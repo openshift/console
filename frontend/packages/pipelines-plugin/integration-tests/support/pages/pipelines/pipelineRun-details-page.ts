@@ -70,6 +70,7 @@ export const pipelineRunDetailsPage = {
     cy.get(pipelineRunDetailsPO.taskRunsTab).should('be.visible');
     cy.get(pipelineRunDetailsPO.logsTab).should('be.visible');
     cy.get(pipelineRunDetailsPO.eventsTab).should('be.visible');
+    cy.get(pipelineRunDetailsPO.parametersTab).should('be.visible');
   },
   verifyFields: () => {
     cy.byLegacyTestID('resource-summary').within(() => {
@@ -131,6 +132,11 @@ export const pipelineRunDetailsPage = {
       case 'Task Runs': {
         cy.get(pipelineRunDetailsPO.taskRunsTab).click();
         cy.url().should('include', 'task-runs');
+        break;
+      }
+      case 'Parameters': {
+        cy.get(pipelineRunDetailsPO.parametersTab).click();
+        cy.url().should('include', 'parameters');
         break;
       }
       default: {

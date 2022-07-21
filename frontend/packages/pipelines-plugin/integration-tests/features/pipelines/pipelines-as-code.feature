@@ -99,7 +99,7 @@ Feature: Perform Actions on repository
               And user is at repositories page
              When user clicks Last Run value of repository "<repository_name>"
              Then user will be redirected to Pipeline Run Details page
-              And user is able to see Details, YAML, TaskRuns, Logs and Events tabs
+              And user is able to see Details, YAML, TaskRuns, Parameters, Logs and Events tabs
               And Details tab is displayed with fields Repository, Branch, Commit id and Event type
               And Actions dropdown display on the top right corner of the page
 

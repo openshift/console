@@ -156,7 +156,7 @@ Then('user is able to see kebab menu options Rerun, Delete Pipeline Run', () => 
   cy.byTestActionID('Delete PipelineRun').should('be.visible');
 });
 
-Then('user is able to see Details, YAML, TaskRuns, Logs and Events tabs', () => {
+Then('user is able to see Details, YAML, TaskRuns, Parameters, Logs and Events tabs', () => {
   pipelineRunDetailsPage.verifyTabs();
 });
 
@@ -582,3 +582,36 @@ Then('user will see failure message below pipeline runs', () => {
 Then('user will also see the log snippet', () => {
   cy.get(topologyPO.sidePane.pipelineRunsLogSnippet).should('be.visible');
 });
+
+Then('user navigates to pipelineRun parameters tab', () => {
+  pipelineRunDetailsPage.selectTab('Parameters');
+});
+
+Then('user is able to see parameters of pipelineRun', () => {
+  cy.get(pipelineRunDetailsPO.parameters.form).should('be.visible');
+});
+
+Then('user is able to see No parameters are associated with this PipelineRun', () => {
+  cy.contains('No parameters are associated with this PipelineRun.');
+});
+
+Given('pipeline run is displayed for {string} with parameters', (pipelineName: string) => {
+  pipelinesPage.clickOnCreatePipeline();
+  pipelineBuilderPage.createPipelineWithParameters(pipelineName);
+  cy.byLegacyTestID('breadcrumb-link-0').click();
+  pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
+  modal.modalTitleShouldContain('Start Pipeline');
+  startPipelineInPipelinesPage.clickStart();
+  pipelineRunDetailsPage.verifyTitle();
+  navigateTo(devNavigationMenu.Pipelines);
+  pipelinesPage.search(pipelineName);
+  cy.get('[title="PipelineRun"]').should('be.visible');
+});
+
+Then(
+  'user is able to see name {string} and value {string} parameters value of pipelineRun',
+  (paramName: string, paramValue: string) => {
+    cy.byTestID('name').should('have.value', paramName);
+    cy.byTestID('value').should('have.value', paramValue);
+  },
+);

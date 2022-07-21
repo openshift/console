@@ -10,3 +10,4 @@ export { default as PipelineConditionDetailsPage } from './detail-page-tabs/Pipe
 export { default as PipelineBuilderPage } from './pipeline-builder/PipelineBuilderPage';
 export { default as PipelineBuilderEditPage } from './pipeline-builder/PipelineBuilderEditPage';
 export { default as PipelineTabbedPage } from './PipelineTabbedPage';
+export { default as PipelineParameters } from './PipelineParameters';

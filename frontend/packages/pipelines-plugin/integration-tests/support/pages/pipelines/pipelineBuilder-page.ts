@@ -187,6 +187,20 @@ export const pipelineBuilderPage = {
     pipelineDetailsPage.verifyTitle(pipelineName);
   },
 
+  createPipelineWithParameters: (
+    pipelineName: string,
+    paramName: string = 'testName',
+    description: string = 'parameter description',
+    defaultValue: string = 'testValue',
+    taskName: string = 'kn',
+  ) => {
+    pipelineBuilderPage.enterPipelineName(pipelineName);
+    pipelineBuilderPage.selectTask(taskName);
+    pipelineBuilderPage.addParameters(paramName, description, defaultValue);
+    pipelineBuilderPage.clickCreateButton();
+    cy.get(pipelineDetailsPO.title).should('be.visible');
+  },
+
   selectSampleInYamlView: (yamlSample: string) => {
     cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.sidebar).within(() => {
       cy.get('li.co-resource-sidebar-item')

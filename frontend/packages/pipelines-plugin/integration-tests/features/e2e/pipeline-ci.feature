@@ -75,7 +75,7 @@ Feature: Entire pipeline flow from Builder page
             Given user is at pipelines page
              When user clicks Last Run value of the pipeline "flow"
              Then user will be redirected to Pipeline Run Details page
-              And user is able to see Details, YAML, TaskRuns, Logs and Events tabs
+              And user is able to see Details, YAML, TaskRuns, Parameters, Logs and Events tabs
               And Details tab is displayed with field names Name, Labels, Annotations, Created At, Owner and Pipelines
               And user is able to see the pipelineRuns with status as Succeeded
               And Actions menu contains options "Rerun", "Delete PipelineRun"

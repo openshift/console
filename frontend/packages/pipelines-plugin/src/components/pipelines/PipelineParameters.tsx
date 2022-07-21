@@ -1,27 +1,34 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 import { MultiColumnField, InputField } from '@console/shared';
 
 type PipelineParametersProps = {
   addLabel?: string;
+  nameLabel: string;
+  nameFieldName: string;
+  descriptionLabel: string;
+  descriptionFieldName: string;
+  valueLabel: string;
+  valueFieldName: string;
+  emptyMessage: string;
   fieldName: string;
+  emptyValues: { [name: string]: string };
   isReadOnly?: boolean;
 };
 
-const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
-  const { t } = useTranslation();
-  const {
-    addLabel = t('pipelines-plugin~Add Pipeline parameter'),
-    fieldName,
-    isReadOnly = false,
-  } = props;
-  const emptyMessage = t('pipelines-plugin~No parameters are associated with this pipeline.');
-
-  const nameLabel = t('pipelines-plugin~Name');
-  const descriptionLabel = t('pipelines-plugin~Description');
-  const defaultValueLabel = t('pipelines-plugin~Default value');
-
+const PipelineParameters: React.FC<PipelineParametersProps> = ({
+  addLabel,
+  nameLabel,
+  nameFieldName,
+  descriptionLabel,
+  descriptionFieldName,
+  valueLabel,
+  valueFieldName,
+  emptyMessage,
+  fieldName,
+  emptyValues,
+  isReadOnly = false,
+}) => {
   return (
     <div className="co-m-pane__form">
       <MultiColumnField
@@ -34,35 +41,35 @@ const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
             required: true,
           },
           descriptionLabel,
-          defaultValueLabel,
+          valueLabel,
         ]}
-        emptyValues={{ name: '', description: '', default: '' }}
+        emptyValues={emptyValues}
         emptyMessage={emptyMessage}
         isReadOnly={isReadOnly}
       >
         <InputField
-          data-test="name"
-          name="name"
+          data-test={nameFieldName}
+          name={nameFieldName}
           type={TextInputTypes.text}
           placeholder={nameLabel}
-          isReadOnly={isReadOnly}
+          isDisabled={isReadOnly}
           aria-label={nameLabel}
         />
         <InputField
-          data-test="description"
-          name="description"
+          data-test={descriptionFieldName}
+          name={descriptionFieldName}
           type={TextInputTypes.text}
           placeholder={descriptionLabel}
-          isReadOnly={isReadOnly}
+          isDisabled={isReadOnly}
           aria-label={descriptionLabel}
         />
         <InputField
-          data-test="default"
-          name="default"
+          data-test={valueFieldName}
+          name={valueFieldName}
           type={TextInputTypes.text}
-          placeholder={defaultValueLabel}
-          isReadOnly={isReadOnly}
-          aria-label={defaultValueLabel}
+          placeholder={valueLabel}
+          isDisabled={isReadOnly}
+          aria-label={valueLabel}
         />
       </MultiColumnField>
     </div>
