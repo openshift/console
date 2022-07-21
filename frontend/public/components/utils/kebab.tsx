@@ -467,8 +467,8 @@ export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
 };
 
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
-  const { actions, kindObj, resource, isDisabled, customData, hoverMessage } = props;
   const { t } = useTranslation();
+  const { actions, kindObj, resource, isDisabled, customData, terminatingTooltip } = props;
 
   if (!kindObj) {
     return null;
@@ -481,10 +481,12 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
     <Kebab
       options={options}
       key={resource.metadata.uid}
-      isDisabled={
-        isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')
+      isDisabled={isDisabled ?? _.has(resource.metadata, 'deletionTimestamp')}
+      terminatingTooltip={
+        _.has(resource.metadata, 'deletionTimestamp')
+          ? terminatingTooltip || t('Resource is being deleted.')
+          : ''
       }
-      hoverMessage={hoverMessage ? hoverMessage : t('public~Resource is being deleted.')}
     />
   );
 });
@@ -560,18 +562,21 @@ class KebabWithTranslation extends React.Component<
   getDivReference = () => this.divElement.current;
 
   render() {
-    const { options, isDisabled, t, hoverMessage } = this.props;
+    const { options, isDisabled, t, terminatingTooltip } = this.props;
 
     const menuOptions = kebabOptionsToMenu(options);
 
     return (
-      <div
-        className={classNames({
-          'pf-c-dropdown': true,
-          'pf-m-expanded': this.state.active,
-        })}
+      <Tooltip
+        content={terminatingTooltip}
+        trigger={isDisabled && terminatingTooltip ? 'mouseenter' : 'manual'}
       >
-        <Tooltip content={hoverMessage} isVisible={isDisabled && !!hoverMessage} trigger="manual">
+        <div
+          className={classNames({
+            'pf-c-dropdown': true,
+            'pf-m-expanded': this.state.active,
+          })}
+        >
           <button
             ref={this.dropdownElement}
             type="button"
@@ -587,33 +592,33 @@ class KebabWithTranslation extends React.Component<
           >
             <EllipsisVIcon />
           </button>
-        </Tooltip>
-        <Popper
-          open={!isDisabled && this.state.active}
-          placement="bottom-end"
-          closeOnEsc
-          closeOnOutsideClick
-          onRequestClose={this.handleRequestClose}
-          reference={this.getPopperReference}
-        >
-          <FocusTrap
-            focusTrapOptions={{
-              clickOutsideDeactivates: true,
-              returnFocusOnDeactivate: false,
-              fallbackFocus: this.getDivReference, // fallback to popover content wrapper div if there are no tabbable elements
-            }}
+          <Popper
+            open={!isDisabled && this.state.active}
+            placement="bottom-end"
+            closeOnEsc
+            closeOnOutsideClick
+            onRequestClose={this.handleRequestClose}
+            reference={this.getPopperReference}
           >
-            <div ref={this.divElement} className="pf-c-dropdown pf-m-expanded" tabIndex={-1}>
-              <KebabMenuItems
-                options={menuOptions}
-                onClick={this.onClick}
-                className="oc-kebab__popper-items"
-                focusItem={menuOptions[0]}
-              />
-            </div>
-          </FocusTrap>
-        </Popper>
-      </div>
+            <FocusTrap
+              focusTrapOptions={{
+                clickOutsideDeactivates: true,
+                returnFocusOnDeactivate: false,
+                fallbackFocus: this.getDivReference, // fallback to popover content wrapper div if there are no tabbable elements
+              }}
+            >
+              <div ref={this.divElement} className="pf-c-dropdown pf-m-expanded" tabIndex={-1}>
+                <KebabMenuItems
+                  options={menuOptions}
+                  onClick={this.onClick}
+                  className="oc-kebab__popper-items"
+                  focusItem={menuOptions[0]}
+                />
+              </div>
+            </FocusTrap>
+          </Popper>
+        </div>
+      </Tooltip>
     );
   }
 }
@@ -659,7 +664,7 @@ export type ResourceKebabProps = {
   resource: K8sResourceKind;
   isDisabled?: boolean;
   customData?: { [key: string]: any };
-  hoverMessage?: string;
+  terminatingTooltip?: string;
 };
 
 type KebabSubMenu = {
@@ -676,7 +681,7 @@ type KebabProps = {
   options: KebabOption[];
   isDisabled?: boolean;
   columnClass?: string;
-  hoverMessage?: string;
+  terminatingTooltip?: string;
 };
 
 type KebabItemProps = {

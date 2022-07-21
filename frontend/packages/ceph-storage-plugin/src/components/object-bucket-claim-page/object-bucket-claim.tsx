@@ -72,9 +72,9 @@ const OBCTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
           actions={menuActions}
           kind={kind}
           resource={obj}
-          hoverMessage={t(
+          terminatingTooltip={t(
             'ceph-storage-plugin~Disabled because the ObjectBucketClaim is being deleted.',
-          )} /* hoverMessage is only visible when kebab is disabled, i.e., when its associated resource is being deleted */
+          )}
         />
       </TableData>
     </>
