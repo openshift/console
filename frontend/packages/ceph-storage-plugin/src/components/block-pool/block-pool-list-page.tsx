@@ -29,6 +29,7 @@ import {
   BlockPoolColumnInfo,
   getScNamesUsingPool,
   getPerPoolMetrics,
+  isDefaultPool,
 } from '../../utils/block-pool';
 import { twelveHoursdateTimeNoYear } from '../../utils/common';
 import { PopoverHelper } from '../../utils/popover-helper';
@@ -203,7 +204,10 @@ const BlockPoolTableRow: React.FC<RowFunctionArgs<StoragePoolKind>> = ({ obj, cu
           actions={menuActions}
           kind={referenceFor(obj)}
           resource={obj}
-          isDisabled={disableMenuAction(obj, props?.cephCluster)}
+          isDisabled={isDefaultPool(obj) || disableMenuAction(obj, props?.cephCluster)}
+          terminatingTooltip={
+            isDefaultPool(obj) ? t('ceph-storage-plugin~Default pool cannot be deleted.') : ''
+          }
           customData={{ tFunction: t }}
         />
       </TableData>
