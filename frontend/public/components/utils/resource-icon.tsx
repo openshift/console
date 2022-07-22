@@ -3,7 +3,8 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 
 import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { K8sGroupVersionKind, K8sResourceKindReference } from '../../module/k8s';
+import { ResourceIconProps } from '@console/dynamic-plugin-sdk';
+import { K8sResourceKindReference } from '../../module/k8s';
 import { modelFor } from '../../module/k8s/k8s-models';
 import { kindToAbbr } from '../../module/k8s/get-resources';
 
@@ -42,13 +43,6 @@ export const ResourceIcon: React.SFC<ResourceIconProps> = ({
   }
 
   return rendered;
-};
-
-export type ResourceIconProps = {
-  className?: string;
-  /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */
-  kind?: K8sResourceKindReference;
-  groupVersionKind?: K8sGroupVersionKind;
 };
 
 export type ResourceNameProps = {
