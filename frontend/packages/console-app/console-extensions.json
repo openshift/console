@@ -472,7 +472,6 @@
       "id": "projects",
       "insertAfter": "dashboards",
       "name": "%console-app~Projects%",
-      "startsWith": ["projects"],
       "model": {
         "group": "project.openshift.io",
         "version": "v1",
@@ -526,7 +525,6 @@
       "section": "workloads",
       "id": "pods",
       "name": "%console-app~Pods%",
-      "startsWith": ["pods"],
       "model": {
         "version": "v1",
         "kind": "Pod"
@@ -541,7 +539,6 @@
       "id": "deployments",
       "insertAfter": "pods",
       "name": "%console-app~Deployments%",
-      "startsWith": ["deployments"],
       "model": {
         "group": "apps",
         "version": "v1",
@@ -557,7 +554,6 @@
       "id": "deploymentconfigs",
       "insertAfter": "deployments",
       "name": "%console-app~DeploymentConfigs%",
-      "startsWith": ["deploymentconfigs"],
       "model": {
         "group": "apps.openshift.io",
         "version": "v1",
@@ -574,7 +570,6 @@
       "id": "statefulsets",
       "insertAfter": "deploymentconfigs",
       "name": "%console-app~StatefulSets%",
-      "startsWith": ["statefulsets"],
       "model": {
         "group": "apps",
         "version": "v1",
@@ -590,7 +585,6 @@
       "id": "secrets",
       "insertAfter": "statefulsets",
       "name": "%console-app~Secrets%",
-      "startsWith": ["secrets"],
       "model": {
         "version": "v1",
         "kind": "Secret"
@@ -605,7 +599,6 @@
       "id": "configmaps",
       "insertAfter": "secrets",
       "name": "%console-app~ConfigMaps%",
-      "startsWith": ["configmaps"],
       "model": {
         "version": "v1",
         "kind": "ConfigMap"
@@ -630,7 +623,6 @@
       "id": "cronjobs",
       "insertAfter": "WorkloadsSeparator",
       "name": "%console-app~CronJobs%",
-      "startsWith": ["cronjobs"],
       "model": {
         "group": "batch",
         "version": "v1",
@@ -646,7 +638,6 @@
       "id": "jobs",
       "insertAfter": "cronjobs",
       "name": "%console-app~Jobs%",
-      "startsWith": ["jobs"],
       "model": {
         "group": "batch",
         "version": "v1",
@@ -662,7 +653,6 @@
       "id": "daemonsets",
       "insertAfter": "jobs",
       "name": "%console-app~DaemonSets%",
-      "startsWith": ["daemonsets"],
       "model": {
         "group": "apps",
         "version": "v1",
@@ -678,7 +668,6 @@
       "id": "replicasets",
       "insertAfter": "daemonsets",
       "name": "%console-app~ReplicaSets%",
-      "startsWith": ["replicasets"],
       "model": {
         "group": "apps",
         "version": "v1",
@@ -694,7 +683,6 @@
       "id": "replicationcontrollers",
       "insertAfter": "replicasets",
       "name": "%console-app~ReplicationControllers%",
-      "startsWith": ["replicationcontrollers"],
       "model": {
         "version": "v1",
         "kind": "ReplicationController"
@@ -709,7 +697,6 @@
       "id": "horizontalpodautoscalers",
       "insertAfter": "replicationcontrollers",
       "name": "%console-app~HorizontalPodAutoscalers%",
-      "startsWith": ["horizontalpodautoscalers"],
       "model": {
         "group": "autoscaling",
         "version": "v2beta2",
@@ -725,7 +712,6 @@
       "id": "poddisruptionbudgets",
       "insertAfter": "horizontalpodautoscalers",
       "name": "%console-app~PodDisruptionBudgets%",
-      "startsWith": ["poddisruptionbudgets"],
       "model": {
         "group": "policy",
         "version": "v1",
@@ -740,7 +726,6 @@
       "section": "networking",
       "id": "services",
       "name": "%console-app~Services%",
-      "startsWith": ["services"],
       "model": {
         "version": "v1",
         "kind": "Service"
@@ -755,7 +740,6 @@
       "id": "routes",
       "insertAfter": "services",
       "name": "%console-app~Routes%",
-      "startsWith": ["routes"],
       "model": {
         "group": "route.openshift.io",
         "version": "v1",
@@ -772,7 +756,6 @@
       "id": "ingresses",
       "insertAfter": "routes",
       "name": "%console-app~Ingresses%",
-      "startsWith": ["ingresses"],
       "model": {
         "group": "networking.k8s.io",
         "version": "v1",
@@ -788,7 +771,6 @@
       "id": "networkpolicies",
       "insertAfter": "ingresses",
       "name": "%console-app~NetworkPolicies%",
-      "startsWith": ["networkpolicies"],
       "model": {
         "group": "networking.k8s.io",
         "version": "v1",
@@ -803,7 +785,6 @@
       "section": "storage",
       "id": "persistentvolumes",
       "name": "%console-app~PersistentVolumes%",
-      "startsWith": ["persistentvolumes"],
       "model": {
         "version": "v1",
         "kind": "PersistentVolume"
@@ -819,7 +800,6 @@
       "id": "persistentvolumeclaims",
       "insertAfter": "persistentvolumes",
       "name": "%console-app~PersistentVolumeClaims%",
-      "startsWith": ["persistentvolumeclaims"],
       "model": {
         "group": "v1",
         "version": "",
@@ -835,7 +815,6 @@
       "id": "storageclasses",
       "insertAfter": "persistentvolumeclaims",
       "name": "%console-app~StorageClasses%",
-      "startsWith": ["storageclasses"],
       "model": {
         "group": "storage.k8s.io",
         "version": "v1",
@@ -880,7 +859,6 @@
       "section": "builds",
       "id": "buildconfigs",
       "name": "%console-app~BuildConfigs%",
-      "startsWith": ["buildconfigs"],
       "model": {
         "group": "build.openshift.io",
         "version": "v1",
@@ -896,7 +874,6 @@
       "id": "builds",
       "insertAfter": "buildconfigs",
       "name": "%console-app~Builds%",
-      "startsWith": ["builds"],
       "model": {
         "group": "build.openshift.io",
         "version": "v1",
@@ -912,12 +889,12 @@
       "id": "imagestreams",
       "insertAfter": "builds",
       "name": "%console-app~ImageStreams%",
+      "startsWith": ["imagestreamtags"],
       "model": {
         "group": "image.openshift.io",
         "version": "v1",
         "kind": "ImageStream"
-      },
-      "startsWith": ["imagestreams", "imagestreamtags"]
+      }
     }
   },
   {
@@ -927,7 +904,6 @@
       "section": "compute",
       "id": "nodes",
       "name": "%console-app~Nodes%",
-      "startsWith": ["nodes"],
       "model": {
         "version": "v1",
         "kind": "Node"
@@ -1064,7 +1040,6 @@
       "id": "serviceaccounts",
       "insertAfter": "groups",
       "name": "%console-app~ServiceAccounts%",
-      "startsWith": ["serviceaccounts"],
       "model": {
         "version": "v1",
         "kind": "ServiceAccount"
@@ -1079,12 +1054,12 @@
       "id": "roles",
       "insertAfter": "serviceaccounts",
       "name": "%console-app~Roles%",
+      "startsWith": ["clusterroles"],
       "model": {
         "group": "rbac.authorization.k8s.io",
         "version": "v1",
         "kind": "Role"
-      },
-      "startsWith": ["roles", "clusterroles"]
+      }
     }
   },
   {
@@ -1095,12 +1070,12 @@
       "id": "rolebindings",
       "insertAfter": "roles",
       "name": "%console-app~RoleBindings%",
+      "startsWith": ["clusterrolebindings"],
       "model": {
         "group": "rbac.authorization.k8s.io",
         "version": "v1",
         "kind": "RoleBinding"
-      },
-      "startsWith": ["rolebindings", "clusterrolebindings"]
+      }
     }
   },
   {
@@ -1130,7 +1105,6 @@
       "id": "namespaces",
       "insertAfter": "clustersettings",
       "name": "%console-app~Namespaces%",
-      "startsWith": ["namespaces"],
       "model": {
         "version": "v1",
         "kind": "Namespace"
@@ -1146,12 +1120,12 @@
       "id": "resourcequotas",
       "insertAfter": "namespaces",
       "name": "%console-app~ResourceQuotas%",
+      "startsWith": ["clusterresourcequotas"],
       "model": {
         "group": "project.openshift.io",
         "version": "v1",
         "kind": "Project"
-      },
-      "startsWith": ["resourcequotas", "clusterresourcequotas"]
+      }
     }
   },
   {
@@ -1162,7 +1136,6 @@
       "id": "limitranges",
       "insertAfter": "resourcequotas",
       "name": "%console-app~LimitRanges%",
-      "startsWith": ["limitranges"],
       "model": {
         "version": "v1",
         "kind": "LimitRange"
@@ -1177,7 +1150,6 @@
       "id": "customresourcedefinitions",
       "insertAfter": "metering",
       "name": "%console-app~CustomResourceDefinitions%",
-      "startsWith": ["customresourcedefinitions"],
       "model": {
         "group": "apiextensions.k8s.io",
         "version": "v1",

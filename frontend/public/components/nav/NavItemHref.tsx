@@ -5,7 +5,7 @@ import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-internal
 import { useLocation } from '@console/shared/src/hooks/useLocation';
 import { HrefNavItem } from '@console/dynamic-plugin-sdk';
 import { NavLinkProps, NavLink } from './NavLink';
-import { navLinkHrefIsActive, stripScopeFromPath } from './utils';
+import { navItemHrefIsActive, stripScopeFromPath } from './utils';
 
 export const NavItemHref: React.FC<NavItemHrefProps> = ({
   children,
@@ -17,7 +17,7 @@ export const NavItemHref: React.FC<NavItemHrefProps> = ({
 }) => {
   const [activeNamespace] = useActiveNamespace();
   const location = useLocation();
-  const isActive = React.useMemo(() => navLinkHrefIsActive(location, href, startsWith), [
+  const isActive = React.useMemo(() => navItemHrefIsActive(location, href, startsWith), [
     href,
     location,
     startsWith,

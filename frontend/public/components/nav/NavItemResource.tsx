@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NavLink, NavLinkProps } from './NavLink';
-import { navLinkResourceIsActive } from './utils';
+import { navItemResourceIsActive } from './utils';
 import {
   formatNamespacedRouteForResource,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
@@ -11,6 +11,7 @@ import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-internal
 import { useLocation } from '@console/shared/src/hooks/useLocation';
 import { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
 import { NavItem } from '@patternfly/react-core';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 export const NavItemResource: React.FC<NavItemResourceProps> = ({
   model,
@@ -24,10 +25,12 @@ export const NavItemResource: React.FC<NavItemResourceProps> = ({
   const location = useLocation();
   const lastNamespace = sessionStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
   const resourceReference = referenceForExtensionModel(model);
-  const isActive = React.useMemo(
-    () => navLinkResourceIsActive(location, namespaced, model, startsWith),
-    [namespaced, location, model, startsWith],
-  );
+  const [k8sModel] = useK8sModel(resourceReference);
+  const isActive = React.useMemo(() => navItemResourceIsActive(location, k8sModel, startsWith), [
+    k8sModel,
+    location,
+    startsWith,
+  ]);
   const to = React.useCallback(
     () =>
       namespaced

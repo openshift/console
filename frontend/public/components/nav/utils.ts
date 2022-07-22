@@ -1,7 +1,4 @@
 import {
-  isHrefNavItem,
-  isResourceNSNavItem,
-  isResourceClusterNavItem,
   NavExtension,
   isNavSection,
   ExtensionK8sModel,
@@ -156,7 +153,7 @@ export const sortExtensionItems = <E extends NavExtension>(
 
 // Returns true if path equals or starts with at least one provided prefix
 export const somePrefixMatchesPath = (path: string, ...prefixes: string[]): boolean =>
-  prefixes?.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+  prefixes?.some((prefix) => prefix?.length > 0 && path.startsWith(prefix));
 
 // Returns true if path equals or starts with group~version~kind for the given k8s model
 export const modelMatchesPath = (path: string, model: K8sModel) =>
@@ -175,10 +172,7 @@ export const stripScopeFromPath = (path: string) => {
     ?.replace(/^\//, '');
 };
 
-const namespacedPathPattern = new RegExp(/.*\/k8s\/(all-namespaces|ns)\/.*/);
-const clusterPathPattern = new RegExp(/.*\/k8s\/cluster\/.*/);
-
-export const navLinkHrefIsActive = (
+export const navItemHrefIsActive = (
   location: string,
   href: string,
   startsWith?: string[],
@@ -189,31 +183,17 @@ export const navLinkHrefIsActive = (
     ...(startsWith ?? []),
   );
 
-export const navLinkResourceIsActive = (
+export const navItemResourceIsActive = (
   location: string,
-  namespaced: boolean,
-  model: ExtensionK8sModel,
-  startsWith: string[],
-) => {
-  const resourceReference = referenceForExtensionModel(model);
-  const strippedLocation = stripScopeFromPath(location);
-  const pathPattern = namespaced ? namespacedPathPattern : clusterPathPattern;
-  return (
-    pathPattern.test(location) &&
-    somePrefixMatchesPath(strippedLocation, resourceReference, ...(startsWith ?? []))
+  k8sModel: K8sModel,
+  startsWith?: string[],
+): boolean =>
+  somePrefixMatchesPath(
+    stripScopeFromPath(location),
+    referenceForModel(k8sModel),
+    k8sModel.plural,
+    ...(startsWith ?? []),
   );
-};
 
 export const isTopLevelNavItem = (e: LoadedExtension<NavExtension>) =>
   isNavSection(e) || !e.properties.section;
-
-export const isNavExtensionActive = (e: LoadedExtension<NavExtension>, location: string) => {
-  return (
-    (isHrefNavItem(e) &&
-      navLinkHrefIsActive(location, e.properties.href, e.properties.startsWith)) ||
-    (isResourceNSNavItem(e) &&
-      navLinkResourceIsActive(location, true, e.properties.model, e.properties.startsWith)) ||
-    (isResourceClusterNavItem(e) &&
-      navLinkResourceIsActive(location, false, e.properties.model, e.properties.startsWith))
-  );
-};

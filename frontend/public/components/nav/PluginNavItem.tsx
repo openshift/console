@@ -6,20 +6,20 @@ import {
   NavExtension,
   isHrefNavItem,
   isResourceNSNavItem,
-  isResourceClusterNavItem,
+  isResourceNavItem,
 } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { NavItemHref } from './NavItemHref';
 import { NavSection } from './NavSection';
 import { NavItemResource } from './NavItemResource';
 
-export const PluginNavItem: React.FC<PluginNavItemsProps> = ({ extension }) => {
+export const PluginNavItem: React.FC<PluginNavItemProps> = ({ extension }) => {
   if (isNavSection(extension)) {
     return (
       <NavSection
         id={extension.properties.id}
         name={extension.properties.name}
-        dataAttributes-={extension.properties.dataAttributes}
+        dataAttributes={extension.properties.dataAttributes}
       />
     );
   }
@@ -38,7 +38,7 @@ export const PluginNavItem: React.FC<PluginNavItemsProps> = ({ extension }) => {
       </NavItemHref>
     );
   }
-  if (isResourceNSNavItem(extension) || isResourceClusterNavItem(extension)) {
+  if (isResourceNavItem(extension)) {
     return (
       <NavItemResource
         namespaced={isResourceNSNavItem(extension)}
@@ -52,6 +52,6 @@ export const PluginNavItem: React.FC<PluginNavItemsProps> = ({ extension }) => {
   return null;
 };
 
-export type PluginNavItemsProps = {
+export type PluginNavItemProps = {
   extension: LoadedExtension<NavExtension>;
 };
