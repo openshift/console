@@ -23,6 +23,7 @@ import {
   pipelineRunsPO,
   pipelinesPO,
   pipelineDetailsPO,
+  triggerTemplateDetailsPO,
 } from '../../page-objects/pipelines-po';
 import {
   pipelinesPage,
@@ -236,7 +237,9 @@ When('user selects Rerun option from the Actions menu', () => {
 });
 
 Then('status displays as {string} in pipeline run details page', (pipelineStatus: string) => {
-  cy.get(pipelineRunsPO.pipelineRunsTable.status).should('contain.text', pipelineStatus);
+  cy.get(pipelineRunsPO.pipelineRunsTable.status).should('contain.text', pipelineStatus, {
+    timeout: 10000,
+  });
 });
 
 Then('user will be redirected to Pipeline Run Details page', () => {
@@ -339,6 +342,18 @@ Then('Last Run status of the workload displays as {string} in topology page', (s
 When('user clicks Actions menu on the top right corner of the page', () => {
   actionsDropdownMenu.clickActionMenu();
 });
+
+When(
+  'user is able to see Actions menu options {string}, {string}, {string}, {string} in pipeline run page',
+  (el1, el2, el3, el4: string) => {
+    cy.byLegacyTestID('breadcrumb-link-0').contains('PipelineRun');
+    cy.byLegacyTestID('action-items')
+      .should('contain', el1)
+      .and('contain', el2)
+      .and('contain', el3)
+      .and('contain', el4);
+  },
+);
 
 When('user clicks Last Run value of the pipeline {string}', (pipelineName: string) => {
   pipelinesPage.selectPipelineRun(pipelineName);
@@ -620,3 +635,32 @@ Then(
     cy.byTestID('value').should('have.value', paramValue);
   },
 );
+
+When('user creates pipeline using git named {string}', (pipelineName: string) => {
+  navigateTo(devNavigationMenu.Add);
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
+  gitPage.enterGitUrl('https://github.com/sclorg/golang-ex');
+  devFilePage.verifyValidatedMessage('https://github.com/sclorg/golang-ex');
+  gitPage.selectAddPipeline();
+  gitPage.enterWorkloadName(pipelineName);
+  gitPage.clickCreate();
+  topologyPage.verifyTopologyPage();
+});
+
+When('user is at the Pipeline Details page of pipeline {string}', (pipelineName: string) => {
+  navigateTo(devNavigationMenu.Pipelines);
+  pipelinesPage.search(pipelineName);
+  cy.byLegacyTestID(pipelineName).click();
+  pipelineDetailsPage.verifyTitle(pipelineName);
+});
+
+When('user starts the pipeline {string} in Pipeline Details page', (pipelineName: string) => {
+  pipelineDetailsPage.verifyTitle(pipelineName);
+  cy.get(triggerTemplateDetailsPO.detailsTab)
+    .should('be.visible')
+    .click();
+  cy.byLegacyTestID('breadcrumb-link-0').click();
+  pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
+  modal.modalTitleShouldContain('Start Pipeline');
+  startPipelineInPipelinesPage.clickStart();
+});

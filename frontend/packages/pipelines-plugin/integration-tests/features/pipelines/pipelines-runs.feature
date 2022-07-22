@@ -146,13 +146,14 @@ Feature: Pipeline Runs
              Then user is able to see expanded logs page
 
 
-        @regression
+        @regression @odc-4793
         Scenario: kebab menu options in pipeline Runs page: P-07-TC14
-            Given pipeline run is displayed for "pipeline-aaa" without resource
-             When user selects the Pipeline Run for "pipeline-aaa"
-              And user navigates to pipelineRuns page
-              And user selects the kebab menu in pipeline Runs page for pipeline "pipeline-aaa"
-             Then user is able to see kebab menu options Rerun, Delete Pipeline Run
+            Given user creates pipeline using git named "pipeline-aaa"
+              And user is at the Pipeline Details page of pipeline "pipeline-aaa"
+            #  When user starts the pipeline from start pipeline modal
+             When user starts the pipeline "pipeline-aaa" in Pipeline Details page
+              And user clicks Actions menu on the top right corner of the page
+             Then user is able to see Actions menu options "Stop", "Cancel", "Rerun", "Delete PipelineRun" in pipeline run page
 
 
         @regression
@@ -355,3 +356,21 @@ Feature: Pipeline Runs
               And user navigates to pipelineRun parameters tab
               And user is able to see parameters of pipelineRun
               And user is able to see name "testName" and value "testValue" parameters value of pipelineRun
+
+
+        @regression @odc-4793
+        Scenario: Status for the cancelled pipeline: P-07-TC34
+            Given user creates pipeline using git named "pipeline-cancel"
+              And user is at the Pipeline Details page of pipeline "pipeline-cancel"
+             When user starts the pipeline "pipeline-cancel" in Pipeline Details page
+              And user selects option "Cancel" from Actions menu drop down
+             Then status displays as "Cancelled" in pipeline run details page
+
+
+        @regression @odc-4793
+        Scenario: Status for the stopped pipeline: P-07-TC35
+            Given user creates pipeline using git named "pipeline-stop"
+              And user is at the Pipeline Details page of pipeline "pipeline-stop"
+             When user starts the pipeline "pipeline-stop" in Pipeline Details page
+              And user selects option "Stop" from Actions menu drop down
+             Then status displays as "Cancelled" in pipeline run details page
