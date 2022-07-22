@@ -138,7 +138,16 @@ export const EditYAML_ = connect(stateToProps)(
         }
 
         handleError(error, success = null) {
-          this.setState({ errors: _.isEmpty(error) ? null : [error], success });
+          this.setState((prevState) => {
+            const errors = prevState.errors || [];
+            if (!_.isEmpty(error)) {
+              errors.push(error);
+            }
+            return {
+              errors,
+              success,
+            };
+          });
         }
 
         handleErrors(resourceObject, error) {
@@ -670,7 +679,7 @@ export const EditYAML_ = connect(stateToProps)(
                       />
                       <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
                         {customAlerts}
-                        {errors && (
+                        {errors?.length && (
                           <Alert
                             isInline
                             className="co-alert co-alert--scrollable"
