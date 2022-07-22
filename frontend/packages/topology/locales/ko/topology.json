@@ -63,7 +63,7 @@
   "{{kindLabel}} {{label}}": "{{kindLabel}} {{label}}",
   "{{label}} sub-resources": "{{label}} 하위 리소스",
   "unassigned": "할당되지 않음",
-  "Select an Application group to add the component <2>{resource.metadata.name}</2> to": "구성 요소 <2>{resource.metadata.name}</2>를 추가할 애플리케이션 그룹을 선택합니다.",
+  "Select an Application group to add the component <2>{{resourceName}}</2> to": "구성 요소 <2>{{resourceName}}</2>를 추가할 애플리케이션 그룹을 선택합니다.",
   "Save": "저장",
   "Connect <1>{{sourceLabel}}</1> to": "<1>{{sourceLabel}}</1> 연결",
   "Unable to move connector of type {{type}}.": "{{type}} 유형의 커넥터를 이동할 수 없습니다.",
