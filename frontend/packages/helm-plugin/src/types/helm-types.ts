@@ -92,12 +92,12 @@ export enum HelmActionOrigins {
   topology = 'topology',
 }
 
-export interface ProjectHelmChartRepositoryType {
+export interface HelmChartRepositoryType {
   apiVersion: string;
   kind: string;
   metadata: {
-    name?: string;
-    namespace: string;
+    name: string;
+    namespace?: string;
     labels?: { [key: string]: string };
     annotations?: { [key: string]: string };
   };
@@ -113,9 +113,11 @@ export interface ProjectHelmChartRepositoryType {
   };
 }
 
-export interface ProjectHelmChartRepositoryFormData {
-  repoName?: string;
-  repoUrl?: string;
+export interface HelmChartRepositoryFormData {
+  repoName: string;
+  repoUrl: string;
+  repoDisplayName?: string;
+  scope: string;
   repoDescription?: string;
   ca?: string;
   tlsClientConfig?: string;
@@ -123,9 +125,9 @@ export interface ProjectHelmChartRepositoryFormData {
   metadata?: object;
 }
 
-export interface ProjectHelmChartRepositoryData {
+export interface HelmChartRepositoryData {
   editorType: string;
   yamlData: string;
-  formData: ProjectHelmChartRepositoryFormData;
+  formData: HelmChartRepositoryFormData;
   formReloadCount?: number;
 }

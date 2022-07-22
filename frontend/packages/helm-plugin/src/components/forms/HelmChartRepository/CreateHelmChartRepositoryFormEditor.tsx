@@ -1,11 +1,17 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
+import { FormikValues, useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
-import { InputField, ResourceDropdownField, CheckboxField } from '@console/shared/src';
+import {
+  InputField,
+  ResourceDropdownField,
+  CheckboxField,
+  RadioGroupField,
+} from '@console/shared/src';
 
 export type FormData = {
   formData: {
@@ -18,17 +24,54 @@ export type FormData = {
   };
 };
 
-const CreateProjectHelmChartRepositoryFormEditor = () => {
+type CreateHelmChartRepositoryFormEditorProps = {
+  showScopeType: boolean;
+};
+
+const CreateHelmChartRepositoryFormEditor: React.FC<CreateHelmChartRepositoryFormEditorProps> = ({
+  showScopeType,
+}) => {
   const { t } = useTranslation();
+  const {
+    values: { formData },
+  } = useFormikContext<FormikValues>();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   return (
     <FormSection>
+      {showScopeType && (
+        <RadioGroupField
+          name="formData.scope"
+          label={t('helm-plugin~Scope type')}
+          options={[
+            {
+              label: t('helm-plugin~Namespaced scoped  (ProjectHelmChartRepository)'),
+              value: 'ProjectHelmChartRepository',
+              children: t('helm-plugin~Add Helm Chart Repository in the selected namespace.'),
+              isChecked: formData.scope === 'ProjectHelmChartRepository',
+            },
+            {
+              label: t('helm-plugin~Cluster scoped (HelmChartRepository)'),
+              value: 'HelmChartRepository',
+              children: t(
+                'helm-plugin~Add Helm Chart Repository at the cluster level and in all namespaces.',
+              ),
+              isChecked: formData.scope === 'HelmChartRepository',
+            },
+          ]}
+        />
+      )}
       <InputField
         type={TextInputTypes.text}
         name="formData.repoName"
-        label={t('helm-plugin~Chart repository name')}
-        helpText={t('helm-plugin~A display name for the Helm Chart repository.')}
+        label={t('helm-plugin~Name')}
+        helpText={t('helm-plugin~A unique name for the Helm Chart repository.')}
         required
+      />
+      <InputField
+        type={TextInputTypes.text}
+        name="formData.repoDisplayName"
+        label={t('helm-plugin~Display name')}
+        helpText={t('helm-plugin~A display name for the Helm Chart repository.')}
       />
       <InputField
         type={TextInputTypes.text}
@@ -38,7 +81,7 @@ const CreateProjectHelmChartRepositoryFormEditor = () => {
       />
       <CheckboxField
         name="formData.disabled"
-        label={t('helm-plugin~Disable usage of the repo in the namespace')}
+        label={t('helm-plugin~Disable usage of the repo in the developer catalog.')}
       />
       <InputField
         type={TextInputTypes.text}
@@ -54,7 +97,7 @@ const CreateProjectHelmChartRepositoryFormEditor = () => {
         <FormSection>
           <p className="pf-c-form__helper-text">
             {t(
-              'helm-plugin~Add credentials and custom certificate authority (CA) certificates to connect to private helm chart repository',
+              'helm-plugin~Add credentials and custom certificate authority (CA) certificates to connect to private helm chart repository.',
             )}
           </p>
           <ResourceDropdownField
@@ -100,4 +143,4 @@ const CreateProjectHelmChartRepositoryFormEditor = () => {
   );
 };
 
-export default CreateProjectHelmChartRepositoryFormEditor;
+export default CreateHelmChartRepositoryFormEditor;

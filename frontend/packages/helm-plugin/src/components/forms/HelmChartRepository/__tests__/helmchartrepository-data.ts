@@ -1,9 +1,6 @@
-import {
-  ProjectHelmChartRepositoryFormData,
-  ProjectHelmChartRepositoryType,
-} from '../../../../types/helm-types';
+import { HelmChartRepositoryFormData, HelmChartRepositoryType } from '../../../../types/helm-types';
 
-export const sampleProjectHelmChartRepository: ProjectHelmChartRepositoryType = {
+export const sampleProjectHelmChartRepository: HelmChartRepositoryType = {
   apiVersion: 'helm.openshift.io/v1beta1',
   kind: 'ProjectHelmChartRepository',
   metadata: {
@@ -28,13 +25,15 @@ export const sampleProjectHelmChartRepository: ProjectHelmChartRepositoryType = 
     },
     description: 'test-description',
     disabled: false,
-    name: 'phcr',
+    name: 'display phcr',
   },
 };
 
-export const sampleProjectHelmChartRepositoryFormData: ProjectHelmChartRepositoryFormData = {
+export const sampleHelmChartRepositoryFormData: HelmChartRepositoryFormData = {
   repoName: 'phcr',
+  repoDisplayName: 'display phcr',
   ca: 'test-ca',
+  scope: 'ProjectHelmChartRepository',
   disabled: false,
   tlsClientConfig: 'test-tlsClientConfig',
   repoDescription: 'test-description',
@@ -49,7 +48,7 @@ export const sampleProjectHelmChartRepositoryFormData: ProjectHelmChartRepositor
   },
 };
 
-export const defaultProjectHelmChartRepository: ProjectHelmChartRepositoryType = {
+export const defaultProjectHelmChartRepository: HelmChartRepositoryType = {
   apiVersion: 'helm.openshift.io/v1beta1',
   kind: 'ProjectHelmChartRepository',
   metadata: {

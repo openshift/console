@@ -146,6 +146,7 @@ export interface RadioButtonFieldProps extends FieldProps {
   value: React.ReactText;
   description?: React.ReactNode;
   onChange?: (value: React.ReactText) => void;
+  isChecked?: boolean;
 }
 
 export interface RadioGroupFieldProps extends FieldProps {
@@ -158,6 +159,7 @@ export interface RadioGroupOption {
   value: React.ReactText;
   label: React.ReactNode;
   isDisabled?: boolean;
+  isChecked?: boolean;
   children?: React.ReactNode;
   activeChildren?: React.ReactElement;
 }
