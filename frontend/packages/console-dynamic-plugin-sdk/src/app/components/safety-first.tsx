@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 /**
+ * @deprecated - This hook is not related to console functionality.
  * Hook that ensures a safe asynchronnous setting of React state in case a given component could be unmounted.
  * (https://github.com/facebook/react/issues/14113)
  * @param initialState initial state value

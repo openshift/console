@@ -23,7 +23,7 @@ export const useAccessReview2 = (
   impersonate?: ImpersonateKind,
 ) => useAccReview(resourceAttributes, impersonate);
 
-/** @deprecated - Use useAccessReviewAllowed from \@console/dynamic-plugin-sdk instead. */
+/** @deprecated - Use useAccessReview from \@console/dynamic-plugin-sdk instead. */
 export const useAccessReview = (
   resourceAttributes: AccessReviewResourceAttributes,
   impersonate?: ImpersonateKind,

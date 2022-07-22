@@ -108,11 +108,13 @@ const generateDoc = (comment: tsdoc.DocComment) => {
     description: renderDocNode(param.content),
   }));
   const returns = renderDocNode(comment.returnsBlock?.content);
+  const deprecated = renderDocNode(comment.deprecatedBlock);
   return {
     summary,
     example,
     parameters,
     returns,
+    deprecated,
   };
 };
 
@@ -188,7 +190,12 @@ const getAPIs = () => {
 };
 
 renderTemplate('scripts/templates/api.md.ejs', {
-  apis: getAPIs(),
+  apis: getAPIs().sort((a, b) => {
+    if (a.doc.deprecated !== b.doc.deprecated) {
+      return a.doc.deprecated ? 1 : -1;
+    }
+    return 1;
+  }),
   printComments: (docComments: string) => printJSDocComments([docComments]).replace(/\n/g, '<br/>'),
   removeNewLines: (comment: string) => comment.replace('\n', ''),
   toLowerCase: (str: string) => str.toLocaleLowerCase(),
