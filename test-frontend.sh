@@ -8,11 +8,10 @@ ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
 
 cd frontend
 
-# Fail fast if generated artifacts are out of sync
-
-if git status --short | grep 'yarn.lock' >/dev/null; then
-  printf "\n\nOUTDATED yarn.lock (COMMIT IT TO FIX!!!!!)\n"
-  git diff
+# Check for outdated yarn.lock file
+if [[ -n "$(git status --porcelain -- yarn.lock)" ]]; then
+  echo "Outdated yarn.lock file, commit changes to fix!"
+  git --no-pager diff
   exit 1
 fi
 
@@ -20,7 +19,7 @@ fi
 GIT_STATUS="$(git status --short --untracked-files -- packages/console-dynamic-plugin-sdk/docs)"
 if [ -n "$GIT_STATUS" ]; then
   echo "dynamic plugin sdk docs are not up to date. Run 'yarn generate-plugin-sdk-docs' then commit changes."
-  git diff
+  git --no-pager diff
   exit 1
 fi
 
@@ -28,7 +27,7 @@ yarn i18n
 GIT_STATUS="$(git status --short --untracked-files -- public/locales packages/**/locales)"
 if [ -n "$GIT_STATUS" ]; then
   echo "i18n files are not up to date. Run 'yarn i18n' then commit changes."
-  git diff
+  git --no-pager diff
   exit 1
 fi
 
