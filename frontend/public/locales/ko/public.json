@@ -820,7 +820,7 @@
   "Current desired pod count": "현재 원하는 pod 수",
   "of pod_0": "/ Pod",
   "Number or percentage of total pods at the start of the update (optional)": "업데이트 시작시 총 pod 수 또는 백분율 (선택 사항)",
-  "greater than pod_0": "pod 보다 큼",
+  "greater than pod": "pod 보다 큼",
   "Recreate": "재생성",
   "Shut down all existing pods before creating new ones": "새 pod를 만들기 전에 기존 pod를 모두 종료",
   "Confirm": "확인",

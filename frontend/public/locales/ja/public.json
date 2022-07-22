@@ -820,7 +820,7 @@
   "Current desired pod count": "現在の必要な Pod 数",
   "of pod_0": "Pod",
   "Number or percentage of total pods at the start of the update (optional)": "更新の開始時の Pod の合計数またはパーセンテージ (オプション)",
-  "greater than pod_0": "Pod を上回る",
+  "greater than pod": "Pod を上回る",
   "Recreate": "再作成",
   "Shut down all existing pods before creating new ones": "新規 Pod を作成する前に、既存 Pod をすべてシャットダウンします。",
   "Confirm": "確定",
