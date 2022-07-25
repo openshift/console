@@ -7,6 +7,7 @@ import { history } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared/src';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { ProjectHelmChartRepositoryModel } from '../../../models';
 import { HelmChartRepositoryData, HelmChartRepositoryType } from '../../../types/helm-types';
@@ -27,6 +28,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
 }) => {
   const { t } = useTranslation();
   const [namespace] = useActiveNamespace();
+  const fireTelemetryEvent = useTelemetry();
 
   const initialValues = React.useRef({
     editorType: EditorType.Form,
@@ -77,6 +79,12 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
 
     return resourceCall
       .then(() => {
+        fireTelemetryEvent('Helm Chart Repository', {
+          helmChartRepositoryScope:
+            values.formData?.scope === ProjectHelmChartRepositoryModel.kind
+              ? 'namespace'
+              : 'cluster',
+        });
         actions.setStatus({
           submitError: '',
           submitSuccess: t('helm-plugin~{{hcr}} has been created', {
