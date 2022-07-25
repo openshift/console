@@ -19,7 +19,6 @@
   "Rollback": "回滚",
   "Alternatively, developers can <2>try to configure their own custom Helm Chart repository</2>.": "另外，开发人员也可以<2>尝试配置自己的自定义 Helm Chart 仓库</2>。",
   "Browse for charts that help manage complex installations and upgrades. Cluster administrators can customize the content made available in the catalog.<1></1>": "查看有助于管理复杂安装和升级的 chart。集群管理员可以自定义目录中提供的内容。<1></1>",
-  "## README\n{{readmeData}}": "## README\n{{readmeData}}",
   "README not available": "README 不可用",
   "This Helm Chart is provided by a trusted partner and has been verified for ease of integration.": "该 Helm Chart 由值得信任的合作伙伴提供，并经过验证以方便集成。",
   "Certified": "已认证",
