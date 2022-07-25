@@ -19,7 +19,6 @@
   "Rollback": "롤백",
   "Alternatively, developers can <2>try to configure their own custom Helm Chart repository</2>.": "또는 개발자가 <2>고유한 사용자 정의 Helm 차트 리포지토리</2>를 구성할 수 있습니다.",
   "Browse for charts that help manage complex installations and upgrades. Cluster administrators can customize the content made available in the catalog.<1></1>": "복잡한 설치 및 업그레이드를 관리하는 데 도움이 되는 차트를 살표보십시오. 클러스터 관리자는 카탈로그에 제공된 콘텐츠를 사용자 지정할 수 있습니다.<1></1>",
-  "## README\n{{readmeData}}": "## README\n{{readmeData}}",
   "README not available": "README는 사용할 수 없습니다",
   "This Helm Chart is provided by a trusted partner and has been verified for ease of integration.": "이 Helm 차트는 신뢰할 수 있는 파트너가 제공하며 통합이 용이하도록 검증되었습니다.",
   "Certified": "인증",
