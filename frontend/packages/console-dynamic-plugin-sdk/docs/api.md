@@ -58,9 +58,10 @@
 56.  [`ResourceEventStream`](#resourceeventstream)
 57.  [`usePrometheusPoll`](#useprometheuspoll)
 58.  [`Timestamp`](#timestamp)
-59. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
-60. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
-61. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+59.  [`useModal`](#usemodal)
+60. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
+61. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
+62. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
 
 ---
 
@@ -2020,6 +2021,19 @@ A component to render timestamp.<br/>The timestamps are synchronized between inv
 | `simple` | render simple version of the component omitting icon and tooltip. |
 | `omitSuffix` | formats the date ommiting the suffix. |
 | `className` | additional class name for the component. |
+
+
+
+---
+
+## `useModal`
+
+### Summary 
+
+A hook to launch Modals.<br/><br/>```tsx<br/>const AppPage: React.FC = () => {<br/> const [launchModal] = useModal();<br/> const onClick = () => launchModal(ModalComponent);<br/> return (<br/>   <Button onClick={onClick}>Launch a Modal</Button><br/> )<br/>}<br/>```
+
+
+
 
 
 
