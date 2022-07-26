@@ -35,6 +35,7 @@ dynamic-demo-plugin/
 | `@openshift-console/dynamic-plugin-sdk` | Provides core APIs, types and utilities used by dynamic plugins at runtime. |
 | `@openshift-console/dynamic-plugin-sdk-webpack` | Provides webpack plugin `ConsoleRemotePlugin` used to build all dynamic plugin assets. |
 | `@openshift-console/dynamic-plugin-sdk-internal` | Internal package exposing additional code. |
+| `@openshift-console/plugin-shared` | Provides reusable components and utility functions to build OCP dynamic plugins. Compatible with multiple versions of OpenShift Console. |
 
 ## OpenShift Console Versions vs SDK Versions
 
