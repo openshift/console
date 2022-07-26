@@ -83,7 +83,7 @@ export const ResourceListPage = connectToPlural(
 
 export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProps) => {
   const detailsPageExtensions = useExtensions<ResourceDetailsPageExt>(isResourceDetailsPage);
-  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceDetailsPage>(
+  const dynamicResourceDetailsPageExtensions = useExtensions<DynamicResourceDetailsPage>(
     isDynamicResourceDetailsPage,
   );
   const { name, ns, kindObj, kindsInFlight } = allParams(props);
@@ -101,8 +101,8 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
       ? referenceForModel(kindObj)
       : null;
   const componentLoader =
-    getResourceDetailsPages(detailsPageExtensions, dynamicResourceListPageExtensions).get(ref) ||
-    getResourceDetailsPages(detailsPageExtensions, dynamicResourceListPageExtensions).get(
+    getResourceDetailsPages(detailsPageExtensions, dynamicResourceDetailsPageExtensions).get(ref) ||
+    getResourceDetailsPages(detailsPageExtensions, dynamicResourceDetailsPageExtensions).get(
       referenceForExtensionModel({
         group: kindObj.apiGroup,
         kind: kindObj.kind,

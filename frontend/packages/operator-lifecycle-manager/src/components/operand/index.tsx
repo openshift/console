@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { useHistory, match } from 'react-router-dom';
-import { ListPageBody } from '@console/dynamic-plugin-sdk';
+import { ListPageBody, K8sModel } from '@console/dynamic-plugin-sdk';
 import { getResources } from '@console/internal/actions/k8s';
 import { Conditions } from '@console/internal/components/conditions';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -40,6 +40,7 @@ import {
   Timestamp,
   navFactory,
   ResourceLink,
+  AsyncComponent,
 } from '@console/internal/components/utils';
 import {
   useK8sWatchResources,
@@ -73,6 +74,8 @@ import { Status, SuccessStatus } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
+import { useResourceDetailsPage } from '@console/shared/src/hooks/useResourceDetailsPage';
+import { useResourceListPage } from '@console/shared/src/hooks/useResourceListPage';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
@@ -552,7 +555,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   );
 };
 
-export const ProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
+const DefaultProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
   const { t } = useTranslation();
   const [showOperandsInAllNamespaces] = useShowOperandsInAllNamespaces();
 
@@ -625,6 +628,14 @@ export const ProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
       </ListPageBody>
     </ModelStatusBox>
   );
+};
+
+export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
+  const resourceListPage = useResourceListPage(props.kind);
+  if (resourceListPage) {
+    return <AsyncComponent {...props} loader={resourceListPage} />;
+  }
+  return <DefaultProvidedAPIPage {...props} />;
 };
 
 const OperandDetailsSection: React.FC = ({ children }) => (
@@ -784,7 +795,7 @@ const ResourcesTab = (resourceProps) => (
   <Resources {...resourceProps} clusterServiceVersion={resourceProps.csv} />
 );
 
-export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
+const DefaultOperandDetailsPage = (props: OperandDetailsPageProps) => {
   const { t } = useTranslation();
   const [model] = useK8sModel(props.match.params.plural);
   const actionExtensions = useExtensions<ClusterServiceVersionAction>(
@@ -850,6 +861,14 @@ export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
   );
 };
 
+export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
+  const resourceDetailsPage = useResourceDetailsPage(props.match.params.plural);
+  if (resourceDetailsPage) {
+    return <AsyncComponent {...props} loader={resourceDetailsPage} />;
+  }
+  return <DefaultOperandDetailsPage {...props} />;
+};
+
 type OperandStatusType = {
   type: string;
   value: string;
@@ -898,6 +917,10 @@ export type ProvidedAPIPageProps = {
   hideLabelFilter?: boolean;
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
+  match?: match<{
+    ns: string;
+    plural: string;
+  }>;
 };
 
 type PodStatusesProps = {
@@ -923,6 +946,8 @@ export type OperandDetailsPageProps = {
     plural: string;
   }>;
 };
+
+type DefaultOperandDetailsPage = OperandDetailsPageProps & { model: K8sModel };
 
 export type OperandesourceDetailsProps = {
   csv?: { data: ClusterServiceVersionKind };
@@ -958,6 +983,9 @@ type GetK8sWatchResources = {
 OperandList.displayName = 'OperandList';
 OperandDetails.displayName = 'OperandDetails';
 ProvidedAPIsPage.displayName = 'ProvidedAPIsPage';
+DefaultProvidedAPIPage.displayName = 'DefaultProvidedAPIPage';
+ProvidedAPIPage.displayName = 'ProvidedAPIPage';
+DefaultOperandDetailsPage.displayName = 'DefaultOperandDetailsPage';
 OperandDetailsPage.displayName = 'OperandDetailsPage';
 OperandTableRow.displayName = 'OperandTableRow';
 OperandDetailsSection.displayName = 'OperandDetailsSection';

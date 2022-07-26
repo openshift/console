@@ -2,33 +2,17 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
-import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
-import { getResourceListPages } from '@console/internal/components/resource-pages';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { Page, AsyncComponent } from '@console/internal/components/utils';
-import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import { useFlag, MenuActions, MultiTabListPage, getBadgeFromType } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { useResourceListPages } from '@console/shared/src/hooks/useResourceListPages';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
 
 interface BuildsTabListPageProps {
   match: Rmatch<{ ns?: string }>;
 }
-
-const useResourceListPages = () => {
-  const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-    isDynamicResourceListPage,
-  );
-  return React.useMemo(
-    () => getResourceListPages(resourceListPageExtensions, dynamicResourceListPageExtensions),
-    [resourceListPageExtensions, dynamicResourceListPageExtensions],
-  );
-};
 
 /**
  * We might add a generic extension for multi tab list pages in the future.
