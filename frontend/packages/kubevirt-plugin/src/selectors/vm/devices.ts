@@ -26,7 +26,7 @@ export const transformDevices = (
 ): BootableDeviceType[] => {
   const transformedDisks = disks.map((disk) => ({
     type: DeviceType.DISK,
-    typeLabel: new DiskWrapper(disk).getType().toString(),
+    typeLabel: new DiskWrapper(disk).getType()?.toString(),
     value: disk,
   }));
   const transformedNics = nics.map((nic) => ({
