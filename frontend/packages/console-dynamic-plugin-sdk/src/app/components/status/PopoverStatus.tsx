@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
+import './PopoverStatus.scss';
 
 type PopoverStatusProps = {
   statusBody: React.ReactNode;
@@ -49,7 +50,7 @@ const PopoverStatus: React.FC<PopoverStatusProps> = ({
       isVisible={isVisible}
       shouldClose={shouldClose}
     >
-      <Button variant="link" isInline>
+      <Button variant="link" isInline className="co-popover-status-button">
         {statusBody}
       </Button>
     </Popover>
