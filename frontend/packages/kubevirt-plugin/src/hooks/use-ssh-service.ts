@@ -11,7 +11,7 @@ import {
   createOrDeleteSSHService,
   TARGET_PORT,
 } from '../components/ssh-service/SSHForm/ssh-form-utils';
-import { getServicePort } from '../selectors/service/selectors';
+import { getServicePort, getServicesForVM } from '../selectors/service/selectors';
 import { VMIKind, VMKind } from '../types';
 import useSSHSelectors from './use-ssh-selectors';
 
@@ -66,30 +66,19 @@ const useSSHService = (vm?: VMKind | VMIKind): useSSHServiceResult => {
 
 export default useSSHService;
 
-const getServicesForVmi = (services: K8sResourceKind[], vmi: VMIKind): K8sResourceKind[] => {
-  const vmLabels = vmi?.metadata?.labels;
-
-  if (!vmLabels) return [];
-
-  return services?.filter((service) => {
-    const selectors = service?.spec?.selector || {};
-    return Object?.keys(selectors)?.every((key) => vmLabels?.[key] === selectors?.[key]);
-  });
-};
-
 // bz: https://bugzilla.redhat.com/show_bug.cgi?id=2090178
-export const useSSHService2 = (vmi: VMIKind) => {
+export const useSSHService2 = (vm: VMKind) => {
   const [services, servicesLoaded, servicesError] = useK8sWatchResource<K8sResourceKind[]>({
     kind: ServiceModel.kind,
     isList: true,
-    namespace: vmi?.metadata?.namespace,
+    namespace: vm?.metadata?.namespace,
   });
 
-  const vmiServices = getServicesForVmi(services, vmi);
+  const vmServices = getServicesForVM(services, vm);
 
-  const sshVMIService = vmiServices.find((service) =>
+  const vmSSHService = vmServices.find((service) =>
     service?.spec?.ports?.find((port) => parseInt(port.targetPort, 10) === TARGET_PORT),
   );
 
-  return [sshVMIService, servicesLoaded || servicesError];
+  return [vmSSHService, servicesLoaded || servicesError];
 };
