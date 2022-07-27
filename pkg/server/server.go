@@ -552,7 +552,16 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
 	helmHandlers := helmhandlerspkg.New(localK8sProxyConfig.Endpoint.String(), localK8sClient.Transport, s)
-
+	verifierHandler := helmhandlerspkg.NewVerifierHandler(localK8sProxyConfig.Endpoint.String(), localK8sClient.Transport, s)
+	handle("/api/helm/verify", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			verifierHandler.HandleChartVerifier(user, w, r)
+		default:
+			w.Header().Set("Allow", "POST")
+			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are POST"})
+		}
+	}))
 	pluginsHandler := plugins.NewPluginsHandler(
 		&http.Client{
 			// 120 seconds matches the webpack require timeout.

@@ -1,0 +1,9 @@
+{
+    "version": "1.9.0",
+    "quay-image":  "quay.io/redhat-certification/chart-verifier",
+    "release-info": [
+        "<ul>",
+        "<li>None - temp for testing</li>",
+        "</ul>"
+    ]
+}
