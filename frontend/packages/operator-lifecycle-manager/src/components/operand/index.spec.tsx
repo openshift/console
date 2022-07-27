@@ -119,7 +119,7 @@ describe(OperandTableRow.displayName, () => {
 
   beforeEach(() => {
     spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
-    wrapper = mount(<OperandTableRow obj={testResourceInstance} columns={[]} />, {
+    wrapper = mount(<OperandTableRow obj={testResourceInstance} columns={[]} showNamespace />, {
       wrappingComponent: (props) => (
         <Router history={history}>
           <Provider store={store} {...props} />
@@ -188,7 +188,7 @@ describe(OperandList.displayName, () => {
   beforeEach(() => {
     resources = [testResourceInstance];
     spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
-    wrapper = mount(<OperandList loaded data={resources} />, {
+    wrapper = mount(<OperandList loaded data={resources} showNamespace />, {
       wrappingComponent: (props) => (
         <Router history={history}>
           <Provider store={store} {...props} />
