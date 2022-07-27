@@ -1,7 +1,4 @@
 import * as React from 'react';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { useSelector } from 'react-redux';
 import { Base64 } from 'js-base64';
 import {

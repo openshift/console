@@ -1,7 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { useSelector } from 'react-redux';
 
 import { K8sResourceKindReference, K8sKind, getModelExtensionMetadata } from './index';

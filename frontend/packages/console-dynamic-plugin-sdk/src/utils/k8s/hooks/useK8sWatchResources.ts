@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { Map as ImmutableMap } from 'immutable';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { Map as ImmutableMap, Iterable } from 'immutable';
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { K8sModel } from '../../../api/common-types';
@@ -50,7 +48,7 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const prevK8sModels = usePrevious(allK8sModels);
   const prevResources = usePrevious(resources);
 
-  const k8sModelsRef = React.useRef<ImmutableMap<string, K8sModel>>(ImmutableMap());
+  const k8sModelsRef = React.useRef<Iterable<string, K8sModel>>(Iterable(ImmutableMap()));
 
   if (
     prevResources !== resources ||

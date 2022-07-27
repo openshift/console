@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';

@@ -1,7 +1,4 @@
 import * as React from 'react';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { useSelector } from 'react-redux';
 import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { UseUserSettings } from '@console/dynamic-plugin-sdk/src/api/internal-types';

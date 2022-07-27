@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector, useDispatch } from 'react-redux';
 import { getActiveCluster } from '../../../app/core/reducers/coreSelectors';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
@@ -29,7 +27,7 @@ import { useModelsLoaded } from './useModelsLoaded';
  * ```
  */
 export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
-  const cluster = useSelector((state) => getActiveCluster(state));
+  const cluster = useSelector<SDKStoreState, string>((state) => getActiveCluster(state));
   const resource = useDeepCompareMemoize(initResource, true);
   const modelsLoaded = useModelsLoaded();
 

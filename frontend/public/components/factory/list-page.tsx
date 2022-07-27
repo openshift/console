@@ -1,8 +1,6 @@
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { connect, useDispatch } from 'react-redux';
 import { Link, match as RMatch } from 'react-router-dom';
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';

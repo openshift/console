@@ -1,8 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { useSelector } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';

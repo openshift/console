@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { Alert, Button } from '@patternfly/react-core';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { history, LoadingBox } from '@console/internal/components/utils';

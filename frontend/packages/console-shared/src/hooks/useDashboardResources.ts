@@ -1,6 +1,4 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import {
   RequestMap,

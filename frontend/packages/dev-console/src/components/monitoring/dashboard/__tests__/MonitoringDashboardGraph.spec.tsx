@@ -7,9 +7,6 @@ import { monitoringDashboardQueries } from '../../queries';
 import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGraph';
 
 describe('Monitoring Dashboard graph', () => {
-  // FIXME upgrading redux types is causing many errors at this time
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  // @ts-ignore
   const spyDispatch = jest.spyOn(redux, 'useDispatch');
   spyDispatch.mockReturnValue(() => {});
   let monitoringDashboardGraphProps: React.ComponentProps<typeof MonitoringDashboardGraph>;

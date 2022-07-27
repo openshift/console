@@ -1,6 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { Map as ImmutableMap } from 'immutable';
 import { useSelector } from 'react-redux';
+import { K8sModel } from '../../../api/common-types';
+import { SDKStoreState } from '../../../app/redux-types';
 import { UseK8sModels } from '../../../extensions/console-types';
 
 /**
@@ -16,6 +17,8 @@ import { UseK8sModels } from '../../../extensions/console-types';
  * ```
  */
 export const useK8sModels: UseK8sModels = () => [
-  useSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'models']))?.toJS() ?? {},
-  useSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight'])) ?? false,
+  useSelector<SDKStoreState, ImmutableMap<string, K8sModel>>(({ k8s }) =>
+    k8s.getIn(['RESOURCES', 'models']),
+  )?.toJS() ?? {},
+  useSelector<SDKStoreState, boolean>(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight'])) ?? false,
 ];

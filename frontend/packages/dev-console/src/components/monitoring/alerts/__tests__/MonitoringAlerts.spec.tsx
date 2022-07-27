@@ -22,14 +22,10 @@ describe('MonitoringAlerts', () => {
     filters: Map({}),
     listSorts: Map({}),
   };
-  // FIXME upgrading redux types is causing many errors at this time
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  // @ts-ignore
+
   const spySelector = jest.spyOn(redux, 'useSelector');
   spySelector.mockReturnValue({ monitoring: { devRules: [] } });
-  // FIXME upgrading redux types is causing many errors at this time
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  // @ts-ignore
+
   const spyDispatch = jest.spyOn(redux, 'useDispatch');
   spyDispatch.mockReturnValue(() => {});
 

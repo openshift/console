@@ -2,8 +2,6 @@ import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { match } from 'react-router';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { useDispatch } from 'react-redux';
 import {
   ButtonBar,

@@ -2,8 +2,6 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
