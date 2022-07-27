@@ -164,8 +164,10 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
 
   return [loadingSecret, loadingServiceLevel, loadServiceLevel];
 };
+
 const useGetServiceLevel = (
   clusterIDParam: string,
+  loadServiceLevelIfNeeded: boolean,
 ): {
   level: string;
   daysRemaining: number | null;
@@ -184,7 +186,12 @@ const useGetServiceLevel = (
   const [loadingSecret, loadingServiceLevel, loadServiceLevel] = useLoadServiceLevel();
 
   React.useEffect(() => {
-    if (clusterID !== clusterIDParam && !loadingSecret && !loadingServiceLevel) {
+    if (
+      clusterID !== clusterIDParam &&
+      !loadingSecret &&
+      !loadingServiceLevel &&
+      loadServiceLevelIfNeeded
+    ) {
       loadServiceLevel(clusterIDParam);
     }
     // only on clusterID change
@@ -211,7 +218,10 @@ export const ServiceLevel: React.FC<{
   loading: React.ReactNode;
   children: React.ReactNode;
 }> = ({ clusterID, loading, children }) => {
-  const { hasSecretAccess, loadingSecret, loadingServiceLevel } = useGetServiceLevel(clusterID);
+  const { hasSecretAccess, loadingSecret, loadingServiceLevel } = useGetServiceLevel(
+    clusterID,
+    false,
+  );
 
   if (!showServiceLevel(clusterID)) {
     return null;
@@ -225,13 +235,15 @@ export const ServiceLevel: React.FC<{
 
   return <>{children}</>;
 };
+
 type ServiceLevelTextProps = {
   clusterID?: string;
   inline?: boolean;
 };
+
 export const ServiceLevelText: React.FC<ServiceLevelTextProps> = ({ clusterID, inline }) => {
   const { t } = useTranslation();
-  const { level, daysRemaining } = useGetServiceLevel(clusterID);
+  const { level, daysRemaining } = useGetServiceLevel(clusterID, false);
   const levelText = (
     <>
       {useServiceLevelText(level)}
@@ -271,13 +283,14 @@ export const ServiceLevelText: React.FC<ServiceLevelTextProps> = ({ clusterID, i
     </div>
   );
 };
+
 export const useServiceLevelTitle = (): string => {
   const { t } = useTranslation();
   return t('public~Service Level Agreement (SLA)');
 };
 
 export const useShowServiceLevelNotifications = (clusterID: string): boolean => {
-  const { level } = useGetServiceLevel(clusterID);
+  const { level } = useGetServiceLevel(clusterID, true);
   return level && (level === 'Eval' || level === 'None');
 };
 
@@ -286,7 +299,7 @@ export const ServiceLevelNotification: React.FC<{
   toggleNotificationDrawer: () => void;
 }> = ({ clusterID, toggleNotificationDrawer }) => {
   const { t } = useTranslation();
-  const { level, daysRemaining, trialDateEnd } = useGetServiceLevel(clusterID);
+  const { level, daysRemaining, trialDateEnd } = useGetServiceLevel(clusterID, false);
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
 
   if (!showServiceLevelNotification) {
