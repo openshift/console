@@ -153,7 +153,7 @@ export const SecretFormWrapper = withTranslation()(
         inProgress: false,
         type: defaultSecretType,
         stringData: _.mapValues(_.get(props.obj, 'data'), (value) => {
-          return value ? Base64.decode(value) : '';
+          return value ? Base64.atob(value) : '';
         }),
         disableForm: false,
       };
@@ -194,7 +194,7 @@ export const SecretFormWrapper = withTranslation()(
       this.setState({ inProgress: true });
       const data = {
         ..._.mapValues(this.state.stringData, (value) => {
-          return Base64.encode(value);
+          return Base64.btoa(value);
         }),
         ...this.state?.base64StringData,
       };
