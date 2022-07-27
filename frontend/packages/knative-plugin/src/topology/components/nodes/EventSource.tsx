@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { SignOutAltIcon } from '@patternfly/react-icons';
 import {
   Node,
   observer,
@@ -116,7 +115,7 @@ const EventSource: React.FC<EventSourceProps> = ({
         y={height * 0.25}
         width={size * 0.5}
         height={size * 0.5}
-        xlinkHref={getEventSourceIcon(data.kind, resources.obj)}
+        xlinkHref={getEventSourceIcon(data.kind, resources.obj, element.getType())}
       />
       {showLabels && (data.kind || element.getLabel()) && (
         <SvgBoxedText
@@ -126,7 +125,7 @@ const EventSource: React.FC<EventSourceProps> = ({
           paddingX={8}
           paddingY={4}
           kind={data.kind}
-          typeIcon={<SignOutAltIcon />}
+          typeIconClass="icon-eventsource"
         >
           {element.getLabel()}
         </SvgBoxedText>

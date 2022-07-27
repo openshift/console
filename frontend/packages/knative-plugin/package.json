@@ -22,7 +22,7 @@
     },
     "exposedModules": {
       "actions": "src/actions/providers.ts",
-      "icons": "src/utils/icons.ts",
+      "icons": "src/utils/icons.tsx",
       "catalog": "src/catalog",
       "yamlTemplates": "src/yaml-templates.ts",
       "revisionsComponent": "src/components/revisions",

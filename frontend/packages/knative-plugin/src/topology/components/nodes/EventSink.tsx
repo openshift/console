@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { SignInAltIcon } from '@patternfly/react-icons';
 import {
   Node,
   observer,
@@ -139,7 +138,7 @@ const EventSink: React.FC<EventSinkProps> = ({
         y={height * 0.33}
         width={size * 0.35}
         height={size * 0.35}
-        xlinkHref={getEventSourceIcon(data.kind, resources.obj)}
+        xlinkHref={getEventSourceIcon(data.kind, resources.obj, element.getType())}
       />
 
       {showLabels && (data.kind || element.getLabel()) && (
@@ -150,7 +149,7 @@ const EventSink: React.FC<EventSinkProps> = ({
           paddingX={8}
           paddingY={4}
           kind={data.kind}
-          typeIcon={<SignInAltIcon />}
+          typeIconClass="icon-eventsink"
         >
           {element.getLabel()}
         </SvgBoxedText>
