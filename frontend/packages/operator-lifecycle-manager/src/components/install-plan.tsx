@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { match, Link } from 'react-router-dom';
+import { getUser } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import {
   MultiListPage,
@@ -251,12 +252,14 @@ const updateUser = (isOpenShift: boolean, user: UserKind): string => {
   if (!isOpenShift) {
     return authSvc.name();
   }
-  return user.fullName || user.metadata?.name || '';
+  return user.fullName || user.metadata?.name;
 };
 
-export const NeedInstallPlanPermissions = ({ installPlan }: NeedInstallPlanPermissions) => {
+export const NeedInstallPlanPermissions: React.FC<NeedInstallPlanPermissionsProps> = ({
+  installPlan,
+}) => {
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
-  const user = useSelector<RootState, string>(({ UI }) => UI.get('user'));
+  const user = useSelector<RootState, object>(getUser);
 
   const [username, setUsername] = React.useState(updateUser(isOpenShift, user));
 
@@ -274,10 +277,15 @@ export const NeedInstallPlanPermissions = ({ installPlan }: NeedInstallPlanPermi
       isInline
       title={t('olm~Missing sufficient privileges for manual InstallPlan approval')}
     >
-      {t(
-        'olm~User "{{user}}" does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
-        { user: username, apiGroup, namespace: installPlan.metadata.namespace },
-      )}
+      {username
+        ? t(
+            'olm~User "{{user}}" does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
+            { user: username, apiGroup, namespace: installPlan.metadata.namespace },
+          )
+        : t(
+            'olm~User does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
+            { apiGroup, namespace: installPlan.metadata.namespace },
+          )}
     </Alert>
   );
 };
@@ -549,8 +557,9 @@ export type InstallPlanPreviewState = {
   error?: string;
 };
 
-export type NeedInstallPlanPermissions = {
+export type NeedInstallPlanPermissionsProps = {
   installPlan: InstallPlanKind;
+  user?: UserKind;
 };
 
 InstallPlansPage.displayName = 'InstallPlansPage';
