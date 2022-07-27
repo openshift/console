@@ -5,6 +5,7 @@ import {
 } from '../../../../k8s/enhancedK8sMethods/k8sMethodsUtils';
 import { ResultsWrapper } from '../../../../k8s/enhancedK8sMethods/types';
 import { createVM as _createVM, createVMTemplate } from '../../../../k8s/requests/vm/create/create';
+import { DiskActions, DiskActionsNames } from '../../../../redux/actions/diskActions';
 import {
   SourceRefActions,
   SourceRefActionsNames,
@@ -19,8 +20,8 @@ import { iGetStorages } from '../../selectors/immutable/storage';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import {
   getEnableSSHService,
-  getSysprepData,
   getSourceRefData,
+  getSysprepData,
 } from '../../selectors/immutable/wizard-selectors';
 import { iGetHardwareField } from '../../tabs/advanced-tab/hardware-devices/selectors';
 import {
@@ -103,6 +104,7 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
       if (sourceRef) {
         dispatch(SourceRefActions[SourceRefActionsNames.clearValues]());
       }
+      dispatch(DiskActions[DiskActionsNames.setInitialRootdisk]());
       dispatch(
         vmWizardInternalActions[InternalActionType.SetResults](id, tabState, isValid, false, false),
       );

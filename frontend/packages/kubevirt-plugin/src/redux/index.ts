@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import createVmWizardReducers from '../components/create-vm-wizard/redux/reducers';
 import authorizedSSHKeysReducer from '../components/ssh-service/redux/reducer';
 import sourceRefReducer from './reducers/sourceRef-reducer';
+import diskReducer from './reducers/storage-new-reducer-delete-rootdisk';
 import sysprepReducer from './reducers/sysprep-reducer';
 import v2vConfigMapReducer from './reducers/v2v-config-map-reducer';
 
@@ -11,4 +12,5 @@ export default combineReducers({
   v2vConfigMap: v2vConfigMapReducer,
   sysprep: sysprepReducer,
   sourceRef: sourceRefReducer,
+  disk: diskReducer,
 });
