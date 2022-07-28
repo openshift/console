@@ -317,7 +317,8 @@ export const pipelinesPO = {
 export const repositoryDetailsPO = {
   detailsTab: '[data-test-id$="Details"]',
   yamlTab: '[data-test-id$="YAML"]',
-  pipelineRunsTab: '[data-test-id="horizontal-link-Pipeline Runs"]',
+  pipelineRunsTab: '[data-test-id="horizontal-link-PipelineRuns"]',
+  importYaml: '[data-test="import-yaml"]',
   details: {
     sectionTitle: '[data-test-section-heading="Repository details"]',
     fieldNames: {

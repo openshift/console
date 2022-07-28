@@ -64,6 +64,7 @@ Then('user will be redirected to Repositories yaml view page', () => {
 });
 
 When('user creates repository using YAML editor from {string}', (yamlLocation: string) => {
+  cy.get(repositoryDetailsPO.importYaml).click();
   pipelinesPage.clearYAMLEditor();
   pipelinesPage.setEditorContent(yamlLocation);
   cy.get(createRepositoryPO.create).click();

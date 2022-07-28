@@ -297,7 +297,10 @@ And('user has named pipeline as {string}', (pipelineName: string) => {
 });
 
 And('user has tasks {string} and {string} in series', (task1: string, task2: string) => {
-  pipelineBuilderPage.selectTask(task1);
+  cy.byTestID('task-list').click();
+  cy.get(pipelineBuilderPO.formView.quickSearch).type(task1);
+  cy.byTestID(`item-name-${task1}-Red Hat`).click();
+  cy.get(pipelineBuilderPO.formView.addInstallTask).click();
   pipelineBuilderPage.selectSeriesTask(task2);
 });
 
@@ -547,8 +550,10 @@ When('user should see the Create button enabled after installation', () => {
 });
 
 When('user selects {string} from Add task quick search', (searchItem: string) => {
-  cy.get('[data-test="task-list"]').click();
+  cy.byTestID('task-list').click();
   cy.get(pipelineBuilderPO.formView.quickSearch).type(searchItem);
+  cy.byTestID(`item-name-${searchItem}-Red Hat`).click();
+  cy.get(pipelineBuilderPO.formView.addInstallTask).click();
 });
 
 When('user hovers over the newly added task', () => {

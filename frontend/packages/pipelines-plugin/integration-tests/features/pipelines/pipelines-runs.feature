@@ -220,7 +220,7 @@ Feature: Pipeline Runs
         Scenario: Display failure details on pipeline run details: P-07-TC22
             Given user is at pipeline page in developer perspective
               And a failed pipeline is present
-             When user goes to failed pipeline run of pipeline "golang-ex"
+             When user goes to failed pipeline run of pipeline "devfilev2"
               And user opens pipeline run details
              Then user can see status as Failure
               And user can view failure message under Message heading
@@ -230,8 +230,8 @@ Feature: Pipeline Runs
         @regression
         Scenario: Display failure details of pipeline run in topology sidebar: P-07-TC23
             Given user is at the Topology page
-              And a node with an associated pipeline "golang-ex" is present
-             When user opens sidebar of the node "golang-ex"
+              And a node with an associated pipeline "devfilev2" is present
+             When user opens sidebar of the node "devfilev2"
               And user scrolls down to pipeline runs section
              Then user will see the pipeline run name with failed status
               And user will see failure message below pipeline runs
@@ -340,8 +340,8 @@ Feature: Pipeline Runs
         Scenario: Pipeline Run details page with Parameters tab and no parameters: P-07-TC34
             Given pipeline run is displayed for "pipeline-run-no-parameters" without resource
               And user is at pipelines page
-            When user clicks Last Run value of "pipeline-run-no-parameters"
-            Then user will be redirected to Pipeline Run Details page
+             When user clicks Last Run value of "pipeline-run-no-parameters"
+             Then user will be redirected to Pipeline Run Details page
               And user is able to see Details, YAML, TaskRuns, Parameters, Logs and Events tabs
               And user navigates to pipelineRun parameters tab
               And user is able to see No parameters are associated with this PipelineRun
@@ -350,8 +350,8 @@ Feature: Pipeline Runs
         Scenario: Pipeline Run with parameters: P-07-TC35
             Given pipeline run is displayed for "pipeline-run-parameters" with parameters
               And user is at pipelines page
-            When user clicks Last Run value of "pipeline-run-parameters"
-            Then user will be redirected to Pipeline Run Details page
+             When user clicks Last Run value of "pipeline-run-parameters"
+             Then user will be redirected to Pipeline Run Details page
               And user navigates to pipelineRun parameters tab
               And user is able to see parameters of pipelineRun
               And user is able to see name "testName" and value "testValue" parameters value of pipelineRun
