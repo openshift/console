@@ -7,6 +7,7 @@
   box-shadow: var(--pf-global--BoxShadow--sm-top);
   display: flex;
   flex-direction: column;
+  z-index: var(--pf-global--ZIndex--xs);
 
   &__drag-handle {
     width: 100%;
