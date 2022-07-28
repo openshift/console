@@ -26,7 +26,7 @@ import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   getName,
   getUID,
-  getNodeRole,
+  getNodeRoleMatch,
   getLabels,
   getNodeMachineNameAndNamespace,
   WithUserSettingsCompatibilityProps,
@@ -508,7 +508,7 @@ const NodesPage = connect<{}, MapDispatchToProps>(
       {
         filterGroupName: t('console-app~Role'),
         type: 'node-role',
-        reducer: getNodeRole,
+        isMatch: getNodeRoleMatch,
         items: [
           {
             id: 'master',

@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { nodeStatus, volumeSnapshotStatus } from '@console/app/src/status';
-import { getNodeRole, getLabelsAsString } from '@console/shared';
+import { getNodeRoles, getLabelsAsString } from '@console/shared';
 import { FilterValue, RowFilter } from '@console/dynamic-plugin-sdk';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
@@ -146,8 +146,9 @@ export const tableFilters: FilterMap = {
     if (!roles || !roles.selected || !roles.selected.length) {
       return true;
     }
-    const role = getNodeRole(node);
-    return roles.selected.includes(role);
+
+    const roleList = getNodeRoles(node);
+    return roles.selected.filter((elem) => roleList.includes(elem)).length > 0;
   },
 
   'clusterserviceversion-resource-kind': (filters, resource) => {
