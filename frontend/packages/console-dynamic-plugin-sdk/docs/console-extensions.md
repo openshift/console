@@ -1250,8 +1250,9 @@ YAML templates for editing resources via the yaml editor.
 | `id` | `string` | no | ID used to identify the action. |
 | `label` | `string` | no | The label of the action |
 | `description` | `string` | no | The description of the action. |
-| `href` | `string` | no | The href to navigate to. |
 | `groupId` | `string` | yes | IDs used to identify the action groups the action would belong to. |
+| `href` | `string` | yes | The href to navigate to. |
+| `callback` | `CodeRef<(props: Record<string, any>) => void>` | yes | A callback that performs an action on click |
 | `icon` | `CodeRef<React.ReactNode>` | yes | The perspective display icon. |
 | `accessReview` | `AccessReviewResourceAttributes[]` | yes | Optional access review to control visibility / enablement of the action. |
 

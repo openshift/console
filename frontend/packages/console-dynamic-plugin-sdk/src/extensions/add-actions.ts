@@ -14,7 +14,9 @@ export type AddAction = ExtensionDeclaration<
     /** The description of the action. */
     description: string;
     /** The href to navigate to. */
-    href: string;
+    href?: string;
+    /** A callback that performs an action on click */
+    callback?: CodeRef<(props: Record<string, any>) => void>;
     /** The perspective display icon. */
     icon?: CodeRef<React.ReactNode>;
     /** Optional access review to control visibility / enablement of the action. */

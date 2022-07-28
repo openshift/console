@@ -66,6 +66,14 @@
     }
   },
   {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "application-portability",
+      "name": "%devconsole~Application portability%",
+      "insertBefore": "local-machine"
+    }
+  },
+  {
     "type": "dev-console.add/action",
     "properties": {
       "id": "import-from-samples",
@@ -184,6 +192,21 @@
         { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
         { "group": "", "resource": "services", "verb": "create" }
       ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "export-application",
+      "groupId": "application-portability",
+      "callback": { "$codeRef": "actions.exportApplicationAction" },
+      "label": "%devconsole~Export application%",
+      "description": "%devconsole~Replicate your application by exporting a zip file, which can be imported to another project or another cluster%",
+      "icon": { "$codeRef": "icons.exportApplicationIconElement" },
+      "accessReview": [{ "group": "primer.gitops.io", "resource": "exports", "verb": "create" }]
+    },
+    "flags": {
+      "required": ["ALLOW_EXPORT_APP"]
     }
   },
   {

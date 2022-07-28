@@ -27,3 +27,10 @@ export function exportModalButton(element: string) {
   const buttonName = buttonDisplayName(element);
   return `[data-test~="${buttonName}"]`;
 }
+
+export function closeExportNotification() {
+  return cy
+    .get('[aria-label="Close Info alert: alert: Export application"]')
+    .should('be.visible')
+    .click();
+}
