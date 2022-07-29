@@ -43,8 +43,10 @@ Not all NPM packages are fully compatible with all versions of the Console. This
 
 | Console Version | SDK Package | Last Package Version |
 | --- | --- | --- |
-| 4.11.x | `@openshift-console/dynamic-plugin-sdk` | Latest |
+| 4.12.x | `@openshift-console/dynamic-plugin-sdk` | Latest |
 |  | `@openshift-console/dynamic-plugin-sdk-webpack` | Latest |
+| 4.11.x | `@openshift-console/dynamic-plugin-sdk` | 0.0.12 |
+|  | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.7 |
 | 4.10.x **[Tech]** | `@openshift-console/dynamic-plugin-sdk` | 0.0.3 |
 |  | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.6 |
 | 4.9.x **[Dev]** | `@openshift-console/dynamic-plugin-sdk` | 0.0.0-alpha18 |
