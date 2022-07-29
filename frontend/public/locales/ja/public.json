@@ -1396,6 +1396,8 @@
   "A cluster administrator can establish limits on both the amount you can request and your limits with a ResourceQuota.": "クラスター管理者は、要求できる量および ResourceQuota の制限を設定できます。",
   "Resource type": "リソースタイプ",
   "Total used": "使用済み合計",
+  "{{count}} resource reached quota_one": "{{count}} resource reached quota",
+  "{{count}} resource reached quota_other": "{{count}} resources reached quota",
   "Cluster-wide {{resource}}": "クラスター全体 {{resource}}",
   "Namespace {{resource}}": "namespace {{resource}}",
   "Create ResourceQuota": "ResourceQuota の作成",
