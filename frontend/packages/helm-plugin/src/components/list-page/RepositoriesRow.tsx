@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
-import { ResourceKebab, ResourceLink, Timestamp, Kebab } from '@console/internal/components/utils';
+import {
+  ResourceKebab,
+  ResourceLink,
+  Timestamp,
+  Kebab,
+  ExternalLink,
+} from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 
@@ -39,9 +45,7 @@ const RepositoriesRow: React.FC<RowFunctionArgs> = ({ obj }) => {
       <TableData>{obj.spec?.disabled ? t('helm-plugin~True') : t('helm-plugin~False')}</TableData>
       <TableData>
         {obj.spec?.connectionConfig?.url ? (
-          <a href={obj.spec.connectionConfig.url} target="_blank" rel="noopener noreferrer">
-            {obj.spec.connectionConfig.url}
-          </a>
+          <ExternalLink href={obj.spec.connectionConfig.url} text={obj.spec.connectionConfig.url} />
         ) : (
           '-'
         )}

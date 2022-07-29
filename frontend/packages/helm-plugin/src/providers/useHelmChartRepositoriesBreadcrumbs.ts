@@ -4,7 +4,6 @@ import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { K8sKind } from '@console/internal/module/k8s';
 import { useTabbedTableBreadcrumbsFor } from '@console/shared';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../models';
-import { helmPageTab } from '../utils/helm-tab-utils';
 
 export const getHelmChartRepositoriesModel = () => [
   HelmChartRepositoryModel,
@@ -18,7 +17,7 @@ export const useHelmChartRepositoriesBreadcrumbs = (kindObj: K8sKind, urlMatch: 
     kindObj,
     urlMatch,
     'helm-releases',
-    helmPageTab('Repositories'),
+    'repositories',
     isAdminPerspective ? undefined : t('helm-plugin~Repositories'),
     !isAdminPerspective,
   );
