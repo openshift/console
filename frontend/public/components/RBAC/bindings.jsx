@@ -543,9 +543,22 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
   render() {
     const { kind, metadata, roleRef } = this.state.data;
     const subject = this.getSubject();
-    const { fixed, saveButtonText, t } = this.props;
+    const { fixed, saveButtonText, t, titleVerb } = this.props;
     const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
-    const title = `${this.props.titleVerb} ${t(kindObj(kind).labelKey)}`;
+
+    const title = () => {
+      switch (titleVerb) {
+        case 'Create':
+          return t('public~Create {{kind}}', { kind: t(kindObj(kind).labelKey) });
+        case 'Edit':
+          return t('public~Edit {{kind}}', { kind: t(kindObj(kind).labelKey) });
+        case 'Duplicate':
+          return t('public~Duplicate {{kind}}', { kind: t(kindObj(kind).labelKey) });
+        default:
+          return '';
+      }
+    };
+
     const isSubjectDisabled = fixed?.subjectRef?.subjectName ? true : false;
     const bindingKinds = [
       {
@@ -572,10 +585,10 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
     return (
       <div className="co-m-pane__form">
         <Helmet>
-          <title>{title}</title>
+          <title>{title()}</title>
         </Helmet>
         <PageHeading
-          title={<div data-test="title">{title}</div>}
+          title={<div data-test="title">{title()}</div>}
           helpText={t(
             'public~Associate a user/group to the selected role to define the type of access and resources that are allowed.',
           )}
@@ -723,14 +736,13 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
     roleRef: { kind: roleKind, name: roleName },
     subjectRef: { subjectName, subjectKind },
   };
-  const { t } = useTranslation();
   return (
     <BaseEditRoleBinding
       metadata={metadata}
       setActiveNamespace={setActiveNamespace}
       fixed={fixed}
       isCreate={true}
-      titleVerb={t('public~Create')}
+      titleVerb="Create"
     />
   );
 };
@@ -765,7 +777,7 @@ export const EditRoleBinding = ({ match: { params }, kind }) => {
       <BindingLoadingWrapper
         fixedKeys={['kind', 'metadata', 'roleRef']}
         subjectIndex={getSubjectIndex()}
-        titleVerb={t('public~Edit')}
+        titleVerb="Edit"
         saveButtonText={t('public~Save')}
       />
     </Firehose>
@@ -773,7 +785,6 @@ export const EditRoleBinding = ({ match: { params }, kind }) => {
 };
 
 export const CopyRoleBinding = ({ match: { params }, kind }) => {
-  const { t } = useTranslation();
   return (
     <Firehose
       resources={[{ kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj' }]}
@@ -782,7 +793,7 @@ export const CopyRoleBinding = ({ match: { params }, kind }) => {
         isCreate={true}
         fixedKeys={['kind']}
         subjectIndex={getSubjectIndex()}
-        titleVerb={t('public~Duplicate')}
+        titleVerb="Duplicate"
       />
     </Firehose>
   );
