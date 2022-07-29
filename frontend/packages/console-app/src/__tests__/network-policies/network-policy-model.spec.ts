@@ -1,11 +1,11 @@
 import { NetworkPolicyKind } from '@console/internal/module/k8s';
+import { t } from '../../../../../__mocks__/i18next';
 import {
   NetworkPolicy,
   networkPolicyFromK8sResource,
   networkPolicyToK8sResource,
 } from '../../components/network-policies/network-policy-model';
 
-const stubTFunc = (text: string, opts) => text.replace('{{path}}', opts.path);
 const denyAll: NetworkPolicy = {
   name: 'deny-all',
   namespace: 'ns',
@@ -218,28 +218,28 @@ describe('NetworkPolicy model conversion', () => {
   it('should convert deny-all resource', () => {
     const converted = networkPolicyToK8sResource(denyAll);
     expect(converted).toEqual(k8sDenyAll);
-    const reconv = networkPolicyFromK8sResource(converted as NetworkPolicyKind, stubTFunc);
+    const reconv = networkPolicyFromK8sResource(converted as NetworkPolicyKind, t);
     expect(reconv).toEqual(denyAll);
   });
 
   it('should convert same-namespace frontend pods rule to K8s resource', () => {
     const converted = networkPolicyToK8sResource(sameNamespace);
     expect(converted).toEqual(k8sSameNamespace);
-    const reconv = networkPolicyFromK8sResource(converted as NetworkPolicyKind, stubTFunc);
+    const reconv = networkPolicyFromK8sResource(converted as NetworkPolicyKind, t);
     expect(reconv).toEqual(sameNamespace);
   });
 
   it('should convert other-namespaces egress rule to K8s resource', () => {
     const converted = networkPolicyToK8sResource(otherNamespace);
     expect(converted).toEqual(k8sOtherNamespace);
-    const reconv = networkPolicyFromK8sResource(converted as NetworkPolicyKind, stubTFunc);
+    const reconv = networkPolicyFromK8sResource(converted as NetworkPolicyKind, t);
     expect(reconv).toEqual(otherNamespace);
   });
 
   it('should convert ipblock rule to K8s resource', () => {
     const converted = networkPolicyToK8sResource(ipBlockRule);
     expect(converted).toEqual(k8sIPBlockRule);
-    const reconv = networkPolicyFromK8sResource(converted as NetworkPolicyKind, stubTFunc);
+    const reconv = networkPolicyFromK8sResource(converted as NetworkPolicyKind, t);
     expect(reconv).toEqual(ipBlockRule);
   });
 
@@ -307,10 +307,10 @@ describe('NetworkPolicy model conversion', () => {
           podSelector: {},
         } as any,
       },
-      stubTFunc,
+      t,
     );
     expect(converted).toEqual({
-      error: 'console-app~spec.ingress should be an Array.',
+      error: 'spec.ingress should be an Array.',
       kind: 'invalid',
     });
   });

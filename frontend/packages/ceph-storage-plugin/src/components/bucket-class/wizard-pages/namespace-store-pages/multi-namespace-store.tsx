@@ -82,7 +82,7 @@ export const MultiNamespaceStorePage: React.FC<MultiNamespaceStoreProps> = React
             />
           </FormGroup>
           <p className="nb-create-bc-step-page-form__element--light-text">
-            {t('ceph-storage-plugin~{{nns, number}} namespace store ', {
+            {t('ceph-storage-plugin~{{nns, number}} namespace store', {
               nns: selectedCount,
               count: selectedCount,
             })}
