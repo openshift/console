@@ -256,7 +256,7 @@ const BackingStoreSelection: React.FC<BackingStoreSelectionProps> = (props) => {
             />
           </FormGroup>
           <p className="nb-create-bc-step-page-form__element--light-text">
-            {t('ceph-storage-plugin~{{bs, number}} BackingStore ', {
+            {t('ceph-storage-plugin~{{bs, number}} BackingStore', {
               bs: selectedTierB.length,
               count: selectedTierB.length,
             })}{' '}
