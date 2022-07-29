@@ -42,7 +42,7 @@ body,
   height: 100%;
 
   &__body {
-    flex: 1 1 700px;
+    flex: 1 1 auto;
   }
 
   &__close-button {
@@ -54,7 +54,7 @@ body,
   &__sidebar {
     position: relative;
     @media (min-width: $screen-md-min) {
-      flex: 1 0 300px;
+      flex: 1 0 auto;
       overflow-y: auto;
     }
 

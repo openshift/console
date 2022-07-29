@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { PageHeading, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -95,9 +95,14 @@ export const PDBFormPage: React.FC<{
         <LoadingBox />
       ) : (
         <>
-          <PageHeading title={title}>
-            <span className="help-block">{helpText}</span>
-          </PageHeading>
+          <PageHeading
+            title={title}
+            helpText={
+              <Trans t={t} ns="console-app">
+                {helpText}
+              </Trans>
+            }
+          />
 
           <SyncedEditor
             context={{

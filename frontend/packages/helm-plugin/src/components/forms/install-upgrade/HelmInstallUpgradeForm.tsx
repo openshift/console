@@ -147,6 +147,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
             yamlContext={{ name: 'yamlData', editor: yamlEditor }}
             lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
             prune={prune}
+            noMargin
           />
         )}
       </FormBody>
