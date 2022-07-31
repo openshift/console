@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ProjectModel } from '@console/internal/models';
+import { ProjectModel, StorageClassModel } from '@console/internal/models';
 import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
 import {
   DataVolumeSourceType,
@@ -24,11 +24,13 @@ import {
   VMWizardName,
   VolumeType,
 } from '../../constants';
+import { DEFAULT_SC_ANNOTATION } from '../../constants/sc';
 import { instantiateTemplateBaseURLBuilder } from '../../constants/url-params';
 import { useStorageClassConfigMap } from '../../hooks/storage-class-config-map';
 import { useErrorTranslation } from '../../hooks/use-error-translation';
 import useSSHKeys from '../../hooks/use-ssh-keys';
 import useSSHService from '../../hooks/use-ssh-service';
+import { useStorageProfileSettings } from '../../hooks/use-storage-profile-settings';
 import { useSupportModal } from '../../hooks/use-support-modal';
 import useV2VConfigMap from '../../hooks/use-v2v-config-map';
 import { createVM } from '../../k8s/requests/vm/create/simple-create';
@@ -200,6 +202,22 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
     restoreDefaultSSHSettings,
   } = useSSHKeys();
   const { createOrDeleteSSHService } = useSSHService();
+  const [storageClasses, storageClassLoaded] = useK8sWatchResource<K8sResourceCommon[]>({
+    kind: StorageClassModel.kind,
+    isList: true,
+  });
+
+  const storageClassDefaultName = React.useMemo(() => {
+    if (storageClasses && storageClassLoaded) {
+      const storageClassDefault = storageClasses?.find(
+        (sc) => sc?.metadata?.annotations[DEFAULT_SC_ANNOTATION] === 'true',
+      );
+      return storageClassDefault?.metadata?.name;
+    }
+    return null;
+  }, [storageClasses, storageClassLoaded]);
+
+  const [spAccessMode, spVolumeMode, spLoaded] = useStorageProfileSettings(storageClassDefaultName);
 
   const [projects, projectsLoaded, projectsError] = useK8sWatchResource<K8sResourceCommon[]>({
     kind: ProjectModel.kind,
@@ -225,15 +243,32 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
   const loaded = resourcesLoaded && projectsLoaded && scLoaded && V2VConfigMapImagesLoaded;
   const loadError = resourcesLoadError || projectsError || scError;
 
-  const sourceStatus =
-    selectedTemplate &&
-    getTemplateSourceStatus({
-      pvcs,
-      template: selectedTemplate.variants[0],
-      pods,
-      dataVolumes,
-      dataSources,
-    });
+  const sourceStatus = React.useMemo(
+    () =>
+      selectedTemplate &&
+      getTemplateSourceStatus({
+        pvcs,
+        template: selectedTemplate.variants[0],
+        pods,
+        dataVolumes,
+        dataSources,
+      }),
+    [pvcs, selectedTemplate, pods, dataVolumes, dataSources],
+  );
+
+  React.useEffect(() => {
+    if (sourceStatus?.sourceRef && spLoaded) {
+      bootDispatch({
+        type: BOOT_ACTION_TYPE.SET_ACCESS_MODE,
+        payload: spAccessMode.getValue(),
+      });
+      bootDispatch({
+        type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
+        payload: spVolumeMode.getValue(),
+      });
+    }
+  }, [spAccessMode, spVolumeMode, spLoaded, sourceStatus]);
+
   React.useEffect(() => {
     if ((initData.commonTemplateName || initData.userTemplateName) && !selectedTemplate && loaded) {
       const name = initData.commonTemplateName ?? initData.userTemplateName;
