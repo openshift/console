@@ -45,21 +45,6 @@
     }
   },
   {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "virtualizationoverview",
-      "section": "virtualization",
-      "perspective": "admin",
-      "name": "%kubevirt-plugin~Overview%",
-      "href": "/virtualization/overview",
-      "prefixNamespaced": false
-    },
-    "flags": {
-      "required": ["KUBEVIRT", "CAN_GET_NS", "OPENSHIFT"],
-      "disallowed": ["CNV_411"]
-    }
-  },
-  {
     "type": "console.page/resource/list",
     "properties": {
       "model": {
@@ -83,40 +68,6 @@
         "version": "v1alpha3"
       },
       "component": { "$codeRef": "VirtualizationPage.VirtualizationPage" }
-    },
-    "flags": {
-      "required": ["KUBEVIRT_HAS_v1alpha3_API"],
-      "disallowed": ["CNV_411"]
-    }
-  },
-  {
-    "type": "console.navigation/resource-ns",
-    "properties": {
-      "id": "virtualmachines",
-      "section": "virtualization",
-      "name": "%kubevirt-plugin~VirtualMachines%",
-      "model": {
-        "group": "kubevirt.io",
-        "kind": "VirtualMachine",
-        "version": "v1"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT_HAS_v1_API"],
-      "disallowed": ["CNV_411"]
-    }
-  },
-  {
-    "type": "console.navigation/resource-ns",
-    "properties": {
-      "id": "virtualmachines",
-      "section": "virtualization",
-      "name": "%kubevirt-plugin~VirtualMachines%",
-      "model": {
-        "group": "kubevirt.io",
-        "kind": "VirtualMachine",
-        "version": "v1alpha3"
-      }
     },
     "flags": {
       "required": ["KUBEVIRT_HAS_v1alpha3_API"],
@@ -277,20 +228,6 @@
     }
   },
   {
-    "type": "dev-console.add/action",
-    "properties": {
-      "id": "dev-catalog-virtualization",
-      "groupId": "developer-catalog",
-      "href": "/catalog?catalogType=VmTemplate",
-      "label": "%kubevirt-plugin~Virtual Machines%",
-      "description": "%kubevirt-plugin~Create a Virtual Machine from a template%",
-      "icon": { "$codeRef": "icons.vmIconElement" }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
     "type": "console.catalog/item-type",
     "properties": {
       "type": "VmTemplate",
@@ -401,22 +338,6 @@
     }
   },
   {
-    "type": "console.page/resource/details",
-    "properties": {
-      "model": {
-        "group": "snapshot.kubevirt.io",
-        "kind": "VirtualMachineSnapshot"
-      },
-      "component": {
-        "$codeRef": "SnapshotDetailsPage.SnapshotDetailsPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"],
-      "disallowed": ["CNV_411"]
-    }
-  },
-  {
     "type": "console.page/route",
     "properties": {
       "path": ["/catalog/create-vm"],
@@ -488,32 +409,6 @@
     "flags": {
       "required": ["KUBEVIRT"],
       "disallowed": ["CNV_411"]
-    }
-  },
-  {
-    "type": "console.dashboards/overview/health/url",
-    "properties": {
-      "title": "Virtualization",
-      "url": "apis/subresources.kubevirt.io/v1alpha3/healthz",
-      "healthHandler": {
-        "$codeRef": "dashboardHealth.getKubevirtHealthState"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT_HAS_v1alpha3_API"]
-    }
-  },
-  {
-    "type": "console.dashboards/overview/health/url",
-    "properties": {
-      "title": "Virtualization",
-      "url": "apis/subresources.kubevirt.io/v1/healthz",
-      "healthHandler": {
-        "$codeRef": "dashboardHealth.getKubevirtHealthState"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT_HAS_v1_API"]
     }
   },
   {
@@ -720,47 +615,6 @@
       }
     },
     "flags": {
-      "disallowed": ["CNV_411"]
-    }
-  },
-  {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "hardwaredevices",
-      "section": "compute",
-      "name": "%kubevirt-plugin~Hardware Devices%",
-      "insertBefore": "baremetalhosts",
-      "href": "/hardwaredevices",
-      "prefixNamespaced": false
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "path": ["/hardwaredevices"],
-      "component": {
-        "$codeRef": "HardwareDevicesPage.HardwareDevicesPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.navigation/section",
-    "properties": {
-      "perspective": "admin",
-      "id": "virtualization",
-      "name": "%kubevirt-plugin~Virtualization%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-virtualization" },
-      "insertBefore": "serverless",
-      "insertAfter": "workloads"
-    },
-    "flags": {
-      "required": ["KUBEVIRT"],
       "disallowed": ["CNV_411"]
     }
   }
