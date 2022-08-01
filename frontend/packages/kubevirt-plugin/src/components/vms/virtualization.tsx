@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { HorizontalNav, useAccessReview2 } from '@console/internal/components/utils';
+import { useAccessReview2 } from '@console/internal/components/utils';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import {
@@ -67,7 +67,24 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
   const [isOpen, setOpen] = React.useState(false);
   const printableVmStatusFlag = useFlag(FLAG_KUBEVIRT_HAS_PRINTABLESTATUS);
 
-  const namespace = props.match.params.ns;
+  const namespace = props?.match?.params?.ns || props?.namespace;
+
+  const match = React.useMemo(() => {
+    const kind = props?.kind || kubevirtReferenceForModel(VirtualMachineModel);
+
+    if (props.match) {
+      return { ...props.match };
+    }
+    return {
+      isExact: true,
+      params: {
+        plural: kind,
+        ns: namespace,
+      },
+      path: namespace ? '/k8s/ns/:ns/:plural' : '/k8s/all-namespaces/:plural',
+      url: namespace ? `/k8s/ns/${namespace}/${kind}` : `/k8s/all-namespaces/${kind}`,
+    };
+  }, [props, namespace]);
 
   const [canCreate] = useAccessReview2({
     group: VirtualMachineModel?.apiGroup,
@@ -75,15 +92,6 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
     verb: 'create',
     namespace,
   });
-
-  const obj = { loaded: true, data: { kind: kubevirtReferenceForModel(VirtualMachineModel) } };
-  const pages = [
-    {
-      href: '',
-      name: t('kubevirt-plugin~Virtual Machines'),
-      component: printableVmStatusFlag ? NewVirtualMachinesPage : VirtualMachinesPage,
-    },
-  ];
 
   const getMenuItem = React.useCallback(
     ({ test, wizardName, mode, label }) => (
@@ -134,14 +142,21 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
           )}
         </h1>
       </div>
-      <HorizontalNav
-        {...props}
-        pages={pages}
-        match={props.match}
-        obj={obj}
-        hideNav
-        customData={{ showTitle: false, noProjectsAvailable: props.noProjectsAvailable }}
-      />
+      {printableVmStatusFlag ? (
+        <NewVirtualMachinesPage
+          match={match}
+          customData={{
+            namespace,
+            showTitle: false,
+            noProjectsAvailable: props.noProjectsAvailable,
+          }}
+        />
+      ) : (
+        <VirtualMachinesPage
+          match={match}
+          customData={{ showTitle: false, noProjectsAvailable: props.noProjectsAvailable }}
+        />
+      )}
     </>
   );
 };
@@ -151,6 +166,9 @@ type VirtualizationPageProps = {
   skipAccessReview?: boolean;
   noProjectsAvailable?: boolean;
   location?: { search?: string };
+  // additional props from search view
+  namespace?: string;
+  kind?: string;
 };
 
 const VirtualizationPage = withStartGuide(WrappedVirtualizationPage);
