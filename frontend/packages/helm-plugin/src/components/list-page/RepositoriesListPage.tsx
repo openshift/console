@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { MultiListPage } from '@console/internal/components/factory';
-import { AccessDenied } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 import RepositoriesList from './RepositoriesList';
@@ -16,19 +15,38 @@ interface RepositoriesPageProps {
 const RepositoriesPage: React.FC<RepositoriesPageProps> = (props) => {
   const { t } = useTranslation();
   const namespace = props.match.params.ns;
-  const [projectHelmChartAccess, loadingPHCR] = useAccessReview({
+  const [projectHelmChartListAccess] = useAccessReview({
     group: ProjectHelmChartRepositoryModel.apiGroup,
     resource: ProjectHelmChartRepositoryModel.plural,
     verb: 'list',
     namespace,
   });
-  const [helmChartAccess, loadingHCR] = useAccessReview({
+
+  const [helmChartListAccess] = useAccessReview({
     group: HelmChartRepositoryModel.apiGroup,
     resource: HelmChartRepositoryModel.plural,
     verb: 'list',
   });
+  const [projectHelmChartEditAccess] = useAccessReview({
+    group: ProjectHelmChartRepositoryModel.apiGroup,
+    resource: ProjectHelmChartRepositoryModel.plural,
+    verb: 'update',
+    namespace,
+  });
+
+  const [helmChartEditAccess] = useAccessReview({
+    group: HelmChartRepositoryModel.apiGroup,
+    resource: HelmChartRepositoryModel.plural,
+    verb: 'update',
+  });
+
   let resources = [];
-  if (projectHelmChartAccess && helmChartAccess) {
+  if (
+    projectHelmChartListAccess &&
+    projectHelmChartEditAccess &&
+    helmChartListAccess &&
+    helmChartEditAccess
+  ) {
     resources = [
       {
         prop: 'helmChartRepository',
@@ -44,7 +62,7 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = (props) => {
         isList: true,
       },
     ];
-  } else if (projectHelmChartAccess && !helmChartAccess) {
+  } else if (projectHelmChartListAccess && projectHelmChartEditAccess) {
     resources = [
       {
         prop: 'projectHelmChartRepository',
@@ -54,7 +72,7 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = (props) => {
         isList: true,
       },
     ];
-  } else if (!projectHelmChartAccess && helmChartAccess) {
+  } else if (helmChartListAccess && helmChartEditAccess) {
     resources = [
       {
         prop: 'helmChartRepository',
@@ -76,7 +94,7 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = (props) => {
     return repositoriesListData;
   };
 
-  return projectHelmChartAccess || helmChartAccess ? (
+  return (
     <MultiListPage
       namespace={namespace}
       flatten={flatten}
@@ -84,8 +102,6 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = (props) => {
       label={t('helm-plugin~Repositories')}
       ListComponent={RepositoriesList}
     />
-  ) : !loadingPHCR && !loadingHCR ? (
-    <AccessDenied />
-  ) : null;
+  );
 };
 export default RepositoriesPage;

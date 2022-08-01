@@ -8,10 +8,11 @@ import NamespacedPage, {
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { Page } from '@console/internal/components/utils';
+import { LoadingBox, Page } from '@console/internal/components/utils';
 import { MenuActions, MultiTabListPage } from '@console/shared';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 import HelmReleaseList from './HelmReleaseList';
+import HelmReleaseListPage from './HelmReleaseListPage';
 import RepositoriesPage from './RepositoriesListPage';
 
 type HelmTabbedPageProps = RouteComponentProps<{ ns: string }>;
@@ -24,16 +25,39 @@ export const PageContents: React.FC<HelmTabbedPageProps> = (props) => {
     },
   } = props;
   const [showTitle, canCreate] = [false, false];
-  const [projectHelmChartAccess] = useAccessReview({
+  const [projectHelmChartCreateAccess, loadingCreatePHCR] = useAccessReview({
     group: ProjectHelmChartRepositoryModel.apiGroup,
     resource: ProjectHelmChartRepositoryModel.plural,
     verb: 'create',
     namespace,
   });
-  const [helmChartAccess] = useAccessReview({
+  const [helmChartCreateAccess, loadingCreateHCR] = useAccessReview({
     group: HelmChartRepositoryModel.apiGroup,
     resource: HelmChartRepositoryModel.plural,
     verb: 'create',
+  });
+  const [projectHelmChartEditAccess, loadingEditPHCR] = useAccessReview({
+    group: ProjectHelmChartRepositoryModel.apiGroup,
+    resource: ProjectHelmChartRepositoryModel.plural,
+    verb: 'update',
+    namespace,
+  });
+  const [helmChartEditAccess, loadingEditHCR] = useAccessReview({
+    group: HelmChartRepositoryModel.apiGroup,
+    resource: HelmChartRepositoryModel.plural,
+    verb: 'update',
+  });
+  const [projectHelmChartListAccess, loadingPHCR] = useAccessReview({
+    group: ProjectHelmChartRepositoryModel.apiGroup,
+    resource: ProjectHelmChartRepositoryModel.plural,
+    verb: 'list',
+    namespace,
+  });
+
+  const [helmChartListAccess, loadingHCR] = useAccessReview({
+    group: HelmChartRepositoryModel.apiGroup,
+    resource: HelmChartRepositoryModel.plural,
+    verb: 'list',
   });
 
   const menuActions: MenuActions = {
@@ -42,7 +66,8 @@ export const PageContents: React.FC<HelmTabbedPageProps> = (props) => {
       onSelection: () => `/catalog/ns/${namespace}?catalogType=HelmChart`,
     },
     projectHelmChartRepository: {
-      label: projectHelmChartAccess || helmChartAccess ? t('helm-plugin~Repository') : null,
+      label:
+        projectHelmChartCreateAccess || helmChartCreateAccess ? t('helm-plugin~Repository') : null,
       onSelection: () => `/ns/${namespace}/helmchartrepositories/~new?actionOrigin=list`,
     },
   };
@@ -64,13 +89,29 @@ export const PageContents: React.FC<HelmTabbedPageProps> = (props) => {
     },
   ];
 
+  if (
+    loadingCreatePHCR ||
+    loadingEditPHCR ||
+    loadingCreateHCR ||
+    loadingEditHCR ||
+    loadingPHCR ||
+    loadingHCR
+  ) {
+    return <LoadingBox />;
+  }
+
   return namespace ? (
-    <MultiTabListPage
-      pages={pages}
-      match={props.match}
-      title={t('helm-plugin~Helm')}
-      menuActions={menuActions}
-    />
+    (projectHelmChartListAccess && projectHelmChartCreateAccess && projectHelmChartEditAccess) ||
+    (helmChartListAccess && helmChartCreateAccess && helmChartEditAccess) ? (
+      <MultiTabListPage
+        pages={pages}
+        match={props.match}
+        title={t('helm-plugin~Helm')}
+        menuActions={menuActions}
+      />
+    ) : (
+      <HelmReleaseListPage {...props} />
+    )
   ) : (
     <CreateProjectListPage title={t('helm-plugin~Helm')}>
       {(openProjectModal) => (

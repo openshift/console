@@ -38,9 +38,4 @@ Feature: Add repositories tab in Helm navigation item
               And Topology page have the helm chart workload "nodejs-release-2"
 
 
-        #TODO. Once the feature ODC-6716 gets merged to master, this e2e to be continued.
-        @regression
-        Scenario: Click on create Repository: HR-09-TC04
-            Given user is at the Helm page
-             When user clicks on Repository in create action menu
 
