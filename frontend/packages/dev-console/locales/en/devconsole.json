@@ -400,6 +400,7 @@
   "Try sample": "Try sample",
   "Source Secret": "Source Secret",
   "Secret with credentials for pulling your source code.": "Secret with credentials for pulling your source code.",
+  "No Secret": "No Secret",
   "docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>": "docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>",
   "To deploy an Image from a private repository, you must <2>create an Image pull secret</2> with your Image registry credentials.": "To deploy an Image from a private repository, you must <2>create an Image pull secret</2> with your Image registry credentials.",
   "Secret {{newImageSecret}} was created.": "Secret {{newImageSecret}} was created.",

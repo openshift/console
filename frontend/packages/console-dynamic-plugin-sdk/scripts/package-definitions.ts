@@ -70,7 +70,12 @@ export const getCorePackage: GetPackageDefinition = (
     ...commonManifestFields,
     dependencies: {
       ...parseSharedModuleDeps(rootPackage, missingDepCallback),
-      ...parseDeps(rootPackage, ['typesafe-actions', 'whatwg-fetch'], missingDepCallback),
+      ...parseDeps(
+        rootPackage,
+        ['classnames', 'immutable', 'reselect', 'typesafe-actions', 'whatwg-fetch'],
+        missingDepCallback,
+      ),
+      ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
   },
   filesToCopy: {
@@ -90,7 +95,10 @@ export const getInternalPackage: GetPackageDefinition = (
     version: sdkPackage.version,
     main: 'lib/lib-internal.js',
     ...commonManifestFields,
-    dependencies: parseSharedModuleDeps(rootPackage, missingDepCallback),
+    dependencies: {
+      ...parseSharedModuleDeps(rootPackage, missingDepCallback),
+      ...parseDeps(rootPackage, ['immutable'], missingDepCallback),
+    },
   },
   filesToCopy: {
     ...commonFiles,

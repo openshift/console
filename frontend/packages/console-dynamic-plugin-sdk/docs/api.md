@@ -53,13 +53,14 @@
 51.  [`InventoryItemStatus`](#inventoryitemstatus)
 52.  [`InventoryItemLoading`](#inventoryitemloading)
 53.  [`useFlag`](#useflag)
-54.  [`ResourceYAMLEditor`](#resourceyamleditor)
-55.  [`ResourceEventStream`](#resourceeventstream)
-56.  [`usePrometheusPoll`](#useprometheuspoll)
-57.  [`Timestamp`](#timestamp)
-58. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
-59. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
-60. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+54.  [`YAMLEditor`](#yamleditor)
+55.  [`ResourceYAMLEditor`](#resourceyamleditor)
+56.  [`ResourceEventStream`](#resourceeventstream)
+57.  [`usePrometheusPoll`](#useprometheuspoll)
+58.  [`Timestamp`](#timestamp)
+59. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
+60. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
+61. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
 
 ---
 
@@ -1865,11 +1866,50 @@ the boolean value of the requested feature flag or undefined
 
 ---
 
+## `YAMLEditor`
+
+### Summary 
+
+A basic lazy loaded YAML editor with hover help and completion.
+
+
+
+### Example
+
+
+```tsx
+<React.Suspense fallback={<LoadingBox />}>
+  <YAMLEditor
+    value={code}
+  />
+</React.Suspense>
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `value` | String representing the yaml code to render. |
+| `options` | Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html. |
+| `minHeight` | Minimum editor height in valid CSS height values. |
+| `showShortcuts` | Boolean to show shortcuts on top of the editor. |
+| `toolbarLinks` | Array of ReactNode rendered on the toolbar links section on top of the editor. |
+| `onChange` | Callback for on code change event. |
+| `onSave` | Callback called when the command CTRL / CMD + S is triggered. |
+
+
+
+---
+
 ## `ResourceYAMLEditor`
 
 ### Summary 
 
-A lazy loaded YAML editor for Kubernetes resources with hover help and completion.<br/>The editor will handle updating the resource when the user clicks save unless an onSave handler is provided.<br/>It should be wrapped in a React.Suspense component.
+A lazy loaded YAML editor for Kubernetes resources with hover help and completion.<br/>The component use the YAMLEditor and add on top of it more functionality like<br/>resource update handling, alerts, save, cancel and reload buttons, accessibility and more.<br/>Unless onSave callback is provided, the resource update is automatically handled.<br/>It should be wrapped in a React.Suspense component.
 
 
 

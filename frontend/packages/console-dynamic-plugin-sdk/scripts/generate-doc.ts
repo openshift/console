@@ -12,7 +12,7 @@ import { getProgramFromFile, printJSDocComments } from './utils/typescript';
 
 const EXAMPLE = '@example';
 const DYNAMIC_PKG_PATH = '@console/dynamic-plugin-sdk/';
-const GITHUB_URL = 'https://github.com/openshift/console/tree/release-4.11/frontend';
+const GITHUB_URL = 'https://github.com/openshift/console/tree/release-4.12/frontend';
 
 const getConsoleExtensions = () => {
   const program = getProgramFromFile(resolvePath('src/schema/console-extensions.ts'));

@@ -118,6 +118,7 @@ export const EditYAML_ = connect(stateToProps)(
           }
           return models.get(referenceFor(obj)) || models.get(obj.kind);
         }
+
         async createResources(objs) {
           const results = [];
           for (const obj of objs) {
@@ -137,8 +138,22 @@ export const EditYAML_ = connect(stateToProps)(
           return Promise.resolve(results);
         }
 
+        /** @param {() => void} callback */
+        clearErrors(callback) {
+          this.setState({ errors: [] }, callback);
+        }
+
         handleError(error, success = null) {
-          this.setState({ errors: _.isEmpty(error) ? null : [error], success });
+          this.setState((prevState) => {
+            let errors = prevState.errors || [];
+            if (!_.isEmpty(error)) {
+              errors = [...errors, error];
+            }
+            return {
+              errors,
+              success,
+            };
+          });
         }
 
         handleErrors(resourceObject, error) {
@@ -383,91 +398,94 @@ export const EditYAML_ = connect(stateToProps)(
         }
 
         save() {
-          const { onSave, t } = this.props;
-          const { owner } = this.state;
-          let obj;
+          this.clearErrors(() => {
+            const { onSave, t } = this.props;
+            const { owner } = this.state;
+            let obj;
 
-          if (onSave) {
-            onSave(this.getEditor().getValue());
-            return;
-          }
-
-          try {
-            obj = safeLoad(this.getEditor().getValue());
-          } catch (e) {
-            this.handleError(t('public~Error parsing YAML: {{e}}', { e }));
-            return;
-          }
-
-          const error = this.validate(obj);
-          if (error) {
-            this.handleError(error);
-            return;
-          }
-
-          const { namespace: newNamespace, name: newName } = obj.metadata;
-
-          if (!this.props.create && this.props.obj) {
-            const { namespace, name } = this.props.obj.metadata;
-
-            if (name !== newName) {
-              this.handleError(
-                t(
-                  'public~Cannot change resource name (original: "{{name}}", updated: "{{newName}}").',
-                  { name, newName },
-                ),
-              );
-              return;
-            }
-            if (namespace !== newNamespace) {
-              this.handleError(
-                t(
-                  'public~Cannot change resource namespace (original: "{{namespace}}", updated: "{{newNamespace}}").',
-                  { namespace, newNamespace },
-                ),
-              );
-              return;
-            }
-            if (this.props.obj.kind !== obj.kind) {
-              this.handleError(
-                t(
-                  'public~Cannot change resource kind (original: "{{original}}", updated: "{{updated}}").',
-                  { original: this.props.obj.kind, updated: obj.kind },
-                ),
-              );
+            if (onSave) {
+              onSave(this.getEditor().getValue());
               return;
             }
 
-            const apiGroup = groupVersionFor(this.props.obj.apiVersion).group;
-            const newAPIGroup = groupVersionFor(obj.apiVersion).group;
-            if (apiGroup !== newAPIGroup) {
-              this.handleError(
-                t(
-                  'public~Cannot change API group (original: "{{apiGroup}}", updated: "{{newAPIGroup}}").',
-                  { apiGroup, newAPIGroup },
-                ),
-              );
+            try {
+              obj = safeLoad(this.getEditor().getValue());
+            } catch (e) {
+              this.handleError(t('public~Error parsing YAML: {{e}}', { e }));
               return;
             }
 
-            if (owner) {
-              managedResourceSaveModal({
-                kind: obj.kind,
-                resource: obj,
-                onSubmit: () => this.updateYAML(obj, this.getModel(obj), newNamespace, newName),
-                owner,
-              });
+            const error = this.validate(obj);
+            if (error) {
+              this.handleError(error);
               return;
             }
-          }
-          this.updateYAML(obj, this.getModel(obj), newNamespace, newName);
+
+            const { namespace: newNamespace, name: newName } = obj.metadata;
+
+            if (!this.props.create && this.props.obj) {
+              const { namespace, name } = this.props.obj.metadata;
+
+              if (name !== newName) {
+                this.handleError(
+                  t(
+                    'public~Cannot change resource name (original: "{{name}}", updated: "{{newName}}").',
+                    { name, newName },
+                  ),
+                );
+                return;
+              }
+              if (namespace !== newNamespace) {
+                this.handleError(
+                  t(
+                    'public~Cannot change resource namespace (original: "{{namespace}}", updated: "{{newNamespace}}").',
+                    { namespace, newNamespace },
+                  ),
+                );
+                return;
+              }
+              if (this.props.obj.kind !== obj.kind) {
+                this.handleError(
+                  t(
+                    'public~Cannot change resource kind (original: "{{original}}", updated: "{{updated}}").',
+                    { original: this.props.obj.kind, updated: obj.kind },
+                  ),
+                );
+                return;
+              }
+
+              const apiGroup = groupVersionFor(this.props.obj.apiVersion).group;
+              const newAPIGroup = groupVersionFor(obj.apiVersion).group;
+              if (apiGroup !== newAPIGroup) {
+                this.handleError(
+                  t(
+                    'public~Cannot change API group (original: "{{apiGroup}}", updated: "{{newAPIGroup}}").',
+                    { apiGroup, newAPIGroup },
+                  ),
+                );
+                return;
+              }
+
+              if (owner) {
+                managedResourceSaveModal({
+                  kind: obj.kind,
+                  resource: obj,
+                  onSubmit: () => this.updateYAML(obj, this.getModel(obj), newNamespace, newName),
+                  owner,
+                });
+                return;
+              }
+            }
+            this.updateYAML(obj, this.getModel(obj), newNamespace, newName);
+          });
         }
 
         saveAll() {
-          const { t } = this.props;
-          let objs;
-          let hasErrors = false;
-          this.setState({ errors: null }, () => {
+          this.clearErrors(() => {
+            const { t } = this.props;
+            let objs;
+            let hasErrors = false;
+
             try {
               objs = safeLoadAll(this.getEditor().getValue()).filter((obj) => obj);
             } catch (e) {
@@ -670,7 +688,7 @@ export const EditYAML_ = connect(stateToProps)(
                       />
                       <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
                         {customAlerts}
-                        {errors && (
+                        {errors?.length > 0 && (
                           <Alert
                             isInline
                             className="co-alert co-alert--scrollable"

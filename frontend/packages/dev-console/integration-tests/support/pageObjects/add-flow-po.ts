@@ -357,6 +357,7 @@ export const helmChartRepositoriesPO = {
   formTitle: '[data-test="form-title"]',
   cancelButton: '[data-test-id="cancel-button"]',
   name: '#form-input-formData-repoName-field',
+  displayName: '#form-input-formData-repoDisplayName-field',
   description: '#form-input-formData-repoDescription-field',
   url: '#form-input-formData-repoUrl-field',
 };

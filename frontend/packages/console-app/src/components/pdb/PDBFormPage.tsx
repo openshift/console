@@ -8,7 +8,7 @@ import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { PodDisruptionBudgetModel } from '../../models';
-import { pdbToK8sResource } from './pdb-models';
+import { pdbToK8sResource, mergeInitialYAMLWithExistingResource } from './pdb-models';
 import PDBForm from './PDBForm';
 import { PodDisruptionBudgetKind } from './types';
 import { getPDBResource } from './utils/get-pdb-resources';
@@ -69,17 +69,16 @@ export const PDBFormPage: React.FC<{
   const k8sObj = pdbToK8sResource(initialPDB);
 
   const YAMLEditor: React.FC<YAMLEditorProps> = ({ onChange, initialYAML = '' }) => {
+    const yamlData = mergeInitialYAMLWithExistingResource(initialYAML, existingResource);
+
     return (
       <CreateYAML
         hideHeader
         match={match}
         onChange={onChange}
-        template={
-          initialYAML ||
-          safeJSToYAML(existingResource, 'yamlData', {
-            skipInvalid: true,
-          })
-        }
+        template={safeJSToYAML(yamlData, 'yamlData', {
+          skipInvalid: true,
+        })}
         isCreate={!existingResource}
       />
     );
