@@ -74,6 +74,9 @@ export const listPage = {
     countShouldBe: (count: number) => {
       cy.get(`[data-test-rows="resource-row"`).should('have.length', count);
     },
+    countShouldBeWithin: (min: number, max: number) => {
+      cy.get(`[data-test-rows="resource-row"`).should('have.length.within', min, max);
+    },
     clickFirstLinkInFirstRow: () => {
       cy.get(`[data-test-rows="resource-row"]`)
         .first()
