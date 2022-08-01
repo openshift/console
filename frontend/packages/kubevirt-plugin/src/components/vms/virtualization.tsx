@@ -1,3 +1,5 @@
+import './virtualization.scss';
+
 import * as React from 'react';
 import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
@@ -19,7 +21,6 @@ import { getVMWizardCreateLink } from '../../utils/url';
 import MigrationTool from './migration-tool/MigrationTool';
 import { VirtualMachinesPage } from './vm';
 import { VirtualMachinesPage as NewVirtualMachinesPage } from './vm-page-new';
-import './virtualization.scss';
 
 export const RedirectToVirtualizationPage: React.FC<RouteComponentProps<{ ns: string }>> = (
   props,
@@ -46,7 +47,7 @@ export const RedirectToVirtualizationTemplatePage: React.FC<RouteComponentProps<
     }}
   />
 );
-
+// stam comment masrih
 const vmMenuItems = (t: TFunction) => [
   {
     test: 'vm-wizard',
