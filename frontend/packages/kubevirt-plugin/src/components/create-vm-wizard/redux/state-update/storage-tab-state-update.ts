@@ -12,6 +12,7 @@ import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { DiskActions, DiskActionsNames } from '../../../../redux/actions/diskActions';
 import {
   SourceRefActions,
   SourceRefActionsNames,
@@ -132,12 +133,16 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
         VMWizardProps.storageClassConfigMap,
       );
       const idResolver = getNextIDResolver(getStorages(state, id));
-      dispatch(
-        vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
-          id: oldSourceStorage ? oldSourceStorage.id : idResolver(),
-          ...newSourceStorage,
-        }),
-      );
+      if (state?.plugins?.kubevirt?.disk?.removeRootdisk) {
+        dispatch(
+          vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
+            id: oldSourceStorage ? oldSourceStorage.id : idResolver(),
+            ...newSourceStorage,
+          }),
+        );
+        dispatch(DiskActions[DiskActionsNames.removeRootdisk]());
+      }
+
       if (newSourceStorage.disk.cdrom && !additionalStorage) {
         const emptyDisk = {
           id: idResolver(),
