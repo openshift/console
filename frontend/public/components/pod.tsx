@@ -742,6 +742,7 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
           : t('public~Not configured')}
       </DetailsItem>
       <DetailsItem label={t('public~Pod IP')} obj={pod} path="status.podIP" />
+      <DetailsItem label={t('public~Host IP')} obj={pod} path="status.hostIP" />
       <DetailsItem label={t('public~Node')} obj={pod} path="spec.nodeName" hideEmpty>
         <NodeLink name={pod.spec.nodeName} />
       </DetailsItem>
