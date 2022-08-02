@@ -88,8 +88,7 @@ export const getChartURL = (
   chartVersion: string,
   chartRepoName: string,
 ): string => {
-  const chartData: HelmChartMetaData = _.find(
-    helmChartData,
+  const chartData: HelmChartMetaData = helmChartData.find(
     (obj) => obj.version === chartVersion && obj.repoName === chartRepoName,
   );
   return chartData?.urls[0];
@@ -100,7 +99,28 @@ export const getChartRepositoryTitle = (
   chartRepoName: string,
 ) => {
   const chartRepository = chartRepositories?.find((repo) => repo.metadata.name === chartRepoName);
-  return chartRepository?.spec?.name || toTitleCase(chartRepoName);
+  if (chartRepository?.spec?.name) {
+    return chartRepository.spec.name;
+  }
+  if (chartRepoName) {
+    return toTitleCase(chartRepoName);
+  }
+  return null;
+};
+
+export const getChartIndexEntry = (
+  chartEntries: HelmChartEntries,
+  chartName: string,
+  chartRepoName: string,
+) => {
+  const repoName = chartRepoName
+    .toLowerCase()
+    .split(' ')
+    .join('-');
+  const indexEntry = Object.keys(chartEntries).find((val) =>
+    val.includes(`${chartName}--${repoName}`),
+  );
+  return indexEntry;
 };
 
 export const getChartEntriesByName = (
@@ -111,8 +131,9 @@ export const getChartEntriesByName = (
 ): HelmChartMetaData[] => {
   if (chartName && chartRepoName) {
     const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
+    const indexEntry = getChartIndexEntry(chartEntries, chartName, chartRepoName);
     return (
-      chartEntries?.[`${chartName}--${chartRepoName}`]?.map((e) => ({
+      chartEntries?.[indexEntry]?.map((e) => ({
         ...e,
         repoName: chartRepositoryTitle,
       })) ?? []
@@ -194,6 +215,7 @@ export const getHelmActionConfig = (
   t: TFunction,
   actionOrigin?: HelmActionOrigins,
   chartURL?: string,
+  chartIndexEntry?: string,
 ): HelmActionConfigType | undefined => {
   switch (helmAction) {
     case HelmActionType.Install:
@@ -208,7 +230,9 @@ export const getHelmActionConfig = (
             'helm-plugin~The Helm Chart can be installed by manually entering YAML or JSON definitions.',
           ),
         },
-        helmReleaseApi: `/api/helm/chart?url=${chartURL}`,
+        helmReleaseApi: `/api/helm/chart?url=${encodeURIComponent(
+          chartURL,
+        )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartIndexEntry)}`,
         fetch: coFetchJSON.post,
         redirectURL: getOriginRedirectURL(HelmActionOrigins.topology, namespace, releaseName),
       };

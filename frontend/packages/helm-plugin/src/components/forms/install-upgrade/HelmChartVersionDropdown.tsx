@@ -27,6 +27,7 @@ import {
   concatVersions,
   getChartEntriesByName,
   getChartRepositoryTitle,
+  getChartIndexEntry,
 } from '../../../utils/helm-utils';
 
 export type HelmChartVersionDropdownProps = {
@@ -35,6 +36,7 @@ export type HelmChartVersionDropdownProps = {
   helmAction: string;
   onVersionChange: (chart: HelmChart) => void;
   namespace: string;
+  chartIndexEntry: string;
 };
 type ModalCallback = () => void;
 
@@ -44,6 +46,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   helmAction,
   onVersionChange,
   namespace,
+  chartIndexEntry,
 }) => {
   const { t } = useTranslation();
   const {
@@ -125,6 +128,12 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         chartRepoName,
         chartRepositories,
       );
+      if (!chartIndexEntry) {
+        setFieldValue(
+          'chartIndexEntry',
+          getChartIndexEntry(json?.entries, chartName, chartEntries[0].repoName),
+        );
+      }
       setHelmChartEntries(chartEntries);
       setHelmChartVersions(getChartVersions(chartEntries, t));
     };
@@ -132,7 +141,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     return () => {
       ignore = true;
     };
-  }, [chartName, chartRepoName, chartRepositories, t, namespace]);
+  }, [chartName, chartRepoName, chartRepositories, t, namespace, chartIndexEntry, setFieldValue]);
 
   const onChartVersionChange = (value: string) => {
     const [version, repoName] = value.split('--');
@@ -141,8 +150,11 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
 
     setFieldValue('chartVersion', value);
     setFieldValue('chartURL', chartURL);
-
-    coFetchJSON(`/api/helm/chart?url=${chartURL}`)
+    coFetchJSON(
+      `/api/helm/chart?url=${encodeURIComponent(
+        chartURL,
+      )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartIndexEntry)}`,
+    )
       .then((res: HelmChart) => {
         onVersionChange(res);
 
