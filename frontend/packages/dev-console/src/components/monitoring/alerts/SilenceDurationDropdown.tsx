@@ -35,6 +35,8 @@ const durations = {
   '1d': '1 day',
 };
 
+const externalLabelFilter = ({ name }: { name: string }) => name !== 'prometheus';
+
 const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({
   rule,
   silenceInProgress,
@@ -54,7 +56,7 @@ const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({
       value: rule.name,
     },
     ...ruleMatchers,
-  ];
+  ].filter(externalLabelFilter);
 
   const setDuration = (duration: string) => {
     const startsAt = new Date();
