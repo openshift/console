@@ -132,7 +132,6 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
         title={t('olm~Create {{item}}', { item: model.label })}
         badge={getBadgeFromType(model.badge)}
         helpText={helpText}
-        detail
       />
       <SyncedEditor
         context={{

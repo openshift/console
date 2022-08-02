@@ -375,6 +375,7 @@
   "The value of maxUnavailable = 0 might not protect your pods from disruption": "The value of maxUnavailable = 0 might not protect your pods from disruption",
   "Create {{label}}": "Create {{label}}",
   "Edit {{label}}": "Edit {{label}}",
+  "{helpText}": "{helpText}",
   "Create PodDiscruptionBudget": "Create PodDiscruptionBudget",
   "No PodDisruptionBudgets": "No PodDisruptionBudgets",
   "Quick Starts": "Quick Starts",

@@ -2,7 +2,8 @@
 
 .co-synced-editor__editor-toggle {
   border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-  padding: 8px $pf-global-gutter;
+  border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+  padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--lg);
   @media (min-width: $pf-global--breakpoint--xl) {
     padding-left: $pf-global-gutter--md;
     padding-right: $pf-global-gutter--md;
@@ -10,6 +11,7 @@
 }
 
 .co-synced-editor__editor-toggle-label {
+  font-size: $font-size-base - 1; // match --pf-c-form__label--FontSize that's used for the osc-yaml-editor
   margin-bottom: 0;
 }
 
