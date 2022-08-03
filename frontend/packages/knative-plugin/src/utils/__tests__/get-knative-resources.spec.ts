@@ -216,7 +216,7 @@ describe('Get knative resources', () => {
       expect(getSinkableResources('')).toHaveLength(0);
     });
 
-    it('expect to return Knative and K8s Services', () => {
+    it('expect to return Knative/K8s Services and Kafka Sinks', () => {
       const SAMPLE_NAMESPACE = 'mynamespace';
       const sinkableResources = getSinkableResources(SAMPLE_NAMESPACE);
       expect(sinkableResources).toEqual([
@@ -233,6 +233,13 @@ describe('Get knative resources', () => {
           namespace: 'mynamespace',
           optional: true,
           prop: 'ksservices',
+        },
+        {
+          isList: true,
+          kind: 'eventing.knative.dev~v1alpha1~KafkaSink',
+          namespace: 'mynamespace',
+          optional: true,
+          prop: 'kafkasinks',
         },
       ]);
     });

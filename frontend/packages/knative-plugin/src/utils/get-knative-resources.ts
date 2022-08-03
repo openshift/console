@@ -18,6 +18,7 @@ import {
   CamelIntegrationModel,
   CamelKameletBindingModel,
   DomainMappingModel,
+  KafkaSinkModel,
 } from '../models';
 import { Traffic } from '../types';
 import {
@@ -180,6 +181,20 @@ export const knativeServingResourcesServices = (
       kind: referenceForModel(ServiceModel),
       namespace,
       prop: 'ksservices',
+      optional: true,
+      ...(limit && { limit }),
+    },
+  ];
+  return knativeResource;
+};
+
+export const knativeKafkaSinks = (namespace: string, limit?: number): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(KafkaSinkModel),
+      namespace,
+      prop: 'kafkasinks',
       optional: true,
       ...(limit && { limit }),
     },
@@ -415,7 +430,11 @@ export const getTrafficByRevision = (revName: string, service: K8sResourceKind) 
 
 export const getSinkableResources = (namespace: string): FirehoseResource[] => {
   return namespace
-    ? [...k8sServices(namespace), ...knativeServingResourcesServices(namespace)]
+    ? [
+        ...k8sServices(namespace),
+        ...knativeServingResourcesServices(namespace),
+        ...knativeKafkaSinks(namespace),
+      ]
     : [];
 };
 

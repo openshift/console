@@ -29,7 +29,7 @@ describe('SinkResources', () => {
   it('should be able to sink to k8s service', () => {
     wrapper = shallow(<SinkResources isMoveSink namespace="test" />);
     const sinkables = wrapper.find(ResourceDropdownField).props().resources;
-    expect(sinkables).toHaveLength(3);
+    expect(sinkables).toHaveLength(4);
     expect(sinkables.filter((r) => r.kind === ServiceModel.kind)).toHaveLength(1);
   });
 
@@ -37,6 +37,6 @@ describe('SinkResources', () => {
     await fetchChannelsCrd();
     wrapper = shallow(<SinkResources isMoveSink namespace="test" />);
     const sinkables = wrapper.find(ResourceDropdownField).props().resources;
-    expect(sinkables).toHaveLength(6);
+    expect(sinkables).toHaveLength(7);
   });
 });
