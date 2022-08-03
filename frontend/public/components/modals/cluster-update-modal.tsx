@@ -36,7 +36,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
       ? currentMinorVersionPatchUpdate?.version
       : availableSortedUpdates[0]?.version) || '',
   );
-  const [error, setError] = React.useState(errorMessage);
+  const [error, setError] = React.useState('');
   const [isOpen, setIsOpen] = React.useState(false);
   const onToggle = () => setIsOpen(!isOpen);
   const onSelect = (event, selection) => {
@@ -95,7 +95,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
         </div>
       </ModalBody>
       <ModalSubmitFooter
-        errorMessage={error}
+        errorMessage={errorMessage || error}
         inProgress={inProgress}
         submitText={t('public~Update')}
         cancelText={t('public~Cancel')}
