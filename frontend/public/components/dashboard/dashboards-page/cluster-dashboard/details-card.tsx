@@ -247,7 +247,7 @@ export const DetailsCard = withDashboardResources(
                       isLoading={false}
                       valueClassName="co-select-to-copy"
                     >
-                      {t('public~No (single master)')}
+                      {t('public~No (single control plane node)')}
                     </OverviewDetailItem>
                   )}
                   {detailItemsExtensions.map((e) => {

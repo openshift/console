@@ -328,7 +328,7 @@ export enum NodeTypes {
  * of the Node names for display purposes
  */
 export enum NodeTypeNames {
-  Master = 'Master',
+  Master = 'Control plane',
   Worker = 'Worker',
 }
 

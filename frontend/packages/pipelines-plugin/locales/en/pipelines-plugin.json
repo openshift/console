@@ -280,7 +280,7 @@
   "Pipeline could not be started automatically": "Pipeline could not be started automatically",
   "View all {{pipelineRunsLength}}": "View all {{pipelineRunsLength}}",
   "Name of the cluster.": "Name of the cluster.",
-  "Host URL of the master node.": "Host URL of the master node.",
+  "Host URL of the control plane node.": "Host URL of the control plane node.",
   "Username": "Username",
   "The user with access to the cluster.": "The user with access to the cluster.",
   "Password": "Password",

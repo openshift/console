@@ -20,7 +20,7 @@ const PipelineClusterOptions: React.FC<PipelineClusterOptionsProps> = ({ prefixN
         type={TextInputTypes.text}
         name={`${prefixName}.params.url`}
         label={t('pipelines-plugin~URL')}
-        helpText={t('pipelines-plugin~Host URL of the master node.')}
+        helpText={t('pipelines-plugin~Host URL of the control plane node.')}
         required
       />
       <InputField

@@ -7,7 +7,7 @@ const NODE_ROLE_PREFIX = 'node-role.kubernetes.io/';
 
 export const getNodeRoles = (node: NodeKind): string[] => {
   const labels = _.get(node, 'metadata.labels');
-  return _.reduce(
+  const rolesList = _.reduce(
     labels,
     (acc: string[], v: string, k: string) => {
       if (k.startsWith(NODE_ROLE_PREFIX)) {
@@ -17,10 +17,14 @@ export const getNodeRoles = (node: NodeKind): string[] => {
     },
     [],
   );
+  return rolesList.map((e) => {
+    if (e === 'master') return 'control plane';
+    return e;
+  });
 };
 
 export const getNodeRole = (node: NodeKind): string =>
-  getNodeRoles(node).includes('master') ? 'master' : 'worker';
+  getNodeRoles(node).includes('control plane') ? 'control plane' : 'worker';
 
 export const getNodeRoleMatch = (node: NodeKind, role: string): boolean => {
   const roles = getNodeRoles(node);
