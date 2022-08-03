@@ -188,7 +188,7 @@ export const SecretFormWrapper = withTranslation()(
         disableForm: disable,
       });
     }
-    save(e) {
+    async save(e) {
       e.preventDefault();
       const { metadata } = this.state.secret;
       this.setState({ inProgress: true });
@@ -208,21 +208,22 @@ export const SecretFormWrapper = withTranslation()(
         // When updating a Secret, use it's type.
         this.props.isCreate ? { type: determineSecretType(this.state.stringData) } : {},
       );
-      (this.props.isCreate
-        ? k8sCreate(SecretModel, newSecret)
-        : k8sUpdate(SecretModel, newSecret, metadata.namespace, newSecret.metadata.name)
-      ).then(
-        (secret) => {
-          this.setState({ inProgress: false });
-          if (this.props.onSave) {
-            this.props.onSave(secret.metadata.name);
-          }
-          if (!this.props.modal) {
-            history.push(resourceObjPath(secret, referenceFor(secret)));
-          }
-        },
-        (err) => this.setState({ error: err.message, inProgress: false }),
-      );
+
+      try {
+        const secret = this.props.isCreate
+          ? await k8sCreate(SecretModel, newSecret)
+          : await k8sUpdate(SecretModel, newSecret, metadata.namespace, newSecret.metadata.name);
+
+        this.setState({ inProgress: false });
+        if (this.props.onSave) {
+          this.props.onSave(secret.metadata.name);
+        }
+        if (!this.props.modal) {
+          history.push(resourceObjPath(secret, referenceFor(secret)));
+        }
+      } catch (err) {
+        this.setState({ error: err.message, inProgress: false });
+      }
     }
 
     renderBody = () => {
