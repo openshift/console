@@ -1,4 +1,4 @@
-@odc-4981
+@shipwright
 Feature: Shipwright build details page
               As a user, I want check my Shipwright Build and see all related BuildRuns in a second tab.
 

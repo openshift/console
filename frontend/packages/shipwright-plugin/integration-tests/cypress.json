@@ -1,0 +1,29 @@
+{
+  "integrationFolder": "features",
+  "testFiles": "**/*.{feature,features}",
+  "defaultCommandTimeout": 40000,
+  "viewportWidth": 1920,
+  "viewportHeight": 1080,
+  "animationDistanceThreshold": 20,
+  "execTimeout": 90000,
+  "pageLoadTimeout": 90000,
+  "requestTimeout": 15000,
+  "responseTimeout": 15000,
+  "supportFile": "support/commands/index.ts",
+  "pluginsFile": "../../dev-console/integration-tests/plugins/index.js",
+  "fixturesFolder": "testData",
+  "reporter": "../../../node_modules/cypress-multi-reporters",
+  "reporterOptions": {
+    "configFile": "reporter-config.json"
+  },
+  "screenshotsFolder": "../../../gui_test_screenshots/cypress/screenshots",
+  "videosFolder": "../../../gui_test_screenshots/cypress/videos",
+  "env": {
+    "TAGS": "(@smoke or @regression) and not (@manual or @to-do or @un-verified or @broken-test)",
+    "NAMESPACE": "aut-shipwright"
+  },
+  "retries": {
+    "runMode": 0,
+    "openMode": 0
+  }
+}
