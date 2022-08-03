@@ -24,42 +24,43 @@
 22.  [`ListPageFilter`](#listpagefilter)
 23.  [`useListPageFilter`](#uselistpagefilter)
 24.  [`ResourceLink`](#resourcelink)
-25.  [`useK8sModel`](#usek8smodel)
-26.  [`useK8sModels`](#usek8smodels)
-27.  [`useK8sWatchResource`](#usek8swatchresource)
-28.  [`useK8sWatchResources`](#usek8swatchresources)
-29.  [`consoleFetch`](#consolefetch)
-30.  [`consoleFetchJSON`](#consolefetchjson)
-31.  [`consoleFetchText`](#consolefetchtext)
-32.  [`getConsoleRequestHeaders`](#getconsolerequestheaders)
-33.  [`k8sGetResource`](#k8sgetresource)
-34.  [`k8sCreateResource`](#k8screateresource)
-35.  [`k8sUpdateResource`](#k8supdateresource)
-36.  [`k8sPatchResource`](#k8spatchresource)
-37.  [`k8sDeleteResource`](#k8sdeleteresource)
-38.  [`k8sListResource`](#k8slistresource)
-39.  [`k8sListResourceItems`](#k8slistresourceitems)
-40.  [`getAPIVersionForModel`](#getapiversionformodel)
-41.  [`getGroupVersionKindForResource`](#getgroupversionkindforresource)
-42.  [`getGroupVersionKindForModel`](#getgroupversionkindformodel)
-43.  [`StatusPopupSection`](#statuspopupsection)
-44.  [`StatusPopupItem`](#statuspopupitem)
-45.  [`Overview`](#overview)
-46.  [`OverviewGrid`](#overviewgrid)
-47.  [`InventoryItem`](#inventoryitem)
-48.  [`InventoryItemTitle`](#inventoryitemtitle)
-49.  [`InventoryItemBody`](#inventoryitembody)
-50.  [`InventoryItemStatus`](#inventoryitemstatus)
-51.  [`InventoryItemLoading`](#inventoryitemloading)
-52.  [`useFlag`](#useflag)
-53.  [`YAMLEditor`](#yamleditor)
-54.  [`ResourceYAMLEditor`](#resourceyamleditor)
-55.  [`ResourceEventStream`](#resourceeventstream)
-56.  [`usePrometheusPoll`](#useprometheuspoll)
-57.  [`Timestamp`](#timestamp)
-58. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
-59. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
-60. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+25.  [`ResourceIcon`](#resourceicon)
+26.  [`useK8sModel`](#usek8smodel)
+27.  [`useK8sModels`](#usek8smodels)
+28.  [`useK8sWatchResource`](#usek8swatchresource)
+29.  [`useK8sWatchResources`](#usek8swatchresources)
+30.  [`consoleFetch`](#consolefetch)
+31.  [`consoleFetchJSON`](#consolefetchjson)
+32.  [`consoleFetchText`](#consolefetchtext)
+33.  [`getConsoleRequestHeaders`](#getconsolerequestheaders)
+34.  [`k8sGetResource`](#k8sgetresource)
+35.  [`k8sCreateResource`](#k8screateresource)
+36.  [`k8sUpdateResource`](#k8supdateresource)
+37.  [`k8sPatchResource`](#k8spatchresource)
+38.  [`k8sDeleteResource`](#k8sdeleteresource)
+39.  [`k8sListResource`](#k8slistresource)
+40.  [`k8sListResourceItems`](#k8slistresourceitems)
+41.  [`getAPIVersionForModel`](#getapiversionformodel)
+42.  [`getGroupVersionKindForResource`](#getgroupversionkindforresource)
+43.  [`getGroupVersionKindForModel`](#getgroupversionkindformodel)
+44.  [`StatusPopupSection`](#statuspopupsection)
+45.  [`StatusPopupItem`](#statuspopupitem)
+46.  [`Overview`](#overview)
+47.  [`OverviewGrid`](#overviewgrid)
+48.  [`InventoryItem`](#inventoryitem)
+49.  [`InventoryItemTitle`](#inventoryitemtitle)
+50.  [`InventoryItemBody`](#inventoryitembody)
+51.  [`InventoryItemStatus`](#inventoryitemstatus)
+52.  [`InventoryItemLoading`](#inventoryitemloading)
+53.  [`useFlag`](#useflag)
+54.  [`YAMLEditor`](#yamleditor)
+55.  [`ResourceYAMLEditor`](#resourceyamleditor)
+56.  [`ResourceEventStream`](#resourceeventstream)
+57.  [`usePrometheusPoll`](#useprometheuspoll)
+58.  [`Timestamp`](#timestamp)
+59. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
+60. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
+61. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
 
 ---
 
@@ -955,6 +956,37 @@ Component that creates a link to a specific resource type with an icon badge
 | `dataTest` | (optional) identifier for testing |
 | `onClick` | (optional) callback function for when component is clicked |
 | `truncate` | (optional) flag to truncate the link if too long |
+
+
+
+---
+
+## `ResourceIcon`
+
+### Summary 
+
+Component that creates an icon badge for a specific resource type
+
+
+
+### Example
+
+
+```tsx
+<ResourceIcon kind="Pod"/>
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `kind` | (optional) the kind of resource i.e. Pod, Deployment, Namespace |
+| `groupVersionKind` | (optional) object with group, version, and kind |
+| `className` | (optional) class style for component |
 
 
 

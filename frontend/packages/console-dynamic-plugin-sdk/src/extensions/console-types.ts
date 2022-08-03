@@ -469,6 +469,13 @@ export type ResourceLinkProps = {
   truncate?: boolean;
 };
 
+export type ResourceIconProps = {
+  className?: string;
+  /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */
+  kind?: K8sResourceKindReference;
+  groupVersionKind?: K8sGroupVersionKind;
+};
+
 export type UseK8sModel = (
   // Use K8sGroupVersionKind type instead of K8sResourceKindReference. Support for type K8sResourceKindReference will be removed in a future release.
   groupVersionKind?: K8sResourceKindReference | K8sGroupVersionKind,

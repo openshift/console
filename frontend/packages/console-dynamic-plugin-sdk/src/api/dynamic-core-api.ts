@@ -14,6 +14,7 @@ import {
   ListPageFilterProps,
   UseListPageFilter,
   ResourceLinkProps,
+  ResourceIconProps,
   OverviewProps,
   OverviewGridProps,
   InventoryItemTitleProps,
@@ -344,6 +345,19 @@ export const useListPageFilter: UseListPageFilter = require('@console/internal/c
 export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/internal/components/utils/resource-link')
   .ResourceLink;
 export { default as ResourceStatus } from '../app/components/utils/resource-status';
+
+/**
+ * Component that creates an icon badge for a specific resource type
+ * @param {K8sResourceKindReference} [kind] - (optional) the kind of resource i.e. Pod, Deployment, Namespace
+ * @param {K8sGroupVersionKind} [groupVersionKind] - (optional) object with group, version, and kind
+ * @param {string} [className] -  (optional) class style for component
+ * @example 
+ * ```tsx
+ * <ResourceIcon kind="Pod"/>
+ * ```
+ */
+export const ResourceIcon: React.FC<ResourceIconProps> = require('@console/internal/components/utils/resource-icon')
+  .ResourceIcon;
 
 export {
   useK8sModel,
