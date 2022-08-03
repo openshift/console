@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
   observer,
@@ -14,6 +15,7 @@ import {
   useVisualizationController,
   ScaleDetailsLevel,
 } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import { DeploymentModel } from '@console/internal/models';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '@console/shared';
@@ -26,6 +28,7 @@ import { EventSinkIcon } from '../../../utils/icons';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 import { TYPE_EVENT_SINK_LINK, TYPE_KAFKA_CONNECTION_LINK } from '../../const';
 import EventSinkTargetAnchor from '../anchors/EventSinkTargetAnchor';
+import { MOVE_EV_SRC_CONNECTOR_OPERATION } from '../knativeComponentUtils';
 
 import './EventSource.scss';
 
@@ -33,6 +36,10 @@ export type EventSinkProps = {
   element: Node;
   dragging?: boolean;
   edgeDragging?: boolean;
+  tooltipLabel?: string;
+  canDrop?: boolean;
+  dropTarget?: boolean;
+  edgeOperation?: string;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
@@ -46,9 +53,14 @@ const EventSink: React.FC<EventSinkProps> = ({
   onShowCreateConnector,
   contextMenuOpen,
   children,
+  tooltipLabel,
+  dropTarget,
+  canDrop,
+  edgeOperation,
   ...rest
 }) => {
   useAnchor(EventSinkTargetAnchor, AnchorEnd.target, TYPE_EVENT_SINK_LINK);
+  const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef);
   const { data, resources, resource } = element.getData();
@@ -107,46 +119,59 @@ const EventSink: React.FC<EventSinkProps> = ({
   ]);
 
   return (
-    <BaseNode
-      className="odc-event-source"
-      onShowCreateConnector={isKafkaConnectionLinkPresent && onShowCreateConnector}
-      kind={data.kind}
-      element={element}
-      hoverRef={hoverRef}
-      dragNodeRef={groupRefs}
-      labelIcon={<EventSinkIcon />}
-      {...rest}
+    <Tooltip
+      content={
+        edgeOperation === MOVE_EV_SRC_CONNECTOR_OPERATION
+          ? t('knative-plugin~Move sink to KafkaSink')
+          : tooltipLabel ?? ''
+      }
+      trigger="manual"
+      isVisible={dropTarget && canDrop}
+      animationDuration={0}
     >
-      {donutStatus && showDetails && !isKafkaSink && (
-        <PodSet size={size * 0.75} x={width / 2} y={height / 2} data={donutStatus} />
-      )}
-      <circle
-        cx={width * 0.5}
-        cy={height * 0.5}
-        r={width * 0.25}
-        fill="var(--pf-global--palette--white)"
-      />
-      {typeof getEventSourceIcon(data.kind, resources.obj) === 'string' ? (
-        <image
-          x={width * 0.33}
-          y={height * 0.33}
-          width={size * 0.35}
-          height={size * 0.35}
-          xlinkHref={getEventSourceIcon(data.kind, resources.obj, element.getType()) as string}
+      <BaseNode
+        className="odc-event-source"
+        onShowCreateConnector={isKafkaConnectionLinkPresent && onShowCreateConnector}
+        kind={data.kind}
+        element={element}
+        hoverRef={hoverRef}
+        dragNodeRef={groupRefs}
+        dropTarget={dropTarget}
+        canDrop={canDrop}
+        labelIcon={<EventSinkIcon />}
+        {...rest}
+      >
+        {donutStatus && showDetails && !isKafkaSink && (
+          <PodSet size={size * 0.75} x={width / 2} y={height / 2} data={donutStatus} />
+        )}
+        <circle
+          cx={width * 0.5}
+          cy={height * 0.5}
+          r={width * 0.25}
+          fill="var(--pf-global--palette--white)"
         />
-      ) : (
-        <foreignObject
-          x={width * 0.33}
-          y={height * 0.33}
-          width={size * 0.35}
-          height={size * 0.35}
-          className="odc-event-source__svg-icon"
-        >
-          {getEventSourceIcon(data.kind, resources.obj, element.getType())}
-        </foreignObject>
-      )}
-      {children}
-    </BaseNode>
+        {typeof getEventSourceIcon(data.kind, resources.obj) === 'string' ? (
+          <image
+            x={width * 0.33}
+            y={height * 0.33}
+            width={size * 0.35}
+            height={size * 0.35}
+            xlinkHref={getEventSourceIcon(data.kind, resources.obj, element.getType()) as string}
+          />
+        ) : (
+          <foreignObject
+            x={width * 0.33}
+            y={height * 0.33}
+            width={size * 0.35}
+            height={size * 0.35}
+            className="odc-event-source__svg-icon"
+          >
+            {getEventSourceIcon(data.kind, resources.obj, element.getType())}
+          </foreignObject>
+        )}
+        {children}
+      </BaseNode>
+    </Tooltip>
   );
 };
 

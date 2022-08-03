@@ -172,7 +172,11 @@ export const getKafkaSinkComponentFactory: ViewComponentFactory = (kind, type) =
   if (type === TYPE_KAFKA_SINK) {
     return withEditReviewAccess('patch')(
       withDragNode(nodeDragSourceSpec(type))(
-        withSelection({ controlled: true })(withContextMenu(contextMenuActions)(EventSink)),
+        withSelection({ controlled: true })(
+          withContextMenu(contextMenuActions)(
+            withDndDrop<any, any, {}, NodeComponentProps>(eventSourceSinkDropTargetSpec)(EventSink),
+          ),
+        ),
       ),
     );
   }
