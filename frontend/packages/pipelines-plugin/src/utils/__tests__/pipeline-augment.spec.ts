@@ -23,6 +23,7 @@ import {
   getResourceModelFromTaskKind,
   getResourceModelFromBindingKind,
   shouldHidePipelineRunStop,
+  shouldHidePipelineRunCancel,
 } from '../pipeline-augment';
 import { testData } from './pipeline-augment-test-data';
 
@@ -235,6 +236,30 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
           DataState.SUCCESS
         ];
       expect(shouldHidePipelineRunStop(pipelineRun)).toEqual(true);
+    });
+
+    it('should hide the pipelinerun cancel action ', () => {
+      const pipelineRun =
+        pipelineTestData[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP].pipelineRuns[
+          DataState.SUCCESS
+        ];
+      expect(shouldHidePipelineRunCancel(pipelineRun)).toEqual(true);
+    });
+
+    it('should not hide the pipelinerun cancel action ', () => {
+      const pipelineRun =
+        pipelineTestData[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP].pipelineRuns[
+          DataState.IN_PROGRESS
+        ];
+      expect(shouldHidePipelineRunCancel(pipelineRun)).toEqual(false);
+    });
+
+    it('should hide the pipelinerun cancel action ', () => {
+      const pipelineRun =
+        pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[
+          DataState.PIPELINE_RUN_STOPPED
+        ];
+      expect(shouldHidePipelineRunCancel(pipelineRun)).toEqual(true);
     });
   });
 

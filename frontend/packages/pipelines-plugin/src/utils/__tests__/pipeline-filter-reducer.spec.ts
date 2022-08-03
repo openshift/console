@@ -34,7 +34,12 @@ const mockPipelineRuns = [
   { status: { conditions: [{ status: 'Unknown', type: 'Succeeded' }] } },
   {
     status: {
-      conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'PipelineRunCancelled' }],
+      conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'StoppedRunFinally' }],
+    },
+  },
+  {
+    status: {
+      conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'CancelledRunFinally' }],
     },
   },
   {
@@ -120,12 +125,16 @@ describe('Check PipelineRun Status | Filter Reducer applied to the following:', 
     const reducerOutput = pipelineRunStatus(mockPipelineRuns[8]);
     expect(reducerOutput).toBe('Running');
   });
-  it('Pipelinerun with first element of condition array with type as "Succeeded" & status as "Unknown"', () => {
+  it('Pipelinerun with first element of condition array with type as "Succeeded" & status as "Unknown" & reason as "StoppedRunFinally"', () => {
     const reducerOutput = pipelineRunStatus(mockPipelineRuns[9]);
     expect(reducerOutput).toBe('Cancelled');
   });
-  it('Pipelinerun with first element of condition array with type as "Succeeded" & status as "Unknown"', () => {
+  it('Pipelinerun with first element of condition array with type as "Succeeded" & status as "Unknown" & reason as "CancelledRunFinally"', () => {
     const reducerOutput = pipelineRunStatus(mockPipelineRuns[10]);
+    expect(reducerOutput).toBe('Cancelled');
+  });
+  it('Pipelinerun with first element of condition array with type as "Succeeded" & status as "Unknown"', () => {
+    const reducerOutput = pipelineRunStatus(mockPipelineRuns[11]);
     expect(reducerOutput).toBe('Cancelled');
   });
   it('Pipelinerun with first element of condition array with type as "Succeeded" & Failing condition', () => {

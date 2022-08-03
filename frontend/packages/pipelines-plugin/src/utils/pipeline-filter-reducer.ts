@@ -3,7 +3,8 @@ import * as _ from 'lodash';
 import { ComputedStatus } from '../types';
 
 export enum SucceedConditionReason {
-  PipelineRunCancelled = 'PipelineRunCancelled',
+  PipelineRunCancelled = 'StoppedRunFinally',
+  PipelineRunStopped = 'CancelledRunFinally',
   TaskRunCancelled = 'TaskRunCancelled',
   Cancelled = 'Cancelled',
   PipelineRunStopping = 'PipelineRunStopping',
@@ -36,6 +37,7 @@ export const pipelineRunStatus = (pipelineRun): ComputedStatus => {
       case SucceedConditionReason.PipelineRunCancelled:
       case SucceedConditionReason.TaskRunCancelled:
       case SucceedConditionReason.Cancelled:
+      case SucceedConditionReason.PipelineRunStopped:
         return ComputedStatus.Cancelled;
       case SucceedConditionReason.PipelineRunStopping:
       case SucceedConditionReason.TaskRunStopping:

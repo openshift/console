@@ -406,6 +406,8 @@
   "Edit Pipeline": "Edit Pipeline",
   "Start last run": "Start last run",
   "Stop": "Stop",
+  "Let the running tasks complete, then execute finally tasks": "Let the running tasks complete, then execute finally tasks",
+  "Interrupt any executing non finally tasks, then execute finally tasks": "Interrupt any executing non finally tasks, then execute finally tasks",
   "Succeeded": "Succeeded",
   "Failed": "Failed",
   "PipelineRun failed to start": "PipelineRun failed to start",
