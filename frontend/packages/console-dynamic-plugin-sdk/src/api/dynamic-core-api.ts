@@ -1,5 +1,6 @@
 /* eslint-disable */
 import * as React from 'react';
+import { ActionServiceProviderProps } from '../extensions/actions';
 import {
   HorizontalNavProps,
   UseResolvedExtensions,
@@ -351,7 +352,7 @@ export { default as ResourceStatus } from '../app/components/utils/resource-stat
  * @param {K8sResourceKindReference} [kind] - (optional) the kind of resource i.e. Pod, Deployment, Namespace
  * @param {K8sGroupVersionKind} [groupVersionKind] - (optional) object with group, version, and kind
  * @param {string} [className] -  (optional) class style for component
- * @example 
+ * @example
  * ```tsx
  * <ResourceIcon kind="Pod"/>
  * ```
@@ -645,3 +646,26 @@ export const Timestamp: React.FC<TimestampProps> = require('@console/internal/co
   .Timestamp;
 
 export { useModal } from '../app/modal-support/useModal';
+
+/**
+ * Component that allows to receive contributions from other plugins for the `console.action/provider` extension type.
+ * See docs: https://github.com/openshift/console/blob/master/frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md#consoleactionprovider
+ *
+ * @param {ActionServiceProviderProps["context"]} context - Object with contextId and optional plugin data
+ * @example
+ * ```tsx
+ *    const context: ActionContext = { 'a-context-id': { dataFromDynamicPlugin } };
+ *
+ *    ...
+ *
+ *    <ActionServiceProvider context={context}>
+ *        {({ actions, options, loaded }) =>
+ *          loaded && (
+ *            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+ *          )
+ *        }
+ *    </ActionServiceProvider>
+ * ```
+ */
+export const ActionServiceProvider: React.FC<ActionServiceProviderProps> = require('@console/shared/src/components/actions/ActionServiceProvider')
+  .default;

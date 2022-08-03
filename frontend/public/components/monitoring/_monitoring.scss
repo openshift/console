@@ -294,6 +294,18 @@ $monitoring-line-height: 18px;
   margin-right: 10px;
 }
 
+.monitoring-alert-detail-toolbar.pf-c-toolbar  {
+  padding-top: 0;
+
+  .pf-c-toolbar__content{
+    padding: 0;
+  }
+
+  .co-section-heading{
+    margin: 0;
+  }
+}
+
 .monitoring-silence-alert {
   max-width: 950px;
 
@@ -496,9 +508,10 @@ $monitoring-line-height: 18px;
   padding: 10px 20px;
 }
 
-.query-browser__toggle-graph {
-  margin-bottom: 5px;
-  float: right;
+.query-browser__toggle-graph-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--pf-global--spacer--xs);
 }
 
 .query-browser__tooltip {

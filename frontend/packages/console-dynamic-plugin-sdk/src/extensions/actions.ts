@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ExtensionHook, ExtensionK8sKindVersionModel } from '../api/common-types';
+import { ActionContext } from '../api/internal-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
@@ -125,4 +126,28 @@ export type Action = {
   insertAfter?: string | string[];
   /** Describes the access check to perform. */
   accessReview?: AccessReviewResourceAttributes;
+};
+
+export type GroupedMenuOption = ActionGroup['properties'] & {
+  children?: MenuOption[];
+};
+
+export type MenuOption = Action | GroupedMenuOption;
+
+export type ActionService = {
+  actions: Action[];
+  options: MenuOption[];
+  loaded: boolean;
+  error: any;
+};
+
+export enum MenuOptionType {
+  GROUP_MENU,
+  SUB_MENU,
+  ATOMIC_MENU,
+}
+
+export type ActionServiceProviderProps = {
+  context: ActionContext;
+  children: (service: ActionService) => React.ReactNode;
 };
