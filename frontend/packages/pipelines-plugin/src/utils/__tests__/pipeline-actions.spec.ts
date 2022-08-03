@@ -73,17 +73,9 @@ describe('PipelineAction testing stopPipelineRun create correct labels and callb
 
 describe('PipelineAction testing cancelPipelineRunFinally create correct labels and callbacks', () => {
   it('expect label to be "Cancel" with hidden flag as false when latest Run is running', () => {
-    const cancelAction = cancelPipelineRunFinally(PipelineRunModel, {
-      ...samplePipelineRun,
-      status: {
-        conditions: [
-          {
-            ...samplePipelineRun.status.conditions[0],
-            status: 'Unknown',
-          },
-        ],
-      },
-    });
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.IN_PROGRESS];
+    const cancelAction = cancelPipelineRunFinally(PipelineRunModel, pipelineRun);
     expect(cancelAction.labelKey).toBe(`${i18nNS}~Cancel`);
     expect(cancelAction.callback).not.toBeNull();
     expect(cancelAction.hidden).toBeFalsy();

@@ -765,7 +765,7 @@ export const pipelineTestData: PipelineTestData = {
           pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
-              reason: 'StoppedRunFinally',
+              reason: 'Cancelled',
               status: 'False',
               type: 'Succeeded',
             },
@@ -841,7 +841,7 @@ export const pipelineTestData: PipelineTestData = {
           pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
-              reason: 'StoppedRunFinally',
+              reason: 'Cancelled',
               status: 'False',
               type: 'Succeeded',
             },
@@ -1047,7 +1047,7 @@ export const pipelineTestData: PipelineTestData = {
           pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
-              reason: 'StoppedRunFinally',
+              reason: 'Cancelled',
               status: 'False',
               type: 'Succeeded',
             },

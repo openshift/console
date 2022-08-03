@@ -414,6 +414,7 @@
   "Running": "Running",
   "Skipped": "Skipped",
   "Cancelled": "Cancelled",
+  "Cancelling": "Cancelling",
   "Pending": "Pending",
   "PipelineRun not started yet": "PipelineRun not started yet",
   "Other": "Other"

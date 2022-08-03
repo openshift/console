@@ -21,6 +21,18 @@ export const pipelineRunStatus = (pipelineRun): ComputedStatus => {
   if (conditions.length === 0) return null;
 
   const succeedCondition = conditions.find((c) => c.type === 'Succeeded');
+  const cancelledCondition = conditions.find((c) => c.reason === 'Cancelled');
+
+  if (
+    [
+      SucceedConditionReason.PipelineRunStopped,
+      SucceedConditionReason.PipelineRunCancelled,
+    ].includes(pipelineRun.spec?.status) &&
+    !cancelledCondition
+  ) {
+    return ComputedStatus.Cancelling;
+  }
+
   if (!succeedCondition || !succeedCondition.status) {
     return null;
   }
@@ -74,6 +86,8 @@ export const pipelineRunStatusTitle = (pipelineRun): string => {
       return i18next.t('pipelines-plugin~Running');
     case ComputedStatus.Skipped:
       return i18next.t('pipelines-plugin~Skipped');
+    case ComputedStatus.Cancelling:
+      return i18next.t('pipelines-plugin~Cancelling');
     default:
       return status;
   }
