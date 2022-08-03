@@ -235,19 +235,26 @@ const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
   });
   const onToggle = (open: boolean): void => setIsOpen(open);
 
+  const selectedNodesUpdated = selectedNodes.map((item) =>
+    item === 'master' ? 'control plane' : item,
+  );
+
   return (
     <Select
       variant={SelectVariant.checkbox}
       aria-label={t('public~Filter by Node type')}
       onToggle={onToggle}
       onSelect={onNodeSelect}
-      selections={selectedNodes}
+      selections={selectedNodesUpdated}
       isOpen={isOpen}
       placeholderText={t('public~Filter by Node type')}
       isPlain
     >
       {sortedMCPs.map((mcp) => (
-        <SelectOption key={mcp.metadata.name} value={mcp.metadata.name} />
+        <SelectOption
+          key={mcp.metadata.name}
+          value={mcp.metadata.name === 'master' ? 'control plane' : mcp.metadata.name}
+        />
       ))}
     </Select>
   );
@@ -273,10 +280,11 @@ export const UtilizationCard = () => {
 
   // TODO: add `useUserSettingsCompatibility` to store selectedNodes
   const onNodeSelect = (event: React.MouseEvent, selection: string) => {
-    if (selectedNodes.includes(selection)) {
-      setSelectedNodes(selectedNodes.filter((item) => item !== selection));
+    const selectionUpdated = selection === 'control plane' ? 'master' : selection;
+    if (selectedNodes.includes(selectionUpdated)) {
+      setSelectedNodes(selectedNodes.filter((item) => item !== selectionUpdated));
     } else {
-      setSelectedNodes([...selectedNodes, selection]);
+      setSelectedNodes([...selectedNodes, selectionUpdated]);
     }
   };
   // if no filter is applied, show all nodes using regex

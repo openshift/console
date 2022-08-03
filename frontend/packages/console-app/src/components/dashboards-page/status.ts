@@ -106,7 +106,7 @@ export const getControlPlaneHealth: PrometheusHealthHandler = (
 
   const singleMasterMsg =
     worstStatus.state === HealthState.OK && isSingleNode(infrastructure)
-      ? t('console-app~Single master')
+      ? t('console-app~Single control plane node')
       : undefined;
 
   return {
