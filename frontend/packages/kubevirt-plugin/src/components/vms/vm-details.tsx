@@ -18,7 +18,7 @@ import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/gue
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { getNamespace } from '../../selectors';
 import { isVM, isVMI } from '../../selectors/check-type';
-import { getServicesForVmi } from '../../selectors/service';
+import { getServicesForVM } from '../../selectors/service';
 import { isWindows } from '../../selectors/vm/combined';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
@@ -84,7 +84,7 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
   const { kindObj, vm, vmi, pods, vmStatusBundle, ...restProps } = props;
 
   const vmiLike = kindObj === VirtualMachineModel ? vm : vmi;
-  const vmServicesData = getServicesForVmi(getLoadedData(props.services, []), vmi);
+  const vmServicesData = getServicesForVM(getLoadedData(props.services, []), vm);
   const canUpdate = useAccessReview(asAccessReview(kindObj, vmiLike || {}, 'patch')) && !!vmiLike;
 
   const [guestAgentInfoRaw] = useGuestAgentInfo({ vmi });

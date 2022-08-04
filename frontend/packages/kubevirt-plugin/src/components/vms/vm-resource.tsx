@@ -1,3 +1,5 @@
+import './ssh-details.scss';
+
 import * as React from 'react';
 import { ClipboardCopy, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -72,8 +74,6 @@ import VMDetailsItem from './VMDetailsItem';
 import VMDetailsItemTemplate from './VMDetailsItemTemplate';
 import VMEditWithPencil from './VMEditWithPencil';
 import VMIP from './VMIP';
-
-import './ssh-details.scss';
 
 export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   vm,
@@ -164,9 +164,9 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const ipAddrs = getVmiIpAddresses(vmi);
   const workloadProfile = vmiLikeWrapper?.getWorkloadProfile();
 
-  const [sshService] = useSSHService2(vmi);
+  const [sshService] = useSSHService2(vm);
 
-  const { command, user } = useSSHCommand(vmi);
+  const { command, user } = useSSHCommand(vm);
   const vmiReady = isVMIReady(vmi);
   const sshServicesRunning = !!sshService;
   const sshServicePort = sshService?.spec?.ports?.find(
@@ -294,19 +294,13 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         title={t('kubevirt-plugin~SSH Access')}
         dataTest="ssh-access-details-item"
         idValue={prefixedID(id, 'ssh-access')}
-        canEdit={vmiReady}
+        canEdit
         onEditClick={() => SSHModal({ vm })}
       >
         <span data-test="details-item-ssh-access-port">
-          {vmiReady ? (
-            sshServicesRunning ? (
-              t('kubevirt-plugin~port: {{port}}', { port: sshServicePort })
-            ) : (
-              t('kubevirt-plugin~SSH Service disabled')
-            )
-          ) : (
-            <div className="text-secondary">{t('kubevirt-plugin~Virtual machine not running')}</div>
-          )}
+          {sshServicesRunning
+            ? t('kubevirt-plugin~port: {{port}}', { port: sshServicePort })
+            : t('kubevirt-plugin~SSH Service disabled')}
         </span>
       </VMDetailsItem>
 

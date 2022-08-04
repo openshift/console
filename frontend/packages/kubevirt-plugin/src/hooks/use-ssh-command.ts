@@ -1,5 +1,5 @@
 import { getCloudInitValues, TARGET_PORT } from '../components/ssh-service/SSHForm/ssh-form-utils';
-import { VMIKind } from '../types';
+import { VMKind } from '../types';
 import { useSSHService2 } from './use-ssh-service';
 
 export type useSSHCommandResult = {
@@ -11,8 +11,8 @@ export type useSSHCommandResult = {
 };
 
 // based on dynamic-plugin solution: https://github.com/kubevirt-ui/kubevirt-plugin/pull/478
-const useSSHCommand = (vmi: VMIKind): useSSHCommandResult => {
-  const [sshService] = useSSHService2(vmi);
+const useSSHCommand = (vm: VMKind): useSSHCommandResult => {
+  const [sshService] = useSSHService2(vm);
 
   const servicePort = sshService?.spec?.ports?.find(
     (port) => parseInt(port.targetPort, 10) === TARGET_PORT,
@@ -20,7 +20,7 @@ const useSSHCommand = (vmi: VMIKind): useSSHCommandResult => {
 
   const consoleHostname = window.location.hostname; // fallback to console hostname
 
-  const user = getCloudInitValues(vmi, 'user');
+  const user = getCloudInitValues(vm, 'user');
 
   let command = 'ssh ';
   if (user) command += `${user}@`;
