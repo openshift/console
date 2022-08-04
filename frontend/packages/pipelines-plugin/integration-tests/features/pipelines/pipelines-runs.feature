@@ -336,7 +336,7 @@ Feature: Pipeline Runs
               And user navigates to pipelineRun logs tab
              Then user is able to see log snippet for failure of "build-image" task
 
-        @regression
+        @regression @odc-4793
         Scenario: Pipeline Run details page with Parameters tab and no parameters: P-07-TC34
             Given pipeline run is displayed for "pipeline-run-no-parameters" without resource
               And user is at pipelines page
@@ -346,7 +346,7 @@ Feature: Pipeline Runs
               And user navigates to pipelineRun parameters tab
               And user is able to see No parameters are associated with this PipelineRun
 
-        @regression
+        @regression @odc-4793
         Scenario: Pipeline Run with parameters: P-07-TC35
             Given pipeline run is displayed for "pipeline-run-parameters" with parameters
               And user is at pipelines page

@@ -17,7 +17,7 @@ import {
 import { getPipelineRunData } from '../components/pipelines/modals/common/utils';
 import { EventListenerModel, PipelineModel, PipelineRunModel } from '../models';
 import { PipelineKind, PipelineRunKind } from '../types';
-import { shouldHidePipelineRunStop } from './pipeline-augment';
+import { shouldHidePipelineRunStop, shouldHidePipelineRunCancel } from './pipeline-augment';
 
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
   history.push(
@@ -182,6 +182,8 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
   return {
     // t('pipelines-plugin~Stop')
     labelKey: 'pipelines-plugin~Stop',
+    // t('pipelines-plugin~Let the running tasks complete, then execute finally tasks'),
+    tooltipKey: 'pipelines-plugin~Let the running tasks complete, then execute finally tasks',
     callback: () => {
       k8sPatch(
         PipelineRunModel,
@@ -192,12 +194,49 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
           {
             op: 'replace',
             path: `/spec/status`,
-            value: 'PipelineRunCancelled',
+            value: 'StoppedRunFinally',
           },
         ],
       );
     },
     hidden: shouldHidePipelineRunStop(pipelineRun),
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.plural,
+      name: pipelineRun.metadata.name,
+      namespace: pipelineRun.metadata.namespace,
+      verb: 'update',
+    },
+  };
+};
+
+export const cancelPipelineRunFinally: KebabAction = (
+  kind: K8sKind,
+  pipelineRun: PipelineRunKind,
+) => {
+  // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
+  return {
+    // t('pipelines-plugin~Cancel')
+    labelKey: 'pipelines-plugin~Cancel',
+    // t('pipelines-plugin~Interrupt any executing non finally tasks, then execute finally tasks'),
+    tooltipKey:
+      'pipelines-plugin~Interrupt any executing non finally tasks, then execute finally tasks',
+    callback: () => {
+      k8sPatch(
+        PipelineRunModel,
+        {
+          metadata: { name: pipelineRun.metadata.name, namespace: pipelineRun.metadata.namespace },
+        },
+        [
+          {
+            op: 'replace',
+            path: `/spec/status`,
+            value: 'CancelledRunFinally',
+          },
+        ],
+      );
+    },
+    hidden: shouldHidePipelineRunCancel(pipelineRun),
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
@@ -263,6 +302,7 @@ export const getPipelineRunKebabActions = (redirectReRun?: boolean): KebabAction
     ? (model, pipelineRun) => rerunPipelineRunAndRedirect(model, pipelineRun)
     : (model, pipelineRun) => reRunPipelineRun(model, pipelineRun),
   (model, pipelineRun) => stopPipelineRun(model, pipelineRun),
+  (model, pipelineRun) => cancelPipelineRunFinally(model, pipelineRun),
   Kebab.factory.Delete,
 ];
 
