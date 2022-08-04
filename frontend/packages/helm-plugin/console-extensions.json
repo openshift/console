@@ -78,9 +78,9 @@
   {
     "type": "console.page/route",
     "properties": {
-      "exact": true,
-      "path": ["/helm-releases/all-namespaces", "/helm-releases/ns/:ns"],
-      "component": { "$codeRef": "helmComponents.HelmReleaseListPage" }
+      "exact": false,
+      "path": ["/helm-releases/ns/:ns/release/:name"],
+      "component": { "$codeRef": "helmComponents.HelmReleaseDetailsPage" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -90,8 +90,8 @@
     "type": "console.page/route",
     "properties": {
       "exact": false,
-      "path": ["/helm-releases/ns/:ns/release/:name"],
-      "component": { "$codeRef": "helmComponents.HelmReleaseDetailsPage" }
+      "path": ["/helm-releases/all-namespaces", "/helm-releases/ns/:ns"],
+      "component": { "$codeRef": "helmComponents.HelmTabbedPage" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -336,6 +336,16 @@
         "kind": "HelmChartRepository"
       },
       "component": { "$codeRef": "helmComponents.HelmChartRepositoryListPage" }
+    }
+  },
+  {
+    "type": "dev-console.detailsPage/breadcrumbs",
+    "properties": {
+      "getModels": { "$codeRef": "helmProviders.getHelmChartRepositoriesModel" },
+      "breadcrumbsProvider": { "$codeRef":"helmProviders.useHelmChartRepositoriesBreadcrumbs" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
     }
   }
 ]

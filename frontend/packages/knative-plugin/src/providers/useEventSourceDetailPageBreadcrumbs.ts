@@ -16,6 +16,7 @@ export const useEventSourceDetailPageBreadcrumbs = (kindObj: K8sKind, urlMatch: 
     'eventing',
     serverlessTab('EventSource'),
     isAdminPerspective ? t('knative-plugin~Event Sources') : undefined,
+    isAdminPerspective,
   );
 };
 

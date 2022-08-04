@@ -4,30 +4,40 @@ import {
   devNavigationMenu,
   addOptions,
   pageTitle,
+  switchPerspective,
 } from '@console/dev-console/integration-tests/support/constants';
 import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects/add-flow-po';
 import {
   navigateTo,
   addPage,
   catalogPage,
+  perspective,
 } from '@console/dev-console/integration-tests/support/pages';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 import { helmPage, helmDetailsPage } from '../../pages';
+
+Given('user is at developer perspective', () => {
+  perspective.switchTo(switchPerspective.Developer);
+});
 
 When('user clicks on the Helm tab', () => {
   navigateTo(devNavigationMenu.Helm);
 });
 
 Then('user will be redirected to Helm releases page', () => {
-  detailsPage.titleShouldContain('Helm Releases');
+  detailsPage.titleShouldContain('Helm');
 });
 
-Then('user is able to see the message as no helm charts present', () => {
-  helmPage.verifyMessage();
+Then('user is able to see the message {string}', (noHelmReleasesFound: string) => {
+  helmPage.verifyMessage(noHelmReleasesFound);
 });
 
 Then('user will get the link to install helm charts from developer catalog', () => {
   helmPage.verifyInstallHelmLink();
+});
+
+Then('user is able to see the link {string}', (installLink: string) => {
+  helmPage.verifyInstallHelmChartLink(installLink);
 });
 
 When('user searches and selects {string} card from catalog page', (cardName: string) => {
@@ -170,4 +180,48 @@ Then('form sections are displayed in form view', () => {
   // Only field group IDs are available with new chart.
   cy.get('#root_field-group').should('be.visible');
   cy.get(catalogPO.installHelmChart.cancel).click();
+});
+
+Then('user is redirected to Repositories tab', () => {
+  detailsPage.titleShouldContain('Helm');
+  helmDetailsPage.selectedHelmTab('Repositories');
+});
+
+Then('user is able to see Helm Releases and Repositories Tabs', () => {
+  helmDetailsPage.checkHelmTab('Helm Releases');
+  helmDetailsPage.checkHelmTab('Repositories');
+});
+
+When('user clicks on Repositories tab', () => {
+  helmDetailsPage.selectHelmTab('Repositories');
+});
+
+Then(
+  'user is able to see the Create drop down menu with Helm Release and Repository options',
+  () => {
+    helmDetailsPage.verifyHelmActionsDropdown();
+    helmDetailsPage.clickHelmActionButton();
+    helmDetailsPage.verifyActionsInCreateMenu();
+  },
+);
+
+Then('user clicks on {string} repository', (repoName: string) => {
+  helmDetailsPage.clickHelmChartRepository(repoName);
+});
+
+Then('Repositories breadcrumbs is visible', () => {
+  detailsPage.breadcrumb(0).contains('Repositories');
+});
+
+Then('user clicks on Repositories link', () => {
+  detailsPage.breadcrumb(0).click();
+  detailsPage.titleShouldContain('Helm');
+});
+
+When('user clicks on Repository in create action menu', () => {
+  helmDetailsPage.clickCreateRepository();
+});
+
+When('user clicks on Helm release in create action menu', () => {
+  helmDetailsPage.clickCreateHelmRelease();
 });

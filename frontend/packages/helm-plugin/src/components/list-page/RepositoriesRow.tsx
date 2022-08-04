@@ -9,8 +9,11 @@ import {
   Kebab,
   ExternalLink,
 } from '@console/internal/components/utils';
-import { referenceFor } from '@console/internal/module/k8s';
+import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+
+const helmChartRepositoryReference = referenceForModel(HelmChartRepositoryModel);
+const projectHelmChartRepositoryReference = referenceForModel(ProjectHelmChartRepositoryModel);
 
 const tableColumnClasses = [
   '', // Name
@@ -22,30 +25,31 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ProjectHelmChartRepositoryRow: React.FC<RowFunctionArgs> = ({ obj }) => {
+const RepositoriesRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
   const objReference = referenceFor(obj);
   const menuActions = [
-    ...Kebab.getExtensionsActionsForKind(
-      obj.metadata?.namespace ? ProjectHelmChartRepositoryModel : HelmChartRepositoryModel,
-    ),
+    ...Kebab.getExtensionsActionsForKind(HelmChartRepositoryModel),
     ...Kebab.factory.common,
   ];
-
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
-          kind={objReference}
+          kind={
+            obj.kind === HelmChartRepositoryModel.kind
+              ? helmChartRepositoryReference
+              : projectHelmChartRepositoryReference
+          }
           name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          namespace={obj.metadata?.namespace}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         {obj.spec?.name ? obj.spec.name : '-'}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {obj.kind === ProjectHelmChartRepositoryModel.kind ? (
+        {obj.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
         ) : (
           t('helm-plugin~All Namespaces')
@@ -75,4 +79,4 @@ const ProjectHelmChartRepositoryRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   );
 };
 
-export default ProjectHelmChartRepositoryRow;
+export default RepositoriesRow;

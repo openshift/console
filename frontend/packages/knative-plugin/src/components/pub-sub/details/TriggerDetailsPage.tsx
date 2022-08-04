@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -13,6 +14,7 @@ import TriggerDetails from './TriggerDetails';
 
 const TriggerDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { kindObj, match } = props;
+  const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const customActionMenu = (kindObjData, obj) => {
     const resourceKind = referenceForModel(kindObjData);
     const context = { [resourceKind]: obj };
@@ -31,6 +33,8 @@ const TriggerDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
     match,
     'eventing',
     serverlessTab(kindObj.kind),
+    undefined,
+    isAdminPerspective,
   );
   const pages = [navFactory.details(TriggerDetails), navFactory.editYaml()];
 
