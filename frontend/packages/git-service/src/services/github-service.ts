@@ -19,9 +19,11 @@ export class GithubService extends BaseService {
 
   constructor(gitsource: GitSource) {
     super(gitsource);
-    const opts = this.getAuthProvider();
+    const authOpts = this.getAuthProvider();
     this.metadata = this.getRepoMetadata();
-    this.client = new Octokit(opts);
+    const baseUrl =
+      this.metadata.host === 'github.com' ? null : `https://${this.metadata.host}/api/v3`;
+    this.client = new Octokit({ ...authOpts, baseUrl });
   }
 
   protected getAuthProvider = (): Octokit.Options => {

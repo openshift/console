@@ -49,7 +49,12 @@ export const gitPage = {
       .type(gitUrl);
 
     if (repository) {
-      cy.wait(['@getRepo', '@getContents', '@getPackage']);
+      const responses = getResponseMocks(repository);
+      cy.wait(
+        responses.packageResponse
+          ? ['@getRepo', '@getContents', '@getPackage']
+          : ['@getRepo', '@getContents'],
+      );
     }
     app.waitForDocumentLoad();
   },
