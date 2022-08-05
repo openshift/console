@@ -162,7 +162,7 @@ describe('ImagesSection', () => {
     expect(Object.values(options).map((option) => option.textContent)).toEqual([
       'Image Stream Tag',
       'Image Stream Image',
-      'Docker image',
+      'External container image',
     ]);
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
@@ -193,7 +193,7 @@ describe('ImagesSection', () => {
       'None',
       'Image Stream Tag',
       'Image Stream Image',
-      'Docker image',
+      'External container image',
     ]);
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
@@ -222,7 +222,7 @@ describe('ImagesSection', () => {
     expect(Object.values(options).map((option) => option.textContent)).toEqual([
       'None',
       'Image Stream Tag',
-      'Docker image',
+      'External container image',
     ]);
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
@@ -274,7 +274,7 @@ describe('ImagesSection', () => {
     );
 
     userEvent.click(renderResult.getByText('Please select'));
-    userEvent.click(renderResult.getByText('Docker image'));
+    userEvent.click(renderResult.getByText('External container image'));
 
     expect(renderResult.getAllByRole('textbox')).toHaveLength(1);
 
@@ -407,7 +407,7 @@ describe('ImagesSection', () => {
 
     // Fill form
     userEvent.click(renderResult.getByText('Please select'));
-    userEvent.click(renderResult.getByText('Docker image'));
+    userEvent.click(renderResult.getByText('External container image'));
     userEvent.type(renderResult.getByRole('textbox'), 'centos');
 
     // Submit
