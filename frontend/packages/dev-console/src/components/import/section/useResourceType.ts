@@ -17,12 +17,11 @@ export const useResourceType = (): [string, React.Dispatch<React.SetStateAction<
     preferredResourceType,
     setPreferredResourceType,
     preferredResourceTypeLoaded,
-  ] = useUserSettings<string>(PREFERRED_RESOURCE_TYPE_USER_SETTING_KEY, defaultResourceType, true);
+  ] = useUserSettings<string>(PREFERRED_RESOURCE_TYPE_USER_SETTING_KEY, defaultResourceType);
 
   const [resourceType, setResourceType, resourceTypeLoaded] = useUserSettings<string>(
     LAST_RESOURCE_TYPE_STORAGE_KEY,
     defaultResourceType,
-    true,
   );
 
   React.useEffect(() => {
@@ -56,7 +55,8 @@ export const useResourceType = (): [string, React.Dispatch<React.SetStateAction<
     if (preferredResourceTypeLoaded && preferredResourceType !== LAST_USED_RESOURCE_KEY) {
       setResourceType(preferredResourceType);
     }
-  }, [preferredResourceType, preferredResourceTypeLoaded, setResourceType]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preferredResourceType, preferredResourceTypeLoaded]);
 
   return [resourceType, setResourceType];
 };
