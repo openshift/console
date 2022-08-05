@@ -9,6 +9,7 @@ export const maxClockSkewMS = -60000;
 export const timeFormatter = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
   hour: 'numeric',
   minute: 'numeric',
+  hour12: true,
 });
 
 export const timeFormatterWithSeconds = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
