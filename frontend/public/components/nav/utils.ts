@@ -1,11 +1,7 @@
-import {
-  NavExtension,
-  isNavSection,
-  ExtensionK8sModel,
-  K8sModel,
-} from '@console/dynamic-plugin-sdk';
+import { startsWithSome } from '@console/shared';
+import { NavExtension, isNavSection, K8sModel } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { referenceForModel, referenceForExtensionModel } from '@console/internal/module/k8s';
+import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { stripBasePath } from '../utils';
 
 const toArray = (val) => (val ? (Array.isArray(val) ? val : [val]) : []);
@@ -151,18 +147,6 @@ export const sortExtensionItems = <E extends NavExtension>(
   return sortedItems;
 };
 
-// Returns true if path equals or starts with at least one provided prefix
-export const somePrefixMatchesPath = (path: string, ...prefixes: string[]): boolean =>
-  prefixes?.some((prefix) => prefix?.length > 0 && path.startsWith(prefix));
-
-// Returns true if path equals or starts with group~version~kind for the given k8s model
-export const modelMatchesPath = (path: string, model: K8sModel) =>
-  model && somePrefixMatchesPath(path, referenceForModel(model));
-
-// Returns true if path equals or starts with group~version~kind for the provided extension model
-export const extensionModelMatchesPath = (path: string, model: ExtensionK8sModel) =>
-  model && somePrefixMatchesPath(path, referenceForExtensionModel(model));
-
 // Strips '/<basePath>/k8s/cluster/', '/<basePath>/k8s/ns/<namespace>/', and
 // '/<basePath>/k8s/all-namespaces/' from the beginning a given path
 export const stripScopeFromPath = (path: string) => {
@@ -177,23 +161,21 @@ export const navItemHrefIsActive = (
   href: string,
   startsWith?: string[],
 ): boolean =>
-  somePrefixMatchesPath(
-    stripScopeFromPath(location),
-    stripScopeFromPath(href),
-    ...(startsWith ?? []),
-  );
+  startsWithSome(stripScopeFromPath(location), stripScopeFromPath(href), ...(startsWith ?? []));
 
 export const navItemResourceIsActive = (
   location: string,
   k8sModel: K8sModel,
   startsWith?: string[],
-): boolean =>
-  somePrefixMatchesPath(
-    stripScopeFromPath(location),
-    referenceForModel(k8sModel),
-    k8sModel.plural,
-    ...(startsWith ?? []),
-  );
+): boolean => {
+  const scopelessPath = stripScopeFromPath(location);
+  const [firstSegment] = scopelessPath.split('/');
+  const resourceMatches =
+    k8sModel &&
+    firstSegment &&
+    [getReferenceForModel(k8sModel), k8sModel.plural].includes(firstSegment);
+  return resourceMatches || startsWithSome(scopelessPath, ...(startsWith ?? []));
+};
 
 export const isTopLevelNavItem = (e: LoadedExtension<NavExtension>) =>
   isNavSection(e) || !e.properties.section;

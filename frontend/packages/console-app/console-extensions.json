@@ -801,8 +801,7 @@
       "insertAfter": "persistentvolumes",
       "name": "%console-app~PersistentVolumeClaims%",
       "model": {
-        "group": "v1",
-        "version": "",
+        "version": "v1",
         "kind": "PersistentVolumeClaim"
       }
     }
@@ -1122,9 +1121,8 @@
       "name": "%console-app~ResourceQuotas%",
       "startsWith": ["clusterresourcequotas"],
       "model": {
-        "group": "project.openshift.io",
         "version": "v1",
-        "kind": "Project"
+        "kind": "ResourceQuota"
       }
     }
   },
