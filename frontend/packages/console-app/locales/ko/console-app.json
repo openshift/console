@@ -96,6 +96,7 @@
   "Edit update strategy": "업데이트 전략 편집",
   "Resume rollouts": "롤아웃 재개",
   "Pause rollouts": "롤아웃 일시 중지",
+  "Restart rollout": "롤아웃 재시작",
   "Start rollout": "롤아웃 시작",
   "Edit resource limits": "리소스 제한 편집",
   "Create Service Binding": "서비스 바인딩 만들기",

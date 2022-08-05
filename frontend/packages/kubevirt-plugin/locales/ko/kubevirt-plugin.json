@@ -725,6 +725,7 @@
   "The following information regarding how the disks are partitioned is provided by the guest agent.": "다음의 디스크 파티션 설정 방법에 대한 정보는 게스트 에이전트에서 제공합니다.",
   "The following hot-plugged disks will be removed from the virtual machine": "다음 핫플러그 디스크가 가상 머신에서 제거됩니다.",
   "<0>{diskList}</0>": "<0>{diskList}</0>",
+  "Disk Type": "디스크 유형",
   "VM Disks List": "VM 디스크 목록",
   "Content": "내용",
   "Drive": "드라이브",

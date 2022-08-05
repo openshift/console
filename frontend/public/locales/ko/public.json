@@ -444,6 +444,7 @@
   "Triggers": "트리거",
   "DeploymentConfig details": "배포 설정 세부 정보",
   "ReplicationControllers": "복제 컨트롤러",
+  "Retry rollout": "롤아웃 다시 시도",
   "DeploymentConfigs": "배포 설정",
   "Edit update strategy": "업데이트 전략 편집",
   "Progress deadline seconds": "진행 종료 시간 (초)",

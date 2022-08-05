@@ -100,6 +100,7 @@
   "Build <1></1> is pending": "<1></1> 빌드가 보류 중입니다",
   "Build <1></1> is running": "<1></1> 빌드가 실행 중입니다",
   "Build <1></1> is {build.status?.phase?.toLowerCase()}": "<1></1> 빌드는 {build.status?.phase?.toLowerCase()}입니다",
+  "View all {{buildsLength}}": "{{buildsLength}} 모두 보기",
   "Start Build": "빌드 시작",
   "No Builds found for this Build Config.": "이 빌드 구성에 대한 빌드가 없습니다.",
   "Builds": "빌드",
