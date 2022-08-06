@@ -19,8 +19,7 @@ export const requesterFilter = (filter, obj): boolean => {
     return true;
   }
 
-  const annotations = obj.metadata?.annotations;
-  const requester = annotations ? annotations['openshift.io/requester'] : undefined;
+  const requester = obj.metadata?.annotations?.['openshift.io/requester'];
   if (filter.selected.includes(REQUESTER_FILTER.ME) && isCurrentUser(requester)) {
     return true;
   }
