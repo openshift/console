@@ -100,6 +100,7 @@ export const useExportAppFormToast = () => {
               window.open(routeUrl, '_blank');
             },
             component: 'a',
+            dataTest: 'download-export',
           },
         ],
         onClose: () => cleanToastConfig(key),
