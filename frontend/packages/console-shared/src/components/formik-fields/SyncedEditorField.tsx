@@ -47,7 +47,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
   const { t } = useTranslation();
   const [field] = useField(name);
 
-  const { values, setFieldValue } = useFormikContext<FormikValues>();
+  const { values, setFieldValue, setStatus } = useFormikContext<FormikValues>();
 
   const formData = _.get(values, formContext.name);
   const yamlData: string = _.get(values, yamlContext.name);
@@ -133,6 +133,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
       default:
         break;
     }
+    setStatus({ submitError: '' });
   };
 
   React.useEffect(() => {
