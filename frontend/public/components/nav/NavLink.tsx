@@ -3,7 +3,7 @@ import { Link, LinkProps } from 'react-router-dom';
 
 export const NavLink: React.FC<NavLinkProps> = ({ children, dragRef, ...linkProps }) => {
   return (
-    <Link {...linkProps} ref={dragRef}>
+    <Link data-test="nav" ref={dragRef} {...linkProps}>
       {children}
     </Link>
   );

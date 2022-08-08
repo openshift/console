@@ -457,8 +457,7 @@
       "section": "home",
       "id": "dashboards",
       "name": "%console-app~Overview%",
-      "href": "/dashboards",
-      "activePath": "/dashboards/"
+      "href": "/dashboards"
     },
     "flags": {
       "required": ["CAN_GET_NS", "OPENSHIFT", "PROMETHEUS", "MONITORING"]
@@ -489,8 +488,7 @@
       "insertAfter": "projects",
       "name": "%console-app~Search%",
       "href": "/search",
-      "namespaced": true,
-      "startsWith": ["search"]
+      "namespaced": true
     }
   },
   {
@@ -502,7 +500,7 @@
       "insertAfter": "search",
       "name": "%console-app~API Explorer%",
       "href": "/api-explorer",
-      "startsWith": ["api-explorer", "api-resource"]
+      "startsWith": ["api-resource"]
     }
   },
   {
@@ -514,8 +512,7 @@
       "insertAfter": "explore",
       "name": "%console-app~Events%",
       "href": "/events",
-      "prefixNamespaced": true,
-      "startsWith": ["events"]
+      "prefixNamespaced": true
     }
   },
   {
@@ -1085,9 +1082,7 @@
       "id": "clustersettings",
       "name": "%console-app~Cluster Settings%",
       "href": "/settings/cluster",
-      "activePath": "/settings/cluster/",
       "startsWith": [
-        "settings/cluster",
         "settings/idp",
         "config.openshift.io",
         "monitoring/alertmanagerconfig",
@@ -1167,7 +1162,7 @@
       "id": "monitoringalerts",
       "name": "%console-app~Alerting%",
       "href": "/monitoring/alerts",
-      "startsWith": ["monitoring/alerts", "monitoring/alertrules", "monitoring/silences"]
+      "startsWith": ["monitoring/alertrules", "monitoring/silences"]
     }
   },
   {
@@ -1209,8 +1204,7 @@
       "id": "monitoringtargets",
       "insertAfter": "monitoringdashboards",
       "name": "%console-app~Targets%",
-      "href": "/monitoring/targets",
-      "startsWith": ["monitoring/targets"]
+      "href": "/monitoring/targets"
     }
   },
   {

@@ -42,8 +42,8 @@ export const NavItemResource: React.FC<NavItemResourceProps> = ({
     [namespaced, resourceReference, lastNamespace, activeNamespace],
   );
   return (
-    <NavItem className={className} isActive={isActive} {...dataAttributes}>
-      <NavLink {...navLinkProps} to={to} />
+    <NavItem className={className} isActive={isActive}>
+      <NavLink {...navLinkProps} {...dataAttributes} to={to} />
     </NavItem>
   );
 };

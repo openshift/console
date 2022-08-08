@@ -13,6 +13,7 @@ export const NavItemHref: React.FC<NavItemHrefProps> = ({
   namespaced,
   prefixNamespaced,
   startsWith,
+  dataAttributes,
   ...navLinkProps
 }) => {
   const [activeNamespace] = useActiveNamespace();
@@ -33,7 +34,7 @@ export const NavItemHref: React.FC<NavItemHrefProps> = ({
   }, [activeNamespace, href, namespaced, prefixNamespaced]);
   return (
     <NavItem isActive={isActive}>
-      <NavLink {...navLinkProps} to={to}>
+      <NavLink {...navLinkProps} {...dataAttributes} to={to}>
         {children}
       </NavLink>
     </NavItem>

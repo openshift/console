@@ -33,6 +33,7 @@ export const PluginNavItem: React.FC<PluginNavItemProps> = ({ extension }) => {
         namespaced={extension.properties.namespaced}
         prefixNamespaced={extension.properties.prefixNamespaced}
         startsWith={extension.properties.startsWith}
+        dataAttributes={extension.properties.dataAttributes}
       >
         {extension.properties.name}
       </NavItemHref>
@@ -44,6 +45,7 @@ export const PluginNavItem: React.FC<PluginNavItemProps> = ({ extension }) => {
         namespaced={isResourceNSNavItem(extension)}
         model={extension.properties.model}
         startsWith={extension.properties.startsWith}
+        dataAttributes={extension.properties.dataAttributes}
       >
         {extension.properties.name}
       </NavItemResource>
