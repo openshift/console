@@ -19,6 +19,7 @@ import {
   TOAST_TIMEOUT_LONG,
 } from '@console/shared/src';
 import { ToastContextType } from '@console/shared/src/components/toast/ToastContext';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import {
   createExportResource,
   getExportAppData,
@@ -37,6 +38,7 @@ export type ExportApplicationModalProps = ModalComponentProps & {
 
 export const ExportApplicationModal: React.FC<ExportApplicationModalProps> = (props) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const { cancel, name, namespace, exportResource, toast } = props;
   const [startTime, setStartTime] = React.useState<string>(null);
   const [errMessage, setErrMessage] = React.useState<string>('');
@@ -55,6 +57,7 @@ export const ExportApplicationModal: React.FC<ExportApplicationModalProps> = (pr
   const createExportCR = async () => {
     try {
       const exportRes = await createExportResource(getExportAppData(name, namespace));
+      fireTelemetryEvent('Export Application Started');
       const key = `${namespace}-${name}`;
       const exportAppToastConfig = {
         ...exportAppToast,
