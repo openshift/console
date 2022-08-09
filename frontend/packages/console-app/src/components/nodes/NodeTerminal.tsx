@@ -140,7 +140,7 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
     };
     const closeTab = (event) => {
       event.preventDefault();
-      deleteNamespace(namespace.metadata.name);
+      k8sKillByName(NamespaceModel, namespace.metadata.name);
     };
     const createDebugPod = async () => {
       try {

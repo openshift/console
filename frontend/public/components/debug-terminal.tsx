@@ -121,7 +121,7 @@ export const DebugTerminal: React.FC<DebugTerminalProps> = ({ podData, container
     let newDebugPod;
     const closeTab = (event) => {
       event.preventDefault();
-      deleteDebugPod(newDebugPod.metadata.name);
+      k8sKillByName(PodModel, newDebugPod.metadata.name, podNamespace);
     };
     const createDebugPod = async () => {
       try {
