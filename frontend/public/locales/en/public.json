@@ -1314,6 +1314,7 @@
   "To troubleshoot, view logs and events, then debug in terminal.": "To troubleshoot, view logs and events, then debug in terminal.",
   "Debug container {{name}}": "Debug container {{name}}",
   "Restart policy": "Restart policy",
+  "Host IP": "Host IP",
   "Image pull secret": "Image pull secret",
   "Pod details": "Pod details",
   "Init containers": "Init containers",
