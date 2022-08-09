@@ -17,8 +17,11 @@ import {
   resourcePathFromModel,
   ResourceSummary,
   SectionHeading,
+  editYamlComponent,
+  viewYamlComponent,
 } from '../utils';
 import { formatPrometheusDuration } from '../utils/datetime';
+import { useCanEditIdentityProviders } from '@console/shared/src/hooks/oauth';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(OAuthModel), ...common];
@@ -156,37 +159,45 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
             </>
           </Alert>
         )}
-        <Dropdown
-          className="co-m-pane__dropdown"
-          toggle={
-            <DropdownToggle
-              id="idp-dropdown"
-              onToggle={() => setIDPOpen(!isIDPOpen)}
-              toggleIndicator={CaretDownIcon}
-              data-test-id="dropdown-button"
-            >
-              {t('public~Add')}
-            </DropdownToggle>
-          }
-          isOpen={isIDPOpen}
-          dropdownItems={IDPDropdownItems}
-          onSelect={() => setIDPOpen(false)}
-          id="idp"
-        />
+        {useCanEditIdentityProviders() && (
+          <Dropdown
+            className="co-m-pane__dropdown"
+            toggle={
+              <DropdownToggle
+                id="idp-dropdown"
+                onToggle={() => setIDPOpen(!isIDPOpen)}
+                toggleIndicator={CaretDownIcon}
+                data-test-id="dropdown-button"
+              >
+                {t('public~Add')}
+              </DropdownToggle>
+            }
+            isOpen={isIDPOpen}
+            dropdownItems={IDPDropdownItems}
+            onSelect={() => setIDPOpen(false)}
+            id="idp"
+          />
+        )}
         <IdentityProviders identityProviders={identityProviders} />
       </div>
     </>
   );
 };
 
-export const OAuthDetailsPage: React.FC<OAuthDetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    kind={oAuthReference}
-    menuActions={menuActions}
-    pages={[navFactory.details(OAuthDetails), navFactory.editYaml()]}
-  />
-);
+export const OAuthDetailsPage: React.FC<OAuthDetailsPageProps> = (props) => {
+  const canEdit = useCanEditIdentityProviders();
+  return (
+    <DetailsPage
+      {...props}
+      kind={oAuthReference}
+      menuActions={menuActions}
+      pages={[
+        navFactory.details(OAuthDetails),
+        navFactory.editYaml(canEdit ? editYamlComponent : viewYamlComponent),
+      ]}
+    />
+  );
+};
 
 type IdentityProvidersProps = {
   identityProviders: IdentityProvider[];
