@@ -1,4 +1,3 @@
-import { DiskActions, DiskActionsNames } from '../../../../redux/actions/diskActions';
 import { getProviders } from '../../provider-definitions';
 import { ChangedCommonDataProp } from '../../types';
 import { vmWizardInternalActions } from '../internal-actions';
@@ -17,6 +16,5 @@ export const disposeWizard = (id: string) => (dispatch, getState) => {
 
   getProviders().forEach((provider) => provider.cleanup && provider.cleanup(options));
 
-  dispatch(DiskActions[DiskActionsNames.setInitialRootdisk]());
   dispatch(vmWizardInternalActions[InternalActionType.Dispose](id));
 };
