@@ -914,11 +914,6 @@ const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = 
         <CreateInitializationResourceButton
           obj={props.csv}
           initializationResource={initializationResource}
-          targetNamespace={
-            model?.namespaced
-              ? initializationResource?.metadata.namespace || csv.metadata?.namespace
-              : null
-          }
         />
       </Alert>
     );
