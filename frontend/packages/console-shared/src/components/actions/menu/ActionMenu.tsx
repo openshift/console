@@ -6,6 +6,7 @@ import { checkAccess } from '@console/internal/components/utils';
 import { ActionMenuVariant, MenuOption } from '../types';
 import ActionMenuContent from './ActionMenuContent';
 import ActionMenuToggle from './ActionMenuToggle';
+import './ActionMenu.scss';
 
 type ActionMenuProps = {
   actions: Action[];
@@ -74,7 +75,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   }, [actions, isKebabVariant, setVisible]);
 
   const menu = (
-    <Menu ref={menuRef} containsFlyout onSelect={hideMenu}>
+    <Menu className="ocs-action-menu" ref={menuRef} containsFlyout onSelect={hideMenu}>
       <MenuContent data-test-id="action-items" translate="no">
         <MenuList>
           <ActionMenuContent options={menuOptions} onClick={hideMenu} focusItem={menuOptions[0]} />

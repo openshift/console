@@ -1,0 +1,8 @@
+// This is a workaround fix for the PatternFly issue https://github.com/patternfly/patternfly/issues/4871
+// It is fixed in the latest release via PR https://github.com/patternfly/patternfly/pull/4892
+
+.ocs-action-menu.pf-c-menu.pf-m-flyout {
+  .pf-c-menu__content {
+    overflow: unset
+  }
+}
