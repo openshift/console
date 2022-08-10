@@ -6,15 +6,27 @@ import {
   pageTitle,
   switchPerspective,
 } from '@console/dev-console/integration-tests/support/constants';
-import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects/add-flow-po';
+import {
+  catalogPO,
+  helmChartRepositoriesPO,
+} from '@console/dev-console/integration-tests/support/pageObjects/add-flow-po';
 import {
   navigateTo,
   addPage,
   catalogPage,
   perspective,
+  createForm,
 } from '@console/dev-console/integration-tests/support/pages';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 import { helmPage, helmDetailsPage } from '../../pages';
+
+const deleteChartRepositoryFromDetailsPage = (name: string, type: string) => {
+  cy.log(`Deleting ${name}`);
+  cy.byLegacyTestID('kebab-button').click();
+  cy.byTestActionID(`Delete ${type}`).click();
+  createForm.clickConfirm();
+  cy.byTestID('no-repositories-found').should('be.visible');
+};
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
@@ -218,10 +230,93 @@ Then('user clicks on Repositories link', () => {
   detailsPage.titleShouldContain('Helm');
 });
 
-When('user clicks on Repository in create action menu', () => {
+When('user clicks on Repository in create action menu to see the {string} form', (formName) => {
   helmDetailsPage.clickCreateRepository();
+  cy.byTestID('form-title').contains(formName);
 });
 
 When('user clicks on Helm release in create action menu', () => {
   helmDetailsPage.clickCreateHelmRelease();
+});
+
+When('user enters Chart repository name as {string}', (name: string) => {
+  cy.get(helmChartRepositoriesPO.name)
+    .should('be.visible')
+    .clear()
+    .type(name);
+});
+
+When('user enters Description as {string}', (description: string) => {
+  cy.get(helmChartRepositoriesPO.description)
+    .scrollIntoView()
+    .should('be.visible')
+    .clear()
+    .type(description);
+});
+
+When('user enters URL as {string}', (url: string) => {
+  cy.get(helmChartRepositoriesPO.url)
+    .scrollIntoView()
+    .should('be.visible')
+    .clear()
+    .type(url);
+});
+
+When('user clicks on Create button', () => {
+  createForm.clickCreate();
+});
+
+When(
+  'user clicks on Save button to see the {string} {string} details page',
+  (type: string, name: string) => {
+    createForm.clickSave();
+    cy.get(`[title=${type}`).should('be.visible');
+    cy.byLegacyTestID('resource-title').contains(name);
+  },
+);
+
+When('user enters Display name as {string}', (displayName: string) => {
+  cy.get(helmChartRepositoriesPO.displayName)
+    .scrollIntoView()
+    .should('be.visible')
+    .clear()
+    .type(displayName);
+});
+
+Then(
+  'user can see {string} {string} updated with {string} in the list page',
+  (type: string, repoName: string, updatedValue: string) => {
+    cy.byLegacyTestID('item-filter')
+      .should('be.visible')
+      .type(repoName);
+    cy.wait(3000);
+    cy.get('[data-test-rows="resource-row"]').contains(updatedValue);
+    deleteChartRepositoryFromDetailsPage(repoName, type);
+  },
+);
+
+When('user edits {string} {string}', (name: string, type: string) => {
+  cy.byLegacyTestID('item-filter')
+    .should('be.visible')
+    .clear()
+    .type(name);
+  cy.wait(3000);
+  cy.byLegacyTestID('kebab-button').click();
+  cy.byTestActionID(`Edit ${type}`).click();
+  cy.byTestID('form-title').contains(`Edit ${type}`);
+});
+
+When('user selects cluster-scoped scope type', () => {
+  cy.get(`[data-test="HelmChartRepository-view-input"]`)
+    .should('be.visible')
+    .click();
+});
+
+When('user navigates to Helm page', () => {
+  navigateTo(devNavigationMenu.Helm);
+});
+
+When('user can see {string} {string} details page', (type: string, name: string) => {
+  cy.get(`[title=${type}`).should('be.visible');
+  cy.byLegacyTestID('resource-title').contains(name);
 });

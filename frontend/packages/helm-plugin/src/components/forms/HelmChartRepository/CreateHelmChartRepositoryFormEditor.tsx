@@ -4,6 +4,7 @@ import { FormikValues, useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { HelmChartRepositoryType } from '@console/helm-plugin/src/types/helm-types';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
 import {
@@ -26,10 +27,12 @@ export type FormData = {
 
 type CreateHelmChartRepositoryFormEditorProps = {
   showScopeType: boolean;
+  existingRepo: HelmChartRepositoryType;
 };
 
 const CreateHelmChartRepositoryFormEditor: React.FC<CreateHelmChartRepositoryFormEditorProps> = ({
   showScopeType,
+  existingRepo,
 }) => {
   const { t } = useTranslation();
   const {
@@ -38,7 +41,7 @@ const CreateHelmChartRepositoryFormEditor: React.FC<CreateHelmChartRepositoryFor
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   return (
     <FormSection>
-      {showScopeType && (
+      {showScopeType && !existingRepo && (
         <RadioGroupField
           name="formData.scope"
           label={t('helm-plugin~Scope type')}
@@ -64,7 +67,10 @@ const CreateHelmChartRepositoryFormEditor: React.FC<CreateHelmChartRepositoryFor
         type={TextInputTypes.text}
         name="formData.repoName"
         label={t('helm-plugin~Name')}
-        helpText={t('helm-plugin~A unique name for the Helm Chart repository.')}
+        helpText={
+          !existingRepo ? t('helm-plugin~A unique name for the Helm Chart repository.') : null
+        }
+        isDisabled={!!existingRepo}
         required
       />
       <InputField
