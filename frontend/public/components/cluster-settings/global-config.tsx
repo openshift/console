@@ -23,6 +23,7 @@ import {
   ClusterGlobalConfig,
   isClusterGlobalConfig,
 } from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
+import { useCanEditIdentityProviders } from '@console/shared/src/hooks/oauth';
 
 type ConfigDataType = { model: K8sKind; id: string; name: string; namespace: string };
 
@@ -71,6 +72,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
   const [loading, setLoading] = React.useState(true);
   const [textFilter, setTextFilter] = React.useState('');
   const { t } = useTranslation();
+  const canEditIDP = useCanEditIdentityProviders();
 
   React.useEffect(() => {
     const oauthMenuItems = _.map(addIDPItems, (label: string, id: string) => ({
@@ -99,7 +101,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
       }),
     ).then((responses) => {
       const flattenedResponses = _.flatten(responses);
-      const winnowedResponses: ConfigDataType[] = flattenedResponses.map((item) => ({
+      let winnowedResponses: ConfigDataType[] = flattenedResponses.map((item) => ({
         model: item.model,
         id: item.metadata.uid,
         name: item.metadata.name,
@@ -112,6 +114,9 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
           model: modelFor(referenceForGroupVersionKind(group)(version)(kind)),
         };
       });
+      if (!canEditIDP) {
+        winnowedResponses = winnowedResponses.filter((item) => item.model.kind !== 'OAuth');
+      }
       const allItems = [...winnowedResponses, ...usableConfigs]
         .map((item) => {
           const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
@@ -155,7 +160,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
       }
     });
     return () => (isSubscribed = false);
-  }, [clusterOperatorConfigResources, configResources, globalConfigs, t]);
+  }, [canEditIDP, clusterOperatorConfigResources, configResources, globalConfigs, t]);
   const visibleItems = items.filter(({ label, description = '' }) => {
     return (
       fuzzyCaseInsensitive(textFilter, label) ||
