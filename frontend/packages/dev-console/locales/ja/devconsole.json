@@ -74,7 +74,7 @@
   "Run Policy": "ポリシーの実行",
   "Hooks": "フック",
   "Advanced options": "詳細オプション",
-  "Click on the names to access advanced options for <1></1>.": "名前をクリックして、<1></1> の詳細オプションにアクセスします。",
+  "Click on the names to access advanced options for <0></0>.": "名前をクリックして、<0></0> の詳細オプションにアクセスします。",
   "Create BuildConfig": "BuildConfig の作成",
   "Edit BuildConfig": "BuildConfig の編集",
   "Build Configs": "ビルドの設定",

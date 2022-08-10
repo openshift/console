@@ -74,7 +74,7 @@
   "Run Policy": "정책 실행",
   "Hooks": "후크",
   "Advanced options": "고급 옵션",
-  "Click on the names to access advanced options for <1></1>.": "<1></1>에 대한 고급 옵션에 액세스하려면 이름을 클릭하십시오.",
+  "Click on the names to access advanced options for <0></0>.": "<0></0>에 대한 고급 옵션에 액세스하려면 이름을 클릭하십시오.",
   "Create BuildConfig": "빌드 설정 만들기",
   "Edit BuildConfig": "빌드 설정 편집",
   "Build Configs": "빌드 설정",
