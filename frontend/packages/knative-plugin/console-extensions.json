@@ -573,6 +573,18 @@
     }
   },
   {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "EventSink",
+      "title": "%knative-plugin~Event Sinks%",
+      "provider": { "$codeRef": "catalog.kafkaSinkProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_KAFKA_SINK"]
+    }
+  },
+  {
     "type": "console.global-config",
     "properties": {
       "id": "knative-serving",

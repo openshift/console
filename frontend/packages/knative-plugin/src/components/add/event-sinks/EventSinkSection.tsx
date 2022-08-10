@@ -9,8 +9,10 @@ import { ProjectModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { descriptorsToUISchema } from '@console/operator-lifecycle-manager/src/components/operand/utils';
 import { DynamicFormField, useFormikValidationFix } from '@console/shared';
+import { EVENT_SINK_KAFKA_KIND } from '../../../const';
 import { formDescriptorData } from '../../../utils/create-eventsources-utils';
 import { EventSources } from '../import-types';
+import KafkaSinkSection from './KafkaSinkSection';
 import SourceSection from './SourceSection';
 
 interface EventSinkSectionProps {
@@ -42,7 +44,6 @@ const EventSinkSection: React.FC<EventSinkSectionProps> = ({
   }
   const defaultFormSection = (
     <>
-      <SourceSection namespace={namespace} fullWidth={fullWidth} />
       <AppSection
         project={values.formData.project}
         noProjectsAvailable={loaded && _.isEmpty(data)}
@@ -63,7 +64,12 @@ const EventSinkSection: React.FC<EventSinkSectionProps> = ({
           uiSchema={descriptorsToUISchema(formDescriptorData(formSchema.properties), formSchema)}
           showAlert={false}
         />
+        <SourceSection namespace={namespace} fullWidth={fullWidth} />
       </>
+    );
+  } else if (values.formData.type === EVENT_SINK_KAFKA_KIND) {
+    EventSink = (
+      <KafkaSinkSection title={values.formData.type} fullWidth={fullWidth} namespace={namespace} />
     );
   }
   return (

@@ -59,6 +59,7 @@ export const operatorsPO = {
     noOperatorFoundMessage: 'div.cos-status-box__title',
     knativeServingLink: '[title="knativeservings.operator.knative.dev"]',
     knativeEventingLink: '[title="knativeeventings.operator.knative.dev"]',
+    knativeKafkaLink: '[title="knativekafkas.operator.serverless.openshift.io"]',
     operatorStatus: '[data-test="status-text"]',
     checlusterCRLink: '[title="checlusters.org.eclipse.che"]',
     shipwrightBuildLink: '[title="shipwrightbuilds.operator.shipwright.io"]',

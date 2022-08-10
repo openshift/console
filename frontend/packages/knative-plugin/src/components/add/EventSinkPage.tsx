@@ -48,6 +48,7 @@ const EventSinkPage: React.FC<EventSinkPageProps> = ({ match, location }) => {
           normalizedSink={normalizedSink}
           selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION)}
           contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
+          sinkKind={sinkKindProp}
           kameletSink={kamelet}
         />
       ) : (

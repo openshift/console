@@ -36,7 +36,7 @@ const getEventSourceIconFromKind = (kind: string, nodeType?: string): React.Reac
     case EVENT_SOURCE_SINK_BINDING_KIND:
       return sinkBindingSourceImg;
     case EVENT_SINK_KAFKA_KIND:
-      return eventSinkIconSVG;
+      return kafkaSourceImg;
     default:
       return nodeType === TYPE_EVENT_SINK ? eventSinkIconSVG : eventSourceIconSVG;
   }
