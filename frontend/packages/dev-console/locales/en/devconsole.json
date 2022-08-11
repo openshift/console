@@ -534,6 +534,7 @@
   "Invalid Git URL.": "Invalid Git URL.",
   "We failed to detect the Git type. Please choose a Git type.": "We failed to detect the Git type. Please choose a Git type.",
   "Container port should be an integer": "Container port should be an integer",
+  "View Alerting Rule": "View Alerting Rule",
   "Severity": "Severity",
   "Alert state": "Alert state",
   "Notifications": "Notifications",
