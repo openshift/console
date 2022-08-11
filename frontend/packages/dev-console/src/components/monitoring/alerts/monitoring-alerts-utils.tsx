@@ -1,7 +1,18 @@
 import * as React from 'react';
+import i18next from 'i18next';
 import * as _ from 'lodash';
+// FIXME upgrading redux types is causing many errors at this time
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { SortByDirection } from '@patternfly/react-table';
+import {
+  monitoringErrored,
+  monitoringLoaded,
+  monitoringLoading,
+} from '@console/internal/actions/ui';
+import { ALERT_MANAGER_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 import {
   StateCounts,
   Severity,
@@ -18,12 +29,16 @@ import {
   alertingRuleStateOrder,
   labelsToParams,
 } from '@console/internal/components/monitoring/utils';
-import { Alert, Rule, AlertStates } from '@console/internal/components/monitoring/types';
+import { Alert, Rule, AlertStates, Silence } from '@console/internal/components/monitoring/types';
+import {
+  URL_POLL_DEFAULT_DELAY,
+  useURLPoll,
+} from '@console/internal/components/utils/url-poll-hook';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import SilenceAlert from './SilenceAlert';
 
 const viewAlertRule = (rule: Rule, ns: string) => ({
-  label: 'View Alerting Rule',
+  label: i18next.t('devconsole~View Alerting Rule'),
   href: `/dev-monitoring/ns/${ns}/rules/${rule.id}`,
 });
 
@@ -128,4 +143,32 @@ export const applyListSort = (rules: Rule[], orderBy: SortByDirection, func: str
     return setOrderBy(orderBy, sorted);
   }
   return rules;
+};
+
+export const useAlertManagerSilencesDispatch = ({ namespace }) => {
+  const url = `${ALERT_MANAGER_TENANCY_BASE_PATH}/api/v2/silences?namespace=${namespace}`;
+  const [response, loadError, loading] = useURLPoll<Silence[]>(
+    url,
+    URL_POLL_DEFAULT_DELAY,
+    namespace,
+  );
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    if (loadError) {
+      dispatch(monitoringErrored('silences', loadError));
+    } else if (loading) {
+      dispatch(monitoringLoading('silences'));
+    } else {
+      const silencesWithAlertsName = _.map(response, (s: Silence) => {
+        const alertName = _.get(_.find(s.matchers, { name: 'alertname' }), 'value');
+        return {
+          ...s,
+          name:
+            alertName ||
+            s.matchers.map((m) => `${m.name}${m.isRegex ? '=~' : '='}${m.value}`).join(', '),
+        };
+      });
+      dispatch(monitoringLoaded('silences', silencesWithAlertsName));
+    }
+  }, [dispatch, loadError, loading, response]);
 };

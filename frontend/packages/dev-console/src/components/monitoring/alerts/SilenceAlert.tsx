@@ -18,7 +18,6 @@ import {
   ALERT_MANAGER_TENANCY_BASE_PATH,
   PROMETHEUS_TENANCY_BASE_PATH,
 } from '@console/internal/components/graphs';
-import { refreshNotificationPollers } from '@console/internal/components/notification-drawer';
 
 type SilenceAlertProps = {
   rule: Rule;
@@ -52,9 +51,10 @@ const SilenceAlert: React.FC<SilenceAlertProps> = ({ rule, namespace }) => {
     if (checked) {
       _.each(rule.silencedBy, (silence) => {
         coFetchJSON
-          .delete(`${ALERT_MANAGER_TENANCY_BASE_PATH}/api/v2/silence/${silence.id}`)
+          .delete(
+            `${ALERT_MANAGER_TENANCY_BASE_PATH}/api/v2/silence/${silence.id}?namespace=${namespace}`,
+          )
           .then(() => {
-            refreshNotificationPollers();
             // eslint-disable-next-line promise/no-nesting
             return coFetchJSON(
               `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/rules?namespace=${namespace}`,
@@ -86,6 +86,7 @@ const SilenceAlert: React.FC<SilenceAlertProps> = ({ rule, namespace }) => {
           <SilenceDurationDropDown
             silenceInProgress={(progress) => setIsInprogress(progress)}
             rule={rule}
+            namespace={namespace}
           />
         )
       }

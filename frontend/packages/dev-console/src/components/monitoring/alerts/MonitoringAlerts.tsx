@@ -19,7 +19,12 @@ import { RootState } from '@console/internal/redux';
 import { getURLSearchParams, EmptyBox, LoadingBox } from '@console/internal/components/utils';
 import { getFilteredRows } from '@console/internal/components/factory';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
-import { monitoringAlertRows, alertFilters, applyListSort } from './monitoring-alerts-utils';
+import {
+  monitoringAlertRows,
+  alertFilters,
+  applyListSort,
+  useAlertManagerSilencesDispatch,
+} from './monitoring-alerts-utils';
 import { MonitoringAlertColumn } from './MonitoringAlertColumn';
 
 import './MonitoringAlerts.scss';
@@ -60,6 +65,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
     () => (!loading && !loadError ? getAlertsAndRules(response?.data) : { rules: [], alerts: [] }),
     [response, loadError, loading],
   );
+  useAlertManagerSilencesDispatch({ namespace });
 
   React.useEffect(() => {
     const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, alertingRuleStateOrder);
