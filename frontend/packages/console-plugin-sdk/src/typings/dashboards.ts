@@ -80,6 +80,11 @@ namespace ExtensionProperties {
      */
     popupTitle?: string;
 
+    /** Optional classname for the popup top-level component. */
+    popupClassname?: string;
+    /** If true, the popup will stay open when clicked outside of its boundary. Default: false */
+    popupKeepOnOutsideClick?: boolean;
+
     /** Control plane topology for which the subsystem should be hidden. */
     disallowedControlPlaneTopology?: string[];
   }

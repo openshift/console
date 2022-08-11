@@ -389,6 +389,8 @@ Adds a health subsystem to the status card of Overview dashboard where the sourc
 | `additionalResource` | `CodeRef<FirehoseResource>` | yes | Additional resource which will be fetched and passed to `healthHandler`. |
 | `popupComponent` | `CodeRef<React.ComponentType<PrometheusHealthPopupProps>>` | yes | Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. |
 | `popupTitle` | `string` | yes | The title of the popover. |
+| `popupClassname` | `string` | yes | Optional classname for the popup top-level component. |
+| `popupKeepOnOutsideClick` | `boolean` | yes | If true, the popup will stay open when clicked outside of its boundary. Default: false |
 | `disallowedControlPlaneTopology` | `string[]` | yes | Control plane topology for which the subsystem should be hidden. |
 
 ---

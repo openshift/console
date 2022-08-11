@@ -60,6 +60,8 @@ export type HealthItemProps = WithClassNameProps<{
   details?: string;
   state?: HealthState;
   popupTitle?: string;
+  popupClassname?: string;
+  popupKeepOnOutsideClick?: boolean;
   noIcon?: boolean;
   icon?: React.ReactNode;
 }>;

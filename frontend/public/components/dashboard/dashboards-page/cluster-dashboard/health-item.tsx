@@ -293,6 +293,8 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
         state={healthState.state}
         details={healthState.message}
         popupTitle={subsystem.popupTitle}
+        popupClassname={subsystem.popupClassname}
+        popupKeepOnOutsideClick={subsystem.popupKeepOnOutsideClick}
       >
         {subsystem.popupComponent && (
           <AsyncComponent
