@@ -20,6 +20,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
     details,
     popupTitle,
     popupClassname,
+    popupBodyContent,
     popupKeepOnOutsideClick = false,
     noIcon = false,
     icon,
@@ -46,16 +47,13 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
         )}
         <div>
           <span className="co-status-card__health-item-text">
-            {React.Children.toArray(children).length && state !== HealthState.LOADING ? (
+            {(React.Children.toArray(children).length || popupBodyContent) &&
+            state !== HealthState.LOADING ? (
               <Popover
                 className={popupClassname}
                 position={PopoverPosition.top}
                 headerContent={popupTitle}
-                bodyContent={
-                  React.Children.toArray(children).length === 1 && React.isValidElement(children)
-                    ? (hide) => React.cloneElement(children, { hide })
-                    : children
-                }
+                bodyContent={popupBodyContent || children}
                 enableFlip
                 maxWidth="21rem"
                 hideOnOutsideClick={!popupKeepOnOutsideClick}

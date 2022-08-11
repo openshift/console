@@ -221,16 +221,20 @@ export const URLHealthItem = withDashboardResources<URLHealthItemProps>(
         state={healthState.state}
         details={healthState.message}
         popupTitle={subsystem.popupTitle}
-      >
-        {subsystem.popupComponent && (
-          <AsyncComponent
-            loader={subsystem.popupComponent}
-            healthResult={healthResult}
-            healthResultError={healthResultError}
-            k8sResult={k8sResult}
-          />
-        )}
-      </HealthItem>
+        popupBodyContent={
+          subsystem.popupComponent
+            ? (hide) => (
+                <AsyncComponent
+                  loader={subsystem.popupComponent}
+                  healthResult={healthResult}
+                  healthResultError={healthResultError}
+                  k8sResult={k8sResult}
+                  hide={hide}
+                />
+              )
+            : undefined
+        }
+      />
     );
   },
 );
