@@ -76,7 +76,12 @@ export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = ({
           </DropdownToggle>
         }
         dropdownItems={Object.keys(items).map((key) => (
-          <DropdownItem key={key} component="button" onClick={() => onClick(key)}>
+          <DropdownItem
+            key={key}
+            data-test={`list-page-create-dropdown-item-${key}`}
+            component="button"
+            onClick={() => onClick(key)}
+          >
             {items[key]}
           </DropdownItem>
         ))}

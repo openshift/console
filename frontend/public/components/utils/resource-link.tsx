@@ -104,13 +104,17 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
           title={title}
           className="co-resource-item__resource-name"
           data-test-id={value}
-          data-test={dataTest}
+          data-test={dataTest ?? value}
           onClick={onClick}
         >
           {value}
         </Link>
       ) : (
-        <span className="co-resource-item__resource-name" data-test-id={value} data-test={dataTest}>
+        <span
+          className="co-resource-item__resource-name"
+          data-test-id={value}
+          data-test={dataTest ?? value}
+        >
           {value}
         </span>
       )}

@@ -37,6 +37,7 @@ export const ManagedByOperatorResourceLink: React.SFC<ManagerLinkProps> = ({
             to={ownerIsCSV ? link : `${link}/${ownerGroupVersionKind}/${owner.name}`}
             className="co-resource-item__resource-name"
             data-test-operand-link={owner.name}
+            data-test={owner.name}
           >
             {owner.name}
           </Link>
