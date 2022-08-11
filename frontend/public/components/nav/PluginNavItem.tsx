@@ -51,6 +51,8 @@ export const PluginNavItem: React.FC<PluginNavItemProps> = ({ extension }) => {
       </NavItemResource>
     );
   }
+  // eslint-disable-next-line no-console
+  console.warn('Invalid or unrecognized navigation extension:', extension);
   return null;
 };
 
