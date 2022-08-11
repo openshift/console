@@ -31,13 +31,13 @@ import {
   ViewPlugin,
   ViewUpdate,
 } from '@codemirror/view';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { PrometheusEndpoint, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import CloseButton from '@console/shared/src/components/close-button';
 import { PromQLExtension } from '@prometheus-io/codemirror-promql';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
 import { PROMETHEUS_BASE_PATH } from '../graphs';
-import { PrometheusEndpoint } from '../graphs/helpers';
 import { useSafeFetch } from '../utils';
 import './_promql-expression-input.scss';
 

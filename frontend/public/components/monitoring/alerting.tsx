@@ -1,6 +1,18 @@
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import i18next from 'i18next';
 import * as _ from 'lodash-es';
+import {
+  AlertSeverity,
+  AlertStates,
+  BlueInfoCircleIcon,
+  GreenCheckCircleIcon,
+  PrometheusAlert,
+  PrometheusLabels,
+  RedExclamationCircleIcon,
+  ResourceStatus,
+  useActivePerspective,
+  YellowExclamationTriangleIcon,
+} from '@console/dynamic-plugin-sdk';
 import {
   Alert as PFAlert,
   Button,
@@ -8,6 +20,13 @@ import {
   CodeBlockCode,
   Popover,
 } from '@patternfly/react-core';
+import {
+  BanIcon,
+  BellIcon,
+  BellSlashIcon,
+  HourglassHalfIcon,
+  OutlinedBellIcon,
+} from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -16,21 +35,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
-import {
-  BanIcon,
-  BellIcon,
-  BellSlashIcon,
-  HourglassHalfIcon,
-  OutlinedBellIcon,
-} from '@patternfly/react-icons';
 
-import { useActivePerspective, ResourceStatus } from '@console/dynamic-plugin-sdk';
-import {
-  BlueInfoCircleIcon,
-  GreenCheckCircleIcon,
-  RedExclamationCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { withFallback } from '@console/shared/src/components/error';
 import {
@@ -55,7 +60,6 @@ import { RootState } from '../../redux';
 import { RowFunctionArgs, Table, TableData, TableProps } from '../factory';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
 import { confirmModal } from '../modals';
-import { PrometheusLabels } from '../graphs';
 import { AlertmanagerYAMLEditorWrapper } from './alert-manager-yaml-editor';
 import { AlertmanagerConfigWrapper } from './alert-manager-config';
 import MonitoringDashboardsPage from './dashboards';
@@ -67,12 +71,9 @@ import { TargetsUI } from './targets';
 import {
   Alert,
   Alerts,
-  AlertSeverity,
   AlertSource,
-  AlertStates,
   ListPageProps,
   MonitoringResource,
-  PrometheusAlert,
   Rule,
   Silence,
   Silences,
@@ -161,15 +162,18 @@ const MonitoringResourceIcon: React.FC<MonitoringResourceIconProps> = ({ classNa
   </span>
 );
 
-const alertStateIcons = {
-  [AlertStates.Firing]: <BellIcon />,
-  [AlertStates.Pending]: <OutlinedBellIcon />,
-  [AlertStates.Silenced]: <BellSlashIcon className="text-muted" />,
-};
-
-const AlertStateIcon: React.FC<{ state: string }> = React.memo(
-  ({ state }) => alertStateIcons[state],
-);
+const AlertStateIcon: React.FC<{ state: string }> = React.memo(({ state }) => {
+  switch (state) {
+    case AlertStates.Firing:
+      return <BellIcon />;
+    case AlertStates.Pending:
+      return <OutlinedBellIcon />;
+    case AlertStates.Silenced:
+      return <BellSlashIcon className="text-muted" />;
+    default:
+      return null;
+  }
+});
 
 const getAlertStateKey = (state) => {
   switch (state) {
@@ -185,7 +189,7 @@ const getAlertStateKey = (state) => {
 };
 
 export const AlertState: React.FC<AlertStateProps> = React.memo(({ state }) => {
-  const icon = alertStateIcons[state];
+  const icon = <AlertStateIcon state={state} />;
 
   return icon ? (
     <>

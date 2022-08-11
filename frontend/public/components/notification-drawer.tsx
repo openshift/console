@@ -21,11 +21,7 @@ import {
 } from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
-import {
-  Alert,
-  PrometheusRulesResponse,
-  AlertSeverity,
-} from '@console/internal/components/monitoring/types';
+import { Alert, PrometheusRulesResponse } from '@console/internal/components/monitoring/types';
 
 import { getClusterID } from '../module/k8s/cluster-settings';
 
@@ -55,6 +51,7 @@ import { useClusterVersion } from '@console/shared/src/hooks/version';
 import { usePrevious } from '@console/shared/src/hooks/previous';
 import {
   AlertAction,
+  AlertSeverity,
   isAlertAction,
   useResolvedExtensions,
   ResolvedExtension,
@@ -77,8 +74,6 @@ import { LinkifyExternal } from './utils';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
-
-const criticalAlertLabelSelector = new LabelSelector({ severity: AlertSeverity.Critical });
 
 const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation();
@@ -321,18 +316,17 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     toggleNotificationDrawer,
   );
 
-  const [criticalAlerts, nonCriticalAlerts] = React.useMemo(
-    () =>
-      alerts.reduce<AlertAccumulator>(
-        ([criticalAlertAcc, nonCriticalAlertAcc], alert) => {
-          return criticalAlertLabelSelector.matchesLabels(alert.labels)
-            ? [[...criticalAlertAcc, alert], nonCriticalAlertAcc]
-            : [criticalAlertAcc, [...nonCriticalAlertAcc, alert]];
-        },
-        [[], []],
-      ),
-    [alerts],
-  );
+  const [criticalAlerts, nonCriticalAlerts] = React.useMemo(() => {
+    const criticalAlertLabelSelector = new LabelSelector({ severity: AlertSeverity.Critical });
+    return alerts.reduce<AlertAccumulator>(
+      ([criticalAlertAcc, nonCriticalAlertAcc], alert) => {
+        return criticalAlertLabelSelector.matchesLabels(alert.labels)
+          ? [[...criticalAlertAcc, alert], nonCriticalAlertAcc]
+          : [criticalAlertAcc, [...nonCriticalAlertAcc, alert]];
+      },
+      [[], []],
+    );
+  }, [alerts]);
 
   const hasCriticalAlerts = criticalAlerts.length > 0;
   const hasNonCriticalAlerts = nonCriticalAlerts.length > 0;

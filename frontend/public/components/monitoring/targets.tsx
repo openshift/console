@@ -1,4 +1,9 @@
 import * as _ from 'lodash-es';
+import {
+  GreenCheckCircleIcon,
+  PrometheusEndpoint,
+  RedExclamationCircleIcon,
+} from '@console/dynamic-plugin-sdk';
 import { Alert } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
@@ -8,9 +13,6 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { useSelector } from 'react-redux';
 import { Link, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
-
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
 
 import { NamespaceModel, ServiceModel, ServiceMonitorModel } from '../../models';
 import { K8sResourceKind, LabelSelector, referenceForModel } from '../../module/k8s';

@@ -1,6 +1,13 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
+import classNames from 'classnames';
 import * as _ from 'lodash-es';
+import * as React from 'react';
+import {
+  PrometheusEndpoint,
+  PrometheusLabels,
+  PrometheusResponse,
+  PrometheusResult,
+  PrometheusValue,
+} from '@console/dynamic-plugin-sdk';
 import {
   Chart,
   ChartArea,
@@ -32,7 +39,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { VictoryPortal } from 'victory-core';
 
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
 
 import {
@@ -41,7 +47,6 @@ import {
   queryBrowserSetTimespan,
 } from '../../actions/observe';
 import { RootState } from '../../redux';
-import { PrometheusLabels, PrometheusResponse, PrometheusResult, PrometheusValue } from '../graphs';
 import { GraphEmpty } from '../graphs/graph-empty';
 import { getPrometheusURL } from '../graphs/helpers';
 import { queryBrowserTheme } from '../graphs/themes';
@@ -524,7 +529,8 @@ const maxStacks = 50;
 // so don't update unless the number of samples would change by at least this proportion
 const samplesLeeway = 0.2;
 
-// Minimum step (milliseconds between data samples) because tiny steps reduce performance for almost no benefit
+// Minimum step (milliseconds between data samples) because tiny steps reduce performance for almost
+// no benefit
 const minStep = 5 * 1000;
 
 // Don't allow zooming to less than this number of milliseconds

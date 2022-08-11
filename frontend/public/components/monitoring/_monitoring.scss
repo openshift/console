@@ -84,7 +84,8 @@
   margin: 0 0 20px 0;
 
   .co-dashboard-card__body--dashboard {
-    // Add extra padding to the right. X-axis times with AM/PM at certain screen widths can overflow the card otherwise.
+    // Add extra padding to the right. X-axis times with AM/PM at certain screen widths can overflow
+    // the card otherwise.
     padding: 10px 15px 10px 10px;
   }
 
@@ -264,7 +265,8 @@ $monitoring-line-height: 18px;
 }
 
 .monitoring-description {
-  // Limit to $num-lines lines of text. Truncate with an ellipsis in WebKit. Just overflow hidden for other browsers.
+  // Limit to $num-lines lines of text. Truncate with an ellipsis in WebKit. Just overflow hidden
+  // for other browsers.
   $num-lines: 2;
   display: -webkit-box;
   -webkit-box-orient: vertical;

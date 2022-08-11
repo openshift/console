@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
+
 import { formatPrometheusDuration, parsePrometheusDuration } from '../utils/datetime';
 import { useBoolean } from './hooks/useBoolean';
 
