@@ -2,7 +2,7 @@ import { chart_color_black_400 as skippedColor } from '@patternfly/react-tokens/
 import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
-import { runStatus } from '../../../../utils/pipeline-augment';
+import { ComputedStatus } from '../../../../types';
 import {
   getLastRegularTasks,
   getTopologyNodesEdges,
@@ -148,7 +148,7 @@ describe('hasWhenExpression', () => {
 describe('When expression decorator color', () => {
   it('should return grey color in pipeline details page', () => {
     const { diamondColor, tooltipContent } = getWhenExpressionDiamondState(
-      runStatus.Idle,
+      ComputedStatus.Idle,
       false,
       false,
     );
@@ -158,7 +158,7 @@ describe('When expression decorator color', () => {
 
   it('should return light-grey color in pipeline details page', () => {
     const { diamondColor, tooltipContent } = getWhenExpressionDiamondState(
-      runStatus.Idle,
+      ComputedStatus.Idle,
       false,
       true,
     );
@@ -168,7 +168,7 @@ describe('When expression decorator color', () => {
 
   it('should return green color for failed task status in pipeline-run details page', () => {
     const { diamondColor, tooltipContent } = getWhenExpressionDiamondState(
-      runStatus.Failed,
+      ComputedStatus.Failed,
       true,
       true,
     );
@@ -178,7 +178,7 @@ describe('When expression decorator color', () => {
 
   it('should return blue color for running task status in pipeline-run details page', () => {
     const { diamondColor, tooltipContent } = getWhenExpressionDiamondState(
-      runStatus.Running,
+      ComputedStatus.Running,
       true,
       true,
     );
@@ -188,7 +188,7 @@ describe('When expression decorator color', () => {
 
   it('should return black color for skipped status in pipeline-run details page', () => {
     const { diamondColor, tooltipContent } = getWhenExpressionDiamondState(
-      runStatus.Skipped,
+      ComputedStatus.Skipped,
       true,
       true,
     );

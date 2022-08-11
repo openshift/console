@@ -36,6 +36,7 @@ import {
   RepositoryModel,
 } from '../models';
 import {
+  ComputedStatus,
   PipelineRunKind,
   PipelineRunParam,
   PipelineRunWorkspace,
@@ -44,7 +45,7 @@ import {
   TaskRunKind,
   TektonParam,
 } from '../types';
-import { getLatestRun, runStatus } from './pipeline-augment';
+import { getLatestRun } from './pipeline-augment';
 import {
   pipelineRunFilterReducer,
   pipelineRunStatus,
@@ -125,12 +126,12 @@ export const appendPipelineRunStatus = (pipeline, pipelineRun, isFinallyTasks = 
     }
     if (!pipelineRun?.status?.taskRuns) {
       if (pipelineRun.spec.status === SucceedConditionReason.PipelineRunCancelled) {
-        return _.merge(task, { status: { reason: runStatus.Cancelled } });
+        return _.merge(task, { status: { reason: ComputedStatus.Cancelled } });
       }
       if (pipelineRun.spec.status === SucceedConditionReason.PipelineRunPending) {
-        return _.merge(task, { status: { reason: runStatus.Idle } });
+        return _.merge(task, { status: { reason: ComputedStatus.Idle } });
       }
-      return _.merge(task, { status: { reason: runStatus.Failed } });
+      return _.merge(task, { status: { reason: ComputedStatus.Failed } });
     }
     const mTask = _.merge(task, {
       status: _.get(_.find(pipelineRun.status.taskRuns, { pipelineTaskName: task.name }), 'status'),
@@ -144,11 +145,11 @@ export const appendPipelineRunStatus = (pipeline, pipelineRun, isFinallyTasks = 
     }
     // append task status
     if (!mTask.status) {
-      mTask.status = { reason: runStatus.Idle };
+      mTask.status = { reason: ComputedStatus.Idle };
     } else if (mTask.status && mTask.status.conditions) {
-      mTask.status.reason = pipelineRunStatus(mTask) || runStatus.Idle;
+      mTask.status.reason = pipelineRunStatus(mTask) || ComputedStatus.Idle;
     } else if (mTask.status && !mTask.status.reason) {
-      mTask.status.reason = runStatus.Idle;
+      mTask.status.reason = ComputedStatus.Idle;
     }
     return mTask;
   });
@@ -272,19 +273,19 @@ export const getLatestPipelineRunStatus = (
 ): LatestPipelineRunStatus => {
   if (!pipelineRuns || pipelineRuns.length === 0) {
     // Not enough data to build the current state
-    return { latestPipelineRun: null, status: runStatus.PipelineNotStarted };
+    return { latestPipelineRun: null, status: ComputedStatus.PipelineNotStarted };
   }
 
   const latestPipelineRun = getLatestRun({ data: pipelineRuns }, 'creationTimestamp');
 
   if (!latestPipelineRun) {
     // Without the latestRun we will not have progress to show
-    return { latestPipelineRun: null, status: runStatus.PipelineNotStarted };
+    return { latestPipelineRun: null, status: ComputedStatus.PipelineNotStarted };
   }
 
   let status: string = pipelineRunFilterReducer(latestPipelineRun);
   if (status === '-') {
-    status = runStatus.Pending;
+    status = ComputedStatus.Pending;
   }
 
   return {
