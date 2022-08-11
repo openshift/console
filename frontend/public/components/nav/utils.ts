@@ -149,19 +149,24 @@ export const sortExtensionItems = <E extends NavExtension>(
 
 // Strips '/<basePath>/k8s/cluster/', '/<basePath>/k8s/ns/<namespace>/', and
 // '/<basePath>/k8s/all-namespaces/' from the beginning a given path
-export const stripScopeFromPath = (path: string) => {
-  return stripBasePath(path)
-    ?.replace(/^\/?k8s\//, '')
-    ?.replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '')
-    ?.replace(/^\//, '');
-};
+export const stripScopeFromPath = (path: string) =>
+  stripBasePath(path)?.replace(
+    /^\/?(?:k8s\/cluster\/|k8s\/all-namespaces\/|k8s\/ns\/[^/]*\/)?(.*?)\/?$/,
+    '$1',
+  );
 
 export const navItemHrefIsActive = (
   location: string,
   href: string,
   startsWith?: string[],
-): boolean =>
-  startsWithSome(stripScopeFromPath(location), stripScopeFromPath(href), ...(startsWith ?? []));
+): boolean => {
+  const scopelessLocation = stripScopeFromPath(location);
+  const scopelessHref = stripScopeFromPath(href);
+  const locationSegments = scopelessLocation.split('/');
+  const hrefSegments = scopelessHref.split('/');
+  const hrefMatch = hrefSegments.every((segment, i) => segment === locationSegments?.[i]);
+  return hrefMatch || startsWithSome(scopelessLocation, ...(startsWith ?? []));
+};
 
 export const navItemResourceIsActive = (
   location: string,

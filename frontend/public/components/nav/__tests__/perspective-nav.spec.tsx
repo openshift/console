@@ -69,8 +69,8 @@ describe('Perspective Nav', () => {
         </Provider>
       </Router>,
     );
-    expect(wrapper.find('[data-test="pinned-resource-item"]').length).toBe(1);
-    expect(wrapper.find('[data-test="draggable-pinned-resource-item"]').length).toBe(0);
+    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
+    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
   });
 
   it('should render draggable pinned items when more than one pinned resource is available', () => {
@@ -88,8 +88,8 @@ describe('Perspective Nav', () => {
         </Provider>
       </Router>,
     );
-    expect(wrapper.find('[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('[data-test="draggable-pinned-resource-item"]').length).toBe(2);
+    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
+    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
   });
 
   it('should handle one valid and one invalid pinned resource', () => {
@@ -107,8 +107,8 @@ describe('Perspective Nav', () => {
         </Provider>
       </Router>,
     );
-    expect(wrapper.find('[data-test="pinned-resource-item"]').length).toBe(1);
-    expect(wrapper.find('[data-test="draggable-pinned-resource-item"]').length).toBe(0);
+    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
+    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
   });
 
   it('should handle one valid and multiple invalid pinned resources', () => {
@@ -126,8 +126,8 @@ describe('Perspective Nav', () => {
         </Provider>
       </Router>,
     );
-    expect(wrapper.find('[data-test="pinned-resource-item"]').length).toBe(1);
-    expect(wrapper.find('[data-test="draggable-pinned-resource-item"]').length).toBe(0);
+    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
+    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
   });
 
   it('should handle multiple valid and one invalid pinned resource', () => {
@@ -145,8 +145,8 @@ describe('Perspective Nav', () => {
         </Provider>
       </Router>,
     );
-    expect(wrapper.find('[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('[data-test="draggable-pinned-resource-item"]').length).toBe(2);
+    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
+    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
   });
 
   it('should handle multiple valid and multiple invalid pinned resources', () => {
@@ -164,8 +164,8 @@ describe('Perspective Nav', () => {
         </Provider>
       </Router>,
     );
-    expect(wrapper.find('[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('[data-test="draggable-pinned-resource-item"]').length).toBe(2);
+    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
+    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
   });
 
   it('should handle all invalid pinned resources', () => {
@@ -179,8 +179,8 @@ describe('Perspective Nav', () => {
         </Provider>
       </Router>,
     );
-    expect(wrapper.find('[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('[data-test="draggable-pinned-resource-item"]').length).toBe(0);
+    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
+    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
   });
 
   // TODO: More unit tests for dynmamic plugins
