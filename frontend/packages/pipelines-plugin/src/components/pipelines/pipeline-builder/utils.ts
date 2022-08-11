@@ -11,7 +11,7 @@ import {
   TaskKind,
   TektonParam,
 } from '../../../types';
-import { removeEmptyDefaultFromPipelineParams } from '../detail-page-tabs';
+import { sanitizePipelineParams } from '../detail-page-tabs';
 import { getTaskParameters } from '../resource-utils';
 import {
   getTaskErrorString,
@@ -354,7 +354,7 @@ export const convertBuilderFormToPipeline = (
     spec: {
       ...existingPipeline?.spec,
       ...unhandledSpec,
-      params: removeEmptyDefaultFromPipelineParams(params),
+      params: sanitizePipelineParams(params),
       resources,
       workspaces,
       tasks: tasks.map((task) => removeEmptyFormFields(removeListRunAfters(task, listIds))),
