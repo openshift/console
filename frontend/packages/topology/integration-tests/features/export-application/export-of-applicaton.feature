@@ -5,7 +5,7 @@ Feature: Export of application
 
 
         Background:
-             Given user has installed Gitops primer Operator
+            Given user has installed Gitops primer Operator
               And user is at developer perspective
               And user has created or selected namespace "aut-export-application"
 
@@ -24,7 +24,7 @@ Feature: Export of application
             Given user has created "nodejs-ex-git-2" workload in "nodejs-ex-git-app" application
              When user clicks on Export Application button
               And user clicks on Ok button on Export Application modal to start the export
-              And user clicks on Export Application button
+              And user clicks on Export Application button again
              Then user can see "View logs" link, "Cancel Export", "Restart Export", and "Ok" button
 
 
@@ -34,7 +34,7 @@ Feature: Export of application
             Given user is at Topology page
              When user clicks on Export Application button
               And user clicks on Ok button on Export Application modal to start the export
-              And user clicks on Export Application button
+              And user clicks on Export Application button again
               And user clicks on Restart button
              Then user can see a toast message saying "Export of resources in aut-export-application has started."
               And user can see a toast message saying "All the resources are exported successfully from aut-export-application. Click below to download it." with download option and close button
@@ -45,7 +45,7 @@ Feature: Export of application
             Given user is at Topology page
              When user clicks on Export Application button
               And user clicks on Ok button on Export Application modal to start the export
-              And user clicks on Export Application button
+              And user clicks on Export Application button again
               And user clicks on Cancel button
              Then user can see primer job gets deleted in topology
 

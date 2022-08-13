@@ -150,6 +150,8 @@ When(
 );
 
 Then('user will see workload disappeared from topology', () => {
+  navigateTo(devNavigationMenu.Add);
+  navigateTo(devNavigationMenu.Topology);
   cy.get(topologyPO.emptyStateIcon).should('be.visible');
 });
 

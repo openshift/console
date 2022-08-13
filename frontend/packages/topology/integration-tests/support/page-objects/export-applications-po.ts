@@ -1,6 +1,8 @@
 export const exportApplication = {
   exportApplicationButton: '[data-test="export-app-btn"]',
   infoTip: '[aria-label="Info Alert"]',
+  exportView: '[data-test="export-view-log-btn"]',
+  resourceAddedNotification: '[aria-label="Close Info alert: alert: Resource added"]',
 };
 
 export const buttonDisplayName = (buttonName: string) => {

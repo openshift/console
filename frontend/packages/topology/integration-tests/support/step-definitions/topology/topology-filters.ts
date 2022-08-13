@@ -29,6 +29,7 @@ Then('user will see the Application groupings option is disabled', () => {
 
 Then('user will see that the Expand options are disabled', () => {
   topologyPage.verifyExpandOptionsDisabled();
+  topologyPage.defaultState();
 });
 
 When('user unchecks the Expand', () => {
@@ -126,4 +127,5 @@ Then('user will see deployment section is not visible', () => {
 
 Then('user will see deployments in count view', () => {
   cy.get(topologyPO.displayFilter.deployemntCount).should('be.visible');
+  topologyPage.defaultState();
 });
