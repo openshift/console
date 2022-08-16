@@ -46,6 +46,8 @@ export const operatorsPO = {
     shipwrightOperator:
       '[data-test="shipwright-operator-community-operators-openshift-marketplace"]',
     redisOperatorCard: '[data-test="redis-operator-community-operators-openshift-marketplace"]',
+    amqStreams: '[data-test="amq-streams-redhat-operators-openshift-marketplace"]',
+    rhoas: '[data-test="rhoas-operator-community-operators-openshift-marketplace"]',
   },
   subscription: {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',
