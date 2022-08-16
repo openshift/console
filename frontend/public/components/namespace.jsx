@@ -116,7 +116,7 @@ const getFilters = () => [
     type: 'requester',
     reducer: (namespace) => {
       const name = namespace.metadata?.name;
-      const requester = namespace.metadata?.annotations['openshift.io/requester'];
+      const requester = namespace.metadata?.annotations?.['openshift.io/requester'];
       if (isCurrentUser(requester)) {
         return REQUESTER_FILTER.ME;
       }
@@ -143,7 +143,7 @@ export const deleteModal = (kind, ns) => {
 
   if (ns.metadata.name === 'default') {
     tooltip = `${kind.label} default cannot be deleted`;
-  } else if (ns.status.phase === 'Terminating') {
+  } else if (ns.status?.phase === 'Terminating') {
     tooltip = `${kind.label} is already terminating`;
   } else {
     callback = () => deleteNamespaceModal({ kind, resource: ns });
@@ -348,7 +348,7 @@ const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
         columns={columns}
         columnID={namespaceColumnInfo.status.id}
       >
-        <Status status={ns.status.phase} />
+        <Status status={ns.status?.phase} />
       </TableData>
       <TableData
         className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
@@ -671,7 +671,7 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
         columns={columns}
         columnID={namespaceColumnInfo.status.id}
       >
-        <Status status={project.status.phase} />
+        <Status status={project.status?.phase} />
       </TableData>
       <TableData
         className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
@@ -1029,7 +1029,7 @@ export const NamespaceSummary = ({ ns }) => {
       <div className="col-sm-6 col-xs-12">
         <dl className="co-m-pane__details">
           <DetailsItem label={t('public~Status')} obj={ns} path="status.phase">
-            <Status status={ns.status.phase} />
+            <Status status={ns.status?.phase} />
           </DetailsItem>
           <PullSecret namespace={ns} canViewSecrets={canListSecrets} />
           <dt>{t('public~NetworkPolicies')}</dt>

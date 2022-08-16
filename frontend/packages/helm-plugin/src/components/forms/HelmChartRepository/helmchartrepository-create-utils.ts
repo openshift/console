@@ -10,15 +10,15 @@ import { HelmChartRepositoryFormData, HelmChartRepositoryType } from '../../../t
 
 export const convertToForm = (resource: HelmChartRepositoryType) => {
   return {
-    scope: resource.kind,
-    repoName: resource.metadata?.name ?? '',
-    repoDisplayName: resource.spec?.name ?? '',
-    ca: resource.spec?.connectionConfig?.ca?.name ?? '',
-    disabled: resource.spec?.disabled ?? false,
-    tlsClientConfig: resource.spec?.connectionConfig?.tlsClientConfig?.name ?? '',
-    repoDescription: resource.spec?.description ?? '',
-    repoUrl: resource.spec?.connectionConfig?.url ?? '',
-    metadata: _.omit(resource.metadata, ['name', 'namespace']) ?? {},
+    scope: resource?.kind,
+    repoName: resource?.metadata?.name ?? '',
+    repoDisplayName: resource?.spec?.name ?? '',
+    ca: resource?.spec?.connectionConfig?.ca?.name ?? '',
+    disabled: resource?.spec?.disabled ?? false,
+    tlsClientConfig: resource?.spec?.connectionConfig?.tlsClientConfig?.name ?? '',
+    repoDescription: resource?.spec?.description ?? '',
+    repoUrl: resource?.spec?.connectionConfig?.url ?? '',
+    metadata: _.omit(resource?.metadata, ['name', 'namespace']) ?? {},
   };
 };
 

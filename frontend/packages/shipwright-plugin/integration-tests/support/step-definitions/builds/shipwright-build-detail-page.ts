@@ -1,8 +1,10 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { devNavigationMenu, switchPerspective } from '../../constants';
-import { buildPO } from '../../pageObjects/build-po';
-import { resourceRow } from '../../pageObjects/global-po';
-import { navigateTo, perspective } from '../../pages';
+import {
+  devNavigationMenu,
+  switchPerspective,
+} from '@console/dev-console/integration-tests/support/constants';
+import { perspective, navigateTo } from '@console/dev-console/integration-tests/support/pages';
+import { buildPO, resourceRow } from '../../pageObjects';
 
 When('user has created shipwright builds', () => {
   cy.exec(

@@ -12,7 +12,7 @@ const ProjectHelmChartRepositoryListPage: React.FC<React.ComponentProps<typeof L
   const createProps = {
     to: `/ns/${props.namespace || 'default'}/helmchartrepositories/~new?kind=${referenceForModel(
       ProjectHelmChartRepositoryModel,
-    )}&actionOrigin=search`,
+    )}`,
   };
   return (
     <ListPage

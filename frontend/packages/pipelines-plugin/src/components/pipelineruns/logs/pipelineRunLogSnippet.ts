@@ -31,7 +31,7 @@ export const getPLRLogSnippet = (pipelineRun: PipelineRunKind): CombinedErrorDet
   );
   const isKnownReason = (reason: string): boolean => {
     // known reasons https://tekton.dev/vault/pipelines-v0.21.0/pipelineruns/#monitoring-execution-status
-    return ['PipelineRunCancelled', 'PipelineRunTimeout'].includes(reason);
+    return ['StoppedRunFinally', 'CancelledRunFinally', 'PipelineRunTimeout'].includes(reason);
   };
 
   // We're intentionally looking at the first failure because we have to start somewhere - they have the YAML still

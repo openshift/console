@@ -19,29 +19,33 @@ import CreateHelmChartRepositoryFormEditor from './CreateHelmChartRepositoryForm
 import { convertToForm, convertToHelmChartRepository } from './helmchartrepository-create-utils';
 
 const CreateHelmChartRepositoryForm: React.FC<FormikProps<FormikValues> & {
-  resource: HelmChartRepositoryType;
   namespace: string;
   handleCancel: () => void;
   showScopeType: boolean;
+  existingRepo: HelmChartRepositoryType;
 }> = ({
-  resource,
   namespace,
   errors,
   handleSubmit,
-  setFieldTouched,
   handleCancel,
   status,
   isSubmitting,
   dirty,
   showScopeType,
   values: { editorType, formData, yamlData },
+  existingRepo,
 }) => {
   const { t } = useTranslation();
 
   const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY =
     'helm-plugin.createHelmChartRepository.editor.lastView';
 
-  const formEditor = <CreateHelmChartRepositoryFormEditor showScopeType={showScopeType} />;
+  const formEditor = (
+    <CreateHelmChartRepositoryFormEditor
+      showScopeType={showScopeType}
+      existingRepo={existingRepo}
+    />
+  );
 
   const yamlEditor = (
     <YAMLEditorField
@@ -51,17 +55,13 @@ const CreateHelmChartRepositoryForm: React.FC<FormikProps<FormikValues> & {
           ? ProjectHelmChartRepositoryModel
           : HelmChartRepositoryModel
       }
-      showSamples={!resource}
+      showSamples={!existingRepo}
       onSave={handleSubmit}
     />
   );
 
   const sanitizeToForm = (yamlDeployment: HelmChartRepositoryType) => {
     const formDetails = convertToForm(yamlDeployment);
-    if (formDetails.repoName || formDetails.repoUrl) {
-      setFieldTouched('formData.repoName', true);
-      setFieldTouched('formData.repoUrl', true);
-    }
     return formDetails;
   };
 
@@ -72,13 +72,23 @@ const CreateHelmChartRepositoryForm: React.FC<FormikProps<FormikValues> & {
 
   const formTitle =
     !showScopeType && formData.scope === ProjectHelmChartRepositoryModel.kind
-      ? t('helm-plugin~Create ProjectHelmChartRepository')
+      ? existingRepo
+        ? t('helm-plugin~Edit ProjectHelmChartRepository')
+        : t('helm-plugin~Create ProjectHelmChartRepository')
+      : existingRepo
+      ? t('helm-plugin~Edit {{label}}', { label: existingRepo.kind })
       : t('helm-plugin~Create Helm Chart Repository');
 
   const formDescription =
     !showScopeType && formData.scope === ProjectHelmChartRepositoryModel.kind
-      ? t('helm-plugin~Add helm chart repository in the namespace.')
-      : t('helm-plugin~Add helm chart repository');
+      ? existingRepo
+        ? t('helm-plugin~Update helm chart repository in the namespace.')
+        : t('helm-plugin~Add helm chart repository in the namespace.')
+      : existingRepo
+      ? existingRepo.kind === ProjectHelmChartRepositoryModel.kind
+        ? t('helm-plugin~Update helm chart repository in the namespace.')
+        : t('helm-plugin~Update the helm chart repository.')
+      : t('helm-plugin~Add helm chart repository.');
 
   return (
     <FlexForm onSubmit={handleSubmit}>
@@ -104,7 +114,7 @@ const CreateHelmChartRepositoryForm: React.FC<FormikProps<FormikValues> & {
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         isSubmitting={isSubmitting}
-        submitLabel={t('helm-plugin~Create')}
+        submitLabel={existingRepo ? t('helm-plugin~Save') : t('helm-plugin~Create')}
         disableSubmit={
           (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) || isSubmitting
         }

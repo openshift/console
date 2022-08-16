@@ -82,6 +82,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     align-items: center;
     display: flex;
     min-height: 40px;
+    min-width: 40px; // prevent Firefox from collapsing the img since it assigns base64 encoded svg without height and width values to 0 https://bugzilla.mozilla.org/show_bug.cgi?id=1328124 and https://jsbin.com/kuzovihumo/edit?js,console
   }
 
   &__icon {

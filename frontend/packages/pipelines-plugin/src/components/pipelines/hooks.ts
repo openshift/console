@@ -20,14 +20,41 @@ import { metricsQueries, PipelineQuery } from './pipeline-metrics/pipeline-metri
 
 type Match = RMatch<{ url: string }>;
 
-export const usePipelinesBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
-  useTabbedTableBreadcrumbsFor(kindObj, match, 'pipelines', pipelinesTab(kindObj));
+export const usePipelinesBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
+  const isAdminPerspective = useActivePerspective()[0] === 'admin';
+  return useTabbedTableBreadcrumbsFor(
+    kindObj,
+    match,
+    'pipelines',
+    pipelinesTab(kindObj),
+    undefined,
+    isAdminPerspective,
+  );
+};
 
-export const useTasksBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
-  useTabbedTableBreadcrumbsFor(kindObj, match, 'tasks', pipelinesTab(kindObj));
+export const useTasksBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
+  const isAdminPerspective = useActivePerspective()[0] === 'admin';
+  return useTabbedTableBreadcrumbsFor(
+    kindObj,
+    match,
+    'tasks',
+    pipelinesTab(kindObj),
+    undefined,
+    isAdminPerspective,
+  );
+};
 
-export const useTriggersBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
-  useTabbedTableBreadcrumbsFor(kindObj, match, 'triggers', pipelinesTab(kindObj));
+export const useTriggersBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
+  const isAdminPerspective = useActivePerspective()[0] === 'admin';
+  return useTabbedTableBreadcrumbsFor(
+    kindObj,
+    match,
+    'triggers',
+    pipelinesTab(kindObj),
+    undefined,
+    isAdminPerspective,
+  );
+};
 
 export const useDevPipelinesBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
   const isAdminPerspective = useActivePerspective()[0] === 'admin';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Alert, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import {
   ISortBy,
@@ -151,6 +151,16 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
 
   return consolePluginsLoaded ? (
     <div className="co-m-pane__body">
+      {obj.spec?.managementState === 'Unmanaged' && (
+        <Alert
+          className="co-alert"
+          variant="info"
+          isInline
+          title={t(
+            'console-app~Console operator spec.managementState is unmanaged. Changes to plugins will have no effect.',
+          )}
+        />
+      )}
       {rows.length ? (
         <Table
           aria-label={t('console-app~Console plugins table')}

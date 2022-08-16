@@ -1,17 +1,14 @@
-import { APIError } from '@console/shared';
 import {
-  Silence,
-  PrometheusAlert,
   Alert,
-  PrometheusRule,
+  AlertSeverity,
+  AlertStates,
   PrometheusLabels,
-  PrometheusValue,
+  PrometheusRule,
   Rule,
   RuleStates,
-  AlertStates,
-  AlertSeverity,
+  Silence,
   SilenceStates,
-} from '@console/dynamic-plugin-sdk/src/api/common-types';
+} from '@console/dynamic-plugin-sdk';
 
 import { RowFunctionArgs } from '../factory';
 import { RowFilter } from '../filter-toolbar';
@@ -26,11 +23,7 @@ export {
 // prettier 1.x doesn't support TS 3.8 syntax
 // eslint-disable-next-line prettier/prettier
 export type {
-  PrometheusAlert,
   Alert,
-  PrometheusRule,
-  PrometheusLabels,
-  PrometheusValue,
   Rule,
   Silence,
 }
@@ -72,13 +65,14 @@ type Group = {
 };
 
 export type PrometheusAPIError = {
-  response?: {
-    status: number;
-  };
-  json?: {
+  json: {
     error?: string;
   };
-} & APIError;
+  message?: string;
+  response: {
+    status: number;
+  };
+};
 
 export type PrometheusRulesResponse = {
   data: {

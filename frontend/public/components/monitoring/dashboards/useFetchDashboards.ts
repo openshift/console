@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+
 import { useSafeFetch } from '../../utils';
 import { useBoolean } from '../hooks/useBoolean';
 import { Board } from './types';

@@ -1,20 +1,17 @@
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
-
-import { PrometheusLabels } from '../graphs';
 import {
   Alert,
   AlertSeverity,
-  AlertSource,
   AlertStates,
-  MonitoringResource,
+  PrometheusLabels,
   PrometheusRule,
-  PrometheusRulesResponse,
   Rule,
   Silence,
   SilenceStates,
-  Target,
-} from './types';
+} from '@console/dynamic-plugin-sdk';
+
+import { AlertSource, MonitoringResource, PrometheusRulesResponse, Target } from './types';
 
 export const AlertResource: MonitoringResource = {
   kind: 'Alert',

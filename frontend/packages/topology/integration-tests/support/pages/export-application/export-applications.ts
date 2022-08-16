@@ -35,15 +35,8 @@ export const exportOfApplication = {
     cy.get(exportApplication.exportApplicationButton)
       .should('be.visible')
       .click();
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="export-cancel-btn"]').length) {
-        cy.log('Close export application modal');
-        cy.get(exportModalButton('Restart Export'))
-          .should('be.visible')
-          .click();
-        cy.get(exportModalButton('Restart Export')).should('not.exist');
-      }
-    });
-    clickVisibleButton();
+    cy.byTestID('close-btn')
+      .should('be.visible')
+      .click();
   },
 };

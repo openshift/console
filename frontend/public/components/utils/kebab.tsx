@@ -11,6 +11,11 @@ import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscri
 import { KebabActions, isKebabActions } from '@console/plugin-sdk/src/typings/kebab-actions';
 import Popper from '@console/shared/src/components/popper/Popper';
 import {
+  HelmChartRepositoryModel,
+  ProjectHelmChartRepositoryModel,
+} from '@console/helm-plugin/src/models';
+import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import {
   annotationsModal,
   configureReplicaCountModal,
   taintsModal,
@@ -28,10 +33,10 @@ import {
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
+  referenceFor,
   referenceForModel,
   VolumeSnapshotKind,
 } from '../../module/k8s';
-import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { connectToModel } from '../../kinds';
 import {
   BuildConfigModel,
@@ -298,6 +303,16 @@ const kebabFactory: KebabFactory = {
         break;
       case RouteModel.kind:
         href = `/k8s/ns/${obj.metadata.namespace}/routes/${obj.metadata.name}/edit`;
+        break;
+      case HelmChartRepositoryModel.kind:
+        href = `/k8s/cluster/helmchartrepositories/${obj.metadata.name}/edit?kind=${referenceFor(
+          obj,
+        )}`;
+        break;
+      case ProjectHelmChartRepositoryModel.kind:
+        href = `/ns/${obj.metadata.namespace}/helmchartrepositories/${
+          obj.metadata.name
+        }/edit?kind=${referenceFor(obj)}`;
         break;
       default:
         href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`;

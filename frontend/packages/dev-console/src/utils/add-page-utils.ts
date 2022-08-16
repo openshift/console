@@ -51,7 +51,7 @@ export const filterNamespaceScopedUrl = (
     return [];
   }
   if (namespace === ALL_NAMESPACES_KEY) {
-    return addActions.filter(({ properties: { href } }) => !href.match(/:namespace\b/));
+    return addActions.filter(({ properties: { href } }) => !href?.match(/:namespace\b/));
   }
   return addActions;
 };

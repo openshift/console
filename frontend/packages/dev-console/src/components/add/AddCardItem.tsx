@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { SimpleListItem, Title, Text } from '@patternfly/react-core';
 import { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
+import { useToast } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { navigateTo, resolvedHref } from '../../utils/add-page-utils';
 import { useShowAddCardItemDetails } from './hooks/useShowAddCardItemDetails';
@@ -13,12 +14,13 @@ type AddCardItemProps = {
 
 const AddCardItem: React.FC<AddCardItemProps> = ({
   action: {
-    properties: { id, label, icon, href, description },
+    properties: { id, label, icon, href, callback, description },
   },
   namespace,
 }) => {
   const fireTelemetryEvent = useTelemetry();
   const [showDetails] = useShowAddCardItemDetails();
+  const toast = useToast();
 
   const actionIcon = (): JSX.Element => {
     if (typeof icon === 'string') {
@@ -47,13 +49,17 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
       componentProps={{
         'data-test': `item ${id}`,
       }}
-      href={resolvedHref(href, namespace)}
+      href={href ? resolvedHref(href, namespace) : null}
       onClick={(e: React.SyntheticEvent) => {
         fireTelemetryEvent('Add Item Selected', {
           id,
           name: label,
         });
-        navigateTo(e, resolvedHref(href, namespace));
+        if (href) {
+          navigateTo(e, resolvedHref(href, namespace));
+        } else if (callback) {
+          callback({ namespace, toast });
+        }
       }}
       className="odc-add-card-item"
     >

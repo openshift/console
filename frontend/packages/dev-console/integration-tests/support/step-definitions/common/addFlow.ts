@@ -20,6 +20,7 @@ import {
   topologySidePane,
   app,
   createGitWorkloadIfNotExistsOnTopologyPage,
+  verifyAndInstallGitopsPrimerOperator,
 } from '../../pages';
 
 Given('user is at Add page', () => {
@@ -118,3 +119,7 @@ And(
     cy.get(`input[data-test="pairs-list-value"][value="${envVal}"]`).should('have.length', 1);
   },
 );
+
+Given('user has installed Gitops primer Operator', () => {
+  verifyAndInstallGitopsPrimerOperator();
+});

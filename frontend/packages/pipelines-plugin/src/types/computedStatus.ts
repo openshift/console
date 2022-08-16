@@ -1,4 +1,5 @@
 export enum ComputedStatus {
+  Cancelling = 'Cancelling',
   Succeeded = 'Succeeded',
   Failed = 'Failed',
   Running = 'Running',

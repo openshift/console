@@ -1,5 +1,12 @@
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash-es';
+import {
+  PrometheusData,
+  PrometheusEndpoint,
+  PrometheusLabels,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/dynamic-plugin-sdk';
 import {
   ActionGroup,
   Button,
@@ -33,9 +40,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { withFallback } from '@console/shared/src/components/error';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 
 import {
   queryBrowserAddQuery,
@@ -53,7 +58,7 @@ import {
   toggleGraphs,
 } from '../../actions/observe';
 import { RootState } from '../../redux';
-import { PrometheusData, PrometheusLabels, PROMETHEUS_BASE_PATH } from '../graphs';
+import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { getPrometheusURL } from '../graphs/helpers';
 import {
   ActionsMenu,
@@ -67,7 +72,7 @@ import {
 } from '../utils';
 import { setAllQueryArguments } from '../utils/router';
 import IntervalDropdown from './poll-interval-dropdown';
-import { colors, Error as QueryBrowserError, QueryBrowser } from './query-browser';
+import { colors, Error, QueryBrowser } from './query-browser';
 import TablePagination from './table-pagination';
 import { PrometheusAPIError } from './types';
 
@@ -163,29 +168,30 @@ const MetricsDropdown: React.FC<{}> = () => {
     if (target) {
       target.focus();
 
-      // Restore cursor position / currently selected text (use _.defer() to delay until after the input value is set)
+      // Restore cursor position / currently selected text (use _.defer() to delay until after the
+      // input value is set)
       _.defer(() => target.setSelectionRange(selection.start, selection.start + metric.length));
     }
   };
 
-  let title: React.ReactNode = t('public~Insert metric at cursor');
+  let title: React.ReactElement = <>{t('public~Insert metric at cursor')}</>;
   if (error !== undefined) {
     const message =
       error?.response?.status === 403
         ? t('public~Access restricted.')
         : t('public~Failed to load metrics list.');
     title = (
-      <span>
+      <>
         <RedExclamationCircleIcon /> {message}
-      </span>
+      </>
     );
   } else if (items === undefined) {
     title = <LoadingInline />;
   } else if (_.isEmpty(items)) {
     title = (
-      <span>
+      <>
         <YellowExclamationTriangleIcon /> {t('public~No metrics found.')}
-      </span>
+      </>
     );
   }
 
@@ -395,7 +401,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
   if (error) {
     return (
       <div className="query-browser__table-message">
-        <QueryBrowserError error={error} title={t('public~Error loading values')} />
+        <Error error={error} title={t('public~Error loading values')} />
       </div>
     );
   }
@@ -638,8 +644,8 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
   }, [dispatch]);
 
   /* eslint-disable react-hooks/exhaustive-deps */
-  // Use React.useMemo() to prevent these two arrays being recreated on every render, which would trigger unnecessary
-  // re-renders of QueryBrowser, which can be quite slow
+  // Use React.useMemo() to prevent these two arrays being recreated on every render, which would
+  // trigger unnecessary re-renders of QueryBrowser, which can be quite slow
   const queriesMemoKey = JSON.stringify(_.map(queries, 'query'));
   const queryStrings = React.useMemo(() => _.map(queries, 'query'), [queriesMemoKey]);
   const disabledSeriesMemoKey = JSON.stringify(

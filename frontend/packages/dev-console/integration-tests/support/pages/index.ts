@@ -1,5 +1,6 @@
 export * from './add-flow/index';
 export * from '@console/topology/integration-tests/support/pages/topology';
+export * from '@console/topology/integration-tests/support/page-objects/export-applications-po';
 export * from './monitoring/index';
 export * from './addHealthChecks-page';
 export * from './app';
