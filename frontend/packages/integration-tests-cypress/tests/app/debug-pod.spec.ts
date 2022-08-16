@@ -14,9 +14,18 @@ kind: Pod
 metadata:
   name: ${POD_NAME}
 spec:
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
   containers:
     - name: ${CONTAINER_NAME}
       image: quay.io/fedora/fedora
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
   restartPolicy: Always`;
 
 describe('Debug pod', () => {
