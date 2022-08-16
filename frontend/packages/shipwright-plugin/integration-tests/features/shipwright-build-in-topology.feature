@@ -7,65 +7,66 @@ Feature: Shipwright build in topolgy
               And user is at developer perspective
               And user has created or selected namespace "aut-shipwright-build-details"
               And user has installed Shipwright Operator
+              And user has installed OpenShift Serverless Operator
               And user is at Add page
-              And user has created shipwright builds
+              And user has created shipwright builds with resources
+              And user is at namespace "aut-shipwright-build-details"
 
 
-        @smoke @to-do
-        Scenario Outline: Sidebar for workload with shipwright build: SWB-02-TC01
-            Given user has created workload using yaml "<workload_yaml>"
-              And user is at the Topology page
-             When user clicks on workload "<workload_name>"
-              And user clicks on Resource tab
-             Then user will see Shipwright BuildRuns
-
-        Examples:
-                  | workload_yaml                                                    | workload_name               |
-                  | testData/builds/201-full-openshift-deployment-example.yaml       | sw-deployment-example       |
-                  | testData/builds/202-full-openshift-deploymentconfig-example.yaml | sw-deploymentconfig-example |
-                  | testData/builds/203-full-openshift-knative-service-example.yaml  | sw-knative-service-example  |
-
-
-        @regression @to-do
-        Scenario Outline: Shipwright build decorator in topology: SWB-02-TC02
-            Given user has created workload "<workload_name>"
-              And user is at the Topology page
-             When user clicks on build decorator for workload "<workload_name>"
-             Then user will see "Shipwright Builds" tab
+        @smoke
+        Scenario Outline: Topology page in dev perspective: SWB-02-TC01
+             When user navigates to Topology in Developer perspective
+              And user filters the workload "<workload_name>" by name and sets the workload type to "<workload_type>"
+              And user clicks on the Build decorator attached to "<workload_name>"
+             Then user will be redirected to the buildRun logs page
+              And user will be able to see the buildRun logs
 
         Examples:
-                  | workload_name               |
-                  | sw-deployment-example       |
-                  | sw-deploymentconfig-example |
-                  | sw-knative-service-example  |
+                  | workload_name           | workload_type    |
+                  | sw-deployment-app       | Deployment       |
+                  | sw-deploymentconfig-app | DeploymentConfig |
+                  | sw-knative-service-app  | Service          |
 
 
-        @regression @to-do
+        @regression
+        Scenario Outline: BuildRun Section in Topology Sidebar: SWB-02-TC02
+             When user navigates to Topology in Developer perspective
+              And user filters the workload "<workload_name>" by name and sets the workload type to "<workload_type>"
+              And user clicks on the workload of type "<workload_type>"
+             Then user will clicks on the Resources tab on the topology sidebar for "<workload_name>"
+              And user will verify BuildRuns section is visible
+
+        Examples:
+                  | workload_name               | workload_type    |
+                  | sw-deployment-example       | Deployment       |
+                  | sw-deploymentconfig-example | DeploymentConfig |
+                  | sw-knative-service-example  | Service          |
+
+
+        @regression
         Scenario Outline: Check Shipwright buildrun from topology: SWB-02-TC03
-            Given user has created workload using yaml "<workload_yaml>"
-              And user is at Shipwright Builds details page for build "<build_name>"
-             When user selects "Start Build" from the action menu
-              And user navigates to Topology page
-             Then user will see build running for "<workload_yaml>"
+            Given user is at Shipwright Builds details page for build "<build_name>"
+             When user selects "Start" option from Actions menu
+              And user navigates to Topology in Developer perspective
+              And user filters the workload "<workload_name>" by name and sets the workload type to "<workload_type>"
+             Then user will see build running for "<workload_type>"
 
         Examples:
-                  | build_name                        | workload_name               |
-                  | sw-deployment-example-build       | sw-deployment-example       |
-                  | sw-deploymentconfig-example-build | sw-deploymentconfig-example |
-                  | sw-knative-service-example-build  | sw-knative-service-example  |
+                  | build_name                        | workload_name               | workload_type    |
+                  | sw-deployment-example-build       | sw-deployment-example       | Deployment       |
+                  | sw-deploymentconfig-example-build | sw-deploymentconfig-example | DeploymentConfig |
+                  | sw-knative-service-example-build  | sw-knative-service-example  | Service          |
 
 
-        @regression @to-do
+        @regression
         Scenario Outline: View logs for shipwright buildrun: SWB-02-TC04
-            Given user has created workload "<workload_name>"
-              And user is at the Topology page
-             When user clicks on workload "<workload_name>"
-              And user clicks on Resource tab
-              And user clicks on View logs button for build run
-             Then user will see Shipwright BuildRuns logs
+            When user navigates to Topology in Developer perspective
+              And user filters the workload "<workload_name>" by name and sets the workload type to "<workload_type>"
+              And user clicks on View logs button for buildrun for workload type "<workload_type>" from the sidebar
+             Then user will be able to see the buildRun logs
 
         Examples:
-                  | workload_name               |
-                  | sw-deployment-example       |
-                  | sw-deploymentconfig-example |
-                  | sw-knative-service-example  |
+                  | workload_name               | workload_type    |
+                  | sw-deployment-example       | Deployment       |
+                  | sw-deploymentconfig-example | DeploymentConfig |
+                  | sw-knative-service-example  | Service          |

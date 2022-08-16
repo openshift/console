@@ -9,6 +9,8 @@ import {
   buildRunReferenceIncompleteBuildWithGenerateName,
   buildRunContainsIncompleteBuildSpecWithoutGenerateName,
   buildRunContainsIncompleteBuildSpecWithGenerateName,
+  buildRunWithLabels,
+  buildWithLabels,
 } from './mock-data';
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
@@ -35,6 +37,34 @@ describe('startBuild', () => {
       spec: {
         buildRef: {
           name: 'incomplete-build',
+        },
+      },
+    };
+
+    await startBuild(build);
+    expect(k8sCreateResourceMock).toHaveBeenCalledTimes(1);
+    expect(k8sCreateResourceMock).toHaveBeenCalledWith({
+      model: BuildRunModel,
+      data: expectedBuildRun,
+    });
+  });
+
+  it('should create a new BuildRun with Labels present in Build', async () => {
+    const build: Build = buildWithLabels;
+    const expectedBuildRun: BuildRun = {
+      apiVersion: 'shipwright.io/v1alpha1',
+      kind: 'BuildRun',
+      metadata: {
+        namespace: 'a-namespace',
+        generateName: 'build-with-labels-',
+        labels: {
+          'build.shipwright.io/name': 'build-with-labels',
+          'app.kubernetes.io/part-of': 'buildpack-nodejs-build',
+        },
+      },
+      spec: {
+        buildRef: {
+          name: 'build-with-labels',
         },
       },
     };
@@ -170,5 +200,33 @@ describe('rerunBuildRun', () => {
       new Error('Could not rerun BuildRun without buildRef.name or inline buildSpec.'),
     );
     expect(k8sCreateResourceMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should rerun a BuildRun with the labels from the existing BuildRun', async () => {
+    const buildRun: BuildRun = buildRunWithLabels;
+    const expectedBuildRun: BuildRun = {
+      apiVersion: 'shipwright.io/v1alpha1',
+      kind: 'BuildRun',
+      metadata: {
+        namespace: 'a-namespace',
+        generateName: 'buildrun-with-labels-',
+        labels: {
+          'build.shipwright.io/name': 'build-with-labels',
+          'app.kubernetes.io/part-of': 'buildpack-nodejs-build',
+        },
+      },
+      spec: {
+        buildRef: {
+          name: 'build-with-labels',
+        },
+      },
+    };
+
+    await rerunBuildRun(buildRun);
+    expect(k8sCreateResourceMock).toHaveBeenCalledTimes(1);
+    expect(k8sCreateResourceMock).toHaveBeenCalledWith({
+      model: BuildRunModel,
+      data: expectedBuildRun,
+    });
   });
 });

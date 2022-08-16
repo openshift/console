@@ -13,7 +13,8 @@
     "entry": "src/plugin.ts",
     "exposedModules": {
       "pages": "src/pages.ts",
-      "actions": "src/actions.ts"
+      "actions": "src/actions.ts",
+      "topology": "src/topology.ts"
     }
   }
 }

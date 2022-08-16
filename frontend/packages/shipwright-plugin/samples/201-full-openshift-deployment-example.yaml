@@ -2,11 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sw-deployment-example
+  namespace: build-examples
   labels:
     app.kubernetes.io/part-of: sw-deployment-app
-  annotations:
-    image.openshift.io/triggers: >-
-      [{"from":{"kind":"ImageStreamTag","name":"sw-deployment-example:latest","namespace":"test-build"},"fieldPath":"spec.template.spec.containers[?(@.name==\"container\")].image","pause":"false"}]
 spec:
   selector:
     matchLabels:
@@ -20,12 +18,13 @@ spec:
       containers:
         - name: container
           image: >-
-            image-registry.openshift-image-registry.svc:5000/test-build/sw-deployment-example:latest
+            image-registry.openshift-image-registry.svc:5000/build-examples/sw-deployment-example:latest
 ---
 apiVersion: shipwright.io/v1alpha1
 kind: Build
 metadata:
   name: sw-deployment-example-build
+  namespace: build-examples
   labels:
     app.kubernetes.io/part-of: sw-deployment-app
 spec:
@@ -36,12 +35,13 @@ spec:
     name: buildpacks-v3
     kind: BuildStrategy
   output:
-    image: image-registry.openshift-image-registry.svc:5000/test-build/sw-deployment-example
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/sw-deployment-example-build
 ---
 apiVersion: shipwright.io/v1alpha1
 kind: BuildRun
 metadata:
-  generateName: sw-deployment-example-buildrun-
+  namespace: build-examples
+  generateName: sw-deployment-example-build-
   labels:
     app.kubernetes.io/part-of: sw-deployment-app
 spec:

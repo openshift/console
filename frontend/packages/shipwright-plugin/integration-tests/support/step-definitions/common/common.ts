@@ -39,6 +39,11 @@ Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
 });
 
+When('user navigates to Topology in Developer perspective', () => {
+  navigateTo(devNavigationMenu.Add);
+  cy.get('[data-test-id="topology-header"]', { timeout: 10000 }).click({ force: true });
+});
+
 Given('user has created namespace starts with {string}', (projectName: string) => {
   const d = new Date();
   const timestamp = d.getTime();
@@ -66,7 +71,9 @@ When('user switches to developer perspective', () => {
 });
 
 When('user selects {string} option from Actions menu', (option: string) => {
+  cy.byLegacyTestID('actions-menu-button').click();
   cy.byTestActionID(option).click();
+  cy.get('[aria-label="Breadcrumb"]', { timeout: 5000 }).should('contain', 'Build details');
 });
 
 Then('modal with {string} appears', (header: string) => {
