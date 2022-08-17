@@ -1,7 +1,6 @@
 import {
   Alert,
   AlertSeverity,
-  AlertStates,
   PrometheusLabels,
   PrometheusRule,
   Rule,
@@ -13,7 +12,6 @@ import { RowFilter } from '../filter-toolbar';
 
 export {
   AlertSeverity,
-  AlertStates,
 };
 
 // prettier 1.x doesn't support TS 3.8 syntax

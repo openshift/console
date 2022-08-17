@@ -1,8 +1,7 @@
-import { RuleStates } from '@console/dynamic-plugin-sdk';
+import { AlertStates, RuleStates } from '@console/dynamic-plugin-sdk';
 import {
   Alert,
   Alerts,
-  AlertStates,
   PrometheusRulesResponse,
 } from '@console/internal/components/monitoring/types';
 

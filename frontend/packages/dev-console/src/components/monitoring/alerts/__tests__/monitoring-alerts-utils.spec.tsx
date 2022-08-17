@@ -1,4 +1,4 @@
-import { AlertStates } from '@console/internal/components/monitoring/types';
+import { AlertStates } from '@console/dynamic-plugin-sdk';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { rules } from '@console/shared/src/utils/__mocks__/alerts-and-rules-data';
 import { monitoringAlertRows } from '../monitoring-alerts-utils';
