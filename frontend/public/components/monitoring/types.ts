@@ -7,14 +7,12 @@ import {
   Rule,
   RuleStates,
   Silence,
-  SilenceStates,
 } from '@console/dynamic-plugin-sdk';
 
 import { RowFunctionArgs } from '../factory';
 import { RowFilter } from '../filter-toolbar';
 
 export {
-  SilenceStates,
   AlertSeverity,
   RuleStates,
   AlertStates,
