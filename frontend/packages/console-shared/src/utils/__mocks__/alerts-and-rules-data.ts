@@ -1,9 +1,9 @@
+import { RuleStates } from '@console/dynamic-plugin-sdk';
 import {
   Alert,
   Alerts,
   AlertStates,
   PrometheusRulesResponse,
-  RuleStates,
 } from '@console/internal/components/monitoring/types';
 
 export const mockAlerts: Alerts = {

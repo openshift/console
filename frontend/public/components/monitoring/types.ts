@@ -5,7 +5,6 @@ import {
   PrometheusLabels,
   PrometheusRule,
   Rule,
-  RuleStates,
   Silence,
 } from '@console/dynamic-plugin-sdk';
 
@@ -14,7 +13,6 @@ import { RowFilter } from '../filter-toolbar';
 
 export {
   AlertSeverity,
-  RuleStates,
   AlertStates,
 };
 
