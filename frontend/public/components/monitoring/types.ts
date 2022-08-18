@@ -1,6 +1,5 @@
 import {
   Alert,
-  AlertSeverity,
   PrometheusLabels,
   PrometheusRule,
   Rule,
@@ -9,10 +8,6 @@ import {
 
 import { RowFunctionArgs } from '../factory';
 import { RowFilter } from '../filter-toolbar';
-
-export {
-  AlertSeverity,
-};
 
 // prettier 1.x doesn't support TS 3.8 syntax
 // eslint-disable-next-line prettier/prettier

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { AlertSeverity } from '@console/internal/components/monitoring/types';
+import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 import { ExternalLink } from '@console/internal/components/utils';
 import useFilteredAlerts from '../../hooks/useFilteredAlerts';
 

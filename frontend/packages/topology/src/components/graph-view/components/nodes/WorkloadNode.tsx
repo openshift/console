@@ -13,8 +13,8 @@ import {
   WithSelectionProps,
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { AlertSeverity } from '@console/internal/components/monitoring/types';
 import {
   AllPodStatus,
   calculateRadius,
