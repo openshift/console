@@ -69,7 +69,7 @@ import {
   useExtensions,
   isClusterServiceVersionAction,
 } from '@console/plugin-sdk';
-import { Status, SuccessStatus } from '@console/shared';
+import { Status, SuccessStatus, getNamespace } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
@@ -85,6 +85,7 @@ import ModelStatusBox from '../model-status-box';
 import { csvNameFromWindow, OperandLink } from './operand-link';
 import { ShowOperandsInAllNamespacesRadioGroup } from './ShowOperandsInAllNamespacesRadioGroup';
 import { useShowOperandsInAllNamespaces } from './useShowOperandsInAllNamespaces';
+
 /**
  * @depricated these actions has been converted to Action extension, src/actions/csv-actions.ts
  */
@@ -282,6 +283,8 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, showNames
   );
 };
 
+const getOperandNamespace = (obj: ClusterServiceVersionKind): string | null => getNamespace(obj);
+
 export const OperandList: React.FC<OperandListProps> = (props) => {
   const { t } = useTranslation();
   const { noAPIsFound, showNamespace } = props;
@@ -300,7 +303,7 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
   };
   const namespaceHeader: Header = {
     title: t('public~Namespace'),
-    sortFunc: 'metadata.namespace',
+    sortFunc: 'getOperandNamespace',
     transforms: [sortable],
     props: { className: tableColumnClasses[2] },
   };
@@ -366,6 +369,7 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
       {...props}
       customSorts={{
         operandStatus: getOperandStatusText,
+        getOperandNamespace,
       }}
       data={data}
       EmptyMsg={() =>
