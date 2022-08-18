@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
+import { i18n, TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { withTranslation } from 'react-i18next';
 import { getName } from '@console/shared';
@@ -42,7 +43,6 @@ import {
 import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
 import * as k8sActions from '../actions/k8s';
 import { CSIDriverModel, StorageClassModel } from './../models';
-import { i18n, TFunction } from 'i18next';
 
 enum Provisioner {
   CSI = 'csi',
@@ -121,12 +121,12 @@ class StorageClassFormWithTranslation extends React.Component<
   CSIStorageTypes = Object.freeze({
     ...this.getExtensionsStorageClassProvisioners(Provisioner.CSI),
     'ebs.csi.aws.com': {
-      title: 'AWS CSI', // t('public~AWS CSI')
+      title: this.props.t('public~AWS CSI'),
       provisioner: 'ebs.csi.aws.com',
       allowVolumeExpansion: true,
       parameters: {
         type: {
-          name: 'Type', // t('public~Type')
+          name: this.props.t('public~Type'),
           values: {
             gp3: 'gp3',
             gp2: 'gp2',
@@ -135,32 +135,36 @@ class StorageClassFormWithTranslation extends React.Component<
             st1: 'st1',
             standard: 'standard',
           },
-          hintText: 'Select AWS Type. Default is gp3',
+          hintText: this.props.t('public~Select AWS Type. Default is gp3'),
         },
         iopsPerGB: {
-          name: 'IOPS per GiB', // t('public~IOPS per GiB')
-          hintText: 'I/O operations per second per GiB', // t('public~I/O operations per second per GiB')
+          name: this.props.t('public~IOPS per GiB'),
+          hintText: this.props.t('public~I/O operations per second per GiB'),
           validation: (params) => {
             if (params.iopsPerGB.value && !params.iopsPerGB.value.match(/^\d+$/)) {
-              return 'IOPS per GiB must be a number'; // t('public~IOPS per GiB must be a number')
+              return this.props.t('public~IOPS per GiB must be a number');
             }
             return null;
           },
           visible: (params) => _.get(params, 'type.value') === 'io1',
         },
         fsType: {
-          name: 'Filesystem Type', // t('public~Filesystem Type')
-          hintText: 'Filesystem type to use during volume creation. Default is ext4.', // t('public~Filesystem type to use during volume creation. Default is ext4.')
+          name: this.props.t('public~Filesystem Type'),
+          hintText: this.props.t(
+            'public~Filesystem type to use during volume creation. Default is ext4.',
+          ),
           values: { ext4: 'ext4', xfs: 'xfs', ext2: 'ext2', ext3: 'ext3' },
         },
         encrypted: {
-          name: 'Encrypted', // t('public~Encrypted')
+          name: this.props.t('public~Encrypted'),
           type: 'checkbox',
           format: (value) => value.toString(),
         },
         kmsKeyId: {
-          name: 'KMS key ID', // t('public~KMS key ID')
-          hintText: 'The full Amazon resource name of the key to use when encrypting the volume', // t('public~The full Amazon resource name of the key to use when encrypting the volume')
+          name: this.props.t('public~KMS key ID'),
+          hintText: this.props.t(
+            'public~The full Amazon resource name of the key to use when encrypting the volume',
+          ),
           visible: (params) => _.get(params, 'encrypted.value', false),
         },
       },
@@ -171,7 +175,7 @@ class StorageClassFormWithTranslation extends React.Component<
   defaultStorageTypes = Object.freeze({
     ...this.getExtensionsStorageClassProvisioners(Provisioner.OTHERS), // Plugin provisioners
     local: {
-      title: 'Local', // t('public~Local')
+      title: this.props.t('public~Local'),
       provisioner: 'kubernetes.io/no-provisioner',
       documentationLink: DOC_URL_STORAGE_CLASSES_LOCAL,
       parameters: {},
@@ -184,33 +188,37 @@ class StorageClassFormWithTranslation extends React.Component<
       documentationLink: DOC_URL_STORAGE_CLASSES_AWS_EBS,
       parameters: {
         type: {
-          name: 'Type', // t('public~Type')
+          name: this.props.t('public~Type'),
           values: { io1: 'io1', gp2: 'gp2', sc1: 'sc1', st1: 'st1' },
-          hintText: 'Select AWS Type',
+          hintText: this.props.t('public~Select AWS Type'),
         },
         iopsPerGB: {
-          name: 'IOPS per GiB', // t('public~IOPS per GiB')
-          hintText: 'I/O operations per second per GiB', // t('public~I/O operations per second per GiB')
+          name: this.props.t('public~IOPS per GiB'),
+          hintText: this.props.t('public~I/O operations per second per GiB'),
           validation: (params) => {
             if (params.iopsPerGB.value && !params.iopsPerGB.value.match(/^\d+$/)) {
-              return 'IOPS per GiB must be a number'; // t('public~IOPS per GiB must be a number')
+              return this.props.t('public~IOPS per GiB must be a number');
             }
             return null;
           },
           visible: (params) => _.get(params, 'type.value') === 'io1',
         },
         fsType: {
-          name: 'Filesystem type', // t('public~Filesystem type')
-          hintText: 'Filesystem type to use during volume creation. Default is ext4.', // t('public~Filesystem type to use during volume creation. Default is ext4.')
+          name: this.props.t('public~Filesystem type'),
+          hintText: this.props.t(
+            'public~Filesystem type to use during volume creation. Default is ext4.',
+          ),
         },
         encrypted: {
-          name: 'Encrypted', // t('public~Encrypted')
+          name: this.props.t('public~Encrypted'),
           type: 'checkbox',
           format: (value) => value.toString(),
         },
         kmsKeyId: {
-          name: 'KMS key ID', // t('public~KMS key ID')
-          hintText: 'The full Amazon resource name of the key to use when encrypting the volume', // t('public~The full Amazon resource name of the key to use when encrypting the volume')
+          name: this.props.t('public~KMS key ID'),
+          hintText: this.props.t(
+            'public~The full Amazon resource name of the key to use when encrypting the volume',
+          ),
           visible: (params) => _.get(params, 'encrypted.value', false),
         },
       },
@@ -222,38 +230,44 @@ class StorageClassFormWithTranslation extends React.Component<
       documentationLink: DOC_URL_STORAGE_CLASSES_GCE,
       parameters: {
         type: {
-          name: 'Type', // t('public~Type')
+          name: this.props.t('public~Type'),
           values: { 'pd-standard': 'pd-standard', 'pd-ssd': 'pd-ssd' },
-          hintText: 'Select GCE type',
+          hintText: this.props.t('public~Select GCE type'),
         },
         zone: {
-          name: 'Zone', // t('public~Zone')
+          name: this.props.t('public~Zone'),
           validation: (params) => {
             if (params.zone.value !== '' && _.get(params, 'zones.value', '') !== '') {
-              return 'Zone and zones parameters must not be used at the same time'; // t('public~Zone and zones parameters must not be used at the same time')
+              return this.props.t(
+                'public~Zone and zones parameters must not be used at the same time',
+              );
             }
             return null;
           },
         },
         zones: {
-          name: 'Zones', // t('public~Zones')
+          name: this.props.t('public~Zones'),
           validation: (params) => {
             if (params.zones.value !== '' && _.get(params, 'zone.value', '') !== '') {
-              return 'Zone and zones parameters must not be used at the same time'; // t('public~Zone and zones parameters must not be used at the same time')
+              return this.props.t(
+                'public~Zone and zones parameters must not be used at the same time',
+              );
             }
             return null;
           },
         },
         'replication-type': {
-          name: 'Replication type', // t('public~Replication type')
+          name: this.props.t('public~Replication type'),
           values: { none: 'none', 'regional-pd': 'regional-pd' },
-          hintText: 'Select Replication type',
+          hintText: this.props.t('public~Select Replication type'),
           validation: (params) => {
             if (
               params['replication-type'].value === 'regional-pd' &&
               _.get(params, 'zone.value', '') !== ''
             ) {
-              return 'Zone cannot be specified when replication type regional-pd is chosen. Use zones instead.'; // t('public~Zone cannot be specified when replication type regional-pd is chosen. Use zones instead.')
+              return this.props.t(
+                'public~Zone cannot be specified when replication type regional-pd is chosen. Use zones instead.',
+              );
             }
             return null;
           },
@@ -267,41 +281,41 @@ class StorageClassFormWithTranslation extends React.Component<
       documentationLink: DOC_URL_STORAGE_CLASSES_GLUSTERFS,
       parameters: {
         resturl: {
-          name: 'Gluster REST/Heketi URL', // t('public~Gluster REST/Heketi URL')
+          name: this.props.t('public~Gluster REST/Heketi URL'),
           required: true,
         },
         restuser: {
-          name: 'Gluster REST/Heketi user', // t('public~Gluster REST/Heketi user')
+          name: this.props.t('public~Gluster REST/Heketi user'),
         },
         secretNamespace: {
-          name: 'Secret Namespace', // t('public~Secret Namespace')
+          name: this.props.t('public~Secret Namespace'),
         },
         secretName: {
-          name: 'Secret name', // t('public~Secret name')
+          name: this.props.t('public~Secret name'),
         },
         clusterid: {
-          name: 'Cluster ID', // t('public~Cluster ID')
+          name: this.props.t('public~Cluster ID'),
         },
         gidMin: {
-          name: 'GID min', // t('public~GID min')
+          name: this.props.t('public~GID min'),
           validation: (params) => {
             if (params.gidMin.value !== '' && !params.gidMin.value.match(/^[1-9]\d*$/)) {
-              return 'GID min must be number'; // t('public~GID min must be number')
+              return this.props.t('public~GID min must be number');
             }
             return null;
           },
         },
         gidMax: {
-          name: 'GID max', // t('public~GID max')
+          name: this.props.t('public~GID max'),
           validation: (params) => {
             if (params.gidMax.value !== '' && !params.gidMax.value.match(/^[1-9]\d*$/)) {
-              return 'GID max must be number'; // t('public~GID max must be number')
+              return this.props.t('public~GID max must be number');
             }
             return null;
           },
         },
         volumetype: {
-          name: 'Volume type', // t('public~Volume type')
+          name: this.props.t('public~Volume type'),
         },
       },
     },
@@ -312,10 +326,10 @@ class StorageClassFormWithTranslation extends React.Component<
       documentationLink: DOC_URL_STORAGE_CLASSES_OPENSTACK_CINDER,
       parameters: {
         type: {
-          name: 'Volume type', // t('public~Volume type')
+          name: this.props.t('public~Volume type'),
         },
         availability: {
-          name: 'Availability zone', // t('public~Availability zone')
+          name: this.props.t('public~Availability zone'),
         },
       },
     },
@@ -326,16 +340,16 @@ class StorageClassFormWithTranslation extends React.Component<
       documentationLink: DOC_URL_STORAGE_CLASSES_AZURE_FILE,
       parameters: {
         skuName: {
-          name: 'SKU name', // t('public~SKU name')
-          hintText: 'Azure storage account SKU tier', // t('public~Azure storage account SKU tier')
+          name: this.props.t('public~SKU name'),
+          hintText: this.props.t('public~Azure storage account SKU tier'),
         },
         location: {
-          name: 'Location', // t('public~Location')
-          hintText: 'Azure storage account location', // t('public~Azure storage account location')
+          name: this.props.t('public~Location'),
+          hintText: this.props.t('public~Azure storage account location'),
         },
         storageAccount: {
-          name: 'Azure storage account name', // t('public~Azure storage account name')
-          hintText: 'Azure storage account name', // t('public~Azure storage account name')
+          name: this.props.t('public~Azure storage account name'),
+          hintText: this.props.t('public~Azure storage account name'),
         },
       },
     },
@@ -346,13 +360,13 @@ class StorageClassFormWithTranslation extends React.Component<
       documentationLink: DOC_URL_STORAGE_CLASSES_AZURE_DISK,
       parameters: {
         storageaccounttype: {
-          name: 'Storage account type', // t('public~Storage account type')
-          hintText: 'Storage account type', // t('public~Storage account type')
+          name: this.props.t('public~Storage account type'),
+          hintText: this.props.t('public~Storage account type'),
         },
         kind: {
-          name: 'Account kind', // t('public~Account kind')
+          name: this.props.t('public~Account kind'),
           values: { shared: 'shared', dedicated: 'dedicated', managed: 'managed' },
-          hintText: 'Select account kind',
+          hintText: this.props.t('public~Select account kind'),
         },
       },
     },
@@ -363,36 +377,36 @@ class StorageClassFormWithTranslation extends React.Component<
       documentationLink: DOC_URL_STORAGE_CLASSES_QUOBYTE,
       parameters: {
         quobyteAPIServer: {
-          name: 'Quobyte API server', // t('public~Quobyte API server')
-          hintText: 'Quobyte API server', // t('public~Quobyte API server')
+          name: this.props.t('public~Quobyte API server'),
+          hintText: this.props.t('public~Quobyte API server'),
         },
         registry: {
-          name: 'Registry address(es)', // t('public~Registry address(es)')
-          hintText: 'Registry address(es)', // t('public~Registry address(es)')
+          name: this.props.t('public~Registry address(es)'),
+          hintText: this.props.t('public~Registry address(es)'),
         },
         adminSecretName: {
-          name: 'Admin secret name', // t('public~Admin secret name')
-          hintText: 'Admin secret name', // t('public~Admin secret name')
+          name: this.props.t('public~Admin secret name'),
+          hintText: this.props.t('public~Admin secret name'),
         },
         adminSecretNamespace: {
-          name: 'Admin secret namespace', // t('public~Admin secret namespace')
-          hintText: 'Admin secret namespace', // t('public~Admin secret namespace')
+          name: this.props.t('public~Admin secret namespace'),
+          hintText: this.props.t('public~Admin secret namespace'),
         },
         user: {
-          name: 'User', // t('public~User')
-          hintText: 'User', // t('public~User')
+          name: this.props.t('public~User'),
+          hintText: this.props.t('public~User'),
         },
         group: {
-          name: 'Group', // t('public~Group')
-          hintText: 'Group', // t('public~Group')
+          name: this.props.t('public~Group'),
+          hintText: this.props.t('public~Group'),
         },
         quobyteConfig: {
-          name: 'Quobyte configuration', // t('public~Quobyte configuration')
-          hintText: 'Quobyte configuration', // t('public~Quobyte configuration')
+          name: this.props.t('public~Quobyte configuration'),
+          hintText: this.props.t('public~Quobyte configuration'),
         },
         quobyteTenant: {
-          name: 'Quobyte tenant', // t('public~Quobyte tenant')
-          hintText: 'Quobyte tenant ID used to create/delete the volume', // t('public~Quobyte tenant ID used to create/delete the volume')
+          name: this.props.t('public~Quobyte tenant'),
+          hintText: this.props.t('public~Quobyte tenant ID used to create/delete the volume'),
         },
       },
     },
@@ -403,17 +417,17 @@ class StorageClassFormWithTranslation extends React.Component<
       documentationLink: DOC_URL_STORAGE_CLASSES_VSPHERE,
       parameters: {
         diskformat: {
-          name: 'Disk format', // t('public~Disk format')
+          name: this.props.t('public~Disk format'),
           values: {
             thin: 'thin',
             zeroedthick: 'zeroed thick',
             eagerzeroedthick: 'eager zeroed thick',
           },
-          hintText: 'Select disk format',
+          hintText: this.props.t('public~Select disk format'),
         },
         datastore: {
-          name: 'Datastore', // t('public~Datastore')
-          hintText: 'Datastore', // t('public~Datastore')
+          name: this.props.t('public~Datastore'),
+          hintText: this.props.t('public~Datastore'),
         },
       },
       volumeBindingMode: 'Immediate',
@@ -425,44 +439,48 @@ class StorageClassFormWithTranslation extends React.Component<
       documentationLink: DOC_URL_STORAGE_CLASSES_PORTWORX_VOLUME,
       parameters: {
         fs: {
-          name: 'Filesystem', // t('public~Filesystem')
+          name: this.props.t('public~Filesystem'),
           values: { none: 'none', xfs: 'xfs', ext4: 'ext4' },
-          hintText: 'Select Filesystem',
+          hintText: this.props.t('public~Select Filesystem'),
         },
         // eslint-disable-next-line camelcase
         block_size: {
-          name: 'Block size', // t('public~Block size')
-          hintText: 'Block size in Kb', // t('public~Block Size in Kb')
+          name: this.props.t('public~Block size'),
+          hintText: this.props.t('public~Block size in Kb'),
           validation: (params) => {
             if (params.block_size.value !== '' && !params.block_size.value.match(/^[1-9]\d*$/)) {
-              return 'Snapshot interval must be a number'; // t('public~Snapshot interval must be a number')
+              return this.props.t('public~Snapshot interval must be a number');
             }
             return null;
           },
         },
         repl: {
-          name: 'Number of synchronous replicas to be provided in the form of replication factor', // t('public~Number of synchronous replicas to be provided in the form of replication factor')
-          hintText: 'Number of replicas', // t('public~Number of replicas')
+          name: this.props.t(
+            'public~Number of synchronous replicas to be provided in the form of replication factor',
+          ),
+          hintText: this.props.t('public~Number of replicas'),
           validation: (params) => {
             if (params.repl.value !== '' && !params.repl.value.match(/^[1-9]\d*$/)) {
-              return 'Number of replicas must be a number'; // t('public~Number of replicas must be a number')
+              return this.props.t('public~Number of replicas must be a number');
             }
             return null;
           },
         },
         // eslint-disable-next-line camelcase
         io_priority: {
-          name: 'I/O priority', // t('public~I/O priority')
+          name: this.props.t('public~I/O priority'),
           values: { high: 'high', medium: 'medium', low: 'low' },
-          hintText: 'I/O priority',
+          hintText: this.props.t('public~I/O priority'),
         },
         // eslint-disable-next-line camelcase
         snap_interval: {
-          name: 'Snapshot interval', // t('public~Snapshot interval')
-          hintText: 'Clock/time interval in minutes for when to trigger snapshots', // t('public~Clock/time interval in minutes for when to trigger snapshots')
+          name: this.props.t('public~Snapshot interval'),
+          hintText: this.props.t(
+            'public~Clock/time interval in minutes for when to trigger snapshots',
+          ),
           validation: (params) => {
             if (params.repl.value !== '' && !params.repl.value.match(/^[1-9]\d*$/)) {
-              return 'Snapshot interval must be a number'; // t('public~Snapshot interval must be a number')
+              return this.props.t('public~Snapshot interval must be a number');
             }
             return null;
           },
@@ -470,21 +488,23 @@ class StorageClassFormWithTranslation extends React.Component<
         },
         // eslint-disable-next-line camelcase
         aggregation_level: {
-          name: 'Aggregation level', // t('public~Aggregation level')
-          hintText: 'The number of chunks the volume would be distributed into', // t('public~The number of chunks the volume would be distributed into')
+          name: this.props.t('public~Aggregation level'),
+          hintText: this.props.t(
+            'public~The number of chunks the volume would be distributed into',
+          ),
           validation: (params) => {
             if (
               params.aggregation_level.value !== '' &&
               !params.aggregation_level.value.match(/^[1-9]\d*$/)
             ) {
-              return 'Aggregation level must be a number'; // t('public~Aggregation level must be a number')
+              return this.props.t('public~Aggregation level must be a number');
             }
             return null;
           },
           format: (value) => value.toString(),
         },
         ephemeral: {
-          name: 'Ephemeral', // t('public~Ephemeral')
+          name: this.props.t('public~Ephemeral'),
           type: 'checkbox',
           format: (value) => value.toString(),
         },
@@ -497,42 +517,42 @@ class StorageClassFormWithTranslation extends React.Component<
       documentationLink: DOC_URL_STORAGE_CLASSES_SCALEIO,
       parameters: {
         gateway: {
-          name: 'API gateway', // t('public~API gateway')
+          name: this.props.t('public~API gateway'),
           required: true,
-          hintText: 'ScaleIO API gateway address', // t('public~ScaleIO API gateway address')
+          hintText: this.props.t('public~ScaleIO API gateway address'),
         },
         system: {
-          name: 'System name', // t('public~System name')
+          name: this.props.t('public~System name'),
           required: true,
-          hintText: 'Name of the ScaleIO system', // t('public~Name of the ScaleIO system')
+          hintText: this.props.t('public~Name of the ScaleIO system'),
         },
         protectionDomain: {
-          name: 'Protection domain', // t('public~Protection domain')
+          name: this.props.t('public~Protection domain'),
           required: true,
-          hintText: 'Name of the ScaleIO protection domain', // t('public~Name of the ScaleIO protection domain')
+          hintText: this.props.t('public~Name of the ScaleIO protection domain'),
         },
         storagePool: {
-          name: 'Storage pool', // t('public~Storage pool')
+          name: this.props.t('public~Storage pool'),
           required: true,
-          hintText: 'Name of the volume storage pool', // t('public~Name of the volume storage pool')
+          hintText: this.props.t('public~Name of the volume storage pool'),
         },
         storageMode: {
-          name: 'Storage mode', // t('public~Storage mode')
+          name: this.props.t('public~Storage mode'),
           values: { thinProvisioned: 'ThinProvisioned', thickProvisioned: 'ThickProvisioned' },
-          hintText: 'Select storage provision mode',
+          hintText: this.props.t('public~Select storage provision mode'),
         },
         secretRef: {
-          name: 'Secret reference', // t('public~Secret reference')
+          name: this.props.t('public~Secret reference'),
           required: true,
-          hintText: 'Reference to a configured Secret object', // t('public~Reference to a configured Secret object')
+          hintText: this.props.t('public~Reference to a configured Secret object'),
         },
         readOnly: {
-          name: 'Read Only', // t('public~Read Only')
+          name: this.props.t('public~Read Only'),
           type: 'checkbox',
         },
         fsType: {
-          name: 'Filesystem Type', // t('public~Filesystem Type')
-          hintText: 'Filesystem to use for the volume', // t('public~Filesystem to use for the volume')
+          name: this.props.t('public~Filesystem Type'),
+          hintText: this.props.t('public~Filesystem to use for the volume'),
         },
       },
     },
@@ -543,25 +563,30 @@ class StorageClassFormWithTranslation extends React.Component<
       documentationLink: DOC_URL_STORAGE_CLASSES_STORAGEOS,
       parameters: {
         pool: {
-          name: 'Pool', // t('public~Pool')
-          hintText:
-            'Name of the StorageOS distributed capacity pool from which to provision the volume', // t('public~Name of the StorageOS distributed capacity pool from which to provision the volume')
+          name: this.props.t('public~Pool'),
+          hintText: this.props.t(
+            'public~Name of the StorageOS distributed capacity pool from which to provision the volume',
+          ),
         },
         description: {
-          name: 'Description', // t('public~Description')
-          hintText: 'Description to assign to volumes that were created dynamically', // t('public~Description to assign to volumes that were created dynamically')
+          name: this.props.t('public~Description'),
+          hintText: this.props.t(
+            'public~Description to assign to volumes that were created dynamically',
+          ),
         },
         fsType: {
-          name: 'Filesystem type', // t('public~Filesystem type')
-          hintText: 'Default filesystem type to request', // t('public~Default filesystem type to request')
+          name: this.props.t('public~Filesystem type'),
+          hintText: this.props.t('public~Default filesystem type to request'),
         },
         adminSecretName: {
-          name: 'Admin secret name', // t('public~Admin secret name')
-          hintText: 'Name of the secret to use for obtaining the StorageOS API credentials', // t('public~Name of the secret to use for obtaining the StorageOS API credentials')
+          name: this.props.t('public~Admin secret name'),
+          hintText: this.props.t(
+            'public~Name of the secret to use for obtaining the StorageOS API credentials',
+          ),
         },
         adminSecretNamespace: {
-          name: 'Admin secret namespace', // t('public~Admin secret namespace')
-          hintText: 'Namespace where the API configuration secret is located', // t('public~Namespace where the API configuration secret is located')
+          name: this.props.t('public~Admin secret namespace'),
+          hintText: this.props.t('public~Namespace where the API configuration secret is located'),
           required: (params) => {
             const adminSecretName = _.get(params, 'adminSecretName.value', null);
             return adminSecretName !== null && adminSecretName !== '';
@@ -759,7 +784,7 @@ class StorageClassFormWithTranslation extends React.Component<
     // Display error if duplicate keys are found
     const keys = customParams.map((t) => t[NameValueEditorPair.Name]);
     if (_.uniq(keys).length !== keys.length) {
-      this.setState({ error: 'Duplicate keys found.' }); // t('public~Duplicate keys found.')
+      this.setState({ error: this.props.t('public~Duplicate keys found.') });
       return;
     }
 
@@ -814,15 +839,16 @@ class StorageClassFormWithTranslation extends React.Component<
       error: null,
       nameIsValid: true,
     };
+    const { t } = this.props;
 
     if (nameUpdated) {
       if (updatedName.trim().length === 0) {
-        returnVal.error = 'Storage name is required'; // t('public~Storage name is required')
+        returnVal.error = t('public~Storage name is required');
         returnVal.nameIsValid = false;
       } else if (this.resources) {
         _.each(this.resources.data, function(storageClass) {
           if (storageClass.metadata.name === updatedName.toLowerCase()) {
-            returnVal.error = 'Storage name must be unique'; // t('public~Storage name must be unique')
+            returnVal.error = t('public~Storage name must be unique');
             returnVal.nameIsValid = false;
           }
         });
@@ -988,10 +1014,10 @@ class StorageClassFormWithTranslation extends React.Component<
           </p>
           <NameValueEditorComponent
             nameValuePairs={this.state.customParams}
-            nameString="Parameter"
-            nameParameter="parameter"
-            valueString="Value"
-            addString="Add Parameter"
+            nameString={t('public~Parameter')}
+            nameParameter={t('public~parameter')}
+            valueString={t('public~Value')}
+            addString={t('public~Add Parameter')}
             updateParentData={this.updateCustomParams}
           />
         </div>
