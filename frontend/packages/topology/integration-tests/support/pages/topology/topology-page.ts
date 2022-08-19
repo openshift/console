@@ -70,8 +70,8 @@ export const topologyPage = {
   verifyWorkloadInTopologyPage: (appName: string) => {
     topologyHelper.verifyWorkloadInTopologyPage(appName);
   },
-  verifyWorkloadNotInTopologyPage: (appName: string) => {
-    topologyHelper.search(appName).should('not.exist');
+  verifyWorkloadNotInTopologyPage: (appName: string, options?: { timeout: number }) => {
+    topologyHelper.verifyWorkloadDeleted(appName, options);
   },
   clickDisplayOptionDropdown: () =>
     cy

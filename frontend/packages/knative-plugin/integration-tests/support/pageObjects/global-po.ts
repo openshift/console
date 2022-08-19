@@ -14,6 +14,8 @@ export const eventingPO = {
   createConnector: '[data-test=save-changes]',
   submit: '[data-test-id="submit-button"]',
   nodeLink: '[data-test-id="edge-handler"]',
+  catalogProviderRedHat: '[data-test="provider-red-hat"] input[type=checkbox]',
+  bootstrapServers: '[aria-label="Bootstrap servers"]',
   awsSqsSource: {
     accessKey: '[id="root_accessKey"]',
     queueName: '[id="root_queueNameOrArn"]',

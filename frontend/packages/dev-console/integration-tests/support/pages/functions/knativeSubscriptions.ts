@@ -107,9 +107,7 @@ export const createKnativeKafka = () => {
       cy.byTestID('create-dynamic-form').click();
 
       cy.byLegacyTestID('details-actions').should('be.visible');
-      cy.contains('DeploymentsAvailable, InstallSucceeded, Ready', { timeout: 150000 }).should(
-        'be.visible',
-      );
+      cy.contains('InstallSucceeded', { timeout: 150000 }).should('be.visible');
     }
   });
 };

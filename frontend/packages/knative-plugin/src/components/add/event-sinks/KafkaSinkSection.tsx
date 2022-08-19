@@ -1,22 +1,13 @@
 import * as React from 'react';
 import { SelectVariant, TextInputTypes } from '@patternfly/react-core';
 import * as fuzzy from 'fuzzysearch';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  InputField,
-  ResourceDropdownField,
-  SelectInputField,
-  SelectInputOption,
-} from '@console/shared';
+import { InputField, ResourceDropdownField, SelectInputField } from '@console/shared';
 import { EVENT_SINK_KAFKA_KIND } from '../../../const';
-import { getBootstrapServers } from '../../../utils/create-eventsources-utils';
-import { strimziResourcesWatcher } from '../../../utils/get-knative-resources';
+import { useBootstrapServers } from '../../../hooks';
 
 interface KafkaSinkSectionProps {
   title: string;
@@ -26,58 +17,7 @@ interface KafkaSinkSectionProps {
 
 const KafkaSinkSection: React.FC<KafkaSinkSectionProps> = ({ title, namespace, fullWidth }) => {
   const { t } = useTranslation();
-  const memoResources = React.useMemo(() => strimziResourcesWatcher(namespace), [namespace]);
-  const { kafkas, kafkaconnections } = useK8sWatchResources<{
-    [key: string]: K8sResourceKind[];
-  }>(memoResources);
-
-  const [bootstrapServers, bsPlaceholder] = React.useMemo(() => {
-    let bootstrapServersOptions: SelectInputOption[] = [];
-    let placeholder: React.ReactNode = '';
-    const isKafkasLoaded =
-      (kafkas.loaded && !kafkas.loadError) ||
-      (kafkaconnections.loaded && !kafkaconnections.loadError);
-    const isKafkasLoadError = !!(kafkas.loadError && kafkaconnections.loadError);
-    if (isKafkasLoaded) {
-      const kafkasData = [
-        ...(kafkas.data ? kafkas.data : []),
-        ...(kafkaconnections.data ? kafkaconnections.data : []),
-      ];
-      bootstrapServersOptions = !_.isEmpty(kafkasData)
-        ? _.map(getBootstrapServers(kafkasData), (bs) => ({
-            value: bs,
-            disabled: false,
-          }))
-        : [
-            {
-              value: t('knative-plugin~No bootstrap servers found'),
-              disabled: true,
-            },
-          ];
-      placeholder = t('knative-plugin~Add bootstrap servers');
-    } else if (isKafkasLoadError) {
-      placeholder = t(
-        'knative-plugin~{{loadErrorMessage}}. Try adding bootstrap servers manually.',
-        {
-          loadErrorMessage: `${kafkas.loadError.message}, ${kafkaconnections.loadError.message}`,
-        },
-      );
-    } else {
-      bootstrapServersOptions = [
-        { value: t('knative-plugin~Loading bootstrap servers...'), disabled: true },
-      ];
-      placeholder = '...';
-    }
-    return [bootstrapServersOptions, placeholder];
-  }, [
-    kafkas.loaded,
-    kafkas.loadError,
-    kafkas.data,
-    kafkaconnections.loaded,
-    kafkaconnections.loadError,
-    kafkaconnections.data,
-    t,
-  ]);
+  const [bootstrapServers, bsPlaceholder] = useBootstrapServers(namespace);
 
   const autocompleteFilter = (text: string, item: any): boolean => fuzzy(text, item?.props?.name);
 

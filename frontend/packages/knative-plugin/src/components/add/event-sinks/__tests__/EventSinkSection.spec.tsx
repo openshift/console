@@ -5,7 +5,7 @@ import AppSection from '@console/dev-console/src/components/import/app/AppSectio
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DynamicFormField } from '@console/shared';
 import { mockKameletSink } from '../../__mocks__/Kamelet-data';
-import { formikMockDataKafkaSink } from '../__mocks__/event-sink-data';
+import { formikMockDataKafkaSink } from '../__mocks__/event-kafka-sink-data';
 import EventSinkSection from '../EventSinkSection';
 import KafkaSinkSection from '../KafkaSinkSection';
 import SourceSection from '../SourceSection';
