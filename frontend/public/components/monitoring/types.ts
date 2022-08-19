@@ -1,24 +1,13 @@
 import {
   Alert,
-  AlertSeverity,
-  AlertStates,
   PrometheusLabels,
   PrometheusRule,
   Rule,
-  RuleStates,
   Silence,
-  SilenceStates,
 } from '@console/dynamic-plugin-sdk';
 
 import { RowFunctionArgs } from '../factory';
 import { RowFilter } from '../filter-toolbar';
-
-export {
-  SilenceStates,
-  AlertSeverity,
-  RuleStates,
-  AlertStates,
-};
 
 // prettier 1.x doesn't support TS 3.8 syntax
 // eslint-disable-next-line prettier/prettier

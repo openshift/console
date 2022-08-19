@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
+import { RuleStates } from '@console/dynamic-plugin-sdk';
 import { alertingSetRules } from '@console/internal/actions/observe';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import {
@@ -12,7 +13,7 @@ import {
   PROMETHEUS_TENANCY_BASE_PATH,
 } from '@console/internal/components/graphs';
 import { StateTimestamp } from '@console/internal/components/monitoring/alerting';
-import { Rule, RuleStates } from '@console/internal/components/monitoring/types';
+import { Rule } from '@console/internal/components/monitoring/types';
 import {
   alertingRuleStateOrder,
   getAlertsAndRules,

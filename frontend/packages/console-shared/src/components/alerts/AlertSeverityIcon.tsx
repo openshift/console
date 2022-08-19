@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ExclamationTriangleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
-import { AlertSeverity } from '@console/internal/components/monitoring/types';
+import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 
 interface AlertSeverityIconProps {
   severityAlertType: AlertSeverity;
