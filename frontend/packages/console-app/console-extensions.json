@@ -457,8 +457,7 @@
       "section": "home",
       "id": "dashboards",
       "name": "%console-app~Overview%",
-      "href": "/dashboards",
-      "activePath": "/dashboards/"
+      "href": "/dashboards"
     },
     "flags": {
       "required": ["CAN_GET_NS", "OPENSHIFT", "PROMETHEUS", "MONITORING"]
@@ -472,7 +471,11 @@
       "id": "projects",
       "insertAfter": "dashboards",
       "name": "%console-app~Projects%",
-      "resource": "projects"
+      "model": {
+        "group": "project.openshift.io",
+        "version": "v1",
+        "kind": "Project"
+      }
     },
     "flags": { "required": ["OPENSHIFT"] }
   },
@@ -485,8 +488,7 @@
       "insertAfter": "projects",
       "name": "%console-app~Search%",
       "href": "/search",
-      "namespaced": true,
-      "startsWith": ["search"]
+      "namespaced": true
     }
   },
   {
@@ -498,18 +500,19 @@
       "insertAfter": "search",
       "name": "%console-app~API Explorer%",
       "href": "/api-explorer",
-      "startsWith": ["api-explorer", "api-resource"]
+      "startsWith": ["api-resource"]
     }
   },
   {
-    "type": "console.navigation/resource-ns",
+    "type": "console.navigation/href",
     "properties": {
       "perspective": "admin",
       "section": "home",
       "id": "events",
       "insertAfter": "explore",
       "name": "%console-app~Events%",
-      "resource": "events"
+      "href": "/events",
+      "prefixNamespaced": true
     }
   },
   {
@@ -519,7 +522,10 @@
       "section": "workloads",
       "id": "pods",
       "name": "%console-app~Pods%",
-      "resource": "pods"
+      "model": {
+        "version": "v1",
+        "kind": "Pod"
+      }
     }
   },
   {
@@ -530,7 +536,11 @@
       "id": "deployments",
       "insertAfter": "pods",
       "name": "%console-app~Deployments%",
-      "resource": "deployments"
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "Deployment"
+      }
     }
   },
   {
@@ -541,7 +551,11 @@
       "id": "deploymentconfigs",
       "insertAfter": "deployments",
       "name": "%console-app~DeploymentConfigs%",
-      "resource": "deploymentconfigs"
+      "model": {
+        "group": "apps.openshift.io",
+        "version": "v1",
+        "kind": "DeploymentConfig"
+      }
     },
     "flags": { "required": ["OPENSHIFT"] }
   },
@@ -553,7 +567,11 @@
       "id": "statefulsets",
       "insertAfter": "deploymentconfigs",
       "name": "%console-app~StatefulSets%",
-      "resource": "statefulsets"
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "StatefulSet"
+      }
     }
   },
   {
@@ -564,7 +582,10 @@
       "id": "secrets",
       "insertAfter": "statefulsets",
       "name": "%console-app~Secrets%",
-      "resource": "secrets"
+      "model": {
+        "version": "v1",
+        "kind": "Secret"
+      }
     }
   },
   {
@@ -575,7 +596,10 @@
       "id": "configmaps",
       "insertAfter": "secrets",
       "name": "%console-app~ConfigMaps%",
-      "resource": "configmaps"
+      "model": {
+        "version": "v1",
+        "kind": "ConfigMap"
+      }
     }
   },
   {
@@ -596,7 +620,11 @@
       "id": "cronjobs",
       "insertAfter": "WorkloadsSeparator",
       "name": "%console-app~CronJobs%",
-      "resource": "cronjobs"
+      "model": {
+        "group": "batch",
+        "version": "v1",
+        "kind": "CronJob"
+      }
     }
   },
   {
@@ -607,7 +635,11 @@
       "id": "jobs",
       "insertAfter": "cronjobs",
       "name": "%console-app~Jobs%",
-      "resource": "jobs"
+      "model": {
+        "group": "batch",
+        "version": "v1",
+        "kind": "Job"
+      }
     }
   },
   {
@@ -618,7 +650,11 @@
       "id": "daemonsets",
       "insertAfter": "jobs",
       "name": "%console-app~DaemonSets%",
-      "resource": "daemonsets"
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "DaemonSet"
+      }
     }
   },
   {
@@ -629,7 +665,11 @@
       "id": "replicasets",
       "insertAfter": "daemonsets",
       "name": "%console-app~ReplicaSets%",
-      "resource": "replicasets"
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "ReplicaSet"
+      }
     }
   },
   {
@@ -640,7 +680,10 @@
       "id": "replicationcontrollers",
       "insertAfter": "replicasets",
       "name": "%console-app~ReplicationControllers%",
-      "resource": "replicationcontrollers"
+      "model": {
+        "version": "v1",
+        "kind": "ReplicationController"
+      }
     }
   },
   {
@@ -651,7 +694,11 @@
       "id": "horizontalpodautoscalers",
       "insertAfter": "replicationcontrollers",
       "name": "%console-app~HorizontalPodAutoscalers%",
-      "resource": "horizontalpodautoscalers"
+      "model": {
+        "group": "autoscaling",
+        "version": "v2beta2",
+        "kind": "HorizontalPodAutoscaler"
+      }
     }
   },
   {
@@ -662,7 +709,11 @@
       "id": "poddisruptionbudgets",
       "insertAfter": "horizontalpodautoscalers",
       "name": "%console-app~PodDisruptionBudgets%",
-      "resource": "poddisruptionbudgets"
+      "model": {
+        "group": "policy",
+        "version": "v1",
+        "kind": "PodDisruptionBudget"
+      }
     }
   },
   {
@@ -672,7 +723,10 @@
       "section": "networking",
       "id": "services",
       "name": "%console-app~Services%",
-      "resource": "services"
+      "model": {
+        "version": "v1",
+        "kind": "Service"
+      }
     }
   },
   {
@@ -683,7 +737,11 @@
       "id": "routes",
       "insertAfter": "services",
       "name": "%console-app~Routes%",
-      "resource": "routes"
+      "model": {
+        "group": "route.openshift.io",
+        "version": "v1",
+        "kind": "Route"
+      }
     },
     "flags": { "required": ["OPENSHIFT"] }
   },
@@ -695,7 +753,11 @@
       "id": "ingresses",
       "insertAfter": "routes",
       "name": "%console-app~Ingresses%",
-      "resource": "ingresses"
+      "model": {
+        "group": "networking.k8s.io",
+        "version": "v1",
+        "kind": "Ingress"
+      }
     }
   },
   {
@@ -706,7 +768,11 @@
       "id": "networkpolicies",
       "insertAfter": "ingresses",
       "name": "%console-app~NetworkPolicies%",
-      "resource": "networkpolicies"
+      "model": {
+        "group": "networking.k8s.io",
+        "version": "v1",
+        "kind": "NetworkPolicy"
+      }
     }
   },
   {
@@ -716,7 +782,10 @@
       "section": "storage",
       "id": "persistentvolumes",
       "name": "%console-app~PersistentVolumes%",
-      "resource": "persistentvolumes"
+      "model": {
+        "version": "v1",
+        "kind": "PersistentVolume"
+      }
     },
     "flags": { "required": ["CAN_LIST_PV"] }
   },
@@ -728,7 +797,10 @@
       "id": "persistentvolumeclaims",
       "insertAfter": "persistentvolumes",
       "name": "%console-app~PersistentVolumeClaims%",
-      "resource": "persistentvolumeclaims"
+      "model": {
+        "version": "v1",
+        "kind": "PersistentVolumeClaim"
+      }
     }
   },
   {
@@ -739,7 +811,11 @@
       "id": "storageclasses",
       "insertAfter": "persistentvolumeclaims",
       "name": "%console-app~StorageClasses%",
-      "resource": "storageclasses"
+      "model": {
+        "group": "storage.k8s.io",
+        "version": "v1",
+        "kind": "StorageClass"
+      }
     }
   },
   {
@@ -779,7 +855,11 @@
       "section": "builds",
       "id": "buildconfigs",
       "name": "%console-app~BuildConfigs%",
-      "resource": "buildconfigs"
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "BuildConfig"
+      }
     }
   },
   {
@@ -790,7 +870,11 @@
       "id": "builds",
       "insertAfter": "buildconfigs",
       "name": "%console-app~Builds%",
-      "resource": "builds"
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "Build"
+      }
     }
   },
   {
@@ -801,8 +885,12 @@
       "id": "imagestreams",
       "insertAfter": "builds",
       "name": "%console-app~ImageStreams%",
-      "resource": "imagestreams",
-      "startsWith": ["imagestreams", "imagestreamtags"]
+      "startsWith": ["imagestreamtags"],
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStream"
+      }
     }
   },
   {
@@ -812,7 +900,10 @@
       "section": "compute",
       "id": "nodes",
       "name": "%console-app~Nodes%",
-      "resource": "nodes"
+      "model": {
+        "version": "v1",
+        "kind": "Node"
+      }
     }
   },
   {
@@ -899,8 +990,8 @@
       "insertAfter": "machineconfigs",
       "name": "%console-app~MachineConfigPools%",
       "model": {
-        "version": "v1",
         "group": "machineconfiguration.openshift.io",
+        "version": "v1",
         "kind": "MachineConfigPool"
       }
     },
@@ -914,8 +1005,8 @@
       "id": "users",
       "name": "%console-app~Users%",
       "model": {
-        "version": "v1",
         "group": "user.openshift.io",
+        "version": "v1",
         "kind": "User"
       }
     },
@@ -930,8 +1021,8 @@
       "insertAfter": "users",
       "name": "%console-app~Groups%",
       "model": {
-        "version": "v1",
         "group": "user.openshift.io",
+        "version": "v1",
         "kind": "Group"
       }
     },
@@ -945,7 +1036,10 @@
       "id": "serviceaccounts",
       "insertAfter": "groups",
       "name": "%console-app~ServiceAccounts%",
-      "resource": "serviceaccounts"
+      "model": {
+        "version": "v1",
+        "kind": "ServiceAccount"
+      }
     }
   },
   {
@@ -956,8 +1050,12 @@
       "id": "roles",
       "insertAfter": "serviceaccounts",
       "name": "%console-app~Roles%",
-      "resource": "roles",
-      "startsWith": ["roles", "clusterroles"]
+      "startsWith": ["clusterroles"],
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "Role"
+      }
     }
   },
   {
@@ -968,8 +1066,12 @@
       "id": "rolebindings",
       "insertAfter": "roles",
       "name": "%console-app~RoleBindings%",
-      "resource": "rolebindings",
-      "startsWith": ["rolebindings", "clusterrolebindings"]
+      "startsWith": ["clusterrolebindings"],
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "RoleBinding"
+      }
     }
   },
   {
@@ -980,9 +1082,7 @@
       "id": "clustersettings",
       "name": "%console-app~Cluster Settings%",
       "href": "/settings/cluster",
-      "activePath": "/settings/cluster/",
       "startsWith": [
-        "settings/cluster",
         "settings/idp",
         "config.openshift.io",
         "monitoring/alertmanagerconfig",
@@ -999,7 +1099,10 @@
       "id": "namespaces",
       "insertAfter": "clustersettings",
       "name": "%console-app~Namespaces%",
-      "resource": "namespaces"
+      "model": {
+        "version": "v1",
+        "kind": "Namespace"
+      }
     },
     "flags": { "required": ["CAN_LIST_NS"] }
   },
@@ -1011,8 +1114,11 @@
       "id": "resourcequotas",
       "insertAfter": "namespaces",
       "name": "%console-app~ResourceQuotas%",
-      "resource": "resourcequotas",
-      "startsWith": ["resourcequotas", "clusterresourcequotas"]
+      "startsWith": ["clusterresourcequotas"],
+      "model": {
+        "version": "v1",
+        "kind": "ResourceQuota"
+      }
     }
   },
   {
@@ -1023,7 +1129,10 @@
       "id": "limitranges",
       "insertAfter": "resourcequotas",
       "name": "%console-app~LimitRanges%",
-      "resource": "limitranges"
+      "model": {
+        "version": "v1",
+        "kind": "LimitRange"
+      }
     }
   },
   {
@@ -1034,7 +1143,11 @@
       "id": "customresourcedefinitions",
       "insertAfter": "metering",
       "name": "%console-app~CustomResourceDefinitions%",
-      "resource": "customresourcedefinitions"
+      "model": {
+        "group": "apiextensions.k8s.io",
+        "version": "v1",
+        "kind": "CustomResourceDefinition"
+      }
     },
     "flags": { "required": ["CAN_LIST_CRD"] }
   },
@@ -1049,7 +1162,7 @@
       "id": "monitoringalerts",
       "name": "%console-app~Alerting%",
       "href": "/monitoring/alerts",
-      "startsWith": ["monitoring/alerts", "monitoring/alertrules", "monitoring/silences"]
+      "startsWith": ["monitoring/alertrules", "monitoring/silences"]
     }
   },
   {
@@ -1091,8 +1204,7 @@
       "id": "monitoringtargets",
       "insertAfter": "monitoringdashboards",
       "name": "%console-app~Targets%",
-      "href": "/monitoring/targets",
-      "startsWith": ["monitoring/targets"]
+      "href": "/monitoring/targets"
     }
   },
   {

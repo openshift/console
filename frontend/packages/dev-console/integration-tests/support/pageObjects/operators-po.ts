@@ -11,7 +11,8 @@ export const operatorsPO = {
     eventing: `a[href^="/eventing/"]`,
     serving: `a[href^="/serving/"]`,
     administration: '[data-quickstart-id="qs-nav-administration"]',
-    customResourceDefinitions: 'a[href="/k8s/cluster/customresourcedefinitions"]',
+    customResourceDefinitions:
+      'a[data-test="nav"][href$="apiextensions.k8s.io~v1~CustomResourceDefinition"]',
   },
   operatorHub: {
     numOfItems: 'div.co-catalog-page__num-items',

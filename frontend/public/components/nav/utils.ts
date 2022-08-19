@@ -1,18 +1,8 @@
-import {
-  isHrefNavItem,
-  isResourceNSNavItem,
-  isResourceClusterNavItem,
-  NavExtension,
-  isNavSection,
-  ExtensionK8sModel,
-  K8sModel,
-} from '@console/dynamic-plugin-sdk';
+import { startsWithSome } from '@console/shared';
+import { NavExtension, isNavSection, K8sModel } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { referenceForModel, referenceForExtensionModel } from '@console/internal/module/k8s';
+import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { stripBasePath } from '../utils';
-import { NavLinkHref } from './NavLinkHref';
-import { NavLinkResourceNS } from './NavLinkResourceNS';
-import { NavLinkResourceCluster } from './NavLinkResourceCluster';
 
 const toArray = (val) => (val ? (Array.isArray(val) ? val : [val]) : []);
 
@@ -82,7 +72,7 @@ const insertPositionedItems = (
   insertPositionedItems(positionedItems, currentItems);
 };
 
-export const getSortedNavItems = (
+export const getSortedNavExtensions = (
   navItems: LoadedExtension<NavExtension>[],
 ): LoadedExtension<NavExtension>[] => {
   const sortedItems = navItems.filter((item) => !isPositioned(item, navItems));
@@ -157,34 +147,40 @@ export const sortExtensionItems = <E extends NavExtension>(
   return sortedItems;
 };
 
+// Strips '/<basePath>/k8s/cluster/', '/<basePath>/k8s/ns/<namespace>/', and
+// '/<basePath>/k8s/all-namespaces/' from the beginning a given path
+export const stripScopeFromPath = (path: string) =>
+  stripBasePath(path)?.replace(
+    /^\/?(?:k8s\/cluster\/|k8s\/all-namespaces\/|k8s\/ns\/[^/]*\/)?(.*?)\/?$/,
+    '$1',
+  );
+
+export const navItemHrefIsActive = (
+  location: string,
+  href: string,
+  startsWith?: string[],
+): boolean => {
+  const scopelessLocation = stripScopeFromPath(location);
+  const scopelessHref = stripScopeFromPath(href);
+  const locationSegments = scopelessLocation.split('/');
+  const hrefSegments = scopelessHref.split('/');
+  const hrefMatch = hrefSegments.every((segment, i) => segment === locationSegments?.[i]);
+  return hrefMatch || startsWithSome(scopelessLocation, ...(startsWith ?? []));
+};
+
+export const navItemResourceIsActive = (
+  location: string,
+  k8sModel: K8sModel,
+  startsWith?: string[],
+): boolean => {
+  const scopelessPath = stripScopeFromPath(location);
+  const [firstSegment] = scopelessPath.split('/');
+  const resourceMatches =
+    k8sModel &&
+    firstSegment &&
+    [getReferenceForModel(k8sModel), k8sModel.plural].includes(firstSegment);
+  return resourceMatches || startsWithSome(scopelessPath, ...(startsWith ?? []));
+};
+
 export const isTopLevelNavItem = (e: LoadedExtension<NavExtension>) =>
   isNavSection(e) || !e.properties.section;
-
-export const isNavExtensionActive = (
-  e: LoadedExtension<NavExtension>,
-  location: string,
-  namespace: string,
-) => {
-  return (
-    (isHrefNavItem(e) && NavLinkHref.isActive(e.properties, location)) ||
-    (isResourceNSNavItem(e) && NavLinkResourceNS.isActive(e.properties, location, namespace)) ||
-    (isResourceClusterNavItem(e) && NavLinkResourceCluster.isActive(e.properties, location))
-  );
-};
-
-export const matchesPath = (path: string, prefix: string): boolean =>
-  path === prefix || path.startsWith(`${prefix}/`);
-
-export const matchesModel = (path: string, model: K8sModel): boolean =>
-  model && matchesPath(path, referenceForModel(model));
-
-export const matchesExtensionModel = (path: string, model: ExtensionK8sModel): boolean =>
-  model && matchesPath(path, referenceForExtensionModel(model));
-
-export const stripNS = (path: string): string => {
-  path = stripBasePath(path);
-  return path
-    .replace(/^\/?k8s\//, '')
-    .replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '')
-    .replace(/^\//, '');
-};

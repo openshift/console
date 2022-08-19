@@ -12,6 +12,7 @@ import {
   INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL,
   INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL,
 } from '@console/dynamic-plugin-sdk';
+import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 
 const shallowMapEquals = (a, b) => {
   if (a === b || (a.size === 0 && b.size === 0)) {
@@ -140,7 +141,7 @@ const stateToProps = (state, { resources }) => {
   const { k8s } = state;
   const cluster = getActiveCluster(state);
   const k8sModels = resources.reduce(
-    (models, { kind }) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])),
+    (models, { kind }) => models.set(kind, getK8sModel(k8s, kind)),
     ImmutableMap(),
   );
   const loaded = (r) =>
