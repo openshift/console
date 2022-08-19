@@ -287,14 +287,13 @@ class Dropdown_ extends DropdownMixin {
     if (autocompleteFilter && !_.isEmpty(autocompleteText)) {
       if (weightedSort) {
         // Use fuzzysort
-        let totalItems = _.map(items, (item) => item.props);
+        const totalItems = _.map(items, (item) => item.props);
         const result = autocompleteFilter(autocompleteText, totalItems);
-        totalItems = {};
-        _.forEach(result, (item) => {
+        items = result.reduce((acc, item) => {
           const key = `${item.obj.name}-${item.obj.kind}`;
-          totalItems[key] = items[key];
-        });
-        items = totalItems;
+          acc[key] = items[key];
+          return acc;
+        }, {});
       } else {
         // Use fuzzysearch
         items = _.pickBy(items, (item, key) => autocompleteFilter(autocompleteText, item, key));
