@@ -23,7 +23,6 @@ import {
 } from '@console/internal/components/utils';
 import {
   k8sPatch,
-  modelFor,
   referenceForModel,
   referenceFor,
   K8sResourceKind,
@@ -156,14 +155,9 @@ export const CreateInitializationResourceButton: React.FC<InitializationResource
   disabled,
   initializationResource,
   obj,
-  targetNamespace,
 }) => {
   const { t } = useTranslation();
   const reference = referenceFor(initializationResource);
-  const model = modelFor(reference);
-  const initializationResourceNamespace = model?.namespaced
-    ? initializationResource?.metadata?.namespace || targetNamespace
-    : null;
   const kind = initializationResource?.kind;
   const button = (
     <Button aria-disabled={disabled} isDisabled={disabled} variant="primary">
@@ -178,7 +172,7 @@ export const CreateInitializationResourceButton: React.FC<InitializationResource
       to={`${resourcePathFromModel(
         ClusterServiceVersionModel,
         obj.metadata.name,
-        initializationResourceNamespace,
+        obj.metadata.namespace,
       )}/${reference}/~new?useInitializationResource`}
     >
       {button}
@@ -243,7 +237,6 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
           <CreateInitializationResourceButton
             initializationResource={initializationResource}
             obj={obj}
-            targetNamespace={namespace}
           />
         ) : (
           <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
@@ -291,7 +284,6 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
             disabled
             initializationResource={initializationResource}
             obj={obj}
-            targetNamespace={namespace}
           />
         )}
         <ViewInstalledOperatorsButton namespace={namespace} />
@@ -520,7 +512,6 @@ type InitializationResourceButtonProps = {
   disabled?: boolean;
   initializationResource: K8sResourceKind;
   obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind;
-  targetNamespace: string;
 };
 type ViewOperatorButtonProps = {
   namespace: string;

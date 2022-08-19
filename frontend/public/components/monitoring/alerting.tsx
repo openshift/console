@@ -10,6 +10,7 @@ import {
   PrometheusLabels,
   RedExclamationCircleIcon,
   ResourceStatus,
+  SilenceStates,
   useActivePerspective,
   YellowExclamationTriangleIcon,
 } from '@console/dynamic-plugin-sdk';
@@ -77,7 +78,6 @@ import {
   Rule,
   Silence,
   Silences,
-  SilenceStates,
 } from './types';
 import {
   alertDescription,

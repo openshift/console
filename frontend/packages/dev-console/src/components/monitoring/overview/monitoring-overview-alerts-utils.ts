@@ -1,4 +1,4 @@
-import { AlertSeverity } from '@console/internal/components/monitoring/types';
+import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 
 export const getAlertType = (severity: string): 'danger' | 'warning' | 'info' => {
   switch (severity) {

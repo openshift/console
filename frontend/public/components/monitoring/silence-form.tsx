@@ -7,7 +7,7 @@ import { Trans, useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector } from 'react-redux';
-import { getUser } from '@console/dynamic-plugin-sdk';
+import { getUser, SilenceStates } from '@console/dynamic-plugin-sdk';
 
 import { withFallback } from '@console/shared/src/components/error';
 import { coFetchJSON } from '../../co-fetch';
@@ -20,7 +20,7 @@ import { PageHeading, SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams } from '../utils/link';
 import { history } from '../utils/router';
 import { StatusBox } from '../utils/status-box';
-import { Silence, Silences, SilenceStates } from './types';
+import { Silence, Silences } from './types';
 import { SilenceResource, silenceState } from './utils';
 
 const pad = (i: number): string => (i < 10 ? `0${i}` : String(i));

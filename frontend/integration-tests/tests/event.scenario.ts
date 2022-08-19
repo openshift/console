@@ -12,10 +12,22 @@ describe('Events', () => {
       namespace: testName,
     },
     spec: {
+      securityContext: {
+        runAsNonRoot: true,
+        seccompProfile: {
+          type: 'RuntimeDefault',
+        },
+      },
       containers: [
         {
           name: 'httpd',
           image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
+          securityContext: {
+            allowPrivilegeEscalation: false,
+            capabilities: {
+              drop: ['ALL'],
+            },
+          },
         },
       ],
     },

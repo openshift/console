@@ -1,12 +1,13 @@
 import * as _ from 'lodash-es';
 import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
+import { AlertStates, RuleStates, SilenceStates } from '@console/dynamic-plugin-sdk';
 
 import { ActionType, ObserveAction } from '../actions/observe';
 import {
   MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
   MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
 } from '../components/monitoring/dashboards/types';
-import { Alert, AlertStates, RuleStates, SilenceStates } from '../components/monitoring/types';
+import { Alert } from '../components/monitoring/types';
 import { isSilenced } from '../components/monitoring/utils';
 
 export type ObserveState = ImmutableMap<string, any>;

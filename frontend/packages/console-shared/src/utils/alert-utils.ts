@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { Alert, AlertSeverity, AlertStates } from '@console/internal/components/monitoring/types';
+import { AlertSeverity, AlertStates } from '@console/dynamic-plugin-sdk';
+import { Alert } from '@console/internal/components/monitoring/types';
 import { alertSeverityOrder } from '@console/internal/components/monitoring/utils';
 
 export const sortMonitoringAlerts = (alerts: Alert[]): Alert[] =>
