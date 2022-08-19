@@ -29,7 +29,7 @@ import { FieldLevelHelp } from '@console/internal/components/utils/field-level-h
 import { k8sCreate } from '@console/internal/module/k8s';
 import { PodDisruptionBudgetModel } from '../../models';
 import AvailabilityRequirementPopover from './AvailabilityRequirementPopover';
-import { pdbToK8sResource, formValuesFromK8sResource, patchPDB } from './pdb-models';
+import { pdbToK8sResource, initialValuesFromK8sResource, patchPDB } from './pdb-models';
 import { PodDisruptionBudgetKind } from './types';
 
 const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
@@ -38,8 +38,8 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   existingResource,
 }) => {
   const { t } = useTranslation();
-  const converted = formValuesFromK8sResource(formData);
-  const [formValues, setFormValues] = React.useState(converted);
+  const initialFormValues = initialValuesFromK8sResource(formData);
+  const [formValues, setFormValues] = React.useState(initialFormValues);
   const [error, setError] = React.useState('');
   const [inProgress, setInProgress] = React.useState(false);
   const [requirement, setRequirement] = React.useState('');
@@ -66,7 +66,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
     requirement === 'Requirement' ? setDisabled(true) : setDisabled(false);
 
     if (!_.isEmpty(existingResource) && _.isEmpty(formValues.name)) {
-      onFormValuesChange(formValuesFromK8sResource(existingResource));
+      onFormValuesChange(initialValuesFromK8sResource(existingResource));
     }
   }, [existingResource, formValues, onFormValuesChange, requirement]);
 
