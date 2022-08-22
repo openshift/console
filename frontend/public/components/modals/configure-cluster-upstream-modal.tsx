@@ -45,8 +45,8 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
     const { t } = useTranslation();
 
     const updateLink = isUpstream()
-      ? `${openshiftHelpBase}updating/installing-update-service.html`
-      : `${openshiftHelpBase}html/updating_clusters/installing-update-service`;
+      ? `${openshiftHelpBase}updating/understanding-openshift-updates.html`
+      : `${openshiftHelpBase}html/updating_clusters/updating-restricted-network-cluster#update-service-overview_updating-restricted-network-cluster`;
 
     return (
       <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
