@@ -43,7 +43,7 @@ import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
 
 // t('console-app~Name')
 // t('console-app~Status')
-// t('console-app~Role')
+// t('console-app~Roles')
 // t('console-app~Pods')
 // t('console-app~Memory')
 // t('console-app~CPU')
@@ -68,7 +68,7 @@ const nodeColumnInfo = Object.freeze({
   role: {
     classes: '',
     id: 'role',
-    title: 'console-app~Role',
+    title: 'console-app~Roles',
   },
   pods: {
     classes: '',
@@ -506,7 +506,7 @@ const NodesPage = connect<{}, MapDispatchToProps>(
         ],
       },
       {
-        filterGroupName: t('console-app~Role'),
+        filterGroupName: t('console-app~Roles'),
         type: 'node-role',
         isMatch: getNodeRoleMatch,
         items: [
