@@ -59,10 +59,25 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
+  font-size: small;
+}
+
+.co-status-card__alert-item-header {
+  margin-left: 1rem;
+  font-weight: bold;
+  color: var(--pf-global--Color--black);
+}
+
+.co-status-card__alert-item-doc-link {
+  margin-left: 1rem;
+  margin-top: 0.2rem;
+  width: fit-content;
 }
 
 .co-health-card__alert-item-timestamp {
   white-space: nowrap;
+  font-size: smaller;
+  margin-bottom: 0.5rem;
 }
 
 .co-status-card__alert-item:first-of-type {

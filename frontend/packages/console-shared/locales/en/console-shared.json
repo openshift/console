@@ -43,6 +43,7 @@
   "{{count}} resource reached quota_plural": "{{count}} resources reached quota",
   "none are at quota": "none are at quota",
   "No ResourceQuotas": "No ResourceQuotas",
+  "Go to documentation": "Go to documentation",
   "View details": "View details",
   "Alerts could not be loaded.": "Alerts could not be loaded.",
   "({{operatorStatusLength}} installed)": "({{operatorStatusLength}} installed)",
