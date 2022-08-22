@@ -61,7 +61,7 @@ type ConnectionConfigNamespaceScoped struct {
 	// It is used as a trust anchor to validate the TLS certificate presented by the remote server.
 	// The key "ca-bundle.crt" is used to locate the data.
 	// If empty, the default system roots are used.
-	// The namespace for this configmap should be same as the namespace where the project helm chart repository is getting instantiated.
+	// The namespace for this configmap must be same as the namespace where the project helm chart repository is getting instantiated.
 	// +optional
 	CA configv1.ConfigMapNameReference `json:"ca,omitempty"`
 
@@ -69,9 +69,17 @@ type ConnectionConfigNamespaceScoped struct {
 	// PEM-encoded TLS client certificate and private key to present when connecting to the server.
 	// The key "tls.crt" is used to locate the client certificate.
 	// The key "tls.key" is used to locate the private key.
-	// The namespace for this secret should be same as the namespace where the project helm chart repository is getting instantiated.
+	// The namespace for this secret must be same as the namespace where the project helm chart repository is getting instantiated.
 	// +optional
 	TLSClientConfig configv1.SecretNameReference `json:"tlsClientConfig,omitempty"`
+
+	// basicAuthConfig is an optional reference to a secret by name that contains
+	// the basic authentication credentials to present when connecting to the server.
+	// The key "username" is used locate the username.
+	// The key "password" is used to locate the password.
+	// The namespace for this secret must be same as the namespace where the project helm chart repository is getting instantiated.
+	// +optional
+	BasicAuthConfig configv1.SecretNameReference `json:"basicAuthConfig,omitempty"`
 }
 
 // Compatibility level 2: Stable within a major release for a minimum of 9 months or 3 minor releases (whichever is longer).

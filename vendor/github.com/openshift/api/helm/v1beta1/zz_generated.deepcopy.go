@@ -33,6 +33,7 @@ func (in *ConnectionConfigNamespaceScoped) DeepCopyInto(out *ConnectionConfigNam
 	*out = *in
 	out.CA = in.CA
 	out.TLSClientConfig = in.TLSClientConfig
+	out.BasicAuthConfig = in.BasicAuthConfig
 	return
 }
 

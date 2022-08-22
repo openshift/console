@@ -44,6 +44,7 @@ func setUpAuthentication(chartPathOptions *action.ChartPathOptions, connectionCo
 
 func setUpAuthenticationProject(chartPathOptions *action.ChartPathOptions, connectionConfig *v1beta1.ConnectionConfigNamespaceScoped, coreClient corev1client.CoreV1Interface, namespace string) ([]*os.File, error) {
 	tlsFiles := []*os.File{}
+	var secretNamespace string
 	//set up tls cert and key
 	if connectionConfig.TLSClientConfig != (configv1.SecretNameReference{}) {
 		chartPathOptions.RepoURL = connectionConfig.URL
@@ -55,6 +56,24 @@ func setUpAuthenticationProject(chartPathOptions *action.ChartPathOptions, conne
 		tlsFiles = append(tlsFiles, tlsCertFile)
 		chartPathOptions.KeyFile = tlsKeyFile.Name()
 		tlsFiles = append(tlsFiles, tlsKeyFile)
+	}
+	//set up basic auth
+	if connectionConfig.BasicAuthConfig != (configv1.SecretNameReference{}) {
+		secretName := connectionConfig.BasicAuthConfig.Name
+		secret, err := coreClient.Secrets(namespace).Get(context.TODO(), secretName, v1.GetOptions{})
+		if err != nil {
+			return nil, fmt.Errorf("failed to GET secret '%s/%s', reason %v", secretNamespace, secretName, err)
+		}
+		baUsername, found := secret.Data[username]
+		if !found {
+			return nil, fmt.Errorf("failed to find %q key in secret '%s/%s'", username, secretNamespace, secretName)
+		}
+		chartPathOptions.Username = string(baUsername)
+		baPassword, found := secret.Data[password]
+		if !found {
+			return nil, fmt.Errorf("failed to find %q key in secret '%s/%s'", password, secretNamespace, secretName)
+		}
+		chartPathOptions.Password = string(baPassword)
 	}
 	//set up ca certificate
 	if connectionConfig.CA != (configv1.ConfigMapNameReference{}) {
