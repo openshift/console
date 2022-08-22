@@ -4,6 +4,7 @@ import { modal } from '../../../integration-tests-cypress/views/modal';
 import { nav } from '../../../integration-tests-cypress/views/nav';
 import { operator, TestOperandProps } from '../views/operator.view';
 
+// TODO Update to valid operator. This is deprecated.
 const testOperator = {
   name: 'Red Hat CodeReady Workspaces',
   operatorHubCardTestID: 'codeready-workspaces-redhat-operators-openshift-marketplace',
@@ -12,8 +13,10 @@ const testOperator = {
 
 const testOperand: TestOperandProps = {
   name: 'CodeReady Workspaces Cluster',
+  group: 'org.eclipse.che',
+  version: 'v1',
   kind: 'CheCluster',
-  tabName: 'CodeReady Workspaces Cluster',
+  createActionID: '', // TODO Define a real selector here when we re-enable this test case
   exampleName: `codeready-workspaces`,
   deleteURL: '/api/kubernetes/apis/org.eclipse.che/*/namespaces/*/checlusters/codeready-workspaces',
 };
@@ -49,7 +52,7 @@ xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
     );
     operator.installedSucceeded(testOperator.name);
     operator.createOperand(testOperator.name, testOperand, testOperator.installedNamespace);
-    cy.byTestOperandLink(testOperand.exampleName).should('exist');
+    cy.byTestID(testOperand.exampleName).should('exist');
     operator.operandShouldExist(testOperator.name, testOperand, testOperator.installedNamespace);
   });
 

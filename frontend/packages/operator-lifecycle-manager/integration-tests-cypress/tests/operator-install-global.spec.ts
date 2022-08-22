@@ -9,9 +9,11 @@ const testOperator = {
 
 const testOperand: TestOperandProps = {
   name: 'ServiceBinding',
+  group: 'binding.operators.coreos.com',
+  version: 'v1alpha1',
   kind: 'ServiceBinding',
-  tabName: 'Service Binding',
-  exampleName: `example-servicebinding`,
+  createActionID: 'list-page-create-dropdown-item-servicebindings.binding.operators.coreos.com',
+  exampleName: 'example-servicebinding',
 };
 
 describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
@@ -41,7 +43,7 @@ describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstall
     cy.byLegacyTestID('resource-summary').should('exist');
 
     operator.createOperand(testOperator.name, testOperand);
-    cy.byTestOperandLink(testOperand.exampleName).should('exist');
+    cy.byTestID(testOperand.exampleName).should('exist');
     operator.operandShouldExist(testOperator.name, testOperand);
 
     operator.deleteOperand(testOperator.name, testOperand);
