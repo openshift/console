@@ -31,6 +31,7 @@ When('user navigates to Topology page', () => {
 });
 
 When('user clicks on Export Application button', () => {
+  cy.get(exportApplication.resourceAddedNotification).should('not.exist');
   cy.get(exportApplication.exportApplicationButton)
     .should('be.visible')
     .click();
@@ -44,21 +45,21 @@ When('user clicks on Ok button on Export Application modal to start the export',
 });
 
 Then('user can see a toast message saying {string}', (message: string) => {
-  cy.get(exportApplication.infoTip, { timeout: 5000 }).contains(message);
+  cy.get(exportApplication.infoTip, { timeout: 5000 }).should('include.text', message);
+  closeExportNotification();
 });
 
 Then(
   'user can see a toast message saying {string} with download option and close button',
   (message: string) => {
-    cy.get(exportApplication.infoTip).should('not.exist');
-    cy.get(exportApplication.infoTip, { timeout: 120000 }).contains(message);
+    cy.get(exportApplication.infoTip, { timeout: 180000 }).should('include.text', message);
     cy.byTestID('download-export').contains('Download');
     closeExportNotification();
   },
 );
 
 Then('user can see primer deployment created in topology', () => {
-  topologyHelper.verifyWorkloadInTopologyPage('primer', { timeout: 80000 });
+  topologyHelper.verifyWorkloadInTopologyPage('primer', { timeout: 120000 });
 });
 
 Given('user is at Topology page', () => {
@@ -69,6 +70,7 @@ When('user clicks on Export Application button again', () => {
   cy.get(exportApplication.exportApplicationButton)
     .should('be.visible')
     .click();
+  cy.get(exportApplication.exportView, { timeout: 50000 }).should('be.visible');
 });
 
 Then(

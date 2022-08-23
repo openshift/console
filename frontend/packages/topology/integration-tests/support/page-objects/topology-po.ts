@@ -311,11 +311,22 @@ export const topologyPO = {
     deploymentLabel: '#nodejs-ex-git-app-Deployment-label',
     deployemntCount: '.odc-topology-list-view__group-resource-count',
   },
+  pipelines: {
+    storageNav: '[data-quickstart-id="qs-nav-storage"]',
+    pvcOption: '[href="/k8s/all-namespaces/persistentvolumeclaims"]',
+    pvc: '[aria-label="PersistentVolumeClaims"]',
+    startAction: '[data-test-action="Start"]',
+    pvcIcon: '.co-m-resource-persistentvolumeclaim',
+    addTriggerAction: '[data-test-action="Add Trigger"]',
+    pipelineCheckbox: '#form-checkbox-pipeline-enabled-field',
+    editWorkloadPage: '#content-scrollable',
+    pipelineSection: '.odc-form-section-pipeline',
+  },
 };
 
 export const typeOfWorkload = (workload: string) => {
-  return `[data-test~="icon"][data-test~="${workload
+  return `[data-id="odc-topology-graph"] .odc-resource-icon-${workload
     .toLowerCase()
     .replace(' ', '')
-    .trim()}"]`;
+    .trim()}`;
 };

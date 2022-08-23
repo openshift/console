@@ -24,6 +24,7 @@ Feature: Sidebar in topology
             Given user has installed OpenShift Serverless Operator
               And user is at developer perspective
               And user has selected namespace "aut-topology-sidebar"
+              And user is at Add page
               And user has created workload "hello-openshift" with resource type "Knative Service"
              When user clicks on knative workload "hello-openshift"
              Then user can see sidebar opens with Resources tab selected by default
@@ -82,4 +83,3 @@ Feature: Sidebar in topology
               And user enters key as "app.openshift.io/route-disabled"
               And user enters value as "true"
              Then user can see route decorator has been hidden for workload "nodejs-ex-3"
-             

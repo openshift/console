@@ -28,15 +28,7 @@ export const createWorkloadUsingOptions = (optionName: string, optionalData?: st
         'https://github.com/devfile-samples/devfile-sample-go-basic.git',
       );
       gitPage.enterComponentName('go-basic');
-      gitPage.selectResource('Deployment');
-      cy.get(chartAreaPO.gitInputURL).should('be.disabled');
-      cy.get(chartAreaPO.gitForm)
-        .contains('Show advanced Routing options')
-        .click();
-      cy.get(chartAreaPO.gitForm)
-        .contains('Hide advanced Routing options')
-        .click();
-      gitPage.enterComponentName('go-basic');
+      cy.wait(3000);
       cy.get(chartAreaPO.submitButton).click();
       break;
 

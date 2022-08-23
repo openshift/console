@@ -104,3 +104,39 @@ export const createGitWorkloadWithResourceLimit = (
     });
   });
 };
+
+export const createGitWorkloadWithBuilderImage = (
+  gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git',
+  componentName: string = 'nodejs-ex-git',
+  resourceType: string = 'Deployment',
+  builderImage: string = 'nodejs',
+  appName: string = 'nodejs-ex-git-app',
+  isPipelineSelected: boolean = false,
+) => {
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
+  gitPage.enterGitUrl(gitUrl);
+  gitPage.verifyValidatedMessage(gitUrl);
+  cy.get('.odc-import-strategy-section__edit-strategy-button').click();
+  cy.byTestID('import-strategy Builder Image').click();
+  cy.byTestID(`card ${builderImage}`).click();
+  gitPage.enterComponentName(componentName);
+  gitPage.selectResource(resourceType);
+  gitPage.enterAppName(appName);
+  if (isPipelineSelected === true) {
+    gitPage.selectAddPipeline();
+  }
+  createForm.clickCreate().then(() => {
+    cy.get('.co-m-loader').should('not.exist');
+    cy.get('body').then(($body) => {
+      if ($body.find(formPO.errorAlert).length !== 0) {
+        cy.get(formPO.errorAlert)
+          .find('.co-pre-line')
+          .then(($ele) => {
+            cy.log($ele.text());
+          });
+      } else {
+        cy.log(`Workload : "${componentName}" is created`);
+      }
+    });
+  });
+};

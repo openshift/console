@@ -359,7 +359,9 @@ When('user selects Postgres and clicks on Create', () => {
 
 When('user selects Nodejs and clicks on Install Helm Charts', () => {
   cy.get(chartAreaPO.filterItem).type('nodejs');
-  cy.get(chartAreaPO.helmNodejs).click();
+  cy.get(chartAreaPO.helmNodejs)
+    .eq(0)
+    .click();
   cy.get(chartAreaPO.overlayCreate).click({ force: true });
 });
 

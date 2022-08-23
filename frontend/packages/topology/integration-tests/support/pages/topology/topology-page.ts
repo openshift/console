@@ -1,5 +1,6 @@
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import {
+  devNavigationMenu,
   displayOptions,
   nodeActions,
   sideBarTabs,
@@ -9,6 +10,7 @@ import {
   createHelmRelease,
   app,
   createForm,
+  navigateTo,
 } from '@console/dev-console/integration-tests/support/pages';
 import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow';
 import { topologyHelper } from './topology-helper-page';
@@ -90,6 +92,63 @@ export const topologyPage = {
     cy.get(topologyPO.graph.displayOptions.applicationGroupings).should('be.disabled'),
   uncheckExpandToggle: () => {
     cy.get(topologyPO.graph.displayOptions.expandSwitchToggle).click({ force: true });
+  },
+  defaultState: () => {
+    // By Default: Graph View
+    topologyPage.verifyTopologyGraphView();
+
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get('body').then((el) => {
+      if (el.find(topologyPO.displayFilter.applicationGroupingOption).length === 0) {
+        cy.get(topologyPO.displayFilter.display).click();
+      }
+    });
+
+    // By Default: Expand Enabled
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get(topologyPO.displayFilter.expandOption)
+      .as('radiobutton')
+      .invoke('is', ':checked')
+      .then((initial) => {
+        if (!initial) {
+          cy.get('@radiobutton').check({ force: true });
+        }
+      });
+
+    // By Default: ApplicationGroupings Checked
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get(topologyPO.displayFilter.applicationGroupingOption)
+      .as('checkbox')
+      .invoke('is', ':checked')
+      .then((initial) => {
+        if (!initial) {
+          cy.get('@checkbox').check({ force: true });
+        }
+      });
+
+    // By Default: PodCount Unchecked
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get(topologyPO.displayFilter.podLabelOptions)
+      .eq(2)
+      .as('checkbox')
+      .invoke('is', ':checked')
+      .then((initial) => {
+        if (initial) {
+          cy.get('@checkbox').uncheck({ force: true });
+        }
+      });
+
+    // By Default: Labels Checked
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get(topologyPO.displayFilter.podLabelOptions)
+      .eq(3)
+      .as('checkbox')
+      .invoke('is', ':checked')
+      .then((initial) => {
+        if (!initial) {
+          cy.get('@checkbox').check({ force: true });
+        }
+      });
   },
   verifyPodCountUnchecked: () => cy.get(topologyPO.sidePane.showPodCount).should('not.be.checked'),
   selectDisplayOption: (opt: displayOptions) => {
@@ -419,5 +478,7 @@ export const createServiceBindingConnect = (
     .should('be.visible')
     .click();
   cy.get('#confirm-action').click();
-  cy.get('[data-test-id="edge-handler"]', { timeout: 10000 }).should('be.visible');
+  navigateTo(devNavigationMenu.Add);
+  navigateTo(devNavigationMenu.Topology);
+  cy.get('[data-test-id="edge-handler"]', { timeout: 15000 }).should('be.visible');
 };
