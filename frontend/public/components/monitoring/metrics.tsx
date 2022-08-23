@@ -10,10 +10,15 @@ import {
 import {
   ActionGroup,
   Button,
+  Dropdown as PFDropdown,
+  DropdownItem,
+  DropdownPosition,
+  DropdownToggle,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
+  KebabToggle,
   Switch,
   Title,
 } from '@patternfly/react-core';
@@ -61,16 +66,15 @@ import { RootState } from '../../redux';
 import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { getPrometheusURL } from '../graphs/helpers';
 import {
-  ActionsMenu,
   AsyncComponent,
   Dropdown,
   getURLSearchParams,
-  Kebab,
   LoadingInline,
   usePoll,
   useSafeFetch,
 } from '../utils';
 import { setAllQueryArguments } from '../utils/router';
+import { useBoolean } from './hooks/useBoolean';
 import IntervalDropdown from './poll-interval-dropdown';
 import { colors, Error, QueryBrowser } from './query-browser';
 import TablePagination from './table-pagination';
@@ -81,6 +85,8 @@ let focusedQuery;
 
 const MetricsActionsMenu: React.FC<{}> = () => {
   const { t } = useTranslation();
+
+  const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
 
   const isAllExpanded = useSelector(({ observe }: RootState) =>
     observe.getIn(['queryBrowser', 'queries']).every((q) => q.get('isExpanded')),
@@ -94,21 +100,31 @@ const MetricsActionsMenu: React.FC<{}> = () => {
     focusedQuery = undefined;
   };
 
-  const actionsMenuActions = [
-    { label: t('public~Add query'), callback: addQuery },
-    {
-      label: isAllExpanded
-        ? t('public~Collapse all query tables')
-        : t('public~Expand all query tables'),
-      callback: () => dispatch(queryBrowserSetAllExpanded(!isAllExpanded)),
-    },
-    { label: t('public~Delete all queries'), callback: doDelete },
+  const dropdownItems = [
+    <DropdownItem key="add-query" component="button" onClick={addQuery}>
+      {t('public~Add query')}
+    </DropdownItem>,
+    <DropdownItem
+      key="collapse-all"
+      component="button"
+      onClick={() => dispatch(queryBrowserSetAllExpanded(!isAllExpanded))}
+    >
+      {isAllExpanded ? t('public~Collapse all query tables') : t('public~Expand all query tables')}
+    </DropdownItem>,
+    <DropdownItem key="delete-all" component="button" onClick={doDelete}>
+      {t('public~Delete all queries')}
+    </DropdownItem>,
   ];
 
   return (
-    <div className="co-actions">
-      <ActionsMenu actions={actionsMenuActions} />
-    </div>
+    <PFDropdown
+      className="co-actions-menu"
+      dropdownItems={dropdownItems}
+      isOpen={isOpen}
+      onSelect={setClosed}
+      position={DropdownPosition.right}
+      toggle={<DropdownToggle onToggle={setIsOpen}>Actions</DropdownToggle>}
+    />
   );
 };
 
@@ -283,6 +299,8 @@ const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
 const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
   const { t } = useTranslation();
 
+  const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
+
   const isDisabledSeriesEmpty = useSelector(({ observe }: RootState) =>
     _.isEmpty(observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
   );
@@ -319,20 +337,30 @@ const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
     dispatch(queryBrowserDuplicateQuery(index));
   }, [dispatch, index]);
 
+  const dropdownItems = [
+    <DropdownItem key="toggle-query" component="button" onClick={toggleIsEnabled}>
+      {isEnabled ? t('public~Disable query') : t('public~Enable query')}
+    </DropdownItem>,
+    <DropdownItem key="toggle-all-series" component="button" onClick={toggleAllSeries}>
+      {isDisabledSeriesEmpty ? t('public~Hide all series') : t('public~Show all series')}
+    </DropdownItem>,
+    <DropdownItem key="delete" component="button" onClick={doDelete}>
+      {t('public~Delete query')}
+    </DropdownItem>,
+    <DropdownItem key="duplicate" component="button" onClick={doClone}>
+      {t('public~Duplicate query')}
+    </DropdownItem>,
+  ];
+
   return (
-    <Kebab
-      options={[
-        {
-          label: isEnabled ? t('public~Disable query') : t('public~Enable query'),
-          callback: toggleIsEnabled,
-        },
-        {
-          label: isDisabledSeriesEmpty ? t('public~Hide all series') : t('public~Show all series'),
-          callback: toggleAllSeries,
-        },
-        { label: t('public~Delete query'), callback: doDelete },
-        { label: t('public~Duplicate query'), callback: doClone },
-      ]}
+    <PFDropdown
+      data-test-id="kebab-button"
+      dropdownItems={dropdownItems}
+      isOpen={isOpen}
+      isPlain
+      onSelect={setClosed}
+      position={DropdownPosition.right}
+      toggle={<KebabToggle id="toggle-kebab" onToggle={setIsOpen} />}
     />
   );
 };
