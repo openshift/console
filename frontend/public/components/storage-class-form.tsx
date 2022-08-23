@@ -597,13 +597,13 @@ class StorageClassFormWithTranslation extends React.Component<
   });
 
   reclaimPolicies = {
-    Retain: 'Retain',
-    Delete: 'Delete',
+    Retain: this.props.t('public~Retain'),
+    Delete: this.props.t('public~Delete'),
   };
 
   volumeBindingModes = {
-    Immediate: 'Immediate',
-    WaitForFirstConsumer: 'WaitForFirstConsumer',
+    Immediate: this.props.t('public~Immediate'),
+    WaitForFirstConsumer: this.props.t('public~WaitForFirstConsumer'),
   };
 
   // Accepts a list of CSI provisioners and it checks if the
