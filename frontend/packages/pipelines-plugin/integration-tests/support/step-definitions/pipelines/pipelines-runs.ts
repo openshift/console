@@ -494,8 +494,10 @@ Given('user is at pipeline page in developer perspective', () => {
 Given('a failed pipeline is present', () => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.ImportFromGit);
-  gitPage.enterGitUrl('https://github.com/sclorg/golang-ex');
-  devFilePage.verifyValidatedMessage('https://github.com/sclorg/golang-ex');
+  gitPage.enterGitUrl('https://github.com/che-samples/java-spring-petclinic/tree/devfilev2');
+  devFilePage.verifyValidatedMessage(
+    'https://github.com/che-samples/java-spring-petclinic/tree/devfilev2',
+  );
   gitPage.selectAddPipeline();
   gitPage.clickCreate();
   topologyPage.verifyTopologyPage();
@@ -512,7 +514,10 @@ When('user opens pipeline run details', () => {
 });
 
 Then('user can see status as Failure', () => {
-  cy.get(pipelineRunsPO.pipelineRunsTable.status).should('include.text', 'Failed');
+  cy.get(pipelineRunsPO.pipelineRunsTable.status, { timeout: 20000 }).should(
+    'include.text',
+    'Failed',
+  );
 });
 
 Then('user can view failure message under Message heading', () => {

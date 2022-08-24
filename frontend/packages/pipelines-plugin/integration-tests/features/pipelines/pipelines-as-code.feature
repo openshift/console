@@ -11,8 +11,7 @@ Feature: Perform Actions on repository
         Scenario Outline: Repositories page: P-11-TC01
             Given user has installed pipelines as code
               And user is at repositories page
-             When user clicks on Create Repository button
-              And user creates repository using YAML editor from "<repository_yaml>"
+             When user creates repository using YAML editor from "<repository_yaml>"
              Then user will be redirected to Repository details page with header name "<repository_name>"
 
         Examples:
