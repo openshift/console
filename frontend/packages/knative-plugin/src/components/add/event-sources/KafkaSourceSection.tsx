@@ -6,8 +6,8 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { InputField, SelectInputField, SelectInputOption } from '@console/shared';
-import { getBootstrapServers } from '../../../utils/create-eventsources-utils';
-import { strimziResourcesWatcher } from '../../../utils/get-knative-resources';
+import { useBootstrapServers } from '../../../hooks';
+import { kafkaTopicsResourcesWatcher } from '../../../utils/get-knative-resources';
 import { EventSources } from '../import-types';
 import KafkaSourceNetSection from './KafkaSourceNetSection';
 
@@ -19,58 +19,10 @@ interface KafkaSourceSectionProps {
 
 const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title, namespace, fullWidth }) => {
   const { t } = useTranslation();
-  const memoResources = React.useMemo(() => strimziResourcesWatcher(namespace), [namespace]);
-  const { kafkas, kafkatopics, kafkaconnections } = useK8sWatchResources<{
+  const [bootstrapServers, bsPlaceholder] = useBootstrapServers(namespace);
+  const { kafkatopics } = useK8sWatchResources<{
     [key: string]: K8sResourceKind[];
-  }>(memoResources);
-
-  const [bootstrapServers, bsPlaceholder] = React.useMemo(() => {
-    let bootstrapServersOptions: SelectInputOption[] = [];
-    let placeholder: React.ReactNode = '';
-    const isKafkasLoaded =
-      (kafkas.loaded && !kafkas.loadError) ||
-      (kafkaconnections.loaded && !kafkaconnections.loadError);
-    const isKafkasLoadError = !!(kafkas.loadError && kafkaconnections.loadError);
-    if (isKafkasLoaded) {
-      const kafkasData = [
-        ...(kafkas.data ? kafkas.data : []),
-        ...(kafkaconnections.data ? kafkaconnections.data : []),
-      ];
-      bootstrapServersOptions = !_.isEmpty(kafkasData)
-        ? _.map(getBootstrapServers(kafkasData), (bs) => ({
-            value: bs,
-            disabled: false,
-          }))
-        : [
-            {
-              value: t('knative-plugin~No bootstrap servers found'),
-              disabled: true,
-            },
-          ];
-      placeholder = t('knative-plugin~Add bootstrap servers');
-    } else if (isKafkasLoadError) {
-      placeholder = t(
-        'knative-plugin~{{loadErrorMessage}}. Try adding bootstrap servers manually.',
-        {
-          loadErrorMessage: `${kafkas.loadError.message}, ${kafkaconnections.loadError.message}`,
-        },
-      );
-    } else {
-      bootstrapServersOptions = [
-        { value: t('knative-plugin~Loading bootstrap servers...'), disabled: true },
-      ];
-      placeholder = '...';
-    }
-    return [bootstrapServersOptions, placeholder];
-  }, [
-    kafkas.loaded,
-    kafkas.loadError,
-    kafkas.data,
-    kafkaconnections.loaded,
-    kafkaconnections.loadError,
-    kafkaconnections.data,
-    t,
-  ]);
+  }>(kafkaTopicsResourcesWatcher());
 
   const [kafkaTopics, ktPlaceholder] = React.useMemo(() => {
     let topicsOptions: SelectInputOption[] = [];

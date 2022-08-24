@@ -339,8 +339,8 @@ export const knativeCamelKameletResourceWatchers = (namespace: string) => {
   };
 };
 
-export const strimziResourcesWatcher = (namespace: string): WatchK8sResources<any> => {
-  const strimziResources = {
+export const kafkaBootStrapServerResourcesWatcher = (namespace: string): WatchK8sResources<any> => {
+  return {
     [KafkaModel.plural]: {
       isList: true,
       kind: referenceForModel(KafkaModel),
@@ -352,13 +352,17 @@ export const strimziResourcesWatcher = (namespace: string): WatchK8sResources<an
       namespace,
       optional: true,
     },
+  };
+};
+
+export const kafkaTopicsResourcesWatcher = (): WatchK8sResources<any> => {
+  return {
     [KafkaTopicModel.plural]: {
       isList: true,
       kind: referenceForModel(KafkaTopicModel),
       optional: true,
     },
   };
-  return strimziResources;
 };
 
 export const knativeCamelKameletBindingResourceWatchers = (
