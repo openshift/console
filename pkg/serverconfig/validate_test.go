@@ -87,6 +87,32 @@ func TestUnknownPropertyInDeveloperCatalogCategory(t *testing.T) {
 	}
 }
 
+func TestValidEmptyDeveloperCatalogTypes(t *testing.T) {
+	_, err := validateDeveloperCatalogTypes("")
+	if err != nil {
+		t.Error("Unexpected error when parsing an empty string.", err)
+	}
+}
+
+func TestValidEntriesForDeveloperCatalogTypes(t *testing.T) {
+	types, err := validateDeveloperCatalogTypes("{ \"state\": \"Disabled\", \"disabled\": [ \"Type1\", \"Type2\", \"Type3\" ]}")
+	if err != nil {
+		t.Error("Unexpected error when parsing data.", err)
+	}
+	if len(*types.Disabled) != 3 {
+		t.Errorf("Unexpected value: actual %v, expected %v", len(*types.Disabled), 3)
+	}
+}
+
+func TestInvalidEntriesForDeveloperCatalogTypes(t *testing.T) {
+	_, err := validateDeveloperCatalogTypes("{\"state\": \"Disabled\", \"disable\": [ \"Type1\", \"Type2\", \"Type3\" ]}")
+	actualMsg := err.Error()
+	expectedMsg := "json: unknown field \"disable\""
+	if actualMsg != expectedMsg {
+		t.Errorf("Unexpected error: actual\n%s\n, expected\n%s", actualMsg, expectedMsg)
+	}
+}
+
 func TestValidEmptyQuickStarts(t *testing.T) {
 	_, err := validateQuickStarts("")
 	if err != nil {

@@ -103,6 +103,7 @@ type jsGlobals struct {
 	GOOS                            string                     `json:"GOOS"`
 	GraphQLBaseURL                  string                     `json:"graphqlBaseURL"`
 	DevCatalogCategories            string                     `json:"developerCatalogCategories"`
+	DevCatalogTypes                 string                     `json:"developerCatalogTypes"`
 	UserSettingsLocation            string                     `json:"userSettingsLocation"`
 	AddPage                         string                     `json:"addPage"`
 	ConsolePlugins                  []string                   `json:"consolePlugins"`
@@ -168,6 +169,7 @@ type Server struct {
 	AlertManagerUserWorkloadHost string
 	AlertManagerTenancyHost      string
 	DevCatalogCategories         string
+	DevCatalogTypes              string
 	UserSettingsLocation         string
 	QuickStarts                  string
 	AddPage                      string
@@ -722,6 +724,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		LoadTestFactor:             s.LoadTestFactor,
 		GraphQLBaseURL:             proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
 		DevCatalogCategories:       s.DevCatalogCategories,
+		DevCatalogTypes:            s.DevCatalogTypes,
 		UserSettingsLocation:       s.UserSettingsLocation,
 		ConsolePlugins:             plugins,
 		I18nNamespaces:             s.I18nNamespaces,

@@ -133,6 +133,7 @@ func main() {
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
 
 	fDevCatalogCategories := fs.String("developer-catalog-categories", "", "Allow catalog categories customization. (JSON as string)")
+	fDevCatalogTypes := fs.String("developer-catalog-types", "", "Allow enabling/disabling of sub-catalog types from the developer catalog. (JSON as string)")
 	fUserSettingsLocation := fs.String("user-settings-location", "configmap", "DEV ONLY. Define where the user settings should be stored. (configmap | localstorage).")
 	fQuickStarts := fs.String("quick-starts", "", "Allow customization of available ConsoleQuickStart resources in console. (JSON as string)")
 	fAddPage := fs.String("add-page", "", "DEV ONLY. Allow add page customization. (JSON as string)")
@@ -262,6 +263,7 @@ func main() {
 		LoadTestFactor:               *fLoadTestFactor,
 		InactivityTimeout:            *fInactivityTimeout,
 		DevCatalogCategories:         *fDevCatalogCategories,
+		DevCatalogTypes:              *fDevCatalogTypes,
 		UserSettingsLocation:         *fUserSettingsLocation,
 		EnabledConsolePlugins:        consolePluginsFlags,
 		I18nNamespaces:               i18nNamespaces,

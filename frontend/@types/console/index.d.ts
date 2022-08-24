@@ -45,6 +45,7 @@ declare interface Window {
     graphqlBaseURL: string;
     developerCatalogCategories: string;
     perspectives: string;
+    developerCatalogTypes: string;
     userSettingsLocation: string;
     addPage: string; // JSON encoded configuration
     consolePlugins: string[]; // Console dynamic plugins enabled on the cluster

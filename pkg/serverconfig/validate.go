@@ -15,6 +15,10 @@ func Validate(fs *flag.FlagSet) error {
 		return err
 	}
 
+	if _, err := validateDeveloperCatalogTypes(fs.Lookup("developer-catalog-types").Value.String()); err != nil {
+		return err
+	}
+
 	bridge.ValidateFlagIs("user-settings-location", fs.Lookup("user-settings-location").Value.String(), "configmap", "localstorage")
 
 	if _, err := validateQuickStarts(fs.Lookup("quick-starts").Value.String()); err != nil {
@@ -64,6 +68,21 @@ func validateDeveloperCatalogCategories(value string) ([]DeveloperConsoleCatalog
 	}
 
 	return categories, nil
+}
+
+func validateDeveloperCatalogTypes(value string) (DeveloperConsoleCatalogTypesState, error) {
+	if value == "" {
+		return DeveloperConsoleCatalogTypesState{}, nil
+	}
+	var developerCatalogTypesState DeveloperConsoleCatalogTypesState
+	decoder := json.NewDecoder(strings.NewReader(value))
+	decoder.DisallowUnknownFields()
+
+	if err := decoder.Decode(&developerCatalogTypesState); err != nil {
+		return DeveloperConsoleCatalogTypesState{}, err
+	}
+
+	return developerCatalogTypesState, nil
 }
 
 func validateQuickStarts(value string) (QuickStarts, error) {
