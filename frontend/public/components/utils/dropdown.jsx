@@ -4,7 +4,8 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
-import { CaretDownIcon, MinusCircleIcon, PlusCircleIcon, StarIcon } from '@patternfly/react-icons';
+import { CaretDownIcon, CheckIcon, StarIcon } from '@patternfly/react-icons';
+import { Divider } from '@patternfly/react-core';
 import { impersonateStateToProps, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useUserSettingsCompatibility } from '@console/shared';
 
@@ -146,7 +147,11 @@ class DropDownRowWithTranslation extends React.PureComponent {
       prefix = (
         <a
           href="#"
-          className={classNames('bookmarker', { hover, focus: selected })}
+          className={classNames(
+            'pf-c-menu__item-action pf-m-favorite',
+            { hover, focus: selected },
+            { 'pf-m-favorited': isBookmarked },
+          )}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -158,7 +163,9 @@ class DropDownRowWithTranslation extends React.PureComponent {
               : t('public~Add bookmark {{content}}', { content: contentString })
           }
         >
-          {isBookmarked ? <MinusCircleIcon /> : <PlusCircleIcon />}
+          <span className="pf-c-menu__item-action-icon">
+            <StarIcon />
+          </span>
         </a>
       );
     }
@@ -187,22 +194,25 @@ class DropDownRowWithTranslation extends React.PureComponent {
     }
 
     return (
-      <li role="option" className={classNames(className)} key={itemKey}>
-        {prefix}
+      <li role="option" className={classNames('pf-c-menu__list-item', className)} key={itemKey}>
         <a
           href="#"
           ref={this.link}
           id={`${itemKey}-link`}
           data-test="dropdown-menu-item-link"
-          className={classNames('pf-c-dropdown__menu-item', {
-            'next-to-bookmark': !!prefix,
-            hover,
-            focus: selected,
+          className={classNames('pf-c-menu__item', {
+            'pf-m-selected': selected,
           })}
           onClick={(e) => onclick(itemKey, e)}
         >
-          {content}
+          <span className="pf-c-menu__item-main">
+            <span className="pf-c-menu__item-text">{content}</span>
+            <span className="pf-c-menu__item-select-icon">
+              <CheckIcon />
+            </span>
+          </span>
         </a>
+        {prefix}
         {suffix}
       </li>
     );
@@ -347,9 +357,7 @@ class Dropdown_ extends DropdownMixin {
               hover={ai.actionKey === keyboardHoverKey}
             />
           ))}
-          <li className="co-namespace-selector__divider">
-            <div className="dropdown-menu__divider" />
-          </li>
+          <Divider component="li" />
         </>
       );
     }
@@ -467,41 +475,44 @@ class Dropdown_ extends DropdownMixin {
               </div>
             </button>
             {active && (
-              <ul
-                role="listbox"
-                ref={this.dropdownList}
-                className={classNames(
-                  'dropdown-menu__autocomplete-filter',
-                  'pf-c-dropdown__menu',
-                  menuClassName,
-                )}
-              >
-                {autocompleteFilter && (
-                  <div className="dropdown-menu__filter">
-                    <input
-                      autoFocus
-                      type="text"
-                      ref={(input) => (this.input = input)}
-                      onChange={this.changeTextFilter}
-                      placeholder={autocompletePlaceholder}
-                      value={autocompleteText || ''}
-                      autoCapitalize="none"
-                      onKeyDown={this.onKeyDown}
-                      className="pf-c-form-control"
-                      onClick={(e) => e.stopPropagation()}
-                      data-test-id="dropdown-text-filter"
-                    />
-                  </div>
-                )}
-                {this.renderActionItem()}
-                {bookMarkRows}
-                {_.size(bookMarkRows) ? (
-                  <li className="co-namespace-selector__divider">
-                    <div className="dropdown-menu__divider" />
-                  </li>
-                ) : null}
-                {rows}
-              </ul>
+              // Style the Application menu to match the Project selection menu
+              <div className="pf-c-menu pf-m-scrollable co-namespace-dropdown__menu">
+                <div className="pf-c-menu__content" style={{ maxHeight: '60vh' }}>
+                  {autocompleteFilter && (
+                    <>
+                      <div className="pf-c-menu__search">
+                        <input
+                          autoFocus
+                          type="text"
+                          ref={(input) => (this.input = input)}
+                          onChange={this.changeTextFilter}
+                          placeholder={autocompletePlaceholder}
+                          value={autocompleteText || ''}
+                          autoCapitalize="none"
+                          onKeyDown={this.onKeyDown}
+                          className="pf-c-form-control pf-m-search"
+                          onClick={(e) => e.stopPropagation()}
+                          data-test-id="dropdown-text-filter"
+                        />
+                      </div>
+                      <Divider />
+                    </>
+                  )}
+                  <ul
+                    role="listbox"
+                    ref={this.dropdownList}
+                    className="pf-c-menu__list dropdown-menu__autocomplete-filter"
+                  >
+                    {this.renderActionItem()}
+                    {_.size(bookMarkRows) ? (
+                      <li className="pf-c-menu__group-title pf-u-pb-sm">Favorites</li>
+                    ) : null}
+                    {bookMarkRows}
+                    {_.size(bookMarkRows) && _.size(rows) ? <Divider component="li" /> : null}
+                    {rows}
+                  </ul>
+                </div>
+              </div>
             )}
           </div>
         </div>

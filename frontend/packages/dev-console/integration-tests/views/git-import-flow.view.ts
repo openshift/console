@@ -16,7 +16,7 @@ export const applicationNameField = element(by.id('form-input-application-name-f
 
 export const applicationSelector = element(by.id('form-dropdown-application-name-field'));
 export const applicationDropdown = element(
-  by.className('dropdown-menu__autocomplete-filter pf-c-dropdown__menu dropdown-menu--text-wrap'),
+  by.className('dropdown-menu__autocomplete-filter dropdown-menu--text-wrap'),
 );
 
 export const createApplication = element(by.id('#CREATE_APPLICATION_KEY#-link'));
