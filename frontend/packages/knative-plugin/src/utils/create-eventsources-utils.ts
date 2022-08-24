@@ -151,7 +151,7 @@ export const getEventSourceData = (source: string) => {
       schedule: '',
     },
     [EventSources.PingSource]: {
-      jsonData: '',
+      data: '',
       schedule: '',
     },
     [EventSources.SinkBinding]: {

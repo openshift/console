@@ -16,7 +16,7 @@ const PingSourceSection: React.FC<PingSourceSectionProps> = ({ title, fullWidth 
     <FormSection title={title} extraMargin fullWidth={fullWidth}>
       <InputField
         type={TextInputTypes.text}
-        name={`formData.data.${EventSources.PingSource}.jsonData`}
+        name={`formData.data.${EventSources.PingSource}.data`}
         label={t('knative-plugin~Data')}
         helpText={t('knative-plugin~The data posted to the target function')}
       />
