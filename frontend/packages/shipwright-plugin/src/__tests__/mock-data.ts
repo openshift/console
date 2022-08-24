@@ -9,12 +9,57 @@ export const incompleteBuild: Build = {
   },
 };
 
+export const buildWithLabels: Build = {
+  apiVersion: 'shipwright.io/v1alpha1',
+  kind: 'Build',
+  metadata: {
+    namespace: 'a-namespace',
+    name: 'build-with-labels',
+    labels: {
+      'app.kubernetes.io/part-of': 'buildpack-nodejs-build',
+    },
+  },
+  spec: {
+    source: {
+      url: 'https://github.com/shipwright-io/sample-nodejs',
+      contextDir: 'source-build',
+    },
+    strategy: {
+      name: 'buildpacks-v3',
+      kind: 'BuildStrategy',
+    },
+    output: {
+      image:
+        'image-registry.openshift-image-registry.svc:5000/build-examples/buildpack-nodejs-build',
+    },
+  },
+};
+
 export const incompleteBuildRun: BuildRun = {
   apiVersion: 'shipwright.io/v1alpha1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
     name: 'incomplete-buildrun',
+  },
+};
+
+export const buildRunWithLabels: BuildRun = {
+  apiVersion: 'shipwright.io/v1alpha1',
+  kind: 'BuildRun',
+  metadata: {
+    namespace: 'a-namespace',
+    generateName: 'buildrun-with-labels-',
+    name: 'buildrun-with-labels-1234',
+    labels: {
+      'build.shipwright.io/name': 'build-with-labels',
+      'app.kubernetes.io/part-of': 'buildpack-nodejs-build',
+    },
+  },
+  spec: {
+    buildRef: {
+      name: 'build-with-labels',
+    },
   },
 };
 

@@ -98,6 +98,7 @@ Given('user is at Shipwright Builds details page for build {string}', (buildName
     .should('be.visible')
     .click();
   cy.get('[aria-label="Breadcrumb"]').should('contain', 'Build details');
+  cy.get('[data-test-id="actions-menu-button"]', { timeout: 10000 }).should('be.visible');
 });
 
 When('user clicks on Filter', () => {

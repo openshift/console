@@ -1,12 +1,10 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
+  namespace: build-examples
   name: sw-knative-service-example
   labels:
-    app.kubernetes.io/part-of: sw-knative-service-app
-  annotations:
-    image.openshift.io/triggers: >-
-      [{"from":{"kind":"ImageStreamTag","name":"sw-knative-service-example:latest","namespace":"test-build"},"fieldPath":"spec.template.spec.containers[?(@.name==\"container\")].image","pause":"false"}]
+    app.kubernetes.io/part-of: sw-knative-service-example
 spec:
   template:
     metadata:
@@ -16,14 +14,15 @@ spec:
       containers:
         - name: container
           image: >-
-            image-registry.openshift-image-registry.svc:5000/test-build/sw-knative-service-example:latest
+            image-registry.openshift-image-registry.svc:5000/build-examples/sw-knative-service-example:latest
 ---
 apiVersion: shipwright.io/v1alpha1
 kind: Build
 metadata:
+  namespace: build-examples
   name: sw-knative-service-example-build
   labels:
-    app.kubernetes.io/part-of: sw-knative-service-app
+    app.kubernetes.io/part-of: sw-knative-service-example
 spec:
   source:
     url: https://github.com/shipwright-io/sample-nodejs
@@ -32,14 +31,15 @@ spec:
     name: buildpacks-v3
     kind: BuildStrategy
   output:
-    image: image-registry.openshift-image-registry.svc:5000/test-build/sw-knative-service-example
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/sw-knative-service-example
 ---
 apiVersion: shipwright.io/v1alpha1
 kind: BuildRun
 metadata:
+  namespace: build-examples
   generateName: sw-knative-service-example-buildrun-
   labels:
-    app.kubernetes.io/part-of: sw-knative-service-app
+    app.kubernetes.io/part-of: sw-knative-service-example
 spec:
   buildRef:
     name: sw-knative-service-example-build

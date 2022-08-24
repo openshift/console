@@ -13,10 +13,12 @@ export const buildPO = {
   dev: {
     buildTab: '[aria-label="Builds"]',
   },
+  decorator: '[data-test="build-decorator"]',
   shipwrightBuild: {
     shipwrightBuildsTab: '[data-test-id="horizontal-link-Shipwright Builds"]',
     shipwrightBuildRunsTab: '[data-test-id="horizontal-link-BuildRuns"]',
     statusText: '[data-test="status-text"]',
+    buildrunLogs: '.odc-multi-stream-logs',
   },
   popup: '[data-test="failure-popup"]',
 };
