@@ -28,13 +28,10 @@ import {
 } from '@console/internal/components/factory/ListPage/ListPageCreate';
 import ListPageFilter from '@console/internal/components/factory/ListPage/ListPageFilter';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
-import { deleteModal } from '@console/internal/components/modals';
 import {
   Kebab,
-  KebabAction,
   LabelList,
   MsgBox,
-  ResourceKebab,
   ResourceSummary,
   SectionHeading,
   Timestamp,
@@ -53,9 +50,7 @@ import {
   K8sKind,
   K8sResourceCondition,
   K8sResourceKind,
-  K8sResourceKindReference,
   OwnerReference,
-  apiGroupForReference,
   apiVersionForReference,
   kindForReference,
   referenceFor,
@@ -66,11 +61,12 @@ import {
   K8sResourceCommon,
 } from '@console/internal/module/k8s';
 import {
-  ClusterServiceVersionAction,
-  useExtensions,
-  isClusterServiceVersionAction,
-} from '@console/plugin-sdk';
-import { Status, SuccessStatus, getNamespace } from '@console/shared';
+  Status,
+  SuccessStatus,
+  LazyActionMenu,
+  ActionMenuVariant,
+  getNamespace,
+} from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
@@ -84,85 +80,9 @@ import { DescriptorType, StatusCapability, StatusDescriptor } from '../descripto
 import { isMainStatusDescriptor } from '../descriptors/utils';
 import { providedAPIsForCSV, referenceForProvidedAPI } from '../index';
 import { Resources } from '../k8s-resource';
-import { csvNameFromWindow, OperandLink } from './operand-link';
+import { OperandLink } from './operand-link';
 import { ShowOperandsInAllNamespacesRadioGroup } from './ShowOperandsInAllNamespacesRadioGroup';
 import { useShowOperandsInAllNamespaces } from './useShowOperandsInAllNamespaces';
-
-/**
- * @depricated these actions has been converted to Action extension, src/actions/csv-actions.ts
- */
-
-export const getOperandActions = (
-  ref: K8sResourceKindReference,
-  actionExtensions: ClusterServiceVersionAction[],
-  csvName?: string,
-) => {
-  const actions = actionExtensions.filter(
-    (action) =>
-      action.properties.kind === kindForReference(ref) &&
-      apiGroupForReference(ref) === action.properties.apiGroup,
-  );
-  const pluginActions = actions.reduce((acc, action) => {
-    acc[action.properties.id] = (kind, ocsObj) => ({
-      label: action.properties.label,
-      callback: action.properties.callback(kind, ocsObj),
-      hidden:
-        typeof action.properties?.hidden === 'function'
-          ? action.properties?.hidden(kind, ocsObj)
-          : action.properties?.hidden,
-    });
-    return acc;
-  }, {});
-  const defaultActions = {
-    edit: (kind, obj) => {
-      const reference = referenceFor(obj);
-      const href = kind.namespaced
-        ? `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csvName ||
-            csvNameFromWindow()}/${reference}/${obj.metadata.name}/yaml`
-        : `/k8s/cluster/${reference}/${obj.metadata.name}/yaml`;
-      return {
-        // t('olm~Edit {{item}}')
-        labelKey: 'olm~Edit {{item}}',
-        labelKind: { item: kind.label },
-        href,
-        accessReview: {
-          group: kind.apiGroup,
-          resource: kind.plural,
-          name: obj.metadata.name,
-          namespace: obj.metadata.namespace,
-          verb: 'update',
-        },
-      };
-    },
-    delete: (kind, obj) => ({
-      // t('olm~Delete {{item}}')
-      labelKey: 'olm~Delete {{item}}',
-      labelKind: { item: kind.label },
-      callback: () =>
-        deleteModal({
-          kind,
-          resource: obj,
-          redirectTo: `/k8s/ns/${obj.metadata.namespace}/${
-            ClusterServiceVersionModel.plural
-          }/${csvName || csvNameFromWindow()}/${referenceFor(obj)}`,
-        }),
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        name: obj.metadata.name,
-        namespace: obj.metadata.namespace,
-        verb: 'delete',
-      },
-    }),
-  };
-  // In order to keep plugin properties on top
-  const overridenProperties = Object.assign(
-    defaultActions,
-    _.pick(pluginActions, Object.keys(defaultActions)),
-  );
-  const mergedActions = Object.assign({}, pluginActions, overridenProperties);
-  return Object.values(mergedActions) as KebabAction[];
-};
 
 const tableColumnClasses = [
   '',
@@ -236,15 +156,8 @@ const getOperandStatusText = (operand: K8sResourceKind): string => {
 };
 
 export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, showNamespace }) => {
-  const actionExtensions = useExtensions<ClusterServiceVersionAction>(
-    isClusterServiceVersionAction,
-  );
   const objReference = referenceFor(obj);
-  const actions = React.useMemo(() => getOperandActions(objReference, actionExtensions), [
-    objReference,
-    actionExtensions,
-  ]);
-
+  const context = { [objReference]: obj, 'csv-actions': { resource: obj } };
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -279,7 +192,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, showNames
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={actions} kind={referenceFor(obj)} resource={obj} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
@@ -810,13 +723,14 @@ const ResourcesTab = (resourceProps) => (
 
 const DefaultOperandDetailsPage = ({ match, k8sModel }: DefaultOperandDetailsPageProps) => {
   const { t } = useTranslation();
-  const actionExtensions = useExtensions<ClusterServiceVersionAction>(
-    isClusterServiceVersionAction,
-  );
-  const menuActions = React.useMemo(
-    () => getOperandActions(match.params.plural, actionExtensions),
-    [match.params.plural, actionExtensions],
-  );
+
+  const actionItems = React.useCallback((resourceModel: K8sKind, resource: K8sResourceKind) => {
+    const context = {
+      [referenceForModel(resourceModel)]: resource,
+      'csv-actions': { resource },
+    };
+    return <LazyActionMenu context={context} variant={ActionMenuVariant.DROPDOWN} />;
+  }, []);
 
   return (
     <DetailsPage
@@ -839,7 +753,7 @@ const DefaultOperandDetailsPage = ({ match, k8sModel }: DefaultOperandDetailsPag
           prop: 'crd',
         },
       ]}
-      menuActions={menuActions}
+      customActionMenu={actionItems}
       createRedirect
       breadcrumbsFor={() => [
         {

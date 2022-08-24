@@ -329,8 +329,25 @@
     "type": "console.project-overview/utilization-item",
     "properties": {
       "title": "%plugin__console-demo-plugin~Foo item%",
-      "getUtilizationQuery":  { "$codeRef": "projectOverview.getUtilizationQuery" },
-      "humanize": { "$codeRef": "clusterOverview.humanize"}
+      "getUtilizationQuery": { "$codeRef": "projectOverview.getUtilizationQuery" },
+      "humanize": { "$codeRef": "clusterOverview.humanize" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-modal",
+      "component": { "$codeRef": "modalPage.TestModalPage" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test-modal-page",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "Modal Launchers",
+      "href": "/test-modal"
     }
   }
 ]

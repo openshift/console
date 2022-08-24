@@ -643,3 +643,5 @@ export const usePrometheusPoll: UsePrometheusPoll = (options) => {
  */
 export const Timestamp: React.FC<TimestampProps> = require('@console/internal/components/utils/timestamp')
   .Timestamp;
+
+export { useModal } from '../app/modal-support/useModal';
