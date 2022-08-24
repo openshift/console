@@ -1,7 +1,5 @@
-import classNames from 'classnames';
-import i18next from 'i18next';
-import * as _ from 'lodash-es';
 import {
+  Action,
   AlertSeverity,
   AlertStates,
   BlueInfoCircleIcon,
@@ -20,6 +18,10 @@ import {
   CodeBlock,
   CodeBlockCode,
   Popover,
+  Toolbar,
+  ToolbarContent,
+  ToolbarGroup,
+  ToolbarItem,
 } from '@patternfly/react-core';
 import {
   BanIcon,
@@ -29,6 +31,9 @@ import {
   OutlinedBellIcon,
 } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
+import classNames from 'classnames';
+import i18next from 'i18next';
+import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
@@ -37,8 +42,10 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { withFallback } from '@console/shared/src/components/error';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { ActionContext } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { ActionServiceProvider } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   alertingErrored,
   alertingLoaded,
@@ -58,11 +65,24 @@ import {
 } from '../../models';
 import { K8sKind } from '../../module/k8s';
 import { RootState } from '../../redux';
+import { breadcrumbsForGlobalConfig } from '../cluster-settings/global-config';
 import { RowFunctionArgs, Table, TableData, TableProps } from '../factory';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
+import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { confirmModal } from '../modals';
-import { AlertmanagerYAMLEditorWrapper } from './alert-manager-yaml-editor';
+import { refreshNotificationPollers } from '../notification-drawer';
+import { formatPrometheusDuration } from '../utils/datetime';
+import { ActionsMenu } from '../utils/dropdown';
+import { Firehose } from '../utils/firehose';
+import { ActionButtons, BreadCrumbs, SectionHeading } from '../utils/headings';
+import { Kebab } from '../utils/kebab';
+import { getURLSearchParams, LinkifyExternal } from '../utils/link';
+import { ResourceLink } from '../utils/resource-link';
+import { history } from '../utils/router';
+import { LoadingInline, StatusBox } from '../utils/status-box';
+import { Timestamp } from '../utils/timestamp';
 import { AlertmanagerConfigWrapper } from './alert-manager-config';
+import { AlertmanagerYAMLEditorWrapper } from './alert-manager-yaml-editor';
 import MonitoringDashboardsPage from './dashboards';
 import { Label, Labels } from './labels';
 import { QueryBrowserPage, ToggleGraph } from './metrics';
@@ -92,19 +112,6 @@ import {
   SilenceResource,
   silenceState,
 } from './utils';
-import { refreshNotificationPollers } from '../notification-drawer';
-import { formatPrometheusDuration } from '../utils/datetime';
-import { ActionsMenu } from '../utils/dropdown';
-import { Firehose } from '../utils/firehose';
-import { SectionHeading, ActionButtons, BreadCrumbs } from '../utils/headings';
-import { Kebab } from '../utils/kebab';
-import { getURLSearchParams, LinkifyExternal } from '../utils/link';
-import { ResourceLink } from '../utils/resource-link';
-import { history } from '../utils/router';
-import { LoadingInline, StatusBox } from '../utils/status-box';
-import { Timestamp } from '../utils/timestamp';
-import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
-import { breadcrumbsForGlobalConfig } from '../cluster-settings/global-config';
 
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
@@ -439,6 +446,10 @@ const SourceHelp: React.FC<{}> = React.memo(() => {
   );
 });
 
+type ActionWithHref = Omit<Action, 'cta'> & { cta: { href: string; external?: boolean } };
+
+const isActionWithHref = (action: Action): action is ActionWithHref => 'href' in action.cta;
+
 const queryBrowserURL = (query: string, namespace: string) =>
   namespace
     ? `/dev-monitoring/ns/${namespace}/metrics?query0=${encodeURIComponent(query)}`
@@ -682,6 +693,8 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const labels: PrometheusLabels = React.useMemo(() => alert?.labels, [labelsMemoKey]);
 
+  const actionsContext: ActionContext = { 'alert-detail-toolbar-actions': { alert } };
+
   return (
     <>
       <Helmet>
@@ -720,8 +733,30 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
           <HeaderAlertMessage alert={alert} rule={rule} />
         </div>
         <div className="co-m-pane__body">
-          <ToggleGraph />
-          <SectionHeading text={t('public~Alert details')} />
+          <Toolbar className="monitoring-alert-detail-toolbar">
+            <ToolbarContent>
+              <ToolbarItem variant="label">
+                <SectionHeading text={t('public~Alert details')} />
+              </ToolbarItem>
+              <ToolbarGroup alignment={{ default: 'alignRight' }}>
+                <ActionServiceProvider context={actionsContext}>
+                  {({ actions, loaded }) =>
+                    loaded
+                      ? actions.filter(isActionWithHref).map((action) => (
+                          <ToolbarItem key={action.id}>
+                            <Link to={action.cta.href}>{action.label}</Link>
+                          </ToolbarItem>
+                        ))
+                      : null
+                  }
+                </ActionServiceProvider>
+                <ToolbarItem>
+                  <ToggleGraph />
+                </ToolbarItem>
+              </ToolbarGroup>
+            </ToolbarContent>
+          </Toolbar>
+
           <div className="co-m-pane__body-group">
             <div className="row">
               <div className="col-sm-12">
@@ -1042,8 +1077,18 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
         </div>
         <div className="co-m-pane__body">
           <div className="co-m-pane__body-group">
-            <ToggleGraph />
-            <SectionHeading text={t('public~Active alerts')} />
+            <Toolbar className="monitoring-alert-detail-toolbar">
+              <ToolbarContent>
+                <ToolbarItem variant="label">
+                  <SectionHeading text={t('public~Active alerts')} />
+                </ToolbarItem>
+                <ToolbarGroup alignment={{ default: 'alignRight' }}>
+                  <ToolbarItem>
+                    <ToggleGraph />
+                  </ToolbarItem>
+                </ToolbarGroup>
+              </ToolbarContent>
+            </Toolbar>
             <div className="row">
               <div className="col-sm-12">
                 <Graph

@@ -59,9 +59,10 @@
 57.  [`usePrometheusPoll`](#useprometheuspoll)
 58.  [`Timestamp`](#timestamp)
 59.  [`useModal`](#usemodal)
-60. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
-61. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
-62. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+60.  [`ActionServiceProvider`](#actionserviceprovider)
+61. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
+62. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
+63. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
 
 ---
 
@@ -2034,6 +2035,45 @@ A hook to launch Modals.<br/><br/>```tsx<br/>const AppPage: React.FC = () => {<b
 
 
 
+
+
+
+---
+
+## `ActionServiceProvider`
+
+### Summary 
+
+Component that allows to receive contributions from other plugins for the `console.action/provider` extension type.<br/>See docs: https://github.com/openshift/console/blob/master/frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md#consoleactionprovider
+
+
+
+### Example
+
+
+```tsx
+   const context: ActionContext = { 'a-context-id': { dataFromDynamicPlugin } };
+
+   ...
+
+   <ActionServiceProvider context={context}>
+       {({ actions, options, loaded }) =>
+         loaded && (
+           <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+         )
+       }
+   </ActionServiceProvider>
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `context` | Object with contextId and optional plugin data |
 
 
 
