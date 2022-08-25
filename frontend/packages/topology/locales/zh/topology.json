@@ -100,6 +100,7 @@
   "Build <1></1> is pending": "构建 <1></1> 待处理",
   "Build <1></1> is running": "构建 <1></1> 正在运行",
   "Build <1></1> is {build.status?.phase?.toLowerCase()}": "构建 <1></1> 是 {build.status?.phase?.toLowerCase()}",
+  "View all {{buildsLength}}": "查看所有 {{buildsLength}}",
   "Start Build": "开始构建",
   "No Builds found for this Build Config.": "没有为此构建配置找到构建。",
   "Builds": "构建",
