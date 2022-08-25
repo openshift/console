@@ -15,6 +15,7 @@ import {
   ProvisionerDetails as UnResolvedProvisionerDetails,
   ProvisionerType,
   ResolvedExtension,
+  K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk';
 import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 import {
@@ -462,6 +463,7 @@ class StorageClassFormWithTranslation extends React.Component<
             selectedKey={_.get(this.state, selectedKey)}
             onChange={(event) => this.setParameterHandler(key, event, false)}
             id={paramId}
+            dataTest={paramId}
           />
           <span className="help-block">{validationMsg ? validationMsg : null}</span>
         </>
@@ -477,6 +479,7 @@ class StorageClassFormWithTranslation extends React.Component<
                     onChange={(event) => this.setParameterHandler(key, event, isCheckbox)}
                     checked={_.get(this.state, selectedKey, false)}
                     id={`provisioner-settings-${key}-checkbox`}
+                    data-test={paramId}
                   />
                   {_.get(parameter, 'name', key)}
                 </label>
@@ -498,6 +501,7 @@ class StorageClassFormWithTranslation extends React.Component<
                 value={_.get(this.state, selectedKey, '')}
                 onChange={(event) => this.setParameterHandler(key, event, isCheckbox)}
                 id={paramId}
+                data-test={paramId}
               />
             </>
           )}
@@ -592,6 +596,7 @@ class StorageClassFormWithTranslation extends React.Component<
                 className="pf-c-form-control"
                 placeholder={newStorageClass.name}
                 id="storage-class-name"
+                data-test="storage-class-name"
                 onChange={(event) => this.setStorageHandler('name', event.target.value.trim())}
                 value={_.get(newStorageClass, 'name', '')}
               />
@@ -606,6 +611,7 @@ class StorageClassFormWithTranslation extends React.Component<
                 type="text"
                 className="pf-c-form-control"
                 id="storage-class-description"
+                data-test="storage-class-description"
                 onChange={(event) => this.setStorageHandler('description', event.target.value)}
                 value={_.get(newStorageClass, 'description', '')}
               />
@@ -768,8 +774,7 @@ export type StorageClassData = {
   expansion: boolean;
 };
 
-export type StorageClass = {
-  metadata: object;
+export type StorageClass = K8sResourceCommon & {
   provisioner: string;
   parameters: object;
   reclaimPolicy?: string;
