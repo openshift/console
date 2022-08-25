@@ -815,7 +815,7 @@
   "Current desired pod count": "当前所需的 pod 数量",
   "of pod_0": "pod",
   "Number or percentage of total pods at the start of the update (optional)": "更新开始时 pod 总数的数量或百分比（可选）",
-  "greater than pod_0": "大于 pod",
+  "greater than pod": "大于 pod",
   "Recreate": "重新创建",
   "Shut down all existing pods before creating new ones": "在创建新的前关闭所有现有的 pod",
   "Confirm": "确认",
