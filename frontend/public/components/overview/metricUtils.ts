@@ -1,8 +1,8 @@
+import { Alert } from '@console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
 import { coFetchJSON } from '../../co-fetch';
 import { getAlertsAndRules } from '../monitoring/utils';
-import { Alert } from '../monitoring/types';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 
 export type MetricValuesByPod = {

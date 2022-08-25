@@ -11,12 +11,11 @@ import { RebootingIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import { Alert, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { Alert } from '@console/internal/components/monitoring/types';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BlueInfoCircleIcon } from '@console/shared';

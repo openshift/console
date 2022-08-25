@@ -1,4 +1,4 @@
-import { Alert } from '@console/internal/components/monitoring/types';
+import { Alert } from '@console/dynamic-plugin-sdk';
 import { HorizontalPodAutoscalerKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { DEPLOYMENT_STRATEGY } from '../constants';
 

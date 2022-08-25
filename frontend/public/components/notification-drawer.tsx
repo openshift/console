@@ -21,7 +21,7 @@ import {
 } from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
-import { Alert, PrometheusRulesResponse } from '@console/internal/components/monitoring/types';
+import { PrometheusRulesResponse } from '@console/internal/components/monitoring/types';
 
 import { getClusterID } from '../module/k8s/cluster-settings';
 
@@ -50,6 +50,7 @@ import {
 import { useClusterVersion } from '@console/shared/src/hooks/version';
 import { usePrevious } from '@console/shared/src/hooks/previous';
 import {
+  Alert,
   AlertAction,
   AlertSeverity,
   isAlertAction,

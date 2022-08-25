@@ -1,4 +1,4 @@
-import { Alert } from '@console/internal/components/monitoring/types';
+import { Alert } from '@console/dynamic-plugin-sdk';
 import { fetchMonitoringAlerts } from '@console/internal/components/overview/metricUtils';
 
 type UnsubscribeCallback = () => void;

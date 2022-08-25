@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { TFunction } from 'i18next';
-import { Alert } from '@console/internal/components/monitoring/types';
+import { Alert } from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
 import { K8sResourceKind, DeploymentKind } from '@console/internal/module/k8s/types';
 import { StorageClass } from '@console/internal/components/storage-class-form';

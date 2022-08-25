@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { nodeStatus, volumeSnapshotStatus } from '@console/app/src/status';
 import { getNodeRoles, getLabelsAsString } from '@console/shared';
-import { AlertStates, FilterValue, RowFilter } from '@console/dynamic-plugin-sdk';
+import { Alert, AlertStates, FilterValue, RowFilter, Rule, Silence } from '@console/dynamic-plugin-sdk';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
 import { roleType } from '../RBAC';
@@ -24,7 +24,7 @@ import {
   targetSource,
 } from '../monitoring/utils';
 
-import { Alert, Rule, Silence, Target } from '../monitoring/types';
+import { Target } from '../monitoring/types';
 import { requesterFilter } from '@console/shared/src/components/namespace';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>

@@ -1,5 +1,6 @@
 import {
   Action,
+  Alert,
   AlertSeverity,
   AlertStates,
   BlueInfoCircleIcon,
@@ -8,6 +9,8 @@ import {
   PrometheusLabels,
   RedExclamationCircleIcon,
   ResourceStatus,
+  Rule,
+  Silence,
   SilenceStates,
   useActivePerspective,
   YellowExclamationTriangleIcon,
@@ -90,13 +93,10 @@ import { FormatSeriesTitle, QueryBrowser } from './query-browser';
 import { CreateSilence, EditSilence } from './silence-form';
 import { TargetsUI } from './targets';
 import {
-  Alert,
   Alerts,
   AlertSource,
   ListPageProps,
   MonitoringResource,
-  Rule,
-  Silence,
   Silences,
 } from './types';
 import {
