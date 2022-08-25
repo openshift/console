@@ -1308,6 +1308,7 @@
   "{{numCores}} cores": "{{numCores}} cores",
   "Exit code": "Exit code",
   "View in query browser": "View in query browser",
+  "CPU usage(millicores)": "CPU usage(millicores)",
   "Pod unschedulable": "Pod unschedulable",
   "Pod crash loop back-off": "Pod crash loop back-off",
   "CrashLoopBackOff indicates that the application within the container is failing to start properly.": "CrashLoopBackOff indicates that the application within the container is failing to start properly.",

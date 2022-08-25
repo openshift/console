@@ -556,7 +556,7 @@ const PodMetrics: React.FC<PodMetricsProps> = ({ obj }) => {
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~CPU usage')}</CardTitle>
+              <CardTitle>{t('public~CPU usage(millicores)')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Area
