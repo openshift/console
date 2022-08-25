@@ -367,7 +367,7 @@ const Graph: React.FC<GraphProps> = React.memo(
       });
     });
 
-    if (data.every(_.isEmpty)) {
+    if (!data.some(Array.isArray)) {
       return <GraphEmpty />;
     }
 
@@ -383,8 +383,8 @@ const Graph: React.FC<GraphProps> = React.memo(
       }
     } else {
       // Set a reasonable Y-axis range based on the min and max values in the data
-      const findMin = (series: GraphSeries) => _.minBy(series, 'y');
-      const findMax = (series: GraphSeries) => _.maxBy(series, 'y');
+      const findMin = (series: GraphSeries): GraphDataPoint => _.minBy(series, 'y');
+      const findMax = (series: GraphSeries): GraphDataPoint => _.maxBy(series, 'y');
       let minY: number = findMin(data.map(findMin))?.y ?? 0;
       let maxY: number = findMax(data.map(findMax))?.y ?? 0;
       if (minY === 0 && maxY === 0) {
