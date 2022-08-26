@@ -404,14 +404,6 @@ $monitoring-line-height: 18px;
   max-height: 25vh;
   overflow: auto;
   width: 100%;
-
-  &--insert {
-    @media (min-width: $screen-sm-min) {
-      max-width: 55vw;
-    }
-    max-width: 85vw;
-    width: 550px;
-  }
 }
 
 .query-browser__query {

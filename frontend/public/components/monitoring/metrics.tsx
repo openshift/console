@@ -4,7 +4,6 @@ import {
   PrometheusData,
   PrometheusEndpoint,
   PrometheusLabels,
-  RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/dynamic-plugin-sdk';
 import {
@@ -52,27 +51,17 @@ import {
   queryBrowserDuplicateQuery,
   queryBrowserDeleteAllQueries,
   queryBrowserDeleteQuery,
-  queryBrowserInsertText,
   queryBrowserPatchQuery,
   queryBrowserRunQueries,
   queryBrowserSetAllExpanded,
-  queryBrowserSetMetrics,
   queryBrowserSetPollInterval,
   queryBrowserToggleIsEnabled,
   queryBrowserToggleSeries,
   toggleGraphs,
 } from '../../actions/observe';
 import { RootState } from '../../redux';
-import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { getPrometheusURL } from '../graphs/helpers';
-import {
-  AsyncComponent,
-  Dropdown,
-  getURLSearchParams,
-  LoadingInline,
-  usePoll,
-  useSafeFetch,
-} from '../utils';
+import { AsyncComponent, getURLSearchParams, LoadingInline, usePoll, useSafeFetch } from '../utils';
 import { setAllQueryArguments } from '../utils/router';
 import { useBoolean } from './hooks/useBoolean';
 import IntervalDropdown from './poll-interval-dropdown';
@@ -147,80 +136,6 @@ export const ToggleGraph: React.FC<{}> = () => {
     >
       {icon} {hideGraphs ? t('public~Show graph') : t('public~Hide graph')}
     </Button>
-  );
-};
-
-const metricsFilter = (a: string, b: string): boolean => b.includes(a);
-
-const MetricsDropdown: React.FC<{}> = () => {
-  const { t } = useTranslation();
-
-  const dispatch = useDispatch();
-
-  const [items, setItems] = React.useState<MetricsDropdownItems>();
-  const [error, setError] = React.useState<PrometheusAPIError>();
-
-  const safeFetch = React.useCallback(useSafeFetch(), []);
-
-  React.useEffect(() => {
-    safeFetch(`${PROMETHEUS_BASE_PATH}/${PrometheusEndpoint.LABEL}/__name__/values`)
-      .then((response) => {
-        const metrics = response?.data;
-        setItems(_.zipObject(metrics, metrics));
-        dispatch(queryBrowserSetMetrics(metrics));
-      })
-      .catch((err) => {
-        if (err.name !== 'AbortError') {
-          setError(err);
-        }
-      });
-  }, [dispatch, safeFetch]);
-
-  const onChange = (metric: string) => {
-    // Replace the currently selected text with the metric
-    const { index = 0, selection = {}, target = undefined } = focusedQuery || {};
-    dispatch(queryBrowserInsertText(index, metric, selection.start, selection.end));
-
-    if (target) {
-      target.focus();
-
-      // Restore cursor position / currently selected text (use _.defer() to delay until after the
-      // input value is set)
-      _.defer(() => target.setSelectionRange(selection.start, selection.start + metric.length));
-    }
-  };
-
-  let title: React.ReactElement = <>{t('public~Insert metric at cursor')}</>;
-  if (error !== undefined) {
-    const message =
-      error?.response?.status === 403
-        ? t('public~Access restricted.')
-        : t('public~Failed to load metrics list.');
-    title = (
-      <>
-        <RedExclamationCircleIcon /> {message}
-      </>
-    );
-  } else if (items === undefined) {
-    title = <LoadingInline />;
-  } else if (_.isEmpty(items)) {
-    title = (
-      <>
-        <YellowExclamationTriangleIcon /> {t('public~No metrics found.')}
-      </>
-    );
-  }
-
-  return (
-    <Dropdown
-      autocompleteFilter={metricsFilter}
-      disabled={error !== undefined}
-      id="metrics-dropdown"
-      items={items || {}}
-      menuClassName="query-browser__metrics-dropdown-menu query-browser__metrics-dropdown-menu--insert"
-      onChange={onChange}
-      title={title}
-    />
   );
 };
 
@@ -823,9 +738,6 @@ const QueryBrowserPage_: React.FC<{}> = () => {
           <div className="col-xs-12">
             <QueryBrowserWrapper />
             <div className="query-browser__controls">
-              <div className="query-browser__controls--left">
-                <MetricsDropdown />
-              </div>
               <div className="query-browser__controls--right">
                 <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
                   <AddQueryButton />
@@ -841,10 +753,6 @@ const QueryBrowserPage_: React.FC<{}> = () => {
   );
 };
 export const QueryBrowserPage = withFallback(QueryBrowserPage_);
-
-type MetricsDropdownItems = {
-  [key: string]: string;
-};
 
 type QueryTableProps = {
   index: number;
