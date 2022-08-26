@@ -5,7 +5,7 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "clean": "rm -rf dist generated schema",
+    "clean": "rm -rf dist generated",
     "build": "yarn clean && yarn validate && yarn compile && yarn generate",
     "compile": "for ext in '' '-internal' '-webpack' ; do ./node_modules/.bin/tsc -p tsconfig${ext}.json || exit $? ; done",
     "generate": "yarn generate-schema && yarn generate-doc && yarn generate-pkg-assets",
@@ -16,6 +16,7 @@
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'"
   },
   "devDependencies": {
+    "@openshift/dynamic-plugin-sdk": "1.0.0-alpha15",
     "@microsoft/tsdoc": "0.13.2",
     "@types/ejs": "3.x",
     "@types/fs-extra": "9.x",

@@ -10,7 +10,9 @@ import {
 } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import {
   FeatureFlag as DynamicFeatureFlag,
+  CoreFeatureFlag as DynamicCoreFeatureFlag,
   isFeatureFlag as isDynamicFeatureFlag,
+  isCoreFeatureFlag as isDynamicCoreFeatureFlag,
   SetFeatureFlag,
   setUser,
 } from '@console/dynamic-plugin-sdk';
@@ -258,7 +260,7 @@ export const featureFlagController: SetFeatureFlag = (flag, enabled) => {
   store.dispatch(setFlag(flag, enabled));
 };
 
-subscribeToExtensions<DynamicFeatureFlag>(
+subscribeToExtensions<DynamicFeatureFlag | DynamicCoreFeatureFlag>(
   extensionDiffListener((added) => {
     added.forEach((e) => {
       resolveExtension(e)
@@ -272,4 +274,5 @@ subscribeToExtensions<DynamicFeatureFlag>(
     });
   }),
   isDynamicFeatureFlag,
+  isDynamicCoreFeatureFlag,
 );

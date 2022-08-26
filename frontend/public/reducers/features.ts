@@ -9,7 +9,9 @@ import {
 } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import {
   ModelFeatureFlag as DynamicModelFeatureFlag,
+  CoreModelFeatureFlag as DynamicCoreModelFeatureFlag,
   isModelFeatureFlag as isDynamicModelFeatureFlag,
+  isCoreModelFeatureFlag as isDynamicCoreModelFeatureFlag,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
   ClusterAutoscalerModel,
@@ -27,6 +29,7 @@ import {
 import { referenceForGroupVersionKind } from '../module/k8s';
 import { referenceForModel } from '../module/k8s/k8s-ref';
 import { RootState } from '../redux';
+import { ExtensionK8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { ActionType as K8sActionType } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { FeatureState } from '@console/dynamic-plugin-sdk/src/app/features';
 import { FeatureAction, ActionType } from '../actions/features';
@@ -75,24 +78,22 @@ pluginStore
     addToCRDs(referenceForModel(ff.properties.model), ff.properties.flag);
   });
 
-subscribeToExtensions<DynamicModelFeatureFlag>(
+subscribeToExtensions<DynamicModelFeatureFlag | DynamicCoreModelFeatureFlag>(
   extensionDiffListener((added, removed) => {
-    const getModelRef = (e: DynamicModelFeatureFlag) => {
-      const model = e.properties.model;
-      return referenceForGroupVersionKind(model.group)(model.version)(model.kind);
-    };
+    const getModelRef = (model: ExtensionK8sModel) => referenceForGroupVersionKind(model.group)(model.version)(model.kind);
 
     added.forEach((e) => {
-      addToCRDs(getModelRef(e), e.properties.flag);
+      addToCRDs(getModelRef(e.properties.model), e.properties.flag);
     });
 
     removed.forEach((e) => {
-      delete CRDs[getModelRef(e)];
+      delete CRDs[getModelRef(e.properties.model)];
     });
 
     // TODO(vojtech): change of 'CRDs' should trigger relevant detection logic
   }),
   isDynamicModelFeatureFlag,
+  isDynamicCoreModelFeatureFlag,
 );
 
 export const featureReducerName = 'FLAGS';

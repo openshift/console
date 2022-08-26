@@ -35,6 +35,7 @@ import {
   useResolvedExtensions,
   isContextProvider,
   isReduxReducer,
+  isCoreReduxReducer,
   isStandaloneRoutePage,
   AppInitSDK,
   getUser,
@@ -235,7 +236,11 @@ class App_ extends React.PureComponent {
 }
 
 const AppWithExtensions = withTranslation()(function AppWithExtensions(props) {
-  const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions(isReduxReducer);
+  const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions(
+    isReduxReducer,
+    isCoreReduxReducer,
+  );
+
   const [contextProviderExtensions, providersResolved] = useResolvedExtensions(isContextProvider);
 
   if (reducersResolved && providersResolved) {

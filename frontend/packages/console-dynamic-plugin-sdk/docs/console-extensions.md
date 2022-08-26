@@ -28,53 +28,56 @@
 26.  [`console.dashboards/project/overview/item`](#consoledashboardsprojectoverviewitem)
 27.  [`console.dashboards/tab`](#consoledashboardstab)
 28.  [`console.file-upload`](#consolefile-upload)
-29.  [`console.flag`](#consoleflag)
-30.  [`console.flag/hookProvider`](#consoleflaghookProvider)
-31.  [`console.flag/model`](#consoleflagmodel)
-32.  [`console.global-config`](#consoleglobal-config)
-33.  [`console.model-metadata`](#consolemodel-metadata)
-34.  [`console.navigation/href`](#consolenavigationhref)
-35.  [`console.navigation/resource-cluster`](#consolenavigationresource-cluster)
-36.  [`console.navigation/resource-ns`](#consolenavigationresource-ns)
-37.  [`console.navigation/section`](#consolenavigationsection)
-38.  [`console.navigation/separator`](#consolenavigationseparator)
-39.  [`console.page/resource/details`](#consolepageresourcedetails)
-40.  [`console.page/resource/list`](#consolepageresourcelist)
-41.  [`console.page/route`](#consolepageroute)
-42.  [`console.page/route/standalone`](#consolepageroutestandalone)
-43.  [`console.perspective`](#consoleperspective)
-44.  [`console.project-overview/inventory-item`](#consoleproject-overviewinventory-item)
-45.  [`console.project-overview/utilization-item`](#consoleproject-overviewutilization-item)
-46.  [`console.pvc/alert`](#consolepvcalert)
-47.  [`console.pvc/create-prop`](#consolepvccreate-prop)
-48.  [`console.pvc/delete`](#consolepvcdelete)
-49.  [`console.pvc/status`](#consolepvcstatus)
-50.  [`console.redux-reducer`](#consoleredux-reducer)
-51.  [`console.resource/create`](#consoleresourcecreate)
-52.  [`console.storage-class/provisioner`](#consolestorage-classprovisioner)
-53.  [`console.storage-provider`](#consolestorage-provider)
-54.  [`console.tab/horizontalNav`](#consoletabhorizontalNav)
-55.  [`console.telemetry/listener`](#consoletelemetrylistener)
-56.  [`console.topology/adapter/build`](#consoletopologyadapterbuild)
-57.  [`console.topology/adapter/network`](#consoletopologyadapternetwork)
-58.  [`console.topology/adapter/pod`](#consoletopologyadapterpod)
-59.  [`console.topology/component/factory`](#consoletopologycomponentfactory)
-60.  [`console.topology/create/connector`](#consoletopologycreateconnector)
-61.  [`console.topology/data/factory`](#consoletopologydatafactory)
-62.  [`console.topology/decorator/provider`](#consoletopologydecoratorprovider)
-63.  [`console.topology/details/resource-alert`](#consoletopologydetailsresource-alert)
-64.  [`console.topology/details/resource-link`](#consoletopologydetailsresource-link)
-65.  [`console.topology/details/tab`](#consoletopologydetailstab)
-66.  [`console.topology/details/tab-section`](#consoletopologydetailstab-section)
-67.  [`console.topology/display/filters`](#consoletopologydisplayfilters)
-68.  [`console.topology/relationship/provider`](#consoletopologyrelationshipprovider)
-69.  [`console.user-preference/group`](#consoleuser-preferencegroup)
-70.  [`console.user-preference/item`](#consoleuser-preferenceitem)
-71.  [`console.yaml-template`](#consoleyaml-template)
+29.  [`console.flag/hookProvider`](#consoleflaghookProvider)
+30.  [`console.global-config`](#consoleglobal-config)
+31.  [`console.model-metadata`](#consolemodel-metadata)
+32.  [`console.navigation/href`](#consolenavigationhref)
+33.  [`console.navigation/resource-cluster`](#consolenavigationresource-cluster)
+34.  [`console.navigation/resource-ns`](#consolenavigationresource-ns)
+35.  [`console.navigation/section`](#consolenavigationsection)
+36.  [`console.navigation/separator`](#consolenavigationseparator)
+37.  [`console.page/resource/details`](#consolepageresourcedetails)
+38.  [`console.page/resource/list`](#consolepageresourcelist)
+39.  [`console.page/route`](#consolepageroute)
+40.  [`console.page/route/standalone`](#consolepageroutestandalone)
+41.  [`console.perspective`](#consoleperspective)
+42.  [`console.project-overview/inventory-item`](#consoleproject-overviewinventory-item)
+43.  [`console.project-overview/utilization-item`](#consoleproject-overviewutilization-item)
+44.  [`console.pvc/alert`](#consolepvcalert)
+45.  [`console.pvc/create-prop`](#consolepvccreate-prop)
+46.  [`console.pvc/delete`](#consolepvcdelete)
+47.  [`console.pvc/status`](#consolepvcstatus)
+48.  [`console.resource/create`](#consoleresourcecreate)
+49.  [`console.storage-class/provisioner`](#consolestorage-classprovisioner)
+50.  [`console.storage-provider`](#consolestorage-provider)
+51.  [`console.tab/horizontalNav`](#consoletabhorizontalNav)
+52.  [`console.telemetry/listener`](#consoletelemetrylistener)
+53.  [`console.topology/adapter/build`](#consoletopologyadapterbuild)
+54.  [`console.topology/adapter/network`](#consoletopologyadapternetwork)
+55.  [`console.topology/adapter/pod`](#consoletopologyadapterpod)
+56.  [`console.topology/component/factory`](#consoletopologycomponentfactory)
+57.  [`console.topology/create/connector`](#consoletopologycreateconnector)
+58.  [`console.topology/data/factory`](#consoletopologydatafactory)
+59.  [`console.topology/decorator/provider`](#consoletopologydecoratorprovider)
+60.  [`console.topology/details/resource-alert`](#consoletopologydetailsresource-alert)
+61.  [`console.topology/details/resource-link`](#consoletopologydetailsresource-link)
+62.  [`console.topology/details/tab`](#consoletopologydetailstab)
+63.  [`console.topology/details/tab-section`](#consoletopologydetailstab-section)
+64.  [`console.topology/display/filters`](#consoletopologydisplayfilters)
+65.  [`console.topology/relationship/provider`](#consoletopologyrelationshipprovider)
+66.  [`console.user-preference/group`](#consoleuser-preferencegroup)
+67.  [`console.user-preference/item`](#consoleuser-preferenceitem)
+68.  [`console.yaml-template`](#consoleyaml-template)
+69.  [`core.flag`](#coreflag)
+70.  [`core.flag/model`](#coreflagmodel)
+71.  [`core.redux-reducer`](#coreredux-reducer)
 72.  [`dev-console.add/action`](#dev-consoleaddaction)
 73.  [`dev-console.add/action-group`](#dev-consoleaddaction-group)
 74.  [`dev-console.import/environment`](#dev-consoleimportenvironment)
-75. [DEPRECATED] [`console.page/resource/tab`](#consolepageresourcetab)
+75. [DEPRECATED] [`console.flag`](#consoleflag)
+76. [DEPRECATED] [`console.flag/model`](#consoleflagmodel)
+77. [DEPRECATED] [`console.page/resource/tab`](#consolepageresourcetab)
+78. [DEPRECATED] [`console.redux-reducer`](#consoleredux-reducer)
 
 ---
 
@@ -543,20 +546,6 @@ Adds a new dashboard tab, placed after the Overview tab.
 
 ---
 
-## `console.flag`
-
-### Summary 
-
-Gives full control over Console feature flags.
-
-### Properties
-
-| Name | Value Type | Optional | Description |
-| ---- | ---------- | -------- | ----------- |
-| `handler` | `CodeRef<FeatureFlagHandler>` | no | Used to set/unset arbitrary feature flags. |
-
----
-
 ## `console.flag/hookProvider`
 
 ### Summary 
@@ -568,21 +557,6 @@ Gives full control over Console feature flags with hook handlers.
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `handler` | `CodeRef<FeatureFlagHandler>` | no | Used to set/unset arbitrary feature flags. |
-
----
-
-## `console.flag/model`
-
-### Summary 
-
-Adds new Console feature flag driven by the presence of a CRD on the cluster.
-
-### Properties
-
-| Name | Value Type | Optional | Description |
-| ---- | ---------- | -------- | ----------- |
-| `flag` | `string` | no | The name of the flag to set once the CRD is detected. |
-| `model` | `ExtensionK8sModel` | no | The model which refers to a `CustomResourceDefinition`. |
 
 ---
 
@@ -904,21 +878,6 @@ Adds a new project overview utilization item.
 | `priority` | `number` | no | Priority for the status component. Bigger value means higher priority. |
 | `status` | `CodeRef<React.ComponentType<{ pvc: K8sResourceCommon; }>>` | no | The status component. |
 | `predicate` | `CodeRef<(pvc: K8sResourceCommon) => boolean>` | no | Predicate that tells whether to render the status component or not. |
-
----
-
-## `console.redux-reducer`
-
-### Summary 
-
-Adds new reducer to Console Redux store which operates on `plugins.<scope>` substate.
-
-### Properties
-
-| Name | Value Type | Optional | Description |
-| ---- | ---------- | -------- | ----------- |
-| `scope` | `string` | no | The key to represent the reducer-managed substate within the Redux state object. |
-| `reducer` | `CodeRef<Reducer<any, AnyAction>>` | no | The reducer function, operating on the reducer-managed substate. |
 
 ---
 
@@ -1255,6 +1214,50 @@ YAML templates for editing resources via the yaml editor.
 
 ---
 
+## `core.flag`
+
+### Summary 
+
+Core equivalent of `console.flag` extension.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `handler` | `CodeRef<(callback: SetFeatureFlag) => void>` | no | Used to set/unset arbitrary feature flags. |
+
+---
+
+## `core.flag/model`
+
+### Summary 
+
+Core equivalent of `console.flag/model` extension.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `flag` | `string` | no | The name of the flag to set once the CRD is detected. |
+| `model` | `ExtensionK8sResourceIdentifier & { group: string; version: string; kind: string; }` | no | The model which refers to a `CustomResourceDefinition`. |
+
+---
+
+## `core.redux-reducer`
+
+### Summary 
+
+Core equivalent of `console.redux-reducer` extension.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `scope` | `string` | no | The key to represent the reducer-managed substate within the Redux state object. |
+| `reducer` | `CodeRef<Reducer<any, AnyAction>>` | no | The reducer function, operating on the reducer-managed substate. |
+
+---
+
 ## `dev-console.add/action`
 
 ### Summary 
@@ -1309,6 +1312,35 @@ YAML templates for editing resources via the yaml editor.
 
 ---
 
+## `console.flag`
+
+### Summary [DEPRECATED]
+
+@deprecated use `core.flag` extension instead<br/>Gives full control over Console feature flags.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `handler` | `CodeRef<FeatureFlagHandler>` | no | Used to set/unset arbitrary feature flags. |
+
+---
+
+## `console.flag/model`
+
+### Summary [DEPRECATED]
+
+@deprecated use `core.flag/model` extension instead<br/>Adds new Console feature flag driven by the presence of a CRD on the cluster.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `flag` | `string` | no | The name of the flag to set once the CRD is detected. |
+| `model` | `ExtensionK8sModel` | no | The model which refers to a `CustomResourceDefinition`. |
+
+---
+
 ## `console.page/resource/tab`
 
 ### Summary [DEPRECATED]
@@ -1324,4 +1356,19 @@ YAML templates for editing resources via the yaml editor.
 | `name` | `string` | no | The name of the tab. |
 | `href` | `string` | yes | The optional href for the tab link. If not provided, the first `path` is used. |
 | `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
+
+---
+
+## `console.redux-reducer`
+
+### Summary [DEPRECATED]
+
+@deprecated use `core.redux-reducer` extension instead<br/>Adds new reducer to Console Redux store which operates on `plugins.<scope>` substate.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `scope` | `string` | no | The key to represent the reducer-managed substate within the Redux state object. |
+| `reducer` | `CodeRef<Reducer<any, AnyAction>>` | no | The reducer function, operating on the reducer-managed substate. |
 

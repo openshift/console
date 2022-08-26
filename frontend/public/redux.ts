@@ -4,6 +4,7 @@ import thunk from 'redux-thunk';
 import {
   ResolvedExtension,
   ReduxReducer,
+  CoreReduxReducer,
   SDKReducers,
   SDKStoreState,
 } from '@console/dynamic-plugin-sdk';
@@ -40,7 +41,9 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk)),
 );
 
-export const applyReduxExtensions = (reducerExtensions: ResolvedExtension<ReduxReducer>[]) => {
+export const applyReduxExtensions = (
+  reducerExtensions: ResolvedExtension<ReduxReducer | CoreReduxReducer>[],
+) => {
   const pluginReducers: ReducersMapObject = {};
 
   reducerExtensions.forEach(({ properties: { scope, reducer } }) => {

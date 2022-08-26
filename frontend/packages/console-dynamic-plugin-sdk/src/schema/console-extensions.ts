@@ -27,7 +27,9 @@ import {
 } from '../extensions/dashboards';
 import {
   FeatureFlag,
+  CoreFeatureFlag,
   ModelFeatureFlag,
+  CoreModelFeatureFlag,
   FeatureFlagHookProvider,
 } from '../extensions/feature-flags';
 import { FileUpload } from '../extensions/file-upload';
@@ -54,7 +56,7 @@ import {
   ProjectOverviewUtilizationItem,
 } from '../extensions/project-overview';
 import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
-import { ReduxReducer } from '../extensions/redux';
+import { ReduxReducer, CoreReduxReducer } from '../extensions/redux';
 import { ModelMetadata } from '../extensions/resource-metadata';
 import { StorageClassProvisioner } from '../extensions/storage-class-provisioner';
 import { StorageProvider } from '../extensions/storage-provider';
@@ -73,9 +75,12 @@ import { YAMLTemplate } from '../extensions/yaml-templates';
 
 export type SupportedExtension =
   | FeatureFlag
+  | CoreFeatureFlag
   | ModelFeatureFlag
+  | CoreModelFeatureFlag
   | FeatureFlagHookProvider
   | ReduxReducer
+  | CoreReduxReducer
   | ContextProvider
   | StandaloneRoutePage
   | PVCCreateProp

@@ -10,8 +10,6 @@ import {
   hasDeprecationJSDoc,
 } from './typescript';
 
-export type ConsoleTypeDeclarations = Record<'CodeRef' | 'EncodedCodeRef', ts.Declaration>;
-
 type ContainsJSDoc = {
   /** JSDoc comments attached to the corresponding AST node. */
   docComments: string[];
@@ -38,7 +36,7 @@ export type ExtensionTypeInfo = {
 } & ContainsJSDoc;
 
 type ConsoleTypeResolver = {
-  getDeclarations: () => ConsoleTypeDeclarations;
+  getDeclarations: () => Record<string, ts.Declaration>;
 
   getConsoleExtensions: (
     exitOnErrors?: boolean,
@@ -141,7 +139,6 @@ export const getConsoleTypeResolver = (program: ts.Program): ConsoleTypeResolver
 
   return {
     getDeclarations: () => ({
-      CodeRef: getTypeAliasDeclaration(srcFile('src/types.ts'), 'CodeRef'),
       EncodedCodeRef: getTypeAliasDeclaration(srcFile('src/types.ts'), 'EncodedCodeRef'),
     }),
 
