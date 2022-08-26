@@ -476,6 +476,14 @@ class ConfigEntryFormWithTranslation extends React.Component<
     this.setState({ email: event.currentTarget.value }, this.propagateChange);
   };
 
+  onBlurHandler: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    const { name, value } = event.currentTarget;
+    this.setState((prevState) => ({
+      ...prevState,
+      [name]: value.trim(),
+    }));
+  };
+
   render() {
     const { t } = this.props;
     return (
@@ -493,6 +501,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
               name="address"
               onChange={this.onAddressChanged}
               value={this.state.address}
+              onBlur={this.onBlurHandler}
               required
             />
           </div>
@@ -512,6 +521,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
               name="username"
               onChange={this.onUsernameChanged}
               value={this.state.username}
+              onBlur={this.onBlurHandler}
               required
             />
           </div>
@@ -528,6 +538,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
               name="password"
               onChange={this.onPasswordChanged}
               value={this.state.password}
+              onBlur={this.onBlurHandler}
               required
             />
           </div>
@@ -544,6 +555,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
               name="email"
               onChange={this.onEmailChanged}
               value={this.state.email}
+              onBlur={this.onBlurHandler}
             />
           </div>
         </div>
@@ -917,6 +929,7 @@ class BasicAuthSubformWithTranslation extends React.Component<
       () => this.props.onChange(this.state),
     );
   }
+
   render() {
     const { t } = this.props;
     return (
