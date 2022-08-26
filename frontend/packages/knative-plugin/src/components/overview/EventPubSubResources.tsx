@@ -24,7 +24,7 @@ type EventPubSubResourcesProps = {
     deployments?: K8sResourceKind[];
     brokers?: K8sResourceKind[];
     channels?: K8sResourceKind[];
-    ksservices?: K8sResourceKind[];
+    subscriberRes?: K8sResourceKind[];
     filters?: FilterTableRowProps;
     subscribers?: Subscriber[];
   };
@@ -63,7 +63,7 @@ const EventPubSubResources: React.FC<EventPubSubResourcesProps> = ({ item }) => 
   const { t } = useTranslation();
   const {
     obj,
-    ksservices = [],
+    subscriberRes = [],
     eventSources = [],
     pods = [],
     deployments = [],
@@ -82,7 +82,10 @@ const EventPubSubResources: React.FC<EventPubSubResourcesProps> = ({ item }) => 
             title={t('knative-plugin~Event Sources')}
           />
           <PubSubResourceOverviewList items={brokers} title={t('knative-plugin~Broker')} />
-          <PubSubResourceOverviewList items={ksservices} title={t('knative-plugin~Subscriber')} />
+          <PubSubResourceOverviewList
+            items={subscriberRes}
+            title={t('knative-plugin~Subscriber')}
+          />
           <EventTriggerFilterList filters={filters} />
         </>
       );
@@ -94,7 +97,10 @@ const EventPubSubResources: React.FC<EventPubSubResourcesProps> = ({ item }) => 
             title={t('knative-plugin~Event Sources')}
           />
           <PubSubResourceOverviewList items={channels} title={t('knative-plugin~Channel')} />
-          <PubSubResourceOverviewList items={ksservices} title={t('knative-plugin~Subscriber')} />
+          <PubSubResourceOverviewList
+            items={subscriberRes}
+            title={t('knative-plugin~Subscriber')}
+          />
         </>
       );
     case EventingBrokerModel.kind:
