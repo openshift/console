@@ -550,7 +550,7 @@ Gives full control over Console feature flags.
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `handler` | `CodeRef<FeatureFlagHandler>` | no | Used to set/unset arbitrary feature flags. |
+| `handler` | `CodeRef<(callback: SetFeatureFlag) => void>` | no | Used to set/unset arbitrary feature flags. |
 
 ---
 
@@ -579,7 +579,7 @@ Adds new Console feature flag driven by the presence of a CRD on the cluster.
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `flag` | `string` | no | The name of the flag to set once the CRD is detected. |
-| `model` | `ExtensionK8sModel` | no | The model which refers to a `CustomResourceDefinition`. |
+| `model` | `ExtensionK8sResourceIdentifier & { group: string; version: string; kind: string; }` | no | The model which refers to a `CustomResourceDefinition`. |
 
 ---
 

@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import * as tsj from 'ts-json-schema-generator';
 import * as ts from 'typescript';
-import { ConsoleTypeDeclarations } from '../utils/type-resolver';
 
 /**
  * Parse references to `CodeRef<T>` functions as references to `EncodedCodeRef` object literals.
@@ -9,21 +7,14 @@ import { ConsoleTypeDeclarations } from '../utils/type-resolver';
 export class CodeRefTypeReferenceParser implements tsj.SubNodeParser {
   constructor(
     private readonly typeChecker: ts.TypeChecker,
-    private readonly consoleTypeDeclarations: ConsoleTypeDeclarations,
+    private readonly consoleTypeDeclarations: Record<string, ts.Declaration>,
     private readonly getMainParser: () => tsj.NodeParser,
   ) {}
 
   supportsNode(node: ts.Node) {
-    if (ts.isTypeReferenceNode(node)) {
-      const nodeType = this.typeChecker.getTypeAtLocation(node);
-
-      return (
-        nodeType.aliasSymbol?.name === 'CodeRef' &&
-        _.head(nodeType.aliasSymbol?.declarations) === this.consoleTypeDeclarations.CodeRef
-      );
-    }
-
-    return false;
+    return ts.isTypeReferenceNode(node)
+      ? this.typeChecker.getTypeAtLocation(node).aliasSymbol?.name === 'CodeRef'
+      : false;
   }
 
   createType() {
