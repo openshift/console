@@ -199,6 +199,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [CEPH_FLAG],
+      disallowed: [FEATURES.DASHBOARD_RESOURCES],
     },
   },
   {
@@ -218,6 +219,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [CEPH_FLAG],
+      disallowed: [FEATURES.DASHBOARD_RESOURCES],
     },
   },
   // Noobaa Related Plugins
@@ -390,6 +392,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [MCG_FLAG],
+      disallowed: [FEATURES.INVENTORY_ITEM],
     },
   },
   {
