@@ -17,7 +17,7 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
         <ExclamationCircleIcon
           style={{
             fontSize,
-            color: 'var(--pf-global--danger-color--100)',
+            fill: 'var(--pf-global--danger-color--100)',
           }}
         />
       );
@@ -27,7 +27,7 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
         <ExclamationTriangleIcon
           style={{
             fontSize,
-            color: 'var(--pf-global--warning-color--100)',
+            fill: 'var(--pf-global--warning-color--100)',
           }}
         />
       );
