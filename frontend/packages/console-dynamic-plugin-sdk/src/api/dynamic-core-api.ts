@@ -27,6 +27,7 @@ import {
   UsePrometheusPoll,
   TimestampProps,
   NamespaceBarProps,
+  YAMLEditorRef,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -574,8 +575,9 @@ export { useFlag } from '../utils/flags';
  * @param {YAMLEditorProps['toolbarLinks']} toolbarLinks - Array of ReactNode rendered on the toolbar links section on top of the editor.
  * @param {YAMLEditorProps['onChange']} onChange - Callback for on code change event.
  * @param {YAMLEditorProps['onSave']} onSave - Callback called when the command CTRL / CMD + S is triggered.
+ * @param {YAMLEditorRef} ref - React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html.
  */
-export const YAMLEditor: React.FC<YAMLEditorProps> = require('@console/internal/components/AsyncYAMLEditor')
+export const YAMLEditor: React.ForwardRefExoticComponent<YAMLEditorProps & React.RefAttributes<YAMLEditorRef>> = require('@console/internal/components/AsyncYAMLEditor')
   .AsyncYAMLEditor;
 
 /**

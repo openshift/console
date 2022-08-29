@@ -1903,6 +1903,7 @@ A basic lazy loaded YAML editor with hover help and completion.
 | `toolbarLinks` | Array of ReactNode rendered on the toolbar links section on top of the editor. |
 | `onChange` | Callback for on code change event. |
 | `onSave` | Callback called when the command CTRL / CMD + S is triggered. |
+| `ref` | React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html. |
 
 
 
