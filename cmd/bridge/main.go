@@ -490,6 +490,9 @@ func main() {
 			}
 		}
 
+		srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
+		srv.PluginsProxyTLSConfig = serviceProxyTLSConfig
+
 		if *fK8sModeOffClusterGitOps != "" {
 			offClusterGitOpsURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-gitops", *fK8sModeOffClusterGitOps)
 			srv.GitOpsProxyConfig = &proxy.Config{
