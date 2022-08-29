@@ -4,6 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"path"
+	"strings"
+
 	"github.com/devfile/api/v2/pkg/attributes"
 	devfileCtx "github.com/devfile/library/pkg/devfile/parser/context"
 	"github.com/devfile/library/pkg/devfile/parser/data"
@@ -12,10 +16,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/klog"
-	"net/url"
-	"path"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strings"
 
 	"reflect"
 
@@ -508,7 +509,7 @@ func convertDevWorskapceTemplateToDevObj(dwTemplate v1.DevWorkspaceTemplate) (d 
 
 }
 
-//setDefaults sets the default values for nil boolean properties after the merging of devWorkspaceTemplateSpec is complete
+// setDefaults sets the default values for nil boolean properties after the merging of devWorkspaceTemplateSpec is complete
 func setDefaults(d DevfileObj) (err error) {
 
 	var devfileVersion string
@@ -609,13 +610,13 @@ func setDefaults(d DevfileObj) (err error) {
 	return nil
 }
 
-///setIsDefault sets the default value of CommandGroup.IsDefault if nil
+// /setIsDefault sets the default value of CommandGroup.IsDefault if nil
 func setIsDefault(cmdGroup *v1.CommandGroup) {
 	val := cmdGroup.GetIsDefault()
 	cmdGroup.IsDefault = &val
 }
 
-//setEndpoints sets the default value of Endpoint.Secure if nil
+// setEndpoints sets the default value of Endpoint.Secure if nil
 func setEndpoints(endpoints []v1.Endpoint) {
 	for i := range endpoints {
 		val := endpoints[i].GetSecure()
@@ -623,7 +624,7 @@ func setEndpoints(endpoints []v1.Endpoint) {
 	}
 }
 
-//parseKubeResourceFromURI iterate through all kubernetes & openshift components, and parse from uri and update the content to inlined field in devfileObj
+// parseKubeResourceFromURI iterate through all kubernetes & openshift components, and parse from uri and update the content to inlined field in devfileObj
 func parseKubeResourceFromURI(devObj DevfileObj) error {
 	getKubeCompOptions := common.DevfileOptions{
 		ComponentOptions: common.ComponentOptions{
@@ -670,7 +671,7 @@ func parseKubeResourceFromURI(devObj DevfileObj) error {
 	return nil
 }
 
-//convertK8sLikeCompUriToInlined read in kubernetes resources definition from uri and converts to kubernetest inlined field
+// convertK8sLikeCompUriToInlined read in kubernetes resources definition from uri and converts to kubernetest inlined field
 func convertK8sLikeCompUriToInlined(component *v1.Component, d devfileCtx.DevfileCtx) error {
 	var uri string
 	if component.Kubernetes != nil {
@@ -697,7 +698,7 @@ func convertK8sLikeCompUriToInlined(component *v1.Component, d devfileCtx.Devfil
 	return nil
 }
 
-//getKubernetesDefinitionFromUri read in kubernetes resources definition from uri and returns the raw content
+// getKubernetesDefinitionFromUri read in kubernetes resources definition from uri and returns the raw content
 func getKubernetesDefinitionFromUri(uri string, d devfileCtx.DevfileCtx) ([]byte, error) {
 	// validate URI
 	err := validation.ValidateURI(uri)

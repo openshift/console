@@ -25,7 +25,7 @@ type PluginOverrides struct {
 	Commands []CommandPluginOverride `json:"commands,omitempty" patchStrategy:"merge" patchMergeKey:"id"`
 }
 
-//+k8s:openapi-gen=true
+// +k8s:openapi-gen=true
 type ComponentPluginOverride struct {
 
 	// Mandatory name that allows referencing the component

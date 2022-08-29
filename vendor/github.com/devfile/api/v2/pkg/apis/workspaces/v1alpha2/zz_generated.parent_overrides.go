@@ -56,7 +56,7 @@ type ParentOverrides struct {
 	Commands []CommandParentOverride `json:"commands,omitempty" patchStrategy:"merge" patchMergeKey:"id"`
 }
 
-//+k8s:openapi-gen=true
+// +k8s:openapi-gen=true
 type ComponentParentOverride struct {
 
 	// Mandatory name that allows referencing the component
@@ -721,7 +721,7 @@ type ImportReferenceUnionParentOverride struct {
 // So please be careful when renaming
 type OverridesBaseParentOverride struct{}
 
-//+k8s:openapi-gen=true
+// +k8s:openapi-gen=true
 type ComponentPluginOverrideParentOverride struct {
 
 	// Mandatory name that allows referencing the component
