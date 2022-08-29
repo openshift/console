@@ -23,6 +23,7 @@ import (
 	"github.com/devfile/library/pkg/devfile/generator"
 	"github.com/devfile/library/pkg/devfile/parser"
 	"github.com/devfile/library/pkg/devfile/parser/data/v2/common"
+	"github.com/devfile/library/pkg/testingutil/filesystem"
 )
 
 func (s *Server) devfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +67,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 	httpTimeout := 10
 	devfileObj, _, err = devfile.ParseDevfileAndValidate(parser.ParserArgs{Data: devfileContentBytes, HTTPTimeout: &httpTimeout})
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to parse devfile:")
+		errMsg := "Failed to parse devfile:"
 		if strings.Contains(err.Error(), "schemaVersion not present in devfile") {
 			errMsg = fmt.Sprintf("%s schemaVersion not present in devfile. Only devfile 2.2.0 or above is supported. The devfile needs to have the schemaVersion set in the metadata section with a value of 2.2.0 or above.", errMsg)
 		} else {
@@ -78,27 +79,15 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filterOptions := common.DevfileOptions{
-		ComponentOptions: common.ComponentOptions{
-			ComponentType: devfilev1.ImageComponentType,
-		},
-	}
-
-	imageComponents, err := devfileObj.Data.GetComponents(filterOptions) //For Dev Preview, if there is more than one image component err out
+	deployAssociatedComponents, err := getDeployComponents(devfileObj)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to get the image component from devfile: %v", err)
-		klog.Error(errMsg)
-		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
-		return
-	}
-	if len(imageComponents) != 1 {
-		errMsg := fmt.Sprintf("Only devfile 2.2.0 or above, with one image component, is supported. ")
+		errMsg := fmt.Sprintf("Failed to get the deploy command associated components from devfile: %v", err)
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
 	}
 
-	deploymentResource, err := getDeployResource(data, devfileObj, filterOptions)
+	deploymentResource, err := getDeployResource(devfileObj, deployAssociatedComponents)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to get deployment resource for the devfile: %v", err)
 		klog.Error(errMsg)
@@ -106,17 +95,25 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dockerfileRelativePath := imageComponents[0].Image.Dockerfile.Uri
+	imageBuildComponent, err := getImageBuildComponent(devfileObj, deployAssociatedComponents)
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to get an image component from the devfile: %v", err)
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
+		return
+	}
+
+	dockerfileRelativePath := imageBuildComponent.Image.Dockerfile.Uri
 	if dockerfileRelativePath == "" {
-		errMsg := fmt.Sprintf("Failed to get the Dockerfile location, dockerfile uri is not defined by image component %v", imageComponents[0].Name)
+		errMsg := fmt.Sprintf("Failed to get the Dockerfile location, dockerfile uri is not defined by image component %v", imageBuildComponent.Name)
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
 	}
 
-	dockerRelativeSrcContext := imageComponents[0].Image.Dockerfile.BuildContext
+	dockerRelativeSrcContext := imageBuildComponent.Image.Dockerfile.BuildContext
 	if dockerRelativeSrcContext == "" {
-		errMsg := fmt.Sprintf("Failed to get the dockefile context location, dockerfile buildcontext is not defined by image component %v", imageComponents[0].Name)
+		errMsg := fmt.Sprintf("Failed to get the dockefile context location, dockerfile buildcontext is not defined by image component %v", imageBuildComponent.Name)
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
@@ -130,7 +127,12 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	service, err := getService(devfileObj, filterOptions, dockerImagePort)
+	imageComponentFilter := common.DevfileOptions{
+		ComponentOptions: common.ComponentOptions{
+			ComponentType: devfilev1.ImageComponentType,
+		},
+	}
+	service, err := getService(devfileObj, imageComponentFilter, dockerImagePort)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to get service for the devfile: %v", err)
 		klog.Error(errMsg)
@@ -156,6 +158,95 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
 	}
 	w.Write(resp)
+}
+
+func getImageBuildComponent(devfileObj parser.DevfileObj, deployAssociatedComponents map[string]string) (devfilev1.Component, error) {
+	imageComponentFilter := common.DevfileOptions{
+		ComponentOptions: common.ComponentOptions{
+			ComponentType: devfilev1.ImageComponentType,
+		},
+	}
+
+	imageComponents, err := devfileObj.Data.GetComponents(imageComponentFilter)
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to get the image component from devfile: %v", err)
+		klog.Error(errMsg)
+		return devfilev1.Component{}, err
+	}
+
+	var imageBuildComponent devfilev1.Component
+	imageDeployComponentCount := 0
+	for _, component := range imageComponents {
+		if _, ok := deployAssociatedComponents[component.Name]; ok && component.Image != nil {
+			imageBuildComponent = component
+			imageDeployComponentCount++
+		}
+	}
+
+	// If there is not exactly one image component defined in the deploy command, err out
+	if imageDeployComponentCount != 1 {
+		errMsg := "expected to find only one devfile image component with a deploy command for build"
+		klog.Error(errMsg)
+		return devfilev1.Component{}, fmt.Errorf(errMsg)
+	}
+
+	return imageBuildComponent, nil
+}
+
+func getDeployComponents(devfileObj parser.DevfileObj) (map[string]string, error) {
+	deployCommandFilter := common.DevfileOptions{
+		CommandOptions: common.CommandOptions{
+			CommandGroupKind: devfilev1.DeployCommandGroupKind,
+		},
+	}
+	deployCommands, err := devfileObj.Data.GetCommands(deployCommandFilter)
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to get the deploy commands from devfile: %v", err)
+		klog.Error(errMsg)
+		return nil, err
+	}
+
+	deployAssociatedComponents := make(map[string]string)
+	var deployAssociatedSubCommands []string
+
+	for _, command := range deployCommands {
+		if command.Apply != nil {
+			if len(deployCommands) > 1 && command.Apply.Group.IsDefault != nil && !*command.Apply.Group.IsDefault {
+				continue
+			}
+			deployAssociatedComponents[command.Apply.Component] = command.Apply.Component
+		} else if command.Composite != nil {
+			if len(deployCommands) > 1 && command.Composite.Group.IsDefault != nil && !*command.Composite.Group.IsDefault {
+				continue
+			}
+			deployAssociatedSubCommands = append(deployAssociatedSubCommands, command.Composite.Commands...)
+		}
+	}
+
+	applyCommandFilter := common.DevfileOptions{
+		CommandOptions: common.CommandOptions{
+			CommandType: devfilev1.ApplyCommandType,
+		},
+	}
+	applyCommands, err := devfileObj.Data.GetCommands(applyCommandFilter)
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to get the apply commands from devfile: %v", err)
+		klog.Error(errMsg)
+		return nil, err
+	}
+
+	for _, command := range applyCommands {
+		if command.Apply != nil {
+			for _, deployCommand := range deployAssociatedSubCommands {
+				if deployCommand == command.Id {
+					deployAssociatedComponents[command.Apply.Component] = command.Apply.Component
+				}
+			}
+
+		}
+	}
+
+	return deployAssociatedComponents, nil
 }
 
 func getImageStream() imagev1.ImageStream {
@@ -185,22 +276,55 @@ func getBuildResource(data devfileForm, dockerfilePath, contextDir string) build
 	return *buildConfig
 }
 
-func getDeployResource(data devfileForm, devfileObj parser.DevfileObj, filterOptions common.DevfileOptions) (appsv1.Deployment, error) {
-
-	containers, err := generator.GetContainers(devfileObj, filterOptions)
+func getDeployResource(devfileObj parser.DevfileObj, deployAssociatedComponents map[string]string) (appsv1.Deployment, error) {
+	kubernetesComponentFilter := common.DevfileOptions{
+		ComponentOptions: common.ComponentOptions{
+			ComponentType: devfilev1.KubernetesComponentType,
+		},
+	}
+	kubernetesComponents, err := devfileObj.Data.GetComponents(kubernetesComponentFilter)
 	if err != nil {
+		errMsg := fmt.Sprintf("Failed to get the kubernetes components from devfile: %v", err)
+		klog.Error(errMsg)
 		return appsv1.Deployment{}, err
 	}
 
-	deployParams := generator.DeploymentParams{
-		TypeMeta:          generator.GetTypeMeta("Deployment", "apps/v1"),
-		Containers:        containers,
-		PodSelectorLabels: map[string]string{"app": data.Name},
+	var resources parser.KubernetesResources
+
+	for _, component := range kubernetesComponents {
+		if _, ok := deployAssociatedComponents[component.Name]; ok && component.Kubernetes != nil {
+			var src parser.YamlSrc
+
+			if component.Kubernetes.Inlined != "" {
+				src = parser.YamlSrc{
+					Data: []byte(component.Kubernetes.Inlined),
+				}
+			} else {
+				return appsv1.Deployment{}, fmt.Errorf("unable to find the Kuberntes data from the inlined Kubernetes devfile component")
+			}
+
+			values, err := parser.ReadKubernetesYaml(src, filesystem.DefaultFs{})
+			if err != nil {
+				errMsg := fmt.Sprintf("Failed to read the Kubernetes yaml from devfile: %v", err)
+				klog.Error(errMsg)
+				return appsv1.Deployment{}, err
+			}
+
+			resources, err = parser.ParseKubernetesYaml(values)
+			if err != nil {
+				errMsg := fmt.Sprintf("Failed to parse the Kubernetes yaml data from devfile: %v", err)
+				klog.Error(errMsg)
+				return appsv1.Deployment{}, err
+			}
+		}
 	}
 
-	deployment, err := generator.GetDeployment(devfileObj, deployParams)
+	if len(resources.Deployments) > 0 {
+		return resources.Deployments[0], nil
+	}
 
-	return *deployment, err
+	return appsv1.Deployment{}, fmt.Errorf("no deployment definition was found in the devfile sample")
+
 }
 
 func getService(devfileObj parser.DevfileObj, filterOptions common.DevfileOptions, imagePort string) (corev1.Service, error) {
