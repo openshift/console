@@ -1021,13 +1021,17 @@ export const PodsPage: React.FC<PodPageProps> = ({
   const [data, filteredData, onFilterChange] = useListPageFilter(pods, filters, {
     name: { selected: [nameFilter] },
   });
-
+  const resourceKind = referenceForModel(PodModel);
+  const accessReview = {
+    groupVersionKind: resourceKind,
+    namespace: namespace || 'default',
+  };
   return (
     userSettingsLoaded && (
       <>
         <ListPageHeader title={showTitle ? t('public~Pods') : undefined}>
           {canCreate && (
-            <ListPageCreate groupVersionKind={referenceForModel(PodModel)}>
+            <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
               {t('public~Create Pod')}
             </ListPageCreate>
           )}
