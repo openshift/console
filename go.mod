@@ -11,7 +11,7 @@ require (
 	github.com/devfile/registry-support/registry-library v0.0.0-20220527155645-8328a8a883be
 	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
-	github.com/openshift/api v0.0.0-20220729142910-83d1191dd9fc
+	github.com/openshift/api v0.0.0-20220803132145-8e34324aa580
 	github.com/openshift/library-go v0.0.0-20200424095618-2aeb4725dadf
 	github.com/operator-framework/kubectl-operator v0.3.0
 	github.com/prometheus/client_golang v1.12.1

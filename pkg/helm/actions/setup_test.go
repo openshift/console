@@ -26,6 +26,9 @@ func TestMain(m *testing.M) {
 	if err := setupTestWithoutTls(); err != nil {
 		panic(err)
 	}
+	if err := setupTestBasicAuth(); err != nil {
+		panic(err)
+	}
 	retCode := m.Run()
 	if err := ExecuteScript("./testdata/chartmuseum-stop.sh", false); err != nil {
 		panic(err)
@@ -65,6 +68,18 @@ func setupTestWithoutTls() error {
 	}
 	time.Sleep(5 * time.Second)
 	if err := ExecuteScript("./testdata/uploadChartsWithoutTls.sh", true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func setupTestBasicAuth() error {
+	setSettings(settings)
+	if err := ExecuteScript("./testdata/chartmuseumWithBasicAuth.sh", false); err != nil {
+		return err
+	}
+	time.Sleep(5 * time.Second)
+	if err := ExecuteScript("./testdata/uploadChartsWithBasicAuth.sh", true); err != nil {
 		return err
 	}
 	return nil
