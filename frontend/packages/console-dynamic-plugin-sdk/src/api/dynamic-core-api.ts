@@ -26,6 +26,7 @@ import {
   ResourceEventStreamProps,
   UsePrometheusPoll,
   TimestampProps,
+  NamespaceBarProps,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -669,3 +670,25 @@ export { useModal } from '../app/modal-support/useModal';
  */
 export const ActionServiceProvider: React.FC<ActionServiceProviderProps> = require('@console/shared/src/components/actions/ActionServiceProvider')
   .default;
+
+/**
+ * A component that renders a horizontal toolbar with a namespace dropdown menu in the leftmost position. Additional components can be passed in as children and will be rendered to the right of the namespace dropdown. This component is designed to be used at the top of the page. It should be used on pages where the user needs to be able to change the active namespace, such as on pages with k8s resources.
+ * @param {function} onNamespaceChange - (optional) A function that is executed when a namespace option is selected. It accepts the new namespace in the form of a string as its only argument. The active namespace is updated automatically when an option is selected, but additional logic can be applied via this function. When the namespace is changed, the namespace parameter in the URL will be changed from the previous namespace to the newly selected namespace.
+ * @param {boolean} isDisabled - (optional) A boolean flag that disables the namespace dropdown if set to true. This option only applies to the namespace dropdown and has no effect on child components.
+ * @param {React.ReactNode} children - (optional) Additional elements to be rendered inside the toolbar to the right of the namespace dropdown.
+ * @example
+ * ```tsx
+ *    const logNamespaceChange = (namespace) => console.log(`New namespace: ${namespace}`);
+ *
+ *    ...
+ *
+ *    <NamespaceBar onNamespaceChange={logNamespaceChange}>
+ *      <NamespaceBarApplicationSelector />
+ *    </NamespaceBar>
+ *    <Page>
+ *
+ *      ...
+ * ```
+ */
+export const NamespaceBar: React.FC<NamespaceBarProps> = require('@console/internal/components/namespace-bar')
+  .NamespaceBar;
