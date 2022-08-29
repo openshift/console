@@ -6,7 +6,6 @@ import { match as RMatch } from 'react-router';
 import { withStartGuide } from '../../../../../public/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
-import { ResourceQuotaAlert } from '../resource-quota/ResourceQuotaAlert';
 import AddPageLayout from './AddPageLayout';
 
 export interface AddPageProps {
@@ -21,10 +20,7 @@ export const PageContents: React.FC<AddPageProps> = ({ match }) => {
   const namespace = match.params.ns;
 
   return namespace ? (
-    <>
-      <ResourceQuotaAlert namespace={namespace} />
-      <AddPageLayout title={t('devconsole~Add')} />
-    </>
+    <AddPageLayout title={t('devconsole~Add')} />
   ) : (
     <CreateProjectListPage title={t('devconsole~Add')}>
       {(openProjectModal) => (

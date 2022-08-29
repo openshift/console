@@ -1,8 +1,12 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
+import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import {
+  useK8sWatchResources,
+  YellowExclamationTriangleIcon,
+} from '@console/dynamic-plugin-sdk/src/api/core-api';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { AppliedClusterResourceQuotaModel, ResourceQuotaModel } from '@console/internal/models';
 import { AppliedClusterResourceQuotaKind, ResourceQuotaKind } from '@console/internal/module/k8s';
 import { checkQuotaLimit } from '@console/topology/src/components/utils/checkResourceQuota';
@@ -14,30 +18,52 @@ export interface ResourceQuotaAlertProps {
 export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespace }) => {
   const { t } = useTranslation();
   const [warningMessageFlag, setWarningMessageFlag] = React.useState<boolean>();
-  const [resourceQuotaName, setResourceQuotaName] = React.useState<string>('');
-  const [resourceQuotaKind, setResourceQuotaKind] = React.useState<string>('');
+  const [resourceQuotaName, setResourceQuotaName] = React.useState(null);
+  const [resourceQuotaKind, setResourceQuotaKind] = React.useState(null);
 
-  const [quotas, rqLoaded] = useK8sWatchResource<ResourceQuotaKind[]>({
-    groupVersionKind: {
-      kind: ResourceQuotaModel.kind,
-      version: ResourceQuotaModel.apiVersion,
-    },
-    namespace,
-    isList: true,
-  });
+  const watchedResources = React.useMemo(
+    () => ({
+      resourcequotas: {
+        groupVersionKind: {
+          kind: ResourceQuotaModel.kind,
+          version: ResourceQuotaModel.apiVersion,
+        },
+        namespace,
+        isList: true,
+      },
+      appliedclusterresourcequotas: {
+        groupVersionKind: {
+          kind: AppliedClusterResourceQuotaModel.kind,
+          version: AppliedClusterResourceQuotaModel.apiVersion,
+          group: AppliedClusterResourceQuotaModel.apiGroup,
+        },
+        namespace,
+        isList: true,
+      },
+    }),
+    [namespace],
+  );
 
-  const [clusterQuotas, acrqLoaded] = useK8sWatchResource<AppliedClusterResourceQuotaKind[]>({
-    groupVersionKind: {
-      kind: AppliedClusterResourceQuotaModel.kind,
-      version: AppliedClusterResourceQuotaModel.apiVersion,
-      group: AppliedClusterResourceQuotaModel.apiGroup,
-    },
-    namespace,
-    isList: true,
-  });
+  const { resourcequotas, appliedclusterresourcequotas } = useK8sWatchResources<{
+    resourcequotas: ResourceQuotaKind[];
+    appliedclusterresourcequotas: AppliedClusterResourceQuotaKind[];
+  }>(watchedResources);
 
-  const [totalRQatQuota, quotaName, quotaKind] = checkQuotaLimit(quotas);
-  const [totalACRQatQuota, clusterRQName, clusterRQKind] = checkQuotaLimit(clusterQuotas);
+  const [totalRQatQuota = [], quotaName, quotaKind] = React.useMemo(
+    () =>
+      resourcequotas.loaded && !resourcequotas.loadError
+        ? checkQuotaLimit(resourcequotas.data)
+        : [],
+    [resourcequotas],
+  );
+
+  const [totalACRQatQuota = [], clusterRQName, clusterRQKind] = React.useMemo(
+    () =>
+      appliedclusterresourcequotas.loaded && !appliedclusterresourcequotas.loadError
+        ? checkQuotaLimit(appliedclusterresourcequotas.data)
+        : [],
+    [appliedclusterresourcequotas],
+  );
 
   let totalResourcesAtQuota = [...totalRQatQuota, ...totalACRQatQuota];
   totalResourcesAtQuota = totalResourcesAtQuota.filter((resourceAtQuota) => resourceAtQuota !== 0);
@@ -47,35 +73,38 @@ export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespac
       setResourceQuotaName(quotaName || clusterRQName);
       setResourceQuotaKind(quotaKind || clusterRQKind);
     } else {
-      setResourceQuotaName('');
-      setResourceQuotaKind('');
+      setResourceQuotaName(null);
+      setResourceQuotaKind(null);
     }
+  }, [clusterRQKind, clusterRQName, totalResourcesAtQuota, quotaKind, quotaName]);
+
+  React.useEffect(() => {
     if (totalResourcesAtQuota.length > 0) {
       setWarningMessageFlag(true);
     } else {
       setWarningMessageFlag(false);
     }
-  }, [clusterRQKind, clusterRQName, totalResourcesAtQuota, quotaKind, quotaName]);
+  }, [totalResourcesAtQuota]);
 
   const getRedirectLink = () => {
     if (resourceQuotaName && resourceQuotaKind === AppliedClusterResourceQuotaModel.kind) {
-      return `/k8s/ns/${namespace}/${AppliedClusterResourceQuotaModel.apiGroup}~${AppliedClusterResourceQuotaModel.apiVersion}~${AppliedClusterResourceQuotaModel.kind}/${resourceQuotaName}`;
+      return resourcePathFromModel(AppliedClusterResourceQuotaModel, resourceQuotaName, namespace);
     }
     if (resourceQuotaName) {
-      return `/k8s/ns/${namespace}/${ResourceQuotaModel.plural}/${resourceQuotaName}`;
+      return resourcePathFromModel(ResourceQuotaModel, resourceQuotaName, namespace);
     }
-    return `/k8s/ns/${namespace}/${ResourceQuotaModel.plural}`;
+    return resourcePathFromModel(ResourceQuotaModel, null, namespace);
   };
   return (
     <>
-      {warningMessageFlag && rqLoaded && acrqLoaded ? (
-        <Alert variant="warning" title={t('devconsole~Resource quota reached')} isInline>
-          <Link to={getRedirectLink()}>
+      {warningMessageFlag && resourcequotas.loaded && appliedclusterresourcequotas.loaded ? (
+        <Label color="orange" icon={<YellowExclamationTriangleIcon />}>
+          <Link to={getRedirectLink()} data-test="resource-quota-warning">
             {t('devconsole~{{count}} resource reached quota', {
               count: totalResourcesAtQuota.reduce((a, b) => a + b, 0),
             })}
           </Link>
-        </Alert>
+        </Label>
       ) : null}
     </>
   );

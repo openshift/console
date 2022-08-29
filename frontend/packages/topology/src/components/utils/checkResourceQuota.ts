@@ -1,10 +1,12 @@
 import { getUsedPercentage } from '@console/app/src/components/resource-quota/utils';
-import { ResourceQuotaModel } from '../../../../../public/models';
+import { ResourceQuotaModel } from '@console/internal/models';
 
-export const checkQuotaLimit = (resourecQuota: any) => {
+type ResourceQuotaReturnItems = [number[], string, string];
+
+export const checkQuotaLimit = (resourceQuotas: any): ResourceQuotaReturnItems => {
   let quotaName = '';
   let quotaKind = '';
-  const resourceQuotaResources = resourecQuota.map((quota) => {
+  const resourceQuotaResources = resourceQuotas.map((quota) => {
     let resourcesAtQuota;
     if (quota?.kind === ResourceQuotaModel.kind) {
       resourcesAtQuota = Object.keys(quota?.status?.hard || {}).reduce(

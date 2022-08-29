@@ -91,10 +91,7 @@ When('user enters the {string} file data to YAML Editor', (yamlFile: string) => 
 });
 
 When('user clicks on link to view resource quota details', () => {
-  cy.get('h4.pf-c-alert__title').should('contain.text', 'Resource quota reached');
-  cy.get('a')
-    .contains('reached quota')
-    .click();
+  cy.byTestID('resource-quota-warning').click();
 });
 
 Then('user is redirected to resource quota details page', () => {

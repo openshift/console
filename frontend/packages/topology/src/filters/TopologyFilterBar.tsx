@@ -13,6 +13,7 @@ import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization, isNode } from '@patternfly/react-topology';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { ResourceQuotaAlert } from '@console/dev-console/src/components/resource-quota/ResourceQuotaAlert';
 import { ExternalLink, setQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
@@ -20,9 +21,10 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { requirementFromString } from '@console/internal/module/k8s/selector-requirement';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { useQueryParams } from '@console/shared';
+import { useFlag, useQueryParams } from '@console/shared';
 import ExportApplication from '../components/export-app/ExportApplication';
 import TopologyQuickSearchButton from '../components/quick-search/TopologyQuickSearchButton';
+import { ALLOW_EXPORT_APP } from '../const';
 import { TopologyViewType } from '../topology-types';
 import { getResource } from '../utils';
 import { getNamespaceDashboardKialiLink } from '../utils/topology-utils';
@@ -41,7 +43,6 @@ import FilterDropdown from './FilterDropdown';
 import { FilterContext } from './FilterProvider';
 import KindFilterDropdown from './KindFilterDropdown';
 import NameLabelFilterDropdown from './NameLabelFilterDropdown';
-
 import './TopologyFilterBar.scss';
 
 type StateProps = {
@@ -80,7 +81,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   const queryParams = useQueryParams();
   const searchQuery = queryParams.get(TOPOLOGY_SEARCH_FILTER_KEY) || '';
   const labelsQuery = queryParams.get(TOPOLOGY_LABELS_FILTER_KEY)?.split(',') || [];
-
+  const isExportApplicationEnabled = useFlag(ALLOW_EXPORT_APP);
   const updateNameFilter = (value: string) => {
     const query = value?.trim();
     onSearchChange(query);
@@ -198,6 +199,15 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           variant={ToolbarGroupVariant['button-group']}
           alignment={{ default: 'alignRight' }}
         >
+          <ToolbarItem
+            className={
+              isExportApplicationEnabled || kialiLink
+                ? 'odc-topology-filter-bar__resource-quota-warning-block'
+                : ''
+            }
+          >
+            <ResourceQuotaAlert namespace={namespace} />
+          </ToolbarItem>
           {kialiLink && (
             <ToolbarItem className="odc-topology-filter-bar__kiali-link1">
               <ExternalLink href={kialiLink} text={t('topology~Kiali')} />
