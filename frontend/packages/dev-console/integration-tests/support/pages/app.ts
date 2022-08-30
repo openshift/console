@@ -3,8 +3,15 @@ import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import * as yamlView from '../../../../integration-tests-cypress/views/yaml-editor';
-import { devNavigationMenu, switchPerspective, pageTitle } from '../constants';
-import { devNavigationMenuPO, formPO, gitPO, topologyPO, yamlPO } from '../pageObjects';
+import { devNavigationMenu, switchPerspective, pageTitle, adminNavigationBar } from '../constants';
+import {
+  devNavigationMenuPO,
+  formPO,
+  gitPO,
+  yamlPO,
+  topologyPO,
+  adminNavigationMenuPO,
+} from '../pageObjects';
 
 export const app = {
   waitForDocumentLoad: () => {
@@ -411,4 +418,16 @@ export const kebabMenu = {
       });
     });
   },
+};
+
+export const navigateToAdminMenu = (opt: adminNavigationBar) => {
+  switch (opt) {
+    case adminNavigationBar.Home: {
+      cy.get(adminNavigationMenuPO.home.main).click();
+      break;
+    }
+    default: {
+      throw new Error('Option is not available');
+    }
+  }
 };

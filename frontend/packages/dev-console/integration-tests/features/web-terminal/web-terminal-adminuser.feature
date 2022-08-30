@@ -8,7 +8,7 @@ Feature: Web Terminal for Admin user
               # Error while installing WTO operator because of DWO https://issues.redhat.com/browse/WTO-127
               And user has installed Web Terminal operator
 
-        @smoke @to-do
+        @smoke
         Scenario: Create new project and use Web Terminal: WT-02-TC01
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead

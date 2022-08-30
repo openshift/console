@@ -16,6 +16,10 @@ export enum devNavigationMenu {
   Deployments = 'Deployments',
 }
 
+export enum adminNavigationBar {
+  Home = 'Home',
+}
+
 export enum switchPerspective {
   Developer = 'Developer',
   Administrator = 'Administrator',
