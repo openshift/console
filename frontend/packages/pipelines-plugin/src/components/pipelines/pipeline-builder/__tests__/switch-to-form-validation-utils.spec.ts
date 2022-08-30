@@ -70,18 +70,10 @@ describe('Pipeline Builder YAML to Form switch validation schema', () => {
     ])
       .then(shouldHaveFailed)
       .catch(
-        hasMultipleErrors([
-          {
-            yupPath: 'spec.params[0].name',
-            errorMessage:
-              'spec.params[0].name must be a `string` type, but the final value was: `{\n  "test": "\\"test\\""\n}`.',
-          },
-          {
-            yupPath: 'spec.params[0].default',
-            errorMessage:
-              'spec.params[0].default must be a `string` type, but the final value was: `[\n  "\\"value\\""\n]`.',
-          },
-        ]),
+        hasError(
+          'spec.params[0].name',
+          'spec.params[0].name must be a `string` type, but the final value was: `{\n  "test": "\\"test\\""\n}`.',
+        ),
       );
   });
 

@@ -3,7 +3,7 @@ import { TextInputTypes } from '@patternfly/react-core';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { InputField } from '@console/shared';
+import { InputField, TextColumnField } from '@console/shared';
 import { paramIsRequired } from '../../../../utils/common';
 import AutoCompletePopover from '../../../shared/common/auto-complete/AutoCompletePopover';
 import { CommonPipelineModalFormikValues, ModalParameter } from './types';
@@ -42,8 +42,36 @@ const PipelineParameterSection: React.FC<ParametersSectionProps> = ({ autoComple
                   autoComplete="off"
                 />
               );
-
-              return (
+              return parameter.type === 'array' ? (
+                <TextColumnField
+                  name={name}
+                  label={parameter.name}
+                  helpText={parameter.description}
+                  required={isRequired}
+                  addLabel={`Add ${parameter.name}`}
+                  data-test={`${parameter.name}-text-column-field`}
+                >
+                  {({ name: arrayName, ...additionalProps }) =>
+                    autoCompleteValues ? (
+                      <AutoCompletePopover
+                        autoCompleteValues={autoCompleteValues}
+                        onAutoComplete={(value: string) => setFieldValue(name, value)}
+                      >
+                        {(callbackRef) => (
+                          <InputField
+                            ref={callbackRef}
+                            name={arrayName}
+                            {...additionalProps}
+                            autoComplete="off"
+                          />
+                        )}
+                      </AutoCompletePopover>
+                    ) : (
+                      <InputField name={arrayName} {...additionalProps} autoComplete="off" />
+                    )
+                  }
+                </TextColumnField>
+              ) : (
                 <React.Fragment key={parameter.name}>
                   {autoCompleteValues ? (
                     <AutoCompletePopover

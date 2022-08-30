@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { k8sUpdate, K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
-import { removeEmptyDefaultFromPipelineParams } from './utils';
+import { sanitizePipelineParams } from './utils';
 
 export interface PipelineFormProps {
   PipelineFormComponent: React.ComponentType<any>;
@@ -32,7 +32,7 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
         ...obj,
         spec: {
           ...obj.spec,
-          params: removeEmptyDefaultFromPipelineParams(values.parameters),
+          params: sanitizePipelineParams(values.parameters),
           resources: values.resources,
         },
       },
