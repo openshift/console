@@ -1103,6 +1103,13 @@
     core-js-pure "^3.15.0"
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@7.16.7":
+  version "7.16.7"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.7.tgz#03ff99f64106588c9c403c6ecb8c3bafbbdff1fa"
+  integrity sha512-9E9FJowqAsytyOY6LG+1KuueckRL+aQW+mKvXRXnuFGyRAyepJPmEo9vgMfXUA6O9u3IeEdv9MAkppFcaQwogQ==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime@7.3.1":
   version "7.3.1"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.3.1.tgz#574b03e8e8a9898eaf4a872a92ea20b7846f6f2a"
@@ -10451,6 +10458,13 @@ i18next-pseudo@^2.2.0:
   integrity sha512-nEZlbvxJaOCdX5rNOpwRKWk3U8I1ElnYRQOhnU/cRnv+2HyBnS8tm9yKAT9Y3yI/cnWYx+dAMghZFX48XgLBvg==
   dependencies:
     i18next "^19.1.0"
+
+i18next-v4-format-converter@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/i18next-v4-format-converter/-/i18next-v4-format-converter-1.0.3.tgz#48d1bfa1e6ee302a9856f6679a6ff15de19644e1"
+  integrity sha512-m4WvrFtWas7apIXEX9WnqWDr5zwIkU12H/L1zNpHBk7fuV+5ssTx8ee7Wyz9plaUTwzAvHFWQq52HtfEVeTkNA==
+  dependencies:
+    "@babel/runtime" "7.16.7"
 
 i18next@^19.1.0:
   version "19.7.0"
