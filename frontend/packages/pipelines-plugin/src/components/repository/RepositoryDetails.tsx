@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { GithubIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary, ExternalLink } from '@console/internal/components/utils';
+import { getGitProviderIcon } from './repository-utils';
 import { RepositoryKind } from './types';
 
 export interface RepositoryDetailsProps {
@@ -25,7 +25,7 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
               <dt>{t('pipelines-plugin~Repository')}</dt>
               <dd>
                 <ExternalLink href={spec?.url}>
-                  <GithubIcon title={spec?.url} /> {spec?.url}
+                  {getGitProviderIcon(spec?.url)} {spec?.url}
                 </ExternalLink>
               </dd>
               {spec?.branch && (
