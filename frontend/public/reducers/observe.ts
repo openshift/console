@@ -197,16 +197,6 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
     case ActionType.QueryBrowserDismissNamespaceAlert:
       return state.setIn(['queryBrowser', 'dismissNamespaceAlert'], true);
 
-    case ActionType.QueryBrowserInsertText: {
-      const { index, newText, replaceFrom, replaceTo } = action.payload;
-      const oldText = state.getIn(['queryBrowser', 'queries', index, 'text'], '');
-      const text =
-        _.isInteger(replaceFrom) && _.isInteger(replaceTo)
-          ? oldText.substring(0, replaceFrom) + newText + oldText.substring(replaceTo)
-          : oldText + newText;
-      return state.setIn(['queryBrowser', 'queries', index, 'text'], text);
-    }
-
     case ActionType.QueryBrowserPatchQuery: {
       const { index, patch } = action.payload;
       const query = state.hasIn(['queryBrowser', 'queries', index])
