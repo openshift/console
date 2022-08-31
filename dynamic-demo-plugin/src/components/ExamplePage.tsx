@@ -39,6 +39,7 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
       <PageSection>
         <Stack hasGutter>
           <AlertGroup>
+            <p>{t('Tesing i18n plural formats for plugins. Number of {{count}} pod', {count: 2})}</p>
             <Alert title={t('Example info alert')} variant="info" isInline />
             <Alert title={t('Example warning alert')} variant="warning" isInline />
           </AlertGroup>
