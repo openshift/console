@@ -81,7 +81,8 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                   </div>
                   <p className="help-block text-muted" id="input-max-unavailable-help">
                     {t(
-                      'public~Number or percentage of total pods at the start of the update (optional)',
+                      'public~Percentage of total number of pods or the maximum number ' +
+                        'of pods that can be unavailable during the update(optional)',
                     )}
                   </p>
                 </div>
@@ -116,7 +117,8 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                   </div>
                   <p className="help-block text-muted" id="input-max-surge-help">
                     {t(
-                      'public~Number or percentage of total pods at the start of the update (optional)',
+                      'public~Percentage of total number of pods or the maximum number ' +
+                        'of pods that can be scheduled above the original number of pods(optional)',
                     )}
                   </p>
                 </div>
