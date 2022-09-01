@@ -68,7 +68,6 @@ import {
 } from '../utils/datetime';
 import { formatNumber } from './format';
 import { PrometheusAPIError } from './types';
-import { ONE_MINUTE } from '@console/shared/src/constants/time';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
@@ -325,6 +324,8 @@ const nullComponent = <Null />;
 type GraphSeries = GraphDataPoint[] | null;
 
 const getXDomain = (endTime: number, span: number): AxisDomain => [endTime - span, endTime];
+
+const ONE_MINUTE = 60 * 1000;
 
 const Graph: React.FC<GraphProps> = React.memo(
   ({
