@@ -90,7 +90,7 @@ github.com/cyphar/filepath-securejoin
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew
-# github.com/devfile/api/v2 v2.0.0-20220105201057-dd1d65d4d91f
+# github.com/devfile/api/v2 v2.0.0-20220117162434-6e6e6a8bc14c
 ## explicit; go 1.13
 github.com/devfile/api/v2/pkg/apis/workspaces/v1alpha2
 github.com/devfile/api/v2/pkg/attributes
@@ -99,7 +99,7 @@ github.com/devfile/api/v2/pkg/utils/overriding
 github.com/devfile/api/v2/pkg/utils/unions
 github.com/devfile/api/v2/pkg/validation
 github.com/devfile/api/v2/pkg/validation/variables
-# github.com/devfile/library v1.2.1-0.20211104222135-49d635cb492f
+# github.com/devfile/library v1.2.1-0.20220308191614-f0f7e11b17de
 ## explicit; go 1.15
 github.com/devfile/library/pkg/devfile
 github.com/devfile/library/pkg/devfile/generator
@@ -114,10 +114,10 @@ github.com/devfile/library/pkg/devfile/parser/data/v2/common
 github.com/devfile/library/pkg/devfile/validate
 github.com/devfile/library/pkg/testingutil/filesystem
 github.com/devfile/library/pkg/util
-# github.com/devfile/registry-support/index/generator v0.0.0-20220222194908-7a90a4214f3e
+# github.com/devfile/registry-support/index/generator v0.0.0-20220624203950-e7282a4695b6
 ## explicit; go 1.14
 github.com/devfile/registry-support/index/generator/schema
-# github.com/devfile/registry-support/registry-library v0.0.0-20220527155645-8328a8a883be
+# github.com/devfile/registry-support/registry-library v0.0.0-20220901004827-b579f98d73ad
 ## explicit; go 1.14
 github.com/devfile/registry-support/registry-library/library
 # github.com/docker/cli v20.10.11+incompatible
@@ -195,6 +195,9 @@ github.com/exponent-io/jsonpath
 # github.com/fatih/color v1.13.0
 ## explicit; go 1.13
 github.com/fatih/color
+# github.com/fsnotify/fsnotify v1.5.1
+## explicit; go 1.13
+github.com/fsnotify/fsnotify
 # github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 ## explicit
 # github.com/go-errors/errors v1.0.1
