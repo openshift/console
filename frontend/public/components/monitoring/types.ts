@@ -2,12 +2,12 @@ import {
   Alert,
   PrometheusLabels,
   PrometheusRule,
+  RowFilter,
   Rule,
   Silence,
 } from '@console/dynamic-plugin-sdk';
 
 import { RowFunctionArgs } from '../factory';
-import { RowFilter } from '../filter-toolbar';
 
 export const enum AlertSource {
   Platform = 'platform',
@@ -78,7 +78,7 @@ export type ListPageProps = {
   Row: React.FC<RowFunctionArgs>;
   rowFilters: RowFilter[];
   showTitle?: boolean;
-  TopAlert?: React.ReactNode
+  TopAlert?: React.ReactNode;
 };
 
 export type Target = {
