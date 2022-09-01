@@ -2,7 +2,6 @@ package generator
 
 import (
 	"fmt"
-
 	v1 "github.com/devfile/api/v2/pkg/apis/workspaces/v1alpha2"
 	"github.com/devfile/library/pkg/devfile/parser"
 	"github.com/devfile/library/pkg/devfile/parser/data/v2/common"
@@ -158,10 +157,11 @@ type DeploymentParams struct {
 	Containers        []corev1.Container
 	Volumes           []corev1.Volume
 	PodSelectorLabels map[string]string
+	Replicas          *int32
 }
 
 // GetDeployment gets a deployment object
-func GetDeployment(deployParams DeploymentParams) *appsv1.Deployment {
+func GetDeployment(devfileObj parser.DevfileObj, deployParams DeploymentParams) (*appsv1.Deployment, error) {
 
 	podTemplateSpecParams := podTemplateSpecParams{
 		ObjectMeta:     deployParams.ObjectMeta,
@@ -173,7 +173,14 @@ func GetDeployment(deployParams DeploymentParams) *appsv1.Deployment {
 	deploySpecParams := deploymentSpecParams{
 		PodTemplateSpec:   *getPodTemplateSpec(podTemplateSpecParams),
 		PodSelectorLabels: deployParams.PodSelectorLabels,
+		Replicas:          deployParams.Replicas,
 	}
+
+	containerAnnotations, err := getContainerAnnotations(devfileObj, common.DevfileOptions{})
+	if err != nil {
+		return nil, err
+	}
+	deployParams.ObjectMeta.Annotations = mergeMaps(deployParams.ObjectMeta.Annotations, containerAnnotations.Deployment)
 
 	deployment := &appsv1.Deployment{
 		TypeMeta:   deployParams.TypeMeta,
@@ -181,7 +188,7 @@ func GetDeployment(deployParams DeploymentParams) *appsv1.Deployment {
 		Spec:       *getDeploymentSpec(deploySpecParams),
 	}
 
-	return deployment
+	return deployment, nil
 }
 
 // PVCParams is a struct to create PVC
@@ -218,7 +225,11 @@ func GetService(devfileObj parser.DevfileObj, serviceParams ServiceParams, optio
 	if err != nil {
 		return nil, err
 	}
-
+	containerAnnotations, err := getContainerAnnotations(devfileObj, options)
+	if err != nil {
+		return nil, err
+	}
+	serviceParams.ObjectMeta.Annotations = mergeMaps(serviceParams.ObjectMeta.Annotations, containerAnnotations.Service)
 	service := &corev1.Service{
 		TypeMeta:   serviceParams.TypeMeta,
 		ObjectMeta: serviceParams.ObjectMeta,
@@ -236,9 +247,9 @@ type IngressParams struct {
 }
 
 // GetIngress gets an ingress
-func GetIngress(ingressParams IngressParams) *extensionsv1.Ingress {
-
+func GetIngress(endpoint v1.Endpoint, ingressParams IngressParams) *extensionsv1.Ingress {
 	ingressSpec := getIngressSpec(ingressParams.IngressSpecParams)
+	ingressParams.ObjectMeta.Annotations = mergeMaps(ingressParams.ObjectMeta.Annotations, endpoint.Annotations)
 
 	ingress := &extensionsv1.Ingress{
 		TypeMeta:   ingressParams.TypeMeta,
@@ -250,8 +261,9 @@ func GetIngress(ingressParams IngressParams) *extensionsv1.Ingress {
 }
 
 // GetNetworkingV1Ingress gets a networking v1 ingress
-func GetNetworkingV1Ingress(ingressParams IngressParams) *networkingv1.Ingress {
+func GetNetworkingV1Ingress(endpoint v1.Endpoint, ingressParams IngressParams) *networkingv1.Ingress {
 	ingressSpec := getNetworkingV1IngressSpec(ingressParams.IngressSpecParams)
+	ingressParams.ObjectMeta.Annotations = mergeMaps(ingressParams.ObjectMeta.Annotations, endpoint.Annotations)
 
 	ingress := &networkingv1.Ingress{
 		TypeMeta:   ingressParams.TypeMeta,
@@ -270,9 +282,10 @@ type RouteParams struct {
 }
 
 // GetRoute gets a route
-func GetRoute(routeParams RouteParams) *routev1.Route {
+func GetRoute(endpoint v1.Endpoint, routeParams RouteParams) *routev1.Route {
 
 	routeSpec := getRouteSpec(routeParams.RouteSpecParams)
+	routeParams.ObjectMeta.Annotations = mergeMaps(routeParams.ObjectMeta.Annotations, endpoint.Annotations)
 
 	route := &routev1.Route{
 		TypeMeta:   routeParams.TypeMeta,
