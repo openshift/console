@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import detector from 'i18next-browser-languagedetector';
 import httpBackend from 'i18next-http-backend';
 import Pseudo from 'i18next-pseudo';
-import { transformNamespace } from 'i18next-v4-format-converter';
+// import { transformNamespace } from 'i18next-v4-format-converter';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
 import { pluginStore } from './plugins';
@@ -28,20 +28,20 @@ export const init = () => {
     .init({
       backend: {
         loadPath: '/locales/resource.json?lng={{lng}}&ns={{ns}}',
-        parse: function(data, languages, namespaces) {
-          // eslint-disable-next-line no-console
-          console.error(
-            ', languages, namespaces',
-            languages,
-            namespaces,
-            pluginStore.getI18nNamespaces(),
-          );
-          if (namespaces.startsWith('plugin__')) {
-            // eslint-disable-next-line no-console
-            console.error(', plugin__', namespaces);
-            return transformNamespace('en', JSON.parse(data));
-          }
-        },
+        // parse: function(data, languages, namespaces) {
+        //   // eslint-disable-next-line no-console
+        //   console.error(
+        //     ', languages, namespaces',
+        //     languages,
+        //     namespaces,
+        //     pluginStore.getI18nNamespaces(),
+        //   );
+        //   if (namespaces.startsWith('plugin__')) {
+        //     // eslint-disable-next-line no-console
+        //     console.error(', plugin__', namespaces);
+        //     return transformNamespace('en', JSON.parse(data));
+        //   }
+        // },
       },
       lng: getLastLanguage(),
       fallbackLng: 'en',
