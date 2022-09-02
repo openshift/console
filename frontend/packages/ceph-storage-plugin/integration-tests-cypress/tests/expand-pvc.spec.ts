@@ -1,6 +1,6 @@
 import { pvc } from '../views/pvc';
 
-describe('Tests Expansion of a PVC', () => {
+xdescribe('Tests Expansion of a PVC', () => {
   before(() => {
     cy.login();
     cy.visit('/');
