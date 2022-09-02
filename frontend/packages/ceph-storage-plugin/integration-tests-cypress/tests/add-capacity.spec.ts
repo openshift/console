@@ -16,7 +16,7 @@ import {
 } from '../helpers';
 import { commonFlows } from '../views/common';
 
-describe('OCS Operator Expansion of Storage Class Test', () => {
+xdescribe('OCS Operator Expansion of Storage Class Test', () => {
   before(() => {
     cy.login();
     cy.visit('/');

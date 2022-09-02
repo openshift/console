@@ -1,6 +1,6 @@
 import { checkErrors } from '../../../integration-tests-cypress/support';
 
-describe('Check noobaa link in obejct service dashboard and perform SSO', () => {
+xdescribe('Check noobaa link in obejct service dashboard and perform SSO', () => {
   before(() => {
     cy.login();
     cy.install();

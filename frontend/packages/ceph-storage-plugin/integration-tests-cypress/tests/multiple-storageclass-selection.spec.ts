@@ -13,7 +13,7 @@ import {
   UidAndDeviceSet,
 } from '../views/multiple-storageclass';
 
-describe('Add capacity using multiple storage classes', () => {
+xdescribe('Add capacity using multiple storage classes', () => {
   const beforeCapacityAddition: UidAndDeviceSet = {
     deviceSets: null,
     uid: null,
