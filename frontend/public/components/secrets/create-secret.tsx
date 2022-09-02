@@ -502,6 +502,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
               onChange={this.onAddressChanged}
               value={this.state.address}
               onBlur={this.onBlurHandler}
+              data-test="image-secret-address"
               required
             />
           </div>
@@ -522,6 +523,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
               onChange={this.onUsernameChanged}
               value={this.state.username}
               onBlur={this.onBlurHandler}
+              data-test="image-secret-username"
               required
             />
           </div>
@@ -539,6 +541,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
               onChange={this.onPasswordChanged}
               value={this.state.password}
               onBlur={this.onBlurHandler}
+              data-test="image-secret-password"
               required
             />
           </div>
@@ -556,6 +559,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
               onChange={this.onEmailChanged}
               value={this.state.email}
               onBlur={this.onBlurHandler}
+              data-test="image-secret-email"
             />
           </div>
         </div>
