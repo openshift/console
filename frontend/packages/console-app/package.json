@@ -41,7 +41,9 @@
       "actions": "src/actions",
       "userPreferences": "src/components/user-preferences",
       "perspective": "src/utils/perspective",
-      "dynamicPluginsHealthResource": "src/components/dashboards-page/dynamic-plugins-health-resource"
+      "dynamicPluginsHealthResource": "src/components/dashboards-page/dynamic-plugins-health-resource",
+      "storageProvisioners": "src/components/storage/StorageClassProviders",
+      "storageProvisionerDocs": "src/components/storage/Documentation"
     }
   }
 }

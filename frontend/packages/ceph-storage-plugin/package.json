@@ -37,7 +37,10 @@
       "bcCreate": "./src/components/bucket-class/create-bc.tsx",
       "nssCreate": "./src/components/namespace-store/create-namespace-store.tsx",
       "odfSystemDashboard": "./src/components/dashboards/odf-system-dashboard.tsx",
-      "actions": "src/actions"
+      "actions": "src/actions",
+      "storageProvisioners": "src/utils/odf-provisioners",
+      "storageProvisionerComponents": "src/components/ocs-storage-class-form/ocs-storage-class-form",
+      "thickProvisioner": "src/components/ocs-storage-class-form/ocs-thick-provisioner"
     }
   }
 }
