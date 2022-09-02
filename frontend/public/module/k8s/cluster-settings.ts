@@ -254,8 +254,7 @@ export const getReportBugLink = (cv: ClusterVersionKind): { label: string; href:
       productName = 'OpenShift Dedicated';
       break;
     case 'azure':
-      // TODO:  change to 'Azure Red Hat OpenShift' once https://issues.redhat.com/browse/CPCCM-9926 is complete
-      productName = 'OpenShift Managed (Azure)';
+      productName = 'Azure Red Hat OpenShift';
       break;
     default:
       productName = 'OKD';
