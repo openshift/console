@@ -52,7 +52,7 @@ Feature: Perform actions on Broker
              Then user will see "app" application created
 
 
-        #Please add the respective test data
+     #Please add the respective test data
         @regression
         Scenario: Edit Labels action on Broker: KE-05-TC05
              When user right click on the "default-broker" broker to open the context menu
@@ -64,7 +64,7 @@ Feature: Perform actions on Broker
              Then user will see the newly added label "app.kubernetes.io/broker-label=12"
 
 
-        #Please add the respective test data
+     #Please add the respective test data
         @regression
         Scenario: Edit Annotations action on Broker: KE-05-TC06
              When user right click on the "default-broker" broker to open the context menu

@@ -18,12 +18,12 @@ Feature: Knative Eventing Broker and Trigger
              Then Subscriber has knative service dropdown with "Service" and "KSVC" options
 
 
-        @smoke 
+        @smoke
         Scenario: Add Trigger to Broker: KE-04-TC02
             Given user is having Broker "broker-test1" on the Topology page
               And user is having knative service "nodejs-ex-git"
               And user is at Topology page
-             When user right clicks on the Broker "broker-test1" to open the context menu 
+             When user right clicks on the Broker "broker-test1" to open the context menu
               And user clicks on the Add Trigger
               And user selects the auto populated name of subscription
               And user will click on the Subscriber dropdown on the modal
@@ -67,7 +67,7 @@ Feature: Knative Eventing Broker and Trigger
              Then trigger will get deleted
 
 
-         @regression @manual
+        @regression @manual
         Scenario: Add Trigger using connector: KE-04-TC06
             Given user is having Broker on the Topology page
              When user drags the connector and drops it on graph
@@ -79,8 +79,8 @@ Feature: Knative Eventing Broker and Trigger
              Then user will see connection between Broker and Subscriber
 
 
-        @regression @broken-test
-        # Bug 2090193 : https://bugzilla.redhat.com/show_bug.cgi?id=2090193
+    @regression @broken-test
+    # Bug 2090193 : https://bugzilla.redhat.com/show_bug.cgi?id=2090193
         Scenario: Sidebar for the Event Source sinked Broker subscribed to Knative Service: KE-04-TC07
             Given user is having Broker "broker-test1" subscribed to Knative Service on the Topology page
               And user has already added the trigger

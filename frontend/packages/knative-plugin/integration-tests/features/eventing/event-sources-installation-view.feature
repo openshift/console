@@ -5,7 +5,7 @@ Feature: Event Sources Installation View
 
         Background:
             Given user has created or selected namespace "aut-eventsources"
-            
+
         @regression @manual
         Scenario: Install Event Source from Developer Catalog Page using YAML View: KF-01-TC01
             Given user is at Add page

@@ -11,6 +11,7 @@ export const eventSourcesPage = {
   },
   clickEventSourceType: (eventSourceName: string | eventSourceCards) => {
     cy.byTestID(`EventSource-${eventSourceName}`)
+      .scrollIntoView()
       .should('be.visible')
       .click();
   },

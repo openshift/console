@@ -8,6 +8,7 @@ import { app, createForm, navigateTo } from '../app';
 export const createBroker = (brokerName: string = 'broker-one') => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.Broker);
+  cy.get('#form-radiobutton-editorType-form-field').click();
   gitPage.enterWorkloadName(brokerName);
   createForm.clickCreate().then(() => {
     app.waitForLoad();

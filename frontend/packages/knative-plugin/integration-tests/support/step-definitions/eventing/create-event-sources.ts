@@ -21,6 +21,7 @@ import {
   gitPage,
   catalogPage,
 } from '@console/dev-console/integration-tests/support/pages';
+import { eventingPO } from '@console/knative-plugin/integration-tests/support/pageObjects/global-po';
 import {
   topologyPage,
   topologySidePane,
@@ -347,4 +348,33 @@ When('user selects {string} option under Sink section', () => {
 
 When('user enters uri as {string}', (uri: string) => {
   createEventSourcePage.enterURI(uri);
+});
+
+Given('user has created Integration Platform CR {string}', (name: string) => {
+  cy.get(eventingPO.eventSource.camelK).click();
+  cy.get(eventingPO.eventSource.integrationPlatform).click();
+  cy.get(eventingPO.eventSource.create).click();
+  cy.get(eventingPO.eventSource.name)
+    .clear()
+    .type(name);
+  cy.get(eventingPO.eventSource.submit).click();
+});
+
+Then(
+  'user will see cards of {string},{string},{string},{string},{string},{string}',
+  (c1: string, c2: string, c3: string, c4: string, c5: string, c6: string) => {
+    cy.get(eventingPO.eventSource.searchCatalog).type(c1);
+    cy.byTestID(`EventSource-${c1}`).should('be.visible');
+    const cards = [c2, c3, c4, c5, c6];
+    cards.forEach((card) => {
+      cy.get(eventingPO.eventSource.searchCatalog)
+        .clear()
+        .type(card);
+      cy.byTestID(`EventSource-${card}`).should('be.visible');
+    });
+  },
+);
+
+When('user clicks on Event Sources', () => {
+  cy.get(eventingPO.eventSource.eventSourceCard).click();
 });
