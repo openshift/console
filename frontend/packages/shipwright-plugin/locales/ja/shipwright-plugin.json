@@ -1,13 +1,13 @@
 {
-  "Build": "ビルド",
-  "Builds": "ビルド",
+  "Build": "Build",
+  "Builds": "Build",
   "BuildRun": "BuildRun",
-  "BuildRuns": "BuildRuns",
-  "Shipwright Builds": "Shipwright ビルド",
-  "Shipwright BuildRuns": "Shipwright BuildRuns",
+  "BuildRuns": "BuildRun",
+  "Shipwright Builds": "Shipwright Build",
+  "Shipwright BuildRuns": "Shipwright BuildRun",
   "Start": "開始",
   "Rerun": "再実行",
-  "Build details": "ビルドの詳細",
+  "Build details": "Build の詳細",
   "Status": "ステータス",
   "Strategy": "ストラテジー",
   "Source URL": "ソース URL",
@@ -46,7 +46,7 @@
   "Running": "実行中",
   "Age": "年齢",
   "ClusterBuildStrategy": "ClusterBuildStrategy",
-  "ClusterBuildStrategies": "ClusterBuildStrategies",
+  "ClusterBuildStrategies": "ClusterBuildStrategy",
   "BuildStrategy": "BuildStrategy",
-  "BuildStrategies": "BuildStrategies"
+  "BuildStrategies": "BuildStrategy"
 }
