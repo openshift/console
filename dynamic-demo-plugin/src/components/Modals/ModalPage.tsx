@@ -6,6 +6,7 @@ import {
   useModal,
 } from '@openshift-console/dynamic-plugin-sdk';
 import './modal.scss';
+import { useTranslation } from 'react-i18next';
 
 export const scResource = {
   kind: 'StorageClass',
@@ -14,9 +15,11 @@ export const scResource = {
 };
 
 export const TestModal: React.FC<{ closeModal: () => void }> = (props) => {
+  const { t } = useTranslation('plugin__console-demo-plugin');
   const [res] = useK8sWatchResource<K8sResourceCommon[]>(scResource);
   return (
     <Modal isOpen onClose={props?.closeModal} title="Storage Classes">
+         <p>{t('Tesing i18n plural formats for plugins. Number of {{count}} pod', {count: 2})}</p>
       StorageClasses present in this cluster:
       <List>
         {!!res &&
