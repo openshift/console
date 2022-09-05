@@ -138,7 +138,7 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
   }
 
   componentDidUpdate(prevProps: TemplateFormProps) {
-    if (this.props.obj !== prevProps.obj) {
+    if (this.props.obj.data?.parameters !== prevProps.obj.data?.parameters) {
       const parameters = this.getParameterValues(this.props);
       this.setState({ parameters });
     }
