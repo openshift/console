@@ -13,7 +13,19 @@ const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state, dataTest }) => (
 );
 
 const HealthItem: React.FC<HealthItemProps> = React.memo(
-  ({ className, state, title, details, popupTitle, noIcon = false, icon, children }) => {
+  ({
+    className,
+    state,
+    title,
+    details,
+    popupTitle,
+    popupClassname,
+    popupBodyContent,
+    popupKeepOnOutsideClick = false,
+    noIcon = false,
+    icon,
+    children,
+  }) => {
     const { t } = useTranslation();
 
     const detailMessage = details || healthStateMessage(state, t);
@@ -35,13 +47,16 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
         )}
         <div>
           <span className="co-status-card__health-item-text">
-            {React.Children.toArray(children).length && state !== HealthState.LOADING ? (
+            {(React.Children.toArray(children).length || popupBodyContent) &&
+            state !== HealthState.LOADING ? (
               <Popover
+                className={popupClassname}
                 position={PopoverPosition.top}
                 headerContent={popupTitle}
-                bodyContent={children}
+                bodyContent={popupBodyContent || children}
                 enableFlip
                 maxWidth="21rem"
+                hideOnOutsideClick={!popupKeepOnOutsideClick}
               >
                 <Button
                   variant="link"
