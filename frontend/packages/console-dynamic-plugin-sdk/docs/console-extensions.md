@@ -153,7 +153,7 @@ ResourceActionProvider contributes a hook that returns list of actions for speci
 | ---- | ---------- | -------- | ----------- |
 | `alert` | `string` | no |  |
 | `text` | `string` | no |  |
-| `action` | `CodeRef<(alert: any) => void>` | no |  |
+| `action` | `CodeRef<(alert: Alert, launchModal: LaunchModal) => void>` | no |  |
 
 ---
 

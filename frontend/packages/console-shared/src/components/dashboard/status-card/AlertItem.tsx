@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { isAlertAction, AlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { AlertItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { getAlertActions } from '@console/internal/components/notification-drawer';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
@@ -52,6 +53,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({ Icon, timestamp, message
 
 const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
   const { t } = useTranslation();
+  const launchModal = useModal();
   const [actionExtensions] = useResolvedExtensions<AlertAction>(
     React.useCallback(
       (e): e is AlertAction => isAlertAction(e) && e.properties.alert === alert.rule.name,
@@ -67,7 +69,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
       message={getAlertDescription(alert) || getAlertMessage(alert) || getAlertSummary(alert)}
     >
       {text && action ? (
-        <Button variant={ButtonVariant.link} onClick={() => action(alert)} isInline>
+        <Button variant={ButtonVariant.link} onClick={() => action(alert, launchModal)} isInline>
           {text}
         </Button>
       ) : (
