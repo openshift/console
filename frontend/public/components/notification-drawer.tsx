@@ -74,6 +74,7 @@ import { LinkifyExternal } from './utils';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
+import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation();
@@ -297,6 +298,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   }, [dispatch, t, rulesAccess]);
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
+  const launchModal = useModal();
   const alertIds = React.useMemo(() => alerts?.map((alert) => alert.rule.name) || [], [alerts]);
   const [alertActionExtensions] = useResolvedExtensions<AlertAction>(
     React.useCallback(
@@ -391,7 +393,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
                 toggleNotificationDrawer={toggleNotificationDrawer}
                 targetPath={alertURL(alert, alert.rule.id)}
                 actionText={action?.text}
-                alertAction={() => action?.action?.(alert)}
+                alertAction={() => action?.action?.(alert, launchModal)}
               />
             );
           })
@@ -423,7 +425,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
               toggleNotificationDrawer={toggleNotificationDrawer}
               targetPath={alertURL(alert, alert.rule.id)}
               actionText={action?.text}
-              alertAction={() => action?.action?.(alert)}
+              alertAction={() => action?.action?.(alert, launchModal)}
             />
           );
         })}
