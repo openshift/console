@@ -15,14 +15,29 @@ type CatalogServiceProviderProps = {
   namespace: string;
   catalogId: string;
   catalogType?: string;
+  showAlreadyLoadedItemsAfter?: number;
   children: (service: CatalogService) => React.ReactNode;
 };
 
+/**
+ * Return false until the given timeout time is up, then true.
+ * Restarts the timer when the timeout changes.
+ */
+const useTimeout = (timeout: number) => {
+  const [timeIsUp, setTimeIsUp] = React.useState(false);
+  React.useEffect(() => {
+    const t = timeout > 0 ? setTimeout(() => setTimeIsUp(true), timeout) : null;
+    return () => clearTimeout(t);
+  }, [timeout]);
+  return timeIsUp;
+};
+
 const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
+  namespace,
   catalogId,
   catalogType,
+  showAlreadyLoadedItemsAfter = 3000,
   children,
-  namespace,
 }) => {
   const defaultOptions: CatalogExtensionHookOptions = { namespace };
   const [
@@ -39,10 +54,14 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     [type: string]: { [id: string]: CatalogItemMetadataProviderFunction };
   }>({});
 
+  const showAlreadyLoadedItems = useTimeout(showAlreadyLoadedItemsAfter);
+
   const loaded =
     extensionsResolved &&
     (catalogProviderExtensions.length === 0 ||
-      catalogProviderExtensions.every(({ uid }) => extItemsMap[uid] || extItemsErrorMap[uid]));
+      (showAlreadyLoadedItems
+        ? catalogProviderExtensions.some(({ uid }) => extItemsMap[uid] || extItemsErrorMap[uid])
+        : catalogProviderExtensions.every(({ uid }) => extItemsMap[uid] || extItemsErrorMap[uid])));
 
   const preCatalogItems = React.useMemo(() => {
     if (!loaded) {
