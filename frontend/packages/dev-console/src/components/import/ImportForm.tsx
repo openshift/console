@@ -4,7 +4,7 @@ import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel, RouteModel } from '@console/internal/models';
@@ -12,8 +12,12 @@ import { RouteKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { KnativeServingModel } from '@console/knative-plugin/src';
-import { useExtensions } from '@console/plugin-sdk';
-import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction, useTelemetry } from '@console/shared';
+import {
+  ALL_APPLICATIONS_KEY,
+  usePerspectives,
+  usePostFormSubmitAction,
+  useTelemetry,
+} from '@console/shared';
 import { useToast } from '@console/shared/src/components/toast';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
@@ -58,7 +62,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [perspective] = useActivePerspective();
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const postFormCallback = usePostFormSubmitAction();
   const toastContext = useToast();
 

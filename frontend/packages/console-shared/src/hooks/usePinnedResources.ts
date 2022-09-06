@@ -1,9 +1,9 @@
 import { useMemo, useCallback } from 'react';
 import * as _ from 'lodash';
-import { isPerspective, Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
-import { useExtensions } from '@console/plugin-sdk';
 import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '../constants';
+import { usePerspectives } from './perspective-utils';
 import { useTelemetry } from './useTelemetry';
 import { useUserSettingsCompatibility } from './useUserSettingsCompatibility';
 
@@ -16,7 +16,7 @@ const PINNED_RESOURCES_CONFIG_MAP_KEY = 'console.pinnedResources';
 export const usePinnedResources = (): [string[], (pinnedResources: string[]) => void, boolean] => {
   const fireTelemetryEvent = useTelemetry();
   const [activePerspective] = useActivePerspective();
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const defaultPins = useMemo(
     () =>
       perspectiveExtensions.reduce(

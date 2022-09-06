@@ -1,16 +1,12 @@
 import * as React from 'react';
 import { LoadedExtension, useExtensions } from '@console/plugin-sdk';
-import {
-  Perspective,
-  isPerspective,
-  NavExtension,
-  isNavExtension,
-} from '@console/dynamic-plugin-sdk/src/lib-core';
+import { NavExtension, isNavExtension } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { usePerspectives } from '@console/shared/src';
 
 export const useNavExtensionsForPerspective = (
   perspective: string,
 ): LoadedExtension<NavExtension>[] => {
-  const allPerspectives = useExtensions<Perspective>(isPerspective);
+  const allPerspectives = usePerspectives();
   const allNavExtensions = useExtensions<NavExtension>(isNavExtension);
   const isDefaultPerspective = React.useMemo(
     () =>

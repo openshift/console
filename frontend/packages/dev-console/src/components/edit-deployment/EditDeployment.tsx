@@ -2,12 +2,12 @@ import * as React from 'react';
 import { FormikBag, Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { history } from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useExtensions } from '@console/plugin-sdk';
+import { usePerspectives } from '@console/shared/src';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { getResourcesType } from '../edit-application/edit-application-utils';
@@ -31,7 +31,7 @@ export interface EditDeploymentProps {
 const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, namespace, name }) => {
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const isNew = !name || name === '~new';
 
   const initialValues = React.useRef({

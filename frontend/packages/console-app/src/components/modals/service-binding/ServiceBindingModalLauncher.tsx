@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
+import { Perspective } from '@console/dynamic-plugin-sdk';
 import { createModalLauncher } from '@console/internal/components/factory/modal';
 import { history, getQueryArgument } from '@console/internal/components/utils';
 import {
@@ -11,8 +11,8 @@ import {
   referenceFor,
   modelFor,
 } from '@console/internal/module/k8s';
-import { useExtensions } from '@console/plugin-sdk';
 import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
+import { usePerspectives } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { createServiceBinding } from '@console/topology/src/operators/actions/serviceBindings';
 import { useValuesForPerspectiveContext } from '../../detect-perspective/useValuesForPerspectiveContext';
@@ -49,7 +49,7 @@ const CreateServiceBindingModal: React.FC<CreateServiceBindingModalProps> = (pro
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [activePerspective] = useValuesForPerspectiveContext();
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const handleSubmit = async (values, actions) => {
     const bindings: K8sResourceKind[] = await k8sList(ServiceBindingModel, {
       ns: source.metadata.namespace,

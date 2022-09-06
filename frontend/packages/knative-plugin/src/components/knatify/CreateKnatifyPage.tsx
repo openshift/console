@@ -10,8 +10,6 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import {
-  Perspective,
-  isPerspective,
   WatchK8sResults,
   WatchK8sResultsObject,
   useActivePerspective,
@@ -20,8 +18,7 @@ import { LoadingBox, history, PageHeading } from '@console/internal/components/u
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel, ServiceModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
-import { useExtensions } from '@console/plugin-sdk';
-import { BadgeType, getBadgeFromType, useRelatedHPA } from '@console/shared';
+import { BadgeType, getBadgeFromType, usePerspectives, useRelatedHPA } from '@console/shared';
 import {
   getInitialValuesKnatify,
   knatifyResources,
@@ -46,7 +43,7 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
   const appName = queryParams.get('name');
   const apiVersion = queryParams.get('apiversion');
   const [perspective] = useActivePerspective();
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const [hpa, hpaLoaded, hpaError] = useRelatedHPA(apiVersion, kind, appName, namespace);
 
   const watchedResources = React.useMemo(

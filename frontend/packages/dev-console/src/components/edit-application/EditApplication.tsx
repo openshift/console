@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
 import { ImageStreamModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
-import { useExtensions } from '@console/plugin-sdk';
+import { usePerspectives } from '@console/shared/src';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { createOrUpdateDeployImageResources } from '../import/deployImage-submit-utils';
 import {
@@ -35,7 +35,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
 }) => {
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const uploadJarFormToastCallback = useUploadJarFormToast();
   const initialValues = getInitialValues(appResources, appName, namespace);
   const buildStrategy = _.get(initialValues, 'build.strategy', '');

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Skeleton, SelectOption, Select, SelectVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { isPerspective, Perspective } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk';
+import { usePerspectives } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import {
   PREFERRED_PERSPECTIVE_USER_SETTING_KEY,
@@ -13,7 +12,7 @@ const PerspectiveDropdown: React.FC = () => {
   // resources and calls to hooks
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const allPerspectives = perspectiveExtensions.map((extension) => extension.properties);
   const [
     preferredPerspective,
@@ -42,7 +41,8 @@ const PerspectiveDropdown: React.FC = () => {
   // utils and callbacks
   const getDropdownLabelForValue = (): string =>
     preferredPerspective
-      ? allPerspectives.find((perspective) => perspective.id === preferredPerspective)?.name
+      ? allPerspectives.find((perspective) => perspective.id === preferredPerspective)?.name ??
+        lastViewedLabel
       : lastViewedLabel;
   const getDropdownValueForLabel = (selectedLabel: string): string =>
     selectedLabel === lastViewedLabel
