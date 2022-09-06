@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
+import { toLower } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { isAlertAction, AlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
@@ -14,7 +15,6 @@ import {
   getAlertDescription,
   getAlertTime,
   getAlertSummary,
-  getAlertDocumentation,
   getAlertName,
 } from './alert-utils';
 
@@ -74,6 +74,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
       [alert],
     ),
   );
+  const alertName = getAlertName(alert);
   const actionObj = getAlertActions(actionExtensions).get(alert.rule.name);
   const { text, action } = actionObj || {};
   return (
@@ -81,8 +82,14 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
       Icon={getSeverityIcon(getAlertSeverity(alert))}
       timestamp={getAlertTime(alert)}
       message={getAlertDescription(alert) || getAlertMessage(alert) || getAlertSummary(alert)}
-      documentationLink={getAlertDocumentation(alert)}
-      name={getAlertName(alert)}
+      documentationLink={
+        alertName
+          ? `https://access.redhat.com/documentation/en-us/red_hat_openshift_data_foundation/4.12/html-single/troubleshooting_openshift_data_foundation/index#${toLower(
+              alertName,
+            )}_rhodf`
+          : null
+      }
+      name={alertName}
     >
       {text && action ? (
         <Button variant={ButtonVariant.link} onClick={() => action(alert)} isInline>

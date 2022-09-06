@@ -10,6 +10,3 @@ export const getAlertSummary = (alert: Alert) => alert?.annotations?.summary || 
 export const getAlertTime = (alert: Alert) => (alert ? alert.activeAt : null);
 export const getAlertName = (alert: Alert) =>
   alert && alert.labels ? alert.labels.alertname : null;
-export const getAlertDocumentation = (alert: Alert) =>
-  alert && alert.labels ? alert.labels.documentation : null;
-export const getAlertRuleName = (alert: Alert) => (alert && alert.rule ? alert.rule.name : null);
