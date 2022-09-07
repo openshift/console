@@ -322,8 +322,13 @@ export const devfileValidationSchema = (t: TFunction) =>
   yup.object().when('build', {
     is: (build) => build.strategy === 'Devfile',
     then: yup.object().shape({
-      devfileHasError: yup.boolean().oneOf([false]),
       devfilePath: yup.string().required(t('devconsole~Required')),
+      devfileContent: yup
+        .string()
+        .min(1, t('devconsole~Required'))
+        .required(t('devconsole~Required')),
+      devfileHasError: yup.boolean().oneOf([false]),
+      devfileSuggestedResources: yup.object().required(t('devconsole~Required')),
     }),
   });
 
