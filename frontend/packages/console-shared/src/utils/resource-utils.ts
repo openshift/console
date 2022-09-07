@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
+import { Alert } from '@console/dynamic-plugin-sdk';
 import { alertMessageResources } from '@console/internal/components/monitoring/alerting';
-import { Alert, Alerts } from '@console/internal/components/monitoring/types';
+import { Alerts } from '@console/internal/components/monitoring/types';
 import {
   ReplicationControllerModel,
   ReplicaSetModel,

@@ -2,20 +2,12 @@ import {
   Alert,
   PrometheusLabels,
   PrometheusRule,
+  RowFilter,
   Rule,
   Silence,
 } from '@console/dynamic-plugin-sdk';
 
 import { RowFunctionArgs } from '../factory';
-import { RowFilter } from '../filter-toolbar';
-
-// prettier 1.x doesn't support TS 3.8 syntax
-// eslint-disable-next-line prettier/prettier
-export type {
-  Alert,
-  Rule,
-  Silence,
-}
 
 export const enum AlertSource {
   Platform = 'platform',
@@ -86,7 +78,7 @@ export type ListPageProps = {
   Row: React.FC<RowFunctionArgs>;
   rowFilters: RowFilter[];
   showTitle?: boolean;
-  TopAlert?: React.ReactNode
+  TopAlert?: React.ReactNode;
 };
 
 export type Target = {

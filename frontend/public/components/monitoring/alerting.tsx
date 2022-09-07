@@ -1,5 +1,6 @@
 import {
   Action,
+  Alert,
   AlertSeverity,
   AlertStates,
   BlueInfoCircleIcon,
@@ -8,6 +9,9 @@ import {
   PrometheusLabels,
   RedExclamationCircleIcon,
   ResourceStatus,
+  RowFilter,
+  Rule,
+  Silence,
   SilenceStates,
   useActivePerspective,
   YellowExclamationTriangleIcon,
@@ -67,7 +71,7 @@ import { K8sKind } from '../../module/k8s';
 import { RootState } from '../../redux';
 import { breadcrumbsForGlobalConfig } from '../cluster-settings/global-config';
 import { RowFunctionArgs, Table, TableData, TableProps } from '../factory';
-import { FilterToolbar, RowFilter } from '../filter-toolbar';
+import { FilterToolbar } from '../filter-toolbar';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { confirmModal } from '../modals';
 import { refreshNotificationPollers } from '../notification-drawer';
@@ -89,16 +93,7 @@ import { QueryBrowserPage, ToggleGraph } from './metrics';
 import { FormatSeriesTitle, QueryBrowser } from './query-browser';
 import { CreateSilence, EditSilence } from './silence-form';
 import { TargetsUI } from './targets';
-import {
-  Alert,
-  Alerts,
-  AlertSource,
-  ListPageProps,
-  MonitoringResource,
-  Rule,
-  Silence,
-  Silences,
-} from './types';
+import { Alerts, AlertSource, ListPageProps, MonitoringResource, Silences } from './types';
 import {
   alertDescription,
   alertingRuleSource,
@@ -1338,6 +1333,8 @@ const AlertTableRow: React.FC<RowFunctionArgs<Alert>> = ({ obj }) => {
 };
 
 export const severityRowFilter = (): RowFilter => ({
+  filter: (filter, alert: Alert) =>
+    filter.selected?.includes(alert.labels?.severity) || _.isEmpty(filter.selected),
   filterGroupName: i18next.t('public~Severity'),
   items: [
     { id: AlertSeverity.Critical, title: i18next.t('public~Critical') },
@@ -1352,6 +1349,8 @@ export const severityRowFilter = (): RowFilter => ({
 const alertsRowFilters = (): RowFilter[] => [
   {
     defaultSelected: [AlertStates.Firing],
+    filter: (filter, alert: Alert) =>
+      filter.selected?.includes(alertState(alert)) || _.isEmpty(filter.selected),
     filterGroupName: i18next.t('public~Alert State'),
     items: [
       { id: AlertStates.Firing, title: i18next.t('public~Firing') },
@@ -1364,6 +1363,8 @@ const alertsRowFilters = (): RowFilter[] => [
   severityRowFilter(),
   {
     defaultSelected: [AlertSource.Platform],
+    filter: (filter, alert: Alert) =>
+      filter.selected?.includes(alertSource(alert)) || _.isEmpty(filter.selected),
     filterGroupName: i18next.t('public~Source'),
     items: [
       { id: AlertSource.Platform, title: i18next.t('public~Platform') },
@@ -1620,6 +1621,8 @@ const RulesPage_: React.FC<{}> = () => {
     severityRowFilter(),
     {
       defaultSelected: [AlertSource.Platform],
+      filter: (filter, rule: Rule) =>
+        filter.selected?.includes(alertingRuleSource(rule)) || _.isEmpty(filter.selected),
       filterGroupName: t('public~Source'),
       items: [
         { id: AlertSource.Platform, title: t('public~Platform') },
@@ -1677,14 +1680,16 @@ const SilencesPage_: React.FC<Silences> = () => {
   const silencesRowFilters: RowFilter[] = [
     {
       defaultSelected: [SilenceStates.Active, SilenceStates.Pending],
-      type: 'silence-state',
+      filter: (filter, silence: Silence) =>
+        filter.selected?.includes(silenceState(silence)) || _.isEmpty(filter.selected),
       filterGroupName: t('public~Silence State'),
-      reducer: silenceState,
       items: [
         { id: SilenceStates.Active, title: t('public~Active') },
         { id: SilenceStates.Pending, title: t('public~Pending') },
         { id: SilenceStates.Expired, title: t('public~Expired') },
       ],
+      reducer: silenceState,
+      type: 'silence-state',
     },
   ];
 

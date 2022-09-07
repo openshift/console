@@ -16,10 +16,7 @@ import {
   ChartLegend,
   ChartLine,
   ChartStack,
-  ChartThemeColor,
-  ChartThemeVariant,
   ChartVoronoiContainer,
-  getCustomTheme,
 } from '@patternfly/react-charts';
 import {
   Alert,
@@ -49,7 +46,6 @@ import {
 import { RootState } from '../../redux';
 import { GraphEmpty } from '../graphs/graph-empty';
 import { getPrometheusURL } from '../graphs/helpers';
-import { queryBrowserTheme } from '../graphs/themes';
 import {
   Dropdown,
   humanizeNumberSI,
@@ -67,17 +63,12 @@ import {
   timeFormatterWithSeconds,
 } from '../utils/datetime';
 import { formatNumber } from './format';
+import { queryBrowserTheme } from './query-browser-theme';
 import { PrometheusAPIError } from './types';
-import { ONE_MINUTE } from '@console/shared/src/constants/time';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
-const theme = getCustomTheme(
-  ChartThemeColor.multiUnordered,
-  ChartThemeVariant.light,
-  queryBrowserTheme,
-);
-export const colors = theme.line.colorScale;
+export const colors = queryBrowserTheme.line.colorScale;
 
 // Use exponential notation for small or very large numbers to avoid labels with too many characters
 const formatPositiveValue = (v: number): string =>
@@ -326,6 +317,8 @@ type GraphSeries = GraphDataPoint[] | null;
 
 const getXDomain = (endTime: number, span: number): AxisDomain => [endTime - span, endTime];
 
+const ONE_MINUTE = 60 * 1000;
+
 const Graph: React.FC<GraphProps> = React.memo(
   ({
     allSeries,
@@ -367,7 +360,7 @@ const Graph: React.FC<GraphProps> = React.memo(
       });
     });
 
-    if (data.every(_.isEmpty)) {
+    if (!data.some(Array.isArray)) {
       return <GraphEmpty />;
     }
 
@@ -383,8 +376,8 @@ const Graph: React.FC<GraphProps> = React.memo(
       }
     } else {
       // Set a reasonable Y-axis range based on the min and max values in the data
-      const findMin = (series: GraphSeries) => _.minBy(series, 'y');
-      const findMax = (series: GraphSeries) => _.maxBy(series, 'y');
+      const findMin = (series: GraphSeries): GraphDataPoint => _.minBy(series, 'y');
+      const findMax = (series: GraphSeries): GraphDataPoint => _.maxBy(series, 'y');
       let minY: number = findMin(data.map(findMin))?.y ?? 0;
       let maxY: number = findMax(data.map(findMax))?.y ?? 0;
       if (minY === 0 && maxY === 0) {
@@ -427,7 +420,7 @@ const Graph: React.FC<GraphProps> = React.memo(
         domainPadding={{ y: 1 }}
         height={200}
         scale={{ x: 'time', y: 'linear' }}
-        theme={theme}
+        theme={queryBrowserTheme}
         width={width}
       >
         <ChartAxis tickCount={xAxisTickCount} tickFormat={xAxisTickFormat} />

@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { AlertStates } from '@console/dynamic-plugin-sdk';
+import { Alert, AlertStates, Rule, Silence } from '@console/dynamic-plugin-sdk';
 import {
   alertingErrored,
   alertingLoaded,
@@ -22,7 +22,6 @@ import {
   severityRowFilter,
   alertStateFilter,
 } from '@console/internal/components/monitoring/alerting';
-import { Alert, Rule, Silence } from '@console/internal/components/monitoring/types';
 import {
   alertDescription,
   alertState,

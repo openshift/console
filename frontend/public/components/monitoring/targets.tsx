@@ -3,6 +3,7 @@ import {
   GreenCheckCircleIcon,
   PrometheusEndpoint,
   RedExclamationCircleIcon,
+  RowFilter,
 } from '@console/dynamic-plugin-sdk';
 import { Alert } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -18,7 +19,7 @@ import { NamespaceModel, ServiceModel, ServiceMonitorModel } from '../../models'
 import { K8sResourceKind, LabelSelector, referenceForModel } from '../../module/k8s';
 import { RootState } from '../../redux';
 import { RowFunctionArgs, Table, TableData } from '../factory';
-import { FilterToolbar, RowFilter } from '../filter-toolbar';
+import { FilterToolbar } from '../filter-toolbar';
 import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { BreadCrumbs, PageHeading, SectionHeading } from '../utils/headings';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
@@ -258,6 +259,8 @@ const List: React.FC<ListProps> = ({ loaded, loadError, targets }) => {
 
   const rowFilters: RowFilter[] = [
     {
+      filter: (filter, target: Target) =>
+        filter.selected?.includes(target.health) || _.isEmpty(filter.selected),
       filterGroupName: t('public~Status'),
       items: [
         { id: 'up', title: t('public~Up') },
@@ -267,12 +270,14 @@ const List: React.FC<ListProps> = ({ loaded, loadError, targets }) => {
       type: 'observe-target-health',
     },
     {
+      filter: (filter, target: Target) =>
+        filter.selected?.includes(targetSource(target)) || _.isEmpty(filter.selected),
       filterGroupName: t('public~Source'),
       items: [
         { id: AlertSource.Platform, title: t('public~Platform') },
         { id: AlertSource.User, title: t('public~User') },
       ],
-      reducer: (target: Target) => targetSource(target),
+      reducer: targetSource,
       type: 'observe-target-source',
     },
   ];

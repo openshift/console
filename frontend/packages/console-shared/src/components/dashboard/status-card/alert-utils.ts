@@ -1,4 +1,4 @@
-import { Alert } from '@console/internal/components/monitoring/types';
+import { Alert } from '@console/dynamic-plugin-sdk';
 
 export const getAlertSeverity = (alert: Alert) =>
   alert && alert.labels ? alert.labels.severity : null;

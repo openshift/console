@@ -11,9 +11,9 @@ import {
 } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
+import { Alert } from '@console/dynamic-plugin-sdk';
 import { alertingLoaded } from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
-import { Alert } from '@console/internal/components/monitoring/types';
 import { OverviewMetrics } from '@console/internal/components/overview/metricUtils';
 import { useQueryParams } from '@console/shared';
 import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
