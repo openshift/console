@@ -310,7 +310,7 @@ describe('NetworkPolicy model conversion', () => {
       t,
     );
     expect(converted).toEqual({
-      error: 'console-app~spec.ingress should be an Array.',
+      error: 'spec.ingress should be an Array.',
       kind: 'invalid',
     });
   });
