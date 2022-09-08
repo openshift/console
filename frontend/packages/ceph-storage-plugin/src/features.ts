@@ -41,6 +41,8 @@ export const OCS_FLAG = 'OCS';
 
 export const MCG_STANDALONE = 'MCG_STANDALONE';
 
+export const ODF_ADMIN = 'ODF_ADMIN'; // Set to "true" if user is an "openshift-storage" admin (access to StorageSystems)
+
 export enum FEATURES {
   // Flag names to be prefixed with "OCS_" so as to seperate from console flags
   OCS_MULTUS = 'OCS_MULTUS',
