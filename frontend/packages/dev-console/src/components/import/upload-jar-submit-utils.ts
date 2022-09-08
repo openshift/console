@@ -55,7 +55,6 @@ export const createOrUpdateDeployment = (
     limits: { cpu, memory },
     healthChecks,
     runtimeIcon,
-    resources,
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
@@ -74,7 +73,7 @@ export const createOrUpdateDeployment = (
     ...getTriggerAnnotation(name, imageName, namespace, imageChange),
     jarFileName: fileName,
   };
-  const podLabels = getPodLabels(resources, name);
+  const podLabels = getPodLabels(Resources.Kubernetes, name);
   const templateLabels = getTemplateLabels(originalDeployment);
 
   const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');
@@ -147,12 +146,11 @@ const createOrUpdateDeploymentConfig = (
     labels: userLabels,
     limits: { cpu, memory },
     healthChecks,
-    resources,
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
-  const podLabels = getPodLabels(resources, name);
+  const podLabels = getPodLabels(Resources.OpenShift, name);
   const templateLabels = getTemplateLabels(originalDeploymentConfig);
 
   const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');

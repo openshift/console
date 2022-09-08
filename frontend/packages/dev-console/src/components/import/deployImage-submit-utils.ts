@@ -105,7 +105,7 @@ export const createOrUpdateImageStream = async (
   ).catch(() => createdImageStream);
 };
 
-const getMetadata = (formData: DeployImageFormData) => {
+const getMetadata = (resource: Resources, formData: DeployImageFormData) => {
   const {
     application: { name: applicationName },
     name,
@@ -113,7 +113,6 @@ const getMetadata = (formData: DeployImageFormData) => {
     labels: userLabels,
     imageStream: { image: imageStreamName, tag: selectedTag, namespace },
     runtimeIcon,
-    resources,
   } = formData;
   const defaultLabels = getAppLabels({
     name,
@@ -124,7 +123,7 @@ const getMetadata = (formData: DeployImageFormData) => {
     namespace,
   });
   const labels = { ...defaultLabels, ...userLabels };
-  const podLabels = getPodLabels(resources, name);
+  const podLabels = getPodLabels(resource, name);
 
   const volumes = [];
   const volumeMounts = [];
@@ -181,7 +180,7 @@ export const createOrUpdateDeployment = (
   };
   const templateAnnotations = getCommonAnnotations();
 
-  const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
+  const { labels, podLabels, volumes, volumeMounts } = getMetadata(Resources.Kubernetes, formData);
 
   const imageRef =
     registry === RegistryType.External
@@ -251,7 +250,7 @@ export const createOrUpdateDeploymentConfig = (
     healthChecks,
   } = formData;
 
-  const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
+  const { labels, podLabels, volumes, volumeMounts } = getMetadata(Resources.OpenShift, formData);
 
   const defaultAnnotations = {
     ...getCommonAnnotations(),
