@@ -8,7 +8,6 @@ import {
   navigateTo,
   createGitWorkloadIfNotExistsOnTopologyPage,
   topologyHelper,
-  topologyPage,
   app,
 } from '@console/dev-console/integration-tests/support/pages';
 
@@ -31,13 +30,13 @@ Given('user has created workload with resource type deployment', () => {
 });
 
 Given('user has created two resource quotas using {string} file', (yamlLocation) => {
-  cy.exec(`oc apply -f ${yamlLocation}  -n ${Cypress.env('NAMESPACE')}`);
+  cy.exec(`oc apply -f ${yamlLocation} -n ${Cypress.env('NAMESPACE')}`);
   app.waitForDocumentLoad();
 });
 
-When('user navigates to Topology page', () => {
-  navigateTo(devNavigationMenu.Topology);
-  topologyPage.verifyTopologyPage();
+When('user navigates to Add page', () => {
+  app.waitForDocumentLoad();
+  navigateTo(devNavigationMenu.Add);
 });
 
 When('user clicks on link to view resource quota details', () => {
