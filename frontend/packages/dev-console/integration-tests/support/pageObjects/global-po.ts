@@ -40,6 +40,7 @@ export const formPO = {
   save: '[data-test="save-changes"]',
   errorAlert: '[aria-label="Danger Alert"]',
   successAlert: '[aria-label="Success Alert"]',
+  confirm: '[data-test="confirm-action"]',
 };
 export const alert = '.pf-c-alert';
 export const pagePO = {

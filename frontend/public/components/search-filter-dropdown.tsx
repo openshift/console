@@ -25,10 +25,20 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
     setOpen(!isOpen);
   };
   const dropdownItems = [
-    <DropdownItem key="label-action" name={searchFilterValues.Label} component="button">
+    <DropdownItem
+      key="label-action"
+      data-test="label-filter"
+      name={searchFilterValues.Label}
+      component="button"
+    >
       {t(searchFilterValues.Label)}
     </DropdownItem>,
-    <DropdownItem key="name-action" name={searchFilterValues.Name} component="button">
+    <DropdownItem
+      key="name-action"
+      data-test="name-filter"
+      name={searchFilterValues.Name}
+      component="button"
+    >
       {t(searchFilterValues.Name)}
     </DropdownItem>,
   ];

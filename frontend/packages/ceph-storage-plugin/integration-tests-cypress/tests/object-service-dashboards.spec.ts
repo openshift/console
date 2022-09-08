@@ -1,6 +1,6 @@
 import { testBucket } from '../utils/consts';
 
-describe('Tests Buckets, Status, Object Storage Efficiency, and Resource Providers Cards', () => {
+xdescribe('Tests Buckets, Status, Object Storage Efficiency, and Resource Providers Cards', () => {
   before(() => {
     cy.login();
     cy.visit('/');

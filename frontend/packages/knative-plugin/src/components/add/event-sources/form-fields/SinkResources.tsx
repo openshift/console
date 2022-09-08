@@ -11,6 +11,7 @@ import {
   knativeServingResourcesServices,
   knativeEventingResourcesBroker,
   k8sServices,
+  knativeKafkaSinks,
 } from '../../../../utils/get-knative-resources';
 import { craftResourceKey } from '../../../pub-sub/pub-sub-utils';
 import { SinkType } from '../../import-types';
@@ -58,6 +59,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
     ...knativeServingResourcesServices(namespace),
     ...getDynamicChannelResourceList(namespace),
     ...knativeEventingResourcesBroker(namespace),
+    ...knativeKafkaSinks(namespace),
   ];
 
   const handleOnLoad = (resourceList: { [key: string]: string }) => {

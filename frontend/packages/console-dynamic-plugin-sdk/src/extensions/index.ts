@@ -26,3 +26,5 @@ export * from './import-environments';
 export * from './cluster-overview';
 export * from './project-overview';
 export * from './dashboard-types';
+export * from './breadcrumbs';
+export * from './storage-class-provisioner';

@@ -132,7 +132,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     }
     case devNavigationMenu.Helm: {
       cy.get(devNavigationMenuPO.helm).click();
-      detailsPage.titleShouldContain(pageTitle.HelmReleases);
+      detailsPage.titleShouldContain(pageTitle.Helm);
       cy.testA11y('Helm Releases Page in dev perspective');
       break;
     }
@@ -353,6 +353,11 @@ export const createForm = {
   clickSave: () =>
     cy
       .get(formPO.save)
+      .should('be.enabled')
+      .click(),
+  clickConfirm: () =>
+    cy
+      .get(formPO.confirm)
       .should('be.enabled')
       .click(),
   sectionTitleShouldContain: (sectionTitle: string) =>

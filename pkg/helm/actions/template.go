@@ -3,18 +3,25 @@ package actions
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 
+	"github.com/openshift/api/helm/v1beta1"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/cli"
 	"helm.sh/helm/v3/pkg/releaseutil"
+	"k8s.io/client-go/dynamic"
+	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
-func RenderManifests(name string, url string, vals map[string]interface{}, conf *action.Configuration) (string, error) {
+func RenderManifests(name string, url string, vals map[string]interface{}, conf *action.Configuration, dynamicClient dynamic.Interface, coreClient corev1client.CoreV1Interface, ns, indexEntry string, fileCleanUp bool) (string, error) {
 	var showFiles []string
+	var chartInfo *ChartInfo
+	var err error
+	var chartLocation string
 	response := make(map[string]string)
 	validate := false
 	client := action.NewInstall(conf)
@@ -24,14 +31,40 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 	client.Replace = true // Skip the releaseName check
 	client.ClientOnly = !validate
 	emptyResponse := ""
-
-	name, chart, err := client.NameAndChart([]string{name, url})
+	tlsFiles := []*os.File{}
+	if indexEntry == "" {
+		chartInfo, err = getChartInfoFromChartUrl(url, ns, dynamicClient, coreClient)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		chartInfo = getChartInfoFromIndexEntry(indexEntry, ns, url)
+	}
+	client.ChartPathOptions.Version = chartInfo.Version
+	connectionConfig, isClusterScoped, err := getRepositoryConnectionConfig(chartInfo.RepositoryName, ns, dynamicClient)
 	if err != nil {
-		return emptyResponse, err
+		return "", err
+	}
+	if isClusterScoped {
+		clusterConnectionConfig := connectionConfig.(v1beta1.ConnectionConfig)
+		tlsFiles, err = setUpAuthentication(&client.ChartPathOptions, &clusterConnectionConfig, coreClient)
+		if err != nil {
+			return "", fmt.Errorf("error setting up authentication: %w", err)
+		}
+	} else {
+		namespaceConnectionConfig := connectionConfig.(v1beta1.ConnectionConfigNamespaceScoped)
+		tlsFiles, err = setUpAuthenticationProject(&client.ChartPathOptions, &namespaceConnectionConfig, coreClient, ns)
+		if err != nil {
+			return "", fmt.Errorf("error setting up authentication: %w", err)
+		}
 	}
 	client.ReleaseName = name
-
-	cp, err := client.ChartPathOptions.LocateChart(chart, cli.New())
+	if len(tlsFiles) == 0 {
+		chartLocation = url
+	} else {
+		chartLocation = chartInfo.Name
+	}
+	cp, err := client.ChartPathOptions.LocateChart(chartLocation, cli.New())
 	if err != nil {
 		return emptyResponse, err
 	}
@@ -100,5 +133,14 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 	} else {
 		fmt.Fprintf(&output, "%s", manifests.String())
 	}
+	// remove all the tls related files created by this process
+	defer func() {
+		if fileCleanUp == false {
+			return
+		}
+		for _, f := range tlsFiles {
+			os.Remove(f.Name())
+		}
+	}()
 	return output.String(), nil
 }

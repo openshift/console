@@ -146,7 +146,12 @@ const TopologyOperatorBackedResources: React.FC<TopologyOperatorBackedResourcesP
         {t('olm~Managed by')}{' '}
         <span className="co-resource-item">
           <ResourceIcon kind={kind} />
-          <Link to={link} className="co-resource-item__resource-name" data-test-operand-link={name}>
+          <Link
+            to={link}
+            className="co-resource-item__resource-name"
+            data-test-operand-link={name}
+            data-test={name}
+          >
             {name}
           </Link>
         </span>

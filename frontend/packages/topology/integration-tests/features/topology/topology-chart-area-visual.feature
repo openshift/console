@@ -291,7 +291,7 @@ Feature: Topology chart area
         @regression @manual
         Scenario: Display of External Bindable resources: T-06-TC24
             Given user has installed Service Binding operator
-            #Please refer to test case KM-01-TC01 for creating kafka connection
+    #Please refer to test case KM-01-TC01 for creating kafka connection
               And user has created external bindable resource Kafka Connection "kafka-instance-123"
              When user navigates to Topology chart view
              Then user will see the bindable resource "kafka-instance-123" in trapezoid shape
@@ -300,7 +300,7 @@ Feature: Topology chart area
         @regression @manual
         Scenario: Connect to External Bindable resources: T-06-TC25
             Given user has installed Service Binding operator
-            #Please refer to test case KM-01-TC01 for creating kafka connection
+    #Please refer to test case KM-01-TC01 for creating kafka connection
               And user has created external bindable resource Kafka Connection "kafka-instance-123"
               And user is at the Topology chart view
              When user created a deployment workload "node-js-git-1"
@@ -348,7 +348,7 @@ Feature: Topology chart area
             Given user has installed Service Binding operator
               And user is at Topology page chart view
               And user has created a deployment workload "node-js2"
-            #Please refer to test case KM-01-TC01 for creating kafka connection
+    #Please refer to test case KM-01-TC01 for creating kafka connection
               And user has created external bindable resource Kafka Connection "kafka-instance-ex"
               And user has created operator-backed service of postgresSQL "example-pg"
               And user has applied '/testdata/bindableresource1.yaml' yaml
@@ -364,7 +364,7 @@ Feature: Topology chart area
             Given user has installed Service Binding operator
               And user is at Topology page chart view
               And user has created a deployment workload "node-s"
-            #Please refer to test case KM-01-TC01 for creating kafka connection
+    #Please refer to test case KM-01-TC01 for creating kafka connection
               And user has created external bindable resource Kafka Connection "kafka-instance-ex"
              When user drag and drop the connector to Kafka Connection
               And user clicks on Create with name "node-s-d-kafka-instance-ex-akc"
@@ -393,7 +393,7 @@ Feature: Topology chart area
         Scenario: Create connection to already existing service binding connection: T-06-TC31
             Given user has installed Service Binding operator
               And user is at Topology page chart view
-            #Please refer to test case KM-01-TC01 for creating kafka connection
+    #Please refer to test case KM-01-TC01 for creating kafka connection
               And user has created service binding connnector between deployment workload "node-j" and Kafka Connection "kafka-instance-ex1"
              When user right clicks on workload "node-j"
               And user clicks on "Create Service Binding" option from context menu

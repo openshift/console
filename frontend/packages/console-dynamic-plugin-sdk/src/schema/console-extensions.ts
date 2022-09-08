@@ -56,6 +56,7 @@ import {
 import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
 import { ReduxReducer } from '../extensions/redux';
 import { ModelMetadata } from '../extensions/resource-metadata';
+import { StorageClassProvisioner } from '../extensions/storage-class-provisioner';
 import { StorageProvider } from '../extensions/storage-provider';
 import { TelemetryListener } from '../extensions/telemetry';
 import {
@@ -132,7 +133,8 @@ export type SupportedExtension =
   | ClusterOverviewMultilineUtilizationItem
   | OverviewDetailItem
   | ProjectOverviewUtilizationItem
-  | ProjectOverviewInventoryItem;
+  | ProjectOverviewInventoryItem
+  | StorageClassProvisioner;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

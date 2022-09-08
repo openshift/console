@@ -88,6 +88,7 @@ export const operator = {
     cy.byTestOperatorRow(operatorName).should('exist');
     cy.byTestOperatorRow(operatorName).click();
   },
+  horizontalNavTab: (tabID) => cy.byLegacyTestID(`horizontal-link-${tabID}`).last(),
   uninstallModal: {
     open: (operatorName: string, installedNamespace: string = GlobalInstalledNamespace) => {
       cy.log('open uninstall modal');
@@ -105,19 +106,13 @@ export const operator = {
     testOperand: TestOperandProps,
     installedNamespace: string = GlobalInstalledNamespace,
   ) => {
-    const { tabName, exampleName } = testOperand;
+    const { exampleName, createActionID } = testOperand;
     cy.log(`create operand "${exampleName}" for "${operatorName}" in ${installedNamespace}`);
     operator.navToDetailsPage(operatorName, installedNamespace);
-    cy.log(`navigate to the "${tabName}" tab`);
-    cy.byLegacyTestID(`horizontal-link-${tabName}`)
-      .last()
-      .click();
-    cy.byTestID('msg-box-title').should('contain', 'No operands found');
-    cy.byTestID('msg-box-detail').should(
-      'contain',
-      'Operands are declarative components used to define the behavior of the application.',
-    );
-    listPage.clickCreateYAMLbutton();
+    operator.horizontalNavTab('olm~All instances').click();
+    cy.byTestOperandLink(exampleName).should('not.exist');
+    cy.byTestID('item-create').click();
+    cy.byTestID(createActionID).click();
     cy.url().should('contain', '~new');
     cy.log('create a new operand');
     cy.get('[id="root_metadata_name"]')
@@ -131,34 +126,29 @@ export const operator = {
     testOperand: TestOperandProps,
     installedNamespace: string = GlobalInstalledNamespace,
   ) => {
-    const { tabName, exampleName } = testOperand;
+    const { exampleName } = testOperand;
     cy.log(`operand "${exampleName}" should exist for "${operatorName}" in ${installedNamespace}`);
     operator.navToDetailsPage(operatorName, installedNamespace);
-    cy.log(`navigate to the "${tabName}" tab`);
-    cy.byLegacyTestID(`horizontal-link-${tabName}`)
-      .last()
-      .click();
-    cy.byTestOperandLink(exampleName).should('contain', exampleName);
+    operator.horizontalNavTab('olm~All instances').click();
+    cy.byTestID(exampleName).should('exist');
     cy.log(`navigate to the operand "Details" tab`);
-    cy.byTestOperandLink(exampleName).click();
+    cy.byTestID(exampleName).click();
     cy.url().should('match', new RegExp(`${exampleName}$`)); // url should end with example operand name
-    detailsPage.titleShouldContain(exampleName);
   },
   deleteOperand: (
     operatorName: string,
     testOperand: TestOperandProps,
     installedNamespace: string = GlobalInstalledNamespace,
   ) => {
-    const { kind: operandKind, tabName, exampleName } = testOperand;
+    const { kind, exampleName } = testOperand;
     cy.log(`delete operand: ${exampleName}`);
     operator.navToDetailsPage(operatorName, installedNamespace);
-    cy.log(`navigate to the "${tabName}" tab`);
-    cy.byLegacyTestID(`horizontal-link-${tabName}`)
-      .last()
-      .click();
+    operator.horizontalNavTab('olm~All instances').click();
     // drilldown to Operand details page
     cy.byTestOperandLink(exampleName).click();
-    detailsPage.clickPageActionFromDropdown(`Delete ${operandKind}`);
+
+    // FIXME these selectors may be unreliable due to dynamic plugins
+    detailsPage.clickPageActionFromDropdown(`Delete ${kind}`);
     modal.shouldBeOpened();
     modal.submit();
     modal.shouldBeClosed();
@@ -168,14 +158,11 @@ export const operator = {
     testOperand: TestOperandProps,
     installedNamespace: string = GlobalInstalledNamespace,
   ) => {
-    const { tabName, exampleName } = testOperand;
+    const { exampleName } = testOperand;
     cy.log(`operand "${exampleName}" should not exist`);
     operator.navToDetailsPage(operatorName, installedNamespace);
-    cy.log(`navigate to the "${tabName}" tab`);
-    cy.byLegacyTestID(`horizontal-link-${tabName}`)
-      .last()
-      .click();
-    cy.byTestOperandLink(exampleName).should('not.exist');
+    operator.horizontalNavTab('olm~All instances').click();
+    cy.byTestID(exampleName).should('not.exist');
   },
   uninstall: (
     operatorName: string,
@@ -200,8 +187,10 @@ export const operator = {
 
 export type TestOperandProps = {
   name: string;
+  group: string;
+  version: string;
   kind: string;
-  tabName: string;
+  createActionID: string;
   exampleName: string;
   deleteURL?: string;
 };

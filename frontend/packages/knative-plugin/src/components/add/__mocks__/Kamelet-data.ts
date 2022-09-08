@@ -136,3 +136,9 @@ export const mockNormalizedSink = {
   iconUrl: 'data:image/svg+xml;base64',
   provider: 'Apache Software Foundation',
 };
+
+export const mockNormalizedKafkaSink = {
+  name: 'KafkaSink',
+  iconUrl: 'data:image/svg+xml;base64',
+  provider: 'Red hat',
+};

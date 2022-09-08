@@ -2,6 +2,7 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { addOptions, devNavigationMenu } from '../../constants';
 import { addPagePO, helmChartRepositoriesPO } from '../../pageObjects';
 import { addPage, createForm, navigateTo } from '../../pages';
+import { helmChartRepository } from '../../pages/add-flow/helm-chart-repository';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
@@ -47,9 +48,22 @@ Then('user can see {string} form', (title: string) => {
     .click();
 });
 
-Given('user is at Create ProjectHelmChartRepository page', () => {
+Given('user is at Create Helm Chart Repository page', () => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.HelmChartRepositories);
+});
+
+Then('user enters Chart repository name as helm-test2', () => {
+  cy.get(helmChartRepositoriesPO.name)
+    .should('be.visible')
+    .clear()
+    .type('helm-test2');
+});
+
+When('user selects cluster-scoped scope type', () => {
+  cy.get(`[data-test="HelmChartRepository-view-input"]`)
+    .should('be.visible')
+    .click();
 });
 
 When('user enters Chart repository name as {string}', (name: string) => {
@@ -57,6 +71,14 @@ When('user enters Chart repository name as {string}', (name: string) => {
     .should('be.visible')
     .clear()
     .type(name);
+});
+
+When('user enters Display name as {string}', (displayName: string) => {
+  cy.get(helmChartRepositoriesPO.displayName)
+    .scrollIntoView()
+    .should('be.visible')
+    .clear()
+    .type(displayName);
 });
 
 When('user enters Description as {string}', (description: string) => {
@@ -80,9 +102,14 @@ When('user clicks on Create button', () => {
 });
 
 Then(
-  'user can see {string} under Chart Repositories in Helm Charts catalog page',
-  (projectHelmChartRepositories: string) => {
-    const projectHelmRepo = projectHelmChartRepositories.replace(/([A-Z,a-z]+)([0-9])/g, '$1-$2');
-    cy.get(`[data-test="chartRepositoryTitle-${projectHelmRepo}"]`).should('be.visible');
+  'user can see {string} for resource {string} and type {string} under Chart Repositories in Helm Charts catalog page',
+  (repo: string, resourceName: string, type: string) => {
+    let helmRepo = repo
+      .toLowerCase()
+      .split(' ')
+      .join('-');
+    helmRepo = helmRepo.replace(/([A-Z,a-z]+)([0-9])/g, '$1-$2');
+    cy.get(`[data-test="chartRepositoryTitle-${helmRepo}"]`).should('be.visible');
+    helmChartRepository.deleteChartRepository(resourceName, type);
   },
 );

@@ -1,3 +1,5 @@
+import { Alert } from '../api/common-types';
+import { LaunchModal } from '../app/modal-support/ModalProvider';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 export type AlertAction = ExtensionDeclaration<
@@ -8,7 +10,7 @@ export type AlertAction = ExtensionDeclaration<
     /* Action text */
     text: string;
     /* Function to perform side effect */
-    action: CodeRef<(alert) => void>;
+    action: CodeRef<(alert: Alert, launchModal: LaunchModal) => void>;
   }
 >;
 

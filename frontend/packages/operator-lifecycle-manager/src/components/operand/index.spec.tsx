@@ -16,18 +16,17 @@ import {
   history,
   Timestamp,
   LabelList,
-  ResourceKebab,
   FirehoseResourcesResult,
   ResourceLink,
 } from '@console/internal/components/utils';
 import * as k8sModels from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
 import * as extensionHooks from '@console/plugin-sdk';
+import { LazyActionMenu } from '@console/shared';
 import {
   testCRD,
   testResourceInstance,
   testClusterServiceVersion,
-  testOwnedResourceInstance,
   testModel,
   testConditionsDescriptor,
 } from '../../../mocks';
@@ -167,17 +166,9 @@ describe(OperandTableRow.displayName, () => {
     expect(timestamp.props().timestamp).toEqual(testResourceInstance.metadata.creationTimestamp);
   });
 
-  it('renders a `ResourceKebab` for resource actions', () => {
-    const kebab = wrapper.find(ResourceKebab);
-
-    expect(kebab.props().actions[0](testModel, testOwnedResourceInstance).labelKey).toEqual(
-      `olm~Edit {{item}}`,
-    );
-    expect(kebab.props().actions[1](testModel, testOwnedResourceInstance).labelKey).toEqual(
-      `olm~Delete {{item}}`,
-    );
-    expect(kebab.props().kind).toEqual(k8sModels.referenceFor(testResourceInstance));
-    expect(kebab.props().resource).toEqual(testResourceInstance);
+  it('renders a `LazyActionsMenu` for resource actions', () => {
+    const kebab = wrapper.find(LazyActionMenu);
+    expect(kebab.props().context.hasOwnProperty('csv-actions')).toBeTruthy();
   });
 });
 
@@ -407,18 +398,7 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('menu actions to `DetailsPage`', () => {
-    expect(
-      wrapper
-        .find(DetailsPage)
-        .props()
-        .menuActions[0](testModel, testOwnedResourceInstance).labelKey,
-    ).toEqual('olm~Edit {{item}}');
-    expect(
-      wrapper
-        .find(DetailsPage)
-        .props()
-        .menuActions[1](testModel, testOwnedResourceInstance).labelKey,
-    ).toEqual('olm~Delete {{item}}');
+    expect(wrapper.find(DetailsPage).prop('customActionMenu')).toBeTruthy();
   });
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {

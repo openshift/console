@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Formik } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
@@ -19,9 +20,10 @@ import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
-import { CamelKameletBindingModel } from '../../models';
+import { CamelKameletBindingModel, KafkaSinkModel } from '../../models';
 import {
   getCatalogEventSinkResource,
+  getEventSinkData,
   getEventSinksDepResource,
   getKameletSinkData,
 } from '../../utils/create-eventsink-utils';
@@ -38,7 +40,8 @@ interface EventSinkProps {
   normalizedSink: KnEventCatalogMetaData;
   contextSource?: string;
   selectedApplication?: string;
-  kameletSink: K8sResourceKind;
+  sinkKind: string;
+  kameletSink?: K8sResourceKind;
 }
 
 const EventSink: React.FC<EventSinkProps> = ({
@@ -46,6 +49,7 @@ const EventSink: React.FC<EventSinkProps> = ({
   normalizedSink,
   contextSource,
   selectedApplication,
+  sinkKind = '',
   kameletSink,
 }) => {
   const perpectiveExtension = useExtensions<Perspective>(isPerspective);
@@ -53,10 +57,22 @@ const EventSink: React.FC<EventSinkProps> = ({
   const { t } = useTranslation();
   const application = useSelector(getActiveApplication);
   const currentApp = selectedApplication || application;
+
+  let sinkApiVersion = '';
+  let sinkData = {};
+  let sinkName = '';
+
+  if (sinkKind && sinkKind === KafkaSinkModel.kind) {
+    sinkApiVersion = `${KafkaSinkModel.apiGroup}/${KafkaSinkModel.apiVersion}`;
+    sinkData = { [KafkaSinkModel.kind]: getEventSinkData(sinkKind) };
+    sinkName = _.kebabCase(sinkKind);
+  } else {
+    sinkApiVersion = `${CamelKameletBindingModel.apiGroup}/${CamelKameletBindingModel.apiVersion}`;
+    sinkData = { [CamelKameletBindingModel.kind]: getKameletSinkData(kameletSink) };
+    sinkName = `kamelet-${kameletSink.metadata.name}`;
+  }
+
   const activeApplication = currentApp !== ALL_APPLICATIONS_KEY ? currentApp : '';
-  const sinkApiVersion = `${CamelKameletBindingModel.apiGroup}/${CamelKameletBindingModel.apiVersion}`;
-  const sinkData = { [CamelKameletBindingModel.kind]: getKameletSinkData(kameletSink) };
-  const sinkName = `kamelet-${kameletSink.metadata.name}`;
   const [sourceGroupVersionKind = '', sourceName = ''] = contextSource?.split('/') ?? [];
   const [sourceGroup = '', sourceVersion = '', sourceKind = ''] =
     getGroupVersionKind(sourceGroupVersionKind) ?? [];
@@ -78,16 +94,18 @@ const EventSink: React.FC<EventSinkProps> = ({
     },
     name: sinkName,
     apiVersion: sinkApiVersion,
-    source: {
-      apiVersion: sourceApiVersion,
-      kind: sourceKind,
-      name: sourceName,
-      key: craftResourceKey(sourceName, {
+    ...(sinkKind !== KafkaSinkModel.kind && {
+      source: {
+        apiVersion: sourceApiVersion,
         kind: sourceKind,
-        apiVersion: `${sourceGroup}/${sourceVersion}`,
-      }),
-    },
-    type: CamelKameletBindingModel.kind,
+        name: sourceName,
+        key: craftResourceKey(sourceName, {
+          kind: sourceKind,
+          apiVersion: `${sourceGroup}/${sourceVersion}`,
+        }),
+      },
+    }),
+    type: sinkKind,
     data: sinkData,
   };
 

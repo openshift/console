@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-with-array-parameter
+spec:
+  params:
+    - name: param1
+      description: ''
+      default:
+        - foo
+        - bar
+    - name: param2
+      description: ''
+      default: default1
+  resources: []
+  workspaces: []
+  tasks:
+    - name: kn
+      taskRef:
+        kind: ClusterTask
+        name: kn
+      params:
+        - name: kn-image
+          value: >-
+            registry.redhat.io/openshift-serverless-1/client-kn-rhel8@sha256:9bc475db01697e6d6eac2e47a655971cbee7f821684aa48f30729fb49976559d
+        - name: ARGS
+          value:
+            - help
+  finally: []

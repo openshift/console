@@ -12,8 +12,10 @@ const testOperator = {
 
 const testOperand: TestOperandProps = {
   name: '3scale Backend Schema',
+  group: 'capabilities.3scale.net',
+  version: 'v1beta1',
   kind: 'Backend',
-  tabName: '3scale Backend',
+  createActionID: 'list-page-create-dropdown-item-backends.capabilities.3scale.net',
   exampleName: `backend1-sample`,
 };
 
@@ -71,7 +73,7 @@ describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
     });
 
     operator.createOperand(testOperator.name, testOperand, testOperator.installedNamespace);
-    cy.byTestOperandLink(testOperand.exampleName).should('exist');
+    cy.byTestID(testOperand.exampleName).should('exist');
     operator.operandShouldExist(testOperator.name, testOperand, testOperator.installedNamespace);
 
     operator.deleteOperand(testOperator.name, testOperand, testOperator.installedNamespace);

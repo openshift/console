@@ -9,10 +9,8 @@ import { K8sModel, modelFor } from '../../module/k8s';
 import confirmNavUnpinModal from './confirmNavUnpinModal';
 
 import './PinnedResource.scss';
-import { NavLinkComponent } from './NavLink';
-import { NavLinkRoot } from './NavLinkRoot';
-import { NavLinkResourceNS } from './NavLinkResourceNS';
-import { NavLinkResourceCluster } from './NavLinkResourceCluster';
+import { NavItemResource } from './NavItemResource';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 type PinnedResourceProps = {
   resourceRef?: string;
@@ -121,11 +119,11 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
     },
   });
 
-  const model = modelFor(resourceRef);
+  const [model] = useK8sModel(resourceRef);
   if (!model) {
     return null;
   }
-  const { apiVersion, apiGroup, namespaced, crd, plural } = model;
+  const { apiVersion, apiGroup, namespaced, kind } = model;
 
   const getLabelForResourceRef = (resourceName: string): string => {
     const resourceModel: K8sModel | undefined = modelFor(resourceName);
@@ -139,28 +137,26 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
   };
   const label = getLabelForResourceRef(resourceRef);
   const duplicates = navResources.filter((res) => getLabelForResourceRef(res) === label).length > 1;
-  const props = {
-    key: `pinned-${resourceRef}`,
-    name: label,
-    resource: crd ? resourceRef : plural,
-    tipText: duplicates ? `${label}: ${apiGroup || 'core'}/${apiVersion}` : null,
-    id: resourceRef,
-  };
-  const Component: NavLinkComponent = namespaced ? NavLinkResourceNS : NavLinkResourceCluster;
   const previewRef = draggable ? (node: React.ReactElement) => preview(drop(node)) : null;
   return (
-    <NavLinkRoot
+    <NavItemResource
+      key={`pinned-${resourceRef}`}
+      namespaced={namespaced}
+      title={duplicates ? `${label}: ${apiGroup || 'core'}/${apiVersion}` : null}
+      model={{ group: apiGroup, version: apiVersion, kind }}
+      id={resourceRef}
       dragRef={previewRef}
-      data-test={draggable ? 'draggable-pinned-resource-item' : 'pinned-resource-item'}
+      dataAttributes={{
+        'data-test': draggable ? 'draggable-pinned-resource-item' : 'pinned-resource-item',
+      }}
       className={classNames('oc-pinned-resource', {
         'oc-pinned-resource--dragging': draggable && isOver,
       })}
-      component={Component}
-      insertBeforeName={draggable ? <DraggableButton dragRef={drag} /> : null}
-      {...props}
     >
+      {draggable ? <DraggableButton dragRef={drag} /> : null}
+      {label}
       <RemoveButton onChange={onChange} navResources={navResources} resourceRef={resourceRef} />
-    </NavLinkRoot>
+    </NavItemResource>
   );
 };
 

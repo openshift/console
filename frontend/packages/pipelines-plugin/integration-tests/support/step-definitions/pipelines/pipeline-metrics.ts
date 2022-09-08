@@ -26,17 +26,14 @@ Then(
   },
 );
 
-Then(
-  'user can see Pipeline success ratio, Number of Pipeline Runs graphs for default metrics level',
-  () => {
-    cy.get(pipelineDetailsPO.metrics.graphTitle)
-      .eq(0)
-      .should('contain.text', pipelineDetailsText.metrics.graphs.pipelineSuccessRatio);
-    cy.get(pipelineDetailsPO.metrics.graphTitle)
-      .eq(1)
-      .should('contain.text', pipelineDetailsText.metrics.graphs.numberOfPipelineRuns);
-  },
-);
+Then('user can see Pipeline success ratio, Number of Pipeline Runs', () => {
+  cy.get(pipelineDetailsPO.metrics.graphTitle)
+    .eq(0)
+    .should('contain.text', pipelineDetailsText.metrics.graphs.pipelineSuccessRatio);
+  cy.get(pipelineDetailsPO.metrics.graphTitle)
+    .eq(1)
+    .should('contain.text', pipelineDetailsText.metrics.graphs.numberOfPipelineRuns);
+});
 
 When('user can see message "No datapoints found" inside graphs', () => {
   cy.byTestID('datapoints-msg').should('include.text', 'No datapoints found.');

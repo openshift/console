@@ -111,11 +111,8 @@ export const addPage = {
       case 'Helm Chart Repositories':
       case addOptions.HelmChartRepositories:
         cy.byTestID('item project-helm-chart-repositories').click();
-        cy.get('[data-test="form-title"]').should(
-          'have.text',
-          pageTitle.CreateProjectHelmChartRepository,
-        );
-        cy.testA11y(pageTitle.CreateProjectHelmChartRepository);
+        cy.get('[data-test="form-title"]').should('have.text', pageTitle.CreateHelmChartRepository);
+        cy.testA11y(pageTitle.CreateHelmChartRepository);
         break;
       default:
         throw new Error(`Unable to find the "${card}" card on Add page`);

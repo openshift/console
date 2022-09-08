@@ -16,7 +16,8 @@ export enum DataState {
   FAILED_BUT_COMPLETE = 'Completed But Failed',
   SKIPPED = 'Skipped',
   PIPELINE_RUN_PENDING = 'PipelineRunPending',
-  PIPELINE_RUN_CANCELLED = 'PipelineRunCancelled',
+  PIPELINE_RUN_CANCELLED = 'StoppedRunFinally',
+  PIPELINE_RUN_STOPPED = 'CancelledRunFinally',
 }
 
 export enum PipelineExampleNames {
@@ -625,6 +626,41 @@ export const pipelineTestData: PipelineTestData = {
         },
       },
 
+      [DataState.PIPELINE_RUN_STOPPED]: {
+        apiVersion: 'tekton.dev/v1alpha1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'simple-pipeline-p1bun0',
+          namespace: 'tekton-pipelines',
+          creationTimestamp: '2020-10-29T09:58:19Z',
+          labels: { [TektonResourceLabel.pipeline]: 'simple-pipeline' },
+        },
+        spec: {
+          pipelineRef: { name: 'simple-pipeline' },
+          resources: [
+            { name: 'source-repo', resourceRef: { name: 'mapit-git' } },
+            {
+              name: 'web-image',
+              resourceRef: { name: 'mapit-image' },
+            },
+          ],
+          status: 'CancelledRunFinally',
+        },
+        status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
+          completionTime: '2019-10-29T11:57:53Z',
+          conditions: [
+            {
+              lastTransitionTime: '2019-09-12T20:38:01Z',
+              message: 'All Tasks have completed executing',
+              reason: 'Succeeded',
+              status: 'True',
+              type: 'Succeeded',
+            },
+          ],
+        },
+      },
+
       [DataState.PIPELINE_RUN_CANCELLED]: {
         apiVersion: 'tekton.dev/v1alpha1',
         kind: 'PipelineRun',
@@ -643,7 +679,7 @@ export const pipelineTestData: PipelineTestData = {
               resourceRef: { name: 'mapit-image' },
             },
           ],
-          status: 'PipelineRunCancelled',
+          status: 'StoppedRunFinally',
         },
         status: {
           pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
@@ -723,13 +759,13 @@ export const pipelineTestData: PipelineTestData = {
             { name: 'app-git', resourceRef: { name: 'mapit-git' } },
             { name: 'app-image', resourceRef: { name: 'mapit-image' } },
           ],
-          status: 'PipelineRunCancelled',
+          status: 'StoppedRunFinally',
         },
         status: {
           pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
-              reason: 'PipelineRunCancelled',
+              reason: 'Cancelled',
               status: 'False',
               type: 'Succeeded',
             },
@@ -799,13 +835,13 @@ export const pipelineTestData: PipelineTestData = {
             { name: 'app-git', resourceRef: { name: 'mapit-git' } },
             { name: 'app-image', resourceRef: { name: 'mapit-image' } },
           ],
-          status: 'PipelineRunCancelled',
+          status: 'StoppedRunFinally',
         },
         status: {
           pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
-              reason: 'PipelineRunCancelled',
+              reason: 'Cancelled',
               status: 'False',
               type: 'Succeeded',
             },
@@ -1005,13 +1041,13 @@ export const pipelineTestData: PipelineTestData = {
             { name: 'app-git', resourceRef: { name: 'mapit-git' } },
             { name: 'app-image', resourceRef: { name: 'mapit-image' } },
           ],
-          status: 'PipelineRunCancelled',
+          status: 'StoppedRunFinally',
         },
         status: {
           pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
-              reason: 'PipelineRunCancelled',
+              reason: 'Cancelled',
               status: 'False',
               type: 'Succeeded',
             },

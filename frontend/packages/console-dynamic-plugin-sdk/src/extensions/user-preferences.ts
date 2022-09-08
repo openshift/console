@@ -12,9 +12,11 @@ export type UserPreferenceDropdownField = {
   type: UserPreferenceFieldType.dropdown;
   userSettingsKey: string;
   defaultValue?: string;
+  description?: string;
   options: {
     value: string;
     label: string;
+    description?: string;
   }[];
 };
 
@@ -27,6 +29,7 @@ export type UserPreferenceCheckboxField = {
   trueValue: UserPreferenceCheckboxFieldValue;
   falseValue: UserPreferenceCheckboxFieldValue;
   defaultValue?: UserPreferenceCheckboxFieldValue;
+  description?: string;
 };
 
 export type UserPreferenceCustomField = {

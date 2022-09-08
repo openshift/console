@@ -19,7 +19,7 @@ import {
 } from '../utils/consts';
 import { CreateOBCHandler } from '../views/obcPage';
 
-describe('Test Object Bucket Claim resource', () => {
+xdescribe('Test Object Bucket Claim resource', () => {
   let obcHandler;
   let obcUrl;
 

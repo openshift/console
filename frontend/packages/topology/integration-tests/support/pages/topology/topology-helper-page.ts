@@ -21,6 +21,7 @@ export const topologyHelper = {
       }
     });
     cy.get(topologyPO.graph.reset).click();
+    cy.get(topologyPO.graph.fitToScreen).click();
     cy.get(topologyPO.highlightNode, options).should('be.visible');
     app.waitForDocumentLoad();
   },

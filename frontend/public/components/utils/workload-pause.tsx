@@ -44,7 +44,9 @@ export const WorkloadPausedAlert = ({ model, obj }) => {
             togglePaused(model, obj).catch((err) => errorModal({ error: err.message }))
           }
         >
-          {t('public~Resume rollouts')}
+          {obj.kind === 'MachineConfigPool'
+            ? t('public~Resume updates')
+            : t('public~Resume rollouts')}
         </AlertActionLink>
       }
     >

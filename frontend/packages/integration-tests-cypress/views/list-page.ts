@@ -2,7 +2,10 @@ import * as yamlEditor from './yaml-editor';
 
 export const listPage = {
   titleShouldHaveText: (title: string) =>
-    cy.byLegacyTestID('resource-title').should('have.text', title),
+    cy
+      .byLegacyTestID('resource-title')
+      .contains(title)
+      .should('exist'),
   clickCreateYAMLdropdownButton: () => {
     cy.byTestID('item-create')
       .click()
@@ -73,6 +76,9 @@ export const listPage = {
     },
     countShouldBe: (count: number) => {
       cy.get(`[data-test-rows="resource-row"`).should('have.length', count);
+    },
+    countShouldBeWithin: (min: number, max: number) => {
+      cy.get(`[data-test-rows="resource-row"`).should('have.length.within', min, max);
     },
     clickFirstLinkInFirstRow: () => {
       cy.get(`[data-test-rows="resource-row"]`)

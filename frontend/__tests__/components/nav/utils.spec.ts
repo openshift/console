@@ -1,4 +1,4 @@
-import { getSortedNavItems, sortExtensionItems } from '@console/internal/components/nav/utils';
+import { getSortedNavExtensions, sortExtensionItems } from '@console/internal/components/nav/utils';
 import { LoadedExtension } from '@console/plugin-sdk/src';
 import { NavExtension } from '@console/dynamic-plugin-sdk/src';
 
@@ -72,7 +72,7 @@ const indexOfId = (id, sortedItems) => sortedItems.map((i) => i.properties.id).i
 
 describe('perspective-nav insertPositionedItems', () => {
   it('should order items that are not positioned', () => {
-    const sortedItems = getSortedNavItems(mockNavItems);
+    const sortedItems = getSortedNavExtensions(mockNavItems);
     expect(sortedItems.map((i) => i.properties.id)).toEqual(
       mockNavItems.map((i) => i.properties.id),
     );
@@ -80,27 +80,27 @@ describe('perspective-nav insertPositionedItems', () => {
 
   it('should order items that are positioned', () => {
     mockNavItems[0].properties.insertAfter = 'test2';
-    let sortedItems = getSortedNavItems(mockNavItems);
+    let sortedItems = getSortedNavExtensions(mockNavItems);
     expect(indexOfId('test1', sortedItems)).toBe(1);
 
     delete mockNavItems[0].properties.insertAfter;
     mockNavItems[0].properties.insertBefore = 'test5';
-    sortedItems = getSortedNavItems(mockNavItems);
+    sortedItems = getSortedNavExtensions(mockNavItems);
     expect(indexOfId('test1', sortedItems)).toBe(3);
 
     delete mockNavItems[0].properties.insertBefore;
     mockNavItems[0].properties.insertAfter = ['x', 'y', 'test3', 'z'];
-    sortedItems = getSortedNavItems(mockNavItems);
+    sortedItems = getSortedNavExtensions(mockNavItems);
     expect(indexOfId('test1', sortedItems)).toBe(2);
 
     delete mockNavItems[0].properties.insertAfter;
     mockNavItems[0].properties.insertBefore = ['x', 'y', 'test3', 'z'];
-    sortedItems = getSortedNavItems(mockNavItems);
+    sortedItems = getSortedNavExtensions(mockNavItems);
     expect(indexOfId('test1', sortedItems)).toBe(1);
 
     // Before takes precedence
     mockNavItems[0].properties.insertAfter = 'test6';
-    sortedItems = getSortedNavItems(mockNavItems);
+    sortedItems = getSortedNavExtensions(mockNavItems);
     expect(indexOfId('test1', sortedItems)).toBe(1);
   });
 
@@ -108,13 +108,13 @@ describe('perspective-nav insertPositionedItems', () => {
     delete mockNavItems[0].properties.insertBefore;
     mockNavItems[0].properties.insertAfter = 'test6';
     mockNavItems[5].properties.insertAfter = 'test4';
-    let sortedItems = getSortedNavItems(mockNavItems);
+    let sortedItems = getSortedNavExtensions(mockNavItems);
     expect(indexOfId('test6', sortedItems)).toBe(3);
     expect(indexOfId('test1', sortedItems)).toBe(4);
     expect(indexOfId('test7', sortedItems)).toBe(6);
 
     mockNavItems[6].properties.insertBefore = 'test1';
-    sortedItems = getSortedNavItems(mockNavItems);
+    sortedItems = getSortedNavExtensions(mockNavItems);
     expect(indexOfId('test6', sortedItems)).toBe(3);
     expect(indexOfId('test1', sortedItems)).toBe(5);
     expect(indexOfId('test7', sortedItems)).toBe(4);

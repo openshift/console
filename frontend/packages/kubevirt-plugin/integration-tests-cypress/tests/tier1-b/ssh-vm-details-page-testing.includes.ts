@@ -81,7 +81,7 @@ export default ({ vmName }) =>
       // eslint-disable-next-line
       cy.wait(AFTER_CREATE_WAIT_TIME);
       cy.get('[data-test=nav]')
-        .filter('[href$=services]')
+        .filter('[href$=core~v1~Service]')
         .then((link) => cy.visit(link.attr('href')));
     });
 

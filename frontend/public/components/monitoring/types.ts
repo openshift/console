@@ -1,39 +1,13 @@
-import { APIError } from '@console/shared';
 import {
-  Silence,
-  PrometheusAlert,
   Alert,
-  PrometheusRule,
   PrometheusLabels,
-  PrometheusValue,
+  PrometheusRule,
+  RowFilter,
   Rule,
-  RuleStates,
-  AlertStates,
-  AlertSeverity,
-  SilenceStates,
-} from '@console/dynamic-plugin-sdk/src/api/common-types';
+  Silence,
+} from '@console/dynamic-plugin-sdk';
 
 import { RowFunctionArgs } from '../factory';
-import { RowFilter } from '../filter-toolbar';
-
-export {
-  SilenceStates,
-  AlertSeverity,
-  RuleStates,
-  AlertStates,
-};
-
-// prettier 1.x doesn't support TS 3.8 syntax
-// eslint-disable-next-line prettier/prettier
-export type {
-  PrometheusAlert,
-  Alert,
-  PrometheusRule,
-  PrometheusLabels,
-  PrometheusValue,
-  Rule,
-  Silence,
-}
 
 export const enum AlertSource {
   Platform = 'platform',
@@ -72,13 +46,14 @@ type Group = {
 };
 
 export type PrometheusAPIError = {
-  response?: {
-    status: number;
-  };
-  json?: {
+  json: {
     error?: string;
   };
-} & APIError;
+  message?: string;
+  response: {
+    status: number;
+  };
+};
 
 export type PrometheusRulesResponse = {
   data: {
@@ -103,7 +78,7 @@ export type ListPageProps = {
   Row: React.FC<RowFunctionArgs>;
   rowFilters: RowFilter[];
   showTitle?: boolean;
-  TopAlert?: React.ReactNode
+  TopAlert?: React.ReactNode;
 };
 
 export type Target = {

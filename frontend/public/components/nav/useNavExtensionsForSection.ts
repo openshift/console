@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { LoadedExtension } from '@console/plugin-sdk';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useActivePerspective, NavExtension } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useNavExtensionsForPerspective } from './useNavExtensionForPerspective';
-import { getSortedNavItems } from './utils';
+import { getSortedNavExtensions } from './utils';
 
 export const useNavExtensionsForSection = (section: string): LoadedExtension<NavExtension>[] => {
   const [activePerspective] = useActivePerspective();
@@ -13,6 +13,6 @@ export const useNavExtensionsForSection = (section: string): LoadedExtension<Nav
   );
   return React.useMemo(() => {
     const filtered = extensions.filter(isExtensionForSection);
-    return getSortedNavItems(filtered);
+    return getSortedNavExtensions(filtered);
   }, [extensions, isExtensionForSection]);
 };

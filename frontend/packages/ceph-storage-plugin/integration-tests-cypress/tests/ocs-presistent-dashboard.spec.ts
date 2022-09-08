@@ -1,7 +1,7 @@
 import { checkErrors } from '../../../integration-tests-cypress/support';
 import { getPVCJSON } from '../helpers/pvc';
 
-describe('Check OCS Dashboards', () => {
+xdescribe('Check OCS Dashboards', () => {
   before(() => {
     cy.login();
     cy.visit('/');

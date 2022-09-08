@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Badge } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { AlertStates } from '@console/internal/components/monitoring/types';
+import { AlertStates } from '@console/dynamic-plugin-sdk';
 import { mockAlerts } from '@console/shared/src/utils/__mocks__/alerts-and-rules-data';
 import MonitoringOverview from '../MonitoringOverview';
 import { mockPodEvents, mockResourceEvents, mockPods } from './mockData';

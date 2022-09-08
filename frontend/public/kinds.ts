@@ -1,28 +1,24 @@
-import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { match } from 'react-router-dom';
 
 import {
   K8sKind,
   K8sResourceKindReference,
-  kindForReference,
   GroupVersionKind,
   isGroupVersionKind,
   allModels,
   getGroupVersionKind,
 } from './module/k8s';
 import { RootState } from './redux';
+import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 
 export const connectToModel = connect(
-  (state: RootState, props: { kind: K8sResourceKindReference } & any) => {
-    const kind: string = props.kind || _.get(props, 'match.params.plural');
-
-    const kindObj: K8sKind = !_.isEmpty(kind)
-      ? state.k8s.getIn(['RESOURCES', 'models', kind]) ||
-        state.k8s.getIn(['RESOURCES', 'models', kindForReference(kind)])
-      : null;
-
-    return { kindObj, kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']) } as any;
+  ({ k8s }: RootState, props: { kind: K8sResourceKindReference } & any) => {
+    const kind: string = props.kind || props.match?.params?.plural;
+    return {
+      kindObj: getK8sModel(k8s, kind),
+      kindsInFlight: k8s.getIn(['RESOURCES', 'inFlight']),
+    } as any;
   },
 );
 
@@ -44,25 +40,27 @@ export type ConnectToPlural = <P extends WithPluralProps>(
  */
 export const connectToPlural: ConnectToPlural = connect(
   (
-    state: RootState,
+    { k8s }: RootState,
     props: {
       plural?: GroupVersionKind | string;
       match: match<{ plural: GroupVersionKind | string }>;
     },
   ) => {
     const plural = props.plural || props.match?.params?.plural;
-
     const groupVersionKind = getGroupVersionKind(plural);
 
     let kindObj: K8sKind = null;
     if (groupVersionKind) {
       const [group, version, kind] = groupVersionKind;
-      kindObj = allModels().find((model) => {
-        return model.apiGroup === group && model.apiVersion === version && model.kind === kind;
-      });
+      kindObj = allModels().find(
+        (model) =>
+          (model.apiGroup ?? 'core') === group &&
+          model.apiVersion === version &&
+          model.kind === kind,
+      );
 
       if (!kindObj) {
-        kindObj = state.k8s.getIn(['RESOURCES', 'models']).get(plural);
+        kindObj = getK8sModel(k8s, plural);
       }
     } else {
       kindObj = allModels().find(
@@ -70,8 +68,8 @@ export const connectToPlural: ConnectToPlural = connect(
       );
     }
 
-    const modelRef = isGroupVersionKind(plural) ? plural : _.get(kindObj, 'kind');
+    const modelRef = isGroupVersionKind(plural) ? plural : kindObj?.kind;
 
-    return { kindObj, modelRef, kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']) };
+    return { kindObj, modelRef, kindsInFlight: k8s.getIn(['RESOURCES', 'inFlight']) };
   },
 );

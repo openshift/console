@@ -2,7 +2,8 @@ import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { InputField } from '@console/shared';
-import { PipelineParameters, PipelineResources, PipelineWorkspaces } from '../detail-page-tabs';
+import { PipelineResources, PipelineWorkspaces } from '../detail-page-tabs';
+import PipelineParameters from '../PipelineParameters';
 import PipelineBuilderVisualization from './PipelineBuilderVisualization';
 import PipelineWorkspaceSuggestionIcon from './PipelineWorkspaceSuggestionIcon';
 import {
@@ -64,8 +65,16 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (pro
       <div>
         <h2>{t('pipelines-plugin~Parameters')}</h2>
         <PipelineParameters
-          addLabel={t('pipelines-plugin~Add parameter')}
           fieldName="formData.params"
+          addLabel={t('pipelines-plugin~Add parameter')}
+          nameLabel={t('pipelines-plugin~Name')}
+          nameFieldName="name"
+          descriptionLabel={t('pipelines-plugin~Description')}
+          descriptionFieldName="description"
+          valueLabel={t('pipelines-plugin~Default value')}
+          valueFieldName="default"
+          emptyMessage={t('pipelines-plugin~No parameters are associated with this Pipeline.')}
+          emptyValues={{ name: '', description: '', default: '' }}
         />
       </div>
 

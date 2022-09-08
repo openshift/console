@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Alert } from '@console/dynamic-plugin-sdk';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
-import { Alert } from '@console/internal/components/monitoring/types';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { useDeepCompareMemoize } from '@console/shared';
 

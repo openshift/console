@@ -71,7 +71,7 @@ export interface EventSinkFormData {
   name: string;
   apiVersion: string;
   type: string;
-  source: SinkResourceData;
+  source?: SinkResourceData;
   data?: EventSourceData;
 }
 

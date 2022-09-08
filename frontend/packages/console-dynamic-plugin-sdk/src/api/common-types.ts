@@ -82,7 +82,6 @@ export type MatchExpression = {
   key: string;
   operator: Operator | string;
   values?: string[];
-  value?: string;
 };
 
 export type MatchLabels = {

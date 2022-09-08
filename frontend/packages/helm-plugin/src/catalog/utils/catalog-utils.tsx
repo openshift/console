@@ -43,7 +43,10 @@ export const normalizeHelmCharts = (
         const imgUrl = chart.icon || getImageForIconClass('icon-helm');
         const chartURL = chart.urls[0];
         const encodedChartURL = encodeURIComponent(chartURL);
-        const href = `/catalog/helm-install?chartName=${name}&chartRepoName=${chartRepoName}&chartURL=${encodedChartURL}&preselected-ns=${activeNamespace}`;
+        const encodedChartRepoName = encodeURIComponent(chartRepoName);
+        const encodedChartName = encodeURIComponent(name);
+        const encodedChartIndexKey = encodeURIComponent(key);
+        const href = `/catalog/helm-install?chartName=${encodedChartName}&chartRepoName=${encodedChartRepoName}&chartURL=${encodedChartURL}&preselected-ns=${activeNamespace}&indexEntry=${encodedChartIndexKey}`;
 
         const translatedProviderType = PROVIDER_TYPE_KEYS[providerType]
           ? t(PROVIDER_TYPE_KEYS[providerType])
@@ -113,10 +116,17 @@ export const normalizeHelmCharts = (
 
         const detailsDescriptions = [
           {
+            label: t('helm-plugin~Description'),
             value: <p>{description}</p>,
           },
           {
-            value: <HelmReadmeLoader chartURL={chartURL} />,
+            value: (
+              <HelmReadmeLoader
+                chartURL={chartURL}
+                namespace={activeNamespace}
+                chartIndexEntry={key}
+              />
+            ),
           },
         ];
 

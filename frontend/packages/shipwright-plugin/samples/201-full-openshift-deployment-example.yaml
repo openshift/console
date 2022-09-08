@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sw-deployment-example
+  namespace: build-examples
+  labels:
+    app.kubernetes.io/part-of: sw-deployment-app
+spec:
+  selector:
+    matchLabels:
+      app: sw-deployment-example
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sw-deployment-example
+    spec:
+      containers:
+        - name: container
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/build-examples/sw-deployment-example:latest
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: sw-deployment-example-build
+  namespace: build-examples
+  labels:
+    app.kubernetes.io/part-of: sw-deployment-app
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-nodejs
+    contextDir: source-build
+  strategy:
+    name: buildpacks-v3
+    kind: BuildStrategy
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/sw-deployment-example-build
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  namespace: build-examples
+  generateName: sw-deployment-example-build-
+  labels:
+    app.kubernetes.io/part-of: sw-deployment-app
+spec:
+  buildRef:
+    name: sw-deployment-example-build
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sw-deployment-example-service
+  labels:
+    app.kubernetes.io/component: sw-deployment-example
+spec:
+  ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: sw-deployment-example
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: sw-deployment-example-route
+  labels:
+    app.kubernetes.io/component: sw-deployment-example
+spec:
+  to:
+    kind: Service
+    name: sw-deployment-example-service
+    weight: 100
+  port:
+    targetPort: 8080-tcp

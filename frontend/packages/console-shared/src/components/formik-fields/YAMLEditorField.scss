@@ -1,19 +1,34 @@
 @import '~@patternfly/patternfly/sass-utilities/all';
+@import '../../../../../public/style/vars';
 
 .osc-yaml-editor {
   display: flex;
   flex: 1 0 auto;
   flex-direction: row;
+  margin-right: -$pf-global-gutter;
+  @media (max-width: $pf-global--breakpoint--md) {
+    margin-left: -$pf-global-gutter;
+    margin-top: -$pf-global-gutter--md;
+  }
+  @media (min-width: $pf-global--breakpoint--xl) {
+    margin-right: -$pf-global-gutter--md;
+  }
 
   &__editor {
     display: flex;
     flex: 1 0 auto;
     flex-direction: column;
+    @media (min-width: $pf-global--breakpoint--md) {
+      margin-right: $pf-global-gutter;
+    }
+    @media (min-width: $pf-global--breakpoint--xl) {
+      margin-right: $pf-global-gutter--md;
+    }
   }
   &__sidebar {
     display: flex;
     flex: 1 0 0;
-    margin-left: 20px;
+    margin-top: -$pf-global-gutter--md;
     @media screen and (max-width: $pf-global--breakpoint--lg) {
       display: none;
     }

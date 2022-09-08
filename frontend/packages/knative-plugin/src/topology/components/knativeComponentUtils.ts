@@ -27,6 +27,7 @@ import {
   TYPE_KNATIVE_SERVICE,
   TYPE_EVENT_PUB_SUB,
   TYPE_SINK_URI,
+  TYPE_KAFKA_SINK,
 } from '../const';
 import {
   createEventSourceKafkaConnection,
@@ -54,13 +55,15 @@ export const nodesEdgeIsDragging = (monitor, props) =>
 
 export const canDropEventSourceSinkOnNode = (operation: string, edge: Edge, node: Node): boolean =>
   edge.getSource() !== node &&
-  [TYPE_KNATIVE_SERVICE, TYPE_EVENT_PUB_SUB, TYPE_SINK_URI].includes(node.getType()) &&
+  [TYPE_KNATIVE_SERVICE, TYPE_EVENT_PUB_SUB, TYPE_SINK_URI, TYPE_KAFKA_SINK].includes(
+    node.getType(),
+  ) &&
   operation === MOVE_EV_SRC_CONNECTOR_OPERATION &&
   !node.getTargetEdges().find((e) => e.getSource() === edge.getSource());
 
 export const canDropPubSubSinkOnNode = (operation: string, edge: Edge, node: Node): boolean =>
   edge.getSource() !== node &&
-  node.getType() === TYPE_KNATIVE_SERVICE &&
+  (node.getType() === TYPE_KNATIVE_SERVICE || node.getType() === TYPE_KAFKA_SINK) &&
   operation === MOVE_PUB_SUB_CONNECTOR_OPERATION &&
   !node.getTargetEdges().find((e) => e.getSource() === edge.getSource());
 
@@ -74,11 +77,23 @@ export const isEventPubSubDroppable = (source: Node, target: Node) => {
   );
 };
 const getKnativeTooltip = (monitor): string => {
-  return monitor.getOperation()?.type === CREATE_PUB_SUB_CONNECTOR_OPERATION
-    ? monitor.getItem()?.getData()?.resources.obj.kind === EventingBrokerModel.kind
-      ? i18next.t('knative-plugin~Add Trigger')
-      : i18next.t('knative-plugin~Add Subscription')
-    : i18next.t('knative-plugin~Move sink to service');
+  switch (monitor.getOperation()?.type) {
+    case CREATE_PUB_SUB_CONNECTOR_OPERATION: {
+      return monitor.getItem()?.getData()?.resources.obj.kind === EventingBrokerModel.kind
+        ? i18next.t('knative-plugin~Add Trigger')
+        : i18next.t('knative-plugin~Add Subscription');
+    }
+    case MOVE_PUB_SUB_CONNECTOR_OPERATION: {
+      return monitor.getItem()?.getData()?.resources.obj.kind === EventingBrokerModel.kind
+        ? i18next.t('knative-plugin~Move Trigger')
+        : i18next.t('knative-plugin~Move Subscription');
+    }
+    case MOVE_EV_SRC_CONNECTOR_OPERATION: {
+      return i18next.t('knative-plugin~Move sink to Service');
+    }
+    default:
+      return '';
+  }
 };
 export const eventSourceSinkDropTargetSpec: DropTargetSpec<
   Edge,
@@ -102,6 +117,7 @@ export const eventSourceSinkDropTargetSpec: DropTargetSpec<
     dropTarget: monitor.isOver({ shallow: true }),
     edgeDragging: nodesEdgeIsDragging(monitor, props),
     tooltipLabel: getKnativeTooltip(monitor),
+    edgeOperation: monitor.getOperation()?.type,
   }),
   dropHint: (item) => {
     const itemData = item.getData();

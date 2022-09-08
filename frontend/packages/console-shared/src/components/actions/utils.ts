@@ -1,6 +1,11 @@
-import { Action, ActionGroup } from '@console/dynamic-plugin-sdk';
+import {
+  Action,
+  ActionGroup,
+  GroupedMenuOption,
+  MenuOption,
+  MenuOptionType,
+} from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/plugin-sdk';
-import { GroupedMenuOption, MenuOption, MenuOptionType } from './types';
 
 export const createMenuOptions = (
   actions: Action[],

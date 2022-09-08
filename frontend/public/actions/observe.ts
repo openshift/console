@@ -1,6 +1,6 @@
 import { action, ActionType as Action } from 'typesafe-actions';
 
-import { Rule } from '../components/monitoring/types';
+import { Rule } from '@console/dynamic-plugin-sdk';
 
 export enum ActionType {
   AlertingSetData = 'alertingSetData',
@@ -18,7 +18,6 @@ export enum ActionType {
   QueryBrowserDeleteAllSeries = 'queryBrowserDeleteAllSeries',
   QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
   QueryBrowserDismissNamespaceAlert = 'queryBrowserDismissNamespaceAlert',
-  QueryBrowserInsertText = 'queryBrowserInsertText',
   QueryBrowserPatchQuery = 'queryBrowserPatchQuery',
   QueryBrowserRunQueries = 'queryBrowserRunQueries',
   QueryBrowserSetAllExpanded = 'queryBrowserSetAllExpanded',
@@ -104,13 +103,6 @@ export const queryBrowserDismissNamespaceAlert = () =>
 export const queryBrowserDeleteQuery = (index: number) =>
   action(ActionType.QueryBrowserDeleteQuery, { index });
 
-export const queryBrowserInsertText = (
-  index: number,
-  newText: string,
-  replaceFrom: number,
-  replaceTo: number,
-) => action(ActionType.QueryBrowserInsertText, { index, newText, replaceFrom, replaceTo });
-
 export const queryBrowserPatchQuery = (index: number, patch: { [key: string]: unknown }) =>
   action(ActionType.QueryBrowserPatchQuery, { index, patch });
 
@@ -154,7 +146,6 @@ const actions = {
   queryBrowserDeleteAllSeries,
   queryBrowserDeleteQuery,
   queryBrowserDismissNamespaceAlert,
-  queryBrowserInsertText,
   queryBrowserPatchQuery,
   queryBrowserRunQueries,
   queryBrowserSetAllExpanded,

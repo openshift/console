@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Node, ContextSubMenuItem, ContextMenuItem, Graph } from '@patternfly/react-topology';
-import { Action } from '@console/dynamic-plugin-sdk/src';
-import { referenceFor } from '@console/internal/module/k8s';
 import {
-  getMenuOptionType,
+  Action,
   GroupedMenuOption,
   MenuOption,
   MenuOptionType,
-  orderExtensionBasedOnInsertBeforeAndAfter,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk/src';
+import { referenceFor } from '@console/internal/module/k8s';
+import { getMenuOptionType, orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
 import { getResource } from '../utils';
 

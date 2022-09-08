@@ -58,7 +58,7 @@ export default ({ vmName }) =>
 
     it('should navigate to services', () => {
       cy.get('[data-test=nav]')
-        .filter('[href$=services]')
+        .filter('[href$=core~v1~Service]')
         .then((link) => cy.visit(link.attr('href')));
     });
 

@@ -19,9 +19,10 @@
 
   &--inline {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
 
     > .pf-c-form__group-label {
+      padding-bottom: 0;
       margin-right: var(--pf-global--spacer--md);
     }
 

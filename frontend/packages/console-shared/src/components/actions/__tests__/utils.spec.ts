@@ -1,4 +1,4 @@
-import { MenuOptionType } from '../types';
+import { MenuOptionType } from '@console/dynamic-plugin-sdk';
 import { getMenuOptionType, createMenuOptions } from '../utils';
 import { mockActionGroups, mockActions, mockMenuOptions } from './utils-test-data';
 

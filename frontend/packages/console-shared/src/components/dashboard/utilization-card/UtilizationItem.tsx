@@ -15,25 +15,6 @@ import { ByteDataTypes } from '../../../graph-helper/data-utils';
 import { useUtilizationDuration } from '../../../hooks';
 import { YellowExclamationTriangleIcon, RedExclamationCircleIcon } from '../../status';
 
-const getCurrentData = (
-  humanizeValue: Humanize,
-  description: string,
-  data?: DataPoint[],
-  dataUnits?: string,
-): string => {
-  let current: string;
-  if (data && data.length > 0) {
-    const latestData = data[data.length - 1];
-    current = humanizeValue(latestData.y).string;
-    if (dataUnits) {
-      current += ` ${dataUnits}`;
-    }
-    current += ` ${description.toLowerCase()}`;
-  }
-
-  return current;
-};
-
 const lastTimeInSeries = (series: DataPoint[]) => new Date(_.last(series)?.x ?? 0).getTime();
 const getMaxDate = (data: DataPoint[][]) =>
   new Date(Math.max(...(data?.map?.(lastTimeInSeries) ?? [])) ?? 0);
@@ -52,14 +33,63 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
   }) => {
     const { t } = useTranslation();
     const { endDate, startDate, updateEndDate } = useUtilizationDuration();
+
+    const getCurrentData = (
+      description: string,
+      originalData?: DataPoint[],
+      dataUnitsValue?: string,
+    ): string => {
+      let current: string;
+      if (originalData && originalData.length > 0) {
+        const latestData = originalData[originalData.length - 1];
+        current = humanizeValue(latestData.y).string;
+        if (dataUnitsValue) {
+          current += ` ${dataUnitsValue}`;
+        }
+        if (description === 'in') {
+          current = t('console-shared~{{amount}} in', { amount: current });
+        } else if (description === 'out') {
+          current = t('console-shared~{{amount}} out', { amount: current });
+        } else {
+          current += ` ${description.toLowerCase()}`;
+        }
+      }
+
+      return current;
+    };
+
     const current = data.map((datum, index) =>
-      getCurrentData(humanizeValue, queries[index].desc, datum, dataUnits && dataUnits[index]),
+      getCurrentData(queries[index].desc, datum, dataUnits && dataUnits[index]),
     );
     const maxDate = getMaxDate(data);
     React.useEffect(() => updateEndDate(maxDate), [maxDate, updateEndDate]);
+
+    const mapTranslatedData = (originalData: DataPoint[][]) => {
+      if (!originalData || originalData.length === 0 || originalData[0].length === 0)
+        return originalData;
+      const translatedData = [];
+
+      for (const query of originalData) {
+        const currData = [];
+        const desc = query[0].description;
+        for (const item of query) {
+          if (desc === 'in') {
+            currData.push({ ...item, description: t('console-shared~in') });
+          } else if (desc === 'out') {
+            currData.push({ ...item, description: t('console-shared~out') });
+          } else {
+            currData.push(item);
+          }
+        }
+        translatedData.push(currData);
+      }
+      return translatedData;
+    };
+
+    const translatedData = mapTranslatedData(data);
     const chart = (
       <AreaChart
-        data={error ? [[]] : data}
+        data={error ? [[]] : translatedData}
         domain={{ x: [startDate, endDate] }}
         loading={!error && isLoading}
         query={queries.map((q) => q.query)}

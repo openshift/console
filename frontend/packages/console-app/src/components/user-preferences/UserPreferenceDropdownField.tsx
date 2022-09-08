@@ -5,6 +5,8 @@ import { UserPreferenceDropdownField as DropdownFieldType } from '@console/dynam
 import { useTelemetry, useUserSettings } from '@console/shared';
 import { UserPreferenceFieldProps } from './types';
 
+import './UserPreferenceField.scss';
+
 type UserPreferenceDropdownFieldProps = UserPreferenceFieldProps<DropdownFieldType>;
 
 const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = ({
@@ -12,6 +14,7 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
   userSettingsKey,
   defaultValue,
   options,
+  description,
 }) => {
   // resources and calls to hooks
   const { t } = useTranslation();
@@ -26,13 +29,26 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
     () =>
       options.map((dropdownOption, index) => {
         const key = `${dropdownOption.label}${index}`;
-        return <SelectOption key={key} value={dropdownOption.label} />;
+        return (
+          <SelectOption
+            key={key}
+            value={dropdownOption.label}
+            description={dropdownOption?.description}
+          />
+        );
       }),
     [options],
   );
   const loaded: boolean = currentUserPreferenceValueLoaded;
 
-  if (defaultValue && loaded && !currentUserPreferenceValue) {
+  const isCurrentUserPreferenceValuePresentInOptions = options.find(
+    (option) => option.value === currentUserPreferenceValue,
+  );
+
+  if (
+    (defaultValue && loaded && !currentUserPreferenceValue) ||
+    (defaultValue && loaded && !isCurrentUserPreferenceValuePresentInOptions)
+  ) {
     setCurrentUserPreferenceValue(defaultValue);
   }
 
@@ -53,18 +69,23 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
   };
 
   return loaded ? (
-    <Select
-      toggleId={id}
-      variant={SelectVariant.single}
-      isOpen={dropdownOpen}
-      selections={getDropdownLabelFromValue(currentUserPreferenceValue)}
-      onToggle={onToggle}
-      onSelect={onSelect}
-      placeholderText={t('console-app~Select an option')}
-      data-test={`dropdown ${id}`}
-    >
-      {selectOptions}
-    </Select>
+    <>
+      {description && (
+        <div className="co-help-text co-user-preference-field--description">{description}</div>
+      )}
+      <Select
+        toggleId={id}
+        variant={SelectVariant.single}
+        isOpen={dropdownOpen}
+        selections={getDropdownLabelFromValue(currentUserPreferenceValue)}
+        onToggle={onToggle}
+        onSelect={onSelect}
+        placeholderText={t('console-app~Select an option')}
+        data-test={`dropdown ${id}`}
+      >
+        {selectOptions}
+      </Select>
+    </>
   ) : (
     <Skeleton height="30px" width="100%" data-test={`dropdown skeleton ${id}`} />
   );

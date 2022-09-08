@@ -1,17 +1,26 @@
 import {
   autocompletion,
+  closeBrackets,
+  closeBracketsKeymap,
   closeCompletion,
   completionKeymap,
   currentCompletions,
   setSelectedCompletion,
 } from '@codemirror/autocomplete';
-import { closeBrackets, closeBracketsKeymap } from '@codemirror/closebrackets';
-import { defaultKeymap, insertNewlineAndIndent } from '@codemirror/commands';
-import { HighlightStyle, tags } from '@codemirror/highlight';
-import { history, historyKeymap } from '@codemirror/history';
-import { indentOnInput } from '@codemirror/language';
+import {
+  defaultKeymap,
+  historyKeymap,
+  history,
+  insertNewlineAndIndent,
+} from '@codemirror/commands';
+import {
+  indentOnInput,
+  HighlightStyle,
+  bracketMatching,
+  syntaxHighlighting,
+} from '@codemirror/language';
+import { tags } from '@lezer/highlight';
 import { lintKeymap } from '@codemirror/lint';
-import { bracketMatching } from '@codemirror/matchbrackets';
 import { highlightSelectionMatches } from '@codemirror/search';
 import { EditorState, Prec } from '@codemirror/state';
 import {
@@ -22,13 +31,13 @@ import {
   ViewPlugin,
   ViewUpdate,
 } from '@codemirror/view';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { PrometheusEndpoint, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import CloseButton from '@console/shared/src/components/close-button';
-import { PromQLExtension } from 'codemirror-promql';
+import { PromQLExtension } from '@prometheus-io/codemirror-promql';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
 import { PROMETHEUS_BASE_PATH } from '../graphs';
-import { PrometheusEndpoint } from '../graphs/helpers';
 import { useSafeFetch } from '../utils';
 import './_promql-expression-input.scss';
 
@@ -333,7 +342,7 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
             ...lintKeymap,
           ]),
           codeMirrorPlaceholder(placeholder),
-          promqlHighlighter,
+          syntaxHighlighting(promqlHighlighter),
           promqlExtension.asExtension(),
           keymap.of([
             {
@@ -344,7 +353,7 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
               },
             },
           ]),
-          Prec.override(
+          Prec.highest(
             keymap.of([
               {
                 key: 'Enter',

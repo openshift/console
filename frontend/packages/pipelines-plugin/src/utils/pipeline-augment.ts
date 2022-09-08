@@ -168,6 +168,8 @@ export const getRunStatusColor = (status: string): StatusMessage => {
       return { message: i18next.t('pipelines-plugin~Skipped'), pftoken: skippedColor };
     case ComputedStatus.Cancelled:
       return { message: i18next.t('pipelines-plugin~Cancelled'), pftoken: cancelledColor };
+    case ComputedStatus.Cancelling:
+      return { message: i18next.t('pipelines-plugin~Cancelling'), pftoken: cancelledColor };
     case ComputedStatus.Idle:
     case ComputedStatus.Pending:
       return { message: i18next.t('pipelines-plugin~Pending'), pftoken: pendingColor };
@@ -319,4 +321,11 @@ export const shouldHidePipelineRunStop = (pipelineRun: PipelineRunKind): boolean
     pipelineRun &&
     (countRunningTasks(pipelineRun) > 0 ||
       pipelineRunFilterReducer(pipelineRun) === ComputedStatus.Running)
+  );
+
+export const shouldHidePipelineRunCancel = (pipelineRun: PipelineRunKind): boolean =>
+  !(
+    pipelineRun &&
+    countRunningTasks(pipelineRun) > 0 &&
+    pipelineRunFilterReducer(pipelineRun) !== ComputedStatus.Cancelled
   );

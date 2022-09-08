@@ -84,7 +84,7 @@ Given('user is on the Helm page with helm release {string}', (helmRelease: strin
 });
 
 Then('user will be redirected to Helm Releases page', () => {
-  detailsPage.titleShouldContain(pageTitle.HelmReleases);
+  detailsPage.titleShouldContain(pageTitle.Helm);
 });
 
 When('user clicks on the Kebab menu', () => {

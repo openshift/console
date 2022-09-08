@@ -89,7 +89,7 @@ export const pipelineBuilderYAMLSchema = (formData: PipelineBuilderFormValues) =
         yup.object({
           name: yup.string(),
           description: yup.string(),
-          default: yup.string(),
+          default: yup.lazy((val) => (Array.isArray(val) ? yup.array() : yup.string())),
         }),
       ),
       resources: yup.array().of(

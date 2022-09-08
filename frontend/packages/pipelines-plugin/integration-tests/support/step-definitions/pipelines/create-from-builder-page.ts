@@ -15,6 +15,7 @@ import {
   pipelineDetailsPage,
   pipelineBuilderSidePane,
   pipelineRunDetailsPage,
+  startPipelineInPipelinesPage,
 } from '../../pages';
 
 When('user clicks Create Pipeline button on Pipelines page', () => {
@@ -297,7 +298,10 @@ And('user has named pipeline as {string}', (pipelineName: string) => {
 });
 
 And('user has tasks {string} and {string} in series', (task1: string, task2: string) => {
-  pipelineBuilderPage.selectTask(task1);
+  cy.byTestID('task-list').click();
+  cy.get(pipelineBuilderPO.formView.quickSearch).type(task1);
+  cy.byTestID(`item-name-${task1}-Red Hat`).click();
+  cy.get(pipelineBuilderPO.formView.addInstallTask).click();
   pipelineBuilderPage.selectSeriesTask(task2);
 });
 
@@ -547,8 +551,10 @@ When('user should see the Create button enabled after installation', () => {
 });
 
 When('user selects {string} from Add task quick search', (searchItem: string) => {
-  cy.get('[data-test="task-list"]').click();
+  cy.byTestID('task-list').click();
   cy.get(pipelineBuilderPO.formView.quickSearch).type(searchItem);
+  cy.byTestID(`item-name-${searchItem}-Red Hat`).click();
+  cy.get(pipelineBuilderPO.formView.addInstallTask).click();
 });
 
 When('user hovers over the newly added task', () => {
@@ -600,4 +606,34 @@ When('user changes version to {string}', (menuItem: string) => {
 
 When('user clicks on Update and Add button', () => {
   cy.byTestID('task-cta').click();
+});
+
+When('user will see array type parameter {string} field', (param: string) => {
+  cy.byTestID(`${param}-text-column-field`).should('be.visible');
+});
+
+When('user add array type parameter {string} value {string}', (param: string, value: string) => {
+  cy.byTestID(`${param}-text-column-field`)
+    .get('[data-test="add-action"]')
+    .should('be.visible')
+    .click();
+  cy.get('#form-input-parameters-0-value-2-field').type(value);
+});
+
+When('user click on pipeline start modal Start button', () => {
+  startPipelineInPipelinesPage.clickStart();
+});
+
+Then('user see the added parameter value', () => {
+  cy.get('#form-input-parameters-0-value-field').should('have.value', 'foo,bar,value1');
+});
+
+When('user will see pipeline {string} in pipelines page', (name: string) => {
+  navigateTo(devNavigationMenu.Add);
+  navigateTo(devNavigationMenu.Pipelines);
+  pipelinesPage.search(name);
+});
+
+Then('user see the pipeline succeeded', () => {
+  cy.byTestID('status-text').should('have.text', 'Succeeded');
 });

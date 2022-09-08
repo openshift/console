@@ -34,6 +34,7 @@ export const OperandLink: React.FC<OperandLinkProps> = (props) => {
         className="co-resource-item__resource-name"
         onClick={props.onClick}
         data-test-operand-link={name}
+        data-test={name}
       >
         {name}
       </Link>

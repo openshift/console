@@ -141,15 +141,6 @@ export const ClusterOperatorList: React.FC = (props) => {
   );
 };
 
-const allStatuses = [
-  OperatorStatus.Available,
-  OperatorStatus.Progressing,
-  OperatorStatus.Degraded,
-  OperatorStatus.CannotUpdate,
-  OperatorStatus.Unavailable,
-  OperatorStatus.Unknown,
-];
-
 const UpdateInProgressAlert: React.FC<UpdateInProgressAlertProps> = ({ cv }) => {
   const updateCondition = getClusterVersionCondition(
     cv,
@@ -181,10 +172,14 @@ export const ClusterOperatorPage: React.FC<ClusterOperatorPageProps> = (props) =
       filterGroupName: t('public~Status'),
       type: 'cluster-operator-status',
       reducer: getClusterOperatorStatus,
-      items: _.map(allStatuses, (phase) => ({
-        id: phase,
-        title: phase,
-      })),
+      items: [
+        { id: 'Available', title: t('public~Available') },
+        { id: 'Progressing', title: t('public~Progressing') },
+        { id: 'Degraded', title: t('public~Degraded') },
+        { id: 'Cannot update', title: t('public~Cannot update') },
+        { id: 'Unavailable', title: t('public~Unavailable') },
+        { id: 'Unknown', title: t('public~Unknown') },
+      ],
     },
   ];
   return (

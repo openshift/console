@@ -76,3 +76,9 @@ export const toTitleCase = (title: string): string => {
 export const isModifiedEvent = (event: React.MouseEvent<HTMLElement>) => {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 };
+
+// Returns true if subject starts with at least one search string
+export const startsWithSome = (subject: string, ...searchStrings: string[]): boolean =>
+  searchStrings?.some(
+    (searchString) => searchString?.length > 0 && subject.startsWith(searchString),
+  );

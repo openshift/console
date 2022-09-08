@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ExclamationTriangleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
-import { AlertSeverity } from '@console/internal/components/monitoring/types';
+import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 
 interface AlertSeverityIconProps {
   severityAlertType: AlertSeverity;
@@ -17,7 +17,7 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
         <ExclamationCircleIcon
           style={{
             fontSize,
-            color: 'var(--pf-global--danger-color--100)',
+            fill: 'var(--pf-global--danger-color--100)',
           }}
         />
       );
@@ -27,7 +27,7 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
         <ExclamationTriangleIcon
           style={{
             fontSize,
-            color: 'var(--pf-global--warning-color--100)',
+            fill: 'var(--pf-global--warning-color--100)',
           }}
         />
       );

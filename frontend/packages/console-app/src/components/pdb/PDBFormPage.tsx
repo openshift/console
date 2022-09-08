@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { PageHeading, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -8,7 +8,7 @@ import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { PodDisruptionBudgetModel } from '../../models';
-import { pdbToK8sResource } from './pdb-models';
+import { pdbToK8sResource, mergeInitialYAMLWithExistingResource } from './pdb-models';
 import PDBForm from './PDBForm';
 import { PodDisruptionBudgetKind } from './types';
 import { getPDBResource } from './utils/get-pdb-resources';
@@ -69,17 +69,16 @@ export const PDBFormPage: React.FC<{
   const k8sObj = pdbToK8sResource(initialPDB);
 
   const YAMLEditor: React.FC<YAMLEditorProps> = ({ onChange, initialYAML = '' }) => {
+    const yamlData = mergeInitialYAMLWithExistingResource(initialYAML, existingResource);
+
     return (
       <CreateYAML
         hideHeader
         match={match}
         onChange={onChange}
-        template={
-          initialYAML ||
-          safeJSToYAML(existingResource, 'yamlData', {
-            skipInvalid: true,
-          })
-        }
+        template={safeJSToYAML(yamlData, 'yamlData', {
+          skipInvalid: true,
+        })}
         isCreate={!existingResource}
       />
     );
@@ -96,9 +95,14 @@ export const PDBFormPage: React.FC<{
         <LoadingBox />
       ) : (
         <>
-          <PageHeading title={title}>
-            <span className="help-block">{helpText}</span>
-          </PageHeading>
+          <PageHeading
+            title={title}
+            helpText={
+              <Trans t={t} ns="console-app">
+                {helpText}
+              </Trans>
+            }
+          />
 
           <SyncedEditor
             context={{

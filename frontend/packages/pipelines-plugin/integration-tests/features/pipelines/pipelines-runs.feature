@@ -44,7 +44,7 @@ Feature: Pipeline Runs
               And user is at pipelines page
              When user clicks Last Run value of "<pipeline_name>"
              Then user will be redirected to Pipeline Run Details page
-              And user is able to see Details, YAML, TaskRuns, Logs and Events tabs
+              And user is able to see Details, YAML, TaskRuns, Parameters, Logs and Events tabs
               And Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created At, Owner, Status, Pipeline and Triggered by
               And Actions dropdown display on the top right corner of the page
 
@@ -146,13 +146,14 @@ Feature: Pipeline Runs
              Then user is able to see expanded logs page
 
 
-        @regression
+        @regression @odc-4793
         Scenario: kebab menu options in pipeline Runs page: P-07-TC14
-            Given pipeline run is displayed for "pipeline-aaa" without resource
-             When user selects the Pipeline Run for "pipeline-aaa"
-              And user navigates to pipelineRuns page
-              And user selects the kebab menu in pipeline Runs page for pipeline "pipeline-aaa"
-             Then user is able to see kebab menu options Rerun, Delete Pipeline Run
+            Given user creates pipeline using git named "pipeline-aaa"
+              And user is at the Pipeline Details page of pipeline "pipeline-aaa"
+            #  When user starts the pipeline from start pipeline modal
+             When user starts the pipeline "pipeline-aaa" in Pipeline Details page
+              And user clicks Actions menu on the top right corner of the page
+             Then user is able to see Actions menu options "Stop", "Cancel", "Rerun", "Delete PipelineRun" in pipeline run page
 
 
         @regression
@@ -220,7 +221,7 @@ Feature: Pipeline Runs
         Scenario: Display failure details on pipeline run details: P-07-TC22
             Given user is at pipeline page in developer perspective
               And a failed pipeline is present
-             When user goes to failed pipeline run of pipeline "golang-ex"
+             When user goes to failed pipeline run of pipeline "devfilev2"
               And user opens pipeline run details
              Then user can see status as Failure
               And user can view failure message under Message heading
@@ -230,8 +231,8 @@ Feature: Pipeline Runs
         @regression
         Scenario: Display failure details of pipeline run in topology sidebar: P-07-TC23
             Given user is at the Topology page
-              And a node with an associated pipeline "golang-ex" is present
-             When user opens sidebar of the node "golang-ex"
+              And a node with an associated pipeline "devfilev2" is present
+             When user opens sidebar of the node "devfilev2"
               And user scrolls down to pipeline runs section
              Then user will see the pipeline run name with failed status
               And user will see failure message below pipeline runs
@@ -335,3 +336,41 @@ Feature: Pipeline Runs
               And user clicks on Start button
               And user navigates to pipelineRun logs tab
              Then user is able to see log snippet for failure of "build-image" task
+
+        @regression @odc-4793
+        Scenario: Pipeline Run details page with Parameters tab and no parameters: P-07-TC34
+            Given pipeline run is displayed for "pipeline-run-no-parameters" without resource
+              And user is at pipelines page
+             When user clicks Last Run value of "pipeline-run-no-parameters"
+             Then user will be redirected to Pipeline Run Details page
+              And user is able to see Details, YAML, TaskRuns, Parameters, Logs and Events tabs
+              And user navigates to pipelineRun parameters tab
+              And user is able to see No parameters are associated with this PipelineRun
+
+        @regression @odc-4793
+        Scenario: Pipeline Run with parameters: P-07-TC35
+            Given pipeline run is displayed for "pipeline-run-parameters" with parameters
+              And user is at pipelines page
+             When user clicks Last Run value of "pipeline-run-parameters"
+             Then user will be redirected to Pipeline Run Details page
+              And user navigates to pipelineRun parameters tab
+              And user is able to see parameters of pipelineRun
+              And user is able to see name "testName" and value "testValue" parameters value of pipelineRun
+
+
+        @regression @odc-4793
+        Scenario: Status for the cancelled pipeline: P-07-TC34
+            Given user creates pipeline using git named "pipeline-cancel"
+              And user is at the Pipeline Details page of pipeline "pipeline-cancel"
+             When user starts the pipeline "pipeline-cancel" in Pipeline Details page
+              And user selects option "Cancel" from Actions menu drop down
+             Then status displays as "Cancelled" in pipeline run details page
+
+
+        @regression @odc-4793
+        Scenario: Status for the stopped pipeline: P-07-TC35
+            Given user creates pipeline using git named "pipeline-stop"
+              And user is at the Pipeline Details page of pipeline "pipeline-stop"
+             When user starts the pipeline "pipeline-stop" in Pipeline Details page
+              And user selects option "Stop" from Actions menu drop down
+             Then status displays as "Cancelled" in pipeline run details page

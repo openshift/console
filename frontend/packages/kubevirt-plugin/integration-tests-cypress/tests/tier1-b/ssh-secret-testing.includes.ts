@@ -9,7 +9,7 @@ export default () =>
       // eslint-disable-next-line
       cy.wait(AFTER_CREATE_WAIT_TIME);
       cy.get('[data-test=nav]')
-        .filter('[href$=secrets]')
+        .filter('[href$=core~v1~Secret]')
         .then((link) => cy.visit(link.attr('href')));
     });
 

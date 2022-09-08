@@ -85,7 +85,6 @@ export const CreateNetworkPolicy: React.FC<{
         className="create-network-policy__page-heading"
         title={t('console-app~Create NetworkPolicy')}
         helpText={helpText}
-        detail
       />
       <SyncedEditor
         context={{

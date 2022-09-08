@@ -49,6 +49,7 @@ export type PrometheusHealthHandler = (
 export type PrometheusHealthPopupProps = {
   responses: { response: PrometheusResponse; error: any }[];
   k8sResult?: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>;
+  hide: () => void;
 };
 
 export type PrometheusActivityProps = {

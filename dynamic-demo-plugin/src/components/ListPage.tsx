@@ -12,6 +12,7 @@ import {
   TableData,
   RowProps,
   ResourceLink,
+  ResourceIcon,
   TableColumn,
 } from '@openshift-console/dynamic-plugin-sdk';
 
@@ -114,6 +115,10 @@ const ListPage = () => {
           loaded={loaded}
           loadError={loadError}
         />
+      </ListPageBody>
+      <ListPageBody>
+        <p>Sample ResourceIcon</p>
+        <ResourceIcon kind="Pod" />
       </ListPageBody>
     </>
   );

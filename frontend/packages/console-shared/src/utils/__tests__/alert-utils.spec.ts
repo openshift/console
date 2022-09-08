@@ -1,4 +1,4 @@
-import { AlertSeverity } from '@console/internal/components/monitoring/types';
+import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 import { mockAlerts, mockAlerts2, expectedFiringAlerts } from '../__mocks__/alerts-and-rules-data';
 import {
   getSeverityAlertType,

@@ -72,6 +72,8 @@ export type NavSection = ExtensionDeclaration<
   }
 >;
 
+export type ResourceNavItem = ResourceClusterNavItem | ResourceNSNavItem;
+
 export type NavExtension =
   | NavSection
   | Separator
@@ -89,6 +91,9 @@ export const isResourceNSNavItem = (e: Extension): e is ResourceNSNavItem =>
 
 export const isResourceClusterNavItem = (e: Extension): e is ResourceClusterNavItem =>
   e.type === 'console.navigation/resource-cluster';
+
+export const isResourceNavItem = (e: Extension): e is ResourceNavItem =>
+  isResourceNSNavItem(e) || isResourceClusterNavItem(e);
 
 export const isSeparator = (e: Extension): e is Separator =>
   e.type === 'console.navigation/separator';

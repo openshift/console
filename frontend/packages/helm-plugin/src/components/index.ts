@@ -3,5 +3,7 @@ export { default as HelmInstallUpgradePage } from './forms/install-upgrade/HelmI
 export { default as HelmReleaseRollbackPage } from './forms/rollback/HelmReleaseRollbackPage';
 export { default as HelmReleaseDetailsPage } from './details-page/HelmReleaseDetailsPage';
 export { default as HelmReleaseListPage } from './list-page/HelmReleaseListPage';
-export { default as ProjectHelmChartRepositoryForm } from './forms/ProjectHelmChartRepository/CreateProjectHelmChartRepositoryPage';
+export { default as HelmChartRepositoryForm } from './forms/HelmChartRepository/CreateHelmChartRepositoryPage';
 export { default as ProjectHelmChartRepositoryListPage } from './list-page/ProjectHelmChartRepositoryListPage';
+export { default as HelmChartRepositoryListPage } from './list-page/HelmChartRepositoryListPage';
+export { default as HelmTabbedPage } from './list-page/HelmTabbedPage';

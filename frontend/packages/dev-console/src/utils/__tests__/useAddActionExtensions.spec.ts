@@ -48,39 +48,61 @@ describe('useAddActionExtensions', () => {
     uid: '1234-3',
   };
 
+  const addAction4: ResolvedExtension<AddAction> = {
+    type: 'dev-console.add/action',
+    properties: {
+      id: 'action4',
+      label: 'Action 4',
+      description: 'A description for action 4',
+      callback: jest.fn(),
+    },
+    pluginID: 'plugin3',
+    pluginName: 'Plugin 3',
+    uid: '1234-3',
+  };
+
   afterEach(() => {
     delete window.SERVER_FLAGS.addPage;
   });
 
   it('return all actions if SERVER_FLAGS.addPage is not defined', () => {
-    useResolvedExtensionsMock.mockReturnValue([[addAction1, addAction2, addAction3], true]);
+    useResolvedExtensionsMock.mockReturnValue([
+      [addAction1, addAction2, addAction3, addAction4],
+      true,
+    ]);
     delete window.SERVER_FLAGS.addPage;
 
     testHook(() => {
       const [addActionExtensions, resolved] = useAddActionExtensions();
-      expect(addActionExtensions).toEqual([addAction1, addAction2, addAction3]);
+      expect(addActionExtensions).toEqual([addAction1, addAction2, addAction3, addAction4]);
       expect(resolved).toEqual(true);
     });
   });
 
   it('return all actions if SERVER_FLAGS.addPage customization is empty', () => {
-    useResolvedExtensionsMock.mockReturnValue([[addAction1, addAction2, addAction3], true]);
+    useResolvedExtensionsMock.mockReturnValue([
+      [addAction1, addAction2, addAction3, addAction4],
+      true,
+    ]);
     window.SERVER_FLAGS.addPage = '{}';
 
     testHook(() => {
       const [addActionExtensions, resolved] = useAddActionExtensions();
-      expect(addActionExtensions).toEqual([addAction1, addAction2, addAction3]);
+      expect(addActionExtensions).toEqual([addAction1, addAction2, addAction3, addAction4]);
       expect(resolved).toEqual(true);
     });
   });
 
   it('return filtered actions if SERVER_FLAGS.addPage contains some disabledActions', () => {
-    useResolvedExtensionsMock.mockReturnValue([[addAction1, addAction2, addAction3], true]);
+    useResolvedExtensionsMock.mockReturnValue([
+      [addAction1, addAction2, addAction3, addAction4],
+      true,
+    ]);
     window.SERVER_FLAGS.addPage = '{"disabledActions":["action2"]}';
 
     testHook(() => {
       const [addActionExtensions, resolved] = useAddActionExtensions();
-      expect(addActionExtensions).toEqual([addAction1, addAction3]);
+      expect(addActionExtensions).toEqual([addAction1, addAction3, addAction4]);
       expect(resolved).toEqual(true);
     });
   });

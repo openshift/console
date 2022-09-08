@@ -70,6 +70,7 @@ const Status: React.FC<StatusProps> = ({
     case 'Deleting':
     case 'Expired':
     case 'Not Ready':
+    case 'Cancelling':
     case 'Terminating':
       return <StatusIconAndText {...statusProps} icon={<BanIcon />} />;
 

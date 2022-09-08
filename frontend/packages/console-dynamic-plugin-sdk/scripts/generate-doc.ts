@@ -12,7 +12,7 @@ import { getProgramFromFile, printJSDocComments } from './utils/typescript';
 
 const EXAMPLE = '@example';
 const DYNAMIC_PKG_PATH = '@console/dynamic-plugin-sdk/';
-const GITHUB_URL = 'https://github.com/openshift/console/tree/release-4.11/frontend';
+const GITHUB_URL = 'https://github.com/openshift/console/tree/release-4.12/frontend';
 
 const getConsoleExtensions = () => {
   const program = getProgramFromFile(resolvePath('src/schema/console-extensions.ts'));
@@ -108,11 +108,13 @@ const generateDoc = (comment: tsdoc.DocComment) => {
     description: renderDocNode(param.content),
   }));
   const returns = renderDocNode(comment.returnsBlock?.content);
+  const deprecated = renderDocNode(comment.deprecatedBlock);
   return {
     summary,
     example,
     parameters,
     returns,
+    deprecated,
   };
 };
 
@@ -188,7 +190,12 @@ const getAPIs = () => {
 };
 
 renderTemplate('scripts/templates/api.md.ejs', {
-  apis: getAPIs(),
+  apis: getAPIs().sort((a, b) => {
+    if (a.doc.deprecated !== b.doc.deprecated) {
+      return a.doc.deprecated ? 1 : -1;
+    }
+    return 1;
+  }),
   printComments: (docComments: string) => printJSDocComments([docComments]).replace(/\n/g, '<br/>'),
   removeNewLines: (comment: string) => comment.replace('\n', ''),
   toLowerCase: (str: string) => str.toLocaleLowerCase(),

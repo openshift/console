@@ -8,13 +8,12 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { useDispatch, connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
-import { RowFilter as RowFilterExt } from '@console/dynamic-plugin-sdk';
+import { RowFilter as RowFilterExt, Rule } from '@console/dynamic-plugin-sdk';
 import { alertingLoaded, alertingSetRules } from '@console/internal/actions/observe';
 import { sortList } from '@console/internal/actions/ui';
 import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
-import { Rule } from '@console/internal/components/monitoring/types';
 import {
   alertingRuleStateOrder,
   getAlertsAndRules,

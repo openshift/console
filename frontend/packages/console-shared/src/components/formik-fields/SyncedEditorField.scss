@@ -2,9 +2,19 @@
 
 .ocs-synced-editor-field {
   &__editor-toggle {
-    padding-top: var(--pf-global--spacer--sm);
     border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
     border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+    margin-left: -$pf-global-gutter;
+    margin-right: -$pf-global-gutter;
+    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--lg);
+    @media (min-width: $pf-global--breakpoint--xl) {
+      margin-left: -$pf-global-gutter--md;
+      margin-right: -$pf-global-gutter--md;
+    }
+    @media (min-width: $pf-global--breakpoint--xl) {
+      padding-left: $pf-global-gutter--md;
+      padding-right: $pf-global-gutter--md;
+    }
 
     &.margin {
       margin: var(--pf-global--spacer--md) 0;

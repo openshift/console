@@ -114,9 +114,9 @@ type helmRepoGetter struct {
 	CoreClient corev1.CoreV1Interface
 }
 
-func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmRepo, error) {
+func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespace string, isClusterScoped bool) (*helmRepo, error) {
 	h := &helmRepo{}
-
+	var caReferenceNamespace, tlsRefNamespace, basicAuthRefNamespace string
 	disabled, _, err := unstructured.NestedBool(repo.Object, "spec", "disabled")
 	if err != nil {
 		return nil, err
@@ -147,27 +147,46 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmR
 	if err != nil {
 		return nil, err
 	}
-
+	if isClusterScoped {
+		caReferenceNamespace = configNamespace
+	} else {
+		caReferenceNamespace = namespace
+	}
 	tlsReference, _, err := unstructured.NestedString(repo.Object, "spec", "connectionConfig", "tlsClientConfig", "name")
 	if err != nil {
 		return nil, err
 	}
+	if isClusterScoped {
+		tlsRefNamespace = configNamespace
+	} else {
+		tlsRefNamespace = namespace
+	}
+
+	basicAuthReference, _, err := unstructured.NestedString(repo.Object, "spec", "connectionConfig", "basicAuthConfig", "name")
+	if err != nil {
+		return nil, err
+	}
+	if isClusterScoped {
+		basicAuthRefNamespace = configNamespace
+	} else {
+		basicAuthRefNamespace = namespace
+	}
 
 	var rootCAs *x509.CertPool
 	if caReference != "" {
-		configMap, err := b.CoreClient.ConfigMaps(configNamespace).Get(context.TODO(), caReference, v1.GetOptions{})
+		configMap, err := b.CoreClient.ConfigMaps(caReferenceNamespace).Get(context.TODO(), caReference, v1.GetOptions{})
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("Failed to GET configmap %s, reason %v", caReference, err))
+			return nil, fmt.Errorf("Failed to GET configmap %s, reason %v", caReference, err)
 		}
 		caBundleKey := "ca-bundle.crt"
 		caCert, found := configMap.Data[caBundleKey]
 		if !found {
-			return nil, errors.New(fmt.Sprintf("Failed to find %s key in configmap %s", caBundleKey, caReference))
+			return nil, fmt.Errorf("Failed to find %s key in configmap %s", caBundleKey, caReference)
 		}
 		if caCert != "" {
 			rootCAs = x509.NewCertPool()
 			if ok := rootCAs.AppendCertsFromPEM([]byte(caCert)); !ok {
-				return nil, errors.New("Failed to append caCert")
+				return nil, fmt.Errorf("Failed to append caCert")
 			}
 		}
 	}
@@ -181,19 +200,19 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmR
 		RootCAs: rootCAs,
 	})
 	if tlsReference != "" {
-		secret, err := b.CoreClient.Secrets(configNamespace).Get(context.TODO(), tlsReference, v1.GetOptions{})
+		secret, err := b.CoreClient.Secrets(tlsRefNamespace).Get(context.TODO(), tlsReference, v1.GetOptions{})
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("Failed to GET secret %s reason %v", tlsReference, err))
+			return nil, fmt.Errorf("Failed to GET secret %s from %v reason %v", tlsReference, tlsRefNamespace, err)
 		}
 		tlsCertSecretKey := "tls.crt"
 		tlsCert, ok := secret.Data[tlsCertSecretKey]
 		if !ok {
-			return nil, errors.New(fmt.Sprintf("Failed to find %s key in secret %s", tlsCertSecretKey, tlsReference))
+			return nil, fmt.Errorf("Failed to find %s key in secret %s", tlsCertSecretKey, tlsReference)
 		}
 		tlsSecretKey := "tls.key"
 		tlsKey, ok := secret.Data[tlsSecretKey]
 		if !ok {
-			return nil, errors.New(fmt.Sprintf("Failed to find %s key in secret %s", tlsSecretKey, tlsReference))
+			return nil, fmt.Errorf("Failed to find %s key in secret %s", tlsSecretKey, tlsReference)
 		}
 		if tlsKey != nil && tlsCert != nil {
 			cert, err := tls.X509KeyPair(tlsCert, tlsKey)
@@ -203,6 +222,25 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmR
 			tlsClientConfig.Certificates = []tls.Certificate{cert}
 		}
 	}
+
+	if basicAuthReference != "" {
+		secret, err := b.CoreClient.Secrets(basicAuthRefNamespace).Get(context.TODO(), basicAuthReference, v1.GetOptions{})
+		if err != nil {
+			return nil, fmt.Errorf("Failed to GET secret %q from %q reason %v", basicAuthReference, basicAuthRefNamespace, err)
+		}
+		baUsernameKey := "username"
+		baPasswordKey := "password"
+		baUsername, found := secret.Data[baUsernameKey]
+		if !found {
+			return nil, fmt.Errorf("failed to find %q key in secret '%s/%s'", baUsernameKey, basicAuthRefNamespace, basicAuthReference)
+		}
+		baPassword, found := secret.Data[baPasswordKey]
+		if !found {
+			return nil, fmt.Errorf("failed to find %q key in secret '%s/%s'", baPasswordKey, basicAuthRefNamespace, basicAuthReference)
+		}
+		h.URL.User = url.UserPassword(string(baUsername), string(baPassword))
+	}
+
 	h.httpClient = func() (*http.Client, error) {
 		return httpClient(tlsClientConfig)
 	}
@@ -218,7 +256,7 @@ func (b *helmRepoGetter) List(namespace string) ([]*helmRepo, error) {
 		return helmRepos, nil
 	}
 	for _, item := range clusterRepos.Items {
-		helmConfig, err := b.unmarshallConfig(item)
+		helmConfig, err := b.unmarshallConfig(item, "", true)
 		if err != nil {
 			klog.Errorf("Error unmarshalling repo %v: %v", item, err)
 			continue
@@ -233,7 +271,7 @@ func (b *helmRepoGetter) List(namespace string) ([]*helmRepo, error) {
 			return helmRepos, nil
 		}
 		for _, item := range namespaceRepos.Items {
-			helmConfig, err := b.unmarshallConfig(item)
+			helmConfig, err := b.unmarshallConfig(item, namespace, false)
 			if err != nil {
 				klog.Errorf("Error unmarshalling repo %v: %v", item, err)
 				continue

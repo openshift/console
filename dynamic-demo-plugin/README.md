@@ -8,8 +8,10 @@ capabilities via end-to-end tests.
 
 ## Local development
 
-1. `yarn build` to build the plugin, generating output to `dist` directory
-2. `yarn http-server` to start an HTTP server hosting the generated assets
+1. `yarn --cwd ../frontend install` to install dependant frontend resources
+2. `yarn install` to install plugin dependencies
+3. `yarn build` to build the plugin, generating output to `dist` directory
+4. `yarn http-server` to start an HTTP server hosting the generated assets
 
 ```
 Starting up http-server, serving ./dist
@@ -26,6 +28,29 @@ the script, for example:
 
 ```sh
 yarn http-server -a 127.0.0.1
+```
+
+In another terminal window, run:
+
+1. `oc login` (requires [oc](https://console.redhat.com/openshift/downloads) and an [OpenShift cluster](https://console.redhat.com/openshift/create))
+2. `yarn run start-console` (requires [Docker](https://www.docker.com) or [podman 3.2.0+](https://podman.io))
+
+This will run the OpenShift console in a container connected to the cluster
+you've logged into. The plugin HTTP server runs on port 9001 with CORS enabled.
+Navigate to <http://localhost:9000> to see the running plugin.
+
+### Running start-console with Apple silicon and podman
+
+If you are using podman on a Mac with Apple silicon, `yarn run start-console`
+might fail since it runs an amd64 image. You can workaround the problem with
+[qemu-user-static](https://github.com/multiarch/qemu-user-static) by running
+these commands:
+
+```bash
+podman machine ssh
+sudo -i
+rpm-ostree install qemu-user-static
+systemctl reboot
 ```
 
 See the plugin development section in
@@ -106,11 +131,11 @@ spec:
 ### Local development
 
 In case of local developement of the dynamic plugin, just set up your
-HTTP server locally and pass its endpoint address in form of a service proxy 
+HTTP server locally and pass its endpoint address in form of a service proxy
 entry to the console server in form of JSON, using the `--plugin-proxy` flag.
 
-
 Example:
+
 ```
  ./bin/bridge --plugin-proxy='{"services":[{"consoleAPIPath":"/api/proxy/namespace/serviceNamespace/service/serviceName:9991/","endpoint":"http://localhost:8080"}]}'
 ```
@@ -123,14 +148,19 @@ Note that the service `endpoint` needs to contain scheme and `consoleAPIPath` ne
 Following commands should be executed in Console repository root.
 
 1. Build the image:
+
    ```sh
    docker build -f Dockerfile.plugins.demo -t quay.io/$USER/console-demo-plugin .
    ```
+
 2. Run the image:
+
    ```sh
    docker run -it -p 9001:9001 quay.io/$USER/console-demo-plugin
    ```
+
 3. Push the image to image registry:
+
    ```sh
    docker push quay.io/$USER/console-demo-plugin
    ```

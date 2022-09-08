@@ -1,10 +1,12 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { KnEventCatalogMetaData } from '../components/add/import-types';
 import { GLOBAL_OPERATOR_NS } from '../const';
-import { CamelKameletBindingModel, CamelKameletModel } from '../models';
+import { CamelKameletBindingModel, CamelKameletModel, KafkaSinkModel } from '../models';
+import { getEventSinkMetadata } from '../utils/create-eventsink-utils';
 import { getKameletMetadata } from '../utils/create-eventsources-utils';
 
 export const useEventSinkStatus = (
@@ -19,6 +21,7 @@ export const useEventSinkStatus = (
   normalizedSink: KnEventCatalogMetaData;
   kamelet: K8sResourceKind;
 } => {
+  const { t } = useTranslation();
   const [kameletNs, kameletNsLoaded] = useK8sGet<K8sResourceKind>(
     CamelKameletModel,
     kameletName,
@@ -31,19 +34,24 @@ export const useEventSinkStatus = (
   );
 
   const kameletLoaded = kameletNsLoaded && kameletGlobalNsLoaded;
-  const kamelet = kameletLoaded && (kameletNs || kameletGlobalNs);
+  const kamelet = kameletName && kameletLoaded && (kameletNs || kameletGlobalNs);
 
   const isKameletSink = kameletName && sinkKindProp === CamelKameletBindingModel.kind;
+  const isSinkKindPresent = sinkKindProp || isKameletSink;
+
+  const eventSinkModel =
+    sinkKindProp && !isKameletSink && KafkaSinkModel.kind === sinkKindProp && KafkaSinkModel;
+  const sinkModel = isKameletSink ? CamelKameletBindingModel : eventSinkModel;
 
   const [createSinkAccess, createSinkAccessLoading] = useAccessReview({
-    group: CamelKameletBindingModel?.apiGroup,
-    resource: CamelKameletBindingModel?.plural,
+    group: sinkModel?.apiGroup,
+    resource: sinkModel?.plural,
     verb: 'create',
     namespace,
   });
 
   const sourceStatus = React.useMemo(() => {
-    if (!isKameletSink) {
+    if (!isSinkKindPresent) {
       return {
         isValidSink: false,
         loaded: true,
@@ -51,11 +59,13 @@ export const useEventSinkStatus = (
       };
     }
     return {
-      isValidSink: kameletLoaded && kamelet && isKameletSink,
-      loaded: kameletLoaded,
-      normalizedSink: getKameletMetadata(kamelet),
+      isValidSink: !!eventSinkModel || (kameletLoaded && kamelet && isKameletSink),
+      loaded: isKameletSink ? kameletLoaded : !!eventSinkModel,
+      normalizedSink: isKameletSink
+        ? getKameletMetadata(kamelet)
+        : getEventSinkMetadata(eventSinkModel, t),
     };
-  }, [kameletLoaded, kamelet, isKameletSink]);
+  }, [isSinkKindPresent, eventSinkModel, kameletLoaded, kamelet, isKameletSink, t]);
 
   return {
     ...sourceStatus,

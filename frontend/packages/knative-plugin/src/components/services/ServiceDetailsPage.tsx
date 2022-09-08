@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
@@ -15,6 +16,7 @@ import ServerlessFunctionType from '../overview/ServerlessFunctionType';
 
 const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { kindObj, match, kind } = props;
+  const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const renderTypeForServerlessFunction = (obj: K8sResourceKind) =>
     isServerlessFunction(obj) ? <ServerlessFunctionType /> : null;
   const pages = [
@@ -39,6 +41,8 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
     match,
     'serving',
     serverlessTab(kindObj.kind),
+    undefined,
+    isAdminPerspective,
   );
   return (
     <DetailsPage

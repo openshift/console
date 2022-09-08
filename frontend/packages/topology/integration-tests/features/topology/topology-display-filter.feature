@@ -6,8 +6,8 @@ Feature: Topology Display Filter Group
             Given user is at developer perspective
               And user has created or selected namespace "aut-display-filter"
               And user is at Add page
-              
-              
+
+
         @regression
         Scenario: Topology display filter by expand option: T-18-TC01
             Given user has created workload "nodejs-ex-git" with resource type "Deployment"

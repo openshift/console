@@ -85,6 +85,21 @@ Given('user has installed Red Hat Integration - Camel K Operator', () => {
   });
 });
 
+Given('user has installed Red Hat Integration - AMQ Streams operator', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  operatorsPage.navigateToInstallOperatorsPage();
+  operatorsPage.searchOperatorInInstallPage(operators.AMQStreams);
+  cy.get('body', {
+    timeout: 50000,
+  }).then(($ele) => {
+    if ($ele.find(operatorsPO.installOperators.noOperatorsFound)) {
+      installOperator(operators.AMQStreams);
+    } else {
+      cy.log(`${operators.AMQStreams} operator is installed in cluster`);
+    }
+  });
+});
+
 Given('user has installed Knative Apache Kafka Operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
   operatorsPage.navigateToInstallOperatorsPage();

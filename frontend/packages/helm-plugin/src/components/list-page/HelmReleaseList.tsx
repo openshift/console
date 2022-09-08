@@ -8,6 +8,7 @@ import {
 } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import { match } from 'react-router';
 import { Link } from 'react-router-dom';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { StatusBox } from '@console/internal/components/utils';
@@ -31,11 +32,12 @@ const getRowProps = (obj) => ({
 });
 
 interface HelmReleaseListProps {
-  namespace: string;
+  match: match<{ ns?: string }>;
 }
 
-const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
+const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
   const { t } = useTranslation();
+  const namespace = props.match.params.ns;
   const secretsCountRef = React.useRef<number>(0);
   const [releasesLoaded, setReleasesLoaded] = React.useState<boolean>(false);
   const [loadError, setLoadError] = React.useState<string>();

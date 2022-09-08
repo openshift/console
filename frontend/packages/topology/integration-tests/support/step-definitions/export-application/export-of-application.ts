@@ -1,52 +1,65 @@
 import { When, Then, Given } from 'cypress-cucumber-preprocessor/steps';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
-import { createGitWorkload } from '@console/dev-console/integration-tests/support/pages';
+import { createGitWorkloadIfNotExistsOnTopologyPage } from '@console/dev-console/integration-tests/support/pages';
 import {
   app,
   navigateTo,
   projectNameSpace,
 } from '@console/dev-console/integration-tests/support/pages/app';
-import { exportApplication, exportModalButton } from '../../page-objects/export-applications-po';
-import { topologyPO } from '../../page-objects/topology-po';
 import {
-  clickVisibleButton,
-  exportOfApplication,
-} from '../../pages/export-application/export-applications';
+  exportApplication,
+  exportModalButton,
+  closeExportNotification,
+} from '../../page-objects/export-applications-po';
+import { topologyPO } from '../../page-objects/topology-po';
 import { topologyHelper } from '../../pages/topology';
 
-Given('user has created a deployment workload {string}', (workloadName: string) => {
-  navigateTo(devNavigationMenu.Add);
-  createGitWorkload(
-    'https://github.com/sclorg/nodejs-ex.git',
-    workloadName,
-    'Deployment',
-    'nodejs-ex-git-app',
-  );
-});
-
+Given(
+  'user has created {string} workload in {string} application',
+  (nodeName: string, appName: string) => {
+    createGitWorkloadIfNotExistsOnTopologyPage(
+      'https://github.com/sclorg/nodejs-ex.git',
+      nodeName,
+      'Deployment',
+      appName,
+    );
+    topologyHelper.verifyWorkloadInTopologyPage(nodeName);
+  },
+);
 When('user navigates to Topology page', () => {
   navigateTo(devNavigationMenu.Topology);
 });
 
 When('user clicks on Export Application button', () => {
-  exportOfApplication.exportApplicationFresh();
-});
-
-Then('user can see a toast message saying {string}', (message: string) => {
-  cy.get(exportApplication.infoTip, { timeout: 10000 }).contains(message);
-  cy.get(exportApplication.infoTip, { timeout: 10000 }).should('not.exist');
-});
-
-Then('user can see a toast message saying {string} and close it', (message: string) => {
-  cy.get(exportApplication.infoTip).should('not.exist');
-  cy.get(exportApplication.infoTip, { timeout: 120000 }).contains(message);
-  cy.get('[aria-label="Close Info alert: alert: Export Application"]')
+  cy.get(exportApplication.resourceAddedNotification).should('not.exist');
+  cy.get(exportApplication.exportApplicationButton)
     .should('be.visible')
     .click();
 });
 
-Then('user can see primer job created in topology', () => {
-  topologyHelper.verifyWorkloadInTopologyPage('primer', { timeout: 30000 });
+When('user clicks on Ok button on Export Application modal to start the export', () => {
+  cy.get('.modal-body').contains('Do you want to export your application?');
+  cy.byTestID('close-btn')
+    .should('be.visible')
+    .click();
+});
+
+Then('user can see a toast message saying {string}', (message: string) => {
+  cy.get(exportApplication.infoTip, { timeout: 5000 }).should('include.text', message);
+  closeExportNotification();
+});
+
+Then(
+  'user can see a toast message saying {string} with download option and close button',
+  (message: string) => {
+    cy.get(exportApplication.infoTip, { timeout: 180000 }).should('include.text', message);
+    cy.byTestID('download-export').contains('Download');
+    closeExportNotification();
+  },
+);
+
+Then('user can see primer deployment created in topology', () => {
+  topologyHelper.verifyWorkloadInTopologyPage('primer', { timeout: 120000 });
 });
 
 Given('user is at Topology page', () => {
@@ -54,11 +67,10 @@ Given('user is at Topology page', () => {
 });
 
 When('user clicks on Export Application button again', () => {
-  topologyHelper.verifyWorkloadInTopologyPage('primer', { timeout: 30000 });
   cy.get(exportApplication.exportApplicationButton)
     .should('be.visible')
     .click();
-  clickVisibleButton(false);
+  cy.get(exportApplication.exportView, { timeout: 50000 }).should('be.visible');
 });
 
 Then(
@@ -68,7 +80,8 @@ Then(
     cy.get(exportModalButton(el2)).should('be.visible');
     cy.get(exportModalButton(el3)).should('be.visible');
     cy.get(exportModalButton(el4)).should('be.visible');
-    cy.get(exportModalButton('Ok')).click();
+    cy.get(exportModalButton('Cancel Export')).click();
+    cy.get(exportModalButton('Cancel Export')).should('not.exist');
   },
 );
 
@@ -78,10 +91,6 @@ Given('user has created or selected namespace {string}', (componentName: string)
 
 Then('user can see Export Application button disabled', () => {
   cy.get(exportApplication.exportApplicationButton).should('be.disabled');
-});
-
-Given('Export Application has already started', () => {
-  exportOfApplication.exportApplicationFresh();
 });
 
 When('user clicks on Restart button', () => {

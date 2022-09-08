@@ -37,7 +37,7 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
   const header = (
     <Flex style={{ flexGrow: 1 }} data-test="cloudshell-drawer-header">
       <FlexItem className="co-cloud-shell-drawer__heading">
-        {t('console-app~Command line terminal')}
+        {t('console-app~OpenShift command line terminal')}
       </FlexItem>
       <FlexItem align={{ default: 'alignRight' }}>
         <Tooltip content={t('console-app~Open terminal in new tab')}>

@@ -2,13 +2,17 @@ package chartproxy
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"reflect"
 	"testing"
+	"time"
 
 	helmrepo "helm.sh/helm/v3/pkg/repo"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/dynamic"
@@ -18,6 +22,8 @@ import (
 	"sigs.k8s.io/yaml"
 
 	"github.com/openshift/console/pkg/helm/actions/fake"
+	"github.com/stretchr/testify/require"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type apiError struct {
@@ -353,7 +359,7 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 					},
 				},
 			}
-			repo, err := repoGetter.unmarshallConfig(repoCR)
+			repo, err := repoGetter.unmarshallConfig(repoCR, "", true)
 			if err != nil {
 				t.Error(err)
 			}
@@ -511,4 +517,148 @@ func TestHelmRepoGetter_SkipDisabled(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
+	if err := setupTestWithTls(); err != nil {
+		panic(err)
+	}
+	tests := []struct {
+		name            string
+		helmCRS         *unstructured.Unstructured
+		repoName        string
+		wantsErr        bool
+		createSecret    bool
+		namespace       string
+		createNamespace bool
+	}{
+		{
+			name: "Namespace present",
+			helmCRS: &unstructured.Unstructured{
+				Object: map[string]interface{}{
+					"apiVersion": "helm.openshift.io/v1beta1",
+					"kind":       "ProjectHelmChartRepository",
+					"metadata": map[string]interface{}{
+						"namespace": "",
+						"name":      "repo4",
+					},
+					"spec": map[string]interface{}{
+						"connectionConfig": map[string]interface{}{
+							"url": "https://localhost:9553",
+							"tlsClientConfig": map[string]interface{}{
+								"name":      "fooSecret",
+								"namespace": "testing",
+							},
+						},
+					},
+				},
+			},
+			repoName:        "repo4",
+			wantsErr:        false,
+			createSecret:    true,
+			namespace:       "testing",
+			createNamespace: true,
+		},
+		{
+			name: "Namespace not present",
+			helmCRS: &unstructured.Unstructured{
+				Object: map[string]interface{}{
+					"apiVersion": "helm.openshift.io/v1beta1",
+					"kind":       "ProjectHelmChartRepository",
+					"metadata": map[string]interface{}{
+						"namespace": "",
+						"name":      "repo5",
+					},
+					"spec": map[string]interface{}{
+						"connectionConfig": map[string]interface{}{
+							"url": "https://localhost:9553",
+							"tlsClientConfig": map[string]interface{}{
+								"name": "fooSecret",
+							},
+						},
+					},
+				},
+			},
+			repoName:        "repo5",
+			wantsErr:        false,
+			createSecret:    true,
+			createNamespace: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			objs := []runtime.Object{}
+			// create a namespace if it is not same as openshift-config
+			if tt.createNamespace && tt.namespace != configNamespace {
+				nsSpec := &v1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: tt.namespace}}
+				objs = append(objs, nsSpec)
+			}
+			// create a secret in required namespace
+			if tt.createSecret {
+				certificate, errCert := ioutil.ReadFile("./server.crt")
+				require.NoError(t, errCert)
+				key, errKey := ioutil.ReadFile("./server.key")
+				require.NoError(t, errKey)
+				data := map[string][]byte{
+					"tls.key": key,
+					"tls.crt": certificate,
+				}
+				secretSpec := &v1.Secret{Data: data, ObjectMeta: metav1.ObjectMeta{Name: "fooSecret", Namespace: tt.namespace}}
+				objs = append(objs, secretSpec)
+			}
+			repoGetter := &helmRepoGetter{
+				Client:     fake.K8sDynamicClient("helm.openshift.io/v1beta1", "HelmChartRepository", ""),
+				CoreClient: k8sfake.NewSimpleClientset(objs...).CoreV1(),
+			}
+			_, err := repoGetter.unmarshallConfig(*tt.helmCRS, tt.namespace, false)
+			if tt.wantsErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+	err := ExecuteScript("./testdata/chartmuseum-stop.sh", false)
+	require.NoError(t, err)
+	err = ExecuteScript("./testdata/cleanup.sh", false)
+	require.NoError(t, err)
+}
+
+func ExecuteScript(filepath string, waitForCompletion bool) error {
+	tlsCmd := exec.Command(filepath)
+	tlsCmd.Stdout = os.Stdout
+	tlsCmd.Stderr = os.Stderr
+	err := tlsCmd.Start()
+	if err != nil {
+		bytes, _ := ioutil.ReadAll(os.Stderr)
+		return fmt.Errorf("Error starting command :%s:%s:%w", filepath, string(bytes), err)
+	}
+	if waitForCompletion {
+		err = tlsCmd.Wait()
+		if err != nil {
+			bytes, _ := ioutil.ReadAll(os.Stderr)
+			return fmt.Errorf("Error waiting command :%s:%s:%w", filepath, string(bytes), err)
+		}
+	}
+	return nil
+}
+
+func setupTestWithTls() error {
+	if err := ExecuteScript("./testdata/downloadChartmuseum.sh", true); err != nil {
+		return err
+	}
+	if err := ExecuteScript("./testdata/createTlsSecrets.sh", true); err != nil {
+		return err
+	}
+	if err := ExecuteScript("./testdata/chartmuseum.sh", false); err != nil {
+		return err
+	}
+	time.Sleep(5 * time.Second)
+	if err := ExecuteScript("./testdata/cacertCreate.sh", true); err != nil {
+		return err
+	}
+	if err := ExecuteScript("./testdata/uploadCharts.sh", true); err != nil {
+		return err
+	}
+	return nil
 }

@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/internal/components/utils';
 import { FormFooter } from '@console/shared';
-import PipelineParameters from './PipelineParameters';
+import PipelineParameters from '../PipelineParameters';
 
 type PipelineParametersFormProps = FormikProps<FormikValues> & {
   namespace: string;
@@ -31,7 +31,19 @@ const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
   return (
     <Form onSubmit={handleSubmit}>
       <div className="co-m-pane__body">
-        <PipelineParameters fieldName="parameters" isReadOnly={!pipelineParameterAccess} />
+        <PipelineParameters
+          fieldName="parameters"
+          isReadOnly={!pipelineParameterAccess}
+          addLabel={t('pipelines-plugin~Add Pipeline parameter')}
+          nameLabel={t('pipelines-plugin~Name')}
+          nameFieldName="name"
+          descriptionLabel={t('pipelines-plugin~Description')}
+          descriptionFieldName="description"
+          valueLabel={t('pipelines-plugin~Default value')}
+          valueFieldName="default"
+          emptyMessage={t('pipelines-plugin~No parameters are associated with this Pipeline.')}
+          emptyValues={{ name: '', description: '', default: '' }}
+        />
       </div>
       {pipelineParameterAccess && (
         <FormFooter

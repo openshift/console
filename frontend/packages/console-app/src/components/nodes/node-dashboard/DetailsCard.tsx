@@ -30,7 +30,7 @@ const DetailsCard: React.FC = () => {
           <OverviewDetailItem isLoading={!obj} title={t('console-app~Node name')}>
             {obj.metadata.name}
           </OverviewDetailItem>
-          <OverviewDetailItem isLoading={!obj} title={t('console-app~Role')}>
+          <OverviewDetailItem isLoading={!obj} title={t('console-app~Roles')}>
             <NodeRoles node={obj} />
           </OverviewDetailItem>
           <OverviewDetailItem

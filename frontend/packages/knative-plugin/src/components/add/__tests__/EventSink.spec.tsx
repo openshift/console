@@ -5,7 +5,11 @@ import { Formik } from 'formik';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector } from 'react-redux';
-import { mockKameletSink, mockNormalizedSink } from '../__mocks__/Kamelet-data';
+import {
+  mockKameletSink,
+  mockNormalizedKafkaSink,
+  mockNormalizedSink,
+} from '../__mocks__/Kamelet-data';
 import EventSink from '../EventSink';
 
 const useSelectorMock = useSelector as jest.Mock;
@@ -31,6 +35,7 @@ describe('EventSinkSpec', () => {
         namespace={namespace}
         normalizedSink={mockNormalizedSink}
         kameletSink={mockKameletSink}
+        sinkKind={'KameletBinding'}
       />,
     );
     const FormikField = wrapper.find(Formik);
@@ -43,5 +48,24 @@ describe('EventSinkSpec', () => {
     expect(FormikField.get(0).props.initialValues.formData.source.apiVersion).toEqual('');
     expect(FormikField.get(0).props.initialValues.formData.source.kind).toEqual('');
     expect(FormikField.get(0).props.initialValues.formData.source.name).toEqual('');
+  });
+
+  it('should render form with proper initialvalues for kafkaSink', () => {
+    useSelectorMock.mockReturnValue('appGroup');
+    wrapper = shallow(
+      <EventSink
+        namespace={namespace}
+        normalizedSink={mockNormalizedKafkaSink}
+        sinkKind={'KafkaSink'}
+      />,
+    );
+    const FormikField = wrapper.find(Formik);
+    expect(FormikField.exists()).toBe(true);
+    expect(FormikField.get(0).props.initialValues.formData.project.name).toBe('myApp');
+    expect(FormikField.get(0).props.initialValues.formData.application.name).toBe('appGroup');
+    expect(FormikField.get(0).props.initialValues.formData.apiVersion).toBe(
+      'eventing.knative.dev/v1alpha1',
+    );
+    expect(FormikField.get(0).props.initialValues.formData.source).toBeUndefined();
   });
 });

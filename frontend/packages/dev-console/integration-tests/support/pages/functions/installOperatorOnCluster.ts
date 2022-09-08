@@ -6,7 +6,11 @@ import { operatorsPO } from '../../pageObjects';
 import { app, perspective, projectNameSpace, sidePane } from '../app';
 import { operatorsPage } from '../operators-page';
 import { installCRW, waitForCRWToBeAvailable } from './installCRW';
-import { createKnativeEventing, createKnativeServing } from './knativeSubscriptions';
+import {
+  createKnativeEventing,
+  createKnativeServing,
+  createKnativeKafka,
+} from './knativeSubscriptions';
 
 export const installOperator = (operatorName: operators) => {
   operatorsPage.navigateToOperatorHubPage();
@@ -176,6 +180,7 @@ const performPostInstallationSteps = (operator: operators): void => {
       cy.log(`Performing Serverless post installation steps`);
       createKnativeServing();
       createKnativeEventing();
+      createKnativeKafka();
       operatorsPage.navigateToOperatorHubPage();
       break;
     case operators.RedHatCodereadyWorkspaces:

@@ -60,6 +60,9 @@ export type HealthItemProps = WithClassNameProps<{
   details?: string;
   state?: HealthState;
   popupTitle?: string;
+  popupClassname?: string;
+  popupBodyContent?: React.ReactNode | ((hide: () => void) => React.ReactNode);
+  popupKeepOnOutsideClick?: boolean;
   noIcon?: boolean;
   icon?: React.ReactNode;
 }>;
@@ -177,6 +180,12 @@ export type Options = {
 };
 
 export type UseActiveNamespace = () => [string, (ns: string) => void];
+
+export type UseLastNamespace = () => [
+  string,
+  React.Dispatch<React.SetStateAction<string>>,
+  boolean,
+];
 
 export type VirtualizedGridProps = {
   items: VirtualizedGridItem[] | VirtualizedGridGroupedItems;

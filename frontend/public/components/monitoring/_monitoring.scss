@@ -84,7 +84,8 @@
   margin: 0 0 20px 0;
 
   .co-dashboard-card__body--dashboard {
-    // Add extra padding to the right. X-axis times with AM/PM at certain screen widths can overflow the card otherwise.
+    // Add extra padding to the right. X-axis times with AM/PM at certain screen widths can overflow
+    // the card otherwise.
     padding: 10px 15px 10px 10px;
   }
 
@@ -264,7 +265,8 @@ $monitoring-line-height: 18px;
 }
 
 .monitoring-description {
-  // Limit to $num-lines lines of text. Truncate with an ellipsis in WebKit. Just overflow hidden for other browsers.
+  // Limit to $num-lines lines of text. Truncate with an ellipsis in WebKit. Just overflow hidden
+  // for other browsers.
   $num-lines: 2;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -290,6 +292,18 @@ $monitoring-line-height: 18px;
 
 .monitoring-icon-wrap {
   margin-right: 10px;
+}
+
+.monitoring-alert-detail-toolbar.pf-c-toolbar  {
+  padding-top: 0;
+
+  .pf-c-toolbar__content{
+    padding: 0;
+  }
+
+  .co-section-heading{
+    margin: 0;
+  }
 }
 
 .monitoring-silence-alert {
@@ -390,14 +404,6 @@ $monitoring-line-height: 18px;
   max-height: 25vh;
   overflow: auto;
   width: 100%;
-
-  &--insert {
-    @media (min-width: $screen-sm-min) {
-      max-width: 55vw;
-    }
-    max-width: 85vw;
-    width: 550px;
-  }
 }
 
 .query-browser__query {
@@ -494,9 +500,10 @@ $monitoring-line-height: 18px;
   padding: 10px 20px;
 }
 
-.query-browser__toggle-graph {
-  margin-bottom: 5px;
-  float: right;
+.query-browser__toggle-graph-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--pf-global--spacer--xs);
 }
 
 .query-browser__tooltip {

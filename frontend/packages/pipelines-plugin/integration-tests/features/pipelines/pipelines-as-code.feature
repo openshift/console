@@ -11,8 +11,7 @@ Feature: Perform Actions on repository
         Scenario Outline: Repositories page: P-11-TC01
             Given user has installed pipelines as code
               And user is at repositories page
-             When user clicks on Create Repository button
-              And user creates repository using YAML editor from "<repository_yaml>"
+             When user creates repository using YAML editor from "<repository_yaml>"
              Then user will be redirected to Repository details page with header name "<repository_name>"
 
         Examples:
@@ -99,7 +98,7 @@ Feature: Perform Actions on repository
               And user is at repositories page
              When user clicks Last Run value of repository "<repository_name>"
              Then user will be redirected to Pipeline Run Details page
-              And user is able to see Details, YAML, TaskRuns, Logs and Events tabs
+              And user is able to see Details, YAML, TaskRuns, Parameters, Logs and Events tabs
               And Details tab is displayed with fields Repository, Branch, Commit id and Event type
               And Actions dropdown display on the top right corner of the page
 

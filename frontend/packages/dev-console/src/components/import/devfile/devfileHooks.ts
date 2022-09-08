@@ -56,6 +56,7 @@ export const useDevfileServer = (
     }
 
     setParsingDevfile(true);
+    setFieldValue('devfile.devfileSuggestedResources', null);
     coFetchJSON
       .post('/api/devfile/', devfileData)
       .then((value: DevfileSuggestedResources) => {

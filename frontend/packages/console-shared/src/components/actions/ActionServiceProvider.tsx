@@ -1,16 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Action, ActionGroup, isActionGroup } from '@console/dynamic-plugin-sdk';
+import {
+  Action,
+  ActionGroup,
+  ActionService,
+  ActionServiceProviderProps,
+  isActionGroup,
+  MenuOption,
+} from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk';
 import { useDeepCompareMemoize } from '../../hooks';
 import ActionsLoader from './loader/ActionsLoader';
-import { ActionContext, ActionService, MenuOption } from './types';
+import { ActionContext } from './types';
 import { createMenuOptions } from './utils';
-
-type ActionServiceProviderProps = {
-  context: ActionContext;
-  children: (service: ActionService) => React.ReactNode;
-};
 
 const ActionServiceProvider: React.FC<ActionServiceProviderProps> = ({ context, children }) => {
   const [contextMap, setContextMap] = React.useState<ActionContext>(context);
