@@ -34,6 +34,23 @@ export const ServiceMonitorModel: K8sKind = {
   propagationPolicy: 'Foreground',
 };
 
+export const PodMonitorModel: K8sKind = {
+  kind: 'PodMonitor',
+  label: 'PodMonitor',
+  // t('public~PodMonitor')
+  labelKey: 'public~PodMonitor',
+  labelPlural: 'PodMonitors',
+  // t('public~PodMonitors')
+  labelPluralKey: 'public~PodMonitors',
+  apiGroup: 'monitoring.coreos.com',
+  apiVersion: 'v1',
+  abbr: 'PM',
+  namespaced: true,
+  crd: true,
+  plural: 'podmonitors',
+  propagationPolicy: 'Foreground',
+};
+
 export const AlertmanagerModel: K8sKind = {
   kind: 'Alertmanager',
   label: 'Alertmanager',
