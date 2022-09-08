@@ -58,7 +58,6 @@ const NamespaceBarApplicationSelector: React.FC<Props> = ({
   return (
     <ApplicationDropdown
       className="co-namespace-selector"
-      menuClassName="co-namespace-selector__menu"
       buttonClassName="pf-m-plain"
       namespace={namespace}
       title={title && <span className="btn-link__title">{title}</span>}
