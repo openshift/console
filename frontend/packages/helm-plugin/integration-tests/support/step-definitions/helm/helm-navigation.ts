@@ -5,6 +5,7 @@ import {
   addOptions,
   pageTitle,
   switchPerspective,
+  catalogTypes,
 } from '@console/dev-console/integration-tests/support/constants';
 import {
   catalogPO,
@@ -170,7 +171,7 @@ Then('user will see the helm charts listed', () => {
 });
 
 When('user selects {string} option from Type section', (catalogType: string) => {
-  catalogPage.selectCatalogType(catalogType);
+  catalogPage.selectCatalogType(catalogType as catalogTypes);
 });
 
 Then('user can see {string} card on the Add page', (cardName: string) => {
