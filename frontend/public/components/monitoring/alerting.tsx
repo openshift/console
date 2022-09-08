@@ -833,6 +833,8 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                 </dl>
               </div>
             </div>
+          </div>
+          <div className="co-m-pane__body-group">
             <div className="row">
               <div className="col-xs-12">
                 <dl className="co-m-pane__details" data-test="label-list">
@@ -843,6 +845,8 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                 </dl>
               </div>
             </div>
+          </div>
+          <div className="co-m-pane__body-group">
             <div className="row">
               <div className="col-xs-12">
                 <dl className="co-m-pane__details">
@@ -1080,6 +1084,8 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                 </dl>
               </div>
             </div>
+          </div>
+          <div className="co-m-pane__body-group">
             <div className="row">
               <div className="col-xs-12">
                 <dl className="co-m-pane__details">
