@@ -7,16 +7,17 @@ reviewers:
   - invincibleJai
   - jerolimov
   - karthikjeeyar
-  - nemesis09
   - rohitkrai03
   - rottencandy
   - sahil143
   - vikram-raj
 approvers:
-  - andrewballantyne
-  - christianvogt
+  - divyanshiGupta
   - invincibleJai
   - jerolimov
+  - karthikjeeyar
   - rohitkrai03
+  - sahil143
+  - vikram-raj
 labels:
   - component/dev-console
