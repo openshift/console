@@ -2,8 +2,10 @@
   "{{count}} Worker Node": "{{count}} Worker Node",
   "{{count}} Worker Node_plural": "{{count}} Worker Nodes",
   "Worker Nodes": "Worker Nodes",
-  "Tesing i18n plural formats for plugins. Number of {{count}} pod_one": "Tesing i18n plural formats for plugins. Number of {{count}} pod",
-  "Tesing i18n plural formats for plugins. Number of {{count}} pod_other": "Tesing i18n plural formats for plugins. Number of {{count}} pods",
+  "Tesing i18n plural formats for plugins. Number of {{count}} pod": "Tesing i18n plural formats for plugins. Number of {{count}} pod",
+  "Tesing i18n plural formats for plugins. Number of {{count}} pod_plural": "Tesing i18n plural formats for plugins. Number of {{count}} pods",
+  "Tesing i18n plural new formats for plugins. Number of {{count}} pod_one": "Tesing i18n plural new formats for plugins. Number of {{count}} pod",
+  "Tesing i18n plural new formats for plugins. Number of {{count}} pod_other": "Tesing i18n plural new formats for plugins. Number of {{count}} pods",
   "Example info alert": "Example info alert",
   "Example warning alert": "Example warning alert",
   "Example hint": "Example hint",
@@ -44,5 +46,7 @@
   "Foo item": "Foo item",
   "Bar item": "Bar item",
   "Dynamic Page 1": "Dynamic Page 1",
-  "Dynamic Page 2": "Dynamic Page 2"
+  "Dynamic Page 2": "Dynamic Page 2",
+  "Tesing i18n plural formats for plugins. Number of {{count}} pod_one": "Tesing i18n plural formats for plugins. Number of {{count}} pod",
+  "Tesing i18n plural formats for plugins. Number of {{count}} pod_other": "Tesing i18n plural formats for plugins. Number of {{count}} pods"
 }
