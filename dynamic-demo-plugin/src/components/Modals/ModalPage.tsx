@@ -19,13 +19,13 @@ export const TestModal: React.FC<{ closeModal: () => void }> = (props) => {
   const [res] = useK8sWatchResource<K8sResourceCommon[]>(scResource);
   return (
     <Modal isOpen onClose={props?.closeModal} title="Storage Classes">
-         <p>{t('Tesing i18n plural formats for plugins. Number of {{count}} pod', {count: 5})}</p>
-         <p>{t('Tesing i18n plural formats for plugins. Number of {{count}} pod', {count: 0})}</p>
-         <p>{t('Tesing i18n plural formats for plugins. Number of {{count}} pod', {count: 1})}</p>
-         <p>{t('Tesing i18n plural new formats for plugins. Number of {{count}} pod', {count: 5})}</p>
-         <p>{t('Tesing i18n plural new formats for plugins. Number of {{count}} pod', {count: 0})}</p>
-         <p>{t('Tesing i18n plural new formats for plugins. Number of {{count}} pod', {count: 1})}</p>
-      StorageClasses present in this cluster:
+         <p>{t('Testing i18n plural old format for plugins. {{count}} pod', {count: 0})}</p>
+         <p>{t('Testing i18n plural old format for plugins. {{count}} pod', {count: 1})}</p>
+         <p>{t('Testing i18n plural old format for plugins. {{count}} pod', {count: 2})}</p>
+         <p>{t('Testing i18n plural new format for plugins. {{count}} pod', {count: 0})}</p>
+         <p>{t('Testing i18n plural new format for plugins. {{count}} pod', {count: 1})}</p>
+         <p>{t('Testing i18n plural new format for plugins. {{count}} pod', {count: 2})}</p>
+               StorageClasses present in this cluster:
       <List>
         {!!res &&
           res.map((item) => <ListItem key={item.metadata.uid}>{item.metadata.name}</ListItem>)}
