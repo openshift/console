@@ -68,7 +68,7 @@ const ImageOption: React.FC<{
 
       {type === 'dockerImage' ? (
         <InputField
-          label={t('devconsole~Docker image repository')}
+          label={t('devconsole~Image registry')}
           name={`${fieldPrefix}.dockerImage`}
           type={TextInputTypes.text}
           data-test={`${dataTest} docker-image`}
@@ -89,18 +89,18 @@ const ImagesSection: React.FC<{}> = () => {
           none: t('devconsole~None'),
           imageStreamTag: t('devconsole~Image Stream Tag'),
           imageStreamImage: t('devconsole~Image Stream Image'),
-          dockerImage: t('devconsole~Docker image'),
+          dockerImage: t('devconsole~External container image'),
         }
       : {
           imageStreamTag: t('devconsole~Image Stream Tag'),
           imageStreamImage: t('devconsole~Image Stream Image'),
-          dockerImage: t('devconsole~Docker image'),
+          dockerImage: t('devconsole~External container image'),
         };
 
   const pushToItems = {
     none: t('devconsole~None'),
     imageStreamTag: t('devconsole~Image Stream Tag'),
-    dockerImage: t('devconsole~Docker image'),
+    dockerImage: t('devconsole~External container image'),
   };
 
   return (

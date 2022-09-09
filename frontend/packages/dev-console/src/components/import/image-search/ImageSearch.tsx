@@ -194,7 +194,7 @@ const ImageSearch: React.FC = () => {
       />
       <div className="help-block" id="image-name-help">
         <Trans ns="devconsole" t={t}>
-          To deploy an Image from a private repository, you must{' '}
+          To deploy an Image from a private registry, you must{' '}
           <Button
             variant="link"
             isInline
