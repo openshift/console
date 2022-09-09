@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
+import { toLower } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { isAlertAction, AlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
@@ -15,6 +16,7 @@ import {
   getAlertDescription,
   getAlertTime,
   getAlertSummary,
+  getAlertName,
 } from './alert-utils';
 
 const CriticalIcon = () => <RedExclamationCircleIcon title="Critical" />;
@@ -29,7 +31,15 @@ const getSeverityIcon = (severity: string) => {
   }
 };
 
-export const StatusItem: React.FC<StatusItemProps> = ({ Icon, timestamp, message, children }) => {
+export const StatusItem: React.FC<StatusItemProps> = ({
+  name,
+  documentationLink,
+  Icon,
+  timestamp,
+  message,
+  children,
+}) => {
+  const { t } = useTranslation();
   return (
     <div className="co-status-card__alert-item">
       <div className="co-status-card__alert-item-icon co-dashboard-icon">
@@ -37,6 +47,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({ Icon, timestamp, message
       </div>
       <div className="co-status-card__alert-item-text">
         <div className="co-status-card__alert-item-message">
+          {name && <span className="co-status-card__alert-item-header">{name}</span>}
           <div
             className="co-health-card__alert-item-timestamp co-status-card__health-item-text text-secondary"
             data-test="timestamp"
@@ -44,6 +55,11 @@ export const StatusItem: React.FC<StatusItemProps> = ({ Icon, timestamp, message
             {timestamp && <Timestamp simple timestamp={timestamp} />}
           </div>
           <span className="co-status-card__health-item-text co-break-word">{message}</span>
+          {documentationLink && (
+            <a className="co-status-card__alert-item-doc-link" href={documentationLink}>
+              {t('console-shared~Go to documentation')}
+            </a>
+          )}
         </div>
         {children && <div className="co-status-card__alert-item-more">{children}</div>}
       </div>
@@ -60,6 +76,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
       [alert],
     ),
   );
+  const alertName = getAlertName(alert);
   const actionObj = getAlertActions(actionExtensions).get(alert.rule.name);
   const { text, action } = actionObj || {};
   return (
@@ -67,6 +84,14 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
       Icon={getSeverityIcon(getAlertSeverity(alert))}
       timestamp={getAlertTime(alert)}
       message={getAlertDescription(alert) || getAlertMessage(alert) || getAlertSummary(alert)}
+      documentationLink={
+        alertName
+          ? `https://access.redhat.com/documentation/en-us/red_hat_openshift_data_foundation/4.12/html-single/troubleshooting_openshift_data_foundation/index#${toLower(
+              alertName,
+            )}_rhodf`
+          : null
+      }
+      name={alertName}
     >
       {text && action ? (
         <Button variant={ButtonVariant.link} onClick={() => action(alert, launchModal)} isInline>
@@ -85,4 +110,6 @@ type StatusItemProps = {
   Icon: React.ComponentType<any>;
   timestamp?: string;
   message: string;
+  name?: string;
+  documentationLink?: string;
 };
