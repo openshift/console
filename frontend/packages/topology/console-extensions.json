@@ -175,6 +175,15 @@
     }
   },
   {
+    "type": "console.topology/details/resource-alert",
+    "properties": {
+      "id": "resource-quota-alert",
+      "contentProvider": {
+        "$codeRef": "workload.useResourceQuotaAlert"
+      }
+    }
+  },
+  {
     "type": "console.context-provider",
     "properties": {
       "provider": { "$codeRef": "exportAppContext.ExportAppContextProvider" },

@@ -1,9 +1,12 @@
 import * as React from 'react';
+import { AlertActionLink } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { DetailsResourceAlertContent } from '@console/dynamic-plugin-sdk';
-import { useAccessReview } from '@console/internal/components/utils';
+import { CommonActionFactory } from '@console/app/src/actions/creators/common-factory';
+import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
+import { DetailsResourceAlertContent, useAccessReview } from '@console/dynamic-plugin-sdk';
 import {
   DaemonSetModel,
   DeploymentConfigModel,
@@ -74,6 +77,58 @@ export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAler
           </>
         ),
         variant: 'default',
+      }
+    : null;
+};
+
+export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAlertContent => {
+  const { t } = useTranslation();
+  const resource = getResource(element);
+  const name = resource?.metadata?.name;
+  const namespace = resource?.metadata?.namespace;
+
+  const canUseAlertAction = useAccessReview({
+    group: DeploymentModel?.apiGroup,
+    resource: DeploymentModel?.plural,
+    namespace,
+    name,
+    verb: 'patch',
+  });
+
+  if (!resource || referenceForModel(DeploymentModel) !== referenceFor(resource)) return null;
+
+  const statusConditions = resource.status?.conditions ?? [];
+  const replicaFailure = !_.isEmpty(statusConditions)
+    ? _.find(statusConditions, (condition) => condition.type === 'ReplicaFailure')
+    : undefined;
+  const replicaFailureMsg: string = replicaFailure?.message ?? '';
+  const resourceQuotaRequested = replicaFailureMsg.split(':')?.[3] ?? '';
+  const resourceQuotaType = resourceQuotaRequested.includes('limits')
+    ? 'Limits'
+    : resourceQuotaRequested.includes('pods')
+    ? 'Pods'
+    : '';
+  const showAlert = resourceQuotaType && canUseAlertAction;
+  const alertAction =
+    resourceQuotaType === 'Limits'
+      ? DeploymentActionFactory.EditResourceLimits(DeploymentModel, resource)
+      : CommonActionFactory.ModifyCount(DeploymentModel, resource);
+
+  const alertActionCta = alertAction.cta as () => void;
+
+  const alertActionLink = (
+    <AlertActionLink onClick={() => alertActionCta()}>
+      {alertAction.label as string}
+    </AlertActionLink>
+  );
+
+  return showAlert
+    ? {
+        title: t('topology~Resource Quotas'),
+        dismissible: true,
+        content: <>{replicaFailureMsg}</>,
+        actionLinks: alertActionLink,
+        variant: 'warning',
       }
     : null;
 };

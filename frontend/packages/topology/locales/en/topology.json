@@ -133,6 +133,7 @@
   "Container {{containersName}} does not have health checks to ensure your application is running correctly.": "Container {{containersName}} does not have health checks to ensure your application is running correctly.",
   "Health checks": "Health checks",
   "Add health checks": "Add health checks",
+  "Resource Quotas": "Resource Quotas",
   "Visual connector": "Visual connector",
   "Expand groups": "Expand groups",
   "Pod count": "Pod count",
