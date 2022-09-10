@@ -80,7 +80,7 @@ import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import { ActionButtons, BreadCrumbs, SectionHeading } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
-import { getURLSearchParams, LinkifyExternal } from '../utils/link';
+import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { ResourceLink } from '../utils/resource-link';
 import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
@@ -688,6 +688,9 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const labels: PrometheusLabels = React.useMemo(() => alert?.labels, [labelsMemoKey]);
 
+  // eslint-disable-next-line camelcase
+  const runbookURL = alert?.annotations?.runbook_url;
+
   const actionsContext: ActionContext = { 'alert-detail-toolbar-actions': { alert } };
 
   return (
@@ -804,6 +807,14 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                       </dd>
                     </>
                   )}
+                  {runbookURL && (
+                    <>
+                      <dt>{t('public~Runbook')}</dt>
+                      <dd>
+                        <ExternalLink href={runbookURL} text={runbookURL} />
+                      </dd>
+                    </>
+                  )}
                 </dl>
               </div>
               <div className="col-sm-6">
@@ -822,6 +833,8 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                 </dl>
               </div>
             </div>
+          </div>
+          <div className="co-m-pane__body-group">
             <div className="row">
               <div className="col-xs-12">
                 <dl className="co-m-pane__details" data-test="label-list">
@@ -832,6 +845,8 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                 </dl>
               </div>
             </div>
+          </div>
+          <div className="co-m-pane__body-group">
             <div className="row">
               <div className="col-xs-12">
                 <dl className="co-m-pane__details">
@@ -965,6 +980,9 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
     return `${nameLabel}{${_.map(otherLabels, (v, k) => `${k}="${v}"`).join(',')}}`;
   };
 
+  // eslint-disable-next-line camelcase
+  const runbookURL = rule?.annotations?.runbook_url;
+
   return (
     <>
       <Helmet>
@@ -1031,6 +1049,14 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                       </dd>
                     </>
                   )}
+                  {runbookURL && (
+                    <>
+                      <dt>{t('public~Runbook')}</dt>
+                      <dd>
+                        <ExternalLink href={runbookURL} text={runbookURL} />
+                      </dd>
+                    </>
+                  )}
                 </dl>
               </div>
               <div className="col-sm-6">
@@ -1058,6 +1084,8 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                 </dl>
               </div>
             </div>
+          </div>
+          <div className="co-m-pane__body-group">
             <div className="row">
               <div className="col-xs-12">
                 <dl className="co-m-pane__details">
