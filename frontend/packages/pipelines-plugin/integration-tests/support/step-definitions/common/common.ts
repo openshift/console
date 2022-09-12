@@ -6,6 +6,7 @@ import {
   devNavigationMenu,
   switchPerspective,
   catalogCards,
+  catalogTypes,
 } from '@console/dev-console/integration-tests/support/constants';
 import {
   topologyPage,
@@ -51,7 +52,7 @@ When('user enters Git Repo URL as {string}', (gitUrl: string) => {
 });
 
 When('user creates the application with the selected builder image', () => {
-  catalogPage.selectCatalogType('Builder Image');
+  catalogPage.selectCatalogType(catalogTypes.BuilderImage);
   catalogPage.selectCardInCatalog(catalogCards.nodeJs);
   catalogPage.clickButtonOnCatalogPageSidePane();
 });
