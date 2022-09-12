@@ -469,6 +469,14 @@ export type ResourceLinkProps = {
   truncate?: boolean;
 };
 
+export type ExternalLinkProps = {
+  href: string;
+  text?: React.ReactNode;
+  additionalClassName?: string;
+  dataTestID?: string;
+  stopPropagation?: boolean;
+};
+
 export type ResourceIconProps = {
   className?: string;
   /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */

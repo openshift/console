@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
 import { Tooltip } from '@patternfly/react-core';
 import { CopyIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkProps } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 
 // Kubernetes "dns-friendly" names match
@@ -136,14 +137,6 @@ export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({ child
   <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>{children}</Linkify>
 );
 LinkifyExternal.displayName = 'LinkifyExternal';
-
-type ExternalLinkProps = {
-  href: string;
-  text?: React.ReactNode;
-  additionalClassName?: string;
-  dataTestID?: string;
-  stopPropagation?: boolean;
-};
 
 type ExternalLinkWithCopyProps = {
   link: string;

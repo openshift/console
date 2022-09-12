@@ -14,6 +14,7 @@ import {
   ListPageCreateDropdownProps,
   ListPageFilterProps,
   UseListPageFilter,
+  ExternalLinkProps,
   ResourceLinkProps,
   ResourceIconProps,
   OverviewProps,
@@ -318,6 +319,27 @@ export const ListPageFilter: React.FC<ListPageFilterProps> = require('@console/i
  */
 export const useListPageFilter: UseListPageFilter = require('@console/internal/components/factory/ListPage/filter-hook')
   .useListPageFilter;
+
+
+/**
+ * Component that creates a link to a page outside of the application
+ * @param {React.ReactNode} children - (optional) elements to render inside the link
+ * @param {string} [href] - URL to link to
+ * @param {ReactNode} [text] - (optional) if children is not provided, this is rendered as the link text
+ * @param {string} [additionalClassName] - (optional) additional class name for the link component
+ * @param {string} [dataTestID] - (optional) identifier for testing
+ * @param {boolean} [stopPropagation] - (optional) - stop propagation of the onClick event to other elements
+ * @example
+ * ```tsx
+ *   <ExternalLink
+ *     href="https://github.com/openshift/console/blob/master/README.md"
+ *     text="View README"
+ *   />
+ * ```
+ */
+export const ExternalLink: React.FC<ExternalLinkProps> = require('@console/internal/components/utils/link')
+  .ExternalLink;
+
 
 /**
  * Component that creates a link to a specific resource type with an icon badge
