@@ -5,10 +5,10 @@ go 1.18
 require (
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
-	github.com/devfile/api/v2 v2.0.0-20220117162434-6e6e6a8bc14c
-	github.com/devfile/library v1.2.1-0.20220308191614-f0f7e11b17de
+	github.com/devfile/api/v2 v2.0.0-20220614133608-351f05b7c2b1
+	github.com/devfile/library v1.2.1-0.20220913214119-82a6d4aff1bd
 	github.com/devfile/registry-support/index/generator v0.0.0-20220624203950-e7282a4695b6
-	github.com/devfile/registry-support/registry-library v0.0.0-20220901004827-b579f98d73ad
+	github.com/devfile/registry-support/registry-library v0.0.0-20220913214140-36887a7907aa
 	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
 	github.com/openshift/api v0.0.0-20220803132145-8e34324aa580
@@ -175,7 +175,7 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/apiserver v0.24.0 // indirect
 	k8s.io/component-base v0.24.0 // indirect
 	k8s.io/helm v2.17.0+incompatible // indirect

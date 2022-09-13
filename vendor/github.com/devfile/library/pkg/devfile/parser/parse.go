@@ -4,18 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/devfile/api/v2/pkg/attributes"
+	devfileCtx "github.com/devfile/library/pkg/devfile/parser/context"
+	"github.com/devfile/library/pkg/devfile/parser/data"
+	"github.com/devfile/library/pkg/devfile/parser/data/v2/common"
 	"github.com/devfile/library/pkg/util"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/klog"
 	"net/url"
 	"path"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"strings"
-
-	devfileCtx "github.com/devfile/library/pkg/devfile/parser/context"
-	"github.com/devfile/library/pkg/devfile/parser/data"
-	"github.com/devfile/library/pkg/devfile/parser/data/v2/common"
-	"k8s.io/klog"
 
 	"reflect"
 
@@ -71,6 +71,9 @@ type ParserArgs struct {
 	// FlattenedDevfile defines if the returned devfileObj is flattened content (true) or raw content (false).
 	// The value is default to be true.
 	FlattenedDevfile *bool
+	// ConvertKubernetesContentInUri defines if the kubernetes resources definition from uri will be converted to inlined in devObj(true) or not (false).
+	// The value is default to be true.
+	ConvertKubernetesContentInUri *bool
 	// RegistryURLs is a list of registry hosts which parser should pull parent devfile from.
 	// If registryUrl is defined in devfile, this list will be ignored.
 	RegistryURLs []string
@@ -81,6 +84,10 @@ type ParserArgs struct {
 	Context context.Context
 	// K8sClient is the Kubernetes client instance used for interacting with a cluster
 	K8sClient client.Client
+	// ExternalVariables override variables defined in the Devfile
+	ExternalVariables map[string]string
+	// HTTPTimeout overrides the request and response timeout values for reading a parent devfile reference from the registry.  If a negative value is specified, the default timeout will be used.
+	HTTPTimeout *int
 }
 
 // ParseDevfile func populates the devfile data, parses and validates the devfile integrity.
@@ -104,6 +111,7 @@ func ParseDevfile(args ParserArgs) (d DevfileObj, err error) {
 		registryURLs:     args.RegistryURLs,
 		context:          args.Context,
 		k8sClient:        args.K8sClient,
+		httpTimeout:      args.HTTPTimeout,
 	}
 
 	flattenedDevfile := true
@@ -124,6 +132,19 @@ func ParseDevfile(args ParserArgs) (d DevfileObj, err error) {
 		}
 	}
 
+	convertUriToInlined := true
+	if args.ConvertKubernetesContentInUri != nil {
+		convertUriToInlined = *args.ConvertKubernetesContentInUri
+	}
+
+	if convertUriToInlined {
+		d.Ctx.SetConvertUriToInlined(true)
+		err = parseKubeResourceFromURI(d)
+		if err != nil {
+			return d, errors.Wrapf(err, "failed to parse kubernetes/openshift component from uri to inlined")
+		}
+	}
+
 	return d, err
 }
 
@@ -138,6 +159,8 @@ type resolverTools struct {
 	context context.Context
 	// K8sClient is the Kubernetes client instance used for interacting with a cluster
 	k8sClient client.Client
+	// httpTimeout is the timeout value in seconds passed in from the client.
+	httpTimeout *int
 }
 
 func populateAndParseDevfile(d DevfileObj, resolveCtx *resolutionContextTree, tool resolverTools, flattenedDevfile bool) (DevfileObj, error) {
@@ -378,7 +401,7 @@ func parseFromRegistry(importReference v1.ImportReference, resolveCtx *resolutio
 	id := importReference.Id
 	registryURL := importReference.RegistryUrl
 	if registryURL != "" {
-		devfileContent, err := getDevfileFromRegistry(id, registryURL)
+		devfileContent, err := getDevfileFromRegistry(id, registryURL, importReference.Version, tool.httpTimeout)
 		if err != nil {
 			return DevfileObj{}, err
 		}
@@ -392,7 +415,7 @@ func parseFromRegistry(importReference v1.ImportReference, resolveCtx *resolutio
 
 	} else if tool.registryURLs != nil {
 		for _, registryURL := range tool.registryURLs {
-			devfileContent, err := getDevfileFromRegistry(id, registryURL)
+			devfileContent, err := getDevfileFromRegistry(id, registryURL, importReference.Version, tool.httpTimeout)
 			if devfileContent != nil && err == nil {
 				d.Ctx, err = devfileCtx.NewByteContentDevfileCtx(devfileContent)
 				if err != nil {
@@ -411,13 +434,16 @@ func parseFromRegistry(importReference v1.ImportReference, resolveCtx *resolutio
 	return DevfileObj{}, fmt.Errorf("failed to get id: %s from registry URLs provided", id)
 }
 
-func getDevfileFromRegistry(id, registryURL string) ([]byte, error) {
+func getDevfileFromRegistry(id, registryURL, version string, httpTimeout *int) ([]byte, error) {
 	if !strings.HasPrefix(registryURL, "http://") && !strings.HasPrefix(registryURL, "https://") {
 		return nil, fmt.Errorf("the provided registryURL: %s is not a valid URL", registryURL)
 	}
 	param := util.HTTPRequestParams{
-		URL: fmt.Sprintf("%s/devfiles/%s", registryURL, id),
+		URL: fmt.Sprintf("%s/devfiles/%s/%s", registryURL, id, version),
 	}
+
+	param.Timeout = httpTimeout
+
 	return util.HTTPGetRequest(param, 0)
 }
 
@@ -595,4 +621,118 @@ func setEndpoints(endpoints []v1.Endpoint) {
 		val := endpoints[i].GetSecure()
 		endpoints[i].Secure = &val
 	}
+}
+
+//parseKubeResourceFromURI iterate through all kubernetes & openshift components, and parse from uri and update the content to inlined field in devfileObj
+func parseKubeResourceFromURI(devObj DevfileObj) error {
+	getKubeCompOptions := common.DevfileOptions{
+		ComponentOptions: common.ComponentOptions{
+			ComponentType: v1.KubernetesComponentType,
+		},
+	}
+	getOpenshiftCompOptions := common.DevfileOptions{
+		ComponentOptions: common.ComponentOptions{
+			ComponentType: v1.OpenshiftComponentType,
+		},
+	}
+	kubeComponents, err := devObj.Data.GetComponents(getKubeCompOptions)
+	if err != nil {
+		return err
+	}
+	openshiftComponents, err := devObj.Data.GetComponents(getOpenshiftCompOptions)
+	if err != nil {
+		return err
+	}
+	for _, kubeComp := range kubeComponents {
+		if kubeComp.Kubernetes != nil && kubeComp.Kubernetes.Uri != "" {
+			err := convertK8sLikeCompUriToInlined(&kubeComp, devObj.Ctx)
+			if err != nil {
+				return errors.Wrapf(err, "failed to convert Kubernetes Uri to inlined for component '%s'", kubeComp.Name)
+			}
+			err = devObj.Data.UpdateComponent(kubeComp)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	for _, openshiftComp := range openshiftComponents {
+		if openshiftComp.Openshift != nil && openshiftComp.Openshift.Uri != "" {
+			err := convertK8sLikeCompUriToInlined(&openshiftComp, devObj.Ctx)
+			if err != nil {
+				return errors.Wrapf(err, "failed to convert Openshift Uri to inlined for component '%s'", openshiftComp.Name)
+			}
+			err = devObj.Data.UpdateComponent(openshiftComp)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+//convertK8sLikeCompUriToInlined read in kubernetes resources definition from uri and converts to kubernetest inlined field
+func convertK8sLikeCompUriToInlined(component *v1.Component, d devfileCtx.DevfileCtx) error {
+	var uri string
+	if component.Kubernetes != nil {
+		uri = component.Kubernetes.Uri
+	} else if component.Openshift != nil {
+		uri = component.Openshift.Uri
+	}
+	data, err := getKubernetesDefinitionFromUri(uri, d)
+	if err != nil {
+		return err
+	}
+	if component.Kubernetes != nil {
+		component.Kubernetes.Inlined = string(data)
+		component.Kubernetes.Uri = ""
+	} else if component.Openshift != nil {
+		component.Openshift.Inlined = string(data)
+		component.Openshift.Uri = ""
+	}
+	if component.Attributes == nil {
+		component.Attributes = attributes.Attributes{}
+	}
+	component.Attributes.PutString(K8sLikeComponentOriginalURIKey, uri)
+
+	return nil
+}
+
+//getKubernetesDefinitionFromUri read in kubernetes resources definition from uri and returns the raw content
+func getKubernetesDefinitionFromUri(uri string, d devfileCtx.DevfileCtx) ([]byte, error) {
+	// validate URI
+	err := validation.ValidateURI(uri)
+	if err != nil {
+		return nil, err
+	}
+
+	absoluteURL := strings.HasPrefix(uri, "http://") || strings.HasPrefix(uri, "https://")
+	var newUri string
+	var data []byte
+	// relative path on disk
+	if !absoluteURL && d.GetAbsPath() != "" {
+		newUri = path.Join(path.Dir(d.GetAbsPath()), uri)
+		fs := d.GetFs()
+		data, err = fs.ReadFile(newUri)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to read kubernetes resources definition from path '%s'", newUri)
+		}
+	} else if absoluteURL || d.GetURL() != "" {
+		if d.GetURL() != "" {
+			// relative path to a URL
+			u, err := url.Parse(d.GetURL())
+			if err != nil {
+				return nil, err
+			}
+			u.Path = path.Join(path.Dir(u.Path), uri)
+			newUri = u.String()
+		} else {
+			// absolute URL address
+			newUri = uri
+		}
+		data, err = util.DownloadFileInMemory(newUri)
+		if err != nil {
+			return nil, errors.Wrapf(err, "error getting kubernetes resources definition info from url '%s'", newUri)
+		}
+	}
+	return data, nil
 }
