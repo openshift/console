@@ -1,3 +1,4 @@
+import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { errorModal } from '@console/internal/components/modals/error-modal';
@@ -7,7 +8,6 @@ import {
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
-import { formatPrometheusDuration } from '@console/internal/components/utils/datetime';
 import { ServiceAccountModel } from '@console/internal/models';
 import {
   ContainerStatus,
