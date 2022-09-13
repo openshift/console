@@ -2,6 +2,7 @@ import * as React from 'react';
 import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import { INSTANCE_LABEL, NAME_LABEL } from '../../const';
 import EditApplication from './EditApplication';
 
 type AppResources = {
@@ -24,15 +25,29 @@ const EditApplicationComponent: React.FunctionComponent<EditApplicationComponent
   props,
 ) => {
   const { appName, resources } = props;
-  const appLabel = resources.editAppResource?.data?.metadata?.labels?.['app.kubernetes.io/name'];
+  const appLabel =
+    resources.editAppResource?.data?.metadata?.labels?.[NAME_LABEL] ||
+    resources.editAppResource?.data?.metadata?.labels?.[INSTANCE_LABEL];
+
+  const filterAssociatedResource = (obj: K8sResourceKind) => {
+    return (
+      obj.metadata.name === appName ||
+      obj.metadata.name === appLabel ||
+      (appLabel && obj.metadata.labels?.[NAME_LABEL] === appLabel) ||
+      (appLabel && obj.metadata.labels?.[INSTANCE_LABEL] === appLabel)
+    );
+  };
 
   const getAssociatedResource = (resourcesObj: WatchK8sResultsObject<K8sResourceKind[]>) => {
-    const associatedRes = resourcesObj.data?.find(
-      (ob) =>
-        ob.metadata.name === appName ||
-        ob.metadata.name === appLabel ||
-        ob.metadata.labels['app.kubernetes.io/name'] === appLabel,
-    );
+    const associatedRes = resourcesObj.data?.find(filterAssociatedResource);
+    return {
+      ...resourcesObj,
+      data: associatedRes,
+    };
+  };
+
+  const getAssociatedImageStream = (resourcesObj: WatchK8sResultsObject<K8sResourceKind[]>) => {
+    const associatedRes = resourcesObj.data?.filter(filterAssociatedResource);
     return {
       ...resourcesObj,
       data: associatedRes,
@@ -46,6 +61,7 @@ const EditApplicationComponent: React.FunctionComponent<EditApplicationComponent
         ...resources,
         pipeline: getAssociatedResource(resources.pipeline) as WatchK8sResultsObject<PipelineKind>,
         buildConfig: getAssociatedResource(resources.buildConfig),
+        imageStream: getAssociatedImageStream(resources.imageStream),
       }}
     />
   );
