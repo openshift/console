@@ -444,6 +444,7 @@ type EndpointParentOverride struct {
 	Name string `json:"name"`
 
 	//  +optional
+	// The port number should be unique.
 	TargetPort int `json:"targetPort,omitempty"`
 
 	// Describes how the endpoint should be exposed on the network.
@@ -1139,6 +1140,7 @@ type EndpointPluginOverrideParentOverride struct {
 	Name string `json:"name"`
 
 	//  +optional
+	// The port number should be unique.
 	TargetPort int `json:"targetPort,omitempty"`
 
 	// Describes how the endpoint should be exposed on the network.
