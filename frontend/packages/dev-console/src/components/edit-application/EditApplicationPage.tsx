@@ -13,6 +13,7 @@ import {
 import { ServiceModel } from '@console/knative-plugin';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import { INSTANCE_LABEL, NAME_LABEL } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import EditApplicationComponent from './EditApplicationComponent';
 
@@ -51,11 +52,12 @@ const EditApplicationPage: React.FunctionComponent<EditApplicationPageProps> = (
   >(watchedEditResource);
 
   const watchedResources = React.useMemo(() => {
-    const NAME_LABEL = 'app.kubernetes.io/name';
     const nameLabel =
       isEditResDataLoaded &&
       !editResDataLoadError &&
-      (editResData?.metadata?.labels?.[NAME_LABEL] || appName);
+      (editResData?.metadata?.labels?.[NAME_LABEL] ||
+        editResData?.metadata?.labels?.[INSTANCE_LABEL] ||
+        appName);
     return {
       service: {
         kind: 'Service',
@@ -74,27 +76,20 @@ const EditApplicationPage: React.FunctionComponent<EditApplicationPageProps> = (
         kind: 'BuildConfig',
         isList: true,
         namespace,
-        selector: {
-          matchLabels: { [NAME_LABEL]: nameLabel },
-        },
+        name: nameLabel,
         optional: true,
       },
       [PipelineModel.id]: {
         kind: referenceForModel(PipelineModel),
         isList: true,
         namespace,
-        selector: {
-          matchLabels: { [NAME_LABEL]: nameLabel },
-        },
+        name: nameLabel,
         optional: true,
       },
       imageStream: {
         kind: 'ImageStream',
         isList: true,
         namespace,
-        selector: {
-          matchLabels: { [NAME_LABEL]: nameLabel },
-        },
         optional: true,
       },
       imageStreams: {
