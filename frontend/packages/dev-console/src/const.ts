@@ -20,3 +20,6 @@ export enum CONNECTOR_INCONTEXT_ACTIONS {
 export const SERVICE_BINDING_ENABLED = 'SERVICE_BINDING_ENABLED';
 
 export const SAMPLE_APPLICATION_GROUP = 'sample-app';
+
+export const NAME_LABEL = 'app.kubernetes.io/name';
+export const INSTANCE_LABEL = 'app.kubernetes.io/instance';
