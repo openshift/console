@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: resourcequota1
+spec:
+  hard:
+    pods: '1'
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: resourcequota2
+spec:
+  hard:
+    pods: '1'

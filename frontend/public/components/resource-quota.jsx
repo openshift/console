@@ -40,6 +40,7 @@ import {
   ResourceQuotaModel,
   ClusterResourceQuotaModel,
 } from '../models';
+import { getUsedPercentage } from '@console/app/src/components/resource-quota/utils';
 
 const { common } = Kebab.factory;
 
@@ -157,10 +158,18 @@ const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
-const acrqTableColumnClasses = ['', '', '', '', Kebab.columnClass];
+const acrqTableColumnClasses = [
+  '',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
+  Kebab.columnClass,
+];
 
 export const UsageIcon = ({ percent }) => {
   let usageIcon = <UnknownIcon />;
@@ -396,6 +405,25 @@ const Details = ({ obj: rq, match }) => {
 const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
   const { t } = useTranslation();
   const actions = quotaActions(rq, customData);
+  let resourcesAtQuota;
+  if (rq.kind === ResourceQuotaModel.kind) {
+    resourcesAtQuota = Object.keys(rq?.status?.hard || {}).reduce(
+      (acc, resource) =>
+        getUsedPercentage(rq?.status?.hard[resource], rq?.status?.used?.[resource]) >= 100
+          ? acc + 1
+          : acc,
+      0,
+    );
+  } else {
+    resourcesAtQuota = Object.keys(rq?.status?.total?.hard || {}).reduce(
+      (acc, resource) =>
+        getUsedPercentage(rq?.status?.total?.hard[resource], rq?.status?.total?.used?.[resource]) >=
+        100
+          ? acc + 1
+          : acc,
+      0,
+    );
+  }
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -430,10 +458,20 @@ const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
       <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
         <Selector selector={rq.spec?.selector?.annotations} namespace={customData.namespace} />
       </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <Timestamp timestamp={rq.metadata.creationTimestamp} />
+      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+        {resourcesAtQuota > 0 ? (
+          <>
+            <YellowExclamationTriangleIcon />{' '}
+            {t('public~{{count}} resource reached quota', { count: resourcesAtQuota })}
+          </>
+        ) : (
+          t('public~none are at quota')
+        )}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
+        <Timestamp timestamp={rq.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab
           customData={customData}
           actions={actions}
@@ -446,7 +484,16 @@ const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
 };
 
 const AppliedClusterResourceQuotaTableRow = ({ obj: rq, customData }) => {
+  const { t } = useTranslation();
   const actions = quotaActions(rq, customData);
+  const resourcesAtQuota = Object.keys(rq?.status?.total?.hard || {}).reduce(
+    (acc, resource) =>
+      getUsedPercentage(rq?.status?.total?.hard[resource], rq?.status?.total?.used?.[resource]) >=
+      100
+        ? acc + 1
+        : acc,
+    0,
+  );
   return (
     <>
       <TableData className={acrqTableColumnClasses[0]}>
@@ -466,10 +513,20 @@ const AppliedClusterResourceQuotaTableRow = ({ obj: rq, customData }) => {
       <TableData className={classNames(acrqTableColumnClasses[2], 'co-break-word')}>
         <Selector selector={rq.spec?.selector?.annotations} namespace={customData.namespace} />
       </TableData>
-      <TableData className={acrqTableColumnClasses[3]}>
-        <Timestamp timestamp={rq.metadata.creationTimestamp} />
+      <TableData className={classNames(acrqTableColumnClasses[3], 'co-break-word')}>
+        {resourcesAtQuota > 0 ? (
+          <>
+            <YellowExclamationTriangleIcon />{' '}
+            {t('public~{{count}} resource reached quota', { count: resourcesAtQuota })}
+          </>
+        ) : (
+          t('public~none are at quota')
+        )}
       </TableData>
       <TableData className={acrqTableColumnClasses[4]}>
+        <Timestamp timestamp={rq.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={acrqTableColumnClasses[5]}>
         <ResourceKebab
           customData={customData}
           actions={actions}
@@ -511,14 +568,19 @@ export const ResourceQuotasList = (props) => {
         props: { className: tableColumnClasses[3] },
       },
       {
+        title: t('public~Status'),
+        props: { className: tableColumnClasses[4] },
+        transforms: [sortable],
+      },
+      {
         title: t('public~Created'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
+        props: { className: tableColumnClasses[5] },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[5] },
+        props: { className: tableColumnClasses[6] },
       },
     ];
   };
@@ -557,14 +619,19 @@ export const AppliedClusterResourceQuotasList = (props) => {
         props: { className: acrqTableColumnClasses[2] },
       },
       {
+        title: t('public~Status'),
+        props: { className: acrqTableColumnClasses[3] },
+        transforms: [sortable],
+      },
+      {
         title: t('public~Created'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
-        props: { className: acrqTableColumnClasses[3] },
+        props: { className: acrqTableColumnClasses[4] },
       },
       {
         title: '',
-        props: { className: acrqTableColumnClasses[4] },
+        props: { className: acrqTableColumnClasses[5] },
       },
     ];
   };
