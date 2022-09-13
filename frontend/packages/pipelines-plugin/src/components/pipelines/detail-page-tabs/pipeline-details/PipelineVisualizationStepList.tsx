@@ -13,6 +13,7 @@ export interface PipelineVisualizationStepListProps {
   taskName: string;
   steps: StepStatus[];
   isFinallyTask?: boolean;
+  hideHeader?: boolean;
 }
 
 const TooltipColoredStatusIcon = ({ status }) => {
@@ -50,11 +51,14 @@ export const PipelineVisualizationStepList: React.FC<PipelineVisualizationStepLi
   taskName,
   steps,
   isFinallyTask,
+  hideHeader,
 }) => {
   const { t } = useTranslation();
   return (
     <div className="odc-pipeline-visualization-step-list">
-      <div className="odc-pipeline-visualization-step-list__task-name">{taskName}</div>
+      {!hideHeader && (
+        <div className="odc-pipeline-visualization-step-list__task-name">{taskName}</div>
+      )}
       {isFinallyTask && (
         <div className="odc-pipeline-visualization-step-list__task-type">
           {t('pipelines-plugin~Finally task')}

@@ -1,3 +1,4 @@
+import { RunStatus } from '@patternfly/react-topology';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import {
   TektonParam,
@@ -50,6 +51,12 @@ export type PipelineTask = {
   taskSpec?: TektonTaskSpec;
   when?: WhenExpression[];
   workspaces?: PipelineTaskWorkspace[];
+};
+
+export type PipelineTaskWithStatus = PipelineTask & {
+  status: {
+    reason: RunStatus;
+  };
 };
 
 export type PipelineSpec = {

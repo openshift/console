@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PipelineKind, PipelineRunKind } from '../../../../types';
-import { PipelineLayout } from '../../pipeline-topology/const';
+import { dagreViewerComponentFactory } from '../../pipeline-topology/factories';
 import PipelineTopologyGraph from '../../pipeline-topology/PipelineTopologyGraph';
-import { getTopologyNodesEdges, hasWhenExpression } from '../../pipeline-topology/utils';
+import { getGraphDataModel } from '../../pipeline-topology/utils';
 
 import './PipelineVisualization.scss';
 
@@ -20,9 +20,9 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
   const { t } = useTranslation();
   let content: React.ReactElement;
 
-  const { nodes, edges } = getTopologyNodesEdges(pipeline, pipelineRun);
+  const model = getGraphDataModel(pipeline, pipelineRun);
 
-  if (nodes.length === 0 && edges.length === 0) {
+  if (model?.nodes.length === 0 && model?.edges.length === 0) {
     // Nothing to render
     // TODO: Confirm wording with UX; ODC-1860
     content = (
@@ -35,15 +35,10 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
   } else {
     content = (
       <PipelineTopologyGraph
-        id={`${pipelineRun?.metadata?.name || pipeline.metadata.name}-graph`}
         data-test="pipeline-visualization"
-        nodes={nodes}
-        edges={edges}
-        layout={
-          hasWhenExpression(pipeline)
-            ? PipelineLayout.DAGRE_VIEWER_SPACED
-            : PipelineLayout.DAGRE_VIEWER
-        }
+        componentFactory={dagreViewerComponentFactory}
+        model={model}
+        showControlBar
       />
     );
   }

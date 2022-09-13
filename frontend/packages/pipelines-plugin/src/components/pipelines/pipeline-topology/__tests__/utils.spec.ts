@@ -1,44 +1,24 @@
 import { chart_color_black_400 as skippedColor } from '@patternfly/react-tokens/dist/js/chart_color_black_400';
 import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
+import { RunStatus, WhenStatus } from '@patternfly/react-topology';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
-import { ComputedStatus } from '../../../../types';
+import { ComputedStatus, PipelineTaskWithStatus } from '../../../../types';
 import {
   getLastRegularTasks,
-  getTopologyNodesEdges,
+  getGraphDataModel,
   getFinallyTaskHeight,
   hasWhenExpression,
   getFinallyTaskWidth,
   taskHasWhenExpression,
   nodesHasWhenExpression,
   getWhenExpressionDiamondState,
+  extractDepsFromContextVariables,
+  taskWhenStatus,
 } from '../utils';
 
 const pipelineData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
 const { pipeline } = pipelineData;
-const pipelineWithFinally = {
-  ...pipeline,
-  spec: {
-    ...pipeline.spec,
-    finally: [{ ...pipeline.spec.tasks[0], name: 'finally-task' }],
-  },
-};
-
-describe('getTopologyNodesEdges', () => {
-  it('expect to return nodes and edges for a pipeline without finally tasks', () => {
-    const { nodes, edges } = getTopologyNodesEdges(pipeline);
-    expect(nodes).toHaveLength(pipeline.spec.tasks.length);
-    expect(edges).toHaveLength(19);
-  });
-
-  it('expect to return nodes and edges for a pipeline with finally tasks', () => {
-    const { nodes, edges } = getTopologyNodesEdges(pipelineWithFinally);
-    expect(nodes).toHaveLength(
-      pipelineWithFinally.spec.tasks.length + pipelineWithFinally.spec.finally.length,
-    );
-    expect(edges).toHaveLength(20);
-  });
-});
 
 describe('getLastRegularTasks', () => {
   it('expect to handle the empty array input', () => {
@@ -46,7 +26,7 @@ describe('getLastRegularTasks', () => {
   });
 
   it('expect to return the last regular task name in the pipeline', () => {
-    const { nodes } = getTopologyNodesEdges(pipeline);
+    const { nodes } = getGraphDataModel(pipeline);
     expect(getLastRegularTasks(nodes)).toHaveLength(1);
     expect(getLastRegularTasks(nodes)).toEqual(['verify']);
   });
@@ -60,7 +40,7 @@ describe('getLastRegularTasks', () => {
         tasks: [task1, task2, task3, task4],
       },
     };
-    const { nodes } = getTopologyNodesEdges(pipelineWithMultipleLastTasks);
+    const { nodes } = getGraphDataModel(pipelineWithMultipleLastTasks);
     expect(getLastRegularTasks(nodes)).toHaveLength(3);
     expect(getLastRegularTasks(nodes)).toEqual(['analyse-code', 'style-checks', 'find-bugs']);
   });
@@ -106,7 +86,7 @@ describe('nodesHasWhenExpression', () => {
   const { pipeline: pipelineWithWhenExpression } = conditionalPipeline;
 
   it('expect to return false if the nodes does not contain when expressions', () => {
-    const { nodes } = getTopologyNodesEdges({
+    const { nodes } = getGraphDataModel({
       ...pipelineWithWhenExpression,
       spec: {
         ...pipelineWithWhenExpression.spec,
@@ -117,7 +97,7 @@ describe('nodesHasWhenExpression', () => {
   });
 
   it('expect to return true if the node contains when expressions', () => {
-    const { nodes } = getTopologyNodesEdges(pipelineWithWhenExpression);
+    const { nodes } = getGraphDataModel(pipelineWithWhenExpression);
     expect(nodesHasWhenExpression(nodes)).toBe(true);
   });
 });
@@ -194,5 +174,69 @@ describe('When expression decorator color', () => {
     );
     expect(diamondColor).toBe(skippedColor.value);
     expect(tooltipContent).toBe('When expression was not met');
+  });
+});
+
+describe('extractDepsFromContextVariables: ', () => {
+  it('should return emtpy array for invalid values', () => {
+    expect(extractDepsFromContextVariables('')).toEqual([]);
+    expect(extractDepsFromContextVariables(null)).toEqual([]);
+    expect(extractDepsFromContextVariables(undefined)).toEqual([]);
+  });
+
+  it('should return empty array if the context variable string does not contain results', () => {
+    expect(extractDepsFromContextVariables('$(context.pipeline.name)')).toEqual([]);
+    expect(extractDepsFromContextVariables('$(context.pipelinerun.name)')).toEqual([]);
+  });
+
+  it('should return a task name if the context variable string contains results', () => {
+    const contextVariable = '$(tasks.task1.results.sum)';
+    expect(extractDepsFromContextVariables(contextVariable)).toEqual(['task1']);
+  });
+
+  it('should return a list of task names if the context variable string contains multiple results', () => {
+    const contextVariable = '$(tasks.task1.results.sum)  $(tasks.task2.results.sum)';
+
+    expect(extractDepsFromContextVariables(contextVariable)).toEqual(['task1', 'task2']);
+  });
+});
+
+describe('taskWhenStatus:', () => {
+  const [task1] = pipeline.spec.tasks;
+
+  const taskWithStatus = (
+    reason: RunStatus = RunStatus.Succeeded,
+    when?: boolean,
+  ): PipelineTaskWithStatus => {
+    return {
+      ...task1,
+      ...(when && {
+        when: [
+          {
+            input: 'params.test',
+            operator: 'IN',
+            values: ['pass'],
+          },
+        ],
+      }),
+      status: {
+        reason,
+      },
+    };
+  };
+
+  it('should return undefined if the task does not have when expression', () => {
+    expect(taskWhenStatus(taskWithStatus())).toBeUndefined();
+  });
+
+  it('should return a matching when status', () => {
+    const succeededTask: PipelineTaskWithStatus = {
+      ...taskWithStatus(RunStatus.Succeeded, true),
+    };
+    const skippedTask: PipelineTaskWithStatus = {
+      ...taskWithStatus(RunStatus.Skipped, true),
+    };
+    expect(taskWhenStatus(succeededTask)).toBe(WhenStatus.Met);
+    expect(taskWhenStatus(skippedTask)).toBe(WhenStatus.Unmet);
   });
 });
