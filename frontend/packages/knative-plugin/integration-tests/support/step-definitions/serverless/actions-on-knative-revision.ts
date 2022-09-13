@@ -5,7 +5,7 @@ import {
   devNavigationMenu,
   nodeActions,
 } from '@console/dev-console/integration-tests/support/constants';
-import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { formPO, topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   deleteRevision,
   editLabels,
@@ -13,6 +13,8 @@ import {
   navigateTo,
   addPage,
   createGitWorkloadIfNotExistsOnTopologyPage,
+  app,
+  gitPage,
 } from '@console/dev-console/integration-tests/support/pages';
 import {
   topologyPage,
@@ -28,7 +30,7 @@ Given('user is at Import from git page', () => {
 Given(
   'number of annotations are {string} present in revision side bar details of service {string}',
   (numOfAnnotations: string, serviceName: string) => {
-    topologyPage.getRevisionNode(serviceName).click();
+    topologyPage.getRevisionNode(serviceName).click({ force: true });
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
     topologySidePane.verifyNumberOfAnnotations(numOfAnnotations);
@@ -38,7 +40,7 @@ Given(
 Given(
   'Revision of Knative service {string} consists of annotations in topology side bar',
   (serviceName: string) => {
-    topologyPage.getRevisionNode(serviceName).click();
+    topologyPage.getRevisionNode(serviceName).click({ force: true });
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
     cy.get(topologyPO.sidePane.editAnnotations).then(($el) => {
@@ -79,14 +81,39 @@ Then(
   },
 );
 
-Given('Knative service with multiple revisions', () => {
+Given('knative service {string} with multiple revisions', (serviceName: string) => {
   navigateTo(devNavigationMenu.Add);
   createGitWorkloadIfNotExistsOnTopologyPage(
     'https://github.com/sclorg/nodejs-ex.git',
-    'nodejs-ex-git-z',
+    serviceName,
     'Knative',
   );
-  // TODO: implement step
+  topologyPage.verifyUserIsInGraphView();
+  topologyPage.waitForLoad();
+  topologyPage.rightClickOnKnativeService(serviceName);
+
+  topologyPage.selectContextMenuAction(`Edit ${serviceName}`);
+
+  app.waitForLoad();
+  cy.get('button')
+    .contains('Labels')
+    .scrollIntoView()
+    .click();
+  gitPage.enterLabels('app=frontend');
+
+  cy.get(formPO.create).click();
+  topologyPage.verifyTopologyPage();
+
+  topologyPage.verifyUserIsInGraphView();
+  topologyPage.clickOnKnativeService(serviceName);
+
+  cy.log(`user is able to see revisions in knative service : ${serviceName} of topology side pane`);
+  topologySidePane.selectTab('Resources');
+  topologySidePane.verifySection('Revisions');
+  cy.get('.revision-overview-list')
+    .next('ul')
+    .find('li')
+    .should('have.length', 2);
 });
 
 When(
@@ -188,9 +215,9 @@ Then('save, cancel buttons are displayed', () => {
 Then(
   'user can see the label {string} in the Details tab of the Sidebar of {string}',
   (label: string, serviceName: string) => {
-    topologyPage.search(serviceName);
-    cy.byLegacyTestID('base-node-handler')
-      .find('g.odc-resource-icon')
+    topologyPage
+      .getRevisionNode(serviceName)
+      .first()
       .click({ force: true });
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
@@ -201,9 +228,9 @@ Then(
 Then(
   'user will not see the label {string} in the Details tab of the Sidebar of {string}',
   (label: string, serviceName: string) => {
-    topologyPage.search(serviceName);
-    cy.byLegacyTestID('base-node-handler')
-      .find('g.odc-resource-icon')
+    topologyPage
+      .getRevisionNode(serviceName)
+      .first()
       .click({ force: true });
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
@@ -284,3 +311,36 @@ Then(
 Then('modal with alert description {string} appears', (alertDescription: string) => {
   cy.get('h4.pf-c-alert__title').should('contain.text', alertDescription);
 });
+
+Then('user clicks the save button on the "Edit annotations" modal', () => {
+  cy.get('[data-test="confirm-action"]').click();
+});
+
+Then(
+  'verify the number of annotations equal to {string} in side bar details knative revision',
+  (numOfAnnotations: string) => {
+    topologySidePane.verify();
+    topologySidePane.selectTab('Details');
+    topologySidePane.verifyNumberOfAnnotations(numOfAnnotations);
+  },
+);
+
+Then('user clicks on "remove" icon for the annotation with key {string}', (key: string) => {
+  cy.get(`[value="${key}"]`)
+    .parent()
+    .parent()
+    .find('.pairs-list__action')
+    .find('[data-test="delete-button"]')
+    .click();
+});
+
+When(
+  'user selects {string} option from knative revision context menu of knative service {string}',
+  (option: string, serviceName: string) => {
+    topologyPage
+      .getRevisionNode(serviceName)
+      .first()
+      .trigger('contextmenu', { force: true });
+    cy.byTestActionID(option).click();
+  },
+);

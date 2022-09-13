@@ -103,7 +103,10 @@ export const topologySidePane = {
       .should('be.visible');
   },
   verifyNumberOfAnnotations: (num: string) => {
-    cy.get(topologyPO.sidePane.detailsTab.annotations).should('be.visible');
+    cy.wait(3000);
+    cy.get(topologyPO.sidePane.detailsTab.annotations)
+      .scrollIntoView()
+      .should('be.visible');
     // eslint-disable-next-line promise/catch-or-return
     cy.get(topologyPO.sidePane.editAnnotations).then(($el) => {
       const res = $el.text().split(' ');
