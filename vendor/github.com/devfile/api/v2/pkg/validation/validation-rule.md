@@ -14,8 +14,7 @@ The validation will be done as part of schema validation, the rule will be intro
 
 ### Endpoints:
 - all the endpoint names are unique across components
-  
-Since network is shared in the same pod, endpoint ports should be unique across components, two components cannot have the same target port but two endpoints in a single component can have the same target port. Only exception: container component with `dedicatedpod=true`
+- all the endpoint ports are unique across components. Only exception: container component with `dedicatedpod=true`
 
 ### Commands:
 1. id must be unique
@@ -34,6 +33,8 @@ Common rules for all components types:
 #### Container component 
 1. the container components must reference a valid volume component if it uses volume mounts, and the volume components are unique
 2. `PROJECT_SOURCE` or `PROJECTS_ROOT` are reserved environment variables defined under env, cannot be defined again in `env`
+3. the annotations should not have conflict values for same key, except deployment annotations and service annotations set for a container with `dedicatedPod=true`
+4. resource requirements, e.g. `cpuLimit`, `cpuRequest`, `memoryLimit`, `memoryRequest`, must be in valid quantity format; and the resource requested must be less than the resource limit (if specified).
 
 #### Plugin Component
 - Commands in plugins components share the same commands validation rules as listed above. Validation occurs after overriding and merging, in flattened devfile

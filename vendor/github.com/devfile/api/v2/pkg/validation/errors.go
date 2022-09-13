@@ -96,7 +96,7 @@ func (e *InvalidEndpointError) Error() string {
 	if e.name != "" {
 		errMsg = fmt.Sprintf("devfile contains multiple endpoint entries with same name: %v", e.name)
 	} else if fmt.Sprint(e.port) != "" {
-		errMsg = fmt.Sprintf("devfile contains multiple containers with same TargetPort: %v", e.port)
+		errMsg = fmt.Sprintf("devfile contains multiple endpoint entries with same TargetPort: %v", e.port)
 	}
 
 	return errMsg
@@ -159,6 +159,53 @@ type InvalidProjectCheckoutRemoteError struct {
 
 func (e *InvalidProjectCheckoutRemoteError) Error() string {
 	return fmt.Sprintf("unable to find the checkout remote %s in the remotes for %s %s", e.checkoutRemote, e.objectType, e.objectName)
+}
+
+type ResourceRequirementType string
+
+const (
+	MemoryLimit   ResourceRequirementType = "memoryLimit"
+	CpuLimit      ResourceRequirementType = "cpuLimit"
+	MemoryRequest ResourceRequirementType = "memoryRequest"
+	CpuRequest    ResourceRequirementType = "cpuRequest"
+)
+
+//ParsingResourceRequirementError returns an error if failed to parse a resource requirement
+type ParsingResourceRequirementError struct {
+	resource ResourceRequirementType
+	cmpName  string
+	errMsg   string
+}
+
+func (e *ParsingResourceRequirementError) Error() string {
+	return fmt.Sprintf("error parsing %s requirement for component %s: %s", e.resource, e.cmpName, e.errMsg)
+}
+
+//InvalidResourceRequestError returns an error if resource limit < resource requested
+type InvalidResourceRequestError struct {
+	cmpName string
+	errMsg  string
+}
+
+func (e *InvalidResourceRequestError) Error() string {
+	return fmt.Sprintf("invalid resource request for component %s: %s", e.cmpName, e.errMsg)
+}
+
+type AnnotationType string
+
+const (
+	DeploymentAnnotation AnnotationType = "deployment"
+	ServiceAnnotation    AnnotationType = "service"
+)
+
+//AnnotationConflictError returns an error if an annotation has been declared with conflict values
+type AnnotationConflictError struct {
+	annotationName string
+	annotationType AnnotationType
+}
+
+func (e *AnnotationConflictError) Error() string {
+	return fmt.Sprintf("%v annotation: %v has been declared multiple times and with different values", e.annotationType, e.annotationName)
 }
 
 // resolveErrorMessageWithImportAttributes returns an updated error message

@@ -50,6 +50,7 @@ type Endpoint struct {
 	// +kubebuilder:validation:MaxLength=63
 	Name string `json:"name"`
 
+	// The port number should be unique.
 	TargetPort int `json:"targetPort"`
 
 	// Describes how the endpoint should be exposed on the network.
@@ -112,4 +113,8 @@ type Endpoint struct {
 	// +kubebuilder:pruning:PreserveUnknownFields
 	// +kubebuilder:validation:Schemaless
 	Attributes attributes.Attributes `json:"attributes,omitempty"`
+
+	// +optional
+	// Annotations to be added to Kubernetes Ingress or Openshift Route
+	Annotations map[string]string `json:"annotation,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 }
