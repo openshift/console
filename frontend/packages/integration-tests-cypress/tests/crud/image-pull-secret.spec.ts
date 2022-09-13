@@ -13,13 +13,8 @@ const clickCreateImagePullSecretDropdownButton = () => {
     });
 };
 
-const typeValue = (testId: string, inputValue: string, blur: boolean) => {
-  !blur
-    ? cy.byTestID(testId).type(inputValue)
-    : cy
-        .byTestID(testId)
-        .type(inputValue)
-        .blur();
+const typeValue = (testId: string, inputValue: string) => {
+  cy.byTestID(testId).type(inputValue);
 };
 
 const populateImageSecretForm = (
@@ -31,11 +26,13 @@ const populateImageSecretForm = (
 ) => {
   cy.get('.co-m-pane__heading').contains('Create image pull secret');
   cy.byTestID('secret-name').should('exist');
-  typeValue('secret-name', name, false);
-  typeValue('image-secret-address', address, false);
-  typeValue('image-secret-username', username, false);
-  typeValue('image-secret-password', password, false);
-  typeValue('image-secret-email', email, true);
+  typeValue('secret-name', name);
+  typeValue('image-secret-address', address);
+  typeValue('image-secret-username', username);
+  typeValue('image-secret-password', password);
+  cy.byTestID('image-secret-email')
+    .type(email)
+    .blur();
 };
 
 const isWhitespaceRemoved = (testId: string, expectedValue: string) => {
