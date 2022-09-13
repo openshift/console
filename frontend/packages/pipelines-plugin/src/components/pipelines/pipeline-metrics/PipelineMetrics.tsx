@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { parsePrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
   Flex,
   FlexItem,
@@ -12,7 +13,6 @@ import {
   CardTitle,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
 import { PipelineMetricsLevel } from '../const';
 import { PipelineDetailsTabProps } from '../detail-page-tabs/types';
 import { useLatestPipelineRun } from '../hooks';

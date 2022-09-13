@@ -9,6 +9,10 @@ import {
   PrometheusValue,
 } from '@console/dynamic-plugin-sdk';
 import {
+  formatPrometheusDuration,
+  parsePrometheusDuration,
+} from '@openshift-console/plugin-shared/src/datetime/prometheus';
+import {
   Chart,
   ChartArea,
   ChartAxis,
@@ -57,8 +61,6 @@ import {
 import {
   dateFormatterNoYear,
   dateTimeFormatterWithSeconds,
-  formatPrometheusDuration,
-  parsePrometheusDuration,
   timeFormatter,
   timeFormatterWithSeconds,
 } from '../utils/datetime';

@@ -1,9 +1,12 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  formatPrometheusDuration,
+  parsePrometheusDuration,
+} from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
 
-import { formatPrometheusDuration, parsePrometheusDuration } from '../utils/datetime';
 import { useBoolean } from './hooks/useBoolean';
 
 const OFF_KEY = 'OFF_KEY';

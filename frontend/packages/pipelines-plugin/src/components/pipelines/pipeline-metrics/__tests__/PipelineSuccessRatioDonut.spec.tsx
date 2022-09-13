@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { parsePrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import { shallow } from 'enzyme';
 import Measure from 'react-measure';
 import { DEFAULT_PROMETHEUS_TIMESPAN } from '@console/internal/components/graphs';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { LoadingInline } from '@console/internal/components/utils';
-import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
 import { DEFAULT_REFRESH_INTERVAL, PipelineMetricsLevel } from '../../const';
 import * as hookUtils from '../../hooks';

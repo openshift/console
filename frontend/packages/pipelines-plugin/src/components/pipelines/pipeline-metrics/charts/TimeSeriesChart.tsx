@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { parsePrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
   Chart,
   ChartAxis,
@@ -13,7 +14,6 @@ import {
 } from '@patternfly/react-charts';
 import * as _ from 'lodash';
 import { DomainPropType } from 'victory-core';
-import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
 import { DEFAULT_CHART_HEIGHT } from '../../const';
 import { formatDate, formatValue, getXaxisValues } from '../pipeline-metrics-utils';
 

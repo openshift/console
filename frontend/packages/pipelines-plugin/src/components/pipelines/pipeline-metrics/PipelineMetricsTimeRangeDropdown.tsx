@@ -1,11 +1,11 @@
 import * as React from 'react';
+import {
+  formatPrometheusDuration,
+  parsePrometheusDuration,
+} from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { map } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  parsePrometheusDuration,
-  formatPrometheusDuration,
-} from '@console/internal/components/utils/datetime';
 import { PipelineMetricsTimeRangeOptions } from './pipeline-metrics-utils';
 
 interface PipelineMetricsTimeRangeDropdownProps {
