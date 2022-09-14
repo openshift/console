@@ -1,30 +1,23 @@
 import * as React from 'react';
-import { ExtensionHook, ExtensionK8sKindVersionModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import {
+  ActionFilter as CoreActionFilter,
+  ActionGroup as CoreActionGroup,
+  ActionProvider as CoreActionProvider,
+  ResourceActionProvider as CoreResourceActionProvider,
+} from '@openshift/dynamic-plugin-sdk';
+import { Extension, ExtensionDeclaration } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
 /** ActionProvider contributes a hook that returns list of actions for specific context */
 export type ActionProvider = ExtensionDeclaration<
   'console.action/provider',
-  {
-    /** The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm */
-    contextId: string | 'resource';
-    /** A react hook which returns actions for the given scope.
-     * If contextId = `resource` then the scope will always be a K8s resource object
-     * */
-    provider: CodeRef<ExtensionHook<Action[]>>;
-  }
+  CoreActionProvider['properties']
 >;
 
 /** ResourceActionProvider contributes a hook that returns list of actions for specific resource model */
 export type ResourceActionProvider = ExtensionDeclaration<
   'console.action/resource-provider',
-  {
-    /** The model for which this provider provides actions for. */
-    model: ExtensionK8sKindVersionModel;
-    /** A react hook which returns actions for the given resource model */
-    provider: CodeRef<ExtensionHook<Action[]>>;
-  }
+  CoreResourceActionProvider['properties']
 >;
 
 /** ActionGroup contributes an action group that can also be a submenu */
@@ -51,18 +44,17 @@ export type ActionGroup = ExtensionDeclaration<
   }
 >;
 
+/** ActionGroup contributes an action group that can also be a submenu */
+// DO NOT COMMIT
+export type ActionGroup2 = ExtensionDeclaration<
+  'console.action/group',
+  CoreActionGroup['properties']
+>;
+
 /** ActionFilter can be used to filter an action */
 export type ActionFilter = ExtensionDeclaration<
   'console.action/filter',
-  {
-    /** The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm */
-    contextId: string | 'resource';
-    /** A function which will filter actions based on some conditions.
-     * scope: The scope in which actions should be provided for.
-     * Note: hook may be required if we want to remove the ModifyCount action from a deployment with HPA
-     * */
-    filter: CodeRef<(scope: any, action: Action) => boolean>;
-  }
+  CoreActionFilter['properties']
 >;
 
 export type SupportedActionExtensions =

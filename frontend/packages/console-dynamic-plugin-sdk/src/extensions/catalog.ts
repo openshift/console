@@ -1,23 +1,15 @@
 import * as React from 'react';
+import {
+  CatalogItemFilter as CoreCatalogItemFilter,
+  CatalogItemProvider as CoreCatalogItemProvider,
+  CatalogItemType as CoreCatalogItemType,
+} from '@openshift/dynamic-plugin-sdk';
 import { ExtensionHook } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 export type CatalogItemType = ExtensionDeclaration<
   'console.catalog/item-type',
-  {
-    /** Type for the catalog item. */
-    type: string;
-    /** Title for the catalog item. */
-    title: string;
-    /** Description for the type specific catalog. */
-    catalogDescription?: string | CodeRef<React.ReactNode>;
-    /** Description for the catalog item type. */
-    typeDescription?: string;
-    /** Custom filters specific to the catalog item.  */
-    filters?: CatalogItemAttribute[];
-    /** Custom groupings specific to the catalog item. */
-    groupings?: CatalogItemAttribute[];
-  }
+  CoreCatalogItemType['properties']
 >;
 
 export type CatalogItemTypeMetadata = ExtensionDeclaration<
@@ -34,31 +26,12 @@ export type CatalogItemTypeMetadata = ExtensionDeclaration<
 
 export type CatalogItemProvider = ExtensionDeclaration<
   'console.catalog/item-provider',
-  {
-    /** The unique identifier for the catalog this provider contributes to. */
-    catalogId: string | string[];
-    /** Type ID for the catalog item type. */
-    type: string;
-    /** Title for the catalog item provider */
-    title: string;
-    /** Fetch items and normalize it for the catalog. Value is a react effect hook. */
-    provider: CodeRef<ExtensionHook<CatalogItem[], CatalogExtensionHookOptions>>;
-    /** Priority for this provider. Defaults to 0. Higher priority providers may override catalog
-        items provided by other providers. */
-    priority?: number;
-  }
+  CoreCatalogItemProvider['properties']
 >;
 
 export type CatalogItemFilter = ExtensionDeclaration<
   'console.catalog/item-filter',
-  {
-    /** The unique identifier for the catalog this provider contributes to. */
-    catalogId: string | string[];
-    /** Type ID for the catalog item type. */
-    type: string;
-    /** Filters items of a specific type. Value is a function that takes CatalogItem[] and returns a subset based on the filter criteria. */
-    filter: CodeRef<(item: CatalogItem) => boolean>;
-  }
+  CoreCatalogItemFilter['properties']
 >;
 
 export type CatalogItemMetadataProvider = ExtensionDeclaration<

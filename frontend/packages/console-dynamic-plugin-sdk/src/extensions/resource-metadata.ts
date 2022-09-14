@@ -1,3 +1,4 @@
+import { ModelMetadata as CoreModelMetadata } from '@openshift/dynamic-plugin-sdk';
 import { ExtensionK8sGroupModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration } from '../types';
 
@@ -23,6 +24,13 @@ export type ModelMetadata = ExtensionDeclaration<
     /** Customize the abbreviation. Defaults to All uppercase chars in the kind up to 4 characters long. Requires `kind` be provided. */
     abbr?: string;
   }
+>;
+
+/** Customize the display of models by overriding values retrieved and generated through API discovery. */
+// DO NOT COMMIT
+export type ModelMetadata2 = ExtensionDeclaration<
+  'console.model-metadata',
+  CoreModelMetadata['properties']
 >;
 
 // Type guards

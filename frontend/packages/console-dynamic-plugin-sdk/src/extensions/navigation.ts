@@ -1,3 +1,9 @@
+import {
+  NavItem as CoreNavItem,
+  HrefNavItem as CoreHrefNavItem,
+  ResourceNSNavItem as CoreResourceNSNavItem,
+  Separator as CoreSeparator,
+} from '@openshift/dynamic-plugin-sdk';
 import { ExtensionK8sModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration } from '../types';
 
@@ -18,25 +24,11 @@ type NavItemProperties = {
   insertAfter?: string | string[];
 };
 
-export type NavItem = ExtensionDeclaration<
-  'console.navigation/href',
-  NavItemProperties & {
-    name: string;
-  }
->;
+export type NavItem = ExtensionDeclaration<'console.navigation/href', CoreNavItem['properties']>;
 
 export type HrefNavItem = ExtensionDeclaration<
   'console.navigation/href',
-  NavItemProperties & {
-    /** The name of this item. */
-    name: string;
-    /** The link href value. */
-    href: string;
-    /** if true, adds /ns/active-namespace to the end */
-    namespaced?: boolean;
-    /** if true, adds /k8s/ns/active-namespace to the begining */
-    prefixNamespaced?: boolean;
-  }
+  CoreHrefNavItem['properties']
 >;
 
 export type ResourceNSNavItem = ExtensionDeclaration<
@@ -47,6 +39,12 @@ export type ResourceNSNavItem = ExtensionDeclaration<
     /** The model for which this nav item links to. */
     model: ExtensionK8sModel;
   }
+>;
+
+// DO NOT COMMIT
+export type ResourceNSNavItem2 = ExtensionDeclaration<
+  'console.navigation/resource-ns',
+  CoreResourceNSNavItem['properties']
 >;
 
 export type ResourceClusterNavItem = ExtensionDeclaration<
@@ -61,7 +59,7 @@ export type ResourceClusterNavItem = ExtensionDeclaration<
 
 export type Separator = ExtensionDeclaration<
   'console.navigation/separator',
-  Omit<NavItemProperties, 'startsWith'>
+  CoreSeparator['properties']
 >;
 
 export type NavSection = ExtensionDeclaration<

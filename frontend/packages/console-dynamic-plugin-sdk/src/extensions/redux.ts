@@ -1,15 +1,10 @@
-import { Reducer } from 'redux';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { ReduxReducer as CoreReduxReducer } from '@openshift/dynamic-plugin-sdk';
+import { Extension, ExtensionDeclaration } from '../types';
 
 /** Adds new reducer to Console Redux store which operates on `plugins.<scope>` substate. */
 export type ReduxReducer = ExtensionDeclaration<
   'console.redux-reducer',
-  {
-    /** The key to represent the reducer-managed substate within the Redux state object. */
-    scope: string;
-    /** The reducer function, operating on the reducer-managed substate. */
-    reducer: CodeRef<Reducer>;
-  }
+  CoreReduxReducer['properties']
 >;
 
 // Type guards

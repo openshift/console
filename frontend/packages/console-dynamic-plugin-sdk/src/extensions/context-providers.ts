@@ -1,15 +1,10 @@
-import { Provider } from 'react';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { ContextProvider as CoreContextProvider } from '@openshift/dynamic-plugin-sdk';
+import { Extension, ExtensionDeclaration } from '../types';
 
 /** Adds new React context provider to Console application root. */
 export type ContextProvider<T = any> = ExtensionDeclaration<
   'console.context-provider',
-  {
-    /** Context Provider component. */
-    provider: CodeRef<Provider<T>>;
-    /** Hook for the Context value. */
-    useValueHook: CodeRef<() => T>;
-  }
+  CoreContextProvider['properties']
 >;
 
 // Type guards
