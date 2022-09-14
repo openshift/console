@@ -89,6 +89,7 @@ export const topologyPO = {
     editAnnotations: '[data-test="edit-annotations"]',
     tabName: '[role="dialog"] li button',
     healthCheckAlert: 'div.odc-topology-sidebar-alert',
+    resourceQuotaAlert: 'div.odc-topology-sidebar-alert [aria-label="Warning Alert"]',
     podScale: 'button.pf-c-button.pf-m-plain.pf-m-block',
     podText: 'text.pf-chart-donut-title.pod-ring__center-text',
     applicationGroupingsTitle: '.overview__sidebar-pane-head.resource-overview__heading',

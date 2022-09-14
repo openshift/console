@@ -1,19 +1,23 @@
 import * as React from 'react';
 import { AlertActionLink } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CommonActionFactory } from '@console/app/src/actions/creators/common-factory';
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
-import { DetailsResourceAlertContent, useAccessReview } from '@console/dynamic-plugin-sdk';
+import { Action, DetailsResourceAlertContent, useAccessReview } from '@console/dynamic-plugin-sdk';
 import {
   DaemonSetModel,
   DeploymentConfigModel,
   DeploymentModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import {
+  K8sResourceCondition,
+  modelFor,
+  referenceFor,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
 import { getResource } from '../../utils';
 
@@ -35,7 +39,7 @@ export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAler
   const resourceModel = kindForCRDResource ? modelFor(kindForCRDResource) : undefined;
   const resourceKind = resourceModel?.crd ? kindForCRDResource : kind;
 
-  const canAddHealthChecks = useAccessReview({
+  const [canAddHealthChecks, canAddHealthChecksLoading] = useAccessReview({
     group: resourceModel?.apiGroup,
     resource: resourceModel?.plural,
     namespace,
@@ -53,7 +57,7 @@ export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAler
     (container) => container.readinessProbe || container.livenessProbe || container.startupProbe,
   );
 
-  const showAlert = !healthCheckAdded && canAddHealthChecks;
+  const showAlert = !healthCheckAdded && canAddHealthChecks && !canAddHealthChecksLoading;
 
   const addHealthChecksLink = `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containersName[0]}/health-checks`;
 
@@ -87,9 +91,9 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
   const name = resource?.metadata?.name;
   const namespace = resource?.metadata?.namespace;
 
-  const canUseAlertAction = useAccessReview({
-    group: DeploymentModel?.apiGroup,
-    resource: DeploymentModel?.plural,
+  const [canUseAlertAction, canUseAlertActionLoading] = useAccessReview({
+    group: DeploymentModel.apiGroup,
+    resource: DeploymentModel.plural,
     namespace,
     name,
     verb: 'patch',
@@ -97,32 +101,31 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
 
   if (!resource || referenceForModel(DeploymentModel) !== referenceFor(resource)) return null;
 
-  const statusConditions = resource.status?.conditions ?? [];
-  const replicaFailure = !_.isEmpty(statusConditions)
-    ? _.find(statusConditions, (condition) => condition.type === 'ReplicaFailure')
-    : undefined;
+  const statusConditions: K8sResourceCondition[] = resource.status?.conditions ?? [];
+  const replicaFailure = statusConditions.find((condition) => condition.type === 'ReplicaFailure');
   const replicaFailureMsg: string = replicaFailure?.message ?? '';
   const resourceQuotaRequested = replicaFailureMsg.split(':')?.[3] ?? '';
-  const resourceQuotaType = resourceQuotaRequested.includes('limits')
-    ? 'Limits'
-    : resourceQuotaRequested.includes('pods')
-    ? 'Pods'
-    : '';
-  const showAlert = resourceQuotaType && canUseAlertAction;
-  const alertAction =
-    resourceQuotaType === 'Limits'
-      ? DeploymentActionFactory.EditResourceLimits(DeploymentModel, resource)
-      : CommonActionFactory.ModifyCount(DeploymentModel, resource);
 
-  const alertActionCta = alertAction.cta as () => void;
+  let alertAction: Action;
+  if (resourceQuotaRequested.includes('limits')) {
+    alertAction = DeploymentActionFactory.EditResourceLimits(DeploymentModel, resource);
+  } else if (resourceQuotaRequested.includes('pods')) {
+    alertAction = CommonActionFactory.ModifyCount(DeploymentModel, resource);
+  }
 
-  const alertActionLink = (
+  const showAlertActionLink = alertAction && canUseAlertAction && !canUseAlertActionLoading;
+
+  const alertActionCta = alertAction?.cta as () => void;
+
+  const alertActionLink = showAlertActionLink ? (
     <AlertActionLink onClick={() => alertActionCta()}>
       {alertAction.label as string}
     </AlertActionLink>
+  ) : (
+    undefined
   );
 
-  return showAlert
+  return replicaFailure
     ? {
         title: t('topology~Resource Quotas'),
         dismissible: true,

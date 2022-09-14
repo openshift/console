@@ -54,8 +54,7 @@ type BaseNodeProps = {
   createConnectorAccessVerb?: K8sVerb;
   nodeStatus?: NodeStatus;
   showStatusBackground?: boolean;
-  showAlertStatus?: boolean;
-  alertVariant?: string;
+  alertVariant?: NodeStatus;
 } & Partial<WithSelectionProps> &
   Partial<WithDragNodeProps> &
   Partial<WithDndDropProps> &
@@ -75,7 +74,6 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   contextMenuOpen,
   createConnectorAccessVerb = 'patch',
   createConnectorDrag,
-  showAlertStatus,
   alertVariant,
   ...rest
 }) => {
@@ -118,10 +116,14 @@ const BaseNode: React.FC<BaseNodeProps> = ({
     <Layer id={hover || contextMenuOpen ? TOP_LAYER : DEFAULT_LAYER}>
       <g ref={nodeHoverRefs} data-test-id={element.getLabel()}>
         <DefaultNode
-          className={classNames('odc-base-node', className, {
-            'is-filtered': filtered,
-            [StatusModifier[alertVariant]]: showAlertStatus,
-          })}
+          className={classNames(
+            'odc-base-node',
+            className,
+            alertVariant && StatusModifier[alertVariant],
+            {
+              'is-filtered': filtered,
+            },
+          )}
           truncateLength={RESOURCE_NAME_TRUNCATE_LENGTH}
           element={element}
           showLabel={showLabel}

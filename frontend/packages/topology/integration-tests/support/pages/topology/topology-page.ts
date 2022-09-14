@@ -436,6 +436,11 @@ export const topologyPage = {
       .should('be.visible')
       .click({ force: true });
   },
+  verifyNodeAlert: (nodeName: string) => {
+    cy.get('[data-type="workload"]')
+      .find('.pf-topology__node.pf-m-warning')
+      .contains(nodeName);
+  },
 };
 
 export const addGitWorkload = (

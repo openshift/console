@@ -194,7 +194,7 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
   const buildStatus = buildConfigs?.[0]?.builds?.[0]?.status?.phase;
   const pipelineStatus = element.getData()?.resources?.pipelineRunStatus ?? 'Unknown';
   const workloadRqAlert = useResourceQuotaAlert(element);
-  const workloadRqAlertVariant = workloadRqAlert?.variant || 'default';
+  const workloadRqAlertVariant = (workloadRqAlert?.variant as NodeStatus) || NodeStatus.default;
 
   return (
     <g className="odc-workload-node">
@@ -219,7 +219,6 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
           }
           attachments={nodeDecorators}
           contextMenuOpen={contextMenuOpen}
-          showAlertStatus={!!workloadRqAlert}
           alertVariant={workloadRqAlertVariant}
           {...rest}
         >
