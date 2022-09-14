@@ -43,7 +43,9 @@ export const namespacePolicyTypeRadios = (t: TFunction) => [
     id: NamespacePolicyType.SINGLE,
     value: NamespacePolicyType.SINGLE,
     label: t('ceph-storage-plugin~Single NamespaceStore'),
-    description: 'The namespace bucket will read and write its data to a selected namespace store',
+    description: t(
+      'ceph-storage-plugin~The namespace bucket will read and write its data to a selected namespace store',
+    ),
   },
   {
     id: NamespacePolicyType.MULTI,
