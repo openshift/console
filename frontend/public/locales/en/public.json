@@ -1798,6 +1798,8 @@
   "Prometheuses": "Prometheuses",
   "ServiceMonitor": "ServiceMonitor",
   "ServiceMonitors": "ServiceMonitors",
+  "PodMonitor": "PodMonitor",
+  "PodMonitors": "PodMonitors",
   "DaemonSet": "DaemonSet",
   "ReplicationController": "ReplicationController",
   "HorizontalPodAutoscaler": "HorizontalPodAutoscaler",

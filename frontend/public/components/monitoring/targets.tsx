@@ -15,7 +15,13 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
 
-import { NamespaceModel, ServiceModel, ServiceMonitorModel } from '../../models';
+import {
+  NamespaceModel,
+  ServiceModel,
+  ServiceMonitorModel,
+  PodModel,
+  PodMonitorModel,
+} from '../../models';
 import { K8sResourceKind, LabelSelector, referenceForModel } from '../../module/k8s';
 import { RootState } from '../../redux';
 import { RowFunctionArgs, Table, TableData } from '../factory';
@@ -32,11 +38,59 @@ import { Labels } from './labels';
 import { AlertSource, PrometheusAPIError, Target } from './types';
 import { targetSource } from './utils';
 
-const MonitorsWatchContext = React.createContext([]);
+enum MonitorType {
+  ServiceMonitor = 'serviceMonitor',
+  PodMonitor = 'podMonitor',
+}
+
+const ServiceMonitorsWatchContext = React.createContext([]);
 const ServicesWatchContext = React.createContext([]);
 
+const PodMonitorsWatchContext = React.createContext([]);
+const PodsWatchContext = React.createContext([]);
+
+const PodMonitor: React.FC<{ target: Target }> = ({ target }) => {
+  const [podMonitors, podMonitorsLoaded] = React.useContext(PodMonitorsWatchContext);
+  const [pods, podsLoaded] = React.useContext(PodsWatchContext);
+
+  if (!podsLoaded || !podMonitorsLoaded) {
+    return <LoadingInline />;
+  }
+
+  // First find the pod that corresponds to the target
+  const pod = _.find(
+    pods,
+    ({ metadata }) =>
+      metadata.name === target?.labels?.pod && metadata.namespace === target?.labels?.namespace,
+  );
+
+  // Now find the pod monitor that corresponds to the pod
+  const podMonitor = _.find(
+    podMonitors,
+    ({ metadata, spec }) =>
+      pod &&
+      target.scrapePool.includes(`/${metadata.namespace}/${metadata.name}/`) &&
+      ((spec.selector.matchLabels === undefined && spec.selector.matchExpressions === undefined) ||
+        new LabelSelector(spec.selector).matchesLabels(pod.metadata.labels ?? {})) &&
+      (spec.namespaceSelector?.matchNames === undefined ||
+        _.includes(spec.namespaceSelector?.matchNames, pod.metadata.namespace)),
+  );
+
+  if (!podMonitor) {
+    return <>-</>;
+  }
+
+  return (
+    <ResourceLink
+      kind={referenceForModel(PodMonitorModel)}
+      name={podMonitor.metadata.name}
+      namespace={podMonitor.metadata.namespace}
+    />
+  );
+};
+
 const ServiceMonitor: React.FC<{ target: Target }> = ({ target }) => {
-  const [monitors, monitorsLoaded] = React.useContext(MonitorsWatchContext);
+  const [monitors, monitorsLoaded] = React.useContext(ServiceMonitorsWatchContext);
   const [services, servicesLoaded] = React.useContext(ServicesWatchContext);
 
   if (!servicesLoaded || !monitorsLoaded) {
@@ -101,6 +155,9 @@ const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets })
   const scrapeUrl = atob(match?.params?.scrapeUrl ?? '');
   const target: Target = scrapeUrl ? _.find(targets, { scrapeUrl }) : undefined;
 
+  const isServiceMonitor: boolean = target.scrapePool.includes(MonitorType.ServiceMonitor);
+  const isPodMonitor: boolean = target.scrapePool.includes(MonitorType.PodMonitor);
+
   return (
     <>
       <Helmet>
@@ -154,9 +211,21 @@ const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets })
                     <Health health={target?.health} />
                   </dd>
                   <dt>{t('public~Monitor')}</dt>
-                  <dd>
-                    <ServiceMonitor target={target} />
-                  </dd>
+                  {isServiceMonitor && (
+                    <dd>
+                      <ServiceMonitor target={target} />
+                    </dd>
+                  )}
+                  {isPodMonitor && (
+                    <dd>
+                      <PodMonitor target={target} />
+                    </dd>
+                  )}
+                  {!isServiceMonitor && !isPodMonitor && (
+                    <dd>
+                      <>-</>
+                    </dd>
+                  )}
                 </dl>
               </div>
             </div>
@@ -179,13 +248,18 @@ const tableClasses = [
 const Row: React.FC<RowFunctionArgs<Target>> = ({ obj }) => {
   const { health, labels, lastScrape, lastScrapeDuration, scrapeUrl } = obj;
 
+  const isServiceMonitor: boolean = obj.scrapePool.includes(MonitorType.ServiceMonitor);
+  const isPodMonitor: boolean = obj.scrapePool.includes(MonitorType.PodMonitor);
+
   return (
     <>
       <TableData className={tableClasses[0]}>
         <Link to={`./targets/${btoa(scrapeUrl)}`}>{scrapeUrl}</Link>
       </TableData>
       <TableData className={tableClasses[1]}>
-        <ServiceMonitor target={obj} />
+        {isServiceMonitor && <ServiceMonitor target={obj} />}
+        {isPodMonitor && <PodMonitor target={obj} />}
+        {!isServiceMonitor && !isPodMonitor && <>-</>}
       </TableData>
       <TableData className={tableClasses[2]}>
         <Health health={health} />
@@ -349,6 +423,16 @@ export const TargetsUI: React.FC<{}> = () => {
     kind: referenceForModel(ServiceMonitorModel),
   });
 
+  const podsWatch = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: PodModel.kind,
+  });
+
+  const podMonitorsWatch = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: referenceForModel(PodMonitorModel),
+  });
+
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const tick = () =>
@@ -370,17 +454,21 @@ export const TargetsUI: React.FC<{}> = () => {
   const loadError = error?.json?.error || error?.message;
 
   return (
-    <MonitorsWatchContext.Provider value={monitorsWatch}>
+    <ServiceMonitorsWatchContext.Provider value={monitorsWatch}>
       <ServicesWatchContext.Provider value={servicesWatch}>
-        <Switch>
-          <Route path="/monitoring/targets" exact>
-            <List loaded={loaded} loadError={loadError} targets={targets} />
-          </Route>
-          <Route path="/monitoring/targets/:scrapeUrl?" exact>
-            <Details loaded={loaded} loadError={loadError} targets={targets} />
-          </Route>
-        </Switch>
+        <PodMonitorsWatchContext.Provider value={podMonitorsWatch}>
+          <PodsWatchContext.Provider value={podsWatch}>
+            <Switch>
+              <Route path="/monitoring/targets" exact>
+                <List loaded={loaded} loadError={loadError} targets={targets} />
+              </Route>
+              <Route path="/monitoring/targets/:scrapeUrl?" exact>
+                <Details loaded={loaded} loadError={loadError} targets={targets} />
+              </Route>
+            </Switch>
+          </PodsWatchContext.Provider>
+        </PodMonitorsWatchContext.Provider>
       </ServicesWatchContext.Provider>
-    </MonitorsWatchContext.Provider>
+    </ServiceMonitorsWatchContext.Provider>
   );
 };
