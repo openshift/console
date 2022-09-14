@@ -15,6 +15,9 @@ import {
   WithSelectionProps,
 } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
+import { Link } from 'react-router-dom';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { PipelineRunModel } from '../../../models';
 import { ComputedStatus } from '../../../types';
 import {
   createStepStatus,
@@ -40,6 +43,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   const stepStatusList: StepStatus[] = stepList.map((step) =>
     createStepStatus(step, data?.task?.status),
   );
+  const { pipelineRun } = data;
   const succeededStepsCount =
     stepStatusList.filter(({ status }) => status === ComputedStatus.Succeeded)?.length || 0;
 
@@ -81,8 +85,25 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
     />
   ) : null;
 
-  return (
-    <Layer id={detailsLevel !== ScaleDetailsLevel.high && hover ? TOP_LAYER : DEFAULT_LAYER}>
+  const { name: plrName, namespace } = pipelineRun?.metadata;
+  const path = plrName
+    ? `${resourcePathFromModel(PipelineRunModel, plrName, namespace)}/logs/${element.getLabel()}`
+    : undefined;
+
+  const enableLogLink =
+    data?.status !== ComputedStatus.Idle &&
+    data?.status !== ComputedStatus.Pending &&
+    data?.status !== ComputedStatus.Cancelled &&
+    !!path;
+
+  const taskNode = (
+    <Layer
+      id={
+        detailsLevel !== ScaleDetailsLevel.high && (hover || contextMenuOpen)
+          ? TOP_LAYER
+          : DEFAULT_LAYER
+      }
+    >
       <g ref={hoverRef}>
         <TaskNode
           element={element}
@@ -100,6 +121,14 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
         </TaskNode>
       </g>
     </Layer>
+  );
+
+  return enableLogLink ? (
+    <Link to={path}>
+      <g data-test={`task ${element.getLabel()}`}>{taskNode}</g>
+    </Link>
+  ) : (
+    taskNode
   );
 };
 

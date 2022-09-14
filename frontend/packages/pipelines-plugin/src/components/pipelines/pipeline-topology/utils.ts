@@ -106,10 +106,8 @@ export const createBuilderFinallyNode = (
 ): NodeCreator<BuilderFinallyNodeModel> =>
   createGenericNode(NodeType.BUILDER_FINALLY_NODE, width, height);
 
-const createPipelineRunNode = (
-  type: NodeType,
-  data: any, // PipelineRunNodeData,
-) => createGenericNode(type, data.width, data.height)(data.id, data);
+const createPipelineTaskNode = (type: NodeType, data: PipelineRunAfterNodeModelData) =>
+  createGenericNode(type, data.width, data.height)(data.id, data);
 
 export const getNodeCreator = (type: NodeType): NodeCreator<PipelineRunAfterNodeModelData> => {
   switch (type) {
@@ -504,7 +502,7 @@ export const getGraphDataModel = (
     }
     const badgePadding = Object.keys(pipelineRun.spec)?.length > 0 ? DEFAULT_BADGE_WIDTH : 0;
     nodes.push(
-      createPipelineRunNode(NodeType.TASK_NODE, {
+      createPipelineTaskNode(NodeType.TASK_NODE, {
         id: vertex.name,
         label: vertex.name,
         width:
@@ -513,10 +511,11 @@ export const getGraphDataModel = (
           DEFAULT_NODE_ICON_WIDTH +
           badgePadding,
         runAfterTasks,
-        noLocation: true,
         status: vertex.data.status?.reason,
         whenStatus: taskWhenStatus(vertex.data),
         task: vertex.data,
+        pipeline,
+        pipelineRun,
       }),
     );
   });
@@ -526,7 +525,7 @@ export const getGraphDataModel = (
   const maxFinallyNodeName =
     finallyTaskList.sort((a, b) => b.name.length - a.name.length)[0]?.name || '';
   const finallyNodes = finallyTaskList.map((fTask) =>
-    createPipelineRunNode(NodeType.FINALLY_NODE, {
+    createPipelineTaskNode(NodeType.FINALLY_NODE, {
       id: fTask.name,
       label: fTask.name,
       width:
@@ -536,6 +535,8 @@ export const getGraphDataModel = (
       status: fTask.status?.reason,
       whenStatus: taskWhenStatus(fTask),
       task: fTask,
+      pipeline,
+      pipelineRun,
     }),
   );
   const finallyGroup = finallyNodes.length

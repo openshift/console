@@ -133,7 +133,7 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
     <div style={{ height: maxSize?.height, width: maxSize?.width }}>
       <VisualizationProvider controller={vis}>
         {showControlBar ? (
-          <TopologyView controlBar={controlBar ? controlBar(vis) : undefined}>
+          <TopologyView controlBar={controlBar(vis)}>
             <VisualizationSurface />
           </TopologyView>
         ) : (
