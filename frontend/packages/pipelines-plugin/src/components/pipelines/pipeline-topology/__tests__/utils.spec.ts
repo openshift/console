@@ -4,6 +4,7 @@ import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/
 import { RunStatus, WhenStatus } from '@patternfly/react-topology';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
 import { ComputedStatus, PipelineTaskWithStatus } from '../../../../types';
+import { NodeType } from '../const';
 import {
   getLastRegularTasks,
   getGraphDataModel,
@@ -238,5 +239,38 @@ describe('taskWhenStatus:', () => {
     };
     expect(taskWhenStatus(succeededTask)).toBe(WhenStatus.Met);
     expect(taskWhenStatus(skippedTask)).toBe(WhenStatus.Unmet);
+  });
+});
+
+describe('getGraphDataModel', () => {
+  it('should return null for invalid values', () => {
+    expect(getGraphDataModel(null)).toBeNull();
+    expect(getGraphDataModel(undefined, undefined)).toBeNull();
+  });
+
+  it('should return graph, nodes and edges for valid pipeline', () => {
+    const model = getGraphDataModel(pipeline);
+    expect(model.graph).toBeDefined();
+    expect(model.nodes).toHaveLength(13);
+    expect(model.edges).toHaveLength(19);
+  });
+
+  it('should return graph, nodes and edges for valid pipeline', () => {
+    const model = getGraphDataModel(pipeline);
+    expect(model.graph).toBeDefined();
+    expect(model.nodes).toHaveLength(13);
+    expect(model.edges).toHaveLength(19);
+  });
+
+  it('should include the finally group and nodes for the pipeline with finally task', () => {
+    const pData = pipelineTestData[PipelineExampleNames.PIPELINE_WITH_FINALLY];
+    const { pipeline: pipelineWithFinallyTasks } = pData;
+
+    const { nodes } = getGraphDataModel(pipelineWithFinallyTasks);
+    const finallyGroup = nodes.filter((n) => n.type === NodeType.FINALLY_GROUP);
+    const finallyNodes = nodes.filter((n) => n.type === NodeType.FINALLY_NODE);
+
+    expect(finallyGroup).toHaveLength(1);
+    expect(finallyNodes).toHaveLength(1);
   });
 });

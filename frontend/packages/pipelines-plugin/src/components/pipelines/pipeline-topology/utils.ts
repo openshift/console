@@ -438,6 +438,10 @@ export const getGraphDataModel = (
   nodes: PipelineMixedNodeModel[];
   edges: EdgeModel[];
 } => {
+  if (!pipeline) {
+    return null;
+  }
+
   const taskList = _.flatten(getPipelineTasks(pipeline, pipelineRun));
 
   const dag = new DAG();
