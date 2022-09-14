@@ -145,11 +145,11 @@ export const appendPipelineRunStatus = (pipeline, pipelineRun, isFinallyTasks = 
     }
     // append task status
     if (!mTask.status) {
-      mTask.status = { reason: ComputedStatus.Idle };
+      mTask.status = { reason: ComputedStatus.Pending };
     } else if (mTask.status && mTask.status.conditions) {
-      mTask.status.reason = pipelineRunStatus(mTask) || ComputedStatus.Idle;
+      mTask.status.reason = pipelineRunStatus(mTask) || ComputedStatus.Pending;
     } else if (mTask.status && !mTask.status.reason) {
-      mTask.status.reason = ComputedStatus.Idle;
+      mTask.status.reason = ComputedStatus.Pending;
     }
     return mTask;
   });

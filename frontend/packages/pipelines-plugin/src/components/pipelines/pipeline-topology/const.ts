@@ -23,6 +23,7 @@ export const DEFAULT_NODE_ICON_WIDTH = 30;
 export const DEFAULT_BADGE_WIDTH = 40;
 export const DEFAULT_FINALLLY_GROUP_PADDING = 35;
 export const TOOLBAR_HEIGHT = 40;
+export const GRAPH_MIN_WIDTH = 300;
 
 export enum NodeType {
   TASK_NODE = 'task',

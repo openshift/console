@@ -16,6 +16,9 @@ export type PipelineRunAfterNodeModelData = {
   height?: number;
   selected?: boolean;
   status?: RunStatus;
+  whenStatus?: string;
+  pipeline?: PipelineKind;
+  pipelineRun?: PipelineRunKind;
   label?: string;
   runAfterTasks?: string[];
   task: {

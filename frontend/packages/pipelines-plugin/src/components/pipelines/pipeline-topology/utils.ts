@@ -501,6 +501,8 @@ export const getGraphDataModel = (
       });
     }
     const badgePadding = Object.keys(pipelineRun.spec)?.length > 0 ? DEFAULT_BADGE_WIDTH : 0;
+    const isTaskSkipped = pipelineRun?.status?.skippedTasks?.some((t) => t.name === task.name);
+
     nodes.push(
       createPipelineTaskNode(NodeType.TASK_NODE, {
         id: vertex.name,
@@ -511,7 +513,7 @@ export const getGraphDataModel = (
           DEFAULT_NODE_ICON_WIDTH +
           badgePadding,
         runAfterTasks,
-        status: vertex.data.status?.reason,
+        status: isTaskSkipped ? RunStatus.Skipped : vertex.data.status?.reason,
         whenStatus: taskWhenStatus(vertex.data),
         task: vertex.data,
         pipeline,
@@ -524,21 +526,24 @@ export const getGraphDataModel = (
 
   const maxFinallyNodeName =
     finallyTaskList.sort((a, b) => b.name.length - a.name.length)[0]?.name || '';
-  const finallyNodes = finallyTaskList.map((fTask) =>
-    createPipelineTaskNode(NodeType.FINALLY_NODE, {
+  const finallyNodes = finallyTaskList.map((fTask) => {
+    const isTaskSkipped = pipelineRun?.status?.skippedTasks?.some((t) => t.name === fTask.name);
+
+    return createPipelineTaskNode(NodeType.FINALLY_NODE, {
       id: fTask.name,
       label: fTask.name,
       width:
         getTextWidth(maxFinallyNodeName) + NODE_PADDING * 2 + DEFAULT_FINALLLY_GROUP_PADDING * 2,
       height: DEFAULT_NODE_HEIGHT,
       runAfterTasks: [],
-      status: fTask.status?.reason,
+      status: isTaskSkipped ? RunStatus.Skipped : fTask.status?.reason,
       whenStatus: taskWhenStatus(fTask),
       task: fTask,
       pipeline,
       pipelineRun,
-    }),
-  );
+    });
+  });
+
   const finallyGroup = finallyNodes.length
     ? [
         {

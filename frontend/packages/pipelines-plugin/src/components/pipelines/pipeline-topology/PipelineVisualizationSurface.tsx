@@ -15,7 +15,13 @@ import {
   GRAPH_POSITION_CHANGE_EVENT,
   ComponentFactory,
 } from '@patternfly/react-topology';
-import { DROP_SHADOW_SPACING, NODE_HEIGHT, TOOLBAR_HEIGHT, PipelineLayout } from './const';
+import {
+  DROP_SHADOW_SPACING,
+  NODE_HEIGHT,
+  TOOLBAR_HEIGHT,
+  GRAPH_MIN_WIDTH,
+  PipelineLayout,
+} from './const';
 import { layoutFactory } from './factories';
 import { getLayoutData } from './utils';
 
@@ -65,7 +71,10 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
 
       setMaxSize({
         height: Math.max(finallyTaskHeight, regularTaskHeight) + TOOLBAR_HEIGHT,
-        width: maxX + maxWidth + DROP_SHADOW_SPACING + horizontalMargin * 2,
+        width: Math.max(
+          maxX + maxWidth + DROP_SHADOW_SPACING + horizontalMargin * 2,
+          GRAPH_MIN_WIDTH,
+        ),
       });
     },
     [setMaxSize, layout],

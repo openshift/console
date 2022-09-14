@@ -94,6 +94,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
     data?.status !== ComputedStatus.Idle &&
     data?.status !== ComputedStatus.Pending &&
     data?.status !== ComputedStatus.Cancelled &&
+    data?.status !== ComputedStatus.Skipped &&
     !!path;
 
   const taskNode = (
@@ -104,7 +105,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
           : DEFAULT_LAYER
       }
     >
-      <g ref={hoverRef}>
+      <g ref={hoverRef} style={{ cursor: enableLogLink ? 'pointer' : 'default' }}>
         <TaskNode
           element={element}
           onContextMenu={data.showContextMenu ? onContextMenu : undefined}
