@@ -20,8 +20,10 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
   isInputValuePersisted,
   noResultsFoundText,
   toggleOnSelection,
+  onChange,
+  getLabelFromValue,
 }) => {
-  const [field, { touched, error }] = useField<string[]>(name);
+  const [field, { touched, error }] = useField<string | string[]>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [newOptions, setNewOptions] = React.useState<SelectInputOption[]>([]);
@@ -36,7 +38,9 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
   };
 
   const onSelect = (event, selection: string) => {
-    if (variant !== SelectVariant.typeaheadMulti && variant !== SelectVariant.checkbox) {
+    if (onChange) {
+      onChange(selection);
+    } else if (variant !== SelectVariant.typeaheadMulti && variant !== SelectVariant.checkbox) {
       setFieldValue(name, selection);
     } else {
       const selections = field.value;
@@ -86,7 +90,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
         onSelect={onSelect}
         onClear={onClearSelection}
         isOpen={isOpen}
-        selections={field.value}
+        selections={getLabelFromValue ? getLabelFromValue(field.value as string) : field.value}
         placeholderText={placeholderText}
         isCreatable={isCreatable}
         onCreateOption={(hasOnCreateOption && onCreateOption) || undefined}
@@ -94,7 +98,12 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
         noResultsFoundText={noResultsFoundText}
       >
         {_.map([...options, ...newOptions], (op) => (
-          <SelectOption value={op.value} isDisabled={op.disabled} key={op.value} />
+          <SelectOption
+            value={op.label ? op.label : op.value}
+            isDisabled={op.disabled}
+            key={op.value}
+            description={op.description ?? ''}
+          />
         ))}
       </Select>
     </FormGroup>
