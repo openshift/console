@@ -138,6 +138,7 @@ func main() {
 	fManagedClusterConfigs := fs.String("managed-clusters", "", "List of managed cluster configurations. (JSON as string)")
 	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control/infra nodes (External | HighlyAvailable | SingleReplica)")
 	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
+	fNodesArchitecture := fs.String("nodes-architecture", "", "List of nodes architectures. Example --nodes-architecture=amd64,arm64")
 
 	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -240,6 +241,15 @@ func main() {
 		}
 	}
 
+	nodesArchitectures := strings.Split(*fNodesArchitecture, ",")
+	if *fNodesArchitecture != "" {
+		for _, architecture := range nodesArchitectures {
+			if architecture == "" {
+				bridge.FlagFatalf("nodes-architecture", "list must contain name of cluster nodes architecture separated by comma")
+			}
+		}
+	}
+
 	srv := &server.Server{
 		PublicDir:                 *fPublicDir,
 		BaseURL:                   baseURL,
@@ -268,6 +278,7 @@ func main() {
 		K8sClients:                make(map[string]*http.Client),
 		Telemetry:                 telemetryFlags,
 		ReleaseVersion:            *fReleaseVersion,
+		NodesArchitecture:         nodesArchitectures,
 	}
 
 	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}
