@@ -13,6 +13,7 @@ import (
 	routev1 "github.com/openshift/api/route/v1"
 	devfilePkg "github.com/openshift/console/pkg/devfile"
 	"github.com/openshift/console/pkg/serverutils"
+	"github.com/spf13/afero"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -23,7 +24,6 @@ import (
 	"github.com/devfile/library/pkg/devfile/generator"
 	"github.com/devfile/library/pkg/devfile/parser"
 	"github.com/devfile/library/pkg/devfile/parser/data/v2/common"
-	"github.com/devfile/library/pkg/testingutil/filesystem"
 )
 
 func (s *Server) devfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
@@ -87,9 +87,10 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deploymentResource, err := getDeployResource(devfileObj, deployAssociatedComponents)
+	// different
+	deploymentResource, _, _, err := getResourceFromDevfile(devfileObj, deployAssociatedComponents, data)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to get deployment resource for the devfile: %v", err)
+		errMsg := fmt.Sprintf("Failed to get Kubernetes resource for the devfile: %v", err)
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
 		return
@@ -147,7 +148,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		BuildResource:  getBuildResource(data, dockerfileRelativePath, dockerContextDir),
 		DeployResource: deploymentResource,
 		Service:        service,
-		Route:          getRouteForDockerImage(data, dockerImagePort),
+		Route:          getRouteForDockerImage(data, dockerImagePort, "/", false, nil),
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -276,7 +277,7 @@ func getBuildResource(data devfileForm, dockerfilePath, contextDir string) build
 	return *buildConfig
 }
 
-func getDeployResource(devfileObj parser.DevfileObj, deployAssociatedComponents map[string]string) (appsv1.Deployment, error) {
+func getResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedComponents map[string]string, data devfileForm) (appsv1.Deployment, corev1.Service, routev1.Route, error) {
 	kubernetesComponentFilter := common.DevfileOptions{
 		ComponentOptions: common.ComponentOptions{
 			ComponentType: devfilev1.KubernetesComponentType,
@@ -286,10 +287,15 @@ func getDeployResource(devfileObj parser.DevfileObj, deployAssociatedComponents 
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to get the kubernetes components from devfile: %v", err)
 		klog.Error(errMsg)
-		return appsv1.Deployment{}, err
+		return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, err
 	}
 
-	var resources parser.KubernetesResources
+	var appendedResources parser.KubernetesResources
+	var deployment appsv1.Deployment
+	var service corev1.Service
+	var route routev1.Route
+
+	returnDeploymentOnly := true // once devfile samples YAML have service & route definitions, switch to false
 
 	for _, component := range kubernetesComponents {
 		if _, ok := deployAssociatedComponents[component.Name]; ok && component.Kubernetes != nil {
@@ -300,31 +306,102 @@ func getDeployResource(devfileObj parser.DevfileObj, deployAssociatedComponents 
 					Data: []byte(component.Kubernetes.Inlined),
 				}
 			} else {
-				return appsv1.Deployment{}, fmt.Errorf("unable to find the Kuberntes data from the inlined Kubernetes devfile component")
+				// If the Kubernetes YAML file does not have inline content, fall back to the dev preview way
+				// Once we have resolved the flow between frontend, backend and consume only YAML files,
+				// we can err out here instead of falling back
+				deploymentResource, err := getDeployResource(data, devfileObj, common.DevfileOptions{})
+				if err != nil {
+					errMsg := fmt.Sprintf("Failed to get Deployment resource for the devfile: %v", err)
+					klog.Error(errMsg)
+					return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, err
+				}
+
+				appendedResources.Deployments = append(appendedResources.Deployments, deploymentResource)
+				returnDeploymentOnly = true
+
+				// break here as we are no longer interested in parsing a YAML file
+				break
 			}
 
-			values, err := parser.ReadKubernetesYaml(src, filesystem.DefaultFs{})
+			fs := afero.Afero{Fs: afero.NewOsFs()}
+			values, err := parser.ReadKubernetesYaml(src, fs)
 			if err != nil {
 				errMsg := fmt.Sprintf("Failed to read the Kubernetes yaml from devfile: %v", err)
 				klog.Error(errMsg)
-				return appsv1.Deployment{}, err
+				return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, err
 			}
 
-			resources, err = parser.ParseKubernetesYaml(values)
+			resources, err := parser.ParseKubernetesYaml(values)
 			if err != nil {
 				errMsg := fmt.Sprintf("Failed to parse the Kubernetes yaml data from devfile: %v", err)
 				klog.Error(errMsg)
-				return appsv1.Deployment{}, err
+				return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, err
 			}
+
+			for _, endpoint := range component.Kubernetes.Endpoints {
+				if endpoint.Exposure != devfilev1.NoneEndpointExposure {
+					resources.Routes = append(resources.Routes, getRouteForDockerImage(data, fmt.Sprintf("%d", endpoint.TargetPort), endpoint.Path, *endpoint.Secure, endpoint.Annotations))
+				}
+			}
+
+			appendedResources.Deployments = append(appendedResources.Deployments, resources.Deployments...)
+			appendedResources.Services = append(appendedResources.Services, resources.Services...)
+			appendedResources.Routes = append(appendedResources.Routes, resources.Routes...)
 		}
 	}
 
-	if len(resources.Deployments) > 0 {
-		return resources.Deployments[0], nil
+	var errMsg string
+
+	if len(appendedResources.Deployments) > 0 {
+		deployment = appendedResources.Deployments[0]
+	} else {
+		errMsg = "no deployment definition was found in the devfile sample"
 	}
 
-	return appsv1.Deployment{}, fmt.Errorf("no deployment definition was found in the devfile sample")
+	if len(appendedResources.Services) > 0 {
+		service = appendedResources.Services[0]
+	} else if !returnDeploymentOnly {
+		if len(errMsg) != 0 {
+			errMsg = errMsg + ", "
+		}
+		errMsg = errMsg + "no service definition was found in the devfile sample"
+	}
 
+	if len(appendedResources.Routes) > 0 {
+		route = appendedResources.Routes[0]
+	} else if !returnDeploymentOnly {
+		if len(errMsg) != 0 {
+			errMsg = errMsg + ", "
+		}
+		errMsg = errMsg + "no route definition was found in the devfile sample"
+	}
+
+	if len(errMsg) == 0 {
+		return deployment, service, route, nil
+	}
+
+	return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, fmt.Errorf(errMsg)
+}
+
+func getDeployResource(data devfileForm, devfileObj parser.DevfileObj, filterOptions common.DevfileOptions) (appsv1.Deployment, error) {
+
+	containers, err := generator.GetContainers(devfileObj, filterOptions)
+	if err != nil {
+		return appsv1.Deployment{}, err
+	}
+
+	deployParams := generator.DeploymentParams{
+		TypeMeta:          generator.GetTypeMeta("Deployment", "apps/v1"),
+		Containers:        containers,
+		PodSelectorLabels: map[string]string{"app": data.Name},
+	}
+
+	deployment, err := generator.GetDeployment(devfileObj, deployParams)
+	if err != nil {
+		return appsv1.Deployment{}, err
+	}
+
+	return *deployment, nil
 }
 
 func getService(devfileObj parser.DevfileObj, filterOptions common.DevfileOptions, imagePort string) (corev1.Service, error) {
@@ -353,17 +430,21 @@ func getService(devfileObj parser.DevfileObj, filterOptions common.DevfileOption
 	return *service, nil
 }
 
-func getRouteForDockerImage(data devfileForm, imagePort string) routev1.Route {
+func getRouteForDockerImage(data devfileForm, port, path string, secure bool, annotations map[string]string) routev1.Route {
+
+	if path == "" {
+		path = "/"
+	}
 
 	routeParams := generator.RouteParams{
 		TypeMeta: generator.GetTypeMeta("Route", "route.openshift.io/v1"),
 		RouteSpecParams: generator.RouteSpecParams{
 			ServiceName: data.Name,
-			PortNumber:  intstr.FromString(imagePort),
-			Path:        "/",
-			Secure:      false,
+			PortNumber:  intstr.FromString(port),
+			Path:        path,
+			Secure:      secure,
 		},
 	}
 
-	return *generator.GetRoute(devfilev1.Endpoint{}, routeParams)
+	return *generator.GetRoute(devfilev1.Endpoint{Annotations: annotations}, routeParams)
 }
