@@ -7,7 +7,6 @@ import AdvancedSection from '../../advanced/AdvancedSection';
 import AppSection from '../../app/AppSection';
 import BuilderImageTagSelector from '../../builder/BuilderImageTagSelector';
 import IconSection from '../../section/IconSection';
-import ResourceSection from '../../section/ResourceSection';
 import JarSection from '../section/JarSection';
 import UploadJarForm from '../UploadJarForm';
 
@@ -51,7 +50,6 @@ describe('UploadJarForm', () => {
     expect(wrapper.find(IconSection).exists()).toBe(true);
     expect(wrapper.find(BuilderImageTagSelector).exists()).toBe(true);
     expect(wrapper.find(AppSection).exists()).toBe(true);
-    expect(wrapper.find(ResourceSection).exists()).toBe(true);
     expect(wrapper.find(AdvancedSection).exists()).toBe(true);
   });
 
@@ -72,7 +70,6 @@ describe('UploadJarForm', () => {
     expect(wrapper.find(JarSection).exists()).toBe(true);
     expect(wrapper.find(IconSection).exists()).toBe(true);
     expect(wrapper.find(AppSection).exists()).toBe(true);
-    expect(wrapper.find(ResourceSection).exists()).toBe(true);
     expect(wrapper.find(AdvancedSection).exists()).toBe(true);
     expect(wrapper.find(Alert).exists()).toBe(true);
     expect(wrapper.find(BuilderImageTagSelector).exists()).toBe(false);

@@ -96,6 +96,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
         variant={SelectVariant.single}
         onChange={onChange}
         getLabelFromValue={(value: string) => t(ReadableResourcesNames[value])}
+        hideClearButton
         toggleOnSelection
       />
     </FormSection>

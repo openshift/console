@@ -181,6 +181,7 @@ export interface SelectInputFieldProps extends FieldProps {
   isInputValuePersisted?: boolean;
   noResultsFoundText?: string;
   toggleOnSelection?: boolean;
+  hideClearButton?: boolean;
   onChange?: (selection: string) => void;
   getLabelFromValue?: (value: string) => string;
 }

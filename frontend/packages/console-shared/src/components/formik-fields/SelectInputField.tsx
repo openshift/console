@@ -20,6 +20,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
   isInputValuePersisted,
   noResultsFoundText,
   toggleOnSelection,
+  hideClearButton,
   onChange,
   getLabelFromValue,
 }) => {
@@ -88,7 +89,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
         typeAheadAriaLabel={ariaLabel}
         onToggle={onToggle}
         onSelect={onSelect}
-        onClear={onClearSelection}
+        onClear={hideClearButton ? Select.defaultProps.onClear : onClearSelection}
         isOpen={isOpen}
         selections={getLabelFromValue ? getLabelFromValue(field.value as string) : field.value}
         placeholderText={placeholderText}

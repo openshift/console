@@ -7,6 +7,7 @@ import ProgressiveList from '../../progressive-list/ProgressiveList';
 import ProgressiveListItem from '../../progressive-list/ProgressiveListItem';
 import { Resources } from '../import-types';
 import FormSection from '../section/FormSection';
+import ResourceSection from '../section/ResourceSection';
 import BuildConfigSection from './BuildConfigSection';
 import DeploymentConfigSection from './DeploymentConfigSection';
 import LabelSection from './LabelSection';
@@ -18,6 +19,10 @@ import ServerlessScalingSection from './ServerlessScalingSection';
 type AdvancedSectionProps = {
   values: FormikValues;
   appResources?: AppResources;
+};
+
+type AdvancedSectionListProps = AdvancedSectionProps & {
+  formPage: string;
 };
 
 const Footer = ({ children }) => {
@@ -32,7 +37,7 @@ const Footer = ({ children }) => {
   );
 };
 
-const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
+const List: React.FC<AdvancedSectionListProps> = ({ appResources, values, formPage }) => {
   const { t } = useTranslation();
 
   const [visibleItems, setVisibleItems] = React.useState([]);
@@ -46,6 +51,11 @@ const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
       onVisibleItemChange={handleVisibleItemChange}
       Footer={Footer}
     >
+      {!['edit', 'knatify'].includes(formPage) && (
+        <ProgressiveListItem name={t('devconsole~Resources')}>
+          <ResourceSection />
+        </ProgressiveListItem>
+      )}
       <ProgressiveListItem name={t('devconsole~Health checks')}>
         <HealthChecks title={t('devconsole~Health checks')} resourceType={values.resources} />
       </ProgressiveListItem>
@@ -83,12 +93,12 @@ const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
 
 const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources }) => {
   const { t } = useTranslation();
-
+  const formPage = window.location.pathname.split('/')[1];
   return (
     <FormSection title={t('devconsole~Advanced options')}>
       <RouteSection route={values.route} resources={values.resources} />
       <div>
-        <List appResources={appResources} values={values} />
+        <List appResources={appResources} values={values} formPage={formPage} />
       </div>
     </FormSection>
   );
