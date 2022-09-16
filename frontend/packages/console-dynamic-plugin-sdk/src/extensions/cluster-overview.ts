@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { OverviewDetailItemProps } from '@openshift-console/plugin-shared/dist/lib';
+import { OverviewDetailItemProps } from '@openshift-console/plugin-shared/src';
 import { CodeRef, Extension, ExtensionDeclaration } from '../types';
 import { Humanize, TopConsumerPopoverProps, QueryWithDescription } from './console-types';
 
