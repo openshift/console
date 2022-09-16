@@ -34,9 +34,6 @@
         "kind": "HelmChartRepository"
       },
       "provider": { "$codeRef": "helmActions.useHelmChartRepositoryActions" }
-    },
-    "flags": {
-      "required": ["OPENSHIFT_HELM"]
     }
   },
   {
@@ -48,9 +45,6 @@
         "kind": "ProjectHelmChartRepository"
       },
       "provider": { "$codeRef": "helmActions.useHelmChartRepositoryActions" }
-    },
-    "flags": {
-      "required": ["OPENSHIFT_HELM"]
     }
   },
   {
@@ -147,9 +141,6 @@
   },
   {
     "type": "dev-console.add/action",
-    "flags": {
-      "required": ["OPENSHIFT_HELM"]
-    },
     "properties": {
       "id": "helm",
       "groupId": "developer-catalog",
@@ -157,6 +148,9 @@
       "label": "%helm-plugin~Helm Chart%",
       "description": "%helm-plugin~Browse the catalog to discover and install Helm Charts%",
       "icon": { "$codeRef": "helmUtils.helmCatalogIconSVG" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
     }
   },
   {
