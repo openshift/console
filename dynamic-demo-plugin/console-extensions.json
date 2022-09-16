@@ -320,6 +320,16 @@
     }
   },
   {
+    "type": "console.dashboards/custom/overview/detail/item",
+    "properties": {
+      "title": "%plugin__console-demo-plugin~Custom Overview Detail Title%",
+      "component": { "$codeRef": "customOverviewDetailItem.default" },
+      "error": { "$codeRef": "customOverviewDetailItem.getError" },
+      "isLoading": { "$codeRef": "customOverviewDetailItem.isLoading" },
+      "valueClassName": "co-select-to-copy"
+    }
+  },
+  {
     "type": "console.project-overview/inventory-item",
     "properties": {
       "component": { "$codeRef": "projectOverviewInventory.default" }

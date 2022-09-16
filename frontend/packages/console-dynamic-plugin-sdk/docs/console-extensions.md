@@ -15,8 +15,8 @@
 13.  [`console.cluster-overview/utilization-item`](#consolecluster-overviewutilization-item)
 14.  [`console.context-provider`](#consolecontext-provider)
 15.  [`console.dashboards/card`](#consoledashboardscard)
-16.  [`console.dashboards/overview/activity/resource`](#consoledashboardsoverviewactivityresource)
-17.  [`console.dashboards/overview/detail/item`](#consoledashboardsoverviewdetailitem)
+16.  [`console.dashboards/custom/overview/detail/item`](#consoledashboardscustomoverviewdetailitem)
+17.  [`console.dashboards/overview/activity/resource`](#consoledashboardsoverviewactivityresource)
 18.  [`console.dashboards/overview/health/operator`](#consoledashboardsoverviewhealthoperator)
 19.  [`console.dashboards/overview/health/prometheus`](#consoledashboardsoverviewhealthprometheus)
 20.  [`console.dashboards/overview/health/resource`](#consoledashboardsoverviewhealthresource)
@@ -74,7 +74,8 @@
 72.  [`dev-console.add/action`](#dev-consoleaddaction)
 73.  [`dev-console.add/action-group`](#dev-consoleaddaction-group)
 74.  [`dev-console.import/environment`](#dev-consoleimportenvironment)
-75. [DEPRECATED] [`console.page/resource/tab`](#consolepageresourcetab)
+75. [DEPRECATED] [`console.dashboards/overview/detail/item`](#consoledashboardsoverviewdetailitem)
+76. [DEPRECATED] [`console.page/resource/tab`](#consolepageresourcetab)
 
 ---
 
@@ -325,6 +326,24 @@ Adds a new dashboard card.
 
 ---
 
+## `console.dashboards/custom/overview/detail/item`
+
+### Summary 
+
+Adds an item to the Details card of Overview Dashboard
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `title` | `string` | no |  |
+| `component` | `CodeRef<React.ComponentType<{}>>` | no | The value, based on the DetailItem component |
+| `valueClassName` | `string` | yes |  |
+| `isLoading` | `CodeRef<() => boolean>` | yes |  |
+| `error` | `CodeRef<() => string>` | yes |  |
+
+---
+
 ## `console.dashboards/overview/activity/resource`
 
 ### Summary 
@@ -339,20 +358,6 @@ Adds an activity to the Activity Card of Overview Dashboard where the triggering
 | `component` | `CodeRef<React.ComponentType<K8sActivityProps<T>>>` | no | The action component. |
 | `isActivity` | `CodeRef<(resource: T) => boolean>` | yes | Function which determines if the given resource represents the action. If not defined, every resource represents activity. |
 | `getTimestamp` | `CodeRef<(resource: T) => Date>` | yes | Timestamp for the given action, which will be used for ordering. |
-
----
-
-## `console.dashboards/overview/detail/item`
-
-### Summary 
-
-Adds an item to the Details card of Overview Dashboard
-
-### Properties
-
-| Name | Value Type | Optional | Description |
-| ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The value, based on the DetailItem component |
 
 ---
 
@@ -1306,6 +1311,20 @@ YAML templates for editing resources via the yaml editor.
 | `imageStreamName` | `string` | no | Name of the image stream to provide custom environment variables for |
 | `imageStreamTags` | `string[]` | no | List of supported image stream tags |
 | `environments` | `ImageEnvironment[]` | no | List of environment variables |
+
+---
+
+## `console.dashboards/overview/detail/item`
+
+### Summary [DEPRECATED]
+
+@deprecated use CustomOverviewDetailItem type instead
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `component` | `CodeRef<React.ComponentType<{}>>` | no | The value, based on the DetailItem component |
 
 ---
 
