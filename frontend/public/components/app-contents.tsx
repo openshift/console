@@ -15,7 +15,7 @@ import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
-import { NamespaceBar } from './namespace';
+import { NamespaceBar } from './namespace-bar';
 import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, LoadingBox } from './utils';

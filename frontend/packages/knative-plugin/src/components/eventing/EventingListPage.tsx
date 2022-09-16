@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
-import { NamespaceBar } from '@console/internal/components/namespace';
+import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import { Page } from '@console/internal/components/utils';
 import { MenuActions, MultiTabListPage } from '@console/shared';
 import { EventingBrokerModel } from '../../models';
