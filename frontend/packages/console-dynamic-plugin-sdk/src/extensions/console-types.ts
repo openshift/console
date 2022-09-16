@@ -643,3 +643,9 @@ export type TimestampProps = {
   omitSuffix?: boolean;
   className?: string;
 };
+
+export type NamespaceBarProps = {
+  onNamespaceChange?: (namespace: string) => void;
+  isDisabled?: boolean;
+  children?: React.ReactNode;
+};

@@ -37,7 +37,7 @@ When('user clicks on From Catalog card', () => {
 });
 
 When('create the application with s2i builder image', () => {
-  catalogPage.selectCatalogType('Builder Image');
+  catalogPage.selectCatalogType(catalogTypes.BuilderImage);
   catalogPage.selectCardInCatalog(catalogCards.nodeJs);
   catalogPage.clickButtonOnCatalogPageSidePane();
 });
@@ -61,7 +61,7 @@ When('user searches and selects the {string} card', (cardName: string) => {
 });
 
 When('user creates the application with the selected builder image', () => {
-  catalogPage.selectCatalogType('Builder Image');
+  catalogPage.selectCatalogType(catalogTypes.BuilderImage);
   catalogPage.selectCardInCatalog(catalogCards.nodeJs);
   catalogPage.clickButtonOnCatalogPageSidePane();
 });

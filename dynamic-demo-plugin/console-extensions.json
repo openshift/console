@@ -359,5 +359,25 @@
       "name": "Modal Launchers",
       "href": "/test-modal"
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/example-namespaced-page/ns/:ns", "/example-namespaced-page/all-namespaces"],
+      "component": {
+        "$codeRef": "exampleNamespacedPage.ExampleNamespacedPage"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "namespaced": true,
+      "id": "demo-example-namespaced-page",
+      "perspective": "demo",
+      "name": "%plugin__console-demo-plugin~Example Namespaced Page%",
+      "href": "/example-namespaced-page"
+    }
   }
 ]

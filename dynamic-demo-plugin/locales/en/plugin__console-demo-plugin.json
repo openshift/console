@@ -3,6 +3,8 @@
   "{{count}} Worker Node_plural": "{{count}} Worker Node",
   "Worker Nodes": "Worker Nodes",
   "Custom Overview Detail Info": "Custom Overview Detail Info",
+  "Example page with a namespace bar": "Example page with a namespace bar",
+  "Currently selected namespace": "Currently selected namespace",
   "Example info alert": "Example info alert",
   "Example warning alert": "Example warning alert",
   "Example hint": "Example hint",
@@ -30,7 +32,7 @@
   "Added title - error": "Added title - error",
   "Error text": "Error text",
   "{{count}} Cron Job": "{{count}} Cron Job",
-  "{{count}} Cron Job_plural": "{{count}} Cron Job",
+  "{{count}} Cron Job_plural": "{{count}} Cron Jobs",
   "Cron Jobs": "Cron Jobs",
   "Utilities from Dynamic Plugin SDK": "Utilities from Dynamic Plugin SDK",
   "Utility: consoleFetchJSON": "Utility: consoleFetchJSON",
@@ -43,6 +45,7 @@
   "Foo item": "Foo item",
   "Bar item": "Bar item",
   "Custom Overview Detail Title": "Custom Overview Detail Title",
+  "Example Namespaced Page": "Example Namespaced Page",
   "Dynamic Page 1": "Dynamic Page 1",
   "Dynamic Page 2": "Dynamic Page 2"
 }

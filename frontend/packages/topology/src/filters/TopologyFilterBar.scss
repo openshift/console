@@ -12,4 +12,8 @@
   &__kiali-link {
     margin-left: auto;
   }
+
+  &__resource-quota-warning-block  {
+    margin-right: var(--pf-global--spacer--lg);
+  }
 }

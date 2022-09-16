@@ -78,7 +78,7 @@
   "Delete Revision": "Delete Revision",
   "Edit URI": "Edit URI",
   "Make Serverless": "Make Serverless",
-  "Kafka Sink is Addressable, it receives events and send them to a Kafka topic.": "Kafka Sink is Addressable, it receives events and send them to a Kafka topic.",
+  "A KafkaSink takes a CloudEvent, and sends it to an Apache Kafka Topic. Events can be specified in either Structured or Binary mode.": "A KafkaSink takes a CloudEvent, and sends it to an Apache Kafka Topic. Events can be specified in either Structured or Binary mode.",
   "Supported": "Supported",
   "This object can be used to connect an event sink, such as a Service, Channel, or Broker to the Kubernetes API server. ApiServerSource watches for Kubernetes events and forwards them to the sink.": "This object can be used to connect an event sink, such as a Service, Channel, or Broker to the Kubernetes API server. ApiServerSource watches for Kubernetes events and forwards them to the sink.",
   "Starts a user-provided Container which will generate events and send messages to a sink URI. The sink URI is injected into the Container as an environment variable. A ContainerSource is an easy way to implement your own event sources in Knative.": "Starts a user-provided Container which will generate events and send messages to a sink URI. The sink URI is injected into the Container as an environment variable. A ContainerSource is an easy way to implement your own event sources in Knative.",

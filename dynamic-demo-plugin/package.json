@@ -56,6 +56,7 @@
       "utilityConsumer": "./components/UtilityConsumer",
       "exampleProxyPage": "./components/ExampleProxyPage",
       "K8sAPIConsumer": "./components/k8sConsumer/K8sAPIConsumer",
+      "exampleNamespacedPage": "./components/ExampleNamespacedPage",
       "navPage": "./components/Nav",
       "listPage": "./components/ListPage",
       "projectTabContent": "./components/ProjectTabExtensionContent",

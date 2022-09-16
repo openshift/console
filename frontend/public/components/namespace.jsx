@@ -28,8 +28,6 @@ import {
   Status,
   getRequester,
   getDescription,
-  ALL_NAMESPACES_KEY,
-  KEYBOARD_SHORTCUTS,
   FLAGS,
   GreenCheckCircleIcon,
   getName,
@@ -41,7 +39,6 @@ import {
   isModifiedEvent,
   REQUESTER_FILTER,
   useFlag,
-  useActiveNamespace,
   usePrometheusGate,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
@@ -61,7 +58,6 @@ import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   DetailsItem,
   ExternalLink,
-  Firehose,
   Kebab,
   LabelList,
   LoadingInline,
@@ -88,24 +84,20 @@ import {
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, PROMETHEUS_BASE_PATH } from './graphs';
 import { flagPending } from '../reducers/features';
-import { setFlag } from '../actions/features';
 import { OpenShiftGettingStarted } from './start-guide';
 import { OverviewListPage } from './overview';
 import {
   getNamespaceDashboardConsoleLinks,
   ProjectDashboard,
 } from './dashboard/project-dashboard/project-dashboard';
-import { removeQueryArgument } from './utils/router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
 import {
-  NamespaceDropdown,
   isCurrentUser,
   isOtherUser,
   isSystemNamespace,
 } from '@console/shared/src/components/namespace';
 
-const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
   _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
 
@@ -1094,87 +1086,6 @@ const RolesPage = ({ obj: { metadata } }) => (
     showTitle={false}
   />
 );
-
-export const NamespaceBarDropdowns = ({
-  children,
-  disabled,
-  namespace,
-  onNamespaceChange,
-  useProjects,
-}) => {
-  const dispatch = useDispatch();
-  const [activeNamespace, setActiveNamespace] = useActiveNamespace();
-  const canListNS = useFlag(FLAGS.CAN_LIST_NS);
-  React.useEffect(() => {
-    if (namespace.loaded) {
-      dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(namespace.data)));
-    }
-  }, [dispatch, namespace.data, namespace.loaded]);
-
-  if (flagPending(canListNS)) {
-    return null;
-  }
-
-  return (
-    <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
-      <NamespaceDropdown
-        onSelect={(event, newNamespace) => {
-          onNamespaceChange?.(newNamespace);
-          setActiveNamespace(newNamespace);
-          removeQueryArgument('project-name');
-        }}
-        onCreateNew={() => {
-          createProjectModal({
-            blocking: true,
-            onSubmit: (newProject) => {
-              setActiveNamespace(newProject.metadata.name);
-              removeQueryArgument('project-name');
-            },
-          });
-        }}
-        selected={activeNamespace || ALL_NAMESPACES_KEY}
-        isProjects={getModel(useProjects).label === 'Project'}
-        disabled={disabled}
-        shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
-      />
-
-      {children}
-    </div>
-  );
-};
-
-/** @type {React.FC<{children?: ReactNode, disabled?: boolean, onNamespaceChange?: Function, hideProjects?: boolean}>} */
-export const NamespaceBar = ({ hideProjects = false, children, disabled, onNamespaceChange }) => {
-  const useProjects = useSelector(({ k8s }) =>
-    k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
-  );
-  return (
-    <div
-      className={classNames('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}
-    >
-      {hideProjects ? (
-        <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
-          {children}
-        </div>
-      ) : (
-        // Data from Firehose is not used directly by the NamespaceDropdown nor the children.
-        // Data is used to determine if the StartGuide should be shown.
-        // See NamespaceBarDropdowns_  above.
-        <Firehose
-          resources={[{ kind: getModel(useProjects).kind, prop: 'namespace', isList: true }]}
-        >
-          <NamespaceBarDropdowns
-            useProjects={useProjects}
-            disabled={disabled}
-            onNamespaceChange={onNamespaceChange}
-          >
-            {children}
-          </NamespaceBarDropdowns>
-        </Firehose>
-      )}
-    </div>
-  );
-};
 
 export const NamespacesDetailsPage = (props) => (
   <DetailsPage

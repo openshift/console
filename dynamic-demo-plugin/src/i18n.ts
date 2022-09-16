@@ -13,3 +13,4 @@
 // t('plugin__console-demo-plugin~Foo item')
 // t('plugin__console-demo-plugin~Bar item')
 // t('plugin__console-demo-plugin~Custom Overview Detail Title')
+// t('plugin__console-demo-plugin~Example Namespaced Page')

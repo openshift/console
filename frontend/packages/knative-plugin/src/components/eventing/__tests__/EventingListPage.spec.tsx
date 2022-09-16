@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { NamespaceBar } from '@console/internal/components/namespace';
+import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import { MultiTabListPage } from '@console/shared';
 import EventingListPage from '../EventingListPage';
 

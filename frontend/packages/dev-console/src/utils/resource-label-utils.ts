@@ -94,10 +94,15 @@ export const getUserAnnotations = (allAnnotations: { [key: string]: string }) =>
 };
 
 export const getPodLabels = (resource: Resources, name: string) => {
-  const resourceKind = _.toLower(ResourcesKinds[resource]);
+  const resourceKind = ResourcesKinds[resource];
+  if (resourceKind) {
+    return {
+      app: name,
+      [resourceKind.toLowerCase()]: name,
+    };
+  }
   return {
     app: name,
-    [resourceKind]: name,
   };
 };
 

@@ -60,9 +60,10 @@
 58.  [`Timestamp`](#timestamp)
 59.  [`useModal`](#usemodal)
 60.  [`ActionServiceProvider`](#actionserviceprovider)
-61. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
-62. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
-63. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+61.  [`NamespaceBar`](#namespacebar)
+62. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
+63. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
+64. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
 
 ---
 
@@ -2074,6 +2075,46 @@ Component that allows to receive contributions from other plugins for the `conso
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `context` | Object with contextId and optional plugin data |
+
+
+
+---
+
+## `NamespaceBar`
+
+### Summary 
+
+A component that renders a horizontal toolbar with a namespace dropdown menu in the leftmost position. Additional components can be passed in as children and will be rendered to the right of the namespace dropdown. This component is designed to be used at the top of the page. It should be used on pages where the user needs to be able to change the active namespace, such as on pages with k8s resources.
+
+
+
+### Example
+
+
+```tsx
+   const logNamespaceChange = (namespace) => console.log(`New namespace: ${namespace}`);
+
+   ...
+
+   <NamespaceBar onNamespaceChange={logNamespaceChange}>
+     <NamespaceBarApplicationSelector />
+   </NamespaceBar>
+   <Page>
+
+     ...
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `onNamespaceChange` | (optional) A function that is executed when a namespace option is selected. It accepts the new namespace in the form of a string as its only argument. The active namespace is updated automatically when an option is selected, but additional logic can be applied via this function. When the namespace is changed, the namespace parameter in the URL will be changed from the previous namespace to the newly selected namespace. |
+| `isDisabled` | (optional) A boolean flag that disables the namespace dropdown if set to true. This option only applies to the namespace dropdown and has no effect on child components. |
+| `children` | (optional) Additional elements to be rendered inside the toolbar to the right of the namespace dropdown. |
 
 
 
