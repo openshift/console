@@ -337,10 +337,10 @@ Adds an item to the Details card of Overview Dashboard
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `title` | `string` | no |  |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The value, based on the DetailItem component |
+| `component` | `CodeRef<React.ComponentType<{}>>` | no | The value, rendered by the OverviewDetailItem component |
 | `valueClassName` | `string` | yes |  |
-| `isLoading` | `CodeRef<() => boolean>` | yes |  |
-| `error` | `CodeRef<() => string>` | yes |  |
+| `isLoading` | `CodeRef<() => boolean>` | yes | Function returning the loading state of the component |
+| `error` | `CodeRef<() => string>` | yes | Function returning errors to be displayed by the component |
 
 ---
 
