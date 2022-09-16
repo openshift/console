@@ -25,7 +25,7 @@ Feature: Perform actions on HPA in Administrative perspective
               And user changes value to spec.metrics.resource.target.averageUtilization under cpu target as "<cpu_util>"
               And user adds new field for memory similar to cpu under spec.metrics as resource.name with value memory
               And user adds value for memory to spec.metrics.resource.target.averageUtilization under memory target as "<memory_util>"
-              And user sees save, reload and cancel button
+              And user sees create and cancel button
               And user clicks on Save button
               And user checks details with Action menu on top
               And user sees Edit Labels, Edit Annotaions, Edit Horizontal Pod Autoscaler, Delete Horizontal Pod Autoscaler options in action menu

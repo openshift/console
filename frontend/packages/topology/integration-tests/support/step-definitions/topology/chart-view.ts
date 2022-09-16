@@ -319,7 +319,7 @@ When('user clicks on Samples', () => {
 
 When('user selects go sample', () => {
   cy.get(chartAreaPO.filterItem).type('Go');
-  cy.get(chartAreaPO.sampleBasicGo).click();
+  cy.get(chartAreaPO.sampleGo).click();
 });
 
 When('user hovers on Add to Project and clicks on {string}', (optionName: string) => {
@@ -381,7 +381,7 @@ Then(
   'user is able to see different applications created from Samples, Import from Git, Container Image, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel',
   () => {
     verifyMultipleWorkloadInTopologyPage([
-      'go-basic',
+      'golang-sample',
       'nodejs-ex-git',
       'hello-openshift',
       'python-app',
@@ -401,6 +401,10 @@ Given('user has created namespace {string}', (projectName: string) => {
 
 Given('user has installed Redis Operator', () => {
   verifyAndInstallOperator(operators.RedisOperator);
+});
+
+Given('user has installed Red Hat OpenShift distributed tracing platform', () => {
+  verifyAndInstallOperator(operators.Jaeger);
 });
 
 Given(

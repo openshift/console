@@ -27,7 +27,7 @@ Feature: Topology Layout should be saved
 
 
         @manual
-        Scenario: Persistence Topology Layout across page views: T-11-TC05
+        Scenario: Persistence Topology Layout across page views: T-11-TC03
             Given user has created workload "hello-openshift"
               And user kept workload on right top corner
               And user has zoomed in the topology to a certain amount
@@ -39,7 +39,7 @@ Feature: Topology Layout should be saved
 
 
         @manual
-        Scenario: Persistence Topology Layout after logging out from cluster: T-11-TC06
+        Scenario: Persistence Topology Layout after logging out from cluster: T-11-TC04
             Given user has created workload "hello-openshift"
               And user kept workload on right top corner
              When user logs out from cluster

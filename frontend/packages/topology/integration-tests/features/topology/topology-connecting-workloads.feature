@@ -23,7 +23,7 @@ Feature: Connecting nodes
 
         @regression @manual
         Scenario: Create visual connection between two nodes using drag and drop: T-07-TC02
-            Given user has creaeted two worloads "nodejs-ex-git" and "dancer-ex-git"
+            Given user has created two worloads "nodejs-ex-git" and "dancer-ex-git"
              When user scrolls over a node to see the arrow
               And user click on the front of arrow and drag it on to the other node and drop it
              Then user can see the arrow connecting them with head pointing to the node where the arrow is dropped

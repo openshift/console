@@ -1,4 +1,5 @@
-@topology
+@broken-test
+# Gitops Primer Operator not installing correctly.
 Feature: Export of application
               As a user, I have an unmanaged application which I want to export. I'd like to be able to later add that code to git or some shared location so that I can share with others, or import into a new cluster or same cluster but different project, or be able to apply updates to an existing application.
 
@@ -30,7 +31,7 @@ Feature: Export of application
 
 
         @regression @odc-6684
-        Scenario: Restart Export when export application is in progress: EA-02-TC04
+        Scenario: Restart Export when export application is in progress: EA-02-TC03
             Given user is at Topology page
              When user clicks on Export Application button
               And user clicks on Ok button on Export Application modal to start the export
@@ -41,7 +42,7 @@ Feature: Export of application
 
 
         @regression @odc-6684
-        Scenario: Cancel Export when export application is in progress: EA-02-TC05
+        Scenario: Cancel Export when export application is in progress: EA-02-TC04
             Given user is at Topology page
              When user clicks on Export Application button
               And user clicks on Ok button on Export Application modal to start the export
@@ -51,14 +52,14 @@ Feature: Export of application
 
 
         @regression @odc-6296
-        Scenario: Export application button in empty topology view: EA-02-TC06
+        Scenario: Export application button in empty topology view: EA-02-TC05
             Given user has created or selected namespace "aut-export-application-temp"
              When user navigates to Topology page
              Then user can see Export Application button disabled
 
 
         @regression @manual @odc-6296
-        Scenario: View logs when export application is in progress: EA-02-TC03
+        Scenario: View logs when export application is in progress: EA-02-TC06
             Given user is at Topology page
              When user clicks on Export Application button
               And user clicks on Ok button on Export Application modal to start the export

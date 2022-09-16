@@ -1,6 +1,6 @@
 @topology
 Feature: Topology
-    User will be able to create different types of workloads like Cron Job, Job and Pod and will be able to see it on Topology page
+     User will be able to create different types of workloads like Cron Job, Job and Pod and will be able to see it on Topology page
 
 
         Background:

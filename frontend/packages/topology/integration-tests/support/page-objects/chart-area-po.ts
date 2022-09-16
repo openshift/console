@@ -22,7 +22,7 @@ export const chartAreaPO = {
   eventsource: '[data-test-action="Event Source"]',
   channel: '[data-test-action="Channel"]',
   filterItem: 'input[placeholder="Filter by keyword..."]',
-  sampleBasicGo: '[data-test="Sample-Basic Go"]',
+  sampleGo: '[data-test="Sample-Go"]',
   submitButton: '[data-test-id="submit-button"]',
   deployImage: '[data-test-id="deploy-image-search-term"]',
   validationText: '#form-input-searchTerm-field-helper',

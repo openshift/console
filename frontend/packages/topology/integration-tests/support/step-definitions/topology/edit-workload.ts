@@ -1,13 +1,13 @@
-import { When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import { formPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
+import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages';
 import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow';
 import { pipelineBuilderPO } from '@console/pipelines-plugin/integration-tests/support/page-objects';
 import { addSecret } from '@console/topology/integration-tests/support/pages/functions/add-secret';
 import { topologyHelper } from '@console/topology/integration-tests/support/pages/topology/topology-helper-page';
 import { topologyPO } from '../../page-objects/topology-po';
-import { topologyPage } from '../../pages/topology';
+import { topologyPage, topologySidePane } from '../../pages/topology';
 import { editDeployment } from '../../pages/topology/topology-edit-deployment';
 
 When('user edits application groupings to {string}', (newAppName: string) => {
@@ -49,10 +49,6 @@ When('user clicks on {string} from context action menu', (actionItem: string) =>
 
 Then('user will see {string} in secret name dropdown under Pull secret', (secretName: string) => {
   cy.reload();
-  cy.get('.pf-c-alert__description', { timeout: 80000 }).should(
-    'include.text',
-    'Click reload to see the new version.',
-  );
   if (cy.get(topologyPO.createSecret.advancedOptions).contains('Show advanced image options')) {
     cy.get(topologyPO.createSecret.advancedOptions).click();
   } else {
@@ -229,12 +225,40 @@ When('user enters value as {string} to which it will be connected', (annotationV
 });
 
 Then('user can see that two workloads are connected with arrow', () => {
-  cy.get(topologyPO.graph.connector).should('be.visible');
+  navigateTo(devNavigationMenu.Add);
+  navigateTo(devNavigationMenu.Topology);
+  cy.get(topologyPO.graph.connector, { timeout: 10000 }).should('be.visible');
 });
 
 Then(
   'user right clicks on the knative workload {string} to open the Context Menu',
   (nodeName: string) => {
     topologyPage.getKnativeNode(nodeName).trigger('contextmenu', { force: true });
+  },
+);
+export const checkBuildComplete = (tries: number = 4) => {
+  if (tries < 1) {
+    return;
+  }
+  // eslint-disable-next-line promise/catch-or-return
+  cy.get('body').then(($body) => {
+    if ($body.find('.build-overview__status svg title').length === 0) {
+      cy.reload();
+      app.waitForDocumentLoad();
+      cy.wait(30000);
+      checkBuildComplete(tries - 1);
+    } else {
+      cy.log('COMPLETE');
+    }
+  });
+};
+
+Given(
+  'user clicks on knative workload {string} to verify that build is completed',
+  (nodeName: string) => {
+    topologyPage.knativeNode(nodeName).click({ force: true });
+    topologySidePane.selectTab('Resources');
+    checkBuildComplete();
+    cy.byLegacyTestID('sidebar-close-button').click();
   },
 );

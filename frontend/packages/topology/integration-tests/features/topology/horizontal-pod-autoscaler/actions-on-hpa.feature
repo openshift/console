@@ -1,4 +1,5 @@
-@topology
+@broken-test
+# Not able to create HPA because of BUG: https://issues.redhat.com/browse/OCPBUGS-2306
 Feature: Perform actions on HPA in Topology page
               As a user, I want to add HPA to a workload
 

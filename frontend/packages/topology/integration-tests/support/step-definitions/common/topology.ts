@@ -169,6 +169,7 @@ When('user clicks Start building your application', () => {
 
 When('user enters {string} builder image in Quick Search bar', (searchItem: string) => {
   cy.get(topologyPO.quickSearch).type(searchItem);
+  cy.byTestID('item-name-.NET-Builder Images').click();
 });
 
 When('user clicks Create application on Quick Search Dialog', () => {
@@ -211,4 +212,8 @@ Given('user has installed Gitops primer Operator', () => {
 
 Given('user has installed OpenShift Pipelines Operator', () => {
   verifyAndInstallPipelinesOperator();
+});
+
+When('user selects Resource as deployment', () => {
+  cy.byTestID('kubernetes-view-input').click();
 });
