@@ -50,7 +50,6 @@ type Endpoint struct {
 	// +kubebuilder:validation:MaxLength=63
 	Name string `json:"name"`
 
-	// The port number should be unique.
 	TargetPort int `json:"targetPort"`
 
 	// Describes how the endpoint should be exposed on the network.

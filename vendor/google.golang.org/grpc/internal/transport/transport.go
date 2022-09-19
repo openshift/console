@@ -30,7 +30,6 @@ import (
 	"net"
 	"sync"
 	"sync/atomic"
-	"time"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
@@ -519,8 +518,7 @@ const (
 // ServerConfig consists of all the configurations to establish a server transport.
 type ServerConfig struct {
 	MaxStreams            uint32
-	ConnectionTimeout     time.Duration
-	Credentials           credentials.TransportCredentials
+	AuthInfo              credentials.AuthInfo
 	InTapHandle           tap.ServerInHandle
 	StatsHandler          stats.Handler
 	KeepaliveParams       keepalive.ServerParameters
@@ -532,6 +530,12 @@ type ServerConfig struct {
 	ChannelzParentID      int64
 	MaxHeaderListSize     *uint32
 	HeaderTableSize       *uint32
+}
+
+// NewServerTransport creates a ServerTransport with conn or non-nil error
+// if it fails.
+func NewServerTransport(protocol string, conn net.Conn, config *ServerConfig) (ServerTransport, error) {
+	return newHTTP2Server(conn, config)
 }
 
 // ConnectOptions covers all relevant options for communicating with the server.
@@ -690,7 +694,7 @@ type ServerTransport interface {
 	// Close tears down the transport. Once it is called, the transport
 	// should not be accessed any more. All the pending streams and their
 	// handlers will be terminated asynchronously.
-	Close()
+	Close() error
 
 	// RemoteAddr returns the remote network address.
 	RemoteAddr() net.Addr
