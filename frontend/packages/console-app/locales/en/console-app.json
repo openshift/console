@@ -428,6 +428,8 @@
   "Mark as schedulable": "Mark as schedulable",
   "Min available {{minAvailable}} of {{count}} pod": "Min available {{minAvailable}} of {{count}} pod",
   "Min available {{minAvailable}} of {{count}} pod_plural": "Min available {{minAvailable}} of {{count}} pods",
+  "Max unavailable {{maxUnavailable}} of {{count}} pod": "Max unavailable {{maxUnavailable}} of {{count}} pod",
+  "Max unavailable {{maxUnavailable}} of {{count}} pod_plural": "Max unavailable {{maxUnavailable}} of {{count}} pods",
   "Availability requirement": "Availability requirement",
   "maxUnavailable": "maxUnavailable",
   "An eviction is allowed if at most \"maxUnavailable\" pods selected by \"selector\" are unavailable after the eviction, i.e. even in absence of the evicted pod. For example, one can prevent all voluntary evictions by specifying 0. This is a mutually exclusive setting with \"minAvailable\".": "An eviction is allowed if at most \"maxUnavailable\" pods selected by \"selector\" are unavailable after the eviction, i.e. even in absence of the evicted pod. For example, one can prevent all voluntary evictions by specifying 0. This is a mutually exclusive setting with \"minAvailable\".",
