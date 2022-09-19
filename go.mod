@@ -5,10 +5,10 @@ go 1.16
 require (
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
-	github.com/devfile/api/v2 v2.0.0-20220117162434-6e6e6a8bc14c
-	github.com/devfile/library v1.2.1-0.20220308191614-f0f7e11b17de
-	github.com/devfile/registry-support/index/generator v0.0.0-20220624203950-e7282a4695b6
-	github.com/devfile/registry-support/registry-library v0.0.0-20220901004827-b579f98d73ad
+	github.com/devfile/api/v2 v2.0.0-20220105201057-dd1d65d4d91f
+	github.com/devfile/library v1.2.1-0.20211104222135-49d635cb492f
+	github.com/devfile/registry-support/index/generator v0.0.0-20220110165901-db88e581adf8
+	github.com/devfile/registry-support/registry-library v0.0.0-20220919175547-3f85c85b2650
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
 	github.com/gorilla/websocket v1.4.2
@@ -19,7 +19,7 @@ require (
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/prometheus/client_golang v1.11.0
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
-	golang.org/x/net v0.0.0-20220107192237-5cfca573fb4d
+	golang.org/x/net v0.0.0-20210520170846-37e1c6afe023
 	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v3 v3.7.1
