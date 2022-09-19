@@ -50,8 +50,10 @@ import QuickSearch from '../quick-search/QuickSearch';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 import './TopologyView.scss';
+import { LimitExceededState } from './LimitExceededState';
 
 const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
+const MAX_NODES_LIMIT = 100;
 
 interface StateProps {
   application?: string;
@@ -103,6 +105,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const [isQuickSearchOpen, setIsQuickSearchOpen] = React.useState<boolean>(
     typeof getQueryArgument('catalogSearch') === 'string',
   );
+  const [showTopologyAnyway, setShowTopologyAnyway] = React.useState(false);
   const setIsQuickSearchOpenAndFireEvent = React.useCallback(
     (open: boolean) => {
       if (open) {
@@ -258,25 +261,29 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     }
   }, [searchParams]);
 
+  const nodesLength = filteredModel?.nodes?.length ?? 0;
+
   const viewContent = React.useMemo(
     () =>
-      viewType === TopologyViewType.list ? (
-        <TopologyListView
-          model={filteredModel}
-          namespace={namespace}
-          onSelect={onSelect}
-          setVisualization={setVisualization}
-        />
-      ) : (
-        <Topology
-          model={filteredModel}
-          namespace={namespace}
-          application={applicationRef.current}
-          onSelect={onSelect}
-          setVisualization={setVisualization}
-        />
-      ),
-    [filteredModel, namespace, onSelect, viewType],
+      nodesLength <= MAX_NODES_LIMIT || showTopologyAnyway ? (
+        viewType === TopologyViewType.list ? (
+          <TopologyListView
+            model={filteredModel}
+            namespace={namespace}
+            onSelect={onSelect}
+            setVisualization={setVisualization}
+          />
+        ) : (
+          <Topology
+            model={filteredModel}
+            namespace={namespace}
+            application={applicationRef.current}
+            onSelect={onSelect}
+            setVisualization={setVisualization}
+          />
+        )
+      ) : null,
+    [filteredModel, namespace, onSelect, viewType, nodesLength, showTopologyAnyway],
   );
 
   const topologySideBarDetails = getSelectedEntityDetails(selectedEntity);
@@ -297,7 +304,9 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
             viewType={viewType}
             visualization={visualization}
             setIsQuickSearchOpen={setIsQuickSearchOpenAndFireEvent}
-            isDisabled={!model.nodes?.length}
+            isDisabled={
+              !model.nodes?.length || (nodesLength > MAX_NODES_LIMIT && !showTopologyAnyway)
+            }
           />
         </StackItem>
         <StackItem isFilled className={containerClasses}>
@@ -316,7 +325,11 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
                   </span>
                 </div>
               )}
-              {viewContent}
+              {nodesLength > MAX_NODES_LIMIT && !showTopologyAnyway ? (
+                <LimitExceededState onShowTopologyAnyway={() => setShowTopologyAnyway(true)} />
+              ) : (
+                viewContent
+              )}
               {!model.nodes?.length ? (
                 <TopologyEmptyState setIsQuickSearchOpen={setIsQuickSearchOpenAndFireEvent} />
               ) : null}
