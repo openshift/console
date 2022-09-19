@@ -3,7 +3,12 @@ import { Map as ImmutableMap } from 'immutable';
 import YAML from 'js-yaml';
 import * as _ from 'lodash';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
-import { AddAction, isAddAction } from '@console/dynamic-plugin-sdk';
+import {
+  AddAction,
+  CatalogItemType,
+  isAddAction,
+  isCatalogItemType,
+} from '@console/dynamic-plugin-sdk';
 import { FirehoseResult } from '@console/internal/components/utils';
 import * as denyOtherNamespacesImg from '@console/internal/imgs/network-policy-samples/1-deny-other-namespaces.svg';
 import * as limitCertainAppImg from '@console/internal/imgs/network-policy-samples/2-limit-certain-apps.svg';
@@ -343,6 +348,30 @@ const defaultSamples = (t: TFunction) =>
                   unsubscribe();
                 },
                 isAddAction,
+              );
+            });
+          },
+          targetResource: getTargetResource(ConsoleOperatorConfigModel),
+        },
+        {
+          title: t('console-shared~Add sub-catalog types'),
+          description: t(
+            'console-shared~Provides a list of all the available sub-catalog types which are shown in the Developer Catalog. The types must be added below spec customization developerCatalog',
+          ),
+          id: 'devcatalog-types',
+          snippet: true,
+          lazyYaml: () => {
+            return new Promise<string>((resolve) => {
+              const unsubscribe = subscribeToExtensions<CatalogItemType>(
+                (extensions: LoadedExtension<CatalogItemType>[]) => {
+                  const enabledTypes = {
+                    state: 'Enabled',
+                    enabled: extensions.map((extension) => extension.properties.type),
+                  };
+                  resolve(YAML.dump(enabledTypes));
+                  unsubscribe();
+                },
+                isCatalogItemType,
               );
             });
           },

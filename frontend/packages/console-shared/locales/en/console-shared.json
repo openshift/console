@@ -281,6 +281,8 @@
   "Provides a list of default roles which are shown in the Project Access. The roles must be added below customization projectAccess.": "Provides a list of default roles which are shown in the Project Access. The roles must be added below customization projectAccess.",
   "Add page actions": "Add page actions",
   "Provides a list of all available actions on the Add page in the Developer perspective. The IDs must be added below customization addPage disabledActions to hide these actions.": "Provides a list of all available actions on the Add page in the Developer perspective. The IDs must be added below customization addPage disabledActions to hide these actions.",
+  "Add sub-catalog types": "Add sub-catalog types",
+  "Provides a list of all the available sub-catalog types which are shown in the Developer Catalog. The types must be added below spec customization developerCatalog": "Provides a list of all the available sub-catalog types which are shown in the Developer Catalog. The types must be added below spec customization developerCatalog",
   "Set maxUnavaliable to 0": "Set maxUnavaliable to 0",
   "An eviction is allowed if at most 0 pods selected by \"selector\" are unavailable after the eviction.": "An eviction is allowed if at most 0 pods selected by \"selector\" are unavailable after the eviction.",
   "Set minAvailable to 25%": "Set minAvailable to 25%",
