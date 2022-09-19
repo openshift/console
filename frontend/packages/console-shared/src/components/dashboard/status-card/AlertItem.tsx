@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
-import { toLower } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { isAlertAction, AlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
@@ -8,6 +7,7 @@ import { AlertItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-typ
 import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { getAlertActions } from '@console/internal/components/notification-drawer';
+import { ExternalLink } from '@console/internal/components/utils';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import {
@@ -56,9 +56,12 @@ export const StatusItem: React.FC<StatusItemProps> = ({
           </div>
           <span className="co-status-card__health-item-text co-break-word">{message}</span>
           {documentationLink && (
-            <a className="co-status-card__alert-item-doc-link" href={documentationLink}>
+            <ExternalLink
+              additionalClassName="co-status-card__alert-item-doc-link"
+              href={documentationLink}
+            >
               {t('console-shared~Go to documentation')}
-            </a>
+            </ExternalLink>
           )}
         </div>
         {children && <div className="co-status-card__alert-item-more">{children}</div>}
@@ -67,7 +70,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({
   );
 };
 
-const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
+const AlertItem: React.FC<AlertItemProps> = ({ alert, documentationLink }) => {
   const { t } = useTranslation();
   const launchModal = useModal();
   const [actionExtensions] = useResolvedExtensions<AlertAction>(
@@ -84,13 +87,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
       Icon={getSeverityIcon(getAlertSeverity(alert))}
       timestamp={getAlertTime(alert)}
       message={getAlertDescription(alert) || getAlertMessage(alert) || getAlertSummary(alert)}
-      documentationLink={
-        alertName
-          ? `https://access.redhat.com/documentation/en-us/red_hat_openshift_data_foundation/4.12/html-single/troubleshooting_openshift_data_foundation/index#${toLower(
-              alertName,
-            )}_rhodf`
-          : null
-      }
+      documentationLink={documentationLink}
       name={alertName}
     >
       {text && action ? (
