@@ -9,7 +9,7 @@ import {
 import {
   ActionGroup,
   Button,
-  Dropdown as PFDropdown,
+  Dropdown,
   DropdownItem,
   DropdownPosition,
   DropdownToggle,
@@ -106,7 +106,7 @@ const MetricsActionsMenu: React.FC<{}> = () => {
   ];
 
   return (
-    <PFDropdown
+    <Dropdown
       className="co-actions-menu"
       dropdownItems={dropdownItems}
       isOpen={isOpen}
@@ -268,7 +268,7 @@ const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
   ];
 
   return (
-    <PFDropdown
+    <Dropdown
       data-test-id="kebab-button"
       dropdownItems={dropdownItems}
       isOpen={isOpen}
