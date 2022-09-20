@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
+import { CatalogItem, ExtensionHook, SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
+import {
+  FLAG_KNATIVE_EVENT_SINK_CATALOG_TYPE,
+  FLAG_KNATIVE_EVENT_SOURCE_CATALOG_TYPE,
+} from '../const';
 import { useEventSourceModelsWithAccess } from '../hooks';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
 import { getEventSourceCatalogProviderData } from './event-source-data';
@@ -37,7 +42,7 @@ const normalizeEventSources = (
   return normalizedEventSources;
 };
 
-const useEventSourceProvider: ExtensionHook<CatalogItem[]> = ({
+export const useEventSourceProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
@@ -52,4 +57,7 @@ const useEventSourceProvider: ExtensionHook<CatalogItem[]> = ({
   return [normalizedSources, loaded, undefined];
 };
 
-export default useEventSourceProvider;
+export const knativeEventingTypeProvider = (setFeatureFlag: SetFeatureFlag) => {
+  setFeatureFlag(FLAG_KNATIVE_EVENT_SOURCE_CATALOG_TYPE, isCatalogTypeEnabled('EventSource'));
+  setFeatureFlag(FLAG_KNATIVE_EVENT_SINK_CATALOG_TYPE, isCatalogTypeEnabled('EventSink'));
+};

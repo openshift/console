@@ -23,11 +23,20 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "actions.useDeveloperCatalogProvider" }
+    }
+  },
+  {
     "type": "dev-console.add/action-group",
     "properties": {
       "id": "developer-catalog",
       "name": "%devconsole~Developer Catalog%",
       "insertBefore": "git-repository"
+    },
+    "flags": {
+      "required": ["DEVELOPER_CATALOG"]
     }
   },
   {
@@ -90,6 +99,9 @@
         { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
         { "group": "", "resource": "services", "verb": "create" }
       ]
+    },
+    "flags": {
+      "required": ["DEVELOPER_CATALOG", "SAMPLE_CATALOG_TYPE"]
     }
   },
   {
@@ -151,6 +163,9 @@
       "label": "%devconsole~All services%",
       "description": "%devconsole~Browse the catalog to discover, deploy and connect to services%",
       "icon": { "$codeRef": "icons.devCatalogIconElement" }
+    },
+    "flags": {
+      "required": ["DEVELOPER_CATALOG"]
     }
   },
   {
@@ -162,6 +177,9 @@
       "label": "%devconsole~Database%",
       "description": "%devconsole~Browse the catalog to discover database services to add to your application%",
       "icon": { "$codeRef": "icons.databaseCatalogIconElement" }
+    },
+    "flags": {
+      "required": ["DEVELOPER_CATALOG"]
     }
   },
   {
@@ -173,6 +191,9 @@
       "label": "%devconsole~Operator Backed%",
       "description": "%devconsole~Browse the catalog to discover and deploy operator managed services%",
       "icon": { "$codeRef": "icons.operatorCatalogIconElement" }
+    },
+    "flags": {
+      "required": ["DEVELOPER_CATALOG", "OPERATOR_BACKED_SERVICE_CATALOG_TYPE"]
     }
   },
   {

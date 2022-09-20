@@ -3,6 +3,7 @@ import { Formik, FormikHelpers } from 'formik';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { history, StatusBox } from '@console/internal/components/utils';
@@ -43,6 +44,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
   const { t } = useTranslation();
   const [namespace] = useActiveNamespace();
   const fireTelemetryEvent = useTelemetry();
+  const isHelmEnabled = isCatalogTypeEnabled('HelmChart');
   const [hcr, hcrLoaded, hcrLoadError] = useK8sWatchResource<HelmChartRepositoryType>(
     isEditForm
       ? {
@@ -117,16 +119,17 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
           data: HelmChartRepositoryRes,
         });
 
-    const redirectURL = actionOrigin
-      ? `/catalog/ns/${HelmChartRepositoryRes.metadata.namespace ??
-          namespace}?catalogType=HelmChart`
-      : HelmChartRepositoryRes.kind === ProjectHelmChartRepositoryModel.kind
-      ? `/k8s/ns/${HelmChartRepositoryRes.metadata.namespace}/${referenceFor(
-          HelmChartRepositoryRes,
-        )}/${HelmChartRepositoryRes.metadata.name}`
-      : `/k8s/cluster/${referenceFor(HelmChartRepositoryRes)}/${
-          HelmChartRepositoryRes.metadata.name
-        }`;
+    const redirectURL =
+      actionOrigin && isHelmEnabled
+        ? `/catalog/ns/${HelmChartRepositoryRes.metadata.namespace ??
+            namespace}?catalogType=HelmChart`
+        : HelmChartRepositoryRes.kind === ProjectHelmChartRepositoryModel.kind
+        ? `/k8s/ns/${HelmChartRepositoryRes.metadata.namespace}/${referenceFor(
+            HelmChartRepositoryRes,
+          )}/${HelmChartRepositoryRes.metadata.name}`
+        : `/k8s/cluster/${referenceFor(HelmChartRepositoryRes)}/${
+            HelmChartRepositoryRes.metadata.name
+          }`;
 
     return resourceCall
       .then(() => {

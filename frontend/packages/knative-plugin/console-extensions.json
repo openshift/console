@@ -441,9 +441,15 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "catalog.knativeEventingTypeProvider" }
+    }
+  },
+  {
     "type": "dev-console.add/action",
     "flags": {
-      "required": ["KNATIVE_EVENTING"]
+      "required": ["KNATIVE_EVENTING", "DEVELOPER_CATALOG", "KNATIVE_EVENT_SOURCE_CATALOG_TYPE"]
     },
     "properties": {
       "id": "knative-event-source",
@@ -489,7 +495,7 @@
   {
     "type": "dev-console.add/action",
     "flags": {
-      "required": ["KNATIVE_EVENTING"]
+      "required": ["KNATIVE_EVENTING", "DEVELOPER_CATALOG", "KNATIVE_EVENT_SINK_CATALOG_TYPE"]
     },
     "properties": {
       "id": "knative-event-sink",
@@ -524,7 +530,7 @@
       "catalogId": "dev-catalog",
       "type": "EventSource",
       "title": "%knative-plugin~Event Sources%",
-      "provider": { "$codeRef": "catalog.eventSourceProvider" }
+      "provider": { "$codeRef": "catalog.useEventSourceProvider" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]

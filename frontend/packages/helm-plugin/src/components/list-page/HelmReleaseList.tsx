@@ -10,6 +10,7 @@ import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -109,6 +110,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
   }
 
   const emptyState = () => {
+    const isHelmEnabled = isCatalogTypeEnabled('HelmChart');
     const helmImage = () => (
       <img
         className="odc-helm-release__empty-list__image"
@@ -123,11 +125,13 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
         <Title headingLevel="h3" size="lg">
           {t('helm-plugin~No Helm Releases found')}
         </Title>
-        <EmptyStateSecondaryActions>
-          <Link to={installURL}>
-            {t('helm-plugin~Install a Helm Chart from the developer catalog')}
-          </Link>
-        </EmptyStateSecondaryActions>
+        {isHelmEnabled ? (
+          <EmptyStateSecondaryActions>
+            <Link to={installURL}>
+              {t('helm-plugin~Install a Helm Chart from the developer catalog')}
+            </Link>
+          </EmptyStateSecondaryActions>
+        ) : null}
       </EmptyState>
     );
   };

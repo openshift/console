@@ -13,6 +13,7 @@ import { isEmpty } from 'lodash';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
 import {
   ButtonBar,
   ExternalLink,
@@ -50,21 +51,26 @@ import { useVmTemplatesResources } from '../hooks/use-vm-templates-resources';
 const DevConsoleCreateVmFormEmptyState: React.FC<{ templateParam: string; t: TFunction }> = ({
   templateParam,
   t,
-}) => (
-  <EmptyState>
-    <Title headingLevel="h4" size="lg">
-      {t('kubevirt-plugin~Error Loading Template')}
-    </Title>
-    <EmptyStateBody>
-      {t('kubevirt-plugin~Virtual machine template {{ templateParam }} not found.', {
-        templateParam,
-      })}
-    </EmptyStateBody>
-    <Button variant="primary" onClick={() => history.push('/catalog?catalogType=VmTemplate')}>
-      {t('kubevirt-plugin~Back to templates catalog')}
-    </Button>
-  </EmptyState>
-);
+}) => {
+  const isVMTemplateTypeEnabled = isCatalogTypeEnabled('VmTemplate');
+  return (
+    <EmptyState>
+      <Title headingLevel="h4" size="lg">
+        {t('kubevirt-plugin~Error Loading Template')}
+      </Title>
+      <EmptyStateBody>
+        {t('kubevirt-plugin~Virtual machine template {{ templateParam }} not found.', {
+          templateParam,
+        })}
+      </EmptyStateBody>
+      {isVMTemplateTypeEnabled ? (
+        <Button variant="primary" onClick={() => history.push('/catalog?catalogType=VmTemplate')}>
+          {t('kubevirt-plugin~Back to templates catalog')}
+        </Button>
+      ) : null}
+    </EmptyState>
+  );
+};
 
 export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
   const { t } = useTranslation();

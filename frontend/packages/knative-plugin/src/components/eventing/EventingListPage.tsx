@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import { Page } from '@console/internal/components/utils';
 import { MenuActions, MultiTabListPage } from '@console/shared';
@@ -22,9 +23,10 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
   } = match;
   const [showTitle, canCreate] = [false, false];
   const nsSelected = namespace || 'default';
+  const isEventSourceTypeEnabled = isCatalogTypeEnabled('EventSource');
   const menuActions: MenuActions = {
     eventSource: {
-      label: t('knative-plugin~Event Source'),
+      label: isEventSourceTypeEnabled ? t('knative-plugin~Event Source') : null,
       onSelection: () => `/catalog/ns/${nsSelected}?catalogType=EventSource&provider=["Red+Hat"]`,
     },
     brokers: {

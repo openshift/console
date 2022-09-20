@@ -4,6 +4,7 @@ import { getCommonResourceActions } from '@console/app/src/actions/creators/comm
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
 import { disabledActionsFilter } from '@console/dev-console/src/actions/add-resources';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { Action } from '@console/dynamic-plugin-sdk';
 import {
   K8sResourceKind,
@@ -138,6 +139,9 @@ export const useTopologyActionsProvider = ({
   element: GraphElement;
   connectorSource?: Node;
 }) => {
+  const isEventSinkTypeEnabled = isCatalogTypeEnabled('EventSink');
+  const isEventSourceTypeEnabled = isCatalogTypeEnabled('EventSource');
+
   const [namespace] = useActiveNamespace();
   const actions = React.useMemo(() => {
     const application = element.getLabel();
@@ -146,12 +150,16 @@ export const useTopologyActionsProvider = ({
         return [];
       }
       const path = application ? 'add-to-application' : 'add-to-project';
-      return [
-        AddEventSinkAction(namespace, application, undefined, path),
-        AddEventSourceAction(namespace, application, undefined, path),
-        AddChannelAction(namespace, application, path),
-        AddBrokerAction(namespace, application, path),
-      ].filter(disabledActionsFilter);
+      const addActions: Action[] = [];
+      if (isEventSinkTypeEnabled) {
+        addActions.push(AddEventSinkAction(namespace, application, undefined, path));
+      }
+      if (isEventSourceTypeEnabled) {
+        addActions.push(AddEventSourceAction(namespace, application, undefined, path));
+      }
+      addActions.push(AddChannelAction(namespace, application, path));
+      addActions.push(AddBrokerAction(namespace, application, path));
+      return addActions.filter(disabledActionsFilter);
     }
 
     if (connectorSource.getData().type === TYPE_EVENT_SOURCE_KAFKA) return [];
@@ -190,7 +198,7 @@ export const useTopologyActionsProvider = ({
       default:
         return [];
     }
-  }, [connectorSource, element, namespace]);
+  }, [connectorSource, element, isEventSinkTypeEnabled, isEventSourceTypeEnabled, namespace]);
   return [actions, true, undefined];
 };
 

@@ -2,11 +2,13 @@ import * as React from 'react';
 import { GraphElement, isGraph, Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { Action } from '@console/dynamic-plugin-sdk';
-import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { SetFeatureFlag, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared';
 import { getResource } from '@console/topology/src/utils';
+import { FLAG_HELM_CHARTS_CATALOG_TYPE } from '../const';
 import { TYPE_HELM_RELEASE } from '../topology/components/const';
 import { AddHelmChartAction } from './add-resources';
 import {
@@ -89,4 +91,8 @@ export const useHelmChartRepositoryActions = (resource: K8sResourceKind) => {
   }, [kindObj, resource, t]);
 
   return [actions, !inFlight, undefined];
+};
+
+export const helmChartTypeProvider = (setFeatureFlag: SetFeatureFlag) => {
+  setFeatureFlag(FLAG_HELM_CHARTS_CATALOG_TYPE, isCatalogTypeEnabled('HelmChart'));
 };

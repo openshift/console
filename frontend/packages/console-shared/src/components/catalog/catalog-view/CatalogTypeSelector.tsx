@@ -3,6 +3,7 @@ import { VerticalTabs } from '@patternfly/react-catalog-view-extension';
 import { Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
+import { useGetAllDisabledSubCatalogs } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import { CatalogQueryParams, CatalogType, CatalogTypeCounts } from '../utils/types';
@@ -18,7 +19,7 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
 }) => {
   const { t } = useTranslation();
   const { pathname, search } = useLocation();
-
+  const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
   const typeDescriptions = React.useMemo(
     () =>
       catalogTypes.map(
@@ -49,7 +50,7 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
             search: `?${queryParams.toString()}`,
           };
 
-          return typeCount > 0 ? (
+          return typeCount > 0 && !disabledSubCatalogs?.includes(value) ? (
             <li key={value} className="vertical-tabs-pf-tab" data-test={`tab ${value}`}>
               <Link to={to}>{`${label} (${typeCount})`}</Link>
             </li>
