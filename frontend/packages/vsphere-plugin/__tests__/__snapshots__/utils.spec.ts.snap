@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[Global]
+secret-name=vsphere-creds
+secret-namespace=kube-system
+insecure-flag=1
+
+[Workspace]
+foo=bar
+foofoo=barbar
+server=https://1.2.3.4/something
+datacenter=my-datacenter
+default-datastore=my-default-ds
+folder=/my/folder
+
+[VirtualCenter "https://1.2.3.4/something"]
+datacenters=my-datacenter
+ 1`] = `
+"[Global]
+secret-name=vsphere-creds
+secret-namespace=kube-system
+insecure-flag=1
+
+[Workspace]
+foo=bar
+foofoo=barbar
+server=https://1.2.3.4/something
+datacenter=my-datacenter
+default-datastore=my-default-ds
+folder=/my/folder
+
+[VirtualCenter \\"https://1.2.3.4/something\\"]
+datacenters=my-datacenter
+"
+`;
+
+exports[`mergeCloudProviderConfig handles empty input 1`] = `
+"[Global]
+secret-name=vsphere-creds
+secret-namespace=kube-system
+insecure-flag=1
+
+[Workspace]
+server=https://1.2.3.4/something
+datacenter=my-datacenter
+default-datastore=my-default-ds
+folder=/my/folder
+
+[VirtualCenter \\"https://1.2.3.4/something\\"]
+datacenters=my-datacenter
+"
+`;

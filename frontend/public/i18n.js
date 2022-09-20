@@ -56,6 +56,7 @@ export const init = () => {
         'rhoas-plugin',
         'service-binding-plugin',
         'topology',
+        'vsphere-plugin',
         ...pluginStore.getI18nNamespaces(),
       ],
       defaultNS: 'public',

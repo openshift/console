@@ -1,0 +1,19 @@
+{
+  "name": "@console/vsphere-plugin",
+  "version": "0.0.0-fixed",
+  "description": "OpenShift vSphere Plugin",
+  "private": true,
+  "scripts": {
+    "lint": "yarn --cwd ../.. eslint packages/vsphere-plugin --fix"
+  },
+  "dependencies": {
+    "@console/dynamic-plugin-sdk": "0.0.0-fixed"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.ts",
+    "exposedModules": {
+      "vsphereStatus": "src/components/ClusterOverview/VSphereStatus",
+      "flag": "src/flag"
+    }
+  }
+}
