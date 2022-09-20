@@ -545,7 +545,7 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
     const subject = this.getSubject();
     const { fixed, saveButtonText, t } = this.props;
     const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
-    const title = `${this.props.titleVerb} ${t(kindObj(kind).labelKey)}`;
+    const title = `${this.props.titleVerbAndKind}`;
     const isSubjectDisabled = fixed?.subjectRef?.subjectName ? true : false;
     const bindingKinds = [
       {
@@ -730,7 +730,7 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
       setActiveNamespace={setActiveNamespace}
       fixed={fixed}
       isCreate={true}
-      titleVerb={t('public~Create')}
+      titleVerbAndKind={t('public~Create RoleBinding')}
     />
   );
 };
@@ -765,7 +765,7 @@ export const EditRoleBinding = ({ match: { params }, kind }) => {
       <BindingLoadingWrapper
         fixedKeys={['kind', 'metadata', 'roleRef']}
         subjectIndex={getSubjectIndex()}
-        titleVerb={t('public~Edit')}
+        titleVerbAndKind={t('public~Edit RoleBinding')}
         saveButtonText={t('public~Save')}
       />
     </Firehose>
@@ -782,7 +782,7 @@ export const CopyRoleBinding = ({ match: { params }, kind }) => {
         isCreate={true}
         fixedKeys={['kind']}
         subjectIndex={getSubjectIndex()}
-        titleVerb={t('public~Duplicate')}
+        titleVerbAndKind={t('public~Duplicate RoleBinding')}
       />
     </Firehose>
   );
