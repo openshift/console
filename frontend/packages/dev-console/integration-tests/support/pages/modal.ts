@@ -11,10 +11,7 @@ export const editLabels = {
     return cy.get('tags-input span.tag-item-content');
   },
   removeLabel: (labelName: string) => {
-    cy.get('tags-input span.tag-item')
-      .contains(labelName)
-      .next('a.remove-button')
-      .click();
+    cy.get(`[aria-label="Close ${labelName}"]`).click();
   },
 };
 

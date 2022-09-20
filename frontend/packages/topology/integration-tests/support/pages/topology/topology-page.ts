@@ -235,7 +235,7 @@ export const topologyPage = {
       .contains(eventSource);
   },
   getRevisionNode: (serviceName: string) => {
-    cy.get('[data-type="knative-service"] g.pf-topology__group__label > text')
+    cy.get('[data-type="knative-service"] g.pf-topology__group__label > text', { timeout: 80000 })
       .contains(serviceName)
       .should('be.visible');
     return cy.get('[data-type="knative-revision"] ellipse.pf-topology__node__background');
