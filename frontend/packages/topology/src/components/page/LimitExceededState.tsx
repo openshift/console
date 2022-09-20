@@ -28,7 +28,7 @@ export const LimitExceededState: React.FC<LimitExceededStateProps> = ({ onShowTo
           `topology~We noticed that it is taking a long time to visualize your application Topology. You can use Search to find specific resources or click Continue to keep waiting.`,
         )}
       </EmptyStateBody>
-      <Button variant="primary" component={(props) => <Link {...props} to="/search-page" />}>
+      <Button variant="primary" component={(props) => <Link {...props} to="/search" />}>
         {t('topology~Go to Search')}
       </Button>
       <EmptyStateSecondaryActions>
