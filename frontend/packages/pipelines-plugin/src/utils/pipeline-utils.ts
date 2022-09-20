@@ -274,7 +274,7 @@ export const getLatestPipelineRunStatus = (
     return { latestPipelineRun: null, status: runStatus.PipelineNotStarted };
   }
 
-  const latestPipelineRun = getLatestRun({ data: pipelineRuns }, 'creationTimestamp');
+  const latestPipelineRun = getLatestRun(pipelineRuns, 'creationTimestamp');
 
   if (!latestPipelineRun) {
     // Without the latestRun we will not have progress to show
