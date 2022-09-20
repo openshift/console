@@ -36,6 +36,7 @@ export enum gitAdvancedOptions {
   ResourceLimits = 'Resource Limits',
   Labels = 'Labels',
   HealthChecks = 'Health Checks',
+  Resources = 'Resources',
 }
 
 export enum catalogCards {

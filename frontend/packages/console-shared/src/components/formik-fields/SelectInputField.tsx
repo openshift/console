@@ -103,6 +103,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
             value={op.label ? op.label : op.value}
             isDisabled={op.disabled}
             key={op.value}
+            id={`select-option-${name}-${op.value}`}
             description={op.description ?? ''}
           />
         ))}

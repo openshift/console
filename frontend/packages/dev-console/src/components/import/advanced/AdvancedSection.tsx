@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormikValues } from 'formik';
+import { FormikValues, useFormikContext } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import { AppResources } from '../../edit-application/edit-application-types';
 import HealthChecks from '../../health-checks/HealthChecks';
@@ -8,6 +8,7 @@ import ProgressiveListItem from '../../progressive-list/ProgressiveListItem';
 import { Resources } from '../import-types';
 import FormSection from '../section/FormSection';
 import ResourceSection from '../section/ResourceSection';
+import { useResourceType } from '../section/useResourceType';
 import BuildConfigSection from './BuildConfigSection';
 import DeploymentConfigSection from './DeploymentConfigSection';
 import LabelSection from './LabelSection';
@@ -19,10 +20,6 @@ import ServerlessScalingSection from './ServerlessScalingSection';
 type AdvancedSectionProps = {
   values: FormikValues;
   appResources?: AppResources;
-};
-
-type AdvancedSectionListProps = AdvancedSectionProps & {
-  formPage: string;
 };
 
 const Footer = ({ children }) => {
@@ -37,7 +34,7 @@ const Footer = ({ children }) => {
   );
 };
 
-const List: React.FC<AdvancedSectionListProps> = ({ appResources, values, formPage }) => {
+const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
   const { t } = useTranslation();
 
   const [visibleItems, setVisibleItems] = React.useState([]);
@@ -51,8 +48,8 @@ const List: React.FC<AdvancedSectionListProps> = ({ appResources, values, formPa
       onVisibleItemChange={handleVisibleItemChange}
       Footer={Footer}
     >
-      {!['edit', 'knatify'].includes(formPage) && (
-        <ProgressiveListItem name={t('devconsole~Resources')}>
+      {!['edit', 'knatify'].includes(values.formType) && (
+        <ProgressiveListItem name={t('devconsole~Resource type')}>
           <ResourceSection />
         </ProgressiveListItem>
       )}
@@ -93,12 +90,18 @@ const List: React.FC<AdvancedSectionListProps> = ({ appResources, values, formPa
 
 const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources }) => {
   const { t } = useTranslation();
-  const formPage = window.location.pathname.split('/')[1];
+  const [resourceType] = useResourceType();
+  const { setFieldValue } = useFormikContext<FormikValues>();
+
+  React.useEffect(() => {
+    !['edit', 'knatify'].includes(values.formType) && setFieldValue('resources', resourceType);
+  }, [resourceType, setFieldValue, values.formType]);
+
   return (
     <FormSection title={t('devconsole~Advanced options')}>
       <RouteSection route={values.route} resources={values.resources} />
       <div>
-        <List appResources={appResources} values={values} formPage={formPage} />
+        <List appResources={appResources} values={values} />
       </div>
     </FormSection>
   );

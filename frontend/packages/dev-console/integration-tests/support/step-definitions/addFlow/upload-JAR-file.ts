@@ -43,12 +43,7 @@ Then('Application Name, Name fields displayed in General section', () => {
   cy.get(gitPO.nodeName).should('be.visible');
 });
 
-Then('Resources section, Advanced options sections are displayed', () => {
-  cy.get(gitPO.sectionTitle)
-    .contains('Resources')
-    .should('be.visible');
-  cy.get(gitPO.resources.deployment).should('be.enabled');
-  cy.get(gitPO.resources.deploymentConfig).should('be.enabled');
+Then('Advanced options sections are displayed', () => {
   cy.get(gitPO.sectionTitle)
     .contains('Advanced options')
     .scrollIntoView()

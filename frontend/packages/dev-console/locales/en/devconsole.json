@@ -334,7 +334,6 @@
   "Maximum Pods should be greater than or equal to Minimum Pods.": "Maximum Pods should be greater than or equal to Minimum Pods.",
   "Max Pods must be defined.": "Max Pods must be defined.",
   "Average utilization must be a positive number.": "Average utilization must be a positive number.",
-  "Resources": "Resources",
   "Health checks": "Health checks",
   "Build configuration": "Build configuration",
   "Resource limits": "Resource limits",

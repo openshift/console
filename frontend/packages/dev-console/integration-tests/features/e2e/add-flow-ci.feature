@@ -100,7 +100,7 @@ Feature: Create the different workloads from Add page
             Given user is on Import from Git form
              When user enters Git Repo URL as "https://github.com/rohitkrai03/flask-dockerfile-example"
               And user enters Name as "<name>" in Docker file page
-              And user selects "<resource_type>" radio button in Resource type section
+              And user selects "<resource_type>" in Resource type section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "<name>" in topology page
@@ -121,5 +121,5 @@ Feature: Create the different workloads from Add page
              When user clicks on the Upload JAR file card
              Then user is able to see Upload jar file, Optional java commands, Run time Icon and Builder Image version fields displayed in JAR section
               And Application Name, Name fields displayed in General section
-              And Resources section, Advanced options sections are displayed
+              And Advanced options sections are displayed
               And Create button is in disabled state

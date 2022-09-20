@@ -14,7 +14,7 @@ Feature: Upload JAR file
              When user clicks on the Upload JAR file card
              Then user is able to see Upload jar file, Optional java commands, Run time Icon and Builder Image version fields displayed in JAR section
               And Application Name, Name fields displayed in General section
-              And Resources section, Advanced options sections are displayed
+              And Advanced options sections are displayed
               And Create button is in disabled state
 
 

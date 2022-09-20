@@ -37,11 +37,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
     flags[FLAG_KNATIVE_SERVING_SERVICE] &&
     knativeServiceAccess;
 
-  const [resourceType, setResourceType] = useResourceType();
-
-  React.useEffect(() => {
-    setFieldValue(fieldName, resourceType);
-  }, [resourceType, setFieldValue]);
+  const [, setResourceType] = useResourceType();
 
   const onChange = React.useCallback(
     (selection: string) => {
@@ -88,7 +84,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   }, [invalidTypes, canIncludeKnative, t]);
 
   return (
-    <FormSection title={t('devconsole~Resources')} fullWidth>
+    <FormSection title={t('devconsole~Resource type')} fullWidth>
       <div>{t('devconsole~Select the resource type to generate')}</div>
       <SelectInputField
         name={fieldName}
