@@ -82,7 +82,7 @@ export const useLatestPipelineRun = (pipelineName: string, namespace: string): P
   const [pipelineRun, pipelineRunLoaded, pipelineRunError] = useK8sWatchResource<PipelineRunKind[]>(
     pipelineRunResource,
   );
-  const latestRun = getLatestRun({ data: pipelineRun }, 'creationTimestamp');
+  const latestRun = getLatestRun(pipelineRun, 'creationTimestamp');
   return pipelineRunLoaded && !pipelineRunError ? latestRun : null;
 };
 

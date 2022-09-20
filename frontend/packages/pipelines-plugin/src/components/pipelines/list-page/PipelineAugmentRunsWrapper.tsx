@@ -3,11 +3,13 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ListPageWrapper } from '@console/internal/components/factory';
 import { EmptyBox, Firehose, LoadingBox } from '@console/internal/components/utils';
-import { Resource, getResources } from '../../../utils/pipeline-augment';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { PipelineRunModel } from '../../../models';
 import PipelineAugmentRuns, { filters } from './PipelineAugmentRuns';
 import PipelineList from './PipelineList';
 
 interface PipelineAugmentRunsWrapperProps {
+  namespace: string;
   pipeline?: any;
   reduxIDs?: string[];
   hideNameLabelFilters?: boolean;
@@ -24,13 +26,18 @@ const PipelineAugmentRunsWrapper: React.FC<PipelineAugmentRunsWrapperProps> = (p
   if (pipelineData.length === 0) {
     return <EmptyBox label={t('pipelines-plugin~Pipelines')} />;
   }
-  const firehoseResources: Resource = getResources(props.pipeline.data);
   return (
-    <Firehose resources={firehoseResources.resources}>
-      <PipelineAugmentRuns
-        {...props}
-        propsReferenceForRuns={firehoseResources.propsReferenceForRuns}
-      >
+    <Firehose
+      resources={[
+        {
+          kind: referenceForModel(PipelineRunModel),
+          namespace: props.namespace,
+          prop: 'pipelinerun',
+          isList: true,
+        },
+      ]}
+    >
+      <PipelineAugmentRuns {...props}>
         <ListPageWrapper
           {...props}
           flatten={(_resources) => _.get(_resources, ['pipeline', 'data'], {})}
