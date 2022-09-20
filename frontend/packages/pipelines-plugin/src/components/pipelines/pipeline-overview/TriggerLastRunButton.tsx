@@ -24,9 +24,7 @@ const TriggerLastRunButton: React.FC<TriggerLastRunButtonProps> = ({
   impersonate,
 }) => {
   const { t } = useTranslation();
-  const latestRun = usePipelineRunWithUserAnnotation(
-    getLatestRun({ data: pipelineRuns }, 'startTimestamp'),
-  );
+  const latestRun = usePipelineRunWithUserAnnotation(getLatestRun(pipelineRuns, 'startTimestamp'));
   const { labelKey, callback, accessReview: utilityAccessReview } = rerunPipelineAndStay(
     PipelineRunModel,
     latestRun,

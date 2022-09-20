@@ -19,6 +19,7 @@ describe('Pipeline Augment Run Wrapper', () => {
         data: [pipeline],
         loaded: false,
       },
+      namespace: 'test',
     };
     wrapper = shallow(<PipelineAugmentRunsWrapper {...pipelineAugmentRunsWrapperProps} />);
   });
