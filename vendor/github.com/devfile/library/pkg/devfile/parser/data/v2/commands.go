@@ -43,9 +43,7 @@ func (d *DevfileV2) GetCommands(options common.DevfileOptions) ([]v1.Command, er
 			continue
 		}
 
-		if options.FilterByName == "" || command.Id == options.FilterByName {
-			commands = append(commands, command)
-		}
+		commands = append(commands, command)
 	}
 
 	return commands, nil

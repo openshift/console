@@ -229,7 +229,7 @@ type CommandUnionParentOverride struct {
 	//
 	// When no `apply` command exist for a given component,
 	// it is assumed the component will be applied at devworkspace start
-	// by default, unless `deployByDefault` for that component is set to false.
+	// by default.
 	// +optional
 	Apply *ApplyCommandParentOverride `json:"apply,omitempty"`
 
@@ -385,10 +385,6 @@ type ContainerParentOverride struct {
 	Env []EnvVarParentOverride `json:"env,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 
 	// +optional
-	// Annotations that should be added to specific resources for this container
-	Annotation *AnnotationParentOverride `json:"annotation,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
-
-	// +optional
 	// List of volumes mounts that should be mounted is this container.
 	VolumeMounts []VolumeMountParentOverride `json:"volumeMounts,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 
@@ -444,7 +440,6 @@ type EndpointParentOverride struct {
 	Name string `json:"name"`
 
 	//  +optional
-	// The port number should be unique.
 	TargetPort int `json:"targetPort,omitempty"`
 
 	// Describes how the endpoint should be exposed on the network.
@@ -504,23 +499,12 @@ type EndpointParentOverride struct {
 	// +kubebuilder:pruning:PreserveUnknownFields
 	// +kubebuilder:validation:Schemaless
 	Attributes attributes.Attributes `json:"attributes,omitempty"`
-
-	// +optional
-	// Annotations to be added to Kubernetes Ingress or Openshift Route
-	Annotations map[string]string `json:"annotation,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 }
 
 type K8sLikeComponentParentOverride struct {
 	BaseComponentParentOverride            `json:",inline"`
 	K8sLikeComponentLocationParentOverride `json:",inline"`
-
-	// Defines if the component should be deployed during startup.
-	//
-	// Default value is `false`
-	// +optional
-	DeployByDefault *bool `json:"deployByDefault,omitempty"`
-
-	Endpoints []EndpointParentOverride `json:"endpoints,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
+	Endpoints                              []EndpointParentOverride `json:"endpoints,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 }
 
 // Volume that should be mounted to a component container
@@ -605,18 +589,6 @@ type EnvVarParentOverride struct {
 	Value string `json:"value,omitempty" yaml:"value"`
 }
 
-// Annotation specifies the annotations to be added to specific resources
-type AnnotationParentOverride struct {
-
-	// +optional
-	// Annotations to be added to deployment
-	Deployment map[string]string `json:"deployment,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
-
-	// +optional
-	// Annotations to be added to service
-	Service map[string]string `json:"service,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
-}
-
 // Volume that should be mounted to a component container
 type VolumeMountParentOverride struct {
 
@@ -665,7 +637,7 @@ type K8sLikeComponentLocationParentOverride struct {
 // +union
 type ImageUnionParentOverride struct {
 
-	// +kubebuilder:validation:Enum=Dockerfile;AutoBuild
+	// +kubebuilder:validation:Enum=Dockerfile
 	// Type of image
 	//
 	// +unionDiscriminator
@@ -675,12 +647,6 @@ type ImageUnionParentOverride struct {
 	// Allows specifying dockerfile type build
 	// +optional
 	Dockerfile *DockerfileImageParentOverride `json:"dockerfile,omitempty"`
-
-	// Defines if the image should be built during startup.
-	//
-	// Default value is `false`
-	// +optional
-	AutoBuild *bool `json:"autoBuild,omitempty"`
 }
 
 // Location from where the an import reference is retrieved
@@ -858,7 +824,7 @@ type CommandUnionPluginOverrideParentOverride struct {
 	//
 	// When no `apply` command exist for a given component,
 	// it is assumed the component will be applied at devworkspace start
-	// by default, unless `deployByDefault` for that component is set to false.
+	// by default.
 	// +optional
 	Apply *ApplyCommandPluginOverrideParentOverride `json:"apply,omitempty"`
 
@@ -1081,10 +1047,6 @@ type ContainerPluginOverrideParentOverride struct {
 	Env []EnvVarPluginOverrideParentOverride `json:"env,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 
 	// +optional
-	// Annotations that should be added to specific resources for this container
-	Annotation *AnnotationPluginOverrideParentOverride `json:"annotation,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
-
-	// +optional
 	// List of volumes mounts that should be mounted is this container.
 	VolumeMounts []VolumeMountPluginOverrideParentOverride `json:"volumeMounts,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 
@@ -1140,7 +1102,6 @@ type EndpointPluginOverrideParentOverride struct {
 	Name string `json:"name"`
 
 	//  +optional
-	// The port number should be unique.
 	TargetPort int `json:"targetPort,omitempty"`
 
 	// Describes how the endpoint should be exposed on the network.
@@ -1200,23 +1161,12 @@ type EndpointPluginOverrideParentOverride struct {
 	// +kubebuilder:pruning:PreserveUnknownFields
 	// +kubebuilder:validation:Schemaless
 	Attributes attributes.Attributes `json:"attributes,omitempty"`
-
-	// +optional
-	// Annotations to be added to Kubernetes Ingress or Openshift Route
-	Annotations map[string]string `json:"annotation,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 }
 
 type K8sLikeComponentPluginOverrideParentOverride struct {
 	BaseComponentPluginOverrideParentOverride            `json:",inline"`
 	K8sLikeComponentLocationPluginOverrideParentOverride `json:",inline"`
-
-	// Defines if the component should be deployed during startup.
-	//
-	// Default value is `false`
-	// +optional
-	DeployByDefault *bool `json:"deployByDefault,omitempty"`
-
-	Endpoints []EndpointPluginOverrideParentOverride `json:"endpoints,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
+	Endpoints                                            []EndpointPluginOverrideParentOverride `json:"endpoints,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 }
 
 // Volume that should be mounted to a component container
@@ -1254,18 +1204,6 @@ type EnvVarPluginOverrideParentOverride struct {
 
 	//  +optional
 	Value string `json:"value,omitempty" yaml:"value"`
-}
-
-// Annotation specifies the annotations to be added to specific resources
-type AnnotationPluginOverrideParentOverride struct {
-
-	// +optional
-	// Annotations to be added to deployment
-	Deployment map[string]string `json:"deployment,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
-
-	// +optional
-	// Annotations to be added to service
-	Service map[string]string `json:"service,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 }
 
 // Volume that should be mounted to a component container
@@ -1316,7 +1254,7 @@ type K8sLikeComponentLocationPluginOverrideParentOverride struct {
 // +union
 type ImageUnionPluginOverrideParentOverride struct {
 
-	// +kubebuilder:validation:Enum=Dockerfile;AutoBuild
+	// +kubebuilder:validation:Enum=Dockerfile
 	// Type of image
 	//
 	// +unionDiscriminator
@@ -1326,12 +1264,6 @@ type ImageUnionPluginOverrideParentOverride struct {
 	// Allows specifying dockerfile type build
 	// +optional
 	Dockerfile *DockerfileImagePluginOverrideParentOverride `json:"dockerfile,omitempty"`
-
-	// Defines if the image should be built during startup.
-	//
-	// Default value is `false`
-	// +optional
-	AutoBuild *bool `json:"autoBuild,omitempty"`
 }
 
 type BaseCommandPluginOverrideParentOverride struct {

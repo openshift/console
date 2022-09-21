@@ -25,7 +25,6 @@ type Image struct {
 }
 
 // +union
-// +devfile:getter:generate
 type ImageUnion struct {
 	// Type of image
 	//
@@ -36,11 +35,4 @@ type ImageUnion struct {
 	// Allows specifying dockerfile type build
 	// +optional
 	Dockerfile *DockerfileImage `json:"dockerfile,omitempty"`
-
-	// Defines if the image should be built during startup.
-	//
-	// Default value is `false`
-	// +optional
-	// +devfile:default:value=false
-	AutoBuild *bool `json:"autoBuild,omitempty"`
 }

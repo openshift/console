@@ -20,9 +20,6 @@ type DevfileOptions struct {
 
 	// ProjectOptions specifies the various options available to filter projects/starterProjects
 	ProjectOptions ProjectOptions
-
-	// FilterByName specifies the name for the particular devfile object that's been looking for
-	FilterByName string
 }
 
 // CommandOptions specifies the various options available to filter commands

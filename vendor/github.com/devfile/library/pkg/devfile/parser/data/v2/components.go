@@ -35,9 +35,7 @@ func (d *DevfileV2) GetComponents(options common.DevfileOptions) ([]v1.Component
 			continue
 		}
 
-		if options.FilterByName == "" || component.Name == options.FilterByName {
-			components = append(components, component)
-		}
+		components = append(components, component)
 	}
 
 	return components, nil
