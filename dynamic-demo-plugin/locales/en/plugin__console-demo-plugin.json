@@ -1,7 +1,8 @@
 {
   "{{count}} Worker Node": "{{count}} Worker Node",
-  "{{count}} Worker Node_plural": "{{count}} Worker Nodes",
+  "{{count}} Worker Node_plural": "{{count}} Worker Node",
   "Worker Nodes": "Worker Nodes",
+  "Custom Overview Detail Info": "Custom Overview Detail Info",
   "Example page with a namespace bar": "Example page with a namespace bar",
   "Currently selected namespace": "Currently selected namespace",
   "Example info alert": "Example info alert",
@@ -43,6 +44,7 @@
   "Test Utilities": "Test Utilities",
   "Foo item": "Foo item",
   "Bar item": "Bar item",
+  "Custom Overview Detail Title": "Custom Overview Detail Title",
   "Example Namespaced Page": "Example Namespaced Page",
   "Dynamic Page 1": "Dynamic Page 1",
   "Dynamic Page 2": "Dynamic Page 2"

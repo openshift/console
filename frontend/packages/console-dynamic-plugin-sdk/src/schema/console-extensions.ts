@@ -5,6 +5,7 @@ import {
   ClusterOverviewInventoryItem,
   ClusterOverviewUtilizationItem,
   ClusterOverviewMultilineUtilizationItem,
+  CustomOverviewDetailItem,
   OverviewDetailItem,
 } from '../extensions/cluster-overview';
 import { ClusterGlobalConfig } from '../extensions/cluster-settings';
@@ -132,6 +133,7 @@ export type SupportedExtension =
   | ClusterOverviewUtilizationItem
   | ClusterOverviewMultilineUtilizationItem
   | OverviewDetailItem
+  | CustomOverviewDetailItem
   | ProjectOverviewUtilizationItem
   | ProjectOverviewInventoryItem
   | StorageClassProvisioner;

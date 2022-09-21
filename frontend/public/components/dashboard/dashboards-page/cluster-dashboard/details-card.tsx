@@ -15,7 +15,9 @@ import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import {
   useResolvedExtensions,
   isOverviewDetailItem,
+  isCustomOverviewDetailItem,
   WatchK8sResource,
+  CustomOverviewDetailItem as CustomOverviewDetailItemType,
   OverviewDetailItem as OverviewDetailItemType,
 } from '@console/dynamic-plugin-sdk';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
@@ -112,6 +114,9 @@ export const DetailsCard = withDashboardResources(
     >(clusterVersionResource);
     const [detailItemsExtensions] = useResolvedExtensions<OverviewDetailItemType>(
       isOverviewDetailItem,
+    );
+    const [customDetailItemsExtensions] = useResolvedExtensions<CustomOverviewDetailItemType>(
+      isCustomOverviewDetailItem,
     );
 
     React.useEffect(() => {
@@ -255,6 +260,21 @@ export const DetailsCard = withDashboardResources(
                         )}
                       >
                         <Component />
+                      </ErrorBoundaryInline>
+                    );
+                  })}
+                  {customDetailItemsExtensions.map((e) => {
+                    const { component: Component, error, isLoading, ...props } = e.properties;
+                    return (
+                      <ErrorBoundaryInline
+                        key={e.uid}
+                        wrapper={({ children }) => (
+                          <OverviewDetailItem title="">{children}</OverviewDetailItem>
+                        )}
+                      >
+                        <OverviewDetailItem {...props} error={error?.()} isLoading={isLoading?.()}>
+                          <Component />
+                        </OverviewDetailItem>
                       </ErrorBoundaryInline>
                     );
                   })}

@@ -65,6 +65,7 @@
       "yamlEditor": "./components/YAMLEditorPage",
       "events": "./components/APIServerEvents",
       "overviewDetailItem": "./components/OverviewDetailItem",
+      "customOverviewDetailItem": "./components/CustomOverviewDetailItem",
       "projectOverviewInventory": "./components/ProjectOverview/Inventory",
       "projectOverview": "./utils/project-overview",
       "modalPage": "./components/Modals/ModalPage"
