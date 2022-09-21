@@ -191,7 +191,7 @@ func getDeployResource(data devfileForm, devfileObj parser.DevfileObj, filterOpt
 
 	deployment := generator.GetDeployment(deployParams)
 
-	return *deployment, err
+	return *deployment, nil
 }
 
 func getService(devfileObj parser.DevfileObj, filterOptions common.DevfileOptions, imagePort string) (corev1.Service, error) {
