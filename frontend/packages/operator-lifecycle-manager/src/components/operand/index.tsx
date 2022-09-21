@@ -120,6 +120,13 @@ const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {
     };
   }
 
+  if (obj?.metadata?.deletionTimestamp) {
+    return {
+      type: 'Status',
+      value: 'Terminating',
+    };
+  }
+
   const conditionsIsObject =
     typeof conditions === 'object' && !Array.isArray(conditions) && conditions !== null;
   const formattedConditions = conditionsIsObject ? [conditions] : conditions;
