@@ -188,6 +188,7 @@ export const SecretFormWrapper = withTranslation()(
         disableForm: disable,
       });
     }
+
     save(e) {
       e.preventDefault();
       const { metadata } = this.state.secret;
@@ -269,6 +270,7 @@ export const SecretFormWrapper = withTranslation()(
     render() {
       const { secretTypeAbstraction } = this.state;
       const { t, isCreate, modal, onCancel = history.goBack } = this.props;
+
       const title = secretDisplayType(isCreate, secretTypeAbstraction, t);
       return modal ? (
         <form className="co-create-secret-form modal-content" onSubmit={this.save}>
@@ -478,14 +480,18 @@ class ConfigEntryFormWithTranslation extends React.Component<
 
   onBlurHandler: React.ReactEventHandler<HTMLInputElement> = (event) => {
     const { name, value } = event.currentTarget;
-    this.setState((prevState) => ({
-      ...prevState,
-      [name]: value.trim(),
-    }));
+    this.setState(
+      (prevState) => ({
+        ...prevState,
+        [name]: value.trim(),
+      }),
+      this.propagateChange,
+    );
   };
 
   render() {
     const { t } = this.props;
+
     return (
       <div className="co-m-pane__body-group" data-test-id="create-image-secret-form">
         <div className="form-group">
@@ -1483,3 +1489,11 @@ type WebHookSecretFormProps = {
     WebHookSecretKey: string;
   };
 };
+
+// testMouseOver: React.ReactEventHandler<HTMLDivElement> = (event) => {
+//   console.log('active el', document.activeElement);
+//   console.log('hi', event);
+//   if (document.activeElement instanceof HTMLElement) {
+//     document.activeElement.blur();
+//   }
+// };
