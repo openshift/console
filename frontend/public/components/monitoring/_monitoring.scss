@@ -461,13 +461,14 @@ $monitoring-line-height: 18px;
   }
 }
 
-.query-browser__span-dropdown-menu {
-  right: 1px;
-  width: 130px;
-}
+// Match the width of the combined text input and dropdown button input group and the dropdown menu
+.query-browser__span {
+  $width: 130px;
+  max-width: $width;
 
-.query-browser__span-text {
-  max-width: 79px;
+  .query-browser__span-dropdown-item {
+    width: $width - 1px;
+  }
 }
 
 .query-browser__table {
