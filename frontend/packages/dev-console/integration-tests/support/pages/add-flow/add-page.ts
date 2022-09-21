@@ -60,6 +60,7 @@ export const addPage = {
         break;
       case 'Pipeline':
       case addOptions.Pipeline:
+        cy.wait(3000);
         cy.byTestID('item pipeline').click();
         cy.get('.odc-pipeline-builder-header__title').should(
           'have.text',

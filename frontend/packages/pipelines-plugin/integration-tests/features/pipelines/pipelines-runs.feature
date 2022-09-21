@@ -3,7 +3,7 @@ Feature: Pipeline Runs
               As a user, I want to start pipeline, rerun, delete pipeline run
 
         Background:
-            Given user has created or selected namespace "aut-pipelines-runs"
+            Given user has created or selected namespace "aut-pipelines"
               And user is at pipelines page
 
 
@@ -100,8 +100,8 @@ Feature: Pipeline Runs
                   | pipeline-with-resource |
 
 
-        @to-do
-        # Marking it as to-do due to flakiness
+  @to-do
+  # Marking it as to-do due to flakiness
         Scenario Outline: Filter the pipeline runs based on status: P-07-TC09
             Given pipeline "<pipeline_name>" is executed for 3 times
               And user is at pipelines page
@@ -150,7 +150,7 @@ Feature: Pipeline Runs
         Scenario: kebab menu options in pipeline Runs page: P-07-TC14
             Given user creates pipeline using git named "pipeline-aaa"
               And user is at the Pipeline Details page of pipeline "pipeline-aaa"
-            #  When user starts the pipeline from start pipeline modal
+    #  When user starts the pipeline from start pipeline modal
              When user starts the pipeline "pipeline-aaa" in Pipeline Details page
               And user clicks Actions menu on the top right corner of the page
              Then user is able to see Actions menu options "Stop", "Cancel", "Rerun", "Delete PipelineRun" in pipeline run page
@@ -292,7 +292,7 @@ Feature: Pipeline Runs
 
         @regression
         Scenario: Pipeline Run results on Pipeline Run details page for passed pipeline run: P-07-TC29
-            #Run oc apply -f ../../testData/pipelines-workspaces/sum-three-pipeline.yaml
+    #Run oc apply -f ../../testData/pipelines-workspaces/sum-three-pipeline.yaml
             Given user has passed pipeline run
               And user is on Pipeline Run details page of "sum-three-pipeline-run" pipeline run
              When user scrolls to the Pipeline Run results section
@@ -301,7 +301,7 @@ Feature: Pipeline Runs
 
         @regression @manual
         Scenario: Pipeline Run results on Pipeline Run details page for failed pipeline run: P-07-TC30
-            #Run oc apply -f ../../testData/pipelines-workspaces/sum-three-pipeline.yaml
+    #Run oc apply -f ../../testData/pipelines-workspaces/sum-three-pipeline.yaml
             Given user has failed pipeline run for pipeline "sum-three-pipeline-run"
               And user is on Pipeline Run details page
              Then user can not see Pipeline Run results section
@@ -327,7 +327,7 @@ Feature: Pipeline Runs
 
         @regression @manual @odc-6303
         Scenario: Show failed PipelineRun log snippet on the log page: P-07-TC33
-        # petclinic-pipeline-all.yaml can be found here in /testData/petclinic-pipeline-all.yaml
+    # petclinic-pipeline-all.yaml can be found here in /testData/petclinic-pipeline-all.yaml
             Given pipeline is 'petclinic-pipeline-all.yaml' present on Pipeline Details page
              When user selects "Start" option from kebab menu
               And user selects 'maven-cache-pvc' PVC for maven-cache workspace

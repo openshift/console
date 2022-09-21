@@ -150,7 +150,12 @@ Given(
   (namespace: string) => {
     cy.exec(
       `oc apply -f testData/pipelines-workspaces/sum-and-multiply-pipeline/pipeline-failed-task.yaml -n ${namespace}`,
-    );
+      {
+        failOnNonZeroExit: false,
+      },
+    ).then(function(result) {
+      cy.log(result.stdout);
+    });
   },
 );
 
@@ -171,7 +176,12 @@ Given(
   (namespace: string) => {
     cy.exec(
       `oc apply -f testData/pipelines-workspaces/sum-and-multiply-pipeline/passed-task-run-results.yaml -n ${namespace}`,
-    );
+      {
+        failOnNonZeroExit: false,
+      },
+    ).then(function(result) {
+      cy.log(result.stdout);
+    });
   },
 );
 
@@ -180,9 +190,7 @@ When('user scrolls to the Task Run results section', () => {
 });
 
 When('user clicks on pipeline runs tab for pipeline {string}', (pipelineName: string) => {
-  cy.get(`[data-test-id^="${pipelineName}"]`)
-    .eq(0)
-    .click();
+  cy.get(`[data-test-id^="${pipelineName}"]`).click();
   pipelineDetailsPage.selectTab('Pipeline Runs');
 });
 

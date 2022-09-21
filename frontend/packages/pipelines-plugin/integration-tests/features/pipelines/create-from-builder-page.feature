@@ -70,8 +70,8 @@ Feature: Create the pipeline from builder page
                   | pipe-three    | kn                |
 
 
-        @un-verified
-        #test data required
+    @un-verified
+    #test data required
         Scenario Outline: Create pipeline with "<resource_type>" as resource type from pipeline builder page: P-02-TC06
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
@@ -241,7 +241,7 @@ Feature: Create the pipeline from builder page
               And user can see "Add Value", "Add When Expressions" and "Remove When Expressions" options
 
 
-        @regression
+        @regression @broken-test
         Scenario: Start pipeline with When expression in the Pipeline Builder: P-02-TC17
             Given user is at Pipeline Builder page
               And user has named pipeline as "pipeline-when-expression"
@@ -255,6 +255,7 @@ Feature: Create the pipeline from builder page
               And user enters the value as "Success"
               And user clicks Create button on Pipeline Builder page
              Then user will be redirected to Pipeline Details page with header name "pipeline-when-expression"
+        #  BUG: not able to hover on when expresion icon tooltip: https://issues.redhat.com/browse/OCPBUGS-4300
               And user will see tooltip saying "When expression" while scrolling over diamond structure before conditional task
 
 

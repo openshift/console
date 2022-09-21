@@ -220,7 +220,7 @@ export const pipelineRunDetailsPO = {
       commidID: '[data-label="Commit id"]',
       taskStatus: '[data-label="Task status"]',
       duration: '[data-label="Duration"]',
-      branch: '[data-label="Branch"]',
+      branch: '[data-label="Branch/Tag"]',
     },
   },
   taskRunsDetails: {

@@ -21,7 +21,11 @@ When('user creates pipeline resource using YAML editor from {string}', (yamlLoca
 When(
   'user creates pipeline using YAML and CLI {string} in namespace {string}',
   (yamlFile: string, namespace: string) => {
-    cy.exec(`oc apply -f ${yamlFile} -n ${namespace}`);
+    cy.exec(`oc apply -f ${yamlFile} -n ${namespace}`, {
+      failOnNonZeroExit: false,
+    }).then(function(result) {
+      cy.log(result.stdout);
+    });
   },
 );
 

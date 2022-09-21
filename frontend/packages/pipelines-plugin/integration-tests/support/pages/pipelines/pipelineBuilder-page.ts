@@ -1,5 +1,4 @@
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
-import { createForm } from '@console/dev-console/integration-tests/support/pages';
 import { pipelineBuilderText } from '../../constants';
 import { pipelineBuilderPO, pipelineDetailsPO } from '../../page-objects/pipelines-po';
 import { pipelineDetailsPage } from './pipelineDetails-page';
@@ -127,13 +126,9 @@ export const pipelineBuilderPage = {
       .should('contain.text', pipelineBuilderText.formView.Workspaces);
   },
   clickCreateButton: () => {
-    cy.get(pipelineBuilderPO.create).click();
-    cy.get('body').then(($body) => {
-      if ($body.find('[aria-label="Danger Alert"]').length) {
-        cy.log($body.find('[aria-label="Danger Alert"]').text());
-        createForm.clickCancel();
-      }
-    });
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000);
+    cy.get(pipelineBuilderPO.create).click({ force: true });
   },
   clickSaveButton: () => cy.get(pipelineBuilderPO.create).click(),
   clickYaml: () => {
