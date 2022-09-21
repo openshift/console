@@ -1221,8 +1221,8 @@ export const transformKnNodeData = (
           const itemData = getOwnedEventSourceData(res, data, resources);
           knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
           knDataModel.edges.push(
-            ...getEventTopologyEdgeItems(res, resources.ksservices),
-            ...getEventTopologyEdgeItems(res, resources.kafkasinks),
+            ...(resources.ksservices ? getEventTopologyEdgeItems(res, resources.ksservices) : []),
+            ...(resources.kafkasinks ? getEventTopologyEdgeItems(res, resources.kafkasinks) : []),
           );
           sinkURIDataModel(res, resources, data, knDataModel);
           const newGroup = getTopologyGroupItems(res);
