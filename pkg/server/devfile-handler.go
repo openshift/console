@@ -183,7 +183,7 @@ func getDeployResource(data devfileForm, devfileObj parser.DevfileObj, filterOpt
 		PodSelectorLabels: map[string]string{"app": data.Name},
 	}
 
-	deployment, err := generator.GetDeployment(devfileObj, deployParams)
+	deployment := generator.GetDeployment(deployParams)
 
 	return *deployment, err
 }
@@ -226,5 +226,5 @@ func getRouteForDockerImage(data devfileForm, imagePort string) routev1.Route {
 		},
 	}
 
-	return *generator.GetRoute(devfilev1.Endpoint{}, routeParams)
+	return *generator.GetRoute(routeParams)
 }
