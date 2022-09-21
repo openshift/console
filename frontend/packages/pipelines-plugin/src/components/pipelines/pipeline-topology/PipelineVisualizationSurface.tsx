@@ -29,16 +29,19 @@ type PipelineVisualizationSurfaceProps = {
   model: Model;
   componentFactory: ComponentFactory;
   showControlBar?: boolean;
+  fixedWidth?: boolean;
 };
 
 const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> = ({
   model,
   componentFactory,
   showControlBar = false,
+  fixedWidth = false,
 }) => {
   const [vis, setVis] = React.useState<Controller>(null);
   const [maxSize, setMaxSize] = React.useState(null);
   const storedGraphModel = React.useRef(null);
+  const containerRef = React.useRef(null);
 
   const layout: PipelineLayout = model.graph.layout as PipelineLayout;
 
@@ -127,7 +130,7 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
           controller.getGraph().scaleBy(0.75);
         }),
         fitToScreenCallback: action(() => {
-          controller.getGraph().fit(70);
+          controller.getGraph().fit(80);
         }),
         resetViewCallback: action(() => {
           controller.getGraph().reset();
@@ -139,7 +142,15 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
   );
 
   return (
-    <div style={{ height: maxSize?.height, width: maxSize?.width }}>
+    <div
+      ref={containerRef}
+      style={{
+        height: maxSize?.height,
+        width: fixedWidth
+          ? maxSize?.width
+          : Math.min(maxSize?.width, containerRef.current?.clientWidth || 0),
+      }}
+    >
       <VisualizationProvider controller={vis}>
         {showControlBar ? (
           <TopologyView controlBar={controlBar(vis)}>
