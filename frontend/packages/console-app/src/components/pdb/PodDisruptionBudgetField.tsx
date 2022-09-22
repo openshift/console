@@ -24,9 +24,9 @@ export const PodDisruptionBudgetField: React.FC<PodDisruptionBudgetFieldProps> =
   const pdb = getPDBResource(pdbResources, obj);
 
   return (
-    <DetailsItem label={t('console-app~PodDisruptionBudgets')} obj={obj}>
+    <>
       {!_.isEmpty(pdb) ? (
-        <>
+        <DetailsItem label={t('console-app~PodDisruptionBudgets')} obj={pdb}>
           <ResourceLink
             kind={referenceForModel(PodDisruptionBudgetModel)}
             name={pdb.metadata.name}
@@ -36,11 +36,14 @@ export const PodDisruptionBudgetField: React.FC<PodDisruptionBudgetFieldProps> =
             (!_.isNil(pdb.spec?.minAvailable) || !_.isNil(pdb.spec?.maxUnavailable)) && (
               <AvailabilityRequirement pdb={pdb} replicas={obj.spec?.replicas} />
             )}
-        </>
+        </DetailsItem>
       ) : (
-        t('console-app~No PodDisruptionBudgets')
+        <>
+          <dt>{t('console-app~PodDisruptionBudgets')}</dt>
+          <dd>{t('console-app~No PodDisruptionBudgets')}</dd>
+        </>
       )}
-    </DetailsItem>
+    </>
   );
 };
 
