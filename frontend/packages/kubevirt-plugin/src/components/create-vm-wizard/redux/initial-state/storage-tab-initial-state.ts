@@ -252,7 +252,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   const initialData = getInitialData(state, id);
   const { source, accessMode, volumeMode } = initialData;
   const storagesUpdate = getStorages(state, id);
-  const rootStorage = storagesUpdate.find((s) => s.disk.bootOrder === 1) || storagesUpdate[0];
+  const rootStorage = storagesUpdate.find((s) => s.disk?.bootOrder === 1) || storagesUpdate[0];
   const diskBus = tmpDiskBus || new DiskWrapper(rootStorage?.disk).getDiskBus();
 
   const storageClassConfigMap = toShallowJS(

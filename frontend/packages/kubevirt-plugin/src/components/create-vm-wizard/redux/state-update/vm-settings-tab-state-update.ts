@@ -71,7 +71,7 @@ const selectTemplateOnLoadedUpdater = (options: UpdateOptions) => {
       ),
     );
 
-    const isDisabled = asDisabled(iUserTemplate != null, VMWizardProps.userTemplate);
+    const isDisabled = asDisabled(false, VMWizardProps.userTemplate);
 
     dispatch(
       vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
