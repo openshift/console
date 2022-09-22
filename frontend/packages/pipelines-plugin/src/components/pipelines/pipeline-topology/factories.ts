@@ -18,6 +18,7 @@ import FinallyNode from './FinallyNode';
 import InvalidTaskListNode from './InvalidTaskListNode';
 import LoadingNode from './LoadingNode';
 import PipelineTaskNode from './PipelineTaskNode';
+import BuilderTaskEdge from './TaskEdge';
 import TaskListNode from './TaskListNode';
 import TaskNode from './TaskNode';
 import { getLayoutData } from './utils';
@@ -27,7 +28,7 @@ export const builderComponentsFactory: ComponentFactory = (kind: ModelKind, type
     case ModelKind.graph:
       return GraphComponent;
     case ModelKind.edge:
-      return TaskEdge;
+      return BuilderTaskEdge;
     case ModelKind.node:
       switch (type) {
         case NodeType.TASK_NODE:

@@ -15,7 +15,7 @@ import {
   nodesHasWhenExpression,
   getWhenExpressionDiamondState,
   extractDepsFromContextVariables,
-  taskWhenStatus,
+  getTaskWhenStatus,
 } from '../utils';
 
 const pipelineData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
@@ -202,7 +202,7 @@ describe('extractDepsFromContextVariables: ', () => {
   });
 });
 
-describe('taskWhenStatus:', () => {
+describe('getTaskWhenStatus:', () => {
   const [task1] = pipeline.spec.tasks;
 
   const taskWithStatus = (
@@ -227,7 +227,7 @@ describe('taskWhenStatus:', () => {
   };
 
   it('should return undefined if the task does not have when expression', () => {
-    expect(taskWhenStatus(taskWithStatus())).toBeUndefined();
+    expect(getTaskWhenStatus(taskWithStatus())).toBeUndefined();
   });
 
   it('should return a matching when status', () => {
@@ -237,8 +237,8 @@ describe('taskWhenStatus:', () => {
     const skippedTask: PipelineTaskWithStatus = {
       ...taskWithStatus(RunStatus.Skipped, true),
     };
-    expect(taskWhenStatus(succeededTask)).toBe(WhenStatus.Met);
-    expect(taskWhenStatus(skippedTask)).toBe(WhenStatus.Unmet);
+    expect(getTaskWhenStatus(succeededTask)).toBe(WhenStatus.Met);
+    expect(getTaskWhenStatus(skippedTask)).toBe(WhenStatus.Unmet);
   });
 });
 

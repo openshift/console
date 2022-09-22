@@ -17,6 +17,13 @@ describe('Pipeline Visualization', () => {
     expect(PipelineTopologyGraphComponent).toHaveLength(1);
   });
 
+  it('Should render a Alert message if the pipeline is null', () => {
+    wrapper.setProps({ pipeline: null });
+    const alert = wrapper.find(Alert);
+    expect(alert).toHaveLength(1);
+    expect(alert.props().title).toBe('This Pipeline has no tasks to visualize.');
+  });
+
   it('Should render a Alert message if the pipeline does not have tasks', () => {
     wrapper.setProps({ pipeline: { ...mockPipelinesJSON[2], spec: { tasks: [] } } });
     const alert = wrapper.find(Alert);

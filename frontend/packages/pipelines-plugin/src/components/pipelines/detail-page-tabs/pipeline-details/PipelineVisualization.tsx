@@ -22,7 +22,7 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
 
   const model = getGraphDataModel(pipeline, pipelineRun);
 
-  if (model?.nodes.length === 0 && model?.edges.length === 0) {
+  if (!model || (model.nodes.length === 0 && model.edges.length === 0)) {
     // Nothing to render
     // TODO: Confirm wording with UX; ODC-1860
     content = (

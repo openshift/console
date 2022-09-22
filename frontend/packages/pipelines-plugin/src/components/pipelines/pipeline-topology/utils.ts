@@ -402,7 +402,7 @@ export const getSpacerNode = (node: PipelineMixedNodeModel): PipelineMixedNodeMo
   width: 1,
 });
 
-export const getWhenStatus = (status: RunStatus): string => {
+export const getWhenStatus = (status: RunStatus): WhenStatus => {
   switch (status) {
     case RunStatus.Succeeded:
     case RunStatus.Failed:
@@ -412,11 +412,11 @@ export const getWhenStatus = (status: RunStatus): string => {
     case RunStatus.Idle:
       return WhenStatus.Unmet;
     default:
-      return '';
+      return undefined;
   }
 };
 
-export const taskWhenStatus = (task: PipelineTaskWithStatus) => {
+export const getTaskWhenStatus = (task: PipelineTaskWithStatus): WhenStatus => {
   if (!task.when) {
     return undefined;
   }
@@ -514,7 +514,7 @@ export const getGraphDataModel = (
           badgePadding,
         runAfterTasks,
         status: isTaskSkipped ? RunStatus.Skipped : vertex.data.status?.reason,
-        whenStatus: taskWhenStatus(vertex.data),
+        whenStatus: getTaskWhenStatus(vertex.data),
         task: vertex.data,
         pipeline,
         pipelineRun,
@@ -537,7 +537,7 @@ export const getGraphDataModel = (
       height: DEFAULT_NODE_HEIGHT,
       runAfterTasks: [],
       status: isTaskSkipped ? RunStatus.Skipped : fTask.status?.reason,
-      whenStatus: taskWhenStatus(fTask),
+      whenStatus: getTaskWhenStatus(fTask),
       task: fTask,
       pipeline,
       pipelineRun,
@@ -575,10 +575,7 @@ export const getGraphDataModel = (
       id: `${pipelineRun?.metadata?.name || pipeline.metadata.name}-graph`,
       type: ModelKind.graph,
       layout: PipelineLayout.DAGRE_VIEWER,
-      scale: 0.5,
       scaleExtent: [0.5, 1],
-      x: 25,
-      y: 10,
     },
     nodes: [...nodes, ...spacerNodes, ...finallyNodes, ...finallyGroup],
     edges,

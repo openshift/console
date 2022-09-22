@@ -15,12 +15,14 @@ import {
   GRAPH_POSITION_CHANGE_EVENT,
   ComponentFactory,
 } from '@patternfly/react-topology';
+import Measure from 'react-measure';
 import {
   DROP_SHADOW_SPACING,
   NODE_HEIGHT,
   TOOLBAR_HEIGHT,
   GRAPH_MIN_WIDTH,
   PipelineLayout,
+  GRAPH_MAX_HEIGHT,
 } from './const';
 import { layoutFactory } from './factories';
 import { getLayoutData } from './utils';
@@ -29,19 +31,19 @@ type PipelineVisualizationSurfaceProps = {
   model: Model;
   componentFactory: ComponentFactory;
   showControlBar?: boolean;
-  fixedWidth?: boolean;
+  noScrollbar?: boolean;
 };
 
 const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> = ({
   model,
   componentFactory,
   showControlBar = false,
-  fixedWidth = false,
+  noScrollbar = false,
 }) => {
   const [vis, setVis] = React.useState<Controller>(null);
   const [maxSize, setMaxSize] = React.useState(null);
+  const [width, setWidth] = React.useState(null);
   const storedGraphModel = React.useRef(null);
-  const containerRef = React.useRef(null);
 
   const layout: PipelineLayout = model.graph.layout as PipelineLayout;
 
@@ -142,25 +144,33 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
   );
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        height: maxSize?.height,
-        width: fixedWidth
-          ? maxSize?.width
-          : Math.min(maxSize?.width, containerRef.current?.clientWidth || 0),
+    <Measure
+      bounds
+      onResize={(contentRect) => {
+        setWidth(contentRect.bounds?.width);
       }}
     >
-      <VisualizationProvider controller={vis}>
-        {showControlBar ? (
-          <TopologyView controlBar={controlBar(vis)}>
-            <VisualizationSurface />
-          </TopologyView>
-        ) : (
-          <VisualizationSurface />
-        )}
-      </VisualizationProvider>
-    </div>
+      {({ measureRef }) => (
+        <div ref={measureRef}>
+          <div
+            style={{
+              height: noScrollbar ? maxSize?.height : Math.min(GRAPH_MAX_HEIGHT, maxSize?.height),
+              width: noScrollbar ? maxSize?.width : Math.min(maxSize?.width, width),
+            }}
+          >
+            <VisualizationProvider controller={vis}>
+              {showControlBar ? (
+                <TopologyView controlBar={controlBar(vis)}>
+                  <VisualizationSurface />
+                </TopologyView>
+              ) : (
+                <VisualizationSurface />
+              )}
+            </VisualizationProvider>
+          </div>
+        </div>
+      )}
+    </Measure>
   );
 };
 

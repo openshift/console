@@ -2015,19 +2015,6 @@
     tippy.js "5.1.2"
     tslib "^2.0.0"
 
-"@patternfly/react-core@^4.236.7":
-  version "4.236.14"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-4.236.14.tgz#a672ec06f625149f5a61d0f18898901efa870831"
-  integrity sha512-htxD/Mkkw2axbHD4RuMgQSS4GUTGqy+qtvP3Kgq0dILydStMLlwA3o3ckbevS0AtuKfBm+1lU8w91EMHYm8UQQ==
-  dependencies:
-    "@patternfly/react-icons" "^4.87.14"
-    "@patternfly/react-styles" "^4.86.14"
-    "@patternfly/react-tokens" "^4.88.14"
-    focus-trap "6.9.2"
-    react-dropzone "9.0.0"
-    tippy.js "5.1.2"
-    tslib "^2.0.0"
-
 "@patternfly/react-icons@^4.11.4":
   version "4.11.4"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-4.11.4.tgz#8fae0bf215e39e382661a089a1d43f3ccb7fdeef"

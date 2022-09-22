@@ -44,8 +44,9 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
     createStepStatus(step, data?.task?.status),
   );
   const { pipelineRun } = data;
-  const succeededStepsCount =
-    stepStatusList.filter(({ status }) => status === ComputedStatus.Succeeded)?.length || 0;
+  const succeededStepsCount = stepStatusList.filter(
+    ({ status }) => status === ComputedStatus.Succeeded,
+  ).length;
 
   const badge =
     stepStatusList.length > 0 ? `${succeededStepsCount}/${stepStatusList.length}` : null;

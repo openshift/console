@@ -26,7 +26,7 @@ const PipelineTopologyGraph: React.FC<PipelineTopologyGraphProps> = ({
       <PipelineVisualizationSurface
         model={model}
         componentFactory={componentFactory}
-        fixedWidth={builder}
+        noScrollbar={builder}
         {...props}
       />
     </div>
