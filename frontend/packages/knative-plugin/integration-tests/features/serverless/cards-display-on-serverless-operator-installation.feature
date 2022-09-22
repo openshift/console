@@ -1,4 +1,4 @@
-@knative
+@knative-serverless
 Feature: Event sources cards display
               As a user, I want to create event sources
 

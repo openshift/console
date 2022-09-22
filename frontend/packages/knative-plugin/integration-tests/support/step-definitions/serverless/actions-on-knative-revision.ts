@@ -91,7 +91,6 @@ Given('knative service {string} with multiple revisions', (serviceName: string) 
   topologyPage.verifyUserIsInGraphView();
   topologyPage.waitForLoad();
   topologyPage.rightClickOnKnativeService(serviceName);
-
   topologyPage.selectContextMenuAction(`Edit ${serviceName}`);
 
   app.waitForLoad();
@@ -100,12 +99,17 @@ Given('knative service {string} with multiple revisions', (serviceName: string) 
     .scrollIntoView()
     .click();
   gitPage.enterLabels('app=frontend');
-
   cy.get(formPO.create).click();
   topologyPage.verifyTopologyPage();
-
   topologyPage.verifyUserIsInGraphView();
-  topologyPage.clickOnKnativeService(serviceName);
+  app.waitForLoad();
+
+  // Open sidebar if not already opened
+  cy.get('body').then(($body) => {
+    if ($body.find('[data-test-id="actions-menu-button"]').length === 0) {
+      topologyPage.clickOnKnativeService(serviceName);
+    }
+  });
 
   cy.log(`user is able to see revisions in knative service : ${serviceName} of topology side pane`);
   topologySidePane.selectTab('Resources');

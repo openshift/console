@@ -456,3 +456,7 @@ Given('workload build is completed', () => {
 Given('workload {string} is present in topology page', (workloadName: string) => {
   topologyPage.verifyWorkloadInTopologyPage(workloadName);
 });
+
+When('user clicks on service {string} to open sidebar', () => {
+  cy.get('.odc-knative-service__label').click();
+});
