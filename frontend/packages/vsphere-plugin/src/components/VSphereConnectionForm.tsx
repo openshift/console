@@ -82,23 +82,44 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
   ]);
 
   const folderHelperText = (
-    <ul>
-      <li>
-        <Trans i18nKey="vsphere-plugin~vsphere-connection-form-folderhelp-one">
-          Provide <b>datacenter</b> folder which contains VMs of the cluster, example: /
-          <span className="vsphere-connection-form-helper__datacenter">{{ datacenter }}</span>/
-          <b>vm</b>/<b>[MY_VMS_TOP_FOLDER]</b>.
+    <Trans i18nKey="vsphere-plugin~vsphere-connection-form-folderhelp-one">
+      Provide <b>datacenter</b> folder which contains VMs of the cluster, example: /
+      <span className="vsphere-connection-form-helper__datacenter">{{ datacenter }}</span>/<b>vm</b>
+      /<b>[MY_VMS_TOP_FOLDER]</b>.
+    </Trans>
+  );
+
+  const datacenterHelperText = (
+    <>
+      <Trans i18nKey="vsphere-plugin~vsphere-connection-form-datacenterhelp-one">
+        The name of an existing datacenter in the vSphere which the virtual machines backing this
+        cluster are in.
+      </Trans>
+      <br />
+      <strong>
+        <Trans i18nKey="vsphere-plugin~vsphere-connection-form-datacenterhelp-two">
+          Please mind, that changing this value will break existing PersistentVolumes, if there are
+          already any.
         </Trans>
-      </li>
-      <li>
-        <Trans i18nKey="vsphere-plugin~vsphere-connection-form-folderhelp-two">
-          The file backing PersistenVolume will be stored with this prefix under the{' '}
-          <b>/kubevols</b> folder of the{' '}
-          <span className="vsphere-connection-form-helper__datastore">{defaultdatastore}</span>{' '}
-          <b>datastore</b>, mind to have that folder already created in the vSphere.
+      </strong>
+    </>
+  );
+
+  const datastoreHelperText = (
+    <>
+      <Trans i18nKey="vsphere-plugin~vsphere-connection-form-datastorehelp-one">
+        The name of an existing datastore in the datacenter where the persistent volumes will be
+        stored.
+      </Trans>
+      <br />
+      <strong>
+        <Trans i18nKey="vsphere-plugin~vsphere-connection-form-datastorehelp-two">
+          Please mind, that changing this value will break existing PersistentVolumes, if there are
+          already any.
         </Trans>
-      </li>
-    </ul>
+      </strong>
+      .
+    </>
   );
 
   return (
@@ -169,13 +190,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
       </FormGroup>
       <FormGroup
         label={t('vsphere-plugin~Datacenter')}
-        labelIcon={
-          <PopoverHelpButton
-            content={t(
-              'vsphere-plugin~The name of an existing datacenter in the vSphere which the virtual machines backing this cluster are in.',
-            )}
-          />
-        }
+        labelIcon={<PopoverHelpButton content={datacenterHelperText} />}
         isRequired
         fieldId="connection-datacenter"
       >
@@ -190,21 +205,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
       </FormGroup>
       <FormGroup
         label={t('vsphere-plugin~Default data store')}
-        labelIcon={
-          <PopoverHelpButton
-            content={
-              <>
-                {t(
-                  'vsphere-plugin~The name of an existing datastore in the datacenter where the persistent volumes will be stored.',
-                )}
-                <br />
-                {t(
-                  'vsphere-plugin~Make sure there is /kubevols folder created in the root of the datastore.',
-                )}
-              </>
-            }
-          />
-        }
+        labelIcon={<PopoverHelpButton content={datastoreHelperText} />}
         isRequired
         fieldId="connection-defaultdatastore"
       >

@@ -115,15 +115,23 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
         title={t('vsphere-plugin~Delayed propagation of configuration')}
       >
         {t(
-          "vsphere-plugin~After saving the configuration, it may take approximately one hour to see if the settings are correct and the operators' statuses are updated.",
+          "vsphere-plugin~After saving the configuration, it may take approximately one hour to see if the settings are correct and the operators' statuses are updated, nodes will get rebooted.",
         )}
         <br />
         {t(
-          'vsphere-plugin~Note, that existing resources (like bound PVCs) will not be affected by later changes.',
+          'vsphere-plugin~Note, that existing resources (like already bound PVCs) might get broken by these changes.',
         )}
       </Alert>
     );
   }
+
+  const allRequiredFieldsAreSet =
+    vcenter?.trim() &&
+    username?.trim() &&
+    password?.trim() &&
+    datacenter?.trim() &&
+    defaultdatastore?.trim();
+  const isSaveDisabled = isSaving || !isDirty || !allRequiredFieldsAreSet;
 
   const footer = (
     <>
@@ -131,11 +139,12 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
       <Button key="cancel" variant="link" onClick={onClose}>
         Cancel
       </Button>
-      <Button key="save" variant="primary" isDisabled={isSaving || !isDirty} onClick={onSave}>
+      <Button key="save" variant="primary" isDisabled={isSaveDisabled} onClick={onSave}>
         Save configuration
       </Button>
     </>
   );
+
   return (
     <Modal
       className="vsphere-connection-modal"
