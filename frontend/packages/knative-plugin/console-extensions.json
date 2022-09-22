@@ -780,11 +780,22 @@
     "type": "console.topology/component/factory",
     "properties": {
       "getFactory": {
-        "$codeRef": "topology.getKnativeComponentFactory"
+        "$codeRef": "topology.getKnativeServingComponentFactory"
       }
     },
     "flags": {
-      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_EVENTING"]
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": {
+        "$codeRef": "topology.getKnativeEventingComponentFactory"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
     }
   },
   {

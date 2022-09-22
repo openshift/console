@@ -8,6 +8,7 @@ import {
   TopologyDecoratorProvider,
 } from '@console/topology/src/extensions';
 import {
+  FLAG_CAMEL_KAMELETS,
   FLAG_KNATIVE_EVENTING,
   FLAG_KNATIVE_SERVING,
   FLAG_KNATIVE_SERVING_CONFIGURATION,
@@ -15,7 +16,11 @@ import {
   FLAG_KNATIVE_SERVING_ROUTE,
   FLAG_KNATIVE_SERVING_SERVICE,
 } from '../const';
-import { getKnativeResources } from '../utils/get-knative-resources';
+import {
+  getKnativeEventingKameletsResources,
+  getKnativeEventingResources,
+  getKnativeServingResources,
+} from '../utils/get-knative-resources';
 
 const getKnativeTopologyDataModel = () =>
   import('./data-transformer' /* webpackChunkName: "knative-components" */).then(
@@ -38,9 +43,9 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
   {
     type: 'Topology/DataModelFactory',
     properties: {
-      id: 'knative-topology-model-factory',
+      id: 'knative-serving-topology-model-factory',
       priority: 100,
-      resources: getKnativeResources,
+      resources: getKnativeServingResources,
       workloadKeys: ['ksservices'],
       getDataModel: applyCodeRefSymbol(getKnativeTopologyDataModel),
       isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
@@ -52,8 +57,35 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
         FLAG_KNATIVE_SERVING_REVISION,
         FLAG_KNATIVE_SERVING_ROUTE,
         FLAG_KNATIVE_SERVING_SERVICE,
-        FLAG_KNATIVE_EVENTING,
       ],
+    },
+  },
+  {
+    type: 'Topology/DataModelFactory',
+    properties: {
+      id: 'knative-eventing-topology-model-factory',
+      priority: 100,
+      resources: getKnativeEventingResources,
+      workloadKeys: ['eventingsubscription'],
+      getDataModel: applyCodeRefSymbol(getKnativeTopologyDataModel),
+      isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Topology/DataModelFactory',
+    properties: {
+      id: 'knative-kamelets-topology-model-factory',
+      priority: 100,
+      resources: getKnativeEventingKameletsResources,
+      workloadKeys: ['kameletbindings'],
+      getDataModel: applyCodeRefSymbol(getKnativeTopologyDataModel),
+      isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING, FLAG_CAMEL_KAMELETS],
     },
   },
 ];

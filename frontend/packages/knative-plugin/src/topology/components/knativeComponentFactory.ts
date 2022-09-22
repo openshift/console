@@ -68,7 +68,7 @@ const dragOperationKafka: EditableDragOperationType = {
   edit: true,
 };
 
-export const getKnativeComponentFactory = (
+export const getKnativeServingComponentFactory = (
   kind,
   type,
 ): React.ComponentType<{ element: GraphElement }> | undefined => {
@@ -91,6 +91,24 @@ export const getKnativeComponentFactory = (
           ),
         ),
       );
+    case TYPE_KNATIVE_REVISION:
+      return withDragNode(nodeDragSourceSpec(type, false))(
+        withSelection({ controlled: true })(
+          withContextMenu(contextMenuActions)(withNoDrop()(RevisionNode)),
+        ),
+      );
+    case TYPE_REVISION_TRAFFIC:
+      return TrafficLink;
+    default:
+      return undefined;
+  }
+};
+
+export const getKnativeEventingComponentFactory = (
+  kind,
+  type,
+): React.ComponentType<{ element: GraphElement }> | undefined => {
+  switch (type) {
     case TYPE_EVENT_SOURCE:
       return withEditReviewAccess('patch')(
         withDragNode(nodeDragSourceSpec(type))(
@@ -131,14 +149,6 @@ export const getKnativeComponentFactory = (
           ),
         ),
       );
-    case TYPE_KNATIVE_REVISION:
-      return withDragNode(nodeDragSourceSpec(type, false))(
-        withSelection({ controlled: true })(
-          withContextMenu(contextMenuActions)(withNoDrop()(RevisionNode)),
-        ),
-      );
-    case TYPE_REVISION_TRAFFIC:
-      return TrafficLink;
     case TYPE_EVENT_SOURCE_LINK:
       return withTargetDrag(eventSourceLinkDragSourceSpec())(EventSourceLink);
     case TYPE_EVENT_SINK_LINK:
