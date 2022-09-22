@@ -1034,6 +1034,8 @@
   "Delete query": "Delete query",
   "Duplicate query": "Duplicate query",
   "Error loading values": "Error loading values",
+  "Unselect all": "Unselect all",
+  "Select all": "Select all",
   "No query entered": "No query entered",
   "Enter a query in the box below to explore metrics for this cluster.": "Enter a query in the box below to explore metrics for this cluster.",
   "Insert example query": "Insert example query",
