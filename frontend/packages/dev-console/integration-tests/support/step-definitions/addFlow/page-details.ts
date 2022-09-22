@@ -103,37 +103,44 @@ Then('user will see {string} option', (addPageOption: string) => {
   verifyAddPage.verifyAddPageCard(addPageOption);
 });
 
-When('user enable Details toggle', () => {
-  if (cy.get(addPagePO.detailsOnOffText).contains('Details on')) {
-    cy.log('Details are on');
-  } else {
-    cy.get(addPagePO.detailsOnOffSwitch).click();
-  }
+Given('add page Details toggle shows {string}', (label: string) => {
+  // Just waiting until the switch with all options is shown.
+  // This doesn't ensure that the right label is shown because its hidden via CSS!
+  cy.get(addPagePO.detailsOnOffSwitch)
+    .find('.pf-c-switch__label')
+    .should('contain', label);
+  // Check the checkbox checked value and change it if needed.
+  cy.get(addPagePO.detailsOnOffSwitch).then((s) => {
+    const toggleIsChecked = s.find('input:checked').length > 0;
+    const toggleShouldBeChecked = label === 'Details on';
+    cy.log(`toggleIsChecked: ${toggleIsChecked}, toggleShouldBeChecked: ${toggleShouldBeChecked}`);
+    if (toggleIsChecked !== toggleShouldBeChecked) {
+      cy.get(addPagePO.detailsOnOffSwitch).click();
+    }
+  });
 });
 
-Then('user will see label Details on', () => {
-  cy.get(addPagePO.detailsOnOffText).should('contain', 'Details on');
+When('user clicks Details toggle', () => {
+  cy.get(addPagePO.detailsOnOffSwitch).click();
 });
 
-Then('user will see description of each option on each card', () => {
-  cy.get(addPagePO.cardDetails).should('have.length.at.least', 5);
-});
-
-When('user disable Details toggle', () => {
-  if (cy.get(addPagePO.detailsOnOffText).contains('Details on')) {
-    cy.get(addPagePO.detailsOnOffSwitch).click();
-  } else {
-    cy.log('Details are off');
-  }
-});
-
-Then('user will see label Details off', () => {
-  cy.get(addPagePO.detailsOnOffText).should('contain', 'Details off');
+Then('user will see Detail toggle label {string}', (label: string) => {
+  cy.get(addPagePO.detailsOnOffSwitch)
+    // find both switch labels (one for checked=on and one for unchecked=off)
+    .find('.pf-c-switch__label')
+    // they are hidden via a CSS rule like
+    // .pf-c-switch__input:not(:checked)~.pf-m-on { display: none; }
+    // .pf-c-switch__input:checked~.pf-m-off { display: none; }
+    .filter((_, element) => getComputedStyle(element).display !== 'none')
+    .should('contain', label);
 });
 
 Then('user will not see description of option on cards', () => {
   cy.get(addPagePO.cardDetails).should('not.exist');
-  cy.clearLocalStorage();
+});
+
+Then('user will see description of each option on each card', () => {
+  cy.get(addPagePO.cardDetails).should('have.length.at.least', 5);
 });
 
 Given('user has hidden Getting Started Resources from View', () => {

@@ -67,16 +67,20 @@ Feature: Add page on Developer Console
 
         @regression
         Scenario: Details Toggle on: A-11-TC09
-             When user enable Details toggle
-             Then user will see label Details on
+            Given add page Details toggle shows "Details off"
+             When user clicks Details toggle
+             Then user will see Detail toggle label "Details on"
               And user will see description of each option on each card
 
 
         @regression
         Scenario: Details Toggle off: A-11-TC10
-             When user disable Details toggle
-             Then user will see label Details off
+            Given add page Details toggle shows "Details on"
+             When user clicks Details toggle
+             Then user will see Detail toggle label "Details off"
               And user will not see description of option on cards
+              # reset details toggle (it is saved in the user settings)
+              And user clicks Details toggle
 
 
         @regression @manual
