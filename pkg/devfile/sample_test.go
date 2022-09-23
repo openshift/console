@@ -72,7 +72,7 @@ func TestGetRegistrySamples(t *testing.T) {
 					DisplayName: "Basic Python",
 					Description: "A simple Hello World application using Python",
 					Tags:        []string{"Python"},
-					Icon:        "https://www.python.org/static/community_logos/python-logo-generic.svg",
+					Icon:        "https://raw.githubusercontent.com/devfile-samples/devfile-stack-icons/main/python.svg",
 					Type:        schema.SampleDevfileType,
 					ProjectType: "python",
 					Language:    "python",
