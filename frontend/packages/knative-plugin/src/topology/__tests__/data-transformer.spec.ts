@@ -23,7 +23,11 @@ import { cleanUpWorkload, WORKLOAD_TYPES } from '@console/topology/src/utils';
 import { ServiceModel, EventingBrokerModel } from '../../models';
 import * as knativefetchutils from '../../utils/fetch-dynamic-eventsources-utils';
 import { TYPE_EVENT_PUB_SUB, TYPE_EVENT_PUB_SUB_LINK, TYPE_KNATIVE_SERVICE } from '../const';
-import { getKnativeTopologyDataModel } from '../data-transformer';
+import {
+  getKnativeServingTopologyDataModel,
+  getKnativeEventingTopologyDataModel,
+  getKnativeKameletsTopologyDataModel,
+} from '../data-transformer';
 import { isKnativeResource } from '../isKnativeResource';
 import {
   applyKnativeDisplayOptions,
@@ -49,7 +53,24 @@ const getTransformedTopologyData = (
   dataModelDepicters: TopologyDataModelDepicted[] = [],
 ) => {
   const workloadResources = getWorkloadResources(mockData, TEST_KINDS_MAP, WORKLOAD_TYPES);
-  return getKnativeTopologyDataModel('test-project', mockData).then((model) => {
+  return Promise.all([
+    getKnativeServingTopologyDataModel('test-project', mockData),
+    getKnativeEventingTopologyDataModel('test-project', mockData),
+    getKnativeKameletsTopologyDataModel('test-project', mockData),
+  ]).then((modelList) => {
+    const [servingModel, eventingModel, kameletModel] = modelList;
+    const model: Model = {
+      nodes: [
+        ...(servingModel.nodes as NodeModel[]),
+        ...(eventingModel.nodes as NodeModel[]),
+        ...(kameletModel.nodes as NodeModel[]),
+      ],
+      edges: [
+        ...(servingModel.edges as EdgeModel[]),
+        ...(eventingModel.edges as EdgeModel[]),
+        ...(kameletModel.edges as EdgeModel[]),
+      ],
+    };
     return baseDataModelGetter(
       model,
       'test-project',

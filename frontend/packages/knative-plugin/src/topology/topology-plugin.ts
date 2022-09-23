@@ -22,9 +22,19 @@ import {
   getKnativeServingResources,
 } from '../utils/get-knative-resources';
 
-const getKnativeTopologyDataModel = () =>
-  import('./data-transformer' /* webpackChunkName: "knative-components" */).then(
-    (m) => m.getKnativeTopologyDataModel,
+const getKnativeServingTopologyDataModel = () =>
+  import('./data-transformer' /* webpackChunkName: "serving-components" */).then(
+    (m) => m.getKnativeServingTopologyDataModel,
+  );
+
+const getKnativeEventingTopologyDataModel = () =>
+  import('./data-transformer' /* webpackChunkName: "eventing-components" */).then(
+    (m) => m.getKnativeEventingTopologyDataModel,
+  );
+
+const getKnativeKameletsTopologyDataModel = () =>
+  import('./data-transformer' /* webpackChunkName: "kamelets-components" */).then(
+    (m) => m.getKnativeKameletsTopologyDataModel,
   );
 
 const getIsKnativeResource = () =>
@@ -47,7 +57,7 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
       priority: 100,
       resources: getKnativeServingResources,
       workloadKeys: ['ksservices'],
-      getDataModel: applyCodeRefSymbol(getKnativeTopologyDataModel),
+      getDataModel: applyCodeRefSymbol(getKnativeServingTopologyDataModel),
       isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
     },
     flags: {
@@ -67,7 +77,7 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
       priority: 100,
       resources: getKnativeEventingResources,
       workloadKeys: ['eventingsubscription'],
-      getDataModel: applyCodeRefSymbol(getKnativeTopologyDataModel),
+      getDataModel: applyCodeRefSymbol(getKnativeEventingTopologyDataModel),
       isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
     },
     flags: {
@@ -81,7 +91,7 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
       priority: 100,
       resources: getKnativeEventingKameletsResources,
       workloadKeys: ['kameletbindings'],
-      getDataModel: applyCodeRefSymbol(getKnativeTopologyDataModel),
+      getDataModel: applyCodeRefSymbol(getKnativeKameletsTopologyDataModel),
       isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
     },
     flags: {

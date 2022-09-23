@@ -18,7 +18,9 @@ import {
 import { MockKnativeResources } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import {
   getKafkaSinkKnativeTopologyData,
-  getKnativeTopologyDataModel,
+  getKnativeEventingTopologyDataModel,
+  getKnativeKameletsTopologyDataModel,
+  getKnativeServingTopologyDataModel,
 } from '@console/knative-plugin/src/topology/data-transformer';
 import {
   MockResources,
@@ -55,7 +57,16 @@ const getTopologyData = async (
     workloadType,
   ]);
   if (isKnativeResource) {
-    model = await getKnativeTopologyDataModel(name, mockData);
+    const [servingModel, eventingModel, kameletModel] = await Promise.all([
+      getKnativeServingTopologyDataModel(name, mockData),
+      getKnativeEventingTopologyDataModel(name, mockData),
+      getKnativeKameletsTopologyDataModel(name, mockData),
+    ]);
+
+    model = {
+      nodes: [...servingModel.nodes, ...eventingModel.nodes, ...kameletModel.nodes],
+      edges: [...servingModel.edges, ...eventingModel.edges, ...kameletModel.edges],
+    };
   }
   const result = baseDataModelGetter(model, namespace, mockData, workloadResources, []);
   return result.nodes.find((n) => n.data.resources?.obj.metadata.name === name);
