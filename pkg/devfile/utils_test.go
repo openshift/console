@@ -18,7 +18,8 @@ func TestGetImageBuildComponent(t *testing.T) {
 	componentNames := []string{"testcomp1", "testcomp2", "testcomp3"}
 
 	expectedMockErr := "an expected error"
-	multipleComponentsErr := "Currently there are 2 image component"
+	multipleComponentsErr := "Currently there is more than one image component"
+	noComponentsErr := "Currently there is no image component"
 
 	tests := []struct {
 		name                       string
@@ -139,6 +140,15 @@ func TestGetImageBuildComponent(t *testing.T) {
 				componentNames[2]: componentNames[2],
 			},
 			wantErr: &multipleComponentsErr,
+		},
+		{
+			name:       "No Image component",
+			components: []v1.Component{},
+			deployAssociatedComponents: map[string]string{
+				componentNames[0]: componentNames[0],
+				componentNames[2]: componentNames[2],
+			},
+			wantErr: &noComponentsErr,
 		},
 	}
 	for _, tt := range tests {

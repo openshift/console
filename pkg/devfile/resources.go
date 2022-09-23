@@ -8,6 +8,7 @@ import (
 	"github.com/devfile/library/pkg/devfile/generator"
 	"github.com/devfile/library/pkg/devfile/parser"
 	"github.com/devfile/library/pkg/devfile/parser/data/v2/common"
+	"github.com/hashicorp/go-multierror"
 	buildv1 "github.com/openshift/api/build/v1"
 	imagev1 "github.com/openshift/api/image/v1"
 	routev1 "github.com/openshift/api/route/v1"
@@ -60,13 +61,13 @@ func GetDeployResource(name string, devfileObj parser.DevfileObj, filterOptions 
 }
 
 // GetService gets the service resource
-func GetService(devfileObj parser.DevfileObj, filterOptions common.DevfileOptions, imagePort string) (corev1.Service, error) {
+func GetService(devfileObj parser.DevfileObj, imagePort string) (corev1.Service, error) {
 
 	serviceParams := generator.ServiceParams{
 		TypeMeta: generator.GetTypeMeta("Service", "v1"),
 	}
 
-	service, err := generator.GetService(devfileObj, serviceParams, filterOptions)
+	service, err := generator.GetService(devfileObj, serviceParams, common.DevfileOptions{})
 	if err != nil {
 		return corev1.Service{}, err
 	}
@@ -125,18 +126,11 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 	var service corev1.Service
 	var route routev1.Route
 
-	returnDeploymentOnly := true // NOTE: (TODO) once devfile samples YAML have service & route definitions, switch to false
-	// Update tests accordingly
+	returnDeploymentOnly := true // NOTE: (TODO) once devfile samples YAML have service & route definitions, switch to false. Update tests accordingly
 
 	for _, component := range kubernetesComponents {
 		if _, ok := deployAssociatedComponents[component.Name]; ok && component.Kubernetes != nil {
-			var src parser.YamlSrc
-
-			if component.Kubernetes.Inlined != "" {
-				src = parser.YamlSrc{
-					Data: []byte(component.Kubernetes.Inlined),
-				}
-			} else {
+			if component.Kubernetes.Inlined == "" {
 				// If the Kubernetes YAML file does not have inline content, fall back to the dev preview way
 				// Once we have resolved the flow between frontend, backend and consume only YAML files,
 				// we can err out here instead of falling back
@@ -152,20 +146,14 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 
 				dockerImagePort := devfileObj.Data.GetMetadata().Attributes.GetString("alpha.dockerimage-port", &err)
 				if err != nil {
-					errMsg := fmt.Sprintf("Failed to get the Dockerfile location from devfile metadata attribute 'alpha.build-dockerfile': %v", err)
+					errMsg := fmt.Sprintf("Failed to get the Docker image port from devfile metadata attribute 'alpha.dockerimage-port': %v", err)
 					klog.Error(errMsg)
 
 					return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, err
 				}
 
-				imageComponentFilter := common.DevfileOptions{
-					ComponentOptions: common.ComponentOptions{
-						ComponentType: devfilev1.ImageComponentType,
-					},
-				}
-
 				// Service
-				serviceResource, err := GetService(devfileObj, imageComponentFilter, dockerImagePort)
+				serviceResource, err := GetService(devfileObj, dockerImagePort)
 				if err != nil {
 					errMsg := fmt.Sprintf("Failed to get service for the devfile: %v", err)
 					klog.Error(errMsg)
@@ -183,6 +171,9 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 				break
 			}
 
+			src := parser.YamlSrc{
+				Data: []byte(component.Kubernetes.Inlined),
+			}
 			fs := afero.Afero{Fs: afero.NewOsFs()}
 			values, err := parser.ReadKubernetesYaml(src, fs)
 			if err != nil {
@@ -199,7 +190,7 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 			}
 
 			for _, endpoint := range component.Kubernetes.Endpoints {
-				if endpoint.Exposure != devfilev1.NoneEndpointExposure {
+				if endpoint.Exposure != devfilev1.NoneEndpointExposure && endpoint.Exposure != devfilev1.InternalEndpointExposure {
 					var isSecure bool
 					if endpoint.Secure != nil {
 						isSecure = *endpoint.Secure
@@ -214,34 +205,22 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 		}
 	}
 
-	var errMsg string
-
 	if len(appendedResources.Deployments) > 0 {
 		deployment = appendedResources.Deployments[0]
 	} else {
-		errMsg = "no deployment definition was found in the devfile sample"
+		err = multierror.Append(err, fmt.Errorf("no deployment definition was found in the devfile sample"))
 	}
 
 	if len(appendedResources.Services) > 0 {
 		service = appendedResources.Services[0]
 	} else if !returnDeploymentOnly {
-		if len(errMsg) != 0 {
-			errMsg = errMsg + ", "
-		}
-		errMsg = errMsg + "no service definition was found in the devfile sample"
+		err = multierror.Append(err, fmt.Errorf("no service definition was found in the devfile sample"))
 	}
 
 	if len(appendedResources.Routes) > 0 {
 		route = appendedResources.Routes[0]
 	} else if !returnDeploymentOnly {
-		if len(errMsg) != 0 {
-			errMsg = errMsg + ", "
-		}
-		errMsg = errMsg + "no route definition was found in the devfile sample"
-	}
-
-	if len(errMsg) != 0 {
-		err = fmt.Errorf(errMsg)
+		err = multierror.Append(err, fmt.Errorf("no route definition was found in the devfile sample"))
 	}
 
 	return deployment, service, route, err

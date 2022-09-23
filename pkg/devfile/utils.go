@@ -2,6 +2,7 @@ package devfile
 
 import (
 	"fmt"
+	"reflect"
 
 	"k8s.io/klog"
 
@@ -26,17 +27,21 @@ func GetImageBuildComponent(devfileObj parser.DevfileObj, deployAssociatedCompon
 	}
 
 	var imageBuildComponent devfilev1.Component
-	imageDeployComponentCount := 0
 	for _, component := range imageComponents {
 		if _, ok := deployAssociatedComponents[component.Name]; ok && component.Image != nil {
-			imageBuildComponent = component
-			imageDeployComponentCount++
+			if reflect.DeepEqual(imageBuildComponent, devfilev1.Component{}) {
+				imageBuildComponent = component
+			} else {
+				errMsg := "expected to find one devfile image component with a deploy command for build. Currently there is more than one image component"
+				klog.Error(errMsg)
+				return devfilev1.Component{}, fmt.Errorf(errMsg)
+			}
 		}
 	}
 
-	// If there is not exactly one image component defined in the deploy command, err out
-	if imageDeployComponentCount != 1 {
-		errMsg := fmt.Sprintf("expected to find one devfile image component with a deploy command for build. Currently there are %d image component", imageDeployComponentCount)
+	// If there is not one image component defined in the deploy command, err out
+	if reflect.DeepEqual(imageBuildComponent, devfilev1.Component{}) {
+		errMsg := "expected to find one devfile image component with a deploy command for build. Currently there is no image component"
 		klog.Error(errMsg)
 		return devfilev1.Component{}, fmt.Errorf(errMsg)
 	}
