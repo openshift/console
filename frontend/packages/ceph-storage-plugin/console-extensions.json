@@ -71,7 +71,7 @@
       }
     },
     "flags": {
-      "required": ["MCG"],
+      "required": ["MCG", "ODF_ADMIN"],
       "disallowed": ["MCG_RESOURCE"]
     }
   },
@@ -90,7 +90,7 @@
       }
     },
     "flags": {
-      "required": ["RGW"],
+      "required": ["RGW", "ODF_ADMIN"],
       "disallowed": ["MCG", "MCG_RESOURCE"]
     }
   },
@@ -108,7 +108,7 @@
       }
     },
     "flags": {
-      "required": ["MCG"],
+      "required": ["MCG", "ODF_ADMIN"],
       "disallowed": ["MCG_RESOURCE"]
     }
   },
@@ -127,7 +127,7 @@
       }
     },
     "flags": {
-      "required": ["RGW"],
+      "required": ["RGW", "ODF_ADMIN"],
       "disallowed": ["MCG", "MCG_RESOURCE"]
     }
   },
