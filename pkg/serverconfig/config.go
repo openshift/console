@@ -265,6 +265,12 @@ func addMonitoringInfo(fs *flag.FlagSet, monitoring *MonitoringInfo) {
 	if monitoring.ThanosPublicURL != "" {
 		fs.Set("thanos-public-url", monitoring.ThanosPublicURL)
 	}
+	if monitoring.AlertmanagerUserWorkloadHost != "" {
+		fs.Set("alermanager-user-workload-host", monitoring.AlertmanagerUserWorkloadHost)
+	}
+	if monitoring.AlertmanagerTenancyHost != "" {
+		fs.Set("alermanager-tenancy-host", monitoring.AlertmanagerTenancyHost)
+	}
 }
 
 func addCustomization(fs *flag.FlagSet, customization *Customization) {
