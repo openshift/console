@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
+import MonacoEditor from 'react-monaco-editor/lib/editor';
 import { RouteComponentProps } from 'react-router';
 import {
   ExtensionK8sGroupKindModel,
@@ -623,8 +624,12 @@ export type YAMLEditorProps = {
   minHeight?: string | number;
   showShortcuts?: boolean;
   toolbarLinks?: React.ReactNodeArray;
-  onChange?: (newValue, event) => {};
-  onSave?: () => {};
+  onChange?: (newValue, event) => void;
+  onSave?: () => void;
+};
+
+export type YAMLEditorRef = {
+  editor?: MonacoEditor['editor'];
 };
 
 export type ResourceYAMLEditorProps = {
