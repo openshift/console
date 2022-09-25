@@ -2,6 +2,12 @@ package devfile
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"path"
 	"strings"
 	"testing"
 
@@ -10,15 +16,17 @@ import (
 
 func TestGetRegistrySamples(t *testing.T) {
 	tests := []struct {
-		name        string
-		registry    string
-		wantSamples []schema.Schema
-		wantErr     bool
+		name            string
+		registryFolder  string
+		registryServer  string
+		expectedSamples []schema.Schema
+		expectedError   error
 	}{
 		{
-			name:     "Fetch the sample",
-			registry: DEVFILE_STAGING_REGISTRY_URL,
-			wantSamples: []schema.Schema{
+			// curl https://registry.stage.devfile.io/index/sample -o pkg/devfile/testdata/registrystagedevfileio/sample.json
+			name:           "Fetch samples from mock registry server",
+			registryFolder: "testdata/registrystagedevfileio",
+			expectedSamples: []schema.Schema{
 				{
 					Name:        "nodejs-basic",
 					DisplayName: "Basic Node.js",
@@ -118,31 +126,59 @@ func TestGetRegistrySamples(t *testing.T) {
 			},
 		},
 		{
-			name:     "Invalid registry",
-			registry: "invalid",
-			wantErr:  true,
+			name:           "Invalid registry",
+			registryServer: "invalid-server",
+			expectedError:  errors.New("registry invalid-server is invalid"),
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			bytes, err := GetRegistrySamples(tt.registry)
-			if tt.wantErr && err == nil {
-				t.Errorf("Expected error from test but got nil")
-			} else if !tt.wantErr && err != nil {
-				t.Errorf("Got unexpected error: %s", err)
-			} else if !tt.wantErr {
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if test.registryFolder != "" {
+				registryServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					// fmt.Printf("Mock registry server handles %s\n", r.URL.Path)
+					if r.URL.Path == "/index/sample" {
+						samples, loadErr := ioutil.ReadFile(path.Join(test.registryFolder, "sample.json"))
+						if loadErr != nil {
+							t.Errorf("Could not read samples: %v", loadErr)
+							w.WriteHeader(http.StatusInternalServerError)
+							w.Write([]byte(fmt.Sprintf("Could not read samples\n%v", loadErr)))
+							return
+						}
+						w.WriteHeader(http.StatusOK)
+						w.Write(samples)
+					} else {
+						w.WriteHeader(http.StatusNotFound)
+					}
+				}))
+				defer registryServer.Close()
+
+				test.registryServer = registryServer.URL
+				testRegistryServer = test.registryServer
+			}
+
+			bytes, actualError := GetRegistrySamples(test.registryServer)
+
+			if test.expectedError == nil && actualError != nil {
+				t.Errorf("Error does not match expectation:\n%v\nbut got\n%v", test.expectedError, actualError)
+				return
+			} else if test.expectedError != nil && (actualError == nil || test.expectedError.Error() != actualError.Error()) {
+				t.Errorf("Error does not match expectation:\n%v\nbut got\n%v", test.expectedError, actualError)
+				return
+			}
+
+			if test.expectedSamples != nil {
 				var parsedRegistryIndex []schema.Schema
-				err = json.Unmarshal(bytes, &parsedRegistryIndex)
+				parseError := json.Unmarshal(bytes, &parsedRegistryIndex)
 				actualRegistryIndex, _ := json.MarshalIndent(parsedRegistryIndex, "", "  ")
-				expectedRegistryIndex, _ := json.MarshalIndent(tt.wantSamples, "", "  ")
-				if err != nil {
-					t.Errorf("Got unexpected error: %s", err)
+				expectedRegistryIndex, _ := json.MarshalIndent(test.expectedSamples, "", "  ")
+				if parseError != nil {
+					t.Errorf("Got unexpected error: %s", parseError)
 					return
 				}
 				if strings.Compare(string(expectedRegistryIndex), string(actualRegistryIndex)) != 0 {
 					t.Errorf("expected %s does not match actual %s", expectedRegistryIndex, actualRegistryIndex)
 				}
-
 			}
 		})
 	}
