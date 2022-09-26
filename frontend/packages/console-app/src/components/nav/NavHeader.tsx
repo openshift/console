@@ -1,22 +1,22 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { useDispatch } from 'react-redux';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
-import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk';
-import { history } from '../utils';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useActiveCluster, useActiveNamespace, ACM_LINK_ID } from '@console/shared';
-import { formatNamespaceRoute } from '@console/internal/actions/ui';
-import { detectFeatures, clearSSARFlags } from '@console/internal/actions/features';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
+import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { detectFeatures, clearSSARFlags } from '@console/internal/actions/features';
+import { formatNamespaceRoute } from '@console/internal/actions/ui';
+import { history } from '@console/internal/components/utils';
+import * as acmIcon from '@console/internal/imgs/ACM-icon.svg';
 import { ConsoleLinkModel } from '@console/internal/models';
-import * as acmIcon from '../../imgs/ACM-icon.svg';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { useExtensions } from '@console/plugin-sdk';
+import { useActiveCluster, useActiveNamespace, ACM_LINK_ID } from '@console/shared';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 import './NavHeader.scss';
 

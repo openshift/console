@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { NavLink, NavLinkProps } from './NavLink';
-import { navItemResourceIsActive } from './utils';
+import { NavItem } from '@patternfly/react-core';
+import { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-internal';
+import { referenceForExtensionModel } from '@console/internal/module/k8s';
 import {
   formatNamespacedRouteForResource,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   ALL_NAMESPACES_KEY,
 } from '@console/shared';
-import { referenceForExtensionModel } from '@console/internal/module/k8s';
-import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-internal';
-import { useLocation } from '@console/shared/src/hooks/useLocation';
-import { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
-import { NavItem } from '@patternfly/react-core';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { useLocation } from '@console/shared/src/hooks/useLocation';
+import { NavLink, NavLinkProps } from './NavLink';
+import { navItemResourceIsActive } from './utils';
 
 export const NavItemResource: React.FC<NavItemResourceProps> = ({
   model,

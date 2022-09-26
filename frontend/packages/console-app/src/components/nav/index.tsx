@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Nav, NavProps, PageSidebar } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
-import PerspectiveNav from './PerspectiveNav';
 import NavHeader from './NavHeader';
+import PerspectiveNav from './PerspectiveNav';
 
 type NavigationProps = {
   onNavSelect: NavProps['onSelect'];
