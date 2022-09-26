@@ -2,6 +2,7 @@ package serverconfig
 
 import (
 	configv1 "github.com/openshift/api/config/v1"
+	authorizationv1 "k8s.io/api/authorization/v1"
 )
 
 // This file is a copy of the struct within the console operator:
@@ -95,6 +96,7 @@ type Customization struct {
 	// addPage allows customizing actions on the Add page in developer perspective.
 	AddPage       AddPage       `yaml:"addPage,omitempty"`
 	ProjectAccess ProjectAccess `yaml:"projectAccess,omitempty"`
+	Perspectives  []Perspective `yaml:"perspectives,omitempty"`
 }
 
 // QuickStarts contains options for ConsoleQuickStarts resource
@@ -138,6 +140,45 @@ type AddPage struct {
 	// disabledActions is a list of actions that are not shown to users.
 	// Each action in the list is represented by its ID.
 	DisabledActions []string `json:"disabledActions,omitempty" yaml:"disabledActions,omitempty"`
+}
+
+// PerspectiveState defines the visibility state of the perspective. "Enabled" means the perspective is shown.
+// "Disabled" means the Perspective is hidden.
+// "AccessReview" means access review check is required to show or hide a Perspective.
+type PerspectiveState string
+
+const (
+	PerspectiveEnabled      PerspectiveState = "Enabled"
+	PerspectiveDisabled     PerspectiveState = "Disabled"
+	PerspectiveAccessReview PerspectiveState = "AccessReview"
+)
+
+// ResourceAttributesAccessReview defines the visibility of the perspective depending on the access review checks.
+// `required` and  `missing` can work together esp. in the case where the cluster admin
+// wants to show another perspective to users without specific permissions. Out of `required` and `missing` atleast one property should be non-empty.
+type ResourceAttributesAccessReview struct {
+	// required defines a list of permission checks. The perspective will only be shown when all checks are successful. When omitted, the access review is skipped and the perspective will not be shown unless it is required to do so based on the configuration of the missing access review list.
+	Required []authorizationv1.ResourceAttributes `json:"required" yaml:"required"`
+	// missing defines a list of permission checks. The perspective will only be shown when at least one check fails. When omitted, the access review is skipped and the perspective will not be shown unless it is required to do so based on the configuration of the required access review list.
+	Missing []authorizationv1.ResourceAttributes `json:"missing" yaml:"missing"`
+}
+
+// PerspectiveVisibility defines the criteria to show/hide a perspective.
+type PerspectiveVisibility struct {
+	// state defines the perspective is enabled or disabled or access review check is required.
+	State PerspectiveState `json:"state" yaml:"state"`
+	// accessReview defines required and missing access review checks.
+	AccessReview *ResourceAttributesAccessReview `json:"accessReview,omitempty" yaml:"accessReview,omitempty"`
+}
+
+type Perspective struct {
+	// id defines the id of the perspective.
+	// Example: "dev", "admin".
+	// The available perspective ids can be found in the code snippet section next to the yaml editor.
+	// Incorrect or unknown ids will be ignored.
+	ID string `json:"id" yaml:"id"`
+	// visibility defines the state of perspective along with access review checks if needed for that perspective.
+	Visibility PerspectiveVisibility `json:"visibility" yaml:"visibility"`
 }
 
 type Providers struct {

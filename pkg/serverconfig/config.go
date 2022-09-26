@@ -323,6 +323,15 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 			fs.Set("project-access-cluster-roles", string(projectAccessClusterRoles))
 		}
 	}
+
+	if customization.Perspectives != nil {
+		perspectives, err := json.Marshal(customization.Perspectives)
+		if err != nil {
+			klog.Fatalf("Could not marshal ConsoleConfig customization.perspectives field: %v", err)
+		} else {
+			fs.Set("perspectives", string(perspectives))
+		}
+	}
 }
 
 func isAlreadySet(fs *flag.FlagSet, name string) bool {
