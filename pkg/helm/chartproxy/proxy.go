@@ -77,7 +77,7 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 	if err != nil {
 		return nil, err
 	}
-
+	annotations := make(map[string]string)
 	indexFile := repo.NewIndexFile()
 	var delKeys []string = make([]string, 0, 20)
 	for _, helmRepo := range helmRepos {
@@ -85,6 +85,10 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 		if !helmRepo.Disabled {
 			idxFile, err := helmRepo.IndexFile()
 			if err != nil {
+				if _, ok := annotations[helmRepo.Name]; !ok {
+					annotations[helmRepo.Name] = "The repository seems to be invalid or unreachable. Please check the url"
+				}
+				indexFile.Annotations = annotations
 				klog.Errorf("Error retrieving index file for %v: %v", helmRepo, err)
 				continue
 			}
