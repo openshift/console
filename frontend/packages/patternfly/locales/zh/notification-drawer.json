@@ -1,6 +1,7 @@
 {
   "Notifications": "通知",
-  "{{count}} unread_0": "{{count}} 未读",
+  "{{count}} unread_one": "{{count}} 个未读",
+  "{{count}} unread_other": "{{count}} 个未读",
   "Close": "关闭",
   "Warning notification:": "警告通知：",
   "Critical notification:": "关键通知：",
