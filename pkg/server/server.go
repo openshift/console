@@ -109,6 +109,7 @@ type jsGlobals struct {
 	I18nNamespaces                  []string                   `json:"i18nNamespaces"`
 	QuickStarts                     string                     `json:"quickStarts"`
 	ProjectAccessClusterRoles       string                     `json:"projectAccessClusterRoles"`
+	Perspectives                    string                     `json:"perspectives"`
 	Clusters                        []string                   `json:"clusters"`
 	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
@@ -171,6 +172,7 @@ type Server struct {
 	QuickStarts                  string
 	AddPage                      string
 	ProjectAccessClusterRoles    string
+	Perspectives                 string
 	Telemetry                    serverconfig.MultiKeyValue
 }
 
@@ -726,6 +728,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		QuickStarts:                s.QuickStarts,
 		AddPage:                    s.AddPage,
 		ProjectAccessClusterRoles:  s.ProjectAccessClusterRoles,
+		Perspectives:               s.Perspectives,
 		Clusters:                   clusters,
 		Telemetry:                  s.Telemetry,
 		ReleaseVersion:             s.ReleaseVersion,

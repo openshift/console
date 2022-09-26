@@ -44,6 +44,7 @@ declare interface Window {
     GOOS: string;
     graphqlBaseURL: string;
     developerCatalogCategories: string;
+    perspectives: string;
     userSettingsLocation: string;
     addPage: string; // JSON encoded configuration
     consolePlugins: string[]; // Console dynamic plugins enabled on the cluster

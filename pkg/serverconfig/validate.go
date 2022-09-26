@@ -29,6 +29,10 @@ func Validate(fs *flag.FlagSet) error {
 		return err
 	}
 
+	if _, err := validatePerspectives(fs.Lookup("perspectives").Value.String()); err != nil {
+		return err
+	}
+
 	if _, err := validateControlPlaneTopology(fs.Lookup("control-plane-topology-mode").Value.String()); err != nil {
 		return err
 	}
@@ -125,6 +129,39 @@ func validateProjectAccessClusterRolesJSON(value string) ([]string, error) {
 	}
 
 	return projectAccessOptions, nil
+}
+
+func validatePerspectives(value string) ([]Perspective, error) {
+	if value == "" {
+		return nil, nil
+	}
+	var perspectives []Perspective
+
+	decoder := json.NewDecoder(strings.NewReader(value))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&perspectives); err != nil {
+		return nil, err
+	}
+
+	for perspectiveIndex, perspective := range perspectives {
+		if perspective.ID == "" {
+			return perspectives, fmt.Errorf("Perspective at index %d must have id property.", perspectiveIndex)
+		}
+		if perspective.Visibility.State == "" {
+			return perspectives, fmt.Errorf("Perspective id %s must have visibility property.", perspective.ID)
+		}
+		if perspective.Visibility.State != PerspectiveDisabled && perspective.Visibility.State != PerspectiveEnabled && perspective.Visibility.State != PerspectiveAccessReview {
+			return perspectives, fmt.Errorf("Perspective state for id %s must have value \"Enabled\" or \"Disabled\" or \"AccessReview\".", perspective.ID)
+		}
+		if perspective.Visibility.State == "AccessReview" && perspective.Visibility.AccessReview == nil {
+			return perspectives, fmt.Errorf("Perspective accessReview for id %s must be configured for state AccessReview.", perspective.ID)
+		}
+		if perspective.Visibility.State == "AccessReview" && len(perspective.Visibility.AccessReview.Required) == 0 && len(perspective.Visibility.AccessReview.Missing) == 0 {
+			return perspectives, fmt.Errorf("Perspective accessReview for id %s must have atleast required or missing property as non-empty.", perspective.ID)
+		}
+	}
+
+	return perspectives, nil
 }
 
 func ValidateManagedClusterConfig(managedCluster ManagedClusterConfig) error {
