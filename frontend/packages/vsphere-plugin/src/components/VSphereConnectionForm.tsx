@@ -9,21 +9,22 @@ import { VSphereConnectionProps } from './types';
 
 import './VSphereConnectionForm.css';
 
-export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?: string }> = ({
+export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
   cloudProviderConfig,
-  formId,
 }) => {
   const { t } = useTranslation();
+  const formId = 'vsphere-connection-modal-form';
+
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const [SecretModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'Secret' });
-  const vcenterRef = React.useRef(null);
+  const [secretModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'Secret' });
+  const vcenterRef = React.useRef<HTMLInputElement>(null);
 
   const {
     vcenter,
     username,
     password,
     datacenter,
-    defaultdatastore,
+    defaultDatastore,
     folder,
 
     setDirty,
@@ -31,14 +32,12 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
     setUsername,
     setPassword,
     setDatacenter,
-    setDefaultdatastore,
+    setDefaultDatastore,
     setFolder,
   } = useConnectionFormContext();
 
   React.useEffect(() => {
-    if (vcenterRef && vcenterRef.current) {
-      (vcenterRef.current as HTMLInputElement).focus();
-    }
+    vcenterRef?.current?.focus();
   }, []);
 
   // initial load
@@ -59,21 +58,21 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
           setUsername,
           setPassword,
           setDatacenter,
-          setDefaultdatastore,
+          setDefaultDatastore,
           setFolder,
         },
-        SecretModel,
+        secretModel,
         cloudProviderConfig,
       );
     };
 
     doItAsync();
   }, [
-    SecretModel,
+    secretModel,
     cloudProviderConfig,
     isLoaded,
     setDatacenter,
-    setDefaultdatastore,
+    setDefaultDatastore,
     setDirty,
     setFolder,
     setPassword,
@@ -84,8 +83,8 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
   const folderHelperText = (
     <Trans i18nKey="vsphere-plugin~vsphere-connection-form-folderhelp-one">
       Provide <b>datacenter</b> folder which contains VMs of the cluster, example: /
-      <span className="vsphere-connection-form-helper__datacenter">{{ datacenter }}</span>/<b>vm</b>
-      /<b>[MY_VMS_TOP_FOLDER]</b>.
+      <span className="plugin-vsphere-form-helper__datacenter">{{ datacenter }}</span>/<b>vm</b>/
+      <b>[MY_VMS_TOP_FOLDER]</b>.
     </Trans>
   );
 
@@ -134,7 +133,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
                   "vsphere-plugin~Enter the network address the vCenter is running on. It can either be a domain name or IP. If you're unsure, you can try to determine the value from the vSphere Web Client address. Example: ",
                 )}
                 <ul>
-                  <li> https://[your_vCenter_address]/ui</li>
+                  <li>https://[your_vCenter_address]/ui</li>
                 </ul>
               </>
             }
@@ -214,8 +213,8 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
           type="text"
           id="connection-defaultdatastore"
           name="defaultdatastore"
-          value={defaultdatastore}
-          onChange={setDefaultdatastore}
+          value={defaultDatastore}
+          onChange={setDefaultDatastore}
         />
       </FormGroup>
       <FormGroup

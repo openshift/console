@@ -12,13 +12,13 @@ import {
   VSPHERE_CREDS_SECRET_NAME,
   VSPHERE_CREDS_SECRET_NAMESPACE,
 } from '../constants';
-import { ConfigMap, KubeControllerManager, KubeControllerManagerModel, Secret } from '../resources';
+import { ConfigMap, KubeControllerManager, Secret } from '../resources';
 import { ConnectionFormContextValues } from './types';
 import { encodeBase64, mergeCloudProviderConfig } from './utils';
 
 const persistSecret = async (
   t: TFunction,
-  SecretModel: K8sModel,
+  secretModel: K8sModel,
   config: ConnectionFormContextValues,
 ): Promise<string | undefined> => {
   const { vcenter, username, password } = config;
@@ -33,7 +33,7 @@ const persistSecret = async (
 
   try {
     const secret = await k8sGet<Secret>({
-      model: SecretModel,
+      model: secretModel,
       name: VSPHERE_CREDS_SECRET_NAME,
       ns: VSPHERE_CREDS_SECRET_NAMESPACE,
     });
@@ -41,7 +41,7 @@ const persistSecret = async (
     // Found - do PATCH
     try {
       await k8sPatch({
-        model: SecretModel,
+        model: secretModel,
         resource: secret,
         data: [
           {
@@ -57,8 +57,8 @@ const persistSecret = async (
   } catch (e) {
     // Not found, create one
     const data: Secret = {
-      apiVersion: SecretModel.apiVersion, // 'v1',
-      kind: SecretModel.kind,
+      apiVersion: secretModel.apiVersion, // 'v1',
+      kind: secretModel.kind,
       metadata: {
         name: VSPHERE_CREDS_SECRET_NAME,
         namespace: VSPHERE_CREDS_SECRET_NAMESPACE,
@@ -68,7 +68,7 @@ const persistSecret = async (
 
     try {
       await k8sCreate({
-        model: SecretModel,
+        model: secretModel,
         data,
       });
     } catch (e2) {
@@ -83,10 +83,13 @@ const persistSecret = async (
 };
 
 /** oc patch kubecontrollermanager cluster -p='{"spec": {"forceRedeploymentReason": "recovery-'"$( date --rfc-3339=ns )"'"}}' --type=merge */
-const patchKubeControllerManager = async (t: TFunction): Promise<string | undefined> => {
+const patchKubeControllerManager = async (
+  t: TFunction,
+  kubeControllerManagerModel: K8sModel,
+): Promise<string | undefined> => {
   try {
     const cm = await k8sGet<KubeControllerManager>({
-      model: KubeControllerManagerModel,
+      model: kubeControllerManagerModel,
       name: KUBE_CONTROLLER_MANAGER_NAME,
     });
 
@@ -99,7 +102,7 @@ const patchKubeControllerManager = async (t: TFunction): Promise<string | undefi
     cm.spec.forceRedeploymentReason = `recovery-${date}`;
 
     await k8sPatch({
-      model: KubeControllerManagerModel,
+      model: kubeControllerManagerModel,
       resource: {
         metadata: {
           name: KUBE_CONTROLLER_MANAGER_NAME,
@@ -122,11 +125,11 @@ const patchKubeControllerManager = async (t: TFunction): Promise<string | undefi
 
 const persistProviderConfigMap = async (
   t: TFunction,
-  ConfigMapModel: K8sModel,
+  configMapModel: K8sModel,
   config: ConnectionFormContextValues,
   cloudProviderConfig?: ConfigMap,
 ): Promise<string | undefined> => {
-  const { vcenter, datacenter, defaultdatastore, folder } = config;
+  const { vcenter, datacenter, defaultDatastore, folder } = config;
 
   if (cloudProviderConfig) {
     const configIniString = mergeCloudProviderConfig(
@@ -136,7 +139,7 @@ const persistProviderConfigMap = async (
 
     try {
       await k8sPatch({
-        model: ConfigMapModel,
+        model: configMapModel,
         resource: {
           metadata: {
             name: VSPHERE_CONFIGMAP_NAME,
@@ -166,7 +169,7 @@ insecure-flag = "1"
 [Workspace]
 server = "${vcenter}"
 datacenter = "${datacenter}"
-default-datastore = "${defaultdatastore}"
+default-datastore = "${defaultDatastore}"
 folder = "${folder}"
 
 [VirtualCenter "${vcenter}"]
@@ -187,7 +190,7 @@ datacenters = "${datacenter}"
 
     try {
       await k8sCreate({
-        model: ConfigMapModel,
+        model: configMapModel,
         data,
       });
     } catch (e) {
@@ -201,20 +204,22 @@ datacenters = "${datacenter}"
 export const persist = async (
   t: TFunction,
   {
-    SecretModel,
-    ConfigMapModel,
+    secretModel,
+    configMapModel,
+    kubeControllerManagerModel,
   }: {
-    SecretModel: K8sModel;
-    ConfigMapModel: K8sModel;
+    secretModel: K8sModel;
+    configMapModel: K8sModel;
+    kubeControllerManagerModel: K8sModel;
   },
   config: ConnectionFormContextValues,
   cloudProviderConfig?: ConfigMap,
 ): Promise<string | undefined> => {
   // return "undefined" if success
   return (
-    (await persistSecret(t, SecretModel, config)) ||
-    (await patchKubeControllerManager(t)) ||
+    (await persistSecret(t, secretModel, config)) ||
+    (await patchKubeControllerManager(t, kubeControllerManagerModel)) ||
     // eslint-disable-next-line no-return-await
-    (await persistProviderConfigMap(t, ConfigMapModel, config, cloudProviderConfig))
+    (await persistProviderConfigMap(t, configMapModel, config, cloudProviderConfig))
   );
 };

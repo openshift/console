@@ -5,8 +5,6 @@ import { VSPHERE_FEATURE_FLAG, VSPHERE_PLATFORM } from './constants';
 import { Infrastructure } from './resources';
 
 export const useVSphereFlagHandler = (setFeatureFlag: SetFeatureFlag) => {
-  // eslint-disable-next-line no-console
-  console.log('useVSphereFlagHandler called', setFeatureFlag);
   const [InfrastructureModel] = useK8sModel({
     group: 'config.openshift.io',
     version: 'v1',

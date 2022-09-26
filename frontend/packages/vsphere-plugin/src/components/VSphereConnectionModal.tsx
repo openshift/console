@@ -20,12 +20,17 @@ import { VSphereConnectionForm } from './VSphereConnectionForm';
 import { VSphereOperatorStatuses } from './VSphereOperatorStatuses';
 import './VSphereConnectionModal.css';
 
-export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params) => {
+export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (props) => {
   const { t } = useTranslation();
   const [isModalOpen, setModalOpen] = React.useState(true);
 
-  const [SecretModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'Secret' });
-  const [ConfigMapModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'ConfigMap' });
+  const [secretModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'Secret' });
+  const [configMapModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'ConfigMap' });
+  const [kubeControllerManagerModel] = useK8sModel({
+    group: 'operator.openshift.io',
+    version: 'v1',
+    kind: 'KubeControllerManager',
+  });
 
   const [isSaving, setIsSaving] = React.useState(false);
   const [error, setError] = React.useState<string>();
@@ -35,19 +40,17 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
     username,
     password,
     datacenter,
-    defaultdatastore,
+    defaultDatastore,
     folder,
     isDirty,
     setDirty,
   } = useConnectionFormContext();
 
-  const formId = 'vsphere-connection-modal-form';
-
   const onClose = () => {
     setModalOpen(false);
 
     // hide popup
-    params.hide && params.hide();
+    props.hide?.();
   };
 
   const onSave = () => {
@@ -57,16 +60,16 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
 
       const errorMsg = await persist(
         t,
-        { SecretModel, ConfigMapModel },
+        { secretModel, configMapModel, kubeControllerManagerModel },
         {
           vcenter,
           username,
           password,
           datacenter,
-          defaultdatastore,
+          defaultDatastore,
           folder,
         },
-        params.cloudProviderConfig,
+        props.cloudProviderConfig,
       );
 
       // Done
@@ -74,7 +77,6 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
 
       if (errorMsg) {
         setError(errorMsg);
-        setIsSaving(false);
         return;
       }
 
@@ -86,14 +88,14 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
   };
 
   let alert;
-  if (!error && !isSaving && params.health.state === HealthState.WARNING) {
+  if (!error && !isSaving && props.health.state === HealthState.WARNING) {
     alert = (
       <Alert
         isInline
         title={t('vsphere-plugin~vSphere Problem Detector (can be outdated)')}
         variant={AlertVariant.warning}
       >
-        {params.health.message}
+        {props.health.message}
       </Alert>
     );
   } else if (error) {
@@ -130,24 +132,24 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
     username?.trim() &&
     password?.trim() &&
     datacenter?.trim() &&
-    defaultdatastore?.trim();
+    defaultDatastore?.trim();
   const isSaveDisabled = isSaving || !isDirty || !allRequiredFieldsAreSet;
 
   const footer = (
     <>
       {isSaving ? <InProgress key="progress" text={t('vsphere-plugin~Saving...')} /> : null}
       <Button key="cancel" variant="link" onClick={onClose}>
-        Cancel
+        {t('vsphere-plugin~Cancel')}
       </Button>
       <Button key="save" variant="primary" isDisabled={isSaveDisabled} onClick={onSave}>
-        Save configuration
+        {t('vsphere-plugin~Save configuration')}
       </Button>
     </>
   );
 
   return (
     <Modal
-      className="vsphere-connection-modal"
+      className="plugin-vsphere-modal"
       variant={ModalVariant.medium}
       position="top"
       title={t('vsphere-plugin~vSphere connection configuration')}
@@ -158,7 +160,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
     >
       <Stack hasGutter>
         <StackItem>
-          <VSphereConnectionForm {...params} formId={formId} />
+          <VSphereConnectionForm {...props} />
         </StackItem>
         <StackItem>
           <VSphereOperatorStatuses />

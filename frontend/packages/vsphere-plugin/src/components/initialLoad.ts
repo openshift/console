@@ -6,13 +6,12 @@ import { decodeBase64, parseKeyValue } from './utils';
 // TODO: Adopt npm/ini package to do following parsing (see persist.ts)
 export const initialLoad = async (
   setters: ConnectionFormContextSetters,
-  SecretModel: K8sModel,
+  secretModel: K8sModel,
   cloudProviderConfig: ConfigMap,
-): Promise<boolean> => {
-  // parse cloudProviderConfig
+): Promise<void> => {
   const config = cloudProviderConfig.data?.config;
   if (!config) {
-    return false;
+    return;
   }
 
   const keyValues = parseKeyValue(config);
@@ -20,50 +19,44 @@ export const initialLoad = async (
   const server = keyValues.server || '';
   const dc = keyValues.datacenter || '';
   const ds = keyValues['default-datastore'] || '';
-  const { folder } = keyValues;
+  const folder = keyValues.folder || '';
+  let username = '';
+  let pwd = '';
 
   // query Secret
-  if (!keyValues['secret-name'] || !keyValues['secret-namespace']) {
-    // still ok??
-    return true;
-  }
+  if (keyValues['secret-name'] && keyValues['secret-namespace']) {
+    // parse secret for username and password
+    try {
+      const secret = await k8sGet<Secret>({
+        model: secretModel,
+        name: keyValues['secret-name'],
+        ns: keyValues['secret-namespace'],
+      });
 
-  // parse secret for username and password
-  try {
-    const secret = await k8sGet<Secret>({
-      model: SecretModel,
-      name: keyValues['secret-name'],
-      ns: keyValues['secret-namespace'],
-    });
+      if (!secret.data) {
+        // eslint-disable-next-line no-console
+        console.error(`Unexpected structure of the "${keyValues['secret-name']}" secret`);
+      }
 
-    if (!secret.data) {
+      const secretKeyValues = secret.data;
+      username = decodeBase64(secretKeyValues[`${server}.username`]);
+      pwd = decodeBase64(secretKeyValues[`${server}.password`]);
+    } catch (e) {
+      // It should be there if referenced
       // eslint-disable-next-line no-console
-      console.error(`Unexpected structure of the "${keyValues['secret-name']}" secret`);
-      return false;
+      console.error(
+        `Failed to load "${keyValues['secret-name']}" from "${keyValues['secret-namespace']}" secret: `,
+        e,
+      );
     }
-
-    const secretKeyValues = secret.data;
-    const username = decodeBase64(secretKeyValues[`${server}.username`]);
-    const pwd = decodeBase64(secretKeyValues[`${server}.password`]);
-
-    setters.setVcenter(server);
-    setters.setDatacenter(dc);
-    setters.setDefaultdatastore(ds);
-    setters.setFolder(folder);
-    setters.setUsername(username);
-    setters.setPassword(pwd);
-
-    setters.setDirty(false);
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(
-      `Failed to load "${keyValues['secret-name']}" from "${keyValues['secret-namespace']}" secret: `,
-      e,
-    );
-
-    // It should be there if referenced
-    return false;
   }
 
-  return true;
+  setters.setVcenter(server);
+  setters.setDatacenter(dc);
+  setters.setDefaultDatastore(ds);
+  setters.setFolder(folder);
+  setters.setUsername(username);
+  setters.setPassword(pwd);
+
+  setters.setDirty(false);
 };

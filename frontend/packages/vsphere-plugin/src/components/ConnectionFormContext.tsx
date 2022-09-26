@@ -10,7 +10,7 @@ export const ConnectionFormContextProvider: React.FC<{
   const [username, setUsername] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [datacenter, setDatacenter] = React.useState<string>('');
-  const [defaultdatastore, setDefaultdatastore] = React.useState<string>('');
+  const [defaultDatastore, setDefaultDatastore] = React.useState<string>('');
   const [folder, setFolder] = React.useState<string>('');
   const [isDirty, setDirty] = React.useState(false);
 
@@ -43,10 +43,10 @@ export const ConnectionFormContextProvider: React.FC<{
         setDatacenter(v);
       },
 
-      defaultdatastore,
-      setDefaultdatastore: (v) => {
+      defaultDatastore,
+      setDefaultDatastore: (v) => {
         setDirty(true);
-        setDefaultdatastore(v);
+        setDefaultDatastore(v);
       },
 
       folder,
@@ -55,7 +55,7 @@ export const ConnectionFormContextProvider: React.FC<{
         setFolder(v);
       },
     }),
-    [datacenter, defaultdatastore, folder, isDirty, password, username, vcenter],
+    [datacenter, defaultDatastore, folder, isDirty, password, username, vcenter],
   );
 
   return <ConnectionFormContext.Provider value={value}>{children}</ConnectionFormContext.Provider>;

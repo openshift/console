@@ -8,7 +8,7 @@ export type ConnectionFormContextSetters = {
   setUsername: (v: string) => void;
   setPassword: (v: string) => void;
   setDatacenter: (v: string) => void;
-  setDefaultdatastore: (v: string) => void;
+  setDefaultDatastore: (v: string) => void;
   setFolder: (v: string) => void;
 };
 
@@ -17,7 +17,7 @@ export type ConnectionFormContextValues = {
   username: string;
   password: string;
   datacenter: string;
-  defaultdatastore: string;
+  defaultDatastore: string;
   folder: string;
 };
 

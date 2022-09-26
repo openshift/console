@@ -14,15 +14,13 @@ import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
-  k8sGet,
   StatusPopupItem,
   StatusPopupSection,
+  useK8sWatchResource,
 } from '@console/dynamic-plugin-sdk/src/api/core-api';
-import { ClusterOperatorModel } from '@console/internal/models';
 import { ClusterOperator } from '@console/internal/module/k8s';
-import { DELAY_BEFORE_POLLING_RETRY_MEDIUM } from '../constants';
-import { BooleanString, CONSOLE_PREFIX_CLUSTER_OPERATOR, getCondition } from '../resources';
-import { delay } from './utils';
+import { CONSOLE_PREFIX_CLUSTER_OPERATOR, getCondition } from '../resources';
+import { K8sResourceConditionStatus } from '../resources/k8sResource';
 
 let ohlCounter = 0;
 const OperatorHealthLevel: { [key: string]: number } = {
@@ -51,89 +49,85 @@ const getWorstIconState = (states: OperatorHealthType[]): OperatorHealthType['ic
   return worst.icon;
 };
 
-const getOperatorHealth = async (t: TFunction, name: string): Promise<OperatorHealthType> => {
-  try {
-    const operator = await k8sGet<ClusterOperator>({ model: ClusterOperatorModel, name });
+const useOperatorHealth = (t: TFunction, name: string): OperatorHealthType => {
+  const [operator, isLoaded, error] = useK8sWatchResource<ClusterOperator>({
+    groupVersionKind: { group: 'config.openshift.io', version: 'v1', kind: 'ClusterOperator' },
+    name,
+    isList: false,
+    namespaced: false,
+  });
 
-    const progressing = getCondition(operator, 'Progressing')?.status as BooleanString | undefined;
-    const available = getCondition(operator, 'Available')?.status as BooleanString | undefined;
-    const degraded = getCondition(operator, 'Degraded')?.status as BooleanString | undefined;
-
-    if (progressing === 'True') {
-      return {
-        message: t('vsphere-plugin~Progressing'),
-        icon: <InProgressIcon />,
-        level: OperatorHealthLevel.Progressing,
-      };
-    }
-
-    if (degraded === 'True') {
-      return {
-        message: t('vsphere-plugin~Degraded'),
-        icon: <ExclamationCircleIcon color={errorColor.value} />,
-        level: OperatorHealthLevel.Degraded,
-      };
-    }
-
-    if (available === 'True') {
-      return {
-        message: t('vsphere-plugin~Healthy'),
-        icon: <CheckCircleIcon color={okColor.value} />,
-        level: OperatorHealthLevel.Healthy,
-      };
-    }
-
+  if (!isLoaded) {
     return {
-      message: t('vsphere-plugin~Unknown'),
-      icon: <UnknownIcon />,
+      message: t('vsphere-plugin~Pending'),
+      icon: <InProgressIcon />,
       level: OperatorHealthLevel.Unknown,
     };
-  } catch (e) {
+  }
+
+  if (error) {
     // eslint-disable-next-line no-console
-    console.error('Error getting operator status: ', name, e);
+    console.error(`Failed to load operator "${name}": `, error);
     return {
       message: t('vsphere-plugin~Error'),
       icon: <ExclamationCircleIcon color={errorColor.value} />,
       level: OperatorHealthLevel.Error,
     };
   }
+
+  const progressing = getCondition(operator, 'Progressing')?.status as
+    | K8sResourceConditionStatus
+    | undefined;
+  const available = getCondition(operator, 'Available')?.status as
+    | K8sResourceConditionStatus
+    | undefined;
+  const degraded = getCondition(operator, 'Degraded')?.status as
+    | K8sResourceConditionStatus
+    | undefined;
+
+  if (progressing === 'True') {
+    return {
+      message: t('vsphere-plugin~Progressing'),
+      icon: <InProgressIcon />,
+      level: OperatorHealthLevel.Progressing,
+    };
+  }
+
+  if (degraded === 'True') {
+    return {
+      message: t('vsphere-plugin~Degraded'),
+      icon: <ExclamationCircleIcon color={errorColor.value} />,
+      level: OperatorHealthLevel.Degraded,
+    };
+  }
+
+  if (available === 'True') {
+    return {
+      message: t('vsphere-plugin~Healthy'),
+      icon: <CheckCircleIcon color={okColor.value} />,
+      level: OperatorHealthLevel.Healthy,
+    };
+  }
+
+  return {
+    message: t('vsphere-plugin~Unknown'),
+    icon: <UnknownIcon />,
+    level: OperatorHealthLevel.Unknown,
+  };
 };
 
 export const VSphereOperatorStatuses: React.FC = () => {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = React.useState(false);
 
-  const initialHealth = {
-    message: t('vsphere-plugin~Pending'),
-    icon: <InProgressIcon />,
-    level: OperatorHealthLevel.Unknown,
-  };
-  const [kubeControllerManager, setKubeControllerManager] = React.useState<OperatorHealthType>(
-    initialHealth,
-  );
-  const [kubeApiServer, setKubeApiServer] = React.useState<OperatorHealthType>(initialHealth);
-  const [storage, setStorage] = React.useState<OperatorHealthType>(initialHealth);
-
-  const [pollingTimmer, setPollingTimmer] = React.useState<number>(0);
-
-  React.useEffect(() => {
-    const doItAsync = async () => {
-      setKubeControllerManager(await getOperatorHealth(t, 'kube-controller-manager'));
-      setKubeApiServer(await getOperatorHealth(t, 'kube-apiserver'));
-      setStorage(await getOperatorHealth(t, 'storage'));
-
-      await delay(DELAY_BEFORE_POLLING_RETRY_MEDIUM);
-      setPollingTimmer(pollingTimmer + 1);
-    };
-
-    doItAsync();
-  }, [pollingTimmer, t]);
+  const kubeControllerManager = useOperatorHealth(t, 'kube-controller-manager');
+  const kubeApiServer = useOperatorHealth(t, 'kube-apiserver');
+  const storage = useOperatorHealth(t, 'storage');
 
   const onToggle = (value: boolean) => {
     setIsExpanded(value);
   };
 
-  // TODO: calculate from all vSphere-related operators
   const worstIconState = getWorstIconState([kubeApiServer, kubeControllerManager, storage]);
 
   return (

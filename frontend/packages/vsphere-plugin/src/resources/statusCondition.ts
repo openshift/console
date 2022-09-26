@@ -1,4 +1,4 @@
-import { K8sResourceCondition } from '@console/internal/module/k8s';
+import { K8sResourceCondition } from './k8sResource';
 
 export type StatusCondition = {
   status: string;

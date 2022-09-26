@@ -1,15 +1,6 @@
 import { Buffer } from 'buffer';
 import { encode, decode } from 'ini';
-import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
-import { ClusterOperatorModel } from '@console/internal/models';
-import { ClusterOperator } from '@console/internal/module/k8s';
-import {
-  DELAY_BEFORE_POLLING_RETRY,
-  MAX_RETRY_ATTEMPTS_CO,
-  VSPHERE_CREDS_SECRET_NAME,
-  VSPHERE_CREDS_SECRET_NAMESPACE,
-} from '../constants';
-import { getCondition, OperatorStateType } from '../resources';
+import { VSPHERE_CREDS_SECRET_NAME, VSPHERE_CREDS_SECRET_NAMESPACE } from '../constants';
 import { ConnectionFormContextValues } from './types';
 
 export const parseKeyValue = (config: string, delimiter = '='): { [key: string]: string } => {
@@ -34,14 +25,9 @@ export const parseKeyValue = (config: string, delimiter = '='): { [key: string]:
 export const encodeBase64 = (data: string) => Buffer.from(data).toString('base64');
 export const decodeBase64 = (data: string) => Buffer.from(data, 'base64').toString('ascii');
 
-export const delay = (ms: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-
 export const mergeCloudProviderConfig = (
   existingIni: string,
-  { vcenter, datacenter, defaultdatastore, folder }: ConnectionFormContextValues,
+  { vcenter, datacenter, defaultDatastore: defaultdatastore, folder }: ConnectionFormContextValues,
 ): string => {
   const configIni = decode(existingIni);
 
@@ -81,45 +67,4 @@ export const mergeCloudProviderConfig = (
     .join('\n');
 
   return result;
-};
-
-export const waitForClusterOperator = async (
-  name: string,
-  abortSignal: React.MutableRefObject<boolean>,
-  expectedState: OperatorStateType = {
-    /* An undefined value would mean: I don't care */
-    progressing: 'False',
-    degraded: 'False',
-    available: 'True',
-  },
-  maxPollingAttempts: number = MAX_RETRY_ATTEMPTS_CO,
-): Promise<boolean> => {
-  for (let counter = 0; counter < maxPollingAttempts; counter++) {
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      const operator = await k8sGet<ClusterOperator>({ model: ClusterOperatorModel, name });
-      if (
-        (!expectedState.progressing ||
-          getCondition(operator, 'Progressing')?.status === expectedState.progressing) &&
-        (!expectedState.degraded ||
-          getCondition(operator, 'Degraded')?.status === expectedState.degraded) &&
-        (!expectedState.available ||
-          getCondition(operator, 'Available')?.status === expectedState.available)
-      ) {
-        // all good
-        return true;
-      }
-    } catch (e) {
-      // do not report, keep trying
-    }
-
-    if (abortSignal.current) {
-      return false;
-    }
-
-    // eslint-disable-next-line no-await-in-loop
-    await delay(DELAY_BEFORE_POLLING_RETRY);
-  }
-
-  return false;
 };

@@ -7,7 +7,7 @@ const config: ConnectionFormContextValues = {
   password: 'my-password',
   vcenter: 'https://1.2.3.4/something',
   datacenter: 'my-datacenter',
-  defaultdatastore: 'my-default-ds',
+  defaultDatastore: 'my-default-ds',
   folder: '/my/folder',
 };
 

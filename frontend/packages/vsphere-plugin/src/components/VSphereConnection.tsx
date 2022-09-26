@@ -10,7 +10,7 @@ const setPopupVisibility = (v: 'visible' | 'hidden') => {
   style && (style.visibility = v);
 };
 
-export const VSphereConnection: React.FC<VSphereConnectionProps> = (params) => {
+export const VSphereConnection: React.FC<VSphereConnectionProps> = (props) => {
   React.useEffect(
     // Hack to stick with the Health status popup
     () => {
@@ -26,7 +26,7 @@ export const VSphereConnection: React.FC<VSphereConnectionProps> = (params) => {
 
   return (
     <ConnectionFormContextProvider>
-      <VSphereConnectionModal {...params} />
+      <VSphereConnectionModal {...props} />
     </ConnectionFormContextProvider>
   );
 };

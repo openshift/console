@@ -1,7 +1,3 @@
-.vsphere-connection-form-helper__datacenter {
-    color: blue;
-}
-
-.vsphere-connection-form-helper__datastore {
+.plugin-vsphere-form-helper__datacenter {
     color: blue;
 }
