@@ -180,18 +180,22 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
     );
     if (dataVolumeTemplate) {
       const dataVolumeWrapper = new DataVolumeWrapper(dataVolumeTemplate);
-      return supportedDVSources.includes(dataVolumeWrapper.getType())
-        ? {
-            source: SOURCE_TYPE.DATA_VOLUME_TEMPLATE,
-            provider: customTemplateProvider,
-            isReady: true,
-            dvTemplate: dataVolumeWrapper.asResource(),
-            isCDRom: isCDRom(dataVolumeWrapper.asResource(), null),
-            addedOn: getCreationTimestamp(template),
-          }
-        : {
-            error: 'Source not supported.',
-          };
+
+      if (
+        supportedDVSources.includes(dataVolumeWrapper.getType()) ||
+        dataVolumeTemplate?.spec?.sourceRef
+      )
+        return {
+          source: SOURCE_TYPE.DATA_VOLUME_TEMPLATE,
+          provider: customTemplateProvider,
+          isReady: true,
+          dvTemplate: dataVolumeWrapper.asResource(),
+          isCDRom: isCDRom(dataVolumeWrapper.asResource(), null),
+          addedOn: getCreationTimestamp(template),
+        };
+      return {
+        error: 'Source not supported.',
+      };
     }
     const dataVolume = dataVolumes.find(
       ({ metadata }) =>
