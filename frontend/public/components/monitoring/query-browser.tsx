@@ -372,7 +372,7 @@ const Graph: React.FC<GraphProps> = React.memo(
         _.every(series, ([, values]) => _.every(values, { y: 0 })),
       );
       if (isAllZero) {
-        domain.y = [-1, 1];
+        domain.y = [0, 1];
       }
     } else {
       // Set a reasonable Y-axis range based on the min and max values in the data
@@ -381,7 +381,7 @@ const Graph: React.FC<GraphProps> = React.memo(
       let minY: number = findMin(data.map(findMin))?.y ?? 0;
       let maxY: number = findMax(data.map(findMax))?.y ?? 0;
       if (minY === 0 && maxY === 0) {
-        minY = -1;
+        minY = 0;
         maxY = 1;
       } else if (minY > 0 && maxY > 0) {
         minY = 0;
