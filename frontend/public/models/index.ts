@@ -1248,7 +1248,7 @@ export const ConsolePluginModel: K8sKind = {
   label: 'ConsolePlugin',
   // t('public~ConsolePlugin')
   labelKey: 'public~ConsolePlugin',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1',
   apiGroup: 'console.openshift.io',
   plural: 'consoleplugins',
   abbr: 'CP',

@@ -1113,12 +1113,33 @@ export type NetworkPolicyPort = {
 export type ConsolePluginKind = K8sResourceCommon & {
   spec: {
     displayName: string;
+    backend: {
+      service: {
+        basePath: string;
+        name: string;
+        namespace: string;
+        port: number;
+      };
+      type: 'Service';
+    };
+    i18n: {
+      loadType: 'Preload' | 'Lazy' | '';
+    };
+    proxy: ConsolePluginProxy[];
+  };
+};
+
+export type ConsolePluginProxy = {
+  alias: string;
+  authorization: 'UserToken' | 'None';
+  caCertificate: string;
+  endpoint: {
     service: {
-      basePath: string;
       name: string;
       namespace: string;
-      port: number;
+      port: string;
     };
+    type: 'Service';
   };
 };
 
