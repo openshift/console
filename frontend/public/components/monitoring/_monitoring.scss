@@ -495,6 +495,10 @@ $monitoring-line-height: 18px;
   }
 }
 
+.query-browser__table-wrapper .query-browser__series-select-all-btn {
+  margin-top: var(--pf-global--spacer--md);
+}
+
 .query-browser__table-message {
   border-bottom: solid 1px var(--pf-global--BorderColor--100);
   padding: 10px 20px;
@@ -590,6 +594,7 @@ $monitoring-line-height: 18px;
   &:focus {
     outline: none;
   }
+  height: 200px;
 }
 
 .query-browser__zoom-overlay {

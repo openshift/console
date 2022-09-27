@@ -55,6 +55,7 @@ import {
   queryBrowserRunQueries,
   queryBrowserSetAllExpanded,
   queryBrowserSetPollInterval,
+  queryBrowserToggleAllSeries,
   queryBrowserToggleIsEnabled,
   queryBrowserToggleSeries,
   toggleGraphs,
@@ -222,9 +223,6 @@ const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
   const isEnabled = useSelector(({ observe }: RootState) =>
     observe.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
   );
-  const series = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'series']),
-  );
 
   const dispatch = useDispatch();
 
@@ -233,15 +231,10 @@ const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
     index,
   ]);
 
-  const toggleAllSeries = React.useCallback(
-    () =>
-      dispatch(
-        queryBrowserPatchQuery(index, {
-          disabledSeries: isDisabledSeriesEmpty ? series : [],
-        }),
-      ),
-    [dispatch, index, isDisabledSeriesEmpty, series],
-  );
+  const toggleAllSeries = React.useCallback(() => dispatch(queryBrowserToggleAllSeries(index)), [
+    dispatch,
+    index,
+  ]);
 
   const doDelete = React.useCallback(() => {
     dispatch(queryBrowserDeleteQuery(index));
@@ -308,6 +301,17 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
 
   const lastRequestTime = useSelector(({ observe }: RootState) =>
     observe.getIn(['queryBrowser', 'lastRequestTime']),
+  );
+
+  const dispatch = useDispatch();
+
+  const toggleAllSeries = React.useCallback(() => dispatch(queryBrowserToggleAllSeries(index)), [
+    dispatch,
+    index,
+  ]);
+
+  const isDisabledSeriesEmpty = useSelector(({ observe }: RootState) =>
+    _.isEmpty(observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
   );
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
@@ -444,6 +448,14 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
     <>
       <div className="query-browser__table-wrapper">
         <div className="horizontal-scroll">
+          <Button
+            variant="link"
+            isInline
+            onClick={toggleAllSeries}
+            className="query-browser__series-select-all-btn"
+          >
+            {isDisabledSeriesEmpty ? t('public~Unselect all') : t('public~Select all')}
+          </Button>
           <Table
             aria-label={t('public~query results table')}
             cells={columns}
