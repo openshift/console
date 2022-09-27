@@ -90,7 +90,7 @@ type Customization struct {
 	DocumentationBaseURL string `yaml:"documentationBaseURL,omitempty"`
 	CustomProductName    string `yaml:"customProductName,omitempty"`
 	CustomLogoFile       string `yaml:"customLogoFile,omitempty"`
-	// developerCatalog allows to configure the shown developer catalog categories.
+	// developerCatalog allows to configure the shown developer catalog categories and it's types.
 	DeveloperCatalog DeveloperConsoleCatalogCustomization `yaml:"developerCatalog,omitempty"`
 	QuickStarts      QuickStarts                          `yaml:"quickStarts,omitempty"`
 	// addPage allows customizing actions on the Add page in developer perspective.
@@ -109,10 +109,40 @@ type ProjectAccess struct {
 	AvailableClusterRoles []string `json:"availableClusterRoles,omitempty" yaml:"availableClusterRoles,omitempty"`
 }
 
+// CatalogTypesState defines the state of the catalog types based on which the types will be enabled or disabled.
+type CatalogTypesState string
+
+const (
+	CatalogTypeEnabled  CatalogTypesState = "Enabled"
+	CatalogTypeDisabled CatalogTypesState = "Disabled"
+)
+
+// DeveloperConsoleCatalogTypesState defines the state of the sub-catalog types.
+type DeveloperConsoleCatalogTypesState struct {
+	// state defines if a list of catalog types should be enabled or disabled.
+	State CatalogTypesState `json:"state,omitempty" yaml:"state,omitempty"`
+	// enabled is a list of developer catalog types (sub-catalogs IDs) that will be shown to users.
+	// Types (sub-catalogs) are added via console plugins, the available types (sub-catalog IDs) are available
+	// in the console on the cluster configuration page, or when editing the YAML in the console.
+	// Example: "Devfile", "HelmChart", "BuilderImage"
+	// If the list is non-empty, a new type will not be shown to the user until it is added to list.
+	// If the list is empty the complete developer catalog will be shown.
+	Enabled *[]string `json:"enabled,omitempty" yaml:"enabled,omitempty"`
+	// disabled is a list of developer catalog types (sub-catalogs IDs) that are not shown to users.
+	// Types (sub-catalogs) are added via console plugins, the available types (sub-catalog IDs) are available
+	// in the console on the cluster configuration page, or when editing the YAML in the console.
+	// Example: "Devfile", "HelmChart", "BuilderImage"
+	// If the list is empty or all the available sub-catalog types are added, then the complete developer catalog should be hidden.
+	Disabled *[]string `json:"disabled,omitempty" yaml:"disabled,omitempty"`
+}
+
 // DeveloperConsoleCatalogCustomization allow cluster admin to configure developer catalog.
 type DeveloperConsoleCatalogCustomization struct {
 	// categories which are shown the in developer catalog.
 	Categories []DeveloperConsoleCatalogCategory `json:"categories,omitempty" yaml:"categories,omitempty"`
+	// types allows enabling or disabling of sub-catalog types that user can see in the Developer catalog.
+	// When omitted, all the sub-catalog types will be shown.
+	Types DeveloperConsoleCatalogTypesState `json:"types,omitempty" yaml:"types,omitempty"`
 }
 
 // DeveloperConsoleCatalogCategoryMeta are the key identifiers of a developer catalog category.

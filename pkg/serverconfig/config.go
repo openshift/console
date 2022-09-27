@@ -299,6 +299,15 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 		}
 	}
 
+	if (customization.DeveloperCatalog.Types != DeveloperConsoleCatalogTypesState{}) {
+		types, err := json.Marshal(customization.DeveloperCatalog.Types)
+		if err == nil {
+			fs.Set("developer-catalog-types", string(types))
+		} else {
+			klog.Fatalf("Could not marshal ConsoleConfig customization.developerCatalog.types field: %v", err)
+		}
+	}
+
 	if customization.QuickStarts.Disabled != nil {
 		quickStarts, err := json.Marshal(customization.QuickStarts)
 		if err == nil {
