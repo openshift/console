@@ -582,7 +582,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
           onClose={closeOverlay}
           title={detailsItem.name}
         >
-          <OperatorHubItemDetails namespace={props.namespace} item={detailsItem} />
+          <OperatorHubItemDetails item={detailsItem} />
         </Modal>
       )}
     </>
