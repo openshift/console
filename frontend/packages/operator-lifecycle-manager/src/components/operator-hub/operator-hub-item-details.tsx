@@ -63,7 +63,6 @@ type CapabilityLevelProps = {
 
 const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
   latestVersion,
-  namespace,
   subscription,
 }) => {
   const { t } = useTranslation();
@@ -74,7 +73,7 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
     isList: false,
     namespaced: true,
   });
-  const nsPath = `/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}`;
+  const nsPath = `/k8s/ns/${subscription.metadata.namespace}`;
   const to = installedCSV
     ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name ?? ''}`
     : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
@@ -99,10 +98,7 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
   );
 };
 
-const InstallingHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
-  namespace,
-  subscription,
-}) => {
+const InstallingHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({ subscription }) => {
   const { t } = useTranslation();
   const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>(
     subscription?.status?.installedCSV
@@ -115,7 +111,7 @@ const InstallingHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
         }
       : null,
   );
-  const nsPath = `/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}`;
+  const nsPath = `/k8s/ns/${subscription.metadata.namespace}`;
   const to = installedCSV
     ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name}/subscription`
     : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
@@ -184,10 +180,7 @@ const OperatorHubItemDetailsHintBlock: React.FC<OperatorHubItemDetailsHintBlockP
   return null;
 };
 
-export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
-  item,
-  namespace,
-}) => {
+export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({ item }) => {
   const { t } = useTranslation();
   const {
     capabilityLevel,
@@ -299,7 +292,6 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                 installed={installed}
                 isInstalling={isInstalling}
                 latestVersion={version}
-                namespace={namespace}
                 catalogSource={catalogSource}
                 subscription={subscription}
               />
@@ -319,13 +311,11 @@ type OperatorHubItemDetailsHintBlockProps = {
   installed: boolean;
   isInstalling: boolean;
   latestVersion: string;
-  namespace: string;
   catalogSource: string;
   subscription: SubscriptionKind;
 };
 
 export type OperatorHubItemDetailsProps = {
-  namespace?: string;
   item: OperatorHubItem;
 };
 
