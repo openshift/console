@@ -87,12 +87,12 @@ describe('Monitoring: Alerts', () => {
     // launches page form
     cy.byTestID('start-immediately').should('be.checked');
     cy.byTestID('from').should('have.value', 'Now');
-    cy.byLegacyTestID('dropdown-button').should('contain', '2h');
+    cy.byTestID('for').should('contain', '2h');
     cy.byTestID('until').should('have.value', '2h from now');
     // Change duration
-    cy.byLegacyTestID('dropdown-button')
+    cy.byTestID('for')
       .click()
-      .get('[data-test-dropdown-menu="1h"]')
+      .contains(/^1h$/)
       .click();
     cy.byTestID('until').should('have.value', '1h from now');
     // Change to not start now
@@ -118,9 +118,9 @@ describe('Monitoring: Alerts', () => {
     cy.byTestID('start-immediately').should('be.checked');
     cy.byTestID('until').should('have.value', '1h from now');
     // Change duration back again
-    cy.byLegacyTestID('dropdown-button')
+    cy.byTestID('for')
       .click()
-      .get('[data-test-dropdown-menu="2h"]')
+      .contains(/^2h$/)
       .click();
     cy.byTestID('until').should('have.value', '2h from now');
     // add comment and submit
