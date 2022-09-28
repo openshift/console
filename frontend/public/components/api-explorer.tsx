@@ -6,7 +6,14 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Map as ImmutableMap } from 'immutable';
 import * as fuzzy from 'fuzzysearch';
-import { Tooltip } from '@patternfly/react-core';
+import {
+  Tooltip,
+  Toolbar,
+  ToolbarContent,
+  ToolbarItem,
+  ToolbarToggleGroup,
+} from '@patternfly/react-core';
+import { FilterIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -301,39 +308,47 @@ const APIResourcesList = compose(
 
   return (
     <>
-      <div className="co-m-pane__filter-bar">
-        <div className="co-m-pane__filter-bar-group">
-          <Dropdown
-            autocompleteFilter={autocompleteGroups}
-            items={groupOptions}
-            onChange={onGroupSelected}
-            selectedKey={groupFilter}
-            spacerBefore={groupSpacer}
-            title={groupOptions[groupFilter]}
-            className="co-m-pane__filter-bar-dropdown"
-          />
-          <Dropdown
-            items={versionOptions}
-            onChange={onVersionSelected}
-            selectedKey={versionFilter}
-            spacerBefore={versionSpacer}
-            title={versionOptions[versionFilter]}
-            className="co-m-pane__filter-bar-dropdown"
-          />
-          <Dropdown
-            items={scopeOptions}
-            onChange={onScopeSelected}
-            selectedKey={scopeFilter}
-            spacerBefore={scopeSpacer}
-            title={scopeOptions[scopeFilter]}
-            className="co-m-pane__filter-bar-dropdown"
-          />
-        </div>
-        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter value={textFilter} label={t('public~by kind')} onChange={setTextFilter} />
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+        <Toolbar className="co-toolbar-no-padding pf-m-toggle-group-container">
+          <ToolbarContent>
+            <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+              <ToolbarItem>
+                <Dropdown
+                  autocompleteFilter={autocompleteGroups}
+                  items={groupOptions}
+                  onChange={onGroupSelected}
+                  selectedKey={groupFilter}
+                  spacerBefore={groupSpacer}
+                  title={groupOptions[groupFilter]}
+                  dropDownClassName="dropdown--full-width"
+                />
+              </ToolbarItem>
+              <ToolbarItem>
+                <Dropdown
+                  items={versionOptions}
+                  onChange={onVersionSelected}
+                  selectedKey={versionFilter}
+                  spacerBefore={versionSpacer}
+                  title={versionOptions[versionFilter]}
+                  dropDownClassName="dropdown--full-width"
+                />
+              </ToolbarItem>
+              <ToolbarItem>
+                <Dropdown
+                  items={scopeOptions}
+                  onChange={onScopeSelected}
+                  selectedKey={scopeFilter}
+                  spacerBefore={scopeSpacer}
+                  title={scopeOptions[scopeFilter]}
+                  dropDownClassName="dropdown--full-width"
+                />
+              </ToolbarItem>
+            </ToolbarToggleGroup>
+            <ToolbarItem>
+              <TextFilter value={textFilter} label={t('public~by kind')} onChange={setTextFilter} />
+            </ToolbarItem>
+          </ToolbarContent>
+        </Toolbar>
         <Table
           EmptyMsg={EmptyAPIResourcesMsg}
           Header={APIResourceHeader}
