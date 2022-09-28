@@ -28,6 +28,25 @@ export type HorizontalNavTab = ExtensionDeclaration<
   }
 >;
 
+/** Adds a tab to a horizontal nav matching the `contextId`. */
+export type NavTab = ExtensionDeclaration<
+  'console.tab',
+  {
+    /** Context ID assigned to the horizontal nav in which the tab will be injected.
+     * Possible values:
+     * - `dev-console-observe`
+     */
+    contextId: string;
+    /** The display label of the tab */
+    name: string;
+    /** The href appended to the existing URL */
+    href: string;
+    /** Tab content component. */
+    component: CodeRef<React.ComponentType<PageComponentProps>>;
+  }
+>;
+
 // Type Guards
 export const isHorizontalNavTab = (e: Extension): e is HorizontalNavTab =>
   e.type === 'console.tab/horizontalNav';
+export const isTab = (e: Extension): e is NavTab => e.type === 'console.tab';
