@@ -97,8 +97,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
       <br />
       <strong>
         <Trans i18nKey="vsphere-plugin~vsphere-connection-form-datacenterhelp-two">
-          Please mind, that changing this value will break existing PersistentVolumes, if there are
-          already any.
+          Note: Updating this value will break any existing PersistentVolumes.
         </Trans>
       </strong>
     </>
@@ -113,8 +112,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
       <br />
       <strong>
         <Trans i18nKey="vsphere-plugin~vsphere-connection-form-datastorehelp-two">
-          Please mind, that changing this value will break existing PersistentVolumes, if there are
-          already any.
+          Note: Updating this value will break any existing PersistentVolumes.
         </Trans>
       </strong>
       .

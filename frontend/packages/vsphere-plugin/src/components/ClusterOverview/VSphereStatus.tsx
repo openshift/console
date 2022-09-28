@@ -32,7 +32,7 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ hide, responses, 
   if (health.state === HealthState.LOADING) {
     return (
       <Stack hasGutter>
-        <StackItem>{t('vsphere-plugin~Loading vSphere connection status...')}</StackItem>
+        <StackItem>{t('vsphere-plugin~Loading vSphere connection status')}</StackItem>
       </Stack>
     );
   }
@@ -59,7 +59,7 @@ export const healthHandler: PrometheusHealthHandler = (responses, t, additionalR
       message = health.message;
       break;
     case HealthState.PROGRESS:
-      message = t('vsphere-plugin~Click for more details');
+      message = t('vsphere-plugin~Learn more about progress');
       break;
     default:
       break;

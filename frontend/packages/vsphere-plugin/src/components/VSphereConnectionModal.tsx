@@ -117,7 +117,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (props) 
         title={t('vsphere-plugin~Delayed propagation of configuration')}
       >
         {t(
-          "vsphere-plugin~After saving the configuration, it may take approximately one hour to see if the settings are correct and the operators' statuses are updated, nodes will get rebooted.",
+          "vsphere-plugin~After saving the configuration, it might take approximately 1 hour to see if the settings are correct and the operators' statuses are updated, nodes will get rebooted.",
         )}
         <br />
         {t(
@@ -137,7 +137,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (props) 
 
   const footer = (
     <>
-      {isSaving ? <InProgress key="progress" text={t('vsphere-plugin~Saving...')} /> : null}
+      {isSaving ? <InProgress key="progress" text={t('vsphere-plugin~Saving')} /> : null}
       <Button key="cancel" variant="link" onClick={onClose}>
         {t('vsphere-plugin~Cancel')}
       </Button>
