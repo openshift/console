@@ -16,6 +16,7 @@ import {
   useActivePerspective,
   YellowExclamationTriangleIcon,
 } from '@console/dynamic-plugin-sdk';
+import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
   Alert as PFAlert,
   Button,
@@ -75,7 +76,6 @@ import { FilterToolbar } from '../filter-toolbar';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { confirmModal } from '../modals';
 import { refreshNotificationPollers } from '../notification-drawer';
-import { formatPrometheusDuration } from '../utils/datetime';
 import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import { ActionButtons, BreadCrumbs, SectionHeading } from '../utils/headings';

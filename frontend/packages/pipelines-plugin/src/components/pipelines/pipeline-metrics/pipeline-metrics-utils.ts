@@ -1,3 +1,4 @@
+import { parsePrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import {
@@ -6,10 +7,7 @@ import {
   PrometheusResult,
 } from '@console/internal/components/graphs';
 import { humanizeNumberSI } from '@console/internal/components/utils';
-import {
-  dateFormatterNoYear,
-  parsePrometheusDuration,
-} from '@console/internal/components/utils/datetime';
+import { dateFormatterNoYear } from '@console/internal/components/utils/datetime';
 import { PipelineKind } from '../../../types';
 import { PipelineMetricsLevel } from '../const';
 

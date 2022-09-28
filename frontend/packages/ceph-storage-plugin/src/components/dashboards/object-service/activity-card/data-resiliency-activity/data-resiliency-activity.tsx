@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { formatPrometheusDuration } from '@console/internal/components/utils/datetime';
+import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import { DataResiliency } from '../../../common/data-resiliency/data-resiliency-activity';
 import { getGaugeValue } from '../../../../../utils';
 import './data-resiliency-activity.scss';

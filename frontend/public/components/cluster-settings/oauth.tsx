@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
+
+import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import { Alert, Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
@@ -18,7 +20,6 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '../utils';
-import { formatPrometheusDuration } from '../utils/datetime';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(OAuthModel), ...common];

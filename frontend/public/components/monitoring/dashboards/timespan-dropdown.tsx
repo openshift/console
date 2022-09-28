@@ -1,4 +1,8 @@
 import * as _ from 'lodash';
+import {
+  formatPrometheusDuration,
+  parsePrometheusDuration,
+} from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +13,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { dashboardsSetEndTime, dashboardsSetTimespan } from '../../../actions/observe';
 import { RootState } from '../../../redux';
 import { getQueryArgument, removeQueryArgument, setQueryArgument } from '../../utils';
-import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
 import { useBoolean } from '../hooks/useBoolean';
 import customTimeRangeModal from './custom-time-range-modal';
 import { TimeDropdownsProps } from './types';

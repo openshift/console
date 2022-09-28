@@ -1,9 +1,8 @@
 import {
   formatPrometheusDuration,
-  getDuration,
-  isValid,
   parsePrometheusDuration,
-} from '../../../public/components/utils/datetime';
+} from '@openshift-console/plugin-shared/src/datetime/prometheus';
+import { getDuration, isValid } from '../../../public/components/utils/datetime';
 
 describe('isValid', () => {
   it('rejects non-dates', () => {
