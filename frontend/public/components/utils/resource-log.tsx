@@ -674,6 +674,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
               />
             }
             onScroll={onScroll}
+            initialIndexWidth={7}
           />
         </div>
       </div>
