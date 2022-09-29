@@ -16,7 +16,7 @@ import AppContents from './app-contents';
 import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
 import { ConnectedNotificationDrawer } from './notification-drawer';
-import { Navigation } from './nav';
+import { Navigation } from '@console/app/src/components/nav';
 import { history, AsyncComponent, LoadingBox, useSafeFetch, usePoll } from './utils';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';

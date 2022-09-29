@@ -1,28 +1,27 @@
 import * as React from 'react';
+import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
+import { CaretDownIcon } from '@patternfly/react-icons';
+import * as cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import * as cx from 'classnames';
-import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
-import { CaretDownIcon } from '@patternfly/react-icons';
+import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
 import { Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { history } from '../utils';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
+import { detectFeatures, clearSSARFlags } from '@console/internal/actions/features';
+import { formatNamespaceRoute } from '@console/internal/actions/ui';
+import { history } from '@console/internal/components/utils';
+import * as acmIcon from '@console/internal/imgs/ACM-icon.svg';
+import { ConsoleLinkModel } from '@console/internal/models';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   useActiveCluster,
   useActiveNamespace,
   ACM_LINK_ID,
   usePerspectives,
 } from '@console/shared';
-import { formatNamespaceRoute } from '@console/internal/actions/ui';
-import { detectFeatures, clearSSARFlags } from '@console/internal/actions/features';
-import { useTranslation } from 'react-i18next';
-import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { ConsoleLinkModel } from '@console/internal/models';
-import * as acmIcon from '../../imgs/ACM-icon.svg';
-
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import './NavHeader.scss';
 
 export type NavHeaderProps = {
@@ -203,7 +202,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
               <DropdownToggle onToggle={() => setClusterDropdownOpen(!isClusterDropdownOpen)}>
                 <Title headingLevel="h2" size="md">
                   {activePerspective === 'acm' ? (
-                    t('public~All Clusters')
+                    t('console-app~All Clusters')
                   ) : (
                     <>
                       <ClusterIcon /> {activeCluster}
@@ -222,7 +221,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
                         setClusterDropdownOpen(false);
                       }}
                     >
-                      {t('public~All Clusters')}
+                      {t('console-app~All Clusters')}
                     </DropdownItem>,
                   ]
                 : []),
