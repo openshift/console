@@ -1,4 +1,4 @@
-import { getSortedNavExtensions, sortExtensionItems } from '@console/internal/components/nav/utils';
+import { getSortedNavExtensions, sortExtensionItems } from '@console/app/src/components/nav/utils';
 import { LoadedExtension } from '@console/plugin-sdk/src';
 import { NavExtension } from '@console/dynamic-plugin-sdk/src';
 

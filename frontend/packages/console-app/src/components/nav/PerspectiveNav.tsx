@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as classNames from 'classnames';
 import { NavGroup, NavList } from '@patternfly/react-core';
-import { modelFor } from '@console/internal/module/k8s';
-import PinnedResource from './PinnedResource';
-import withDragDropContext from '../utils/drag-drop-context';
+import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import {
   useActivePerspective,
   isNavSection,
   isNavItem,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
+import withDragDropContext from '@console/internal/components/utils/drag-drop-context';
+import { modelFor } from '@console/internal/module/k8s';
 import { usePinnedResources } from '@console/shared';
+import PinnedResource from './PinnedResource';
 import { PluginNavItem } from './PluginNavItem';
 import { useNavExtensionsForPerspective } from './useNavExtensionForPerspective';
 import { getSortedNavExtensions, isTopLevelNavItem } from './utils';

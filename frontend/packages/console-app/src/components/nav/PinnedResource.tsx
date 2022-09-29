@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { useDrag, useDrop } from 'react-dnd';
-import { useTranslation } from 'react-i18next';
-import { debounce } from 'lodash';
-import * as classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon, GripVerticalIcon } from '@patternfly/react-icons';
-import { K8sModel, modelFor } from '../../module/k8s';
+import * as classNames from 'classnames';
+import { debounce } from 'lodash';
+import { useDrag, useDrop } from 'react-dnd';
+import { useTranslation } from 'react-i18next';
+import { K8sModel, modelFor } from '@console/internal/module/k8s';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import confirmNavUnpinModal from './confirmNavUnpinModal';
-
 import './PinnedResource.scss';
 import { NavItemResource } from './NavItemResource';
-import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 type PinnedResourceProps = {
   resourceRef?: string;

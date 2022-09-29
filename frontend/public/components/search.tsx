@@ -35,7 +35,7 @@ import {
   K8sResourceKindReference,
 } from '../module/k8s';
 import { LoadingBox, MsgBox, ResourceIcon, setQueryArgument, AsyncComponent } from './utils';
-import confirmNavUnpinModal from './nav/confirmNavUnpinModal';
+import confirmNavUnpinModal from '@console/app/src/components/nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Trans } from 'react-i18next';
 import i18next from 'i18next';
+import { Trans } from 'react-i18next';
+import { confirmModal } from '@console/internal/components/modals';
+import { modelFor } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
-import { modelFor } from '../../module/k8s';
-import { confirmModal } from '../modals/confirm-modal';
 
 const confirmNavUnpinModal = (resource: string, pinnedResources: string[], updatePinsFn) => {
   const executeFn = () => {
