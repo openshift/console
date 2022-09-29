@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PopoverProps } from '@patternfly/react-core';
+import { Tooltip } from '@patternfly/react-core';
 import {
   DEFAULT_LAYER,
   DEFAULT_WHEN_OFFSET,
@@ -16,14 +16,18 @@ import {
 } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
 import { Link } from 'react-router-dom';
+import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { PipelineRunModel } from '../../../models';
-import { ComputedStatus } from '../../../types';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../../../models';
+import { ComputedStatus, TaskKind } from '../../../types';
+import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import {
   createStepStatus,
   StepStatus,
 } from '../detail-page-tabs/pipeline-details/pipeline-step-utils';
 import { PipelineVisualizationStepList } from '../detail-page-tabs/pipeline-details/PipelineVisualizationStepList';
+import { NodeType } from './const';
 
 type PipelineTaskNodeProps = {
   element: Node;
@@ -39,29 +43,60 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   const data = element.getData();
   const [hover, hoverRef] = useHover();
   const detailsLevel = useDetailsLevel();
-  const stepList = data?.task?.status?.steps || [];
-  const stepStatusList: StepStatus[] = stepList.map((step) =>
-    createStepStatus(step, data?.task?.status),
+  const isFinallyTask = element.getType() === NodeType.FINALLY_NODE;
+  let resources;
+  if (data?.task.taskRef.kind === ClusterTaskModel.kind) {
+    resources = {
+      kind: referenceForModel(ClusterTaskModel),
+      name: data?.task.taskRef.name,
+      prop: 'task',
+    };
+  } else {
+    resources = {
+      kind: referenceForModel(TaskModel),
+      name: data?.task.taskRef.name,
+      namespace: data.pipeline.metadata.namespace,
+      prop: 'task',
+    };
+  }
+  const [task] = useK8sWatchResource<TaskKind>(resources);
+
+  const stepList = data?.task?.status?.steps || task?.spec?.steps || [];
+
+  const pipelineRunStatus = data?.pipelineRun && pipelineRunFilterReducer(data?.pipelineRun);
+  const isSkipped = data?.pipelineRun?.status?.skippedTasks?.some(
+    (t) => t.name === data?.task.name,
   );
+
+  const taskStatus = data?.task?.status || {
+    duration: '',
+    reason: ComputedStatus.Idle,
+  };
+  if (
+    pipelineRunStatus === ComputedStatus.Failed ||
+    pipelineRunStatus === ComputedStatus.Cancelled
+  ) {
+    if (
+      data?.task?.status?.reason === ComputedStatus.Idle ||
+      data?.task?.status?.reason === ComputedStatus.Pending
+    ) {
+      taskStatus.reason = ComputedStatus.Cancelled;
+    }
+  }
+  if (isSkipped) {
+    taskStatus.reason = ComputedStatus.Skipped;
+  }
+
+  const stepStatusList: StepStatus[] = stepList.map((step) => createStepStatus(step, taskStatus));
   const { pipelineRun } = data;
   const succeededStepsCount = stepStatusList.filter(
     ({ status }) => status === ComputedStatus.Succeeded,
   ).length;
 
   const badge =
-    stepStatusList.length > 0 ? `${succeededStepsCount}/${stepStatusList.length}` : null;
-  const badgePopoverParams: PopoverProps = {
-    headerContent: <div>{element.getLabel()}</div>,
-    bodyContent: (
-      <PipelineVisualizationStepList
-        isSpecOverview={false}
-        taskName={element.getLabel()}
-        steps={stepStatusList}
-        isFinallyTask={false}
-        hideHeader
-      />
-    ),
-  };
+    stepStatusList.length > 0 && data?.status
+      ? `${succeededStepsCount}/${stepStatusList.length}`
+      : null;
 
   const passedData = React.useMemo(() => {
     const newData = { ...data };
@@ -107,20 +142,32 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
       }
     >
       <g ref={hoverRef} style={{ cursor: enableLogLink ? 'pointer' : 'default' }}>
-        <TaskNode
-          element={element}
-          onContextMenu={data.showContextMenu ? onContextMenu : undefined}
-          contextMenuOpen={contextMenuOpen}
-          scaleNode={(hover || contextMenuOpen) && detailsLevel !== ScaleDetailsLevel.high}
-          hideDetailsAtMedium
-          {...passedData}
-          {...rest}
-          badgePopoverParams={badgePopoverParams}
-          badge={badge}
-          truncateLength={element.getData()?.label?.length}
+        <Tooltip
+          position="bottom"
+          enableFlip={false}
+          content={
+            <PipelineVisualizationStepList
+              isSpecOverview={!data?.status}
+              taskName={element.getLabel()}
+              steps={stepStatusList}
+              isFinallyTask={isFinallyTask}
+            />
+          }
         >
-          {whenDecorator}
-        </TaskNode>
+          <TaskNode
+            element={element}
+            onContextMenu={data.showContextMenu ? onContextMenu : undefined}
+            contextMenuOpen={contextMenuOpen}
+            scaleNode={(hover || contextMenuOpen) && detailsLevel !== ScaleDetailsLevel.high}
+            hideDetailsAtMedium
+            {...passedData}
+            {...rest}
+            badge={badge}
+            truncateLength={element.getData()?.label?.length}
+          >
+            {whenDecorator}
+          </TaskNode>
+        </Tooltip>
       </g>
     </Layer>
   );
@@ -134,4 +181,4 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   );
 };
 
-export default observer(PipelineTaskNode);
+export default React.memo(observer(PipelineTaskNode));

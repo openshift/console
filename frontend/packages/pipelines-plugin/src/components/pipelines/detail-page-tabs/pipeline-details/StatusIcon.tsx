@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   AngleDoubleRightIcon,
-  BanIcon,
   CheckCircleIcon,
   CircleIcon,
   ExclamationCircleIcon,
@@ -9,6 +8,7 @@ import {
   SyncAltIcon,
 } from '@patternfly/react-icons';
 import * as cx from 'classnames';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { ComputedStatus } from '../../../../types';
 import { getRunStatusColor } from '../../../../utils/pipeline-augment';
 
@@ -36,7 +36,7 @@ export const StatusIcon: React.FC<StatusIconProps> = ({ status, disableSpin, ...
       return <HourglassHalfIcon {...props} />;
 
     case ComputedStatus.Cancelled:
-      return <BanIcon {...props} />;
+      return <YellowExclamationTriangleIcon {...props} />;
 
     case ComputedStatus.Skipped:
       return <AngleDoubleRightIcon {...props} />;

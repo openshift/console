@@ -22,7 +22,7 @@ import {
   TOOLBAR_HEIGHT,
   GRAPH_MIN_WIDTH,
   PipelineLayout,
-  GRAPH_MAX_HEIGHT,
+  GRAPH_MAX_HEIGHT_PERCENT,
 } from './const';
 import { layoutFactory } from './factories';
 import { getLayoutData } from './utils';
@@ -154,7 +154,9 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
         <div ref={measureRef}>
           <div
             style={{
-              height: noScrollbar ? maxSize?.height : Math.min(GRAPH_MAX_HEIGHT, maxSize?.height),
+              height: noScrollbar
+                ? maxSize?.height
+                : Math.min((GRAPH_MAX_HEIGHT_PERCENT / 100) * window.innerHeight, maxSize?.height),
               width: noScrollbar ? maxSize?.width : Math.min(maxSize?.width, width),
             }}
           >
