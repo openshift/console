@@ -8,7 +8,8 @@ require (
 	github.com/devfile/api/v2 v2.0.0-20220105201057-dd1d65d4d91f
 	github.com/devfile/library v1.2.1-0.20211104222135-49d635cb492f
 	github.com/devfile/registry-support/index/generator v0.0.0-20220110165901-db88e581adf8
-	github.com/devfile/registry-support/registry-library v0.0.0-20220110165901-db88e581adf8
+	github.com/devfile/registry-support/registry-library v0.0.0-20220919175547-3f85c85b2650
+	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9

@@ -1,13 +1,17 @@
-//
-// Copyright (c) 2020 Red Hat, Inc.
-// This program and the accompanying materials are made
-// available under the terms of the Eclipse Public License 2.0
-// which is available at https://www.eclipse.org/legal/epl-2.0/
-//
-// SPDX-License-Identifier: EPL-2.0
-//
-// Contributors:
-//   Red Hat, Inc. - initial API and implementation
+/*   Copyright 2020-2022 Red Hat, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 
 package library
 
@@ -47,8 +51,7 @@ const (
 	DevfilePNGLogoMediaType = "image/png"
 	DevfileArchiveMediaType = "application/x-tar"
 
-	httpRequestTimeout    = 30 * time.Second // httpRequestTimeout configures timeout of all HTTP requests
-	responseHeaderTimeout = 30 * time.Second // responseHeaderTimeout is the timeout to retrieve the server's response headers
+	httpRequestResponseTimeout = 30 * time.Second // httpRequestTimeout configures timeout of all HTTP requests
 )
 
 var (
@@ -73,9 +76,15 @@ type TelemetryData struct {
 }
 
 type RegistryOptions struct {
+	// SkipTLSVerify is false by default which is the recommended setting for a devfile registry deployed in production.  SkipTLSVerify should only be set to true
+	// if you are testing a devfile registry or proxy server that is set up with self-signed certificates in a pre-production environment.
 	SkipTLSVerify bool
-	Telemetry     TelemetryData
-	Filter        RegistryFilter
+	// Telemetry allows clients to send telemetry data to the community Devfile Registry
+	Telemetry TelemetryData
+	// Filter allows clients to specify which architectures they want to filter their devfiles on
+	Filter RegistryFilter
+	// HTTPTimeout overrides the request and response timeout values for the custom HTTP clients set by the registry library.  If unset or a negative value is specified, the default timeout of 30s will be used.
+	HTTPTimeout *int
 }
 
 type RegistryFilter struct {
@@ -140,13 +149,8 @@ func GetRegistryIndex(registryURL string, options RegistryOptions, devfileTypes 
 
 	setHeaders(&req.Header, options)
 
-	httpClient := &http.Client{
-		Transport: &http.Transport{
-			ResponseHeaderTimeout: responseHeaderTimeout,
-			TLSClientConfig:       &tls.Config{InsecureSkipVerify: options.SkipTLSVerify},
-		},
-		Timeout: httpRequestTimeout,
-	}
+	httpClient := getHTTPClient(options)
+
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -162,7 +166,7 @@ func GetRegistryIndex(registryURL string, options RegistryOptions, devfileTypes 
 	return registryIndex, nil
 }
 
-// GetMultipleRegistryIndices returns returns the list of stacks and/or samples of multiple registries
+// GetMultipleRegistryIndices returns the list of stacks and/or samples of multiple registries
 func GetMultipleRegistryIndices(registryURLs []string, options RegistryOptions, devfileTypes ...indexSchema.DevfileType) []Registry {
 	registryList := make([]Registry, len(registryURLs))
 	registryContentsChannel := make(chan []indexSchema.Schema)
@@ -242,11 +246,9 @@ func PullStackByMediaTypesFromRegistry(registry string, stack string, allowedMed
 	if urlObj.Scheme == "https" {
 		plainHTTP = false
 	}
-	httpClient := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: options.SkipTLSVerify},
-		},
-	}
+
+	httpClient := getHTTPClient(options)
+
 	headers := make(http.Header)
 	setHeaders(&headers, options)
 
@@ -342,5 +344,26 @@ func setHeaders(headers *http.Header, options RegistryOptions) {
 	}
 	if t.Locale != "" {
 		headers.Add("Locale", t.Locale)
+	}
+}
+
+//getHTTPClient returns a new http client object
+func getHTTPClient(options RegistryOptions) *http.Client {
+
+	overriddenTimeout := httpRequestResponseTimeout
+	timeout := options.HTTPTimeout
+	//if value is invalid or unspecified, the default will be used
+	if timeout != nil && *timeout > 0 {
+		//convert timeout to seconds
+		overriddenTimeout = time.Duration(*timeout) * time.Second
+	}
+
+	return &http.Client{
+		Transport: &http.Transport{
+			Proxy:                 http.ProxyFromEnvironment,
+			ResponseHeaderTimeout: overriddenTimeout,
+			TLSClientConfig:       &tls.Config{InsecureSkipVerify: options.SkipTLSVerify},
+		},
+		Timeout: overriddenTimeout,
 	}
 }

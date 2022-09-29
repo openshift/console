@@ -363,8 +363,8 @@ github.com/devfile/library v1.2.1-0.20211104222135-49d635cb492f/go.mod h1:uFZZdT
 github.com/devfile/registry-support/index/generator v0.0.0-20211012185733-0a73f866043f/go.mod h1:bLGagbW2SFn7jo5+kUPlCMehIGqWkRtLKc5O0OyJMJM=
 github.com/devfile/registry-support/index/generator v0.0.0-20220110165901-db88e581adf8 h1:56kXmhn2zZsn9zQOHynLmsAN0CWO7xJJYoMm9vbEXlE=
 github.com/devfile/registry-support/index/generator v0.0.0-20220110165901-db88e581adf8/go.mod h1:iRPBxs+ZjfLEduVXpCCIOzdD2588Zv9OCs/CcXMcCCY=
-github.com/devfile/registry-support/registry-library v0.0.0-20220110165901-db88e581adf8 h1:03EBApvy0PROuzZsMCbxyp5QUkCKy4KqEDcZdeIKtrc=
-github.com/devfile/registry-support/registry-library v0.0.0-20220110165901-db88e581adf8/go.mod h1:Z2dUO33gD07aw8/Fb9NEY1ljuYiKuBC/UVYB6eF5l9E=
+github.com/devfile/registry-support/registry-library v0.0.0-20220919175547-3f85c85b2650 h1:+afg+GYotKc7LVL9Mp2wjjjYkgg8LV9LQHNuvARn3S8=
+github.com/devfile/registry-support/registry-library v0.0.0-20220919175547-3f85c85b2650/go.mod h1:Z2dUO33gD07aw8/Fb9NEY1ljuYiKuBC/UVYB6eF5l9E=
 github.com/dgrijalva/jwt-go v0.0.0-20170104182250-a601269ab70c/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
@@ -440,8 +440,9 @@ github.com/form3tech-oss/jwt-go v3.2.2+incompatible/go.mod h1:pbq4aXjuKjdthFRnoD
 github.com/form3tech-oss/jwt-go v3.2.3+incompatible/go.mod h1:pbq4aXjuKjdthFRnoDwaVPLA+WlJuPGy+QneDUgJi2k=
 github.com/frankban/quicktest v1.11.3/go.mod h1:wRf/ReqHper53s+kmmSZizM8NamnL3IM0I9ntUbOk+k=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
-github.com/fsnotify/fsnotify v1.4.9 h1:hsms1Qyu0jgnwNXIxa+/V/PDsU6CfLf6CNO8H7IWoS4=
 github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
+github.com/fsnotify/fsnotify v1.5.1 h1:mZcQUHVQUQWoPXXtuf9yuEXKudkV2sx1E06UadKWpgI=
+github.com/fsnotify/fsnotify v1.5.1/go.mod h1:T3375wBYaZdLLcVNkcVbzGHY7f1l/uK5T5Ai1i3InKU=
 github.com/fsouza/fake-gcs-server v1.7.0/go.mod h1:5XIRs4YvwNbNoz+1JF8j6KLAyDh7RHGAyAK3EP2EsNk=
 github.com/fsouza/go-dockerclient v0.0.0-20171004212419-da3951ba2e9e/go.mod h1:KpcjM623fQYE9MZiTGzKhjfxXAV9wbyX2C1cyRHfhl0=
 github.com/fullsailor/pkcs7 v0.0.0-20190404230743-d7302db945fa/go.mod h1:KnogPXtdwXqoenmZCw6S+25EAm2MkxbG0deNDu4cbSA=
@@ -2017,6 +2018,7 @@ modernc.org/mathutil v1.0.0/go.mod h1:wU0vUrJsVWBZ4P6e7xtFJEhFSNsfRLJ8H458uRjg03
 modernc.org/strutil v1.0.0/go.mod h1:lstksw84oURvj9y3tn8lGvRxyRC1S2+g5uuIzNfIOBs=
 modernc.org/xc v1.0.0/go.mod h1:mRNCo0bvLjGhHO9WsyuKVU4q0ceiDDDoEeWDJHrNx8I=
 oras.land/oras-go v0.4.0 h1:u6+7D+raZDYHwlz/uOwNANiRmyYDSSMW7A9E1xXycUQ=
+oras.land/oras-go v0.4.0/go.mod h1:VJcU+VE4rkclUbum5C0O7deEZbBYnsnpbGSACwTjOcg=
 oras.land/oras-go v0.4.0/go.mod h1:VJcU+VE4rkclUbum5C0O7deEZbBYnsnpbGSACwTjOcg=
 rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
 rsc.io/letsencrypt v0.0.3 h1:H7xDfhkaFFSYEJlKeq38RwX2jYcnTeHuDQyT+mMNMwM=

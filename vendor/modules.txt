@@ -90,7 +90,7 @@ github.com/devfile/library/pkg/util
 # github.com/devfile/registry-support/index/generator v0.0.0-20220110165901-db88e581adf8
 ## explicit
 github.com/devfile/registry-support/index/generator/schema
-# github.com/devfile/registry-support/registry-library v0.0.0-20220110165901-db88e581adf8
+# github.com/devfile/registry-support/registry-library v0.0.0-20220919175547-3f85c85b2650
 ## explicit
 github.com/devfile/registry-support/registry-library/library
 # github.com/docker/cli v20.10.7+incompatible
@@ -154,6 +154,8 @@ github.com/evanphx/json-patch
 github.com/exponent-io/jsonpath
 # github.com/fatih/color v1.10.0
 github.com/fatih/color
+# github.com/fsnotify/fsnotify v1.5.1
+## explicit
 # github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 ## explicit
 # github.com/go-errors/errors v1.0.1
