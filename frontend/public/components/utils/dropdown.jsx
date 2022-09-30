@@ -498,15 +498,15 @@ class Dropdown_ extends DropdownMixin {
                       <Divider />
                     </>
                   )}
+                  {_.size(bookMarkRows) ? (
+                    <h1 className="pf-c-menu__group-title">Favorites</h1>
+                  ) : null}
                   <ul
                     role="listbox"
                     ref={this.dropdownList}
                     className="pf-c-menu__list dropdown-menu__autocomplete-filter"
                   >
                     {this.renderActionItem()}
-                    {_.size(bookMarkRows) ? (
-                      <li className="pf-c-menu__group-title pf-u-pb-sm">Favorites</li>
-                    ) : null}
                     {bookMarkRows}
                     {_.size(bookMarkRows) && _.size(rows) ? <Divider component="li" /> : null}
                     {rows}
