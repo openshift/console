@@ -14,12 +14,7 @@ import {
   ClusterServiceVersionModel,
   ClusterServiceVersionKind,
 } from '@console/operator-lifecycle-manager';
-import {
-  deleteHPAModal,
-  isHelmResource,
-  isOperatorBackedService,
-  useActiveNamespace,
-} from '@console/shared';
+import { deleteHPAModal, isHelmResource, isOperatorBackedService } from '@console/shared';
 import { doesHpaMatch } from '@console/shared/src/utils/hpa-utils';
 import { ResourceActionFactory } from './common-factory';
 
@@ -93,7 +88,8 @@ type DeploymentActionExtraResources = {
 };
 
 export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
-  const [namespace] = useActiveNamespace();
+  const namespace = resource?.metadata?.namespace;
+
   const watchedResources = React.useMemo(
     () => ({
       hpas: {
