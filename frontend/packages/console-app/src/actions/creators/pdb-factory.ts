@@ -10,7 +10,6 @@ import {
   K8sKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { useActiveNamespace } from '@console/shared';
 import { deletePDBModal } from '../../components/pdb/modals';
 import { PodDisruptionBudgetKind } from '../../components/pdb/types';
 import { getPDBResource } from '../../components/pdb/utils/get-pdb-resources';
@@ -69,7 +68,8 @@ const getPDBActions = (
 };
 
 export const usePDBActions = (kindObj: K8sKind, resource: K8sPodControllerKind) => {
-  const [namespace] = useActiveNamespace();
+  const namespace = resource?.metadata?.namespace;
+
   const watchedResource = React.useMemo(
     () => ({
       isList: true,
