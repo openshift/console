@@ -5,8 +5,8 @@ type UseModalLauncher = () => LaunchModal;
 
 /**
  * A hook to launch Modals.
- *
- * ```tsx
+ * @example
+ *```tsx
  * const AppPage: React.FC = () => {
  *  const [launchModal] = useModal();
  *  const onClick = () => launchModal(ModalComponent);
