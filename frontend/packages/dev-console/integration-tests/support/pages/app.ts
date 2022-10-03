@@ -207,7 +207,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Deployments: {
       cy.get('body').then(($body) => {
         if ($body.text().includes('Deployments')) {
-          cy.byTestID('nav')
+          cy.byTestID('draggable-pinned-resource-item')
             .contains('Deployments')
             .click();
         } else {
@@ -220,7 +220,8 @@ export const navigateTo = (opt: devNavigationMenu) => {
           cy.get('.co-search-group__pin-toggle')
             .should('be.visible')
             .click();
-          cy.byTestID('nav')
+          cy.wait(3000);
+          cy.byTestID('draggable-pinned-resource-item')
             .contains('Deployments')
             .should('be.visible')
             .click();

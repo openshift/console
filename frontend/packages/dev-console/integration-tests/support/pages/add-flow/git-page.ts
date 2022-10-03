@@ -134,6 +134,7 @@ export const gitPage = {
       .scrollIntoView()
       .invoke('val')
       .should('not.be.empty');
+    cy.wait(2000);
     cy.get(gitPO.nodeName).clear();
     cy.get(gitPO.nodeName)
       .type(name)

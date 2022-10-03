@@ -178,10 +178,10 @@ export const topologyPO = {
     },
   },
   resourceLimits: {
-    requestCPU: 'input[name="limits.cpu.requestValue"]',
-    limitCPU: 'input[name="limits.cpu.limitValue"]',
-    requestMemory: 'input[name="limits.memory.requestValue"]',
-    limitMemory: 'input[name="limits.memory.limitValue"]',
+    requestCPU: '[aria-describedby="form-resource-limit-limits-cpu-request-field-helper"]',
+    limitCPU: '[aria-describedby="form-resource-limit-limits-cpu-limit-field-helper"]',
+    requestMemory: '[aria-describedby="form-resource-limit-limits-memory-request-field-helper"]',
+    limitMemory: '[aria-describedby="form-resource-limit-limits-memory-limit-field-helper"]',
   },
   deploymentStrategy: {
     strategyTypeDropDown: 'button[id="form-dropdown-formData-deploymentStrategy-type-field"]',

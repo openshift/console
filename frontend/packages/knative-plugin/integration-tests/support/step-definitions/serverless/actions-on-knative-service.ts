@@ -345,7 +345,6 @@ Then(
   (workload1: string, workload2: string) => {
     topologyPage.verifyWorkloadInTopologyPage(workload1);
     topologyPage.verifyWorkloadInTopologyPage(workload2);
-    cy.get('[title="service]').should('be.visible');
   },
 );
 
