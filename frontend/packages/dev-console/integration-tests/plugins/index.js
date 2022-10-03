@@ -45,8 +45,18 @@ module.exports = (on, config) => {
       },
     },
   };
+
   // `on` is used to hook into various events Cypress emits
   on('task', {
+    beforeTest(testName) {
+      console.log(`=== ${new Date().toISOString()} start: ${testName}`);
+      // cy.task must return something, cannot return undefined
+      return null;
+    },
+    afterTest(testName) {
+      console.log(`=== ${new Date().toISOString()} end: ${testName}`);
+      return null;
+    },
     log(message) {
       console.log(message);
       return null;
@@ -66,7 +76,9 @@ module.exports = (on, config) => {
       return null;
     },
   });
+
   on('file:preprocessor', webpack(options));
+
   /* In a Docker container, the default size of the /dev/shm shared memory space is 64MB. This is not typically enough
    to run Chrome and can cause the browser to crash. You can fix this by passing the --disable-dev-shm-usage flag to
    Chrome with the following workaround: */
@@ -76,6 +88,7 @@ module.exports = (on, config) => {
     }
     return launchOptions;
   });
+
   // `config` is the resolved Cypress config
   config.baseUrl = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
     process.env.BRIDGE_BASE_PATH || '/'

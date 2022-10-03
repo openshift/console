@@ -21,8 +21,18 @@ module.exports = (on, config) => {
       },
     },
   };
+
   // `on` is used to hook into various events Cypress emits
   on('task', {
+    beforeTest(testName) {
+      console.log(`=== ${new Date().toISOString()} start: ${testName}`);
+      // cy.task must return something, cannot return undefined
+      return null;
+    },
+    afterTest(testName) {
+      console.log(`=== ${new Date().toISOString()} end: ${testName}`);
+      return null;
+    },
     log(message) {
       console.log(message);
       return null;
@@ -42,6 +52,7 @@ module.exports = (on, config) => {
       return null;
     },
   });
+
   on('after:screenshot', (details) => {
     // Prepend "1_", "2_", etc. to screenshot filenames because they are sorted alphanumerically in CI's artifacts dir
     const pathObj = path.parse(details.path);
@@ -58,7 +69,9 @@ module.exports = (on, config) => {
       });
     });
   });
+
   on('file:preprocessor', wp(options));
+
   // `config` is the resolved Cypress config
   config.baseUrl = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
     process.env.BRIDGE_BASE_PATH || '/'
