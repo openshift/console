@@ -24,7 +24,6 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
 
   if (!model || (model.nodes.length === 0 && model.edges.length === 0)) {
     // Nothing to render
-    // TODO: Confirm wording with UX; ODC-1860
     content = (
       <Alert
         variant="info"
