@@ -45,36 +45,36 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   const detailsLevel = useDetailsLevel();
   const isFinallyTask = element.getType() === NodeType.FINALLY_NODE;
   let resources;
-  if (data?.task?.taskRef?.kind === ClusterTaskModel.kind) {
+  if (data.task?.taskRef?.kind === ClusterTaskModel.kind) {
     resources = {
       kind: referenceForModel(ClusterTaskModel),
-      name: data?.task.taskRef.name,
+      name: data.task.taskRef.name,
       prop: 'task',
     };
-  } else if (data?.task?.taskRef) {
+  } else if (data.task?.taskRef) {
     resources = {
       kind: referenceForModel(TaskModel),
-      name: data?.task.taskRef.name,
-      namespace: data?.pipeline.metadata?.namespace,
+      name: data.task.taskRef.name,
+      namespace: data.pipeline.metadata.namespace,
       prop: 'task',
     };
   }
   const [task] = useK8sWatchResource<TaskKind>(resources);
 
-  const computedTask = task && Object.keys(task).length ? task : data?.task;
+  const computedTask = task && Object.keys(task).length ? task : data.task;
   const stepList =
     computedTask?.status?.steps || computedTask?.spec?.steps || computedTask?.taskSpec?.steps || [];
 
-  const pipelineRunStatus = data?.pipelineRun && pipelineRunFilterReducer(data?.pipelineRun);
+  const pipelineRunStatus = data.pipelineRun && pipelineRunFilterReducer(data.pipelineRun);
   const isSkipped = !!(
     computedTask &&
-    data?.pipelineRun?.status?.skippedTasks?.some(
-      (t) => t.name === data?.task.name,
+    data.pipelineRun?.status?.skippedTasks?.some(
+      (t) => t.name === data.task.name,
       (t) => t.name === computedTask.name,
     )
   );
 
-  const taskStatus = data?.task?.status || {
+  const taskStatus = data.task?.status || {
     duration: '',
     reason: ComputedStatus.Idle,
   };
@@ -83,8 +83,8 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
     pipelineRunStatus === ComputedStatus.Cancelled
   ) {
     if (
-      data?.task?.status?.reason === ComputedStatus.Idle ||
-      data?.task?.status?.reason === ComputedStatus.Pending
+      data.task?.status?.reason === ComputedStatus.Idle ||
+      data.task?.status?.reason === ComputedStatus.Pending
     ) {
       taskStatus.reason = ComputedStatus.Cancelled;
     }
@@ -100,7 +100,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   ).length;
 
   const badge =
-    stepStatusList.length > 0 && data?.status
+    stepStatusList.length > 0 && data.status
       ? `${succeededStepsCount}/${stepStatusList.length}`
       : null;
 
@@ -114,11 +114,11 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
     return newData;
   }, [data]);
 
-  const hasTaskIcon = !!(data?.taskIconClass || data?.taskIcon);
-  const whenDecorator = data?.whenStatus ? (
+  const hasTaskIcon = !!(data.taskIconClass || data.taskIcon);
+  const whenDecorator = data.whenStatus ? (
     <WhenDecorator
       element={element}
-      status={data?.whenStatus}
+      status={data.whenStatus}
       leftOffset={
         hasTaskIcon
           ? DEFAULT_WHEN_OFFSET + (element.getBounds().height - 4) * 0.75
@@ -133,10 +133,10 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
     : undefined;
 
   const enableLogLink =
-    data?.status !== ComputedStatus.Idle &&
-    data?.status !== ComputedStatus.Pending &&
-    data?.status !== ComputedStatus.Cancelled &&
-    data?.status !== ComputedStatus.Skipped &&
+    data.status !== ComputedStatus.Idle &&
+    data.status !== ComputedStatus.Pending &&
+    data.status !== ComputedStatus.Cancelled &&
+    data.status !== ComputedStatus.Skipped &&
     !!path;
 
   const taskNode = (
@@ -153,7 +153,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
           enableFlip={false}
           content={
             <PipelineVisualizationStepList
-              isSpecOverview={!data?.status}
+              isSpecOverview={!data.status}
               taskName={element.getLabel()}
               steps={stepStatusList}
               isFinallyTask={isFinallyTask}
@@ -162,7 +162,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
         >
           <TaskNode
             element={element}
-            onContextMenu={data?.showContextMenu ? onContextMenu : undefined}
+            onContextMenu={data.showContextMenu ? onContextMenu : undefined}
             contextMenuOpen={contextMenuOpen}
             scaleNode={(hover || contextMenuOpen) && detailsLevel !== ScaleDetailsLevel.high}
             hideDetailsAtMedium
