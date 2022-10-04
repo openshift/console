@@ -114,7 +114,7 @@ github.com/devfile/library/pkg/testingutil/filesystem
 github.com/devfile/library/pkg/util
 # github.com/devfile/registry-support/index/generator v0.0.0-20211012185733-0a73f866043f
 github.com/devfile/registry-support/index/generator/schema
-# github.com/devfile/registry-support/registry-library v0.0.0-20211026200306-cab748834109
+# github.com/devfile/registry-support/registry-library v0.0.0-20220920210039-139b3bf07bf6
 github.com/devfile/registry-support/registry-library/library
 # github.com/docker/cli v20.10.5+incompatible
 github.com/docker/cli/cli/config
