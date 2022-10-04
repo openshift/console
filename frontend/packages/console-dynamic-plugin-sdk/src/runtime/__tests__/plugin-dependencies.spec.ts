@@ -78,7 +78,6 @@ describe('resolvePluginDependencies', () => {
 
   it('completes if there are no required plugins', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
-    manifest.dependencies = { '@console/pluginAPI': '*' };
 
     await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test', 'Foo', 'Bar']);
 
@@ -88,7 +87,7 @@ describe('resolvePluginDependencies', () => {
 
   it('throws an error if some of the required plugins are not available', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
-    manifest.dependencies = { '@console/pluginAPI': '*', Foo: '*', Bar: '*' };
+    manifest.dependencies = { Foo: '*', Bar: '*' };
 
     try {
       await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test']);
@@ -103,7 +102,7 @@ describe('resolvePluginDependencies', () => {
 
   it('subscribes to changes in dynamic plugin information', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
-    manifest.dependencies = { '@console/pluginAPI': '*', Foo: '*', Bar: '*' };
+    manifest.dependencies = { Foo: '*', Bar: '*' };
 
     subscribeToDynamicPlugins.mockImplementation((listener: DynamicPluginListener) => {
       listener([
@@ -137,7 +136,7 @@ describe('resolvePluginDependencies', () => {
 
   it('completes when all required plugins are loaded successfully', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
-    manifest.dependencies = { '@console/pluginAPI': '*', Foo: '*', Bar: '*' };
+    manifest.dependencies = { Foo: '*', Bar: '*' };
 
     subscribeToDynamicPlugins.mockImplementation((listener: DynamicPluginListener) => {
       listener([
@@ -154,7 +153,7 @@ describe('resolvePluginDependencies', () => {
 
   it('throws an error if some of the required plugins fail to load successfully', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
-    manifest.dependencies = { '@console/pluginAPI': '*', Foo: '*', Bar: '*', Baz: '*' };
+    manifest.dependencies = { Foo: '*', Bar: '*', Baz: '*' };
 
     subscribeToDynamicPlugins.mockImplementation((listener: DynamicPluginListener) => {
       listener([
@@ -178,7 +177,6 @@ describe('resolvePluginDependencies', () => {
   it('throws an error if some of the required plugin dependencies are not met', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
     manifest.dependencies = {
-      '@console/pluginAPI': '*',
       Foo: '^1.0.0',
       Bar: '~1.1.1',
       Baz: '=1.1.1',

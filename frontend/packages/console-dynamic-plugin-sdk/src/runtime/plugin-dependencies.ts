@@ -37,8 +37,8 @@ export const resolvePluginDependencies = (
   consolePluginAPIVersion: string,
   allowedPluginNames: string[],
 ) => {
-  const { dependencies } = manifest;
   const pluginID = getPluginID(manifest);
+  const dependencies = manifest.dependencies || {};
 
   if (unsubListenerMap.has(pluginID)) {
     throw new Error(`Dependency resolution for plugin ${pluginID} is already in progress`);
@@ -56,6 +56,7 @@ export const resolvePluginDependencies = (
 
   if (
     consolePluginAPIVersion &&
+    dependencies[pluginAPIDepName] &&
     !semver.satisfies(consolePluginAPIVersion, dependencies[pluginAPIDepName], semverOptions)
   ) {
     throw new UnmetPluginDependenciesError('Unmet dependency on Console plugin API', [

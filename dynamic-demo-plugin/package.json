@@ -70,9 +70,6 @@
       "projectOverview": "./utils/project-overview",
       "modalPage": "./components/Modals/ModalPage"
     },
-    "dependencies": {
-      "@console/pluginAPI": "*"
-    },
     "disableStaticPlugins": [
       "@console/demo-plugin"
     ]

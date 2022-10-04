@@ -12,7 +12,6 @@ export const getPluginManifest = (
   name,
   version,
   extensions: extensions as ConsoleExtensionsJSON,
-  dependencies: { '@console/pluginAPI': '*' },
   disableStaticPlugins,
 });
 

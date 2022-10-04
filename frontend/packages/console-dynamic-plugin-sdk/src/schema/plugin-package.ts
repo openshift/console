@@ -18,13 +18,16 @@ export type ConsolePluginMetadata = {
   /** Specific modules exposed through the plugin's remote entry. */
   exposedModules?: { [moduleName: string]: string };
   /**
-   * Plugin API and other plugins required for this plugin to work.
+   * Additional dependencies required for this plugin to work.
    * Values must be valid semver ranges or `*` representing any version.
+   *
+   * Console plugins may depend on other Console plugins or on Console
+   * application itself, represented as `@console/pluginAPI` dependency.
+   *
+   * If present, `@console/pluginAPI` version range is matched against
+   * the Console release version, as provided by the Console operator.
    */
-  dependencies: {
-    '@console/pluginAPI': string;
-    [pluginName: string]: string;
-  };
+  dependencies?: { [pluginName: string]: string };
   /** Disable the given static plugins when this plugin gets loaded. */
   disableStaticPlugins?: string[];
 };

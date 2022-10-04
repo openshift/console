@@ -75,7 +75,7 @@ Plugin metadata is declared via the `consolePlugin` object.
       "barUtils": "./utils/bar"
     },
     "dependencies": {
-      "@console/pluginAPI": "*"
+      "@console/pluginAPI": "~4.11.0"
     }
   }
 }
@@ -93,9 +93,12 @@ at runtime. A separate [webpack chunk](https://webpack.js.org/guides/code-splitt
 each entry in `consolePlugin.exposedModules` object. Exposed modules are resolved relative to plugin's
 webpack `context` option.
 
-The `@console/pluginAPI` dependency is mandatory and refers to Console versions this dynamic plugin is
+The `@console/pluginAPI` dependency is optional and refers to Console versions this dynamic plugin is
 compatible with. The `consolePlugin.dependencies` object may also refer to other dynamic plugins that
-are required for this dynamic plugin to work correctly.
+are required for this dynamic plugin to work correctly. For dependencies whose versions may include
+a [semver pre-release](https://semver.org/#spec-item-9) identifier, adapt your semver range constraint
+to include the relevant pre-release prefix, e.g. use `~4.11.0-0.ci` when targeting pre-release versions
+like `4.11.0-0.ci-1234`.
 
 See `ConsolePluginMetadata` type for details on the `consolePlugin` object and its schema.
 
