@@ -1,6 +1,8 @@
 package chartproxy
 
 import (
+	"strings"
+
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/repo"
 	"k8s.io/client-go/dynamic"
@@ -78,6 +80,7 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 		return nil, err
 	}
 	annotations := make(map[string]string)
+	var invalidRepos []string
 	indexFile := repo.NewIndexFile()
 	var delKeys []string = make([]string, 0, 20)
 	for _, helmRepo := range helmRepos {
@@ -85,10 +88,7 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 		if !helmRepo.Disabled {
 			idxFile, err := helmRepo.IndexFile()
 			if err != nil {
-				if _, ok := annotations[helmRepo.Name]; !ok {
-					annotations[helmRepo.Name] = "The repository seems to be invalid or unreachable. Please check the url"
-				}
-				indexFile.Annotations = annotations
+				invalidRepos = append(invalidRepos, helmRepo.Name)
 				klog.Errorf("Error retrieving index file for %v: %v", helmRepo, err)
 				continue
 			}
@@ -115,6 +115,10 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 				}
 			}
 		}
+	}
+	if invalidRepos != nil {
+		annotations[warning] = ErrorMessage + strings.Join(invalidRepos, ", ")
+		indexFile.Annotations = annotations
 	}
 
 	for _, delKey := range delKeys {
