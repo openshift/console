@@ -350,3 +350,49 @@ _Returns repository index file containing all entries from all configured reposi
 
   * **Code:** 400 BAD REQUEST <br />
     **Content:** `{ error : "error message" }`
+
+**Verify Chart Url**
+----
+_Verifies if a Helm chart is compliant with a certain set of independent checks using chart URL_
+
+* **URL**
+
+    `/api/helm/verify`
+
+* **Method:**
+
+  `POST`
+
+*  **Post Data Params**
+
+```
+  chart_url: [string]
+  value: map[string]interface{}
+```
+
+*  **Example Request**
+
+```
+  {
+    "chart_url": "https://github.com/openshift-helm-charts/charts/releases/download/redhat-redis-sed-1.0.1/redhat-redis-sed-1.0.1.tgz",
+    "values":{
+	    "provider":"developer-console"
+    }
+}
+```
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+  * JSON encoded [Release structure](https://github.com/redhat-certification/chart-verifier/blob/main/pkg/chartverifier/reportsummary/types.go#L39-43)
+
+* **Error Response:**
+
+  * **Code:** 502 BAD GATEWAY <br />
+    **Content:** `{ error : "error message" }`
+
+  * **Code:** 404 NOT FOUND <br />
+    **Content:** `{ error : "error message" }`
+
+
+

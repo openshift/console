@@ -9,7 +9,6 @@ import (
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/release"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/yaml"
@@ -20,19 +19,6 @@ import (
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/openshift/console/pkg/version"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
-)
-
-var (
-	helmChartRepositoryClusterGVK = schema.GroupVersionResource{
-		Group:    "helm.openshift.io",
-		Version:  "v1beta1",
-		Resource: "helmchartrepositories",
-	}
-	helmChartRepositoryNamespaceGVK = schema.GroupVersionResource{
-		Group:    "helm.openshift.io",
-		Version:  "v1beta1",
-		Resource: "projecthelmchartrepositories",
-	}
 )
 
 func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.KubeVersionGetter) *helmHandlers {

@@ -1,0 +1,33 @@
+{
+    "remote": "origin",
+    "target-branch": "main",
+    "since": "HEAD~1",
+    "build-id": "pr-42",
+    "lint-conf": "my-lint-conf.yaml",
+    "chart-yaml-schema": "my-chart-yaml-schema.yaml",
+    "github-instance": "https://github.com",
+    "validate-maintainers": true,
+    "validate-chart-schema": true,
+    "validate-yaml": true,
+    "check-version-increment": true,
+    "all": false,
+    "chart-repos": [
+        "incubator=https://incubator"
+    ],
+    "helm-repo-extra-args": [
+        "incubator=--username test"
+    ],
+    "chart-dirs": [
+        "stable",
+        "incubator"
+    ],
+    "excluded-charts": [
+        "common"
+    ],
+    "helm-extra-args": "--timeout 300",
+    "upgrade": true,
+    "skip-missing-values": true,
+    "namespace": "default",
+    "release-label": "release",
+    "exclude-deprecated": true
+}
