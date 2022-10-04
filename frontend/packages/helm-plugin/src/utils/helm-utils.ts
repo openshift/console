@@ -101,6 +101,21 @@ export const getChartRepositoryTitle = (
   return chartRepository?.spec?.name || toTitleCase(chartRepoName);
 };
 
+export const getChartIndexEntry = (
+  chartEntries: HelmChartEntries,
+  chartName: string,
+  chartRepoName: string,
+) => {
+  const repoName = chartRepoName
+    .toLowerCase()
+    .split(' ')
+    .join('-');
+  const indexEntry = Object.keys(chartEntries).find((val) =>
+    val.includes(`${chartName}--${repoName}`),
+  );
+  return indexEntry;
+};
+
 export const getChartEntriesByName = (
   chartEntries: HelmChartEntries,
   chartName: string,
@@ -109,8 +124,10 @@ export const getChartEntriesByName = (
 ): HelmChartMetaData[] => {
   if (chartName && chartRepoName) {
     const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
+    const indexEntry = getChartIndexEntry(chartEntries, chartName, chartRepoName);
+
     return (
-      chartEntries?.[`${chartName}--${chartRepoName}`]?.map((e) => ({
+      chartEntries?.[indexEntry]?.map((e) => ({
         ...e,
         repoName: chartRepositoryTitle,
       })) ?? []

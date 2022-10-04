@@ -225,6 +225,11 @@ export const mockChartEntries: HelmChartEntries = {
   'hazelcast-enterprise--redhat-helm-repo': mockRedhatHelmChartData,
 };
 
+export const mockChartEntries1: HelmChartEntries = {
+  'ibm-hazelcast-enterprise--ibm-helm-repo': mockIBMHelmChartData,
+  'rh-hazelcast-enterprise--redhat-helm-repo': mockRedhatHelmChartData,
+};
+
 export const mockReleaseResources: FirehoseResourcesResult<{
   Deployment: K8sResourceCommon;
   StatefulSet: K8sResourceCommon;
