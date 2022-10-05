@@ -29,7 +29,7 @@ const PipelinesList: React.FC<PipelinesListProps> = ({
   return (
     <div className="co-m-pane__body">
       <Firehose resources={resources}>
-        <PipelineAugmentRunsWrapper />
+        <PipelineAugmentRunsWrapper namespace={namespace} />
       </Firehose>
     </div>
   );
