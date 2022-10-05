@@ -26,10 +26,15 @@ import {
   Alert,
   Button,
   Checkbox,
+  Dropdown,
+  DropdownItem,
+  DropdownPosition,
+  DropdownToggle,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
+  InputGroup,
   TextInput,
   Title,
 } from '@patternfly/react-core';
@@ -50,14 +55,7 @@ import {
 import { RootState } from '../../redux';
 import { GraphEmpty } from '../graphs/graph-empty';
 import { getPrometheusURL } from '../graphs/helpers';
-import {
-  Dropdown,
-  humanizeNumberSI,
-  LoadingInline,
-  usePoll,
-  useRefWidth,
-  useSafeFetch,
-} from '../utils';
+import { humanizeNumberSI, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
 import {
   dateFormatterNoYear,
   dateTimeFormatterWithSeconds,
@@ -65,11 +63,11 @@ import {
   timeFormatterWithSeconds,
 } from '../utils/datetime';
 import { formatNumber } from './format';
+import { useBoolean } from './hooks/useBoolean';
 import { queryBrowserTheme } from './query-browser-theme';
 import { PrometheusAPIError } from './types';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
-const dropdownItems = _.zipObject(spans, spans);
 export const colors = queryBrowserTheme.line.colorScale;
 
 // Use exponential notation for small or very large numbers to avoid labels with too many characters
@@ -108,6 +106,8 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
 
     const { t } = useTranslation();
 
+    const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
+
     React.useEffect(() => {
       setText(formatPrometheusDuration(span));
     }, [span]);
@@ -125,24 +125,35 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
       }
     };
 
+    const dropdownItems = spans.map((s) => (
+      <DropdownItem
+        className="query-browser__span-dropdown-item"
+        key={s}
+        onClick={() => setSpan(s, true)}
+      >
+        {s}
+      </DropdownItem>
+    ));
+
     return (
       <>
-        <TextInput
-          aria-label={t('public~graph timespan')}
-          className="query-browser__span-text"
-          validated={isValid ? 'default' : 'error'}
-          onChange={(v) => setSpan(v, true)}
-          type="text"
-          value={text}
-        />
-        <Dropdown
-          ariaLabel={t('public~graph timespan')}
-          buttonClassName="dropdown-button--icon-only"
-          items={dropdownItems}
-          menuClassName="query-browser__span-dropdown-menu"
-          noSelection={true}
-          onChange={(v: string) => setSpan(v)}
-        />
+        <InputGroup className="query-browser__span">
+          <TextInput
+            aria-label={t('public~graph timespan')}
+            className="query-browser__span-text"
+            validated={isValid ? 'default' : 'error'}
+            onChange={(v) => setSpan(v, true)}
+            type="text"
+            value={text}
+          />
+          <Dropdown
+            dropdownItems={dropdownItems}
+            isOpen={isOpen}
+            onSelect={setClosed}
+            position={DropdownPosition.right}
+            toggle={<DropdownToggle aria-label={t('public~graph timespan')} onToggle={setIsOpen} />}
+          />
+        </InputGroup>
         <Button
           className="query-browser__inline-control"
           onClick={() => setSpan(defaultSpanText)}
