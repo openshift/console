@@ -55,7 +55,7 @@ const RepositoriesRow: React.FC<RowFunctionArgs> = ({ obj }) => {
           <ExternalLink
             href={obj.spec.connectionConfig.url}
             text={obj.spec.connectionConfig.url}
-            additionalClassName="co-break-all"
+            additionalClassName="co-external-link--block"
           />
         ) : (
           '-'
