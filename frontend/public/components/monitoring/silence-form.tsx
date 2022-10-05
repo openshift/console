@@ -3,7 +3,17 @@ import {
   formatPrometheusDuration,
   parsePrometheusDuration,
 } from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import { Alert, ActionGroup, Button, TextArea, TextInput, Tooltip } from '@patternfly/react-core';
+import {
+  Alert,
+  ActionGroup,
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+  TextArea,
+  TextInput,
+  Tooltip,
+} from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -18,11 +28,11 @@ import { coFetchJSON } from '../../co-fetch';
 import { RootState } from '../../redux';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { ButtonBar } from '../utils/button-bar';
-import { Dropdown } from '../utils/dropdown';
 import { PageHeading, SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams } from '../utils/link';
 import { history } from '../utils/router';
 import { StatusBox } from '../utils/status-box';
+import { useBoolean } from './hooks/useBoolean';
 import { Silences } from './types';
 import { SilenceResource, silenceState } from './utils';
 
@@ -66,19 +76,17 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   const { t } = useTranslation();
 
   const durationOff = '-';
-  const durations = [durationOff, '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w'];
-  const internationalizedDurationItems = [
-    durationOff,
-    t('public~30m'),
-    t('public~1h'),
-    t('public~2h'),
-    t('public~6h'),
-    t('public~12h'),
-    t('public~1d'),
-    t('public~2d'),
-    t('public~1w'),
-  ];
-  const durationItems = _.zipObject(durations, internationalizedDurationItems);
+  const durations = {
+    [durationOff]: durationOff,
+    '30m': t('public~30m'),
+    '1h': t('public~1h'),
+    '2h': t('public~2h'),
+    '6h': t('public~6h'),
+    '12h': t('public~12h'),
+    '1d': t('public~1d'),
+    '2d': t('public~2d'),
+    '1w': t('public~1w'),
+  };
 
   const now = new Date();
 
@@ -94,10 +102,12 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
     const durationFromDefaults = formatPrometheusDuration(
       Date.parse(defaults.endsAt) - Date.parse(defaults.startsAt),
     );
-    if (durations.includes(durationFromDefaults)) {
+    if (Object.keys(durations).includes(durationFromDefaults)) {
       defaultDuration = durationFromDefaults;
     }
   }
+
+  const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
 
   const [comment, setComment] = React.useState(defaults.comment ?? '');
   const [createdBy, setCreatedBy] = React.useState(defaults.createdBy ?? '');
@@ -192,6 +202,10 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
       });
   };
 
+  const dropdownItems = _.map(durations, (displayText, key) => (
+    <DropdownItem onClick={() => setDuration(key)}>{displayText}</DropdownItem>
+  ));
+
   return (
     <>
       <Helmet>
@@ -228,10 +242,12 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               <div className="form-group col-sm-4 col-md-2">
                 <label>{t('public~For...')}</label>
                 <Dropdown
-                  dropDownClassName="dropdown--full-width"
-                  items={durationItems}
-                  onChange={(v: string) => setDuration(v)}
-                  selectedKey={duration}
+                  className="dropdown--full-width"
+                  data-test="for"
+                  dropdownItems={dropdownItems}
+                  isOpen={isOpen}
+                  onSelect={setClosed}
+                  toggle={<DropdownToggle onToggle={setIsOpen}>{duration}</DropdownToggle>}
                 />
               </div>
               <div className="form-group col-sm-4 col-md-5">
@@ -249,7 +265,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                     isDisabled
                     value={
                       isStartNow
-                        ? t('public~{{duration}} from now', { duration: durationItems[duration] })
+                        ? t('public~{{duration}} from now', { duration: durations[duration] })
                         : getEndsAtValue()
                     }
                   />
