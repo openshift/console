@@ -5,6 +5,11 @@ import {
   LayoutFactory,
   ModelKind,
   Graph,
+  TaskEdge,
+  PipelineDagreLayout,
+  withPanZoom,
+  SpacerNode,
+  DefaultTaskGroup,
 } from '@patternfly/react-topology';
 import BuilderFinallyNode from './BuilderFinallyNode';
 import BuilderNode from './BuilderNode';
@@ -12,18 +17,18 @@ import { NodeType, PipelineLayout } from './const';
 import FinallyNode from './FinallyNode';
 import InvalidTaskListNode from './InvalidTaskListNode';
 import LoadingNode from './LoadingNode';
-import SpacerNode from './SpacerNode';
-import TaskEdge from './TaskEdge';
+import PipelineTaskNode from './PipelineTaskNode';
+import BuilderTaskEdge from './TaskEdge';
 import TaskListNode from './TaskListNode';
 import TaskNode from './TaskNode';
 import { getLayoutData } from './utils';
 
-export const componentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
+export const builderComponentsFactory: ComponentFactory = (kind: ModelKind, type: string) => {
   switch (kind) {
     case ModelKind.graph:
       return GraphComponent;
     case ModelKind.edge:
-      return TaskEdge;
+      return BuilderTaskEdge;
     case ModelKind.node:
       switch (type) {
         case NodeType.TASK_NODE:
@@ -50,11 +55,32 @@ export const componentFactory: ComponentFactory = (kind: ModelKind, type: string
   }
 };
 
+export const dagreViewerComponentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
+  switch (kind) {
+    case ModelKind.graph:
+      return withPanZoom()(GraphComponent);
+    case ModelKind.edge:
+      return TaskEdge;
+    case ModelKind.node:
+      switch (type) {
+        case NodeType.TASK_NODE:
+        case NodeType.FINALLY_NODE:
+          return PipelineTaskNode;
+        case NodeType.FINALLY_GROUP:
+          return DefaultTaskGroup;
+        case NodeType.SPACER_NODE:
+          return SpacerNode;
+        default:
+          return undefined;
+      }
+    default:
+      return undefined;
+  }
+};
+
 export const layoutFactory: LayoutFactory = (type: string, graph: Graph) => {
   switch (type) {
     case PipelineLayout.DAGRE_BUILDER:
-    case PipelineLayout.DAGRE_VIEWER:
-    case PipelineLayout.DAGRE_VIEWER_SPACED:
     case PipelineLayout.DAGRE_BUILDER_SPACED:
       return new DagreLayout(graph, {
         // Hack to get around undesirable defaults
@@ -69,6 +95,8 @@ export const layoutFactory: LayoutFactory = (type: string, graph: Graph) => {
         layoutOnDrag: false,
         ...getLayoutData(type),
       });
+    case PipelineLayout.DAGRE_VIEWER:
+      return new PipelineDagreLayout(graph, { nodesep: 25 });
     default:
       return undefined;
   }

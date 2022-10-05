@@ -17,6 +17,15 @@ export const FINALLY_ADD_LINK_SIZE = 15;
 export const WHEN_EXPRESSSION_DIAMOND_SIZE = 10;
 export const WHEN_EXPRESSION_SPACING = 25;
 
+export const DEFAULT_NODE_HEIGHT = 32;
+export const NODE_PADDING = 12;
+export const DEFAULT_NODE_ICON_WIDTH = 30;
+export const DEFAULT_BADGE_WIDTH = 40;
+export const DEFAULT_FINALLLY_GROUP_PADDING = 35;
+export const TOOLBAR_HEIGHT = 40;
+export const GRAPH_MIN_WIDTH = 300;
+export const GRAPH_MAX_HEIGHT_PERCENT = 45;
+
 export enum NodeType {
   TASK_NODE = 'task',
   SPACER_NODE = 'spacer',
@@ -26,6 +35,8 @@ export enum NodeType {
   INVALID_TASK_LIST_NODE = 'invalid-task-list',
   FINALLY_NODE = 'finally-node',
   BUILDER_FINALLY_NODE = 'builder-finally-node',
+  FINALLY_GROUP = 'finally-group',
+  EDGE = 'edge',
 }
 export enum DrawDesign {
   INTEGRAL_SHAPE = 'integral-shape',

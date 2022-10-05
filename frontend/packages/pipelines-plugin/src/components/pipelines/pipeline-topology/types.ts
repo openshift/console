@@ -1,4 +1,4 @@
-import { EdgeModel, NodeModel } from '@patternfly/react-topology';
+import { EdgeModel, NodeModel, RunStatus, WhenStatus } from '@patternfly/react-topology';
 import { PipelineKind, TaskKind, PipelineRunKind, PipelineTask } from '../../../types';
 import { PipelineBuilderLoadingTask, TaskSearchCallback } from '../pipeline-builder/types';
 import { AddNodeDirection, NodeType } from './const';
@@ -11,7 +11,16 @@ export type NodeSelectionCallback = (nodeData: BuilderNodeModelData) => void;
 
 // Node Data Models
 export type PipelineRunAfterNodeModelData = {
+  id?: string;
+  width?: number;
+  height?: number;
   selected?: boolean;
+  status?: RunStatus;
+  whenStatus?: WhenStatus;
+  pipeline?: PipelineKind;
+  pipelineRun?: PipelineRunKind;
+  label?: string;
+  runAfterTasks?: string[];
   task: {
     name: string;
     runAfter?: string[];

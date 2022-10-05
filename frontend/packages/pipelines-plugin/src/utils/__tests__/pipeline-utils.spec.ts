@@ -249,7 +249,7 @@ describe('pipeline-utils ', () => {
     expect(serviceAccount.imagePullSecrets).toHaveLength(2);
   });
 
-  it('should append Idle status if a taskrun status reason is missing', () => {
+  it('should append Pending status if a taskrun status reason is missing', () => {
     const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
     const pipelineRunWithoutStatus = _.cloneDeep(pipelineRuns[DataState.IN_PROGRESS]);
     _.forIn(pipelineRunWithoutStatus.status.taskRuns, (taskRun, name) => {
@@ -260,7 +260,7 @@ describe('pipeline-utils ', () => {
       ]);
     });
     const taskList = appendPipelineRunStatus(pipeline, pipelineRunWithoutStatus);
-    expect(taskList.filter((t) => t.status.reason === ComputedStatus.Idle)).toHaveLength(2);
+    expect(taskList.filter((t) => t.status.reason === ComputedStatus.Pending)).toHaveLength(2);
   });
 
   it('should append pipelineRun running status for all the tasks', () => {

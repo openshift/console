@@ -1,10 +1,29 @@
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
+import {
+  getSpacerNodes,
+  getEdgesFromNodes,
+  WhenStatus,
+  RunStatus,
+  ModelKind,
+  GraphModel,
+  EdgeModel,
+} from '@patternfly/react-topology';
 import * as dagre from 'dagre';
 import * as _ from 'lodash';
 import i18n from '@console/internal/i18n';
-import { ComputedStatus, PipelineKind, PipelineRunKind, PipelineTask } from '../../../types';
+import {
+  ComputedStatus,
+  PipelineKind,
+  PipelineRunKind,
+  PipelineTask,
+  PipelineTaskWithStatus,
+} from '../../../types';
 import { getRunStatusColor } from '../../../utils/pipeline-augment';
-import { getPipelineTasks, getFinallyTasksWithStatus } from '../../../utils/pipeline-utils';
+import {
+  getPipelineTasks,
+  getFinallyTasksWithStatus,
+  appendPipelineRunStatus,
+} from '../../../utils/pipeline-utils';
 import { CheckTaskErrorMessage } from '../pipeline-builder/types';
 import {
   NODE_HEIGHT,
@@ -19,7 +38,13 @@ import {
   WHEN_EXPRESSION_SPACING,
   DAGRE_VIEWER_SPACED_PROPS,
   DAGRE_BUILDER_SPACED_PROPS,
+  NODE_PADDING,
+  DEFAULT_NODE_ICON_WIDTH,
+  DEFAULT_FINALLLY_GROUP_PADDING,
+  DEFAULT_NODE_HEIGHT,
+  DEFAULT_BADGE_WIDTH,
 } from './const';
+import { DAG, Vertex } from './dag';
 import {
   PipelineEdgeModel,
   NodeCreator,
@@ -40,7 +65,9 @@ import {
 
 const createGenericNode: NodeCreatorSetup = (type, width?, height?) => (name, data) => ({
   id: name,
-  data,
+  label: data?.label || name,
+  runAfterTasks: data?.runAfterTasks || [],
+  ...(data && { data }),
   height: height ?? NODE_HEIGHT,
   width: width ?? NODE_WIDTH,
   type,
@@ -78,6 +105,9 @@ export const createBuilderFinallyNode = (
   width: number,
 ): NodeCreator<BuilderFinallyNodeModel> =>
   createGenericNode(NodeType.BUILDER_FINALLY_NODE, width, height);
+
+const createPipelineTaskNode = (type: NodeType, data: PipelineRunAfterNodeModelData) =>
+  createGenericNode(type, data.width, data.height)(data.id, data);
 
 export const getNodeCreator = (type: NodeType): NodeCreator<PipelineRunAfterNodeModelData> => {
   switch (type) {
@@ -238,7 +268,7 @@ export const tasksToBuilderNodes = (
   });
 };
 
-export const getEdgesFromNodes = (nodes: PipelineMixedNodeModel[]): PipelineEdgeModel[] =>
+export const getBuilderEdgesFromNodes = (nodes: PipelineMixedNodeModel[]): PipelineEdgeModel[] =>
   _.flatten(
     nodes.map((node) => {
       const {
@@ -331,6 +361,225 @@ export const getTopologyNodesEdges = (
   const edges: PipelineEdgeModel[] = getEdgesFromNodes(nodes);
 
   return { nodes, edges };
+};
+
+export const getTextWidth = (text: string, font: string = '0.8rem RedHatText'): number => {
+  if (!text || text.length === 0) {
+    return 0;
+  }
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  if (!context) {
+    return text.length;
+  }
+  context.font = font;
+  const { width } = context.measureText(text);
+  return width;
+};
+
+export const extractDepsFromContextVariables = (contextVariable: string) => {
+  const regex = /(?:(?:\$\(tasks.))([a-z0-9_-]+)(?:.results+)(?:[.^\w]+\))/g;
+  let matches;
+  const deps = [];
+  // eslint-disable-next-line no-cond-assign
+  while ((matches = regex.exec(contextVariable)) !== null) {
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (matches.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+    if (matches) {
+      if (!deps.includes(matches[1])) {
+        deps.push(matches[1]);
+      }
+    }
+  }
+  return deps;
+};
+
+export const getSpacerNode = (node: PipelineMixedNodeModel): PipelineMixedNodeModel => ({
+  ...node,
+  height: 1,
+  width: 1,
+});
+
+export const getWhenStatus = (status: RunStatus): WhenStatus => {
+  switch (status) {
+    case RunStatus.Succeeded:
+    case RunStatus.Failed:
+      return WhenStatus.Met;
+    case RunStatus.Skipped:
+    case RunStatus['In Progress']:
+    case RunStatus.Idle:
+      return WhenStatus.Unmet;
+    default:
+      return undefined;
+  }
+};
+
+export const getTaskWhenStatus = (task: PipelineTaskWithStatus): WhenStatus => {
+  if (!task.when) {
+    return undefined;
+  }
+  return getWhenStatus(task.status?.reason);
+};
+
+export const getGraphDataModel = (
+  pipeline: PipelineKind,
+  pipelineRun: PipelineRunKind = {
+    apiVersion: '',
+    metadata: {},
+    kind: 'PipelineRun',
+    spec: {},
+  },
+): {
+  graph: GraphModel;
+  nodes: PipelineMixedNodeModel[];
+  edges: EdgeModel[];
+} => {
+  if (!pipeline) {
+    return null;
+  }
+
+  const taskList = _.flatten(getPipelineTasks(pipeline, pipelineRun));
+
+  const dag = new DAG();
+  taskList?.forEach((task: PipelineTask) => {
+    dag.addEdges(task.name, task, '', task.runAfter || []);
+  });
+
+  const nodes = [];
+  const maxWidthForLevel = {};
+  dag.topologicalSort((v: Vertex) => {
+    if (!maxWidthForLevel[v.level]) {
+      maxWidthForLevel[v.level] = getTextWidth(v.name);
+    } else {
+      maxWidthForLevel[v.level] = Math.max(maxWidthForLevel[v.level], getTextWidth(v.name));
+    }
+  });
+  dag.topologicalSort((vertex: Vertex) => {
+    const runAfterTasks = [];
+    const task = vertex.data;
+    const depsFromContextVariables = [];
+    if (task.params) {
+      task.params.forEach((p) => {
+        if (Array.isArray(p.value)) {
+          p.value.forEach((paramValue) => {
+            depsFromContextVariables.push(...extractDepsFromContextVariables(paramValue));
+          });
+        } else {
+          depsFromContextVariables.push(...extractDepsFromContextVariables(p.value));
+        }
+      });
+    }
+    if (task?.when) {
+      task.when.forEach(({ input, values }) => {
+        depsFromContextVariables.push(...extractDepsFromContextVariables(input));
+        values.forEach((whenValue) => {
+          depsFromContextVariables.push(...extractDepsFromContextVariables(whenValue));
+        });
+      });
+    }
+    const dependancies = _.uniq([...vertex.dependancyNames]);
+    if (dependancies) {
+      dependancies.forEach((dep) => {
+        const depObj = dag.vertices.get(dep);
+        if (depObj.level - vertex.level <= 1 || vertex.data.runAfter?.includes(depObj.name)) {
+          runAfterTasks.push(dep);
+        }
+      });
+    }
+    if (depsFromContextVariables.length > 0) {
+      const v = depsFromContextVariables.map((d) => {
+        return dag.vertices.get(d);
+      });
+      const minLevelDep = _.minBy(v, (d) => d.level);
+      const nearestDeps = v.filter((v1) => v1.level === minLevelDep.level);
+      nearestDeps.forEach((nd) => {
+        if (nd.level - vertex.level <= 1 || vertex.dependancyNames.length === 0) {
+          runAfterTasks.push(nd.name);
+        }
+      });
+    }
+    const badgePadding = Object.keys(pipelineRun.spec)?.length > 0 ? DEFAULT_BADGE_WIDTH : 0;
+    const isTaskSkipped = pipelineRun?.status?.skippedTasks?.some((t) => t.name === task.name);
+
+    nodes.push(
+      createPipelineTaskNode(NodeType.TASK_NODE, {
+        id: vertex.name,
+        label: vertex.name,
+        width:
+          maxWidthForLevel[vertex.level] +
+          NODE_PADDING * 2 +
+          DEFAULT_NODE_ICON_WIDTH +
+          badgePadding,
+        runAfterTasks,
+        status: isTaskSkipped ? RunStatus.Skipped : vertex.data.status?.reason,
+        whenStatus: getTaskWhenStatus(vertex.data),
+        task: vertex.data,
+        pipeline,
+        pipelineRun,
+      }),
+    );
+  });
+
+  const finallyTaskList = appendPipelineRunStatus(pipeline, pipelineRun, true);
+
+  const maxFinallyNodeName =
+    finallyTaskList.sort((a, b) => b.name.length - a.name.length)[0]?.name || '';
+  const finallyNodes = finallyTaskList.map((fTask) => {
+    const isTaskSkipped = pipelineRun?.status?.skippedTasks?.some((t) => t.name === fTask.name);
+
+    return createPipelineTaskNode(NodeType.FINALLY_NODE, {
+      id: fTask.name,
+      label: fTask.name,
+      width:
+        getTextWidth(maxFinallyNodeName) + NODE_PADDING * 2 + DEFAULT_FINALLLY_GROUP_PADDING * 2,
+      height: DEFAULT_NODE_HEIGHT,
+      runAfterTasks: [],
+      status: isTaskSkipped ? RunStatus.Skipped : fTask.status?.reason,
+      whenStatus: getTaskWhenStatus(fTask),
+      task: fTask,
+      pipeline,
+      pipelineRun,
+    });
+  });
+
+  const finallyGroup = finallyNodes.length
+    ? [
+        {
+          id: 'finally-group-id',
+          type: NodeType.FINALLY_GROUP,
+          children: finallyNodes.map((n) => n.id),
+          group: true,
+          style: { padding: DEFAULT_FINALLLY_GROUP_PADDING },
+        },
+      ]
+    : [];
+  const spacerNodes: PipelineMixedNodeModel[] = getSpacerNodes(
+    [...nodes, ...finallyNodes],
+    NodeType.SPACER_NODE,
+    [NodeType.FINALLY_NODE],
+  ).map(getSpacerNode);
+
+  const edges: PipelineEdgeModel[] = getEdgesFromNodes(
+    [...nodes, ...spacerNodes, ...finallyNodes],
+    NodeType.SPACER_NODE,
+    NodeType.EDGE,
+    NodeType.EDGE,
+    [NodeType.FINALLY_NODE],
+    NodeType.EDGE,
+  );
+
+  return {
+    graph: {
+      id: `${pipelineRun?.metadata?.name || pipeline.metadata.name}-graph`,
+      type: ModelKind.graph,
+      layout: PipelineLayout.DAGRE_VIEWER,
+      scaleExtent: [0.5, 1],
+    },
+    nodes: [...nodes, ...spacerNodes, ...finallyNodes, ...finallyGroup],
+    edges,
+  };
 };
 
 export const taskHasWhenExpression = (task: PipelineTask): boolean => task?.when?.length > 0;

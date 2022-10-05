@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
+import { ModelKind } from '@patternfly/react-topology';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { LoadingBox } from '@console/internal/components/utils';
 import { PipelineLayout } from '../pipeline-topology/const';
+import { builderComponentsFactory } from '../pipeline-topology/factories';
 import PipelineTopologyGraph from '../pipeline-topology/PipelineTopologyGraph';
-import { getEdgesFromNodes, nodesHasWhenExpression } from '../pipeline-topology/utils';
+import { getBuilderEdgesFromNodes, nodesHasWhenExpression } from '../pipeline-topology/utils';
 import { useNodes } from './hooks';
 import {
   PipelineBuilderFormikValues,
@@ -62,18 +64,26 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
     );
   }
 
+  const model = {
+    graph: {
+      id: 'pipeline-builder',
+      type: ModelKind.graph,
+      layout: hasWhenExpression
+        ? PipelineLayout.DAGRE_BUILDER_SPACED
+        : PipelineLayout.DAGRE_BUILDER,
+    },
+    nodes,
+    edges: getBuilderEdgesFromNodes(nodes),
+  };
+
   return (
     <PipelineTopologyGraph
       // TODO: fix this; the graph layout isn't properly laying out nodes
       key={`${nodes.map((n) => n.id).join('-')}${hasWhenExpression ? '-spaced' : ''}`}
-      id="pipeline-builder"
       data-test="pipeline-builder"
-      fluid
-      nodes={nodes}
-      edges={getEdgesFromNodes(nodes)}
-      layout={
-        hasWhenExpression ? PipelineLayout.DAGRE_BUILDER_SPACED : PipelineLayout.DAGRE_BUILDER
-      }
+      builder
+      model={model}
+      componentFactory={builderComponentsFactory}
     />
   );
 };
