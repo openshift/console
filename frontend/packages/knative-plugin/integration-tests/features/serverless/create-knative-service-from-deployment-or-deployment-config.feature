@@ -1,4 +1,4 @@
-@knative
+@knative-serverless
 Feature: Create Knative service from existing Deployment/Deployment Config workloads
               As a user, I should be able to create a serverless app(knative service) from existing deployment/deployment-config and specify any advanced options which I'm able to specify upon creating a knative service
 

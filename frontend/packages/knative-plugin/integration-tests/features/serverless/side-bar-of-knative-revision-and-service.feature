@@ -1,4 +1,4 @@
-@knative
+@knative-serverless
 Feature: side bar details
               As a user, I want to see the details of the revision and service in side bar
 
@@ -34,12 +34,12 @@ Feature: side bar details
              Then side bar is displayed with heading name as "nodejs-ex-git"
               And Name, Namespace, Labels, Annotations, Created at, Owner fields displayed in topology details
               And Pods, Revisions, Routes and Builds displayed in Resources section
-            # And Name display as "nodejs-ex-git-1" in topology details
-            # And Namespace display as "aut-knative-side-pane-details" in topology details
-            # And Labels section contain n number of Labels in topology details
-            # And Annotations section contain "{number of annotations} Annotations" in topology details
-            # And "Created on" field display the date in format "{month date, hour:minutes am/pm}" in topology details
-            # And owner field displayed in topology details
+    # And Name display as "nodejs-ex-git-1" in topology details
+    # And Namespace display as "aut-knative-side-pane-details" in topology details
+    # And Labels section contain n number of Labels in topology details
+    # And Annotations section contain "{number of annotations} Annotations" in topology details
+    # And "Created on" field display the date in format "{month date, hour:minutes am/pm}" in topology details
+    # And owner field displayed in topology details
 
 
         @smoke @broken-test
