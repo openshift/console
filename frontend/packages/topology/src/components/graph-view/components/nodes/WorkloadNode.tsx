@@ -112,6 +112,7 @@ export const getAggregateStatus = (
   alertSeverity: AlertSeverity,
   buildStatus: string,
   pipelineStatus: string,
+  workloadRqAlertVariant: NodeStatus,
 ): NodeStatus => {
   const worstPodStatus =
     donutStatus?.pods?.reduce((acc, pod) => {
@@ -130,7 +131,8 @@ export const getAggregateStatus = (
     worstPodStatus === POD_STATUS_WARNING ||
     alertSeverity === AlertSeverity.Warning ||
     StatusSeverities.warning.includes(buildStatus) ||
-    StatusSeverities.warning.includes(pipelineStatus)
+    StatusSeverities.warning.includes(pipelineStatus) ||
+    workloadRqAlertVariant === NodeStatus.warning
   ) {
     return NodeStatus.warning;
   }
@@ -215,7 +217,13 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
           canDrop={canDrop}
           nodeStatus={
             !showDetails &&
-            getAggregateStatus(donutStatus, severityAlertType, buildStatus, pipelineStatus)
+            getAggregateStatus(
+              donutStatus,
+              severityAlertType,
+              buildStatus,
+              pipelineStatus,
+              workloadRqAlertVariant,
+            )
           }
           attachments={nodeDecorators}
           contextMenuOpen={contextMenuOpen}

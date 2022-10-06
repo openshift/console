@@ -67,6 +67,7 @@ export const topologyPO = {
     },
     addLink: '[data-test="add-page"]',
     quickSearch: '[data-test="quick-search-bar"]',
+    warningBackground: '[class="pf-topology__node__background pf-m-warning"]',
   },
   list: {
     appName: '#HelmRelease ul li div',

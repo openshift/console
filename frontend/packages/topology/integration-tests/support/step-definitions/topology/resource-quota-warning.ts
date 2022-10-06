@@ -12,6 +12,7 @@ import {
   app,
   topologySidePane,
 } from '@console/dev-console/integration-tests/support/pages';
+import { topologyPO } from '../../page-objects/topology-po';
 
 const deteleResourceQuota = () => {
   detailsPage.isLoaded();
@@ -76,4 +77,14 @@ Then('user is able to see resource quota alert', () => {
 
 And('user is able to see yellow border around {string} workload', (workloadName: string) => {
   topologyPage.verifyNodeAlert(workloadName);
+});
+
+And('user continously clicks on zoom-out button until it gets maximum zoomed out', () => {
+  topologyPage.clickMaxZoomOut();
+});
+
+Then('user is able to see yellow background on workload for resource quota alert', () => {
+  cy.byLegacyTestID('ex-node-js1')
+    .get(topologyPO.graph.warningBackground)
+    .should('be.visible');
 });
