@@ -134,7 +134,7 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
     ? {
         title: t('topology~Resource Quotas'),
         dismissible: true,
-        content: <>{replicaFailureMsg}</>,
+        content: replicaFailureMsg,
         actionLinks: alertActionLink,
         variant: 'warning',
       }
