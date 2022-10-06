@@ -19,53 +19,53 @@ beforeEach(() => {
 });
 
 describe('isSubCatalogTypeEnabled - get sub-catalog status', () => {
-  it('if customization is not there', () => {
+  it('should show HelmChart catalog type as enabled when dev catalog types are not configured', () => {
     const isEnabled = isCatalogTypeEnabled('HelmChart');
     expect(isEnabled).toBe(true);
   });
-  it('if none of the sub-catalogs enabled', () => {
+  it('should show HelmChart catalog type as enabled when enabled list is empty', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" , "enabled": [] }';
     const isEnabled = isCatalogTypeEnabled('HelmChart');
     expect(isEnabled).toBe(true);
   });
-  it('if disabled list is empty', () => {
+  it('should show HelmChart catalog type as disabled when disabled list is empty', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" , "disabled": [] }';
     const isEnabled = isCatalogTypeEnabled('HelmChart');
     expect(isEnabled).toBe(false);
   });
-  it('if sub-catalog is enabled', () => {
+  it('should show HelmChart catalog type as enabled when HelmChart is added in enabled list', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" , "enabled": ["HelmChart"] }';
     const isEnabled = isCatalogTypeEnabled('HelmChart');
     expect(isEnabled).toBe(true);
   });
-  it('if sub-catalog is disabled', () => {
+  it('should show HelmChart catalog type as disabled when HelmChart is added in disabled list', () => {
     window.SERVER_FLAGS.developerCatalogTypes =
       '{"state" : "Disabled" , "disabled": ["HelmChart"] }';
     const isEnabled = isCatalogTypeEnabled('HelmChart');
     expect(isEnabled).toBe(false);
   });
-  it('if sub-catalog is not added in enabled list', () => {
+  it('should show HelmChart catalog type as disabled when HelmChart is not added in enabled list', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" , "enabled": ["Devfile"] }';
     const isEnabled = isCatalogTypeEnabled('HelmChart');
     expect(isEnabled).toBe(false);
   });
-  it('if sub-catalog is not added in disabled list', () => {
+  it('should show HelmChart catalog type as enabled when HelmChart is not added in disabled list', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" , "disabled": ["Devfile"] }';
     const isEnabled = isCatalogTypeEnabled('HelmChart');
     expect(isEnabled).toBe(true);
   });
-  it('if sub-catalog enabled along with other types', () => {
+  it('should show HelmChart catalog type as enabled when HelmChart is added in enabled list along with other sub-catalog', () => {
     window.SERVER_FLAGS.developerCatalogTypes =
       '{"state" : "Enabled" , "enabled": ["Devfile","HelmChart"] }';
     const isEnabled = isCatalogTypeEnabled('HelmChart');
     expect(isEnabled).toBe(true);
   });
-  it('if state is Enabled but enabled list is not added', () => {
+  it('should show HelmChart catalog type as enabled when enabled attribute is not added', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" }';
     const isEnabled = isCatalogTypeEnabled('HelmChart');
     expect(isEnabled).toBe(true);
   });
-  it('if state is Disabled but disabled list is not added', () => {
+  it('should show HelmChart catalog type as disabled when disabled attribute is not added', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" }';
     const isEnabled = isCatalogTypeEnabled('HelmChart');
     expect(isEnabled).toBe(false);
@@ -73,21 +73,21 @@ describe('isSubCatalogTypeEnabled - get sub-catalog status', () => {
 });
 
 describe('useIsDeveloperCatalogEnabled - check if developer catalog is enabled or not', () => {
-  it('if enabled list is empty', () => {
+  it('should show developer catalog as enabled when enabled list is empty', () => {
     testHook(() => {
       window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" , "enabled": [] }';
       const isEnabled = useIsDeveloperCatalogEnabled();
       expect(isEnabled).toBe(true);
     });
   });
-  it('if disabled list is empty', () => {
+  it('should show developer catalog as disabled when disabled list is empty', () => {
     testHook(() => {
       window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" , "disabled": [] }';
       const isEnabled = useIsDeveloperCatalogEnabled();
       expect(isEnabled).toBe(false);
     });
   });
-  it('atleast one sub-catalog is enabled', () => {
+  it('should show developer catalog as enabled when enabled list is not empty', () => {
     testHook(() => {
       window.SERVER_FLAGS.developerCatalogTypes =
         '{"state" : "Enabled" , "enabled": ["HelmChart"] }';
@@ -95,7 +95,7 @@ describe('useIsDeveloperCatalogEnabled - check if developer catalog is enabled o
       expect(isEnabled).toBe(true);
     });
   });
-  it('all the sub-catalogs are disabled', () => {
+  it('should show developer catalog as disabled when all sub-catalogs are disabled', () => {
     testHook(() => {
       window.SERVER_FLAGS.developerCatalogTypes =
         '{"state" : "Disabled" , "disabled": ["HelmChart","Devfile","EventSource","EventSink","OperatorBackedService","Sample","Template","BuilderImage"]}';
@@ -103,12 +103,12 @@ describe('useIsDeveloperCatalogEnabled - check if developer catalog is enabled o
       expect(isEnabled).toBe(false);
     });
   });
-  it('if state is Enabled but enabled list is not added', () => {
+  it('should show developer catalog as enabled when enabled attribute is not added', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" }';
     const isEnabled = useIsDeveloperCatalogEnabled();
     expect(isEnabled).toBe(true);
   });
-  it('if state is Disabled but disabled list is not added', () => {
+  it('should show developer catalog as enabled when enabled attribute is not added', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" }';
     const isEnabled = useIsDeveloperCatalogEnabled();
     expect(isEnabled).toBe(false);
@@ -116,13 +116,13 @@ describe('useIsDeveloperCatalogEnabled - check if developer catalog is enabled o
 });
 
 describe('useGetAllDisabledSubCatalogs - get all the disabled sub-catalogs', () => {
-  it('if customization is not added', () => {
+  it('should return no sub-catalog is disabled when dev catalog types are not configured', () => {
     testHook(() => {
       const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
       expect(disabledSubCatalogs.length).toBe(0);
     });
   });
-  it('if one sub-catalog is disabled', () => {
+  it('should return no sub-catalog is disabled when HelmChart is added in disabled list', () => {
     window.SERVER_FLAGS.developerCatalogTypes =
       '{"state" : "Disabled" , "disabled": ["HelmChart"] }';
     testHook(() => {
@@ -130,21 +130,21 @@ describe('useGetAllDisabledSubCatalogs - get all the disabled sub-catalogs', () 
       expect(disabledSubCatalogs.length).toBe(1);
     });
   });
-  it('if all sub-catalogs are disabled', () => {
+  it('should return all sub-catalogs are disabled when disabled list is empty', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" , "disabled": [] }';
     testHook(() => {
       const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
       expect(disabledSubCatalogs.length).toBe(8);
     });
   });
-  it('if enabled list is empty', () => {
+  it('should return no sub-catalogs are disabled when enabled list is empty', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" , "enabled": [] }';
     testHook(() => {
       const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
       expect(disabledSubCatalogs.length).toBe(0);
     });
   });
-  it('if 3 sub-catalogs are enabled', () => {
+  it('should return five sub-catalogs are disabled when enabled list is having three sub-catalogs', () => {
     window.SERVER_FLAGS.developerCatalogTypes =
       '{"state" : "Enabled" , "enabled": ["Devfile","HelmChart","Sample"] }';
     testHook(() => {
@@ -152,7 +152,7 @@ describe('useGetAllDisabledSubCatalogs - get all the disabled sub-catalogs', () 
       expect(disabledSubCatalogs.length).toBe(5);
     });
   });
-  it('if one sub-catalog is enabled', () => {
+  it('should return seven sub-catalogs are disabled when enabled list is having one sub-catalog', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" , "enabled": ["Devfile"] }';
     testHook(() => {
       const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();

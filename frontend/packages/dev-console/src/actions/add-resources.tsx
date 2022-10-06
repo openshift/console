@@ -29,7 +29,6 @@ type ActionFactory = (
   path?: string,
   accessReviewDisabled?: boolean,
   isServiceBindingAllowed?: boolean,
-  isSubCatalogTypeEnabled?: boolean,
 ) => Action;
 
 export const resolvedURLWithParams = (
@@ -162,6 +161,4 @@ export const AddActions: { [name: string]: ActionFactory } = {
 };
 
 const disabledAddActions = getDisabledAddActions();
-export const disabledActionsFilter = (item: Action) => {
-  return !disabledAddActions?.includes(item.id);
-};
+export const disabledActionsFilter = (item: Action) => !disabledAddActions?.includes(item.id);
