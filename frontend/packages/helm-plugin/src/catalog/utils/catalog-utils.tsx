@@ -99,6 +99,7 @@ export const normalizeHelmCharts = (
 
         const detailsDescriptions = [
           {
+            label: t('helm-plugin~Description'),
             value: <p>{description}</p>,
           },
           {
