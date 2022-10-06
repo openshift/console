@@ -257,6 +257,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
               }
             }}
             placeholder="Search"
+            minSearchChars={0}
           />
         </div>
         {showDebugAction(resource, containerName) && !isWindowsPod(resource) && (
