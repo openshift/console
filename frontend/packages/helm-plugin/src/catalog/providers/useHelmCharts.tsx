@@ -1,14 +1,18 @@
 import * as React from 'react';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { ExtensionHook, CatalogItem, WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { ExtensionHook, CatalogItem, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { APIError, useActiveNamespace } from '@console/shared';
-import { HelmChartRepositoryModel } from '../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 import { HelmChartEntries } from '../../types/helm-types';
 import { normalizeHelmCharts } from '../utils/catalog-utils';
+
+type WatchResource = {
+  [key: string]: K8sResourceKind[];
+};
 
 const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   namespace,
@@ -18,14 +22,28 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   const [helmCharts, setHelmCharts] = React.useState<HelmChartEntries>();
   const [loadedError, setLoadedError] = React.useState<APIError>();
 
-  const resourceSelector: WatchK8sResource = {
-    isList: true,
-    kind: referenceForModel(HelmChartRepositoryModel),
-  };
+  const resourceSelector = React.useMemo(
+    () => ({
+      hcrs: {
+        isList: true,
+        kind: referenceForModel(HelmChartRepositoryModel),
+      },
+      phcrs: {
+        isList: true,
+        kind: referenceForModel(ProjectHelmChartRepositoryModel),
+        namespace,
+      },
+    }),
+    [namespace],
+  );
 
-  const [chartRepositories, chartRepositoriesLoaded] = useK8sWatchResource<K8sResourceKind[]>(
+  const chartRepositories: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>(
     resourceSelector,
   );
+
+  const chartRepositoriesLoaded =
+    Object.keys(chartRepositories).length > 0 &&
+    Object.values(chartRepositories).some((value) => value.loaded || !!value.loadError);
 
   React.useEffect(() => {
     let mounted = true;
@@ -47,7 +65,13 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   }, [activeNamespace]);
 
   const normalizedHelmCharts: CatalogItem[] = React.useMemo(
-    () => normalizeHelmCharts(helmCharts, chartRepositories, namespace, t),
+    () =>
+      normalizeHelmCharts(
+        helmCharts,
+        [...chartRepositories?.hcrs?.data, ...chartRepositories?.phcrs?.data],
+        namespace,
+        t,
+      ),
     [chartRepositories, helmCharts, namespace, t],
   );
 
