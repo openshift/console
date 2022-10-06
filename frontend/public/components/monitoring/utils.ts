@@ -69,7 +69,15 @@ export const getAlertsAndRules = (
 };
 
 export const alertState = (a: Alert): AlertStates => a?.state;
+
 export const silenceState = (s: Silence): SilenceStates => s?.status?.state;
+
+export const silenceMatcherEqualitySymbol = (isEqual: boolean, isRegex: boolean): string => {
+  if (isRegex) {
+    return isEqual ? '=~' : '!~';
+  }
+  return isEqual ? '=' : '!=';
+};
 
 export const alertingRuleSource = (rule: Rule): AlertSource =>
   rule.labels?.prometheus === 'openshift-monitoring/k8s' ? AlertSource.Platform : AlertSource.User;
@@ -85,7 +93,10 @@ export const isSilenced = (alert: Alert, silence: Silence): boolean =>
   [AlertStates.Firing, AlertStates.Silenced].includes(alert.state) &&
   _.every(silence.matchers, (m) => {
     const alertValue = _.get(alert.labels, m.name, '');
-    return m.isRegex ? new RegExp(`^${m.value}$`).test(alertValue) : alertValue === m.value;
+    const isMatch = m.isRegex
+      ? new RegExp(`^${m.value}$`).test(alertValue)
+      : alertValue === m.value;
+    return m.isEqual === false && alertValue ? !isMatch : isMatch;
   });
 
 type ListOrder = (number | string)[];

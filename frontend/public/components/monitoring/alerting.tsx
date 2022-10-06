@@ -22,6 +22,7 @@ import {
   Button,
   CodeBlock,
   CodeBlockCode,
+  Label,
   Popover,
   Toolbar,
   ToolbarContent,
@@ -88,7 +89,7 @@ import { Timestamp } from '../utils/timestamp';
 import { AlertmanagerConfigWrapper } from './alert-manager-config';
 import { AlertmanagerYAMLEditorWrapper } from './alert-manager-yaml-editor';
 import MonitoringDashboardsPage from './dashboards';
-import { Label, Labels } from './labels';
+import { Labels } from './labels';
 import { QueryBrowserPage, ToggleGraph } from './metrics';
 import { FormatSeriesTitle, QueryBrowser } from './query-browser';
 import { CreateSilence, EditSilence } from './silence-form';
@@ -104,6 +105,7 @@ import {
   getAlertsAndRules,
   labelsToParams,
   RuleResource,
+  silenceMatcherEqualitySymbol,
   SilenceResource,
   silenceState,
 } from './utils';
@@ -492,8 +494,12 @@ const tableSilenceClasses = [
 
 const SilenceMatchersList = ({ silence }) => (
   <div className={`co-text-${SilenceResource.kind.toLowerCase()}`}>
-    {_.map(silence.matchers, ({ name, isRegex, value }, i) => (
-      <Label key={i} k={name} v={isRegex ? `~${value}` : value} />
+    {_.map(silence.matchers, ({ name, isEqual, isRegex, value }, i) => (
+      <Label className="co-label" key={i}>
+        <span className="co-label__key">{name}</span>
+        <span className="co-label__eq">{silenceMatcherEqualitySymbol(isEqual, isRegex)}</span>
+        <span className="co-label__value">{value}</span>
+      </Label>
     ))}
   </div>
 );

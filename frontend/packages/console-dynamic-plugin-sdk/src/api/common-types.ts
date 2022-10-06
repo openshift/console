@@ -141,7 +141,7 @@ export type Silence = {
   endsAt: string;
   firingAlerts: Alert[];
   id?: string;
-  matchers: { name: string; value: string; isRegex: boolean }[];
+  matchers: { isEqual?: boolean; isRegex: boolean; name: string; value: string }[];
   name?: string;
   startsAt: string;
   status?: { state: SilenceStates };

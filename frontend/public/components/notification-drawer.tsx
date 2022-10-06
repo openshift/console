@@ -29,7 +29,11 @@ import {
   ServiceLevelNotification,
   useShowServiceLevelNotifications,
 } from '@console/internal/components/utils/service-level';
-import { getAlertsAndRules, alertURL } from '@console/internal/components/monitoring/utils';
+import {
+  alertURL,
+  getAlertsAndRules,
+  silenceMatcherEqualitySymbol,
+} from '@console/internal/components/monitoring/utils';
 import { NotificationAlerts } from '@console/internal/reducers/observe';
 import { RedExclamationCircleIcon, useCanClusterUpgrade } from '@console/shared';
 import {
@@ -281,7 +285,9 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
             if (!s.name) {
               // No alertname, so fall back to displaying the other matchers
               s.name = s.matchers
-                .map((m) => `${m.name}${m.isRegex ? '=~' : '='}${m.value}`)
+                .map(
+                  (m) => `${m.name}${silenceMatcherEqualitySymbol(m.isEqual, m.isRegex)}${m.value}`,
+                )
                 .join(', ');
             }
           });
