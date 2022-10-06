@@ -63,7 +63,6 @@ const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
   const { buildConfigs, loaded: buildConfigsLoaded } = useBuildConfigsWatcher(resource);
   const { loaded: rcsLoaded, mostRecentRC } = useReplicationControllersWatcher(resource);
   const workloadRqAlert = useResourceQuotaAlert(item);
-  // const workloadRqAlertVariant = (workloadRqAlert?.variant as NodeStatus) || NodeStatus.default;
   const workloadRqAlerts: OverviewItemAlerts = workloadRqAlert
     ? {
         rqAlert: {
