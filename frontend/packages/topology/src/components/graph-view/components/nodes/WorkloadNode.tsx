@@ -28,6 +28,7 @@ import {
 import { WithCreateConnectorProps } from '../../../../behavior/withCreateConnector';
 import { getFilterById, SHOW_POD_COUNT_FILTER_ID, useDisplayFilters } from '../../../../filters';
 import { getResource, getTopologyResourceObject } from '../../../../utils/topology-utils';
+import { useResourceQuotaAlert } from '../../../workload';
 import BaseNode from './BaseNode';
 import { getNodeDecorators } from './decorators/getNodeDecorators';
 import PodSet, { podSetInnerRadius } from './PodSet';
@@ -192,6 +193,8 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
   const { buildConfigs } = useBuildConfigsWatcher(resource);
   const buildStatus = buildConfigs?.[0]?.builds?.[0]?.status?.phase;
   const pipelineStatus = element.getData()?.resources?.pipelineRunStatus ?? 'Unknown';
+  const workloadRqAlert = useResourceQuotaAlert(element);
+  const workloadRqAlertVariant = (workloadRqAlert?.variant as NodeStatus) || NodeStatus.default;
 
   return (
     <g className="odc-workload-node">
@@ -216,6 +219,7 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
           }
           attachments={nodeDecorators}
           contextMenuOpen={contextMenuOpen}
+          alertVariant={workloadRqAlertVariant}
           {...rest}
         >
           {donutStatus && showDetails ? (

@@ -81,6 +81,8 @@ export const topologySidePane = {
     cy.get(topologyPO.sidePane.podText, { timeout: 120000 }).should('contain.text', scaleNumber);
   },
   verifyHealthCheckAlert: () => cy.get(topologyPO.sidePane.healthCheckAlert).should('be.visible'),
+  verifyResourceQuotaAlert: () =>
+    cy.get(topologyPO.sidePane.resourceQuotaAlert).should('be.visible'),
   verifyWorkloadInAppSideBar: (workloadName: string) =>
     cy
       .get(topologyPO.sidePane.dialog)

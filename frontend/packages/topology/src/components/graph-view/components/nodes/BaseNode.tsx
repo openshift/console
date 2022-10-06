@@ -14,6 +14,7 @@ import {
   WithDndDropProps,
   WithDragNodeProps,
   WithSelectionProps,
+  StatusModifier,
 } from '@patternfly/react-topology';
 import classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
@@ -53,6 +54,7 @@ type BaseNodeProps = {
   createConnectorAccessVerb?: K8sVerb;
   nodeStatus?: NodeStatus;
   showStatusBackground?: boolean;
+  alertVariant?: NodeStatus;
 } & Partial<WithSelectionProps> &
   Partial<WithDragNodeProps> &
   Partial<WithDndDropProps> &
@@ -72,6 +74,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   contextMenuOpen,
   createConnectorAccessVerb = 'patch',
   createConnectorDrag,
+  alertVariant,
   ...rest
 }) => {
   const [hoverChange, setHoverChange] = React.useState<boolean>(false);
@@ -113,9 +116,14 @@ const BaseNode: React.FC<BaseNodeProps> = ({
     <Layer id={hover || contextMenuOpen ? TOP_LAYER : DEFAULT_LAYER}>
       <g ref={nodeHoverRefs} data-test-id={element.getLabel()}>
         <DefaultNode
-          className={classNames('odc-base-node', className, {
-            'is-filtered': filtered,
-          })}
+          className={classNames(
+            'odc-base-node',
+            className,
+            alertVariant && StatusModifier[alertVariant],
+            {
+              'is-filtered': filtered,
+            },
+          )}
           truncateLength={RESOURCE_NAME_TRUNCATE_LENGTH}
           element={element}
           showLabel={showLabel}

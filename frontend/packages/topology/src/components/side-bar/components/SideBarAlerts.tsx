@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
-import { GraphElement } from '@patternfly/react-topology';
+import { GraphElement, observer } from '@patternfly/react-topology';
 import {
   DetailsResourceAlert,
   DetailsResourceAlertContent,
@@ -15,7 +15,7 @@ const ResolveResourceAlerts: React.FC<{
   id?: string;
   useResourceAlertsContent?: (element: GraphElement) => DetailsResourceAlertContent;
   element: GraphElement;
-}> = ({ id, useResourceAlertsContent, element }) => {
+}> = observer(function ResolveResourceAlerts({ id, useResourceAlertsContent, element }) {
   const [showAlert, setShowAlert, loaded] = useUserSettings(
     `${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`,
     true,
@@ -42,7 +42,7 @@ const ResolveResourceAlerts: React.FC<{
       {content}
     </Alert>
   ) : null;
-};
+});
 
 const SideBarAlerts: React.FC<{ element: GraphElement }> = ({ element }) => {
   const [resourceAlertsExtension, resolved] = useResolvedExtensions<DetailsResourceAlert>(
