@@ -1,5 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { gitAdvancedOptions, resourceTypes } from '../../constants';
+import { resourceTypes } from '../../constants';
 import { devNavigationMenu } from '../../constants/global';
 import { monitoringPO } from '../../pageObjects/monitoring-po';
 import {
@@ -40,7 +40,6 @@ When('user clicks on Resources dropdown', () => {
 });
 
 When('user selects {string} in Resource type section', (resourceType: string) => {
-  gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
   gitPage.selectResource(resourceType);
 });
 

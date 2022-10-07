@@ -148,6 +148,7 @@ export const gitPage = {
   verifyNodeName: (componentName: string) =>
     cy.get(gitPO.nodeName).should('have.value', componentName),
   selectResource: (resource: string = 'deployment') => {
+    gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
     cy.get(gitPO.advancedOptions.resourcesDropdown)
       .scrollIntoView()
       .click();

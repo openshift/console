@@ -4,7 +4,7 @@ Feature: Update user in topology page if Quotas has been reached in a namespace
 
         Background:
             Given user is at developer perspective
-              And user has created or selected namespace "aut-topology"
+              And user has created or selected namespace "aut-topology-resource-quota"
 
 
         @regression

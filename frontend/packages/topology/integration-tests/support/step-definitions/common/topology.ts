@@ -201,6 +201,10 @@ When('user enters Name as {string}', (name: string) => {
   gitPage.enterWorkloadName(name);
 });
 
+When('user selects {string} in Resource type section', (resourceType: string) => {
+  gitPage.selectResource(resourceType);
+});
+
 Given('user has installed Gitops primer Operator', () => {
   verifyAndInstallGitopsPrimerOperator();
 });
