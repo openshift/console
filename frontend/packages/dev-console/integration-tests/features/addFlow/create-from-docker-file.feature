@@ -25,7 +25,7 @@ Feature: Create Application from Docker file
             Given user is on Import from Git form
              When user enters Git Repo URL as "https://github.com/rohitkrai03/flask-dockerfile-example"
               And user enters Name as "<name>" in Docker file page
-              And user selects "<resource_type>" radio button in Resource type section
+              And user selects "<resource_type>" in Resource type section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "<name>" in topology page
@@ -40,6 +40,6 @@ Feature: Create Application from Docker file
         Scenario: Performing cancel operation on Dockerfile form should redirected the user to Add page: A-05-TC03
             Given user is on Import from Git form
              When user enters Git Repo URL as "https://github.com/rohitkrai03/flask-dockerfile-example"
-              And user selects "Deployment" radio button in Resource type section
+              And user selects "Deployment" in Resource type section
               And user clicks Cancel button on Add page
              Then user will be redirected to Add page

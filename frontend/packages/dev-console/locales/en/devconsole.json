@@ -504,7 +504,6 @@
   "Select an icon": "Select an icon",
   "A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.": "A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.",
   "A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.": "A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.",
-  "Resources": "Resources",
   "Select the resource type to generate": "Select the resource type to generate",
   "Domain mapping": "Domain mapping",
   "Add domain": "Add domain",

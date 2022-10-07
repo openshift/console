@@ -1,5 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { addOptions } from '../../constants';
+import { addOptions, gitAdvancedOptions } from '../../constants';
 import { gitPage, addPage, devFilePage } from '../../pages';
 
 Given('user is on Import from Git form', () => {
@@ -16,7 +16,8 @@ When('user enters Git Repo URL as {string} in Import from Git form', (gitUrl: st
   devFilePage.verifyValidatedMessage(gitUrl);
 });
 
-When('user selects {string} radio button in Resource type section', (resourceType: string) => {
+When('user selects {string} in Resource type section', (resourceType: string) => {
+  gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
   gitPage.selectResource(resourceType);
 });
 

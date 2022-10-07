@@ -166,7 +166,9 @@ export interface RadioGroupOption {
 
 export interface SelectInputOption {
   value: string;
-  disabled: boolean;
+  label?: string;
+  description?: string;
+  disabled?: boolean;
 }
 
 export interface SelectInputFieldProps extends FieldProps {
@@ -179,4 +181,7 @@ export interface SelectInputFieldProps extends FieldProps {
   isInputValuePersisted?: boolean;
   noResultsFoundText?: string;
   toggleOnSelection?: boolean;
+  hideClearButton?: boolean;
+  onChange?: (selection: string) => void;
+  getLabelFromValue?: (value: string) => string;
 }

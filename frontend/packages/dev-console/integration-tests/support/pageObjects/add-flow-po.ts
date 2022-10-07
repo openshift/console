@@ -45,11 +45,6 @@ export const gitPO = {
     addPipeline: '#form-checkbox-pipeline-enabled-field',
     pipelineDropdown: '#form-dropdown-pipeline-templateSelected-field',
   },
-  resources: {
-    deployment: '#form-radiobutton-resources-kubernetes-field',
-    deploymentConfig: '#form-radiobutton-resources-openshift-field',
-    knative: '#form-radiobutton-resources-knative-field',
-  },
   advancedOptions: {
     createRoute: '#form-checkbox-route-create-field',
     routing: {
@@ -97,6 +92,12 @@ export const gitPO = {
       memoryLimitHelperText: 'div#form-resource-limit-limits-memory-limit-field-helper',
     },
     labels: 'input[data-test="labels"]',
+    resourcesDropdown: '#form-select-input-resources-field',
+    resources: {
+      deployment: '#select-option-resources-kubernetes',
+      deploymentConfig: '#select-option-resources-openshift',
+      knative: '#select-option-resources-knative',
+    },
   },
 };
 

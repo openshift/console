@@ -13,7 +13,6 @@ import AppSection from '../app/AppSection';
 import DeployImage from '../DeployImage';
 import DeployImagePage from '../DeployImagePage';
 import ImageSearchSection from '../image-search/ImageSearchSection';
-import ResourceSection from '../section/ResourceSection';
 
 jest.mock('@console/shared/src/hooks/post-form-submit-action', () => ({
   usePostFormSubmitAction: () => () => {},
@@ -21,11 +20,6 @@ jest.mock('@console/shared/src/hooks/post-form-submit-action', () => ({
 
 jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
   useResizeObserver: () => {},
-}));
-
-jest.mock('@console/internal/components/utils/rbac', () => ({
-  // Called in ResourceSection to check knative ServicePlugin permissions
-  useAccessReview: () => false,
 }));
 
 jest.mock('../serverless/useUpdateKnScalingDefaultValues', () => ({
@@ -123,9 +117,6 @@ describe('Deploy Image Test', () => {
 
   it('should load  correct app section', () => {
     expect(deployImageWrapper.find(AppSection).exists()).toBe(true);
-  });
-  it('should load  correct resource section', () => {
-    expect(deployImageWrapper.find(ResourceSection).exists()).toBe(true);
   });
   it('should load  correct advanced section', () => {
     expect(deployImageWrapper.find(AdvancedSection).exists()).toBe(true);

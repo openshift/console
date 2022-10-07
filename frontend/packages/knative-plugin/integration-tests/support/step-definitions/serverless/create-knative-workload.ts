@@ -5,6 +5,7 @@ import {
   catalogCards,
   catalogTypes,
   devNavigationMenu,
+  gitAdvancedOptions,
 } from '@console/dev-console/integration-tests/support/constants';
 import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
@@ -75,7 +76,11 @@ Then('user will be redirected to page with header name {string}', (headerName: s
 });
 
 Then('Knative Service option is displayed under Resources section', () => {
-  cy.get(gitPO.resources.knative)
+  gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
+  cy.get(gitPO.advancedOptions.resourcesDropdown)
+    .scrollIntoView()
+    .click();
+  cy.get(gitPO.advancedOptions.resources.knative)
     .scrollIntoView()
     .should('be.visible');
 });
