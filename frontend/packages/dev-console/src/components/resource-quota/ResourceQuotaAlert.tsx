@@ -9,6 +9,7 @@ import {
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { AppliedClusterResourceQuotaModel, ResourceQuotaModel } from '@console/internal/models';
 import { AppliedClusterResourceQuotaKind, ResourceQuotaKind } from '@console/internal/module/k8s';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { checkQuotaLimit } from '@console/topology/src/components/utils/checkResourceQuota';
 
 export interface ResourceQuotaAlertProps {
@@ -17,6 +18,7 @@ export interface ResourceQuotaAlertProps {
 
 export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespace }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const [warningMessageFlag, setWarningMessageFlag] = React.useState<boolean>();
   const [resourceQuotaName, setResourceQuotaName] = React.useState(null);
   const [resourceQuotaKind, setResourceQuotaKind] = React.useState(null);
@@ -95,11 +97,20 @@ export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespac
     }
     return resourcePathFromModel(ResourceQuotaModel, null, namespace);
   };
+
+  const onResourceQuotaLinkClick = () => {
+    fireTelemetryEvent('Resource Quota Warning Label Clicked');
+  };
+
   return (
     <>
       {warningMessageFlag && resourcequotas.loaded && appliedclusterresourcequotas.loaded ? (
         <Label color="orange" icon={<YellowExclamationTriangleIcon />}>
-          <Link to={getRedirectLink()} data-test="resource-quota-warning">
+          <Link
+            to={getRedirectLink()}
+            data-test="resource-quota-warning"
+            onClick={onResourceQuotaLinkClick}
+          >
             {t('devconsole~{{count}} resource reached quota', {
               count: totalResourcesAtQuota.reduce((a, b) => a + b, 0),
             })}

@@ -19,6 +19,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { getResource } from '../../utils';
 
 const addHealthChecksRefs = [
@@ -87,6 +88,7 @@ export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAler
 
 export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAlertContent => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const resource = getResource(element);
   const name = resource?.metadata?.name;
   const namespace = resource?.metadata?.namespace;
@@ -117,10 +119,13 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
 
   const alertActionCta = alertAction?.cta as () => void;
 
+  const onAlertActionClick = () => {
+    fireTelemetryEvent('Resource Quota Warning Alert Action Link Clicked');
+    alertActionCta();
+  };
+
   const alertActionLink = showAlertActionLink ? (
-    <AlertActionLink onClick={() => alertActionCta()}>
-      {alertAction.label as string}
-    </AlertActionLink>
+    <AlertActionLink onClick={onAlertActionClick}>{alertAction.label as string}</AlertActionLink>
   ) : (
     undefined
   );
