@@ -3,7 +3,8 @@ import { Provider } from 'react-redux';
 import { Router } from 'react-router';
 import { shallow, mount } from 'enzyme';
 import { Nav } from '@patternfly/react-core';
-import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
+// import * as PinnedResources from '@console/shared/src/hooks/usePinnedResources';
+import { usePinnedResources } from '@console/shared/src';
 import store from '../../../redux';
 import { history } from '../../utils';
 import PerspectiveNav from '../PerspectiveNav';
@@ -18,8 +19,8 @@ jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', ()
 jest.mock('@console/shared/src/hooks/usePinnedResources', () => ({
   usePinnedResources: jest.fn(),
 }));
-jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
-  useExtensions: jest.fn().mockReturnValue([]),
+jest.mock('@console/shared/src/hooks/perspective-utils', () => ({
+  usePerspectives: jest.fn(),
 }));
 jest.mock('react-dnd', () => {
   const reactDnd = require.requireActual('react-dnd');

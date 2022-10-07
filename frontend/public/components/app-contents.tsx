@@ -5,12 +5,11 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import {
   useActivePerspective,
   Perspective,
-  isPerspective,
   RoutePage as DynamicRoutePage,
   isRoutePage as isDynamicRoutePage,
 } from '@console/dynamic-plugin-sdk';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import { FLAGS, useUserSettings, getPerspectiveVisitedKey } from '@console/shared';
+import { FLAGS, useUserSettings, getPerspectiveVisitedKey, usePerspectives } from '@console/shared';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, FlagsObject } from '../reducers/features';
@@ -76,7 +75,7 @@ type DefaultPageProps = {
 // The default page component lets us connect to flags without connecting the entire App.
 const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
   const [activePerspective] = useActivePerspective();
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const [visited, setVisited, visitedLoaded] = useUserSettings<boolean>(
     getPerspectiveVisitedKey(activePerspective),
     false,
@@ -99,14 +98,14 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
     return <LoadingBox />;
   }
 
-  const perspective = perspectiveExtensions.find((p) => p.properties.id === activePerspective);
+  const perspective = perspectiveExtensions.find((p) => p?.properties?.id === activePerspective);
 
   // support redirecting to perspective landing page
   return (
     <DefaultPageRedirect
       flags={flags}
       firstVisit={firstVisit.current}
-      url={perspective.properties.landingPageURL}
+      url={perspective?.properties?.landingPageURL}
     />
   );
 };

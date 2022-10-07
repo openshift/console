@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { isPerspective, Perspective, PerspectiveContext } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk';
+import { Perspective, PerspectiveContext } from '@console/dynamic-plugin-sdk';
+import { usePerspectives } from '@console/shared/src';
 import PerspectiveDetector from './PerspectiveDetector';
 import { useValuesForPerspectiveContext } from './useValuesForPerspectiveContext';
 
@@ -20,7 +20,7 @@ const getPerspectiveURLParam = (perspectives: Perspective[]) => {
 
 const DetectPerspective: React.FC<DetectPerspectiveProps> = ({ children }) => {
   const [activePerspective, setActivePerspective, loaded] = useValuesForPerspectiveContext();
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const perspectiveParam = getPerspectiveURLParam(perspectiveExtensions);
   React.useEffect(() => {
     if (perspectiveParam && perspectiveParam !== activePerspective) {
@@ -37,8 +37,5 @@ const DetectPerspective: React.FC<DetectPerspectiveProps> = ({ children }) => {
     )
   ) : null;
 };
-
-// For testing
-export const InternalDetectPerspective = DetectPerspective;
 
 export default DetectPerspective;

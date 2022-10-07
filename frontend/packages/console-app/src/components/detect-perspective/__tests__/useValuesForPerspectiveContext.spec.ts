@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { mockPerspectiveExtensions } from '@console/dynamic-plugin-sdk/src/perspective/__tests__/perspective.data';
-import { useExtensions } from '@console/plugin-sdk';
+import { usePerspectives } from '@console/shared/src';
 import { usePreferredPerspective } from '../../user-preferences';
 import { useLastPerspective } from '../useLastPerspective';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
-jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
-  useExtensions: jest.fn(),
+jest.mock('@console/shared/src', () => ({
+  usePerspectives: jest.fn(),
 }));
 
 jest.mock('../useLastPerspective', () => ({
@@ -26,7 +26,7 @@ jest.mock('react', () => {
 });
 
 const useStateMock = React.useState as jest.Mock;
-const useExtensionsMock = useExtensions as jest.Mock;
+const usePerspectivesMock = usePerspectives as jest.Mock;
 const useLastPerspectiveMock = useLastPerspective as jest.Mock;
 const usePreferredPerspectiveMock = usePreferredPerspective as jest.Mock;
 
@@ -36,7 +36,7 @@ describe('useValuesForPerspectiveContext', () => {
   });
 
   it('should return undefined for PerspectiveType if the perspective from user preference does not match any of the perspectives received from extensions', () => {
-    useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
+    usePerspectivesMock.mockReturnValue(mockPerspectiveExtensions);
     useLastPerspectiveMock.mockReturnValue(['acm', jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue([undefined, jest.fn(), true]);
     useStateMock.mockReturnValue(['', jest.fn()]);
@@ -45,7 +45,7 @@ describe('useValuesForPerspectiveContext', () => {
   });
 
   it('should return undefined for PerspectiveType and false for loaded if preferred or last viewed perspective has not yet loaded', () => {
-    useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
+    usePerspectivesMock.mockReturnValue(mockPerspectiveExtensions);
     useLastPerspectiveMock.mockReturnValue(['dev', jest.fn(), false]);
     usePreferredPerspectiveMock.mockReturnValue(['admin', jest.fn(), true]);
     useStateMock.mockReturnValue(['', jest.fn()]);
@@ -55,7 +55,7 @@ describe('useValuesForPerspectiveContext', () => {
 
     jest.resetAllMocks();
 
-    useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
+    usePerspectivesMock.mockReturnValue(mockPerspectiveExtensions);
     useLastPerspectiveMock.mockReturnValue(['dev', jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue(['admin', jest.fn(), false]);
     useStateMock.mockReturnValue(['', jest.fn()]);
@@ -65,7 +65,7 @@ describe('useValuesForPerspectiveContext', () => {
   });
 
   it('should return preferred perspective if it exists and matches one of the perspectives received from extensions', () => {
-    useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
+    usePerspectivesMock.mockReturnValue(mockPerspectiveExtensions);
     useLastPerspectiveMock.mockReturnValue(['dev', jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue(['admin', jest.fn(), true]);
     useStateMock.mockReturnValue(['', jest.fn()]);
@@ -73,7 +73,7 @@ describe('useValuesForPerspectiveContext', () => {
     expect(perspective).toEqual('admin');
   });
   it('should return last viewed perspective if it matches one of the perspectives received from extensions and preferred perspective does not exist', () => {
-    useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
+    usePerspectivesMock.mockReturnValue(mockPerspectiveExtensions);
     useLastPerspectiveMock.mockReturnValue(['dev', jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue([undefined, jest.fn(), true]);
     useStateMock.mockReturnValue(['', jest.fn()]);
@@ -82,7 +82,7 @@ describe('useValuesForPerspectiveContext', () => {
   });
 
   it(`should return active perspective if it exists`, () => {
-    useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
+    usePerspectivesMock.mockReturnValue(mockPerspectiveExtensions);
     useLastPerspectiveMock.mockReturnValue(['dev', jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue(['dev', jest.fn(), true]);
     useStateMock.mockReturnValue(['admin', jest.fn()]);

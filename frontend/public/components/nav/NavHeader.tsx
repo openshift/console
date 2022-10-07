@@ -2,13 +2,18 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
+import * as cx from 'classnames';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
-import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk';
+import { Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '../utils';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useActiveCluster, useActiveNamespace, ACM_LINK_ID } from '@console/shared';
+import {
+  useActiveCluster,
+  useActiveNamespace,
+  ACM_LINK_ID,
+  usePerspectives,
+} from '@console/shared';
 import { formatNamespaceRoute } from '@console/internal/actions/ui';
 import { detectFeatures, clearSSARFlags } from '@console/internal/actions/features';
 import { useTranslation } from 'react-i18next';
@@ -70,7 +75,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isClusterDropdownOpen, setClusterDropdownOpen] = React.useState(false);
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -90,7 +95,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     [consoleLinks],
   );
   const acmPerspectiveExtension = React.useMemo(
-    () => perspectiveExtensions?.find((p) => p.properties.id === 'acm'),
+    () => perspectiveExtensions.find((p) => p.properties.id === 'acm'),
     [perspectiveExtensions],
   );
   const showMultiClusterDropdown = acmPerspectiveExtension || isMultiClusterEnabled();
@@ -159,11 +164,34 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   );
 
   const { icon, name } = React.useMemo(
-    () => perspectiveExtensions.find((p) => p.properties.id === activePerspective).properties,
+    () =>
+      perspectiveExtensions.find((p) => p?.properties?.id === activePerspective)?.properties ??
+      perspectiveExtensions[0]?.properties ?? { icon: null, name: null },
     [activePerspective, perspectiveExtensions],
   );
 
-  const LazyIcon = React.useMemo(() => React.lazy(icon), [icon]);
+  const LazyIcon = React.useMemo(() => icon && React.lazy(icon), [icon]);
+  const perspectiveDropdownItems = [
+    ...perspectiveItems,
+    ...(!acmPerspectiveExtension && acmLink
+      ? [
+          <DropdownItem
+            key={ACM_LINK_ID}
+            onClick={() => {
+              window.location.href = acmLink.spec.href;
+            }}
+            isHovered={ACM_LINK_ID === activePerspective}
+          >
+            <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
+              <span className="oc-nav-header__icon">
+                <img src={acmIcon} height="12em" width="12em" alt="" />
+              </span>
+              {t('public~Advanced Cluster Management')}
+            </Title>
+          </DropdownItem>,
+        ]
+      : []),
+  ];
 
   return (
     <>
@@ -213,42 +241,23 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
             isOpen={isPerspectiveDropdownOpen}
             toggle={
               <DropdownToggle
+                className={cx({
+                  'oc-nav-header__dropdown-toggle--is-empty': perspectiveItems.length === 1,
+                })}
                 isOpen={isPerspectiveDropdownOpen}
-                onToggle={togglePerspectiveOpen}
-                toggleIndicator={CaretDownIcon}
+                onToggle={() => (perspectiveItems.length === 1 ? null : togglePerspectiveOpen())}
+                toggleIndicator={perspectiveItems.length === 1 ? null : CaretDownIcon}
                 data-test-id="perspective-switcher-toggle"
               >
-                <Title headingLevel="h2" size="md">
-                  <span className="oc-nav-header__icon">{<LazyIcon />}</span>
-                  {name}
-                </Title>
+                {name && (
+                  <Title headingLevel="h2" size="md">
+                    <span className="oc-nav-header__icon">{<LazyIcon />}</span>
+                    {name}
+                  </Title>
+                )}
               </DropdownToggle>
             }
-            dropdownItems={[
-              ...perspectiveItems,
-              ...(!acmPerspectiveExtension && acmLink
-                ? [
-                    <DropdownItem
-                      key={ACM_LINK_ID}
-                      onClick={() => {
-                        window.location.href = acmLink.spec.href;
-                      }}
-                      isHovered={ACM_LINK_ID === activePerspective}
-                    >
-                      <Title
-                        headingLevel="h2"
-                        size="md"
-                        data-test-id="perspective-switcher-menu-option"
-                      >
-                        <span className="oc-nav-header__icon">
-                          <img src={acmIcon} height="12em" width="12em" alt="" />
-                        </span>
-                        {t('public~Advanced Cluster Management')}
-                      </Title>
-                    </DropdownItem>,
-                  ]
-                : []),
-            ]}
+            dropdownItems={perspectiveDropdownItems}
             data-test-id="perspective-switcher-menu"
           />
         </div>

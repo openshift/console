@@ -1,15 +1,15 @@
 import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/useActivePerspective';
-import { useExtensions } from '@console/plugin-sdk';
+import { usePerspectives } from '@console/shared/src';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import { usePinnedResources } from '../usePinnedResources';
 import { useUserSettingsCompatibility } from '../useUserSettingsCompatibility';
 
 const useActivePerspectiveMock = useActivePerspective as jest.Mock;
-const useExtensionsMock = useExtensions as jest.Mock;
+const usePerspectivesMock = usePerspectives as jest.Mock;
 const useUserSettingsCompatibilityMock = useUserSettingsCompatibility as jest.Mock;
 const setPinnedResourcesMock = jest.fn();
 
-jest.mock('@console/plugin-sdk', () => ({ useExtensions: jest.fn() }));
+jest.mock('@console/shared/src/hooks/perspective-utils', () => ({ usePerspectives: jest.fn() }));
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
   default: jest.fn(),
 }));
@@ -22,8 +22,8 @@ describe('usePinnedResources', () => {
     useActivePerspectiveMock.mockReturnValue(['admin']);
 
     // Return defaultPins for dev perspective extension
-    useExtensionsMock.mockClear();
-    useExtensionsMock.mockReturnValue([
+    usePerspectivesMock.mockClear();
+    usePerspectivesMock.mockReturnValue([
       {
         type: 'Perspective',
         properties: {

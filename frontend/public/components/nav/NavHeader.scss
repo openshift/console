@@ -19,6 +19,9 @@
     margin-right: var(--pf-global--spacer--sm);
   }
 
+  &__dropdown-toggle--is-empty {
+    cursor: default !important;
+  }
   .pf-c-dropdown {
     --pf-c-dropdown__menu-item--PaddingLeft: 7px;
     width: 100%;

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { isPerspective, Perspective, PerspectiveType } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk';
+import { PerspectiveType } from '@console/dynamic-plugin-sdk';
+import { usePerspectives } from '@console/shared/src';
 import { usePreferredPerspective } from '../user-preferences';
 import { useLastPerspective } from './useLastPerspective';
 
@@ -9,7 +9,7 @@ export const useValuesForPerspectiveContext = (): [
   (newPerspective: string) => void,
   boolean,
 ] => {
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const [lastPerspective, setLastPerspective, lastPerspectiveLoaded] = useLastPerspective();
   const [preferredPerspective, , preferredPerspectiveLoaded] = usePreferredPerspective();
   const [activePerspective, setActivePerspective] = React.useState<string>('');

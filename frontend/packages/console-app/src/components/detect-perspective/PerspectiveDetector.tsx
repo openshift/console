@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Perspective, isPerspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk';
+import { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { usePerspectives } from '@console/shared/src';
 
 type DetectorProps = {
   setActivePerspective: (perspective: string) => void;
@@ -55,7 +55,7 @@ const Detector: React.FC<DetectorProps> = ({
 };
 
 const PerspectiveDetector: React.FC<PerspectiveDetectorProps> = ({ setActivePerspective }) => {
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const perspectiveExtensions = usePerspectives();
   const [detectors, setDetectors] = React.useState<
     (undefined | ResolvedExtension<Perspective>['properties']['usePerspectiveDetection'])[]
   >();
