@@ -240,21 +240,44 @@ export const getReportBugLink = (cv: ClusterVersionKind): { label: string; href:
     return null;
   }
 
-  // Show a Bugzilla link for prerelease versions and a support case link for supported versions.
   const { major, minor, prerelease } = parsed;
-  const bugzillaVersion = major === 4 && minor <= 3 ? `${major}.${minor}.0` : `${major}.${minor}`;
-  const environment = encodeURIComponent(`Version: ${version}
-Cluster ID: ${cv.spec.clusterID}
-Browser: ${window.navigator.userAgent}
-`);
+  let productName;
+  switch (window.SERVER_FLAGS.branding) {
+    case 'openshift':
+    case 'ocp':
+      productName = 'OpenShift Container Platform';
+      break;
+    case 'online':
+      productName = 'OpenShift Online';
+      break;
+    case 'dedicated':
+      productName = 'OpenShift Dedicated';
+      break;
+    case 'azure':
+      // TODO:  change to 'Azure Red Hat OpenShift' once https://issues.redhat.com/browse/CPCCM-9926 is complete
+      productName = 'OpenShift Managed (Azure)';
+      break;
+    default:
+      productName = 'OKD';
+  }
+
+  // Do not show a link for OKD until the new OKD Jira project is ready.
+  if (productName === 'OKD') {
+    return null;
+  }
+
+  // Show a support case link for supported versions and a Jira link for prerelease versions.
   return _.isEmpty(prerelease)
     ? {
         label: i18next.t('public~Open support case with Red Hat'),
-        href: `https://access.redhat.com/support/cases/#/case/new?product=OpenShift%20Container%20Platform&version=${major}.${minor}&clusterId=${cv.spec.clusterID}`,
+        href: `https://access.redhat.com/support/cases/#/case/new?product=${encodeURIComponent(
+          productName,
+        )}&version=${major}.${minor}&clusterId=${cv.spec.clusterID}`,
       }
     : {
         label: i18next.t('public~Report bug to Red Hat'),
-        href: `https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform&version=${bugzillaVersion}&cf_environment=${environment}`,
+        // It is not currently possible to pre-populate `component`, etc. per https://jira.atlassian.com/browse/JRASERVER-23590
+        href: `https://issues.redhat.com/secure/CreateIssue.jspa?pid=12332330&issuetype=1`,
       };
 };
 
