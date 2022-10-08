@@ -71,7 +71,7 @@ parameters:
   - name: NAME
     description: Name for the new VM
     required: true
-  - password: CLOUD_USER_PASSWORD
+  - name: CLOUD_USER_PASSWORD
     description: Randomized password for the cloud-init user
     generate: expression
     from: '[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}'
