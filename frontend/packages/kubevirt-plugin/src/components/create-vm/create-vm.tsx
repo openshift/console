@@ -265,7 +265,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
   React.useEffect(() => {
     if ((initData.commonTemplateName || initData.userTemplateName) && !selectedTemplate && loaded) {
       const name = initData.commonTemplateName ?? initData.userTemplateName;
-      const ns = initData.commonTemplateName ? 'openshift' : initData.userTemplateNs;
+      const ns = initData?.userTemplateNs || searchParams?.get('namespace') || 'openshift';
       let templateVariant: TemplateKind;
       const templateItem = templates?.find((tItem) => {
         templateVariant = tItem.variants.find(
@@ -281,7 +281,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
         setTemplatePreselectError('kubevirt-plugin~Requested template could not be found');
       }
     }
-  }, [loaded, initData, templates, userTemplates, selectedTemplate, t]);
+  }, [loaded, initData, templates, userTemplates, selectedTemplate, t, searchParams]);
 
   React.useEffect(() => {
     const vm = new VMWrapper(selectVM(selectedTemplate?.variants?.[0]));
