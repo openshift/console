@@ -74,7 +74,7 @@ export const monitoringAlertRows = (
           title: _.isEmpty(rls.alerts) ? '-' : <StateCounts alerts={rls.alerts} />,
         },
         {
-          title: <SilenceAlert rule={rls} namespace={namespace} />,
+          title: _.isEmpty(rls.alerts) ? '-' : <SilenceAlert rule={rls} namespace={namespace} />,
         },
         {
           title: (
