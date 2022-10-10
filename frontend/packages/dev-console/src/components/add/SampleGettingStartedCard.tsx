@@ -8,6 +8,7 @@ import {
   GettingStartedCard,
 } from '@console/shared/src/components/getting-started';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { isCatalogTypeEnabled } from '../../utils/catalog-utils';
 import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
 
 interface SampleGettingStartedCardProps {
@@ -43,9 +44,10 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
 }) => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
+  const isSampleTypeEnabled = isCatalogTypeEnabled('Sample');
 
   const disabledAddActions = getDisabledAddActions();
-  if (disabledAddActions?.includes('import-from-samples')) {
+  if (disabledAddActions?.includes('import-from-samples') || !isSampleTypeEnabled) {
     return null;
   }
 

@@ -6,7 +6,7 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';

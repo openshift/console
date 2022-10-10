@@ -1,11 +1,11 @@
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import {
   useGetAllDisabledSubCatalogs,
   isCatalogTypeEnabled,
   useIsDeveloperCatalogEnabled,
-} from '../useAddActionExtensions';
+} from '../catalog-utils';
 import { mockExtensions } from './catalogTypeExtensions.data';
-import { testHook } from './utils/hooks-utils';
 
 jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
   useResolvedExtensions: jest.fn(),

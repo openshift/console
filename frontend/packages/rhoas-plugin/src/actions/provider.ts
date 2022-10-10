@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';

@@ -4,7 +4,7 @@ import { getCommonResourceActions } from '@console/app/src/actions/creators/comm
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
 import { disabledActionsFilter } from '@console/dev-console/src/actions/add-resources';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import { Action } from '@console/dynamic-plugin-sdk';
 import {
   K8sResourceKind,
@@ -89,14 +89,19 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
 
 export const useBrokerActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
+  const isEventSinkTypeEnabled = isCatalogTypeEnabled('EventSink');
+  const addActions: Action[] = [];
   const actions = React.useMemo(() => {
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
-    return [
-      addTriggerBroker(kindObj, resource),
-      AddEventSinkMenuAction(resource.metadata.namespace, undefined, connectorSource),
-      ...getCommonResourceActions(kindObj, resource),
-    ];
-  }, [kindObj, resource]);
+    addActions.push(addTriggerBroker(kindObj, resource));
+    if (isEventSinkTypeEnabled) {
+      addActions.push(
+        AddEventSinkMenuAction(resource.metadata.namespace, undefined, connectorSource),
+      );
+    }
+    addActions.push(...getCommonResourceActions(kindObj, resource));
+    return addActions;
+  }, [addActions, isEventSinkTypeEnabled, kindObj, resource]);
 
   return [actions, !inFlight, undefined];
 };
@@ -120,14 +125,19 @@ export const useCommonActionsProvider = (resource: K8sResourceKind) => {
 
 export const useChannelActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
+  const isEventSinkTypeEnabled = isCatalogTypeEnabled('EventSink');
+  const addActions: Action[] = [];
   const actions = React.useMemo(() => {
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
-    return [
-      addSubscriptionChannel(kindObj, resource),
-      AddEventSinkMenuAction(resource.metadata.namespace, undefined, connectorSource),
-      ...getCommonResourceActions(kindObj, resource),
-    ];
-  }, [kindObj, resource]);
+    addActions.push(addSubscriptionChannel(kindObj, resource));
+    if (isEventSinkTypeEnabled) {
+      addActions.push(
+        AddEventSinkMenuAction(resource.metadata.namespace, undefined, connectorSource),
+      );
+    }
+    addActions.push(...getCommonResourceActions(kindObj, resource));
+    return addActions;
+  }, [addActions, isEventSinkTypeEnabled, kindObj, resource]);
 
   return [actions, !inFlight, undefined];
 };
@@ -167,34 +177,45 @@ export const useTopologyActionsProvider = ({
     const sourceKind = connectorSource.getData().data.kind;
     const connectorResource = connectorSource.getData().resource;
     if (isEventingChannelResourceKind(sourceKind)) {
-      return [
-        AddSubscriptionAction(connectorResource),
-        AddEventSinkMenuAction(
-          namespace,
-          application,
-          `${sourceKind}/${connectorResource.metadata.name}`,
-        ),
-      ];
-    }
-    switch (sourceKind) {
-      case referenceForModel(ServiceModel):
-        return [
-          AddEventSourceAction(
-            namespace,
-            application,
-            `${sourceKind}/${connectorResource.metadata.name}`,
-            '',
-          ),
-        ].filter(disabledActionsFilter);
-      case referenceForModel(EventingBrokerModel):
-        return [
-          AddTriggerAction(connectorResource),
+      const addActions: Action[] = [];
+      addActions.push(AddSubscriptionAction(connectorResource));
+      if (isEventSinkTypeEnabled) {
+        addActions.push(
           AddEventSinkMenuAction(
             namespace,
             application,
             `${sourceKind}/${connectorResource.metadata.name}`,
           ),
-        ];
+        );
+      }
+      return addActions;
+    }
+    switch (sourceKind) {
+      case referenceForModel(ServiceModel):
+        return isEventSourceTypeEnabled
+          ? [
+              AddEventSourceAction(
+                namespace,
+                application,
+                `${sourceKind}/${connectorResource.metadata.name}`,
+                '',
+              ),
+            ].filter(disabledActionsFilter)
+          : [];
+      case referenceForModel(EventingBrokerModel): {
+        const addActions: Action[] = [];
+        addActions.push(AddTriggerAction(connectorResource));
+        if (isEventSinkTypeEnabled) {
+          addActions.push(
+            AddEventSinkMenuAction(
+              namespace,
+              application,
+              `${sourceKind}/${connectorResource.metadata.name}`,
+            ),
+          );
+        }
+        return addActions;
+      }
       default:
         return [];
     }

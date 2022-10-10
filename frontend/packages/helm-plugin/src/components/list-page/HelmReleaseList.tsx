@@ -10,7 +10,7 @@ import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

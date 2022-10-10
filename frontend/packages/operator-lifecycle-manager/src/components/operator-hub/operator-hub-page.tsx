@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import {
   isCatalogTypeEnabled,
   useIsDeveloperCatalogEnabled,
-} from '@console/dev-console/src/utils/useAddActionExtensions';
+} from '@console/dev-console/src/utils/catalog-utils';
 import {
   DOC_URL_RED_HAT_MARKETPLACE,
   ExternalLink,

@@ -13,7 +13,7 @@ import { isEmpty } from 'lodash';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import {
   ButtonBar,
   ExternalLink,

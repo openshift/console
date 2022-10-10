@@ -27,10 +27,7 @@ import {
   FLAG_OPERATOR_BACKED_SERVICE_CATALOG_TYPE,
   FLAG_SAMPLE_CATALOG_TYPE,
 } from '../const';
-import {
-  isCatalogTypeEnabled,
-  useIsDeveloperCatalogEnabled,
-} from '../utils/useAddActionExtensions';
+import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '../utils/catalog-utils';
 import { AddActions, disabledActionsFilter } from './add-resources';
 import { DeleteApplicationAction } from './context-menu';
 import { EditImportApplication } from './creators';
@@ -108,6 +105,7 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
   const isCatalogImageResourceAccess = isImportResourceAccess && imageStreamImportAccess;
   const isDevCatalogEnabled = useIsDeveloperCatalogEnabled();
   const isOperatorBackedServiceEnabled = isCatalogTypeEnabled('OperatorBackedService');
+  const isSampleTypeEnabled = isCatalogTypeEnabled('Sample');
 
   return React.useMemo(() => {
     const sourceObj = connectorSource?.getData()?.resource;
@@ -151,15 +149,17 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
     );
 
     const actionsWithoutSourceRef: Action[] = [];
-    actionsWithoutSourceRef.push(
-      AddActions.Samples(
-        namespace,
-        undefined,
-        undefined,
-        'add-to-project',
-        !isImportResourceAccess,
-      ),
-    );
+    if (isSampleTypeEnabled) {
+      actionsWithoutSourceRef.push(
+        AddActions.Samples(
+          namespace,
+          undefined,
+          undefined,
+          'add-to-project',
+          !isImportResourceAccess,
+        ),
+      );
+    }
     actionsWithoutSourceRef.push(
       AddActions.FromGit(
         namespace,
@@ -217,13 +217,14 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
     return [[], true, undefined];
   }, [
     connectorSource,
-    element,
     namespace,
     isImportResourceAccess,
     isCatalogImageResourceAccess,
-    serviceBindingAccess,
     isOperatorBackedServiceEnabled,
+    isSampleTypeEnabled,
     isDevCatalogEnabled,
+    element,
+    serviceBindingAccess,
   ]);
 };
 

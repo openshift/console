@@ -2,7 +2,7 @@ import * as React from 'react';
 import { GraphElement, isGraph, Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { SetFeatureFlag, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';

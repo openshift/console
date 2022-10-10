@@ -3,7 +3,7 @@ import { VerticalTabs } from '@patternfly/react-catalog-view-extension';
 import { Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
-import { useGetAllDisabledSubCatalogs } from '@console/dev-console/src/utils/useAddActionExtensions';
+import { useGetAllDisabledSubCatalogs } from '@console/dev-console/src/utils/catalog-utils';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import { CatalogQueryParams, CatalogType, CatalogTypeCounts } from '../utils/types';

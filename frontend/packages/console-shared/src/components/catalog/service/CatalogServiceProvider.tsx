@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { useGetAllDisabledSubCatalogs } from '@console/dev-console/src/utils/useAddActionExtensions';
+import { useGetAllDisabledSubCatalogs } from '@console/dev-console/src/utils/catalog-utils';
 import {
   CatalogExtensionHookOptions,
   CatalogItem,

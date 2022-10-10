@@ -3,7 +3,7 @@ import { Formik, FormikHelpers } from 'formik';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/useAddActionExtensions';
+import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { history, StatusBox } from '@console/internal/components/utils';
