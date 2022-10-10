@@ -40,3 +40,9 @@ export class CustomError extends Error {
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
+
+export class ErrorWithCause extends CustomError {
+  constructor(message: string, readonly cause?: unknown) {
+    super(message);
+  }
+}

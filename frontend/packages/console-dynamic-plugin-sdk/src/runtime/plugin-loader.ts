@@ -8,6 +8,7 @@ import { remoteEntryFile } from '../constants';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { initSharedPluginModules } from '../shared-modules-init';
 import { RemoteEntryModule } from '../types';
+import { ErrorWithCause } from '../utils/error/custom-error';
 import { resolveURL } from '../utils/url';
 import { resolvePluginDependencies } from './plugin-dependencies';
 import { fetchPluginManifest } from './plugin-manifest';
@@ -59,8 +60,7 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
     };
 
     script.onerror = (event) => {
-      console.error('Plugin loader received an error:', event);
-      reject(new Error(`Error while loading entry script for plugin ${pluginID}`));
+      reject(new ErrorWithCause(`Error while loading entry script for plugin ${pluginID}`, event));
     };
 
     console.info(`Loading entry script for plugin ${pluginID} from ${script.src}`);
@@ -117,25 +117,37 @@ export const registerPluginEntryCallback = (pluginStore: PluginStore) => {
 export const loadAndEnablePlugin = async (
   pluginName: string,
   pluginStore: PluginStore,
-  onError: VoidFunction = _.noop,
+  onError: (errorMessage: string, errorCause?: unknown) => void = _.noop,
 ) => {
   const url = `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/`;
+  let manifest: ConsolePluginManifestJSON;
 
   try {
-    const manifest = await fetchPluginManifest(url);
+    manifest = await fetchPluginManifest(url);
+  } catch (e) {
+    onError(`Failed to get a valid plugin manifest from ${url}`, e);
+    return;
+  }
 
+  try {
     await resolvePluginDependencies(
       manifest,
       semver.valid(window.SERVER_FLAGS.releaseVersion),
       pluginStore.getAllowedDynamicPluginNames(),
     );
-
-    const pluginID = await loadDynamicPlugin(url, manifest);
-    pluginStore.setDynamicPluginEnabled(pluginID, true);
   } catch (e) {
-    console.error(`Error while loading plugin ${pluginName} from ${url}`, e);
-    onError();
+    onError(`Failed to resolve dependencies of plugin ${pluginName}`, e);
+    return;
   }
+
+  try {
+    await loadDynamicPlugin(url, manifest);
+  } catch (e) {
+    onError(`Failed to load entry script of plugin ${pluginName}`, e);
+    return;
+  }
+
+  pluginStore.setDynamicPluginEnabled(getPluginID(manifest), true);
 };
 
 export const getStateForTestPurposes = () => ({

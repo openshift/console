@@ -8,15 +8,19 @@ import { registerPluginEntryCallback, loadAndEnablePlugin } from './plugin-loade
 
 export const initConsolePlugins = _.once(
   (pluginStore: PluginStore, reduxStore: Store<RootState>) => {
+    // Initialize dynamic plugin infrastructure
     initSubscriptionService(pluginStore, reduxStore);
     registerPluginEntryCallback(pluginStore);
+    setPluginStore(pluginStore);
 
+    // Load dynamic plugins
     pluginStore.getAllowedDynamicPluginNames().forEach((pluginName) => {
-      loadAndEnablePlugin(pluginName, pluginStore, () => {
+      loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
+        // eslint-disable-next-line no-console
+        console.error(..._.compact([errorMessage, errorCause]));
+        pluginStore.registerFailedDynamicPlugin(pluginName, errorMessage, errorCause);
         // TODO(vojtech): add new entry into the notification drawer
-        pluginStore.registerFailedDynamicPlugin(pluginName);
       });
     });
-    setPluginStore(pluginStore);
   },
 );
