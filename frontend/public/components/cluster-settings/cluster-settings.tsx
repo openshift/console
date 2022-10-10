@@ -563,7 +563,7 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
     MCPUpdatingTime > updateStartedTime ? machineConfigPool?.status?.updatedMachineCount : 0;
   const percentMCPNodes = calculatePercentage(updatedMCPNodes, totalMCPNodes);
   const { t } = useTranslation();
-  return hideIfComplete && percentMCPNodes === 100 ? null : (
+  return totalMCPNodes === 0 || (hideIfComplete && percentMCPNodes === 100) ? null : (
     <UpdatesGroup divided={divided}>
       <UpdatesType>
         <Link to={`/k8s/cluster/nodes?rowFilter-node-role=${machineConfigPool.metadata.name}`}>
