@@ -46,12 +46,14 @@ export const containerImagePage = {
     componentName = 'hello-openshift',
     appName = 'ext-app',
     runTimeIcon = 'fedora',
+    resourceType = 'deployment',
   ) => {
     addPage.selectCardFromOptions(addOptions.ContainerImage);
     containerImagePage.enterExternalRegistryImageName(externalRegistryName);
     containerImagePage.selectRunTimeIcon(runTimeIcon);
     containerImagePage.selectOrCreateApplication(appName);
     gitPage.enterComponentName(componentName);
+    gitPage.selectResource(resourceType);
     gitPage.clickCreate();
     topologyPage.verifyWorkloadInTopologyPage(componentName);
   },

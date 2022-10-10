@@ -4,7 +4,7 @@ Feature: Update user in Add page if Quotas has been reached in a namespace
 
         Background:
             Given user is at developer perspective
-              And user has created or selected namespace "aut-add"
+              And user has created or selected namespace "aut-add-resource-quota"
 
 
         @regression

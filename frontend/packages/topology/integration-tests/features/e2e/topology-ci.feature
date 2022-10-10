@@ -25,6 +25,7 @@ Feature: Perform actions on topology
               And user enters Git Repo URL as "https://github.com/redhat-developer/s2i-dotnetcore-ex" in Create Source-to-Image Application
               And user enters Application Name as "dotnet-app"
               And user enters Name as "dotnet"
+              And user selects "Deployment" in Resource type section
               And user clicks Create button on Create Source-to-Image Application page
              Then user is able to see workload "dotnet" in topology page
 

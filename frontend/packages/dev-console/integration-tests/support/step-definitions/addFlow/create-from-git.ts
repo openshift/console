@@ -1,12 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import {
-  addOptions,
-  buildConfigOptions,
-  gitAdvancedOptions,
-  messages,
-  resources,
-} from '../../constants';
+import { addOptions, buildConfigOptions, messages, resources } from '../../constants';
 import { gitPO } from '../../pageObjects';
 import {
   gitPage,
@@ -52,7 +46,6 @@ Then('user can see toast notification saying {string}', (message: string) => {
 });
 
 When('user selects resource type as {string}', (resourceType: string) => {
-  gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
   gitPage.selectResource(resourceType);
 });
 
