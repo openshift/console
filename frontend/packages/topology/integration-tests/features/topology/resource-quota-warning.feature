@@ -35,4 +35,10 @@ Feature: Update user in topology page if Quotas has been reached in a namespace
              Then user is able to see resource quota alert
               And user is able to see yellow border around 'ex-node-js1' workload   
 
+        @regression
+        Scenario: checking background color of deployment node for resource quota alert: T-19-TC04
+            Given user is at Topology page
+             When user continously clicks on zoom-out button until it gets maximum zoomed out
+             Then user is able to see yellow background on workload for resource quota alert
+
               

@@ -441,6 +441,13 @@ export const topologyPage = {
       .find('.pf-topology__node.pf-m-warning')
       .contains(nodeName);
   },
+  clickMaxZoomOut: () => {
+    cy.get(topologyPO.graph.emptyGraph).click();
+    cy.get(topologyPO.graph.reset).click();
+    for (let i = 0; i < 5; i++) {
+      cy.get(topologyPO.graph.zoomOut).click();
+    }
+  },
 };
 
 export const addGitWorkload = (
