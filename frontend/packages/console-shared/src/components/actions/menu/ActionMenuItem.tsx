@@ -44,6 +44,7 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
         }
       }
       onClick && onClick();
+      event.stopPropagation();
     },
     [cta, onClick],
   );
