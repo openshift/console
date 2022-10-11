@@ -72,7 +72,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
       catalogProviderExtensions.map((e) =>
         catalogFilterExtensions
           .filter((fe) => fe.properties.type === e.properties.type)
-          .reduce((acc, ext) => acc.filter(ext.properties.filter), extItemsMap[e.uid]),
+          .reduce((acc, ext) => acc.filter(ext.properties.filter), extItemsMap[e.uid] ?? []),
       ),
     ).reduce((acc, item) => {
       if (!item) return acc;
