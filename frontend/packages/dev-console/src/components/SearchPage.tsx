@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
+import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { match as RMatch } from 'react-router';
+import { SearchPage } from '@console/internal/components/search';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { SearchPage } from '../../../../public/components/search';
 import NamespacedPage, { NamespacedPageVariants } from './NamespacedPage';
 import CreateProjectListPage from './projects/CreateProjectListPage';
 
@@ -14,12 +15,9 @@ export interface SearchPageProps {
   noProjectsAvailable?: boolean;
 }
 
-const PageContents: React.FC<SearchPageProps> = ({ noProjectsAvailable, ...props }) => {
+const ProjectListPage = () => {
   const { t } = useTranslation();
-  const namespace = props.match.params.ns;
-  return namespace ? (
-    <SearchPage namespace={namespace} noProjectsAvailable={noProjectsAvailable} />
-  ) : (
+  return (
     <CreateProjectListPage title={t('devconsole~Search')}>
       {(openProjectModal) => (
         <Trans t={t} ns="devconsole">
@@ -34,12 +32,29 @@ const PageContents: React.FC<SearchPageProps> = ({ noProjectsAvailable, ...props
   );
 };
 
-const PageContentsWithStartGuide = withStartGuide(PageContents);
+const ProjectListPageWithStartGuide = withStartGuide(ProjectListPage);
 
-const Search: React.FC<SearchPageProps> = (props) => (
-  <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-    <PageContentsWithStartGuide {...props} />
-  </NamespacedPage>
-);
+const PageContents: React.FC<SearchPageProps> = ({ noProjectsAvailable, ...props }) => {
+  const namespace = props.match.params.ns;
+  return namespace ? (
+    <SearchPage namespace={namespace} noProjectsAvailable={noProjectsAvailable} />
+  ) : (
+    <ProjectListPageWithStartGuide />
+  );
+};
+
+const Search: React.FC<SearchPageProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Helmet>
+        <title data-test="page-title">{t('devconsole~Search')}</title>
+      </Helmet>
+      <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+        <PageContents {...props} />
+      </NamespacedPage>
+    </>
+  );
+};
 
 export default Search;
