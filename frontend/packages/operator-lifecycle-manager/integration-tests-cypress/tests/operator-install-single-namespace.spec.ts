@@ -19,7 +19,7 @@ const testOperand: TestOperandProps = {
   exampleName: `backend1-sample`,
 };
 
-describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
+xdescribe(`[https://issues.redhat.com/browse/OCPBUGS-2182] Installing "${testOperator.name}" operator in test namespace`, () => {
   before(() => {
     cy.login();
     cy.visit('/');
