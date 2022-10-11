@@ -115,6 +115,7 @@ type jsGlobals struct {
 	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ReleaseVersion                  string                     `json:"releaseVersion"`
+	NodeArchitectures               []string                   `json:"nodeArchitectures"`
 }
 
 type Server struct {
@@ -138,6 +139,7 @@ type Server struct {
 	LoadTestFactor       int
 	InactivityTimeout    int
 	ReleaseVersion       string
+	NodeArchitectures    []string
 	// Map that contains list of enabled plugins and their endpoints.
 	EnabledConsolePlugins serverconfig.MultiKeyValue
 	I18nNamespaces        []string
@@ -744,6 +746,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		Clusters:                   clusters,
 		Telemetry:                  s.Telemetry,
 		ReleaseVersion:             s.ReleaseVersion,
+		NodeArchitectures:          s.NodeArchitectures,
 	}
 
 	localAuther := s.getLocalAuther()

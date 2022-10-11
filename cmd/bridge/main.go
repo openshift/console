@@ -142,6 +142,7 @@ func main() {
 	fManagedClusterConfigs := fs.String("managed-clusters", "", "List of managed cluster configurations. (JSON as string)")
 	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control/infra nodes (External | HighlyAvailable | SingleReplica)")
 	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
+	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
 
 	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -235,12 +236,25 @@ func main() {
 		}
 	}
 
-	i18nNamespaces := strings.Split(*fI18NamespacesFlags, ",")
+	i18nNamespaces := []string{}
 	if *fI18NamespacesFlags != "" {
-		for _, str := range i18nNamespaces {
+		for _, str := range strings.Split(*fI18NamespacesFlags, ",") {
+			str = strings.TrimSpace(str)
 			if str == "" {
 				bridge.FlagFatalf("i18n-namespaces", "list must contain name of i18n namespaces separated by comma")
 			}
+			i18nNamespaces = append(i18nNamespaces, str)
+		}
+	}
+
+	nodeArchitectures := []string{}
+	if *fNodeArchitectures != "" {
+		for _, str := range strings.Split(*fNodeArchitectures, ",") {
+			str = strings.TrimSpace(str)
+			if str == "" {
+				bridge.FlagFatalf("node-architectures", "list must contain name of node architectures separated by comma")
+			}
+			nodeArchitectures = append(nodeArchitectures, str)
 		}
 	}
 
@@ -276,6 +290,7 @@ func main() {
 		K8sClients:                   make(map[string]*http.Client),
 		Telemetry:                    telemetryFlags,
 		ReleaseVersion:               *fReleaseVersion,
+		NodeArchitectures:            nodeArchitectures,
 	}
 
 	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}

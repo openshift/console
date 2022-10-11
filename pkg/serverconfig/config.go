@@ -213,6 +213,10 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 	if clusterInfo.ReleaseVersion != "" {
 		fs.Set("release-version", string(clusterInfo.ReleaseVersion))
 	}
+
+	if len(clusterInfo.NodeArchitectures) > 0 {
+		fs.Set("node-architectures", strings.Join(clusterInfo.NodeArchitectures, ","))
+	}
 }
 
 func addAuth(fs *flag.FlagSet, auth *Auth) {
