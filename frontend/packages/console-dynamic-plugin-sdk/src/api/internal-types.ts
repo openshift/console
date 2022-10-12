@@ -53,6 +53,7 @@ export type OngoingActivityBodyProps = {
 
 export type AlertItemProps = {
   alert: Alert;
+  documentationLink?: string;
 };
 
 export type HealthItemProps = WithClassNameProps<{
