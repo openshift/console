@@ -31,6 +31,7 @@ export enum VMWizardProps {
   reduxID = 'reduxID',
   virtualMachines = 'virtualMachines',
   commonTemplates = 'commonTemplates',
+  additionalCommonTemplates = 'additionalCommonTemplates',
   commonTemplateName = 'commonTemplateName',
   openshiftCNVBaseImages = 'openshiftCNVBaseImages',
   storageClassConfigMap = 'storageClassConfigMap',
@@ -239,6 +240,7 @@ export type ChangedCommonDataProp =
   | VMWizardProps.userTemplate
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
+  | VMWizardProps.additionalCommonTemplates
   | VMWizardProps.cdRom
   | VMWizardProps.openshiftCNVBaseImages
   | VMWizardProps.dataVolumes

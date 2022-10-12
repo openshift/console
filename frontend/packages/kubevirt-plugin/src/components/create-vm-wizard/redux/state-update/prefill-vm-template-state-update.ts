@@ -43,6 +43,7 @@ import {
   iGetCommonData,
   iGetLoadedCommonData,
   iGetName,
+  iGetNamespace,
 } from '../../selectors/immutable/selectors';
 import { getStorages } from '../../selectors/selectors';
 import {
@@ -61,17 +62,30 @@ import { InternalActionType, UpdateOptions } from '../types';
 
 export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  const { commonTemplateName } = getInitialData(state, id);
+  const { commonTemplateName, commonTemplateNamespace } = getInitialData(state, id);
 
   const isProviderImport = iGetCommonData(state, id, VMWizardProps.isProviderImport);
 
-  const iTemplate = commonTemplateName
+  let iTemplate = commonTemplateName
     ? iGetLoadedCommonData(
         state,
         id,
         commonTemplateName ? VMWizardProps.commonTemplates : VMWizardProps.userTemplates,
       ).find((template) => iGetName(template) === commonTemplateName)
     : iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
+
+  // common template in a different namespace instead of 'openshift'
+  const additionalCommonTemplate = iGetLoadedCommonData(
+    state,
+    id,
+    VMWizardProps.additionalCommonTemplates,
+  )?.find(
+    (template) =>
+      iGetName(template) === commonTemplateName &&
+      iGetNamespace(template) === commonTemplateNamespace,
+  );
+
+  iTemplate = iTemplate || additionalCommonTemplate;
 
   let isCloudInitForm = null;
   const vmSettingsUpdate = {

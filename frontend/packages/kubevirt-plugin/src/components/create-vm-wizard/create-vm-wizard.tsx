@@ -14,6 +14,7 @@ import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import { featureReducerName, FlagsObject } from '@console/internal/reducers/features';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { FLAGS } from '@console/shared';
+import { NAMESPACE_OPENSHIFT } from '../../constants';
 import { VMWizardURLParams } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_BASE,
@@ -465,11 +466,25 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     if (flags[FLAGS.OPENSHIFT]) {
       resources.push(
         getResource(TemplateModel, {
-          namespace: 'openshift',
+          namespace: NAMESPACE_OPENSHIFT,
           prop: VMWizardProps.commonTemplates,
           matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
         }),
       );
+
+      if (
+        initialData.commonTemplateNamespace &&
+        initialData.commonTemplateNamespace !== NAMESPACE_OPENSHIFT
+      ) {
+        // common template in a different namespace instead of 'openshift'
+        resources.push(
+          getResource(TemplateModel, {
+            namespace: initialData.commonTemplateNamespace,
+            prop: VMWizardProps.additionalCommonTemplates,
+            matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
+          }),
+        );
+      }
 
       if (userMode === VMWizardMode.TEMPLATE) {
         resources.push(
