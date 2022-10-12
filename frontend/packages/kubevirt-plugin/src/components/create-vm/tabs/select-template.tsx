@@ -233,7 +233,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
         bootSourceFilter = filters.bootSource.includes(BOOT_SOURCE_REQUIRED);
       } else if (!isTemplateSourceError(item.sourceStatus)) {
         bootSourceFilter =
-          filters.bootSource.includes(item.sourceStatus?.provider) && item.sourceStatus?.isReady;
+          filters.bootSource.includes(BOOT_SOURCE_AVAILABLE) && item.sourceStatus?.isReady;
       }
     }
     return textFilter && providerFilter && bootSourceFilter;
