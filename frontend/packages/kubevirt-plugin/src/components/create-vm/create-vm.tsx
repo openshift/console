@@ -265,7 +265,11 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
   React.useEffect(() => {
     if ((initData.commonTemplateName || initData.userTemplateName) && !selectedTemplate && loaded) {
       const name = initData.commonTemplateName ?? initData.userTemplateName;
-      const ns = initData?.userTemplateNs || searchParams?.get('namespace') || 'openshift';
+      const ns =
+        initData?.userTemplateNs ||
+        initData?.commonTemplateNamespace ||
+        searchParams?.get('template-ns') ||
+        'openshift';
       let templateVariant: TemplateKind;
       const templateItem = templates?.find((tItem) => {
         templateVariant = tItem.variants.find(

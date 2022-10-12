@@ -3,6 +3,7 @@ export type VMWizardInitialData = {
   startVM?: boolean;
   source?: VMWizardBootSourceParams;
   commonTemplateName?: string;
+  commonTemplateNamespace?: string;
   userTemplateName?: string;
   userTemplateNs?: string;
   storageClass?: string;

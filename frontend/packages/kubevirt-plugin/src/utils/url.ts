@@ -119,6 +119,7 @@ export const getVMWizardCreateLink = ({
     if (template) {
       if (isCommonTemplate(template)) {
         initialData.commonTemplateName = template.metadata.name;
+        initialData.commonTemplateNamespace = template.metadata.namespace;
       } else {
         initialData.userTemplateName = template.metadata.name;
         initialData.userTemplateNs = template.metadata.namespace;
@@ -138,6 +139,7 @@ export const getVMWizardCreateLink = ({
   if (template) {
     if (isCommonTemplate(template)) {
       initialData.commonTemplateName = template.metadata.name;
+      initialData.commonTemplateNamespace = template.metadata.namespace;
     } else {
       initialData.userTemplateName = template.metadata.name;
       initialData.userTemplateNs = template.metadata.namespace;
