@@ -7,13 +7,14 @@ import {
   devNavigationMenu,
   gitAdvancedOptions,
 } from '@console/dev-console/integration-tests/support/constants';
-import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { gitPO, topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   addPage,
   gitPage,
   containerImagePage,
   catalogPage,
   navigateTo,
+  topologyPage,
 } from '@console/dev-console/integration-tests/support/pages';
 
 Given('user is on {string} form', (formName: string) => {
@@ -76,6 +77,8 @@ Then('user will be redirected to page with header name {string}', (headerName: s
 });
 
 Then('Knative Service option is displayed under Resources section', () => {
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(4000);
   gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
   cy.get(gitPO.advancedOptions.resourcesDropdown)
     .scrollIntoView()
@@ -95,4 +98,55 @@ When('user enters Image name from external registry as {string}', (imageName: st
 
 Given('user is at Deploy Image page', () => {
   addPage.selectCardFromOptions(addOptions.ContainerImage);
+});
+
+When('user enters git url {string}', (url: string) => {
+  gitPage.enterGitUrl(url);
+});
+
+When('user enters Docker URL as {string}', (url: string) => {
+  gitPage.enterGitUrl(url);
+});
+
+When('user clicks on Import From Git option', () => {
+  cy.get(topologyPO.grouping.importFromGitOption).click();
+});
+
+When('user clicks on Edit import strategy', () => {
+  cy.get('.odc-import-strategy-section__edit-strategy-button').click();
+});
+
+When('user enters Git Repo URL as {string}', (gitUrl: string) => {
+  gitPage.enterGitUrl(gitUrl);
+  gitPage.verifyValidatedMessage(gitUrl);
+});
+
+When('user clicks Import From Git card on the Add page', () => {
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
+});
+
+When('user selects Import Strategy as Dockerfile', () => {
+  cy.byTestID('import-strategy Dockerfile').click();
+});
+
+When('user enters Dockerfile path as {string}', (dockerfilePath: string) => {
+  cy.get('#form-input-docker-dockerfilePath-field')
+    .clear()
+    .type(dockerfilePath);
+});
+
+When('user enters workload name as {string}', (name: string) => {
+  gitPage.enterWorkloadName(name);
+});
+
+When('user selects resource type as {string}', (resourceType: string) => {
+  gitPage.selectResource(resourceType);
+});
+
+When('user clicks Create button on Add page', () => {
+  gitPage.clickCreate();
+});
+
+Then('user is able to see workload {string} in topology page', (workloadName: string) => {
+  topologyPage.verifyWorkloadInTopologyPage(workloadName);
 });
