@@ -62,7 +62,9 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Get devfile content and parse it using a library call in the future
 	devfileContentBytes := []byte(data.Devfile.DevfileContent)
-	devfileObj, _, err = devfile.ParseDevfileAndValidate(parser.ParserArgs{Data: devfileContentBytes})
+	//reduce the http request and response timeouts on the devfile library parser to 10s
+	httpTimeout := 10
+	devfileObj, _, err = devfile.ParseDevfileAndValidate(parser.ParserArgs{Data: devfileContentBytes, HTTPTimeout: &httpTimeout})
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to parse devfile:")
 		if strings.Contains(err.Error(), "schemaVersion not present in devfile") {

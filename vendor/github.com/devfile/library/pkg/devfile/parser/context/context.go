@@ -35,6 +35,9 @@ type DevfileCtx struct {
 
 	// filesystem for devfile
 	fs filesystem.Filesystem
+
+	// devfile kubernetes components has been coverted from uri to inlined in memory
+	convertUriToInlined bool
 }
 
 // NewDevfileCtx returns a new DevfileCtx type object
@@ -142,4 +145,14 @@ func (d *DevfileCtx) SetAbsPath() (err error) {
 
 	return nil
 
+}
+
+// GetConvertUriToInlined func returns if the devfile kubernetes comp has been converted from uri to inlined
+func (d *DevfileCtx) GetConvertUriToInlined() bool {
+	return d.convertUriToInlined
+}
+
+// SetConvertUriToInlined sets if the devfile kubernetes comp has been converted from uri to inlined
+func (d *DevfileCtx) SetConvertUriToInlined(value bool) {
+	d.convertUriToInlined = value
 }

@@ -444,7 +444,8 @@ type EndpointParentOverride struct {
 	Name string `json:"name"`
 
 	//  +optional
-	// The port number should be unique.
+	// Port number to be used within the container component. The same port cannot
+	// be used by two different container components.
 	TargetPort int `json:"targetPort,omitempty"`
 
 	// Describes how the endpoint should be exposed on the network.
@@ -552,6 +553,14 @@ type ImportReferenceParentOverride struct {
 	// it is recommended to always specify the `registryUrl` when `id` is used.
 	// +optional
 	RegistryUrl string `json:"registryUrl,omitempty"`
+
+	// Specific stack/sample version to pull the parent devfile from, when using id in the parent reference.
+	// To specify `version`, `id` must be defined and used as the import reference source.
+	// `version` can be either a specific stack version, or `latest`.
+	// If no `version` specified, default version will be used.
+	// +optional
+	// +kubebuilder:validation:Pattern=^(latest)|(([1-9])\.([0-9]+)\.([0-9]+)(\-[0-9a-z-]+(\.[0-9a-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?)$
+	Version string `json:"version,omitempty"`
 }
 
 type PluginOverridesParentOverride struct {
@@ -908,7 +917,7 @@ type DockerfileSrcParentOverride struct {
 
 type DockerfileParentOverride struct {
 
-	// Path of source directory to establish build context. Defaults to ${PROJECT_ROOT} in the container
+	// Path of source directory to establish build context. Defaults to ${PROJECT_SOURCE} in the container
 	// +optional
 	BuildContext string `json:"buildContext,omitempty"`
 
@@ -1140,7 +1149,8 @@ type EndpointPluginOverrideParentOverride struct {
 	Name string `json:"name"`
 
 	//  +optional
-	// The port number should be unique.
+	// Port number to be used within the container component. The same port cannot
+	// be used by two different container components.
 	TargetPort int `json:"targetPort,omitempty"`
 
 	// Describes how the endpoint should be exposed on the network.
@@ -1397,7 +1407,7 @@ type DockerfileSrcPluginOverrideParentOverride struct {
 
 type DockerfilePluginOverrideParentOverride struct {
 
-	// Path of source directory to establish build context. Defaults to ${PROJECT_ROOT} in the container
+	// Path of source directory to establish build context. Defaults to ${PROJECT_SOURCE} in the container
 	// +optional
 	BuildContext string `json:"buildContext,omitempty"`
 
