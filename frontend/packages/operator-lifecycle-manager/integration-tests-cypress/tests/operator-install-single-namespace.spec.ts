@@ -5,7 +5,7 @@ import { nav } from '../../../integration-tests-cypress/views/nav';
 import { GlobalInstalledNamespace, operator, TestOperandProps } from '../views/operator.view';
 
 const testOperator = {
-  name: 'Red Hat Integration - 3scale',
+  name: 'Red Hat Integration - 3scale - Managed Application Services',
   operatorHubCardTestID: '3scale-operator-redhat-operators-openshift-marketplace',
   installedNamespace: testName,
 };
