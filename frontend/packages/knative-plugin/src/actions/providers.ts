@@ -4,7 +4,6 @@ import { getCommonResourceActions } from '@console/app/src/actions/creators/comm
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
 import { disabledActionsFilter } from '@console/dev-console/src/actions/add-resources';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import { Action } from '@console/dynamic-plugin-sdk';
 import {
   K8sResourceKind,
@@ -12,11 +11,12 @@ import {
   referenceForModel,
   modelFor,
 } from '@console/internal/module/k8s';
-import { useActiveNamespace } from '@console/shared';
+import { isCatalogTypeEnabled, useActiveNamespace } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { MoveConnectorAction } from '@console/topology/src/actions/edgeActions';
 import { getModifyApplicationAction } from '@console/topology/src/actions/modify-application';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
+import { EVENT_SINK_CATALOG_TYPE_ID, EVENT_SOURCE_CATALOG_TYPE_ID } from '../const';
 import { RevisionModel, EventingBrokerModel, ServiceModel } from '../models';
 import {
   TYPE_EVENT_SOURCE,
@@ -89,7 +89,7 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
 
 export const useBrokerActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
-  const isEventSinkTypeEnabled = isCatalogTypeEnabled('EventSink');
+  const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
   const addActions: Action[] = [];
   const actions = React.useMemo(() => {
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
@@ -125,7 +125,7 @@ export const useCommonActionsProvider = (resource: K8sResourceKind) => {
 
 export const useChannelActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
-  const isEventSinkTypeEnabled = isCatalogTypeEnabled('EventSink');
+  const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
   const addActions: Action[] = [];
   const actions = React.useMemo(() => {
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
@@ -149,8 +149,8 @@ export const useTopologyActionsProvider = ({
   element: GraphElement;
   connectorSource?: Node;
 }) => {
-  const isEventSinkTypeEnabled = isCatalogTypeEnabled('EventSink');
-  const isEventSourceTypeEnabled = isCatalogTypeEnabled('EventSource');
+  const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
+  const isEventSourceTypeEnabled = isCatalogTypeEnabled(EVENT_SOURCE_CATALOG_TYPE_ID);
 
   const [namespace] = useActiveNamespace();
   const actions = React.useMemo(() => {

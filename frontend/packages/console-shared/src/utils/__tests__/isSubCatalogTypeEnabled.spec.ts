@@ -1,10 +1,11 @@
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { testHook } from '../../../../../__tests__/utils/hooks-utils';
+import { HELM_CHART_CATALOG_TYPE_ID } from '@console/helm-plugin/src/const';
 import {
   useGetAllDisabledSubCatalogs,
   isCatalogTypeEnabled,
   useIsDeveloperCatalogEnabled,
-} from '../catalog-utils';
+} from '@console/shared';
+import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import { mockExtensions } from './catalogTypeExtensions.data';
 
 jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
@@ -20,54 +21,54 @@ beforeEach(() => {
 
 describe('isSubCatalogTypeEnabled - get sub-catalog status', () => {
   it('should show HelmChart catalog type as enabled when dev catalog types are not configured', () => {
-    const isEnabled = isCatalogTypeEnabled('HelmChart');
+    const isEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     expect(isEnabled).toBe(true);
   });
   it('should show HelmChart catalog type as enabled when enabled list is empty', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" , "enabled": [] }';
-    const isEnabled = isCatalogTypeEnabled('HelmChart');
+    const isEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     expect(isEnabled).toBe(true);
   });
   it('should show HelmChart catalog type as disabled when disabled list is empty', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" , "disabled": [] }';
-    const isEnabled = isCatalogTypeEnabled('HelmChart');
+    const isEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     expect(isEnabled).toBe(false);
   });
   it('should show HelmChart catalog type as enabled when HelmChart is added in enabled list', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" , "enabled": ["HelmChart"] }';
-    const isEnabled = isCatalogTypeEnabled('HelmChart');
+    const isEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     expect(isEnabled).toBe(true);
   });
   it('should show HelmChart catalog type as disabled when HelmChart is added in disabled list', () => {
     window.SERVER_FLAGS.developerCatalogTypes =
       '{"state" : "Disabled" , "disabled": ["HelmChart"] }';
-    const isEnabled = isCatalogTypeEnabled('HelmChart');
+    const isEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     expect(isEnabled).toBe(false);
   });
   it('should show HelmChart catalog type as disabled when HelmChart is not added in enabled list', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" , "enabled": ["Devfile"] }';
-    const isEnabled = isCatalogTypeEnabled('HelmChart');
+    const isEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     expect(isEnabled).toBe(false);
   });
   it('should show HelmChart catalog type as enabled when HelmChart is not added in disabled list', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" , "disabled": ["Devfile"] }';
-    const isEnabled = isCatalogTypeEnabled('HelmChart');
+    const isEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     expect(isEnabled).toBe(true);
   });
   it('should show HelmChart catalog type as enabled when HelmChart is added in enabled list along with other sub-catalog', () => {
     window.SERVER_FLAGS.developerCatalogTypes =
       '{"state" : "Enabled" , "enabled": ["Devfile","HelmChart"] }';
-    const isEnabled = isCatalogTypeEnabled('HelmChart');
+    const isEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     expect(isEnabled).toBe(true);
   });
   it('should show HelmChart catalog type as enabled when enabled attribute is not added', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" }';
-    const isEnabled = isCatalogTypeEnabled('HelmChart');
+    const isEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     expect(isEnabled).toBe(true);
   });
   it('should show HelmChart catalog type as disabled when disabled attribute is not added', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" }';
-    const isEnabled = isCatalogTypeEnabled('HelmChart');
+    const isEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     expect(isEnabled).toBe(false);
   });
 });

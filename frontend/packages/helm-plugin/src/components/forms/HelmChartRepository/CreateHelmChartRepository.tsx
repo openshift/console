@@ -3,8 +3,8 @@ import { Formik, FormikHelpers } from 'formik';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { HELM_CHART_CATALOG_TYPE_ID } from '@console/helm-plugin/src/const';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { history, StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -14,7 +14,7 @@ import {
   modelFor,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { useActiveNamespace, useQueryParams } from '@console/shared/src';
+import { isCatalogTypeEnabled, useActiveNamespace, useQueryParams } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
@@ -44,7 +44,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
   const { t } = useTranslation();
   const [namespace] = useActiveNamespace();
   const fireTelemetryEvent = useTelemetry();
-  const isHelmEnabled = isCatalogTypeEnabled('HelmChart');
+  const isHelmEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
   const [hcr, hcrLoaded, hcrLoadError] = useK8sWatchResource<HelmChartRepositoryType>(
     isEditForm
       ? {

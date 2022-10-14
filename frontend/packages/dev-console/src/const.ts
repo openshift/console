@@ -29,3 +29,6 @@ export const INSTANCE_LABEL = 'app.kubernetes.io/instance';
 export const FLAG_DEVELOPER_CATALOG = 'DEVELOPER_CATALOG';
 export const FLAG_OPERATOR_BACKED_SERVICE_CATALOG_TYPE = 'OPERATOR_BACKED_SERVICE_CATALOG_TYPE';
 export const FLAG_SAMPLE_CATALOG_TYPE = 'SAMPLE_CATALOG_TYPE';
+export const OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID = 'OperatorBackedService';
+export const SAMPLE_CATALOG_TYPE_ID = 'Sample';
+export const ADD_TO_PROJECT = 'add-to-project';

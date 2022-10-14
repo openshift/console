@@ -16,7 +16,7 @@ import { useQueryParams } from '../../hooks';
 import CatalogView from './catalog-view/CatalogView';
 import CatalogTile from './CatalogTile';
 import CatalogDetailsModal from './details/CatalogDetailsModal';
-import { getURLWithParams } from './utils/catalog-utils';
+import { getURLWithParams, useGetAllDisabledSubCatalogs } from './utils/catalog-utils';
 import { determineAvailableFilters } from './utils/filter-utils';
 import {
   CatalogCategory,
@@ -52,6 +52,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const queryParams = useQueryParams();
+  const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
 
   const typeExtension: ResolvedExtension<CatalogItemType> = React.useMemo(
     () => catalogExtensions?.find((extension) => extension.properties.type === type),
@@ -126,14 +127,16 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   }, [items, queryParams]);
 
   const catalogTypes: CatalogType[] = React.useMemo(() => {
-    const types = catalogExtensions.map((extension) => ({
-      label: extension.properties.title,
-      value: extension.properties.type,
-      description: extension.properties.typeDescription,
-    }));
+    const types = catalogExtensions
+      .map((extension) => ({
+        label: extension.properties.title,
+        value: extension.properties.type,
+        description: extension.properties.typeDescription,
+      }))
+      .filter((extension) => !disabledSubCatalogs?.includes(extension.value));
 
     return _.sortBy(types, ({ label }) => label.toLowerCase());
-  }, [catalogExtensions]);
+  }, [catalogExtensions, disabledSubCatalogs]);
 
   const catalogItems = React.useMemo(() => (type ? itemsMap[type] : items), [
     items,

@@ -4,10 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
-import {
-  isCatalogTypeEnabled,
-  useIsDeveloperCatalogEnabled,
-} from '@console/dev-console/src/utils/catalog-utils';
+import { OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import {
   DOC_URL_RED_HAT_MARKETPLACE,
   ExternalLink,
@@ -19,6 +16,7 @@ import {
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
+import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { iconFor } from '..';
@@ -257,7 +255,9 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
 
 export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => {
   const isDevCatalogEnabled = useIsDeveloperCatalogEnabled();
-  const isOperatorBackedServiceEnabled = isCatalogTypeEnabled('OperatorBackedService');
+  const isOperatorBackedServiceEnabled = isCatalogTypeEnabled(
+    OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID,
+  );
   return (
     <>
       <Helmet>

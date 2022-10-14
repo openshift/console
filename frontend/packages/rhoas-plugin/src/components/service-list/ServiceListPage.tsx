@@ -6,18 +6,18 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
+  isCatalogTypeEnabled,
   FormHeader,
   FlexForm,
   FormBody,
   useActiveNamespace,
   TechPreviewBadge,
 } from '@console/shared';
-import { ServicesRequestCRName } from '../../const';
+import { MANAGED_SERVICES_CATALOG_TYPE_ID, ServicesRequestCRName } from '../../const';
 import { CloudServicesRequestModel } from '../../models/rhoas';
 import {
   isResourceStatusSuccessful,
@@ -47,7 +47,7 @@ const ServiceListPage: React.FC = () => {
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState<string[]>();
   const [isSubmitting, setSubmitting] = React.useState<boolean>(false);
   const [connectionError, setConnectionError] = React.useState<ConnectionErrorProps>();
-  const isManagedServicesTypeEnabled = isCatalogTypeEnabled('managedservices');
+  const isManagedServicesTypeEnabled = isCatalogTypeEnabled(MANAGED_SERVICES_CATALOG_TYPE_ID);
   const { t } = useTranslation();
 
   React.useEffect(() => {

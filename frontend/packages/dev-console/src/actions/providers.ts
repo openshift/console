@@ -19,15 +19,21 @@ import {
   referenceFor,
 } from '@console/internal/module/k8s';
 import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
-import { useActiveNamespace } from '@console/shared';
+import {
+  isCatalogTypeEnabled,
+  useActiveNamespace,
+  useIsDeveloperCatalogEnabled,
+} from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import {
   FLAG_DEVELOPER_CATALOG,
   FLAG_OPERATOR_BACKED_SERVICE_CATALOG_TYPE,
   FLAG_SAMPLE_CATALOG_TYPE,
+  OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID,
+  SAMPLE_CATALOG_TYPE_ID,
+  ADD_TO_PROJECT,
 } from '../const';
-import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '../utils/catalog-utils';
 import { AddActions, disabledActionsFilter } from './add-resources';
 import { DeleteApplicationAction } from './context-menu';
 import { EditImportApplication } from './creators';
@@ -73,9 +79,9 @@ export const useDeveloperCatalogProvider = (setFeatureFlag: SetFeatureFlag) => {
   setFeatureFlag(FLAG_DEVELOPER_CATALOG, useIsDeveloperCatalogEnabled());
   setFeatureFlag(
     FLAG_OPERATOR_BACKED_SERVICE_CATALOG_TYPE,
-    isCatalogTypeEnabled('OperatorBackedService'),
+    isCatalogTypeEnabled(OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID),
   );
-  setFeatureFlag(FLAG_SAMPLE_CATALOG_TYPE, isCatalogTypeEnabled('sample'));
+  setFeatureFlag(FLAG_SAMPLE_CATALOG_TYPE, isCatalogTypeEnabled(SAMPLE_CATALOG_TYPE_ID));
 };
 
 export const useTopologyGraphActionProvider: TopologyActionProvider = ({
@@ -104,8 +110,10 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
     serviceAccess;
   const isCatalogImageResourceAccess = isImportResourceAccess && imageStreamImportAccess;
   const isDevCatalogEnabled = useIsDeveloperCatalogEnabled();
-  const isOperatorBackedServiceEnabled = isCatalogTypeEnabled('OperatorBackedService');
-  const isSampleTypeEnabled = isCatalogTypeEnabled('Sample');
+  const isOperatorBackedServiceEnabled = isCatalogTypeEnabled(
+    OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID,
+  );
+  const isSampleTypeEnabled = isCatalogTypeEnabled(SAMPLE_CATALOG_TYPE_ID);
 
   return React.useMemo(() => {
     const sourceObj = connectorSource?.getData()?.resource;
@@ -155,35 +163,29 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
           namespace,
           undefined,
           undefined,
-          'add-to-project',
+          ADD_TO_PROJECT,
           !isImportResourceAccess,
         ),
       );
     }
     actionsWithoutSourceRef.push(
-      AddActions.FromGit(
-        namespace,
-        undefined,
-        undefined,
-        'add-to-project',
-        !isImportResourceAccess,
-      ),
+      AddActions.FromGit(namespace, undefined, undefined, ADD_TO_PROJECT, !isImportResourceAccess),
     );
     actionsWithoutSourceRef.push(
       AddActions.ContainerImage(
         namespace,
         undefined,
         undefined,
-        'add-to-project',
+        ADD_TO_PROJECT,
         !isCatalogImageResourceAccess,
       ),
     );
     if (isDevCatalogEnabled) {
       actionsWithoutSourceRef.push(
-        AddActions.DevCatalog(namespace, undefined, undefined, 'add-to-project', undefined),
+        AddActions.DevCatalog(namespace, undefined, undefined, ADD_TO_PROJECT, undefined),
       );
       actionsWithoutSourceRef.push(
-        AddActions.DatabaseCatalog(namespace, undefined, undefined, 'add-to-project', undefined),
+        AddActions.DatabaseCatalog(namespace, undefined, undefined, ADD_TO_PROJECT, undefined),
       );
     }
     if (isOperatorBackedServiceEnabled) {
@@ -192,7 +194,7 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
           namespace,
           undefined,
           undefined,
-          'add-to-project',
+          ADD_TO_PROJECT,
           undefined,
           undefined,
         ),
@@ -203,7 +205,7 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
         namespace,
         undefined,
         undefined,
-        'add-to-project',
+        ADD_TO_PROJECT,
         !isCatalogImageResourceAccess,
       ),
     );

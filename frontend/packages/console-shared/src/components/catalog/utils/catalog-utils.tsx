@@ -1,5 +1,10 @@
 import * as _ from 'lodash';
 import {
+  useResolvedExtensions,
+  CatalogItemType,
+  isCatalogItemType,
+} from '@console/dynamic-plugin-sdk';
+import {
   CatalogItem,
   CatalogItemDetails,
   CatalogItemMetadataProviderFunction,
@@ -9,6 +14,11 @@ import { history } from '@console/internal/components/utils';
 import * as catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
 import { keywordFilter } from '../../../utils/keyword-filter';
 import { CatalogType, CatalogTypeCounts } from './types';
+
+enum CatalogVisibilityState {
+  Enabled = 'Enabled',
+  Disabled = 'Disabled',
+}
 
 const catalogItemCompare = (keyword: string, item: CatalogItem): boolean => {
   if (!item) {
@@ -125,3 +135,63 @@ export const applyCatalogItemMetadata = (
     }
     return item;
   });
+
+export const isCatalogTypeEnabled = (catalogType: string): boolean => {
+  if (window.SERVER_FLAGS.developerCatalogTypes) {
+    const developerCatalogTypes = JSON.parse(window.SERVER_FLAGS.developerCatalogTypes);
+    if (
+      developerCatalogTypes?.state === CatalogVisibilityState.Enabled &&
+      developerCatalogTypes?.enabled?.length > 0
+    ) {
+      return developerCatalogTypes?.enabled.includes(catalogType);
+    }
+    if (developerCatalogTypes?.state === CatalogVisibilityState.Disabled) {
+      if (developerCatalogTypes?.disabled?.length > 0) {
+        return !developerCatalogTypes?.disabled.includes(catalogType);
+      }
+      return false;
+    }
+  }
+  return true;
+};
+
+export const useGetAllDisabledSubCatalogs = () => {
+  const [catalogExtensionsArray] = useResolvedExtensions<CatalogItemType>(isCatalogItemType);
+  const catalogTypeExtensions = catalogExtensionsArray.map((type) => {
+    return type.properties.type;
+  });
+  let disabledSubCatalogs = [];
+  if (window.SERVER_FLAGS.developerCatalogTypes) {
+    const developerCatalogTypes = JSON.parse(window.SERVER_FLAGS.developerCatalogTypes);
+    if (
+      developerCatalogTypes?.state === CatalogVisibilityState.Enabled &&
+      developerCatalogTypes?.enabled?.length > 0
+    ) {
+      disabledSubCatalogs = catalogTypeExtensions.filter(
+        (val) => !developerCatalogTypes?.enabled.includes(val),
+      );
+      return [disabledSubCatalogs];
+    }
+    if (developerCatalogTypes?.state === CatalogVisibilityState.Disabled) {
+      if (developerCatalogTypes?.disabled?.length > 0) {
+        return [developerCatalogTypes?.disabled, catalogTypeExtensions];
+      }
+      return [catalogTypeExtensions];
+    }
+  }
+  return [disabledSubCatalogs];
+};
+
+export const useIsDeveloperCatalogEnabled = (): boolean => {
+  const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
+  const [catalogExtensionsArray] = useResolvedExtensions<CatalogItemType>(isCatalogItemType);
+  const catalogTypeExtensions = catalogExtensionsArray.map((type) => {
+    return type.properties.type;
+  });
+  if (disabledSubCatalogs?.length === catalogTypeExtensions?.length) {
+    return (
+      JSON.stringify(disabledSubCatalogs.sort()) !== JSON.stringify(catalogTypeExtensions.sort())
+    );
+  }
+  return true;
+};

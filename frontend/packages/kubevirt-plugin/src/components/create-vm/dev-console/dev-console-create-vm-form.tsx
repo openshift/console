@@ -13,7 +13,6 @@ import { isEmpty } from 'lodash';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import {
   ButtonBar,
   ExternalLink,
@@ -22,10 +21,11 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { isCatalogTypeEnabled } from '@console/shared';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '../../../../../dev-console/src/components/NamespacedPage';
-import { ALL_NAMESPACES_KEY } from '../../../constants';
+import { ALL_NAMESPACES_KEY, VM_TEMPLATE_CATALOG_TYPE_ID } from '../../../constants';
 import { BOOT_SOURCE_AVAILABLE, SUPPORT_URL } from '../../../constants/vm-templates';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
 import useSSHKeys from '../../../hooks/use-ssh-keys';
@@ -52,7 +52,7 @@ const DevConsoleCreateVmFormEmptyState: React.FC<{ templateParam: string; t: TFu
   templateParam,
   t,
 }) => {
-  const isVMTemplateTypeEnabled = isCatalogTypeEnabled('VmTemplate');
+  const isVMTemplateTypeEnabled = isCatalogTypeEnabled(VM_TEMPLATE_CATALOG_TYPE_ID);
   return (
     <EmptyState>
       <Title headingLevel="h4" size="lg">

@@ -17,3 +17,4 @@ export const kafkaIcon = `data:image/svg+xml,%3Csvg id='adffd9f6-a340-4cce-8211-
 export const APITokenLengthMinimum = 100;
 
 export const FLAG_MANAGED_SERVICES_CATALOG_TYPE = 'MANAGED_SERVICES_CATALOG_TYPE';
+export const MANAGED_SERVICES_CATALOG_TYPE_ID = 'managedservices';

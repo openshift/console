@@ -9,8 +9,8 @@ import {
   CatalogServiceProvider,
   useCatalogCategories,
   CatalogController,
+  isCatalogTypeEnabled,
 } from '@console/shared';
-import { isCatalogTypeEnabled } from '../../utils/catalog-utils';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
 

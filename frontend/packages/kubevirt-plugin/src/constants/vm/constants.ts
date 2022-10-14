@@ -92,3 +92,4 @@ export const TEMPLATE_CUSTOMIZE_SOURCE = 'kubevirt.templates.customizeSource';
 export const DEFAULT_DISK_SIZE = '20Gi';
 
 export const RED_HAT = 'Red Hat';
+export const VM_TEMPLATE_CATALOG_TYPE_ID = 'VmTemplate';

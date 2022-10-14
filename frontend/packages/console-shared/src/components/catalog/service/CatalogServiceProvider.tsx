@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { useGetAllDisabledSubCatalogs } from '@console/dev-console/src/utils/catalog-utils';
 import {
   CatalogExtensionHookOptions,
   CatalogItem,
@@ -9,7 +8,11 @@ import {
 import { IncompleteDataError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import useCatalogExtensions from '../hooks/useCatalogExtensions';
 import { CatalogService } from '../utils';
-import { keywordCompare, applyCatalogItemMetadata } from '../utils/catalog-utils';
+import {
+  keywordCompare,
+  applyCatalogItemMetadata,
+  useGetAllDisabledSubCatalogs,
+} from '../utils/catalog-utils';
 import CatalogExtensionHookResolver from './CatalogExtensionHookResolver';
 
 type CatalogServiceProviderProps = {

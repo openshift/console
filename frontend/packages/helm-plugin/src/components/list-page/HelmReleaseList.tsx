@@ -10,13 +10,13 @@ import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
-import { isCatalogTypeEnabled } from '@console/dev-console/src/utils/catalog-utils';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { CustomResourceList } from '@console/shared';
+import { isCatalogTypeEnabled, CustomResourceList } from '@console/shared';
+import { HELM_CHART_CATALOG_TYPE_ID } from '../../const';
 import {
   helmReleasesRowFilters,
   filterHelmReleasesByName,
@@ -25,7 +25,6 @@ import {
 } from '../../utils/helm-utils';
 import HelmReleaseListHeader from './HelmReleaseListHeader';
 import HelmReleaseListRow from './HelmReleaseListRow';
-
 import './HelmReleaseList.scss';
 
 const getRowProps = (obj) => ({
@@ -110,7 +109,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
   }
 
   const emptyState = () => {
-    const isHelmEnabled = isCatalogTypeEnabled('HelmChart');
+    const isHelmEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     const helmImage = () => (
       <img
         className="odc-helm-release__empty-list__image"
