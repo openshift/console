@@ -3,7 +3,13 @@ import { Form, TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { MultiColumnField, InputField, DropdownField, FormFooter } from '@console/shared';
+import {
+  MultiColumnField,
+  InputField,
+  DropdownField,
+  FormFooter,
+  NSDropdownField,
+} from '@console/shared';
 import { Roles, ignoreRoleBindingName } from './project-access-form-utils';
 import { UserRoleBinding } from './project-access-form-utils-types';
 import './ProjectAccessForm.scss';
@@ -12,6 +18,33 @@ type ProjectAccessFormProps = FormikProps<FormikValues> & {
   roles: Roles;
   roleBindings: { projectAccess: UserRoleBinding[] };
   onCancel?: () => void;
+};
+
+type SubjectNamespaceDropdownProps = {
+  name?: string;
+  values: FormikValues;
+};
+
+export const SubjectNamespaceDropdown: React.FC<SubjectNamespaceDropdownProps> = ({
+  name,
+  values,
+}) => {
+  const { t } = useTranslation();
+  const arr = name.split('.');
+  const showDropdown =
+    arr.length > 2 && values?.projectAccess?.[arr?.[1]]?.subject?.kind === 'ServiceAccount';
+  return (
+    <div>
+      <DropdownField
+        name={`${name}.kind`}
+        title={t('devconsole~Select a type')}
+        items={{ Group: 'Group', ServiceAccount: 'ServiceAccount', User: 'User' }}
+        fullWidth
+        className="odc-project-access-form__subject-kind-dropdown"
+      />
+      {showDropdown && <NSDropdownField name={`${name}.namespace`} fullWidth />}
+    </div>
+  );
 };
 
 const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
@@ -52,15 +85,17 @@ const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
           <MultiColumnField
             name="projectAccess"
             addLabel={t('devconsole~Add access')}
-            headers={[t('devconsole~Name'), t('devconsole~Role')]}
+            headers={[t('devconsole~Subject'), t('devconsole~Name'), t('devconsole~Role')]}
             emptyValues={{ name: '', role: '' }}
           >
+            <SubjectNamespaceDropdown name="subject" values={values} />
             <InputField
               name="subject.name"
               type={TextInputTypes.text}
               placeholder={t('devconsole~Name')}
             />
             <DropdownField
+              dataTest="role-dropdown"
               name="role"
               title={t('devconsole~Select a role')}
               items={roles}

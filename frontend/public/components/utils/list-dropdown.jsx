@@ -284,7 +284,7 @@ export const NsDropdown = (props) => {
       actionItems={actionItems}
       desc={model.plural}
       onChange={onChange}
-      placeholder={getPlaceholder(model)}
+      placeholder={props.placeholder || getPlaceholder(model)}
       resources={[{ kind: `${model.kind}` }]}
       selectedKeyKind={model.kind}
       selectedKey={selectedKey}
