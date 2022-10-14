@@ -26,9 +26,9 @@ let nextID: number = 0;
 const newQueryBrowserQueryID = () : number => nextID++ 
 
 // returns a Key/Value Pair Map {id: 'query-browser-quer-123', Value:Map{isEnabled:true, isExpanded:true} }
-const newQueryBrowserQuery2 = () : [[number, ImmutableMap<string, any>]] =>  {
+const newQueryBrowserQuery2 = () : [[string, ImmutableMap<string, any>]] =>  {
   return [[
-    nextID++, 
+    "query-browser-query-id-" + nextID++, 
     ImmutableMap({
       isEnabled: true,
       isExpanded: true,
@@ -74,7 +74,6 @@ export const silenceFiringAlerts = (firingAlerts, silences) => {
 };
 
 export default (state: ObserveState, action: ObserveAction): ObserveState => {
-
   if (!state) {
     return ImmutableMap({
       dashboards: ImmutableMap({

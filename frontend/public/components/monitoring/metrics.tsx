@@ -477,6 +477,41 @@ const PromQLExpressionInput = (props) => (
   />
 );
 
+const Query2 : React.FC<{ id: string }> = ({ id }) => {
+  const { t } = useTranslation();
+
+  // QueriesList {id:Map{}, id:Map{}, id:Map{}}
+  const isEnabled = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser2', 'queries2', id, 'isEnabled']),
+  );
+  const isExpanded = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser2', 'queries2', id, 'isExpanded']),
+  );
+  const text = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser2', 'queries2', id, 'text'], ''),
+  );
+
+  const queries = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser2', 'queries2', id]),
+  );
+
+  console.log("QueryComponent : " + id + " " + queries.toString())
+
+  return (
+    <div
+      className={classNames('query-browser__table', {
+        'query-browser__table--expanded': true,
+      })}
+    >
+      <div className="query-browser__query-controls">
+       
+      </div>
+    </div>
+  );
+  
+
+};
+
 const Query: React.FC<{ index: number }> = ({ index }) => {
   const { t } = useTranslation();
 
@@ -695,17 +730,56 @@ const QueriesList: React.FC<{}> = () => {
 
   console.log("JZ Queries : " + queries)
 
+
+  queries2.forEach((value, key) => {
+    console.log("JZ Key:Value " + key +  " : " + value.toString());
+  })
+
+  // TODO: Need to Sort this in reverse but the .sort() function handles
+  // sorting by ASCII so we need to write a lambda to handle sorting by 
+  // values and not ASCII ... would this work if the keys were numbers 
+  // instead of strings?
+  // console.log("JZ KeySeq() : " + queries2.keySeq().sort().reverse())
+
+  // JZ NOTE: number ID APPROACH
+  // const queryKeys = queries2.keySeq().sort().reverse()
+
+  queries2.keySeq().sort((key:string) => console.log("Slice Key: " + +key.slice(22) + " type: " + typeof +key.slice(22) ));
+  
+  // JZ NOTE: string ID APPROACH 
+  // comparator to sort IDs in reverse (newest queries precede older queries)
+  // .slice() to seperate the ID number from the string "query-browser-query-id-123"
+  const queryKeys = queries2.keySeq().sort((k1,k2) => {
+    k1 = +k1.slice(23)
+    k2 = +k2.slice(23)
+    if (k1 < k2) {
+      return 1;
+    }
+    if (k1 > k2) {
+        return -1;
+    }
+    return 0;
+   }
+  )
   
   // State > Queries > Object structure is List[Map<string:string>]
   // TODO: QueriesList need to sort the map by ID then render 
   return (
     <>
-      {_.range(queries.size).map((i) => (
+      {/* {_.range(queries.size).map((i) => (
         <div>
           The Index is : {i}   key : {queries.get(i).get("id")} 
           <Query index={i} key={queries.get(i).get("id")} />
         </div>
-      ))}
+      ))} */}
+      {
+        queryKeys.map(key => 
+          <div>
+            {key.toString()}
+            <Query2 id={key} key={key} />
+          </div>
+          )
+      }
     </>
   );
 
