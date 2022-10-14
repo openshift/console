@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { MultiColumnField, InputField, DropdownField, FormFooter } from '@console/shared';
 import { defaultAccessRoles } from '../project-access-form-utils';
-import ProjectAccessForm from '../ProjectAccessForm';
+import ProjectAccessForm, { SubjectNamespaceDropdown } from '../ProjectAccessForm';
 
 type ProjectAccessFormProps = React.ComponentProps<typeof ProjectAccessForm>;
 let formProps: ProjectAccessFormProps;
@@ -106,19 +106,25 @@ describe('Project Access Form', () => {
     expect(projectAccessForm.find(MultiColumnField).exists()).toBe(true);
     const formWrapper = projectAccessForm.find(MultiColumnField);
     expect(formWrapper.getElements()[0].props.name).toBe('projectAccess');
-    expect(formWrapper.getElements()[0].props.headers).toEqual(['Name', 'Role']);
+    expect(formWrapper.getElements()[0].props.headers).toEqual(['Subject', 'Name', 'Role']);
     expect(formWrapper.getElements()[0].props.addLabel).toEqual('Add access');
-    expect(formWrapper.children()).toHaveLength(2);
+    expect(formWrapper.children()).toHaveLength(3);
     expect(
       formWrapper
         .children()
         .at(0)
-        .is(InputField),
+        .is(SubjectNamespaceDropdown),
     ).toBe(true);
     expect(
       formWrapper
         .children()
         .at(1)
+        .is(InputField),
+    ).toBe(true);
+    expect(
+      formWrapper
+        .children()
+        .at(2)
         .is(DropdownField),
     ).toBe(true);
     expect(projectAccessForm.find(FormFooter).exists()).toBe(true);
@@ -129,13 +135,13 @@ describe('Project Access Form', () => {
     expect(
       formWrapper
         .children()
-        .at(1)
+        .at(2)
         .props().name,
     ).toBe('role');
     expect(
       formWrapper
         .children()
-        .at(1)
+        .at(2)
         .props().items,
     ).toEqual({ admin: 'Admin', view: 'View', edit: 'Edit' });
   });

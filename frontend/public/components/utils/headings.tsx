@@ -117,6 +117,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     className,
     centerText,
     helpText,
+    'data-test': dataTestId,
   } = props;
   const extraResources = _.reduce(
     props.resourceKeys,
@@ -150,6 +151,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
         </div>
       )}
       <div
+        data-test-id={dataTestId}
         className={classNames(
           'co-m-nav-title',
           { 'co-m-nav-title--detail': detail },
@@ -314,6 +316,7 @@ export type KebabOptionsCreator = (
 ) => KebabOption[];
 
 export type PageHeadingProps = {
+  'data-test'?: string;
   breadcrumbs?: { name: string; path: string }[];
   breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
   buttonActions?: any[];
