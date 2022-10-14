@@ -184,6 +184,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   // so that the i18n-parser can find them, and keep them in sync with the locale json file.
   // Changes made in this comment block take effect after `yarn i18n` is run.
   // const resources = [
+  //   t('console-app~Quick Starts'),
   //   t('console-app~No results found'),
   //   t('console-app~No results match the filter criteria. Remove filters or clear all filters to show results.'),
   //   t('console-app~Clear all filters'),
@@ -195,12 +196,14 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   //   t('console-app~Status'),
   //   t('console-app~{{count, number}} item', { count: 0 }),
   //   t('console-app~Prerequisites ({{totalPrereqs}})'),
+  //   t('console-app~View Prerequisites ({{totalPrereqs}})'),
   //   t('console-app~Prerequisites'),
   //   t('console-app~Show prerequisites'),
   //   t('console-app~Complete'),
   //   t('console-app~In progress'),
   //   t('console-app~Not started'),
   //   t('console-app~{{duration, number}} minutes'),
+  //   t('console-app~{{type}} • {{duration, number}} minutes'),
   //   t('console-app~One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.'),
   //   t('console-app~Start {{nextQSDisplayName}} quick start'),
   //   t('console-app~Start'),
@@ -219,6 +222,12 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   //   t('console-app~Cancel'),
   //   t('console-app~Leave'),
   //   t('console-app~Your progress will be saved.'),
+  //   t('console-app~Not available'),
+  //   t('console-app~Copy to clipboard'),
+  //   t('console-app~Successfully copied to clipboard!'),
+  //   t('console-app~Type'),
+  //   t('console-app~No {{label}} found'),
+  //   t('console-app~Not found'),
   // ];
   return {
     useLegacyHeaderColors: true,

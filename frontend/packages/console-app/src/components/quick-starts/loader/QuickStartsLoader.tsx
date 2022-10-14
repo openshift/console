@@ -14,15 +14,14 @@ const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = ({ children }) => {
 
   const enabledQuickstarts = React.useMemo(() => {
     const disabledQuickStarts = getDisabledQuickStarts();
-    return disabledQuickStarts?.length > 0
-      ? quickStartsLoaded
-        ? quickStarts.filter((qs) => !isDisabledQuickStart(qs, disabledQuickStarts))
-        : []
-      : quickStarts;
+    if (quickStartsLoaded && disabledQuickStarts.length > 0) {
+      return quickStarts.filter((qs) => !isDisabledQuickStart(qs, disabledQuickStarts));
+    }
+    return quickStarts;
   }, [quickStarts, quickStartsLoaded]);
 
   const [allowedQuickStarts, setAllowedQuickStarts] = React.useState<QuickStart[]>([]);
-  const [loaded, setLoaded] = React.useState<boolean>(!(enabledQuickstarts.length > 0));
+  const [permissionsLoaded, setPermissionsLoaded] = React.useState<boolean>(false);
   const permissionChecks = React.useRef<{ [name: string]: boolean }>({});
 
   const handlePermissionCheck = React.useCallback(
@@ -33,7 +32,7 @@ const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = ({ children }) => {
           (quickstart) => permissionChecks.current[quickstart.metadata.name],
         );
         setAllowedQuickStarts(filteredQuickStarts);
-        setLoaded(true);
+        setPermissionsLoaded(true);
       }
     },
     [enabledQuickstarts],
@@ -50,7 +49,10 @@ const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = ({ children }) => {
           />
         );
       })}
-      {children(allowedQuickStarts, loaded)}
+      {children(
+        allowedQuickStarts,
+        quickStartsLoaded && (enabledQuickstarts.length === 0 || permissionsLoaded),
+      )}
     </>
   );
 };
