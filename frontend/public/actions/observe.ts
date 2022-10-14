@@ -13,6 +13,7 @@ export enum ActionType {
   DashboardsSetTimespan = 'dashboardsSetTimespan',
   DashboardsVariableOptionsLoaded = 'dashboardsVariableOptionsLoaded',
   QueryBrowserAddQuery = 'queryBrowserAddQuery',
+  QueryBrowserAddQuery2 = 'queryBrowserAddQuery2',
   QueryBrowserDuplicateQuery = 'queryBrowserDuplicateQuery',
   QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
   QueryBrowserDeleteAllSeries = 'queryBrowserDeleteAllSeries',
@@ -90,6 +91,8 @@ export const toggleGraphs = () => action(ActionType.ToggleGraphs);
 
 export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
 
+export const queryBrowserAddQuery2 = () => action(ActionType.QueryBrowserAddQuery2);
+
 export const queryBrowserDuplicateQuery = (index: number) =>
   action(ActionType.QueryBrowserDuplicateQuery, { index });
 
@@ -141,6 +144,7 @@ const actions = {
   dashboardsSetTimespan,
   dashboardsVariableOptionsLoaded,
   queryBrowserAddQuery,
+  queryBrowserAddQuery2,
   queryBrowserDuplicateQuery,
   queryBrowserDeleteAllQueries,
   queryBrowserDeleteAllSeries,

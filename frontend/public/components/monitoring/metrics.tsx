@@ -58,6 +58,7 @@ import {
   queryBrowserToggleIsEnabled,
   queryBrowserToggleSeries,
   toggleGraphs,
+  queryBrowserAddQuery2,
 } from '../../actions/observe';
 import { RootState } from '../../redux';
 import { getPrometheusURL } from '../graphs/helpers';
@@ -526,6 +527,7 @@ const Query: React.FC<{ index: number }> = ({ index }) => {
   const switchKey = `${id}-${isEnabled}`;
   const switchLabel = isEnabled ? t('public~Disable query') : t('public~Enable query');
 
+
   return (
     <div
       className={classNames('query-browser__table', {
@@ -651,11 +653,12 @@ const AddQueryButton: React.FC<{}> = () => {
 
   const dispatch = useDispatch();
   const addQuery = React.useCallback(() => dispatch(queryBrowserAddQuery()), [dispatch]);
+  const addQuery2 = React.useCallback(() => dispatch(queryBrowserAddQuery2()), [dispatch]);
 
   return (
     <Button
       className="query-browser__inline-control"
-      onClick={addQuery}
+      onClick={addQuery && addQuery2}
       type="button"
       variant="secondary"
     >
@@ -677,19 +680,37 @@ const RunQueriesButton: React.FC<{}> = () => {
   );
 };
 
+
 const QueriesList: React.FC<{}> = () => {
-  const count = useSelector(
-    ({ observe }: RootState) => observe.getIn(['queryBrowser', 'queries']).size,
+
+  const queries =  useSelector(
+    ({ observe }: RootState) => observe.getIn(['queryBrowser', 'queries']),
   );
 
+  const queries2 = useSelector(
+    ({ observe }: RootState) => observe.getIn(['queryBrowser2', 'queries2']),
+  );
+
+  console.log("JZ Queries2: " + queries2)
+
+  console.log("JZ Queries : " + queries)
+
+  
+  // State > Queries > Object structure is List[Map<string:string>]
+  // TODO: QueriesList need to sort the map by ID then render 
   return (
     <>
-      {_.range(count).map((i) => (
-        <Query index={i} key={i} />
+      {_.range(queries.size).map((i) => (
+        <div>
+          The Index is : {i}   key : {queries.get(i).get("id")} 
+          <Query index={i} key={queries.get(i).get("id")} />
+        </div>
       ))}
     </>
   );
+
 };
+
 
 const PollIntervalDropdown = () => {
   const interval = useSelector(({ observe }: RootState) =>

@@ -11,12 +11,40 @@ import { isSilenced } from '../components/monitoring/utils';
 
 export type ObserveState = ImmutableMap<string, any>;
 
+let nextID: number = 0; 
+
+// const newQueryBrowserQueryID = () : number => nextID++ 
+
+// // returns a Key/Value Pair Map {id: 'query-browser-quer-123', Value:Map{isEnabled:true, isExpanded:true} }
+// const newQueryBrowserQuery2 = () : ImmutableMap<string, any> =>  
+//     ImmutableMap({
+//         isEnabled: true,
+//         isExpanded: true,
+//       }) 
+
+
+const newQueryBrowserQueryID = () : number => nextID++ 
+
+// returns a Key/Value Pair Map {id: 'query-browser-quer-123', Value:Map{isEnabled:true, isExpanded:true} }
+const newQueryBrowserQuery2 = () : [[number, ImmutableMap<string, any>]] =>  {
+  return [[
+    nextID++, 
+    ImmutableMap({
+      isEnabled: true,
+      isExpanded: true,
+    }) 
+  ]]
+}
+
 const newQueryBrowserQuery = (): ImmutableMap<string, any> =>
   ImmutableMap({
     id: _.uniqueId('query-browser-query'),
     isEnabled: true,
     isExpanded: true,
   });
+    
+
+
 
 export const silenceFiringAlerts = (firingAlerts, silences) => {
   // For each firing alert, store a list of the Silences that are silencing it
@@ -46,6 +74,7 @@ export const silenceFiringAlerts = (firingAlerts, silences) => {
 };
 
 export default (state: ObserveState, action: ObserveAction): ObserveState => {
+
   if (!state) {
     return ImmutableMap({
       dashboards: ImmutableMap({
@@ -62,6 +91,16 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
           variables: ImmutableMap(),
         }),
       }),
+
+      // Create a ImmutableMap Similar in structure to the dashboards 
+      queryBrowser2: ImmutableMap({
+        metrics: [],
+        pollInterval: null,
+        queries2: ImmutableMap(newQueryBrowserQuery2()), // initialize queries Map with a Key:Value Pair 
+        timespan: MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
+      }),
+
+      // intiial state creates an ImmutableList with one Query 
       queryBrowser: ImmutableMap({
         metrics: [],
         pollInterval: null,
@@ -155,6 +194,36 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
 
     case ActionType.ToggleGraphs:
       return state.set('hideGraphs', !state.get('hideGraphs'));
+
+    // case ActionType.QueryBrowserAddQuery: { 
+
+    //   // gets current state of state.queryBrowser.queries[] 
+    //   const prev = state.getIn(['queryBrowser', 'queries'])
+    //   console.log("JZ reducer > addQuery | PREVIOUS State of QueryList:" + prev )
+
+    //   // creates a new Query to be added to tate.queryBrowser.queries[] 
+    //   const newQuery = newQueryBrowserQuery();
+    //   console.log("JZ reducer > addQuery | newQuery: " + newQuery)
+
+    //   // copies current state.queryBrowser.queries[] and appends a newQuery 
+    //   const updateValue = state.getIn(['queryBrowser', 'queries']).push(newQuery)
+    //   console.log("JZ reducer > addQuery | state.getIn....push(newQueryBrowserQuery()) :" +  updateValue)
+
+    //   const update = state.setIn(
+    //     ['queryBrowser', 'queries'],
+    //     updateValue,
+    //   );
+
+    //   console.log('JZ reducer > addQuery |  UPDATED State of QueryList: ' + update)
+
+    //   return update;
+    // }
+
+    case ActionType.QueryBrowserAddQuery2:
+      return state.setIn(
+        ['queryBrowser2', 'queries2'],
+        state.getIn(['queryBrowser2', 'queries2']).merge(newQueryBrowserQuery2()),
+      );
 
     case ActionType.QueryBrowserAddQuery:
       return state.setIn(
