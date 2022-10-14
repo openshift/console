@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import { CopyToClipboard } from '@console/internal/components/utils/copy-to-clipboard';
-import { ErrorBoundaryFallbackProps } from '../types';
 
 const ErrorDetailsBlock: React.FC<ErrorBoundaryFallbackProps> = (props) => {
   const { t } = useTranslation();

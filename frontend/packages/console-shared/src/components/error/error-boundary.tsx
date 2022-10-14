@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils/router';
-import { ErrorBoundaryFallbackProps } from './types';
 
 type ErrorBoundaryProps = {
   FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackProps>;

@@ -363,6 +363,23 @@
   {
     "type": "console.page/route",
     "properties": {
+      "path": "/sample-error-boundary-page",
+      "component": { "$codeRef": "sampleErrorBoundaryPage.default" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "error-boundary-page",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "%plugin__console-demo-plugin~Sample Error Boundary Page%",
+      "href": "/sample-error-boundary-page"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
       "exact": false,
       "path": ["/example-namespaced-page/ns/:ns", "/example-namespaced-page/all-namespaces"],
       "component": {

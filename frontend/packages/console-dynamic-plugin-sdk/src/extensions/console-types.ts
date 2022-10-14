@@ -654,3 +654,10 @@ export type NamespaceBarProps = {
   isDisabled?: boolean;
   children?: React.ReactNode;
 };
+
+export type ErrorBoundaryFallbackProps = {
+  errorMessage: string;
+  componentStack: string;
+  stack: string;
+  title: string;
+};
