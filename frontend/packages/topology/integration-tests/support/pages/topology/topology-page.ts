@@ -441,6 +441,13 @@ export const topologyPage = {
       .find('.pf-topology__node.pf-m-warning')
       .contains(nodeName);
   },
+  verifyListNodeAlert: (nodeName: string) => {
+    cy.get('.odc-topology-list-view__label-cell')
+      .contains(nodeName)
+      .parent()
+      .find('div.odc-topology-list-view__alert-cell')
+      .contains('Alerts:');
+  },
   clickMaxZoomOut: () => {
     cy.get(topologyPO.graph.emptyGraph).click();
     cy.get(topologyPO.graph.reset).click();

@@ -12,8 +12,10 @@ import {
   useReplicationControllersWatcher,
   getReplicationControllerAlerts,
   useIsMobile,
+  OverviewItemAlerts,
 } from '@console/shared';
 import { getResource } from '../../../utils';
+import { useResourceQuotaAlert } from '../../workload';
 
 import './AlertsCell.scss';
 
@@ -60,6 +62,15 @@ const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
   const { podData, loaded } = usePodsWatcher(resource);
   const { buildConfigs, loaded: buildConfigsLoaded } = useBuildConfigsWatcher(resource);
   const { loaded: rcsLoaded, mostRecentRC } = useReplicationControllersWatcher(resource);
+  const workloadRqAlert = useResourceQuotaAlert(item);
+  const workloadRqAlerts: OverviewItemAlerts = workloadRqAlert
+    ? {
+        rqAlert: {
+          message: workloadRqAlert.content as string,
+          severity: workloadRqAlert.variant,
+        },
+      }
+    : {};
 
   const currentAlerts = React.useMemo(() => {
     if (loaded && podData.current) {
@@ -95,6 +106,7 @@ const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
     ...buildConfigAlerts,
     ...currentAlerts,
     ...previousAlerts,
+    ...workloadRqAlerts,
   };
 
   if (alerts?.length) {

@@ -150,7 +150,7 @@ export type DetailsResourceAlertContent = {
    * State will be store in user settings, once dismissed alert won't show up again untill user settings state resets
    */
   dismissible?: boolean;
-  content: React.Component | undefined | JSX.Element;
+  content: React.Component | undefined | JSX.Element | string;
   variant?: 'success' | 'danger' | 'warning' | 'info' | 'default';
   actionLinks?: React.ReactNode;
 };

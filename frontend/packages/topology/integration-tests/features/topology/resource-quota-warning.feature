@@ -41,4 +41,9 @@ Feature: Update user in topology page if Quotas has been reached in a namespace
              When user continously clicks on zoom-out button until it gets maximum zoomed out
              Then user is able to see yellow background on workload for resource quota alert
 
-              
+        
+        @regression
+        Scenario: deployment node shows alert when resource quota is reached in list view: T-19-TC05
+            Given user is at the Topology page
+             When user clicks on List view button
+             Then user will see resource quota alert in 'ex-node-js1' list node        
