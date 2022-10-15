@@ -8,6 +8,7 @@ import {
   TopologyDecoratorProvider,
 } from '@console/topology/src/extensions';
 import {
+  FLAG_CAMEL_KAMELETS,
   FLAG_KNATIVE_EVENTING,
   FLAG_KNATIVE_SERVING,
   FLAG_KNATIVE_SERVING_CONFIGURATION,
@@ -15,11 +16,25 @@ import {
   FLAG_KNATIVE_SERVING_ROUTE,
   FLAG_KNATIVE_SERVING_SERVICE,
 } from '../const';
-import { getKnativeResources } from '../utils/get-knative-resources';
+import {
+  getKnativeEventingKameletsResources,
+  getKnativeEventingResources,
+  getKnativeServingResources,
+} from '../utils/get-knative-resources';
 
-const getKnativeTopologyDataModel = () =>
-  import('./data-transformer' /* webpackChunkName: "knative-components" */).then(
-    (m) => m.getKnativeTopologyDataModel,
+const getKnativeServingTopologyDataModel = () =>
+  import('./data-transformer' /* webpackChunkName: "serving-components" */).then(
+    (m) => m.getKnativeServingTopologyDataModel,
+  );
+
+const getKnativeEventingTopologyDataModel = () =>
+  import('./data-transformer' /* webpackChunkName: "eventing-components" */).then(
+    (m) => m.getKnativeEventingTopologyDataModel,
+  );
+
+const getKnativeKameletsTopologyDataModel = () =>
+  import('./data-transformer' /* webpackChunkName: "kamelets-components" */).then(
+    (m) => m.getKnativeKameletsTopologyDataModel,
   );
 
 const getIsKnativeResource = () =>
@@ -38,11 +53,11 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
   {
     type: 'Topology/DataModelFactory',
     properties: {
-      id: 'knative-topology-model-factory',
+      id: 'knative-serving-topology-model-factory',
       priority: 100,
-      resources: getKnativeResources,
+      resources: getKnativeServingResources,
       workloadKeys: ['ksservices'],
-      getDataModel: applyCodeRefSymbol(getKnativeTopologyDataModel),
+      getDataModel: applyCodeRefSymbol(getKnativeServingTopologyDataModel),
       isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
     },
     flags: {
@@ -52,8 +67,35 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
         FLAG_KNATIVE_SERVING_REVISION,
         FLAG_KNATIVE_SERVING_ROUTE,
         FLAG_KNATIVE_SERVING_SERVICE,
-        FLAG_KNATIVE_EVENTING,
       ],
+    },
+  },
+  {
+    type: 'Topology/DataModelFactory',
+    properties: {
+      id: 'knative-eventing-topology-model-factory',
+      priority: 100,
+      resources: getKnativeEventingResources,
+      workloadKeys: ['eventingsubscription'],
+      getDataModel: applyCodeRefSymbol(getKnativeEventingTopologyDataModel),
+      isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Topology/DataModelFactory',
+    properties: {
+      id: 'knative-kamelets-topology-model-factory',
+      priority: 100,
+      resources: getKnativeEventingKameletsResources,
+      workloadKeys: ['kameletbindings'],
+      getDataModel: applyCodeRefSymbol(getKnativeKameletsTopologyDataModel),
+      isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING, FLAG_CAMEL_KAMELETS],
     },
   },
 ];

@@ -438,17 +438,28 @@ export const getSinkableResources = (namespace: string): FirehoseResource[] => {
     : [];
 };
 
-export const getKnativeResources = (namespace: string) => {
+export const getKnativeServingResources = (namespace: string) => {
   return {
     ...knativeServingResourcesRevisionWatchers(namespace),
     ...knativeServingResourcesConfigurationsWatchers(namespace),
     ...knativeServingResourcesRoutesWatchers(namespace),
     ...knativeServingResourcesServicesWatchers(namespace),
+    ...knativeCamelDomainMappingResourceWatchers(namespace),
+  };
+};
+
+export const getKnativeEventingResources = (namespace: string) => {
+  return {
     ...knativeEventingResourcesSubscriptionWatchers(namespace),
     ...getDynamicEventSourcesWatchers(namespace),
     ...getDynamicEventingChannelWatchers(namespace),
     ...knativeEventingBrokerResourceWatchers(namespace),
     ...knativeEventingTriggerResourceWatchers(namespace),
+  };
+};
+
+export const getKnativeEventingKameletsResources = (namespace: string) => {
+  return {
     ...knativeCamelIntegrationsResourceWatchers(namespace),
     ...knativeCamelKameletBindingResourceWatchers(namespace),
     ...knativeCamelDomainMappingResourceWatchers(namespace),
