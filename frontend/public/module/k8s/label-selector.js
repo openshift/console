@@ -157,7 +157,7 @@ export class LabelSelector {
     if (!resource) {
       return false;
     }
-    const labels = resource.metadata.labels || {};
+    const labels = resource.metadata?.labels || {};
     return this.matchesLabels(labels);
   }
   hasConjunct(conjunct) {
