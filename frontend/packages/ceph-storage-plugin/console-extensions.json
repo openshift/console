@@ -7,6 +7,9 @@
       "action": {
         "$codeRef": "alert.getDiskAlertActionPath"
       }
+    },
+    "flags": {
+      "disallowed": ["ODF_ALERT_ACTIONS"]
     }
   },
   {
@@ -17,6 +20,9 @@
       "action": {
         "$codeRef": "alert.getDiskAlertActionPath"
       }
+    },
+    "flags": {
+      "disallowed": ["ODF_ALERT_ACTIONS"]
     }
   },
   {
@@ -29,7 +35,8 @@
       }
     },
     "flags": {
-      "required": ["OCS"]
+      "required": ["OCS"],
+      "disallowed": ["ODF_ALERT_ACTIONS"]
     }
   },
   {
@@ -42,7 +49,8 @@
       }
     },
     "flags": {
-      "required": ["OCS"]
+      "required": ["OCS"],
+      "disallowed": ["ODF_ALERT_ACTIONS"]
     }
   },
   {
@@ -54,7 +62,8 @@
       }
     },
     "flags": {
-      "required": ["OCS"]
+      "required": ["OCS"],
+      "disallowed": ["ODF_STORAGE_PROVIDER"]
     }
   },
   {
@@ -259,7 +268,7 @@
       "provider": { "$codeRef": "actions.useCsvActions" }
     },
     "flags": {
-      "disallowed": ["COMMON_FLAG"]
+      "disallowed": ["COMMON_FLAG", "ODF_CSV_ACTIONS"]
     }
   },
   {
@@ -360,7 +369,8 @@
       }
     },
     "flags": {
-      "required": ["OCS"]
+      "required": ["OCS"],
+      "disallowed": ["ODF_STORAGE_PROVISIONER"]
     }
   },
   {
@@ -424,7 +434,8 @@
       }
     },
     "flags": {
-      "required": ["OCS"]
+      "required": ["OCS"],
+      "disallowed": ["ODF_STORAGE_PROVISIONER"]
     }
   }
 ]

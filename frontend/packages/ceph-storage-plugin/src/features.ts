@@ -62,7 +62,13 @@ export enum FEATURES {
   BLOCK_POOL = 'BLOCK_POOL',
   MCG_RESOURCE = 'MCG_RESOURCE',
   ODF_DASHBOARD = 'ODF_DASHBOARD',
-  COMMON_FLAG = 'COMMON_FLAG',
+  COMMON_FLAG = 'ODF_COMMON_FLAG',
+  STORAGE_PROVIDER = 'ODF_STORAGE_PROVIDER',
+  STORAGE_PROVISIONER = 'ODF_STORAGE_PROVISIONER',
+  DASHBOARD_RESOURCES = 'ODF_DASHBOARD_RESOURCES',
+  CSV_ACTIONS = 'ODF_CSV_ACTIONS',
+  INVENTORY_ITEM = 'ODF_INVENTORY_ITEM',
+  ALERT_ACTIONS = 'ODF_ALERT_ACTIONS',
 }
 
 const OCS_FEATURE_FLAGS = {
@@ -88,6 +94,11 @@ export const ODF_BLOCK_FLAG = {
   [FEATURES.MCG_RESOURCE]: 'mcg-resource',
   [FEATURES.ODF_DASHBOARD]: 'odf-dashboard',
   [FEATURES.COMMON_FLAG]: 'common',
+  [FEATURES.STORAGE_PROVIDER]: 'storage-provider',
+  [FEATURES.STORAGE_PROVISIONER]: 'storage-provisioner',
+  [FEATURES.CSV_ACTIONS]: 'csv-actions',
+  [FEATURES.INVENTORY_ITEM]: 'inventory-item',
+  [FEATURES.ALERT_ACTIONS]: 'alert-actions',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {
