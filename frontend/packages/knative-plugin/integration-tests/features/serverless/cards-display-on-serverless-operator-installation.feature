@@ -11,7 +11,7 @@ Feature: Event sources cards display
         Scenario: Different event source display in event sources add page: KN-03-TC01
             Given user is at Add page
               And user has installed one or more operators that contribute event sources
-             When user clicks on "Event Source" card
+             When user clicks on "Event Source" Card
              Then user will be redirected to "Event Sources" page
               And user will see the list of Providers
               And user will see the Event Sources cards
@@ -20,7 +20,7 @@ Feature: Event sources cards display
               And user is able to see event sources like ApiServerSource, ContainerSource, PingSource, SinkBinding
 
 
-        @smoke @broken-test
+        @smoke
         Scenario: Event Source card display on serverless operator installation: KN-03-TC02
             Given user is at Add page
              Then user is able to see "Event Source" card on Add page
@@ -29,46 +29,39 @@ Feature: Event sources cards display
               And user is able to see "Broker" card on Add page
 
 
-        @regression @broken-test
+        @regression
         Scenario: knative eventing in operator backed: KN-03-TC03
             Given user is at Add page
-             When user clicks on "Operator Backed" card
-             Then user will be redirected to "Developer Catalog" page
-              And user is able to see knative Eventing card
+             When user clicks on "Operator Backed" Card
+             Then user will be redirected to "Operator Backed" page
+              And user can see knative Eventing card
 
 
-        @smoke @to-do
+  @smoke @broken-test
+  #   Kamelet Source option does not exist on Even Sources page
         Scenario: Kamelets in event source: KN-03-TC04
             Given user is at developer perspective
               And user is at Add page
-             When user clicks on "Event Source" card
-             Then user will be redirected  to "Event Sources" page
+             When user clicks on "Event Source" Card
+             Then user will be redirected to "Event Sources" page
               And user is able to see "Kamelet Source" type
 
-
-        @regression @broken-test
-        Scenario: Operator Backed card display on serverless operator installation: KN-03-TC06
-              And user is at namespace "aut-namespace"
-             When user selects Add option from left side navigation menu
-             Then user will be redirected to Add page
-              And user is able to see "Operator Backed" card on Add page
-
-
-        @regression @broken-test
-        Scenario: Notifier message display in Event sources page when knative service is not available in namespace: KN-03-TC07
+        @regression
+        Scenario: Notifier message display in Event sources page when knative service is not available in namespace: KN-03-TC05
             Given user is at Add page
-             When user clicks on "Event Source" card
+             When user clicks on "Event Source" Card
               And user selects event source type "Api Server Source"
-              And user selects Resource option in Sink section
+              And user selects Create Event Source
+              And user selects Resource option in Target section
              Then user is able to see notifier header "No resources available"
-              And user can see message in sink section as "Event Sources can only sink to knative Services. No knative Services exist in this project."
+              And user can see message in sink section as "Select the URI option, or exit this form and create a Knative Service, Broker, or Channel first."
 
 
         @smoke @manual
-        Scenario: Different event source display in event sources add page: KN-03-TC08
+        Scenario: Different event source display in event sources add page: KN-03-TC06
             Given user is at Add page
               And user has installed one or more operators that contribute event sources
-             When user clicks on "Event Source" card
+             When user clicks on "Event Source" Card
              Then user will be redirected to "Event Sources" page
               And user will see the list of Providers
               And user will see the Event Sources cards
