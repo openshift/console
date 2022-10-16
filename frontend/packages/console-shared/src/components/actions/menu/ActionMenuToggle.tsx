@@ -45,22 +45,27 @@ const ActionMenuToggle: React.FC<ActionMenuToggleProps> = ({
   };
 
   const handleClickOutside = (event) => {
-    if (isOpen && !menuRef.current?.contains(event.target)) {
+    if (
+      toggleRef.current !== event.target &&
+      !toggleRef.current?.contains(event.target) &&
+      !menuRef.current?.contains(event.target)
+    ) {
       onToggleClick(false);
     }
   };
 
   React.useEffect(() => {
-    window.addEventListener('keydown', handleMenuKeys);
-    window.addEventListener('click', handleClickOutside);
+    if (isOpen) {
+      window.addEventListener('keydown', handleMenuKeys);
+      window.addEventListener('click', handleClickOutside);
+    }
     return () => {
       window.removeEventListener('keydown', handleMenuKeys);
       window.removeEventListener('click', handleClickOutside);
     }; // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]); // This needs to be run only on component mount/unmount
 
-  const handleToggleClick = (ev) => {
-    ev.stopPropagation(); // Stop handleClickOutside from handling
+  const handleToggleClick = () => {
     setTimeout(() => {
       const firstElement = menuRef?.current?.querySelector<HTMLElement>(
         'li > button:not(:disabled)',
