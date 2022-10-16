@@ -25,13 +25,19 @@ const PacPermissions: React.FC = () => {
             fieldId="repo-permissions"
           >
             <Text component={TextVariants.small}>
+              {t('pipelines-plugin~Checks: Read & Write')}
+              <br />
               {t('pipelines-plugin~Contents: Read & Write')}
               <br />
               {t('pipelines-plugin~Issues: Read & Write')}
               <br />
+              {t('pipelines-plugin~Members: Readonly')}
+              <br />
               {t('pipelines-plugin~Metadata: Readonly')}
               <br />
-              {t('pipelines-plugin~Pull request: Read & Write')}
+              {t('pipelines-plugin~Organization plan: Readonly')}
+              <br />
+              {t('pipelines-plugin~Pull requests: Read & Write')}
             </Text>
           </FormGroup>
         </GridItem>

@@ -47,11 +47,18 @@ export const usePacGHManifest = (): { loaded: boolean; manifestData: GHManifestD
     public: true,
     // eslint-disable-next-line @typescript-eslint/camelcase
     default_permissions: {
-      issues: 'write',
       checks: 'write',
+      contents: 'write',
+      issues: 'write',
+      members: 'read',
+      metadata: 'read',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      organization_plan: 'read',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      pull_requests: 'write',
     },
     // eslint-disable-next-line @typescript-eslint/camelcase
-    default_events: ['issues', 'issue_comment', 'check_suite', 'check_run'],
+    default_events: ['check_run', 'issue_comment', 'pull_request', 'push'],
   };
 
   return { loaded, manifestData };
