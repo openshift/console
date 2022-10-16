@@ -59,6 +59,8 @@ import {
   queryBrowserToggleSeries,
   toggleGraphs,
   queryBrowserAddQuery2,
+  queryBrowserToggleIsEnabled2,
+  queryBrowserPatchQuery2,
 } from '../../actions/observe';
 import { RootState } from '../../redux';
 import { getPrometheusURL } from '../graphs/helpers';
@@ -480,6 +482,10 @@ const PromQLExpressionInput = (props) => (
 const Query2 : React.FC<{ id: string }> = ({ id }) => {
   const { t } = useTranslation();
 
+  const q = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser2', 'queries2']),
+  );
+
   // QueriesList {id:Map{}, id:Map{}, id:Map{}}
   const isEnabled = useSelector(({ observe }: RootState) =>
     observe.getIn(['queryBrowser2', 'queries2', id, 'isEnabled']),
@@ -497,14 +503,46 @@ const Query2 : React.FC<{ id: string }> = ({ id }) => {
 
   console.log("QueryComponent : " + id + " " + queries.toString())
 
+  const dispatch = useDispatch();
+
+  const toggleIsEnabled = React.useCallback(() => dispatch(queryBrowserToggleIsEnabled2(id)), [
+    dispatch,
+    id,
+  ]);
+
+  // TODO: JZ NOTES Left OFF HERE 
+  const toggleIsExpanded = React.useCallback(
+    () => dispatch(queryBrowserPatchQuery2(id, { isExpanded: !isExpanded })),
+    [dispatch, id, isExpanded],
+  );
+
+  const handleTextChange = React.useCallback(
+    (value: string) => {
+      dispatch(queryBrowserPatchQuery2(id, { text: value }));
+    },
+    [dispatch, id],
+  );
+
+  const handleExecuteQueries = React.useCallback(() => {
+    dispatch(queryBrowserRunQueries());
+  }, [dispatch]);
+
+
   return (
     <div
       className={classNames('query-browser__table', {
-        'query-browser__table--expanded': true,
+        'query-browser__table--expanded': isExpanded,
       })}
     >
       <div className="query-browser__query-controls">
-       
+      <ExpandButton isExpanded={isExpanded} onClick={toggleIsExpanded} />
+      <PromQLExpressionInput
+          value={text}
+          onValueChange={handleTextChange}
+          onExecuteQuery={handleExecuteQueries}
+          // onSelectionChange={handleSelectionChange}
+        />
+
       </div>
     </div>
   );
@@ -524,9 +562,9 @@ const Query: React.FC<{ index: number }> = ({ index }) => {
   const isExpanded = useSelector(({ observe }: RootState) =>
     observe.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
   );
-  const text = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'text'], ''),
-  );
+  // const text = useSelector(({ observe }: RootState) =>
+  //   observe.getIn(['queryBrowser', 'queries', index, 'text'], ''),
+  // );
 
   const dispatch = useDispatch();
 
@@ -735,16 +773,12 @@ const QueriesList: React.FC<{}> = () => {
     console.log("JZ Key:Value " + key +  " : " + value.toString());
   })
 
-  // TODO: Need to Sort this in reverse but the .sort() function handles
-  // sorting by ASCII so we need to write a lambda to handle sorting by 
-  // values and not ASCII ... would this work if the keys were numbers 
-  // instead of strings?
-  // console.log("JZ KeySeq() : " + queries2.keySeq().sort().reverse())
-
   // JZ NOTE: number ID APPROACH
   // const queryKeys = queries2.keySeq().sort().reverse()
 
-  queries2.keySeq().sort((key:string) => console.log("Slice Key: " + +key.slice(22) + " type: " + typeof +key.slice(22) ));
+  // TODO: Which is the better choice for ID: string or number?
+  // number is easier to development 
+  // string is easier for debugging 
   
   // JZ NOTE: string ID APPROACH 
   // comparator to sort IDs in reverse (newest queries precede older queries)
@@ -772,6 +806,12 @@ const QueriesList: React.FC<{}> = () => {
           <Query index={i} key={queries.get(i).get("id")} />
         </div>
       ))} */}
+      <div>
+        <div>
+            QueriesList: {queries.toString()}
+            <br/>
+            QueriesList2: {queries2.toString()}
+        </div>
       {
         queryKeys.map(key => 
           <div>
@@ -780,6 +820,7 @@ const QueriesList: React.FC<{}> = () => {
           </div>
           )
       }
+      </div>
     </>
   );
 

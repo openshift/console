@@ -20,12 +20,14 @@ export enum ActionType {
   QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
   QueryBrowserDismissNamespaceAlert = 'queryBrowserDismissNamespaceAlert',
   QueryBrowserPatchQuery = 'queryBrowserPatchQuery',
+  QueryBrowserPatchQuery2 = 'queryBrowserPatchQuery2',
   QueryBrowserRunQueries = 'queryBrowserRunQueries',
   QueryBrowserSetAllExpanded = 'queryBrowserSetAllExpanded',
   QueryBrowserSetMetrics = 'queryBrowserSetMetrics',
   QueryBrowserSetPollInterval = 'queryBrowserSetPollInterval',
   QueryBrowserSetTimespan = 'queryBrowserSetTimespan',
   QueryBrowserToggleIsEnabled = 'queryBrowserToggleIsEnabled',
+  QueryBrowserToggleIsEnabled2 = 'queryBrowserToggleIsEnabled2',
   QueryBrowserToggleSeries = 'queryBrowserToggleSeries',
   SetAlertCount = 'SetAlertCount',
   ToggleGraphs = 'toggleGraphs',
@@ -109,6 +111,9 @@ export const queryBrowserDeleteQuery = (index: number) =>
 export const queryBrowserPatchQuery = (index: number, patch: { [key: string]: unknown }) =>
   action(ActionType.QueryBrowserPatchQuery, { index, patch });
 
+export const queryBrowserPatchQuery2 = (id: string, patch: { [key: string]: unknown }) =>
+  action(ActionType.QueryBrowserPatchQuery2, { id, patch });
+
 export const queryBrowserRunQueries = () => action(ActionType.QueryBrowserRunQueries);
 
 export const queryBrowserSetAllExpanded = (isExpanded: boolean) =>
@@ -125,6 +130,9 @@ export const queryBrowserSetTimespan = (timespan: number) =>
 
 export const queryBrowserToggleIsEnabled = (index: number) =>
   action(ActionType.QueryBrowserToggleIsEnabled, { index });
+
+export const queryBrowserToggleIsEnabled2 = (id: string) =>
+  action(ActionType.QueryBrowserToggleIsEnabled2, { id });
 
 export const queryBrowserToggleSeries = (index: number, labels: { [key: string]: unknown }) =>
   action(ActionType.QueryBrowserToggleSeries, { index, labels });
@@ -151,12 +159,14 @@ const actions = {
   queryBrowserDeleteQuery,
   queryBrowserDismissNamespaceAlert,
   queryBrowserPatchQuery,
+  queryBrowserPatchQuery2,
   queryBrowserRunQueries,
   queryBrowserSetAllExpanded,
   queryBrowserSetMetrics,
   queryBrowserSetPollInterval,
   queryBrowserSetTimespan,
   queryBrowserToggleIsEnabled,
+  queryBrowserToggleIsEnabled2,
   queryBrowserToggleSeries,
   setAlertCount,
   toggleGraphs,

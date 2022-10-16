@@ -32,6 +32,8 @@ const newQueryBrowserQuery2 = () : [[string, ImmutableMap<string, any>]] =>  {
     ImmutableMap({
       isEnabled: true,
       isExpanded: true,
+      query: "", 
+      text: ""
     }) 
   ]]
 }
@@ -272,6 +274,16 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       return state.mergeIn(['queryBrowser', 'queries', index], query);
     }
 
+    case ActionType.QueryBrowserPatchQuery2: {
+      const { id, patch } = action.payload;
+      const patch2 = [[id,patch]]
+      const query = state.hasIn(['queryBrowser', 'queries', id])
+        ? ImmutableMap(patch)
+        : newQueryBrowserQuery2()[0][1].merge(patch2);
+        console.log("JZ QueryBrowserPathQuery2 : " + query)
+      return state.mergeIn(['queryBrowser', 'queries', id], query);
+    }
+
     case ActionType.QueryBrowserRunQueries: {
       const queries = state.getIn(['queryBrowser', 'queries']).map((q) => {
         const isEnabled = q.get('isEnabled');
@@ -306,6 +318,19 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       const isEnabled = !query.get('isEnabled');
       return state.setIn(
         ['queryBrowser', 'queries', action.payload.index],
+        query.merge({
+          isEnabled,
+          isExpanded: isEnabled,
+          query: isEnabled ? query.get('text') : '',
+        }),
+      );
+    }
+
+    case ActionType.QueryBrowserToggleIsEnabled2: {
+      const query = state.getIn(['queryBrowser', 'queries', action.payload.id]);
+      const isEnabled = !query.get('isEnabled');
+      return state.setIn(
+        ['queryBrowser', 'queries', action.payload.id],
         query.merge({
           isEnabled,
           isExpanded: isEnabled,
