@@ -18,7 +18,7 @@ export const useValuesForClusterContext = () => {
     LAST_CLUSTER_USER_SETTINGS_KEY,
     LAST_CLUSTER_USER_SETTINGS_KEY,
     HUB_CLUSTER_NAME,
-    true,
+    false,
     true,
   );
 
