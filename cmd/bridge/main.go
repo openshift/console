@@ -502,7 +502,8 @@ func main() {
 			}
 		}
 
-		if *fK8sModeOffClusterManagedClusterProxy != "" {
+		// Must have off-cluster cluster proxy endpoint if we have managed clusters
+		if len(managedClusterConfigs) > 0 {
 			offClusterManagedClusterProxyURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-managed-cluster-proxy", *fK8sModeOffClusterManagedClusterProxy)
 			srv.ManagedClusterProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
