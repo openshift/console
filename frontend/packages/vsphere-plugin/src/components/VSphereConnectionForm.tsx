@@ -154,7 +154,18 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
           ref={vcenterRef}
         />
       </FormGroup>
-      <FormGroup label={t('vsphere-plugin~Username')} isRequired fieldId="connection-username">
+      <FormGroup
+        label={t('vsphere-plugin~Username')}
+        isRequired
+        fieldId="connection-username"
+        labelIcon={
+          <PopoverHelpButton
+            content={t(
+              'vsphere-plugin~The vSphere vCenter username. Mind to double-check it is correct, otherwise cluster nodes will get unschedulable (Known issue: OCPBUGS-2353).',
+            )}
+          />
+        }
+      >
         <TextInput
           isRequired
           type="text"
@@ -169,7 +180,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
         labelIcon={
           <PopoverHelpButton
             content={t(
-              'vsphere-plugin~The password will be stored in a Secret in the kube-system namespace of this cluster.',
+              'vsphere-plugin~The password will be stored in a Secret in the kube-system namespace of this cluster. Mind to double-check it is correct, otherwise cluster nodes will get unschedulable (Known issue: OCPBUGS-2353).',
             )}
           />
         }
