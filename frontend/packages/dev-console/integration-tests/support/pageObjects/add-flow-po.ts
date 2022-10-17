@@ -2,8 +2,7 @@ export const cardTitle = '[data-test="title"]';
 
 export const addPagePO = {
   gettingStarted: '[data-test="getting-started"]',
-  detailsOnOffText: '[data-test="label"]',
-  detailsOnOffSwitch: '.pf-c-switch__toggle',
+  detailsOnOffSwitch: '[data-test="details-switch"]',
   cardDetails: 'p.odc-add-card-item__description',
   restoreGettingStarted: '[data-test="restore-getting-started"]',
   kebabMenuGettingStarted: '[data-test="actions"]',
