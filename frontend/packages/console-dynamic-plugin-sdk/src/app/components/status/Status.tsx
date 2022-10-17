@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   BanIcon,
   ClipboardListIcon,
-  ExclamationTriangleIcon,
   HourglassHalfIcon,
   HourglassStartIcon,
   NotStartedIcon,
@@ -75,8 +74,6 @@ const Status: React.FC<StatusProps> = ({
       return <StatusIconAndText {...statusProps} icon={<BanIcon />} />;
 
     case 'Warning':
-      return <StatusIconAndText {...statusProps} icon={<ExclamationTriangleIcon />} />;
-
     case 'RequiresApproval':
       return <StatusIconAndText {...statusProps} icon={<YellowExclamationTriangleIcon />} />;
 
