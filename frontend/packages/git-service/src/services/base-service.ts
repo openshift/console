@@ -47,6 +47,11 @@ export abstract class BaseService {
   abstract getRepoLanguageList(): Promise<RepoLanguageList>;
 
   /**
+   * Returns content of the file as a string.
+   */
+  abstract getFileContent(path: string): Promise<string | null>;
+
+  /**
    * Check if Dockerfile present in the repo.
    */
   abstract isDockerfilePresent(): Promise<boolean>;

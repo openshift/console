@@ -14,3 +14,10 @@ export interface DevfileSample {
   };
   provider?: string;
 }
+
+export interface DevfileComponent {
+  name: string;
+  kubernetes?: { uri?: string; inlined?: string; [key: string]: any };
+  openshift?: { uri?: string; inlined?: string; [key: string]: any };
+  [key: string]: any;
+}

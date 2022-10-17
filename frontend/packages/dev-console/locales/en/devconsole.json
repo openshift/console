@@ -401,6 +401,7 @@
   "Select the most appropriate one from the list to continue.": "Select the most appropriate one from the list to continue.",
   "Builder Image version": "Builder Image version",
   "Sample repository:": "Sample repository:",
+  "Could not fetch devfile resources.": "Could not fetch devfile resources.",
   "The Devfile in your Git repository is invalid.": "The Devfile in your Git repository is invalid.",
   "Validated": "Validated",
   "Devfile not detected": "Devfile not detected",
