@@ -160,7 +160,7 @@
   "Cannot do a contextual binding without a source": "Cannot do a contextual binding without a source",
   "Cannot find resource ({{contextualSource}}) to do a contextual binding to": "Cannot find resource ({{contextualSource}}) to do a contextual binding to",
   "Move component node": "Move component node",
-  "Remove component node from Application": "Remove component node from Application",
+  "Remove component node from application": "Remove component node from application",
   "Are you sure you want to move <1>{{nodeLabel}}</1> from {{sourceLabel}} to {{targetLabel}}?": "Are you sure you want to move <1>{{nodeLabel}}</1> from {{sourceLabel}} to {{targetLabel}}?",
   "Are you sure you want to remove <1>{{nodeLabel}}</1> from {{sourceLabel}}?": "Are you sure you want to remove <1>{{nodeLabel}}</1> from {{sourceLabel}}?",
   "Remove": "Remove",
