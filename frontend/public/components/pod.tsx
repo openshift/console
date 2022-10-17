@@ -929,6 +929,7 @@ export const PodList: React.FC<PodListProps> = ({ showNamespaceOverride, showNod
       <VirtualizedTable<PodKind, PodRowData>
         {...props}
         aria-label={t('public~Pods')}
+        label={t('public~Pods')}
         columns={activeColumns}
         Row={PodTableRow}
         rowData={rowData}

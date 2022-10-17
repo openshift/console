@@ -14,6 +14,7 @@ const PodDisruptionBudgetList: React.FC<PodDisruptionBudgetsListProps> = (props)
     <VirtualizedTable<PodDisruptionBudgetKind>
       {...props}
       aria-label={t('console-app~PodDisruptionBudgets')}
+      label={t('console-app~PodDisruptionBudgets')}
       columns={columns}
       Row={PodDisruptionBudgetTableRow}
     />
