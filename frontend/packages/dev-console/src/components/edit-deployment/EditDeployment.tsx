@@ -39,10 +39,7 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
     yamlData: safeJSToYAML(resource, 'yamlData', {
       skipInvalid: true,
     }),
-    formData: {
-      ...convertDeploymentToEditForm(resource),
-      formType: isNew ? 'create' : 'edit',
-    },
+    formData: convertDeploymentToEditForm(resource),
     formReloadCount: 0,
   });
 

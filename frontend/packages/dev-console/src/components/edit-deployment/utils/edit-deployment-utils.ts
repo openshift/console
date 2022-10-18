@@ -280,6 +280,7 @@ export const convertDeploymentToEditForm = (
 ): EditDeploymentFormData => {
   const resourceType = getResourcesType(deployment);
   return {
+    formType: deployment.metadata.name ? 'edit' : 'create',
     name: deployment.metadata.name ?? '',
     resourceVersion: deployment.metadata.resourceVersion ?? '',
     deploymentStrategy: getStrategy(deployment, resourceType),
