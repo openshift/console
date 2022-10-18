@@ -17,6 +17,7 @@ package parser
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 
 	"github.com/devfile/library/pkg/util"
@@ -53,8 +54,9 @@ type KubernetesResources struct {
 // ReadKubernetesYaml reads a yaml Kubernetes file from either the Path, URL or Data provided.
 // It returns all the parsed Kubernetes objects as an array of interface.
 // Consumers interested in the Kubernetes resources are expected to Unmarshal
-// it to the struct of the respective Kubernetes resource.
-func ReadKubernetesYaml(src YamlSrc, fs afero.Afero) ([]interface{}, error) {
+// it to the struct of the respective Kubernetes resource. If a Path is being passed,
+// provide a filesystem, otherwise nil can be passed in
+func ReadKubernetesYaml(src YamlSrc, fs *afero.Afero) ([]interface{}, error) {
 
 	var data []byte
 	var err error
@@ -65,6 +67,9 @@ func ReadKubernetesYaml(src YamlSrc, fs afero.Afero) ([]interface{}, error) {
 			return nil, errors.Wrapf(err, "failed to download file %q", src.URL)
 		}
 	} else if src.Path != "" {
+		if fs == nil {
+			return nil, fmt.Errorf("cannot read from %s because fs passed in was nil", src.Path)
+		}
 		data, err = fs.ReadFile(src.Path)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to read yaml from path %q", src.Path)

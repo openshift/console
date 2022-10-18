@@ -36,7 +36,7 @@ func (d *DevfileV2) AddEnvVars(containerEnvMap map[string][]v1alpha2.EnvVar) err
 	for _, component := range components {
 		if component.Container != nil {
 			component.Container.Env = merge(component.Container.Env, containerEnvMap[component.Name])
-			d.UpdateComponent(component)
+			_ = d.UpdateComponent(component)
 		}
 	}
 	return nil
@@ -55,7 +55,7 @@ func (d *DevfileV2) RemoveEnvVars(containerEnvMap map[string][]string) error {
 			if err != nil {
 				return err
 			}
-			d.UpdateComponent(component)
+			_ = d.UpdateComponent(component)
 		}
 	}
 	return nil
@@ -76,7 +76,7 @@ func (d *DevfileV2) SetPorts(containerPortsMap map[string][]string) error {
 		}
 		if component.Container != nil {
 			component.Container.Endpoints = addEndpoints(component.Container.Endpoints, endpoints)
-			d.UpdateComponent(component)
+			_ = d.UpdateComponent(component)
 		}
 	}
 
@@ -97,7 +97,7 @@ func (d *DevfileV2) RemovePorts(containerPortsMap map[string][]string) error {
 			if err != nil {
 				return err
 			}
-			d.UpdateComponent(component)
+			_ = d.UpdateComponent(component)
 		}
 	}
 

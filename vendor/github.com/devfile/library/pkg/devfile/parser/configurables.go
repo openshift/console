@@ -105,7 +105,7 @@ func (d DevfileObj) SetMemory(memory string) error {
 	for _, component := range components {
 		if component.Container != nil {
 			component.Container.MemoryLimit = memory
-			d.Data.UpdateComponent(component)
+			_ = d.Data.UpdateComponent(component)
 		}
 	}
 	return d.WriteYamlDevfile()
