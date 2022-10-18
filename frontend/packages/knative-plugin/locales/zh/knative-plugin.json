@@ -78,7 +78,7 @@
   "Delete Revision": "删除修订",
   "Edit URI": "编辑 URI",
   "Make Serverless": "制作无服务器",
-  "Kafka Sink is Addressable, it receives events and send them to a Kafka topic.": "Kafka Sink 是可寻址的，它会接收事件并将其发送到 Kafka 主题。",
+  "A KafkaSink takes a CloudEvent, and sends it to an Apache Kafka Topic. Events can be specified in either Structured or Binary mode.": "KafkaSink 会接受一个 CloudEvent，并将其发送到 Apache Kafka 主题。事件可以以 Structured 或 Binary 的模式指定。",
   "Supported": "支持",
   "This object can be used to connect an event sink, such as a Service, Channel, or Broker to the Kubernetes API server. ApiServerSource watches for Kubernetes events and forwards them to the sink.": "此对象可用于把事件接收器（sink），如 Service、Channel 或 Broker， 连接到 Kubernetes API 服务器。ApiServerSource 监视 Kubernetes 事件并将其转发到接收器。",
   "Starts a user-provided Container which will generate events and send messages to a sink URI. The sink URI is injected into the Container as an environment variable. A ContainerSource is an easy way to implement your own event sources in Knative.": "启动用户提供的容器，该容器将生成事件和向 sink URI 发送消息。sink URI 注入容器作为环境变量。ContainerSource 是在 Knative 中实现自己的事件源的简便方法。",

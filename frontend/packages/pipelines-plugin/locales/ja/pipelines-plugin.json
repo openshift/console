@@ -349,7 +349,7 @@
   "Git Repo URL": "Git リポジトリー URL",
   "Git repository added.": "Git リポジトリーが追加されました。",
   "Copy this code to <1>.tekton</1> directory in your <4>Git repository</4>. <7></7>": "このコードを <4>Git リポジトリー</4> の <1>.tekton</1> ディレクトリーにコピーします。 <7></7>",
-  "Learn more": "詳細はドキュメントを参照してください。",
+  "Learn more": "詳細はドキュメントを参照してください",
   "You can now add PipelineRuns to the <1>.tekton</1> directory in your <3>Git repository</3> and execute them on Git events.": "PipelineRuns を <3>Git リポジトリー</3> の <1>.tekton</1> ディレクトリーに追加し、Git イベントでそれらを実行できるようになりました。",
   "Step 1": "ステップ 1",
   "<0>In your repository, create the <1>.tekton</1> directory to store you pipeline.</0>": "<0>リポジトリーで、<1>.tekton</1> ディレクトリーを作成し、パイプラインを保存します。</0>",
