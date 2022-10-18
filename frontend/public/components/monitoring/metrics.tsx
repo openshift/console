@@ -62,6 +62,7 @@ import {
   queryBrowserDeleteQuery2,
   queryBrowserDuplicateQuery2,
   queryBrowserToggleIsEnabled2,
+  queryBrowserToggleSeries2,
   queryBrowserPatchQuery2,
   queryBrowserRunQueries2,
 } from '../../actions/observe';
@@ -163,6 +164,60 @@ const ExpandButton = ({ isExpanded, onClick }) => {
         <AngleRightIcon className="query-browser__expand-icon" />
       )}
     </Button>
+  );
+};
+
+const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
+  const { t } = useTranslation();
+
+  const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ observe }: RootState) => {
+    const disabledSeries = observe.getIn(['queryBrowser2', 'queries2', id, 'disabledSeries']);
+    if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
+      return [null, true, false];
+    }
+
+    const series = observe.getIn(['queryBrowser2', 'queries2', id, 'series']);
+    if (_.isEmpty(series)) {
+      return [null, false, true];
+    }
+
+    // JZ LEFT OFF HERE Oct 18 7pm
+    // .take() might be the issue here 
+    const colorOffset = observe
+      .getIn(['queryBrowser2', 'queries2'])
+      .take(id)
+      .filter((q) => q.get('isEnabled'))
+      .reduce((sum, q) => sum + _.size(q.get('series')), 0);
+    const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
+    return [(colorOffset + seriesIndex) % colors.length, false, false];
+  });
+
+  const dispatch = useDispatch();
+  const toggleSeries = React.useCallback(() => dispatch(queryBrowserToggleSeries2(id, labels)), [
+    dispatch,
+    id,
+    labels,
+  ]);
+
+  if (isSeriesEmpty) {
+    return <div className="query-browser__series-btn-wrap"></div>;
+  }
+  const title = isDisabled ? t('public~Show series') : t('public~Hide series');
+
+  return (
+    <div className="query-browser__series-btn-wrap">
+      <Button
+        aria-label={title}
+        className={classNames('query-browser__series-btn', {
+          'query-browser__series-btn--disabled': isDisabled,
+        })}
+        onClick={toggleSeries}
+        style={colorIndex === null ? undefined : { backgroundColor: colors[colorIndex] }}
+        title={title}
+        type="button"
+        variant="plain"
+      />
+    </div>
   );
 };
 
@@ -353,6 +408,196 @@ const QueryKebab2: React.FC<{ id: string }> = ({ id }) => {
       position={DropdownPosition.right}
       toggle={<KebabToggle id="toggle-kebab" onToggle={setIsOpen} />}
     />
+  );
+};
+
+export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
+  const { t } = useTranslation();
+
+  const [data, setData] = React.useState<PrometheusData>();
+  const [error, setError] = React.useState<PrometheusAPIError>();
+  const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(50);
+  const [sortBy, setSortBy] = React.useState<ISortBy>({});
+
+  const isEnabled = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser2', 'queries2', id, 'isEnabled']),
+  );
+  const isExpanded = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser2', 'queries2', id, 'isExpanded']),
+  );
+  const pollInterval = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser2', 'pollInterval'], 15 * 1000),
+  );
+  const query = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser2', 'queries2', id, 'query']),
+  );
+  const series = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser2', 'queries2', id, 'series']),
+  );
+  const span = useSelector(({ observe }: RootState) => observe.getIn(['queryBrowser2', 'timespan']));
+
+  const lastRequestTime = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser2', 'lastRequestTime']),
+  );
+
+  const safeFetch = React.useCallback(useSafeFetch(), []);
+
+  const tick = () => {
+    if (isEnabled && isExpanded && query) {
+      safeFetch(getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, namespace, query }))
+        .then((response) => {
+          setData(_.get(response, 'data'));
+          setError(undefined);
+        })
+        .catch((err) => {
+          if (err.name !== 'AbortError') {
+            setData(undefined);
+            setError(err);
+          }
+        });
+    }
+  };
+
+  usePoll(tick, pollInterval, namespace, query, span, lastRequestTime);
+
+  React.useEffect(() => {
+    setData(undefined);
+    setError(undefined);
+    setPage(1);
+    setSortBy({});
+  }, [namespace, query]);
+
+  if (!isEnabled || !isExpanded || !query) {
+    return null;
+  }
+
+  if (error) {
+    return (
+      <div className="query-browser__table-message">
+        <Error error={error} title={t('public~Error loading values')} />
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="query-browser__table-message">
+        <LoadingInline />
+      </div>
+    );
+  }
+
+  // Add any data series from `series` (those displayed in the graph) that are not in `data.result`.
+  // This happens for queries that exclude a series currently, but included that same series at some
+  // point during the graph's range.
+  const expiredSeries = _.differenceWith(series, data.result, (s, r) => _.isEqual(s, r.metric));
+  const result = expiredSeries.length
+    ? [...data.result, ...expiredSeries.map((metric) => ({ metric }))]
+    : data.result;
+
+  if (!result || result.length === 0) {
+    return (
+      <div className="query-browser__table-message">
+        <YellowExclamationTriangleIcon /> {t('public~No datapoints found.')}
+      </div>
+    );
+  }
+
+  const transforms = [sortable, wrappable];
+
+  // JZ LEFT OFF HERE Oct 18 7pm
+  const buttonCell = (labels) => ({ title: <SeriesButton2 id={id} labels={labels} /> });
+
+  let columns, rows;
+  if (data.resultType === 'scalar') {
+    columns = ['', { title: t('public~Value'), transforms }];
+    rows = [[buttonCell({}), _.get(result, '[1]')]];
+  } else if (data.resultType === 'string') {
+    columns = [{ title: t('public~Value'), transforms }];
+    rows = [[result?.[1]]];
+  } else {
+    const allLabelKeys = _.uniq(_.flatMap(result, ({ metric }) => Object.keys(metric))).sort();
+
+    columns = [
+      '',
+      ...allLabelKeys.map((k) => ({
+        title: <span>{k === '__name__' ? t('public~Name') : k}</span>,
+        transforms,
+      })),
+      { title: t('public~Value'), transforms },
+    ];
+
+    let rowMapper;
+    if (data.resultType === 'matrix') {
+      rowMapper = ({ metric, values }) => [
+        '',
+        ..._.map(allLabelKeys, (k) => metric[k]),
+        {
+          title: (
+            <>
+              {_.map(values, ([time, v]) => (
+                <div key={time}>
+                  {v}&nbsp;@{time}
+                </div>
+              ))}
+            </>
+          ),
+        },
+      ];
+    } else {
+      rowMapper = ({ metric, value }) => [
+        buttonCell(metric),
+        ..._.map(allLabelKeys, (k) => metric[k]),
+        _.get(value, '[1]', { title: <span className="text-muted">{t('public~None')}</span> }),
+      ];
+    }
+
+    rows = _.map(result, rowMapper);
+    if (sortBy) {
+      // Sort Values column numerically and sort all the other columns alphabetically
+      const valuesColIndex = allLabelKeys.length + 1;
+      const sort =
+        sortBy.index === valuesColIndex
+          ? (cells) => {
+              const v = Number(cells[valuesColIndex]);
+              return Number.isNaN(v) ? 0 : v;
+            }
+          : `${sortBy.index}`;
+      rows = _.orderBy(rows, [sort], [sortBy.direction]);
+    }
+  }
+
+  const onSort = (e, i, direction) => setSortBy({ index: i, direction });
+
+  const tableRows = rows.slice((page - 1) * perPage, page * perPage).map((cells) => ({ cells }));
+
+  return (
+    <>
+      <div className="query-browser__table-wrapper">
+        <div className="horizontal-scroll">
+          <Table
+            aria-label={t('public~query results table')}
+            cells={columns}
+            gridBreakPoint={TableGridBreakpoint.none}
+            onSort={onSort}
+            rows={tableRows}
+            sortBy={sortBy}
+            variant={TableVariant.compact}
+          >
+            <TableHeader />
+            <TableBody />
+          </Table>
+        </div>
+      </div>
+      <TablePagination
+        itemCount={rows.length}
+        page={page}
+        perPage={perPage}
+        setPage={setPage}
+        setPerPage={setPerPage}
+      />
+    </>
   );
 };
 
@@ -633,13 +878,13 @@ const Query2 : React.FC<{ id: string }> = ({ id }) => {
             id={switchKey}
             isChecked={isEnabled}
             key={switchKey}
-            onChange={toggleIsEnabled}__
+            onChange={toggleIsEnabled}
           />
         </div>
         <div className="dropdown-kebab-pf">
           <QueryKebab2 id={id} />
         </div>
-
+        <QueryTable2 id={id} />
       </div>
     </div>
   );
@@ -862,10 +1107,6 @@ const QueriesList: React.FC<{}> = () => {
     ({ observe }: RootState) => observe.getIn(['queryBrowser2', 'queries2']),
   );
 
-  console.log("JZ Queries2: " + queries2)
-
-  console.log("JZ Queries : " + queries)
-
 
   queries2.forEach((value, key) => {
     console.log("JZ Key:Value " + key +  " : " + value.toString());
@@ -881,18 +1122,17 @@ const QueriesList: React.FC<{}> = () => {
   // JZ NOTE: string ID APPROACH 
   // comparator to sort IDs in reverse (newest queries precede older queries)
   // .slice() to seperate the ID number from the string "query-browser-query-id-123"
-  const queryKeys = queries2.keySeq().sort((k1,k2) => {
-    k1 = +k1.slice(23)
-    k2 = +k2.slice(23)
-    if (k1 < k2) {
+  const sortedQueries = queries2.sort((k1,k2) => {
+    if (k1.get("sortOrder") < k2.get("sortOrder")) {
       return 1;
     }
-    if (k1 > k2) {
+    if (k1.get("sortOrder") > k2.get("sortOrder")) {
         return -1;
     }
     return 0;
    }
   )
+
   
   // State > Queries > Object structure is List[Map<string:string>]
   // TODO: QueriesList need to sort the map by ID then render 
@@ -918,9 +1158,9 @@ const QueriesList: React.FC<{}> = () => {
 
       {/* JZ NOTE: Changes  */}
       {
-        queryKeys.map(key => 
+        sortedQueries.keySeq().map(key => 
           <div>
-            {key.toString()}
+            {key}
             <Query2 id={key} key={key} />
           </div>
           )
@@ -995,12 +1235,24 @@ const QueryBrowserPage_: React.FC<{}> = () => {
 };
 export const QueryBrowserPage = withFallback(QueryBrowserPage_);
 
+// TODO: delete 
 type QueryTableProps = {
   index: number;
   namespace?: string;
 };
 
+type QueryTableProps2 = {
+  id: string;
+  namespace?: string;
+};
+
+// TODO: Delete 
 type SeriesButtonProps = {
   index: number;
+  labels: PrometheusLabels;
+};
+
+type SeriesButtonProps2 = {
+  id: string;
   labels: PrometheusLabels;
 };

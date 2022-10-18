@@ -32,6 +32,8 @@ export enum ActionType {
   QueryBrowserToggleIsEnabled = 'queryBrowserToggleIsEnabled',
   QueryBrowserToggleIsEnabled2 = 'queryBrowserToggleIsEnabled2',
   QueryBrowserToggleSeries = 'queryBrowserToggleSeries',
+  QueryBrowserToggleSeries2 = 'queryBrowserToggleSeries2',
+
   SetAlertCount = 'SetAlertCount',
   ToggleGraphs = 'toggleGraphs',
 }
@@ -148,7 +150,10 @@ export const queryBrowserToggleIsEnabled2 = (id: string) =>
 export const queryBrowserToggleSeries = (index: number, labels: { [key: string]: unknown }) =>
   action(ActionType.QueryBrowserToggleSeries, { index, labels });
 
-export const setAlertCount = (alertCount) => action(ActionType.SetAlertCount, { alertCount });
+  export const queryBrowserToggleSeries2 = (id: string, labels: { [key: string]: unknown }) =>
+  action(ActionType.QueryBrowserToggleSeries2, { id, labels });
+
+  export const setAlertCount = (alertCount) => action(ActionType.SetAlertCount, { alertCount });
 
 const actions = {
   alertingErrored,
@@ -182,6 +187,7 @@ const actions = {
   queryBrowserToggleIsEnabled,
   queryBrowserToggleIsEnabled2,
   queryBrowserToggleSeries,
+  queryBrowserToggleSeries2,
   setAlertCount,
   toggleGraphs,
 };
