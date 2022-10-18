@@ -113,7 +113,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 	devfileResources := devfilePkg.DevfileResources{
 		ImageStream:    devfilePkg.GetImageStream(),
 		BuildResource:  devfilePkg.GetBuildResource(data, dockerfileRelativePath, dockerContextDir),
-		DeployResource: deploymentResource,
+		DeployResource: *deploymentResource,
 		Service:        serviceResource,
 		Route:          routeResource,
 	}

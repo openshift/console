@@ -8,11 +8,10 @@ import (
 	"github.com/devfile/library/pkg/devfile/generator"
 	"github.com/devfile/library/pkg/devfile/parser"
 	"github.com/devfile/library/pkg/devfile/parser/data/v2/common"
-	"github.com/hashicorp/go-multierror"
+
 	buildv1 "github.com/openshift/api/build/v1"
 	imagev1 "github.com/openshift/api/image/v1"
 	routev1 "github.com/openshift/api/route/v1"
-	"github.com/spf13/afero"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -108,7 +107,7 @@ func GetRouteForDockerImage(name string, port, path string, secure bool, annotat
 }
 
 // GetResourceFromDevfile gets the deployment, service and route resources from the devfile
-func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedComponents map[string]string, name string) (appsv1.Deployment, corev1.Service, routev1.Route, error) {
+func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedComponents map[string]string, name string) (*appsv1.Deployment, *corev1.Service, *routev1.Route, error) {
 	kubernetesComponentFilter := common.DevfileOptions{
 		ComponentOptions: common.ComponentOptions{
 			ComponentType: devfilev1.KubernetesComponentType,
@@ -118,15 +117,13 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to get the kubernetes components from devfile: %v", err)
 		klog.Error(errMsg)
-		return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, err
+		return nil, nil, nil, err
 	}
 
 	var appendedResources parser.KubernetesResources
-	var deployment appsv1.Deployment
-	var service corev1.Service
-	var route routev1.Route
-
-	returnDeploymentOnly := true // NOTE: (TODO) once devfile samples YAML have service & route definitions, switch to false. Update tests accordingly
+	var deployment *appsv1.Deployment
+	var service *corev1.Service
+	var route *routev1.Route
 
 	for _, component := range kubernetesComponents {
 		if _, ok := deployAssociatedComponents[component.Name]; ok && component.Kubernetes != nil {
@@ -140,7 +137,7 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 				if err != nil {
 					errMsg := fmt.Sprintf("Failed to get Deployment resource for the devfile: %v", err)
 					klog.Error(errMsg)
-					return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, err
+					return nil, nil, nil, err
 				}
 				appendedResources.Deployments = append(appendedResources.Deployments, deploymentResource)
 
@@ -149,7 +146,7 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 					errMsg := fmt.Sprintf("Failed to get the Docker image port from devfile metadata attribute 'alpha.dockerimage-port': %v", err)
 					klog.Error(errMsg)
 
-					return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, err
+					return nil, nil, nil, err
 				}
 
 				// Service
@@ -157,15 +154,13 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 				if err != nil {
 					errMsg := fmt.Sprintf("Failed to get service for the devfile: %v", err)
 					klog.Error(errMsg)
-					return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, err
+					return nil, nil, nil, err
 				}
 				appendedResources.Services = append(appendedResources.Services, serviceResource)
 
 				// Route
 				routeResource := GetRouteForDockerImage(name, dockerImagePort, "/", false, nil)
 				appendedResources.Routes = append(appendedResources.Routes, routeResource)
-
-				returnDeploymentOnly = false
 
 				// break here as we are no longer interested in parsing a YAML file
 				break
@@ -174,19 +169,18 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 			src := parser.YamlSrc{
 				Data: []byte(component.Kubernetes.Inlined),
 			}
-			fs := afero.Afero{Fs: afero.NewOsFs()}
-			values, err := parser.ReadKubernetesYaml(src, fs)
+			values, err := parser.ReadKubernetesYaml(src, nil)
 			if err != nil {
 				errMsg := fmt.Sprintf("Failed to read the Kubernetes yaml from devfile: %v", err)
 				klog.Error(errMsg)
-				return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, err
+				return nil, nil, nil, err
 			}
 
 			resources, err := parser.ParseKubernetesYaml(values)
 			if err != nil {
 				errMsg := fmt.Sprintf("Failed to parse the Kubernetes yaml data from devfile: %v", err)
 				klog.Error(errMsg)
-				return appsv1.Deployment{}, corev1.Service{}, routev1.Route{}, err
+				return nil, nil, nil, err
 			}
 
 			for _, endpoint := range component.Kubernetes.Endpoints {
@@ -206,21 +200,17 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 	}
 
 	if len(appendedResources.Deployments) > 0 {
-		deployment = appendedResources.Deployments[0]
+		deployment = &appendedResources.Deployments[0]
 	} else {
-		err = multierror.Append(err, fmt.Errorf("no deployment definition was found in the devfile sample"))
+		err = fmt.Errorf("no deployment definition was found in the devfile sample")
 	}
 
 	if len(appendedResources.Services) > 0 {
-		service = appendedResources.Services[0]
-	} else if !returnDeploymentOnly {
-		err = multierror.Append(err, fmt.Errorf("no service definition was found in the devfile sample"))
+		service = &appendedResources.Services[0]
 	}
 
 	if len(appendedResources.Routes) > 0 {
-		route = appendedResources.Routes[0]
-	} else if !returnDeploymentOnly {
-		err = multierror.Append(err, fmt.Errorf("no route definition was found in the devfile sample"))
+		route = &appendedResources.Routes[0]
 	}
 
 	return deployment, service, route, err

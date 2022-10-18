@@ -602,15 +602,33 @@ spec:
 				t.Errorf("TestGetResourceFromDevfile() error: %v, wantErr %v", err, tt.wantErr)
 			} else if err == nil {
 				if tt.name == "Correct deployment, service and route from attribute" {
+					assert.NotNil(t, actualDeployment, "expected deployment to be not nil")
 					assert.Equal(t, 1, len(actualDeployment.Spec.Template.Spec.Containers), "expected to have one container")
 					assert.Equal(t, "image", actualDeployment.Spec.Template.Spec.Containers[0].Image, "received the wrong container image")
+					assert.NotNil(t, actualService, "expected service to be not nil")
 					assert.GreaterOrEqual(t, len(actualService.Spec.Ports), 1)
 					assert.Equal(t, int32(8081), actualService.Spec.Ports[0].Port, "received the wrong port")
 				} else {
-					assert.Equal(t, tt.wantDeploymentName, actualDeployment.Name, "received the wrong deployment")
-					assert.Equal(t, tt.wantServiceName, actualService.Name, "received the wrong service")
+					if tt.wantDeploymentName != "" {
+						assert.NotNil(t, actualDeployment, "expected deployment to be not nil")
+						assert.Equal(t, tt.wantDeploymentName, actualDeployment.Name, "received the wrong deployment")
+					} else {
+						assert.Nil(t, actualDeployment, "expected deployment to be nil")
+					}
+
+					if tt.wantServiceName != "" {
+						assert.NotNil(t, actualService, "expected service to be not nil")
+						assert.Equal(t, tt.wantServiceName, actualService.Name, "received the wrong service")
+					} else {
+						assert.Nil(t, actualService, "expected service to be nil")
+					}
 				}
-				assert.Equal(t, tt.wantRouteServiceName, actualRoute.Spec.To.Name, "received the wrong route")
+				if tt.wantRouteServiceName != "" {
+					assert.NotNil(t, actualRoute, "expected route to be not nil")
+					assert.Equal(t, tt.wantRouteServiceName, actualRoute.Spec.To.Name, "received the wrong route")
+				} else {
+					assert.Nil(t, actualRoute, "expected route to be nil")
+				}
 			} else {
 				assert.Regexp(t, *tt.wantErr, err.Error(), "TestGetResourceFromDevfile(): Error message does not match")
 			}
