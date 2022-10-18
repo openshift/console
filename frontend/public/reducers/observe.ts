@@ -23,17 +23,22 @@ let nextID: number = 0;
 //       }) 
 
 
-const newQueryBrowserQueryID = () : number => nextID++ 
+// const newQueryBrowserQueryID = () : number => nextID++ 
 
-// returns a Key/Value Pair Map {id: 'query-browser-quer-123', Value:Map{isEnabled:true, isExpanded:true} }
+
+
+
+// JZ2 returns a Key/Value Pair Map {id: 'query-browser-quer-123', Value:Map{isEnabled:true, isExpanded:true} }
 const newQueryBrowserQuery2 = () : [[string, ImmutableMap<string, any>]] =>  {
   return [[
+    // replace with lodash _.uniqueID 
     "query-browser-query-id-" + nextID++, 
     ImmutableMap({
       isEnabled: true,
       isExpanded: true,
       query: "", 
-      text: ""
+      text: "",
+      // sortOrder: 1 2 3 4 
     }) 
   ]]
 }
@@ -45,8 +50,6 @@ const newQueryBrowserQuery = (): ImmutableMap<string, any> =>
     isExpanded: true,
   });
     
-
-
 
 export const silenceFiringAlerts = (firingAlerts, silences) => {
   // For each firing alert, store a list of the Silences that are silencing it
@@ -93,6 +96,7 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         }),
       }),
 
+      // JZ1 
       // Create a ImmutableMap Similar in structure to the dashboards 
       queryBrowser2: ImmutableMap({
         metrics: [],
@@ -232,6 +236,7 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         state.getIn(['queryBrowser', 'queries']).push(newQueryBrowserQuery()),
       );
 
+    // TODO: delete 
     case ActionType.QueryBrowserDuplicateQuery: {
       const index = action.payload.index;
       const originQueryText = state.getIn(['queryBrowser', 'queries', index, 'text']);
@@ -245,6 +250,34 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       );
     }
 
+    // JZ NOTE: Left off Here OCt 17 2022 5pm
+    // Problem is that const duplicate returns on the Map{} without the key 
+    // May need to use the same method as QueryPATCH
+    case ActionType.QueryBrowserDuplicateQuery2: {
+      const id = action.payload.id;
+      const originQueryText = state.getIn(['queryBrowser2', 'queries2', id, 'text'])
+      console.log("JZ QueryBrowserDuplicateQuery2 " + "id " + id + " originQueryText " + originQueryText)
+      
+
+      // const duplicate = newQueryBrowserQuery2()[0][1].update({
+      //   text: originQueryText,
+      //   isEnabled: false,
+      // });
+      console.log("JZ QueryBrowserDuplicateQuery2 " + "state.getIn " +  state.getIn(['queryBrowser2', 'queries2']).merge(duplicate))
+
+      return state;
+      // const duplicate = newQueryBrowserQuery2()[0][1].merge({
+      //   text: originQueryText,
+      //   isEnabled: false,
+      // });
+      // console.log("JZ QueryBrowserDuplicateQuery2 " + "duplicate Query " + duplicate)
+      
+      // return state.setIn(
+      //   ['queryBrowser2', 'queries2'],
+      //   state.getIn(['queryBrowser2', 'queries2']).set(duplicate),
+      // );
+    }
+
     case ActionType.QueryBrowserDeleteAllQueries:
       return state.setIn(['queryBrowser', 'queries'], ImmutableList([newQueryBrowserQuery()]));
 
@@ -255,12 +288,22 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       );
     }
 
+    // TODO: delete 
     case ActionType.QueryBrowserDeleteQuery: {
       let queries = state.getIn(['queryBrowser', 'queries']).delete(action.payload.index);
       if (queries.size === 0) {
         queries = queries.push(newQueryBrowserQuery());
       }
       return state.setIn(['queryBrowser', 'queries'], queries);
+    }
+
+    // TODO: Update the line queries.push() --- doesn't work for MAP 
+    case ActionType.QueryBrowserDeleteQuery2: {
+      let queries = state.getIn(['queryBrowser2', 'queries2']).delete(action.payload.id);
+      if (queries.size === 0) {
+        queries = queries.push(newQueryBrowserQuery2());
+      }
+      return state.setIn(['queryBrowser2', 'queries2'], queries);
     }
 
     case ActionType.QueryBrowserDismissNamespaceAlert:
@@ -276,12 +319,10 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
 
     case ActionType.QueryBrowserPatchQuery2: {
       const { id, patch } = action.payload;
-      const patch2 = [[id,patch]]
-      const query = state.hasIn(['queryBrowser', 'queries', id])
+      const query = state.hasIn(['queryBrowser2', 'queries2', id])
         ? ImmutableMap(patch)
-        : newQueryBrowserQuery2()[0][1].merge(patch2);
-        console.log("JZ QueryBrowserPathQuery2 : " + query)
-      return state.mergeIn(['queryBrowser', 'queries', id], query);
+        : newQueryBrowserQuery2()[0][1].merge(patch);
+      return state.mergeIn(['queryBrowser2', 'queries2', id], query);
     }
 
     case ActionType.QueryBrowserRunQueries: {
@@ -295,6 +336,22 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       return state
         .setIn(['queryBrowser', 'queries'], queries)
         .setIn(['queryBrowser', 'lastRequestTime'], Date.now());
+    }
+
+
+    case ActionType.QueryBrowserRunQueries2: {
+      console.log("JZ Hello from REducer RunQueries2")
+      const queries = state.getIn(['queryBrowser2', 'queries2']).map((q) => {
+        console.log("JZ QueryBrowserRunQueries2 .map(q) " + q)
+        const isEnabled = q.get('isEnabled');
+        const query = q.get('query');
+        const text = _.trim(q.get('text'));
+        return isEnabled && query !== text ? q.merge({ query: text, series: undefined }) : q;
+      });
+
+      return state
+        .setIn(['queryBrowser2', 'queries2'], queries)
+        .setIn(['queryBrowser2', 'lastRequestTime'], Date.now());
     }
 
     case ActionType.QueryBrowserSetAllExpanded: {
@@ -327,10 +384,10 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
     }
 
     case ActionType.QueryBrowserToggleIsEnabled2: {
-      const query = state.getIn(['queryBrowser', 'queries', action.payload.id]);
+      const query = state.getIn(['queryBrowser2', 'queries2', action.payload.id]);
       const isEnabled = !query.get('isEnabled');
       return state.setIn(
-        ['queryBrowser', 'queries', action.payload.id],
+        ['queryBrowser2', 'queries2', action.payload.id],
         query.merge({
           isEnabled,
           isExpanded: isEnabled,

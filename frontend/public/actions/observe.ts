@@ -15,13 +15,16 @@ export enum ActionType {
   QueryBrowserAddQuery = 'queryBrowserAddQuery',
   QueryBrowserAddQuery2 = 'queryBrowserAddQuery2',
   QueryBrowserDuplicateQuery = 'queryBrowserDuplicateQuery',
+  QueryBrowserDuplicateQuery2 = 'queryBrowserDuplicateQuery2',
   QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
   QueryBrowserDeleteAllSeries = 'queryBrowserDeleteAllSeries',
   QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
+  QueryBrowserDeleteQuery2 = 'queryBrowserDeleteQuery2',
   QueryBrowserDismissNamespaceAlert = 'queryBrowserDismissNamespaceAlert',
   QueryBrowserPatchQuery = 'queryBrowserPatchQuery',
   QueryBrowserPatchQuery2 = 'queryBrowserPatchQuery2',
   QueryBrowserRunQueries = 'queryBrowserRunQueries',
+  QueryBrowserRunQueries2 = 'queryBrowserRunQueries2',
   QueryBrowserSetAllExpanded = 'queryBrowserSetAllExpanded',
   QueryBrowserSetMetrics = 'queryBrowserSetMetrics',
   QueryBrowserSetPollInterval = 'queryBrowserSetPollInterval',
@@ -98,6 +101,9 @@ export const queryBrowserAddQuery2 = () => action(ActionType.QueryBrowserAddQuer
 export const queryBrowserDuplicateQuery = (index: number) =>
   action(ActionType.QueryBrowserDuplicateQuery, { index });
 
+export const queryBrowserDuplicateQuery2 = (id: string) =>
+  action(ActionType.QueryBrowserDuplicateQuery2, { id });
+
 export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
 
 export const queryBrowserDeleteAllSeries = () => action(ActionType.QueryBrowserDeleteAllSeries);
@@ -108,6 +114,9 @@ export const queryBrowserDismissNamespaceAlert = () =>
 export const queryBrowserDeleteQuery = (index: number) =>
   action(ActionType.QueryBrowserDeleteQuery, { index });
 
+export const queryBrowserDeleteQuery2 = (id: string) =>
+  action(ActionType.QueryBrowserDeleteQuery2, { id });
+
 export const queryBrowserPatchQuery = (index: number, patch: { [key: string]: unknown }) =>
   action(ActionType.QueryBrowserPatchQuery, { index, patch });
 
@@ -115,6 +124,8 @@ export const queryBrowserPatchQuery2 = (id: string, patch: { [key: string]: unkn
   action(ActionType.QueryBrowserPatchQuery2, { id, patch });
 
 export const queryBrowserRunQueries = () => action(ActionType.QueryBrowserRunQueries);
+
+export const queryBrowserRunQueries2 = () => action(ActionType.QueryBrowserRunQueries2);
 
 export const queryBrowserSetAllExpanded = (isExpanded: boolean) =>
   action(ActionType.QueryBrowserSetAllExpanded, { isExpanded });
@@ -154,13 +165,16 @@ const actions = {
   queryBrowserAddQuery,
   queryBrowserAddQuery2,
   queryBrowserDuplicateQuery,
+  queryBrowserDuplicateQuery2,
   queryBrowserDeleteAllQueries,
   queryBrowserDeleteAllSeries,
   queryBrowserDeleteQuery,
+  queryBrowserDeleteQuery2,
   queryBrowserDismissNamespaceAlert,
   queryBrowserPatchQuery,
   queryBrowserPatchQuery2,
   queryBrowserRunQueries,
+  queryBrowserRunQueries2,
   queryBrowserSetAllExpanded,
   queryBrowserSetMetrics,
   queryBrowserSetPollInterval,
