@@ -6,9 +6,9 @@ require (
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
 	github.com/devfile/api/v2 v2.0.0-20220117162434-6e6e6a8bc14c
-	github.com/devfile/library v1.2.1-0.20220308191614-f0f7e11b17de
+	github.com/devfile/library v1.2.1-0.20221018204255-ca638eec2023
 	github.com/devfile/registry-support/index/generator v0.0.0-20220624203950-e7282a4695b6
-	github.com/devfile/registry-support/registry-library v0.0.0-20220901004827-b579f98d73ad
+	github.com/devfile/registry-support/registry-library v0.0.0-20220913214140-36887a7907aa
 	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
 	github.com/openshift/api v0.0.0-20211103080632-8981c8822dfa

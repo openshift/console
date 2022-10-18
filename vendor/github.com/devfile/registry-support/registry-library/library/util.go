@@ -28,6 +28,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // SplitVersionFromStack takes a stack/version tag and splits the stack name from the version
@@ -147,12 +148,21 @@ func setHeaders(headers *http.Header, options RegistryOptions) {
 
 //getHTTPClient returns a new http client object
 func getHTTPClient(options RegistryOptions) *http.Client {
+
+	overriddenTimeout := httpRequestResponseTimeout
+	timeout := options.HTTPTimeout
+	//if value is invalid or unspecified, the default will be used
+	if timeout != nil && *timeout > 0 {
+		//convert timeout to seconds
+		overriddenTimeout = time.Duration(*timeout) * time.Second
+	}
+
 	return &http.Client{
 		Transport: &http.Transport{
 			Proxy:                 http.ProxyFromEnvironment,
-			ResponseHeaderTimeout: responseHeaderTimeout,
+			ResponseHeaderTimeout: overriddenTimeout,
 			TLSClientConfig:       &tls.Config{InsecureSkipVerify: options.SkipTLSVerify},
 		},
-		Timeout: httpRequestTimeout,
+		Timeout: overriddenTimeout,
 	}
 }
