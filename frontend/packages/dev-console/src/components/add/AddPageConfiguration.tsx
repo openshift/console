@@ -10,6 +10,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src';
 import './AddCardItem.scss';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useTelemetry } from '@console/shared/src';
 import {
   useDebounceCallback,
   useConsoleOperatorConfig,
@@ -53,6 +54,7 @@ const Item: React.FC<ItemProps> = ({ id, addAction }) => (
 
 const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
 
   // Available add page items
   const [addActionExtensions, addActionExtensionsResolved] = useResolvedExtensions<AddAction>(
@@ -111,6 +113,10 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
   // Save the latest value (disabled string array)
   const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
+    fireTelemetryEvent('Console cluster configuration changed', {
+      customize: 'Add page actions',
+      disabledActions: disabled?.length > 0 ? disabled : null,
+    });
     setSaveStatus({ status: 'in-progress' });
 
     const patch: DeveloperCatalogAddPageConfig = {

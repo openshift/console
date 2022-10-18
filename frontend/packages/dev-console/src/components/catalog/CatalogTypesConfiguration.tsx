@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { CatalogItemType, isCatalogItemType } from '@console/dynamic-plugin-sdk/src/extensions';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useTelemetry } from '@console/shared/src';
 import {
   useDebounceCallback,
   useConsoleOperatorConfig,
@@ -36,6 +37,7 @@ const Item: React.FC<ItemProps> = ({ title }) => <>{title}</>;
 
 const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
 
   // Available catalog types
   const [catalogTypesExtensions, catalogTypesExtensionsLoaded] = useResolvedExtensions<
@@ -161,6 +163,16 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
   // Save the latest value (types)
   const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
+    fireTelemetryEvent('Console cluster configuration changed', {
+      customize: 'Developer Catalog types',
+      state: types?.state,
+      types:
+        types?.state === 'Enabled'
+          ? types.enabled || []
+          : types?.state === 'Disabled'
+          ? types.disabled || []
+          : null,
+    });
     setSaveStatus({ status: 'in-progress' });
 
     const patch: DeveloperCatalogTypesConsoleConfig = {

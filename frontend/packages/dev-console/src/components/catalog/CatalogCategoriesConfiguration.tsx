@@ -7,6 +7,7 @@ import {
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useTelemetry } from '@console/shared/src';
 import { CatalogCategory } from '@console/shared/src/components/catalog/utils/types';
 import {
   useDebounceCallback,
@@ -30,6 +31,7 @@ type DeveloperCatalogTypesConsoleConfig = K8sResourceKind & {
 
 const CatalogCategoriesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
 
   // Current configuration
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
@@ -71,6 +73,9 @@ const CatalogCategoriesConfiguration: React.FC<{ readonly: boolean }> = ({ reado
   // Save the latest value (types)
   const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
+    fireTelemetryEvent('Console cluster configuration changed', {
+      customize: 'Developer Catalog categories',
+    });
     setSaveStatus({ status: 'in-progress' });
 
     const patch: DeveloperCatalogTypesConsoleConfig = {

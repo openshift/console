@@ -10,6 +10,7 @@ import {
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { ClusterRoleModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useTelemetry } from '@console/shared/src';
 import {
   useDebounceCallback,
   useConsoleOperatorConfig,
@@ -49,6 +50,7 @@ const Item: React.FC<ItemProps> = ({ name, clusterRole }) => (
 
 const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
 
   // Available cluster roles
   const [allClusterRoles, allClusterRolesLoaded, allClusterRolesError] = useK8sWatchResource<
@@ -129,6 +131,10 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
   // Save the latest value (disabled string array)
   const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
+    fireTelemetryEvent('Console cluster configuration changed', {
+      customize: 'Project Access cluster roles',
+      roles: selectedClusterRoles?.length > 0 ? selectedClusterRoles : null,
+    });
     setSaveStatus({ status: 'in-progress' });
 
     const patch: DeveloperCatalogClusterRolesConfig = {

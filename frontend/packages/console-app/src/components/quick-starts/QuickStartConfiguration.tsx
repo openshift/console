@@ -9,6 +9,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useTelemetry } from '@console/shared/src';
 import {
   useDebounceCallback,
   useConsoleOperatorConfig,
@@ -49,6 +50,7 @@ const Item: React.FC<ItemProps> = ({ id, quickStart }) => (
 
 const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
 
   // All available quick starts
   const [allQuickStarts, allQuickStartsLoaded, allQuickStartsError] = useK8sWatchResource<
@@ -114,6 +116,10 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
   // Save the latest value (disabled string array)
   const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
+    fireTelemetryEvent('Console cluster configuration changed', {
+      customize: 'Quick Starts',
+      disabled,
+    });
     setSaveStatus({ status: 'in-progress' });
 
     const patch: DisabledQuickStartsConsoleConfig = {
