@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -178,6 +179,32 @@ type Server struct {
 	Telemetry                    serverconfig.MultiKeyValue
 }
 
+type neuteredFileSystem struct {
+	fs http.FileSystem
+}
+
+func (nfs neuteredFileSystem) Open(path string) (http.File, error) {
+	f, err := nfs.fs.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err := f.Stat()
+	if s.IsDir() {
+		index := filepath.Join(path, "index.html")
+		if _, err := nfs.fs.Open(index); err != nil {
+			closeErr := f.Close()
+			if closeErr != nil {
+				return nil, closeErr
+			}
+
+			return nil, err
+		}
+	}
+
+	return f, nil
+}
+
 func (s *Server) authDisabled() bool {
 	return s.getLocalAuther() == nil
 }
@@ -294,7 +321,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	handleFunc("/api/", notFoundHandler)
 
-	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), http.FileServer(http.Dir(s.PublicDir)))
+	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), http.FileServer(neuteredFileSystem{http.Dir(s.PublicDir)}))
 	handle("/static/", gzipHandler(securityHeadersMiddleware(staticHandler)))
 
 	if s.CustomLogoFile != "" {
