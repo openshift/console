@@ -10,13 +10,14 @@ import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
+  isCatalogTypeEnabled,
   FormHeader,
   FlexForm,
   FormBody,
   useActiveNamespace,
   TechPreviewBadge,
 } from '@console/shared';
-import { ServicesRequestCRName } from '../../const';
+import { MANAGED_SERVICES_CATALOG_TYPE_ID, ServicesRequestCRName } from '../../const';
 import { CloudServicesRequestModel } from '../../models/rhoas';
 import {
   isResourceStatusSuccessful,
@@ -46,7 +47,7 @@ const ServiceListPage: React.FC = () => {
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState<string[]>();
   const [isSubmitting, setSubmitting] = React.useState<boolean>(false);
   const [connectionError, setConnectionError] = React.useState<ConnectionErrorProps>();
-
+  const isManagedServicesTypeEnabled = isCatalogTypeEnabled(MANAGED_SERVICES_CATALOG_TYPE_ID);
   const { t } = useTranslation();
 
   React.useEffect(() => {
@@ -97,14 +98,19 @@ const ServiceListPage: React.FC = () => {
         message: t('rhoas-plugin~Please try again', {
           error,
         }),
-        action: () => history.push(`/catalog/ns/${currentNamespace}?catalogType=managedservices`),
-        actionLabel: t('rhoas-plugin~Go back to Services Catalog'),
+        action: () =>
+          isManagedServicesTypeEnabled
+            ? history.push(`/catalog/ns/${currentNamespace}?catalogType=managedservices`)
+            : null,
+        actionLabel: isManagedServicesTypeEnabled
+          ? t('rhoas-plugin~Go back to Services Catalog')
+          : null,
       };
       setConnectionError(connectionErrorObj);
 
       setSubmitting(false);
     }
-  }, [currentNamespace, remoteKafkaInstances, selectedKafka, t]);
+  }, [currentNamespace, isManagedServicesTypeEnabled, remoteKafkaInstances, selectedKafka, t]);
 
   if (
     !watchedKafkaRequest ||
@@ -145,9 +151,13 @@ const ServiceListPage: React.FC = () => {
               title={t('rhoas-plugin~Could not fetch services')}
               message={t('rhoas-plugin~Could not connect to RHOAS with API Token')}
               action={() =>
-                history.push(`/catalog/ns/${currentNamespace}?catalogType=managedservices`)
+                isManagedServicesTypeEnabled
+                  ? history.push(`/catalog/ns/${currentNamespace}?catalogType=managedservices`)
+                  : null
               }
-              actionLabel={t('rhoas-plugin~Go back to Services Catalog')}
+              actionLabel={
+                isManagedServicesTypeEnabled ? t('rhoas-plugin~Go back to Services Catalog') : null
+              }
               icon={TimesCircleIcon}
             />
           </FormGroup>
@@ -160,9 +170,15 @@ const ServiceListPage: React.FC = () => {
                   error: getFinishedCondition(watchedKafkaRequest)?.message,
                 })}
                 action={() =>
-                  history.push(`/catalog/ns/${currentNamespace}?catalogType=managedservices`)
+                  isManagedServicesTypeEnabled
+                    ? history.push(`/catalog/ns/${currentNamespace}?catalogType=managedservices`)
+                    : null
                 }
-                actionLabel={'rhoas-plugin~Go back to Services Catalog'}
+                actionLabel={
+                  isManagedServicesTypeEnabled
+                    ? t('rhoas-plugin~Go back to Services Catalog')
+                    : null
+                }
                 icon={TimesCircleIcon}
               />
             </FormSection>

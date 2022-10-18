@@ -4,6 +4,7 @@ import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { HELM_CHART_CATALOG_TYPE_ID } from '@console/helm-plugin/src/const';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { history, StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -13,7 +14,7 @@ import {
   modelFor,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { useActiveNamespace, useQueryParams } from '@console/shared/src';
+import { isCatalogTypeEnabled, useActiveNamespace, useQueryParams } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
@@ -43,6 +44,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
   const { t } = useTranslation();
   const [namespace] = useActiveNamespace();
   const fireTelemetryEvent = useTelemetry();
+  const isHelmEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
   const [hcr, hcrLoaded, hcrLoadError] = useK8sWatchResource<HelmChartRepositoryType>(
     isEditForm
       ? {
@@ -117,16 +119,17 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
           data: HelmChartRepositoryRes,
         });
 
-    const redirectURL = actionOrigin
-      ? `/catalog/ns/${HelmChartRepositoryRes.metadata.namespace ??
-          namespace}?catalogType=HelmChart`
-      : HelmChartRepositoryRes.kind === ProjectHelmChartRepositoryModel.kind
-      ? `/k8s/ns/${HelmChartRepositoryRes.metadata.namespace}/${referenceFor(
-          HelmChartRepositoryRes,
-        )}/${HelmChartRepositoryRes.metadata.name}`
-      : `/k8s/cluster/${referenceFor(HelmChartRepositoryRes)}/${
-          HelmChartRepositoryRes.metadata.name
-        }`;
+    const redirectURL =
+      actionOrigin && isHelmEnabled
+        ? `/catalog/ns/${HelmChartRepositoryRes.metadata.namespace ??
+            namespace}?catalogType=HelmChart`
+        : HelmChartRepositoryRes.kind === ProjectHelmChartRepositoryModel.kind
+        ? `/k8s/ns/${HelmChartRepositoryRes.metadata.namespace}/${referenceFor(
+            HelmChartRepositoryRes,
+          )}/${HelmChartRepositoryRes.metadata.name}`
+        : `/k8s/cluster/${referenceFor(HelmChartRepositoryRes)}/${
+            HelmChartRepositoryRes.metadata.name
+          }`;
 
     return resourceCall
       .then(() => {

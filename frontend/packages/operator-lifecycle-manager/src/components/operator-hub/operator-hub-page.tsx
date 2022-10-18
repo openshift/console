@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
+import { OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import {
   DOC_URL_RED_HAT_MARKETPLACE,
   ExternalLink,
@@ -15,6 +16,7 @@ import {
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
+import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { iconFor } from '..';
@@ -251,8 +253,12 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
   );
 };
 
-export const OperatorHubPage = withFallback(
-  (props: OperatorHubPageProps) => (
+export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => {
+  const isDevCatalogEnabled = useIsDeveloperCatalogEnabled();
+  const isOperatorBackedServiceEnabled = isCatalogTypeEnabled(
+    OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID,
+  );
+  return (
     <>
       <Helmet>
         <title>OperatorHub</title>
@@ -261,15 +267,26 @@ export const OperatorHubPage = withFallback(
         <div className="co-catalog">
           <PageHeading title="OperatorHub" />
           <p className="co-catalog-page__description">
-            <Trans ns="olm">
-              Discover Operators from the Kubernetes community and Red Hat partners, curated by Red
-              Hat. You can purchase commercial software through{' '}
-              <ExternalLink href={DOC_URL_RED_HAT_MARKETPLACE}>Red Hat Marketplace</ExternalLink>.
-              You can install Operators on your clusters to provide optional add-ons and shared
-              services to your developers. After installation, the Operator capabilities will appear
-              in the <Link to="/catalog">Developer Catalog</Link> providing a self-service
-              experience.
-            </Trans>
+            {isDevCatalogEnabled && isOperatorBackedServiceEnabled ? (
+              <Trans ns="olm">
+                Discover Operators from the Kubernetes community and Red Hat partners, curated by
+                Red Hat. You can purchase commercial software through{' '}
+                <ExternalLink href={DOC_URL_RED_HAT_MARKETPLACE}>Red Hat Marketplace</ExternalLink>.
+                You can install Operators on your clusters to provide optional add-ons and shared
+                services to your developers. After installation, the Operator capabilities will
+                appear in the <Link to="/catalog">Developer Catalog</Link> providing a self-service
+                experience.
+              </Trans>
+            ) : (
+              <Trans ns="olm">
+                Discover Operators from the Kubernetes community and Red Hat partners, curated by
+                Red Hat. You can purchase commercial software through{' '}
+                <ExternalLink href={DOC_URL_RED_HAT_MARKETPLACE}>Red Hat Marketplace</ExternalLink>.
+                You can install Operators on your clusters to provide optional add-ons and shared
+                services to your developers. The Operator Backed Developer Catalog is currently
+                disabled, thus Operator capabilities will not be exposed to developers.
+              </Trans>
+            )}
           </p>
           <div className="co-catalog__body">
             <Firehose
@@ -317,9 +334,8 @@ export const OperatorHubPage = withFallback(
         </div>
       </div>
     </>
-  ),
-  ErrorBoundaryFallbackPage,
-);
+  );
+}, ErrorBoundaryFallbackPage);
 
 export type OperatorHubPageProps = {
   match: match<{ ns?: string }>;

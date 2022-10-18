@@ -1,1 +1,1 @@
-export { useKafkaConnectionActionProvider } from './provider';
+export * from './provider';

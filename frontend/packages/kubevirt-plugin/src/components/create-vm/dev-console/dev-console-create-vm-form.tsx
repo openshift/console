@@ -21,10 +21,11 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { isCatalogTypeEnabled } from '@console/shared';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '../../../../../dev-console/src/components/NamespacedPage';
-import { ALL_NAMESPACES_KEY } from '../../../constants';
+import { ALL_NAMESPACES_KEY, VM_TEMPLATE_CATALOG_TYPE_ID } from '../../../constants';
 import { BOOT_SOURCE_AVAILABLE, SUPPORT_URL } from '../../../constants/vm-templates';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
 import useSSHKeys from '../../../hooks/use-ssh-keys';
@@ -50,21 +51,26 @@ import { useVmTemplatesResources } from '../hooks/use-vm-templates-resources';
 const DevConsoleCreateVmFormEmptyState: React.FC<{ templateParam: string; t: TFunction }> = ({
   templateParam,
   t,
-}) => (
-  <EmptyState>
-    <Title headingLevel="h4" size="lg">
-      {t('kubevirt-plugin~Error Loading Template')}
-    </Title>
-    <EmptyStateBody>
-      {t('kubevirt-plugin~Virtual machine template {{ templateParam }} not found.', {
-        templateParam,
-      })}
-    </EmptyStateBody>
-    <Button variant="primary" onClick={() => history.push('/catalog?catalogType=VmTemplate')}>
-      {t('kubevirt-plugin~Back to templates catalog')}
-    </Button>
-  </EmptyState>
-);
+}) => {
+  const isVMTemplateTypeEnabled = isCatalogTypeEnabled(VM_TEMPLATE_CATALOG_TYPE_ID);
+  return (
+    <EmptyState>
+      <Title headingLevel="h4" size="lg">
+        {t('kubevirt-plugin~Error Loading Template')}
+      </Title>
+      <EmptyStateBody>
+        {t('kubevirt-plugin~Virtual machine template {{ templateParam }} not found.', {
+          templateParam,
+        })}
+      </EmptyStateBody>
+      {isVMTemplateTypeEnabled ? (
+        <Button variant="primary" onClick={() => history.push('/catalog?catalogType=VmTemplate')}>
+          {t('kubevirt-plugin~Back to templates catalog')}
+        </Button>
+      ) : null}
+    </EmptyState>
+  );
+};
 
 export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
   const { t } = useTranslation();

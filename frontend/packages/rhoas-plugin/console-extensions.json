@@ -61,9 +61,15 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "rhoasActions.managedServicesProvider" }
+    }
+  },
+  {
     "type": "dev-console.add/action",
     "flags": {
-      "required": ["RHOAS_FLAG"]
+      "required": ["RHOAS_FLAG", "DEVELOPER_CATALOG", "MANAGED_SERVICES_CATALOG_TYPE"]
     },
     "properties": {
       "id": "rhoasAddAction",

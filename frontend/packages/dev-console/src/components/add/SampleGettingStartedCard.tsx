@@ -2,12 +2,13 @@ import * as React from 'react';
 import { CatalogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { ALL_NAMESPACES_KEY, CatalogServiceProvider } from '@console/shared';
+import { ALL_NAMESPACES_KEY, CatalogServiceProvider, isCatalogTypeEnabled } from '@console/shared';
 import {
   GettingStartedLink,
   GettingStartedCard,
 } from '@console/shared/src/components/getting-started';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { SAMPLE_CATALOG_TYPE_ID } from '../../const';
 import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
 
 interface SampleGettingStartedCardProps {
@@ -43,9 +44,10 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
 }) => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
+  const isSampleTypeEnabled = isCatalogTypeEnabled(SAMPLE_CATALOG_TYPE_ID);
 
   const disabledAddActions = getDisabledAddActions();
-  if (disabledAddActions?.includes('import-from-samples')) {
+  if (disabledAddActions?.includes('import-from-samples') || !isSampleTypeEnabled) {
     return null;
   }
 

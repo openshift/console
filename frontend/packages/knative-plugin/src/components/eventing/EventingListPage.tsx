@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import { Page } from '@console/internal/components/utils';
-import { MenuActions, MultiTabListPage } from '@console/shared';
+import { isCatalogTypeEnabled, MenuActions, MultiTabListPage } from '@console/shared';
+import { EVENT_SOURCE_CATALOG_TYPE_ID } from '../../const';
 import { EventingBrokerModel } from '../../models';
 import BrokerListPage from './brokers-list/BrokerListPage';
 import ChannelListPage from './channels-list/ChannelListPage';
@@ -22,9 +23,10 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
   } = match;
   const [showTitle, canCreate] = [false, false];
   const nsSelected = namespace || 'default';
+  const isEventSourceTypeEnabled = isCatalogTypeEnabled(EVENT_SOURCE_CATALOG_TYPE_ID);
   const menuActions: MenuActions = {
     eventSource: {
-      label: t('knative-plugin~Event Source'),
+      label: isEventSourceTypeEnabled ? t('knative-plugin~Event Source') : null,
       onSelection: () => `/catalog/ns/${nsSelected}?catalogType=EventSource&provider=["Red+Hat"]`,
     },
     brokers: {

@@ -8,7 +8,11 @@ import {
 import { IncompleteDataError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import useCatalogExtensions from '../hooks/useCatalogExtensions';
 import { CatalogService } from '../utils';
-import { keywordCompare, applyCatalogItemMetadata } from '../utils/catalog-utils';
+import {
+  keywordCompare,
+  applyCatalogItemMetadata,
+  useGetAllDisabledSubCatalogs,
+} from '../utils/catalog-utils';
 import CatalogExtensionHookResolver from './CatalogExtensionHookResolver';
 
 type CatalogServiceProviderProps = {
@@ -47,7 +51,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     catalogBadgeProviderExtensions,
     extensionsResolved,
   ] = useCatalogExtensions(catalogId, catalogType);
-
+  const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
   const [extItemsMap, setExtItemsMap] = React.useState<{ [uid: string]: CatalogItem[] }>({});
   const [extItemsErrorMap, setItemsErrorMap] = React.useState<{ [uid: string]: Error }>({});
   const [metadataProviderMap, setMetadataProviderMap] = React.useState<{
@@ -63,13 +67,16 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
         ? catalogProviderExtensions.some(({ uid }) => extItemsMap[uid] || extItemsErrorMap[uid])
         : catalogProviderExtensions.every(({ uid }) => extItemsMap[uid] || extItemsErrorMap[uid])));
 
+  const enabledCatalogProviderExtensions = catalogProviderExtensions.filter((item) => {
+    return !disabledSubCatalogs?.includes(item?.properties?.type);
+  });
   const preCatalogItems = React.useMemo(() => {
     if (!loaded) {
       return [];
     }
 
     const itemMap = _.flatten(
-      catalogProviderExtensions.map((e) =>
+      enabledCatalogProviderExtensions.map((e) =>
         catalogFilterExtensions
           .filter((fe) => fe.properties.type === e.properties.type)
           .reduce((acc, ext) => acc.filter(ext.properties.filter), extItemsMap[e.uid] ?? []),
@@ -81,7 +88,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     }, {} as { [uid: string]: CatalogItem });
 
     return _.sortBy(Object.values(itemMap), 'name');
-  }, [extItemsMap, loaded, catalogProviderExtensions, catalogFilterExtensions]);
+  }, [extItemsMap, loaded, enabledCatalogProviderExtensions, catalogFilterExtensions]);
 
   const catalogItems = React.useMemo(() => {
     if (!loaded) {

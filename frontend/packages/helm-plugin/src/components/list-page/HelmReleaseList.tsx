@@ -15,7 +15,8 @@ import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { CustomResourceList } from '@console/shared';
+import { isCatalogTypeEnabled, CustomResourceList } from '@console/shared';
+import { HELM_CHART_CATALOG_TYPE_ID } from '../../const';
 import {
   helmReleasesRowFilters,
   filterHelmReleasesByName,
@@ -24,7 +25,6 @@ import {
 } from '../../utils/helm-utils';
 import HelmReleaseListHeader from './HelmReleaseListHeader';
 import HelmReleaseListRow from './HelmReleaseListRow';
-
 import './HelmReleaseList.scss';
 
 const getRowProps = (obj) => ({
@@ -109,6 +109,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
   }
 
   const emptyState = () => {
+    const isHelmEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
     const helmImage = () => (
       <img
         className="odc-helm-release__empty-list__image"
@@ -123,11 +124,13 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
         <Title headingLevel="h3" size="lg">
           {t('helm-plugin~No Helm Releases found')}
         </Title>
-        <EmptyStateSecondaryActions>
-          <Link to={installURL}>
-            {t('helm-plugin~Install a Helm Chart from the developer catalog')}
-          </Link>
-        </EmptyStateSecondaryActions>
+        {isHelmEnabled ? (
+          <EmptyStateSecondaryActions>
+            <Link to={installURL}>
+              {t('helm-plugin~Install a Helm Chart from the developer catalog')}
+            </Link>
+          </EmptyStateSecondaryActions>
+        ) : null}
       </EmptyState>
     );
   };

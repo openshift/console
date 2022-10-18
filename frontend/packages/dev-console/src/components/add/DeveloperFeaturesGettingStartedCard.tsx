@@ -18,6 +18,7 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
   const isHelmEnabled = useFlag('OPENSHIFT_HELM');
+  const isHelmVisible = useFlag('HELM_CHARTS_CATALOG_TYPE');
   const parsed = semver.parse(useOpenShiftVersion());
   // Show only major and minor version.
   const version = parsed ? `${parsed.major}.${parsed.minor}` : '';
@@ -25,7 +26,7 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
   const links: GettingStartedLink[] = [];
 
   const disabledAddActions = getDisabledAddActions();
-  if (isHelmEnabled && !disabledAddActions?.includes('helm')) {
+  if (isHelmEnabled && isHelmVisible && !disabledAddActions?.includes('helm')) {
     links.push({
       id: 'helm-charts',
       title: t('devconsole~Discover certified Helm Charts'),

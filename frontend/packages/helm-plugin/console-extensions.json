@@ -140,7 +140,16 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "helmActions.helmChartTypeProvider" }
+    }
+  },
+  {
     "type": "dev-console.add/action",
+    "flags": {
+      "required": ["OPENSHIFT_HELM", "DEVELOPER_CATALOG", "HELM_CHARTS_CATALOG_TYPE"]
+    },
     "properties": {
       "id": "helm",
       "groupId": "developer-catalog",
@@ -148,9 +157,6 @@
       "label": "%helm-plugin~Helm Chart%",
       "description": "%helm-plugin~Browse the catalog to discover and install Helm Charts%",
       "icon": { "$codeRef": "helmUtils.helmCatalogIconSVG" }
-    },
-    "flags": {
-      "required": ["OPENSHIFT_HELM"]
     }
   },
   {
@@ -228,7 +234,7 @@
       "provider": { "$codeRef": "helmActions.useTopologyActionProvider" }
     },
     "flags": {
-      "required": ["OPENSHIFT_HELM"]
+      "required": ["OPENSHIFT_HELM", "DEVELOPER_CATALOG", "HELM_CHARTS_CATALOG_TYPE"]
     }
   },
   {

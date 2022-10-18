@@ -40,3 +40,7 @@ export const EVENT_SOURCE_CONTAINER_KIND = 'ContainerSource';
 export const EVENT_SOURCE_PING_KIND = 'PingSource';
 export const EVENT_SOURCE_CRONJOB_KIND = 'CronJobSource';
 export const EVENT_SINK_KAFKA_KIND = 'KafkaSink';
+export const FLAG_KNATIVE_EVENT_SOURCE_CATALOG_TYPE = 'KNATIVE_EVENT_SOURCE_CATALOG_TYPE';
+export const FLAG_KNATIVE_EVENT_SINK_CATALOG_TYPE = 'KNATIVE_EVENT_SINK_CATALOG_TYPE';
+export const EVENT_SOURCE_CATALOG_TYPE_ID = 'EventSource';
+export const EVENT_SINK_CATALOG_TYPE_ID = 'EventSink';
