@@ -88,6 +88,7 @@ export interface EditDeploymentFormData extends TriggersAndImageStreamFormData {
   imagePullSecret?: string;
   paused?: boolean;
   replicas?: number;
+  formType?: string;
 }
 
 export interface EditDeploymentData {

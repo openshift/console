@@ -80,7 +80,7 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
     setFieldValue('formData.resourceVersion', resource.metadata.resourceVersion);
     setFieldValue('yamlData', safeJSToYAML(resource, 'yamlData', { skipInvalid: true }));
     setFieldValue('formReloadCount', formReloadCount + 1);
-  }, [editorType, resource, setErrors, setFieldValue, setStatus, formReloadCount]);
+  }, [setStatus, setErrors, editorType, setFieldValue, resource, formReloadCount]);
 
   return (
     <FlexForm onSubmit={handleSubmit}>
