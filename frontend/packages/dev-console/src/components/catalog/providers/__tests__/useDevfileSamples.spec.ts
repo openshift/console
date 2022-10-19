@@ -1,18 +1,27 @@
 import { act } from 'react-dom/test-utils';
 import { coFetchJSON } from '@console/internal/co-fetch';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
 import { DevfileSample } from '../../../import/devfile/devfile-types';
 import useDevfileSamples from '../useDevfileSamples';
 import { devfileSamples, expectedCatalogItems } from './useDevfileSamples.data';
 
+const ns: string = 'test';
+
 jest.mock('@console/internal/co-fetch', () => ({
   coFetchJSON: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
+  useActiveNamespace: jest.fn(),
+}));
+
 const getMock = (coFetchJSON as unknown) as jest.Mock;
+const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
 
 beforeEach(() => {
   jest.resetAllMocks();
+  useActiveNamespaceMock.mockReturnValue([ns]);
 });
 
 describe('useDevfileSamples:', () => {
