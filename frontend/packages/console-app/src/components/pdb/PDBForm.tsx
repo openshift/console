@@ -201,13 +201,13 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
               <SplitItem isFilled>
                 <TextInput
                   type="text"
-                  aria-label={t('console-app~minAvailable')}
+                  aria-label={t('console-app~Availability requirement value')}
                   onChange={handleAvailabilityRequirementValueChange}
                   value={
                     formValues?.minAvailable?.toString() || formValues?.maxUnavailable?.toString()
                   }
                   placeholder={t('console-app~Value (% or number)')}
-                  name="minAvailable"
+                  name="availability requirement value"
                   isDisabled={isDisabled}
                   validated={
                     formValues.maxUnavailable === '0'
