@@ -27,8 +27,8 @@ type DevfileResources struct {
 	BuildResource buildv1.BuildConfig `json:"buildResource"`
 	// This can be enhanced to include Deploy Resource Type that includes all possible types of deployment objects(eg deployment, deploymentConfig, helmChart, etc.)
 	DeployResource appsv1.Deployment `json:"deployResource"`
-	Service        *corev1.Service   `json:"service"`
-	Route          *routev1.Route    `json:"route"`
+	Service        *corev1.Service   `json:"service,omitempty"`
+	Route          *routev1.Route    `json:"route,omitempty"`
 }
 
 // GitData is the git-related information
