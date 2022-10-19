@@ -309,6 +309,10 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         const isEnabled = q.get('isEnabled');
         const query = q.get('query');
         const text = _.trim(q.get('text'));
+        console.log("JZ Hello from REducer RunQueries2 isEnabled %s, query %s, text %s", isEnabled, query, text)
+        console.log("JZ Hello from REducer RunQueries2 isEnabled %s, query %s, text %s", isEnabled, query, text)
+
+
         return isEnabled && query !== text ? q.merge({ query: text, series: undefined }) : q;
       });
 

@@ -173,22 +173,25 @@ const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
   const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ observe }: RootState) => {
     const disabledSeries = observe.getIn(['queryBrowser2', 'queries2', id, 'disabledSeries']);
     if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
+      console.log("JZ isSeriesEmpty : " + false )
       return [null, true, false];
     }
 
     const series = observe.getIn(['queryBrowser2', 'queries2', id, 'series']);
     if (_.isEmpty(series)) {
+      console.log("JZ isSeriesEmpty : " + true )
       return [null, false, true];
     }
 
-    // JZ LEFT OFF HERE Oct 18 7pm
-    // .take() might be the issue here 
     const colorOffset = observe
       .getIn(['queryBrowser2', 'queries2'])
       .take(id)
       .filter((q) => q.get('isEnabled'))
       .reduce((sum, q) => sum + _.size(q.get('series')), 0);
     const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
+
+    console.log("JZ colorIndex is (colorOffset + seriesIndex) % colors.length : " + (colorOffset + seriesIndex) % colors.length)
+
     return [(colorOffset + seriesIndex) % colors.length, false, false];
   });
 
@@ -206,6 +209,7 @@ const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
 
   return (
     <div className="query-browser__series-btn-wrap">
+      <h1> hellow </h1>
       <Button
         aria-label={title}
         className={classNames('query-browser__series-btn', {
