@@ -40,10 +40,9 @@ import (
 )
 
 const (
-	HTTPRequestTimeout    = 30 * time.Second // HTTPRequestTimeout configures timeout of all HTTP requests
-	ResponseHeaderTimeout = 30 * time.Second // ResponseHeaderTimeout is the timeout to retrieve the server's response headers
-	ModeReadWriteFile     = 0600             // default Permission for a file
-	CredentialPrefix      = "odo-"           // CredentialPrefix is the prefix of the credential that uses to access secure registry
+	HTTPRequestResponseTimeout = 30 * time.Second // HTTPRequestTimeout configures timeout of all HTTP requests
+	ModeReadWriteFile          = 0600             // default Permission for a file
+	CredentialPrefix           = "odo-"           // CredentialPrefix is the prefix of the credential that uses to access secure registry
 )
 
 // httpCacheDir determines directory where odo will cache HTTP respones
@@ -70,8 +69,9 @@ type ResourceRequirementInfo struct {
 
 // HTTPRequestParams holds parameters of forming http request
 type HTTPRequestParams struct {
-	URL   string
-	Token string
+	URL     string
+	Token   string
+	Timeout *int
 }
 
 // DownloadParams holds parameters of forming file download request
@@ -723,11 +723,26 @@ func HTTPGetRequest(request HTTPRequestParams, cacheFor int) ([]byte, error) {
 		req.Header.Add("Authorization", bearer)
 	}
 
+	overriddenTimeout := HTTPRequestResponseTimeout
+	timeout := request.Timeout
+	if timeout != nil {
+		//if value is invalid, the default will be used
+		if *timeout > 0 {
+			//convert timeout to seconds
+			overriddenTimeout = time.Duration(*timeout) * time.Second
+			klog.V(4).Infof("HTTP request and response timeout overridden value is %v ", overriddenTimeout)
+		} else {
+			klog.V(4).Infof("Invalid httpTimeout is passed in, using default value")
+		}
+
+	}
+
 	httpClient := &http.Client{
 		Transport: &http.Transport{
-			ResponseHeaderTimeout: ResponseHeaderTimeout,
+			Proxy:                 http.ProxyFromEnvironment,
+			ResponseHeaderTimeout: overriddenTimeout,
 		},
-		Timeout: HTTPRequestTimeout,
+		Timeout: overriddenTimeout,
 	}
 
 	klog.V(4).Infof("HTTPGetRequest: %s", req.URL.String())
@@ -1025,8 +1040,8 @@ func DownloadFile(params DownloadParams) error {
 // DownloadFileInMemory uses the url to download the file and return bytes
 func DownloadFileInMemory(url string) ([]byte, error) {
 	var httpClient = &http.Client{Transport: &http.Transport{
-		ResponseHeaderTimeout: ResponseHeaderTimeout,
-	}, Timeout: HTTPRequestTimeout}
+		ResponseHeaderTimeout: HTTPRequestResponseTimeout,
+	}, Timeout: HTTPRequestResponseTimeout}
 	resp, err := httpClient.Get(url)
 	if err != nil {
 		return nil, err
