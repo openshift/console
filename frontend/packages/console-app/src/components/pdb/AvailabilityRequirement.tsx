@@ -12,7 +12,7 @@ const AvailabilityRequirement: React.FC<AvailabilityRequirementProps> = ({ pdb, 
             minAvailable: pdb.spec.minAvailable,
             count: replicas,
           })
-        : t('public~Max unavailable {{maxUnavailable}} of {{count}} pod', {
+        : t('console-app~Max unavailable {{maxUnavailable}} of {{count}} pod', {
             maxUnavailable: pdb?.spec?.maxUnavailable,
             count: replicas,
           })}
