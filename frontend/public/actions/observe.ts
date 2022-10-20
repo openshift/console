@@ -18,6 +18,7 @@ export enum ActionType {
   QueryBrowserDuplicateQuery2 = 'queryBrowserDuplicateQuery2',
   QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
   QueryBrowserDeleteAllSeries = 'queryBrowserDeleteAllSeries',
+  QueryBrowserDeleteAllSeries2 = 'queryBrowserDeleteAllSeries2',
   QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
   QueryBrowserDeleteQuery2 = 'queryBrowserDeleteQuery2',
   QueryBrowserDismissNamespaceAlert = 'queryBrowserDismissNamespaceAlert',
@@ -110,6 +111,8 @@ export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowser
 
 export const queryBrowserDeleteAllSeries = () => action(ActionType.QueryBrowserDeleteAllSeries);
 
+export const queryBrowserDeleteAllSeries2 = () => action(ActionType.QueryBrowserDeleteAllSeries2);
+
 export const queryBrowserDismissNamespaceAlert = () =>
   action(ActionType.QueryBrowserDismissNamespaceAlert);
 
@@ -173,6 +176,7 @@ const actions = {
   queryBrowserDuplicateQuery2,
   queryBrowserDeleteAllQueries,
   queryBrowserDeleteAllSeries,
+  queryBrowserDeleteAllSeries2,
   queryBrowserDeleteQuery,
   queryBrowserDeleteQuery2,
   queryBrowserDismissNamespaceAlert,

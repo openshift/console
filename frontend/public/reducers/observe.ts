@@ -252,6 +252,13 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       );
     }
 
+    case ActionType.QueryBrowserDeleteAllSeries2: {
+      return state.setIn(
+        ['queryBrowser2', 'queries2'],
+        state.getIn(['queryBrowser2', 'queries2']).map((q) => q.set('series', undefined)),
+      );
+    }
+
     // TODO: delete 
     case ActionType.QueryBrowserDeleteQuery: {
       let queries = state.getIn(['queryBrowser', 'queries']).delete(action.payload.index);

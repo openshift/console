@@ -167,6 +167,7 @@ const ExpandButton = ({ isExpanded, onClick }) => {
   );
 };
 
+// TODO: Resolve series:undefined -- in query-browser.tsx there is a dispatch(queryBrowswerPatch(i, series:<Prometheus_data>) that needs to be udpated)
 const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
   const { t } = useTranslation();
 
@@ -209,7 +210,6 @@ const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
 
   return (
     <div className="query-browser__series-btn-wrap">
-      <h1> hellow </h1>
       <Button
         aria-label={title}
         className={classNames('query-browser__series-btn', {
@@ -463,6 +463,8 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
     }
   };
 
+  console.log("JZ Prometheus data: " +  JSON.stringify(data))
+
   usePoll(tick, pollInterval, namespace, query, span, lastRequestTime);
 
   React.useEffect(() => {
@@ -510,7 +512,11 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
 
   const transforms = [sortable, wrappable];
 
-  // JZ LEFT OFF HERE Oct 18 7pm
+  // JZ LEFT OFF HERE Oct 19 5:30pm -- Query{...series:undefined} -- Prometheus data is not getting properly set 
+
+  const dispatch = useDispatch();
+  dispatch(queryBrowserPatchQuery2(id, {series: data.result}))
+
   const buttonCell = (labels) => ({ title: <SeriesButton2 id={id} labels={labels} /> });
 
   let columns, rows;
@@ -888,13 +894,14 @@ const Query2 : React.FC<{ id: string }> = ({ id }) => {
         <div className="dropdown-kebab-pf">
           <QueryKebab2 id={id} />
         </div>
+        </div>
+
         <QueryTable2 id={id} />
       </div>
-    </div>
   );
   
 
-};
+}
 
 const Query: React.FC<{ index: number }> = ({ index }) => {
   const { t } = useTranslation();
@@ -1006,6 +1013,9 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
       );
     }
   }, [dispatch]);
+
+  // TODO: DON'T Change the query-browser NOTE -- 10-20-11:08
+  // Loop through the QueryMAP and match the query-string to get the Object ID 
 
   /* eslint-disable react-hooks/exhaustive-deps */
   // Use React.useMemo() to prevent these two arrays being recreated on every render, which would
