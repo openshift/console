@@ -19,6 +19,7 @@ describe('Catalog Controller', () => {
       type: 'HelmChart',
       title: null,
       description: null,
+      typesErrorMap: {},
       catalogExtensions: [
         {
           pluginID: '@console/helm-plugin',
@@ -69,6 +70,7 @@ describe('Catalog Controller', () => {
       type: 'CatalogItems',
       title: null,
       description: null,
+      typesErrorMap: {},
       catalogExtensions: [
         {
           pluginID: 'pluginId',
@@ -118,6 +120,7 @@ describe('Catalog Controller', () => {
       type: 'HelmChart',
       title: 'Default title',
       description: 'Default description',
+      typesErrorMap: {},
       catalogExtensions: [
         {
           pluginID: '@console/helm-plugin',

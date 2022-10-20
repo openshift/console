@@ -53,6 +53,11 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
           const yaml = await res.text();
           const json = safeLoad(yaml);
           setHelmCharts(json.entries);
+          if (json.annotations?.['console-warning']) {
+            setLoadedError(new Error(json.annotations?.['console-warning']));
+          } else {
+            setLoadedError(null);
+          }
         }
       })
       .catch((err) => {

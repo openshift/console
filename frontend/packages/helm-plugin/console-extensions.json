@@ -183,7 +183,8 @@
       "filters": [
         {
           "label": "%helm-plugin~Chart Repositories%",
-          "attribute": "chartRepositoryTitle"
+          "attribute": "chartRepositoryTitle",
+          "showAlert": "true"
         },
         {
           "label": "%helm-plugin~Source%",

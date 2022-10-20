@@ -7,6 +7,7 @@ export const loadingCatalogService: CatalogService = {
   loaded: false,
   loadError: null,
   searchCatalog: () => [],
+  typesErrorMap: {},
   catalogExtensions: [
     {
       type: 'console.catalog/item-type',
@@ -158,6 +159,7 @@ export const loadingCatalogService: CatalogService = {
 export const loadedCatalogService: CatalogService = {
   type: '',
   searchCatalog: () => [],
+  typesErrorMap: {},
   items: [
     {
       uid: 'Sample-7755a465-a923-4393-a102-9876c110dbb4',

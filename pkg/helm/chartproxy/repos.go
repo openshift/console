@@ -41,7 +41,7 @@ var (
 const (
 	configNamespace = "openshift-config"
 	warning         = "console-warning"
-	ErrorMessage    = "The following repositories seem to be invalid or unreachable: "
+	ErrorMessage    = "The following Helm Chart Repositories are unreachable or invalid: "
 )
 
 type helmRepo struct {

@@ -48,6 +48,7 @@ type CatalogViewProps = {
   filterGroups: string[];
   filterGroupMap: CatalogFilterGroupMap;
   groupings: CatalogStringMap;
+  loadError: any;
   renderTile: (item: CatalogItem) => React.ReactNode;
   hideSidebar?: boolean;
 };
@@ -63,6 +64,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   groupings,
   renderTile,
   hideSidebar,
+  loadError,
 }) => {
   const { t } = useTranslation();
   const queryParams = useQueryParams();
@@ -242,6 +244,8 @@ const CatalogView: React.FC<CatalogViewProps> = ({
           )}
           {showFilters && (
             <CatalogFilters
+              catalogType={catalogType}
+              catalogLoadError={loadError}
               activeFilters={activeFilters}
               filterGroupCounts={filterGroupCounts}
               filterGroupMap={filterGroupMap}

@@ -1,14 +1,14 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Alert, Button } from '@patternfly/react-core';
+import { Alert, AlertGroup, Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import {
   IncompleteDataError,
   TimeoutError,
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
-import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
+import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 
 export const Box: React.FC<BoxProps> = ({ children, className }) => (
   <div className={classNames('cos-status-box', className)}>{children}</div>
@@ -173,19 +173,29 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
     if (loadError instanceof IncompleteDataError && !_.isEmpty(data)) {
       return (
         <Data data={data} {...dataProps}>
-          <Alert
-            variant="info"
-            isInline
-            title={t(
-              'public~{{labels}} content is not available in the catalog at this time due to loading failures.',
-              {
-                labels: new Intl.ListFormat(getLastLanguage() || 'en', {
-                  style: 'long',
-                  type: 'conjunction',
-                }).format(loadError.labels),
-              },
+          <AlertGroup>
+            {loadError.labels?.length > 0 && (
+              <Alert
+                variant="warning"
+                isInline
+                title={t(
+                  'public~No {{labels}} are available at this time due to loading failures.',
+                  {
+                    labels: new Intl.ListFormat(getLastLanguage() || 'en', {
+                      style: 'long',
+                      type: 'conjunction',
+                    }).format(loadError.labels),
+                  },
+                )}
+              />
             )}
-          />
+            {!_.isEmpty(loadError.err) &&
+              Object.values(loadError.err).map(
+                (error) =>
+                  error?.message && <Alert variant="warning" isInline title={error.message} />,
+              )}
+          </AlertGroup>
+
           {props.children}
         </Data>
       );

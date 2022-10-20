@@ -6,8 +6,9 @@ type CatalogExtensionHookResolverProps<T> = {
   id: string;
   useValue: ExtensionHook<T>;
   options: CatalogExtensionHookOptions;
-  onValueResolved: (value: T, id: string) => void;
-  onValueError?: (error: any, id: string) => void;
+  onValueResolved: (id: string, value: T) => void;
+  onValueError?: (id: string, error: any) => void;
+  onCatalogTypeError?: (id: string, error: any) => void;
 };
 
 const CatalogExtensionHookResolver = function<T>({
@@ -16,20 +17,23 @@ const CatalogExtensionHookResolver = function<T>({
   options,
   onValueResolved,
   onValueError,
+  onCatalogTypeError,
 }: CatalogExtensionHookResolverProps<T>) {
   const [value, loaded, loadError] = useValue(options);
 
   React.useEffect(() => {
-    if (loaded) onValueResolved(value, id);
+    if (loaded) onValueResolved(id, value);
     // unnecessary to run effect again if the onValueResolved callback changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, loaded, value]);
 
   React.useEffect(() => {
-    if (loadError && onValueError) onValueError(loadError, id);
+    if (Array.isArray(value) && value?.length > 0 && onCatalogTypeError)
+      onCatalogTypeError(id, loadError);
+    else if (onValueError) onValueError(id, loadError);
     // unnecessary to run effect again if the onValueError callback changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, loadError]);
+  }, [id, loadError, value]);
 
   return null;
 };

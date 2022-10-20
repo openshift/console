@@ -48,6 +48,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   description: defaultDescription,
   hideSidebar,
   categories,
+  typesErrorMap,
 }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
@@ -128,15 +129,21 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 
   const catalogTypes: CatalogType[] = React.useMemo(() => {
     const types = catalogExtensions
-      .map((extension) => ({
+      .map<CatalogType>((extension) => ({
         label: extension.properties.title,
         value: extension.properties.type,
         description: extension.properties.typeDescription,
+        error:
+          typesErrorMap[
+            Object.keys(typesErrorMap).find(
+              (catalogType) => catalogType === extension.properties.title,
+            )
+          ],
       }))
       .filter((extension) => !disabledSubCatalogs?.includes(extension.value));
 
     return _.sortBy(types, ({ label }) => label.toLowerCase());
-  }, [catalogExtensions, disabledSubCatalogs]);
+  }, [catalogExtensions, disabledSubCatalogs, typesErrorMap]);
 
   const catalogItems = React.useMemo(() => (type ? itemsMap[type] : items), [
     items,
@@ -209,6 +216,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
                 groupings={groupings}
                 renderTile={renderTile}
                 hideSidebar={hideSidebar}
+                loadError={loadError}
               />
               <CatalogDetailsModal item={selectedItem} onClose={closeDetailsPanel} />
             </StatusBox>

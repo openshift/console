@@ -122,20 +122,25 @@ describe('StatusBox', () => {
   });
 
   it('should render a patternfly alert together with its children when an IncompleteDataError occured', () => {
-    const { getByText } = render(
+    const { findByLabelText } = render(
       <StatusBox
         loaded
         data={[{}]}
-        loadError={new IncompleteDataError(['Test', 'RedHat', 'Hello World'])}
+        loadError={
+          new IncompleteDataError(['Test', 'RedHat', 'Hello World'], {
+            error: Error('this is another error'),
+          })
+        }
       >
         my-children
       </StatusBox>,
     );
 
-    getByText(
+    findByLabelText(
       'Test, RedHat, and Hello World content is not available in the catalog at this time due to loading failures.',
     );
-    getByText('my-children');
+    findByLabelText('this is another error');
+    findByLabelText('my-children');
   });
 
   it('should render an info together with its children when loaded and a TimeOutError ocurred', () => {

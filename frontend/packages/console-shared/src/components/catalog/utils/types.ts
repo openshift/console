@@ -41,6 +41,7 @@ export type CatalogType = {
   label: string;
   value: string;
   description: string;
+  error: Error;
 };
 
 export type CatalogCategory = {
@@ -64,4 +65,7 @@ export type CatalogService = {
   loadError: any;
   searchCatalog: (query: string) => CatalogItem[];
   catalogExtensions: ResolvedExtension<CatalogItemType>[];
+  typesErrorMap: {
+    [type: string]: Error;
+  };
 };

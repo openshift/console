@@ -179,6 +179,7 @@ export type CatalogItemAttribute = {
   label: string;
   attribute: string;
   description?: string;
+  showAlert?: boolean;
 };
 
 export type CatalogItemBadge = {
