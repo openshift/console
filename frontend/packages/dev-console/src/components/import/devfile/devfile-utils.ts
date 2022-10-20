@@ -1,15 +1,17 @@
+import i18n from 'i18next';
 import * as _ from 'lodash';
 import { GitProvider, getGitService } from '@console/git-service/src';
 import { coFetch } from '@console/internal/co-fetch';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { safeYAMLToJS, safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { DevfileComponent } from './devfile-types';
+import { Devfile, DevfileComponent } from './devfile-types';
 
 export const suffixSlash = (val: string) => (val.endsWith('/') ? val : `${val}/`);
 
 export const prefixDotSlash = (val) => (val.startsWith('/') ? `.${val}` : val);
 
 export const getResourceContent = async (
+  componentName: string,
   resourceURI: string,
   url: string,
   ref: string,
@@ -18,14 +20,27 @@ export const getResourceContent = async (
   secretResource?: K8sResourceKind,
 ): Promise<string> => {
   if (resourceURI.startsWith('http://') || resourceURI.startsWith('https://')) {
-    const response = await coFetch(resourceURI);
-    return response.text();
+    try {
+      const response = await coFetch(resourceURI);
+      return response.text();
+    } catch (error) {
+      if (!error.message) {
+        error.message = i18n.t(
+          'devconsole~Could not fetch kubernetes resource "{{resourceURI}}" for component "{{componentName}}".',
+          { resourceURI, componentName },
+        );
+      }
+      throw error;
+    }
   }
 
   const gitService = getGitService(url, type, ref, dir, secretResource);
   if (!gitService) {
     throw new Error(
-      `Could not fetch kubernetes resource from ${resourceURI}. Git provider ${type} is not supported.`,
+      i18n.t(
+        'devconsole~Could not fetch kubernetes resource "{{resourceURI}}" for component "{{componentName}}". Git provider is not supported.',
+        { resourceURI, componentName },
+      ),
     );
   }
 
@@ -36,7 +51,18 @@ export const getResourceContent = async (
     const contextDir = suffixSlash(dir);
     resourcePath = `${contextDir}${resourceURI}`;
   }
-  return gitService.getFileContent(resourcePath);
+
+  const resourceContent = await gitService.getFileContent(resourcePath);
+  if (!resourceContent) {
+    throw new Error(
+      i18n.t(
+        'devconsole~Could not fetch kubernetes resource "{{resourcePath}}" for component "{{componentName}}" from Git repository {{url}}.',
+        { resourcePath, componentName, url },
+      ),
+    );
+  }
+
+  return resourceContent;
 };
 
 export const getParsedComponent = async (
@@ -51,6 +77,7 @@ export const getParsedComponent = async (
   const component = currentComponent;
   if (component.kubernetes && component.kubernetes.uri) {
     resourceContent = await getResourceContent(
+      component.name,
       component.kubernetes.uri,
       url,
       ref,
@@ -63,6 +90,7 @@ export const getParsedComponent = async (
     }
   } else if (component.openshift && component.openshift.uri) {
     resourceContent = await getResourceContent(
+      component.name,
       component.openshift.uri,
       url,
       ref,
@@ -85,7 +113,7 @@ export const convertURItoInlineYAML = async (
   type: GitProvider,
   secretResource?: K8sResourceKind,
 ) => {
-  const devfileJSON = safeYAMLToJS(devfileContent);
+  const devfileJSON = safeYAMLToJS(devfileContent) as Devfile;
   for (let component of devfileJSON.components) {
     // eslint-disable-next-line no-await-in-loop
     component = await getParsedComponent(component, url, ref, dir, type, secretResource);

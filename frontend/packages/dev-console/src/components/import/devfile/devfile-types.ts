@@ -21,3 +21,8 @@ export interface DevfileComponent {
   openshift?: { uri?: string; inlined?: string; [key: string]: any };
   [key: string]: any;
 }
+
+export interface Devfile {
+  components?: DevfileComponent[];
+  [key: string]: any;
+}

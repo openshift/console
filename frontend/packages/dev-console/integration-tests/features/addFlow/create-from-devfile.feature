@@ -25,10 +25,30 @@ Feature: Create Application from Devfile
         Scenario: Create the workload from dev file: A-04-TC02
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/nodeshift-starters/devfile-sample"
-              And user enters workload name as "node-bulletin-board"
+              And user enters workload name as "node-example"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And user is able to see workload "node-bulletin-board" in topology page
+              And user is able to see workload "node-example" in topology page
+
+        
+        @regression
+        Scenario: No service is shown in the node sidebar if it is not defined in the devfile : A-04-TC03
+            Given user has created workload "node-example" with resource type "Deployment"
+              And user is at Topology page
+             When user clicks on workload "node-example"
+             Then user can see sidebar opens with Resources tab selected by default
+              And user can see under Services section "No Services found for this resource."
+
+
+        @regression
+        Scenario: No route is shown in the node sidebar if it is not defined in the devfile : A-04-TC04
+            Given user has created workload "node-example" with resource type "Deployment"
+              And user is at Topology page
+             When user clicks on workload "node-example"
+             Then user can see sidebar opens with Resources tab selected by default
+              And user can see under Routes section "No Routes found for this resource."
+             
+        
 
 
         # Below scenario to be removed after the tests are are updated
@@ -42,7 +62,7 @@ Feature: Create Application from Devfile
 
 
         @regression @to-do
-        Scenario: Create the Devfiles workload from Developer Catalog: A-04-TC03
+        Scenario: Create the Devfiles workload from Developer Catalog: A-04-TC05
             Given user is at Developer Catalog page
              When user clicks on Devfiles type
               And user clicks on Basic Python card

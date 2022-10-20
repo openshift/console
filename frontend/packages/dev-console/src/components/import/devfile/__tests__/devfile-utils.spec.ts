@@ -243,6 +243,7 @@ describe('devfile-utils', () => {
   describe('getResourceContent tests', () => {
     it('should use git-service for internal URIs', async () => {
       const resourceContent = await getResourceContent(
+        'outerloop-deploy',
         'outerloop-deploy.yaml',
         git.url,
         git.ref,
@@ -255,6 +256,7 @@ describe('devfile-utils', () => {
 
     it('should use coFetch for external URIs', async () => {
       const resourceContent = await getResourceContent(
+        'outerloop-deploy',
         'https://raw.githubusercontent.com/jerolimov/devfile-sample-go-basic-remote-k8s-uri/main/outerloop-deploy.yaml',
         git.url,
         git.ref,

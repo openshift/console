@@ -30,7 +30,7 @@ Then('user will be redirected to Topology page', () => {
 
 When('user clicks on workload {string}', (workloadName: string) => {
   topologyPage.waitForLoad();
-  topologyPage.componentNode(workloadName).click({ force: true });
+  topologyPage.componentNodeClick(workloadName);
 });
 
 Then('user can see sidebar opens with Resources tab selected by default', () => {
