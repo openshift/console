@@ -121,7 +121,7 @@ const UserPreferencePage: React.FC<UserPreferencePageProps> = ({ match }) => {
       <PageLayout
         title={t('console-app~User Preferences')}
         hint={t(
-          'Set your individual preferences for the console experience. Any changes will be autosaved.',
+          'console-app~Set your individual preferences for the console experience. Any changes will be autosaved.',
         )}
       >
         {userPreferenceItemResolved ? (

@@ -29,6 +29,7 @@ import {
   Page,
   AsyncComponent,
   PageComponentProps,
+  KebabAction,
 } from '../utils';
 import {
   K8sResourceKindReference,
@@ -190,7 +191,7 @@ export type DetailsPageProps = {
   match: match<any>;
   title?: string | JSX.Element;
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
-  menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
+  menuActions?: KebabAction[] | KebabOptionsCreator;
   buttonActions?: any[];
   createRedirect?: boolean;
   customActionMenu?:

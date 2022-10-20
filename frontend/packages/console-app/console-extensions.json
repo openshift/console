@@ -218,6 +218,103 @@
       "provider": { "$codeRef": "actions.useReplicationControllerActionsProvider" }
     }
   },
+
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/cluster-configuration", "/cluster-configuration/:group"],
+      "component": { "$codeRef": "clusterConfiguration.ClusterConfigurationPage" }
+    }
+  },
+
+  {
+    "type": "console.cluster-configuration/group",
+    "properties": {
+      "id": "general",
+      "label": "%console-app~General%"
+    }
+  },
+  {
+    "type": "console.cluster-configuration/group",
+    "properties": {
+      "id": "projects",
+      "label": "%console-app~Projects%",
+      "insertAfter": "general"
+    }
+  },
+  {
+    "type": "console.cluster-configuration/group",
+    "properties": {
+      "id": "developer",
+      "label": "%console-app~Developer%",
+      "insertAfter": "projects"
+    }
+  },
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
+      "id": "console-app.customization.perspectives",
+      "groupId": "general",
+      "label": "%console-app~Perspectives%",
+      "description": "%console-app~Show or hide perspectives by enabling, disabling or adding access review checks.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "perspectiveConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        }
+      ]
+    }
+  },
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
+      "id": "console-app.quick-start.QuickStartConfiguration",
+      "label": "%console-app~Quick Starts%",
+      "groupId": "general",
+      "description": "%console-app~Configure a list of Quick Starts that are not shown to users.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "quickStartConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        },
+        {
+          "group": "console.openshift.io/v1",
+          "resource": "ConsoleQuickStart",
+          "verb": "list"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        }
+      ]
+    }
+  },
+
   {
     "type": "console.user-preference/group",
     "properties": {

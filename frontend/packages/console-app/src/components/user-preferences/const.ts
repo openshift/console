@@ -4,7 +4,8 @@ import UserPreferenceCustomField from './UserPreferenceCustomField';
 import UserPreferenceDropdownField from './UserPreferenceDropdownField';
 
 export const USER_PREFERENCES_BASE_URL = '/user-preferences';
-export const componentForFieldType = {
+
+export const componentForFieldType: Record<UserPreferenceFieldType, React.FC<{ id: string }>> = {
   [UserPreferenceFieldType.dropdown]: UserPreferenceDropdownField,
   [UserPreferenceFieldType.checkbox]: UserPreferenceCheckboxField,
   [UserPreferenceFieldType.custom]: UserPreferenceCustomField,

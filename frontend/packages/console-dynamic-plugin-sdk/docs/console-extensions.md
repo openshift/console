@@ -1218,9 +1218,9 @@ Topology relationship provider connector extension
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `id` | `string` | no | ID used to identify the user preference group. |
-| `label` | `string` | no | The label of the user preference group |
-| `insertBefore` | `string` | yes | ID of user preference group before which this group should be placed |
-| `insertAfter` | `string` | yes | ID of user preference group after which this group should be placed |
+| `label` | `string` | no | The label of the user preference group. |
+| `insertBefore` | `string` | yes | ID of user preference group before which this group should be placed. |
+| `insertAfter` | `string` | yes | ID of user preference group after which this group should be placed. |
 
 ---
 
@@ -1235,12 +1235,12 @@ Topology relationship provider connector extension
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `id` | `string` | no | ID used to identify the user preference item and referenced in insertAfter and insertBefore to define the item order. |
-| `label` | `string` | no | The label of the user preference |
+| `groupId` | `string` | no | IDs used to identify the user preference groups the item would belong to. |
+| `label` | `string` | no | The label of the user preference. |
 | `description` | `string` | no | The description of the user preference. |
 | `field` | `UserPreferenceField` | no | The input field options used to render the values to set the user preference. |
-| `groupId` | `string` | yes | IDs used to identify the user preference groups the item would belong to. |
-| `insertBefore` | `string` | yes | ID of user preference item before which this item should be placed |
-| `insertAfter` | `string` | yes | ID of user preference item after which this item should be placed |
+| `insertBefore` | `string` | yes | ID of user preference item before which this item should be placed. |
+| `insertAfter` | `string` | yes | ID of user preference item after which this item should be placed. |
 
 ---
 

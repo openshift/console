@@ -505,6 +505,7 @@
   "Select a perspective": "选择一个视角",
   "Select an option": "选择一个选项",
   "User Preferences": "用户首选项",
+  "Set your individual preferences for the console experience. Any changes will be autosaved.": "为增强控制台体验设置您的个人首选项。任何更改都将自动保存。",
   "Only {{volumeMode}} volume mode is available for {{storageClass}} with {{accessMode}} access mode": "使用 {{accessMode}} 访问模式的 {{storageClass}} 只有 {{volumeMode}} 卷模式可用",
   "VolumeSnapshotClass with same provisioner as claim": "带有与声明相同的置备程序的卷快照类",
   "Select volume snapshot class": "选择卷快照类",

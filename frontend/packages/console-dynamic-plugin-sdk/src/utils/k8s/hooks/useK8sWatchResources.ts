@@ -33,7 +33,7 @@ import { usePrevious } from './usePrevious';
         'pod': {...}
         ...
       }
- *   const {deployment, pod}  = UseK8sWatchResources(watchResources)
+ *   const {deployment, pod} = useK8sWatchResources(watchResources)
  *   return ...
  * }
  * ```

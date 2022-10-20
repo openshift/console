@@ -48,11 +48,11 @@ export type UserPreferenceGroup = ExtensionDeclaration<
   {
     /** ID used to identify the user preference group. */
     id: string;
-    /** The label of the user preference group */
+    /** The label of the user preference group. */
     label: string;
-    /** ID of user preference group before which this group should be placed */
+    /** ID of user preference group before which this group should be placed. */
     insertBefore?: string;
-    /** ID of user preference group after which this group should be placed */
+    /** ID of user preference group after which this group should be placed. */
     insertAfter?: string;
   }
 >;
@@ -63,26 +63,26 @@ export type UserPreferenceItem = ExtensionDeclaration<
     /** ID used to identify the user preference item and referenced in insertAfter and insertBefore to define the item order. */
     id: string;
     /** IDs used to identify the user preference groups the item would belong to. */
-    groupId?: string;
-    /** The label of the user preference */
+    groupId: string;
+    /** The label of the user preference. */
     label: string;
     /** The description of the user preference. */
     description: string;
     /** The input field options used to render the values to set the user preference. */
     field: UserPreferenceField;
-    /** ID of user preference item before which this item should be placed */
+    /** ID of user preference item before which this item should be placed. */
     insertBefore?: string;
-    /** ID of user preference item after which this item should be placed */
+    /** ID of user preference item after which this item should be placed. */
     insertAfter?: string;
   }
 >;
 
 // Type guards
 
-export const isUserPreferenceItem = (e: Extension): e is UserPreferenceItem => {
-  return e.type === 'console.user-preference/item';
-};
-
 export const isUserPreferenceGroup = (e: Extension): e is UserPreferenceGroup => {
   return e.type === 'console.user-preference/group';
+};
+
+export const isUserPreferenceItem = (e: Extension): e is UserPreferenceItem => {
+  return e.type === 'console.user-preference/item';
 };

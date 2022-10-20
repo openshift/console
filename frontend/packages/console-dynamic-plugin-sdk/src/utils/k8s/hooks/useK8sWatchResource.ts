@@ -23,7 +23,7 @@ import { useModelsLoaded } from './useModelsLoaded';
  *   const watchRes = {
         ...
       }
- *   const [data, loaded, error] = UseK8sWatchResource(watchRes)
+ *   const [data, loaded, error] = useK8sWatchResource(watchRes)
  *   return ...
  * }
  * ```
