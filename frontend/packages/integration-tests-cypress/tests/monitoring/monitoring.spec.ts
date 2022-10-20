@@ -85,45 +85,47 @@ describe('Monitoring: Alerts', () => {
     // After creating the Silence, should be redirected to its details page
     detailsPage.clickPageActionButton('Silence alert');
     // launches page form
-    cy.byTestID('start-immediately').should('be.checked');
-    cy.byTestID('from').should('have.value', 'Now');
-    cy.byTestID('for').should('contain', '2h');
-    cy.byTestID('until').should('have.value', '2h from now');
+    cy.byTestID('silence-start-immediately').should('be.checked');
+    cy.byTestID('silence-from').should('have.value', 'Now');
+    cy.byTestID('silence-for').should('contain', '2h');
+    cy.byTestID('silence-until').should('have.value', '2h from now');
     // Change duration
-    cy.byTestID('for')
-      .click()
+    cy.byTestID('silence-for-toggle').click();
+    cy.byTestID('silence-for').should('contain', '1h');
+    cy.byTestID('silence-for')
       .contains(/^1h$/)
       .click();
-    cy.byTestID('until').should('have.value', '1h from now');
+    cy.byTestID('silence-until').should('have.value', '1h from now');
     // Change to not start now
-    cy.byTestID('start-immediately').click();
-    cy.byTestID('start-immediately').should('not.be.checked');
+    cy.byTestID('silence-start-immediately').click();
+    cy.byTestID('silence-start-immediately').should('not.be.checked');
     // Allow for some difference in times
-    cy.byTestID('from').should('not.have.value', 'Now');
-    cy.byTestID('from').then(($fromElement) => {
+    cy.byTestID('silence-from').should('not.have.value', 'Now');
+    cy.byTestID('silence-from').then(($fromElement) => {
       const fromText = $fromElement[0].getAttribute('value');
       expect(Date.parse(fromText) - Date.now()).toBeLessThan(10000);
       // eslint-disable-next-line promise/no-nesting
-      cy.byTestID('until').then(($untilElement) => {
+      cy.byTestID('silence-until').then(($untilElement) => {
         expect(Date.parse($untilElement[0].getAttribute('value')) - Date.parse(fromText)).toEqual(
           60 * 60 * 1000,
         );
       });
     });
     // Invalid start time
-    cy.byTestID('from').type('abc');
-    cy.byTestID('until').should('have.value', '-');
+    cy.byTestID('silence-from').type('abc');
+    cy.byTestID('silence-until').should('have.value', '-');
     // Change to back to start now
-    cy.byTestID('start-immediately').click();
-    cy.byTestID('start-immediately').should('be.checked');
-    cy.byTestID('until').should('have.value', '1h from now');
+    cy.byTestID('silence-start-immediately').click();
+    cy.byTestID('silence-start-immediately').should('be.checked');
+    cy.byTestID('silence-until').should('have.value', '1h from now');
     // Change duration back again
-    cy.byTestID('for')
-      .click()
+    cy.byTestID('silence-for-toggle').click();
+    cy.byTestID('silence-for').should('contain', '2h');
+    cy.byTestID('silence-for')
       .contains(/^2h$/)
       .click();
-    cy.byTestID('until').should('have.value', '2h from now');
-    // add comment and submit
+    cy.byTestID('silence-until').should('have.value', '2h from now');
+    // Add comment and submit
     cy.byTestID('silence-comment').type('test comment');
     cy.testA11y('Silence alert form');
     cy.get(submitButton).click();
@@ -147,13 +149,17 @@ describe('Monitoring: Alerts', () => {
     shouldBeWatchdogSilencePage();
 
     cy.log('expires the Silence');
-    detailsPage.clickPageActionFromDropdown('Expire silence');
+    cy.byTestID('silence-actions-toggle').click();
+    cy.byTestID('silence-actions').should('contain', 'Expire silence');
+    cy.byTestID('silence-actions')
+      .contains('Expire silence')
+      .click();
     modal.shouldBeOpened();
     cy.testA11y('Expire silence modal');
     modal.submit();
     modal.shouldBeClosed();
     cy.get(errorMessage).should('not.exist');
-    // wait for expiredSilenceIcon to exist
+    // Wait for expiredSilenceIcon to exist
     cy.byLegacyTestID('ban-icon').should('exist');
   });
 });
