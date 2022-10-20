@@ -111,7 +111,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
     disabled: accessReviewDisabled,
   }),
   Samples: (namespace, application, contextSource, path, accessReviewDisabled) => ({
-    id: 'import-form-samples',
+    id: 'import-from-samples',
     label: i18next.t('devconsole~Samples'),
     icon: <LaptopCodeIcon />,
     cta: {

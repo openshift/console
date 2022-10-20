@@ -2,12 +2,17 @@ import * as React from 'react';
 import { GraphElement, isGraph, Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
+import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { SetFeatureFlag, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { isCatalogTypeEnabled, useActiveNamespace } from '@console/shared';
 import { getResource } from '@console/topology/src/utils';
-import { FLAG_HELM_CHARTS_CATALOG_TYPE, HELM_CHART_CATALOG_TYPE_ID } from '../const';
+import {
+  FLAG_HELM_CHARTS_CATALOG_TYPE,
+  HELM_CHART_ACTION_ID,
+  HELM_CHART_CATALOG_TYPE_ID,
+} from '../const';
 import { TYPE_HELM_RELEASE } from '../topology/components/const';
 import { AddHelmChartAction } from './add-resources';
 import {
@@ -67,13 +72,14 @@ export const useTopologyActionProvider = ({
   connectorSource?: Node;
 }) => {
   const [namespace] = useActiveNamespace();
-
+  const disabledAddActions = getDisabledAddActions();
+  const isHelmDisabled = disabledAddActions?.includes(HELM_CHART_ACTION_ID);
   return React.useMemo(() => {
-    if (isGraph(element) && !connectorSource) {
+    if (isGraph(element) && !connectorSource && !isHelmDisabled) {
       return [[AddHelmChartAction(namespace, 'add-to-project', true)], true, undefined];
     }
     return [[], true, undefined];
-  }, [connectorSource, element, namespace]);
+  }, [connectorSource, element, namespace, isHelmDisabled]);
 };
 
 export const useHelmChartRepositoryActions = (resource: K8sResourceKind) => {
