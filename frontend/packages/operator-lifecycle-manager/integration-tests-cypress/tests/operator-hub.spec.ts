@@ -61,7 +61,7 @@ describe('Interacting with OperatorHub', () => {
   });
 
   it('filters Operators by name', () => {
-    const operatorName = 'Couchbase Operator';
+    const operatorName = 'Datadog Operator';
     cy.byTestID('search-operatorhub').type(operatorName);
     cy.get('.catalog-tile-pf')
       .its('length')
