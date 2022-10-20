@@ -22,6 +22,129 @@
       "usePerspectiveDetection": { "$codeRef": "perspective.usePerspectiveDetection" }
     }
   },
+
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
+      "id": "dev-console.project-access.ProjectAccessRolesConfiguration",
+      "groupId": "projects",
+      "label": "%devconsole~Project access Cluster Roles%",
+      "description": "%devconsole~Define a list of ClusterRole names that are assignable to users on the project access page.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "projectAccess.ProjectAccessRolesConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        },
+        {
+          "resource": "clusterroles",
+          "verb": "list"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        }
+      ]
+    }
+  },
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
+      "id": "dev-console.AddPageConfiguration",
+      "groupId": "developer",
+      "label": "%devconsole~Add page actions%",
+      "description": "%devconsole~A list of actions that are not shown to users on the add page.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "add.AddPageConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        }
+      ]
+    }
+  },
+  /*
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
+      "id": "dev-console.CatalogCategoriesConfiguration",
+      "groupId": "developer",
+      "label": "%devconsole~Developer Catalog Types%",
+      "description": "%devconsole~Categories which are shown in the developer catalog.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "catalog.CatalogCategoriesConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        }
+      ]
+    }
+  },
+  */
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
+      "id": "dev-console.CatalogTypesConfiguration",
+      "groupId": "developer",
+      "label": "%devconsole~Developer Catalog Types%",
+      "description": "%devconsole~A list of developer catalog types that are not shown to users.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "catalog.CatalogTypesConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        }
+      ]
+    }
+  },
   {
     "type": "console.flag/hookProvider",
     "properties": {

@@ -151,11 +151,11 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
     }
   }, [perspectiveExtensions, handleResults]);
   const perspectives = React.useMemo(() => {
-    const filteredExtensions = perspectiveExtensions.filter((e) => results[e.properties.id]);
-
     if (!window.SERVER_FLAGS.perspectives) {
       return perspectiveExtensions;
     }
+
+    const filteredExtensions = perspectiveExtensions.filter((e) => results[e.properties.id]);
 
     return filteredExtensions.length === 0 &&
       Object.keys(results).length === perspectiveExtensions.length
