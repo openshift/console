@@ -1,5 +1,6 @@
 export * from './add-actions';
 export * from './catalog';
+export * from './cluster-configuration';
 export * from './cluster-settings';
 export * from './context-providers';
 export * from './dashboards';

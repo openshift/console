@@ -505,6 +505,7 @@
   "Select a perspective": "화면 선택",
   "Select an option": "옵션 선택",
   "User Preferences": "사용자 기본 설정",
+  "Set your individual preferences for the console experience. Any changes will be autosaved.": "콘솔 환경에 대한 개별 기본 설정을 지정합니다. 모든 변경 사항은 자동 저장됩니다.",
   "Only {{volumeMode}} volume mode is available for {{storageClass}} with {{accessMode}} access mode": "{{accessMode}} 액세스 모드가 있는 {{storageClass}}에서는 {{volumeMode}} 볼륨 모드만 사용할 수 있습니다.",
   "VolumeSnapshotClass with same provisioner as claim": "클레임과 동일한 프로비저너를 사용하는 볼륨 스냅샷 클래스",
   "Select volume snapshot class": "볼륨 스냅 샷 클래스 선택",

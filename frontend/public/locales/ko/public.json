@@ -1894,7 +1894,6 @@
   "Exec command": "Exec 명령",
   "HTTP GET": "HTTP GET",
   "TCP socket (port)": "TCP 소켓 (포트)",
-  "Set your individual preferences for the console experience. Any changes will be autosaved.": "콘솔 환경에 대한 개별 기본 설정을 지정합니다. 모든 변경 사항은 자동 저장됩니다.",
   "Loading {{title}} status": "{{title}} 상태 로딩",
   "Disable": "비활성화",
   "default": "기본",

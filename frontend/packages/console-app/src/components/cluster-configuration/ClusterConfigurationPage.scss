@@ -1,0 +1,48 @@
+.co-cluster-configuration-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  // Fix missing white background color above the header.
+  .ocs-page-layout__title {
+    margin-top: 0;
+    padding-top: var(--pf-global--spacer--lg);
+  }
+
+  .ocs-page-layout__content {
+    display: flex;
+  }
+
+  .pf-c-empty-state {
+    background-color: var(--pf-global--BackgroundColor--100);
+    flex: 1;
+    align-items: flex-start;
+  }
+
+  .pf-c-tabs.pf-m-vertical {
+    background-color: var(--pf-global--BackgroundColor--100);
+
+    @media (min-width: 769px) {
+      max-width: 100%;
+    }
+
+    @media (min-width: 992px) {
+      min-width: 220px;
+    }
+
+    @media (min-width: 1200px) {
+      max-width: 220px;
+    }
+  }
+
+  // Fix padding which is causes the buttons to show even when isVertical prop is true
+  .pf-c-tabs__scroll-button {
+    display: none;
+  }
+
+  .pf-c-tab-content {
+    background-color: var(--pf-global--BackgroundColor--100);
+    width: 100%;
+    padding: var(--pf-global--spacer--lg);
+  }
+}

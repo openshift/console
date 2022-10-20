@@ -1894,7 +1894,6 @@
   "Exec command": "実行コマンド",
   "HTTP GET": "HTTP GET",
   "TCP socket (port)": "TCP ソケット (ポート)",
-  "Set your individual preferences for the console experience. Any changes will be autosaved.": "コンソールエクスペリエンスに個別の設定を行います。変更は自動保存されます。",
   "Loading {{title}} status": "{{title}} ステータスの読み込み",
   "Disable": "無効にする",
   "default": "デフォルト",

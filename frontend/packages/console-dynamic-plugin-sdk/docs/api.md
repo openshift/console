@@ -1079,7 +1079,7 @@ const Component: React.FC = () => {
   const watchRes = {
         ...
       }
-  const [data, loaded, error] = UseK8sWatchResource(watchRes)
+  const [data, loaded, error] = useK8sWatchResource(watchRes)
   return ...
 }
 ```
@@ -1121,7 +1121,7 @@ const Component: React.FC = () => {
         'pod': {...}
         ...
       }
-  const {deployment, pod}  = UseK8sWatchResources(watchResources)
+  const {deployment, pod} = useK8sWatchResources(watchResources)
   return ...
 }
 ```
