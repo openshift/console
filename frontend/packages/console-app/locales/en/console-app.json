@@ -239,6 +239,7 @@
   "Console plugins table": "Console plugins table",
   "console plugins": "console plugins",
   "Console plugins": "Console plugins",
+  "Customize": "Customize",
   "Updating cluster to {{version}}": "Updating cluster to {{version}}",
   "API Servers": "API Servers",
   "Controller Managers": "Controller Managers",
