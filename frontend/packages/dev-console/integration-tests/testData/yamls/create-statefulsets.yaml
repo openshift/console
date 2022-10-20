@@ -4,26 +4,26 @@ metadata:
   name: example
   namespace: default
 spec:
-  serviceName: nginx
+  serviceName: httpd
   replicas: 3
   selector:
     matchLabels:
-      app: nginx
+      app: httpd
   template:
     metadata:
       labels:
-        app: nginx
+        app: httpd
     spec:
       terminationGracePeriodSeconds: 10
       containers:
-        - name: nginx
-          image: 'gcr.io/google_containers/nginx-slim:0.8'
+        - name: httpd
+          image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest'
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               name: web
           volumeMounts:
             - name: www
-              mountPath: /usr/share/nginx/html
+              mountPath: /var/www/html
   volumeClaimTemplates:
     - metadata:
         name: www
