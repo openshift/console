@@ -194,8 +194,8 @@ export type DevfileSuggestedResources = {
   imageStream: K8sResourceKind;
   buildResource: K8sResourceKind;
   deployResource: K8sResourceKind;
-  service: K8sResourceKind;
-  route: K8sResourceKind;
+  service?: K8sResourceKind | null;
+  route?: K8sResourceKind | null;
 };
 
 export interface RouteData {

@@ -7,9 +7,7 @@ import { SAMPLE_APPLICATION_GROUP } from '../../../const';
 import { DevfileSuggestedResources } from '../import-types';
 import { createComponentName } from '../import-validation-utils';
 import { DevfileSample } from './devfile-types';
-
-export const suffixSlash = (val: string) => (val.endsWith('/') ? val : `${val}/`);
-export const prefixDotSlash = (val) => (val.startsWith('/') ? `.${val}` : val);
+import { convertURItoInlineYAML, prefixDotSlash, suffixSlash } from './devfile-utils';
 
 export const useDevfileServer = (
   values: FormikValues,
@@ -21,24 +19,33 @@ export const useDevfileServer = (
 
   const {
     name,
-    git: { url, ref, dir },
+    git: { url, ref, dir, type, secretResource },
     devfile,
   } = values;
   const smartSlashDir = prefixDotSlash(suffixSlash(dir));
 
   const { devfileContent, devfilePath } = devfile || {};
 
-  const devfileData = React.useMemo(() => {
+  const devfileDataPromise = React.useMemo(async () => {
     if (!name || !url || !devfileContent) {
       return null;
     }
 
+    const newDevfileContent = await convertURItoInlineYAML(
+      devfileContent,
+      url,
+      ref,
+      dir,
+      type,
+      secretResource,
+    );
+
     return {
       name,
       git: { URL: url, ref, dir: prefixDotSlash(dir) },
-      devfile: { devfileContent, devfilePath: `${smartSlashDir}${devfilePath}` },
+      devfile: { devfileContent: newDevfileContent, devfilePath: `${smartSlashDir}${devfilePath}` },
     };
-  }, [name, url, devfileContent, ref, dir, smartSlashDir, devfilePath]);
+  }, [name, url, devfileContent, ref, dir, type, secretResource, smartSlashDir, devfilePath]);
 
   React.useEffect(() => {
     const setError = (msg) => {
@@ -50,49 +57,63 @@ export const useDevfileServer = (
       setFieldValue('devfile.devfileHasError', false);
     };
 
-    if (devfileData === null) {
-      clearError();
-      return;
-    }
+    const getDevfileResources = async () => {
+      let devfileData;
+      try {
+        devfileData = await devfileDataPromise;
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Could not fetch devfile resource:', e);
+        setError(e.message || t('devconsole~Could not fetch devfile resources.'));
+        return;
+      }
 
-    setParsingDevfile(true);
-    setFieldValue('devfile.devfileSuggestedResources', null);
-    coFetchJSON
-      .post('/api/devfile/', devfileData)
-      .then((value: DevfileSuggestedResources) => {
-        setParsingDevfile(false);
-        if (value) {
-          clearError();
-          const { imageStream, buildResource, deployResource, service, route } = value;
+      if (devfileData === null) {
+        clearError();
+        return;
+      }
 
-          if (deployResource.spec?.template?.spec?.containers?.length > 0) {
-            const buildGuidanceContainer = deployResource.spec.template.spec.containers[0];
+      setParsingDevfile(true);
+      setFieldValue('devfile.devfileSuggestedResources', null);
+      coFetchJSON
+        .post('/api/devfile/', devfileData)
+        .then((value: DevfileSuggestedResources) => {
+          setParsingDevfile(false);
+          if (value) {
+            clearError();
+            const { imageStream, buildResource, deployResource, service, route } = value;
 
-            setFieldValue('image.ports', buildGuidanceContainer.ports || [], false);
-            setFieldValue('deployment.env', buildGuidanceContainer.env || [], false);
-            setFieldValue('limits', getLimitsDataFromResource(deployResource), false);
+            if (deployResource.spec?.template?.spec?.containers?.length > 0) {
+              const buildGuidanceContainer = deployResource.spec.template.spec.containers[0];
 
-            delete deployResource.spec.template.spec.containers;
+              setFieldValue('image.ports', buildGuidanceContainer.ports || [], false);
+              setFieldValue('deployment.env', buildGuidanceContainer.env || [], false);
+              setFieldValue('limits', getLimitsDataFromResource(deployResource), false);
+
+              delete deployResource.spec.template.spec.containers;
+            }
+
+            setFieldValue('devfile.devfileSuggestedResources', {
+              imageStream,
+              buildResource,
+              deployResource,
+              service,
+              route,
+            });
+            return;
           }
 
-          setFieldValue('devfile.devfileSuggestedResources', {
-            imageStream,
-            buildResource,
-            deployResource,
-            service,
-            route,
-          });
-          return;
-        }
+          // Failed to parse response, error out
+          setError(t('devconsole~The Devfile in your Git repository is invalid.'));
+        })
+        .catch((e) => {
+          setParsingDevfile(false);
+          setError(e.message || t('devconsole~The Devfile in your Git repository is invalid.'));
+        });
+    };
 
-        // Failed to parse response, error out
-        setError(t('devconsole~The Devfile in your Git repository is invalid.'));
-      })
-      .catch((e) => {
-        setParsingDevfile(false);
-        setError(e.message || t('devconsole~The Devfile in your Git repository is invalid.'));
-      });
-  }, [devfileData, setFieldValue, t]);
+    getDevfileResources();
+  }, [devfileDataPromise, setFieldValue, t]);
 
   return [parsingDevfile, devfileParseError];
 };

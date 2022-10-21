@@ -1,4 +1,4 @@
-import { When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { When, Then, And } from 'cypress-cucumber-preprocessor/steps';
 import { gitPO, topologyPO } from '../../pageObjects';
 import { gitPage, topologyPage, devFilePage } from '../../pages';
 
@@ -39,4 +39,12 @@ When('user clicks Create button on Devfile page', () => {
 
 When('user enters Name as {string} in DevFile page', (name: string) => {
   gitPage.enterWorkloadName(name);
+});
+
+And('user can see under Services section {string}', (msg: string) => {
+  cy.get('[role="dialog"]').contains(msg);
+});
+
+And('user can see under Routes section {string}', (msg: string) => {
+  cy.get('[role="dialog"]').contains(msg);
 });
