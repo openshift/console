@@ -78,7 +78,7 @@
   "Delete Revision": "개정 버전 삭제",
   "Edit URI": "URI 편집",
   "Make Serverless": "서버리스 만들기",
-  "Kafka Sink is Addressable, it receives events and send them to a Kafka topic.": "Kafka Sink는 주소 지정이 가능하며 이벤트를 수신하여 Kafka 주제로 보냅니다.",
+  "A KafkaSink takes a CloudEvent, and sends it to an Apache Kafka Topic. Events can be specified in either Structured or Binary mode.": "KafkaSink는 클라우드 이벤트를 가져와 Apache Kafka Topic으로 전송합니다. 이벤트는 구조화 모드 또는 바이너리 모드에서 지정할 수 있습니다.",
   "Supported": "지원됨",
   "This object can be used to connect an event sink, such as a Service, Channel, or Broker to the Kubernetes API server. ApiServerSource watches for Kubernetes events and forwards them to the sink.": "이 개체는 서비스, 채널 또는 브로커와 같은 이벤트 싱크를 Kubernetes API 서버에 연결하는 데 사용할 수 있습니다. ApiServerSource는 Kubernetes 이벤트를 감시하고 싱크로 전달합니다.",
   "Starts a user-provided Container which will generate events and send messages to a sink URI. The sink URI is injected into the Container as an environment variable. A ContainerSource is an easy way to implement your own event sources in Knative.": "이벤트를 생성하고 메시지를 싱크 URI로 보내는 사용자 지정 컨테이너를 시작합니다. 싱크 URI는 환경 변수로 컨테이너에 삽입됩니다. ContainerSource는 Knative에서 고유한 이벤트 소스를 구현하는 간단한 방법입니다.",
