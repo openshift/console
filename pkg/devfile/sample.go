@@ -13,11 +13,13 @@ const ODC_TELEMETRY_CLIENT_NAME = "openshift-console"
 
 const DEVFILE_REGISTRY_PLACEHOLDER_URL = "sample-placeholder"
 
+var testRegistryServer = ""
+
 // GetRegistrySamples returns the list of samples, more specifically
 // it gets the content of the index (index.json) of the specified registry.
 // This is based on https://github.com/devfile/registry-support/blob/master/registry-library/library/library.go#L61
 func GetRegistrySamples(registry string) ([]byte, error) {
-	if registry == DEVFILE_REGISTRY_URL || registry == DEVFILE_STAGING_REGISTRY_URL {
+	if registry == DEVFILE_REGISTRY_URL || registry == DEVFILE_STAGING_REGISTRY_URL || registry == testRegistryServer && testRegistryServer != "" {
 		// set registryOption with `user=openshift-console` for registry telemetry tracking
 		registryOption := registryLibrary.RegistryOptions{User: ODC_TELEMETRY_CLIENT_NAME}
 
