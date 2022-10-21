@@ -44,7 +44,7 @@
   "Enabled": "Enabled",
   "Disabled": "Disabled",
   "Last synced": "Last synced",
-  "Default pool cannot be deleted.": "Default pool cannot be deleted.",
+  "Default pool cannot be deleted": "Default pool cannot be deleted",
   "BlockPool List": "BlockPool List",
   "Delete BlockPool": "Delete BlockPool",
   "{{replica}} Replication": "{{replica}} Replication",
