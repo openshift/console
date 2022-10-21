@@ -8,14 +8,11 @@ import {
   NodeQueries,
 } from '@console/app/src/components/nodes/node-dashboard/queries';
 import { LIMIT_STATE, Humanize } from '@console/dynamic-plugin-sdk';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { humanizeCpuCores, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { MachineModel } from '@console/internal/models';
-import {
-  referenceForModel,
-  MachineKind,
-  MachineHealthCheckKind,
-} from '@console/internal/module/k8s';
+import { MachineKind, MachineHealthCheckKind } from '@console/internal/module/k8s';
 import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import { usePrometheusQuery } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
@@ -114,15 +111,16 @@ const getMessage: GetMessage = (
 const HealthChecksLink: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
   const { name, namespace } = getNodeMachineNameAndNamespace(obj);
-  const machineResource = React.useMemo(
-    () => ({
-      kind: referenceForModel(MachineModel),
-      name,
-      namespace,
-    }),
-    [name, namespace],
+
+  const machine = useK8sWatchResource<MachineKind>(
+    name && namespace
+      ? {
+          groupVersionKind: getGroupVersionKindForModel(MachineModel),
+          name,
+          namespace,
+        }
+      : undefined,
   );
-  const machine = useK8sWatchResource<MachineKind>(machineResource);
   const healthChecks = useK8sWatchResource<MachineHealthCheckKind[]>(machineHealthChecksResource);
   const healthState = getMachineHealth(obj, machine, healthChecks);
   const { t } = useTranslation();
