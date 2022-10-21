@@ -152,10 +152,7 @@ export const linkForCsvResource = (
 
 export const Resources: React.FC<ResourcesProps> = (props) => {
   const { t } = useTranslation();
-  const providedAPI = providedAPIForReference(
-    props.clusterServiceVersion,
-    props.match.params.plural,
-  );
+  const providedAPI = providedAPIForReference(props.csv, props.match.params.plural);
 
   const firehoseResources = (providedAPI?.resources ?? DEFAULT_RESOURCES).map(
     ({ name, kind, version }): FirehoseResource => {
@@ -203,7 +200,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
 
 export type ResourcesProps = {
   obj: K8sResourceKind;
-  clusterServiceVersion: ClusterServiceVersionKind;
+  csv: ClusterServiceVersionKind;
   match: match<{ plural: GroupVersionKind; ns: string; appName: string; name: string }>;
 };
 

@@ -332,11 +332,7 @@ describe('ResourcesList', () => {
 
   it('uses the resources defined in the CSV', () => {
     const resourceComponent = shallow(
-      <Resources
-        match={match}
-        clusterServiceVersion={testClusterServiceVersion}
-        obj={testResourceInstance}
-      />,
+      <Resources match={match} csv={testClusterServiceVersion} obj={testResourceInstance} />,
     );
 
     expect(resourceComponent.props().resources).toEqual(
@@ -348,7 +344,7 @@ describe('ResourcesList', () => {
 
   it('uses the default resources if the kind is not found in the CSV', () => {
     const resourceComponent = shallow(
-      <Resources match={match} clusterServiceVersion={null} obj={testResourceInstance} />,
+      <Resources match={match} csv={null} obj={testResourceInstance} />,
     );
     expect(resourceComponent.props().resources.length > 5).toEqual(true);
   });
@@ -389,11 +385,10 @@ describe(OperandDetailsPage.displayName, () => {
 
   it('renders a `DetailsPage` which also watches the parent CSV', () => {
     expect(wrapper.find(DetailsPage).prop('resources')[0]).toEqual({
-      kind: k8sModels.referenceForModel(ClusterServiceVersionModel),
-      name: match.params.appName,
-      namespace: match.params.ns,
+      kind: 'CustomResourceDefinition',
+      name: 'testresources.testapp.coreos.com',
       isList: false,
-      prop: 'csv',
+      prop: 'crd',
     });
   });
 
@@ -451,11 +446,7 @@ describe(OperandDetailsPage.displayName, () => {
 
   it('passes `flatten` function to Resources component which returns only objects with `ownerReferences` to each other or parent object', () => {
     const resourceComponent = shallow(
-      <Resources
-        clusterServiceVersion={testClusterServiceVersion}
-        obj={testResourceInstance}
-        match={match}
-      />,
+      <Resources csv={testClusterServiceVersion} obj={testResourceInstance} match={match} />,
     );
     const { flatten } = resourceComponent.find(MultiListPage).props();
     const pod = {
@@ -512,13 +503,26 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   beforeEach(() => {
-    wrapper = mount(<ProvidedAPIsPage obj={testClusterServiceVersion} />, {
-      wrappingComponent: (props) => (
-        <Router history={history}>
-          <Provider store={store} {...props} />
-        </Router>
-      ),
-    });
+    wrapper = mount(
+      <ProvidedAPIsPage
+        match={{
+          isExact: true,
+          params: {
+            ns: 'default',
+          },
+          path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/instances`,
+          url: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/instances`,
+        }}
+        obj={testClusterServiceVersion}
+      />,
+      {
+        wrappingComponent: (props) => (
+          <Router history={history}>
+            <Provider store={store} {...props} />
+          </Router>
+        ),
+      },
+    );
   });
   it('render listpage components', () => {
     expect(wrapper.find(ListPageHeader).exists()).toBe(true);
@@ -546,8 +550,8 @@ describe(ProvidedAPIsPage.displayName, () => {
     const listPageCreateDropdown = wrapper.find(ListPageCreateDropdown);
 
     expect(listPageCreateDropdown.props().items).toEqual({
-      'testresources.testapp.coreos.com': 'Test Resource',
-      'foobars.testapp.coreos.com': 'Foo Bars',
+      'testapp.coreos.com~v1alpha1~TestResource': 'Test Resource',
+      'testapp.coreos.com~v1~FooBar': 'Foo Bars',
     });
   });
   it('check if ListPageBody component renders the correct children', () => {
@@ -565,7 +569,20 @@ describe(ProvidedAPIPage.displayName, () => {
 
   beforeEach(() => {
     wrapper = mount(
-      <ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} namespace="foo" />,
+      <ProvidedAPIPage
+        match={{
+          isExact: true,
+          params: {
+            plural: 'TestResourceRO',
+            ns: 'default',
+          },
+          path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/`,
+          url: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp`,
+        }}
+        kind="TestResourceRO"
+        csv={testClusterServiceVersion}
+        namespace="foo"
+      />,
       {
         wrappingComponent: (props) => (
           <Router history={history}>
