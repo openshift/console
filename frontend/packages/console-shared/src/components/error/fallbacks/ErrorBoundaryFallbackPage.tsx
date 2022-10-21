@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Text, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
-import { ErrorBoundaryFallbackProps } from '../types';
 import ErrorDetailsBlock from './ErrorDetailsBlock';
 
 /**

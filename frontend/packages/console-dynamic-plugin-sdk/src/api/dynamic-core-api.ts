@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { ActionServiceProviderProps } from '../extensions/actions';
 import {
+  ErrorBoundaryFallbackProps,
   HorizontalNavProps,
   UseResolvedExtensions,
   VirtualizedTableFC,
@@ -694,3 +695,29 @@ export const ActionServiceProvider: React.FC<ActionServiceProviderProps> = requi
  */
 export const NamespaceBar: React.FC<NamespaceBarProps> = require('@console/internal/components/namespace-bar')
   .NamespaceBar;
+
+/**
+ * Creates full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong."
+ * message along with the stack trace and other helpful debugging information. This is to be used in
+ * conjunction with an <ErrorBoundary> component.
+ *
+ * @param {string} errorMessage - text description of the error message
+ * @param {string} componentStack - component trace of the exception
+ * @param {string} stack - stack trace of the exception
+ * @param {string} title - title to render as the header of the error boundary page
+ * @example
+ *  ```tsx
+ *  //in ErrorBoundary component
+ *   return (
+ *     if (this.state.hasError) {
+ *       return <ErrorBoundaryFallbackPage errorMessage={errorString} componentStack={componentStackString}
+ *        stack={stackTraceString} title={errorString}/>;
+ *     }
+ *
+ *     return this.props.children;
+ *   }
+ *  )
+ * ```
+ */
+export const ErrorBoundaryFallbackPage: React.FC<ErrorBoundaryFallbackProps> = require('@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage')
+  .default;

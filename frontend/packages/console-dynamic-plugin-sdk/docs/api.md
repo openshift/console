@@ -61,9 +61,10 @@
 59.  [`useModal`](#usemodal)
 60.  [`ActionServiceProvider`](#actionserviceprovider)
 61.  [`NamespaceBar`](#namespacebar)
-62. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
-63. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
-64. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+62.  [`ErrorBoundaryFallbackPage`](#errorboundaryfallbackpage)
+63. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
+64. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
+65. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
 
 ---
 
@@ -2116,6 +2117,47 @@ A component that renders a horizontal toolbar with a namespace dropdown menu in 
 | `onNamespaceChange` | (optional) A function that is executed when a namespace option is selected. It accepts the new namespace in the form of a string as its only argument. The active namespace is updated automatically when an option is selected, but additional logic can be applied via this function. When the namespace is changed, the namespace parameter in the URL will be changed from the previous namespace to the newly selected namespace. |
 | `isDisabled` | (optional) A boolean flag that disables the namespace dropdown if set to true. This option only applies to the namespace dropdown and has no effect on child components. |
 | `children` | (optional) Additional elements to be rendered inside the toolbar to the right of the namespace dropdown. |
+
+
+
+---
+
+## `ErrorBoundaryFallbackPage`
+
+### Summary 
+
+Creates full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong."<br/>message along with the stack trace and other helpful debugging information. This is to be used in<br/>conjunction with an <ErrorBoundary> component.
+
+
+
+### Example
+
+
+ ```tsx
+ //in ErrorBoundary component
+  return (
+    if (this.state.hasError) {
+      return <ErrorBoundaryFallbackPage errorMessage={errorString} componentStack={componentStackString}
+       stack={stackTraceString} title={errorString}/>;
+    }
+
+    return this.props.children;
+  }
+ )
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `errorMessage` | text description of the error message |
+| `componentStack` | component trace of the exception |
+| `stack` | stack trace of the exception |
+| `title` | title to render as the header of the error boundary page |
 
 
 
