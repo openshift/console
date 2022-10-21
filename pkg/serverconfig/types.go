@@ -225,7 +225,7 @@ type Helm struct {
 	ChartRepo HelmChartRepo `yaml:"chartRepository"`
 }
 
-// ManagedClusterAPIServerConfig enables proxying managed cluster API server requests
+// TODO Remove this type once the console operator has been updated. It is obsolete now that we are using the MCE cluster proxy.
 type ManagedClusterAPIServerConfig struct {
 	URL    string `json:"url" yaml:"url"`
 	CAFile string `json:"caFile" yaml:"caFile"`
@@ -240,7 +240,7 @@ type ManagedClusterOAuthConfig struct {
 
 // ManagedClusterConfig enables proxying to an ACM managed cluster
 type ManagedClusterConfig struct {
-	Name      string                        `json:"name" yaml:"name"` // ManagedCluster name, provided through ACM
-	APIServer ManagedClusterAPIServerConfig `json:"apiServer" yaml:"apiServer"`
+	Name      string                        `json:"name" yaml:"name"`           // ManagedCluster name, provided through ACM
+	APIServer ManagedClusterAPIServerConfig `json:"apiServer" yaml:"apiServer"` // TODO Remove this property once conosle operator has been updated
 	OAuth     ManagedClusterOAuthConfig     `json:"oauth" yaml:"oauth"`
 }

@@ -119,7 +119,6 @@ type jsGlobals struct {
 }
 
 type Server struct {
-	K8sProxyConfigs      map[string]*proxy.Config
 	BaseURL              *url.URL
 	LogoutRedirect       *url.URL
 	PublicDir            string
@@ -145,7 +144,8 @@ type Server struct {
 	I18nNamespaces        []string
 	PluginProxy           string
 	// Clients with the correct TLS setup for communicating with the API servers.
-	K8sClients                          map[string]*http.Client
+	LocalK8sClient                      *http.Client
+	LocalK8sProxyConfig                 *proxy.Config
 	ThanosProxyConfig                   *proxy.Config
 	ThanosTenancyProxyConfig            *proxy.Config
 	ThanosTenancyProxyForRulesConfig    *proxy.Config
@@ -157,6 +157,7 @@ type Server struct {
 	PluginsProxyTLSConfig               *tls.Config
 	GitOpsProxyConfig                   *proxy.Config
 	ClusterManagementProxyConfig        *proxy.Config
+	ManagedClusterProxyConfig           *proxy.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
@@ -185,7 +186,7 @@ func (s *Server) authDisabled() bool {
 }
 
 func (s *Server) prometheusProxyEnabled() bool {
-	return len(s.K8sProxyConfigs) == 1 && s.ThanosTenancyProxyConfig != nil && s.ThanosTenancyProxyForRulesConfig != nil
+	return len(s.Authers) == 1 && s.ThanosTenancyProxyConfig != nil && s.ThanosTenancyProxyForRulesConfig != nil
 }
 
 func (s *Server) alertManagerProxyEnabled() bool {
@@ -204,31 +205,38 @@ func (s *Server) getLocalAuther() *auth.Authenticator {
 	return s.Authers[serverutils.LocalClusterName]
 }
 
-func (s *Server) getLocalK8sProxyConfig() *proxy.Config {
-	return s.K8sProxyConfigs[serverutils.LocalClusterName]
+func (s *Server) getK8sProxyConfig(cluster string) *proxy.Config {
+	proxyConfig := s.LocalK8sProxyConfig
+	if cluster != serverutils.LocalClusterName {
+		proxyConfig = s.ManagedClusterProxyConfig
+		path := fmt.Sprintf("/%s", cluster)
+		proxyConfig.Endpoint.Path = path
+		proxyConfig.Endpoint.RawPath = path
+	}
+
+	if len(s.BaseURL.Scheme) > 0 && len(s.BaseURL.Host) > 0 {
+		proxyConfig.Origin = fmt.Sprintf("%s://%s", s.BaseURL.Scheme, s.BaseURL.Host)
+	}
+
+	return proxyConfig
 }
 
-func (s *Server) getLocalK8sClient() *http.Client {
-	return s.K8sClients[serverutils.LocalClusterName]
+func (s *Server) getK8sClient(cluster string) *http.Client {
+	if cluster == serverutils.LocalClusterName {
+		return s.LocalK8sClient
+	}
+	return &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: s.ManagedClusterProxyConfig.TLSClientConfig,
+		},
+	}
 }
 
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
-
-	if len(s.BaseURL.Scheme) > 0 && len(s.BaseURL.Host) > 0 {
-		for cluster := range s.K8sProxyConfigs {
-			s.K8sProxyConfigs[cluster].Origin = fmt.Sprintf("%s://%s", s.BaseURL.Scheme, s.BaseURL.Host)
-		}
-	}
-
 	localAuther := s.getLocalAuther()
-	localK8sProxyConfig := s.getLocalK8sProxyConfig()
-	localK8sClient := s.getLocalK8sClient()
-	k8sProxies := make(map[string]*proxy.Proxy)
-	for cluster, proxyConfig := range s.K8sProxyConfigs {
-		k8sProxies[cluster] = proxy.NewProxy(proxyConfig)
-	}
-
+	localK8sProxyConfig := s.getK8sProxyConfig(serverutils.LocalClusterName)
+	localK8sProxy := proxy.NewProxy(localK8sProxyConfig)
 	handle := func(path string, handler http.Handler) {
 		mux.Handle(proxy.SingleJoiningSlash(s.BaseURL.Path, path), handler)
 	}
@@ -318,15 +326,9 @@ func (s *Server) HTTPHandler() http.Handler {
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 			cluster := serverutils.GetCluster(r)
-			k8sProxy, k8sProxyFound := k8sProxies[cluster]
-
-			if !k8sProxyFound {
-				klog.Errorf("Bad Request. Invalid cluster: %v", cluster)
-				w.WriteHeader(http.StatusBadRequest)
-				return
-			}
-
 			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+			proxyConfig := s.getK8sProxyConfig(cluster)
+			k8sProxy := proxy.NewProxy(proxyConfig)
 			k8sProxy.ServeHTTP(w, r)
 		})),
 	)
@@ -348,7 +350,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		panic(err)
 	}
 	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
-	k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxies[serverutils.LocalClusterName]}
+	k8sResolver := resolver.K8sResolver{K8sProxy: localK8sProxy}
 	rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
 	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
 	handler := graphqlws.NewHandler()
@@ -529,7 +531,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	// List operator operands endpoint
 	operandsListHandler := &OperandsListHandler{
 		APIServerURL: s.KubeAPIServerURL,
-		Client:       localK8sClient,
+		Client:       s.LocalK8sClient,
 	}
 
 	handle(operandsListEndpoint, http.StripPrefix(
@@ -547,14 +549,14 @@ func (s *Server) HTTPHandler() http.Handler {
 	// User settings
 	userSettingHandler := usersettings.UserSettingsHandler{
 		K8sProxyConfig:      localK8sProxyConfig,
-		Client:              localK8sClient,
+		Client:              s.LocalK8sClient,
 		Endpoint:            localK8sProxyConfig.Endpoint.String(),
 		ServiceAccountToken: s.ServiceAccountToken,
 	}
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
-	helmHandlers := helmhandlerspkg.New(localK8sProxyConfig.Endpoint.String(), localK8sClient.Transport, s)
-	verifierHandler := helmhandlerspkg.NewVerifierHandler(localK8sProxyConfig.Endpoint.String(), localK8sClient.Transport, s)
+	helmHandlers := helmhandlerspkg.New(localK8sProxyConfig.Endpoint.String(), s.LocalK8sClient.Transport, s)
+	verifierHandler := helmhandlerspkg.NewVerifierHandler(localK8sProxyConfig.Endpoint.String(), s.LocalK8sClient.Transport, s)
 	handle("/api/helm/verify", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
@@ -703,8 +705,8 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		plugins = append(plugins, plugin)
 	}
 
-	clusters := make([]string, 0, len(s.K8sProxyConfigs))
-	for cluster := range s.K8sProxyConfigs {
+	clusters := make([]string, 0, len(s.Authers))
+	for cluster := range s.Authers {
 		clusters = append(clusters, cluster)
 	}
 
@@ -813,14 +815,8 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 
 	// Proxy request to correct cluster
 	cluster := serverutils.GetCluster(r)
-	k8sProxy, k8sProxyFound := s.K8sProxyConfigs[cluster]
-	k8sClient, k8sClientFound := s.K8sClients[cluster]
-	if !k8sProxyFound || !k8sClientFound {
-		klog.Errorf("Bad Request. Invalid cluster: %v", cluster)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
+	k8sProxy := s.getK8sProxyConfig(cluster)
+	k8sClient := s.getK8sClient(cluster)
 	tokenName := user.Token
 	if strings.HasPrefix(tokenName, sha256Prefix) {
 		tokenName = tokenToObjectName(tokenName)
