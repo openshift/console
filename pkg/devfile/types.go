@@ -1,4 +1,4 @@
-package server
+package devfile
 
 import (
 	buildv1 "github.com/openshift/api/build/v1"
@@ -8,31 +8,31 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-// devfileForm is the needed data to send to the devfile library
-type devfileForm struct {
+// DevfileForm is the needed data to send to the devfile library
+type DevfileForm struct {
 	Name    string      `json:"name"`
-	Git     gitData     `json:"git"`
-	Devfile devfileData `json:"devfile"`
+	Git     GitData     `json:"git"`
+	Devfile DevfileData `json:"devfile"`
 }
 
-// devfileSamplesForm is the needed data to query the devfile registry for samples
-type devfileSamplesForm struct {
+// DevfileSamplesForm is the needed data to query the devfile registry for samples
+type DevfileSamplesForm struct {
 	Registry string `json:"registry"`
 }
 
-// devfileResources is the constructed response from the devfile library data
-type devfileResources struct {
+// DevfileResources is the constructed response from the devfile library data
+type DevfileResources struct {
 	ImageStream imagev1.ImageStream `json:"imageStream"`
 	// This can be enhanced to include BuildResource Type that includes all possible types of build objects(eg buildConfig, build, pod, etc.)
 	BuildResource buildv1.BuildConfig `json:"buildResource"`
 	// This can be enhanced to include Deploy Resource Type that includes all possible types of deployment objects(eg deployment, deploymentConfig, helmChart, etc.)
 	DeployResource appsv1.Deployment `json:"deployResource"`
-	Service        corev1.Service    `json:"service"`
-	Route          routev1.Route     `json:"route"`
+	Service        *corev1.Service   `json:"service,omitempty"`
+	Route          *routev1.Route    `json:"route,omitempty"`
 }
 
-// gitData is the git-related information
-type gitData struct {
+// GitData is the git-related information
+type GitData struct {
 	// URL is the url to the repository
 	URL string `json:"url"`
 	// Ref is the git-reference (branch or commit id)
@@ -41,8 +41,8 @@ type gitData struct {
 	Dir string `json:"dir"`
 }
 
-// devfileData is the devfile-related information
-type devfileData struct {
+// DevfileData is the devfile-related information
+type DevfileData struct {
 	// DevfileContent is the content of the "devfile.yaml"
 	DevfileContent string `json:"devfileContent"`
 	// DevfilePath is the path to the devfile (including the file name; ie "./my-path/devfile.yaml")

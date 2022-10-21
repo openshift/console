@@ -1,3 +1,18 @@
+//
+// Copyright 2022 Red Hat, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package parser
 
 import (
@@ -5,6 +20,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/devfile/api/v2/pkg/attributes"
+	registryLibrary "github.com/devfile/registry-support/registry-library/library"
+	"io/ioutil"
+	"net/url"
+	"os"
+	"path"
+	"strings"
+
 	devfileCtx "github.com/devfile/library/pkg/devfile/parser/context"
 	"github.com/devfile/library/pkg/devfile/parser/data"
 	"github.com/devfile/library/pkg/devfile/parser/data/v2/common"
@@ -12,12 +34,8 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/klog"
-	"net/url"
-	"path"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strings"
-
 	"reflect"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	v1 "github.com/devfile/api/v2/pkg/apis/workspaces/v1alpha2"
 	apiOverride "github.com/devfile/api/v2/pkg/utils/overriding"
@@ -377,19 +395,45 @@ func parseFromURI(importReference v1.ImportReference, curDevfileCtx devfileCtx.D
 	if !absoluteURL && curDevfileCtx.GetAbsPath() != "" {
 		newUri = path.Join(path.Dir(curDevfileCtx.GetAbsPath()), uri)
 		d.Ctx = devfileCtx.NewDevfileCtx(newUri)
-	} else if absoluteURL {
-		// absolute URL address
-		newUri = uri
-		d.Ctx = devfileCtx.NewURLDevfileCtx(newUri)
-	} else if curDevfileCtx.GetURL() != "" {
-		// relative path to a URL
-		u, err := url.Parse(curDevfileCtx.GetURL())
-		if err != nil {
-			return DevfileObj{}, err
+		if util.ValidateFile(newUri) != nil {
+			return DevfileObj{}, fmt.Errorf("the provided path is not a valid filepath %s", newUri)
 		}
-		u.Path = path.Join(path.Dir(u.Path), uri)
-		newUri = u.String()
+		srcDir := path.Dir(newUri)
+		destDir := path.Dir(curDevfileCtx.GetAbsPath())
+		if srcDir != destDir {
+			err := util.CopyAllDirFiles(srcDir, destDir)
+			if err != nil {
+				return DevfileObj{}, err
+			}
+		}
+	} else {
+		if absoluteURL {
+			// absolute URL address
+			newUri = uri
+		} else if curDevfileCtx.GetURL() != "" {
+			// relative path to a URL
+			u, err := url.Parse(curDevfileCtx.GetURL())
+			if err != nil {
+				return DevfileObj{}, err
+			}
+			u.Path = path.Join(u.Path, uri)
+			newUri = u.String()
+		} else {
+			return DevfileObj{}, fmt.Errorf("failed to resolve parent uri, devfile context is missing absolute url and path to devfile. %s", resolveImportReference(importReference))
+		}
+
 		d.Ctx = devfileCtx.NewURLDevfileCtx(newUri)
+		if strings.Contains(newUri, "raw.githubusercontent.com") {
+			urlComponents, err := util.GetGitUrlComponentsFromRaw(newUri)
+			if err != nil {
+				return DevfileObj{}, err
+			}
+			destDir := path.Dir(curDevfileCtx.GetAbsPath())
+			err = getResourcesFromGit(urlComponents, destDir)
+			if err != nil {
+				return DevfileObj{}, err
+			}
+		}
 	}
 	importReference.Uri = newUri
 	newResolveCtx := resolveCtx.appendNode(importReference)
@@ -397,9 +441,32 @@ func parseFromURI(importReference v1.ImportReference, curDevfileCtx devfileCtx.D
 	return populateAndParseDevfile(d, newResolveCtx, tool, true)
 }
 
+func getResourcesFromGit(gitUrlComponents map[string]string, destDir string) error {
+	stackDir, err := ioutil.TempDir(os.TempDir(), fmt.Sprintf("git-resources"))
+	if err != nil {
+		return fmt.Errorf("failed to create dir: %s, error: %v", stackDir, err)
+	}
+	defer os.RemoveAll(stackDir)
+
+	err = util.CloneGitRepo(gitUrlComponents, stackDir)
+	if err != nil {
+		return err
+	}
+
+	dir := path.Dir(path.Join(stackDir, gitUrlComponents["file"]))
+	err = util.CopyAllDirFiles(dir, destDir)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func parseFromRegistry(importReference v1.ImportReference, resolveCtx *resolutionContextTree, tool resolverTools) (d DevfileObj, err error) {
 	id := importReference.Id
 	registryURL := importReference.RegistryUrl
+	destDir := path.Dir(d.Ctx.GetAbsPath())
+
 	if registryURL != "" {
 		devfileContent, err := getDevfileFromRegistry(id, registryURL, importReference.Version, tool.httpTimeout)
 		if err != nil {
@@ -410,6 +477,11 @@ func parseFromRegistry(importReference v1.ImportReference, resolveCtx *resolutio
 			return d, errors.Wrap(err, "failed to set devfile content from bytes")
 		}
 		newResolveCtx := resolveCtx.appendNode(importReference)
+
+		err = getResourcesFromRegistry(id, registryURL, destDir)
+		if err != nil {
+			return DevfileObj{}, err
+		}
 
 		return populateAndParseDevfile(d, newResolveCtx, tool, true)
 
@@ -423,6 +495,11 @@ func parseFromRegistry(importReference v1.ImportReference, resolveCtx *resolutio
 				}
 				importReference.RegistryUrl = registryURL
 				newResolveCtx := resolveCtx.appendNode(importReference)
+
+				err := getResourcesFromRegistry(id, registryURL, destDir)
+				if err != nil {
+					return DevfileObj{}, err
+				}
 
 				return populateAndParseDevfile(d, newResolveCtx, tool, true)
 			}
@@ -445,6 +522,26 @@ func getDevfileFromRegistry(id, registryURL, version string, httpTimeout *int) (
 	param.Timeout = httpTimeout
 
 	return util.HTTPGetRequest(param, 0)
+}
+
+func getResourcesFromRegistry(id, registryURL, destDir string) error {
+	stackDir, err := ioutil.TempDir(os.TempDir(), fmt.Sprintf("registry-resources-%s", id))
+	if err != nil {
+		return fmt.Errorf("failed to create dir: %s, error: %v", stackDir, err)
+	}
+	defer os.RemoveAll(stackDir)
+
+	err = registryLibrary.PullStackFromRegistry(registryURL, id, stackDir, registryLibrary.RegistryOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to pull stack from registry %s", registryURL)
+	}
+
+	err = util.CopyAllDirFiles(stackDir, destDir)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func parseFromKubeCRD(importReference v1.ImportReference, resolveCtx *resolutionContextTree, tool resolverTools) (d DevfileObj, err error) {
@@ -645,6 +742,7 @@ func parseKubeResourceFromURI(devObj DevfileObj) error {
 	}
 	for _, kubeComp := range kubeComponents {
 		if kubeComp.Kubernetes != nil && kubeComp.Kubernetes.Uri != "" {
+			/* #nosec G601 -- not an issue, kubeComp is de-referenced in sequence*/
 			err := convertK8sLikeCompUriToInlined(&kubeComp, devObj.Ctx)
 			if err != nil {
 				return errors.Wrapf(err, "failed to convert Kubernetes Uri to inlined for component '%s'", kubeComp.Name)
@@ -657,6 +755,7 @@ func parseKubeResourceFromURI(devObj DevfileObj) error {
 	}
 	for _, openshiftComp := range openshiftComponents {
 		if openshiftComp.Openshift != nil && openshiftComp.Openshift.Uri != "" {
+			/* #nosec G601 -- not an issue, openshiftComp is de-referenced in sequence*/
 			err := convertK8sLikeCompUriToInlined(&openshiftComp, devObj.Ctx)
 			if err != nil {
 				return errors.Wrapf(err, "failed to convert Openshift Uri to inlined for component '%s'", openshiftComp.Name)

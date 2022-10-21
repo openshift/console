@@ -1,12 +1,28 @@
+//
+// Copyright 2022 Red Hat, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package parser
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 
-	"github.com/devfile/library/pkg/testingutil/filesystem"
 	"github.com/devfile/library/pkg/util"
 	"github.com/pkg/errors"
+	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 	k8yaml "sigs.k8s.io/yaml"
 
@@ -38,8 +54,9 @@ type KubernetesResources struct {
 // ReadKubernetesYaml reads a yaml Kubernetes file from either the Path, URL or Data provided.
 // It returns all the parsed Kubernetes objects as an array of interface.
 // Consumers interested in the Kubernetes resources are expected to Unmarshal
-// it to the struct of the respective Kubernetes resource.
-func ReadKubernetesYaml(src YamlSrc, fs filesystem.Filesystem) ([]interface{}, error) {
+// it to the struct of the respective Kubernetes resource. If a Path is being passed,
+// provide a filesystem, otherwise nil can be passed in
+func ReadKubernetesYaml(src YamlSrc, fs *afero.Afero) ([]interface{}, error) {
 
 	var data []byte
 	var err error
@@ -50,6 +67,9 @@ func ReadKubernetesYaml(src YamlSrc, fs filesystem.Filesystem) ([]interface{}, e
 			return nil, errors.Wrapf(err, "failed to download file %q", src.URL)
 		}
 	} else if src.Path != "" {
+		if fs == nil {
+			return nil, fmt.Errorf("cannot read from %s because fs passed in was nil", src.Path)
+		}
 		data, err = fs.ReadFile(src.Path)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to read yaml from path %q", src.Path)
