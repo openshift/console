@@ -200,16 +200,28 @@ const BlockPoolTableRow: React.FC<RowFunctionArgs<StoragePoolKind>> = ({ obj, cu
         {compressionStatus ? compressionSavings : '-'}
       </TableData>
       <TableData className={Kebab.columnClass}>
-        <ResourceKebab
-          actions={menuActions}
-          kind={referenceFor(obj)}
-          resource={obj}
-          isDisabled={isDefaultPool(obj) || disableMenuAction(obj, props?.cephCluster)}
-          terminatingTooltip={
-            isDefaultPool(obj) ? t('ceph-storage-plugin~Default pool cannot be deleted.') : ''
-          }
-          customData={{ tFunction: t }}
-        />
+        {isDefaultPool(obj) ? (
+          <Tooltip
+            content={t('ceph-storage-plugin~Default pool cannot be deleted')}
+            trigger={'mouseenter'}
+          >
+            <ResourceKebab
+              actions={menuActions}
+              kind={referenceFor(obj)}
+              resource={obj}
+              isDisabled={disableMenuAction(obj, props?.cephCluster)}
+              customData={{ tFunction: t }}
+            />
+          </Tooltip>
+        ) : (
+          <ResourceKebab
+            actions={menuActions}
+            kind={referenceFor(obj)}
+            resource={obj}
+            isDisabled={disableMenuAction(obj, props?.cephCluster)}
+            customData={{ tFunction: t }}
+          />
+        )}
       </TableData>
     </>
   );
