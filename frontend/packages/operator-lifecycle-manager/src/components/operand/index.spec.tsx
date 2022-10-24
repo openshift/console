@@ -2,8 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
-import { Router } from 'react-router';
-import { match as RouterMatch } from 'react-router-dom';
+import { MemoryRouter, Router, Route } from 'react-router-dom';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { Table, DetailsPage, MultiListPage } from '@console/internal/components/factory';
 import {
@@ -42,7 +41,6 @@ import {
   OperandTableRowProps,
   OperandTableRow,
   OperandDetails,
-  OperandDetailsPageProps,
   OperandDetailsProps,
   OperandDetailsPage,
   ProvidedAPIPage,
@@ -50,6 +48,17 @@ import {
   OperandStatus,
   OperandStatusProps,
 } from '.';
+
+const mountWithRoute = <T,>(component, currentURL, routePath): ReactWrapper<T> =>
+  mount<T>(component, {
+    wrappingComponent: ({ children }) => (
+      <Provider store={store}>
+        <MemoryRouter initialEntries={[currentURL]}>
+          <Route path={routePath}>{children}</Route>
+        </MemoryRouter>
+      </Provider>
+    ),
+  });
 
 jest.mock('@console/shared/src/hooks/useK8sModels', () => ({
   useK8sModels: () => [
@@ -314,28 +323,18 @@ describe(OperandDetails.displayName, () => {
 });
 
 describe('ResourcesList', () => {
-  let match: RouterMatch<any>;
-
-  beforeEach(() => {
-    match = {
-      params: {
-        appName: 'etcd',
-        plural: k8sModels.referenceFor(testResourceInstance),
-        name: 'my-etcd',
-        ns: 'default',
-      },
-      isExact: false,
-      url: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters/my-etcd`,
-      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`,
-    };
-  });
-
+  const currentURL = `/k8s/ns/default/${
+    ClusterServiceVersionModel.plural
+  }/etcd/${k8sModels.referenceFor(testResourceInstance)}/my-etcd`;
+  const routePath = `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`;
   it('uses the resources defined in the CSV', () => {
-    const resourceComponent = shallow(
-      <Resources match={match} csv={testClusterServiceVersion} obj={testResourceInstance} />,
+    const wrapper = mountWithRoute(
+      <Resources csv={testClusterServiceVersion} obj={testResourceInstance} />,
+      currentURL,
+      routePath,
     );
-
-    expect(resourceComponent.props().resources).toEqual(
+    const multiListPage = wrapper.find(MultiListPage);
+    expect(multiListPage.props().resources).toEqual(
       testClusterServiceVersion.spec.customresourcedefinitions.owned[0].resources.map(
         (resource) => ({ kind: resource.kind, namespaced: true, prop: 'Pod' }),
       ),
@@ -343,38 +342,23 @@ describe('ResourcesList', () => {
   });
 
   it('uses the default resources if the kind is not found in the CSV', () => {
-    const resourceComponent = shallow(
-      <Resources match={match} csv={null} obj={testResourceInstance} />,
+    const wrapper = mountWithRoute(
+      <Resources csv={null} obj={testResourceInstance} />,
+      currentURL,
+      routePath,
     );
-    expect(resourceComponent.props().resources.length > 5).toEqual(true);
+    const multiListPage = wrapper.find(MultiListPage);
+    expect(multiListPage.props().resources.length > 5).toEqual(true);
   });
 });
 
 describe(OperandDetailsPage.displayName, () => {
-  let wrapper: ReactWrapper<OperandDetailsPageProps>;
-  let match: RouterMatch<any>;
-
-  beforeEach(() => {
-    match = {
-      params: {
-        appName: 'testapp',
-        plural: 'testapp.coreos.com~v1alpha1~TestResource',
-        name: 'my-test-resource',
-        ns: 'default',
-      },
-      isExact: false,
-      url: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`,
-      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`,
-    };
-
-    wrapper = mount(<OperandDetailsPage match={match} />, {
-      wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
-    });
-  });
+  const currentURL = `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`;
+  const routePath = `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`;
 
   it('renders a `DetailsPage` with the correct subpages', () => {
+    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
     const detailsPage = wrapper.find(DetailsPage);
-
     expect(detailsPage.props().pages[0].nameKey).toEqual(`${i18nNS}~Details`);
     expect(detailsPage.props().pages[0].href).toEqual('');
     expect(detailsPage.props().pages[1].nameKey).toEqual(`${i18nNS}~YAML`);
@@ -384,6 +368,7 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('renders a `DetailsPage` which also watches the parent CSV', () => {
+    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
     expect(wrapper.find(DetailsPage).prop('resources')[0]).toEqual({
       kind: 'CustomResourceDefinition',
       name: 'testresources.testapp.coreos.com',
@@ -393,10 +378,12 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('menu actions to `DetailsPage`', () => {
+    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
     expect(wrapper.find(DetailsPage).prop('customActionMenu')).toBeTruthy();
   });
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
+    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
     expect(
       wrapper
         .find(DetailsPage)
@@ -419,12 +406,11 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('creates correct breadcrumbs even if `namespace`, `plural`, `appName`, and `name` URL parameters are the same', () => {
-    match.params = Object.keys(match.params).reduce(
-      (params, name) => Object.assign(params, { [name]: 'example' }),
-      {},
+    const wrapper = mountWithRoute(
+      <OperandDetailsPage />,
+      `/k8s/ns/example/${ClusterServiceVersionModel.plural}/example/example/example`,
+      routePath,
     );
-    match.url = `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/example`;
-    wrapper.setProps({ match });
 
     expect(
       wrapper
@@ -436,19 +422,24 @@ describe(OperandDetailsPage.displayName, () => {
         name: 'Installed Operators',
         path: `/k8s/ns/example/${ClusterServiceVersionModel.plural}`,
       },
-      { name: 'example', path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example` },
+      {
+        name: 'example',
+        path: `/k8s/ns/example/${ClusterServiceVersionModel.plural}/example/example`,
+      },
       {
         name: `example details`,
-        path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/example`,
+        path: `/k8s/ns/example/${ClusterServiceVersionModel.plural}/example/example/example`,
       },
     ]);
   });
 
   it('passes `flatten` function to Resources component which returns only objects with `ownerReferences` to each other or parent object', () => {
-    const resourceComponent = shallow(
-      <Resources csv={testClusterServiceVersion} obj={testResourceInstance} match={match} />,
+    const wrapper = mountWithRoute(
+      <Resources csv={testClusterServiceVersion} obj={testResourceInstance} />,
+      currentURL,
+      routePath,
     );
-    const { flatten } = resourceComponent.find(MultiListPage).props();
+    const { flatten } = wrapper.find(MultiListPage).props();
     const pod = {
       kind: 'Pod',
       metadata: {
@@ -503,25 +494,10 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   beforeEach(() => {
-    wrapper = mount(
-      <ProvidedAPIsPage
-        match={{
-          isExact: true,
-          params: {
-            ns: 'default',
-          },
-          path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/instances`,
-          url: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/instances`,
-        }}
-        obj={testClusterServiceVersion}
-      />,
-      {
-        wrappingComponent: (props) => (
-          <Router history={history}>
-            <Provider store={store} {...props} />
-          </Router>
-        ),
-      },
+    wrapper = mountWithRoute<ProvidedAPIsPageProps>(
+      <ProvidedAPIsPage obj={testClusterServiceVersion} />,
+      `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/instances`,
+      `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/instances`,
     );
   });
   it('render listpage components', () => {
@@ -568,28 +544,10 @@ describe(ProvidedAPIPage.displayName, () => {
   let wrapper: ReactWrapper<ProvidedAPIPageProps>;
 
   beforeEach(() => {
-    wrapper = mount(
-      <ProvidedAPIPage
-        match={{
-          isExact: true,
-          params: {
-            plural: 'TestResourceRO',
-            ns: 'default',
-          },
-          path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/`,
-          url: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp`,
-        }}
-        kind="TestResourceRO"
-        csv={testClusterServiceVersion}
-        namespace="foo"
-      />,
-      {
-        wrappingComponent: (props) => (
-          <Router history={history}>
-            <Provider store={store} {...props} />
-          </Router>
-        ),
-      },
+    wrapper = mountWithRoute(
+      <ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} namespace="foo" />,
+      `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResourceRO`,
+      `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural`,
     );
   });
 

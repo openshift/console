@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
-import { useHistory, match as routerMatch, useParams } from 'react-router-dom';
+import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import { ListPageBody, K8sModel } from '@console/dynamic-plugin-sdk';
 import { getResources } from '@console/internal/actions/k8s';
 import { Conditions } from '@console/internal/components/conditions';
@@ -339,6 +339,7 @@ const getK8sWatchResources = (
 
 export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const { t } = useTranslation();
+  const match = useRouteMatch();
   const [showOperandsInAllNamespaces] = useShowOperandsInAllNamespaces();
   const {
     obj,
@@ -404,7 +405,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
         )
       : {};
 
-  const createNavigate = (kind) => history.push(`${props.match.url}/${kind}/~new`);
+  const createNavigate = (kind) => history.push(`${match.url.replace('instances', kind)}/~new`);
 
   const data = React.useMemo(() => flatten(resources), [resources, flatten]);
 
@@ -472,18 +473,18 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 
 const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) => {
   const { t } = useTranslation();
+  const match = useRouteMatch();
   const [showOperandsInAllNamespaces] = useShowOperandsInAllNamespaces();
 
   const {
     namespace,
-    kind: apiGroupVersionKind,
     csv,
     showTitle = true,
     hideLabelFilter = false,
     hideNameLabelFilters = false,
     hideColumnManagement = false,
   } = props;
-  const createPath = `${props.match.url}/${apiGroupVersionKind}/~new`;
+  const createPath = `${match.url}/~new`;
 
   const { apiGroup: group, apiVersion: version, kind, namespaced, label } = props.k8sModel;
   const managesAllNamespaces = namespaced && hasAllNamespaces(csv);
@@ -531,6 +532,7 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
 
 export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
   const resourceListPage = useResourceListPage(props.kind);
+  const { ns } = useParams();
   const [k8sModel, inFlight] = useK8sModel(props.kind);
   const [apiRefreshed, setAPIRefreshed] = React.useState(false);
   const dispatch = useDispatch();
@@ -559,7 +561,7 @@ export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
       {...props}
       model={{ group, version, kind }}
       kind={props.kind}
-      namespace={props.match.params.ns}
+      namespace={ns}
       loader={resourceListPage}
     />
   ) : (
@@ -716,9 +718,10 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
   );
 });
 
-const DefaultOperandDetailsPage = ({ match, k8sModel }: DefaultOperandDetailsPageProps) => {
+const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps) => {
   const { t } = useTranslation();
-  const { appName, ns } = useParams();
+  const match = useRouteMatch();
+  const { appName, ns, name, plural } = useParams();
   const [csv] = useClusterServiceVersion(appName, ns);
   const actionItems = React.useCallback((resourceModel: K8sKind, resource: K8sResourceKind) => {
     const context = {
@@ -731,9 +734,9 @@ const DefaultOperandDetailsPage = ({ match, k8sModel }: DefaultOperandDetailsPag
   return (
     <DetailsPage
       match={match}
-      name={match.params.name}
-      kind={match.params.plural}
-      namespace={match.params.ns}
+      name={name}
+      kind={plural}
+      namespace={ns}
       resources={[
         {
           kind: CustomResourceDefinitionModel.kind,
@@ -772,9 +775,10 @@ const DefaultOperandDetailsPage = ({ match, k8sModel }: DefaultOperandDetailsPag
   );
 };
 
-export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
-  const resourceDetailsPage = useResourceDetailsPage(props.match.params.plural);
-  const [k8sModel, inFlight] = useK8sModel(props.match.params.plural);
+export const OperandDetailsPage = (props) => {
+  const { plural, ns, name } = useParams();
+  const resourceDetailsPage = useResourceDetailsPage(plural);
+  const [k8sModel, inFlight] = useK8sModel(plural);
   if (inFlight && !k8sModel) {
     return null;
   }
@@ -788,9 +792,9 @@ export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
     <AsyncComponent
       {...props}
       model={{ group, version, kind }}
-      namespace={props.match.params.ns}
-      kind={props.match.params.plural} // TODO remove when static plugins are no longer supported
-      name={props.match.params.name} // TODO remove when static plugins are no longer supported
+      namespace={ns}
+      kind={plural} // TODO remove when static plugins are no longer supported
+      name={name} // TODO remove when static plugins are no longer supported
       loader={resourceDetailsPage}
     />
   ) : (
@@ -836,9 +840,6 @@ export type ProvidedAPIsPageProps = {
   hideLabelFilter?: boolean;
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
-  match: routerMatch<{
-    ns: string;
-  }>;
 };
 
 export type ProvidedAPIPageProps = {
@@ -849,10 +850,6 @@ export type ProvidedAPIPageProps = {
   hideLabelFilter?: boolean;
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
-  match?: routerMatch<{
-    ns: string;
-    plural: string;
-  }>;
 };
 
 type DefaultProvidedAPIPageProps = ProvidedAPIPageProps & { k8sModel: K8sModel };
@@ -872,23 +869,13 @@ export type OperandDetailsProps = {
   crd: CustomResourceDefinitionKind;
 };
 
-export type OperandDetailsPageProps = {
-  match: routerMatch<{
-    name: string;
-    ns: string;
-    appName: string;
-    plural: string;
-  }>;
-};
-
-type DefaultOperandDetailsPageProps = OperandDetailsPageProps & { k8sModel: K8sModel };
+type DefaultOperandDetailsPageProps = { k8sModel: K8sModel };
 
 export type OperandResourceDetailsProps = {
   csv?: { data: ClusterServiceVersionKind };
   gvk: GroupVersionKind;
   name: string;
   namespace: string;
-  match: routerMatch<{ appName: string }>;
 };
 
 type Header = {
