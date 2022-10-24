@@ -343,8 +343,11 @@ export const StateCounts: React.FC<{ alerts: PrometheusAlert[] }> = ({ alerts })
   );
 };
 
-const PopoverField: React.FC<{ body: React.ReactNode; label: string }> = ({ body, label }) => (
-  <Popover headerContent={label} bodyContent={body}>
+const PopoverField: React.FC<{ bodyContent: React.ReactNode; label: string }> = ({
+  bodyContent,
+  label,
+}) => (
+  <Popover headerContent={label} bodyContent={bodyContent}>
     <Button variant="plain" className="details-item__popover-button">
       {label}
     </Button>
@@ -778,7 +781,7 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                   <dt>{t('public~Name')}</dt>
                   <dd>{labels?.alertname}</dd>
                   <dt>
-                    <PopoverField label={t('public~Severity')} body={SeverityHelp} />
+                    <PopoverField bodyContent={<SeverityHelp />} label={t('public~Severity')} />
                   </dt>
                   <dd>
                     <Severity severity={labels?.severity} />
@@ -826,11 +829,11 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               <div className="col-sm-6">
                 <dl className="co-m-pane__details">
                   <dt>
-                    <PopoverField label={t('public~Source')} body={SourceHelp} />
+                    <PopoverField bodyContent={<SourceHelp />} label={t('public~Source')} />
                   </dt>
                   <dd>{alert && getSourceKey(_.startCase(alertSource(alert)))}</dd>
                   <dt>
-                    <PopoverField label={t('public~State')} body={AlertStateHelp} />
+                    <PopoverField bodyContent={<AlertStateHelp />} label={t('public~State')} />
                   </dt>
                   <dd>
                     <AlertState state={state} />
@@ -1028,7 +1031,7 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                   <dt>{t('public~Name')}</dt>
                   <dd>{rule?.name}</dd>
                   <dt>
-                    <PopoverField label={t('public~Severity')} body={SeverityHelp} />
+                    <PopoverField bodyContent={<SeverityHelp />} label={t('public~Severity')} />
                   </dt>
                   <dd>
                     <Severity severity={rule?.labels?.severity} />
@@ -1068,7 +1071,7 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               <div className="col-sm-6">
                 <dl className="co-m-pane__details">
                   <dt>
-                    <PopoverField label={t('public~Source')} body={SourceHelp} />
+                    <PopoverField bodyContent={<SourceHelp />} label={t('public~Source')} />
                   </dt>
                   <dd>{rule && getSourceKey(_.startCase(alertingRuleSource(rule)))}</dd>
                   {_.isInteger(rule?.duration) && (
