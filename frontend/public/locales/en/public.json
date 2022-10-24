@@ -1007,6 +1007,7 @@
   "Inspect": "Inspect",
   "Metrics dashboards": "Metrics dashboards",
   "panel.styles attribute not found": "panel.styles attribute not found",
+  "No data found": "No data found",
   "query results table": "query results table",
   "Last {{count}} minute": "Last {{count}} minute",
   "Last {{count}} minute_plural": "Last {{count}} minutes",

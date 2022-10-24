@@ -1,7 +1,12 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { PrometheusEndpoint, PrometheusResponse } from '@console/dynamic-plugin-sdk';
-import { PerPageOptions } from '@patternfly/react-core';
+import {
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateVariant,
+  PerPageOptions,
+} from '@patternfly/react-core';
 import {
   ISortBy,
   sortable,
@@ -17,7 +22,7 @@ import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { formatNumber } from '../format';
 import { ColumnStyle, Panel } from './types';
 import { getPrometheusURL } from '../../graphs/helpers';
-import { EmptyBox, usePoll, useSafeFetch } from '../../utils';
+import { usePoll, useSafeFetch } from '../../utils';
 import TablePagination from '../table-pagination';
 
 import { useTranslation } from 'react-i18next';
@@ -122,7 +127,11 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries, namespace }) => 
     return <ErrorAlert message={t('public~panel.styles attribute not found')} />;
   }
   if (_.isEmpty(data)) {
-    return <EmptyBox label={t('public~Data')} />;
+    return (
+      <EmptyState variant={EmptyStateVariant.xs}>
+        <EmptyStateBody>{t('public~No data found')}</EmptyStateBody>
+      </EmptyState>
+    );
   }
 
   const columns: AugmentedColumnStyle[] = getColumns(panel.styles);
