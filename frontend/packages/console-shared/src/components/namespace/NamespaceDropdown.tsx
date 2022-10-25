@@ -69,8 +69,7 @@ export const Filter: React.FC<{
 }> = ({ filterText, filterRef, onFilterChange, isProject }) => {
   const { t } = useTranslation();
   return (
-    // @ts-ignore
-    <MenuInput>
+    <MenuInput translate="no">
       <TextInput
         data-test="dropdown-text-filter"
         autoFocus
@@ -106,9 +105,7 @@ const SystemSwitch: React.FC<{
   return hasSystemNamespaces ? (
     <>
       <Divider />
-      {/*
-        //@ts-ignore */}
-      <MenuInput>
+      <MenuInput translate="no">
         <Switch
           data-test="showSystemSwitch"
           data-checked-state={isChecked}
@@ -130,32 +127,33 @@ const SystemSwitch: React.FC<{
 
 export const NamespaceGroup: React.FC<{
   isFavorites?: boolean;
+  isProject: boolean;
   options: { key: string; title: string }[];
   selectedKey: string;
   favorites?: { [key: string]: boolean }[];
   canFavorite?: boolean;
-}> = ({ isFavorites, options, selectedKey, favorites, canFavorite = true }) => {
+}> = ({ isFavorites, isProject, options, selectedKey, favorites, canFavorite = true }) => {
   const { t } = useTranslation();
-  const label = isFavorites ? t('console-shared~Favorites') : t('console-shared~Projects');
+  const label = isFavorites
+    ? t('console-shared~Favorites')
+    : isProject
+    ? t('console-shared~Projects')
+    : t('console-shared~Namespaces');
 
   return options.length === 0 ? null : (
     <>
       <Divider />
-      {/*
-        //@ts-ignore */}
-      <MenuGroup label={label}>
-        {/*
-        //@ts-ignore */}
+      <MenuGroup label={label} translate="no">
         <MenuList>
           {options.map((option) => {
             return (
-              // @ts-ignore
               <MenuItem
                 key={option.key}
                 itemId={option.key}
                 isFavorited={canFavorite ? !!favorites?.[option.key] : undefined}
                 isSelected={selectedKey === option.key}
                 data-test="dropdown-menu-item-link"
+                translate="no"
               >
                 {option.title}
               </MenuItem>
@@ -331,9 +329,7 @@ const NamespaceMenu: React.FC<{
       data-test="namespace-dropdown-menu"
       isScrollable
     >
-      {/*
-        //@ts-ignore */}
-      <MenuContent maxMenuHeight="60vh">
+      <MenuContent maxMenuHeight="60vh" translate="no">
         <Filter
           filterRef={filterRef}
           onFilterChange={setFilterText}
@@ -353,6 +349,7 @@ const NamespaceMenu: React.FC<{
         ) : null}
         <NamespaceGroup
           isFavorites
+          isProject={isProjects}
           options={filteredFavorites}
           selectedKey={selected}
           favorites={favorites}
@@ -363,7 +360,12 @@ const NamespaceMenu: React.FC<{
           isChecked={systemNamespaces}
           onChange={setSystemNamespaces}
         />
-        <NamespaceGroup options={filteredOptions} selectedKey={selected} favorites={favorites} />
+        <NamespaceGroup
+          isProject={isProjects}
+          options={filteredOptions}
+          selectedKey={selected}
+          favorites={favorites}
+        />
       </MenuContent>
       <Footer
         canCreateNew={canCreate}

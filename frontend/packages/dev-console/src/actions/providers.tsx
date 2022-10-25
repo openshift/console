@@ -21,8 +21,10 @@ import {
 } from '@console/internal/module/k8s';
 import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import {
+  FLAGS,
   isCatalogTypeEnabled,
   useActiveNamespace,
+  useFlag,
   useIsDeveloperCatalogEnabled,
 } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
@@ -102,6 +104,11 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
   element,
   connectorSource,
 }) => {
+  const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
+  const developerCatalogFlag = useFlag(FLAG_DEVELOPER_CATALOG);
+  const sampleCatalogFlag = useFlag(FLAG_SAMPLE_CATALOG_TYPE);
+  const operatorBackedServiceCatalogFlag = useFlag(FLAG_OPERATOR_BACKED_SERVICE_CATALOG_TYPE);
+
   const [namespace] = useActiveNamespace();
   const buildConfigsAccess = useAccessReview(resourceAttributes(BuildConfigModel, namespace));
   const imageStreamAccess = useAccessReview(resourceAttributes(ImageStreamModel, namespace));
@@ -130,117 +137,137 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
   const isSampleTypeEnabled = isCatalogTypeEnabled(SAMPLE_CATALOG_TYPE_ID);
 
   return React.useMemo(() => {
+    if (!isGraph(element)) {
+      return [[], true, undefined];
+    }
+
     const sourceObj = connectorSource?.getData()?.resource;
     const sourceReference = sourceObj
       ? `${referenceFor(sourceObj)}/${sourceObj?.metadata?.name}`
       : undefined;
 
-    const actionsWithSourceRef: Action[] = [];
-    actionsWithSourceRef.push(
-      AddActions.FromGit(namespace, undefined, sourceReference, '', !isImportResourceAccess),
-    );
-    actionsWithSourceRef.push(
-      AddActions.ContainerImage(
-        namespace,
-        undefined,
-        sourceReference,
-        '',
-        !isCatalogImageResourceAccess,
-      ),
-    );
-    if (isOperatorBackedServiceEnabled) {
-      actionsWithSourceRef.push(
-        AddActions.OperatorBacked(
-          namespace,
-          undefined,
-          sourceReference,
-          '',
-          null,
-          serviceBindingAccess,
-        ),
-      );
-    }
-    actionsWithSourceRef.push(
-      AddActions.UploadJarFile(
-        namespace,
-        undefined,
-        sourceReference,
-        '',
-        !isCatalogImageResourceAccess,
-      ),
-    );
+    const actions: Action[] = [];
 
-    const actionsWithoutSourceRef: Action[] = [];
-    if (isSampleTypeEnabled) {
-      actionsWithoutSourceRef.push(
-        AddActions.Samples(
-          namespace,
-          undefined,
-          undefined,
-          ADD_TO_PROJECT,
-          !isImportResourceAccess,
-        ),
-      );
+    if (sourceReference) {
+      if (openshiftFlag) {
+        actions.push(
+          AddActions.FromGit(namespace, undefined, sourceReference, '', !isImportResourceAccess),
+          AddActions.ContainerImage(
+            namespace,
+            undefined,
+            sourceReference,
+            '',
+            !isCatalogImageResourceAccess,
+          ),
+        );
+      }
+      if (
+        developerCatalogFlag &&
+        operatorBackedServiceCatalogFlag &&
+        isOperatorBackedServiceEnabled
+      ) {
+        actions.push(
+          AddActions.OperatorBacked(
+            namespace,
+            undefined,
+            sourceReference,
+            '',
+            null,
+            serviceBindingAccess,
+          ),
+        );
+      }
+      if (openshiftFlag) {
+        actions.push(
+          AddActions.UploadJarFile(
+            namespace,
+            undefined,
+            sourceReference,
+            '',
+            !isCatalogImageResourceAccess,
+          ),
+        );
+      }
+    } else {
+      if (developerCatalogFlag && sampleCatalogFlag && isSampleTypeEnabled) {
+        actions.push(
+          AddActions.Samples(
+            namespace,
+            undefined,
+            undefined,
+            ADD_TO_PROJECT,
+            !isImportResourceAccess,
+          ),
+        );
+      }
+      if (openshiftFlag) {
+        actions.push(
+          AddActions.FromGit(
+            namespace,
+            undefined,
+            undefined,
+            ADD_TO_PROJECT,
+            !isImportResourceAccess,
+          ),
+          AddActions.ContainerImage(
+            namespace,
+            undefined,
+            undefined,
+            ADD_TO_PROJECT,
+            !isCatalogImageResourceAccess,
+          ),
+        );
+      }
+      if (isDevCatalogEnabled) {
+        actions.push(
+          AddActions.DevCatalog(namespace, undefined, undefined, ADD_TO_PROJECT, undefined),
+          AddActions.DatabaseCatalog(namespace, undefined, undefined, ADD_TO_PROJECT, undefined),
+        );
+      }
+      if (
+        developerCatalogFlag &&
+        operatorBackedServiceCatalogFlag &&
+        isOperatorBackedServiceEnabled
+      ) {
+        actions.push(
+          AddActions.OperatorBacked(
+            namespace,
+            undefined,
+            undefined,
+            ADD_TO_PROJECT,
+            undefined,
+            undefined,
+          ),
+        );
+      }
+      if (openshiftFlag) {
+        actions.push(
+          AddActions.UploadJarFile(
+            namespace,
+            undefined,
+            undefined,
+            ADD_TO_PROJECT,
+            !isCatalogImageResourceAccess,
+          ),
+        );
+      }
     }
-    actionsWithoutSourceRef.push(
-      AddActions.FromGit(namespace, undefined, undefined, ADD_TO_PROJECT, !isImportResourceAccess),
-    );
-    actionsWithoutSourceRef.push(
-      AddActions.ContainerImage(
-        namespace,
-        undefined,
-        undefined,
-        ADD_TO_PROJECT,
-        !isCatalogImageResourceAccess,
-      ),
-    );
-    if (isDevCatalogEnabled) {
-      actionsWithoutSourceRef.push(
-        AddActions.DevCatalog(namespace, undefined, undefined, ADD_TO_PROJECT, undefined),
-      );
-      actionsWithoutSourceRef.push(
-        AddActions.DatabaseCatalog(namespace, undefined, undefined, ADD_TO_PROJECT, undefined),
-      );
-    }
-    if (isOperatorBackedServiceEnabled) {
-      actionsWithoutSourceRef.push(
-        AddActions.OperatorBacked(
-          namespace,
-          undefined,
-          undefined,
-          ADD_TO_PROJECT,
-          undefined,
-          undefined,
-        ),
-      );
-    }
-    actionsWithoutSourceRef.push(
-      AddActions.UploadJarFile(
-        namespace,
-        undefined,
-        undefined,
-        ADD_TO_PROJECT,
-        !isCatalogImageResourceAccess,
-      ),
-    );
 
-    if (isGraph(element)) {
-      const actions = sourceReference
-        ? actionsWithSourceRef.filter(disabledActionsFilter)
-        : actionsWithoutSourceRef.filter(disabledActionsFilter);
-      return [actions, true, undefined];
-    }
-    return [[], true, undefined];
+    return [actions.filter(disabledActionsFilter), true, undefined];
   }, [
+    element,
     connectorSource,
+    openshiftFlag,
+    isOperatorBackedServiceEnabled,
     namespace,
     isImportResourceAccess,
     isCatalogImageResourceAccess,
-    isOperatorBackedServiceEnabled,
+    serviceBindingAccess,
+    developerCatalogFlag,
+    sampleCatalogFlag,
+    operatorBackedServiceCatalogFlag,
     isSampleTypeEnabled,
     isDevCatalogEnabled,
-    element,
-    serviceBindingAccess,
   ]);
 };
 
@@ -248,6 +275,7 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
   element,
   connectorSource,
 }) => {
+  const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const [namespace] = useActiveNamespace();
   const buildConfigsAccess = useAccessReview(resourceAttributes(BuildConfigModel, namespace));
   const imageStreamAccess = useAccessReview(resourceAttributes(ImageStreamModel, namespace));
@@ -289,31 +317,46 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
       const sourceReference = sourceObj
         ? `${referenceFor(sourceObj)}/${sourceObj?.metadata?.name}`
         : undefined;
-      const actions = [
-        ...(connectorSource ? [] : [DeleteApplicationAction(appData, kindObj)]),
-        AddActions.FromGit(namespace, application, sourceReference, path, !isImportResourceAccess),
-        AddActions.ContainerImage(
-          namespace,
-          application,
-          sourceReference,
-          path,
-          !isCatalogImageResourceAccess,
-        ),
-        AddActions.UploadJarFile(
-          namespace,
-          application,
-          sourceReference,
-          path,
-          !isCatalogImageResourceAccess,
-        ),
-      ].filter(disabledActionsFilter);
-      return [actions, !inFlight, undefined];
+
+      const actions: Action[] = [];
+
+      if (!connectorSource) {
+        actions.push(DeleteApplicationAction(appData, kindObj));
+      }
+      if (openshiftFlag) {
+        actions.push(
+          AddActions.FromGit(
+            namespace,
+            application,
+            sourceReference,
+            path,
+            !isImportResourceAccess,
+          ),
+          AddActions.ContainerImage(
+            namespace,
+            application,
+            sourceReference,
+            path,
+            !isCatalogImageResourceAccess,
+          ),
+          AddActions.UploadJarFile(
+            namespace,
+            application,
+            sourceReference,
+            path,
+            !isCatalogImageResourceAccess,
+          ),
+        );
+      }
+
+      return [actions.filter(disabledActionsFilter), !inFlight, undefined];
     }
     return [[], true, undefined];
   }, [
     element,
     inFlight,
     connectorSource,
+    openshiftFlag,
     namespace,
     application,
     isImportResourceAccess,

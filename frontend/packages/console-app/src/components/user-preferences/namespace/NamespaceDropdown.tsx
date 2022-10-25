@@ -176,7 +176,12 @@ const NamespaceDropdown: React.FC = () => {
         />
         {lastNamespaceOption}
         {loadErrorState || emptyState}
-        <NamespaceGroup options={filteredOptions} selectedKey={selected} canFavorite={false} />
+        <NamespaceGroup
+          isProject={isProject}
+          options={filteredOptions}
+          selectedKey={selected}
+          canFavorite={false}
+        />
       </MenuContent>
       <Footer
         canCreateNew={canCreate}

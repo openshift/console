@@ -452,9 +452,6 @@
       "name": "%knative-plugin~Eventing%",
       "insertBefore": "local-machine",
       "insertAfter": "container-images"
-    },
-    "flags": {
-      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_ENABLED"]
     }
   },
   {

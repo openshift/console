@@ -21,7 +21,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { requirementFromString } from '@console/internal/module/k8s/selector-requirement';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { useFlag, useQueryParams } from '@console/shared';
+import { FLAGS, useFlag, useQueryParams } from '@console/shared';
 import ExportApplication from '../components/export-app/ExportApplication';
 import TopologyQuickSearchButton from '../components/quick-search/TopologyQuickSearchButton';
 import { ALLOW_EXPORT_APP } from '../const';
@@ -70,6 +70,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   setIsQuickSearchOpen,
 }) => {
   const { t } = useTranslation();
+  const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const { filters, setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
   const [labelFilterInput, setLabelFilterInput] = React.useState('');
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
@@ -117,9 +118,11 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   return (
     <Toolbar className="co-namespace-bar odc-topology-filter-bar" clearAllFilters={clearAll}>
       <ToolbarContent>
-        <ToolbarItem>
-          <TopologyQuickSearchButton onClick={() => setIsQuickSearchOpen(true)} />
-        </ToolbarItem>
+        {openshiftFlag ? (
+          <ToolbarItem>
+            <TopologyQuickSearchButton onClick={() => setIsQuickSearchOpen(true)} />
+          </ToolbarItem>
+        ) : null}
         <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
           <ToolbarItem>
             <FilterDropdown

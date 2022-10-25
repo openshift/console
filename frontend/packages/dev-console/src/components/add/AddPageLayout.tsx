@@ -5,7 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
 import { getQueryArgument } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src';
-import { PageLayout, useActiveNamespace, RestoreGettingStartedButton } from '@console/shared';
+import {
+  PageLayout,
+  useActiveNamespace,
+  RestoreGettingStartedButton,
+  useFlag,
+  FLAGS,
+} from '@console/shared';
 import TopologyQuickSearch from '@console/topology/src/components/quick-search/TopologyQuickSearch';
 import TopologyQuickSearchButton from '@console/topology/src/components/quick-search/TopologyQuickSearchButton';
 import { filterNamespaceScopedUrl } from '../../utils/add-page-utils';
@@ -25,6 +31,7 @@ type AddPageLayoutProps = {
 
 const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additionalHint }) => {
   const { t } = useTranslation();
+  const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const [activeNamespace] = useActiveNamespace();
   const [viewContainer, setViewContainer] = React.useState<HTMLElement>(null);
   const [isQuickSearchOpen, setIsQuickSearchOpen] = React.useState<boolean>(
@@ -60,7 +67,9 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
       <>
         <div className="odc-add-page-layout__hint-block">
           <div className="odc-add-page-layout__hint-block__text">
-            <TopologyQuickSearchButton onClick={() => setIsQuickSearchOpen(true)} />
+            {openshiftFlag ? (
+              <TopologyQuickSearchButton onClick={() => setIsQuickSearchOpen(true)} />
+            ) : null}
           </div>
           <div className="odc-add-page-layout__hint-block__actions">
             <div className="odc-add-page-layout__resource-quota-message-block">
