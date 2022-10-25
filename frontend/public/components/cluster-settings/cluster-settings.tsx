@@ -639,13 +639,14 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
       : 0;
   const percentMCPNodes = calculatePercentage(updatedMCPNodes, totalMCPNodes);
   const isUpdated = percentMCPNodes === 100;
+  const nodeRoleFilterValue = isMaster ? 'control-plane' : mcpName;
   const { t } = useTranslation();
   return totalMCPNodes === 0 || (hideIfComplete && isUpdated)
     ? null
     : machineConfigOperatorLoaded && renderedConfigLoaded && (
         <UpdatesGroup divided={divided}>
           <UpdatesType>
-            <Link to={`/k8s/cluster/nodes?rowFilter-node-role=${mcpName}`}>
+            <Link to={`/k8s/cluster/nodes?rowFilter-node-role=${nodeRoleFilterValue}`}>
               {`${name} ${NodeModel.labelPlural}`}
             </Link>
             {!isMaster && (

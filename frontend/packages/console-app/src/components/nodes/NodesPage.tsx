@@ -511,12 +511,12 @@ const NodesPage = connect<{}, MapDispatchToProps>(
         isMatch: getNodeRoleMatch,
         items: [
           {
-            id: 'control plane',
-            title: t('console-app~Control plane'),
+            id: 'control-plane',
+            title: t('console-app~control-plane'),
           },
           {
             id: 'worker',
-            title: t('console-app~Worker'),
+            title: t('console-app~worker'),
           },
         ],
       },
