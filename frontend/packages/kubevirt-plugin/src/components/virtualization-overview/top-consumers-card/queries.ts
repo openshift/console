@@ -14,7 +14,7 @@ const topConsumerQueries = {
       `sort_desc(sum(topk(<%= numItemsToShow %>, container_fs_usage_bytes{pod=~".*virt-launcher.*"})) by (namespace)) > 0`,
     ),
     [Metric.MEMORY_SWAP.getValue()]: _.template(
-      `sort_desc(topk(<%= numItemsToShow %>, sum(kubevirt_vmi_memory_swap_in_traffic_bytes_total-kubevirt_vmi_memory_swap_out_traffic_bytes_total) by (namespace))) > 0`,
+      `sort_desc(topk(5, sum(avg_over_time(kubevirt_vmi_memory_swap_in_traffic_bytes_total[5m]) + avg_over_time(kubevirt_vmi_memory_swap_out_traffic_bytes_total[5m])) by (namespace))) > 0`,
     ),
     [Metric.VCPU_WAIT.getValue()]: _.template(
       `sort_desc(topk(<%= numItemsToShow %>, sum(rate(kubevirt_vmi_vcpu_wait_seconds[4h])) by (namespace))) > 0`,
@@ -37,7 +37,7 @@ const topConsumerQueries = {
       `sort_desc(sum(topk(<%= numItemsToShow %>, avg_over_time(container_fs_usage_bytes{pod=~".*virt-launcher.*"}[4h]))) by (pod, namespace, label_vm_kubevirt_io_name)) + on (pod, namespace) group_left(label_vm_kubevirt_io_name) ( 0 * topk by (pod,namespace) (1, kube_pod_labels{pod=~".*virt-launcher.*"} )) > 0`,
     ),
     [Metric.MEMORY_SWAP.getValue()]: _.template(
-      `sort_desc(topk (<%= numItemsToShow %>, sum(kubevirt_vmi_memory_swap_in_traffic_bytes_total-kubevirt_vmi_memory_swap_out_traffic_bytes_total) by(name, namespace))) > 0`,
+      `sort_desc(topk(5, sum(avg_over_time(kubevirt_vmi_memory_swap_in_traffic_bytes_total[5m]) + avg_over_time(kubevirt_vmi_memory_swap_out_traffic_bytes_total[5m])) by (namespace, name)))>0`,
     ),
     [Metric.VCPU_WAIT.getValue()]: _.template(
       `sort_desc(topk(<%= numItemsToShow %>, sum(rate(kubevirt_vmi_vcpu_wait_seconds[4h])) by (namespace, name))) > 0`,
@@ -60,7 +60,7 @@ const topConsumerQueries = {
       `sort_desc(sum(topk(<%= numItemsToShow %>, container_fs_usage_bytes{pod=~".*virt-launcher.*"})) by (node)) > 0`,
     ),
     [Metric.MEMORY_SWAP.getValue()]: _.template(
-      `sort_desc(topk(<%= numItemsToShow %>, sum(kubevirt_vmi_memory_swap_in_traffic_bytes_total-kubevirt_vmi_memory_swap_out_traffic_bytes_total) by (node))) > 0`,
+      `sort_desc(topk(5, sum(avg_over_time(kubevirt_vmi_memory_swap_in_traffic_bytes_total[5m]) + avg_over_time(kubevirt_vmi_memory_swap_out_traffic_bytes_total[5m])) by (node))) > 0`,
     ),
     [Metric.VCPU_WAIT.getValue()]: _.template(
       `sort_desc(topk(<%= numItemsToShow %>, sum(rate(kubevirt_vmi_vcpu_wait_seconds[4h])) by (node))) > 0`,
@@ -74,7 +74,7 @@ const topConsumerQueries = {
   },
 };
 
-export const getTopConsumerQuery = (metric, scope, numItemsToShow) => {
+export const getTopConsumerQuery = (metric: string, scope: string, numItemsToShow: number) => {
   const numItems = numItemsToShow || 5;
   return topConsumerQueries[scope][metric]({ numItemsToShow: numItems });
 };
