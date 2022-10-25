@@ -1241,7 +1241,6 @@
   "Dynamic plugin error": "Dynamic plugin error",
   "prometheusBaseURL not set": "prometheusBaseURL not set",
   "alertManagerBaseURL not set": "alertManagerBaseURL not set",
-  "monitoring access not granted": "monitoring access not granted",
   "Critical Alerts": "Critical Alerts",
   "Other Alerts": "Other Alerts",
   "Recommendations": "Recommendations",
