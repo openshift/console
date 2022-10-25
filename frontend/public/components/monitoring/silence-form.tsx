@@ -324,11 +324,19 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                   <div className="monitoring-silence-alert__label-options">
                     <label>
                       <input
-                        type="checkbox"
-                        onChange={(e) => setMatcherField(i, 'isRegex', e.currentTarget.checked)}
                         checked={matcher.isRegex}
+                        onChange={(e) => setMatcherField(i, 'isRegex', e.currentTarget.checked)}
+                        type="checkbox"
                       />
-                      &nbsp; {t('public~Use RegEx')}
+                      &nbsp; {t('public~RegEx')}
+                    </label>
+                    <label>
+                      <input
+                        checked={matcher.isEqual === false}
+                        onChange={(e) => setMatcherField(i, 'isEqual', !e.currentTarget.checked)}
+                        type="checkbox"
+                      />
+                      &nbsp; {t('public~Negative matcher')}
                     </label>
                     <Tooltip content={t('public~Remove')}>
                       <Button
