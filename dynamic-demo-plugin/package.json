@@ -71,9 +71,6 @@
       "modalPage": "./components/Modals/ModalPage",
       "sampleErrorBoundaryPage": "./components/ErrorBoundary/SampleErrorBoundaryPage"
     },
-    "dependencies": {
-      "@console/pluginAPI": "*"
-    },
     "disableStaticPlugins": [
       "@console/demo-plugin"
     ]
