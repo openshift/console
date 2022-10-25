@@ -295,12 +295,12 @@ describe('PluginStore', () => {
       const {
         dynamicPluginExtensions,
         loadedDynamicPlugins,
-        failedDynamicPluginNames,
+        failedDynamicPlugins,
       } = store.getStateForTestPurposes();
 
       expect(dynamicPluginExtensions).toEqual([]);
       expect(loadedDynamicPlugins.size).toBe(0);
-      expect(failedDynamicPluginNames.size).toBe(0);
+      expect(failedDynamicPlugins.size).toBe(0);
 
       expect(store.getExtensionsInUse()).toEqual([]);
       expect(store.getAllowedDynamicPluginNames()).toEqual(['TestA', 'TestB']);
@@ -523,7 +523,7 @@ describe('PluginStore', () => {
       );
 
       store.setDynamicPluginEnabled('TestA@1.2.3', true);
-      store.registerFailedDynamicPlugin('TestB');
+      store.registerFailedDynamicPlugin('TestB', 'Test error message');
 
       listeners.forEach((l) => {
         expect(l.mock.calls.length).toBe(3);
@@ -659,10 +659,10 @@ describe('PluginStore', () => {
       expect(loadedDynamicPlugins.size).toBe(0);
     });
 
-    it('does nothing if the plugin is already listed via failedDynamicPluginNames', () => {
+    it('does nothing if the plugin is already listed via failedDynamicPlugins', () => {
       const store = new PluginStore([], ['Test']);
 
-      store.registerFailedDynamicPlugin('Test');
+      store.registerFailedDynamicPlugin('Test', 'Test error message');
 
       addDynamicPluginToStore(
         store,
@@ -903,23 +903,27 @@ describe('PluginStore', () => {
   });
 
   describe('registerFailedDynamicPlugin', () => {
-    it('adds the given plugin name to failedDynamicPluginNames', () => {
+    it('adds the given plugin name to failedDynamicPlugins', () => {
       const store = new PluginStore([], ['Test']);
 
       const listeners = [jest.fn(), jest.fn()];
       listeners.forEach((l) => store.subscribe(l));
 
-      const { failedDynamicPluginNames } = store.getStateForTestPurposes();
+      const { failedDynamicPlugins } = store.getStateForTestPurposes();
 
-      expect(failedDynamicPluginNames).toEqual(new Set());
+      expect(failedDynamicPlugins.size).toBe(0);
 
       listeners.forEach((l) => {
         expect(l.mock.calls.length).toBe(0);
       });
 
-      store.registerFailedDynamicPlugin('Test');
+      store.registerFailedDynamicPlugin('Test', 'Test error message', new Error('Boom'));
 
-      expect(failedDynamicPluginNames).toEqual(new Set(['Test']));
+      expect(failedDynamicPlugins.size).toBe(1);
+      expect(failedDynamicPlugins.get('Test')).toEqual({
+        errorMessage: 'Test error message',
+        errorCause: new Error('Boom'),
+      });
 
       listeners.forEach((l) => {
         expect(l.mock.calls.length).toBe(1);
@@ -932,11 +936,11 @@ describe('PluginStore', () => {
       const listeners = [jest.fn(), jest.fn()];
       listeners.forEach((l) => store.subscribe(l));
 
-      const { failedDynamicPluginNames } = store.getStateForTestPurposes();
+      const { failedDynamicPlugins } = store.getStateForTestPurposes();
 
-      store.registerFailedDynamicPlugin('Test');
+      store.registerFailedDynamicPlugin('Test', 'Test error message', new Error('Boom'));
 
-      expect(failedDynamicPluginNames).toEqual(new Set());
+      expect(failedDynamicPlugins.size).toBe(0);
 
       listeners.forEach((l) => {
         expect(l.mock.calls.length).toBe(0);
@@ -954,11 +958,11 @@ describe('PluginStore', () => {
       const listeners = [jest.fn(), jest.fn()];
       listeners.forEach((l) => store.subscribe(l));
 
-      const { failedDynamicPluginNames } = store.getStateForTestPurposes();
+      const { failedDynamicPlugins } = store.getStateForTestPurposes();
 
-      store.registerFailedDynamicPlugin('Test');
+      store.registerFailedDynamicPlugin('Test', 'Test error message', new Error('Boom'));
 
-      expect(failedDynamicPluginNames).toEqual(new Set());
+      expect(failedDynamicPlugins.size).toBe(0);
 
       listeners.forEach((l) => {
         expect(l.mock.calls.length).toBe(0);
@@ -1013,7 +1017,7 @@ describe('PluginStore', () => {
         },
       ]);
 
-      store.registerFailedDynamicPlugin('TestB');
+      store.registerFailedDynamicPlugin('TestB', 'Test error message', new Error('Boom'));
 
       expect(store.getDynamicPluginInfo()).toEqual([
         {
@@ -1025,6 +1029,8 @@ describe('PluginStore', () => {
         {
           status: 'Failed',
           pluginName: 'TestB',
+          errorMessage: 'Test error message',
+          errorCause: new Error('Boom'),
         },
       ]);
     });

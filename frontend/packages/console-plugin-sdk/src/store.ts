@@ -60,11 +60,11 @@ export class PluginStore {
 
   private readonly allowedDynamicPluginNames: Set<string>;
 
-  // Dynamic plugins that were loaded successfully
+  // Dynamic plugins that were loaded successfully (keys are plugin IDs)
   private readonly loadedDynamicPlugins = new Map<string, LoadedDynamicPlugin>();
 
-  // Dynamic plugins that failed to load properly
-  private readonly failedDynamicPluginNames = new Set<string>();
+  // Dynamic plugins that failed to load properly (keys are plugin names)
+  private readonly failedDynamicPlugins = new Map<string, FailedDynamicPlugin>();
 
   private readonly listeners: VoidFunction[] = [];
 
@@ -132,7 +132,7 @@ export class PluginStore {
       return;
     }
 
-    if (this.failedDynamicPluginNames.has(manifest.name)) {
+    if (this.failedDynamicPlugins.has(manifest.name)) {
       console.warn(`Attempt to add plugin ${pluginID} previously marked as failed`);
       return;
     }
@@ -203,7 +203,11 @@ export class PluginStore {
     );
   }
 
-  registerFailedDynamicPlugin(pluginName: string) {
+  private isDynamicPluginFailed(pluginName: string) {
+    return this.failedDynamicPlugins.has(pluginName);
+  }
+
+  registerFailedDynamicPlugin(pluginName: string, errorMessage: string, errorCause?: unknown) {
     if (!this.allowedDynamicPluginNames.has(pluginName)) {
       console.warn(`Attempt to register unexpected plugin ${pluginName} as failed`);
       return;
@@ -214,14 +218,13 @@ export class PluginStore {
       return;
     }
 
-    this.failedDynamicPluginNames.add(pluginName);
+    this.failedDynamicPlugins.set(pluginName, { errorMessage, errorCause });
     this.invokeListeners();
   }
 
   getDynamicPluginInfo(): DynamicPluginInfo[] {
-    const loadedPluginEntries = Array.from(this.loadedDynamicPlugins.keys()).reduce(
-      (acc, pluginID) => {
-        const plugin = this.loadedDynamicPlugins.get(pluginID);
+    const loadedPluginEntries = Array.from(this.loadedDynamicPlugins.entries()).reduce(
+      (acc, [pluginID, plugin]) => {
         acc.push({
           status: 'Loaded',
           pluginID,
@@ -233,11 +236,13 @@ export class PluginStore {
       [] as LoadedDynamicPluginInfo[],
     );
 
-    const failedPluginEntries = Array.from(this.failedDynamicPluginNames.values()).reduce(
-      (acc, pluginName) => {
+    const failedPluginEntries = Array.from(this.failedDynamicPlugins.entries()).reduce(
+      (acc, [pluginName, plugin]) => {
         acc.push({
           status: 'Failed',
           pluginName,
+          errorMessage: plugin.errorMessage,
+          errorCause: plugin.errorCause,
         });
         return acc;
       },
@@ -247,7 +252,7 @@ export class PluginStore {
     const pendingPluginEntries = Array.from(this.allowedDynamicPluginNames.values())
       .filter(
         (pluginName) =>
-          !this.isDynamicPluginLoaded(pluginName) && !this.failedDynamicPluginNames.has(pluginName),
+          !this.isDynamicPluginLoaded(pluginName) && !this.isDynamicPluginFailed(pluginName),
       )
       .reduce((acc, pluginName) => {
         acc.push({
@@ -267,7 +272,7 @@ export class PluginStore {
       staticPlugins: this.staticPlugins,
       disabledStaticPluginNames: this.disabledStaticPluginNames,
       loadedDynamicPlugins: this.loadedDynamicPlugins,
-      failedDynamicPluginNames: this.failedDynamicPluginNames,
+      failedDynamicPlugins: this.failedDynamicPlugins,
       listeners: this.listeners,
     };
   }
@@ -290,6 +295,11 @@ type LoadedDynamicPlugin = {
   enabled: boolean;
 };
 
+type FailedDynamicPlugin = {
+  errorMessage: string;
+  errorCause?: unknown;
+};
+
 export type LoadedDynamicPluginInfo = {
   status: 'Loaded';
   pluginID: string;
@@ -297,10 +307,17 @@ export type LoadedDynamicPluginInfo = {
   enabled: boolean;
 };
 
-export type NotLoadedDynamicPluginInfo = {
-  status: 'Pending' | 'Failed';
-  pluginName: string;
-};
+export type NotLoadedDynamicPluginInfo =
+  | {
+      status: 'Pending';
+      pluginName: string;
+    }
+  | {
+      status: 'Failed';
+      pluginName: string;
+      errorMessage: string;
+      errorCause?: unknown;
+    };
 
 export type DynamicPluginInfo = LoadedDynamicPluginInfo | NotLoadedDynamicPluginInfo;
 

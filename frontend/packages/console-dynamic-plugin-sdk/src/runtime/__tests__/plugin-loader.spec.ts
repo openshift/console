@@ -376,8 +376,8 @@ describe('loadAndEnablePlugin', () => {
     await loadAndEnablePlugin('Test', pluginStore, onError);
 
     expect(onError).toHaveBeenCalledTimes(1);
-    expect(consoleMock).toHaveBeenLastCalledWith(
-      `Error while loading plugin Test from /test/api/plugins/Test/`,
+    expect(onError).toHaveBeenLastCalledWith(
+      'Failed to get a valid plugin manifest from /test/api/plugins/Test/',
       new Error('boom1'),
     );
 
@@ -387,8 +387,8 @@ describe('loadAndEnablePlugin', () => {
     await loadAndEnablePlugin('Test', pluginStore, onError);
 
     expect(onError).toHaveBeenCalledTimes(2);
-    expect(consoleMock).toHaveBeenLastCalledWith(
-      `Error while loading plugin Test from /test/api/plugins/Test/`,
+    expect(onError).toHaveBeenLastCalledWith(
+      'Failed to resolve dependencies of plugin Test',
       new Error('boom2'),
     );
 
@@ -399,8 +399,8 @@ describe('loadAndEnablePlugin', () => {
     await loadAndEnablePlugin('Test', pluginStore, onError);
 
     expect(onError).toHaveBeenCalledTimes(3);
-    expect(consoleMock).toHaveBeenLastCalledWith(
-      `Error while loading plugin Test from /test/api/plugins/Test/`,
+    expect(onError).toHaveBeenLastCalledWith(
+      'Failed to load entry script of plugin Test',
       new Error('boom3'),
     );
 

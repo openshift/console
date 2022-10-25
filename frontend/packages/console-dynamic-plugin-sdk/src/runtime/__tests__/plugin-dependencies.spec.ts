@@ -46,6 +46,7 @@ describe('resolvePluginDependencies', () => {
   ): NotLoadedDynamicPluginInfo => ({
     status: 'Failed',
     pluginName: manifest.name,
+    errorMessage: `Test error message for plugin ${manifest.name}`,
   });
 
   it('throws an error if Console plugin API dependency is not met', async () => {
