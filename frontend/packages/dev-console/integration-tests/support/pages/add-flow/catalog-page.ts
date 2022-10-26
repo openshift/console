@@ -36,7 +36,7 @@ export const catalogPage = {
     cy.get(catalogPO.sidePane.instantiateTemplate).click({ force: true });
   },
   clickOnCancelButton: () => cy.byButtonText('Cancel').click(),
-  selectCatalogType: (type: string | catalogTypes) => {
+  selectCatalogType: (type: catalogTypes) => {
     switch (type) {
       case catalogTypes.OperatorBacked:
       case 'Operator Backed': {
@@ -48,13 +48,11 @@ export const catalogPage = {
         cy.get(catalogPO.catalogTypes.helmCharts).click();
         break;
       }
-      case catalogTypes.BuilderImage:
-      case 'Builder Images': {
+      case catalogTypes.BuilderImage: {
         cy.get(catalogPO.catalogTypes.builderImage).click();
         break;
       }
-      case catalogTypes.Template:
-      case 'Templates': {
+      case catalogTypes.Template: {
         cy.get(catalogPO.catalogTypes.template).click();
         break;
       }
@@ -78,12 +76,17 @@ export const catalogPage = {
       }
     }
   },
-  selectTemplateTypes: (type: string | catalogTypes) => {
-    cy.get(catalogPO.catalogTypeLink)
-      .contains(type)
-      .scrollIntoView()
-      .click();
-    cy.log(`Select ${type} from Types section`);
+  selectTemplateCategory: (templateCategoryTitle: string) => {
+    const selector =
+      catalogPO.catalogCategoriesByTitle[
+        templateCategoryTitle as keyof typeof catalogPO.catalogCategoriesByTitle
+      ];
+    if (!selector) {
+      throw new Error(`Selector not found for Template category "${templateCategoryTitle}"`);
+    }
+    cy.get(selector).scrollIntoView();
+    cy.get(selector).click();
+    cy.log(`Select Template category ${templateCategoryTitle}`);
   },
   selectKnativeServingCard: () =>
     cy
