@@ -13,7 +13,7 @@ import { FEATURES } from '../features';
 
 export const useCsvActions = ({ resource }) => {
   const [k8sModel, inFlight] = useK8sModel(referenceFor(resource));
-  const disableAddCapacity = useFlag(FEATURES.ADD_CAPACITY);
+  const disableAddCapacity = useFlag(FEATURES.CSV_ACTIONS);
 
   const actions = useMemo(
     () => [
