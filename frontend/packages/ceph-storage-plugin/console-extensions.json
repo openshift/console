@@ -268,7 +268,7 @@
       "provider": { "$codeRef": "actions.useCsvActions" }
     },
     "flags": {
-      "disallowed": ["COMMON_FLAG", "ODF_CSV_ACTIONS"]
+      "disallowed": ["OCS_INDEPENDENT", "MCG_STANDALONE", "ODF_CSV_ACTIONS"]
     }
   },
   {
