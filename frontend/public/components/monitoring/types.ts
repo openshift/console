@@ -1,10 +1,4 @@
-import {
-  Alert,
-  PrometheusLabels,
-  PrometheusRule,
-  Rule,
-  Silence,
-} from '@console/dynamic-plugin-sdk';
+import { Alert, PrometheusLabels, Rule, Silence } from '@console/dynamic-plugin-sdk';
 
 export const enum AlertSource {
   Platform = 'platform',
@@ -36,12 +30,6 @@ export type Rules = {
   loadError?: string | Error;
 };
 
-type Group = {
-  rules: PrometheusRule[];
-  file: string;
-  name: string;
-};
-
 export type PrometheusAPIError = {
   json: {
     error?: string;
@@ -50,13 +38,6 @@ export type PrometheusAPIError = {
   response: {
     status: number;
   };
-};
-
-export type PrometheusRulesResponse = {
-  data: {
-    groups: Group[];
-  };
-  status: string;
 };
 
 export type Target = {

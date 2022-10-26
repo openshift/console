@@ -179,11 +179,25 @@ export type PrometheusRule = {
 
 export type Rule = PrometheusRule & {
   id: string;
+  sourceId?: string;
   silencedBy?: Silence[];
 };
 
 export type PrometheusLabels = { [key: string]: string };
 export type PrometheusValue = [number, string];
+
+type Group = {
+  rules: PrometheusRule[];
+  file: string;
+  name: string;
+};
+
+export type PrometheusRulesResponse = {
+  data: {
+    groups: Group[];
+  };
+  status: string;
+};
 
 export type DiscoveryResources = {
   adminResources: string[];

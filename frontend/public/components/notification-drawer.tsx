@@ -21,7 +21,6 @@ import {
 } from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
-import { PrometheusRulesResponse } from '@console/internal/components/monitoring/types';
 
 import { getClusterID } from '../module/k8s/cluster-settings';
 
@@ -78,7 +77,7 @@ import { LinkifyExternal } from './utils';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
-import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useModal, PrometheusRulesResponse } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation();
