@@ -70,7 +70,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     cta: {
       label: 'Create Devfile Sample',
       href:
-        '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/nodeshift-starters/devfile-sample.git',
+        '/import/ns/test?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/nodeshift-starters/devfile-sample.git',
     },
     icon: { url: 'trimmed' },
   },
@@ -83,7 +83,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     cta: {
       label: 'Create Devfile Sample',
       href:
-        '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git',
+        '/import/ns/test?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git',
     },
     icon: { url: 'trimmed' },
   },
@@ -96,7 +96,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     cta: {
       label: 'Create Devfile Sample',
       href:
-        '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git',
+        '/import/ns/test?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git',
     },
     icon: { url: 'trimmed' },
   },
@@ -109,7 +109,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     cta: {
       label: 'Create Devfile Sample',
       href:
-        '/import?importType=devfile&formType=sample&devfileName=python-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-python-basic.git',
+        '/import/ns/test?importType=devfile&formType=sample&devfileName=python-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-python-basic.git',
     },
     icon: { url: 'trimmed' },
   },
