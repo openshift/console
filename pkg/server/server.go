@@ -41,76 +41,78 @@ const (
 	tokenizerPageTemplateName          = "tokener.html"
 	multiclusterLogoutPageTemplateName = "multicluster-logout.html"
 
-	authLoginEndpoint                = "/auth/login"
-	AuthLoginCallbackEndpoint        = "/auth/callback"
-	AuthLoginSuccessEndpoint         = "/"
-	AuthLoginErrorEndpoint           = "/error"
-	authLogoutEndpoint               = "/auth/logout"
-	authLogoutMulticlusterEndpoint   = "/api/logout/multicluster"
-	k8sProxyEndpoint                 = "/api/kubernetes/"
-	graphQLEndpoint                  = "/api/graphql"
-	prometheusProxyEndpoint          = "/api/prometheus"
-	prometheusTenancyProxyEndpoint   = "/api/prometheus-tenancy"
-	alertManagerProxyEndpoint        = "/api/alertmanager"
-	alertManagerTenancyProxyEndpoint = "/api/alertmanager-tenancy"
-	meteringProxyEndpoint            = "/api/metering"
-	customLogoEndpoint               = "/custom-logo"
-	helmChartRepoProxyEndpoint       = "/api/helm/charts/"
-	gitopsEndpoint                   = "/api/gitops/"
-	devfileEndpoint                  = "/api/devfile/"
-	devfileSamplesEndpoint           = "/api/devfile/samples/"
-	pluginAssetsEndpoint             = "/api/plugins/"
-	pluginProxyEndpoint              = "/api/proxy/"
-	localesEndpoint                  = "/locales/resource.json"
-	updatesEndpoint                  = "/api/check-updates"
-	operandsListEndpoint             = "/api/list-operands/"
-	accountManagementEndpoint        = "/api/accounts_mgmt/"
-	sha256Prefix                     = "sha256~"
+	authLoginEndpoint                     = "/auth/login"
+	AuthLoginCallbackEndpoint             = "/auth/callback"
+	AuthLoginSuccessEndpoint              = "/"
+	AuthLoginErrorEndpoint                = "/error"
+	authLogoutEndpoint                    = "/auth/logout"
+	authLogoutMulticlusterEndpoint        = "/api/logout/multicluster"
+	k8sProxyEndpoint                      = "/api/kubernetes/"
+	graphQLEndpoint                       = "/api/graphql"
+	prometheusProxyEndpoint               = "/api/prometheus"
+	prometheusTenancyProxyEndpoint        = "/api/prometheus-tenancy"
+	alertManagerProxyEndpoint             = "/api/alertmanager"
+	alertmanagerUserWorkloadProxyEndpoint = "/api/alertmanager-user-workload"
+	alertManagerTenancyProxyEndpoint      = "/api/alertmanager-tenancy"
+	meteringProxyEndpoint                 = "/api/metering"
+	customLogoEndpoint                    = "/custom-logo"
+	helmChartRepoProxyEndpoint            = "/api/helm/charts/"
+	gitopsEndpoint                        = "/api/gitops/"
+	devfileEndpoint                       = "/api/devfile/"
+	devfileSamplesEndpoint                = "/api/devfile/samples/"
+	pluginAssetsEndpoint                  = "/api/plugins/"
+	pluginProxyEndpoint                   = "/api/proxy/"
+	localesEndpoint                       = "/locales/resource.json"
+	updatesEndpoint                       = "/api/check-updates"
+	operandsListEndpoint                  = "/api/list-operands/"
+	accountManagementEndpoint             = "/api/accounts_mgmt/"
+	sha256Prefix                          = "sha256~"
 )
 
 type jsGlobals struct {
-	ConsoleVersion             string                     `json:"consoleVersion"`
-	AuthDisabled               bool                       `json:"authDisabled"`
-	KubectlClientID            string                     `json:"kubectlClientID"`
-	BasePath                   string                     `json:"basePath"`
-	LoginURL                   string                     `json:"loginURL"`
-	LoginSuccessURL            string                     `json:"loginSuccessURL"`
-	LoginErrorURL              string                     `json:"loginErrorURL"`
-	LogoutURL                  string                     `json:"logoutURL"`
-	LogoutRedirect             string                     `json:"logoutRedirect"`
-	MulticlusterLogoutRedirect string                     `json:"multiclusterLogoutRedirect"`
-	RequestTokenURL            string                     `json:"requestTokenURL"`
-	KubeAdminLogoutURL         string                     `json:"kubeAdminLogoutURL"`
-	KubeAPIServerURL           string                     `json:"kubeAPIServerURL"`
-	PrometheusBaseURL          string                     `json:"prometheusBaseURL"`
-	PrometheusTenancyBaseURL   string                     `json:"prometheusTenancyBaseURL"`
-	AlertManagerBaseURL        string                     `json:"alertManagerBaseURL"`
-	MeteringBaseURL            string                     `json:"meteringBaseURL"`
-	Branding                   string                     `json:"branding"`
-	CustomProductName          string                     `json:"customProductName"`
-	CustomLogoURL              string                     `json:"customLogoURL"`
-	StatuspageID               string                     `json:"statuspageID"`
-	DocumentationBaseURL       string                     `json:"documentationBaseURL"`
-	AlertManagerPublicURL      string                     `json:"alertManagerPublicURL"`
-	GrafanaPublicURL           string                     `json:"grafanaPublicURL"`
-	PrometheusPublicURL        string                     `json:"prometheusPublicURL"`
-	ThanosPublicURL            string                     `json:"thanosPublicURL"`
-	LoadTestFactor             int                        `json:"loadTestFactor"`
-	InactivityTimeout          int                        `json:"inactivityTimeout"`
-	GOARCH                     string                     `json:"GOARCH"`
-	GOOS                       string                     `json:"GOOS"`
-	GraphQLBaseURL             string                     `json:"graphqlBaseURL"`
-	DevCatalogCategories       string                     `json:"developerCatalogCategories"`
-	UserSettingsLocation       string                     `json:"userSettingsLocation"`
-	AddPage                    string                     `json:"addPage"`
-	ConsolePlugins             []string                   `json:"consolePlugins"`
-	I18nNamespaces             []string                   `json:"i18nNamespaces"`
-	QuickStarts                string                     `json:"quickStarts"`
-	ProjectAccessClusterRoles  string                     `json:"projectAccessClusterRoles"`
-	Clusters                   []string                   `json:"clusters"`
-	ControlPlaneTopology       string                     `json:"controlPlaneTopology"`
-	Telemetry                  serverconfig.MultiKeyValue `json:"telemetry"`
-	ReleaseVersion             string                     `json:"releaseVersion"`
+	ConsoleVersion                  string                     `json:"consoleVersion"`
+	AuthDisabled                    bool                       `json:"authDisabled"`
+	KubectlClientID                 string                     `json:"kubectlClientID"`
+	BasePath                        string                     `json:"basePath"`
+	LoginURL                        string                     `json:"loginURL"`
+	LoginSuccessURL                 string                     `json:"loginSuccessURL"`
+	LoginErrorURL                   string                     `json:"loginErrorURL"`
+	LogoutURL                       string                     `json:"logoutURL"`
+	LogoutRedirect                  string                     `json:"logoutRedirect"`
+	MulticlusterLogoutRedirect      string                     `json:"multiclusterLogoutRedirect"`
+	RequestTokenURL                 string                     `json:"requestTokenURL"`
+	KubeAdminLogoutURL              string                     `json:"kubeAdminLogoutURL"`
+	KubeAPIServerURL                string                     `json:"kubeAPIServerURL"`
+	PrometheusBaseURL               string                     `json:"prometheusBaseURL"`
+	PrometheusTenancyBaseURL        string                     `json:"prometheusTenancyBaseURL"`
+	AlertManagerBaseURL             string                     `json:"alertManagerBaseURL"`
+	MeteringBaseURL                 string                     `json:"meteringBaseURL"`
+	Branding                        string                     `json:"branding"`
+	CustomProductName               string                     `json:"customProductName"`
+	CustomLogoURL                   string                     `json:"customLogoURL"`
+	StatuspageID                    string                     `json:"statuspageID"`
+	DocumentationBaseURL            string                     `json:"documentationBaseURL"`
+	AlertManagerPublicURL           string                     `json:"alertManagerPublicURL"`
+	AlertmanagerUserWorkloadBaseURL string                     `json:"alertmanagerUserWorkloadBaseURL"`
+	GrafanaPublicURL                string                     `json:"grafanaPublicURL"`
+	PrometheusPublicURL             string                     `json:"prometheusPublicURL"`
+	ThanosPublicURL                 string                     `json:"thanosPublicURL"`
+	LoadTestFactor                  int                        `json:"loadTestFactor"`
+	InactivityTimeout               int                        `json:"inactivityTimeout"`
+	GOARCH                          string                     `json:"GOARCH"`
+	GOOS                            string                     `json:"GOOS"`
+	GraphQLBaseURL                  string                     `json:"graphqlBaseURL"`
+	DevCatalogCategories            string                     `json:"developerCatalogCategories"`
+	UserSettingsLocation            string                     `json:"userSettingsLocation"`
+	AddPage                         string                     `json:"addPage"`
+	ConsolePlugins                  []string                   `json:"consolePlugins"`
+	I18nNamespaces                  []string                   `json:"i18nNamespaces"`
+	QuickStarts                     string                     `json:"quickStarts"`
+	ProjectAccessClusterRoles       string                     `json:"projectAccessClusterRoles"`
+	Clusters                        []string                   `json:"clusters"`
+	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
+	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
+	ReleaseVersion                  string                     `json:"releaseVersion"`
 }
 
 type Server struct {
@@ -139,17 +141,18 @@ type Server struct {
 	I18nNamespaces        []string
 	PluginProxy           string
 	// Clients with the correct TLS setup for communicating with the API servers.
-	K8sClients                       map[string]*http.Client
-	ThanosProxyConfig                *proxy.Config
-	ThanosTenancyProxyConfig         *proxy.Config
-	ThanosTenancyProxyForRulesConfig *proxy.Config
-	AlertManagerProxyConfig          *proxy.Config
-	AlertManagerTenancyProxyConfig   *proxy.Config
-	MeteringProxyConfig              *proxy.Config
-	TerminalProxyTLSConfig           *tls.Config
-	PluginsProxyTLSConfig            *tls.Config
-	GitOpsProxyConfig                *proxy.Config
-	ClusterManagementProxyConfig     *proxy.Config
+	K8sClients                          map[string]*http.Client
+	ThanosProxyConfig                   *proxy.Config
+	ThanosTenancyProxyConfig            *proxy.Config
+	ThanosTenancyProxyForRulesConfig    *proxy.Config
+	AlertManagerProxyConfig             *proxy.Config
+	AlertManagerUserWorkloadProxyConfig *proxy.Config
+	AlertManagerTenancyProxyConfig      *proxy.Config
+	MeteringProxyConfig                 *proxy.Config
+	TerminalProxyTLSConfig              *tls.Config
+	PluginsProxyTLSConfig               *tls.Config
+	GitOpsProxyConfig                   *proxy.Config
+	ClusterManagementProxyConfig        *proxy.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
@@ -157,16 +160,18 @@ type Server struct {
 	GOARCH                             string
 	GOOS                               string
 	// Monitoring and Logging related URLs
-	AlertManagerPublicURL     *url.URL
-	GrafanaPublicURL          *url.URL
-	PrometheusPublicURL       *url.URL
-	ThanosPublicURL           *url.URL
-	DevCatalogCategories      string
-	UserSettingsLocation      string
-	QuickStarts               string
-	AddPage                   string
-	ProjectAccessClusterRoles string
-	Telemetry                 serverconfig.MultiKeyValue
+	AlertManagerPublicURL        *url.URL
+	GrafanaPublicURL             *url.URL
+	PrometheusPublicURL          *url.URL
+	ThanosPublicURL              *url.URL
+	AlertManagerUserWorkloadHost string
+	AlertManagerTenancyHost      string
+	DevCatalogCategories         string
+	UserSettingsLocation         string
+	QuickStarts                  string
+	AddPage                      string
+	ProjectAccessClusterRoles    string
+	Telemetry                    serverconfig.MultiKeyValue
 }
 
 func (s *Server) authDisabled() bool {
@@ -461,11 +466,13 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	if s.alertManagerProxyEnabled() {
 		var (
-			alertManagerProxyAPIPath        = alertManagerProxyEndpoint + "/api/"
-			alertManagerTenancyProxyAPIPath = alertManagerTenancyProxyEndpoint + "/api/"
+			alertManagerProxyAPIPath             = alertManagerProxyEndpoint + "/api/"
+			alertManagerUserWorkloadProxyAPIPath = alertmanagerUserWorkloadProxyEndpoint + "/api/"
+			alertManagerTenancyProxyAPIPath      = alertManagerTenancyProxyEndpoint + "/api/"
 
-			alertManagerProxy        = proxy.NewProxy(s.AlertManagerProxyConfig)
-			alertManagerTenancyProxy = proxy.NewProxy(s.AlertManagerTenancyProxyConfig)
+			alertManagerProxy             = proxy.NewProxy(s.AlertManagerProxyConfig)
+			alertManagerUserWorkloadProxy = proxy.NewProxy(s.AlertManagerUserWorkloadProxyConfig)
+			alertManagerTenancyProxy      = proxy.NewProxy(s.AlertManagerTenancyProxyConfig)
 		)
 
 		handle(alertManagerProxyAPIPath, http.StripPrefix(
@@ -473,6 +480,14 @@ func (s *Server) HTTPHandler() http.Handler {
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				alertManagerProxy.ServeHTTP(w, r)
+			})),
+		)
+
+		handle(alertManagerUserWorkloadProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerUserWorkloadProxyAPIPath),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				alertManagerUserWorkloadProxy.ServeHTTP(w, r)
 			})),
 		)
 
@@ -731,6 +746,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	if s.alertManagerProxyEnabled() {
 		jsg.AlertManagerBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyEndpoint)
+		jsg.AlertmanagerUserWorkloadBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertmanagerUserWorkloadProxyEndpoint)
 	}
 
 	if s.meteringProxyEnabled() {

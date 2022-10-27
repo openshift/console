@@ -55,12 +55,14 @@ type ServingInfo struct {
 	RequestTimeoutSeconds int64         `yaml:"requestTimeoutSeconds,omitempty"`
 }
 
-// Monitoring holds URLs for monitoring related services
+// MonitoringInfo holds URLs and hosts for monitoring related services
 type MonitoringInfo struct {
-	AlertmanagerPublicURL string `yaml:"alertmanagerPublicURL,omitempty"`
-	GrafanaPublicURL      string `yaml:"grafanaPublicURL,omitempty"`
-	PrometheusPublicURL   string `yaml:"prometheusPublicURL,omitempty"`
-	ThanosPublicURL       string `yaml:"thanosPublicURL,omitempty"`
+	AlertmanagerTenancyHost      string `yaml:"alertmanagerTenancyHost,omitempty"`
+	AlertmanagerUserWorkloadHost string `yaml:"alertmanagerUserWorkloadHost,omitempty"`
+	AlertmanagerPublicURL        string `yaml:"alertmanagerPublicURL,omitempty"`
+	GrafanaPublicURL             string `yaml:"grafanaPublicURL,omitempty"`
+	PrometheusPublicURL          string `yaml:"prometheusPublicURL,omitempty"`
+	ThanosPublicURL              string `yaml:"thanosPublicURL,omitempty"`
 }
 
 // ClusterInfo holds information the about the cluster such as master public URL and console public URL.
