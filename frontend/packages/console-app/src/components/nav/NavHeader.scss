@@ -1,5 +1,5 @@
 @import '~@patternfly/patternfly/sass-utilities/all';
-@import '../../style/vars';
+@import '~@console/internal/style/vars';
 
 .oc-nav-header {
   border-bottom: 1px solid var(--pf-global--BackgroundColor--dark-200);

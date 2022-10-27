@@ -1,8 +1,8 @@
-import { startsWithSome } from '@console/shared';
 import { NavExtension, isNavSection, K8sModel } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { stripBasePath } from '../utils';
+import { stripBasePath } from '@console/internal/components/utils';
+import { startsWithSome } from '@console/shared';
 
 const toArray = (val) => (val ? (Array.isArray(val) ? val : [val]) : []);
 
@@ -18,25 +18,34 @@ const itemDependsOnItem = (s1: NavExtension, s2: NavExtension): boolean => {
 const isPositioned = (item: NavExtension, allItems: NavExtension[]): boolean =>
   !!allItems.find((i) => itemDependsOnItem(item, i));
 
-const findIndexForItem = (item: NavExtension, currentItems: NavExtension[]): number => {
-  const { insertBefore, insertAfter } = item.properties;
-  let index = -1;
-  const before = toArray(insertBefore);
-  const after = toArray(insertAfter);
-  let count = 0;
-  while (count < before.length && index < 0) {
-    index = currentItems.findIndex((i) => i.properties.id === before[count]);
-    count++;
-  }
-  count = 0;
-  while (count < after.length && index < 0) {
-    index = currentItems.findIndex((i) => i.properties.id === after[count]);
-    if (index >= 0) {
-      index += 1;
+const findInsertBeforeIndex = (item: NavExtension, allItems: NavExtension[]): number => {
+  return toArray(item.properties.insertBefore).reduce((index, currentItem) => {
+    // take only the first index found
+    if (index < 0) {
+      return allItems.findIndex((i) => i.properties.id === currentItem);
     }
-    count++;
+    return index;
+  }, -1);
+};
+
+const findInsertAfterIndex = (item: NavExtension, allItems: NavExtension[]): number => {
+  return toArray(item.properties.insertAfter).reduce((index, currentItem) => {
+    if (index < 0) {
+      const newIndex = allItems.findIndex((i) => i.properties.id === currentItem);
+      if (newIndex >= 0) {
+        return newIndex + 1;
+      }
+    }
+    return index;
+  }, -1);
+};
+
+const findIndexForItem = (item: NavExtension, allItems: NavExtension[]) => {
+  const insertBeforeIndex = findInsertBeforeIndex(item, allItems);
+  if (insertBeforeIndex >= 0) {
+    return insertBeforeIndex;
   }
-  return index;
+  return findInsertAfterIndex(item, allItems);
 };
 
 const insertItem = (
@@ -104,6 +113,7 @@ export const sortExtensionItems = <E extends NavExtension>(
     return dependencyIds.reduce((acc, dependencyId) => {
       if (dependencyId) {
         // Add this dependency and its dependencies
+        // eslint-disable-next-line no-param-reassign
         acc = [...acc, dependencyId, ...dependencies(dependencyId, [...acc, dependencyId])];
       }
       return acc;

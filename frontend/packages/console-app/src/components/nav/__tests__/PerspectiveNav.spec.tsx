@@ -1,12 +1,11 @@
 import * as React from 'react';
+import { Nav } from '@patternfly/react-core';
+import { shallow, mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router';
-import { shallow, mount } from 'enzyme';
-import { Nav } from '@patternfly/react-core';
-// import * as PinnedResources from '@console/shared/src/hooks/usePinnedResources';
-import { usePinnedResources } from '@console/shared/src';
-import store from '../../../redux';
-import { history } from '../../utils';
+import { history } from '@console/internal/components/utils';
+import store from '@console/internal/redux';
+import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
 import PerspectiveNav from '../PerspectiveNav';
 
 jest.mock('react', () => ({

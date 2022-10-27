@@ -1,20 +1,23 @@
 import * as React from 'react';
+import { NavExpandable, NavGroup, NavItemSeparator } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { NavExpandable, NavGroup } from '@patternfly/react-core';
-import { useLocation } from '@console/shared/src/hooks/useLocation';
-import { useNavExtensionsForSection } from './useNavExtensionsForSection';
-import { PluginNavItem } from './PluginNavItem';
 import {
   NavExtension,
   isHrefNavItem,
   isResourceNavItem,
+  isSeparator,
   K8sModel,
   ResourceNavItem,
+  isResourceNSNavItem,
 } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { navItemHrefIsActive, navItemResourceIsActive } from './utils';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
+import { useLocation } from '@console/shared/src/hooks/useLocation';
+import { NavItemHref } from './NavItemHref';
+import { NavItemResource } from './NavItemResource';
+import { useNavExtensionsForSection } from './useNavExtensionsForSection';
+import { navItemHrefIsActive, navItemResourceIsActive } from './utils';
 
 export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes }) => {
   const { t } = useTranslation();
@@ -56,16 +59,44 @@ export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes
     return null;
   }
 
-  const children = navExtensions.map((extension) => (
-    <PluginNavItem key={extension.uid} extension={extension} />
-  ));
+  const children = navExtensions.map((extension) => {
+    if (isSeparator(extension)) {
+      return <NavItemSeparator key={extension.uid} {...extension.properties.dataAttributes} />;
+    }
+    if (isHrefNavItem(extension)) {
+      return (
+        <NavItemHref
+          href={extension.properties.href}
+          namespaced={extension.properties.namespaced}
+          prefixNamespaced={extension.properties.prefixNamespaced}
+          startsWith={extension.properties.startsWith}
+          dataAttributes={extension.properties.dataAttributes}
+        >
+          {extension.properties.name}
+        </NavItemHref>
+      );
+    }
+    if (isResourceNavItem(extension)) {
+      return (
+        <NavItemResource
+          namespaced={isResourceNSNavItem(extension)}
+          model={extension.properties.model}
+          startsWith={extension.properties.startsWith}
+          dataAttributes={extension.properties.dataAttributes}
+        >
+          {extension.properties.name}
+        </NavItemResource>
+      );
+    }
+    return null;
+  });
 
   if (!name) {
     return (
       <NavGroup
         title=""
         className="no-title"
-        aria-label={t('public~Navigation')}
+        aria-label={t('console-app~Navigation')}
         {...dataAttributes}
       >
         {children}

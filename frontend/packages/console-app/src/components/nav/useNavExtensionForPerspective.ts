@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { LoadedExtension, useExtensions } from '@console/plugin-sdk';
 import { NavExtension, isNavExtension } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { LoadedExtension, useExtensions } from '@console/plugin-sdk';
 import { usePerspectives } from '@console/shared/src';
 
 export const useNavExtensionsForPerspective = (

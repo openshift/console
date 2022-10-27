@@ -10,8 +10,8 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { NavItemHref } from './NavItemHref';
-import { NavSection } from './NavSection';
 import { NavItemResource } from './NavItemResource';
+import { NavSection } from './NavSection';
 
 export const PluginNavItem: React.FC<PluginNavItemProps> = ({ extension }) => {
   if (isNavSection(extension)) {

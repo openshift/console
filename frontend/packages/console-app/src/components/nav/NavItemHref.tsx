@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { NavItem } from '@patternfly/react-core';
-import { formatNamespacedRouteForHref, formatNamespacedRouteForResource } from '@console/shared';
-import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-internal';
-import { useLocation } from '@console/shared/src/hooks/useLocation';
 import { HrefNavItem } from '@console/dynamic-plugin-sdk';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-internal';
+import { formatNamespacedRouteForHref, formatNamespacedRouteForResource } from '@console/shared';
+import { useLocation } from '@console/shared/src/hooks/useLocation';
 import { NavLinkProps, NavLink } from './NavLink';
 import { navItemHrefIsActive, stripScopeFromPath } from './utils';
 
