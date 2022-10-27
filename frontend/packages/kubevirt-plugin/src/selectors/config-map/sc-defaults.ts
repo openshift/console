@@ -61,4 +61,4 @@ export const isConfigMapContainsScModes = (
 export const getDefaultStorageClass = (
   storageClasses: StorageClassResourceKind[],
 ): StorageClassResourceKind =>
-  (storageClasses || []).find((sc) => getAnnotations(sc, {})[DEFAULT_SC_ANNOTATION] === 'true');
+  (storageClasses || []).find((sc) => getAnnotations(sc, {})?.[DEFAULT_SC_ANNOTATION] === 'true');

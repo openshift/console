@@ -203,7 +203,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
   const storageClassDefaultName = React.useMemo(() => {
     if (storageClasses && storageClassLoaded) {
       const storageClassDefault = storageClasses?.find(
-        (sc) => sc?.metadata?.annotations[DEFAULT_SC_ANNOTATION] === 'true',
+        (sc) => sc?.metadata?.annotations?.[DEFAULT_SC_ANNOTATION] === 'true',
       );
       return storageClassDefault?.metadata?.name;
     }
