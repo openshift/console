@@ -6,4 +6,4 @@ To add and manage all things Serverless (Knative Services, Revisions, Routes) yo
 
 Read more here:
 
-https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/serverless/administration-guide#install-serverless-operator
+https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/serverless/install
