@@ -21,7 +21,7 @@ var testRegistryServer = ""
 func GetRegistrySamples(registry string) ([]byte, error) {
 	//reduce the http request and response timeouts on the registry to 10s
 	httpTimeout := 10
-	if registry == DEVFILE_REGISTRY_URL || registry == DEVFILE_STAGING_REGISTRY_URL || registry == testRegistryServer && testRegistryServer != ""  {
+	if registry == DEVFILE_REGISTRY_URL || registry == DEVFILE_STAGING_REGISTRY_URL || registry == testRegistryServer && testRegistryServer != "" {
 		// set registryOption with `user=openshift-console` for registry telemetry tracking
 		registryOption := registryLibrary.RegistryOptions{HTTPTimeout: &httpTimeout, User: ODC_TELEMETRY_CLIENT_NAME}
 
