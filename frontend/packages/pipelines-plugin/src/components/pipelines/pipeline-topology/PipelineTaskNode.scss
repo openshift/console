@@ -1,0 +1,10 @@
+.odc-pipeline-topology__task-node {
+  &.is-link {
+    > a:hover {
+      text-decoration: none;
+    }
+  }
+  &:focus {
+    outline: -webkit-focus-ring-color auto 5px;
+  }
+}

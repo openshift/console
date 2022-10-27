@@ -14,6 +14,7 @@ import {
   WithContextMenuProps,
   WithSelectionProps,
 } from '@patternfly/react-topology';
+import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { Link } from 'react-router-dom';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/lib-core';
@@ -28,6 +29,8 @@ import {
 } from '../detail-page-tabs/pipeline-details/pipeline-step-utils';
 import { PipelineVisualizationStepList } from '../detail-page-tabs/pipeline-details/PipelineVisualizationStepList';
 import { NodeType } from './const';
+
+import './PipelineTaskNode.scss';
 
 type PipelineTaskNodeProps = {
   element: Node;
@@ -140,6 +143,24 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
     !!path;
 
   const taskNode = (
+    <TaskNode
+      className="odc-pipeline-topology__task-node"
+      element={element}
+      onContextMenu={data.showContextMenu ? onContextMenu : undefined}
+      contextMenuOpen={contextMenuOpen}
+      scaleNode={(hover || contextMenuOpen) && detailsLevel !== ScaleDetailsLevel.high}
+      hideDetailsAtMedium
+      {...passedData}
+      {...rest}
+      badge={badge}
+      truncateLength={element.getData()?.label?.length}
+    >
+      {whenDecorator}
+    </TaskNode>
+  );
+
+  const classes = classNames('odc-pipeline-topology__task-node', { 'is-link': enableLogLink });
+  return (
     <Layer
       id={
         detailsLevel !== ScaleDetailsLevel.high && (hover || contextMenuOpen)
@@ -147,7 +168,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
           : DEFAULT_LAYER
       }
     >
-      <g ref={hoverRef} style={{ cursor: enableLogLink ? 'pointer' : 'default' }}>
+      <g data-test={`task ${element.getLabel()}`} className={classes} ref={hoverRef}>
         <Tooltip
           position="bottom"
           enableFlip={false}
@@ -160,30 +181,10 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
             />
           }
         >
-          <TaskNode
-            element={element}
-            onContextMenu={data.showContextMenu ? onContextMenu : undefined}
-            contextMenuOpen={contextMenuOpen}
-            scaleNode={(hover || contextMenuOpen) && detailsLevel !== ScaleDetailsLevel.high}
-            hideDetailsAtMedium
-            {...passedData}
-            {...rest}
-            badge={badge}
-            truncateLength={element.getData()?.label?.length}
-          >
-            {whenDecorator}
-          </TaskNode>
+          {enableLogLink ? <Link to={path}>{taskNode}</Link> : taskNode}
         </Tooltip>
       </g>
     </Layer>
-  );
-
-  return enableLogLink ? (
-    <Link to={path}>
-      <g data-test={`task ${element.getLabel()}`}>{taskNode}</g>
-    </Link>
-  ) : (
-    taskNode
   );
 };
 
