@@ -32,7 +32,8 @@ import {
   ViewUpdate,
 } from '@codemirror/view';
 import { PrometheusEndpoint, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
-import CloseButton from '@console/shared/src/components/close-button';
+import { Button } from '@patternfly/react-core';
+import { CloseIcon } from '@patternfly/react-icons';
 import { PromQLExtension } from '@prometheus-io/codemirror-promql';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -416,11 +417,14 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
           </div>
         </div>
       )}
-      <CloseButton
-        additionalClassName="query-browser__clear-icon"
-        ariaLabel={t('public~Clear query')}
+      <Button
+        aria-label={t('public~Clear query')}
+        className="query-browser__clear-icon"
         onClick={onClear}
-      />
+        variant="plain"
+      >
+        <CloseIcon />
+      </Button>
     </div>
   );
 };
