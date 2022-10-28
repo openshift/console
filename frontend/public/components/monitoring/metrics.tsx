@@ -191,10 +191,26 @@ const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
       .reduce((sum, q) => sum + _.size(q.get('series')), 0);
     const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
 
+    const cherries = observe
+    .getIn(['queryBrowser2', 'queries2',id])
+    .get('series')
+    .reduce((sum, q) => sum + _.size(q), 0)
+
+    console.log("JZ id %s", id)
+    console.log("JZ cherries %s", JSON.stringify(cherries))
+
     console.log("JZ colorIndex is (colorOffset + seriesIndex) % colors.length : " + (colorOffset + seriesIndex) % colors.length)
+    console.log("JZ colorOffSet %s, seriesIndex %s, colors %s , colors.length %s", colorOffset , seriesIndex, colors, colors.length)
+    console.log("JZ Labels %s", JSON.stringify(labels))
+    console.log("JZ series %s", JSON.stringify(series))
 
     return [(colorOffset + seriesIndex) % colors.length, false, false];
   });
+
+  console.log("JZ colories %s", colors)
+  console.log("JZ colorIndex %s", colorIndex)
+
+
 
   const dispatch = useDispatch();
   const toggleSeries = React.useCallback(() => dispatch(queryBrowserToggleSeries2(id, labels)), [
@@ -225,57 +241,57 @@ const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
   );
 };
 
-const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
-  const { t } = useTranslation();
+// const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
+//   const { t } = useTranslation();
 
-  const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ observe }: RootState) => {
-    const disabledSeries = observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries']);
-    if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
-      return [null, true, false];
-    }
+//   const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ observe }: RootState) => {
+//     const disabledSeries = observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries']);
+//     if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
+//       return [null, true, false];
+//     }
 
-    const series = observe.getIn(['queryBrowser', 'queries', index, 'series']);
-    if (_.isEmpty(series)) {
-      return [null, false, true];
-    }
+//     const series = observe.getIn(['queryBrowser', 'queries', index, 'series']);
+//     if (_.isEmpty(series)) {
+//       return [null, false, true];
+//     }
 
-    const colorOffset = observe
-      .getIn(['queryBrowser', 'queries'])
-      .take(index)
-      .filter((q) => q.get('isEnabled'))
-      .reduce((sum, q) => sum + _.size(q.get('series')), 0);
-    const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
-    return [(colorOffset + seriesIndex) % colors.length, false, false];
-  });
+//     const colorOffset = observe
+//       .getIn(['queryBrowser', 'queries'])
+//       .take(index)
+//       .filter((q) => q.get('isEnabled'))
+//       .reduce((sum, q) => sum + _.size(q.get('series')), 0);
+//     const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
+//     return [(colorOffset + seriesIndex) % colors.length, false, false];
+//   });
 
-  const dispatch = useDispatch();
-  const toggleSeries = React.useCallback(() => dispatch(queryBrowserToggleSeries(index, labels)), [
-    dispatch,
-    index,
-    labels,
-  ]);
+//   const dispatch = useDispatch();
+//   const toggleSeries = React.useCallback(() => dispatch(queryBrowserToggleSeries(index, labels)), [
+//     dispatch,
+//     index,
+//     labels,
+//   ]);
 
-  if (isSeriesEmpty) {
-    return <div className="query-browser__series-btn-wrap"></div>;
-  }
-  const title = isDisabled ? t('public~Show series') : t('public~Hide series');
+//   if (isSeriesEmpty) {
+//     return <div className="query-browser__series-btn-wrap"></div>;
+//   }
+//   const title = isDisabled ? t('public~Show series') : t('public~Hide series');
 
-  return (
-    <div className="query-browser__series-btn-wrap">
-      <Button
-        aria-label={title}
-        className={classNames('query-browser__series-btn', {
-          'query-browser__series-btn--disabled': isDisabled,
-        })}
-        onClick={toggleSeries}
-        style={colorIndex === null ? undefined : { backgroundColor: colors[colorIndex] }}
-        title={title}
-        type="button"
-        variant="plain"
-      />
-    </div>
-  );
-};
+//   return (
+//     <div className="query-browser__series-btn-wrap">
+//       <Button
+//         aria-label={title}
+//         className={classNames('query-browser__series-btn', {
+//           'query-browser__series-btn--disabled': isDisabled,
+//         })}
+//         onClick={toggleSeries}
+//         style={colorIndex === null ? undefined : { backgroundColor: colors[colorIndex] }}
+//         title={title}
+//         type="button"
+//         variant="plain"
+//       />
+//     </div>
+//   );
+// };
 
 const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
   const { t } = useTranslation();
@@ -418,6 +434,7 @@ const QueryKebab2: React.FC<{ id: string }> = ({ id }) => {
 export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
   const { t } = useTranslation();
 
+  // Set all the Variables 
   const [data, setData] = React.useState<PrometheusData>();
   const [error, setError] = React.useState<PrometheusAPIError>();
   const [page, setPage] = React.useState(1);
@@ -430,9 +447,11 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
   const isExpanded = useSelector(({ observe }: RootState) =>
     observe.getIn(['queryBrowser2', 'queries2', id, 'isExpanded']),
   );
-  const pollInterval = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser2', 'pollInterval'], 15 * 1000),
-  );
+  // const pollInterval = useSelector(({ observe }: RootState) =>
+  //   observe.getIn(['queryBrowser2', 'pollInterval'], 15 * 1000),
+  // );
+  const pollInterval = 15 * 1000
+
   const query = useSelector(({ observe }: RootState) =>
     observe.getIn(['queryBrowser2', 'queries2', id, 'query']),
   );
@@ -447,6 +466,7 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
+  // JZ if there's a query and the table row is send a request to Prometheus 
   const tick = () => {
     if (isEnabled && isExpanded && query) {
       safeFetch(getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, namespace, query }))
@@ -464,9 +484,14 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
   };
 
   console.log("JZ Prometheus data: " +  JSON.stringify(data))
+  console.log("JZ PollInterval data: " +  JSON.stringify(pollInterval))
 
+
+
+  // JZ save callback and poll the request at set time intervals 
   usePoll(tick, pollInterval, namespace, query, span, lastRequestTime);
 
+  // JZ clear previous data? 
   React.useEffect(() => {
     setData(undefined);
     setError(undefined);
@@ -510,14 +535,19 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
     );
   }
 
+  console.log("JZ result %s", JSON.stringify(result))
+
   const transforms = [sortable, wrappable];
 
   // JZ LEFT OFF HERE Oct 19 5:30pm -- Query{...series:undefined} -- Prometheus data is not getting properly set 
+  // Hacked this -- by queryBrowserPatchQuery
 
   const dispatch = useDispatch();
   dispatch(queryBrowserPatchQuery2(id, {series: data.result}))
 
   const buttonCell = (labels) => ({ title: <SeriesButton2 id={id} labels={labels} /> });
+
+  console.log("JZ buttonCell %s", buttonCell)
 
   let columns, rows;
   if (data.resultType === 'scalar') {
@@ -562,6 +592,11 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
         _.get(value, '[1]', { title: <span className="text-muted">{t('public~None')}</span> }),
       ];
     }
+
+    console.log("JZ Rows %s", rows)
+    console.log("JZ columns %s", columns)
+    console.log("JZ rowMapper %s", rowMapper)
+    
 
     rows = _.map(result, rowMapper);
     if (sortBy) {
