@@ -1,4 +1,5 @@
 import * as _ from 'lodash-es';
+import { getUser, Silence, SilenceStates } from '@console/dynamic-plugin-sdk';
 import {
   formatPrometheusDuration,
   parsePrometheusDuration,
@@ -21,10 +22,9 @@ import { Trans, useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector } from 'react-redux';
-import { getUser, Silence, SilenceStates } from '@console/dynamic-plugin-sdk';
 
+import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { withFallback } from '@console/shared/src/components/error';
-import { coFetchJSON } from '../../co-fetch';
 import { RootState } from '../../redux';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { ButtonBar } from '../utils/button-bar';
@@ -189,7 +189,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
       startsAt: saveStartsAt.toISOString(),
     };
 
-    coFetchJSON
+    consoleFetchJSON
       .post(`${alertManagerBaseURL}/api/v2/silences`, body)
       .then(({ silenceID }) => {
         setError(undefined);

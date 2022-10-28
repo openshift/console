@@ -16,6 +16,12 @@ import { useSelector } from 'react-redux';
 import { Link, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
 
 import {
+  ResourceLink,
+  Timestamp,
+  useK8sWatchResource,
+} from '@console/dynamic-plugin-sdk/src/lib-core';
+
+import {
   NamespaceModel,
   ServiceModel,
   ServiceMonitorModel,
@@ -28,12 +34,9 @@ import { RowFunctionArgs, Table, TableData } from '../factory';
 import { FilterToolbar } from '../filter-toolbar';
 import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { BreadCrumbs, PageHeading, SectionHeading } from '../utils/headings';
-import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { usePoll } from '../utils/poll-hook';
-import { ResourceLink } from '../utils/resource-link';
 import { useSafeFetch } from '../utils/safe-fetch-hook';
 import { LoadingInline, StatusBox } from '../utils/status-box';
-import { Timestamp } from '../utils/timestamp';
 import { Labels } from './labels';
 import { AlertSource, PrometheusAPIError, Target } from './types';
 import { targetSource } from './utils';
