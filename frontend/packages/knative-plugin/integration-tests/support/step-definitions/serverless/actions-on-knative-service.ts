@@ -362,7 +362,9 @@ When('user enters the Name as {string} in Make Serverless form', (workloadName: 
 });
 
 When('user clicks on Create button in Make Serverless form', () => {
-  cy.get(formPO.save).click({ force: true });
+  cy.get(formPO.save)
+    .should('be.enabled')
+    .click({ force: true });
 });
 
 When(
