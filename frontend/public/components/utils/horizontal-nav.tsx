@@ -16,9 +16,10 @@ import {
   RouteComponentProps,
 } from 'react-router-dom';
 import {
-  useResolvedExtensions,
-  HorizontalNavTab as DynamicHorizontalNavTab,
-  isHorizontalNavTab as DynamicIsHorizontalNavTab,
+  HorizontalNavTab as DynamicResourceNavTab,
+  isHorizontalNavTab as DynamicIsResourceNavTab,
+  NavTab as DynamicNavTab,
+  isTab as DynamicIsNavTab,
   ExtensionK8sGroupModel,
 } from '@console/dynamic-plugin-sdk';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
@@ -33,6 +34,8 @@ import {
   NavPage,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk/src';
+
+const removeLeadingSlash = (str: string | undefined) => str?.replace(/^\//, '') || '';
 
 export const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
@@ -183,7 +186,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
     <>
       {pages.map(({ name, nameKey, href, path }) => {
         const matchURL = matchPath(location.pathname, {
-          path: `${basePath}/${path || href}`,
+          path: `${basePath}/${removeLeadingSlash(path || href)}`,
           exact: true,
         });
         const klass = classNames('co-m-horizontal-nav__menu-item', {
@@ -192,7 +195,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
         return (
           <li className={klass} key={href}>
             <Link
-              to={`${baseURL.replace(/\/$/, '')}/${href}`}
+              to={`${baseURL.replace(/\/$/, '')}/${removeLeadingSlash(href)}`}
               data-test-id={`horizontal-link-${nameKey || name}`}
             >
               {nameKey ? t(nameKey) : name}
@@ -258,9 +261,11 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   );
 
   const objReference = props.obj?.data ? referenceFor(props.obj.data) : '';
-  const [dynamicNavTabExtensions, navTabExtentionsResolved] = useResolvedExtensions<
-    DynamicHorizontalNavTab
-  >(DynamicIsHorizontalNavTab);
+  const contextId = props.contextId;
+  const dynamicResourceNavTabExtensions = useExtensions<DynamicResourceNavTab>(
+    DynamicIsResourceNavTab,
+  );
+  const dynamicTabExtensions = useExtensions<DynamicNavTab>(DynamicIsNavTab);
   const navTabExtensions = useExtensions<HorizontalNavTab>(isHorizontalNavTab);
 
   const pluginPages = React.useMemo(
@@ -276,22 +281,34 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     [navTabExtensions, objReference],
   );
 
-  const dynamicPluginPages = React.useMemo(
-    () =>
-      navTabExtentionsResolved
-        ? dynamicNavTabExtensions
-            .filter(
-              (tab) =>
-                referenceForExtensionModel(tab.properties.model as ExtensionK8sGroupModel) ===
-                objReference,
-            )
-            .map((tab) => ({
-              ...tab.properties.page,
-              component: tab.properties.component,
-            }))
-        : [],
-    [dynamicNavTabExtensions, navTabExtentionsResolved, objReference],
-  );
+  const dynamicPluginPages = React.useMemo(() => {
+    const resolvedResourceNavTab = dynamicResourceNavTabExtensions
+      .filter(
+        (tab) =>
+          referenceForExtensionModel(tab.properties.model as ExtensionK8sGroupModel) ===
+          objReference,
+      )
+      .map((tab) => ({
+        ...tab.properties.page,
+        component: (params: PageComponentProps) => (
+          <AsyncComponent {...params} loader={tab.properties.component} />
+        ),
+      }));
+
+    const resolvedNavTab = dynamicTabExtensions
+      .filter((tab) => tab.properties.contextId === contextId)
+      .map((tab) => ({
+        name: tab.properties.name,
+        href: tab.properties.href,
+        component: (params: PageComponentProps) => (
+          <AsyncComponent {...params} loader={tab.properties.component} />
+        ),
+      }));
+
+    return [...resolvedResourceNavTab, ...resolvedNavTab].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+  }, [dynamicResourceNavTabExtensions, dynamicTabExtensions, objReference, contextId]);
 
   const pages: Page[] = [
     ...(props.pages || props.pagesFor(props.obj?.data)),
@@ -300,7 +317,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   ];
 
   const routes = pages.map((p) => {
-    const path = `${props.match.path}/${p.path || p.href}`;
+    const path = `${props.match.path}/${removeLeadingSlash(p.path || p.href)}`;
     const render = (params: RouteComponentProps) => {
       return (
         <ErrorBoundaryPage>
@@ -384,6 +401,7 @@ export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resou
   match: Match<any>;
   className?: string;
   createRedirect?: boolean;
+  contextId?: string;
   pages: Page[];
   label?: string;
   obj?: { data: K8sResourceCommon; loaded: boolean };

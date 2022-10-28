@@ -202,6 +202,15 @@
     }
   },
   {
+    "type": "console.tab",
+    "properties": {
+      "contextId": "dev-console-observe",
+      "name": "Demo Logs",
+      "href": "/demo-logs",
+      "component": { "$codeRef": "exampleNavs.DynamicPage1" }
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
       "path": "/test-utility-consumer",

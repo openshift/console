@@ -32,7 +32,7 @@ import {
   FeatureFlagHookProvider,
 } from '../extensions/feature-flags';
 import { FileUpload } from '../extensions/file-upload';
-import { HorizontalNavTab } from '../extensions/horizontal-nav-tabs';
+import { HorizontalNavTab, NavTab } from '../extensions/horizontal-nav-tabs';
 import { ImportEnvironment } from '../extensions/import-environments';
 import {
   HrefNavItem,
@@ -129,6 +129,7 @@ export type SupportedExtension =
   | UserPreferenceItem
   | Perspective
   | HorizontalNavTab
+  | NavTab
   | ClusterOverviewInventoryItem
   | ClusterOverviewUtilizationItem
   | ClusterOverviewMultilineUtilizationItem
