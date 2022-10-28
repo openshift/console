@@ -14,20 +14,20 @@ Feature: Create a workload of 'knative Service' type resource
               And Knative Service option is displayed under Resources section
 
 
-        @regression @to-do
+        @regression
         Scenario: knative resource type in docker file add flow: KN-05-TC02
             Given user is at Add page
-             When user clicks on Import from Git
+             When user clicks Import From Git card on the Add page
               And user enters git url "https://github.com/rohitkrai03/flask-dockerfile-example"
              Then Knative Service option is displayed under Resources section
 
 
-        @regression @broken-test
+        @regression
         Scenario: knative resource type in catalog add flow: KN-05-TC03
             Given user is at Add page
              When user clicks on From Catalog card
               And create the application with s2i builder image
-             Then user will be redirected to page with header name "Create Source-to-Image Application"
+             Then user will be redirected to page with header name "Create Source-to-Image application"
               And Knative Service option is displayed under Resources section
 
 
@@ -61,11 +61,11 @@ Feature: Create a workload of 'knative Service' type resource
                   | openshift/hello-openshift | knative-ex-registry |
 
 
-        @regression @to-do
+        @regression
         Scenario Outline: Create a workload from Docker file card on Add page: KN-05-TC06
             Given user is on Import from Git form
              When user enters Docker URL as "<docker_git_url>"
-              And user clicks on "Edit import strategy"
+              And user clicks on Edit import strategy
               And user selects Import Strategy as Dockerfile
               And user enters Dockerfile path as "<dockerfile_path>"
               And user enters workload name as "<workload_name>"
@@ -79,11 +79,9 @@ Feature: Create a workload of 'knative Service' type resource
                   | https://github.com/rohitkrai03/flask-dockerfile-example | Dockerfile      | knative-docker |
 
 
-        @regression @broken-test
+        @regression
         Scenario: Create a workload from DevCatalog BuilderImages card on Add page: KN-05-TC07
             Given user is at Developer Catalog page
-              And builder images are displayed
-             When user searches and selects the "node" card
               And user creates the application with the selected builder image
               And user enters S2I Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
               And user enters workload name as "knative-dev-catalog"
@@ -93,13 +91,14 @@ Feature: Create a workload of 'knative Service' type resource
               And user is able to see workload "nodejs-ex-git" in topology page
 
 
-        @regression @to-do
+        @regression @broken-test
         Scenario: Create a knative workload with advanced option "Scaling" from From Git card: KN-05-TC08
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/dancer-ex.git"
               And user enters Name as "dancer-ex-git" in General section
               And user selects resource type as "Serverless Deployment"
               And user clicks "Scaling" link in Advanced Options section
+        #Bug: Can't change the values by typing in max and min pod fields - https://issues.redhat.com/browse/OCPBUGS-2306
               And user enters number of Min Pods as "1"
               And user enters number of Max Pods as "5"
               And user enters number of Concurrency target as "3"
