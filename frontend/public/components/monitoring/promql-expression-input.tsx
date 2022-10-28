@@ -38,8 +38,8 @@ import { PromQLExtension } from '@prometheus-io/codemirror-promql';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { useSafeFetch } from '../utils';
+import { PROMETHEUS_BASE_PATH } from './utils';
 import './_promql-expression-input.scss';
 
 type InteractionTarget = {

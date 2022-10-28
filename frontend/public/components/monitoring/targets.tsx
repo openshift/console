@@ -32,14 +32,13 @@ import { K8sResourceKind, LabelSelector, referenceForModel } from '../../module/
 import { RootState } from '../../redux';
 import { RowFunctionArgs, Table, TableData } from '../factory';
 import { FilterToolbar } from '../filter-toolbar';
-import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { BreadCrumbs, PageHeading, SectionHeading } from '../utils/headings';
 import { usePoll } from '../utils/poll-hook';
 import { useSafeFetch } from '../utils/safe-fetch-hook';
 import { LoadingInline, StatusBox } from '../utils/status-box';
 import { Labels } from './labels';
 import { AlertSource, PrometheusAPIError, Target } from './types';
-import { targetSource } from './utils';
+import { PROMETHEUS_BASE_PATH, targetSource } from './utils';
 
 enum MonitorType {
   ServiceMonitor = 'serviceMonitor',
