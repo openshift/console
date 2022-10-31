@@ -84,11 +84,11 @@ const ImageVulnerabilitiesList: React.FC<ImageVulnerabilitiesListProps> = (props
       ) => {
         return _.sortBy(
           _.flatten(
-            resources?.imageVulnerabilities?.data?.spec.features.map((feature) =>
-              feature.vulnerabilities.map((vulnerability) => ({ feature, vulnerability })),
+            (resources?.imageVulnerabilities?.data?.spec?.features ?? []).map((feature) =>
+              (feature?.vulnerabilities ?? []).map((vulnerability) => ({ feature, vulnerability })),
             ),
           ),
-          (v: ImageVuln) => priorityFor(v.vulnerability.severity).index,
+          (v: ImageVuln) => priorityFor(v?.vulnerability?.severity).index,
         );
       }}
       namespace={namespace}

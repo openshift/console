@@ -7,6 +7,7 @@ import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import { DefaultList } from '@console/internal/components/default-resource';
 import {
   MultiListPage,
@@ -51,10 +52,10 @@ export const totalCount = (obj: ImageManifestVuln) => {
   return highCount + mediumCount + lowCount + unknownCount;
 };
 export const affectedPodsCount = (obj: ImageManifestVuln) =>
-  Object.keys(obj.status.affectedPods).length;
+  Object.keys(obj.status?.affectedPods ?? {}).length;
 
 export const highestSeverityIndex = (obj: ImageManifestVuln) =>
-  priorityFor(obj.status.highestSeverity).index;
+  priorityFor(obj.status?.highestSeverity).index;
 
 export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> = (props) => {
   const { t } = useTranslation();
@@ -100,7 +101,7 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
 export const AffectedPods: React.FC<AffectedPodsProps> = (props) => {
   const affectedPodsFor = (pods: PodKind[]) =>
     pods.filter((p) =>
-      _.keys(props.obj.status.affectedPods).includes(
+      _.keys(props.obj.status?.affectedPods ?? {}).includes(
         [p.metadata.namespace, p.metadata.name].join('/'),
       ),
     );
@@ -174,17 +175,17 @@ export const ImageManifestVulnTableRow: React.FC<RowFunctionArgs<ImageManifestVu
         <ResourceLink kind="Namespace" name={namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {_.get(obj.status, 'highestSeverity') ? (
+        {obj.status?.highestSeverity ? (
           <>
             <ExclamationTriangleIcon color={priorityFor(obj.status.highestSeverity).color.value} />
             &nbsp;{obj.status.highestSeverity}
           </>
         ) : (
-          <Loading />
+          DASH
         )}
       </TableData>
       <TableData className={tableColumnClasses[3]}>{affectedPodsCount(obj)}</TableData>
-      <TableData className={tableColumnClasses[4]}>{obj.status.fixableCount || 0}</TableData>
+      <TableData className={tableColumnClasses[4]}>{obj.status?.fixableCount || 0}</TableData>
       <TableData className={tableColumnClasses[5]}>{totalCount(obj)}</TableData>
       <TableData className={tableColumnClasses[6]}>
         <ExternalLink text={shortenHash(obj.spec.manifest)} href={quayURLFor(obj)} />
