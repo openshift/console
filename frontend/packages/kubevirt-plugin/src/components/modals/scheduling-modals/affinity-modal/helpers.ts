@@ -162,21 +162,25 @@ export const getAffinityFromRowsData = (affinityRows: AffinityRowData[]) => {
       .filter(({ type, condition }) => type === rowType && condition === rowCondition)
       .map((rowData) => mapper(rowData));
 
+  const nodeSelectorTerms = pickRows(
+    AffinityType.node,
+    AffinityCondition.required,
+    getRequiredNodeTermFromRowData,
+  );
+
+  const nodeAffinity = {
+    [AffinityCondition.preferred]: pickRows(
+      AffinityType.node,
+      AffinityCondition.preferred,
+      getPreferredNodeTermFromRowData,
+    ),
+  };
+
+  if (nodeSelectorTerms?.length > 0)
+    nodeAffinity[AffinityCondition.required] = { nodeSelectorTerms };
+
   const affinity = {
-    nodeAffinity: {
-      [AffinityCondition.required]: {
-        nodeSelectorTerms: pickRows(
-          AffinityType.node,
-          AffinityCondition.required,
-          getRequiredNodeTermFromRowData,
-        ),
-      },
-      [AffinityCondition.preferred]: pickRows(
-        AffinityType.node,
-        AffinityCondition.preferred,
-        getPreferredNodeTermFromRowData,
-      ),
-    },
+    nodeAffinity,
     podAffinity: {
       [AffinityCondition.required]: pickRows(
         AffinityType.pod,
