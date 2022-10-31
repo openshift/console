@@ -22,7 +22,7 @@ export const humanizeTopConsumerMetric = (value: number, metric: TopConsumerMetr
       humanizedValue = humanizeBinaryBytes(value, 'B');
       break;
     case TopConsumerMetric.MEMORY_SWAP:
-      humanizedValue = humanizeDecimalBytes(value, 'MB');
+      humanizedValue = humanizeDecimalBytes(value);
       break;
     case TopConsumerMetric.VCPU_WAIT:
       humanizedValue = humanizeSeconds(value, 's', 'ms');
