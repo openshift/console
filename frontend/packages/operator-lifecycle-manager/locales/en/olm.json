@@ -321,7 +321,7 @@
   "View error": "View error",
   "Manual approval required": "Manual approval required",
   "Installed operator": "Installed operator",
-  "operand required": "operand required",
+  "custom resource required": "custom resource required",
   "ready for use": "ready for use",
   "The Operator has installed successfully. Create the required custom resource to be able to use this Operator.": "The Operator has installed successfully. Create the required custom resource to be able to use this Operator.",
   "View Operator": "View Operator",
