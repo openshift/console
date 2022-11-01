@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation, withTranslation } from 'react-i18next';
-import { TFunction, WithT } from 'i18next';
+import i18next, { TFunction, WithT } from 'i18next';
 import { Base64 } from 'js-base64';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
@@ -59,18 +59,23 @@ export type BasicAuthSubformState = {
   username: string;
   password: string;
 };
-
-const secretFormExplanation: Record<SecretTypeAbstraction, (t: TFunction) => string> = {
-  [SecretTypeAbstraction.generic]: (t) =>
-    t(
-      'public~Key/value secrets let you inject sensitive data into your application as files or environment variables.',
-    ),
-  [SecretTypeAbstraction.source]: (t) =>
-    t('public~Source secrets let you authenticate against a Git server.'),
-  [SecretTypeAbstraction.image]: (t) =>
-    t('public~Image pull secrets let you authenticate against a private image registry.'),
-  [SecretTypeAbstraction.webhook]: (t) =>
-    t('public~Webhook secrets let you authenticate a webhook trigger.'),
+const secretFormExplanation = (typeAbstraction: SecretTypeAbstraction) => {
+  switch (typeAbstraction) {
+    case SecretTypeAbstraction.generic:
+      return i18next.t(
+        'public~Key/value secrets let you inject sensitive data into your application as files or environment variables.',
+      );
+    case SecretTypeAbstraction.source:
+      return i18next.t('public~Source secrets let you authenticate against a Git server.');
+    case SecretTypeAbstraction.image:
+      return i18next.t(
+        'public~Image pull secrets let you authenticate against a private image registry.',
+      );
+    case SecretTypeAbstraction.webhook:
+      return i18next.t('public~Webhook secrets let you authenticate a webhook trigger.');
+    default:
+      throw new Error('public~Non-existent abstraction in switch: abstraction');
+  }
 };
 
 const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction): SecretType => {
@@ -1278,53 +1283,53 @@ const secretFormFactory = (secretType: SecretTypeAbstraction) => {
       return GenericSecretForm;
   }
 };
-
-class SecretLoadingWrapper extends React.Component<
-  SecretLoadingWrapperProps,
-  SecretLoadingWrapperState
-> {
-  readonly state: SecretLoadingWrapperState = {
-    secretTypeAbstraction: SecretTypeAbstraction.generic,
-  };
-  componentDidUpdate() {
-    if (!_.isEmpty(this.props.obj.data)) {
-      const secretTypeAbstraction = toTypeAbstraction(this.props.obj.data);
-      if (this.state.secretTypeAbstraction !== secretTypeAbstraction) {
-        this.setState({
-          secretTypeAbstraction,
-        });
+export const SecretLoadingWrapper = withTranslation()(
+  class SecretLoadingWrapper extends React.Component<
+    SecretLoadingWrapperProps & WithT,
+    SecretLoadingWrapperState
+  > {
+    readonly state: SecretLoadingWrapperState = {
+      secretTypeAbstraction: SecretTypeAbstraction.generic,
+    };
+    componentDidUpdate() {
+      if (!_.isEmpty(this.props.obj.data)) {
+        const secretTypeAbstraction = toTypeAbstraction(this.props.obj.data);
+        if (this.state.secretTypeAbstraction !== secretTypeAbstraction) {
+          this.setState({
+            secretTypeAbstraction,
+          });
+        }
       }
     }
-  }
-  render() {
-    const { obj, fixedKeys } = this.props;
-    const { secretTypeAbstraction } = this.state;
-    if (!secretTypeAbstraction) {
-      return <LoadingBox />;
+    render() {
+      const { obj, fixedKeys } = this.props;
+      const { secretTypeAbstraction } = this.state;
+      if (!secretTypeAbstraction) {
+        return <LoadingBox />;
+      }
+      const fixed = _.reduce(fixedKeys, (acc, k) => ({ ...acc, k: _.get(obj.data, k) }), {});
+      return (
+        <StatusBox {...obj}>
+          <SecretFormWrapper
+            {...this.props}
+            secretTypeAbstraction={secretTypeAbstraction}
+            obj={obj.data}
+            fixed={fixed}
+            explanation={secretFormExplanation(secretTypeAbstraction)}
+          />
+        </StatusBox>
+      );
     }
-    const fixed = _.reduce(fixedKeys, (acc, k) => ({ ...acc, k: _.get(obj.data, k) }), {});
-    return (
-      <StatusBox {...obj}>
-        <SecretFormWrapper
-          {...this.props}
-          secretTypeAbstraction={secretTypeAbstraction}
-          obj={obj.data}
-          fixed={fixed}
-          explanation={secretFormExplanation[secretTypeAbstraction]}
-        />
-      </StatusBox>
-    );
-  }
-}
+  },
+);
 
 export const CreateSecret = ({ match: { params } }: CreateSecretProps) => {
-  const { t } = useTranslation();
   const secretTypeAbstraction = params.type;
   return (
     <SecretFormWrapper
       fixed={{ metadata: { namespace: params.ns } }}
       secretTypeAbstraction={secretTypeAbstraction}
-      explanation={secretFormExplanation[params.type](t)}
+      explanation={secretFormExplanation(params.type)}
       isCreate={true}
     />
   );
@@ -1393,8 +1398,8 @@ type BaseEditSecretProps_ = {
   obj?: K8sResourceKind;
   fixed: any;
   kind?: string;
-  isCreate: boolean;
-  modal: boolean;
+  isCreate?: boolean;
+  modal?: boolean;
   secretTypeAbstraction?: SecretTypeAbstraction;
   saveButtonText?: string;
   explanation?: string;
@@ -1485,7 +1490,10 @@ type WebHookSecretFormState = {
 
 type WebHookSecretFormProps = {
   onChange: Function;
+  onError: Function;
+  onFormDisable: Function;
+  secretType: string;
   stringData: {
-    WebHookSecretKey: string;
+    [key: string]: string;
   };
 };
