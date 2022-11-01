@@ -101,6 +101,7 @@ const Status: React.FC<StatusProps> = ({
     case 'Succeeded':
     case 'Ready':
     case 'Up to date':
+    case 'Loaded':
     case 'Provisioned as node':
     case 'Preferred':
     case 'Connected':

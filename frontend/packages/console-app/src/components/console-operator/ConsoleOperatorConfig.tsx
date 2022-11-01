@@ -32,10 +32,14 @@ import {
   K8sResourceKindReference,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
+import {
+  isLoadedDynamicPluginInfo,
+  isNotLoadedDynamicPluginInfo,
+  LoadedDynamicPluginInfo,
+  NotLoadedDynamicPluginInfo,
+} from '@console/plugin-sdk/src';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import { consolePluginModal } from '@console/shared/src/components/modals';
-import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
+import { consolePluginModal, CONSOLE_OPERATOR_CONFIG_NAME, Status } from '@console/shared';
 
 const consoleOperatorConfigReference: K8sResourceKindReference = referenceForModel(
   ConsoleOperatorConfigModel,
@@ -96,13 +100,34 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
       const pluginName = plugin?.metadata?.name;
       const loadedPluginInfo = pluginInfoEntries
         .filter(isLoadedDynamicPluginInfo)
-        .find((i) => i?.metadata?.name === pluginName);
+        .find(
+          (i: LoadedDynamicPluginInfo) => i?.metadata?.name === pluginName,
+        ) as LoadedDynamicPluginInfo;
+      const notLoadedPluginInfo = pluginInfoEntries
+        .filter(isNotLoadedDynamicPluginInfo)
+        .find(
+          (i: NotLoadedDynamicPluginInfo) => i?.pluginName === pluginName,
+        ) as NotLoadedDynamicPluginInfo;
       const enabled = !!obj?.spec?.plugins?.includes(pluginName);
+      if (loadedPluginInfo) {
+        return {
+          name: plugin?.metadata?.name,
+          version: loadedPluginInfo?.metadata?.version,
+          description: loadedPluginInfo?.metadata?.description,
+          enabled,
+          status: loadedPluginInfo?.status,
+        };
+      }
       return {
         name: plugin?.metadata?.name,
-        version: loadedPluginInfo?.metadata?.version,
-        description: loadedPluginInfo?.metadata?.description,
         enabled,
+        status: notLoadedPluginInfo?.status,
+        errorMessage:
+          notLoadedPluginInfo?.status !== 'Pending' ? notLoadedPluginInfo?.errorMessage : undefined,
+        errorCause:
+          notLoadedPluginInfo?.status !== 'Pending'
+            ? notLoadedPluginInfo?.errorCause?.toString()
+            : undefined,
       };
     });
     const placeholder = '-';
@@ -121,6 +146,15 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
             },
             item.version || placeholder,
             item.description || placeholder,
+            item.status
+              ? {
+                  title: (
+                    <Status status={item.status} title={item.status}>
+                      {item.errorMessage} <br /> {item.errorCause}
+                    </Status>
+                  ),
+                }
+              : placeholder,
             {
               title: <ConsolePluginStatus plugin={item.name} enabled={item.enabled} />,
             },
@@ -140,6 +174,10 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
     },
     {
       title: t('console-app~Description'),
+      transforms: [sortable],
+    },
+    {
+      title: t('console-app~Status'),
       transforms: [sortable],
     },
     { title: '' },
