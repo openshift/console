@@ -25,17 +25,61 @@ const menuActions = [
   ...Kebab.factory.common,
 ];
 
-const ServiceIP = ({ s }) => {
-  const children = _.map(s.spec.ports, (portObj, i) => {
-    const clusterIP = s.spec.clusterIP === 'None' ? 'None' : `${s.spec.clusterIP}:${portObj.port}`;
-    return (
-      <div key={i} className="co-truncate co-select-to-copy">
-        {clusterIP}
-      </div>
-    );
-  });
+const ServiceLocation = ({ s }) => {
+  const { t } = useTranslation();
+  switch (s.spec.type) {
+    case 'NodePort': {
+      const clusterIP = s.spec.clusterIP ? `${s.spec.clusterIP}:` : '';
+      return _.map(s.spec.ports, (portObj, i) => {
+        return (
+          <div key={i} className="co-truncate co-select-to-copy">
+            {clusterIP}
+            {portObj.nodePort}
+          </div>
+        );
+      });
+    }
 
-  return children;
+    case 'LoadBalancer': {
+      if (!s.status?.loadBalancer?.ingress?.length) {
+        return <div className="co-truncate">{t('public~Pending')}</div>;
+      }
+      return _.map(s.status.loadBalancer.ingress, (ingress, i) => {
+        return (
+          <div key={i} className="co-truncate co-select-to-copy">
+            {ingress.hostname || ingress.ip || '-'}
+          </div>
+        );
+      });
+    }
+
+    case 'ExternalName': {
+      return _.map(s.spec.ports, (portObj, i) => {
+        const externalName = s.spec.externalName ? `${s.spec.externalName}:` : '';
+        return (
+          <div key={i} className="co-truncate co-select-to-copy">
+            {externalName}
+            {portObj.port}
+          </div>
+        );
+      });
+    }
+
+    default: {
+      if (s.spec.clusterIP === 'None') {
+        return <div className="co-truncate">{t('public~None')}</div>;
+      }
+      return _.map(s.spec.ports, (portObj, i) => {
+        const clusterIP = s.spec.clusterIP ? `${s.spec.clusterIP}:` : '';
+        return (
+          <div key={i} className="co-truncate co-select-to-copy">
+            {clusterIP}
+            {portObj.port}
+          </div>
+        );
+      });
+    }
+  }
 };
 
 const kind = 'Service';
@@ -68,7 +112,7 @@ const ServiceTableRow = ({ obj: s }) => {
         <Selector selector={s.spec.selector} namespace={s.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <ServiceIP s={s} />
+        <ServiceLocation s={s} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={s} />
