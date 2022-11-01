@@ -1263,7 +1263,6 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
           pageData: {
             csv: obj,
             kind: referenceForProvidedAPI(api),
-            namespace: obj.metadata.namespace,
           },
         })),
       ];

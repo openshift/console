@@ -66,6 +66,7 @@ import {
   LazyActionMenu,
   ActionMenuVariant,
   getNamespace,
+  useActiveNamespace,
 } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
@@ -340,6 +341,7 @@ const getK8sWatchResources = (
 export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const { t } = useTranslation();
   const match = useRouteMatch();
+  const [namespace] = useActiveNamespace();
   const [showOperandsInAllNamespaces] = useShowOperandsInAllNamespaces();
   const {
     obj,
@@ -382,7 +384,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const watchedResources = getK8sWatchResources(
     models,
     providedAPIs,
-    listAllNamespaces ? null : obj.metadata.namespace,
+    listAllNamespaces ? null : namespace,
   );
 
   const resources = useK8sWatchResources<{ [key: string]: K8sResourceKind[] }>(watchedResources);
@@ -532,7 +534,7 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
 
 export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
   const resourceListPage = useResourceListPage(props.kind);
-  const { ns } = useParams();
+  const [namespace] = useActiveNamespace();
   const [k8sModel, inFlight] = useK8sModel(props.kind);
   const [apiRefreshed, setAPIRefreshed] = React.useState(false);
   const dispatch = useDispatch();
@@ -561,11 +563,11 @@ export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
       {...props}
       model={{ group, version, kind }}
       kind={props.kind}
-      namespace={ns}
+      namespace={namespace}
       loader={resourceListPage}
     />
   ) : (
-    <DefaultProvidedAPIPage {...props} k8sModel={k8sModel} />
+    <DefaultProvidedAPIPage {...props} namespace={namespace} k8sModel={k8sModel} />
   );
 };
 
@@ -845,14 +847,13 @@ export type ProvidedAPIsPageProps = {
 export type ProvidedAPIPageProps = {
   csv: ClusterServiceVersionKind;
   kind: GroupVersionKind;
-  namespace: string;
   showTitle?: boolean;
   hideLabelFilter?: boolean;
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
 };
 
-type DefaultProvidedAPIPageProps = ProvidedAPIPageProps & { k8sModel: K8sModel };
+type DefaultProvidedAPIPageProps = ProvidedAPIPageProps & { k8sModel: K8sModel; namespace: string };
 
 type PodStatusesProps = {
   kindObj: K8sKind;

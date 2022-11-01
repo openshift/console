@@ -545,7 +545,7 @@ describe(ProvidedAPIPage.displayName, () => {
 
   beforeEach(() => {
     wrapper = mountWithRoute(
-      <ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} namespace="foo" />,
+      <ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} />,
       `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResourceRO`,
       `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural`,
     );
