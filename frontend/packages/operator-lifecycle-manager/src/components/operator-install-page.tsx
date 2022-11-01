@@ -215,9 +215,8 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
   return (
     <>
       <h2 className="co-clusterserviceversion-install__heading">
-        {t('olm~Installed operator')}
-        &nbsp; - &nbsp;
-        {initializationResource ? t('olm~operand required') : t('olm~ready for use')}
+        {t('olm~Installed operator')}: &nbsp;
+        {initializationResource ? t('olm~custom resource required') : t('olm~ready for use')}
       </h2>
       {initializationResource && (
         <>
