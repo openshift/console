@@ -171,46 +171,49 @@ const ExpandButton = ({ isExpanded, onClick }) => {
 const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
   const { t } = useTranslation();
 
+  console.log("JZ SeriesBtn2 > labels : "  + labels)
+
   const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ observe }: RootState) => {
     const disabledSeries = observe.getIn(['queryBrowser2', 'queries2', id, 'disabledSeries']);
     if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
-      console.log("JZ isSeriesEmpty : " + false )
+      console.log("JZ SeriesBtn2 > disabledSeries  " )
       return [null, true, false];
     }
 
     const series = observe.getIn(['queryBrowser2', 'queries2', id, 'series']);
     if (_.isEmpty(series)) {
-      console.log("JZ isSeriesEmpty : " + true )
+      console.log("JZ SeriesBtn2 > isSeriesEmpty " )
       return [null, false, true];
     }
 
+    // JZ NOTE: this fx() gets the numnber of series that are enabled for a given query 
     const colorOffset = observe
       .getIn(['queryBrowser2', 'queries2'])
       .take(id)
       .filter((q) => q.get('isEnabled'))
       .reduce((sum, q) => sum + _.size(q.get('series')), 0);
+
+    // JZ NOTE: Find the index of the series that correspond with the query's labels
     const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
 
-    const cherries = observe
-    .getIn(['queryBrowser2', 'queries2',id])
-    .get('series')
-    .reduce((sum, q) => sum + _.size(q), 0)
+    console.log (" JZ seriesBtn2 > series + ", series )
 
-    console.log("JZ id %s", id)
-    console.log("JZ cherries %s", JSON.stringify(cherries))
+    // TODO checkout why seriesIndex is coming back -1 
 
-    console.log("JZ colorIndex is (colorOffset + seriesIndex) % colors.length : " + (colorOffset + seriesIndex) % colors.length)
-    console.log("JZ colorOffSet %s, seriesIndex %s, colors %s , colors.length %s", colorOffset , seriesIndex, colors, colors.length)
-    console.log("JZ Labels %s", JSON.stringify(labels))
-    console.log("JZ series %s", JSON.stringify(series))
+
+    // console.log("JZ SeriesBtn2 >  colorIndex is [(colorOffset + seriesIndex)] % colors.length : " + (colorOffset + seriesIndex) % colors.length)
+    // console.log("JZ SeriesBtn2 >  colorOffSet %s, seriesIndex %s, colors %s , colors.length %s", colorOffset , seriesIndex, colors, colors.length)
+
+    // TODO: Delete -- this is a test  
+    if ( ((colorOffset + seriesIndex) % colors.length) == -1 ) {
+      return [0, false, false]
+    }
 
     return [(colorOffset + seriesIndex) % colors.length, false, false];
   });
 
-  console.log("JZ colories %s", colors)
-  console.log("JZ colorIndex %s", colorIndex)
-
-
+    // console.log("JZ SeriesBtn2 > [colorIndex %s, isDisabled %s, isSeriesEmpty %s]", colorIndex, isDisabled, isSeriesEmpty)
+    // console.log("JZ SeriesBtn2 > backgroundColor: colors:%s [colorsIndex:%s] = ", colors, colorIndex, colors[colorIndex] )
 
   const dispatch = useDispatch();
   const toggleSeries = React.useCallback(() => dispatch(queryBrowserToggleSeries2(id, labels)), [
@@ -527,6 +530,7 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
     ? [...data.result, ...expiredSeries.map((metric) => ({ metric }))]
     : data.result;
 
+
   if (!result || result.length === 0) {
     return (
       <div className="query-browser__table-message">
@@ -535,19 +539,16 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
     );
   }
 
-  console.log("JZ result %s", JSON.stringify(result))
+  console.log("JZ QueryTable2 > data.result %s", JSON.stringify(data.result))
 
   const transforms = [sortable, wrappable];
 
   // JZ LEFT OFF HERE Oct 19 5:30pm -- Query{...series:undefined} -- Prometheus data is not getting properly set 
   // Hacked this -- by queryBrowserPatchQuery
-
   const dispatch = useDispatch();
   dispatch(queryBrowserPatchQuery2(id, {series: data.result}))
 
   const buttonCell = (labels) => ({ title: <SeriesButton2 id={id} labels={labels} /> });
-
-  console.log("JZ buttonCell %s", buttonCell)
 
   let columns, rows;
   if (data.resultType === 'scalar') {
@@ -586,17 +587,13 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
         },
       ];
     } else {
+      // JZ NOTE: key:value pair 
       rowMapper = ({ metric, value }) => [
         buttonCell(metric),
         ..._.map(allLabelKeys, (k) => metric[k]),
         _.get(value, '[1]', { title: <span className="text-muted">{t('public~None')}</span> }),
       ];
     }
-
-    console.log("JZ Rows %s", rows)
-    console.log("JZ columns %s", columns)
-    console.log("JZ rowMapper %s", rowMapper)
-    
 
     rows = _.map(result, rowMapper);
     if (sortBy) {
@@ -612,6 +609,10 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
       rows = _.orderBy(rows, [sort], [sortBy.direction]);
     }
   }
+
+  // console.log("JZ QueryTable2 > Rows %s", rows)
+  // console.log("JZ QueryTable2 > columns %s", columns)
+
 
   const onSort = (e, i, direction) => setSortBy({ index: i, direction });
 
@@ -864,8 +865,6 @@ const Query2 : React.FC<{ id: string }> = ({ id }) => {
     observe.getIn(['queryBrowser2', 'queries2', id]),
   );
 
-  console.log("QueryComponent : " + id + " " + queries.toString())
-
   const dispatch = useDispatch();
 
   const toggleIsEnabled = React.useCallback(() => dispatch(queryBrowserToggleIsEnabled2(id)), [
@@ -1028,7 +1027,7 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
 
   const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
   const queriesList = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries']),
+    observe.getIn(['queryBrowser2', 'queries2']),
   );
 
   const queries = queriesList.toJS();
@@ -1156,21 +1155,6 @@ const QueriesList: React.FC<{}> = () => {
     ({ observe }: RootState) => observe.getIn(['queryBrowser2', 'queries2']),
   );
 
-
-  queries2.forEach((value, key) => {
-    console.log("JZ Key:Value " + key +  " : " + value.toString());
-  })
-
-  // JZ NOTE: number ID APPROACH
-  // const queryKeys = queries2.keySeq().sort().reverse()
-
-  // TODO: Which is the better choice for ID: string or number?
-  // number is easier to development 
-  // string is easier for debugging 
-  
-  // JZ NOTE: string ID APPROACH 
-  // comparator to sort IDs in reverse (newest queries precede older queries)
-  // .slice() to seperate the ID number from the string "query-browser-query-id-123"
   const sortedQueries = queries2.sort((k1,k2) => {
     if (k1.get("sortOrder") < k2.get("sortOrder")) {
       return 1;
@@ -1196,16 +1180,6 @@ const QueriesList: React.FC<{}> = () => {
             <br/>
             <br/>
         </div>
-
-      {/* JZ NOTE: Original Code    */}
-      {/* {_.range(queries.size).map((i) => (
-        <div>
-          The Index is : {i}   key : {queries.get(i).get("id")} 
-          <Query index={i} key={queries.get(i).get("id")} />
-        </div>
-      ))} */}
-
-      {/* JZ NOTE: Changes  */}
       {
         sortedQueries.keySeq().map(key => 
           <div>

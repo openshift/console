@@ -185,30 +185,6 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
     case ActionType.ToggleGraphs:
       return state.set('hideGraphs', !state.get('hideGraphs'));
 
-    // case ActionType.QueryBrowserAddQuery: { 
-
-    //   // gets current state of state.queryBrowser.queries[] 
-    //   const prev = state.getIn(['queryBrowser', 'queries'])
-    //   console.log("JZ reducer > addQuery | PREVIOUS State of QueryList:" + prev )
-
-    //   // creates a new Query to be added to tate.queryBrowser.queries[] 
-    //   const newQuery = newQueryBrowserQuery();
-    //   console.log("JZ reducer > addQuery | newQuery: " + newQuery)
-
-    //   // copies current state.queryBrowser.queries[] and appends a newQuery 
-    //   const updateValue = state.getIn(['queryBrowser', 'queries']).push(newQuery)
-    //   console.log("JZ reducer > addQuery | state.getIn....push(newQueryBrowserQuery()) :" +  updateValue)
-
-    //   const update = state.setIn(
-    //     ['queryBrowser', 'queries'],
-    //     updateValue,
-    //   );
-
-    //   console.log('JZ reducer > addQuery |  UPDATED State of QueryList: ' + update)
-
-    //   return update;
-    // }
-
     case ActionType.QueryBrowserAddQuery2:
       return state.setIn(
         ['queryBrowser2', 'queries2'],
@@ -238,8 +214,39 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
     // JZ NOTE: Left off Here OCt 17 2022 5pm
     // Problem is that const duplicate returns on the Map{} without the key 
     // May need to use the same method as QueryPATCH
-    case ActionType.QueryBrowserDuplicateQuery2: {     
-      return state;
+    case ActionType.QueryBrowserDuplicateQuery2: {    
+      const id = action.payload.id;
+      const queries = state.getIn(['queryBrowser2', 'queries2'])
+      const originQueryText = state.getIn(['queryBrowser2', 'queries2', id, 'text']);
+      const originSortOrder = state.getIn(['queryBrowser2', 'queries2', id, 'sortOrder']);
+
+      console.log("JZ originQueryText " + originQueryText)
+
+      // duplicate query appears on top of origin query
+      var duplicate = newQueryBrowserQuery2()
+      duplicate[0][1] = duplicate[0][1].mergeDeep({
+        text: originQueryText,
+        isEnabled: false,
+        sortOrder: originSortOrder + 1
+      });
+
+      // Update sort order so the duplicate query appears on top of 
+      // origin query in the queriesList. 
+      // Update all existing queries, then update the counter.
+      const queryIDs = queries.keySeq() 
+      
+      // JZ NOTE: LEFT OFF NOV1 5:30pm 
+
+
+      nextSortOrderID++
+
+      
+
+
+      return state.setIn(
+        ['queryBrowser2', 'queries2'],
+        state.getIn(['queryBrowser2', 'queries2']).merge(duplicate),
+      ); 
     }
 
     case ActionType.QueryBrowserDeleteAllQueries:
@@ -310,16 +317,10 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
 
 
     case ActionType.QueryBrowserRunQueries2: {
-      console.log("JZ Hello from REducer RunQueries2")
       const queries = state.getIn(['queryBrowser2', 'queries2']).map((q) => {
-        console.log("JZ QueryBrowserRunQueries2 .map(q) " + q)
         const isEnabled = q.get('isEnabled');
         const query = q.get('query');
         const text = _.trim(q.get('text'));
-        console.log("JZ Hello from REducer RunQueries2 isEnabled %s, query %s, text %s", isEnabled, query, text)
-        console.log("JZ Hello from REducer RunQueries2 isEnabled %s, query %s, text %s", isEnabled, query, text)
-
-
         return isEnabled && query !== text ? q.merge({ query: text, series: undefined }) : q;
       });
 
