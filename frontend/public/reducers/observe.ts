@@ -36,6 +36,8 @@ const newQueryBrowserQuery = (): ImmutableMap<string, any> =>
   });
     
 
+
+
 export const silenceFiringAlerts = (firingAlerts, silences) => {
   // For each firing alert, store a list of the Silences that are silencing it
   // and set its state to show it is silenced
@@ -99,6 +101,11 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       }),
     });
   }
+
+ 
+
+
+
 
   switch (action.type) {
     case ActionType.DashboardsPatchVariable:
@@ -211,17 +218,50 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       );
     }
 
-    // JZ NOTE: Left off Here OCt 17 2022 5pm
-    // Problem is that const duplicate returns on the Map{} without the key 
-    // May need to use the same method as QueryPATCH
     case ActionType.QueryBrowserDuplicateQuery2: {    
       const id = action.payload.id;
       const queries = state.getIn(['queryBrowser2', 'queries2'])
       const originQueryText = state.getIn(['queryBrowser2', 'queries2', id, 'text']);
       const originSortOrder = state.getIn(['queryBrowser2', 'queries2', id, 'sortOrder']);
 
-      console.log("JZ originQueryText " + originQueryText)
+      // 1. Sort queryKeys by sortOrder -- DONE 
+      const sortedQueries = queries.sort((k1,k2) => {
+        if (k1.get("sortOrder") < k2.get("sortOrder")) {
+          return 1;
+        }
+        if (k1.get("sortOrder") > k2.get("sortOrder")) {
+            return -1;
+        }
+        return 0;
+       }
+      )
 
+      // 2. Find key of Origin Query -- DONE
+      const queryKeys = sortedQueries.keySeq().toArray() 
+      console.log("JZ Duplicate > originQueryID: %s, index %s queryKeys: %s", id, _.indexOf(queryKeys, id), queryKeys) 
+      const indexOfOrignQuery = _.indexOf(queryKeys, id)
+
+      console.log("JZ Duplicate > sortedQueries : ", sortedQueries)
+
+
+      // 3. Update the queries preceding duplicate 
+      const updatedQueries = state.getIn(['queryBrowser2', 'queries2']).map((q) => {
+        const sortOrder = q.get('sortOrder') 
+        const newSortOrder = sortOrder + 1 
+        return sortOrder > originSortOrder ?  q.merge({ sortOrder: newSortOrder }) : q;
+      });
+
+      // JZ NOTE: Left Off Here 11/2/22 9pm 
+      // updated 'sortOrder > originSortOrder' need to be tested -- 
+      console.log("JZ Duplicate > updatedQueries : ", JSON.stringify(updatedQueries) )
+      console.log("JZ Duplicate > setIn(updatedQueries) : ", JSON.stringify(state.setIn(['queryBrowser2', 'queries2'], updatedQueries)))
+
+
+      // 4. Update sortOrderCounter 
+      nextSortOrderID++
+
+
+      // 5. Create Duplicate 
       // duplicate query appears on top of origin query
       var duplicate = newQueryBrowserQuery2()
       duplicate[0][1] = duplicate[0][1].mergeDeep({
@@ -230,23 +270,16 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         sortOrder: originSortOrder + 1
       });
 
-      // Update sort order so the duplicate query appears on top of 
-      // origin query in the queriesList. 
-      // Update all existing queries, then update the counter.
-      const queryIDs = queries.keySeq() 
-      
-      // JZ NOTE: LEFT OFF NOV1 5:30pm 
 
+      // return state.setIn(
+      //   ['queryBrowser2', 'queries2'],
+      //   state.getIn(['queryBrowser2', 'queries2']).merge(duplicate),
+      // ); 
 
-      nextSortOrderID++
+      return state
+        .setIn(['queryBrowser2', 'queries2'], updatedQueries)
+        .setIn(['queryBrowser2', 'queries2'], state.getIn(['queryBrowser2', 'queries2']).merge(duplicate)); 
 
-      
-
-
-      return state.setIn(
-        ['queryBrowser2', 'queries2'],
-        state.getIn(['queryBrowser2', 'queries2']).merge(duplicate),
-      ); 
     }
 
     case ActionType.QueryBrowserDeleteAllQueries:
