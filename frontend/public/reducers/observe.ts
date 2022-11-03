@@ -13,7 +13,6 @@ export type ObserveState = ImmutableMap<string, any>;
 
 let nextSortOrderID: number = 0; 
 
-// JZ2 returns a Key/Value Pair Map {id: 'query-browser-quer-123', Value:Map{isEnabled:true, isExpanded:true} }
 const newQueryBrowserQuery2 = () : [[string, ImmutableMap<string, any>]] =>  {
   return [[
     // replace with lodash _.uniqueID 
@@ -35,8 +34,6 @@ const newQueryBrowserQuery = (): ImmutableMap<string, any> =>
     isExpanded: true,
   });
     
-
-
 
 export const silenceFiringAlerts = (firingAlerts, silences) => {
   // For each firing alert, store a list of the Silences that are silencing it
@@ -82,17 +79,14 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
           variables: ImmutableMap(),
         }),
       }),
-
-      // JZ1 
-      // Create a ImmutableMap Similar in structure to the dashboards 
+    
       queryBrowser2: ImmutableMap({
         metrics: [],
         pollInterval: null,
-        queries2: ImmutableMap(newQueryBrowserQuery2()), // initialize queries Map with a Key:Value Pair 
+        queries2: ImmutableMap(newQueryBrowserQuery2()), 
         timespan: MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
       }),
 
-      // intiial state creates an ImmutableList with one Query 
       queryBrowser: ImmutableMap({
         metrics: [],
         pollInterval: null,
@@ -101,11 +95,6 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       }),
     });
   }
-
- 
-
-
-
 
   switch (action.type) {
     case ActionType.DashboardsPatchVariable:
@@ -223,26 +212,18 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       const originQueryText = state.getIn(['queryBrowser2', 'queries2', id, 'text']);
       const originSortOrder = state.getIn(['queryBrowser2', 'queries2', id, 'sortOrder']);
 
-      // 3. Update the queries preceding duplicate 
-      const updatedQueries = state.getIn(['queryBrowser2', 'queries2']).map((q) => {
+      // Duplicated Queries are rendered immediately above their origin query. 
+      // `sortOrder` of all queries rendered before the origin query
+      // are shifted by 1 to make way for duplicate query.
+      const sortOrderUpdateQueries = state.getIn(['queryBrowser2', 'queries2']).map((q) => {
         const sortOrder = q.get('sortOrder') 
         const newSortOrder = sortOrder + 1 
         return sortOrder > originSortOrder ?  q.merge({ sortOrder: newSortOrder }) : q;
       });
 
-      // JZ NOTE: Left Off Here 11/2/22 9pm 
-      // updated 'sortOrder > originSortOrder' need to be tested -- 
-      // the output of these console logs should be the same 
-      console.log("JZ Duplicate > updatedQueries : ", JSON.stringify(updatedQueries) )
-      console.log("JZ Duplicate > setIn(updatedQueries) : ", JSON.stringify(state.setIn(['queryBrowser2', 'queries2'], updatedQueries)))
-
-
-      // 4. Update sortOrderCounter 
+      // Update global counter to account for shift  
       nextSortOrderID++
 
-
-      // 5. Create Duplicate 
-      // duplicate query appears on top of origin query
       var duplicate = newQueryBrowserQuery2()
       duplicate[0][1] = duplicate[0][1].mergeDeep({
         text: originQueryText,
@@ -250,14 +231,9 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         sortOrder: originSortOrder + 1
       });
 
-      const updateAndDuplicateQueries = updatedQueries.merge(duplicate)
+      const updatedQueriesList = sortOrderUpdateQueries.merge(duplicate)
 
-      console.log("JZ Duplicate > updateAndDuplicateQueries " + updateAndDuplicateQueries)
-
-      return state
-        .setIn(['queryBrowser2', 'queries2'], updateAndDuplicateQueries)
-        // .setIn(['queryBrowser2', 'queries2'], state.getIn(['queryBrowser2', 'queries2']).merge(duplicate)); 
-
+      return state.setIn(['queryBrowser2', 'queries2'], updatedQueriesList)
     }
 
     case ActionType.QueryBrowserDeleteAllQueries:

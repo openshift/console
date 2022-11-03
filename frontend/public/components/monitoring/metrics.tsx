@@ -171,34 +171,36 @@ const ExpandButton = ({ isExpanded, onClick }) => {
 const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
   const { t } = useTranslation();
 
-  console.log("JZ SeriesBtn2 > labels : "  + labels)
 
   const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ observe }: RootState) => {
     const disabledSeries = observe.getIn(['queryBrowser2', 'queries2', id, 'disabledSeries']);
     if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
-      console.log("JZ SeriesBtn2 > disabledSeries  " )
       return [null, true, false];
     }
 
     const series = observe.getIn(['queryBrowser2', 'queries2', id, 'series']);
     if (_.isEmpty(series)) {
-      console.log("JZ SeriesBtn2 > isSeriesEmpty " )
       return [null, false, true];
     }
 
-    // JZ NOTE: this fx() gets the numnber of series that are enabled for a given query 
     const colorOffset = observe
       .getIn(['queryBrowser2', 'queries2'])
       .take(id)
       .filter((q) => q.get('isEnabled'))
       .reduce((sum, q) => sum + _.size(q.get('series')), 0);
 
-    // JZ NOTE: Find the index of the series that correspond with the query's labels
     const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
 
+    console.log("JZ SeriesBtn2 > labels : "  + JSON.stringify(labels))
     console.log (" JZ seriesBtn2 > series + ", series )
 
-    // TODO checkout why seriesIndex is coming back -1 
+    series.forEach((s) => {
+      console.log("JZ SeriesBtn2 > s : ", s)
+      console.log("JZ SeriesBtn2 > _.isEqual(s, labels) : ", _.isEqual(s, labels))
+    })
+
+    console.log("JZ SeriesBtn2 > ====================== END ==================== ")
+
 
 
     // console.log("JZ SeriesBtn2 >  colorIndex is [(colorOffset + seriesIndex)] % colors.length : " + (colorOffset + seriesIndex) % colors.length)
@@ -491,7 +493,7 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
 
 
 
-  // JZ save callback and poll the request at set time intervals 
+  // JZ NOTES: saves callback and poll the request at set time intervals 
   usePoll(tick, pollInterval, namespace, query, span, lastRequestTime);
 
   // JZ clear previous data? 
@@ -539,8 +541,6 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
     );
   }
 
-  console.log("JZ QueryTable2 > data.result %s", JSON.stringify(data.result))
-
   const transforms = [sortable, wrappable];
 
   // JZ LEFT OFF HERE Oct 19 5:30pm -- Query{...series:undefined} -- Prometheus data is not getting properly set 
@@ -587,7 +587,6 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
         },
       ];
     } else {
-      // JZ NOTE: key:value pair 
       rowMapper = ({ metric, value }) => [
         buttonCell(metric),
         ..._.map(allLabelKeys, (k) => metric[k]),
