@@ -220,29 +220,8 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
 
     case ActionType.QueryBrowserDuplicateQuery2: {    
       const id = action.payload.id;
-      const queries = state.getIn(['queryBrowser2', 'queries2'])
       const originQueryText = state.getIn(['queryBrowser2', 'queries2', id, 'text']);
       const originSortOrder = state.getIn(['queryBrowser2', 'queries2', id, 'sortOrder']);
-
-      // 1. Sort queryKeys by sortOrder -- DONE 
-      const sortedQueries = queries.sort((k1,k2) => {
-        if (k1.get("sortOrder") < k2.get("sortOrder")) {
-          return 1;
-        }
-        if (k1.get("sortOrder") > k2.get("sortOrder")) {
-            return -1;
-        }
-        return 0;
-       }
-      )
-
-      // 2. Find key of Origin Query -- DONE
-      const queryKeys = sortedQueries.keySeq().toArray() 
-      console.log("JZ Duplicate > originQueryID: %s, index %s queryKeys: %s", id, _.indexOf(queryKeys, id), queryKeys) 
-      const indexOfOrignQuery = _.indexOf(queryKeys, id)
-
-      console.log("JZ Duplicate > sortedQueries : ", sortedQueries)
-
 
       // 3. Update the queries preceding duplicate 
       const updatedQueries = state.getIn(['queryBrowser2', 'queries2']).map((q) => {
@@ -253,6 +232,7 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
 
       // JZ NOTE: Left Off Here 11/2/22 9pm 
       // updated 'sortOrder > originSortOrder' need to be tested -- 
+      // the output of these console logs should be the same 
       console.log("JZ Duplicate > updatedQueries : ", JSON.stringify(updatedQueries) )
       console.log("JZ Duplicate > setIn(updatedQueries) : ", JSON.stringify(state.setIn(['queryBrowser2', 'queries2'], updatedQueries)))
 
@@ -270,15 +250,13 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         sortOrder: originSortOrder + 1
       });
 
+      const updateAndDuplicateQueries = updatedQueries.merge(duplicate)
 
-      // return state.setIn(
-      //   ['queryBrowser2', 'queries2'],
-      //   state.getIn(['queryBrowser2', 'queries2']).merge(duplicate),
-      // ); 
+      console.log("JZ Duplicate > updateAndDuplicateQueries " + updateAndDuplicateQueries)
 
       return state
-        .setIn(['queryBrowser2', 'queries2'], updatedQueries)
-        .setIn(['queryBrowser2', 'queries2'], state.getIn(['queryBrowser2', 'queries2']).merge(duplicate)); 
+        .setIn(['queryBrowser2', 'queries2'], updateAndDuplicateQueries)
+        // .setIn(['queryBrowser2', 'queries2'], state.getIn(['queryBrowser2', 'queries2']).merge(duplicate)); 
 
     }
 
