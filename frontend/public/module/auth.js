@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
+import { stripBasePath } from '@console/shared/src/utils/paths';
 
 import { coFetch } from '../co-fetch';
-import { stripBasePath } from '../components/utils/link';
 
 const loginState = (key) => localStorage.getItem(key);
 

@@ -1,8 +1,8 @@
 import { NavExtension, isNavSection, K8sModel } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { stripBasePath } from '@console/internal/components/utils';
 import { startsWithSome } from '@console/shared';
+import { stripScopeFromPath } from '@console/shared/src/utils/paths';
 
 const toArray = (val) => (val ? (Array.isArray(val) ? val : [val]) : []);
 
@@ -156,14 +156,6 @@ export const sortExtensionItems = <E extends NavExtension>(
 
   return sortedItems;
 };
-
-// Strips '/<basePath>/k8s/cluster/', '/<basePath>/k8s/ns/<namespace>/', and
-// '/<basePath>/k8s/all-namespaces/' from the beginning a given path
-export const stripScopeFromPath = (path: string) =>
-  stripBasePath(path)?.replace(
-    /^\/?(?:k8s\/cluster\/|k8s\/all-namespaces\/|k8s\/ns\/[^/]*\/)?(.*?)\/?$/,
-    '$1',
-  );
 
 export const navItemHrefIsActive = (
   location: string,

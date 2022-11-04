@@ -18,9 +18,14 @@ import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 //
 // And it's ok for users to make assumptions about capturing groups.
 
-export const legalNamePattern = /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/;
-
-const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
+export const legalNamePattern = '[a-z0-9](?:[-a-z0-9]*[a-z0-9])?';
+export const namespacePrefixPattern =
+  '/k8s/(?:ns|cluster/projects|cluster/project.openshift.io~v1~Project|cluster/namespaces)/';
+export const clusterPrefixPattern = '/c/';
+export const allNamespacesPattern = '/k8s/all-namespaces';
+export const namespaceCapturePattern = `${namespacePrefixPattern}(${legalNamePattern})`;
+export const clusterCapturePattern = `${clusterPrefixPattern}(${legalNamePattern})`;
+export const CLUSTER_ROUTE_PREFIX = `${clusterPrefixPattern}:cluster`;
 
 export const namespacedPrefixes = [
   '/api-resource',
@@ -31,29 +36,29 @@ export const namespacedPrefixes = [
   '/details',
   '/search',
   '/status',
+  '/c/:cluster/api-resource',
+  '/c/:cluster/k8s',
+  '/c/:cluster/operatorhub',
+  '/c/:cluster/operatormanagement',
+  '/c/:cluster/operators',
+  '/c/:cluster/details',
+  '/c/:cluster/search',
+  '/c/:cluster/status',
 ];
 
-export const stripBasePath = (path: string): string => path.replace(basePathPattern, '/');
+export const getClusterFromUrl = (path: string) => {
+  const [, cluster] = path.match(clusterCapturePattern) ?? [];
+  return cluster;
+};
 
 export const getNamespace = (path: string): string => {
-  path = stripBasePath(path);
-  const split = path.split('/').filter((x) => x);
-
-  if (split[1] === 'all-namespaces') {
+  const [allNamespaces] = path.match(allNamespacesPattern) ?? [];
+  if (allNamespaces) {
     return ALL_NAMESPACES_KEY;
   }
 
-  let ns: string;
-  if (split[1] === 'cluster' && ['namespaces', 'projects'].includes(split[2]) && split[3]) {
-    ns = split[3];
-  } else if (split[1] === 'ns' && split[2]) {
-    ns = split[2];
-  } else {
-    return;
-  }
-
-  const match = ns.match(legalNamePattern);
-  return match && match.length > 0 && match[0];
+  const [, namespace] = path.match(namespaceCapturePattern) ?? [];
+  return namespace;
 };
 
 export const getURLSearchParams = () => {

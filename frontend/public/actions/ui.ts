@@ -134,8 +134,13 @@ export const formatNamespaceRoute = (
   forceList?: boolean,
 ) => {
   let path = originalPath.substr(window.SERVER_FLAGS.basePath.length);
-
   let parts = path.split('/').filter((p) => p);
+  let cluster;
+  if (parts[0] === 'c') {
+    parts.shift();
+    cluster = parts.shift();
+  }
+
   const prefix = parts.shift();
 
   let previousNS;
@@ -164,7 +169,7 @@ export const formatNamespaceRoute = (
   const namespacePrefix =
     activeNamespace === ALL_NAMESPACES_KEY ? 'all-namespaces' : `ns/${activeNamespace}`;
 
-  path = `/${prefix}/${namespacePrefix}`;
+  path = cluster ? `/c/${cluster}/${prefix}/${namespacePrefix}` : `/${prefix}/${namespacePrefix}`;
   if (parts.length) {
     path += `/${parts.join('/')}`;
   }
