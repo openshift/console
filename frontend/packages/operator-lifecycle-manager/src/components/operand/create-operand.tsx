@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   PageHeading,
@@ -17,7 +18,6 @@ import {
   K8sResourceKind,
   K8sResourceKindReference,
   kindForReference,
-  referenceForModel,
   nameForModel,
   CustomResourceDefinitionKind,
   definitionFor,
@@ -36,6 +36,7 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { exampleForModel, providedAPIForModel } from '..';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
+import { useClusterServiceVersion } from '../../utils/useClusterServiceVersion';
 import ModelStatusBox from '../model-status-box';
 import { DEFAULT_K8S_SCHEMA } from './const';
 // eslint-disable-next-line @typescript-eslint/camelcase
@@ -153,12 +154,8 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
 const CreateOperandPage: React.FC<CreateOperandPageProps> = ({ match }) => {
   const { t } = useTranslation();
   const createResourceExtension = useCreateResourceExtension(match.params.plural);
-  const [csv, loaded, loadError] = useK8sWatchResource<ClusterServiceVersionKind>({
-    kind: referenceForModel(ClusterServiceVersionModel),
-    name: match.params.csvName,
-    namespace: match.params.ns,
-    isList: false,
-  });
+  const { csvName, ns } = useParams();
+  const [csv, loaded, loadError] = useClusterServiceVersion(csvName, ns);
 
   return (
     <>
