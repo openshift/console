@@ -85,7 +85,7 @@ const MetricsActionsMenu: React.FC<{}> = () => {
   const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
 
   const isAllExpanded = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries']).every((q) => q.get('isExpanded')),
+    observe.getIn(['queryBrowser2', 'queries2']).every((q) => q.get('isExpanded')),
   );
 
   const dispatch = useDispatch();
@@ -192,13 +192,14 @@ const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
     const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
 
     console.log("JZ SeriesBtn2 > labels : "  + JSON.stringify(labels))
-    console.log (" JZ seriesBtn2 > series + ", series )
+    console.log ("JZ seriesBtn2 > series : ", series )
 
-    series.forEach((s) => {
-      console.log("JZ SeriesBtn2 > s : ", s)
-      console.log("JZ SeriesBtn2 > _.isEqual(s, labels) : ", _.isEqual(s, labels))
-    })
-
+    // series.forEach((s) => {
+    //   console.log("JZ SeriesBtn2 > series.forEach( (s) => : ", s)
+    //   console.log("JZ SeriesBtn2 > _.isEqual(s, labels) : ", _.isEqual(s, labels))
+    // })
+    console.log("JZ seriesIndex : ", seriesIndex )
+    console.log("JZ colorOffSet : ", colorOffset )
     console.log("JZ SeriesBtn2 > ====================== END ==================== ")
 
 
@@ -532,6 +533,8 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
     ? [...data.result, ...expiredSeries.map((metric) => ({ metric }))]
     : data.result;
 
+  console.log("JZ SeriesBtn2 > QueryTable2 > expiredSeries : ", JSON.stringify(expiredSeries))
+  console.log("JZ SeriesBtn2 > QueryTable2 > result : ", JSON.stringify(result))
 
   if (!result || result.length === 0) {
     return (
@@ -545,8 +548,8 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
 
   // JZ LEFT OFF HERE Oct 19 5:30pm -- Query{...series:undefined} -- Prometheus data is not getting properly set 
   // Hacked this -- by queryBrowserPatchQuery
-  const dispatch = useDispatch();
-  dispatch(queryBrowserPatchQuery2(id, {series: data.result}))
+  // const dispatch = useDispatch();
+  // dispatch(queryBrowserPatchQuery2(id, {series: data.result}))
 
   const buttonCell = (labels) => ({ title: <SeriesButton2 id={id} labels={labels} /> });
 
@@ -1055,6 +1058,15 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
   // trigger unnecessary re-renders of QueryBrowser, which can be quite slow
   const queriesMemoKey = JSON.stringify(_.map(queries, 'query'));
   const queryStrings = React.useMemo(() => _.map(queries, 'query'), [queriesMemoKey]);
+  
+  // JZ NOTES: LEFT OFF HERE NOV3 --- Need to pass queryIDs to <QueryBrowsers/> 
+  // ln 785 query-broser.tsx > update dispatch(queryBrowserPatchQuery2('queryIDs[i]', {series ....}))
+  const queriesMemoIDs = JSON.stringify(_.map(queries, 'query'));
+  const queryIDs = React.useMemo(() => _.keys(queries), [queriesMemoIDs]);
+
+  console.log("JZ query-browser component > QueryBrowserWrapper queryStrings: ", queryStrings)
+  console.log("JZ query-browser component > QueryBrowserWrapper queryIDs: ", queryIDs)
+
   const disabledSeriesMemoKey = JSON.stringify(
     _.reject(_.map(queries, 'disabledSeries'), _.isEmpty),
   );

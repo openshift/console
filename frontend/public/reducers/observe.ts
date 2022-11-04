@@ -317,10 +317,10 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
     }
 
     case ActionType.QueryBrowserSetAllExpanded: {
-      const queries = state.getIn(['queryBrowser', 'queries']).map((q) => {
+      const queries = state.getIn(['queryBrowser2', 'queries2']).map((q) => {
         return q.set('isExpanded', action.payload.isExpanded);
       });
-      return state.setIn(['queryBrowser', 'queries'], queries);
+      return state.setIn(['queryBrowser2', 'queries2'], queries);
     }
 
     case ActionType.QueryBrowserSetMetrics:

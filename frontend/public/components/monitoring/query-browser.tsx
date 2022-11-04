@@ -41,6 +41,7 @@ import withFallback from '@console/shared/src/components/error/fallbacks/withFal
 import {
   queryBrowserDeleteAllSeries,
   queryBrowserPatchQuery,
+  queryBrowserPatchQuery2,
   queryBrowserSetTimespan,
 } from '../../actions/observe';
 import { RootState } from '../../redux';
@@ -777,8 +778,14 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
           });
           setGraphData(newGraphData);
 
-          _.each(newResults, (r, i) =>
-            dispatch(queryBrowserPatchQuery(i, { series: r ? _.map(r, 'metric') : undefined })),
+          console.log("JZ query-browser component newResults: ", newResults)
+
+          _.each(newResults, (r, i) => {
+            dispatch(queryBrowserPatchQuery(i, { series: r ? _.map(r, 'metric') : 'undefined' })),
+            dispatch(queryBrowserPatchQuery2("query-browser-query5", { series: r ? _.map(r, 'metric') : 'undefined' })),
+
+            console.log("JZ query-browser component > r : %s, i : %s ", JSON.stringify(r), i )
+            }
           );
           setUpdating(false);
         }
@@ -1030,6 +1037,7 @@ export type QueryBrowserProps = {
   timespan?: number;
   units?: string;
   wrapperClassName?: string;
+  queryIDs?: string[];
 };
 
 type SpanControlsProps = {
