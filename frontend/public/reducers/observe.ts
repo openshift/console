@@ -236,9 +236,14 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       return state.setIn(['queryBrowser2', 'queries2'], updatedQueriesList)
     }
 
+    // TODO: Delete 
     case ActionType.QueryBrowserDeleteAllQueries:
       return state.setIn(['queryBrowser', 'queries'], ImmutableList([newQueryBrowserQuery()]));
-
+    
+    case ActionType.QueryBrowserDeleteAllQueries2:
+        return state.setIn(['queryBrowser2', 'queries2'], ImmutableMap(newQueryBrowserQuery2()));
+      
+    // TODO: Delete 
     case ActionType.QueryBrowserDeleteAllSeries: {
       return state.setIn(
         ['queryBrowser', 'queries'],
@@ -316,6 +321,7 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         .setIn(['queryBrowser2', 'lastRequestTime'], Date.now());
     }
 
+    
     case ActionType.QueryBrowserSetAllExpanded: {
       const queries = state.getIn(['queryBrowser2', 'queries2']).map((q) => {
         return q.set('isExpanded', action.payload.isExpanded);

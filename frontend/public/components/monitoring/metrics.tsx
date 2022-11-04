@@ -59,6 +59,7 @@ import {
   queryBrowserToggleSeries,
   toggleGraphs,
   queryBrowserAddQuery2,
+  queryBrowserDeleteAllQueries2,
   queryBrowserDeleteQuery2,
   queryBrowserDuplicateQuery2,
   queryBrowserToggleIsEnabled2,
@@ -79,6 +80,9 @@ import { PrometheusAPIError } from './types';
 // Stores information about the currently focused query input
 let focusedQuery;
 
+// JZ NOTE: 
+// Refactor : DONE 
+// FunctionComponent Reuse: NONE  
 const MetricsActionsMenu: React.FC<{}> = () => {
   const { t } = useTranslation();
 
@@ -89,10 +93,10 @@ const MetricsActionsMenu: React.FC<{}> = () => {
   );
 
   const dispatch = useDispatch();
-  const addQuery = React.useCallback(() => dispatch(queryBrowserAddQuery()), [dispatch]);
+  const addQuery = React.useCallback(() => dispatch(queryBrowserAddQuery2()), [dispatch]);
 
   const doDelete = () => {
-    dispatch(queryBrowserDeleteAllQueries());
+    dispatch(queryBrowserDeleteAllQueries2());
     focusedQuery = undefined;
   };
 
@@ -124,6 +128,9 @@ const MetricsActionsMenu: React.FC<{}> = () => {
   );
 };
 
+// JZ NOTE: 
+// Refactor : NONE  
+// FunctionComponent Reuse: alerts  
 export const ToggleGraph: React.FC<{}> = () => {
   const { t } = useTranslation();
 
@@ -146,10 +153,12 @@ export const ToggleGraph: React.FC<{}> = () => {
   );
 };
 
+// JZ NOTE: 
+// Refactor : NONE  
+// FunctionComponent Reuse: alerts  
 const ExpandButton = ({ isExpanded, onClick }) => {
   const { t } = useTranslation();
   const title = isExpanded ? t('public~Hide table') : t('public~Show table');
-  console.log("JZ Expanded Button : " + isExpanded + " " + onClick)
   return (
     <Button
       aria-label={title}
@@ -167,7 +176,9 @@ const ExpandButton = ({ isExpanded, onClick }) => {
   );
 };
 
-// TODO: Resolve series:undefined -- in query-browser.tsx there is a dispatch(queryBrowswerPatch(i, series:<Prometheus_data>) that needs to be udpated)
+// JZ NOTE: 
+// Refactor : IN-Progress, There's still an issue with the buttonSeries rendering colors that don't match the graph   
+// FunctionComponent Reuse: none   
 const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
   const { t } = useTranslation();
 
@@ -189,6 +200,7 @@ const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
       .reduce((sum, q) => sum + _.size(q.get('series')), 0);
     const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
 
+    // TODO: colors.length might be the reason why the colors QueryTable don't make the Graph 
     return [(colorOffset + seriesIndex) % colors.length, false, false];
   });
 
@@ -221,19 +233,23 @@ const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
   );
 };
 
+
+// JZ NOTE: 
+// Refactor : DONE
+// FunctionComponent Reuse: none 
 const QueryKebab2: React.FC<{ id: string }> = ({ id }) => {
   const { t } = useTranslation();
 
   const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
 
   const isDisabledSeriesEmpty = useSelector(({ observe }: RootState) =>
-    _.isEmpty(observe.getIn(['queryBrowser', 'queries', id, 'disabledSeries'])),
+    _.isEmpty(observe.getIn(['queryBrowser2', 'queries2', id, 'disabledSeries'])),
   );
   const isEnabled = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', id, 'isEnabled']),
+    observe.getIn(['queryBrowser2', 'queries2', id, 'isEnabled']),
   );
   const series = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', id, 'series']),
+    observe.getIn(['queryBrowser2', 'queries2', id, 'series']),
   );
 
   const dispatch = useDispatch();
@@ -289,6 +305,8 @@ const QueryKebab2: React.FC<{ id: string }> = ({ id }) => {
     />
   );
 };
+
+// JZ NOTE: Left off Here NOV 4 5:30pm
 
 export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
   const { t } = useTranslation();
@@ -792,6 +810,8 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
 
   const queries = queriesList.toJS();
 
+  // TODO: update useEffect so that it used queryBrowserPatchQuery2(id ... )
+
   // Initialize queries from URL parameters
   React.useEffect(() => {
     const searchParams = getURLSearchParams();
@@ -884,11 +904,9 @@ const AddQueryButton: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
-  const addQuery = React.useCallback(() => dispatch(queryBrowserAddQuery()), [dispatch]);
   const addQuery2 = React.useCallback(() => dispatch(queryBrowserAddQuery2()), [dispatch]);
 
   return (
-    // TODO: Update onClick so that its only one function that is called 
     <Button
       className="query-browser__inline-control"
       onClick={addQuery2}

@@ -17,6 +17,7 @@ export enum ActionType {
   QueryBrowserDuplicateQuery = 'queryBrowserDuplicateQuery',
   QueryBrowserDuplicateQuery2 = 'queryBrowserDuplicateQuery2',
   QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
+  QueryBrowserDeleteAllQueries2 = 'queryBrowserDeleteAllQueries2',
   QueryBrowserDeleteAllSeries = 'queryBrowserDeleteAllSeries',
   QueryBrowserDeleteAllSeries2 = 'queryBrowserDeleteAllSeries2',
   QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
@@ -109,6 +110,8 @@ export const queryBrowserDuplicateQuery2 = (id: string) =>
 
 export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
 
+export const queryBrowserDeleteAllQueries2 = () => action(ActionType.QueryBrowserDeleteAllQueries2);
+
 export const queryBrowserDeleteAllSeries = () => action(ActionType.QueryBrowserDeleteAllSeries);
 
 export const queryBrowserDeleteAllSeries2 = () => action(ActionType.QueryBrowserDeleteAllSeries2);
@@ -132,6 +135,7 @@ export const queryBrowserRunQueries = () => action(ActionType.QueryBrowserRunQue
 
 export const queryBrowserRunQueries2 = () => action(ActionType.QueryBrowserRunQueries2);
 
+// JZ NOTE: only referenced in metric.tsx 
 export const queryBrowserSetAllExpanded = (isExpanded: boolean) =>
   action(ActionType.QueryBrowserSetAllExpanded, { isExpanded });
 
@@ -175,6 +179,7 @@ const actions = {
   queryBrowserDuplicateQuery,
   queryBrowserDuplicateQuery2,
   queryBrowserDeleteAllQueries,
+  queryBrowserDeleteAllQueries2,
   queryBrowserDeleteAllSeries,
   queryBrowserDeleteAllSeries2,
   queryBrowserDeleteQuery,
