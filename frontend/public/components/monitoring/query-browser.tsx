@@ -645,6 +645,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   onZoom,
   pollInterval,
   queries,
+  queryIDs,
   showLegend,
   showStackedControl = false,
   timespan,
@@ -782,7 +783,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
           _.each(newResults, (r, i) => {
             dispatch(queryBrowserPatchQuery(i, { series: r ? _.map(r, 'metric') : 'undefined' })),
-            dispatch(queryBrowserPatchQuery2("query-browser-query5", { series: r ? _.map(r, 'metric') : 'undefined' })),
+            dispatch(queryBrowserPatchQuery2(queryIDs[i], { series: r ? _.map(r, 'metric') : 'undefined' })),
 
             console.log("JZ query-browser component > r : %s, i : %s ", JSON.stringify(r), i )
             }
@@ -1032,12 +1033,12 @@ export type QueryBrowserProps = {
   onZoom?: GraphOnZoom;
   pollInterval?: number;
   queries: string[];
+  queryIDs?: string[];
   showLegend?: boolean;
   showStackedControl?: boolean;
   timespan?: number;
   units?: string;
   wrapperClassName?: string;
-  queryIDs?: string[];
 };
 
 type SpanControlsProps = {

@@ -171,7 +171,6 @@ const ExpandButton = ({ isExpanded, onClick }) => {
 const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
   const { t } = useTranslation();
 
-
   const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ observe }: RootState) => {
     const disabledSeries = observe.getIn(['queryBrowser2', 'queries2', id, 'disabledSeries']);
     if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
@@ -188,35 +187,10 @@ const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
       .take(id)
       .filter((q) => q.get('isEnabled'))
       .reduce((sum, q) => sum + _.size(q.get('series')), 0);
-
     const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
-
-    console.log("JZ SeriesBtn2 > labels : "  + JSON.stringify(labels))
-    console.log ("JZ seriesBtn2 > series : ", series )
-
-    // series.forEach((s) => {
-    //   console.log("JZ SeriesBtn2 > series.forEach( (s) => : ", s)
-    //   console.log("JZ SeriesBtn2 > _.isEqual(s, labels) : ", _.isEqual(s, labels))
-    // })
-    console.log("JZ seriesIndex : ", seriesIndex )
-    console.log("JZ colorOffSet : ", colorOffset )
-    console.log("JZ SeriesBtn2 > ====================== END ==================== ")
-
-
-
-    // console.log("JZ SeriesBtn2 >  colorIndex is [(colorOffset + seriesIndex)] % colors.length : " + (colorOffset + seriesIndex) % colors.length)
-    // console.log("JZ SeriesBtn2 >  colorOffSet %s, seriesIndex %s, colors %s , colors.length %s", colorOffset , seriesIndex, colors, colors.length)
-
-    // TODO: Delete -- this is a test  
-    if ( ((colorOffset + seriesIndex) % colors.length) == -1 ) {
-      return [0, false, false]
-    }
 
     return [(colorOffset + seriesIndex) % colors.length, false, false];
   });
-
-    // console.log("JZ SeriesBtn2 > [colorIndex %s, isDisabled %s, isSeriesEmpty %s]", colorIndex, isDisabled, isSeriesEmpty)
-    // console.log("JZ SeriesBtn2 > backgroundColor: colors:%s [colorsIndex:%s] = ", colors, colorIndex, colors[colorIndex] )
 
   const dispatch = useDispatch();
   const toggleSeries = React.useCallback(() => dispatch(queryBrowserToggleSeries2(id, labels)), [
@@ -246,58 +220,6 @@ const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
     </div>
   );
 };
-
-// const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
-//   const { t } = useTranslation();
-
-//   const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ observe }: RootState) => {
-//     const disabledSeries = observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries']);
-//     if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
-//       return [null, true, false];
-//     }
-
-//     const series = observe.getIn(['queryBrowser', 'queries', index, 'series']);
-//     if (_.isEmpty(series)) {
-//       return [null, false, true];
-//     }
-
-//     const colorOffset = observe
-//       .getIn(['queryBrowser', 'queries'])
-//       .take(index)
-//       .filter((q) => q.get('isEnabled'))
-//       .reduce((sum, q) => sum + _.size(q.get('series')), 0);
-//     const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
-//     return [(colorOffset + seriesIndex) % colors.length, false, false];
-//   });
-
-//   const dispatch = useDispatch();
-//   const toggleSeries = React.useCallback(() => dispatch(queryBrowserToggleSeries(index, labels)), [
-//     dispatch,
-//     index,
-//     labels,
-//   ]);
-
-//   if (isSeriesEmpty) {
-//     return <div className="query-browser__series-btn-wrap"></div>;
-//   }
-//   const title = isDisabled ? t('public~Show series') : t('public~Hide series');
-
-//   return (
-//     <div className="query-browser__series-btn-wrap">
-//       <Button
-//         aria-label={title}
-//         className={classNames('query-browser__series-btn', {
-//           'query-browser__series-btn--disabled': isDisabled,
-//         })}
-//         onClick={toggleSeries}
-//         style={colorIndex === null ? undefined : { backgroundColor: colors[colorIndex] }}
-//         title={title}
-//         type="button"
-//         variant="plain"
-//       />
-//     </div>
-//   );
-// };
 
 const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
   const { t } = useTranslation();
@@ -1118,6 +1040,7 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
       disabledSeries={disabledSeries}
       queries={queryStrings}
       showStackedControl
+      queryIDs={queryIDs}
     />
   );
 };
