@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableVariant,
 } from '@patternfly/react-table';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview, WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
@@ -95,6 +96,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
   const [pluginInfoEntries] = useDynamicPluginInfo();
   const [rows, setRows] = React.useState([]);
   const [sortBy, setSortBy] = React.useState<ISortBy>({});
+  const pluginColumns = ['name', 'version', 'description', 'status'];
   React.useEffect(() => {
     const data = consolePlugins.map((plugin) => {
       const pluginName = plugin?.metadata?.name;
@@ -131,8 +133,23 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
       };
     });
     const placeholder = '-';
+    const sortedData = !_.isEmpty(sortBy)
+      ? data.sort((a, b) => {
+          const sortCol = pluginColumns[sortBy.index];
+          if ((a[sortCol] || placeholder) < (b[sortCol] || placeholder)) {
+            return -1;
+          }
+          if ((a[sortCol] || placeholder) > (b[sortCol] || placeholder)) {
+            return 1;
+          }
+          return 0;
+        })
+      : data;
+    if (sortBy && sortBy?.direction === SortByDirection.desc) {
+      sortedData.reverse();
+    }
     setRows(
-      data?.map((item) => {
+      sortedData?.map((item) => {
         return {
           cells: [
             {
@@ -162,7 +179,8 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
         };
       }),
     );
-  }, [consolePlugins, pluginInfoEntries, obj]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [consolePlugins, pluginInfoEntries, obj, sortBy]);
   const headers = [
     {
       title: t('console-app~Name'),
@@ -183,14 +201,10 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
     { title: '' },
   ];
   const onSort = (e, index, direction) => {
-    const sortedRows = rows.sort((a, b) =>
-      a[index] < b[index] ? -1 : a[index] > b[index] ? 1 : 0,
-    );
     setSortBy({
       index,
       direction,
     });
-    setRows(direction === SortByDirection.asc ? sortedRows : sortedRows.reverse());
   };
 
   return consolePluginsLoaded ? (
