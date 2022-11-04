@@ -2,7 +2,7 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { match } from 'react-router';
+import { useParams } from 'react-router-dom';
 import {
   MultiListPage,
   Table,
@@ -27,7 +27,6 @@ import {
 } from '@console/internal/models';
 import {
   K8sResourceKind,
-  GroupVersionKind,
   kindForReference,
   modelFor,
   referenceForGroupVersionKind,
@@ -152,10 +151,8 @@ export const linkForCsvResource = (
 
 export const Resources: React.FC<ResourcesProps> = (props) => {
   const { t } = useTranslation();
-  const providedAPI = providedAPIForReference(
-    props.clusterServiceVersion,
-    props.match.params.plural,
-  );
+  const { plural } = useParams();
+  const providedAPI = providedAPIForReference(props.csv, plural);
 
   const firehoseResources = (providedAPI?.resources ?? DEFAULT_RESOURCES).map(
     ({ name, kind, version }): FirehoseResource => {
@@ -203,8 +200,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
 
 export type ResourcesProps = {
   obj: K8sResourceKind;
-  clusterServiceVersion: ClusterServiceVersionKind;
-  match: match<{ plural: GroupVersionKind; ns: string; appName: string; name: string }>;
+  csv: ClusterServiceVersionKind;
 };
 
 export type ResourceListProps = {};

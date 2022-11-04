@@ -116,6 +116,7 @@ type jsGlobals struct {
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ReleaseVersion                  string                     `json:"releaseVersion"`
 	NodeArchitectures               []string                   `json:"nodeArchitectures"`
+	CopiedCSVsDisabled              bool                       `json:"copiedCSVsDisabled"`
 }
 
 type Server struct {
@@ -179,6 +180,7 @@ type Server struct {
 	ProjectAccessClusterRoles    string
 	Perspectives                 string
 	Telemetry                    serverconfig.MultiKeyValue
+	CopiedCSVsDisabled           bool
 }
 
 func (s *Server) authDisabled() bool {
@@ -749,6 +751,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		Telemetry:                  s.Telemetry,
 		ReleaseVersion:             s.ReleaseVersion,
 		NodeArchitectures:          s.NodeArchitectures,
+		CopiedCSVsDisabled:         s.CopiedCSVsDisabled,
 	}
 
 	localAuther := s.getLocalAuther()

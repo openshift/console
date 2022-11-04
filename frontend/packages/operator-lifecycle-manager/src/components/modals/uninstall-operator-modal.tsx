@@ -34,7 +34,10 @@ import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { getPatchForRemovingPlugins, isPluginEnabled } from '@console/shared/src/utils';
-import { GLOBAL_OPERATOR_NAMESPACE, OPERATOR_UNINSTALL_MESSAGE_ANNOTATION } from '../../const';
+import {
+  DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE,
+  OPERATOR_UNINSTALL_MESSAGE_ANNOTATION,
+} from '../../const';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { getClusterServiceVersionPlugins } from '../../utils';
@@ -192,7 +195,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const name = csv?.spec?.displayName || subscription?.spec?.name;
   const csvName = csv?.metadata?.name;
   const namespace =
-    subscription.metadata.namespace === GLOBAL_OPERATOR_NAMESPACE
+    subscription.metadata.namespace === DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE
       ? 'all-namespaces'
       : subscription.metadata.namespace;
   const uninstallMessage = csv?.metadata?.annotations?.[OPERATOR_UNINSTALL_MESSAGE_ANNOTATION];

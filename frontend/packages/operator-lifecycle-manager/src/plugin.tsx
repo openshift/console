@@ -133,7 +133,7 @@ const plugin: Plugin<ConsumedExtensions> = [
           await import(
             './components/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */
           )
-        ).ClusterServiceVersionsDetailsPage,
+        ).ClusterServiceVersionDetailsPage,
     },
   },
   {
