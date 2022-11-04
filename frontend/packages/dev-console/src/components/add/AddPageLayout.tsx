@@ -73,30 +73,31 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
               })}
               data-test="details-switch"
             >
-              {extensionsLoaded ? (
-                <Tooltip
-                  content={t('devconsole~Show or hide details about each item')}
-                  position="top"
-                >
-                  <Switch
-                    aria-label={
-                      showDetails
-                        ? t('devconsole~Show add card details')
-                        : t('devconsole~Hide add card details')
-                    }
-                    isChecked={showDetails}
-                    onChange={(checked) => {
-                      setShowDetails(checked);
-                    }}
-                    data-test="switch"
-                    label={t('devconsole~Details on')}
-                    labelOff={t('devconsole~Details off')}
-                    className="odc-add-page-layout__hint-block__details-switch__text"
-                  />
-                </Tooltip>
-              ) : (
-                <Skeleton shape="circle" width="24px" />
-              )}
+              {!allAddActionsDisabled &&
+                (extensionsLoaded ? (
+                  <Tooltip
+                    content={t('devconsole~Show or hide details about each item')}
+                    position="top"
+                  >
+                    <Switch
+                      aria-label={
+                        showDetails
+                          ? t('devconsole~Show add card details')
+                          : t('devconsole~Hide add card details')
+                      }
+                      isChecked={showDetails}
+                      onChange={(checked) => {
+                        setShowDetails(checked);
+                      }}
+                      data-test="switch"
+                      label={t('devconsole~Details on')}
+                      labelOff={t('devconsole~Details off')}
+                      className="odc-add-page-layout__hint-block__details-switch__text"
+                    />
+                  </Tooltip>
+                ) : (
+                  <Skeleton shape="circle" width="24px" />
+                ))}
             </div>
           </div>
           <TopologyQuickSearch
