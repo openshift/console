@@ -56,7 +56,9 @@ export const detectImportStrategies = async (
   let loaded: boolean = false;
   let loadError = null;
 
-  const repositoryStatus = gitService ? await gitService.isRepoReachable() : RepoStatus.Unreachable;
+  const repositoryStatus = gitService
+    ? await gitService.isRepoReachable()
+    : RepoStatus.GitTypeNotDetected;
   let detectedFiles: string[] = [];
   let detectedCustomData: string[];
 
