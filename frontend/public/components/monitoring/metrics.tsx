@@ -221,75 +221,6 @@ const SeriesButton2: React.FC<SeriesButtonProps2> = ({ id, labels }) => {
   );
 };
 
-const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
-  const { t } = useTranslation();
-
-  const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
-
-  const isDisabledSeriesEmpty = useSelector(({ observe }: RootState) =>
-    _.isEmpty(observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
-  );
-  const isEnabled = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
-  );
-  const series = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'series']),
-  );
-
-  const dispatch = useDispatch();
-
-  const toggleIsEnabled = React.useCallback(() => dispatch(queryBrowserToggleIsEnabled(index)), [
-    dispatch,
-    index,
-  ]);
-
-  const toggleAllSeries = React.useCallback(
-    () =>
-      dispatch(
-        queryBrowserPatchQuery(index, {
-          disabledSeries: isDisabledSeriesEmpty ? series : [],
-        }),
-      ),
-    [dispatch, index, isDisabledSeriesEmpty, series],
-  );
-
-  const doDelete = React.useCallback(() => {
-    dispatch(queryBrowserDeleteQuery(index));
-    focusedQuery = undefined;
-  }, [dispatch, index]);
-
-  const doClone = React.useCallback(() => {
-    dispatch(queryBrowserDuplicateQuery(index));
-  }, [dispatch, index]);
-
-  const dropdownItems = [
-    <DropdownItem key="toggle-query" component="button" onClick={toggleIsEnabled}>
-      {isEnabled ? t('public~Disable query') : t('public~Enable query')}
-    </DropdownItem>,
-    <DropdownItem key="toggle-all-series" component="button" onClick={toggleAllSeries}>
-      {isDisabledSeriesEmpty ? t('public~Hide all series') : t('public~Show all series')}
-    </DropdownItem>,
-    <DropdownItem key="delete" component="button" onClick={doDelete}>
-      {t('public~Delete query')}
-    </DropdownItem>,
-    <DropdownItem key="duplicate" component="button" onClick={doClone}>
-      {t('public~Duplicate query')}
-    </DropdownItem>,
-  ];
-
-  return (
-    <PFDropdown
-      data-test-id="kebab-button"
-      dropdownItems={dropdownItems}
-      isOpen={isOpen}
-      isPlain
-      onSelect={setClosed}
-      position={DropdownPosition.right}
-      toggle={<KebabToggle id="toggle-kebab" onToggle={setIsOpen} />}
-    />
-  );
-};
-
 const QueryKebab2: React.FC<{ id: string }> = ({ id }) => {
   const { t } = useTranslation();
 
@@ -571,6 +502,8 @@ export const QueryTable2: React.FC<QueryTableProps2> = ({ id, namespace }) => {
   );
 };
 
+// JZ NOTE: This Component is referenced in MetricsChart.tsx
+// need to refactor 
 export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
   const { t } = useTranslation();
 
@@ -770,11 +703,6 @@ const PromQLExpressionInput = (props) => (
 const Query2 : React.FC<{ id: string }> = ({ id }) => {
   const { t } = useTranslation();
 
-  // const q = useSelector(({ observe }: RootState) =>
-  //   observe.getIn(['queryBrowser2', 'queries2']),
-  // );
-
-  // QueriesList {id:Map{}, id:Map{}, id:Map{}}
   const isEnabled = useSelector(({ observe }: RootState) =>
     observe.getIn(['queryBrowser2', 'queries2', id, 'isEnabled']),
   );
@@ -783,10 +711,6 @@ const Query2 : React.FC<{ id: string }> = ({ id }) => {
   );
   const text = useSelector(({ observe }: RootState) =>
     observe.getIn(['queryBrowser2', 'queries2', id, 'text'], ''),
-  );
-
-  const queries = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser2', 'queries2', id]),
   );
 
   const dispatch = useDispatch();
@@ -812,9 +736,6 @@ const Query2 : React.FC<{ id: string }> = ({ id }) => {
     dispatch(queryBrowserRunQueries2());
   }, [dispatch]);
 
-  // TODO: NOT sure if this actually is working ... 
-  // when you click on a selection from the dropdown, the query runs with out 
-  // clicking 'run query'
   const handleSelectionChange = (
     target: { focus: () => void; setSelectionRange: (start: number, end: number) => void },
     start: number,
@@ -853,96 +774,11 @@ const Query2 : React.FC<{ id: string }> = ({ id }) => {
           <QueryKebab2 id={id} />
         </div>
         </div>
-
         <QueryTable2 id={id} />
       </div>
   );
-  
-
 }
 
-const Query: React.FC<{ index: number }> = ({ index }) => {
-  const { t } = useTranslation();
-
-  const id = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'id']),
-  );
-  const isEnabled = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
-  );
-  const isExpanded = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
-  );
-  const text = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'text'], ''),
-  );
-
-  const dispatch = useDispatch();
-
-  const toggleIsEnabled = React.useCallback(() => dispatch(queryBrowserToggleIsEnabled(index)), [
-    dispatch,
-    index,
-  ]);
-
-  const toggleIsExpanded = React.useCallback(
-    () => dispatch(queryBrowserPatchQuery(index, { isExpanded: !isExpanded })),
-    [dispatch, index, isExpanded],
-  );
-
-  const handleTextChange = React.useCallback(
-    (value: string) => {
-      dispatch(queryBrowserPatchQuery(index, { text: value }));
-    },
-    [dispatch, index],
-  );
-
-  const handleExecuteQueries = React.useCallback(() => {
-    dispatch(queryBrowserRunQueries());
-  }, [dispatch]);
-
-  const handleSelectionChange = (
-    target: { focus: () => void; setSelectionRange: (start: number, end: number) => void },
-    start: number,
-    end: number,
-  ) => {
-    focusedQuery = { index, selection: { start, end }, target };
-  };
-
-  const switchKey = `${id}-${isEnabled}`;
-  const switchLabel = isEnabled ? t('public~Disable query') : t('public~Enable query');
-
-
-  return (
-    <div
-      className={classNames('query-browser__table', {
-        'query-browser__table--expanded': isExpanded,
-      })}
-    >
-      <div className="query-browser__query-controls">
-        <ExpandButton isExpanded={isExpanded} onClick={toggleIsExpanded} />
-        <PromQLExpressionInput
-          value={text}
-          onValueChange={handleTextChange}
-          onExecuteQuery={handleExecuteQueries}
-          onSelectionChange={handleSelectionChange}
-        />
-        <div title={switchLabel}>
-          <Switch
-            aria-label={switchLabel}
-            id={switchKey}
-            isChecked={isEnabled}
-            key={switchKey}
-            onChange={toggleIsEnabled}
-          />
-        </div>
-        <div className="dropdown-kebab-pf">
-          <QueryKebab index={index} />
-        </div>
-      </div>
-      <QueryTable index={index} />
-    </div>
-  );
-};
 
 const QueryBrowserWrapper: React.FC<{}> = () => {
   const { t } = useTranslation();
@@ -972,17 +808,16 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
     }
   }, [dispatch]);
 
-  // TODO: DON'T Change the query-browser NOTE -- 10-20-11:08
-  // Loop through the QueryMAP and match the query-string to get the Object ID 
-
   /* eslint-disable react-hooks/exhaustive-deps */
   // Use React.useMemo() to prevent these two arrays being recreated on every render, which would
   // trigger unnecessary re-renders of QueryBrowser, which can be quite slow
   const queriesMemoKey = JSON.stringify(_.map(queries, 'query'));
   const queryStrings = React.useMemo(() => _.map(queries, 'query'), [queriesMemoKey]);
   
-  // JZ NOTES: LEFT OFF HERE NOV3 --- Need to pass queryIDs to <QueryBrowsers/> 
-  // ln 785 query-broser.tsx > update dispatch(queryBrowserPatchQuery2('queryIDs[i]', {series ....}))
+  // TODO: DON'T Change the query-browser NOTE -- 10-20-11:08
+  // Loop through the QueryMAP and match the query-string to get the Object ID 
+  // JZ NOTE:  passes queryIDs to <QueryBrowsers/> 
+  // ~ln 785 query-broser.tsx > update dispatch(queryBrowserPatchQuery2('queryIDs[i]', {series ....}))
   const queriesMemoIDs = JSON.stringify(_.map(queries, 'query'));
   const queryIDs = React.useMemo(() => _.keys(queries), [queriesMemoIDs]);
 
@@ -1056,7 +891,7 @@ const AddQueryButton: React.FC<{}> = () => {
     // TODO: Update onClick so that its only one function that is called 
     <Button
       className="query-browser__inline-control"
-      onClick={addQuery && addQuery2}
+      onClick={addQuery2}
       type="button"
       variant="secondary"
     >

@@ -779,15 +779,15 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
           });
           setGraphData(newGraphData);
 
-          console.log("JZ query-browser component newResults: ", newResults)
-
-          _.each(newResults, (r, i) => {
-            dispatch(queryBrowserPatchQuery(i, { series: r ? _.map(r, 'metric') : 'undefined' })),
-            dispatch(queryBrowserPatchQuery2(queryIDs[i], { series: r ? _.map(r, 'metric') : 'undefined' })),
-
-            console.log("JZ query-browser component > r : %s, i : %s ", JSON.stringify(r), i )
-            }
-          );
+          if (_.isEmpty(queryIDs)) {
+            _.each(newResults, (r, i) => 
+              dispatch(queryBrowserPatchQuery(i, { series: r ? _.map(r, 'metric') : 'undefined' })) 
+            );
+          } else {
+            _.each(newResults, (r, i) => 
+              dispatch(queryBrowserPatchQuery2(queryIDs[i], { series: r ? _.map(r, 'metric') : 'undefined' }))
+            )
+          }
           setUpdating(false);
         }
         setError(undefined);
