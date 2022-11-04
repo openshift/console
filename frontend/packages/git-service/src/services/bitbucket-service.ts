@@ -76,8 +76,19 @@ export class BitbucketService extends BaseService {
         return RepoStatus.Reachable;
       }
     } catch (e) {
-      if (e.status === 429) {
-        return RepoStatus.RateLimitExceeded;
+      switch (e.status) {
+        case 429: {
+          return RepoStatus.RateLimitExceeded;
+        }
+        case 403: {
+          return RepoStatus.PrivateRepo;
+        }
+        case 404: {
+          return RepoStatus.ResourceNotFound;
+        }
+        default: {
+          return RepoStatus.InvalidGitTypeSelected;
+        }
       }
     }
     return RepoStatus.Unreachable;
