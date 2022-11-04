@@ -31,7 +31,7 @@ export const NavItemResource: React.FC<NavItemResourceProps> = ({
     location,
     startsWith,
   ]);
-  const to = React.useCallback(
+  const to = React.useMemo(
     () =>
       namespaced
         ? formatNamespacedRouteForResource(

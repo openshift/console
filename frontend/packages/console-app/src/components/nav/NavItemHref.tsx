@@ -4,8 +4,9 @@ import { HrefNavItem } from '@console/dynamic-plugin-sdk';
 import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { formatNamespacedRouteForHref, formatNamespacedRouteForResource } from '@console/shared';
 import { useLocation } from '@console/shared/src/hooks/useLocation';
+import { stripScopeFromPath } from '@console/shared/src/utils/paths';
 import { NavLinkProps, NavLink } from './NavLink';
-import { navItemHrefIsActive, stripScopeFromPath } from './utils';
+import { navItemHrefIsActive } from './utils';
 
 export const NavItemHref: React.FC<NavItemHrefProps> = ({
   children,
@@ -23,7 +24,7 @@ export const NavItemHref: React.FC<NavItemHrefProps> = ({
     location,
     startsWith,
   ]);
-  const to = React.useCallback(() => {
+  const to = React.useMemo(() => {
     if (namespaced) {
       return formatNamespacedRouteForHref(href, activeNamespace);
     }
