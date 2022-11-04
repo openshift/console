@@ -43,7 +43,7 @@ export const getK8sResourcePath = (model: K8sModel, options: Options): string =>
     u += `/${options.path}`;
   }
   if (!_.isEmpty(options.queryParams)) {
-    const q = _.map(options.queryParams, function(v, k) {
+    const q = _.map(options.queryParams, (v, k) => {
       return `${k}=${v}`;
     });
     u += `?${q.join('&')}`;
@@ -109,11 +109,11 @@ export const toRequirements = (selector: Selector = {}): MatchExpression[] => {
 
   Object.keys(matchLabels || {})
     .sort()
-    .forEach(function(k) {
+    .forEach((k) => {
       requirements.push(createEquals(k, matchLabels[k]));
     });
 
-  (matchExpressions || []).forEach(function(me) {
+  (matchExpressions || []).forEach((me) => {
     requirements.push(me);
   });
 
@@ -132,6 +132,7 @@ export const k8sWatch = (
     resourceVersion?: string;
     ns?: string;
     fieldSelector?: string;
+    cluster?: string;
   } = {},
   wsOptions: {
     [key: string]: any;
@@ -167,6 +168,10 @@ export const k8sWatch = (
 
   if (query.ns) {
     opts.ns = query.ns;
+  }
+
+  if (query.cluster) {
+    queryParams.cluster = encodeURIComponent(query.cluster);
   }
 
   if (query.resourceVersion) {
