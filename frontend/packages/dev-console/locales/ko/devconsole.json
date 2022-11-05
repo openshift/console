@@ -66,7 +66,7 @@
   "Click reload to see the new version.": "새로 고침을 클릭하여 새 버전을 표시합니다.",
   "Save": "저장",
   "Advanced options": "고급 옵션",
-  "Click on the names to access advanced options for": "고급 옵션에 액세스하려면 이름을 클릭하십시오.",
+  "Click on the names to access advanced options for <0></0>.": "<0></0>에 대한 고급 옵션에 액세스하려면 이름을 클릭하십시오.",
   "Triggers": "트리거",
   "Secrets": "시크릿",
   "Run Policy": "정책 실행",

@@ -20,6 +20,18 @@ type AdvancedSectionProps = {
   appResources?: AppResources;
 };
 
+const Footer = ({ children }) => {
+  const { t } = useTranslation();
+  return (
+    <Trans
+      t={t}
+      ns="devconsole"
+      defaults="Click on the names to access advanced options for <0></0>."
+      components={[children]}
+    />
+  );
+};
+
 const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
   const { t } = useTranslation();
 
@@ -29,7 +41,11 @@ const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
   };
 
   return (
-    <ProgressiveList visibleItems={visibleItems} onVisibleItemChange={handleVisibleItemChange}>
+    <ProgressiveList
+      visibleItems={visibleItems}
+      onVisibleItemChange={handleVisibleItemChange}
+      Footer={Footer}
+    >
       <ProgressiveListItem name={t('devconsole~Health checks')}>
         <HealthChecks title={t('devconsole~Health checks')} resourceType={values.resources} />
       </ProgressiveListItem>
@@ -72,10 +88,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
     <FormSection title={t('devconsole~Advanced options')}>
       <RouteSection route={values.route} resources={values.resources} />
       <div>
-        <Trans ns="devconsole">
-          {'Click on the names to access advanced options for '}
-          <List appResources={appResources} values={values} />.
-        </Trans>
+        <List appResources={appResources} values={values} />
       </div>
     </FormSection>
   );
