@@ -669,6 +669,18 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 	}))
 
+	handle("/api/helm/release/async", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			helmHandlers.HandleHelmInstallAsync(user, w, r)
+		case http.MethodPut:
+			helmHandlers.HandleUpgradeReleaseAsync(user, w, r)
+		default:
+			w.Header().Set("Allow", " POST, PUT")
+			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are GET, POST, PATCH, PUT, DELETE"})
+		}
+	}))
+
 	// GitOps proxy endpoints
 	if s.gitopsProxyEnabled() {
 		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)

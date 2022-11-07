@@ -41,7 +41,9 @@ var fakeReleaseHistory = []*release.Release{
 		Version: 2,
 	},
 }
-
+var fakeSecret = actions.Secret{
+	SecretName: "Test",
+}
 var fakeRelease = release.Release{
 	Name: "Test",
 }
@@ -62,6 +64,12 @@ func fakeHelmHandler() helmHandlers {
 func fakeInstallChart(mockedRelease *release.Release, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (*release.Release, error) {
 	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, cliet dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (r *release.Release, er error) {
 		return mockedRelease, err
+	}
+}
+
+func fakeInstallChartAsync(mockedSecret *actions.Secret, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (*actions.Secret, error) {
+	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, cliet dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (r *actions.Secret, er error) {
+		return mockedSecret, err
 	}
 }
 
@@ -119,6 +127,18 @@ func fakeUpgradeRelease(name, ns string, t *testing.T, fakeRelease *release.Rele
 			t.Errorf("Name mismatch expected %s received %s", name, n)
 		}
 		return fakeRelease, err
+	}
+}
+
+func fakeUpgradeReleaseAsync(name, ns string, t *testing.T, fakeSecret *actions.Secret, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*actions.Secret, error) {
+	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*actions.Secret, error) {
+		if namespace != ns {
+			t.Errorf("Namespace mismatch expected %s received %s", ns, namespace)
+		}
+		if name != n {
+			t.Errorf("Name mismatch expected %s received %s", name, n)
+		}
+		return fakeSecret, err
 	}
 }
 
@@ -865,6 +885,120 @@ func TestHelmHandlers_Index(t *testing.T) {
 
 			if tt.expectedResponse != "" && tt.expectedResponse != response.Body.String() {
 				t.Errorf("Response not matching expected is %s and received %s", tt.expectedResponse, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestHelmHandlers_HandleHelmInstallAsync(t *testing.T) {
+	tests := []struct {
+		name             string
+		expectedResponse string
+		installedSecret  actions.Secret
+		error
+		httpStatusCode int
+	}{
+		{
+			name:             "Error occurred",
+			expectedResponse: `{"error":"Failed to install helm chart: Chart path is invalid"}`,
+			error:            errors.New("Chart path is invalid"),
+			httpStatusCode:   http.StatusBadGateway,
+		},
+		{
+			name:             "Successful install returns release info in JSON format",
+			installedSecret:  fakeSecret,
+			httpStatusCode:   http.StatusCreated,
+			expectedResponse: `{"secret_name":"Test"}`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeHelmHandler()
+			handlers.installChartAsync = fakeInstallChartAsync(&tt.installedSecret, tt.error)
+
+			request := httptest.NewRequest("", "/foo", strings.NewReader("{}"))
+			response := httptest.NewRecorder()
+
+			handlers.HandleHelmInstallAsync(&auth.User{}, response, request)
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
+			}
+			if response.Header().Get("Content-Type") != "application/json" {
+				t.Errorf("content type should be application/json but got %s", response.Header().Get("Content-Type"))
+			}
+			if response.Body.String() != tt.expectedResponse {
+				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestHelmHandlers_HandleHelmUpgradeReleaseAsync(t *testing.T) {
+	tests := []struct {
+		name                string
+		expectedResponse    string
+		expectedContentType string
+		secret              *actions.Secret
+		error
+		httpStatusCode  int
+		requestBody     string
+		releaseName     string
+		releaseNamepace string
+	}{
+		{
+			name:                "Invalid chart path upgrade release test",
+			error:               errors.New("Chart path is invalid"),
+			expectedResponse:    `{"error":"Failed to upgrade helm release: Chart path is invalid"}`,
+			httpStatusCode:      http.StatusBadGateway,
+			expectedContentType: "application/json",
+			requestBody:         `{"name":"test", "namespace": "test-namespace", "version": 1}`,
+			releaseName:         "test",
+			releaseNamepace:     "test-namespace",
+		},
+		{
+			name:                "Valid chart upgrade release",
+			expectedResponse:    `{"secret_name":"Test"}`,
+			secret:              &fakeSecret,
+			expectedContentType: "application/json",
+			error:               nil,
+			httpStatusCode:      http.StatusCreated,
+			requestBody:         `{"name":"test", "namespace": "test-namespace"}`,
+			releaseName:         "test",
+			releaseNamepace:     "test-namespace",
+		},
+		{
+			name:                "Upgrade of non exist release should return no revision found error",
+			expectedResponse:    `{"error":"Failed to rollback helm releases: revision not found for provided release"}`,
+			secret:              &fakeSecret,
+			expectedContentType: "application/json",
+			error:               actions.ErrReleaseRevisionNotFound,
+			httpStatusCode:      http.StatusNotFound,
+			requestBody:         `{"name":"test", "namespace": "test-namespace"}`,
+			releaseName:         "test",
+			releaseNamepace:     "test-namespace",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeHelmHandler()
+			var request *http.Request
+
+			handlers.upgradeReleaseAsync = fakeUpgradeReleaseAsync(tt.releaseName, tt.releaseNamepace, t, tt.secret, tt.error)
+
+			request = httptest.NewRequest("", "/foo", strings.NewReader(tt.requestBody))
+
+			response := httptest.NewRecorder()
+
+			handlers.HandleUpgradeReleaseAsync(&auth.User{}, response, request)
+
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
+			}
+			if response.Header().Get("Content-Type") != tt.expectedContentType {
+				t.Errorf("content type should be %s but got %s", tt.expectedContentType, response.Header().Get("Content-Type"))
+			}
+			if response.Body.String() != tt.expectedResponse {
+				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
 			}
 		})
 	}
