@@ -80,6 +80,46 @@ import { PrometheusAPIError } from './types';
 // Stores information about the currently focused query input
 let focusedQuery;
 
+enum SortDirection {
+  Ascending = "ASCENDING",
+  Descending = "DESCENDING", 
+};
+
+const sortedQueryKeys = (sortDirection:SortDirection) => {
+  let sortedQueries; 
+  const queries = useSelector(
+    ({ observe }: RootState) => observe.getIn(['queryBrowser2', 'queries2']),
+  );
+
+  if (sortDirection == SortDirection.Descending) {
+     // Newer queries precede older queries 
+     sortedQueries = queries.sort((k1,k2) => {
+      if (k1.get("sortOrder") < k2.get("sortOrder")) {
+        return 1;
+      }
+      if (k1.get("sortOrder") > k2.get("sortOrder")) {
+          return -1;
+      }
+      return 0;
+     }
+    )
+  } else {
+    // Older queries precede newer queries 
+    sortedQueries = queries.sort((k1,k2) => {
+      if (k1.get("sortOrder") > k2.get("sortOrder")) {
+        return 1;
+      }
+      if (k1.get("sortOrder") < k2.get("sortOrder")) {
+          return -1;
+      }
+      return 0;
+     }
+    )
+  }
+  return sortedQueries.keySeq();
+}
+
+
 // JZ NOTE: 
 // Refactor : DONE 
 // FunctionComponent Reuse: NONE  
@@ -810,26 +850,23 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
 
   const queries = queriesList.toJS();
 
-  // TODO: update useEffect so that it used queryBrowserPatchQuery2(id ... )
-  const searchParams = getURLSearchParams();
-  console.log("JZ BrowserWrapper > searchParams : " + searchParams )
+  let sortedQueryKeys2 = sortedQueryKeys(SortDirection.Ascending)
 
-
-  // Initialize queries from URL parameters
-  React.useEffect(() => {
-    const searchParams = getURLSearchParams(); // get URL
-    for (let i = 0; _.has(searchParams, `query${i}`); ++i) { // iterate, search all the queries of the URL 
-      const query = searchParams[`query${i}`]; // patch 
-      dispatch(
-        queryBrowserPatchQuery(i, {
-          isEnabled: true,
-          isExpanded: true,
-          query,
-          text: query,
-        }),
-      );
-    }
-  }, [dispatch]);
+    // Initialize queries from URL parameters
+    React.useEffect(() => {
+      const searchParams = getURLSearchParams(); // get URL
+      for (let i = 0; _.has(searchParams, `query${i}`); ++i) { // iterate, search all the queries of the URL 
+        const query = searchParams[`query${i}`]; // patchQuery
+        dispatch(
+          queryBrowserPatchQuery2(sortedQueryKeys2.get(i), {
+            isEnabled: true,
+            isExpanded: true,
+            query,
+            text: query,
+          }),
+        );
+      }
+    }, [dispatch]);
 
   /* eslint-disable react-hooks/exhaustive-deps */
   // Use React.useMemo() to prevent these two arrays being recreated on every render, which would
@@ -900,6 +937,27 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
   );
 };
 
+// TODO: Delete test component 
+const TestQueryButton: React.FC<{}> = () => {
+  const { t } = useTranslation();
+
+  const dispatch = useDispatch();
+  const id = undefined; 
+  const patch = {test: "cheese!"}
+  const patchQuery2 = React.useCallback(() => dispatch(queryBrowserPatchQuery2(id, patch)), [dispatch]);
+
+  return (
+    <Button
+      className="query-browser__inline-control"
+      onClick={patchQuery2}
+      type="button"
+      variant="secondary"
+    >
+      {t('public~TEST query')}
+    </Button>
+  );
+};
+
 const AddQueryButton: React.FC<{}> = () => {
   const { t } = useTranslation();
 
@@ -934,6 +992,7 @@ const RunQueriesButton: React.FC<{}> = () => {
 
 const QueriesList: React.FC<{}> = () => {
 
+  // TODO: delete these 
   const queries =  useSelector(
     ({ observe }: RootState) => observe.getIn(['queryBrowser', 'queries']),
   );
@@ -942,18 +1001,21 @@ const QueriesList: React.FC<{}> = () => {
     ({ observe }: RootState) => observe.getIn(['queryBrowser2', 'queries2']),
   );
 
-  // Sort queries by the attribute `sortOrder` so that 
-  // newer queries preceed older queries. 
-  const sortedQueries = queries2.sort((k1,k2) => {
-    if (k1.get("sortOrder") < k2.get("sortOrder")) {
-      return 1;
-    }
-    if (k1.get("sortOrder") > k2.get("sortOrder")) {
-        return -1;
-    }
-    return 0;
-   }
-  )
+  // // Sort queries by the attribute `sortOrder` so that 
+  // // newer queries preceed older queries. 
+  // // DESCENDING ORDER 
+  // const sortedQueries = queries2.sort((k1,k2) => {
+  //   if (k1.get("sortOrder") < k2.get("sortOrder")) {
+  //     return 1;
+  //   }
+  //   if (k1.get("sortOrder") > k2.get("sortOrder")) {
+  //       return -1;
+  //   }
+  //   return 0;
+  //  }
+  // )
+
+  const queryKeys = sortedQueryKeys(SortDirection.Descending);
 
   
   // State > Queries > Object structure is List[Map<string:string>]
@@ -970,7 +1032,7 @@ const QueriesList: React.FC<{}> = () => {
             <br/>
         </div>
       {
-        sortedQueries.keySeq().map(key => 
+        queryKeys.map(key => 
           <div>
             {key}
             <Query2 id={key} key={key} />
@@ -1033,6 +1095,8 @@ const QueryBrowserPage_: React.FC<{}> = () => {
             <div className="query-browser__controls">
               <div className="query-browser__controls--right">
                 <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
+                  {/*  TODO: Delete TestQueryButton */}
+                  <TestQueryButton /> 
                   <AddQueryButton />
                   <RunQueriesButton />
                 </ActionGroup>

@@ -224,13 +224,13 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       // Update global counter to account for shift  
       nextSortOrderID++
 
+      // Create the duplicate and add it to the queriesList
       var duplicate = newQueryBrowserQuery2()
       duplicate[0][1] = duplicate[0][1].mergeDeep({
         text: originQueryText,
         isEnabled: false,
         sortOrder: originSortOrder + 1
       });
-
       const updatedQueriesList = sortOrderUpdateQueries.merge(duplicate)
 
       return state.setIn(['queryBrowser2', 'queries2'], updatedQueriesList)
@@ -278,6 +278,7 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
     case ActionType.QueryBrowserDismissNamespaceAlert:
       return state.setIn(['queryBrowser', 'dismissNamespaceAlert'], true);
 
+    // TODO: Need to update other components that reference this?
     case ActionType.QueryBrowserPatchQuery: {
       const { index, patch } = action.payload;
       const query = state.hasIn(['queryBrowser', 'queries', index])
@@ -288,9 +289,12 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
 
     case ActionType.QueryBrowserPatchQuery2: {
       const { id, patch } = action.payload;
-      const query = state.hasIn(['queryBrowser2', 'queries2', id])
-        ? ImmutableMap(patch)
-        : newQueryBrowserQuery2()[0][1].merge(patch);
+      if (!state.hasIn(['queryBrowser2', 'queries2', id])) {
+        var newQuery = newQueryBrowserQuery2();
+        newQuery[0][1] = newQuery[0][1].merge(patch);
+        return state.mergeIn(['queryBrowser2', 'queries2'], newQuery);
+      }
+      const query = ImmutableMap(patch)
       return state.mergeIn(['queryBrowser2', 'queries2', id], query);
     }
 
