@@ -74,7 +74,6 @@ import {
   splitClusterVersionChannel,
 } from '../module/k8s';
 import { pluginStore } from '../plugins';
-import { useAccessReview2 } from './utils/rbac';
 import { LinkifyExternal } from './utils';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
@@ -231,78 +230,80 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [rulesAccess] = useAccessReview2({
-    group: 'monitoring.coreos.com',
-    resource: 'prometheusrules',
-    verb: 'list',
-  });
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
 
   React.useEffect(() => {
-    if (rulesAccess) {
-      const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
-        dispatch(alertingLoading(key));
-        const notificationPoller = (): void => {
-          coFetchJSON(url)
-            .then((response) => dataHandler(response))
-            .then((data) => dispatch(alertingLoaded(key, data)))
-            .catch((e) => dispatch(alertingErrored(key, e)))
-            .then(() => (pollerTimeouts[key] = setTimeout(notificationPoller, 15 * 1000)));
-        };
-        pollers[key] = notificationPoller;
-        notificationPoller();
-      };
-      const { alertManagerBaseURL, prometheusBaseURL } = window.SERVER_FLAGS;
+    const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
+      dispatch(alertingLoading(key));
+      const notificationPoller = (): void => {
+        coFetchJSON(url)
+          .then((response) => dataHandler(response))
+          .then((data) => {
+            dispatch(alertingLoaded(key, data));
+            pollerTimeouts[key] = setTimeout(notificationPoller, 15 * 1000);
+          })
+          .catch((e) => {
+            dispatch(alertingErrored(key, e));
 
-      if (prometheusBaseURL) {
-        poll(
-          `${prometheusBaseURL}/${PrometheusEndpoint.RULES}`,
-          'notificationAlerts',
-          (alertsResults: PrometheusRulesResponse): Alert[] =>
-            alertsResults
-              ? getAlertsAndRules(alertsResults.data)
-                  .alerts.filter(
-                    (a) =>
-                      a.state === 'firing' &&
-                      getAlertName(a) !== 'Watchdog' &&
-                      getAlertName(a) !== 'UpdateAvailable',
-                  )
-                  .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
-              : [],
-        );
-      } else {
-        dispatch(
-          alertingErrored('notificationAlerts', new Error(t('public~prometheusBaseURL not set'))),
-        );
-      }
-
-      if (alertManagerBaseURL) {
-        poll(`${alertManagerBaseURL}/api/v2/silences`, 'silences', (silences) => {
-          // Set a name field on the Silence to make things easier
-          _.each(silences, (s) => {
-            s.name = _.get(_.find(s.matchers, { name: 'alertname' }), 'value');
-            if (!s.name) {
-              // No alertname, so fall back to displaying the other matchers
-              s.name = s.matchers
-                .map(
-                  (m) => `${m.name}${silenceMatcherEqualitySymbol(m.isEqual, m.isRegex)}${m.value}`,
-                )
-                .join(', ');
-            }
+            // If the API returned an error, poll less frequently to avoid excessive calls. For
+            // example, if the user doesn't have permission to access the API, polling will probably
+            // continue to fail, but it is possible that permissions will be granted so we don't
+            // stop completely.
+            pollerTimeouts[key] = setTimeout(notificationPoller, 60 * 1000);
           });
-          return silences;
-        });
-      } else {
-        dispatch(alertingErrored('silences', new Error(t('public~alertManagerBaseURL not set'))));
-      }
+      };
+      pollers[key] = notificationPoller;
+      notificationPoller();
+    };
 
-      return () => _.each(pollerTimeouts, clearTimeout);
+    const { alertManagerBaseURL, prometheusBaseURL } = window.SERVER_FLAGS;
+
+    if (prometheusBaseURL) {
+      poll(
+        `${prometheusBaseURL}/${PrometheusEndpoint.RULES}`,
+        'notificationAlerts',
+        (alertsResults: PrometheusRulesResponse): Alert[] =>
+          alertsResults
+            ? getAlertsAndRules(alertsResults.data)
+                .alerts.filter(
+                  (a) =>
+                    a.state === 'firing' &&
+                    getAlertName(a) !== 'Watchdog' &&
+                    getAlertName(a) !== 'UpdateAvailable',
+                )
+                .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
+            : [],
+      );
+    } else {
+      dispatch(
+        alertingErrored('notificationAlerts', new Error(t('public~prometheusBaseURL not set'))),
+      );
     }
-    dispatch(
-      alertingErrored('notificationAlerts', new Error(t('public~monitoring access not granted'))),
-    );
-  }, [dispatch, t, rulesAccess]);
+
+    if (alertManagerBaseURL) {
+      poll(`${alertManagerBaseURL}/api/v2/silences`, 'silences', (silences) => {
+        // Set a name field on the Silence to make things easier
+        _.each(silences, (s) => {
+          s.name = _.get(_.find(s.matchers, { name: 'alertname' }), 'value');
+          if (!s.name) {
+            // No alertname, so fall back to displaying the other matchers
+            s.name = s.matchers
+              .map(
+                (m) => `${m.name}${silenceMatcherEqualitySymbol(m.isEqual, m.isRegex)}${m.value}`,
+              )
+              .join(', ');
+          }
+        });
+        return silences;
+      });
+    } else {
+      dispatch(alertingErrored('silences', new Error(t('public~alertManagerBaseURL not set'))));
+    }
+
+    return () => _.each(pollerTimeouts, clearTimeout);
+  }, [dispatch, t]);
+
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
   const launchModal = useModal();
