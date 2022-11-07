@@ -38,6 +38,7 @@ const tableColumnClasses = [
 ];
 
 const OBTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
+  const { t } = useTranslation();
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -50,7 +51,14 @@ const OBTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
         {_.get(obj, 'spec.storageClassName', '-')}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+        <ResourceKebab
+          actions={menuActions}
+          kind={kind}
+          resource={obj}
+          terminatingTooltip={t(
+            'ceph-storage-plugin~The corresponding ObjectBucketClaim must be deleted first.',
+          )}
+        />
       </TableData>
     </>
   );

@@ -68,7 +68,14 @@ const PVTableRow = ({ obj }) => {
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+        <ResourceKebab
+          actions={menuActions}
+          kind={kind}
+          resource={obj}
+          terminatingTooltip={t(
+            'public~The corresponding PersistentVolumeClaim must be deleted first.',
+          )}
+        />
       </TableData>
     </>
   );

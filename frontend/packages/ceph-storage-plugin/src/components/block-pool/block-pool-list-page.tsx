@@ -29,6 +29,7 @@ import {
   BlockPoolColumnInfo,
   getScNamesUsingPool,
   getPerPoolMetrics,
+  isDefaultPool,
 } from '../../utils/block-pool';
 import { twelveHoursdateTimeNoYear } from '../../utils/common';
 import { PopoverHelper } from '../../utils/popover-helper';
@@ -199,13 +200,28 @@ const BlockPoolTableRow: React.FC<RowFunctionArgs<StoragePoolKind>> = ({ obj, cu
         {compressionStatus ? compressionSavings : '-'}
       </TableData>
       <TableData className={Kebab.columnClass}>
-        <ResourceKebab
-          actions={menuActions}
-          kind={referenceFor(obj)}
-          resource={obj}
-          isDisabled={disableMenuAction(obj, props?.cephCluster)}
-          customData={{ tFunction: t }}
-        />
+        {isDefaultPool(obj) ? (
+          <Tooltip
+            content={t('ceph-storage-plugin~Default pool cannot be deleted')}
+            trigger={'mouseenter'}
+          >
+            <ResourceKebab
+              actions={menuActions}
+              kind={referenceFor(obj)}
+              resource={obj}
+              isDisabled={disableMenuAction(obj, props?.cephCluster)}
+              customData={{ tFunction: t }}
+            />
+          </Tooltip>
+        ) : (
+          <ResourceKebab
+            actions={menuActions}
+            kind={referenceFor(obj)}
+            resource={obj}
+            isDisabled={disableMenuAction(obj, props?.cephCluster)}
+            customData={{ tFunction: t }}
+          />
+        )}
       </TableData>
     </>
   );
