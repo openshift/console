@@ -25,6 +25,7 @@ export enum ClusterUpdateStatus {
   UpdatingAndFailing = 'Updating and Failing',
   ErrorRetrieving = 'Error Retrieving',
   Invalid = 'Invalid Cluster Version',
+  ReleaseNotAccepted = 'Release Not Accepted',
 }
 
 export const clusterVersionReference = referenceForModel(ClusterVersionModel);
@@ -164,6 +165,16 @@ export const invalid = (cv: ClusterVersionKind): boolean => {
   );
 };
 
+export const releaseNotAccepted = (cv: ClusterVersionKind): boolean => {
+  return !_.isEmpty(
+    getClusterVersionCondition(
+      cv,
+      ClusterVersionConditionType.ReleaseAccepted,
+      K8sResourceConditionStatus.False,
+    ),
+  );
+};
+
 export const failedToRetrieveUpdates = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
@@ -195,6 +206,10 @@ export const hasNotRecommendedUpdates = (cv: ClusterVersionKind): boolean => {
 export const getClusterUpdateStatus = (cv: ClusterVersionKind): ClusterUpdateStatus => {
   if (invalid(cv)) {
     return ClusterUpdateStatus.Invalid;
+  }
+
+  if (releaseNotAccepted(cv)) {
+    return ClusterUpdateStatus.ReleaseNotAccepted;
   }
 
   if (isProgressing(cv) && updateFailing(cv)) {

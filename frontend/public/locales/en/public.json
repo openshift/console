@@ -118,6 +118,7 @@
   "Not configured": "Not configured",
   "Invalid cluster version": "Invalid cluster version",
   "Cancel update": "Cancel update",
+  "Release not accepted": "Release not accepted",
   "Available updates": "Available updates",
   "Failing": "Failing",
   "View conditions": "View conditions",
