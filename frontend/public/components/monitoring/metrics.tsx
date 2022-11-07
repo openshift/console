@@ -811,12 +811,15 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
   const queries = queriesList.toJS();
 
   // TODO: update useEffect so that it used queryBrowserPatchQuery2(id ... )
+  const searchParams = getURLSearchParams();
+  console.log("JZ BrowserWrapper > searchParams : " + searchParams )
+
 
   // Initialize queries from URL parameters
   React.useEffect(() => {
-    const searchParams = getURLSearchParams();
-    for (let i = 0; _.has(searchParams, `query${i}`); ++i) {
-      const query = searchParams[`query${i}`];
+    const searchParams = getURLSearchParams(); // get URL
+    for (let i = 0; _.has(searchParams, `query${i}`); ++i) { // iterate, search all the queries of the URL 
+      const query = searchParams[`query${i}`]; // patch 
       dispatch(
         queryBrowserPatchQuery(i, {
           isEnabled: true,
@@ -840,9 +843,6 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
   // ~ln 785 query-broser.tsx > update dispatch(queryBrowserPatchQuery2('queryIDs[i]', {series ....}))
   const queriesMemoIDs = JSON.stringify(_.map(queries, 'query'));
   const queryIDs = React.useMemo(() => _.keys(queries), [queriesMemoIDs]);
-
-  console.log("JZ query-browser component > QueryBrowserWrapper queryStrings: ", queryStrings)
-  console.log("JZ query-browser component > QueryBrowserWrapper queryIDs: ", queryIDs)
 
   const disabledSeriesMemoKey = JSON.stringify(
     _.reject(_.map(queries, 'disabledSeries'), _.isEmpty),
@@ -942,6 +942,8 @@ const QueriesList: React.FC<{}> = () => {
     ({ observe }: RootState) => observe.getIn(['queryBrowser2', 'queries2']),
   );
 
+  // Sort queries by the attribute `sortOrder` so that 
+  // newer queries preceed older queries. 
   const sortedQueries = queries2.sort((k1,k2) => {
     if (k1.get("sortOrder") < k2.get("sortOrder")) {
       return 1;
