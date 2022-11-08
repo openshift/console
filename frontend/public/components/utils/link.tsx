@@ -33,6 +33,16 @@ export const namespacedPrefixes = [
   '/status',
 ];
 
+export const CLUSTER_SCOPED_PREFIXES = [
+  ...namespacedPrefixes,
+  '/overview',
+  '/dashboards',
+  '/settings',
+  '/api-explorer',
+  '/catalog',
+  '/c/',
+];
+
 export const stripBasePath = (path: string): string => path.replace(basePathPattern, '/');
 
 export const getNamespace = (path: string): string => {
