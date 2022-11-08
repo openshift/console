@@ -25,6 +25,7 @@ import {
   RepoAnnotationFields,
   RepositoryAnnotations,
 } from './consts';
+import { sanitizeBranchName } from './repository-utils';
 import { tableColumnClasses } from './RepositoryPipelineRunHeader';
 
 const pipelinerunReference = referenceForModel(PipelineRunModel);
@@ -92,7 +93,7 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ 
       </TableData>
       <TableData className={tableColumnClasses[6]}>{pipelineRunDuration(obj)}</TableData>
       <TableData className={tableColumnClasses[7]}>
-        {plrLabels?.[RepositoryLabels[RepositoryFields.BRANCH]]}
+        {sanitizeBranchName(plrLabels?.[RepositoryLabels[RepositoryFields.BRANCH]])}
       </TableData>
       <TableData className={tableColumnClasses[8]}>
         <ResourceKebabWithUserLabel
