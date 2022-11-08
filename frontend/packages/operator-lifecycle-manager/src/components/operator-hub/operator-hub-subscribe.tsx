@@ -133,6 +133,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const { installModes = [] } = currentCSVDesc;
   const suggestedNamespace =
     currentCSVDesc.annotations?.['operatorframework.io/suggested-namespace'];
+  const suggestedNamespaceTemplate = parseJSONAnnotation(
+    currentCSVDesc.annotations,
+    'operatorframework.io/suggested-namespace-template',
+    // eslint-disable-next-line no-console
+    () => console.error('Could not parse JSON annotation.'),
+    {},
+  );
+  const suggestedNamespaceTemplateName = suggestedNamespaceTemplate?.metadata?.name;
   const operatorRequestsMonitoring =
     currentCSVDesc.annotations?.['operatorframework.io/cluster-monitoring'] === 'true';
   const initializationResource = parseJSONAnnotation(
@@ -163,12 +171,16 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   };
 
   let selectedTargetNamespace = targetNamespace || props.targetNamespace;
+  const operatorSuggestedNamespace = suggestedNamespaceTemplateName || suggestedNamespace;
   if (selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces) {
-    if (suggestedNamespace) {
-      items[suggestedNamespace] = (
-        <ResourceName kind="Project" name={`${suggestedNamespace} (Operator recommended)`} />
+    if (operatorSuggestedNamespace) {
+      items[operatorSuggestedNamespace] = (
+        <ResourceName
+          kind="Project"
+          name={`${operatorSuggestedNamespace} (Operator recommended)`}
+        />
       );
-      selectedTargetNamespace = targetNamespace || suggestedNamespace;
+      selectedTargetNamespace = targetNamespace || operatorSuggestedNamespace;
     } else {
       selectedTargetNamespace = globalNS;
     }
@@ -181,18 +193,18 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   }
 
   const isSuggestedNamespaceSelected =
-    suggestedNamespace && suggestedNamespace === selectedTargetNamespace;
+    operatorSuggestedNamespace && operatorSuggestedNamespace === selectedTargetNamespace;
   const showSuggestedNamespaceDetails =
     !suggestedNamespaceExistsInFlight && isSuggestedNamespaceSelected;
   const selectedApproval = approval || InstallPlanApproval.Automatic;
 
   React.useEffect(() => {
-    if (!suggestedNamespace) {
+    if (!operatorSuggestedNamespace) {
       setSuggestedNamespaceExistsInFlight(false);
       return;
     }
-    setTargetNamespace(suggestedNamespace);
-    k8sGet(NamespaceModel, suggestedNamespace)
+    setTargetNamespace(operatorSuggestedNamespace);
+    k8sGet(NamespaceModel, operatorSuggestedNamespace)
       .then(() => {
         setSuggestedNamespaceExists(true);
         setSuggestedNamespaceExistsInFlight(false);
@@ -201,7 +213,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         setSuggestedNamespaceExists(false);
         setSuggestedNamespaceExistsInFlight(false);
       });
-  }, [suggestedNamespace]);
+  }, [operatorSuggestedNamespace]);
 
   React.useEffect(() => {
     k8sListPartialMetadata(PackageManifestModel, {
@@ -290,7 +302,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     setError('');
     setInProgress(true);
 
-    const ns: K8sResourceCommon = {
+    const defaultNS: K8sResourceCommon = {
       metadata: {
         name: selectedTargetNamespace,
         labels:
@@ -302,6 +314,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       },
     };
 
+    const ns = _.defaultsDeep({}, defaultNS, suggestedNamespaceTemplate);
     const rbacName = `${selectedTargetNamespace}-prometheus`;
     const prometheusRole = {
       kind: RoleModel.kind,
@@ -530,12 +543,12 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       >
         {suggestedNamespaceExists ? (
           <Trans ns="olm">
-            Namespace <b>{{ suggestedNamespace }}</b> already exists and will be used. Other users
-            can already have access to this namespace.
+            Namespace <b>{{ operatorSuggestedNamespace }}</b> already exists and will be used. Other
+            users can already have access to this namespace.
           </Trans>
         ) : (
           <Trans ns="olm">
-            Namespace <b>{{ suggestedNamespace }}</b> does not exist and will be created.
+            Namespace <b>{{ operatorSuggestedNamespace }}</b> does not exist and will be created.
           </Trans>
         )}
       </Alert>
@@ -598,6 +611,16 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         />
       </div>
       {suggestedNamespaceDetails}
+      {operatorSuggestedNamespace && operatorSuggestedNamespace !== selectedTargetNamespace && (
+        <Alert
+          isInline
+          className="co-alert pf-c-alert--top-margin"
+          variant="warning"
+          title={t(
+            'olm~Not installing the Operator into the recommended namespace can cause unexpected behavior.',
+          )}
+        />
+      )}
     </>
   );
 
@@ -641,6 +664,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             onChange={(ns) => setTargetNamespace(ns)}
             dataTest="dropdown-selectbox"
           />
+
           {suggestedNamespace !== selectedTargetNamespace && (
             <Alert
               isInline
