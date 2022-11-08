@@ -96,6 +96,7 @@ label {
   display: inline-block;
   padding-left: 20px;
   margin-bottom: 0;
+  margin-right: 20px;
   font-weight: 400;
   vertical-align: middle;
   cursor: pointer;
@@ -105,11 +106,6 @@ label {
   fieldset[disabled] & {
     cursor: not-allowed;
   }
-}
-.radio-inline + .radio-inline,
-.checkbox-inline + .checkbox-inline {
-  margin-top: 0;
-  margin-left: 10px; // space out consecutive inline controls
 }
 
 .small, small {
