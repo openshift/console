@@ -28,6 +28,7 @@ const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
       isDisabled={props.isDisabled}
       aria-label={`${fieldId}-${label}`}
       data-test={`${value}-view-input`}
+      data-checked-state={isChecked || field.value === value}
       onChange={() => {
         if (onChange) {
           onChange(value);
