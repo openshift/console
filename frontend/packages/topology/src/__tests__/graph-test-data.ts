@@ -1622,7 +1622,7 @@ export const MockGraphResources: TopologyDataResources = {
             },
           ],
           labels: {
-            app: 'nginx',
+            app: 'httpd',
             'controller-revision-hash': 'test-statefulset-1-7d57df7bfc',
             'statefulset.kubernetes.io/pod-name': 'test-statefulset-1-0',
           },
@@ -1632,7 +1632,7 @@ export const MockGraphResources: TopologyDataResources = {
           serviceAccountName: 'default',
           imagePullSecrets: [{ name: 'default-dockercfg-zch2x' }],
           priority: 0,
-          subdomain: 'nginx',
+          subdomain: 'httpd',
           schedulerName: 'default-scheduler',
           enableServiceLinks: true,
           terminationGracePeriodSeconds: 10,
@@ -1641,15 +1641,15 @@ export const MockGraphResources: TopologyDataResources = {
             {
               resources: {},
               terminationMessagePath: '/dev/termination-log',
-              name: 'nginx',
+              name: 'httpd',
               securityContext: {
                 capabilities: { drop: ['KILL', 'MKNOD', 'SETGID', 'SETUID'] },
                 runAsUser: 1000520000,
               },
-              ports: [{ name: 'web', containerPort: 80, protocol: 'TCP' }],
+              ports: [{ name: 'web', containerPort: 8080, protocol: 'TCP' }],
               imagePullPolicy: ImagePullPolicy.IfNotPresent,
               volumeMounts: [
-                { name: 'www', mountPath: '/usr/share/nginx/html' },
+                { name: 'www', mountPath: '/var/www/html' },
                 {
                   name: 'default-token-5ffs4',
                   readOnly: true,
@@ -1657,7 +1657,7 @@ export const MockGraphResources: TopologyDataResources = {
                 },
               ],
               terminationMessagePolicy: 'File',
-              image: 'gcr.io/google_containers/nginx-slim:0.8',
+              image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
             },
           ],
           hostname: 'test-statefulset-1-0',
@@ -2577,17 +2577,17 @@ export const MockGraphResources: TopologyDataResources = {
         },
         spec: {
           replicas: 3,
-          selector: { matchLabels: { app: 'nginx' } },
+          selector: { matchLabels: { app: 'httpd' } },
           template: {
-            metadata: { creationTimestamp: null, labels: { app: 'nginx' } },
+            metadata: { creationTimestamp: null, labels: { app: 'httpd' } },
             spec: {
               containers: [
                 {
-                  name: 'nginx',
-                  image: 'gcr.io/google_containers/nginx-slim:0.8',
-                  ports: [{ name: 'web', containerPort: 80, protocol: 'TCP' }],
+                  name: 'httpd',
+                  image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
+                  ports: [{ name: 'web', containerPort: 8080, protocol: 'TCP' }],
                   resources: {},
-                  volumeMounts: [{ name: 'www', mountPath: '/usr/share/nginx/html' }],
+                  volumeMounts: [{ name: 'www', mountPath: '/var/www/html' }],
                   terminationMessagePath: '/dev/termination-log',
                   terminationMessagePolicy: 'File',
                   imagePullPolicy: ImagePullPolicy.IfNotPresent,
@@ -2612,7 +2612,7 @@ export const MockGraphResources: TopologyDataResources = {
               status: { phase: 'Pending' },
             },
           ],
-          serviceName: 'nginx',
+          serviceName: 'httpd',
           podManagementPolicy: 'OrderedReady',
           updateStrategy: { type: 'RollingUpdate', rollingUpdate: { partition: 0 } },
           revisionHistoryLimit: 10,
