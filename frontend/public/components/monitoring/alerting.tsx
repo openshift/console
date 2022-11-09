@@ -52,7 +52,6 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { withFallback } from '@console/shared/src/components/error';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { ActionContext } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   ActionServiceProvider,
   ResourceLink,
@@ -704,8 +703,6 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   // eslint-disable-next-line camelcase
   const runbookURL = alert?.annotations?.runbook_url;
 
-  const actionsContext: ActionContext = { 'alert-detail-toolbar-actions': { alert } };
-
   return (
     <>
       <Helmet>
@@ -750,7 +747,7 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                 <SectionHeading text={t('public~Alert details')} />
               </ToolbarItem>
               <ToolbarGroup alignment={{ default: 'alignRight' }}>
-                <ActionServiceProvider context={actionsContext}>
+                <ActionServiceProvider context={{ 'alert-detail-toolbar-actions': { alert } }}>
                   {({ actions, loaded }) =>
                     loaded
                       ? actions.filter(isActionWithHref).map((action) => (
