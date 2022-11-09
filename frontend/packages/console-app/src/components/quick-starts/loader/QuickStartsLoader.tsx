@@ -7,7 +7,7 @@ import { QuickStartModel } from '../../../models';
 import QuickStartPermissionChecker from './QuickStartPermissionChecker';
 
 const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = ({ children }) => {
-  const [quickStarts, quickStartsLoaded] = useK8sWatchResource<QuickStart[]>({
+  const [quickStarts, quickStartsLoaded, quickStartsError] = useK8sWatchResource<QuickStart[]>({
     kind: referenceForModel(QuickStartModel),
     isList: true,
   });
@@ -21,22 +21,29 @@ const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = ({ children }) => {
   }, [quickStarts, quickStartsLoaded]);
 
   const [allowedQuickStarts, setAllowedQuickStarts] = React.useState<QuickStart[]>([]);
-  const [permissionsLoaded, setPermissionsLoaded] = React.useState<boolean>(false);
-  const permissionChecks = React.useRef<{ [name: string]: boolean }>({});
+  const [permissionsResolved, setPermissionsResolved] = React.useState<boolean>(false);
+  const permissionCheckResults = React.useRef<{ [name: string]: boolean }>({});
 
   const handlePermissionCheck = React.useCallback(
     (quickStart, hasPermission) => {
-      permissionChecks.current[quickStart.metadata.name] = hasPermission;
-      if (Object.keys(permissionChecks.current).length === enabledQuickstarts.length) {
+      permissionCheckResults.current[quickStart.metadata.name] = hasPermission;
+      if (Object.keys(permissionCheckResults.current).length === enabledQuickstarts.length) {
         const filteredQuickStarts = enabledQuickstarts.filter(
-          (quickstart) => permissionChecks.current[quickstart.metadata.name],
+          (quickstart) => permissionCheckResults.current[quickstart.metadata.name],
         );
         setAllowedQuickStarts(filteredQuickStarts);
-        setPermissionsLoaded(true);
+        setPermissionsResolved(true);
       }
     },
     [enabledQuickstarts],
   );
+
+  // Show content (see QuickStartDrawer) when
+  // 1. Quick starts are loaded or couldn't loaded (error)
+  // 2. When there is no quick start or all permission checks are resolved.
+  const loaded =
+    (quickStartsLoaded || !!quickStartsError) &&
+    (enabledQuickstarts.length === 0 || permissionsResolved);
 
   return (
     <>
@@ -49,10 +56,7 @@ const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = ({ children }) => {
           />
         );
       })}
-      {children(
-        allowedQuickStarts,
-        quickStartsLoaded && (enabledQuickstarts.length === 0 || permissionsLoaded),
-      )}
+      {children(allowedQuickStarts, loaded)}
     </>
   );
 };
