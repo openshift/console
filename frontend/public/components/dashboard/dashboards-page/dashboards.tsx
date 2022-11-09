@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-
-import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
-import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { RestoreGettingStartedButton } from '@console/shared/src/components/getting-started';
@@ -25,7 +20,9 @@ import {
   GridPosition,
   OverviewGridCard,
 } from '@console/dynamic-plugin-sdk';
-import { RootState } from '../../../redux';
+import { useModelsLoaded } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useModelsLoaded';
+import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
+import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
 import { USER_SETTINGS_KEY } from './cluster-dashboard/getting-started/constants';
 
 export const getCardsOnPosition = (
@@ -73,8 +70,9 @@ export const getPluginTabPages = (
   });
 };
 
-const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, k8sModels }) => {
+export const DashboardsPage: React.FC<RouteComponentProps> = ({ match }) => {
   const { t } = useTranslation();
+  const modelsLoaded = useModelsLoaded();
   const title = t('public~Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
@@ -111,7 +109,7 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
     [allPages, match],
   );
 
-  return kindsInFlight && k8sModels.size === 0 ? (
+  return !modelsLoaded ? (
     <LoadingBox />
   ) : (
     <>
@@ -122,16 +120,4 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
       <HorizontalNav match={match} pages={allPages} noStatusBox />
     </>
   );
-};
-
-export const mapStateToProps = (state: RootState) => ({
-  kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
-  k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
-});
-
-export const DashboardsPage = connect(mapStateToProps)(DashboardsPage_);
-
-export type DashboardsPageProps = RouteComponentProps & {
-  kindsInFlight: boolean;
-  k8sModels: ImmutableMap<string, any>;
 };

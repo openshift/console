@@ -8,17 +8,13 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { RouteComponentProps, useLocation } from 'react-router-dom';
 import { OverviewGridCard } from '@console/dynamic-plugin-sdk';
-import {
-  DashboardsPageProps,
-  mapStateToProps,
-} from '@console/internal/components/dashboard/dashboards-page/dashboards';
 import { Page, HorizontalNav, LoadingBox, PageHeading } from '@console/internal/components/utils';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { useModelsLoaded } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useModelsLoaded';
 import { default as StatusCard } from './persistent-internal/status-card/status-card';
 import RawCapacityCard from './persistent-internal/raw-capacity-card/raw-capacity-card';
 import BreakdownCard from './persistent-internal/capacity-breakdown-card/capacity-breakdown-card';
@@ -124,12 +120,8 @@ const ObjectServiceDashboard: React.FC = () => {
   );
 };
 
-const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({
-  match,
-  kindsInFlight,
-  k8sModels,
-  history,
-}) => {
+const OCSSystemDashboard: React.FC<RouteComponentProps> = ({ match, history }) => {
+  const modelsLoaded = useModelsLoaded();
   const isIndependent = useFlag(OCS_INDEPENDENT_FLAG);
   const isObjectServiceAvailable = useFlag(MCG_FLAG);
   const isCephAvailable = useFlag(CEPH_FLAG);
@@ -190,7 +182,7 @@ const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({
     }
   }, [isCephAvailable, isObjectServiceAvailable, history, match.url, location.pathname]);
 
-  return kindsInFlight && k8sModels.size === 0 ? (
+  return !modelsLoaded ? (
     <LoadingBox />
   ) : (
     <>
@@ -201,4 +193,4 @@ const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({
   );
 };
 
-export default connect(mapStateToProps)(OCSSystemDashboard);
+export default OCSSystemDashboard;
