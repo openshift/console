@@ -99,7 +99,7 @@ github.com/devfile/api/v2/pkg/utils/overriding
 github.com/devfile/api/v2/pkg/utils/unions
 github.com/devfile/api/v2/pkg/validation
 github.com/devfile/api/v2/pkg/validation/variables
-# github.com/devfile/library v1.2.1-0.20220308191614-f0f7e11b17de
+# github.com/devfile/library v1.2.1-0.20221018204255-ca638eec2023
 ## explicit; go 1.15
 github.com/devfile/library/pkg/devfile
 github.com/devfile/library/pkg/devfile/generator
@@ -117,7 +117,7 @@ github.com/devfile/library/pkg/util
 # github.com/devfile/registry-support/index/generator v0.0.0-20220624203950-e7282a4695b6
 ## explicit; go 1.14
 github.com/devfile/registry-support/index/generator/schema
-# github.com/devfile/registry-support/registry-library v0.0.0-20220901004827-b579f98d73ad
+# github.com/devfile/registry-support/registry-library v0.0.0-20220913214140-36887a7907aa
 ## explicit; go 1.14
 github.com/devfile/registry-support/registry-library/library
 # github.com/docker/cli v20.10.11+incompatible

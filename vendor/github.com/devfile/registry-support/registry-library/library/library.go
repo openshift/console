@@ -50,8 +50,7 @@ const (
 
 	OwnersFile = "OWNERS"
 
-	httpRequestTimeout    = 30 * time.Second // httpRequestTimeout configures timeout of all HTTP requests
-	responseHeaderTimeout = 30 * time.Second // responseHeaderTimeout is the timeout to retrieve the server's response headers
+	httpRequestResponseTimeout = 30 * time.Second // httpRequestTimeout configures timeout of all HTTP requests
 )
 
 var (
@@ -90,6 +89,8 @@ type RegistryOptions struct {
 	// NewIndexSchema is false by default, which calls GET /index and returns index of default version of each stack using the old index schema struct.
 	// If specified to true, calls GET /v2index and returns the new Index schema with multi-version support
 	NewIndexSchema bool
+	// HTTPTimeout overrides the request and response timeout values for the custom HTTP clients set by the registry library.  If unset or a negative value is specified, the default timeout of 30s will be used.
+	HTTPTimeout *int
 }
 
 type RegistryFilter struct {
