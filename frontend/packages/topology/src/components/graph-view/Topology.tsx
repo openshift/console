@@ -17,6 +17,8 @@ import {
   SELECTION_EVENT,
   NODE_POSITIONED_EVENT,
   GRAPH_POSITION_CHANGE_EVENT,
+  Node,
+  Rect,
 } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { action } from 'mobx';
@@ -60,6 +62,16 @@ const setTopologyLayout = (namespace: string, nodes: NodeModel[], layout: string
     layout,
   };
   return currentStore;
+};
+
+const nodeDistanceToBounds = (node: Node, bounds: Rect): number => {
+  const nodeBounds = node.getBounds();
+  const nodeX = nodeBounds.x + nodeBounds.width / 2;
+  const nodeY = nodeBounds.y + nodeBounds.height / 2;
+
+  const dx = Math.max(bounds.x - nodeX, 0, nodeX - (bounds.x + bounds.width));
+  const dy = Math.max(bounds.y - nodeY, 0, nodeY - (bounds.y + bounds.height));
+  return Math.sqrt(dx * dx + dy * dy);
 };
 
 interface TopologyGraphViewProps {
@@ -231,7 +243,6 @@ const Topology: React.FC<TopologyProps &
             }
           });
         }
-        storedLayoutApplied.current = true;
       }
 
       model.nodes.forEach((n) => {
@@ -248,6 +259,33 @@ const Topology: React.FC<TopologyProps &
       });
 
       visualization.fromModel(model);
+
+      // Make sure something is visible in the case where stored locations are off the screen
+      if (!storedLayoutApplied.current) {
+        storedLayoutApplied.current = true;
+        if (topologyLayoutDataJson?.[namespace]) {
+          const graph = visualization.getGraph();
+          const nodes = visualization.getElements().filter(isNode);
+          if (nodes.length) {
+            const nodesVisible = nodes.find((n) => graph.isNodeInView(n, { padding: 0 }));
+            if (!nodesVisible) {
+              const graphBounds = graph.getBounds();
+              const [viewNode] = nodes.reduce(
+                ([closestNode, closestDistance], nextNode) => {
+                  const distance = nodeDistanceToBounds(nextNode, graphBounds);
+                  if (!closestNode || distance < closestDistance) {
+                    return [nextNode, distance];
+                  }
+                  return [closestNode, closestDistance];
+                },
+                [null, 0],
+              );
+              graph.panIntoView(viewNode);
+            }
+          }
+        }
+      }
+
       const selectedItem = selectedId ? visualization.getElementById(selectedId) : null;
       if (!selectedItem || !selectedItem.isVisible()) {
         onSelect();
