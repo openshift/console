@@ -20,7 +20,7 @@ export const getNodeRoles = (node: NodeKind): string[] => {
 };
 
 export const getNodeRole = (node: NodeKind): string =>
-  getNodeRoles(node).includes('master') ? 'master' : 'worker';
+  getNodeRoles(node).includes('control-plane') ? 'control-plane' : 'worker';
 
 export const getNodeRoleMatch = (node: NodeKind, role: string): boolean => {
   const roles = getNodeRoles(node);

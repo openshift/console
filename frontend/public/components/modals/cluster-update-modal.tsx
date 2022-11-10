@@ -251,7 +251,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
             {t('public~Update options')}
             <FieldLevelHelp>
               {t(
-                "public~Full cluster update allows you to update all your nodes, but takes longer. Partial cluster update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule, but you'll need to resume the non-master node update within 60 days to avoid failure.",
+                "public~Full cluster update allows you to update all your Nodes, but takes longer. Partial cluster update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule, but you'll need to resume the non-control plane Node updates within 60 days to avoid failure.",
               )}
             </FieldLevelHelp>
           </label>

@@ -159,7 +159,7 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.large}>
       <p>{t('lso-plugin~Disks Not Found')}</p>
-      {csvName && operatorNs && nodeRole !== 'master' && (
+      {csvName && operatorNs && nodeRole !== 'control-plane' && (
         <Button
           isDisabled={lvdRequestInProgress}
           isLoading={lvdRequestInProgress}

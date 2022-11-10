@@ -481,7 +481,7 @@ describe('Update In Progress while updating', () => {
         .find(NodesUpdatesGroup)
         .at(0)
         .props().name,
-    ).toBe('Master');
+    ).toBe('Control plane');
     expect(
       wrapper
         .find(NodesUpdatesGroup)

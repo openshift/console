@@ -616,11 +616,12 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
     kind: referenceForModel(MachineConfigModel),
     name: machineConfigPool?.spec?.configuration?.name,
   });
+  const mcpName = machineConfigPool?.metadata?.name;
   const machineConfigPoolIsEditable = useAccessReview({
     group: MachineConfigPoolModel.apiGroup,
     resource: MachineConfigPoolModel.plural,
     verb: 'patch',
-    name,
+    name: mcpName,
   });
   const isMaster = isMCPMaster(machineConfigPool);
   const isPaused = isMCPPaused(machineConfigPool);
@@ -638,15 +639,14 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
       : 0;
   const percentMCPNodes = calculatePercentage(updatedMCPNodes, totalMCPNodes);
   const isUpdated = percentMCPNodes === 100;
+  const nodeRoleFilterValue = isMaster ? 'control-plane' : mcpName;
   const { t } = useTranslation();
   return totalMCPNodes === 0 || (hideIfComplete && isUpdated)
     ? null
     : machineConfigOperatorLoaded && renderedConfigLoaded && (
         <UpdatesGroup divided={divided}>
           <UpdatesType>
-            <Link
-              to={`/k8s/cluster/nodes?rowFilter-node-role=${machineConfigPool?.metadata?.name}`}
-            >
+            <Link to={`/k8s/cluster/nodes?rowFilter-node-role=${nodeRoleFilterValue}`}>
               {`${name} ${NodeModel.labelPlural}`}
             </Link>
             {!isMaster && (
