@@ -1,25 +1,35 @@
-import * as _ from 'lodash-es';
 import {
   GreenCheckCircleIcon,
+  ListPageBody,
   PrometheusEndpoint,
   RedExclamationCircleIcon,
   RowFilter,
+  RowProps,
+  TableColumn,
 } from '@console/dynamic-plugin-sdk';
-import { Alert, AlertActionCloseButton, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
-import { sortable } from '@patternfly/react-table';
-import * as React from 'react';
-import { Helmet } from 'react-helmet';
-import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-import { useSelector } from 'react-redux';
-import { Link, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
-
 import {
+  ListPageFilter,
+  ListPageHeader,
   ResourceLink,
   Timestamp,
   useK8sWatchResource,
+  useListPageFilter,
+  VirtualizedTable,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
+import {
+  Alert,
+  AlertActionCloseButton,
+  Breadcrumb,
+  BreadcrumbItem,
+  Tooltip,
+} from '@patternfly/react-core';
+import { sortable } from '@patternfly/react-table';
+import fuzzy from 'fuzzysearch';
+import { find, includes, isEmpty, toLower } from 'lodash-es';
+import * as React from 'react';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { Link, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
 
 import {
   NamespaceModel,
@@ -29,14 +39,12 @@ import {
   PodMonitorModel,
 } from '../../models';
 import { K8sResourceKind, LabelSelector, referenceForModel } from '../../module/k8s';
-import { RootState } from '../../redux';
-import { RowFunctionArgs, Table, TableData } from '../factory';
-import { FilterToolbar } from '../filter-toolbar';
-import { PageHeading, SectionHeading } from '../utils/headings';
-import { useBoolean } from './hooks/useBoolean';
+import { TableData } from '../factory';
+import { SectionHeading } from '../utils/headings';
 import { usePoll } from '../utils/poll-hook';
 import { useSafeFetch } from '../utils/safe-fetch-hook';
 import { LoadingInline, StatusBox } from '../utils/status-box';
+import { useBoolean } from './hooks/useBoolean';
 import { Labels } from './labels';
 import { AlertSource, PrometheusAPIError, Target } from './types';
 import { PROMETHEUS_BASE_PATH, targetSource } from './utils';
@@ -73,14 +81,14 @@ const PodMonitor: React.FC<{ target: Target }> = ({ target }) => {
   }
 
   // First find the pod that corresponds to the target
-  const pod = _.find(
+  const pod = find(
     pods,
     ({ metadata }) =>
       metadata.name === target?.labels?.pod && metadata.namespace === target?.labels?.namespace,
   );
 
   // Now find the pod monitor that corresponds to the pod
-  const podMonitor = _.find(
+  const podMonitor = find(
     podMonitors,
     ({ metadata, spec }) =>
       pod &&
@@ -88,7 +96,7 @@ const PodMonitor: React.FC<{ target: Target }> = ({ target }) => {
       ((spec.selector.matchLabels === undefined && spec.selector.matchExpressions === undefined) ||
         new LabelSelector(spec.selector).matchesLabels(pod.metadata.labels ?? {})) &&
       (spec.namespaceSelector?.matchNames === undefined ||
-        _.includes(spec.namespaceSelector?.matchNames, pod.metadata.namespace)),
+        includes(spec.namespaceSelector?.matchNames, pod.metadata.namespace)),
   );
 
   if (!podMonitor) {
@@ -125,14 +133,14 @@ const ServiceMonitor: React.FC<{ target: Target }> = ({ target }) => {
   }
 
   // First find the service that corresponds to the target
-  const service = _.find(
+  const service = find(
     services,
     ({ metadata }) =>
       metadata.name === target?.labels?.service && metadata.namespace === target?.labels?.namespace,
   );
 
   // Now find the service monitor that corresponds to the service
-  const monitor = _.find(
+  const monitor = find(
     monitors,
     ({ metadata, spec }) =>
       service &&
@@ -140,7 +148,7 @@ const ServiceMonitor: React.FC<{ target: Target }> = ({ target }) => {
       ((spec.selector.matchLabels === undefined && spec.selector.matchExpressions === undefined) ||
         new LabelSelector(spec.selector).matchesLabels(service.metadata.labels ?? {})) &&
       (spec.namespaceSelector?.matchNames === undefined ||
-        _.includes(spec.namespaceSelector?.matchNames, service.metadata.namespace)),
+        includes(spec.namespaceSelector?.matchNames, service.metadata.namespace)),
   );
 
   if (!monitor) {
@@ -156,7 +164,7 @@ const ServiceMonitor: React.FC<{ target: Target }> = ({ target }) => {
   );
 };
 
-const Health: React.FC<{ health: string }> = React.memo(({ health }) => {
+const Health: React.FC<{ health: 'up' | 'down' }> = React.memo(({ health }) => {
   const { t } = useTranslation();
 
   return health === 'up' ? (
@@ -203,15 +211,20 @@ type DetailsProps = RouteComponentProps<{ scrapeUrl?: string }> & {
 const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets }) => {
   const { t } = useTranslation();
 
-  const scrapeUrl = atob(match?.params?.scrapeUrl ?? '');
-  const target: Target = scrapeUrl ? _.find(targets, { scrapeUrl }) : undefined;
+  let scrapeUrl: string = '';
+  let target: Target | undefined;
+  if (match?.params?.scrapeUrl) {
+    try {
+      scrapeUrl = atob(match?.params?.scrapeUrl);
+      target = find(targets, { scrapeUrl });
+    } catch {
+      // Leave scrapeUrl and target unset
+    }
+  }
 
-  const isServiceMonitor: boolean = target
-    ? target.scrapePool.includes(MonitorType.ServiceMonitor)
-    : undefined;
-  const isPodMonitor: boolean = target
-    ? target.scrapePool.includes(MonitorType.PodMonitor)
-    : undefined;
+  const isServiceMonitor: boolean =
+    target && target.scrapePool.includes(MonitorType.ServiceMonitor);
+  const isPodMonitor: boolean = target && target.scrapePool.includes(MonitorType.PodMonitor);
 
   const [, , serviceMonitorsLoadError] = React.useContext(ServiceMonitorsWatchContext);
   const [, , podMonitorsLoadError] = React.useContext(PodMonitorsWatchContext);
@@ -317,11 +330,11 @@ const tableClasses = [
   'pf-m-hidden pf-m-visible-on-md', // Scrape Duration
 ];
 
-const Row: React.FC<RowFunctionArgs<Target>> = ({ obj }) => {
-  const { health, labels, lastScrape, lastScrapeDuration, scrapeUrl } = obj;
+const Row: React.FC<RowProps<Target>> = ({ obj }) => {
+  const { health, labels, lastError, lastScrape, lastScrapeDuration, scrapePool, scrapeUrl } = obj;
 
-  const isServiceMonitor: boolean = obj.scrapePool.includes(MonitorType.ServiceMonitor);
-  const isPodMonitor: boolean = obj.scrapePool.includes(MonitorType.PodMonitor);
+  const isServiceMonitor: boolean = scrapePool?.includes(MonitorType.ServiceMonitor);
+  const isPodMonitor: boolean = scrapePool?.includes(MonitorType.PodMonitor);
 
   return (
     <>
@@ -334,7 +347,15 @@ const Row: React.FC<RowFunctionArgs<Target>> = ({ obj }) => {
         {!isServiceMonitor && !isPodMonitor && <>-</>}
       </TableData>
       <TableData className={tableClasses[2]}>
-        <Health health={health} />
+        {health === 'up' ? (
+          <Health health="up" />
+        ) : (
+          <Tooltip content={lastError}>
+            <span>
+              <Health health="down" />
+            </span>
+          </Tooltip>
+        )}
       </TableData>
       <TableData className={tableClasses[3]}>
         {labels?.namespace && (
@@ -352,64 +373,100 @@ const Row: React.FC<RowFunctionArgs<Target>> = ({ obj }) => {
 };
 
 type ListProps = {
+  data: Target[];
+  loaded: boolean;
+  loadError: string;
+  unfilteredData: Target[];
+};
+
+const List: React.FC<ListProps> = ({ data, loaded, loadError, unfilteredData }) => {
+  const { t } = useTranslation();
+
+  const columns = React.useMemo<TableColumn<Target>[]>(
+    () => [
+      {
+        id: 'scrapeUrl',
+        title: t('public~Endpoint'),
+        sort: 'scrapeUrl',
+        transforms: [sortable],
+        props: { className: tableClasses[0] },
+      },
+      {
+        id: 'monitor',
+        title: t('public~Monitor'),
+        props: { className: tableClasses[1] },
+      },
+      {
+        id: 'health',
+        title: t('public~Status'),
+        sort: 'health',
+        transforms: [sortable],
+        props: { className: tableClasses[2] },
+      },
+      {
+        id: 'namespace',
+        title: t('public~Namespace'),
+        sort: 'labels.namespace',
+        transforms: [sortable],
+        props: { className: tableClasses[3] },
+      },
+      {
+        id: 'lastScrape',
+        title: t('public~Last Scrape'),
+        sort: 'lastScrape',
+        transforms: [sortable],
+        props: { className: tableClasses[4] },
+      },
+      {
+        id: 'lastScrapeDuration',
+        title: t('public~Scrape Duration'),
+        sort: 'lastScrapeDuration',
+        transforms: [sortable],
+        props: { className: tableClasses[5] },
+      },
+    ],
+    [t],
+  );
+
+  return (
+    <VirtualizedTable<Target>
+      aria-label="metrics targets"
+      columns={columns}
+      data={data}
+      loaded={loaded}
+      loadError={loadError}
+      Row={Row}
+      unfilteredData={unfilteredData}
+    />
+  );
+};
+
+const fuzzyCaseInsensitive = (a: string, b: string): boolean => fuzzy(toLower(a), toLower(b));
+
+type ListPageProps = {
   loaded: boolean;
   loadError: string;
   targets: Target[];
 };
 
-const REDUX_ID = 'monitoringTargets';
-
-const getRowProps = (target: Target) => ({ id: target.scrapeUrl, title: target.lastError });
-
-const List: React.FC<ListProps> = ({ loaded, loadError, targets }) => {
+const ListPage: React.FC<ListPageProps> = ({ loaded, loadError, targets }) => {
   const { t } = useTranslation();
 
   const [, , serviceMonitorsLoadError] = React.useContext(ServiceMonitorsWatchContext);
   const [, , podMonitorsLoadError] = React.useContext(PodMonitorsWatchContext);
 
-  const filters = useSelector(({ k8s }: RootState) => k8s.getIn([REDUX_ID, 'filters']));
-
-  const Header = () => [
-    {
-      title: t('public~Endpoint'),
-      sortField: 'scrapeUrl',
-      transforms: [sortable],
-      props: { className: tableClasses[0] },
-    },
-    {
-      title: t('public~Monitor'),
-      props: { className: tableClasses[1] },
-    },
-    {
-      title: t('public~Status'),
-      sortField: 'health',
-      transforms: [sortable],
-      props: { className: tableClasses[2] },
-    },
-    {
-      title: t('public~Namespace'),
-      sortField: 'labels.namespace',
-      transforms: [sortable],
-      props: { className: tableClasses[3] },
-    },
-    {
-      title: t('public~Last Scrape'),
-      sortField: 'lastScrape',
-      transforms: [sortable],
-      props: { className: tableClasses[4] },
-    },
-    {
-      title: t('public~Scrape Duration'),
-      sortFunc: 'targetScrapeDuration',
-      transforms: [sortable],
-      props: { className: tableClasses[5] },
-    },
-  ];
+  const nameFilter: RowFilter = {
+    filter: (filter, target: Target) =>
+      fuzzyCaseInsensitive(filter.selected?.[0], target.scrapeUrl) ||
+      fuzzyCaseInsensitive(filter.selected?.[0], target.labels?.namespace),
+    items: [],
+    type: 'name',
+  } as RowFilter;
 
   const rowFilters: RowFilter[] = [
     {
       filter: (filter, target: Target) =>
-        filter.selected?.includes(target.health) || _.isEmpty(filter.selected),
+        filter.selected?.includes(target.health) || isEmpty(filter.selected),
       filterGroupName: t('public~Status'),
       items: [
         { id: 'up', title: t('public~Up') },
@@ -420,7 +477,7 @@ const List: React.FC<ListProps> = ({ loaded, loadError, targets }) => {
     },
     {
       filter: (filter, target: Target) =>
-        filter.selected?.includes(targetSource(target)) || _.isEmpty(filter.selected),
+        filter.selected?.includes(targetSource(target)) || isEmpty(filter.selected),
       filterGroupName: t('public~Source'),
       items: [
         { id: AlertSource.Platform, title: t('public~Platform') },
@@ -431,6 +488,10 @@ const List: React.FC<ListProps> = ({ loaded, loadError, targets }) => {
     },
   ];
 
+  const allFilters: RowFilter[] = [nameFilter, ...rowFilters];
+
+  const [staticData, filteredData, onFilterChange] = useListPageFilter(targets, allFilters);
+
   const title = t('public~Metrics targets');
 
   return (
@@ -438,8 +499,8 @@ const List: React.FC<ListProps> = ({ loaded, loadError, targets }) => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PageHeading title={title} />
-      <div className="co-m-pane__body">
+      <ListPageHeader title={title} />
+      <ListPageBody>
         {loadError && (
           <Alert
             className="co-alert"
@@ -461,34 +522,27 @@ const List: React.FC<ListProps> = ({ loaded, loadError, targets }) => {
             title={t('public~Error loading pod monitor data')}
           />
         )}
-        <FilterToolbar
-          data={targets}
+        <ListPageFilter
+          data={staticData}
           labelFilter="observe-target-labels"
           labelPath="labels"
+          loaded={loaded}
           nameFilterPlaceholder={t('public~Search by endpoint or namespace...')}
           nameFilterTitle={t('public~Text')}
-          reduxIDs={[REDUX_ID]}
+          onFilterChange={onFilterChange}
           rowFilters={rowFilters}
-          textFilter="observe-target-text"
         />
         <div className="row">
           <div className="col-xs-12">
-            <Table
-              aria-label="metrics targets"
-              data={targets}
-              defaultSortField="scrapeUrl"
-              filters={filters?.toJS()}
-              getRowProps={getRowProps}
-              Header={Header}
+            <List
+              data={filteredData ?? []}
               loaded={loaded}
               loadError={loadError}
-              reduxID={REDUX_ID}
-              Row={Row}
-              rowFilters={rowFilters}
+              unfilteredData={targets}
             />
           </div>
         </div>
-      </div>
+      </ListPageBody>
     </>
   );
 };
@@ -547,7 +601,7 @@ export const TargetsUI: React.FC<{}> = () => {
           <PodsWatchContext.Provider value={podsWatch}>
             <Switch>
               <Route path="/monitoring/targets" exact>
-                <List loaded={loaded} loadError={loadError} targets={targets} />
+                <ListPage loaded={loaded} loadError={loadError} targets={targets} />
               </Route>
               <Route path="/monitoring/targets/:scrapeUrl?" exact>
                 <Details loaded={loaded} loadError={loadError} targets={targets} />

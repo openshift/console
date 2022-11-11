@@ -44,7 +44,6 @@ import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/compo
 import { RowFilter as RowFilterExt } from '@console/dynamic-plugin-sdk';
 import { RowFilter } from '../filter-toolbar';
 import * as UIActions from '../../actions/ui';
-import { Target } from '../monitoring/types';
 import {
   alertingRuleSource,
   alertingRuleStateOrder,
@@ -107,7 +106,6 @@ const sorts = {
   pvcStorage: (pvc) => _.toInteger(convertToBaseValue(pvc?.status?.capacity?.storage)),
   silenceFiringAlertsOrder,
   silenceStateOrder,
-  targetScrapeDuration: (target: Target): number => target?.lastScrapeDuration,
   string: (val) => JSON.stringify(val),
   number: (val) => _.toNumber(val),
   getClusterOperatorStatus: (operator: ClusterOperator) => getClusterOperatorStatus(operator),
