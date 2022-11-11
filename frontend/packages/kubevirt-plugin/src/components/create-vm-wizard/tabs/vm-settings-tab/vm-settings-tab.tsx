@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassModel } from '@console/internal/models';
-import { StorageClassResourceKind } from '@console/internal/module/k8s';
+import { StorageClassResourceKind, TemplateKind } from '@console/internal/module/k8s';
 import { TemplateSupport } from '../../../../constants/vm-templates/support';
 import useV2VConfigMap from '../../../../hooks/use-v2v-config-map';
 import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
@@ -47,6 +47,7 @@ import './vm-settings-tab.scss';
 export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   iUserTemplate,
   commonTemplates,
+  additionalCommonTemplates,
   commonTemplateName,
   cnvBaseImages,
   dataSources,
@@ -173,6 +174,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
       <OS
         iUserTemplate={iUserTemplate}
         commonTemplates={commonTemplates}
+        additionalCommonTemplates={additionalCommonTemplates}
         commonTemplateName={commonTemplateName}
         operatinSystemField={getField(VMSettingsField.OPERATING_SYSTEM)}
         isCreateTemplate={isCreateTemplate}
@@ -220,6 +222,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
       <FlavorSelect
         iUserTemplate={iUserTemplate}
         commonTemplates={commonTemplates}
+        additionalCommonTemplates={additionalCommonTemplates}
         os={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
         flavorField={getField(VMSettingsField.FLAVOR)}
         workloadProfile={getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
@@ -235,6 +238,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
       <WorkloadSelect
         iUserTemplate={iUserTemplate}
         commonTemplates={commonTemplates}
+        additionalCommonTemplates={additionalCommonTemplates}
         os={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
         workloadProfileField={getField(VMSettingsField.WORKLOAD_PROFILE)}
         operatingSystem={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
@@ -250,6 +254,11 @@ const stateToProps = (state, { wizardReduxID }) => ({
   vmSettings: iGetVmSettings(state, wizardReduxID),
   vmAdvancedSettings: iGetVmAdvancedSettings(state, wizardReduxID),
   commonTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
+  additionalCommonTemplates: iGetCommonData(
+    state,
+    wizardReduxID,
+    VMWizardProps.additionalCommonTemplates,
+  ),
   iUserTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplate),
   commonTemplateName: getInitialData(state, wizardReduxID).commonTemplateName,
   cnvBaseImages: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftCNVBaseImages),
@@ -271,6 +280,7 @@ type VMSettingsTabComponentProps = {
   vmAdvancedSettings: any;
   provisionSourceStorage: VMWizardStorage;
   commonTemplates: any;
+  additionalCommonTemplates: TemplateKind[];
   iUserTemplate: any;
   commonTemplateName: string;
   cnvBaseImages: any;

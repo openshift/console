@@ -4,6 +4,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ResourceLink, useAccessReview } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { TemplateKind } from '@console/internal/module/k8s';
 import { getPVCUploadURL } from '../../../../constants';
 import { operatingSystemsNative } from '../../../../constants/vm-templates/os';
 import { asValidationObject, ValidationErrorType } from '../../../../selectors';
@@ -41,6 +42,7 @@ export const OS: React.FC<OSProps> = React.memo(
   ({
     iUserTemplate,
     commonTemplates,
+    additionalCommonTemplates,
     operatinSystemField,
     cloneBaseDiskImageField,
     isCreateTemplate,
@@ -74,7 +76,10 @@ export const OS: React.FC<OSProps> = React.memo(
       ? isUserTemplateValid
         ? [toShallowJS(iGetLoadedData(iUserTemplate))]
         : []
-      : immutableListToShallowJS(iGetLoadedData(commonTemplates));
+      : [
+          ...immutableListToShallowJS(iGetLoadedData(commonTemplates)),
+          ...immutableListToShallowJS(iGetLoadedData(additionalCommonTemplates)),
+        ];
 
     let operatingSystems;
 
@@ -325,6 +330,7 @@ export const OS: React.FC<OSProps> = React.memo(
 type OSProps = {
   iUserTemplate: any;
   commonTemplates: any;
+  additionalCommonTemplates: TemplateKind[];
   flavor: string;
   commonTemplateName: string;
   operatinSystemField: any;

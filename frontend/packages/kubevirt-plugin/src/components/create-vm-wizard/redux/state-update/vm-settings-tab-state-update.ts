@@ -14,7 +14,7 @@ import {
   iGetRelevantTemplate,
   iGetTemplateGuestToolsDisk,
 } from '../../../../selectors/immutable/template/combined';
-import { iGetIsLoaded, iGetLoadError, toShallowJS } from '../../../../utils/immutable';
+import { iGetIsLoaded, toShallowJS } from '../../../../utils/immutable';
 import {
   CDI_UPLOAD_POD_ANNOTATION,
   CDI_PVC_PHASE_RUNNING,
@@ -57,8 +57,7 @@ const selectTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const commonTemplateReady =
     commonTemplateName &&
     iGetIsLoaded(iGetCommonData(state, id, VMWizardProps.commonTemplates)) &&
-    iGetIsLoaded(iGetCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)) &&
-    !iGetLoadError(iGetCommonData(state, id, VMWizardProps.openshiftCNVBaseImages));
+    iGetIsLoaded(iGetCommonData(state, id, VMWizardProps.additionalCommonTemplates));
 
   const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
 
@@ -166,7 +165,19 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
   if (!iUserTemplate) {
     const relevantOptions = iGetRelevantTemplateSelectors(state, id);
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-    const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
+    const iAdditionalCommonTemplates = iGetLoadedCommonData(
+      state,
+      id,
+      VMWizardProps.additionalCommonTemplates,
+    );
+    const iCommonRelevantTemplate =
+      iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
+    const iAdditionalRelevantTemplate =
+      iAdditionalCommonTemplates &&
+      iGetRelevantTemplate(iAdditionalCommonTemplates, relevantOptions);
+
+    const iTemplate = iCommonRelevantTemplate || iAdditionalRelevantTemplate;
+
     const pvcName = iGetPVCName(iTemplate);
     const pvcNamespace = iGetPVCNamespace(iTemplate);
 
@@ -264,8 +275,17 @@ const templateConsistencyUpdater = ({ id, prevState, dispatch, getState }: Updat
   const selectors = iGetRelevantTemplateSelectors(state, id);
   const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
+  const iAdditionalCommonTemplates = iGetLoadedCommonData(
+    state,
+    id,
+    VMWizardProps.additionalCommonTemplates,
+  );
 
-  if (!iUserTemplate && !iGetRelevantTemplate(iCommonTemplates, selectors)) {
+  const relevantTemplate =
+    iGetRelevantTemplate(iCommonTemplates, selectors) ||
+    iGetRelevantTemplate(iAdditionalCommonTemplates, selectors);
+
+  if (!iUserTemplate && !relevantTemplate) {
     // Reset workload and flavor profile if no relevant template found
     // Could be triggered by provider prefil or os selection
     dispatch(

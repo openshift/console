@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { SelectOption } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { TemplateKind } from '@console/internal/module/k8s';
 import { CUSTOM_FLAVOR } from '../../../../constants';
 import { Flavor } from '../../../../constants/vm/flavor';
 import { asValidationObject, ValidationErrorType, getLabelValue } from '../../../../selectors';
@@ -32,6 +33,7 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
     iUserTemplate,
     cnvBaseImages,
     commonTemplates,
+    additionalCommonTemplates,
     os,
     flavorField,
     workloadProfile,
@@ -52,7 +54,10 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
       ? isUserTemplateValid
         ? [toShallowJS(iGetLoadedData(iUserTemplate))]
         : []
-      : immutableListToShallowJS(iGetLoadedData(commonTemplates));
+      : [
+          ...immutableListToShallowJS(iGetLoadedData(commonTemplates)),
+          ...immutableListToShallowJS(iGetLoadedData(additionalCommonTemplates)),
+        ];
 
     const defaultTemplate = getOsDefaultTemplate(templates, os);
 
@@ -152,6 +157,7 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
 type FlavorProps = {
   iUserTemplate: any;
   commonTemplates: any;
+  additionalCommonTemplates: TemplateKind[];
   flavorField: any;
   os: string;
   workloadProfile: string;

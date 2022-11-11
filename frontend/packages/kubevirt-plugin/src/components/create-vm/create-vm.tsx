@@ -15,9 +15,16 @@ import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ProjectModel, StorageClassModel } from '@console/internal/models';
+import { ProjectModel, StorageClassModel, TemplateModel } from '@console/internal/models';
 import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
-import { DataVolumeSourceType, VMWizardMode, VMWizardName, VolumeType } from '../../constants';
+import {
+  DataVolumeSourceType,
+  TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_LABEL,
+  VMWizardMode,
+  VMWizardName,
+  VolumeType,
+} from '../../constants';
 import { DEFAULT_SC_ANNOTATION } from '../../constants/sc';
 import { instantiateTemplateBaseURLBuilder } from '../../constants/url-params';
 import { useStorageClassConfigMap } from '../../hooks/storage-class-config-map';
@@ -231,7 +238,22 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
     resourcesLoadError,
   } = useVmTemplatesResources(namespace);
 
-  const templates = filterTemplates([...userTemplates, ...baseTemplates]);
+  const [additionalTemplates = []] = useK8sWatchResource<TemplateKind[]>(
+    initData.commonTemplateNamespace &&
+      initData.commonTemplateNamespace !== namespace &&
+      initData.commonTemplateNamespace !== 'openshift'
+      ? {
+          kind: TemplateModel.kind,
+          namespace: initData.commonTemplateNamespace,
+          selector: {
+            matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
+          },
+          isList: true,
+        }
+      : null,
+  );
+
+  const templates = filterTemplates([...userTemplates, ...baseTemplates, ...additionalTemplates]);
 
   const loaded = resourcesLoaded && projectsLoaded && scLoaded && V2VConfigMapImagesLoaded;
   const loadError = resourcesLoadError || projectsError || scError;

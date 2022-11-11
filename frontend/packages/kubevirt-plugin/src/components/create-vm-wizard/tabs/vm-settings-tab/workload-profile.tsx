@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { SelectOption } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { TemplateKind } from '@console/internal/module/k8s';
 import { WorkloadProfile } from '../../../../constants/vm/workload-profile';
 import { getLabelValue } from '../../../../selectors/selectors';
 import {
@@ -28,6 +29,7 @@ export const WorkloadSelect: React.FC<WorkloadProps> = React.memo(
     iUserTemplate,
     cnvBaseImages,
     commonTemplates,
+    additionalCommonTemplates,
     os,
     workloadProfileField,
     operatingSystem,
@@ -41,7 +43,10 @@ export const WorkloadSelect: React.FC<WorkloadProps> = React.memo(
       ? isUserTemplateValid
         ? [toShallowJS(iGetLoadedData(iUserTemplate))]
         : []
-      : immutableListToShallowJS(iGetLoadedData(commonTemplates));
+      : [
+          ...immutableListToShallowJS(iGetLoadedData(commonTemplates)),
+          ...immutableListToShallowJS(iGetLoadedData(additionalCommonTemplates)),
+        ];
 
     const defaultTemplate = getOsDefaultTemplate(templates, os);
 
@@ -110,6 +115,7 @@ export const WorkloadSelect: React.FC<WorkloadProps> = React.memo(
 type WorkloadProps = {
   iUserTemplate: any;
   commonTemplates: any;
+  additionalCommonTemplates: TemplateKind[];
   os: string;
   workloadProfileField: any;
   flavor: string;
