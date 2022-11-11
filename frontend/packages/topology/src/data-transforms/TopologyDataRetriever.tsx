@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { observer } from 'mobx-react';
 import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { useDebounceCallback } from '@console/shared';
@@ -14,12 +15,12 @@ type TopologyDataRetrieverProps = {
 
 const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficData }) => {
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
-  const { namespace } = dataModelContext;
+  const { namespace, extensionsLoaded, watchedResources } = dataModelContext;
   const [resources, setResources] = React.useState<WatchK8sResults<TopologyResourcesObject>>();
   const monitoringAlerts = useMonitoringAlerts(namespace);
   const resourcesList = React.useMemo<WatchK8sResources<any>>(
-    () => (namespace && dataModelContext.extensionsLoaded ? dataModelContext.watchedResources : {}),
-    [dataModelContext.extensionsLoaded, dataModelContext.watchedResources, namespace],
+    () => (namespace && extensionsLoaded ? watchedResources : {}),
+    [extensionsLoaded, watchedResources, namespace],
   );
 
   const debouncedUpdateResources = useDebounceCallback(setResources, 250);
@@ -53,4 +54,4 @@ const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficDa
   return null;
 };
 
-export default TopologyDataRetriever;
+export default observer(TopologyDataRetriever);
