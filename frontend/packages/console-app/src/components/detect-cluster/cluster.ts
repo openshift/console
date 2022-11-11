@@ -2,7 +2,7 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import {
   getActiveCluster,
   setActiveCluster,
@@ -10,7 +10,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src';
 import { clearSSARFlags, detectFeatures } from '@console/internal/actions/features';
 import { startAPIDiscovery } from '@console/internal/actions/k8s';
-import { getClusterFromUrl, history, legalNamePattern } from '@console/internal/components/utils';
+import { useClusterFromUrl } from '@console/shared/src/hooks/useClusterFromUrl';
 import { useLastCluster } from './useLastCluster';
 
 type ClusterContextType = {
@@ -20,24 +20,14 @@ type ClusterContextType = {
 
 export const ClusterContext = React.createContext<ClusterContextType>({});
 
-export const formatClusterPath = (cluster: string, path: string, location?: Location): string => {
-  const [, prefix, currentCluster, suffix] =
-    path.match(`^(.*)/c/(${legalNamePattern})(/.*)$`) ?? [];
-  if (!currentCluster || currentCluster === cluster) {
-    return path;
-  }
-  const newPath = `${prefix}/c/${cluster}${suffix}`;
-  return location ? `${newPath}${location.search}${location.hash}` : newPath;
-};
-
 export const useValuesForClusterContext = (): ClusterContextType => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const location = useLocation();
-  const [activePerspective, setActivePerspective] = useActivePerspective();
-  const urlCluster = getClusterFromUrl(location.pathname);
+  const urlCluster = useClusterFromUrl();
   const cluster = useSelector(getActiveCluster);
+  const [activePerspective, setActivePerspective] = useActivePerspective();
   const [lastCluster, setLastCluster] = useLastCluster();
-
   // Set initial value for active cluster
   React.useEffect(() => {
     dispatch(setActiveCluster(urlCluster ?? lastCluster));
@@ -45,15 +35,13 @@ export const useValuesForClusterContext = (): ClusterContextType => {
   }, []);
 
   React.useEffect(() => {
-    const currentPath = window.location.pathname;
-    const newPath = formatClusterPath(cluster, currentPath, window.location);
-    if (newPath !== currentPath) {
-      history.pushPath(newPath);
+    if (urlCluster && urlCluster !== cluster) {
+      history.push(location.pathname.replace(`/c/${urlCluster}`, `/c/${cluster}`));
     }
     dispatch(clearSSARFlags());
     dispatch(detectFeatures());
     dispatch(startAPIDiscovery());
-  }, [cluster, dispatch]);
+  }, [cluster, dispatch, history, location.pathname, urlCluster]);
 
   const setCluster = React.useCallback(
     (newCluster: string) => {

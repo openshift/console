@@ -8,7 +8,13 @@ import {
   isRoutePage as isDynamicRoutePage,
 } from '@console/dynamic-plugin-sdk';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import { FLAGS, useUserSettings, getPerspectiveVisitedKey, usePerspectives } from '@console/shared';
+import {
+  FLAGS,
+  useUserSettings,
+  getPerspectiveVisitedKey,
+  usePerspectives,
+  CLUSTER_ROUTE_PREFIX,
+} from '@console/shared';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, FlagsObject } from '../reducers/features';
@@ -17,7 +23,7 @@ import { NamespaceBar } from './namespace-bar';
 import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, LoadingBox } from './utils';
-import { CLUSTER_ROUTE_PREFIX, namespacedPrefixes } from './utils/link';
+import { namespacedPrefixes } from './utils/link';
 import { AlertmanagerModel, CronJobModel, VolumeSnapshotModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { NamespaceRedirect } from './utils/namespace-redirect';
@@ -44,7 +50,13 @@ function NamespaceFromURL(Component) {
 }
 
 const namespacedRoutes = namespacedPrefixes.reduce<string[]>(
-  (bucket, p) => [...bucket, `${p}/ns/:ns`, `${p}/all-namespaces`],
+  (acc, p) => [
+    ...acc,
+    `${p}/ns/:ns`,
+    `${p}/all-namespaces`,
+    `${CLUSTER_ROUTE_PREFIX}${p}/ns/:ns`,
+    `${CLUSTER_ROUTE_PREFIX}${p}/all-namespaces`,
+  ],
   [],
 );
 

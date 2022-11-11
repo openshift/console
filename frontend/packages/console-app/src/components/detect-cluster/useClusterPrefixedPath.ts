@@ -6,8 +6,8 @@ import { addPrefixToPath } from '@console/shared/src/utils/paths';
 export const getClusterPrefixedPath = (path, activePerspective, activeCluster) =>
   activePerspective === 'acm' ? path : addPrefixToPath(path, `/c/${activeCluster}`);
 
-// Takes a path and adds the current cluster prefis to it if the current perspective is
-// single - cluster scoped.
+// Takes a path and adds the current cluster prefix to it if the current perspective is
+// cluster scoped.
 // Temporary solution until the nav plugin API supports some way to indicate when a link should
 // be prefixed with the current active cluster name.
 export const useClusterPrefixedPath = (path: string): string => {

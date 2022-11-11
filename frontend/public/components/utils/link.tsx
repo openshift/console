@@ -1,31 +1,12 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import Linkify from 'react-linkify';
+import { matchPath } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
 import { Tooltip } from '@patternfly/react-core';
 import { CopyIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
-
-// Kubernetes "dns-friendly" names match
-// [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters
-// long. This pattern checks the pattern but not the length.
-//
-// Don't capture anything in legalNamePattern, since it's used
-// in expressions like
-//
-//    new RegExp("PREFIX" + legalNamePattern.source + "(SUFFIX)")
-//
-// And it's ok for users to make assumptions about capturing groups.
-
-export const legalNamePattern = '[a-z0-9](?:[-a-z0-9]*[a-z0-9])?';
-export const namespacePrefixPattern =
-  '/k8s/(?:ns|cluster/projects|cluster/project.openshift.io~v1~Project|cluster/namespaces)/';
-export const clusterPrefixPattern = '/c/';
-export const allNamespacesPattern = '/k8s/all-namespaces';
-export const namespaceCapturePattern = `${namespacePrefixPattern}(${legalNamePattern})`;
-export const clusterCapturePattern = `${clusterPrefixPattern}(${legalNamePattern})`;
-export const CLUSTER_ROUTE_PREFIX = `${clusterPrefixPattern}:cluster`;
+import { ALL_NAMESPACES_KEY, K8S_DNS_FRIENDLY_NAME_PATTERN } from '@console/shared/src/constants';
 
 export const namespacedPrefixes = [
   '/api-resource',
@@ -36,29 +17,23 @@ export const namespacedPrefixes = [
   '/details',
   '/search',
   '/status',
-  '/c/:cluster/api-resource',
-  '/c/:cluster/k8s',
-  '/c/:cluster/operatorhub',
-  '/c/:cluster/operatormanagement',
-  '/c/:cluster/operators',
-  '/c/:cluster/details',
-  '/c/:cluster/search',
-  '/c/:cluster/status',
 ];
 
-export const getClusterFromUrl = (path: string) => {
-  const [, cluster] = path.match(clusterCapturePattern) ?? [];
-  return cluster;
-};
-
 export const getNamespace = (path: string): string => {
-  const [allNamespaces] = path.match(allNamespacesPattern) ?? [];
-  if (allNamespaces) {
+  const allNamespacesMatch = matchPath(path, {
+    path: '/*/all-namespaces',
+  });
+  if (allNamespacesMatch) {
     return ALL_NAMESPACES_KEY;
   }
-
-  const [, namespace] = path.match(namespaceCapturePattern) ?? [];
-  return namespace;
+  return matchPath<{ ns: string }>(path, {
+    path: [
+      `/*/ns/:ns${K8S_DNS_FRIENDLY_NAME_PATTERN}`,
+      `/*/k8s/cluster/namespaces/:ns${K8S_DNS_FRIENDLY_NAME_PATTERN}`,
+      `/*/k8s/cluster/projects/:ns${K8S_DNS_FRIENDLY_NAME_PATTERN}`,
+      `/*/k8s/cluster/projects.openshift.io~v1~Project/:ns${K8S_DNS_FRIENDLY_NAME_PATTERN}`,
+    ],
+  })?.params?.ns;
 };
 
 export const getURLSearchParams = () => {

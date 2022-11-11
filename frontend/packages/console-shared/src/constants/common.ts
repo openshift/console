@@ -103,3 +103,12 @@ export const CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER =
   'https://api.openshift.com/api/upgrades_info/v1/graph';
 
 export const HUB_CLUSTER_NAME = 'local-cluster';
+
+// K8s dns friendly names contain lowercase alpha-numeric and '-' characters only, and must
+// not start or end with '-'. This pattern can be used to capture a validated k8s name from a
+// react-router path.
+// e.g.:
+// Match will be null unless the ':ns' param matches this pattern.
+// const match = useRouteMatch({ path: `/k8s/ns/:ns${K8S_DNS_FRIENDLY_NAME_PATTERN}` })
+export const K8S_DNS_FRIENDLY_NAME_PATTERN = '([a-z0-9][-a-z0-9]*[a-z0-9]|[a-z0-9])';
+export const CLUSTER_ROUTE_PREFIX = `/c/:cluster`;
