@@ -345,7 +345,6 @@ Then(
   (workload1: string, workload2: string) => {
     topologyPage.verifyWorkloadInTopologyPage(workload1);
     topologyPage.verifyWorkloadInTopologyPage(workload2);
-    cy.get('[title="service]').should('be.visible');
   },
 );
 
@@ -363,7 +362,9 @@ When('user enters the Name as {string} in Make Serverless form', (workloadName: 
 });
 
 When('user clicks on Create button in Make Serverless form', () => {
-  cy.get(formPO.save).click({ force: true });
+  cy.get(formPO.save)
+    .should('be.enabled')
+    .click({ force: true });
 });
 
 When(

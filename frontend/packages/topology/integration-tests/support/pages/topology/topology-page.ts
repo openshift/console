@@ -294,6 +294,9 @@ export const topologyPage = {
   rightClickOnNode: (nodeName: string) => {
     topologyPage.getNode(nodeName).trigger('contextmenu', { force: true });
   },
+  rightClickOnKnativeNode: (nodeName: string) => {
+    topologyPage.getKnativeNode(nodeName).trigger('contextmenu', { force: true });
+  },
   rightClickOnGroup: (releaseName: string) => {
     topologyPage.getGroup(releaseName).trigger('contextmenu', { force: true });
   },

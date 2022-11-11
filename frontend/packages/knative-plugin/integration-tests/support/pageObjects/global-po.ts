@@ -254,3 +254,11 @@ export const servingPO = {
     inmemorychannel: '[data-test-row-filter="inmemorychannel"]',
   },
 };
+
+export const hpaPO = {
+  addHPA: '[data-test-action="Add HorizontalPodAutoscaler"]',
+  minhpaPod: '[id="form-number-spinner-formData-spec-minReplicas-field"]',
+  maxhpaPod: '[id="form-number-spinner-formData-spec-maxReplicas-field"]',
+  cpu: '[id="cpu"]',
+  memory: '[id="memory"]',
+};
