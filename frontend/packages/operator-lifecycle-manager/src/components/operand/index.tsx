@@ -434,10 +434,9 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 
   const [staticData, filteredData, onFilterChange] = useListPageFilter(data, rowFilters);
   const loaded = Object.values(resources).every((r) => r.loaded);
-  const loadErrors = Object.values(resources)
-    .filter((r) => r.loadError)
-    .map((m) => m.loadError)
-    .join();
+  // only pass the first loadError as StatusBox can only display one
+  const loadError: Record<string, any> = Object.values(resources).find((r) => r.loadError)
+    ?.loadError;
 
   return inFlight ? null : (
     <>
@@ -464,7 +463,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
         <OperandList
           data={filteredData}
           loaded={loaded}
-          loadError={loadErrors}
+          loadError={loadError}
           noAPIsFound={Object.keys(watchedResources).length === 0}
           showNamespace={listAllNamespaces}
         />
@@ -818,7 +817,7 @@ export type OperandListProps = {
   reduxIDs?: string[];
   rowSplitter?: any;
   staticFilters?: any;
-  loadError?: string;
+  loadError?: Record<string, any>;
   noAPIsFound?: boolean;
   showNamespace?: boolean;
 };
