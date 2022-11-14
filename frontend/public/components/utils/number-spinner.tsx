@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NumberInput } from '@patternfly/react-core';
+import { ButtonProps, NumberInput } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
@@ -22,7 +22,9 @@ export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
         inputProps={{ ...inputProps }}
         className={className}
         minusBtnAriaLabel={t('public~Decrement')}
+        minusBtnProps={{ 'data-test-id': 'Decrement' } as ButtonProps}
         plusBtnAriaLabel={t('public~Increment')}
+        plusBtnProps={{ 'data-test-id': 'Increment' } as ButtonProps}
         isDisabled={inputProps.disabled}
       />
     </div>
