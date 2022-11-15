@@ -6,7 +6,7 @@ require (
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
 	github.com/devfile/api/v2 v2.0.0-20220105201057-dd1d65d4d91f
-	github.com/devfile/library v1.2.1-0.20211104222135-49d635cb492f
+	github.com/devfile/library v1.2.1-0.20221018201900-31548af3ad98
 	github.com/devfile/registry-support/index/generator v0.0.0-20220110165901-db88e581adf8
 	github.com/devfile/registry-support/registry-library v0.0.0-20220919175547-3f85c85b2650
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
