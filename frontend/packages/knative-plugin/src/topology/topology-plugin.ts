@@ -10,6 +10,7 @@ import {
 import {
   FLAG_CAMEL_KAMELETS,
   FLAG_KNATIVE_EVENTING,
+  FLAG_KNATIVE_EVENTING_ENABLED,
   FLAG_KNATIVE_SERVING,
   FLAG_KNATIVE_SERVING_CONFIGURATION,
   FLAG_KNATIVE_SERVING_REVISION,
@@ -81,7 +82,7 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
       isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
     },
     flags: {
-      required: [FLAG_KNATIVE_EVENTING],
+      required: [FLAG_KNATIVE_EVENTING, FLAG_KNATIVE_EVENTING_ENABLED],
     },
   },
   {

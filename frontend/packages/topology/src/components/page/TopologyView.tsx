@@ -263,7 +263,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
       const updateFilters = [...filters];
       [...displayFilterExtensions, ...dynamicDisplayFilterExtensions].forEach((extension) => {
         const extFilters = extension.properties.getTopologyFilters();
-        extFilters.forEach((filter) => {
+        extFilters?.forEach((filter) => {
           if (!updateFilters.find((f) => f.id === filter.id)) {
             if (appliedFilters[filter.id] !== undefined) {
               filter.value = appliedFilters[filter.id];
