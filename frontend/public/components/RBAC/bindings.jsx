@@ -289,7 +289,7 @@ export const RoleBindingsPage = ({
   name,
   kind,
   createPath = `/k8s/cluster/rolebindings/~new${
-    name && kind ? `?subjectName=${name}&subjectKind=${kind}` : ''
+    name && kind ? `?subjectName=${encodeURIComponent(name)}&subjectKind=${kind}` : ''
   }`,
   hideLabelFilter = false,
   hideNameLabelFilters = false,
