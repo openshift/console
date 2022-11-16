@@ -1134,6 +1134,8 @@
   "The endpoint to send HTTP POST requests to.": "The endpoint to send HTTP POST requests to.",
   "Invalid date / time": "Invalid date / time",
   "Datetime": "Datetime",
+  "Select the negative matcher option to update the label value to a not equals matcher.": "Select the negative matcher option to update the label value to a not equals matcher.",
+  "If both the RegEx and negative matcher options are selected, the label value must not match the regular expression.": "If both the RegEx and negative matcher options are selected, the label value must not match the regular expression.",
   "30m": "30m",
   "1h": "1h",
   "2h": "2h",

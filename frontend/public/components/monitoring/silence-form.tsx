@@ -72,6 +72,23 @@ const DatetimeTextInput = (props) => {
   );
 };
 
+const NegativeMatcherHelp = () => {
+  const { t } = useTranslation();
+
+  return (
+    <dl>
+      <dd>
+        {t('Select the negative matcher option to update the label value to a not equals matcher.')}
+      </dd>
+      <dd>
+        {t(
+          'If both the RegEx and negative matcher options are selected, the label value must not match the regular expression.',
+        )}
+      </dd>
+    </dl>
+  );
+};
+
 const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
   const { t } = useTranslation();
 
@@ -330,14 +347,16 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                       />
                       &nbsp; {t('public~RegEx')}
                     </label>
-                    <label>
-                      <input
-                        checked={matcher.isEqual === false}
-                        onChange={(e) => setMatcherField(i, 'isEqual', !e.currentTarget.checked)}
-                        type="checkbox"
-                      />
-                      &nbsp; {t('public~Negative matcher')}
-                    </label>
+                    <Tooltip content={<NegativeMatcherHelp />}>
+                      <label>
+                        <input
+                          checked={matcher.isEqual === false}
+                          onChange={(e) => setMatcherField(i, 'isEqual', !e.currentTarget.checked)}
+                          type="checkbox"
+                        />
+                        &nbsp; {t('public~Negative matcher')}
+                      </label>
+                    </Tooltip>
                     <Tooltip content={t('public~Remove')}>
                       <Button
                         type="button"
