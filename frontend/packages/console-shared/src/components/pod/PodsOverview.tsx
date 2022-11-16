@@ -10,6 +10,7 @@ import {
   SidebarSectionHeading,
   LoadingBox,
 } from '@console/internal/components/utils';
+import { GetPodTraffic } from '@console/internal/components/utils/get-pod-traffic';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { podPhase, PodKind, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import {
@@ -112,11 +113,14 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
   return (
     <li className="list-group-item container-fluid">
       <div className="row">
-        <span className="col-xs-6">
+        <span className="col-xs-5">
           <ResourceLink kind={kind} name={name} namespace={namespace} />
         </span>
         <span className="col-xs-3">
           <PodStatus pod={pod} />
+        </span>
+        <span className="col-xs-1">
+          <GetPodTraffic podName={name} namespace={namespace} tooltipFlag />
         </span>
         <span className="col-xs-3 text-right">
           <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('public~View logs')}</Link>

@@ -1200,3 +1200,14 @@ export type ReplicationControllerKind = {
 } & K8sResourceCommon;
 
 export type ReplicaSetKind = {} & ReplicationControllerKind;
+
+type EndpointSlice = {
+  kind?: string;
+  name?: string;
+  namespace?: string;
+  uid?: string;
+};
+
+export type EndpointSliceKind = {
+  endpoints?: EndpointSlice[];
+} & K8sResourceCommon;
