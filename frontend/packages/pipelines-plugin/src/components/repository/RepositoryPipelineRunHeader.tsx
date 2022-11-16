@@ -61,7 +61,7 @@ const RepositoryPipelineRunHeader = () => {
       props: { className: tableColumnClasses[6] },
     },
     {
-      title: i18n.t('pipelines-plugin~Branch'),
+      title: i18n.t('pipelines-plugin~Branch/Tag'),
       sortField: `metadata.labels.${RepositoryLabels[RepositoryFields.BRANCH]}`,
       transforms: [sortable],
       props: { className: tableColumnClasses[7] },
