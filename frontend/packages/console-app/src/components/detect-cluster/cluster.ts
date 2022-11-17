@@ -1,10 +1,16 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useDispatch } from 'react-redux';
-import { setActiveCluster } from '@console/dynamic-plugin-sdk/src/app/core/actions';
-import { LAST_CLUSTER_USER_SETTINGS_KEY, HUB_CLUSTER_NAME } from '@console/shared/src/constants';
-import { useUserSettingsLocalStorage } from '@console/shared/src/hooks/useUserSettingsLocalStorage';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getActiveCluster,
+  setActiveCluster,
+  useActivePerspective,
+} from '@console/dynamic-plugin-sdk/src';
+import { clearSSARFlags, detectFeatures } from '@console/internal/actions/features';
+import { setQueryArgument } from '@console/internal/components/utils';
+import { useQueryParams } from '@console/shared/src';
+import { useLastCluster } from './useLastCluster';
 
 type ClusterContextType = {
   cluster?: string;
@@ -13,32 +19,40 @@ type ClusterContextType = {
 
 export const ClusterContext = React.createContext<ClusterContextType>({});
 
-export const useValuesForClusterContext = () => {
-  const [lastCluster, setLastCluster] = useUserSettingsLocalStorage<string>(
-    LAST_CLUSTER_USER_SETTINGS_KEY,
-    LAST_CLUSTER_USER_SETTINGS_KEY,
-    HUB_CLUSTER_NAME,
-    false,
-    true,
-  );
-
+export const useValuesForClusterContext = (): ClusterContextType => {
   const dispatch = useDispatch();
-
-  // Set initial active cluster in redux on first render.
+  const clusterParam = useQueryParams().get('cluster');
+  const cluster = useSelector(getActiveCluster);
+  const [activePerspective, setActivePerspective] = useActivePerspective();
+  const [lastCluster, setLastCluster] = useLastCluster();
+  // Set initial value for active cluster
   React.useEffect(() => {
-    // TODO: Detect cluster from URL.
-    dispatch(setActiveCluster(lastCluster));
+    dispatch(setActiveCluster(clusterParam ?? lastCluster));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return {
-    cluster: lastCluster,
-    setCluster: React.useCallback(
-      (cluster: string) => {
-        dispatch(setActiveCluster(cluster));
-        setLastCluster(cluster);
-      },
-      [dispatch, setLastCluster],
-    ),
-  };
+  React.useEffect(() => {
+    if (clusterParam !== cluster) {
+      setQueryArgument('cluster', cluster);
+    }
+    dispatch(clearSSARFlags());
+    dispatch(detectFeatures());
+    // TODO Restart API discovery on cluster change once graphql is multicluster compatible
+    // dispatch(startAPIDiscovery());
+  }, [dispatch, cluster, clusterParam]);
+
+  const setCluster = React.useCallback(
+    (newCluster: string) => {
+      if (newCluster !== cluster) {
+        setLastCluster(newCluster);
+        dispatch(setActiveCluster(newCluster));
+        if (activePerspective === 'acm') {
+          setActivePerspective('admin');
+        }
+      }
+    },
+    [activePerspective, cluster, dispatch, setActivePerspective, setLastCluster],
+  );
+
+  return { cluster, setCluster };
 };
