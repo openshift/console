@@ -228,6 +228,25 @@ const InvalidMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   );
 };
 
+const ReleaseNotAcceptedMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
+  const releaseNotAcceptedCondition = getClusterVersionCondition(
+    cv,
+    ClusterVersionConditionType.ReleaseAccepted,
+    K8sResourceConditionStatus.False,
+  );
+  const { t } = useTranslation();
+  return (
+    <>
+      <div>
+        <StatusMessagePopover bodyContent={releaseNotAcceptedCondition.message}>
+          <RedExclamationCircleIcon /> {t('public~Release not accepted')}
+        </StatusMessagePopover>
+      </div>
+      <ClusterVersionConditionsLink cv={cv} />
+    </>
+  );
+};
+
 const UpdatesAvailableMessage: React.FC<CVStatusMessageProps> = () => {
   const { t } = useTranslation();
   return (
@@ -332,6 +351,8 @@ export const UpdateStatus: React.FC<UpdateStatusProps> = ({ cv }) => {
   switch (status) {
     case ClusterUpdateStatus.Invalid:
       return <InvalidMessage cv={cv} />;
+    case ClusterUpdateStatus.ReleaseNotAccepted:
+      return <ReleaseNotAcceptedMessage cv={cv} />;
     case ClusterUpdateStatus.UpdatesAvailable:
       return <UpdatesAvailableMessage cv={cv} />;
     case ClusterUpdateStatus.Updating:
