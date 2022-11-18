@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import MonitoringDashboardsPage from '@console/internal/components/monitoring/dashboards';
 import { withStartGuide } from '@console/internal/components/start-guide';
@@ -13,7 +12,7 @@ import {
 } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import CreateProjectListPage from '../projects/CreateProjectListPage';
+import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 import ConnectedMonitoringAlerts from './alerts/MonitoringAlerts';
 import MonitoringEvents from './events/MonitoringEvents';
 import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
@@ -77,11 +76,8 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
     <CreateProjectListPage title={t('devconsole~Observe')}>
       {(openProjectModal) => (
         <Trans t={t} ns="devconsole">
-          Select a Project to view monitoring metrics or{' '}
-          <Button isInline variant="link" onClick={openProjectModal}>
-            create a Project
-          </Button>
-          .
+          Select a Project to view monitoring metrics
+          <CreateAProjectButton openProjectModal={openProjectModal} />.
         </Trans>
       )}
     </CreateProjectListPage>

@@ -121,7 +121,7 @@
   "Unable to load Helm Releases": "Unable to load Helm Releases",
   "No Helm Releases found": "No Helm Releases found",
   "Repositories": "Repositories",
-  "Select a Project to view its details or <2>create a Project</2>.": "Select a Project to view its details or <2>create a Project</2>.",
+  "Select a Project to view its details<1></1>.": "Select a Project to view its details<1></1>.",
   "No repositories found": "No repositories found",
   "Unable to find resource for {{helmLabel}}": "Unable to find resource for {{helmLabel}}",
   " / App Version {{appVersion}}": " / App Version {{appVersion}}",

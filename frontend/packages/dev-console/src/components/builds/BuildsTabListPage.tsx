@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { Page, AsyncComponent } from '@console/internal/components/utils';
@@ -8,7 +7,7 @@ import { useFlag, MenuActions, MultiTabListPage, getBadgeFromType } from '@conso
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useResourceListPages } from '@console/shared/src/hooks/useResourceListPages';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import CreateProjectListPage from '../projects/CreateProjectListPage';
+import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
 interface BuildsTabListPageProps {
   match: Rmatch<{ ns?: string }>;
@@ -21,7 +20,6 @@ interface BuildsTabListPageProps {
  */
 const BuildsTabListPage: React.FC<BuildsTabListPageProps> = ({ match }) => {
   const { t } = useTranslation();
-
   const title = t('devconsole~Builds');
   const namespace = match.params.ns;
   const menuActions: MenuActions = {};
@@ -97,11 +95,8 @@ const BuildsTabListPage: React.FC<BuildsTabListPageProps> = ({ match }) => {
       <CreateProjectListPage title={title}>
         {(openProjectModal) => (
           <Trans t={t} ns="devconsole">
-            Select a Project to view the list of builds or{' '}
-            <Button isInline variant="link" onClick={openProjectModal}>
-              create a Project
-            </Button>
-            .
+            Select a Project to view the list of builds
+            <CreateAProjectButton openProjectModal={openProjectModal} />.
           </Trans>
         )}
       </CreateProjectListPage>
