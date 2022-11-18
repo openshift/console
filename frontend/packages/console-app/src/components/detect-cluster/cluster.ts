@@ -8,8 +8,9 @@ import {
   useActivePerspective,
 } from '@console/dynamic-plugin-sdk/src';
 import { clearSSARFlags, detectFeatures } from '@console/internal/actions/features';
-import { setQueryArgument } from '@console/internal/components/utils';
+import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
 import { useQueryParams } from '@console/shared/src';
+import isMultiClusterEnabled from '../../utils/isMultiClusterEnabled';
 import { useLastCluster } from './useLastCluster';
 
 type ClusterContextType = {
@@ -19,19 +20,29 @@ type ClusterContextType = {
 
 export const ClusterContext = React.createContext<ClusterContextType>({});
 
+const isValidCluster = (c) => window.SERVER_FLAGS.clusters.includes(c);
+
 export const useValuesForClusterContext = (): ClusterContextType => {
   const dispatch = useDispatch();
-  const clusterParam = useQueryParams().get('cluster');
+  const queryParams = useQueryParams();
+  const clusterParam = queryParams.get('cluster');
   const cluster = useSelector(getActiveCluster);
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [lastCluster, setLastCluster] = useLastCluster();
   // Set initial value for active cluster
   React.useEffect(() => {
-    dispatch(setActiveCluster(clusterParam ?? lastCluster));
+    const initCluster = clusterParam ?? lastCluster;
+    if (isValidCluster(initCluster)) {
+      dispatch(setActiveCluster(initCluster));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
+    if (!isMultiClusterEnabled()) {
+      removeQueryArgument('cluster');
+      return;
+    }
     if (clusterParam !== cluster) {
       setQueryArgument('cluster', cluster);
     }
@@ -43,7 +54,7 @@ export const useValuesForClusterContext = (): ClusterContextType => {
 
   const setCluster = React.useCallback(
     (newCluster: string) => {
-      if (newCluster !== cluster) {
+      if (isValidCluster(newCluster)) {
         setLastCluster(newCluster);
         dispatch(setActiveCluster(newCluster));
         if (activePerspective === 'acm') {
@@ -51,7 +62,7 @@ export const useValuesForClusterContext = (): ClusterContextType => {
         }
       }
     },
-    [activePerspective, cluster, dispatch, setActivePerspective, setLastCluster],
+    [activePerspective, dispatch, setActivePerspective, setLastCluster],
   );
 
   return { cluster, setCluster };
