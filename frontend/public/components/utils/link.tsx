@@ -33,14 +33,15 @@ export const namespacedPrefixes = [
   '/status',
 ];
 
-export const CLUSTER_SCOPED_PREFIXES = [
-  ...namespacedPrefixes,
+export const CLUSTER_SCOPED_ROUTES = [
+  '/*/ns/:ns',
+  '/*/all-namespaces',
   '/overview',
   '/dashboards',
   '/settings',
   '/api-explorer',
   '/catalog',
-  '/c/',
+  '/monitoring',
 ];
 
 export const stripBasePath = (path: string): string => path.replace(basePathPattern, '/');
