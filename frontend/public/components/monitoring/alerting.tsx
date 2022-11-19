@@ -5,7 +5,9 @@ import {
   AlertStates,
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
+  K8sKind,
   PrometheusAlert,
+  PrometheusEndpoint,
   PrometheusLabels,
   RedExclamationCircleIcon,
   ResourceStatus,
@@ -50,15 +52,19 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { withFallback } from '@console/shared/src/components/error';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { ActionContext } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { ActionServiceProvider } from '@console/dynamic-plugin-sdk/src/lib-core';
+import {
+  ActionServiceProvider,
+  ResourceLink,
+  Timestamp,
+} from '@console/dynamic-plugin-sdk/src/lib-core';
+import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
+
 import {
   alertingErrored,
   alertingLoaded,
   alertingLoading,
   alertingSetRules,
 } from '../../actions/observe';
-import { coFetchJSON } from '../../co-fetch';
 import {
   ContainerModel,
   DaemonSetModel,
@@ -69,12 +75,11 @@ import {
   PodModel,
   StatefulSetModel,
 } from '../../models';
-import { K8sKind } from '../../module/k8s';
 import { RootState } from '../../redux';
 import { breadcrumbsForGlobalConfig } from '../cluster-settings/global-config';
 import { RowFunctionArgs, Table, TableData, TableProps } from '../factory';
 import { FilterToolbar } from '../filter-toolbar';
-import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
+import { getPrometheusURL } from '../graphs/helpers';
 import { confirmModal } from '../modals';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { ActionsMenu } from '../utils/dropdown';
@@ -82,10 +87,8 @@ import { Firehose } from '../utils/firehose';
 import { ActionButtons, BreadCrumbs, SectionHeading } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
 import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
-import { ResourceLink } from '../utils/resource-link';
 import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
-import { Timestamp } from '../utils/timestamp';
 import { AlertmanagerConfigWrapper } from './alert-manager-config';
 import { AlertmanagerYAMLEditorWrapper } from './alert-manager-yaml-editor';
 import MonitoringDashboardsPage from './dashboards';
@@ -141,7 +144,7 @@ const cancelSilence = (silence: Silence) => ({
       message: i18next.t('public~Are you sure you want to expire this silence?'),
       btnText: i18next.t('public~Expire silence'),
       executeFn: () =>
-        coFetchJSON
+        consoleFetchJSON
           .delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silence.id}`)
           .then(() => refreshNotificationPollers()),
     }),
@@ -700,8 +703,6 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   // eslint-disable-next-line camelcase
   const runbookURL = alert?.annotations?.runbook_url;
 
-  const actionsContext: ActionContext = { 'alert-detail-toolbar-actions': { alert } };
-
   return (
     <>
       <Helmet>
@@ -746,7 +747,7 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                 <SectionHeading text={t('public~Alert details')} />
               </ToolbarItem>
               <ToolbarGroup alignment={{ default: 'alignRight' }}>
-                <ActionServiceProvider context={actionsContext}>
+                <ActionServiceProvider context={{ 'alert-detail-toolbar-actions': { alert } }}>
                   {({ actions, loaded }) =>
                     loaded
                       ? actions.filter(isActionWithHref).map((action) => (
@@ -1894,7 +1895,7 @@ const PollerPages = () => {
       dispatch(alertingLoading(alertsKey));
       const url = getPrometheusURL({ endpoint: PrometheusEndpoint.RULES });
       const poller = (): void => {
-        coFetchJSON(url)
+        consoleFetchJSON(url)
           .then(({ data }) => {
             const { alerts, rules } = getAlertsAndRules(data);
             dispatch(alertingLoaded(alertsKey, alerts));

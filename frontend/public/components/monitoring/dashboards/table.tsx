@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { PrometheusEndpoint, PrometheusResponse } from '@console/dynamic-plugin-sdk';
 import { PerPageOptions } from '@patternfly/react-core';
 import {
@@ -19,8 +20,6 @@ import { ColumnStyle, Panel } from './types';
 import { getPrometheusURL } from '../../graphs/helpers';
 import { EmptyBox, usePoll, useSafeFetch } from '../../utils';
 import TablePagination from '../table-pagination';
-
-import { useTranslation } from 'react-i18next';
 
 type AugmentedColumnStyle = ColumnStyle & {
   className?: string;

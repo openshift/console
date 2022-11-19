@@ -13,6 +13,8 @@ import {
 
 import { AlertSource, MonitoringResource, PrometheusRulesResponse, Target } from './types';
 
+export const PROMETHEUS_BASE_PATH = window.SERVER_FLAGS.prometheusBaseURL;
+
 export const AlertResource: MonitoringResource = {
   kind: 'Alert',
   label: 'Alert',
