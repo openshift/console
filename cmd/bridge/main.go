@@ -395,21 +395,26 @@ func main() {
 			serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
 				RootCAs: serviceProxyRootCAs,
 			})
-			srv.ThanosProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosHost, Path: "/api"},
+
+			// Disable metrics in multicluster env.
+			if len(managedClusterConfigs) == 0 {
+				srv.ThanosProxyConfig = &proxy.Config{
+					TLSClientConfig: serviceProxyTLSConfig,
+					HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+					Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosHost, Path: "/api"},
+				}
+				srv.ThanosTenancyProxyConfig = &proxy.Config{
+					TLSClientConfig: serviceProxyTLSConfig,
+					HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+					Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyHost, Path: "/api"},
+				}
+				srv.ThanosTenancyProxyForRulesConfig = &proxy.Config{
+					TLSClientConfig: serviceProxyTLSConfig,
+					HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+					Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyForRulesHost, Path: "/api"},
+				}
 			}
-			srv.ThanosTenancyProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyHost, Path: "/api"},
-			}
-			srv.ThanosTenancyProxyForRulesConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyForRulesHost, Path: "/api"},
-			}
+
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -457,7 +462,8 @@ func main() {
 			Endpoint:        k8sEndpoint,
 		}
 
-		if *fK8sModeOffClusterThanos != "" {
+		// Disable metrics in off-cluster multicluster env
+		if len(managedClusterConfigs) == 0 && *fK8sModeOffClusterThanos != "" {
 			offClusterThanosURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-thanos", *fK8sModeOffClusterThanos)
 			offClusterThanosURL.Path += "/api"
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
