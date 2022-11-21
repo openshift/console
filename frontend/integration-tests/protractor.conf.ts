@@ -53,7 +53,6 @@ const testSuites = {
   environment: suite(['tests/environment.scenario.ts']),
   secrets: suite(['tests/secrets.scenario.ts']),
   crud: suite(['tests/secrets.scenario.ts', 'tests/environment.scenario.ts']),
-  event: suite(['tests/event.scenario.ts']),
   monitoring: suite(['tests/monitoring.scenario.ts']),
   newApp: suite(['tests/deploy-image.scenario.ts']),
   crdExtensions: suite(['tests/crd-extensions.scenario.ts']),
@@ -66,7 +65,6 @@ const testSuites = {
     'tests/alertmanager.scenario.ts',
     'tests/crd-extensions.scenario.ts',
     'tests/oauth.scenario.ts',
-    'tests/event.scenario.ts',
     'tests/cluster-settings.scenario.ts',
   ]),
   release: suite([
@@ -75,7 +73,6 @@ const testSuites = {
     'tests/deploy-image.scenario.ts',
     'tests/monitoring.scenario.ts',
     'tests/crd-extensions.scenario.ts',
-    'tests/event.scenario.ts',
   ]),
   all: suite([
     'tests/secrets.scenario.ts',
@@ -84,7 +81,6 @@ const testSuites = {
     'tests/alertmanager.scenario.ts',
     'tests/crd-extensions.scenario.ts',
     'tests/oauth.scenario.ts',
-    'tests/event.scenario.ts',
     'tests/cluster-settings.scenario.ts',
   ]),
   clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
