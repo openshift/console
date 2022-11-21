@@ -8,8 +8,15 @@ Feature: Create event sources
               And user is at Event Sources page
 
 
+        @smoke
+        Scenario: Event Sources on default Developer Catalog: KE-02-TC01
+             Then user will see the cards of Event Sources
+              And user will see Filter by Keyword field
+              And user will see A-Z, Z-A sort by dropdown
+
+
         @regression @odc-6359
-        Scenario: Event source details for ApiServerSource event source type: KE-02-TC01
+        Scenario: Event source details for ApiServerSource event source type: KE-02-TC02
              When user selects event source type "Api Server Source"
               And user selects Create Event Source
              Then page contains Resource, Mode, Service Account name, Sink
@@ -19,7 +26,7 @@ Feature: Create event sources
 
 
         @regression @odc-6359
-        Scenario: Event source details for ContainerSource event source type: KE-02-TC02
+        Scenario: Event source details for ContainerSource event source type: KE-02-TC03
              When user selects event source type "Container Source"
               And user selects Create Event Source
              Then page contains Container, Environment variables, Sink, Application and node name
@@ -83,7 +90,7 @@ Feature: Create event sources
 
 
         @smoke
-        Scenario: Create PingSource event source: KE-02-TC10
+        Scenario: Create PingSource event source: KE-02-TC09
              When user selects event source type "Ping Source"
               And user selects Create Event Source
               And user enters schedule as "*/2 * * * *"
@@ -94,7 +101,7 @@ Feature: Create event sources
 
 
         @smoke
-        Scenario: Create SinkBinding event source linked with knative service: KE-02-TC11
+        Scenario: Create SinkBinding event source linked with knative service: KE-02-TC10
              When user selects event source type "Sink Binding"
               And user selects Create Event Source
               And user enters Subject apiVersion as "batch/v1"
@@ -107,7 +114,7 @@ Feature: Create event sources
 
 
         @smoke
-        Scenario: Create SinkBinding event source linked with uri: KE-02-TC12
+        Scenario: Create SinkBinding event source linked with uri: KE-02-TC11
              When user selects event source type "Sink Binding"
               And user selects Create Event Source
               And user enters Subject apiVersion as "batch/v1"
@@ -121,7 +128,7 @@ Feature: Create event sources
 
 
         @regression @manual
-        Scenario: Create CamelSource event source: KE-02-TC13
+        Scenario: Create CamelSource event source: KE-02-TC12
             Given user has installed Red Hat Integration - Camel K Operator
               And user has created or selected namespace "aut-knative"
               And user has created knative service "kn-event"
@@ -134,7 +141,7 @@ Feature: Create event sources
 
 
         @regression
-        Scenario: Kamelets on Event Sources page: KE-02-TC14
+        Scenario: Kamelets on Event Sources page: KE-02-TC13
             Given user has created Knative Serving and Knative Eventing CR
               And user has installed Red Hat Integration - Camel K Operator
               And user has created Integration Platform CR

@@ -5,6 +5,7 @@ import {
   addOptions,
 } from '@console/dev-console/integration-tests/support/constants';
 import {
+  catalogPO,
   containerImagePO,
   eventSourcePO,
   formPO,
@@ -18,6 +19,7 @@ import {
   app,
   createForm,
   gitPage,
+  catalogPage,
 } from '@console/dev-console/integration-tests/support/pages';
 import {
   topologyPage,
@@ -27,6 +29,21 @@ import {
 Given('user is at Event Sources page', () => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.EventSource);
+});
+
+Then('user will see Filter by Keyword field', () => {
+  cy.get(catalogPO.search).should('have.attr', 'placeholder', 'Filter by keyword...');
+});
+
+Then('user will see A-Z, Z-A sort by dropdown', () => {
+  cy.get('.co-catalog-page__sort').click();
+  cy.byTestDropDownMenu('asc').should('be.visible');
+  cy.byTestDropDownMenu('desc').should('be.visible');
+  cy.get('.co-catalog-page__sort').click();
+});
+
+Then('user will see the cards of Event Sources', () => {
+  catalogPage.verifyCardTypeOfAllCards('Event Sources');
 });
 
 When('user clicks on {string} card', (cardName: string) => {
