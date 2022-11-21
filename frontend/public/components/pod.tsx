@@ -35,11 +35,9 @@ import {
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
-  ALL_NAMESPACES_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ListPageBody, RowFilter, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
@@ -233,7 +231,7 @@ const podColumnInfo = Object.freeze({
     title: 'public~IP address',
   },
   traffic: {
-    classes: classNames('pf-m-hidden'),
+    classes: '',
     id: 'trafficStatus',
     title: 'public~Receiving Traffic',
   },
@@ -242,11 +240,7 @@ const podColumnInfo = Object.freeze({
 const kind = 'Pod';
 const columnManagementID = referenceForModel(PodModel);
 
-const getColumns = (
-  showNodes: boolean,
-  t: TFunction,
-  namespace?: string,
-): TableColumn<PodKind>[] => [
+const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] => [
   {
     title: t(podColumnInfo.name.title),
     id: podColumnInfo.name.id,
@@ -344,7 +338,7 @@ const getColumns = (
   {
     title: t(podColumnInfo.traffic.title),
     id: podColumnInfo.traffic.id,
-    props: { className: namespace ? '' : podColumnInfo.traffic.classes },
+    props: { className: podColumnInfo.traffic.classes },
     additional: true,
   },
   {
@@ -360,7 +354,6 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
   activeColumnIDs,
 }) => {
   const { t } = useTranslation();
-  const [activeNameSpace] = useActiveNamespace();
   const { name, namespace, creationTimestamp, labels } = pod.metadata;
   const bytes: number = useSelector(({ UI }) => {
     const metrics = UI.getIn(['metrics', 'pod']);
@@ -466,7 +459,7 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
         {pod?.status?.podIP ?? '-'}
       </TableData>
       <TableData
-        className={activeNameSpace === ALL_NAMESPACES_KEY ? podColumnInfo.traffic.classes : ''}
+        className={podColumnInfo.traffic.classes}
         activeColumnIDs={activeColumnIDs}
         id={podColumnInfo.traffic.id}
       >
@@ -939,18 +932,9 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
 };
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-export const PodList: React.FC<PodListProps> = ({
-  showNamespaceOverride,
-  showNodes,
-  namespace,
-  ...props
-}) => {
+export const PodList: React.FC<PodListProps> = ({ showNamespaceOverride, showNodes, ...props }) => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => getColumns(showNodes, t, namespace), [
-    showNodes,
-    t,
-    namespace,
-  ]);
+  const columns = React.useMemo(() => getColumns(showNodes, t), [showNodes, t]);
   const [activeColumns, userSettingsLoaded] = useActiveColumns({
     columns,
     showNamespaceOverride,
@@ -1078,7 +1062,7 @@ export const PodsPage: React.FC<PodPageProps> = ({
             rowFilters={filters}
             onFilterChange={onFilterChange}
             columnLayout={{
-              columns: getColumns(showNodes, t, namespace).map((column) =>
+              columns: getColumns(showNodes, t).map((column) =>
                 _.pick(column, ['title', 'additional', 'id']),
               ),
               id: columnManagementID,

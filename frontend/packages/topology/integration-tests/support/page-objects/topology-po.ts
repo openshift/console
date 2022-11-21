@@ -109,6 +109,8 @@ export const topologyPO = {
       startLastRun: '[role="dialog"] li.list-group-item.pipeline-overview div button',
       pipelineRuns: 'li.odc-pipeline-run-item',
       routeLink: '[data-test-id="route-link"]',
+      waitingPods: 'button[data-test="waiting-pods"]',
+      podTrafficStatus: 'div[data-test="pod-traffic-status',
     },
     monitoringTab: {
       viewMonitoringDashBoardLink: '[data-test="observe-dashboard-link"]',

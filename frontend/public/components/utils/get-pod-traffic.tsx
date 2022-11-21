@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { EndpointSliceKind } from '@console/internal/module/k8s';
+import { EndpointSliceKind } from '../../module/k8s';
 import { ConnectedIcon, DisconnectedIcon } from '@patternfly/react-icons';
 import { EndPointSliceModel } from '@console/app/src/models';
 import { LoadingInline } from '@console/internal/components/utils';
@@ -31,15 +31,14 @@ export const GetPodTraffic: React.FC<GetPodTrafficProp> = ({ podName, namespace,
   } else if (loaded && loadError) {
     return <Status status="Error" title={t('public~Error')} />;
   }
-  const allEndpoints = data && data.reduce((prev, next) => prev.concat(next?.endpoints), []);
-  const receivingTraffic =
-    allEndpoints && allEndpoints.find((endPoint) => endPoint?.targetRef?.name === podName);
+  const allEndpoints = data?.reduce((prev, next) => prev.concat(next?.endpoints), []);
+  const receivingTraffic = allEndpoints?.find((endPoint) => endPoint?.targetRef?.name === podName);
 
   if (tooltipFlag) {
     return (
       loaded &&
       !loadError && (
-        <div>
+        <div data-test="pod-traffic-status">
           <Tooltip
             position="top"
             content={

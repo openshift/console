@@ -184,7 +184,10 @@ export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
       variant="info"
       title={t('public~Waiting for the build')}
       actionLinks={
-        <AlertActionLink onClick={() => setShowWaitingPods(!showWaitingPods)}>
+        <AlertActionLink
+          onClick={() => setShowWaitingPods(!showWaitingPods)}
+          data-test="waiting-pods"
+        >
           {showWaitingPods
             ? t('console-shared~Hide waiting pods with errors')
             : t('console-shared~Show waiting pods with errors')}

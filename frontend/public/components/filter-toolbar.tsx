@@ -416,6 +416,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                     })
                   }
                   aria-label={t('public~Column management')}
+                  data-test="manage-columns"
                 >
                   <ColumnsIcon />
                 </Button>
