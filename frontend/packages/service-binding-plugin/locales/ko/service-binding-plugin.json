@@ -4,6 +4,7 @@
   "ServiceBinding details": "서비스 바인딩 세부 정보",
   "Conditions": "상태",
   "Status": "상태",
+  "Label Selector": "레이블 선택기",
   "Application": "애플리케이션",
   "Services": "서비스",
   "Connected": "연결됨",
