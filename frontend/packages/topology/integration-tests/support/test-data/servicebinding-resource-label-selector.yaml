@@ -1,0 +1,17 @@
+apiVersion: binding.operators.coreos.com/v1alpha1
+kind: ServiceBinding
+metadata:
+  name: test-connector4
+spec:
+  services:
+    - group: redis.redis.opstreelabs.in
+      kind: Redis
+      name: redis-standalone
+      version: v1beta1
+  application:
+    labelSelector:
+      matchLabels:
+        app: node-ej
+    group: apps
+    version: v1
+    resource: deployments

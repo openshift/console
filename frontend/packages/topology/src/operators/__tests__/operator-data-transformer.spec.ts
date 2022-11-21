@@ -5,6 +5,8 @@ import { MockResources } from '@console/shared/src/utils/__tests__/test-resource
 import {
   sbrBackingServiceSelector,
   sbrBackingServiceSelectors,
+  sbrLabelSelectorBackingServiceSelector,
+  sbrLabelSelectorBackingServiceSelectors,
 } from '../../__tests__/service-binding-test-data';
 import { TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
 import { TYPE_SERVICE_BINDING, TYPE_WORKLOAD } from '../../const';
@@ -149,6 +151,50 @@ describe('operator data transformer ', () => {
     const deployments = sbrBackingServiceSelectors.deployments.data;
     const obsGroups = getOperatorGroupResources(mockResources);
     const sbrs = sbrBackingServiceSelectors.serviceBindingRequests.data;
+    const installedOperators = mockResources?.clusterServiceVersions?.data;
+
+    expect(getServiceBindingEdges(deployments[0], obsGroups, sbrs, installedOperators)).toEqual([
+      {
+        id: `uid-app_3006a8f3-6e2b-4a19-b37e-fbddd9a41f51`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: '3006a8f3-6e2b-4a19-b37e-fbddd9a41f51',
+        data: { sbr: sbrs[0] },
+        resource: sbrs[0],
+      },
+      {
+        id: `uid-app_3006a8f3-6e2b-4a19-b37e-fbddd9a41f51`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: '3006a8f3-6e2b-4a19-b37e-fbddd9a41f51',
+        data: { sbr: sbrs[0] },
+        resource: sbrs[0],
+      },
+    ]);
+  });
+
+  it('should support single binding service selector with workload using label selector', async () => {
+    const deployments = sbrLabelSelectorBackingServiceSelector.deployments.data;
+    const obsGroups = getOperatorGroupResources(mockResources);
+    const sbrs = sbrLabelSelectorBackingServiceSelector.serviceBindingRequests.data;
+    const installedOperators = mockResources?.clusterServiceVersions?.data;
+
+    expect(getServiceBindingEdges(deployments[0], obsGroups, sbrs, installedOperators)).toEqual([
+      {
+        id: `uid-app_3006a8f3-6e2b-4a19-b37e-fbddd9a41f51`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: '3006a8f3-6e2b-4a19-b37e-fbddd9a41f51',
+        data: { sbr: sbrs[0] },
+        resource: sbrs[0],
+      },
+    ]);
+  });
+
+  it('should support multiple binding service selectors with workload using label selector', async () => {
+    const deployments = sbrLabelSelectorBackingServiceSelectors.deployments.data;
+    const obsGroups = getOperatorGroupResources(mockResources);
+    const sbrs = sbrLabelSelectorBackingServiceSelectors.serviceBindingRequests.data;
     const installedOperators = mockResources?.clusterServiceVersions?.data;
 
     expect(getServiceBindingEdges(deployments[0], obsGroups, sbrs, installedOperators)).toEqual([

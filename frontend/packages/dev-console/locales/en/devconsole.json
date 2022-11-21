@@ -69,6 +69,7 @@
   "From Catalog": "From Catalog",
   "Delete application": "Delete application",
   "Edit {{applicationName}}": "Edit {{applicationName}}",
+  "Deletion of a Service Binding resource that utilizes label selector will result in the removal of all bindings on applications that share the labels defined in the Service Binding resource.": "Deletion of a Service Binding resource that utilizes label selector will result in the removal of all bindings on applications that share the labels defined in the Service Binding resource.",
   "Access permissions needed": "Access permissions needed",
   "Unable to load": "Unable to load",
   "You do not have sufficient permissions to access these add options.": "You do not have sufficient permissions to access these add options.",
