@@ -29,6 +29,7 @@ Feature: Editing an application
               And user is at Add page
               And user has created or selected namespace "edit-knative-service"
               And user has created workload "nodejs-ex-git-kn" with resource type "Knative Service"
+              And user clicks on knative workload "nodejs-ex-git-kn" to verify that build is completed
              When user right clicks on the knative workload "nodejs-ex-git-kn" to open the Context Menu
               And user clicks on "Edit nodejs-ex-git-kn" from context action menu
               And user edits application groupings to "new-app"
@@ -67,7 +68,7 @@ Feature: Editing an application
               And user clicks "Edit Deployment" from action menu
               And user selects "Rolling Update" Strategy type under Deployment Strategy
               And user enters value of Maximum number of unavailable Pods and Maximum number of surge Pods as "25%"
-            #2091102 : https://bugzilla.redhat.com/show_bug.cgi?id=2091102
+        #2091102 : https://bugzilla.redhat.com/show_bug.cgi?id=2091102
               And user selects value of project, image stream and tag section under images as "openshift", "golang" and "latest" respectively
               And user enters NAME as "DEMO_GREETING" and VALUE as "Hello from the environment"
               And user clicks on Show advanced image options
@@ -102,9 +103,9 @@ Feature: Editing an application
 
         @regression @manual
         Scenario: Edit JAR file through drag and drop: T-09-TC07
-            Given user has uploaded JAR file
-             When user opens sidebar of the file
-              And user clicks on Edit app in Action menu
+            Given user has uploaded JAR file named "sample-jar"
+             When user opens sidebar of the JAR workload
+              And user clicks on Edit "sample-jar" in Action menu
               And user drag and drop a new JAR file in JAR file section
               And user updates Build image version
               And user clicks on Save
@@ -115,22 +116,21 @@ Feature: Editing an application
         @regression @manual
         Scenario: Additional parameters and lifecycle hooks for Edit deployment config: T-09-TC08
             Given user is on Edit DeploymentConfig page
-             When user clicks on "Show additional parameters and lifecycle hooks" option
+             When user changes Strategy type to "Recreate"
+              And user clicks on "Show additional parameters and lifecycle hooks" option
               And user clicks on "Add Pre Cycle Hook" under Pre Cycle Hook section
               And user clicks on "Add Mid Cycle Hook" under Mid Cycle Hook section
               And user clicks on "Add Post Cycle Hook" under Post Cycle Hook section
              Then user will see "Lifecycle action", "Container name", "Command", "Environment variables(runtime only)" "Volumes" and "Failure policy" sections in each of the form
               And user will see Tick and cross buttons associated with the forms
 
-
         @regression @manual
         Scenario Outline: Advanced container options in Edit deployment/deployment config form: T-09-TC09
             Given user has "<resource>" workload "workload-d"
               And user is on Edit "<resource>" page
              When user selects "Deploy image from an image stream tag" checkbox
-              And user clicks on "Show advanced container options" option
-             Then user will see "Environment variables(runtime only)" under Environment variables for container mentioned in image stream section
-              And user will see "Add value" and "Add from ConfigMap or Secret" options
+              And user clicks on "Show advanced image options" option
+             Then user can see Pull Secret dropdown and Create new secret option
 
         Examples:
                   | resource         |

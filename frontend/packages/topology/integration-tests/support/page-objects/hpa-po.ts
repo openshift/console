@@ -21,7 +21,7 @@ export const hpaPO = {
   sectionHeading: '.sidebar__section-heading',
   sidebarClose: '[data-test-id="sidebar-close-button"]',
   switchToggler: '[data-test-id="topology-switcher-view"]',
-  hpaFormName: '[name="formData.metadata.name"]',
+  hpaFormName: '[id="form-input-formData-metadata-name-field"]',
   podRing: '[class="odc-pod-ring"]',
   nodeList: '[class="list-group-item container-fluid"]',
 };

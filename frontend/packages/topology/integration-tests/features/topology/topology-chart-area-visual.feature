@@ -40,7 +40,7 @@ Feature: Topology chart area
 
         @regression @manual
         Scenario: Visual for deployment: T-06-TC05
-            Given user has created a workload named "nodejs-ex-git"
+            Given user has created a deployment workload named "nodejs-d"
               And user is at the Topology page
              When user checks nodes and the decorators associated with them
              Then nodes are circular shaped with builder image in them
@@ -53,8 +53,8 @@ Feature: Topology chart area
 
         @regression @manual
         Scenario: Visual for deployment-config: T-06-TC06
-            Given user is at the Topology page
-              And deployment-config workload is present in topology
+            Given user has created a deployment config workload named "nodejs-dc"
+              And user is at the Topology page
              When user checks nodes and the decorators associated with them
              Then nodes are circular shaped with builder image in them
               And pod ring associated with node are present around node with color according to the pod status
@@ -66,11 +66,11 @@ Feature: Topology chart area
 
         @regression @manual
         Scenario: Visual for knative service with no revision: T-06-TC07
-            Given user is at the Topology page
-              And knative workload without revision is present in topology
+            Given user has created a knative service workload named "nodejs-knative" without revision
+              And user is at the Topology page
              When user checks nodes and the decorators associated with them
              Then user can view knative service are rectangular shaped with round corners
-              And user can see dotted boundary with text "No Revision" mentioned
+              And user can see dotted boundary with text "No Revisions" mentioned
               And knative sevice app can have application url on top-right of the node
               And user sees build decorator on bottom left on knative service app which will take user to build tab
               And user checks knative service having label "KSVC" and then the name of service
@@ -78,16 +78,15 @@ Feature: Topology chart area
 
         @regression @manual
         Scenario: Visual for knative service with revisions: T-06-TC08
-            Given user is at the Topology page
-              And knative workload with revison is present in topology
+            Given user has created a knative service workload named "nodejs-knative" with revision
+              And user is at the Topology page
              When user checks nodes and the decorators associated with them
              Then user can view knative service are rectangular shaped with round corners
               And user can see knative service app with dotted boundary with revision present inside it
               And knative sevice app can have application url on top-right of the node
               And user can see traffic distribution from knative sevice app to its revisions with its percentage number
               And pod ring associated with revisions are present around node with color according to the pod status
-              And knative revision can have application url on top-right of the node
-              And user sees edit source code decorator is on bottom right of the revision which can lead to github or che workspace
+              And user sees edit source code decorator is on bottom right of knative service which can lead to github or che workspace
               And user sees build decorator on bottom left on knative service app which will take user to either build tab
               And user checks revisions having label "REV" and then the name
               And user checks knative service having label "KSVC" and then the name of service
@@ -95,7 +94,7 @@ Feature: Topology chart area
 
         @smoke
         Scenario: Context menu of node: T-06-TC09
-            Given user has created a deployment workload "nodejs-ex-git3"
+            Given user has created a deployment workload named "nodejs-ex-git3"
               And user is at the Topology page
              When user right clicks on the node "nodejs-ex-git3" to open context menu
              Then user is able to see context menu options like Edit Application Grouping, Edit Pod Count, Pause Rollouts, Add Health Checks, Add Horizontal Pod Autoscaler, Add Storage, Edit Update Strategy, Edit Labels, Edit Annotations, Edit Deployment, Delete Deployment
@@ -105,6 +104,7 @@ Feature: Topology chart area
         Scenario: Zoom In to 50% in topology: T-06-TC10
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
+              And chart view is totally zoomed out
              When user clicks on Zoom In option to zoom to 50% scale
              Then user can see the chart area is zoomed
               And user can see all labels & decorators are hidden
@@ -115,6 +115,7 @@ Feature: Topology chart area
         Scenario: Zoom In to 30% in topology: T-06-TC11
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
+              And chart view is totally zoomed out
              When user clicks on Zoom In option to zoom to 30% scale
              Then user can see the chart area is zoomed
               And user can see all labels, decorators, pod rings & icons are hidden
@@ -122,7 +123,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Zoom Out in topology: T-06-TC11
+        Scenario: Zoom Out in topology: T-06-TC12
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user clicks on Zoom Out option
@@ -130,7 +131,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Fit to Screen in topology: T-06-TC12
+        Scenario: Fit to Screen in topology: T-06-TC13
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user clicks on Zoom In option
@@ -140,7 +141,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Reset view in topology: T-06-TC13
+        Scenario: Reset view in topology: T-06-TC14
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user clicks on Zoom In option
@@ -150,7 +151,7 @@ Feature: Topology chart area
 
 
         @regression
-        Scenario Outline: Topology filter by resource: T-06-TC14
+        Scenario Outline: Topology filter by resource: T-06-TC15
             Given user created "<resource_type>" workload
              When user is at Topology page chart view
               And user clicks the filter by resource on top
@@ -164,7 +165,7 @@ Feature: Topology chart area
 
 
         @regression
-        Scenario: Context menu on empty area: T-06-TC15
+        Scenario: Context menu on empty area: T-06-TC16
             Given user has installed OpenShift Serverless Operator
               And user has installed Crunchy Postgres for Kubernetes operator
               And user navigates to Topology Page
@@ -173,8 +174,8 @@ Feature: Topology chart area
              Then user is able to see options like Samples, Import from Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
 
 
-        @regression
-        Scenario: Add to Project in topology: T-06-TC16
+        @regression @broken-test
+        Scenario: Add to Project in topology: T-06-TC17
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user hovers on Add to Project
@@ -191,6 +192,7 @@ Feature: Topology chart area
               And user hovers on Add to Project and clicks on "Database"
               And user selects Postgres Database and clicks on Instantiate Template
               And user clicks on Create button
+    # Crunchy Postgres for Kubernetes operator not installing correctly, won't able to create a postgres.
               And user hovers on Add to Project and clicks on "Operator Backed"
               And user selects Postgres and clicks on Create
               And user fills the "Operator Backed" form with yaml at "test-data/postgres-operator-backed.yaml" and clicks Create
@@ -206,7 +208,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Upload JAR file form: T-06-TC17
+        Scenario: Upload JAR file form: T-06-TC18
             Given user has a jar file named "sample_yaml_upload.yaml"
               And user is at the Topology page
              When user drags and drop jar file on topology
@@ -214,11 +216,11 @@ Feature: Topology chart area
               And user can see JAR section with jar file name with Browse and Clear button associated with it
               And user can see Optional java commands, Runtime icon and Build image version under JAR section
               And user can see General section with Application name and Name under it
-              And user can see Resources and Advanced options sections
+              And user can see Advanced options section
 
 
         @regression @manual
-        Scenario: Drag and drop jar file in topology chart view: T-06-TC18
+        Scenario: Drag and drop jar file in topology chart view: T-06-TC19
             Given user has a jar file named "sample_yaml_upload.yaml"
               And user is at the Topology page
              When user drags and drop jar file on topology
@@ -230,7 +232,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Add to Project to upload JAR file in topology: T-06-TC19
+        Scenario: Add to Project to upload JAR file in topology: T-06-TC20
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user clicks on Add to Project
@@ -246,7 +248,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Add to Project through drag and drop to upload JAR file in topology: T-06-TC20
+        Scenario: Add to Project through drag and drop to upload JAR file in topology: T-06-TC21
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user clicks on Add to Project
@@ -260,7 +262,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Drag and drop Incompatible file in topology chart view: T-06-TC21
+        Scenario: Drag and drop Incompatible file in topology chart view: T-06-TC22
             Given user has a incompatible file
               And user is at the Topology chart view
              When user drags and drops the file on topology
@@ -268,7 +270,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Exiting the browser while an upload is in progress: T-06-TC22
+        Scenario: Exiting the browser while an upload is in progress: T-06-TC23
             Given user is uploading a jar file
               And user is at the Topology chart view
              When user tries to exist the browser
@@ -276,8 +278,9 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: View shortcuts menu: T-06-TC23
+        Scenario: View shortcuts menu: T-06-TC24
             Given user has uploaded a jar file
+              And user is at Topology page
              When user clicks on View shortcuts
              Then user sees shortcut for Move
               And user sees shortcut for Edit Application grouping
@@ -289,7 +292,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Display of External Bindable resources: T-06-TC24
+        Scenario: Display of External Bindable resources: T-06-TC25
             Given user has installed Service Binding operator
     #Please refer to test case KM-01-TC01 for creating kafka connection
               And user has created external bindable resource Kafka Connection "kafka-instance-123"
@@ -298,7 +301,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Connect to External Bindable resources: T-06-TC25
+        Scenario: Connect to External Bindable resources: T-06-TC26
             Given user has installed Service Binding operator
     #Please refer to test case KM-01-TC01 for creating kafka connection
               And user has created external bindable resource Kafka Connection "kafka-instance-123"
@@ -310,7 +313,7 @@ Feature: Topology chart area
 
 
         @regression @odc-6361
-        Scenario: Search with label: T-06-TC26
+        Scenario: Search with label: T-06-TC27
             Given user has created a deployment workload "nodejs-1"
               And user has created a deployment workload "nodejs-2"
               And user is at Topology page chart view
@@ -320,7 +323,7 @@ Feature: Topology chart area
 
 
         @regression @odc-6361
-        Scenario: Check last selected node in topology per project per session: T-06-TC27
+        Scenario: Check last selected node in topology per project per session: T-06-TC28
             Given user has created a deployment workload "nodejs-1"
               And user has created a deployment workload "nodejs-2"
               And user is at Topology page chart view
@@ -331,7 +334,7 @@ Feature: Topology chart area
 
 
         @regression @odc-5947
-        Scenario: Create Service Binding option in nodes actions menu: T-06-TC27
+        Scenario: Create Service Binding option in nodes actions menu: T-06-TC29
             Given user has installed Service Binding operator
               And user has created or selected namespace "binding-service"
               And user is at developer perspective
@@ -344,7 +347,7 @@ Feature: Topology chart area
 
 
         @regression @manual @odc-5947
-        Scenario: Bindable services options in Create Service Binding modal: T-06-TC28
+        Scenario: Bindable services options in Create Service Binding modal: T-06-TC30
             Given user has installed Service Binding operator
               And user is at Topology page chart view
               And user has created a deployment workload "node-js2"
@@ -360,7 +363,7 @@ Feature: Topology chart area
 
 
         @regression @manual @odc-5947
-        Scenario: Drag and drop connector to existing bindable resource: T-06-TC29
+        Scenario: Drag and drop connector to existing bindable resource: T-06-TC31
             Given user has installed Service Binding operator
               And user is at Topology page chart view
               And user has created a deployment workload "node-s"
@@ -374,7 +377,7 @@ Feature: Topology chart area
 
 
         @regression @manual @odc-5947
-        Scenario: Specify the name and the bindable object to connect to in Create Service Binding modal: T-06-TC30
+        Scenario: Specify the name and the bindable object to connect to in Create Service Binding modal: T-06-TC32
             Given user has installed Service Binding operator
               And user is at Topology page chart view
               And user has created a deployment workload "node-js"
@@ -390,7 +393,7 @@ Feature: Topology chart area
 
 
         @regression @manual @odc-5947
-        Scenario: Create connection to already existing service binding connection: T-06-TC31
+        Scenario: Create connection to already existing service binding connection: T-06-TC33
             Given user has installed Service Binding operator
               And user is at Topology page chart view
     #Please refer to test case KM-01-TC01 for creating kafka connection
@@ -403,7 +406,7 @@ Feature: Topology chart area
 
 
         @regression @odc-4944 @manual
-        Scenario: Status on Service binding in topology: T-06-TC32
+        Scenario: Status on Service binding in topology: T-06-TC34
             Given user has installed Service Binding operator
               And user has installed Redis Operator
               And user has installed Crunchy Postgres for Kubernetes operator
@@ -422,10 +425,11 @@ Feature: Topology chart area
               And user can see "Error" in Status section on service binding connnector topology sidebar
 
 
-        @regression @odc-4944
-        Scenario: Connected status on Service binding details page: T-06-TC33
+        @regression @odc-4944 @broken-test
+        Scenario: Connected status on Service binding details page: T-06-TC35
             Given user has created namespace "aut-connected-sb"
               And user has installed Service Binding operator
+    # Crunchy Postgres for Kubernetes operator not installing correctly
               And user has installed Crunchy Postgres for Kubernetes operator
               And user is at developer perspective
               And user is at Topology page chart view
@@ -438,15 +442,15 @@ Feature: Topology chart area
 
 
         @regression @odc-4944
-        Scenario: Error status on Service binding details page: T-06-TC34
+        Scenario: Error status on Service binding details page: T-06-TC36
             Given user has created namespace "aut-error-sb"
               And user has installed Service Binding operator
-              And user has installed Redis Operator
+              And user has installed Red Hat OpenShift distributed tracing platform
               And user is at developer perspective
               And user is at Topology page chart view
               And user has created a deployment workload named "node-ej"
-              And user has created a operator backed service of "Redis" operator named "redis-standalone-test"
-              And user has created service binding connnector "test-connector3" between "node-ej" and "redis-standalone-test"
+              And user has created a operator backed service of "Jaeger" operator named "jaeger-test"
+              And user has created service binding connnector "test-connector3" between "node-ej" and "jaeger-test"
              When user clicks on service binding connector
               And user clicks on the service binding name "test-connector3" at the sidebar
              Then user will see "Error" Status on Service binding details page

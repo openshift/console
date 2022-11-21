@@ -10,7 +10,7 @@ Feature: Workload Groupings in Topology
 
 
         @smoke
-        Scenario: Default state of Display dropdown: T-16-TC01
+        Scenario: Default state of Display dropdown: T-08-TC01
             Given user has created workload "nodejs-ex-git" with resource type "Deployment"
              When user clicks on the Display dropdown
              Then user will see the Expand is checked
@@ -18,7 +18,7 @@ Feature: Workload Groupings in Topology
 
 
         @regression
-        Scenario: Uncheck the Expand: T-16-TC03
+        Scenario: Uncheck the Expand: T-08-TC02
             Given user is at Topology page
              When user clicks on the Display dropdown
               And user unchecks the Expand
@@ -26,7 +26,7 @@ Feature: Workload Groupings in Topology
 
 
         @regression @manual
-        Scenario: Provide ability to hide and show Helm release groupings in Topology graph and list view: T-16-TC04
+        Scenario: Provide ability to hide and show Helm release groupings in Topology graph and list view: T-08-TC03
             Given user is at the Topology page
               And user is at the graph view
              When user clicks on the Display dropdown
@@ -36,7 +36,7 @@ Feature: Workload Groupings in Topology
 
 
         @regression @manual
-        Scenario: Provide ability to hide and show Knative Services groupings in Topology graph and list view: T-16-TC05
+        Scenario: Provide ability to hide and show Knative Services groupings in Topology graph and list view: T-08-TC04
             Given user is at the Topology page
               And user is at the graph view
              When user clicks on the Display dropdown
@@ -46,7 +46,7 @@ Feature: Workload Groupings in Topology
 
 
         @regression @manual
-        Scenario: Provide ability to hide and show Operator Groups groupings in Topology graph and list view: T-16-TC06
+        Scenario: Provide ability to hide and show Operator Groups groupings in Topology graph and list view: T-08-TC05
             Given user is at the Topology page
               And user is at the graph view
              When user clicks on the Display dropdown
@@ -56,12 +56,12 @@ Feature: Workload Groupings in Topology
 
 
         @regression @manual
-        Scenario: Display options menu in topology with defaut options: T-08-TC07
+        Scenario: Display options menu in topology with defaut options: T-08-TC06
             Given user has created deployment, deployment-config and knative-service resource type git workloads
              When user clicks on Display Options
               And user sees "Pod Count" and "Labels" under "Show" and "Expand" have options according to their presence which are "Application Groupings" and "knative Services"
               And user deselects "Labels" which is selected by default
-              And user sees the labels under the workloads have dissapeared
+              And user sees the labels under the workloads have disappeared
               And user hovers over application grouping the label appears
               And user selects "Pod Count" which is deselected by default
               And user checks the workloads which shows pod count instead of buider images

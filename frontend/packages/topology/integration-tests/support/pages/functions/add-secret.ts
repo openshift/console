@@ -19,7 +19,7 @@ export const addSecret = (
   editDeployment.saveSecret();
 };
 
-export const checkPodsText = (tries: number = 10) => {
+export const checkPodsText = (tries: number = 5) => {
   if (tries < 1) {
     return;
   }
@@ -34,7 +34,7 @@ export const checkPodsText = (tries: number = 10) => {
       cy.reload();
       app.waitForDocumentLoad();
       topologySidePane.selectTab('Details');
-      cy.wait(15000);
+      cy.wait(35000);
       checkPodsText(tries - 1);
     } else {
       cy.get(topologyPO.sidePane.podText, { timeout: 120000 }).should('have.text', '1Pod');
@@ -42,7 +42,7 @@ export const checkPodsText = (tries: number = 10) => {
   });
 };
 
-export const checkPodsCount = (tries: number = 10) => {
+export const checkPodsCount = (tries: number = 5) => {
   if (tries < 1) {
     return;
   }
@@ -51,7 +51,7 @@ export const checkPodsCount = (tries: number = 10) => {
     if ($body.find(hpaPO.nodeList).length === 0) {
       cy.reload();
       app.waitForDocumentLoad();
-      cy.wait(15000);
+      cy.wait(35000);
       checkPodsCount(tries - 1);
     } else {
       cy.log('Found');

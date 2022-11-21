@@ -24,12 +24,9 @@ export const verifyMultipleWorkloadInTopologyPage = (workloadNames: string[]) =>
 export const createWorkloadUsingOptions = (optionName: string, optionalData?: string) => {
   switch (optionName) {
     case 'Go Sample':
-      gitPage.verifyValidatedMessage(
-        'https://github.com/devfile-samples/devfile-sample-go-basic.git',
-      );
-      gitPage.enterComponentName('go-basic');
-      cy.wait(3000);
-      cy.get(chartAreaPO.submitButton).click();
+      cy.get(chartAreaPO.submitButton)
+        .should('be.enabled')
+        .click();
       break;
 
     case 'Import From Git':

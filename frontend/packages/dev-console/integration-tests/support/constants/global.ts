@@ -45,6 +45,7 @@ export enum operators {
   RedisOperator = 'Redis Operator',
   AMQStreams = 'AMQ Streams',
   RHOAS = 'RHOAS',
+  Jaeger = 'Red Hat OpenShift distributed tracing platform',
 }
 
 export enum authenticationType {

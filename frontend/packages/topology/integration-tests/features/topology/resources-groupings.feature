@@ -10,7 +10,7 @@ Feature: Resources Groupings in Topology
 
         @regression
         Scenario: Default state of Resources dropdown: T-03-TC01
-            Given user has created workload with resource type deployment
+            Given user has created a deployment workload named "node-ex"
               And user is at Topology page
              When user clicks on the Resources dropdown
              Then user sees that all the checkboxes are unchecked
@@ -140,10 +140,3 @@ Feature: Resources Groupings in Topology
               And user unchecks Stateful Set checkbox
              Then user will not see the workloads of Stateful Set resource types only
 
-
-        @regression @manual
-        Scenario: Ability to selects all resource types in Topology graph and list view: T-03-TC16
-            Given user is at Topology page
-             When user clicks on the Resources dropdown
-              And user clicks on the Select All button
-             Then user will see workloads of all resource types

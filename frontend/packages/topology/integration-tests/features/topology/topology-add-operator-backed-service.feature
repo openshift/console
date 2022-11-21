@@ -5,7 +5,7 @@ Feature: Create Operator backed service in topology page
 
         Background:
             Given user has installed OpenShift Serverless Operator
-              And user has installed Red Hat OpenShift Jaeger Operator
+              And user has installed Red Hat OpenShift distributed tracing platform
               And user has installed Service Binding Operator
               And user has installed PostgreSQL Operator provided by Red Hat
               And user is at developer perspective
@@ -23,12 +23,13 @@ Feature: Create Operator backed service in topology page
               And user clicks on the Jaeger card
               And user clicks on Create button on side bar
               And user clicks on Create button on Create Jaeger page
+              And user clicks on Create button on Create Service Binding module
              Then user will see visual connection between "hello-openshift" and Jaeger operator backed service
 
 
         @regression @manual
         Scenario: Create Operator Backed serivce using visual connector from existing knative service: T-04-TC02
-            Given user has created knative service "knative demo"
+            Given user has created knative service "knative demo" with revision present
              When user drags connector from "knative-demo" workload
               And user drops visual connector on empty graph
               And user clicks on Operator Backed option
@@ -36,6 +37,7 @@ Feature: Create Operator backed service in topology page
               And user clicks on the Jaeger card
               And user clicks on Create button on side bar
               And user clicks on Create button on Create Jaeger page
+              And user clicks on Create button on Create Service Binding module
              Then user will see visual connection between "knative-demo" and Jaeger operator backed service
 
 

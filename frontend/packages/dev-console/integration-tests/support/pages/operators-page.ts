@@ -191,6 +191,11 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.rhoas).click();
         break;
       }
+      case 'Jaeger':
+      case operators.Jaeger: {
+        cy.get(operatorsPO.operatorHub.jaeger).click();
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }

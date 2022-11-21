@@ -77,7 +77,7 @@ Feature: Provide quick search from topology/list views to add to project
         Scenario: Quick Add of Quick Starts in topology graph view: T-02-TC09
             Given user is at topology graph view
              When user clicks Add to project button
-              And user enters "monitor" in Add to project search bar
+              And user enters "monitor your sample application" in Add to project search bar
               And user selects Monitor your sample application option
               And user clicks on Start button
              Then Monitor your sample application quick start displays in the Topology
