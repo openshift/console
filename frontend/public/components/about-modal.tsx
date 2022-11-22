@@ -6,9 +6,18 @@ import {
   TextList,
   TextListItem,
 } from '@patternfly/react-core';
+import {
+  Table,
+  TableBody,
+  TableGridBreakpoint,
+  TableHeader,
+  TableVariant,
+} from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion, BlueArrowCircleUpIcon, useCanClusterUpgrade } from '@console/shared';
+import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
+import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
 import { getBrandingDetails } from './masthead';
 import {
   ReleaseNotesLink,
@@ -25,6 +34,47 @@ import {
   getOpenShiftVersion,
   hasAvailableUpdates,
 } from '../module/k8s/cluster-settings';
+
+const DynamicPlugins: React.FC = () => {
+  const { t } = useTranslation();
+  const [pluginInfoEntries] = useDynamicPluginInfo();
+  const [rows, setRows] = React.useState([]);
+
+  React.useEffect(() => {
+    const loadedPlugins = pluginInfoEntries.filter(isLoadedDynamicPluginInfo);
+    setRows(
+      loadedPlugins?.map((plugin) => {
+        return {
+          cells: [plugin.metadata.name, plugin.metadata.version],
+        };
+      }),
+    );
+  }, [pluginInfoEntries]);
+
+  const headers = [
+    {
+      title: t('public~Name'),
+    },
+    {
+      title: t('public~Version'),
+    },
+  ];
+
+  return rows.length > 0 ? (
+    <Table
+      aria-label={t('public~Dynamic Plugins table')}
+      cells={headers}
+      gridBreakPoint={TableGridBreakpoint.none}
+      rows={rows}
+      variant={TableVariant.compact}
+    >
+      <TableHeader />
+      <TableBody />
+    </Table>
+  ) : (
+    t('public~None')
+  );
+};
 
 const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
   const [kubernetesVersion, setKubernetesVersion] = React.useState('');
@@ -112,6 +162,11 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
               </TextListItem>
             </>
           </ServiceLevel>
+
+          <TextListItem component="dt">{t('public~Dynamic plugins')}</TextListItem>
+          <TextListItem component="dd">
+            <DynamicPlugins />
+          </TextListItem>
         </TextList>
       </TextContent>
     </>
