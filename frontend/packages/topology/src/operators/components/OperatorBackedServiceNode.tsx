@@ -33,7 +33,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   const { t } = useTranslation();
   return (
     <Tooltip
-      content={t('topology~Create Service Binding')}
+      content={canDrop && t('topology~Create Service Binding')}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}

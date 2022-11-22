@@ -1,7 +1,7 @@
 import { Node } from '@patternfly/react-topology';
-import * as _ from 'lodash';
 import { serviceBindingModal } from '@console/app/src/components/modals/service-binding';
 import {
+  groupVersionFor,
   k8sCreate,
   K8sResourceKind,
   modelFor,
@@ -22,8 +22,8 @@ export const createServiceBinding = (
 
   const targetName = target.metadata.name;
   const { namespace, name: sourceName } = source.metadata;
-  const sourceGroup = _.split(source.apiVersion, '/');
-  const targetGroup = _.split(target.apiVersion, '/');
+  const { group: sourceGroup, version: sourceVersion } = groupVersionFor(source.apiVersion);
+  const { group: targetGroup, version: targetVersion } = groupVersionFor(target.apiVersion);
 
   const serviceBinding = {
     apiVersion: apiVersionForModel(ServiceBindingModel),
@@ -35,14 +35,14 @@ export const createServiceBinding = (
     spec: {
       application: {
         name: sourceName,
-        group: sourceGroup[0],
-        version: sourceGroup[1],
+        group: sourceGroup,
+        version: sourceVersion,
         resource: modelFor(referenceFor(source)).plural,
       },
       services: [
         {
-          group: targetGroup[0],
-          version: targetGroup[1],
+          group: targetGroup,
+          version: targetVersion,
           kind: target.kind,
           name: targetName,
         },
@@ -66,8 +66,7 @@ const createServiceBindingConnection = (source: Node, target: Node) => {
 
 export const getCreateConnector = (createHints: string[], source: Node, target: Node) => {
   if (
-    createHints &&
-    createHints.includes('createServiceBinding') &&
+    createHints?.includes('createServiceBinding') &&
     target.getType() === TYPE_OPERATOR_BACKED_SERVICE
   ) {
     return createServiceBindingConnection;
