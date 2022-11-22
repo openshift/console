@@ -40,12 +40,12 @@ import { quayURLFor } from './summary';
 import './image-manifest-vuln.scss';
 
 const shortenImage = (img: string) =>
-  img
+  (img ?? '')
     .replace('@sha256', '')
     .split('/')
     .slice(1, 3)
     .join('/');
-const shortenHash = (hash: string) => hash.slice(7, 18);
+const shortenHash = (hash: string): string => (hash ?? '').slice(7, 18);
 export const totalCount = (obj: ImageManifestVuln) => {
   if (!obj.status) return 0;
   const { highCount = 0, mediumCount = 0, lowCount = 0, unknownCount = 0 } = obj.status;
@@ -127,9 +127,11 @@ export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPage
     <DetailsPage
       match={props.match}
       kindObj={ImageManifestVulnModel}
-      titleFunc={(obj: ImageManifestVuln) =>
-        !_.isEmpty(obj) ? `${shortenImage(obj.spec.image)}@${shortenHash(obj.spec.manifest)}` : null
-      }
+      titleFunc={(obj: ImageManifestVuln) => {
+        const image = shortenImage(obj?.spec?.image);
+        const hash = obj?.spec?.manifest ? `@${shortenHash(obj.spec.manifest)}` : '';
+        return image ? `${image}${hash}` : null;
+      }}
       name={props.match.params.name}
       namespace={props.match.params.ns}
       kind={referenceForModel(ImageManifestVulnModel)}
