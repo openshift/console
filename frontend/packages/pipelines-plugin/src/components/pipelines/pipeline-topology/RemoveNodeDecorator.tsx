@@ -30,7 +30,7 @@ const RemoveNodeDecorator: React.FC<RemoveNodeDecoratorProps> = ({
       data-id="delete-task"
     >
       <circle cx={0} cy={0} r={BUILDER_NODE_DECORATOR_RADIUS} fill={greyColor.value} />
-      <g transform="translate(-5, -7)">
+      <g transform="translate(-5, -9)">
         <foreignObject
           width={BUILDER_NODE_DECORATOR_RADIUS * 2}
           height={BUILDER_NODE_DECORATOR_RADIUS * 2}
