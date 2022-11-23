@@ -407,7 +407,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
         {columnLayout?.id && !hideColumnManagement && (
           <ToolbarGroup>
             <ToolbarItem>
-              <Tooltip content={t('public~Manage columns')}>
+              <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
                 <Button
                   variant="plain"
                   onClick={() =>
