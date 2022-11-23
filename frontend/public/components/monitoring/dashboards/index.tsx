@@ -26,6 +26,8 @@ import { Link } from 'react-router-dom';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
+import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
 
 import {
   DashboardsClearVariables,
@@ -69,6 +71,7 @@ import {
   getActivePerspective,
   getAllVariables,
 } from './monitoring-dashboard-utils';
+import { PROMETHEUS_BASE_PATH } from '../utils';
 
 const intervalVariableRegExps = ['__interval', '__rate_interval', '__auto_interval_[a-z]+'];
 
@@ -200,6 +203,7 @@ const VariableOption = ({ itemKey }) =>
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   const activePerspective = getActivePerspective(namespace);
 
   const timespan = useSelector(({ observe }: RootState) =>
@@ -220,27 +224,41 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
 
   React.useEffect(() => {
     if (query) {
-      // Convert label_values queries to something Prometheus can handle
-      // TODO: Once the Prometheus /series endpoint is available through the API proxy, this should
-      // be converted to use that instead
-      const prometheusQuery = query.replace(/label_values\((.*), (.*)\)/, 'count($1) by ($2)');
+      const labelValuesMatch = query.match(/label_values\((.*), (.*)\)/);
 
-      const url = getPrometheusURL({
-        endpoint: PrometheusEndpoint.QUERY_RANGE,
-        query: prometheusQuery,
-        samples: DEFAULT_GRAPH_SAMPLES,
-        timeout: '60s',
-        timespan,
-        namespace,
-      });
+      if (labelValuesMatch.length < 3) {
+        return;
+      }
+
+      const labelMatchers = labelValuesMatch[1];
+      const label = labelValuesMatch[2];
+      const isClusterQuery = label === 'cluster';
+      const labelValuesURL = namespace
+        ? getPrometheusURL({
+            endpoint: PrometheusEndpoint.QUERY,
+            namespace,
+            query: `count(${labelMatchers}) by (${label})`,
+          })
+        : `${PROMETHEUS_BASE_PATH}/${PrometheusEndpoint.LABEL}/${label}/values`;
 
       dispatch(dashboardsPatchVariable(name, { isLoading: true }, activePerspective));
 
-      safeFetch(url)
-        .then(({ data }) => {
+      safeFetch(labelValuesURL)
+        .then((response) => {
           setIsError(false);
-          const newOptions = _.flatMap(data?.result, ({ metric }) => _.values(metric)).sort();
-          dispatch(dashboardsVariableOptionsLoaded(name, newOptions, activePerspective));
+          let labelValues = namespace
+            ? _.map(_.get(response, 'data.result'), `metric.${label}`)
+            : _.get(response, 'data');
+
+          /**
+           * If is a multi-cluster environment and no cluster list was returned
+           * use the current cluster id for filtering to avoid empty dashboards
+           */
+          if (isClusterQuery && isMultiClusterEnabled() && labelValues.length === 0) {
+            labelValues = [cluster];
+          }
+
+          dispatch(dashboardsVariableOptionsLoaded(name, labelValues.sort(), activePerspective));
         })
         .catch((err) => {
           dispatch(dashboardsPatchVariable(name, { isLoading: false }, activePerspective));
@@ -249,7 +267,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
           }
         });
     }
-  }, [activePerspective, dispatch, name, namespace, query, safeFetch, timespan]);
+  }, [activePerspective, cluster, dispatch, name, namespace, query, safeFetch, timespan]);
 
   React.useEffect(() => {
     if (variable.value && variable.value !== getQueryArgument(name)) {
