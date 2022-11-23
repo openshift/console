@@ -23,12 +23,12 @@ const useInlineExecuteCommandShowdownExtension = () => {
         if (!group || !subGroup || !groupType || !groupId) return text;
         return removeTemplateWhitespace(
           `<span class="pf-c-clipboard-copy pf-m-inline">
-              <span class="pf-c-clipboard-copy__text" ${MARKDOWN_SNIPPET_ID}="${groupType}">${group}</span>
+              <span class="pf-c-clipboard-copy__text" ${MARKDOWN_SNIPPET_ID}="${groupId}">${group.trim()}</span>
               <span class="pf-c-clipboard-copy__actions">
                 <span class="pf-c-clipboard-copy__actions-item">
                   <button class="pf-c-button pf-m-plain" aria-label="${t(
                     'console-shared~Copy to clipboard',
-                  )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupType}">
+                  )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupId}">
                     <i class="fas fa-copy" aria-hidden="true"></i>
                   </button>
                 </span>
@@ -37,7 +37,7 @@ const useInlineExecuteCommandShowdownExtension = () => {
                     ? `<span class="pf-c-clipboard-copy__actions-item ocs-markdown-execute-snippet__action">
                     <button class="pf-c-button pf-m-plain ocs-markdown-execute-snippet__button" aria-label="${t(
                       'console-shared~Run in Web Terminal',
-                    )}" ${MARKDOWN_EXECUTE_BUTTON_ID}="${groupType}">
+                    )}" ${MARKDOWN_EXECUTE_BUTTON_ID}="${groupId}">
                       <i class="fas fa-play" aria-hidden="true"></i>
                       <i class="fas fa-check" aria-hidden="true"></i>
                     </button>

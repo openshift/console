@@ -26,7 +26,7 @@ const useMultilineExecuteCommandShowdownExtension = () => {
                   <div class="pf-c-code-block__actions-item">
                     <button class="pf-c-button pf-m-plain" type="button" aria-label="${t(
                       'console-shared~Copy to clipboard',
-                    )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupType}">
+                    )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupId}">
                       <i class="fas fa-copy" aria-hidden="true"></i>
                     </button>
                   </div>
@@ -35,7 +35,7 @@ const useMultilineExecuteCommandShowdownExtension = () => {
                       ? `<div class="pf-c-code-block__actions-item ocs-markdown-execute-snippet__action">
                       <button class="pf-c-button pf-m-plain ocs-markdown-execute-snippet__button" type="button" aria-label="${t(
                         'console-shared~Run in Web Terminal',
-                      )}" ${MARKDOWN_EXECUTE_BUTTON_ID}="${groupType}">
+                      )}" ${MARKDOWN_EXECUTE_BUTTON_ID}="${groupId}">
                         <i class="fas fa-play" aria-hidden="true"></i>
                         <i class="fas fa-check" aria-hidden="true"></i>
                       </button>
@@ -47,7 +47,7 @@ const useMultilineExecuteCommandShowdownExtension = () => {
               <div class="pf-c-code-block__content">
                 <pre class="pf-c-code-block__pre pfext-code-block__pre">
                   <code class="pf-c-code-block__code" 
-                    ${MARKDOWN_SNIPPET_ID}="${groupType}">${group}</code>
+                    ${MARKDOWN_SNIPPET_ID}="${groupId}">${group.trim()}</code>
                 </pre>
               </div>
             </div>`;
