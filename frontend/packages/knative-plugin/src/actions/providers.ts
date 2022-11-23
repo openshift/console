@@ -16,6 +16,7 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { MoveConnectorAction } from '@console/topology/src/actions/edgeActions';
 import { getModifyApplicationAction } from '@console/topology/src/actions/modify-application';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
+import { useKnativeEventingEnabled } from '../catalog/useEventSourceProvider';
 import { EVENT_SINK_CATALOG_TYPE_ID, EVENT_SOURCE_CATALOG_TYPE_ID } from '../const';
 import { RevisionModel, EventingBrokerModel, ServiceModel } from '../models';
 import {
@@ -151,6 +152,7 @@ export const useTopologyActionsProvider = ({
 }) => {
   const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
   const isEventSourceTypeEnabled = isCatalogTypeEnabled(EVENT_SOURCE_CATALOG_TYPE_ID);
+  const isEventingEnabled = useKnativeEventingEnabled();
 
   const [namespace] = useActiveNamespace();
   const actions = React.useMemo(() => {
@@ -161,14 +163,16 @@ export const useTopologyActionsProvider = ({
       }
       const path = application ? 'add-to-application' : 'add-to-project';
       const addActions: Action[] = [];
-      if (isEventSinkTypeEnabled) {
+      if (isEventSinkTypeEnabled && isEventingEnabled) {
         addActions.push(AddEventSinkAction(namespace, application, undefined, path));
       }
-      if (isEventSourceTypeEnabled) {
+      if (isEventSourceTypeEnabled && isEventingEnabled) {
         addActions.push(AddEventSourceAction(namespace, application, undefined, path));
       }
-      addActions.push(AddChannelAction(namespace, application, path));
-      addActions.push(AddBrokerAction(namespace, application, path));
+      if (isEventingEnabled) {
+        addActions.push(AddChannelAction(namespace, application, path));
+        addActions.push(AddBrokerAction(namespace, application, path));
+      }
       return addActions.filter(disabledActionsFilter);
     }
 
@@ -219,7 +223,14 @@ export const useTopologyActionsProvider = ({
       default:
         return [];
     }
-  }, [connectorSource, element, isEventSinkTypeEnabled, isEventSourceTypeEnabled, namespace]);
+  }, [
+    connectorSource,
+    element,
+    isEventSinkTypeEnabled,
+    isEventSourceTypeEnabled,
+    isEventingEnabled,
+    namespace,
+  ]);
   return [actions, true, undefined];
 };
 
