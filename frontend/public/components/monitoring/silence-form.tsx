@@ -62,7 +62,7 @@ const DatetimeTextInput = (props) => {
         <TextInput
           {...props}
           aria-label={t('public~Datetime')}
-          data-test-id="datetime"
+          data-test-id="silence-datetime"
           validated={isValid || !!props.isDisabled ? 'default' : 'error'}
           pattern={pattern}
           placeholder="YYYY/MM/DD hh:mm:ss"
@@ -246,10 +246,10 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               <div className="form-group col-sm-4 col-md-5">
                 <label>{t('public~Silence alert from...')}</label>
                 {isStartNow ? (
-                  <DatetimeTextInput isDisabled data-test="from" value={t('public~Now')} />
+                  <DatetimeTextInput isDisabled data-test="silence-from" value={t('public~Now')} />
                 ) : (
                   <DatetimeTextInput
-                    data-test="from"
+                    data-test="silence-from"
                     isRequired
                     onChange={(v: string) => setStartsAt(v)}
                     value={startsAt}
@@ -260,25 +260,29 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 <label>{t('public~For...')}</label>
                 <Dropdown
                   className="dropdown--full-width"
-                  data-test="for"
+                  data-test="silence-for"
                   dropdownItems={dropdownItems}
                   isOpen={isOpen}
                   onSelect={setClosed}
-                  toggle={<DropdownToggle onToggle={setIsOpen}>{duration}</DropdownToggle>}
+                  toggle={
+                    <DropdownToggle data-test="silence-for-toggle" onToggle={setIsOpen}>
+                      {duration}
+                    </DropdownToggle>
+                  }
                 />
               </div>
               <div className="form-group col-sm-4 col-md-5">
                 <label>{t('public~Until...')}</label>
                 {duration === durationOff ? (
                   <DatetimeTextInput
-                    data-test="until"
+                    data-test="silence-until"
                     isRequired
                     onChange={(v: string) => setEndsAt(v)}
                     value={endsAt}
                   />
                 ) : (
                   <DatetimeTextInput
-                    data-test="until"
+                    data-test="silence-until"
                     isDisabled
                     value={
                       isStartNow
@@ -292,7 +296,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
             <div className="form-group">
               <label>
                 <input
-                  data-test="start-immediately"
+                  data-test="silence-start-immediately"
                   checked={isStartNow}
                   onChange={(e) => setIsStartNow(e.currentTarget.checked)}
                   type="checkbox"

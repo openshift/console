@@ -25,6 +25,11 @@ import {
   CodeBlock,
   CodeBlockCode,
   Label,
+  Dropdown,
+  DropdownItem,
+  DropdownPosition,
+  DropdownToggle,
+  KebabToggle,
   Popover,
   Toolbar,
   ToolbarContent,
@@ -82,7 +87,6 @@ import { FilterToolbar } from '../filter-toolbar';
 import { getPrometheusURL } from '../graphs/helpers';
 import { confirmModal } from '../modals';
 import { refreshNotificationPollers } from '../notification-drawer';
-import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import { ActionButtons, BreadCrumbs, SectionHeading } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
@@ -92,6 +96,7 @@ import { LoadingInline, StatusBox } from '../utils/status-box';
 import { AlertmanagerConfigWrapper } from './alert-manager-config';
 import { AlertmanagerYAMLEditorWrapper } from './alert-manager-yaml-editor';
 import MonitoringDashboardsPage from './dashboards';
+import { useBoolean } from './hooks/useBoolean';
 import { Labels } from './labels';
 import { QueryBrowserPage, ToggleGraph } from './metrics';
 import { FormatSeriesTitle, QueryBrowser } from './query-browser';
@@ -127,35 +132,6 @@ const viewAlertRule = (alert: Alert) => ({
   label: i18next.t('public~View alerting rule'),
   href: ruleURL(alert.rule),
 });
-
-const editSilence = (silence: Silence) => ({
-  label:
-    silenceState(silence) === SilenceStates.Expired
-      ? i18next.t('public~Recreate silence')
-      : i18next.t('public~Edit silence'),
-  href: `${SilenceResource.plural}/${silence.id}/edit`,
-});
-
-const cancelSilence = (silence: Silence) => ({
-  label: i18next.t('public~Expire silence'),
-  callback: () =>
-    confirmModal({
-      title: i18next.t('public~Expire silence'),
-      message: i18next.t('public~Are you sure you want to expire this silence?'),
-      btnText: i18next.t('public~Expire silence'),
-      executeFn: () =>
-        consoleFetchJSON
-          .delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silence.id}`)
-          .then(() => refreshNotificationPollers()),
-    }),
-});
-
-const silenceMenuActions = (silence: Silence) =>
-  silenceState(silence) === SilenceStates.Expired
-    ? [editSilence(silence)]
-    : [editSilence(silence), cancelSilence(silence)];
-
-const SilenceKebab = ({ silence }) => <Kebab options={silenceMenuActions(silence)} />;
 
 const MonitoringResourceIcon: React.FC<MonitoringResourceIconProps> = ({ className, resource }) => (
   <span
@@ -549,7 +525,7 @@ const SilenceTableRow: React.FC<RowFunctionArgs<Silence>> = ({ obj }) => {
       </TableData>
       <TableData className={tableSilenceClasses[3]}>{createdBy || '-'}</TableData>
       <TableData className={tableSilenceClasses[4]}>
-        <SilenceKebab silence={obj} />
+        <SilenceDropdownKebab silence={obj} />
       </TableData>
     </>
   );
@@ -1150,6 +1126,76 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
 };
 export const AlertRulesDetailsPage = withFallback(AlertRulesDetailsPage_);
 
+const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
+  className,
+  isPlain,
+  silence,
+  Toggle,
+}) => {
+  const { t } = useTranslation();
+
+  const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
+
+  const editSilence = () => {
+    history.push(`${SilenceResource.plural}/${silence.id}/edit`);
+  };
+
+  const cancelSilence = () => {
+    confirmModal({
+      btnText: t('public~Expire silence'),
+      executeFn: () =>
+        consoleFetchJSON
+          .delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silence.id}`)
+          .then(() => refreshNotificationPollers()),
+      message: t('public~Are you sure you want to expire this silence?'),
+      title: t('public~Expire silence'),
+    });
+  };
+
+  const dropdownItems =
+    silenceState(silence) === SilenceStates.Expired
+      ? [
+          <DropdownItem key="edit-silence" component="button" onClick={editSilence}>
+            {t('public~Recreate silence')}
+          </DropdownItem>,
+        ]
+      : [
+          <DropdownItem key="edit-silence" component="button" onClick={editSilence}>
+            {t('public~Edit silence')}
+          </DropdownItem>,
+          <DropdownItem key="cancel-silence" component="button" onClick={cancelSilence}>
+            {t('public~Expire silence')}
+          </DropdownItem>,
+        ];
+
+  return (
+    <Dropdown
+      className={className}
+      data-test="silence-actions"
+      dropdownItems={dropdownItems}
+      isOpen={isOpen}
+      isPlain={isPlain}
+      onSelect={setClosed}
+      position={DropdownPosition.right}
+      toggle={<Toggle onToggle={setIsOpen} />}
+    />
+  );
+};
+
+const SilenceDropdownKebab: React.FC<{ silence: Silence }> = ({ silence }) => (
+  <SilenceDropdown isPlain silence={silence} Toggle={KebabToggle} />
+);
+
+const ActionsToggle: React.FC<{ onToggle: OnToggle }> = ({ onToggle, ...props }) => (
+  <DropdownToggle data-test="silence-actions-toggle" onToggle={onToggle} {...props}>
+    Actions
+  </DropdownToggle>
+);
+
+const SilenceDropdownActions: React.FC<{ silence: Silence }> = ({ silence }) => (
+  <SilenceDropdown className="co-actions-menu" silence={silence} Toggle={ActionsToggle} />
+);
+
 const SilencedAlertsList = ({ alerts }) => {
   const { t } = useTranslation();
 
@@ -1236,7 +1282,7 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               {silence?.name}
             </div>
             <div className="co-actions" data-test-id="details-actions">
-              {silence && <ActionsMenu actions={silenceMenuActions(silence)} />}
+              {silence && <SilenceDropdownActions silence={silence} />}
             </div>
           </h1>
         </div>
@@ -1971,4 +2017,13 @@ type GraphProps = {
 type MonitoringResourceIconProps = {
   className?: string;
   resource: MonitoringResource;
+};
+
+type OnToggle = (value: boolean, e: MouseEvent) => void;
+
+type SilenceDropdownProps = {
+  className?: string;
+  isPlain?: boolean;
+  silence: Silence;
+  Toggle: React.FC<{ onToggle: OnToggle }>;
 };
