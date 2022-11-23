@@ -4,6 +4,7 @@ import { getCommonResourceActions } from '@console/app/src/actions/creators/comm
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
 import { disabledActionsFilter } from '@console/dev-console/src/actions/add-resources';
+import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { Action } from '@console/dynamic-plugin-sdk';
 import {
   K8sResourceKind,
@@ -17,7 +18,14 @@ import { MoveConnectorAction } from '@console/topology/src/actions/edgeActions';
 import { getModifyApplicationAction } from '@console/topology/src/actions/modify-application';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import { useKnativeEventingEnabled } from '../catalog/useEventSourceProvider';
-import { EVENT_SINK_CATALOG_TYPE_ID, EVENT_SOURCE_CATALOG_TYPE_ID } from '../const';
+import {
+  EVENTING_BROKER_ACTION_ID,
+  EVENTING_CHANNEL_ACTION_ID,
+  EVENT_SINK_ACTION_ID,
+  EVENT_SINK_CATALOG_TYPE_ID,
+  EVENT_SOURCE_ACTION_ID,
+  EVENT_SOURCE_CATALOG_TYPE_ID,
+} from '../const';
 import { RevisionModel, EventingBrokerModel, ServiceModel } from '../models';
 import {
   TYPE_EVENT_SOURCE,
@@ -143,6 +151,16 @@ export const useChannelActionProvider = (resource: K8sResourceKind) => {
   return [actions, !inFlight, undefined];
 };
 
+const getEventingEnabledAddAction = () => {
+  const disabledAddActions = getDisabledAddActions();
+  return {
+    isEventSourceAddEnabled: !disabledAddActions?.includes(EVENT_SOURCE_ACTION_ID),
+    isEventSinkAddEnabled: !disabledAddActions?.includes(EVENT_SINK_ACTION_ID),
+    isChannelAddEnabled: !disabledAddActions?.includes(EVENTING_CHANNEL_ACTION_ID),
+    isBrokerAddEnabled: !disabledAddActions?.includes(EVENTING_BROKER_ACTION_ID),
+  };
+};
+
 export const useTopologyActionsProvider = ({
   element,
   connectorSource,
@@ -153,6 +171,12 @@ export const useTopologyActionsProvider = ({
   const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
   const isEventSourceTypeEnabled = isCatalogTypeEnabled(EVENT_SOURCE_CATALOG_TYPE_ID);
   const isEventingEnabled = useKnativeEventingEnabled();
+  const {
+    isEventSourceAddEnabled,
+    isEventSinkAddEnabled,
+    isChannelAddEnabled,
+    isBrokerAddEnabled,
+  } = getEventingEnabledAddAction();
 
   const [namespace] = useActiveNamespace();
   const actions = React.useMemo(() => {
@@ -163,14 +187,16 @@ export const useTopologyActionsProvider = ({
       }
       const path = application ? 'add-to-application' : 'add-to-project';
       const addActions: Action[] = [];
-      if (isEventSinkTypeEnabled && isEventingEnabled) {
+      if (isEventSinkAddEnabled && isEventSinkTypeEnabled && isEventingEnabled) {
         addActions.push(AddEventSinkAction(namespace, application, undefined, path));
       }
-      if (isEventSourceTypeEnabled && isEventingEnabled) {
+      if (isEventSourceAddEnabled && isEventSourceTypeEnabled && isEventingEnabled) {
         addActions.push(AddEventSourceAction(namespace, application, undefined, path));
       }
-      if (isEventingEnabled) {
+      if (isEventingEnabled && isChannelAddEnabled) {
         addActions.push(AddChannelAction(namespace, application, path));
+      }
+      if (isEventingEnabled && isBrokerAddEnabled) {
         addActions.push(AddBrokerAction(namespace, application, path));
       }
       return addActions.filter(disabledActionsFilter);
@@ -226,7 +252,11 @@ export const useTopologyActionsProvider = ({
   }, [
     connectorSource,
     element,
+    isBrokerAddEnabled,
+    isChannelAddEnabled,
+    isEventSinkAddEnabled,
     isEventSinkTypeEnabled,
+    isEventSourceAddEnabled,
     isEventSourceTypeEnabled,
     isEventingEnabled,
     namespace,
