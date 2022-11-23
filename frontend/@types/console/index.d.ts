@@ -57,6 +57,7 @@ declare interface Window {
     controlPlaneTopology: string;
     telemetry: Record<string, string>;
     nodeArchitectures: string[];
+    hubConsoleURL: string;
   };
   windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
