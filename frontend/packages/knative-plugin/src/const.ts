@@ -46,3 +46,7 @@ export const EVENT_SOURCE_CATALOG_TYPE_ID = 'EventSource';
 export const EVENT_SINK_CATALOG_TYPE_ID = 'EventSink';
 export const FLAG_EVENT_SOURCE_PING = 'FLAG_EVENT_SOURCE_PING';
 export const FLAG_KNATIVE_EVENTING_ENABLED = 'FLAG_KNATIVE_EVENTING_ENABLED';
+export const EVENT_SOURCE_ACTION_ID = 'knative-event-source';
+export const EVENT_SINK_ACTION_ID = 'knative-event-sink';
+export const EVENTING_CHANNEL_ACTION_ID = 'knative-eventing-channel';
+export const EVENTING_BROKER_ACTION_ID = 'knative-eventing-broker';
