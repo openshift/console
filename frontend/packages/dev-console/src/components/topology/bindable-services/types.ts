@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceCommon } from '@console/internal/module/k8s';
 
 export type BindableServiceGVK = {
   group: string;
@@ -6,9 +6,6 @@ export type BindableServiceGVK = {
   kind: string;
 };
 
-export type BindableServicesKind = {
-  metadata: {
-    name: string;
-  };
+export type BindableServicesKind = K8sResourceCommon & {
   status: BindableServiceGVK[];
-} & K8sResourceKind;
+};
