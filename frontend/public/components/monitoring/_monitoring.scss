@@ -79,6 +79,10 @@
   }
 }
 
+.monitoring-breadcrumbs {
+  padding-bottom: var(--pf-global--spacer--sm);
+}
+
 .monitoring-dashboards__card {
   height: calc(100% - 20px);
   margin: 0 0 20px 0;

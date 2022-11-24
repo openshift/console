@@ -21,6 +21,8 @@ import {
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
   Alert as PFAlert,
+  Breadcrumb,
+  BreadcrumbItem,
   Button,
   CodeBlock,
   CodeBlockCode,
@@ -88,7 +90,7 @@ import { getPrometheusURL } from '../graphs/helpers';
 import { confirmModal } from '../modals';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { Firehose } from '../utils/firehose';
-import { ActionButtons, BreadCrumbs, SectionHeading } from '../utils/headings';
+import { ActionButtons, SectionHeading } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
 import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { history } from '../utils/router';
@@ -691,15 +693,17 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
         loadError={alerts?.loadError}
       >
         <div className="pf-c-page__main-breadcrumb">
-          <BreadCrumbs
-            breadcrumbs={[
-              {
-                name: t('public~Alerts'),
-                path: namespace ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alerts',
-              },
-              { name: t('public~Alert details'), path: undefined },
-            ]}
-          />
+          <Breadcrumb className="monitoring-breadcrumbs">
+            <BreadcrumbItem>
+              <Link
+                className="pf-c-breadcrumb__link"
+                to={namespace ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alerts'}
+              >
+                {t('public~Alerts')}
+              </Link>
+            </BreadcrumbItem>
+            <BreadcrumbItem isActive>{t('public~Alert details')}</BreadcrumbItem>
+          </Breadcrumb>
         </div>
         <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
           <h1 className="co-m-pane__heading">
@@ -976,17 +980,17 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
       </Helmet>
       <StatusBox data={rule} label={RuleResource.label} loaded={loaded} loadError={loadError}>
         <div className="pf-c-page__main-breadcrumb">
-          <BreadCrumbs
-            breadcrumbs={[
-              {
-                name: namespace ? t('public~Alerts') : t('public~Alerting rules'),
-                path: namespace
-                  ? `/dev-monitoring/ns/${namespace}/alerts`
-                  : '/monitoring/alertrules',
-              },
-              { name: t('public~Alerting rule details'), path: undefined },
-            ]}
-          />
+          <Breadcrumb className="monitoring-breadcrumbs">
+            <BreadcrumbItem>
+              <Link
+                className="pf-c-breadcrumb__link"
+                to={namespace ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alertrules'}
+              >
+                {namespace ? t('public~Alerts') : t('public~Alerting rules')}
+              </Link>
+            </BreadcrumbItem>
+            <BreadcrumbItem isActive>{t('public~Alerting rule details')}</BreadcrumbItem>
+          </Breadcrumb>
         </div>
         <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
           <h1 className="co-m-pane__heading">
@@ -1259,18 +1263,21 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
         loadError={silences?.loadError}
       >
         <div className="pf-c-page__main-breadcrumb">
-          <BreadCrumbs
-            breadcrumbs={[
-              {
-                name: perspective === 'dev' ? t('public~Alerts') : t('public~Silences'),
-                path:
+          <Breadcrumb className="monitoring-breadcrumbs">
+            <BreadcrumbItem>
+              <Link
+                className="pf-c-breadcrumb__link"
+                to={
                   perspective === 'dev'
                     ? `/dev-monitoring/ns/${namespace}/alerts`
-                    : '/monitoring/silences',
-              },
-              { name: t('public~Silence details'), path: undefined },
-            ]}
-          />
+                    : '/monitoring/silences'
+                }
+              >
+                {perspective === 'dev' ? t('public~Alerts') : t('public~Silences')}
+              </Link>
+            </BreadcrumbItem>
+            <BreadcrumbItem isActive>{t('public~Silence details')}</BreadcrumbItem>
+          </Breadcrumb>
         </div>
         <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
           <h1 className="co-m-pane__heading">
@@ -1856,6 +1863,23 @@ const Tab: React.FC<{ active: boolean; children: React.ReactNode }> = ({ active,
   </li>
 );
 
+const AlertmanagerConfigBreadcrumbs = () => {
+  const breadcrumbs = breadcrumbsForGlobalConfig('Alertmanager', '/monitoring/alertmanagerconfig');
+
+  return (
+    <div className="pf-c-page__main-breadcrumb">
+      <Breadcrumb className="monitoring-breadcrumbs">
+        <BreadcrumbItem>
+          <Link className="pf-c-breadcrumb__link" to={breadcrumbs[0].path}>
+            {breadcrumbs[0].name}
+          </Link>
+        </BreadcrumbItem>
+        <BreadcrumbItem isActive>{breadcrumbs[1].name}</BreadcrumbItem>
+      </Breadcrumb>
+    </div>
+  );
+};
+
 const AlertingPage: React.FC<{ match: any }> = ({ match }) => {
   const { t } = useTranslation();
 
@@ -1870,16 +1894,7 @@ const AlertingPage: React.FC<{ match: any }> = ({ match }) => {
 
   return (
     <>
-      {isAlertmanager && (
-        <div className="pf-c-page__main-breadcrumb">
-          <BreadCrumbs
-            breadcrumbs={breadcrumbsForGlobalConfig(
-              'Alertmanager',
-              '/monitoring/alertmanagerconfig',
-            )}
-          />
-        </div>
-      )}
+      {isAlertmanager && <AlertmanagerConfigBreadcrumbs />}
       <div
         className={classNames('co-m-nav-title', 'co-m-nav-title--detail', {
           'co-m-nav-title--breadcrumbs': isAlertmanager,
