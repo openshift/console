@@ -90,7 +90,7 @@ import { getPrometheusURL } from '../graphs/helpers';
 import { confirmModal } from '../modals';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { Firehose } from '../utils/firehose';
-import { ActionButtons, SectionHeading } from '../utils/headings';
+import { SectionHeading } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
 import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { history } from '../utils/router';
@@ -681,6 +681,8 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   // eslint-disable-next-line camelcase
   const runbookURL = alert?.annotations?.runbook_url;
 
+  const actionButton = silenceAlert(alert);
+
   return (
     <>
       <Helmet>
@@ -713,8 +715,14 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               <SeverityBadge severity={labels?.severity} />
             </div>
             {state !== AlertStates.Silenced && (
-              <div className="co-actions" data-test-id="details-actions">
-                <ActionButtons actionButtons={[silenceAlert(alert)]} />
+              <div data-test-id="details-actions">
+                <Button
+                  className="co-action-buttons__btn"
+                  onClick={actionButton.callback}
+                  variant="primary"
+                >
+                  {actionButton.label}
+                </Button>
               </div>
             )}
           </h1>
