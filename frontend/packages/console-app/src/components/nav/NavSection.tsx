@@ -66,6 +66,7 @@ export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes
     if (isHrefNavItem(extension)) {
       return (
         <NavItemHref
+          key={extension.uid}
           href={extension.properties.href}
           namespaced={extension.properties.namespaced}
           prefixNamespaced={extension.properties.prefixNamespaced}
@@ -79,6 +80,7 @@ export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes
     if (isResourceNavItem(extension)) {
       return (
         <NavItemResource
+          key={extension.uid}
           namespaced={isResourceNSNavItem(extension)}
           model={extension.properties.model}
           startsWith={extension.properties.startsWith}
