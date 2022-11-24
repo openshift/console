@@ -1,7 +1,22 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { PipeLineRunWithRepoMetadata } from '../../../test-data/pipeline-data';
+import { getLabelValue, sanitizeBranchName } from '../repository-utils';
 import RepositoryLinkList from '../RepositoryLinkList';
+
+jest.mock('../repository-utils', () => ({
+  getLabelValue: jest.fn(),
+  sanitizeBranchName: jest.fn(),
+}));
+
+const getLabelValueMock = getLabelValue as jest.Mock;
+const sanitizeBranchNameMock = sanitizeBranchName as jest.Mock;
+
+beforeEach(() => {
+  jest.resetAllMocks();
+  getLabelValueMock.mockReturnValue('pipelines-plugin~Branch');
+  sanitizeBranchNameMock.mockReturnValue('main');
+});
 
 describe('RepositoryLinkList', () => {
   it('should not render when repo label is missing', () => {

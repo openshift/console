@@ -4,6 +4,7 @@ import {
   getGitProviderIcon,
   getLatestRepositoryPLRName,
   sanitizeBranchName,
+  getLabelValue,
 } from '../repository-utils';
 import { mockRepository } from './repository-mock';
 
@@ -69,6 +70,17 @@ describe('repository-util', () => {
     const branch3 = sanitizeBranchName('refs/heads/foo');
     expect(branch3).toBe('foo');
     const branch4 = sanitizeBranchName('refs/tags/1.0');
-    expect(branch4).toBe('refs/tags/1.0');
+    expect(branch4).toBe('1.0');
+  });
+
+  it('getLabelValue should return correct label based on ref', () => {
+    const label1 = getLabelValue('refs-heads-main');
+    expect(label1).toBe('pipelines-plugin~Branch');
+    const label2 = getLabelValue('refs-tags-cicd-demo');
+    expect(label2).toBe('pipelines-plugin~Tag');
+    const label3 = getLabelValue('refs/heads/main');
+    expect(label3).toBe('pipelines-plugin~Branch');
+    const label4 = getLabelValue('refs/tags/cicd/demo');
+    expect(label4).toBe('pipelines-plugin~Tag');
   });
 });

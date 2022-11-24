@@ -17,7 +17,7 @@ import {
   RepositoryAnnotations,
   RepoAnnotationFields,
 } from './consts';
-import { sanitizeBranchName } from './repository-utils';
+import { getLabelValue, sanitizeBranchName } from './repository-utils';
 
 export type RepositoryLinkListProps = {
   pipelineRun: PipelineRunKind;
@@ -54,7 +54,7 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({ pipelineRun }) 
       </dd>
       {plrLabels?.[RepositoryLabels[RepositoryFields.BRANCH]] && (
         <>
-          <dt>{t('pipelines-plugin~Branch')}</dt>
+          <dt>{t(getLabelValue(plrLabels[RepositoryLabels[RepositoryFields.BRANCH]]))}</dt>
           <dd data-test="pl-repository-branch">
             {sanitizeBranchName(plrLabels[RepositoryLabels[RepositoryFields.BRANCH]])}
           </dd>
