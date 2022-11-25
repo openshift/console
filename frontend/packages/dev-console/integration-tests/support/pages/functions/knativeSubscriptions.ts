@@ -30,15 +30,10 @@ export const createKnativeServing = () => {
       detailsPage.titleShouldContain(pageTitle.CreateKnativeServing);
       cy.byTestID('create-dynamic-form').click();
       cy.byLegacyTestID('details-actions').should('be.visible');
-      // Currently disabling the check for ready and DeploymentsAvailable status due to https://issues.redhat.com/browse/SRVKS-953
-      // Enable it once the issue is fixed in Serverless operator
-      // cy.contains(
-      //   'DependenciesInstalled, DeploymentsAvailable, InstallSucceeded, Ready, VersionMigrationEligible',
-      //   { timeout: 150000 },
-      // ).should('be.visible');
-      cy.contains('DependenciesInstalled, InstallSucceeded, VersionMigrationEligible', {
-        timeout: 150000,
-      }).should('be.visible');
+      cy.contains(
+        'DependenciesInstalled, DeploymentsAvailable, InstallSucceeded, Ready, VersionMigrationEligible',
+        { timeout: 150000 },
+      ).should('be.visible');
     }
   });
 };
