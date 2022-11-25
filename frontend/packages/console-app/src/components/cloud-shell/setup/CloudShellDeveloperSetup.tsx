@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
+import { SectionHeading } from '@console/internal/components/utils';
 import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, K8sKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
@@ -67,8 +68,10 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
   };
 
   return (
-    <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
-      <h2>{t('console-app~Initialize terminal')}</h2>
+    <>
+      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
+        <SectionHeading text={t('console-app~Initialize terminal')} />
+      </div>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
@@ -77,7 +80,7 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
       >
         {(formikProps) => <CloudSehellSetupForm {...formikProps} />}
       </Formik>
-    </div>
+    </>
   );
 };
 
