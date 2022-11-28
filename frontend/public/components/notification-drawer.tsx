@@ -17,7 +17,7 @@ import {
   alertingErrored,
   alertingLoaded,
   alertingLoading,
-  setAlertCount,
+  setNotificationCount,
 } from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
@@ -366,9 +366,10 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
 
   // Update alert count.
   const alertCount = alerts?.length ?? 0;
+  const recommendationCount = updateList?.length ?? 0;
   React.useEffect(() => {
-    dispatch(setAlertCount(alertCount));
-  }, [alertCount, dispatch]);
+    dispatch(setNotificationCount(alertCount, recommendationCount));
+  }, [alertCount, recommendationCount, dispatch]);
 
   const emptyState = loadError ? (
     <AlertErrorState errorText={loadError.toString()} />

@@ -266,8 +266,11 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         (v) => _.xorWith(v, [action.payload.labels], _.isEqual),
       );
 
-    case ActionType.SetAlertCount:
-      return state.set('alertCount', action.payload.alertCount);
+    case ActionType.SetNotificationCount:
+      return state.set(
+        'notificationCount',
+        action.payload.alertCount + action.payload.recommendationCount,
+      );
 
     default:
       break;
