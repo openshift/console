@@ -264,10 +264,10 @@ func main() {
 		}
 	}
 
-    hubConsoleURL := &url.URL{}
-    if *fHubConsoleURL != "" {
-        hubConsoleURL = bridge.ValidateFlagIsURL("hub-console-url", *fHubConsoleURL)
-    }
+	hubConsoleURL := &url.URL{}
+	if *fHubConsoleURL != "" {
+		hubConsoleURL = bridge.ValidateFlagIsURL("hub-console-url", *fHubConsoleURL)
+	}
 
 	srv := &server.Server{
 		PublicDir:                    *fPublicDir,
