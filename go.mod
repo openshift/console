@@ -6,7 +6,7 @@ require (
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
 	github.com/devfile/api/v2 v2.0.0-20211021164004-dabee4e633ed
-	github.com/devfile/library v1.2.1-0.20211104222135-49d635cb492f
+	github.com/devfile/library v1.2.1-0.20221018201900-31548af3ad98
 	github.com/devfile/registry-support/index/generator v0.0.0-20211012185733-0a73f866043f
 	github.com/devfile/registry-support/registry-library v0.0.0-20220920210039-139b3bf07bf6
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
