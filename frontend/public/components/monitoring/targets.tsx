@@ -5,7 +5,7 @@ import {
   RedExclamationCircleIcon,
   RowFilter,
 } from '@console/dynamic-plugin-sdk';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -32,7 +32,7 @@ import { K8sResourceKind, LabelSelector, referenceForModel } from '../../module/
 import { RootState } from '../../redux';
 import { RowFunctionArgs, Table, TableData } from '../factory';
 import { FilterToolbar } from '../filter-toolbar';
-import { BreadCrumbs, PageHeading, SectionHeading } from '../utils/headings';
+import { PageHeading, SectionHeading } from '../utils/headings';
 import { usePoll } from '../utils/poll-hook';
 import { useSafeFetch } from '../utils/safe-fetch-hook';
 import { LoadingInline, StatusBox } from '../utils/status-box';
@@ -166,12 +166,14 @@ const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets })
         <title>{t('public~Target details')}</title>
       </Helmet>
       <div className="pf-c-page__main-breadcrumb">
-        <BreadCrumbs
-          breadcrumbs={[
-            { name: t('public~Targets'), path: '/monitoring/targets' },
-            { name: t('public~Target details'), path: undefined },
-          ]}
-        />
+        <Breadcrumb className="co-breadcrumb">
+          <BreadcrumbItem>
+            <Link className="pf-c-breadcrumb__link" to="/monitoring/targets">
+              {t('public~Targets')}
+            </Link>
+          </BreadcrumbItem>
+          <BreadcrumbItem isActive>{t('public~Target details')}</BreadcrumbItem>
+        </Breadcrumb>
       </div>
       <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
         <h1 className="co-m-pane__heading">
