@@ -7,12 +7,18 @@ import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContex
 
 const MockApp = () => <h1>App</h1>;
 
+jest.mock('react-router-dom', () => ({
+  ...require.requireActual('react-router-dom'),
+  useRouteMatch: jest.fn(() => true),
+}));
+
 jest.mock('../useValuesForPerspectiveContext', () => ({
   useValuesForPerspectiveContext: jest.fn(),
 }));
 
 jest.mock('@console/shared/src', () => ({
   usePerspectives: jest.fn(),
+  useQueryParams: jest.fn(() => ({ get: () => undefined })),
 }));
 const useValuesForPerspectiveContextMock = useValuesForPerspectiveContext as jest.Mock;
 const usePerspectivesMock = usePerspectives as jest.Mock;
