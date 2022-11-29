@@ -89,13 +89,13 @@ import { getPrometheusURL } from '../graphs/helpers';
 import { confirmModal } from '../modals';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { SectionHeading } from '../utils/headings';
-import { Kebab } from '../utils/kebab';
 import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
 import AlertmanagerPage from './alertmanager/alertmanager-page';
 import MonitoringDashboardsPage from './dashboards';
 import { useBoolean } from './hooks/useBoolean';
+import KebabDropdown from './kebab-dropdown';
 import { Labels } from './labels';
 import { QueryBrowserPage, ToggleGraph } from './metrics';
 import { FormatSeriesTitle, QueryBrowser } from './query-browser';
@@ -122,15 +122,10 @@ const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 const pollers = {};
 const pollerTimeouts = {};
 
-const silenceAlert = (alert: Alert) => ({
-  callback: () => history.push(`${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`),
-  label: i18next.t('public~Silence alert'),
-});
+const silenceAlert = (alert: Alert) =>
+  history.push(`${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`);
 
-const viewAlertRule = (alert: Alert) => ({
-  label: i18next.t('public~View alerting rule'),
-  href: ruleURL(alert.rule),
-});
+const viewAlertRule = (alert: Alert) => history.push(ruleURL(alert.rule));
 
 const MonitoringResourceIcon: React.FC<MonitoringResourceIconProps> = ({ className, resource }) => (
   <span
@@ -470,7 +465,7 @@ const tableSilenceClasses = [
   'pf-m-hidden pf-m-visible-on-sm pf-m-hidden-on-md pf-m-visible-on-lg',
   '',
   'pf-m-hidden pf-m-visible-on-sm',
-  Kebab.columnClass,
+  'dropdown-kebab-pf pf-c-table__action',
 ];
 
 const SilenceMatchersList = ({ silence }) => (
@@ -678,8 +673,6 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   // eslint-disable-next-line camelcase
   const runbookURL = alert?.annotations?.runbook_url;
 
-  const actionButton = silenceAlert(alert);
-
   return (
     <>
       <Helmet>
@@ -715,10 +708,10 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               <div data-test-id="details-actions">
                 <Button
                   className="co-action-buttons__btn"
-                  onClick={actionButton.callback}
+                  onClick={() => silenceAlert(alert)}
                   variant="primary"
                 >
-                  {actionButton.label}
+                  {t('public~Silence alert')}
                 </Button>
               </div>
             )}
@@ -944,7 +937,13 @@ const ActiveAlerts: React.FC<{ alerts; ruleID: string; namespace: string }> = (p
             <div className="col-sm-2 col-xs-3 co-truncate">{a.value}</div>
             {a.state !== AlertStates.Silenced && (
               <div className="dropdown-kebab-pf">
-                <Kebab options={[silenceAlert(a)]} />
+                <KebabDropdown
+                  dropdownItems={[
+                    <DropdownItem component="button" key="silence" onClick={() => silenceAlert(a)}>
+                      {t('public~Silence alert')}
+                    </DropdownItem>,
+                  ]}
+                />
               </div>
             )}
           </div>
@@ -1233,7 +1232,13 @@ const SilencedAlertsList = ({ alerts }) => {
               <Severity severity={a.labels.severity} />
             </div>
             <div className="dropdown-kebab-pf">
-              <Kebab options={[viewAlertRule(a)]} />
+              <KebabDropdown
+                dropdownItems={[
+                  <DropdownItem key="view-rule" onClick={() => viewAlertRule(a)}>
+                    {t('public~View alerting rule')}
+                  </DropdownItem>,
+                ]}
+              />
             </div>
           </div>
         ))}
@@ -1380,13 +1385,28 @@ const tableAlertClasses = [
   'pf-m-hidden pf-m-visible-on-sm',
   '',
   'pf-m-hidden pf-m-visible-on-sm',
-  Kebab.columnClass,
+  'dropdown-kebab-pf pf-c-table__action',
 ];
 
 const AlertTableRow: React.FC<RowFunctionArgs<Alert>> = ({ obj }) => {
+  const { t } = useTranslation();
+
   const { annotations = {}, labels } = obj;
   const description = annotations.description || annotations.message;
   const state = alertState(obj);
+
+  const dropdownItems = [
+    <DropdownItem key="view-rule" onClick={() => viewAlertRule(obj)}>
+      {t('public~View alerting rule')}
+    </DropdownItem>,
+  ];
+  if (state !== AlertStates.Silenced) {
+    dropdownItems.unshift(
+      <DropdownItem key="silence-alert" onClick={() => silenceAlert(obj)}>
+        {t('public~Silence alert')}
+      </DropdownItem>,
+    );
+  }
 
   return (
     <>
@@ -1416,13 +1436,7 @@ const AlertTableRow: React.FC<RowFunctionArgs<Alert>> = ({ obj }) => {
           : i18next.t('public~Platform')}
       </TableData>
       <TableData className={tableAlertClasses[4]}>
-        <Kebab
-          options={
-            state === AlertStates.Silenced
-              ? [viewAlertRule(obj)]
-              : [silenceAlert(obj), viewAlertRule(obj)]
-          }
-        />
+        <KebabDropdown dropdownItems={dropdownItems} />
       </TableData>
     </>
   );

@@ -17,7 +17,6 @@ import {
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
-  KebabToggle,
   Switch,
   Title,
 } from '@patternfly/react-core';
@@ -65,6 +64,7 @@ import { getPrometheusURL } from '../graphs/helpers';
 import { AsyncComponent, getURLSearchParams, LoadingInline, usePoll, useSafeFetch } from '../utils';
 import { setAllQueryArguments } from '../utils/router';
 import { useBoolean } from './hooks/useBoolean';
+import KebabDropdown from './kebab-dropdown';
 import IntervalDropdown from './poll-interval-dropdown';
 import { colors, Error, QueryBrowser } from './query-browser';
 import TablePagination from './table-pagination';
@@ -215,8 +215,6 @@ const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
 const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
   const { t } = useTranslation();
 
-  const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
-
   const isDisabledSeriesEmpty = useSelector(({ observe }: RootState) =>
     _.isEmpty(observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
   );
@@ -260,17 +258,7 @@ const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
     </DropdownItem>,
   ];
 
-  return (
-    <Dropdown
-      data-test-id="kebab-button"
-      dropdownItems={dropdownItems}
-      isOpen={isOpen}
-      isPlain
-      onSelect={setClosed}
-      position={DropdownPosition.right}
-      toggle={<KebabToggle id="toggle-kebab" onToggle={setIsOpen} />}
-    />
-  );
+  return <KebabDropdown dropdownItems={dropdownItems} />;
 };
 
 export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
