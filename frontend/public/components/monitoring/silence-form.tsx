@@ -220,7 +220,9 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   };
 
   const dropdownItems = _.map(durations, (displayText, key) => (
-    <DropdownItem onClick={() => setDuration(key)}>{displayText}</DropdownItem>
+    <DropdownItem key={key} onClick={() => setDuration(key)}>
+      {displayText}
+    </DropdownItem>
   ));
 
   return (
