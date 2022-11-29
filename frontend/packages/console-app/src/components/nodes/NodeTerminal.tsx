@@ -44,6 +44,7 @@ const getDebugPod = async (name: string, namespace: string, nodeName: string): P
       annotations: {
         'debug.openshift.io/source-container': 'container-00',
         'debug.openshift.io/source-resource': `/v1, Resource=nodes/${nodeName}`,
+        'openshift.io/scc': 'privileged',
       },
     },
     spec: {
@@ -89,7 +90,7 @@ const getDebugPod = async (name: string, namespace: string, nodeName: string): P
 const NodeTerminalError: React.FC<NodeTerminalErrorProps> = ({ error }) => {
   return (
     <div className="co-m-pane__body">
-      <Alert variant="danger" isInline title={error} />
+      <Alert variant="danger" isInline title={error} data-test="node-terminal-error" />
     </div>
   );
 };
@@ -146,9 +147,13 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
       try {
         namespace = await k8sCreate(NamespaceModel, {
           metadata: {
-            generateName: 'openshift-debug-node-',
+            generateName: 'openshift-debug-',
             labels: {
               'openshift.io/run-level': '0',
+              'pod-security.kubernetes.io/audit': 'privileged',
+              'pod-security.kubernetes.io/enforce': 'privileged',
+              'pod-security.kubernetes.io/warn': 'privileged',
+              'security.openshift.io/scc.podSecurityLabelSync': 'false',
             },
             annotations: {
               'openshift.io/node-selector': '',
