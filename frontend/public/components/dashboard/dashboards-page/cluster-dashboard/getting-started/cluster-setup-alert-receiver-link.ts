@@ -7,8 +7,8 @@ import { SecretModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getAlertmanagerConfig } from '@console/internal/components/monitoring/alert-manager-utils';
-import { numberOfIncompleteReceivers } from '@console/internal/components/monitoring/alert-manager-config';
+import { getAlertmanagerConfig } from '@console/internal/components/monitoring/alertmanager/alertmanager-utils';
+import { numberOfIncompleteReceivers } from '@console/internal/components/monitoring/alertmanager/alertmanager-config';
 
 const useCanEditAlertManagerConfigSecret = () =>
   useAccessReview({

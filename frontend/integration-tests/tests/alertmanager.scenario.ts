@@ -8,7 +8,7 @@ import { dropdownMenuForTestID } from '../views/form.view';
 import {
   AlertmanagerConfig,
   AlertmanagerReceiver,
-} from '@console/internal/components/monitoring/alert-manager-config';
+} from '@console/internal/components/monitoring/alertmanager/alertmanager-config';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 import * as monitoringView from '../views/monitoring.view';

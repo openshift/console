@@ -3,9 +3,9 @@ import * as _ from 'lodash-es';
 import { Base64 } from 'js-base64';
 import { safeLoad, safeDump } from 'js-yaml';
 
-import { k8sPatch, K8sResourceKind } from '../../module/k8s';
-import { AlertmanagerConfig } from './alert-manager-config';
-import { SecretModel } from '../../models';
+import { SecretModel } from '../../../models';
+import { k8sPatch, K8sResourceKind } from '../../../module/k8s';
+import { AlertmanagerConfig } from './alertmanager-config';
 
 // t('public~PagerDuty')
 // t('public~Webhook')
@@ -42,10 +42,10 @@ export const getAlertmanagerYAML = (
 export const getAlertmanagerConfig = (
   secret: K8sResourceKind,
 ): { config: AlertmanagerConfig; errorMessage?: string } => {
-  const parsedAlertManagerYAML = getAlertmanagerYAML(secret);
+  const parsedAlertmanagerYAML = getAlertmanagerYAML(secret);
   try {
-    const config = safeLoad(parsedAlertManagerYAML.yaml);
-    return { config, errorMessage: parsedAlertManagerYAML.errorMessage };
+    const config = safeLoad(parsedAlertmanagerYAML.yaml);
+    return { config, errorMessage: parsedAlertmanagerYAML.errorMessage };
   } catch (e) {
     return { config: null, errorMessage: `Error loading alertmanager.yaml: ${e}` };
   }

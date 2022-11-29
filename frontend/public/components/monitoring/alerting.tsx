@@ -83,20 +83,17 @@ import {
   StatefulSetModel,
 } from '../../models';
 import { RootState } from '../../redux';
-import { breadcrumbsForGlobalConfig } from '../cluster-settings/global-config';
 import { RowFunctionArgs, Table, TableData, TableProps } from '../factory';
 import { FilterToolbar } from '../filter-toolbar';
 import { getPrometheusURL } from '../graphs/helpers';
 import { confirmModal } from '../modals';
 import { refreshNotificationPollers } from '../notification-drawer';
-import { Firehose } from '../utils/firehose';
 import { SectionHeading } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
 import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
-import { AlertmanagerConfigWrapper } from './alert-manager-config';
-import { AlertmanagerYAMLEditorWrapper } from './alert-manager-yaml-editor';
+import AlertmanagerPage from './alertmanager/alertmanager-page';
 import MonitoringDashboardsPage from './dashboards';
 import { useBoolean } from './hooks/useBoolean';
 import { Labels } from './labels';
@@ -1825,42 +1822,6 @@ const SilencesPage_: React.FC<Silences> = () => {
 };
 const SilencesPage = withFallback(SilencesPage_);
 
-const AlertmanagerYAML = () => {
-  return (
-    <Firehose
-      resources={[
-        {
-          kind: 'Secret',
-          name: 'alertmanager-main',
-          namespace: 'openshift-monitoring',
-          isList: false,
-          prop: 'obj',
-        },
-      ]}
-    >
-      <AlertmanagerYAMLEditorWrapper />
-    </Firehose>
-  );
-};
-
-const AlertmanagerConfig = () => {
-  return (
-    <Firehose
-      resources={[
-        {
-          kind: 'Secret',
-          name: 'alertmanager-main',
-          namespace: 'openshift-monitoring',
-          isList: false,
-          prop: 'obj',
-        },
-      ]}
-    >
-      <AlertmanagerConfigWrapper />
-    </Firehose>
-  );
-};
-
 const Tab: React.FC<{ active: boolean; children: React.ReactNode }> = ({ active, children }) => (
   <li
     className={classNames('co-m-horizontal-nav__menu-item', {
@@ -1871,82 +1832,41 @@ const Tab: React.FC<{ active: boolean; children: React.ReactNode }> = ({ active,
   </li>
 );
 
-const AlertmanagerConfigBreadcrumbs = () => {
-  const breadcrumbs = breadcrumbsForGlobalConfig('Alertmanager', '/monitoring/alertmanagerconfig');
-
-  return (
-    <div className="pf-c-page__main-breadcrumb">
-      <Breadcrumb className="monitoring-breadcrumbs">
-        <BreadcrumbItem>
-          <Link className="pf-c-breadcrumb__link" to={breadcrumbs[0].path}>
-            {breadcrumbs[0].name}
-          </Link>
-        </BreadcrumbItem>
-        <BreadcrumbItem isActive>{breadcrumbs[1].name}</BreadcrumbItem>
-      </Breadcrumb>
-    </div>
-  );
-};
-
-const AlertingPage: React.FC<{ match: any }> = ({ match }) => {
+const AlertingPage: React.FC<{ match: { url: string } }> = ({ match }) => {
   const { t } = useTranslation();
 
   const alertsPath = '/monitoring/alerts';
   const rulesPath = '/monitoring/alertrules';
   const silencesPath = '/monitoring/silences';
-  const configPath = '/monitoring/alertmanagerconfig';
-  const YAMLPath = '/monitoring/alertmanageryaml';
 
   const { url } = match;
-  const isAlertmanager = url === configPath || url === YAMLPath;
 
   return (
     <>
-      {isAlertmanager && <AlertmanagerConfigBreadcrumbs />}
-      <div
-        className={classNames('co-m-nav-title', 'co-m-nav-title--detail', {
-          'co-m-nav-title--breadcrumbs': isAlertmanager,
-        })}
-      >
+      <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name" data-test-id="resource-title">
-              {isAlertmanager ? t('public~Alertmanager') : t('public~Alerting')}
+              {t('public~Alerting')}
             </span>
           </div>
         </h1>
       </div>
       <ul className="co-m-horizontal-nav__menu">
-        {(url === alertsPath || url === rulesPath || url === silencesPath) && (
-          <>
-            <Tab active={url === alertsPath}>
-              <Link to={alertsPath}>{t('public~Alerts')}</Link>
-            </Tab>
-            <Tab active={url === silencesPath}>
-              <Link to={silencesPath}>{t('public~Silences')}</Link>
-            </Tab>
-            <Tab active={url === rulesPath}>
-              <Link to={rulesPath}>{t('public~Alerting rules')}</Link>
-            </Tab>
-          </>
-        )}
-        {isAlertmanager && (
-          <>
-            <Tab active={url === configPath}>
-              <Link to={configPath}>{t('public~Details')}</Link>
-            </Tab>
-            <Tab active={url === YAMLPath}>
-              <Link to={YAMLPath}>{t('public~YAML')}</Link>
-            </Tab>
-          </>
-        )}
+        <Tab active={url === alertsPath}>
+          <Link to={alertsPath}>{t('public~Alerts')}</Link>
+        </Tab>
+        <Tab active={url === silencesPath}>
+          <Link to={silencesPath}>{t('public~Silences')}</Link>
+        </Tab>
+        <Tab active={url === rulesPath}>
+          <Link to={rulesPath}>{t('public~Alerting rules')}</Link>
+        </Tab>
       </ul>
       <Switch>
         <Route path={alertsPath} exact component={AlertsPage} />
         <Route path={rulesPath} exact component={RulesPage} />
         <Route path={silencesPath} exact component={SilencesPage} />
-        <Route path={configPath} exact component={AlertmanagerConfig} />
-        <Route path={YAMLPath} exact component={AlertmanagerYAML} />
       </Switch>
     </>
   );
@@ -1983,11 +1903,7 @@ const PollerPages = () => {
 
   return (
     <Switch>
-      <Route
-        path="/monitoring/(alertmanageryaml|alerts|alertrules|silences|alertmanagerconfig)"
-        exact
-        component={AlertingPage}
-      />
+      <Route path="/monitoring/(alerts|alertrules|silences)" exact component={AlertingPage} />
       <Route path="/monitoring/alertrules/:id" exact component={AlertRulesDetailsPage} />
       <Route path="/monitoring/alerts/:ruleID" exact component={AlertsDetailsPage} />
       <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
@@ -2009,6 +1925,8 @@ export const MonitoringUI = () => (
     {/* This redirect also handles the `/monitoring/#/alerts?...` link URLs generated by
     Alertmanager (because the `#` is considered the end of the URL) */}
     <Redirect from="/monitoring" exact to="/monitoring/alerts" />
+    <Route path="/monitoring/alertmanagerconfig" exact component={AlertmanagerPage} />
+    <Route path="/monitoring/alertmanageryaml" exact component={AlertmanagerPage} />
     <Route path="/monitoring/dashboards/:board?" exact component={MonitoringDashboardsPage} />
     <Route path="/monitoring/graph" exact component={PrometheusUIRedirect} />
     <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />

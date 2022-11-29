@@ -17,14 +17,14 @@ import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
   receiverTypes,
-} from '../alert-manager-utils';
+} from '../alertmanager/alertmanager-utils';
 import { K8sResourceKind } from '../../../module/k8s';
 import {
   AlertmanagerConfig,
   AlertmanagerReceiver,
   AlertmanagerRoute,
   InitialReceivers,
-} from '../alert-manager-config';
+} from '../alertmanager/alertmanager-config';
 import { RoutingLabelEditor } from './routing-labels-editor';
 import * as PagerDutyForm from './pagerduty-receiver-form';
 import * as WebhookForm from './webhook-receiver-form';
