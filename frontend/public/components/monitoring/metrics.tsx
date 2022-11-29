@@ -696,9 +696,10 @@ const QueriesList: React.FC<{}> = () => {
 
   return (
     <>
-      {_.range(count).map((i) => (
-        <Query index={i} key={i} />
-      ))}
+      {_.range(count).map((index) => {
+        const reversedIndex = count - index - 1;
+        return <Query index={reversedIndex} key={reversedIndex} />;
+      })}
     </>
   );
 };
