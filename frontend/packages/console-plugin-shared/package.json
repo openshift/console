@@ -1,6 +1,6 @@
 {
   "name": "@openshift-console/plugin-shared",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Console plugin shared code",
   "private": false,
   "main": "lib/index.js",
@@ -20,9 +20,13 @@
     "stylefiles": "cd src && find . -name '*.scss' -exec cp '{}' ../dist/lib/'{}' \\;"
   },
   "dependencies": {
-    "classnames": "2.x"
+    "classnames": "2.x",
+    "lodash-es": "^4.17.21",
+    "sanitize-html": "^2.3.2",
+    "showdown": "1.8.6"
   },
   "devDependencies": {
+    "@types/showdown": "1.9.4",
     "typescript": "4.2.x"
   },
   "peerDependencies": {
