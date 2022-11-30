@@ -1,4 +1,5 @@
 import { testName, checkErrors } from '../../support';
+import { nav } from '../../views/nav';
 
 const name = `${testName}-event-test-pod`;
 const testpod = {
@@ -33,6 +34,9 @@ const testpod = {
 describe('Events', () => {
   before(() => {
     cy.login();
+    cy.visit('/');
+    nav.sidenav.switcher.changePerspectiveTo('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Administrator');
     cy.createProject(testName);
     try {
       cy.exec(`echo '${JSON.stringify(testpod)}' | kubectl create -n ${testName} -f -`);
