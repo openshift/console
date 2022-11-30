@@ -188,7 +188,7 @@ func (s *Server) authDisabled() bool {
 }
 
 func (s *Server) prometheusProxyEnabled() bool {
-	return len(s.Authers) == 1 && s.ThanosTenancyProxyConfig != nil && s.ThanosTenancyProxyForRulesConfig != nil
+	return s.ThanosProxyConfig != nil && s.ThanosTenancyProxyConfig != nil && s.ThanosTenancyProxyForRulesConfig != nil
 }
 
 func (s *Server) alertManagerProxyEnabled() bool {
