@@ -1,6 +1,4 @@
 import vmiFixture from '../../fixtures/vmi-ephemeral';
-import { testName } from '../../support';
-import { K8S_KIND } from '../../utils/const/index';
 
 const vmiName = 'vmi-ephemeral';
 
@@ -8,14 +6,8 @@ describe('smoke tests', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
-    cy.createProject(testName);
-    vmiFixture.metadata.namespace = testName;
+    vmiFixture.metadata.namespace = 'default';
     cy.createResource(vmiFixture);
-  });
-
-  after(() => {
-    cy.deleteResource(K8S_KIND.VMI, vmiName, testName);
-    cy.deleteTestProject(testName);
   });
 
   describe('visit vmi list page', () => {
