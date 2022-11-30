@@ -1,71 +1,100 @@
 import * as React from 'react';
+import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { k8sGetResource, k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { SectionHeading } from '@console/internal/components/utils';
 import { LoadError } from '@console/internal/components/utils/status-box';
 import { NamespaceModel } from '@console/internal/models';
-import { K8sKind, k8sCreate, k8sGet } from '@console/internal/module/k8s';
 import {
   newCloudShellWorkSpace,
   createCloudShellResourceName,
   CLOUD_SHELL_PROTECTED_NAMESPACE,
 } from '../cloud-shell-utils';
-import TerminalLoadingBox from '../TerminalLoadingBox';
+import {
+  CloudShellSetupFormData,
+  cloudShellSetupValidationSchema,
+  getCloudShellTimeout,
+} from './cloud-shell-setup-utils';
+import CloudSehellSetupForm from './CloudShellSetupForm';
 
 type Props = {
-  onInitialize: (namespace: string) => void;
-  workspaceModel: K8sKind;
+  onSubmit?: (namespace: string) => void;
+  onCancel?: () => void;
+  workspaceModel: K8sModel;
   operatorNamespace: string;
 };
 
 const CloudShellAdminSetup: React.FunctionComponent<Props> = ({
-  onInitialize,
+  onSubmit,
+  onCancel,
   workspaceModel,
   operatorNamespace,
 }) => {
+  const initialValues: CloudShellSetupFormData = {
+    namespace: CLOUD_SHELL_PROTECTED_NAMESPACE,
+    advancedOptions: {
+      timeout: {
+        limit: null,
+        unit: 'm',
+      },
+    },
+  };
+
   const { t } = useTranslation();
 
   const [initError, setInitError] = React.useState<string>();
-  React.useEffect(() => {
-    (async () => {
-      async function namespaceExists(): Promise<boolean> {
-        try {
-          await k8sGet(NamespaceModel, CLOUD_SHELL_PROTECTED_NAMESPACE);
-          return true;
-        } catch (error) {
-          if (error.json.code !== 404) {
-            setInitError(error);
-          }
-          return false;
-        }
-      }
 
+  const handleSubmit = async (values: CloudShellSetupFormData, actions) => {
+    async function namespaceExists(): Promise<boolean> {
       try {
-        const protectedNamespaceExists = await namespaceExists();
-        if (!protectedNamespaceExists) {
-          await k8sCreate(NamespaceModel, {
+        await k8sGetResource({
+          model: NamespaceModel,
+          name: CLOUD_SHELL_PROTECTED_NAMESPACE,
+        });
+        return true;
+      } catch (error) {
+        if (error.json.code !== 404) {
+          setInitError(error);
+        }
+        return false;
+      }
+    }
+    try {
+      const protectedNamespaceExists = await namespaceExists();
+      const csTimeout = getCloudShellTimeout(
+        values.advancedOptions?.timeout?.limit,
+        values.advancedOptions?.timeout?.unit,
+      );
+
+      if (!protectedNamespaceExists) {
+        await k8sCreateResource({
+          model: NamespaceModel,
+          data: {
             metadata: {
               name: CLOUD_SHELL_PROTECTED_NAMESPACE,
             },
-          });
-        }
-        await k8sCreate(
-          workspaceModel,
-          newCloudShellWorkSpace(
-            createCloudShellResourceName(),
-            CLOUD_SHELL_PROTECTED_NAMESPACE,
-            operatorNamespace,
-            workspaceModel.apiVersion,
-          ),
-        );
-        onInitialize(CLOUD_SHELL_PROTECTED_NAMESPACE);
-      } catch (error) {
-        setInitError(error);
+          },
+        });
       }
-    })();
-    // Don't include dependencies because if the CLOUD_SHELL_PROTECTED_NAMESPACE
-    // is not found a refresh will be triggered, creating an extra terminal
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      await k8sCreateResource({
+        model: workspaceModel,
+        data: newCloudShellWorkSpace(
+          createCloudShellResourceName(),
+          values.namespace,
+          operatorNamespace,
+          workspaceModel.apiVersion,
+          csTimeout,
+          values.advancedOptions?.image,
+        ),
+      });
+      onSubmit(values.namespace);
+    } catch (error) {
+      actions.setStatus({ submitError: error.message });
+      setInitError(error);
+    }
+  };
 
   if (initError) {
     return (
@@ -74,9 +103,19 @@ const CloudShellAdminSetup: React.FunctionComponent<Props> = ({
   }
 
   return (
-    <div className="co-cloudshell-terminal__container">
-      <TerminalLoadingBox />
-    </div>
+    <>
+      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
+        <SectionHeading text={t('console-app~Initialize terminal')} style={{ marginBottom: 0 }} />
+      </div>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        onReset={onCancel}
+        validationSchema={cloudShellSetupValidationSchema()}
+      >
+        {(formikProps) => <CloudSehellSetupForm {...formikProps} isAdmin />}
+      </Formik>
+    </>
   );
 };
 

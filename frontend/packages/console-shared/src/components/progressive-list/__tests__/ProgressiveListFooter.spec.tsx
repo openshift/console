@@ -10,7 +10,7 @@ const Footer = ({ children }) => {
   return (
     <Trans
       t={t}
-      ns="devconsole"
+      ns="console-shared"
       defaults="Click on the names to access advanced options for <0></0>."
       components={[children]}
     />

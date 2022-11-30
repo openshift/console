@@ -23,6 +23,16 @@ When('user clicks on the Web Terminal icon on the Masthead', () => {
   cy.get(webTerminalPO.webTerminalIcon).click();
 });
 
+When('user clicks advanced option for Timeout', () => {
+  cy.get('[role="tabpanel"] button.pf-c-button.pf-m-link.pf-m-inline')
+    .contains('Timeout')
+    .click();
+});
+
+When('user sets timeout to 1 Minute', () => {
+  cy.byLegacyTestID('Increment').click();
+});
+
 When('user opens {int} additional web terminal tabs', (n: number) => {
   addTerminals(n);
 });

@@ -13,13 +13,15 @@ Feature: Web Terminal for Developer user
               # in existed project
               And user has created or selected namespace "aut-terminal-testuser-existed"
 
-        @regression @to-do
+        @regression @to-do @odc-6745
         Scenario: Create new project and use Web Terminal: WT-03-TC01
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead
               And user selects Create Project from Project drop down menu
               And user enters project name "aut-terminal-testuser"
-              And user clicks on Submit button
+              And user clicks advanced option for Timeout
+              And user sets timeout to 1 Minute
+              And user clicks on Start button
              Then user will see the terminal window
              Then user will see the terminal instance for developer namespace "aut-terminal-testuser"
 

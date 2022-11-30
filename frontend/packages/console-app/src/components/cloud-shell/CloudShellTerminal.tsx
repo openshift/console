@@ -226,10 +226,11 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   if (isAdmin) {
     return (
       <CloudShellAdminSetup
-        onInitialize={(ns: string) => {
+        workspaceModel={workspaceModel}
+        onCancel={onCancel}
+        onSubmit={(ns: string) => {
           setNamespace(ns);
         }}
-        workspaceModel={workspaceModel}
         operatorNamespace={operatorNamespace}
       />
     );

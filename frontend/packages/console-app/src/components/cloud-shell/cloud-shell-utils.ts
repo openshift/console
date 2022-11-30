@@ -69,7 +69,7 @@ const v1alpha1DevworkspaceComponent = [
   },
 ];
 
-const devWorkspaceComponent = (namespace: string) => [
+const devWorkspaceComponent = (namespace: string, timeout?: string, image?: string) => [
   {
     name: 'web-terminal-tooling',
     plugin: {
@@ -77,6 +77,16 @@ const devWorkspaceComponent = (namespace: string) => [
         name: 'web-terminal-tooling',
         namespace,
       },
+      ...(image && {
+        components: [
+          {
+            name: 'web-terminal-tooling',
+            container: {
+              image,
+            },
+          },
+        ],
+      }),
     },
   },
   {
@@ -86,6 +96,16 @@ const devWorkspaceComponent = (namespace: string) => [
         name: 'web-terminal-exec',
         namespace,
       },
+      ...(timeout && {
+        components: [
+          {
+            name: 'web-terminal-exec',
+            container: {
+              env: [{ name: 'WEB_TERMINAL_IDLE_TIMEOUT', value: timeout }],
+            },
+          },
+        ],
+      }),
     },
   },
 ];
@@ -95,6 +115,8 @@ export const newCloudShellWorkSpace = (
   workspaceNamespace: string,
   operatorNamespace: string,
   version: string,
+  timeout?: string,
+  image?: string,
 ): CloudShellResource => ({
   apiVersion: `workspace.devfile.io/${version}`,
   kind: 'DevWorkspace',
@@ -116,7 +138,7 @@ export const newCloudShellWorkSpace = (
       components:
         version === v1alpha1WorkspaceModel.apiVersion
           ? v1alpha1DevworkspaceComponent
-          : devWorkspaceComponent(operatorNamespace),
+          : devWorkspaceComponent(operatorNamespace, timeout, image),
     },
   },
 });
