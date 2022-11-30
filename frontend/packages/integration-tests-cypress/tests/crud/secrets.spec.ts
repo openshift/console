@@ -11,7 +11,10 @@ const populateSecretForm = (name: string, key: string, fileName: string) => {
   cy.get('.co-m-pane__heading').contains('Create key/value secret');
   cy.byTestID('secret-name').should('exist');
   cy.byLegacyTestID('file-input-textarea').should('exist');
-  cy.byTestID('secret-name').type(name);
+  cy.byTestID('secret-name')
+    .clear()
+    .type(name);
+  cy.byTestID('secret-name').should('have.value', name);
   cy.byTestID('secret-key').type(key);
   cy.byTestID('file-input').attachFile(fileName);
 };

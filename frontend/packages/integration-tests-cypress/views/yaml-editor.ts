@@ -20,6 +20,10 @@ export const isImportLoaded = () => {
   cy.wait(5000);
   cy.get('.monaco-editor textarea:first').should('exist');
 };
-export const clickSaveCreateButton = () => cy.byTestID('save-changes').click();
+export const clickSaveCreateButton = () => {
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(3000);
+  cy.byTestID('save-changes').click();
+};
 export const clickCancelButton = () => cy.byTestID('cancel').click();
 export const clickReloadButton = () => cy.byTestID('reload-object').click();
