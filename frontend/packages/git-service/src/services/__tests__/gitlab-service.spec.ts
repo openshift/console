@@ -243,6 +243,36 @@ describe('Gitlab Service', () => {
     });
   });
 
+  it('should detect .tekton folder', () => {
+    const gitSource = {
+      url: 'https://gitlab.com/avikkundu/oc-pipe',
+    };
+
+    const gitService = new GitlabService(gitSource);
+
+    return nockBack('tekton.json').then(async ({ nockDone, context }) => {
+      const isTektonFolderPresent = await gitService.isTektonFolderPresent();
+      expect(isTektonFolderPresent).toBe(true);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should not detect .tekton folder', () => {
+    const gitSource: GitSource = {
+      url: 'https://gitlab.com/jpratik999/devconsole-git.git',
+    };
+
+    const gitService = new GitlabService(gitSource);
+
+    return nockBack('no-tekton.json').then(async ({ nockDone, context }) => {
+      const isTektonFolderPresent = await gitService.isTektonFolderPresent();
+      expect(isTektonFolderPresent).toBe(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
   it('should make API call to specified hostname', async () => {
     const gitSource: GitSource = { url: 'https://example.com/test/repo' };
     const gitService = new GitlabService(gitSource);

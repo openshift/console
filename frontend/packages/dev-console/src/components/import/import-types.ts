@@ -5,6 +5,7 @@ import { DetectedStrategy } from '@console/git-service/src/utils/import-strategy
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { PipelineData } from '@console/pipelines-plugin/src/components/import/import-types';
+import { RepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/types';
 import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
@@ -82,6 +83,7 @@ export interface DeployImageFormData {
   resources: Resources;
   resourceTypesNotValid?: Resources[];
   serverless?: ServerlessData;
+  pac?: PacData;
   pipeline?: PipelineData;
   labels: { [name: string]: string };
   annotations?: { [name: string]: string };
@@ -129,6 +131,7 @@ export interface GitImportFormData extends BaseFormData {
   git: GitData;
   docker: DockerData;
   devfile?: DevfileData;
+  pac?: PacData;
   import?: ImportStrategyData;
 }
 
@@ -188,6 +191,11 @@ export type DevfileData = {
   devfileSourceUrl?: string;
   devfileHasError: boolean;
   devfileSuggestedResources?: DevfileSuggestedResources;
+};
+
+export type PacData = {
+  pacHasError: boolean;
+  repository: RepositoryFormValues;
 };
 
 export type DevfileSuggestedResources = {
@@ -283,6 +291,7 @@ export enum ImportTypes {
   devfile = 'devfile',
   docker = 'docker',
   s2i = 's2i',
+  pac = 'pac',
 }
 
 export enum Resources {

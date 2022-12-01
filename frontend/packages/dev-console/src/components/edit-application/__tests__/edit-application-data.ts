@@ -1,6 +1,7 @@
 import { GitProvider } from '@console/git-service/src';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
+import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksData } from '../../health-checks/__tests__/create-health-checks-probe-data';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
@@ -509,6 +510,12 @@ export const gitImportInitialValues: GitImportFormData = {
     labels: {},
   },
   resources: Resources.OpenShift,
+  pac: {
+    pacHasError: false,
+    repository: {
+      ...defaultRepositoryFormValues,
+    },
+  },
   serverless: serverlessInitialValues,
   pipeline: { enabled: false },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
@@ -594,6 +601,12 @@ export const externalImageValues: DeployImageFormData = {
   },
   resources: Resources.OpenShift,
   serverless: serverlessInitialValues,
+  pac: {
+    pacHasError: false,
+    repository: {
+      ...defaultRepositoryFormValues,
+    },
+  },
   pipeline: { enabled: false },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
   labels: { 'app.kubernetes.io/component': 'nationalparks-py', 'app.kubernetes.io/name': 'python' },
@@ -669,6 +682,12 @@ export const internalImageValues: DeployImageFormData = {
   resources: Resources.OpenShift,
   serverless: serverlessInitialValues,
   pipeline: { enabled: false },
+  pac: {
+    pacHasError: false,
+    repository: {
+      ...defaultRepositoryFormValues,
+    },
+  },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
   labels: { 'app.kubernetes.io/component': 'nationalparks-py', 'app.kubernetes.io/name': 'python' },
   limits: {
@@ -768,6 +787,12 @@ export const knExternalImageValues: DeployImageFormData = {
   },
   name: 'nationalparks-py',
   pipeline: { enabled: false },
+  pac: {
+    pacHasError: false,
+    repository: {
+      ...defaultRepositoryFormValues,
+    },
+  },
   project: { name: 'div' },
   runtimeIcon: null,
   registry: 'external',

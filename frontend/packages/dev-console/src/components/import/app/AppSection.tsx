@@ -13,6 +13,7 @@ export interface AppSectionProps {
   extraMargin?: boolean;
   subPath?: string;
   fullWidth?: boolean;
+  hideApplicationName?: boolean;
 }
 
 const AppSection: React.FC<AppSectionProps> = ({
@@ -21,6 +22,7 @@ const AppSection: React.FC<AppSectionProps> = ({
   extraMargin,
   subPath,
   fullWidth,
+  hideApplicationName = false,
 }) => {
   const [initialApplication] = useField(
     subPath ? `${subPath}.application.initial` : 'application.initial',
@@ -52,7 +54,7 @@ const AppSection: React.FC<AppSectionProps> = ({
           />
         </>
       )}
-      {!initialApplication.value && (
+      {!hideApplicationName && !initialApplication.value && (
         <ApplicationSelector
           namespace={project.name}
           noProjectsAvailable={noProjectsAvailable}

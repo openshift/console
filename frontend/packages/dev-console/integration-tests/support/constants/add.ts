@@ -14,6 +14,7 @@ export enum addOptions {
   EventSink = 'Event Sink',
   Sharing = 'Sharing',
   HelmChartRepositories = 'Helm Chart Repositories',
+  Samples = 'Samples',
 }
 
 export enum buildConfigOptions {

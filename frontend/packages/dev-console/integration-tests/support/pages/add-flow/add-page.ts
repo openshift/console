@@ -75,6 +75,13 @@ export const addPage = {
         app.waitForLoad();
         cy.testA11y(pageTitle.YAML);
         break;
+      case 'Samples':
+      case addOptions.Samples:
+        cy.byTestID('item import-from-samples').click();
+        app.waitForLoad();
+        detailsPage.titleShouldContain(pageTitle.Samples);
+        cy.testA11y(pageTitle.Samples);
+        break;
       case 'Channel':
       case addOptions.Channel:
         cy.byTestID('item knative-eventing-channel').click();

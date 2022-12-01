@@ -19,6 +19,7 @@ import {
   ServiceModel,
 } from '@console/knative-plugin';
 import { isDockerPipeline } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
+import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import {
   PIPELINE_RUNTIME_LABEL,
   PIPELINE_RUNTIME_VERSION_LABEL,
@@ -384,6 +385,12 @@ export const getCommonInitialValues = (
     serverless: getServerlessData(editAppResource),
     pipeline: {
       enabled: !_.isEmpty(pipelineData),
+    },
+    pac: {
+      pacHasError: false,
+      repository: {
+        ...defaultRepositoryFormValues,
+      },
     },
     deployment: getDeploymentData(editAppResource),
     labels: getUserLabels(editAppResource),

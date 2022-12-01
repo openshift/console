@@ -12,6 +12,7 @@ import {
 import { FormikValues, useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { Base64 } from 'js-base64';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { generateSecret } from '@console/dev-console/src/components/import/import-submit-utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
@@ -30,11 +31,14 @@ import PermissionsSection from './PermissionsSection';
 
 type WebhoookSectionProps = {
   pac: ConfigMapKind;
+  formContextField?: string;
 };
 
-const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
+const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField }) => {
   const [namespace] = useActiveNamespace();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
+  const fieldPrefix = formContextField ? `${formContextField}.` : '';
+  const { gitProvider, webhook } = _.get(values, formContextField) || values;
   const [controllerUrl, setControllerUrl] = React.useState('');
   const [webhookSecret, setWebhookSecret] = React.useState('');
   const { t } = useTranslation();
@@ -43,9 +47,9 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
     const ctlUrl = pac?.data?.['controller-url'];
     if (ctlUrl) {
       setControllerUrl(ctlUrl);
-      setFieldValue('webhook.url', ctlUrl);
+      setFieldValue(`${fieldPrefix}webhook.url`, ctlUrl);
     }
-  }, [pac, setFieldValue]);
+  }, [fieldPrefix, pac, setFieldValue]);
   const autocompleteFilter = (text: string, item: any): boolean => fuzzy(text, item?.props?.name);
   const resources: FirehoseResource[] = [
     {
@@ -139,9 +143,9 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
   };
 
   return (
-    <FormSection fullWidth extraMargin>
+    <FormSection fullWidth={!fieldPrefix} extraMargin>
       <RadioGroupField
-        name="webhook.method"
+        name={`${fieldPrefix}webhook.method`}
         label={t('pipelines-plugin~Secret')}
         options={[
           {
@@ -149,7 +153,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
             label: t('pipelines-plugin~Git access token'),
             activeChildren: (
               <InputField
-                name="webhook.token"
+                name={`${fieldPrefix}webhook.token`}
                 type={TextInputTypes.text}
                 helpText={<HelpText />}
                 required
@@ -165,7 +169,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
                 helpText={t(
                   'pipelines-plugin~Secret with the Git access token for pulling pipeline and tasks from your Git repository.',
                 )}
-                name="webhook.secretRef"
+                name={`${fieldPrefix}webhook.secretRef`}
                 resources={resources}
                 dataSelector={['metadata', 'name']}
                 placeholder={t('pipelines-plugin~Select a secret')}
@@ -174,7 +178,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
                 showBadge
                 onChange={(k, v, res) => {
                   if (res && res.data) {
-                    setFieldValue('webhook.secretObj', res);
+                    setFieldValue(`${fieldPrefix}webhook.secretObj`, res);
                     const secret = res?.data['webhook.secret'];
                     if (secret) {
                       setWebhookSecret(Base64.decode(secret));
@@ -186,7 +190,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
           },
         ]}
       />
-      {values.webhook.url && (
+      {webhook.url && (
         <FormGroup
           fieldId="test"
           label={t('pipelines-plugin~Webhook URL')}
@@ -196,7 +200,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
         >
           <ClipboardCopy
             isReadOnly
-            name="webhook.url"
+            name={`${fieldPrefix}webhook.url`}
             hoverTip="Copy"
             clickTip="Copied"
             style={{ flex: '1' }}
@@ -209,12 +213,12 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
       <FormGroup fieldId={'webhook-secret-clipboard'} label={t('pipelines-plugin~Webhook secret')}>
         <InputGroup style={{ display: 'flex' }}>
           <ClipboardCopy
-            name="webhook.secret"
+            name={`${fieldPrefix}webhook.secret`}
             hoverTip="Copy"
             clickTip="Copied"
             style={{ flex: '1' }}
             onChange={(v) => {
-              setFieldValue('webhook.secret', v);
+              setFieldValue(`${fieldPrefix}webhook.secret`, v);
             }}
           >
             {webhookSecret}
@@ -225,17 +229,17 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
         </InputGroup>
       </FormGroup>
 
-      <ExpandableSection toggleText={getPermssionSectionHeading(values.gitProvider)}>
+      <ExpandableSection toggleText={getPermssionSectionHeading(gitProvider)}>
         <FormGroup label={t('pipelines-plugin~Repository Permissions:')} fieldId="repo-permissions">
           <Text component={TextVariants.small}>
-            <PermissionsSection />
+            <PermissionsSection formContextField={formContextField} />
           </Text>
         </FormGroup>
       </ExpandableSection>
 
       <ExternalLink
         text={t('pipelines-plugin~Read more about setting up webhook')}
-        href={WebhookDocLinks[values.gitProvider]}
+        href={WebhookDocLinks[gitProvider]}
       />
     </FormSection>
   );

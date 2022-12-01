@@ -26,6 +26,7 @@ export type RepositoryFormValues = {
   name: string;
   gitProvider: GitProvider;
   gitUrl: string;
+  githubAppAvailable: boolean;
   method: string;
   yamlData: string;
   showOverviewPage: boolean;
