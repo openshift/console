@@ -11,7 +11,8 @@ export type ExtensionHookResult<T> = [T, boolean, any];
 export type ExtensionK8sModel = {
   group: string;
   version: string;
-  kind: string;
+  kind?: string;
+  resource?: string;
 };
 
 export type ExtensionK8sGroupModel = {

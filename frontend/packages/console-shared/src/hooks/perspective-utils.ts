@@ -5,6 +5,7 @@ import {
   PerspectiveType,
   AccessReviewResourceAttributes,
   checkAccess,
+  ExtensionK8sModel,
 } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension, useExtensions } from '@console/plugin-sdk/src';
 import { USERSETTINGS_PREFIX } from '../constants';
