@@ -13,13 +13,13 @@ Feature: Helm Chart Installation View
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs" card from catalog page
-              And user clicks on the Install Helm Chart button on side bar
+              And user clicks on the Create button on side bar
               And user clicks on the chart versions dropdown menu
              Then user will see the information of all the chart versions
 
         @manual
         Scenario: Switch from YAML to Form view: HR-04-TC02
-            Given user is at the Install Helm Chart page
+            Given user is at the Create Helm Release page
              When user selects the YAML view
               And user does some changes in the yaml for helm chart
               And user selects the Form view
@@ -32,7 +32,7 @@ Feature: Helm Chart Installation View
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs" card from catalog page
-              And user clicks on the Install Helm Chart button on side bar
+              And user clicks on the Create button on side bar
               And user enters Release Name as "nodejs-release-3"
               And user enters Replica count as "3"
               And user selects the YAML view

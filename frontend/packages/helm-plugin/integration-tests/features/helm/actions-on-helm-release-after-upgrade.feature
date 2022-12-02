@@ -19,7 +19,7 @@ Feature: Verify the Actions on Helm Release after upgrade
         Scenario: Actions menu on Helm page after helm chart upgrade: HR-08-TC01
             Given user is on the Helm page with helm release "nodejs-release-1"
              When user clicks on the Kebab menu
-             Then user is able to see kebab menu with actions Upgrade, Rollback and Uninstall Helm Release
+             Then user is able to see kebab menu with actions Upgrade, Rollback and Delete Helm Release
 
 
         Scenario: Perform the helm chart upgrade for already upgraded helm chart : HR-08-TC02

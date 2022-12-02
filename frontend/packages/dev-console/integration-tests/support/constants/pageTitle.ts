@@ -32,7 +32,7 @@ export const pageTitle = {
   Templates: 'Templates',
   BuilderImages: 'Builder Images',
   HelmCharts: 'Helm Charts',
-  InstallHelmCharts: 'Install Helm Chart',
+  CreateHelmRelease: 'Create Helm Release',
   CreateHelmChartRepository: 'Create Helm Chart Repository',
   OperatorBacked: 'Operator Backed',
   HelmReleaseDetails: 'Helm Release details',

@@ -150,7 +150,7 @@ export const normalizeHelmCharts = (
             url: imgUrl,
           },
           cta: {
-            label: t('helm-plugin~Install Helm Chart'),
+            label: t('helm-plugin~Create'),
             href,
           },
           details: {

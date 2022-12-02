@@ -19,11 +19,11 @@ export const helmChartRepository = {
     if (type === 'projecthelmchartrepository') {
       cy.get('[data-filter-text="PHCRProjectHelmChartRepository"]').click();
       filterByName(name);
-      cy.byTestActionID('Delete Project Helm Chart Repository').click();
+      cy.byTestActionID('Delete ProjectHelmChartRepository').click();
     } else {
       cy.get('[data-filter-text="HCRHelmChartRepository"]').click();
       filterByName(name);
-      cy.byTestActionID('Delete Helm Chart Repository').click();
+      cy.byTestActionID('Delete HelmChartRepository').click();
     }
     createForm.clickConfirm();
     cy.byTestID('empty-message').should('be.visible');

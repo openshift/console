@@ -127,7 +127,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
         {isHelmEnabled ? (
           <EmptyStateSecondaryActions>
             <Link to={installURL}>
-              {t('helm-plugin~Install a Helm Chart from the developer catalog')}
+              {t('helm-plugin~Browse the catalog to discover and install Helm Charts')}
             </Link>
           </EmptyStateSecondaryActions>
         ) : null}

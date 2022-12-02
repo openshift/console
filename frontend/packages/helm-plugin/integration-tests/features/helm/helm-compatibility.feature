@@ -26,6 +26,6 @@ Feature: Helm Chart
 
         @regression @manual
         Scenario: Check the chart versions in the chart version dropdown if they are compatible with the cluster: HR-02-TC03
-            Given user is at the Install Helm Chart page
+            Given user is at the Create Helm Release page
              When user clicks on the Chart Version dropdown menu
              Then user will see the chart versions which are compatible with the kubeversion of the cluster

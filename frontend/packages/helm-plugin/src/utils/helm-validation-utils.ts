@@ -5,7 +5,7 @@ import { HelmActionType } from '../types/helm-types';
 
 export const getHelmActionValidationSchema = (helmAction: HelmActionType, t: TFunction) => {
   switch (helmAction) {
-    case HelmActionType.Install:
+    case HelmActionType.Create:
       return yup.object().shape({
         releaseName: nameValidationSchema(t),
       });

@@ -58,15 +58,15 @@ When('user searches and selects {string} card from catalog page', (cardName: str
   catalogPage.selectHelmChartCard(cardName);
 });
 
-Then('Install Helm Chart page is displayed', () => {
-  cy.get('h1.pf-c-title').should('have.text', pageTitle.InstallHelmCharts);
+Then('Create Helm Release page is displayed', () => {
+  cy.get('h1.pf-c-title').should('have.text', pageTitle.CreateHelmRelease);
 });
 
 Then('release name displays as {string}', (name: string) => {
   cy.get(catalogPO.installHelmChart.releaseName).should('have.value', name);
 });
 
-Given('user is at Install Helm Chart page', () => {
+Given('user is at Create Helm Release page', () => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.HelmChart);
   catalogPage.search('Nodejs');
@@ -126,7 +126,7 @@ Then('user will see the Release Notes tab', () => {
 });
 
 Then(
-  'user will see the Actions drop down menu with options Upgrade, Rollback, and Uninstall Helm Release',
+  'user will see the Actions drop down menu with options Upgrade, Rollback, and Delete Helm Release',
   () => {
     helmDetailsPage.verifyActionsDropdown();
     helmDetailsPage.clickActionMenu();

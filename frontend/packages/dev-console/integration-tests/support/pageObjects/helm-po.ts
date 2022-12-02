@@ -37,6 +37,6 @@ export const helmPO = {
   helmActions: {
     upgrade: '[data-test-action="Upgrade"]',
     rollBack: '[data-test-action="Rollback"]',
-    uninstallHelmRelease: '[data-test-action="Uninstall Helm Release"]',
+    deleteHelmRelease: '[data-test-action="Delete Helm Release"]',
   },
 };

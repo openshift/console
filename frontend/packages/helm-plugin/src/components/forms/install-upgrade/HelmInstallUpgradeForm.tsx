@@ -72,7 +72,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   const yamlEditor = chartHasValues && (
     <YAMLEditorField
       name="yamlData"
-      label={t('helm-plugin~Helm Chart')}
+      label={t('helm-plugin~Helm Release')}
       schema={formSchema}
       showSamples={false}
       onSave={handleSubmit}
@@ -126,7 +126,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
                 type={TextInputTypes.text}
                 name="releaseName"
                 label={t('helm-plugin~Release name')}
-                helpText={t('helm-plugin~A unique name for the Helm Chart release.')}
+                helpText={t('helm-plugin~A unique name for the Helm Release.')}
                 required
                 isDisabled={!!chartError || helmAction === HelmActionType.Upgrade}
               />

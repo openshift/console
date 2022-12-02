@@ -72,7 +72,7 @@ export enum HelmReleaseStatus {
 }
 
 export enum HelmActionType {
-  Install = 'Install',
+  Create = 'Create',
   Upgrade = 'Upgrade',
   Rollback = 'Rollback',
 }

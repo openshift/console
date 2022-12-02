@@ -15,12 +15,12 @@ Feature: Helm Release
               And user will get the link to install helm charts from developer catalog
 
 
-        Scenario: Install Helm Chart page details: HR-05-TC02
+        Scenario: Create Helm Release page details: HR-05-TC02
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs" card from catalog page
-              And user clicks on the Install Helm Chart button on side bar
-             Then Install Helm Chart page is displayed
+              And user clicks on the Create button on side bar
+             Then Create Helm Release page is displayed
               And release name displays as "nodejs"
               And form view radio button is selected by default
               And yaml view radio button is enabled
@@ -31,9 +31,9 @@ Feature: Helm Release
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs" card from catalog page
-              And user clicks on the Install Helm Chart button on side bar
+              And user clicks on the Create button on side bar
               And user enters Release Name as "nodejs-release"
-              And user clicks on the Install button
+              And user clicks on the Create button
              Then user will be redirected to Topology page
               And Topology page have the helm chart workload "nodejs-release"
 
@@ -41,7 +41,7 @@ Feature: Helm Release
         Scenario: Context menu options of helm release: HR-01-TC01
             Given user is at the Topology page
              When user right clicks on the helm release "nodejs-release" to open the context menu
-             Then user is able to see the context menu with actions Upgrade and Uninstall Helm Release
+             Then user is able to see the context menu with actions Upgrade and Delete Helm Release
 
 
         Scenario: Open the Helm tab on the navigation bar when helm charts are present: HR-05-TC05
@@ -66,13 +66,13 @@ Feature: Helm Release
               And user will see the Resources tab
               And user will see the Revision History tab
               And user will see the Release Notes tab
-              And user will see the Actions drop down menu with options Upgrade, Rollback, and Uninstall Helm Release
+              And user will see the Actions drop down menu with options Upgrade, Rollback, and Delete Helm Release
 
 
         Scenario: Actions menu on Helm page after helm chart upgrade: HR-08-TC01
             Given user is on the Helm page with helm release "nodejs-release"
              When user clicks on the Kebab menu
-             Then user is able to see kebab menu with actions Upgrade, Rollback and Uninstall Helm Release
+             Then user is able to see kebab menu with actions Upgrade, Rollback and Delete Helm Release
 
 
         Scenario: Perform Upgrade action on Helm Release through Context Menu: HR-01-TC04
@@ -103,10 +103,10 @@ Feature: Helm Release
              Then user will be redirected to Topology page
 
 
-        Scenario: Uninstall Helm Release through Context Menu: HR-01-TC03
+        Scenario: Delete Helm Release through Context Menu: HR-01-TC03
             Given user is at the Topology page
              When user right clicks on the helm release "nodejs-release" to open the context menu
-              And user clicks on the "Uninstall Helm Release" action
+              And user clicks on the "Delete Helm Release" action
               And user enters the release name "nodejs-release"
-              And user clicks on the Uninstall button
+              And user clicks on the Delete button
              Then user will be redirected to Topology page

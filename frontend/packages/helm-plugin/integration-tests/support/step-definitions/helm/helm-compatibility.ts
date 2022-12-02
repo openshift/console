@@ -5,7 +5,7 @@ import { pageTitle } from '@console/dev-console/integration-tests/support/consta
 import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { addPage } from '@console/dev-console/integration-tests/support/pages/add-flow/add-page';
 
-Given('user is at the Install Helm Chart page', () => {
+Given('user is at the Create Helm Release page', () => {
   addPage.selectCardFromOptions(addOptions.HelmChart);
 });
 

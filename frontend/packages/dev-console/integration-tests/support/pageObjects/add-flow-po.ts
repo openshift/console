@@ -174,7 +174,7 @@ export const catalogPO = {
   },
   installHelmChart: {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',
-    install: '[data-test-id="submit-button"]',
+    create: '[data-test-id="submit-button"]',
     releaseName: '#form-input-releaseName-field',
     yamlView: '#form-radiobutton-editorType-yaml-field',
     formView: '#form-radiobutton-editorType-form-field',

@@ -75,7 +75,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const [initialFormData, setInitialFormData] = React.useState<object>();
   const [initialFormSchema, setInitialFormSchema] = React.useState<JSONSchema7>();
   const helmAction: HelmActionType = initialChartURL
-    ? HelmActionType.Install
+    ? HelmActionType.Create
     : HelmActionType.Upgrade;
 
   const config = React.useMemo<HelmActionConfigType>(
@@ -189,7 +189,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     };
 
     const isGoingToTopology =
-      helmAction === HelmActionType.Install || helmActionOrigin === HelmActionOrigins.topology;
+      helmAction === HelmActionType.Create || helmActionOrigin === HelmActionOrigins.topology;
 
     return config
       .fetch('/api/helm/release', payload, null, -1)
