@@ -14,19 +14,19 @@ import {
   LabelGroup as PfLabelGroup,
   Title,
 } from '@patternfly/react-core';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 
-import { K8sResourceKind } from '../../module/k8s';
-import { history, Kebab, MsgBox, SectionHeading, StatusBox } from '../utils';
-import { confirmModal, createAlertRoutingModal } from '../modals';
-import { Table, TableData, TextFilter, RowFunctionArgs } from '../factory';
+import { K8sResourceKind } from '../../../module/k8s';
+import { Table, TableData, TextFilter, RowFunctionArgs } from '../../factory';
+import { confirmModal, createAlertRoutingModal } from '../../modals';
+import { Firehose, history, Kebab, MsgBox, SectionHeading, StatusBox } from '../../utils';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
   receiverTypes,
-} from './alert-manager-utils';
-import { Helmet } from 'react-helmet';
-import { PencilAltIcon } from '@patternfly/react-icons';
+} from './alertmanager-utils';
 
 export enum InitialReceivers {
   Critical = 'Critical',
@@ -492,7 +492,7 @@ const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ o
   );
 };
 
-export const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps> = React.memo(
+const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps> = React.memo(
   ({ obj, ...props }) => {
     const { t } = useTranslation();
     return (
@@ -506,6 +506,22 @@ export const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps>
       </>
     );
   },
+);
+
+export const AlertmanagerConfig = () => (
+  <Firehose
+    resources={[
+      {
+        kind: 'Secret',
+        name: 'alertmanager-main',
+        namespace: 'openshift-monitoring',
+        isList: false,
+        prop: 'obj',
+      },
+    ]}
+  >
+    <AlertmanagerConfigWrapper />
+  </Firehose>
 );
 
 type AlertmanagerConfigWrapperProps = {

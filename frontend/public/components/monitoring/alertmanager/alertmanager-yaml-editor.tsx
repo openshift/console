@@ -5,14 +5,14 @@ import { Alert } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 
-import { K8sResourceKind } from '../../module/k8s';
-import { AsyncComponent, StatusBox } from '../utils';
-import { patchAlertmanagerConfig, getAlertmanagerYAML } from './alert-manager-utils';
+import { K8sResourceKind } from '../../../module/k8s';
+import { AsyncComponent, Firehose, StatusBox } from '../../utils';
+import { patchAlertmanagerConfig, getAlertmanagerYAML } from './alertmanager-utils';
 
 const EditAlertmanagerYAML = (props) => (
   <AsyncComponent
     {...props}
-    loader={() => import('../edit-yaml').then((c) => c.EditYAML)}
+    loader={() => import('../../edit-yaml').then((c) => c.EditYAML)}
     create={false}
     genericYAML
   />
@@ -91,7 +91,7 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: se
   );
 };
 
-export const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps> = React.memo(
+const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps> = React.memo(
   ({ obj, ...props }) => {
     const { t } = useTranslation();
     return (
@@ -107,6 +107,22 @@ export const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapp
   },
 );
 
+const AlertmanagerYAML: React.FC<{}> = () => (
+  <Firehose
+    resources={[
+      {
+        kind: 'Secret',
+        name: 'alertmanager-main',
+        namespace: 'openshift-monitoring',
+        isList: false,
+        prop: 'obj',
+      },
+    ]}
+  >
+    <AlertmanagerYAMLEditorWrapper />
+  </Firehose>
+);
+
 type AlertmanagerYAMLEditorWrapperProps = {
   obj?: {
     data?: K8sResourceKind;
@@ -118,3 +134,5 @@ type AlertmanagerYAMLEditorProps = {
   obj?: K8sResourceKind;
   onCancel?: () => void;
 };
+
+export default AlertmanagerYAML;

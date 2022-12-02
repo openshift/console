@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { K8sResourceKind } from '../../module/k8s';
-import { AlertmanagerConfig } from '../monitoring/alert-manager-config';
-import { patchAlertmanagerConfig } from '../monitoring/alert-manager-utils';
+import { AlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-config';
+import { patchAlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-utils';
 
 const updateAlertRoutingProperty = (
   config: any,
