@@ -244,7 +244,10 @@ const getContainer = (pod: PodKind, name: String): ContainerSpec => {
 const getContainerStateValue = (state: any) => {
   const containerTerminated = state.value === 'terminated' && _.isFinite(state.exitCode);
   return containerTerminated
-    ? i18n.t('public~{{label}} with exit code {{exitCode}}', { state })
+    ? i18n.t('public~{{label}} with exit code {{exitCode}}', {
+        label: state.label,
+        exitCode: state.exitCode,
+      })
     : state.label;
 };
 
