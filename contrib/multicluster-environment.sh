@@ -21,8 +21,8 @@ OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET:=open-sesame}
 BRIDGE_MANAGED_CLUSTERS="[]"
 CA_FILE_DIR=$(mktemp -d 2>/dev/null || mktemp -d -t 'bridge-ca-files')
 
-oc get -n openshift-config-managed cm kube-root-ca.crt -o json | jq -r '.data["ca.crt"]' > "$CA_FILE_DIR/api-ca.crt"
-oc get -n openshift-config-managed cm default-ingress-cert -o json | jq -r '.data["ca-bundle.crt"]' > "$CA_FILE_DIR/oauth-ca.crt"
+oc get -n openshift-config-managed cm kube-root-ca.crt -o json | jq -r '.data["ca.crt"]' >"$CA_FILE_DIR/api-ca.crt"
+oc get -n openshift-config-managed cm default-ingress-cert -o json | jq -r '.data["ca-bundle.crt"]' >"$CA_FILE_DIR/oauth-ca.crt"
 
 for CONTEXT in $(oc config get-contexts -o name); do
     # Set up the OAuthClient for this cluster
@@ -44,16 +44,16 @@ EOF
         mkdir -p "$CA_FILE_DIR/$NAME"
         CA_FILE="$CA_FILE_DIR/$NAME/api-ca.crt"
         OAUTH_CA_FILE="$CA_FILE_DIR/$NAME/oauth-ca.crt"
-        oc --context "$CONTEXT" get -n openshift-config-managed cm kube-root-ca.crt -o json | jq -r '.data["ca.crt"]' > "$CA_FILE"
-        oc --context "$CONTEXT" get -n openshift-config-managed cm default-ingress-cert -o json | jq -r '.data["ca-bundle.crt"]' > "$OAUTH_CA_FILE"
-        BRIDGE_MANAGED_CLUSTERS=$(echo "$BRIDGE_MANAGED_CLUSTERS" | \
+        oc --context "$CONTEXT" get -n openshift-config-managed cm kube-root-ca.crt -o json | jq -r '.data["ca.crt"]' >"$CA_FILE"
+        oc --context "$CONTEXT" get -n openshift-config-managed cm default-ingress-cert -o json | jq -r '.data["ca-bundle.crt"]' >"$OAUTH_CA_FILE"
+        BRIDGE_MANAGED_CLUSTERS=$(echo "$BRIDGE_MANAGED_CLUSTERS" |
             jq --arg name "$NAME" \
-            --arg url "$URL" \
-            --arg caFile "$CA_FILE" \
-            --arg clientID "$OAUTH_CLIENT_ID" \
-            --arg clientSecret "$OAUTH_CLIENT_SECRET" \
-            --arg oauthCAFile "$OAUTH_CA_FILE" \
-            '. += [{"name": $name, "apiServer": {"url": $url, "caFile": $caFile}, "oauth": {"clientID": $clientID, "clientSecret": $clientSecret, caFile: $oauthCAFile}}]')
+                --arg url "$URL" \
+                --arg caFile "$CA_FILE" \
+                --arg clientID "$OAUTH_CLIENT_ID" \
+                --arg clientSecret "$OAUTH_CLIENT_SECRET" \
+                --arg oauthCAFile "$OAUTH_CA_FILE" \
+                '. += [{"name": $name, "apiServer": {"url": $url, "caFile": $caFile}, "oauth": {"clientID": $clientID, "clientSecret": $clientSecret, caFile: $oauthCAFile}}]')
     fi
 done
 
@@ -75,6 +75,9 @@ export BRIDGE_K8S_MODE
 
 BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT=$(oc whoami --show-server)
 export BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT
+
+BRIDGE_K8S_MODE_OFF_CLUSTER_MANAGED_CLUSTER_PROXY="https://$(oc get route cluster-proxy-addon-user -n multicluster-engine -o json | jq -r '.spec.host')"
+export BRIDGE_K8S_MODE_OFF_CLUSTER_MANAGED_CLUSTER_PROXY
 
 BRIDGE_CA_FILE="$CA_FILE_DIR/api-ca.crt"
 export BRIDGE_CA_FILE
