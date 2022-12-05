@@ -793,7 +793,7 @@
       "name": "%console-app~HorizontalPodAutoscalers%",
       "model": {
         "group": "autoscaling",
-        "version": "v2beta2",
+        "version": "v2",
         "kind": "HorizontalPodAutoscaler"
       }
     }

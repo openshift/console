@@ -200,7 +200,7 @@ export const deploymentData: K8sResourceKind = {
 
 export const hpaData: K8sResourceKind = {
   kind: 'HorizontalPodAutoscaler',
-  apiVersion: 'autoscaling/v2beta2',
+  apiVersion: 'autoscaling/v2',
   metadata: {
     name: 'example',
     namespace: 'testproject3',

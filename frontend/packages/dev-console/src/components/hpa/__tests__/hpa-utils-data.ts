@@ -601,7 +601,7 @@ export const deploymentConfigExamples: { [key: string]: K8sResourceKind } = {
 export const hpaExamples: { [key: string]: HorizontalPodAutoscalerKind } = {
   noMetrics: {
     kind: 'HorizontalPodAutoscaler',
-    apiVersion: 'autoscaling/v2beta2',
+    apiVersion: 'autoscaling/v2',
     metadata: {
       name: 'example',
       namespace: 'test-ns',
@@ -618,7 +618,7 @@ export const hpaExamples: { [key: string]: HorizontalPodAutoscalerKind } = {
   },
   cpuScaled: {
     kind: 'HorizontalPodAutoscaler',
-    apiVersion: 'autoscaling/v2beta2',
+    apiVersion: 'autoscaling/v2',
     metadata: {
       name: 'example',
       namespace: 'test-ns',
