@@ -148,7 +148,7 @@ func main() {
 	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
-
+	fHubConsoleURL := fs.String("hub-console-url", "", "URL of the hub cluster's console in a multi cluster environment.")
 	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
@@ -263,6 +263,11 @@ func main() {
 		}
 	}
 
+	hubConsoleURL := &url.URL{}
+	if *fHubConsoleURL != "" {
+		hubConsoleURL = bridge.ValidateFlagIsURL("hub-console-url", *fHubConsoleURL)
+	}
+
 	srv := &server.Server{
 		PublicDir:                    *fPublicDir,
 		BaseURL:                      baseURL,
@@ -295,6 +300,7 @@ func main() {
 		ReleaseVersion:               *fReleaseVersion,
 		NodeArchitectures:            nodeArchitectures,
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
+		HubConsoleURL:                hubConsoleURL,
 	}
 
 	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}

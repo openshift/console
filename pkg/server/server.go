@@ -117,6 +117,7 @@ type jsGlobals struct {
 	ReleaseVersion                  string                     `json:"releaseVersion"`
 	NodeArchitectures               []string                   `json:"nodeArchitectures"`
 	CopiedCSVsDisabled              bool                       `json:"copiedCSVsDisabled"`
+	HubConsoleURL                   string                     `json:"hubConsoleURL"`
 }
 
 type Server struct {
@@ -181,6 +182,7 @@ type Server struct {
 	Perspectives                 string
 	Telemetry                    serverconfig.MultiKeyValue
 	CopiedCSVsDisabled           bool
+	HubConsoleURL                *url.URL
 }
 
 func (s *Server) authDisabled() bool {
@@ -752,6 +754,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		ReleaseVersion:             s.ReleaseVersion,
 		NodeArchitectures:          s.NodeArchitectures,
 		CopiedCSVsDisabled:         s.CopiedCSVsDisabled,
+		HubConsoleURL:              s.HubConsoleURL.String(),
 	}
 
 	localAuther := s.getLocalAuther()
