@@ -150,7 +150,7 @@ export const HorizontalPodAutoscalerModel: K8sKind = {
   // t('public~HorizontalPodAutoscaler')
   labelKey: 'public~HorizontalPodAutoscaler',
   plural: 'horizontalpodautoscalers',
-  apiVersion: 'v2beta2',
+  apiVersion: 'v2',
   apiGroup: 'autoscaling',
   abbr: 'HPA',
   namespaced: true,

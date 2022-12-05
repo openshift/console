@@ -349,7 +349,7 @@ spec:
   .setIn(
     [referenceForModel(k8sModels.HorizontalPodAutoscalerModel), 'default'],
     `
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: example
