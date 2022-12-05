@@ -40,6 +40,7 @@ describe('Create key/value secrets', () => {
   });
 
   afterEach(() => {
+    secrets.deleteSecret();
     checkErrors();
   });
 
