@@ -99,7 +99,6 @@ export const getPluginEntryCallback = (
     pluginID,
     () => {
       console.error(`Code reference resolution failed for plugin ${pluginID}`);
-      pluginStore.setDynamicPluginEnabled(pluginID, false);
     },
   );
 
