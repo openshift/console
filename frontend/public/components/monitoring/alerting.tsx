@@ -575,8 +575,12 @@ const AlertMessage: React.FC<AlertMessageProps> = ({ alertText, labels, template
         );
         messageParts = _.flatMap(messageParts, (part) => {
           if (_.isString(part) && part.indexOf(labelValue) !== -1) {
-            const [before, after] = part.split(labelValue);
-            return [before, link, after];
+            // `part` contains at least one instance of the resource name, so replace each instance
+            // with the link to the resource. Since the link is a component, we can't simply do a
+            // string substitution. Instead, create an array that contains each of the string parts
+            // and the resource links in the correct order.
+            const splitParts = part.split(labelValue);
+            return _.flatMap(splitParts, (p) => [p, link]).slice(0, -1);
           }
           return [part];
         });
