@@ -262,3 +262,11 @@ export const hpaPO = {
   cpu: '[id="cpu"]',
   memory: '[id="memory"]',
 };
+
+export const domainPO = {
+  domainMapping: '[aria-label="Domain mapping"]',
+  chipGroup: '[aria-label="Chip group category"]',
+  contentScroll: '[id="content-scrollable"]',
+  removeLabel: '[aria-label="Remove"]',
+  chipText: '[class="pf-c-chip__text"]',
+};
