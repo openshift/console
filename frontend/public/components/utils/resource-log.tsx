@@ -281,7 +281,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
           </Tooltip>
         )}
       </div>
-      <div className="co-toolbar__group co-toolbar__group--right">
+      <div className="co-toolbar__group co-toolbar__group--right" data-test="log-links">
         {!_.isEmpty(podLogLinks) &&
           _.map(_.sortBy(podLogLinks, 'metadata.name'), (link) => {
             const namespace = resource.metadata.namespace;
