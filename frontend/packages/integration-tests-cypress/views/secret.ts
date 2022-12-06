@@ -14,6 +14,7 @@ export const secrets = {
       });
   },
   deleteSecret: () => {
+    detailsPage.isLoaded();
     detailsPage.clickPageActionFromDropdown('Delete Secret');
     modal.shouldBeOpened();
     modal.submit();
