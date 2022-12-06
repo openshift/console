@@ -42,7 +42,12 @@ describe('Create key/value secrets', () => {
   });
 
   afterEach(() => {
-    secrets.deleteSecret();
+    cy.exec(
+      `oc delete secret -n ${testName} ${binarySecretName} ${asciiSecretName} ${unicodeSecretName}`,
+      {
+        failOnNonZeroExit: false,
+      },
+    );
     checkErrors();
   });
 
