@@ -4,13 +4,13 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PodStatus } from '@console/internal/components/pod';
+import { PodTraffic } from '@console/internal/components/pod-traffic';
 import {
   ResourceLink,
   resourcePath,
   SidebarSectionHeading,
   LoadingBox,
 } from '@console/internal/components/utils';
-import { GetPodTraffic } from '@console/internal/components/utils/get-pod-traffic';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { podPhase, PodKind, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import {
@@ -120,7 +120,7 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
           <PodStatus pod={pod} />
         </span>
         <span className="col-xs-1">
-          <GetPodTraffic podName={name} namespace={namespace} tooltipFlag />
+          <PodTraffic podName={name} namespace={namespace} tooltipFlag />
         </span>
         <span className="col-xs-3 text-right">
           <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('public~View logs')}</Link>

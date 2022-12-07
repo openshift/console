@@ -114,7 +114,7 @@ import VirtualizedTable, { TableData } from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { GetPodTraffic } from './utils/get-pod-traffic';
+import { PodTraffic } from './pod-traffic';
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
 const showMetrics =
@@ -463,7 +463,7 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
         activeColumnIDs={activeColumnIDs}
         id={podColumnInfo.traffic.id}
       >
-        <GetPodTraffic podName={name} namespace={namespace} />
+        <PodTraffic podName={name} namespace={namespace} />
       </TableData>
       <TableData className={Kebab.columnClass} activeColumnIDs={activeColumnIDs} id="">
         <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />
@@ -780,7 +780,7 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
       <RuntimeClass obj={pod} path="spec.runtimeClassName" />
       <PodDisruptionBudgetField obj={pod} />
       <DetailsItem label={t('public~Receiving Traffic')} obj={pod}>
-        <GetPodTraffic podName={pod.metadata.name} namespace={pod.metadata.namespace} />
+        <PodTraffic podName={pod.metadata.name} namespace={pod.metadata.namespace} />
       </DetailsItem>
     </dl>
   );
