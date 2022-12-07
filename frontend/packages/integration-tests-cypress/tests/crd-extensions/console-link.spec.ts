@@ -34,6 +34,10 @@ describe(`${crd} CRD`, () => {
   });
 
   afterEach(() => {
+    // delete potential orphaned consolelink from possible failed try
+    cy.exec(`oc delete consolelink ${name}`, {
+      failOnNonZeroExit: false,
+    });
     checkErrors();
   });
 
@@ -66,6 +70,7 @@ describe(`${crd} CRD`, () => {
         });
 
         cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}/${name}`);
+        detailsPage.sectionHeaderShouldExist('ConsoleLink details');
         detailsPage.titleShouldContain(name);
 
         cy.get(dropdownToggle).click();
