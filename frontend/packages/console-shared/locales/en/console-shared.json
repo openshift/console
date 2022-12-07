@@ -289,6 +289,8 @@
   "Provides a list of all the available sub-catalog types which are shown in the Developer Catalog. The types must be added below spec customization developerCatalog": "Provides a list of all the available sub-catalog types which are shown in the Developer Catalog. The types must be added below spec customization developerCatalog",
   "Add user perspectives": "Add user perspectives",
   "Provides a list of all the available user perspectives which are shown in the perspective dropdown. The perspectives must be added below spec customization.": "Provides a list of all the available user perspectives which are shown in the perspective dropdown. The perspectives must be added below spec customization.",
+  "Add pinned resources": "Add pinned resources",
+  "Provides a list of resources to be pinned on the Developer perspective navigation. The pinned resources must be added below spec customization perspectives.": "Provides a list of resources to be pinned on the Developer perspective navigation. The pinned resources must be added below spec customization perspectives.",
   "Set maxUnavaliable to 0": "Set maxUnavaliable to 0",
   "An eviction is allowed if at most 0 pods selected by \"selector\" are unavailable after the eviction.": "An eviction is allowed if at most 0 pods selected by \"selector\" are unavailable after the eviction.",
   "Set minAvailable to 25%": "Set minAvailable to 25%",

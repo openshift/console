@@ -67,6 +67,13 @@ const defaultProjectAccessRoles: ProjectAccessRoles = {
   availableClusterRoles: ['admin', 'edit', 'view'],
 };
 
+const samplePinnedResources = [
+  { group: 'apps', version: 'v1', resource: 'deployments' },
+  { group: '', version: 'v1', resource: 'secrets' },
+  { group: '', version: 'v1', resource: 'configmaps' },
+  { group: '', version: 'v1', resource: 'pods' },
+];
+
 const clusterRoleBindingSamples = (t: TFunction): Sample[] => [
   {
     title: t('console-shared~Allow reading Nodes in the core API groups (for ClusterRoleBinding)'),
@@ -406,6 +413,16 @@ const defaultSamples = (t: TFunction) =>
               );
             });
           },
+          targetResource: getTargetResource(ConsoleOperatorConfigModel),
+        },
+        {
+          title: t('console-shared~Add pinned resources'),
+          description: t(
+            'console-shared~Provides a list of resources to be pinned on the Developer perspective navigation. The pinned resources must be added below spec customization perspectives.',
+          ),
+          id: 'dev-pinned-resources',
+          snippet: true,
+          lazyYaml: () => YAML.dump(samplePinnedResources),
           targetResource: getTargetResource(ConsoleOperatorConfigModel),
         },
       ],
