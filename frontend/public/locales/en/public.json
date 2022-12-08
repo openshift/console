@@ -1,7 +1,4 @@
 {
-  "Name": "Name",
-  "Version": "Version",
-  "Dynamic Plugins table": "Dynamic Plugins table",
   "None": "None",
   "unknown": "unknown",
   "Cluster update available. <2>Update cluster</2>": "Cluster update available. <2>Update cluster</2>",
@@ -14,8 +11,10 @@
   "OpenShift is Red Hat's container application platform that allows developers to quickly develop, host, and scale applications in a cloud environment.": "OpenShift is Red Hat's container application platform that allows developers to quickly develop, host, and scale applications in a cloud environment.",
   "Alertmanager details": "Alertmanager details",
   "Alertmanager node selector": "Alertmanager node selector",
+  "Name": "Name",
   "Namespace": "Namespace",
   "Labels": "Labels",
+  "Version": "Version",
   "Node selector": "Node selector",
   "Alertmanagers": "Alertmanagers",
   "API resources": "API resources",
