@@ -121,7 +121,7 @@ func (p *PluginsHandler) HandleI18nResources(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		errMsg := err.Error()
 		klog.Error(errMsg)
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
+		serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: errMsg})
 		return
 	}
 	pluginServiceRequestURL.Path = path.Join(pluginServiceRequestURL.Path, "locales", lang, fmt.Sprintf("%s.json", namespace))
@@ -140,7 +140,7 @@ func (p *PluginsHandler) HandlePluginAssets(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		errMsg := err.Error()
 		klog.Error(errMsg)
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
+		serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: errMsg})
 		return
 	}
 	pluginServiceRequestURL.Path = path.Join(pluginServiceRequestURL.Path, pluginAssetPath)
@@ -163,7 +163,7 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 	if err != nil {
 		errMsg := fmt.Sprintf("GET request for %q plugin failed: %v", pluginName, err)
 		klog.Error(errMsg)
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
+		serverutils.SendResponse(w, resp.StatusCode, serverutils.ApiError{Err: errMsg})
 		return
 	}
 	defer resp.Body.Close()
@@ -188,7 +188,7 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 	if err != nil {
 		errMsg := fmt.Sprintf("failed sending HTTP response body from %q plugin: %v", pluginName, err)
 		klog.Error(errMsg)
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
 		return
 	}
 }
