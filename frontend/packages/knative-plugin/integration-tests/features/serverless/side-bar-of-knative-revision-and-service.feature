@@ -28,10 +28,10 @@ Feature: side bar details
 
 
         @smoke
-        Scenario: side bar details of knative Service: KN-06-TC01
-            Given user has created knative service "nodejs-ex-git"
-             When user clicks on the knative service "nodejs-ex-git"
-             Then side bar is displayed with heading name as "nodejs-ex-git"
+        Scenario: Sidebar details of knative Service: KN-06-TC01
+            Given user has created knative service "nodejs"
+             When user clicks on the knative service "nodejs"
+             Then side bar is displayed with heading name as "nodejs"
               And Name, Namespace, Labels, Annotations, Created at, Owner fields displayed in topology details
               And Pods, Revisions, Routes and Builds displayed in Resources section
     # And Name display as "nodejs-ex-git-1" in topology details
@@ -42,33 +42,34 @@ Feature: side bar details
     # And owner field displayed in topology details
 
 
-        @smoke @broken-test
-        Scenario: side bar details of knative Revision: KN-06-TC02
-            Given user has created knative service "nodejs-ex-git"
-             When user clicks on the revision of knative service "nodejs-ex-git"
-             Then side bar is displayed with heading name as "nodejs-ex-git"
+        @smoke
+        Scenario: Sidebar details of knative Revision: KN-06-TC02
+            Given user has created knative service "nodejs"
+             When user clicks on the revision of knative service "nodejs"
+             Then side bar is displayed with heading name as "nodejs"
               And Name, Namespace, Labels, Annotations, Created at, Owner fields displayed in topology details
               And Pods, Deployment, Routes and Configurations displayed in Resources section
 
 
-        @regression @broken-test
-        Scenario: Actions menu of knative revision in side bar: KN-06-TC05
-            Given user has created knative service "nodejs-ex-git"
-             When user clicks on the revision of knative service "nodejs-ex-git"
+        @regression
+        Scenario: Actions menu of knative revision in side bar: KN-06-TC03
+            Given user has created knative service "nodejs"
+             When user clicks on the revision of knative service "nodejs"
               And user clicks on Actions dropdown in top right corner of side bar
-             Then user able to see the options Edit Labels, Edit Annotations, Edit Revision, Delete Revision
+             Then user able to see the options "Edit labels", "Edit annotations", "Edit Revision", "Delete Revision"
 
 
-        @to-do
-        Scenario: Resoruce details of knative service in side bar: KN-06-TC06
-            Given user has created knative service "nodejs-ex-git"
-             When user clicks on the knative service "nodejs-ex-git"
-              And user clicks on Resources section
+        @regression
+        Scenario: Resoruce details of knative service in side bar: KN-06-TC04
+            Given user has created knative service "nodejs"
+             When user clicks on the knative service "nodejs"
+              And user clicks on Resources tab
+             Then user able to see the "Pods", "Routes", "Revisions", "Builds" sections
 
 
-        @regression @broken-test
-        Scenario: Actions menu of knative service in side bar: KN-06-TC08
-            Given user has created knative service "nodejs-ex-git"
-             When user clicks on the knative service "nodejs-ex-git"
+        @regression
+        Scenario: Actions menu of knative service in side bar: KN-06-TC05
+            Given user has created knative service "nodejs"
+             When user clicks on the knative service "nodejs"
               And user clicks on Actions dropdown in top right corner of side bar
-             Then user able to see the options like Edit Application Grouping, Set Traffic Distribution, Edit Health Checks, Edit Labels, Edit Annotations, Edit Service, Delete Service
+             Then user able to see the options like "Edit application grouping", "Set traffic distribution", "Edit Health Checks", "Edit labels", "Edit annotations", "Edit Service", "Delete Service", "Edit resource limits", "Edit nodejs", "Create Service Binding"
