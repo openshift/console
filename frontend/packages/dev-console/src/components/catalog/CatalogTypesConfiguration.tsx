@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DualListSelector, FormSection } from '@patternfly/react-core';
+import { DualListSelector, FormHelperText, FormSection } from '@patternfly/react-core';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { CatalogItemType, isCatalogItemType } from '@console/dynamic-plugin-sdk/src/extensions';
@@ -239,6 +239,11 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
 
   return (
     <FormSection title={t('devconsole~Developer catalog')} data-test="catalog-types form-section">
+      <FormHelperText isHidden={false}>
+        {t(
+          'devconsole~Another option to customize and standardize your development process. As an admin, you can disable the complete Developer Catalog, or individual sub-catalogs (available as Types in the Developer Catalog). Also here the "Search" and "Topology" will still show such resources.',
+        )}
+      </FormHelperText>
       <DualListSelector
         availableOptionsTitle={t('devconsole~Enabled types')}
         chosenOptionsTitle={t('devconsole~Disabled types')}

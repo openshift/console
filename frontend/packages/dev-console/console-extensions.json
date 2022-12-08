@@ -59,6 +59,35 @@
   {
     "type": "console.cluster-configuration/item",
     "properties": {
+      "id": "dev-console.PinnedResourcesConfiguration",
+      "groupId": "developer",
+      "label": "%devconsole~Pre-pinned navigation items%",
+      "description": "%devconsole~A list of default resouces saved.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "catalog.PinnedResourcesConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        }
+      ]
+    }
+  },
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
       "id": "dev-console.AddPageConfiguration",
       "groupId": "developer",
       "label": "%devconsole~Add page actions%",

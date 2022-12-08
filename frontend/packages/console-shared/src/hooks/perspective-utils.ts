@@ -27,9 +27,15 @@ export type PerspectiveVisibility = {
   accessReview?: PerspectiveAccessReview;
 };
 
+export type PerspectivePinnedResource = {
+  group: string;
+  version: string;
+  resource: string;
+};
 export type Perspective = {
   id: string;
   visibility: PerspectiveVisibility;
+  pinnedResources?: PerspectivePinnedResource[];
 };
 
 export const getPerspectiveVisitedKey = (perspective: PerspectiveType): string =>
