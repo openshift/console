@@ -33,7 +33,7 @@ Feature: Install the Helm Release
               And user searches and selects "Quarkus" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
               And user selects YAML view
-              And user selects the Chart Version "0.0.2 (Provided by Red Hat Helm Charts)"
+              # And user selects the Chart Version "0.0.2 (Provided by Red Hat Helm Charts)"
              When user clicks on the Install button
              Then user will be redirected to Topology page
               And Topology page have the helm chart workload "quarkus"
@@ -47,16 +47,6 @@ Feature: Install the Helm Release
               And user clicks on the Install Helm Chart button on side bar
               And user clicks on the chart versions dropdown menu
              Then user will see the information of all the chart versions
-
-
-        @regression @manual
-        Scenario: README should be updated when chart version is updated: HR-06-TC07
-            Given user is at Install Helm Chart page
-             Then user will see the chart version dropdown
-             When user selects YAML view
-             When user selects the Chart Version "0.2.0 / App Version 1.16.0 (Provided by Red Hat Helm Charts)"
-             When user selects "Proceed" button from Change Chart version confirmation dialog
-             Then user will see that the README is also updated with new chart version "0.2.0 / App Version 1.16.0 (Provided by Red Hat Helm Charts)"
 
 
         @regression @to-do
@@ -126,7 +116,7 @@ Feature: Install the Helm Release
             Given user is at Add page
             # Uncomment below for cluster not having projecthelmchartrepositories CRD
             #   And user has applied namespaced CRD yaml "<crd_yaml>"
-              And user has added namespaced helm chart repo yaml "<cr_yaml>" in namespace "aut-helm"
+              And user has created namespaced helm chart repo with yaml "<cr_yaml>" in namespace "aut-helm"
              When user selects Helm Chart card from Add page
              Then user will see "Ibm Repo" under Chart repositories filter
               And user will not see "Ibm Repo" under Chart repositories filter in a new namespace "test-helm1"
@@ -146,11 +136,3 @@ Feature: Install the Helm Release
               And user selects Helm Chart card from Add page
              Then user will see "Ibm Repo" under Chart repositories filter
               And user will not see "Ibm Repo" under Chart repositories filter in a new namespace "test-helm2"
-
-
-        @regression @odc-5713
-        Scenario: Quick starts link in the helm dev catalog description: HR-06-TC14
-            Given user is at Add page
-             When user selects Helm Chart card from Add page
-              And user clicks on quick start link in helm catalog description
-             Then user will see "Add Helm Chart Repositories to extend the Developer Catalog for your project" quick start

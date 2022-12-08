@@ -41,10 +41,6 @@ Then('user will see A-Z, Z-A sort by dropdown', () => {
   cy.get('.co-catalog-page__sort').click();
 });
 
-Then('user will see the cards of Event Sources', () => {
-  catalogPage.verifyCardTypeOfAllCards('Event Sources');
-});
-
 Then('user will see the cards of Helm Charts', () => {
   catalogPage.verifyHelmChartCardsAvailable();
 });
