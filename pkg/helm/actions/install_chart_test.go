@@ -1,16 +1,20 @@
 package actions
 
 import (
+	"fmt"
 	"io/ioutil"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chartutil"
 	kubefake "helm.sh/helm/v3/pkg/kube/fake"
 	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/storage"
 	"helm.sh/helm/v3/pkg/storage/driver"
+	helmTime "helm.sh/helm/v3/pkg/time"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -305,6 +309,97 @@ func TestInstallChartBasicAuth(t *testing.T) {
 			require.Equal(t, tt.releaseName, rel.Name)
 			require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
 			require.Equal(t, tt.chartPath, rel.Chart.Metadata.Annotations["chart_url"])
+		})
+	}
+}
+
+func TestInstallChartAsync(t *testing.T) {
+	tests := []struct {
+		releaseName  string
+		chartPath    string
+		createSecret bool
+		chartName    string
+		chartVersion string
+		indexEntry   string
+		namespace    string
+		requireError bool
+		helmCRS      []*unstructured.Unstructured
+	}{
+		{
+			releaseName:  "myrelease",
+			chartPath:    "http://localhost:9181/charts/influxdb-3.0.2.tgz",
+			chartName:    "influxdb",
+			chartVersion: "3.0.2",
+			createSecret: true,
+			namespace:    "test",
+			indexEntry:   "influxdb--without-tls",
+			helmCRS: []*unstructured.Unstructured{
+				{
+					Object: map[string]interface{}{
+						"apiVersion": "helm.openshift.io/v1beta1",
+						"kind":       "HelmChartRepository",
+						"metadata": map[string]interface{}{
+							"name": "without-tls",
+						},
+						"spec": map[string]interface{}{
+							"connectionConfig": map[string]interface{}{
+								"url": "http://localhost:9181",
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.releaseName, func(t *testing.T) {
+			store := storage.Init(driver.NewMemory())
+			actionConfig := &action.Configuration{
+				RESTClientGetter: FakeConfig{},
+				Releases:         store,
+				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				Capabilities:     chartutil.DefaultCapabilities,
+				Log:              func(format string, v ...interface{}) {},
+			}
+			objs := []runtime.Object{}
+			client := K8sDynamicClientFromCRs(tt.helmCRS...)
+			clientInterface := k8sfake.NewSimpleClientset(objs...)
+			coreClient := clientInterface.CoreV1()
+			var rel *Secret
+			var err error
+			go func() {
+				rel, err = InstallChartAsync(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry)
+				fmt.Println(rel, err)
+				if tt.releaseName == "myrelease" {
+					require.NoError(t, err)
+					require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName), rel.SecretName)
+				} else if tt.releaseName == "invalid chart path" {
+					require.Error(t, err)
+				}
+			}()
+			if tt.requireError == false {
+				secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.namespace))
+				r := release.Release{
+					Name:      tt.releaseName,
+					Namespace: tt.namespace,
+					Info: &release.Info{
+						FirstDeployed: helmTime.Time{},
+						Status:        "pending-install",
+					},
+					Version: 1,
+					Chart: &chart.Chart{
+						Metadata: &chart.Metadata{
+							Name:        "influxdb",
+							Version:     "3.0.2",
+							Annotations: map[string]string{"chart_url": tt.chartPath},
+						},
+					},
+				}
+				time.Sleep(10 * time.Second)
+				err = secretsDriver.Create(fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName), &r)
+				require.NoError(t, err)
+			}
+
 		})
 	}
 }

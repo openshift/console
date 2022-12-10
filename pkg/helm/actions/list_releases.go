@@ -7,7 +7,7 @@ import (
 
 func ListReleases(conf *action.Configuration) ([]*release.Release, error) {
 	cmd := action.NewList(conf)
-
+	cmd.StateMask = action.ListAll
 	releases, err := cmd.Run()
 	if err != nil {
 		return nil, err

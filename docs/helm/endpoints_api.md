@@ -394,5 +394,97 @@ _Verifies if a Helm chart is compliant with a certain set of independent checks 
   * **Code:** 404 NOT FOUND <br />
     **Content:** `{ error : "error message" }`
 
+**Install Helm Release Asynchronously**
+----
+  _Install Helm release asynchronously_
+
+* **URL**
+
+    `/api/helm/release/async`
+
+* **Method:**
+
+  `POST`
+
+*  **Post Data Params**
+
+```
+ {
+   name: [string],
+   namespace: [string]
+   chart_url: [string]
+   values: map[string]interface{}
+  }
+```
+
+*  **Example Request**
+```
+    {
+    	"name": "test-helm-release",
+    	"namespace": "default",
+    	"chart_url": "https://github.com/akashshinde/console/raw/helm_endpoints/pkg/helm/testdata/influxdb-3.0.2.tgz"
+        "values": { "service": {"type": "ClusterIP"} }
+    }
+```
+
+* **Success Response:**
+
+  * **Code:** 201 <br />
+  * JSON encoded [Release structure](https://github.com/openshift/console/blob/master/pkg/helm/actions/utility.go#L21)
+
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{ error : "error message" }`
+
+
+
+
+
+
+**Upgrade Helm Release Asynchronously**
+----
+  _Upgrade Helm release asynchronously_
+
+* **URL**
+
+    `/api/helm/release/async`
+
+* **Method:**
+
+  `PUT`
+
+*  **Post Data Params**
+
+```
+ {
+   name: [string],
+   namespace: [string]
+   chart_url: [string]
+   values: map[string]interface{}
+  }
+```
+
+*  **Example Request**
+```
+    {
+    	"name": "test-helm-release",
+    	"namespace": "default",
+    	"chart_url": "https://github.com/akashshinde/console/raw/helm_endpoints/pkg/helm/testdata/influxdb-3.0.2.tgz"
+        "values": { "service": {"type": "ClusterIP"} }
+    }
+```
+
+* **Success Response:**
+
+  * **Code:** 201 <br />
+  * JSON encoded [Release structure](https://github.com/openshift/console/blob/master/pkg/helm/actions/utility.go#L21)
+
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{ error : "error message" }`
+
+
 
 
