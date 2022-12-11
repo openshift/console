@@ -468,6 +468,7 @@ export type ResourceLinkProps = {
   dataTest?: string;
   onClick?: () => void;
   truncate?: boolean;
+  children?: React.ReactNode;
 };
 
 export type ResourceIconProps = {
