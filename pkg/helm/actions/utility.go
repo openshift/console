@@ -172,6 +172,7 @@ func getRepositoryConnectionConfig(
 }
 
 func getSecret(ns string, name string, version int, coreclient corev1client.CoreV1Interface) (Secret, error) {
+	fmt.Println("create cluster")
 	label := fmt.Sprintf("owner=helm,name=%v,version=%v", name, version)
 	timeout := int64(60)
 	secretList, err := coreclient.Secrets(ns).Watch(context.TODO(), metav1.ListOptions{LabelSelector: label, Watch: true, TimeoutSeconds: &timeout})
