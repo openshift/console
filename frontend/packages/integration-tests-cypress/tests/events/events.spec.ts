@@ -1,4 +1,5 @@
 import { testName, checkErrors } from '../../support';
+import { guidedTour } from '../../views/guided-tour';
 import { nav } from '../../views/nav';
 
 const name = `${testName}-event-test-pod`;
@@ -34,6 +35,7 @@ const testpod = {
 describe('Events', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.visit('/');
     nav.sidenav.switcher.changePerspectiveTo('Administrator');
     nav.sidenav.switcher.shouldHaveText('Administrator');
