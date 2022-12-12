@@ -14,7 +14,7 @@ import { dashboardsSetEndTime, dashboardsSetTimespan } from '../../../actions/ob
 import { RootState } from '../../../redux';
 import { getQueryArgument, removeQueryArgument, setQueryArgument } from '../../utils';
 import { useBoolean } from '../hooks/useBoolean';
-import customTimeRangeModal from './custom-time-range-modal';
+import CustomTimeRangeModal from './custom-time-range-modal';
 import { TimeDropdownsProps } from './types';
 import { getActivePerspective } from './monitoring-dashboard-utils';
 
@@ -23,7 +23,9 @@ const CUSTOM_TIME_RANGE_KEY = 'CUSTOM_TIME_RANGE_KEY';
 const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
   const { t } = useTranslation();
   const activePerspective = getActivePerspective(namespace);
+
   const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
+  const [isModalOpen, , setModalOpen, setModalClosed] = useBoolean(false);
 
   const timespan = useSelector(({ observe }: RootState) =>
     observe.getIn(['dashboards', activePerspective, 'timespan']),
@@ -39,7 +41,7 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
   const onChange = React.useCallback(
     (v: string) => {
       if (v === CUSTOM_TIME_RANGE_KEY) {
-        customTimeRangeModal({ activePerspective });
+        setModalOpen();
       } else {
         setQueryArgument('timeRange', parsePrometheusDuration(v).toString());
         removeQueryArgument('endTime');
@@ -66,39 +68,46 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
   };
 
   return (
-    <div className="form-group monitoring-dashboards__dropdown-wrap">
-      <label
-        className="monitoring-dashboards__dropdown-title"
-        htmlFor="monitoring-time-range-dropdown"
-      >
-        {t('public~Time range')}
-      </label>
-      <Dropdown
-        className="monitoring-dashboards__variable-dropdown"
-        dropdownItems={_.map(items, (name, key) => (
-          <DropdownItem component="button" key={key} onClick={() => onChange(key)}>
-            {name}
-          </DropdownItem>
-        ))}
-        isOpen={isOpen}
-        onSelect={setClosed}
-        toggle={
-          <DropdownToggle
-            className="monitoring-dashboards__dropdown-button"
-            id="monitoring-time-range-dropdown"
-            onToggle={toggleIsOpen}
-          >
-            {
-              items[
-                endTime || endTimeFromParams
-                  ? CUSTOM_TIME_RANGE_KEY
-                  : formatPrometheusDuration(_.toNumber(timeSpanFromParams) || timespan)
-              ]
-            }
-          </DropdownToggle>
-        }
+    <>
+      <CustomTimeRangeModal
+        activePerspective={activePerspective}
+        isOpen={isModalOpen}
+        setClosed={setModalClosed}
       />
-    </div>
+      <div className="form-group monitoring-dashboards__dropdown-wrap">
+        <label
+          className="monitoring-dashboards__dropdown-title"
+          htmlFor="monitoring-time-range-dropdown"
+        >
+          {t('public~Time range')}
+        </label>
+        <Dropdown
+          className="monitoring-dashboards__variable-dropdown"
+          dropdownItems={_.map(items, (name, key) => (
+            <DropdownItem component="button" key={key} onClick={() => onChange(key)}>
+              {name}
+            </DropdownItem>
+          ))}
+          isOpen={isOpen}
+          onSelect={setClosed}
+          toggle={
+            <DropdownToggle
+              className="monitoring-dashboards__dropdown-button"
+              id="monitoring-time-range-dropdown"
+              onToggle={toggleIsOpen}
+            >
+              {
+                items[
+                  endTime || endTimeFromParams
+                    ? CUSTOM_TIME_RANGE_KEY
+                    : formatPrometheusDuration(_.toNumber(timeSpanFromParams) || timespan)
+                ]
+              }
+            </DropdownToggle>
+          }
+        />
+      </div>
+    </>
   );
 };
 

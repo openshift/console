@@ -3,7 +3,6 @@ import { projectDropdown } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
 import { submitButton, errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
-import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
 
 const shouldBeWatchdogAlertDetailsPage = () => {
@@ -154,12 +153,10 @@ describe('Monitoring: Alerts', () => {
     cy.byTestID('silence-actions')
       .contains('Expire silence')
       .click();
-    modal.shouldBeOpened();
     cy.testA11y('Expire silence modal');
-    modal.submit();
-    modal.shouldBeClosed();
+    cy.get('button.pf-m-primary').click();
     cy.get(errorMessage).should('not.exist');
-    // Wait for expiredSilenceIcon to exist
+    // Wait for expired silence icon to exist
     cy.byLegacyTestID('ban-icon').should('exist');
   });
 });
