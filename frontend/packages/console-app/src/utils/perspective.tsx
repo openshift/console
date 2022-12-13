@@ -10,7 +10,9 @@ export const getLandingPageURL: ResolvedExtension<Perspective>['properties']['la
   if (!flags[FLAGS.OPENSHIFT]) {
     return '/search';
   }
-  return flags[FLAGS.CAN_LIST_NS] ? '/dashboards' : '/k8s/cluster/projects';
+  return flags[FLAGS.CAN_LIST_NS] && flags[FLAGS.MONITORING]
+    ? '/dashboards'
+    : '/k8s/cluster/projects';
 };
 
 export const getImportRedirectURL: ResolvedExtension<
