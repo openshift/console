@@ -5,12 +5,12 @@ import { TYPE_WORKLOAD } from '../const';
 import { getResource } from '../utils';
 import { getModifyApplicationAction } from './modify-application';
 
-export const useTopologyWorloadActionProvider = (element: GraphElement) => {
+export const useTopologyWorkloadActionProvider = (element: GraphElement) => {
+  const resource = getResource(element);
   const actions = useMemo(() => {
-    const resource = getResource(element);
     const k8sKind = modelFor(referenceFor(resource));
     return [getModifyApplicationAction(k8sKind, resource)];
-  }, [element]);
+  }, [resource]);
 
   return useMemo(() => {
     if (element.getType() !== TYPE_WORKLOAD) return [[], true, undefined];

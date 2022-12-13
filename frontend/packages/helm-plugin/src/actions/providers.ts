@@ -24,11 +24,11 @@ export const useHelmActionProvider = (scope: HelmActionsScope) => {
 };
 
 export const useHelmActionProviderForTopology = (element: GraphElement) => {
-  const nodeType = element.getType();
+  const resource = getResource(element);
   const scope = React.useMemo(() => {
+    const nodeType = element.getType();
     if (nodeType !== TYPE_HELM_RELEASE) return undefined;
     const releaseName = element.getLabel();
-    const resource = getResource(element);
     if (!resource?.metadata) return null;
     const {
       namespace,
@@ -42,7 +42,7 @@ export const useHelmActionProviderForTopology = (element: GraphElement) => {
       },
       actionOrigin: 'topology',
     };
-  }, [element, nodeType]);
+  }, [element, resource]);
   const result = useHelmActionProvider(scope);
   return result;
 };
