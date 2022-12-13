@@ -343,7 +343,7 @@ const PopoverField: React.FC<{ body: React.ReactNode; label: string }> = ({ body
   </Popover>
 );
 
-const AlertStateHelp: React.FC<{}> = React.memo(() => {
+const AlertStateHelp: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
     <dl className="co-inline">
@@ -374,9 +374,9 @@ const AlertStateHelp: React.FC<{}> = React.memo(() => {
       </dd>
     </dl>
   );
-});
+};
 
-const SeverityHelp: React.FC<{}> = React.memo(() => {
+const SeverityHelp: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
     <dl className="co-inline">
@@ -409,9 +409,9 @@ const SeverityHelp: React.FC<{}> = React.memo(() => {
       </dd>
     </dl>
   );
-});
+};
 
-const SourceHelp: React.FC<{}> = React.memo(() => {
+const SourceHelp: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
     <dl className="co-inline">
@@ -433,7 +433,7 @@ const SourceHelp: React.FC<{}> = React.memo(() => {
       </dd>
     </dl>
   );
-});
+};
 
 const queryBrowserURL = (query: string, namespace: string) =>
   namespace
