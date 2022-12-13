@@ -470,3 +470,37 @@ Feature: Topology chart area
               And user sees "test-connector4" Title on Service binding details page
               And user navigates to Topology page
              Then user will see service binding connection
+
+
+        @regression @odc-7120
+        Scenario: Label specified in Label Selector section on Service binding details page: T-06-TC38
+            Given user has created namespace "aut-label-details-sb"
+              And user has installed Service Binding operator
+              And user has installed Redis Operator
+              And user is at developer perspective
+              And user is at Topology page chart view
+              And user has created a deployment workload named "node-ej"
+              And user has created a operator backed service of "Redis" operator named "redis-standalone"
+             When user clicks on import YAML button from topology page
+              And user enters yaml content from yaml file "test-data/servicebinding-resource-label-selector.yaml" in the editor
+              And user clicks on Create button in import YAML
+              And user sees "test-connector4" Title on Service binding details page
+             Then user will see "app=node-ej" in Label Selector section on Service binding details page
+
+
+        @regression @odc-7120
+        Scenario: Label specified in Label Selector section on Service binding side panel: T-06-TC39
+            Given user has created namespace "aut-label-panel-sb"
+              And user has installed Service Binding operator
+              And user has installed Redis Operator
+              And user is at developer perspective
+              And user is at Topology page chart view
+              And user has created a deployment workload named "node-ej"
+              And user has created a operator backed service of "Redis" operator named "redis-standalone"
+             When user clicks on import YAML button from topology page
+              And user enters yaml content from yaml file "test-data/servicebinding-resource-label-selector.yaml" in the editor
+              And user clicks on Create button in import YAML
+              And user sees "test-connector4" Title on Service binding details page
+              And user navigates to Topology page
+              And user clicks on service binding connector
+             Then user will see "app=node-ej" in Label Selector section on Service binding connnector topology sidebar

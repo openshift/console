@@ -6,7 +6,12 @@ export type ServiceBinding = K8sResourceCommon & {
       group: string;
       version: string;
       resource: string;
-      name: string;
+      name?: string;
+      labelSelector?: {
+        matchLabels: {
+          [key: string]: string;
+        };
+      };
     };
     services: {
       group: string;

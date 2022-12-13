@@ -474,3 +474,18 @@ When('user sees {string} Title on Service binding details page', (title: string)
   app.waitForLoad();
   cy.get('[data-test-id="resource-title"]').should('have.text', title);
 });
+
+Then(
+  'user will see {string} in Label Selector section on Service binding details page',
+  (label: string) => {
+    cy.byTestID('label-list').should('have.text', label);
+  },
+);
+
+Then(
+  'user will see {string} in Label Selector section on Service binding connnector topology sidebar',
+  (label: string) => {
+    topologySidePane.selectTab('Details');
+    cy.byTestID('label-list').should('have.text', label);
+  },
+);

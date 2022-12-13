@@ -1,8 +1,14 @@
 import * as React from 'react';
-import { render } from '@testing-library/react';
+import { configure, render } from '@testing-library/react';
+import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
-import { modelFor } from '@console/internal/module/k8s';
-import { connectedServiceBinding, failedServiceBinding } from '../../../__tests__/mock-data';
+import { modelFor, useModelFinder } from '@console/internal/module/k8s';
+import store from '@console/internal/redux';
+import {
+  connectedServiceBinding,
+  connectedServiceBindingWithLabelSelector,
+  failedServiceBinding,
+} from '../../../__tests__/mock-data';
 import { ServiceBindingModel } from '../../../models';
 import ServiceBindingDetailsTab from '../ServiceBindingDetailsTab';
 
@@ -16,6 +22,13 @@ jest.mock('@console/internal/module/k8s/k8s-models', () => ({
   modelFor: jest.fn(),
 }));
 
+jest.mock('@console/internal/module/k8s', () => ({
+  ...require.requireActual('@console/internal/module/k8s'),
+  useModelFinder: jest.fn(() => ({
+    findModel: jest.fn(),
+  })),
+}));
+
 jest.mock('@console/internal/components/utils/rbac', () => ({
   ...require.requireActual('@console/internal/components/utils/rbac'),
   useAccessReview: () => true,
@@ -26,8 +39,15 @@ jest.mock('@console/internal/components/utils/timestamp', () => ({
 }));
 
 (modelFor as jest.Mock).mockReturnValue(ServiceBindingModel);
+(useModelFinder as jest.Mock).mockImplementation(() => ({ findModel: () => ServiceBindingModel }));
 
-const Wrapper: React.FC = ({ children }) => <MemoryRouter>{children}</MemoryRouter>;
+configure({ testIdAttribute: 'data-test' });
+
+const Wrapper: React.FC = ({ children }) => (
+  <MemoryRouter>
+    <Provider store={store}>{children}</Provider>
+  </MemoryRouter>
+);
 
 describe('ServiceBindingDetailsTab', () => {
   it('should render a connected SB with the right status and attributes', () => {
@@ -90,5 +110,36 @@ describe('ServiceBindingDetailsTab', () => {
     renderResult.getByText('Ready');
     renderResult.getByText('ErrorReadingBinding');
     renderResult.getAllByText('redisSecret is not found');
+  });
+
+  it('should render a connected SB using label selector with the right status and attributes', () => {
+    const renderResult = render(
+      <Wrapper>
+        <ServiceBindingDetailsTab obj={connectedServiceBindingWithLabelSelector} />
+      </Wrapper>,
+    );
+
+    renderResult.getByText('ServiceBinding details');
+
+    // Name
+    renderResult.getByText('Name');
+    renderResult.getByText('connected-service-binding-with-label-selector');
+
+    // Status
+    renderResult.getAllByText('Status');
+    renderResult.getByText('Connected');
+    expect(renderResult.queryAllByText('Error')).toEqual([]);
+
+    // Label Selector
+    renderResult.getByText('Label Selector');
+    expect(renderResult.getByTestId('label-list').textContent).toEqual('test=test');
+
+    // Services
+    renderResult.getByText('Services');
+    renderResult.getByText('example');
+
+    // Conditions
+    renderResult.getByText('Conditions');
+    renderResult.getByText('Ready');
   });
 });
