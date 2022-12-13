@@ -20,7 +20,7 @@ export const deploymentConfigHasCpuAndMemoryLimits = {
 
 export const cpuScaled: HorizontalPodAutoscalerKind = {
   kind: 'HorizontalPodAutoscaler',
-  apiVersion: 'autoscaling/v2beta2',
+  apiVersion: 'autoscaling/v2',
   metadata: {
     name: 'example',
     namespace: 'test-ns',

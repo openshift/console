@@ -19,7 +19,12 @@ import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, LoadingBox } from './utils';
 import { namespacedPrefixes } from './utils/link';
-import { AlertmanagerModel, CronJobModel, VolumeSnapshotModel } from '../models';
+import {
+  AlertmanagerModel,
+  CronJobModel,
+  HorizontalPodAutoscalerModel,
+  VolumeSnapshotModel,
+} from '../models';
 import { referenceForModel } from '../module/k8s';
 import { NamespaceRedirect } from './utils/namespace-redirect';
 
@@ -296,6 +301,12 @@ const AppContents: React.FC<{}> = () => {
         exact
         from="/k8s/ns/:ns/batch~v1beta1~CronJob/:name"
         to={`/k8s/ns/:ns/${CronJobModel.plural}/:name`}
+      />
+
+      <Redirect
+        exact
+        from="/k8s/ns/:ns/autoscaling~v2beta2~HorizontalPodAutoscaler/:name"
+        to={`/k8s/ns/:ns/${HorizontalPodAutoscalerModel.plural}/:name`}
       />
 
       <LazyRoute
