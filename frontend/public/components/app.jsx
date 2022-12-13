@@ -213,9 +213,9 @@ class App_ extends React.PureComponent {
     );
 
     return (
-      <DetectCluster>
-        <DetectPerspective>
-          <DetectNamespace>
+      <DetectPerspective>
+        <DetectNamespace>
+          <DetectCluster>
             <ModalProvider>
               {contextProviderExtensions.reduce(
                 (children, e) => (
@@ -226,10 +226,10 @@ class App_ extends React.PureComponent {
                 content,
               )}
             </ModalProvider>
-          </DetectNamespace>
-        </DetectPerspective>
+          </DetectCluster>
+        </DetectNamespace>
         <DetectLanguage />
-      </DetectCluster>
+      </DetectPerspective>
     );
   }
 }

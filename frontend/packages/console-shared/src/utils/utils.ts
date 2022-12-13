@@ -82,3 +82,10 @@ export const startsWithSome = (subject: string, ...searchStrings: string[]): boo
   searchStrings?.some(
     (searchString) => searchString?.length > 0 && subject.startsWith(searchString),
   );
+
+export const alphanumericCompare = (a: string, b: string): number => {
+  return a.localeCompare(b, undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  });
+};

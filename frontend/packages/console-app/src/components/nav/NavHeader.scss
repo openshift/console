@@ -1,6 +1,15 @@
 @import '~@patternfly/patternfly/sass-utilities/all';
 @import '~@console/internal/style/vars';
 
+$sidebar-toggle-button-background-color: var(--pf-global--BackgroundColor--dark-200);
+$sidebar-toggle-button-background-color--dark: var(--pf-global--BackgroundColor--dark-300);
+
+.co-cluster-menu.pf-c-menu {
+  // Default to match perspective switcher menu
+  // --pf-c-page__sidebar--Width - left and right padding.
+  min-width: 258px;
+}
+
 .oc-nav-header {
   border-bottom: 1px solid var(--pf-global--BackgroundColor--dark-200);
   padding: 0.6rem var(--pf-global--spacer--sm);
@@ -22,6 +31,15 @@
   &__dropdown-toggle--is-empty {
     cursor: default !important;
   }
+
+  // Style menu toggle component to match sidebar navigation list
+  .co-cluster-selector.pf-m-expanded {
+    background-color: $sidebar-toggle-button-background-color;
+    :where(.pf-theme-dark) & {
+      background-color: $sidebar-toggle-button-background-color--dark;
+    }
+  }
+
   .pf-c-dropdown {
     --pf-c-dropdown__menu-item--PaddingLeft: 7px;
     width: 100%;
@@ -29,9 +47,9 @@
 
     &.pf-m-expanded {
       .pf-c-dropdown__toggle {
-        background-color: var(--pf-global--BackgroundColor--dark-200);
+        background-color: $sidebar-toggle-button-background-color;
         :where(.pf-theme-dark) & {
-          background-color: var(--pf-global--BackgroundColor--dark-300);
+          background-color: $sidebar-toggle-button-background-color--dark;
         }
       }
     }
@@ -74,6 +92,16 @@
     // Needed until https://github.com/patternfly/patternfly-design/issues/1068 is resolved
     &:before {
       border: none;
+    }
+  }
+
+  .pf-c-menu-toggle {
+    color: var(--pf-global--Color--light-100);
+    font-size: $co-side-nav-section-font-size;
+
+    .pf-c-menu-toggle__toggle-icon {
+      color: var(--pf-global--Color--light-100);
+      font-size: $co-side-nav-section-font-size;
     }
   }
 }
