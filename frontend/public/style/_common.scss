@@ -339,6 +339,14 @@ dl.co-inline {
   padding: 0 5px;
 }
 
+// PatternFly's TextList lacks a plain variant
+// see https://github.com/patternfly/patternfly-react/issues/8434
+.co-text-list-plain {
+  list-style: none !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
 .co-toolbar {
   align-items: stretch;
   display: flex;

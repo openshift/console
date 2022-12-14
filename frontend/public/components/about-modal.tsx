@@ -6,13 +6,6 @@ import {
   TextList,
   TextListItem,
 } from '@patternfly/react-core';
-import {
-  Table,
-  TableBody,
-  TableGridBreakpoint,
-  TableHeader,
-  TableVariant,
-} from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion, BlueArrowCircleUpIcon, useCanClusterUpgrade } from '@console/shared';
@@ -38,39 +31,27 @@ import {
 const DynamicPlugins: React.FC = () => {
   const { t } = useTranslation();
   const [pluginInfoEntries] = useDynamicPluginInfo();
-  const [rows, setRows] = React.useState([]);
+  const [items, setItems] = React.useState([]);
 
   React.useEffect(() => {
     const loadedPlugins = pluginInfoEntries.filter(isLoadedDynamicPluginInfo);
-    setRows(
-      loadedPlugins?.map((plugin) => {
-        return {
-          cells: [plugin.metadata.name, plugin.metadata.version],
-        };
+    const sortedLoadedPlugins = loadedPlugins.sort((a, b) =>
+      a.metadata.name.localeCompare(b.metadata.name),
+    );
+
+    setItems(
+      sortedLoadedPlugins?.map((plugin) => {
+        return (
+          <TextListItem
+            key={plugin.pluginID}
+          >{`${plugin.metadata.name} (${plugin.metadata.version})`}</TextListItem>
+        );
       }),
     );
   }, [pluginInfoEntries]);
 
-  const headers = [
-    {
-      title: t('public~Name'),
-    },
-    {
-      title: t('public~Version'),
-    },
-  ];
-
-  return rows.length > 0 ? (
-    <Table
-      aria-label={t('public~Dynamic Plugins table')}
-      cells={headers}
-      gridBreakPoint={TableGridBreakpoint.none}
-      rows={rows}
-      variant={TableVariant.compact}
-    >
-      <TableHeader />
-      <TableBody />
-    </Table>
+  return items.length > 0 ? (
+    <TextList className="co-text-list-plain">{items}</TextList>
   ) : (
     t('public~None')
   );
