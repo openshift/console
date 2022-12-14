@@ -25,7 +25,7 @@ describe('Number Spinner Field', () => {
   it('should only put numbers in input field', async () => {
     mockFormikRenderer(<NumberSpinnerField name="spinnerField" />, { spinnerField: '' });
 
-    expect(getInput().value).toEqual('0');
+    expect(getInput().value).toEqual('NaN');
 
     await act(async () => {
       await fireEvent.change(getInput(), {
@@ -40,7 +40,7 @@ describe('Number Spinner Field', () => {
   it('should increment or decrement value based on clicked button', () => {
     mockFormikRenderer(<NumberSpinnerField name="spinnerField" />, { spinnerField: '' });
 
-    expect(getInput().value).toEqual('0');
+    expect(getInput().value).toEqual('NaN');
     fireEvent.click(screen.getByTestId('Increment'));
     fireEvent.click(screen.getByTestId('Increment'));
     expect(getInput().value).toEqual('2');
