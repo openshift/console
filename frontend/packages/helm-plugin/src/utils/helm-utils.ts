@@ -218,16 +218,16 @@ export const getHelmActionConfig = (
   chartIndexEntry?: string,
 ): HelmActionConfigType | undefined => {
   switch (helmAction) {
-    case HelmActionType.Install:
+    case HelmActionType.Create:
       return {
-        type: HelmActionType.Install,
-        title: t('helm-plugin~Install Helm Chart'),
+        type: HelmActionType.Create,
+        title: t('helm-plugin~Create Helm Release'),
         subTitle: {
           form: t(
-            'helm-plugin~The Helm Chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
+            'helm-plugin~The Helm Release can be created by completing the form. Default values may be provided by the Helm chart authors.',
           ),
           yaml: t(
-            'helm-plugin~The Helm Chart can be installed by manually entering YAML or JSON definitions.',
+            'helm-plugin~The Helm Release can be created by manually entering YAML or JSON definitions.',
           ),
         },
         helmReleaseApi: `/api/helm/chart?url=${encodeURIComponent(
@@ -298,7 +298,7 @@ export const getChartReadme = (chart: HelmChart): string => {
 };
 
 export const helmActionString = (t: TFunction) => ({
-  Install: t('helm-plugin~Install'),
+  Create: t('helm-plugin~Create'),
   Upgrade: t('helm-plugin~Upgrade'),
   Rollback: t('helm-plugin~Rollback'),
 });

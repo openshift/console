@@ -16,12 +16,12 @@ Feature: Navigations on Helm Chart
 
 
         @smoke
-        Scenario: Install Helm Chart page details: HR-05-TC02
+        Scenario: Create Helm Release page details: HR-05-TC02
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs" card from catalog page
-              And user clicks on the Install Helm Chart button on side bar
-             Then Install Helm Chart page is displayed
+              And user clicks on the Create button on side bar
+             Then Create Helm Release page is displayed
               And release name displays as "nodejs"
               And form view radio button is selected by default
               And yaml view radio button is enabled
@@ -30,7 +30,7 @@ Feature: Navigations on Helm Chart
 
         @smoke
         Scenario: Yaml view editor for Install Helm Chart page: HR-05-TC03
-            Given user is at Install Helm Chart page
+            Given user is at Create Helm Release page
              When user selects YAML view
              Then user is able to see YAML editor
 
@@ -40,8 +40,8 @@ Feature: Navigations on Helm Chart
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs" card from catalog page
-              And user clicks on the Install Helm Chart button on side bar
-              And user clicks on the Install button
+              And user clicks on the Create button on side bar
+              And user clicks on the Create button
              Then user will be redirected to Topology page
               And Topology page have the helm chart workload "nodejs"
 
@@ -120,4 +120,4 @@ Feature: Navigations on Helm Chart
               And user will see the Resources tab
               And user will see the Revision History tab
               And user will see the Release Notes tab
-              And user will see the Actions drop down menu with options Upgrade, Rollback, and Uninstall Helm Release
+              And user will see the Actions drop down menu with options Upgrade, Rollback, and Delete Helm Release

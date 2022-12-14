@@ -7,7 +7,7 @@ export const helmPage = {
   verifyInstallHelmLink: () =>
     cy
       .get('a')
-      .contains('Install a Helm Chart from the developer catalog')
+      .contains('Browse the catalog to discover and install Helm Charts')
       .should('be.visible'),
   search: (name: string) => {
     cy.get(helmPO.search)
@@ -173,9 +173,9 @@ export const helmPage = {
       case helmActions.rollback:
         cy.get(helmPO.helmActions.rollBack).click();
         break;
-      case 'Uninstall Helm Release':
-      case helmActions.uninstallHelmRelease:
-        cy.get(helmPO.helmActions.uninstallHelmRelease).click();
+      case 'Delete Helm Release':
+      case helmActions.deleteHelmRelease:
+        cy.get(helmPO.helmActions.deleteHelmRelease).click();
         break;
       default:
         cy.log(`${actionName} is not available in dropdown menu`);

@@ -36,14 +36,14 @@ Then(
     cy.get('ul[role="menu"]').should('be.visible');
     cy.get(helmPO.helmActions.upgrade).should('be.visible');
     cy.get(helmPO.helmActions.rollBack).should('be.visible');
-    cy.get(helmPO.helmActions.uninstallHelmRelease).should('be.visible');
+    cy.get(helmPO.helmActions.deleteHelmRelease).should('be.visible');
   },
 );
 
-Then('user is able to see the context menu with actions Upgrade and Uninstall Helm Release', () => {
+Then('user is able to see the context menu with actions Upgrade and Delete Helm Release', () => {
   cy.get('ul[role="menu"]').should('be.visible');
   cy.byTestActionID('Upgrade').should('be.visible');
-  cy.byTestActionID('Uninstall Helm Release').should('be.visible');
+  cy.byTestActionID('Delete Helm Release').should('be.visible');
 });
 
 Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
@@ -61,7 +61,7 @@ Then(
     topologySidePane.verifyActions(
       helmActions.upgrade,
       helmActions.rollback,
-      helmActions.uninstallHelmRelease,
+      helmActions.deleteHelmRelease,
     );
   },
 );
@@ -92,12 +92,12 @@ When('user clicks on the Kebab menu', () => {
 });
 
 Then(
-  'user is able to see kebab menu with actions Upgrade, Rollback and Uninstall Helm Release',
+  'user is able to see kebab menu with actions Upgrade, Rollback and Delete Helm Release',
   () => {
     topologySidePane.verifyActions(
       helmActions.upgrade,
       helmActions.rollback,
-      helmActions.uninstallHelmRelease,
+      helmActions.deleteHelmRelease,
     );
   },
 );
@@ -127,7 +127,7 @@ When('user enters the release name {string}', (releaseName: string) => {
   helmDetailsPage.enterReleaseNameInUninstallPopup(releaseName);
 });
 
-When('user clicks on the Uninstall button', () => {
+When('user clicks on the Delete button', () => {
   helmDetailsPage.uninstallHelmRelease();
 });
 

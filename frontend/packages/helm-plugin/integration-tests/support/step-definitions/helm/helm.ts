@@ -39,7 +39,7 @@ When(
   },
 );
 
-When('user clicks on the Install button', () => {
+When('user clicks on the Create button', () => {
   catalogPage.clickOnInstallButton();
 });
 

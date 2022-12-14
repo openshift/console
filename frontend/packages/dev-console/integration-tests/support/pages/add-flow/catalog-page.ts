@@ -26,11 +26,11 @@ export const catalogPage = {
       .type(keyword);
   },
   verifyDialog: () => cy.get(catalogPO.sidePane.dialog).should('be.visible'),
-  verifyInstallHelmChartPage: () =>
+  verifyCreateHelmReleasePage: () =>
     cy
       .get('form h1')
       .eq(0)
-      .should('have.text', pageTitle.InstallHelmCharts),
+      .should('have.text', pageTitle.CreateHelmRelease),
   verifySelectOperatorBackedCard: (cardName: string) => {
     cy.byTestID(`OperatorBackedService-${cardName}`)
       .first()
@@ -116,7 +116,7 @@ export const catalogPage = {
       .first()
       .click(),
   clickOnInstallButton: () => {
-    cy.get(catalogPO.installHelmChart.install).click();
+    cy.get(catalogPO.installHelmChart.create).click();
     cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
   },
   enterReleaseName: (releaseName: string) =>
@@ -249,7 +249,7 @@ export const catalogPage = {
     catalogPage.selectHelmChartCard(helmChartName);
     catalogPage.verifyDialog();
     catalogPage.clickButtonOnCatalogPageSidePane();
-    catalogPage.verifyInstallHelmChartPage();
+    catalogPage.verifyCreateHelmReleasePage();
     catalogPage.enterReleaseName(releaseName);
     catalogPage.clickOnInstallButton();
     app.waitForDocumentLoad();

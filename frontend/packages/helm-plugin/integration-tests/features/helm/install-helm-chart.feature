@@ -31,10 +31,10 @@ Feature: Install the Helm Release
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Quarkus" card from catalog page
-              And user clicks on the Install Helm Chart button on side bar
+              And user clicks on the Create button on side bar
               And user selects YAML view
               # And user selects the Chart Version "0.0.2 (Provided by Red Hat Helm Charts)"
-             When user clicks on the Install button
+             When user clicks on the Create button
              Then user will be redirected to Topology page
               And Topology page have the helm chart workload "quarkus"
 
@@ -44,7 +44,7 @@ Feature: Install the Helm Release
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Quarkus" card from catalog page
-              And user clicks on the Install Helm Chart button on side bar
+              And user clicks on the Create button on side bar
               And user clicks on the chart versions dropdown menu
              Then user will see the information of all the chart versions
 

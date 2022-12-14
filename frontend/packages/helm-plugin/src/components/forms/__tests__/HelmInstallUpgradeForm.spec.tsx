@@ -31,8 +31,8 @@ const formValues = {
 };
 
 const helmConfig = {
-  type: HelmActionType.Install,
-  title: 'Install Helm Chart',
+  type: HelmActionType.Create,
+  title: 'Create Helm Release',
   subTitle: {
     form: 'Mock form help text',
     yaml: 'Mock yaml help text',

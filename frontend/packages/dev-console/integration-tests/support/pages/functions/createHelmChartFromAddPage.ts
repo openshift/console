@@ -14,7 +14,7 @@ export const createHelmChartFromAddPage = (
   catalogPage.selectHelmChartCard(helmChartName);
   catalogPage.verifyDialog();
   catalogPage.clickButtonOnCatalogPageSidePane();
-  catalogPage.verifyInstallHelmChartPage();
+  catalogPage.verifyCreateHelmReleasePage();
   catalogPage.enterReleaseName(releaseName);
   catalogPage.clickOnInstallButton();
 };

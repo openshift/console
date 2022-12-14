@@ -14,7 +14,7 @@ Then('user will see the information of all the chart versions', () => {
   cy.byLegacyTestID('reset-button').click();
 });
 
-When('user clicks on the Install Helm Chart button on side bar', () => {
+When('user clicks on the Create button on side bar', () => {
   catalogPage.clickButtonOnCatalogPageSidePane();
 });
 

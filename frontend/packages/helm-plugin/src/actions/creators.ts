@@ -11,13 +11,13 @@ export const getHelmDeleteAction = (
   t: TFunction,
 ): Action => ({
   id: 'delete-helm',
-  label: t('helm-plugin~Uninstall Helm Release'),
+  label: t('helm-plugin~Delete Helm Release'),
   cta: () => {
     deleteResourceModal({
       blocking: true,
       resourceName: releaseName,
       resourceType: 'Helm Release',
-      actionLabel: t('helm-plugin~Uninstall'),
+      actionLabel: t('helm-plugin~Delete'),
       redirect,
       onSubmit: () => {
         return coFetchJSON.delete(
