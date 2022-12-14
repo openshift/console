@@ -34,13 +34,20 @@ describe('Create key/value secrets', () => {
   });
 
   beforeEach(() => {
+    // ensure the test project is selected to avoid flakes
+    cy.visit(`/k8s/cluster/projects/${testName}`);
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     listPage.titleShouldHaveText('Secrets');
     secrets.clickCreateKeyValSecretDropdownButton();
   });
 
   afterEach(() => {
-    secrets.deleteSecret();
+    cy.exec(
+      `oc delete secret -n ${testName} ${binarySecretName} ${asciiSecretName} ${unicodeSecretName}`,
+      {
+        failOnNonZeroExit: false,
+      },
+    );
     checkErrors();
   });
 
@@ -54,7 +61,9 @@ describe('Create key/value secrets', () => {
     cy.byLegacyTestID('file-input-textarea').should('not.exist');
     cy.get(infoMessage).should('exist');
     cy.byTestID('save-changes').click();
+    cy.byTestID('loading-indicator').should('not.exist');
     detailsPage.isLoaded();
+    detailsPage.titleShouldContain(binarySecretName);
     cy.exec(
       `oc get secret -n ${testName} ${binarySecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
       {
@@ -72,7 +81,9 @@ describe('Create key/value secrets', () => {
     cy.byLegacyTestID('file-input-textarea').should('exist');
     cy.get(infoMessage).should('not.exist');
     cy.byTestID('save-changes').click();
+    cy.byTestID('loading-indicator').should('not.exist');
     detailsPage.isLoaded();
+    detailsPage.titleShouldContain(asciiSecretName);
     cy.exec(
       `oc get secret -n ${testName} ${asciiSecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
       {
@@ -90,7 +101,9 @@ describe('Create key/value secrets', () => {
     cy.byLegacyTestID('file-input-textarea').should('exist');
     cy.get(infoMessage).should('not.exist');
     cy.byTestID('save-changes').click();
+    cy.byTestID('loading-indicator').should('not.exist');
     detailsPage.isLoaded();
+    detailsPage.titleShouldContain(unicodeSecretName);
     cy.exec(
       `oc get secret -n ${testName} ${unicodeSecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
       {
