@@ -30,7 +30,7 @@ export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes
     (e: LoadedExtension<ResourceNavItem>): K8sModel => {
       const { model } = e.properties;
       const gvk = referenceForExtensionModel(model);
-      return k8sModels?.[gvk] ?? k8sModels[e.properties.model.kind ?? ''];
+      return k8sModels?.[gvk] ?? k8sModels[e?.properties?.model?.kind ?? ''];
     },
     [k8sModels],
   );
