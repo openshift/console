@@ -4,8 +4,8 @@ import { Breadcrumb, BreadcrumbItem, Button, TextContent } from '@patternfly/rea
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
 import {
+  fetchSwagger,
   getDefinitionKey,
-  getSwaggerDefinitions,
   getSwaggerPath,
   K8sKind,
   SwaggerDefinition,
@@ -25,19 +25,30 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // entry contains the name, description, and path to the definition in the
   // OpenAPI document.
   const [drilldownHistory, setDrilldownHistory] = React.useState([]);
+  const [allDefinitions, setAllDefinitions] = React.useState<SwaggerDefinitions>(null);
   const { kindObj, schema } = props;
   const { t } = useTranslation();
+
+  React.useEffect(() => {
+    if (kindObj) {
+      fetchSwagger().then((swagger) => {
+        setAllDefinitions(swagger);
+      });
+    } else if (schema) {
+      setAllDefinitions({ 'custom-schema': schema });
+    } else {
+      return null;
+    }
+  }, [kindObj, schema]);
 
   if (!kindObj && !schema) {
     return null;
   }
 
-  const allDefinitions: SwaggerDefinitions = kindObj
-    ? getSwaggerDefinitions()
-    : schema && { 'custom-schema': schema };
   if (!allDefinitions) {
     return null;
   }
+
   const currentSelection = _.last(drilldownHistory);
   // Show the current selected property or the top-level definition for the kind.
   const currentPath = currentSelection
