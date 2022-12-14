@@ -63,7 +63,9 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
             {importType !== ImportTypes.devfile &&
               values.import.selectedStrategy.type !== ImportStrategy.DEVFILE && (
                 <>
-                  <PipelineSection builderImages={builderImages} />
+                  {values.import.selectedStrategy.type !== ImportStrategy.SERVERLESS_FUNCTION && (
+                    <PipelineSection builderImages={builderImages} />
+                  )}
                   <AdvancedSection values={values} />
                 </>
               )}

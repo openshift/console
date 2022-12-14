@@ -120,6 +120,7 @@ export enum BuildStrategyType {
   Custom = 'Custom',
   JenkinsPipeline = 'JenkinsPipeline',
   Source = 'Source',
+  ServerlessFunction = 'ServerlessFunction',
 }
 
 export const BuildLogLink = ({ build }) => {

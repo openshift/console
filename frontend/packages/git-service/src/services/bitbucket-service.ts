@@ -164,6 +164,10 @@ export class BitbucketService extends BaseService {
   getDockerfileContent = () =>
     this.getFileContent(`${this.metadata.contextDir}/${this.metadata.dockerfilePath}`);
 
+  isFuncYamlPresent = () => this.isFilePresent('func.yaml') || this.isFilePresent('func.yml');
+
+  getFuncYamlContent = () => this.getFileContent('func.yaml') || this.getFileContent('func.yml');
+
   isDevfilePresent = () =>
     this.isFilePresent(`${this.metadata.contextDir}/${this.metadata.devfilePath}`);
 

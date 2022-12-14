@@ -2,6 +2,7 @@ import { BaseService } from '../services/base-service';
 import { RepoStatus } from '../types';
 import { ImportStrategy } from '../types/git';
 import { detectBuildTypes } from './build-tool-type-detector';
+import { evaluateFunc } from './serverless-strategy-detector';
 
 type ImportStrategyType = {
   name: string;
@@ -11,17 +12,23 @@ type ImportStrategyType = {
   customDetection?: (gitService: BaseService) => Promise<any>;
 };
 
-const ImportStrategyList: ImportStrategyType[] = [
+let ImportStrategyList: ImportStrategyType[] = [
   {
     name: 'Devfile',
     type: ImportStrategy.DEVFILE,
     expectedRegexp: /^\.?devfile\.yaml$/,
-    priority: 2,
+    priority: 3,
   },
   {
     name: 'Dockerfile',
     type: ImportStrategy.DOCKERFILE,
     expectedRegexp: /^Dockerfile.*/,
+    priority: 2,
+  },
+  {
+    name: 'Serverless Function',
+    type: ImportStrategy.SERVERLESS_FUNCTION,
+    expectedRegexp: /^func\.yaml$/,
     priority: 1,
   },
   {
@@ -51,6 +58,7 @@ type DetectedServiceData = {
 export const detectImportStrategies = async (
   repository: string,
   gitService: BaseService,
+  isServerlessEnabled?: boolean,
 ): Promise<DetectedServiceData> => {
   let detectedStrategies: DetectedStrategy[] = [];
   let loaded: boolean = false;
@@ -65,6 +73,16 @@ export const detectImportStrategies = async (
   if (repositoryStatus === RepoStatus.Reachable) {
     try {
       const { files } = await gitService.getRepoFileList();
+
+      if (!isServerlessEnabled) {
+        ImportStrategyList = ImportStrategyList.filter((strategy) => {
+          if (strategy.type === ImportStrategy.SERVERLESS_FUNCTION) {
+            return false;
+          }
+          return true;
+        });
+      }
+
       detectedStrategies = await Promise.all(
         ImportStrategyList.map<Promise<DetectedStrategy>>(async (strategy) => {
           detectedFiles = files.filter((f) => strategy.expectedRegexp.test(f));
@@ -87,6 +105,16 @@ export const detectImportStrategies = async (
     }
   } else {
     loaded = true;
+  }
+
+  if (
+    isServerlessEnabled &&
+    gitService.isFuncYamlPresent &&
+    !(await evaluateFunc(gitService)).isBuilderS2I
+  ) {
+    detectedStrategies = detectedStrategies.filter(
+      (strategy) => strategy.type !== ImportStrategy.SERVERLESS_FUNCTION,
+    );
   }
 
   detectedStrategies = detectedStrategies

@@ -3,8 +3,11 @@ import { FormGroup, Grid, GridItem, Tile } from '@patternfly/react-core';
 import { LayerGroupIcon, CubeIcon, GitAltIcon, StarIcon } from '@patternfly/react-icons';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { ImportStrategy } from '@console/git-service/src';
+import { getActiveNamespace } from '@console/internal/actions/ui';
 import { BuildStrategyType } from '@console/internal/components/build';
+import { ServiceModel } from '@console/knative-plugin/src/models';
 import { getFieldId, useFormikValidationFix } from '@console/shared/src';
 import './ImportStrategySelector.scss';
 
@@ -45,6 +48,24 @@ const ImportStrategySelector: React.FC = () => {
       icon: <GitAltIcon />,
     },
   ];
+
+  const [knativeServiceAccess] = useAccessReview({
+    group: ServiceModel.apiGroup,
+    resource: ServiceModel.plural,
+    namespace: getActiveNamespace(),
+    verb: 'create',
+  });
+
+  if (recommendedStrategy?.type === ImportStrategy.SERVERLESS_FUNCTION && knativeServiceAccess) {
+    itemList.push({
+      name: 'Serverless Function',
+      type: ImportStrategy.SERVERLESS_FUNCTION,
+      build: BuildStrategyType.ServerlessFunction,
+      priority: 3,
+      detectedFiles: [],
+      icon: <GitAltIcon />,
+    });
+  }
 
   const onSelect = React.useCallback(
     (item) => {

@@ -4,10 +4,13 @@ import { useFormikContext, FormikErrors, FormikTouched } from 'formik';
 import { isEmpty } from 'lodash';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { RepoStatus, ImportStrategy, getGitService, GitProvider } from '@console/git-service';
 import { DetectedBuildType } from '@console/git-service/src/utils/build-tool-type-detector';
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
+import { getActiveNamespace } from '@console/internal/actions/ui';
 import { BuildStrategyType } from '@console/internal/components/build';
+import { ServiceModel } from '@console/knative-plugin';
 import {
   InputField,
   DropdownField,
@@ -97,6 +100,13 @@ const GitSection: React.FC<GitSectionProps> = ({
     setFieldValue: formikSetFieldValue,
     setFieldTouched: formikSetFieldTouched,
   } = useFormikContext<GitSectionFormData>();
+
+  const [knativeServiceAccess] = useAccessReview({
+    group: ServiceModel.apiGroup,
+    resource: ServiceModel.plural,
+    namespace: getActiveNamespace(),
+    verb: 'create',
+  });
 
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const setFieldValue = React.useCallback(
@@ -263,7 +273,11 @@ const GitSection: React.FC<GitSectionProps> = ({
         values.docker?.dockerfilePath,
       );
 
-      const importStrategyData = await detectImportStrategies(url, gitService);
+      const importStrategyData = await detectImportStrategies(
+        url,
+        gitService,
+        knativeServiceAccess,
+      );
 
       const {
         loaded,
@@ -357,6 +371,10 @@ const GitSection: React.FC<GitSectionProps> = ({
             setFieldValue('docker.dockerfileHasError', false);
             break;
           }
+          case ImportStrategy.SERVERLESS_FUNCTION: {
+            setFieldValue('build.strategy', BuildStrategyType.ServerlessFunction);
+            break;
+          }
           default:
         }
       }
@@ -370,9 +388,10 @@ const GitSection: React.FC<GitSectionProps> = ({
       status,
       setFieldValue,
       gitUrlError,
+      formType,
+      values.git.detectedType,
       values.git.showGitType,
       values.git.type,
-      values.git.detectedType,
       values.git.secretResource,
       values.devfile,
       values.docker,
@@ -381,7 +400,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.application.name,
       values.application.selectedKey,
       values.build.strategy,
-      formType,
+      knativeServiceAccess,
       nameTouched,
       importType,
       imageStreamName,
