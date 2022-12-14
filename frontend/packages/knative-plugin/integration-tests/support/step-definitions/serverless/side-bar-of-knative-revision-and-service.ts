@@ -73,29 +73,16 @@ When('user clicks on Actions dropdown in top right corner of side bar', () => {
 });
 
 Then(
-  'user able to see the options Edit Labels, Edit Annotations, Edit Revision, Delete Revision',
-  () => {
-    topologySidePane.verifyActions(
-      'Edit Labels',
-      'Edit Annotations',
-      'Edit Revision',
-      'Delete Revision',
-    );
+  'user able to see the options {string}, {string}, {string}, {string}',
+  (op1, op2, op3, op4) => {
+    topologySidePane.verifyActions(op1, op2, op3, op4);
   },
 );
 
 Then(
-  'user able to see the options like Edit Application Grouping, Set Traffic Distribution, Edit Health Checks, Edit Labels, Edit Annotations, Edit Service, Delete Service',
-  () => {
-    topologySidePane.verifyActions(
-      'Edit Application Grouping',
-      'Set Traffic Distribution',
-      'Edit Health Checks',
-      'Edit Labels',
-      'Edit Annotations',
-      'Edit Service',
-      'Delete Service',
-    );
+  'user able to see the options like {string}, {string}, {string}, {string}, {string}, {string}, {string}, {string}, {string}, {string}',
+  (op1, op2, op3, op4, op5, op6, op7, op8, op9, op10) => {
+    topologySidePane.verifyActions(op1, op2, op3, op4, op5, op6, op7, op8, op9, op10);
   },
 );
 
@@ -112,5 +99,19 @@ Then(
   (image: string, runTimeIcon: string) => {
     topologyPage.verifyWorkloadInTopologyPage(image);
     topologyPage.verifyRunTimeIconForContainerImage(runTimeIcon);
+  },
+);
+
+When('user clicks on Resources tab', () => {
+  topologySidePane.verifySelectedTab('Resources');
+});
+
+Then(
+  'user able to see the {string}, {string}, {string}, {string} sections',
+  (op1, op2, op3, op4) => {
+    topologySidePane.verifySection(op1);
+    topologySidePane.verifySection(op2);
+    topologySidePane.verifySection(op3);
+    topologySidePane.verifySection(op4);
   },
 );
