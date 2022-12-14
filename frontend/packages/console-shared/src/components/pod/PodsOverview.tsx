@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PodStatus } from '@console/internal/components/pod';
+import { PodTraffic } from '@console/internal/components/pod-traffic';
 import {
   ResourceLink,
   resourcePath,
@@ -112,11 +113,14 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
   return (
     <li className="list-group-item container-fluid">
       <div className="row">
-        <span className="col-xs-6">
+        <span className="col-xs-5">
           <ResourceLink kind={kind} name={name} namespace={namespace} />
         </span>
         <span className="col-xs-3">
           <PodStatus pod={pod} />
+        </span>
+        <span className="col-xs-1">
+          <PodTraffic podName={name} namespace={namespace} tooltipFlag />
         </span>
         <span className="col-xs-3 text-right">
           <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('public~View logs')}</Link>
@@ -180,7 +184,10 @@ export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
       variant="info"
       title={t('public~Waiting for the build')}
       actionLinks={
-        <AlertActionLink onClick={() => setShowWaitingPods(!showWaitingPods)}>
+        <AlertActionLink
+          onClick={() => setShowWaitingPods(!showWaitingPods)}
+          data-test="waiting-pods"
+        >
           {showWaitingPods
             ? t('console-shared~Hide waiting pods with errors')
             : t('console-shared~Show waiting pods with errors')}

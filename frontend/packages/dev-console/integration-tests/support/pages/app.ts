@@ -427,6 +427,10 @@ export const navigateToAdminMenu = (opt: adminNavigationBar) => {
       cy.get(adminNavigationMenuPO.home.main).click();
       break;
     }
+    case adminNavigationBar.Workloads: {
+      cy.get(adminNavigationMenuPO.workloads.main).click();
+      break;
+    }
     default: {
       throw new Error('Option is not available');
     }

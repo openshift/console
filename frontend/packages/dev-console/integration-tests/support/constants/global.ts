@@ -18,6 +18,7 @@ export enum devNavigationMenu {
 
 export enum adminNavigationBar {
   Home = 'Home',
+  Workloads = 'Workloads',
 }
 
 export enum switchPerspective {

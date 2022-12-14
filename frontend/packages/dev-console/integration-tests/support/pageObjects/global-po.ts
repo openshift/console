@@ -16,6 +16,7 @@ export const devNavigationMenuPO = {
 
 export const adminNavigationMenuPO = {
   home: { main: '[data-quickstart-id="qs-nav-home"]', search: "a[href*='/search/ns/']" },
+  workloads: { main: '[data-quickstart-id="qs-nav-workloads"]', pods: "a[href*='/core~v1~Pod']" },
 };
 
 export const createSourceSecret = {

@@ -1290,6 +1290,8 @@
   "The terminal connection has closed.": "The terminal connection has closed.",
   "Reconnect": "Reconnect",
   "Connecting to": "Connecting to",
+  "Receiving Traffic": "Receiving Traffic",
+  "Not Receiving Traffic": "Not Receiving Traffic",
   "Log in to your account": "Log in to your account",
   "Log in": "Log in",
   "Welcome to {{platformTitle}}": "Welcome to {{platformTitle}}",

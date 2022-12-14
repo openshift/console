@@ -155,3 +155,12 @@ When('user can see workload {string} is created', (workloadName: string) => {
 When('user clicks on {string} from action menu', (actionItem: string) => {
   topologyActions.selectAction(actionItem);
 });
+
+Then('user can see traffic details for pod', () => {
+  topologySidePane.selectTab('Resources');
+  topologySidePane.verifySection('Pods');
+  cy.get(topologyPO.sidePane.resourcesTab.waitingPods, { timeout: 100000 }).should('not.exist');
+  cy.get(topologyPO.sidePane.resourcesTab.podTrafficStatus, { timeout: 100000 }).should(
+    'be.visible',
+  );
+});

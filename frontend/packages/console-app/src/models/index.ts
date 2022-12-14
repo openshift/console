@@ -48,3 +48,14 @@ export const PodDisruptionBudgetModel: K8sKind = {
   kind: 'PodDisruptionBudget',
   id: 'poddisruptionbudget',
 };
+
+export const EndPointSliceModel: K8sKind = {
+  kind: 'EndpointSlice',
+  label: 'EndpointSlice',
+  labelPlural: 'EndpointSlices',
+  apiGroup: 'discovery.k8s.io',
+  apiVersion: 'v1',
+  abbr: 'EPS',
+  namespaced: true,
+  plural: 'endpointslices',
+};

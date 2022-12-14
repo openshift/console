@@ -16,6 +16,7 @@ Feature: Sidebar in topology
               And user can see sidebar Details, Resources and Observe tabs
               And user verifies name of the node "nodejs-ex-git" and Action drop down present on top of the sidebar
               And user is able to see health check notification
+              And user can see traffic details for pod
               And user can see close button
 
 
@@ -30,6 +31,7 @@ Feature: Sidebar in topology
              Then user can see sidebar opens with Resources tab selected by default
               And user can see sidebar Details, Resources tabs
               And user verifies name of the node "hello-openshift" and Action drop down present on top of the sidebar
+              And user can see traffic details for pod
               And user can see close button
 
 
