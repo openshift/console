@@ -8,7 +8,7 @@ import HelmReleaseNotesEmptyState from '../../components/details-page/notes/Helm
 import TopologyHelmReleaseNotesPanel from '../TopologyHelmReleaseNotesPanel';
 import { mockManifest, mockReleaseNotes } from './mockData';
 
-jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
+jest.mock('@openshift-console/plugin-shared/src/hooks/useResizeObserver', () => ({
   useResizeObserver: jest.fn(),
 }));
 

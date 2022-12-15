@@ -11,7 +11,7 @@ jest.mock('showdown', () => ({
   },
 }));
 
-jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
+jest.mock('@openshift-console/plugin-shared/src/hooks/useResizeObserver', () => ({
   useResizeObserver: jest.fn(),
 }));
 
