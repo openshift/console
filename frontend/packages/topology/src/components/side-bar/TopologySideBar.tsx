@@ -4,6 +4,7 @@ import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology
 import { useUserSettings } from '@console/shared';
 import CloseButton from '@console/shared/src/components/close-button';
 import { TOPOLOGY_SIDE_BAR_WIDTH_STORAGE_KEY } from '../../const';
+import './TopologySideBarTabSection.scss';
 
 type TopologySideBarProps = {
   onClose: () => void;
@@ -28,6 +29,7 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ children, onClose }) 
       minSize="400px"
       defaultSize={`${sideBarSizeLoaded ? sideBarSize : DEFAULT_SIDE_BAR_SIZE}px`}
       onResize={handleResizeCallback}
+      className="ocs-sidebar-index"
     >
       <PFTopologySideBar resizable className="pf-topology-side-bar-resizable">
         <div className="pf-topology-side-bar__body">
