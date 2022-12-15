@@ -116,7 +116,7 @@ type jsGlobals struct {
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ReleaseVersion                  string                     `json:"releaseVersion"`
 	NodeArchitectures               []string                   `json:"nodeArchitectures"`
-	CopiedCSVsDisabled              bool                       `json:"copiedCSVsDisabled"`
+	CopiedCSVsDisabled              map[string]bool            `json:"copiedCSVsDisabled"`
 	HubConsoleURL                   string                     `json:"hubConsoleURL"`
 }
 
@@ -181,7 +181,7 @@ type Server struct {
 	ProjectAccessClusterRoles    string
 	Perspectives                 string
 	Telemetry                    serverconfig.MultiKeyValue
-	CopiedCSVsDisabled           bool
+	CopiedCSVsDisabled           map[string]bool
 	HubConsoleURL                *url.URL
 }
 
