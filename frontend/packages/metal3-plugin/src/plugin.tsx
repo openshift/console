@@ -230,7 +230,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/k8s/cluster/nodes/'],
+      path: [`/k8s/cluster/${referenceForModel(NodeModel)}`],
       loader: () =>
         import(
           './components/baremetal-nodes/BareMetalNodesPage' /* webpackChunkName: "node" */
