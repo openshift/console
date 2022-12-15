@@ -32,9 +32,9 @@ export const edgesFromServiceBinding = (
       if (sbr?.spec?.application?.name === source.metadata.name) {
         edgeExists = true;
       } else {
-        const matchLabels = sbr?.spec?.application?.matchLabels;
+        const matchLabels = sbr?.spec?.application?.labelSelector?.matchLabels;
         if (matchLabels) {
-          const sbrSelector = new LabelSelector(sbr.spec.application);
+          const sbrSelector = new LabelSelector(sbr.spec.application.labelSelector);
           if (sbrSelector.matches(source)) {
             edgeExists = true;
           }

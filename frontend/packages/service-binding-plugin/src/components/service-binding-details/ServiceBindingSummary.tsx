@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResourceLink, DetailsItem } from '@console/internal/components/utils';
+import { ResourceLink, DetailsItem, LabelList } from '@console/internal/components/utils';
+import { useModelFinder } from '@console/internal/module/k8s';
 import { ServiceBinding } from '../../types';
 import ServiceBindingStatus from '../service-binding-status/ServiceBindingStatus';
 
@@ -9,7 +10,13 @@ type ServiceBindingSummaryProps = {
 };
 
 const ServiceBindingSummary: React.FC<ServiceBindingSummaryProps> = ({ serviceBinding }) => {
+  const { findModel } = useModelFinder();
   const { t } = useTranslation();
+
+  const model = findModel(
+    serviceBinding.spec.application.group,
+    serviceBinding.spec.application.resource,
+  );
 
   return (
     <dl>
@@ -18,13 +25,28 @@ const ServiceBindingSummary: React.FC<ServiceBindingSummaryProps> = ({ serviceBi
         <ServiceBindingStatus serviceBinding={serviceBinding} />
       </dd>
 
-      <DetailsItem
-        label={t('service-binding-plugin~Application')}
-        obj={serviceBinding}
-        path="spec.application"
-      >
-        {serviceBinding.spec.application?.name || '-'}
-      </DetailsItem>
+      {serviceBinding.spec?.application?.labelSelector ? (
+        <DetailsItem
+          label={t('service-binding-plugin~Label Selector')}
+          obj={serviceBinding}
+          path="spec.application.labelSelector"
+        >
+          {(
+            <LabelList
+              kind={model.kind}
+              labels={serviceBinding.spec.application.labelSelector.matchLabels}
+            />
+          ) || '-'}
+        </DetailsItem>
+      ) : (
+        <DetailsItem
+          label={t('service-binding-plugin~Application')}
+          obj={serviceBinding}
+          path="spec.application"
+        >
+          {serviceBinding.spec.application?.name || '-'}
+        </DetailsItem>
+      )}
 
       <DetailsItem
         label={t('service-binding-plugin~Services')}

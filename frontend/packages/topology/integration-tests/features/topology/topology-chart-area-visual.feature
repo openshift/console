@@ -174,7 +174,7 @@ Feature: Topology chart area
              Then user is able to see options like Samples, Import from Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
 
 
-        @regression @broken-test
+        @regression 
         Scenario: Add to Project in topology: T-06-TC17
             Given user is at the Topology page
              When user right clicks on the empty chart area
@@ -194,8 +194,8 @@ Feature: Topology chart area
               And user clicks on Create button
     # Crunchy Postgres for Kubernetes operator not installing correctly, won't able to create a postgres.
               And user hovers on Add to Project and clicks on "Operator Backed"
-              And user selects Postgres and clicks on Create
-              And user fills the "Operator Backed" form with yaml at "test-data/postgres-operator-backed.yaml" and clicks Create
+              And user selects Redis and clicks on Create
+              And user fills the "Operator Backed" form with yaml at "test-data/redis-standalone.yaml" and clicks Create
               And user hovers on Add to Project and clicks on "Helm Charts"
               And user selects Nodejs and clicks on Install Helm Charts
               And user fills the "Helm Chart" form and clicks Create
@@ -425,17 +425,16 @@ Feature: Topology chart area
               And user can see "Error" in Status section on service binding connnector topology sidebar
 
 
-        @regression @odc-4944 @broken-test
+        @regression @odc-4944 
         Scenario: Connected status on Service binding details page: T-06-TC35
             Given user has created namespace "aut-connected-sb"
               And user has installed Service Binding operator
-    # Crunchy Postgres for Kubernetes operator not installing correctly
-              And user has installed Crunchy Postgres for Kubernetes operator
+              And user has installed Redis Operator
               And user is at developer perspective
               And user is at Topology page chart view
               And user has created a deployment workload named "node-ej"
-              And user has created a operator backed service "hippo" from yaml "test-data/hippo-postgres-cluster.yaml"
-              And user has created service binding connnector "test-connector2" between "node-ej" and "hippo"
+              And user has created a operator backed service of "Redis" operator named "redis-standalone"
+              And user has created service binding connnector "test-connector2" between "node-ej" and "redis-standalone"
              When user clicks on service binding connector
               And user clicks on the service binding name "test-connector2" at the sidebar
              Then user will see "Connected" Status on Service binding details page
@@ -445,12 +444,63 @@ Feature: Topology chart area
         Scenario: Error status on Service binding details page: T-06-TC36
             Given user has created namespace "aut-error-sb"
               And user has installed Service Binding operator
-              And user has installed Red Hat OpenShift distributed tracing platform
+              And user has installed Redis Operator
               And user is at developer perspective
               And user is at Topology page chart view
               And user has created a deployment workload named "node-ej"
-              And user has created a operator backed service of "Jaeger" operator named "jaeger-test"
-              And user has created service binding connnector "test-connector3" between "node-ej" and "jaeger-test"
+              And user has created a operator backed service "redis-standalone" from yaml "test-data/redis-standalone.yaml"
+              And user has created service binding connnector "test-connector3" between "node-ej" and "redis-standalone"
              When user clicks on service binding connector
               And user clicks on the service binding name "test-connector3" at the sidebar
              Then user will see "Error" Status on Service binding details page
+
+
+        @regression @odc-7120
+        Scenario: Create connection using import YAML with Service Binding using Label Selector: T-06-TC37
+            Given user has created namespace "aut-connected-sb-ls"
+              And user has installed Service Binding operator
+              And user has installed Redis Operator
+              And user is at developer perspective
+              And user is at Topology page chart view
+              And user has created a deployment workload named "node-ej"
+              And user has created a operator backed service of "Redis" operator named "redis-standalone"
+             When user clicks on import YAML button from topology page
+              And user enters yaml content from yaml file "test-data/servicebinding-resource-label-selector.yaml" in the editor
+              And user clicks on Create button in import YAML
+              And user sees "test-connector4" Title on Service binding details page
+              And user navigates to Topology page
+             Then user will see service binding connection
+
+
+        @regression @odc-7120
+        Scenario: Label specified in Label Selector section on Service binding details page: T-06-TC38
+            Given user has created namespace "aut-label-details-sb"
+              And user has installed Service Binding operator
+              And user has installed Redis Operator
+              And user is at developer perspective
+              And user is at Topology page chart view
+              And user has created a deployment workload named "node-ej"
+              And user has created a operator backed service of "Redis" operator named "redis-standalone"
+             When user clicks on import YAML button from topology page
+              And user enters yaml content from yaml file "test-data/servicebinding-resource-label-selector.yaml" in the editor
+              And user clicks on Create button in import YAML
+              And user sees "test-connector4" Title on Service binding details page
+             Then user will see "app=node-ej" in Label Selector section on Service binding details page
+
+
+        @regression @odc-7120
+        Scenario: Label specified in Label Selector section on Service binding side panel: T-06-TC39
+            Given user has created namespace "aut-label-panel-sb"
+              And user has installed Service Binding operator
+              And user has installed Redis Operator
+              And user is at developer perspective
+              And user is at Topology page chart view
+              And user has created a deployment workload named "node-ej"
+              And user has created a operator backed service of "Redis" operator named "redis-standalone"
+             When user clicks on import YAML button from topology page
+              And user enters yaml content from yaml file "test-data/servicebinding-resource-label-selector.yaml" in the editor
+              And user clicks on Create button in import YAML
+              And user sees "test-connector4" Title on Service binding details page
+              And user navigates to Topology page
+              And user clicks on service binding connector
+             Then user will see "app=node-ej" in Label Selector section on Service binding connnector topology sidebar

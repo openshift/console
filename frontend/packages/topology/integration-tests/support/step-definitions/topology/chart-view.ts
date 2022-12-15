@@ -19,6 +19,7 @@ import {
   navigateTo,
   perspective,
   projectNameSpace,
+  yamlEditor,
 } from '@console/dev-console/integration-tests/support/pages/app';
 import { chartAreaPO } from '../../page-objects/chart-area-po';
 import { topologyPO, typeOfWorkload } from '../../page-objects/topology-po';
@@ -351,9 +352,9 @@ When('user selects Postgres Database and clicks on Instantiate Template', () => 
   cy.get(chartAreaPO.overlayCreate).click({ force: true });
 });
 
-When('user selects Postgres and clicks on Create', () => {
-  cy.get(chartAreaPO.filterItem).type('postgresql');
-  cy.get(chartAreaPO.operatorBackedPostgres).click();
+When('user selects Redis and clicks on Create', () => {
+  cy.get(chartAreaPO.filterItem).type('redis');
+  cy.get(chartAreaPO.operatorBackedRedis).click();
   cy.get(chartAreaPO.overlayCreate).click({ force: true });
 });
 
@@ -386,7 +387,7 @@ Then(
       'hello-openshift',
       'python-app',
       'postgres',
-      'postgres-operator-backed',
+      'redis-standalone',
       'helm-nodejs',
       'api-server-source',
       'channel',
@@ -446,3 +447,45 @@ Then('user will see {string} Status on Service binding details page', (status: s
   cy.byTestID('resource-status').should('have.text', status);
   cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, { failOnNonZeroExit: false });
 });
+
+Then('user will see service binding connection', () => {
+  cy.byLegacyTestID('edge-handler').should('be.visible');
+});
+
+When('user clicks on import YAML button from topology page', () => {
+  app.waitForLoad();
+  topologyPage.verifyTopologyPage();
+  cy.get('[data-test="import-yaml"]').click();
+  cy.get('.yaml-editor').should('be.visible');
+});
+
+When('user enters yaml content from yaml file {string} in the editor', (yamlFile: string) => {
+  const yamlContent = `support/${yamlFile}`;
+  yamlEditor.isLoaded();
+  yamlEditor.clearYAMLEditor();
+  yamlEditor.setEditorContent(yamlContent);
+});
+
+When('user clicks on Create button in import YAML', () => {
+  yamlEditor.clickSave();
+});
+
+When('user sees {string} Title on Service binding details page', (title: string) => {
+  app.waitForLoad();
+  cy.get('[data-test-id="resource-title"]').should('have.text', title);
+});
+
+Then(
+  'user will see {string} in Label Selector section on Service binding details page',
+  (label: string) => {
+    cy.byTestID('label-list').should('have.text', label);
+  },
+);
+
+Then(
+  'user will see {string} in Label Selector section on Service binding connnector topology sidebar',
+  (label: string) => {
+    topologySidePane.selectTab('Details');
+    cy.byTestID('label-list').should('have.text', label);
+  },
+);

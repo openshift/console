@@ -239,3 +239,54 @@ export const allFailedServiceBindings = [
   failedServiceBindingMissingCondition,
   failedServiceBindingWithAllConditions,
 ];
+
+export const connectedServiceBindingWithLabelSelector: ServiceBinding = {
+  apiVersion: 'binding.operators.coreos.com/v1alpha1',
+  kind: 'ServiceBinding',
+  metadata: {
+    namespace: 'a-namespace',
+    name: 'connected-service-binding-with-label-selector',
+  },
+  spec: {
+    application: {
+      group: 'apps',
+      labelSelector: {
+        matchLabels: {
+          test: 'test',
+        },
+      },
+      resource: 'deployments',
+      version: 'v1',
+    },
+    services: [
+      {
+        group: 'postgres-operator.crunchydata.com',
+        kind: 'PostgresCluster',
+        name: 'example',
+        version: 'v1beta1',
+      },
+    ],
+  },
+  status: {
+    conditions: [
+      {
+        type: 'CollectionReady',
+        status: 'True',
+        reason: 'DataCollected',
+        message: '',
+      },
+      {
+        type: 'InjectionReady',
+        status: 'True',
+        reason: 'ApplicationUpdated',
+        message: '',
+      },
+      {
+        type: 'Ready',
+        status: 'True',
+        reason: 'ApplicationsBound',
+        message: '',
+      },
+    ],
+  },
+};

@@ -15,18 +15,25 @@ export type ResourceActionCreator = (
   kind: K8sKind,
   obj: K8sResourceKind,
   relatedResource?: K8sResourceKind,
+  message?: JSX.Element,
 ) => Action;
 
 export type ResourceActionFactory = { [name: string]: ResourceActionCreator };
 
 export const CommonActionFactory: ResourceActionFactory = {
-  Delete: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+  Delete: (
+    kind: K8sKind,
+    obj: K8sResourceKind,
+    relatedResource?: K8sResourceKind,
+    message?: JSX.Element,
+  ): Action => ({
     id: `delete-resource`,
     label: i18next.t('console-app~Delete {{kind}}', { kind: kind.kind }),
     cta: () =>
       deleteModal({
         kind,
         resource: obj,
+        message,
       }),
     accessReview: asAccessReview(kind, obj, 'delete'),
   }),
@@ -106,11 +113,15 @@ export const CommonActionFactory: ResourceActionFactory = {
   }),
 };
 
-export const getCommonResourceActions = (kind: K8sKind, obj: K8sResourceKind): Action[] => {
+export const getCommonResourceActions = (
+  kind: K8sKind,
+  obj: K8sResourceKind,
+  message?: JSX.Element,
+): Action[] => {
   return [
     CommonActionFactory.ModifyLabels(kind, obj),
     CommonActionFactory.ModifyAnnotations(kind, obj),
     CommonActionFactory.Edit(kind, obj),
-    CommonActionFactory.Delete(kind, obj),
+    CommonActionFactory.Delete(kind, obj, undefined, message),
   ];
 };

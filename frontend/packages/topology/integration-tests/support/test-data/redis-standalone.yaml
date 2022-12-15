@@ -1,0 +1,23 @@
+kind: Redis
+apiVersion: redis.redis.opstreelabs.in/v1beta1
+metadata:
+  name: redis-standalone
+spec:
+  kubernetesConfig:
+    image: 'quay.io/opstree/redis:v7.0.5'
+    imagePullPolicy: IfNotPresent
+    redisSecret:
+      key: test
+      name: test
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+  redisExporter:
+    enabled: true
+    image: 'quay.io/opstree/redis-exporter:v1.44.0'
+    imagePullPolicy: IfNotPresent

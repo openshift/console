@@ -31,6 +31,7 @@ export const chartAreaPO = {
   gitInputURL: '[data-test-id="git-form-input-url"]',
   postgresqlTemplate: '[data-test="Template-PostgreSQL"]',
   operatorBackedPostgres: '[data-test="OperatorBackedService-Postgres Cluster"]',
+  operatorBackedRedis: '[data-test="OperatorBackedService-Redis"]',
   helmNodejs: '[data-test="HelmChart-Nodejs"]',
   helmReleaseName: '#form-input-releaseName-field',
   apiEventSource: '[data-test="EventSource-ApiServerSource"]',
