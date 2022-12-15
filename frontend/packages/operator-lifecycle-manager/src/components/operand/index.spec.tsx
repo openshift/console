@@ -120,6 +120,10 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useActiveCluster', () => ({
+  useActiveCluster: () => ['local-cluster', () => {}],
+}));
+
 const i18nNS = 'public';
 
 describe(OperandTableRow.displayName, () => {
@@ -355,6 +359,7 @@ describe('ResourcesList', () => {
 describe(OperandDetailsPage.displayName, () => {
   const currentURL = `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`;
   const routePath = `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`;
+  window.SERVER_FLAGS.copiedCSVsDisabled = { 'local-cluster': false };
 
   it('renders a `DetailsPage` with the correct subpages', () => {
     const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
