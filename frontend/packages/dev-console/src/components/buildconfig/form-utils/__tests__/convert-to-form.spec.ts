@@ -363,8 +363,8 @@ describe('convertBuildConfigToFormData', () => {
         spec: {
           triggers: [
             { type: 'ConfigChange' },
-            { type: 'Generic', generic: { secret: '19a3' } },
-            { type: 'GitHub', github: { secret: '2cd4' } },
+            { type: 'Generic', generic: { secretReference: { name: '19a3' } } },
+            { type: 'GitHub', github: { secretReference: { name: '2cd4' } } },
           ],
         },
       };
@@ -373,8 +373,8 @@ describe('convertBuildConfigToFormData', () => {
       expectedValues.formData.triggers.configChange = true;
       expectedValues.formData.triggers.imageChange = false;
       expectedValues.formData.triggers.otherTriggers = [
-        { type: 'Generic', secret: '19a3' },
-        { type: 'GitHub', secret: '2cd4' },
+        { type: 'Generic', secret: '19a3', data: { secretReference: { name: '19a3' } } },
+        { type: 'GitHub', secret: '2cd4', data: { secretReference: { name: '2cd4' } } },
       ];
       expect(convertBuildConfigToFormData(buildConfig)).toEqual(expectedValues);
     });
@@ -387,8 +387,8 @@ describe('convertBuildConfigToFormData', () => {
         spec: {
           triggers: [
             { type: 'ImageChange', imageChange: { lastTriggeredImageID: '1234' } },
-            { type: 'Generic', generic: { secret: '19a3' } },
-            { type: 'GitHub', github: { secret: '2cd4' } },
+            { type: 'Generic', generic: { secretReference: { name: '19a3' } } },
+            { type: 'GitHub', github: { secretReference: { name: '2cd4' } } },
           ],
         },
       };
@@ -397,8 +397,8 @@ describe('convertBuildConfigToFormData', () => {
       expectedValues.formData.triggers.configChange = false;
       expectedValues.formData.triggers.imageChange = true;
       expectedValues.formData.triggers.otherTriggers = [
-        { type: 'Generic', secret: '19a3' },
-        { type: 'GitHub', secret: '2cd4' },
+        { type: 'Generic', secret: '19a3', data: { secretReference: { name: '19a3' } } },
+        { type: 'GitHub', secret: '2cd4', data: { secretReference: { name: '2cd4' } } },
       ];
       expect(convertBuildConfigToFormData(buildConfig)).toEqual(expectedValues);
     });

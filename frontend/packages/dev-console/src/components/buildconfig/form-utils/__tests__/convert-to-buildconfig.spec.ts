@@ -647,7 +647,7 @@ describe('convertFormDataToBuildConfig', () => {
       expect(buildConfig.spec.triggers).toEqual([{ type: 'ImageChange' }]);
     });
 
-    it('convert config a custom trigger to BuildConfig trigger', () => {
+    it('convert config custom trigger to BuildConfig trigger', () => {
       const originBuildConfig = {} as BuildConfig;
       const values = getInitialBuildConfigFormikValues();
       values.formData.triggers.otherTriggers = [
@@ -658,8 +658,24 @@ describe('convertFormDataToBuildConfig', () => {
       const buildConfig = convertFormDataToBuildConfig(originBuildConfig, values);
 
       expect(buildConfig.spec.triggers).toEqual([
+        { type: 'Generic', generic: { secretReference: { name: '19a3' } } },
+        { type: 'GitHub', github: { secretReference: { name: '2cd4' } } },
+      ]);
+    });
+
+    it('convert config custom trigger to BuildConfig trigger with secret/secretReference as per original yaml', () => {
+      const originBuildConfig = {} as BuildConfig;
+      const values = getInitialBuildConfigFormikValues();
+      values.formData.triggers.otherTriggers = [
+        { type: 'Generic', secret: '19a3', data: { secret: '19a3' } },
+        { type: 'GitHub', secret: '2cd4', data: { secretReference: { name: '2cd4' } } },
+      ];
+
+      const buildConfig = convertFormDataToBuildConfig(originBuildConfig, values);
+
+      expect(buildConfig.spec.triggers).toEqual([
         { type: 'Generic', generic: { secret: '19a3' } },
-        { type: 'GitHub', github: { secret: '2cd4' } },
+        { type: 'GitHub', github: { secretReference: { name: '2cd4' } } },
       ]);
     });
 
@@ -678,8 +694,8 @@ describe('convertFormDataToBuildConfig', () => {
       expect(buildConfig.spec.triggers).toEqual([
         { type: 'ConfigChange' },
         { type: 'ImageChange' },
-        { type: 'Generic', generic: { secret: '19a3' } },
-        { type: 'GitHub', github: { secret: '2cd4' } },
+        { type: 'Generic', generic: { secretReference: { name: '19a3' } } },
+        { type: 'GitHub', github: { secretReference: { name: '2cd4' } } },
       ]);
     });
   });
