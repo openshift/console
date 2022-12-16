@@ -222,7 +222,7 @@ export const useTopologyActionsProvider = ({
     }
     switch (sourceKind) {
       case referenceForModel(ServiceModel):
-        return isEventSourceTypeEnabled
+        return isEventSourceTypeEnabled && isEventSourceAddEnabled && isEventingEnabled
           ? [
               AddEventSourceAction(
                 namespace,
