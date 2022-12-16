@@ -53,7 +53,10 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
       badge={badge}
     >
       <Firehose resources={resources}>
-        <PipelineAugmentRunsWrapper hideNameLabelFilters={props.hideNameLabelFilters} />
+        <PipelineAugmentRunsWrapper
+          namespace={namespace}
+          hideNameLabelFilters={props.hideNameLabelFilters}
+        />
       </Firehose>
     </FireMan>
   );
