@@ -394,7 +394,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         ...previousPlugins.filter((plugin: string) => !csvPlugins.includes(plugin)),
         ...enabledPlugins,
       ];
-      if (!_.isEqual(previousPlugins.sort(), updatedPlugins.sort())) {
+      if (
+        !_.isEqual(previousPlugins.sort(), updatedPlugins.sort()) &&
+        canPatchConsoleOperatorConfig
+      ) {
         await k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, [
           {
             path: '/spec/plugins',
