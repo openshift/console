@@ -431,12 +431,32 @@ const GitSection: React.FC<GitSectionProps> = ({
       return t('devconsole~Validated');
     }
     if (validated === ValidatedOptions.warning) {
-      if (repoStatus === RepoStatus.RateLimitExceeded) {
-        return t('devconsole~Rate limit exceeded');
+      switch (repoStatus) {
+        case RepoStatus.RateLimitExceeded: {
+          return t('devconsole~Rate limit exceeded');
+        }
+        case RepoStatus.GitTypeNotDetected: {
+          return t(
+            'devconsole~URL is valid but a git type could not be identified. Please select a git type from the git type dropdown below',
+          );
+        }
+        case RepoStatus.PrivateRepo: {
+          return t(
+            'devconsole~If this is a private repository, enter a source Secret in advanced Git options',
+          );
+        }
+        case RepoStatus.ResourceNotFound: {
+          return t('devconsole~Requested repository does not exist');
+        }
+        case RepoStatus.InvalidGitTypeSelected: {
+          return t(
+            'devconsole~The selected git type might not be valid or the repository is private. Please try selecting another git type or enter a source Secret in advanced Git options',
+          );
+        }
+        default: {
+          return t('devconsole~URL is valid but cannot be reached');
+        }
       }
-      return t(
-        'devconsole~URL is valid but cannot be reached. If this is a private repository, enter a source Secret in advanced Git options',
-      );
     }
     return t('devconsole~Repository URL to build and deploy your code from');
   }, [t, values.git.isUrlValidating, validated, repoStatus]);
