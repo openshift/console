@@ -25,6 +25,17 @@
   margin-top: -15px;
 }
 
+.pf-c-modal-box {
+  .custom-time-range-modal {
+    overflow: visible;
+    padding: var(--pf-c-modal-box__body--PaddingTop) var(--pf-c-modal-box__body--PaddingLeft);
+  }
+
+  .custom-time-range-modal-footer {
+    padding-top: var(--pf-c-modal-box__body--PaddingTop);
+  }
+}
+
 .graph-empty-state {
   min-height: 310px;
   &__loaded {

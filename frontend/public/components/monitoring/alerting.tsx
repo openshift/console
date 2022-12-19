@@ -26,12 +26,16 @@ import {
   Button,
   CodeBlock,
   CodeBlockCode,
-  Label,
   Dropdown,
   DropdownItem,
   DropdownPosition,
   DropdownToggle,
+  Flex,
+  FlexItem,
   KebabToggle,
+  Label,
+  Modal,
+  ModalVariant,
   Popover,
   Toolbar,
   ToolbarContent,
@@ -86,7 +90,6 @@ import { RootState } from '../../redux';
 import { RowFunctionArgs, Table, TableData, TableProps } from '../factory';
 import { FilterToolbar } from '../filter-toolbar';
 import { getPrometheusURL } from '../graphs/helpers';
-import { confirmModal } from '../modals';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
@@ -1138,6 +1141,79 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
 };
 export const AlertRulesDetailsPage = withFallback(AlertRulesDetailsPage_);
 
+type ExpireSilenceModalProps = {
+  isOpen: boolean;
+  setClosed: () => void;
+  silenceId: string;
+};
+
+const ExpireSilenceModal: React.FC<ExpireSilenceModalProps> = ({
+  isOpen,
+  setClosed,
+  silenceId,
+}) => {
+  const { t } = useTranslation();
+
+  const [isInProgress, , setInProgress, setNotInProgress] = useBoolean(false);
+  const [errorMessage, setErrorMessage] = React.useState();
+
+  const expireSilence = () => {
+    setInProgress();
+    consoleFetchJSON
+      .delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silenceId}`)
+      .then(() => {
+        refreshNotificationPollers();
+        setClosed();
+      })
+      .catch((err) => {
+        setErrorMessage(_.get(err, 'json.error') || err.message || 'Error saving silence');
+        setNotInProgress();
+      })
+      .then(setNotInProgress);
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      position="top"
+      showClose={false}
+      title={t('public~Expire silence')}
+      variant={ModalVariant.small}
+    >
+      <Flex direction={{ default: 'column' }}>
+        <FlexItem>{t('public~Are you sure you want to expire this silence?')}</FlexItem>
+        <Flex direction={{ default: 'column' }}>
+          <FlexItem>
+            {errorMessage && (
+              <PFAlert
+                className="co-alert co-alert--scrollable"
+                isInline
+                title={t('public~An error occurred')}
+                variant="danger"
+              >
+                <div className="co-pre-line">{errorMessage}</div>
+              </PFAlert>
+            )}
+          </FlexItem>
+          <Flex>
+            <FlexItem>{isInProgress && <LoadingInline />}</FlexItem>
+            <FlexItem align={{ default: 'alignRight' }}>
+              <Button variant="secondary" onClick={setClosed}>
+                {t('public~Cancel')}
+              </Button>
+            </FlexItem>
+            <FlexItem>
+              <Button variant="primary" onClick={expireSilence}>
+                {t('public~Expire silence')}
+              </Button>
+            </FlexItem>
+          </Flex>
+        </Flex>
+      </Flex>
+    </Modal>
+  );
+};
+
 const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
   className,
   isPlain,
@@ -1147,21 +1223,10 @@ const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
   const { t } = useTranslation();
 
   const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
+  const [isModalOpen, , setModalOpen, setModalClosed] = useBoolean(false);
 
   const editSilence = () => {
     history.push(`${SilenceResource.plural}/${silence.id}/edit`);
-  };
-
-  const cancelSilence = () => {
-    confirmModal({
-      btnText: t('public~Expire silence'),
-      executeFn: () =>
-        consoleFetchJSON
-          .delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silence.id}`)
-          .then(() => refreshNotificationPollers()),
-      message: t('public~Are you sure you want to expire this silence?'),
-      title: t('public~Expire silence'),
-    });
   };
 
   const dropdownItems =
@@ -1175,22 +1240,25 @@ const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
           <DropdownItem key="edit-silence" component="button" onClick={editSilence}>
             {t('public~Edit silence')}
           </DropdownItem>,
-          <DropdownItem key="cancel-silence" component="button" onClick={cancelSilence}>
+          <DropdownItem key="cancel-silence" component="button" onClick={setModalOpen}>
             {t('public~Expire silence')}
           </DropdownItem>,
         ];
 
   return (
-    <Dropdown
-      className={className}
-      data-test="silence-actions"
-      dropdownItems={dropdownItems}
-      isOpen={isOpen}
-      isPlain={isPlain}
-      onSelect={setClosed}
-      position={DropdownPosition.right}
-      toggle={<Toggle onToggle={setIsOpen} />}
-    />
+    <>
+      <Dropdown
+        className={className}
+        data-test="silence-actions"
+        dropdownItems={dropdownItems}
+        isOpen={isOpen}
+        isPlain={isPlain}
+        onSelect={setClosed}
+        position={DropdownPosition.right}
+        toggle={<Toggle onToggle={setIsOpen} />}
+      />
+      <ExpireSilenceModal isOpen={isModalOpen} setClosed={setModalClosed} silenceId={silence.id} />
+    </>
   );
 };
 
