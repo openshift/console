@@ -536,7 +536,7 @@ const GitSection: React.FC<GitSectionProps> = ({
             fullWidth
             required
           />
-          {values.git.detectedType === GitProvider.UNSURE && (
+          {values.git.type === GitProvider.UNSURE && (
             <Alert isInline variant="info" title={t('devconsole~Defaulting Git type to other')}>
               {t('devconsole~We failed to detect the Git type.')}
             </Alert>
