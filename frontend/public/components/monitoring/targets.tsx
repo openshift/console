@@ -5,7 +5,7 @@ import {
   RedExclamationCircleIcon,
   RowFilter,
 } from '@console/dynamic-plugin-sdk';
-import { Alert } from '@patternfly/react-core';
+import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -29,6 +29,7 @@ import { FilterToolbar } from '../filter-toolbar';
 import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { BreadCrumbs, PageHeading, SectionHeading } from '../utils/headings';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
+import { useBoolean } from './hooks/useBoolean';
 import { usePoll } from '../utils/poll-hook';
 import { ResourceLink } from '../utils/resource-link';
 import { useSafeFetch } from '../utils/safe-fetch-hook';
@@ -50,8 +51,20 @@ const PodMonitorsWatchContext = React.createContext([]);
 const PodsWatchContext = React.createContext([]);
 
 const PodMonitor: React.FC<{ target: Target }> = ({ target }) => {
-  const [podMonitors, podMonitorsLoaded] = React.useContext(PodMonitorsWatchContext);
+  const { t } = useTranslation();
+
+  const [podMonitors, podMonitorsLoaded, podMonitorsLoadError] = React.useContext(
+    PodMonitorsWatchContext,
+  );
   const [pods, podsLoaded] = React.useContext(PodsWatchContext);
+
+  if (podMonitorsLoadError) {
+    return (
+      <>
+        <RedExclamationCircleIcon /> {t('public~Error')}
+      </>
+    );
+  }
 
   if (!podsLoaded || !podMonitorsLoaded) {
     return <LoadingInline />;
@@ -90,8 +103,20 @@ const PodMonitor: React.FC<{ target: Target }> = ({ target }) => {
 };
 
 const ServiceMonitor: React.FC<{ target: Target }> = ({ target }) => {
-  const [monitors, monitorsLoaded] = React.useContext(ServiceMonitorsWatchContext);
+  const { t } = useTranslation();
+
+  const [monitors, monitorsLoaded, monitorsLoadError] = React.useContext(
+    ServiceMonitorsWatchContext,
+  );
   const [services, servicesLoaded] = React.useContext(ServicesWatchContext);
+
+  if (monitorsLoadError) {
+    return (
+      <>
+        <RedExclamationCircleIcon /> {t('public~Error')}
+      </>
+    );
+  }
 
   if (!servicesLoaded || !monitorsLoaded) {
     return <LoadingInline />;
@@ -143,6 +168,30 @@ const Health: React.FC<{ health: string }> = React.memo(({ health }) => {
   );
 });
 
+type WatchErrorAlertProps = {
+  loadError: { code: number; message: string };
+  title: string;
+};
+
+const WatchErrorAlert: React.FC<WatchErrorAlertProps> = ({ loadError, title }) => {
+  const [showError, , , hideError] = useBoolean(true);
+
+  if (!showError) {
+    return null;
+  }
+
+  return (
+    <Alert
+      className="co-alert"
+      title={title}
+      variant="danger"
+      actionClose={<AlertActionCloseButton onClose={hideError} />}
+    >
+      {loadError.message}
+    </Alert>
+  );
+};
+
 type DetailsProps = RouteComponentProps<{ scrapeUrl?: string }> & {
   loaded: boolean;
   loadError: string;
@@ -155,8 +204,15 @@ const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets })
   const scrapeUrl = atob(match?.params?.scrapeUrl ?? '');
   const target: Target = scrapeUrl ? _.find(targets, { scrapeUrl }) : undefined;
 
-  const isServiceMonitor: boolean = target.scrapePool.includes(MonitorType.ServiceMonitor);
-  const isPodMonitor: boolean = target.scrapePool.includes(MonitorType.PodMonitor);
+  const isServiceMonitor: boolean = target
+    ? target.scrapePool.includes(MonitorType.ServiceMonitor)
+    : undefined;
+  const isPodMonitor: boolean = target
+    ? target.scrapePool.includes(MonitorType.PodMonitor)
+    : undefined;
+
+  const [, , serviceMonitorsLoadError] = React.useContext(ServiceMonitorsWatchContext);
+  const [, , podMonitorsLoadError] = React.useContext(PodMonitorsWatchContext);
 
   return (
     <>
@@ -179,6 +235,18 @@ const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets })
       <StatusBox data={target} label="target" loaded={loaded} loadError={loadError}>
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~Target details')} />
+          {isServiceMonitor && serviceMonitorsLoadError && (
+            <WatchErrorAlert
+              loadError={serviceMonitorsLoadError}
+              title={t('public~Error loading service monitor data')}
+            />
+          )}
+          {isPodMonitor && podMonitorsLoadError && (
+            <WatchErrorAlert
+              loadError={podMonitorsLoadError}
+              title={t('public~Error loading pod monitor data')}
+            />
+          )}
           <div className="co-m-pane__body-group">
             <div className="row">
               <div className="col-sm-6">
@@ -292,6 +360,9 @@ const getRowProps = (target: Target) => ({ id: target.scrapeUrl, title: target.l
 const List: React.FC<ListProps> = ({ loaded, loadError, targets }) => {
   const { t } = useTranslation();
 
+  const [, , serviceMonitorsLoadError] = React.useContext(ServiceMonitorsWatchContext);
+  const [, , podMonitorsLoadError] = React.useContext(PodMonitorsWatchContext);
+
   const filters = useSelector(({ k8s }: RootState) => k8s.getIn([REDUX_ID, 'filters']));
 
   const Header = () => [
@@ -373,6 +444,18 @@ const List: React.FC<ListProps> = ({ loaded, loadError, targets }) => {
           >
             {loadError}
           </Alert>
+        )}
+        {serviceMonitorsLoadError && (
+          <WatchErrorAlert
+            loadError={serviceMonitorsLoadError}
+            title={t('public~Error loading service monitor data')}
+          />
+        )}
+        {podMonitorsLoadError && (
+          <WatchErrorAlert
+            loadError={podMonitorsLoadError}
+            title={t('public~Error loading pod monitor data')}
+          />
         )}
         <FilterToolbar
           data={targets}
