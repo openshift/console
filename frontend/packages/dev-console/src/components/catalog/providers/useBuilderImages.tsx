@@ -37,6 +37,8 @@ const normalizeBuilderImages = (
     const builderImageTag = _.head(imageStream.spec?.tags);
     const sampleRepo = builderImageTag?.['annotations']?.['sampleRepo'];
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
+    const documentationUrl = annotations[ANNOTATIONS.documentationURL];
+    const supportUrl = annotations[ANNOTATIONS.supportURL];
 
     const detailsProperties = [
       {
@@ -100,6 +102,8 @@ const normalizeBuilderImages = (
       name: displayName,
       provider,
       description,
+      documentationUrl,
+      supportUrl,
       tags,
       creationTimestamp,
       cta: {
