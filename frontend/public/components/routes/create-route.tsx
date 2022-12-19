@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as fuzzy from 'fuzzysearch';
 import { Alert, Button } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { connect, FormikContextType, FormikValues } from 'formik';
@@ -221,6 +222,9 @@ class CreateRouteWithTranslation extends React.Component<
     });
   };
 
+  autocompleteFilter = (strText: string, item: React.ReactElement): boolean =>
+    fuzzy(strText, item?.props?.name);
+
   render() {
     const { t, services, existingRoute } = this.props;
     const {
@@ -362,6 +366,7 @@ class CreateRouteWithTranslation extends React.Component<
           )}
           {!_.isEmpty(serviceOptions) && (
             <Dropdown
+              autocompleteFilter={this.autocompleteFilter}
               items={availableServiceOptions}
               title={service ? serviceOptions[service.metadata.name] : t('public~Select a service')}
               dropDownClassName="dropdown--full-width"
