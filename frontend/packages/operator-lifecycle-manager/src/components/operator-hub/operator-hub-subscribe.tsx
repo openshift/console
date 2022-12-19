@@ -636,15 +636,15 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       <RadioInput
         onChange={() => {
           setUseSuggestedNSForSingleInstallMode(true);
-          setTargetNamespace(suggestedNamespace);
+          setTargetNamespace(operatorSuggestedNamespace);
         }}
-        value={suggestedNamespace}
+        value={operatorSuggestedNamespace}
         checked={useSuggestedNSForSingleInstallMode}
         title={t('olm~Operator recommended Namespace:')}
       >
         {' '}
         <ResourceIcon kind="Project" />
-        <b>{suggestedNamespace}</b>
+        <b>{operatorSuggestedNamespace}</b>
       </RadioInput>
       {useSuggestedNSForSingleInstallMode && suggestedNamespaceDetails}
       <RadioInput
@@ -652,7 +652,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           setUseSuggestedNSForSingleInstallMode(false);
           setTargetNamespace(null);
         }}
-        value={suggestedNamespace}
+        value={operatorSuggestedNamespace}
         checked={!useSuggestedNSForSingleInstallMode}
         title={t('olm~Select a Namespace')}
       />
@@ -756,7 +756,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     onChange={(e) => {
                       setInstallMode(e.target.value);
                       setTargetNamespace(
-                        useSuggestedNSForSingleInstallMode ? suggestedNamespace : null,
+                        useSuggestedNSForSingleInstallMode ? operatorSuggestedNamespace : null,
                       );
                       setCannotResolve(false);
                     }}
