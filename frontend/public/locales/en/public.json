@@ -1176,6 +1176,8 @@
   "Down": "Down",
   "Target details": "Target details",
   "Targets": "Targets",
+  "Error loading service monitor data": "Error loading service monitor data",
+  "Error loading pod monitor data": "Error loading pod monitor data",
   "Endpoint": "Endpoint",
   "Last scrape": "Last scrape",
   "Scrape failed": "Scrape failed",
