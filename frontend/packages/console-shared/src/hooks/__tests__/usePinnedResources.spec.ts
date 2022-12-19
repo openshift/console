@@ -1,4 +1,6 @@
 import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/useActivePerspective';
+import { DeploymentModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/__mocks__/k8s-data';
+import { ConfigMapModel } from '@console/internal/models';
 import { useModelFinder } from '@console/internal/module/k8s/k8s-models';
 import { usePerspectives } from '@console/shared/src';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
@@ -32,19 +34,52 @@ describe('usePinnedResources', () => {
         properties: {
           id: 'dev',
           name: 'Developer',
-          defaultPins: [{ kind: 'ConfigMap' }, { kind: 'Secret' }],
+          defaultPins: [
+            { group: '', version: 'v1', kind: 'ConfigMap' },
+            { group: '', version: 'v1', kind: 'Secret' },
+          ],
         },
       },
     ]);
 
     useModelFinderMock.mockReturnValue({
-      findModel: () => ({ kind: 'Deployment' }),
+      findModel: (group: string, resource: string) => {
+        if (group === 'apps' && resource === 'deployments') {
+          return DeploymentModel;
+        }
+        if (group === '' && resource === 'configmaps') {
+          return ConfigMapModel;
+        }
+        return null;
+      },
     });
     useUserSettingsCompatibilityMock.mockClear();
     setPinnedResourcesMock.mockClear();
   });
 
-  it('returns an empty array if user settings are not loaded yet', async () => {
+  it('should return default pins from extension if perspectives are not configured', async () => {
+    window.SERVER_FLAGS.perspectives = '';
+    useActivePerspectiveMock.mockReturnValue(['dev']);
+    useUserSettingsCompatibilityMock.mockImplementation((configKey, storageKey, defaultPins) => [
+      defaultPins,
+      setPinnedResourcesMock,
+      true,
+    ]);
+
+    const { result } = testHook(() => usePinnedResources());
+
+    // Expect default pins
+    expect(result.current).toEqual([
+      ['core~v1~ConfigMap', 'core~v1~Secret'],
+      expect.any(Function),
+      true,
+    ]);
+
+    // Setter was not used
+    expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should return an empty array if user settings are not loaded yet', async () => {
     window.SERVER_FLAGS.perspectives =
       '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deployments"}]}]';
     // Mock user settings
@@ -59,10 +94,12 @@ describe('usePinnedResources', () => {
     expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);
   });
 
-  it('returns no default pins if there are no other pins defined and no extension could be found', async () => {
+  it('should not return any pins if no pins are configured and no extension could be found', async () => {
     window.SERVER_FLAGS.perspectives = '[{ "id" : "dev", "visibility": {"state" : "Enabled" }}]';
     // Mock empty old data
     useUserSettingsCompatibilityMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
+    usePerspectivesMock.mockClear();
+    usePerspectivesMock.mockReturnValue([]);
 
     const { result } = testHook(() => usePinnedResources());
 
@@ -73,7 +110,75 @@ describe('usePinnedResources', () => {
     expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);
   });
 
-  it('returns some default pins if there are no other pins defined and the extension has default pins', async () => {
+  it('should not return any pins if no pins are configured and extension donot have default pins', async () => {
+    window.SERVER_FLAGS.perspectives = '[{ "id" : "dev", "visibility": {"state" : "Enabled" }}]';
+    // Mock empty old data
+    useUserSettingsCompatibilityMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
+    usePerspectivesMock.mockClear();
+    usePerspectivesMock.mockReturnValue([
+      {
+        type: 'Perspective',
+        properties: {
+          id: 'dev',
+          name: 'Developer',
+        },
+      },
+    ]);
+
+    const { result } = testHook(() => usePinnedResources());
+
+    // Expect empty array
+    expect(result.current).toEqual([[], expect.any(Function), true]);
+
+    // Setter was not used
+    expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should not return any pins if pins configured is an empty array and the extension has default pins', async () => {
+    window.SERVER_FLAGS.perspectives =
+      '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources": []}]';
+    // Mock empty old data
+    useActivePerspectiveMock.mockReturnValue(['dev']);
+    useUserSettingsCompatibilityMock.mockImplementation((configKey, storageKey, defaultPins) => [
+      defaultPins,
+      setPinnedResourcesMock,
+      true,
+    ]);
+
+    const { result } = testHook(() => usePinnedResources());
+
+    // Do not expect pins
+    expect(result.current).toEqual([[], expect.any(Function), true]);
+
+    // Setter was not used
+    expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should return default pins if pins configured is null and the extension has default pins', async () => {
+    window.SERVER_FLAGS.perspectives =
+      '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources": null}]';
+    // Mock empty old data
+    useActivePerspectiveMock.mockReturnValue(['dev']);
+    useUserSettingsCompatibilityMock.mockImplementation((configKey, storageKey, defaultPins) => [
+      defaultPins,
+      setPinnedResourcesMock,
+      true,
+    ]);
+
+    const { result } = testHook(() => usePinnedResources());
+
+    // Do not expect pins
+    expect(result.current).toEqual([
+      ['core~v1~ConfigMap', 'core~v1~Secret'],
+      expect.any(Function),
+      true,
+    ]);
+
+    // Setter was not used
+    expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should return default pins from extension if there are no pinned resources configured by and the extension has default pins', async () => {
     window.SERVER_FLAGS.perspectives = '[{ "id" : "dev", "visibility": {"state" : "Enabled" }}]';
     // Mock empty old data
     useActivePerspectiveMock.mockReturnValue(['dev']);
@@ -87,7 +192,7 @@ describe('usePinnedResources', () => {
 
     // Expect default pins
     expect(result.current).toEqual([
-      ['core~~ConfigMap', 'core~~Secret'],
+      ['core~v1~ConfigMap', 'core~v1~Secret'],
       expect.any(Function),
       true,
     ]);
@@ -96,7 +201,7 @@ describe('usePinnedResources', () => {
     expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);
   });
 
-  it('returns customized pins if the pins are not customized by the user and the extension has default pins', async () => {
+  it('should return customized pins if the pins are not customized by the user and the extension has default pins', async () => {
     window.SERVER_FLAGS.perspectives =
       '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deployments", "group": "apps"}]}]';
     // Mock empty old data
@@ -116,7 +221,7 @@ describe('usePinnedResources', () => {
     expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);
   });
 
-  it('returns an array of pins saved in user settings for the current perspective', async () => {
+  it('should return an array of pins saved in user settings for the current perspective', async () => {
     window.SERVER_FLAGS.perspectives =
       '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deployments"}]}]';
     // Mock user settings data
@@ -135,6 +240,22 @@ describe('usePinnedResources', () => {
       expect.any(Function),
       true,
     ]);
+
+    // Setter was not used
+    expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should return configured pins and filter out pins with resources that donot exist', async () => {
+    window.SERVER_FLAGS.perspectives =
+      '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deploymentss", "group" : "apps" },{"version" : "v1", "resource" : "configmaps", "group" : "" } ]}]';
+    // Mock user settings data
+    useActivePerspectiveMock.mockReturnValue(['dev']);
+    useUserSettingsCompatibilityMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
+
+    const { result } = testHook(() => usePinnedResources());
+
+    // Expect pins customized by the admin
+    expect(result.current).toEqual([['core~~', 'core~v1~ConfigMap'], expect.any(Function), true]);
 
     // Setter was not used
     expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);

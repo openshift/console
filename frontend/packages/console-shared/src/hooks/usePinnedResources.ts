@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import * as _ from 'lodash';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { ExtensionK8sModel, K8sModel, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { referenceForExtensionModel, useModelFinder } from '@console/internal/module/k8s';
 import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '../constants';
 import { usePerspectives, Perspective } from './perspective-utils';
@@ -13,89 +13,79 @@ type PinnedResourcesType = {
 
 const PINNED_RESOURCES_CONFIG_MAP_KEY = 'console.pinnedResources';
 
-const getCustomizedPins = (id: string) => {
-  if (window.SERVER_FLAGS.perspectives) {
-    const perspectives: Perspective[] = JSON.parse(window.SERVER_FLAGS.perspectives);
-    const perspective = perspectives.find((p: Perspective) => p.id === id && p?.pinnedResources);
-    return perspective?.pinnedResources;
-  }
-  return null;
-};
-
 export const usePinnedResources = (): [string[], (pinnedResources: string[]) => void, boolean] => {
   const fireTelemetryEvent = useTelemetry();
   const [activePerspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
   const { findModel } = useModelFinder();
-  const pinsFromExtension: PinnedResourcesType = useMemo(
-    () =>
-      perspectiveExtensions.reduce(
-        (acc, e) => ({
-          ...acc,
-          [e.properties.id]: (e.properties.defaultPins || []).map((gvk) => {
-            const model = {
-              group: gvk.group,
-              version: gvk.version,
-              kind: gvk.kind,
-            };
-            return referenceForExtensionModel(model);
-          }),
-        }),
-        {},
-      ),
-    [perspectiveExtensions],
+
+  const getPins = useCallback(
+    (id: string, defaultPins: ExtensionK8sModel[]): ExtensionK8sModel[] => {
+      let customizedPins: ExtensionK8sModel[] = null;
+      if (window.SERVER_FLAGS.perspectives) {
+        const perspectives: Perspective[] = JSON.parse(window.SERVER_FLAGS.perspectives);
+        const perspective = perspectives.find((p: Perspective) => p.id === id);
+        customizedPins = perspective?.pinnedResources?.map((pr) => {
+          const model: K8sModel = findModel(pr.group, pr.resource);
+          return (
+            model && {
+              group: pr.group,
+              version: pr.version,
+              kind: model.kind,
+            }
+          );
+        });
+      }
+      return customizedPins ?? defaultPins ?? [];
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
+
   const defaultPins: PinnedResourcesType = useMemo(
     () =>
       perspectiveExtensions.reduce(
         (acc, e) => ({
           ...acc,
-          [e.properties.id]: (
-            getCustomizedPins(e.properties.id) ||
-            e.properties.defaultPins ||
-            []
-          ).map((gvk) => {
-            const model = {
-              group: gvk.group,
-              version: gvk.version,
-              kind: gvk.kind ?? _.get(findModel(gvk.group, gvk.resource), 'kind'),
-            };
-            return referenceForExtensionModel(model);
-          }),
+          [e.properties.id]: getPins(e.properties.id, e.properties.defaultPins)?.map((gvk) =>
+            referenceForExtensionModel(gvk),
+          ),
         }),
         {},
       ),
-    [perspectiveExtensions],
+    [perspectiveExtensions, getPins],
   );
   const [pinnedResources, setPinnedResources, loaded] = useUserSettingsCompatibility<
     PinnedResourcesType
-  >(PINNED_RESOURCES_CONFIG_MAP_KEY, PINNED_RESOURCES_LOCAL_STORAGE_KEY, defaultPins, true);
+  >(PINNED_RESOURCES_CONFIG_MAP_KEY, PINNED_RESOURCES_LOCAL_STORAGE_KEY, null, true);
 
   const pins = useMemo(() => {
     if (!loaded) {
       return [];
     }
-    if (
-      JSON.stringify(pinnedResources[activePerspective]) ===
-        JSON.stringify(pinsFromExtension[activePerspective]) &&
-      defaultPins[activePerspective]
-    ) {
-      return defaultPins[activePerspective];
+    if (_.isEmpty(pinnedResources) || !pinnedResources?.[activePerspective]) {
+      return defaultPins[activePerspective] ?? [];
     }
     return pinnedResources[activePerspective] ?? [];
-  }, [loaded, pinnedResources, activePerspective, pinsFromExtension, defaultPins]);
+  }, [loaded, pinnedResources, activePerspective, defaultPins]);
 
   const setPins = useCallback(
     (newPins: string[]) => {
       setPinnedResources((prevPR) => {
-        _.difference(newPins, prevPR[activePerspective]).forEach((resource) =>
+        _.difference(
+          newPins,
+          prevPR?.[activePerspective].length > 0 ? prevPR[activePerspective] : pins,
+        ).forEach((resource) =>
           fireTelemetryEvent('Navigation Added', {
             resource,
             perspective: activePerspective,
           }),
         );
 
-        _.difference(prevPR[activePerspective], newPins).forEach((resource) =>
+        _.difference(
+          prevPR?.[activePerspective].length > 0 ? prevPR[activePerspective] : pins,
+          newPins,
+        ).forEach((resource) =>
           fireTelemetryEvent('Navigation Removed', {
             resource,
             perspective: activePerspective,
@@ -105,7 +95,7 @@ export const usePinnedResources = (): [string[], (pinnedResources: string[]) => 
         return { ...prevPR, [activePerspective]: newPins };
       });
     },
-    [activePerspective, setPinnedResources, fireTelemetryEvent],
+    [setPinnedResources, activePerspective, pins, fireTelemetryEvent],
   );
 
   return [pins, setPins, loaded];
