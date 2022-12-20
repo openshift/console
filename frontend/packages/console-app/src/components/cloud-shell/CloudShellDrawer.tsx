@@ -70,7 +70,7 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
   return (
     <Drawer
       open={expanded}
-      defaultHeight={365}
+      defaultHeight={385}
       header={header}
       maxHeight={`calc(100vh - ${getMastheadHeight()}px)`}
       onChange={handleChange}

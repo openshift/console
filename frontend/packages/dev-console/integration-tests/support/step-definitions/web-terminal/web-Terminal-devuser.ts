@@ -14,7 +14,7 @@ When('user enters project name {string}', (projectName: string) => {
   initTerminalPage.typeProjectName(projectName);
 });
 
-When('user clicks on Submit button', () => {
+When('user clicks on Start button', () => {
   initTerminalPage.clickStartButton();
 });
 Then(

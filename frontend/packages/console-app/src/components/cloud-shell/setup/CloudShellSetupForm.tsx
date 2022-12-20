@@ -3,17 +3,27 @@ import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { FlexForm, FormFooter, FormBody } from '@console/shared';
+import AdminNamespaceSection from './AdminNamespaceSection';
+import CloudShellAdvancedOption from './CloudShellAdvancedOption';
 import NamespaceSection from './NamespaceSection';
 
 const CloudShellSetupForm: React.FC<Pick<
   FormikProps<FormikValues>,
   'errors' | 'handleSubmit' | 'handleReset' | 'status' | 'isSubmitting'
->> = ({ errors, handleSubmit, handleReset, status, isSubmitting }) => {
+> & { isAdmin?: boolean }> = ({
+  errors,
+  handleSubmit,
+  handleReset,
+  status,
+  isSubmitting,
+  isAdmin = false,
+}) => {
   const { t } = useTranslation();
   return (
-    <FlexForm onSubmit={handleSubmit} className="co-m-pane__form">
-      <FormBody>
-        <NamespaceSection />
+    <FlexForm onSubmit={handleSubmit}>
+      <FormBody className="co-m-pane__form">
+        {isAdmin ? <AdminNamespaceSection /> : <NamespaceSection />}
+        <CloudShellAdvancedOption />
       </FormBody>
       <FormFooter
         handleReset={handleReset}

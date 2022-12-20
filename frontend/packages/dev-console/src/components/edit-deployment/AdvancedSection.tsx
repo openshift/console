@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { ProgressiveList, ProgressiveListItem } from '@console/shared/src';
 import ScalingSection from '../import/advanced/ScalingSection';
 import FormSection from '../import/section/FormSection';
-import ProgressiveList from '../progressive-list/ProgressiveList';
-import ProgressiveListItem from '../progressive-list/ProgressiveListItem';
 import PauseRolloutsSection from './PauseRolloutsSection';
 
 type AdvancedSectionProps = {

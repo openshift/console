@@ -12,7 +12,8 @@ import { newCloudShellWorkSpace, createCloudShellResourceName } from '../cloud-s
 import {
   CloudShellSetupFormData,
   CREATE_NAMESPACE_KEY,
-  cloudShellSetupValidation,
+  cloudShellSetupValidationSchema,
+  getCloudShellTimeout,
 } from './cloud-shell-setup-utils';
 import CloudSehellSetupForm from './CloudShellSetupForm';
 
@@ -37,13 +38,22 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
 }) => {
   const initialValues: CloudShellSetupFormData = {
     namespace: activeNamespace === ALL_NAMESPACES_KEY ? undefined : activeNamespace,
+    advancedOptions: {
+      timeout: {
+        limit: null,
+        unit: 'm',
+      },
+    },
   };
   const { t } = useTranslation();
 
   const handleSubmit = async (values: CloudShellSetupFormData, actions) => {
     const createNamespace = values.namespace === CREATE_NAMESPACE_KEY;
     const namespace = createNamespace ? values.newNamespace : values.namespace;
-
+    const csTimeout = getCloudShellTimeout(
+      values.advancedOptions?.timeout?.limit,
+      values.advancedOptions?.timeout?.unit,
+    );
     try {
       if (createNamespace) {
         await k8sCreate(ProjectRequestModel, {
@@ -59,6 +69,8 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
           namespace,
           operatorNamespace,
           workspaceModel.apiVersion,
+          csTimeout,
+          values.advancedOptions?.image,
         ),
       );
       onSubmit && onSubmit(namespace);
@@ -70,13 +82,13 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
   return (
     <>
       <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
-        <SectionHeading text={t('console-app~Initialize terminal')} />
+        <SectionHeading text={t('console-app~Initialize terminal')} style={{ marginBottom: 0 }} />
       </div>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
         onReset={onCancel}
-        validate={cloudShellSetupValidation}
+        validationSchema={cloudShellSetupValidationSchema()}
       >
         {(formikProps) => <CloudSehellSetupForm {...formikProps} />}
       </Formik>
