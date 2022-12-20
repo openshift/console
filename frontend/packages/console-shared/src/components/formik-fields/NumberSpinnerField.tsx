@@ -16,6 +16,14 @@ const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, .
 
   useFormikValidationFix(field.value);
 
+  const handleChange: React.ReactEventHandler<HTMLInputElement> = React.useCallback(
+    (event) => {
+      field.onChange(event);
+      setFieldValue(props.name, event.currentTarget.value);
+    },
+    [field, props.name, setFieldValue],
+  );
+
   return (
     <FormGroup
       fieldId={fieldId}
@@ -28,8 +36,10 @@ const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, .
       <NumberSpinner
         {...field}
         {...props}
+        onChange={handleChange}
         value={parseInt(field.value, 10)}
         id={fieldId}
+        data-test-id="number-spinner-field"
         changeValueBy={(operation: number) => {
           setFieldValue(props.name, _.toInteger(field.value) + operation);
           setFieldTouched(props.name, true);
