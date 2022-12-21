@@ -136,10 +136,21 @@ const convertBuildConfigTriggersToFormData = (
     (trigger) => trigger.type === 'ImageChange',
   );
   values.formData.triggers.otherTriggers = triggers
-    .filter((trigger) => trigger.type && trigger[trigger.type.toLowerCase()]?.secret)
+    .filter(
+      (trigger) =>
+        trigger.type &&
+        (trigger[trigger.type.toLowerCase()]?.secretReference ||
+          trigger[trigger.type.toLowerCase()]?.secret),
+    )
     .map((trigger) => ({
       type: trigger.type,
-      secret: trigger[trigger.type.toLowerCase()].secret,
+      secret:
+        trigger[trigger.type.toLowerCase()].secretReference?.name ||
+        trigger[trigger.type.toLowerCase()].secret,
+      ...(trigger[trigger.type.toLowerCase()].allowEnv
+        ? { allowEnv: trigger[trigger.type.toLowerCase()].allowEnv }
+        : {}),
+      data: trigger[trigger.type.toLowerCase()],
     }));
 };
 

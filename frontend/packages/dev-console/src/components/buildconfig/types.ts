@@ -124,28 +124,36 @@ export type BuildConfigImageChangeTrigger = {
 export type BuildConfigGenericTrigger = {
   type: 'Generic';
   generic: {
-    secret: string;
+    allowEnv?: boolean;
+    secret?: string;
+    secretReference?: { name: string };
   };
 };
 
 export type BuildConfigGitHubTrigger = {
   type: 'GitHub';
   github: {
-    secret: string;
+    allowEnv?: boolean;
+    secret?: string;
+    secretReference?: { name: string };
   };
 };
 
 export type BuildConfigGitLabTrigger = {
   type: 'GitLab';
   gitlab: {
-    secret: string;
+    allowEnv?: boolean;
+    secret?: string;
+    secretReference?: { name: string };
   };
 };
 
 export type BuildConfigBitbucketTrigger = {
   type: 'Bitbucket';
   bitbucket: {
-    secret: string;
+    allowEnv?: boolean;
+    secret?: string;
+    secretReference?: { name: string };
   };
 };
 
