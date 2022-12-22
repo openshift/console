@@ -438,6 +438,9 @@ export type ListPageFilterProps<D = any> = {
   data: D;
   loaded: boolean;
   rowFilters?: RowFilter[];
+  labelFilter?: string;
+  labelPath?: string;
+  nameFilterTitle?: string;
   nameFilterPlaceholder?: string;
   labelFilterPlaceholder?: string;
   hideNameLabelFilters?: boolean;

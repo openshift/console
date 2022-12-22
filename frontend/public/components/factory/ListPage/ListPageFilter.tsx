@@ -8,6 +8,9 @@ const ListPageFilter: React.FC<ListPageFilterProps> = ({
   data,
   loaded,
   rowFilters,
+  labelFilter,
+  labelPath,
+  nameFilterTitle,
   nameFilterPlaceholder,
   labelFilterPlaceholder,
   hideNameLabelFilters,
@@ -20,6 +23,9 @@ const ListPageFilter: React.FC<ListPageFilterProps> = ({
   !_.isEmpty(data) && (
     <FilterToolbar
       rowFilters={rowFilters}
+      labelFilter={labelFilter}
+      labelPath={labelPath}
+      nameFilterTitle={nameFilterTitle}
       data={data}
       nameFilterPlaceholder={nameFilterPlaceholder}
       labelFilterPlaceholder={labelFilterPlaceholder}
