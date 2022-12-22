@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { nodeStatus, volumeSnapshotStatus } from '@console/app/src/status';
 import { getNodeRoles, getLabelsAsString } from '@console/shared';
-import { Alert, FilterValue, RowFilter, Rule, Silence } from '@console/dynamic-plugin-sdk';
+import { Alert, FilterValue, RowFilter, Rule } from '@console/dynamic-plugin-sdk';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
 import { roleType } from '../RBAC';
@@ -57,14 +57,8 @@ export const tableFilters: FilterMap = {
     return !!values.all.every((v) => labels.includes(v));
   },
 
-  'alerting-rule-name': (filter, rule: Rule) =>
-    fuzzyCaseInsensitive(filter.selected?.[0], rule.name),
-
   'observe-target-labels': (values, target: Target) =>
     !values.all || values.all.every((v) => getLabelsAsString(target, 'labels').includes(v)),
-
-  'silence-name': (filter, silence: Silence) =>
-    fuzzyCaseInsensitive(filter.selected?.[0], silence.name),
 
   // Filter role by role kind
   'role-kind': (filter, role) =>

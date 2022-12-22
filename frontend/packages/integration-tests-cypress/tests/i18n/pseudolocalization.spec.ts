@@ -59,21 +59,19 @@ describe('Localization', () => {
         listPage.rows.shouldBeLoaded();
         cy.get(ListPageSelector.tableColumnHeaders).isPseudoLocalized();
         cy.get(DetailsPageSelector.horizontalNavTabs).isPseudoLocalized();
-      }
-      // check applied filters are i18ned then clear all filters
-      cy.get('.pf-c-chip-group__main').then((groups) => {
-        if (groups.length >= 1) {
-          cy.get('[class*="pf-c-chip-group"]').isPseudoLocalized();
-        }
-        listPage.filter.clearAllFilters();
-      });
-      // check filter dropdown items & search by items i18ned
-      listPage.filter.clickFilterDropdown();
-      cy.get('.pf-c-select__menu').within(() => {
-        cy.get('.pf-c-select__menu-group-title').isPseudoLocalized();
-        cy.get('.co-filter-dropdown-item__name').isPseudoLocalized();
-      });
-      if (page === 'alerts' || page === 'alertrules') {
+        // check applied filters are i18ned then clear all filters
+        cy.get('.pf-c-chip-group__main').then((groups) => {
+          if (groups.length >= 1) {
+            cy.get('[class*="pf-c-chip-group"]').isPseudoLocalized();
+          }
+          listPage.filter.clearAllFilters();
+        });
+        // check filter dropdown items & search by items i18ned
+        listPage.filter.clickFilterDropdown();
+        cy.get('.pf-c-select__menu').within(() => {
+          cy.get('.pf-c-select__menu-group-title').isPseudoLocalized();
+          cy.get('.co-filter-dropdown-item__name').isPseudoLocalized();
+        });
         listPage.filter.clickSearchByDropdown();
         cy.get('.pf-c-dropdown__menu').within(() => {
           cy.get('.pf-c-dropdown__menu-item').isPseudoLocalized();

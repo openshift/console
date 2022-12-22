@@ -24,8 +24,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
-import fuzzy from 'fuzzysearch';
-import { find, includes, isEmpty, toLower } from 'lodash-es';
+import { find, includes, isEmpty } from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
@@ -47,7 +46,7 @@ import { LoadingInline, StatusBox } from '../utils/status-box';
 import { useBoolean } from './hooks/useBoolean';
 import { Labels } from './labels';
 import { AlertSource, PrometheusAPIError, Target } from './types';
-import { PROMETHEUS_BASE_PATH, targetSource } from './utils';
+import { fuzzyCaseInsensitive, PROMETHEUS_BASE_PATH, targetSource } from './utils';
 
 enum MonitorType {
   ServiceMonitor = 'serviceMonitor',
@@ -440,8 +439,6 @@ const List: React.FC<ListProps> = ({ data, loaded, loadError, unfilteredData }) 
     />
   );
 };
-
-const fuzzyCaseInsensitive = (a: string, b: string): boolean => fuzzy(toLower(a), toLower(b));
 
 type ListPageProps = {
   loaded: boolean;
