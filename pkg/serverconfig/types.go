@@ -203,6 +203,7 @@ type PerspectiveVisibility struct {
 	AccessReview *ResourceAttributesAccessReview `json:"accessReview,omitempty" yaml:"accessReview,omitempty"`
 }
 
+// Perspective defines a perspective that cluster admins want to show/hide in the perspective switcher dropdown
 type Perspective struct {
 	// id defines the id of the perspective.
 	// Example: "dev", "admin".
@@ -211,6 +212,29 @@ type Perspective struct {
 	ID string `json:"id" yaml:"id"`
 	// visibility defines the state of perspective along with access review checks if needed for that perspective.
 	Visibility PerspectiveVisibility `json:"visibility" yaml:"visibility"`
+	// pinnedResources defines the list of default pinned resources that users will see on the perspective navigation if they have not customized these pinned resources themselves.
+	// The list of available Kubernetes resources could be read via `kubectl api-resources`.
+	// The console will also provide a configuration UI and a YAML snippet that will list the available resources that can be pinned to the navigation.
+	// Incorrect or unknown resources will be ignored.
+	PinnedResources *[]PinnedResourceReference `json:"pinnedResources,omitempty" yaml:"pinnedResources,omitempty"`
+}
+
+// PinnedResourceReference includes the group, version and type of resource
+type PinnedResourceReference struct {
+	// group is the API Group of the Resource.
+	// Enter empty string for the core group.
+	// This value should consist of only lowercase alphanumeric characters, hyphens and periods.
+	// Example: "", "apps", "build.openshift.io", etc.
+	Group string `json:"group" yaml:"group"`
+	// version is the API Version of the Resource.
+	// This value should consist of only lowercase alphanumeric characters.
+	// Example: "v1", "v1beta1", etc.
+	Version string `json:"version" yaml:"version"`
+	// resource is the type that is being referenced.
+	// It is normally the plural form of the resource kind in lowercase.
+	// This value should consist of only lowercase alphanumeric characters and hyphens.
+	// Example: "deployments", "deploymentconfigs", "pods", etc.
+	Resource string `json:"resource" yaml:"resource"`
 }
 
 type Providers struct {
