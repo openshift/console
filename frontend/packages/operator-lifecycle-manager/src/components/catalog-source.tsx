@@ -13,9 +13,9 @@ import {
   TableData,
   TableProps,
   MultiListPage,
+  MultiListPageProps,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
-import { ListPageProps } from '@console/internal/components/monitoring/types';
 import {
   Firehose,
   Kebab,
@@ -634,7 +634,7 @@ export type CatalogSourceDetailsPageProps = {
 
 export type CatalogSourceListPageProps = {
   obj: OperatorHubKind;
-} & ListPageProps;
+} & MultiListPageProps;
 
 export type CreateSubscriptionYAMLProps = {
   match: match<{ ns: string; pkgName: string }>;
@@ -643,7 +643,7 @@ export type CreateSubscriptionYAMLProps = {
 
 export type CatalogSourceOperatorsPageProps = {
   obj: CatalogSourceKind;
-} & ListPageProps;
+} & MultiListPageProps;
 
 CatalogSourceDetails.displayName = 'CatalogSourceDetails';
 CatalogSourceDetailsPage.displayName = 'CatalogSourceDetailPage';
