@@ -10,7 +10,13 @@ import {
   withHandlePromise,
   HandlePromiseProps,
 } from '../utils';
-import { k8sKill, k8sList, referenceForOwnerRef, K8sKind } from '../../module/k8s/';
+import {
+  k8sKill,
+  k8sList,
+  referenceForOwnerRef,
+  K8sKind,
+  K8sResourceKind,
+} from '../../module/k8s/';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { findOwner } from '../../module/k8s/managed-by';
@@ -19,13 +25,14 @@ import { ResourceLink } from '../utils/resource-link';
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
 const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromiseProps) => {
   const [isChecked, setIsChecked] = React.useState(true);
+  const [isDeleteOtherResourcesChecked, setIsDeleteOtherResourcesChecked] = React.useState(true);
   const [owner, setOwner] = React.useState(null);
 
   const { t } = useTranslation();
 
   const submit = (event) => {
     event.preventDefault();
-    const { kind, resource } = props;
+    const { kind, resource, deleteAllResources } = props;
 
     //https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/
     const propagationPolicy = isChecked && kind ? kind.propagationPolicy : 'Orphan';
@@ -35,6 +42,10 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromisePr
 
     props.handlePromise(k8sKill(kind, resource, {}, {}, json), () => {
       props.close();
+
+      if (deleteAllResources && isDeleteOtherResourcesChecked) {
+        deleteAllResources();
+      }
 
       // If we are currently on the deleted resource's page, redirect to the resource list page
       const re = new RegExp(`/${resource.metadata.name}(/|$)`);
@@ -100,6 +111,18 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromisePr
               </label>
             </div>
           )}
+          {props.deleteAllResources && (
+            <div className="checkbox">
+              <label className="control-label">
+                <input
+                  type="checkbox"
+                  onChange={() => setIsDeleteOtherResourcesChecked(!isDeleteOtherResourcesChecked)}
+                  checked={!!isDeleteOtherResourcesChecked}
+                />
+                {t('public~Delete other resources created by console')}
+              </label>
+            </div>
+          )}
           {owner && (
             <Alert
               className="co-alert co-alert--margin-top"
@@ -145,4 +168,5 @@ export type DeleteModalProps = {
   message?: JSX.Element;
   cancel?: () => void;
   btnText?: string;
+  deleteAllResources?: () => Promise<K8sResourceKind[]>;
 };
