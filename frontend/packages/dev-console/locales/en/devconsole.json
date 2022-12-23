@@ -68,6 +68,7 @@
   "Container Image": "Container Image",
   "From Catalog": "From Catalog",
   "Delete application": "Delete application",
+  "Delete {{kind}}": "Delete {{kind}}",
   "Edit {{applicationName}}": "Edit {{applicationName}}",
   "Deletion of a Service Binding resource that utilizes label selector will result in the removal of all bindings on applications that share the labels defined in the Service Binding resource.": "Deletion of a Service Binding resource that utilizes label selector will result in the removal of all bindings on applications that share the labels defined in the Service Binding resource.",
   "Access permissions needed": "Access permissions needed",
