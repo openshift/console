@@ -1,7 +1,9 @@
 import i18next from 'i18next';
 import { Action, K8sModel } from '@console/dynamic-plugin-sdk';
 import { TopologyApplicationObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import { deleteModal } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { deleteResourceModal } from '@console/shared';
 import { ApplicationModel } from '@console/topology/src/models';
 import { cleanUpWorkload } from '@console/topology/src/utils';
@@ -35,3 +37,19 @@ export const DeleteApplicationAction = (
     accessReview: asAccessReview(resourceModel, primaryResource, 'delete'),
   };
 };
+
+export const DeleteResourceAction = (
+  kind: K8sModel,
+  obj: K8sResourceKind,
+  isKnativeResource?: boolean,
+): Action => ({
+  id: `delete-resource`,
+  label: i18next.t('devconsole~Delete {{kind}}', { kind: kind.kind }),
+  cta: () =>
+    deleteModal({
+      kind,
+      resource: obj,
+      deleteAllResources: () => cleanUpWorkload(obj, isKnativeResource),
+    }),
+  accessReview: asAccessReview(kind, obj, 'delete'),
+});

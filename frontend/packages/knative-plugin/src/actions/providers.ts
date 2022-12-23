@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { GraphElement, Graph, Node, Edge, isEdge, isGraph } from '@patternfly/react-topology';
-import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
+import {
+  CommonActionFactory,
+  getCommonResourceActions,
+} from '@console/app/src/actions/creators/common-factory';
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
 import { disabledActionsFilter } from '@console/dev-console/src/actions/add-resources';
+import { DeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
 import { Action } from '@console/dynamic-plugin-sdk';
 import {
   K8sResourceKind,
@@ -79,7 +83,12 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
       getHealthChecksAction(kindObj, resource),
       editKnativeService(kindObj, resource),
       DeploymentActionFactory.EditResourceLimits(kindObj, resource),
-      ...getCommonResourceActions(kindObj, resource),
+      CommonActionFactory.ModifyLabels(kindObj, resource),
+      CommonActionFactory.ModifyAnnotations(kindObj, resource),
+      CommonActionFactory.Edit(kindObj, resource),
+      ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
+        ? [DeleteResourceAction(kindObj, resource, true)]
+        : [CommonActionFactory.Delete(kindObj, resource)]),
     ];
   }, [kindObj, resource]);
 
