@@ -2,7 +2,6 @@ import * as React from 'react';
 import { DualListSelector, FormHelperText, FormSection, Tooltip } from '@patternfly/react-core';
 import * as fuzzy from 'fuzzysearch';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import {
@@ -36,13 +35,13 @@ import {
 } from '@console/shared/src/hooks/perspective-utils';
 import './PinnedResourcesConfiguration.scss';
 
-// Blacklist known duplicate resources.
-const blacklistGroups = ImmutableSet([
+// skip duplicate resources.
+const skipGroups = ImmutableSet([
   // Prefer rbac.authorization.k8s.io/v1, which has the same resources.
   'authorization.openshift.io',
 ]);
 
-const blacklistResources = ImmutableSet([
+const skipResources = ImmutableSet([
   // Prefer core/v1
   'events.k8s.io/v1beta1.Event',
 ]);
@@ -93,16 +92,12 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
   const resources = React.useMemo(() => {
     return allK8sModels
       ?.filter(({ apiGroup, apiVersion, kind, verbs }) => {
-        // Remove blacklisted items.
-        if (
-          blacklistGroups.has(apiGroup) ||
-          blacklistResources.has(`${apiGroup}/${apiVersion}.${kind}`)
-        ) {
+        if (skipGroups.has(apiGroup) || skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)) {
           return false;
         }
 
         // Only show resources that can be listed.
-        if (!_.isEmpty(verbs) && !_.includes(verbs, 'list')) {
+        if (!verbs?.some((v) => v === 'list')) {
           return false;
         }
 

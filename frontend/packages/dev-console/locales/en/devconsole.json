@@ -3,7 +3,7 @@
   "Project access Cluster Roles": "Project access Cluster Roles",
   "Define a list of ClusterRole names that are assignable to users on the project access page.": "Define a list of ClusterRole names that are assignable to users on the project access page.",
   "Pre-pinned navigation items": "Pre-pinned navigation items",
-  "A list of default resouces saved.": "A list of default resouces saved.",
+  "Resource links that are shown below the standard navigation items. These pinned resources can still be changed by the user.": "Resource links that are shown below the standard navigation items. These pinned resources can still be changed by the user.",
   "Add page actions": "Add page actions",
   "A list of actions that are not shown to users on the add page.": "A list of actions that are not shown to users on the add page.",
   "Developer Catalog Types": "Developer Catalog Types",

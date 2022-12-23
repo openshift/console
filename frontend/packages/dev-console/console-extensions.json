@@ -62,7 +62,7 @@
       "id": "dev-console.PinnedResourcesConfiguration",
       "groupId": "developer",
       "label": "%devconsole~Pre-pinned navigation items%",
-      "description": "%devconsole~A list of default resouces saved.%",
+      "description": "%devconsole~Resource links that are shown below the standard navigation items. These pinned resources can still be changed by the user.%",
       "field": {
         "type": "custom",
         "component": { "$codeRef": "catalog.PinnedResourcesConfiguration" }
