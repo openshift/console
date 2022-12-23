@@ -144,6 +144,22 @@ export const topologyActions = {
           .click();
         break;
       }
+      case 'Add Health Checks':
+      case nodeActions.AddHealthChecks: {
+        cy.byTestActionID(action)
+          .scrollIntoView()
+          .should('be.visible')
+          .click();
+        break;
+      }
+      case 'Edit Health Checks':
+      case nodeActions.EditHealthChecks: {
+        cy.byTestActionID(action)
+          .scrollIntoView()
+          .should('be.visible')
+          .click();
+        break;
+      }
       default: {
         throw new Error(`${action} is not available in action menu`);
       }
