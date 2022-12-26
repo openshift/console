@@ -1,4 +1,6 @@
 import * as _ from 'lodash';
+import { getAPIVersionForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { ContainerSpec, EnvVar, K8sResourceKind } from '@console/internal/module/k8s';
 import { getTriggerAnnotation } from '../../../utils/resource-label-utils';
 import {
@@ -19,7 +21,101 @@ import {
   LifecycleHookFormData,
   LifecycleHookImagestreamData,
   TriggersAndImageStreamFormData,
-} from './edit-deployment-types';
+} from './deployment-types';
+
+export const getDefaultDeploymentConfig = (namespace: string): K8sResourceKind => {
+  const defaultDeploymentConfig: K8sResourceKind = {
+    apiVersion: getAPIVersionForModel(DeploymentConfigModel),
+    kind: DeploymentConfigModel.kind,
+    metadata: {
+      namespace,
+      name: '',
+    },
+    spec: {
+      selector: {},
+      replicas: 3,
+      template: {
+        metadata: {
+          labels: {},
+        },
+        spec: {
+          containers: [
+            {
+              name: 'container',
+              image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
+              ports: [
+                {
+                  containerPort: 8080,
+                  protocol: 'TCP',
+                },
+              ],
+            },
+          ],
+        },
+      },
+      strategy: {
+        type: DeploymentStrategyType.rollingParams,
+        rollingParams: {
+          updatePeriodSeconds: 1,
+          intervalSeconds: 1,
+          timeoutSeconds: 600,
+          maxUnavailable: '25%',
+          maxSurge: '25%',
+        },
+      },
+    },
+  };
+
+  return defaultDeploymentConfig;
+};
+
+export const getDefaultDeployment = (namespace: string): K8sResourceKind => {
+  const defaultDeployment: K8sResourceKind = {
+    apiVersion: getAPIVersionForModel(DeploymentModel),
+    kind: DeploymentModel.kind,
+    metadata: {
+      namespace,
+      name: '',
+    },
+    spec: {
+      selector: { matchLabels: { app: 'name' } },
+      replicas: 3,
+      template: {
+        metadata: {
+          labels: { app: 'name' },
+        },
+        spec: {
+          containers: [
+            {
+              name: 'container',
+              image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
+              ports: [
+                {
+                  containerPort: 8080,
+                  protocol: 'TCP',
+                },
+              ],
+            },
+          ],
+        },
+      },
+      strategy: {
+        type: DeploymentStrategyType.rollingUpdate,
+        rollingUpdate: {
+          maxSurge: '25%',
+          maxUnavailable: '25%',
+        },
+      },
+      triggers: [
+        {
+          type: 'ConfigChange',
+        },
+      ],
+    },
+  };
+
+  return defaultDeployment;
+};
 
 export const getContainerNames = (containers: ContainerSpec[]) => {
   return (

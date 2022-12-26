@@ -32,7 +32,6 @@ export const ResourceIcon: React.SFC<ResourceIconProps> = ({
 
   const rendered = (
     <>
-      <span className="sr-only">{kindStr}</span>
       <span className={klass} title={kindStr} style={{ backgroundColor }}>
         {iconLabel}
       </span>

@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor, configure } from '@testing
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
-import { mockEditDeploymentData, mockDeploymentConfig } from '../__mocks__/edit-deployment-data';
+import { mockEditDeploymentData, mockDeploymentConfig } from '../__mocks__/deployment-data';
 import MockForm from '../__mocks__/MockForm';
 import ContainerField from '../ContainerField';
 import EnvironmentVariablesSection from '../EnvironmentVariablesSection';

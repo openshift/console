@@ -18,7 +18,7 @@ const ContainerField: React.FC = () => {
       <span style={{ fontWeight: 'bold' }}>
         <Trans t={t} ns="devconsole">
           Container: <ResourceIcon kind={ContainerModel.kind} />
-          {{ containerName }}
+          {containerName}
         </Trans>
       </span>
     </FormGroup>

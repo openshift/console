@@ -70,7 +70,7 @@ export const PageContents: React.FC<HelmTabbedPageProps> = (props) => {
     projectHelmChartRepository: {
       label:
         projectHelmChartCreateAccess || helmChartCreateAccess ? t('helm-plugin~Repository') : null,
-      onSelection: () => `/ns/${namespace}/helmchartrepositories/~new`,
+      onSelection: () => `/ns/${namespace}/helmchartrepositories/~new/form`,
     },
   };
 

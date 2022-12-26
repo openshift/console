@@ -677,7 +677,7 @@
     "properties": {
       "exact": true,
       "path": ["/builds"],
-      "component": { "$codeRef": "builds.NamespaceRedirect" }
+      "component": { "$codeRef": "common.NamespaceRedirect" }
     },
     "flags": {
       "required": ["OPENSHIFT"]
@@ -987,6 +987,210 @@
     },
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": [
+        "/add",
+        "/import",
+        "/import-sample",
+        "/catalog",
+        "/samples",
+        "/topology",
+        "/deploy-image",
+        "/project-details",
+        "/dev-monitoring",
+        "/helm-releases",
+        "/upload-jar",
+        "/search-page"
+      ],
+      "component": { "$codeRef": "common.NamespaceRedirect" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/add/all-namespaces", "/add/ns/:ns"],
+      "component": { "$codeRef": "add.AddPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/topology/all-namespaces", "/topology/ns/:name"],
+      "component": { "$codeRef": "topology.TopologyPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/catalog/all-namespaces", "/catalog/ns/:ns"],
+      "component": { "$codeRef": "catalog.CatalogPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/edit/ns/:ns",
+      "component": { "$codeRef": "editApplication.EditApplication" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/deployments/~new/form", "/k8s/ns/:ns/deployments/:name/form"],
+      "component": { "$codeRef": "deployment.DeploymentPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": [
+        "/k8s/ns/:ns/deploymentconfigs/~new/form",
+        "/k8s/ns/:ns/deploymentconfigs/:name/form"
+      ],
+      "component": { "$codeRef": "deployment.DeploymentConfigPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/import/all-namespaces", "/import/ns/:ns"],
+      "component": { "$codeRef": "import.ImportPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/samples/all-namespaces", "/samples/ns/:ns"],
+      "component": { "$codeRef": "import.SamplesCatalog" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/samples/all-namespaces/:is/:isNs", "/samples/ns/:ns/:is/:isNs"],
+      "component": { "$codeRef": "import.ImportSamplePage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/catalog/source-to-image"],
+      "component": { "$codeRef": "import.ImportPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/buildconfigs/~new/form", "/k8s/ns/:ns/buildconfigs/:name/form"],
+      "component": { "$codeRef": "buildConfig.BuildConfigFormPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/deploy-image/all-namespaces", "/deploy-image/ns/:ns"],
+      "component": { "$codeRef": "import.DeployImagePage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/upload-jar/all-namespaces", "/upload-jar/ns/:ns"],
+      "component": { "$codeRef": "import.UploadJarPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "perspective": "dev",
+      "exact": false,
+      "path": ["/project-details/all-namespaces", "/project-details/ns/:ns"],
+      "component": { "$codeRef": "projects.ProjectDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/dev-monitoring/ns/:ns/alerts/:ruleID"],
+      "component": { "$codeRef": "monitoring.MonitoringAlertsRulesDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/dev-monitoring/ns/:ns/rules/:id"],
+      "component": { "$codeRef": "monitoring.MonitoringAlertsRulesDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/dev-monitoring/all-namespaces", "/dev-monitoring/ns/:ns"],
+      "component": { "$codeRef": "monitoring.MonitoringPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/:kind/:name/containers/:containerName/health-checks"],
+      "component": { "$codeRef": "healthChecks.HealthChecksPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "perspective": "dev",
+      "exact": false,
+      "path": ["/k8s/all-namespaces/import"],
+      "component": { "$codeRef": "import.ImportYamlPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "perspective": "dev",
+      "exact": false,
+      "path": ["/k8s/all-namespaces/:plural"],
+      "component": { "$codeRef": "common.ProjectSelectPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/workload-hpa/ns/:ns/:resourceRef/:name"],
+      "component": { "$codeRef": "hpa.HPAPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "perspective": "dev",
+      "exact": true,
+      "path": ["/search-page/all-namespaces", "/search-page/ns/:ns"],
+      "component": { "$codeRef": "common.SearchPage" }
     }
   }
 ]

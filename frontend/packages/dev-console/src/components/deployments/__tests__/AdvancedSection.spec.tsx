@@ -33,7 +33,7 @@ afterEach(() => cleanup());
 
 describe('AdvancedSection', () => {
   it('should show Pause rollouts section on click', async () => {
-    expect(screen.getByTestId('edit-deployment-testid').textContent).toEqual(
+    expect(screen.getByTestId('deployment-form-testid').textContent).toEqual(
       'Click on the names to access advanced options for Pause rollouts and Scaling.',
     );
 
@@ -51,13 +51,13 @@ describe('AdvancedSection', () => {
       expect(screen.queryByRole('checkbox')).not.toBeNull();
     });
 
-    expect(screen.getByTestId('edit-deployment-testid').textContent).toContain(
+    expect(screen.getByTestId('deployment-form-testid').textContent).toContain(
       'Click on the names to access advanced options for Scaling.',
     );
   });
 
   it('should show Scaling section on click', async () => {
-    expect(screen.getByTestId('edit-deployment-testid').textContent).toEqual(
+    expect(screen.getByTestId('deployment-form-testid').textContent).toEqual(
       'Click on the names to access advanced options for Pause rollouts and Scaling.',
     );
 
@@ -75,13 +75,13 @@ describe('AdvancedSection', () => {
       expect(screen.queryByRole('spinbutton', { name: /input/i })).not.toBeNull();
     });
 
-    expect(screen.getByTestId('edit-deployment-testid').textContent).toContain(
+    expect(screen.getByTestId('deployment-form-testid').textContent).toContain(
       'Click on the names to access advanced options for Pause rollouts.',
     );
   });
 
   it('should not show message when both advanced options are clicked', async () => {
-    expect(screen.getByTestId('edit-deployment-testid').textContent).toEqual(
+    expect(screen.getByTestId('deployment-form-testid').textContent).toEqual(
       'Click on the names to access advanced options for Pause rollouts and Scaling.',
     );
     const pauseRolloutsButton = screen.getByRole('button', {
@@ -98,7 +98,7 @@ describe('AdvancedSection', () => {
       expect(screen.queryByRole('checkbox')).not.toBeNull();
     });
 
-    expect(screen.getByTestId('edit-deployment-testid').textContent).toContain(
+    expect(screen.getByTestId('deployment-form-testid').textContent).toContain(
       'Click on the names to access advanced options for Scaling.',
     );
 
@@ -116,7 +116,7 @@ describe('AdvancedSection', () => {
       expect(screen.queryByRole('spinbutton', { name: /input/i })).not.toBeNull();
     });
 
-    expect(screen.getByTestId('edit-deployment-testid').textContent).not.toContain(
+    expect(screen.getByTestId('deployment-form-testid').textContent).not.toContain(
       'Click on the names to access advanced options for ',
     );
   });
