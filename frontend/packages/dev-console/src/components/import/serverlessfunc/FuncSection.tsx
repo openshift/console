@@ -1,59 +1,52 @@
 import * as React from 'react';
-import { FormSection, ValidatedOptions } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
-import { getGitService, ImportStrategy } from '@console/git-service/src';
+import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { BuilderImage } from '@console/dev-console/src/utils/imagestream-utils';
+import { getGitService } from '@console/git-service/src';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
-import BuilderImageSelector from '../builder/BuilderImageSelector';
+import { Loading } from '@console/internal/components/utils';
+import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
+import { Resources } from '../import-types';
+import { useResourceType } from '../section/useResourceType';
+import { getRuntimeImage, Runtime } from './func-utils';
 
 const FuncSection = ({ builderImages }) => {
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const {
-    import: { strategies, recommendedStrategy },
     git: { url, type, ref, dir, secretResource },
   } = values;
-  const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
-
-  React.useEffect(() => {
-    if (recommendedStrategy && recommendedStrategy.type !== ImportStrategy.SERVERLESS_FUNCTION) {
-      const funcStrategy = strategies.find((s) => s.type === ImportStrategy.SERVERLESS_FUNCTION);
-      if (funcStrategy) {
-        setFieldValue('import.selectedStrategy.detectedFiles', funcStrategy.detectedFiles);
-        validated === ValidatedOptions.success
-          ? setFieldValue('import.strategyChanged', true)
-          : setFieldValue('import.strategyChanged', false);
-      }
-    }
-  }, [recommendedStrategy, setFieldValue, strategies, validated]);
+  const [runtimeImage, setRuntimeImage] = React.useState<BuilderImage>(null);
+  const [, setResourceType] = useResourceType();
 
   React.useEffect(() => {
     const gitService = getGitService(url, type, ref, dir, secretResource);
     evaluateFunc(gitService)
       .then((res) => {
-        if (res) {
-          setValidated(ValidatedOptions.success);
-          setFieldValue('serverlessFunction.funcHasError', false);
-          setFieldValue('serverlessFunction.funcData.builder', res.values.builder);
-          setFieldValue('serverlessFunction.funcData.runtime', res.values.runtime);
-          setFieldValue('serverlessFunction.funcData.builderEnvs', res.values.builderEnvs);
-          setFieldValue('serverlessFunction.funcData.runtimeEnvs', res.values.runtimeEnvs);
-        } else {
-          setValidated(ValidatedOptions.error);
-          setFieldValue('func.funcHasError', true);
-        }
+        setResourceType(Resources.KnativeService);
+        setRuntimeImage(getRuntimeImage(res.values.runtime as Runtime, builderImages));
+        setFieldValue('resources', Resources.KnativeService);
+        setFieldValue('serverlessFunction.funcHasError', false);
+        setFieldValue('serverlessFunction.funcData.builder', res.values.builder);
+        setFieldValue('serverlessFunction.funcData.runtime', res.values.runtime);
+        setFieldValue('serverlessFunction.funcData.builderEnvs', res.values.builderEnvs);
+        setFieldValue('serverlessFunction.funcData.runtimeEnvs', res.values.runtimeEnvs);
       })
-      .catch(() => {
-        setValidated(ValidatedOptions.error);
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.warn('Error fetching Serverless Function YAML: ', err);
         setFieldValue('func.funcHasError', true);
       });
-  }, [setFieldValue, url, type, ref, dir, secretResource]);
+  }, [setFieldValue, url, type, ref, dir, secretResource, setResourceType, builderImages]);
 
-  return (
-    <div>
-      <h1>FuncSection</h1>
-      <FormSection>
-        <BuilderImageSelector loadingImageStream={!builderImages} builderImages={builderImages} />
-      </FormSection>
-    </div>
+  return runtimeImage ? (
+    <FormSection extraMargin>
+      <BuilderImageTagSelector
+        selectedBuilderImage={runtimeImage}
+        selectedImageTag={runtimeImage?.recentTag?.name}
+      />
+    </FormSection>
+  ) : (
+    <Loading />
   );
 };
 

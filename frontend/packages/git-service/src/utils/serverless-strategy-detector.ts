@@ -41,3 +41,12 @@ export const evaluateFunc = async (gitService: BaseService): Promise<FuncData> =
     };
   }
 };
+
+export const isServerlessFxRepository = async (
+  isServerlessEnabled: boolean,
+  gitService: BaseService,
+): Promise<boolean> => {
+  const funcData = await evaluateFunc(gitService);
+
+  return isServerlessEnabled && gitService && gitService.isFuncYamlPresent && funcData.isBuilderS2I;
+};

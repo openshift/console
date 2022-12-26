@@ -9,6 +9,7 @@ import { getActiveNamespace } from '@console/internal/actions/ui';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { ServiceModel } from '@console/knative-plugin/src/models';
 import { getFieldId, useFormikValidationFix } from '@console/shared/src';
+import ServerlessFxIcon from './ServerlessFxIcon';
 import './ImportStrategySelector.scss';
 
 const ImportStrategySelector: React.FC = () => {
@@ -56,14 +57,16 @@ const ImportStrategySelector: React.FC = () => {
     verb: 'create',
   });
 
-  if (recommendedStrategy?.type === ImportStrategy.SERVERLESS_FUNCTION && knativeServiceAccess) {
+  const canIncludeKnative = knativeServiceAccess;
+
+  if (recommendedStrategy?.type === ImportStrategy.SERVERLESS_FUNCTION && canIncludeKnative) {
     itemList.push({
       name: 'Serverless Function',
       type: ImportStrategy.SERVERLESS_FUNCTION,
       build: BuildStrategyType.ServerlessFunction,
       priority: 3,
       detectedFiles: [],
-      icon: <GitAltIcon />,
+      icon: <ServerlessFxIcon />,
     });
   }
 

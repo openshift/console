@@ -2,7 +2,7 @@ import { BaseService } from '../services/base-service';
 import { RepoStatus } from '../types';
 import { ImportStrategy } from '../types/git';
 import { detectBuildTypes } from './build-tool-type-detector';
-import { evaluateFunc } from './serverless-strategy-detector';
+import { isServerlessFxRepository } from './serverless-strategy-detector';
 
 type ImportStrategyType = {
   name: string;
@@ -12,7 +12,7 @@ type ImportStrategyType = {
   customDetection?: (gitService: BaseService) => Promise<any>;
 };
 
-let ImportStrategyList: ImportStrategyType[] = [
+const ImportStrategyList: ImportStrategyType[] = [
   {
     name: 'Devfile',
     type: ImportStrategy.DEVFILE,
@@ -28,7 +28,7 @@ let ImportStrategyList: ImportStrategyType[] = [
   {
     name: 'Serverless Function',
     type: ImportStrategy.SERVERLESS_FUNCTION,
-    expectedRegexp: /^func\.yaml$/,
+    expectedRegexp: /^func\.(yaml|yml)$/,
     priority: 1,
   },
   {
@@ -61,6 +61,7 @@ export const detectImportStrategies = async (
   isServerlessEnabled?: boolean,
 ): Promise<DetectedServiceData> => {
   let detectedStrategies: DetectedStrategy[] = [];
+  let addServerlessFxStrategy: boolean;
   let loaded: boolean = false;
   let loadError = null;
 
@@ -73,15 +74,7 @@ export const detectImportStrategies = async (
   if (repositoryStatus === RepoStatus.Reachable) {
     try {
       const { files } = await gitService.getRepoFileList();
-
-      if (!isServerlessEnabled) {
-        ImportStrategyList = ImportStrategyList.filter((strategy) => {
-          if (strategy.type === ImportStrategy.SERVERLESS_FUNCTION) {
-            return false;
-          }
-          return true;
-        });
-      }
+      addServerlessFxStrategy = await isServerlessFxRepository(isServerlessEnabled, gitService);
 
       detectedStrategies = await Promise.all(
         ImportStrategyList.map<Promise<DetectedStrategy>>(async (strategy) => {
@@ -107,11 +100,7 @@ export const detectImportStrategies = async (
     loaded = true;
   }
 
-  if (
-    isServerlessEnabled &&
-    gitService.isFuncYamlPresent &&
-    !(await evaluateFunc(gitService)).isBuilderS2I
-  ) {
+  if (!addServerlessFxStrategy) {
     detectedStrategies = detectedStrategies.filter(
       (strategy) => strategy.type !== ImportStrategy.SERVERLESS_FUNCTION,
     );
