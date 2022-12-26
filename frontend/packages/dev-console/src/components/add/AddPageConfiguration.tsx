@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DualListSelector, FormSection } from '@patternfly/react-core';
+import { DualListSelector, FormHelperText, FormSection } from '@patternfly/react-core';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import {
@@ -150,6 +150,11 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
 
   return (
     <FormSection title={t('devconsole~Add page')} data-test="add-page form-section">
+      <FormHelperText isHidden={false}>
+        {t(
+          'devconsole~Option to disable individual actions from the "+Add" page to simplify and standardize your development processes. Users can still create resources from a cli or via YAML. The "Search" and "Topology" will still show such resources.',
+        )}
+      </FormHelperText>
       <DualListSelector
         availableOptionsTitle={t('devconsole~Enabled actions')}
         chosenOptionsTitle={t('devconsole~Disabled actions')}

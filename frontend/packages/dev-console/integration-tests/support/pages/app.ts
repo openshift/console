@@ -231,6 +231,38 @@ export const navigateTo = (opt: devNavigationMenu) => {
       cy.testA11y('Deployments Page in dev perspective');
       break;
     }
+    case devNavigationMenu.Consoles: {
+      cy.get('body').then(($body) => {
+        if ($body.text().includes('Consoles')) {
+          cy.byTestID('nav')
+            .contains('Consoles')
+            .click();
+        } else {
+          cy.get(devNavigationMenuPO.search).click();
+          cy.get('[aria-label="Options menu"]').click();
+          cy.get('[placeholder="Select Resource"]')
+            .should('be.visible')
+            .type('console');
+          cy.get('[data-filter-text="CConsole"]').then(($el) => {
+            if ($el.text().includes('operator.openshift.io')) {
+              cy.wrap($el)
+                .contains('operator.openshift.io')
+                .click();
+            } else {
+              cy.wrap($el).click();
+            }
+          });
+          cy.get('.co-search-group__pin-toggle')
+            .should('be.visible')
+            .click();
+          cy.byTestID('cluster')
+            .should('be.visible')
+            .click();
+        }
+      });
+      cy.testA11y('cluster Page in dev perspective');
+      break;
+    }
     default: {
       throw new Error('Option is not available');
     }
