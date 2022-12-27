@@ -670,7 +670,6 @@ export const createOrUpdateResources = async (
       triggers: { image: imageChange },
     },
     git: { url: repository, type: gitType, ref },
-    pac: { repository: pacRepository },
     pipeline,
     resources,
   } = formData;
@@ -699,6 +698,7 @@ export const createOrUpdateResources = async (
   }
 
   if (buildStrategy === BuildStrategyType.Pac) {
+    const pacRepository = formData?.pac?.repository;
     const repo = await createRepositoryResources(pacRepository, namespace, dryRun);
     responses.push(repo);
     return responses;

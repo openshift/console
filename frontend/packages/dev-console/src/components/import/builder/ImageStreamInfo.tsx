@@ -18,7 +18,7 @@ const ImageStreamInfo: React.FC<ImageStreamInfoProps> = ({ displayName, tag }) =
   const sampleRepo = getSampleRepo(tag);
 
   return (
-    <div>
+    <div data-test="imageStream-details">
       <div className="co-catalog-item-details">
         <ImageStreamIcon tag={tag} iconSize="large" />
         <div>

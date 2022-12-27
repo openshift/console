@@ -34,7 +34,8 @@
       "userPreferences": "src/components/user-preferences",
       "serviceBindingContext": "src/components/topology/bindable-services/bindable-service-context.ts",
       "projectAccess": "src/components/project-access",
-      "add": "src/components/add"
+      "add": "src/components/add",
+      "serverlessFunction": "src/components/import/serverless-function"
     }
   }
 }

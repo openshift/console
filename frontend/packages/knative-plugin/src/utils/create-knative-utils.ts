@@ -47,6 +47,7 @@ export const getKnativeServiceDepResource = (
     import: { selectedStrategy },
     healthChecks,
     resources,
+    formType,
   } = formData;
   const { fileUpload } = formData as UploadJarFormData;
   const contTargetPort = parseInt(unknownTargetPort, 10) || defaultUnknownPort;
@@ -103,6 +104,7 @@ export const getKnativeServiceDepResource = (
       labels: {
         ...defaultLabel,
         ...labels,
+        ...(formType === 'serverlessFunction' && { 'function.knative.dev': 'true' }),
         ...(!create && { 'networking.knative.dev/visibility': `cluster-local` }),
         ...(((formData as GitImportFormData).pipeline?.enabled || generatedImageStreamName) && {
           'app.kubernetes.io/name': name,
