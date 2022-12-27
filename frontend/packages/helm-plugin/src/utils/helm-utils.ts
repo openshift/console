@@ -73,13 +73,16 @@ export const filterHelmReleasesByName = (releases: HelmRelease[], filter: string
   return releases.filter((release: HelmRelease) => fuzzy(filter, release.name));
 };
 
-export const fetchHelmReleases = (
+export const fetchHelmReleases = (namespace: string): Promise<HelmRelease[]> => {
+  const fetchString = `/api/helm/releases?ns=${namespace}`;
+  return coFetchJSON(fetchString);
+};
+
+export const fetchHelmRelease = (
   namespace: string,
-  helmReleaseName?: string,
-): Promise<HelmRelease[]> => {
-  const fetchString = `/api/helm/releases?ns=${namespace}${
-    helmReleaseName ? `&name=${helmReleaseName}` : ''
-  }`;
+  helmReleaseName: string,
+): Promise<HelmRelease> => {
+  const fetchString = `/api/helm/release?ns=${namespace}&name=${helmReleaseName}`;
   return coFetchJSON(fetchString);
 };
 

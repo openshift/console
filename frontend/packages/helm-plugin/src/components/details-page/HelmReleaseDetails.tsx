@@ -15,7 +15,7 @@ import { SecretModel } from '@console/internal/models';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { ActionMenu, ActionMenuVariant, Status, ActionServiceProvider } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
-import { fetchHelmReleases } from '../../utils/helm-utils';
+import { fetchHelmRelease } from '../../utils/helm-utils';
 import HelmReleaseHistory from './history/HelmReleaseHistory';
 import HelmReleaseNotes from './notes/HelmReleaseNotes';
 import HelmReleaseOverview from './overview/HelmReleaseOverview';
@@ -137,18 +137,17 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = ({ secret, match }
   React.useEffect(() => {
     let ignore = false;
 
-    const getHelmReleases = async () => {
+    const getHelmRelease = async () => {
       try {
-        const helmReleases = await fetchHelmReleases(namespace);
+        const helmRelease = await fetchHelmRelease(namespace, helmReleaseName);
         if (!ignore) {
-          const releaseData = helmReleases.find((release) => release.name === helmReleaseName);
-          setHelmReleaseData(releaseData);
+          setHelmReleaseData(helmRelease);
         }
         // eslint-disable-next-line no-empty
       } catch {}
     };
 
-    getHelmReleases();
+    getHelmRelease();
 
     return () => {
       ignore = true;
