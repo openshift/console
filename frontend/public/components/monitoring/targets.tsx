@@ -38,7 +38,6 @@ import {
   PodMonitorModel,
 } from '../../models';
 import { K8sResourceKind, LabelSelector, referenceForModel } from '../../module/k8s';
-import { TableData } from '../factory';
 import { SectionHeading } from '../utils/headings';
 import { usePoll } from '../utils/poll-hook';
 import { useSafeFetch } from '../utils/safe-fetch-hook';
@@ -337,15 +336,15 @@ const Row: React.FC<RowProps<Target>> = ({ obj }) => {
 
   return (
     <>
-      <TableData className={tableClasses[0]}>
+      <td className={tableClasses[0]}>
         <Link to={`./targets/${btoa(scrapeUrl)}`}>{scrapeUrl}</Link>
-      </TableData>
-      <TableData className={tableClasses[1]}>
+      </td>
+      <td className={tableClasses[1]}>
         {isServiceMonitor && <ServiceMonitor target={obj} />}
         {isPodMonitor && <PodMonitor target={obj} />}
         {!isServiceMonitor && !isPodMonitor && <>-</>}
-      </TableData>
-      <TableData className={tableClasses[2]}>
+      </td>
+      <td className={tableClasses[2]}>
         {health === 'up' ? (
           <Health health="up" />
         ) : (
@@ -355,18 +354,18 @@ const Row: React.FC<RowProps<Target>> = ({ obj }) => {
             </span>
           </Tooltip>
         )}
-      </TableData>
-      <TableData className={tableClasses[3]}>
+      </td>
+      <td className={tableClasses[3]}>
         {labels?.namespace && (
           <ResourceLink inline kind={NamespaceModel.kind} name={labels?.namespace} />
         )}
-      </TableData>
-      <TableData className={tableClasses[4]}>
+      </td>
+      <td className={tableClasses[4]}>
         <Timestamp timestamp={lastScrape} />
-      </TableData>
-      <TableData className={tableClasses[5]}>
+      </td>
+      <td className={tableClasses[5]}>
         {lastScrapeDuration ? `${(1000 * lastScrapeDuration).toFixed(1)} ms` : '-'}
-      </TableData>
+      </td>
     </>
   );
 };
