@@ -10,12 +10,13 @@ import { DetectedBuildType } from '@console/git-service/src/utils/build-tool-typ
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { BuildStrategyType } from '@console/internal/components/build';
-import { ServiceModel } from '@console/knative-plugin';
+import { FLAG_KNATIVE_SERVING_SERVICE, ServiceModel } from '@console/knative-plugin';
 import {
   InputField,
   DropdownField,
   useFormikValidationFix,
   useDebounceCallback,
+  useFlag,
 } from '@console/shared';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import {
@@ -107,6 +108,8 @@ const GitSection: React.FC<GitSectionProps> = ({
     namespace: getActiveNamespace(),
     verb: 'create',
   });
+
+  const canIncludeKnative = useFlag(FLAG_KNATIVE_SERVING_SERVICE) && knativeServiceAccess;
 
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const setFieldValue = React.useCallback(
@@ -273,11 +276,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         values.docker?.dockerfilePath,
       );
 
-      const importStrategyData = await detectImportStrategies(
-        url,
-        gitService,
-        knativeServiceAccess,
-      );
+      const importStrategyData = await detectImportStrategies(url, gitService, canIncludeKnative);
 
       const {
         loaded,
@@ -400,7 +399,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.application.name,
       values.application.selectedKey,
       values.build.strategy,
-      knativeServiceAccess,
+      canIncludeKnative,
       nameTouched,
       importType,
       imageStreamName,

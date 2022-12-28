@@ -2,11 +2,7 @@ import {
   BuilderImage,
   NormalizedBuilderImages,
 } from '@console/dev-console/src/utils/imagestream-utils';
-
-export const enum Runtime {
-  Node = 'node',
-  Python = 'python',
-}
+import { Runtime } from '../import-types';
 
 export const getRuntimeImage = (
   runtime: Runtime,

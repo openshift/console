@@ -99,16 +99,6 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       devfilePath: '',
       devfileHasError: false,
     },
-    serverlessFunction: {
-      funcHasError: false,
-      runtimeVersion: '',
-      funcData: {
-        builder: null,
-        runtime: '',
-        builderEnvs: [],
-        runtimeEnvs: [],
-      },
-    },
     build: {
       ...initialBaseValues.build,
       triggers: {

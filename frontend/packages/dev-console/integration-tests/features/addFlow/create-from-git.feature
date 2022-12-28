@@ -246,3 +246,15 @@ Feature: Create Application from git form
               And user is able to see Redirect value is selected in "Insecure traffic"
 
 
+        @regression @odc-7167
+        Scenario: Create Serverless Function from Import From Git Form on Add page: A-06-TC20
+            Given user has installed OpenShift Serverless Operator
+              And user has selected namespace "aut-addflow-git"
+              And user is at Add page
+              And user is at Import from Git form
+             When user enters Git Repo URL as "https://github.com/Lucifergene/oc-func"
+              And user enters Application name as "oc-func-app"
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user clicks on Topology list view
+              And user will see name of the serverless function as KSVC label followed by fx label and name "oc-func"

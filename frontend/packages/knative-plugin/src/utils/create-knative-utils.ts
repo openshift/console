@@ -6,6 +6,7 @@ import {
   UploadJarFormData,
 } from '@console/dev-console/src/components/import/import-types';
 import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource-label-utils';
+import { ImportStrategy } from '@console/git-service/src';
 import {
   K8sResourceKind,
   ImagePullPolicy,
@@ -43,6 +44,7 @@ export const getKnativeServiceDepResource = (
       env,
       triggers: { image: imagePolicy },
     },
+    import: { selectedStrategy },
     healthChecks,
     resources,
   } = formData;
@@ -104,6 +106,9 @@ export const getKnativeServiceDepResource = (
         ...(!create && { 'networking.knative.dev/visibility': `cluster-local` }),
         ...(((formData as GitImportFormData).pipeline?.enabled || generatedImageStreamName) && {
           'app.kubernetes.io/name': name,
+        }),
+        ...(selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION && {
+          'function.knative.dev': 'true',
         }),
       },
       annotations: fileUpload ? { ...annotations, jarFileName: fileUpload.name } : annotations,

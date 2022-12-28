@@ -129,7 +129,6 @@ export interface GitImportFormData extends BaseFormData {
   git: GitData;
   docker: DockerData;
   devfile?: DevfileData;
-  serverlessFunction?: ServerlessFunctionData;
   import?: ImportStrategyData;
 }
 
@@ -198,20 +197,6 @@ export type DevfileSuggestedResources = {
   service?: K8sResourceKind | null;
   route?: K8sResourceKind | null;
 };
-
-export type ServerlessFunctionData = {
-  funcHasError: boolean;
-  runtimeVersion?: string;
-  funcData?: FuncYAMLData;
-};
-
-export type FuncYAMLData = {
-  builder?: FuncBuilderTypes | null;
-  runtime?: string;
-  builderEnvs?: NameValuePair[];
-  runtimeEnvs?: NameValuePair[];
-};
-
 export interface RouteData {
   disable?: boolean;
   create: boolean;
@@ -308,6 +293,12 @@ export enum Resources {
 export enum FuncBuilderTypes {
   s2i = 's2i',
   pack = 'pack',
+}
+
+export enum Runtime {
+  Node = 'node',
+  Python = 'python',
+  Unsupported = 'unsupported',
 }
 
 export const ReadableResourcesNames: Record<Resources, string> = {

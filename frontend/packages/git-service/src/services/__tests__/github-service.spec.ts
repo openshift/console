@@ -254,6 +254,36 @@ describe('Github Service', () => {
     });
   });
 
+  it('should detect func.yaml file', () => {
+    const gitSource = {
+      url: 'https://github.com/Lucifergene/oc-func',
+    };
+
+    const gitService = new GithubService(gitSource);
+
+    return nockBack('func.json').then(async ({ nockDone, context }) => {
+      const isFuncYamlPresent = await gitService.isFuncYamlPresent();
+      expect(isFuncYamlPresent).toBe(true);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should not detect func.yaml file', () => {
+    const gitSource: GitSource = {
+      url: 'https://github.com/redhat-developer/devconsole-git',
+    };
+
+    const gitService = new GithubService(gitSource);
+
+    return nockBack('no-func.json').then(async ({ nockDone, context }) => {
+      const isFuncYamlPresent = await gitService.isFuncYamlPresent();
+      expect(isFuncYamlPresent).toBe(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
   it('should make API call to specified hostname', async () => {
     const gitSource: GitSource = { url: 'https://example.com/test/repo' };
     const gitService = new GithubService(gitSource);

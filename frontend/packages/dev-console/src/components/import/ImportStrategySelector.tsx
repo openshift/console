@@ -7,8 +7,9 @@ import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { ImportStrategy } from '@console/git-service/src';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { BuildStrategyType } from '@console/internal/components/build';
+import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const';
 import { ServiceModel } from '@console/knative-plugin/src/models';
-import { getFieldId, useFormikValidationFix } from '@console/shared/src';
+import { getFieldId, useFlag, useFormikValidationFix } from '@console/shared/src';
 import ServerlessFxIcon from './ServerlessFxIcon';
 import './ImportStrategySelector.scss';
 
@@ -57,7 +58,7 @@ const ImportStrategySelector: React.FC = () => {
     verb: 'create',
   });
 
-  const canIncludeKnative = knativeServiceAccess;
+  const canIncludeKnative = useFlag(FLAG_KNATIVE_SERVING_SERVICE) && knativeServiceAccess;
 
   if (recommendedStrategy?.type === ImportStrategy.SERVERLESS_FUNCTION && canIncludeKnative) {
     itemList.push({

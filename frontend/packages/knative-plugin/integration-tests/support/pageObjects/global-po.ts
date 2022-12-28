@@ -240,6 +240,7 @@ export const servingPO = {
   routesTab: '[data-test-id="horizontal-link-Routes"]',
   pageDetails: '.pf-c-breadcrumb',
   resourceName: '.co-resource-item__resource-name',
+  resourceIcon: '.co-m-resource-icon',
   createService: '[data-test-dropdown-menu="service"]',
   kebabButton: '[data-test-id="kebab-button"]',
   filter: {
