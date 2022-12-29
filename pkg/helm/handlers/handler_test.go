@@ -73,8 +73,8 @@ func fakeInstallChartAsync(mockedSecret *actions.Secret, err error) func(ns stri
 	}
 }
 
-func fakeListReleases(mockedReleases []*release.Release, err error) func(conf *action.Configuration) ([]*release.Release, error) {
-	return func(conf *action.Configuration) (releases []*release.Release, er error) {
+func fakeListReleases(mockedReleases []*release.Release, err error) func(conf *action.Configuration, isTopology bool) ([]*release.Release, error) {
+	return func(conf *action.Configuration, isTopology bool) (releases []*release.Release, er error) {
 		return mockedReleases, err
 	}
 }

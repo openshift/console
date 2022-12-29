@@ -13,6 +13,7 @@
 *  **URL Params**
 
    `ns=[string]` - Namespace
+   `limitInfo=[boolean]` - limitInfo
 
 * **Success Response:**
 
