@@ -29,9 +29,30 @@ export const ConfigurationModel: K8sKind = {
   color: knativeServingColor.value,
 };
 
-export const KnativeServingModel: K8sKind = {
+/**
+ * @deprecated apiVersion `v1alpha1` is depricated with Serverless operator 1.26 and get removed in 1.27 and `v1beta1` is supported
+ */
+export const KnativeServingModelV1Alpha1: K8sKind = {
   apiGroup: 'operator.knative.dev',
   apiVersion: 'v1alpha1',
+  kind: 'KnativeServing',
+  label: 'KnativeServing',
+  // t('knative-plugin~KnativeServing')
+  labelKey: 'knative-plugin~KnativeServing',
+  labelPlural: 'KnativeServings',
+  // t('knative-plugin~KnativeServings')
+  labelPluralKey: 'knative-plugin~KnativeServings',
+  plural: 'knativeservings',
+  id: 'knativeserving',
+  abbr: 'KS',
+  namespaced: true,
+  crd: true,
+  color: knativeServingColor.value,
+};
+
+export const KnativeServingModel: K8sKind = {
+  apiGroup: 'operator.knative.dev',
+  apiVersion: 'v1beta1',
   kind: 'KnativeServing',
   label: 'KnativeServing',
   // t('knative-plugin~KnativeServing')

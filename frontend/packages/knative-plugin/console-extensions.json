@@ -16,6 +16,17 @@
       "model": {
         "group": "operator.knative.dev",
         "version": "v1alpha1",
+        "kind": "KnativeServing"
+      },
+      "flag": "KNATIVE_SERVING_V1ALPHA1"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "version": "v1alpha1",
         "kind": "KnativeEventing"
       },
       "flag": "KNATIVE_EVENTING"
@@ -254,6 +265,20 @@
       "model": {
         "group": "operator.knative.dev",
         "version": "v1alpha1",
+        "kind": "KnativeServing"
+      },
+      "component": { "$codeRef": "overviewComponent.KnativeServingDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "version": "v1beta1",
         "kind": "KnativeServing"
       },
       "component": { "$codeRef": "overviewComponent.KnativeServingDetailsPage" }
@@ -642,11 +667,27 @@
   {
     "type": "console.global-config",
     "properties": {
-      "id": "knative-serving",
+      "id": "knative-serving-v1alpha1",
       "name": "knative-serving",
       "model": {
         "group": "operator.knative.dev",
         "version": "v1alpha1",
+        "kind": "KnativeServing"
+      },
+      "namespace": "knative-serving"
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_V1ALPHA1"]
+    }
+  },
+  {
+    "type": "console.global-config",
+    "properties": {
+      "id": "knative-serving",
+      "name": "knative-serving",
+      "model": {
+        "group": "operator.knative.dev",
+        "version": "v1beta1",
         "kind": "KnativeServing"
       },
       "namespace": "knative-serving"
