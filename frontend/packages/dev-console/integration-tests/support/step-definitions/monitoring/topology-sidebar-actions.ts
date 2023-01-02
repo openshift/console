@@ -118,11 +118,10 @@ Then('page redirected to the Monitoring page', () => {
 
 Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
   createHelmChartFromAddPage(helmReleaseName);
-  topologyPage.clickOnHelmWorkload();
 });
 
 When('user clicks on Add Readiness Probe', () => {
-  addHealthChecksPage.clickProbeLink('Add Readiness Probe');
+  addHealthChecksPage.clickProbeLink('Add Readiness probe');
 });
 
 When('user clicks on tick button', () => {
@@ -130,11 +129,11 @@ When('user clicks on tick button', () => {
 });
 
 When('user clicks on Add Liveness Probe', () => {
-  addHealthChecksPage.clickProbeLink('Add Liveness Probe');
+  addHealthChecksPage.clickProbeLink('Add Liveness probe');
 });
 
 When('user clicks on Add Startup Probe', () => {
-  addHealthChecksPage.clickProbeLink('Add Startup Probe');
+  addHealthChecksPage.clickProbeLink('Add Startup probe');
 });
 
 When('user clicks on Add button', () => {
@@ -167,7 +166,7 @@ When('user clicks on Edit Health Checks', () => {
 });
 
 When('user sees Readiness Probe already added', () => {
-  addHealthChecksPage.verifySuccessText('Readiness Probe Added');
+  addHealthChecksPage.verifySuccessText('Readiness probe added');
 });
 
 When('user removes Readiness Probe', () => {
@@ -247,5 +246,5 @@ Then('user will see Readiness Probe removed on the Add Health Checks page', () =
 });
 
 Then('user sees Liveness Probe already added', () => {
-  addHealthChecksPage.verifySuccessText('Liveness Probe Added');
+  addHealthChecksPage.verifySuccessText('Liveness probe added');
 });

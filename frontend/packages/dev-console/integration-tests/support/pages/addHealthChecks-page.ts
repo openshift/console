@@ -14,11 +14,12 @@ export const addHealthChecksPage = {
       .get(addHealthChecksPO.successText)
       .contains(text)
       .should('be.visible'),
-  clickProbeLink: (probeName: string) =>
-    cy
-      .byButtonText(probeName)
+  clickProbeLink: (probeName: string) => {
+    cy.wait(5000);
+    cy.byButtonText(probeName)
       .scrollIntoView()
-      .click(),
+      .click();
+  },
   addReadinessProbe: () => {
     addHealthChecksPage.clickProbeLink('Add Readiness probe');
     addHealthChecksPage.verifyHealthChecksForm();
@@ -26,7 +27,12 @@ export const addHealthChecksPage = {
     addHealthChecksPage.verifySuccessText('Readiness probe added');
   },
   removeReadinessProbe: () => {
-    cy.get(addHealthChecksPO.removeReadinessProbeIcon).click();
+    cy.wait(5000);
+    cy.byButtonText('Readiness probe added')
+      .parent()
+      .next()
+      .find('[role="img"]')
+      .click();
   },
   addLivenessProbe: () => {
     cy.contains('Add Liveness probe')

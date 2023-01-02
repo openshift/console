@@ -151,7 +151,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     }
     case devNavigationMenu.ConfigMaps: {
       perspective.switchTo(switchPerspective.Developer);
-      cy.byTestID('nav')
+      cy.byTestID('draggable-pinned-resource-item')
         .contains('ConfigMaps')
         .click();
       detailsPage.titleShouldContain(pageTitle.ConfigMaps);
@@ -173,7 +173,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Routes: {
       cy.get('body').then(($body) => {
         if ($body.text().includes('Routes')) {
-          cy.byTestID('nav')
+          cy.byTestID('draggable-pinned-resource-item')
             .contains('Routes')
             .click();
         } else {
@@ -194,7 +194,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
           cy.get('.co-search-group__pin-toggle')
             .should('be.visible')
             .click();
-          cy.byTestID('nav')
+          cy.byTestID('draggable-pinned-resource-item')
             .contains('Routes')
             .should('be.visible')
             .click();
