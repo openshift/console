@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
+import { isClusterExternallyManaged } from '@console/shared';
 import {
   ClusterVersionKind,
   getConditionUpgradeableFalse,
@@ -28,14 +29,17 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
   const availableUpdates = getSortedAvailableUpdates(cv);
   const moreAvailableUpdates = availableUpdates.slice(1).reverse();
   const releaseNotes = showReleaseNotes();
-  const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
+  const clusterUpgradeableFalseAndNotExternallyManaged =
+    !!getConditionUpgradeableFalse(cv) && !isClusterExternallyManaged();
   const { t } = useTranslation();
 
   return (
     <div className="modal-content">
       <ModalTitle>{t('public~Other available paths')}</ModalTitle>
       <ModalBody>
-        {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert cv={cv} onCancel={cancel} />}
+        {clusterUpgradeableFalseAndNotExternallyManaged && (
+          <ClusterNotUpgradeableAlert cv={cv} onCancel={cancel} />
+        )}
         <table className="table">
           <thead>
             <tr>
@@ -49,7 +53,7 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
                 <tr key={update.version}>
                   <td>
                     {update.version}
-                    {clusterUpgradeableFalse &&
+                    {clusterUpgradeableFalseAndNotExternallyManaged &&
                       isMinorVersionNewer(getLastCompletedUpdate(cv), update.version) && (
                         <UpdateBlockedLabel />
                       )}

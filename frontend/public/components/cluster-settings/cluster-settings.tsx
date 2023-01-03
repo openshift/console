@@ -117,6 +117,7 @@ import {
   BlueArrowCircleUpIcon,
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
+  isClusterExternallyManaged,
   RedExclamationCircleIcon,
   useCanClusterUpgrade,
   YellowExclamationTriangleIcon,
@@ -762,6 +763,10 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const similarChannels = getSimilarClusterVersionChannels(cv, currentPrefix);
   const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
   const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
+  const newestVersionIsBlocked =
+    clusterUpgradeableFalse &&
+    isMinorVersionNewer(lastVersion, newestVersion) &&
+    !isClusterExternallyManaged();
   const { t } = useTranslation();
 
   return (
@@ -792,18 +797,12 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
           <ChannelLine>
             {newestVersion && (
               <>
-                <ChannelVersion
-                  updateBlocked={
-                    clusterUpgradeableFalse && isMinorVersionNewer(lastVersion, newestVersion)
-                  }
-                >
+                <ChannelVersion updateBlocked={newestVersionIsBlocked}>
                   {newestVersion}
                 </ChannelVersion>
                 <ChannelVersionDot
                   channel={currentChannel}
-                  updateBlocked={
-                    clusterUpgradeableFalse && isMinorVersionNewer(lastVersion, newestVersion)
-                  }
+                  updateBlocked={newestVersionIsBlocked}
                   version={newestVersion}
                 />
               </>
