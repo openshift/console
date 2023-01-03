@@ -21,6 +21,7 @@ import {
   NODE_SHADOW_FILTER_ID,
   noRegroupDragSourceSpec,
 } from '@console/topology/src/components/graph-view';
+import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
 import { useSearchFilter } from '@console/topology/src/filters';
 import { useShowLabel } from '@console/topology/src/filters/useShowLabel';
 import { getResource } from '@console/topology/src/utils';
@@ -37,6 +38,7 @@ type HelmReleaseGroupProps = {
   WithDragNodeProps &
   WithDndDropProps;
 
+const DECORATOR_RADIUS = 13;
 const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
   element,
   badge,
@@ -60,6 +62,17 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
   const hasChildren = element.getChildren()?.length > 0;
   const { x, y, width, height } = element.getBounds();
   const typeIconClass = element.getData().data.chartIcon || 'icon-helm';
+
+  const decorators = getNodeDecorators(
+    element,
+    element.getGraph().getData().decorators,
+    x + width / 2,
+    y + height / 2,
+    -1,
+    DECORATOR_RADIUS,
+    width,
+    height,
+  );
 
   return (
     <g
@@ -108,6 +121,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
           )}
         </g>
       </Layer>
+      {decorators}
       {showLabel && element.getLabel() && (
         <NodeLabel
           className="pf-topology__group__label odc-base-node__label"

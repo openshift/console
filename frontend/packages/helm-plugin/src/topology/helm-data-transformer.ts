@@ -91,6 +91,7 @@ export const getTopologyHelmReleaseGroupItem = (
       },
       data: {
         chartIcon: helmResources?.chartIcon,
+        status: helmResources?.status,
         manifestResources: helmResources?.manifestResources || [],
         releaseNotes,
       },
@@ -170,6 +171,7 @@ const getHelmReleaseMap = (namespace: string) => {
                 chartIcon: release.chart.metadata.icon,
                 manifestResources,
                 releaseNotes: release.info.notes,
+                status: release.info.status,
               };
             }
           });

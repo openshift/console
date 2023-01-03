@@ -5,8 +5,8 @@ import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { Flatten } from '@console/internal/components/factory/list-page';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { toTitleCase } from '@console/shared';
+import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
+import { toTitleCase, WORKLOAD_TYPES } from '@console/shared';
 import {
   HelmRelease,
   HelmChart,
@@ -21,24 +21,28 @@ import {
 export const HelmReleaseStatusLabels = {
   [HelmReleaseStatus.Deployed]: 'Deployed',
   [HelmReleaseStatus.Failed]: 'Failed',
+  [HelmReleaseStatus.PendingInstall]: 'PendingInstall',
+  [HelmReleaseStatus.PendingUpgrade]: 'PendingUpgrade',
+  [HelmReleaseStatus.PendingRollback]: 'PendingRollback',
   [HelmReleaseStatus.Other]: 'Other',
 };
 
 export const SelectedReleaseStatuses = [
   HelmReleaseStatus.Deployed,
   HelmReleaseStatus.Failed,
+  HelmReleaseStatus.PendingInstall,
+  HelmReleaseStatus.PendingUpgrade,
+  HelmReleaseStatus.PendingRollback,
   HelmReleaseStatus.Other,
 ];
 
-export const OtherReleaseStatuses = [
-  'unknown',
-  'uninstalled',
-  'superseded',
-  'uninstalling',
-  'pending-install',
-  'pending-upgrade',
-  'pending-rollback',
-];
+export const OtherReleaseStatuses = ['unknown', 'uninstalled', 'superseded', 'uninstalling'];
+
+export const releaseStatus = (status: string) =>
+  status
+    .split('-')
+    .map((s) => toTitleCase(s))
+    .join('');
 
 export const releaseStatusReducer = (release: HelmRelease) => {
   if (OtherReleaseStatuses.includes(release.info.status)) {
@@ -316,3 +320,8 @@ export const fetchHelmReleaseHistory = (
   const helmReleaseApi: string = `/api/helm/release/history?ns=${namespace}&name=${releaseName}`;
   return coFetchJSON(helmReleaseApi);
 };
+
+export const isGoingToTopology = (resources: K8sResourceKind[]) =>
+  !!resources.find((resource) =>
+    WORKLOAD_TYPES.includes(_.lowerFirst(_.get(modelFor(referenceFor(resource)), 'labelPlural'))),
+  );

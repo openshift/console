@@ -59,6 +59,7 @@ export interface HelmReleaseResourcesData {
   chartIcon: string;
   manifestResources: K8sResourceKind[];
   releaseNotes: string;
+  status: string;
 }
 
 export interface HelmReleaseResourcesMap {
@@ -68,6 +69,9 @@ export interface HelmReleaseResourcesMap {
 export enum HelmReleaseStatus {
   Deployed = 'deployed',
   Failed = 'failed',
+  PendingInstall = 'pending-install',
+  PendingUpgrade = 'pending-upgrade',
+  PendingRollback = 'pending-rollback',
   Other = 'other',
 }
 

@@ -11,7 +11,7 @@ import {
 } from '../../components/__tests__/helm-release-mock-data';
 import { HelmRelease, HelmReleaseStatus } from '../../types/helm-types';
 import {
-  OtherReleaseStatuses,
+  SelectedReleaseStatuses,
   releaseStatusReducer,
   filterHelmReleasesByName,
   filterHelmReleasesByStatus,
@@ -22,6 +22,7 @@ import {
   getChartEntriesByName,
   loadHelmManifestResources,
   getChartIndexEntry,
+  isGoingToTopology,
 } from '../helm-utils';
 
 describe('Helm Releases Utils', () => {
@@ -30,9 +31,9 @@ describe('Helm Releases Utils', () => {
     expect(releaseStatusReducer(release)).toEqual(HelmReleaseStatus.Deployed);
   });
 
-  it('should return other for all other statuses for a helm release', () => {
+  it('should return pending-install for a helm release', () => {
     const release = mockHelmReleases[2];
-    expect(releaseStatusReducer(release)).toEqual(HelmReleaseStatus.Other);
+    expect(releaseStatusReducer(release)).toEqual(HelmReleaseStatus.PendingInstall);
   });
 
   it('should return filtered release items with deployed and failed status for row filters', () => {
@@ -42,11 +43,13 @@ describe('Helm Releases Utils', () => {
     expect(filteredReleases[0].info.status).toBe(HelmReleaseStatus.Deployed);
   });
 
-  it('should return filtered release items with other status for row filters', () => {
-    const filter = ['other'];
+  it('should return filtered release items with pending-install status for row filters', () => {
+    const filter = ['pending-install'];
     const filteredReleases = filterHelmReleasesByStatus(mockHelmReleases, filter);
     expect(filteredReleases.length).toEqual(1);
-    expect(OtherReleaseStatuses.includes(filteredReleases[0].info.status)).toBeTruthy();
+    expect(
+      SelectedReleaseStatuses.includes(filteredReleases[0].info.status as HelmReleaseStatus),
+    ).toBeTruthy();
   });
 
   it('should return filtered release items for text filter', () => {
@@ -144,6 +147,75 @@ describe('Helm Releases Utils', () => {
 
   it('should return the readme for the chart provided', () => {
     expect(getChartReadme(mockHelmReleases[0].chart)).toEqual('example readme content');
+  });
+
+  it('should navigate to topology', () => {
+    let resources = [
+      {
+        apiVersion: 'v1',
+        kind: 'ServiceAccount',
+        metadata: {
+          name: 'example-account',
+        },
+      },
+      {
+        apiVersion: 'v1',
+        kind: 'StatefulSet',
+        metadata: {
+          name: 'example-d',
+        },
+      },
+    ];
+    expect(isGoingToTopology(resources)).toBe(true);
+
+    resources = [
+      {
+        apiVersion: 'v1',
+        kind: 'DaemonSet',
+        metadata: {
+          name: 'example-account',
+        },
+      },
+      {
+        apiVersion: 'v1',
+        kind: 'DeploymentConfig',
+        metadata: {
+          name: 'example-d',
+        },
+      },
+    ];
+    expect(isGoingToTopology(resources)).toBe(true);
+  });
+
+  it('should navigate to helm release details page', () => {
+    let resources = [
+      {
+        apiVersion: 'v1',
+        kind: 'ServiceAccount',
+        metadata: {
+          name: 'example-account',
+        },
+      },
+      {
+        apiVersion: 'v1',
+        kind: 'Secret',
+        metadata: {
+          name: 'example-d',
+        },
+      },
+    ];
+    expect(isGoingToTopology(resources)).toBe(false);
+
+    resources = [
+      {
+        apiVersion: 'v1',
+        kind: 'ConfigMap',
+        metadata: {
+          name: 'example-d',
+        },
+      },
+    ];
+    expect(isGoingToTopology(resources)).toBe(false);
   });
 
   describe('loadHelmManifestResources', () => {
