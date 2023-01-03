@@ -7,7 +7,10 @@ import { ProjectHelmChartRepositoryModel } from '../models';
 import { HelmActionsScope } from './types';
 
 export const getHelmDeleteAction = (
-  { release: { name: releaseName, namespace }, redirect }: HelmActionsScope,
+  {
+    release: { name: releaseName, namespace, version: releaseVersion },
+    redirect,
+  }: HelmActionsScope,
   t: TFunction,
 ): Action => ({
   id: 'delete-helm',
@@ -21,7 +24,7 @@ export const getHelmDeleteAction = (
       redirect,
       onSubmit: () => {
         return coFetchJSON.delete(
-          `/api/helm/release?name=${releaseName}&ns=${namespace}`,
+          `/api/helm/release/async?name=${releaseName}&ns=${namespace}&version=${releaseVersion}`,
           null,
           null,
           -1,

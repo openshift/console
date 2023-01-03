@@ -12,8 +12,6 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { history, LoadingBox } from '@console/internal/components/utils';
-import { SecretModel } from '@console/internal/models';
-import { k8sGet } from '@console/internal/module/k8s';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import {
@@ -23,7 +21,14 @@ import {
   HelmActionConfigType,
   HelmActionOrigins,
 } from '../../../types/helm-types';
-import { getHelmActionConfig, getChartValuesYAML, getChartReadme } from '../../../utils/helm-utils';
+import {
+  getHelmActionConfig,
+  getChartValuesYAML,
+  getChartReadme,
+  fetchHelmRelease,
+  loadHelmManifestResources,
+  isGoingToTopology,
+} from '../../../utils/helm-utils';
 import { getHelmActionValidationSchema } from '../../../utils/helm-validation-utils';
 import HelmChartMetaDescription from './HelmChartMetaDescription';
 import HelmInstallUpgradeForm from './HelmInstallUpgradeForm';
@@ -95,7 +100,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   React.useEffect(() => {
     let ignore = false;
 
-    const fetchHelmRelease = async () => {
+    const fetchHelmChart = async () => {
       let res;
       let error: Error = null;
       try {
@@ -122,7 +127,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       setChartError(error);
     };
 
-    fetchHelmRelease();
+    fetchHelmChart();
 
     return () => {
       ignore = true;
@@ -188,30 +193,26 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       ...(valuesObj ? { values: valuesObj } : {}),
     };
 
-    const isGoingToTopology =
-      helmAction === HelmActionType.Create || helmActionOrigin === HelmActionOrigins.topology;
-
     return config
-      .fetch('/api/helm/release', payload, null, -1)
-      .then(async (res: HelmRelease) => {
+      .fetch('/api/helm/release/async', payload, null, -1)
+      .then(async (res?: { metadata?: { uid?: string } }) => {
         let redirect = config.redirectURL;
-
-        if (isGoingToTopology && res?.info?.notes) {
-          const options = {
-            queryParams: { labelSelector: `name=${res.name},version=${res.version},owner=helm` },
-          };
-          let secret;
-          try {
-            secret = await k8sGet(SecretModel, null, res.namespace, options);
-          } catch (err) {
-            console.error('Could not fetch all helm chart releases', err); // eslint-disable-line no-console
-          }
-          const secretId = secret?.items?.[0]?.metadata?.uid;
-          if (secretId) {
-            redirect = `${config.redirectURL}?selectId=${secretId}&selectTab=${t(
-              'helm-plugin~Release notes',
-            )}`;
-          }
+        let helmRelease: HelmRelease;
+        try {
+          helmRelease = await fetchHelmRelease(namespace, releaseName);
+        } catch (err) {
+          console.error('Could not fetch the helm release', err); // eslint-disable-line no-console
+        }
+        const resources = loadHelmManifestResources(helmRelease);
+        if (isGoingToTopology(resources)) {
+          const secretId = res?.metadata?.uid;
+          redirect = helmRelease?.info?.notes
+            ? `${config.redirectURL}?selectId=${secretId}&selectTab=${t(
+                'helm-plugin~Release notes',
+              )}`
+            : config.redirectURL;
+        } else {
+          redirect = `/helm-releases/ns/${namespace}/release/${releaseName}`;
         }
 
         history.push(redirect);

@@ -601,10 +601,10 @@ const getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
             },
           },
         },
-        resource.spec.template,
+        resource.spec?.template,
       );
     default:
-      return resource.spec.template;
+      return resource.spec?.template;
   }
 };
 

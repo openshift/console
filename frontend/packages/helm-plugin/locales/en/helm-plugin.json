@@ -123,6 +123,7 @@
   "Repositories": "Repositories",
   "Select a Project to view its details<1></1>.": "Select a Project to view its details<1></1>.",
   "No repositories found": "No repositories found",
+  "Helm release is {{status}}": "Helm release is {{status}}",
   "Unable to find resource for {{helmLabel}}": "Unable to find resource for {{helmLabel}}",
   " / App Version {{appVersion}}": " / App Version {{appVersion}}",
   " (Provided by {{chartRepoName}})": " (Provided by {{chartRepoName}})",
