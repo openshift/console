@@ -1,14 +1,20 @@
 import * as React from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
+import * as _ from 'lodash';
 import { GitProvider } from '@console/git-service';
 import { RepositoryFormValues } from '../types';
 
-const PermissionsSection = () => {
+type PermissionsSectionProps = {
+  formContextField?: string;
+};
+
+const PermissionsSection: React.FC<PermissionsSectionProps> = ({ formContextField }) => {
   const { values } = useFormikContext<RepositoryFormValues>();
+  const { gitProvider } = _.get(values, formContextField) || values;
 
   let permission;
-  switch (values.gitProvider) {
+  switch (gitProvider) {
     case GitProvider.GITHUB:
       permission = (
         <List>

@@ -39,7 +39,10 @@ export abstract class BaseService {
   /**
    * Returns source code tree for given gitsource
    */
-  abstract getRepoFileList(): Promise<RepoFileList>;
+  abstract getRepoFileList(params?: {
+    specificPath?: string;
+    includeFolder?: boolean;
+  }): Promise<RepoFileList>;
 
   /**
    * Returns list of detected languages.
@@ -55,6 +58,11 @@ export abstract class BaseService {
    * Check if Dockerfile present in the repo.
    */
   abstract isDockerfilePresent(): Promise<boolean>;
+
+  /**
+   * Check if .tekton folder present in the repo.
+   */
+  abstract isTektonFolderPresent(): Promise<boolean>;
 
   /**
    * Checks if dockerfile exist in the repo and returns dockerfile content

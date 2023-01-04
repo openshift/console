@@ -59,4 +59,5 @@ export const pageTitle = {
   CustomResourceDefinitions: 'CustomResourceDefinitions',
   ShipwrightBuild: 'ShipwrightBuild',
   Helm: 'Helm',
+  Samples: 'Samples',
 };

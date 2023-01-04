@@ -6,12 +6,19 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
-import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
+import {
+  history,
+  AsyncComponent,
+  StatusBox,
+  resourcePathFromModel,
+} from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel, RouteModel } from '@console/internal/models';
 import { RouteKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { KnativeServingModel } from '@console/knative-plugin/src';
+import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
+import { RepositoryModel } from '@console/pipelines-plugin/src/models';
 import {
   ALL_APPLICATIONS_KEY,
   usePerspectives,
@@ -99,6 +106,12 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       devfilePath: '',
       devfileHasError: false,
     },
+    pac: {
+      pacHasError: false,
+      repository: {
+        ...defaultRepositoryFormValues,
+      },
+    },
     build: {
       ...initialBaseValues.build,
       triggers: {
@@ -133,6 +146,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     const createNewProject = projects.loaded && _.isEmpty(projects.data);
     const {
       project: { name: projectName },
+      import: { selectedStrategy },
     } = values;
 
     const resourceActions = createOrUpdateResources(
@@ -172,7 +186,10 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         }
 
         fireTelemetryEvent('Git Import', getTelemetryImport(values));
-        handleRedirect(projectName, perspective, perspectiveExtensions);
+
+        if (selectedStrategy.type === ImportStrategy.PAC)
+          history.push(resourcePathFromModel(RepositoryModel, values.name, namespace));
+        else handleRedirect(projectName, perspective, perspectiveExtensions);
       })
       .catch((err) => {
         // eslint-disable-next-line no-console

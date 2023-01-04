@@ -121,6 +121,7 @@ export enum BuildStrategyType {
   JenkinsPipeline = 'JenkinsPipeline',
   Source = 'Source',
   ServerlessFunction = 'ServerlessFunction',
+  Pac = 'Pac',
 }
 
 export const BuildLogLink = ({ build }) => {
@@ -334,6 +335,8 @@ export const getStrategyType = (strategy: BuildStrategyType) => {
       return 'jenkinsPipelineStrategy';
     case BuildStrategyType.Source:
       return 'sourceStrategy';
+    case BuildStrategyType.Pac:
+      return 'pacStrategy';
     default:
       return null;
   }

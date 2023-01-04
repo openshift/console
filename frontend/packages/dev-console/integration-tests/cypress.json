@@ -22,6 +22,7 @@
     "TAGS": "(@pre-condition or @smoke or @regression) and not (@manual or @to-do or @un-verified or @broken-test)",
     "NAMESPACE": "aut-pipelines"
   },
+  "chromeWebSecurity": false,
   "retries": {
     "runMode": 0,
     "openMode": 0

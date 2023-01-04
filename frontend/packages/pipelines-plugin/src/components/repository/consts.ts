@@ -38,6 +38,7 @@ export enum PacConfigurationTypes {
 
 export const defaultRepositoryFormValues: RepositoryFormValues = {
   gitUrl: '',
+  githubAppAvailable: false,
   gitProvider: GitProvider.INVALID,
   name: '',
   method: 'github',

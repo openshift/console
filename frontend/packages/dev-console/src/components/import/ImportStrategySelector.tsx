@@ -11,6 +11,9 @@ import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const'
 import { ServiceModel } from '@console/knative-plugin/src/models';
 import { getFieldId, useFlag, useFormikValidationFix } from '@console/shared/src';
 import ServerlessFxIcon from './ServerlessFxIcon';
+import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
+import { getFieldId, useFlag, useFormikValidationFix } from '@console/shared/src';
+import PacIcon from './PacIcon';
 import './ImportStrategySelector.scss';
 
 const ImportStrategySelector: React.FC = () => {
@@ -68,6 +71,19 @@ const ImportStrategySelector: React.FC = () => {
       priority: 3,
       detectedFiles: [],
       icon: <ServerlessFxIcon />,
+     });
+  }
+
+  const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
+
+  if (recommendedStrategy?.type === ImportStrategy.PAC && isRepositoryEnabled) {
+    itemList.push({
+      name: 'Pipelines-as-code',
+      type: ImportStrategy.PAC,
+      build: BuildStrategyType.Pac,
+      priority: 3,
+      detectedFiles: [],
+      icon: <PacIcon />,
     });
   }
 

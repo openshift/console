@@ -29,4 +29,5 @@ export enum ImportStrategy {
   DOCKERFILE,
   DEVFILE,
   SERVERLESS_FUNCTION,
+  PAC,
 }

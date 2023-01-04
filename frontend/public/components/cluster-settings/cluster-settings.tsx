@@ -117,6 +117,7 @@ import {
   BlueArrowCircleUpIcon,
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
+  isClusterExternallyManaged,
   RedExclamationCircleIcon,
   useCanClusterUpgrade,
   YellowExclamationTriangleIcon,
@@ -762,6 +763,10 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const similarChannels = getSimilarClusterVersionChannels(cv, currentPrefix);
   const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
   const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
+  const newestVersionIsBlocked =
+    clusterUpgradeableFalse &&
+    isMinorVersionNewer(lastVersion, newestVersion) &&
+    !isClusterExternallyManaged();
   const { t } = useTranslation();
 
   return (
@@ -792,18 +797,12 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
           <ChannelLine>
             {newestVersion && (
               <>
-                <ChannelVersion
-                  updateBlocked={
-                    clusterUpgradeableFalse && isMinorVersionNewer(lastVersion, newestVersion)
-                  }
-                >
+                <ChannelVersion updateBlocked={newestVersionIsBlocked}>
                   {newestVersion}
                 </ChannelVersion>
                 <ChannelVersionDot
                   channel={currentChannel}
-                  updateBlocked={
-                    clusterUpgradeableFalse && isMinorVersionNewer(lastVersion, newestVersion)
-                  }
+                  updateBlocked={newestVersionIsBlocked}
                   version={newestVersion}
                 />
               </>
@@ -1040,12 +1039,12 @@ export const MachineConfigPoolsArePausedAlert: React.FC<MachineConfigPoolsArePau
 };
 
 export const ClusterSettingsAlerts: React.FC<ClusterSettingsAlertsProps> = ({
-  canUpgrade,
   cv,
   machineConfigPools,
 }) => {
   const { t } = useTranslation();
-  if (!canUpgrade) {
+
+  if (isClusterExternallyManaged()) {
     return (
       <Alert
         variant="info"
@@ -1099,12 +1098,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
     <>
       <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
-          <ClusterSettingsAlerts
-            canUpgrade={canUpgrade}
-            cv={cv}
-            machineConfigPools={machineConfigPools}
-            status={status}
-          />
+          <ClusterSettingsAlerts cv={cv} machineConfigPools={machineConfigPools} />
           <div className="co-cluster-settings">
             <div className="co-cluster-settings__row">
               <div className="co-cluster-settings__section co-cluster-settings__section--current">
@@ -1503,10 +1497,8 @@ type MachineConfigPoolsArePausedAlertProps = {
 };
 
 type ClusterSettingsAlertsProps = {
-  canUpgrade: boolean;
   cv: ClusterVersionKind;
   machineConfigPools: MachineConfigPoolKind[];
-  status: ClusterUpdateStatus;
 };
 
 type ClusterVersionDetailsTableProps = {

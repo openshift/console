@@ -37,6 +37,7 @@ import {
 import { PIPELINE_SERVICE_ACCOUNT } from '@console/pipelines-plugin/src/components/pipelines/const';
 import { createTrigger } from '@console/pipelines-plugin/src/components/pipelines/modals/triggers/submit-utils';
 import { setPipelineNotStarted } from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
+import { createRepositoryResources } from '@console/pipelines-plugin/src/components/repository/repository-form-utils';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import {
   updateServiceAccount,
@@ -669,6 +670,7 @@ export const createOrUpdateResources = async (
       triggers: { image: imageChange },
     },
     git: { url: repository, type: gitType, ref },
+    pac: { repository: pacRepository },
     pipeline,
     resources,
   } = formData;
@@ -694,6 +696,12 @@ export const createOrUpdateResources = async (
       throw new Error(t('devconsole~Cannot update Devfile resources'));
     }
     return createDevfileResources(formData, dryRun, appResources, generatedImageStreamName);
+  }
+
+  if (buildStrategy === BuildStrategyType.Pac) {
+    const repo = await createRepositoryResources(pacRepository, namespace, dryRun);
+    responses.push(repo);
+    return responses;
   }
 
   const imageStreamResponse = await createOrUpdateImageStream(

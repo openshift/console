@@ -243,6 +243,21 @@ describe('Gitlab Service', () => {
     });
   });
 
+  it('should detect .tekton folder', () => {
+    const gitSource = {
+      url: 'https://gitlab.com/avikkundu/oc-pipe',
+    };
+
+    const gitService = new GitlabService(gitSource);
+
+    return nockBack('tekton.json').then(async ({ nockDone, context }) => {
+      const isTektonFolderPresent = await gitService.isTektonFolderPresent();
+      expect(isTektonFolderPresent).toBe(true);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+  
   it('should detect func.yaml file', () => {
     const gitSource = {
       url: 'https://gitlab.com/avikkundu/oc-func',
@@ -258,6 +273,21 @@ describe('Gitlab Service', () => {
     });
   });
 
+  it('should not detect .tekton folder', () => {
+    const gitSource: GitSource = {
+      url: 'https://gitlab.com/jpratik999/devconsole-git.git',
+    };
+
+    const gitService = new GitlabService(gitSource);
+
+    return nockBack('no-tekton.json').then(async ({ nockDone, context }) => {
+      const isTektonFolderPresent = await gitService.isTektonFolderPresent();
+      expect(isTektonFolderPresent).toBe(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+  
   it('should not detect func.yaml file', () => {
     const gitSource: GitSource = {
       url: 'https://gitlab.com/jpratik999/devconsole-git.git',

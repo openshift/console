@@ -107,10 +107,24 @@ export class BitbucketService extends BaseService {
     }
   };
 
-  getRepoFileList = async (): Promise<RepoFileList> => {
-    const url = this.isServer
-      ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}/files/${this.metadata.contextDir}?limit=50&at=${this.metadata.defaultBranch}`
-      : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${this.metadata.contextDir}?pagelen=50`;
+  isServerURL = (isServer: boolean, specificPath?: string) => {
+    let url = '';
+    if (specificPath) {
+      url = isServer
+        ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}/files/${this.metadata.contextDir}/${specificPath}?limit=50&at=${this.metadata.defaultBranch}`
+        : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${this.metadata.contextDir}/${specificPath}?pagelen=50`;
+    } else {
+      url = isServer
+        ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}/files/${this.metadata.contextDir}?limit=50&at=${this.metadata.defaultBranch}`
+        : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${this.metadata.contextDir}?pagelen=50`;
+    }
+    return url;
+  };
+
+  getRepoFileList = async (params?: { specificPath?: string }): Promise<RepoFileList> => {
+    const url = params?.specificPath
+      ? this.isServerURL(this.isServer, params.specificPath)
+      : this.isServerURL(this.isServer);
     try {
       const data = await this.fetchJson(url);
       const files = this.isServer ? data.values : data.values?.map((f) => f.path) || [];
@@ -160,6 +174,8 @@ export class BitbucketService extends BaseService {
 
   isDockerfilePresent = () =>
     this.isFilePresent(`${this.metadata.contextDir}/${this.metadata.dockerfilePath}`);
+
+  isTektonFolderPresent = () => this.isFilePresent(`${this.metadata.contextDir}/.tekton`);
 
   getDockerfileContent = () =>
     this.getFileContent(`${this.metadata.contextDir}/${this.metadata.dockerfilePath}`);

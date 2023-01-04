@@ -170,6 +170,24 @@ export const defaultData: GitImportFormData = {
     secret: '',
     isUrlValidating: false,
   },
+  pac: {
+    pacHasError: false,
+    repository: {
+      gitUrl: '',
+      githubAppAvailable: false,
+      gitProvider: GitProvider.INVALID,
+      name: '',
+      method: 'github',
+      showOverviewPage: false,
+      yamlData: ``,
+      webhook: {
+        token: '',
+        method: 'token',
+        secret: '',
+        url: '',
+      },
+    },
+  },
   docker: {
     dockerfilePath: 'Dockerfile',
   },

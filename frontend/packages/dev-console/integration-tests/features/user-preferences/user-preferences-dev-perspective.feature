@@ -120,13 +120,13 @@ Feature: Manage user preferences
               And user changes user preference "Theme" dropdown to "Dark"
              Then user can see console in dark theme
 
+
         @regression
         Scenario: Setting Resource type preference for Console: UP-01-TC12
             Given user has created or selected namespace "aut-user-preferences"
              When user clicks on user dropdown on masthead and selects "User Preferences"
-               And user clicks on "Applications" tab on User Preferences page
-               And user changes user preference "Resource Type" dropdown to "DeploymentConfig"
-               And user clicks on Add in navigation menu
-               And user clicks on Container images
+              And user clicks on "Applications" tab on User Preferences page
+              And user changes user preference "Resource Type" dropdown to "DeploymentConfig"
+              And user clicks on Add in navigation menu
+              And user clicks on Container images
              Then user is able to see resources DeploymentConfig is selected
-             
