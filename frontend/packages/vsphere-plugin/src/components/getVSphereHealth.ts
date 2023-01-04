@@ -85,7 +85,7 @@ export const getVSphereHealth = (
   }
 
   return {
-    state:
-      HealthState.PROGRESS /* To be changed. Since the Problem detector is unreliable, we can not be sure about the result so showing Progress instead and instructing the user to take actions to verify. */,
+    state: HealthState.OK,
+    /* To be changed. Since the Problem detector is unreliable, we can not be sure about the result so showing Progress instead and instructing the user to take actions to verify. */
   };
 };
