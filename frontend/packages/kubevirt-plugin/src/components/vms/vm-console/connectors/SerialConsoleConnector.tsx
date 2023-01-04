@@ -12,16 +12,6 @@ const { CONNECTED, DISCONNECTED, LOADING } = constants;
 // The protocol is complex and backend implementation not stable - let's keep logging to simplify debugging in production.
 const { debug, info, error } = console;
 
-const onResize = (rows, cols) => {
-  debug(
-    'UI has been resized. Pass this info to backend. [',
-    rows,
-    ', ',
-    cols,
-    ']. Ignoring since recently not supported by backend.',
-  );
-};
-
 interface WebSocket {
   destroy(): void;
   send(data: any): void;
@@ -113,11 +103,9 @@ const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = ({ vmi, se
     <SerialConsole
       fontFamily="monospace"
       fontSize={12}
-      id="serial-console"
       onConnect={onConnect}
       onData={onData}
       onDisconnect={onBackendDisconnected}
-      onResize={onResize}
       ref={terminalRef}
       status={status}
       textConnect={t('kubevirt-plugin~Connect')}
