@@ -95,12 +95,14 @@ export class GithubService extends BaseService {
     }
   };
 
-  getRepoFileList = async (): Promise<RepoFileList> => {
+  getRepoFileList = async (params?: { specificPath?: string }): Promise<RepoFileList> => {
     try {
       const resp = await this.client.repos.getContents({
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
-        path: this.metadata.contextDir,
+        ...(params && params?.specificPath
+          ? { path: `${this.metadata.contextDir}/${params.specificPath}` }
+          : { path: this.metadata.contextDir }),
         ...(this.metadata.defaultBranch ? { ref: this.metadata.defaultBranch } : {}),
       });
       let files = [];
@@ -162,6 +164,8 @@ export class GithubService extends BaseService {
 
   isDockerfilePresent = () =>
     this.isFilePresent(`${this.metadata.contextDir}/${this.metadata.dockerfilePath}`);
+
+  isTektonFolderPresent = () => this.isFilePresent(`${this.metadata.contextDir}/.tekton`);
 
   getDockerfileContent = () =>
     this.getFileContent(`${this.metadata.contextDir}/${this.metadata.dockerfilePath}`);

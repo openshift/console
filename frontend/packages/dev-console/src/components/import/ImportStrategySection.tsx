@@ -16,6 +16,7 @@ import BuilderSection from './builder/BuilderSection';
 import DevfileStrategySection from './devfile/DevfileStrategySection';
 import DockerSection from './git/DockerSection';
 import ImportStrategySelector from './ImportStrategySelector';
+import PacSection from './pac/PacSection';
 import FormSection from './section/FormSection';
 import './ImportStrategySection.scss';
 
@@ -45,6 +46,7 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
     () => ({
       [ImportStrategy.DEVFILE]: <DevfileStrategySection />,
       [ImportStrategy.DOCKERFILE]: <DockerSection />,
+      [ImportStrategy.PAC]: <PacSection />,
       [ImportStrategy.S2I]: <BuilderSection builderImages={builderImages} />,
     }),
     [builderImages],
@@ -59,6 +61,9 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
         filePath: docker?.dockerfilePath,
       }),
       [ImportStrategy.S2I]: t('devconsole~A Builder Image is recommended.'),
+      [ImportStrategy.PAC]: t(
+        'devconsole~A Pipelines-as-code file in .tekton directory is recommended.',
+      ),
     }),
     [devfile, docker, t],
   );

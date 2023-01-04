@@ -28,4 +28,5 @@ export enum ImportStrategy {
   S2I,
   DOCKERFILE,
   DEVFILE,
+  PAC,
 }

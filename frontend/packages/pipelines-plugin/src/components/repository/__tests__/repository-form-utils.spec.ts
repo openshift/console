@@ -30,6 +30,7 @@ describe('createRepositoryResources', () => {
   const repoValues: RepositoryFormValues = {
     name: 'test-repo',
     gitUrl: 'https://github.com/sample/repo',
+    githubAppAvailable: false,
     gitProvider: GitProvider.GITHUB,
     yamlData: '',
     showOverviewPage: false,
@@ -54,6 +55,7 @@ describe('createRepositoryResources', () => {
     expect(k8sCreateMock).toHaveBeenCalledWith({
       model: RepositoryModel,
       ns: 'test-ns',
+      queryParams: {},
       data: {
         kind: 'Repository',
         apiVersion: 'pipelinesascode.tekton.dev/v1alpha1',
@@ -83,6 +85,7 @@ describe('createRepositoryResources', () => {
     expect(k8sCreateMock).toHaveBeenCalledWith({
       model: RepositoryModel,
       ns: 'test-ns',
+      queryParams: {},
       data: expect.objectContaining({
         apiVersion: 'pipelinesascode.tekton.dev/v1alpha1',
         kind: 'Repository',
@@ -113,6 +116,7 @@ describe('createRepositoryResources', () => {
     expect(k8sCreateMock).toHaveBeenCalledWith({
       model: RepositoryModel,
       ns: 'test-ns',
+      queryParams: {},
       data: expect.objectContaining({
         spec: {
           url: 'https://customgithost.com/sample/repo',

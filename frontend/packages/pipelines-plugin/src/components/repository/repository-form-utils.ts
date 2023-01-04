@@ -13,12 +13,14 @@ import {
 import { GitProvider } from '@console/git-service/src';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
-import { ConfigMapKind, SecretKind } from '@console/internal/module/k8s';
+import { ConfigMapKind, SecretKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { nameRegex } from '@console/shared/src';
 import { RepositoryModel } from '../../models';
 import { PAC_TEMPLATE_DEFAULT } from '../pac/const';
 import { PIPELINE_NAMESPACE } from '../pipelines/const';
 import { RepositoryFormValues } from './types';
+
+export const dryRunOpt = { dryRun: 'All' };
 
 export const repositoryValidationSchema = (t: TFunction) =>
   yup.object().shape({
@@ -43,12 +45,14 @@ const createTokenSecret = async (
   token: string,
   namespace: string,
   webhookSecret?: string,
+  dryRun?: boolean,
 ) => {
   const data: SecretKind = {
     apiVersion: SecretModel.apiVersion,
     kind: SecretModel.kind,
     metadata: {
       generateName: `${repositoryName}-token-`,
+      namespace,
     },
     type: SecretType.opaque,
     stringData: {
@@ -61,13 +65,15 @@ const createTokenSecret = async (
     model: SecretModel,
     data,
     ns: namespace,
+    queryParams: dryRun ? dryRunOpt : {},
   });
 };
 
 export const createRepositoryResources = async (
   values: RepositoryFormValues,
   namespace: string,
-) => {
+  dryRun?: boolean,
+): Promise<K8sResourceKind> => {
   const {
     name,
     gitUrl,
@@ -76,7 +82,7 @@ export const createRepositoryResources = async (
   const encodedSecret = Base64.encode(webhookSecret);
   let secret: SecretKind;
   if (token && method === 'token') {
-    secret = await createTokenSecret(name, token, namespace, webhookSecret);
+    secret = await createTokenSecret(name, token, namespace, webhookSecret, dryRun);
   } else if (
     method === 'secret' &&
     secretObj &&
@@ -127,6 +133,7 @@ export const createRepositoryResources = async (
     model: RepositoryModel,
     data,
     ns: namespace,
+    queryParams: dryRun ? dryRunOpt : {},
   });
 
   return resource;

@@ -58,9 +58,11 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
             )}
             <AppSection
               project={values.project}
+              hideApplicationName={values.import.selectedStrategy.type === ImportStrategy.PAC}
               noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
             />
             {importType !== ImportTypes.devfile &&
+              values.import.selectedStrategy.type !== ImportStrategy.PAC &&
               values.import.selectedStrategy.type !== ImportStrategy.DEVFILE && (
                 <>
                   <PipelineSection builderImages={builderImages} />

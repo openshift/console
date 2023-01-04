@@ -5,7 +5,9 @@ import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ImportStrategy } from '@console/git-service/src';
 import { BuildStrategyType } from '@console/internal/components/build';
-import { getFieldId, useFormikValidationFix } from '@console/shared/src';
+import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
+import { getFieldId, useFlag, useFormikValidationFix } from '@console/shared/src';
+import PacIcon from './PacIcon';
 import './ImportStrategySelector.scss';
 
 const ImportStrategySelector: React.FC = () => {
@@ -45,6 +47,19 @@ const ImportStrategySelector: React.FC = () => {
       icon: <GitAltIcon />,
     },
   ];
+
+  const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
+
+  if (recommendedStrategy?.type === ImportStrategy.PAC && isRepositoryEnabled) {
+    itemList.push({
+      name: 'Pipelines-as-code',
+      type: ImportStrategy.PAC,
+      build: BuildStrategyType.Pac,
+      priority: 3,
+      detectedFiles: [],
+      icon: <PacIcon />,
+    });
+  }
 
   const onSelect = React.useCallback(
     (item) => {

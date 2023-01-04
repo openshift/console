@@ -8,11 +8,13 @@ import { RepoStatus, ImportStrategy, getGitService, GitProvider } from '@console
 import { DetectedBuildType } from '@console/git-service/src/utils/build-tool-type-detector';
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
 import { BuildStrategyType } from '@console/internal/components/build';
+import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
 import {
   InputField,
   DropdownField,
   useFormikValidationFix,
   useDebounceCallback,
+  useFlag,
 } from '@console/shared';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import {
@@ -85,6 +87,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   imageStreamName,
 }) => {
   const { t } = useTranslation();
+  const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const inputRef = React.useRef<HTMLInputElement>();
 
   const {
@@ -263,7 +266,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         values.docker?.dockerfilePath,
       );
 
-      const importStrategyData = await detectImportStrategies(url, gitService);
+      const importStrategyData = await detectImportStrategies(url, gitService, isRepositoryEnabled);
 
       const {
         loaded,
@@ -357,6 +360,11 @@ const GitSection: React.FC<GitSectionProps> = ({
             setFieldValue('docker.dockerfileHasError', false);
             break;
           }
+          case ImportStrategy.PAC: {
+            setFieldValue('build.strategy', BuildStrategyType.Pac);
+            setFieldValue('pac.pacHasError', false);
+            break;
+          }
           default:
         }
       }
@@ -370,9 +378,10 @@ const GitSection: React.FC<GitSectionProps> = ({
       status,
       setFieldValue,
       gitUrlError,
+      formType,
+      values.git.detectedType,
       values.git.showGitType,
       values.git.type,
-      values.git.detectedType,
       values.git.secretResource,
       values.devfile,
       values.docker,
@@ -381,7 +390,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.application.name,
       values.application.selectedKey,
       values.build.strategy,
-      formType,
+      isRepositoryEnabled,
       nameTouched,
       importType,
       imageStreamName,

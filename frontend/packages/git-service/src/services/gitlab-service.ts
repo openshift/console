@@ -130,14 +130,20 @@ export class GitlabService extends BaseService {
     }
   };
 
-  getRepoFileList = async (): Promise<RepoFileList> => {
+  getRepoFileList = async (params?: {
+    specificPath?: string;
+    includeFolder?: boolean;
+  }): Promise<RepoFileList> => {
     try {
       const projectID = await this.getProjectId();
       const resp = await this.client.Repositories.tree(projectID, {
-        path: this.metadata.contextDir,
+        ...(params?.specificPath
+          ? { path: this.filePath(params.specificPath) }
+          : { path: this.metadata.contextDir }),
       });
       const files = resp.reduce((acc, file) => {
-        if (file.type === 'blob') acc.push(file.path);
+        if (file.type === 'blob' || (params?.includeFolder && file.type === 'tree'))
+          acc.push(file.path);
         return acc;
       }, []);
       return { files };
@@ -182,6 +188,21 @@ export class GitlabService extends BaseService {
   };
 
   isDockerfilePresent = () => this.isFilePresent(this.filePath(`${this.metadata.dockerfilePath}`));
+
+  isTektonFolderPresent = async (): Promise<boolean> => {
+    try {
+      const projectID = await this.getProjectId();
+      const resp = await this.client.Repositories.tree(projectID, {
+        path: this.metadata.contextDir,
+      });
+      const tektonFolderPresent = resp.find(
+        (file) => file.type === 'tree' && file.name === '.tekton',
+      );
+      return !!tektonFolderPresent;
+    } catch (e) {
+      return false;
+    }
+  };
 
   getDockerfileContent = () =>
     this.getFileContent(this.filePath(`${this.metadata.dockerfilePath}`));
