@@ -76,7 +76,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
         setReleases([]);
       } else if (newCount !== secretsCountRef.current) {
         setReleasesLoaded(false);
-        fetchHelmReleases(namespace)
+        fetchHelmReleases(namespace, true)
           .then((helmReleases) => {
             if (!destroyed) {
               setReleases(helmReleases);

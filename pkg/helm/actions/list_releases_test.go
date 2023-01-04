@@ -48,7 +48,7 @@ func TestListReleases(t *testing.T) {
 				Capabilities: chartutil.DefaultCapabilities,
 				Log:          func(format string, v ...interface{}) {},
 			}
-			rels, err := ListReleases(actionConfig)
+			rels, err := ListReleases(actionConfig, true)
 			if err != nil {
 				t.Error("Error occurred while installing chartPath")
 			}
