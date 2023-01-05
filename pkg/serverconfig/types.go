@@ -250,7 +250,7 @@ type Helm struct {
 	ChartRepo HelmChartRepo `yaml:"chartRepository"`
 }
 
-// TODO Remove this type once the console operator has been updated. It is obsolete now that we are using the MCE cluster proxy.
+// ManagedClusterAPIServerConfig is required for managed cluster authentication
 type ManagedClusterAPIServerConfig struct {
 	URL    string `json:"url" yaml:"url"`
 	CAFile string `json:"caFile" yaml:"caFile"`
