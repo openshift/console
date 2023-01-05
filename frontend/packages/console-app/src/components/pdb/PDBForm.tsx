@@ -16,6 +16,7 @@ import {
   Split,
   SplitItem,
 } from '@patternfly/react-core';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { MatchLabels } from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -31,6 +32,16 @@ import { PodDisruptionBudgetModel } from '../../models';
 import AvailabilityRequirementPopover from './AvailabilityRequirementPopover';
 import { pdbToK8sResource, initialValuesFromK8sResource, patchPDB } from './pdb-models';
 import { PodDisruptionBudgetKind } from './types';
+
+const getSelectedRequirement = (requirement: string, items: RequirementItems): string => {
+  if (requirement === 'minAvailable') {
+    return items.minAvailable;
+  }
+  if (requirement === 'maxUnavailable') {
+    return items.maxUnavailable;
+  }
+  return i18next.t('console-app~Requirement');
+};
 
 const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   formData,
@@ -48,10 +59,11 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind>(null);
   const [isOpen, setOpen] = React.useState(false);
   const onToggle = (open: boolean) => setOpen(open);
-  const items = {
-    maxUnavailable: 'maxUnavailable',
-    minAvailable: 'minAvailable',
+  const items: RequirementItems = {
+    maxUnavailable: t('console-app~maxUnavailable'),
+    minAvailable: t('console-app~minAvailable'),
   };
+  const selectedRequirement = getSelectedRequirement(formValues.requirement, items);
 
   const onFormValuesChange = React.useCallback(
     (values) => {
@@ -63,12 +75,11 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
 
   React.useEffect(() => {
     setRequirement(formValues.requirement);
-    requirement === 'Requirement' ? setDisabled(true) : setDisabled(false);
 
     if (!_.isEmpty(existingResource) && _.isEmpty(formValues.name)) {
       onFormValuesChange(initialValuesFromK8sResource(existingResource));
     }
-  }, [existingResource, formValues, onFormValuesChange, requirement]);
+  }, [existingResource, formValues, onFormValuesChange, requirement, items]);
 
   const handleNameChange = (value: string) => onFormValuesChange({ ...formValues, name: value });
 
@@ -89,6 +100,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   const handleAvailabilityRequirementKeyChange = (value: string) => {
     setRequirement(value);
     setOpen(!isOpen);
+    setDisabled(false);
     onFormValuesChange({
       ...formValues,
       requirement: value,
@@ -185,7 +197,9 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
               <SplitItem isFilled>
                 <Dropdown
                   className="dropdown--full-width"
-                  toggle={<DropdownToggle onToggle={onToggle}>{requirement}</DropdownToggle>}
+                  toggle={
+                    <DropdownToggle onToggle={onToggle}>{selectedRequirement}</DropdownToggle>
+                  }
                   isOpen={isOpen}
                   dropdownItems={Object.keys(items).map((key) => (
                     <DropdownItem
@@ -259,4 +273,9 @@ type PodDisruptionBudgetFormProps = {
   onChange: (newFormData: PodDisruptionBudgetKind) => void;
   selector: MatchLabels;
   existingResource: PodDisruptionBudgetKind;
+};
+
+type RequirementItems = {
+  maxUnavailable: string;
+  minAvailable: string;
 };
