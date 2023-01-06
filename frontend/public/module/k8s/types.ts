@@ -1132,24 +1132,24 @@ export type ConsolePluginKind = K8sResourceCommon & {
     displayName: string;
     backend: {
       service: {
-        basePath: string;
+        basePath?: string;
         name: string;
         namespace: string;
         port: number;
       };
       type: 'Service';
     };
-    i18n: {
+    i18n?: {
       loadType: 'Preload' | 'Lazy' | '';
     };
-    proxy: ConsolePluginProxy[];
+    proxy?: ConsolePluginProxy[];
   };
 };
 
 export type ConsolePluginProxy = {
   alias: string;
-  authorization: 'UserToken' | 'None';
-  caCertificate: string;
+  authorization?: 'UserToken' | 'None';
+  caCertificate?: string;
   endpoint: {
     service: {
       name: string;

@@ -94,7 +94,8 @@ spec:
 
 In case the plugin needs to communicate with some in-cluster service, it can
 declare a service proxy in its `ConsolePlugin` resource using the
-`spec.proxy` array field. Each entry needs to specify ednpoint and alias of the proxy, under the `endpoint` and `alias` field. For the `Service` proxy type, endpoint's `type` field will need to be set to `Service` and `service` field with `name`, `namespace` and `port` needs to be specified.
+`spec.proxy` array field. Each entry needs to specify an endpoint and
+alias of the proxy under the `endpoint` and `alias` fields. For the `Service` proxy type, the endpoint's `type` field will need to be set to `Service` and the `service` must include a `name`, `namespace` and `port`.
 
 Console backend exposes following endpoint in order to proxy the communication
 between plugin and the service:
@@ -106,7 +107,7 @@ An example proxy request path from `helm` plugin with a `helm-charts` service to
 Proxied request will use [service CA bundle](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/security_and_compliance/certificate-types-and-descriptions#cert-types-service-ca-certificates) by default. The service must use HTTPS.
 If the service uses a custom service CA, the `caCertificate` field
 must contain the certificate bundle. In case the service proxy request
-needs to contain logged-in user's OpenShift access token, the `authorization`
+needs to contain the logged-in user's OpenShift access token, the `authorization`
 field needs to be set to `UserToken`. The user's OpenShift access token will be
 then passed in the HTTP `Authorization` request header, for example:
 
@@ -128,8 +129,8 @@ spec:
 # ...
 ```
 
-In case the service proxy request shouldn't contain logged-in user's
-OpenShift access token, the `authorization` field needs to be set to `None`.
+If the service proxy request shouldn't contain the logged-in user's
+OpenShift access token, set the `authorization` field to `None`.
 
 ### Local development
 
@@ -187,11 +188,11 @@ conster Header: React.FC = () => {
 ```
 
 To indicate whether the `ConsolePlugin` contains localization resources,
-set `spec.i18n.loadType` field based on needed behavior. `Preload` will
+set the `spec.i18n.loadType` field based on needed behavior. `Preload` will
 load all plugin's localization resources from the i18n namespace named
 after the dynamic plugin during loading. In this case, `plugin__console-demo-plugin`.
-If set to `Lazy`, the plugin's localization resources wont be preload,
-instead will leave their loading to runtime's lazy-loading.
+If set to `Lazy`, the plugin's localization resources won't be preloaded.
+They will be lazy-loaded instead.
 
 ```yaml
 spec:
