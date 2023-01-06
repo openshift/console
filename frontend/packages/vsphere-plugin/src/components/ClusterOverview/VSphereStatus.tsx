@@ -58,8 +58,8 @@ export const healthHandler: PrometheusHealthHandler = (responses, t, additionalR
     case HealthState.WARNING:
       message = health.message;
       break;
-    case HealthState.PROGRESS:
-      message = t('vsphere-plugin~Learn more about progress');
+    case HealthState.OK:
+      message = t('vsphere-plugin~No error is reported, open for detailed status.');
       break;
     default:
       break;

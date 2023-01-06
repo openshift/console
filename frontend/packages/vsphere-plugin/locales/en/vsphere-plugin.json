@@ -3,7 +3,7 @@
   "vSphere configurations": "vSphere configurations",
   "Loading vSphere connection status": "Loading vSphere connection status",
   "The vSphere Connection check is failing.": "The vSphere Connection check is failing.",
-  "Learn more about progress": "Learn more about progress",
+  "No error is reported, open for detailed status.": "No error is reported, open for detailed status.",
   "Missing the vSphere config map.": "Missing the vSphere config map.",
   "Not configured yet": "Not configured yet",
   "Prometheus query failed.": "Prometheus query failed.",
