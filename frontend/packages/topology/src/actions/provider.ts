@@ -8,15 +8,15 @@ import { DeleteConnectorAction, MoveConnectorAction } from './edgeActions';
 import { getModifyApplicationAction } from './modify-application';
 
 export const useTopologyWorkloadActionProvider = (element: GraphElement) => {
+  const resource = getResource(element);
   const actions = useMemo(() => {
     if (element.getType() !== TYPE_WORKLOAD) return undefined;
-    const resource = getResource(element);
     if (!resource) {
       return [];
     }
     const k8sKind = modelFor(referenceFor(resource));
     return [getModifyApplicationAction(k8sKind, resource)];
-  }, [element]);
+  }, [element, resource]);
 
   return useMemo(() => {
     if (!actions) return [[], true, undefined];
