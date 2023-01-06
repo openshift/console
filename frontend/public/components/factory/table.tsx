@@ -44,15 +44,7 @@ import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/compo
 import { RowFilter as RowFilterExt } from '@console/dynamic-plugin-sdk';
 import { RowFilter } from '../filter-toolbar';
 import * as UIActions from '../../actions/ui';
-import {
-  alertingRuleSource,
-  alertingRuleStateOrder,
-  alertSeverityOrder,
-  alertSource,
-  alertStateOrder,
-  silenceFiringAlertsOrder,
-  silenceStateOrder,
-} from '../monitoring/utils';
+import { alertingRuleStateOrder, alertSeverityOrder } from '../monitoring/utils';
 import { ingressValidHosts } from '../ingress';
 import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {
@@ -76,11 +68,8 @@ import {
 import { useTableData } from './table-data-hook';
 
 const sorts = {
-  alertingRuleSource,
   alertingRuleStateOrder,
   alertSeverityOrder,
-  alertSource,
-  alertStateOrder,
   crdLatestVersion: (crd: CustomResourceDefinitionKind): string => getLatestVersionForCRD(crd),
   daemonsetNumScheduled: (daemonset) =>
     _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
@@ -104,8 +93,6 @@ const sorts = {
   podRestarts,
   pvStorage: (pv) => _.toInteger(convertToBaseValue(pv?.spec?.capacity?.storage)),
   pvcStorage: (pvc) => _.toInteger(convertToBaseValue(pvc?.status?.capacity?.storage)),
-  silenceFiringAlertsOrder,
-  silenceStateOrder,
   string: (val) => JSON.stringify(val),
   number: (val) => _.toNumber(val),
   getClusterOperatorStatus: (operator: ClusterOperator) => getClusterOperatorStatus(operator),

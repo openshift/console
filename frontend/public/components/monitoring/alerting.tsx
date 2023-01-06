@@ -12,9 +12,11 @@ import {
   RedExclamationCircleIcon,
   ResourceStatus,
   RowFilter,
+  RowProps,
   Rule,
   Silence,
   SilenceStates,
+  TableColumn,
   useActivePerspective,
   YellowExclamationTriangleIcon,
 } from '@console/dynamic-plugin-sdk';
@@ -65,8 +67,11 @@ import { withFallback } from '@console/shared/src/components/error';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import {
   ActionServiceProvider,
+  ListPageFilter,
   ResourceLink,
   Timestamp,
+  useListPageFilter,
+  VirtualizedTable,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 
@@ -87,8 +92,6 @@ import {
   StatefulSetModel,
 } from '../../models';
 import { RootState } from '../../redux';
-import { RowFunctionArgs, Table, TableData, TableProps } from '../factory';
-import { FilterToolbar } from '../filter-toolbar';
 import { getPrometheusURL } from '../graphs/helpers';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { SectionHeading } from '../utils/headings';
@@ -104,14 +107,15 @@ import { QueryBrowserPage, ToggleGraph } from './metrics';
 import { FormatSeriesTitle, QueryBrowser } from './query-browser';
 import { CreateSilence, EditSilence } from './silence-form';
 import { TargetsUI } from './targets';
-import { Alerts, AlertSource, ListPageProps, MonitoringResource, Silences } from './types';
+import { Alerts, AlertSource, MonitoringResource, Silences } from './types';
 import {
   alertDescription,
-  alertingRuleSource,
+  alertingRuleStateOrder,
   AlertResource,
-  alertSource,
+  alertSeverityOrder,
   alertState,
   alertURL,
+  fuzzyCaseInsensitive,
   getAlertsAndRules,
   labelsToParams,
   RuleResource,
@@ -121,6 +125,11 @@ import {
 } from './utils';
 
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
+
+const alertingRuleSource = (rule: Rule): AlertSource =>
+  rule.labels?.prometheus === 'openshift-monitoring/k8s' ? AlertSource.Platform : AlertSource.User;
+
+const alertSource = (alert: Alert): AlertSource => alertingRuleSource(alert.rule);
 
 const pollers = {};
 const pollerTimeouts = {};
@@ -464,10 +473,10 @@ const Graph: React.FC<GraphProps> = ({
 };
 
 const tableSilenceClasses = [
-  'pf-u-w-50 pf-u-w-33-on-sm',
-  'pf-m-hidden pf-m-visible-on-sm pf-m-hidden-on-md pf-m-visible-on-lg',
-  '',
-  'pf-m-hidden pf-m-visible-on-sm',
+  'pf-u-w-50 pf-u-w-33-on-sm', // Name
+  'pf-m-hidden pf-m-visible-on-sm', // Firing alerts
+  '', // State
+  'pf-m-hidden pf-m-visible-on-sm', // Creator
   'dropdown-kebab-pf pf-c-table__action',
 ];
 
@@ -483,13 +492,15 @@ const SilenceMatchersList = ({ silence }) => (
   </div>
 );
 
-const SilenceTableRow: React.FC<RowFunctionArgs<Silence>> = ({ obj }) => {
+const SilenceTableRow: React.FC<RowProps<Silence>> = ({ obj }) => {
   const { createdBy, endsAt, firingAlerts, id, name, startsAt } = obj;
   const state = silenceState(obj);
 
+  const { t } = useTranslation();
+
   return (
     <>
-      <TableData className={tableSilenceClasses[0]}>
+      <td className={tableSilenceClasses[0]}>
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={SilenceResource} />
           <Link
@@ -504,26 +515,26 @@ const SilenceTableRow: React.FC<RowFunctionArgs<Silence>> = ({ obj }) => {
         <div className="monitoring-label-list">
           <SilenceMatchersList silence={obj} />
         </div>
-      </TableData>
-      <TableData className={tableSilenceClasses[1]}>
+      </td>
+      <td className={tableSilenceClasses[1]}>
         <SeverityCounts alerts={firingAlerts} />
-      </TableData>
-      <TableData className={classNames(tableSilenceClasses[2], 'co-break-word')}>
+      </td>
+      <td className={classNames(tableSilenceClasses[2], 'co-break-word')}>
         <SilenceState silence={obj} />
         {state === SilenceStates.Pending && (
-          <StateTimestamp text={i18next.t('public~Starts')} timestamp={startsAt} />
+          <StateTimestamp text={t('public~Starts')} timestamp={startsAt} />
         )}
         {state === SilenceStates.Active && (
-          <StateTimestamp text={i18next.t('public~Ends')} timestamp={endsAt} />
+          <StateTimestamp text={t('public~Ends')} timestamp={endsAt} />
         )}
         {state === SilenceStates.Expired && (
-          <StateTimestamp text={i18next.t('public~Expired')} timestamp={endsAt} />
+          <StateTimestamp text={t('public~Expired')} timestamp={endsAt} />
         )}
-      </TableData>
-      <TableData className={tableSilenceClasses[3]}>{createdBy || '-'}</TableData>
-      <TableData className={tableSilenceClasses[4]}>
+      </td>
+      <td className={tableSilenceClasses[3]}>{createdBy || '-'}</td>
+      <td className={tableSilenceClasses[4]}>
         <SilenceDropdownKebab silence={obj} />
-      </TableData>
+      </td>
     </>
   );
 };
@@ -606,37 +617,6 @@ const HeaderAlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rul
   );
 };
 
-const getSilenceTableHeader = (t) => [
-  {
-    title: t('public~Name'),
-    sortField: 'name',
-    transforms: [sortable],
-    props: { className: tableSilenceClasses[0] },
-  },
-  {
-    title: t('public~Firing alerts'),
-    sortFunc: 'silenceFiringAlertsOrder',
-    transforms: [sortable],
-    props: { className: tableSilenceClasses[1] },
-  },
-  {
-    title: t('public~State'),
-    sortFunc: 'silenceStateOrder',
-    transforms: [sortable],
-    props: { className: tableSilenceClasses[2] },
-  },
-  {
-    title: t('public~Creator'),
-    sortField: 'createdBy',
-    transforms: [sortable],
-    props: { className: tableSilenceClasses[3] },
-  },
-  {
-    title: '',
-    props: { className: tableSilenceClasses[4] },
-  },
-];
-
 const getSourceKey = (source) => {
   switch (source) {
     case 'Platform':
@@ -648,9 +628,52 @@ const getSourceKey = (source) => {
   }
 };
 
-const getSilenceProps = (obj) => ({
-  id: obj.id,
-});
+const SilencedByList: React.FC<{ silences: Silence[] }> = ({ silences }) => {
+  const { t } = useTranslation();
+
+  const columns = React.useMemo<TableColumn<Silence>[]>(
+    () => [
+      {
+        id: 'name',
+        props: { className: tableSilenceClasses[0] },
+        title: t('public~Name'),
+      },
+      {
+        id: 'firingAlerts',
+        props: { className: tableSilenceClasses[1] },
+        title: t('public~Firing alerts'),
+      },
+      {
+        id: 'state',
+        props: { className: tableSilenceClasses[2] },
+        title: t('public~State'),
+      },
+      {
+        id: 'createdBy',
+        props: { className: tableSilenceClasses[3] },
+        title: t('public~Creator'),
+      },
+      {
+        id: 'actions',
+        props: { className: tableSilenceClasses[4] },
+        title: '',
+      },
+    ],
+    [t],
+  );
+
+  return (
+    <VirtualizedTable<Silence>
+      aria-label={t('public~Silenced by')}
+      columns={columns}
+      data={silences}
+      loaded={true}
+      loadError={undefined}
+      Row={SilenceTableRow}
+      unfilteredData={silences}
+    />
+  );
+};
 
 const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const { t } = useTranslation();
@@ -669,9 +692,6 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const alert = _.find(ruleAlerts, (a) => _.isEqual(a.labels, getURLSearchParams()));
 
   const state = alertState(alert);
-
-  const silencesTableHeader = () =>
-    getSilenceTableHeader(t).map((h) => _.pick(h, ['title', 'props']));
 
   const labelsMemoKey = JSON.stringify(alert?.labels);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -873,14 +893,7 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               <SectionHeading text={t('public~Silenced by')} />
               <div className="row">
                 <div className="col-xs-12">
-                  <Table
-                    aria-label={t('public~Silenced by')}
-                    data={alert?.silencedBy}
-                    Header={silencesTableHeader}
-                    loaded={true}
-                    Row={SilenceTableRow}
-                    getRowProps={getSilenceProps}
-                  />
+                  <SilencedByList silences={alert?.silencedBy} />
                 </div>
               </div>
             </div>
@@ -1453,19 +1466,21 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
 const SilencesDetailsPage = withFallback(SilencesDetailsPage_);
 
 const tableAlertClasses = [
-  'pf-u-w-50 pf-u-w-33-on-sm',
-  'pf-m-hidden pf-m-visible-on-sm',
-  '',
-  'pf-m-hidden pf-m-visible-on-sm',
+  'pf-u-w-50 pf-u-w-33-on-sm', // Name
+  'pf-m-hidden pf-m-visible-on-sm', // Severity
+  '', // State
+  'pf-m-hidden pf-m-visible-on-sm', // Source
   'dropdown-kebab-pf pf-c-table__action',
 ];
 
-const AlertTableRow: React.FC<RowFunctionArgs<Alert>> = ({ obj }) => {
+const AlertTableRow: React.FC<RowProps<Alert>> = ({ obj }) => {
   const { t } = useTranslation();
 
   const { annotations = {}, labels } = obj;
   const description = annotations.description || annotations.message;
   const state = alertState(obj);
+
+  const title: string = obj.annotations?.description || obj.annotations?.message;
 
   const dropdownItems = [
     <DropdownItem key="view-rule" onClick={() => viewAlertRule(obj)}>
@@ -1482,7 +1497,7 @@ const AlertTableRow: React.FC<RowFunctionArgs<Alert>> = ({ obj }) => {
 
   return (
     <>
-      <TableData className={tableAlertClasses[0]}>
+      <td className={tableAlertClasses[0]} title={title}>
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={AlertResource} />
           <Link
@@ -1494,22 +1509,20 @@ const AlertTableRow: React.FC<RowFunctionArgs<Alert>> = ({ obj }) => {
           </Link>
         </div>
         <div className="monitoring-description">{description}</div>
-      </TableData>
-      <TableData className={tableAlertClasses[1]}>
+      </td>
+      <td className={tableAlertClasses[1]} title={title}>
         <Severity severity={labels?.severity} />
-      </TableData>
-      <TableData className={tableAlertClasses[2]}>
+      </td>
+      <td className={tableAlertClasses[2]} title={title}>
         <AlertState state={state} />
         <AlertStateDescription alert={obj} />
-      </TableData>
-      <TableData className={tableAlertClasses[3]}>
-        {alertSource(obj) === AlertSource.User
-          ? i18next.t('public~User')
-          : i18next.t('public~Platform')}
-      </TableData>
-      <TableData className={tableAlertClasses[4]}>
+      </td>
+      <td className={tableAlertClasses[3]} title={title}>
+        {alertSource(obj) === AlertSource.User ? t('public~User') : t('public~Platform')}
+      </td>
+      <td className={tableAlertClasses[4]} title={title}>
         <KebabDropdown dropdownItems={dropdownItems} />
-      </TableData>
+      </td>
     </>
   );
 };
@@ -1528,106 +1541,6 @@ export const severityRowFilter = (): RowFilter => ({
   type: 'alert-severity',
 });
 
-const alertsRowFilters = (): RowFilter[] => [
-  {
-    defaultSelected: [AlertStates.Firing],
-    filter: (filter, alert: Alert) =>
-      filter.selected?.includes(alertState(alert)) || _.isEmpty(filter.selected),
-    filterGroupName: i18next.t('public~Alert State'),
-    items: [
-      { id: AlertStates.Firing, title: i18next.t('public~Firing') },
-      { id: AlertStates.Pending, title: i18next.t('public~Pending') },
-      { id: AlertStates.Silenced, title: i18next.t('public~Silenced') },
-    ],
-    reducer: alertState,
-    type: 'alert-state',
-  },
-  severityRowFilter(),
-  {
-    defaultSelected: [AlertSource.Platform],
-    filter: (filter, alert: Alert) =>
-      filter.selected?.includes(alertSource(alert)) || _.isEmpty(filter.selected),
-    filterGroupName: i18next.t('public~Source'),
-    items: [
-      { id: AlertSource.Platform, title: i18next.t('public~Platform') },
-      { id: AlertSource.User, title: i18next.t('public~User') },
-    ],
-    reducer: alertSource,
-    type: 'alert-source',
-  },
-];
-
-const MonitoringListPage: React.FC<ListPageProps & {
-  getRowProps?: TableProps['getRowProps'];
-}> = ({
-  CreateButton,
-  data,
-  defaultSortField,
-  Header,
-  hideLabelFilter,
-  kindPlural,
-  labelFilter,
-  labelPath,
-  loaded,
-  loadError,
-  nameFilterID,
-  reduxID,
-  Row,
-  rowFilters,
-  getRowProps,
-  TopAlert,
-}) => {
-  const filters = useSelector(({ k8s }: RootState) => k8s.getIn([reduxID, 'filters']));
-
-  return (
-    <>
-      <Helmet>
-        <title>Alerting</title>
-      </Helmet>
-      <div className="co-m-pane__body">
-        {CreateButton && (
-          <div className="co-m-pane__createLink--no-title">
-            <CreateButton />
-          </div>
-        )}
-        <FilterToolbar
-          data={data}
-          hideLabelFilter={hideLabelFilter}
-          labelFilter={labelFilter}
-          labelPath={labelPath}
-          reduxIDs={[reduxID]}
-          rowFilters={rowFilters}
-          textFilter={nameFilterID}
-        />
-        {TopAlert}
-        <div className="row">
-          <div className="col-xs-12">
-            <Table
-              aria-label={kindPlural}
-              data={data}
-              defaultSortField={defaultSortField}
-              filters={filters?.toJS()}
-              Header={Header}
-              loaded={loaded}
-              loadError={loadError}
-              reduxID={reduxID}
-              Row={Row}
-              rowFilters={rowFilters}
-              virtualize
-              getRowProps={getRowProps}
-            />
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
-
-const getRowProps = (obj: Alert | Rule) => ({
-  id: (obj as Alert).rule?.id,
-  title: obj.annotations?.description || obj.annotations?.message,
-});
-
 const SilencesNotLoadedWarning: React.FC<{ silencesLoadError: any }> = ({ silencesLoadError }) => {
   const { t } = useTranslation();
   return (
@@ -1644,66 +1557,136 @@ const SilencesNotLoadedWarning: React.FC<{ silencesLoadError: any }> = ({ silenc
   );
 };
 
+// Sort alerts by their state (sort first by the state itself, then by the timestamp relevant to
+// the state)
+const alertStateOrder = (alert: Alert) => [
+  [AlertStates.Firing, AlertStates.Pending, AlertStates.Silenced].indexOf(alertState(alert)),
+  alertState(alert) === AlertStates.Silenced
+    ? _.max(_.map(alert.silencedBy, 'endsAt'))
+    : _.get(alert, 'activeAt'),
+];
+
 const AlertsPage_: React.FC<Alerts> = () => {
   const { t } = useTranslation();
 
-  const { data, loaded, loadError }: Alerts = useSelector(
+  const { data, loaded = false, loadError }: Alerts = useSelector(
     ({ observe }: RootState) => observe.get('alerts') || {},
   );
   const silencesLoadError = useSelector(
     ({ observe }: RootState) => observe.get('silences')?.loadError,
   );
 
-  const Header = () => [
+  const nameFilter: RowFilter = {
+    filter: (filter, alert: Alert) =>
+      fuzzyCaseInsensitive(filter.selected?.[0], alert.labels?.alertname),
+    items: [],
+    type: 'name',
+  } as RowFilter;
+
+  const rowFilters: RowFilter[] = [
     {
-      title: t('public~Name'),
-      sortField: 'labels.alertname',
-      transforms: [sortable],
-      props: { className: tableAlertClasses[0] },
+      defaultSelected: [AlertStates.Firing],
+      filter: (filter, alert: Alert) =>
+        filter.selected?.includes(alertState(alert)) || _.isEmpty(filter.selected),
+      filterGroupName: t('public~Alert State'),
+      items: [
+        { id: AlertStates.Firing, title: t('public~Firing') },
+        { id: AlertStates.Pending, title: t('public~Pending') },
+        { id: AlertStates.Silenced, title: t('public~Silenced') },
+      ],
+      reducer: alertState,
+      type: 'alert-state',
     },
+    severityRowFilter(),
     {
-      title: t('public~Severity'),
-      sortFunc: 'alertSeverityOrder',
-      transforms: [sortable],
-      props: { className: tableAlertClasses[1] },
-    },
-    {
-      title: t('public~State'),
-      sortFunc: 'alertStateOrder',
-      transforms: [sortable],
-      props: { className: tableAlertClasses[2] },
-    },
-    {
-      title: t('public~Source'),
-      sortFunc: 'alertSource',
-      transforms: [sortable],
-      props: { className: tableAlertClasses[3] },
-    },
-    {
-      title: '',
-      props: { className: tableAlertClasses[4] },
+      defaultSelected: [AlertSource.Platform],
+      filter: (filter, alert: Alert) =>
+        filter.selected?.includes(alertSource(alert)) || _.isEmpty(filter.selected),
+      filterGroupName: t('public~Source'),
+      items: [
+        { id: AlertSource.Platform, title: t('public~Platform') },
+        { id: AlertSource.User, title: t('public~User') },
+      ],
+      reducer: alertSource,
+      type: 'alert-source',
     },
   ];
 
+  const allFilters: RowFilter[] = [nameFilter, ...rowFilters];
+  const [staticData, filteredData, onFilterChange] = useListPageFilter(data, allFilters);
+
+  const columns = React.useMemo<TableColumn<Alert>[]>(
+    () => [
+      {
+        id: 'name',
+        props: { className: tableAlertClasses[0] },
+        sort: 'labels.alertname',
+        title: t('public~Name'),
+        transforms: [sortable],
+      },
+      {
+        id: 'severity',
+        props: { className: tableAlertClasses[1] },
+        sort: (alerts: Alert[], direction: 'asc' | 'desc') =>
+          _.orderBy(alerts, alertSeverityOrder, [direction]) as Alert[],
+        title: t('public~Severity'),
+        transforms: [sortable],
+      },
+      {
+        id: 'state',
+        props: { className: tableAlertClasses[2] },
+        sort: (alerts: Alert[], direction: 'asc' | 'desc') =>
+          _.orderBy(alerts, alertStateOrder, [direction]),
+        title: t('public~State'),
+        transforms: [sortable],
+      },
+      {
+        id: 'source',
+        props: { className: tableAlertClasses[3] },
+        sort: (alerts: Alert[], direction: 'asc' | 'desc') =>
+          _.orderBy(alerts, alertSource, [direction]),
+        title: t('public~Source'),
+        transforms: [sortable],
+      },
+      {
+        id: 'actions',
+        props: { className: tableAlertClasses[4] },
+        title: '',
+      },
+    ],
+    [t],
+  );
+
   return (
-    <MonitoringListPage
-      data={data}
-      defaultSortField="labels.alertname"
-      Header={Header}
-      kindPlural={t('public~Alerts')}
-      labelFilter="alerts"
-      labelPath="labels"
-      loaded={loaded}
-      loadError={loadError}
-      nameFilterID="resource-list-text"
-      reduxID="monitoringAlerts"
-      Row={AlertTableRow}
-      rowFilters={alertsRowFilters()}
-      getRowProps={getRowProps}
-      TopAlert={
-        silencesLoadError && <SilencesNotLoadedWarning silencesLoadError={silencesLoadError} />
-      }
-    />
+    <>
+      <Helmet>
+        <title>Alerting</title>
+      </Helmet>
+      <div className="co-m-pane__body">
+        <ListPageFilter
+          data={staticData}
+          labelFilter="alerts"
+          labelPath="labels"
+          loaded={loaded}
+          onFilterChange={onFilterChange}
+          rowFilters={rowFilters}
+        />
+        {silencesLoadError && <SilencesNotLoadedWarning silencesLoadError={silencesLoadError} />}
+        <div className="row">
+          <div className="col-xs-12">
+            <VirtualizedTable<Alert>
+              aria-label={t('public~Alerts')}
+              columns={columns}
+              data={filteredData ?? []}
+              loaded={loaded}
+              loadError={loadError}
+              Row={AlertTableRow}
+              unfilteredData={data}
+            />
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 const AlertsPage = withFallback(AlertsPage_);
@@ -1730,75 +1713,58 @@ export const alertStateFilter = (): RowFilter => ({
 });
 
 const tableRuleClasses = [
-  'pf-u-w-50 pf-u-w-33-on-sm',
-  'pf-m-hidden pf-m-visible-on-sm',
-  '',
-  'pf-m-hidden pf-m-visible-on-sm',
+  'pf-u-w-50 pf-u-w-33-on-sm', // Name
+  'pf-m-hidden pf-m-visible-on-sm', // Severity
+  '', // Alert state
+  'pf-m-hidden pf-m-visible-on-sm', // Source
 ];
 
-const RuleTableRow: React.FC<RowFunctionArgs<Rule>> = ({ obj }) => (
-  <>
-    <TableData className={tableRuleClasses[0]}>
-      <div className="co-resource-item">
-        <MonitoringResourceIcon resource={RuleResource} />
-        <Link to={ruleURL(obj)} className="co-resource-item__resource-name">
-          {obj.name}
-        </Link>
-      </div>
-    </TableData>
-    <TableData className={tableRuleClasses[1]}>
-      <Severity severity={obj.labels?.severity} />
-    </TableData>
-    <TableData className={tableRuleClasses[2]}>
-      {_.isEmpty(obj.alerts) ? '-' : <StateCounts alerts={obj.alerts} />}
-    </TableData>
-    <TableData className={tableRuleClasses[3]}>
-      {alertingRuleSource(obj) === AlertSource.User
-        ? i18next.t('public~User')
-        : i18next.t('public~Platform')}
-    </TableData>
-  </>
-);
+const RuleTableRow: React.FC<RowProps<Rule>> = ({ obj }) => {
+  const { t } = useTranslation();
+
+  const title: string = obj.annotations?.description || obj.annotations?.message;
+
+  return (
+    <>
+      <td className={tableRuleClasses[0]} title={title}>
+        <div className="co-resource-item">
+          <MonitoringResourceIcon resource={RuleResource} />
+          <Link to={ruleURL(obj)} className="co-resource-item__resource-name">
+            {obj.name}
+          </Link>
+        </div>
+      </td>
+      <td className={tableRuleClasses[1]} title={title}>
+        <Severity severity={obj.labels?.severity} />
+      </td>
+      <td className={tableRuleClasses[2]} title={title}>
+        {_.isEmpty(obj.alerts) ? '-' : <StateCounts alerts={obj.alerts} />}
+      </td>
+      <td className={tableRuleClasses[3]} title={title}>
+        {alertingRuleSource(obj) === AlertSource.User ? t('public~User') : t('public~Platform')}
+      </td>
+    </>
+  );
+};
 
 const RulesPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
 
-  const data = useSelector(({ observe }: RootState) => observe.get('rules'));
-  const { loaded, loadError }: Alerts = useSelector(
+  const data: Rule[] = useSelector(({ observe }: RootState) => observe.get('rules'));
+  const { loaded = false, loadError }: Alerts = useSelector(
     ({ observe }: RootState) => observe.get('alerts') || {},
   );
   const silencesLoadError = useSelector(
     ({ observe }: RootState) => observe.get('silences')?.loadError,
   );
 
-  const Header = () => [
-    {
-      title: t('public~Name'),
-      sortField: 'name',
-      transforms: [sortable],
-      props: { className: tableRuleClasses[0] },
-    },
-    {
-      title: t('public~Severity'),
-      sortFunc: 'alertSeverityOrder',
-      transforms: [sortable],
-      props: { className: tableRuleClasses[1] },
-    },
-    {
-      title: t('public~Alert state'),
-      sortFunc: 'alertingRuleStateOrder',
-      transforms: [sortable],
-      props: { className: tableRuleClasses[2] },
-    },
-    {
-      title: t('public~Source'),
-      sortFunc: 'alertingRuleSource',
-      transforms: [sortable],
-      props: { className: tableRuleClasses[3] },
-    },
-  ];
+  const nameFilter: RowFilter = {
+    filter: (filter, rule: Rule) => fuzzyCaseInsensitive(filter.selected?.[0], rule.name),
+    items: [],
+    type: 'name',
+  } as RowFilter;
 
-  const rulesRowFilters: RowFilter[] = [
+  const rowFilters: RowFilter[] = [
     alertStateFilter(),
     severityRowFilter(),
     {
@@ -1815,25 +1781,75 @@ const RulesPage_: React.FC<{}> = () => {
     },
   ];
 
+  const allFilters: RowFilter[] = [nameFilter, ...rowFilters];
+  const [staticData, filteredData, onFilterChange] = useListPageFilter(data, allFilters);
+
+  const columns = React.useMemo<TableColumn<Rule>[]>(
+    () => [
+      {
+        id: 'name',
+        props: { className: tableRuleClasses[0] },
+        sort: 'name',
+        title: t('public~Name'),
+        transforms: [sortable],
+      },
+      {
+        id: 'severity',
+        props: { className: tableRuleClasses[1] },
+        sort: (rules: Rule[], direction: 'asc' | 'desc') =>
+          _.orderBy(rules, alertSeverityOrder, [direction]) as Rule[],
+        title: t('public~Severity'),
+        transforms: [sortable],
+      },
+      {
+        id: 'state',
+        props: { className: tableRuleClasses[2] },
+        sort: (rules: Rule[], direction: 'asc' | 'desc') =>
+          _.orderBy(rules, alertingRuleStateOrder, [direction]),
+        title: t('public~Alert state'),
+        transforms: [sortable],
+      },
+      {
+        id: 'source',
+        props: { className: tableRuleClasses[3] },
+        sort: (rules: Rule[], direction: 'asc' | 'desc') =>
+          _.orderBy(rules, alertingRuleSource, [direction]),
+        title: t('public~Source'),
+        transforms: [sortable],
+      },
+    ],
+    [t],
+  );
+
   return (
-    <MonitoringListPage
-      data={data}
-      defaultSortField="name"
-      Header={Header}
-      kindPlural={t('public~Alerting rules')}
-      labelFilter="alerts"
-      labelPath="labels"
-      loaded={loaded}
-      loadError={loadError}
-      nameFilterID="alerting-rule-name"
-      reduxID="monitoringRules"
-      Row={RuleTableRow}
-      rowFilters={rulesRowFilters}
-      getRowProps={getRowProps}
-      TopAlert={
-        silencesLoadError && <SilencesNotLoadedWarning silencesLoadError={silencesLoadError} />
-      }
-    />
+    <>
+      <Helmet>
+        <title>Alerting</title>
+      </Helmet>
+      <div className="co-m-pane__body">
+        <ListPageFilter
+          data={staticData}
+          labelFilter="alerts"
+          loaded={loaded}
+          onFilterChange={onFilterChange}
+          rowFilters={rowFilters}
+        />
+        {silencesLoadError && <SilencesNotLoadedWarning silencesLoadError={silencesLoadError} />}
+        <div className="row">
+          <div className="col-xs-12">
+            <VirtualizedTable<Rule>
+              aria-label={t('public~Alerting rules')}
+              columns={columns}
+              data={filteredData ?? []}
+              loaded={loaded}
+              loadError={loadError}
+              Row={RuleTableRow}
+              unfilteredData={data}
+            />
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 const RulesPage = withFallback(RulesPage_);
@@ -1850,16 +1866,36 @@ const CreateButton: React.FC<{}> = React.memo(() => {
   );
 });
 
+const silenceFiringAlertsOrder = (silence: Silence) => {
+  const counts = _.countBy(silence.firingAlerts, 'labels.severity');
+  return [
+    Number.MAX_SAFE_INTEGER - (counts[AlertSeverity.Critical] ?? 0),
+    Number.MAX_SAFE_INTEGER - (counts[AlertSeverity.Warning] ?? 0),
+    silence.firingAlerts.length,
+  ];
+};
+
+const silenceStateOrder = (silence: Silence) => [
+  [SilenceStates.Active, SilenceStates.Pending, SilenceStates.Expired].indexOf(
+    silenceState(silence),
+  ),
+  _.get(silence, silenceState(silence) === SilenceStates.Pending ? 'startsAt' : 'endsAt'),
+];
+
 const SilencesPage_: React.FC<Silences> = () => {
   const { t } = useTranslation();
 
-  const { data, loaded, loadError }: Silences = useSelector(
+  const { data, loaded = false, loadError }: Silences = useSelector(
     ({ observe }: RootState) => observe.get('silences') || {},
   );
 
-  const Header = () => getSilenceTableHeader(t);
+  const nameFilter: RowFilter = {
+    filter: (filter, silence: Silence) => fuzzyCaseInsensitive(filter.selected?.[0], silence.name),
+    items: [],
+    type: 'name',
+  } as RowFilter;
 
-  const silencesRowFilters: RowFilter[] = [
+  const rowFilters: RowFilter[] = [
     {
       defaultSelected: [SilenceStates.Active, SilenceStates.Pending],
       filter: (filter, silence: Silence) =>
@@ -1875,22 +1911,67 @@ const SilencesPage_: React.FC<Silences> = () => {
     },
   ];
 
+  const allFilters: RowFilter[] = [nameFilter, ...rowFilters];
+  const [staticData, filteredData, onFilterChange] = useListPageFilter(data, allFilters);
+
+  const columns = React.useMemo<TableColumn<Silence>[]>(
+    () => [
+      {
+        id: 'name',
+        props: { className: tableSilenceClasses[0] },
+        sort: 'name',
+        title: t('public~Name'),
+        transforms: [sortable],
+      },
+      {
+        id: 'firingAlerts',
+        props: { className: tableSilenceClasses[1] },
+        sort: (silences: Silence[], direction: 'asc' | 'desc') =>
+          _.orderBy(silences, silenceFiringAlertsOrder, [direction]),
+        title: t('public~Firing alerts'),
+        transforms: [sortable],
+      },
+      {
+        id: 'state',
+        props: { className: tableSilenceClasses[2] },
+        sort: (silences: Silence[], direction: 'asc' | 'desc') =>
+          _.orderBy(silences, silenceStateOrder, [direction]),
+        title: t('public~State'),
+        transforms: [sortable],
+      },
+      {
+        id: 'createdBy',
+        props: { className: tableSilenceClasses[3] },
+        sort: 'createdBy',
+        title: t('public~Creator'),
+        transforms: [sortable],
+      },
+      {
+        id: 'actions',
+        props: { className: tableSilenceClasses[4] },
+        title: '',
+      },
+    ],
+    [t],
+  );
+
   return (
-    <MonitoringListPage
-      CreateButton={CreateButton}
-      data={data}
-      defaultSortField="name"
-      Header={Header}
-      hideLabelFilter
-      kindPlural={t('public~Silences')}
-      loaded={loaded}
-      loadError={loadError}
-      nameFilterID="silence-name"
-      reduxID="monitoringSilences"
-      Row={SilenceTableRow}
-      rowFilters={silencesRowFilters}
-      TopAlert={
-        loadError && (
+    <>
+      <Helmet>
+        <title>Alerting</title>
+      </Helmet>
+      <div className="co-m-pane__body">
+        <div className="co-m-pane__createLink--no-title">
+          <CreateButton />
+        </div>
+        <ListPageFilter
+          data={staticData}
+          hideLabelFilter
+          loaded={loaded}
+          onFilterChange={onFilterChange}
+          rowFilters={rowFilters}
+        />
+        {loadError && (
           <PFAlert
             className="co-alert"
             isInline
@@ -1901,9 +1982,22 @@ const SilencesPage_: React.FC<Silences> = () => {
           >
             {typeof loadError === 'string' ? loadError : loadError.message}
           </PFAlert>
-        )
-      }
-    />
+        )}
+        <div className="row">
+          <div className="col-xs-12">
+            <VirtualizedTable<Silence>
+              aria-label={t('public~Silences')}
+              columns={columns}
+              data={filteredData ?? []}
+              loaded={loaded}
+              loadError={loadError}
+              Row={SilenceTableRow}
+              unfilteredData={data}
+            />
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 const SilencesPage = withFallback(SilencesPage_);

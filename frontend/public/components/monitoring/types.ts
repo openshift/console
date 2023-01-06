@@ -2,12 +2,9 @@ import {
   Alert,
   PrometheusLabels,
   PrometheusRule,
-  RowFilter,
   Rule,
   Silence,
 } from '@console/dynamic-plugin-sdk';
-
-import { RowFunctionArgs } from '../factory';
 
 export const enum AlertSource {
   Platform = 'platform',
@@ -60,25 +57,6 @@ export type PrometheusRulesResponse = {
     groups: Group[];
   };
   status: string;
-};
-
-export type ListPageProps = {
-  CreateButton?: React.ComponentType<{}>;
-  data: Alert[] | Rule[] | Silence[];
-  defaultSortField: string;
-  Header: (...args) => any[];
-  hideLabelFilter?: boolean;
-  kindPlural: string;
-  labelFilter?: string;
-  labelPath?: string;
-  loaded: boolean;
-  loadError?: any;
-  nameFilterID: string;
-  reduxID: string;
-  Row: React.FC<RowFunctionArgs>;
-  rowFilters: RowFilter[];
-  showTitle?: boolean;
-  TopAlert?: React.ReactNode;
 };
 
 export type Target = {

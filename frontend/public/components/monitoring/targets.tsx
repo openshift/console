@@ -24,8 +24,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
-import fuzzy from 'fuzzysearch';
-import { find, includes, isEmpty, toLower } from 'lodash-es';
+import { find, includes, isEmpty } from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
@@ -39,7 +38,6 @@ import {
   PodMonitorModel,
 } from '../../models';
 import { K8sResourceKind, LabelSelector, referenceForModel } from '../../module/k8s';
-import { TableData } from '../factory';
 import { SectionHeading } from '../utils/headings';
 import { usePoll } from '../utils/poll-hook';
 import { useSafeFetch } from '../utils/safe-fetch-hook';
@@ -47,7 +45,7 @@ import { LoadingInline, StatusBox } from '../utils/status-box';
 import { useBoolean } from './hooks/useBoolean';
 import { Labels } from './labels';
 import { AlertSource, PrometheusAPIError, Target } from './types';
-import { PROMETHEUS_BASE_PATH, targetSource } from './utils';
+import { fuzzyCaseInsensitive, PROMETHEUS_BASE_PATH, targetSource } from './utils';
 
 enum MonitorType {
   ServiceMonitor = 'serviceMonitor',
@@ -338,15 +336,15 @@ const Row: React.FC<RowProps<Target>> = ({ obj }) => {
 
   return (
     <>
-      <TableData className={tableClasses[0]}>
+      <td className={tableClasses[0]}>
         <Link to={`./targets/${btoa(scrapeUrl)}`}>{scrapeUrl}</Link>
-      </TableData>
-      <TableData className={tableClasses[1]}>
+      </td>
+      <td className={tableClasses[1]}>
         {isServiceMonitor && <ServiceMonitor target={obj} />}
         {isPodMonitor && <PodMonitor target={obj} />}
         {!isServiceMonitor && !isPodMonitor && <>-</>}
-      </TableData>
-      <TableData className={tableClasses[2]}>
+      </td>
+      <td className={tableClasses[2]}>
         {health === 'up' ? (
           <Health health="up" />
         ) : (
@@ -356,18 +354,18 @@ const Row: React.FC<RowProps<Target>> = ({ obj }) => {
             </span>
           </Tooltip>
         )}
-      </TableData>
-      <TableData className={tableClasses[3]}>
+      </td>
+      <td className={tableClasses[3]}>
         {labels?.namespace && (
           <ResourceLink inline kind={NamespaceModel.kind} name={labels?.namespace} />
         )}
-      </TableData>
-      <TableData className={tableClasses[4]}>
+      </td>
+      <td className={tableClasses[4]}>
         <Timestamp timestamp={lastScrape} />
-      </TableData>
-      <TableData className={tableClasses[5]}>
+      </td>
+      <td className={tableClasses[5]}>
         {lastScrapeDuration ? `${(1000 * lastScrapeDuration).toFixed(1)} ms` : '-'}
-      </TableData>
+      </td>
     </>
   );
 };
@@ -440,8 +438,6 @@ const List: React.FC<ListProps> = ({ data, loaded, loadError, unfilteredData }) 
     />
   );
 };
-
-const fuzzyCaseInsensitive = (a: string, b: string): boolean => fuzzy(toLower(a), toLower(b));
 
 type ListPageProps = {
   loaded: boolean;

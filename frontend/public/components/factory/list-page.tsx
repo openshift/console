@@ -518,7 +518,7 @@ type PageCommonProps<L = any, C = any> = {
   mock?: boolean;
 };
 
-type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
+export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   createAccessReview?: {
     model: K8sKind;
     namespace?: string;
