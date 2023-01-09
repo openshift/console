@@ -140,6 +140,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
       component="button"
       onClick={(e) => onClusterSelect(e, managedCluster)}
       title={managedCluster}
+      data-test-id="cluster-switcher-menu-option"
     >
       <ClusterIcon />
       {managedCluster}
@@ -199,7 +200,10 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
           <Dropdown
             isOpen={isClusterDropdownOpen}
             toggle={
-              <DropdownToggle onToggle={() => setClusterDropdownOpen(!isClusterDropdownOpen)}>
+              <DropdownToggle
+                onToggle={() => setClusterDropdownOpen(!isClusterDropdownOpen)}
+                data-test-id="cluster-switcher-toggle"
+              >
                 <Title headingLevel="h2" size="md">
                   {activePerspective === 'acm' ? (
                     t('console-app~All Clusters')
@@ -227,6 +231,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
                 : []),
               ...clusterItems,
             ]}
+            data-test-id="cluster-switcher-menu"
           />
         </div>
       )}

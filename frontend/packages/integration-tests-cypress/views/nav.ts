@@ -11,6 +11,16 @@ export const nav = {
           .contains(newPerspective)
           .click(),
     },
+    clusters: {
+      shouldHaveText: (text: string) => cy.byLegacyTestID('cluster-switcher-toggle').contains(text),
+      changeClusterTo: (newCluster: string) =>
+        cy
+          .byLegacyTestID('cluster-switcher-toggle')
+          .click()
+          .byLegacyTestID('cluster-switcher-menu-option')
+          .contains(newCluster)
+          .click(),
+    },
     shouldHaveNavSection: (path: string[]) => {
       cy.get('#page-sidebar').contains(path[0]);
       if (path.length === 2) {
