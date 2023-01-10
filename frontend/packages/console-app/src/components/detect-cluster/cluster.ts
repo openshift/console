@@ -8,6 +8,7 @@ import { setActiveCluster } from '@console/dynamic-plugin-sdk/src/app/core/actio
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { clearSSARFlags, detectFeatures } from '@console/internal/actions/features';
 import { formatNamespaceRoute } from '@console/internal/actions/ui';
+import { startGQLClient } from '@console/internal/graphql/client';
 import { useActiveNamespace } from '@console/shared/src';
 import { LAST_CLUSTER_USER_SETTINGS_KEY, HUB_CLUSTER_NAME } from '@console/shared/src/constants';
 import { useUserSettingsLocalStorage } from '@console/shared/src/hooks/useUserSettingsLocalStorage';
@@ -48,6 +49,7 @@ export const useValuesForClusterContext = () => {
         if (cluster !== activeCluster) {
           dispatch(setActiveCluster(cluster));
           setLastCluster(cluster);
+          startGQLClient(cluster);
           dispatch(clearSSARFlags());
           dispatch(detectFeatures());
         }

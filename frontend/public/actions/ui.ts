@@ -3,7 +3,7 @@ import { action, ActionType as Action } from 'typesafe-actions';
 import * as _ from 'lodash-es';
 
 // FIXME(alecmerdler): Do not `import store`
-import store from '../redux';
+import store, { RootState } from '../redux';
 import { history } from '../components/utils/router';
 import { OverviewItem } from '@console/shared';
 import {
@@ -15,13 +15,13 @@ import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { setClusterID, setCreateProjectMessage } from './common';
-import { subsClient } from '../graphql/client';
 import {
   beginImpersonate,
   endImpersonate,
   getUser,
   getImpersonate,
 } from '@console/dynamic-plugin-sdk';
+import { startGQLClient } from '../graphql/client';
 
 export enum ActionType {
   DismissOverviewDetails = 'dismissOverviewDetails',
@@ -218,7 +218,10 @@ export const setActiveNamespace = (namespace: string = '') => {
   return action(ActionType.SetActiveNamespace, { namespace });
 };
 
-export const startImpersonate = (kind: string, name: string) => async (dispatch, getState) => {
+export const startImpersonate = (kind: string, name: string) => async (
+  dispatch,
+  getState: () => RootState,
+) => {
   let textEncoder;
   try {
     textEncoder = new TextEncoder();
@@ -255,14 +258,14 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
   }
 
   dispatch(beginImpersonate(kind, name, subprotocols));
-  subsClient.close(false, true);
+  startGQLClient(getState().sdkCore.activeCluster);
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);
 };
-export const stopImpersonate = () => (dispatch) => {
+export const stopImpersonate = () => (dispatch, getState: () => RootState) => {
   dispatch(endImpersonate());
-  subsClient.close(false, true);
+  startGQLClient(getState().sdkCore.activeCluster);
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);

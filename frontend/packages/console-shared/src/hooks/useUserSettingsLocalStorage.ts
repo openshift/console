@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { deseralizeData, seralizeData } from '../utils/user-settings';
+import { deseralizeData, seralizeData, getValueFromStorage } from '../utils/user-settings';
 
 export const useUserSettingsLocalStorage = <T>(
   storageKey: string,
@@ -15,14 +15,14 @@ export const useUserSettingsLocalStorage = <T>(
   const storage = session ? sessionStorage : localStorage;
   const keyRef = React.useRef(userSettingsKey);
   const defaultValueRef = React.useRef(defaultValue);
-  const [data, setData] = React.useState(() => {
-    const valueInStorage =
-      storage.getItem(storageKey) !== null && deseralizeData(storage.getItem(storageKey));
-    return valueInStorage?.hasOwnProperty(keyRef.current) &&
-      valueInStorage[keyRef.current] !== undefined
-      ? valueInStorage[keyRef.current]
-      : defaultValueRef.current;
-  });
+  const [data, setData] = React.useState(() =>
+    getValueFromStorage({
+      storage,
+      storageKey,
+      userSettingsKey: keyRef.current,
+      defaultValue: defaultValueRef.current,
+    }),
+  );
   const dataRef = React.useRef<T>(data);
   dataRef.current = data;
 

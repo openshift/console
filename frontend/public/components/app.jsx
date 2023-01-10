@@ -48,6 +48,11 @@ import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { useToast } from '@console/shared/src/components/toast';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import {
+  HUB_CLUSTER_NAME,
+  LAST_CLUSTER_USER_SETTINGS_KEY,
+} from '@console/shared/src/constants/common';
+import { getValueFromStorage } from '@console/shared/src/utils/user-settings';
 import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
@@ -63,7 +68,7 @@ const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
 import { withoutSensitiveInformations } from './utils/telemetry';
-import { graphQLReady } from '../graphql/client';
+import { startGQLClient } from '../graphql/client';
 
 initI18n();
 
@@ -485,77 +490,94 @@ const initApiDiscovery = (storeInstance) => {
   updateSwaggerDefinitionContinual();
 };
 
-graphQLReady.onReady(() => {
-  store.dispatch(detectFeatures());
+const AppWithGQL = () => {
+  const [clientReady, setClientReady] = React.useState(false);
+  React.useEffect(() => {
+    const cluster = getValueFromStorage({
+      storage: sessionStorage,
+      storageKey: LAST_CLUSTER_USER_SETTINGS_KEY,
+      userSettingsKey: LAST_CLUSTER_USER_SETTINGS_KEY,
+      defaultValue: HUB_CLUSTER_NAME,
+    });
+    startGQLClient(cluster, () => {
+      store.dispatch(detectFeatures());
 
-  // Global timer to ensure all <Timestamp> components update in sync
-  setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
+      // Global timer to ensure all <Timestamp> components update in sync
+      setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
 
-  // Used by GUI tests to check for unhandled exceptions
-  window.windowError = null;
-  window.onerror = (message, source, lineno, colno, error) => {
-    const formattedStack = error?.stack?.replace(/\\n/g, '\n');
-    const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
-    window.windowError = formattedMessage;
-    // eslint-disable-next-line no-console
-    console.error(formattedMessage, error || message);
-  };
-  window.onunhandledrejection = (promiseRejectionEvent) => {
-    const { reason } = promiseRejectionEvent;
-    const formattedMessage = `unhandled promise rejection: ${reason}`;
-    window.windowError = formattedMessage;
-    // eslint-disable-next-line no-console
-    console.error(formattedMessage, reason);
-  };
-
-  if ('serviceWorker' in navigator) {
-    if (window.SERVER_FLAGS.loadTestFactor > 1) {
-      // eslint-disable-next-line import/no-unresolved
-      import('file-loader?name=load-test.sw.js!../load-test.sw.js')
-        .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
-        .then(
-          () =>
-            new Promise((r) =>
-              navigator.serviceWorker.controller
-                ? r()
-                : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
-            ),
-        )
-        .then(() =>
-          navigator.serviceWorker.controller.postMessage({
-            topic: 'setFactor',
-            value: window.SERVER_FLAGS.loadTestFactor,
-          }),
-        );
-    } else {
-      navigator.serviceWorker
-        .getRegistrations()
-        .then((registrations) => registrations.forEach((reg) => reg.unregister()))
+      // Used by GUI tests to check for unhandled exceptions
+      window.windowError = null;
+      window.onerror = (message, source, lineno, colno, error) => {
+        const formattedStack = error?.stack?.replace(/\\n/g, '\n');
+        const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
+        window.windowError = formattedMessage;
         // eslint-disable-next-line no-console
-        .catch((e) => console.warn('Error unregistering service workers', e));
-    }
-  }
+        console.error(formattedMessage, error || message);
+      };
+      window.onunhandledrejection = (promiseRejectionEvent) => {
+        const { reason } = promiseRejectionEvent;
+        const formattedMessage = `unhandled promise rejection: ${reason}`;
+        window.windowError = formattedMessage;
+        // eslint-disable-next-line no-console
+        console.error(formattedMessage, reason);
+      };
 
-  render(
-    <React.Suspense fallback={<LoadingBox />}>
-      <Provider store={store}>
-        <ThemeProvider>
-          <AppInitSDK
-            configurations={{
-              appFetch: appInternalFetch,
-              apiDiscovery: initApiDiscovery,
-              initPlugins,
-            }}
-          >
-            <CaptureTelemetry />
-            <ToastProvider>
-              <PollConsoleUpdates />
-              <AppRouter />
-            </ToastProvider>
-          </AppInitSDK>
-        </ThemeProvider>
-      </Provider>
-    </React.Suspense>,
-    document.getElementById('app'),
+      if ('serviceWorker' in navigator) {
+        if (window.SERVER_FLAGS.loadTestFactor > 1) {
+          // eslint-disable-next-line import/no-unresolved
+          import('file-loader?name=load-test.sw.js!../load-test.sw.js')
+            .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
+            .then(
+              () =>
+                new Promise((r) =>
+                  navigator.serviceWorker.controller
+                    ? r()
+                    : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
+                ),
+            )
+            .then(() =>
+              navigator.serviceWorker.controller.postMessage({
+                topic: 'setFactor',
+                value: window.SERVER_FLAGS.loadTestFactor,
+              }),
+            );
+        } else {
+          navigator.serviceWorker
+            .getRegistrations()
+            .then((registrations) => registrations.forEach((reg) => reg.unregister()))
+            // eslint-disable-next-line no-console
+            .catch((e) => console.warn('Error unregistering service workers', e));
+        }
+      }
+      setClientReady(true);
+    });
+  }, []);
+  return clientReady ? (
+    <ThemeProvider>
+      <AppInitSDK
+        configurations={{
+          appFetch: appInternalFetch,
+          apiDiscovery: initApiDiscovery,
+          initPlugins,
+        }}
+      >
+        <CaptureTelemetry />
+        <ToastProvider>
+          <PollConsoleUpdates />
+          <AppRouter />
+        </ToastProvider>
+      </AppInitSDK>
+    </ThemeProvider>
+  ) : (
+    <LoadingBox />
   );
-});
+};
+
+render(
+  <React.Suspense fallback={<LoadingBox />}>
+    <Provider store={store}>
+      <AppWithGQL />
+    </Provider>
+  </React.Suspense>,
+  document.getElementById('app'),
+);

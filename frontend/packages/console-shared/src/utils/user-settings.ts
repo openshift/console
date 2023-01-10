@@ -72,3 +72,24 @@ export const seralizeData = <T>(data: T) => {
   }
   return JSON.stringify(data);
 };
+
+type GetValueFromStorageArgs<T> = {
+  storage: Storage;
+  storageKey: string;
+  userSettingsKey: string;
+  defaultValue: T;
+};
+
+export const getValueFromStorage = <T>({
+  storage,
+  storageKey,
+  userSettingsKey,
+  defaultValue,
+}: GetValueFromStorageArgs<T>) => {
+  const valueInStorage =
+    storage.getItem(storageKey) !== null && deseralizeData(storage.getItem(storageKey));
+  return valueInStorage?.hasOwnProperty(userSettingsKey) &&
+    valueInStorage[userSettingsKey] !== undefined
+    ? valueInStorage[userSettingsKey]
+    : defaultValue;
+};

@@ -1,92 +1,75 @@
+import { getK8sResourcePath } from '../module/k8s';
+import { K8sModel, K8sResourceCommon } from '../module/k8s/types';
+import { URLQuery } from './client.gql';
+import { URLQueryType, URLQueryVariables } from '../../@types/console/generated/graphql-schema';
+
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { WebSocketLink } from 'apollo-link-ws';
 import { split } from 'apollo-link';
 
-import { getK8sResourcePath } from '../module/k8s';
-import { K8sKind, K8sResourceCommon } from '../module/k8s/types';
-import { URLQuery } from './client.gql';
-import { URLQueryType, URLQueryVariables } from '../../@types/console/generated/graphql-schema';
 import { getConsoleRequestHeaders, coFetch } from '../co-fetch';
 
-let wssErrors = 0;
+export let client: ApolloClient<NormalizedCacheObject>;
+let subsClient: SubscriptionClient;
 
-class GraphQLReady {
-  private callback: VoidFunction;
-  private ready: boolean;
-  private wasCalled: boolean;
+export const startGQLClient = (cluster: string, onReady?: VoidFunction) => {
+  subsClient?.close(true, false);
+  let wssErrors = 0;
+  subsClient = new SubscriptionClient(
+    `${location.protocol === 'https:' ? 'wss://' : 'ws://'}${location.host}${
+      window.SERVER_FLAGS.graphqlBaseURL
+    }?cluster=${cluster}`,
+    {
+      reconnect: true,
+      connectionParams: () => getConsoleRequestHeaders() || {},
+      reconnectionAttempts: 5,
+      connectionCallback: () => {
+        onReady?.();
+        wssErrors = 0;
+      },
+    },
+  );
 
-  setReady() {
-    this.ready = true;
-    if (!this.wasCalled && this.callback) {
-      this.wasCalled = true;
-      this.callback();
+  subsClient.onError(() => {
+    wssErrors++;
+    if (wssErrors > 4) {
+      onReady?.();
     }
-  }
+  });
 
-  onReady(cb: VoidFunction) {
-    this.callback = cb;
-    if (this.ready && !this.wasCalled) {
-      this.wasCalled = true;
-      this.callback();
-    }
-  }
-}
-
-export const graphQLReady = new GraphQLReady();
-
-export const subsClient = new SubscriptionClient(
-  `${location.protocol === 'https:' ? 'wss://' : 'ws://'}${location.host}${
-    window.SERVER_FLAGS.graphqlBaseURL
-  }`,
-  {
-    reconnect: true,
-    connectionParams: getConsoleRequestHeaders,
-    reconnectionAttempts: 5,
-    connectionCallback: () => {
-      graphQLReady.setReady();
-      wssErrors = 0;
+  const httpLink = new HttpLink({
+    uri: window.SERVER_FLAGS.graphqlBaseURL,
+    fetch: (url: string, options) => {
+      const headers = getConsoleRequestHeaders(cluster);
+      return coFetch(url, { ...options, headers });
     },
-  },
-);
+  });
 
-subsClient.onError(() => {
-  wssErrors++;
-  if (wssErrors > 4) {
-    graphQLReady.setReady();
-  }
-});
+  const wsLink = new WebSocketLink(subsClient);
 
-const httpLink = new HttpLink({
-  uri: window.SERVER_FLAGS.graphqlBaseURL,
-  fetch: coFetch,
-});
+  // fallback to http connection if websocket connection was not successful
+  // iOS does not allow wss with self signed certificate
+  const link = split(() => wssErrors > 4, httpLink, wsLink);
 
-const wsLink = new WebSocketLink(subsClient);
-
-// fallback to http connection if websocket connection was not successful
-// iOS does not allow wss with self signed certificate
-const link = split(() => wssErrors > 4, httpLink, wsLink);
-
-const client = new ApolloClient({
-  link,
-  cache: new InMemoryCache(),
-  defaultOptions: {
-    query: {
-      fetchPolicy: 'network-only',
+  client = new ApolloClient({
+    link,
+    cache: new InMemoryCache(),
+    defaultOptions: {
+      query: {
+        fetchPolicy: 'network-only',
+      },
+      mutate: {
+        fetchPolicy: 'network-only',
+      },
+      watchQuery: {
+        fetchPolicy: 'network-only',
+      },
     },
-    mutate: {
-      fetchPolicy: 'network-only',
-    },
-    watchQuery: {
-      fetchPolicy: 'network-only',
-    },
-  },
-});
-
-export default client;
+  });
+};
 
 export const fetchURL = async <R = any>(url: string): Promise<R> => {
   try {
@@ -101,7 +84,7 @@ export const fetchURL = async <R = any>(url: string): Promise<R> => {
 };
 
 export const fetchK8s = <R extends K8sResourceCommon = K8sResourceCommon>(
-  kind: K8sKind,
+  kind: K8sModel,
   name?: string,
   ns?: string,
   path?: string,

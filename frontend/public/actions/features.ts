@@ -20,7 +20,7 @@ import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
 import { ClusterVersionKind } from '../module/k8s';
 import { receivedResources } from './k8s';
 import { setClusterID, setCreateProjectMessage } from './common';
-import client, { fetchURL } from '../graphql/client';
+import { client, fetchURL } from '../graphql/client';
 import { SSARQuery } from './features.gql';
 import { SSARQueryType, SSARQueryVariables } from '../../@types/console/generated/graphql-schema';
 

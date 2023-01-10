@@ -7,7 +7,9 @@ import (
 	"net/http"
 )
 
-const HeadersKey string = "headers"
+type CtxKey string
+
+const HeadersKey CtxKey = "headers"
 
 func contextToHeaders(ctx context.Context, request *http.Request) {
 	if ctx.Value(HeadersKey) != nil {

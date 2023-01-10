@@ -240,7 +240,6 @@ func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
 	localAuther := s.getLocalAuther()
 	localK8sProxyConfig := s.getK8sProxyConfig(serverutils.LocalClusterName)
-	localK8sProxy := proxy.NewProxy(localK8sProxyConfig)
 	handle := func(path string, handler http.Handler) {
 		mux.Handle(proxy.SingleJoiningSlash(s.BaseURL.Path, path), handler)
 	}
@@ -354,13 +353,16 @@ func (s *Server) HTTPHandler() http.Handler {
 		panic(err)
 	}
 	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
-	k8sResolver := resolver.K8sResolver{K8sProxy: localK8sProxy}
-	rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
-	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
-	handler := graphqlws.NewHandler()
-	handler.InitPayload = resolver.InitPayload
-	graphQLHandler := handler.NewHandlerFunc(schema, &relay.Handler{Schema: schema})
-	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	handle(graphQLEndpoint, authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+		cluster := serverutils.GetCluster(r)
+		k8sProxyConfig := s.getK8sProxyConfig(cluster)
+		k8sProxy := proxy.NewProxy(k8sProxyConfig)
+		k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxy}
+		rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
+		schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
+		handler := graphqlws.NewHandler()
+		handler.InitPayload = resolver.InitPayload
+		graphQLHandler := handler.NewHandlerFunc(schema, &relay.Handler{Schema: schema})
 		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]string{
 			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
 		})
