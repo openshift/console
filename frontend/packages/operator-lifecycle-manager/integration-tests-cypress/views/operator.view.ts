@@ -207,7 +207,7 @@ export type TestOperandProps = {
   group: string;
   version: string;
   kind: string;
-  createActionID: string;
+  createActionID?: string;
   exampleName: string;
   deleteURL?: string;
 };

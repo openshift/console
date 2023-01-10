@@ -16,7 +16,6 @@ const testOperand: TestOperandProps = {
   kind: 'KieApp',
   group: 'KieApp',
   version: 'v1',
-  createActionID: '',
   exampleName: `example-kieappk`,
   deleteURL: '/api/kubernetes/apis/app.kiegroup.org/*/namespaces/*/kieapps/*',
 };
