@@ -25,6 +25,28 @@
     "type": "console.flag/model",
     "properties": {
       "model": {
+        "group": "operator.knative.dev",
+        "version": "v1beta1",
+        "kind": "KnativeServing"
+      },
+      "flag": "KNATIVE_SERVING"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "version": "v1beta1",
+        "kind": "KnativeEventing"
+      },
+      "flag": "KNATIVE_EVENTING"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
         "group": "serving.knative.dev",
         "version": "v1",
         "kind": "Configuration"
