@@ -12,12 +12,12 @@ export const nav = {
           .click(),
     },
     clusters: {
-      shouldHaveText: (text: string) => cy.byLegacyTestID('cluster-switcher-toggle').contains(text),
+      shouldHaveText: (text: string) => cy.byLegacyTestID('cluster-dropdown-toggle').contains(text),
       changeClusterTo: (newCluster: string) =>
         cy
-          .byLegacyTestID('cluster-switcher-toggle')
+          .byLegacyTestID('cluster-dropdown-toggle')
           .click()
-          .byLegacyTestID('cluster-switcher-menu-option')
+          .byLegacyTestID('cluster-dropdown-item')
           .contains(newCluster)
           .click(),
     },
