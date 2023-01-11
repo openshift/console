@@ -4,6 +4,7 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import { Link, Router } from 'react-router-dom';
+import * as utils from '@console/dynamic-plugin-sdk';
 import {
   DetailsPage,
   Table,
@@ -543,10 +544,15 @@ describe(CSVSubscription.displayName, () => {
 
 describe(ClusterServiceVersionDetailsPage.displayName, () => {
   let wrapper: ReactWrapper<ClusterServiceVersionsDetailsPageProps>;
+  let spyUseAccessReview;
+
   const name = 'example';
   const ns = 'default';
 
   beforeEach(() => {
+    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview.mockReturnValue([true, false]);
+
     wrapper = mount(
       <ClusterServiceVersionDetailsPage
         match={{ params: { ns, name }, isExact: true, url: '', path: '' }}
