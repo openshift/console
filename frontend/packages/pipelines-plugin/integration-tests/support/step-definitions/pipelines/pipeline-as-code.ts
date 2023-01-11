@@ -212,6 +212,7 @@ When('user adds key {string} and value {string}', (key: string, value: string) =
 });
 
 Then('annotation section contains the value {string}', (numOfAnnotations: string) => {
+  repositoryDetailsPage.selectTab(repositoryDetailsTabs.Details);
   repositoryDetailsPage.verifyAnnotations(numOfAnnotations);
 });
 

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { ListPageWrapper } from '@console/internal/components/factory';
 import { EmptyBox, LoadingBox } from '@console/internal/components/utils';
+import { useUserSettings } from '@console/shared';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
 import PipelineAugmentRunsWrapper from '../PipelineAugmentRunsWrapper';
 
@@ -10,10 +11,17 @@ const { pipeline } = mockData;
 
 type PipelineAugmentRunsWrapperProps = React.ComponentProps<typeof PipelineAugmentRunsWrapper>;
 
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  useUserSettings: jest.fn(),
+}));
+
+const mockUserSettings = useUserSettings as jest.Mock;
+
 describe('Pipeline Augment Run Wrapper', () => {
   let pipelineAugmentRunsWrapperProps: PipelineAugmentRunsWrapperProps;
   let wrapper: ShallowWrapper;
   beforeEach(() => {
+    mockUserSettings.mockReturnValue(['pipelines', jest.fn(), true]);
     pipelineAugmentRunsWrapperProps = {
       pipeline: {
         data: [pipeline],

@@ -120,7 +120,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     }
     case devNavigationMenu.Builds: {
       cy.get(devNavigationMenuPO.builds).click();
-      detailsPage.titleShouldContain(pageTitle.Builds);
+      detailsPage.titleShouldContain(pageTitle.BuildConfigs);
       cy.testA11y('Builds Page in dev perspective');
       break;
     }

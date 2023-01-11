@@ -15,7 +15,7 @@ const RepositoryOverview = () => {
   return (
     <FormSection>
       <FormGroup fieldId="title">
-        <Title headingLevel="h4" size={TitleSizes.xl}>
+        <Title headingLevel="h4" size={TitleSizes.xl} data-test="repository-overview-title">
           {t('pipelines-plugin~Git repository added.')}
         </Title>
         <Text>

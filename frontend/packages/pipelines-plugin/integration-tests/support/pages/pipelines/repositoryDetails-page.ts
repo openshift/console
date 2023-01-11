@@ -35,6 +35,7 @@ export const repositoryDetailsPage = {
   },
 
   verifyFieldsInDetailsTab: () => {
+    cy.get(repositoryDetailsPO.detailsTab).click();
     cy.get(repositoryDetailsPO.details.fieldNames.name).should('be.visible');
     cy.get(repositoryDetailsPO.details.fieldNames.namespace).should('be.visible');
     cy.get(repositoryDetailsPO.details.fieldNames.labels).should('be.visible');

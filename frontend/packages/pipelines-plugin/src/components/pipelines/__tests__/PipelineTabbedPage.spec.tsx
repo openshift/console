@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
-import { MultiTabListPage, useFlag } from '@console/shared';
+import { MultiTabListPage, useFlag, useUserSettings } from '@console/shared';
 import { PipelinesPage } from '../PipelinesPage';
 import PipelineTabbedPage, { PageContents } from '../PipelineTabbedPage';
 
@@ -14,7 +14,13 @@ jest.mock('@console/shared', () => {
   };
 });
 
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  useUserSettings: jest.fn(),
+}));
+
 const useFlagMock = useFlag as jest.Mock;
+
+const mockUserSettings = useUserSettings as jest.Mock;
 
 describe('PipelineTabbedPage', () => {
   let PipelineTabbedPageProps: React.ComponentProps<typeof PipelineTabbedPage> = {
@@ -29,6 +35,10 @@ describe('PipelineTabbedPage', () => {
       },
     },
   };
+
+  beforeAll(() => {
+    mockUserSettings.mockReturnValue(['pipelines', jest.fn(), true]);
+  });
 
   it('should render NamespacedPage', () => {
     useFlagMock.mockReturnValue(true);

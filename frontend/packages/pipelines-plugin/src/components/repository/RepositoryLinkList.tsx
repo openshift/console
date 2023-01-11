@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { GithubIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import {
-  ResourceLink,
   ExternalLink,
   CopyToClipboard,
   truncateMiddle,
+  ResourceIcon,
+  resourcePath,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RepositoryModel } from '../../models';
@@ -40,12 +42,20 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({ pipelineRun }) 
     <dl>
       <dt>{t('pipelines-plugin~Repository')}</dt>
       <dd>
-        <ResourceLink
-          data-test="pl-repository-link"
-          kind={referenceForModel(RepositoryModel)}
-          name={repoName}
-          namespace={pipelineRun.metadata.namespace}
-        />
+        <div>
+          <ResourceIcon kind={referenceForModel(RepositoryModel)} />
+          <Link
+            data-test="pl-repository-link"
+            to={`${resourcePath(
+              referenceForModel(RepositoryModel),
+              repoName,
+              pipelineRun.metadata.namespace,
+            )}/Runs`}
+            className="co-resource-item__resource-name"
+          >
+            {repoName}
+          </Link>
+        </div>
         {repoURL && (
           <ExternalLink href={repoURL}>
             <GithubIcon title={repoURL} /> {repoURL}

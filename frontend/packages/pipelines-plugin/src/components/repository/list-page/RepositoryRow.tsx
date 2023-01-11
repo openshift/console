@@ -1,10 +1,13 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import {
   Kebab,
   LoadingInline,
+  ResourceIcon,
   ResourceKebab,
   ResourceLink,
+  resourcePath,
   Timestamp,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -43,7 +46,14 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj }) => {
   return (
     <>
       <TableData className={repositoriesTableColumnClasses[0]}>
-        <ResourceLink kind={referenceForModel(RepositoryModel)} name={name} namespace={namespace} />
+        <ResourceIcon kind={referenceForModel(RepositoryModel)} />
+        <Link
+          to={`${resourcePath(referenceForModel(RepositoryModel), name, namespace)}/Runs`}
+          className="co-resource-item__resource-name"
+          data-test-id={name}
+        >
+          {name}
+        </Link>
       </TableData>
       <TableData className={repositoriesTableColumnClasses[1]} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
