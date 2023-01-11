@@ -43,6 +43,7 @@ import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plug
 import { GuidedTour } from '@console/app/src/components/tour';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
+import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { useToast } from '@console/shared/src/components/toast';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -319,7 +320,6 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const [pluginsData, setPluginsData] = React.useState();
   const [pluginsError, setPluginsError] = React.useState();
   const [pluginManifestsData, setPluginManifestsData] = React.useState();
-  const [pluginManifestsError, setPluginManifestsError] = React.useState();
   const safeFetch = React.useCallback(useSafeFetch(), []);
   const updatesTick = React.useCallback(() => {
     safeFetch(`${window.SERVER_FLAGS.basePath}api/check-updates`)
@@ -340,12 +340,11 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
     const pluginManifests = pluginsData?.plugins?.map((pluginName) =>
       fetchPluginManifest(pluginName),
     );
-    Promise.all(pluginManifests)
-      .then((response) => {
-        setPluginManifestsData(response);
-        setPluginManifestsError(null);
-      })
-      .catch(setPluginManifestsError);
+    if (pluginManifests) {
+      settleAllPromises(pluginManifests).then(([fulfilledValues]) => {
+        setPluginManifestsData(fulfilledValues);
+      });
+    }
   });
   usePoll(manifestsTick, URL_POLL_DEFAULT_DELAY);
 
@@ -357,11 +356,7 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   });
   const prevPluginsData = prevPluginsDataRef.current;
   const prevPluginManifestsData = prevPluginManifestsDataRef.current;
-  const stateInitialized =
-    _.isEmpty(pluginsError) &&
-    !_.isEmpty(prevPluginsData) &&
-    _.isEmpty(pluginManifestsError) &&
-    !_.isEmpty(prevPluginManifestsData);
+  const stateInitialized = _.isEmpty(pluginsError) && !_.isEmpty(prevPluginsData);
 
   const pluginsListChanged = !_.isEmpty(_.xor(prevPluginsData?.plugins, pluginsData?.plugins));
   if (stateInitialized && pluginsListChanged && !pluginsChanged) {
@@ -391,7 +386,12 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
       );
     });
   });
-  if (stateInitialized && pluginManifestsVersionsChanged && !pluginVersionsChanged) {
+  if (
+    stateInitialized &&
+    !_.isEmpty(prevPluginManifestsData) &&
+    pluginManifestsVersionsChanged &&
+    !pluginVersionsChanged
+  ) {
     setPluginVersionsChanged(true);
   }
 
