@@ -311,14 +311,17 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
 
   const [isToastOpen, setToastOpen] = React.useState(false);
   const [pluginsChanged, setPluginsChanged] = React.useState(false);
+  const [pluginVersionsChanged, setPluginVersionsChanged] = React.useState(false);
   const [consoleChanged, setConsoleChanged] = React.useState(false);
   const [isFetchingPluginEndpoints, setIsFetchingPluginEndpoints] = React.useState(false);
   const [allPluginEndpointsReady, setAllPluginEndpointsReady] = React.useState(false);
 
   const [pluginsData, setPluginsData] = React.useState();
   const [pluginsError, setPluginsError] = React.useState();
+  const [pluginManifestsData, setPluginManifestsData] = React.useState();
+  const [pluginManifestsError, setPluginManifestsError] = React.useState();
   const safeFetch = React.useCallback(useSafeFetch(), []);
-  const tick = React.useCallback(() => {
+  const updatesTick = React.useCallback(() => {
     safeFetch(`${window.SERVER_FLAGS.basePath}api/check-updates`)
       .then((response) => {
         setPluginsData(response);
@@ -326,14 +329,35 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
       })
       .catch(setPluginsError);
   }, [safeFetch]);
-  usePoll(tick, URL_POLL_DEFAULT_DELAY);
+  usePoll(updatesTick, URL_POLL_DEFAULT_DELAY);
+  const fetchPluginManifest = (pluginName) =>
+    coFetchJSON(`${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/plugin-manifest.json`);
+  const manifestsTick = React.useCallback(() => {
+    const pluginManifests = pluginsData?.plugins?.map((pluginName) =>
+      fetchPluginManifest(pluginName),
+    );
+    Promise.all(pluginManifests)
+      .then((response) => {
+        setPluginManifestsData(response);
+        setPluginManifestsError(null);
+      })
+      .catch(setPluginManifestsError);
+  });
+  usePoll(manifestsTick, URL_POLL_DEFAULT_DELAY);
 
   const prevPluginsDataRef = React.useRef();
+  const prevPluginManifestsDataRef = React.useRef();
   React.useEffect(() => {
     prevPluginsDataRef.current = pluginsData;
+    prevPluginManifestsDataRef.current = pluginManifestsData;
   });
   const prevPluginsData = prevPluginsDataRef.current;
-  const stateInitialized = _.isEmpty(pluginsError) && !_.isEmpty(prevPluginsData);
+  const prevPluginManifestsData = prevPluginManifestsDataRef.current;
+  const stateInitialized =
+    _.isEmpty(pluginsError) &&
+    !_.isEmpty(prevPluginsData) &&
+    _.isEmpty(pluginManifestsError) &&
+    !_.isEmpty(prevPluginManifestsData);
 
   const pluginsListChanged = !_.isEmpty(_.xor(prevPluginsData?.plugins, pluginsData?.plugins));
   if (stateInitialized && pluginsListChanged && !pluginsChanged) {
@@ -341,11 +365,9 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   }
 
   if (pluginsChanged && !allPluginEndpointsReady && !isFetchingPluginEndpoints) {
-    const pluginEndpointsReady = pluginsData?.plugins?.map((pluginName) => {
-      return coFetchJSON(
-        `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/plugin-manifest.json`,
-      );
-    });
+    const pluginEndpointsReady = pluginsData?.plugins?.map((pluginName) =>
+      fetchPluginManifest(pluginName),
+    );
     Promise.all(pluginEndpointsReady)
       .then(() => {
         setAllPluginEndpointsReady(true);
@@ -358,6 +380,19 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
     setIsFetchingPluginEndpoints(true);
   }
 
+  const pluginManifestsVersionsChanged = pluginManifestsData?.reduce((acc, obj) => {
+    prevPluginManifestsData?.forEach((o) => {
+      if (obj.name === o.name && obj.version !== o.version) {
+        acc.push(obj);
+      }
+    });
+    return acc;
+  }, []);
+  const pluginManifestsChanged = !_.isEmpty(pluginManifestsVersionsChanged);
+  if (stateInitialized && pluginManifestsChanged && !pluginVersionsChanged) {
+    setPluginVersionsChanged(true);
+  }
+
   const consoleCommitChanged = prevPluginsData?.consoleCommit !== pluginsData?.consoleCommit;
   if (stateInitialized && consoleCommitChanged && !consoleChanged) {
     setConsoleChanged(true);
@@ -367,7 +402,7 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
     return null;
   }
 
-  if (!pluginsChanged && !consoleChanged) {
+  if (!pluginsChanged && !pluginVersionsChanged && !consoleChanged) {
     return null;
   }
 
@@ -378,6 +413,7 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const toastCallback = () => {
     setToastOpen(false);
     setPluginsChanged(false);
+    setPluginVersionsChanged(false);
     setConsoleChanged(false);
     setAllPluginEndpointsReady(false);
     setIsFetchingPluginEndpoints(false);
