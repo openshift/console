@@ -331,7 +331,11 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   }, [safeFetch]);
   usePoll(updatesTick, URL_POLL_DEFAULT_DELAY);
   const fetchPluginManifest = (pluginName) =>
-    coFetchJSON(`${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/plugin-manifest.json`);
+    coFetchJSON(
+      `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/plugin-manifest.json`,
+      'get',
+      { cache: 'no-cache' },
+    );
   const manifestsTick = React.useCallback(() => {
     const pluginManifests = pluginsData?.plugins?.map((pluginName) =>
       fetchPluginManifest(pluginName),
@@ -380,16 +384,14 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
     setIsFetchingPluginEndpoints(true);
   }
 
-  const pluginManifestsVersionsChanged = pluginManifestsData?.reduce((acc, obj) => {
-    prevPluginManifestsData?.forEach((o) => {
-      if (obj.name === o.name && obj.version !== o.version) {
-        acc.push(obj);
-      }
+  const pluginManifestsVersionsChanged = pluginManifestsData?.some((manifest) => {
+    return prevPluginManifestsData?.some((previousManifest) => {
+      return (
+        manifest.name === previousManifest.name && manifest.version !== previousManifest.version
+      );
     });
-    return acc;
-  }, []);
-  const pluginManifestsChanged = !_.isEmpty(pluginManifestsVersionsChanged);
-  if (stateInitialized && pluginManifestsChanged && !pluginVersionsChanged) {
+  });
+  if (stateInitialized && pluginManifestsVersionsChanged && !pluginVersionsChanged) {
     setPluginVersionsChanged(true);
   }
 
