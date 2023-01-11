@@ -237,7 +237,7 @@
   "Seconds": "Seconds",
   "Minutes": "Minutes",
   "Hours": "Hours",
-  "Miliseconds": "Miliseconds",
+  "Milliseconds": "Milliseconds",
   "Set timeout for the terminal.": "Set timeout for the terminal.",
   "Connecting to your OpenShift command line terminal ...": "Connecting to your OpenShift command line terminal ...",
   "Cluster configuration": "Cluster configuration",

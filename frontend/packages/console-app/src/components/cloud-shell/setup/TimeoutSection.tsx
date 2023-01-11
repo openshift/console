@@ -10,7 +10,7 @@ const TimeoutSection: React.FC = () => {
     s: t('console-app~Seconds'),
     m: t('console-app~Minutes'),
     h: t('console-app~Hours'),
-    ms: t('console-app~Miliseconds'),
+    ms: t('console-app~Milliseconds'),
   };
 
   return (
