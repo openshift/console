@@ -67,13 +67,23 @@ describe('PollConsoleUpdates Test', () => {
     checkConsoleUpdateToast();
   });
 
-  it('triggers the console update toast when plugins change', () => {
+  it('triggers the console update toast when a plugin is added', () => {
     loadApp();
     cy.intercept(CHECK_UPDATES_URL, UPDATES_DEFAULT).as(CHECK_UPDATES_ALIAS);
     cy.wait(`@${CHECK_UPDATES_ALIAS}`, WAIT_OPTIONS);
     cy.intercept(CHECK_UPDATES_URL, UPDATES_NEW_PLUGIN).as(CHECK_UPDATES_ALIAS);
     cy.intercept(PLUGIN_MANIFEST_URL, PLUGIN_MANIFEST_DEFAULT).as(CHECK_MANIFEST_ALIAS);
     cy.wait([`@${CHECK_UPDATES_ALIAS}`, `@${CHECK_MANIFEST_ALIAS}`], WAIT_OPTIONS);
+    checkConsoleUpdateToast();
+  });
+
+  it('triggers the console update toast when a plugin is removed', () => {
+    loadApp();
+    cy.intercept(CHECK_UPDATES_URL, UPDATES_NEW_PLUGIN).as(CHECK_UPDATES_ALIAS);
+    cy.intercept(PLUGIN_MANIFEST_URL, PLUGIN_MANIFEST_DEFAULT).as(CHECK_MANIFEST_ALIAS);
+    cy.wait([`@${CHECK_UPDATES_ALIAS}`, `@${CHECK_MANIFEST_ALIAS}`], WAIT_OPTIONS);
+    cy.intercept(CHECK_UPDATES_URL, UPDATES_DEFAULT).as(CHECK_UPDATES_ALIAS);
+    cy.wait(`@${CHECK_UPDATES_ALIAS}`, WAIT_OPTIONS);
     checkConsoleUpdateToast();
   });
 
