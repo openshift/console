@@ -437,6 +437,7 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
             window.location.reload();
           }
         },
+        dataTest: 'refresh-web-console',
       },
     ],
     onClose: toastCallback,
