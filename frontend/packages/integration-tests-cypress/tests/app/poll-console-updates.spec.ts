@@ -1,13 +1,10 @@
 import { checkErrors } from '../../support';
-import { warningToast } from '../../views/form';
+import { refreshWebConsoleLink } from '../../views/form';
 import { guidedTour } from '../../views/guided-tour';
 
 const CHECK_UPDATES_URL = '/api/check-updates';
 const CHECK_UPDATES_ALIAS = 'checkUpdates';
 const CHECK_MANIFEST_ALIAS = 'checkManifest';
-/* The update wait is the value to wait for the poll of /api/check-updates to return with the updated list of plugins
- after the plugin is enabled and loaded. This wait will be longer on ci than when debugging locally. */
-const CHECK_UPDATE_WAIT = 300000;
 const PLUGINS_DEFAULT = [];
 const HASH_DEFAULT = 'hash';
 const UPDATES_DEFAULT = {
@@ -32,16 +29,17 @@ const PLUGIN_MANIFEST_NEW_VERSION = {
   name: PLUGIN_NAME,
   version: '1.0.0',
 };
-const WAIT_OPTIONS = { requestTimeout: CHECK_UPDATE_WAIT };
+const WAIT_OPTIONS = { requestTimeout: 300000 };
 
 const loadApp = () => {
   cy.visit('/');
   guidedTour.close();
 };
 const checkConsoleUpdateToast = () => {
-  cy.get(warningToast).should('exist');
-  cy.byTestID('refresh-web-console').click();
-  cy.get(warningToast).should('not.exist');
+  cy.byTestID(refreshWebConsoleLink)
+    .should('exist')
+    .click();
+  cy.get(refreshWebConsoleLink).should('not.exist');
   cy.byTestID('loading-indicator').should('not.exist');
 };
 
@@ -72,8 +70,12 @@ describe('PollConsoleUpdates Test', () => {
     cy.intercept(CHECK_UPDATES_URL, UPDATES_DEFAULT).as(CHECK_UPDATES_ALIAS);
     cy.wait(`@${CHECK_UPDATES_ALIAS}`, WAIT_OPTIONS);
     cy.intercept(CHECK_UPDATES_URL, UPDATES_NEW_PLUGIN).as(CHECK_UPDATES_ALIAS);
+    cy.intercept(PLUGIN_MANIFEST_URL, { forceNetworkError: true }).as('error');
+    cy.wait(`@${CHECK_UPDATES_ALIAS}`, WAIT_OPTIONS);
+    cy.wait('@error', WAIT_OPTIONS).should('have.property', 'error');
+    cy.get(refreshWebConsoleLink).should('not.exist');
     cy.intercept(PLUGIN_MANIFEST_URL, PLUGIN_MANIFEST_DEFAULT).as(CHECK_MANIFEST_ALIAS);
-    cy.wait([`@${CHECK_UPDATES_ALIAS}`, `@${CHECK_MANIFEST_ALIAS}`], WAIT_OPTIONS);
+    cy.wait(`@${CHECK_MANIFEST_ALIAS}`, WAIT_OPTIONS);
     checkConsoleUpdateToast();
   });
 
