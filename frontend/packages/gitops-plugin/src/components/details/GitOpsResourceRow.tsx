@@ -32,8 +32,8 @@ const GitOpsResourceRow: React.FC<GitOpsResourceRowProps> = ({
         >
           <SplitItem>
             <>
-              {degradedResources.length}{' '}
-              <HeartBrokenIcon color={RedColor.value} className="co-icon-space-r" />
+              {degradedResources.length}
+              <HeartBrokenIcon color={RedColor.value} className="co-icon-space-l" />
             </>
           </SplitItem>
         </Tooltip>
@@ -47,8 +47,8 @@ const GitOpsResourceRow: React.FC<GitOpsResourceRowProps> = ({
         >
           <SplitItem>
             <>
-              {nonSyncedResources.length}{' '}
-              <ExclamationTriangleIcon color={YellowColor.value} className="co-icon-space-r" />
+              {nonSyncedResources.length}
+              <ExclamationTriangleIcon color={YellowColor.value} className="co-icon-space-l" />
             </>
           </SplitItem>
         </Tooltip>
