@@ -3,8 +3,7 @@ import { match as RMatch } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { Firehose, history } from '@console/internal/components/utils';
-import { SecretModel } from '@console/internal/models';
+import { history } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import HelmReleaseDetails from './HelmReleaseDetails';
 
@@ -24,27 +23,13 @@ const handleNamespaceChange = (newNamespace: string): void => {
 };
 
 const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ match }) => {
-  const namespace = match.params.ns;
-  const helmReleaseName = match.params.name;
   return (
     <NamespacedPage
       variant={NamespacedPageVariants.light}
       hideApplications
       onNamespaceChange={handleNamespaceChange}
     >
-      <Firehose
-        resources={[
-          {
-            namespace,
-            kind: SecretModel.kind,
-            prop: SecretModel.id,
-            isList: true,
-            selector: { name: `${helmReleaseName}` },
-          },
-        ]}
-      >
-        <HelmReleaseDetails match={match} />
-      </Firehose>
+      <HelmReleaseDetails match={match} />
     </NamespacedPage>
   );
 };

@@ -7,7 +7,7 @@ Feature: Verify the Actions on Helm Release after upgrade
 
 
         @pre-condition
-        Scenario: Perform Upgrade action on Helm Release through Context Menu: HR-01-TC04
+        Scenario: Perform Upgrade action on Helm Release through Context Menu: HR-08-TC04
             Given user has installed helm chart "Nodejs" with helm release name "nodejs-release-1"
               And user is at the Topology page
              When user right clicks on the helm release "nodejs-release-1" to open the context menu

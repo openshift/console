@@ -6,6 +6,7 @@ const actions = [helmActions.upgrade, helmActions.rollback, helmActions.deleteHe
 
 export const helmDetailsPage = {
   verifyTitle: () => cy.byTestSectionHeading('Helm Release details').should('be.visible'),
+  verifyHelmReleaseStatus: () => cy.get('[data-test="status-text"]').should('be.visible'),
   verifyResourcesTab: () => cy.get(helmPO.resourcesTab).should('be.visible'),
   verifyReleaseNotesTab: () => cy.get(helmPO.revisionHistoryTab).should('be.visible'),
   verifyActionsDropdown: () => cy.byLegacyTestID('actions-menu-button').should('be.visible'),
@@ -79,4 +80,5 @@ export const helmDetailsPage = {
       .contains('Repository')
       .click();
   },
+  clickRevisionHistoryTab: () => cy.get(helmPO.revisionHistoryTab).click(),
 };

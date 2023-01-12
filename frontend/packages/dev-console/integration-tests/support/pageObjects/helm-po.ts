@@ -8,6 +8,12 @@ export const helmPO = {
   revisionHistoryTab: '[data-test-id="horizontal-link-Revision history"]',
   releaseNotesTab: '[data-test-id="horizontal-link-Release notes"]',
   filterDropdown: '[data-test-id="filter-dropdown-toggle"] button',
+  filterDropdownItem: '.co-filter-dropdown-item__name',
+  filter: {
+    pendingInstall: '[data-test-row-filter="pending-install"]',
+    pendingUpgrade: '[data-test-row-filter="pending-upgrade"]',
+    pendingRollback: '[data-test-row-filter="pending-rollback"]',
+  },
   filterDropdownDialog: '.pf-c-dropdown__group.co-filter-dropdown-group',
   filterToolBar: '#filter-toolbar',
   clearAllFilter: '.pf-c-button.pf-m-link.pf-m-inline',

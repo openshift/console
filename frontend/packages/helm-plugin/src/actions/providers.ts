@@ -14,6 +14,7 @@ import {
   HELM_CHART_CATALOG_TYPE_ID,
 } from '../const';
 import { TYPE_HELM_RELEASE } from '../topology/components/const';
+import { HelmReleaseStatus } from '../types/helm-types';
 import { AddHelmChartAction } from './add-resources';
 import {
   getHelmDeleteAction,
@@ -27,15 +28,22 @@ export const useHelmActionProvider = (scope: HelmActionsScope) => {
   const { t } = useTranslation();
   const result = React.useMemo(() => {
     if (!scope) return [[], true, undefined];
-    return [
-      [
-        getHelmUpgradeAction(scope, t),
-        ...(scope.release.version > 1 ? [getHelmRollbackAction(scope, t)] : []),
-        getHelmDeleteAction(scope, t),
-      ],
-      true,
-      undefined,
-    ];
+    switch (scope?.release?.info?.status) {
+      case HelmReleaseStatus.PendingInstall:
+      case HelmReleaseStatus.PendingRollback:
+      case HelmReleaseStatus.PendingUpgrade:
+        return [[getHelmDeleteAction(scope, t)], true, undefined];
+      default:
+        return [
+          [
+            getHelmUpgradeAction(scope, t),
+            ...(scope.release.version > 1 ? [getHelmRollbackAction(scope, t)] : []),
+            getHelmDeleteAction(scope, t),
+          ],
+          true,
+          undefined,
+        ];
+    }
   }, [scope, t]);
   return result;
 };

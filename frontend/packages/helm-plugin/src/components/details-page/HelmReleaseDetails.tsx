@@ -11,11 +11,12 @@ import {
   StatusBox,
   FirehoseResult,
 } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
-import { K8sResourceKindReference } from '@console/internal/module/k8s';
+import { K8sResourceCommon, K8sResourceKindReference } from '@console/internal/module/k8s';
 import { ActionMenu, ActionMenuVariant, Status, ActionServiceProvider } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
-import { fetchHelmRelease } from '../../utils/helm-utils';
+import { fetchHelmRelease, HelmReleaseStatusLabels, releaseStatus } from '../../utils/helm-utils';
 import HelmReleaseHistory from './history/HelmReleaseHistory';
 import HelmReleaseNotes from './notes/HelmReleaseNotes';
 import HelmReleaseOverview from './overview/HelmReleaseOverview';
@@ -68,13 +69,21 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
     <>
       {releaseName}
       <Badge isRead style={{ verticalAlign: 'middle', marginLeft: 'var(--pf-global--spacer--md)' }}>
-        <Status status={_.capitalize(latestReleaseSecret?.metadata.labels.status)} />
+        <Status
+          status={releaseStatus(latestReleaseSecret?.metadata?.labels?.status)}
+          title={HelmReleaseStatusLabels[latestReleaseSecret?.metadata?.labels?.status]}
+        />
       </Badge>
     </>
   );
 
   const actionsScope = {
-    release: { name: releaseName, namespace, version: helmReleaseData.version },
+    release: {
+      name: releaseName,
+      namespace,
+      version: helmReleaseData.version,
+      info: { status: latestReleaseSecret?.metadata?.labels?.status },
+    },
     actionOrigin: HelmActionOrigins.details,
   };
 
@@ -128,12 +137,21 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   );
 };
 
-const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = ({ secret, match }) => {
+const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = ({ match }) => {
   const namespace = match.params.ns;
   const helmReleaseName = match.params.name;
 
   const [helmReleaseData, setHelmReleaseData] = React.useState<HelmRelease>();
 
+  const [secrets, secretLoaded, secretLoaderror] = useK8sWatchResource<K8sResourceCommon[]>({
+    namespace,
+    groupVersionKind: {
+      version: 'v1',
+      kind: SecretModel.kind,
+    },
+    selector: { matchLabels: { name: `${helmReleaseData?.name}` } },
+    isList: true,
+  });
   React.useEffect(() => {
     let ignore = false;
 
@@ -155,7 +173,13 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = ({ secret, match }
     // On upgrading/rolling back to another version a new helm release is created.
     // For fetching and showing the details of the new release adding secret.data as depedency here
     // since secret's data list gets updated when a new release is created.
-  }, [helmReleaseName, namespace, secret.data]);
+  }, [helmReleaseName, namespace, secrets]);
+
+  const secret = {
+    data: secrets,
+    loaded: secretLoaded,
+    loadError: secretLoaderror,
+  };
 
   return (
     <LoadedHelmReleaseDetails match={match} secret={secret} helmReleaseData={helmReleaseData} />

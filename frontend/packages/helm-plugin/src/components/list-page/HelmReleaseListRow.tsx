@@ -1,10 +1,10 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Timestamp, ResourceIcon } from '@console/internal/components/utils';
 import { LazyActionMenu, Status } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
+import { HelmReleaseStatusLabels, releaseStatus } from '../../utils/helm-utils';
 import { tableColumnClasses } from './HelmReleaseListHeader';
 
 const HelmReleaseListRow: React.FC<RowFunctionArgs<HelmRelease>> = ({ obj }) => {
@@ -29,7 +29,10 @@ const HelmReleaseListRow: React.FC<RowFunctionArgs<HelmRelease>> = ({ obj }) => 
         <Timestamp timestamp={obj.info.last_deployed} />
       </TableData>
       <TableData className={tableColumnClasses.status}>
-        <Status status={_.capitalize(obj.info.status)} />
+        <Status
+          status={releaseStatus(obj.info.status)}
+          title={HelmReleaseStatusLabels[obj.info.status]}
+        />
       </TableData>
       <TableData className={tableColumnClasses.chartName}>{obj.chart.metadata.name}</TableData>
       <TableData className={tableColumnClasses.chartVersion}>

@@ -30,8 +30,13 @@ describe('Helm Releases Utils', () => {
     expect(releaseStatusReducer(release)).toEqual(HelmReleaseStatus.Deployed);
   });
 
-  it('should return other for all other statuses for a helm release', () => {
+  it('should return pending-install status for a helm release', () => {
     const release = mockHelmReleases[2];
+    expect(releaseStatusReducer(release)).toEqual(HelmReleaseStatus.PendingInstall);
+  });
+
+  it('should return other for all other statuses for a helm release', () => {
+    const release = mockHelmReleases[3];
     expect(releaseStatusReducer(release)).toEqual(HelmReleaseStatus.Other);
   });
 

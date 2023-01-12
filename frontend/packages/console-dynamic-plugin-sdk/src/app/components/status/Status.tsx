@@ -54,6 +54,8 @@ const Status: React.FC<StatusProps> = ({
 
     case 'ContainerCreating':
     case 'UpgradePending':
+    case 'PendingUpgrade':
+    case 'PendingRollback':
       return <ProgressStatus {...statusProps} />;
 
     case 'In Progress':
@@ -63,6 +65,7 @@ const Status: React.FC<StatusProps> = ({
     case 'Running':
     case 'Updating':
     case 'Upgrading':
+    case 'PendingInstall':
       return <StatusIconAndText {...statusProps} icon={<SyncAltIcon />} />;
 
     case 'Cancelled':
@@ -71,6 +74,8 @@ const Status: React.FC<StatusProps> = ({
     case 'Not Ready':
     case 'Cancelling':
     case 'Terminating':
+    case 'Superseded':
+    case 'Uninstalling':
       return <StatusIconAndText {...statusProps} icon={<BanIcon />} />;
 
     case 'Warning':
@@ -105,6 +110,7 @@ const Status: React.FC<StatusProps> = ({
     case 'Provisioned as node':
     case 'Preferred':
     case 'Connected':
+    case 'Deployed':
       return <SuccessStatus {...statusProps} />;
 
     case 'Info':
