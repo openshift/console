@@ -67,7 +67,12 @@ const NamespaceDropdown: React.FC = () => {
       const { name } = item.metadata;
       return { title: name, key: name };
     });
-    items.sort((a, b) => a.title.localeCompare(b.title));
+    items.sort((a, b) => {
+      return a.title.localeCompare(b.title, undefined, {
+        numeric: true,
+        sensitivity: 'base',
+      });
+    });
     return items;
   }, [options, optionsLoaded]);
 
