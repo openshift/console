@@ -321,32 +321,29 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const [pluginsError, setPluginsError] = React.useState();
   const [pluginManifestsData, setPluginManifestsData] = React.useState();
   const safeFetch = React.useCallback(useSafeFetch(), []);
-  const updatesTick = React.useCallback(() => {
-    safeFetch(`${window.SERVER_FLAGS.basePath}api/check-updates`)
-      .then((response) => {
-        setPluginsData(response);
-        setPluginsError(null);
-      })
-      .catch(setPluginsError);
-  }, [safeFetch]);
-  usePoll(updatesTick, URL_POLL_DEFAULT_DELAY);
   const fetchPluginManifest = (pluginName) =>
     coFetchJSON(
       `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/plugin-manifest.json`,
       'get',
       { cache: 'no-cache' },
     );
-  const manifestsTick = React.useCallback(() => {
-    const pluginManifests = pluginsData?.plugins?.map((pluginName) =>
-      fetchPluginManifest(pluginName),
-    );
-    if (pluginManifests) {
-      settleAllPromises(pluginManifests).then(([fulfilledValues]) => {
-        setPluginManifestsData(fulfilledValues);
-      });
-    }
-  });
-  usePoll(manifestsTick, URL_POLL_DEFAULT_DELAY);
+  const tick = React.useCallback(() => {
+    safeFetch(`${window.SERVER_FLAGS.basePath}api/check-updates`)
+      .then((response) => {
+        setPluginsData(response);
+        setPluginsError(null);
+        const pluginManifests = response?.plugins?.map((pluginName) =>
+          fetchPluginManifest(pluginName),
+        );
+        if (pluginManifests) {
+          settleAllPromises(pluginManifests).then(([fulfilledValues]) => {
+            setPluginManifestsData(fulfilledValues);
+          });
+        }
+      })
+      .catch(setPluginsError);
+  }, [safeFetch]);
+  usePoll(tick, URL_POLL_DEFAULT_DELAY);
 
   const prevPluginsDataRef = React.useRef();
   const prevPluginManifestsDataRef = React.useRef();
