@@ -250,7 +250,12 @@ const NamespaceMenu: React.FC<{
     if (!items.some((option) => option.title === selected) && selected !== ALL_NAMESPACES_KEY) {
       items.push({ title: selected, key: selected }); // Add current namespace if it isn't included
     }
-    items.sort((a, b) => a.title.localeCompare(b.title));
+    items.sort((a, b) => {
+      return a.title.localeCompare(b.title, undefined, {
+        numeric: true,
+        sensitivity: 'base',
+      });
+    });
 
     if (canList) {
       items.unshift({ title: allNamespacesTitle, key: ALL_NAMESPACES_KEY });
