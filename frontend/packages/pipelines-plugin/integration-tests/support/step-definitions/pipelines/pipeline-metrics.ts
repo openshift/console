@@ -38,3 +38,7 @@ Then('user can see Pipeline success ratio, Number of Pipeline Runs', () => {
 When('user can see message "No datapoints found" inside graphs', () => {
   cy.byTestID('datapoints-msg').should('include.text', 'No datapoints found.');
 });
+
+When('user starts the pipeline from start pipeline modal', () => {
+  cy.byTestID('confirm-action').click();
+});

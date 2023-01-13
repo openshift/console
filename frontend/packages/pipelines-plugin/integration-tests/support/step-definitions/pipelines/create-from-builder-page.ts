@@ -80,7 +80,6 @@ Then(
 
 When('user adds another task {string} in series', (taskName: string) => {
   pipelineBuilderPage.selectSeriesTask(taskName);
-  pipelineBuilderPage.clickCreateButton();
 });
 
 When(
@@ -194,7 +193,12 @@ And('user selects the {string} task from finally task list', (finallyTask: strin
     `oc apply -f testData/pipelines-workspaces/pipeline-task-${finallyTask}.yaml -n ${Cypress.env(
       'NAMESPACE',
     )}`,
-  );
+    {
+      failOnNonZeroExit: false,
+    },
+  ).then(function(result) {
+    cy.log(result.stdout);
+  });
   pipelineBuilderPage.selectFinallyTask(finallyTask);
 });
 
@@ -226,12 +230,22 @@ Given('user has chain of 3 tasks created in series', () => {
     `oc apply -f testData/pipelines-workspaces/sum-and-multiply-pipeline/task-sum.yaml -n ${Cypress.env(
       'NAMESPACE',
     )}`,
-  );
+    {
+      failOnNonZeroExit: false,
+    },
+  ).then(function(result) {
+    cy.log(result.stdout);
+  });
   cy.exec(
     `oc apply -f testData/pipelines-workspaces/sum-and-multiply-pipeline/task-multiply.yaml -n ${Cypress.env(
       'NAMESPACE',
     )}`,
-  );
+    {
+      failOnNonZeroExit: false,
+    },
+  ).then(function(result) {
+    cy.log(result.stdout);
+  });
   cy.fixture(`pipelines-workspaces/sum-and-multiply-pipeline/sum-and-multiply-pipeline.yaml`).then(
     (yaml) => {
       cy.get(pipelineBuilderPO.yamlCreatePipeline.yamlEditor)
@@ -300,7 +314,7 @@ And('user has named pipeline as {string}', (pipelineName: string) => {
 And('user has tasks {string} and {string} in series', (task1: string, task2: string) => {
   cy.byTestID('task-list').click();
   cy.get(pipelineBuilderPO.formView.quickSearch).type(task1);
-  cy.byTestID(`item-name-${task1}-Red Hat`).click();
+  cy.byTestID(`item-name-${task1}-Community`).click();
   cy.get(pipelineBuilderPO.formView.addInstallTask).click();
   pipelineBuilderPage.selectSeriesTask(task2);
 });
@@ -413,7 +427,12 @@ Given('user has applied yaml {string}', (yamlFile: string) => {
     `oc apply -f testData/pipelines-workspaces/using-optional-workspaces-in-when-expressions-pipelineRun/${yamlFile} -n ${Cypress.env(
       'NAMESPACE',
     )}`,
-  );
+    {
+      failOnNonZeroExit: false,
+    },
+  ).then(function(result) {
+    cy.log(result.stdout);
+  });
 });
 
 And('user is at YAML view', () => {
@@ -474,12 +493,22 @@ Given('user has imported YAML {string} and {string}', (task1: string, task2: str
     `oc apply -f testData/pipelines-workspaces/sum-and-multiply-pipeline/${task1} -n ${Cypress.env(
       'NAMESPACE',
     )}`,
-  );
+    {
+      failOnNonZeroExit: false,
+    },
+  ).then(function(result) {
+    cy.log(result.stdout);
+  });
   cy.exec(
     `oc apply -f testData/pipelines-workspaces/sum-and-multiply-pipeline/${task2} -n ${Cypress.env(
       'NAMESPACE',
     )}`,
-  );
+    {
+      failOnNonZeroExit: false,
+    },
+  ).then(function(result) {
+    cy.log(result.stdout);
+  });
 });
 
 And('user is at YAML view of Pipeline Builder page', () => {

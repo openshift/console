@@ -32,7 +32,6 @@ Given('user created pipeline with workspace using yaml {string}', (yamlFileName:
   pipelinesPage.clearYAMLEditor();
   pipelinesPage.setEditorContent(yamlFileName);
   cy.get(pipelineBuilderPO.create).click();
-  cy.get(pipelineBuilderPO.yamlCreatePipeline.create).click();
   detailsPage.titleShouldContain('s2i-build-and-deploy').should('be.visible');
 });
 

@@ -140,8 +140,8 @@ Feature: Perform Actions on repository
              Then user can see "GitHub application name", "See GitHub permissions" and "View all steps in documentation"
 
 
-        @regression @manual @odc-6460
-        #This test case is manual as it navigates to github in between the process
+    @regression @manual @odc-6460
+    #This test case is manual as it navigates to github in between the process
         Scenario: Create and configure the GitHub Application to work with Pipelines as code: P-11-TC13
             Given user is at Pipelines tab in admin page
              When user clicks on Setup GitHub App button
@@ -153,8 +153,8 @@ Feature: Perform Actions on repository
               And user will see App Name as "pac-app123", App Link as "https://github.com/apps/pac-app123" and Secret as "pipelines-as-code-secret" in "openshift-pipelines" namespace
 
 
-        @regression @odc-6461 @manual
-        # Manual test case as pipeline 1.8 is not yet available
+    @regression @odc-6461 @manual
+    # Manual test case as pipeline 1.8 is not yet available
         Scenario Outline: Add a Git repository to pipeline as code using webhook url: P-11-TC14
             Given user has installed OpenShift Pipelines Operator version 1.8 with catalog source "<catalog_yaml>" and image content policy "<image_content_policy_yaml>"
               And user is at repositories page
@@ -177,11 +177,11 @@ Feature: Perform Actions on repository
             Given user has installed OpenShift Pipelines Operator version 1.8 with catalog source "<catalog_yaml>" and image content policy "<image_content_policy_yaml>"
               And user has copied webhook url and webhook secret
               And user is on steps to configure Git repository page with its github repo
-              # Follow scenario P-11-TC14 to be redirected to configure git repository steps
+        # Follow scenario P-11-TC14 to be redirected to configure git repository steps
              When user clicks on Add webhook in repository Settings
               And user pastes the webhook url to Payload URL
               And user pastes webhook secret to Secret
-              # Skip the next step if the testing cluster has SSL enabled
+        # Skip the next step if the testing cluster has SSL enabled
               And user disables SSL verification
               And user selects "Send me everything" option
               And user clicks on Add webhook button
@@ -200,7 +200,7 @@ Feature: Perform Actions on repository
         Scenario Outline: Add a Git repository to pipeline as code using GitHub App: P-11-TC16
             Given user has installed OpenShift Pipelines Operator version 1.8 with catalog source "<catalog_yaml>" and image content policy "<image_content_policy_yaml>"
               And user has setted up GitHub App "pipelines-ci-clustername1"
-              # Follow scenario P-11-TC13 to setup GitHub App
+        # Follow scenario P-11-TC13 to setup GitHub App
               And user is at repositories page
              When user clicks on Create Repository button
               And user enters Git Repo URL of repository as "<repository_url>"

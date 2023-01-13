@@ -128,3 +128,8 @@ When('user opens task run {string}', (pipelineName: string) => {
     .eq(0)
     .click();
 });
+
+When('user clicks on Pipelines Tab', () => {
+  cy.reload();
+  tasksPage.openPipelinePage();
+});

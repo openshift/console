@@ -79,7 +79,6 @@ Given(
 
 When('user adds another task {string} in parallel', (taskName: string) => {
   pipelineBuilderPage.selectParallelTask(taskName);
-  pipelineBuilderPage.clickCreateButton();
 });
 
 Given('user is at pipelines page', () => {

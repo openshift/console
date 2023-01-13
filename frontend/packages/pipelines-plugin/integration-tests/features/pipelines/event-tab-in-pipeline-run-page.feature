@@ -11,7 +11,7 @@ Feature: Events tab in Pipeline run and Task run details pages
             Given user is at administrator perspective
               And pipeline named "pipe-one" is available with pipeline run
              When user clicks on pipeline tab in navigation menu
-              And user clicks on Pipelines
+              And user clicks on Pipelines Tab
               And user goes to Pipeline Runs tab
               And user clicks on pipeline run for pipeline "pipe-one"
               And user clicks on Events tab
