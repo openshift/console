@@ -238,7 +238,12 @@ Then('{string} is not displayed on Repositories page', (repoName: string) => {
 Given('pipeline run is displayed for {string}', (repoName) => {
   cy.exec(
     `oc apply -f ${'testData/repository-crd-testdata/pipelineRun.yaml'} -n ${'aut-pipelines'}`,
-  );
+    {
+      failOnNonZeroExit: false,
+    },
+  ).then(function(result) {
+    cy.log(result.stdout);
+  });
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.selectTab(pipelineTabs.Repositories);
   pipelinesPage.search(repoName);

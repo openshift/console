@@ -1,4 +1,5 @@
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { pipelineBuilderPO } from '@console/pipelines-plugin/integration-tests/support/page-objects';
 import { pipelinesPage } from '@console/pipelines-plugin/integration-tests/support/pages';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { pageTitle, operators, switchPerspective } from '../../constants';
@@ -135,6 +136,7 @@ const waitForPipelineTasks = (retries: number = 30) => {
   cy.contains('h1', 'Pipeline builder').should('be.visible');
   cy.byTestID('loading-indicator').should('not.exist');
   cy.wait(500);
+  cy.get(pipelineBuilderPO.formView.switchToFormView).click();
   cy.get('body').then(($body) => {
     if ($body.find(`[data-id="pipeline-builder"]`).length === 0) {
       cy.wait(10000);

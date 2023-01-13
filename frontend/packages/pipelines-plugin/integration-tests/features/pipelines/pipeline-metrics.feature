@@ -27,8 +27,11 @@ Feature: Pipeline metrics
 
         @regression
         Scenario: No datapoint graphs in metrics tab: P-04-TC03
-            Given pipeline "pipeline-metrics-two" is present on Pipeline Details page
+            Given user creates pipeline using git named "pipeline-metrics-two"
+              And user navigates to Pipelines page
+              And user clicks on pipeline "pipeline-metrics-two"
               And user selects option "Start" from Actions menu drop down
+              And user starts the pipeline from start pipeline modal
               And user navigates to Pipelines page
               And user clicks on pipeline "pipeline-metrics-two"
               And user clicks on Metrics tab

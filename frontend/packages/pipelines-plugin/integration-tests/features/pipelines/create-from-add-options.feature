@@ -3,7 +3,7 @@ Feature: Create Pipeline from Add Options
               As a user, I want to create, edit, delete and view the pipeline
 
         Background:
-            Given user has created or selected namespace "aut-pipelines-add-options"
+            Given user has created or selected namespace "aut-pipelines"
 
 
         @smoke
@@ -27,7 +27,7 @@ Feature: Create Pipeline from Add Options
         Scenario Outline: Create a pipeline from git workload with knative resource type: P-01-TC03
             Given user has installed OpenShift Serverless Operator
               And user is at developer perspective
-              And user has created or selected namespace "aut-pipelines-add-options"
+              And user has created or selected namespace "aut-pipelines"
               And user is at Add page
               And user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
@@ -43,7 +43,7 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-git-kn |
 
 
-        # https://bugzilla.redhat.com/show_bug.cgi?id=2061302
+    # https://bugzilla.redhat.com/show_bug.cgi?id=2061302
         @smoke @broken-test
         Scenario Outline: Pipeline details display in topology page: P-01-TC04
             Given user created workload "<name>" from add page with pipeline
@@ -106,7 +106,7 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-git |
 
 
-        #Marking this as manual due to git rate limit  issue
+    #Marking this as manual due to git rate limit  issue
         @regression @manual
         Scenario Outline: Add Pipeline option display in git workload for builder image: P-01-TC08
             Given user is at Import from Git form

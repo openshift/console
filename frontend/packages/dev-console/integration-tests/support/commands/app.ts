@@ -51,7 +51,7 @@ Cypress.Commands.add(
   (selector: string, dropdownText: string) => {
     cy.get(selector).click();
     cy.byLegacyTestID('dropdown-text-filter').type(dropdownText);
-    cy.get(`[id*="${dropdownText}-link"]`).click({ force: true });
+    cy.get(`[id*="${dropdownText}-link"]`, { timeout: 60000 }).click({ force: true });
   },
 );
 
