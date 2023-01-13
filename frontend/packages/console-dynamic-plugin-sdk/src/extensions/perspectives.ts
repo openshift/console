@@ -5,6 +5,7 @@ import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 // Align type with React.lazy
 type LazyComponent = { default: React.ComponentType };
 
+/** This extension contributes a new perspective to the console which enables customization of the navigation menu. */
 export type Perspective = ExtensionDeclaration<
   'console.perspective',
   {

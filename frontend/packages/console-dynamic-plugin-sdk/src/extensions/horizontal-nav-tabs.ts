@@ -13,6 +13,7 @@ export type PageComponentProps<R extends K8sResourceCommon = K8sResourceCommon> 
   fieldSelector?: string;
 };
 
+/** This extension can be used to add a tab on the resource details page. */
 export type HorizontalNavTab = ExtensionDeclaration<
   'console.tab/horizontalNav',
   {

@@ -1,6 +1,7 @@
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { K8sResourceCommon } from './console-types';
 
+/** This extension can be used to specify additional properties that will be used when creating PVC resources on the PVC list page. */
 export type PVCCreateProp = ExtensionDeclaration<
   'console.pvc/create-prop',
   {
@@ -11,6 +12,7 @@ export type PVCCreateProp = ExtensionDeclaration<
   }
 >;
 
+/** This extension can be used to contribute custom alerts on the PVC details page. */
 export type PVCAlert = ExtensionDeclaration<
   'console.pvc/alert',
   {
@@ -19,6 +21,7 @@ export type PVCAlert = ExtensionDeclaration<
   }
 >;
 
+/** This extension can be used to contribute an additional status component for PVC resources on the cluster dashboard page. */
 export type PVCStatus = ExtensionDeclaration<
   'console.pvc/status',
   {
@@ -31,6 +34,7 @@ export type PVCStatus = ExtensionDeclaration<
   }
 >;
 
+/** This extension allows hooking into deleting PVC resources. It can provide an alert with additional information and custom PVC delete logic. */
 export type PVCDelete = ExtensionDeclaration<
   'console.pvc/delete',
   {

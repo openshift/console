@@ -147,15 +147,15 @@ ResourceActionProvider contributes a hook that returns list of actions for speci
 
 ### Summary 
 
-(not available)
+This extension can be used to trigger a specific action when a specific Prometheus alert is observed by the Console based on its `rule.name` value.
 
 ### Properties
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `alert` | `string` | no |  |
-| `text` | `string` | no |  |
-| `action` | `CodeRef<(alert: Alert, launchModal: LaunchModal) => void>` | no |  |
+| `alert` | `string` | no | Alert name as defined by `alert.rule.name` property |
+| `text` | `string` | no | Action text |
+| `action` | `CodeRef<(alert: Alert, launchModal: LaunchModal) => void>` | no | Function to perform side effect |
 
 ---
 
@@ -163,7 +163,7 @@ ResourceActionProvider contributes a hook that returns list of actions for speci
 
 ### Summary 
 
-(not available)
+This extension can be used for plugins to contribute a handler that can filter specific catalog items.<br/>For example, the plugin can contribute a filter that filters helm charts from specific provider.
 
 ### Properties
 
@@ -179,7 +179,7 @@ ResourceActionProvider contributes a hook that returns list of actions for speci
 
 ### Summary 
 
-(not available)
+This extension can be used to contribute a provider that adds extra metadata to specific catalog items.
 
 ### Properties
 
@@ -195,7 +195,7 @@ ResourceActionProvider contributes a hook that returns list of actions for speci
 
 ### Summary 
 
-(not available)
+This extension allows plugins to contribute a provider for a catalog item type. For example, a Helm Plugin can add a provider<br/>that fetches all the Helm Charts. This extension can also be used by other plugins to add more items to a specific catalog item type.
 
 ### Properties
 
@@ -213,7 +213,7 @@ ResourceActionProvider contributes a hook that returns list of actions for speci
 
 ### Summary 
 
-(not available)
+This extension allows plugins to contribute a new type of catalog item. For example, a Helm plugin can define<br/>a new catalog item type as HelmCharts that it wants to contribute to the Developer Catalog.
 
 ### Properties
 
@@ -232,7 +232,7 @@ ResourceActionProvider contributes a hook that returns list of actions for speci
 
 ### Summary 
 
-(not available)
+This extension allows plugins to contribute extra metadata like custom filters or groupings for any catalog item type.<br/>For example, a plugin can attach a custom filter for HelmCharts that can filter based on chart provider.
 
 ### Properties
 
@@ -337,9 +337,9 @@ Adds an item to the Details card of Overview Dashboard
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `title` | `string` | no |  |
+| `title` | `string` | no | Details card title |
 | `component` | `CodeRef<React.ComponentType<{}>>` | no | The value, rendered by the OverviewDetailItem component |
-| `valueClassName` | `string` | yes |  |
+| `valueClassName` | `string` | yes | Value for a className |
 | `isLoading` | `CodeRef<() => boolean>` | yes | Function returning the loading state of the component |
 | `error` | `CodeRef<() => string>` | yes | Function returning errors to be displayed by the component |
 
@@ -538,7 +538,7 @@ Adds a new dashboard tab, placed after the Overview tab.
 
 ### Summary 
 
-(not available)
+This extension can be used to provide a handler for the file drop action on specific file extensions.
 
 ### Properties
 
@@ -596,7 +596,7 @@ Adds new Console feature flag driven by the presence of a CRD on the cluster.
 
 ### Summary 
 
-(not available)
+This extension identifies a resource used to manage the configuration of the cluster.<br/>A link to the resource will be added to the Administration - Cluster Settings - Configuration page.
 
 ### Properties
 
@@ -632,7 +632,7 @@ Customize the display of models by overriding values retrieved and generated thr
 
 ### Summary 
 
-(not available)
+This extension can be used to contribute a navigation item that points to a specific link in the UI.
 
 ### Properties
 
@@ -656,7 +656,7 @@ Customize the display of models by overriding values retrieved and generated thr
 
 ### Summary 
 
-(not available)
+This extension can be used to contribute a navigation item that points to a cluster resource details page.<br/>The K8s model of that resource can be used to define the navigation item.
 
 ### Properties
 
@@ -678,7 +678,7 @@ Customize the display of models by overriding values retrieved and generated thr
 
 ### Summary 
 
-(not available)
+This extension can be used to contribute a navigation item that points to a namespaced resource details page.<br/>The K8s model of that resource can be used to define the navigation item.
 
 ### Properties
 
@@ -700,7 +700,7 @@ Customize the display of models by overriding values retrieved and generated thr
 
 ### Summary 
 
-(not available)
+This extension can be used to define a new section of navigation items in the navigation tab.
 
 ### Properties
 
@@ -719,7 +719,7 @@ Customize the display of models by overriding values retrieved and generated thr
 
 ### Summary 
 
-(not available)
+This extension can be used to add a separator between navigation items in the navigation.
 
 ### Properties
 
@@ -801,7 +801,7 @@ Adds new standalone page (rendered outside the common page layout) to Console ro
 
 ### Summary 
 
-(not available)
+This extension contributes a new perspective to the console which enables customization of the navigation menu.
 
 ### Properties
 
@@ -856,7 +856,7 @@ Adds a new project overview utilization item.
 
 ### Summary 
 
-(not available)
+This extension can be used to contribute custom alerts on the PVC details page.
 
 ### Properties
 
@@ -870,7 +870,7 @@ Adds a new project overview utilization item.
 
 ### Summary 
 
-(not available)
+This extension can be used to specify additional properties that will be used when creating PVC resources on the PVC list page.
 
 ### Properties
 
@@ -885,7 +885,7 @@ Adds a new project overview utilization item.
 
 ### Summary 
 
-(not available)
+This extension allows hooking into deleting PVC resources. It can provide an alert with additional information and custom PVC delete logic.
 
 ### Properties
 
@@ -901,7 +901,7 @@ Adds a new project overview utilization item.
 
 ### Summary 
 
-(not available)
+This extension can be used to contribute an additional status component for PVC resources on the cluster dashboard page.
 
 ### Properties
 
@@ -932,7 +932,7 @@ Adds new reducer to Console Redux store which operates on `plugins.<scope>` subs
 
 ### Summary 
 
-(not available)
+This extension allows plugins to provide a custom component (ie wizard or form) for specific resources,<br/>which will be rendered, when users try to create a new resource instance.
 
 ### Properties
 
@@ -953,8 +953,8 @@ Adds a new storage class provisioner as an option during storage class creation.
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `CSI` | `ProvisionerDetails` | yes |  |
-| `OTHERS` | `ProvisionerDetails` | yes |  |
+| `CSI` | `ProvisionerDetails` | yes | Container Storage Interface provisioner type |
+| `OTHERS` | `ProvisionerDetails` | yes | Other provisioner type |
 
 ---
 
@@ -962,14 +962,14 @@ Adds a new storage class provisioner as an option during storage class creation.
 
 ### Summary 
 
-(not available)
+This extension can be used to contribute a new storage provider to select,<br/>when attaching storage and a provider specific component.
 
 ### Properties
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `name` | `string` | no |  |
-| `Component` | `CodeRef<React.ComponentType<Partial<RouteComponentProps<{}, StaticContext, any>>>>` | no |  |
+| `name` | `string` | no | Displayed name of the provider. |
+| `Component` | `CodeRef<React.ComponentType<Partial<RouteComponentProps<{}, StaticContext, any>>>>` | no | Provider specific component to render. |
 
 ---
 
@@ -994,7 +994,7 @@ Adds a tab to a horizontal nav matching the `contextId`.
 
 ### Summary 
 
-(not available)
+This extension can be used to add a tab on the resource details page.
 
 ### Properties
 
@@ -1010,7 +1010,7 @@ Adds a tab to a horizontal nav matching the `contextId`.
 
 ### Summary 
 
-(not available)
+This component can be used to register a listener function receiving telemetry events.<br/>These events include user identification, page navigation, and other application specific events.<br/>The listener may use this data for reporting and analytics purposes.
 
 ### Properties
 
@@ -1024,13 +1024,13 @@ Adds a tab to a horizontal nav matching the `contextId`.
 
 ### Summary 
 
-BuildAdapter contributes an adapter to adapt element to data that can be used by Build component
+BuildAdapter contributes an adapter to adapt element to data that can be used by Pod component
 
 ### Properties
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `adapt` | `CodeRef<(element: GraphElement) => AdapterDataType<BuildConfigData> \| undefined>` | no |  |
+| `adapt` | `CodeRef<(element: GraphElement) => AdapterDataType<BuildConfigData> \| undefined>` | no | adapter to adapt element to data that can be used by Networking component. |
 
 ---
 
@@ -1044,7 +1044,7 @@ NetworkAdpater contributes an adapter to adapt element to data that can be used 
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `adapt` | `CodeRef<(element: GraphElement) => NetworkAdapterType \| undefined>` | no |  |
+| `adapt` | `CodeRef<(element: GraphElement) => NetworkAdapterType \| undefined>` | no | adapter to adapt element to data that can be used by Networking component. |
 
 ---
 
@@ -1058,7 +1058,7 @@ PodAdapter contributes an adapter to adapt element to data that can be used by P
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `adapt` | `CodeRef<(element: GraphElement) => AdapterDataType<PodsAdapterDataType> \| undefined>` | no |  |
+| `adapt` | `CodeRef<(element: GraphElement) => AdapterDataType<PodsAdapterDataType> \| undefined>` | no | adapter to adapt element to data that can be used by Pod component. |
 
 ---
 
@@ -1120,10 +1120,10 @@ Topology Decorator Provider Extension
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `id` | `string` | no |  |
-| `priority` | `number` | no |  |
-| `quadrant` | `TopologyQuadrant` | no |  |
-| `decorator` | `CodeRef<TopologyDecoratorGetter>` | no |  |
+| `id` | `string` | no | id for topology decorator specific to the extension |
+| `priority` | `number` | no | priority for topology decorator specific to the extension |
+| `quadrant` | `TopologyQuadrant` | no | quadrant for topology decorator specific to the extension |
+| `decorator` | `CodeRef<TopologyDecoratorGetter>` | no | decorator specific to the extension |
 
 ---
 
@@ -1203,8 +1203,8 @@ Topology Display Filters Extension
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `getTopologyFilters` | `CodeRef<() => TopologyDisplayOption[]>` | no |  |
-| `applyDisplayOptions` | `CodeRef<TopologyApplyDisplayOptions>` | no |  |
+| `getTopologyFilters` | `CodeRef<() => TopologyDisplayOption[]>` | no | Getter for topology filters specific to the extension |
+| `applyDisplayOptions` | `CodeRef<TopologyApplyDisplayOptions>` | no | Function to apply filters to the model |
 
 ---
 
@@ -1218,10 +1218,10 @@ Topology relationship provider connector extension
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `provides` | `CodeRef<RelationshipProviderProvides>` | no |  |
-| `tooltip` | `string` | no |  |
-| `create` | `CodeRef<RelationshipProviderCreate>` | no |  |
-| `priority` | `number` | no |  |
+| `provides` | `CodeRef<RelationshipProviderProvides>` | no | use to determine if a connection can be created between the source and target node |
+| `tooltip` | `string` | no | tooltip to show when connector operation is hovering over the drop target ex: "Create a Visual Connector" |
+| `create` | `CodeRef<RelationshipProviderCreate>` | no | callback to execute when connector is drop over target node to create a connection |
+| `priority` | `number` | no | priority for relationship, higher will be preferred in case of multiple |
 
 ---
 
@@ -1229,7 +1229,7 @@ Topology relationship provider connector extension
 
 ### Summary 
 
-(not available)
+This extension can be used to add a group on the console user-preferences page.<br/>It will appear as a vertical tab option on the console user-preferences page.
 
 ### Properties
 
@@ -1246,7 +1246,7 @@ Topology relationship provider connector extension
 
 ### Summary 
 
-(not available)
+This extension can be used to add an item to the user preferences group on the console user preferences page.
 
 ### Properties
 
@@ -1282,7 +1282,7 @@ YAML templates for editing resources via the yaml editor.
 
 ### Summary 
 
-(not available)
+This extension allows plugins to contribute an add action item to the add page of developer perspective.<br/>For example, a Serverless plugin can add a new action item for adding serverless functions<br/>to the add page of developer console.
 
 ### Properties
 
@@ -1303,7 +1303,7 @@ YAML templates for editing resources via the yaml editor.
 
 ### Summary 
 
-(not available)
+This extension allows plugins to contibute a group in the add page of developer console.<br/>Groups can be referenced by actions, which will be grouped together in the add action page based on their extension definition.<br/>For example, a Serverless plugin can contribute a Serverless group and together with multiple add actions.
 
 ### Properties
 
@@ -1320,7 +1320,7 @@ YAML templates for editing resources via the yaml editor.
 
 ### Summary 
 
-(not available)
+This extension can be used to specify extra build environment variable fields under the builder image selector<br/>in the dev console git import form. When set, the fields will override environment variables<br/>of the same name in the build section.
 
 ### Properties
 

@@ -11,6 +11,9 @@ export type ImageEnvironment = {
   description?: string;
 };
 
+/** This extension can be used to specify extra build environment variable fields under the builder image selector
+    in the dev console git import form. When set, the fields will override environment variables
+    of the same name in the build section. */
 export type ImportEnvironment = ExtensionDeclaration<
   'dev-console.import/environment',
   {
