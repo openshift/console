@@ -57,9 +57,9 @@ export type TopologyDataModelFactory = ExtensionDeclaration<
 export type TopologyDisplayFilters = ExtensionDeclaration<
   'console.topology/display/filters',
   {
-    // Getter for topology filters specific to the extension
+    /** Getter for topology filters specific to the extension */
     getTopologyFilters: CodeRef<() => TopologyDisplayOption[]>;
-    // Function to apply filters to the model
+    /** Function to apply filters to the model */
     applyDisplayOptions: CodeRef<TopologyApplyDisplayOptions>;
   }
 >;
@@ -68,13 +68,13 @@ export type TopologyDisplayFilters = ExtensionDeclaration<
 export type TopologyDecoratorProvider = ExtensionDeclaration<
   'console.topology/decorator/provider',
   {
-    // id for topology decorator specific to the extension
+    /** id for topology decorator specific to the extension */
     id: string;
-    // priority for topology decorator specific to the extension
+    /** priority for topology decorator specific to the extension */
     priority: number;
-    // quadrant for topology decorator specific to the extension
+    /** quadrant for topology decorator specific to the extension */
     quadrant: TopologyQuadrant;
-    // decorator specific to the extension
+    /** decorator specific to the extension */
     decorator: CodeRef<TopologyDecoratorGetter>;
   }
 >;
@@ -83,13 +83,13 @@ export type TopologyDecoratorProvider = ExtensionDeclaration<
 export type TopologyRelationshipProvider = ExtensionDeclaration<
   'console.topology/relationship/provider',
   {
-    // use to determine if a connection can be created between the source and target node
+    /** use to determine if a connection can be created between the source and target node */
     provides: CodeRef<RelationshipProviderProvides>;
-    // tooltip to show when connector operation is hovering over the drop target ex: "Create a Visual Connector"
+    /** tooltip to show when connector operation is hovering over the drop target ex: "Create a Visual Connector" */
     tooltip: string;
-    // callback to execute when connector is drop over target node to create a connection
+    /** callback to execute when connector is drop over target node to create a connection */
     create: CodeRef<RelationshipProviderCreate>;
-    // priority for relationship, higher will be preferred in case of multiple
+    /** priority for relationship, higher will be preferred in case of multiple */
     priority: number;
   }
 >;

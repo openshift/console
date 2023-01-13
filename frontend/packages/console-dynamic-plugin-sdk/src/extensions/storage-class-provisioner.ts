@@ -8,7 +8,9 @@ export type ProvisionerProps = {
 };
 
 export enum ProvisionerType {
+  /** Container Storage Interface provisioner type */
   CSI = 'CSI',
+  /** Other provisioner type */
   OTHERS = 'OTHERS',
 }
 

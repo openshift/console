@@ -2,6 +2,9 @@ import * as React from 'react';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
+/** This extension allows plugins to contribute an add action item to the add page of developer perspective.
+    For example, a Serverless plugin can add a new action item for adding serverless functions
+    to the add page of developer console. */
 export type AddAction = ExtensionDeclaration<
   'dev-console.add/action',
   {
@@ -24,6 +27,9 @@ export type AddAction = ExtensionDeclaration<
   }
 >;
 
+/** This extension allows plugins to contibute a group in the add page of developer console.
+    Groups can be referenced by actions, which will be grouped together in the add action page based on their extension definition.
+    For example, a Serverless plugin can contribute a Serverless group and together with multiple add actions. */
 export type AddActionGroup = ExtensionDeclaration<
   'dev-console.add/action-group',
   {

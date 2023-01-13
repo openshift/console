@@ -84,14 +84,16 @@ export type DetailsResourceAlert = ExtensionDeclaration<
 export type PodAdapter = ExtensionDeclaration<
   'console.topology/adapter/pod',
   {
+    /** adapter to adapt element to data that can be used by Pod component. */
     adapt: CodeRef<(element: GraphElement) => AdapterDataType<PodsAdapterDataType> | undefined>;
   }
 >;
 
-/** BuildAdapter contributes an adapter to adapt element to data that can be used by Build component */
+/** BuildAdapter contributes an adapter to adapt element to data that can be used by Pod component */
 export type BuildAdapter = ExtensionDeclaration<
   'console.topology/adapter/build',
   {
+    /** adapter to adapt element to data that can be used by Networking component. */
     adapt: CodeRef<(element: GraphElement) => AdapterDataType<BuildConfigData> | undefined>;
   }
 >;
@@ -100,6 +102,7 @@ export type BuildAdapter = ExtensionDeclaration<
 export type NetworkAdapter = ExtensionDeclaration<
   'console.topology/adapter/network',
   {
+    /** adapter to adapt element to data that can be used by Networking component. */
     adapt: CodeRef<(element: GraphElement) => NetworkAdapterType | undefined>;
   }
 >;

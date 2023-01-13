@@ -43,6 +43,8 @@ export type UserPreferenceField =
   | UserPreferenceCheckboxField
   | UserPreferenceCustomField;
 
+/** This extension can be used to add a group on the console user-preferences page.
+    It will appear as a vertical tab option on the console user-preferences page. */
 export type UserPreferenceGroup = ExtensionDeclaration<
   'console.user-preference/group',
   {
@@ -57,6 +59,7 @@ export type UserPreferenceGroup = ExtensionDeclaration<
   }
 >;
 
+/** This extension can be used to add an item to the user preferences group on the console user preferences page. */
 export type UserPreferenceItem = ExtensionDeclaration<
   'console.user-preference/item',
   {
