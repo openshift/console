@@ -1,5 +1,4 @@
 reviewers:
-  - andrewballantyne
   - abhinandan13jan
   - debsmita1
   - divyanshiGupta
@@ -8,11 +7,14 @@ reviewers:
   - jeff-phillips-18
   - jerolimov
   - karthikjeeyar
+  - lokanandaprabhu
+  - lucifergene
   - rohitkrai03
   - rottencandy
   - sahil143
   - vikram-raj
 approvers:
+  - debsmita1
   - divyanshiGupta
   - invincibleJai
   - jeff-phillips-18
