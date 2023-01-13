@@ -70,9 +70,9 @@ describe('PollConsoleUpdates Test', () => {
     cy.intercept(CHECK_UPDATES_URL, UPDATES_DEFAULT).as(CHECK_UPDATES_ALIAS);
     cy.wait(`@${CHECK_UPDATES_ALIAS}`, WAIT_OPTIONS);
     cy.intercept(CHECK_UPDATES_URL, UPDATES_NEW_PLUGIN).as(CHECK_UPDATES_ALIAS);
-    cy.intercept(PLUGIN_MANIFEST_URL, { forceNetworkError: true }).as('error');
+    cy.intercept(PLUGIN_MANIFEST_URL, { forceNetworkError: true }).as(CHECK_MANIFEST_ALIAS);
     cy.wait(`@${CHECK_UPDATES_ALIAS}`, WAIT_OPTIONS);
-    cy.wait('@error', WAIT_OPTIONS).should('have.property', 'error');
+    cy.wait(`@${CHECK_MANIFEST_ALIAS}`, WAIT_OPTIONS).should('have.property', 'error');
     cy.get(refreshWebConsoleLink).should('not.exist');
     cy.intercept(PLUGIN_MANIFEST_URL, PLUGIN_MANIFEST_DEFAULT).as(CHECK_MANIFEST_ALIAS);
     cy.wait(`@${CHECK_MANIFEST_ALIAS}`, WAIT_OPTIONS);
