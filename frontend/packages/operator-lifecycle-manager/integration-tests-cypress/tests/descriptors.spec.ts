@@ -109,8 +109,12 @@ describe('Using OLM descriptor components', () => {
       `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.versions[0].name}~${testCRD.spec.names.kind}`,
     );
     cy.byTestOperandLink('olm-descriptors-test').should('exist');
-    cy.byLegacyTestID('kebab-button').click({ force: true });
-    cy.byTestActionID(`Delete ${testCRD.spec.names.kind}`).click();
+    cy.byLegacyTestID('kebab-button')
+      .should('exist')
+      .click({ force: true });
+    cy.byTestActionID(`Delete ${testCRD.spec.names.kind}`)
+      .should('exist')
+      .click();
     modal.shouldBeOpened();
     modal.submit();
     modal.shouldBeClosed();
