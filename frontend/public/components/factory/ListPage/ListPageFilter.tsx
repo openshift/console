@@ -18,6 +18,7 @@ const ListPageFilter: React.FC<ListPageFilterProps> = ({
   columnLayout,
   onFilterChange,
   hideColumnManagement,
+  nameFilter,
 }) =>
   loaded &&
   !_.isEmpty(data) && (
@@ -34,6 +35,7 @@ const ListPageFilter: React.FC<ListPageFilterProps> = ({
       hideLabelFilter={hideLabelFilter}
       columnLayout={columnLayout}
       hideColumnManagement={hideColumnManagement}
+      textFilter={nameFilter}
     />
   );
 
