@@ -204,8 +204,9 @@ When(
 );
 
 Then('pipeline run is deleted from pipeline runs page', () => {
-  // Reload is added, because pipeline run is not getting deleted immediately
-  cy.reload();
+  navigateTo(devNavigationMenu.Pipelines);
+  cy.byLegacyTestID('flow').click();
+  cy.get(pipelineDetailsPO.pipelineRunsTab).click();
   cy.get(pipelineRunsPO.pipelineRunsTable.table)
     .find('tr')
     .then(($ele) => {
@@ -489,6 +490,10 @@ Then('user will see VolumeClaimTemplate Workspace in Pipeline Run Details page',
   cy.get(pipelineRunDetailsPO.details.workspacesResources.volumeClaimTemplateResources).should(
     'be.visible',
   );
+});
+
+Then('user will see Empty Directory in Pipeline Run Details page', () => {
+  cy.get(pipelineRunDetailsPO.details.workspacesResources.emptyDirectory).should('be.visible');
 });
 
 When('user clicks on Start', () => {

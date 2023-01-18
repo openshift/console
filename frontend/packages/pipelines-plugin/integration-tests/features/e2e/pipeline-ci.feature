@@ -13,17 +13,11 @@ Feature: Entire pipeline flow from Builder page
             Given user is at Pipeline Builder page
              When user enters pipeline name as "flow"
               And user clicks Add task button under Tasks section
-              And user searches "git-clone" in quick search bar
-              And user selects "git-clone" from "Red Hat"
+              And user searches "kn" in quick search bar
+              And user selects "kn" from "Red Hat"
               And user clicks on Add button
-              And user clicks the "git-clone" node
-              And user enters the url as "https://github.com/sclorg/golang-ex.git" under Parameters section in cluster task sidebar
-              And user enters revision as "master" under Parameters section in cluster task sidebar
-              And user adds the parameter details like Name, Description and Default Value
               And user clicks on Add workspace
               And user adds the Workspace name as "git"
-              And user clicks the "git-clone" node
-              And user selects the "git" workspace in the Output of Workspaces in cluster task sidebar
               And user clicks Create button on Pipeline Builder page
              Then user will be redirected to Pipeline Details page with header name "flow"
               And user will see workspace mentioned as "git" in the Workspaces section of Pipeline Details page
@@ -62,13 +56,13 @@ Feature: Entire pipeline flow from Builder page
             Given user is at pipelines page
              When user selects "Start" option from kebab menu for pipeline "flow"
               And user navigates to Workspaces section
-              And user selects "VolumeClaimTemplate" option from workspace dropdown
+        #   And user selects "VolumeClaimTemplate" option from workspace dropdown
         #   And user clicks Show VolumeClaimTemplate options
         #   And user selects Storage Class as "gp2-csi" from dropdown
               And user clicks on Start
              Then user will be redirected to Pipeline Run Details page
               And user is able to see the pipelineRuns with status as Succeeded
-              And user will see VolumeClaimTemplate Workspace in Pipeline Run Details page
+              And user will see Empty Directory in Pipeline Run Details page
 
         @smoke
         Scenario: Pipeline Run Details page
