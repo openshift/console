@@ -30,12 +30,13 @@ RUN apt-get update \
     libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
     # ^^ additional Cypress dependencies: https://docs.cypress.io/guides/guides/continuous-integration.html#Dependencies
 
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.4/bin/linux/amd64/kubectl && \
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.4/bin/linux/$(go env GOARCH)/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl
 
 RUN cd /tmp && \
-    wget --quiet -O /tmp/node.tar.gz http://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.gz && \
+    wget --quiet -O /tmp/node.tar.gz \
+      "http://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-$(go env GOARCH | sed 's/amd64/x64/').tar.gz" && \
     tar xf node.tar.gz && \
     rm -f /tmp/node.tar.gz && \
     cd node-* && \
@@ -55,7 +56,8 @@ RUN cd /tmp && \
     ln -s /usr/local/yarn/bin/yarn /usr/local/bin/yarn
 
 # Install Chrome for installer gui tests
-RUN wget --quiet -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+RUN test "$(go env GOARCH)" = amd64 || exit 0; \
+    wget --quiet -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
     apt-get update && \
     apt-get install --no-install-recommends -y -q \
