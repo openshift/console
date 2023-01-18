@@ -1,9 +1,11 @@
 package actions
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/openshift/api/helm/v1beta1"
 	"github.com/openshift/console/pkg/helm/metrics"
@@ -12,6 +14,7 @@ import (
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/release"
 	kv1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 )
@@ -225,17 +228,58 @@ func UpgradeReleaseAsync(
 		}
 		ch.Metadata.Annotations["chart_url"] = chartUrl
 	}
+
 	go func() {
-		_, err := client.Run(releaseName, ch, vals)
+		// Create context and prepare the handle of SIGTERM
+		// ctx := context.Background()
+		// ctx, cancel := context.WithCancel(ctx)
+		// remove all the tls related files created by this process
+		ctx, cancel := context.WithCancel(context.Background())
+		cancelChan := make(chan bool, 1)
+		go func() {
+			label := fmt.Sprintf("owner=helm,name=%v,version=%v", releaseName, rel.Version+1)
+			secretList, err := coreClient.Secrets(releaseNamespace).Watch(context.TODO(), metav1.ListOptions{LabelSelector: label, Watch: true})
+			if err != nil {
+				return
+			}
+			start := time.Now()
+			for {
+				event := <-secretList.ResultChan()
+				if event.Object != nil {
+					obj := event.Object.(*kv1.Secret)
+					fmt.Println("+++++++++++", obj.Labels["status"])
+					if obj.Labels["status"] == "uninstalling" {
+						fmt.Println("__Reached Here___")
+						cancelChan <- true
+						secretList.Stop()
+						break
+					} else if obj.Labels["status"] == "deployed" {
+						fmt.Println("release has been deployed")
+						cancelChan <- false
+						secretList.Stop()
+						break
+					}
+				}
+				if time.Since(start) >= (5 * time.Minute) {
+					fmt.Println("No need to watch for the secret after 5 minutes")
+					cancelChan <- false
+					secretList.Stop()
+					break
+				}
+			}
+		}()
+		_, err := client.RunWithContext(ctx, releaseName, ch, vals)
 		if err != nil {
 			createSecret(releaseNamespace, releaseName, rel.Version+1, coreClient, err)
-		}
-		if err == nil {
+		} else {
+			val := <-cancelChan
+				if val == true {
+					cancel()
+				}
 			if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
 				metrics.HandleconsoleHelmUpgradesTotal(ch.Metadata.Name, ch.Metadata.Version)
 			}
 		}
-		// remove all the tls related files created by this process
 		defer func() {
 			if fileCleanUp == false {
 				return
@@ -244,7 +288,9 @@ func UpgradeReleaseAsync(
 				os.Remove(f.Name())
 			}
 		}()
+
 	}()
+
 	secret, err := getSecret(releaseNamespace, releaseName, rel.Version+1, coreClient)
 	if err != nil {
 		return nil, err

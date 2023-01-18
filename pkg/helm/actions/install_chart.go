@@ -1,8 +1,10 @@
 package actions
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/openshift/api/helm/v1beta1"
 	"github.com/openshift/console/pkg/helm/metrics"
@@ -11,6 +13,7 @@ import (
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/release"
 	kv1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -122,6 +125,7 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	if indexEntry == "" {
 		chartInfo, err = getChartInfoFromChartUrl(url, ns, client, coreClient)
 		if err != nil {
+			fmt.Println("Reaching here 33", err)
 			return nil, err
 		}
 	} else {
@@ -130,6 +134,7 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 
 	connectionConfig, isClusterScoped, err := getRepositoryConnectionConfig(chartInfo.RepositoryName, ns, client)
 	if err != nil {
+		fmt.Println("Reaching here 336", err)
 		return nil, err
 	}
 
@@ -159,6 +164,7 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	}
 	ch, err := loader.Load(cp)
 	if err != nil {
+		fmt.Println("comnes here", err)
 		return nil, err
 	}
 
@@ -170,17 +176,61 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 		ch.Metadata.Annotations = make(map[string]string)
 	}
 	ch.Metadata.Annotations["chart_url"] = url
+	fmt.Println(ch.Metadata.Name, ch.Metadata.Version, "Here")
 
-	cmd.Namespace = ns
 	go func() {
-		_, err := cmd.Run(ch, vals)
-		if err != nil {
-			createSecret(ns, name, 1, coreClient, err)
-		}
+		ctx, cancel := context.WithCancel(context.Background())
+		cmd.Namespace = ns
+		cancelChan := make(chan bool, 1)
+
+		go func() {
+			label := fmt.Sprintf("owner=helm,name=%v,version=%v", name, 1)
+			secretList, err := coreClient.Secrets(ns).Watch(context.TODO(), metav1.ListOptions{LabelSelector: label, Watch: true})
+			if err != nil {
+				return
+			}
+			start := time.Now()
+			for {
+				event := <-secretList.ResultChan()
+				if event.Object != nil {
+					obj := event.Object.(*kv1.Secret)
+					fmt.Println("+++++++++++", obj.Labels["status"])
+					if obj.Labels["status"] == "uninstalling" {
+						fmt.Println("__Reached Here___yesssss")
+						cancelChan <- true
+						secretList.Stop()
+						break
+					} else if obj.Labels["status"] == "deployed" {
+						fmt.Println("release has been deployed")
+						cancelChan <- false
+						secretList.Stop()
+						break
+					}
+				}
+				if time.Since(start) >= (5 * time.Minute) {
+					fmt.Println("No need to watch for the secret after 5 minutes")
+					cancelChan <- false
+					secretList.Stop()
+					break
+				}
+			}
+		}()
+		_, err = cmd.RunWithContext(ctx, ch, vals)
+		fmt.Println(ctx, cancel, "*****1")
 		if err == nil {
+			val := <-cancelChan
+			fmt.Println("*****100", val)
+			if val {
+					fmt.Println("Reachig here for cancellation")
+					cancel()
+			}
 			if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
+				fmt.Println("Reaching Here for metrics")
 				metrics.HandleconsoleHelmInstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
 			}
+		} else {
+			fmt.Println("comnes here two", err)
+			createSecret(ns, name, 1, coreClient, err)
 		}
 		// remove all the tls related files created by this process
 		defer func() {
@@ -192,6 +242,7 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 			}
 		}()
 	}()
+
 	secret, err := getSecret(ns, name, 1, coreClient)
 	if err != nil {
 		return nil, err
