@@ -170,6 +170,14 @@ export class GithubService extends BaseService {
   getDockerfileContent = () =>
     this.getFileContent(`${this.metadata.contextDir}/${this.metadata.dockerfilePath}`);
 
+  isFuncYamlPresent = () =>
+    this.isFilePresent(`${this.metadata.contextDir}/func.yaml`) ||
+    this.isFilePresent(`${this.metadata.contextDir}/func.yml`);
+
+  getFuncYamlContent = () =>
+    this.getFileContent(`${this.metadata.contextDir}/func.yaml`) ||
+    this.getFileContent(`${this.metadata.contextDir}/func.yml`);
+
   isDevfilePresent = () =>
     this.isFilePresent(`${this.metadata.contextDir}/${this.metadata.devfilePath}`);
 

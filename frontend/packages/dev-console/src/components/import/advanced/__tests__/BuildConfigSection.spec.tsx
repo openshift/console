@@ -24,6 +24,9 @@ jest.mock('formik', () => ({
         strategy: 'Source',
       },
       image: { selected: 'nodejs-ex', tag: 'latest' },
+      import: {
+        selectedStrategy: '',
+      },
     },
   })),
 }));
@@ -59,6 +62,9 @@ describe('BuildConfigSection', () => {
           strategy: 'Source',
         },
         image: { selected: 'nodejs-ex', tag: 'latest' },
+        import: {
+          selectedStrategy: '',
+        },
       },
     });
     const wrapper = shallow(<BuildConfigSection {...BuildConfigSectionProps} />);

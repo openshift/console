@@ -48,6 +48,14 @@ export const defaultData: DeployImageFormData = {
     status: { metadata: {}, status: '' },
     ports: [],
   },
+  import: {
+    selectedStrategy: {
+      name: '',
+      type: 0,
+      priority: 0,
+      detectedFiles: [],
+    },
+  },
   runtimeIcon: null,
   isSearchingForImage: false,
   resources: Resources.OpenShift,

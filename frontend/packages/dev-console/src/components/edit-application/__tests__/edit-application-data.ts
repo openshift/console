@@ -1,4 +1,4 @@
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
@@ -570,6 +570,12 @@ export const gitImportInitialValues: GitImportFormData = {
   },
   healthChecks: healthChecksProbeInitialData,
   import: {
+    selectedStrategy: {
+      name: '',
+      type: ImportStrategy.S2I,
+      priority: 0,
+      detectedFiles: [],
+    },
     showEditImportStrategy: true,
   },
 };
@@ -650,6 +656,12 @@ export const externalImageValues: DeployImageFormData = {
   isSearchingForImage: false,
   healthChecks: healthChecksProbeInitialData,
   import: {
+    selectedStrategy: {
+      name: '',
+      type: ImportStrategy.S2I,
+      priority: 0,
+      detectedFiles: [],
+    },
     showEditImportStrategy: true,
   },
 };
@@ -730,6 +742,12 @@ export const internalImageValues: DeployImageFormData = {
   isSearchingForImage: false,
   healthChecks: healthChecksProbeInitialData,
   import: {
+    selectedStrategy: {
+      name: '',
+      type: ImportStrategy.S2I,
+      priority: 0,
+      detectedFiles: [],
+    },
     showEditImportStrategy: true,
   },
 };
@@ -821,6 +839,12 @@ export const knExternalImageValues: DeployImageFormData = {
   serverless: serverlessInitialValues,
   healthChecks: healthChecksProbeInitialData,
   import: {
+    selectedStrategy: {
+      name: '',
+      type: ImportStrategy.S2I,
+      priority: 0,
+      detectedFiles: [],
+    },
     showEditImportStrategy: true,
   },
 };
@@ -829,6 +853,12 @@ export const gitImportInitialValuesWithHealthChecksEnabled: GitImportFormData = 
   ...gitImportInitialValues,
   healthChecks: healthChecksData,
   import: {
+    selectedStrategy: {
+      name: '',
+      type: ImportStrategy.S2I,
+      priority: 0,
+      detectedFiles: [],
+    },
     showEditImportStrategy: true,
   },
 };

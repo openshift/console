@@ -300,6 +300,15 @@ export enum Resources {
   KnativeService = 'knative',
 }
 
+export enum SupportedRuntime {
+  Node = 'node',
+  NodeJS = 'nodejs',
+  TypeScript = 'typescript',
+  Quarkus = 'quarkus',
+}
+
+export const notSupportedRuntime = ['go', 'rust', 'springboot', 'python'];
+
 export const ReadableResourcesNames: Record<Resources, string> = {
   [Resources.OpenShift]: DeploymentConfigModel.labelKey,
   [Resources.Kubernetes]: DeploymentModel.labelKey,

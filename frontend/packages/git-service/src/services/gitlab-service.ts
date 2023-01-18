@@ -207,6 +207,13 @@ export class GitlabService extends BaseService {
   getDockerfileContent = () =>
     this.getFileContent(this.filePath(`${this.metadata.dockerfilePath}`));
 
+  isFuncYamlPresent = () =>
+    this.isFilePresent(this.filePath('func.yaml')) || this.isFilePresent(this.filePath('func.yml'));
+
+  getFuncYamlContent = () =>
+    this.getFileContent(this.filePath('func.yaml')) ||
+    this.getFileContent(this.filePath('func.yml'));
+
   isDevfilePresent = () => this.isFilePresent(this.filePath(`${this.metadata.devfilePath}`));
 
   getDevfileContent = () => this.getFileContent(this.filePath(`${this.metadata.devfilePath}`));

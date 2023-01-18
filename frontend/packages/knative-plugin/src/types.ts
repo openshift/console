@@ -193,3 +193,7 @@ export enum DomainMappingResponseAction {
   Update = 'Update',
   Delete = 'Delete',
 }
+
+export enum ServerlessBuildStrategyType {
+  ServerlessFunction = 'ServerlessFunction',
+}

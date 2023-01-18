@@ -273,6 +273,36 @@ describe('Gitlab Service', () => {
     });
   });
 
+  it('should detect func.yaml file', () => {
+    const gitSource = {
+      url: 'https://gitlab.com/avikkundu/oc-func',
+    };
+
+    const gitService = new GitlabService(gitSource);
+
+    return nockBack('func-yaml.json').then(async ({ nockDone, context }) => {
+      const isFuncYamlPresent = await gitService.isFuncYamlPresent();
+      expect(isFuncYamlPresent).toBe(true);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should not detect func.yaml file', () => {
+    const gitSource: GitSource = {
+      url: 'https://gitlab.com/jpratik999/devconsole-git.git',
+    };
+
+    const gitService = new GitlabService(gitSource);
+
+    return nockBack('no-func-yaml.json').then(async ({ nockDone, context }) => {
+      const isFuncYamlPresent = await gitService.isFuncYamlPresent();
+      expect(isFuncYamlPresent).toBe(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
   it('should make API call to specified hostname', async () => {
     const gitSource: GitSource = { url: 'https://example.com/test/repo' };
     const gitService = new GitlabService(gitSource);

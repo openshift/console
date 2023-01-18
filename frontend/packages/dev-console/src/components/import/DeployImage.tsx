@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { ImportStrategy } from '@console/git-service/src/types';
 import { history } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
@@ -69,6 +70,14 @@ const DeployImage: React.FC<Props> = ({
       tag: '',
       status: { metadata: {}, status: '' },
       ports: [],
+    },
+    import: {
+      selectedStrategy: {
+        name: '',
+        type: ImportStrategy.S2I,
+        priority: 0,
+        detectedFiles: [],
+      },
     },
     runtimeIcon: null,
     isSearchingForImage: false,
