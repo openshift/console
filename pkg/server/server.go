@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"crypto/tls"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"html/template"
 	"io"
@@ -67,6 +68,8 @@ const (
 	operandsListEndpoint                  = "/api/list-operands/"
 	accountManagementEndpoint             = "/api/accounts_mgmt/"
 	sha256Prefix                          = "sha256~"
+	justInTimeRetryInterval               = 3 * time.Second
+	justInTimeMaxRetries                  = 10
 )
 
 type jsGlobals struct {
@@ -125,7 +128,6 @@ type Server struct {
 	LogoutRedirect       *url.URL
 	PublicDir            string
 	TectonicVersion      string
-	Authers              map[string]*auth.Authenticator
 	StaticUser           *auth.User
 	ServiceAccountToken  string
 	KubectlClientID      string
@@ -159,7 +161,6 @@ type Server struct {
 	PluginsProxyTLSConfig               *tls.Config
 	GitOpsProxyConfig                   *proxy.Config
 	ClusterManagementProxyConfig        *proxy.Config
-	ManagedClusterProxyConfig           *proxy.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
@@ -183,10 +184,15 @@ type Server struct {
 	Telemetry                    serverconfig.MultiKeyValue
 	CopiedCSVsDisabled           bool
 	HubConsoleURL                *url.URL
+	// Multicluster related config
+	AuthConfigs               map[string]*auth.Config
+	Authenticators            map[string]*auth.Authenticator
+	ManagedClusterProxyConfig *proxy.Config
 }
 
 func (s *Server) authDisabled() bool {
-	return s.getLocalAuther() == nil
+	authenticator, _, _ := s.GetAuthenticator(serverutils.LocalClusterName)
+	return authenticator == nil
 }
 
 func (s *Server) prometheusProxyEnabled() bool {
@@ -203,10 +209,6 @@ func (s *Server) meteringProxyEnabled() bool {
 
 func (s *Server) gitopsProxyEnabled() bool {
 	return s.GitOpsProxyConfig != nil
-}
-
-func (s *Server) getLocalAuther() *auth.Authenticator {
-	return s.Authers[serverutils.LocalClusterName]
 }
 
 func (s *Server) getK8sProxyConfig(cluster string) *proxy.Config {
@@ -238,7 +240,7 @@ func (s *Server) getK8sClient(cluster string) *http.Client {
 
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
-	localAuther := s.getLocalAuther()
+	localAuthenticator, _, _ := s.GetAuthenticator(serverutils.LocalClusterName)
 	localK8sProxyConfig := s.getK8sProxyConfig(serverutils.LocalClusterName)
 	localK8sProxy := proxy.NewProxy(localK8sProxyConfig)
 	handle := func(path string, handler http.Handler) {
@@ -274,18 +276,31 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 	}
 
-	authHandler := func(hf http.HandlerFunc) http.Handler {
-		return authMiddleware(s.Authers, hf)
+	authenticatedHandler := func(hf http.HandlerFunc) http.Handler {
+		return authenticatedMiddleware(s, hf)
 	}
-	authHandlerWithUser := func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
-		return authMiddlewareWithUser(s.Authers, hf)
+	authenticatedHandlerWithUser := func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
+		return authenticatedMiddlewareWithUser(s, hf)
+	}
+
+	handlerWithAuthenticator := func(hf func(*auth.Authenticator, http.ResponseWriter, *http.Request)) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			cluster := serverutils.GetCluster(r)
+			authenticator, status, err := s.GetAuthenticator(cluster)
+			if err != nil {
+				w.WriteHeader(status)
+				w.Write([]byte(err.Error()))
+				return
+			}
+			hf(authenticator, w, r)
+		})
 	}
 
 	if s.authDisabled() {
-		authHandler = func(hf http.HandlerFunc) http.Handler {
+		authenticatedHandler = func(hf http.HandlerFunc) http.Handler {
 			return hf
 		}
-		authHandlerWithUser = func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
+		authenticatedHandlerWithUser = func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				hf(s.StaticUser, w, r)
 			})
@@ -293,16 +308,22 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	if !s.authDisabled() {
-		handleFunc(authLoginEndpoint, localAuther.LoginFunc)
-		handleFunc(authLogoutEndpoint, localAuther.LogoutFunc)
+		handleFunc(authLoginEndpoint, localAuthenticator.LoginFunc)
+		handleFunc(authLogoutEndpoint, localAuthenticator.LogoutFunc)
 		handleFunc(authLogoutMulticlusterEndpoint, s.handleLogoutMulticluster)
-		handleFunc(AuthLoginCallbackEndpoint, localAuther.CallbackFunc(fn))
-		handle("/api/openshift/delete-token", authHandlerWithUser(s.handleOpenShiftTokenDeletion))
-		for clusterName, clusterAuther := range s.Authers {
-			if clusterAuther != nil {
-				handleFunc(fmt.Sprintf("%s/%s", authLoginEndpoint, clusterName), clusterAuther.LoginFunc)
-				handleFunc(fmt.Sprintf("%s/%s", AuthLoginCallbackEndpoint, clusterName), clusterAuther.CallbackFunc(fn))
-			}
+		handleFunc(AuthLoginCallbackEndpoint, localAuthenticator.CallbackFunc(fn))
+		handle("/api/openshift/delete-token", authenticatedHandlerWithUser(s.handleOpenShiftTokenDeletion))
+		for clusterName := range s.AuthConfigs {
+			handle(
+				fmt.Sprintf("%s/%s", authLoginEndpoint, clusterName),
+				handlerWithAuthenticator(func(authenticator *auth.Authenticator, w http.ResponseWriter, r *http.Request) {
+					authenticator.LoginFunc(w, r)
+				}))
+			handle(
+				fmt.Sprintf("%s/%s", AuthLoginCallbackEndpoint, clusterName),
+				handlerWithAuthenticator(func(authenticator *auth.Authenticator, w http.ResponseWriter, r *http.Request) {
+					authenticator.CallbackFunc(fn)
+				}))
 		}
 	}
 
@@ -328,7 +349,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	handle(k8sProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
-		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+		authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 			cluster := serverutils.GetCluster(r)
 			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 			proxyConfig := s.getK8sProxyConfig(cluster)
@@ -345,7 +366,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		localK8sProxyConfig.TLSClientConfig,
 		localK8sProxyConfig.Endpoint)
 
-	handle(terminal.ProxyEndpoint, authHandlerWithUser(terminalProxy.HandleProxy))
+	handle(terminal.ProxyEndpoint, authenticatedHandlerWithUser(terminalProxy.HandleProxy))
 	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
 	handleFunc(terminal.InstalledNamespaceEndpoint, terminalProxy.HandleTerminalInstalledNamespace)
 
@@ -360,7 +381,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handler := graphqlws.NewHandler()
 	handler.InitPayload = resolver.InitPayload
 	graphQLHandler := handler.NewHandlerFunc(schema, &relay.Handler{Schema: schema})
-	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	handle("/api/graphql", authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]string{
 			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
 		})
@@ -393,49 +414,49 @@ func (s *Server) HTTPHandler() http.Handler {
 		// global label, query, and query_range requests have to be proxied via thanos
 		handle(querySourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosProxy.ServeHTTP(w, r)
 			})),
 		)
 		handle(queryRangeSourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosProxy.ServeHTTP(w, r)
 			})),
 		)
 		handle(labelSourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosProxy.ServeHTTP(w, r)
 			})),
 		)
 		handle(targetsSourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosProxy.ServeHTTP(w, r)
 			})),
 		)
 		handle(metadataSourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosProxy.ServeHTTP(w, r)
 			})),
 		)
 		handle(seriesSourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosProxy.ServeHTTP(w, r)
 			})),
 		)
 		handle(labelsSourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosProxy.ServeHTTP(w, r)
 			})),
@@ -445,7 +466,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		// such that both in-cluster and user workload alerts appear in console.
 		handle(rulesSourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosProxy.ServeHTTP(w, r)
 			})),
@@ -454,14 +475,14 @@ func (s *Server) HTTPHandler() http.Handler {
 		// tenancy queries and query ranges have to be proxied via thanos
 		handle(tenancyQuerySourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosTenancyProxy.ServeHTTP(w, r)
 			})),
 		)
 		handle(tenancyQueryRangeSourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosTenancyProxy.ServeHTTP(w, r)
 			})),
@@ -469,7 +490,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		// tenancy rules have to be proxied via thanos
 		handle(tenancyRulesSourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosTenancyForRulesProxy.ServeHTTP(w, r)
 			})),
@@ -489,7 +510,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 		handle(alertManagerProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				alertManagerProxy.ServeHTTP(w, r)
 			})),
@@ -497,7 +518,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 		handle(alertManagerUserWorkloadProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerUserWorkloadProxyAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				alertManagerUserWorkloadProxy.ServeHTTP(w, r)
 			})),
@@ -505,7 +526,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 		handle(alertManagerTenancyProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerTenancyProxyAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				alertManagerTenancyProxy.ServeHTTP(w, r)
 			})),
@@ -517,7 +538,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		meteringProxy := proxy.NewProxy(s.MeteringProxyConfig)
 		handle(meteringProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, meteringProxyAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				meteringProxy.ServeHTTP(w, r)
 			})),
@@ -540,15 +561,15 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	handle(operandsListEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, operandsListEndpoint),
-		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+		authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 			operandsListHandler.OperandsListHandler(user, w, r)
 		}),
 	))
 
-	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
-	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
-	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
-	handle("/api/console/version", authHandler(s.versionHandler))
+	handle("/api/console/monitoring-dashboard-config", authenticatedHandler(s.handleMonitoringDashboardConfigmaps))
+	handle("/api/console/knative-event-sources", authenticatedHandler(s.handleKnativeEventSourceCRDs))
+	handle("/api/console/knative-channels", authenticatedHandler(s.handleKnativeChannelCRDs))
+	handle("/api/console/version", authenticatedHandler(s.versionHandler))
 
 	// User settings
 	userSettingHandler := usersettings.UserSettingsHandler{
@@ -557,11 +578,11 @@ func (s *Server) HTTPHandler() http.Handler {
 		Endpoint:            localK8sProxyConfig.Endpoint.String(),
 		ServiceAccountToken: s.ServiceAccountToken,
 	}
-	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
+	handle("/api/console/user-settings", authenticatedHandlerWithUser(userSettingHandler.HandleUserSettings))
 
 	helmHandlers := helmhandlerspkg.New(localK8sProxyConfig.Endpoint.String(), s.LocalK8sClient.Transport, s)
 	verifierHandler := helmhandlerspkg.NewVerifierHandler(localK8sProxyConfig.Endpoint.String(), s.LocalK8sClient.Transport, s)
-	handle("/api/helm/verify", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	handle("/api/helm/verify", authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
 			verifierHandler.HandleChartVerifier(user, w, r)
@@ -587,7 +608,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	handle(pluginAssetsEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, pluginAssetsEndpoint),
-		authHandler(func(w http.ResponseWriter, r *http.Request) {
+		authenticatedHandler(func(w http.ResponseWriter, r *http.Request) {
 			pluginsHandler.HandlePluginAssets(w, r)
 		}),
 	))
@@ -614,7 +635,7 @@ func (s *Server) HTTPHandler() http.Handler {
 			}
 			var h http.Handler
 			if proxyServiceHandler.Authorize {
-				h = authHandler(f)
+				h = authenticatedHandler(f)
 			} else {
 				h = http.HandlerFunc(f)
 			}
@@ -625,7 +646,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 	}
 
-	handle(updatesEndpoint, authHandler(pluginsHandler.HandleCheckUpdates))
+	handle(updatesEndpoint, authenticatedHandler(pluginsHandler.HandleCheckUpdates))
 
 	// Helm Endpoints
 	metricsHandler := func(next http.Handler) http.Handler {
@@ -641,17 +662,17 @@ func (s *Server) HTTPHandler() http.Handler {
 		})
 	}
 
-	handle("/metrics", metricsHandler(authHandler(func(w http.ResponseWriter, r *http.Request) {
+	handle("/metrics", metricsHandler(authenticatedHandler(func(w http.ResponseWriter, r *http.Request) {
 		promhttp.Handler().ServeHTTP(w, r)
 	})))
 
-	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
-	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
-	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
-	handle("/api/helm/release/history", authHandlerWithUser(helmHandlers.HandleGetReleaseHistory))
-	handle("/api/helm/charts/index.yaml", authHandlerWithUser(helmHandlers.HandleIndexFile))
+	handle("/api/helm/template", authenticatedHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
+	handle("/api/helm/releases", authenticatedHandlerWithUser(helmHandlers.HandleHelmList))
+	handle("/api/helm/chart", authenticatedHandlerWithUser(helmHandlers.HandleChartGet))
+	handle("/api/helm/release/history", authenticatedHandlerWithUser(helmHandlers.HandleGetReleaseHistory))
+	handle("/api/helm/charts/index.yaml", authenticatedHandlerWithUser(helmHandlers.HandleIndexFile))
 
-	handle("/api/helm/release", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	handle("/api/helm/release", authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			helmHandlers.HandleGetRelease(user, w, r)
@@ -669,7 +690,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 	}))
 
-	handle("/api/helm/release/async", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	handle("/api/helm/release/async", authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
 			helmHandlers.HandleHelmInstallAsync(user, w, r)
@@ -686,7 +707,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)
 		handle(gitopsEndpoint, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, gitopsEndpoint),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			authenticatedHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				gitopsProxy.ServeHTTP(w, r)
 			})),
@@ -711,6 +732,7 @@ func (s *Server) handleKnativeChannelCRDs(w http.ResponseWriter, r *http.Request
 }
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
+	localAuthenticator, _, _ := s.GetAuthenticator(serverutils.LocalClusterName)
 	if serverutils.IsUnsupportedBrowser(r) {
 		serverutils.SendUnsupportedBrowserResponse(w, s.Branding)
 		return
@@ -721,8 +743,8 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		plugins = append(plugins, plugin)
 	}
 
-	clusters := make([]string, 0, len(s.Authers))
-	for cluster := range s.Authers {
+	clusters := []string{serverutils.LocalClusterName}
+	for cluster := range s.AuthConfigs {
 		clusters = append(clusters, cluster)
 	}
 
@@ -769,10 +791,8 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		HubConsoleURL:              s.HubConsoleURL.String(),
 	}
 
-	localAuther := s.getLocalAuther()
-
 	if !s.authDisabled() {
-		specialAuthURLs := localAuther.GetSpecialURLs()
+		specialAuthURLs := localAuthenticator.GetSpecialURLs()
 		jsg.RequestTokenURL = specialAuthURLs.RequestToken
 		jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
 	}
@@ -792,7 +812,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !s.authDisabled() {
-		localAuther.SetCSRFCookie(s.BaseURL.Path, &w)
+		localAuthenticator.SetCSRFCookie(s.BaseURL.Path, &w)
 	}
 
 	if s.CustomLogoFile != "" {
@@ -818,11 +838,6 @@ func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 	}{
 		Version: version.Version,
 	})
-}
-
-func notFoundHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotFound)
-	w.Write([]byte("not found"))
 }
 
 func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWriter, r *http.Request) {
@@ -862,7 +877,7 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 }
 
 func (s *Server) handleLogoutMulticluster(w http.ResponseWriter, r *http.Request) {
-	for cluster, auther := range s.Authers {
+	for cluster, authConfig := range s.AuthConfigs {
 		cookieName := auth.GetCookieName(cluster)
 		if cookie, _ := r.Cookie(cookieName); cookie != nil {
 			clearedCookie := http.Cookie{
@@ -870,7 +885,7 @@ func (s *Server) handleLogoutMulticluster(w http.ResponseWriter, r *http.Request
 				Value:    "",
 				MaxAge:   0,
 				HttpOnly: cookie.HttpOnly,
-				Path:     auther.GetCookiePath(),
+				Path:     authConfig.CookiePath,
 				Secure:   cookie.Secure,
 			}
 			klog.Infof("Deleting cookie %v", cookie.Name)
@@ -899,6 +914,31 @@ func (s *Server) handleLogoutMulticluster(w http.ResponseWriter, r *http.Request
 		fmt.Printf("%v", err)
 		os.Exit(1)
 	}
+}
+
+func (s *Server) GetAuthenticator(cluster string) (*auth.Authenticator, int, error) {
+	authenticator := s.Authenticators[cluster]
+	if authenticator == nil {
+		authConfig, authConfigFound := s.AuthConfigs[cluster]
+		if !authConfigFound {
+			msg := fmt.Sprintf("Bad Request. Invalid cluster: %v", cluster)
+			klog.Errorf(msg)
+			return nil, http.StatusBadRequest, errors.New(msg)
+		}
+		authenticator, err := auth.NewAuthenticator(context.Background(), authConfig, justInTimeRetryInterval, justInTimeMaxRetries)
+		if err != nil {
+			msg := fmt.Sprintf("Authentication unavailable for cluster %s: %v", cluster, err)
+			klog.Errorf(msg)
+			return nil, http.StatusServiceUnavailable, errors.New(msg)
+		}
+		s.Authenticators[cluster] = authenticator
+	}
+	return authenticator, 0, nil
+}
+
+func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	w.Write([]byte("not found"))
 }
 
 // tokenToObjectName returns the oauthaccesstokens object name for the given raw token,

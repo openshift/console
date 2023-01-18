@@ -167,13 +167,8 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 
 // NewAuthenticator initializes an Authenticator struct. It blocks until the authenticator is
 // able to contact the provider.
-func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
-	// Retry connecting to the identity provider every 10s for 5 minutes
-	const (
-		backoff  = time.Second * 10
-		maxSteps = 30
-	)
-	steps := 0
+func NewAuthenticator(ctx context.Context, c *Config, retryInterval time.Duration, maxRetries int) (*Authenticator, error) {
+	retries := 0
 
 	for {
 		a, err := newUnstartedAuthenticator(c)
@@ -223,15 +218,15 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 
 		fallbackEndpoint, fallbackLoginMethod, err := authSourceFunc()
 		if err != nil {
-			steps++
-			if steps > maxSteps {
+			retries++
+			if retries > maxRetries {
 				klog.Errorf("error contacting auth provider: %v", err)
 				return nil, err
 			}
 
-			klog.Errorf("error contacting auth provider (retrying in %s): %v", backoff, err)
+			klog.Errorf("Error contacting auth provider. (Attempt %s of %s. Retrying in %s): %v", retries, maxRetries, retryInterval, err)
 
-			time.Sleep(backoff)
+			time.Sleep(retryInterval)
 			continue
 		}
 

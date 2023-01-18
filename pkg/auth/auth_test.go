@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+	"time"
 )
 
 // mockOpenShiftProvider is test OpenShift provider that only supports discovery
@@ -15,6 +16,11 @@ import (
 type mockOpenShiftProvider struct {
 	issuer string
 }
+
+const (
+	retryInterval = time.Second * 10
+	maxRetries    = 30
+)
 
 func (m *mockOpenShiftProvider) handleDiscovery(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/.well-known/oauth-authorization-server" {
@@ -79,7 +85,7 @@ func TestNewAuthenticator(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	a, err := NewAuthenticator(ctx, ccfg)
+	a, err := NewAuthenticator(ctx, ccfg, retryInterval, maxRetries)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -127,7 +133,7 @@ func TestNewOpenShiftAuthenticator(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	a, err := NewAuthenticator(ctx, ccfg)
+	a, err := NewAuthenticator(ctx, ccfg, retryInterval, maxRetries)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"runtime"
+	"time"
 
 	"io/ioutil"
 	"net/http"
@@ -60,6 +61,10 @@ const (
 	openshiftClusterProxyHost = "cluster-proxy-addon-user.multicluster-engine.svc:9092"
 
 	clusterManagementURL = "https://api.openshift.com/"
+
+	// Retry interval and duration for initializing local authenticator
+	localAuthRetryDuration = 10 * time.Second
+	localAuthMaxRetries    = 30
 )
 
 func main() {
@@ -656,11 +661,16 @@ func main() {
 
 		}
 
-		srv.Authers = make(map[string]*auth.Authenticator)
-		if srv.Authers[serverutils.LocalClusterName], err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
-			klog.Fatalf("Error initializing authenticator: %v", err)
+		localAuthenticator, err := auth.NewAuthenticator(context.Background(), oidcClientConfig, localAuthRetryDuration, localAuthMaxRetries)
+		if err != nil {
+			klog.Fatalf("Error initializing local authenticator: %v", err)
 		}
 
+		srv.Authenticators = map[string]*auth.Authenticator{
+			serverutils.LocalClusterName: localAuthenticator,
+		}
+
+		srv.AuthConfigs = make(map[string]*auth.Config)
 		if len(managedClusterConfigs) > 0 {
 			for _, managedCluster := range managedClusterConfigs {
 				managedClusterOIDCClientConfig := &auth.Config{
@@ -685,9 +695,7 @@ func main() {
 					ClusterName:   managedCluster.Name,
 				}
 
-				if srv.Authers[managedCluster.Name], err = auth.NewAuthenticator(context.Background(), managedClusterOIDCClientConfig); err != nil {
-					klog.Fatalf("Error initializing managed cluster authenticator: %v", err)
-				}
+				srv.AuthConfigs[managedCluster.Name] = managedClusterOIDCClientConfig
 			}
 		}
 	case "disabled":
