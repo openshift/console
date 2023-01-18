@@ -225,18 +225,25 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
         </InputGroup>
       </FormGroup>
 
-      <ExpandableSection toggleText={getPermssionSectionHeading(values.gitProvider)}>
-        <FormGroup label={t('pipelines-plugin~Repository Permissions:')} fieldId="repo-permissions">
-          <Text component={TextVariants.small}>
-            <PermissionsSection />
-          </Text>
-        </FormGroup>
-      </ExpandableSection>
+      {values.gitProvider && values.gitProvider !== GitProvider.UNSURE ? (
+        <>
+          <ExpandableSection toggleText={getPermssionSectionHeading(values.gitProvider)}>
+            <FormGroup
+              label={t('pipelines-plugin~Repository Permissions:')}
+              fieldId="repo-permissions"
+            >
+              <Text component={TextVariants.small}>
+                <PermissionsSection />
+              </Text>
+            </FormGroup>
+          </ExpandableSection>
 
-      <ExternalLink
-        text={t('pipelines-plugin~Read more about setting up webhook')}
-        href={WebhookDocLinks[values.gitProvider]}
-      />
+          <ExternalLink
+            text={t('pipelines-plugin~Read more about setting up webhook')}
+            href={WebhookDocLinks[values.gitProvider]}
+          />
+        </>
+      ) : null}
     </FormSection>
   );
 };
