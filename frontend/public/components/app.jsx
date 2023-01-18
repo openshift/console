@@ -338,6 +338,7 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
 
   const [updateData, setUpdateData] = React.useState();
   const [updateError, setUpdateError] = React.useState();
+  const [newPlugins, setNewPlugins] = React.useState();
   const [pluginManifestsData, setPluginManifestsData] = React.useState();
   const safeFetch = React.useCallback(useSafeFetch(), []);
   const fetchPluginManifest = (pluginName) =>
@@ -374,25 +375,29 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const prevPluginManifestsData = prevPluginManifestsDataRef.current;
   const stateInitialized = _.isEmpty(updateError) && !_.isEmpty(prevUpdateData);
 
-  const pluginsListChanged = !_.isEmpty(_.xor(prevUpdateData?.plugins, updateData?.plugins));
+  const newPluginsList = _.xor(prevUpdateData?.plugins, updateData?.plugins);
+  const pluginsListChanged = !_.isEmpty(newPluginsList);
   if (stateInitialized && pluginsListChanged && !pluginsChanged) {
     setPluginsChanged(true);
+    setNewPlugins(newPluginsList);
   }
 
   if (pluginsChanged && !allPluginEndpointsReady && !isFetchingPluginEndpoints) {
-    const pluginEndpointsReady = updateData?.plugins?.map((pluginName) =>
-      fetchPluginManifest(pluginName),
-    );
-    Promise.all(pluginEndpointsReady)
-      .then(() => {
+    const pluginEndpointsReady =
+      newPlugins?.map((pluginName) => fetchPluginManifest(pluginName)) ?? [];
+    if (!_.isEmpty(pluginEndpointsReady)) {
+      settleAllPromises(pluginEndpointsReady).then(([, rejectedReasons]) => {
+        if (!_.isEmpty(rejectedReasons)) {
+          setAllPluginEndpointsReady(false);
+          setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
+          return;
+        }
         setAllPluginEndpointsReady(true);
         setIsFetchingPluginEndpoints(false);
-      })
-      .catch(() => {
-        setAllPluginEndpointsReady(false);
-        setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
+        setNewPlugins(null);
       });
-    setIsFetchingPluginEndpoints(true);
+      setIsFetchingPluginEndpoints(true);
+    }
   }
 
   const pluginManifestsVersionsChanged = pluginManifestsData?.some((manifest) => {
