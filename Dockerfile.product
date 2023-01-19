@@ -17,14 +17,29 @@ ADD . .
 
 USER 0
 
+ARG YARN_VERSION=v1.22.19
+
 # bootstrap yarn so we can install and run the other tools.
-RUN container-entrypoint npm install ./artifacts/yarn-v1.22.19.tar.gz
+RUN CACHED_YARN=./artifacts/yarn-${YARN_VERSION}.tar.gz; \
+    if [ -f ${CACHED_YARN} ]; then \
+      npm install ${CACHED_YARN}; \
+    else \
+      npm install https://github.com/yarnpkg/yarn/releases/download/${YARN_VERSION}/yarn-${YARN_VERSION}.tar.gz; \
+    fi
+
+# The REMOTE_SOURCES value is set by the build system to indicate the location of the cachito-backed artifacts cache.
+# As cachito might not be available in all environments, we need to make sure the value is set before trying to use it and
+# that the COPY layer below doesn't fail. Setting it to be the Dockerfile itself is fairly safe, as it will always be
+# available.
+ARG REMOTE_SOURCES=./Dockerfile.product
+ARG REMOTE_SOURCE_DIR=/tmp/remote-sources
 
 COPY $REMOTE_SOURCES $REMOTE_SOURCES_DIR
 
 # use dependencies provided by Cachito
-RUN cp -f $REMOTE_SOURCES_DIR/cachito-gomod-with-deps/app/registry-ca.pem . \
-  && cp -f $REMOTE_SOURCES_DIR/cachito-gomod-with-deps/app/frontend/{.npmrc,.yarnrc,yarn.lock} frontend/
+RUN test -d ${REMOTE_SOURCES}/cachito-gomod-with-deps || exit 0; \
+    cp -f $REMOTE_SOURCES_DIR/cachito-gomod-with-deps/app/registry-ca.pem . \
+ && cp -f $REMOTE_SOURCES_DIR/cachito-gomod-with-deps/app/frontend/{.npmrc,.yarnrc,yarn.lock} frontend/
 
 # prevent download of chromedriver, geckodriver, and the cypress binary as part of module installs
 ENV CHROMEDRIVER_SKIP_DOWNLOAD=true \
