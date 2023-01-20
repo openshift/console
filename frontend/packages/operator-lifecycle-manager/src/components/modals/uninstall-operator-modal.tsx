@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Alert, Progress, ProgressSize } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { coFetchJSON } from '@console/internal/co-fetch';
@@ -125,14 +126,29 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     propagationPolicy: 'Foreground',
   };
 
-  const uninstallOperator = React.useCallback(() => {
+  const uninstallOperator = React.useCallback(async () => {
     const patch = removePlugins
       ? getPatchForRemovingPlugins(consoleOperatorConfig, enabledPlugins)
       : null;
 
+    const clusterServiceVersionExists = async () => {
+      try {
+        await k8sGetResource({
+          model: ClusterServiceVersionModel,
+          name: subscription.status.installedCSV,
+          ns: subscription.metadata.namespace,
+        });
+        return true;
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err.message);
+        return false;
+      }
+    };
+
     const operatorUninstallPromises = [
       k8sKill(SubscriptionModel, subscription, {}, deleteOptions),
-      ...(subscription?.status?.installedCSV
+      ...(subscription?.status?.installedCSV && (await clusterServiceVersionExists())
         ? [
             k8sKill(
               ClusterServiceVersionModel,
