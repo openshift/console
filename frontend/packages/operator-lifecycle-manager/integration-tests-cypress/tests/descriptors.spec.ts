@@ -12,10 +12,11 @@ describe('Using OLM descriptor components', () => {
     cy.createProject(testName);
     create(testCRD);
     create(testCSV);
-    create(testCR);
   });
 
   afterEach(() => {
+    cy.visit('/');
+    cy.exec(`oc delete ${testCRD.spec.names.kind} ${testCR.metadata.name} -n ${testName}`);
     checkErrors();
   });
 
@@ -54,14 +55,12 @@ describe('Using OLM descriptor components', () => {
   const getOperandFormFieldLabel = (id) => cy.get(`[for=${id}]`);
   const getOperandFormFieldInput = (id) => cy.get(`#${id}`);
 
-  it('displays list containing operands', () => {
+  it('displays list and detail views of an operand', () => {
+    create(testCR);
     cy.visit(
       `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.versions[0].name}~${testCRD.spec.names.kind}`,
     );
     cy.byTestOperandLink('olm-descriptors-test').should('exist');
-  });
-
-  it('displays detail view for operand', () => {
     const {
       group,
       names: { kind },
@@ -71,88 +70,56 @@ describe('Using OLM descriptor components', () => {
       `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${group}~${version}~${kind}/${testCR.metadata.name}`,
     );
     cy.byLegacyTestID('resource-title').should('have.text', `${testCR.metadata.name}`);
-  });
-
-  testCSV.spec.customresourcedefinitions.owned[0].specDescriptors.forEach((descriptor) => {
-    if (descriptor.path === 'hidden') {
-      it(`does not display spec descriptor for ${descriptor.displayName}`, () => {
-        cy.byTestSelector(`details-item-label__${descriptor.displayName}`).should('not.exist');
-      });
-    } else {
-      it(`displays spec descriptor for ${descriptor.displayName}`, () => {
-        cy.byTestSelector(`details-item-label__${descriptor.displayName}`).should('exist');
-      });
-    }
-  });
-
-  testCSV.spec.customresourcedefinitions.owned[0].statusDescriptors
-    // exclude Conditions since they are included in their own section
-    .filter((descriptor) => descriptor.path !== 'conditions')
-    .forEach((descriptor) => {
+    testCSV.spec.customresourcedefinitions.owned[0].specDescriptors.forEach((descriptor) => {
       if (descriptor.path === 'hidden') {
-        it(`does not display status descriptor for ${descriptor.displayName}`, () => {
-          cy.byTestSelector(`details-item-label__${descriptor.displayName}`).should('not.exist');
-        });
+        cy.byTestSelector(`details-item-label__${descriptor.displayName}`).should('not.exist');
       } else {
-        it(`displays status descriptor for ${descriptor.displayName}`, () => {
-          cy.byTestSelector(`details-item-label__${descriptor.displayName}`).should('exist');
-        });
+        cy.byTestSelector(`details-item-label__${descriptor.displayName}`).should('exist');
       }
     });
-
-  it('deletes operand', () => {
-    cy.log(
-      'Delete operand instance created in prior steps. Fixes a failure when trying to create a duplicate operand in the "successfully creates operand using form" step.',
-    );
-    cy.exec(`oc delete ${testCRD.spec.names.kind} ${testCR.metadata.name} -n ${testName}`);
+    testCSV.spec.customresourcedefinitions.owned[0].statusDescriptors
+      // exclude Conditions since they are included in their own section
+      .filter((descriptor) => descriptor.path !== 'conditions')
+      .forEach((descriptor) => {
+        if (descriptor.path === 'hidden') {
+          cy.byTestSelector(`details-item-label__${descriptor.displayName}`).should('not.exist');
+        } else {
+          cy.byTestSelector(`details-item-label__${descriptor.displayName}`).should('exist');
+        }
+      });
   });
 
-  it('displays form for creating operand', () => {
+  it('creates an operand using the form', () => {
     cy.visit(
       `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.versions[0].name}~${testCRD.spec.names.kind}`,
     );
     // TODO figure out why this element is detaching
     cy.byTestID('item-create').click({ force: true });
     cy.byLegacyTestID('resource-title').should('have.text', 'Create App');
-  });
-
-  // TODO: implement tests for more descriptor-based form fields and widgets as well as data syncing.
-  atomicFields.forEach(({ label, id, path }) => {
-    it(`pre-populates ${label} field`, () => {
+    // TODO: implement tests for more descriptor-based form fields and widgets as well as data syncing.
+    atomicFields.forEach(({ label, id, path }) => {
       getOperandFormFieldElement(id).should('exist');
       getOperandFormFieldLabel(id).should('have.text', label);
       getOperandFormFieldInput(id).should('have.value', _.get(testCR, path).toString());
     });
-  });
-
-  it('pre-populates Select field', () => {
     getOperandFormFieldElement(SELECT_FIELD_ID).should('exist');
     getOperandFormFieldLabel(SELECT_FIELD_ID).should('have.text', 'Select');
     cy.get(`#${SELECT_FIELD_ID} .pf-c-dropdown__toggle-text`).should(
       'have.text',
       testCR?.spec?.select.toString(),
     );
-  });
-
-  it('pre-populates Labels field', () => {
     getOperandFormFieldElement(LABELS_FIELD_ID).should('exist');
     getOperandFormFieldLabel(LABELS_FIELD_ID).should('have.text', 'Labels');
     cy.get(`#${LABELS_FIELD_ID}_field .tag-item-content`).should(
       'have.text',
       `automatedTestName=${testName}`,
     );
-  });
-
-  it('pre-populates Field Group', () => {
     cy.get(`#${FIELD_GROUP_ID}_field-group`).should('exist');
     cy.get(`#${FIELD_GROUP_ID}_accordion-toggle`).click();
     cy.get(`[for="${FIELD_GROUP_ID}_itemOne"]`).should('have.text', 'itemOne');
     cy.get(`#${FIELD_GROUP_ID}_itemOne`).should('have.value', testCR.spec.fieldGroup.itemOne);
     cy.get(`[for="${FIELD_GROUP_ID}_itemTwo"]`).should('have.text', 'itemTwo');
     cy.get(`#${FIELD_GROUP_ID}_itemTwo`).should('have.value', testCR.spec.fieldGroup.itemTwo);
-  });
-
-  it('pre-populates Array Field Group', () => {
     cy.get(`#${ARRAY_FIELD_GROUP_ID}_field-group`).should('exist');
     cy.get(`#${ARRAY_FIELD_GROUP_ID}_accordion-toggle`).click();
     cy.get(`[for="${ARRAY_FIELD_GROUP_ID}_0_itemOne"]`).should('have.text', 'Item One');
@@ -165,19 +132,13 @@ describe('Using OLM descriptor components', () => {
       'have.value',
       testCR.spec.arrayFieldGroup[0].itemTwo,
     );
-  });
-
-  it('does not render hidden field group', () => {
     cy.get('#root_spec_hiddenFieldGroup_field-group').should('not.exist');
-  });
-
-  it('successfully creates operand using form', () => {
     cy.get('#root_metadata_name')
       .clear()
-      .type('olm-descriptors-form-test');
+      .type(testCR.metadata.name);
     cy.byTestID('create-dynamic-form').click();
     // TODO figure out why this element is detaching
-    cy.byTestOperandLink('olm-descriptors-form-test').click({ force: true });
+    cy.byTestOperandLink(testCR.metadata.name).click({ force: true });
     cy.get('.co-operand-details__section--info').should('exist');
   });
 });
