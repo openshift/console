@@ -1,7 +1,8 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { addPage, catalogPage, gitPage } from '../../pages';
-import { addOptions, pageTitle } from '../../constants';
+import { addOptions, pageTitle, catalogTypes } from '../../constants';
+
 import { catalogPO } from '../../pageObjects';
 
 When('user selects From Catalog card from add page', () => {
@@ -13,7 +14,7 @@ When('user searches {string} card from catalog page', (cardName: string) => {
 });
 
 When('user selects {string} option from Type section', (catalogType: string) => {
-  catalogPage.selectCatalogType(catalogType);
+  catalogPage.selectCatalogType(catalogType as catalogTypes);
 });
 
 When('user searches and selects {string} card from catalog page', (cardName: string) => {
@@ -108,9 +109,9 @@ When('user searches and selects {string} helm chart from catalog page', (helmCha
 });
 
 Given('user is at Templates page', () => {
-  catalogPage.selectCatalogType('Templates');
+  catalogPage.selectCatalogType(catalogTypes.Template);
 });
 
-When('user selects {string} from Templates type', (templateType: string) => {
-  catalogPage.selectTemplateTypes(templateType);
+When('user selects Template category {string}', (templateCategoryTitle: string) => {
+  catalogPage.selectTemplateCategory(templateCategoryTitle);
 });

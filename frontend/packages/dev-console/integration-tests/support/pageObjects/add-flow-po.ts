@@ -117,6 +117,13 @@ export const catalogPO = {
     managedServices: '[data-test="kind-managed-service"]',
     eventSources: 'a[href="/?catalogType=EventSource"]',
   },
+  catalogCategoriesByTitle: {
+    'CI/CD': '[data-test="tab cicd"]',
+    Databases: '[data-test="tab databases"]',
+    Languages: '[data-test="tab languages"]',
+    Middleware: '[data-test="tab middleware"]',
+    Other: '[data-test="tab other"]',
+  },
   cards: {
     mariaDBTemplate: 'a[data-test="Template-MariaDB"] .catalog-tile-pf-title',
     phpCakeTemplate: '[data-test="Template-CakePHP + MySQL"] .catalog-tile-pf-title',

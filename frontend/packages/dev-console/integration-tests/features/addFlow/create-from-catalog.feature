@@ -23,10 +23,10 @@ Feature: Create Application from Catalog file
 
 
         @smoke
-        Scenario Outline: Deploy Application using Catalog Template "<template_type>": A-01-TC02
+        Scenario Outline: Deploy Application using Catalog Template "<template_category>": A-01-TC02
             Given user is at Developer Catalog page
               And user is at Templates page
-             When user selects "<template_type>" from Templates type
+             When user selects Template category "<template_category>"
               And user searches and selects Template card "<card_name>" from catalog page
               And user clicks Instantiate Template button on side bar
               And user clicks create button on Instantiate Template page
@@ -34,9 +34,9 @@ Feature: Create Application from Catalog file
               And user is able to see workload "<workload_name>" in topology page
 
         Examples:
-                  | template_type | card_name                             | workload_name             |
-                  | CI/CD         | Jenkins                               | jenkins                   |
-                  | Databases     | MariaDB                               | mariadb                   |
-                  | Languages     | Node.js + PostgreSQL (Ephemeral)      | nodejs-postgresql-example |
-                  | Middleware    | Apache HTTP Server                    | httpd-example             |
-                  | Other         | Nginx HTTP server and a reverse proxy | nginx-example             |
+                  | template_category | card_name                             | workload_name             |
+                  | CI/CD             | Jenkins                               | jenkins                   |
+                  | Databases         | MariaDB                               | mariadb                   |
+                  | Languages         | Node.js + PostgreSQL (Ephemeral)      | nodejs-postgresql-example |
+                  | Middleware        | Apache HTTP Server                    | httpd-example             |
+                  | Other             | Nginx HTTP server and a reverse proxy | nginx-example             |

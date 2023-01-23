@@ -8,6 +8,7 @@ import {
   devNavigationMenu,
   addOptions,
   pageTitle,
+  catalogTypes,
 } from '@console/dev-console/integration-tests/support/constants';
 import { helmPage, helmDetailsPage } from '../../pages';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
@@ -149,7 +150,7 @@ Then('user will see the helm charts listed', () => {
 });
 
 When('user selects {string} option from Type section', (catalogType: string) => {
-  catalogPage.selectCatalogType(catalogType);
+  catalogPage.selectCatalogType(catalogType as catalogTypes);
 });
 
 Then('user can see {string} card on the Add page', (cardName: string) => {
