@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { ImportStrategy } from '@console/git-service/src';
 import { ResourceName } from '@console/internal/components/utils';
 import { ImageStreamTagModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -29,7 +30,7 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
   const { t } = useTranslation();
   const {
     values: {
-      import: { showEditImportStrategy },
+      import: { showEditImportStrategy, selectedStrategy },
     },
     setFieldValue,
     setFieldError,
@@ -53,6 +54,9 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
     imageDisplayName,
   );
 
+  const isServerlessFunctionStrategySelected =
+    selectedStrategy?.type === ImportStrategy.SERVERLESS_FUNCTION;
+
   const k8sGet = useSafeK8s();
 
   React.useEffect(() => {
@@ -69,7 +73,13 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
 
   return (
     <>
-      <div style={!showEditImportStrategy ? { display: 'none' } : {}}>
+      <div
+        style={
+          !showEditImportStrategy && !isServerlessFunctionStrategySelected
+            ? { display: 'none' }
+            : {}
+        }
+      >
         <DropdownField
           name="image.tag"
           label={t('devconsole~Builder Image version')}
@@ -80,11 +90,13 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
         />
       </div>
       {imageTag && showImageInfo && <ImageStreamInfo displayName={displayName} tag={imageTag} />}
-      <BuilderImageEnvironments
-        name="image.imageEnv"
-        imageStreamName={imageName}
-        imageStreamTag={selectedImageTag}
-      />
+      {!isServerlessFunctionStrategySelected && (
+        <BuilderImageEnvironments
+          name="image.imageEnv"
+          imageStreamName={imageName}
+          imageStreamTag={selectedImageTag}
+        />
+      )}
     </>
   );
 };

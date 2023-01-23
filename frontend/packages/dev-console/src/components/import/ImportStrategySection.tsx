@@ -18,6 +18,7 @@ import DockerSection from './git/DockerSection';
 import ImportStrategySelector from './ImportStrategySelector';
 import PacSection from './pac/PacSection';
 import FormSection from './section/FormSection';
+import FuncSection from './serverlessfunc/FuncSection';
 import './ImportStrategySection.scss';
 
 export interface ImportStrategySectionProps {
@@ -47,6 +48,7 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
       [ImportStrategy.DEVFILE]: <DevfileStrategySection />,
       [ImportStrategy.DOCKERFILE]: <DockerSection />,
       [ImportStrategy.PAC]: <PacSection />,
+      [ImportStrategy.SERVERLESS_FUNCTION]: <FuncSection builderImages={builderImages} />,
       [ImportStrategy.S2I]: <BuilderSection builderImages={builderImages} />,
     }),
     [builderImages],
@@ -57,6 +59,7 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
       [ImportStrategy.DEVFILE]: t('devconsole~The Devfile at {{filePath}} is recommended.', {
         filePath: devfile?.devfilePath,
       }),
+      [ImportStrategy.SERVERLESS_FUNCTION]: t('devconsole~The func.yaml file is recommended.'),
       [ImportStrategy.DOCKERFILE]: t('devconsole~The Dockerfile at {{filePath}} is recommended.', {
         filePath: docker?.dockerfilePath,
       }),
