@@ -30,6 +30,25 @@ const REACT_REFRESH = process.env.REACT_REFRESH;
 const OPENSHIFT_CI = process.env.OPENSHIFT_CI;
 const WDS_PORT = 8080;
 
+(() => {
+  const crypto = require('crypto');
+
+  /**
+   * md4 algorithm is not available anymore in NodeJS 17+ (because of lib SSL 3).
+   * In that case, silently replace md4 by sha256 algorithm.
+   */
+  try {
+    crypto.createHash('md4');
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('Crypto "md4" is not supported anymore by this Node version');
+    const origCreateHash = crypto.createHash;
+    crypto.createHash = (alg: String, opts: Object) => {
+      return origCreateHash(alg === 'md4' ? 'sha256' : alg, opts);
+    };
+  }
+})();
+
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({
   filename:
