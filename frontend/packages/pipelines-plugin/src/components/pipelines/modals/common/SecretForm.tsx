@@ -138,7 +138,7 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
   };
 
   const onDataChanged = (value: string) => {
-    setStringData(_.merge(stringData, { [values.type]: value }));
+    setStringData({ ...stringData, [values.type]: value });
     setValues(values.type);
   };
 
