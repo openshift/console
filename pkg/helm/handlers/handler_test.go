@@ -12,6 +12,8 @@ import (
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/repo"
+	kv1 "k8s.io/api/core/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/dynamic/fake"
@@ -41,8 +43,11 @@ var fakeReleaseHistory = []*release.Release{
 		Version: 2,
 	},
 }
-var fakeSecret = actions.Secret{
-	SecretName: "Test",
+var fakeSecret = kv1.Secret{
+	TypeMeta: v1.TypeMeta{},
+	ObjectMeta: v1.ObjectMeta{
+		Name: "Test",
+	},
 }
 var fakeRelease = release.Release{
 	Name: "Test",
@@ -67,8 +72,8 @@ func fakeInstallChart(mockedRelease *release.Release, err error) func(ns string,
 	}
 }
 
-func fakeInstallChartAsync(mockedSecret *actions.Secret, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (*actions.Secret, error) {
-	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, cliet dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (r *actions.Secret, er error) {
+func fakeInstallChartAsync(mockedSecret *kv1.Secret, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (*kv1.Secret, error) {
+	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, cliet dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (r *kv1.Secret, er error) {
 		return mockedSecret, err
 	}
 }
@@ -130,8 +135,8 @@ func fakeUpgradeRelease(name, ns string, t *testing.T, fakeRelease *release.Rele
 	}
 }
 
-func fakeUpgradeReleaseAsync(name, ns string, t *testing.T, fakeSecret *actions.Secret, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*actions.Secret, error) {
-	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*actions.Secret, error) {
+func fakeUpgradeReleaseAsync(name, ns string, t *testing.T, fakeSecret *kv1.Secret, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*kv1.Secret, error) {
+	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*kv1.Secret, error) {
 		if namespace != ns {
 			t.Errorf("Namespace mismatch expected %s received %s", ns, namespace)
 		}
@@ -894,7 +899,7 @@ func TestHelmHandlers_HandleHelmInstallAsync(t *testing.T) {
 	tests := []struct {
 		name             string
 		expectedResponse string
-		installedSecret  actions.Secret
+		installedSecret  kv1.Secret
 		error
 		httpStatusCode int
 	}{
@@ -908,7 +913,7 @@ func TestHelmHandlers_HandleHelmInstallAsync(t *testing.T) {
 			name:             "Successful install returns release info in JSON format",
 			installedSecret:  fakeSecret,
 			httpStatusCode:   http.StatusCreated,
-			expectedResponse: `{"secret_name":"Test"}`,
+			expectedResponse: `{"metadata":{"name":"Test","creationTimestamp":null}}`,
 		},
 	}
 	for _, tt := range tests {
@@ -938,7 +943,7 @@ func TestHelmHandlers_HandleHelmUpgradeReleaseAsync(t *testing.T) {
 		name                string
 		expectedResponse    string
 		expectedContentType string
-		secret              *actions.Secret
+		secret              *kv1.Secret
 		error
 		httpStatusCode  int
 		requestBody     string
@@ -957,7 +962,7 @@ func TestHelmHandlers_HandleHelmUpgradeReleaseAsync(t *testing.T) {
 		},
 		{
 			name:                "Valid chart upgrade release",
-			expectedResponse:    `{"secret_name":"Test"}`,
+			expectedResponse:    `{"metadata":{"name":"Test","creationTimestamp":null}}`,
 			secret:              &fakeSecret,
 			expectedContentType: "application/json",
 			error:               nil,
@@ -996,6 +1001,49 @@ func TestHelmHandlers_HandleHelmUpgradeReleaseAsync(t *testing.T) {
 			}
 			if response.Header().Get("Content-Type") != tt.expectedContentType {
 				t.Errorf("content type should be %s but got %s", tt.expectedContentType, response.Header().Get("Content-Type"))
+			}
+			if response.Body.String() != tt.expectedResponse {
+				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestHelmHandlers_HandleHelmUnInstallAsync(t *testing.T) {
+	tests := []struct {
+		name             string
+		expectedResponse string
+		installedSecret  kv1.Secret
+		error
+		httpStatusCode int
+	}{
+		{
+			name:             "Error occurred",
+			expectedResponse: `{"error":"Failed to install helm chart: Chart path is invalid"}`,
+			error:            errors.New("Chart path is invalid"),
+			httpStatusCode:   http.StatusBadGateway,
+		},
+		{
+			name:             "Successful uninstall returns secret info",
+			installedSecret:  fakeSecret,
+			httpStatusCode:   http.StatusCreated,
+			expectedResponse: `{"metadata":{"name":"Test","creationTimestamp":null}}`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeHelmHandler()
+			handlers.installChartAsync = fakeInstallChartAsync(&tt.installedSecret, tt.error)
+
+			request := httptest.NewRequest("", "/foo", strings.NewReader("{}"))
+			response := httptest.NewRecorder()
+
+			handlers.HandleHelmInstallAsync(&auth.User{}, response, request)
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
+			}
+			if response.Header().Get("Content-Type") != "application/json" {
+				t.Errorf("content type should be application/json but got %s", response.Header().Get("Content-Type"))
 			}
 			if response.Body.String() != tt.expectedResponse {
 				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())

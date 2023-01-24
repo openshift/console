@@ -431,7 +431,7 @@ _Verifies if a Helm chart is compliant with a certain set of independent checks 
 * **Success Response:**
 
   * **Code:** 201 <br />
-  * JSON encoded [Release structure](https://github.com/openshift/console/blob/master/pkg/helm/actions/utility.go#L21)
+  * JSON encoded [Secret structure](https://github.com/openshift/console/blob/master/vendor/k8s.io/api/core/v1/types.go#L6110)
 
 * **Error Response:**
 
@@ -479,7 +479,7 @@ _Verifies if a Helm chart is compliant with a certain set of independent checks 
 * **Success Response:**
 
   * **Code:** 201 <br />
-  * JSON encoded [Release structure](https://github.com/openshift/console/blob/master/pkg/helm/actions/utility.go#L21)
+  * JSON encoded [Secret structure](https://github.com/openshift/console/blob/master/vendor/k8s.io/api/core/v1/types.go#L6110)
 
 * **Error Response:**
 
@@ -487,5 +487,35 @@ _Verifies if a Helm chart is compliant with a certain set of independent checks 
     **Content:** `{ error : "error message" }`
 
 
+**Uninstall Helm Release Asynchronously**
+----
+  _Uninstall Helm release asynchronously_
 
+* **URL**
+
+    `/api/helm/release/async`
+
+* **Method:**
+
+  `DELETE`
+
+*  **URL Params**
+
+   `ns=[string]` - Namespace
+
+   `name=[string]` - Helm Release Name
+
+   `version=[string]` - Helm Release Version
+
+* **Success Response:**
+
+  * **Code:** 204 <br />
+
+  * **Code:** 404 NOT FOUND <br />
+    **Content:** `{ error : "error message" }`
+
+* **Error Response:**
+
+  * **Code:** 502 BAD GATEWAY <br />
+    **Content:** `{ error : "error message" }`
 
