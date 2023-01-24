@@ -1,5 +1,6 @@
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import { ImportStrategy } from '@console/git-service/src';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
@@ -398,6 +399,12 @@ export const getCommonInitialValues = (
     healthChecks: getHealthChecksData(editAppResource),
     import: {
       showEditImportStrategy: true,
+      selectedStrategy: {
+        name: '',
+        type: ImportStrategy.S2I,
+        priority: 0,
+        detectedFiles: [],
+      },
     },
   };
   return commonInitialValues;

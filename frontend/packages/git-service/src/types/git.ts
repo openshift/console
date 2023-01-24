@@ -28,5 +28,6 @@ export enum ImportStrategy {
   S2I,
   DOCKERFILE,
   DEVFILE,
+  SERVERLESS_FUNCTION,
   PAC,
 }

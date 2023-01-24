@@ -16,7 +16,7 @@ import { DeploymentConfigModel, DeploymentModel, RouteModel } from '@console/int
 import { RouteKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { KnativeServingModel } from '@console/knative-plugin/src';
+import { ServiceModel as knSvcModel } from '@console/knative-plugin/src';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { RepositoryModel } from '@console/pipelines-plugin/src/models';
 import {
@@ -169,7 +169,8 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
           (resource) =>
             resource.kind === DeploymentModel.kind ||
             resource.kind === DeploymentConfigModel.kind ||
-            resource.kind === KnativeServingModel.kind,
+            (resource.kind === knSvcModel.kind &&
+              resource.apiVersion === `${knSvcModel.apiGroup}/${knSvcModel.apiVersion}`),
         );
         const route = resources.find((resource) => resource.kind === RouteModel.kind) as RouteKind;
         if (deployedResources.length > 0) {

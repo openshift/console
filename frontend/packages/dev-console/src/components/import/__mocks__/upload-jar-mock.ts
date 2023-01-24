@@ -1,3 +1,4 @@
+import { ImportStrategy } from '@console/git-service/src';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { Resources, UploadJarFormData } from '../import-types';
@@ -18,6 +19,14 @@ export const uploadJarMockFormData: UploadJarFormData = {
   fileUpload: {
     name: 'springApp.jar',
     value: '',
+  },
+  import: {
+    selectedStrategy: {
+      name: '',
+      type: ImportStrategy.S2I,
+      priority: 0,
+      detectedFiles: [],
+    },
   },
   image: {
     selected: 'java',

@@ -2,7 +2,9 @@ import * as React from 'react';
 import { configure, render, screen, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
+import * as utils from '@console/dynamic-plugin-sdk/src';
 import { GitProvider } from '@console/git-service/src';
+import * as serverlessFxUtils from '@console/git-service/src/utils/serverless-strategy-detector';
 import store from '@console/internal/redux';
 import userEvent from '../../__tests__/user-event';
 import { BuildStrategyType } from '../../types';
@@ -25,6 +27,9 @@ jest.mock('@console/git-service', () => ({
 jest.mock('../EditorField', () =>
   require.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
+
+const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+const spyEvaluateFunc = jest.spyOn(serverlessFxUtils, 'evaluateFunc');
 
 configure({ testIdAttribute: 'data-test' });
 
@@ -112,7 +117,7 @@ describe('SourceSection', () => {
 
   it('should render git input field when user selects git', async () => {
     const onSubmit = jest.fn();
-
+    spyUseAccessReview.mockReturnValue([true]);
     const renderResult = render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
@@ -161,7 +166,7 @@ describe('SourceSection', () => {
 
   it('should update form data correct after entering a git url and branch (ref)', async () => {
     const onSubmit = jest.fn();
-
+    spyUseAccessReview.mockReturnValue([true]);
     const renderResult = render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
@@ -216,7 +221,10 @@ describe('SourceSection', () => {
 
   it('should update form data correct after selecting and entering a dockerfile', async () => {
     const onSubmit = jest.fn();
-
+    spyEvaluateFunc.mockReturnValue({
+      isBuilderS2I: false,
+      values: {},
+    });
     const renderResult = render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />

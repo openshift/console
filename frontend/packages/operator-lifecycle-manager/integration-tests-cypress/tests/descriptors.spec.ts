@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { checkErrors, create, testName } from '../../../integration-tests-cypress/support';
-import { modal } from '../../../integration-tests-cypress/views/modal';
 import { nav } from '../../../integration-tests-cypress/views/nav';
 import { testCR, testCRD, testCSV } from '../mocks';
 
@@ -105,19 +104,7 @@ describe('Using OLM descriptor components', () => {
     cy.log(
       'Delete operand instance created in prior steps. Fixes a failure when trying to create a duplicate operand in the "successfully creates operand using form" step.',
     );
-    cy.visit(
-      `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.versions[0].name}~${testCRD.spec.names.kind}`,
-    );
-    cy.byTestOperandLink('olm-descriptors-test').should('exist');
-    cy.byLegacyTestID('kebab-button')
-      .should('exist')
-      .click({ force: true });
-    cy.byTestActionID(`Delete ${testCRD.spec.names.kind}`)
-      .should('exist')
-      .click();
-    modal.shouldBeOpened();
-    modal.submit();
-    modal.shouldBeClosed();
+    cy.exec(`oc delete ${testCRD.spec.names.kind} ${testCR.metadata.name} -n ${testName}`);
   });
 
   it('displays form for creating operand', () => {

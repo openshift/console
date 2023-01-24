@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { ImportStrategy } from '@console/git-service/src';
 import { getStrategyType } from '@console/internal/components/build';
 import { LoadingBox } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -19,6 +20,7 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, reso
     values: {
       build,
       image: { selected: selectedImage, tag: selectedTag },
+      import: { selectedStrategy },
     },
   } = useFormikContext<FormikValues>();
   const buildConfigObj = resource || {
@@ -29,9 +31,13 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, reso
   };
   const [environments, envsLoaded] = useBuilderImageEnvironments(selectedImage, selectedTag);
   const strategyType = getStrategyType(resource?.spec?.strategy?.type);
-  const envs = (buildConfigObj.spec?.strategy?.[strategyType]?.env || []).filter(
-    (e) => !environments.some((env) => env.key === e.name),
-  );
+
+  const envs =
+    selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION
+      ? build.env
+      : (buildConfigObj.spec?.strategy?.[strategyType]?.env || []).filter(
+          (e) => !environments.some((env) => env.key === e.name),
+        );
 
   return (
     <FormSection title={t('devconsole~Build configuration')} fullWidth>

@@ -264,4 +264,34 @@ describe('Bitbucket Service', () => {
       nockDone();
     });
   });
+
+  it('should detect func.yaml file', () => {
+    const gitSource = {
+      url: 'https://bitbucket.org/avikkundu/oc-func',
+    };
+
+    const gitService = new BitbucketService(gitSource);
+
+    return nockBack('func.json').then(async ({ nockDone, context }) => {
+      const isFuncYamlPresent = await gitService.isFuncYamlPresent();
+      expect(isFuncYamlPresent).toBe(true);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should not detect func.yaml file', () => {
+    const gitSource: GitSource = {
+      url: 'https://bitbucket.org/akshinde/testgitsource',
+    };
+
+    const gitService = new BitbucketService(gitSource);
+
+    return nockBack('no-func.json').then(async ({ nockDone, context }) => {
+      const isFuncYamlPresent = await gitService.isFuncYamlPresent();
+      expect(isFuncYamlPresent).toBe(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
 });

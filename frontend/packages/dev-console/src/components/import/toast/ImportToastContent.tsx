@@ -18,9 +18,8 @@ const ImportToastContent: React.FC<ImportToastContentProps> = ({
   }
   return (
     <>
-      {deployedResources.length > 1
-        ? t('devconsole~Deployments created successfully.')
-        : t('devconsole~Deployment created successfully.')}
+      {deployedResources.length &&
+        t('devconsole~{{kind}} created successfully.', { kind: deployedResources[0].kind })}
       {route && (
         <p>
           <RouteLinkAndCopy route={route} />

@@ -70,6 +70,16 @@ export abstract class BaseService {
   abstract getDockerfileContent(): Promise<string>;
 
   /**
+   * Check if func.yaml is present in the repo.
+   */
+  abstract isFuncYamlPresent(): Promise<boolean>;
+
+  /**
+   * Checks if func.yaml exist in the repo and returns func.yaml content
+   */
+  abstract getFuncYamlContent(): Promise<string>;
+
+  /**
    * Check if Devfile present in the repo.
    */
   abstract isDevfilePresent(): Promise<boolean>;
