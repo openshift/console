@@ -1,6 +1,7 @@
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
+import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksData } from '../../health-checks/__tests__/create-health-checks-probe-data';
@@ -517,7 +518,7 @@ export const gitImportInitialValues: GitImportFormData = {
     },
   },
   serverless: serverlessInitialValues,
-  pipeline: { enabled: false },
+  pipeline: { enabled: false, type: PipelineType.PIPELINE },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
   labels: {
     'app.kubernetes.io/component': 'nationalparks-py',
@@ -613,7 +614,7 @@ export const externalImageValues: DeployImageFormData = {
       ...defaultRepositoryFormValues,
     },
   },
-  pipeline: { enabled: false },
+  pipeline: { enabled: false, type: PipelineType.PIPELINE },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
   labels: { 'app.kubernetes.io/component': 'nationalparks-py', 'app.kubernetes.io/name': 'python' },
   limits: {
@@ -693,7 +694,7 @@ export const internalImageValues: DeployImageFormData = {
   },
   resources: Resources.OpenShift,
   serverless: serverlessInitialValues,
-  pipeline: { enabled: false },
+  pipeline: { enabled: false, type: PipelineType.PIPELINE },
   pac: {
     pacHasError: false,
     repository: {
@@ -804,7 +805,7 @@ export const knExternalImageValues: DeployImageFormData = {
     },
   },
   name: 'nationalparks-py',
-  pipeline: { enabled: false },
+  pipeline: { enabled: false, type: PipelineType.PIPELINE },
   pac: {
     pacHasError: false,
     repository: {

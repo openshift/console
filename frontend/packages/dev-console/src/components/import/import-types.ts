@@ -291,7 +291,6 @@ export enum ImportTypes {
   devfile = 'devfile',
   docker = 'docker',
   s2i = 's2i',
-  pac = 'pac',
 }
 
 export enum Resources {

@@ -1,0 +1,23 @@
+.odc-pipeline-section-pac {
+  &__radio-intent {
+    position: relative;
+    left: var(--pf-global--spacer--md);
+  }
+  &__error-alert {
+    margin: var(--pf-global--spacer--2xl) 0 0;
+  }
+  &__config-type {
+    margin-top: var(--pf-global--spacer--md);
+  }
+  &__info-panel {
+    color: var(--pf-global--Color--100);
+    border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+    padding: var(--pf-global--spacer--md);
+  }
+  &__clipboard {
+    margin-top: var(--pf-global--spacer--md);
+  }
+  &__info-text {
+    margin-bottom: var(--pf-global--spacer--md);
+  }
+}

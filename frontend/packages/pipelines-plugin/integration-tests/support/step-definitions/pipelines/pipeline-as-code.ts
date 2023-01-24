@@ -91,6 +91,12 @@ When('user clicks on the repository {string} on Repositories page', (repoName: s
   cy.byLegacyTestID(repoName).click();
 });
 
+When('user searches and selects the repository {string} on Repository page', (repoName: string) => {
+  pipelinesPage.search(repoName);
+  pipelinesPage.verifyPipelinesTableDisplay();
+  cy.byLegacyTestID(repoName).click();
+});
+
 Then(
   'user will be redirected to Repository details page with header {string}',
   (repoName: string) => {
@@ -286,6 +292,11 @@ Given('user is at Pipelines tab in admin page', () => {
   perspective.switchTo(switchPerspective.Administrator);
   tasksPage.openPipelinePage();
   tasksPage.togglePipelineSidebar();
+});
+
+Then('user navigates to the Repositories Tab on the Pipelines Page', () => {
+  navigateTo(devNavigationMenu.Pipelines);
+  pipelinesPage.selectTab(pipelineTabs.Repositories);
 });
 
 When('user clicks on Setup GitHub App button', () => {

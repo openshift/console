@@ -2,7 +2,6 @@ import { BaseService } from '../services/base-service';
 import { RepoStatus } from '../types';
 import { ImportStrategy } from '../types/git';
 import { detectBuildTypes } from './build-tool-type-detector';
-import { detectPacFiles, isPacRepository } from './pac-strategy-detector';
 import { isServerlessFxRepository } from './serverless-strategy-detector';
 
 type ImportStrategyType = {
@@ -39,13 +38,6 @@ const ImportStrategyList: ImportStrategyType[] = [
     priority: 0,
     customDetection: detectBuildTypes,
   },
-  {
-    name: 'Pipeline as Code',
-    type: ImportStrategy.PAC,
-    expectedRegexp: /^\.?tekton$/,
-    priority: 3,
-    customDetection: detectPacFiles,
-  },
 ];
 
 export type DetectedStrategy = {
@@ -66,7 +58,6 @@ type DetectedServiceData = {
 export const detectImportStrategies = async (
   repository: string,
   gitService: BaseService,
-  isRepositoryEnabled: boolean = false,
   isServerlessEnabled: boolean = false,
 ): Promise<DetectedServiceData> => {
   let detectedStrategies: DetectedStrategy[] = [];
@@ -79,14 +70,10 @@ export const detectImportStrategies = async (
     : RepoStatus.GitTypeNotDetected;
   let detectedFiles: string[] = [];
   let detectedCustomData: string[];
-  let pacFiles: string[] = [];
-  let addPacRepositoryStrategy: boolean;
 
   if (repositoryStatus === RepoStatus.Reachable) {
     try {
       const { files } = await gitService.getRepoFileList({ includeFolder: true });
-      pacFiles = await detectPacFiles(gitService);
-      addPacRepositoryStrategy = await isPacRepository(isRepositoryEnabled, gitService, pacFiles);
       addServerlessFxStrategy = await isServerlessFxRepository(isServerlessEnabled, gitService);
 
       detectedStrategies = await Promise.all(
@@ -116,12 +103,6 @@ export const detectImportStrategies = async (
   if (!addServerlessFxStrategy) {
     detectedStrategies = detectedStrategies.filter(
       (strategy) => strategy.type !== ImportStrategy.SERVERLESS_FUNCTION,
-    );
-  }
-
-  if (!addPacRepositoryStrategy) {
-    detectedStrategies = detectedStrategies.filter(
-      (strategy) => strategy.type !== ImportStrategy.PAC,
     );
   }
 

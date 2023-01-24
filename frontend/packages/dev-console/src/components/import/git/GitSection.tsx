@@ -15,7 +15,6 @@ import {
   ServerlessBuildStrategyType,
   ServiceModel as ksvcModel,
 } from '@console/knative-plugin';
-import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
 import {
   InputField,
   DropdownField,
@@ -94,7 +93,6 @@ const GitSection: React.FC<GitSectionProps> = ({
   imageStreamName,
 }) => {
   const { t } = useTranslation();
-  const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const inputRef = React.useRef<HTMLInputElement>();
 
   const {
@@ -282,12 +280,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         values.docker?.dockerfilePath,
       );
 
-      const importStrategyData = await detectImportStrategies(
-        url,
-        gitService,
-        isRepositoryEnabled,
-        canIncludeKnative,
-      );
+      const importStrategyData = await detectImportStrategies(url, gitService, canIncludeKnative);
 
       const {
         loaded,
@@ -381,11 +374,6 @@ const GitSection: React.FC<GitSectionProps> = ({
             setFieldValue('docker.dockerfileHasError', false);
             break;
           }
-          case ImportStrategy.PAC: {
-            setFieldValue('build.strategy', BuildStrategyType.Pac);
-            setFieldValue('pac.pacHasError', false);
-            break;
-          }
           case ImportStrategy.SERVERLESS_FUNCTION: {
             setFieldValue('build.strategy', ServerlessBuildStrategyType.ServerlessFunction);
             break;
@@ -415,7 +403,6 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.application.name,
       values.application.selectedKey,
       values.build.strategy,
-      isRepositoryEnabled,
       canIncludeKnative,
       nameTouched,
       importType,

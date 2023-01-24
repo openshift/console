@@ -19,6 +19,7 @@ import {
   KNATIVE_SERVING_LABEL,
   ServiceModel,
 } from '@console/knative-plugin';
+import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { isDockerPipeline } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import {
@@ -386,6 +387,7 @@ export const getCommonInitialValues = (
     serverless: getServerlessData(editAppResource),
     pipeline: {
       enabled: !_.isEmpty(pipelineData),
+      type: PipelineType.PIPELINE,
     },
     pac: {
       pacHasError: false,
