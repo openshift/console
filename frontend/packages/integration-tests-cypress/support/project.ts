@@ -37,6 +37,7 @@ Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false
 Cypress.Commands.add('deleteProject', (name: string) => {
   cy.log(`delete project`);
   cy.visit(`/k8s/cluster/projects/${name}`);
+  detailsPage.isLoaded();
   detailsPage.clickPageActionFromDropdown('Delete Project');
   modal.shouldBeOpened();
   modal.submitShouldBeDisabled();
