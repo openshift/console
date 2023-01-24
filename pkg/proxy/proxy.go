@@ -17,8 +17,14 @@ import (
 	"k8s.io/klog"
 )
 
-var websocketPingInterval = 30 * time.Second
-var websocketTimeout = 30 * time.Second
+const (
+	websocketPingInterval = 30 * time.Second
+	websocketWriteTimeout = 30 * time.Second
+	websocketTimeout      = time.Hour // Kill websockets after one hour to prevent connection leaks
+	tlsHandshakeTimeout   = 10 * time.Second
+	dialerTimeout         = 30 * time.Second
+	dialerKeepAlive       = 30 * time.Second
+)
 
 type Config struct {
 	HeaderBlacklist []string
@@ -57,23 +63,21 @@ func NewProxy(cfg *Config) *Proxy {
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		Dial: (&net.Dialer{
-			Timeout:   30 * time.Second,
-			KeepAlive: 30 * time.Second,
+			Timeout:   dialerTimeout,
+			KeepAlive: dialerKeepAlive,
 		}).Dial,
 		TLSClientConfig:     cfg.TLSClientConfig,
-		TLSHandshakeTimeout: 10 * time.Second,
+		TLSHandshakeTimeout: tlsHandshakeTimeout,
 	}
 
 	reverseProxy := httputil.NewSingleHostReverseProxy(cfg.Endpoint)
 	reverseProxy.FlushInterval = time.Millisecond * 100
 	reverseProxy.Transport = transport
 	reverseProxy.ModifyResponse = FilterHeaders
-
 	proxy := &Proxy{
 		reverseProxy: reverseProxy,
 		config:       cfg,
 	}
-
 	return proxy
 }
 
@@ -111,10 +115,6 @@ func CopyRequestHeaders(originalRequest, newRequest *http.Request) {
 
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	if klog.V(3) {
-		klog.Infof("PROXY: %#q\n", SingleJoiningSlash(p.config.Endpoint.String(), r.URL.Path))
-	}
-
 	// Block scripts from running in proxied content for browsers that support Content-Security-Policy.
 	w.Header().Set("Content-Security-Policy", "sandbox;")
 	// Add `X-Content-Security-Policy` for IE11 and older browsers.
@@ -145,8 +145,15 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	r.URL.Scheme = p.config.Endpoint.Scheme
 
 	if !isWebsocket {
+		if klog.V(3) {
+			klog.Infof("PROXY REQUEST: %#q\n", SingleJoiningSlash(p.config.Endpoint.String(), r.URL.Path))
+		}
 		p.reverseProxy.ServeHTTP(w, r)
 		return
+	}
+
+	if klog.V(3) {
+		klog.Infof("PROXY WEBSOCKET: %#q\n", SingleJoiningSlash(p.config.Endpoint.String(), r.URL.Path))
 	}
 
 	r.URL.Path = SingleJoiningSlash(p.config.Endpoint.Path, r.URL.Path)
@@ -215,7 +222,11 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// NOTE (ericchiang): K8s might not enforce this but websockets requests are
 	// required to supply an origin.
-	proxiedHeader.Add("Origin", "http://localhost")
+	if p.config.Origin != "" {
+		proxiedHeader.Add("Origin", p.config.Origin)
+	} else {
+		proxiedHeader.Add("Origin", "http://localhost")
+	}
 
 	dialer := &websocket.Dialer{
 		TLSClientConfig: p.config.TLSClientConfig,
@@ -266,11 +277,13 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ticker := time.NewTicker(websocketPingInterval)
+	timeoutTimer := time.NewTimer(websocketTimeout)
 	var writeMutex sync.Mutex // Needed because ticker & copy are writing to frontend in separate goroutines
 
 	defer func() {
 		ticker.Stop()
 		frontend.Close()
+		timeoutTimer.Stop()
 	}()
 
 	errc := make(chan error, 2)
@@ -284,10 +297,19 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		case <-errc:
 			// Only wait for a single error and let the defers close both connections.
 			return
-		case <-ticker.C:
+		case <-timeoutTimer.C:
+			// Close websocket after a reasonable timeout to prevent connection leaks
 			writeMutex.Lock()
+			err := frontend.WriteControl(websocket.CloseMessage, []byte{}, time.Now().Add(websocketWriteTimeout))
+			writeMutex.Unlock()
+			if err != nil {
+				klog.V(4).Infof("Failed to send websocket close message: %v\n", err)
+			}
+			return
+		case <-ticker.C:
 			// Send pings to client to prevent load balancers and other middlemen from closing the connection early
-			err := frontend.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(websocketTimeout))
+			writeMutex.Lock()
+			err := frontend.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(websocketWriteTimeout))
 			writeMutex.Unlock()
 			if err != nil {
 				return

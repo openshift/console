@@ -16,8 +16,8 @@ func (s *Server) GetKubeVersion(cluster string) string {
 		return s.KubeVersion
 	}
 	config := &rest.Config{
-		Host:      s.LocalK8sProxyConfig.Endpoint.String(),
-		Transport: s.LocalK8sClient.Transport,
+		Host:      s.K8sProxyConfig.Endpoint.String(),
+		Transport: s.K8sClient.Transport,
 	}
 
 	if cluster != serverutils.LocalClusterName {

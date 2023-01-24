@@ -380,7 +380,7 @@ func main() {
 			klog.Fatalf("failed to read bearer token: %v", err)
 		}
 
-		srv.LocalK8sProxyConfig = &proxy.Config{
+		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: tlsConfig,
 			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 			Endpoint:        k8sEndpoint,
@@ -454,6 +454,11 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftClusterProxyHost},
 			}
+			srv.ServiceClient = &http.Client{
+				Transport: &http.Transport{
+					TLSClientConfig: serviceProxyTLSConfig,
+				},
+			}
 		}
 
 	case "off-cluster":
@@ -462,7 +467,7 @@ func main() {
 			InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
 		})
 
-		srv.LocalK8sProxyConfig = &proxy.Config{
+		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: serviceProxyTLSConfig,
 			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 			Endpoint:        k8sEndpoint,
@@ -539,6 +544,11 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        offClusterManagedClusterProxyURL,
 			}
+			srv.ServiceClient = &http.Client{
+				Transport: &http.Transport{
+					TLSClientConfig: serviceProxyTLSConfig,
+				},
+			}
 		}
 
 	default:
@@ -547,12 +557,12 @@ func main() {
 
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
-		apiServerEndpoint = srv.LocalK8sProxyConfig.Endpoint.String()
+		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
 	}
 	srv.KubeAPIServerURL = apiServerEndpoint
-	srv.LocalK8sClient = &http.Client{
+	srv.K8sClient = &http.Client{
 		Transport: &http.Transport{
-			TLSClientConfig: srv.LocalK8sProxyConfig.TLSClientConfig,
+			TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
 		},
 	}
 
@@ -728,7 +738,7 @@ func main() {
 		},
 		&http.Client{
 			Transport: &http.Transport{
-				TLSClientConfig: srv.LocalK8sProxyConfig.TLSClientConfig,
+				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
 			},
 		},
 		nil,
@@ -746,7 +756,7 @@ func main() {
 		},
 		&http.Client{
 			Transport: &http.Transport{
-				TLSClientConfig: srv.LocalK8sProxyConfig.TLSClientConfig,
+				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
 			},
 		},
 		knative.EventSourceFilter,
@@ -764,7 +774,7 @@ func main() {
 		},
 		&http.Client{
 			Transport: &http.Transport{
-				TLSClientConfig: srv.LocalK8sProxyConfig.TLSClientConfig,
+				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
 			},
 		},
 		knative.ChannelFilter,
