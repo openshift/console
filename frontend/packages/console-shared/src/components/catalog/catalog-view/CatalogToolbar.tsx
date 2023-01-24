@@ -68,7 +68,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
               type="text"
               placeholder={t('console-shared~Filter by keyword...')}
               value={searchKeyword}
-              onChange={onSearchKeywordChange}
+              onChange={(event, text) => onSearchKeywordChange(text)}
               onClear={() => onSearchKeywordChange('')}
               aria-label={t('console-shared~Filter by keyword...')}
             />

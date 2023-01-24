@@ -7,8 +7,8 @@ import { createContextMenuItems } from '../../../actions';
 type Reference = React.ComponentProps<typeof ContextMenu>['reference'];
 
 export interface WithContextMenuProps {
-  onContextMenu: (e: React.MouseEvent) => void;
-  contextMenuOpen: boolean;
+  onContextMenu?: (e: React.MouseEvent) => void;
+  contextMenuOpen?: boolean;
 }
 
 const withContextMenu = <E extends GraphElement>(
