@@ -68,7 +68,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   valueClassName,
 }) => {
   const { t } = useTranslation();
-  const [model] = useK8sModel(referenceFor(obj));
+  const [model] = useK8sModel(obj ? referenceFor(obj) : '');
   const hide = hideEmpty && _.isEmpty(_.get(obj, path));
   const popoverContent: string = description ?? getPropertyDescription(model, path);
   const value: React.ReactNode = children || _.get(obj, path, defaultValue);
@@ -140,7 +140,7 @@ export type DetailsItemProps = {
   hideEmpty?: boolean;
   label: string;
   labelClassName?: string;
-  obj: K8sResourceKind;
+  obj?: K8sResourceKind;
   onEdit?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   path?: string | string[];
   valueClassName?: string;

@@ -1,9 +1,13 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, DetailsItem } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sPodControllerKind, referenceForModel, PodKind } from '@console/internal/module/k8s';
+import {
+  K8sPodControllerKind,
+  referenceForModel,
+  PodKind,
+  getResourceDescription,
+} from '@console/internal/module/k8s';
 import { PodDisruptionBudgetModel } from '../../models';
 import AvailabilityRequirement from './AvailabilityRequirement';
 import { PodDisruptionBudgetKind } from './types';
@@ -22,23 +26,22 @@ export const PodDisruptionBudgetField: React.FC<PodDisruptionBudgetFieldProps> =
     namespace: obj.metadata.namespace,
   });
   const pdb = getPDBResource(pdbResources, obj);
+  const { replicas } = obj.spec ?? {};
+  const pdbDescription = getResourceDescription(PodDisruptionBudgetModel);
 
   return (
-    <DetailsItem label={t('console-app~PodDisruptionBudgets')} obj={obj}>
-      {!_.isEmpty(pdb) ? (
+    <DetailsItem label={t('console-app~PodDisruptionBudget')} description={pdbDescription}>
+      {pdb ? (
         <>
           <ResourceLink
             kind={referenceForModel(PodDisruptionBudgetModel)}
             name={pdb.metadata.name}
             namespace={pdb.metadata.namespace}
           />
-          {obj.spec?.replicas &&
-            (!_.isNil(pdb.spec?.minAvailable) || !_.isNil(pdb.spec?.maxUnavailable)) && (
-              <AvailabilityRequirement pdb={pdb} replicas={obj.spec?.replicas} />
-            )}
+          {replicas && <AvailabilityRequirement pdb={pdb} replicas={replicas} />}
         </>
       ) : (
-        t('console-app~No PodDisruptionBudgets')
+        t('console-app~No PodDisruptionBudget')
       )}
     </DetailsItem>
   );
