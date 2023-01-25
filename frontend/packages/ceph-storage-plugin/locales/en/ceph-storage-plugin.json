@@ -779,5 +779,6 @@
   "LargeScale": "LargeScale",
   "4 TiB": "4 TiB",
   "{{osdSize, number}} TiB": "{{osdSize, number}} TiB",
-  "Help": "Help"
+  "Help": "Help",
+  "Object_plural": "Object_plural"
 }
