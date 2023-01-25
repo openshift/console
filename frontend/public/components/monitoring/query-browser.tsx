@@ -661,7 +661,6 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   showStackedControl = false,
   timespan,
   units,
-  wrapperClassName,
 }) => {
   const { t } = useTranslation();
   const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
@@ -900,7 +899,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   return (
     <div
-      className={classNames('query-browser__wrapper', wrapperClassName, {
+      className={classNames('query-browser__wrapper', {
         'graph-empty-state': isGraphDataEmpty,
         'graph-empty-state__loaded': isGraphDataEmpty && !updating,
       })}
@@ -1042,7 +1041,6 @@ export type QueryBrowserProps = {
   showStackedControl?: boolean;
   timespan?: number;
   units?: string;
-  wrapperClassName?: string;
 };
 
 type SpanControlsProps = {
