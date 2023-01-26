@@ -15,9 +15,10 @@ import {
   ApplicationLauncherItem,
   ApplicationLauncherSeparator,
   NotificationBadge,
-  PageHeaderTools,
-  PageHeaderToolsGroup,
-  PageHeaderToolsItem,
+  Toolbar,
+  ToolbarContent,
+  ToolbarGroup,
+  ToolbarItem,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { FLAGS, YellowExclamationTriangleIcon, ACM_LINK_ID } from '@console/shared';
@@ -55,20 +56,18 @@ const defaultHelpLinks = [
   },
 ];
 
-const SystemStatusButton = ({ statuspageData, className }) => {
+const SystemStatusButton = ({ statuspageData }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
-    <PageHeaderToolsItem className={className}>
-      <a
-        className="pf-c-button pf-m-plain"
-        aria-label={t('public~System status')}
-        href={statuspageData.page.url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <YellowExclamationTriangleIcon className="co-masthead-icon" />
-      </a>
-    </PageHeaderToolsItem>
+    <a
+      className="pf-c-button pf-m-plain"
+      aria-label={t('public~System status')}
+      href={statuspageData.page.url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <YellowExclamationTriangleIcon className="co-masthead-icon" />
+    </a>
   ) : null;
 };
 
@@ -628,85 +627,95 @@ class MastheadToolbarContents_ extends React.Component {
       showAboutModal,
       statuspageData,
     } = this.state;
-    const { consoleLinks, drawerToggle, canAccessNS, alertCount, t } = this.props;
+    const {
+      alertCount,
+      canAccessNS,
+      consoleLinks,
+      drawerToggle,
+      isMastheadStacked,
+      t,
+    } = this.props;
     const launchActions = this._launchActions();
     const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
       <>
-        <PageHeaderTools>
-          <PageHeaderToolsGroup className="hidden-xs">
-            {/* desktop -- (system status button) */}
-            <SystemStatusButton statuspageData={statuspageData} />
-            {/* desktop -- (application launcher dropdown), import yaml, help dropdown [documentation, about] */}
-            {!_.isEmpty(launchActions) && (
-              <PageHeaderToolsItem>
+        <Toolbar isFullHeight isStatic>
+          <ToolbarContent>
+            {/* <ToolbarGroup spacer={{ default: 'spacerNone' }}>
+              cluster picker goes here
+            </ToolbarGroup> */}
+            <ToolbarGroup
+              alignment={{ default: 'alignRight' }}
+              spacer={{ default: 'spacerNone' }}
+              visibility={{ default: isMastheadStacked ? 'hidden' : 'visible' }}
+            >
+              <ToolbarItem spacer={{ default: 'spacerNone', lg: 'spacerLg' }}>
+                <SystemStatusButton statuspageData={statuspageData} />
+                {!_.isEmpty(launchActions) && (
+                  <ApplicationLauncher
+                    aria-label={t('public~Application launcher')}
+                    className="co-app-launcher"
+                    data-test-id="application-launcher"
+                    onSelect={this._onApplicationLauncherDropdownSelect}
+                    onToggle={this._onApplicationLauncherDropdownToggle}
+                    isOpen={isApplicationLauncherDropdownOpen}
+                    items={this._renderApplicationItems(this._launchActions())}
+                    data-quickstart-id="qs-masthead-applications"
+                    position="right"
+                    isGrouped
+                  />
+                )}
+                {alertAccess && (
+                  <NotificationBadge
+                    aria-label={t('public~Notification drawer')}
+                    onClick={drawerToggle}
+                    variant="read"
+                    count={alertCount || 0}
+                    data-quickstart-id="qs-masthead-notifications"
+                  >
+                    <BellIcon alt="" />
+                  </NotificationBadge>
+                )}
+                <Link
+                  to={this._getImportYAMLPath()}
+                  className="pf-c-button pf-m-plain"
+                  aria-label={t('public~Import YAML')}
+                  data-quickstart-id="qs-masthead-import"
+                  data-test="import-yaml"
+                >
+                  <PlusCircleIcon className="co-masthead-icon" alt="" />
+                </Link>
+                <CloudShellMastheadButton />
                 <ApplicationLauncher
-                  aria-label={t('public~Application launcher')}
+                  aria-label={t('public~Help menu')}
                   className="co-app-launcher"
-                  data-test-id="application-launcher"
-                  onSelect={this._onApplicationLauncherDropdownSelect}
-                  onToggle={this._onApplicationLauncherDropdownToggle}
-                  isOpen={isApplicationLauncherDropdownOpen}
-                  items={this._renderApplicationItems(this._launchActions())}
-                  data-quickstart-id="qs-masthead-applications"
+                  data-test="help-dropdown-toggle"
+                  data-tour-id="tour-help-button"
+                  data-quickstart-id="qs-masthead-help"
+                  onSelect={this._onHelpDropdownSelect}
+                  onToggle={this._onHelpDropdownToggle}
+                  isOpen={isHelpDropdownOpen}
+                  items={this._renderApplicationItems(
+                    this._helpActions(
+                      this._getAdditionalActions(
+                        this._getAdditionalLinks(consoleLinks?.data, 'HelpMenu'),
+                      ),
+                    ),
+                  )}
                   position="right"
+                  toggleIcon={<QuestionCircleIcon className="co-masthead-icon" alt="" />}
                   isGrouped
                 />
-              </PageHeaderToolsItem>
-            )}
-            {/* desktop -- (notification drawer button) */
-            alertAccess && (
-              <PageHeaderToolsItem>
-                <NotificationBadge
-                  aria-label={t('public~Notification drawer')}
-                  onClick={drawerToggle}
-                  variant="read"
-                  count={alertCount || 0}
-                  data-quickstart-id="qs-masthead-notifications"
-                >
-                  <BellIcon alt="" />
-                </NotificationBadge>
-              </PageHeaderToolsItem>
-            )}
-            <PageHeaderToolsItem>
-              <Link
-                to={this._getImportYAMLPath()}
-                className="pf-c-button pf-m-plain"
-                aria-label={t('public~Import YAML')}
-                data-quickstart-id="qs-masthead-import"
-                data-test="import-yaml"
-              >
-                <PlusCircleIcon className="co-masthead-icon" alt="" />
-              </Link>
-            </PageHeaderToolsItem>
-            <CloudShellMastheadButton />
-            <PageHeaderToolsItem>
-              <ApplicationLauncher
-                aria-label={t('public~Help menu')}
-                className="co-app-launcher"
-                data-test="help-dropdown-toggle"
-                data-tour-id="tour-help-button"
-                data-quickstart-id="qs-masthead-help"
-                onSelect={this._onHelpDropdownSelect}
-                onToggle={this._onHelpDropdownToggle}
-                isOpen={isHelpDropdownOpen}
-                items={this._renderApplicationItems(
-                  this._helpActions(
-                    this._getAdditionalActions(
-                      this._getAdditionalLinks(consoleLinks?.data, 'HelpMenu'),
-                    ),
-                  ),
-                )}
-                position="right"
-                toggleIcon={<QuestionCircleIcon alt="" />}
-                isGrouped
-              />
-            </PageHeaderToolsItem>
-          </PageHeaderToolsGroup>
-          <PageHeaderToolsGroup>
-            {/* mobile -- (notification drawer button) */
-            alertAccess && alertCount > 0 && (
-              <PageHeaderToolsItem className="visible-xs-block">
+              </ToolbarItem>
+              <ToolbarItem>{this._renderMenu(false)}</ToolbarItem>
+            </ToolbarGroup>
+            <ToolbarGroup
+              alignment={{ default: 'alignRight' }}
+              spacer={{ default: 'spacerNone' }}
+              visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
+            >
+              <SystemStatusButton statuspageData={statuspageData} />
+              {alertAccess && alertCount > 0 && (
                 <NotificationBadge
                   aria-label={t('public~Notification drawer')}
                   onClick={drawerToggle}
@@ -716,20 +725,11 @@ class MastheadToolbarContents_ extends React.Component {
                 >
                   <BellIcon />
                 </NotificationBadge>
-              </PageHeaderToolsItem>
-            )}
-            {/* mobile -- (system status button) */}
-            <SystemStatusButton statuspageData={statuspageData} className="visible-xs-block" />
-            {/* mobile -- kebab dropdown [(application launcher |) import yaml | documentation, about (| logout)] */}
-            <PageHeaderToolsItem className="visible-xs-block">
-              {this._renderMenu(true)}
-            </PageHeaderToolsItem>
-            {/* desktop -- (user dropdown [logout]) */}
-            <PageHeaderToolsItem className="hidden-xs">
-              {this._renderMenu(false)}
-            </PageHeaderToolsItem>
-          </PageHeaderToolsGroup>
-        </PageHeaderTools>
+              )}
+              <ToolbarItem>{this._renderMenu(true)}</ToolbarItem>
+            </ToolbarGroup>
+          </ToolbarContent>
+        </Toolbar>
         <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />
       </>
     );
@@ -760,7 +760,7 @@ const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
 export const MastheadToolbar = connectToFlags(
   FLAGS.CLUSTER_VERSION,
   FLAGS.CONSOLE_LINK,
-)(({ flags }) => {
+)(({ flags, isMastheadStacked }) => {
   const resources = [];
   if (flags[FLAGS.CLUSTER_VERSION]) {
     resources.push({
@@ -780,7 +780,7 @@ export const MastheadToolbar = connectToFlags(
 
   return (
     <Firehose resources={resources}>
-      <MastheadToolbarContents />
+      <MastheadToolbarContents isMastheadStacked={isMastheadStacked} />
     </Firehose>
   );
 });

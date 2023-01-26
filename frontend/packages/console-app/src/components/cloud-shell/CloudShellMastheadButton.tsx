@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, PageHeaderToolsItem } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { TerminalIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -36,18 +36,16 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
   };
 
   return (
-    <PageHeaderToolsItem>
-      <Button
-        variant="plain"
-        aria-label={t('console-app~Command line terminal')}
-        onClick={openCloudshell}
-        className={open ? 'pf-m-selected' : undefined}
-        data-tour-id="tour-cloud-shell-button"
-        data-quickstart-id="qs-masthead-cloudshell"
-      >
-        <TerminalIcon className="co-masthead-icon" />
-      </Button>
-    </PageHeaderToolsItem>
+    <Button
+      variant="plain"
+      aria-label={t('console-app~Command line terminal')}
+      onClick={openCloudshell}
+      className={open ? 'pf-m-selected' : undefined}
+      data-tour-id="tour-cloud-shell-button"
+      data-quickstart-id="qs-masthead-cloudshell"
+    >
+      <TerminalIcon className="co-masthead-icon" />
+    </Button>
   );
 };
 
