@@ -1168,8 +1168,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                     )}
                   </>
                 )}
-                {(status === ClusterUpdateStatus.Failing ||
-                  status === ClusterUpdateStatus.UpdatingAndFailing ||
+                {(status === ClusterUpdateStatus.UpdatingAndFailing ||
                   status === ClusterUpdateStatus.Updating) && (
                   <UpdateInProgress
                     desiredVersion={desiredVersion}
