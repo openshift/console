@@ -757,6 +757,9 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const availableUpdates = getSortedAvailableUpdates(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const newestVersion = availableUpdates[0]?.version;
+  const minorVersionIsNewer = newestVersion
+    ? isMinorVersionNewer(lastVersion, newestVersion)
+    : false;
   const secondNewestVersion = availableUpdates[1]?.version;
   const currentChannel = cv.spec.channel;
   const currentPrefix = splitClusterVersionChannel(currentChannel)?.prefix;
@@ -764,9 +767,7 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
   const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
   const newestVersionIsBlocked =
-    clusterUpgradeableFalse &&
-    isMinorVersionNewer(lastVersion, newestVersion) &&
-    !isClusterExternallyManaged();
+    clusterUpgradeableFalse && minorVersionIsNewer && !isClusterExternallyManaged();
   const { t } = useTranslation();
 
   return (
