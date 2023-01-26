@@ -590,7 +590,7 @@ export const ProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
           namespaced,
           ...(!listAllNamespaces && namespaced && namespace ? { namespace } : {}),
         }
-      : {},
+      : null,
   );
 
   const [staticData, filteredData, onFilterChange] = useListPageFilter(resources);
