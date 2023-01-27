@@ -125,6 +125,36 @@ export const mockHelmReleases: HelmRelease[] = [
     version: 1,
     namespace: 'test-helm',
   },
+  {
+    name: 'node-test-chart',
+    info: {
+      first_deployed: '2020-01-20T15:12:04.19900271+05:30',
+      last_deployed: '2020-01-20T15:12:04.19900271+05:30',
+      deleted: '',
+      description: 'superseded',
+      status: 'superseded',
+      notes: '',
+    },
+    chart: {
+      metadata: {
+        name: 'nodejs-ex-k',
+        version: '0.1.0',
+        description: 'A Helm chart for Kubernetes',
+        apiVersion: 'v2',
+        appVersion: '1.16.0',
+        type: 'application',
+        urls: ['https://kubernetes-charts/repo/community/nodejs-0.1.0.tgz'],
+      },
+      lock: null,
+      templates: [],
+      values: {},
+      schema: null,
+      files: [],
+    },
+    manifest: '',
+    version: 1,
+    namespace: 'test-helm',
+  },
 ];
 
 export const mockIBMHelmChartData: HelmChartMetaData[] = [

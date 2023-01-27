@@ -21,24 +21,28 @@ import {
 export const HelmReleaseStatusLabels = {
   [HelmReleaseStatus.Deployed]: 'Deployed',
   [HelmReleaseStatus.Failed]: 'Failed',
+  [HelmReleaseStatus.PendingInstall]: 'PendingInstall',
+  [HelmReleaseStatus.PendingUpgrade]: 'PendingUpgrade',
+  [HelmReleaseStatus.PendingRollback]: 'PendingRollback',
   [HelmReleaseStatus.Other]: 'Other',
 };
 
 export const SelectedReleaseStatuses = [
   HelmReleaseStatus.Deployed,
   HelmReleaseStatus.Failed,
+  HelmReleaseStatus.PendingInstall,
+  HelmReleaseStatus.PendingUpgrade,
+  HelmReleaseStatus.PendingRollback,
   HelmReleaseStatus.Other,
 ];
 
-export const OtherReleaseStatuses = [
-  'unknown',
-  'uninstalled',
-  'superseded',
-  'uninstalling',
-  'pending-install',
-  'pending-upgrade',
-  'pending-rollback',
-];
+export const OtherReleaseStatuses = ['unknown', 'uninstalled', 'superseded', 'uninstalling'];
+
+export const releaseStatus = (status: string) =>
+  status
+    .split('-')
+    .map((s) => toTitleCase(s))
+    .join('');
 
 export const releaseStatusReducer = (release: HelmRelease) => {
   if (OtherReleaseStatuses.includes(release.info.status)) {

@@ -68,6 +68,9 @@ export interface HelmReleaseResourcesMap {
 export enum HelmReleaseStatus {
   Deployed = 'deployed',
   Failed = 'failed',
+  PendingInstall = 'pending-install',
+  PendingUpgrade = 'pending-upgrade',
+  PendingRollback = 'pending-rollback',
   Other = 'other',
 }
 

@@ -2,7 +2,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Timestamp } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { Status } from '@console/shared';
 import { HelmRelease } from '../../../types/helm-types';
+import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
 
 interface HelmChartSummaryProps {
   obj: K8sResourceKind;
@@ -28,6 +30,13 @@ const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease })
 
   return (
     <dl className="co-m-pane__details">
+      <dt>{t('helm-plugin~Status')}</dt>
+      <dd data-test="helm-release-status-details">
+        <Status
+          status={releaseStatus(helmRelease?.info?.status)}
+          title={HelmReleaseStatusLabels[helmRelease?.info?.status]}
+        />
+      </dd>
       <dt>{t('helm-plugin~Chart name')}</dt>
       <dd>{chartName}</dd>
       <dt>{t('helm-plugin~Chart version')}</dt>

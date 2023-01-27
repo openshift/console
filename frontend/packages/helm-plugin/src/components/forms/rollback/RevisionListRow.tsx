@@ -1,8 +1,8 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Timestamp } from '@console/internal/components/utils';
 import { Status, RadioButtonField } from '@console/shared';
+import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
 import { tableColumnClasses } from './RevisionListHeader';
 
 const RevisionListRow: React.FC<RowFunctionArgs> = ({ obj }) => {
@@ -16,7 +16,10 @@ const RevisionListRow: React.FC<RowFunctionArgs> = ({ obj }) => {
         <Timestamp timestamp={obj.info.last_deployed} />
       </TableData>
       <TableData className={tableColumnClasses.status}>
-        <Status status={_.capitalize(obj.info.status)} />
+        <Status
+          status={releaseStatus(obj.info.status)}
+          title={HelmReleaseStatusLabels[obj.info.status]}
+        />
       </TableData>
       <TableData className={tableColumnClasses.chartName}>{obj.chart.metadata.name}</TableData>
       <TableData className={tableColumnClasses.chartVersion}>

@@ -70,6 +70,10 @@ export const helmPage = {
       .its('length')
       .should('be.greaterThan', 0);
   },
+  verifyHelmChartStatus: () => {
+    cy.byTestID('success-icon').should('be.visible');
+    cy.byTestID('status-text').should('exist');
+  },
   verifySearchMessage: (message: string) =>
     cy.get(helmPO.noHelmSearchMessage).should('contain.text', message),
   selectHelmFilterDropDown: () => {
@@ -187,4 +191,16 @@ export const helmPage = {
       .get('a')
       .contains(installLink)
       .should('be.visible'),
+  verifyDropdownItem: (item1: string, item2: string, item3: string) => {
+    cy.get(helmPO.filterDropdown).click();
+    cy.get(helmPO.filter.pendingInstall).within(() => {
+      cy.get(helmPO.filterDropdownItem).should('contain.text', item1);
+    });
+    cy.get(helmPO.filter.pendingUpgrade).within(() => {
+      cy.get(helmPO.filterDropdownItem).should('contain.text', item2);
+    });
+    cy.get(helmPO.filter.pendingRollback).within(() => {
+      cy.get(helmPO.filterDropdownItem).should('contain.text', item3);
+    });
+  },
 };

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
-import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
@@ -8,6 +7,7 @@ import { confirmModal } from '@console/internal/components/modals';
 import { Timestamp } from '@console/internal/components/utils';
 import { ActionMenu, Status } from '@console/shared';
 import { HelmRelease } from '../../../types/helm-types';
+import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
 import { tableColumnClasses } from './HelmReleaseHistoryHeader';
 
 type HelmReleaseHistoryKebabProps = {
@@ -62,7 +62,10 @@ const HelmReleaseHistoryRow: React.FC<RowFunctionArgs> = ({ obj, customData }) =
       <Timestamp timestamp={obj.info.last_deployed} />
     </TableData>
     <TableData className={tableColumnClasses.status}>
-      <Status status={_.capitalize(obj.info.status)} />
+      <Status
+        status={releaseStatus(obj.info.status)}
+        title={HelmReleaseStatusLabels[obj.info.status]}
+      />
     </TableData>
     <TableData className={tableColumnClasses.chartName}>{obj.chart.metadata.name}</TableData>
     <TableData className={tableColumnClasses.chartVersion}>{obj.chart.metadata.version}</TableData>
