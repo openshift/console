@@ -15,15 +15,15 @@ When('git url {string} gets validated', (gitUrl: string) => {
   gitPage.verifyValidatedMessage(gitUrl);
 });
 
-When('builder image version dropdown is displayed', () => {
+When('user is able to see builder image version dropdown', () => {
   gitPage.verifyBuilderImageVersion();
 });
 
-When('runtime details is displayed', () => {
+When('user is able to see the runtime details', () => {
   cy.byTestID('imageStream-details').should('be.visible');
 });
 
-Then('user see Type Function', () => {
+Then('user is able to see Type as Function', () => {
   cy.byTestID('serverless-function-type').should('be.visible');
   cy.byTestID('serverless-function-type')
     .find('dt')
@@ -39,4 +39,8 @@ Then('user clicks on the Knative Service workload {string}', (nodeName: string) 
 
 Then('user switches to the {string} tab', (tab: string) => {
   topologySidePane.selectTab(tab);
+});
+
+When('user clicks on Create button on Create Serverless function', () => {
+  cy.byLegacyTestID('submit-button').click();
 });

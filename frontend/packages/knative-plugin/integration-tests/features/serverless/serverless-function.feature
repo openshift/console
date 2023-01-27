@@ -59,22 +59,21 @@ Feature: Creation and Visualisation of serverless fuctions
               And user will see Labels as boson.dev/function=true and boson.dev/runtime=node in Details tab
 
         @regression @odc-7167
-        Scenario Outline: Create serverless function using Create Serverless function form: SF-01-TC05
+        Scenario Outline: Create serverless function using Create Serverless function form: SF-01-TC06
             Given user is at Add page
              When user clicks on Create Serverless function card
               And user enters git url "<git_url>"
-              And git url "<git_url>" gets validated
-              And builder image version dropdown is displayed
-              And runtime details is displayed
-              And user clicks Create button on Add page
+              And user is able to see builder image version dropdown
+              And user is able to see the runtime details
+              And user clicks on Create button on Create Serverless function
              Then user will be redirected to Topology page
               And user is able to see workload "<workload_name>" in topology page
               And user clicks on the Knative Service workload "<workload_name>"
               And user switches to the "Details" tab
-              And user see Type Function
+              And user is able to see Type as Function
 
 
 
         Examples:
-                  | git_url                                           | workload_name        |
-                  | https://github.com/vikram-raj/hello-func-node-env | hello-func-node-env  |
+                  | git_url                                           | workload_name       |
+                  | https://github.com/vikram-raj/hello-func-node-env | hello-func-node-env |
