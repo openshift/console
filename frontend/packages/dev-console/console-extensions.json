@@ -975,5 +975,18 @@
       "path": ["/project-access/ns/:ns", "/project-access/all-namespaces"],
       "component": { "$codeRef": "projectAccess.ProjectAccessPage" }
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/serverless-function/all-namespaces", "/serverless-function/ns/:ns"],
+      "component": {
+        "$codeRef": "serverlessFunction.ServerlessFunctionPage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
   }
 ]

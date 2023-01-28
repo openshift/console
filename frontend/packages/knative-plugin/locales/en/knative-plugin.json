@@ -2,6 +2,8 @@
   "Eventing": "Eventing",
   "Event Source": "Event Source",
   "Create an Event source to register interest in a class of events from a particular system": "Create an Event source to register interest in a class of events from a particular system",
+  "Create Serverless function": "Create Serverless function",
+  "Create and deploy stateless, Serverless functions": "Create and deploy stateless, Serverless functions",
   "Broker": "Broker",
   "Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers": "Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers",
   "Channel": "Channel",

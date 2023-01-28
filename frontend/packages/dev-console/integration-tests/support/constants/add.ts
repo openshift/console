@@ -15,6 +15,7 @@ export enum addOptions {
   Sharing = 'Sharing',
   HelmChartRepositories = 'Helm Chart Repositories',
   Samples = 'Samples',
+  CreateServerlessFunction = 'Create Serverless function',
 }
 
 export enum buildConfigOptions {

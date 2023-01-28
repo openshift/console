@@ -60,4 +60,5 @@ export const pageTitle = {
   ShipwrightBuild: 'ShipwrightBuild',
   Helm: 'Helm',
   Samples: 'Samples',
+  CreateServerlessFunction: 'Create Serverless function',
 };

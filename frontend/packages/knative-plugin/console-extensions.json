@@ -505,6 +505,35 @@
     }
   },
   {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "serverless-function",
+      "name": "%knative-plugin~Create Serverless function%",
+      "insertBefore": "eventing"
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    },
+    "properties": {
+      "id": "create-serverless-function",
+      "groupId": "serverless-function",
+      "href": "/serverless-function/ns/:namespace",
+      "label": "%knative-plugin~Create Serverless function%",
+      "description": "%knative-plugin~Create and deploy stateless, Serverless functions%",
+      "icon": { "$codeRef": "icons.serverlessFunctionSVG" },
+      "accessReview": [
+        {
+          "group": "serving.knative.dev",
+          "resource": "services",
+          "verb": "create"
+        }
+      ]
+    }
+  },
+  {
     "type": "dev-console.add/action",
     "flags": {
       "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_BROKER"]

@@ -95,7 +95,8 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
   const { setFieldValue } = useFormikContext<FormikValues>();
 
   React.useEffect(() => {
-    !['edit', 'knatify'].includes(values.formType) && setFieldValue('resources', resourceType);
+    !['edit', 'knatify', 'serverlessFunction'].includes(values.formType) &&
+      setFieldValue('resources', resourceType);
   }, [resourceType, setFieldValue, values.formType]);
 
   return (

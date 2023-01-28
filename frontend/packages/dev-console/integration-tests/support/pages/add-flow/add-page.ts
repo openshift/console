@@ -122,6 +122,16 @@ export const addPage = {
         cy.get('[data-test="form-title"]').should('have.text', pageTitle.CreateHelmChartRepository);
         cy.testA11y(pageTitle.CreateHelmChartRepository);
         break;
+      case 'Create Serverless function':
+      case addOptions.CreateServerlessFunction:
+        cy.byTestID('item create-serverless-function').click();
+        app.waitForLoad();
+        cy.get('[data-test-id="resource-title"]').should(
+          'have.text',
+          pageTitle.CreateServerlessFunction,
+        );
+        cy.testA11y(pageTitle.CreateServerlessFunction);
+        break;
       default:
         throw new Error(`Unable to find the "${card}" card on Add page`);
     }
