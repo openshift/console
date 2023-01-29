@@ -274,16 +274,26 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       ? 'all-namespaces'
       : subscription.metadata.namespace;
   const uninstallMessage = csv?.metadata?.annotations?.[OPERATOR_UNINSTALL_MESSAGE_ANNOTATION];
+  const showOperandsContent = !operandsLoaded || operands.length > 0;
 
   const instructions = (
     <>
       <p>
         <Trans t={t} ns="olm">
           Operator <strong>{{ name }}</strong> will be removed from <strong>{{ namespace }}</strong>
-          . Select the checkbox below to also remove all Operands associated with this Operator. If
-          your Operator configured off-cluster resources, these will continue to run and require
-          manual cleanup.
+          .
         </Trans>
+        {showOperandsContent && (
+          <>
+            {' '}
+            {t(
+              'olm~Select the checkbox below to also remove all Operands associated with this Operator.',
+            )}
+          </>
+        )}{' '}
+        {t(
+          'olm~If your Operator configured off-cluster resources, these will continue to run and require manual cleanup.',
+        )}
       </p>
       {removePlugins && (
         <p>
@@ -304,7 +314,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const operandsSection = operandsLoadedErrorMessage ? (
     <OperandsLoadedErrorAlert operandsLoadedErrorMessage={operandsLoadedErrorMessage} />
   ) : (
-    (!operandsLoaded || operands.length > 0) && (
+    showOperandsContent && (
       <span className="co-operator-uninstall__operands-section">
         <h2>{t('olm~Operand instances')}</h2>
         <OperandsTable
