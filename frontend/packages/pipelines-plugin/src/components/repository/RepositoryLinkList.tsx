@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { GithubIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -13,13 +12,12 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { RepositoryModel } from '../../models';
 import { PipelineRunKind } from '../../types';
 import {
-  baseURL,
   RepositoryLabels,
   RepositoryFields,
   RepositoryAnnotations,
   RepoAnnotationFields,
 } from './consts';
-import { getLabelValue, sanitizeBranchName } from './repository-utils';
+import { getGitProviderIcon, getLabelValue, sanitizeBranchName } from './repository-utils';
 
 export type RepositoryLinkListProps = {
   pipelineRun: PipelineRunKind;
@@ -31,9 +29,7 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({ pipelineRun }) 
   const plrAnnotations = pipelineRun.metadata.annotations;
   const repoLabel = RepositoryLabels[RepositoryFields.REPOSITORY];
   const repoName = plrLabels?.[repoLabel];
-  const urlOrg = plrLabels?.[RepositoryLabels[RepositoryFields.URL_ORG]];
-  const urlRepo = plrLabels?.[RepositoryLabels[RepositoryFields.URL_REPO]];
-  const repoURL = urlOrg && urlRepo && `${baseURL}/${urlOrg}/${urlRepo}`;
+  const repoURL = plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.REPO_URL]];
   const shaURL = plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.SHA_URL]];
 
   if (!repoName) return null;
@@ -58,7 +54,7 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({ pipelineRun }) 
         </div>
         {repoURL && (
           <ExternalLink href={repoURL}>
-            <GithubIcon title={repoURL} /> {repoURL}
+            {getGitProviderIcon(repoURL)} {repoURL}
           </ExternalLink>
         )}
       </dd>
