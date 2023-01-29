@@ -1,6 +1,11 @@
+import { pageTitle } from '@console/dev-console/integration-tests/support/constants';
 import { pipelinesPO } from '../../page-objects';
 
 export const repositoriesPage = {
+  verifyTitle: () => {
+    cy.byTestID('form-title').should('have.text', pageTitle.AddGitRepository);
+    cy.testA11y(pageTitle.AddGitRepository);
+  },
   verifyRepositoryTableColumns: () => {
     cy.get('[role="grid"] tr th').each(($el) => {
       expect([
