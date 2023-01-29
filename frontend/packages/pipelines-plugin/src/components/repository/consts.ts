@@ -65,6 +65,4 @@ export const WebhookDocLinks = {
   [GitProvider.GITLAB]:
     'https://docs.gitlab.com/ee/user/project/integrations/webhooks.html#configure-a-webhook-in-gitlab',
   [GitProvider.BITBUCKET]: 'https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/',
-  [GitProvider.UNSURE]:
-    'https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks',
 };
