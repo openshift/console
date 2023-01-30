@@ -180,7 +180,7 @@
   "The Ceph storage cluster is not in a healthy state.": "Ceph 存储集群没有处于健康状态。",
   "Maintenance should not be started until the health of the storage cluster is restored.": "不应在存储集群健康恢复前启动维护。",
   "Are you sure you want to stop maintenance <1>{reasonLabel}</1> on node <4>{nodeName}</4>?": "您确定要在节点 <4>{nodeName}</4> 上停止维护 <1>{reasonLabel}</1> 吗 ?",
-  "OK": "OK",
+  "OK": "确定",
   "Externally provisioned": "外部置备",
   "Deprovisioned": "取消置备",
   "Inspecting": "检查",

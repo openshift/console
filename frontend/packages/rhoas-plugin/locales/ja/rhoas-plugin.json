@@ -47,7 +47,7 @@
   "Region": "リージョン",
   "Owner": "オーナー",
   "Status": "ステータス",
-  "Created": "作成",
+  "Created": "作成済み",
   "No Kafka instances found": "Kafka インスタンスが見つかりませんでした",
   "No results match the filter criteria.": "フィルター条件にマッチする結果はありません。",
   "Clear filters": "フィルターをクリア",
