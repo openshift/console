@@ -28,18 +28,6 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
                   {getGitProviderIcon(spec?.url)} {spec?.url}
                 </ExternalLink>
               </dd>
-              {spec?.branch && (
-                <>
-                  <dt>{t('pipelines-plugin~Branch')}</dt>
-                  <dd data-test="pl-repository-branch">{spec.branch}</dd>
-                </>
-              )}
-              {spec?.event_type && (
-                <>
-                  <dt>{t('pipelines-plugin~Event type')}</dt>
-                  <dd data-test="pl-repository-eventtype">{spec.event_type}</dd>
-                </>
-              )}
             </dl>
           </div>
         )}

@@ -10,13 +10,14 @@ export type RepositoryStatus = {
   sha?: string;
   startTime?: string;
   title?: string;
+  event_type?: string;
+  target_branch?: string;
 };
 
 export type RepositoryKind = K8sResourceKind & {
   spec?: {
     url: string;
     branch?: string;
-    event_type?: string;
     namespace?: string;
   };
   pipelinerun_status?: RepositoryStatus[];
