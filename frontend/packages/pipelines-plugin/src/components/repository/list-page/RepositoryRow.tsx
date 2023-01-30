@@ -40,6 +40,8 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj }) => {
 
   const latestRun = loaded && getLatestRun(pipelineRun, 'creationTimestamp');
 
+  const latestPLREventType =
+    latestRun && latestRun?.metadata?.labels[RepositoryLabels[RepositoryFields.EVENT_TYPE]];
   return (
     <>
       <TableData className={repositoriesTableColumnClasses[0]}>
@@ -55,7 +57,9 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj }) => {
       <TableData className={repositoriesTableColumnClasses[1]} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={repositoriesTableColumnClasses[2]}>{obj.spec?.event_type}</TableData>
+      <TableData className={repositoriesTableColumnClasses[2]}>
+        {latestPLREventType || '-'}
+      </TableData>
       <TableData className={repositoriesTableColumnClasses[3]}>
         {loaded ? (
           latestRun ? (
