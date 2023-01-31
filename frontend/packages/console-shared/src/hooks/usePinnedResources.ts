@@ -35,10 +35,10 @@ export const usePinnedResources = (): [string[], (pinnedResources: string[]) => 
   >(PINNED_RESOURCES_CONFIG_MAP_KEY, PINNED_RESOURCES_LOCAL_STORAGE_KEY, defaultPins, true);
 
   const pins = useMemo(() => {
-    if (!loaded) {
+    if (!loaded || !pinnedResources) {
       return [];
     }
-    return pinnedResources[activePerspective] ?? [];
+    return pinnedResources[activePerspective] || [];
   }, [loaded, pinnedResources, activePerspective]);
 
   const setPins = useCallback(
