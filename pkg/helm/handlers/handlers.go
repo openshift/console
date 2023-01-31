@@ -9,6 +9,7 @@ import (
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/release"
+	kv1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/yaml"
@@ -35,6 +36,7 @@ func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.K
 		upgradeReleaseAsync:     actions.UpgradeReleaseAsync,
 		upgradeRelease:          actions.UpgradeRelease,
 		uninstallRelease:        actions.UninstallRelease,
+		uninstallReleaseAsync:   actions.UninstallReleaseAsync,
 		rollbackRelease:         actions.RollbackRelease,
 		getReleaseHistory:       actions.GetReleaseHistory,
 	}
@@ -57,18 +59,19 @@ type helmHandlers struct {
 	getActionConfigurations func(string, string, string, *http.RoundTripper) *action.Configuration
 
 	// helm actions
-	renderManifests     func(string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, string, string, bool) (string, error)
-	installChartAsync   func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*actions.Secret, error)
-	installChart        func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
-	listReleases        func(*action.Configuration, bool) ([]*release.Release, error)
-	upgradeReleaseAsync func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*actions.Secret, error)
-	upgradeRelease      func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
-	uninstallRelease    func(string, *action.Configuration) (*release.UninstallReleaseResponse, error)
-	rollbackRelease     func(string, int, *action.Configuration) (*release.Release, error)
-	getRelease          func(string, *action.Configuration) (*release.Release, error)
-	getChart            func(chartUrl string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool, indexEntry string) (*chart.Chart, error)
-	getReleaseHistory   func(releaseName string, conf *action.Configuration) ([]*release.Release, error)
-	newProxy            func(bearerToken string) (chartproxy.Proxy, error)
+	renderManifests       func(string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, string, string, bool) (string, error)
+	installChartAsync     func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
+	installChart          func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
+	listReleases          func(*action.Configuration, bool) ([]*release.Release, error)
+	upgradeReleaseAsync   func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
+	upgradeRelease        func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
+	uninstallRelease      func(string, *action.Configuration) (*release.UninstallReleaseResponse, error)
+	uninstallReleaseAsync func(string, string, string, *action.Configuration, corev1client.CoreV1Interface) error
+	rollbackRelease       func(string, int, *action.Configuration) (*release.Release, error)
+	getRelease            func(string, *action.Configuration) (*release.Release, error)
+	getChart              func(chartUrl string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool, indexEntry string) (*chart.Chart, error)
+	getReleaseHistory     func(releaseName string, conf *action.Configuration) ([]*release.Release, error)
+	newProxy              func(bearerToken string) (chartproxy.Proxy, error)
 }
 
 func (h *helmHandlers) restConfig(bearerToken string) *rest.Config {
@@ -437,4 +440,27 @@ func (h *helmHandlers) HandleIndexFile(user *auth.User, w http.ResponseWriter, r
 	}
 
 	w.Write(out)
+}
+
+func (h *helmHandlers) HandleUninstallReleaseAsync(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	ns := params.Get("ns")
+	rel := params.Get("name")
+	version := params.Get("version")
+	conf := h.getActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
+	coreClient, err := NewCoreClient(conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("error forming core client: %s", err.Error())})
+		return
+	}
+	err = h.uninstallReleaseAsync(rel, ns, version, conf, coreClient)
+	if err != nil {
+		if err.Error() == actions.ErrReleaseNotFound.Error() {
+			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
+			return
+		}
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }

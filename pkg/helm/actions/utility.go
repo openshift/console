@@ -19,10 +19,6 @@ import (
 	"k8s.io/klog"
 )
 
-type Secret struct {
-	SecretName string `json:"secret_name"`
-}
-
 // constants
 const (
 	configNamespace         = "openshift-config"
@@ -171,12 +167,12 @@ func getRepositoryConnectionConfig(
 	return v1beta1.ConnectionConfig{}, false, getClusterRepositoryErr
 }
 
-func getSecret(ns string, name string, version int, coreclient corev1client.CoreV1Interface) (Secret, error) {
+func getSecret(ns string, name string, version int, coreclient corev1client.CoreV1Interface) (kv1.Secret, error) {
 	label := fmt.Sprintf("owner=helm,name=%v,version=%v", name, version)
 	timeout := int64(60)
 	secretList, err := coreclient.Secrets(ns).Watch(context.TODO(), metav1.ListOptions{LabelSelector: label, Watch: true, TimeoutSeconds: &timeout})
 	if err != nil {
-		return Secret{}, err
+		return kv1.Secret{}, err
 	}
 	event := <-secretList.ResultChan()
 	if event.Object != nil {
@@ -187,15 +183,13 @@ func getSecret(ns string, name string, version int, coreclient corev1client.Core
 			secretList.Stop()
 			//Delete secret created to track errors on installation
 			coreclient.Secrets(ns).Delete(context.TODO(), name, v1.DeleteOptions{})
-			return Secret{}, fmt.Errorf(string(actionError))
+			return kv1.Secret{}, fmt.Errorf(string(actionError))
 		} else {
 			secretList.Stop()
-			return Secret{
-				SecretName: obj.ObjectMeta.Name,
-			}, nil
+			return *obj, nil
 		}
 	}
-	return Secret{}, fmt.Errorf("release secret not found")
+	return kv1.Secret{}, fmt.Errorf("release secret not found")
 }
 
 func createSecret(ns string, name string, version int, coreclient corev1client.CoreV1Interface, err error) error {

@@ -365,14 +365,13 @@ func TestInstallChartAsync(t *testing.T) {
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset(objs...)
 			coreClient := clientInterface.CoreV1()
-			var rel *Secret
+			var rel *v1.Secret
 			var err error
 			go func() {
 				rel, err = InstallChartAsync(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry)
-				fmt.Println(rel, err)
 				if tt.releaseName == "myrelease" {
 					require.NoError(t, err)
-					require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName), rel.SecretName)
+					require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName), rel.ObjectMeta.Name)
 				} else if tt.releaseName == "invalid chart path" {
 					require.Error(t, err)
 				}

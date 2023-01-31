@@ -675,9 +675,11 @@ func (s *Server) HTTPHandler() http.Handler {
 			helmHandlers.HandleHelmInstallAsync(user, w, r)
 		case http.MethodPut:
 			helmHandlers.HandleUpgradeReleaseAsync(user, w, r)
+		case http.MethodDelete:
+			helmHandlers.HandleUninstallReleaseAsync(user, w, r)
 		default:
-			w.Header().Set("Allow", " POST, PUT")
-			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are GET, POST, PATCH, PUT, DELETE"})
+			w.Header().Set("Allow", "POST, PUT , DELETE")
+			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are POST, PUT , DELETE"})
 		}
 	}))
 

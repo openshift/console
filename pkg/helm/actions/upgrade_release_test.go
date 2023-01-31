@@ -502,7 +502,7 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 			clientInterface := k8sfake.NewSimpleClientset(objs...)
 			coreClient := clientInterface.CoreV1()
 			secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.namespace))
-			var rel *Secret
+			var rel *v1.Secret
 			var err error
 			go func() {
 				rel, err = UpgradeReleaseAsync(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry)
@@ -511,7 +511,7 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 					require.Error(t, err)
 				} else {
 					require.NoError(t, err)
-					require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.SecretName)
+					require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.ObjectMeta.Name)
 				}
 			}()
 			time.Sleep(10 * time.Second)
@@ -579,7 +579,7 @@ func TestUpgradeReleaseWithDependenciesAsync(t *testing.T) {
 			clientInterface := k8sfake.NewSimpleClientset()
 			coreClient := clientInterface.CoreV1()
 			secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.releaseNamespace))
-			var rel *Secret
+			var rel *v1.Secret
 			var err error
 			r := release.Release{
 				Name:      tt.releaseName,
@@ -603,7 +603,7 @@ func TestUpgradeReleaseWithDependenciesAsync(t *testing.T) {
 			go func() {
 				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry)
 				require.NoError(t, err)
-				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.SecretName)
+				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.ObjectMeta.Name)
 			}()
 			time.Sleep(10 * time.Second)
 			r.Version = 2
@@ -690,12 +690,12 @@ func TestUpgradeReleaseWithCustomValuesAsync(t *testing.T) {
 			clientInterface := k8sfake.NewSimpleClientset()
 			coreClient := clientInterface.CoreV1()
 			secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.releaseNamespace))
-			var rel *Secret
+			var rel *v1.Secret
 			var err error
 			go func() {
 				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry)
 				require.NoError(t, err)
-				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.SecretName)
+				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.ObjectMeta.Name)
 			}()
 			time.Sleep(10 * time.Second)
 			r.Version = 2

@@ -11,6 +11,7 @@ import (
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/release"
+	kv1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 )
@@ -140,7 +141,7 @@ func UpgradeReleaseAsync(
 	coreClient corev1client.CoreV1Interface,
 	fileCleanUp bool,
 	indexEntry string,
-) (*Secret, error) {
+) (*kv1.Secret, error) {
 	client := action.NewUpgrade(conf)
 	client.Namespace = releaseNamespace
 	var ch *chart.Chart
