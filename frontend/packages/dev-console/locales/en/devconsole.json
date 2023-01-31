@@ -58,6 +58,7 @@
   "Resource type": "Resource type",
   "If resource type is not selected, the console default to the latest.": "If resource type is not selected, the console default to the latest.",
   "The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.": "The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.",
+  "Last used": "Last used",
   "The last resource type used when adding a resource.": "The last resource type used when adding a resource.",
   "Deployment": "Deployment",
   "A Deployment enables declarative updates for Pods and ReplicaSets.": "A Deployment enables declarative updates for Pods and ReplicaSets.",
