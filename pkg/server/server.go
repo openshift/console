@@ -236,6 +236,14 @@ func (s *Server) getK8sClient(cluster string) *http.Client {
 	}
 }
 
+func (s *Server) getManagedClusterList() []string {
+	clusters := make([]string, 0, len(s.Authers))
+	for cluster := range s.Authers {
+		clusters = append(clusters, cluster)
+	}
+	return clusters
+}
+
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
 	localAuther := s.getLocalAuther()
@@ -625,7 +633,22 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 	}
 
-	handle(updatesEndpoint, authHandler(pluginsHandler.HandleCheckUpdates))
+	handle(updatesEndpoint, authHandler(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			w.Header().Set("Allow", "GET")
+			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
+			return
+		}
+		serverutils.SendResponse(w, http.StatusOK, struct {
+			ConsoleCommit   string   `json:"consoleCommit"`
+			ManagedClusters []string `json:"managedClusters"`
+			Plugins         []string `json:"plugins"`
+		}{
+			ConsoleCommit:   os.Getenv("SOURCE_GIT_COMMIT"),
+			ManagedClusters: s.getManagedClusterList(),
+			Plugins:         pluginsHandler.GetPluginsList(),
+		})
+	}))
 
 	// Helm Endpoints
 	metricsHandler := func(next http.Handler) http.Handler {
@@ -723,11 +746,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		plugins = append(plugins, plugin)
 	}
 
-	clusters := make([]string, 0, len(s.Authers))
-	for cluster := range s.Authers {
-		clusters = append(clusters, cluster)
-	}
-
 	jsg := &jsGlobals{
 		ConsoleVersion:             version.Version,
 		AuthDisabled:               s.authDisabled(),
@@ -763,7 +781,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		AddPage:                    s.AddPage,
 		ProjectAccessClusterRoles:  s.ProjectAccessClusterRoles,
 		Perspectives:               s.Perspectives,
-		Clusters:                   clusters,
+		Clusters:                   s.getManagedClusterList(),
 		Telemetry:                  s.Telemetry,
 		ReleaseVersion:             s.ReleaseVersion,
 		NodeArchitectures:          s.NodeArchitectures,
