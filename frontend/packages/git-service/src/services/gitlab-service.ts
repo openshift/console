@@ -99,11 +99,24 @@ export class GitlabService extends BaseService {
       await this.getRepo();
       return RepoStatus.Reachable;
     } catch (e) {
-      if (e.response?.status === 429) {
-        return RepoStatus.RateLimitExceeded;
+      switch (e.status) {
+        case 429: {
+          return RepoStatus.RateLimitExceeded;
+        }
+        case 403: {
+          return RepoStatus.PrivateRepo;
+        }
+        case 404: {
+          return RepoStatus.ResourceNotFound;
+        }
+        case 422: {
+          return RepoStatus.InvalidGitTypeSelected;
+        }
+        default: {
+          return RepoStatus.Unreachable;
+        }
       }
     }
-    return RepoStatus.Unreachable;
   };
 
   getRepoBranchList = async (): Promise<BranchList> => {

@@ -40,7 +40,7 @@ describe('Github Service', () => {
 
     return nockBack('repo-not-reachable.json').then(async ({ nockDone, context }) => {
       const repoStatus = await gitService.isRepoReachable();
-      expect(repoStatus).toEqual(RepoStatus.Unreachable);
+      expect(repoStatus).toEqual(RepoStatus.PrivateRepo);
       context.assertScopesFinished();
       nockDone();
     });
