@@ -379,5 +379,14 @@
     "flags": {
       "required": ["OPENSHIFT_HELM"]
     }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "helm-release-status-decorator",
+      "priority": 100,
+      "quadrant": "lowerLeft",
+      "decorator": { "$codeRef": "helmTopology.getHelmReleaseStatusDecorator" }
+    }
   }
 ]

@@ -59,6 +59,7 @@ export interface HelmReleaseResourcesData {
   chartIcon: string;
   manifestResources: K8sResourceKind[];
   releaseNotes: string;
+  status: string;
 }
 
 export interface HelmReleaseResourcesMap {

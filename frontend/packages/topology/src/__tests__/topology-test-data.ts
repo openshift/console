@@ -199,6 +199,7 @@ export const sampleHelmResourcesMap = {
     chartIcon: '',
     manifestResources: [sampleHelmChartDeploymentConfig],
     releaseNotes: 'test release notes',
+    status: 'deployed',
   },
 };
 
