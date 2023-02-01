@@ -68,6 +68,11 @@ export const gitPage = {
       .scrollIntoView()
       .should('be.visible');
   },
+  verifyPipelineCheckBoxChecked: () => {
+    cy.get(gitPO.pipeline.addPipeline)
+      .scrollIntoView()
+      .should('be.checked');
+  },
   selectPipeline: (pipelineName: string) => {
     cy.get(gitPO.pipeline.pipelineDropdown)
       .scrollIntoView()
@@ -179,6 +184,14 @@ export const gitPage = {
         break;
     }
     cy.log(`Resource type "${resource}" is selected`);
+  },
+  enterSecret: (secret: string) => {
+    cy.get('#form-input-pac-repository-webhook-token-field')
+      .clear()
+      .type(secret);
+  },
+  clickGenerateWebhookSecret: () => {
+    cy.byButtonText('Generate').click();
   },
   selectAdvancedOptions: (opt: gitAdvancedOptions) => {
     switch (opt) {

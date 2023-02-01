@@ -8,5 +8,4 @@ export * from './git-page';
 export * from './yaml-page';
 export * from './channel-page';
 export * from './dockerfile-page';
-export * from './pac-page';
 export * from './samples-page';

@@ -1,4 +1,5 @@
 import { GitProvider } from '@console/git-service/src';
+import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
@@ -193,6 +194,7 @@ export const defaultData: GitImportFormData = {
   },
   pipeline: {
     enabled: false,
+    type: PipelineType.PIPELINE,
     template: mockPipelineTemplate,
   },
   healthChecks: healthChecksProbeInitialData,

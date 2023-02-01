@@ -12,6 +12,7 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { SAMPLE_APPLICATION_GROUP } from '../../const';
 import {
@@ -89,6 +90,7 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
     },
     pipeline: {
       enabled: false,
+      type: PipelineType.PIPELINE,
     },
     pac: {
       pacHasError: false,

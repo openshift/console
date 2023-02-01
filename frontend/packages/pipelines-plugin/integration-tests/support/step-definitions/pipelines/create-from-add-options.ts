@@ -107,6 +107,10 @@ When('user enters Name as {string} in General section of Dockerfile page', (name
   dockerfilePage.enterName(name);
 });
 
+When('user verifies Add Pipeline checkbox is checked in Pipelines section', () => {
+  gitPage.verifyPipelineCheckBoxChecked();
+});
+
 When('user selects Add Pipeline checkbox in Pipelines section', () => {
   gitPage.selectAddPipeline();
 });
@@ -226,3 +230,20 @@ When('user enters Dockerfile path as {string}', (dockerfilePath: string) => {
     .clear()
     .type(dockerfilePath);
 });
+
+When('user enters secret as {string}', (secret: string) => {
+  gitPage.enterSecret(secret);
+});
+
+When('user clicks the Generate Webhook Secret to generate Webhook secret', () => {
+  gitPage.clickGenerateWebhookSecret();
+});
+
+When(
+  'user clicks Create button on Add page to see workload {string} in topology page',
+  (workloadName: string) => {
+    gitPage.clickCreate();
+    topologyPage.verifyTopologyPage();
+    topologyPage.verifyWorkloadInTopologyPage(workloadName);
+  },
+);

@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { getGitService, ImportStrategy } from '@console/git-service/src';
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
-import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
-import { FormHeader, InputField, useDebounceCallback, useFlag } from '@console/shared';
+import { FormHeader, InputField, useDebounceCallback } from '@console/shared';
 import { useBuilderImages } from '../hooks/useBuilderImages';
 import {
   recommendRepositoryName,
@@ -19,7 +18,6 @@ import AdvancedConfigurations from './AdvancedConfigurations';
 const RepositoryFormSection = () => {
   const { t } = useTranslation();
   const templatesRef = React.useRef({});
-  const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const { setFieldValue } = useFormikContext<RepositoryFormValues>();
 
   const [builderImages] = useBuilderImages();
@@ -35,7 +33,7 @@ const RepositoryFormSection = () => {
     detectedGitType && setFieldValue('gitProvider', detectedGitType);
     const gitService = getGitService(url, detectedGitType);
 
-    const importStrategyData = await detectImportStrategies(url, gitService, isRepositoryEnabled);
+    const importStrategyData = await detectImportStrategies(url, gitService);
     if (importStrategyData.strategies.length > 0) {
       const detectedBuildTypes = importStrategyData.strategies?.find(
         (s) => s.type === ImportStrategy.S2I,

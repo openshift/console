@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { GitImportFormData, Resources } from '../../import/import-types';
 import {
   getResourcesType,
@@ -55,6 +56,7 @@ describe('getInitialValues', () => {
       },
       pipeline: {
         enabled: true,
+        type: PipelineType.PIPELINE,
       },
       build: {
         ...gitImportInitialValues.build,
