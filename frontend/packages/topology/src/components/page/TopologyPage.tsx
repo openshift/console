@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
+import CreateProjectListPage, {
+  CreateAProjectButton,
+} from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
 import { useQueryParams, useUserSettingsCompatibility } from '@console/shared';
@@ -50,11 +51,8 @@ const PageContents: React.FC<PageContentsProps> = ({ match, viewType }) => {
     <CreateProjectListPage title={t('topology~Topology')}>
       {(openProjectModal) => (
         <Trans t={t} ns="topology">
-          Select a Project to view the topology or{' '}
-          <Button isInline variant="link" onClick={openProjectModal}>
-            create a Project
-          </Button>
-          .
+          Select a Project to view the topology
+          <CreateAProjectButton openProjectModal={openProjectModal} />.
         </Trans>
       )}
     </CreateProjectListPage>
