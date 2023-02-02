@@ -95,10 +95,10 @@ const CustomTimeRangeModal: React.FC<CustomTimeRangeModalProps> = ({
         </FlexItem>
         <Flex>
           <FlexItem>
-            <DatePicker onChange={(str) => setFromDate(str)} value={fromDate} />
+            <DatePicker onChange={(event, str) => setFromDate(str)} value={fromDate} />
           </FlexItem>
           <FlexItem>
-            <TimePicker is24Hour onChange={setFromTime} time={fromTime} />
+            <TimePicker is24Hour onChange={(event, text) => setFromTime(text)} time={fromTime} />
           </FlexItem>
         </Flex>
         <FlexItem spacer={{ default: 'spacerNone' }}>
@@ -106,10 +106,10 @@ const CustomTimeRangeModal: React.FC<CustomTimeRangeModalProps> = ({
         </FlexItem>
         <Flex>
           <FlexItem>
-            <DatePicker onChange={(str) => setToDate(str)} value={toDate} />
+            <DatePicker onChange={(event, str) => setToDate(str)} value={toDate} />
           </FlexItem>
           <FlexItem>
-            <TimePicker is24Hour onChange={setToTime} time={toTime} />
+            <TimePicker is24Hour onChange={(event, text) => setToTime(text)} time={toTime} />
           </FlexItem>
         </Flex>
         <Flex className="custom-time-range-modal-footer">

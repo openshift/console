@@ -881,7 +881,7 @@ export class TileViewPage extends React.Component {
                   ref={(ref) => (this.filterByKeywordInput = ref)}
                   placeholder={i18n.t('public~Filter by keyword...')}
                   value={activeFilters.keyword.value}
-                  onChange={(text) => this.onKeywordChange(text)}
+                  onChange={(event, text) => this.onKeywordChange(text)}
                   onClear={() => this.onKeywordChange('')}
                   aria-label={i18n.t('public~Filter by keyword...')}
                 />
