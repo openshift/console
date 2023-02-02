@@ -38,6 +38,7 @@ import {
   isStandaloneRoutePage,
   AppInitSDK,
   getUser,
+  useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
@@ -234,6 +235,7 @@ class App_ extends React.PureComponent {
 
     return (
       <DetectPerspective>
+        <CaptureTelemetry />
         <DetectNamespace>
           <DetectCluster>
             <ModalProvider>
@@ -291,13 +293,14 @@ const AppRouter = () => {
 };
 
 const CaptureTelemetry = React.memo(function CaptureTelemetry() {
+  const [perspective] = useActivePerspective();
   const fireTelemetryEvent = useTelemetry();
 
   // notify of identity change
   const user = useSelector(getUser);
   React.useEffect(() => {
     if (user.metadata?.uid || user.metadata?.name) {
-      fireTelemetryEvent('identify', { user });
+      fireTelemetryEvent('identify', { perspective, user });
     }
     // Only trigger identify event when the user identifier changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -308,7 +311,10 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   // Also because some pages update the URL as the user enters a search term.
   const fireUrlChangeEvent = useDebounceCallback(fireTelemetryEvent);
   React.useEffect(() => {
-    fireUrlChangeEvent('page', withoutSensitiveInformations(history.location));
+    fireUrlChangeEvent('page', {
+      perspective,
+      ...withoutSensitiveInformations(history.location),
+    });
 
     let { pathname, search } = history.location;
     const unlisten = history.listen((location) => {
@@ -316,11 +322,14 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
       if (pathname !== nextPathname || search !== nextSearch) {
         pathname = nextPathname;
         search = nextSearch;
-        fireUrlChangeEvent('page', withoutSensitiveInformations(location));
+        fireUrlChangeEvent('page', {
+          perspective,
+          ...withoutSensitiveInformations(location),
+        });
       }
     });
     return () => unlisten();
-  }, [fireUrlChangeEvent]);
+  }, [perspective, fireUrlChangeEvent]);
 
   return null;
 });
@@ -575,7 +584,6 @@ graphQLReady.onReady(() => {
               initPlugins,
             }}
           >
-            <CaptureTelemetry />
             <ToastProvider>
               <PollConsoleUpdates />
               <AppRouter />

@@ -21,6 +21,7 @@ import (
 
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
+	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 )
 
@@ -62,6 +63,9 @@ type Authenticator struct {
 	cookiePath    string
 	refererURL    *url.URL
 	secureCookies bool
+
+	k8sConfig *rest.Config
+	metrics   *Metrics
 }
 
 type SpecialAuthURLs struct {
@@ -114,6 +118,9 @@ type Config struct {
 	CookiePath    string
 	SecureCookies bool
 	ClusterName   string
+
+	K8sConfig *rest.Config
+	Metrics   *Metrics
 }
 
 func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, error) {
@@ -301,6 +308,8 @@ func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
 		cookiePath:    c.CookiePath,
 		refererURL:    refUrl,
 		secureCookies: c.SecureCookies,
+		k8sConfig:     c.K8sConfig,
+		metrics:       c.Metrics,
 	}, nil
 }
 
@@ -317,6 +326,10 @@ func (a *Authenticator) Authenticate(r *http.Request) (*User, error) {
 
 // LoginFunc redirects to the OIDC provider for user login.
 func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
+	if a.metrics != nil {
+		a.metrics.LoginRequested()
+	}
+
 	var randData [4]byte
 	if _, err := io.ReadFull(rand.Reader, randData[:]); err != nil {
 		panic(err)
@@ -337,6 +350,10 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 
 // LogoutFunc cleans up session cookies.
 func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
+	if a.metrics != nil {
+		a.metrics.LogoutRequested(UnknownLogoutReason)
+	}
+
 	a.getLoginMethod().logout(w, r)
 }
 
@@ -394,6 +411,10 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 
+		if a.metrics != nil {
+			a.metrics.LoginSuccessful(a.k8sConfig, ls)
+		}
+
 		klog.Infof("oauth success, redirecting to: %q", a.successURL)
 		fn(ls.toLoginJSON(), a.successURL, w)
 	}
@@ -410,6 +431,10 @@ func (a *Authenticator) getLoginMethod() loginMethod {
 }
 
 func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string) {
+	if a.metrics != nil {
+		a.metrics.LoginFailed(UnknownLoginFailureReason)
+	}
+
 	var u url.URL
 	up, err := url.Parse(a.errorURL)
 	if err != nil {

@@ -15,7 +15,6 @@ import (
 	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils"
 )
 
@@ -28,7 +27,6 @@ var USER_RESOURCE = schema.GroupVersionResource{
 }
 
 type UserSettingsHandler struct {
-	K8sProxyConfig      *proxy.Config
 	Client              *http.Client
 	Endpoint            string
 	ServiceAccountToken string
@@ -165,13 +163,13 @@ func (h *UserSettingsHandler) createUserProxyClient(user *auth.User) (dynamic.In
 	return dynamic.NewForConfig(config)
 }
 
-func (h *UserSettingsHandler) getUserSettingMeta(context context.Context, user *auth.User) (*UserSettingMeta, error) {
+func (h *UserSettingsHandler) getUserSettingMeta(ctx context.Context, user *auth.User) (*UserSettingMeta, error) {
 	client, err := h.createUserProxyClient(user)
 	if err != nil {
 		return nil, err
 	}
 
-	userInfo, err := client.Resource(USER_RESOURCE).Get(context, "~", meta.GetOptions{})
+	userInfo, err := client.Resource(USER_RESOURCE).Get(ctx, "~", meta.GetOptions{})
 	if err != nil {
 		return nil, err
 	}

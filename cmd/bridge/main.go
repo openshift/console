@@ -24,6 +24,7 @@ import (
 	"github.com/openshift/console/pkg/serverutils"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
+	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 )
 
@@ -304,6 +305,7 @@ func main() {
 		ReleaseVersion:               *fReleaseVersion,
 		NodeArchitectures:            nodeArchitectures,
 		HubConsoleURL:                hubConsoleURL,
+		AuthMetrics:                  auth.NewMetrics(),
 	}
 
 	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}
@@ -642,6 +644,12 @@ func main() {
 			RefererPath:   refererPath,
 			SecureCookies: secureCookies,
 			ClusterName:   serverutils.LocalClusterName,
+
+			K8sConfig: &rest.Config{
+				Host:      apiServerEndpoint,
+				Transport: srv.LocalK8sClient.Transport,
+			},
+			Metrics: srv.AuthMetrics,
 		}
 
 		// NOTE: This won't work when using the OpenShift auth mode.
@@ -686,6 +694,12 @@ func main() {
 					RefererPath:   refererPath,
 					SecureCookies: secureCookies,
 					ClusterName:   managedCluster.Name,
+
+					K8sConfig: &rest.Config{
+						Host:      apiServerEndpoint,
+						Transport: srv.LocalK8sClient.Transport,
+					},
+					Metrics: srv.AuthMetrics,
 				}
 
 				if srv.Authers[managedCluster.Name], err = auth.NewAuthenticator(context.Background(), managedClusterOIDCClientConfig); err != nil {
