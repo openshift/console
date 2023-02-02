@@ -63,6 +63,7 @@ describe(KindFilterDropdown.displayName, () => {
       type: TopologyDisplayFilterType.kind,
       id: 'Kind-A',
       label: 'Kind-A',
+      labelKey: 'Kind-A',
       priority: 1,
       value: true,
     });
@@ -70,6 +71,7 @@ describe(KindFilterDropdown.displayName, () => {
       type: TopologyDisplayFilterType.kind,
       id: 'Kind-C',
       label: 'Kind-C',
+      labelKey: 'Kind-C',
       priority: 1,
       value: true,
     });
@@ -90,7 +92,8 @@ describe(KindFilterDropdown.displayName, () => {
     dropdownFilter.push({
       type: TopologyDisplayFilterType.kind,
       id: 'Kind-A',
-      label: 'Kind-A',
+      label: 'Kind A',
+      labelKey: 'Kind A',
       priority: 1,
       value: true,
     });
