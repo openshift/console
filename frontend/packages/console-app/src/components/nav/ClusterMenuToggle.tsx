@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MenuToggle, Popper } from '@patternfly/react-core';
+import { MenuToggle, Popper, ToolbarItem } from '@patternfly/react-core';
 
 const ClusterMenuToggle = (props: {
   disabled: boolean;
@@ -12,7 +12,6 @@ const ClusterMenuToggle = (props: {
   const { disabled, menu, isOpen, menuRef, onToggle, title } = props;
 
   const toggleRef = React.useRef(null);
-  const containerRef = React.useRef(null);
 
   const handleMenuKeys = (event) => {
     if (menuRef.current) {
@@ -52,7 +51,7 @@ const ClusterMenuToggle = (props: {
       onClick={() => onToggle(!isOpen)}
       isExpanded={isOpen}
       variant="plainText"
-      isFullWidth
+      isFullHeight
       disabled={disabled}
       className="co-cluster-selector"
       data-test-id="cluster-dropdown-toggle"
@@ -62,7 +61,7 @@ const ClusterMenuToggle = (props: {
   );
 
   return (
-    <div ref={containerRef}>
+    <ToolbarItem>
       <Popper
         trigger={menuToggle}
         popper={menu}
@@ -73,7 +72,7 @@ const ClusterMenuToggle = (props: {
         popperMatchesTriggerWidth={false}
         enableFlip={false}
       />
-    </div>
+    </ToolbarItem>
   );
 };
 

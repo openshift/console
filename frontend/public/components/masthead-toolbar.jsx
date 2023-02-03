@@ -21,7 +21,12 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
-import { FLAGS, YellowExclamationTriangleIcon, ACM_LINK_ID } from '@console/shared';
+import {
+  ACM_LINK_ID,
+  FLAGS,
+  usePerspectiveExtension,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/app/src/components/cloud-shell/CloudShellMastheadAction';
@@ -40,6 +45,8 @@ import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
 import { withTelemetry, withQuickStartContext } from '@console/shared/src/hoc';
+import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
+import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
 
 const defaultHelpLinks = [
   {
@@ -55,6 +62,18 @@ const defaultHelpLinks = [
     href: 'https://blog.openshift.com',
   },
 ];
+
+const MultiClusterToolbarGroup = () => {
+  const showMultiClusterToolbarGroup =
+    usePerspectiveExtension(ACM_PERSPECTIVE_ID) || isMultiClusterEnabled();
+  return (
+    showMultiClusterToolbarGroup && (
+      <ToolbarGroup spacer={{ default: 'spacerNone' }}>
+        <ClusterMenu />
+      </ToolbarGroup>
+    )
+  );
+};
 
 const SystemStatusButton = ({ statuspageData }) => {
   const { t } = useTranslation();
@@ -641,9 +660,7 @@ class MastheadToolbarContents_ extends React.Component {
       <>
         <Toolbar isFullHeight isStatic>
           <ToolbarContent>
-            {/* <ToolbarGroup spacer={{ default: 'spacerNone' }}>
-              cluster picker goes here
-            </ToolbarGroup> */}
+            <MultiClusterToolbarGroup />
             <ToolbarGroup
               alignment={{ default: 'alignRight' }}
               spacer={{ default: 'spacerNone' }}
