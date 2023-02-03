@@ -385,7 +385,7 @@ func main() {
 			klog.Fatalf("failed to read bearer token: %v", err)
 		}
 
-		srv.LocalK8sProxyConfig = &proxy.Config{
+		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: tlsConfig,
 			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 			Endpoint:        k8sEndpoint,
@@ -407,23 +407,26 @@ func main() {
 				RootCAs: serviceProxyRootCAs,
 			})
 
-			// Disable metrics in multicluster env.
-			if len(managedClusterConfigs) == 0 {
-				srv.ThanosProxyConfig = &proxy.Config{
+			srv.ServiceClient = &http.Client{
+				Transport: &http.Transport{
 					TLSClientConfig: serviceProxyTLSConfig,
-					HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-					Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosHost, Path: "/api"},
-				}
-				srv.ThanosTenancyProxyConfig = &proxy.Config{
-					TLSClientConfig: serviceProxyTLSConfig,
-					HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-					Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyHost, Path: "/api"},
-				}
-				srv.ThanosTenancyProxyForRulesConfig = &proxy.Config{
-					TLSClientConfig: serviceProxyTLSConfig,
-					HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-					Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyForRulesHost, Path: "/api"},
-				}
+				},
+			}
+
+			srv.ThanosProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosHost, Path: "/api"},
+			}
+			srv.ThanosTenancyProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyHost, Path: "/api"},
+			}
+			srv.ThanosTenancyProxyForRulesConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyForRulesHost, Path: "/api"},
 			}
 
 			srv.AlertManagerProxyConfig = &proxy.Config{
@@ -467,14 +470,19 @@ func main() {
 			InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
 		})
 
-		srv.LocalK8sProxyConfig = &proxy.Config{
+		srv.ServiceClient = &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: serviceProxyTLSConfig,
+			},
+		}
+
+		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: serviceProxyTLSConfig,
 			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 			Endpoint:        k8sEndpoint,
 		}
 
-		// Disable metrics in off-cluster multicluster env
-		if len(managedClusterConfigs) == 0 && *fK8sModeOffClusterThanos != "" {
+		if *fK8sModeOffClusterThanos != "" {
 			offClusterThanosURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-thanos", *fK8sModeOffClusterThanos)
 			offClusterThanosURL.Path += "/api"
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
@@ -552,12 +560,12 @@ func main() {
 
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
-		apiServerEndpoint = srv.LocalK8sProxyConfig.Endpoint.String()
+		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
 	}
 	srv.KubeAPIServerURL = apiServerEndpoint
-	srv.LocalK8sClient = &http.Client{
+	srv.K8sClient = &http.Client{
 		Transport: &http.Transport{
-			TLSClientConfig: srv.LocalK8sProxyConfig.TLSClientConfig,
+			TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
 		},
 	}
 
@@ -647,7 +655,7 @@ func main() {
 
 			K8sConfig: &rest.Config{
 				Host:      apiServerEndpoint,
-				Transport: srv.LocalK8sClient.Transport,
+				Transport: srv.K8sClient.Transport,
 			},
 			Metrics: srv.AuthMetrics,
 		}
@@ -697,7 +705,7 @@ func main() {
 
 					K8sConfig: &rest.Config{
 						Host:      apiServerEndpoint,
-						Transport: srv.LocalK8sClient.Transport,
+						Transport: srv.K8sClient.Transport,
 					},
 					Metrics: srv.AuthMetrics,
 				}
@@ -749,7 +757,7 @@ func main() {
 		},
 		&http.Client{
 			Transport: &http.Transport{
-				TLSClientConfig: srv.LocalK8sProxyConfig.TLSClientConfig,
+				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
 			},
 		},
 		nil,
@@ -767,7 +775,7 @@ func main() {
 		},
 		&http.Client{
 			Transport: &http.Transport{
-				TLSClientConfig: srv.LocalK8sProxyConfig.TLSClientConfig,
+				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
 			},
 		},
 		knative.EventSourceFilter,
@@ -785,7 +793,7 @@ func main() {
 		},
 		&http.Client{
 			Transport: &http.Transport{
-				TLSClientConfig: srv.LocalK8sProxyConfig.TLSClientConfig,
+				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
 			},
 		},
 		knative.ChannelFilter,
