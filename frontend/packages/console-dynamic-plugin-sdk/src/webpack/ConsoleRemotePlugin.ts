@@ -67,46 +67,63 @@ export class ConsoleRemotePlugin {
       logger.warn(`output.uniqueName is defined, but will be overridden to ${containerName}`);
     }
 
+    const containerLibrary = {
+      type: 'jsonp',
+      name: remoteEntryCallback,
+    };
+
+    const containerModules = _.mapValues(
+      this.pkg.consolePlugin.exposedModules || {},
+      (moduleRequest, moduleName) => ({
+        import: moduleRequest,
+        name: `exposed-${moduleName}`,
+      }),
+    );
+
+    // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
+    const sharedModules = Object.entries(sharedPluginModulesMetadata).reduce(
+      (acc, [moduleRequest, moduleMetadata]) => {
+        const adaptedMetadata = _.defaults({}, moduleMetadata, {
+          singleton: true,
+          allowFallback: false,
+        });
+
+        const moduleConfig: Record<string, any> = {
+          singleton: adaptedMetadata.singleton,
+        };
+
+        if (!adaptedMetadata.allowFallback) {
+          moduleConfig.import = false;
+        }
+
+        acc[moduleRequest] = moduleConfig;
+        return acc;
+      },
+      {},
+    );
+
     compiler.options.output.publicPath = publicPath;
     compiler.options.output.uniqueName = containerName;
 
     // Generate webpack federated module container assets
     new webpack.container.ModuleFederationPlugin({
       name: containerName,
-      library: {
-        type: 'jsonp',
-        name: remoteEntryCallback,
-      },
+      library: containerLibrary,
       filename: remoteEntryFile,
-      exposes: _.mapValues(
-        this.pkg.consolePlugin.exposedModules || {},
-        (moduleRequest, moduleName) => ({
-          import: moduleRequest,
-          name: `exposed-${moduleName}`,
-        }),
-      ),
-      // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
-      shared: Object.entries(sharedPluginModulesMetadata).reduce(
-        (acc, [moduleRequest, moduleMetadata]) => {
-          const adaptedMetadata = _.defaults({}, moduleMetadata, {
-            singleton: true,
-            allowFallback: false,
-          });
-
-          const moduleConfig: Record<string, any> = {
-            singleton: adaptedMetadata.singleton,
-          };
-
-          if (!adaptedMetadata.allowFallback) {
-            moduleConfig.import = false;
-          }
-
-          acc[moduleRequest] = moduleConfig;
-          return acc;
-        },
-        {},
-      ),
+      exposes: containerModules,
+      shared: sharedModules,
     }).apply(compiler);
+
+    // ModuleFederationPlugin does not generate a container entry when the provided
+    // exposes option is empty; we fix that by invoking the ContainerPlugin manually
+    if (_.isEmpty(containerModules)) {
+      new webpack.container.ContainerPlugin({
+        name: containerName,
+        library: containerLibrary,
+        filename: remoteEntryFile,
+        exposes: containerModules,
+      }).apply(compiler);
+    }
 
     // Generate and/or post-process Console plugin assets
     new ConsoleAssetPlugin(
