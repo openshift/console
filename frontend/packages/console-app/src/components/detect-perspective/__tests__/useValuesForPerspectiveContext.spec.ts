@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { mockPerspectiveExtensions } from '@console/dynamic-plugin-sdk/src/perspective/__tests__/perspective.data';
 import { usePerspectives } from '@console/shared/src';
+import { ACM_PERSPECTIVE_ID } from '../../../consts';
 import { usePreferredPerspective } from '../../user-preferences';
 import { useLastPerspective } from '../useLastPerspective';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
 jest.mock('@console/shared/src', () => ({
   usePerspectives: jest.fn(),
+  useTelemetry: jest.fn(),
 }));
 
 jest.mock('../useLastPerspective', () => ({
@@ -37,7 +39,7 @@ describe('useValuesForPerspectiveContext', () => {
 
   it('should return undefined for PerspectiveType if the perspective from user preference does not match any of the perspectives received from extensions', () => {
     usePerspectivesMock.mockReturnValue(mockPerspectiveExtensions);
-    useLastPerspectiveMock.mockReturnValue(['acm', jest.fn(), true]);
+    useLastPerspectiveMock.mockReturnValue([ACM_PERSPECTIVE_ID, jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue([undefined, jest.fn(), true]);
     useStateMock.mockReturnValue(['', jest.fn()]);
     const [perspective, ,] = useValuesForPerspectiveContext();

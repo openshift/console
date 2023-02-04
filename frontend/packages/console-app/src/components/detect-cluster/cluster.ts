@@ -1,10 +1,17 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { CoreState } from '@console/dynamic-plugin-sdk/src';
 import { setActiveCluster } from '@console/dynamic-plugin-sdk/src/app/core/actions';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { clearSSARFlags, detectFeatures } from '@console/internal/actions/features';
+import { formatNamespaceRoute } from '@console/internal/actions/ui';
+import { useActiveNamespace } from '@console/shared/src';
 import { LAST_CLUSTER_USER_SETTINGS_KEY, HUB_CLUSTER_NAME } from '@console/shared/src/constants';
 import { useUserSettingsLocalStorage } from '@console/shared/src/hooks/useUserSettingsLocalStorage';
+import { ACM_PERSPECTIVE_ID, ADMIN_PERSPECTIVE_ID } from '../../consts';
 
 type ClusterContextType = {
   cluster?: string;
@@ -14,6 +21,11 @@ type ClusterContextType = {
 export const ClusterContext = React.createContext<ClusterContextType>({});
 
 export const useValuesForClusterContext = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const [activeNamespace] = useActiveNamespace();
+  const [activePerspective, setActivePerspective] = useActivePerspective();
+  const activeCluster = useSelector((state: CoreState) => state.activeCluster);
   const [lastCluster, setLastCluster] = useUserSettingsLocalStorage<string>(
     LAST_CLUSTER_USER_SETTINGS_KEY,
     LAST_CLUSTER_USER_SETTINGS_KEY,
@@ -21,8 +33,6 @@ export const useValuesForClusterContext = () => {
     false,
     true,
   );
-
-  const dispatch = useDispatch();
 
   // Set initial active cluster in redux on first render.
   React.useEffect(() => {
@@ -35,10 +45,31 @@ export const useValuesForClusterContext = () => {
     cluster: lastCluster,
     setCluster: React.useCallback(
       (cluster: string) => {
-        dispatch(setActiveCluster(cluster));
-        setLastCluster(cluster);
+        if (cluster !== activeCluster) {
+          dispatch(setActiveCluster(cluster));
+          setLastCluster(cluster);
+          dispatch(clearSSARFlags());
+          dispatch(detectFeatures());
+        }
+        if (activePerspective === ACM_PERSPECTIVE_ID) {
+          setActivePerspective(ADMIN_PERSPECTIVE_ID);
+        } else {
+          const oldPath = window.location.pathname;
+          const newPath = formatNamespaceRoute(activeNamespace, oldPath, window.location, true);
+          if (newPath !== oldPath) {
+            history.pushPath(newPath);
+          }
+        }
       },
-      [dispatch, setLastCluster],
+      [
+        activeCluster,
+        activeNamespace,
+        activePerspective,
+        dispatch,
+        history,
+        setActivePerspective,
+        setLastCluster,
+      ],
     ),
   };
 };

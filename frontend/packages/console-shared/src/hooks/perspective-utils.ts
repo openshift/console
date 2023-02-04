@@ -170,3 +170,11 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
   }, [perspectiveExtensions, results]);
   return perspectives;
 };
+
+export const usePerspectiveExtension = (id: string): LoadedExtension<PerspectiveExtension> => {
+  const perspectiveExtensions = usePerspectives();
+  return React.useMemo(() => perspectiveExtensions.find((e) => e.properties.id === id), [
+    id,
+    perspectiveExtensions,
+  ]);
+};
