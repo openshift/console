@@ -867,7 +867,7 @@
         "options": [
           {
             "value": "latest",
-            "label": "Last used",
+            "label": "%devconsole~Last used%",
             "description": "%devconsole~The last resource type used when adding a resource.%"
           },
           {
@@ -903,7 +903,7 @@
         "options": [
           {
             "value": "latest",
-            "label": "Last used",
+            "label": "%devconsole~Last used%",
             "description": "%devconsole~The last resource type used when adding a resource.%"
           },
           {
