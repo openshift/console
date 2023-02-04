@@ -350,7 +350,6 @@
   "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.": "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.",
   "Invalid Git URL.": "Invalid Git URL.",
   "Repository details": "Repository details",
-  "Branch": "Branch",
   "Close": "Close",
   "Commit id": "Commit id",
   "Branch/Tag": "Branch/Tag",
