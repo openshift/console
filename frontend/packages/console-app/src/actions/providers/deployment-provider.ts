@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { DeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
 import { DeploymentKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { CommonActionFactory } from '../creators/common-factory';
@@ -26,7 +27,9 @@ export const useDeploymentActionsProvider = (resource: DeploymentKind) => {
       CommonActionFactory.ModifyLabels(kindObj, resource),
       CommonActionFactory.ModifyAnnotations(kindObj, resource),
       DeploymentActionFactory.EditDeployment(kindObj, resource),
-      CommonActionFactory.Delete(kindObj, resource),
+      ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
+        ? [DeleteResourceAction(kindObj, resource)]
+        : [CommonActionFactory.Delete(kindObj, resource)]),
     ],
     [hpaActions, pdbActions, kindObj, relatedHPAs, resource],
   );
@@ -52,7 +55,9 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentKind) => 
       CommonActionFactory.ModifyLabels(kindObj, resource),
       CommonActionFactory.ModifyAnnotations(kindObj, resource),
       DeploymentActionFactory.EditDeployment(kindObj, resource),
-      CommonActionFactory.Delete(kindObj, resource),
+      ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
+        ? [DeleteResourceAction(kindObj, resource)]
+        : [CommonActionFactory.Delete(kindObj, resource)]),
     ],
     [hpaActions, pdbActions, kindObj, relatedHPAs, resource],
   );
