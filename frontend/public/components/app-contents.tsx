@@ -8,11 +8,11 @@ import {
   RoutePage as DynamicRoutePage,
   isRoutePage as isDynamicRoutePage,
 } from '@console/dynamic-plugin-sdk';
-import { useAllFlags } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import { useUserSettings, getPerspectiveVisitedKey, usePerspectives } from '@console/shared';
+import { FLAGS, useUserSettings, getPerspectiveVisitedKey, usePerspectives } from '@console/shared';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
-import { flagPending } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace-bar';
 import { SearchPage } from './search';
@@ -73,9 +73,12 @@ const DefaultPageRedirect: React.FC<{
   return resolvedUrl ? <Redirect to={resolvedUrl} /> : null;
 };
 
+type DefaultPageProps = {
+  flags: FlagsObject;
+};
+
 // The default page component lets us connect to flags without connecting the entire App.
-const DefaultPage: React.FC = () => {
-  const flags = useAllFlags();
+const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
   const [activePerspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
   const [visited, setVisited, visitedLoaded] = useUserSettings<boolean>(
@@ -111,6 +114,8 @@ const DefaultPage: React.FC = () => {
     />
   );
 };
+
+const DefaultPage = connectToFlags(FLAGS.OPENSHIFT, FLAGS.CAN_LIST_NS)(DefaultPage_);
 
 const LazyRoute = (props) => (
   <Route
