@@ -268,6 +268,10 @@ func main() {
 		hubConsoleURL = bridge.ValidateFlagIsURL("hub-console-url", *fHubConsoleURL)
 	}
 
+	clusterCopiedCSVsDisabled := map[string]bool{
+		serverutils.LocalClusterName: *fCopiedCSVsDisabled,
+	}
+
 	srv := &server.Server{
 		PublicDir:                    *fPublicDir,
 		BaseURL:                      baseURL,
@@ -299,7 +303,6 @@ func main() {
 		Telemetry:                    telemetryFlags,
 		ReleaseVersion:               *fReleaseVersion,
 		NodeArchitectures:            nodeArchitectures,
-		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 		HubConsoleURL:                hubConsoleURL,
 	}
 
@@ -688,6 +691,8 @@ func main() {
 				if srv.Authers[managedCluster.Name], err = auth.NewAuthenticator(context.Background(), managedClusterOIDCClientConfig); err != nil {
 					klog.Fatalf("Error initializing managed cluster authenticator: %v", err)
 				}
+
+				clusterCopiedCSVsDisabled[managedCluster.Name] = managedCluster.CopiedCSVsDisabled
 			}
 		}
 	case "disabled":
@@ -715,6 +720,8 @@ func main() {
 	default:
 		bridge.FlagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift")
 	}
+
+	srv.CopiedCSVsDisabled = clusterCopiedCSVsDisabled
 
 	srv.MonitoringDashboardConfigMapLister = server.NewResourceLister(
 		srv.ServiceAccountToken,

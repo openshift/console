@@ -70,9 +70,14 @@ jest.mock('@console/shared/src/hooks/redux-selectors', () => {
   };
 });
 
+jest.mock('@console/shared/src/hooks/useActiveCluster', () => ({
+  useActiveCluster: () => ['local-cluster', () => {}],
+}));
+
 describe(ClusterServiceVersionTableRow.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionTableRowProps>;
   beforeEach(() => {
+    window.SERVER_FLAGS.copiedCSVsDisabled = { 'local-cluster': false };
     wrapper = shallow(
       <ClusterServiceVersionTableRow
         catalogSourceMissing={false}
@@ -553,6 +558,7 @@ describe(ClusterServiceVersionDetailsPage.displayName, () => {
     spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
     spyUseAccessReview.mockReturnValue([true, false]);
 
+    window.SERVER_FLAGS.copiedCSVsDisabled = { 'local-cluster': false };
     wrapper = mount(
       <ClusterServiceVersionDetailsPage
         match={{ params: { ns, name }, isExact: true, url: '', path: '' }}

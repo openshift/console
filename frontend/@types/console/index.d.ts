@@ -14,7 +14,7 @@ declare module '*.png' {
 
 declare interface Window {
   SERVER_FLAGS: {
-    copiedCSVsDisabled: boolean;
+    copiedCSVsDisabled: Record<string, boolean>;
     alertManagerBaseURL: string;
     alertmanagerUserWorkloadBaseURL: string;
     authDisabled: boolean;
