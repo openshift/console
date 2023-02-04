@@ -115,7 +115,11 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
   );
 };
 
-const DefaultPage = connectToFlags(FLAGS.OPENSHIFT, FLAGS.CAN_LIST_NS)(DefaultPage_);
+const DefaultPage = connectToFlags(
+  FLAGS.OPENSHIFT,
+  FLAGS.CAN_LIST_NS,
+  FLAGS.MONITORING,
+)(DefaultPage_);
 
 const LazyRoute = (props) => (
   <Route
