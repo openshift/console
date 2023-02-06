@@ -317,8 +317,8 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const [isFetchingPluginEndpoints, setIsFetchingPluginEndpoints] = React.useState(false);
   const [allPluginEndpointsReady, setAllPluginEndpointsReady] = React.useState(false);
 
-  const [pluginsData, setPluginsData] = React.useState();
-  const [pluginsError, setPluginsError] = React.useState();
+  const [updateData, setUpdateData] = React.useState();
+  const [updateError, setUpdateError] = React.useState();
   const [pluginManifestsData, setPluginManifestsData] = React.useState();
   const safeFetch = React.useCallback(useSafeFetch(), []);
   const fetchPluginManifest = (pluginName) =>
@@ -330,8 +330,8 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const tick = React.useCallback(() => {
     safeFetch(`${window.SERVER_FLAGS.basePath}api/check-updates`)
       .then((response) => {
-        setPluginsData(response);
-        setPluginsError(null);
+        setUpdateData(response);
+        setUpdateError(null);
         const pluginManifests = response?.plugins?.map((pluginName) =>
           fetchPluginManifest(pluginName),
         );
@@ -341,27 +341,27 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
           });
         }
       })
-      .catch(setPluginsError);
+      .catch(setUpdateError);
   }, [safeFetch]);
   usePoll(tick, URL_POLL_DEFAULT_DELAY);
 
-  const prevPluginsDataRef = React.useRef();
+  const prevUpdateDataRef = React.useRef();
   const prevPluginManifestsDataRef = React.useRef();
   React.useEffect(() => {
-    prevPluginsDataRef.current = pluginsData;
+    prevUpdateDataRef.current = updateData;
     prevPluginManifestsDataRef.current = pluginManifestsData;
   });
-  const prevPluginsData = prevPluginsDataRef.current;
+  const prevUpdateData = prevUpdateDataRef.current;
   const prevPluginManifestsData = prevPluginManifestsDataRef.current;
-  const stateInitialized = _.isEmpty(pluginsError) && !_.isEmpty(prevPluginsData);
+  const stateInitialized = _.isEmpty(updateError) && !_.isEmpty(prevUpdateData);
 
-  const pluginsListChanged = !_.isEmpty(_.xor(prevPluginsData?.plugins, pluginsData?.plugins));
+  const pluginsListChanged = !_.isEmpty(_.xor(prevUpdateData?.plugins, updateData?.plugins));
   if (stateInitialized && pluginsListChanged && !pluginsChanged) {
     setPluginsChanged(true);
   }
 
   if (pluginsChanged && !allPluginEndpointsReady && !isFetchingPluginEndpoints) {
-    const pluginEndpointsReady = pluginsData?.plugins?.map((pluginName) =>
+    const pluginEndpointsReady = updateData?.plugins?.map((pluginName) =>
       fetchPluginManifest(pluginName),
     );
     Promise.all(pluginEndpointsReady)
@@ -392,8 +392,17 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
     setPluginVersionsChanged(true);
   }
 
-  const consoleCommitChanged = prevPluginsData?.consoleCommit !== pluginsData?.consoleCommit;
+  const consoleCommitChanged = prevUpdateData?.consoleCommit !== updateData?.consoleCommit;
   if (stateInitialized && consoleCommitChanged && !consoleChanged) {
+    setConsoleChanged(true);
+  }
+
+  const managedClustersChanged = !_.isEmpty(
+    _.xor(prevUpdateData?.managedClusters, updateData?.managedClusters),
+  );
+  if (stateInitialized && managedClustersChanged && !consoleChanged) {
+    // eslint-disable-next-line no-console
+    console.log('[DEBUG] MANGED CLUSTERS UPDATED');
     setConsoleChanged(true);
   }
 
