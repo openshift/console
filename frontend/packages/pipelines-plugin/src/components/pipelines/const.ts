@@ -67,6 +67,7 @@ export const DEFAULT_SAMPLES = 60;
 export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';
 
 export const PIPELINE_NAMESPACE = 'openshift-pipelines';
+export const PIPELINERUN_TEMPLATE_NAMESPACE = 'openshift';
 export const PIPELINE_CONFIG_NAME = 'config';
 
 export enum PipelineMetricsLevel {
