@@ -166,7 +166,7 @@ describe('knative data transformer ', () => {
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: true } }));
     spyAndReturn(spyK8sList)(Promise.resolve([]));
 
-    cleanUpWorkload(node.resource, true)
+    cleanUpWorkload(node.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
