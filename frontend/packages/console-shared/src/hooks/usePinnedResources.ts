@@ -74,7 +74,7 @@ export const usePinnedResources = (): [string[], (pinnedResources: string[]) => 
       setPinnedResources((prevPR) => {
         _.difference(
           newPins,
-          prevPR?.[activePerspective].length > 0 ? prevPR[activePerspective] : pins,
+          prevPR?.[activePerspective]?.length > 0 ? prevPR[activePerspective] : pins,
         ).forEach((resource) =>
           fireTelemetryEvent('Navigation Added', {
             resource,
@@ -83,7 +83,7 @@ export const usePinnedResources = (): [string[], (pinnedResources: string[]) => 
         );
 
         _.difference(
-          prevPR?.[activePerspective].length > 0 ? prevPR[activePerspective] : pins,
+          prevPR?.[activePerspective]?.length > 0 ? prevPR[activePerspective] : pins,
           newPins,
         ).forEach((resource) =>
           fireTelemetryEvent('Navigation Removed', {
