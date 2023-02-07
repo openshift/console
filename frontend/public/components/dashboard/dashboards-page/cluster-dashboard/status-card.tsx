@@ -66,6 +66,7 @@ import {
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 
 const filterSubsystems = (
   subsystems: (
@@ -134,6 +135,7 @@ const mapStateToProps = (state: RootState) => ({
   k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
 });
 export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels }) => {
+  const [cluster] = useActiveCluster();
   const subsystemExtensions = useExtensions<DashboardsOverviewHealthSubsystem>(
     isDashboardsOverviewHealthSubsystem,
   );
@@ -193,7 +195,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       const { disallowedControlPlaneTopology } = subsystem.properties;
       if (
         disallowedControlPlaneTopology?.length &&
-        disallowedControlPlaneTopology.includes(window.SERVER_FLAGS.controlPlaneTopology)
+        disallowedControlPlaneTopology.includes(window.SERVER_FLAGS.controlPlaneTopology[cluster])
       ) {
         return;
       }

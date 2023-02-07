@@ -124,6 +124,7 @@ import {
 } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 
 import {
   ServiceLevel,
@@ -762,12 +763,13 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
     : false;
   const secondNewestVersion = availableUpdates[1]?.version;
   const currentChannel = cv.spec.channel;
+  const [cluster] = useActiveCluster();
   const currentPrefix = splitClusterVersionChannel(currentChannel)?.prefix;
   const similarChannels = getSimilarClusterVersionChannels(cv, currentPrefix);
   const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
   const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
   const newestVersionIsBlocked =
-    clusterUpgradeableFalse && minorVersionIsNewer && !isClusterExternallyManaged();
+    clusterUpgradeableFalse && minorVersionIsNewer && !isClusterExternallyManaged(cluster);
   const { t } = useTranslation();
 
   return (
@@ -1044,8 +1046,9 @@ export const ClusterSettingsAlerts: React.FC<ClusterSettingsAlertsProps> = ({
   machineConfigPools,
 }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
 
-  if (isClusterExternallyManaged()) {
+  if (isClusterExternallyManaged(cluster)) {
     return (
       <Alert
         variant="info"

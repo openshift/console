@@ -54,7 +54,7 @@ declare interface Window {
     quickStarts: string;
     projectAccessClusterRoles: string;
     clusters: string[];
-    controlPlaneTopology: string;
+    controlPlaneTopology: Record<string, string>;
     telemetry: Record<string, string>;
     nodeArchitectures: string[];
     hubConsoleURL: string;

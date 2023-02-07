@@ -112,7 +112,7 @@ type jsGlobals struct {
 	ProjectAccessClusterRoles       string                     `json:"projectAccessClusterRoles"`
 	Perspectives                    string                     `json:"perspectives"`
 	Clusters                        []string                   `json:"clusters"`
-	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
+	ControlPlaneTopology            map[string]string          `json:"controlPlaneTopology"`
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ReleaseVersion                  string                     `json:"releaseVersion"`
 	NodeArchitectures               []string                   `json:"nodeArchitectures"`
@@ -135,7 +135,7 @@ type Server struct {
 	Branding             string
 	CustomProductName    string
 	CustomLogoFile       string
-	ControlPlaneTopology string
+	ControlPlaneTopology map[string]string
 	StatuspageID         string
 	LoadTestFactor       int
 	InactivityTimeout    int

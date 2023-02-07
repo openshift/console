@@ -24,13 +24,15 @@ import {
   UpdateBlockedLabel,
 } from '../cluster-settings/cluster-settings';
 import { ReleaseNotesLink } from '../utils';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 
 export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
   const availableUpdates = getSortedAvailableUpdates(cv);
   const moreAvailableUpdates = availableUpdates.slice(1).reverse();
   const releaseNotes = showReleaseNotes();
+  const [cluster] = useActiveCluster();
   const clusterUpgradeableFalseAndNotExternallyManaged =
-    !!getConditionUpgradeableFalse(cv) && !isClusterExternallyManaged();
+    !!getConditionUpgradeableFalse(cv) && !isClusterExternallyManaged(cluster);
   const { t } = useTranslation();
 
   return (

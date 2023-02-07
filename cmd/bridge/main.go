@@ -272,6 +272,10 @@ func main() {
 		serverutils.LocalClusterName: *fCopiedCSVsDisabled,
 	}
 
+	clusterControlPlaneTopology := map[string]string{
+		serverutils.LocalClusterName: *fControlPlaneTopology,
+	}
+
 	srv := &server.Server{
 		PublicDir:                    *fPublicDir,
 		BaseURL:                      baseURL,
@@ -279,7 +283,6 @@ func main() {
 		Branding:                     branding,
 		CustomProductName:            *fCustomProductName,
 		CustomLogoFile:               *fCustomLogoFile,
-		ControlPlaneTopology:         *fControlPlaneTopology,
 		StatuspageID:                 *fStatuspageID,
 		DocumentationBaseURL:         documentationBaseURL,
 		AlertManagerUserWorkloadHost: *fAlertmanagerUserWorkloadHost,
@@ -693,6 +696,7 @@ func main() {
 				}
 
 				clusterCopiedCSVsDisabled[managedCluster.Name] = managedCluster.CopiedCSVsDisabled
+				clusterControlPlaneTopology[managedCluster.Name] = string(managedCluster.ControlPlaneToplogy)
 			}
 		}
 	case "disabled":
@@ -722,6 +726,7 @@ func main() {
 	}
 
 	srv.CopiedCSVsDisabled = clusterCopiedCSVsDisabled
+	srv.ControlPlaneTopology = clusterControlPlaneTopology
 
 	srv.MonitoringDashboardConfigMapLister = server.NewResourceLister(
 		srv.ServiceAccountToken,

@@ -1,8 +1,9 @@
 import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk';
 import { ClusterVersionModel } from '@console/internal/models';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 
-export const isClusterExternallyManaged = (): boolean => {
-  return window.SERVER_FLAGS.controlPlaneTopology === 'External';
+export const isClusterExternallyManaged = (cluster: string): boolean => {
+  return window.SERVER_FLAGS.controlPlaneTopology[cluster] === 'External';
 };
 
 export const useCanClusterUpgrade = (): boolean => {
@@ -12,7 +13,8 @@ export const useCanClusterUpgrade = (): boolean => {
     verb: 'patch',
     name: 'version',
   });
-  const notExternallyManaged = !isClusterExternallyManaged();
+  const [cluster] = useActiveCluster();
+  const notExternallyManaged = !isClusterExternallyManaged(cluster);
   const brandingNotDedicated = window.SERVER_FLAGS.branding !== 'dedicated';
   const canPerformUpgrade = hasPermissionsToUpdate && brandingNotDedicated && notExternallyManaged;
 
