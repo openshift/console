@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/openshift/api/helm/v1beta1"
@@ -125,7 +127,6 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	if indexEntry == "" {
 		chartInfo, err = getChartInfoFromChartUrl(url, ns, client, coreClient)
 		if err != nil {
-			fmt.Println("Reaching here 33", err)
 			return nil, err
 		}
 	} else {
@@ -134,7 +135,6 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 
 	connectionConfig, isClusterScoped, err := getRepositoryConnectionConfig(chartInfo.RepositoryName, ns, client)
 	if err != nil {
-		fmt.Println("Reaching here 336", err)
 		return nil, err
 	}
 
@@ -164,7 +164,6 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	}
 	ch, err := loader.Load(cp)
 	if err != nil {
-		fmt.Println("comnes here", err)
 		return nil, err
 	}
 
@@ -177,12 +176,20 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	}
 	ch.Metadata.Annotations["chart_url"] = url
 	fmt.Println(ch.Metadata.Name, ch.Metadata.Version, "Here")
+	// Set up channel on which to send signal notifications.
+	// We must use a buffered channel or risk missing the signal
+	// if we're not ready to receive when the signal is sent.
 
+	ctx, cancel := context.WithCancel(context.Background())
+	cmd.Namespace = ns
+	cSignal := make(chan os.Signal, 2)
+	signal.Notify(cSignal, os.Interrupt, syscall.SIGTERM)
 	go func() {
-		ctx, cancel := context.WithCancel(context.Background())
-		cmd.Namespace = ns
+		<-cSignal
+		cancel()
+	}()
+	go func() {
 		cancelChan := make(chan bool, 1)
-
 		go func() {
 			label := fmt.Sprintf("owner=helm,name=%v,version=%v", name, 1)
 			secretList, err := coreClient.Secrets(ns).Watch(context.TODO(), metav1.ListOptions{LabelSelector: label, Watch: true})
@@ -201,32 +208,30 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 						secretList.Stop()
 						break
 					} else if obj.Labels["status"] == "deployed" {
-						fmt.Println("release has been deployed")
-						cancelChan <- false
 						secretList.Stop()
 						break
 					}
 				}
 				if time.Since(start) >= (5 * time.Minute) {
-					fmt.Println("No need to watch for the secret after 5 minutes")
-					cancelChan <- false
 					secretList.Stop()
 					break
 				}
 			}
 		}()
 		_, err = cmd.RunWithContext(ctx, ch, vals)
-		fmt.Println(ctx, cancel, "*****1")
 		if err == nil {
-			val := <-cancelChan
-			fmt.Println("*****100", val)
-			if val {
-					fmt.Println("Reachig here for cancellation")
-					cancel()
-			}
 			if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
 				fmt.Println("Reaching Here for metrics")
 				metrics.HandleconsoleHelmInstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
+			}
+			val := <-cancelChan
+			if val {
+				fmt.Println("------------------------")
+				fmt.Println("Reachig here for cancellation")
+				//cancel()
+				cSignal <- syscall.SIGTERM
+				fmt.Println("--------------------")
+				fmt.Println(ctx.Err(), " cqwVWfvwsagv")
 			}
 		} else {
 			fmt.Println("comnes here two", err)

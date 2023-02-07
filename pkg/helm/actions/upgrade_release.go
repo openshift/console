@@ -230,10 +230,6 @@ func UpgradeReleaseAsync(
 	}
 
 	go func() {
-		// Create context and prepare the handle of SIGTERM
-		// ctx := context.Background()
-		// ctx, cancel := context.WithCancel(ctx)
-		// remove all the tls related files created by this process
 		ctx, cancel := context.WithCancel(context.Background())
 		cancelChan := make(chan bool, 1)
 		go func() {
@@ -272,12 +268,15 @@ func UpgradeReleaseAsync(
 		if err != nil {
 			createSecret(releaseNamespace, releaseName, rel.Version+1, coreClient, err)
 		} else {
-			val := <-cancelChan
-				if val == true {
-					cancel()
-				}
 			if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
 				metrics.HandleconsoleHelmUpgradesTotal(ch.Metadata.Name, ch.Metadata.Version)
+			}
+			val := <-cancelChan
+			if val {
+				fmt.Println("Reachig here for cancellation")
+				cancel()
+				fmt.Println("--------------------")
+				fmt.Println(ctx.Err())
 			}
 		}
 		defer func() {
