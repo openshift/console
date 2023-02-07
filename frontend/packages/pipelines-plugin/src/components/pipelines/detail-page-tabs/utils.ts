@@ -21,6 +21,21 @@ export const removeEmptyDefaultFromPipelineParams = (parameters: TektonParam[]):
       _.omit(parameter, _.isEmpty(parameter.default) ? ['default'] : []) as TektonParam,
   );
 
+export const sanitizePipelineParams = (parameters: TektonParam[]): TektonParam[] => {
+  const pipelineWithNoEmptyDefaultParams = removeEmptyDefaultFromPipelineParams(parameters);
+  return pipelineWithNoEmptyDefaultParams.length > 0
+    ? pipelineWithNoEmptyDefaultParams.map((parameter) => {
+        if (parameter?.type === 'array' && typeof parameter?.default === 'string') {
+          return {
+            ...parameter,
+            default: parameter.default.split(',').map((param) => param.trim()),
+          };
+        }
+        return parameter;
+      })
+    : [];
+};
+
 type PipelineTaskLinks = {
   taskLinks: ResourceModelLink[];
   finallyTaskLinks: ResourceModelLink[];
