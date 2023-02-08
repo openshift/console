@@ -45,6 +45,10 @@ const EditRegistryPollIntervalModal: React.FC<EditRegistryPollIntervalModalProps
     return handlePromise(k8sPatch(CatalogSourceModel, catalogSource, patch), close);
   };
 
+  if (!availablePollIntervals.hasOwnProperty(pollInterval)) {
+    availablePollIntervals[pollInterval] = pollInterval;
+  }
+
   return (
     <Form onSubmit={submit} name="form">
       <div className="modal-content">
@@ -54,10 +58,7 @@ const EditRegistryPollIntervalModal: React.FC<EditRegistryPollIntervalModalProps
             <Dropdown
               className="dropdown--full-width"
               id="pollInterval_dropdown"
-              items={{
-                ...availablePollIntervals,
-                ...(availablePollIntervals[pollInterval] ? {} : { pollInterval }),
-              }}
+              items={availablePollIntervals}
               onChange={(selectedInterval: string) => setPollInterval(selectedInterval)}
               selectedKey={pollInterval}
             />
