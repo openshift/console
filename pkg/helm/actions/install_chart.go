@@ -4,8 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/signal"
-	"syscall"
+	"strings"
 	"time"
 
 	"github.com/openshift/api/helm/v1beta1"
@@ -175,21 +174,21 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 		ch.Metadata.Annotations = make(map[string]string)
 	}
 	ch.Metadata.Annotations["chart_url"] = url
-	fmt.Println(ch.Metadata.Name, ch.Metadata.Version, "Here")
 	// Set up channel on which to send signal notifications.
 	// We must use a buffered channel or risk missing the signal
 	// if we're not ready to receive when the signal is sent.
 
-	ctx, cancel := context.WithCancel(context.Background())
 	cmd.Namespace = ns
-	cSignal := make(chan os.Signal, 2)
-	signal.Notify(cSignal, os.Interrupt, syscall.SIGTERM)
+
+	// cSignal := make(chan os.Signal, 2)
+	// signal.Notify(cSignal, os.Interrupt, syscall.SIGTERM)
+	// go func() {
+	// 	<-cSignal
+	// 	cancel()
+	// }()
+	ctx, cancel := context.WithCancel(context.Background())
 	go func() {
-		<-cSignal
-		cancel()
-	}()
-	go func() {
-		cancelChan := make(chan bool, 1)
+		// cancelChan := make(chan bool, 1)
 		go func() {
 			label := fmt.Sprintf("owner=helm,name=%v,version=%v", name, 1)
 			secretList, err := coreClient.Secrets(ns).Watch(context.TODO(), metav1.ListOptions{LabelSelector: label, Watch: true})
@@ -201,10 +200,9 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 				event := <-secretList.ResultChan()
 				if event.Object != nil {
 					obj := event.Object.(*kv1.Secret)
-					fmt.Println("+++++++++++", obj.Labels["status"])
 					if obj.Labels["status"] == "uninstalling" {
-						fmt.Println("__Reached Here___yesssss")
-						cancelChan <- true
+						fmt.Println("uninstalling")
+						cancel()
 						secretList.Stop()
 						break
 					} else if obj.Labels["status"] == "deployed" {
@@ -224,17 +222,17 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 				fmt.Println("Reaching Here for metrics")
 				metrics.HandleconsoleHelmInstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
 			}
-			val := <-cancelChan
-			if val {
-				fmt.Println("------------------------")
-				fmt.Println("Reachig here for cancellation")
-				//cancel()
-				cSignal <- syscall.SIGTERM
-				fmt.Println("--------------------")
-				fmt.Println(ctx.Err(), " cqwVWfvwsagv")
-			}
-		} else {
-			fmt.Println("comnes here two", err)
+			// val := <-cancelChan
+			// if val {
+			// 	fmt.Println("------------------------")
+			// 	fmt.Println("Reachig here for cancellation")
+			// 	//cancel()
+			// 	cSignal <- syscall.SIGTERM
+			// 	fmt.Println("--------------------")
+			// 	fmt.Println(ctx.Err(), " cqwVWfvwsagv")
+			// }
+		} else if strings.Contains(err.Error(), "context cancelled") == false {
+			fmt.Println(err.Error())
 			createSecret(ns, name, 1, coreClient, err)
 		}
 		// remove all the tls related files created by this process

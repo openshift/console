@@ -228,10 +228,11 @@ func UpgradeReleaseAsync(
 		}
 		ch.Metadata.Annotations["chart_url"] = chartUrl
 	}
-
+	ctx, cancel := context.WithCancel(context.Background())
+	client.CleanupOnFail = true
 	go func() {
-		ctx, cancel := context.WithCancel(context.Background())
-		cancelChan := make(chan bool, 1)
+
+		// cancelChan := make(chan bool, 1)
 		go func() {
 			label := fmt.Sprintf("owner=helm,name=%v,version=%v", releaseName, rel.Version+1)
 			secretList, err := coreClient.Secrets(releaseNamespace).Watch(context.TODO(), metav1.ListOptions{LabelSelector: label, Watch: true})
@@ -243,41 +244,38 @@ func UpgradeReleaseAsync(
 				event := <-secretList.ResultChan()
 				if event.Object != nil {
 					obj := event.Object.(*kv1.Secret)
-					fmt.Println("+++++++++++", obj.Labels["status"])
 					if obj.Labels["status"] == "uninstalling" {
-						fmt.Println("__Reached Here___")
-						cancelChan <- true
+						// cancelChan <- true
+						cancel()
 						secretList.Stop()
 						break
 					} else if obj.Labels["status"] == "deployed" {
-						fmt.Println("release has been deployed")
-						cancelChan <- false
+						// cancelChan <- false
 						secretList.Stop()
 						break
 					}
 				}
 				if time.Since(start) >= (5 * time.Minute) {
-					fmt.Println("No need to watch for the secret after 5 minutes")
-					cancelChan <- false
+					// cancelChan <- false
 					secretList.Stop()
 					break
 				}
 			}
 		}()
 		_, err := client.RunWithContext(ctx, releaseName, ch, vals)
-		if err != nil {
+		if err != nil && strings.Contains(err.Error(), "context cancelled") == false {
 			createSecret(releaseNamespace, releaseName, rel.Version+1, coreClient, err)
 		} else {
 			if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
 				metrics.HandleconsoleHelmUpgradesTotal(ch.Metadata.Name, ch.Metadata.Version)
 			}
-			val := <-cancelChan
-			if val {
-				fmt.Println("Reachig here for cancellation")
-				cancel()
-				fmt.Println("--------------------")
-				fmt.Println(ctx.Err())
-			}
+			// val := <-cancelChan
+			// if val {
+			// 	fmt.Println("Reachig here for cancellation")
+			// 	cancel()
+			// 	fmt.Println("--------------------")
+			// 	fmt.Println(ctx.Err())
+			// }
 		}
 		defer func() {
 			if fileCleanUp == false {

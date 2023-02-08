@@ -421,9 +421,11 @@ func (i *Install) performInstall(c chan<- resultMessage, rel *release.Release, t
 func (i *Install) handleContext(ctx context.Context, c chan<- resultMessage, done chan struct{}, rel *release.Release) {
 	select {
 	case <-ctx.Done():
+		fmt.Println("YES-----------------")
 		err := ctx.Err()
 		i.reportToRun(c, rel, err)
 	case <-done:
+		fmt.Println("NO-----------------")
 		return
 	}
 }
@@ -438,12 +440,14 @@ func (i *Install) reportToRun(c chan<- resultMessage, rel *release.Release, err 
 func (i *Install) failRelease(rel *release.Release, err error) (*release.Release, error) {
 	rel.SetStatus(release.StatusFailed, fmt.Sprintf("Release %q failed: %s", i.ReleaseName, err.Error()))
 	if i.Atomic {
+		fmt.Println("Reaching Here Yippeee")
 		i.cfg.Log("Install failed and atomic is set, uninstalling release")
 		uninstall := NewUninstall(i.cfg)
 		uninstall.DisableHooks = i.DisableHooks
 		uninstall.KeepHistory = false
 		uninstall.Timeout = i.Timeout
 		if _, uninstallErr := uninstall.Run(i.ReleaseName); uninstallErr != nil {
+			fmt.Println("Let's see it does not reach here")
 			return rel, errors.Wrapf(uninstallErr, "an error occurred while uninstalling the release. original install error: %s", err)
 		}
 		return rel, errors.Wrapf(err, "release %s failed, and has been uninstalled due to atomic being set", i.ReleaseName)
