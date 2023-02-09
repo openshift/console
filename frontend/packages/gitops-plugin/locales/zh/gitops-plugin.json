@@ -45,5 +45,8 @@
   "No GitOps manifest URLs found": "未找到 GitOps 清单 URL",
   "Error cannot retrieve applications": "错误，无法检索应用程序",
   "No Application groups found": "未找到应用程序组",
-  "Environment details were not found. Try reloading the page or contacting an administrator.": "无法找到环境详情。请重新载入页面或联系管理员。"
+  "Environment details were not found. Try reloading the page or contacting an administrator.": "Environment details were not found. Try reloading the page or contacting an administrator.",
+  "Commit message not available": "提交的信息不可用",
+  "Commit author not available": "提交的作者不可用",
+  "Last deployed time not available": "最后部署的时间不可用"
 }
