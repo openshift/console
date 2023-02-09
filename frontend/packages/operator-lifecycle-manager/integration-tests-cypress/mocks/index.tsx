@@ -291,3 +291,23 @@ export const testCSV = {
     },
   },
 };
+
+export const testCatalogSource = {
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  kind: 'CatalogSource',
+  metadata: {
+    name: testName,
+    namespace: testName,
+    labels: { [testLabel]: testName },
+  },
+  spec: {
+    displayName: 'Test catalog',
+    image: '',
+    sourceType: 'grpc',
+    updateStrategy: {
+      registryPoll: {
+        interval: '10m',
+      },
+    },
+  },
+};
