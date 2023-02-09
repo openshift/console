@@ -44,3 +44,11 @@ Then('user switches to the {string} tab', (tab: string) => {
 When('user clicks on Create button on Create Serverless function', () => {
   cy.byLegacyTestID('submit-button').click();
 });
+
+When('user selects Add Pipeline checkbox in Pipelines section', () => {
+  gitPage.selectAddPipeline();
+});
+
+Then('user is able to see PipelineRuns', () => {
+  cy.byTestID('pipeline-overview').should('be.visible');
+});

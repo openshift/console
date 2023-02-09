@@ -8,11 +8,13 @@ import { getGitService, GitProvider } from '@console/git-service/src';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
+import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import GitSection from '../git/GitSection';
+import { notSupportedRuntime } from '../import-types';
 import ServerlessFunctionStrategySection from './ServerlessFunctionStrategySection';
 
 type AddServerlessFunctionFormProps = {
@@ -26,8 +28,6 @@ enum SupportedRuntime {
   typescript = 'nodejs',
   quarkus = 'java',
 }
-
-const notSupportedRuntime = ['go', 'rust', 'springboot', 'python'];
 
 const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
   AddServerlessFunctionFormProps> = ({
@@ -52,9 +52,7 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
   const showFullForm =
     strategy === ServerlessBuildStrategyType.ServerlessFunction &&
     validated !== ValidatedOptions.default &&
-    type !== GitProvider.INVALID &&
-    builderImages[values.image.selected] &&
-    notSupportedRuntime.indexOf(values.image.selected) === -1;
+    type !== GitProvider.INVALID;
 
   React.useEffect(() => {
     if (url) {
@@ -67,9 +65,9 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
             setFieldValue('deployment.env', res.values.runtimeEnvs);
             setFieldValue(
               'image.selected',
-              notSupportedRuntime.indexOf(res.values.runtime) > -1
-                ? res.values.runtime
-                : SupportedRuntime[res.values.runtime],
+              notSupportedRuntime.indexOf(res.values.runtime) === -1
+                ? SupportedRuntime[res.values.runtime]
+                : res.values.runtime,
             );
             setFieldValue('import.showEditImportStrategy', true);
             setFieldValue(
@@ -99,39 +97,23 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
               project={values.project}
               noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
             />
+            <PipelineSection builderImages={builderImages} />
             <AdvancedSection values={values} />
           </>
         )}
         {validated !== ValidatedOptions.default &&
           strategy !== ServerlessBuildStrategyType.ServerlessFunction && (
-            <Alert variant="warning" isInline title={t('devconsole~func.yaml not detected')}>
-              <p>{t('devconsole~func.yaml must be present to create a Serverless function')}</p>
-            </Alert>
-          )}
-        {validated !== ValidatedOptions.warning &&
-          strategy === ServerlessBuildStrategyType.ServerlessFunction &&
-          notSupportedRuntime.indexOf(values.image.selected) === -1 &&
-          builderImages[values.image.selected] === undefined && (
             <Alert
               variant="warning"
               isInline
-              title={t('devconsole~Builder Image {{image}} is not present.', {
-                image: values.image.selected,
-              })}
+              title={t('devconsole~func.yaml is not present or builder strategy is not s2i')}
             >
-              <p>{t('devconsole~Builder image is not present on cluster')}</p>
+              <p>
+                {t(
+                  'devconsole~func.yaml must be present or builder strategy should be s2i to create a Serverless function',
+                )}
+              </p>
             </Alert>
-          )}
-        {validated !== ValidatedOptions.warning &&
-          strategy === ServerlessBuildStrategyType.ServerlessFunction &&
-          notSupportedRuntime.indexOf(values.image.selected) > -1 && (
-            <Alert
-              variant="warning"
-              isInline
-              title={t('devconsole~Support for Builder image {{image}} is not yet available.', {
-                image: values.image.selected,
-              })}
-            />
           )}
       </FormBody>
       <FormFooter

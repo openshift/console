@@ -9,7 +9,10 @@ import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestr
 import { getGitService } from '@console/git-service/src';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
-import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
+import {
+  FLAG_OPENSHIFT_PIPELINE_AS_CODE,
+  FUNC_PIPELINE_RUNTIME_LABEL,
+} from '@console/pipelines-plugin/src/const';
 import {
   BlueInfoCircleIcon,
   CheckboxField,
@@ -72,6 +75,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
 
   const isDockerStrategy = build.strategy === 'Docker';
   const isPipelineAttached = !_.isEmpty(existingPipeline);
+  const isServerlessFunctionStrategy = build.strategy === 'ServerlessFunction';
 
   const getPipelineNames = (pipelines: PipelineKind[]): string =>
     pipelines
@@ -98,9 +102,16 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
 
     const builderPipelineLabel = { [PIPELINE_RUNTIME_LABEL]: image.selected };
     const dockerPipelineLabel = { [labelDocker]: 'docker' };
+    const funcPipelineLabel = { [FUNC_PIPELINE_RUNTIME_LABEL]: image.selected };
 
-    const labelSelector = isDockerStrategy ? dockerPipelineLabel : builderPipelineLabel;
-
+    let labelSelector;
+    if (isDockerStrategy) {
+      labelSelector = dockerPipelineLabel;
+    } else if (isServerlessFunctionStrategy) {
+      labelSelector = funcPipelineLabel;
+    } else {
+      labelSelector = builderPipelineLabel;
+    }
     const fetchPipelineTemplate = async () => {
       let fetchedPipelines: PipelineKind[] = null;
       if (!pipelineStorageRef.current[image.selected]) {
@@ -109,7 +120,6 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
           labelSelector,
         })) as PipelineKind[];
       }
-
       if (ignore) return;
 
       if (fetchedPipelines) {
@@ -170,6 +180,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     isPipelineAttached,
     existingPipeline,
     handlePipelineTypeChange,
+    isServerlessFunctionStrategy,
   ]);
 
   const pipelineTemplateItems = React.useMemo(() => {
