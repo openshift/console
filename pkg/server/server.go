@@ -305,6 +305,9 @@ func (s *Server) HTTPHandler() http.Handler {
 		handleFunc(authLogoutEndpoint, localAuther.LogoutFunc)
 		handleFunc(authLogoutMulticlusterEndpoint, s.handleLogoutMulticluster)
 		handleFunc(AuthLoginCallbackEndpoint, localAuther.CallbackFunc(fn))
+
+		handle("/api/request-token", authHandler(s.handleClusterTokenURL))
+
 		handle("/api/openshift/delete-token", authHandlerWithUser(s.handleOpenShiftTokenDeletion))
 		for clusterName, clusterAuther := range s.Authers {
 			if clusterAuther != nil {
@@ -843,6 +846,28 @@ func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 	w.Write([]byte("not found"))
+}
+
+func (s *Server) handleClusterTokenURL(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only GET is allowed"})
+		return
+	}
+	cluster := serverutils.GetCluster(r)
+	auther, ok := s.Authers[cluster]
+	if !ok {
+		errMsg := fmt.Sprintf("Auther for %q not found", cluster)
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: errMsg})
+		return
+	}
+
+	requestTokenURL := auther.GetSpecialURLs().RequestToken
+	serverutils.SendResponse(w, http.StatusOK, struct {
+		RequestTokenURL string `json:"requestTokenURL"`
+	}{
+		RequestTokenURL: requestTokenURL,
+	})
 }
 
 func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWriter, r *http.Request) {
