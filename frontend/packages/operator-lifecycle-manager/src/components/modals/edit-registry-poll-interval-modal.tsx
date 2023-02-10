@@ -17,12 +17,14 @@ import { k8sPatch } from '@console/internal/module/k8s';
 import { CatalogSourceModel } from '../../models';
 import { CatalogSourceKind } from '../../types';
 
-const availablePollIntervals = {
-  '10m0s': '10m',
-  '15m0s': '15m',
-  '30m0s': '30m',
-  '45m0s': '45m',
-  '60m0s': '60m',
+type DropdownItems = Record<string, string>;
+
+const availablePollIntervals: DropdownItems = {
+  '10m': '10m',
+  '15m': '15m',
+  '30m': '30m',
+  '45m': '45m',
+  '60m': '60m',
 };
 
 const EditRegistryPollIntervalModal: React.FC<EditRegistryPollIntervalModalProps> = ({
@@ -33,9 +35,23 @@ const EditRegistryPollIntervalModal: React.FC<EditRegistryPollIntervalModalProps
   errorMessage,
 }) => {
   const { t } = useTranslation();
-  const [pollInterval, setPollInterval] = React.useState(
-    catalogSource.spec?.updateStrategy?.registryPoll?.interval,
-  );
+  const [pollInterval, setPollInterval] = React.useState(() => {
+    let initialValue = catalogSource.spec?.updateStrategy?.registryPoll?.interval || '';
+    if (initialValue.endsWith('0s')) {
+      initialValue = initialValue.substring(0, initialValue.length - 2);
+    }
+    return initialValue;
+  });
+  const items = React.useMemo<DropdownItems>(() => {
+    let interval = catalogSource.spec?.updateStrategy?.registryPoll?.interval || '';
+    if (interval.endsWith('0s')) {
+      interval = interval.substring(0, interval.length - 2);
+    }
+    return {
+      ...availablePollIntervals,
+      ...(interval && !availablePollIntervals[interval] ? { interval } : {}),
+    };
+  }, [catalogSource.spec]);
 
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -54,10 +70,7 @@ const EditRegistryPollIntervalModal: React.FC<EditRegistryPollIntervalModalProps
             <Dropdown
               className="dropdown--full-width"
               id="pollInterval_dropdown"
-              items={{
-                ...availablePollIntervals,
-                ...(availablePollIntervals[pollInterval] ? {} : { pollInterval }),
-              }}
+              items={items}
               onChange={(selectedInterval: string) => setPollInterval(selectedInterval)}
               selectedKey={pollInterval}
             />
