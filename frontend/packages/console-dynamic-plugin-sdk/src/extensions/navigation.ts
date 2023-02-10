@@ -25,6 +25,7 @@ export type NavItem = ExtensionDeclaration<
   }
 >;
 
+/** This extension can be used to contribute a navigation item that points to a specific link in the UI. */
 export type HrefNavItem = ExtensionDeclaration<
   'console.navigation/href',
   NavItemProperties & {
@@ -39,6 +40,8 @@ export type HrefNavItem = ExtensionDeclaration<
   }
 >;
 
+/** This extension can be used to contribute a navigation item that points to a namespaced resource details page.
+    The K8s model of that resource can be used to define the navigation item. */
 export type ResourceNSNavItem = ExtensionDeclaration<
   'console.navigation/resource-ns',
   NavItemProperties & {
@@ -49,6 +52,8 @@ export type ResourceNSNavItem = ExtensionDeclaration<
   }
 >;
 
+/** This extension can be used to contribute a navigation item that points to a cluster resource details page.
+    The K8s model of that resource can be used to define the navigation item. */
 export type ResourceClusterNavItem = ExtensionDeclaration<
   'console.navigation/resource-cluster',
   NavItemProperties & {
@@ -59,11 +64,13 @@ export type ResourceClusterNavItem = ExtensionDeclaration<
   }
 >;
 
+/** This extension can be used to add a separator between navigation items in the navigation. */
 export type Separator = ExtensionDeclaration<
   'console.navigation/separator',
   Omit<NavItemProperties, 'startsWith'>
 >;
 
+/** This extension can be used to define a new section of navigation items in the navigation tab. */
 export type NavSection = ExtensionDeclaration<
   'console.navigation/section',
   Omit<NavItemProperties, 'startsWith' | 'section'> & {
