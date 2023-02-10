@@ -71,6 +71,7 @@ const ClusterGroup: React.FC<{
   clusters: ClusterMenuItem[];
 }> = ({ clusters }) => {
   const [activeCluster] = useActiveCluster();
+  const [activePerspective] = useActivePerspective();
 
   return clusters.length === 0 ? null : (
     <MenuGroup translate="no" label="Clusters">
@@ -81,7 +82,11 @@ const ClusterGroup: React.FC<{
             data-test-id="cluster-dropdown-item"
             key={cluster.key}
             itemId={cluster.key}
-            isSelected={activeCluster === cluster.key}
+            isSelected={
+              activePerspective === ACM_PERSPECTIVE_ID
+                ? cluster.key === ACM_PERSPECTIVE_ID
+                : cluster.key === activeCluster
+            }
             onClick={(e) => {
               e.preventDefault();
               cluster.onClick();
