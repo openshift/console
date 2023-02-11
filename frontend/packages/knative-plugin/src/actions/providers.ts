@@ -97,7 +97,7 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
       CommonActionFactory.ModifyAnnotations(kindObj, resource),
       CommonActionFactory.Edit(kindObj, resource),
       ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
-        ? [DeleteResourceAction(kindObj, resource, true)]
+        ? [DeleteResourceAction(kindObj, resource)]
         : [CommonActionFactory.Delete(kindObj, resource)]),
     ];
   }, [kindObj, resource]);
