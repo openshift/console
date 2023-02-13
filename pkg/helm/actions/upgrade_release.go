@@ -1,9 +1,11 @@
 package actions
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/openshift/api/helm/v1beta1"
 	"github.com/openshift/console/pkg/helm/metrics"
@@ -12,6 +14,7 @@ import (
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/release"
 	kv1 "k8s.io/api/core/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 )
@@ -229,8 +232,9 @@ func UpgradeReleaseAsync(
 		_, err := client.Run(releaseName, ch, vals)
 		if err != nil {
 			createSecret(releaseNamespace, releaseName, rel.Version+1, coreClient, err)
-		}
-		if err == nil {
+			time.Sleep(15 * time.Second)
+			coreClient.Secrets(releaseNamespace).Delete(context.TODO(), releaseName, v1.DeleteOptions{})
+		} else {
 			if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
 				metrics.HandleconsoleHelmUpgradesTotal(ch.Metadata.Name, ch.Metadata.Version)
 			}

@@ -1,8 +1,10 @@
 package actions
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/openshift/api/helm/v1beta1"
 	"github.com/openshift/console/pkg/helm/metrics"
@@ -11,6 +13,7 @@ import (
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/release"
 	kv1 "k8s.io/api/core/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -174,14 +177,16 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	cmd.Namespace = ns
 	go func() {
 		_, err := cmd.Run(ch, vals)
-		if err != nil {
-			createSecret(ns, name, 1, coreClient, err)
-		}
 		if err == nil {
 			if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
 				metrics.HandleconsoleHelmInstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
 			}
+		} else {
+			createSecret(ns, name, 1, coreClient, err)
+			time.Sleep(15 * time.Second)
+			coreClient.Secrets(ns).Delete(context.TODO(), name, v1.DeleteOptions{})
 		}
+
 		// remove all the tls related files created by this process
 		defer func() {
 			if fileCleanUp == false {
