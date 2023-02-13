@@ -17,7 +17,7 @@ import { ConfigMapKind, SecretKind, K8sResourceKind } from '@console/internal/mo
 import { nameRegex } from '@console/shared/src';
 import { RepositoryModel } from '../../models';
 import { PAC_TEMPLATE_DEFAULT } from '../pac/const';
-import { PIPELINE_NAMESPACE } from '../pipelines/const';
+import { PIPELINERUN_TEMPLATE_NAMESPACE } from '../pipelines/const';
 import { RepositoryFormValues } from './types';
 
 export const dryRunOpt = { dryRun: 'All' };
@@ -273,7 +273,7 @@ export const getPipelineRunDefaultTemplate = async (repoName: string): Promise<s
   try {
     const template = await k8sGetResource<ConfigMapKind>({
       model: ConfigMapModel,
-      ns: PIPELINE_NAMESPACE,
+      ns: PIPELINERUN_TEMPLATE_NAMESPACE,
       name: PAC_TEMPLATE_DEFAULT,
     });
     if (template?.data?.template) {
@@ -295,7 +295,7 @@ export const getPipelineRunTemplate = async (
     const [pipelineRunTemplateCfg] = await k8sListResourceItems<ConfigMapKind>({
       model: ConfigMapModel,
       queryParams: {
-        ns: PIPELINE_NAMESPACE,
+        ns: PIPELINERUN_TEMPLATE_NAMESPACE,
         labelSelector: {
           matchLabels: {
             'pipelinesascode.openshift.io/runtime': runtime,
