@@ -186,40 +186,45 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	// 	<-cSignal
 	// 	cancel()
 	// }()
+	//cmd.Atomic = true
 	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
+	// ctx, _ := context.WithTimeout(
+	// 	context.Background(),
+	// 	time.Duration(90*time.Second))
+	go func(ctx context.Context) {
 		// cancelChan := make(chan bool, 1)
-		go func() {
-			label := fmt.Sprintf("owner=helm,name=%v,version=%v", name, 1)
-			secretList, err := coreClient.Secrets(ns).Watch(context.TODO(), metav1.ListOptions{LabelSelector: label, Watch: true})
-			if err != nil {
-				return
-			}
-			start := time.Now()
-			for {
-				event := <-secretList.ResultChan()
-				if event.Object != nil {
-					obj := event.Object.(*kv1.Secret)
-					if obj.Labels["status"] == "uninstalling" {
-						fmt.Println("uninstalling")
-						cancel()
-						secretList.Stop()
-						break
-					} else if obj.Labels["status"] == "deployed" {
-						secretList.Stop()
-						break
-					}
-				}
-				if time.Since(start) >= (5 * time.Minute) {
-					secretList.Stop()
-					break
-				}
-			}
-		}()
+		// go func(cancel context.CancelFunc) {
+		// 	label := fmt.Sprintf("owner=helm,name=%v,version=%v", name, 1)
+		// 	secretList, err := coreClient.Secrets(ns).Watch(context.TODO(), metav1.ListOptions{LabelSelector: label, Watch: true})
+		// 	if err != nil {
+		// 		return
+		// 	}
+		// 	start := time.Now()
+		// 	for {
+		// 		event := <-secretList.ResultChan()
+		// 		if event.Object != nil {
+		// 			obj := event.Object.(*kv1.Secret)
+		// 			if obj.Labels["status"] == "uninstalling" || obj.Labels["status"] == "uninstalled" {
+		// 				fmt.Println(obj.Labels["status"])
+		// 				cancel()
+		// 				secretList.Stop()
+		// 				break
+		// 			} else if obj.Labels["status"] == "deployed" {
+		// 				secretList.Stop()
+		// 				break
+		// 			}
+		// 		}
+		// 		if time.Since(start) >= (5 * time.Minute) {
+		// 			secretList.Stop()
+		// 			break
+		// 		}
+		// 	}
+		// }(cancel)
 		_, err = cmd.RunWithContext(ctx, ch, vals)
+		// fmt.Println(time.Since(start), err.Error())
+		// fmt.Println(ctx.Err())
 		if err == nil {
 			if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
-				fmt.Println("Reaching Here for metrics")
 				metrics.HandleconsoleHelmInstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
 			}
 			// val := <-cancelChan
@@ -231,9 +236,10 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 			// 	fmt.Println("--------------------")
 			// 	fmt.Println(ctx.Err(), " cqwVWfvwsagv")
 			// }
-		} else if strings.Contains(err.Error(), "context cancelled") == false {
-			fmt.Println(err.Error())
+		} else if strings.Contains(err.Error(), "context canceled") == false {
 			createSecret(ns, name, 1, coreClient, err)
+			time.Sleep(15 * time.Second)
+			coreClient.Secrets(ns).Delete(context.TODO(), name, metav1.DeleteOptions{})
 		}
 		// remove all the tls related files created by this process
 		defer func() {
@@ -244,7 +250,45 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 				os.Remove(f.Name())
 			}
 		}()
-	}()
+		// defer cancel()
+		// select {
+		// case <-ctx.Done():
+		// 	switch ctx.Err() {
+		// 	case context.DeadlineExceeded:
+		// 		fmt.Println("context timeout exceeded")
+		// 	case context.Canceled:
+		// 		fmt.Println("context cancelled by force. whole process is complete")
+		// 	}
+		// }
+	}(ctx)
+
+	go func(cancel context.CancelFunc) {
+		label := fmt.Sprintf("owner=helm,name=%v,version=%v", name, 1)
+		secretList, err := coreClient.Secrets(ns).Watch(context.TODO(), metav1.ListOptions{LabelSelector: label, Watch: true})
+		if err != nil {
+			return
+		}
+		start := time.Now()
+		for {
+			event := <-secretList.ResultChan()
+			if event.Object != nil {
+				obj := event.Object.(*kv1.Secret)
+				if obj.Labels["status"] == "uninstalling" || obj.Labels["status"] == "uninstalled" {
+					fmt.Println(obj.Labels["status"])
+					cancel()
+					secretList.Stop()
+					break
+				} else if obj.Labels["status"] == "deployed" {
+					secretList.Stop()
+					break
+				}
+			}
+			if time.Since(start) >= (5 * time.Minute) {
+				secretList.Stop()
+				break
+			}
+		}
+	}(cancel)
 
 	secret, err := getSecret(ns, name, 1, coreClient)
 	if err != nil {
