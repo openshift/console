@@ -118,3 +118,17 @@ Feature: Creation and Visualisation of serverless fuctions
         Examples:
                   | git_url                                       | workload_name                                            |
                   | https://github.com/vikram-raj/hello-func-node | create-serverless-function-form-hello-func-node-pipeline |
+
+        @regression @odc-6360
+        Scenario Outline: Pipeline section should not present in Create Serverless function form if Pipeline is not available: SF-01-TC09
+            Given user is at Add page
+             When user clicks on Create Serverless function card
+              And user enters git url "<git_url>"
+              And user is able to see builder image version dropdown
+              And user is able to see the runtime details
+              And user enters Name as "<workload_name>"
+             Then user is not able to see Add Pipeline checkbox
+
+        Examples:
+                  | git_url                                          | workload_name      |
+                  | https://github.com/vikram-raj/hello-func-quarkus | hello-func-quarkus |

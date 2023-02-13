@@ -1,5 +1,6 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { addOptions } from '@console/dev-console/integration-tests/support/constants';
+import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   addPage,
   gitPage,
@@ -51,4 +52,8 @@ When('user selects Add Pipeline checkbox in Pipelines section', () => {
 
 Then('user is able to see PipelineRuns', () => {
   cy.byTestID('pipeline-overview').should('be.visible');
+});
+
+Then('user is not able to see Add Pipeline checkbox', () => {
+  cy.get(gitPO.pipeline.addPipeline).should('not.exist');
 });

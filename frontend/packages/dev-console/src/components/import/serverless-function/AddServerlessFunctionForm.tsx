@@ -4,11 +4,18 @@ import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getGitService, GitProvider } from '@console/git-service/src';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
+import {
+  CLUSTER_PIPELINE_NS,
+  FUNC_PIPELINE_RUNTIME_LABEL,
+} from '@console/pipelines-plugin/src/const';
+import { PipelineModel } from '@console/pipelines-plugin/src/models';
+import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import AdvancedSection from '../advanced/AdvancedSection';
@@ -48,7 +55,10 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
   const {
     git: { validated, url, type, ref, dir, secretResource },
     build: { strategy },
+    image,
   } = values;
+
+  const [showPipelineSection, setShowPipelineSection] = React.useState<boolean>(false);
   const showFullForm =
     strategy === ServerlessBuildStrategyType.ServerlessFunction &&
     validated !== ValidatedOptions.default &&
@@ -86,6 +96,27 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
         });
     }
   }, [setFieldValue, url, type, ref, dir, secretResource, builderImages, setStatus]);
+
+  React.useEffect(() => {
+    if (image.selected) {
+      const fetchPipelineTemplate = async () => {
+        const fetchedPipelines = (await k8sListResourceItems({
+          model: PipelineModel,
+          queryParams: {
+            ns: CLUSTER_PIPELINE_NS,
+            labelSelector: { matchLabels: { [FUNC_PIPELINE_RUNTIME_LABEL]: image?.selected } },
+          },
+        })) as PipelineKind[];
+        if (fetchedPipelines.length > 0) {
+          setShowPipelineSection(true);
+        } else {
+          setShowPipelineSection(false);
+        }
+      };
+      fetchPipelineTemplate();
+    }
+  }, [image]);
+
   return (
     <form onSubmit={handleSubmit} data-test="create-serverless-function-form">
       <FormBody>
@@ -97,7 +128,7 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
               project={values.project}
               noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
             />
-            <PipelineSection builderImages={builderImages} />
+            {showPipelineSection && <PipelineSection builderImages={builderImages} />}
             <AdvancedSection values={values} />
           </>
         )}
