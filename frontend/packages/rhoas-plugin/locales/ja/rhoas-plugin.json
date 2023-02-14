@@ -54,8 +54,8 @@
   "List of Kafka Instances": "Kafka インスタンスの一覧",
   "Bootstrap Server": "ブートストラップサーバー",
   "URL": "URL",
-  "Secret": "Secret",
-  "No Secret": "Secret なし",
+  "Secret": "シークレット",
+  "No Secret": "シークレットなし",
   "Error moving event source kafka connector": "イベントソースの kafka コネクターの移動に関するエラー",
   "Cloud Service": "クラウドサービス",
   "This resource represents service that exist outside your cluster": "このリソースは、クラスター外にあるサービスを表します。"

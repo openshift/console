@@ -3,7 +3,7 @@
   "vSphere configurations": "vSphere 配置",
   "Loading vSphere connection status": "加载 vSphere 连接状态",
   "The vSphere Connection check is failing.": "vSphere 连接检查失败。",
-  "Learn more about progress": "了解更多与进度相关的信息",
+  "No error is reported, open for detailed status.": "没有报告错误，打开详细状态。",
   "Missing the vSphere config map.": "缺少 vSphere 配置映射。",
   "Not configured yet": "未配置",
   "Prometheus query failed.": "Prometheus 查询失败。",
