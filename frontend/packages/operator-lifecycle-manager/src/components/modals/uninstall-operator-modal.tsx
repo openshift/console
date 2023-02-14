@@ -69,6 +69,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const [operandDeletionVerificationError, setOperandDeletionVerificationError] = React.useState(
     false,
   );
+  const [clusterServiceVersionExistsError, setClusterServiceVersionExistsError] = React.useState(
+    '',
+  );
 
   const canPatchConsoleOperatorConfig = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
@@ -140,8 +143,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         });
         return true;
       } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log(err.message);
+        if (err.json.code !== 404) {
+          setClusterServiceVersionExistsError(err.message);
+        }
         return false;
       }
     };
@@ -357,6 +361,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     <>
       <UninstallAlert
         errorMessage={
+          clusterServiceVersionExistsError ||
           operatorUninstallErrorMessage ||
           (operandDeletionErrors.length
             ? t('olm~Operator could not be uninstalled due to error deleting its Operands')
