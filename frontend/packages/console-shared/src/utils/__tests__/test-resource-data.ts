@@ -75,6 +75,68 @@ export const sampleDeploymentConfigs: FirehoseResult = {
       kind: 'DeploymentConfig',
       apiVersion: 'apps/v1',
       metadata: {
+        name: 'nodejs-with-bc',
+        namespace: 'testproject',
+        uid: '02f680df-680f-11e9-b69e-5254003f9382',
+        resourceVersion: '732186',
+        generation: 2,
+        creationTimestamp: '2019-04-22T11:58:33Z',
+        labels: {
+          app: 'nodejs-with-bc',
+          'app.kubernetes.io/instance': 'nodejs-with-bc',
+          'app.openshift.io/runtime': 'nodejs',
+          'app.openshift.io/part-of': 'nodejs-with-bc',
+        },
+        annotations: {
+          'app.openshift.io/vcs-uri': 'https://github.com/redhat-developer/topology-example',
+          'app.openshift.io/vcs-ref': 'master',
+        },
+      },
+      spec: {
+        strategy: {
+          type: 'Rolling',
+        },
+        template: {
+          metadata: {
+            creationTimestamp: null,
+            labels: {
+              app: 'nodejs-with-bc',
+              deploymentconfig: 'nodejs-with-bc',
+            },
+          },
+          spec: {},
+        },
+        triggers: [
+          {
+            type: 'ImageChange',
+            imageChangeParams: {
+              automatic: true,
+              containerNames: ['nodejs-with-bc'],
+              from: {
+                kind: 'ImageStreamTag',
+                namespace: 'testproject',
+                name: 'nodejs:latest',
+              },
+            },
+          },
+          {
+            type: 'ConfigChange',
+          },
+        ],
+      },
+      status: {
+        availableReplicas: 1,
+        unavailableReplicas: 0,
+        latestVersion: 1,
+        updatedReplicas: 1,
+        replicas: 1,
+        readyReplicas: 1,
+      },
+    },
+    {
+      kind: 'DeploymentConfig',
+      apiVersion: 'apps/v1',
+      metadata: {
         name: 'nodejs-ex',
         namespace: 'testproject1',
         uid: '02f680df-b69e-5254003f9382',
@@ -1398,6 +1460,29 @@ export const sampleServices: FirehoseResult = {
     {
       kind: 'Service',
       metadata: {
+        name: 'nodejs-with-bc',
+        namespace: 'testproject',
+        uid: '02f53542-680f-11e9-8c69-5254003f9382',
+        resourceVersion: '1160881',
+        creationTimestamp: '2019-04-26T10:35:29Z',
+        labels: {
+          app: 'nodejs-with-bc',
+          'app.openshift.io/part-of': 'nodejs-with-bc',
+        },
+      },
+      spec: {
+        selector: {
+          app: 'nodejs-with-bc',
+          deploymentconfig: 'nodejs-with-bc',
+        },
+      },
+      status: {
+        loadBalancer: {},
+      },
+    },
+    {
+      kind: 'Service',
+      metadata: {
         name: 'wit-service',
         namespace: 'testproject3',
         uid: '60e010cc-680d-11e9-8c69-5254003f9382',
@@ -1484,6 +1569,32 @@ export const sampleRoutes: FirehoseResult = {
         to: {
           kind: 'Service',
           name: 'nodejs',
+          weight: 100,
+        },
+      },
+      status: {},
+    },
+    {
+      kind: 'Route',
+      metadata: {
+        name: 'nodejs-with-bc',
+        namespace: 'testproject',
+        uid: '02f63696-680f-11e9-b69e-5254003f9382',
+        resourceVersion: '1160889',
+        creationTimestamp: '2019-04-26T10:35:29Z',
+        labels: {
+          app: 'nodejs-with-bc',
+          'app.openshift.io/part-of': 'nodejs-with-bc',
+        },
+        annotations: {
+          'openshift.io/host.generated': 'true',
+        },
+      },
+      spec: {
+        host: 'nodejs-testproject3.192.168.42.60.nip.io',
+        to: {
+          kind: 'Service',
+          name: 'nodejs-with-bc',
           weight: 100,
         },
       },
@@ -1616,6 +1727,64 @@ export const sampleBuildConfigs: FirehoseResult = {
           to: {
             kind: 'ImageStreamTag',
             name: 'nodejs:latest',
+          },
+        },
+        triggers: [
+          { type: 'Generic', generic: {} },
+          { type: 'Github', github: {} },
+        ],
+      },
+      status: {
+        lastVersion: 1,
+      },
+    },
+    {
+      kind: 'BuildConfig',
+      metadata: {
+        name: 'nodejs-with-bc',
+        namespace: 'testproject',
+        uid: '02fc958f-680f-11e9-b69e-5254003f9382',
+        resourceVersion: '1160891',
+        creationTimestamp: '2019-04-26T10:35:29Z',
+        labels: {
+          app: 'nodejs-with-bc',
+          'app.openshift.io/part-of': 'nodejs-with-bc',
+        },
+      },
+      spec: {
+        output: {
+          to: {
+            kind: 'ImageStreamTag',
+            name: 'nodejs-with-bc:latest',
+          },
+        },
+        triggers: [
+          { type: 'Generic', generic: {} },
+          { type: 'Github', github: {} },
+        ],
+      },
+      status: {
+        lastVersion: 1,
+      },
+    },
+    {
+      kind: 'BuildConfig',
+      metadata: {
+        name: 'nodejs-with-bc-binary',
+        namespace: 'testproject',
+        uid: '02fc958f-680f-11e9-b69e-5254003f9382',
+        resourceVersion: '1160891',
+        creationTimestamp: '2019-04-26T10:35:29Z',
+        labels: {
+          app: 'nodejs-with-bc',
+          'app.openshift.io/part-of': 'nodejs-with-bc',
+        },
+      },
+      spec: {
+        output: {
+          to: {
+            kind: 'ImageStreamTag',
+            name: 'nodejs-with-bc:latest',
           },
         },
         triggers: [
