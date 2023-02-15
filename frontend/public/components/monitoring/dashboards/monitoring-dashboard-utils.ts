@@ -27,6 +27,7 @@ export const getAllVariables = (boards: Board[], newBoardName: string, namespace
       }
 
       allVariables[v.name] = ImmutableMap({
+        datasource: v.datasource,
         includeAll: !!v.includeAll,
         isHidden: namespace && v.name === 'namespace' ? true : v.hide !== 0,
         isLoading: namespace ? v.type === 'query' && !namespace : v.type === 'query',

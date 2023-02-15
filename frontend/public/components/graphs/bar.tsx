@@ -17,6 +17,8 @@ import { DataPoint } from '.';
 import { getInstantVectorStats } from './utils';
 import { GraphEmpty } from './graph-empty';
 
+import { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
+
 const DEFAULT_BAR_WIDTH = 10;
 const PADDING_RATIO = 1 / 3;
 
@@ -94,12 +96,14 @@ export const Bar: React.FC<BarProps> = ({
   query,
   theme,
   title,
+  customDataSource,
 }) => {
   const [response, , loading] = usePrometheusPoll({
     delay,
     endpoint: PrometheusEndpoint.QUERY,
     namespace,
     query,
+    customDataSource,
   });
   const data = getInstantVectorStats(response, metric, humanize);
 
@@ -149,4 +153,5 @@ type BarProps = {
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   title?: string;
   titleClassName: string;
+  customDataSource?: CustomDataSource;
 };
