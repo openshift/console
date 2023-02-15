@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { GithubIcon, GitAltIcon, GitlabIcon, BitbucketIcon } from '@patternfly/react-icons';
-import { getGitProviderIcon, getLatestRepositoryPLRName } from '../repository-utils';
+import {
+  getGitProviderIcon,
+  getLatestRepositoryPLRName,
+  sanitizeBranchName,
+} from '../repository-utils';
 import { mockRepository } from './repository-mock';
 
 describe('repository-util', () => {
@@ -55,5 +59,16 @@ describe('repository-util', () => {
         title="https://githube.com/sclorg/ruby-ex.git"
       />,
     );
+  });
+
+  it('sanitizeBranchName should return branch name', () => {
+    const branch1 = sanitizeBranchName('refs-heads-main');
+    expect(branch1).toBe('main');
+    const branch2 = sanitizeBranchName('refs-heads-cicd-demo');
+    expect(branch2).toBe('cicd-demo');
+    const branch3 = sanitizeBranchName('refs/heads/foo');
+    expect(branch3).toBe('foo');
+    const branch4 = sanitizeBranchName('refs/tags/1.0');
+    expect(branch4).toBe('refs/tags/1.0');
   });
 });
