@@ -161,7 +161,7 @@ export const sortExtensionItems = <E extends NavExtension>(
 // '/<basePath>/k8s/all-namespaces/' from the beginning a given path
 export const stripScopeFromPath = (path: string) =>
   stripBasePath(path)?.replace(
-    /^\/?(?:k8s\/cluster\/|k8s\/all-namespaces\/|k8s\/ns\/[^/]*\/)?(.*?)\/?$/,
+    /^\/?(?:c\/[^/]*\/)?(?:k8s\/cluster\/|k8s\/all-namespaces\/|k8s\/ns\/[^/]*\/)?(.*?)\/?$/,
     '$1',
   );
 

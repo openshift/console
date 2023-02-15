@@ -14,6 +14,7 @@ import { referenceForModel } from '../../module/k8s/k8s-ref';
 import { connectToFlags } from '../../reducers/connectToFlags';
 import { FlagsObject } from '../../reducers/features';
 import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 
 const unknownKinds = new Set();
 
@@ -84,23 +85,21 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   onClick,
   truncate,
 }) => {
-  if (!kind && !groupVersionKind) {
-    return null;
-  }
   const kindReference = groupVersionKind ? getReference(groupVersionKind) : kind;
   const path = linkTo ? resourcePath(kindReference, name, namespace) : undefined;
+  const to = useClusterPrefixedPath(path);
   const value = displayName ? displayName : name;
   const classes = classNames('co-resource-item', className, {
     'co-resource-item--inline': inline,
     'co-resource-item--truncate': truncate,
   });
 
-  return (
+  return kindReference ? (
     <span className={classes}>
       {!hideIcon && <ResourceIcon kind={kindReference} />}
-      {path ? (
+      {to ? (
         <Link
-          to={path}
+          to={to}
           title={title}
           className="co-resource-item__resource-name"
           data-test-id={value}
@@ -120,7 +119,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
       )}
       {children}
     </span>
-  );
+  ) : null;
 };
 
 const NodeLink_: React.FC<NodeLinkProps> = (props) => {

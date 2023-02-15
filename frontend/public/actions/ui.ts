@@ -64,6 +64,16 @@ type MetricValuesByNamespace = {
   [namespace: string]: MetricValuesByName;
 };
 
+export type FormatNamespaceRouteOptions = {
+  activeNamespace: string;
+  originalPath: string;
+  activeCluster?: string;
+  location?: Location;
+  forceList?: boolean;
+};
+
+export type FormatNamespaceRoute = (options: FormatNamespaceRouteOptions) => string;
+
 export type PodMetrics = {
   cpu: MetricValuesByNamespace;
   memory: MetricValuesByNamespace;
@@ -127,15 +137,22 @@ export const getPVCMetric = (pvc: K8sResourceKind, metric: string): number => {
   return metrics?.[metric]?.[pvc.metadata.namespace]?.[pvc.metadata.name] ?? 0;
 };
 
-export const formatNamespaceRoute = (
+export const formatNamespaceRoute: FormatNamespaceRoute = ({
   activeNamespace,
+  activeCluster,
   originalPath,
-  location?,
-  forceList?: boolean,
-) => {
+  location,
+  forceList,
+}) => {
   let path = originalPath.substr(window.SERVER_FLAGS.basePath.length);
 
   let parts = path.split('/').filter((p) => p);
+  let currentCluster;
+  if (parts[0] === 'c') {
+    parts.shift();
+    currentCluster = parts.shift();
+  }
+
   const prefix = parts.shift();
 
   let previousNS;
@@ -164,7 +181,9 @@ export const formatNamespaceRoute = (
   const namespacePrefix =
     activeNamespace === ALL_NAMESPACES_KEY ? 'all-namespaces' : `ns/${activeNamespace}`;
 
-  path = `/${prefix}/${namespacePrefix}`;
+  path = currentCluster
+    ? `/c/${activeCluster || currentCluster}/${prefix}/${namespacePrefix}`
+    : `/${prefix}/${namespacePrefix}`;
   if (parts.length) {
     path += `/${parts.join('/')}`;
   }
@@ -204,9 +223,13 @@ export const setActiveNamespace = (namespace: string = '') => {
   // otherwise users will get page refresh and cry about
   // broken direct links and bookmarks
   if (namespace !== getActiveNamespace()) {
-    const oldPath = window.location.pathname;
-    const newPath = formatNamespaceRoute(namespace, oldPath, window.location);
-    if (newPath !== oldPath) {
+    const originalPath = window.location.pathname;
+    const newPath = formatNamespaceRoute({
+      activeNamespace: namespace,
+      originalPath,
+      location: window.location,
+    });
+    if (newPath !== originalPath) {
       history.pushPath(newPath);
     }
     // save last namespace in session storage (persisted only for current browser tab). Used to remember/restore if

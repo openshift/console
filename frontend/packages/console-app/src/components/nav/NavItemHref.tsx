@@ -2,7 +2,11 @@ import * as React from 'react';
 import { NavItem } from '@patternfly/react-core';
 import { HrefNavItem } from '@console/dynamic-plugin-sdk';
 import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-internal';
-import { formatNamespacedRouteForHref, formatNamespacedRouteForResource } from '@console/shared';
+import {
+  formatNamespacedRouteForHref,
+  formatNamespacedRouteForResource,
+  useActiveCluster,
+} from '@console/shared';
 import { useLocation } from '@console/shared/src/hooks/useLocation';
 import { NavLinkProps, NavLink } from './NavLink';
 import { navItemHrefIsActive, stripScopeFromPath } from './utils';
@@ -17,6 +21,7 @@ export const NavItemHref: React.FC<NavItemHrefProps> = ({
   ...navLinkProps
 }) => {
   const [activeNamespace] = useActiveNamespace();
+  const [cluster] = useActiveCluster();
   const location = useLocation();
   const isActive = React.useMemo(() => navItemHrefIsActive(location, href, startsWith), [
     href,
@@ -28,10 +33,10 @@ export const NavItemHref: React.FC<NavItemHrefProps> = ({
       return formatNamespacedRouteForHref(href, activeNamespace);
     }
     if (prefixNamespaced) {
-      return formatNamespacedRouteForResource(stripScopeFromPath(href), activeNamespace);
+      return formatNamespacedRouteForResource(stripScopeFromPath(href), activeNamespace, cluster);
     }
     return href;
-  }, [activeNamespace, href, namespaced, prefixNamespaced]);
+  }, [activeNamespace, cluster, href, namespaced, prefixNamespaced]);
   return (
     <NavItem isActive={isActive}>
       <NavLink {...navLinkProps} {...dataAttributes} to={to}>

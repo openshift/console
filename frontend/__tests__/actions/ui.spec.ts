@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import '../../__mocks__/localStorage';
 import store from '../../public/redux';
@@ -8,20 +8,23 @@ import * as router from '../../public/components/utils/router';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 
 const setActiveNamespace = (ns) => store.dispatch(UIActions.setActiveNamespace(ns));
-const getNamespacedRoute = (path) =>
-  UIActions.formatNamespaceRoute(getActiveNamespace(store.getState()), path);
+const getNamespacedRoute = (originalPath) =>
+  UIActions.formatNamespaceRoute({
+    activeNamespace: getActiveNamespace(store.getState()),
+    originalPath,
+  });
 
 describe('ui-actions', () => {
   describe('UIActions.formatNamespaceRoute', () => {
     it('formats namespaced routes', () => {
       [
-        ['bar', '/k8s/ns/foo/pods', '/k8s/ns/bar/pods'],
-        ['bar', '/search/ns/foo', '/search/ns/bar'],
-        ['bar', '/status/ns/foo', '/status/ns/bar'],
-        ['bar', '/k8s/all-namespaces/foo', '/k8s/ns/bar/foo'],
-        ['bar', '/k8s/ns/foo/bar/baz', '/k8s/ns/bar/bar'],
-      ].forEach((t) => {
-        expect(UIActions.formatNamespaceRoute(t[0], t[1])).toEqual(t[2]);
+        [{ activeNamespace: 'bar', originalPath: '/k8s/ns/foo/pods' }, '/k8s/ns/bar/pods'],
+        [{ activeNamespace: 'bar', originalPath: '/search/ns/foo' }, '/search/ns/bar'],
+        [{ activeNamespace: 'bar', originalPath: '/status/ns/foo' }, '/status/ns/bar'],
+        [{ activeNamespace: 'bar', originalPath: '/k8s/all-namespaces/foo' }, '/k8s/ns/bar/foo'],
+        [{ activeNamespace: 'bar', originalPath: '/k8s/ns/foo/bar/baz' }, '/k8s/ns/bar/bar'],
+      ].forEach(([options, result]: [UIActions.FormatNamespaceRouteOptions, string]) => {
+        expect(UIActions.formatNamespaceRoute(options)).toEqual(result);
       });
     });
   });

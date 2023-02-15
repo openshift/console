@@ -2,16 +2,18 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { CoreState } from '@console/dynamic-plugin-sdk/src';
-import { setActiveCluster } from '@console/dynamic-plugin-sdk/src/app/core/actions';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useHistory, useLocation } from 'react-router-dom';
+import {
+  getActiveCluster,
+  setActiveCluster,
+  useActivePerspective,
+} from '@console/dynamic-plugin-sdk/src';
 import { clearSSARFlags, detectFeatures } from '@console/internal/actions/features';
 import { formatNamespaceRoute } from '@console/internal/actions/ui';
 import { useActiveNamespace } from '@console/shared/src';
-import { LAST_CLUSTER_USER_SETTINGS_KEY, HUB_CLUSTER_NAME } from '@console/shared/src/constants';
-import { useUserSettingsLocalStorage } from '@console/shared/src/hooks/useUserSettingsLocalStorage';
+import { useClusterFromUrl } from '@console/shared/src/hooks/useClusterFromUrl';
 import { ACM_PERSPECTIVE_ID, ADMIN_PERSPECTIVE_ID } from '../../consts';
+import { useLastCluster } from './useLastCluster';
 
 type ClusterContextType = {
   cluster?: string;
@@ -23,21 +25,16 @@ export const ClusterContext = React.createContext<ClusterContextType>({});
 export const useValuesForClusterContext = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
   const [activeNamespace] = useActiveNamespace();
   const [activePerspective, setActivePerspective] = useActivePerspective();
-  const activeCluster = useSelector((state: CoreState) => state.activeCluster);
-  const [lastCluster, setLastCluster] = useUserSettingsLocalStorage<string>(
-    LAST_CLUSTER_USER_SETTINGS_KEY,
-    LAST_CLUSTER_USER_SETTINGS_KEY,
-    HUB_CLUSTER_NAME,
-    false,
-    true,
-  );
+  const urlCluster = useClusterFromUrl();
+  const activeCluster = useSelector(getActiveCluster);
+  const [lastCluster, setLastCluster] = useLastCluster();
 
   // Set initial active cluster in redux on first render.
   React.useEffect(() => {
-    // TODO: Detect cluster from URL.
-    dispatch(setActiveCluster(lastCluster));
+    dispatch(setActiveCluster(urlCluster ?? lastCluster));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -54,21 +51,27 @@ export const useValuesForClusterContext = () => {
         if (activePerspective === ACM_PERSPECTIVE_ID) {
           setActivePerspective(ADMIN_PERSPECTIVE_ID);
         } else {
-          const oldPath = window.location.pathname;
-          const newPath = formatNamespaceRoute(activeNamespace, oldPath, window.location, true);
-          if (newPath !== oldPath) {
-            history.pushPath(newPath);
+          const next = formatNamespaceRoute({
+            activeNamespace,
+            activeCluster,
+            originalPath: location.pathname,
+            location,
+            forceList: true,
+          });
+          if (next !== location.pathname) {
+            history.push(next);
           }
         }
       },
       [
         activeCluster,
-        activeNamespace,
         activePerspective,
         dispatch,
-        history,
-        setActivePerspective,
         setLastCluster,
+        setActivePerspective,
+        activeNamespace,
+        location,
+        history,
       ],
     ),
   };

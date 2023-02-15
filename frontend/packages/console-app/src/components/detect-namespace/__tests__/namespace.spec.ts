@@ -48,7 +48,7 @@ const k8sGetMock = k8sGet as jest.Mock;
 const activeNamespace = 'active-ns';
 const urlNamespace: string = 'url-ns';
 const getLocationData = (valid = true) => ({
-  pathname: valid ? `home/ns/${urlNamespace}` : 'home/invalid',
+  pathname: valid ? `/home/ns/${urlNamespace}` : '/home/invalid',
 });
 const lastNamespace: string = 'last-ns';
 const preferredNamespace: string = 'preferred-ns';
@@ -79,7 +79,7 @@ describe('useValuesForNamespaceContext', () => {
     expect(loaded).toBeTruthy();
   });
 
-  it('should return activeNamespace if it it already defined', async () => {
+  it('should return activeNamespace if it is already defined', async () => {
     useFlagMock.mockReturnValue(true);
     k8sGetMock.mockReturnValue(Promise.resolve({}));
     useLocationMock.mockReturnValue(getLocationData(false));

@@ -7,9 +7,11 @@ import {
   formatNamespacedRouteForResource,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   ALL_NAMESPACES_KEY,
+  useActiveCluster,
 } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useLocation } from '@console/shared/src/hooks/useLocation';
+import { getClusterPrefixedPath } from '../detect-cluster/useClusterPrefixedPath';
 import { NavLink, NavLinkProps } from './NavLink';
 import { navItemResourceIsActive } from './utils';
 
@@ -21,6 +23,7 @@ export const NavItemResource: React.FC<NavItemResourceProps> = ({
   dataAttributes,
   ...navLinkProps
 }) => {
+  const [cluster] = useActiveCluster();
   const [activeNamespace] = useActiveNamespace();
   const location = useLocation();
   const lastNamespace = sessionStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
@@ -37,9 +40,10 @@ export const NavItemResource: React.FC<NavItemResourceProps> = ({
         ? formatNamespacedRouteForResource(
             resourceReference,
             lastNamespace === ALL_NAMESPACES_KEY ? lastNamespace : activeNamespace,
+            cluster,
           )
-        : `/k8s/cluster/${resourceReference}`,
-    [namespaced, resourceReference, lastNamespace, activeNamespace],
+        : getClusterPrefixedPath(`/k8s/cluster/${resourceReference}`, cluster),
+    [namespaced, resourceReference, lastNamespace, activeNamespace, cluster],
   );
   return (
     <NavItem className={className} isActive={isActive}>

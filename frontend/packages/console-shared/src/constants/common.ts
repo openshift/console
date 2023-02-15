@@ -103,3 +103,4 @@ export const CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER =
   'https://api.openshift.com/api/upgrades_info/v1/graph';
 
 export const HUB_CLUSTER_NAME = 'local-cluster';
+export const CLUSTER_ROUTE_PREFIX = `/c/:cluster`;

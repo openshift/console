@@ -587,7 +587,11 @@ const ProjectLink = ({ project }) => {
     search: `?${params.toString()}`,
     hash: url.hash,
   };
-  const namespacedPath = UIActions.formatNamespaceRoute(project.metadata.name, basePath, newUrl);
+  const namespacedPath = UIActions.formatNamespaceRoute({
+    activeNamespace: project.metadata.name,
+    originalPath: basePath,
+    location: newUrl,
+  });
 
   const handleClick = (e) => {
     // Don't set last namespace if its modified click (Ctrl+Click).

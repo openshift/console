@@ -24,6 +24,8 @@ import { Link } from 'react-router-dom';
 import {
   ACM_LINK_ID,
   FLAGS,
+  useActiveCluster,
+  useActiveNamespace,
   usePerspectiveExtension,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
@@ -106,6 +108,23 @@ const SystemStatusButton = ({ statuspageData }) => {
   ) : null;
 };
 
+const ImportYAMLLink = ({ children, className, ariaLabel, dataQuickstartId, dataTest }) => {
+  const [activeNamespace] = useActiveNamespace();
+  const [cluster] = useActiveCluster();
+
+  return (
+    <Link
+      to={formatNamespacedRouteForResource('import', activeNamespace, cluster)}
+      className={className}
+      aria-label={ariaLabel}
+      data-quickstart-id={dataQuickstartId}
+      data-test={dataTest}
+    >
+      {children}
+    </Link>
+  );
+};
+
 class MastheadToolbarContents_ extends React.Component {
   constructor(props) {
     super(props);
@@ -122,7 +141,6 @@ class MastheadToolbarContents_ extends React.Component {
     };
 
     this._getStatuspageData = this._getStatuspageData.bind(this);
-    this._getImportYAMLPath = this._getImportYAMLPath.bind(this);
     this._updateUser = this._updateUser.bind(this);
     this._onUserDropdownToggle = this._onUserDropdownToggle.bind(this);
     this._onUserDropdownSelect = this._onUserDropdownSelect.bind(this);
@@ -194,10 +212,6 @@ class MastheadToolbarContents_ extends React.Component {
     })
       .then((response) => response.json())
       .then((statuspageData) => this.setState({ statuspageData }));
-  }
-
-  _getImportYAMLPath() {
-    return formatNamespacedRouteForResource('import', this.props.activeNamespace);
   }
 
   _updateUser() {
@@ -609,7 +623,7 @@ class MastheadToolbarContents_ extends React.Component {
         isSection: true,
         actions: [
           {
-            component: <Link to={this._getImportYAMLPath()}>{t('public~Import YAML')}</Link>,
+            component: <ImportYAMLLink>{t('public~Import YAML')}</ImportYAMLLink>,
           },
           {
             component: <CloudShellMastheadAction />,
@@ -718,15 +732,14 @@ class MastheadToolbarContents_ extends React.Component {
                     <BellIcon alt="" />
                   </NotificationBadge>
                 )}
-                <Link
-                  to={this._getImportYAMLPath()}
+                <ImportYAMLLink
                   className="pf-c-button pf-m-plain"
-                  aria-label={t('public~Import YAML')}
-                  data-quickstart-id="qs-masthead-import"
-                  data-test="import-yaml"
+                  ariaLabel={t('public~Import YAML')}
+                  dataQuickstartId="qs-masthead-import"
+                  dataTest="import-yaml"
                 >
                   <PlusCircleIcon className="co-masthead-icon" alt="" />
-                </Link>
+                </ImportYAMLLink>
                 <CloudShellMastheadButton />
                 <ApplicationLauncher
                   aria-label={t('public~Help menu')}
