@@ -25,6 +25,7 @@ import { getBaseInitialValues } from '../form-initial-values';
 import { createOrUpdateResources, handleRedirect } from '../import-submit-utils';
 import { BaseFormData, Resources } from '../import-types';
 import { validationSchema } from '../import-validation-utils';
+import { useUpdateKnScalingDefaultValues } from '../serverless/useUpdateKnScalingDefaultValues';
 import AddServerlessFunctionForm from './AddServerlessFunctionForm';
 
 type watchResource = {
@@ -92,6 +93,8 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
     },
   };
 
+  const initialVals = useUpdateKnScalingDefaultValues(initialValues);
+
   const watchedResources = {
     imageStreams: {
       kind: ImageStreamModel.kind,
@@ -152,7 +155,7 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
   };
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={initialVals}
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={validationSchema(t)}
