@@ -125,7 +125,7 @@ describe('ApplicationUtils ', () => {
     mockBuilds = sampleBuilds.data;
     mockBuildConfigs = sampleBuildConfigs.data;
     mockSecrets = sampleSecrets;
-    cleanUpWorkload(nodeModel.resource, false)
+    cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
@@ -145,7 +145,7 @@ describe('ApplicationUtils ', () => {
   it('Should delete all the specific models related to deployment config if the build config is not present i.e. for resource created through deploy image form', async (done) => {
     const nodeModel = await getTopologyData(MockResources, 'nodejs-ex', 'test-project');
 
-    cleanUpWorkload(nodeModel.resource, false)
+    cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
@@ -162,7 +162,7 @@ describe('ApplicationUtils ', () => {
 
   it('Should delete all the specific models related to daemonsets', async (done) => {
     const nodeModel = await getTopologyData(MockResources, 'daemonset-testing', 'test-project');
-    cleanUpWorkload(nodeModel.resource, false)
+    cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
@@ -176,7 +176,7 @@ describe('ApplicationUtils ', () => {
 
   it('Should delete all the specific models related to statefulsets', async (done) => {
     const nodeModel = await getTopologyData(MockResources, 'alertmanager-main', 'test-project');
-    cleanUpWorkload(nodeModel.resource, false)
+    cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
@@ -196,7 +196,7 @@ describe('ApplicationUtils ', () => {
       'ksservices',
       true,
     );
-    cleanUpWorkload(nodeModel.resource, true)
+    cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
@@ -218,7 +218,7 @@ describe('ApplicationUtils ', () => {
       true,
     );
     spyAndReturn(spyOn(k8s, 'modelFor'))(CamelKameletBindingModel);
-    cleanUpWorkload(nodeModel.resource, true)
+    cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
@@ -239,7 +239,7 @@ describe('ApplicationUtils ', () => {
       true,
     );
     spyAndReturn(spyOn(k8s, 'modelFor'))(KafkaSinkModel);
-    cleanUpWorkload(nodeModel.resource, true)
+    cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
@@ -254,7 +254,7 @@ describe('ApplicationUtils ', () => {
   it('Should not delete any of the models, if delete access is not available', async (done) => {
     const nodeModel = await getTopologyData(MockResources, 'nodejs', 'test-project');
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: false } }));
-    cleanUpWorkload(nodeModel.resource, false)
+    cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);

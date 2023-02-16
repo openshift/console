@@ -150,11 +150,7 @@ const safeKill = async (model: K8sKind, obj: K8sResourceKind) => {
   return null;
 };
 
-const deleteWebhooks = async (
-  resource: K8sResourceKind,
-  buildConfigs: K8sResourceKind[],
-  isKnativeResource: boolean,
-) => {
+const deleteWebhooks = async (resource: K8sResourceKind, buildConfigs: K8sResourceKind[]) => {
   const deploymentsAnnotations = resource.metadata?.annotations ?? {};
   const gitType = detectGitType(deploymentsAnnotations['app.openshift.io/vcs-uri']);
   const secretList = await k8sList(SecretModel, {
@@ -165,7 +161,7 @@ const deleteWebhooks = async (
     const reqs = triggers.reduce((a, t) => {
       let secretResource: K8sResourceKind;
       const webhookType = t.generic ? 'generic' : gitType;
-      const webhookTypeObj = t.generic || (!isKnativeResource && t[gitType]);
+      const webhookTypeObj = t.generic || t[gitType];
       if (webhookTypeObj) {
         const secretName =
           webhookTypeObj.secretReference?.name ??
@@ -180,10 +176,7 @@ const deleteWebhooks = async (
   }, []);
 };
 
-export const cleanUpWorkload = async (
-  resource: K8sResourceKind,
-  isKnativeResource: boolean,
-): Promise<K8sResourceKind[]> => {
+export const cleanUpWorkload = async (resource: K8sResourceKind): Promise<K8sResourceKind[]> => {
   const reqs = [];
   const buildConfigs = await k8sList(BuildConfigModel, { ns: resource.metadata.namespace });
   const builds = await k8sList(BuildModel, { ns: resource.metadata.namespace });
@@ -246,7 +239,6 @@ export const cleanUpWorkload = async (
     default:
       break;
   }
-  isBuildConfigPresent &&
-    reqs.push(...(await deleteWebhooks(resource, resourceBuildConfigs, isKnativeResource)));
+  isBuildConfigPresent && reqs.push(...(await deleteWebhooks(resource, resourceBuildConfigs)));
   return Promise.all(reqs);
 };
