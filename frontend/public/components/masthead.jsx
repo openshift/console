@@ -1,6 +1,15 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import { Brand, PageHeader } from '@patternfly/react-core';
+import {
+  Brand,
+  Masthead as PfMasthead,
+  MastheadBrand,
+  MastheadContent,
+  MastheadMain,
+  MastheadToggle,
+  PageToggleButton,
+} from '@patternfly/react-core';
+import { BarsIcon } from '@patternfly/react-icons/dist/esm/icons/bars-icon';
 
 import { MastheadToolbar } from './masthead-toolbar';
 import { history } from './utils';
@@ -46,7 +55,7 @@ export const getBrandingDetails = () => {
   return { logoImg, productName };
 };
 
-export const Masthead = React.memo(({ onNavToggle, isNavOpen }) => {
+export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle }) => {
   const details = getBrandingDetails();
   const defaultRoute = '/';
   const logoProps = {
@@ -59,19 +68,26 @@ export const Masthead = React.memo(({ onNavToggle, isNavOpen }) => {
   };
 
   return (
-    <PageHeader
-      id="page-main-header"
-      logo={<Brand src={details.logoImg} alt={details.productName} />}
-      logoProps={logoProps}
-      headerTools={<MastheadToolbar />}
-      showNavToggle
-      onNavToggle={onNavToggle}
-      isNavOpen={isNavOpen}
-    />
+    <PfMasthead id="page-main-header" display={{ default: isMastheadStacked ? 'stack' : 'inline' }}>
+      <MastheadToggle>
+        <PageToggleButton onNavToggle={onNavToggle} isNavOpen={isNavOpen}>
+          <BarsIcon />
+        </PageToggleButton>
+      </MastheadToggle>
+      <MastheadMain>
+        <MastheadBrand {...logoProps}>
+          <Brand src={details.logoImg} alt={details.productName} />
+        </MastheadBrand>
+      </MastheadMain>
+      <MastheadContent>
+        <MastheadToolbar isMastheadStacked={isMastheadStacked} />
+      </MastheadContent>
+    </PfMasthead>
   );
 });
 
 Masthead.propTypes = {
-  onNavToggle: PropTypes.func,
+  isMastheadStacked: PropTypes.bool,
   isNavOpen: PropTypes.bool,
+  onNavToggle: PropTypes.func,
 };
