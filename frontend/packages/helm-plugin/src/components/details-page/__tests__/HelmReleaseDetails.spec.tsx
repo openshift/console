@@ -12,7 +12,7 @@ let loadedHelmReleaseDetailsProps: React.ComponentProps<typeof LoadedHelmRelease
 describe('HelmReleaseDetails', () => {
   beforeEach(() => {
     helmReleaseDetailsProps = {
-      secret: {
+      secrets: {
         data: [
           {
             metadata: {
@@ -42,21 +42,33 @@ describe('HelmReleaseDetails', () => {
 
     loadedHelmReleaseDetailsProps = {
       ...helmReleaseDetailsProps,
-      helmReleaseData: mockHelmReleases[0],
+      helmRelease: {
+        loaded: true,
+        loadError: null,
+        data: mockHelmReleases[0],
+      },
     };
   });
 
   it('should show the loading box if helm release data is not loaded', () => {
-    loadedHelmReleaseDetailsProps.helmReleaseData = null;
+    loadedHelmReleaseDetailsProps.helmRelease.loaded = false;
     const helmReleaseDetails = shallow(
       <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />,
     );
     expect(helmReleaseDetails.find(LoadingBox).exists()).toBe(true);
   });
 
+  it('should show an error if helm release data could not be loaded', () => {
+    loadedHelmReleaseDetailsProps.helmRelease.loadError = new Error('An error!');
+    const helmReleaseDetails = shallow(
+      <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />,
+    );
+    expect(helmReleaseDetails.find(StatusBox).exists()).toBe(true);
+  });
+
   it('should show the loading box if secret is not loaded', () => {
-    loadedHelmReleaseDetailsProps.secret.loaded = false;
-    loadedHelmReleaseDetailsProps.secret.loadError = undefined;
+    loadedHelmReleaseDetailsProps.secrets.loaded = false;
+    loadedHelmReleaseDetailsProps.secrets.loadError = undefined;
     const helmReleaseDetails = shallow(
       <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />,
     );
@@ -64,7 +76,7 @@ describe('HelmReleaseDetails', () => {
   });
 
   it('should show the status box if there is an error loading the secret', () => {
-    loadedHelmReleaseDetailsProps.secret.loadError = 'error 404';
+    loadedHelmReleaseDetailsProps.secrets.loadError = 'error 404';
     const helmReleaseDetails = shallow(
       <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />,
     );
@@ -79,7 +91,7 @@ describe('HelmReleaseDetails', () => {
   });
 
   it('should show the ErrorPage404 for an incorrect release name in the url', () => {
-    loadedHelmReleaseDetailsProps.secret.data = [];
+    loadedHelmReleaseDetailsProps.secrets.data = [];
     const helmReleaseDetails = shallow(
       <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />,
     );
