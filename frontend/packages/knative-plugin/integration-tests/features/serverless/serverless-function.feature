@@ -78,20 +78,21 @@ Feature: Creation and Visualisation of serverless fuctions
 
         @regression @odc-6360
         Scenario Outline: Create Serverless Function from the Import from Git Form on Add page with Pipeline: SF-01-TC07
-            Given user is at Add page
+            Given user has installed OpenShift Pipelines Operator
+           # Below manual creation of the Piepline and ClusterTasks can be removed when Serverless new version 1.28 is released
+              And user created Serverless Function node Pipeline
+              And user is at Add page
               And user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
               And user enters Name as "<workload_name>"
               And user selects Add Pipeline checkbox in Pipelines section
               And user clicks Create button on Add page
-             Then user will be redirected to Topology page
-              And user clicks on Topology list view
-              And user is able to see workload "<workload_name>" in topology page
+              And user clicks on List view button
+             Then user is able to see workload "<workload_name>" in topology page
               And user clicks on the Knative Service workload "<workload_name>"
               And user switches to the "Details" tab
               And user is able to see Type as Function
-              And user switches to the "Resources" tab
-              And user is able to see PipelineRuns
+              And user is able to see PipelineRuns in the "Resources" tab
 
         Examples:
                   | git_url                                       | workload_name                        |
@@ -112,8 +113,7 @@ Feature: Creation and Visualisation of serverless fuctions
               And user clicks on the Knative Service workload "<workload_name>"
               And user switches to the "Details" tab
               And user is able to see Type as Function
-              And user switches to the "Resources" tab
-              And user is able to see PipelineRuns
+              And user is able to see PipelineRuns in the "Resources" tab
 
         Examples:
                   | git_url                                       | workload_name                                            |
@@ -121,11 +121,10 @@ Feature: Creation and Visualisation of serverless fuctions
 
         @regression @odc-6360
         Scenario Outline: Pipeline section should not present in Create Serverless function form if Pipeline is not available: SF-01-TC09
-            Given user is at Add page
+            Given user has installed OpenShift Pipelines Operator
+              And user is at Add page
              When user clicks on Create Serverless function card
               And user enters git url "<git_url>"
-              And user is able to see builder image version dropdown
-              And user is able to see the runtime details
               And user enters Name as "<workload_name>"
              Then user is not able to see Add Pipeline checkbox
 

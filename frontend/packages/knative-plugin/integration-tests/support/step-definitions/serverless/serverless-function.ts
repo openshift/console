@@ -1,4 +1,4 @@
-import { When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { When, Then, Given } from 'cypress-cucumber-preprocessor/steps';
 import { addOptions } from '@console/dev-console/integration-tests/support/constants';
 import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
@@ -50,10 +50,20 @@ When('user selects Add Pipeline checkbox in Pipelines section', () => {
   gitPage.selectAddPipeline();
 });
 
-Then('user is able to see PipelineRuns', () => {
+Then('user is able to see PipelineRuns in the {string} tab', (tab: string) => {
+  topologySidePane.selectTab(tab);
   cy.byTestID('pipeline-overview').should('be.visible');
 });
 
 Then('user is not able to see Add Pipeline checkbox', () => {
   cy.get(gitPO.pipeline.addPipeline).should('not.exist');
+});
+
+Given('user created Serverless Function node Pipeline', () => {
+  const yamlFileName = `support/testData/serverless-function-node-pipeline.yaml`;
+  cy.exec(`oc apply -f ${yamlFileName}`, {
+    failOnNonZeroExit: false,
+  }).then(function(result) {
+    cy.log(result.stdout);
+  });
 });
