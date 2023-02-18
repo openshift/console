@@ -2,7 +2,7 @@ import { safeLoadAll } from 'js-yaml';
 import { checkErrors } from '../../support';
 import { isLocalDevEnvironment } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
-import { infoMessage, hintMessage, warningMessage, warningToast } from '../../views/form';
+import { infoMessage, hintMessage, refreshWebConsoleLink, warningMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
@@ -13,13 +13,15 @@ const PLUGIN_PULL_SPEC = Cypress.env('PLUGIN_PULL_SPEC');
 /* The update wait is the value to wait for the poll of /api/check-updates to return with the updated list of plugins
  after the plugin is enabled and loaded. This wait will be longer on ci than when debugging locally. */
 const CHECK_UPDATE_WAIT = 300000;
+const WAIT_OPTIONS = { requestTimeout: CHECK_UPDATE_WAIT };
 
 /*
   These tests are meant to:
     1. show how to test a dynamic plugin using demo as the plugin instance
     2. run locally:
       2a. build the plugin locally, and run the server
-      2b. using bridge running with the plugin argument that points to the local dynanmic plugin server
+      2b. using bridge running with the plugin arguments that point to the local dynamic plugin server and i18n namespace
+          e.g., ./bin/bridge -plugins=console-demo-plugin=http://localhost:9001 -i18n-namespaces=plugin__console-demo-plugin
       2c. will intercept the check update call to mock a toast notification that a plugin has been enabled
       2d. will not use all workload definitions defined in the yaml (not using the env variable for pull spec)
     3. run on ci:
@@ -59,16 +61,12 @@ const enableDemoPlugin = (enable: boolean) => {
   if (isLocalDevEnvironment) {
     // for local dev env just trigger any change in the return value to activate the toast
     cy.intercept('/api/check-updates*', { plugins: [] }).as('checkUpdates');
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(CHECK_UPDATE_WAIT);
-    cy.wait('@checkUpdates');
+    cy.wait('@checkUpdates', WAIT_OPTIONS);
     cy.log('Running plugin test locally using bridge.');
   } else {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(CHECK_UPDATE_WAIT);
     cy.log(`Running plugin test on ci using PLUGIN_PULL_SPEC: ${PLUGIN_PULL_SPEC}`);
   }
-  cy.get(warningToast)
+  cy.byTestID(refreshWebConsoleLink, { timeout: CHECK_UPDATE_WAIT })
     .should('exist')
     .then(() => {
       cy.reload();
