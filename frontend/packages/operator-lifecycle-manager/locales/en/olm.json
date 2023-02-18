@@ -292,6 +292,7 @@
   "The {{namespace}} Namespace is reserved for global Operators that watch all Namespaces. To install an Operator in a single Namespace, select a different Namespace where the operand should run.": "The {{namespace}} Namespace is reserved for global Operators that watch all Namespaces. To install an Operator in a single Namespace, select a different Namespace where the operand should run.",
   "The OperatorGroup in the {{namespace}} Namespace does not support the {{mode}} installation mode. Select a different installation Namespace that supports this mode.": "The OperatorGroup in the {{namespace}} Namespace does not support the {{mode}} installation mode. Select a different installation Namespace that supports this mode.",
   "A Subscription for this Operator already exists in Namespace \"{{namespace}}\"": "A Subscription for this Operator already exists in Namespace \"{{namespace}}\"",
+  "Remove the <2>existing Subscription</2> in order to install this Operator in Namespace \"{{selectedTargetNamespace}}\"": "Remove the <2>existing Subscription</2> in order to install this Operator in Namespace \"{{selectedTargetNamespace}}\"",
   "Operator conflicts exist": "Operator conflicts exist",
   "Installing this Operator in the selected Namespace would cause conflicts with another Operator providing these APIs:": "Installing this Operator in the selected Namespace would cause conflicts with another Operator providing these APIs:",
   "Operator not available for selected Namespaces": "Operator not available for selected Namespaces",

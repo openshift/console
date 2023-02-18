@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { Link } from 'react-router-dom';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import {
   documentationURLs,
@@ -18,6 +19,7 @@ import {
   PageHeading,
   ResourceIcon,
   ResourceName,
+  resourcePathFromModel,
   StatusBox,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -494,7 +496,21 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               namespace: selectedTargetNamespace,
             },
           )}
-        />
+        >
+          <p>
+            <Trans t={t} ns="olm">
+              Remove the{' '}
+              <Link
+                to={resourcePathFromModel(SubscriptionModel, packageName, selectedTargetNamespace)}
+              >
+                existing Subscription
+              </Link>{' '}
+              in order to install this Operator in Namespace {'"'}
+              {{ selectedTargetNamespace }}
+              {'"'}
+            </Trans>
+          </p>
+        </Alert>
       )) ||
       (!_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) && (
         <Alert

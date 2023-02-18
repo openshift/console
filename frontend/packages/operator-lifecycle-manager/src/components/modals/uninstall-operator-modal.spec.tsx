@@ -32,6 +32,10 @@ jest.mock('react-i18next', () => {
   };
 });
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
+  k8sGetResource: jest.fn(),
+}));
+
 describe(UninstallOperatorModal.name, () => {
   let wrapper: ReactWrapper<UninstallOperatorModalProps>;
   let k8sKill: Spy;
