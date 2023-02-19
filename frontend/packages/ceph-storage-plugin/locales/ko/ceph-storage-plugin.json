@@ -718,6 +718,7 @@
   "Data will be consumed by a Multi-cloud object gateway, deduped, compressed, and encrypted. The encrypted chunks would be saved on the selected BackingStores. Best used when the applications would always use the OpenShift Data Foundation endpoints to access the data.": "데이터는 다중 클라우드개체 게이트웨이에서 사용되고 중복 제거, 압축 및 암호화됩니다. 암호화된 청크는 선택한 백업 저장소에 저장됩니다. 애플리케이션이 항상 OpenShift Data Foundation 엔드 포인트를 사용하여 데이터에 액세스하는 경우에 가장 적합합니다.",
   "Data is stored on the NamespaceStores without performing de-duplication, compression, or encryption. BucketClasses of namespace type allow connecting to existing data and serving from them. These are best used for existing data or when other applications (and cloud-native services) need to access the data from outside OpenShift Data Foundation.": "데이터는 중복 제거, 압축 또는 암호화를 수행하지 않고 네임 스페이스 저장소에 저장됩니다. 네임 스페이스 유형의 버킷 클래스를 사용하면 기존 데이터에 연결하고 기존 데이터에서 서비스를 제공할 수 있습니다. 이러한 기능은 기존 데이터에 사용하거나 다른 애플리케이션 (및 클라우드 기반 서비스)이 OpenShift Data Foundation 외부에서 데이터에 액세스해야하는 경우에 가장 적합합니다.",
   "Single NamespaceStore": "단일 네임 스페이스 저장소",
+  "The namespace bucket will read and write its data to a selected namespace store": "네임스페이스 버킷은 선택한 네임스페이스 저장소에서 데이터를 읽고 씁니다.",
   "Multi NamespaceStores": "다중 네임 스페이스 저장소",
   "The namespace bucket will serve reads from several selected backing stores, creating a virtual namespace on top of them and will write to one of those as its chosen write target": "네임 스페이스 버킷은 선택한 여러 백업 저장소에서 읽기 서비스를 제공하고 그 위에 가상 네임 스페이스를 만들고 선택한 쓰기 대상으로 해당 저장소 중 하나에 씁니다.",
   "Cache NamespaceStore": "캐시 네임 스페이스 저장소",

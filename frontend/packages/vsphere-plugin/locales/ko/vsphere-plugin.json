@@ -3,7 +3,7 @@
   "vSphere configurations": "vSphere 설정",
   "Loading vSphere connection status": "vSphere 연결 상태 로드 중",
   "The vSphere Connection check is failing.": "vSphere 연결 검사에 실패했습니다.",
-  "Learn more about progress": "진행 상황에 대해 더 알아보기",
+  "No error is reported, open for detailed status.": "오류가 보고되지 않았으며 자세한 상태를 보려면 엽니다.",
   "Missing the vSphere config map.": "vSphere 구성 맵이 없습니다.",
   "Not configured yet": "아직 구성되지 않음",
   "Prometheus query failed.": "Prometheus 쿼리에 실패했습니다.",

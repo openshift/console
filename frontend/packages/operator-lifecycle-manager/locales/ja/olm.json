@@ -20,7 +20,7 @@
   "Operators": "Operator",
   "Package not found": "パッケージが見つかりません",
   "Cannot create a Subscription to a non-existent package.": "存在しないパッケージへの Subscription は作成できません。",
-  "Endpoint": "Endpoint",
+  "Endpoint": "エンドポイント",
   "# of Operators": "Operator の数",
   "Disabled": "無効",
   "Operators provided by this source will not appear in OperatorHub and any operators installed from this source will not receive updates until this source is re-enabled.": "このソースによって提供される Operator は OperatorHub に表示されず、このソースからインストールされたいずれの Operator も、このソースが再度有効にされるまで更新を受信しません。",
