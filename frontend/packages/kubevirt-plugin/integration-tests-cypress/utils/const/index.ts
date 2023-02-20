@@ -24,6 +24,7 @@ export const YAML_VM_NAME = 'vm-example';
 export const STATUS_READY = 'Ready';
 export const TEMPLATE_SUPPORT = 'Support by template provider';
 export const NAD_NAME = 'bridge-network'; // refer to fixture/nad.ts
+export const TEST_NS = 'default';
 
 export enum DEFAULT_VALUES {
   NOT_AVAILABLE = 'Not available',
