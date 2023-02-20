@@ -7,6 +7,7 @@ import { usePacInfo } from '@console/pipelines-plugin/src/components/repository/
 import { recommendRepositoryName } from '@console/pipelines-plugin/src/components/repository/repository-form-utils';
 import ConfigTypeSection from '@console/pipelines-plugin/src/components/repository/sections/ConfigTypeSection';
 import WebhookSection from '@console/pipelines-plugin/src/components/repository/sections/WebhookSection';
+import { PacConfigurationTypes } from '../../repository/consts';
 import InfoPanel from './PacInfoPanel';
 import './PacSection.scss';
 
@@ -24,6 +25,9 @@ const PacSection: React.FC = () => {
     if (loaded && !!pac && pac.data['app-link']) {
       setGithubAppAvailable(true);
       setFieldValue('pac.repository.githubAppAvailable', true);
+      setFieldValue('pac.repository.method', PacConfigurationTypes.GITHUB);
+    } else {
+      setFieldValue('pac.repository.method', PacConfigurationTypes.WEBHOOK);
     }
   }, [pac, loaded, setFieldValue]);
 
