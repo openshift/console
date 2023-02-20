@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+	"time"
 )
 
 // mockOpenShiftProvider is test OpenShift provider that only supports discovery
@@ -74,20 +75,24 @@ func TestNewAuthenticator(t *testing.T) {
 		CookiePath:    "/",
 		RefererPath:   "http://auth.example.com/",
 		SecureCookies: true,
+		MaxRetries:    30,
+		RetryInterval: 10 * time.Second,
 	}
 
+	c := make(chan AuthenticatorInitChannelValue)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	a, err := NewAuthenticator(ctx, ccfg)
-	if err != nil {
-		t.Fatal(err)
+	go NewAuthenticator(ctx, ccfg, c)
+	v := <-c
+	if v.err != nil {
+		t.Fatal(v.err)
 	}
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "http://example.com/", nil)
 
-	a.LoginFunc(rr, req)
+	v.authenticator.LoginFunc(rr, req)
 
 	u, err := url.Parse(rr.HeaderMap.Get("Location"))
 	if err != nil {
@@ -122,20 +127,24 @@ func TestNewOpenShiftAuthenticator(t *testing.T) {
 		CookiePath:    "/",
 		RefererPath:   "http://auth.example.com/",
 		SecureCookies: true,
+		MaxRetries:    30,
+		RetryInterval: 10 * time.Second,
 	}
 
+	c := make(chan AuthenticatorInitChannelValue)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	a, err := NewAuthenticator(ctx, ccfg)
-	if err != nil {
-		t.Fatal(err)
+	go NewAuthenticator(ctx, ccfg, c)
+	v := <-c
+	if v.err != nil {
+		t.Fatal(v.err)
 	}
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "http://example.com/", nil)
 
-	a.LoginFunc(rr, req)
+	v.authenticator.LoginFunc(rr, req)
 
 	u, err := url.Parse(rr.HeaderMap.Get("Location"))
 	if err != nil {

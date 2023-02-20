@@ -125,7 +125,7 @@ type Server struct {
 	LogoutRedirect       *url.URL
 	PublicDir            string
 	TectonicVersion      string
-	Authers              map[string]*auth.Authenticator
+	Authenticators       map[string]*auth.Authenticator
 	StaticUser           *auth.User
 	ServiceAccountToken  string
 	KubectlClientID      string
@@ -206,7 +206,7 @@ func (s *Server) gitopsProxyEnabled() bool {
 }
 
 func (s *Server) getLocalAuther() *auth.Authenticator {
-	return s.Authers[serverutils.LocalClusterName]
+	return s.Authenticators[serverutils.LocalClusterName]
 }
 
 func (s *Server) getK8sProxyConfig(cluster string) *proxy.Config {
@@ -237,8 +237,8 @@ func (s *Server) getK8sClient(cluster string) *http.Client {
 }
 
 func (s *Server) getManagedClusterList() []string {
-	clusters := make([]string, 0, len(s.Authers))
-	for cluster := range s.Authers {
+	clusters := make([]string, 0, len(s.Authenticators))
+	for cluster := range s.Authenticators {
 		clusters = append(clusters, cluster)
 	}
 	return clusters
@@ -283,10 +283,10 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	authHandler := func(hf http.HandlerFunc) http.Handler {
-		return authMiddleware(s.Authers, hf)
+		return authMiddleware(s.Authenticators, hf)
 	}
 	authHandlerWithUser := func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
-		return authMiddlewareWithUser(s.Authers, hf)
+		return authMiddlewareWithUser(s.Authenticators, hf)
 	}
 
 	if s.authDisabled() {
@@ -306,7 +306,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		handleFunc(authLogoutMulticlusterEndpoint, s.handleLogoutMulticluster)
 		handleFunc(AuthLoginCallbackEndpoint, localAuther.CallbackFunc(fn))
 		handle("/api/openshift/delete-token", authHandlerWithUser(s.handleOpenShiftTokenDeletion))
-		for clusterName, clusterAuther := range s.Authers {
+		for clusterName, clusterAuther := range s.Authenticators {
 			if clusterAuther != nil {
 				handleFunc(fmt.Sprintf("%s/%s", authLoginEndpoint, clusterName), clusterAuther.LoginFunc)
 				handleFunc(fmt.Sprintf("%s/%s", AuthLoginCallbackEndpoint, clusterName), clusterAuther.CallbackFunc(fn))
@@ -882,7 +882,7 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 }
 
 func (s *Server) handleLogoutMulticluster(w http.ResponseWriter, r *http.Request) {
-	for cluster, auther := range s.Authers {
+	for cluster, auther := range s.Authenticators {
 		cookieName := auth.GetCookieName(cluster)
 		if cookie, _ := r.Cookie(cookieName); cookie != nil {
 			clearedCookie := http.Cookie{

@@ -1,15 +1,13 @@
 package main
 
 import (
-	"context"
 	"crypto/tls"
-	"crypto/x509"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"runtime"
+	"time"
 
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -60,6 +58,17 @@ const (
 	openshiftClusterProxyHost = "cluster-proxy-addon-user.multicluster-engine.svc:9092"
 
 	clusterManagementURL = "https://api.openshift.com/"
+
+	// Retry creating the local cluster authenticator every 10 secondes for 5 minutes. This is to
+	// allow time for the API server to become avialable during initial cluster creation.
+	localClusterAuthenticatorMaxRetries    = 30
+	localClusterAuthenticatorRetryInterval = 10 * time.Second
+
+	// Retry creating managed cluster authenticators every 5 seconds for 30 seconds. Managed cluster
+	// API servers should already be available by the time we are configuring them, so we don't need
+	// to wait as long.
+	managedClusterAuthenticatorMaxRetries    = 6
+	managedClusterAuthenticatorRetryInterval = 5 * time.Second
 )
 
 func main() {
@@ -171,6 +180,11 @@ func main() {
 	caCertFilePath := *fCAFile
 	if *fK8sMode == "in-cluster" {
 		caCertFilePath = k8sInClusterCA
+	}
+
+	clusterProxyCAFile := caCertFilePath
+	if *fK8sMode == "in-cluster" {
+		clusterProxyCAFile = *fServiceCAFile
 	}
 
 	logoutRedirect := &url.URL{}
@@ -343,11 +357,6 @@ func main() {
 	}
 
 	var (
-		// Hold on to raw certificates so we can render them in kubeconfig files.
-		k8sCertPEM []byte
-	)
-
-	var (
 		k8sAuthServiceAccountBearerToken string
 	)
 
@@ -364,24 +373,8 @@ func main() {
 	switch *fK8sMode {
 	case "in-cluster":
 		k8sEndpoint = &url.URL{Scheme: "https", Host: "kubernetes.default.svc"}
-
-		var err error
-		k8sCertPEM, err = ioutil.ReadFile(k8sInClusterCA)
-		if err != nil {
-			klog.Fatalf("Error inferring Kubernetes config from environment: %v", err)
-		}
-		rootCAs := x509.NewCertPool()
-		if !rootCAs.AppendCertsFromPEM(k8sCertPEM) {
-			klog.Fatal("No CA found for the API server")
-		}
-		tlsConfig := oscrypto.SecureTLSConfig(&tls.Config{
-			RootCAs: rootCAs,
-		})
-
-		bearerToken, err := ioutil.ReadFile(k8sInClusterBearerToken)
-		if err != nil {
-			klog.Fatalf("failed to read bearer token: %v", err)
-		}
+		tlsConfig := ReadCAFileToTLSConfigOrDie(k8sInClusterCA)
+		bearerToken := ReadFileOrDie(k8sInClusterBearerToken)
 
 		srv.LocalK8sProxyConfig = &proxy.Config{
 			TLSClientConfig: tlsConfig,
@@ -391,20 +384,9 @@ func main() {
 
 		k8sAuthServiceAccountBearerToken = string(bearerToken)
 
-		// If running in an OpenShift cluster, set up a proxy to the prometheus-k8s service running in the openshift-monitoring namespace.
+		// If running in an OpenShift cluster, set up service proxies
 		if *fServiceCAFile != "" {
-			serviceCertPEM, err := ioutil.ReadFile(*fServiceCAFile)
-			if err != nil {
-				klog.Fatalf("failed to read service-ca.crt file: %v", err)
-			}
-			serviceProxyRootCAs := x509.NewCertPool()
-			if !serviceProxyRootCAs.AppendCertsFromPEM(serviceCertPEM) {
-				klog.Fatal("no CA found for Kubernetes services")
-			}
-			serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
-				RootCAs: serviceProxyRootCAs,
-			})
-
+			serviceProxyTLSConfig := ReadCAFileToTLSConfigOrDie(*fServiceCAFile)
 			// Disable metrics in multicluster env.
 			if len(managedClusterConfigs) == 0 {
 				srv.ThanosProxyConfig = &proxy.Config{
@@ -534,7 +516,7 @@ func main() {
 			}
 		}
 
-		// Must have off-cluster cluster proxy endpoint if we have managed clusters
+		// Must have public cluster proxy endpoint and CA file
 		if len(managedClusterConfigs) > 0 {
 			offClusterManagedClusterProxyURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-managed-cluster-proxy", *fK8sModeOffClusterManagedClusterProxy)
 			srv.ManagedClusterProxyConfig = &proxy.Config{
@@ -585,7 +567,6 @@ func main() {
 		}
 
 		var (
-			err                      error
 			userAuthOIDCIssuerURL    *url.URL
 			authLoginErrorEndpoint   = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginErrorEndpoint)
 			authLoginSuccessEndpoint = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginSuccessEndpoint)
@@ -614,11 +595,7 @@ func main() {
 		}
 
 		if *fUserAuthOIDCClientSecretFile != "" {
-			buf, err := ioutil.ReadFile(*fUserAuthOIDCClientSecretFile)
-			if err != nil {
-				klog.Fatalf("Failed to read client secret file: %v", err)
-			}
-			oidcClientSecret = string(buf)
+			oidcClientSecret = string(ReadFileOrDie(*fUserAuthOIDCClientSecretFile))
 		}
 
 		// Config for logging into console.
@@ -642,6 +619,8 @@ func main() {
 			RefererPath:   refererPath,
 			SecureCookies: secureCookies,
 			ClusterName:   serverutils.LocalClusterName,
+			MaxRetries:    localClusterAuthenticatorMaxRetries,
+			RetryInterval: localClusterAuthenticatorRetryInterval,
 		}
 
 		// NOTE: This won't work when using the OpenShift auth mode.
@@ -659,25 +638,20 @@ func main() {
 
 		}
 
-		srv.Authers = make(map[string]*auth.Authenticator)
-		if srv.Authers[serverutils.LocalClusterName], err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
-			klog.Fatalf("Error initializing authenticator: %v", err)
-		}
+		authConfigs := []*auth.Config{oidcClientConfig}
 
 		if len(managedClusterConfigs) > 0 {
 			for _, managedCluster := range managedClusterConfigs {
-				managedClusterOIDCClientConfig := &auth.Config{
+				authConfigs = append(authConfigs, &auth.Config{
 					AuthSource:   authSource,
-					IssuerURL:    managedCluster.APIServer.URL,
+					IssuerURL:    proxy.SingleJoiningSlash(srv.ManagedClusterProxyConfig.Endpoint.String(), managedCluster.Name),
 					IssuerCA:     managedCluster.OAuth.CAFile,
 					ClientID:     managedCluster.OAuth.ClientID,
 					ClientSecret: managedCluster.OAuth.ClientSecret,
 					RedirectURL:  proxy.SingleJoiningSlash(srv.BaseURL.String(), fmt.Sprintf("%s/%s", server.AuthLoginCallbackEndpoint, managedCluster.Name)),
 					Scope:        scopes,
 
-					// Use the k8s CA file for OpenShift OAuth metadata discovery.
-					// This might be different than IssuerCA.
-					K8sCA: managedCluster.APIServer.CAFile,
+					K8sCA: clusterProxyCAFile,
 
 					ErrorURL:   authLoginErrorEndpoint,
 					SuccessURL: authLoginSuccessEndpoint,
@@ -686,15 +660,13 @@ func main() {
 					RefererPath:   refererPath,
 					SecureCookies: secureCookies,
 					ClusterName:   managedCluster.Name,
-				}
-
-				if srv.Authers[managedCluster.Name], err = auth.NewAuthenticator(context.Background(), managedClusterOIDCClientConfig); err != nil {
-					klog.Fatalf("Error initializing managed cluster authenticator: %v", err)
-				}
-
-				clusterCopiedCSVsDisabled[managedCluster.Name] = managedCluster.CopiedCSVsDisabled
+					MaxRetries:    managedClusterAuthenticatorMaxRetries,
+					RetryInterval: managedClusterAuthenticatorRetryInterval,
+				})
 			}
 		}
+		srv.Authenticators = auth.NewAuthenticatorMap(authConfigs)
+
 	case "disabled":
 		klog.Warning("running with AUTHENTICATION DISABLED!")
 	default:

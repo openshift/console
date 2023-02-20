@@ -23,6 +23,7 @@ CA_FILE_DIR=$(mktemp -d 2>/dev/null || mktemp -d -t 'bridge-ca-files')
 
 oc get -n openshift-config-managed cm kube-root-ca.crt -o json | jq -r '.data["ca.crt"]' >"$CA_FILE_DIR/api-ca.crt"
 oc get -n openshift-config-managed cm default-ingress-cert -o json | jq -r '.data["ca-bundle.crt"]' >"$CA_FILE_DIR/oauth-ca.crt"
+oc get -n multicluster-engine secret proxy-server-ca -o json | jq -r '.data["ca.crt"]' >"$CA_FILE_DIR/cluster-proxy-ca.crt"
 
 for CONTEXT in $(oc config get-contexts -o name); do
     # Set up the OAuthClient for this cluster
@@ -78,6 +79,9 @@ export BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT
 
 BRIDGE_K8S_MODE_OFF_CLUSTER_MANAGED_CLUSTER_PROXY="https://$(oc get route cluster-proxy-addon-user -n multicluster-engine -o json | jq -r '.spec.host')"
 export BRIDGE_K8S_MODE_OFF_CLUSTER_MANAGED_CLUSTER_PROXY
+
+BRIDGE_K8S_MODE_OFF_CLUSTER_MANAGED_CLUSTER_PROXY_CA_FILE="$CA_FILE_DIR/cluster-proxy-ca.crt"
+export BRIDGE_K8S_MODE_OFF_CLUSTER_MANAGED_CLUSTER_PROXY_CA_FILE
 
 BRIDGE_CA_FILE="$CA_FILE_DIR/api-ca.crt"
 export BRIDGE_CA_FILE

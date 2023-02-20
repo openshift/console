@@ -19,6 +19,7 @@ import (
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
 
+	"github.com/openshift/console/pkg/serverutils"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
 	"k8s.io/klog"
@@ -114,6 +115,48 @@ type Config struct {
 	CookiePath    string
 	SecureCookies bool
 	ClusterName   string
+
+	MaxRetries    int
+	RetryInterval time.Duration
+}
+
+type AuthenticatorInitChannelValue struct {
+	cluster       string
+	authenticator *Authenticator
+	err           error
+}
+
+func NewAuthenticatorMap(configs []*Config) map[string]*Authenticator {
+	klog.Infoln("Configuring authenticators...")
+	mutex := &sync.Mutex{}
+	authenticators := map[string]*Authenticator{}
+	channel := make(chan AuthenticatorInitChannelValue)
+	errorHandler := func(cluster string, err error) {
+		errMessage := fmt.Sprintf("[%s] Error initializing authenticator: %v", cluster, err)
+		if cluster == serverutils.LocalClusterName {
+			klog.Fatal(errMessage)
+		}
+		klog.Error(errMessage)
+	}
+
+	// Init authenticators concurrently
+	for _, config := range configs {
+		go NewAuthenticator(context.Background(), config, channel)
+	}
+
+	// Handle results of concurrent authenticator initialization
+	for i := 0; i < len(configs); i++ {
+		value := <-channel
+		if value.err != nil {
+			errorHandler(value.cluster, value.err)
+			continue
+		}
+		mutex.Lock()
+		authenticators[value.cluster] = value.authenticator
+		mutex.Unlock()
+		klog.V(4).Infof("[%s] Successfully configured authenticator.", value.cluster)
+	}
+	return authenticators
 }
 
 func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, error) {
@@ -167,18 +210,18 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 
 // NewAuthenticator initializes an Authenticator struct. It blocks until the authenticator is
 // able to contact the provider.
-func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
-	// Retry connecting to the identity provider every 10s for 5 minutes
-	const (
-		backoff  = time.Second * 10
-		maxSteps = 30
-	)
-	steps := 0
-
+func NewAuthenticator(
+	ctx context.Context,
+	c *Config,
+	channel chan AuthenticatorInitChannelValue,
+) {
+	cluster := c.ClusterName
+	retries := 0
 	for {
 		a, err := newUnstartedAuthenticator(c)
 		if err != nil {
-			return nil, err
+			channel <- AuthenticatorInitChannelValue{cluster, nil, err}
+			return
 		}
 
 		var authSourceFunc func() (oauth2.Endpoint, loginMethod, error)
@@ -223,15 +266,15 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 
 		fallbackEndpoint, fallbackLoginMethod, err := authSourceFunc()
 		if err != nil {
-			steps++
-			if steps > maxSteps {
+			retries++
+			if retries > c.MaxRetries {
 				klog.Errorf("error contacting auth provider: %v", err)
-				return nil, err
+				channel <- AuthenticatorInitChannelValue{cluster, nil, err}
+				return
 			}
 
-			klog.Errorf("error contacting auth provider (retrying in %s): %v", backoff, err)
-
-			time.Sleep(backoff)
+			klog.Errorf("error contacting auth provider (retrying in %s): %v", c.RetryInterval, err)
+			time.Sleep(c.RetryInterval)
 			continue
 		}
 
@@ -255,7 +298,8 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 			return &baseOAuth2Config, currentLoginMethod
 		}
 
-		return a, nil
+		channel <- AuthenticatorInitChannelValue{cluster, a, nil}
+		return
 	}
 }
 
