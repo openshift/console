@@ -451,7 +451,7 @@
   "Storage Efficiency": "ストレージの効率性",
   "OpenShift Container Storage Overview": "OpenShift Container Storage の概要",
   "Block and File": "ブロックおよびファイル",
-  "Object": "オブジェクト",
+  "Object_0": "オブジェクト",
   "BlockPools": "BlockPools",
   "Storage Classes": "ストレージクラス",
   "Pods": "Pods",

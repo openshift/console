@@ -76,7 +76,7 @@
   "Continue": "続行",
   "No resources found": "リソースが見つかりません",
   "<0>Start building your application</0> or visit the <2>Add page</2> for more details.": "<0>アプリケーションのビルドを開始</0> するか、または <2>追加</2> のページに移動して詳細を確認します。",
-  "Select a Project to view the topology or <2>create a Project</2>.": "プロジェクトを選択してトポロジーを表示するか、あるいは <2>プロジェクトを作成</2> します。",
+  "Select a Project to view the topology<1></1>.": "トポロジー <1></1> を表示するプロジェクトを選択します。",
   "List view": "リストビュー",
   "Graph view": "グラフビュー",
   "Shortcuts": "ショートカット",
