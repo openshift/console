@@ -155,7 +155,9 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     };
 
     fetchPipelineTemplate();
-    handlePipelineTypeChange();
+    if (!isPipelineAttached) {
+      handlePipelineTypeChange();
+    }
     return () => {
       ignore = true;
     };
