@@ -1543,8 +1543,6 @@
   "Remove key/value": "Remove key/value",
   "Add key/value": "Add key/value",
   "Drag and drop file with your value here or browse to upload it.": "Drag and drop file with your value here or browse to upload it.",
-  "Download kubeconfig file": "Download kubeconfig file",
-  "Unable to get ServiceAccount token.": "Unable to get ServiceAccount token.",
   "ServiceAccount details": "ServiceAccount details",
   "ServiceAccounts": "ServiceAccounts",
   "Node port": "Node port",
