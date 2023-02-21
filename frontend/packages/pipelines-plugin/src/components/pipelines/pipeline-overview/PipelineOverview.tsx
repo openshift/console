@@ -45,7 +45,7 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
   }, [name, namespace]);
 
   return (
-    <>
+    <div data-test="pipeline-overview">
       <SidebarSectionHeading text={t(PipelineRunModel.labelPluralKey)}>
         {showAlert && pipelineRuns.length === 0 && (
           <PipelineOverviewAlert
@@ -92,7 +92,7 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
         ))}
       </ul>
       <TriggersOverview pipeline={pipeline} />
-    </>
+    </div>
   );
 };
 

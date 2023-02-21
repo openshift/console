@@ -190,7 +190,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
           },
         ]}
       />
-      {webhook.url && (
+      {webhook?.url && (
         <FormGroup
           fieldId="test"
           label={t('pipelines-plugin~Webhook URL')}

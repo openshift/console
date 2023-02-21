@@ -4,15 +4,24 @@ import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getGitService, GitProvider } from '@console/git-service/src';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
+import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
+import {
+  CLUSTER_PIPELINE_NS,
+  FUNC_PIPELINE_RUNTIME_LABEL,
+} from '@console/pipelines-plugin/src/const';
+import { PipelineModel } from '@console/pipelines-plugin/src/models';
+import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import GitSection from '../git/GitSection';
+import { notSupportedRuntime } from '../import-types';
 import ServerlessFunctionStrategySection from './ServerlessFunctionStrategySection';
 
 type AddServerlessFunctionFormProps = {
@@ -26,8 +35,6 @@ enum SupportedRuntime {
   typescript = 'nodejs',
   quarkus = 'java',
 }
-
-const notSupportedRuntime = ['go', 'rust', 'springboot', 'python'];
 
 const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
   AddServerlessFunctionFormProps> = ({
@@ -48,13 +55,14 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
   const {
     git: { validated, url, type, ref, dir, secretResource },
     build: { strategy },
+    image,
   } = values;
+
+  const [showPipelineSection, setShowPipelineSection] = React.useState<boolean>(false);
   const showFullForm =
     strategy === ServerlessBuildStrategyType.ServerlessFunction &&
     validated !== ValidatedOptions.default &&
-    type !== GitProvider.INVALID &&
-    builderImages[values.image.selected] &&
-    notSupportedRuntime.indexOf(values.image.selected) === -1;
+    type !== GitProvider.INVALID;
 
   React.useEffect(() => {
     if (url) {
@@ -67,9 +75,9 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
             setFieldValue('deployment.env', res.values.runtimeEnvs);
             setFieldValue(
               'image.selected',
-              notSupportedRuntime.indexOf(res.values.runtime) > -1
-                ? res.values.runtime
-                : SupportedRuntime[res.values.runtime],
+              notSupportedRuntime.indexOf(res.values.runtime) === -1
+                ? SupportedRuntime[res.values.runtime]
+                : res.values.runtime,
             );
             setFieldValue('import.showEditImportStrategy', true);
             setFieldValue(
@@ -88,6 +96,27 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
         });
     }
   }, [setFieldValue, url, type, ref, dir, secretResource, builderImages, setStatus]);
+
+  React.useEffect(() => {
+    if (image.selected) {
+      const fetchPipelineTemplate = async () => {
+        const fetchedPipelines = (await k8sListResourceItems({
+          model: PipelineModel,
+          queryParams: {
+            ns: CLUSTER_PIPELINE_NS,
+            labelSelector: { matchLabels: { [FUNC_PIPELINE_RUNTIME_LABEL]: image?.selected } },
+          },
+        })) as PipelineKind[];
+        if (fetchedPipelines.length > 0) {
+          setShowPipelineSection(true);
+        } else {
+          setShowPipelineSection(false);
+        }
+      };
+      fetchPipelineTemplate();
+    }
+  }, [image]);
+
   return (
     <form onSubmit={handleSubmit} data-test="create-serverless-function-form">
       <FormBody>
@@ -99,39 +128,23 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
               project={values.project}
               noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
             />
+            {showPipelineSection && <PipelineSection builderImages={builderImages} />}
             <AdvancedSection values={values} />
           </>
         )}
         {validated !== ValidatedOptions.default &&
           strategy !== ServerlessBuildStrategyType.ServerlessFunction && (
-            <Alert variant="warning" isInline title={t('devconsole~func.yaml not detected')}>
-              <p>{t('devconsole~func.yaml must be present to create a Serverless function')}</p>
-            </Alert>
-          )}
-        {validated !== ValidatedOptions.warning &&
-          strategy === ServerlessBuildStrategyType.ServerlessFunction &&
-          notSupportedRuntime.indexOf(values.image.selected) === -1 &&
-          builderImages[values.image.selected] === undefined && (
             <Alert
               variant="warning"
               isInline
-              title={t('devconsole~Builder Image {{image}} is not present.', {
-                image: values.image.selected,
-              })}
+              title={t('devconsole~func.yaml is not present or builder strategy is not s2i')}
             >
-              <p>{t('devconsole~Builder image is not present on cluster')}</p>
+              <p>
+                {t(
+                  'devconsole~func.yaml must be present or builder strategy should be s2i to create a Serverless function',
+                )}
+              </p>
             </Alert>
-          )}
-        {validated !== ValidatedOptions.warning &&
-          strategy === ServerlessBuildStrategyType.ServerlessFunction &&
-          notSupportedRuntime.indexOf(values.image.selected) > -1 && (
-            <Alert
-              variant="warning"
-              isInline
-              title={t('devconsole~Support for Builder image {{image}} is not yet available.', {
-                image: values.image.selected,
-              })}
-            />
           )}
       </FormBody>
       <FormFooter

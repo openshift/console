@@ -59,6 +59,11 @@ describe('createPipelineForImportFlow', () => {
         enabled: true,
         template: pipelineTemplate,
       },
+      build: {
+        triggers: {},
+        strategy: '',
+        env: [],
+      },
     };
     return formData;
   };
@@ -85,6 +90,7 @@ describe('createPipelineForImportFlow', () => {
       formData.pipeline,
       formData.docker.dockerfilePath,
       '14-ubi8',
+      formData.build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -130,6 +136,7 @@ describe('createPipelineForImportFlow', () => {
       formData.pipeline,
       formData.docker.dockerfilePath,
       '14-ubi8',
+      formData.build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -183,6 +190,7 @@ describe('createPipelineForImportFlow', () => {
       formData.pipeline,
       formData.docker.dockerfilePath,
       '14-ubi8',
+      formData.build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -240,6 +248,7 @@ describe('createPipelineForImportFlow', () => {
       formData.pipeline,
       formData.docker.dockerfilePath,
       '14-ubi8',
+      formData.build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -298,6 +307,7 @@ describe('createPipelineForImportFlow', () => {
       formData.pipeline,
       'Dockerfile',
       '14-ubi8',
+      formData.build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -371,6 +381,7 @@ describe('updatePipelineForImportFlow', () => {
     gitDir: '',
     dockerfilePath: '',
     image: { tag: '10-ubi7' },
+    build: { env: [] },
   };
 
   it('should dissociate pipeline if template is not available', async () => {
@@ -384,6 +395,7 @@ describe('updatePipelineForImportFlow', () => {
       props.gitDir,
       props.dockerfilePath,
       props.image.tag,
+      props.build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -413,6 +425,7 @@ describe('updatePipelineForImportFlow', () => {
       props.gitDir,
       props.dockerfilePath,
       props.image.tag,
+      props.build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -446,6 +459,7 @@ describe('updatePipelineForImportFlow', () => {
       props.gitDir,
       props.dockerfilePath,
       '14-ubi8',
+      props.build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -477,6 +491,7 @@ describe('updatePipelineForImportFlow', () => {
       props.gitDir,
       props.dockerfilePath,
       props.image.tag,
+      props.build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -585,6 +600,7 @@ describe('getPipelineParams', () => {
         '/', // git Dir
         '', // dockerfilePath
         '0.1', // tag
+        [],
       ),
     ).toEqual([{ name: 'APP_NAME', default: 'my-app' }]);
   });
@@ -600,6 +616,7 @@ describe('getPipelineParams', () => {
         '/', // git Dir
         '', // dockerfilePath
         '0.1', // tag
+        [],
       ),
     ).toEqual([{ name: 'GIT_REPO', default: 'https://github.com/owner/repo' }]);
   });
@@ -615,6 +632,7 @@ describe('getPipelineParams', () => {
         'gitDir',
         'dockerfilePath',
         'tag',
+        [],
       ),
     ).toEqual([{ name: 'GIT_REVISION', default: '' }]);
 
@@ -628,6 +646,7 @@ describe('getPipelineParams', () => {
         'gitDir',
         'dockerfilePath',
         'tag',
+        [],
       ),
     ).toEqual([{ name: 'GIT_REVISION', default: '' }]);
   });
@@ -643,6 +662,7 @@ describe('getPipelineParams', () => {
         'gitDir',
         'dockerfilePath',
         'tag',
+        [],
       ),
     ).toEqual([]);
     expect(
@@ -655,6 +675,7 @@ describe('getPipelineParams', () => {
         'gitDir',
         'dockerfilePath',
         'tag',
+        [],
       ),
     ).toEqual([]);
   });
@@ -670,6 +691,7 @@ describe('getPipelineParams', () => {
         'gitDir',
         'dockerfilePath',
         'tag',
+        [],
       ),
     ).toEqual([{ name: 'GIT_REVISION', default: '' }]);
   });
@@ -685,6 +707,7 @@ describe('getPipelineParams', () => {
         '/', // git Dir
         '', // dockerfilePath
         '0.1', // tag
+        [],
       ),
     ).toEqual([{ name: 'GIT_REVISION', default: 'main' }]);
   });
@@ -700,6 +723,7 @@ describe('getPipelineParams', () => {
         '/frontend', // git Dir
         '', // dockerfilePath
         '0.1', // tag
+        [],
       ),
     ).toEqual([{ name: 'PATH_CONTEXT', default: 'frontend' }]);
   });
@@ -715,6 +739,7 @@ describe('getPipelineParams', () => {
         '/frontend', // git Dir
         '', // dockerfilePath
         '0.1', // tag
+        [],
       ),
     ).toEqual([
       {
@@ -735,6 +760,7 @@ describe('getPipelineParams', () => {
         '/frontend', // git Dir
         '/dockerpath', // dockerfilePath
         '0.1', // tag
+        [],
       ),
     ).toEqual([
       {
@@ -755,6 +781,7 @@ describe('getPipelineParams', () => {
         '/frontend', // git Dir
         '/dockerpath', // dockerfilePath
         '0.1', // tag
+        [],
       ),
     ).toEqual([
       {
@@ -782,6 +809,7 @@ describe('getPipelineParams', () => {
       '/frontend', // git Dir
       '/dockerpath', // dockerfilePath
       '0.1', // tag
+      [],
     );
 
     expect(finalParams).toHaveLength(pipelineParams.length);
