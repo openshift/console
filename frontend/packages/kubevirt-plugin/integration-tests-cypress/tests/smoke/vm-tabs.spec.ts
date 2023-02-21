@@ -1,12 +1,11 @@
-import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { K8S_KIND, TEMPLATE, VM_STATUS } from '../../utils/const/index';
+import { K8S_KIND, TEMPLATE, VM_STATUS, TEST_NS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { vm, waitForStatus } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
-  name: `smoke-test-vm-${testName}`,
-  namespace: testName,
+  name: `smoke-test-vm`,
+  namespace: TEST_NS,
   template: TEMPLATE.RHEL8,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
@@ -17,14 +16,12 @@ const vmData: VirtualMachineData = {
 describe('smoke tests', () => {
   before(() => {
     cy.Login();
-    cy.visit('/');
-    cy.createProject(testName);
+    cy.visitVMsList();
     vm.create(vmData);
   });
 
   after(() => {
     cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
-    cy.deleteTestProject(testName);
   });
 
   describe('visit vm list page', () => {
