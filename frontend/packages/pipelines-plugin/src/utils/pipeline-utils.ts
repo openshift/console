@@ -16,11 +16,13 @@ import {
   SecretKind,
   K8sResourceCommon,
   K8sKind,
+  K8sResourceKind,
   PersistentVolumeClaimKind,
 } from '@console/internal/module/k8s';
 import { PIPELINE_SERVICE_ACCOUNT, SecretAnnotationId } from '../components/pipelines/const';
 import { PipelineModalFormWorkspace } from '../components/pipelines/modals/common/types';
 import { getDuration } from '../components/pipelines/pipeline-metrics/pipeline-metrics-utils';
+import { EventListenerKind, TriggerTemplateKind } from '../components/pipelines/resource-types';
 import {
   PipelineRunModel,
   TaskRunModel,
@@ -442,4 +444,38 @@ export const getMatchedPVCs = (
       (reference) => reference.name === ownerResourceName && reference.kind === ownerResourceKind,
     );
   });
+};
+
+export const getPipeline = (resource: K8sResourceKind, pipelines: PipelineKind[]): PipelineKind => {
+  const pipeline = pipelines.find((p: PipelineKind) => p.metadata.name === resource.metadata.name);
+  return pipeline;
+};
+
+export const getTriggerTemplates = (
+  pipeline: PipelineKind,
+  triggerTemplates: TriggerTemplateKind[],
+): TriggerTemplateKind[] => {
+  const triggerTemplate = triggerTemplates.filter(
+    (tt: TriggerTemplateKind) =>
+      !!tt.spec.resourcetemplates.find(
+        (rt) => rt.spec.pipelineRef?.name === pipeline.metadata.name,
+      ),
+  );
+  return triggerTemplate;
+};
+
+export const getEventListeners = (
+  triggerTemplates: TriggerTemplateKind[],
+  eventListeners: EventListenerKind[],
+): EventListenerKind[] => {
+  const resourceEventListeners = eventListeners.reduce((acc, et: EventListenerKind) => {
+    const triggers = et.spec.triggers.filter((t) =>
+      triggerTemplates.find((tt) => tt?.metadata.name === t?.template?.ref),
+    );
+    if (triggers.length > 0) {
+      acc.push(et);
+    }
+    return acc;
+  }, []);
+  return resourceEventListeners;
 };
