@@ -136,12 +136,12 @@ describe('getPodsFor...', () => {
 
   it('should return pods and replication controllers for a set of DeploymentConfigs', () => {
     let podRCDataArray = getPodsForDeploymentConfigs(sampleDeploymentConfigs.data, mockResources);
-    expect(podRCDataArray).toHaveLength(2);
+    expect(podRCDataArray).toHaveLength(3);
     expect(podRCDataArray[0].pods).toHaveLength(1);
     expect(podRCDataArray[0].current).not.toBeNull();
     expect(podRCDataArray[0].previous).toBeFalsy();
     expect(podRCDataArray[0].isRollingOut).toBeFalsy();
-    expect(podRCDataArray[1].pods).toHaveLength(0);
+    expect(podRCDataArray[1].pods).toHaveLength(1);
 
     podRCDataArray = getPodsForDeploymentConfigs([], mockResources);
     expect(podRCDataArray).toHaveLength(0);
@@ -151,13 +151,13 @@ describe('getPodsFor...', () => {
 
     mockResources.replicationControllers = { loaded: false, loadError: 'error', data: [] };
     podRCDataArray = getPodsForDeploymentConfigs(sampleDeploymentConfigs.data, mockResources);
-    expect(podRCDataArray).toHaveLength(2);
+    expect(podRCDataArray).toHaveLength(3);
     expect(podRCDataArray[0].pods).toHaveLength(0);
     expect(podRCDataArray[1].pods).toHaveLength(0);
 
     delete mockResources.replicationControllers;
     podRCDataArray = getPodsForDeploymentConfigs(sampleDeploymentConfigs.data, mockResources);
-    expect(podRCDataArray).toHaveLength(2);
+    expect(podRCDataArray).toHaveLength(3);
     expect(podRCDataArray[0].pods).toHaveLength(0);
     expect(podRCDataArray[1].pods).toHaveLength(0);
   });
