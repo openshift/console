@@ -44,7 +44,7 @@ import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
-import { withTelemetry, withQuickStartContext } from '@console/shared/src/hoc';
+import { withTelemetry, withQuickStartContext, withRequestTokenURL } from '@console/shared/src/hoc';
 import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
 import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
 
@@ -513,7 +513,7 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _renderMenu(mobile) {
-    const { flags, consoleLinks, t } = this.props;
+    const { clusterTokenURL, flags, consoleLinks, t } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
     const additionalUserActions = this._getAdditionalActions(
       this._getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
@@ -550,10 +550,10 @@ class MastheadToolbarContents_ extends React.Component {
         }
       };
 
-      if (window.SERVER_FLAGS.requestTokenURL) {
+      if (clusterTokenURL) {
         userActions.unshift({
           label: t('public~Copy login command'),
-          href: window.SERVER_FLAGS.requestTokenURL,
+          href: clusterTokenURL,
           externalLink: true,
         });
       }
@@ -762,7 +762,7 @@ const mastheadToolbarStateToProps = (state) => ({
 });
 
 const MastheadToolbarContentsWithTranslation = withQuickStartContext(
-  withTranslation()(withTelemetry(MastheadToolbarContents_)),
+  withTranslation()(withTelemetry(withRequestTokenURL(MastheadToolbarContents_))),
 );
 const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
   drawerToggle: UIActions.notificationDrawerToggleExpanded,

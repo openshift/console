@@ -10,12 +10,15 @@ import { connectToFlags } from '../reducers/connectToFlags';
 import { ConsoleCLIDownloadModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { SyncMarkdownView } from './markdown-view';
+import { useRequestTokenURL } from '@console/shared/src/hooks/useRequestTokenURL';
 
 export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
   const { t } = useTranslation();
+  const [requestTokenURL] = useRequestTokenURL();
   const title = 'Command Line Tools';
   const data = _.sortBy(_.get(obj, 'data'), 'spec.displayName');
   const cliData = _.remove(data, (item) => item.metadata.name === 'oc-cli-downloads');
+
   const additionalCommandLineTools = _.map(cliData.concat(data), (tool) => {
     const displayName = tool.spec.displayName;
     const defaultLinkText = `Download ${displayName}`;
@@ -56,13 +59,10 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name">{title}</div>
         </h1>
-        {window.SERVER_FLAGS.requestTokenURL && (
+        {requestTokenURL && (
           <>
             <Divider className="co-divider" />
-            <ExternalLink
-              href={window.SERVER_FLAGS.requestTokenURL}
-              text={t('public~Copy login command')}
-            />
+            <ExternalLink href={requestTokenURL} text={t('public~Copy login command')} />
           </>
         )}
         {additionalCommandLineTools}
