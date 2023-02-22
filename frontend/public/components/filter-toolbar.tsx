@@ -365,7 +365,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   }}
                   categoryName={translatedNameFilterTitle}
                 >
-                  <div className="pf-c-input-group">
+                  <div className="pf-c-input-group co-filter-group">
                     {!hideLabelFilter && (
                       <DropdownInternal
                         items={filterDropdownItems}
