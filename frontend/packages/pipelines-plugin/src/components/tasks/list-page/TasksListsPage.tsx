@@ -4,13 +4,14 @@ import { match as Rmatch } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { DefaultPage } from '@console/internal/components/default-resource';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MenuActions, MultiTabListPage } from '@console/shared';
 import { TaskModel, ClusterTaskModel, TaskRunModel } from '../../../models';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
+import ClusterTasksPage from './ClusterTasksPage';
+import TasksPage from './TasksPage';
 
 interface TasksListsPageProps {
   match: Rmatch<any>;
@@ -32,7 +33,7 @@ const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
     {
       href: '',
       name: t('pipelines-plugin~Tasks'),
-      component: DefaultPage,
+      component: TasksPage,
       pageData: {
         kind: referenceForModel(TaskModel),
         canCreate,
@@ -52,7 +53,7 @@ const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
     {
       href: 'cluster-tasks',
       name: t('pipelines-plugin~ClusterTasks'),
-      component: DefaultPage,
+      component: ClusterTasksPage,
       pageData: {
         kind: referenceForModel(ClusterTaskModel),
         canCreate,

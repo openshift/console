@@ -94,41 +94,43 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
     setRows(tableRows);
   }, [collapsedRowsIds, filteredRules, namespace]);
 
-  const onCollapse = (event: React.MouseEvent, rowKey: number, isOpen: boolean) => {
-    rows[rowKey].isOpen = isOpen;
-    const { id } = rows[rowKey].cells[0];
-    if (!_.includes(collapsedRowsIds, id)) {
-      setCollapsedRowsIds([...collapsedRowsIds, id]);
-    } else if (_.includes(collapsedRowsIds, id)) {
-      setCollapsedRowsIds(_.without(collapsedRowsIds, id));
+  const onCollapse = React.useCallback(
+    (event: React.MouseEvent, rowKey: number, isOpen: boolean) => {
+      rows[rowKey].isOpen = isOpen;
+      const { id } = rows[rowKey].cells[0];
+      if (!_.includes(collapsedRowsIds, id)) {
+        setCollapsedRowsIds([...collapsedRowsIds, id]);
+      } else if (_.includes(collapsedRowsIds, id)) {
+        setCollapsedRowsIds(_.without(collapsedRowsIds, id));
+      }
+      setRows([...rows]);
+    },
+    [collapsedRowsIds, rows],
+  );
+  const handleSort = React.useCallback(
+    (_event: React.MouseEvent, index: number, direction: SortByDirection) => {
+      dispatch(
+        sortList(
+          reduxID,
+          monitoringAlertColumn[index - 1].fieldName,
+          monitoringAlertColumn[index - 1].sortFunc,
+          direction,
+          monitoringAlertColumn[index - 1].title,
+        ),
+      );
+      setSortBy({ index, direction });
+    },
+    [dispatch, monitoringAlertColumn],
+  );
+
+  const Content = React.useMemo(() => {
+    if (loading && !loadError) {
+      return <LoadingBox />;
     }
-    setRows([...rows]);
-  };
-  const handleSort = (_event: React.MouseEvent, index: number, direction: SortByDirection) => {
-    dispatch(
-      sortList(
-        reduxID,
-        monitoringAlertColumn[index - 1].fieldName,
-        monitoringAlertColumn[index - 1].sortFunc,
-        direction,
-        monitoringAlertColumn[index - 1].title,
-      ),
-    );
-    setSortBy({ index, direction });
-  };
-
-  if (loading && !loadError) {
-    return <LoadingBox />;
-  }
-  if (_.isEmpty(response?.data?.groups)) {
-    return <EmptyBox label={t('devconsole~Alerts')} />;
-  }
-
-  return (
-    <>
-      <Helmet>
-        <title>{t('devconsole~Alerts')}</title>
-      </Helmet>
+    if (_.isEmpty(response?.data?.groups)) {
+      return <EmptyBox label={t('devconsole~Alerts')} />;
+    }
+    return (
       <div className="odc-monitoring-alerts">
         <FilterToolbar
           rowFilters={alertFilters}
@@ -149,6 +151,26 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
           <TableBody />
         </Table>
       </div>
+    );
+  }, [
+    handleSort,
+    loadError,
+    loading,
+    monitoringAlertColumn,
+    onCollapse,
+    response,
+    rows,
+    rules,
+    sortBy,
+    t,
+  ]);
+
+  return (
+    <>
+      <Helmet>
+        <title>{t('devconsole~Alerts')}</title>
+      </Helmet>
+      {Content}
     </>
   );
 };
