@@ -1,6 +1,6 @@
 import { useURLPoll } from '../utils/url-poll-hook';
 import { getPrometheusURL, PrometheusEndpoint } from './helpers';
-import { PrometheusRulesResponse } from '../monitoring/types';
+import { PrometheusRulesResponse } from '@console/dynamic-plugin-sdk';
 
 export const usePrometheusRulesPoll = ({ delay, namespace }: PrometheusPollProps) => {
   const url = getPrometheusURL({
