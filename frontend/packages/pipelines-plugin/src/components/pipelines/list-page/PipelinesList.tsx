@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
 import { Firehose } from '@console/internal/components/utils';
@@ -27,11 +28,16 @@ const PipelinesList: React.FC<PipelinesListProps> = ({
     },
   ];
   return (
-    <div className="co-m-pane__body">
-      <Firehose resources={resources}>
-        <PipelineAugmentRunsWrapper namespace={namespace} />
-      </Firehose>
-    </div>
+    <>
+      <Helmet>
+        <title>{t('pipelines-plugin~Pipelines')}</title>
+      </Helmet>
+      <div className="co-m-pane__body">
+        <Firehose resources={resources}>
+          <PipelineAugmentRunsWrapper namespace={namespace} />
+        </Firehose>
+      </div>
+    </>
   );
 };
 

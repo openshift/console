@@ -45,6 +45,6 @@ describe('PipelineRunEvents:', () => {
 
   it('Should pass three filters in the props to the ResourcesEventStream', () => {
     const pipelineRunEventsWrapper = shallow(<PipelineRunEvents {...pipelineRunEventsProps} />);
-    expect(pipelineRunEventsWrapper.props().filters).toHaveLength(3);
+    expect(pipelineRunEventsWrapper.find(ResourcesEventStream).props().filters).toHaveLength(3);
   });
 });

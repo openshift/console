@@ -30,6 +30,7 @@ import {
 } from './build';
 import { ResourceEventStream } from './events';
 import { BuildConfigModel } from '../models';
+import Helmet from 'react-helmet';
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 
@@ -220,16 +221,21 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
   };
 
   return (
-    <ListPage
-      {...props}
-      title={t('public~BuildConfigs')}
-      kind={BuildConfigsReference}
-      ListComponent={BuildConfigsList}
-      canCreate={props.canCreate ?? true}
-      createProps={createProps}
-      filterLabel={props.filterLabel}
-      rowFilters={filters}
-    />
+    <>
+      <Helmet>
+        <title>{t('public~BuildConfigs list')}</title>
+      </Helmet>
+      <ListPage
+        {...props}
+        title={t('public~BuildConfigs')}
+        kind={BuildConfigsReference}
+        ListComponent={BuildConfigsList}
+        canCreate={props.canCreate ?? true}
+        createProps={createProps}
+        filterLabel={props.filterLabel}
+        rowFilters={filters}
+      />
+    </>
   );
 };
 BuildConfigsPage.displayName = 'BuildConfigsListPage';
