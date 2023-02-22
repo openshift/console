@@ -52,6 +52,39 @@ commands:
         kind: deploy
         isDefault: true`;
 
+const mockDevfileMissingComponents = `schemaVersion: 2.2.0
+metadata:
+  name: java-quarkus
+  version: 1.1.0
+  provider: Red Hat
+  supportUrl: https://github.com/devfile-samples/devfile-support#support-information
+  website: https://quarkus.io
+  displayName: Quarkus Java
+  description: Upstream Quarkus with Java+GraalVM
+  tags: ["Java", "Quarkus"]
+  projectType: "quarkus"
+  language: "java"
+  attributes:
+    alpha.dockerimage-port: 8081
+parent:
+  id: java-quarkus
+  registryUrl: "https://registry.devfile.io"
+commands:
+  - id: build-image
+    apply:
+      component: outerloop-build
+  - id: deployk8s
+    apply:
+      component: outerloop-deploy
+  - id: deploy
+    composite:
+      commands:
+        - build-image
+        - deployk8s
+      group:
+        kind: deploy
+        isDefault: true`;
+
 const mockNewDevfile = `schemaVersion: 2.2.0
 metadata:
   name: java-quarkus
@@ -114,6 +147,42 @@ components:
                     limits:
                       memory: "1024Mi"
                       cpu: "500m"
+commands:
+  - id: build-image
+    apply:
+      component: outerloop-build
+  - id: deployk8s
+    apply:
+      component: outerloop-deploy
+  - id: deploy
+    composite:
+      commands:
+        - build-image
+        - deployk8s
+      group:
+        kind: deploy
+        isDefault: true
+`;
+
+const mockNewDevfileMissingComponents = `schemaVersion: 2.2.0
+metadata:
+  name: java-quarkus
+  version: 1.1.0
+  provider: Red Hat
+  supportUrl: 'https://github.com/devfile-samples/devfile-support#support-information'
+  website: 'https://quarkus.io'
+  displayName: Quarkus Java
+  description: Upstream Quarkus with Java+GraalVM
+  tags:
+    - Java
+    - Quarkus
+  projectType: quarkus
+  language: java
+  attributes:
+    alpha.dockerimage-port: 8081
+parent:
+  id: java-quarkus
+  registryUrl: 'https://registry.devfile.io'
 commands:
   - id: build-image
     apply:
@@ -365,6 +434,17 @@ describe('devfile-utils', () => {
       );
 
       expect(newDevfile).toEqual(mockNewDevfile);
+    });
+    it('should return original devfile when component is missing', async () => {
+      const newDevfile = await convertURItoInlineYAML(
+        mockDevfileMissingComponents,
+        git.url,
+        git.ref,
+        git.dir,
+        git.type,
+      );
+
+      expect(newDevfile).toEqual(mockNewDevfileMissingComponents);
     });
   });
 });
