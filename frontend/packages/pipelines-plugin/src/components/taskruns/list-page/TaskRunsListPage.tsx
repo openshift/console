@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { getURLSearchParams } from '@console/internal/components/utils';
@@ -29,16 +30,21 @@ const TaskRunsListPage: React.FC<Omit<
     [showPipelineColumn],
   );
   return (
-    <ListPage
-      {...props}
-      customData={customData}
-      canCreate={kind?.includes(referenceForModel(TaskRunModel)) ?? false}
-      kind={referenceForModel(TaskRunModel)}
-      ListComponent={TaskRunsList}
-      rowFilters={taskRunFilters(t)}
-      badge={hideBadge ? null : badge}
-      namespace={namespace}
-    />
+    <>
+      <Helmet>
+        <title>{t('pipelines-plugin~TaskRuns')}</title>
+      </Helmet>
+      <ListPage
+        {...props}
+        customData={customData}
+        canCreate={kind?.includes(referenceForModel(TaskRunModel)) ?? false}
+        kind={referenceForModel(TaskRunModel)}
+        ListComponent={TaskRunsList}
+        rowFilters={taskRunFilters(t)}
+        badge={hideBadge ? null : badge}
+        namespace={namespace}
+      />
+    </>
   );
 };
 export default TaskRunsListPage;

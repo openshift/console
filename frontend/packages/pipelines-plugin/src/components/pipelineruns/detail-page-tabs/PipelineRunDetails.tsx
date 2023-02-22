@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
@@ -15,6 +16,9 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
   const { t } = useTranslation();
   return (
     <>
+      <Helmet>
+        <title>{t('pipelines-plugin~PipelineRun details')}</title>
+      </Helmet>
       <div className="co-m-pane__body odc-pipeline-run-details">
         <PipelineRunDetailsSection pipelineRun={pipelineRun} />
       </div>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
@@ -65,14 +66,19 @@ const PipelineResourcesListPage: React.FC<Omit<
   const { t } = useTranslation();
   const badge = usePipelineTechPreviewBadge(props.namespace);
   return (
-    <ListPage
-      {...props}
-      canCreate={false}
-      kind={referenceForModel(PipelineResourceModel)}
-      ListComponent={PipelineResourcesList}
-      rowFilters={pipelineResourceFilters(t)}
-      badge={props.hideBadge ? null : badge}
-    />
+    <>
+      <Helmet>
+        <title>{t('pipelines-plugin~PipelineResources')}</title>
+      </Helmet>
+      <ListPage
+        {...props}
+        canCreate={false}
+        kind={referenceForModel(PipelineResourceModel)}
+        ListComponent={PipelineResourcesList}
+        rowFilters={pipelineResourceFilters(t)}
+        badge={props.hideBadge ? null : badge}
+      />
+    </>
   );
 };
 
