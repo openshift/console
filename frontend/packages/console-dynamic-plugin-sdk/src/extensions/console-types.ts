@@ -3,7 +3,6 @@ import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import MonacoEditor from 'react-monaco-editor/lib/editor';
 import { RouteComponentProps } from 'react-router';
-import { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
@@ -14,6 +13,7 @@ import {
   Selector,
 } from '../api/common-types';
 import { Extension, ExtensionTypeGuard } from '../types';
+import { CustomDataSource } from './dashboard-data-source';
 
 export type OwnerReference = {
   name: string;
