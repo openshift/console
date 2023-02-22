@@ -1901,7 +1901,8 @@ const RulesPage_: React.FC<{}> = () => {
       <div className="co-m-pane__body">
         <ListPageFilter
           data={staticData}
-          labelFilter="alerts"
+          labelFilter="observe-rules"
+          labelPath="labels"
           loaded={loaded}
           onFilterChange={onFilterChange}
           rowFilters={rowFilters}

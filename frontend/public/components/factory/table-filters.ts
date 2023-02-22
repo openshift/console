@@ -57,6 +57,14 @@ export const tableFilters: FilterMap = {
     return !!values.all.every((v) => labels.includes(v));
   },
 
+  'observe-rules': (values, rule: Rule) => {
+    if (!values.all) {
+      return true;
+    }
+    const labels = getLabelsAsString(rule, 'labels');
+    return !!values.all.every((v) => labels.includes(v));
+  },
+
   'observe-target-labels': (values, target: Target) =>
     !values.all || values.all.every((v) => getLabelsAsString(target, 'labels').includes(v)),
 
