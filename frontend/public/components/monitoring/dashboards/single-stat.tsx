@@ -10,6 +10,8 @@ import { Panel } from './types';
 import { getPrometheusURL } from '../../graphs/helpers';
 import { LoadingInline, usePoll, useSafeFetch } from '../../utils';
 
+import { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
+
 const colorMap = {
   'super-light-blue': 'blue-100',
   'light-blue': 'blue-200',
@@ -55,7 +57,13 @@ const Body: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Bullseye className="monitoring-dashboards__single-stat">{children}</Bullseye>
 );
 
-const SingleStat: React.FC<Props> = ({ panel, pollInterval, query, namespace }) => {
+const SingleStat: React.FC<Props> = ({
+  panel,
+  pollInterval,
+  query,
+  namespace,
+  customDataSource,
+}) => {
   const {
     decimals,
     format,
@@ -74,8 +82,16 @@ const SingleStat: React.FC<Props> = ({ panel, pollInterval, query, namespace }) 
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
-  const tick = () =>
-    safeFetch(getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, query, namespace }))
+  const url = getPrometheusURL(
+    { endpoint: PrometheusEndpoint.QUERY, query, namespace },
+    customDataSource?.basePath,
+  );
+
+  const tick = () => {
+    if (!url) {
+      return;
+    }
+    safeFetch(url)
       .then((response: PrometheusResponse) => {
         setError(undefined);
         setIsLoading(false);
@@ -88,6 +104,7 @@ const SingleStat: React.FC<Props> = ({ panel, pollInterval, query, namespace }) 
           setValue(undefined);
         }
       });
+  };
 
   usePoll(tick, pollInterval, query);
 
@@ -128,6 +145,7 @@ type Props = {
   pollInterval: number;
   query: string;
   namespace?: string;
+  customDataSource?: CustomDataSource;
 };
 
 export default SingleStat;

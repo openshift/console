@@ -70,6 +70,13 @@ import {
   getAllVariables,
 } from './monitoring-dashboard-utils';
 
+import { useExtensions } from '@console/plugin-sdk/src';
+import {
+  isDataSource,
+  DataSource as DataSourceExtension,
+  CustomDataSource,
+} from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
+
 const intervalVariableRegExps = ['__interval', '__rate_interval', '__auto_interval_[a-z]+'];
 
 const isIntervalVariable = (itemKey: string): boolean =>
@@ -218,6 +225,30 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
 
   const [isError, setIsError] = React.useState(false);
 
+  const customDataSourceName = variable?.datasource?.name;
+  const extensions = useExtensions<DataSourceExtension>(isDataSource);
+  const hasExtensions = !_.isEmpty(extensions);
+
+  const getURL = React.useCallback(
+    async (prometheusProps) => {
+      try {
+        if (!customDataSourceName) {
+          return getPrometheusURL(prometheusProps);
+        } else if (hasExtensions) {
+          const extension = extensions.find(
+            (ext) => ext?.properties?.contextId === 'monitoring-dashboards',
+          );
+          const getDataSource = await extension?.properties?.getDataSource();
+          const dataSource = await getDataSource(customDataSourceName);
+          return getPrometheusURL(prometheusProps, dataSource?.basePath);
+        }
+      } catch (error) {
+        setIsError(true);
+      }
+    },
+    [customDataSourceName, extensions, hasExtensions],
+  );
+
   React.useEffect(() => {
     if (query) {
       // Convert label_values queries to something Prometheus can handle
@@ -225,31 +256,31 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
       // be converted to use that instead
       const prometheusQuery = query.replace(/label_values\((.*), (.*)\)/, 'count($1) by ($2)');
 
-      const url = getPrometheusURL({
+      const prometheusProps = {
         endpoint: PrometheusEndpoint.QUERY_RANGE,
         query: prometheusQuery,
         samples: DEFAULT_GRAPH_SAMPLES,
         timeout: '60s',
         timespan,
         namespace,
-      });
+      };
 
-      dispatch(dashboardsPatchVariable(name, { isLoading: true }, activePerspective));
-
-      safeFetch(url)
-        .then(({ data }) => {
-          setIsError(false);
-          const newOptions = _.flatMap(data?.result, ({ metric }) => _.values(metric)).sort();
-          dispatch(dashboardsVariableOptionsLoaded(name, newOptions, activePerspective));
-        })
-        .catch((err) => {
-          dispatch(dashboardsPatchVariable(name, { isLoading: false }, activePerspective));
-          if (err.name !== 'AbortError') {
-            setIsError(true);
-          }
-        });
+      getURL(prometheusProps).then((url) =>
+        safeFetch(url)
+          .then(({ data }) => {
+            setIsError(false);
+            const newOptions = _.flatMap(data?.result, ({ metric }) => _.values(metric)).sort();
+            dispatch(dashboardsVariableOptionsLoaded(name, newOptions, activePerspective));
+          })
+          .catch((err) => {
+            dispatch(dashboardsPatchVariable(name, { isLoading: false }, activePerspective));
+            if (err.name !== 'AbortError') {
+              setIsError(true);
+            }
+          }),
+      );
     }
-  }, [activePerspective, dispatch, name, namespace, query, safeFetch, timespan]);
+  }, [activePerspective, dispatch, getURL, name, namespace, query, safeFetch, timespan]);
 
   React.useEffect(() => {
     if (variable.value && variable.value !== getQueryArgument(name)) {
@@ -494,6 +525,8 @@ const getPanelClassModifier = (panel: Panel): string => {
 };
 
 const Card: React.FC<CardProps> = React.memo(({ panel }) => {
+  const { t } = useTranslation();
+
   const namespace = React.useContext(NamespaceContext);
   const activePerspective = getActivePerspective(namespace);
   const pollInterval = useSelector(({ observe }: RootState) =>
@@ -508,6 +541,37 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
 
   const ref = React.useRef();
   const [, wasEverVisible] = useIsVisible(ref);
+
+  const [isError, setIsError] = React.useState<boolean>(false);
+  const [dataSourceInfoLoading, setDataSourceInfoLoading] = React.useState<boolean>(true);
+  const [customDataSource, setCustomDataSource] = React.useState<CustomDataSource>(undefined);
+  const customDataSourceName = panel.datasource?.name;
+  const extensions = useExtensions<DataSourceExtension>(isDataSource);
+  const hasExtensions = !_.isEmpty(extensions);
+
+  React.useEffect(() => {
+    const getCustomDataSource = async () => {
+      if (!customDataSourceName) {
+        setDataSourceInfoLoading(false);
+        setCustomDataSource(null);
+      } else if (hasExtensions) {
+        setDataSourceInfoLoading(true);
+        const extension = extensions.find(
+          (ext) => ext?.properties?.contextId === 'monitoring-dashboards',
+        );
+        const getDataSource = await extension?.properties?.getDataSource();
+        const dataSource = await getDataSource(customDataSourceName);
+        setCustomDataSource(dataSource);
+        setDataSourceInfoLoading(false);
+      } else {
+        setDataSourceInfoLoading(false);
+        setIsError(true);
+      }
+    };
+    getCustomDataSource().catch(() => {
+      setIsError(true);
+    });
+  }, [extensions, customDataSourceName, hasExtensions]);
 
   const formatSeriesTitle = React.useCallback(
     (labels, i) => {
@@ -545,7 +609,8 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
     return null;
   }
   const queries = rawQueries.map((expr) => evaluateTemplate(expr, variables, timespan));
-  const isLoading = _.some(queries, _.isUndefined);
+  const isLoading =
+    (_.some(queries, _.isUndefined) && dataSourceInfoLoading) || customDataSource === undefined;
 
   const panelClassModifier = getPanelClassModifier(panel);
 
@@ -560,62 +625,88 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
     <div
       className={`monitoring-dashboards__panel monitoring-dashboards__panel--${panelClassModifier}`}
     >
-      <PFCard
-        className={classNames('monitoring-dashboards__card', {
-          'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
-        })}
-        data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
-      >
-        <CardHeader className="monitoring-dashboards__card-header">
-          <CardTitle>{panel.title}</CardTitle>
-          <CardActions className="co-overview-card__actions">
-            {!isLoading && <QueryBrowserLink queries={queries} />}
-          </CardActions>
-        </CardHeader>
-        <CardBody className="co-dashboard-card__body--dashboard">
-          <div className="monitoring-dashboards__card-body-content" ref={ref}>
-            {isLoading || !wasEverVisible ? (
-              <div className={panel.type === 'graph' ? 'query-browser__wrapper' : ''}>
-                <LoadingInline />
-              </div>
-            ) : (
-              <>
-                {panel.type === 'grafana-piechart-panel' && (
-                  <BarChart pollInterval={pollInterval} query={queries[0]} namespace={namespace} />
-                )}
-                {panel.type === 'graph' && (
-                  <Graph
-                    formatSeriesTitle={formatSeriesTitle}
-                    isStack={panel.stack}
-                    pollInterval={pollInterval}
-                    queries={queries}
-                    showLegend={panel.legend?.show}
-                    units={panel.yaxes?.[0]?.format}
-                    onZoomHandle={handleZoom}
-                    namespace={namespace}
-                  />
-                )}
-                {(panel.type === 'singlestat' || panel.type === 'gauge') && (
-                  <SingleStat
-                    panel={panel}
-                    pollInterval={pollInterval}
-                    query={queries[0]}
-                    namespace={namespace}
-                  />
-                )}
-                {panel.type === 'table' && (
-                  <Table
-                    panel={panel}
-                    pollInterval={pollInterval}
-                    queries={queries}
-                    namespace={namespace}
-                  />
-                )}
-              </>
-            )}
-          </div>
-        </CardBody>
-      </PFCard>
+      {isError ? (
+        <PFCard
+          className={classNames('monitoring-dashboards__card', {
+            'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
+          })}
+          data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
+        >
+          <CardHeader className="monitoring-dashboards__card-header">
+            <CardTitle>{panel.title}</CardTitle>
+          </CardHeader>
+          <CardBody className="co-dashboard-card__body--dashboard">
+            <>
+              <RedExclamationCircleIcon /> {t('public~Error loading card')}
+            </>
+          </CardBody>
+        </PFCard>
+      ) : (
+        <PFCard
+          className={classNames('monitoring-dashboards__card', {
+            'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
+          })}
+          data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
+        >
+          <CardHeader className="monitoring-dashboards__card-header">
+            <CardTitle>{panel.title}</CardTitle>
+            <CardActions className="co-overview-card__actions">
+              {!isLoading && <QueryBrowserLink queries={queries} />}
+            </CardActions>
+          </CardHeader>
+          <CardBody className="co-dashboard-card__body--dashboard">
+            <div className="monitoring-dashboards__card-body-content" ref={ref}>
+              {isLoading || !wasEverVisible ? (
+                <div className={panel.type === 'graph' ? 'query-browser__wrapper' : ''}>
+                  <LoadingInline />
+                </div>
+              ) : (
+                <>
+                  {panel.type === 'grafana-piechart-panel' && (
+                    <BarChart
+                      pollInterval={pollInterval}
+                      query={queries[0]}
+                      namespace={namespace}
+                      customDataSource={customDataSource}
+                    />
+                  )}
+                  {panel.type === 'graph' && (
+                    <Graph
+                      formatSeriesTitle={formatSeriesTitle}
+                      isStack={panel.stack}
+                      pollInterval={pollInterval}
+                      queries={queries}
+                      showLegend={panel.legend?.show}
+                      units={panel.yaxes?.[0]?.format}
+                      onZoomHandle={handleZoom}
+                      namespace={namespace}
+                      customDataSource={customDataSource}
+                    />
+                  )}
+                  {(panel.type === 'singlestat' || panel.type === 'gauge') && (
+                    <SingleStat
+                      panel={panel}
+                      pollInterval={pollInterval}
+                      query={queries[0]}
+                      namespace={namespace}
+                      customDataSource={customDataSource}
+                    />
+                  )}
+                  {panel.type === 'table' && (
+                    <Table
+                      panel={panel}
+                      pollInterval={pollInterval}
+                      queries={queries}
+                      namespace={namespace}
+                      customDataSource={customDataSource}
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          </CardBody>
+        </PFCard>
+      )}
     </div>
   );
 });

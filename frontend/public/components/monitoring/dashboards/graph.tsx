@@ -8,6 +8,8 @@ import { RootState } from '../../../redux';
 import { FormatSeriesTitle, QueryBrowser } from '../query-browser';
 import { DEFAULT_GRAPH_SAMPLES, getActivePerspective } from './monitoring-dashboard-utils';
 
+import { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
+
 type Props = {
   formatSeriesTitle?: FormatSeriesTitle;
   isStack: boolean;
@@ -17,6 +19,7 @@ type Props = {
   units: string;
   onZoomHandle?: (timeRange: number, endTime: number) => void;
   namespace?: string;
+  customDataSource?: CustomDataSource;
 };
 
 const Graph: React.FC<Props> = ({
@@ -28,6 +31,7 @@ const Graph: React.FC<Props> = ({
   units,
   onZoomHandle,
   namespace,
+  customDataSource,
 }) => {
   const dispatch = useDispatch();
   const activePerspective = getActivePerspective(namespace);
@@ -61,6 +65,7 @@ const Graph: React.FC<Props> = ({
       timespan={timespan}
       units={units}
       namespace={namespace}
+      customDataSource={customDataSource}
     />
   );
 };
