@@ -74,8 +74,13 @@
     "i18n": "./i18n-scripts/build-i18n.sh && node ./i18n-scripts/consolidate-public-folders && node ./i18n-scripts/set-english-defaults.js",
     "export-pos": "./i18n-scripts/export-pos.sh",
     "memsource-upload": "./i18n-scripts/memsource-upload.sh",
-    "memsource-download": "./i18n-scripts/memsource-download.sh"
+    "memsource-download": "./i18n-scripts/memsource-download.sh",
+    "cy:test-console-headless": "node --max-old-space-size=4096 ./node_modules/.bin/cypress run --config-file packages/integration-tests-cypress/cypress.json --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=chrome}",
+    "cy:test-ceph-storage-plugin-headless": "node --max-old-space-size=4096 ./node_modules/.bin/cypress run --config-file packages/ceph-storage-plugin/integration-tests-cypress/cypress-ceph.json --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=chrome}",
+    "cy:test-console-parallel-headless": "cypress-parallel -s cy:test-console-headless -t 4 -d 'packages/integration-tests-cypress/tests/**/*.ts' -n node_modules/cypress-multi-reporters -b true",
+    "cy:test-ceph-storage-plugin-parallel-headless": "cypress-parallel -s cy:test-ceph-storage-plugin-headless -t 4 -d 'packages/ceph-storage-plugin/integration-tests-cypress/tests/*.ts' -n node_modules/cypress-multi-reporters"
   },
+
   "jest": {
     "moduleFileExtensions": [
       "js",
@@ -276,12 +281,13 @@
     "comment-json": "4.x",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^5.2.7",
-    "cypress": "^8.5.0",
+    "cypress": "^9.5.4",
     "cypress-axe": "^0.12.0",
     "cypress-cucumber-preprocessor": "latest",
     "cypress-file-upload": "^5.0.8",
     "cypress-jest-adapter": "^0.1.1",
-    "cypress-multi-reporters": "^1.4.0",
+    "cypress-multi-reporters": "^1.6.2",
+    "cypress-parallel": "^0.12.0",
     "enzyme": "3.10.x",
     "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-graphql": "^4.0.0",

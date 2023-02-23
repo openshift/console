@@ -1,5 +1,5 @@
 {
-  "integrationFolder": "packages/integration-tests-cypress/tests",
+  "integrationFolder": "packages/ceph-storage-plugin",
   "viewportWidth": 1920,
   "viewportHeight": 1080,
   "screenshotsFolder": "../../gui_test_screenshots/cypress/screenshots",
@@ -9,7 +9,7 @@
   "reporterOptions": {
     "configFile": "reporter-config.json"
   },
-  "supportFile": "packages/integration-tests-cypress/support/index.ts",
+  "supportFile": "packages/ceph-storage-plugin/integration-tests-cypress/support/index.ts",
   "pluginsFile": "packages/integration-tests-cypress/plugins/index.js",
   "fixturesFolder": "fixtures",
   "defaultCommandTimeout": 30000,
