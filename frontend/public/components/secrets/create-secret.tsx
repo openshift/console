@@ -357,6 +357,7 @@ class ImageSecretFormWithTranslation extends React.Component<
     this.onFormDisable = this.onFormDisable.bind(this);
   }
   onDataChanged(secretData) {
+    secretData ? this.onFormDisable(false) : null;
     const dataKey = secretData[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
     this.setState(
       {
