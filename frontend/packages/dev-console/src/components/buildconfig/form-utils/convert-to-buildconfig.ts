@@ -223,12 +223,19 @@ const convertFormDataTriggersToBuildConfig = (
   if (values.formData.triggers?.otherTriggers) {
     triggers.push(
       ...values.formData.triggers.otherTriggers
-        .filter((trigger) => trigger.type)
+        .filter((trigger) => trigger.type && trigger.secret)
         .map(
           (trigger) =>
             ({
               type: trigger.type,
-              [trigger.type.toLowerCase()]: { secret: trigger.secret },
+              [trigger.type.toLowerCase()]: {
+                ...(trigger.data
+                  ? trigger.data.secretReference
+                    ? { secretReference: { name: trigger.secret } }
+                    : { secret: trigger.secret }
+                  : { secretReference: { name: trigger.secret } }),
+                ...(trigger.allowEnv ? { allowEnv: trigger.allowEnv } : {}),
+              },
             } as BuildConfigTrigger),
         ),
     );
