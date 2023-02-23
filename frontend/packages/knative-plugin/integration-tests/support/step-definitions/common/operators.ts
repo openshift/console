@@ -1,8 +1,16 @@
 import { Given, When } from 'cypress-cucumber-preprocessor/steps';
-import { verifyAndInstallKnativeOperator } from '@console/dev-console/integration-tests/support/pages';
+import { operators } from '@console/dev-console/integration-tests/support/constants';
+import {
+  verifyAndInstallKnativeOperator,
+  verifyAndInstallOperator,
+} from '@console/dev-console/integration-tests/support/pages';
 
 Given('user has installed OpenShift Serverless Operator', () => {
   verifyAndInstallKnativeOperator();
+});
+
+Given('user has installed OpenShift Pipelines Operator', () => {
+  verifyAndInstallOperator(operators.PipelinesOperator);
 });
 
 Given('user has installed OpenShift Serverless Operator using CLI', () => {

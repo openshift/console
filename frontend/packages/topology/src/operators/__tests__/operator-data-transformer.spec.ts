@@ -72,7 +72,7 @@ describe('operator data transformer ', () => {
     expect(getNodeById(operatorBackedServices[0].id, graphData).type).toBe(
       TYPE_OPERATOR_BACKED_SERVICE,
     );
-    expect(graphData.nodes.filter((n) => !n.group)).toHaveLength(10);
+    expect(graphData.nodes.filter((n) => !n.group)).toHaveLength(11);
     expect(graphData.nodes.filter((n) => n.group)).toHaveLength(3);
     expect(graphData.edges).toHaveLength(1);
   });

@@ -159,6 +159,34 @@ export const getDefaultVolumeClaimTemplate = (pipelineName: string): VolumeClaim
   };
 };
 
+export const getServerlessFunctionDefaultPersistentVolumeClaim = (
+  pipelineName: string,
+): VolumeClaimTemplateType => {
+  return {
+    volumeClaimTemplate: {
+      metadata: {
+        finalizers: ['kubernetes.io/pvc-protection'],
+        labels: {
+          [TektonResourceLabel.pipeline]: pipelineName,
+          'boson.dev/function': 'true',
+          'function.knative.dev': 'true',
+          'function.knative.dev/name': pipelineName,
+        },
+      },
+      spec: {
+        accessModes: ['ReadWriteOnce'],
+        resources: {
+          requests: {
+            storage: '1Gi',
+          },
+        },
+        storageClassName: 'gp3-csi',
+        volumeMode: 'Filesystem',
+      },
+    },
+  };
+};
+
 const supportWorkspaceDefaults = (preselectPVC: string) => (
   workspace: TektonWorkspace,
 ): PipelineModalFormWorkspace => {

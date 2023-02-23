@@ -10,9 +10,10 @@ import {
   Rule,
   Silence,
   SilenceStates,
+  PrometheusRulesResponse,
 } from '@console/dynamic-plugin-sdk';
 
-import { AlertSource, MonitoringResource, PrometheusRulesResponse, Target } from './types';
+import { AlertSource, MonitoringResource, Target } from './types';
 
 export const PROMETHEUS_BASE_PATH = window.SERVER_FLAGS.prometheusBaseURL;
 
@@ -87,6 +88,15 @@ export const silenceMatcherEqualitySymbol = (isEqual: boolean, isRegex: boolean)
 
 export const alertDescription = (alert: Alert | Rule): string =>
   alert.annotations?.description || alert.annotations?.message || alert.labels?.alertname;
+
+export const alertAdditionalSource = (alert: Alert): string => {
+  const ruleSourceLabel = alert.rule?.labels?.source;
+  const sourceId = alert.rule.sourceId ?? '';
+  if (ruleSourceLabel) {
+    return `${_.startCase(sourceId)} - ${_.startCase(ruleSourceLabel)}`;
+  }
+  return _.startCase(sourceId);
+};
 
 // Determine if an Alert is silenced by a Silence (if all of the Silence's matchers match one of the
 // Alert's labels)

@@ -269,7 +269,7 @@
   "Administrators can try <2>this quick start</2> to configure their metrics level to pipelinerun and taskrun. The pipelinerun and taskrun metrics level collects large volume of metrics over time in unbounded cardinality which may lead to metrics unreliability.": "管理员可以尝试 <2>这个快速启动</2>，将指标级别配置为 pipelinerun 和 taskrun。pipelinerun 和 taskrun 指标级别会在一定时间内收集大量的指标数据，这可能会导致指标变得不可靠。",
   "Refresh Interval": "刷新间隔",
   "Time Range": "时间范围",
-  "Pipeline run count chart": "管道运行数量图",
+  "Pipeline run count chart": "管道运行数图",
   "Pipeline Runs": "管道运行",
   "Average PipelineRun duration": "平均的管道运行持续时间",
   "Pipeline run duration chart": "管道运行持续时间图",

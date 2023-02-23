@@ -487,7 +487,14 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
   } = props;
   const createPath = `${match.url}/~new`;
 
-  const { apiGroup: group, apiVersion: version, kind, namespaced, label } = props.k8sModel;
+  const {
+    apiGroup: group,
+    apiVersion: version,
+    kind,
+    namespaced,
+    label,
+    labelPlural,
+  } = props.k8sModel;
   const managesAllNamespaces = namespaced && hasAllNamespaces(csv);
   const listAllNamespaces = managesAllNamespaces && showOperandsInAllNamespaces;
   const [resources, loaded, loadError] = useK8sWatchResource<K8sResourceKind[]>({
@@ -501,7 +508,7 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
 
   return (
     <>
-      <ListPageHeader title={showTitle ? `${label}s` : undefined}>
+      <ListPageHeader title={showTitle ? `${labelPlural}` : undefined}>
         {managesAllNamespaces && (
           <div className="co-operator-details__toggle-value pf-u-ml-xl-on-md">
             <ShowOperandsInAllNamespacesRadioGroup />

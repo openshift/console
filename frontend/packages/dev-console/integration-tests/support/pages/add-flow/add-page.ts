@@ -78,7 +78,7 @@ export const addPage = {
         break;
       case 'Samples':
       case addOptions.Samples:
-        cy.byTestID('item import-from-samples').click();
+        cy.byTestID('item import-from-samples').click({ force: true });
         app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.Samples);
         cy.testA11y(pageTitle.Samples);

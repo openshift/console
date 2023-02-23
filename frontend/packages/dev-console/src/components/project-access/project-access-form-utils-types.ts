@@ -6,10 +6,11 @@ export enum Verb {
   Patch = 'Patch',
 }
 
-type SubjectType = {
+export type SubjectType = {
   apiGroup?: string;
   kind: string;
   name: string;
+  namespace?: string;
 };
 
 export type UserRoleBinding = {

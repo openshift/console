@@ -26,8 +26,6 @@ import {
 import { ACM_PERSPECTIVE_ID } from '../../consts';
 import ClusterMenuToggle from './ClusterMenuToggle';
 
-const ClusterCIcon: React.FC = () => <span className="co-m-resource-icon">C</span>;
-
 const NoResults: React.FC<{
   onClear: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }> = ({ onClear }) => {
@@ -73,6 +71,7 @@ const ClusterGroup: React.FC<{
   clusters: ClusterMenuItem[];
 }> = ({ clusters }) => {
   const [activeCluster] = useActiveCluster();
+  const [activePerspective] = useActivePerspective();
 
   return clusters.length === 0 ? null : (
     <MenuGroup translate="no" label="Clusters">
@@ -83,13 +82,16 @@ const ClusterGroup: React.FC<{
             data-test-id="cluster-dropdown-item"
             key={cluster.key}
             itemId={cluster.key}
-            isSelected={activeCluster === cluster.key}
+            isSelected={
+              activePerspective === ACM_PERSPECTIVE_ID
+                ? cluster.key === ACM_PERSPECTIVE_ID
+                : cluster.key === activeCluster
+            }
             onClick={(e) => {
               e.preventDefault();
               cluster.onClick();
             }}
           >
-            {cluster.showIcon && <ClusterCIcon />}
             {cluster.title}
           </MenuItem>
         ))}
@@ -145,7 +147,6 @@ const ClusterMenu = () => {
         .map((cluster) => ({
           key: cluster,
           title: cluster,
-          showIcon: true,
           onClick: () => onClusterClick(cluster),
         })),
     ],
@@ -198,13 +199,9 @@ const ClusterMenu = () => {
       isOpen={dropdownOpen}
       onToggle={setDropdownOpen}
       title={
-        `${activePerspective}` === ACM_PERSPECTIVE_ID ? (
-          t('console-app~All Clusters')
-        ) : (
-          <>
-            <ClusterCIcon /> {activeCluster}
-          </>
-        )
+        `${activePerspective}` === ACM_PERSPECTIVE_ID
+          ? t('console-app~All Clusters')
+          : activeCluster
       }
     />
   );
@@ -213,7 +210,6 @@ const ClusterMenu = () => {
 type ClusterMenuItem = {
   key: string;
   title: string;
-  showIcon?: boolean;
   onClick: () => void;
 };
 

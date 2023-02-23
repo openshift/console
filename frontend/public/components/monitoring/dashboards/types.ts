@@ -22,6 +22,7 @@ type YAxis = {
 
 export type Panel = {
   breakpoint?: string;
+  datasource?: DataSource;
   decimals?: number;
   format?: string;
   gridPos?: {
@@ -65,6 +66,7 @@ export type Panel = {
 };
 
 export type TemplateVariable = {
+  datasource: DataSource;
   hide: number;
   includeAll: boolean;
   name: string;
@@ -95,4 +97,9 @@ export type Board = {
 
 export type TimeDropdownsProps = {
   namespace?: string;
+};
+
+export type DataSource = {
+  name: string;
+  type: string;
 };

@@ -159,20 +159,6 @@ form.pf-c-form {
 
 // Page
 .pf-c-page {
-  &__header-brand-link {
-    flex: 0 1 auto !important; // so link doesn't grow larger than logo
-  }
-
-  &__header-tools {
-    .pf-c-dropdown__toggle,
-    .pf-c-app-launcher__toggle {
-      font-size: $pf-header-icon-fontsize !important;
-    }
-    .pf-c-notification-badge {
-      font-size: $pf-header-icon-fontsize;
-    }
-  }
-
   // Positions fullscreen terminal on top of mast header
   &__main.default-overflow {
     z-index: calc(var(--pf-c-page__header--ZIndex) + 50);
@@ -183,10 +169,6 @@ form.pf-c-form {
     display: flex;
     flex-direction: column;
     height: 100%;
-  }
-
-  .pf-c-page__header {
-    background-color: var(--pf-global--palette--black-1000);
   }
 }
 
@@ -212,6 +194,24 @@ form.pf-c-form {
     --pf-global--FontSize--md: #{$font-size-base};
   }
 }
+
+// reset toggles to original size
+// overriding .pf-c-button rule above
+.pf-c-masthead__content {
+  .pf-c-app-launcher__toggle,
+  .pf-c-dropdown__toggle,
+  .pf-c-menu-toggle,
+  .pf-c-notification-badge {
+    font-size: $pf-header-icon-fontsize !important;
+  }
+}
+
+// reset toggle to original size
+// overriding .pf-c-button rule above
+.pf-c-masthead__toggle .pf-c-button {
+  font-size: var(--pf-c-masthead__toggle--c-button--FontSize);
+}
+
 
 :where(:root:not(.pf-theme-dark)) .pf-c-page {
   --pf-c-page__sidebar--BoxShadow: none;

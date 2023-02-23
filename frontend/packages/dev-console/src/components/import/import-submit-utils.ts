@@ -473,7 +473,7 @@ export const managePipelineResources = async (
   const pipelineResources = [];
   if (!formData) return Promise.resolve([]);
 
-  const { name, git, pipeline, project, docker, image } = formData;
+  const { name, git, pipeline, project, docker, image, build } = formData;
   let managedPipeline: PipelineKind;
   const pipelineName = pipelineData?.metadata?.name;
 
@@ -488,6 +488,7 @@ export const managePipelineResources = async (
       git.dir,
       docker.dockerfilePath,
       image.tag,
+      build.env,
     );
   } else if (pipeline.template) {
     managedPipeline = await createPipelineForImportFlow(
@@ -499,6 +500,7 @@ export const managePipelineResources = async (
       pipeline,
       docker.dockerfilePath,
       image.tag,
+      build.env,
     );
     pipelineResources.push(managedPipeline);
     try {

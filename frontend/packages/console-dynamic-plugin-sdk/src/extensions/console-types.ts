@@ -3,6 +3,7 @@ import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import MonacoEditor from 'react-monaco-editor/lib/editor';
 import { RouteComponentProps } from 'react-router';
+import { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
@@ -163,6 +164,8 @@ export type PrometheusPollProps = {
   samples?: number;
   /** A vector-query search parameter */
   timespan?: number;
+  /** An object used to facilitate fetching from different data sources. */
+  customDataSource?: CustomDataSource;
 };
 
 export type UsePrometheusPoll = (

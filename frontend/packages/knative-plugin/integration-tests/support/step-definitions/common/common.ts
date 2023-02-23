@@ -6,7 +6,10 @@ import {
   operators,
   resourceTypes,
 } from '@console/dev-console/integration-tests/support/constants';
-import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import {
+  operatorsPO,
+  topologyPO,
+} from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   perspective,
   projectNameSpace,
@@ -167,4 +170,13 @@ When('user clicks on Create button', () => {
   cy.get(eventingPO.createEventDropDownMenu)
     .contains('Create')
     .click({ force: true });
+});
+
+When('user clicks on List view button', () => {
+  navigateTo(devNavigationMenu.Topology);
+  if (cy.get(topologyPO.graph.emptyGraph)) {
+    cy.get(topologyPO.switcher).click();
+  } else {
+    cy.log('You are already on List View');
+  }
 });

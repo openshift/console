@@ -1,6 +1,10 @@
 import * as _ from 'lodash';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import {
+  NameValueFromPair,
+  NameValuePair,
+} from '@console/shared/src/components/formik-fields/field-types';
+import {
   PIPELINE_RUNTIME_LABEL,
   PIPELINE_RUNTIME_VERSION_LABEL,
   PIPELINE_STRATEGY_LABEL,
@@ -11,6 +15,7 @@ import { VolumeTypes } from '../../pipelines/const';
 import {
   convertPipelineToModalData,
   getDefaultVolumeClaimTemplate,
+  getServerlessFunctionDefaultPersistentVolumeClaim,
 } from '../../pipelines/modals/common/utils';
 import { submitStartPipeline } from '../../pipelines/modals/start-pipeline/submit-utils';
 import { StartPipelineFormValues } from '../../pipelines/modals/start-pipeline/types';
@@ -43,6 +48,7 @@ export const getPipelineParams = (
   gitDir: string,
   dockerfilePath: string,
   tag: string,
+  buildEnv: any,
 ) => {
   return (params || []).map((param) => {
     switch (param.name) {
@@ -60,6 +66,8 @@ export const getPipelineParams = (
         return { ...param, default: dockerfilePath };
       case 'VERSION':
         return { ...param, default: tag || param.default };
+      case 'BUILD_ENVS':
+        return { ...param, default: buildEnv || param.default };
       default:
         return param;
     }
@@ -87,6 +95,7 @@ export const createPipelineForImportFlow = async (
   pipeline: PipelineData,
   dockerfilePath: string,
   tag: string,
+  buildEnv: (NameValuePair | NameValueFromPair)[],
 ) => {
   const template = _.cloneDeep(pipeline.template);
 
@@ -114,6 +123,7 @@ export const createPipelineForImportFlow = async (
       gitDir,
       dockerfilePath,
       tag,
+      buildEnv,
     );
 
   return k8sCreate(PipelineModel, template, { ns: namespace });
@@ -122,12 +132,16 @@ export const createPipelineForImportFlow = async (
 export const createPipelineRunForImportFlow = async (
   pipeline: PipelineKind,
 ): Promise<PipelineRunKind> => {
+  const isServerlessFunctionPipeline =
+    pipeline?.metadata?.labels?.['function.knative.dev'] === 'true';
   const pipelineInitialValues: StartPipelineFormValues = {
     ...convertPipelineToModalData(pipeline),
     workspaces: (pipeline.spec.workspaces || []).map((workspace: TektonWorkspace) => ({
       ...workspace,
       type: VolumeTypes.VolumeClaimTemplate,
-      data: getDefaultVolumeClaimTemplate(pipeline?.metadata?.name),
+      data: isServerlessFunctionPipeline
+        ? getServerlessFunctionDefaultPersistentVolumeClaim(pipeline?.metadata?.name)
+        : getDefaultVolumeClaimTemplate(pipeline?.metadata?.name),
     })),
     secretOpen: false,
   };
@@ -143,6 +157,7 @@ export const updatePipelineForImportFlow = async (
   gitDir: string,
   dockerfilePath: string,
   tag: string,
+  buildEnv: (NameValuePair | NameValueFromPair)[],
 ): Promise<PipelineKind> => {
   let updatedPipeline = _.cloneDeep(pipeline);
 
@@ -176,6 +191,7 @@ export const updatePipelineForImportFlow = async (
       gitDir,
       dockerfilePath,
       tag,
+      buildEnv,
     );
   }
   return k8sUpdate(PipelineModel, updatedPipeline, namespace, name);

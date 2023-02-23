@@ -39,9 +39,10 @@ describe('Project access form utils', () => {
       {
         user: 'ab',
         role: 'edit',
+        type: 'User',
       },
-      { user: 'de', role: 'view' },
-      { user: 'kubeadmin', role: 'admin' },
+      { user: 'de', role: 'view', type: 'User' },
+      { user: 'kubeadmin', role: 'admin', type: 'User' },
     ]);
   });
 });
