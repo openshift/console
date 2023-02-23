@@ -124,6 +124,7 @@ import {
 } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
+import { getClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 
 import {
   ServiceLevel,
@@ -277,10 +278,16 @@ export const ClusterVersionConditionsLink: React.FC<ClusterVersionConditionsLink
   cv,
 }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   return (
     <HashLink
       smooth
-      to={`${resourcePathFromModel(ClusterVersionModel, cv.metadata.name)}#conditions`}
+      to={`${resourcePathFromModel(
+        ClusterVersionModel,
+        cv.metadata.name,
+        undefined,
+        cluster,
+      )}#conditions`}
     >
       {t('public~View conditions')}
     </HashLink>
@@ -1067,6 +1074,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
   obj: cv,
   autoscalers,
 }) => {
+  const [cluster] = useActiveCluster();
   const { history = [] } = cv.status;
   const clusterID = getClusterID(cv);
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';
@@ -1094,6 +1102,12 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
       .then(() => removeQueryArgument('showChannels'))
       .catch(_.noop);
   }
+  const createAutoscalerLink = `${resourcePathFromModel(
+    ClusterAutoscalerModel,
+    undefined,
+    undefined,
+    cluster,
+  )}/~new`;
 
   return (
     <>
@@ -1238,7 +1252,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                 <dt>{t('public~Cluster autoscaler')}</dt>
                 <dd>
                   {_.isEmpty(autoscalers) ? (
-                    <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
+                    <Link to={createAutoscalerLink}>
                       <AddCircleOIcon className="co-icon-space-r" />
                       {t('public~Create autoscaler')}
                     </Link>

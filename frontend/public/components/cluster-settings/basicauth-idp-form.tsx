@@ -11,6 +11,7 @@ import { ButtonBar, PromiseComponent, history, AsyncComponent, PageHeading } fro
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
+import { ClusterContext } from '@console/app/src/components/detect-cluster/cluster';
 
 export const DroppableFileInput = (props: any) => (
   <AsyncComponent
@@ -32,6 +33,9 @@ class AddBasicAuthPageWithTranslation extends PromiseComponent<
     inProgress: false,
     errorMessage: '',
   };
+
+  static contextType = ClusterContext;
+  context!: React.ContextType<typeof ClusterContext>;
 
   getOAuthResource(): Promise<OAuthKind> {
     return this.handlePromise(getOAuthResource());
@@ -116,6 +120,7 @@ class AddBasicAuthPageWithTranslation extends PromiseComponent<
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    const { cluster } = this.context;
     if (_.isEmpty(this.state.keyFileContent) !== _.isEmpty(this.state.certFileContent)) {
       this.setState({
         errorMessage: this.props.t(
@@ -139,7 +144,7 @@ class AddBasicAuthPageWithTranslation extends PromiseComponent<
               const secretName = tlsSecret ? tlsSecret.metadata.name : '';
               return this.addBasicAuthIDP(oauth, secretName, caName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => redirectToOAuthPage(cluster));
         })
         .catch((err) => {
           this.setState({ errorMessage: err });

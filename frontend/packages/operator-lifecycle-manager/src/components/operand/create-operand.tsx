@@ -32,6 +32,7 @@ import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { exampleForModel, providedAPIForModel } from '..';
 import { ClusterServiceVersionModel } from '../../models';
@@ -62,6 +63,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
         }
       : undefined,
   );
+  const [cluster] = useActiveCluster();
 
   const formHelpText = t(
     'olm~Create by completing the form. Default values may be provided by the Operator authors.',
@@ -76,6 +78,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
           ClusterServiceVersionModel,
           match.params.csvName,
           match.params.ns,
+          cluster,
         )}/${match.params.plural}`;
 
   const providedAPI = React.useMemo<ProvidedAPI>(() => providedAPIForModel(csv, model), [

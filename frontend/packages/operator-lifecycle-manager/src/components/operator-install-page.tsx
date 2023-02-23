@@ -33,6 +33,7 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import {
   ClusterServiceVersionModel,
   InstallPlanModel,
@@ -58,6 +59,7 @@ const getInitializationResource = (
 
 const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ namespace }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   const singleNamespaceText = t('olm~View installed Operators in Namespace {{namespace}}', {
     namespace,
   });
@@ -66,7 +68,7 @@ const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ names
     <div className="co-operator-install-page__link">
       <Link
         data-test="view-installed-operators-btn"
-        to={resourcePathFromModel(ClusterServiceVersionModel, null, namespace)}
+        to={resourcePathFromModel(ClusterServiceVersionModel, null, namespace, cluster)}
       >
         {namespace ? singleNamespaceText : allNamespacesText}
       </Link>
@@ -76,6 +78,7 @@ const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ names
 
 const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, csvName, obj }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   return (
     <>
       <h2 className="co-clusterserviceversion-install__heading">
@@ -91,7 +94,7 @@ const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, 
         )}
       </p>
       <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
-        <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
+        <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace, cluster)}>
           <Button variant="primary">{t('olm~View error')}</Button>
         </Link>
         <ViewInstalledOperatorsButton namespace={namespace} />
@@ -107,6 +110,7 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
   approve,
 }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
 
   const canPatchInstallPlans = useAccessReview({
     group: InstallPlanModel.apiGroup,
@@ -134,6 +138,7 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
                 SubscriptionModel,
                 subscriptionObj?.metadata?.name,
                 namespace,
+                cluster,
               )}?showDelete=true`}
             >
               <Button className="co-clusterserviceversion__button" variant="secondary">
@@ -157,6 +162,7 @@ export const CreateInitializationResourceButton: React.FC<InitializationResource
   obj,
 }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   const reference = referenceFor(initializationResource);
   const kind = initializationResource?.kind;
   const button = (
@@ -173,6 +179,7 @@ export const CreateInitializationResourceButton: React.FC<InitializationResource
         ClusterServiceVersionModel,
         obj.metadata.name,
         obj.metadata.namespace,
+        cluster,
       )}/${reference}/~new?useInitializationResource`}
     >
       {button}
@@ -211,6 +218,7 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
   obj,
 }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   const initializationResource = getInitializationResource(obj);
   return (
     <>
@@ -238,7 +246,7 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
             obj={obj}
           />
         ) : (
-          <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
+          <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace, cluster)}>
             <Button variant="primary">{t('olm~View Operator')}</Button>
           </Link>
         )}

@@ -26,6 +26,7 @@ import { k8sCreate, NetworkPolicyKind } from '@console/internal/module/k8s';
 import { useClusterNetworkFeatures } from '@console/internal/module/k8s/network';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';
 import {
   isNetworkPolicyConversionError,
@@ -54,6 +55,7 @@ type NetworkPolicyFormProps = {
 
 export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
 
   const normalizedK8S = networkPolicyNormalizeK8sResource(formData);
@@ -185,7 +187,12 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
       .then(() => {
         setInProgress(false);
         history.push(
-          resourcePathFromModel(NetworkPolicyModel, networkPolicy.name, networkPolicy.namespace),
+          resourcePathFromModel(
+            NetworkPolicyModel,
+            networkPolicy.name,
+            networkPolicy.namespace,
+            cluster,
+          ),
         );
       })
       .catch((err) => {

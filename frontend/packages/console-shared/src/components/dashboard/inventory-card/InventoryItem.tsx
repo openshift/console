@@ -22,6 +22,7 @@ import {
   DashboardsInventoryItemGroup,
   isDashboardsInventoryItemGroup,
 } from '@console/plugin-sdk';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import InventoryItemNew, {
   InventoryItemStatus,
@@ -186,13 +187,15 @@ const StatusLink: React.FC<StatusLinkProps> = ({
     return getStatusGroupIcons(mergedExtensions);
   }, [dynamicGroupExtensions, groupExtensions]);
 
+  const [cluster] = useActiveCluster();
+
   if (groupID === InventoryStatusGroup.NOT_MAPPED || !count) {
     return null;
   }
 
   const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
   const statusItems = encodeURIComponent(statusIDs.join(','));
-  const path = basePath || resourcePathFromModel(kind, null, namespace);
+  const path = basePath || resourcePathFromModel(kind, null, namespace, cluster);
   const to =
     filterType && statusItems.length > 0 ? `${path}?rowFilter-${filterType}=${statusItems}` : path;
 
@@ -205,11 +208,18 @@ const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
   children,
   basePath,
   dataTest,
-}) => (
-  <Link to={basePath || resourcePathFromModel(kind, null, namespace)} data-test={dataTest}>
-    {children}
-  </Link>
-);
+}) => {
+  const [cluster] = useActiveCluster();
+
+  return (
+    <Link
+      to={basePath || resourcePathFromModel(kind, null, namespace, cluster)}
+      data-test={dataTest}
+    >
+      {children}
+    </Link>
+  );
+};
 
 export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   kind,

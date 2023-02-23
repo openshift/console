@@ -47,6 +47,7 @@ import {
   WarningStatus,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -130,10 +131,12 @@ export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> =
   subscription,
 }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   const to = resourcePathFromModel(
     InstallPlanModel,
     subscription.status.installPlanRef.name,
     subscription.metadata.namespace,
+    cluster,
   );
   return (
     <span className="co-icon-and-text">

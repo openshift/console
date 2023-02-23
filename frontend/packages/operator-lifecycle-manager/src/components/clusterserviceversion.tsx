@@ -68,13 +68,12 @@ import {
   K8sResourceCommon,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
+import { useActiveCluster, ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error';
 import { consolePluginModal } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
-import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { isPluginEnabled } from '@console/shared/src/utils';
 import { GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
@@ -132,7 +131,7 @@ const statusColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-lg');
 const lastUpdatedColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-2xl');
 const providedAPIsColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-xl');
 
-const editSubscription = (sub: SubscriptionKind): KebabOption =>
+const editSubscription = (sub: SubscriptionKind, cluster: string): KebabOption =>
   !_.isNil(sub)
     ? {
         // t('olm~Edit Subscription')
@@ -141,6 +140,7 @@ const editSubscription = (sub: SubscriptionKind): KebabOption =>
           SubscriptionModel,
           sub.metadata.name,
           sub.metadata.namespace,
+          cluster,
         )}/yaml`,
       }
     : null;
@@ -172,10 +172,11 @@ const uninstall = (sub: SubscriptionKind, csv?: ClusterServiceVersionKind): Keba
 const menuActionsForCSV = (
   csv: ClusterServiceVersionKind,
   subscription: SubscriptionKind,
+  cluster: string,
 ): KebabAction[] => {
   return _.isEmpty(subscription)
     ? [Kebab.factory.Delete]
-    : [() => editSubscription(subscription), () => uninstall(subscription, csv)];
+    : [() => editSubscription(subscription, cluster), () => uninstall(subscription, csv)];
 };
 
 const SubscriptionStatus: React.FC<{ muted?: boolean; subscription: SubscriptionKind }> = ({
@@ -359,6 +360,7 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
 
 export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
   ({ activeNamespace, obj, subscription, catalogSourceMissing }) => {
+    const [cluster] = useActiveCluster();
     const { displayName, provider, version } = obj.spec ?? {};
     const { t } = useTranslation();
     const olmOperatorNamespace = obj.metadata?.annotations?.['olm.operatorNamespace'] ?? '';
@@ -444,7 +446,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
           <ResourceKebab
             resource={obj}
             kind={referenceFor(obj)}
-            actions={menuActionsForCSV(obj, subscription)}
+            actions={menuActionsForCSV(obj, subscription, cluster)}
           />
         </TableData>
       </>
@@ -1211,6 +1213,7 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
   const { t } = useTranslation();
   const { name, ns } = useParams();
   const [data, loaded, loadError] = useClusterServiceVersion(name, ns);
+  const [cluster] = useActiveCluster();
 
   const menuActions = (
     model,
@@ -1221,7 +1224,7 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
     return [
       ...(_.isEmpty(subscription)
         ? [Kebab.factory.Delete(model, obj)]
-        : [editSubscription(subscription), uninstall(subscription, obj)]),
+        : [editSubscription(subscription, cluster), uninstall(subscription, obj)]),
     ];
   };
 

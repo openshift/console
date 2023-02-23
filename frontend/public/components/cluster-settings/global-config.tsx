@@ -23,7 +23,7 @@ import {
   ClusterGlobalConfig,
   isClusterGlobalConfig,
 } from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
-import { useCanClusterUpgrade } from '@console/shared';
+import { useActiveCluster, useCanClusterUpgrade } from '@console/shared';
 import filterNonUpgradableResources from './filterNonUpgradableResources';
 
 type ConfigDataType = { model: K8sKind; id: string; name: string; namespace: string };
@@ -73,6 +73,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
   const [loading, setLoading] = React.useState(true);
   const [textFilter, setTextFilter] = React.useState('');
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
 
   React.useEffect(() => {
     const oauthMenuItems = _.map(addIDPItems, (label: string, id: string) => ({
@@ -117,7 +118,12 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
       const allItems = [...winnowedResponses, ...usableConfigs]
         .map((item) => {
           const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
-          const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
+          const resourceLink = resourcePathFromModel(
+            item.model,
+            item.name,
+            item.namespace,
+            cluster,
+          );
           return {
             label: item.model.kind,
             apiGroup: item.model.apiGroup,
@@ -157,7 +163,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
       }
     });
     return () => (isSubscribed = false);
-  }, [clusterOperatorConfigResources, configResources, globalConfigs, t]);
+  }, [cluster, clusterOperatorConfigResources, configResources, globalConfigs, t]);
   const visibleItems = items.filter(({ label, description = '' }) => {
     return (
       fuzzyCaseInsensitive(textFilter, label) ||

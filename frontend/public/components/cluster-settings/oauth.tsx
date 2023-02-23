@@ -8,6 +8,7 @@ import { CaretDownIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 
 import { useQueryParams } from '@console/shared';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { ClusterOperatorModel, OAuthModel } from '../../models';
 import { IdentityProvider, OAuthKind, referenceForModel } from '../../module/k8s';
 import { DetailsPage } from '../factory';
@@ -71,6 +72,7 @@ export const addIDPItems = Object.freeze({
 });
 
 const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) => {
+  const [cluster] = useActiveCluster();
   const [isIDPOpen, setIDPOpen] = React.useState(false);
   const { identityProviders, tokenConfig } = obj.spec;
   const { t } = useTranslation();
@@ -151,7 +153,14 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
               {t(
                 'public~Authentication is being reconfigured. The new identity provider will be available once reconfiguration is complete.',
               )}{' '}
-              <Link to={resourcePathFromModel(ClusterOperatorModel, 'authentication')}>
+              <Link
+                to={resourcePathFromModel(
+                  ClusterOperatorModel,
+                  'authentication',
+                  undefined,
+                  cluster,
+                )}
+              >
                 {t('public~View authentication conditions for reconfiguration status.')}
               </Link>
             </>

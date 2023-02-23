@@ -8,7 +8,7 @@ import {
   useScrollToTopOnMount,
 } from '@console/internal/components/utils';
 import { k8sCreate, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { usePostFormSubmitAction } from '@console/shared';
+import { useActiveCluster, usePostFormSubmitAction } from '@console/shared';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
@@ -28,6 +28,8 @@ export const OperandForm: React.FC<OperandFormProps> = ({
 }) => {
   const [errors, setErrors] = React.useState<string[]>([]);
   const postFormCallback = usePostFormSubmitAction<K8sResourceKind>();
+  const [cluster] = useActiveCluster();
+
   const processFormData = ({ metadata, ...rest }) => {
     const data = {
       metadata: {
@@ -53,6 +55,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
           ClusterServiceVersionModel,
           csv.metadata.name,
           csv.metadata.namespace,
+          cluster,
         ),
       );
     } else {

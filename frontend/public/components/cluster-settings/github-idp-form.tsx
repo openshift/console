@@ -10,6 +10,7 @@ import { ButtonBar, ListInput, PromiseComponent, history, PageHeading } from '..
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
+import { ClusterContext } from '@console/app/src/components/detect-cluster/cluster';
 
 class AddGitHubPageWithTranslation extends PromiseComponent<
   AddGitHubPageProps,
@@ -26,6 +27,9 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
     inProgress: false,
     errorMessage: '',
   };
+
+  static contextType = ClusterContext;
+  context!: React.ContextType<typeof ClusterContext>;
 
   getOAuthResource(): Promise<OAuthKind> {
     return this.handlePromise(getOAuthResource());
@@ -102,6 +106,7 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    const { cluster } = this.context;
     if (this.state.organizations.length > 0 && this.state.teams.length > 0) {
       this.setState({
         errorMessage: this.props.t('public~Specify either organizations or teams, but not both.'),
@@ -122,7 +127,7 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
               const caName = configMap ? configMap.metadata.name : '';
               return this.addGitHubIDP(oauth, secret.metadata.name, caName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => redirectToOAuthPage(cluster));
         })
         .catch((err) => {
           this.setState({ errorMessage: err });

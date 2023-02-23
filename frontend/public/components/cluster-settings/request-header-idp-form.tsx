@@ -10,6 +10,7 @@ import { ButtonBar, ListInput, PromiseComponent, history, PageHeading } from '..
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
+import { ClusterContext } from '@console/app/src/components/detect-cluster/cluster';
 
 class AddRequestHeaderPageWithTranslation extends PromiseComponent<
   AddRequestHeaderPageProps,
@@ -28,6 +29,9 @@ class AddRequestHeaderPageWithTranslation extends PromiseComponent<
     inProgress: false,
     errorMessage: '',
   };
+
+  static contextType = ClusterContext;
+  context!: React.ContextType<typeof ClusterContext>;
 
   getOAuthResource(): Promise<OAuthKind> {
     return this.handlePromise(getOAuthResource());
@@ -92,6 +96,7 @@ class AddRequestHeaderPageWithTranslation extends PromiseComponent<
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    const { cluster } = this.context;
     if (!this.state.caFileContent) {
       this.setState({
         errorMessage: this.props.t('public~You must specify a CA File.'),
@@ -108,7 +113,7 @@ class AddRequestHeaderPageWithTranslation extends PromiseComponent<
             .then((configMap: K8sResourceKind) =>
               this.addRequestHeaderIDP(oauth, configMap.metadata.name),
             )
-            .then(redirectToOAuthPage);
+            .then(() => redirectToOAuthPage(cluster));
         })
         .catch((err) => {
           this.setState({ errorMessage: err });

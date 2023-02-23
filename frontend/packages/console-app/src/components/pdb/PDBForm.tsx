@@ -28,6 +28,7 @@ import {
 } from '@console/internal/components/utils';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { k8sCreate } from '@console/internal/module/k8s';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { PodDisruptionBudgetModel } from '../../models';
 import AvailabilityRequirementPopover from './AvailabilityRequirementPopover';
 import { pdbToK8sResource, initialValuesFromK8sResource, patchPDB } from './pdb-models';
@@ -58,6 +59,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   const [labels, setLabels] = React.useState([]);
   const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind>(null);
   const [isOpen, setOpen] = React.useState(false);
+  const [cluster] = useActiveCluster();
   const onToggle = (open: boolean) => setOpen(open);
   const items: RequirementItems = {
     maxUnavailable: t('console-app~maxUnavailable'),
@@ -123,7 +125,12 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
       .then(() => {
         setInProgress(false);
         history.push(
-          resourcePathFromModel(PodDisruptionBudgetModel, formValues.name, formValues.namespace),
+          resourcePathFromModel(
+            PodDisruptionBudgetModel,
+            formValues.name,
+            formValues.namespace,
+            cluster,
+          ),
         );
       })
       .catch((err) => {

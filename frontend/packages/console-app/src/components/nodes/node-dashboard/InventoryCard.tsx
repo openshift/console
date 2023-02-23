@@ -10,6 +10,7 @@ import InventoryItem, {
   StatusGroupMapper,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 export const NodeInventoryItem: React.FC<NodeInventoryItemProps> = ({
@@ -26,7 +27,8 @@ export const NodeInventoryItem: React.FC<NodeInventoryItemProps> = ({
     [nodeName, model],
   );
   const [data, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>(resource);
-  const basePath = `${resourcePathFromModel(NodeModel, nodeName)}/pods`;
+  const [cluster] = useActiveCluster();
+  const basePath = `${resourcePathFromModel(NodeModel, nodeName, undefined, cluster)}/pods`;
 
   return (
     <ResourceInventoryItem

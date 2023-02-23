@@ -41,7 +41,14 @@ import {
   PersistentVolumeClaimKind,
   VolumeSnapshotClassKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace, Status, isCephProvisioner, getAnnotations } from '@console/shared';
+import {
+  getName,
+  getNamespace,
+  Status,
+  isCephProvisioner,
+  getAnnotations,
+  useActiveCluster,
+} from '@console/shared';
 import { AccessModeSelector } from '../../access-modes/access-mode';
 
 import './restore-pvc-modal.scss';
@@ -49,6 +56,7 @@ import './restore-pvc-modal.scss';
 const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
   ({ close, cancel, resource, errorMessage, inProgress, handlePromise }) => {
     const { t } = useTranslation();
+    const [cluster] = useActiveCluster();
     const [restorePVCName, setPVCName] = React.useState(`${getName(resource) || 'pvc'}-restore`);
     const volumeSnapshotAnnotations = getAnnotations(resource);
     const defaultSize: string[] = resource?.status?.restoreSize
@@ -131,7 +139,12 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
         (newPVC) => {
           close();
           history.push(
-            resourcePathFromModel(PersistentVolumeClaimModel, newPVC.metadata.name, namespace),
+            resourcePathFromModel(
+              PersistentVolumeClaimModel,
+              newPVC.metadata.name,
+              namespace,
+              cluster,
+            ),
           );
         },
       );

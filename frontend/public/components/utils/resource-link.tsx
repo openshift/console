@@ -14,11 +14,19 @@ import { referenceForModel } from '../../module/k8s/k8s-ref';
 import { connectToFlags } from '../../reducers/connectToFlags';
 import { FlagsObject } from '../../reducers/features';
 import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
+import {
+  getClusterPrefixedPath,
+  useClusterPrefixedPath,
+} from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 
 const unknownKinds = new Set();
 
-export const resourcePathFromModel = (model: K8sModel, name?: string, namespace?: string) => {
+export const resourcePathFromModel = (
+  model: K8sModel,
+  name?: string,
+  namespace?: string,
+  cluster?: string,
+) => {
   const { plural, namespaced, crd } = model;
 
   let url = '/k8s/';
@@ -41,6 +49,10 @@ export const resourcePathFromModel = (model: K8sModel, name?: string, namespace?
     // Some resources have a name that needs to be encoded. For instance,
     // Users can have special characters in the name like `#`.
     url += `/${encodeURIComponent(name)}`;
+  }
+
+  if (cluster) {
+    url = getClusterPrefixedPath(url, cluster);
   }
 
   return url;

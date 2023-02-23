@@ -35,6 +35,7 @@ import {
 } from './utils';
 import { EventStreamList } from './utils/event-stream';
 import CloseButton from '@console/shared/src/components/close-button';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 
 const maxMessages = 500;
 const flushInterval = 500;
@@ -81,6 +82,15 @@ const kindFilter = (reference, { involvedObject }) => {
       apiGroupForReference(involvedObjectRef) === apiGroupForReference(ref)
     );
   });
+};
+
+const NodeLink = ({ source }) => {
+  const [cluster] = useActiveCluster();
+  return (
+    <Link to={resourcePathFromModel(NodeModel, source.host, undefined, cluster)}>
+      {source.host}
+    </Link>
+  );
 };
 
 const Inner = withTranslation()(
@@ -135,9 +145,7 @@ const Inner = withTranslation()(
                     {component === 'kubelet' && flags[FLAGS.CAN_LIST_NODE] && (
                       <Trans ns="public">
                         Generated from {{ sourceComponent: component }} on{' '}
-                        <Link to={resourcePathFromModel(NodeModel, source.host)}>
-                          {{ sourceHost: source.host }}
-                        </Link>
+                        <NodeLink source={source} />
                       </Trans>
                     )}
                     {component === 'kubelet' &&

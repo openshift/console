@@ -11,6 +11,7 @@ import { ButtonBar, ListInput, PromiseComponent, history, PageHeading } from '..
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
+import { ClusterContext } from '@console/app/src/components/detect-cluster/cluster';
 
 class AddLDAPPageWithTranslation extends PromiseComponent<AddLDAPPageProps, AddLDAPPageState> {
   readonly state: AddLDAPPageState = {
@@ -26,6 +27,9 @@ class AddLDAPPageWithTranslation extends PromiseComponent<AddLDAPPageProps, AddL
     inProgress: false,
     errorMessage: '',
   };
+
+  static contextType = ClusterContext;
+  context!: React.ContextType<typeof ClusterContext>;
 
   getOAuthResource(): Promise<OAuthKind> {
     return this.handlePromise(getOAuthResource());
@@ -125,6 +129,7 @@ class AddLDAPPageWithTranslation extends PromiseComponent<AddLDAPPageProps, AddL
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    const { cluster } = this.context;
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
@@ -140,7 +145,7 @@ class AddLDAPPageWithTranslation extends PromiseComponent<AddLDAPPageProps, AddL
               const caConfigMapName = _.get(caConfigMap, 'metadata.name');
               return this.addLDAPIDP(oauth, bindPasswordSecretName, caConfigMapName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => redirectToOAuthPage(cluster));
         })
         .catch((err) => {
           this.setState({ errorMessage: err });

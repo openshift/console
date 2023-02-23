@@ -9,6 +9,7 @@ import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../m
 import { ButtonBar, PromiseComponent, history, PageHeading } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
+import { ClusterContext } from '@console/app/src/components/detect-cluster/cluster';
 
 class AddGooglePageWithTranslation extends PromiseComponent<
   AddGooglePageProps,
@@ -22,6 +23,9 @@ class AddGooglePageWithTranslation extends PromiseComponent<
     inProgress: false,
     errorMessage: '',
   };
+
+  static contextType = ClusterContext;
+  context!: React.ContextType<typeof ClusterContext>;
 
   getOAuthResource(): Promise<OAuthKind> {
     return this.handlePromise(getOAuthResource());
@@ -68,6 +72,7 @@ class AddGooglePageWithTranslation extends PromiseComponent<
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    const { cluster } = this.context;
 
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
@@ -76,7 +81,7 @@ class AddGooglePageWithTranslation extends PromiseComponent<
         .then(() => {
           return this.createClientSecret()
             .then((secret: K8sResourceKind) => this.addGoogleIDP(oauth, secret.metadata.name))
-            .then(redirectToOAuthPage);
+            .then(() => redirectToOAuthPage(cluster));
         })
         .catch((err) => {
           this.setState({ errorMessage: err });

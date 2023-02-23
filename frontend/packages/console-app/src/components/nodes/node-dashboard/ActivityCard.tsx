@@ -10,6 +10,7 @@ import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 const eventsResource = {
@@ -34,7 +35,13 @@ const RecentEvent: React.FC<RecentEventProps> = ({ node }) => {
 
 const ActivityCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
-  const eventsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/events`;
+  const [cluster] = useActiveCluster();
+  const eventsLink = `${resourcePathFromModel(
+    NodeModel,
+    obj.metadata.name,
+    undefined,
+    cluster,
+  )}/events`;
   const { t } = useTranslation();
   return (
     <Card data-test-id="activity-card" className="co-overview-card--gradient">

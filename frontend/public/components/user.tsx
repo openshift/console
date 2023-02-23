@@ -4,8 +4,10 @@ import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { Button, TextContent } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
 import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
@@ -22,8 +24,6 @@ import {
   SectionHeading,
   resourcePathFromModel,
 } from './utils';
-
-import { useTranslation } from 'react-i18next';
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
@@ -77,12 +77,13 @@ const EmptyMsg = () => {
   const { t } = useTranslation();
   return <MsgBox title={t('public~No Users found')} />;
 };
-const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
 const NoDataEmptyMsgDetail = () => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   const canEditIdentityProviders = useCanEditIdentityProviders();
   const [oauth, oauthLoaded] = useOAuthData(canEditIdentityProviders);
+  const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster', undefined, cluster);
   return (
     <TextContent>
       {canEditIdentityProviders && oauthLoaded ? (

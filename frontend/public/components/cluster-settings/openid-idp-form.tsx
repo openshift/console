@@ -10,6 +10,7 @@ import { ButtonBar, ListInput, PromiseComponent, history, PageHeading } from '..
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
+import { ClusterContext } from '@console/app/src/components/detect-cluster/cluster';
 
 class AddOpenIDIDPPageWithTranslation extends PromiseComponent<
   AddOpenIDIDPPageProps,
@@ -28,6 +29,9 @@ class AddOpenIDIDPPageWithTranslation extends PromiseComponent<
     inProgress: false,
     errorMessage: '',
   };
+
+  static contextType = ClusterContext;
+  context!: React.ContextType<typeof ClusterContext>;
 
   getOAuthResource(): Promise<OAuthKind> {
     return this.handlePromise(getOAuthResource());
@@ -116,6 +120,7 @@ class AddOpenIDIDPPageWithTranslation extends PromiseComponent<
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    const { cluster } = this.context;
 
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
@@ -130,7 +135,7 @@ class AddOpenIDIDPPageWithTranslation extends PromiseComponent<
               const caName = configMap ? configMap.metadata.name : '';
               return this.addOpenIDIDP(oauth, secret.metadata.name, caName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => redirectToOAuthPage(cluster));
         })
         .catch((err) => {
           this.setState({ errorMessage: err });

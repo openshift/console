@@ -6,6 +6,7 @@ import { Card, CardBody, CardHeader, CardTitle, CardActions, Button } from '@pat
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { getName, getRequester, GreenCheckCircleIcon } from '@console/shared';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { LabelList, resourcePathFromModel } from '../../utils';
 import { ProjectModel } from '../../../models';
 import { ProjectDashboardContext } from './project-dashboard-context';
@@ -13,11 +14,17 @@ import { Link } from 'react-router-dom';
 
 export const DetailsCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
+  const [cluster] = useActiveCluster();
   const keys = _.keys(obj.metadata.labels).sort();
   const labelsSubset = _.take(keys, 3);
   const firstThreelabels = _.pick(obj.metadata.labels, labelsSubset);
   const description = obj.metadata.annotations?.['openshift.io/description'];
-  const detailsLink = `${resourcePathFromModel(ProjectModel, obj.metadata.name)}/details`;
+  const detailsLink = `${resourcePathFromModel(
+    ProjectModel,
+    obj.metadata.name,
+    undefined,
+    cluster,
+  )}/details`;
   const serviceMeshEnabled = obj.metadata?.labels?.['maistra.io/member-of'];
   const { t } = useTranslation();
   return (

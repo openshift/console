@@ -14,6 +14,7 @@ import { resourcePathFromModel } from '@console/internal/components/utils';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { getName, getNamespace, useFlag } from '../../..';
 import { FLAGS } from '../../../constants';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
@@ -141,6 +142,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
       const [consumerData, consumerLoaded, consumersLoadError] = useK8sWatchResource<
         K8sResourceCommon[]
       >(k8sResource);
+      const [cluster] = useActiveCluster();
       React.useEffect(() => {
         if (!isOpen) {
           return () => {};
@@ -226,7 +228,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
                     <ListItem key={title} value={item.y}>
                       <Link
                         className="co-utilization-card-popover__consumer-name"
-                        to={resourcePathFromModel(model, title, item.metric.namespace)}
+                        to={resourcePathFromModel(model, title, item.metric.namespace, cluster)}
                       >
                         {title}
                       </Link>

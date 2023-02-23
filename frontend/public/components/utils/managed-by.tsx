@@ -3,6 +3,7 @@ import * as classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { ResourceIcon } from './resource-icon';
 import { resourcePathFromModel, ResourceLink } from './resource-link';
 import {
@@ -23,11 +24,12 @@ export const ManagedByOperatorResourceLink: React.SFC<ManagerLinkProps> = ({
   owner,
   className,
 }) => {
+  const [cluster] = useActiveCluster();
   const ownerGroupVersionKind = referenceForOwnerRef(owner);
   const { apiGroup, kind, namespaced } = modelFor(ownerGroupVersionKind) ?? {};
   const ownerIsCSV =
     apiGroup === ClusterServiceVersionModel.apiGroup && kind === ClusterServiceVersionModel.kind;
-  const link = resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace);
+  const link = resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace, cluster);
   return (
     <span className={className}>
       {namespaced ? (

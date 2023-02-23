@@ -21,6 +21,7 @@ import {
 import i18n from '@console/internal/i18n';
 import { MatchExpression, referenceForModel } from '@console/internal/module/k8s';
 import { OPERATOR_HUB_LABEL } from '@console/shared';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
 import { PackageManifestKind, CatalogSourceKind } from '../types';
 import { ClusterServiceVersionLogo, visibilityLabel, iconFor, defaultChannelFor } from './index';
@@ -65,6 +66,7 @@ export const PackageManifestTableRow: React.FC<RowFunctionArgs<
   PackageManifestKind,
   { catalogSource: CatalogSourceKind }
 >> = ({ obj: packageManifest, customData }) => {
+  const [cluster] = useActiveCluster();
   const channel = defaultChannelFor(packageManifest);
 
   const { displayName, version, provider } = channel?.currentCSVDesc;
@@ -77,6 +79,7 @@ export const PackageManifestTableRow: React.FC<RowFunctionArgs<
             PackageManifestModel,
             packageManifest.metadata.name,
             packageManifest.metadata.namespace,
+            cluster,
           )}
         >
           <ClusterServiceVersionLogo

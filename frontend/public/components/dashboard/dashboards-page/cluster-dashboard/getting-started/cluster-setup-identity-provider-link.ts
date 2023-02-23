@@ -5,9 +5,11 @@ import { GettingStartedLink } from '@console/shared/src/components/getting-start
 import { OAuthModel } from '@console/internal/models';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 
 export const useIdentityProviderLink = (): GettingStartedLink | null => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   const canEdit = useCanEditIdentityProviders();
   const [oauthData, oauthLoaded, oauthLoadError] = useOAuthData(canEdit);
 
@@ -23,6 +25,6 @@ export const useIdentityProviderLink = (): GettingStartedLink | null => {
   return {
     id: 'identity-providers',
     title: t('public~Add identity providers'),
-    href: resourcePathFromModel(OAuthModel, 'cluster'),
+    href: resourcePathFromModel(OAuthModel, 'cluster', undefined, cluster),
   };
 };

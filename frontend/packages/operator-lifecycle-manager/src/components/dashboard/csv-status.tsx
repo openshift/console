@@ -8,6 +8,7 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { OperatorRowProps } from '@console/plugin-sdk';
 import Status from '@console/shared/src/components/dashboard/status-card/StatusPopup';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind } from '../../types';
 
@@ -16,11 +17,17 @@ import './csv-status.scss';
 const ClusterServiceVersionRow: React.FC<OperatorRowProps<ClusterServiceVersionKind>> = ({
   operatorStatus,
 }) => {
+  const [cluster] = useActiveCluster();
   const { name, namespace } = operatorStatus.operators[0].metadata;
   const { displayName } = operatorStatus.operators[0].spec;
   const to =
     operatorStatus.operators.length > 1
-      ? `${resourcePathFromModel(ClusterServiceVersionModel)}?name=${name}`
+      ? `${resourcePathFromModel(
+          ClusterServiceVersionModel,
+          undefined,
+          undefined,
+          cluster,
+        )}?name=${name}`
       : resourcePath(referenceForModel(ClusterServiceVersionModel), name, namespace);
   const value = `${pluralize(
     operatorStatus.operators.length,

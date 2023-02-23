@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
+import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 import { getNodeAddresses } from '@console/shared/src/selectors/node';
 import NodeIPList from '../NodeIPList';
 import NodeRoles from '../NodeRoles';
@@ -13,7 +14,13 @@ import { NodeDashboardContext } from './NodeDashboardContext';
 
 const DetailsCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
-  const detailsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/details`;
+  const [cluster] = useActiveCluster();
+  const detailsLink = `${resourcePathFromModel(
+    NodeModel,
+    obj.metadata.name,
+    undefined,
+    cluster,
+  )}/details`;
   const instanceType = obj.metadata.labels?.['beta.kubernetes.io/instance-type'];
   const zone = obj.metadata.labels?.['topology.kubernetes.io/zone'];
   const { t } = useTranslation();

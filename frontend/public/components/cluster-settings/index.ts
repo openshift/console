@@ -20,8 +20,13 @@ export const addIDP = (
   return k8sPatch(OAuthModel, oauth, [patch], dryRun ? { queryParams: { dryRun: 'All' } } : {});
 };
 
-export const redirectToOAuthPage = () => {
-  const path = `${resourcePathFromModel(OAuthModel, OAUTH_RESOURCE_NAME)}?idpAdded=true`;
+export const redirectToOAuthPage = (cluster) => {
+  const path = `${resourcePathFromModel(
+    OAuthModel,
+    OAUTH_RESOURCE_NAME,
+    undefined,
+    cluster,
+  )}?idpAdded=true`;
   history.push(path);
 };
 
