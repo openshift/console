@@ -1290,6 +1290,7 @@
   "PersistentVolume details": "PersistentVolume details",
   "Reclaim policy": "Reclaim policy",
   "PersistentVolumeClaim": "PersistentVolumeClaim",
+  "NFS-export": "NFS-export",
   "Claim": "Claim",
   "The terminal connection has closed.": "The terminal connection has closed.",
   "Reconnect": "Reconnect",
