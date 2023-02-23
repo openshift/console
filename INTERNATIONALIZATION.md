@@ -108,7 +108,8 @@ Translation work is done by the Red Hat Globalization team. We send them updated
 To add support for a new language to OpenShift:
 1. Look up the [ISO 639-1 code](https://www.loc.gov/standards/iso639-2/php/code_list.php) for the new language.
 2. Add the new language code to `./frontend/i18n-scripts/languages.sh`
-3. Update the language switcher component (`./frontend/public/components/modals/language-preferences-modal.tsx`) to support the new language if translations are available.
+3. Update the supported languages constant (`./frontend/packages/console-app/src/components/user-preferences/language/const.ts`) to support the new language if translations are available.
+
 
 #### Utilities
 We have added various scripts to help us automate internationalization-related tasks in OpenShift.
