@@ -1,7 +1,5 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { safeDump } from 'js-yaml';
-import { Base64 } from 'js-base64';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
@@ -14,98 +12,12 @@ import {
   ResourceSummary,
   Timestamp,
 } from './utils';
-import { k8sList } from '../module/k8s';
-import { SecretModel, ServiceAccountModel } from '../models';
+import { ServiceAccountModel } from '../models';
 import { SecretsPage } from './secret';
-import { saveAs } from 'file-saver';
-import { errorModal } from './modals';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
 
-const KubeConfigify = (kind, sa) => ({
-  label: i18next.t('public~Download kubeconfig file'),
-  weight: 200,
-  callback: () => {
-    const name = sa.metadata.name;
-    const namespace = sa.metadata.namespace;
-
-    k8sList(SecretModel, { ns: namespace })
-      .then((secrets) => {
-        const server = window.SERVER_FLAGS.kubeAPIServerURL;
-        const url = new URL(server);
-        const clusterName = url.host.replace(/\./g, '-');
-
-        // Find the secret that is the service account token.
-        const saSecretsByName = _.keyBy(sa.secrets, 'name');
-        const secret = _.find(
-          secrets,
-          (s) =>
-            saSecretsByName[s.metadata.name] && s.type === 'kubernetes.io/service-account-token',
-        );
-        if (!secret) {
-          errorModal({
-            error: i18next.t('public~Unable to get ServiceAccount token.'),
-          });
-          return;
-        }
-        const token = Base64.decode(secret.data.token);
-        const cert = secret.data['ca.crt'];
-
-        const config = {
-          apiVersion: 'v1',
-          clusters: [
-            {
-              cluster: {
-                'certificate-authority-data': cert,
-                server,
-              },
-              name: clusterName,
-            },
-          ],
-          contexts: [
-            {
-              context: {
-                cluster: clusterName,
-                namespace,
-                user: name,
-              },
-              name,
-            },
-          ],
-          'current-context': name,
-          kind: 'Config',
-          preferences: {},
-          users: [
-            {
-              name,
-              user: {
-                token,
-              },
-            },
-          ],
-        };
-        const dump = safeDump(config);
-        const blob = new Blob([dump], { type: 'text/yaml;charset=utf-8' });
-        saveAs(blob, `kube-config-sa-${name}-${clusterName}`);
-      })
-      .catch((err) => {
-        const error = err.message;
-        errorModal({ error });
-      });
-  },
-  accessReview: {
-    group: SecretModel.apiGroup,
-    resource: SecretModel.plural,
-    namespace: sa.metadata.namespace,
-    verb: 'list',
-  },
-});
 const { common } = Kebab.factory;
-const menuActions = [
-  KubeConfigify,
-  ...Kebab.getExtensionsActionsForKind(ServiceAccountModel),
-  ...common,
-];
+const menuActions = [...Kebab.getExtensionsActionsForKind(ServiceAccountModel), ...common];
 
 const kind = 'ServiceAccount';
 
