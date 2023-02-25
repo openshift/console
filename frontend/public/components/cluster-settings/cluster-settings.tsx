@@ -382,9 +382,10 @@ export const CurrentVersionHeader: React.FC<CurrentVersionProps> = ({ cv }) => {
 
 export const ChannelDocLink: React.FC<{}> = () => {
   const { t } = useTranslation();
+
   return (
     <ExternalLink
-      href={`${openshiftHelpBase}updating/updating-cluster-between-minor.html#understanding-upgrade-channels_updating-cluster-between-minor`}
+      href={`${openshiftHelpBase}updating/understanding-upgrade-channels-release.html#understanding-upgrade-channels_understanding-upgrade-channels-releases`}
       text={t('public~Learn more about OpenShift update channels')}
     />
   );
