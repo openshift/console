@@ -8,10 +8,10 @@ import {
   mockDeploymentConfig,
   mockDeploymentConfig2,
   mockEditDeploymentData,
-} from '../__mocks__/edit-deployment-data';
+} from '../__mocks__/deployment-data';
 import MockForm from '../__mocks__/MockForm';
 import DeploymentStrategySection from '../deployment-strategy/DeploymentStrategySection';
-import { convertDeploymentToEditForm } from '../utils/edit-deployment-utils';
+import { convertDeploymentToEditForm } from '../utils/deployment-utils';
 
 configure({ testIdAttribute: 'data-test' });
 

@@ -5,10 +5,10 @@ import * as _ from 'lodash';
 import { setI18n } from 'react-i18next';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
-import { mockDeploymentConfig, mockEditDeploymentData } from '../__mocks__/edit-deployment-data';
+import { mockDeploymentConfig, mockEditDeploymentData } from '../__mocks__/deployment-data';
 import MockForm from '../__mocks__/MockForm';
 import ContainerField from '../ContainerField';
-import EditDeploymentForm from '../EditDeploymentForm';
+import DeploymentForm from '../DeploymentForm';
 
 configure({ testIdAttribute: 'data-test' });
 
@@ -72,7 +72,7 @@ beforeEach(() => {
     <MockForm handleSubmit={handleSubmit}>
       {(props) => (
         <Provider store={store}>
-          <EditDeploymentForm
+          <DeploymentForm
             {...props}
             heading="Edit DeploymentConfig"
             resource={mockDeploymentConfig}

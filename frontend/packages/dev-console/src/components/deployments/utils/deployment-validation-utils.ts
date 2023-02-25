@@ -7,7 +7,7 @@ import {
   EditDeploymentData,
   EditDeploymentFormData,
   LifecycleHookFormData,
-} from './edit-deployment-types';
+} from './deployment-types';
 
 export const lchValidationSchema = (lch: LifecycleHookFormData) =>
   yup.object().shape({

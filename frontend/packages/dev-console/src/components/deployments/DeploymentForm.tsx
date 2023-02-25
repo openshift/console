@@ -17,11 +17,8 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import { Resources } from '../import/import-types';
-import EditDeploymentFormEditor from './EditDeploymentFormEditor';
-import {
-  convertDeploymentToEditForm,
-  convertEditFormToDeployment,
-} from './utils/edit-deployment-utils';
+import DeploymentFormEditor from './DeploymentFormEditor';
+import { convertDeploymentToEditForm, convertEditFormToDeployment } from './utils/deployment-utils';
 
 const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
   heading: string;
@@ -49,9 +46,7 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
 
   const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'devconsole.editDeploymentForm.editor.lastView';
 
-  const formEditor = (
-    <EditDeploymentFormEditor resourceType={resourceType} resourceObj={resource} />
-  );
+  const formEditor = <DeploymentFormEditor resourceType={resourceType} resourceObj={resource} />;
 
   const yamlEditor = (
     <YAMLEditorField

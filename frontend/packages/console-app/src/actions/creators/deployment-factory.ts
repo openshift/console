@@ -2,9 +2,14 @@ import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { configureUpdateStrategyModal, errorModal } from '@console/internal/components/modals';
-import { togglePaused, asAccessReview } from '@console/internal/components/utils';
+import { togglePaused, asAccessReview, resourceObjPath } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
-import { K8sResourceKind, K8sKind, k8sCreate } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  K8sKind,
+  k8sCreate,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import { resourceLimitsModal } from '../../components/modals/resource-limits';
 import { serviceBindingModal } from '../../components/modals/service-binding';
@@ -81,7 +86,7 @@ export const DeploymentActionFactory: ResourceActionFactory = {
     id: `edit-deployment`,
     label: i18next.t('console-app~Edit {{kind}}', { kind: kind.kind }),
     cta: {
-      href: `/edit-deployment/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${kind.kind}`,
+      href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/form`,
     },
     // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
     accessReview: asAccessReview(kind, obj, 'update'),

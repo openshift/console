@@ -6,7 +6,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DropdownField } from '@console/shared/src';
 import { Resources } from '../../import/import-types';
 import FormSection from '../../import/section/FormSection';
-import { getStrategyData } from '../utils/edit-deployment-utils';
+import { getStrategyData } from '../utils/deployment-utils';
 import CustomStrategy from './CustomStrategy';
 import RecreateStrategy from './RecreateStrategy';
 import RollingStrategy from './RollingStrategy';

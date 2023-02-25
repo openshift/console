@@ -4,7 +4,7 @@ import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DropdownField } from '@console/shared/src';
 import ImageStream from '../../../import/image-search/ImageStream';
-import { getContainerNames } from '../../utils/edit-deployment-utils';
+import { getContainerNames } from '../../utils/deployment-utils';
 
 const TagImagesForm: React.FC<{ lifecycleHook: string }> = ({ lifecycleHook }) => {
   const { t } = useTranslation();

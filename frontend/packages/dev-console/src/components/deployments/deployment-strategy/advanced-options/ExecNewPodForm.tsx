@@ -4,7 +4,7 @@ import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DropdownField, EnvironmentField, InputField, TextColumnField } from '@console/shared/src';
-import { getContainerNames } from '../../utils/edit-deployment-utils';
+import { getContainerNames } from '../../utils/deployment-utils';
 
 interface ExecNewPodFormProps {
   resourceObj: K8sResourceKind;

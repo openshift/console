@@ -6,7 +6,7 @@ import { cloneDeep } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getResourcesType } from '../../../edit-application/edit-application-utils';
-import { getStrategyData } from '../../utils/edit-deployment-utils';
+import { getStrategyData } from '../../utils/deployment-utils';
 import LifecycleHookForm from './LifecycleHookForm';
 import './LifecycleHookField.scss';
 

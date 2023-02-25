@@ -376,7 +376,7 @@ const AppContents: React.FC<{}> = () => {
         }
       />
       <LazyRoute
-        path="/k8s/ns/:ns/configmaps/~new"
+        path="/k8s/ns/:ns/configmaps/~new/form"
         exact
         kind="ConfigMap"
         loader={() =>
@@ -386,7 +386,7 @@ const AppContents: React.FC<{}> = () => {
         }
       />
       <LazyRoute
-        path="/k8s/ns/:ns/configmaps/:name/edit"
+        path="/k8s/ns/:ns/configmaps/:name/form"
         exact
         kind="ConfigMap"
         loader={() =>
@@ -424,7 +424,7 @@ const AppContents: React.FC<{}> = () => {
       />
 
       <LazyRoute
-        path="/k8s/ns/:ns/routes/~new"
+        path="/k8s/ns/:ns/routes/~new/form"
         exact
         kind="Route"
         loader={() =>
@@ -435,7 +435,7 @@ const AppContents: React.FC<{}> = () => {
       />
 
       <LazyRoute
-        path="/k8s/ns/:ns/routes/:name/edit"
+        path="/k8s/ns/:ns/routes/:name/form"
         exact
         kind="Route"
         loader={() =>

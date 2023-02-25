@@ -13,13 +13,10 @@ import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import { handleRedirect } from '../import/import-submit-utils';
 import { Resources } from '../import/import-types';
-import EditDeploymentForm from './EditDeploymentForm';
-import { EditDeploymentData, EditDeploymentFormikValues } from './utils/edit-deployment-types';
-import {
-  convertDeploymentToEditForm,
-  convertEditFormToDeployment,
-} from './utils/edit-deployment-utils';
-import { validationSchema } from './utils/edit-deployment-validation-utils';
+import EditDeploymentForm from './DeploymentForm';
+import { EditDeploymentData, EditDeploymentFormikValues } from './utils/deployment-types';
+import { convertDeploymentToEditForm, convertEditFormToDeployment } from './utils/deployment-utils';
+import { validationSchema } from './utils/deployment-validation-utils';
 
 export interface EditDeploymentProps {
   heading: string;

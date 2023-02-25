@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import { mockEditDeploymentData } from './edit-deployment-data';
+import { mockEditDeploymentData } from './deployment-data';
 
 const MockForm: React.FC<{
   initialValues?: any;

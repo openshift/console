@@ -53,7 +53,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ resourceType }) => {
       dataTest="advanced-options-section"
       fullWidth
     >
-      <div data-test="edit-deployment-testid">
+      <div data-test="deployment-form-testid">
         <List resourceType={resourceType} />
       </div>
     </FormSection>
