@@ -351,13 +351,15 @@ class ImageSecretFormWithTranslation extends React.Component<
       dataKey: getImageSecretKey(this.props.secretType),
       stringData: parsedData,
       authType: 'credentials',
+      disable: false,
     };
     this.onDataChanged = this.onDataChanged.bind(this);
     this.changeFormType = this.changeFormType.bind(this);
     this.onFormDisable = this.onFormDisable.bind(this);
   }
   onDataChanged(secretData) {
-    secretData ? this.onFormDisable(false) : null;
+    // console.log(secretData);
+    _.isError(secretData) ? null : this.onFormDisable(this.state.disable);
     const dataKey = secretData[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
     this.setState(
       {
@@ -1422,6 +1424,7 @@ type ImageSecretFormState = {
   };
   authType: string;
   dataKey: string;
+  disable: boolean;
 };
 
 type ImageSecretFormProps = {
