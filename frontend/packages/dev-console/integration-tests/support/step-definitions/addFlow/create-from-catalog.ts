@@ -51,7 +51,7 @@ When('user clicks Create Application button on side bar', () => {
 });
 
 When('user enters Git Repo url in s2i builder image page as {string}', (gitRepoUrl: string) => {
-  cy.get(catalogPO.s2I.gitRepoUrl).type(gitRepoUrl);
+  gitPage.enterGitUrl(gitRepoUrl);
 });
 
 When('user clicks create button on Instantiate Template page', () => {

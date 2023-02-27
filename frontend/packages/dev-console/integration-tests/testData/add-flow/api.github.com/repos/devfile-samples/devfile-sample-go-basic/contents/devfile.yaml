@@ -1,0 +1,18 @@
+{
+  "name": "devfile.yaml",
+  "path": "devfile.yaml",
+  "sha": "ae1072ee8db4483547f8577bb25471513a7b1e3d",
+  "size": 1403,
+  "url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/devfile.yaml?ref=main",
+  "html_url": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/devfile.yaml",
+  "git_url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/ae1072ee8db4483547f8577bb25471513a7b1e3d",
+  "download_url": "https://raw.githubusercontent.com/devfile-samples/devfile-sample-go-basic/main/devfile.yaml",
+  "type": "file",
+  "content": "c2NoZW1hVmVyc2lvbjogMi4yLjAKbWV0YWRhdGE6CiAgbmFtZTogZ28KICBk\naXNwbGF5TmFtZTogR28gUnVudGltZQogIGRlc2NyaXB0aW9uOiAnR28gaXMg\nYW4gb3BlbiBzb3VyY2UgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2UgdGhhdCBtYWtl\ncyBpdCBlYXN5IHRvIGJ1aWxkIHNpbXBsZSwgcmVsaWFibGUsIGFuZCBlZmZp\nY2llbnQgc29mdHdhcmUuJwogIGljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVz\nZXJjb250ZW50LmNvbS9kZXZmaWxlLXNhbXBsZXMvZGV2ZmlsZS1zdGFjay1p\nY29ucy9tYWluL2dvbGFuZy5zdmcKICBsYW5ndWFnZTogR28KICBwcm9qZWN0\nVHlwZTogR28KICB0YWdzOgogICAgLSBHbwogIHZlcnNpb246IDEuMS4wCiAg\ncHJvdmlkZXI6IFJlZCBIYXQKICBzdXBwb3J0VXJsOiBodHRwczovL2dpdGh1\nYi5jb20vZGV2ZmlsZS1zYW1wbGVzL2RldmZpbGUtc3VwcG9ydCNzdXBwb3J0\nLWluZm9ybWF0aW9uCiAgYXR0cmlidXRlczoKICAgIGFscGhhLmRvY2tlcmlt\nYWdlLXBvcnQ6IDgwODEKcGFyZW50OgogIGlkOiBnbwogIHJlZ2lzdHJ5VXJs\nOiAnaHR0cHM6Ly9yZWdpc3RyeS5kZXZmaWxlLmlvJwpjb21wb25lbnRzOgog\nIC0gbmFtZTogaW1hZ2UtYnVpbGQKICAgIGltYWdlOgogICAgICBpbWFnZU5h\nbWU6IGdvLWltYWdlOmxhdGVzdAogICAgICBkb2NrZXJmaWxlOgogICAgICAg\nIHVyaTogZG9ja2VyL0RvY2tlcmZpbGUKICAgICAgICBidWlsZENvbnRleHQ6\nIC4KICAgICAgICByb290UmVxdWlyZWQ6IGZhbHNlCiAgLSBuYW1lOiBrdWJl\ncm5ldGVzLWRlcGxveQogICAgYXR0cmlidXRlczoKICAgICAgZGVwbG95bWVu\ndC9yZXBsaWNhczogMQogICAgICBkZXBsb3ltZW50L2NwdUxpbWl0OiAnMTAw\nbScKICAgICAgZGVwbG95bWVudC9jcHVSZXF1ZXN0OiAxMG0KICAgICAgZGVw\nbG95bWVudC9tZW1vcnlMaW1pdDogMTAwTWkKICAgICAgZGVwbG95bWVudC9t\nZW1vcnlSZXF1ZXN0OiAxME1pCiAgICAgIGRlcGxveW1lbnQvY29udGFpbmVy\nLXBvcnQ6IDgwODEKICAgIGt1YmVybmV0ZXM6CiAgICAgIHVyaTogZGVwbG95\nLnlhbWwKICAgICAgZW5kcG9pbnRzOgogICAgICAtIG5hbWU6IGh0dHAtODA4\nMQogICAgICAgIHRhcmdldFBvcnQ6IDgwODEKICAgICAgICBwYXRoOiAvCmNv\nbW1hbmRzOgogIC0gaWQ6IGJ1aWxkLWltYWdlCiAgICBhcHBseToKICAgICAg\nY29tcG9uZW50OiBpbWFnZS1idWlsZAogIC0gaWQ6IGRlcGxveWs4cwogICAg\nYXBwbHk6CiAgICAgIGNvbXBvbmVudDoga3ViZXJuZXRlcy1kZXBsb3kKICAt\nIGlkOiBkZXBsb3kKICAgIGNvbXBvc2l0ZToKICAgICAgY29tbWFuZHM6CiAg\nICAgICAgLSBidWlsZC1pbWFnZQogICAgICAgIC0gZGVwbG95azhzCiAgICAg\nIGdyb3VwOgogICAgICAgIGtpbmQ6IGRlcGxveQogICAgICAgIGlzRGVmYXVs\ndDogdHJ1ZQo=\n",
+  "encoding": "base64",
+  "_links": {
+    "self": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/devfile.yaml?ref=main",
+    "git": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/ae1072ee8db4483547f8577bb25471513a7b1e3d",
+    "html": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/devfile.yaml"
+  }
+}

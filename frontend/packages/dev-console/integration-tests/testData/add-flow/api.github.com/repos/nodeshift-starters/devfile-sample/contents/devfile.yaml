@@ -1,0 +1,18 @@
+{
+  "name": "devfile.yaml",
+  "path": "devfile.yaml",
+  "sha": "c9c5a32dcceffcd7babaa2b3e8ab8582baab14be",
+  "size": 1267,
+  "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/devfile.yaml?ref=main",
+  "html_url": "https://github.com/nodeshift-starters/devfile-sample/blob/main/devfile.yaml",
+  "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/c9c5a32dcceffcd7babaa2b3e8ab8582baab14be",
+  "download_url": "https://raw.githubusercontent.com/nodeshift-starters/devfile-sample/main/devfile.yaml",
+  "type": "file",
+  "content": "c2NoZW1hVmVyc2lvbjogMi4yLjAKbWV0YWRhdGE6CiAgbmFtZTogbm9kZWpz\nCiAgdmVyc2lvbjogMi4xLjEKICBkaXNwbGF5TmFtZTogTm9kZS5qcyBSdW50\naW1lCiAgZGVzY3JpcHRpb246IFN0YWNrIHdpdGggTm9kZS5qcyAxNgogIHRh\nZ3M6IFsiTm9kZS5qcyIsICJFeHByZXNzIiwgInViaTgiXQogIHByb2plY3RU\neXBlOiAiTm9kZS5qcyIKICBsYW5ndWFnZTogIkphdmFTY3JpcHQiCiAgYXR0\ncmlidXRlczoKICAgIGFscGhhLmRvY2tlcmltYWdlLXBvcnQ6IDMwMDEKICBw\ncm92aWRlcjogUmVkIEhhdAogIHN1cHBvcnRVcmw6IGh0dHBzOi8vZ2l0aHVi\nLmNvbS9kZXZmaWxlLXNhbXBsZXMvZGV2ZmlsZS1zdXBwb3J0I3N1cHBvcnQt\naW5mb3JtYXRpb24KcGFyZW50OgogIGlkOiBub2RlanMKICByZWdpc3RyeVVy\nbDogImh0dHBzOi8vcmVnaXN0cnkuZGV2ZmlsZS5pbyIKY29tcG9uZW50czoK\nICAtIG5hbWU6IGltYWdlLWJ1aWxkCiAgICBpbWFnZToKICAgICAgaW1hZ2VO\nYW1lOiBub2RlanMtaW1hZ2U6bGF0ZXN0CiAgICAgIGRvY2tlcmZpbGU6CiAg\nICAgICAgdXJpOiBEb2NrZXJmaWxlCiAgICAgICAgYnVpbGRDb250ZXh0OiAu\nCiAgICAgICAgcm9vdFJlcXVpcmVkOiBmYWxzZQogIC0gbmFtZToga3ViZXJu\nZXRlcy1kZXBsb3kKICAgIGF0dHJpYnV0ZXM6CiAgICAgIGRlcGxveW1lbnQv\ncmVwbGljYXM6IDEKICAgICAgZGVwbG95bWVudC9jcHVMaW1pdDogIjEwMG0i\nCiAgICAgIGRlcGxveW1lbnQvY3B1UmVxdWVzdDogMTBtCiAgICAgIGRlcGxv\neW1lbnQvbWVtb3J5TGltaXQ6IDEwME1pCiAgICAgIGRlcGxveW1lbnQvbWVt\nb3J5UmVxdWVzdDogNTBNaQogICAgICBkZXBsb3ltZW50L2NvbnRhaW5lci1w\nb3J0OiAzMDAxCiAgICBrdWJlcm5ldGVzOgogICAgICB1cmk6IGRlcGxveS55\nYW1sCiAgICAgIGVuZHBvaW50czoKICAgICAgLSBuYW1lOiBodHRwLTMwMDEK\nICAgICAgICB0YXJnZXRQb3J0OiAzMDAxCiAgICAgICAgcGF0aDogLwpjb21t\nYW5kczoKICAtIGlkOiBidWlsZC1pbWFnZQogICAgYXBwbHk6CiAgICAgIGNv\nbXBvbmVudDogaW1hZ2UtYnVpbGQKICAtIGlkOiBkZXBsb3lrOHMKICAgIGFw\ncGx5OgogICAgICBjb21wb25lbnQ6IGt1YmVybmV0ZXMtZGVwbG95CiAgLSBp\nZDogZGVwbG95CiAgICBjb21wb3NpdGU6CiAgICAgIGNvbW1hbmRzOgogICAg\nICAgIC0gYnVpbGQtaW1hZ2UKICAgICAgICAtIGRlcGxveWs4cwogICAgICBn\ncm91cDoKICAgICAgICBraW5kOiBkZXBsb3kKICAgICAgICBpc0RlZmF1bHQ6\nIHRydWUKCg==\n",
+  "encoding": "base64",
+  "_links": {
+    "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/devfile.yaml?ref=main",
+    "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/c9c5a32dcceffcd7babaa2b3e8ab8582baab14be",
+    "html": "https://github.com/nodeshift-starters/devfile-sample/blob/main/devfile.yaml"
+  }
+}

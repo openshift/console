@@ -1,0 +1,114 @@
+[
+  {
+    "name": ".gitignore",
+    "path": ".gitignore",
+    "sha": "dd4a2dbe75cd33645177a8a3015bbbf5e71bdfc4",
+    "size": 27,
+    "url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/.gitignore?ref=main",
+    "html_url": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/.gitignore",
+    "git_url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/dd4a2dbe75cd33645177a8a3015bbbf5e71bdfc4",
+    "download_url": "https://raw.githubusercontent.com/devfile-samples/devfile-sample-go-basic/main/.gitignore",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/.gitignore?ref=main",
+      "git": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/dd4a2dbe75cd33645177a8a3015bbbf5e71bdfc4",
+      "html": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/.gitignore"
+    }
+  },
+  {
+    "name": "README.md",
+    "path": "README.md",
+    "sha": "d4aee704f6dbcb3ce3d98c5e49b411a199831723",
+    "size": 25,
+    "url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/README.md?ref=main",
+    "html_url": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/README.md",
+    "git_url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/d4aee704f6dbcb3ce3d98c5e49b411a199831723",
+    "download_url": "https://raw.githubusercontent.com/devfile-samples/devfile-sample-go-basic/main/README.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/README.md?ref=main",
+      "git": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/d4aee704f6dbcb3ce3d98c5e49b411a199831723",
+      "html": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/README.md"
+    }
+  },
+  {
+    "name": "deploy.yaml",
+    "path": "deploy.yaml",
+    "sha": "208850ef7a223df138e8c6c3da60f94e53cc0419",
+    "size": 644,
+    "url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/deploy.yaml?ref=main",
+    "html_url": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/deploy.yaml",
+    "git_url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/208850ef7a223df138e8c6c3da60f94e53cc0419",
+    "download_url": "https://raw.githubusercontent.com/devfile-samples/devfile-sample-go-basic/main/deploy.yaml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/deploy.yaml?ref=main",
+      "git": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/208850ef7a223df138e8c6c3da60f94e53cc0419",
+      "html": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/deploy.yaml"
+    }
+  },
+  {
+    "name": "devfile.yaml",
+    "path": "devfile.yaml",
+    "sha": "ae1072ee8db4483547f8577bb25471513a7b1e3d",
+    "size": 1403,
+    "url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/devfile.yaml?ref=main",
+    "html_url": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/devfile.yaml",
+    "git_url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/ae1072ee8db4483547f8577bb25471513a7b1e3d",
+    "download_url": "https://raw.githubusercontent.com/devfile-samples/devfile-sample-go-basic/main/devfile.yaml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/devfile.yaml?ref=main",
+      "git": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/ae1072ee8db4483547f8577bb25471513a7b1e3d",
+      "html": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/devfile.yaml"
+    }
+  },
+  {
+    "name": "docker",
+    "path": "docker",
+    "sha": "cf498acd9a987d130f9d5d375f5ee2600b1073bd",
+    "size": 0,
+    "url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/docker?ref=main",
+    "html_url": "https://github.com/devfile-samples/devfile-sample-go-basic/tree/main/docker",
+    "git_url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/trees/cf498acd9a987d130f9d5d375f5ee2600b1073bd",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/docker?ref=main",
+      "git": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/trees/cf498acd9a987d130f9d5d375f5ee2600b1073bd",
+      "html": "https://github.com/devfile-samples/devfile-sample-go-basic/tree/main/docker"
+    }
+  },
+  {
+    "name": "go.mod",
+    "path": "go.mod",
+    "sha": "49f5de1682b02a8db7dcd1ccdb9e9c92a24d9d00",
+    "size": 67,
+    "url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/go.mod?ref=main",
+    "html_url": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/go.mod",
+    "git_url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/49f5de1682b02a8db7dcd1ccdb9e9c92a24d9d00",
+    "download_url": "https://raw.githubusercontent.com/devfile-samples/devfile-sample-go-basic/main/go.mod",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/go.mod?ref=main",
+      "git": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/49f5de1682b02a8db7dcd1ccdb9e9c92a24d9d00",
+      "html": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/go.mod"
+    }
+  },
+  {
+    "name": "main.go",
+    "path": "main.go",
+    "sha": "a0d3381107a344f57e4a4f7edb82eab9c457aa0f",
+    "size": 332,
+    "url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/main.go?ref=main",
+    "html_url": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/main.go",
+    "git_url": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/a0d3381107a344f57e4a4f7edb82eab9c457aa0f",
+    "download_url": "https://raw.githubusercontent.com/devfile-samples/devfile-sample-go-basic/main/main.go",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/contents/main.go?ref=main",
+      "git": "https://api.github.com/repos/devfile-samples/devfile-sample-go-basic/git/blobs/a0d3381107a344f57e4a4f7edb82eab9c457aa0f",
+      "html": "https://github.com/devfile-samples/devfile-sample-go-basic/blob/main/main.go"
+    }
+  }
+]

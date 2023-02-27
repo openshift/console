@@ -1,4 +1,3 @@
-import { getResponseMocks, gitImportRepos } from '../../../testData/git-import/repos';
 import { gitAdvancedOptions, buildConfigOptions, builderImages, messages } from '../../constants';
 import { gitPO } from '../../pageObjects';
 import { app } from '../app';
@@ -17,50 +16,60 @@ export const gitPage = {
     cy.get(gitPO.pipeline.infoMessage).should('contain.text', `Info alert:${message}`);
   },
   enterGitUrl: (gitUrl: string) => {
-    const shortUrl = gitUrl.endsWith('.git') ? gitUrl.substring(0, gitUrl.length - 4) : gitUrl;
-    const repository = gitImportRepos.find((repo) => repo.url === shortUrl);
-
-    // mock the github requests for the frequently used repositories to avoid rate limits
-    if (repository) {
-      const urlSegments = repository.url.split('/');
-      const organization = urlSegments[urlSegments.length - 2];
-      const name = urlSegments[urlSegments.length - 1];
-      const apiBaseUrl = `https://api.github.com/repos/${organization}/${name}`;
-      const responses = getResponseMocks(repository);
-
-      cy.intercept('GET', apiBaseUrl, {
-        statusCode: 200,
-        body: responses.repoResponse,
-      }).as('getRepo');
-
-      cy.intercept('GET', `${apiBaseUrl}/contents/`, {
-        statusCode: 200,
-        body: responses.contentsResponse,
-      }).as('getContents');
-
-      cy.intercept('GET', `${apiBaseUrl}/contents//package.json`, {
-        statusCode: responses.packageResponse ? 200 : 404,
-        body: responses.packageResponse,
-      }).as('getPackage');
-
-      cy.intercept('POST', '/api/devfile/', {
-        statusCode: responses.devFileResources ? 200 : 404,
-        body: responses.devFileResources,
-      }).as('getDevfileResources');
-    }
+    // Catch all GitHub API requests:
+    cy.intercept('https://api.github.com/**', async (req) => {
+      const path = req.url.replace(/^https:\/\/api.github.com/, '').replace(/\/\//g, '/');
+      switch (path) {
+        // TODO: The import should not try to load the func.yaml or .tekton, it should check this based on the file list upfront.
+        case '/repos/nodeshift-starters/devfile-sample/contents/func.yaml':
+        case '/repos/redhat-developer/s2i-dotnetcore-ex/contents/func.yaml':
+        case '/repos/rohitkrai03/flask-dockerfile-example/contents/func.yaml':
+        case '/repos/rohitkrai03/flask-dockerfile-example/contents/.tekton':
+        case '/repos/sclorg/cakephp-ex/contents/func.yaml':
+        case '/repos/sclorg/cakephp-ex/contents/.tekton':
+        case '/repos/sclorg/dancer-ex/contents/func.yaml':
+        case '/repos/sclorg/dancer-ex/contents/.tekton':
+        case '/repos/sclorg/django-ex/contents/func.yaml':
+        case '/repos/sclorg/django-ex/contents/.tekton':
+        case '/repos/sclorg/golang-ex/contents/func.yaml':
+        case '/repos/sclorg/golang-ex/contents/.tekton':
+        case '/repos/sclorg/nodejs-ex/contents/func.yaml':
+        case '/repos/sclorg/nodejs-ex/contents/.tekton':
+        case '/repos/sclorg/ruby-ex/contents/func.yaml':
+        case '/repos/sclorg/ruby-ex/contents/.tekton':
+        case '/repos/spring-projects/spring-boot/contents/func.yaml':
+          req.reply({
+            statusCode: 404,
+            headers: {
+              'content-type': 'application/json',
+            },
+            body: {
+              message: 'Not Found',
+              // eslint-disable-next-line @typescript-eslint/camelcase
+              documentation_url:
+                'https://docs.github.com/rest/reference/repos#get-repository-content',
+            },
+          });
+          break;
+        default: {
+          let fixture = req.url.replace('https://', 'add-flow/');
+          if (fixture.endsWith('/')) {
+            fixture = fixture.substring(0, fixture.length - 1);
+          }
+          req.reply({
+            headers: {
+              'content-type': 'application/json',
+            },
+            fixture,
+          });
+        }
+      }
+    });
 
     cy.get(gitPO.gitRepoUrl)
       .clear()
       .type(gitUrl);
 
-    if (repository) {
-      const responses = getResponseMocks(repository);
-      cy.wait(
-        responses.packageResponse
-          ? ['@getRepo', '@getContents', '@getPackage']
-          : ['@getRepo', '@getContents'],
-      );
-    }
     app.waitForDocumentLoad();
   },
   verifyPipelineCheckBox: () => {
@@ -240,6 +249,7 @@ export const gitPage = {
       .get(gitPO.cancel)
       .should('be.enabled')
       .click(),
+  // TODO: can we remove this rate limit workaround since we mocked all the GitHub API calls?
   selectBuilderImageForGitUrl: (gitUrl: string) => {
     switch (gitUrl) {
       case 'https://github.com/sclorg/dancer-ex.git':
@@ -302,6 +312,7 @@ export const gitPage = {
     cy.get(gitPO.gitSection.validatedMessage)
       .should('not.include.text', 'Validating...')
       .and('not.include.text', messages.addFlow.buildDeployMessage);
+    // TODO: can we remove this rate limit workaround since we mocked all the GitHub API calls?
     cy.get('body').then(($body) => {
       if ($body.text().includes(messages.addFlow.rateLimitExceeded)) {
         // Remove .git suffix and remove all parts before the last path

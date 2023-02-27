@@ -48,7 +48,7 @@ export const useDevfileServer = (
   }, [name, url, devfileContent, ref, dir, type, secretResource, smartSlashDir, devfilePath]);
 
   React.useEffect(() => {
-    const setError = (msg) => {
+    const setError = (msg: string) => {
       setDevfileParseError(msg);
       setFieldValue('devfile.devfileHasError', true);
     };

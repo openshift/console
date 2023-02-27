@@ -34,6 +34,7 @@ export const devFilePage = {
       messages.addFlow.gitUrlDevfileMessage,
     );
     cy.get(gitPO.gitSection.validatedMessage).should('not.have.text', 'Validating...');
+    // TODO: can we remove this rate limit workaround since we mocked all the GitHub API calls?
     cy.get('body').then(($body) => {
       if (
         $body

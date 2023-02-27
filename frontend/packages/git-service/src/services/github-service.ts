@@ -156,8 +156,10 @@ export class GithubService extends BaseService {
         // eslint-disable-next-line dot-notation
         return Buffer.from(resp.data['content'], 'base64').toString();
       }
+      // TODO: throw an error if the status code isn't expected
       return null;
     } catch (e) {
+      // TODO: Do not catch and hide errors here
       return null;
     }
   };

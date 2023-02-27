@@ -54,43 +54,53 @@ export abstract class BaseService {
    */
   abstract getFileContent(path: string): Promise<string | null>;
 
+  // TODO: There is no need for the helpers below, git-service API consumers should use getRepoFileList and getFileContent directly.
+
   /**
    * Check if Dockerfile present in the repo.
+   * @deprecated Use getFileContent instead.
    */
   abstract isDockerfilePresent(): Promise<boolean>;
 
   /**
    * Check if .tekton folder present in the repo.
+   * @deprecated Use getRepoFileList instead.
    */
   abstract isTektonFolderPresent(): Promise<boolean>;
 
   /**
    * Checks if dockerfile exist in the repo and returns dockerfile content
+   * @deprecated Use getFileContent instead.
    */
   abstract getDockerfileContent(): Promise<string>;
 
   /**
    * Check if func.yaml is present in the repo.
+   * @deprecated Use getRepoFileList instead.
    */
   abstract isFuncYamlPresent(): Promise<boolean>;
 
   /**
    * Checks if func.yaml exist in the repo and returns func.yaml content
+   * @deprecated Use getFileContent instead.
    */
   abstract getFuncYamlContent(): Promise<string>;
 
   /**
    * Check if Devfile present in the repo.
+   * @deprecated Use getRepoFileList instead.
    */
   abstract isDevfilePresent(): Promise<boolean>;
 
   /**
    * Check if Devfile present in the repo.
+   * @deprecated Use getFileContent instead.
    */
   abstract getDevfileContent(): Promise<string>;
 
   /**
    * Checks if package.json exist in the repo and returns content of the file.
+   * @deprecated Use getFileContent instead.
    */
   abstract getPackageJsonContent(): Promise<string>;
 
