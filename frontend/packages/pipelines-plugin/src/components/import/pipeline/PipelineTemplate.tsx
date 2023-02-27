@@ -56,6 +56,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
   const { t } = useTranslation();
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
   const [isPacRepo, setIsPacRepo] = React.useState(false);
+  const [isPipelineTypeChanged, setIsPipelineTypeChanged] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [pipelineTemplates, setPipelineTemplates] = React.useState([]);
   const pipelineStorageRef = React.useRef<{ [image: string]: PipelineKind[] }>({});
@@ -95,6 +96,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
       setFieldValue('pipeline.enabled', false);
       setFieldValue('pipeline.type', PipelineType.PIPELINE);
     }
+    setIsPipelineTypeChanged(true);
   }, [url, type, ref, dir, secretResource, isRepositoryEnabled, setFieldValue]);
 
   React.useEffect(() => {
@@ -165,7 +167,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     };
 
     fetchPipelineTemplate();
-    if (!isPipelineAttached) {
+    if (!isPipelineAttached && !isPipelineTypeChanged) {
       handlePipelineTypeChange();
     }
     return () => {
@@ -183,6 +185,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     existingPipeline,
     handlePipelineTypeChange,
     isServerlessFunctionStrategy,
+    isPipelineTypeChanged,
   ]);
 
   const pipelineTemplateItems = React.useMemo(() => {
