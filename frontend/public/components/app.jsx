@@ -397,6 +397,9 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
         setNewPlugins(null);
       });
       setIsFetchingPluginEndpoints(true);
+    } else {
+      setAllPluginEndpointsReady(true);
+      setIsFetchingPluginEndpoints(false);
     }
   }
 
