@@ -57,6 +57,7 @@ export const listPage = {
       cy.get('.pf-c-toolbar__content-section').within(() => {
         cy.byLegacyTestID('filter-dropdown-toggle')
           .find('button')
+          .as('filterDropdownToggleButton')
           .click();
         /* PF Filter dropdown menu items are:
            <li id="cluster">
@@ -67,6 +68,7 @@ export const listPage = {
          */
         cy.get(`#${rowFilter}`).click(); // clicking on the <li /> works!
         cy.url().should('include', '?rowFilter');
+        cy.get('@filterDropdownToggleButton').click();
       });
     },
   },
