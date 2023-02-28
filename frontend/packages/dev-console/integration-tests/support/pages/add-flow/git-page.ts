@@ -148,28 +148,27 @@ export const gitPage = {
   verifyNodeName: (componentName: string) =>
     cy.get(gitPO.nodeName).should('have.value', componentName),
   selectResource: (resource: string = 'deployment') => {
-    gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
-    cy.get(gitPO.advancedOptions.resourcesDropdown)
+    cy.get(gitPO.resourcesDropdown)
       .scrollIntoView()
       .click();
     switch (resource) {
       case 'deployment':
       case 'Deployment':
-        cy.get(gitPO.advancedOptions.resources.deployment)
+        cy.get(gitPO.resources.deployment)
           .scrollIntoView()
           .click();
         break;
       case 'deployment config':
       case 'Deployment Config':
       case 'DeploymentConfig':
-        cy.get(gitPO.advancedOptions.resources.deploymentConfig)
+        cy.get(gitPO.resources.deploymentConfig)
           .scrollIntoView()
           .click();
         break;
       case 'Knative':
       case 'Knative Service':
       case 'Serverless Deployment':
-        cy.get(gitPO.advancedOptions.resources.knative)
+        cy.get(gitPO.resources.knative)
           .scrollIntoView()
           .click();
         break;

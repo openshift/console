@@ -5,6 +5,7 @@ import i18n from 'i18next';
 import { act } from 'react-dom/test-utils';
 import { setI18n } from 'react-i18next';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 import { PageHeading, ButtonBar } from '@console/internal/components/utils/';
 import store from '@console/internal/redux';
 import NamespacedPage from '../../NamespacedPage';
@@ -13,9 +14,15 @@ import AppSection from '../app/AppSection';
 import DeployImage from '../DeployImage';
 import DeployImagePage from '../DeployImagePage';
 import ImageSearchSection from '../image-search/ImageSearchSection';
+import ResourceSection from '../section/ResourceSection';
 
 jest.mock('@console/shared/src/hooks/post-form-submit-action', () => ({
   usePostFormSubmitAction: () => () => {},
+}));
+
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  // Called in ResourceSection to check knative ServicePlugin permissions
+  useAccessReview: () => false,
 }));
 
 jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
@@ -25,6 +32,11 @@ jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
 jest.mock('../serverless/useUpdateKnScalingDefaultValues', () => ({
   // Called in DeployImage
   useUpdateKnScalingDefaultValues: (initialValues) => initialValues,
+}));
+
+jest.mock('../section/useResourceType', () => ({
+  // Called in DeployImage
+  useResourceType: () => ['kubernetes', jest.fn()],
 }));
 
 describe('DeployImage Page Test', () => {
@@ -92,9 +104,14 @@ describe('Deploy Image Test', () => {
       },
       namespace: 'my-project',
     };
-    deployImageWrapper = mount(<DeployImage {...deployImageProps} />, {
-      wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
-    });
+    deployImageWrapper = mount(
+      <BrowserRouter>
+        <DeployImage {...deployImageProps} />
+      </BrowserRouter>,
+      {
+        wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+      },
+    );
     // Workaround for error: "Warning: An update to Formik inside a test was not wrapped in act(...)."
     // Wait for an initial rerender because the shared InputFields forces an rerendering via useFormikValidationFix
     await act(async () => {
@@ -117,6 +134,9 @@ describe('Deploy Image Test', () => {
 
   it('should load  correct app section', () => {
     expect(deployImageWrapper.find(AppSection).exists()).toBe(true);
+  });
+  it('should load  correct resource section', () => {
+    expect(deployImageWrapper.find(ResourceSection).exists()).toBe(true);
   });
   it('should load  correct advanced section', () => {
     expect(deployImageWrapper.find(AdvancedSection).exists()).toBe(true);
