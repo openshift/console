@@ -9,6 +9,7 @@ import AppSection from './app/AppSection';
 import ImageSearchSection from './image-search/ImageSearchSection';
 import { DeployImageFormProps } from './import-types';
 import IconSection from './section/IconSection';
+import ResourceSection from './section/ResourceSection';
 
 const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   values,
@@ -32,6 +33,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
           project={values.project}
           noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
         />
+        <ResourceSection />
         <AdvancedSection values={values} />
       </FormBody>
       <FormFooter
