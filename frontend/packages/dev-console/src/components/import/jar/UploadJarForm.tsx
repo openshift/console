@@ -13,6 +13,7 @@ import AppSection from '../app/AppSection';
 import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
 import FormSection from '../section/FormSection';
 import IconSection from '../section/IconSection';
+import ResourceSection from '../section/ResourceSection';
 import JarSection from './section/JarSection';
 
 export type UploadJarFormProps = {
@@ -64,6 +65,7 @@ const UploadJarForm: React.FunctionComponent<FormikProps<FormikValues> & UploadJ
           project={values.project}
           noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
         />
+        <ResourceSection />
         <AdvancedSection values={values} />
       </FormBody>
       <FormFooter
