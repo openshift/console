@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamTagModel } from '../models';
-import { DetailsPage } from './factory';
+import { DetailsPage, Table } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
 import { humanizeBinaryBytes } from './utils/units';
 import { ExampleDockerCommandPopover } from './image-stream';
 import { ImageStreamTimeline } from './image-stream-timeline';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
+import { sortable } from '@patternfly/react-table';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -34,6 +35,90 @@ const splitEnv = (nameValue: string) => {
   };
 };
 
+const supportedPlatformColumnClasses = [
+  'pf-m-hidden pf-m-visible-on-sm',
+  'pf-m-hidden pf-m-visible-on-sm',
+  'pf-m-hidden pf-m-visible-on-lg',
+];
+
+const SupportedPlatformsTableRows = ({ componentProps: { data } }) => {
+  return _.map(data, (submanifest: RowSupportedPlatformData) => {
+    const { os, architecture, digest } = submanifest;
+    return [
+      {
+        title: os,
+        props: {
+          className: supportedPlatformColumnClasses[0],
+        },
+      },
+      {
+        title: architecture,
+        props: {
+          className: supportedPlatformColumnClasses[1],
+        },
+      },
+      {
+        title: digest,
+        props: {
+          className: supportedPlatformColumnClasses[2],
+        },
+      },
+    ];
+  });
+};
+
+export const SupportedPlatformsTable = (props) => {
+  const { t } = useTranslation();
+  const { submanifests, policy, ...tableProps } = props;
+
+  const SupportedPlatformsTableHeader = () => [
+    {
+      title: t('public~OS'),
+      sortField: 'os',
+      transforms: [sortable],
+      props: { className: supportedPlatformColumnClasses[0] },
+    },
+    {
+      title: t('public~Architecture'),
+      sortField: 'architecture',
+      transforms: [sortable],
+      props: { className: supportedPlatformColumnClasses[1] },
+    },
+    {
+      title: t('public~Identifier'),
+      sortField: 'digest',
+      transforms: [sortable],
+      props: { className: supportedPlatformColumnClasses[2] },
+    },
+  ];
+
+  if (!policy || submanifests.length === 0) {
+    // If the policy does not support Manifest Lists, it exits.
+    // or the Manifest List is empty
+    return null;
+  }
+
+  return (
+    <>
+      <div className="co-m-pane__body-group">
+        {props.heading && <SectionHeading text={props.heading} />}
+        <Table
+          {...tableProps}
+          aria-label={t('public~Supported Platforms')}
+          loaded={true}
+          label={props.heading}
+          data={submanifests}
+          Header={SupportedPlatformsTableHeader}
+          Rows={SupportedPlatformsTableRows}
+          virtualize={false}
+        />
+      </div>
+    </>
+  );
+};
+
+SupportedPlatformsTable.displayName = 'SupportedPlatformsTable';
+
 export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
   obj: imageStreamTag,
   imageStream,
@@ -43,6 +128,13 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
   // Convert to an array of objects with name and value properties, then sort the array for display.
   const labelsArray = _.map(labels, (value, name) => ({ name, value }));
   const sortedLabels = _.sortBy(labelsArray, 'name');
+
+  // Sort the submanifests by os,architecture
+  const submanifests = _.get(imageStreamTag, 'image.dockerImageManifests', {});
+  const sortedSubmanifests = _.sortBy(submanifests, ['os', 'architecture']);
+  const importPolicyPreserveOriginal =
+    _.get(imageStreamTag, 'tag.importPolicy.importMode', {}) === 'PreserveOriginal';
+
   const entrypoint = (config.Entrypoint || []).join(' ');
   const cmd = (config.Cmd || []).join(' ');
   const exposedPorts = _.keys(config.ExposedPorts).join(', ');
@@ -141,6 +233,11 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
           </div>
         )}
       </div>
+      <SupportedPlatformsTable
+        submanifests={sortedSubmanifests}
+        policy={importPolicyPreserveOriginal}
+        heading={t('public~Supported Platforms')}
+      />
     </div>
   );
 };
@@ -226,4 +323,10 @@ export type ImageStreamTagsDetailsPageProps = {
   match: any;
   namespace: string;
   name: string;
+};
+
+export type RowSupportedPlatformData = {
+  os: string;
+  architecture: string;
+  digest: string;
 };
