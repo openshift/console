@@ -61,7 +61,8 @@ declare interface Window {
   };
   windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
-  store?: {}; // Redux store
+  i18n?: {}; // i18next instance, only available in development builds for debugging
+  store?: {}; // Redux store, only available in development builds for debugging
   pluginStore?: {}; // Console plugin store
   loadPluginEntry?: Function;
   Cypress?: {};
