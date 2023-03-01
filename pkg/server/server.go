@@ -50,37 +50,40 @@ const (
 
 // Private constants
 const (
-	accountManagementEndpoint             = "/api/accounts_mgmt/"
-	alertManagerProxyEndpoint             = "/api/alertmanager"
-	alertManagerTenancyProxyEndpoint      = "/api/alertmanager-tenancy"
-	alertmanagerUserWorkloadProxyEndpoint = "/api/alertmanager-user-workload"
-	authLoginEndpoint                     = "/auth/login"
-	authLogoutEndpoint                    = "/auth/logout"
-	authLogoutMulticlusterEndpoint        = "/api/logout/multicluster"
-	customLogoEndpoint                    = "/custom-logo"
-	deleteOpenshiftTokenEndpoint          = "/api/openshift/delete-token"
-	devfileEndpoint                       = "/api/devfile/"
-	devfileSamplesEndpoint                = "/api/devfile/samples/"
-	gitopsEndpoint                        = "/api/gitops/"
-	graphQLEndpoint                       = "/api/graphql"
-	helmChartRepoProxyEndpoint            = "/api/helm/charts/"
-	indexPageTemplateName                 = "index.html"
-	k8sProxyEndpoint                      = "/api/kubernetes/"
-	localesEndpoint                       = "/locales/resource.json"
-	meteringProxyEndpoint                 = "/api/metering"
-	multiclusterLogoutPageTemplateName    = "multicluster-logout.html"
-	operandsListEndpoint                  = "/api/list-operands/"
-	pluginAssetsEndpoint                  = "/api/plugins/"
-	pluginProxyEndpoint                   = "/api/proxy/"
-	prometheusProxyEndpoint               = "/api/prometheus"
-	prometheusTenancyProxyEndpoint        = "/api/prometheus-tenancy"
-	requestTokenEndpoint                  = "/api/request-token"
-	sha256Prefix                          = "sha256~"
-	thanosServiceProxyPath                = "/api/v1/namespaces/openshift-monitoring/services/https:thanos-querier:9091/proxy-service/api"
-	thanosTenancyForRulesServiceProxyPath = "/api/v1/namespaces/openshift-monitoring/services/https:thanos-querier:9093/proxy-service/api"
-	thanosTenancyServiceProxyPath         = "/api/v1/namespaces/openshift-monitoring/services/https:thanos-querier:9092/proxy-service/api"
-	tokenizerPageTemplateName             = "tokener.html"
-	updatesEndpoint                       = "/api/check-updates"
+	accountManagementEndpoint                = "/api/accounts_mgmt/"
+	alertManagerProxyEndpoint                = "/api/alertmanager"
+	alertManagerServiceProxyPath             = "/api/v1/namespaces/openshift-monitoring/services/https:alertmanager-main:9094/proxy-service/api"
+	alertManagerTenancyProxyEndpoint         = "/api/alertmanager-tenancy"
+	alertManagerTenancyServiceProxyPath      = "/api/v1/namespaces/openshift-monitoring/services/https:alertmanager-main:9092/proxy-service/api"
+	alertmanagerUserWorkloadProxyEndpoint    = "/api/alertmanager-user-workload"
+	alertManagerUserWorkloadServiceProxyPath = "/api/v1/namespaces/openshift-monitoring/services/https:alertmanager-main:9094/proxy-service/api"
+	authLoginEndpoint                        = "/auth/login"
+	authLogoutEndpoint                       = "/auth/logout"
+	authLogoutMulticlusterEndpoint           = "/api/logout/multicluster"
+	customLogoEndpoint                       = "/custom-logo"
+	deleteOpenshiftTokenEndpoint             = "/api/openshift/delete-token"
+	devfileEndpoint                          = "/api/devfile/"
+	devfileSamplesEndpoint                   = "/api/devfile/samples/"
+	gitopsEndpoint                           = "/api/gitops/"
+	graphQLEndpoint                          = "/api/graphql"
+	helmChartRepoProxyEndpoint               = "/api/helm/charts/"
+	indexPageTemplateName                    = "index.html"
+	k8sProxyEndpoint                         = "/api/kubernetes/"
+	localesEndpoint                          = "/locales/resource.json"
+	meteringProxyEndpoint                    = "/api/metering"
+	multiclusterLogoutPageTemplateName       = "multicluster-logout.html"
+	operandsListEndpoint                     = "/api/list-operands/"
+	pluginAssetsEndpoint                     = "/api/plugins/"
+	pluginProxyEndpoint                      = "/api/proxy/"
+	prometheusProxyEndpoint                  = "/api/prometheus"
+	prometheusTenancyProxyEndpoint           = "/api/prometheus-tenancy"
+	requestTokenEndpoint                     = "/api/request-token"
+	sha256Prefix                             = "sha256~"
+	thanosServiceProxyPath                   = "/api/v1/namespaces/openshift-monitoring/services/https:thanos-querier:9091/proxy-service/api"
+	thanosTenancyForRulesServiceProxyPath    = "/api/v1/namespaces/openshift-monitoring/services/https:thanos-querier:9093/proxy-service/api"
+	thanosTenancyServiceProxyPath            = "/api/v1/namespaces/openshift-monitoring/services/https:thanos-querier:9092/proxy-service/api"
+	tokenizerPageTemplateName                = "tokener.html"
+	updatesEndpoint                          = "/api/check-updates"
 )
 
 type jsGlobals struct {
@@ -393,7 +396,6 @@ func (s *Server) HTTPHandler() http.Handler {
 				if cluster != serverutils.LocalClusterName {
 					path := proxy.SingleJoiningSlash("/"+cluster, thanosServiceProxyPath)
 					r.URL.Path = proxy.SingleJoiningSlash(path, r.URL.Path)
-					r.URL.RawPath = proxy.SingleJoiningSlash(path, r.URL.RawPath)
 					thanosProxy = managedClusterProxy
 				}
 				thanosProxy.ServeHTTP(w, r)
@@ -457,31 +459,50 @@ func (s *Server) HTTPHandler() http.Handler {
 			alertManagerProxyAPIPath             = alertManagerProxyEndpoint + "/api/"
 			alertManagerUserWorkloadProxyAPIPath = alertmanagerUserWorkloadProxyEndpoint + "/api/"
 			alertManagerTenancyProxyAPIPath      = alertManagerTenancyProxyEndpoint + "/api/"
-
-			alertManagerProxy             = proxy.NewProxy(s.AlertManagerProxyConfig)
-			alertManagerUserWorkloadProxy = proxy.NewProxy(s.AlertManagerUserWorkloadProxyConfig)
-			alertManagerTenancyProxy      = proxy.NewProxy(s.AlertManagerTenancyProxyConfig)
 		)
 
+		localAlertManagerProxy := proxy.NewProxy(s.AlertManagerProxyConfig)
 		handle(alertManagerProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyAPIPath),
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				cluster := serverutils.GetCluster(r)
+				alertManagerProxy := localAlertManagerProxy
+				if cluster != serverutils.LocalClusterName {
+					serviceProxyPath := proxy.SingleJoiningSlash("/"+cluster, alertManagerServiceProxyPath)
+					r.URL.Path = proxy.SingleJoiningSlash(serviceProxyPath, r.URL.Path)
+					alertManagerProxy = managedClusterProxy
+				}
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				alertManagerProxy.ServeHTTP(w, r)
-			})),
-		)
+			})))
 
+		localAlertManagerUserWorkloadProxy := proxy.NewProxy(s.AlertManagerUserWorkloadProxyConfig)
 		handle(alertManagerUserWorkloadProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerUserWorkloadProxyAPIPath),
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				cluster := serverutils.GetCluster(r)
+				alertManagerUserWorkloadProxy := localAlertManagerUserWorkloadProxy
+				if cluster != serverutils.LocalClusterName {
+					serviceProxyPath := proxy.SingleJoiningSlash("/"+cluster, alertManagerUserWorkloadServiceProxyPath)
+					r.URL.Path = proxy.SingleJoiningSlash(serviceProxyPath, r.URL.Path)
+					alertManagerUserWorkloadProxy = managedClusterProxy
+				}
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				alertManagerUserWorkloadProxy.ServeHTTP(w, r)
 			})),
 		)
 
+		localAlertManagerTenancyProxy := proxy.NewProxy(s.AlertManagerTenancyProxyConfig)
 		handle(alertManagerTenancyProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerTenancyProxyAPIPath),
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				cluster := serverutils.GetCluster(r)
+				alertManagerTenancyProxy := localAlertManagerTenancyProxy
+				if cluster != serverutils.LocalClusterName {
+					serviceProxyPath := proxy.SingleJoiningSlash("/"+cluster, alertManagerTenancyServiceProxyPath)
+					r.URL.Path = proxy.SingleJoiningSlash(serviceProxyPath, r.URL.Path)
+					alertManagerTenancyProxy = managedClusterProxy
+				}
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				alertManagerTenancyProxy.ServeHTTP(w, r)
 			})),
