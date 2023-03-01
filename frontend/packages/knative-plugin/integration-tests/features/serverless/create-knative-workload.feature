@@ -17,7 +17,7 @@ Feature: Create a workload of 'knative Service' type resource
         @regression
         Scenario: knative resource type in docker file add flow: KN-05-TC02
             Given user is at Add page
-             When user clicks Import From Git card on the Add page
+             When user clicks "Import from Git" card on the Add page
               And user enters git url "https://github.com/rohitkrai03/flask-dockerfile-example"
              Then Knative Service option is displayed under Resources section
 

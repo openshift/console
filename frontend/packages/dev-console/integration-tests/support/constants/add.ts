@@ -1,21 +1,29 @@
+// TODO: Use PascalCase for all enums
 export enum addOptions {
-  ImportFromGit = 'Import From Git',
+  // dev-console
   ContainerImage = 'Container Image',
-  YAML = 'YAML',
-  DeveloperCatalog = 'From Catalog',
   Database = 'Database',
+  DeveloperCatalog = 'Developer Catalog',
+  ImportFromGit = 'Import from Git',
   OperatorBacked = 'Operator Backed',
-  HelmChart = 'Helm Chart',
-  Pipeline = 'Pipeline',
-  EventSource = 'Event Source',
-  Channel = 'Channel',
-  UploadJARFile = 'Upload JAR file',
-  Broker = 'Broker',
-  EventSink = 'Event Sink',
-  Sharing = 'Sharing',
-  HelmChartRepositories = 'Helm Chart Repositories',
   Samples = 'Samples',
+  Sharing = 'Sharing',
+  UploadJARFile = 'Upload JAR file',
+  YAML = 'YAML',
+
+  // helm-plugin
+  HelmChart = 'Helm Chart',
+  HelmChartRepositories = 'Helm Chart Repositories',
+
+  // knative-plugin
+  Broker = 'Broker',
+  Channel = 'Channel',
   CreateServerlessFunction = 'Create Serverless function',
+  EventSink = 'Event Sink',
+  EventSource = 'Event Source',
+
+  // pipelines-plugin
+  Pipeline = 'Pipeline',
 }
 
 export enum buildConfigOptions {

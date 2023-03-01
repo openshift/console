@@ -80,7 +80,7 @@ When('user clicks on workload {string}', (workloadName: string) => {
   topologyPage.componentNode(workloadName).click({ force: true });
 });
 
-When('user selects {string} card from add page', (cardName: string) => {
+When('user selects {string} card from add page', (cardName: addOptions) => {
   addPage.selectCardFromOptions(cardName);
 });
 

@@ -21,7 +21,7 @@ Feature: Add page on Developer Console
         Scenario: Options to create an Application, Component or Service: A-11-TC02
              Then user will see "Developer Catalog" card
               And user will see "Git Repository" card
-              And user will see "Container images" option
+              And user will see "Container Image" option
               And user will see "Samples" option
               And user will see "From Local Machine" card
 
@@ -41,7 +41,7 @@ Feature: Add page on Developer Console
 
         @regression
         Scenario: From Local Machine option to create an Application, Component or Service: A-11-TC05
-             Then user will see "Import YAML" option
+             Then user will see "YAML" option
               And user will see "Upload JAR file" option
 
 

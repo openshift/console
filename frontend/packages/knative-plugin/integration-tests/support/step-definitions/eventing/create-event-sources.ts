@@ -47,7 +47,7 @@ Then('user will see the cards of Event Sources', () => {
   catalogPage.verifyCardTypeOfAllCards('Event Sources');
 });
 
-When('user clicks on {string} card', (cardName: string) => {
+When('user clicks on {string} card', (cardName: addOptions) => {
   addPage.selectCardFromOptions(cardName);
 });
 

@@ -1,5 +1,5 @@
 @add-flow @smoke
-Feature: Create the different workloads from Add page
+Feature: Create different workloads
               As a user, I should be able to create an Application, component or service from one of the options provided on Add page
 
 
@@ -12,7 +12,7 @@ Feature: Create the different workloads from Add page
              Then user will see Create Application using Samples, Build with guided documentation and Explore new developer features under Getting started resources section
               And user will see All services, Database, Operator Backed and Helm Chart options under Developer Catalog section
               And user will see Import from Git card under Git Repository section
-              And user will see "Container images" option
+              And user will see "Container Image" option
               And user will see "Samples" option
               And user will see Import YAML, Upload JAR file under From Local Machine section
 
@@ -124,7 +124,7 @@ Feature: Create the different workloads from Add page
               And Advanced options sections are displayed
               And Create button is in disabled state
 
-        Scenario Outline: Create Sample Application from Add page: GS-03-TC05
+        Scenario Outline: Import Samples: GS-03-TC05
             Given user is at Add page
              When user clicks on the Samples card
               And user selects "<card_name>" sample from Samples

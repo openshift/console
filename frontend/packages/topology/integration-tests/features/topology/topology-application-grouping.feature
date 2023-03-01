@@ -30,7 +30,7 @@ Feature: Application groupings in topology
              When user clicks on application groupings "nodejs-ex-git-app"
               And user clicks on Action menu
               And user hovers on Add to Application from action menu
-              And user clicks on Import From Git option
+              And user clicks on Import from Git option
               And user fills the form with workload name "added-application-1" and clicks Create
              Then user can see "added-application-1" workload
 

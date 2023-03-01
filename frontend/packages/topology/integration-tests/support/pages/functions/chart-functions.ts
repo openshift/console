@@ -29,7 +29,7 @@ export const createWorkloadUsingOptions = (optionName: string, optionalData?: st
         .click();
       break;
 
-    case 'Import From Git':
+    case 'Import from Git':
       gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
       gitPage.verifyValidatedMessage('https://github.com/sclorg/nodejs-ex.git');
       gitPage.enterComponentName('nodejs-ex-git');

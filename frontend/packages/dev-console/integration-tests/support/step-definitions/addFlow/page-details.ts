@@ -24,7 +24,7 @@ When('user selects Add option from left side navigation menu', () => {
 });
 
 Then(
-  'page contains Import From Git, Container Image, YAML, From Catalog, Database, Helm Chart cards',
+  'page contains Import from Git, Container Image, YAML, From Catalog, Database, Helm Chart cards',
   () => {
     addPage.verifyCard(addOptions.ImportFromGit);
     addPage.verifyCard(addOptions.ContainerImage);
@@ -76,30 +76,27 @@ Then(
 Then(
   'user will see All services, Database, Operator Backed and Helm Chart options under Developer Catalog section',
   () => {
-    verifyAddPage.verifyAddPageCard('Developer Catalog');
-    verifyAddPage.verifyAddPageCard('All services');
-    verifyAddPage.verifyAddPageCard('Database');
-    verifyAddPage.verifyAddPageCard('Operator Backed');
-    verifyAddPage.verifyAddPageCard('Helm Chart');
+    verifyAddPage.verifyAddPageCard(addOptions.DeveloperCatalog);
+    verifyAddPage.verifyAddPageCard(addOptions.Database);
+    verifyAddPage.verifyAddPageCard(addOptions.OperatorBacked);
+    verifyAddPage.verifyAddPageCard(addOptions.HelmChart);
   },
 );
 
 Then('user will see Import from Git card under Git Repository section', () => {
-  verifyAddPage.verifyAddPageCard('Git Repository');
-  verifyAddPage.verifyAddPageCard('Import from Git');
+  verifyAddPage.verifyAddPageCard(addOptions.ImportFromGit);
 });
 
 Then('user will see Import YAML, Upload JAR file under From Local Machine section', () => {
-  verifyAddPage.verifyAddPageCard('Import YAML');
-  verifyAddPage.verifyAddPageCard('Upload JAR file');
-  verifyAddPage.verifyAddPageCard('From Local Machine');
+  verifyAddPage.verifyAddPageCard(addOptions.YAML);
+  verifyAddPage.verifyAddPageCard(addOptions.UploadJARFile);
 });
 
-Then('user will see {string} card', (addPageCard: string) => {
+Then('user will see {string} card', (addPageCard: addOptions) => {
   verifyAddPage.verifyAddPageCard(addPageCard);
 });
 
-Then('user will see {string} option', (addPageOption: string) => {
+Then('user will see {string} option', (addPageOption: addOptions) => {
   verifyAddPage.verifyAddPageCard(addPageOption);
 });
 

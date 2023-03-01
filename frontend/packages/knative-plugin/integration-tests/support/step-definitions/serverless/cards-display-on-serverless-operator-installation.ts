@@ -1,6 +1,7 @@
 import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import {
+  addOptions,
   devNavigationMenu,
   pageTitle,
 } from '@console/dev-console/integration-tests/support/constants';
@@ -16,7 +17,7 @@ Then('user is able to see {string} card on Add page', (cardName: string) => {
   addPage.verifyCard(cardName);
 });
 
-When('user clicks on {string} Card', (cardName: string) => {
+When('user clicks on {string} Card', (cardName: addOptions) => {
   addPage.selectCardFromOptions(cardName);
 });
 

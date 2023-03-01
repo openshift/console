@@ -42,7 +42,7 @@ Feature: Creation and Visualisation of serverless fuctions
               And user will see Labels as boson.dev/function=true and boson.dev/runtime=node in Details tab
 
         @regression @odc-7167
-        Scenario Outline: Create Serverless Function from Import From Git Form on Add page with Builder Images: SF-01-TC05
+        Scenario Outline: Create Serverless Function from Import from Git Form on Add page with Builder Images: SF-01-TC05
             Given user is at Add page
               And user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"

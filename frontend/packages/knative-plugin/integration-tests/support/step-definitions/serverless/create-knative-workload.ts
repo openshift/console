@@ -17,7 +17,7 @@ import {
   topologyPage,
 } from '@console/dev-console/integration-tests/support/pages';
 
-Given('user is on {string} form', (formName: string) => {
+Given('user is on {string} form', (formName: addOptions) => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(formName);
 });
@@ -108,7 +108,7 @@ When('user enters Docker URL as {string}', (url: string) => {
   gitPage.enterGitUrl(url);
 });
 
-When('user clicks on Import From Git option', () => {
+When('user clicks on Import from Git option', () => {
   cy.get(topologyPO.grouping.importFromGitOption).click();
 });
 
@@ -121,8 +121,8 @@ When('user enters Git Repo URL as {string}', (gitUrl: string) => {
   gitPage.verifyValidatedMessage(gitUrl);
 });
 
-When('user clicks Import From Git card on the Add page', () => {
-  addPage.selectCardFromOptions(addOptions.ImportFromGit);
+When('user clicks {string} card on the Add page', (addOption: addOptions) => {
+  addPage.selectCardFromOptions(addOption);
 });
 
 When('user selects Import Strategy as Dockerfile', () => {

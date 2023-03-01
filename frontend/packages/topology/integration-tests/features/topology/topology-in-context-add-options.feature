@@ -15,7 +15,7 @@ Feature: Add in context from the Developer Catalog
         Scenario: Add to Project in Context options: T-10-TC01
              When user right clicks on empty graph view
               And user hovers on Add to Project
-             Then user can see in context options "Samples", "Import from Git", "Container Image", "From Catalog", "Database", "Operator Backed", "Helm Charts", "Event Source", "Channel"
+             Then user can see in context options "Samples", "Import from Git", "Container Image", "Developer Catalog", "Database", "Operator Backed", "Helm Charts", "Event Source", "Channel"
 
 
         @regression

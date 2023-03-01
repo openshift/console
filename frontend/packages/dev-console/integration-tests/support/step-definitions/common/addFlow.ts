@@ -88,11 +88,11 @@ When('user clicks Cancel button on Add page', () => {
   gitPage.clickCancel();
 });
 
-Then('user can see {string} card on the Add page', (cardName: string) => {
+Then('user can see {string} card on the Add page', (cardName: addOptions) => {
   addPage.verifyCard(cardName);
 });
 
-When('user selects {string} card from add page', (cardName: string) => {
+When('user selects {string} card from add page', (cardName: addOptions) => {
   addPage.selectCardFromOptions(cardName);
 });
 

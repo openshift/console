@@ -183,7 +183,7 @@ Feature: Topology chart area
               And user selects go sample
               And user fills the "Go Sample" form and clicks Create
               And user hovers on Add to Project and clicks on "Import from Git"
-              And user fills the "Import From Git" form and clicks Create
+              And user fills the "Import from Git" form and clicks Create
               And user hovers on Add to Project and clicks on "Container Image"
               And user fills the "Container Image" form and clicks Create
               And user hovers on Add to Project and clicks on "From Catalog"

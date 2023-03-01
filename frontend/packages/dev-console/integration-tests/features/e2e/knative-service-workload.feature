@@ -10,7 +10,7 @@ Feature: OpenShift Serverless Operator E2E
 
 
         @to-do
-        Scenario: Create knative work load from Import From Git card on Add page: EE-02-TC01
+        Scenario: Create knative work load from Import from Git card on Add page: EE-02-TC01
             Given user is on "Import from Git" form page
              When user enters Git Repo url as "https://github.com/gajanan-more/knative-demo"
               And user enters name as "knative-demo"

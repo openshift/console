@@ -72,7 +72,7 @@ When('user hovers on Add to Application from action menu', () => {
   cy.get(topologyPO.grouping.addToApplication).trigger('mouseover');
 });
 
-When('user clicks on Import From Git option', () => {
+When('user clicks on Import from Git option', () => {
   cy.get(topologyPO.grouping.importFromGitOption).click();
 });
 

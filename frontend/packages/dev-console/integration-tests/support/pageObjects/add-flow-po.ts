@@ -1,3 +1,5 @@
+import { addOptions, pageTitle } from '../constants';
+
 export const cardTitle = '[data-test="title"]';
 
 export const addPagePO = {
@@ -12,6 +14,99 @@ export const addPagePO = {
   buildWithGuidedDocumentationItems: '[data-test="card quick-start"] [data-test~="item"]',
   viewAllQuickStarts: '[data-test="item all-quick-starts"]',
   helmChartRepositoriesCard: '[data-test="card helm-chart-repositories"]',
+};
+
+export const addPageItemsPO: Record<
+  addOptions,
+  {
+    itemId: string;
+    verifyPageTitle: string;
+    alternativePageTitleSelector?: string;
+    extraShouldBeVisibleSelector?: string;
+    skipA11yCheck?: boolean;
+  }
+> = {
+  // dev-console
+  [addOptions.ContainerImage]: {
+    itemId: 'deploy-image',
+    verifyPageTitle: pageTitle.ContainerImage,
+  },
+  [addOptions.Database]: {
+    itemId: 'dev-catalog-databases',
+    verifyPageTitle: pageTitle.DeveloperCatalog,
+  },
+  [addOptions.DeveloperCatalog]: {
+    itemId: 'dev-catalog',
+    verifyPageTitle: pageTitle.DeveloperCatalog,
+  },
+  [addOptions.ImportFromGit]: {
+    itemId: 'import-from-git',
+    verifyPageTitle: pageTitle.Git,
+  },
+  [addOptions.OperatorBacked]: {
+    itemId: 'operator-backed',
+    verifyPageTitle: pageTitle.OperatorBacked,
+  },
+  [addOptions.Samples]: {
+    itemId: 'import-from-samples',
+    verifyPageTitle: pageTitle.Samples,
+  },
+  [addOptions.Sharing]: {
+    itemId: 'project-access',
+    verifyPageTitle: pageTitle.ProjectAccess,
+    // TODO: Fix acceessibility issue
+    skipA11yCheck: true,
+  },
+  [addOptions.UploadJARFile]: {
+    itemId: 'upload-jar',
+    verifyPageTitle: pageTitle.UploadJarFile,
+  },
+  [addOptions.YAML]: {
+    itemId: 'import-yaml',
+    verifyPageTitle: pageTitle.YAML,
+    extraShouldBeVisibleSelector: '[data-mode-id="yaml"]',
+  },
+
+  // helm-plugin
+  [addOptions.HelmChart]: {
+    itemId: 'helm',
+    verifyPageTitle: pageTitle.HelmCharts,
+  },
+  [addOptions.HelmChartRepositories]: {
+    itemId: 'project-helm-chart-repositories',
+    verifyPageTitle: pageTitle.HelmCharts,
+    alternativePageTitleSelector: '[data-test="form-title"]',
+  },
+
+  // knative-plugin
+  [addOptions.Broker]: {
+    itemId: 'knative-eventing-broker',
+    verifyPageTitle: pageTitle.Broker,
+  },
+  [addOptions.Channel]: {
+    itemId: 'knative-eventing-channel',
+    verifyPageTitle: pageTitle.Channel,
+  },
+  [addOptions.CreateServerlessFunction]: {
+    itemId: 'create-serverless-function',
+    verifyPageTitle: pageTitle.CreateServerlessFunction,
+    alternativePageTitleSelector: '[data-test-id="resource-title"]',
+  },
+  [addOptions.EventSink]: {
+    itemId: 'knative-event-sink',
+    verifyPageTitle: pageTitle.EventSink,
+  },
+  [addOptions.EventSource]: {
+    itemId: 'knative-event-source',
+    verifyPageTitle: pageTitle.EventSource,
+  },
+
+  // pipelines-plugin
+  [addOptions.Pipeline]: {
+    itemId: 'pipeline',
+    verifyPageTitle: pageTitle.PipelineBuilder,
+    alternativePageTitleSelector: '.odc-pipeline-builder-header__title',
+  },
 };
 
 export const gitPO = {

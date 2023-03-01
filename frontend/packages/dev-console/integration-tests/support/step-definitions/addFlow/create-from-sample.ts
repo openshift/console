@@ -1,10 +1,9 @@
 import { When } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { addOptions } from '../../constants';
-import { addPage, app, samplesPage, verifyAddPage } from '../../pages';
+import { addPage, app, samplesPage } from '../../pages';
 
 When('user clicks on the Samples card', () => {
-  verifyAddPage.verifyAddPageCard('Samples');
   addPage.selectCardFromOptions(addOptions.Samples);
 });
 

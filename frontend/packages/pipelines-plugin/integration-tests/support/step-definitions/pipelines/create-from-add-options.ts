@@ -24,7 +24,7 @@ Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
 });
 
-When('user clicks Import From Git card on the Add page', () => {
+When('user clicks Import from Git card on the Add page', () => {
   addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
@@ -197,7 +197,7 @@ Then('user is able to see workload {string} in topology page', (workloadName: st
   topologyPage.verifyWorkloadInTopologyPage(workloadName);
 });
 
-When('user clicks Import From Git card on the Add page', () => {
+When('user clicks Import from Git card on the Add page', () => {
   addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
