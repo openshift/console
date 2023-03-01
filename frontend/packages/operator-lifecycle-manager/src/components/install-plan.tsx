@@ -98,7 +98,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
 
       {/* Components */}
       <TableData className={tableColumnClasses[3]}>
-        <ul className="list-unstyled">
+        <ul className="pf-c-list pf-m-plain">
           {obj.spec.clusterServiceVersionNames.map((csvName) => (
             <li key={csvName}>
               {obj.status?.phase === 'Complete' ? (
@@ -124,7 +124,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
         {(obj.metadata.ownerReferences || [])
           .filter((ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel))
           .map((ref) => (
-            <ul key={ref.uid} className="list-unstyled">
+            <ul key={ref.uid} className="pf-c-list pf-m-plain">
               <li>
                 <ResourceLink
                   kind={referenceForModel(SubscriptionModel)}
