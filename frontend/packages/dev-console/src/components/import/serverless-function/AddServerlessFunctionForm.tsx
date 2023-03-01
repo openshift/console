@@ -12,10 +12,12 @@ import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import {
   CLUSTER_PIPELINE_NS,
+  FLAG_OPENSHIFT_PIPELINE,
   FUNC_PIPELINE_RUNTIME_LABEL,
 } from '@console/pipelines-plugin/src/const';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import { useFlag } from '@console/shared/src';
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import AdvancedSection from '../advanced/AdvancedSection';
@@ -57,7 +59,7 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
     build: { strategy },
     image,
   } = values;
-
+  const isPipelineEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE);
   const [showPipelineSection, setShowPipelineSection] = React.useState<boolean>(false);
   const showFullForm =
     strategy === ServerlessBuildStrategyType.ServerlessFunction &&
@@ -98,7 +100,7 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
   }, [setFieldValue, url, type, ref, dir, secretResource, builderImages, setStatus]);
 
   React.useEffect(() => {
-    if (image.selected) {
+    if (image.selected && isPipelineEnabled) {
       const fetchPipelineTemplate = async () => {
         const fetchedPipelines = (await k8sListResourceItems({
           model: PipelineModel,
@@ -115,7 +117,7 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
       };
       fetchPipelineTemplate();
     }
-  }, [image]);
+  }, [image, isPipelineEnabled]);
 
   return (
     <form onSubmit={handleSubmit} data-test="create-serverless-function-form">
