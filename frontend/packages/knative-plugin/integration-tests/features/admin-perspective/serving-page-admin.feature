@@ -12,7 +12,7 @@ Feature: Serving page at Administrator perspective
         @regression
         Scenario: Create new KSVC using Create button on Serving page: KA-04-TC01
             Given user is at Serving page
-             When user clicks on Create button
+             When user clicks on Create dropdown button
               And user clicks on Service button
               And user clicks on Create button to create service
              Then user will be redirected to Service Details page

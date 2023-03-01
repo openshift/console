@@ -1,4 +1,4 @@
-@knative
+@knative-kafka
 Feature: Kafka Event Source
   User should be able to create Kafka source by selecting multiple BootStrapServers and Topics from provided options
 

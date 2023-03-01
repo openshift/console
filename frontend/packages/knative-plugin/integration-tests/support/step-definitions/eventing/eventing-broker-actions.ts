@@ -35,8 +35,7 @@ When('user selects Form view', () => {
 When(
   'user enters broker name as {string} in application groupings {string}',
   (brokerName: string, appName: string) => {
-    cy.get(eventingPO.broker.applicationGrouping.dropdown).click();
-    cy.get(eventingPO.broker.applicationGrouping.create).click();
+    cy.get(eventingPO.broker.applicationGrouping.dropdown).should('not.exist');
     cy.get(eventingPO.broker.applicationGrouping.formData)
       .clear()
       .type(appName);

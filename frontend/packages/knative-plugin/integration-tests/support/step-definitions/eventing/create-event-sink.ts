@@ -15,6 +15,7 @@ import {
   createEventSinkPage,
 } from '@console/dev-console/integration-tests/support/pages';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
+import { eventingPO } from '../../pageObjects/global-po';
 
 When('user clicks on Event Sink card', () => {
   navigateTo(devNavigationMenu.Add);
@@ -31,6 +32,7 @@ When('user clicks on Create Event Sink', () => {
 });
 
 When('user selects Output Target as {string}', (target: string) => {
+  cy.get(eventingPO.formView).click();
   createEventSinkPage.selectOutputTargetName(target);
 });
 

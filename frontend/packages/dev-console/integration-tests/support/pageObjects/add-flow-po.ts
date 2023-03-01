@@ -287,7 +287,7 @@ export const eventSourcePO = {
     notifierMessage: 'div[aria-label="Default Alert"] div.pf-c-alert__description',
   },
   pingSource: {
-    data: '[id$="PingSource-jsonData-field"]',
+    data: '[id$="PingSource-data-field"]',
     schedule: '[id$="PingSource-schedule-field"]',
     name: '[id$="name-field"]',
   },
@@ -302,7 +302,7 @@ export const eventSourcePO = {
     addMoreRow: '[data-test="add-button"]',
   },
   createPingSource: {
-    data: '#form-input-formData-data-PingSource-jsonData-field',
+    data: '#form-input-formData-data-PingSource-data-field',
     schedule: '#form-input-formData-data-PingSource-schedule-field',
     name: '#form-input-formData-name-field',
     resourceToggleButton: '[id="form-radiobutton-formData-sinkType-resource-field"]',

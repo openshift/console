@@ -46,6 +46,7 @@ When('user selects auto selected InMemoryChannel from Type dropdown', () => {
 });
 
 When('user selects Application', () => {
+  cy.get(eventingPO.formView).click();
   cy.get(eventingPO.channel.applicationInput).type('channel-application');
 });
 

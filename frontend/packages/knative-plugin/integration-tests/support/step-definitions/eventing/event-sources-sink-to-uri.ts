@@ -37,6 +37,8 @@ Then(
   'user will see that event source {string} is sinked with uri {string}',
   (eventSourceName: string, uri: string) => {
     cy.log(`${eventSourceName} is linked with ${uri}`);
+    navigateTo(devNavigationMenu.Add);
+    navigateTo(devNavigationMenu.Topology);
     topologyPage.clickOnNode(eventSourceName);
     topologySidePane.verify();
     cy.get(`[href="${uri}"]`).should('be.visible');
@@ -77,7 +79,7 @@ When('user clicks on Save button', () => {
 
 Then('user will see that event source is now connected to new resource', () => {
   cy.get(eventSourcePO.createSinkBinding.eventSourceNode).click();
-  cy.byLegacyTestID('kn-event').should('be.visible');
+  cy.get('[data-test-id="kn-event"]', { timeout: 50000 }).should('be.visible');
 });
 
 Then('user will see that the already existed URI will get vanished', () => {

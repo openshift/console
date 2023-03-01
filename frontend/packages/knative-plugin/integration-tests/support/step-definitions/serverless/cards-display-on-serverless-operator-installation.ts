@@ -25,6 +25,7 @@ Then('user will be redirected to {string} page', (title: string) => {
 });
 
 Then('user can see knative Eventing card', () => {
+  cy.byTestID('search-catalog').type('Knative Eventing');
   cy.byTestID('OperatorBackedService-Knative Eventing').should('be.visible');
 });
 

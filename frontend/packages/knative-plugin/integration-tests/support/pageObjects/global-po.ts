@@ -58,7 +58,7 @@ export const eventingPO = {
     resourceFilter: '[data-test-id="dropdown-text-filter"]',
     resourceItem: '[data-test="dropdown-menu-item-link"]',
     submit: '[data-test-id="submit-button"]',
-    details: '[id="nodejs-ex-git-app-PingSource"]',
+    details: '[data-test-id="ping-source"]',
     save: '[data-test="save-changes"]',
   },
   apiServerSource: {
@@ -115,7 +115,7 @@ export const eventingPO = {
     applicationItem: '[data-test=dropdown-menu-item-link]',
     subscriberInput: '[id="form-ns-dropdown-spec-subscriber-ref-name-field"]',
     subscriberResource: '.kn-event-subscriber-list-item',
-    details: '[id="nodejs-ex-git-app-Channel"]',
+    details: '[data-test-id="channel"]',
     submit: '[data-test="save-changes"]',
     save: '[data-test="confirm-action"]',
     resourceItem: '.co-resource-item',
@@ -230,6 +230,15 @@ export const eventingPO = {
     eventSourceLink: '[data-type="event-source-link"]',
     headingTitle: '.resource-overview__heading',
     listItem: '.list-group-item',
+  },
+  eventSource: {
+    camelK: '[data-test-operator-row="Red Hat Integration - Camel K"]',
+    integrationPlatform: '[data-test-id="horizontal-link-Integration Platform"]',
+    create: '[data-test="item-create"]',
+    name: '[id="root_metadata_name"]',
+    submit: '[data-test="create-dynamic-form"]',
+    searchCatalog: '[data-test="search-catalog"]',
+    eventSourceCard: '[data-test="item knative-event-source"]',
   },
 };
 

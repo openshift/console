@@ -13,7 +13,7 @@ Feature: Eventing page at Administrator perspective
             Given user has created knative service "hello-openshift"
               And user is at administrator perspective
               And user is at eventing page
-             When user clicks on Create button
+             When user clicks on Create dropdown button
               And user selects Event Source
               And user clicks on Ping Source
               And user enters "Message" in Data field
@@ -27,7 +27,7 @@ Feature: Eventing page at Administrator perspective
         @regression
         Scenario: Create new Channel: KA-01-TC02
             Given user is at eventing page
-             When user clicks on Create button
+             When user clicks on Create dropdown button
               And user selects Channel
               And user selects Default channels
               And user clicks on Create button to create channel
