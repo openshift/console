@@ -383,12 +383,20 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const prevUpdateData = prevUpdateDataRef.current;
   const prevPluginManifestsData = prevPluginManifestsDataRef.current;
   const stateInitialized = _.isEmpty(updateError) && !_.isEmpty(prevUpdateData);
+  const pluginsAddedList = updateData?.plugins.filter((x) => !prevUpdateData?.plugins.includes(x));
+  const pluginsRemovedList = prevUpdateData?.plugins.filter(
+    (x) => !updateData?.plugins.includes(x),
+  );
+  const pluginsAdded = !_.isEmpty(pluginsAddedList);
+  const pluginsRemoved = !_.isEmpty(pluginsRemovedList);
 
-  const newPluginsList = _.xor(prevUpdateData?.plugins, updateData?.plugins);
-  const pluginsListChanged = !_.isEmpty(newPluginsList);
-  if (stateInitialized && pluginsListChanged && !pluginsChanged) {
+  if (stateInitialized && pluginsAdded && !pluginsChanged) {
     setPluginsChanged(true);
-    setNewPlugins(newPluginsList);
+    setNewPlugins(pluginsAddedList);
+  }
+
+  if (stateInitialized && pluginsRemoved && !consoleChanged) {
+    setConsoleChanged(true);
   }
 
   if (pluginsChanged && !allPluginEndpointsReady && !isFetchingPluginEndpoints) {
