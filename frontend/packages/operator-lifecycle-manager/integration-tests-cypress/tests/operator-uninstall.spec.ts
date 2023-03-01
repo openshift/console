@@ -65,6 +65,9 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   });
 
   after(() => {
+    cy.visit('/');
+    nav.sidenav.switcher.changePerspectiveTo('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Administrator');
     cy.deleteProject(testName);
     cy.logout();
   });
