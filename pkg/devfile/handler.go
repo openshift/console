@@ -1,4 +1,4 @@
-package server
+package devfile
 
 import (
 	"encoding/json"
@@ -7,7 +7,6 @@ import (
 	"path"
 	"strings"
 
-	devfilePkg "github.com/openshift/console/pkg/devfile"
 	"github.com/openshift/console/pkg/serverutils"
 	"k8s.io/klog"
 
@@ -15,8 +14,7 @@ import (
 	"github.com/devfile/library/pkg/devfile/parser"
 )
 
-func (s *Server) devfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
-
+func DevfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
 	registry := r.URL.Query().Get("registry")
 	if registry == "" {
 		errMsg := "The registry parameter is missing"
@@ -25,7 +23,7 @@ func (s *Server) devfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sampleIndex, err := devfilePkg.GetRegistrySamples(registry)
+	sampleIndex, err := GetRegistrySamples(registry)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to read from registry %s: %v", registry, err)
 		klog.Error(errMsg)
@@ -36,9 +34,9 @@ func (s *Server) devfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(sampleIndex)
 }
 
-func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
+func DevfileHandler(w http.ResponseWriter, r *http.Request) {
 	var (
-		data       devfilePkg.DevfileForm
+		data       DevfileForm
 		devfileObj parser.DevfileObj
 	)
 
@@ -68,7 +66,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deployAssociatedComponents, err := devfilePkg.GetDeployComponents(devfileObj)
+	deployAssociatedComponents, err := GetDeployComponents(devfileObj)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to get the deploy command associated components from devfile: %v", err)
 		klog.Error(errMsg)
@@ -76,7 +74,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	imageBuildComponent, err := devfilePkg.GetImageBuildComponent(devfileObj, deployAssociatedComponents)
+	imageBuildComponent, err := GetImageBuildComponent(devfileObj, deployAssociatedComponents)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to get an image component from the devfile: %v", err)
 		klog.Error(errMsg)
@@ -100,7 +98,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deploymentResource, serviceResource, routeResource, err := devfilePkg.GetResourceFromDevfile(devfileObj, deployAssociatedComponents, data.Name)
+	deploymentResource, serviceResource, routeResource, err := GetResourceFromDevfile(devfileObj, deployAssociatedComponents, data.Name)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to get Kubernetes resource for the devfile: %v", err)
 		klog.Error(errMsg)
@@ -110,9 +108,9 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	dockerContextDir := path.Join(data.Git.Dir, dockerRelativeSrcContext)
 
-	devfileResources := devfilePkg.DevfileResources{
-		ImageStream:    devfilePkg.GetImageStream(),
-		BuildResource:  devfilePkg.GetBuildResource(data, dockerfileRelativePath, dockerContextDir),
+	devfileResources := DevfileResources{
+		ImageStream:    GetImageStream(),
+		BuildResource:  GetBuildResource(data, dockerfileRelativePath, dockerContextDir),
 		DeployResource: *deploymentResource,
 		Service:        serviceResource,
 		Route:          routeResource,

@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"crypto/tls"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
@@ -17,17 +18,21 @@ import (
 	"time"
 
 	"github.com/coreos/pkg/health"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/devfile"
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
+	"github.com/openshift/console/pkg/metrics"
 	"github.com/openshift/console/pkg/plugins"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverconfig"
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/openshift/console/pkg/terminal"
+	"github.com/openshift/console/pkg/usage"
 	"github.com/openshift/console/pkg/usersettings"
 	"github.com/openshift/console/pkg/version"
 
@@ -183,6 +188,9 @@ type Server struct {
 	Telemetry                    serverconfig.MultiKeyValue
 	CopiedCSVsDisabled           map[string]bool
 	HubConsoleURL                *url.URL
+
+	// TODO: only needed because handleLogoutMulticluster is part of the server type
+	AuthMetrics *auth.Metrics
 }
 
 func (s *Server) authDisabled() bool {
@@ -348,8 +356,8 @@ func (s *Server) HTTPHandler() http.Handler {
 		})),
 	)
 
-	handleFunc(devfileEndpoint, s.devfileHandler)
-	handleFunc(devfileSamplesEndpoint, s.devfileSamplesHandler)
+	handleFunc(devfileEndpoint, devfile.DevfileHandler)
+	handleFunc(devfileSamplesEndpoint, devfile.DevfileSamplesHandler)
 
 	terminalProxy := terminal.NewProxy(
 		s.TerminalProxyTLSConfig,
@@ -563,13 +571,13 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	// User settings
 	userSettingHandler := usersettings.UserSettingsHandler{
-		K8sProxyConfig:      localK8sProxyConfig,
 		Client:              s.LocalK8sClient,
 		Endpoint:            localK8sProxyConfig.Endpoint.String(),
 		ServiceAccountToken: s.ServiceAccountToken,
 	}
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
+	// Helm
 	helmHandlers := helmhandlerspkg.New(localK8sProxyConfig.Endpoint.String(), s.LocalK8sClient.Transport, s)
 	verifierHandler := helmhandlerspkg.NewVerifierHandler(localK8sProxyConfig.Endpoint.String(), s.LocalK8sClient.Transport, s)
 	handle("/api/helm/verify", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
@@ -581,6 +589,8 @@ func (s *Server) HTTPHandler() http.Handler {
 			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are POST"})
 		}
 	}))
+
+	// Plugins
 	pluginsHandler := plugins.NewPluginsHandler(
 		&http.Client{
 			// 120 seconds matches the webpack require timeout.
@@ -653,23 +663,36 @@ func (s *Server) HTTPHandler() http.Handler {
 		})
 	}))
 
-	// Helm Endpoints
-	metricsHandler := func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Requests from prometheus-k8s have the access token in headers instead of cookies.
-			// This allows metric requests with proper tokens in either headers or cookies.
-			if r.URL.Path == "/metrics" {
-				openshiftSessionCookieName := "openshift-session-token"
-				openshiftSessionCookieValue := r.Header.Get("Authorization")
-				r.AddCookie(&http.Cookie{Name: openshiftSessionCookieName, Value: openshiftSessionCookieValue})
-			}
-			next.ServeHTTP(w, r)
-		})
+	// Metrics
+	config := &serverconfig.Config{
+		Plugins: s.EnabledConsolePlugins,
+		Customization: serverconfig.Customization{
+			Perspectives: []serverconfig.Perspective{},
+		},
 	}
-
-	handle("/metrics", metricsHandler(authHandler(func(w http.ResponseWriter, r *http.Request) {
-		promhttp.Handler().ServeHTTP(w, r)
-	})))
+	if len(s.Perspectives) > 0 {
+		err := json.Unmarshal([]byte(s.Perspectives), &config.Customization.Perspectives)
+		if err != nil {
+			klog.Errorf("Unable to parse perspective JSON: %v", err)
+		}
+	}
+	usageMetrics := usage.NewMetrics()
+	usageMetrics.MonitorUsers(
+		s.LocalK8sClient,
+		localK8sProxyConfig.Endpoint.String(),
+		s.ServiceAccountToken,
+	)
+	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...)
+	prometheus.MustRegister(serverconfig.NewMetrics(config).GetCollectors()...)
+	prometheus.MustRegister(usageMetrics.GetCollectors()...)
+	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
+		authHandler(func(w http.ResponseWriter, r *http.Request) {
+			promhttp.Handler().ServeHTTP(w, r)
+		}),
+	))
+	handleFunc("/metrics/usage", func(w http.ResponseWriter, r *http.Request) {
+		usage.Handle(usageMetrics, w, r)
+	})
 
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
@@ -906,7 +929,12 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 	resp.Body.Close()
 }
 
+// TODO: Move this function into the auth module
 func (s *Server) handleLogoutMulticluster(w http.ResponseWriter, r *http.Request) {
+	if s.AuthMetrics != nil {
+		s.AuthMetrics.LogoutRequested(auth.UnknownLogoutReason)
+	}
+
 	for cluster, auther := range s.Authers {
 		cookieName := auth.GetCookieName(cluster)
 		if cookie, _ := r.Cookie(cookieName); cookie != nil {

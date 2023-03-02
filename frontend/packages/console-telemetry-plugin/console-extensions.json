@@ -5,7 +5,15 @@
       "handler": { "$codeRef": "telemetryFlags.detectTelemetry" }
     }
   },
-
+  {
+    "type": "console.telemetry/listener",
+    "properties": {
+      "listener": {
+        "$codeRef": "telemetryListeners.usage"
+      }
+    },
+    "flags": { "required": ["TELEMETRY"] }
+  },
   {
     "type": "console.telemetry/listener",
     "properties": {
