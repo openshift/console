@@ -116,7 +116,7 @@ const UserPreferencePage: React.FC<UserPreferencePageProps> = ({ match }) => {
   return (
     <div className="co-user-preference-page">
       <Helmet>
-        <title>{t('console-app~User Preferences')}</title>
+        <title>{t('console-app~User Preferences {{activeTabId}}', { activeTabId })}</title>
       </Helmet>
       <PageLayout
         title={t('console-app~User Preferences')}
