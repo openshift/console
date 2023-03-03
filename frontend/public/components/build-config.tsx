@@ -223,7 +223,7 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
   return (
     <>
       <Helmet>
-        <title>{t('public~BuildConfigs list')}</title>
+        <title>{t('public~BuildConfigs')}</title>
       </Helmet>
       <ListPage
         {...props}
