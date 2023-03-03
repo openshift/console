@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { SortByDirection } from '@patternfly/react-table';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
 import { PipelineRunModel } from '../../../models';
@@ -10,15 +11,20 @@ export const PipelineRunList: React.FC = (props) => {
   const { t } = useTranslation();
 
   return (
-    <Table
-      {...props}
-      aria-label={t(PipelineRunModel.labelPluralKey)}
-      defaultSortField="status.startTime"
-      defaultSortOrder={SortByDirection.desc}
-      Header={PipelineRunHeader}
-      Row={PipelineRunRow}
-      virtualize
-    />
+    <>
+      <Helmet>
+        <title>{t('pipelines-plugin~PipelineRuns')}</title>
+      </Helmet>
+      <Table
+        {...props}
+        aria-label={t(PipelineRunModel.labelPluralKey)}
+        defaultSortField="status.startTime"
+        defaultSortOrder={SortByDirection.desc}
+        Header={PipelineRunHeader}
+        Row={PipelineRunRow}
+        virtualize
+      />
+    </>
   );
 };
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
@@ -95,13 +96,18 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = (props) => {
   };
 
   return (
-    <MultiListPage
-      namespace={namespace}
-      flatten={flatten}
-      resources={resources}
-      label={t('helm-plugin~Repositories')}
-      ListComponent={RepositoriesList}
-    />
+    <>
+      <Helmet>
+        <title>{t('helm-plugin~Helm Repositories')}</title>
+      </Helmet>
+      <MultiListPage
+        namespace={namespace}
+        flatten={flatten}
+        resources={resources}
+        label={t('helm-plugin~Repositories')}
+        ListComponent={RepositoriesList}
+      />
+    </>
   );
 };
 export default RepositoriesPage;

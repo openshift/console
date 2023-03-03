@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { k8sUpdate, K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
@@ -62,16 +63,21 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      onReset={handleReset}
-      validationSchema={validationSchema}
-    >
-      {(formikProps) => (
-        <PipelineFormComponent namespace={obj.metadata.namespace} {...formikProps} />
-      )}
-    </Formik>
+    <>
+      <Helmet>
+        <title>{t(`pipelines-plugin~Pipeline {{formName}}`, { formName })}</title>
+      </Helmet>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        onReset={handleReset}
+        validationSchema={validationSchema}
+      >
+        {(formikProps) => (
+          <PipelineFormComponent namespace={obj.metadata.namespace} {...formikProps} />
+        )}
+      </Formik>
+    </>
   );
 };
 

@@ -4,7 +4,6 @@ import { match as Rmatch } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { DefaultPage } from '@console/internal/components/default-resource';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MultiTabListPage } from '@console/shared';
@@ -15,6 +14,10 @@ import {
   ClusterTriggerBindingModel,
 } from '../../models';
 import { useTriggersTechPreviewBadge } from '../../utils/hooks';
+import ClusterTriggerBindingsPage from './ClusterTriggerBindingsPage';
+import EventListenersPage from './EventListnersPage';
+import TriggerBindingsPage from './TriggerBindingsPage';
+import TriggerTemplatesPage from './TriggerTemplatesPage';
 
 interface TriggersPageProps {
   match: Rmatch<any>;
@@ -37,7 +40,7 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
     {
       href: '',
       name: t('pipelines-plugin~EventListeners'),
-      component: DefaultPage,
+      component: EventListenersPage,
       pageData: {
         kind: referenceForModel(EventListenerModel),
         canCreate,
@@ -48,7 +51,7 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
     {
       href: 'trigger-templates',
       name: t('pipelines-plugin~TriggerTemplates'),
-      component: DefaultPage,
+      component: TriggerTemplatesPage,
       pageData: {
         kind: referenceForModel(TriggerTemplateModel),
         canCreate,
@@ -59,7 +62,7 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
     {
       href: 'trigger-bindings',
       name: t('pipelines-plugin~TriggerBindings'),
-      component: DefaultPage,
+      component: TriggerBindingsPage,
       pageData: {
         kind: referenceForModel(TriggerBindingModel),
         canCreate,
@@ -70,7 +73,7 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
     {
       href: 'cluster-trigger-bindings',
       name: t('pipelines-plugin~ClusterTriggerBindings'),
-      component: DefaultPage,
+      component: ClusterTriggerBindingsPage,
       pageData: {
         kind: referenceForModel(ClusterTriggerBindingModel),
         canCreate,
