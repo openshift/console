@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
@@ -65,14 +66,19 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
     [t, sourcesModel, getModelId],
   );
   return (
-    <MultiListPage
-      {...props}
-      label={t('knative-plugin~Event Sources')}
-      rowFilters={eventSourceRowFilters}
-      flatten={flatten}
-      resources={resources}
-      ListComponent={EventSourceList}
-    />
+    <>
+      <Helmet>
+        <title>{t('knative-plugin~Event Sources')}</title>
+      </Helmet>
+      <MultiListPage
+        {...props}
+        label={t('knative-plugin~Event Sources')}
+        rowFilters={eventSourceRowFilters}
+        flatten={flatten}
+        resources={resources}
+        ListComponent={EventSourceList}
+      />
+    </>
   );
 };
 

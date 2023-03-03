@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import CreateProjectListPage, {
@@ -19,24 +20,31 @@ export const PipelinesPage: React.FC<PipelinesPageProps> = (props) => {
   } = props;
   const badge = usePipelineTechPreviewBadge(namespace);
 
-  return namespace ? (
-    <div>
-      <PipelinesResourceList
-        {...props}
-        badge={badge}
-        namespace={namespace}
-        title={t('pipelines-plugin~Pipelines')}
-      />
-    </div>
-  ) : (
-    <CreateProjectListPage title={t('pipelines-plugin~Pipelines')} badge={badge}>
-      {(openProjectModal) => (
-        <Trans t={t} ns="pipelines-plugin">
-          Select a Project to view the list of Pipelines
-          <CreateAProjectButton openProjectModal={openProjectModal} />.
-        </Trans>
+  return (
+    <>
+      <Helmet>
+        <title>{t('pipelines-plugin~Pipelines')}</title>
+      </Helmet>
+      {namespace ? (
+        <div>
+          <PipelinesResourceList
+            {...props}
+            badge={badge}
+            namespace={namespace}
+            title={t('pipelines-plugin~Pipelines')}
+          />
+        </div>
+      ) : (
+        <CreateProjectListPage title={t('pipelines-plugin~Pipelines')} badge={badge}>
+          {(openProjectModal) => (
+            <Trans t={t} ns="pipelines-plugin">
+              Select a Project to view the list of Pipelines
+              <CreateAProjectButton openProjectModal={openProjectModal} />.
+            </Trans>
+          )}
+        </CreateProjectListPage>
       )}
-    </CreateProjectListPage>
+    </>
   );
 };
 
