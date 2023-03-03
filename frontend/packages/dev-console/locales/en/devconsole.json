@@ -541,7 +541,7 @@
   "Select an icon": "Select an icon",
   "A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.": "A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.",
   "A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.": "A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.",
-  "Select the resource type to generate": "Select the resource type to generate",
+  "Resource type to generate. The default can be set in <2>User Preferences</2>.": "Resource type to generate. The default can be set in <2>User Preferences</2>.",
   "func.yaml is not present or builder strategy is not s2i": "func.yaml is not present or builder strategy is not s2i",
   "func.yaml must be present or builder strategy should be s2i to create a Serverless function": "func.yaml must be present or builder strategy should be s2i to create a Serverless function",
   "Builder Image {{image}} is not present.": "Builder Image {{image}} is not present.",
