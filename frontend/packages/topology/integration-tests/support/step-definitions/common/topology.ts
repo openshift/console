@@ -169,7 +169,9 @@ When('user clicks Start building your application', () => {
 
 When('user enters {string} builder image in Quick Search bar', (searchItem: string) => {
   cy.get(topologyPO.quickSearch).type(searchItem);
-  cy.byTestID('item-name-.NET-Builder Images').click();
+  cy.byTestID('item-name-.NET-Builder Images')
+    .first()
+    .click();
 });
 
 When('user clicks Create application on Quick Search Dialog', () => {
