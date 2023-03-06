@@ -534,7 +534,7 @@
     "type": "console.catalog/item-provider",
     "properties": {
       "catalogId": "samples-catalog",
-      "type": "Sample",
+      "type": "BuilderImage",
       "title": "%devconsole~Builder Images%",
       "provider": { "$codeRef": "catalog.builderImageSamplesProvider" }
     },
@@ -546,7 +546,7 @@
     "type": "console.catalog/item-provider",
     "properties": {
       "catalogId": "samples-catalog",
-      "type": "Sample",
+      "type": "Devfile",
       "title": "%devconsole~Devfiles%",
       "provider": { "$codeRef": "catalog.devfileSamplesProvider" }
     },

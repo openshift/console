@@ -218,8 +218,8 @@ export const catalogPO = {
 export const samplesPO = {
   search: 'input[placeholder="Filter by keyword..."]',
   cards: {
-    httpdTemplate: 'a[data-test="Sample-Httpd"] .catalog-tile-pf-title',
-    basicgoTemplate: 'a[data-test="Sample-Basic Go"] .catalog-tile-pf-title',
+    httpdTemplate: 'a[data-test="BuilderImage-Httpd"] .catalog-tile-pf-title',
+    basicgoTemplate: 'a[data-test="Devfile-Basic Go"] .catalog-tile-pf-title',
   },
 };
 
