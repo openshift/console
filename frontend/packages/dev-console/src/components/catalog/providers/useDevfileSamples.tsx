@@ -20,7 +20,7 @@ const normalizeDevfileSamples = (
 
     const item: CatalogItem = {
       uid,
-      type: 'Sample',
+      type: 'Devfile',
       name: displayName,
       description,
       tags,
