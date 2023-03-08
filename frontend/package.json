@@ -151,6 +151,7 @@
     "@patternfly/react-tokens": "4.94.6",
     "@patternfly/react-topology": "4.91.27",
     "@patternfly/react-virtualized-extension": "4.88.113",
+    "@patternfly/react-user-feedback": "1.0.2",
     "@prometheus-io/codemirror-promql": "^0.37.0",
     "@rjsf/core": "^2.5.1",
     "abort-controller": "3.0.0",

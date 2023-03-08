@@ -248,7 +248,9 @@ export const getCurrentVersion = (cv: ClusterVersionKind): string => {
   return _.get(cv, 'status.history[0].version') || _.get(cv, 'spec.desiredUpdate.version');
 };
 
-export const getReportBugLink = (cv: ClusterVersionKind): { label: string; href: string } => {
+export const getReportBugLink = (
+  cv: ClusterVersionKind,
+): { label: string; description: string; href: string } => {
   const version: string = getCurrentVersion(cv);
   const parsed = semver.parse(version);
   if (!parsed) {
@@ -283,13 +285,15 @@ export const getReportBugLink = (cv: ClusterVersionKind): { label: string; href:
   // Show a support case link for supported versions and a Jira link for prerelease versions.
   return _.isEmpty(prerelease)
     ? {
-        label: i18next.t('public~Open support case with Red Hat'),
+        label: i18next.t('public~Open a support case'),
+        description: i18next.t('public~Get help from Red Hat support.'),
         href: `https://access.redhat.com/support/cases/#/case/new?product=${encodeURIComponent(
           productName,
         )}&version=${major}.${minor}&clusterId=${cv.spec.clusterID}`,
       }
     : {
-        label: i18next.t('public~Report bug to Red Hat'),
+        label: i18next.t('public~Report a bug'),
+        description: i18next.t('public~Report a bug to Red Hat'),
         // It is not currently possible to pre-populate `component`, etc. per https://jira.atlassian.com/browse/JRASERVER-23590
         href: `https://issues.redhat.com/secure/CreateIssue.jspa?pid=12332330&issuetype=1`,
       };
