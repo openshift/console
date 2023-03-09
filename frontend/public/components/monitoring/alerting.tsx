@@ -117,7 +117,6 @@ import { CreateSilence, EditSilence } from './silence-form';
 import { TargetsUI } from './targets';
 import { Alerts, AlertSource, MonitoringResource, Silences } from './types';
 import {
-  alertAdditionalSource,
   alertDescription,
   alertingRuleStateOrder,
   AlertResource,
@@ -1535,7 +1534,6 @@ const AlertTableRow: React.FC<RowProps<Alert>> = ({ obj }) => {
       </DropdownItem>,
     );
   }
-  const additionalSource = alertAdditionalSource(obj);
 
   return (
     <>
@@ -1560,10 +1558,7 @@ const AlertTableRow: React.FC<RowProps<Alert>> = ({ obj }) => {
         <AlertStateDescription alert={obj} />
       </td>
       <td className={tableAlertClasses[3]} title={title}>
-        {additionalSource ||
-          (alertSource(obj) === AlertSource.User
-            ? i18next.t('public~User')
-            : i18next.t('public~Platform'))}
+        {getSourceKey(t, _.startCase(alertSource(obj)))}
       </td>
       <td className={tableAlertClasses[4]} title={title}>
         <KebabDropdown dropdownItems={dropdownItems} />
