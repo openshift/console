@@ -2081,6 +2081,11 @@
     tippy.js "5.1.2"
     tslib "^2.0.0"
 
+"@patternfly/react-icons@4.93.6", "@patternfly/react-icons@^4.93.4", "@patternfly/react-icons@^4.93.6":
+  version "4.93.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-4.93.6.tgz#4aff18724afa30157e3ffd6a6414951dbb39dcb3"
+  integrity sha512-ZrXegc/81oiuTIeWvoHb3nG/eZODbB4rYmekBEsrbiysyO7m/sUFoi/RLvgFINrRoh6YCJqL5fj06Jg6d7jX1g==
+
 "@patternfly/react-icons@^4.11.4":
   version "4.11.4"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-4.11.4.tgz#8fae0bf215e39e382661a089a1d43f3ccb7fdeef"
@@ -2095,11 +2100,6 @@
   version "4.93.3"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-4.93.3.tgz#ba617b1daefce81ba903bc702ff66060413e2a9f"
   integrity sha512-OIEeTc4Noi9XOIRF3OB3sz9dRnxr1h4eNIzIeZwRd8xXWCQxYcrllxPV98F3+RpL4ZCH2QWb/2gG4mHrVyX+0A==
-
-"@patternfly/react-icons@^4.93.4", "@patternfly/react-icons@^4.93.6":
-  version "4.93.6"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-4.93.6.tgz#4aff18724afa30157e3ffd6a6414951dbb39dcb3"
-  integrity sha512-ZrXegc/81oiuTIeWvoHb3nG/eZODbB4rYmekBEsrbiysyO7m/sUFoi/RLvgFINrRoh6YCJqL5fj06Jg6d7jX1g==
 
 "@patternfly/react-log-viewer@4.87.100":
   version "4.87.100"
@@ -2188,6 +2188,14 @@
     react-measure "^2.3.0"
     tslib "^2.0.0"
     webcola "3.4.0"
+
+"@patternfly/react-user-feedback@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-user-feedback/-/react-user-feedback-1.0.2.tgz#9e5033a1974e7d4038cd0b82ce4c4f3c6607d2f1"
+  integrity sha512-2WJAhCqgWQDbBsYzs2ajIgneMLTQyzJHAvHxm6WS3beTHUKAz7qKMSQsbPG+lgjwaLd+A1lsGeJKrkT3nTdjeA==
+  dependencies:
+    "@patternfly/react-core" "^4.276.6"
+    "@patternfly/react-icons" "4.93.6"
 
 "@patternfly/react-virtualized-extension@4.88.113":
   version "4.88.113"
