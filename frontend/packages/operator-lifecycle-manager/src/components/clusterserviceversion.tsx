@@ -1284,7 +1284,7 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
       breadcrumbsFor={() => [
         {
           name: t('olm~Installed Operators'),
-          path: getBreadcrumbPath(props.match),
+          path: getBreadcrumbPath(props.match, undefined, cluster),
         },
         { name: t('olm~Operator details'), path: props.match.url },
       ]}

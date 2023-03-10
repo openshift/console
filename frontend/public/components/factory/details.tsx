@@ -2,7 +2,7 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { getBadgeFromType } from '@console/shared';
+import { getBadgeFromType, useActiveCluster } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import {
   useExtensions,
@@ -78,6 +78,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   const resourceKeys = _.map(props.resources, 'prop');
   const [pluginBreadcrumbs, setPluginBreadcrumbs] = React.useState(undefined);
   const [model] = useK8sModel(props.kind);
+  const [cluster] = useActiveCluster();
   const kindObj: K8sModel = props.kindObj ?? model;
   const renderAsyncComponent = (page: ResourceTabPage, cProps: PageComponentProps) => (
     <AsyncComponent loader={page.properties.loader} {...cProps} />
@@ -162,7 +163,9 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           breadcrumbs={pluginBreadcrumbs}
           breadcrumbsFor={
             props.breadcrumbsFor ??
-            (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(kindObj, props.match) : undefined)
+            (!pluginBreadcrumbs
+              ? breadcrumbsForDetailsPage(kindObj, props.match, cluster)
+              : undefined)
           }
           resourceKeys={resourceKeys}
           getResourceStatus={props.getResourceStatus}

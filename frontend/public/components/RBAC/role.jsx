@@ -23,7 +23,7 @@ import {
 } from '../utils';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY, useActiveCluster } from '@console/shared';
 
 const { common } = Kebab.factory;
 
@@ -252,7 +252,7 @@ export const BindingsForRolePage = (props) => {
   );
 };
 
-const getBreadcrumbs = (model, kindObj, match) => {
+const getBreadcrumbs = (model, kindObj, match, cluster) => {
   const lastNamespace = getLastNamespace();
   return [
     {
@@ -260,6 +260,7 @@ const getBreadcrumbs = (model, kindObj, match) => {
       path: resourceListPathFromModel(
         model,
         !lastNamespace || lastNamespace === ALL_NAMESPACES_KEY ? null : lastNamespace,
+        cluster,
       ),
     },
     {
@@ -273,6 +274,7 @@ const getBreadcrumbs = (model, kindObj, match) => {
 
 export const RolesDetailsPage = (props) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   return (
     <DetailsPage
       {...props}
@@ -282,7 +284,7 @@ export const RolesDetailsPage = (props) => {
         { href: 'bindings', name: t('public~RoleBindings'), component: BindingsForRolePage },
       ]}
       menuActions={menuActions}
-      breadcrumbsFor={() => getBreadcrumbs(RoleModel, props.kindObj, props.match)}
+      breadcrumbsFor={() => getBreadcrumbs(RoleModel, props.kindObj, props.match, cluster)}
     />
   );
 };
@@ -290,6 +292,7 @@ export const RolesDetailsPage = (props) => {
 export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 export const ClusterRoleBindingsDetailsPage = (props) => {
+  const [cluster] = useActiveCluster();
   const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
   const actions = [...Kebab.getExtensionsActionsForKind(ClusterRoleBindingModel), ...common];
 
@@ -298,7 +301,7 @@ export const ClusterRoleBindingsDetailsPage = (props) => {
       {...props}
       menuActions={actions}
       pages={pages}
-      breadcrumbsFor={() => getBreadcrumbs(RoleBindingModel, props.kindObj, props.match)}
+      breadcrumbsFor={() => getBreadcrumbs(RoleBindingModel, props.kindObj, props.match, cluster)}
     />
   );
 };

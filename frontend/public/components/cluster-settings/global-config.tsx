@@ -25,6 +25,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
 import { useActiveCluster, useCanClusterUpgrade } from '@console/shared';
 import filterNonUpgradableResources from './filterNonUpgradableResources';
+import { getClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 
 type ConfigDataType = { model: K8sKind; id: string; name: string; namespace: string };
 
@@ -33,16 +34,23 @@ const stateToProps = (state: RootState) => ({
   clusterOperatorConfigResources: state.k8s.getIn(['RESOURCES', 'clusterOperatorConfigResources']),
 });
 
-export const breadcrumbsForGlobalConfig = (detailsPageKind: string, detailsPagePath: string) => [
-  {
-    name: i18next.t('public~Configuration'),
-    path: '/settings/cluster/globalconfig',
-  },
-  {
-    name: i18next.t('public~{{kind}} details', { kind: detailsPageKind }),
-    path: detailsPagePath,
-  },
-];
+export const breadcrumbsForGlobalConfig = (
+  detailsPageKind: string,
+  detailsPagePath: string,
+  cluster?: string,
+) => {
+  const path = '/settings/cluster/globalconfig';
+  return [
+    {
+      name: i18next.t('public~Configuration'),
+      path: cluster ? getClusterPrefixedPath(path, cluster) : path,
+    },
+    {
+      name: i18next.t('public~{{kind}} details', { kind: detailsPageKind }),
+      path: cluster ? getClusterPrefixedPath(detailsPagePath, cluster) : detailsPagePath,
+    },
+  ];
+};
 
 const ItemRow = ({ item, showAPIGroup }) => {
   return (

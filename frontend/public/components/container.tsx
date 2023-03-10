@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
 import { CodeBlock, CodeBlockCode, Divider } from '@patternfly/react-core';
-import { Status } from '@console/shared';
+import { Status, useActiveCluster } from '@console/shared';
 import {
   ContainerLifecycle,
   ContainerLifecycleStage,
@@ -426,6 +426,7 @@ const getContainerStatusStateValue = (pod: PodKind, containerName: string) => {
 
 export const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
 
   if (!props.loaded) {
     return <LoadingBox />;
@@ -448,7 +449,7 @@ export const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
         kind="Container"
         getResourceStatus={() => containerStateValue}
         breadcrumbsFor={() => [
-          { name: t('public~Pods'), path: getBreadcrumbPath(props.match, 'pods') },
+          { name: t('public~Pods'), path: getBreadcrumbPath(props.match, 'pods', cluster) },
           {
             name: props.match.params.podName,
             path: resourcePath('Pod', props.match.params.podName, props.match.params.ns),

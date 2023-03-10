@@ -18,8 +18,9 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
-import { ALL_NAMESPACES_KEY, FLAGS, APIError } from '@console/shared';
+import { ALL_NAMESPACES_KEY, FLAGS, APIError, useActiveCluster } from '@console/shared';
 import { PageHeading, useAccessReview } from '@console/internal/components/utils';
+import { getClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 import { connectToModel } from '../kinds';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
 import {
@@ -67,17 +68,17 @@ const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   };
 };
 
-const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
+const getAPIResourceLink = (activeNamespace: string, model: K8sKind, cluster?: string) => {
   const ref = referenceForModel(model);
   if (!model.namespaced) {
-    return `/api-resource/cluster/${ref}`;
+    return getClusterPrefixedPath(`/api-resource/cluster/${ref}`, cluster);
   }
 
   if (activeNamespace === ALL_NAMESPACES_KEY) {
-    return `/api-resource/all-namespaces/${ref}`;
+    return getClusterPrefixedPath(`/api-resource/all-namespaces/${ref}`, cluster);
   }
 
-  return `/api-resource/ns/${activeNamespace}/${ref}`;
+  return getClusterPrefixedPath(`/api-resource/ns/${activeNamespace}/${ref}`, cluster);
 };
 
 const APIResourceLink_: React.FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> = ({
@@ -85,7 +86,8 @@ const APIResourceLink_: React.FC<APIResourceLinkStateProps & APIResourceLinkOwnP
   model,
 }) => {
   const { t } = useTranslation();
-  const to = getAPIResourceLink(activeNamespace, model);
+  const [cluster] = useActiveCluster();
+  const to = getAPIResourceLink(activeNamespace, model, cluster);
   return (
     <span className="co-resource-item">
       <span className="co-resource-icon--fixed-width hidden-xs">
@@ -695,6 +697,7 @@ const APIResourcePage_ = ({
 }) => {
   const namespace = kindObj?.namespaced ? match.params.ns : undefined;
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
 
   const canCreateResourceAccessReview = useAccessReview({
     group: namespace
@@ -720,7 +723,7 @@ const APIResourcePage_ = ({
   const breadcrumbs = [
     {
       name: t('public~Explore'),
-      path: '/api-explorer',
+      path: getClusterPrefixedPath('/api-explorer', cluster),
     },
     {
       name: t('public~Resource details'),

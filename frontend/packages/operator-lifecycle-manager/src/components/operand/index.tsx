@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
+import { getClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 import { ListPageBody, K8sModel } from '@console/dynamic-plugin-sdk';
 import { getResources } from '@console/internal/actions/k8s';
 import { Conditions } from '@console/internal/components/conditions';
@@ -67,6 +68,7 @@ import {
   ActionMenuVariant,
   getNamespace,
   useActiveNamespace,
+  useActiveCluster,
 } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
@@ -733,6 +735,7 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
   const match = useRouteMatch();
   const { appName, ns, name, plural } = useParams();
   const [csv] = useClusterServiceVersion(appName, ns);
+  const [cluster] = useActiveCluster();
   const actionItems = React.useCallback((resourceModel: K8sKind, resource: K8sResourceKind) => {
     const context = {
       [referenceForModel(resourceModel)]: resource,
@@ -760,11 +763,14 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
       breadcrumbsFor={() => [
         {
           name: t('olm~Installed Operators'),
-          path: `/k8s/ns/${match.params.ns}/${ClusterServiceVersionModel.plural}`,
+          path: getClusterPrefixedPath(
+            `/k8s/ns/${match.params.ns}/${ClusterServiceVersionModel.plural}`,
+            cluster,
+          ),
         },
         {
           name: match.params.appName,
-          path: match.url.slice(0, match.url.lastIndexOf('/')),
+          path: getClusterPrefixedPath(match.url.slice(0, match.url.lastIndexOf('/')), cluster),
         },
         {
           name: t('olm~{{item}} details', { item: kindForReference(match.params.plural) }), // Use url param in case model doesn't exist

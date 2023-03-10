@@ -8,6 +8,7 @@ import { PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s'
 import { PodExecLoader } from '@console/internal/components/pod';
 import { PodModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useActiveCluster } from '@console/shared/src';
 
 import { resourcePath } from './utils/resource-link';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
@@ -170,6 +171,7 @@ export const DebugTerminal: React.FC<DebugTerminalProps> = ({ podData, container
 
 export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = ({ match }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   const {
     params: { podName, ns, name },
     url,
@@ -193,7 +195,7 @@ export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = ({ match }) =
         kind="Pod"
         obj={{ data: podData }}
         breadcrumbs={[
-          { name: t('public~Pods'), path: getBreadcrumbPath(match, 'pods') },
+          { name: t('public~Pods'), path: getBreadcrumbPath(match, 'pods', cluster) },
           {
             name: podName,
             path: resourcePath('Pod', podName, ns),

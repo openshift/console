@@ -244,7 +244,7 @@ const AppContents: React.FC<{}> = () => {
       <Route path="/overview" exact component={NamespaceRedirect} />
 
       <LazyRoute
-        path="/api-explorer"
+        path={[`${CLUSTER_ROUTE_PREFIX}/api-explorer`, '/api-explorer']}
         exact
         loader={() =>
           import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(
@@ -253,7 +253,10 @@ const AppContents: React.FC<{}> = () => {
         }
       />
       <LazyRoute
-        path="/api-resource/cluster/:plural"
+        path={[
+          `${CLUSTER_ROUTE_PREFIX}/api-resource/cluster/:plural`,
+          '/api-resource/cluster/:plural',
+        ]}
         loader={() =>
           import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(
             (m) => m.APIResourcePage,
@@ -261,7 +264,10 @@ const AppContents: React.FC<{}> = () => {
         }
       />
       <LazyRoute
-        path="/api-resource/all-namespaces/:plural"
+        path={[
+          `${CLUSTER_ROUTE_PREFIX}/api-resource/all-namespaces/:plural`,
+          '/api-resource/all-namespaces/:plural',
+        ]}
         loader={() =>
           import('./api-explorer' /* webpackChunkName: "api-explorer" */).then((m) =>
             NamespaceFromURL(m.APIResourcePage),
@@ -269,7 +275,10 @@ const AppContents: React.FC<{}> = () => {
         }
       />
       <LazyRoute
-        path="/api-resource/ns/:ns/:plural"
+        path={[
+          `${CLUSTER_ROUTE_PREFIX}/api-resource/ns/:ns/:plural`,
+          '/api-resource/ns/:ns/:plural',
+        ]}
         loader={() =>
           import('./api-explorer' /* webpackChunkName: "api-explorer" */).then((m) =>
             NamespaceFromURL(m.APIResourcePage),

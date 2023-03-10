@@ -11,6 +11,7 @@ import { ExampleDockerCommandPopover } from './image-stream';
 import { ImageStreamTimeline } from './image-stream-timeline';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { sortable } from '@patternfly/react-table';
+import { useActiveCluster } from '@console/shared/src';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -275,16 +276,20 @@ const pages = [
 ];
 export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPageProps> = (props) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   return (
     <DetailsPage
       {...props}
       breadcrumbsFor={(obj) => {
         const { imageStreamName } = getImageStreamNameAndTag(obj);
         return [
-          { name: t('public~ImageStreams'), path: getBreadcrumbPath(props.match, 'imagestreams') },
+          {
+            name: t('public~ImageStreams'),
+            path: getBreadcrumbPath(props.match, 'imagestreams', cluster),
+          },
           {
             name: imageStreamName,
-            path: `${getBreadcrumbPath(props.match, 'imagestreams')}/${imageStreamName}`,
+            path: `${getBreadcrumbPath(props.match, 'imagestreams', cluster)}/${imageStreamName}`,
           },
           {
             name: t('public~ImageStreamTag details'),

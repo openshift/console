@@ -9,6 +9,7 @@ import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumb
 import { K8sKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
+import { useActiveCluster } from '@console/shared';
 import { ALL_NAMESPACES_KEY } from '../constants/common';
 
 type Match = RMatch<{ url: string }>;
@@ -22,6 +23,7 @@ export const useTabbedTableBreadcrumbsFor = (
   customBreadcrumbURLRequired?: boolean,
 ) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   const { label, labelKey, labelPlural, labelPluralKey } = kindObj;
   const currentNamespace = useSelector((state: RootState) => getActiveNamespace(state));
   const nsURL =
@@ -35,7 +37,7 @@ export const useTabbedTableBreadcrumbsFor = (
               name: customBreadcrumbName || (labelPluralKey ? t(labelPluralKey) : labelPlural),
               path: customBreadcrumbURLRequired
                 ? `/${navOption}/${nsURL}/${subTab}`
-                : getBreadcrumbPath(match),
+                : getBreadcrumbPath(match, undefined, cluster),
             },
             {
               name: t('console-shared~{{label}} details', {
@@ -47,13 +49,14 @@ export const useTabbedTableBreadcrumbsFor = (
     [
       subTab,
       customBreadcrumbName,
-      customBreadcrumbURLRequired,
       labelPluralKey,
       t,
       labelPlural,
+      customBreadcrumbURLRequired,
       navOption,
       nsURL,
       match,
+      cluster,
       labelKey,
       label,
     ],

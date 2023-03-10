@@ -4,19 +4,21 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, Route, Switch } from 'react-router-dom';
 
+import { useActiveCluster } from '@console/shared';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 import { AlertmanagerConfig } from './alertmanager-config';
 import AlertmanagerYAML from './alertmanager-yaml-editor';
 
 const AlertmanagerPage: React.FC<{ match: { url: string } }> = ({ match }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
 
   const configPath = '/monitoring/alertmanagerconfig';
   const YAMLPath = '/monitoring/alertmanageryaml';
 
   const { url } = match;
 
-  const breadcrumbs = breadcrumbsForGlobalConfig('Alertmanager', configPath);
+  const breadcrumbs = breadcrumbsForGlobalConfig('Alertmanager', configPath, cluster);
 
   return (
     <>

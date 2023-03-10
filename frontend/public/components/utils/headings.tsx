@@ -26,7 +26,6 @@ import {
   useCsvWatchResource,
 } from '@console/shared';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
-import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 import {
   ActionsMenu,
   FirehoseResult,
@@ -53,25 +52,23 @@ export const ResourceItemDeleting = () => {
   );
 };
 
-const BreadCrumbLink: React.FC<BreadCrumbLinkProps> = ({ crumb, i }) => {
-  return (
-    <Link
-      className="pf-c-breadcrumb__link"
-      to={useClusterPrefixedPath(crumb.path)}
-      data-test-id={`breadcrumb-link-${i}`}
-    >
-      {crumb.name}
-    </Link>
-  );
-};
-
 export const BreadCrumbs: React.FC<BreadCrumbsProps> = ({ breadcrumbs }) => (
   <Breadcrumb className="co-breadcrumb">
     {breadcrumbs.map((crumb, i, { length }) => {
       const isLast = i === length - 1;
       return (
         <BreadcrumbItem key={i} isActive={isLast}>
-          {isLast ? crumb.name : <BreadCrumbLink crumb={crumb} i={i} />}
+          {isLast ? (
+            crumb.name
+          ) : (
+            <Link
+              className="pf-c-breadcrumb__link"
+              to={crumb.path}
+              data-test-id={`breadcrumb-link-${i}`}
+            >
+              {crumb.name}
+            </Link>
+          )}
         </BreadcrumbItem>
       );
     })}
@@ -304,14 +301,6 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
 
 export type ActionButtonsProps = {
   actionButtons: any[];
-};
-
-type BreadCrumbLinkProps = {
-  crumb: {
-    name: string;
-    path: string;
-  };
-  i: number;
 };
 
 export type BreadCrumbsProps = {

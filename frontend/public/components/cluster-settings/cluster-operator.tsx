@@ -6,6 +6,7 @@ import { Alert } from '@patternfly/react-core';
 import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
+import { getClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 import { ClusterOperatorModel } from '../../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from '../factory';
 import { Conditions } from '../conditions';
@@ -36,6 +37,7 @@ import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
+  useActiveCluster,
 } from '@console/shared';
 import RelatedObjectsPage from './related-objects';
 import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-settings';
@@ -273,6 +275,7 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
 
 export const ClusterOperatorDetailsPage: React.FC<ClusterOperatorDetailsPageProps> = (props) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   return (
     <DetailsPage
       {...props}
@@ -289,7 +292,7 @@ export const ClusterOperatorDetailsPage: React.FC<ClusterOperatorDetailsPageProp
       breadcrumbsFor={() => [
         {
           name: t(ClusterOperatorModel.labelPluralKey),
-          path: '/settings/cluster/clusteroperators',
+          path: getClusterPrefixedPath('/settings/cluster/clusteroperators', cluster),
         },
         {
           name: t('public~ClusterOperator details'),

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import { useCanClusterUpgrade } from '@console/shared';
+import { useActiveCluster, useCanClusterUpgrade } from '@console/shared';
 
 import { ClusterVersionModel } from '../../models';
 import { DetailsPage } from '../factory';
@@ -41,6 +41,7 @@ const ClusterVersionDetails: React.FC<ClusterVersionDetailsProps> = ({ obj }) =>
 
 export const ClusterVersionDetailsPage: React.FC<ClusterVersionDetailsPageProps> = (props) => {
   const canUpgrade = useCanClusterUpgrade();
+  const [cluster] = useActiveCluster();
   return (
     <DetailsPage
       {...props}
@@ -49,7 +50,9 @@ export const ClusterVersionDetailsPage: React.FC<ClusterVersionDetailsPageProps>
         navFactory.details(ClusterVersionDetails),
         navFactory.editYaml(canUpgrade ? editYamlComponent : viewYamlComponent),
       ]}
-      breadcrumbsFor={() => breadcrumbsForGlobalConfig(ClusterVersionModel.label, props.match.url)}
+      breadcrumbsFor={() =>
+        breadcrumbsForGlobalConfig(ClusterVersionModel.label, props.match.url, cluster)
+      }
     />
   );
 };

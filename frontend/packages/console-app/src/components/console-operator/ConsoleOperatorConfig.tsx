@@ -40,7 +40,12 @@ import {
   NotLoadedDynamicPluginInfo,
 } from '@console/plugin-sdk/src';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import { consolePluginModal, CONSOLE_OPERATOR_CONFIG_NAME, Status } from '@console/shared';
+import {
+  CONSOLE_OPERATOR_CONFIG_NAME,
+  consolePluginModal,
+  Status,
+  useActiveCluster,
+} from '@console/shared';
 
 const consoleOperatorConfigReference: K8sResourceKindReference = referenceForModel(
   ConsoleOperatorConfigModel,
@@ -244,6 +249,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
 export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
   typeof DetailsPage
 >> = (props) => {
+  const [cluster] = useActiveCluster();
   const pages = [
     navFactory.details(DetailsForKind(props.kind)),
     navFactory.editYaml(),
@@ -277,7 +283,7 @@ export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
       pages={pages}
       menuActions={menuActions}
       breadcrumbsFor={() =>
-        breadcrumbsForGlobalConfig(ConsoleOperatorConfigModel.label, props.match.url)
+        breadcrumbsForGlobalConfig(ConsoleOperatorConfigModel.label, props.match.url, cluster)
       }
     />
   );
