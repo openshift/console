@@ -122,7 +122,7 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, manifestUR
                             </StackItem>
                           ) : (
                             <StackItem className="gop-gitops-details__warning-message">
-                              <span>{t('gitops-plugin~Commit message not available')}</span>
+                              {t('gitops-plugin~Commit message not available')}
                             </StackItem>
                           )}
                           <StackItem className="gop-gitops-details__author-sha">
