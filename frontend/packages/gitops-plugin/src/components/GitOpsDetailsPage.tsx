@@ -37,7 +37,7 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = (props) => {
         } catch (err) {
           setError(err);
         }
-        if (data && data.length > 0) {
+        if (data?.length > 0) {
           setEnvsData(data);
         }
       }
