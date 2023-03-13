@@ -52,7 +52,7 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
     <YAMLEditorField
       name="yamlData"
       model={resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel}
-      showSamples={!resource}
+      showSamples={isNew}
       onSave={handleSubmit}
     />
   );
