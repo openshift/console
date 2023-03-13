@@ -166,7 +166,7 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, manifestUR
                         </StackItem>
                       ) : (
                         <StackItem className="co-truncate co-nowrap gop-gitops-details__env-section__time-unavailable">
-                          <span>{t('gitops-plugin~Last deployed time not available')}</span>
+                          {t('gitops-plugin~Last deployed time not available')}
                         </StackItem>
                       )}
                       <StackItem>
