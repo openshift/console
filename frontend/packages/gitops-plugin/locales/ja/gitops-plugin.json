@@ -18,7 +18,7 @@
   "{{x}} of {{total}} OutOfSync": "同期していない状態 {{x}} / {{total}}",
   "Resources": "リソース",
   "Deployments": "Deployments",
-  "Secrets": "Secrets",
+  "Secrets": "シークレット",
   "Services": "Service",
   "Routes": "Routes",
   "Role Bindings": "ロールバインディング",
@@ -35,7 +35,7 @@
   "Deployment Time": "デプロイメント時間",
   "Message": "メッセージ",
   "Author": "作成者",
-  "Revision": "リビジョン",
+  "Revision": "Revision",
   "by name": "名前別",
   "Environments table": "環境についての表",
   "Application name": "アプリケーション名",
@@ -45,8 +45,5 @@
   "No GitOps manifest URLs found": "GitOps マニフェスト URL が見つかりません",
   "Error cannot retrieve applications": "エラー、アプリケーションを取得できません",
   "No Application groups found": "アプリケーショングループが見つかりません",
-  "Environment details were not found. Try reloading the page or contacting an administrator.": "Environment details were not found. Try reloading the page or contacting an administrator.",
-  "Commit message not available": "コミットメッセージ情報はありません",
-  "Commit author not available": "コミット作成者情報はありません",
-  "Last deployed time not available": "最終デプロイ時刻情報はありません"
+  "Environment details were not found. Try reloading the page or contacting an administrator.": "環境の詳細が見つかりませんでした。ページのリロードを試行するか、管理者にお問い合わせください。"
 }
