@@ -247,7 +247,13 @@ const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
     <DropdownItem key="toggle-query" component="button" onClick={toggleIsEnabled}>
       {isEnabled ? t('public~Disable query') : t('public~Enable query')}
     </DropdownItem>,
-    <DropdownItem key="toggle-all-series" component="button" onClick={toggleAllSeries}>
+    <DropdownItem
+      tooltip={!isEnabled ? t('Query must be enabled') : undefined}
+      isDisabled={!isEnabled}
+      key="toggle-all-series"
+      component="button"
+      onClick={toggleAllSeries}
+    >
       {isDisabledSeriesEmpty ? t('public~Hide all series') : t('public~Show all series')}
     </DropdownItem>,
     <DropdownItem key="delete" component="button" onClick={doDelete}>
