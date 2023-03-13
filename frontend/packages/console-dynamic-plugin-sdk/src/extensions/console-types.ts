@@ -451,6 +451,7 @@ export type ListPageFilterProps<D = any> = {
   columnLayout?: ColumnLayout;
   onFilterChange: OnFilterChange;
   hideColumnManagement?: boolean;
+  nameFilter?: string;
 };
 
 export type UseListPageFilter = <D, R>(

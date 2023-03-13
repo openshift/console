@@ -858,12 +858,16 @@ Component that generates filter for list page
 | `loaded` | indicates that data has loaded |
 | `onFilterChange` | callback function for when filter is updated |
 | `rowFilters` | (optional) An array of RowFilter elements that define the available filter options |
+| `labelFilter` | (optional) a unique name key for label filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
+| `labelPath` | (optional) the path to labels to filter from |
+| `nameFilterTitle` | (optional) title for name filter |
 | `nameFilterPlaceholder` | (optional) placeholder for name filter |
 | `labelFilterPlaceholder` | (optional) placeholder for label filter |
 | `hideLabelFilter` | (optional) only shows the name filter instead of both name and label filter |
 | `hideNameLabelFilter` | (optional) hides both name and label filter |
 | `columnLayout` | (optional) column layout object |
 | `hideColumnManagement` | (optional) flag to hide the column management |
+| `nameFilter` | (optional) a unique name key for name filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
 
 
 
