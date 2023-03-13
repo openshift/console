@@ -276,5 +276,6 @@
   "Knative Services": "Knative 服务",
   "All Revisions are autoscaled to 0.": "所有修订版本都将自动缩放到 0。",
   "No Source found for this resource.": "没有找到此资源的源。",
-  "Domain mappings": "域映射"
+  "Domain mappings": "域映射",
+  "{{OKcount}} OK / {{conditionsSize}}": "{{OKcount}}个 OK(共{{conditionsSize}}个)"
 }
