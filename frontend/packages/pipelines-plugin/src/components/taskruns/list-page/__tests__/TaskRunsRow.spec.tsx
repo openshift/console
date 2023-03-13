@@ -39,7 +39,7 @@ describe('TaskRunsRow', () => {
 
   it('should show the pipeline column', () => {
     const wrapper = shallow(<TaskRunsRow {...taskRunsData} />);
-    expect(wrapper.find(TableData)).toHaveLength(8);
+    expect(wrapper.find(TableData)).toHaveLength(9);
   });
 
   it('should render proper data', () => {
@@ -61,6 +61,6 @@ describe('TaskRunsRow', () => {
   it('should not show the pipeline column', () => {
     taskRunsData.customData.showPipelineColumn = false;
     const wrapper = shallow(<TaskRunsRow {...taskRunsData} />);
-    expect(wrapper.find(TableData)).toHaveLength(7);
+    expect(wrapper.find(TableData)).toHaveLength(8);
   });
 });

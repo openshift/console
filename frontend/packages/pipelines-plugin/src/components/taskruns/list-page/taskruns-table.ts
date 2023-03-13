@@ -8,5 +8,6 @@ export const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-sm', // pod
   'pf-m-hidden pf-m-visible-on-sm', // status
   'pf-m-hidden pf-m-visible-on-sm', // started
+  'pf-m-hidden pf-m-visible-on-sm', // duration
   Kebab.columnClass,
 ];
