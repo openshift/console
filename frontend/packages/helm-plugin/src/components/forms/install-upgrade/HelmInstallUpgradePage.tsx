@@ -162,18 +162,25 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     let valuesObj;
 
     if (editorType === EditorType.Form) {
-      const ajv = new Ajv();
-      const validSchema = ajv.validateSchema(formSchema);
-      const prunedFormData = prune(formData);
-      const validFormData = validSchema && ajv.validate(formSchema, prunedFormData);
-      if (validFormData) {
-        valuesObj = prunedFormData;
-      } else {
-        actions.setStatus({
-          submitError: t('helm-plugin~Errors in the form - {{errorsText}}', {
-            errorsText: ajv.errorsText(),
-          }),
-        });
+      const ajv = new Ajv({ schemaId: 'auto' });
+      /* eslint-disable @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, global-require */
+      ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
+      try {
+        const validSchema = ajv.validateSchema(formSchema);
+        const prunedFormData = prune(formData);
+        const validFormData = validSchema && ajv.validate(formSchema, prunedFormData);
+        if (validFormData) {
+          valuesObj = prunedFormData;
+        } else {
+          actions.setStatus({
+            submitError: t('helm-plugin~Errors in the form - {{errorsText}}', {
+              errorsText: ajv.errorsText(),
+            }),
+          });
+          return Promise.resolve();
+        }
+      } catch (err) {
+        actions.setStatus({ submitError: t('helm-plugin~Invalid Form Schema - {{err}}', { err }) });
         return Promise.resolve();
       }
     } else if (yamlData) {
