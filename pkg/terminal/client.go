@@ -31,7 +31,7 @@ func (p *Proxy) createTypedClient(token string) (*kubernetes.Clientset, error) {
 
 func (p *Proxy) getConfig(token string) (*rest.Config, error) {
 	var tlsClientConfig rest.TLSClientConfig
-	if p.TLSClientConfig.InsecureSkipVerify {
+	if p.k8sClientConfig.InsecureSkipVerify {
 		// off-cluster mode
 		tlsClientConfig.Insecure = true
 	} else {
@@ -43,7 +43,7 @@ func (p *Proxy) getConfig(token string) (*rest.Config, error) {
 	}
 
 	return &rest.Config{
-		Host:            p.ClusterEndpoint.Host,
+		Host:            p.k8sEndpoint.Host,
 		TLSClientConfig: tlsClientConfig,
 		BearerToken:     token,
 	}, nil

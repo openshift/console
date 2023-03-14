@@ -31,10 +31,21 @@ export BRIDGE_K8S_MODE_OFF_CLUSTER_THANOS
 BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER=$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.alertmanagerPublicURL}')
 export BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER
 
+TERMINAL_PROXY_HOSTNAME=$(oc -n openshift-console get route console -o jsonpath='{.spec.host}')
+if [ -n "$TERMINAL_PROXY_HOSTNAME" ]; then
+    export BRIDGE_K8S_MODE_OFF_CLUSTER_TERMINAL_PROXY_MODE="remote-console"
+    export BRIDGE_K8S_MODE_OFF_CLUSTER_TERMINAL_PROXY_URL="https://$TERMINAL_PROXY_HOSTNAME"
+else
+    unset BRIDGE_K8S_MODE_OFF_CLUSTER_TERMINAL_PROXY_MODE
+    unset BRIDGE_K8S_MODE_OFF_CLUSTER_TERMINAL_PROXY_URL
+fi
+
 GITOPS_HOSTNAME=$(oc -n openshift-gitops get route cluster -o jsonpath='{.spec.host}' 2> /dev/null)
 if [ -n "$GITOPS_HOSTNAME" ]; then
     BRIDGE_K8S_MODE_OFF_CLUSTER_GITOPS="https://$GITOPS_HOSTNAME"
     export BRIDGE_K8S_MODE_OFF_CLUSTER_GITOPS
+else
+    unset BRIDGE_K8S_MODE_OFF_CLUSTER_GITOPS
 fi
 
 BRIDGE_K8S_AUTH="bearer-token"

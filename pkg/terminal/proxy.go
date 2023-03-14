@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -41,20 +42,30 @@ const (
 
 // Proxy provides handlers to handle terminal related requests
 type Proxy struct {
-	// A client with the correct TLS setup for communicating with servers withing cluster.
+	k8sEndpoint         *url.URL
+	k8sClientConfig     *tls.Config
+	offClusterProxyMode string
+	offClusterProxyURL  *url.URL
+	// A client with the correct TLS setup for communicating with servers within cluster.
 	workspaceHttpClient *http.Client
-	TLSClientConfig     *tls.Config
-	ClusterEndpoint     *url.URL
 }
 
-func NewProxy(serviceTLS *tls.Config, TLSClientConfig *tls.Config, clusterEndpoint *url.URL) *Proxy {
+func NewProxy(
+	k8sEndpoint *url.URL,
+	k8sClientConfig *tls.Config,
+	offClusterProxyMode string,
+	offClusterProxyURL *url.URL,
+	serviceTLS *tls.Config,
+) *Proxy {
 	return &Proxy{
+		k8sEndpoint:         k8sEndpoint,
+		k8sClientConfig:     k8sClientConfig,
+		offClusterProxyMode: offClusterProxyMode,
+		offClusterProxyURL:  offClusterProxyURL,
 		workspaceHttpClient: &http.Client{
 			Timeout:   10 * time.Second,
 			Transport: &http.Transport{TLSClientConfig: serviceTLS},
 		},
-		TLSClientConfig: TLSClientConfig,
-		ClusterEndpoint: clusterEndpoint,
 	}
 }
 
@@ -72,8 +83,24 @@ var (
 	}
 )
 
-// HandleProxy evaluates the namespace and workspace names from URL and after check that
-// it's created by the current user - proxies the request there
+// HandleProxy evaluates the namespace and workspace names from the URL path
+// and forwards requests to web terminal service.
+//
+// In "on-cluster" mode:
+//  1. it checks if the web terminal operator is running
+//  2. and if kubeadmin uses openshift-terminal as namespace
+//  3. before it extracts the endpoint from the DevWorkspace via
+//     `getBaseTerminalHost` and proxy the request via `workspaceHttpClient`.
+//
+// In "off-cluster" mode it accepts the flags `k8s-mode-off-cluster-terminal-proxy-mode`
+// and `k8s-mode-off-cluster-terminal-proxy-url`.
+// These flags could be used to redirect the requests to a local web terminal operator
+// or another console backend.
+//  1. When the proxy URL is defined it redirects all `/api/terminal/proxy/*“ calls.
+//  2. It use the exact same (full) request path if the mode is "console",
+//     and the path after the workspace name (see `stripTerminalAPIPrefix`) in mode "operator".
+//
+// Checkout pkg/terminal/README.md for more information.
 func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		w.Header().Add("Allow", "POST")
@@ -81,19 +108,81 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	isWebTerminalOperatorRunning, err := checkWebTerminalOperatorIsRunning()
+	ok, namespace, workspaceName, path := stripTerminalAPIPrefix(r.URL.Path)
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	if p.offClusterProxyMode != "" && p.offClusterProxyURL != nil {
+		var url string
+
+		switch p.offClusterProxyMode {
+		case "local-operator":
+			// extracted path has no / prefix anymore
+			url = fmt.Sprintf("%s://%s/%s", p.offClusterProxyURL.Scheme, p.offClusterProxyURL.Host, path)
+		case "remote-console":
+			// origin request path starts with an /
+			url = fmt.Sprintf("%s://%s%s", p.offClusterProxyURL.Scheme, p.offClusterProxyURL.Host, r.URL.Path)
+		default:
+			http.Error(w, fmt.Sprintf("Unexpected off-cluster terminal proxy mode %q", p.offClusterProxyMode), http.StatusInternalServerError)
+			return
+		}
+
+		wkspReq, err := http.NewRequest(http.MethodPost, url, ioutil.NopCloser(r.Body))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		switch p.offClusterProxyMode {
+		case "local-operator":
+			// Authentification token is enough for
+			// 1. a local Web Terminal Exec instance (started with go run ... for example),
+			// 2. a remote Pod with a public available Route, or
+			// 3. a remote Pod with local `kubectl port-forward` to a remote `Service`.
+			wkspReq.Header.Set("X-Forwarded-Access-Token", user.Token)
+		case "remote-console":
+			// Send session token (auth token as well), together with CSRFToken and Origin header
+			// so that the remote-console proxy this request to the cluster Web Terminal Exec (Service)
+			wkspReq.AddCookie(&http.Cookie{
+				Name:  "openshift-session-token",
+				Value: user.Token,
+			})
+
+			csrfToken := r.Header.Get("X-CSRFToken")
+			if csrfToken == "" {
+				// Enforce a csrf token, it's undefined when authentification is disabled.
+				csrfToken = "the-csrf-token-value-does-not-matter-but-it-must-exist"
+			}
+			wkspReq.AddCookie(&http.Cookie{
+				Name:  "csrf-token",
+				Value: csrfToken,
+			})
+			wkspReq.Header.Set("X-CSRFToken", csrfToken)
+
+			wkspReq.Header.Set("Origin", fmt.Sprintf("%s://%s", p.offClusterProxyURL.Scheme, p.offClusterProxyURL.Host))
+		}
+
+		p.proxyToWorkspace(wkspReq, w)
+		return
+	}
+
+	config, err := p.getConfig(user.Token)
+	if err != nil {
+		klog.Info("HandleProxy 100b\n")
+		klog.Errorf("Failed to check if the web terminal operator is installed: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	isWebTerminalOperatorRunning, err := checkWebTerminalOperatorIsRunning(config)
 	if err != nil {
 		http.Error(w, "Failed to check web terminal operator state. Cause: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if !isWebTerminalOperatorRunning {
 		http.Error(w, "Terminal endpoint is disabled: web terminal operator is not deployed.", http.StatusForbidden)
-		return
-	}
-
-	ok, namespace, workspaceName, path := stripTerminalAPIPrefix(r.URL.Path)
-	if !ok {
-		http.NotFound(w, r)
 		return
 	}
 
@@ -131,7 +220,7 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 		userId = string(userInfo.GetUID())
 		if userId == "" {
 			// uid is missing. it must be kube:admin
-			if "kube:admin" != userInfo.GetName() {
+			if userInfo.GetName() != "kube:admin" {
 				http.Error(w, "User must have UID to proceed authorization", http.StatusInternalServerError)
 				return
 			}
@@ -176,14 +265,21 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 	}
 }
 
-func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
+func (p *Proxy) HandleProxyAvailable(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		w.Header().Set("Allow", "GET")
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 
-	isWebTerminalOperatorInstalled, err := checkWebTerminalOperatorIsInstalled()
+	config, err := p.getConfig(user.Token)
+	if err != nil {
+		klog.Errorf("Failed to check if the web terminal operator is installed: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	isWebTerminalOperatorInstalled, err := checkWebTerminalOperatorIsInstalled(config)
 	if err != nil {
 		klog.Errorf("Failed to check if the web terminal operator is installed: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -194,7 +290,8 @@ func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		return
 	}
-	isWebTerminalOperatorRunning, err := checkWebTerminalOperatorIsRunning()
+
+	isWebTerminalOperatorRunning, err := checkWebTerminalOperatorIsRunning(config)
 	if err != nil {
 		klog.Errorf("Failed to check if web terminal operator is running: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -207,14 +304,22 @@ func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (p *Proxy) HandleTerminalInstalledNamespace(w http.ResponseWriter, r *http.Request) {
+func (p *Proxy) HandleTerminalInstalledNamespace(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		w.Header().Set("Allow", "GET")
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 
-	subscription, err := getWebTerminalSubscriptions()
+	config, err := p.getConfig(user.Token)
+	if err != nil {
+		klog.Info("HandleProxyEnabled 100b\n")
+		klog.Errorf("Failed to check if the web terminal operator is installed: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	subscription, err := getWebTerminalSubscriptions(config)
 	if err != nil {
 		klog.Errorf("Failed to check the web terminal subscription: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)

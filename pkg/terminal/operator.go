@@ -33,11 +33,7 @@ const (
 
 // checkWebTerminalOperatorIsRunning checks if the workspace operator is running and webhooks are enabled,
 // which is a prerequisite for sending a user's token to a workspace.
-func checkWebTerminalOperatorIsRunning() (bool, error) {
-	config, err := rest.InClusterConfig()
-	if err != nil {
-		return false, err
-	}
+func checkWebTerminalOperatorIsRunning(config *rest.Config) (bool, error) {
 	client, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return false, err
@@ -62,9 +58,8 @@ func checkWebTerminalOperatorIsRunning() (bool, error) {
 }
 
 // checkWebTerminalOperatorIsInstalled checks to see that a web-terminal-operator is installed on the cluster
-func checkWebTerminalOperatorIsInstalled() (bool, error) {
-
-	subs, err := getWebTerminalSubscriptions()
+func checkWebTerminalOperatorIsInstalled(config *rest.Config) (bool, error) {
+	subs, err := getWebTerminalSubscriptions(config)
 	if err != nil {
 		// Web Terminal subscription is not found but it's technically not a real error so we don't want to propogate it. Just say that the operator is not installed
 		if k8sErrors.IsNotFound(err) {
@@ -76,12 +71,7 @@ func checkWebTerminalOperatorIsInstalled() (bool, error) {
 	return len(subs.Items) > 0, nil
 }
 
-func getWebTerminalSubscriptions() (*unstructured.UnstructuredList, error) {
-	config, err := rest.InClusterConfig()
-	if err != nil {
-		return nil, err
-	}
-
+func getWebTerminalSubscriptions(config *rest.Config) (*unstructured.UnstructuredList, error) {
 	config.GroupVersion = OperatorGroupVersion
 	config.APIPath = "apis"
 

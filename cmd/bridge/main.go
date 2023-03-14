@@ -100,6 +100,10 @@ func main() {
 	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
 
+	// Used while developing in "off-cluster" mode to redirect web terminal requests, see pkg/terminal/proxy.go
+	fK8sModeOffClusterTerminalProxyMode := fs.String("k8s-mode-off-cluster-terminal-proxy-mode", "", "DEV ONLY. Optional proxy mode to forward terminal API requests to a \"local-operator\" or a \"remote-console\".")
+	fK8sModeOffClusterTerminalProxyURL := fs.String("k8s-mode-off-cluster-terminal-proxy-url", "", "DEV ONLY. Optional proxy URL to test a local operator or remote console. Can only be used in off-cluster mode.")
+
 	fK8sModeOffClusterGitOps := fs.String("k8s-mode-off-cluster-gitops", "", "DEV ONLY. URL of the GitOps backend service")
 
 	fRedirectPort := fs.Int("redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
@@ -532,6 +536,16 @@ func main() {
 			}
 		}
 
+		if *fK8sModeOffClusterTerminalProxyURL != "" {
+			bridge.ValidateFlagIs("k8s-mode-off-cluster-terminal-proxy-mode", *fK8sModeOffClusterTerminalProxyMode, "local-operator", "remote-console")
+			terminalProxyURL, err := url.Parse(*fK8sModeOffClusterTerminalProxyURL)
+			if err != nil {
+				klog.Fatalf("failed to parse %q", clusterManagementURL)
+			} else {
+				srv.TerminalProxyMode = *fK8sModeOffClusterTerminalProxyMode
+				srv.TerminalProxyURL = terminalProxyURL
+			}
+		}
 		srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 		srv.PluginsProxyTLSConfig = serviceProxyTLSConfig
 

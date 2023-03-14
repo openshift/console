@@ -189,7 +189,9 @@ type Server struct {
 	StatuspageID                        string
 	TectonicVersion                     string
 	Telemetry                           serverconfig.MultiKeyValue
+	TerminalProxyMode                   string
 	TerminalProxyTLSConfig              *tls.Config
+	TerminalProxyURL                    *url.URL
 	ThanosProxyConfig                   *proxy.Config
 	ThanosPublicURL                     *url.URL
 	ThanosTenancyProxyConfig            *proxy.Config
@@ -341,13 +343,16 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc(devfileSamplesEndpoint, devfile.DevfileSamplesHandler)
 
 	terminalProxy := terminal.NewProxy(
-		s.TerminalProxyTLSConfig,
+		s.K8sProxyConfig.Endpoint,
 		s.K8sProxyConfig.TLSClientConfig,
-		s.K8sProxyConfig.Endpoint)
+		s.TerminalProxyMode,
+		s.TerminalProxyURL,
+		s.TerminalProxyTLSConfig,
+	)
 
 	handle(terminal.ProxyEndpoint, authHandlerWithUser(terminalProxy.HandleProxy))
-	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
-	handleFunc(terminal.InstalledNamespaceEndpoint, terminalProxy.HandleTerminalInstalledNamespace)
+	handle(terminal.AvailableEndpoint, authHandlerWithUser(terminalProxy.HandleProxyAvailable))
+	handle(terminal.InstalledNamespaceEndpoint, authHandlerWithUser(terminalProxy.HandleTerminalInstalledNamespace))
 
 	graphQLSchema, err := ioutil.ReadFile("pkg/graphql/schema.graphql")
 	if err != nil {
