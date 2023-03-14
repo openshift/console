@@ -319,7 +319,7 @@ describe('ResourcesList', () => {
   const routePath = `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`;
   it('uses the resources defined in the CSV', () => {
     const wrapper = mountWithRoute(
-      <Resources csv={testClusterServiceVersion} obj={testResourceInstance} />,
+      <Resources customData={testClusterServiceVersion} obj={testResourceInstance} />,
       currentURL,
       routePath,
     );
@@ -333,7 +333,7 @@ describe('ResourcesList', () => {
 
   it('uses the default resources if the kind is not found in the CSV', () => {
     const wrapper = mountWithRoute(
-      <Resources csv={null} obj={testResourceInstance} />,
+      <Resources customData={null} obj={testResourceInstance} />,
       currentURL,
       routePath,
     );
@@ -416,7 +416,7 @@ describe(OperandDetailsPage.displayName, () => {
 
   it('passes `flatten` function to Resources component which returns only objects with `ownerReferences` to each other or parent object', () => {
     const wrapper = mountWithRoute(
-      <Resources csv={testClusterServiceVersion} obj={testResourceInstance} />,
+      <Resources customData={testClusterServiceVersion} obj={testResourceInstance} />,
       currentURL,
       routePath,
     );
