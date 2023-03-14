@@ -44,6 +44,14 @@
         display: none;
       }
     }
+    &__time-unavailable {
+      margin: var(--pf-global--spacer--xs) 0px var(--pf-global--spacer--xs) 0px;
+      display: flex;
+      font-style: italic;
+      .co-icon-and-text__icon {
+        display: none;
+      }
+    }
     &__deployment-history {
       margin-top: var(--pf-global--spacer--xs);
       justify-content: space-between;
@@ -80,11 +88,25 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  &__warning-message {
+    margin-bottom: var(--pf-global--spacer--xs);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-style: italic;
+  }
   &__author {
     margin-right: var(--pf-global--spacer--sm);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  &__author-unavailable {
+    margin-right: var(--pf-global--spacer--sm);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-style: italic;
   }
   &__sha {
     background-color: inherit;
