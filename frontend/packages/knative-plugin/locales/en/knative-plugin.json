@@ -193,6 +193,7 @@
   "Ready": "Ready",
   "Conditions": "Conditions",
   "Created": "Created",
+  "{{OKcount}} OK / {{conditionsSize}}": "{{OKcount}} OK / {{conditionsSize}}",
   "Subscriber": "Subscriber",
   "Filters": "Filters",
   "There is an existing placeholder Service with name {{name}} in namespace {{namespace}}. Please provide another name": "There is an existing placeholder Service with name {{name}} in namespace {{namespace}}. Please provide another name",
