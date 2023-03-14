@@ -19,8 +19,8 @@ import { ExternalLink, Timestamp } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import * as argoIcon from '../../images/argo.png';
 import { GitOpsEnvironment } from '../utils/gitops-types';
+import ArgoCdLink from './ArgoCdLink';
 import GitOpsRenderStatusLabel from './GitOpsRenderStatusLabel';
 import GitOpsResourcesSection from './GitOpsResourcesSection';
 import './GitOpsDetails.scss';
@@ -160,21 +160,11 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, manifestUR
                           </SplitItem>
                           {argocdLink && (
                             <Tooltip content="Argo CD">
-                              <SplitItem className="gop-gitops-details__env-section__deployment-history__argocd-link">
-                                <ExternalLink
-                                  href={`${argocdLink.spec.href}/applications/${env.environment}-${appName}`}
-                                >
-                                  <span className="gop-gitops-details__env-section__argo-external-link">
-                                    <img
-                                      loading="lazy"
-                                      src={argoIcon}
-                                      alt="Argo CD"
-                                      width="19px"
-                                      height="24px"
-                                    />
-                                  </span>
-                                </ExternalLink>
-                              </SplitItem>
+                              <ArgoCdLink
+                                appName={appName}
+                                envName={env.environment}
+                                argocdLink={argocdLink}
+                              />
                             </Tooltip>
                           )}
                         </Split>
