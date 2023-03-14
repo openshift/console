@@ -79,6 +79,9 @@ export BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT
 BRIDGE_K8S_MODE_OFF_CLUSTER_MANAGED_CLUSTER_PROXY="https://$(oc get route cluster-proxy-addon-user -n multicluster-engine -o json | jq -r '.spec.host')"
 export BRIDGE_K8S_MODE_OFF_CLUSTER_MANAGED_CLUSTER_PROXY
 
+BRIDGE_K8S_MODE_OFF_CLUSTER_THANOS=$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.thanosPublicURL}')
+export BRIDGE_K8S_MODE_OFF_CLUSTER_THANOS
+
 BRIDGE_CA_FILE="$CA_FILE_DIR/api-ca.crt"
 export BRIDGE_CA_FILE
 
