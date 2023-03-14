@@ -347,6 +347,7 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
 
   const [updateData, setUpdateData] = React.useState();
   const [updateError, setUpdateError] = React.useState();
+  const [newPlugins, setNewPlugins] = React.useState();
   const [pluginManifestsData, setPluginManifestsData] = React.useState();
   const safeFetch = React.useCallback(useSafeFetch(), []);
   const fetchPluginManifest = (pluginName) =>
@@ -382,26 +383,41 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const prevUpdateData = prevUpdateDataRef.current;
   const prevPluginManifestsData = prevPluginManifestsDataRef.current;
   const stateInitialized = _.isEmpty(updateError) && !_.isEmpty(prevUpdateData);
+  const pluginsAddedList = updateData?.plugins.filter((x) => !prevUpdateData?.plugins.includes(x));
+  const pluginsRemovedList = prevUpdateData?.plugins.filter(
+    (x) => !updateData?.plugins.includes(x),
+  );
+  const pluginsAdded = !_.isEmpty(pluginsAddedList);
+  const pluginsRemoved = !_.isEmpty(pluginsRemovedList);
 
-  const pluginsListChanged = !_.isEmpty(_.xor(prevUpdateData?.plugins, updateData?.plugins));
-  if (stateInitialized && pluginsListChanged && !pluginsChanged) {
+  if (stateInitialized && pluginsAdded && !pluginsChanged) {
     setPluginsChanged(true);
+    setNewPlugins(pluginsAddedList);
+  }
+
+  if (stateInitialized && pluginsRemoved && !consoleChanged) {
+    setConsoleChanged(true);
   }
 
   if (pluginsChanged && !allPluginEndpointsReady && !isFetchingPluginEndpoints) {
-    const pluginEndpointsReady = updateData?.plugins?.map((pluginName) =>
-      fetchPluginManifest(pluginName),
-    );
-    Promise.all(pluginEndpointsReady)
-      .then(() => {
+    const pluginEndpointsReady =
+      newPlugins?.map((pluginName) => fetchPluginManifest(pluginName)) ?? [];
+    if (!_.isEmpty(pluginEndpointsReady)) {
+      settleAllPromises(pluginEndpointsReady).then(([, rejectedReasons]) => {
+        if (!_.isEmpty(rejectedReasons)) {
+          setAllPluginEndpointsReady(false);
+          setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
+          return;
+        }
         setAllPluginEndpointsReady(true);
         setIsFetchingPluginEndpoints(false);
-      })
-      .catch(() => {
-        setAllPluginEndpointsReady(false);
-        setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
+        setNewPlugins(null);
       });
-    setIsFetchingPluginEndpoints(true);
+      setIsFetchingPluginEndpoints(true);
+    } else {
+      setAllPluginEndpointsReady(true);
+      setIsFetchingPluginEndpoints(false);
+    }
   }
 
   const pluginManifestsVersionsChanged = pluginManifestsData?.some((manifest) => {
