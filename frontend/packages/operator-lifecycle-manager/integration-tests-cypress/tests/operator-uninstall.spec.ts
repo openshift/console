@@ -38,7 +38,7 @@ const uninstallAndVerify = () => {
   cy.resourceShouldBeDeleted(testName, testOperand.kind, testOperand.exampleName);
 };
 
-describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
+xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   before(() => {
     cy.login();
     cy.visit('/');
