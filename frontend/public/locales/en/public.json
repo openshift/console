@@ -353,6 +353,7 @@
   "Create {{objLabel}}": "Create {{objLabel}}",
   "CronJob details": "CronJob details",
   "Schedule": "Schedule",
+  "Suspend": "Suspend",
   "Concurrency policy": "Concurrency policy",
   "Starting deadline seconds": "Starting deadline seconds",
   "{{count}} second_one": "{{count}} second",
