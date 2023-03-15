@@ -72,6 +72,7 @@ import {
   ServerlessData,
   DeploymentData,
 } from './import-types';
+import { createResourceName } from './import-validation-utils';
 
 export const generateSecret = () => {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -366,7 +367,7 @@ export const createOrUpdateDeployment = (
         spec: {
           containers: [
             {
-              name,
+              name: createResourceName(name),
               image: `${name}:latest`,
               ports,
               env,
@@ -433,7 +434,7 @@ export const createOrUpdateDeploymentConfig = (
         spec: {
           containers: [
             {
-              name,
+              name: createResourceName(name),
               image: `${name}:latest`,
               ports,
               env,

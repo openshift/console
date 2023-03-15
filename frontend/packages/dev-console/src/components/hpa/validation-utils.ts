@@ -14,7 +14,7 @@ export const hpaValidationSchema = (t: TFunction) =>
             .string()
             .matches(nameRegex, {
               message: t(
-                'devconsole~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+                'devconsole~Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.',
               ),
               excludeEmptyString: true,
             })
