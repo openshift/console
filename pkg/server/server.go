@@ -232,7 +232,10 @@ func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
 	localAuther := s.getLocalAuther()
 	localK8sProxy := proxy.NewProxy(s.K8sProxyConfig)
-	managedClusterProxy := proxy.NewProxy(s.ManagedClusterProxyConfig)
+	var managedClusterProxy *proxy.Proxy
+	if s.ManagedClusterProxyConfig != nil {
+		managedClusterProxy = proxy.NewProxy(s.ManagedClusterProxyConfig)
+	}
 	handle := func(path string, handler http.Handler) {
 		mux.Handle(proxy.SingleJoiningSlash(s.BaseURL.Path, path), handler)
 	}
