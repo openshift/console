@@ -197,7 +197,9 @@ describe(OperatorHubItemDetails.displayName, () => {
   let wrapper: ShallowWrapper<OperatorHubItemDetailsProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<OperatorHubItemDetails {...operatorHubDetailsProps} />);
+    wrapper = shallow(
+      <OperatorHubItemDetails updateChannel={''} updateVersion={''} {...operatorHubDetailsProps} />,
+    );
   });
 
   it('renders longDescription with a MarkdownView component', () => {

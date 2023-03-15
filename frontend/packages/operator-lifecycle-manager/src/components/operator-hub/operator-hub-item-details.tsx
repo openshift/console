@@ -1,10 +1,21 @@
 import * as React from 'react';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
+import {
+  DescriptionList,
+  DescriptionListTerm,
+  DescriptionListGroup,
+  DescriptionListDescription,
+} from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ExternalLink, HintBlock, Timestamp } from '@console/internal/components/utils';
+import {
+  ExternalLink,
+  HintBlock,
+  Timestamp,
+  getQueryArgument,
+} from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
@@ -12,6 +23,8 @@ import { DefaultCatalogSource } from '../../const';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { MarkdownView } from '../clusterserviceversion';
+import { defaultChannelNameFor } from '../index';
+import { OperatorChannelSelect, OperatorVersionSelect } from './operator-channel-version-select';
 import { OperatorHubItem } from './index';
 
 // t('olm~Basic Install'),
@@ -27,9 +40,9 @@ const levels = [
   'Auto Pilot',
 ];
 
-const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capabilityLevel }) => {
+const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ selectedChannelCapabilityLevel }) => {
   const { t } = useTranslation();
-  const capabilityLevelIndex = levels.indexOf(capabilityLevel);
+  const capabilityLevelIndex = levels.indexOf(selectedChannelCapabilityLevel);
 
   return (
     <ul className="properties-side-panel-pf-property-value__capability-levels">
@@ -58,12 +71,13 @@ const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capabilityLevel }) =>
 };
 
 type CapabilityLevelProps = {
-  capabilityLevel: string;
+  selectedChannelCapabilityLevel: string;
 };
 
 const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
   latestVersion,
   subscription,
+  installedChannel,
 }) => {
   const { t } = useTranslation();
   const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>({
@@ -81,19 +95,23 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
   return (
     <HintBlock className="co-catalog-page__hint" title={t('olm~Installed Operator')}>
       <p>
-        {installedVersion !== latestVersion ? (
-          <span>
-            <Trans ns="olm">
-              Version <strong>{{ installedVersion }}</strong> of this Operator has been installed on
-              the cluster.
-            </Trans>
-          </span>
-        ) : (
-          t('olm~This Operator has been installed on the cluster.')
-        )}
-        &nbsp;
+        {t('olm~This Operator has been installed on the cluster.')}{' '}
         <Link to={to}>{t('olm~View it here.')}</Link>
       </p>
+      {installedVersion !== latestVersion ? (
+        <>
+          <DescriptionList columnModifier={{ default: '2Col' }}>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('olm~Installed Channel')}</DescriptionListTerm>
+              <DescriptionListDescription>{installedChannel}</DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('olm~Installed Version')}</DescriptionListTerm>
+              <DescriptionListDescription>{installedVersion}</DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
+        </>
+      ) : null}
     </HintBlock>
   );
 };
@@ -180,20 +198,24 @@ const OperatorHubItemDetailsHintBlock: React.FC<OperatorHubItemDetailsHintBlockP
   return null;
 };
 
-export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({ item }) => {
+export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
+  item,
+  updateChannel,
+  setUpdateChannel,
+  updateVersion,
+  setUpdateVersion,
+}) => {
   const { t } = useTranslation();
   const {
-    capabilityLevel,
     catalogSource,
     catalogSourceDisplayName,
-    containerImage,
-    createdAt,
     description,
     infraFeatures,
     installed,
     isInstalling,
     longDescription,
     marketplaceSupportWorkflow,
+    obj,
     provider,
     repository,
     subscription,
@@ -201,10 +223,22 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({ 
     validSubscription,
     version,
   } = item;
+
+  const installChannel = getQueryArgument('channel');
+  const currentChannel = obj.status.channels.find((ch) => ch.name === installChannel);
+  const selectedChannelContainerImage = currentChannel?.currentCSVDesc.annotations.containerImage;
+  const selectedChannelCreatedAt = currentChannel?.currentCSVDesc.annotations.createdAt;
+  const selectedChannelCapabilityLevel = currentChannel?.currentCSVDesc.annotations.capabilities;
+
+  const installedChannel = item?.subscription?.spec?.channel;
   const notAvailable = (
     <span className="properties-side-panel-pf-property-label">{t('olm~N/A')}</span>
   );
-  const created = Date.parse(createdAt) ? <Timestamp timestamp={createdAt} /> : createdAt;
+  const created = Date.parse(selectedChannelCreatedAt) ? (
+    <Timestamp timestamp={selectedChannelCreatedAt} />
+  ) : (
+    selectedChannelCreatedAt
+  );
 
   const mappedData = (data) => data?.map?.((d) => <div key={d}>{d}</div>) ?? notAvailable;
 
@@ -225,18 +259,43 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({ 
     return null;
   }, [marketplaceSupportWorkflow]);
 
+  const selectedUpdateChannel = updateChannel || defaultChannelNameFor(obj);
+
   return item ? (
     <div className="modal-body modal-body-border">
       <div className="modal-body-content">
         <div className="modal-body-inner-shadow-covers">
           <div className="co-catalog-page__overlay-body">
             <PropertiesSidePanel>
-              <PropertyItem label={t('olm~Latest version')} value={version || notAvailable} />
+              <PropertyItem
+                label={t('olm~Channel')}
+                value={
+                  <OperatorChannelSelect
+                    packageManifest={obj}
+                    selectedUpdateChannel={selectedUpdateChannel}
+                    setUpdateChannel={setUpdateChannel}
+                    setUpdateVersion={setUpdateVersion}
+                  />
+                }
+              />
+              <PropertyItem
+                label={t('olm~Version')}
+                value={
+                  <OperatorVersionSelect
+                    packageManifest={obj}
+                    selectedUpdateChannel={selectedUpdateChannel}
+                    updateVersion={updateVersion}
+                    setUpdateVersion={setUpdateVersion}
+                  />
+                }
+              />
               <PropertyItem
                 label={t('olm~Capability level')}
                 value={
-                  capabilityLevel ? (
-                    <CapabilityLevel capabilityLevel={capabilityLevel} />
+                  selectedChannelCapabilityLevel ? (
+                    <CapabilityLevel
+                      selectedChannelCapabilityLevel={selectedChannelCapabilityLevel}
+                    />
                   ) : (
                     notAvailable
                   )
@@ -268,8 +327,10 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({ 
               <PropertyItem
                 label={t('olm~Container image')}
                 value={
-                  containerImage ? (
-                    <div className="co-break-all co-select-to-copy">{containerImage}</div>
+                  selectedChannelContainerImage ? (
+                    <div className="co-break-all co-select-to-copy">
+                      {selectedChannelContainerImage}
+                    </div>
                   ) : (
                     notAvailable
                   )
@@ -294,6 +355,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({ 
                 latestVersion={version}
                 catalogSource={catalogSource}
                 subscription={subscription}
+                installedChannel={installedChannel}
               />
               {longDescription ? <MarkdownView content={longDescription} /> : description}
             </div>
@@ -313,10 +375,15 @@ type OperatorHubItemDetailsHintBlockProps = {
   latestVersion: string;
   catalogSource: string;
   subscription: SubscriptionKind;
+  installedChannel: string;
 };
 
 export type OperatorHubItemDetailsProps = {
   item: OperatorHubItem;
+  updateChannel: string;
+  updateVersion: string;
+  setUpdateChannel: (updateChannel: string) => void;
+  setUpdateVersion: (updateVersion: string) => void;
 };
 
 OperatorHubItemDetails.displayName = 'OperatorHubItemDetails';

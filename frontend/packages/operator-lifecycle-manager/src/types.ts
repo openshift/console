@@ -257,6 +257,10 @@ export type PackageManifestKind = {
           required?: APIServiceDefinition[];
         };
       };
+      entries?: {
+        name: string;
+        version: string;
+      }[];
     }[];
     defaultChannel: string;
   };

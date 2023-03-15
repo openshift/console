@@ -20,6 +20,10 @@ export const operator = {
     cy.log('go to operator overview panel');
     cy.byTestID(operatorHubCardTestID).click();
     cy.log('go to the install form');
+    cy.log('verify the channel selection is displayed');
+    cy.get('.co-operator-channel__select').should('exist');
+    cy.log('verify the version selection is displayed');
+    cy.get('.co-operator-version__select').should('exist');
     cy.byLegacyTestID('operator-install-btn').click({ force: true });
     /*  Installation mode
      *    () All namespaces        // default: 'openshift-operators'
