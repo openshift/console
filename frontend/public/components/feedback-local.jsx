@@ -24,7 +24,7 @@ export function useFeedbackLocal(reportBug) {
     enterFeedback: t('public~Enter your feedback'),
     feedback: t('public~Feedback'),
     feedbackSent: t('public~Feedback Sent'),
-    helpUsImproveHCC: t('public~Help us improve the Red Hat OpenShift.'),
+    helpUsImproveHCC: t('public~Help us improve Red Hat OpenShift.'),
     howIsConsoleExperience: t('public~What has your experience been like so far?'),
     joinMailingList: t('public~Join mailing list'),
     informDirectionDescription: t(
