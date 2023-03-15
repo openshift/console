@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/openshift/console/pkg/serverutils"
 	"k8s.io/klog"
 )
 
@@ -110,11 +111,7 @@ func CopyRequestHeaders(originalRequest, newRequest *http.Request) {
 }
 
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
-	if klog.V(3) {
-		klog.Infof("PROXY: %#q\n", SingleJoiningSlash(p.config.Endpoint.String(), r.URL.Path))
-	}
-
+	cluster := serverutils.GetCluster(r)
 	// Block scripts from running in proxied content for browsers that support Content-Security-Policy.
 	w.Header().Set("Content-Security-Policy", "sandbox;")
 	// Add `X-Content-Security-Policy` for IE11 and older browsers.
@@ -145,17 +142,31 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	r.URL.Scheme = p.config.Endpoint.Scheme
 
 	if !isWebsocket {
+		klog.V(3).Infof(
+			"PROXY %s %s: %s%s\n",
+			strings.ToUpper(cluster),
+			strings.ToUpper(r.URL.Scheme),
+			p.config.Endpoint.Host,
+			SingleJoiningSlash(p.config.Endpoint.Path, r.URL.Path),
+		)
 		p.reverseProxy.ServeHTTP(w, r)
 		return
 	}
 
 	r.URL.Path = SingleJoiningSlash(p.config.Endpoint.Path, r.URL.Path)
-
 	if r.URL.Scheme == "https" {
 		r.URL.Scheme = "wss"
 	} else {
 		r.URL.Scheme = "ws"
 	}
+
+	klog.V(3).Infof(
+		"PROXY %s %s: %s%s\n",
+		strings.ToUpper(cluster),
+		strings.ToUpper(r.URL.Scheme),
+		p.config.Endpoint.Host,
+		SingleJoiningSlash(p.config.Endpoint.Path, r.URL.Path),
+	)
 
 	subProtocol := ""
 	proxiedHeader := make(http.Header, len(r.Header))
