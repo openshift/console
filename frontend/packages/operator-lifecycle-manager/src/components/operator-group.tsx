@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { MsgBox } from '@console/internal/components/utils/status-box';
@@ -37,7 +38,11 @@ export const NoOperatorGroupMsg: React.FC = () => {
             'olm~The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
           )}
           &nbsp;
-          <Link to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}>
+          <Link
+            to={useClusterPrefixedPath(
+              `/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`,
+            )}
+          >
             {t('olm~Create one here.')}
           </Link>
         </p>

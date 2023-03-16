@@ -119,6 +119,7 @@ import {
   GreenCheckCircleIcon,
   isClusterExternallyManaged,
   RedExclamationCircleIcon,
+  useActiveCluster,
   useCanClusterUpgrade,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
@@ -648,6 +649,7 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
     kind: referenceForModel(MachineConfigModel),
     name: machineConfigPool?.spec?.configuration?.name,
   });
+  const [cluster] = useActiveCluster();
   const mcpName = machineConfigPool?.metadata?.name;
   const machineConfigPoolIsEditable = useAccessReview({
     group: MachineConfigPoolModel.apiGroup,
@@ -678,7 +680,12 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
     : machineConfigOperatorLoaded && renderedConfigLoaded && (
         <UpdatesGroup divided={divided}>
           <UpdatesType>
-            <Link to={`/k8s/cluster/nodes?rowFilter-node-role=${nodeRoleFilterValue}`}>
+            <Link
+              to={getClusterPrefixedPath(
+                `/k8s/cluster/nodes?rowFilter-node-role=${nodeRoleFilterValue}`,
+                cluster,
+              )}
+            >
               {`${name} ${NodeModel.labelPlural}`}
             </Link>
             {!isMaster && (

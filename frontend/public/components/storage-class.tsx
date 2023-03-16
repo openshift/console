@@ -16,6 +16,7 @@ import {
 } from './utils';
 import { StorageClassResourceKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { StorageClassModel } from '../models';
+import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
@@ -135,7 +136,7 @@ StorageClassList.displayName = 'StorageClassList';
 
 export const StorageClassPage: React.FC<StorageClassPageProps> = (props) => {
   const createProps = {
-    to: '/k8s/cluster/storageclasses/~new/form',
+    to: useClusterPrefixedPath('/k8s/cluster/storageclasses/~new/form'),
   };
   const { t } = useTranslation();
   return (

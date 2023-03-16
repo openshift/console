@@ -26,6 +26,7 @@ import { Table } from './factory';
 import { sortable } from '@patternfly/react-table';
 import { removeVolumeModal } from './modals';
 import { connectToModel } from '../kinds';
+import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 
 const removeVolume = (kind: K8sKind, obj: K8sResourceKind, volume: RowVolumeData): KebabOption => {
   return {
@@ -82,7 +83,11 @@ const getRowVolumeData = (resource: K8sResourceKind): RowVolumeData[] => {
 const ContainerLink: React.FC<ContainerLinkProps> = ({ name, pod }) => (
   <span className="co-resource-item co-resource-item--inline">
     <ResourceIcon kind="Container" />
-    <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>
+    <Link
+      to={useClusterPrefixedPath(
+        `/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`,
+      )}
+    >
       {name}
     </Link>
   </span>

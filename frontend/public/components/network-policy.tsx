@@ -27,6 +27,7 @@ import {
   Selector as K8SSelector,
 } from '../module/k8s';
 import { Tooltip } from '@patternfly/react-core';
+import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(NetworkPolicyModel), ...common];
@@ -36,6 +37,7 @@ const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.colu
 const kind = 'NetworkPolicy';
 
 const NetworkPolicyTableRow: React.FC<RowFunctionArgs<NetworkPolicyKind>> = ({ obj: np }) => {
+  const path = useClusterPrefixedPath(`/search/ns/${np.metadata.namespace}?kind=Pod`);
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -49,9 +51,7 @@ const NetworkPolicyTableRow: React.FC<RowFunctionArgs<NetworkPolicyKind>> = ({ o
       </TableData>
       <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         {_.isEmpty(np.spec.podSelector) ? (
-          <Link
-            to={`/search/ns/${np.metadata.namespace}?kind=Pod`}
-          >{`All pods within ${np.metadata.namespace}`}</Link>
+          <Link to={path}>{`All pods within ${np.metadata.namespace}`}</Link>
         ) : (
           <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />
         )}
@@ -176,6 +176,7 @@ const PeerRow: React.FunctionComponent<PeerRowProps> = ({
 }) => {
   const { t } = useTranslation();
   const style = { margin: '5px 0' };
+  const path = useClusterPrefixedPath(`/search/ns/${namespace}?kind=Pod`);
 
   return (
     <div className="row co-resource-list__item">
@@ -185,7 +186,7 @@ const PeerRow: React.FunctionComponent<PeerRowProps> = ({
         </div>
         <div style={style}>
           {_.isEmpty(mainPodSelector) ? (
-            <Link to={`/search/ns/${namespace}?kind=Pod`}>{`All pods within ${namespace}`}</Link>
+            <Link to={path}>{`All pods within ${namespace}`}</Link>
           ) : (
             <Selector selector={mainPodSelector} namespace={namespace} />
           )}

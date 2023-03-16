@@ -44,6 +44,7 @@ import {
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 
 import {
   ConsoleLinkModel,
@@ -1031,7 +1032,7 @@ export const NamespaceSummary = ({ ns }) => {
           <PullSecret namespace={ns} canViewSecrets={canListSecrets} />
           <dt>{t('public~NetworkPolicies')}</dt>
           <dd>
-            <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>
+            <Link to={useClusterPrefixedPath(`/k8s/ns/${ns.metadata.name}/networkpolicies`)}>
               {t('public~NetworkPolicies')}
             </Link>
           </dd>

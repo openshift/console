@@ -8,9 +8,12 @@ import { Label as PfLabel, LabelGroup as PfLabelGroup } from '@patternfly/react-
 import { withTranslation, WithTranslation } from 'react-i18next';
 /* eslint-enable import/named */
 import { K8sResourceKindReference, kindForReference } from '../../module/k8s';
+import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 
 export const Label: React.SFC<LabelProps> = ({ kind, name, value, expand }) => {
-  const href = `/search?kind=${kind}&q=${value ? encodeURIComponent(`${name}=${value}`) : name}`;
+  const href = useClusterPrefixedPath(
+    `/search?kind=${kind}&q=${value ? encodeURIComponent(`${name}=${value}`) : name}`,
+  );
   const kindOf = `co-m-${kindForReference(kind.toLowerCase())}`;
   const klass = classNames(kindOf, { 'co-m-expand': expand }, 'co-label');
 

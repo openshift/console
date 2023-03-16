@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Selector as SelectorKind } from '../../module/k8s';
 import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 
 const Requirement: React.FC<RequirementProps> = ({ kind, requirements, namespace = '' }) => {
   // Strip off any trailing '=' characters for valueless selectors
@@ -13,14 +14,19 @@ const Requirement: React.FC<RequirementProps> = ({ kind, requirements, namespace
     .replace(/=,/g, ',')
     .replace(/=$/g, '');
   const requirementAsUrlEncodedString = encodeURIComponent(requirementAsString);
-
-  const to = namespace
-    ? `/search/ns/${namespace}?kind=${kind}&q=${requirementAsUrlEncodedString}`
-    : `/search/all-namespaces?kind=${kind}&q=${requirementAsUrlEncodedString}`;
+  const nsPath = useClusterPrefixedPath(
+    `/search/ns/${namespace}?kind=${kind}&q=${requirementAsUrlEncodedString}`,
+  );
+  const path = useClusterPrefixedPath(
+    `/search/all-namespaces?kind=${kind}&q=${requirementAsUrlEncodedString}`,
+  );
 
   return (
     <div className="co-m-requirement">
-      <Link className={`co-m-requirement__link co-text-${kind.toLowerCase()}`} to={to}>
+      <Link
+        className={`co-m-requirement__link co-text-${kind.toLowerCase()}`}
+        to={namespace ? nsPath : path}
+      >
         <SearchIcon className="co-m-requirement__icon co-icon-flex-child" />
         <span className="co-m-requirement__label">{requirementAsString.replace(/,/g, ', ')}</span>
       </Link>

@@ -28,6 +28,7 @@ import {
   isDashboardsOverviewPrometheusActivity as isDynamicDashboardsOverviewPrometheusActivity,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
+import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 import { uniqueResource } from './utils';
 import { PrometheusResponse } from '../../../graphs';
 import { Link } from 'react-router-dom';
@@ -46,7 +47,7 @@ const RecentEvent = withDashboardResources(
     return (
       <RecentEventsBody
         events={resources.events as FirehoseResult<EventKind[]>}
-        moreLink={viewEvents}
+        moreLink={useClusterPrefixedPath(viewEvents)}
       />
     );
   },
@@ -198,7 +199,7 @@ export const ActivityCard: React.FC<{}> = React.memo(() => {
       <CardHeader>
         <CardTitle>{t('public~Activity')}</CardTitle>
         <CardActions className="co-overview-card__actions">
-          <Link to={viewEvents} data-test="view-events-link">
+          <Link to={useClusterPrefixedPath(viewEvents)} data-test="view-events-link">
             {t('public~View events')}
           </Link>
         </CardActions>

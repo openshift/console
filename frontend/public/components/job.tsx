@@ -37,6 +37,7 @@ import {
 import { ResourceEventStream } from './events';
 import { JobModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { useClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 
 const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => ({
   // t('public~Edit parallelism')
@@ -90,7 +91,12 @@ const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
         <LabelList kind={kind} labels={job.metadata.labels} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <Link to={`/k8s/ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
+        <Link
+          to={useClusterPrefixedPath(
+            `/k8s/ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`,
+          )}
+          title="pods"
+        >
           {job.status.succeeded || 0} of {completions}
         </Link>
       </TableData>

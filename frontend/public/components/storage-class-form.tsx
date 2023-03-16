@@ -18,6 +18,8 @@ import {
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk';
 import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
+import { ClusterContext } from '@console/app/src/components/detect-cluster/cluster';
+import { getClusterPrefixedPath } from '@console/app/src/components/detect-cluster/useClusterPrefixedPath';
 import {
   AsyncComponent,
   ButtonBar,
@@ -85,6 +87,9 @@ const StorageClassFormWithTranslation = withTranslation()(
       this.state = defaultState;
       this.previousName = '';
     }
+
+    static contextType = ClusterContext;
+    context!: React.ContextType<typeof ClusterContext>;
 
     defaultProvisionerObj: ProvisionerDetails = {
       title: '',
@@ -566,6 +571,7 @@ const StorageClassFormWithTranslation = withTranslation()(
     render() {
       const { t } = this.props;
       const { newStorageClass, fieldErrors } = this.state;
+      const { cluster } = this.context;
       const reclaimPolicyKey =
         newStorageClass.reclaim === null ? this.reclaimPolicies.Delete : newStorageClass.reclaim;
       const volumeBindingModeKey =
@@ -725,7 +731,9 @@ const StorageClassFormWithTranslation = withTranslation()(
                   </Button>
                   <Button
                     id="cancel"
-                    onClick={() => history.push('/k8s/cluster/storageclasses')}
+                    onClick={() =>
+                      history.push(getClusterPrefixedPath('/k8s/cluster/storageclasses', cluster))
+                    }
                     type="button"
                     variant="secondary"
                   >

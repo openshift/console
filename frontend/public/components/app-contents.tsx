@@ -362,9 +362,21 @@ const AppContents: React.FC<{}> = () => {
           )
         }
       />
-      <Route path="/search/all-namespaces" exact component={NamespaceFromURL(SearchPage)} />
-      <Route path="/search/ns/:ns" exact component={NamespaceFromURL(SearchPage)} />
-      <Route path="/search" exact component={NamespaceRedirect} />
+      <Route
+        path={[`${CLUSTER_ROUTE_PREFIX}/search/all-namespaces`, '/search/all-namespaces']}
+        exact
+        component={NamespaceFromURL(SearchPage)}
+      />
+      <Route
+        path={[`${CLUSTER_ROUTE_PREFIX}/search/ns/:ns`, '/search/ns/:ns']}
+        exact
+        component={NamespaceFromURL(SearchPage)}
+      />
+      <Route
+        path={[`${CLUSTER_ROUTE_PREFIX}/search`, '/search']}
+        exact
+        component={NamespaceRedirect}
+      />
 
       <LazyRoute
         path={[`${CLUSTER_ROUTE_PREFIX}/k8s/all-namespaces/import`, '/k8s/all-namespaces/import']}
