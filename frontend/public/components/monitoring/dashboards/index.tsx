@@ -625,36 +625,24 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
     <div
       className={`monitoring-dashboards__panel monitoring-dashboards__panel--${panelClassModifier}`}
     >
-      {isError ? (
-        <PFCard
-          className={classNames('monitoring-dashboards__card', {
-            'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
-          })}
-          data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
-        >
-          <CardHeader className="monitoring-dashboards__card-header">
-            <CardTitle>{panel.title}</CardTitle>
-          </CardHeader>
-          <CardBody className="co-dashboard-card__body--dashboard">
+      <PFCard
+        className={classNames('monitoring-dashboards__card', {
+          'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
+        })}
+        data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
+      >
+        <CardHeader className="monitoring-dashboards__card-header">
+          <CardTitle>{panel.title}</CardTitle>
+          <CardActions className="co-overview-card__actions">
+            {!isLoading && <QueryBrowserLink queries={queries} />}
+          </CardActions>
+        </CardHeader>
+        <CardBody className="co-dashboard-card__body--dashboard">
+          {isError ? (
             <>
               <RedExclamationCircleIcon /> {t('public~Error loading card')}
             </>
-          </CardBody>
-        </PFCard>
-      ) : (
-        <PFCard
-          className={classNames('monitoring-dashboards__card', {
-            'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
-          })}
-          data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
-        >
-          <CardHeader className="monitoring-dashboards__card-header">
-            <CardTitle>{panel.title}</CardTitle>
-            <CardActions className="co-overview-card__actions">
-              {!isLoading && <QueryBrowserLink queries={queries} />}
-            </CardActions>
-          </CardHeader>
-          <CardBody className="co-dashboard-card__body--dashboard">
+          ) : (
             <div className="monitoring-dashboards__card-body-content" ref={ref}>
               {isLoading || !wasEverVisible ? (
                 <div className={panel.type === 'graph' ? 'query-browser__wrapper' : ''}>
@@ -704,9 +692,9 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
                 </>
               )}
             </div>
-          </CardBody>
-        </PFCard>
-      )}
+          )}
+        </CardBody>
+      </PFCard>
     </div>
   );
 });

@@ -80,7 +80,7 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries, namespace, custo
 
   const tick = () => {
     const allPromises = _.map(queries, (query) =>
-      _.isEmpty(query) || query === ''
+      _.isEmpty(query)
         ? Promise.resolve()
         : safeFetch(
             getPrometheusURL(
