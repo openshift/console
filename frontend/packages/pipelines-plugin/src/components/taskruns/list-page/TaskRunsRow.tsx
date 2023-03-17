@@ -7,6 +7,7 @@ import { TaskRunKind } from '../../../types';
 import { getTaskRunKebabActions } from '../../../utils/pipeline-actions';
 import { getModelReferenceFromTaskKind } from '../../../utils/pipeline-augment';
 import { taskRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
+import { pipelineRunDuration } from '../../../utils/pipeline-utils';
 import { TektonResourceLabel } from '../../pipelines/const';
 import TaskRunStatus from '../status/TaskRunStatus';
 import { tableColumnClasses } from './taskruns-table';
@@ -65,7 +66,8 @@ const TaskRunsRow: React.FC<RowFunctionArgs<TaskRunKind>> = ({ obj, customData }
     <TableData className={tableColumnClasses[6]}>
       <Timestamp timestamp={obj?.status?.startTime} />
     </TableData>
-    <TableData className={tableColumnClasses[7]}>
+    <TableData className={tableColumnClasses[7]}>{pipelineRunDuration(obj)}</TableData>
+    <TableData className={tableColumnClasses[8]}>
       <ResourceKebab actions={getTaskRunKebabActions()} kind={taskRunsReference} resource={obj} />
     </TableData>
   </>
