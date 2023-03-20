@@ -39,6 +39,10 @@ export const taskRunWithResults: TaskRunKind = {
   kind: 'TaskRun',
   metadata: {
     name: 'sum-three-pipeline-run-second-add-vbr96',
+    namespace: 'test-ns',
+    labels: {
+      'tekton.dev/pipelineRun': 'sum-three-pipeline-run-second-add-xyxy',
+    },
   },
   spec: {
     params: [
@@ -59,7 +63,9 @@ export const taskRunWithResults: TaskRunKind = {
     timeout: '1h0m0s',
   },
   status: {
-    completionTime: '2021-02-09T09:57:03Z',
+    completionTime: 'Mon Mar 27 2023 18:09:11',
+    startTime: 'Mon Mar 27 2023 18:08:19',
+    podName: 'sum-three-pipeline-run-second-add-al6kxl-deploy-pod',
     conditions: [
       {
         lastTransitionTime: '2021-02-09T09:57:03Z',
