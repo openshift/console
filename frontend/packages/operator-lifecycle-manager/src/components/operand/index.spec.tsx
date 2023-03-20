@@ -603,7 +603,7 @@ describe('OperandStatus', () => {
     };
     wrapper = shallow(<OperandStatus operand={obj} />);
     expect(wrapper.childAt(0).text()).toEqual('Status');
-    expect(wrapper.childAt(2).props().title).toEqual('Running');
+    expect(wrapper.childAt(3).props().title).toEqual('Running');
   });
 
   it('displays the correct status for a `phase` value of `Running`', () => {
@@ -622,7 +622,7 @@ describe('OperandStatus', () => {
     };
     wrapper = shallow(<OperandStatus operand={obj} />);
     expect(wrapper.childAt(0).text()).toEqual('Phase');
-    expect(wrapper.childAt(2).props().title).toEqual('Running');
+    expect(wrapper.childAt(3).props().title).toEqual('Running');
   });
 
   it('displays the correct status for a `phase` value of `Running`', () => {
@@ -641,7 +641,7 @@ describe('OperandStatus', () => {
     };
     wrapper = shallow(<OperandStatus operand={obj} />);
     expect(wrapper.childAt(0).text()).toEqual('Phase');
-    expect(wrapper.childAt(2).props().title).toEqual('Running');
+    expect(wrapper.childAt(3).props().title).toEqual('Running');
   });
 
   it('displays the correct status for a `state` value of `Running`', () => {
@@ -658,7 +658,7 @@ describe('OperandStatus', () => {
     };
     wrapper = shallow(<OperandStatus operand={obj} />);
     expect(wrapper.childAt(0).text()).toEqual('State');
-    expect(wrapper.childAt(2).props().title).toEqual('Running');
+    expect(wrapper.childAt(3).props().title).toEqual('Running');
   });
 
   it('displays the correct status for a condition status of `True`', () => {
@@ -678,7 +678,7 @@ describe('OperandStatus', () => {
     };
     wrapper = shallow(<OperandStatus operand={obj} />);
     expect(wrapper.childAt(0).text()).toEqual('Condition');
-    expect(wrapper.childAt(2).props().title).toEqual('Running');
+    expect(wrapper.childAt(3).props().title).toEqual('Running');
   });
 
   it('displays the `-` status when no conditions are `True`', () => {

@@ -1068,7 +1068,7 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
       {!_.isEmpty(links) && (
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~Launcher')} />
-          <ul className="list-unstyled">
+          <ul className="pf-c-list pf-m-plain">
             {_.map(_.sortBy(links, 'spec.text'), (link) => {
               return (
                 <li key={link.metadata.uid}>

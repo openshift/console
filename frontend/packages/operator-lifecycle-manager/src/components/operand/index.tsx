@@ -147,7 +147,9 @@ export const OperandStatus: React.FC<OperandStatusProps> = ({ operand }) => {
   const { type, value } = status;
   return (
     <span className="co-icon-and-text">
-      {type}: {value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />}
+      {type}
+      <span className="pf-u-pr-sm">:</span>{' '}
+      {value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />}
     </span>
   );
 };

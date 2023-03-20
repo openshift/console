@@ -613,7 +613,7 @@ const OperandErrorList: React.FC<OperandErrorListProps> = ({ operandErrors, csvN
       {_.map(operandErrors, (operandError) => (
         <li
           key={operandError.operand.metadata.uid}
-          className="list-unstyled co-operator-uninstall-alert__list-item"
+          className="pf-c-list pf-m-plain co-operator-uninstall-alert__list-item"
         >
           <OperandLink obj={operandError.operand} csvName={csvName} onClick={cancel} />{' '}
           {operandError.operand.kind}
