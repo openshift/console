@@ -37,7 +37,7 @@ const uninstallAndVerify = () => {
   cy.resourceShouldBeDeleted(testName, testOperand.kind, testOperand.exampleName);
 };
 
-xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
+describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   before(() => {
     cy.login();
     cy.visit('/');
@@ -94,11 +94,9 @@ xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   });
 
   it(`attempts to uninstall the Operator, shows 'Error uninstalling Operator' alert`, () => {
-    // invalidate the request so operator doesn't get uninstalled, as opposed to
-    // letting request go thru unchanged and mocking the response
+    // invalidate the request so operator doesn't get uninstalled
     cy.intercept('DELETE', '/api/kubernetes/apis/operators.coreos.com/*/namespaces/**', (req) => {
-      // ex: .../api/kubernetes/apis/operators.coreos.com/v1alpha1/namespaces/test-mpnsw/subscriptions/datagrid-foobar
-      req.url = `${req.url}-foobar`;
+      req.destroy();
     }).as('deleteOperatorSubscriptionAndCSV');
 
     cy.log('attempt to uninstall the Operator');
