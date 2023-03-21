@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
+import {
+  CatalogItem,
+  CatalogItemDetailsDescription,
+  CatalogItemDetailsProperty,
+  ExtensionHook,
+} from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { ExternalLink } from '@console/internal/components/utils';
 import { APIError } from '@console/shared';
@@ -15,16 +20,17 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
     const createLabel = t('devconsole~Create');
     const type = 'Devfile';
 
-    const detailsProperties = [
-      {
+    const detailsProperties: CatalogItemDetailsProperty[] = [];
+    if (gitRepoUrl) {
+      detailsProperties.push({
         label: t('devconsole~Sample repository'),
         value: (
           <ExternalLink href={gitRepoUrl} additionalClassName="co-break-all" text={gitRepoUrl} />
         ),
-      },
-    ];
+      });
+    }
 
-    const detailsDescriptions = [
+    const detailsDescriptions: CatalogItemDetailsDescription[] = [
       {
         value: <p>{description}</p>,
       },
