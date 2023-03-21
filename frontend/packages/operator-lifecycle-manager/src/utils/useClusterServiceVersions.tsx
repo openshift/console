@@ -2,7 +2,12 @@ import * as React from 'react';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import {
+  ExtensionHook,
+  CatalogItem,
+  CatalogItemDetailsDescription,
+  CatalogItemDetailsProperty,
+} from '@console/dynamic-plugin-sdk';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -53,7 +58,7 @@ const normalizeClusterServiceVersions = (
           : all.concat([cur]),
       [],
     )
-    .map((desc) => {
+    .map<CatalogItem>((desc) => {
       const { creationTimestamp } = desc.csv.metadata;
       const uid = `${desc.csv.metadata.uid}-${desc.displayName}`;
       const { description } = desc;
@@ -74,7 +79,7 @@ const normalizeClusterServiceVersions = (
         .toLowerCase()
         .replace(/\s/g, '');
 
-      const detailsProperties = [
+      const detailsProperties: CatalogItemDetailsProperty[] = [
         {
           label: t('olm~Capability level'),
           value: capabilityLevel,
@@ -87,7 +92,7 @@ const normalizeClusterServiceVersions = (
         </ExpandCollapseDescription>
       );
 
-      const detailsDescriptions = [
+      const detailsDescriptions: CatalogItemDetailsDescription[] = [
         {
           value: <p>{description}</p>,
         },
