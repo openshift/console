@@ -31,7 +31,7 @@ const normalizeBuilderImages = (
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
     const href = `/samples/ns/${activeNamespace}/${name}/${imageStreamNS}`;
     const createLabel = t('devconsole~Create');
-    const type = 'Sample';
+    const type = 'BuilderImage';
 
     const item: CatalogItem = {
       uid: `${type}-${uid}`,
