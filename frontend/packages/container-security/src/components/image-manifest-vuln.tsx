@@ -5,6 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
@@ -30,7 +31,12 @@ import {
   Loading,
 } from '@console/internal/components/utils';
 import { referenceForModel, PodKind, ContainerStatus } from '@console/internal/module/k8s';
-import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
+import {
+  EmptyStateResourceBadge,
+  GreenCheckCircleIcon,
+  labelForNodeKind,
+  labelKeyForNodeKind,
+} from '@console/shared/';
 import { vulnPriority, totalFor, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import { ImageManifestVuln } from '../types';
@@ -61,6 +67,13 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
   const { t } = useTranslation();
   return (
     <>
+      <Helmet>
+        <title data-title-id={`${labelForNodeKind(props.obj.kind)} · Details`}>
+          {props.obj.metadata.name}
+          {' · '} {t(labelKeyForNodeKind(props.obj.kind))}
+          {' · '} {t('container-security~Details')}
+        </title>
+      </Helmet>
       <div className="co-m-pane__body">
         <SectionHeading text={t('container-security~Image Manifest Vulnerabilities details')} />
         <ImageVulnerabilityToggleGroup obj={props.obj} />
@@ -99,6 +112,7 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
 };
 
 export const AffectedPods: React.FC<AffectedPodsProps> = (props) => {
+  const { t } = useTranslation();
   const affectedPodsFor = (pods: PodKind[]) =>
     pods.filter((p) =>
       _.keys(props.obj.status?.affectedPods ?? {}).includes(
@@ -107,15 +121,24 @@ export const AffectedPods: React.FC<AffectedPodsProps> = (props) => {
     );
 
   return (
-    <ListPage
-      kind="Pod"
-      namespace={props.obj.metadata.namespace}
-      canCreate={false}
-      showTitle={false}
-      ListComponent={(listProps) => (
-        <DefaultList {...listProps} data={affectedPodsFor(listProps.data)} />
-      )}
-    />
+    <>
+      <Helmet>
+        <title data-title-id={`${labelForNodeKind(props.obj.kind)} · Affected Pods`}>
+          {props.obj.metadata.name}
+          {' · '} {t(labelKeyForNodeKind(props.obj.kind))}
+          {' · '} {t('container-security~Affected Pods')}
+        </title>
+      </Helmet>
+      <ListPage
+        kind="Pod"
+        namespace={props.obj.metadata.namespace}
+        canCreate={false}
+        showTitle={false}
+        ListComponent={(listProps) => (
+          <DefaultList {...listProps} data={affectedPodsFor(listProps.data)} />
+        )}
+      />
+    </>
   );
 };
 

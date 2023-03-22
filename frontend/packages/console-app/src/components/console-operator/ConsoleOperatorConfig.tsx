@@ -12,6 +12,7 @@ import {
   TableVariant,
 } from '@patternfly/react-table';
 import * as _ from 'lodash';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview, WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
@@ -40,7 +41,13 @@ import {
   NotLoadedDynamicPluginInfo,
 } from '@console/plugin-sdk/src';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import { consolePluginModal, CONSOLE_OPERATOR_CONFIG_NAME, Status } from '@console/shared';
+import {
+  consolePluginModal,
+  CONSOLE_OPERATOR_CONFIG_NAME,
+  labelForNodeKind,
+  labelKeyForNodeKind,
+  Status,
+} from '@console/shared';
 
 const consoleOperatorConfigReference: K8sResourceKindReference = referenceForModel(
   ConsoleOperatorConfigModel,
@@ -207,37 +214,49 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
     });
   };
 
-  return consolePluginsLoaded ? (
-    <div className="co-m-pane__body">
-      {obj.spec?.managementState === 'Unmanaged' && (
-        <Alert
-          className="co-alert"
-          variant="info"
-          isInline
-          title={t(
-            'console-app~Console operator spec.managementState is unmanaged. Changes to plugins will have no effect.',
+  return (
+    <>
+      <Helmet>
+        <title data-title-id={`${labelForNodeKind(obj.kind)} · Console plugins`}>
+          {obj.metadata.name}
+          {' · '} {t(labelKeyForNodeKind(obj.kind))}
+          {' · '} {t('console-app~Console plugins')}
+        </title>
+      </Helmet>
+      {consolePluginsLoaded ? (
+        <div className="co-m-pane__body">
+          {obj.spec?.managementState === 'Unmanaged' && (
+            <Alert
+              className="co-alert"
+              variant="info"
+              isInline
+              title={t(
+                'console-app~Console operator spec.managementState is unmanaged. Changes to plugins will have no effect.',
+              )}
+            />
           )}
-        />
-      )}
-      {rows.length ? (
-        <Table
-          aria-label={t('console-app~Console plugins table')}
-          cells={headers}
-          gridBreakPoint={TableGridBreakpoint.none}
-          onSort={onSort}
-          rows={rows}
-          sortBy={sortBy}
-          variant={TableVariant.compact}
-        >
-          <TableHeader />
-          <TableBody />
-        </Table>
+          {rows.length ? (
+            <Table
+              aria-label={t('console-app~Console plugins table')}
+              cells={headers}
+              gridBreakPoint={TableGridBreakpoint.none}
+              onSort={onSort}
+              rows={rows}
+              sortBy={sortBy}
+              variant={TableVariant.compact}
+            >
+              <TableHeader />
+              <TableBody />
+            </Table>
+          ) : (
+            <EmptyBox label={t('console-app~console plugins')} />
+          )}
+        </div>
       ) : (
-        <EmptyBox label={t('console-app~console plugins')} />
+        <LoadingBox />
       )}
-    </div>
-  ) : (
-    <LoadingBox />
+      ;
+    </>
   );
 };
 

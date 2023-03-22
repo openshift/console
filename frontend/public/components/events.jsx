@@ -22,6 +22,7 @@ import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared/src/constants';
+import { labelForNodeKind, labelKeyForNodeKind } from '@console/shared';
 import {
   Box,
   Dropdown,
@@ -586,13 +587,25 @@ export const ResourceEventStream_ = ({
     kind,
     metadata: { name, namespace, uid },
   },
-}) => (
-  <EventStreamWithTranslation
-    fieldSelector={`involvedObject.uid=${uid},involvedObject.name=${name},involvedObject.kind=${kind}`}
-    namespace={namespace}
-    resourceEventStream
-  />
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Helmet>
+        <title data-title-id={`${labelForNodeKind(kind)} · Events`}>
+          {name}
+          {' · '} {t(labelKeyForNodeKind(kind))}
+          {' · '} {t('public~Events')}
+        </title>
+      </Helmet>
+      <EventStreamWithTranslation
+        fieldSelector={`involvedObject.uid=${uid},involvedObject.name=${name},involvedObject.kind=${kind}`}
+        namespace={namespace}
+        resourceEventStream
+      />
+    </>
+  );
+};
 
 export { ResourceEventStream_ as ResourceEventStream };
 

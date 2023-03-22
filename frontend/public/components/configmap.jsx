@@ -1,7 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import Helmet from 'react-helmet';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { labelForNodeKind, labelKeyForNodeKind } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
@@ -110,6 +112,13 @@ const ConfigMapsDetailsPage = (props) => {
   const ConfigMapDetails = ({ obj: configMap }) => {
     return (
       <>
+        <Helmet>
+          <title data-title-id={`${labelForNodeKind(configMap.kind)} · Details`}>
+            {configMap.metadata.name}
+            {' · '} {t(labelKeyForNodeKind(configMap.kind))}
+            {' · '} {t('public~Details')}
+          </title>
+        </Helmet>
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~ConfigMap details')} />
           <div className="row">

@@ -51,6 +51,7 @@
   "Rollback to Revision {{revision}}": "Rollback to Revision {{revision}}",
   "No release notes available": "No release notes available",
   "Release notes are not available for this Helm Chart.": "Release notes are not available for this Helm Chart.",
+  "Details": "Details",
   "Resources by name": "Resources by name",
   "Name": "Name",
   "Type": "Type",

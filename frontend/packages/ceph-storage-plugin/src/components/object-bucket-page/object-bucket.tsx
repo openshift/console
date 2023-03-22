@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import Helmet from 'react-helmet';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import { Status } from '@console/shared';
+import { labelForNodeKind, labelKeyForNodeKind, Status } from '@console/shared';
 import {
   DetailsPage,
   ListPage,
@@ -74,6 +75,13 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   ];
   return (
     <>
+      <Helmet>
+        <title data-title-id={`${labelForNodeKind(obj.kind)} · Details`}>
+          {obj.metadata.name}
+          {' · '} {t(labelKeyForNodeKind(obj.kind))}
+          {' · '} {t('ceph-storage-plugin~Details')}
+        </title>
+      </Helmet>
       <div className="co-m-pane__body">
         <SectionHeading text={t('ceph-storage-plugin~Object Bucket Details')} />
         <div className="row">

@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { GraphElement, isNode, Node, observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { labelKeyForNodeKind } from './list-view-utils';
+import { labelKeyForNodeKind } from '@console/shared';
 import ListElementWrapper from './ListElementWrapper';
 
 interface TopologyListViewKindGroupProps {

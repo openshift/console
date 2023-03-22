@@ -1,5 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import Helmet from 'react-helmet';
+import i18next from 'i18next';
+import { labelForNodeKind, labelKeyForNodeKind } from '@console/shared';
 
 import {
   ContainerDropdown,
@@ -63,7 +66,6 @@ export class PodLogs extends React.Component {
       initContainers: {},
     };
   }
-
   static getDerivedStateFromProps({ obj: build }, { currentKey }) {
     const newState = {};
     const containers = _.get(build, 'spec.containers', []);
@@ -97,14 +99,23 @@ export class PodLogs extends React.Component {
     );
 
     return (
-      <div className="co-m-pane__body co-m-pane__body--full-height">
-        <ResourceLog
-          containerName={currentContainer ? currentContainer.name : ''}
-          dropdown={containerDropdown}
-          resource={this.props.obj}
-          resourceStatus={currentContainerStatus}
-        />
-      </div>
+      <>
+        <Helmet>
+          <title data-title-id={`${labelForNodeKind(this.props.obj.kind)} · Logs`}>
+            {this.props.obj.metadata.name}
+            {' · '} {i18next.t(labelKeyForNodeKind(this.props.obj.kind))}
+            {' · '} {i18next.t('public~Logs')}
+          </title>
+        </Helmet>
+        <div className="co-m-pane__body co-m-pane__body--full-height">
+          <ResourceLog
+            containerName={currentContainer ? currentContainer.name : ''}
+            dropdown={containerDropdown}
+            resource={this.props.obj}
+            resourceStatus={currentContainerStatus}
+          />
+        </div>
+      </>
     );
   }
 }

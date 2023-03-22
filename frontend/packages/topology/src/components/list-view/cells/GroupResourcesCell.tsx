@@ -3,9 +3,8 @@ import { DataListCell } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ResourceIcon } from '@console/internal/components/utils';
-import { isValidUrl } from '@console/shared';
+import { isValidUrl, labelForNodeKind } from '@console/shared';
 import { showKind, useDisplayFilters } from '../../../filters';
-import { labelForNodeKind } from '../list-view-utils';
 
 interface GroupResourcesCellProps {
   group: Node;

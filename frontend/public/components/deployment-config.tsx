@@ -1,4 +1,6 @@
 import * as React from 'react';
+import Helmet from 'react-helmet';
+import i18next from 'i18next';
 import * as _ from 'lodash-es';
 import {
   Status,
@@ -6,6 +8,8 @@ import {
   ActionMenu,
   ActionMenuVariant,
   LazyActionMenu,
+  labelKeyForNodeKind,
+  labelForNodeKind,
 } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
@@ -266,6 +270,13 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
   const { t } = useTranslation();
   return (
     <>
+      <Helmet>
+        <title data-title-id={`${labelForNodeKind(dc.kind)} · Details`}>
+          {dc.metadata.name}
+          {' · '} {t(labelKeyForNodeKind(dc.kind))}
+          {' · '} {t('public~Details')}
+        </title>
+      </Helmet>
       <div className="co-m-pane__body">
         <SectionHeading text={t('public~DeploymentConfig details')} />
         {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
@@ -309,30 +320,51 @@ const EnvironmentPage = (props) => (
 );
 
 const envPath = ['spec', 'template', 'spec', 'containers'];
-const environmentComponent = (props) => (
-  <EnvironmentPage
-    obj={props.obj}
-    rawEnvData={props.obj.spec.template.spec}
-    envPath={envPath}
-    readOnly={false}
-  />
-);
+const environmentComponent = ({ obj }) => {
+  return (
+    <>
+      <Helmet>
+        <title data-title-id={`${labelForNodeKind(obj.kind)} · Environment`}>
+          {obj.metadata.name}
+          {' · '} {i18next.t(labelKeyForNodeKind(obj.kind))}
+          {' · '} {i18next.t('public~Environment')}
+        </title>
+      </Helmet>
+      <EnvironmentPage
+        obj={obj}
+        rawEnvData={obj.spec.template.spec}
+        envPath={envPath}
+        readOnly={false}
+      />
+    </>
+  );
+};
 
 const ReplicationControllersTab: React.FC<ReplicationControllersTabProps> = ({ obj }) => {
+  const { t } = useTranslation();
   const {
     metadata: { namespace, name },
   } = obj;
 
   // Hide the create button to avoid confusion when showing replication controllers for an object.
   return (
-    <ReplicationControllersPage
-      showTitle={false}
-      namespace={namespace}
-      selector={{
-        'openshift.io/deployment-config.name': name,
-      }}
-      canCreate={false}
-    />
+    <>
+      <Helmet>
+        <title data-title-id={`${labelForNodeKind(obj.kind)} · ReplicationControllers`}>
+          {obj.metadata.name}
+          {' · '} {t(labelKeyForNodeKind(obj.kind))}
+          {' · '} {t('public~ReplicationControllers')}
+        </title>
+      </Helmet>
+      <ReplicationControllersPage
+        showTitle={false}
+        namespace={namespace}
+        selector={{
+          'openshift.io/deployment-config.name': name,
+        }}
+        canCreate={false}
+      />
+    </>
   );
 };
 // t('public~ReplicationControllers')

@@ -106,7 +106,12 @@ export const eventListener: TelemetryEventListener = async (
       }
       break;
     case 'page':
-      (window as any).analytics.page(undefined, properties, anonymousIP);
+      {
+        const titleElement = document.querySelector('title');
+        const titleValue = titleElement.getAttribute('data-title-id');
+        properties.title = titleValue || document.title;
+        (window as any).analytics.page(undefined, properties, anonymousIP);
+      }
       break;
     default:
       (window as any).analytics.track(eventType, properties, anonymousIP);

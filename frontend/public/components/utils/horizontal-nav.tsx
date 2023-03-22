@@ -1,10 +1,12 @@
 import * as React from 'react';
+import Helmet from 'react-helmet';
+import i18next, { TFunction } from 'i18next';
 import * as classNames from 'classnames';
 import { History, Location } from 'history';
 import * as _ from 'lodash-es';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+
 import {
   Redirect,
   Route,
@@ -15,6 +17,7 @@ import {
   matchPath,
   RouteComponentProps,
 } from 'react-router-dom';
+import { labelForNodeKind, labelKeyForNodeKind } from '@console/shared';
 import {
   HorizontalNavTab as DynamicResourceNavTab,
   isHorizontalNavTab as DynamicIsResourceNavTab,
@@ -37,9 +40,20 @@ import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/pl
 
 const removeLeadingSlash = (str: string | undefined) => str?.replace(/^\//, '') || '';
 
-export const editYamlComponent = (props) => (
-  <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
-);
+export const editYamlComponent = ({ obj }) => {
+  return (
+    <>
+      <Helmet>
+        <title data-title-id={`${labelForNodeKind(obj.kind)} · YAML`}>
+          {obj.metadata.name}
+          {' · '} {i18next.t(labelKeyForNodeKind(obj.kind))}
+          {' · '} {i18next.t('public~YAML')}
+        </title>
+      </Helmet>
+      <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={obj} />
+    </>
+  );
+};
 export const viewYamlComponent = (props) => (
   <AsyncComponent
     loader={() => import('../edit-yaml').then((c) => c.EditYAML)}
@@ -65,13 +79,22 @@ class PodsComponentWithTranslation extends React.PureComponent<
     // Otherwise it might seem like you click "Create Pod" to add replicas instead
     // of scaling the owner.
     return (
-      <PodsPage
-        showTitle={false}
-        namespace={namespace}
-        selector={selector}
-        canCreate={false}
-        showNodes={showNodes}
-      />
+      <>
+        <Helmet>
+          <title data-title-id={`${labelForNodeKind(this.props.obj.kind)} · Pods`}>
+            {this.props.obj.metadata.name}
+            {' · '} {t(labelKeyForNodeKind(this.props.obj.kind))}
+            {' · '} {t('public~Pods')}
+          </title>
+        </Helmet>
+        <PodsPage
+          showTitle={false}
+          namespace={namespace}
+          selector={selector}
+          canCreate={false}
+          showNodes={showNodes}
+        />
+      </>
     );
   }
 }

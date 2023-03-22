@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Select, SelectOption, SelectVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
-import { labelForNodeKind, labelKeyForNodeKind } from '../components/list-view/list-view-utils';
+import { labelForNodeKind, labelKeyForNodeKind } from '@console/shared';
 import { TopologyDisplayFilterType, DisplayFilters } from '../topology-types';
 import './KindFilterDropdown.scss';
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { labelKeyForNodeKind } from '@console/shared';
 import { OdcNodeModel } from '../../topology-types';
-import { labelKeyForNodeKind } from '../list-view/list-view-utils';
 import ApplicationGroupResource from './ApplicationGroupResource';
 
 import './TopologyApplicationResources.scss';
