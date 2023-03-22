@@ -8,6 +8,7 @@ import { ResourceIcon, resourceListPathFromModel } from '@console/internal/compo
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { NamespaceModel, PodModel } from '@console/internal/models';
 import { K8sResourceCommon, PodKind, Selector } from '@console/internal/module/k8s';
+import { useActiveCluster } from '@console/shared';
 
 const maxPreviewPods = 10;
 const labelFilterQueryParamSeparator = ',';
@@ -104,6 +105,7 @@ type PodsPreviewProps = {
 export const PodsPreview: React.FunctionComponent<PodsPreviewProps> = (props) => {
   const { namespace, podSelector, namespaceSelector } = props;
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
 
   const [safeNsSelector, offendingNsSelector] = React.useMemo(
     () => safeSelector(namespaceSelector),
@@ -266,7 +268,11 @@ export const PodsPreview: React.FunctionComponent<PodsPreviewProps> = (props) =>
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
-                  href={`${resourceListPathFromModel(PodModel, namespace)}${podsFilterQuery}`}
+                  href={`${resourceListPathFromModel(
+                    PodModel,
+                    namespace,
+                    cluster,
+                  )}${podsFilterQuery}`}
                   data-test="pods-preview-footer-link"
                 >
                   {t('public~View all {{total}} results', {

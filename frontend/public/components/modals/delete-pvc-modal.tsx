@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { HandlePromiseProps, withHandlePromise, resourceListPathFromModel } from '../utils';
-import { getName, YellowExclamationTriangleIcon } from '@console/shared';
+import { getName, useActiveCluster, YellowExclamationTriangleIcon } from '@console/shared';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { isPVCDelete, PVCDelete } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import {
@@ -19,6 +19,7 @@ import { PersistentVolumeClaimModel } from '../../models';
 const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
   const { pvc, inProgress, errorMessage, handlePromise, close, cancel } = props;
   const [pvcDeleteExtensions] = useResolvedExtensions<PVCDelete>(isPVCDelete);
+  const [cluster] = useActiveCluster();
   const pvcName = getName(pvc);
   const { t } = useTranslation();
   const pvcMetadata = { metadata: { ...pvc?.metadata } };
@@ -35,8 +36,10 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
 
     handlePromise(Promise.all([promise, ...extensionPromises]), () => {
       close();
-      // Redirect to resourcce list page if the resouce is deleted.
-      history.push(resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata.namespace));
+      // Redirect to resource list page if the resource is deleted.
+      history.push(
+        resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata.namespace, cluster),
+      );
     });
   };
 

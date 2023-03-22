@@ -10,6 +10,10 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import CloseButton from '@console/shared/src/components/close-button';
 
+import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
+import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
+import DetectCluster from '@console/app/src/components/detect-cluster/DetectCluster';
+
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
 import { history } from '../utils/router';
@@ -44,21 +48,27 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
     return (
       <Provider store={store}>
         <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
-          <Modal
-            isOpen={true}
-            contentLabel={i18next.t('public~Modal')}
-            onRequestClose={_handleClose}
-            className={classNames('modal-dialog', props.modalClassName)}
-            overlayClassName="co-overlay"
-            shouldCloseOnOverlayClick={!props.blocking}
-            parentSelector={() => document.getElementById('modal-container')}
-          >
-            <Component
-              {...(_.omit(props, 'blocking', 'modalClassName') as any)}
-              cancel={_handleCancel}
-              close={_handleClose}
-            />
-          </Modal>
+          <DetectPerspective>
+            <DetectNamespace>
+              <DetectCluster>
+                <Modal
+                  isOpen={true}
+                  contentLabel={i18next.t('public~Modal')}
+                  onRequestClose={_handleClose}
+                  className={classNames('modal-dialog', props.modalClassName)}
+                  overlayClassName="co-overlay"
+                  shouldCloseOnOverlayClick={!props.blocking}
+                  parentSelector={() => document.getElementById('modal-container')}
+                >
+                  <Component
+                    {...(_.omit(props, 'blocking', 'modalClassName') as any)}
+                    cancel={_handleCancel}
+                    close={_handleClose}
+                  />
+                </Modal>
+              </DetectCluster>
+            </DetectNamespace>
+          </DetectPerspective>
         </Router>
       </Provider>
     );

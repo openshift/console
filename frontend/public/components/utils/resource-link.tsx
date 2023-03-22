@@ -58,8 +58,8 @@ export const resourcePathFromModel = (
   return url;
 };
 
-export const resourceListPathFromModel = (model: K8sModel, namespace?: string) =>
-  resourcePathFromModel(model, null, namespace);
+export const resourceListPathFromModel = (model: K8sModel, namespace?: string, cluster?: string) =>
+  resourcePathFromModel(model, null, namespace, cluster);
 
 /**
  * NOTE: This will not work for runtime-defined resources. Use a `connect`-ed component like `ResourceLink` instead.

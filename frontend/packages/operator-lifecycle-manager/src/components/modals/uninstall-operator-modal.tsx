@@ -31,7 +31,7 @@ import {
   k8sPatch,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { useActiveCluster, YellowExclamationTriangleIcon } from '@console/shared';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { useOperands } from '@console/shared/src/hooks/useOperands';
@@ -54,6 +54,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   subscription,
 }) => {
   const { t } = useTranslation();
+  const [cluster] = useActiveCluster();
   const [
     handleOperatorUninstallPromise,
     operatorUninstallInProgress,
@@ -230,9 +231,11 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       window.location.pathname.split('/').includes(subscription.metadata.name) ||
       window.location.pathname.split('/').includes(subscription?.status?.installedCSV)
     ) {
-      history.push(resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()));
+      history.push(
+        resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace(), cluster),
+      );
     }
-  }, [close, subscription]);
+  }, [close, cluster, subscription]);
 
   React.useEffect(() => {
     if (isSubmitFinished && !hasSubmitErrors) {
