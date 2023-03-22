@@ -452,7 +452,7 @@ export const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
           { name: t('public~Pods'), path: getBreadcrumbPath(props.match, 'pods', cluster) },
           {
             name: props.match.params.podName,
-            path: resourcePath('Pod', props.match.params.podName, props.match.params.ns),
+            path: resourcePath('Pod', props.match.params.podName, props.match.params.ns, cluster),
           },
           { name: t('public~Container details'), path: props.match.url },
         ]}

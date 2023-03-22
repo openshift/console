@@ -14,10 +14,11 @@ import {
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { podPhase, PodKind, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import {
-  usePodsWatcher,
+  BuildConfigData,
   getPodsForResource,
   getResourcesToWatchForPods,
-  BuildConfigData,
+  useActiveCluster,
+  usePodsWatcher,
 } from '@console/shared';
 
 const kind: string = 'Pod';
@@ -106,10 +107,11 @@ export const podCompare = (pod1: PodKind, pod2: PodKind): number => {
 };
 
 const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
+  const [cluster] = useActiveCluster();
+  const { t } = useTranslation();
   const {
     metadata: { name, namespace },
   } = pod;
-  const { t } = useTranslation();
   return (
     <li className="list-group-item container-fluid">
       <div className="row">
@@ -123,7 +125,9 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
           <PodTraffic podName={name} namespace={namespace} tooltipFlag />
         </span>
         <span className="col-xs-3 text-right">
-          <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('public~View logs')}</Link>
+          <Link to={`${resourcePath(kind, name, namespace, cluster)}/logs`}>
+            {t('public~View logs')}
+          </Link>
         </span>
       </div>
     </li>

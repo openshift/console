@@ -8,7 +8,7 @@ import { resourcePath, ExternalLink } from './utils';
 import { fromNow } from './utils/datetime';
 import { K8sResourceKind } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
-import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
+import { GreenCheckCircleIcon, RedExclamationCircleIcon, useActiveCluster } from '@console/shared';
 
 const getStages = (status): any[] => (status && status.stages) || [];
 const getJenkinsStatus = (resource: K8sResourceKind) => {
@@ -70,9 +70,10 @@ const BuildSummaryTimestamp: React.SFC<BuildSummaryTimestampProps> = ({ timestam
 );
 
 const BuildPipelineSummary: React.SFC<BuildPipelineSummaryProps> = ({ obj }) => {
+  const [cluster] = useActiveCluster();
   const { name, namespace } = obj.metadata;
   const buildNumber = getBuildNumber(obj);
-  const path: string = resourcePath(obj.kind, name, namespace);
+  const path: string = resourcePath(obj.kind, name, namespace, cluster);
   const { t } = useTranslation();
   return (
     <div className="build-pipeline__summary">

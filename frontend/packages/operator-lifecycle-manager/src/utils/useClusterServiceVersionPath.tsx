@@ -15,7 +15,7 @@ export const useClusterServiceVersionPath = (csv: ClusterServiceVersionKind): st
     csv.metadata.namespace === 'openshift' && // Is global csv
     activeNamespace !== ALL_NAMESPACES_KEY
   ) {
-    return resourcePath(csvReference, csv.metadata.name, activeNamespace);
+    return resourcePath(csvReference, csv.metadata.name, activeNamespace, cluster);
   }
   return resourceObjPath(csv, csvReference);
 };

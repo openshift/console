@@ -3,7 +3,12 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { getMachineAWSPlacement, getMachineRole, getMachineSetInstanceType } from '@console/shared';
+import {
+  getMachineAWSPlacement,
+  getMachineRole,
+  getMachineSetInstanceType,
+  useActiveCluster,
+} from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ListPageBody, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import { Tooltip, Button } from '@patternfly/react-core';
@@ -390,6 +395,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
   );
 
   const MachineSetTableRow: React.FC<RowProps<MachineSetKind>> = ({ obj }) => {
+    const [cluster] = useActiveCluster();
     return (
       <>
         <TableData {...tableColumnInfo[0]}>
@@ -411,6 +417,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
               machineSetReference,
               obj.metadata.name,
               obj.metadata.namespace,
+              cluster,
             )}/machines`}
           >
             {t('public~{{numReadyReplicas}} of {{numDesiredReplicas}} machine', {

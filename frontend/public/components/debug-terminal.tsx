@@ -198,11 +198,11 @@ export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = ({ match }) =
           { name: t('public~Pods'), path: getBreadcrumbPath(match, 'pods', cluster) },
           {
             name: podName,
-            path: resourcePath('Pod', podName, ns),
+            path: resourcePath('Pod', podName, ns, cluster),
           },
           {
             name: t('public~Container details'),
-            path: `${resourcePath('Pod', podName, ns)}/containers/${name}`,
+            path: `${resourcePath('Pod', podName, ns, cluster)}/containers/${name}`,
           },
           { name: t('public~Debug container'), path: url },
         ]}

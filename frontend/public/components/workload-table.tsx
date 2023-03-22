@@ -15,6 +15,7 @@ import {
   resourcePath,
   Selector,
 } from './utils';
+import { useActiveCluster } from '@console/shared';
 
 const tableColumnClasses = [
   '',
@@ -32,6 +33,7 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
   customActionMenu,
   customData,
 }) => {
+  const [cluster] = useActiveCluster();
   const { t } = useTranslation();
   return (
     <>
@@ -46,7 +48,7 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <Link
-          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
+          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace, cluster)}/pods`}
           title="pods"
         >
           {t('public~{{statusReplicas}} of {{specReplicas}} pods', {

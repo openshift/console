@@ -14,7 +14,13 @@ import {
   CardTitle,
 } from '@patternfly/react-core';
 
-import { ONE_HOUR, ONE_MINUTE, Status, usePrometheusGate } from '@console/shared';
+import {
+  ONE_HOUR,
+  ONE_MINUTE,
+  Status,
+  useActiveNamespace,
+  usePrometheusGate,
+} from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   K8sResourceKindReference,
@@ -123,6 +129,7 @@ export enum BuildStrategyType {
 }
 
 export const BuildLogLink = ({ build }) => {
+  const [cluster] = useActiveNamespace();
   const {
     metadata: { name, namespace },
   } = build;
@@ -131,18 +138,21 @@ export const BuildLogLink = ({ build }) => {
   return isPipeline ? (
     <BuildPipelineLogLink obj={build} />
   ) : (
-    <Link to={`${resourcePath('Build', name, namespace)}/logs`}>{t('public~View logs')}</Link>
+    <Link to={`${resourcePath('Build', name, namespace, cluster)}/logs`}>
+      {t('public~View logs')}
+    </Link>
   );
 };
 
 export const BuildNumberLink = ({ build }) => {
+  const [cluster] = useActiveNamespace();
   const {
     metadata: { name, namespace },
   } = build;
   const buildNumber = getBuildNumber(build);
   const title = _.isFinite(buildNumber) ? `#${buildNumber}` : name;
 
-  return <Link to={resourcePath('Build', name, namespace)}>{title}</Link>;
+  return <Link to={resourcePath('Build', name, namespace, cluster)}>{title}</Link>;
 };
 
 // TODO update to use QueryBrowser for each graph

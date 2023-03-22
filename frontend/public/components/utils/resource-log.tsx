@@ -27,7 +27,7 @@ import {
 } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
 import { FLAGS, LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
-import { useUserSettings } from '@console/shared';
+import { useActiveCluster, useUserSettings } from '@console/shared';
 import { LoadingInline, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
@@ -170,6 +170,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
   logType,
   showLogTypeSelect,
 }) => {
+  const [cluster] = useActiveCluster();
   const { t } = useTranslation();
   const [isLogTypeOpen, setLogTypeOpen] = React.useState(false);
 
@@ -266,6 +267,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
               'Pod',
               resource.metadata.name,
               resource.metadata.namespace,
+              cluster,
             )}/containers/${containerName}/debug`}
             data-test="debug-container-link"
           >

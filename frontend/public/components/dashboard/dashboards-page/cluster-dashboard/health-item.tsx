@@ -35,6 +35,7 @@ import { withDashboardResources, DashboardItemProps } from '../../with-dashboard
 import { uniqueResource } from './utils';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 import { ClusterDashboardContext } from './context';
+import { useActiveCluster } from '@console/shared';
 
 const OperatorRow: React.FC<OperatorRowProps & {
   LoadingComponent: () => JSX.Element;
@@ -60,6 +61,7 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
   operatorExtensions,
   dynamicOperatorSubsystems,
 }) => {
+  const [cluster] = useActiveCluster();
   const { t } = useTranslation();
   const sections = [
     ...operatorExtensions.map((o, index) => {
@@ -73,7 +75,9 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
             resources={operatorResources}
             getOperatorsWithStatuses={o.getOperatorsWithStatuses}
             title={o.title}
-            linkTo={o.viewAllLink || resourcePath(o.resources[0].kind)}
+            linkTo={
+              o.viewAllLink || resourcePath(o.resources[0].kind, undefined, undefined, cluster)
+            }
             Row={OperatorRow}
             Component={o.operatorRowLoader}
             isResolved={false}
@@ -92,7 +96,9 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
             resources={operatorResources}
             getOperatorsWithStatuses={o.getOperatorsWithStatuses}
             title={o.title}
-            linkTo={o.viewAllLink || resourcePath(o.resources[0].kind)}
+            linkTo={
+              o.viewAllLink || resourcePath(o.resources[0].kind, undefined, undefined, cluster)
+            }
             Row={OperatorRow}
             Component={o.operatorRowLoader}
             isResolved

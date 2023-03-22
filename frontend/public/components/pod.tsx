@@ -32,6 +32,7 @@ import {
   ActionMenuVariant,
   useUserSettingsCompatibility,
   usePrometheusGate,
+  useActiveCluster,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
@@ -658,6 +659,7 @@ const PodStatusPopover: React.FC<PodStatusPopoverProps> = ({
 };
 
 export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
+  const [cluster] = useActiveCluster();
   const status = podPhase(pod);
   const unschedulableCondition = pod.status?.conditions?.find(
     (condition) => condition.reason === 'Unschedulable' && condition.status === 'False',
@@ -696,11 +698,20 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
             {t('public~To troubleshoot, view logs and events, then debug in terminal.')}
           </Text>
           <Text component={TextVariants.p}>
-            <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/logs`}>
+            <Link
+              to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace, cluster)}/logs`}
+            >
               {t('public~View logs')}
             </Link>
             &emsp;
-            <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/events`}>
+            <Link
+              to={`${resourcePath(
+                'Pod',
+                pod.metadata.name,
+                pod.metadata.namespace,
+                cluster,
+              )}/events`}
+            >
               {t('public~View events')}
             </Link>
           </Text>
@@ -714,6 +725,7 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
                       'Pod',
                       pod.metadata.name,
                       pod.metadata.namespace,
+                      cluster,
                     )}/containers/${container.name}/debug`}
                     data-test={`popup-debug-container-link-${container.name}`}
                   >

@@ -64,7 +64,12 @@ export const resourceListPathFromModel = (model: K8sModel, namespace?: string, c
 /**
  * NOTE: This will not work for runtime-defined resources. Use a `connect`-ed component like `ResourceLink` instead.
  */
-export const resourcePath = (kind: K8sResourceKindReference, name?: string, namespace?: string) => {
+export const resourcePath = (
+  kind: K8sResourceKindReference,
+  name?: string,
+  namespace?: string,
+  cluster?: string,
+) => {
   const model = modelFor(kind);
   if (!model) {
     if (!unknownKinds.has(kind)) {
@@ -75,7 +80,7 @@ export const resourcePath = (kind: K8sResourceKindReference, name?: string, name
     return;
   }
 
-  return resourcePathFromModel(model, name, namespace);
+  return resourcePathFromModel(model, name, namespace, cluster);
 };
 
 export const resourceObjPath = (obj: K8sResourceKind, kind: K8sResourceKindReference) =>

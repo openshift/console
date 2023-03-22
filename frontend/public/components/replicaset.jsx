@@ -30,6 +30,7 @@ import {
   ActionServiceProvider,
   ActionMenu,
   ActionMenuVariant,
+  useActiveCluster,
 } from '@console/shared/src';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
@@ -140,6 +141,7 @@ const tableColumnClasses = [
 ];
 
 const ReplicaSetTableRow = ({ obj }) => {
+  const [cluster] = useActiveCluster();
   const { t } = useTranslation();
   const resourceKind = referenceFor(obj);
   const context = { [resourceKind]: obj };
@@ -156,7 +158,7 @@ const ReplicaSetTableRow = ({ obj }) => {
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <Link
-          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
+          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace, cluster)}/pods`}
           title="pods"
         >
           {t('public~{{count1}} of {{count2}} pods', {

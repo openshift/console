@@ -28,7 +28,7 @@ const ClusterServiceVersionRow: React.FC<OperatorRowProps<ClusterServiceVersionK
           undefined,
           cluster,
         )}?name=${name}`
-      : resourcePath(referenceForModel(ClusterServiceVersionModel), name, namespace);
+      : resourcePath(referenceForModel(ClusterServiceVersionModel), name, namespace, cluster);
   const value = `${pluralize(
     operatorStatus.operators.length,
     'project',

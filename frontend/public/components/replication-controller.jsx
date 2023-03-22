@@ -10,6 +10,7 @@ import {
   ActionServiceProvider,
   ActionMenu,
   ActionMenuVariant,
+  useActiveCluster,
 } from '@console/shared';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
@@ -159,6 +160,7 @@ const tableColumnClasses = [
 ];
 
 const ReplicationControllerTableRow = ({ obj }) => {
+  const [cluster] = useActiveCluster();
   const { t } = useTranslation();
   const phase = obj?.metadata?.annotations?.['openshift.io/deployment.phase'];
   const resourceKind = referenceFor(obj);
@@ -177,7 +179,7 @@ const ReplicationControllerTableRow = ({ obj }) => {
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <Link
-          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
+          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace, cluster)}/pods`}
           title="pods"
         >
           {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
