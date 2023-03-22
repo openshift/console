@@ -2,7 +2,12 @@ import * as React from 'react';
 import { Form, Stack, StackItem } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
+import {
+  CatalogItem,
+  CatalogItemDetailsDescription,
+  CatalogItemDetailsProperty,
+  ExtensionHook,
+} from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes, SectionHeading } from '@console/internal/components/utils';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { BOOT_SOURCE_AVAILABLE } from '../../../constants';
@@ -48,7 +53,7 @@ const normalizeVmTemplates = (
   activeNamespace: string = '',
   t: TFunction,
 ): CatalogItem[] =>
-  templates.map((temp) => {
+  templates.map<CatalogItem>((temp) => {
     const [tmp] = temp?.variants;
     const sourceStatus = getTemplateSourceStatus({
       pods,
@@ -93,7 +98,7 @@ const normalizeVmTemplates = (
       </Stack>
     );
 
-    const detailsDescription = [
+    const detailsDescription: CatalogItemDetailsDescription[] = [
       {
         value: (
           <Stack hasGutter>
@@ -167,7 +172,7 @@ const normalizeVmTemplates = (
       },
     ];
 
-    const detailsProperties = [
+    const detailsProperties: CatalogItemDetailsProperty[] = [
       {
         label: t('kubevirt-plugin~Support'),
         value: <VMTemplateSupportDescription template={tmp} />,
