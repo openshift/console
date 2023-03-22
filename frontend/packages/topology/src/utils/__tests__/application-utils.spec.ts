@@ -160,6 +160,24 @@ describe('ApplicationUtils ', () => {
       .catch((err) => fail(err));
   });
 
+  it('Should delete all the specific models related to deployment config if the build config is present', async (done) => {
+    const nodeModel = await getTopologyData(MockResources, 'nodejs-with-bc', 'testproject');
+
+    cleanUpWorkload(nodeModel.resource)
+      .then(() => {
+        const allArgs = spy.calls.allArgs();
+        const removedModels = allArgs.map((arg) => arg[0]);
+        expect(spy.calls.count()).toEqual(5);
+        expect(removedModels).toContain(BuildConfigModel);
+        expect(removedModels).toContain(DeploymentConfigModel);
+        expect(removedModels).toContain(ImageStreamModel);
+        expect(removedModels).toContain(ServiceModel);
+        expect(removedModels).toContain(RouteModel);
+        done();
+      })
+      .catch((err) => fail(err));
+  });
+
   it('Should delete all the specific models related to daemonsets', async (done) => {
     const nodeModel = await getTopologyData(MockResources, 'daemonset-testing', 'test-project');
     cleanUpWorkload(nodeModel.resource)

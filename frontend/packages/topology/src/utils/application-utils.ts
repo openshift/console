@@ -199,15 +199,16 @@ export const cleanUpWorkload = async (resource: K8sResourceKind): Promise<K8sRes
 
   const deleteModels = [ServiceModel, RouteModel, ImageStreamModel];
   const knativeDeleteModels = [KnativeServiceModel, ImageStreamModel];
-  if (isBuildConfigPresent) {
-    deleteModels.push(BuildConfigModel);
-    knativeDeleteModels.push(BuildConfigModel);
-  }
   const resourceData = _.cloneDeep(resource);
   const deleteRequest = (model: K8sKind, resourceObj: K8sResourceKind) => {
     const req = safeKill(model, resourceObj);
     req && reqs.push(req);
   };
+  if (isBuildConfigPresent) {
+    resourceBuildConfigs.forEach((bc) => {
+      deleteRequest(BuildConfigModel, bc);
+    });
+  }
   const batchDeleteRequests = (models: K8sKind[], resourceObj: K8sResourceKind): void => {
     models.forEach((model) => deleteRequest(model, resourceObj));
   };
