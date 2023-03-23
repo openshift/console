@@ -17,7 +17,7 @@ import {
 import { perspective } from '@console/dev-console/integration-tests/support/pages/app';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { pipelineActions, pipelineBuilderText } from '../../constants';
+import { pipelineActions, pipelineBuilderText, pipelineTabs } from '../../constants';
 import {
   pipelineRunDetailsPO,
   pipelineRunsPO,
@@ -254,11 +254,11 @@ Then('user will be redirected to Pipeline Run Details page', () => {
 });
 
 Then('page will be redirected to pipeline runs page', () => {
-  pipelineRunsPage.verifyTitle();
+  pipelinesPage.verifySelectedTab(pipelineTabs.PipelineRuns);
 });
 
 Then('user will remain on pipeline runs page', () => {
-  pipelineRunsPage.verifyTitle();
+  pipelinesPage.verifySelectedTab(pipelineTabs.PipelineRuns);
 });
 
 Then('side bar is displayed with the pipelines section', () => {

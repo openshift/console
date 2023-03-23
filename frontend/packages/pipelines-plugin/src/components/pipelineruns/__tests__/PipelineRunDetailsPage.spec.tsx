@@ -11,7 +11,7 @@ import PipelineRunDetailsPage from '../PipelineRunDetailsPage';
 import * as utils from '../triggered-by';
 
 const menuActions = jest.spyOn(utils, 'useMenuActionsWithUserAnnotation');
-const breadCrumbs = jest.spyOn(hookUtils, 'usePipelinesBreadcrumbsFor');
+const breadCrumbs = jest.spyOn(hookUtils, 'useDevPipelinesBreadcrumbsFor');
 type PipelineRunDetailsPageProps = React.ComponentProps<typeof PipelineRunDetailsPage>;
 const i18nNS = 'public';
 
