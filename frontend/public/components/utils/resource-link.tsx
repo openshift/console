@@ -83,8 +83,11 @@ export const resourcePath = (
   return resourcePathFromModel(model, name, namespace, cluster);
 };
 
-export const resourceObjPath = (obj: K8sResourceKind, kind: K8sResourceKindReference) =>
-  resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'));
+export const resourceObjPath = (
+  obj: K8sResourceKind,
+  kind: K8sResourceKindReference,
+  cluster?: string,
+) => resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'), cluster);
 
 export const ResourceLink: React.FC<ResourceLinkProps> = ({
   className,

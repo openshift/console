@@ -459,11 +459,12 @@ export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   catalogSourceMissing,
   obj,
 }) => {
+  const [cluster] = useActiveCluster();
   const { t } = useTranslation();
   const csvName = obj?.spec?.name;
   const menuActions = [Kebab.factory.Edit, () => uninstall(obj)];
   const namespace = getNamespace(obj);
-  const route = resourceObjPath(obj, referenceForModel(SubscriptionModel));
+  const route = resourceObjPath(obj, referenceForModel(SubscriptionModel), cluster);
 
   return (
     <>

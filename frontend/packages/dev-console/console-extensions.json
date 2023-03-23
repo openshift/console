@@ -1047,7 +1047,12 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/k8s/ns/:ns/deployments/~new/form", "/k8s/ns/:ns/deployments/:name/form"],
+      "path": [
+        "/c/:cluster/k8s/ns/:ns/deployments/~new/form",
+        "/k8s/ns/:ns/deployments/~new/form",
+        "/c/:cluster/k8s/ns/:ns/deployments/:name/form",
+        "/k8s/ns/:ns/deployments/:name/form"
+      ],
       "component": { "$codeRef": "deployment.DeploymentPage" }
     }
   },
@@ -1056,7 +1061,9 @@
     "properties": {
       "exact": true,
       "path": [
+        "/c/:cluster/k8s/ns/:ns/deploymentconfigs/~new/form",
         "/k8s/ns/:ns/deploymentconfigs/~new/form",
+        "/c/:cluster/k8s/ns/:ns/deploymentconfigs/:name/form",
         "/k8s/ns/:ns/deploymentconfigs/:name/form"
       ],
       "component": { "$codeRef": "deployment.DeploymentConfigPage" }

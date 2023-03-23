@@ -82,11 +82,17 @@ export const retryRollout = (model: K8sKind, obj: K8sResourceKind) => {
 };
 
 export const DeploymentActionFactory: ResourceActionFactory = {
-  EditDeployment: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+  EditDeployment: (
+    kind: K8sKind,
+    obj: K8sResourceKind,
+    relatedResource?: K8sResourceKind,
+    message?: JSX.Element,
+    cluster?: string,
+  ): Action => ({
     id: `edit-deployment`,
     label: i18next.t('console-app~Edit {{kind}}', { kind: kind.kind }),
     cta: {
-      href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/form`,
+      href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind, cluster)}/form`,
     },
     // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
     accessReview: asAccessReview(kind, obj, 'update'),

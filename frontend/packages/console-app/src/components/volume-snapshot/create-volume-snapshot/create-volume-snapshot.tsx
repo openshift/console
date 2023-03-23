@@ -45,7 +45,7 @@ import {
   apiVersionForModel,
   ListKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace, getAnnotations } from '@console/shared';
+import { getName, getNamespace, getAnnotations, useActiveCluster } from '@console/shared';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (
@@ -132,6 +132,7 @@ const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
 const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
   const { namespace, pvcName, handlePromise, inProgress, errorMessage } = props;
 
+  const [cluster] = useActiveCluster();
   const { t } = useTranslation();
   const [selectedPVCName, setSelectedPVCName] = React.useState(pvcName);
   const [pvcObj, setPVCObj] = React.useState<PersistentVolumeClaimKind>(null);
@@ -212,7 +213,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
     };
 
     handlePromise(k8sCreate(VolumeSnapshotModel, snapshotTemplate), (resource) => {
-      history.push(resourceObjPath(resource, referenceFor(resource)));
+      history.push(resourceObjPath(resource, referenceFor(resource), cluster));
     });
   };
 

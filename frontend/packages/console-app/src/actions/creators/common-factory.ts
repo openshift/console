@@ -16,6 +16,7 @@ export type ResourceActionCreator = (
   obj: K8sResourceKind,
   relatedResource?: K8sResourceKind,
   message?: JSX.Element,
+  cluster?: string,
 ) => Action;
 
 export type ResourceActionFactory = { [name: string]: ResourceActionCreator };
@@ -37,11 +38,17 @@ export const CommonActionFactory: ResourceActionFactory = {
       }),
     accessReview: asAccessReview(kind, obj, 'delete'),
   }),
-  Edit: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+  Edit: (
+    kind: K8sKind,
+    obj: K8sResourceKind,
+    relatedResource?: K8sResourceKind,
+    message?: JSX.Element,
+    cluster?: string,
+  ): Action => ({
     id: `edit-resource`,
     label: i18next.t('console-app~Edit {{kind}}', { kind: kind.kind }),
     cta: {
-      href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
+      href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind, cluster)}/yaml`,
     },
     // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
     accessReview: asAccessReview(kind, obj, 'update'),
@@ -100,13 +107,20 @@ export const CommonActionFactory: ResourceActionFactory = {
       }),
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
-  AddStorage: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+  AddStorage: (
+    kind: K8sKind,
+    obj: K8sResourceKind,
+    relatedResource?: K8sResourceKind,
+    message?: JSX.Element,
+    cluster?: string,
+  ): Action => ({
     id: 'add-storage',
     label: i18next.t('console-app~Add storage'),
     cta: {
       href: `${resourceObjPath(
         obj,
         kind.crd ? referenceForModel(kind) : kind.kind,
+        cluster,
       )}/attach-storage`,
     },
     accessReview: asAccessReview(kind, obj, 'patch'),
@@ -117,11 +131,12 @@ export const getCommonResourceActions = (
   kind: K8sKind,
   obj: K8sResourceKind,
   message?: JSX.Element,
+  cluster?: string,
 ): Action[] => {
   return [
     CommonActionFactory.ModifyLabels(kind, obj),
     CommonActionFactory.ModifyAnnotations(kind, obj),
-    CommonActionFactory.Edit(kind, obj),
+    CommonActionFactory.Edit(kind, obj, undefined, undefined, cluster),
     CommonActionFactory.Delete(kind, obj, undefined, message),
   ];
 };

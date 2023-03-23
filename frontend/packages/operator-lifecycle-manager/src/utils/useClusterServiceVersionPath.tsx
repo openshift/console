@@ -17,5 +17,5 @@ export const useClusterServiceVersionPath = (csv: ClusterServiceVersionKind): st
   ) {
     return resourcePath(csvReference, csv.metadata.name, activeNamespace, cluster);
   }
-  return resourceObjPath(csv, csvReference);
+  return resourceObjPath(csv, csvReference, cluster);
 };

@@ -37,13 +37,14 @@ import {
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { isCephProvisioner } from '@console/shared';
+import { isCephProvisioner, useActiveCluster } from '@console/shared';
 import { getRequestedPVCSize } from '@console/shared/src/selectors';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
 
 import './_clone-pvc-modal.scss';
 
 const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
+  const [cluster] = useActiveCluster();
   const { t } = useTranslation();
   const { close, cancel, resource, handlePromise, errorMessage, inProgress } = props;
   const { name: pvcName, namespace } = resource?.metadata;
@@ -112,7 +113,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
 
     return handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj), (cloneResource) => {
       close();
-      history.push(resourceObjPath(cloneResource, referenceFor(cloneResource)));
+      history.push(resourceObjPath(cloneResource, referenceFor(cloneResource), cluster));
     });
   };
 
