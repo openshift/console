@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { getAPIVersionForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { ContainerSpec, EnvVar, K8sResourceKind } from '@console/internal/module/k8s';
+import { TRIGGERS_ANNOTATION } from '@console/shared';
 import { getTriggerAnnotation } from '../../../utils/resource-label-utils';
 import {
   checkIfTriggerExists,
@@ -636,6 +637,8 @@ export const convertEditFormToDeployment = (
       },
     };
   } else {
+    newDeployment?.metadata?.annotations?.[TRIGGERS_ANNOTATION] &&
+      delete newDeployment.metadata.annotations[TRIGGERS_ANNOTATION];
     newDeployment = {
       ...newDeployment,
       metadata: {
