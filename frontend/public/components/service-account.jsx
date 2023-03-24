@@ -1,7 +1,7 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
@@ -13,8 +13,6 @@ import {
   Timestamp,
 } from './utils';
 import { ServiceAccountModel } from '../models';
-import { SecretsPage } from './secret';
-import { useTranslation } from 'react-i18next';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(ServiceAccountModel), ...common];
@@ -57,35 +55,17 @@ const ServiceAccountTableRow = ({ obj: serviceaccount }) => {
 };
 
 const Details = ({ obj: serviceaccount }) => {
-  const {
-    metadata: { namespace },
-    secrets,
-  } = serviceaccount;
-  const filters = { selector: { field: 'metadata.name', values: new Set(_.map(secrets, 'name')) } };
   const { t } = useTranslation();
 
   return (
-    <>
-      <div className="co-m-pane__body">
-        <SectionHeading text={t('public~ServiceAccount details')} />
-        <div className="row">
-          <div className="col-md-6">
-            <ResourceSummary resource={serviceaccount} />
-          </div>
+    <div className="co-m-pane__body">
+      <SectionHeading text={t('public~ServiceAccount details')} />
+      <div className="row">
+        <div className="col-md-6">
+          <ResourceSummary resource={serviceaccount} />
         </div>
       </div>
-      <div className="co-m-pane__body co-m-pane__body--section-heading">
-        <SectionHeading text={t('public~Secrets')} />
-      </div>
-      <SecretsPage
-        kind="Secret"
-        canCreate={false}
-        namespace={namespace}
-        filters={filters}
-        autoFocus={false}
-        showTitle={false}
-      />
-    </>
+    </div>
   );
 };
 
