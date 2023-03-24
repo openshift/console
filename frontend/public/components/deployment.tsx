@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import Helmet from 'react-helmet';
 import {
   ActionServiceProvider,
   LazyActionMenu,
@@ -9,8 +7,6 @@ import {
   ActionMenuVariant,
   Status,
   usePrometheusGate,
-  labelForNodeKind,
-  labelKeyForNodeKind,
 } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
@@ -155,13 +151,6 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
 
   return (
     <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(deployment.kind)} · Details`}>
-          {deployment.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(deployment.kind))}
-          {' · '} {t('public~Details')}
-        </title>
-      </Helmet>
       <div className="co-m-pane__body">
         <SectionHeading text={t('public~Deployment details')} />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
@@ -216,28 +205,16 @@ const EnvironmentPage = (props) => (
 );
 
 const envPath = ['spec', 'template', 'spec', 'containers'];
-const environmentComponent = ({ obj }) => {
-  return (
-    <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · Environment`}>
-          {obj.metadata.name}
-          {' · '} {i18next.t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {i18next.t('public~Environment')}
-        </title>
-      </Helmet>
-      <EnvironmentPage
-        obj={obj}
-        rawEnvData={obj.spec.template.spec}
-        envPath={envPath}
-        readOnly={false}
-      />
-    </>
-  );
-};
+const environmentComponent = (props) => (
+  <EnvironmentPage
+    obj={props.obj}
+    rawEnvData={props.obj.spec.template.spec}
+    envPath={envPath}
+    readOnly={false}
+  />
+);
 
 const ReplicaSetsTab: React.FC<ReplicaSetsTabProps> = ({ obj }) => {
-  const { t } = useTranslation();
   const {
     metadata: { namespace },
     spec: { selector },
@@ -245,21 +222,12 @@ const ReplicaSetsTab: React.FC<ReplicaSetsTabProps> = ({ obj }) => {
 
   // Hide the create button to avoid confusion when showing replica sets for an object.
   return (
-    <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · ReplicaSets`}>
-          {obj.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {t('public~ReplicaSets')}
-        </title>
-      </Helmet>
-      <ReplicaSetsPage
-        showTitle={false}
-        namespace={namespace}
-        selector={selector}
-        canCreate={false}
-      />
-    </>
+    <ReplicaSetsPage
+      showTitle={false}
+      namespace={namespace}
+      selector={selector}
+      canCreate={false}
+    />
   );
 };
 

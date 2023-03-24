@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
@@ -10,35 +9,25 @@ import {
   Kebab,
 } from '@console/internal/components/utils';
 import { VolumeSnapshotClassKind } from '@console/internal/module/k8s';
-import { labelForNodeKind, labelKeyForNodeKind } from '@console/shared';
 
 const { editYaml, events } = navFactory;
 
 const Details: React.FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
-    <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · Details`}>
-          {obj.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {t('console-app~Details')}
-        </title>
-      </Helmet>
-      <div className="co-m-pane__body">
-        <SectionHeading text={t('console-app~VolumeSnapshotClass details')} />
-        <div className="row">
-          <div className="col-md-6 col-xs-12">
-            <ResourceSummary resource={obj}>
-              <dt>{t('console-app~Driver')}</dt>
-              <dd>{obj?.driver}</dd>
-              <dt>{t('console-app~Deletion policy')}</dt>
-              <dd>{obj?.deletionPolicy}</dd>
-            </ResourceSummary>
-          </div>
+    <div className="co-m-pane__body">
+      <SectionHeading text={t('console-app~VolumeSnapshotClass details')} />
+      <div className="row">
+        <div className="col-md-6 col-xs-12">
+          <ResourceSummary resource={obj}>
+            <dt>{t('console-app~Driver')}</dt>
+            <dd>{obj?.driver}</dd>
+            <dt>{t('console-app~Deletion policy')}</dt>
+            <dd>{obj?.deletionPolicy}</dd>
+          </ResourceSummary>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

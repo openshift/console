@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
@@ -18,13 +17,7 @@ import {
   VolumeSnapshotClassModel,
 } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotKind } from '@console/internal/module/k8s';
-import {
-  Status,
-  snapshotSource,
-  FLAGS,
-  labelForNodeKind,
-  labelKeyForNodeKind,
-} from '@console/shared';
+import { Status, snapshotSource, FLAGS } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { volumeSnapshotStatus } from '../../status';
 
@@ -48,68 +41,59 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
 
   return (
-    <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · Details`}>
-          {obj.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {t('console-app~Details')}
-        </title>
-      </Helmet>
-      <div className="co-m-pane__body">
-        <SectionHeading text={t('console-app~VolumeSnapshot details')} />
-        <div className="row">
-          <div className="col-md-6 col-xs-12">
-            <ResourceSummary resource={obj}>
-              <dt>{t('console-app~Status')}</dt>
-              <dd>
-                <Status status={volumeSnapshotStatus(obj)} />
-              </dd>
-            </ResourceSummary>
-          </div>
-          <div className="col-md-6">
-            <dl className="co-m-pane__details">
-              <dt>{t('console-app~Size')}</dt>
-              <dd>{size ? sizeMetrics : '-'}</dd>
-              <dt>{t('console-app~Source')}</dt>
-              <dd>
+    <div className="co-m-pane__body">
+      <SectionHeading text={t('console-app~VolumeSnapshot details')} />
+      <div className="row">
+        <div className="col-md-6 col-xs-12">
+          <ResourceSummary resource={obj}>
+            <dt>{t('console-app~Status')}</dt>
+            <dd>
+              <Status status={volumeSnapshotStatus(obj)} />
+            </dd>
+          </ResourceSummary>
+        </div>
+        <div className="col-md-6">
+          <dl className="co-m-pane__details">
+            <dt>{t('console-app~Size')}</dt>
+            <dd>{size ? sizeMetrics : '-'}</dd>
+            <dt>{t('console-app~Source')}</dt>
+            <dd>
+              <ResourceLink
+                kind={referenceForModel(sourceModel)}
+                name={sourceName}
+                namespace={namespace}
+              />
+            </dd>
+            {canListVSC && (
+              <>
+                <dt>{t('console-app~VolumeSnapshotContent')}</dt>
+                <dd data-test="details-item-value__VSC">
+                  {snapshotContent ? (
+                    <ResourceLink
+                      kind={referenceForModel(VolumeSnapshotContentModel)}
+                      name={snapshotContent}
+                    />
+                  ) : (
+                    '-'
+                  )}
+                </dd>
+              </>
+            )}
+            <dt>{t('console-app~VolumeSnapshotClass')}</dt>
+            <dd data-test="details-item-value__SC">
+              {snapshotClass ? (
                 <ResourceLink
-                  kind={referenceForModel(sourceModel)}
-                  name={sourceName}
-                  namespace={namespace}
+                  kind={referenceForModel(VolumeSnapshotClassModel)}
+                  name={snapshotClass}
                 />
-              </dd>
-              {canListVSC && (
-                <>
-                  <dt>{t('console-app~VolumeSnapshotContent')}</dt>
-                  <dd data-test="details-item-value__VSC">
-                    {snapshotContent ? (
-                      <ResourceLink
-                        kind={referenceForModel(VolumeSnapshotContentModel)}
-                        name={snapshotContent}
-                      />
-                    ) : (
-                      '-'
-                    )}
-                  </dd>
-                </>
+              ) : (
+                '-'
               )}
-              <dt>{t('console-app~VolumeSnapshotClass')}</dt>
-              <dd data-test="details-item-value__SC">
-                {snapshotClass ? (
-                  <ResourceLink
-                    kind={referenceForModel(VolumeSnapshotClassModel)}
-                    name={snapshotClass}
-                  />
-                ) : (
-                  '-'
-                )}
-              </dd>
-            </dl>
-          </div>
+            </dd>
+          </dl>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

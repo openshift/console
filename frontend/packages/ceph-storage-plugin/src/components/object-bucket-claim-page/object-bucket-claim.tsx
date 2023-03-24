@@ -2,7 +2,6 @@ import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
   DetailsPage,
@@ -21,7 +20,7 @@ import {
   SectionHeading,
 } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { labelForNodeKind, labelKeyForNodeKind, Status, useFlag } from '@console/shared';
+import { Status, useFlag } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { GetSecret } from './secret';
 import { menuActionCreator, menuActions } from './menu-actions';
@@ -88,13 +87,6 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
 
   return (
     <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · Details`}>
-          {obj.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {t('ceph-storage-plugin~Details')}
-        </title>
-      </Helmet>
       <div className="co-m-pane__body">
         <SectionHeading text={t('ceph-storage-plugin~Object Bucket Claim Details')} />
         <div className="row">

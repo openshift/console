@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import { MultiListPage } from '@console/internal/components/factory';
@@ -10,7 +9,6 @@ import {
   modelFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { labelForNodeKind, labelKeyForNodeKind } from '@console/shared';
 import { HelmRelease } from '../../../types/helm-types';
 import { flattenReleaseResources, loadHelmManifestResources } from '../../../utils/helm-utils';
 import HelmReleaseResourcesList from './HelmReleaseResourcesList';
@@ -21,10 +19,9 @@ export interface HelmReleaseResourcesProps {
     name?: string;
   }>;
   customData: HelmRelease;
-  obj?: K8sResourceKind;
 }
 
-const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, customData, obj }) => {
+const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, customData }) => {
   const { t } = useTranslation();
   const namespace = match.params.ns;
   const helmManifestResources = loadHelmManifestResources(customData);
@@ -43,22 +40,13 @@ const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, cust
     },
   );
   return (
-    <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · Resources`}>
-          {obj.metadata.labels.name}
-          {' · '} {t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {t('helm-plugin~Resources')}
-        </title>
-      </Helmet>
-      <MultiListPage
-        filterLabel={t('helm-plugin~Resources by name')}
-        resources={firehoseResources}
-        flatten={flattenReleaseResources}
-        label={t('helm-plugin~Resources')}
-        ListComponent={HelmReleaseResourcesList}
-      />
-    </>
+    <MultiListPage
+      filterLabel={t('helm-plugin~Resources by name')}
+      resources={firehoseResources}
+      flatten={flattenReleaseResources}
+      label={t('helm-plugin~Resources')}
+      ListComponent={HelmReleaseResourcesList}
+    />
   );
 };
 

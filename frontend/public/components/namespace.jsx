@@ -41,8 +41,6 @@ import {
   REQUESTER_FILTER,
   useFlag,
   usePrometheusGate,
-  labelForNodeKind,
-  labelKeyForNodeKind,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
@@ -1058,11 +1056,7 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   return (
     <div>
       <Helmet>
-        <title data-title-id={`${labelForNodeKind(ns.kind)} · Details`}>
-          {ns.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(ns.kind))}
-          {' · '} {t('public~Details')}
-        </title>
+        <title>{t('public~Project details')}</title>
       </Helmet>
       <div className="co-m-pane__body">
         {!customData?.hideHeading && (

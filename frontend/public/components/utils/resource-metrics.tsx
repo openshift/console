@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import Helmet from 'react-helmet';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { labelForNodeKind, labelKeyForNodeKind } from '@console/shared';
 import { Grid, GridItem, Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 
 import { QueryBrowser } from '../monitoring/query-browser';
@@ -27,54 +25,45 @@ export const ResourceMetricsDashboard: React.FC<ResourceMetricsDashboardProps> =
   const { t } = useTranslation();
   const queries = useResourceMetricsQueries(obj);
   return queries ? (
-    <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · Metrics`}>
-          {obj.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {t('public~Metrics')}
-        </title>
-      </Helmet>
-      <Dashboard className="resource-metrics-dashboard">
-        <Grid hasGutter>
-          <GridItem xl={6} lg={12}>
-            <ResourceMetricsDashboardCard
-              namespace={obj.metadata.namespace}
-              queries={queries[ResourceUtilizationQuery.MEMORY]}
-              title={t('public~Memory usage')}
-            />
-          </GridItem>
-          <GridItem xl={6} lg={12}>
-            <ResourceMetricsDashboardCard
-              namespace={obj.metadata.namespace}
-              queries={queries[ResourceUtilizationQuery.CPU]}
-              title={t('public~CPU usage')}
-            />
-          </GridItem>
-          <GridItem xl={6} lg={12}>
-            <ResourceMetricsDashboardCard
-              namespace={obj.metadata.namespace}
-              queries={queries[ResourceUtilizationQuery.FILESYSTEM]}
-              title={t('public~Filesystem')}
-            />
-          </GridItem>
-          <GridItem xl={6} lg={12}>
-            <ResourceMetricsDashboardCard
-              namespace={obj.metadata.namespace}
-              queries={queries[ResourceUtilizationQuery.NETWORK_IN]}
-              title={t('public~Network in')}
-            />
-          </GridItem>
-          <GridItem xl={6} lg={12}>
-            <ResourceMetricsDashboardCard
-              namespace={obj.metadata.namespace}
-              queries={queries[ResourceUtilizationQuery.NETWORK_OUT]}
-              title={t('public~Network out')}
-            />
-          </GridItem>
-        </Grid>
-      </Dashboard>
-    </>
+    <Dashboard className="resource-metrics-dashboard">
+      <Grid hasGutter>
+        <GridItem xl={6} lg={12}>
+          <ResourceMetricsDashboardCard
+            namespace={obj.metadata.namespace}
+            queries={queries[ResourceUtilizationQuery.MEMORY]}
+            title={t('public~Memory usage')}
+          />
+        </GridItem>
+        <GridItem xl={6} lg={12}>
+          <ResourceMetricsDashboardCard
+            namespace={obj.metadata.namespace}
+            queries={queries[ResourceUtilizationQuery.CPU]}
+            title={t('public~CPU usage')}
+          />
+        </GridItem>
+        <GridItem xl={6} lg={12}>
+          <ResourceMetricsDashboardCard
+            namespace={obj.metadata.namespace}
+            queries={queries[ResourceUtilizationQuery.FILESYSTEM]}
+            title={t('public~Filesystem')}
+          />
+        </GridItem>
+        <GridItem xl={6} lg={12}>
+          <ResourceMetricsDashboardCard
+            namespace={obj.metadata.namespace}
+            queries={queries[ResourceUtilizationQuery.NETWORK_IN]}
+            title={t('public~Network in')}
+          />
+        </GridItem>
+        <GridItem xl={6} lg={12}>
+          <ResourceMetricsDashboardCard
+            namespace={obj.metadata.namespace}
+            queries={queries[ResourceUtilizationQuery.NETWORK_OUT]}
+            title={t('public~Network out')}
+          />
+        </GridItem>
+      </Grid>
+    </Dashboard>
   ) : null;
 };
 

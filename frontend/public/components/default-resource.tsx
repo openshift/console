@@ -1,10 +1,8 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
-import { labelForNodeKind, labelKeyForNodeKind } from '@console/shared';
 
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData, TableProps, RowFunctionArgs } from './factory';
@@ -47,13 +45,6 @@ export const DetailsForKind = (
 
     return (
       <>
-        <Helmet>
-          <title data-title-id={`${labelForNodeKind(obj.kind)} · Details`}>
-            {obj.metadata.name}
-            {' · '} {t(labelKeyForNodeKind(obj.kind))}
-            {' · '} {t('public~Details')}
-          </title>
-        </Helmet>
         <div className="co-m-pane__body">
           <SectionHeading
             text={t('public~{{kindLabel}} details', { kindLabel: getKindLabel(kind) })}

@@ -30,12 +30,6 @@ describe('Project Access Page', () => {
           ns: 'abc',
         },
       },
-      obj: {
-        kind: 'Project',
-        metadata: {
-          name: 'ProjectA',
-        },
-      },
     };
     const projectAccessPageWrapper = shallow(<ProjectAccessPage {...projectAccessPageProps} />);
     expect(projectAccessPageWrapper.find(ProjectAccess).exists()).toBe(true);
@@ -58,12 +52,6 @@ describe('Project Access Page', () => {
         url: '/project-access/ns/abc',
         params: {
           ns: 'abc',
-        },
-      },
-      obj: {
-        kind: 'Project',
-        metadata: {
-          name: 'ProjectA',
         },
       },
     };

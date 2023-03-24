@@ -15,14 +15,6 @@ describe('HelmReleaseResources', () => {
   const helmReleaseResourcesProps: React.ComponentProps<typeof HelmReleaseResources> = {
     match,
     customData: mockHelmReleases[0],
-    obj: {
-      kind: 'Secret',
-      metadata: {
-        labels: {
-          name: 'dotnet',
-        },
-      },
-    },
   };
 
   const helmReleaseResources = shallow(<HelmReleaseResources {...helmReleaseResourcesProps} />);

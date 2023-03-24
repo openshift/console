@@ -3,7 +3,6 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
@@ -68,8 +67,6 @@ import {
   ActionMenuVariant,
   getNamespace,
   useActiveNamespace,
-  labelKeyForNodeKind,
-  labelForNodeKind,
 } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
@@ -655,91 +652,79 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
   }, {} as any);
 
   return (
-    <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · Details`}>
-          {obj.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {t('olm~Details')}
-        </title>
-      </Helmet>
-      <div className="co-operand-details co-m-pane">
+    <div className="co-operand-details co-m-pane">
+      <div className="co-m-pane__body">
+        {errorMessage && <ErrorAlert message={errorMessage} />}
+        <SectionHeading text={t('olm~{{kind}} overview', { kind: displayName || kind })} />
+        <PodStatuses
+          kindObj={kindObj}
+          obj={obj}
+          schema={schema}
+          podStatusDescriptors={podStatuses}
+        />
+        <div className="co-operand-details__section co-operand-details__section--info">
+          <div className="row">
+            <div className="col-sm-6">
+              <ResourceSummary resource={obj} />
+            </div>
+            {mainStatusDescriptor && (
+              <DescriptorDetailsItem
+                key={mainStatusDescriptor.path}
+                className="col-sm-6"
+                descriptor={mainStatusDescriptor}
+                model={kindObj}
+                obj={obj}
+                schema={schema}
+                type={DescriptorType.status}
+              />
+            )}
+            {otherStatusDescriptors?.length > 0 && (
+              <DescriptorDetailsItemList
+                descriptors={otherStatusDescriptors}
+                itemClassName="col-sm-6"
+                model={kindObj}
+                obj={obj}
+                schema={schema}
+                type={DescriptorType.status}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+      {!_.isEmpty(specDescriptors) && (
         <div className="co-m-pane__body">
-          {errorMessage && <ErrorAlert message={errorMessage} />}
-          <SectionHeading text={t('olm~{{kind}} overview', { kind: displayName || kind })} />
-          <PodStatuses
-            kindObj={kindObj}
-            obj={obj}
-            schema={schema}
-            podStatusDescriptors={podStatuses}
-          />
           <div className="co-operand-details__section co-operand-details__section--info">
             <div className="row">
-              <div className="col-sm-6">
-                <ResourceSummary resource={obj} />
-              </div>
-              {mainStatusDescriptor && (
-                <DescriptorDetailsItem
-                  key={mainStatusDescriptor.path}
-                  className="col-sm-6"
-                  descriptor={mainStatusDescriptor}
-                  model={kindObj}
-                  obj={obj}
-                  schema={schema}
-                  type={DescriptorType.status}
-                />
-              )}
-              {otherStatusDescriptors?.length > 0 && (
-                <DescriptorDetailsItemList
-                  descriptors={otherStatusDescriptors}
-                  itemClassName="col-sm-6"
-                  model={kindObj}
-                  obj={obj}
-                  schema={schema}
-                  type={DescriptorType.status}
-                />
-              )}
+              <DescriptorDetailsItemList
+                descriptors={specDescriptors}
+                itemClassName="col-sm-6"
+                model={kindObj}
+                obj={obj}
+                onError={handleError}
+                schema={schema}
+                type={DescriptorType.spec}
+              />
             </div>
           </div>
         </div>
-        {!_.isEmpty(specDescriptors) && (
-          <div className="co-m-pane__body">
-            <div className="co-operand-details__section co-operand-details__section--info">
-              <div className="row">
-                <DescriptorDetailsItemList
-                  descriptors={specDescriptors}
-                  itemClassName="col-sm-6"
-                  model={kindObj}
-                  obj={obj}
-                  onError={handleError}
-                  schema={schema}
-                  type={DescriptorType.spec}
-                />
-              </div>
-            </div>
+      )}
+      {Array.isArray(status?.conditions) &&
+        (conditionsStatusDescriptors ?? []).every(({ path }) => path !== 'conditions') && (
+          <div className="co-m-pane__body" data-test="status.conditions">
+            <SectionHeading data-test="operand-conditions-heading" text={t('public~Conditions')} />
+            <Conditions conditions={status.conditions} />
           </div>
         )}
-        {Array.isArray(status?.conditions) &&
-          (conditionsStatusDescriptors ?? []).every(({ path }) => path !== 'conditions') && (
-            <div className="co-m-pane__body" data-test="status.conditions">
-              <SectionHeading
-                data-test="operand-conditions-heading"
-                text={t('public~Conditions')}
-              />
-              <Conditions conditions={status.conditions} />
-            </div>
-          )}
-        {conditionsStatusDescriptors?.length > 0 &&
-          conditionsStatusDescriptors.map((descriptor) => (
-            <DescriptorConditions
-              key={descriptor.path}
-              descriptor={descriptor}
-              schema={schema}
-              obj={obj}
-            />
-          ))}
-      </div>
-    </>
+      {conditionsStatusDescriptors?.length > 0 &&
+        conditionsStatusDescriptors.map((descriptor) => (
+          <DescriptorConditions
+            key={descriptor.path}
+            descriptor={descriptor}
+            schema={schema}
+            obj={obj}
+          />
+        ))}
+    </div>
   );
 });
 

@@ -1,16 +1,10 @@
 import * as React from 'react';
 import { SortByDirection } from '@patternfly/react-table';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import { StatusBox } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  CustomResourceList,
-  labelForNodeKind,
-  labelKeyForNodeKind,
-  useDeepCompareMemoize,
-} from '@console/shared';
+import { CustomResourceList, useDeepCompareMemoize } from '@console/shared';
 import { HelmRelease } from '../../../types/helm-types';
 import { fetchHelmReleaseHistory } from '../../../utils/helm-utils';
 import HelmReleaseHistoryHeader from './HelmReleaseHistoryHeader';
@@ -79,29 +73,16 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
   }
 
   return (
-    <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · Revision history`}>
-          {obj.metadata.labels.name}
-          {' · '} {t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {t('helm-plugin~Revision history')}
-        </title>
-      </Helmet>
-      {loadError ? (
-        <StatusBox loaded loadError={loadError} label={t('helm-plugin~Helm Release history')} />
-      ) : (
-        <CustomResourceList
-          resources={revisions}
-          loaded={revisionsLoaded}
-          sortBy="version"
-          sortOrder={SortByDirection.desc}
-          customData={customData}
-          ResourceRow={HelmReleaseHistoryRow}
-          resourceHeader={HelmReleaseHistoryHeader(t)}
-          getRowProps={getRowProps}
-        />
-      )}
-    </>
+    <CustomResourceList
+      resources={revisions}
+      loaded={revisionsLoaded}
+      sortBy="version"
+      sortOrder={SortByDirection.desc}
+      customData={customData}
+      ResourceRow={HelmReleaseHistoryRow}
+      resourceHeader={HelmReleaseHistoryHeader(t)}
+      getRowProps={getRowProps}
+    />
   );
 };
 

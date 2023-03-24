@@ -7,7 +7,6 @@ import HelmReleaseOverview from '../HelmReleaseOverview';
 
 const helmReleaseOverviewProps: React.ComponentProps<typeof HelmReleaseOverview> = {
   obj: {
-    kind: 'Secret',
     metadata: {
       name: 'secret-name',
       namespace: 'xyz',

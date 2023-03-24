@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { labelForNodeKind, labelKeyForNodeKind } from '@console/shared';
+
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -70,11 +70,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
   return (
     <>
       <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · Overview`}>
-          {obj.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {t('public~Overview')}
-        </title>
+        <title>{t('public~Project overview')}</title>
       </Helmet>
       <ProjectDashboardContext.Provider value={context}>
         <Dashboard>

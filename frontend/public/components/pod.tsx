@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-import Helmet from 'react-helmet';
 import {
   Button,
   Divider,
@@ -33,8 +32,6 @@ import {
   ActionMenuVariant,
   useUserSettingsCompatibility,
   usePrometheusGate,
-  labelForNodeKind,
-  labelKeyForNodeKind,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
@@ -826,13 +823,6 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
   const { t } = useTranslation();
   return (
     <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(pod.kind)} · Details`}>
-          {pod.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(pod.kind))}
-          {' · '} {t('public~Details')}
-        </title>
-      </Helmet>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
         <SectionHeading text={t('public~Pod details')} />
@@ -882,61 +872,32 @@ const EnvironmentPage = (props: any) => (
 );
 
 const envPath = ['spec', 'containers'];
-const PodEnvironmentComponent = (props) => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(props.obj.kind)} · Environment`}>
-          {props.obj.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(props.obj.kind))}
-          {' · '} {t('public~Environment')}
-        </title>
-      </Helmet>
-      <EnvironmentPage
-        obj={props.obj}
-        rawEnvData={props.obj.spec}
-        envPath={envPath}
-        readOnly={true}
-      />
-    </>
-  );
-};
+const PodEnvironmentComponent = (props) => (
+  <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
+);
 
 export const PodExecLoader: React.FC<PodExecLoaderProps> = ({
   obj,
   message,
   initialContainer,
   infoMessage,
-}) => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · Terminal`}>
-          {obj.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {t('public~Terminal')}
-        </title>
-      </Helmet>
-      <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-xs-12">
-            <div className="panel-body">
-              <AsyncComponent
-                loader={() => import('./pod-exec').then((c) => c.PodExec)}
-                obj={obj}
-                message={message}
-                infoMessage={infoMessage}
-                initialContainer={initialContainer}
-              />
-            </div>
-          </div>
+}) => (
+  <div className="co-m-pane__body">
+    <div className="row">
+      <div className="col-xs-12">
+        <div className="panel-body">
+          <AsyncComponent
+            loader={() => import('./pod-exec').then((c) => c.PodExec)}
+            obj={obj}
+            message={message}
+            infoMessage={infoMessage}
+            initialContainer={initialContainer}
+          />
         </div>
       </div>
-    </>
-  );
-};
+    </div>
+  </div>
+);
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {

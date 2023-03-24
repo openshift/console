@@ -1,9 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import Helmet from 'react-helmet';
-import { useTranslation } from 'react-i18next';
 import { NodeKind } from '@console/internal/module/k8s';
-import { labelForNodeKind, labelKeyForNodeKind } from '@console/shared';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
@@ -76,7 +73,6 @@ export const reducer = (state: NodeDashboardState, action: NodeDashboardAction) 
 };
 
 const NodeDashboard: React.FC<NodeDashboardProps> = ({ obj }) => {
-  const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(reducer, initialState(obj));
 
   if (obj !== state.obj) {
@@ -107,20 +103,11 @@ const NodeDashboard: React.FC<NodeDashboardProps> = ({ obj }) => {
   };
 
   return (
-    <>
-      <Helmet>
-        <title data-title-id={`${labelForNodeKind(obj.kind)} · Overview`}>
-          {obj.metadata.name}
-          {' · '} {t(labelKeyForNodeKind(obj.kind))}
-          {' · '} {t('console-app~Overview')}
-        </title>
-      </Helmet>
-      <NodeDashboardContext.Provider value={context}>
-        <Dashboard>
-          <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
-        </Dashboard>
-      </NodeDashboardContext.Provider>
-    </>
+    <NodeDashboardContext.Provider value={context}>
+      <Dashboard>
+        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
+      </Dashboard>
+    </NodeDashboardContext.Provider>
   );
 };
 
