@@ -100,13 +100,15 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
 
   const nicsPage = {
     href: 'nics',
-    name: t('kubevirt-plugin~Network Interfaces'),
+    // t('kubevirt-plugin~Network Interfaces')
+    nameKey: 'kubevirt-plugin~Network Interfaces',
     component: VMNics,
   };
 
   const disksPage = {
     href: 'disks',
-    name: t('kubevirt-plugin~Disks'),
+    // t('kubevirt-plugin~Disks')
+    nameKey: 'kubevirt-plugin~Disks',
     component: VMDisks,
   };
 

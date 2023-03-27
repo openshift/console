@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@patternfly/react-core';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { PipelineMetricsLevel } from '../const';
 import { PipelineDetailsTabProps } from '../detail-page-tabs/types';
@@ -55,9 +54,6 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
 
   return (
     <>
-      <Helmet>
-        <title>{t('pipelines-plugin~Pipeline metrics')}</title>
-      </Helmet>
       {!latestPipelineRun ? (
         <PipelineMetricsEmptyState />
       ) : (

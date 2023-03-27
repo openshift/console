@@ -30,3 +30,15 @@ Feature: Perform the actions on Pipelines page
              When user searches repository "git-hello-func" in repositories page
               And user clicks repository "git-hello-func" from searched results on Repositories page
              Then user will be redirected to PipelineRuns tab
+
+        @regression @odc-7270
+        Scenario: Verify page titles for repository details page: P-12-TC04
+            Given repository "git-hello-func" is present on the Repositories page
+             When user searches repository "git-hello-func" in repositories page
+              And user clicks repository "git-hello-func" from searched results on Repositories page
+             Then user will be redirected to PipelineRuns tab
+              And user will see page title as "git-hello-func · Repository · PipelineRuns · OKD"
+              And user clicks on Details tab
+              And user will see page title as "git-hello-func · Repository · Details · OKD"
+              And user clicks on YAML tab
+              And user will see page title as "git-hello-func · Repository · YAML · OKD"

@@ -118,17 +118,20 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
         navFactory.details(HelmReleaseOverview),
         {
           href: 'resources',
-          name: t('helm-plugin~Resources'),
+          // t('helm-plugin~Resources')
+          nameKey: 'helm-plugin~Resources',
           component: HelmReleaseResources,
         },
         {
           href: 'history',
-          name: t('helm-plugin~Revision history'),
+          // t('helm-plugin~Revision history')
+          nameKey: 'helm-plugin~Revision history',
           component: HelmReleaseHistory,
         },
         {
           href: 'releasenotes',
-          name: t('helm-plugin~Release notes'),
+          // t('helm-plugin~Release notes')
+          nameKey: 'helm-plugin~Release notes',
           component: HelmReleaseNotes,
         },
       ]}

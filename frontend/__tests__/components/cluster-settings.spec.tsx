@@ -71,9 +71,6 @@ describe('Cluster Settings page', () => {
   it('should render ClusterSettingsPage component', () => {
     expect(wrapper.exists()).toBe(true);
   });
-  it('should render correct Cluster Settings page title', () => {
-    expect(wrapper.contains('Cluster Settings')).toBeTruthy();
-  });
   it('should render the Firehose Component with the props', () => {
     expect(wrapper.find(Firehose).exists()).toBe(true);
     expect(
@@ -113,20 +110,20 @@ describe('Cluster Settings page', () => {
       wrapper
         .find(HorizontalNav)
         .at(0)
-        .props().pages[0].name,
-    ).toBe('Details');
+        .props().pages[0].nameKey,
+    ).toMatch('Details');
     expect(
       wrapper
         .find(HorizontalNav)
         .at(0)
-        .props().pages[1].name,
-    ).toBe('ClusterOperators');
+        .props().pages[1].nameKey,
+    ).toMatch('ClusterOperators');
     expect(
       wrapper
         .find(HorizontalNav)
         .at(0)
-        .props().pages[2].name,
-    ).toBe('Configuration');
+        .props().pages[2].nameKey,
+    ).toMatch('Configuration');
     expect(
       wrapper
         .find(HorizontalNav)
@@ -413,6 +410,7 @@ describe('Cluster Version Details Table page while updating', () => {
 
   beforeEach(() => {
     cv = clusterVersionUpdatingProps;
+    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
     wrapper = shallow(<ClusterVersionDetailsTable obj={cv} autoscalers={[]} />);
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
     (useCanClusterUpgrade as jest.Mock).mockReturnValueOnce([[], true]);

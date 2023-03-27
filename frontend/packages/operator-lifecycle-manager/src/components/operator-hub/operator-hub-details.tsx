@@ -75,13 +75,13 @@ const Sources: React.FC<CatalogSourceListPageProps> = (props) => (
 );
 
 export const OperatorHubDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { t } = useTranslation();
   const pages = [
     navFactory.details(OperatorHubDetails),
     navFactory.editYaml(),
     {
       href: 'sources',
-      name: t('olm~Sources'),
+      // t('olm~Sources')
+      nameKey: 'olm~Sources',
       component: Sources,
     },
   ];

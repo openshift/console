@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { KebabAction, navFactory, viewYamlComponent } from '@console/internal/components/utils';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
@@ -14,7 +13,6 @@ import PipelineRunParametersForm from './PipelineRunParametersForm';
 import { useMenuActionsWithUserAnnotation } from './triggered-by';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { t } = useTranslation();
   const { kindObj, match } = props;
   const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineRunKebabActions(true),
@@ -34,12 +32,14 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
         navFactory.editYaml(viewYamlComponent),
         {
           href: 'task-runs',
-          name: t('pipelines-plugin~TaskRuns'),
+          // t('pipelines-plugin~TaskRuns')
+          nameKey: 'pipelines-plugin~TaskRuns',
           component: TaskRuns,
         },
         {
           href: 'parameters',
-          name: t('pipelines-plugin~Parameters'),
+          // t('pipelines-plugin~Parameters')
+          nameKey: 'pipelines-plugin~Parameters',
           component: (pageProps) => (
             <PipelineRunParametersForm obj={pageProps.obj} {...pageProps} />
           ),
@@ -47,7 +47,8 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
         {
           href: 'logs',
           path: 'logs/:name?',
-          name: t('pipelines-plugin~Logs'),
+          // t('pipelines-plugin~Logs')
+          nameKey: 'pipelines-plugin~Logs',
           component: PipelineRunLogsWithActiveTask,
         },
         navFactory.events(PipelineRunEvents),

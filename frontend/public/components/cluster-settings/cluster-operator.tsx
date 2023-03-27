@@ -282,7 +282,8 @@ export const ClusterOperatorDetailsPage: React.FC<ClusterOperatorDetailsPageProp
         navFactory.editYaml(),
         {
           href: 'related-objects',
-          name: t('public~Related objects'),
+          // t('public~Related objects')
+          nameKey: 'public~Related objects',
           component: RelatedObjectsPage,
         },
       ]}

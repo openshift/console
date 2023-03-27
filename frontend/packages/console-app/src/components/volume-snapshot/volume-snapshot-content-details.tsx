@@ -84,11 +84,11 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
 };
 
 const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { t } = useTranslation();
   const pages = [
     {
       href: '',
-      name: t('console-app~Details'),
+      // t('console-app~Details')
+      nameKey: 'console-app~Details',
       component: Details,
     },
     editYaml(),
