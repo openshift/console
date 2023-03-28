@@ -18,6 +18,7 @@ import { nameRegex } from '@console/shared/src';
 import { RepositoryModel } from '../../models';
 import { PAC_TEMPLATE_DEFAULT } from '../pac/const';
 import { PIPELINERUN_TEMPLATE_NAMESPACE } from '../pipelines/const';
+import { RepositoryRuntimes } from './consts';
 import { RepositoryFormValues } from './types';
 
 export const dryRunOpt = { dryRun: 'All' };
@@ -194,11 +195,11 @@ metadata:
 
     # The branch or tag we are targeting (ie: main, refs/tags/*)
     pipelinesascode.tekton.dev/on-target-branch: "main"
-    
+
     # Fetch the git-clone task from hub, we are able to reference later on it
     # with taskRef and it will automatically be embedded into our pipeline.
     pipelinesascode.tekton.dev/task: "git-clone"
-    
+
     # You can add more tasks in here to reuse, browse the one you like from here
     # https://hub.tekton.dev/
     # example:
@@ -235,7 +236,7 @@ spec:
             value: $(params.repo_url)
           - name: revision
             value: $(params.revision)
-  
+
       # Customize this task if you like, or just do a taskRef
       # to one of the hub task.
       - name: noop-task
@@ -298,7 +299,7 @@ export const getPipelineRunTemplate = async (
         ns: PIPELINERUN_TEMPLATE_NAMESPACE,
         labelSelector: {
           matchLabels: {
-            'pipelinesascode.openshift.io/runtime': runtime,
+            'pipelinesascode.openshift.io/runtime': RepositoryRuntimes[runtime] || runtime,
           },
         },
       },
