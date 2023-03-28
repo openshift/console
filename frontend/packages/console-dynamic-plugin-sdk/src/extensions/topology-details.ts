@@ -89,11 +89,11 @@ export type PodAdapter = ExtensionDeclaration<
   }
 >;
 
-/** BuildAdapter contributes an adapter to adapt element to data that can be used by Pod component */
+/** BuildAdapter contributes an adapter to adapt element to data that can be used by Build component */
 export type BuildAdapter = ExtensionDeclaration<
   'console.topology/adapter/build',
   {
-    /** adapter to adapt element to data that can be used by Networking component. */
+    /** adapter to adapt element to data that can be used by Build component. */
     adapt: CodeRef<(element: GraphElement) => AdapterDataType<BuildConfigData> | undefined>;
   }
 >;
