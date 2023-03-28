@@ -17,6 +17,7 @@ const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) 
     minHeight,
     onChange,
     onSave,
+    language,
   } = props;
 
   const [usesValue] = React.useState<boolean>(value !== undefined);
@@ -40,7 +41,7 @@ const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) 
             <div className="ocs-yaml-editor__wrapper">
               <MonacoEditor
                 ref={ref}
-                language="yaml"
+                language={language ?? 'yaml'}
                 theme="console"
                 height={contentRect.bounds.height}
                 width={contentRect.bounds.width}
