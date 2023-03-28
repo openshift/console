@@ -454,7 +454,7 @@
   "No Secret": "No Secret",
   "docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>": "docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>",
   "To deploy an Image from a private registry, you must <2>create an Image pull secret</2> with your Image registry credentials.": "To deploy an Image from a private registry, you must <2>create an Image pull secret</2> with your Image registry credentials.",
-  "Secret {{newImageSecret}} was created.": "Secret {{newImageSecret}} was created.",
+  "Secret \"{{newImageSecret}}\" was created.": "Secret \"{{newImageSecret}}\" was created.",
   "Allow Images from insecure registries": "Allow Images from insecure registries",
   "Image": "Image",
   "Deploy an existing Image from an Image Stream or Image registry.": "Deploy an existing Image from an Image Stream or Image registry.",
