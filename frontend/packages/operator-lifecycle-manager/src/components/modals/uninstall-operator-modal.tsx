@@ -335,21 +335,23 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     <OperandsLoadedErrorAlert operandsLoadedErrorMessage={operandsLoadedErrorMessage} />
   ) : (
     showOperandsContent && (
-      <span className="co-operator-uninstall__operands-section">
-        <h2>{t('olm~Operand instances')}</h2>
-        <OperandsTable
-          operands={operands}
-          loaded={operandsLoaded}
-          csvName={csvName}
-          cancel={cancel} // for breadcrumbs & cancel modal when clicking on operand links
-        />
+      <>
+        <span className="co-operator-uninstall__operands-section">
+          <h2>{t('olm~Operand instances')}</h2>
+          <OperandsTable
+            operands={operands}
+            loaded={operandsLoaded}
+            csvName={csvName}
+            cancel={cancel} // for breadcrumbs & cancel modal when clicking on operand links
+          />
+        </span>
         <Checkbox
           onChange={({ currentTarget }) => setDeleteOperands(currentTarget.checked)}
           name="delete-all-operands"
           label={t('olm~Delete all operand instances for this operator')}
           checked={deleteOperands}
         />
-      </span>
+      </>
     )
   );
 
@@ -569,7 +571,7 @@ const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName
       <table className="pf-c-table pf-m-compact pf-m-border-rows">
         <thead>
           <tr key="operand-table-header-row">
-            <th>{t('olm~Name')}</th>
+            <th className="pf-m-width-35">{t('olm~Name')}</th>
             <th>{t('olm~Kind')}</th>
             <th>{t('olm~Namespace')}</th>
           </tr>
