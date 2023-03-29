@@ -232,7 +232,6 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
     const formValues: CommonPipelineModalFormikValues = {
       namespace: samplePipeline.metadata.namespace,
       parameters: [],
-      resources: [],
       workspaces: [],
     };
     const labels: { [key: string]: string } = {
@@ -254,7 +253,6 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
       spec: {
         pipelineRef: { name: samplePipeline.metadata.name },
         params: [],
-        resources: [],
         status: null,
         workspaces: [],
       },
@@ -272,7 +270,6 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
           value: 'Updated value',
         },
       ],
-      resources: [],
       workspaces: [],
     };
     const labels: { [key: string]: string } = {
@@ -291,51 +288,6 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
           {
             name: 'ParameterA',
             value: 'Updated value',
-          },
-        ],
-        resources: [],
-        status: null,
-        workspaces: [],
-      },
-    });
-  });
-
-  it('expect pipeline run data to have a resources if the form data contains resources', () => {
-    const formValues: CommonPipelineModalFormikValues = {
-      namespace: 'corazon',
-      parameters: [],
-      resources: [
-        {
-          name: 'ResourceA',
-          selection: 'SelectionA',
-          data: {
-            type: 'Git',
-            params: {},
-            secrets: {},
-          },
-        },
-      ],
-      workspaces: [],
-    };
-    const labels: { [key: string]: string } = {
-      anotherlabel: 'another-label-value',
-    };
-
-    const runData = getPipelineRunFromForm(samplePipeline, formValues, labels);
-
-    const pipelinerun = getPipelineRunData(samplePipeline);
-    expect(runData).toMatchObject({
-      ...pipelinerun,
-      metadata: { annotations: {}, labels },
-      spec: {
-        pipelineRef: { name: samplePipeline.metadata.name },
-        params: [],
-        resources: [
-          {
-            name: 'ResourceA',
-            resourceRef: {
-              name: 'SelectionA',
-            },
           },
         ],
         status: null,

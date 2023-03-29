@@ -12,10 +12,8 @@ import {
   PipelineDetails,
   PipelineForm,
   PipelineParametersForm,
-  PipelineResourcesForm,
   PipelineRuns,
   parametersValidationSchema,
-  resourcesValidationSchema,
 } from './detail-page-tabs';
 import { PipelineDetailsTabProps } from './detail-page-tabs/types';
 import { useDevPipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
@@ -69,20 +67,6 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
               PipelineFormComponent={PipelineParametersForm}
               formName="parameters"
               validationSchema={parametersValidationSchema()}
-              obj={pageProps.obj}
-              {...pageProps}
-            />
-          ),
-        },
-        {
-          href: 'resources',
-          // t('pipelines-plugin~Resources')
-          nameKey: 'pipelines-plugin~Resources',
-          component: (pageProps: PipelineDetailsTabProps) => (
-            <PipelineForm
-              PipelineFormComponent={PipelineResourcesForm}
-              formName="resources"
-              validationSchema={resourcesValidationSchema()}
               obj={pageProps.obj}
               {...pageProps}
             />

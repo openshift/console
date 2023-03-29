@@ -173,7 +173,7 @@ describe('PipelineDetailsPage:', () => {
       const tabs = wrapper.find(DetailsPage).props().pages;
       const metricsTab = tabs.find((t) => t.nameKey === 'pipelines-plugin~Metrics');
 
-      expect(tabs).toHaveLength(6);
+      expect(tabs).toHaveLength(5);
       expect(metricsTab).toBeDefined();
     });
 
@@ -187,7 +187,7 @@ describe('PipelineDetailsPage:', () => {
       const tabs = wrapper.find(DetailsPage).props().pages;
       const metricsTab = tabs.find((t) => t.nameKey === 'pipelines-plugin~Metrics');
 
-      expect(tabs).toHaveLength(6);
+      expect(tabs).toHaveLength(5);
       expect(metricsTab).toBeDefined();
     });
   });

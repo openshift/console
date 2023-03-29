@@ -19,15 +19,16 @@ const TaskRunDetails: React.FC<TaskRunDetailsProps> = ({ obj: taskRun }) => {
       <div className="co-m-pane__body">
         <TaskRunDetailsSection taskRun={taskRun} />
       </div>
-      {taskRun.status?.taskResults && (
-        <div className="co-m-pane__body">
-          <ResultsList
-            results={taskRun.status?.taskResults}
-            resourceName={t(TaskRunModel.labelKey)}
-            status={taskRunFilterReducer(taskRun)}
-          />
-        </div>
-      )}
+      {taskRun.status?.taskResults ||
+        (taskRun.status?.results && (
+          <div className="co-m-pane__body">
+            <ResultsList
+              results={taskRun.status?.taskResults || taskRun.status?.results}
+              resourceName={t(TaskRunModel.labelKey)}
+              status={taskRunFilterReducer(taskRun)}
+            />
+          </div>
+        ))}
     </>
   );
 };
