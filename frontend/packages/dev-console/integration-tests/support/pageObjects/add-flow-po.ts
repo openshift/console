@@ -71,6 +71,7 @@ export const gitPO = {
       // Count for Rows in Environment Variables section
       envRows: 'div.row.pairs-list__row',
       deleteRowButton: 'button[data-test="delete-button"]',
+      advanceGitOptions: '[data-test="advanced-git-options"]',
     },
     deployment: {
       deploymentTriggerImage: 'input#form-checkbox-deployment-triggers-image-field',
