@@ -67,7 +67,6 @@ const (
 	indexPageTemplateName                 = "index.html"
 	k8sProxyEndpoint                      = "/api/kubernetes/"
 	localesEndpoint                       = "/locales/resource.json"
-	meteringProxyEndpoint                 = "/api/metering"
 	multiclusterLogoutPageTemplateName    = "multicluster-logout.html"
 	operandsListEndpoint                  = "/api/list-operands/"
 	pluginAssetsEndpoint                  = "/api/plugins/"
@@ -117,7 +116,6 @@ type jsGlobals struct {
 	LoginURL                        string                     `json:"loginURL"`
 	LogoutRedirect                  string                     `json:"logoutRedirect"`
 	LogoutURL                       string                     `json:"logoutURL"`
-	MeteringBaseURL                 string                     `json:"meteringBaseURL"`
 	MulticlusterLogoutRedirect      string                     `json:"multiclusterLogoutRedirect"`
 	NodeArchitectures               []string                   `json:"nodeArchitectures"`
 	Perspectives                    string                     `json:"perspectives"`
@@ -172,7 +170,6 @@ type Server struct {
 	LoadTestFactor                      int
 	LogoutRedirect                      *url.URL
 	ManagedClusterProxyConfig           *proxy.Config
-	MeteringProxyConfig                 *proxy.Config
 	MonitoringDashboardConfigMapLister  ResourceLister
 	NodeArchitectures                   []string
 	Perspectives                        string
@@ -210,10 +207,6 @@ func (s *Server) prometheusProxyEnabled() bool {
 
 func (s *Server) alertManagerProxyEnabled() bool {
 	return s.AlertManagerProxyConfig != nil && s.AlertManagerTenancyProxyConfig != nil
-}
-
-func (s *Server) meteringProxyEnabled() bool {
-	return s.MeteringProxyConfig != nil
 }
 
 func (s *Server) gitopsProxyEnabled() bool {
@@ -487,18 +480,6 @@ func (s *Server) HTTPHandler() http.Handler {
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				alertManagerTenancyProxy.ServeHTTP(w, r)
-			})),
-		)
-	}
-
-	if s.meteringProxyEnabled() {
-		meteringProxyAPIPath := meteringProxyEndpoint + "/api/"
-		meteringProxy := proxy.NewProxy(s.MeteringProxyConfig)
-		handle(meteringProxyAPIPath, http.StripPrefix(
-			proxy.SingleJoiningSlash(s.BaseURL.Path, meteringProxyAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-				meteringProxy.ServeHTTP(w, r)
 			})),
 		)
 	}
@@ -791,10 +772,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if s.alertManagerProxyEnabled() {
 		jsg.AlertManagerBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyEndpoint)
 		jsg.AlertmanagerUserWorkloadBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertmanagerUserWorkloadProxyEndpoint)
-	}
-
-	if s.meteringProxyEnabled() {
-		jsg.MeteringBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, meteringProxyEndpoint)
 	}
 
 	if !s.authDisabled() {
