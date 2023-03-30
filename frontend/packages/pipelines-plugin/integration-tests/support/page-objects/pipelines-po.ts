@@ -333,6 +333,11 @@ export const repositoryDetailsPO = {
       annotations: '[data-test="Annotations"]',
       createdAt: '[data-test="Created at"]',
       owner: '[data-test="Owner"]',
+      repository: '[data-test="Repository"]',
+      userName: '[data-test="Username"]',
+      accessToken: '[data-test="Git access token"]',
+      webhookUrl: '[data-test-selector="details-item-label__Webhook URL"]',
+      webhookSecret: '[data-test="Webhook Secret"]',
     },
     fieldValues: {
       name: '[data-test-selector="details-item-value__Name"]',

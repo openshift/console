@@ -3242,6 +3242,31 @@ export const mockRepositories: RepositoryKind[] = [
       namespace: 'test',
     },
   },
+  {
+    apiVersion: 'pipelinesascode.tekton.dev/v1alpha1',
+    kind: 'Repository',
+    metadata: {
+      name: 'aa',
+      namespace: 'test',
+    },
+    spec: {
+      namespace: 'karthik',
+      url: 'https://github.com/karthikjeeyar/demo-app',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      git_provider: {
+        user: 'lokanandap',
+        secret: {
+          key: 'provider.token',
+          name: 'git-hello-func-token-s79pk',
+        },
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        webhook_secret: {
+          key: 'webhook.secret',
+          name: 'git-hello-func-token-s79pk',
+        },
+      },
+    },
+  },
 ];
 
 type TaskTestData = {
