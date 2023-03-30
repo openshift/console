@@ -2,6 +2,8 @@ import * as React from 'react';
 import { ExtensionHook } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
+/** This extension allows plugins to contribute a new type of catalog item. For example, a Helm plugin can define
+    a new catalog item type as HelmCharts that it wants to contribute to the Developer Catalog. */
 export type CatalogItemType = ExtensionDeclaration<
   'console.catalog/item-type',
   {
@@ -20,6 +22,8 @@ export type CatalogItemType = ExtensionDeclaration<
   }
 >;
 
+/** This extension allows plugins to contribute extra metadata like custom filters or groupings for any catalog item type.
+    For example, a plugin can attach a custom filter for HelmCharts that can filter based on chart provider. */
 export type CatalogItemTypeMetadata = ExtensionDeclaration<
   'console.catalog/item-type-metadata',
   {
@@ -32,6 +36,8 @@ export type CatalogItemTypeMetadata = ExtensionDeclaration<
   }
 >;
 
+/** This extension allows plugins to contribute a provider for a catalog item type. For example, a Helm Plugin can add a provider
+    that fetches all the Helm Charts. This extension can also be used by other plugins to add more items to a specific catalog item type. */
 export type CatalogItemProvider = ExtensionDeclaration<
   'console.catalog/item-provider',
   {
@@ -49,6 +55,8 @@ export type CatalogItemProvider = ExtensionDeclaration<
   }
 >;
 
+/** This extension can be used for plugins to contribute a handler that can filter specific catalog items.
+    For example, the plugin can contribute a filter that filters helm charts from specific provider. */
 export type CatalogItemFilter = ExtensionDeclaration<
   'console.catalog/item-filter',
   {
@@ -61,6 +69,7 @@ export type CatalogItemFilter = ExtensionDeclaration<
   }
 >;
 
+/** This extension can be used to contribute a provider that adds extra metadata to specific catalog items. */
 export type CatalogItemMetadataProvider = ExtensionDeclaration<
   'console.catalog/item-metadata',
   {

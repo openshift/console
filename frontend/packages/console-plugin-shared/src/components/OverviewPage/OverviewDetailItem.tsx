@@ -4,9 +4,12 @@ import * as classNames from 'classnames';
 import './OverviewDetailItem.scss';
 
 export type OverviewDetailItemProps = {
+  /** Details card title */
   title: string;
   children: React.ReactNode;
+  /** Trigger skeleton loading component during the loading phase. */
   isLoading?: boolean;
+  /** Value for a className */
   valueClassName?: string;
 
   error?: string;

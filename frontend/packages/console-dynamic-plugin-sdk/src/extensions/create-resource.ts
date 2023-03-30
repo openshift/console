@@ -4,6 +4,8 @@ import { CodeRef, Extension, ExtensionDeclaration } from '../types';
 /** Properties of custom CreateResource component. */
 export type CreateResourceComponentProps = { namespace?: string };
 
+/** This extension allows plugins to provide a custom component (ie wizard or form) for specific resources,
+    which will be rendered, when users try to create a new resource instance. */
 export type CreateResource = ExtensionDeclaration<
   'console.resource/create',
   {

@@ -1,5 +1,6 @@
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
+/** This extension can be used to provide a handler for the file drop action on specific file extensions. */
 export type FileUpload = ExtensionDeclaration<
   'console.file-upload',
   {
