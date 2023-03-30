@@ -26,6 +26,7 @@ import (
 	"github.com/openshift/console/pkg/devfile"
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
+	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/metrics"
 	"github.com/openshift/console/pkg/plugins"
 	"github.com/openshift/console/pkg/proxy"
@@ -525,9 +526,17 @@ func (s *Server) HTTPHandler() http.Handler {
 	))
 
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
+
+	// Knative
+	knativeHandler := knative.KnativeHandler{
+		TrimURLPrefix: proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/console/knative/"),
+		K8sClient:     s.K8sClient,
+		K8sEndpoint:   s.K8sProxyConfig.Endpoint.String(),
+	}
+	handle("/api/console/knative/", authHandlerWithUser(knativeHandler.Handle))
+	// TODO: move the knative-event-sources and knative-channels handler into the knative module.
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
-	handle("/api/console/version", authHandler(s.versionHandler))
 
 	// User settings
 	userSettingHandler := usersettings.UserSettingsHandler{
@@ -703,6 +712,8 @@ func (s *Server) HTTPHandler() http.Handler {
 			})),
 		)
 	}
+
+	handle("/api/console/version", authHandler(s.versionHandler))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
