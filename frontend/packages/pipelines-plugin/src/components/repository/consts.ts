@@ -16,6 +16,13 @@ export enum RepoAnnotationFields {
   REPO_URL = 'repo_url',
 }
 
+export enum RepositoryRuntimes {
+  golang = 'go',
+  nodejs = 'nodejs',
+  python = 'python',
+  java = 'java',
+}
+
 export const RepositoryLabels: Record<RepositoryFields, string> = {
   [RepositoryFields.REPOSITORY]: 'pipelinesascode.tekton.dev/repository',
   [RepositoryFields.BRANCH]: 'pipelinesascode.tekton.dev/branch',
