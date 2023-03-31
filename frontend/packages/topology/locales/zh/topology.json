@@ -61,6 +61,7 @@
   "{{ready, number}} of {{count, number}} Pod_other": "{{ready, number}} 个 pod（共 {{count, number}} 个）",
   "{{length}} Pods": "{{length}} Pod",
   "Rollout in progress...": "正在推出......",
+  "Helm Release": "Helm 发行",
   "{{groupLabel}} {{resourceLabel}}": "{{groupLabel}} {{resourceLabel}}",
   "{{resourceLabel}} sub-resources": "{{resourceLabel}} 子资源",
   "{{kindLabel}} {{label}}": "{{kindLabel}} {{label}}",
