@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Timestamp } from '@console/internal/components/utils';
 import { Status } from '@console/shared';
 import { PipelineRunKind } from '../../../types';
 import {
   pipelineRunFilterReducer,
   pipelineRunTitleFilterReducer,
 } from '../../../utils/pipeline-filter-reducer';
+import { pipelineRunDuration } from '../../../utils/pipeline-utils';
 import {
   convertBackingPipelineToPipelineResourceRefProps,
   getPipelineResourceLinks,
@@ -49,6 +51,16 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
         <dd>
           <PipelineResourceRef {...convertBackingPipelineToPipelineResourceRefProps(pipelineRun)} />
         </dd>
+      </dl>
+      <dl>
+        <dt>{t('pipelines-plugin~Started')}</dt>
+        <dd>
+          <Timestamp timestamp={pipelineRun?.status?.startTime} />
+        </dd>
+      </dl>
+      <dl>
+        <dt>{t('pipelines-plugin~Duration')}</dt>
+        <dd>{pipelineRunDuration(pipelineRun)}</dd>
       </dl>
       <TriggeredBySection pipelineRun={pipelineRun} />
       <DynamicResourceLinkList

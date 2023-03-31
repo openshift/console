@@ -683,7 +683,8 @@ export const pipelineTestData: PipelineTestData = {
         },
         status: {
           pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
-          completionTime: '2019-10-29T11:57:53Z',
+          completionTime: 'Mon Mar 27 2023 18:09:11',
+          startTime: 'Mon Mar 27 2023 18:08:19',
           conditions: [
             {
               lastTransitionTime: '2019-09-12T20:38:01Z',
