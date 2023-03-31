@@ -117,7 +117,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (props) 
         title={t('vsphere-plugin~Delayed propagation of configuration')}
       >
         {t(
-          "vsphere-plugin~After saving the configuration, it might take approximately 1 hour to see if the settings are correct and the operators' statuses are updated, nodes will get rebooted.",
+          'vsphere-plugin~The configuration process updates operator statuses and reboots nodes. This process typically takes about an hour. Existing resources such as previously bound Persistent Volume Claims might become disconnected.',
         )}
         <br />
         {t(
