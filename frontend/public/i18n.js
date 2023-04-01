@@ -12,6 +12,12 @@ import { dateTimeFormatter, fromNow } from './components/utils/datetime';
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 
+let resolvedLoading;
+
+export const loading = new Promise((resolve) => {
+  resolvedLoading = resolve;
+});
+
 export const init = () => {
   i18n
     .use(new Pseudo({ enabled: pseudolocalizationEnabled, wrapped: true }))
@@ -95,7 +101,21 @@ export const init = () => {
         // eslint-disable-next-line no-console
         console.error(window.windowError);
       },
+    })
+    // Update loading promise and pass values and errors to the caller
+    .then((value) => {
+      resolvedLoading(true);
+      return value;
+    })
+    .catch((error) => {
+      resolvedLoading(false);
+      throw error;
     });
 };
+
+if (process.env.NODE_ENV !== 'production') {
+  // Expose i18next for debugging
+  window.i18n = i18n;
+}
 
 export default i18n;
