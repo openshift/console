@@ -1024,13 +1024,13 @@ This component can be used to register a listener function receiving telemetry e
 
 ### Summary 
 
-BuildAdapter contributes an adapter to adapt element to data that can be used by Pod component
+BuildAdapter contributes an adapter to adapt element to data that can be used by Build component
 
 ### Properties
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `adapt` | `CodeRef<(element: GraphElement) => AdapterDataType<BuildConfigData> \| undefined>` | no | adapter to adapt element to data that can be used by Networking component. |
+| `adapt` | `CodeRef<(element: GraphElement) => AdapterDataType<BuildConfigData> \| undefined>` | no | adapter to adapt element to data that can be used by Build component. |
 
 ---
 
