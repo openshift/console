@@ -272,3 +272,7 @@ When('user enters Devfile Path as {string}', (devfilePath: string) => {
 Then('user see message {string}', (message: string) => {
   gitPage.checkDevFileHelpText(message);
 });
+
+Then('user clicks on Create button for creating sample', () => {
+  cy.waitUntilEnabled('[data-test-id="submit-button"]').click();
+});

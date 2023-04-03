@@ -62,6 +62,11 @@ export const pipelineBuilderPage = {
     cy.get(pipelineBuilderPO.formView.quickSearch).type(taskName);
     cy.byTestID('task-cta').click();
   },
+  addRedHatTask: (taskName: string) => {
+    cy.get(pipelineBuilderPO.formView.quickSearch).type(taskName);
+    cy.byTestID(`item-name-${taskName}-Red Hat`).click();
+    cy.byTestID('task-cta').click();
+  },
   clickAddTask: () => {
     cy.get(pipelineBuilderPO.formView.taskDropdown).click();
   },
@@ -79,7 +84,7 @@ export const pipelineBuilderPage = {
       .eq(2)
       .click({ force: true });
     cy.get(pipelineBuilderPO.formView.parallelTask).click();
-    pipelineBuilderPage.AddTask(taskName);
+    pipelineBuilderPage.addRedHatTask(taskName);
   },
   selectSeriesTask: (taskName: string) => {
     cy.mouseHover(pipelineBuilderPO.formView.task);
