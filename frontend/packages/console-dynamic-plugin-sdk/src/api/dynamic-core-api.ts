@@ -329,7 +329,7 @@ export const useListPageFilter: UseListPageFilter = require('@console/internal/c
 /**
  * Component that creates a link to a specific resource type with an icon badge
  * @param {K8sResourceKindReference} [kind] - (optional) the kind of resource i.e. Pod, Deployment, Namespace
- * @param {K8sGroupVersionKind} [groupVersionKind] - (optional) object with groupd, version, and kind
+ * @param {K8sGroupVersionKind} [groupVersionKind] - (optional) object with group, version, and kind
  * @param {string} [className] -  (optional) class style for component
  * @param {string} [displayName] -  (optional) display name for component, overwrites the resource name if set
  * @param {boolean} [inline=false] -  (optional) flag to create icon badge and name inline with children
