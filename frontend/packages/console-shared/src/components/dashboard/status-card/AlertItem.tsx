@@ -82,6 +82,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, documentationLink }) => {
   const alertName = getAlertName(alert);
   const actionObj = getAlertActions(actionExtensions).get(alert.rule.name);
   const { text, action } = actionObj || {};
+  const hideView = alert.hasOwnProperty('hideView') || false;
   return (
     <StatusItem
       Icon={getSeverityIcon(getAlertSeverity(alert))}
@@ -95,7 +96,9 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, documentationLink }) => {
           {text}
         </Button>
       ) : (
-        <Link to={alertURL(alert, alert.rule.id)}>{t('console-shared~View details')}</Link>
+        !hideView && (
+          <Link to={alertURL(alert, alert.rule.id)}>{t('console-shared~View details')}</Link>
+        )
       )}
     </StatusItem>
   );
