@@ -222,6 +222,11 @@ export const pipelineRunDetailsPO = {
       duration: '[data-label="Duration"]',
       branch: '[data-label="Branch/Tag"]',
     },
+    enableManageColumns: '[data-test="manage-columns"]',
+    manageColumns: {
+      durationCheckbox: 'input[id="duration"]',
+      submitButton: '[data-test="confirm-action"]',
+    },
   },
   taskRunsDetails: {
     columnNames: {

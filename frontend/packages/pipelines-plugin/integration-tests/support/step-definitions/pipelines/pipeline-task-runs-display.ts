@@ -206,3 +206,32 @@ Then('user can see Name and Value column under Task Run results', () => {
     .contains('Value')
     .should('be.visible');
 });
+
+When('user clicks manage columns button', () => {
+  cy.get(pipelineRunDetailsPO.taskRuns.enableManageColumns).click();
+});
+
+When('user enables Duration column', () => {
+  cy.get(pipelineRunDetailsPO.taskRuns.manageColumns.durationCheckbox).check();
+  cy.get(pipelineRunDetailsPO.taskRuns.manageColumns.submitButton).click();
+});
+
+When('user disables Duration column', () => {
+  cy.get(pipelineRunDetailsPO.taskRuns.manageColumns.durationCheckbox).uncheck();
+  cy.get(pipelineRunDetailsPO.taskRuns.manageColumns.submitButton).click();
+});
+
+Then('user sees Duration column', () => {
+  cy.get(pipelineRunDetailsPO.taskRuns.columnNames.duration).should('be.visible');
+});
+
+Then('user does not see Duration column', () => {
+  cy.get(pipelineRunDetailsPO.taskRuns.columnNames.duration).should('not.exist');
+});
+
+When('user verifies that duration column is visible', () => {
+  cy.get(pipelineRunDetailsPO.taskRuns.enableManageColumns).click();
+  cy.get(pipelineRunDetailsPO.taskRuns.manageColumns.durationCheckbox).check();
+  cy.get(pipelineRunDetailsPO.taskRuns.manageColumns.submitButton).click();
+  cy.get(pipelineRunDetailsPO.taskRuns.columnNames.duration).should('be.visible');
+});
