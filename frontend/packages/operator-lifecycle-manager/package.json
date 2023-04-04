@@ -13,7 +13,8 @@
       "utils": "src/utils/index.ts",
       "topology": "src/components/topology",
       "topologySidebar": "src/components/topology/sidebar",
-      "actions": "src/actions"
+      "actions": "src/actions",
+      "install": "src/components/operator-install-page"
     }
   }
 }
