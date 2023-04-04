@@ -1229,6 +1229,7 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
     group: SubscriptionModel.apiGroup,
     resource: SubscriptionModel.plural,
     verb: 'list',
+    namespace: ns,
   });
 
   const pagesFor = React.useCallback(
