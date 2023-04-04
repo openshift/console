@@ -21,20 +21,13 @@ export const withoutSensitiveInformations = (location: Location): Location => {
   };
 };
 
+const titleProductNameSuffix = ` · ${getBrandingDetails().productName}`;
+
 export const getTelemetryTitle = () => {
   const titleElement = document.querySelector('title');
-  const titleValue = titleElement.getAttribute('data-telemetry');
-  if (!titleValue) {
-    const { productName } = getBrandingDetails();
-    const pageTitleValue = document.title;
-    const titleArray = pageTitleValue.split(' · ');
-    const last = titleArray[titleArray.length - 1];
-    if (titleArray.length === 1) {
-      return pageTitleValue;
-    } else if (titleArray.length && last === productName) {
-      const newTelemetrytitle = pageTitleValue.replace(` · ${productName}`, '');
-      return newTelemetrytitle;
-    }
+  let title = titleElement.getAttribute('data-telemetry') || document.title;
+  if (title.endsWith(titleProductNameSuffix)) {
+    title = title.substring(0, title.length - titleProductNameSuffix.length);
   }
-  return titleValue || document.title;
+  return title;
 };
