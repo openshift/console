@@ -9,6 +9,7 @@ import {
   setTrafficDistributionModal,
   editSinkUriModal,
   setSinkSourceModal,
+  testServerlessFunctionModal,
 } from '../components/modals';
 import { addPubSubConnectionModal } from '../components/pub-sub/PubSubModalLauncher';
 import { EventingSubscriptionModel, EventingTriggerModel } from '../models';
@@ -150,4 +151,14 @@ export const editSinkUri = (
     namespace: resources[0].metadata.namespace,
     verb: 'update',
   },
+});
+
+export const testServerlessFunction = (model: K8sKind, obj: K8sResourceKind): Action => ({
+  id: 'test-serverless-function',
+  label: i18next.t('knative-plugin~Test Serverless Function'),
+  cta: () =>
+    testServerlessFunctionModal({
+      obj,
+    }),
+  insertBefore: 'create-service-binding',
 });

@@ -31,7 +31,10 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
   model,
   schema,
   showSamples,
+  showShortcuts,
+  minHeight,
   onSave,
+  language,
 }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
@@ -82,10 +85,11 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
           loader={() => import('../editor/YAMLEditor').then((c) => c.default)}
           forwardRef={editorRef}
           value={field.value}
-          minHeight="200px"
+          minHeight={minHeight ?? '200px'}
           onChange={(yaml: string) => setFieldValue(name, yaml)}
           onSave={onSave}
-          showShortcuts
+          showShortcuts={showShortcuts}
+          language={language}
           toolbarLinks={
             !sidebarOpen &&
             hasSidebarContent && [

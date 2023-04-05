@@ -628,6 +628,7 @@ export type SelfSubjectAccessReviewKind = {
 
 export type YAMLEditorProps = {
   value?: string;
+  language?: string;
   options?: object;
   minHeight?: string | number;
   showShortcuts?: boolean;

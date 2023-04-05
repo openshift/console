@@ -89,9 +89,9 @@ export const ModalTitle: React.SFC<ModalTitleProps> = ({
   </div>
 );
 
-export const ModalBody: React.SFC<ModalBodyProps> = ({ children }) => (
+export const ModalBody: React.SFC<ModalBodyProps> = ({ children, className }) => (
   <div className="modal-body">
-    <div className="modal-body-content">{children}</div>
+    <div className={classNames('modal-body-content', className)}>{children}</div>
   </div>
 );
 
@@ -100,10 +100,11 @@ export const ModalFooter: React.SFC<ModalFooterProps> = ({
   errorMessage,
   inProgress,
   children,
+  className = 'modal-footer',
 }) => {
   return (
     <ButtonBar
-      className="modal-footer"
+      className={className}
       errorMessage={errorMessage}
       infoMessage={message}
       inProgress={inProgress}
@@ -120,8 +121,10 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
   cancel,
   submitText,
   cancelText,
+  className,
   submitDisabled,
   submitDanger,
+  buttonAlignment = 'right',
   resetText = i18next.t('public~Reset'),
   reset,
 }) => {
@@ -136,43 +139,71 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
     reset(e);
   };
 
+  const cancelButton = (
+    <Button
+      type="button"
+      variant="secondary"
+      data-test-id="modal-cancel-action"
+      onClick={onCancelClick}
+      aria-label={t('public~Cancel')}
+    >
+      {cancelText || t('public~Cancel')}
+    </Button>
+  );
+
+  const submitButton = submitDanger ? (
+    <Button
+      type="submit"
+      variant="danger"
+      isDisabled={submitDisabled}
+      data-test="confirm-action"
+      id="confirm-action"
+    >
+      {submitText}
+    </Button>
+  ) : (
+    <Button
+      type="submit"
+      variant="primary"
+      isDisabled={submitDisabled}
+      data-test="confirm-action"
+      id="confirm-action"
+    >
+      {submitText}
+    </Button>
+  );
+
+  const resetButton = (
+    <Button variant="link" isInline onClick={onResetClick} id="reset-action">
+      {resetText}
+    </Button>
+  );
+
   return (
-    <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
-      <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
-        {reset && (
-          <Button variant="link" isInline onClick={onResetClick} id="reset-action">
-            {resetText}
-          </Button>
+    <ModalFooter
+      inProgress={inProgress}
+      errorMessage={errorMessage}
+      message={message}
+      className={className}
+    >
+      <ActionGroup
+        className={classNames(
+          { 'pf-c-form__actions--right': buttonAlignment === 'right' },
+          'pf-c-form  pf-c-form__group--no-top-margin',
         )}
-        <Button
-          type="button"
-          variant="secondary"
-          data-test-id="modal-cancel-action"
-          onClick={onCancelClick}
-          aria-label={t('public~Cancel')}
-        >
-          {cancelText || t('public~Cancel')}
-        </Button>
-        {submitDanger ? (
-          <Button
-            type="submit"
-            variant="danger"
-            isDisabled={submitDisabled}
-            data-test="confirm-action"
-            id="confirm-action"
-          >
-            {submitText}
-          </Button>
+      >
+        {buttonAlignment === 'left' ? (
+          <>
+            {submitButton}
+            {reset && resetButton}
+            {cancelButton}
+          </>
         ) : (
-          <Button
-            type="submit"
-            variant="primary"
-            isDisabled={submitDisabled}
-            data-test="confirm-action"
-            id="confirm-action"
-          >
-            {submitText}
-          </Button>
+          <>
+            {reset && resetButton}
+            {cancelButton}
+            {submitButton}
+          </>
         )}
       </ActionGroup>
     </ModalFooter>
@@ -206,6 +237,7 @@ export type ModalFooterProps = {
   message?: string;
   errorMessage?: React.ReactNode;
   inProgress: boolean;
+  className?: string;
 };
 
 export type ModalSubmitFooterProps = {
@@ -214,11 +246,13 @@ export type ModalSubmitFooterProps = {
   inProgress: boolean;
   cancel: (e: React.SyntheticEvent<any, Event>) => void;
   cancelText?: React.ReactNode;
+  className?: string;
   resetText?: React.ReactNode;
   reset?: (e: React.SyntheticEvent<any, Event>) => void;
   submitText: React.ReactNode;
   submitDisabled?: boolean;
   submitDanger?: boolean;
+  buttonAlignment?: 'left' | 'right';
 };
 
 export type CreateModalLauncher = <P extends ModalComponentProps>(
