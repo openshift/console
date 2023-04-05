@@ -218,6 +218,10 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 		fs.Set("node-architectures", strings.Join(clusterInfo.NodeArchitectures, ","))
 	}
 
+	if len(clusterInfo.NodeOperatingSystems) > 0 {
+		fs.Set("node-operating-systems", strings.Join(clusterInfo.NodeOperatingSystems, ","))
+	}
+
 	if clusterInfo.CopiedCSVsDisabled {
 		fs.Set("copied-csvs-disabled", "true")
 	}
