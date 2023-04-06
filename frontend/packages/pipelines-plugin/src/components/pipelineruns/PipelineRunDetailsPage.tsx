@@ -5,7 +5,7 @@ import { KebabAction, navFactory, viewYamlComponent } from '@console/internal/co
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { getPipelineRunKebabActions } from '../../utils/pipeline-actions';
 import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
-import { usePipelinesBreadcrumbsFor } from '../pipelines/hooks';
+import { useDevPipelinesBreadcrumbsFor } from '../pipelines/hooks';
 import { PipelineRunDetails } from './detail-page-tabs/PipelineRunDetails';
 import { PipelineRunLogsWithActiveTask } from './detail-page-tabs/PipelineRunLogs';
 import TaskRuns from './detail-page-tabs/TaskRuns';
@@ -19,7 +19,7 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineRunKebabActions(true),
   );
-  const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
+  const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj, match);
   const badge = usePipelineTechPreviewBadge(props.namespace);
 
   return (
