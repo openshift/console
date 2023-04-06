@@ -28,7 +28,9 @@ const alertExists = (titleText: string) => {
 
 const uninstallAndVerify = () => {
   cy.log('uninstall the Operator and all Operand instances');
-  operator.uninstall(testOperator.name, testOperator.installedNamespace, true);
+  operator.uninstallModal.open(testOperator.name, testOperator.installedNamespace);
+  operator.uninstallModal.checkDeleteAllOperands();
+  modal.submit();
 
   cy.log(`verify the Operator is not installed`);
   operator.shouldNotExist(testOperator.name, testOperator.installedNamespace);
@@ -37,7 +39,7 @@ const uninstallAndVerify = () => {
   cy.resourceShouldBeDeleted(testName, testOperand.kind, testOperand.exampleName);
 };
 
-xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
+describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   before(() => {
     cy.login();
     cy.visit('/');

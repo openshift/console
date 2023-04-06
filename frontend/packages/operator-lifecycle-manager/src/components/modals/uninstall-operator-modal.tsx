@@ -204,7 +204,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   );
 
   const pollOperands = React.useCallback((): Timeout => {
-    const url = `${window.SERVER_FLAGS.basePath}api/list-operands?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
+    const url = `${window.SERVER_FLAGS.basePath}api/list-operands/?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
     const interval = setInterval(() => {
       coFetchJSON(url)
         .then((curOperands) => {
