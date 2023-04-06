@@ -1,5 +1,8 @@
 before(() => {
-  cy.login();
+  const bridgePasswordIDP: string = Cypress.env('BRIDGE_HTPASSWD_IDP');
+  const bridgePasswordUsername: string = Cypress.env('BRIDGE_HTPASSWD_USERNAME');
+  const bridgePasswordPassword: string = Cypress.env('BRIDGE_KUBEADMIN_PASSWORD');
+  cy.login(bridgePasswordIDP, bridgePasswordUsername, bridgePasswordPassword);
   cy.document()
     .its('readyState')
     .should('eq', 'complete');
