@@ -130,6 +130,7 @@ type jsGlobals struct {
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ThanosPublicURL                 string                     `json:"thanosPublicURL"`
 	UserSettingsLocation            string                     `json:"userSettingsLocation"`
+	K8sMode                         string                     `json:"k8sMode"`
 }
 
 type Server struct {
@@ -161,6 +162,7 @@ type Server struct {
 	I18nNamespaces                      []string
 	InactivityTimeout                   int
 	K8sClient                           *http.Client
+	K8sMode                             string
 	K8sProxyConfig                      *proxy.Config
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
@@ -754,6 +756,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		NodeArchitectures:          s.NodeArchitectures,
 		CopiedCSVsDisabled:         s.CopiedCSVsDisabled,
 		HubConsoleURL:              s.HubConsoleURL.String(),
+		K8sMode:                    s.K8sMode,
 	}
 
 	localAuther := s.getLocalAuther()

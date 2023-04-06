@@ -57,6 +57,7 @@ declare interface Window {
     telemetry: Record<string, string>;
     nodeArchitectures: string[];
     hubConsoleURL: string;
+    k8sMode: string,
   };
   windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;

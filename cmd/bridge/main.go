@@ -302,6 +302,7 @@ func main() {
 		NodeArchitectures:            nodeArchitectures,
 		HubConsoleURL:                hubConsoleURL,
 		AuthMetrics:                  auth.NewMetrics(),
+		K8sMode:                      *fK8sMode,
 	}
 
 	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}
