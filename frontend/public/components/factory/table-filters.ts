@@ -19,8 +19,17 @@ import { alertDescription } from '../monitoring/utils';
 import { Target } from '../monitoring/types';
 import { requesterFilter } from '@console/shared/src/components/namespace';
 
-export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
-  fuzzy(_.toLower(a), _.toLower(b));
+export const fuzzyCaseInsensitive = (a: string, b: string): boolean => {
+  // End of quoted string. Compare without leading/trailing quotes
+  if ((a?.startsWith("'") || a?.startsWith('"')) && (a?.endsWith('"') || a?.endsWith("'"))) {
+    return b?.includes(a.substring(1, a.length - 1));
+  }
+  // Beginning of quoted string. Compare without leading quote
+  if (a?.startsWith("'") || a?.startsWith('"')) {
+    return b?.includes(a.substring(1));
+  }
+  return fuzzy(_.toLower(a), _.toLower(b));
+};
 
 const clusterServiceVersionDisplayName = (csv: K8sResourceKind): string =>
   csv?.spec?.displayName || csv?.metadata?.name;
