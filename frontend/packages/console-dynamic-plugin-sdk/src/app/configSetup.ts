@@ -17,12 +17,12 @@ let config: UtilsConfig | undefined;
  *
  * This must be done before using any of the Kubernetes utilities.
  */
-export const setUtilsConfig = (c: UtilsConfig) => {
-  if (config !== undefined) {
+export const setUtilsConfig = (c: UtilsConfig | undefined) => {
+  if (config !== undefined && c !== undefined) {
     throw new Error('setUtilsConfig has already been called');
   }
 
-  config = Object.freeze({ ...c });
+  config = config ? Object.freeze({ ...c }) : undefined;
 };
 
 /**
