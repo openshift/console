@@ -22,7 +22,7 @@ export const setUtilsConfig = (c: UtilsConfig | undefined) => {
     throw new Error('setUtilsConfig has already been called');
   }
 
-  config = config ? Object.freeze({ ...c }) : undefined;
+  config = c ? Object.freeze({ ...c }) : undefined;
 };
 
 /**
