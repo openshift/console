@@ -490,7 +490,7 @@ export const convertEditFormToDeployment = (
           ...deployment.spec.template.metadata,
           labels: {
             ...deployment.spec.template.metadata.labels,
-            ...(name ? { app: name } : {}),
+            ...(deployment.metadata.name ? {} : name ? { app: name } : {}),
           },
         },
         spec: {
@@ -512,7 +512,11 @@ export const convertEditFormToDeployment = (
         ...newDeployment.spec,
         selector: {
           ...newDeployment.spec.selector,
-          ...(newDeployment.metadata.name ? { app: newDeployment.metadata.name } : {}),
+          ...(deployment.metadata.name
+            ? {}
+            : newDeployment.metadata.name
+            ? { app: newDeployment.metadata.name }
+            : {}),
         },
         triggers: [
           ...(fromImageStreamTag
@@ -553,7 +557,11 @@ export const convertEditFormToDeployment = (
           ...newDeployment.spec.selector,
           matchLabels: {
             ...newDeployment.spec.selector.matchLabels,
-            ...(newDeployment.metadata.name ? { app: newDeployment.metadata.name } : {}),
+            ...(deployment.metadata.name
+              ? {}
+              : newDeployment.metadata.name
+              ? { app: newDeployment.metadata.name }
+              : {}),
           },
         },
       },
