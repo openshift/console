@@ -246,14 +246,11 @@ export const verifyAndInstallGitopsPrimerOperator = () => {
 export const verifyAndInstallWebTerminalOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
   operatorsPage.navigateToInstallOperatorsPage();
-  cy.get(operatorsPO.installOperators.search)
-    .should('be.visible')
-    .clear()
-    .type(operators.WebTerminalOperator);
+
   cy.get('body', {
     timeout: 50000,
   }).then(($ele) => {
-    if ($ele.find(operatorsPO.installOperators.noOperatorsFound)) {
+    if ($ele.find(operatorsPO.installOperators.search).length === 0) {
       installOperator(operators.WebTerminalOperator);
       operatorsPage.navigateToInstallOperatorsPage();
       operatorsPage.searchOperatorInInstallPage('DevWorkspace Operator');
@@ -264,7 +261,27 @@ export const verifyAndInstallWebTerminalOperator = () => {
       cy.contains('Succeeded', { timeout: 300000 });
       performPostInstallationSteps(operators.WebTerminalOperator);
     } else {
-      cy.log('Web Terminal operator is installed in cluster');
+      cy.log('Search Found');
+      cy.get(operatorsPO.installOperators.search)
+        .should('be.visible')
+        .clear()
+        .type(operators.WebTerminalOperator);
+
+      cy.wait(2000);
+
+      if ($ele.find(operatorsPO.installOperators.noOperatorsFound).length > 0) {
+        installOperator(operators.WebTerminalOperator);
+        operatorsPage.navigateToInstallOperatorsPage();
+        operatorsPage.searchOperatorInInstallPage('DevWorkspace Operator');
+        cy.get('.co-clusterserviceversion-logo__name__clusterserviceversion').should(
+          'include.text',
+          'DevWorkspace Operator',
+        );
+        cy.contains('Succeeded', { timeout: 300000 });
+        performPostInstallationSteps(operators.WebTerminalOperator);
+      } else {
+        cy.log('Web Terminal operator is installed in cluster');
+      }
     }
   });
 };
