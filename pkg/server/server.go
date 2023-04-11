@@ -617,6 +617,12 @@ func (s *Server) HTTPHandler() http.Handler {
 			klog.Errorf("Unable to parse perspective JSON: %v", err)
 		}
 	}
+	serverconfigMetrics := serverconfig.NewMetrics(config)
+	serverconfigMetrics.MonitorPlugins(
+		s.K8sClient,
+		s.K8sProxyConfig.Endpoint.String(),
+		s.ServiceAccountToken,
+	)
 	usageMetrics := usage.NewMetrics()
 	usageMetrics.MonitorUsers(
 		s.K8sClient,
@@ -624,7 +630,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		s.ServiceAccountToken,
 	)
 	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...)
-	prometheus.MustRegister(serverconfig.NewMetrics(config).GetCollectors()...)
+	prometheus.MustRegister(serverconfigMetrics.GetCollectors()...)
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
 	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
 		authHandler(func(w http.ResponseWriter, r *http.Request) {
