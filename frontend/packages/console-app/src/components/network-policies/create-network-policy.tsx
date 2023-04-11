@@ -98,7 +98,7 @@ export const CreateNetworkPolicy: React.FC<{
           setHelpText(type === EditorType.Form ? formHelpText : yamlHelpText)
         }
         onChange={checkPolicyValidForForm}
-        YAMLEditor={YAMLEditor}
+        CodeEditor={YAMLEditor}
         lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
         displayConversionError
       />

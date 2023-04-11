@@ -8,7 +8,7 @@ import {
   FormFooter,
   FormHeader,
   SyncedEditorField,
-  YAMLEditorField,
+  CodeEditorField,
 } from '@console/shared';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { ConfigMapModel } from '@console/internal/models';
@@ -57,7 +57,7 @@ export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEdito
   );
 
   const yamlEditor = (
-    <YAMLEditorField
+    <CodeEditorField
       name="yamlData"
       model={ConfigMapModel}
       showSamples={false}

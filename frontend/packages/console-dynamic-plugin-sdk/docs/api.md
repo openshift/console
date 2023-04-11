@@ -53,7 +53,7 @@
 51.  [`InventoryItemStatus`](#inventoryitemstatus)
 52.  [`InventoryItemLoading`](#inventoryitemloading)
 53.  [`useFlag`](#useflag)
-54.  [`YAMLEditor`](#yamleditor)
+54.  [`CodeEditor`](#codeeditor)
 55.  [`ResourceYAMLEditor`](#resourceyamleditor)
 56.  [`ResourceEventStream`](#resourceeventstream)
 57.  [`usePrometheusPoll`](#useprometheuspoll)
@@ -1874,11 +1874,11 @@ the boolean value of the requested feature flag or undefined
 
 ---
 
-## `YAMLEditor`
+## `CodeEditor`
 
 ### Summary 
 
-A basic lazy loaded YAML editor with hover help and completion.
+A basic lazy loaded Code editor with hover help and completion.
 
 
 
@@ -1887,7 +1887,7 @@ A basic lazy loaded YAML editor with hover help and completion.
 
 ```tsx
 <React.Suspense fallback={<LoadingBox />}>
-  <YAMLEditor
+  <CodeEditor
     value={code}
   />
 </React.Suspense>

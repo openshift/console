@@ -6,7 +6,7 @@ import { K8sKind } from '@console/internal/module/k8s';
 import { Sample } from '../../utils';
 import { downloadYaml } from './yaml-download-utils';
 
-type YAMLEditorSidebarProps = {
+type CodeEditorSidebarProps = {
   editorRef: React.MutableRefObject<MonacoEditor>;
   model?: K8sKind;
   samples?: Sample[];
@@ -17,7 +17,7 @@ type YAMLEditorSidebarProps = {
   toggleSidebar: () => void;
 };
 
-const YAMLEditorSidebar: React.FC<YAMLEditorSidebarProps> = ({
+const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
   editorRef,
   model,
   samples,
@@ -104,4 +104,4 @@ const YAMLEditorSidebar: React.FC<YAMLEditorSidebarProps> = ({
   );
 };
 
-export default YAMLEditorSidebar;
+export default CodeEditorSidebar;

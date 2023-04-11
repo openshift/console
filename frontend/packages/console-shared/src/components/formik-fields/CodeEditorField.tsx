@@ -16,16 +16,16 @@ import { ConsoleYAMLSampleModel } from '@console/internal/models';
 import { getYAMLTemplates } from '@console/internal/models/yaml-templates';
 import { definitionFor, K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';
 import { getResourceSidebarSamples } from '../../utils';
-import { YAMLEditorFieldProps } from './field-types';
+import { CodeEditorFieldProps } from './field-types';
 
-import './YAMLEditorField.scss';
+import './CodeEditorField.scss';
 
 const SampleResource: WatchK8sResource = {
   kind: referenceForModel(ConsoleYAMLSampleModel),
   isList: true,
 };
 
-const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
+const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
   name,
   label,
   model,
@@ -82,7 +82,7 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
     <div className="osc-yaml-editor" data-test="yaml-editor">
       <div className="osc-yaml-editor__editor">
         <AsyncComponent
-          loader={() => import('../editor/YAMLEditor').then((c) => c.default)}
+          loader={() => import('../editor/CodeEditor').then((c) => c.default)}
           forwardRef={editorRef}
           value={field.value}
           minHeight={minHeight ?? '200px'}
@@ -104,7 +104,7 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
       {sidebarOpen && hasSidebarContent && (
         <div className="osc-yaml-editor__sidebar">
           <AsyncComponent
-            loader={() => import('../editor/YAMLEditorSidebar').then((c) => c.default)}
+            loader={() => import('../editor/CodeEditorSidebar').then((c) => c.default)}
             editorRef={editorRef}
             model={model}
             schema={schema}
@@ -120,4 +120,4 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
   );
 };
 
-export default YAMLEditorField;
+export default CodeEditorField;

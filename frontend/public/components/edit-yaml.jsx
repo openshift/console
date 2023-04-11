@@ -14,8 +14,8 @@ import {
   withPostFormSubmissionCallback,
   getResourceSidebarSamples,
 } from '@console/shared';
-import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
-import YAMLEditorSidebar from '@console/shared/src/components/editor/YAMLEditorSidebar';
+import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
+import CodeEditorSidebar from '@console/shared/src/components/editor/CodeEditorSidebar';
 import '@console/shared/src/components/editor/theme';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
@@ -677,7 +677,7 @@ export const EditYAML_ = connect(stateToProps)(
                       className={classNames('yaml-editor', customClass)}
                       ref={(r) => (this.editor = r)}
                     >
-                      <YAMLEditor
+                      <CodeEditor
                         ref={this.monacoRef}
                         options={options}
                         showShortcuts={!genericYAML}
@@ -768,7 +768,7 @@ export const EditYAML_ = connect(stateToProps)(
                     </div>
                   </div>
                   {hasSidebarContent && showSidebar && (
-                    <YAMLEditorSidebar
+                    <CodeEditorSidebar
                       editorRef={this.monacoRef}
                       model={model}
                       samples={create ? samples : []}

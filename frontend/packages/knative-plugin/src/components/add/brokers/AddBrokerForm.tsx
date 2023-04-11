@@ -11,7 +11,7 @@ import {
   FormBody,
   SyncedEditorField,
   FormFooter,
-  YAMLEditorField,
+  CodeEditorField,
   UNASSIGNED_APPLICATIONS_KEY,
   useFormikValidationFix,
 } from '@console/shared';
@@ -114,7 +114,7 @@ const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFo
     </>
   );
   const yamlEditor = (
-    <YAMLEditorField
+    <CodeEditorField
       name="yamlData"
       model={EventingBrokerModel}
       showSamples

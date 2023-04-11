@@ -14,7 +14,7 @@ import EditorField from '@console/dev-console/src/components/buildconfig/section
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { GitProvider } from '@console/git-service/src';
 import { ExternalLink } from '@console/internal/components/utils';
-import YAMLEditorToolbar from '@console/shared/src/components/editor/YAMLEditorToolbar';
+import CodeEditorToolbar from '@console/shared/src/components/editor/CodeEditorToolbar';
 import CopyPipelineRunButton from '../form-fields/CopyPipelineRunButton';
 import { RepositoryFormValues } from '../types';
 
@@ -68,7 +68,7 @@ const RepositoryOverview = () => {
           </Text>
         </Trans>
         <>
-          <YAMLEditorToolbar showShortcuts toolbarLinks={[]} />
+          <CodeEditorToolbar showShortcuts toolbarLinks={[]} />
           <EditorField
             name="yamlData"
             height={200}

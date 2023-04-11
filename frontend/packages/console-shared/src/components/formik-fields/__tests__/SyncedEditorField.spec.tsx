@@ -6,10 +6,10 @@ import * as _ from 'lodash';
 import { LoadingBox } from '@console/internal/components/utils';
 import { EditorType } from '../../synced-editor/editor-toggle';
 import { useEditorType } from '../../synced-editor/useEditorType';
+import CodeEditorField from '../CodeEditorField';
 import DynamicFormField from '../DynamicFormField';
 import RadioGroupField from '../RadioGroupField';
 import SyncedEditorField from '../SyncedEditorField';
-import YAMLEditorField from '../YAMLEditorField';
 
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{ value: 'form' }, {}]),
@@ -32,7 +32,7 @@ describe('SyncedEditorField', () => {
 
   const mockEditors = {
     form: <DynamicFormField name="formData" schema={{}} />,
-    yaml: <YAMLEditorField name="yamlData" showSamples />,
+    yaml: <CodeEditorField name="yamlData" showSamples />,
   };
 
   const props: SyncedEditorFieldProps = {
@@ -79,7 +79,7 @@ describe('SyncedEditorField', () => {
     mockUseField.mockReturnValue([{ value: EditorType.YAML }, {}]);
     mockUseEditorType.mockReturnValue([EditorType.YAML, jest.fn(), true]);
     wrapper = shallow(<SyncedEditorField {...props} />);
-    expect(wrapper.find(YAMLEditorField).exists()).toBe(true);
+    expect(wrapper.find(CodeEditorField).exists()).toBe(true);
   });
 
   it('should disable corresponding radio button if any editor context is disabled', () => {

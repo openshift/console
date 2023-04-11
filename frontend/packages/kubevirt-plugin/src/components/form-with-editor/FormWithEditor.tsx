@@ -2,7 +2,7 @@ import * as React from 'react';
 import cn from 'classnames';
 import yamlParser from 'js-yaml';
 import { MonacoEditorProps } from 'react-monaco-editor';
-import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
+import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
 import { EditorPosition, formModifier, ViewComponent } from './form-with-editor-utils';
 
 import './form-with-editor.scss';
@@ -97,7 +97,7 @@ const FormWithEditor: React.FC<FormWithEditorProps> = ({
       })}
     >
       {(view === ViewComponent.sideBySide || view === ViewComponent.editor) && (
-        <YAMLEditor
+        <CodeEditor
           value={data}
           minHeight={'100%'}
           theme={theme}

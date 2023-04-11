@@ -1,14 +1,14 @@
 import * as React from 'react';
 import Measure from 'react-measure';
 import MonacoEditor from 'react-monaco-editor';
-import { YAMLEditorProps } from '@console/dynamic-plugin-sdk';
+import { CodeEditorProps } from '@console/dynamic-plugin-sdk';
 import './theme';
+import CodeEditorToolbar from './CodeEditorToolbar';
 import { registerYAMLinMonaco, defaultEditorOptions } from './yaml-editor-utils';
-import YAMLEditorToolbar from './YAMLEditorToolbar';
 
-import './YAMLEditor.scss';
+import './CodeEditor.scss';
 
-const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) => {
+const CodeEditor = React.forwardRef<MonacoEditor, CodeEditorProps>((props, ref) => {
   const {
     value,
     options = defaultEditorOptions,
@@ -34,7 +34,7 @@ const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) 
 
   return (
     <>
-      <YAMLEditorToolbar showShortcuts={showShortcuts} toolbarLinks={toolbarLinks} />
+      <CodeEditorToolbar showShortcuts={showShortcuts} toolbarLinks={toolbarLinks} />
       <Measure bounds>
         {({ measureRef, contentRect }) => (
           <div ref={measureRef} className="ocs-yaml-editor__root" style={{ minHeight }}>
@@ -58,4 +58,4 @@ const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) 
   );
 });
 
-export default YAMLEditor;
+export default CodeEditor;

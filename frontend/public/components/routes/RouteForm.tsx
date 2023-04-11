@@ -9,7 +9,7 @@ import {
   FormBody,
   FormFooter,
   SyncedEditorField,
-  YAMLEditorField,
+  CodeEditorField,
 } from '@console/shared/src';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
@@ -47,7 +47,7 @@ export const RouteForm: React.FC<FormikProps<FormikValues> & RouteFormProps> = (
   const formEditor = <CreateRoute services={services} existingRoute={existingRoute} />;
 
   const yamlEditor = (
-    <YAMLEditorField name="yamlData" model={RouteModel} onSave={handleSubmit} showSamples />
+    <CodeEditorField name="yamlData" model={RouteModel} onSave={handleSubmit} showSamples />
   );
 
   const sanitizeToForm = (yamlData: RouteKind) => {
