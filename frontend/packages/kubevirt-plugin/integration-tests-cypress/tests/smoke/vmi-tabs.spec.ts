@@ -43,12 +43,12 @@ describe('smoke tests', () => {
     });
 
     it('vmi yaml tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~YAML').click();
+      cy.byLegacyTestID('horizontal-link-YAML').click();
       cy.get('.yaml-editor').should('be.visible');
     });
 
     it('vmi events tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~Events').click();
+      cy.byLegacyTestID('horizontal-link-Events').click();
       cy.get('.co-sysevent-stream').should('be.visible');
     });
 

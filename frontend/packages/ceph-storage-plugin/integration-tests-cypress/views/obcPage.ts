@@ -46,7 +46,7 @@ export class CreateOBCHandler {
   }
 
   deploymentReady(deploymentName: string) {
-    cy.byLegacyTestID('horizontal-link-public~Details').click();
+    cy.byLegacyTestID('horizontal-link-Details').click();
     cy.contains(DEPLOYMENT_REPLICAS_STATUS, { timeout: MINUTE });
     cy.byTestSelector('details-item-value__Name')
       .should('be.visible')

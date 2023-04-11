@@ -144,8 +144,8 @@ export const pipelineDetailsPO = {
 
 export const triggerTemplateDetailsPO = {
   title: '[data-test-section-heading="TriggerTemplate details"]',
-  detailsTab: '[data-test-id="horizontal-link-public~Details"]',
-  yamlTab: '[data-test-id="horizontal-link-public~YAML"]',
+  detailsTab: '[data-test-id="horizontal-link-Details"]',
+  yamlTab: '[data-test-id="horizontal-link-YAML"]',
   details: {
     pipelinesIcon: '[title="Pipeline"]',
     eventListenerLink: '[data-test-id^="event-listener-"]',
@@ -230,10 +230,10 @@ export const pipelineRunDetailsPO = {
   },
   taskRunsDetails: {
     columnNames: {
-      details: '[data-test-id="horizontal-link-public~Details"]',
-      YAML: '[data-test-id="horizontal-link-public~YAML"]',
+      details: '[data-test-id="horizontal-link-Details"]',
+      YAML: '[data-test-id="horizontal-link-YAML"]',
       logs: '[data-test-id="horizontal-link-Logs"]',
-      events: '[data-test-id="horizontal-link-public~Events"]',
+      events: '[data-test-id="horizontal-link-Events"]',
     },
     status: '.odc-taskrun-details__status',
   },

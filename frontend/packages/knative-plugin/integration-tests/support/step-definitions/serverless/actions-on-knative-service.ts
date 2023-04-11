@@ -107,7 +107,7 @@ Given('user created another revision for knative Service {string}', (knativeServ
     .next('a')
     .click();
   cy.contains('Service details').should('be.visible');
-  cy.byLegacyTestID('horizontal-link-public~Details').click();
+  cy.byLegacyTestID('horizontal-link-Details').click();
   cy.get('button')
     .contains('Labels')
     .scrollIntoView()

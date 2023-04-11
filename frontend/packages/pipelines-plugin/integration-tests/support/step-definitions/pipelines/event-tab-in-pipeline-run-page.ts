@@ -53,7 +53,7 @@ When('user clicks on pipeline run for pipeline {string}', (pipelineName: string)
 });
 
 When('user clicks on Events tab', () => {
-  cy.get(`[data-test-id="horizontal-link-public~Events"]`).click();
+  cy.get(`[data-test-id="horizontal-link-Events"]`).click();
 });
 
 When('user clicks on Events tab in pipeline Runs page', () => {
