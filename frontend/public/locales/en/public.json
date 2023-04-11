@@ -1869,6 +1869,8 @@
   "ClusterRoleBindings": "ClusterRoleBindings",
   "ClusterRole": "ClusterRole",
   "ClusterRoles": "ClusterRoles",
+  "DevWorkspaceTemplate": "DevWorkspaceTemplate",
+  "DevWorkspaceTemplates": "DevWorkspaceTemplates",
   "SelfSubjectAccessReview": "SelfSubjectAccessReview",
   "SelfSubjectAccessReviews": "SelfSubjectAccessReviews",
   "ResourceAccessReview": "ResourceAccessReview",

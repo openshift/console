@@ -567,6 +567,21 @@ export const RoleBindingModel: K8sKind = {
   labelPluralKey: 'public~RoleBindings',
 };
 
+export const DevWorkspaceTemplateModel: K8sKind = {
+  apiGroup: 'workspace.devfile.io',
+  apiVersion: 'v1alpha2',
+  label: 'DevWorkspaceTemplate',
+  // t('public~DevWorkspaceTemplate')
+  labelKey: 'public~DevWorkspaceTemplate',
+  // t('public~DevWorkspaceTemplates')
+  labelPluralKey: 'public~DevWorkspaceTemplates',
+  plural: 'devworkspacetemplates',
+  abbr: 'DWT',
+  kind: 'DevWorkspaceTemplate',
+  labelPlural: 'devworkspacetemplates',
+  namespaced: true,
+};
+
 export const RoleModel: K8sKind = {
   label: 'Role',
   // t('public~Role')
