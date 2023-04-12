@@ -36,6 +36,10 @@ export const init = () => {
         loadPath: '/locales/resource.json?lng={{lng}}&ns={{ns}}',
         parse: function(data, lng, ns) {
           const parsed = JSON.parse(data);
+          console.log("nstest", ns?.startsWith('plugin__'), ns)
+          console.log("datatest", data)
+          console.log("parsedtest", parsed)
+          console.log("transformNamespace", transformNamespace(lng, parsed) )
           return ns?.startsWith('plugin__') ? transformNamespace(lng, parsed) : parsed;
         },
       },
@@ -97,7 +101,7 @@ export const init = () => {
       },
       saveMissing: true,
       missingKeyHandler: function(lng, ns, key) {
-        window.windowError = `Missing i18n key "${key}" in namespace "${ns}" and language "${lng}."`;
+        window.windowError = `Testing Missing i18n key "${key}" in namespace "${ns}" and language "${lng}."`;
         // eslint-disable-next-line no-console
         console.error(window.windowError);
       },
