@@ -42,7 +42,8 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
   const pages: Page[] = [
     {
       href: '',
-      name: t('knative-plugin~Event Sources'),
+      // t('knative-plugin~Event Sources')
+      nameKey: 'knative-plugin~Event Sources',
       component: EventSourceListPage,
       pageData: {
         canCreate,
@@ -52,7 +53,8 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
     },
     {
       href: 'brokers',
-      name: t('knative-plugin~Brokers'),
+      // t('knative-plugin~Brokers')
+      nameKey: 'knative-plugin~Brokers',
       component: BrokerListPage,
       pageData: {
         canCreate,
@@ -62,7 +64,8 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
     },
     {
       href: 'triggers',
-      name: t('knative-plugin~Triggers'),
+      // t('knative-plugin~Triggers')
+      nameKey: 'knative-plugin~Triggers',
       component: TriggerListPage,
       pageData: {
         canCreate,
@@ -72,7 +75,8 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
     },
     {
       href: 'channels',
-      name: t('knative-plugin~Channels'),
+      // t('knative-plugin~Channels')
+      nameKey: 'knative-plugin~Channels',
       component: ChannelListPage,
       pageData: {
         canCreate,
@@ -82,7 +86,8 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
     },
     {
       href: 'subscriptions',
-      name: t('knative-plugin~Subscriptions'),
+      // t('knative-plugin~Subscriptions')
+      nameKey: 'knative-plugin~Subscriptions',
       component: SubscriptionListPage,
       pageData: {
         canCreate,
@@ -100,6 +105,7 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
         match={match}
         title={t('knative-plugin~Eventing')}
         menuActions={menuActions}
+        telemetryPrefix="Eventing"
       />
     </>
   );

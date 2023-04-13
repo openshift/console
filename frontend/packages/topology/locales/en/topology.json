@@ -61,7 +61,6 @@
   "{{ready, number}} of {{count, number}} Pod_other": "{{ready, number}} of {{count, number}} Pods",
   "{{length}} Pods": "{{length}} Pods",
   "Rollout in progress...": "Rollout in progress...",
-  "Helm Release": "Helm Release",
   "{{groupLabel}} {{resourceLabel}}": "{{groupLabel}} {{resourceLabel}}",
   "{{resourceLabel}} sub-resources": "{{resourceLabel}} sub-resources",
   "{{kindLabel}} {{label}}": "{{kindLabel}} {{label}}",

@@ -33,7 +33,7 @@ describe('smoke tests', () => {
     });
 
     it('template yaml tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~YAML').click();
+      cy.byLegacyTestID('horizontal-link-YAML').click();
       cy.get('.yaml-editor').should('be.visible');
     });
 

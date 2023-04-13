@@ -64,43 +64,50 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
 
   const dashboardPage = {
     href: '', // default landing page
-    name: t('kubevirt-plugin~Overview'),
+    // t('kubevirt-plugin~Overview')
+    nameKey: 'kubevirt-plugin~Overview',
     component: VMDashboard,
   };
 
   const overviewPage = {
     href: VM_DETAIL_DETAILS_HREF,
-    name: t('kubevirt-plugin~Details'),
+    // t('kubevirt-plugin~Details')
+    nameKey: 'kubevirt-plugin~Details',
     component: VMDetailsFirehose,
   };
 
   const consolePage = {
     href: VM_DETAIL_CONSOLES_HREF,
-    name: t('kubevirt-plugin~Console'),
+    // t('kubevirt-plugin~Console')
+    nameKey: 'kubevirt-plugin~Console',
     component: VMConsoleDetailsPage,
   };
 
   const nicsPage = {
     href: VM_DETAIL_NETWORKS_HREF,
-    name: t('kubevirt-plugin~Network Interfaces'),
+    // t('kubevirt-plugin~Network Interfaces')
+    nameKey: 'kubevirt-plugin~Network Interfaces',
     component: VMNics,
   };
 
   const disksPage = {
     href: VM_DETAIL_DISKS_HREF,
-    name: t('kubevirt-plugin~Disks'),
+    // t('kubevirt-plugin~Disks')
+    nameKey: 'kubevirt-plugin~Disks',
     component: VMDisksAndFileSystemsPage,
   };
 
   const environmentPage = {
     href: VM_DETAIL_ENVIRONMENT,
-    name: t('kubevirt-plugin~Environment'),
+    // t('kubevirt-plugin~Environment')
+    nameKey: 'kubevirt-plugin~Environment',
     component: VMEnvironmentFirehose,
   };
 
   const snapshotsPage = {
     href: VM_DETAIL_SNAPSHOTS,
-    name: t('kubevirt-plugin~Snapshots'),
+    // t('kubevirt-plugin~Snapshots')
+    nameKey: 'kubevirt-plugin~Snapshots',
     component: VMSnapshotsPage,
   };
 

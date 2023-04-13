@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Table, TableHeader, TableBody, SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -165,14 +164,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
     t,
   ]);
 
-  return (
-    <>
-      <Helmet>
-        <title>{t('devconsole~Alerts')}</title>
-      </Helmet>
-      {Content}
-    </>
-  );
+  return <>{Content}</>;
 };
 
 const mapStateToProps = (state: RootState): StateProps => {

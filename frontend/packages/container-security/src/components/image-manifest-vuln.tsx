@@ -122,7 +122,6 @@ export const AffectedPods: React.FC<AffectedPodsProps> = (props) => {
 export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPageProps> = (
   props,
 ) => {
-  const { t } = useTranslation();
   return (
     <DetailsPage
       match={props.match}
@@ -141,7 +140,8 @@ export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPage
         navFactory.editYaml(),
         {
           href: 'pods',
-          name: t('container-security~Affected Pods'),
+          // t('container-security~Affected Pods')
+          nameKey: 'container-security~Affected Pods',
           component: AffectedPods,
         },
       ]}

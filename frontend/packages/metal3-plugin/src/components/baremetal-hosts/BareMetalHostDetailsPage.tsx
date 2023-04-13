@@ -58,22 +58,26 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props
 
   const nicsPage = {
     href: 'nics',
-    name: t('metal3-plugin~Network Interfaces'),
+    // t('metal3-plugin~Network Interfaces')
+    nameKey: 'metal3-plugin~Network Interfaces',
     component: BareMetalHostNICs,
   };
   const disksPage = {
     href: 'disks',
-    name: t('metal3-plugin~Disks'),
+    // t('metal3-plugin~Disks')
+    nameKey: 'metal3-plugin~Disks',
     component: BareMetalHostDisks,
   };
   const dashboardPage = {
     href: '',
-    name: t('metal3-plugin~Overview'),
+    // t('metal3-plugin~Overview')
+    nameKey: 'metal3-plugin~Overview',
     component: BareMetalHostDashboard,
   };
   const detailsPage = {
     href: 'details',
-    name: t('metal3-plugin~Details'),
+    // t('metal3-plugin~Details')
+    nameKey: 'metal3-plugin~Details',
     component: BareMetalHostDetails,
   };
   return (

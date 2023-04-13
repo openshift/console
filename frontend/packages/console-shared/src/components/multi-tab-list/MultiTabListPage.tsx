@@ -10,6 +10,7 @@ import {
   Dropdown,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { PageTitleContext } from '../pagetitle/PageTitleContext';
 import { MenuActions, MenuAction, SecondaryButtonAction } from './multi-tab-list-page-types';
 
 interface MultiTabListPageProps {
@@ -19,6 +20,7 @@ interface MultiTabListPageProps {
   pages: Page[];
   match: Rmatch<any>;
   secondaryButtonAction?: SecondaryButtonAction;
+  telemetryPrefix?: string;
 }
 
 const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
@@ -28,6 +30,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
   menuActions,
   match,
   secondaryButtonAction,
+  telemetryPrefix,
 }) => {
   const { t } = useTranslation();
   const {
@@ -64,8 +67,13 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
       }, {})
     : undefined;
 
+  const titleProviderValues = {
+    telemetryPrefix,
+    titlePrefix: title,
+  };
+
   return (
-    <>
+    <PageTitleContext.Provider value={titleProviderValues}>
       <PageHeading className="co-m-nav-title--row" title={title} badge={badge}>
         <ActionList>
           <ActionListItem>
@@ -95,7 +103,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
         </ActionList>
       </PageHeading>
       <HorizontalNav pages={pages} match={match} noStatusBox />
-    </>
+    </PageTitleContext.Provider>
   );
 };
 

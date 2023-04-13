@@ -52,7 +52,7 @@ describe('Monitoring Page ', () => {
     const actualTabs = component
       .find(utils.HorizontalNav)
       .prop('pages')
-      .map((page) => page.name);
+      .map((page) => page.nameKey.replace('devconsole~', ''));
     expect(actualTabs).toEqual(expectedTabs);
   });
 
@@ -74,7 +74,7 @@ describe('Monitoring Page ', () => {
     const actualTabs = component
       .find(utils.HorizontalNav)
       .prop('pages')
-      .map((page) => page.name);
+      .map((page) => page.nameKey.replace('devconsole~', ''));
     expect(actualTabs).toEqual(expectedTabs);
   });
 });

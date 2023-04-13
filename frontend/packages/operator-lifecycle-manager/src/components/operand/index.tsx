@@ -775,7 +775,8 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
         navFactory.details((props) => <OperandDetails {...props} csv={csv} />),
         navFactory.editYaml(),
         {
-          name: t('olm~Resources'),
+          // t('olm~Resources')
+          nameKey: 'olm~Resources',
           href: 'resources',
           component: (props) => <Resources {...props} csv={csv} />,
         },

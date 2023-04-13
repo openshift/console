@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import MonitoringDashboardsPage from '@console/internal/components/monitoring/dashboards';
@@ -11,6 +10,7 @@ import {
   useAccessReview,
 } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 import ConnectedMonitoringAlerts from './alerts/MonitoringAlerts';
@@ -43,35 +43,45 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
   const pages = [
     {
       href: '',
-      name: t('devconsole~Dashboard'),
+      // t('devconsole~Dashboard')
+      nameKey: 'devconsole~Dashboard',
       component: MonitoringDashboardsPage,
     },
     {
       href: 'metrics',
-      name: t('devconsole~Metrics'),
+      // t('devconsole~Metrics')
+      nameKey: 'devconsole~Metrics',
       component: ConnectedMonitoringMetrics,
     },
     ...(prometheousRulesAccess
       ? [
           {
             href: 'alerts',
-            name: t('devconsole~Alerts'),
+            // t('devconsole~Alerts')
+            nameKey: 'devconsole~Alerts',
             component: ConnectedMonitoringAlerts,
           },
         ]
       : []),
     {
       href: 'events',
-      name: t('devconsole~Events'),
+      // t('devconsole~Events')
+      nameKey: 'devconsole~Events',
       component: MonitoringEvents,
     },
   ];
+  const titleProviderValues = {
+    telemetryPrefix: 'Observe',
+    titlePrefix: t('devconsole~Observe'),
+  };
 
   return activeNamespace ? (
-    <div className="odc-monitoring-page">
-      <PageHeading title={t('devconsole~Observe')} />
-      <HorizontalNav contextId="dev-console-observe" pages={pages} match={match} noStatusBox />
-    </div>
+    <PageTitleContext.Provider value={titleProviderValues}>
+      <div className="odc-monitoring-page">
+        <PageHeading title={t('devconsole~Observe')} />
+        <HorizontalNav contextId="dev-console-observe" pages={pages} match={match} noStatusBox />
+      </div>
+    </PageTitleContext.Provider>
   ) : (
     <CreateProjectListPage title={t('devconsole~Observe')}>
       {(openProjectModal) => (
@@ -87,20 +97,14 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
 export const MonitoringPage: React.FC<MonitoringPageProps> = (props) => {
-  const { t } = useTranslation();
   return (
-    <>
-      <Helmet>
-        <title>{t('devconsole~Observe')}</title>
-      </Helmet>
-      <NamespacedPage
-        hideApplications
-        variant={NamespacedPageVariants.light}
-        onNamespaceChange={handleNamespaceChange}
-      >
-        <PageContentsWithStartGuide {...props} />
-      </NamespacedPage>
-    </>
+    <NamespacedPage
+      hideApplications
+      variant={NamespacedPageVariants.light}
+      onNamespaceChange={handleNamespaceChange}
+    >
+      <PageContentsWithStartGuide {...props} />
+    </NamespacedPage>
   );
 };
 

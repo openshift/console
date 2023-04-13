@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
 import Helmet from 'react-helmet';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

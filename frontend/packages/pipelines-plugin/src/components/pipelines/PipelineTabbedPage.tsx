@@ -68,12 +68,14 @@ export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
   const pages: Page[] = [
     {
       href: '',
-      name: t(PipelineModel.labelPluralKey),
+      // t(PipelineModel.labelPluralKey)
+      nameKey: PipelineModel.labelPluralKey,
       component: PipelinesList,
     },
     {
       href: 'pipeline-runs',
-      name: t(PipelineRunModel.labelPluralKey),
+      // t(PipelineRunModel.labelPluralKey)
+      nameKey: PipelineRunModel.labelPluralKey,
       component: PipelineRunsResourceList,
       pageData: { showTitle, hideBadge, canCreate },
     },
@@ -81,7 +83,8 @@ export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
       ? [
           {
             href: 'repositories',
-            name: t(RepositoryModel.labelPluralKey),
+            // t(RepositoryModel.labelPluralKey)
+            nameKey: RepositoryModel.labelPluralKey,
             component: RepositoriesList,
             pageData: { showTitle, hideBadge, canCreate },
           },
@@ -96,6 +99,7 @@ export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
       title={t('pipelines-plugin~Pipelines')}
       badge={badge}
       menuActions={menuActions}
+      telemetryPrefix="Pipelines"
     />
   ) : (
     <CreateProjectListPage title={t('pipelines-plugin~Pipelines')}>

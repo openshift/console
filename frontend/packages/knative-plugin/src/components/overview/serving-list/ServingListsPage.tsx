@@ -26,7 +26,8 @@ const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
   const pages: Page[] = [
     {
       href: '',
-      name: t('knative-plugin~Services'),
+      // t('knative-plugin~Services')
+      nameKey: 'knative-plugin~Services',
       component: ServicesPage,
       pageData: {
         kind: referenceForModel(ServiceModel),
@@ -37,7 +38,8 @@ const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
     },
     {
       href: RevisionModel.plural,
-      name: t('knative-plugin~Revisions'),
+      // t('knative-plugin~Revisions')
+      nameKey: 'knative-plugin~Revisions',
       component: RevisionsPage,
       pageData: {
         kind: referenceForModel(RevisionModel),
@@ -48,7 +50,8 @@ const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
     },
     {
       href: RouteModel.plural,
-      name: t('knative-plugin~Routes'),
+      // t('knative-plugin~Routes')
+      nameKey: 'knative-plugin~Routes',
       component: RoutesPage,
       pageData: {
         kind: referenceForModel(RouteModel),
@@ -67,6 +70,7 @@ const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
         match={match}
         title={t('knative-plugin~Serving')}
         menuActions={menuActions}
+        telemetryPrefix="Serving"
       />
     </>
   );

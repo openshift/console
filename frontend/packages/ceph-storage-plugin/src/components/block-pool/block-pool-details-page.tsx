@@ -38,12 +38,13 @@ const BlockPoolDetailsPage: React.FC<BlockPoolDetailsPagePros> = (props) => {
     () => [
       {
         href: '',
-        name: t('ceph-storage-plugin~Overview'),
+        // t('ceph-storage-plugin~Overview')
+        nameKey: 'ceph-storage-plugin~Overview',
         component: BlockPoolDashboard,
       },
       editYaml(),
     ],
-    [editYaml, t],
+    [editYaml],
   );
 
   const breadcrumbs = () => [

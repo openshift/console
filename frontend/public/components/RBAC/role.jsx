@@ -272,14 +272,18 @@ const getBreadcrumbs = (model, kindObj, match) => {
 };
 
 export const RolesDetailsPage = (props) => {
-  const { t } = useTranslation();
   return (
     <DetailsPage
       {...props}
       pages={[
         navFactory.details(DetailsWithTranslation),
         navFactory.editYaml(),
-        { href: 'bindings', name: t('public~RoleBindings'), component: BindingsForRolePage },
+        {
+          href: 'bindings',
+          // t('public~RoleBindings')
+          nameKey: 'public~RoleBindings',
+          component: BindingsForRolePage,
+        },
       ]}
       menuActions={menuActions}
       breadcrumbsFor={() => getBreadcrumbs(RoleModel, props.kindObj, props.match)}

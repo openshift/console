@@ -310,7 +310,6 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
 export const CustomResourceDefinitionsDetailsPage: React.FC<CustomResourceDefinitionsDetailsPageProps> = (
   props,
 ) => {
-  const { t } = useTranslation();
   return (
     <DetailsPage
       {...props}
@@ -320,7 +319,8 @@ export const CustomResourceDefinitionsDetailsPage: React.FC<CustomResourceDefini
         navFactory.details(Details),
         navFactory.editYaml(),
         {
-          name: t('public~Instances'),
+          // t('public~Instances')
+          nameKey: 'public~Instances',
           href: 'instances',
           component: Instances,
         },

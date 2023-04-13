@@ -6,7 +6,7 @@ export const buildPO = {
   filter: '[aria-label="Options menu"]',
   filterList: '[aria-labelledby="Status"]',
   pane: '.co-m-pane__body',
-  eventTab: '[data-test-id="horizontal-link-public~Events"]',
+  eventTab: '[data-test-id="horizontal-link-Events"]',
   eventStream: '.co-sysevent-stream',
   breadcrumb: '[aria-label="Breadcrumb"]',
   failedFilter: '[data-test-row-filter="Failed"]',

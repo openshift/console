@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
 import Helmet from 'react-helmet';
+import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -1084,18 +1084,12 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
 };
 
 const RolesPage = ({ obj: { metadata } }) => {
-  const { t } = useTranslation();
   return (
-    <>
-      <Helmet>
-        <title>{t('public~RoleBindings')}</title>
-      </Helmet>
-      <RoleBindingsPage
-        createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
-        namespace={metadata.name}
-        showTitle={false}
-      />
-    </>
+    <RoleBindingsPage
+      createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
+      namespace={metadata.name}
+      showTitle={false}
+    />
   );
 };
 
@@ -1112,7 +1106,6 @@ export const NamespacesDetailsPage = (props) => (
 );
 
 export const ProjectsDetailsPage = (props) => {
-  const { t } = useTranslation();
   return (
     <DetailsPage
       {...props}
@@ -1120,12 +1113,14 @@ export const ProjectsDetailsPage = (props) => {
       pages={[
         {
           href: '',
-          name: t('public~Overview'),
+          // t('public~Overview')
+          nameKey: 'public~Overview',
           component: ProjectDashboard,
         },
         {
           href: 'details',
-          name: t('public~Details'),
+          // t('public~Details')
+          nameKey: 'public~Details',
           component: NamespaceDetails,
         },
         navFactory.editYaml(),
