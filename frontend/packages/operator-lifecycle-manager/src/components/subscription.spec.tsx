@@ -15,7 +15,6 @@ import {
   testSubscriptions,
   testClusterServiceVersion,
   testPackageManifest,
-  testCatalogSource,
 } from '../../mocks';
 import {
   SubscriptionModel,
@@ -23,7 +22,6 @@ import {
   PackageManifestModel,
   OperatorGroupModel,
   InstallPlanModel,
-  CatalogSourceModel,
 } from '../models';
 import { SubscriptionKind, SubscriptionState } from '../types';
 import {
@@ -271,7 +269,7 @@ describe('SubscriptionUpdates', () => {
   beforeEach(() => {
     wrapper = shallow(
       <SubscriptionUpdates
-        catalogSource={testCatalogSource}
+        catalogHealth={{ healthy: true }}
         obj={testSubscription}
         pkg={testPackageManifest}
         subscriptions={testSubscriptions}
@@ -324,7 +322,6 @@ describe('SubscriptionDetails', () => {
       <SubscriptionDetails
         obj={testSubscription}
         packageManifests={[testPackageManifest]}
-        catalogSources={[testCatalogSource]}
         subscriptions={testSubscriptions}
       />,
     );
@@ -419,11 +416,6 @@ describe('SubscriptionDetailsPage', () => {
         isList: true,
         namespace: 'default',
         prop: 'clusterServiceVersions',
-      },
-      {
-        kind: referenceForModel(CatalogSourceModel),
-        isList: true,
-        prop: 'catalogSources',
       },
       {
         kind: referenceForModel(SubscriptionModel),

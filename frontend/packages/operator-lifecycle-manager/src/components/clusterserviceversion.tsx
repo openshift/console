@@ -1288,7 +1288,6 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
       resources={[
         { kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscriptions' },
         { kind: referenceForModel(PackageManifestModel), isList: true, prop: 'packageManifests' },
-        { kind: referenceForModel(CatalogSourceModel), isList: true, prop: 'catalogSources' },
         { kind: referenceForModel(InstallPlanModel), isList: true, prop: 'installPlans' },
       ]}
       icon={({ obj }) => (
