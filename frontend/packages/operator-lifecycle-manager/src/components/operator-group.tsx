@@ -11,6 +11,7 @@ import {
   referenceForModel,
   referenceForGroupVersionKind,
 } from '@console/internal/module/k8s';
+import { OPERATOR_NAMESPACE_ANNOTATION } from '../const';
 import { OperatorGroupModel } from '../models';
 import {
   OperatorGroupKind,
@@ -20,11 +21,11 @@ import {
 } from '../types';
 
 export const targetNamespacesFor = (obj: K8sResourceKind) =>
-  obj?.metadata?.annotations?.['olm.targetNamespaces'];
+  obj?.metadata?.annotations?.['olm.targetNamespaces']; // FIXME magic string
 export const operatorNamespaceFor = (obj: K8sResourceKind) =>
-  obj?.metadata?.annotations?.['olm.operatorNamespace'];
+  obj?.metadata?.annotations?.[OPERATOR_NAMESPACE_ANNOTATION];
 export const operatorGroupFor = (obj: K8sResourceKind) =>
-  obj?.metadata?.annotations?.['olm.operatorGroup'];
+  obj?.metadata?.annotations?.['olm.operatorGroup']; // FIXME magic string
 
 export const NoOperatorGroupMsg: React.FC = () => {
   const { t } = useTranslation();

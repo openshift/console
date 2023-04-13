@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import i18n from '@console/internal/i18n';
 import { getName } from '@console/shared/src/selectors/common';
+import { operatorNamespaceFor } from '../components/operator-group';
 import {
   ClusterServiceVersionKind,
   SubscriptionKind,
@@ -22,16 +23,14 @@ export const subscriptionForCSV = (
   csv: ClusterServiceVersionKind,
 ): SubscriptionKind =>
   // TODO Replace _.find with Array.prototype.find
-  _.find(subscriptions, {
+  _.find<SubscriptionKind>(subscriptions, {
     metadata: {
-      // FIXME Magic string. Make a constant.
-      namespace: csv?.metadata?.annotations?.['olm.operatorNamespace'],
+      namespace: operatorNamespaceFor(csv),
     },
     status: {
       installedCSV: getName(csv),
     },
-    // TODO Imporove this type def
-  } as any); // 'as any' to supress typescript error caused by lodash;
+  });
 
 export const getCSVStatus = (
   csv: ClusterServiceVersionKind,

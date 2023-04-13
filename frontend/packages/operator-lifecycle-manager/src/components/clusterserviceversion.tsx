@@ -21,6 +21,7 @@ import {
   StatusIconAndText,
   useAccessReviewAllowed,
 } from '@console/dynamic-plugin-sdk';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { Conditions, ConditionTypes } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
@@ -93,8 +94,6 @@ import {
   ClusterServiceVersionPhase,
   CRDDescription,
   CSVConditionReason,
-  InstallPlanKind,
-  PackageManifestKind,
   SubscriptionKind,
 } from '../types';
 import {
@@ -112,6 +111,7 @@ import { CreateInitializationResourceButton } from './operator-install-page';
 import {
   SourceMissingStatus,
   SubscriptionDetails,
+  SubscriptionDetailsProps,
   UpgradeApprovalLink,
   catalogSourceForSubscription,
 } from './subscription';
@@ -359,7 +359,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
   ({ activeNamespace, obj, subscription, catalogSourceMissing }) => {
     const { displayName, provider, version } = obj.spec ?? {};
     const { t } = useTranslation();
-    const olmOperatorNamespace = obj.metadata?.annotations?.['olm.operatorNamespace'] ?? '';
+    const olmOperatorNamespace = operatorNamespaceFor(obj) ?? '';
     const [icon] = obj.spec.icon ?? [];
     const route = useClusterServiceVersionPath(obj);
     const providedAPIs = providedAPIsForCSV(obj);
@@ -683,7 +683,7 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
   const getOperatorNamespace = (
     obj: ClusterServiceVersionKind | SubscriptionKind,
   ): string | null => {
-    const olmOperatorNamespace = obj.metadata?.annotations?.['olm.operatorNamespace'];
+    const olmOperatorNamespace = operatorNamespaceFor(obj);
     return olmOperatorNamespace ?? getNamespace(obj);
   };
   const allNamespaceActive = activeNamespace === ALL_NAMESPACES_KEY;
@@ -1173,7 +1173,9 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
 
 export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({
   obj,
-  subscriptions = [],
+  subscription,
+  loaded,
+  loadError,
   ...rest
 }) => {
   const { t } = useTranslation();
@@ -1184,19 +1186,9 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({
     />
   );
 
-  const subscription = React.useMemo(() => subscriptionForCSV(subscriptions, obj), [
-    obj,
-    subscriptions,
-  ]);
-
   return (
-    <StatusBox EmptyMsg={EmptyMsg} loaded data={subscription}>
-      <SubscriptionDetails
-        {...rest}
-        obj={subscription}
-        clusterServiceVersions={[obj]}
-        subscriptions={subscriptions}
-      />
+    <StatusBox EmptyMsg={EmptyMsg} loaded={loaded} loadError={loadError} data={subscription}>
+      <SubscriptionDetails {...rest} obj={subscription} clusterServiceVersions={[obj]} />
     </StatusBox>
   );
 };
@@ -1206,26 +1198,32 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
 ) => {
   const { t } = useTranslation();
   const { name, ns } = useParams();
-  const [data, loaded, loadError] = useClusterServiceVersion(name, ns);
+  const [csv, csvLoaded, csvLoadError] = useClusterServiceVersion(name, ns);
+  const namespace = operatorNamespaceFor(csv);
+  const [subscriptions, subscriptionsLoaded, subscriptionsLoadError] = useK8sWatchResource<
+    SubscriptionKind[]
+  >(
+    namespace
+      ? {
+          isList: true,
+          groupVersionKind: getGroupVersionKindForModel(SubscriptionModel),
+          namespace,
+          optional: true,
+        }
+      : null,
+  );
 
-  const menuActions = (
-    model,
-    obj: ClusterServiceVersionKind,
-    { subscriptions }: ExtraResources,
-  ) => {
-    const subscription = subscriptionForCSV(subscriptions, obj);
-    return [
-      ...(_.isEmpty(subscription)
-        ? [Kebab.factory.Delete(model, obj)]
-        : [editSubscription(subscription), uninstall(subscription, obj)]),
-    ];
-  };
+  const subscription = React.useMemo(
+    () => (subscriptions ?? []).find((s) => s.status.installedCSV === csv?.metadata?.name),
+    [csv, subscriptions],
+  );
 
-  const canListSubscriptions = useAccessReview({
-    group: SubscriptionModel.apiGroup,
-    resource: SubscriptionModel.plural,
-    verb: 'list',
-  });
+  const menuActions = React.useCallback(
+    !subscription
+      ? () => [Kebab.factory.Delete(ClusterServiceVersionModel, csv)]
+      : () => [editSubscription(subscription), uninstall(subscription, csv)],
+    [subscription],
+  );
 
   const pagesFor = React.useCallback(
     (obj: ClusterServiceVersionKind) => {
@@ -1233,16 +1231,18 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
       return [
         navFactory.details(ClusterServiceVersionDetails),
         navFactory.editYaml(),
-        ...(canListSubscriptions
-          ? [
-              {
-                href: 'subscription',
-                // t('olm~Subscription')
-                nameKey: 'olm~Subscription',
-                component: CSVSubscription,
-              },
-            ]
-          : []),
+        {
+          href: 'subscription',
+          // t('olm~Subscription')
+          nameKey: 'olm~Subscription',
+          component: CSVSubscription,
+          pageData: {
+            subscriptions,
+            subscription,
+            loaded: subscriptionsLoaded,
+            loadError: subscriptionsLoadError,
+          },
+        },
         navFactory.events(ResourceEventStream),
         ...(providedAPIs.length > 1
           ? [
@@ -1267,13 +1267,13 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
         })),
       ];
     },
-    [canListSubscriptions],
+    [subscription, subscriptions, subscriptionsLoadError, subscriptionsLoaded],
   );
 
   return (
     <DetailsPage
       {...props}
-      obj={{ data, loaded, loadError }}
+      obj={{ data: csv, loaded: csvLoaded, loadError: csvLoadError }}
       breadcrumbsFor={() => [
         {
           name: t('olm~Installed Operators'),
@@ -1282,7 +1282,6 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
         { name: t('olm~Operator details'), path: props.match.url },
       ]}
       resources={[
-        { kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscriptions' },
         { kind: referenceForModel(PackageManifestModel), isList: true, prop: 'packageManifests' },
         { kind: referenceForModel(CatalogSourceModel), isList: true, prop: 'catalogSources' },
         { kind: referenceForModel(InstallPlanModel), isList: true, prop: 'installPlans' },
@@ -1304,8 +1303,6 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
     />
   );
 };
-
-type ExtraResources = { subscriptions: SubscriptionKind[] };
 
 type ClusterServiceVersionStatusProps = {
   obj: ClusterServiceVersionKind;
@@ -1388,12 +1385,14 @@ type ManagedNamespacesProps = {
   obj: ClusterServiceVersionKind;
 };
 
-export type CSVSubscriptionProps = {
-  catalogSources: CatalogSourceKind[];
-  installPlans: InstallPlanKind[];
+export type CSVSubscriptionProps = Omit<
+  SubscriptionDetailsProps,
+  'obj' | 'clusterServiceVersions'
+> & {
   obj: ClusterServiceVersionKind;
-  packageManifests: PackageManifestKind[];
-  subscriptions: SubscriptionKind[];
+  subscription: SubscriptionKind;
+  loaded: boolean;
+  loadError?: any;
 };
 
 type InitializationResourceAlertProps = {
