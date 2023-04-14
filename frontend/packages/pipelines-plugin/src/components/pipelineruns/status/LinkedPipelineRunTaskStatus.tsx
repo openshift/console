@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { resourcePathFromModel } from '@console/internal/components/utils';
+import { LoadingInline, resourcePathFromModel } from '@console/internal/components/utils';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
+import { useTaskRuns } from '../../taskruns/useTaskRuns';
 import { PipelineBars } from './PipelineBars';
 
 export interface LinkedPipelineRunTaskStatusProps {
@@ -18,9 +19,14 @@ const LinkedPipelineRunTaskStatus: React.FC<LinkedPipelineRunTaskStatusProps> = 
   pipelineRun,
 }) => {
   const { t } = useTranslation();
-
-  const pipelineStatus = (
-    <PipelineBars key={pipelineRun.metadata?.name} pipelinerun={pipelineRun} />
+  const [taskRuns, taskRunsLoaded] = useTaskRuns(
+    pipelineRun.metadata.namespace,
+    pipelineRun.metadata.name,
+  );
+  const pipelineStatus = taskRunsLoaded ? (
+    <PipelineBars key={pipelineRun.metadata?.name} pipelinerun={pipelineRun} taskRuns={taskRuns} />
+  ) : (
+    <LoadingInline />
   );
 
   if (pipelineRun.metadata?.name && pipelineRun.metadata?.namespace) {
