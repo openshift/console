@@ -10,12 +10,15 @@ import { LocalVolumeSetModel } from '../../models';
 import { LocalVolumeSetKind, DiskType } from './types';
 
 const getDeviceTypes = (deviceType: string[]) => {
-  const { DISK, PART } = deviceTypeDropdownItems;
+  const { DISK, PART, MPATH } = deviceTypeDropdownItems;
   if ((deviceType.includes(DISK) && deviceType.includes(PART)) || deviceType.length === 0) {
     return [DiskType.RawDisk, DiskType.Partition];
   }
   if (deviceType.includes(PART)) {
     return [DiskType.Partition];
+  }
+  if (deviceType.includes(MPATH)) {
+    return [DiskType.Multipath];
   }
   return [DiskType.RawDisk];
 };
