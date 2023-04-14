@@ -7,11 +7,14 @@ import {
   pipelineTestData,
 } from '../../../../test-data/pipeline-data';
 import PipelineVisualization from '../../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
+import * as utils from '../../../taskruns/useTaskRuns';
 import * as plrDetailsHooks from '../../hooks/usePipelineFromPipelineRun';
 import PipelineRunVisualization from '../PipelineRunVisualization';
 
 const pipelineData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
 const pipelineRun = pipelineData.pipelineRuns[DataState.SUCCESS];
+
+const spyUseTaskRuns = jest.spyOn(utils, 'useTaskRuns');
 
 describe('PipelineRunVisualization', () => {
   type PipelineRunVisualizationProps = React.ComponentProps<typeof PipelineRunVisualization>;
@@ -24,6 +27,7 @@ describe('PipelineRunVisualization', () => {
 
   it('Should render the loading component if pipeline from pipeline run is not defined or null', () => {
     usePipelineFromPipelineRunSpy.mockReturnValueOnce(null);
+    spyUseTaskRuns.mockReturnValue([[], true]);
     wrapper = shallow(<PipelineRunVisualization pipelineRun={pipelineRun} />);
     const LoadingInlineComponent = wrapper.find(LoadingInline);
     expect(LoadingInlineComponent.exists()).toBe(true);
@@ -31,6 +35,7 @@ describe('PipelineRunVisualization', () => {
 
   it('Should render the visualization component if the pipelinerun has the graphable data', () => {
     usePipelineFromPipelineRunSpy.mockReturnValueOnce(pipelineData.pipeline);
+    spyUseTaskRuns.mockReturnValue([[], true]);
     wrapper = shallow(<PipelineRunVisualization pipelineRun={pipelineRun} />);
     const PipelineVisualizationComponent = wrapper.find(PipelineVisualization);
     expect(PipelineVisualizationComponent.exists()).toBe(true);

@@ -21,13 +21,20 @@ import {
 const pipelineData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
 const { pipeline } = pipelineData;
 
+const pipelineRun = {
+  apiVersion: '',
+  metadata: {},
+  kind: 'PipelineRun',
+  spec: {},
+};
+
 describe('getLastRegularTasks', () => {
   it('expect to handle the empty array input', () => {
     expect(getLastRegularTasks([])).toHaveLength(0);
   });
 
   it('expect to return the last regular task name in the pipeline', () => {
-    const { nodes } = getGraphDataModel(pipeline);
+    const { nodes } = getGraphDataModel(pipeline, pipelineRun, []);
     expect(getLastRegularTasks(nodes)).toHaveLength(1);
     expect(getLastRegularTasks(nodes)).toEqual(['verify']);
   });
@@ -41,7 +48,7 @@ describe('getLastRegularTasks', () => {
         tasks: [task1, task2, task3, task4],
       },
     };
-    const { nodes } = getGraphDataModel(pipelineWithMultipleLastTasks);
+    const { nodes } = getGraphDataModel(pipelineWithMultipleLastTasks, pipelineRun, []);
     expect(getLastRegularTasks(nodes)).toHaveLength(3);
     expect(getLastRegularTasks(nodes)).toEqual(['analyse-code', 'style-checks', 'find-bugs']);
   });
@@ -87,18 +94,22 @@ describe('nodesHasWhenExpression', () => {
   const { pipeline: pipelineWithWhenExpression } = conditionalPipeline;
 
   it('expect to return false if the nodes does not contain when expressions', () => {
-    const { nodes } = getGraphDataModel({
-      ...pipelineWithWhenExpression,
-      spec: {
-        ...pipelineWithWhenExpression.spec,
-        tasks: [pipelineWithWhenExpression.spec.tasks[0]],
+    const { nodes } = getGraphDataModel(
+      {
+        ...pipelineWithWhenExpression,
+        spec: {
+          ...pipelineWithWhenExpression.spec,
+          tasks: [pipelineWithWhenExpression.spec.tasks[0]],
+        },
       },
-    });
+      pipelineRun,
+      [],
+    );
     expect(nodesHasWhenExpression(nodes)).toBe(false);
   });
 
   it('expect to return true if the node contains when expressions', () => {
-    const { nodes } = getGraphDataModel(pipelineWithWhenExpression);
+    const { nodes } = getGraphDataModel(pipelineWithWhenExpression, pipelineRun, []);
     expect(nodesHasWhenExpression(nodes)).toBe(true);
   });
 });
@@ -244,19 +255,19 @@ describe('getTaskWhenStatus:', () => {
 
 describe('getGraphDataModel', () => {
   it('should return null for invalid values', () => {
-    expect(getGraphDataModel(null)).toBeNull();
-    expect(getGraphDataModel(undefined, undefined)).toBeNull();
+    expect(getGraphDataModel(null, null, [])).toBeNull();
+    expect(getGraphDataModel(undefined, undefined, [])).toBeNull();
   });
 
   it('should return graph, nodes and edges for valid pipeline', () => {
-    const model = getGraphDataModel(pipeline);
+    const model = getGraphDataModel(pipeline, pipelineRun, []);
     expect(model.graph).toBeDefined();
     expect(model.nodes).toHaveLength(13);
     expect(model.edges).toHaveLength(19);
   });
 
   it('should return graph, nodes and edges for valid pipeline', () => {
-    const model = getGraphDataModel(pipeline);
+    const model = getGraphDataModel(pipeline, pipelineRun, []);
     expect(model.graph).toBeDefined();
     expect(model.nodes).toHaveLength(13);
     expect(model.edges).toHaveLength(19);
@@ -266,7 +277,7 @@ describe('getGraphDataModel', () => {
     const pData = pipelineTestData[PipelineExampleNames.PIPELINE_WITH_FINALLY];
     const { pipeline: pipelineWithFinallyTasks } = pData;
 
-    const { nodes } = getGraphDataModel(pipelineWithFinallyTasks);
+    const { nodes } = getGraphDataModel(pipelineWithFinallyTasks, pipelineRun, []);
     const finallyGroup = nodes.filter((n) => n.type === NodeType.FINALLY_GROUP);
     const finallyNodes = nodes.filter((n) => n.type === NodeType.FINALLY_NODE);
 
