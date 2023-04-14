@@ -3,6 +3,7 @@ import {
   PipelineExampleNames,
   DataState,
 } from '../../../../test-data/pipeline-data';
+import { TektonResourceLabel } from '../../../pipelines/const';
 import { ErrorDetailsWithLogName, ErrorDetailsWithStaticLog } from '../log-snippet-types';
 import { getPLRLogSnippet } from '../pipelineRunLogSnippet';
 
@@ -13,20 +14,36 @@ const pipelineRunMockFailed =
 const pipelineRunTimeoutError =
   pipelineTestData[PipelineExampleNames.BROKEN_MOCK_APP].pipelineRuns[DataState.FAILED2];
 
+const testTaskRuns = Object.keys(pipelineRunMockFailed.status.taskRuns).map((trName) => ({
+  apiVersion: 'v1alpha1',
+  kind: 'TaskRun',
+  metadata: {
+    labels: {
+      [TektonResourceLabel.pipelineTask]:
+        pipelineRunMockFailed.status.taskRuns[trName].pipelineTaskName,
+    },
+    name: trName,
+  },
+  spec: {},
+  pipelineTaskName: pipelineRunMockFailed.status.taskRuns[trName].pipelineTaskName,
+  status: pipelineRunMockFailed.status.taskRuns[trName].status,
+}));
+
 describe('PipelineRunLogSnippet test', () => {
   it('should return null for successful PLR', () => {
-    const msg = getPLRLogSnippet(pipelineRunMock);
+    const msg = getPLRLogSnippet(pipelineRunMock, []);
     expect(msg).toEqual(null);
   });
 
   it('should return null if PLR value is null', () => {
-    const msg = getPLRLogSnippet(null);
+    const msg = getPLRLogSnippet(null, []);
     expect(msg).toEqual(null);
   });
 
   it('should return a Log message for failed PLR with task container', () => {
     const { title, containerName, podName } = getPLRLogSnippet(
       pipelineRunMockFailed,
+      testTaskRuns,
     ) as ErrorDetailsWithLogName;
     expect(title).toEqual('Failure on task x-compile - check logs for details.');
     expect(containerName).toEqual('step-build');
@@ -36,6 +53,7 @@ describe('PipelineRunLogSnippet test', () => {
   it('should return a Log message for PLR with PipelineRunTimeout reason', () => {
     const { title, staticMessage } = getPLRLogSnippet(
       pipelineRunTimeoutError,
+      [],
     ) as ErrorDetailsWithStaticLog;
     expect(title).toEqual('Failure - check logs for details.');
     expect(staticMessage).toEqual(
@@ -44,19 +62,22 @@ describe('PipelineRunLogSnippet test', () => {
   });
 
   it('should return a static message', () => {
-    const { title, staticMessage } = getPLRLogSnippet({
-      ...pipelineRunMock,
-      status: {
-        ...pipelineRunMock.status,
-        conditions: [
-          {
-            ...pipelineRunMock.status.conditions[0],
-            status: 'False',
-            message: '',
-          },
-        ],
+    const { title, staticMessage } = getPLRLogSnippet(
+      {
+        ...pipelineRunMock,
+        status: {
+          ...pipelineRunMock.status,
+          conditions: [
+            {
+              ...pipelineRunMock.status.conditions[0],
+              status: 'False',
+              message: '',
+            },
+          ],
+        },
       },
-    }) as ErrorDetailsWithStaticLog;
+      [],
+    ) as ErrorDetailsWithStaticLog;
     expect(title).toEqual('Failure - check logs for details.');
     expect(staticMessage).toEqual('Unknown failure condition');
   });
