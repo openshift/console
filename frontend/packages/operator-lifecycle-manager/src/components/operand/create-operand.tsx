@@ -144,7 +144,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
         initialType={initialEditorType}
         onChangeEditorType={onChangeEditorType}
         prune={pruneFunc}
-        CodeEditor={OperandYAML}
+        YAMLEditor={OperandYAML}
         lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
       />
     </StatusBox>

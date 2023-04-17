@@ -118,7 +118,7 @@ export const PDBFormPage: React.FC<{
             onChangeEditorType={(type) =>
               setHelpText(type === EditorType.Form ? formHelpText : yamlHelpText)
             }
-            CodeEditor={YAMLEditor}
+            YAMLEditor={YAMLEditor}
             lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
             displayConversionError
           />

@@ -35,7 +35,7 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
   onChangeEditorType = _.noop,
   onChange = _.noop,
   prune,
-  CodeEditor,
+  YAMLEditor,
   lastViewUserSettingKey,
   displayConversionError,
 }) => {
@@ -138,7 +138,7 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
           {...formContext}
         />
       ) : (
-        <CodeEditor initialYAML={yaml} onChange={handleYAMLChange} {...yamlContext} />
+        <YAMLEditor initialYAML={yaml} onChange={handleYAMLChange} {...yamlContext} />
       )}
     </>
   ) : (
@@ -152,7 +152,7 @@ type FormEditorProps = {
   prune?: (data: K8sResourceKind) => any;
 };
 
-type CodeEditorProps = {
+type YAMLEditorProps = {
   initialYAML?: string;
   onChange?: (yaml: string) => void;
 };
@@ -168,7 +168,7 @@ type SyncedEditorProps = {
   onChangeEditorType?: (newType: EditorType) => void;
   onChange?: (data: K8sResourceKind) => void;
   prune?: (data: K8sResourceKind) => any;
-  CodeEditor: React.ComponentType<CodeEditorProps>;
+  YAMLEditor: React.ComponentType<YAMLEditorProps>;
   lastViewUserSettingKey: string;
   displayConversionError?: boolean;
 };
