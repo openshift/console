@@ -43,7 +43,7 @@ export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
   );
 
   React.useEffect(() => {
-    if (preferredTabLoaded) {
+    if (preferredTabLoaded && namespace) {
       if (isRepositoryEnabled && preferredTab === 'repositories') {
         history.push(`/dev-pipelines/ns/${namespace}/repositories`);
       }
