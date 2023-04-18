@@ -4,20 +4,19 @@ import { modal } from '../../../integration-tests-cypress/views/modal';
 import { nav } from '../../../integration-tests-cypress/views/nav';
 import { operator, TestOperandProps } from '../views/operator.view';
 
-// TODO Update to valid operator. This is deprecated.
 const testOperator = {
-  name: 'Business Automation',
-  operatorHubCardTestID: 'businessautomation-operator-redhat-operators-openshift-marketplace',
+  name: 'Data Grid',
+  operatorHubCardTestID: 'datagrid-redhat-operators-openshift-marketplace',
   installedNamespace: testName,
 };
 
 const testOperand: TestOperandProps = {
-  name: 'KieApp',
-  kind: 'KieApp',
-  group: 'KieApp',
+  name: 'Backup',
+  group: 'infinispan.org',
   version: 'v1',
-  exampleName: `example-kieappk`,
-  deleteURL: '/api/kubernetes/apis/app.kiegroup.org/*/namespaces/*/kieapps/*',
+  kind: 'Backup',
+  exampleName: 'example-backup',
+  deleteURL: '/api/kubernetes/apis/infinispan.org/*/namespaces/*/backups/*',
 };
 
 const alertExists = (titleText: string) => {
@@ -37,19 +36,19 @@ const uninstallAndVerify = () => {
   cy.resourceShouldBeDeleted(testName, testOperand.kind, testOperand.exampleName);
 };
 
-xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
+describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   before(() => {
     cy.login();
     cy.visit('/');
     nav.sidenav.switcher.changePerspectiveTo('Administrator');
     nav.sidenav.switcher.shouldHaveText('Administrator');
-    cy.createProject(testName);
+    cy.exec(`oc new-project ${testName}`);
     operator.install(
       testOperator.name,
       testOperator.operatorHubCardTestID,
       testOperator.installedNamespace,
     );
-    operator.installedSucceeded(testOperator.name);
+    operator.installedSucceeded(testOperator.name, testName);
     operator.createOperand(testOperator.name, testOperand, testOperator.installedNamespace);
     cy.byTestID(testOperand.exampleName).should('exist');
     operator.operandShouldExist(testOperator.name, testOperand, testOperator.installedNamespace);
@@ -64,10 +63,7 @@ xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   });
 
   after(() => {
-    cy.visit('/');
-    nav.sidenav.switcher.changePerspectiveTo('Administrator');
-    nav.sidenav.switcher.shouldHaveText('Administrator');
-    cy.deleteProject(testName);
+    cy.exec(`oc delete project ${testName}`);
     cy.logout();
   });
 
@@ -93,11 +89,15 @@ xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
     modal.shouldBeClosed();
   });
 
-  it(`attempts to uninstall the Operator, shows 'Error uninstalling Operator' alert`, () => {
+  xit(`attempts to uninstall the Operator, shows 'Error uninstalling Operator' alert`, () => {
     // invalidate the request so operator doesn't get uninstalled
-    cy.intercept('DELETE', '/api/kubernetes/apis/operators.coreos.com/*/namespaces/**', (req) => {
-      req.destroy();
-    }).as('deleteOperatorSubscriptionAndCSV');
+    cy.intercept(
+      'DELETE',
+      `/api/kubernetes/apis/operators.coreos.com/*/namespaces/${testName}/**`,
+      (req) => {
+        req.destroy();
+      },
+    ).as('deleteOperatorSubscriptionAndCSV');
 
     cy.log('attempt to uninstall the Operator');
     operator.uninstallModal.open(testOperator.name, testOperator.installedNamespace);
@@ -111,9 +111,13 @@ xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
 
   it(`attempts to uninstall the Operator and delete all Operand Instances, shows 'Error Deleting Operands' alert`, () => {
     // invalidate the request so operand instance doesn't get deleted and error alert is shown
-    cy.intercept('DELETE', testOperand.deleteURL, (req) => {
-      req.destroy();
-    }).as('deleteOperandInstance');
+    cy.intercept(
+      'DELETE',
+      `/api/kubernetes/apis/infinispan.org/*/namespaces/${testName}/backups/*`,
+      (req) => {
+        req.destroy();
+      },
+    ).as('deleteOperandInstance');
 
     cy.log('attempt uninstall the Operator and all Operand Instances');
     operator.uninstallModal.open(testOperator.name, testOperator.installedNamespace);
