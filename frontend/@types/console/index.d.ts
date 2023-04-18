@@ -56,6 +56,7 @@ declare interface Window {
     controlPlaneTopology: string;
     telemetry: Record<string, string>;
     nodeArchitectures: string[];
+    nodeOperatingSystems: string[];
     hubConsoleURL: string;
     k8sMode: string,
   };

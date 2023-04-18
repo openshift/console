@@ -118,6 +118,7 @@ type jsGlobals struct {
 	LogoutURL                       string                     `json:"logoutURL"`
 	MulticlusterLogoutRedirect      string                     `json:"multiclusterLogoutRedirect"`
 	NodeArchitectures               []string                   `json:"nodeArchitectures"`
+	NodeOperatingSystems            []string                   `json:"nodeOperatingSystems"`
 	Perspectives                    string                     `json:"perspectives"`
 	ProjectAccessClusterRoles       string                     `json:"projectAccessClusterRoles"`
 	PrometheusBaseURL               string                     `json:"prometheusBaseURL"`
@@ -174,6 +175,7 @@ type Server struct {
 	ManagedClusterProxyConfig           *proxy.Config
 	MonitoringDashboardConfigMapLister  ResourceLister
 	NodeArchitectures                   []string
+	NodeOperatingSystems                []string
 	Perspectives                        string
 	PluginProxy                         string
 	PluginsProxyTLSConfig               *tls.Config
@@ -760,6 +762,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		Telemetry:                  s.Telemetry,
 		ReleaseVersion:             s.ReleaseVersion,
 		NodeArchitectures:          s.NodeArchitectures,
+		NodeOperatingSystems:       s.NodeOperatingSystems,
 		CopiedCSVsDisabled:         s.CopiedCSVsDisabled,
 		HubConsoleURL:              s.HubConsoleURL.String(),
 		K8sMode:                    s.K8sMode,

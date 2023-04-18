@@ -144,6 +144,7 @@ func main() {
 	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control/infra nodes (External | HighlyAvailable | SingleReplica)")
 	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
+	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
 	fHubConsoleURL := fs.String("hub-console-url", "", "URL of the hub cluster's console in a multi cluster environment.")
 	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
@@ -260,6 +261,17 @@ func main() {
 		}
 	}
 
+	nodeOperatingSystems := []string{}
+	if *fNodeOperatingSystems != "" {
+		for _, str := range strings.Split(*fNodeOperatingSystems, ",") {
+			str = strings.TrimSpace(str)
+			if str == "" {
+				bridge.FlagFatalf("node-operating-systems", "list must contain name of node architectures separated by comma")
+			}
+			nodeOperatingSystems = append(nodeOperatingSystems, str)
+		}
+	}
+
 	hubConsoleURL := &url.URL{}
 	if *fHubConsoleURL != "" {
 		hubConsoleURL = bridge.ValidateFlagIsURL("hub-console-url", *fHubConsoleURL)
@@ -300,6 +312,7 @@ func main() {
 		Telemetry:                    telemetryFlags,
 		ReleaseVersion:               *fReleaseVersion,
 		NodeArchitectures:            nodeArchitectures,
+		NodeOperatingSystems:         nodeOperatingSystems,
 		HubConsoleURL:                hubConsoleURL,
 		AuthMetrics:                  auth.NewMetrics(),
 		K8sMode:                      *fK8sMode,
@@ -322,6 +335,7 @@ func main() {
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
+	// is used by catalog-utils.ts
 	if *fK8sMode == "in-cluster" {
 		srv.GOARCH = runtime.GOARCH
 		srv.GOOS = runtime.GOOS
