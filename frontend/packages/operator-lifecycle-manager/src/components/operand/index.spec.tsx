@@ -120,6 +120,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn(),
 }));
 
+// TODO remove multicluster
 jest.mock('@console/shared/src/hooks/useActiveCluster', () => ({
   useActiveCluster: () => ['local-cluster', () => {}],
 }));
@@ -359,6 +360,7 @@ describe('ResourcesList', () => {
 describe(OperandDetailsPage.displayName, () => {
   const currentURL = `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`;
   const routePath = `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`;
+  // TODO remove multicluster
   window.SERVER_FLAGS.copiedCSVsDisabled = { 'local-cluster': false };
 
   it('renders a `DetailsPage` with the correct subpages', () => {
@@ -475,12 +477,26 @@ describe(OperandDetailsPage.displayName, () => {
     };
     const secret = {
       kind: 'Secret',
-      metadata: { uid: 'cccccccc-cccc-cccc-cccc-cccccccccccc' },
+      metadata: {
+        uid: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+      },
     };
     const resources: FirehoseResourcesResult = {
-      Deployment: { data: [deployment], loaded: true, loadError: undefined },
-      Secret: { data: [secret], loaded: true, loadError: undefined },
-      Pod: { data: [pod], loaded: true, loadError: undefined },
+      Deployment: {
+        data: [deployment],
+        loaded: true,
+        loadError: undefined,
+      },
+      Secret: {
+        data: [secret],
+        loaded: true,
+        loadError: undefined,
+      },
+      Pod: {
+        data: [pod],
+        loaded: true,
+        loadError: undefined,
+      },
     };
     const data = flatten(resources);
 

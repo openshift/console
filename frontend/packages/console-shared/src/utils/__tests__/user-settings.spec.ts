@@ -42,7 +42,7 @@ describe('createConfigMap', () => {
     expect(actual).toEqual(configMap);
     expect(coFetchMock).toHaveBeenCalledTimes(1);
     expect(coFetchMock).lastCalledWith('/api/console/user-settings', {
-      headers: { 'X-Cluster': HUB_CLUSTER_NAME },
+      headers: { 'X-Cluster': HUB_CLUSTER_NAME }, // TODO remove multicluster
       method: 'POST',
     });
   });
@@ -65,7 +65,7 @@ describe('updateConfigMap', () => {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/merge-patch+json;charset=UTF-8',
-          'X-Cluster': HUB_CLUSTER_NAME,
+          'X-Cluster': HUB_CLUSTER_NAME, // TODO Remove multicluster
         },
         body: '{"data":{"key":"value"}}',
       },

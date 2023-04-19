@@ -22,8 +22,8 @@ import {
   GreenCheckCircleIcon,
   Modal,
   useUserSettingsCompatibility,
-  useActiveCluster,
-  HUB_CLUSTER_NAME,
+  useActiveCluster, // TODO remove multicluster
+  HUB_CLUSTER_NAME, // TODO remove multicluster
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
 import { isModifiedEvent } from '@console/shared/src/utils';
@@ -399,18 +399,20 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
 
 export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) => {
   const { t } = useTranslation();
-  const [activeCluster] = useActiveCluster();
+  const [activeCluster] = useActiveCluster(); // TODO remove multicluster
   const [detailsItem, setDetailsItem] = React.useState(null);
   const [showDetails, setShowDetails] = React.useState(false);
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
     boolean
   >(userSettingsKey, storeKey, false);
   const filteredItems =
-    activeCluster === HUB_CLUSTER_NAME ? filterByArchAndOS(props.items) : props.items;
+    activeCluster === HUB_CLUSTER_NAME ? filterByArchAndOS(props.items) : props.items; // TODO remove multicluster
 
   React.useEffect(() => {
     const detailsItemID = new URLSearchParams(window.location.search).get('details-item');
-    const currentItem = _.find(filteredItems, { uid: detailsItemID });
+    const currentItem = _.find(filteredItems, {
+      uid: detailsItemID,
+    });
     setDetailsItem(currentItem);
     setShowDetails(!_.isNil(currentItem));
   }, [filteredItems]);
@@ -561,9 +563,15 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                   <Link
                     className={classNames(
                       'pf-c-button',
-                      { 'pf-m-secondary': remoteWorkflowUrl },
-                      { 'pf-m-primary': !remoteWorkflowUrl },
-                      { 'pf-m-disabled': detailsItem.isInstalling },
+                      {
+                        'pf-m-secondary': remoteWorkflowUrl,
+                      },
+                      {
+                        'pf-m-primary': !remoteWorkflowUrl,
+                      },
+                      {
+                        'pf-m-disabled': detailsItem.isInstalling,
+                      },
                       'co-catalog-page__overlay-action',
                     )}
                     data-test-id="operator-install-btn"

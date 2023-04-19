@@ -1,3 +1,4 @@
+// TODO remove multicluster
 import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -28,6 +29,7 @@ import { useModelsLoaded } from './useModelsLoaded';
  * }
  * ```
  */
+// TODO remove multicluster
 export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
   const cluster = useSelector((state) => getActiveCluster(state));
   const resource = useDeepCompareMemoize(initResource, true);

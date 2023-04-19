@@ -10,7 +10,7 @@ export const createConfigMap = async (): Promise<ConfigMapKind> => {
     const response = await coFetch('/api/console/user-settings', {
       method: 'POST',
       headers: {
-        'X-Cluster': HUB_CLUSTER_NAME,
+        'X-Cluster': HUB_CLUSTER_NAME, // TODO remove multicluster
       },
     });
     return response.json();
@@ -43,7 +43,7 @@ export const updateConfigMap = async (
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/merge-patch+json;charset=UTF-8',
-        'X-Cluster': HUB_CLUSTER_NAME,
+        'X-Cluster': HUB_CLUSTER_NAME, // TODO remove multicluster
       },
       body: JSON.stringify(patch),
     });

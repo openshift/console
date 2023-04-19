@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { HttpError, RetryError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { authSvc } from './module/auth';
-import { getActiveCluster } from '@console/dynamic-plugin-sdk/src';
+import { getActiveCluster } from '@console/dynamic-plugin-sdk/src'; // TODO remove multicluster
 import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
 
 // set required headers for console
@@ -74,7 +74,7 @@ export const validateStatus = async (
   }
 
   if (response.status === 401 && shouldLogout(url)) {
-    authSvc.logout(window.location.pathname, getActiveCluster(storeHandler.getStore()?.getState()));
+    authSvc.logout(window.location.pathname, getActiveCluster(storeHandler.getStore()?.getState())); // TODO remove multicluster
   }
 
   const contentType = response.headers.get('content-type');

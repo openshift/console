@@ -181,7 +181,7 @@ export type FireManProps = {
   helpText?: React.ReactNode;
   title: string;
   autoFocus?: boolean;
-  cluster?: string;
+  cluster?: string; // TODO remove multicluster
 };
 
 type FireManState = {
@@ -206,7 +206,7 @@ export const FireMan = connect<{}, { filterList: typeof filterList }, FireManPro
         makeReduxID(
           kindObj(r.kind),
           makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
-          this.props.cluster,
+          this.props.cluster, // TODO remove multicluster
         ),
       );
       this.state = { reduxIDs };
@@ -217,7 +217,7 @@ export const FireMan = connect<{}, { filterList: typeof filterList }, FireManPro
         makeReduxID(
           kindObj(r.kind),
           makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
-          cluster,
+          cluster, // TODO remove multicluster
         ),
       );
       if (_.isEqual(reduxIDs, this.state.reduxIDs)) {

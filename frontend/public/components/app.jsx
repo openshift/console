@@ -26,7 +26,7 @@ import { pluginStore } from '../plugins';
 import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
-import DetectCluster from '@console/app/src/components/detect-cluster/DetectCluster';
+import DetectCluster from '@console/app/src/components/detect-cluster/DetectCluster'; // TODO remove multicluster
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
 import FeatureFlagExtensionLoader from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
@@ -237,6 +237,7 @@ class App_ extends React.PureComponent {
       <DetectPerspective>
         <CaptureTelemetry />
         <DetectNamespace>
+          {/* TODO remove multicluster */}
           <DetectCluster>
             <ModalProvider>
               {contextProviderExtensions.reduce(
@@ -440,6 +441,7 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
     setConsoleChanged(true);
   }
 
+  // TODO remove multicluster
   const managedClustersChanged = !_.isEmpty(
     _.xor(prevUpdateData?.managedClusters, updateData?.managedClusters),
   );

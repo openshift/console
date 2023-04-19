@@ -65,7 +65,7 @@ const checkAccessInternal = _.memoize(
     };
     return k8sCreate(SelfSubjectAccessReviewModel, ssar);
   },
-  (...args) => [...args, getActiveCluster(storeHandler.getStore().getState())].join('~'),
+  (...args) => [...args, getActiveCluster(storeHandler.getStore().getState())].join('~'), // TODO remove multicluster
 );
 
 /**
