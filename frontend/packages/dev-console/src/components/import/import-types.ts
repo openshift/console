@@ -188,6 +188,7 @@ export type DevfileData = {
   devfileSourceUrl?: string;
   devfileHasError: boolean;
   devfileSuggestedResources?: DevfileSuggestedResources;
+  devfileProjectType?: string;
 };
 
 export type DevfileSuggestedResources = {
@@ -289,6 +290,24 @@ export enum Resources {
   OpenShift = 'openshift',
   Kubernetes = 'kubernetes',
   KnativeService = 'knative',
+}
+
+export enum SupportedRuntime {
+  Node = 'node',
+  NodeJS = 'nodejs',
+  TypeScript = 'typescript',
+  Quarkus = 'quarkus',
+}
+
+export const notSupportedRuntime = ['go', 'rust', 'springboot', 'python'];
+
+export enum SampleRuntime {
+  'Node.js' = 'nodejs',
+  Quarkus = 'quarkus',
+  dotnet = 'dotnet',
+  Python = 'python',
+  Go = 'golang',
+  springboot = 'spring-boot',
 }
 
 export const ReadableResourcesNames: Record<Resources, string> = {
