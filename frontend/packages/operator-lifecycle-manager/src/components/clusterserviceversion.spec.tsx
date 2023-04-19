@@ -477,7 +477,6 @@ describe(CSVSubscription.displayName, () => {
         loaded
         packageManifests={[]}
         subscriptions={[]}
-        catalogSources={[]}
         installPlans={[]}
       />,
     );
@@ -502,7 +501,6 @@ describe(CSVSubscription.displayName, () => {
         subscription={subscription}
         loaded
         subscriptions={[testSubscription, subscription]}
-        catalogSources={[testCatalogSource]}
         installPlans={[testInstallPlan]}
       />,
     );
@@ -537,7 +535,6 @@ describe(CSVSubscription.displayName, () => {
         subscription={subscription}
         loaded
         subscriptions={[testSubscription, subscription]}
-        catalogSources={[testCatalogSource]}
         installPlans={[testInstallPlan]}
       />,
     );
