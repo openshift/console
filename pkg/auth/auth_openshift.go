@@ -21,7 +21,7 @@ type openShiftAuth struct {
 	cookiePath    string
 	secureCookies bool
 	specialURLs   SpecialAuthURLs
-	clusterName   string
+	clusterName   string // TODO remove multicluster
 }
 
 type openShiftConfig struct {
@@ -30,7 +30,7 @@ type openShiftConfig struct {
 	issuerURL     string
 	cookiePath    string
 	secureCookies bool
-	clusterName   string
+	clusterName   string // TODO remove multicluster
 }
 
 func validateAbsURL(value string) error {
@@ -117,7 +117,7 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 				requestTokenURL,
 				kubeAdminLogoutURL,
 			},
-			c.clusterName,
+			c.clusterName, // TODO remove multicluster
 		}, nil
 }
 
@@ -144,7 +144,7 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 	// only logic using the OAuth2 implicit flow.
 	// https://tools.ietf.org/html/rfc6749#section-4.2
 	cookie := http.Cookie{
-		Name:     GetCookieName(o.clusterName),
+		Name:     GetCookieName(o.clusterName), // TODO remove multicluster
 		Value:    ls.rawToken,
 		MaxAge:   int(expiresIn),
 		HttpOnly: true,
@@ -162,7 +162,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 
 	// Delete session cookie
 	cookie := http.Cookie{
-		Name:     GetCookieName(o.clusterName),
+		Name:     GetCookieName(o.clusterName), // TODO remove multicluster
 		Value:    "",
 		MaxAge:   0,
 		HttpOnly: true,
@@ -174,8 +174,10 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func getOpenShiftUser(r *http.Request) (*User, error) {
+	// TODO remove multicluster
 	cluster := serverutils.GetCluster(r)
 	cookieName := GetCookieName(cluster)
+
 	// TODO: This doesn't do any validation of the cookie with the assumption that the
 	// API server will reject tokens it doesn't recognize. If we want to keep some backend
 	// state we should sign this cookie. If not there's not much we can do.

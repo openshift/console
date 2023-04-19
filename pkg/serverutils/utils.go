@@ -8,8 +8,10 @@ import (
 	"k8s.io/klog"
 )
 
+// TODO remove multicluster
 const LocalClusterName = "local-cluster"
 
+// TODO remove multicluster
 func GetCluster(r *http.Request) string {
 	// The client can't set headers for WebSockets, so check both the header and query
 	// parameters for the active cluster.

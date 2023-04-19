@@ -11,6 +11,7 @@ import (
 	"k8s.io/klog"
 )
 
+// TODO remove multicluster: Remove cluster arg.
 func (s *Server) GetKubeVersion(cluster string) string {
 	if s.KubeVersion != "" {
 		return s.KubeVersion

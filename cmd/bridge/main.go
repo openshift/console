@@ -140,13 +140,17 @@ func main() {
 	fAddPage := fs.String("add-page", "", "DEV ONLY. Allow add page customization. (JSON as string)")
 	fProjectAccessClusterRoles := fs.String("project-access-cluster-roles", "", "The list of Cluster Roles assignable for the project access page. (JSON as string)")
 	fPerspectives := fs.String("perspectives", "", "Allow enabling/disabling of perspectives in the console. (JSON as string)")
-	fManagedClusterConfigs := fs.String("managed-clusters", "", "List of managed cluster configurations. (JSON as string)")
 	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control/infra nodes (External | HighlyAvailable | SingleReplica)")
 	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
 	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
+
+	// TODO Remove multicluster
+	fManagedClusterConfigs := fs.String("managed-clusters", "", "List of managed cluster configurations. (JSON as string)")
 	fHubConsoleURL := fs.String("hub-console-url", "", "URL of the hub cluster's console in a multi cluster environment.")
+	// TODO Remove multicluster
+
 	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
@@ -272,11 +276,14 @@ func main() {
 		}
 	}
 
+	// TODO remove multicluster
 	hubConsoleURL := &url.URL{}
 	if *fHubConsoleURL != "" {
 		hubConsoleURL = bridge.ValidateFlagIsURL("hub-console-url", *fHubConsoleURL)
 	}
 
+	// TODO remove multicluster
+	// Update to bool
 	clusterCopiedCSVsDisabled := map[string]bool{
 		serverutils.LocalClusterName: *fCopiedCSVsDisabled,
 	}
@@ -313,11 +320,12 @@ func main() {
 		ReleaseVersion:               *fReleaseVersion,
 		NodeArchitectures:            nodeArchitectures,
 		NodeOperatingSystems:         nodeOperatingSystems,
-		HubConsoleURL:                hubConsoleURL,
+		HubConsoleURL:                hubConsoleURL, // TODO remove multicluster
 		AuthMetrics:                  auth.NewMetrics(),
 		K8sMode:                      *fK8sMode,
 	}
 
+	// TODO remove multicluster
 	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}
 	if *fManagedClusterConfigs != "" {
 		unvalidatedManagedClusters := []serverconfig.ManagedClusterConfig{}
@@ -463,6 +471,7 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftGitOpsHost},
 			}
+			// TODO remove multicluster
 			srv.ManagedClusterProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -540,6 +549,7 @@ func main() {
 			}
 		}
 
+		// TODO remove multicluster
 		// Must have off-cluster cluster proxy endpoint if we have managed clusters
 		if len(managedClusterConfigs) > 0 {
 			offClusterManagedClusterProxyURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-managed-cluster-proxy", *fK8sModeOffClusterManagedClusterProxy)
@@ -670,12 +680,14 @@ func main() {
 			)
 
 		}
-
+		// TODO remove multicluster
+		// Revert to *auth.Authenticator property
 		srv.Authers = make(map[string]*auth.Authenticator)
 		if srv.Authers[serverutils.LocalClusterName], err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
 			klog.Fatalf("Error initializing authenticator: %v", err)
 		}
 
+		// TODO remove multicluster
 		if len(managedClusterConfigs) > 0 {
 			for _, managedCluster := range managedClusterConfigs {
 				managedClusterOIDCClientConfig := &auth.Config{
@@ -739,6 +751,7 @@ func main() {
 		bridge.FlagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift")
 	}
 
+	// TODO remove multicluster
 	srv.CopiedCSVsDisabled = clusterCopiedCSVsDisabled
 
 	srv.MonitoringDashboardConfigMapLister = server.NewResourceLister(
