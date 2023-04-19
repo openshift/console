@@ -5,6 +5,7 @@ import {
 } from '@console/internal/module/k8s';
 import { StatusCapability, SpecCapability } from './src/components/descriptors/types';
 import { OperatorHubItem } from './src/components/operator-hub';
+import { CloudCredentialKind } from '@console/internal/module/k8s';
 import {
   OperatorGroupKind,
   PackageManifestKind,
@@ -616,6 +617,14 @@ const federationv2PackageManifest = {
   },
 };
 
+const cred : CloudCredentialKind = {
+  spec: {
+    credentialsMode: "Manual",
+  }
+}
+
+const testCredentials = cred
+
 const prometheusPackageManifest = {
   apiVersion: 'packages.operators.coreos.com/v1' as PackageManifestKind['apiVersion'],
   kind: 'PackageManifest' as PackageManifestKind['kind'],
@@ -728,6 +737,7 @@ export const operatorHubListPageProps = {
     ] as PackageManifestKind[],
   },
   clusterServiceVersions: null,
+  cloudcredentials: { loaded: true, data: cred},
 };
 
 export const operatorHubTileViewPageProps = {
@@ -759,6 +769,8 @@ export const operatorHubTileViewPageProps = {
       catalogSourceNamespace: 'openshift-marketplace',
       validSubscription: undefined,
       infraFeatures: undefined,
+      shortLivedTokenEnabled: 'false',
+      cloudcredentials: testCredentials,
     },
     {
       obj: etcdPackageManifest,
@@ -786,6 +798,8 @@ export const operatorHubTileViewPageProps = {
       catalogSourceNamespace: 'openshift-marketplace',
       validSubscription: undefined,
       infraFeatures: undefined,
+      shortLivedTokenEnabled: 'false',
+      cloudcredentials: testCredentials,
     },
     {
       obj: federationv2PackageManifest,
@@ -813,6 +827,8 @@ export const operatorHubTileViewPageProps = {
       catalogSourceNamespace: 'openshift-marketplace',
       validSubscription: undefined,
       infraFeatures: undefined,
+      shortLivedTokenEnabled: 'false',
+      cloudcredentials: testCredentials,
     },
     {
       obj: prometheusPackageManifest,
@@ -839,6 +855,8 @@ export const operatorHubTileViewPageProps = {
       catalogSourceNamespace: 'openshift-marketplace',
       validSubscription: undefined,
       infraFeatures: undefined,
+      shortLivedTokenEnabled: 'false',
+      cloudcredentials: testCredentials,
     },
   ] as OperatorHubItem[],
   openOverlay: null,
@@ -874,6 +892,8 @@ export const operatorHubTileViewPagePropsWithDummy = {
       catalogSourceNamespace: 'openshift-marketplace',
       validSubscription: undefined,
       infraFeatures: undefined,
+      shortLivedTokenEnabled: 'false',
+      cloudcredentials: testCredentials,
     },
   ],
   openOverlay: null,
@@ -991,4 +1011,6 @@ export const itemWithLongDescription = {
   catalogSourceNamespace: 'openshift-marketplace',
   validSubscription: undefined,
   infraFeatures: undefined,
+  shortLivedTokenEnabled: 'false',
+  cloudcredentials: testCredentials,
 };

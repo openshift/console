@@ -32,6 +32,16 @@ export const CatalogSourceModel: K8sKind = {
   plural: 'catalogsources',
 };
 
+export const CloudCredentialModel: K8sKind = {
+  kind: 'CloudCredential',
+  label: 'CloudCredential',
+  labelPlural: 'CloudCredentials',
+  apiGroup: 'operator.openshift.io',
+  apiVersion: 'v1',
+  abbr: 'CO',
+  plural: 'cloudcredentials',
+}
+
 export const PackageManifestModel: K8sKind = {
   kind: 'PackageManifest',
   label: 'PackageManifest',

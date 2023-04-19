@@ -107,6 +107,7 @@ const operatorHubFilterGroups = [
   'capabilityLevel',
   'infraFeatures',
   'validSubscriptionFilters',
+  'shortLivedTokenEnabled',
 ];
 
 const ignoredProviderTails = [', Inc.', ', Inc', ' Inc.', ' Inc', ', LLC', ' LLC'];
@@ -236,6 +237,10 @@ const validSubscriptionSort = (validSubscription) => {
   }
 };
 
+const shortLivedTokenEnabledSort = (shortLivedTokenEnabled) => {
+  return shortLivedTokenEnabled.value
+};
+
 const sortFilterValues = (values, field) => {
   let sorter: any = ['value'];
 
@@ -261,6 +266,10 @@ const sortFilterValues = (values, field) => {
 
   if (field === 'validSubscriptionFilters') {
     sorter = validSubscriptionSort;
+  }
+
+  if (field === 'shortLivedTokenEnabled') {
+    sorter = shortLivedTokenEnabledSort;
   }
 
   return _.sortBy(values, sorter);
@@ -505,6 +514,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     capabilityLevel: t('olm~Capability level'),
     infraFeatures: t('olm~Infrastructure features'),
     validSubscriptionFilters: t('olm~Valid subscription'),
+    shortLivedTokenEnabled: t('olm~Short Lived Token Enabled'),
   };
 
   return (

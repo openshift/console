@@ -14,7 +14,7 @@ import {
   skeletonCatalog,
   StatusBox,
 } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel, CloudCredentialKind } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
@@ -26,6 +26,7 @@ import {
   PackageManifestModel,
   OperatorGroupModel,
   SubscriptionModel,
+  CloudCredentialModel,
 } from '../../models';
 import {
   ClusterServiceVersionKind,
@@ -73,6 +74,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
   packageManifests,
   subscriptions,
   clusterServiceVersions,
+  cloudcredentials,
 }) => {
   const { t } = useTranslation();
   const items: OperatorHubItem[] = React.useMemo(() => {
@@ -100,6 +102,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
           const { currentCSVDesc } = (channels || []).find(({ name }) => name === defaultChannel);
           const currentCSVAnnotations: OperatorHubCSVAnnotations =
             currentCSVDesc?.annotations ?? {};
+          console.log(currentCSVAnnotations) // eslint-disable-next-line no-console
           const [parsedInfraFeatures, validSubscription] = ANNOTATIONS_WITH_JSON.map(
             (annotationKey) =>
               parseJSONAnnotation(currentCSVAnnotations, annotationKey, () =>
@@ -147,6 +150,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             createdAt,
             support,
             capabilities: capabilityLevel,
+            [OperatorHubCSVAnnotationKey.shortLivedTokenEnabled]: shortLivedTokenEnabled,
             [OperatorHubCSVAnnotationKey.actionText]: marketplaceActionText,
             [OperatorHubCSVAnnotationKey.remoteWorkflow]: marketplaceRemoteWorkflow,
             [OperatorHubCSVAnnotationKey.supportWorkflow]: marketplaceSupportWorkflow,
@@ -154,6 +158,11 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
 
           const subscription =
             loaded && subscriptionFor(subscriptions?.data)(operatorGroups?.data)(pkg)(namespace);
+
+          console.log(cloudcredentials?.data) // eslint-disable-next-line no-console
+          const cloudcredential =
+            loaded && cloudcredentials?.data
+          console.log(cloudcredential?.spec?.credentialsMode)
 
           const clusterServiceVersion =
             loaded &&
@@ -202,7 +211,9 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             validSubscription,
             validSubscriptionFilters,
             infraFeatures,
+            shortLivedTokenEnabled,
             keywords: currentCSVDesc?.keywords ?? [],
+            cloudcredentials: cloudcredential,
           };
         },
       );
@@ -214,6 +225,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
     operatorGroups,
     packageManifests,
     subscriptions,
+    cloudcredentials,
   ]);
 
   const uniqueItems = _.uniqBy(items, 'uid');
@@ -325,6 +337,11 @@ export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => {
                   namespace: props.match.params.ns,
                   prop: 'clusterServiceVersions',
                 },
+                {
+                  kind: referenceForModel(CloudCredentialModel),
+                  prop: 'cloudcredentials',
+                  name: 'cluster',
+                },
               ]}
             >
               {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
@@ -347,6 +364,7 @@ export type OperatorHubListProps = {
   packageManifests: { loaded: boolean; data?: PackageManifestKind[] };
   marketplacePackageManifests: { loaded: boolean; data?: PackageManifestKind[] };
   subscriptions: { loaded: boolean; data?: SubscriptionKind[] };
+  cloudcredentials: {loaded: boolean; data?: CloudCredentialKind }
   loaded: boolean;
   loadError?: string;
   clusterServiceVersions: { loaded: boolean; data?: ClusterServiceVersionKind[] };

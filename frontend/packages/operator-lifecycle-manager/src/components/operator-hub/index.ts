@@ -1,4 +1,4 @@
-import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
+import { CloudCredentialKind, K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
 import { PackageManifestKind, SubscriptionKind } from '../../types';
 
 export enum InstalledState {
@@ -53,6 +53,8 @@ export type OperatorHubItem = {
   [key: string]: any;
   validSubscription: string[];
   infraFeatures: InfraFeatures[];
+  shortLivedTokenEnabled: string;
+  cloudcredentials: CloudCredentialKind;
 };
 
 export enum OperatorHubCSVAnnotationKey {
@@ -71,6 +73,7 @@ export enum OperatorHubCSVAnnotationKey {
   infrastructureFeatures = 'operators.openshift.io/infrastructure-features',
   validSubscription = 'operators.openshift.io/valid-subscription',
   tags = 'tags',
+  shortLivedTokenEnabled = 'cloudTokenEnabled',
 }
 
 export type OperatorHubCSVAnnotations = {
@@ -89,6 +92,7 @@ export type OperatorHubCSVAnnotations = {
   [OperatorHubCSVAnnotationKey.infrastructureFeatures]?: string;
   [OperatorHubCSVAnnotationKey.validSubscription]?: string;
   [OperatorHubCSVAnnotationKey.tags]?: string[];
+  [OperatorHubCSVAnnotationKey.shortLivedTokenEnabled]?: string;
 } & ObjectMetadata['annotations'];
 
 type OperatorHubSpec = {

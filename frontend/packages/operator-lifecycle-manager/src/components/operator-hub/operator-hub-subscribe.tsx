@@ -6,6 +6,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
+import { TextInput } from '@patternfly/react-core';
 import {
   documentationURLs,
   Dropdown,
@@ -71,6 +72,7 @@ import {
 import { installedFor, supports, providedAPIsForOperatorGroup, isGlobal } from '../operator-group';
 
 export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
+  const [filterText, setFilterText] = React.useState('');
   const { catalogNamespace, pkg } = getURLSearchParams();
   const [targetNamespace, setTargetNamespace] = React.useState(null);
   const [installMode, setInstallMode] = React.useState(null);
@@ -389,7 +391,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         startingCSV: channels.find((ch) => ch.name === selectedUpdateChannel).currentCSV,
         channel: selectedUpdateChannel,
         installPlanApproval: selectedApproval,
-      },
+        config: {
+          env: [
+            {
+              name: "roleARN",
+              value: filterText,
+            },]
+          }
+        },
     };
 
     try {
@@ -700,6 +709,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     selectedTargetNamespace,
   );
 
+  const tokenType = "role ARN"
+
   return (
     <>
       <Helmet>
@@ -719,6 +730,24 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         <div className="row">
           <div className="col-xs-6">
             <>
+              {(
+                <div className="form-group">
+                <fieldset>
+                  <div className="co-toolbar__item">
+                    <TextInput
+                      autoFocus
+                      placeholder={tokenType}
+                      aria-label={tokenType}
+                      type="text"
+                      value={filterText}
+                      onChange={(value) => {
+                        setFilterText(value);
+                      }}
+                    />
+                  </div>
+                </fieldset>
+              </div>
+              )}
               <div className="form-group">
                 <fieldset>
                   <label className="co-required">{t('olm~Update channel')}</label>

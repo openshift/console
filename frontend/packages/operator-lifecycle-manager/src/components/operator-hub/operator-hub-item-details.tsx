@@ -6,7 +6,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ExternalLink, HintBlock, Timestamp } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { CloudCredentialKind, referenceForModel } from '@console/internal/module/k8s';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import { DefaultCatalogSource } from '../../const';
 import { ClusterServiceVersionModel } from '../../models';
@@ -128,15 +128,28 @@ const InstallingHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({ s
   );
 };
 
+
 const OperatorHubItemDetailsHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = (props) => {
   const { t } = useTranslation();
-  const { installed, isInstalling, catalogSource } = props;
+  const { installed, isInstalling, catalogSource, cloudcredentials } = props;
   if (isInstalling) {
     return <InstallingHintBlock {...props} />;
   }
 
   if (installed) {
     return <InstalledHintBlock {...props} />;
+  }
+
+  if ( cloudcredentials?.spec?.credentialsMode == "Token") {
+    return (
+      <HintBlock className="co-catalog-page__hint" title={t('olm~CLUSTER IS IN STS MODE')}>
+        <p>
+          {t(
+            'olm~The cluster is in STS mode!!',
+          )}
+        </p>
+      </HintBlock>
+    )
   }
 
   if (catalogSource === DefaultCatalogSource.CommunityOperators) {
@@ -200,6 +213,8 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({ 
     support,
     validSubscription,
     version,
+    shortLivedTokenEnabled,
+    cloudcredentials,
   } = item;
   const notAvailable = (
     <span className="properties-side-panel-pf-property-label">{t('olm~N/A')}</span>
@@ -241,6 +256,10 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({ 
                     notAvailable
                   )
                 }
+              />
+              <PropertyItem
+                label={t('olm~Short Lived Token Enabled')}
+                value={shortLivedTokenEnabled || notAvailable}
               />
               <PropertyItem
                 label={t('olm~Source')}
@@ -294,6 +313,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({ 
                 latestVersion={version}
                 catalogSource={catalogSource}
                 subscription={subscription}
+                cloudcredentials={cloudcredentials}
               />
               {longDescription ? <MarkdownView content={longDescription} /> : description}
             </div>
@@ -313,6 +333,7 @@ type OperatorHubItemDetailsHintBlockProps = {
   latestVersion: string;
   catalogSource: string;
   subscription: SubscriptionKind;
+  cloudcredentials: CloudCredentialKind;
 };
 
 export type OperatorHubItemDetailsProps = {
