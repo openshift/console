@@ -12,5 +12,5 @@ export const buildConfigPO = {
   },
   imageRegistryField: '#form-input-formData-images-buildFrom-dockerImage-field',
   contentDirectoryField: '#form-input-formData-source-git-git-dir-field',
-  environmentTab: '[data-test-id="horizontal-link-public~Environment"]',
+  environmentTab: '[data-test-id="horizontal-link-Environment"]',
 };

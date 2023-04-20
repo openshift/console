@@ -107,7 +107,8 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
   const pages = [
     {
       href: '',
-      name: 'Details',
+      // t('kubevirt-plugin~Details')
+      nameKey: 'kubevirt-plugin~Details',
       component: SnapshotDetails,
     },
     editYaml(),

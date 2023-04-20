@@ -14,6 +14,7 @@ import {
 import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
 import { fetchURL } from '../../graphql/client';
 import { pluginStore } from '../../plugins';
+import { loading as i18nLoading } from '../../i18n';
 
 const ADMIN_RESOURCES = new Set([
   'roles',
@@ -154,7 +155,13 @@ export const getResources = () =>
       .concat(['/api/v1'])
       .map((p) => fetchURL<APIResourceList>(p).catch((err) => err));
 
+    // Wait also until the known translation bundles are resolved
+    all.push(i18nLoading);
+
     return Promise.all(all).then((data) => {
+      // Drop i18nLoading promise (resolved loaded state)
+      data.pop();
+
       const resourceSet = new Set<string>();
       const namespacedSet = new Set<string>();
       data.forEach(

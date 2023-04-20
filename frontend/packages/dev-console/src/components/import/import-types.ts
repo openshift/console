@@ -191,6 +191,7 @@ export type DevfileData = {
   devfileSourceUrl?: string;
   devfileHasError: boolean;
   devfileSuggestedResources?: DevfileSuggestedResources;
+  devfileProjectType?: string;
 };
 
 export type PacData = {
@@ -307,6 +308,15 @@ export enum SupportedRuntime {
 }
 
 export const notSupportedRuntime = ['go', 'rust', 'springboot', 'python'];
+
+export enum SampleRuntime {
+  'Node.js' = 'nodejs',
+  Quarkus = 'quarkus',
+  dotnet = 'dotnet',
+  Python = 'python',
+  Go = 'golang',
+  springboot = 'spring-boot',
+}
 
 export const ReadableResourcesNames: Record<Resources, string> = {
   [Resources.OpenShift]: DeploymentConfigModel.labelKey,

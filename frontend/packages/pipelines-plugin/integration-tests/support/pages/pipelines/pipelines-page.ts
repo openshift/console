@@ -47,6 +47,13 @@ export const pipelinesPage = {
     }
   },
 
+  verifySelectedTab: (tabName: pipelineTabs) => {
+    cy.get('.co-m-horizontal-nav__menu-item.co-m-horizontal-nav-item--active > a').should(
+      'have.text',
+      tabName,
+    );
+  },
+
   selectKebabMenu: (pipelineName: string) => {
     cy.get(pipelinesPO.pipelinesTable.table).within(() => {
       cy.get(pipelinesPO.pipelinesTable.pipelineName).each(($el, index) => {

@@ -51,9 +51,6 @@ const (
 	// Default location of the tenant aware Alert Manager service for OpenShift. This is only accessible in-cluster.
 	openshiftAlertManagerTenancyHost = "alertmanager-main.openshift-monitoring.svc:9092"
 
-	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
-	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
-
 	// Well-known location of the GitOps service. This is only accessible in-cluster
 	openshiftGitOpsHost = "cluster.openshift-gitops.svc:8080"
 
@@ -94,7 +91,6 @@ func main() {
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
 	fK8sModeOffClusterThanos := fs.String("k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Thanos server.")
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
-	fK8sModeOffClusterMetering := fs.String("k8s-mode-off-cluster-metering", "", "DEV ONLY. URL of the cluster's metering server.")
 	fK8sModeOffClusterManagedClusterProxy := fs.String("k8s-mode-off-cluster-managed-cluster-proxy", "", "DEV ONLY. Public URL of the ACM/MCE cluster proxy.")
 
 	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
@@ -148,6 +144,7 @@ func main() {
 	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control/infra nodes (External | HighlyAvailable | SingleReplica)")
 	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
+	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
 	fHubConsoleURL := fs.String("hub-console-url", "", "URL of the hub cluster's console in a multi cluster environment.")
 	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
@@ -264,6 +261,17 @@ func main() {
 		}
 	}
 
+	nodeOperatingSystems := []string{}
+	if *fNodeOperatingSystems != "" {
+		for _, str := range strings.Split(*fNodeOperatingSystems, ",") {
+			str = strings.TrimSpace(str)
+			if str == "" {
+				bridge.FlagFatalf("node-operating-systems", "list must contain name of node architectures separated by comma")
+			}
+			nodeOperatingSystems = append(nodeOperatingSystems, str)
+		}
+	}
+
 	hubConsoleURL := &url.URL{}
 	if *fHubConsoleURL != "" {
 		hubConsoleURL = bridge.ValidateFlagIsURL("hub-console-url", *fHubConsoleURL)
@@ -304,8 +312,10 @@ func main() {
 		Telemetry:                    telemetryFlags,
 		ReleaseVersion:               *fReleaseVersion,
 		NodeArchitectures:            nodeArchitectures,
+		NodeOperatingSystems:         nodeOperatingSystems,
 		HubConsoleURL:                hubConsoleURL,
 		AuthMetrics:                  auth.NewMetrics(),
+		K8sMode:                      *fK8sMode,
 	}
 
 	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}
@@ -325,6 +335,7 @@ func main() {
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
+	// is used by catalog-utils.ts
 	if *fK8sMode == "in-cluster" {
 		srv.GOARCH = runtime.GOARCH
 		srv.GOOS = runtime.GOOS
@@ -444,11 +455,6 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: *fAlertmanagerTenancyHost, Path: "/api"},
 			}
-			srv.MeteringProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftMeteringHost, Path: "/api"},
-			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 			srv.PluginsProxyTLSConfig = serviceProxyTLSConfig
 
@@ -519,16 +525,6 @@ func main() {
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        offClusterAlertManagerURL,
-			}
-		}
-
-		if *fK8sModeOffClusterMetering != "" {
-			offClusterMeteringURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-metering", *fK8sModeOffClusterMetering)
-			offClusterMeteringURL.Path += "/api"
-			srv.MeteringProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        offClusterMeteringURL,
 			}
 		}
 

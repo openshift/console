@@ -3,7 +3,9 @@ import { shallow } from 'enzyme';
 import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { MultiTabListPage, useFlag, useUserSettings } from '@console/shared';
-import { PipelinesPage } from '../PipelinesPage';
+import PipelineRunsResourceList from '../../pipelineruns/PipelineRunsResourceList';
+import RepositoriesList from '../../repository/list-page/RepositoriesList';
+import PipelinesList from '../list-page/PipelinesList';
 import PipelineTabbedPage, { PageContents } from '../PipelineTabbedPage';
 
 jest.mock('@console/shared', () => {
@@ -46,16 +48,25 @@ describe('PipelineTabbedPage', () => {
     expect(wrapper.find(NamespacedPage).exists()).toBe(true);
   });
 
-  it('should render PipelinesPage', () => {
-    useFlagMock.mockReturnValue(false);
-    const wrapper = shallow(<PageContents {...PipelineTabbedPageProps} />);
-    expect(wrapper.find(PipelinesPage).exists()).toBe(true);
-  });
-
   it('should render MultiTabListPage', () => {
     useFlagMock.mockReturnValue(true);
     const wrapper = shallow(<PageContents {...PipelineTabbedPageProps} />);
     expect(wrapper.find(MultiTabListPage).exists()).toBe(true);
+    expect(wrapper.find(MultiTabListPage).props().pages[0].component).toEqual(PipelinesList);
+    expect(wrapper.find(MultiTabListPage).props().pages[1].component).toEqual(
+      PipelineRunsResourceList,
+    );
+    expect(wrapper.find(MultiTabListPage).props().pages[2].component).toEqual(RepositoriesList);
+  });
+
+  it('should render only Pipelines and PipelineRuns tabs', () => {
+    useFlagMock.mockReturnValue(false);
+    const wrapper = shallow(<PageContents {...PipelineTabbedPageProps} />);
+    expect(wrapper.find(MultiTabListPage).props().pages.length).toBe(2);
+    expect(wrapper.find(MultiTabListPage).props().pages[0].component).toEqual(PipelinesList);
+    expect(wrapper.find(MultiTabListPage).props().pages[1].component).toEqual(
+      PipelineRunsResourceList,
+    );
   });
 
   it('should render CreateProjectListPage', () => {

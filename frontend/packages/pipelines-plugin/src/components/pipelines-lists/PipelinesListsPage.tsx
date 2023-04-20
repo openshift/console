@@ -76,18 +76,21 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
   const pages: Page[] = [
     {
       href: '',
-      name: t(PipelineModel.labelPluralKey),
+      // t(PipelineModel.labelPluralKey)
+      nameKey: PipelineModel.labelPluralKey,
       component: PipelinesList,
     },
     {
       href: 'pipeline-runs',
-      name: t(PipelineRunModel.labelPluralKey),
+      // t(PipelineRunModel.labelPluralKey)
+      nameKey: PipelineRunModel.labelPluralKey,
       component: PipelineRunsResourceList,
       pageData: { showTitle, hideBadge, canCreate },
     },
     {
       href: 'pipeline-resources',
-      name: t(PipelineResourceModel.labelPluralKey),
+      // t(PipelineResourceModel.labelPluralKey)
+      nameKey: PipelineResourceModel.labelPluralKey,
       component: PipelineResourcesListPage,
       pageData: { showTitle, hideBadge },
     },
@@ -95,7 +98,8 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
       ? [
           {
             href: 'conditions',
-            name: t(ConditionModel.labelPluralKey),
+            // t(ConditionModel.labelPluralKey)
+            nameKey: ConditionModel.labelPluralKey,
             component: DefaultPage,
             pageData: {
               kind: referenceForModel(ConditionModel),
@@ -110,7 +114,8 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
       ? [
           {
             href: 'repositories',
-            name: t(RepositoryModel.labelPluralKey),
+            // t(RepositoryModel.labelPluralKey)
+            nameKey: RepositoryModel.labelPluralKey,
             component: RepositoriesList,
             pageData: { showTitle, hideBadge, canCreate },
           },
@@ -137,6 +142,7 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
         badge={badge}
         menuActions={menuActions}
         secondaryButtonAction={showSecondaryAction ? secondaryButtonAction : undefined}
+        telemetryPrefix="Pipelines"
       />
     </NamespacedPage>
   );

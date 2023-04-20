@@ -110,7 +110,7 @@ Then('user is able to see Details, YAML, Pipeline Runs tabs', () => {
 });
 
 Then(
-  'Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created at, Owner, Repository',
+  'Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created at, Owner, Repository, Username, Git access token, Webhook URL, Webhook Secret',
   () => {
     repositoryDetailsPage.verifyFieldsInDetailsTab();
   },

@@ -109,9 +109,6 @@ func TestUsersMetrics(t *testing.T) {
 				}
 			}),
 			expectedMetrics: `
-			console_usage_users{role="cluster-admin"} 0
-			console_usage_users{role="developer"} 0
-			console_usage_users{role="kubeadmin"} 0
 			console_usage_users{role="unknown"} 1
 			`,
 		},
@@ -135,7 +132,7 @@ func TestUsersMetrics(t *testing.T) {
 							},
 							{
 								ObjectMeta: v1.ObjectMeta{
-									Name: "user-settings-kubeadmin-rolebinding",
+									Name: "user-settings-clusteradmin1-rolebinding",
 								},
 								Subjects: []rbac.Subject{
 									{
@@ -146,7 +143,7 @@ func TestUsersMetrics(t *testing.T) {
 							},
 							{
 								ObjectMeta: v1.ObjectMeta{
-									Name: "user-settings-kubeadmin-rolebinding",
+									Name: "user-settings-clusteradmin2-rolebinding",
 								},
 								Subjects: []rbac.Subject{
 									{
@@ -179,7 +176,7 @@ func TestUsersMetrics(t *testing.T) {
 							},
 							{
 								ObjectMeta: v1.ObjectMeta{
-									Name: "user-settings-developer2-rolebinding",
+									Name: "user-settings-developer3-rolebinding",
 								},
 								Subjects: []rbac.Subject{
 									{
@@ -288,6 +285,146 @@ func TestUsersMetrics(t *testing.T) {
 				metrics.RemoveComments(testcase.expectedMetrics),
 				metrics.RemoveComments(metrics.FormatMetrics(m.users)),
 			)
+		})
+	}
+}
+
+func TestUsersMetricsRunningTwice(t *testing.T) {
+	testcases := []struct {
+		name               string
+		handlerOne         http.Handler
+		handlerTwo         http.Handler
+		expectedMetricsOne string
+		expectedMetricsTwo string
+	}{
+		{
+			name: "can-get-namespaces-fails-first-time-and-works-then",
+			handlerOne: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				fmt.Printf("Mock testserver handles: %s\n", r.URL.Path)
+				if r.URL.Path == "/apis/rbac.authorization.k8s.io/v1/namespaces/openshift-console-user-settings/rolebindings" {
+					w.Header().Set("Content-Type", "application/json")
+
+					roleBindingList := rbac.RoleBindingList{
+						Items: []rbac.RoleBinding{
+							{
+								ObjectMeta: v1.ObjectMeta{
+									Name: "user-settings-unknown-user-role-rolebinding",
+								},
+								Subjects: []rbac.Subject{
+									{
+										Kind: "User",
+										Name: "unknown-user-role",
+									},
+								},
+							},
+						},
+					}
+
+					if res, err := json.Marshal(roleBindingList); err != nil {
+						w.WriteHeader(http.StatusInternalServerError)
+						w.Write([]byte(err.Error()))
+					} else {
+						w.WriteHeader(http.StatusOK)
+						w.Write(res)
+					}
+				} else {
+					w.WriteHeader(http.StatusNotFound)
+				}
+			}),
+			handlerTwo: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				fmt.Printf("Mock testserver handles: %s\n", r.URL.Path)
+				if r.URL.Path == "/apis/rbac.authorization.k8s.io/v1/namespaces/openshift-console-user-settings/rolebindings" {
+					roleBindingList := rbac.RoleBindingList{
+						Items: []rbac.RoleBinding{
+							{
+								ObjectMeta: v1.ObjectMeta{
+									Name: "user-settings-clusteradmin-rolebinding",
+								},
+								Subjects: []rbac.Subject{
+									{
+										Kind: "User",
+										Name: "clusteradmin",
+									},
+								},
+							},
+						},
+					}
+
+					if res, err := json.Marshal(roleBindingList); err != nil {
+						w.WriteHeader(http.StatusInternalServerError)
+						w.Write([]byte(err.Error()))
+					} else {
+						w.Header().Set("Content-Type", "application/json")
+						w.WriteHeader(http.StatusOK)
+						w.Write(res)
+					}
+				} else if r.Method == http.MethodPost && r.URL.Path == "/apis/authorization.k8s.io/v1/subjectaccessreviews" {
+					var accessReviewReq authv1.SubjectAccessReview
+					err := json.NewDecoder(r.Body).Decode(&accessReviewReq)
+					if err != nil {
+						w.WriteHeader(http.StatusBadRequest)
+						w.Write([]byte(fmt.Sprintf("Unexpected request: %s", err)))
+						return
+					}
+
+					username := accessReviewReq.Spec.User
+					if username != "clusteradmin" {
+						w.WriteHeader(http.StatusInternalServerError)
+						w.Write([]byte(fmt.Sprintf("Unexpected username: %s", username)))
+						return
+					}
+
+					accessReviewRes := authv1.SubjectAccessReview{
+						Spec: accessReviewReq.Spec,
+						Status: authv1.SubjectAccessReviewStatus{
+							Allowed: true,
+						},
+					}
+					if res, err := json.Marshal(accessReviewRes); err != nil {
+						w.WriteHeader(http.StatusInternalServerError)
+						w.Write([]byte(err.Error()))
+					} else {
+						w.Header().Set("Content-Type", "application/json")
+						w.WriteHeader(http.StatusOK)
+						w.Write(res)
+					}
+				} else {
+					w.WriteHeader(http.StatusNotFound)
+				}
+			}),
+			expectedMetricsOne: `
+			console_usage_users{role="unknown"} 1
+			`,
+			expectedMetricsTwo: `
+			console_usage_users{role="cluster-admin"} 1
+			console_usage_users{role="unknown"} 0
+			`,
+		},
+	}
+
+	for _, testcase := range testcases {
+		t.Run(testcase.name, func(t *testing.T) {
+			m := NewMetrics()
+			{
+				testserver := httptest.NewServer(testcase.handlerOne)
+				defer testserver.Close()
+				assert.NoError(t, m.updateUsersMetric(&http.Client{}, testserver.URL, "ignored-service-account-token"))
+
+				assert.Equal(t,
+					metrics.RemoveComments(testcase.expectedMetricsOne),
+					metrics.RemoveComments(metrics.FormatMetrics(m.users)),
+				)
+			}
+			{
+				testserver := httptest.NewServer(testcase.handlerTwo)
+				defer testserver.Close()
+				assert.NoError(t, m.updateUsersMetric(&http.Client{}, testserver.URL, "ignored-service-account-token"))
+
+				assert.Equal(t,
+					metrics.RemoveComments(testcase.expectedMetricsTwo),
+					metrics.RemoveComments(metrics.FormatMetrics(m.users)),
+				)
+			}
 		})
 	}
 }

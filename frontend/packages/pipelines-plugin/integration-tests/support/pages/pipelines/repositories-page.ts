@@ -3,7 +3,7 @@ import { pipelinesPO } from '../../page-objects';
 
 export const repositoriesPage = {
   verifyTitle: () => {
-    cy.byTestID('form-title').should('have.text', pageTitle.AddGitRepository);
+    cy.byTestID('form-title').should('contain', pageTitle.AddGitRepository);
     cy.testA11y(pageTitle.AddGitRepository);
   },
   verifyRepositoryTableColumns: () => {

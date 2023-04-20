@@ -32,6 +32,16 @@ describe('TaskRunsRow', () => {
       },
       customData: {
         showPipelineColumn: true,
+        selectedColumns: new Set([
+          'name',
+          'namespace',
+          'task',
+          'pod',
+          'status',
+          'started',
+          'pipeline',
+          'duration',
+        ]),
       },
       columns: null,
     };

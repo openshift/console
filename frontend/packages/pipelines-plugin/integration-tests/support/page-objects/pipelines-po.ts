@@ -144,8 +144,8 @@ export const pipelineDetailsPO = {
 
 export const triggerTemplateDetailsPO = {
   title: '[data-test-section-heading="TriggerTemplate details"]',
-  detailsTab: '[data-test-id="horizontal-link-public~Details"]',
-  yamlTab: '[data-test-id="horizontal-link-public~YAML"]',
+  detailsTab: '[data-test-id="horizontal-link-Details"]',
+  yamlTab: '[data-test-id="horizontal-link-YAML"]',
   details: {
     pipelinesIcon: '[title="Pipeline"]',
     eventListenerLink: '[data-test-id^="event-listener-"]',
@@ -222,13 +222,18 @@ export const pipelineRunDetailsPO = {
       duration: '[data-label="Duration"]',
       branch: '[data-label="Branch/Tag"]',
     },
+    enableManageColumns: '[data-test="manage-columns"]',
+    manageColumns: {
+      durationCheckbox: 'input[id="duration"]',
+      submitButton: '[data-test="confirm-action"]',
+    },
   },
   taskRunsDetails: {
     columnNames: {
-      details: '[data-test-id="horizontal-link-public~Details"]',
-      YAML: '[data-test-id="horizontal-link-public~YAML"]',
+      details: '[data-test-id="horizontal-link-Details"]',
+      YAML: '[data-test-id="horizontal-link-YAML"]',
       logs: '[data-test-id="horizontal-link-Logs"]',
-      events: '[data-test-id="horizontal-link-public~Events"]',
+      events: '[data-test-id="horizontal-link-Events"]',
     },
     status: '.odc-taskrun-details__status',
   },
@@ -328,6 +333,11 @@ export const repositoryDetailsPO = {
       annotations: '[data-test="Annotations"]',
       createdAt: '[data-test="Created at"]',
       owner: '[data-test="Owner"]',
+      repository: '[data-test="Repository"]',
+      userName: '[data-test="Username"]',
+      accessToken: '[data-test="Git access token"]',
+      webhookUrl: '[data-test-selector="details-item-label__Webhook URL"]',
+      webhookSecret: '[data-test="Webhook Secret"]',
     },
     fieldValues: {
       name: '[data-test-selector="details-item-value__Name"]',

@@ -15,7 +15,7 @@ export const detailsPage = {
   isLoaded: () => cy.byTestID('skeleton-detail-view').should('not.exist'),
   breadcrumb: (breadcrumbIndex: number) => cy.byLegacyTestID(`breadcrumb-link-${breadcrumbIndex}`),
   selectTab: (name: string) => {
-    cy.get(`a[data-test-id="horizontal-link-public~${name}"]`)
+    cy.get(`a[data-test-id="horizontal-link-${name}"]`)
       .should('exist')
       .click();
   },

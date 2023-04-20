@@ -37,7 +37,7 @@ export const getGroupVersionKind = (
   return parts as [string, string, string];
 };
 
-export const isGroupVersionKind = (ref: GroupVersionKind | string) => ref.split('~').length === 3;
+export const isGroupVersionKind = (ref: GroupVersionKind | string) => ref?.split('~').length === 3;
 
 export const groupVersionFor = (apiVersion: string) => ({
   group: apiVersion.split('/').length === 2 ? apiVersion.split('/')[0] : 'core',

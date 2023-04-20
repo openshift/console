@@ -368,7 +368,7 @@ describe(OperandDetailsPage.displayName, () => {
     expect(detailsPage.props().pages[0].href).toEqual('');
     expect(detailsPage.props().pages[1].nameKey).toEqual(`${i18nNS}~YAML`);
     expect(detailsPage.props().pages[1].href).toEqual('yaml');
-    expect(detailsPage.props().pages[2].name).toEqual('Resources');
+    expect(detailsPage.props().pages[2].nameKey).toEqual('olm~Resources');
     expect(detailsPage.props().pages[2].href).toEqual('resources');
   });
 

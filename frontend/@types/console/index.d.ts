@@ -33,7 +33,6 @@ declare interface Window {
     loginURL: string;
     logoutRedirect: string;
     logoutURL: string;
-    meteringBaseURL: string;
     prometheusBaseURL: string;
     prometheusTenancyBaseURL: string;
     quickStarts: string;
@@ -57,11 +56,14 @@ declare interface Window {
     controlPlaneTopology: string;
     telemetry: Record<string, string>;
     nodeArchitectures: string[];
+    nodeOperatingSystems: string[];
     hubConsoleURL: string;
+    k8sMode: string,
   };
   windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
-  store?: {}; // Redux store
+  i18n?: {}; // i18next instance, only available in development builds for debugging
+  store?: {}; // Redux store, only available in development builds for debugging
   pluginStore?: {}; // Console plugin store
   loadPluginEntry?: Function;
   Cypress?: {};

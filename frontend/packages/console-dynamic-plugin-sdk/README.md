@@ -192,8 +192,6 @@ to your local plugin asset server (web server hosting the plugin's generated ass
 Your plugin should start loading automatically upon Console application startup. Inspect the value of
 `window.SERVER_FLAGS.consolePlugins` to see the list of plugins which Console loads upon its startup.
 
-Note running plugins in this way will likely result in incorrect data in the Cluster Dashboard Dynamic Plugins popover.
-
 ## Plugin detection and management
 
 [Console operator](https://github.com/openshift/console-operator) detects available plugins through

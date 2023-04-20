@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { TriggerTemplateModel } from '../../../../models';
@@ -16,9 +15,6 @@ const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({ obj: pipeline, cus
 
   return (
     <>
-      <Helmet>
-        <title>{t('pipelines-plugin~Pipeline details')}</title>
-      </Helmet>
       <div className="co-m-pane__body">
         <SectionHeading text={t('pipelines-plugin~Pipeline details')} />
         <PipelineVisualization pipeline={pipeline} />

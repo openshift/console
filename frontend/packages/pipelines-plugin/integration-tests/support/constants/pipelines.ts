@@ -16,6 +16,7 @@ export enum pipelineActions {
 export enum pipelineTabs {
   Pipelines = 'Pipelines',
   Repositories = 'Repositories',
+  PipelineRuns = 'PipelineRuns',
 }
 
 export enum pipelineDetailsTabs {

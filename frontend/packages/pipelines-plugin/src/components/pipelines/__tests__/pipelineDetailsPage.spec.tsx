@@ -171,7 +171,7 @@ describe('PipelineDetailsPage:', () => {
     test('It should contain metrics tab if the user has view permission in the openshift pipelines namespace', async () => {
       const wrapper: ReactWrapper = await renderPipelineDetailsPage();
       const tabs = wrapper.find(DetailsPage).props().pages;
-      const metricsTab = tabs.find((t) => t.name === 'Metrics');
+      const metricsTab = tabs.find((t) => t.nameKey === 'pipelines-plugin~Metrics');
 
       expect(tabs).toHaveLength(6);
       expect(metricsTab).toBeDefined();
@@ -185,7 +185,7 @@ describe('PipelineDetailsPage:', () => {
       ]);
       const wrapper: ReactWrapper = await renderPipelineDetailsPage();
       const tabs = wrapper.find(DetailsPage).props().pages;
-      const metricsTab = tabs.find((t) => t.name === 'Metrics');
+      const metricsTab = tabs.find((t) => t.nameKey === 'pipelines-plugin~Metrics');
 
       expect(tabs).toHaveLength(6);
       expect(metricsTab).toBeDefined();

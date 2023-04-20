@@ -473,9 +473,10 @@ describe(CSVSubscription.displayName, () => {
     wrapper = shallow(
       <CSVSubscription
         obj={testClusterServiceVersion}
+        subscription={undefined}
+        loaded
         packageManifests={[]}
         subscriptions={[]}
-        catalogSources={[]}
         installPlans={[]}
       />,
     );
@@ -497,8 +498,9 @@ describe(CSVSubscription.displayName, () => {
       <CSVSubscription
         obj={obj}
         packageManifests={[testPackageManifest]}
+        subscription={subscription}
+        loaded
         subscriptions={[testSubscription, subscription]}
-        catalogSources={[testCatalogSource]}
         installPlans={[testInstallPlan]}
       />,
     );
@@ -530,8 +532,9 @@ describe(CSVSubscription.displayName, () => {
       <CSVSubscription
         obj={obj}
         packageManifests={[testPackageManifest, otherPkg]}
+        subscription={subscription}
+        loaded
         subscriptions={[testSubscription, subscription]}
-        catalogSources={[testCatalogSource]}
         installPlans={[testInstallPlan]}
       />,
     );

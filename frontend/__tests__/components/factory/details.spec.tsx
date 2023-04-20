@@ -22,6 +22,7 @@ describe(DetailsPage.displayName, () => {
         namespace="default"
         kind={referenceForModel(PodModel)}
         pages={[]}
+        kindObj={PodModel}
       />,
       {
         wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
@@ -49,7 +50,7 @@ describe(DetailsPage.displayName, () => {
         prop: 'configMap',
       },
     ];
-    wrapper = wrapper.setProps({ resources });
+    wrapper = wrapper.setProps({ resources, kindObj: ConfigMapModel });
 
     expect(wrapper.find<any>(Firehose).props().resources.length).toEqual(resources.length + 1);
     resources.forEach((resource, i) => {

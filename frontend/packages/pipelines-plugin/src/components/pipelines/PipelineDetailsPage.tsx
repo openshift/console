@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { KebabAction, navFactory, LoadingBox } from '@console/internal/components/utils';
@@ -25,7 +24,6 @@ import { usePipelineMetricsLevel } from './utils/pipeline-operator';
 import { usePipelineTriggerTemplateNames } from './utils/triggers';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { t } = useTranslation();
   const { name, namespace, kindObj, match } = props;
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
   const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj, match);
@@ -51,18 +49,21 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
         navFactory.details(PipelineDetails),
         {
           href: 'metrics',
-          name: t('pipelines-plugin~Metrics'),
+          // t('pipelines-plugin~Metrics')
+          nameKey: 'pipelines-plugin~Metrics',
           component: PipelineMetrics,
         },
         navFactory.editYaml(),
         {
           href: 'Runs',
-          name: t('pipelines-plugin~PipelineRuns'),
+          // t('pipelines-plugin~PipelineRuns')
+          nameKey: 'pipelines-plugin~PipelineRuns',
           component: PipelineRuns,
         },
         {
           href: 'parameters',
-          name: t('pipelines-plugin~Parameters'),
+          // t('pipelines-plugin~Parameters')
+          nameKey: 'pipelines-plugin~Parameters',
           component: (pageProps: PipelineDetailsTabProps) => (
             <PipelineForm
               PipelineFormComponent={PipelineParametersForm}
@@ -75,7 +76,8 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
         },
         {
           href: 'resources',
-          name: t('pipelines-plugin~Resources'),
+          // t('pipelines-plugin~Resources')
+          nameKey: 'pipelines-plugin~Resources',
           component: (pageProps: PipelineDetailsTabProps) => (
             <PipelineForm
               PipelineFormComponent={PipelineResourcesForm}

@@ -67,7 +67,6 @@ const (
 	indexPageTemplateName                 = "index.html"
 	k8sProxyEndpoint                      = "/api/kubernetes/"
 	localesEndpoint                       = "/locales/resource.json"
-	meteringProxyEndpoint                 = "/api/metering"
 	multiclusterLogoutPageTemplateName    = "multicluster-logout.html"
 	operandsListEndpoint                  = "/api/list-operands/"
 	pluginAssetsEndpoint                  = "/api/plugins/"
@@ -117,9 +116,9 @@ type jsGlobals struct {
 	LoginURL                        string                     `json:"loginURL"`
 	LogoutRedirect                  string                     `json:"logoutRedirect"`
 	LogoutURL                       string                     `json:"logoutURL"`
-	MeteringBaseURL                 string                     `json:"meteringBaseURL"`
 	MulticlusterLogoutRedirect      string                     `json:"multiclusterLogoutRedirect"`
 	NodeArchitectures               []string                   `json:"nodeArchitectures"`
+	NodeOperatingSystems            []string                   `json:"nodeOperatingSystems"`
 	Perspectives                    string                     `json:"perspectives"`
 	ProjectAccessClusterRoles       string                     `json:"projectAccessClusterRoles"`
 	PrometheusBaseURL               string                     `json:"prometheusBaseURL"`
@@ -132,6 +131,7 @@ type jsGlobals struct {
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ThanosPublicURL                 string                     `json:"thanosPublicURL"`
 	UserSettingsLocation            string                     `json:"userSettingsLocation"`
+	K8sMode                         string                     `json:"k8sMode"`
 }
 
 type Server struct {
@@ -163,6 +163,7 @@ type Server struct {
 	I18nNamespaces                      []string
 	InactivityTimeout                   int
 	K8sClient                           *http.Client
+	K8sMode                             string
 	K8sProxyConfig                      *proxy.Config
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
@@ -172,9 +173,9 @@ type Server struct {
 	LoadTestFactor                      int
 	LogoutRedirect                      *url.URL
 	ManagedClusterProxyConfig           *proxy.Config
-	MeteringProxyConfig                 *proxy.Config
 	MonitoringDashboardConfigMapLister  ResourceLister
 	NodeArchitectures                   []string
+	NodeOperatingSystems                []string
 	Perspectives                        string
 	PluginProxy                         string
 	PluginsProxyTLSConfig               *tls.Config
@@ -210,10 +211,6 @@ func (s *Server) prometheusProxyEnabled() bool {
 
 func (s *Server) alertManagerProxyEnabled() bool {
 	return s.AlertManagerProxyConfig != nil && s.AlertManagerTenancyProxyConfig != nil
-}
-
-func (s *Server) meteringProxyEnabled() bool {
-	return s.MeteringProxyConfig != nil
 }
 
 func (s *Server) gitopsProxyEnabled() bool {
@@ -491,18 +488,6 @@ func (s *Server) HTTPHandler() http.Handler {
 		)
 	}
 
-	if s.meteringProxyEnabled() {
-		meteringProxyAPIPath := meteringProxyEndpoint + "/api/"
-		meteringProxy := proxy.NewProxy(s.MeteringProxyConfig)
-		handle(meteringProxyAPIPath, http.StripPrefix(
-			proxy.SingleJoiningSlash(s.BaseURL.Path, meteringProxyAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-				meteringProxy.ServeHTTP(w, r)
-			})),
-		)
-	}
-
 	clusterManagementProxy := proxy.NewProxy(s.ClusterManagementProxyConfig)
 	handle(accountManagementEndpoint, http.StripPrefix(
 		s.BaseURL.Path,
@@ -636,6 +621,12 @@ func (s *Server) HTTPHandler() http.Handler {
 			klog.Errorf("Unable to parse perspective JSON: %v", err)
 		}
 	}
+	serverconfigMetrics := serverconfig.NewMetrics(config)
+	serverconfigMetrics.MonitorPlugins(
+		s.K8sClient,
+		s.K8sProxyConfig.Endpoint.String(),
+		s.ServiceAccountToken,
+	)
 	usageMetrics := usage.NewMetrics()
 	usageMetrics.MonitorUsers(
 		s.K8sClient,
@@ -643,7 +634,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		s.ServiceAccountToken,
 	)
 	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...)
-	prometheus.MustRegister(serverconfig.NewMetrics(config).GetCollectors()...)
+	prometheus.MustRegister(serverconfigMetrics.GetCollectors()...)
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
 	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
 		authHandler(func(w http.ResponseWriter, r *http.Request) {
@@ -771,8 +762,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		Telemetry:                  s.Telemetry,
 		ReleaseVersion:             s.ReleaseVersion,
 		NodeArchitectures:          s.NodeArchitectures,
+		NodeOperatingSystems:       s.NodeOperatingSystems,
 		CopiedCSVsDisabled:         s.CopiedCSVsDisabled,
 		HubConsoleURL:              s.HubConsoleURL.String(),
+		K8sMode:                    s.K8sMode,
 	}
 
 	localAuther := s.getLocalAuther()
@@ -791,10 +784,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if s.alertManagerProxyEnabled() {
 		jsg.AlertManagerBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyEndpoint)
 		jsg.AlertmanagerUserWorkloadBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertmanagerUserWorkloadProxyEndpoint)
-	}
-
-	if s.meteringProxyEnabled() {
-		jsg.MeteringBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, meteringProxyEndpoint)
 	}
 
 	if !s.authDisabled() {

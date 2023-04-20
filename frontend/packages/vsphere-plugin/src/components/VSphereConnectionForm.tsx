@@ -91,13 +91,14 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
   const datacenterHelperText = (
     <>
       <Trans i18nKey="vsphere-plugin~vsphere-connection-form-datacenterhelp-one">
-        The name of an existing datacenter in the vSphere which the virtual machines backing this
-        cluster are in.
+        Enter the name of the vSphere data center that contains the virtual machines currently
+        backing-up the cluster.
       </Trans>
       <br />
       <strong>
         <Trans i18nKey="vsphere-plugin~vsphere-connection-form-datacenterhelp-two">
-          Note: Updating this value will break any existing PersistentVolumes.
+          Warning: Updating this value once the configuration has been saved will detach any
+          existing PersistentVolumes.
         </Trans>
       </strong>
     </>
@@ -106,13 +107,13 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
   const datastoreHelperText = (
     <>
       <Trans i18nKey="vsphere-plugin~vsphere-connection-form-datastorehelp-one">
-        The name of an existing datastore in the datacenter where the persistent volumes will be
-        stored.
+        Select the data store in the vSphere data center that is to store the persistent data
+        volumes.
       </Trans>
       <br />
       <strong>
         <Trans i18nKey="vsphere-plugin~vsphere-connection-form-datastorehelp-two">
-          Note: Updating this value will break any existing PersistentVolumes.
+          Warning: Updating this value will break any existing PersistentVolumes.
         </Trans>
       </strong>
       .
@@ -128,7 +129,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
             content={
               <>
                 {t(
-                  "vsphere-plugin~Enter the network address the vCenter is running on. It can either be a domain name or IP. If you're unsure, you can try to determine the value from the vSphere Web Client address. Example: ",
+                  'vsphere-plugin~Enter the network address of the vCenter server. It can either be a domain name or IP address. It appears in the vSphere web client URL. Example:  ',
                 )}
                 <ul>
                   <li>https://[your_vCenter_address]/ui</li>
@@ -140,7 +141,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
         isRequired
         fieldId="connection-vcenter"
         helperText={t(
-          'vsphere-plugin~Can be both domain name or IP, see additional info how to get it.',
+          'vsphere-plugin~Can be either domain name or IP address. See tooltip for details.',
         )}
       >
         <TextInput
@@ -161,7 +162,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
         labelIcon={
           <PopoverHelpButton
             content={t(
-              'vsphere-plugin~The vSphere vCenter username. Mind to double-check it is correct, otherwise cluster nodes will get unschedulable (Known issue: OCPBUGS-2353).',
+              'vsphere-plugin~Enter the vSphere vCenter username. An incorrect username will render the cluster nodes unschedulable (known issue: OCPBUGS-2353).',
             )}
           />
         }
@@ -180,7 +181,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
         labelIcon={
           <PopoverHelpButton
             content={t(
-              'vsphere-plugin~The password will be stored in a Secret in the kube-system namespace of this cluster. Mind to double-check it is correct, otherwise cluster nodes will get unschedulable (Known issue: OCPBUGS-2353).',
+              'vsphere-plugin~Enter the vSphere vCenter password. The password will be stored in a Secret in the kube-system namespace for this cluster. An incorrect password will render the cluster nodes unschedulable (known issue: OCPBUGS-2353).',
             )}
           />
         }

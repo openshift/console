@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodsPage } from '@console/internal/components/pod';
@@ -22,17 +21,18 @@ const NodePodsPage: React.FC<PageComponentProps<NodeKind>> = ({ obj }) => (
 );
 
 const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const { t } = useTranslation();
   const pagesFor = React.useCallback(
     (node: NodeKind) => [
       {
         href: '',
-        name: t('console-app~Overview'),
+        // t('console-app~Overview')
+        nameKey: 'console-app~Overview',
         component: NodeDashboard,
       },
       {
         href: 'details',
-        name: t('console-app~Details'),
+        // t('console-app~Details')
+        nameKey: 'console-app~Details',
         component: NodeDetails,
       },
       navFactory.editYaml(),
@@ -41,7 +41,7 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
       navFactory.events(ResourceEventStream),
       ...(!isWindowsNode(node) ? [navFactory.terminal(NodeTerminal)] : []),
     ],
-    [t],
+    [],
   );
 
   return (

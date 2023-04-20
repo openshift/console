@@ -93,7 +93,7 @@ describe(`Interacting with CatalogSource page`, () => {
     // verfiy catalogSource details page is open
     detailsPage.sectionHeaderShouldExist('CatalogSource details');
 
-    cy.byLegacyTestID('horizontal-link-olm~Operators').click();
+    cy.byLegacyTestID('horizontal-link-Operators').click();
     cy.get('[data-label=Name]').should('exist');
   });
 

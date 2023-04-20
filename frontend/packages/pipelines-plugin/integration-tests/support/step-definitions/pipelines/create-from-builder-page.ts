@@ -8,6 +8,7 @@ import {
   pipelineBuilderPO,
   pipelineDetailsPO,
   pipelineRunDetailsPO,
+  pipelinesPO,
 } from '../../page-objects/pipelines-po';
 import {
   pipelinesPage,
@@ -462,6 +463,7 @@ Then('user will be able to see the output in print-motd task', () => {
 
 Given('user is at pipelines page', () => {
   navigateTo(devNavigationMenu.Pipelines);
+  cy.get(pipelinesPO.pipelinesTab).click();
 });
 
 When('user clicks on import YAML button', () => {

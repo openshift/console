@@ -40,8 +40,11 @@ import {
 } from './index';
 
 const osBaseLabel = 'operatorframework.io/os.';
-const targetGOOSLabel = window.SERVER_FLAGS.GOOS ? `${osBaseLabel}${window.SERVER_FLAGS.GOOS}` : '';
 const archBaseLabel = 'operatorframework.io/arch.';
+const targetNodeOperatingSystems = window.SERVER_FLAGS.nodeOperatingSystems ?? [];
+const targetNodeOperatingSystemsLabels = targetNodeOperatingSystems.map(
+  (os) => `${osBaseLabel}${os}`,
+);
 const targetNodeArchitectures = window.SERVER_FLAGS.nodeArchitectures ?? [];
 const targetNodeArchitecturesLabels = targetNodeArchitectures.map(
   (arch) => `${archBaseLabel}${arch}`,
@@ -50,7 +53,7 @@ const targetNodeArchitecturesLabels = targetNodeArchitectures.map(
 const archDefaultAMD64Label = 'operatorframework.io/arch.amd64';
 const osDefaultLinuxLabel = 'operatorframework.io/os.linux';
 const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
-  if (_.isEmpty(targetNodeArchitectures) || !window.SERVER_FLAGS.GOOS) {
+  if (_.isEmpty(targetNodeArchitectures) && _.isEmpty(targetNodeOperatingSystems)) {
     return items;
   }
   return items.filter((item: OperatorHubItem) => {
@@ -82,7 +85,7 @@ const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
     }
 
     return (
-      _.includes(relevantLabels.os, targetGOOSLabel) &&
+      _.some(relevantLabels.os, (os) => _.includes(targetNodeOperatingSystemsLabels, os)) &&
       _.some(relevantLabels.arch, (arch) => _.includes(targetNodeArchitecturesLabels, arch))
     );
   });

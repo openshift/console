@@ -84,7 +84,8 @@ Feature: Entire pipeline flow from Builder page
 
         @smoke
         Scenario: Add secret to pipeline with authentication type as Basic Authentication: P-08-TC02
-            Given user is at Start Pipeline modal for pipeline "flow"
+            Given user is at pipelines page
+              And user is at Start Pipeline modal for pipeline "flow"
              When user clicks on Show Credentials link present in Start Pipeline modal
               And user clicks on Add Secret link
               And user enters Secret Name as "basic-secret"

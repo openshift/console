@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import PipelineRunParameters from './PipelineRunParameters';
@@ -17,9 +16,6 @@ const PipelineRunParametersForm: React.FC<PipelineRunParametersFormProps> = ({ o
   };
   return (
     <>
-      <Helmet>
-        <title>{t('pipelines-plugin~PipelineRun parameters')}</title>
-      </Helmet>
       <Formik initialValues={initialValues} onSubmit={null}>
         {() => (
           <div className="co-m-pane__body">

@@ -114,8 +114,11 @@ export interface MultiColumnFieldProps extends FieldProps {
 
 export interface YAMLEditorFieldProps extends FieldProps {
   model?: K8sKind;
+  minHeight?: string;
+  language?: string;
   schema?: JSONSchema7;
   showSamples: boolean;
+  showShortcuts?: boolean;
   onSave?: () => void;
 }
 

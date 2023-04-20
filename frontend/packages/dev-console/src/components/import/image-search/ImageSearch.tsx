@@ -216,7 +216,7 @@ const ImageSearch: React.FC = () => {
           isInline
           className="co-alert"
           variant="success"
-          title={t('devconsole~Secret {{newImageSecret}} was created.', newImageSecret)}
+          title={t('devconsole~Secret "{{newImageSecret}}" was created.', { newImageSecret })}
           actionClose={<AlertActionCloseButton onClose={() => shouldHideAlert(false)} />}
         />
       )}

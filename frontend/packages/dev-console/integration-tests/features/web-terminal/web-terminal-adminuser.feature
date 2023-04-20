@@ -5,7 +5,6 @@ Feature: Web Terminal for Admin user
 
         Background:
             Given user has logged in as admin user
-              # Error while installing WTO operator because of DWO https://issues.redhat.com/browse/WTO-127
               And user has installed Web Terminal operator
 
         @smoke @odc-6745

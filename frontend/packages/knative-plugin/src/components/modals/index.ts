@@ -22,3 +22,8 @@ export const editSinkUriModal = (props) =>
   import('../sink-uri/SinkUriController' /* webpackChunkName: "sink-uri" */).then((m) =>
     m.sinkModalLauncher(props),
   );
+
+export const testServerlessFunctionModal = (props) =>
+  import(
+    '../test-function/TestFunctionController' /* webpackChunkName: "test-serverless-function" */
+  ).then((m) => m.testFunctionModalLauncher(props));

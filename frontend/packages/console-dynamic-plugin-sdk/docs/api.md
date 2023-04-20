@@ -952,7 +952,7 @@ Component that creates a link to a specific resource type with an icon badge
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `kind` | (optional) the kind of resource i.e. Pod, Deployment, Namespace |
-| `groupVersionKind` | (optional) object with groupd, version, and kind |
+| `groupVersionKind` | (optional) object with group, version, and kind |
 | `className` | (optional) class style for component |
 | `displayName` | (optional) display name for component, overwrites the resource name if set |
 | `inline` | (optional) flag to create icon badge and name inline with children |
@@ -2038,7 +2038,23 @@ A component to render timestamp.<br/>The timestamps are synchronized between inv
 
 ### Summary 
 
-A hook to launch Modals.<br/><br/>```tsx<br/>const AppPage: React.FC = () => {<br/> const [launchModal] = useModal();<br/> const onClick = () => launchModal(ModalComponent);<br/> return (<br/>   <Button onClick={onClick}>Launch a Modal</Button><br/> )<br/>}<br/>```
+A hook to launch Modals.
+
+
+
+### Example
+
+
+```tsx
+const AppPage: React.FC = () => {
+ const [launchModal] = useModal();
+ const onClick = () => launchModal(ModalComponent);
+ return (
+   <Button onClick={onClick}>Launch a Modal</Button>
+ )
+}
+```
+
 
 
 

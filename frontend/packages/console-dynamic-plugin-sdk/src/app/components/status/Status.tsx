@@ -123,7 +123,7 @@ const Status: React.FC<StatusProps> = ({
       return <StatusIconAndText {...statusProps} icon={<NotStartedIcon />} />;
 
     default:
-      return <>{status || DASH}</>;
+      return status ? <StatusIconAndText {...statusProps} /> : <>{DASH}</>;
   }
 };
 

@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import * as semver from 'semver';
-import { Helmet } from 'react-helmet';
 import {
   Alert,
   AlertActionLink,
@@ -122,6 +121,7 @@ import {
   useCanClusterUpgrade,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 
@@ -1353,30 +1353,34 @@ export const ClusterSettingsPage: React.FC<ClusterSettingsPageProps> = ({ match 
   const pages = [
     {
       href: '',
-      name: t('public~Details'),
+      // t('public~Details')
+      nameKey: 'public~Details',
       component: ClusterVersionDetailsTable,
     },
     {
       href: 'clusteroperators',
-      name: t(ClusterOperatorModel.labelPluralKey),
+      // t(ClusterOperatorModel.labelPluralKey)
+      nameKey: ClusterOperatorModel.labelPluralKey,
       component: ClusterOperatorTabPage,
     },
     {
       href: 'globalconfig',
-      name: t('public~Configuration'),
+      // t('public~Configuration')
+      nameKey: 'public~Configuration',
       component: GlobalConfigPage,
     },
   ];
+  const titleProviderValues = {
+    telemetryPrefix: 'Cluster Settings',
+    titlePrefix: title,
+  };
   return (
-    <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+    <PageTitleContext.Provider value={titleProviderValues}>
       <PageHeading title={<div data-test-id="cluster-settings-page-heading">{title}</div>} />
       <Firehose resources={resources}>
         <HorizontalNav pages={pages} match={match} resourceKeys={resourceKeys} />
       </Firehose>
-    </>
+    </PageTitleContext.Provider>
   );
 };
 
