@@ -363,8 +363,6 @@ export const createOrUpdateDeployImageResources = async (
   const imageStreamData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
   const originalImageStream = (imageStreamData.length && imageStreamData[0]) || {};
   if (formData.resources !== Resources.KnativeService) {
-    registry === RegistryType.External &&
-      (await createOrUpdateImageStream(formData, dryRun, originalImageStream, verb));
     if (formData.resources === Resources.Kubernetes) {
       requests.push(
         createOrUpdateDeployment(
@@ -402,6 +400,8 @@ export const createOrUpdateDeployImageResources = async (
         requests.push(k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {}));
       }
     }
+    registry === RegistryType.External &&
+      (await createOrUpdateImageStream(formData, dryRun, originalImageStream, verb));
   } else if (formData.resources === Resources.KnativeService) {
     let imageStreamUrl: string = image?.dockerImageReference;
     let generatedImageStreamName: string = '';
