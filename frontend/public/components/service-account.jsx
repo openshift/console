@@ -4,6 +4,9 @@ import { safeDump } from 'js-yaml';
 import { Base64 } from 'js-base64';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { saveAs } from 'file-saver';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
@@ -16,11 +19,12 @@ import {
 } from './utils';
 import { k8sList } from '../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../models';
-import { SecretsPage } from './secret';
-import { saveAs } from 'file-saver';
+import { SecretsList } from './secret';
 import { errorModal } from './modals';
-import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
+import { ListPageBody } from '@console/dynamic-plugin-sdk';
+import { useListPageFilter } from '@console/internal/components/factory/ListPage/filter-hook';
+import ListPageFilter from '@console/internal/components/factory/ListPage/ListPageFilter';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
 const KubeConfigify = (kind, sa) => ({
   label: i18next.t('public~Download kubeconfig file'),
@@ -145,12 +149,25 @@ const ServiceAccountTableRow = ({ obj: serviceaccount }) => {
 };
 
 const Details = ({ obj: serviceaccount }) => {
+  const { t } = useTranslation();
   const {
     metadata: { namespace },
     secrets,
   } = serviceaccount;
-  const filters = { selector: { field: 'metadata.name', values: new Set(_.map(secrets, 'name')) } };
-  const { t } = useTranslation();
+  const serviceAcctSecrets = [...new Set(secrets?.map((s) => s.name))];
+  const [resources, loaded, loadError] = useK8sWatchResource({
+    groupVersionKind: {
+      group: SecretModel.apiGroup,
+      kind: SecretModel.kind,
+      version: SecretModel.apiVersion,
+    },
+    isList: true,
+    namespaced: true,
+    namespace,
+  });
+  const [data, filteredData, onFilterChange] = useListPageFilter(resources, [], {
+    'secrets-service-account': { selected: serviceAcctSecrets },
+  });
 
   return (
     <>
@@ -162,17 +179,16 @@ const Details = ({ obj: serviceaccount }) => {
           </div>
         </div>
       </div>
-      <div className="co-m-pane__body co-m-pane__body--section-heading">
+      <ListPageBody>
         <SectionHeading text={t('public~Secrets')} />
-      </div>
-      <SecretsPage
-        kind="Secret"
-        canCreate={false}
-        namespace={namespace}
-        filters={filters}
-        autoFocus={false}
-        showTitle={false}
-      />
+        <ListPageFilter data={data} loaded={loaded} onFilterChange={onFilterChange} />
+        <SecretsList
+          data={filteredData}
+          unfilteredData={resources}
+          loaded={loaded}
+          loadError={loadError}
+        />
+      </ListPageBody>
     </>
   );
 };
