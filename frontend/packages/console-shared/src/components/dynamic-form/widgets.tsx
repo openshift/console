@@ -121,7 +121,7 @@ export const K8sResourceWidget: React.FC<K8sResourceWidgetProps> = ({
   const { t } = useTranslation();
   const { model, groupVersionKind } = options;
   const { namespace } = formContext;
-  const selectedKey = value ? `${value}-${model.kind}` : null;
+  const selectedKey = value ? `${value}-${groupVersionKind}` : null;
 
   return (
     <div>
