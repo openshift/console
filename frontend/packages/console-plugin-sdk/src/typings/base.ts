@@ -6,7 +6,7 @@ import {
   LoadedExtension,
 } from '@console/dynamic-plugin-sdk/src/types';
 
-export { ExtensionFlags, Extension, ExtensionTypeGuard, LoadedExtension };
+export type { ExtensionFlags, Extension, ExtensionTypeGuard, LoadedExtension };
 
 /**
  * An extension that is always effective, regardless of feature flags.

@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rm -rf dist generated schema",
     "build": "yarn clean && yarn validate && yarn compile && yarn generate",
-    "compile": "for ext in '' '-internal' '-webpack' ; do ./node_modules/.bin/tsc -p tsconfig${ext}.json || exit $? ; done",
+    "compile": "for ext in '' '-internal' '-webpack' ; do ../../node_modules/.bin/tsc -p tsconfig${ext}.json || exit $? ; done",
     "generate": "yarn generate-schema && yarn generate-doc && yarn generate-pkg-assets",
     "generate-schema": "yarn ts-node scripts/generate-schema.ts",
     "generate-doc": "yarn ts-node scripts/generate-doc.ts",
@@ -16,14 +16,13 @@
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'"
   },
   "devDependencies": {
-    "@microsoft/tsdoc": "0.13.2",
+    "@microsoft/tsdoc": "0.14.2",
     "@types/ejs": "3.x",
     "@types/fs-extra": "9.x",
     "ejs": "3.x",
     "fs-extra": "9.x",
-    "ts-json-schema-generator": "0.91.0",
-    "tsutils": "3.x",
-    "typescript": "4.2.x",
+    "ts-json-schema-generator": "0.98.0",
+    "tsutils": "3.21.0",
     "webpack": "^5.73.0"
   }
 }

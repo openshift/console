@@ -3,7 +3,6 @@ import * as webpack from 'webpack';
 import * as path from 'path';
 import * as _ from 'lodash';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
-import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
@@ -12,6 +11,8 @@ import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modu
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { ConsoleActivePluginsModule } from '@console/plugin-sdk/src/webpack/ConsoleActivePluginsModule';
 import { CircularDependencyPreset } from './webpack.circular-deps';
+
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 interface Configuration extends webpack.Configuration {
   devServer?: WebpackDevServerConfiguration;
@@ -211,7 +212,13 @@ const config: Configuration = {
   },
   plugins: [
     new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
-    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, memoryLimit: 4096 }),
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        configFile: path.resolve(__dirname, 'tsconfig.json'),
+        diagnosticOptions: { syntactic: true, semantic: true },
+        memoryLimit: 4096,
+      },
+    }),
     new HtmlWebpackPlugin({
       filename: './tokener.html',
       template: './public/tokener.html',
