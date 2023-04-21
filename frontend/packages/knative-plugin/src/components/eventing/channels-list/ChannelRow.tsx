@@ -1,16 +1,18 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceFor } from '@console/internal/module/k8s';
 import { EventChannelKind, ChannelConditionTypes } from '../../../types';
-import { getCondition, getConditionString } from '../../../utils/condition-utils';
+import { getCondition, getConditionStats } from '../../../utils/condition-utils';
 import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 
 const ChannelRow: React.FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;
+  const { t } = useTranslation();
   const objReference = referenceFor(obj);
   const kind = getDynamicChannelModel(objReference);
   const menuActions = [...Kebab.getExtensionsActionsForKind(kind), ...Kebab.factory.common];
@@ -27,7 +29,12 @@ const ChannelRow: React.FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
       </TableData>
       <TableData columnID="ready">{(readyCondition && readyCondition.status) || '-'}</TableData>
       <TableData columnID="condition">
-        {obj.status ? getConditionString(obj.status.conditions) : '-'}
+        {obj.status
+          ? t(
+              'knative-plugin~{{OKcount}} OK / {{conditionsSize}}',
+              getConditionStats(obj.status.conditions),
+            )
+          : '-'}
       </TableData>
       <TableData>{kind.label}</TableData>
       <TableData>
