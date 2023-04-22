@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
+import CreateProjectListPage, {
+  CreateAProjectButton,
+} from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { PipelineRunModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import PipelineRunsResourceList from './PipelineRunsResourceList';
@@ -26,11 +27,8 @@ const PipelineRunsPage: React.FC<PipelineRunsPageProps> = (props) => {
     <CreateProjectListPage title={pipelineRunLabel} badge={badge}>
       {(openProjectModal) => (
         <Trans t={t} ns="pipelines-plugin" values={{ pipelineRunLabel }}>
-          Select a Project to view the list of {{ pipelineRunLabel }} or{' '}
-          <Button isInline variant="link" onClick={openProjectModal}>
-            create a Project
-          </Button>
-          .
+          Select a Project to view the list of {{ pipelineRunLabel }}
+          <CreateAProjectButton openProjectModal={openProjectModal} />.
         </Trans>
       )}
     </CreateProjectListPage>

@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -12,7 +11,7 @@ import { ProjectModel, RoleBindingModel } from '@console/internal/models';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import ProjectAccessPage from '../../project-access/ProjectAccessPage';
-import CreateProjectListPage from '../CreateProjectListPage';
+import CreateProjectListPage, { CreateAProjectButton } from '../CreateProjectListPage';
 
 export const PROJECT_DETAILS_ALL_NS_PAGE_URI = '/project-details/all-namespaces';
 
@@ -87,11 +86,8 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
     <CreateProjectListPage title={t('devconsole~Project Details')}>
       {(openProjectModal) => (
         <Trans t={t} ns="devconsole">
-          Select a Project to view its details or{' '}
-          <Button isInline variant="link" onClick={openProjectModal}>
-            create a Project
-          </Button>
-          .
+          Select a Project to view its details
+          <CreateAProjectButton openProjectModal={openProjectModal} />.
         </Trans>
       )}
     </CreateProjectListPage>
