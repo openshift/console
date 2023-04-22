@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import HealthChecks from '../../../health-checks/HealthChecks';
 import { Resources } from '../../import-types';
-import ResourceSection from '../../section/ResourceSection';
 import AdvancedSection from '../AdvancedSection';
 import BuildConfigSection from '../BuildConfigSection';
 import DeploymentConfigSection from '../DeploymentConfigSection';
@@ -19,10 +18,6 @@ jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({
     setFieldValue: jest.fn(),
   })),
-}));
-
-jest.mock('../../section/useResourceType', () => ({
-  useResourceType: () => ['', null],
 }));
 
 describe('AdvancedSection', () => {
@@ -57,7 +52,6 @@ describe('AdvancedSection', () => {
     expect(listItems.find(DeploymentConfigSection).exists()).toBe(true);
     expect(listItems.find(ScalingSection).exists()).toBe(true);
     expect(listItems.find(ResourceLimitSection).exists()).toBe(true);
-    expect(listItems.find(ResourceSection).exists()).toBe(true);
 
     expect(listItems.find(LabelSection).exists()).toBe(true);
     expect(listItems.find(ServerlessScalingSection).exists()).toBe(false);

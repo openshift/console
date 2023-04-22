@@ -2,7 +2,6 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
   addOptions,
   devNavigationMenu,
-  gitAdvancedOptions,
 } from '@console/dev-console/integration-tests/support/constants';
 import { formPO, gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
@@ -103,11 +102,10 @@ Given('user has created deployment workload {string} with no Route defined', (no
     .clear()
     .type(`openshift/${nodeName}`);
   cy.get('#form-input-searchTerm-field-helper').should('have.text', 'Validated');
-  gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
-  cy.get(gitPO.advancedOptions.resourcesDropdown)
+  cy.get(gitPO.resourcesDropdown)
     .scrollIntoView()
     .click();
-  cy.get(gitPO.advancedOptions.resources.deployment)
+  cy.get(gitPO.resources.deployment)
     .scrollIntoView()
     .click();
   cy.get('#form-checkbox-route-create-field').uncheck();

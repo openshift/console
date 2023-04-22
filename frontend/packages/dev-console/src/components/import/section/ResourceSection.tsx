@@ -2,7 +2,9 @@ import * as React from 'react';
 import { SelectVariant } from '@patternfly/react-core';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { ImportStrategy } from '@console/git-service/src';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
@@ -23,8 +25,15 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const { t } = useTranslation();
   const [field] = useField<Resources[]>('resourceTypesNotValid');
   const fieldName = 'resources';
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const { values, setFieldValue } = useFormikContext<FormikValues>();
   const invalidTypes = field.value || [];
+
+  const [resourceType] = useResourceType();
+
+  React.useEffect(() => {
+    !['edit', 'knatify', 'serverlessFunction'].includes(values.formType) &&
+      setFieldValue('resources', resourceType);
+  }, [resourceType, setFieldValue, values.formType]);
 
   const knativeServiceAccess = useAccessReview({
     group: ServiceModel.apiGroup,
@@ -83,20 +92,34 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
     return options;
   }, [invalidTypes, canIncludeKnative, t]);
 
-  return (
-    <FormSection title={t('devconsole~Resource type')} fullWidth>
-      <div>{t('devconsole~Select the resource type to generate')}</div>
-      <SelectInputField
-        name={fieldName}
-        options={selectInputOptions}
-        variant={SelectVariant.single}
-        onChange={onChange}
-        getLabelFromValue={(value: string) => t(ReadableResourcesNames[value])}
-        hideClearButton
-        toggleOnSelection
-      />
-    </FormSection>
-  );
+  if (
+    !['edit', 'knatify'].includes(values.formType) &&
+    values.import?.selectedStrategy?.type !== ImportStrategy.SERVERLESS_FUNCTION
+  ) {
+    return (
+      <FormSection>
+        <SelectInputField
+          name={fieldName}
+          label={t('devconsole~Resource type')}
+          options={selectInputOptions}
+          variant={SelectVariant.single}
+          onChange={onChange}
+          getLabelFromValue={(value: string) => t(ReadableResourcesNames[value])}
+          helpText={
+            <p className="pf-c-form__helper-text">
+              <Trans t={t} ns="devconsole">
+                Resource type to generate. The default can be set in{' '}
+                <Link to="/user-preferences/applications">User Preferences</Link>.
+              </Trans>
+            </p>
+          }
+          hideClearButton
+          toggleOnSelection
+        />
+      </FormSection>
+    );
+  }
+  return null;
 };
 
 export default connectToFlags(FLAG_KNATIVE_SERVING_SERVICE)(ResourceSection);
