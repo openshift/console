@@ -38,11 +38,15 @@ export const SelectedReleaseStatuses = [
 
 export const OtherReleaseStatuses = ['unknown', 'uninstalled', 'superseded', 'uninstalling'];
 
-export const releaseStatus = (status: string) =>
-  status
+export const releaseStatus = (status: string) => {
+  if (!status) {
+    return 'Unknown';
+  }
+  return status
     .split('-')
     .map((s) => toTitleCase(s))
     .join('');
+};
 
 export const releaseStatusReducer = (release: HelmRelease) => {
   if (OtherReleaseStatuses.includes(release.info.status)) {
