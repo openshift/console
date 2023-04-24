@@ -34,7 +34,6 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
         deploymentStrategy,
       },
     },
-    initialValues,
     setFieldValue,
   } = useFormikContext<FormikValues>();
 
@@ -59,17 +58,9 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
         ..._.merge(strategyDefaultValues, deploymentStrategy),
         type: value,
       };
-      initialValues.formData.deploymentStrategy = strategyData;
       setFieldValue('formData.deploymentStrategy', strategyData);
     },
-    [
-      initialValues.formData.deploymentStrategy,
-      resName,
-      resNamespace,
-      resourceType,
-      setFieldValue,
-      deploymentStrategy,
-    ],
+    [resName, resNamespace, resourceType, setFieldValue, deploymentStrategy],
   );
 
   return (
