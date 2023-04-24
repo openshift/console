@@ -228,9 +228,62 @@ export const verifyAndInstallOperator = (operator: operators, namespace?: string
   performPostInstallationSteps(operator);
 };
 
+export const verifyAndInstallPipelinesOperatorUsingCLI = () => {
+  const checkForCRDsAndTasks = () => {
+    waitForCRDs(operators.PipelinesOperator);
+    cy.visit('/pipelines/ns/default');
+    pipelinesPage.clickOnCreatePipeline();
+    waitForPipelineTasks();
+  };
+
+  const installPipelinesOperator = () => {
+    const yamlFile = 'testData/pipelinesOperatorInstallationUsingCLI.yaml';
+    cy.exec(`oc apply -f ${yamlFile}`, {
+      failOnNonZeroExit: false,
+    }).then(function(result) {
+      cy.log(result.stdout);
+    });
+    checkForCRDsAndTasks();
+  };
+
+  perspective.switchTo(switchPerspective.Administrator);
+  operatorsPage.navigateToInstallOperatorsPage();
+
+  cy.get('body').then(($e1) => {
+    if ($e1.find(operatorsPO.installOperators.search).length === 0) {
+      cy.log('Search filter is not visible, installing Pipelines operator');
+      operatorsPage.navigateToInstallOperatorsPage();
+      installPipelinesOperator();
+    } else {
+      cy.log('Search filter is visible, checking if Pipelines operator is installed');
+      cy.get(operatorsPO.installOperators.search)
+        .should('be.visible')
+        .clear()
+        .type(operators.PipelinesOperator);
+      cy.wait(5000);
+      cy.get('body', {
+        timeout: 50000,
+      }).then(($e2) => {
+        if ($e2.find(operatorsPO.installOperators.noOperatorsFound).length > 0) {
+          cy.log('Pipelines operator not installed, installing...');
+          installPipelinesOperator();
+        } else {
+          cy.log('Pipelines operator is installed in cluster, check for CRDs and Tasks.');
+          checkForCRDsAndTasks();
+        }
+      });
+    }
+  });
+};
+
 export const verifyAndInstallPipelinesOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
   verifyAndInstallOperator(operators.PipelinesOperator);
+};
+
+export const installPipelinesOperatorUsingCLI = () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  verifyAndInstallPipelinesOperatorUsingCLI();
 };
 
 export const verifyAndInstallKnativeOperator = () => {

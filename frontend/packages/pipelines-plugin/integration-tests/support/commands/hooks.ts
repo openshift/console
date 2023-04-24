@@ -1,11 +1,11 @@
-import { verifyAndInstallPipelinesOperator } from '@console/dev-console/integration-tests/support/pages';
+import { installPipelinesOperatorUsingCLI } from '@console/dev-console/integration-tests/support/pages';
 
 before(() => {
   cy.login();
   cy.document()
     .its('readyState')
     .should('eq', 'complete');
-  verifyAndInstallPipelinesOperator();
+  installPipelinesOperatorUsingCLI();
 });
 
 after(() => {
