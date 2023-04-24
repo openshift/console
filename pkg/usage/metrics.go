@@ -26,8 +26,9 @@ const updateConsoleUsersInterval = 6 * time.Hour
 var delayBetweenConsoleUserPermissionChecks = 100 * time.Millisecond
 
 type Metrics struct {
-	usageTotal *prometheus.CounterVec
-	users      *prometheus.GaugeVec
+	usageTotal          *prometheus.CounterVec
+	users               *prometheus.GaugeVec
+	updatedUserRoleOnce map[UserRole]bool
 }
 
 type UserRole string
@@ -60,7 +61,7 @@ func (m *Metrics) MonitorUsers(
 	serviceAccountToken string,
 ) {
 	go func() {
-		time.Sleep(3 * time.Second)
+		time.Sleep(5 * time.Second)
 		go m.updateUsersMetric(userSettingsClient, userSettingsEndpoint, serviceAccountToken)
 	}()
 
@@ -177,19 +178,23 @@ func (m *Metrics) updateUsersMetric(
 		unknowns, UnknownUserRole,
 		time.Since(startTime),
 	)
-	if gauge, err := m.users.GetMetricWithLabelValues(string(KubeadminUserRole)); gauge != nil && err == nil {
-		gauge.Set(float64(kubeAdmin))
-	}
-	if gauge, err := m.users.GetMetricWithLabelValues(string(ClusterAdminUserRole)); gauge != nil && err == nil {
-		gauge.Set(float64(clusterAdmins))
-	}
-	if gauge, err := m.users.GetMetricWithLabelValues(string(DeveloperUserRole)); gauge != nil && err == nil {
-		gauge.Set(float64(developers))
-	}
-	if gauge, err := m.users.GetMetricWithLabelValues(string(UnknownUserRole)); gauge != nil && err == nil {
-		gauge.Set(float64(unknowns))
-	}
+	m.setUserGaugeValue(KubeadminUserRole, kubeAdmin)
+	m.setUserGaugeValue(ClusterAdminUserRole, clusterAdmins)
+	m.setUserGaugeValue(DeveloperUserRole, developers)
+	m.setUserGaugeValue(UnknownUserRole, unknowns)
 	return nil
+}
+
+func (m *Metrics) setUserGaugeValue(userRole UserRole, count int) {
+	// Reduce cardinality if the user role (for example Kubeadmin, but esp. Unknown) is never used.
+	if !m.updatedUserRoleOnce[userRole] && count > 0 {
+		m.updatedUserRoleOnce[userRole] = true
+	}
+	if m.updatedUserRoleOnce[userRole] {
+		if gauge, err := m.users.GetMetricWithLabelValues(string(userRole)); gauge != nil && err == nil {
+			gauge.Set(float64(count))
+		}
+	}
 }
 
 func NewMetrics() *Metrics {
@@ -216,6 +221,8 @@ func NewMetrics() *Metrics {
 		Name:      "users",
 		Help:      "The number of console users splitten into roles (cluster-admin, developer, and unknown if a RBAC check fails)",
 	}, []string{"role"})
+
+	m.updatedUserRoleOnce = map[UserRole]bool{}
 
 	return m
 }
