@@ -121,11 +121,6 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn(),
 }));
 
-// TODO remove multicluster
-jest.mock('@console/shared/src/hooks/useActiveCluster', () => ({
-  useActiveCluster: () => ['local-cluster', () => {}],
-}));
-
 const i18nNS = 'public';
 
 describe(OperandTableRow.displayName, () => {

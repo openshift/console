@@ -1,5 +1,4 @@
 import { act } from 'react-dom/test-utils';
-import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled'; // TODO remove multicluster
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import * as clientUtils from '@console/internal/graphql/client';
@@ -21,13 +20,8 @@ jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
 }));
 
-jest.mock('@console/app/src/utils/isMultiClusterEnabled', () => ({
-  default: jest.fn(),
-}));
-
 const settleAllPromisesMock = settleAllPromises as jest.Mock;
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
-const isMultiClusterEnabledMock = isMultiClusterEnabled as jest.Mock; // TODO remove multicluster
 
 describe('hasEnabledHelmCharts', () => {
   it('should return false if all chart repositories are disabled', () => {
@@ -74,17 +68,7 @@ describe('useDetectHelmChartRepositories', () => {
     jest.useRealTimers();
   });
 
-  // TODO remove multicluster
-  it('should not call fetchK8s and call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if multi cluster is enabled', async () => {
-    isMultiClusterEnabledMock.mockReturnValue(true);
-    testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
-    expect(fetchK8sSpy).toHaveBeenCalledTimes(0);
-    expect(setFeatureFlag).toHaveBeenCalledTimes(1);
-    expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, false]);
-  });
-
   it('should call fetchK8s with HelmChartRepositoryModel and ProjectHelmChartRepositoryModel', async () => {
-    isMultiClusterEnabledMock.mockReturnValue(false);
     fetchK8sSpy
       .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList))
       .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList));
@@ -98,7 +82,6 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if only cluster scoped helm chart repository is available', async () => {
-    isMultiClusterEnabledMock.mockReturnValue(false);
     fetchK8sSpy
       .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList))
       .mockReturnValueOnce(Promise.resolve({ items: [] }));
@@ -114,7 +97,6 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if only project scoped helm chart repository is available', async () => {
-    isMultiClusterEnabledMock.mockReturnValue(false);
     fetchK8sSpy
       .mockReturnValueOnce(Promise.resolve({ items: [] }))
       .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList));
@@ -130,7 +112,6 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if both project and cluster scoped helm chart repositories are available', async () => {
-    isMultiClusterEnabledMock.mockReturnValue(false);
     fetchK8sSpy
       .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList))
       .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList));
@@ -146,7 +127,6 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if no CR helm chart repository is available', async () => {
-    isMultiClusterEnabledMock.mockReturnValue(false);
     fetchK8sSpy
       .mockReturnValueOnce(Promise.resolve({ items: [] }))
       .mockReturnValueOnce(Promise.resolve({ items: [] }));
@@ -162,7 +142,6 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if fetchK8s returns rejected promise for both cluster and project scoped helm chart repositories with atleast one of them being error 404', async () => {
-    isMultiClusterEnabledMock.mockReturnValue(false);
     const error404 = new HttpError('404', 404, {
       status: 404,
     } as Response);
@@ -182,7 +161,6 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and undefined if fetchK8s returns rejected promise for both cluster and project scoped helm chart repositories with none of them being error 404', async () => {
-    isMultiClusterEnabledMock.mockReturnValue(false);
     const error200 = new HttpError('200', 200, {
       status: 200,
     } as Response);
@@ -197,7 +175,6 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call fetchK8s every 10 seconds', async () => {
-    isMultiClusterEnabledMock.mockReturnValue(false);
     fetchK8sSpy
       .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList))
       .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList));
@@ -211,7 +188,6 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should not call fetchK8s every 10 seconds if fetchK8s returns rejected promise for both cluster and project scoped helm chart repositories', async () => {
-    isMultiClusterEnabledMock.mockReturnValue(false);
     const error404 = new HttpError('404', 404, {
       status: 404,
     } as Response);

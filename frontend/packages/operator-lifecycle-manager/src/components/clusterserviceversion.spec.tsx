@@ -70,11 +70,6 @@ jest.mock('@console/shared/src/hooks/redux-selectors', () => {
   };
 });
 
-// TODO remove multicluster
-jest.mock('@console/shared/src/hooks/useActiveCluster', () => ({
-  useActiveCluster: () => ['local-cluster', () => {}],
-}));
-
 describe(ClusterServiceVersionTableRow.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionTableRowProps>;
   beforeEach(() => {

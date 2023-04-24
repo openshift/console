@@ -113,7 +113,9 @@ describe('fetch-dynamic-eventsources: Channels', () => {
   beforeEach(async () => {
     jest.spyOn(coFetchModule, 'consoleFetch').mockImplementation(() =>
       Promise.resolve({
-        json: () => ({ ...mockChannelCRDData }),
+        json: () => ({
+          ...mockChannelCRDData,
+        }),
       }),
     );
   });

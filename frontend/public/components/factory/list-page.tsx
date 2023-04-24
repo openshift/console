@@ -182,12 +182,10 @@ export type FireManProps = {
   helpText?: React.ReactNode;
   title?: string;
   autoFocus?: boolean;
-  cluster?: string; // TODO remove multicluster
 };
 
 export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }> = (props) => {
   const {
-    cluster,
     resources,
     textFilter,
     canCreate,
@@ -208,11 +206,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     params.forEach((v, k) => applyFilter(k, v));
 
     const reduxId = resources.map((r) =>
-      makeReduxID(
-        kindObj(r.kind),
-        makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
-        cluster, // TODO remove multicluster
-      ),
+      makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
     );
     setReduxIDs(reduxId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -220,11 +214,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
 
   React.useEffect(() => {
     const reduxId = resources.map((r) =>
-      makeReduxID(
-        kindObj(r.kind),
-        makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
-        cluster, // TODO remove multicluster
-      ),
+      makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
     );
 
     if (_.isEqual(reduxId, reduxIDs)) {
@@ -234,7 +224,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     // reapply filters to the new list...
     setReduxIDs(reduxId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cluster, resources]);
+  }, [resources]);
 
   const updateURL = (filterName: string, options: any) => {
     if (filterName !== textFilter) {

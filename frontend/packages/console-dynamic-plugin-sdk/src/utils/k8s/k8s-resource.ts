@@ -10,7 +10,6 @@ type BaseOptions = {
   ns?: string;
   path?: string;
   queryParams?: QueryParams;
-  cluster?: string; // TODO remove multicluster
 };
 
 type AdapterFunc = <D extends BaseOptions>(
@@ -29,13 +28,12 @@ const adapterFunc: AdapterFunc = (func: Function, knownArgs: string[]) => {
     const args = knownArgs.map((arg) => {
       // forming opts to match underlying API signature if it's there in knownArgs
       if (arg === 'opts') {
-        const { name, ns, path, queryParams, cluster } = options || {}; // TODO remove multicluster
+        const { name, ns, path, queryParams } = options || {};
         return {
           ...(name && { name }),
           ...(ns && { ns }),
           ...(path && { path }),
           ...(queryParams && { queryParams }),
-          ...(cluster && { cluster }), // TODO remove multicluster
         };
       }
       return options[arg];
@@ -63,14 +61,7 @@ export const k8sGet = (
   ns?: string,
   opts?: Options,
   requestInit?: RequestInit,
-) =>
-  coFetchJSON(
-    resourceURL(model, Object.assign({ ns, name }, opts)),
-    'GET',
-    requestInit,
-    null,
-    opts?.cluster, // TODO remove multicluster
-  );
+) => coFetchJSON(resourceURL(model, Object.assign({ ns, name }, opts)), 'GET', requestInit, null);
 
 type OptionsGet = BaseOptions & {
   model: K8sModel;
@@ -118,7 +109,6 @@ export const k8sCreate = <R extends K8sResourceCommon>(
     data,
     null,
     null,
-    opts.cluster, // TODO remove multicluster
   );
 };
 
@@ -174,7 +164,6 @@ export const k8sUpdate = <R extends K8sResourceCommon>(
     data,
     null,
     null,
-    opts?.cluster, // TODO remove multicluster
   );
 
 type OptionsUpdate<R> = BaseOptions & {
@@ -244,7 +233,6 @@ export const k8sPatch = <R extends K8sResourceCommon>(
     patches,
     null,
     null,
-    opts.cluster, // TODO remove multicluster
   );
 };
 
@@ -311,7 +299,6 @@ export const k8sKill = <R extends K8sResourceCommon>(
     jsonData,
     requestInit,
     null,
-    opts.cluster, // TODO remove multicluster
   );
 };
 
@@ -366,7 +353,6 @@ export const k8sList = (
   queryParams: { [key: string]: any } = {},
   raw = false,
   requestInit: RequestInit = {},
-  cluster?: string, // TODO remove multicluster
 ) => {
   const query = _.map(_.omit(queryParams, 'ns'), (v, k) => {
     let newVal;
@@ -377,7 +363,7 @@ export const k8sList = (
   }).join('&');
 
   const listURL = resourceURL(model, { ns: queryParams.ns });
-  return coFetchJSON(`${listURL}?${query}`, 'GET', requestInit, null, cluster).then((result) => {
+  return coFetchJSON(`${listURL}?${query}`, 'GET', requestInit, null).then((result) => {
     const typedItems = result.items?.map((i) => ({
       kind: model.kind,
       apiVersion: result.apiVersion,
@@ -410,7 +396,6 @@ export const k8sListResource: K8sListResource = adapterFunc(k8sList, [
   'queryParams',
   'raw',
   'requestInit',
-  'cluster', // TODO remove multicluster
 ]);
 
 /**

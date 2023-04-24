@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router';
-import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled'; // TODO remove multicluster
 import { useFlag } from '@console/shared';
 import { FLAG_DEVWORKSPACE } from '../../const';
 import MultiTabTerminal from './MultiTabbedTerminal';
@@ -12,8 +11,7 @@ const CloudShellTab: React.FC = () => {
   const { t } = useTranslation();
   const devWorkspaceFlag = useFlag(FLAG_DEVWORKSPACE);
 
-  // TODO remove multicluster
-  if (devWorkspaceFlag === false || isMultiClusterEnabled()) return <Redirect to="/" />;
+  if (devWorkspaceFlag === false) return <Redirect to="/" />;
 
   return (
     <>

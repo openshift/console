@@ -1,10 +1,8 @@
-// TODO remove multicluster
 import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector, useDispatch } from 'react-redux';
-import { getActiveCluster } from '../../../app/core/reducers/coreSelectors';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
 import { getReduxIdPayload } from '../../../app/k8s/reducers/k8sSelector';
 import { SDKStoreState } from '../../../app/redux-types';
@@ -29,19 +27,13 @@ import { useModelsLoaded } from './useModelsLoaded';
  * }
  * ```
  */
-// TODO remove multicluster
 export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
-  const cluster = useSelector((state) => getActiveCluster(state));
   const resource = useDeepCompareMemoize(initResource, true);
   const modelsLoaded = useModelsLoaded();
 
   const [k8sModel] = useK8sModel(resource?.groupVersionKind || resource?.kind);
 
-  const reduxID = React.useMemo(() => getIDAndDispatch(resource, k8sModel, cluster), [
-    k8sModel,
-    resource,
-    cluster,
-  ]);
+  const reduxID = React.useMemo(() => getIDAndDispatch(resource, k8sModel), [k8sModel, resource]);
 
   const dispatch = useDispatch();
 
