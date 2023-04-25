@@ -1,0 +1,20 @@
+{
+  "name": "@console/webterminal-plugin",
+  "version": "0.0.0-fixed",
+  "description": "OpenShift WebTerminal Plugin",
+  "private": true,
+  "scripts": {
+    "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/webterminal-plugin/src/**\",\"!**/__tests__/**\",\"!packages/webterminal-plugin/src/test/**\"]'",
+    "lint": "yarn --cwd ../.. eslint packages/webterminal-plugin",
+    "test": "yarn --cwd ../.. test packages/webterminal-plugin"
+  },
+  "dependencies": {},
+  "consolePlugin": {
+    "entry": "src/plugin.ts",
+    "exposedModules": {
+      "actions": "src/actions/providers",
+      "reduxReducer": "src/redux/reducer.ts",
+      "webTerminalConfiguration": "src/components/cloud-shell/WebTerminalConfiguration.tsx"
+    }
+  }
+}

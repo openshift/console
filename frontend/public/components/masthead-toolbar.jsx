@@ -28,8 +28,8 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
-import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
-import CloudShellMastheadAction from '@console/app/src/components/cloud-shell/CloudShellMastheadAction';
+import CloudShellMastheadButton from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
+import CloudShellMastheadAction from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
 import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled'; // TODO remove multicluster
 import { getUser } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
