@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { match as Match } from 'react-router';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { K8sResourceKind, K8sResourceKindReference, referenceFor } from '../module/k8s';
@@ -215,7 +216,7 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
     },
   ];
 
-  const namespace = props.namespace;
+  const namespace = props.namespace ?? props.match?.params?.ns;
   const createProps = {
     to: `/k8s/ns/${namespace || 'default'}/buildconfigs/~new/form`,
   };
@@ -246,6 +247,7 @@ export type BuildConfigsDetailsProps = {
 
 export type BuildConfigsPageProps = {
   namespace: string;
+  match?: Match<{ ns: string; name: string }>;
   canCreate?: boolean;
   filterLabel?: string;
   mock?: boolean;
