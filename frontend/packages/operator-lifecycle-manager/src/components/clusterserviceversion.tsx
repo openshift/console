@@ -936,6 +936,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
 ) => {
   const { t } = useTranslation();
   const { spec, metadata, status } = props.obj;
+  const { subscription } = props.customData;
   const providedAPIs = providedAPIsForCSV(props.obj);
   const {
     'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow,
@@ -970,7 +971,6 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
   }, [marketplaceSupportWorkflow]);
 
   const csvPlugins = getClusterServiceVersionPlugins(metadata?.annotations);
-  const subscription = subscriptionForCSV(props.subscriptions, props.obj);
   const permissions = _.uniqBy(spec?.install?.spec?.permissions, 'serviceAccountName');
 
   return (
@@ -1175,14 +1175,10 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
   );
 };
 
-export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({
-  obj,
-  subscription,
-  loaded,
-  loadError,
-  ...rest
-}) => {
+export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({ obj, customData, ...rest }) => {
   const { t } = useTranslation();
+  const { subscription, subscriptions, subscriptionsLoaded, subscriptionsLoadError } =
+    customData ?? {};
   const EmptyMsg = () => (
     <MsgBox
       title={t('olm~No Operator Subscription')}
@@ -1191,8 +1187,18 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({
   );
 
   return (
-    <StatusBox EmptyMsg={EmptyMsg} loaded={loaded} loadError={loadError} data={subscription}>
-      <SubscriptionDetails {...rest} obj={subscription} clusterServiceVersions={[obj]} />
+    <StatusBox
+      EmptyMsg={EmptyMsg}
+      loaded={subscriptionsLoaded}
+      loadError={subscriptionsLoadError}
+      data={subscription}
+    >
+      <SubscriptionDetails
+        {...rest}
+        obj={subscription}
+        clusterServiceVersions={[obj]}
+        subscriptions={subscriptions}
+      />
     </StatusBox>
   );
 };
@@ -1229,55 +1235,47 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
     [subscription],
   );
 
-  const pagesFor = React.useCallback(
-    (obj: ClusterServiceVersionKind) => {
-      const providedAPIs = providedAPIsForCSV(obj);
-      return [
-        navFactory.details(ClusterServiceVersionDetails),
-        navFactory.editYaml(),
-        {
-          href: 'subscription',
-          // t('olm~Subscription')
-          nameKey: 'olm~Subscription',
-          component: CSVSubscription,
-          pageData: {
-            subscriptions,
-            subscription,
-            loaded: subscriptionsLoaded,
-            loadError: subscriptionsLoadError,
-          },
+  const pagesFor = React.useCallback((obj: ClusterServiceVersionKind) => {
+    const providedAPIs = providedAPIsForCSV(obj);
+    return [
+      navFactory.details(ClusterServiceVersionDetails),
+      navFactory.editYaml(),
+      {
+        href: 'subscription',
+        // t('olm~Subscription')
+        nameKey: 'olm~Subscription',
+        component: CSVSubscription,
+      },
+      navFactory.events(ResourceEventStream),
+      ...(providedAPIs.length > 1
+        ? [
+            {
+              href: 'instances',
+              // t('olm~All instances')
+              nameKey: 'olm~All instances',
+              component: ProvidedAPIsPage,
+            },
+          ]
+        : []),
+      ...providedAPIs.map<Page<ProvidedAPIPageProps>>((api: CRDDescription) => ({
+        href: referenceForProvidedAPI(api),
+        name: ['Details', 'YAML', 'Subscription', 'Events'].includes(api.displayName)
+          ? `${api.displayName} Operand`
+          : api.displayName || api.kind,
+        component: ProvidedAPIPage,
+        pageData: {
+          csv: obj,
+          kind: referenceForProvidedAPI(api),
         },
-        navFactory.events(ResourceEventStream),
-        ...(providedAPIs.length > 1
-          ? [
-              {
-                href: 'instances',
-                // t('olm~All instances')
-                nameKey: 'olm~All instances',
-                component: ProvidedAPIsPage,
-              },
-            ]
-          : []),
-        ...providedAPIs.map<Page<ProvidedAPIPageProps>>((api: CRDDescription) => ({
-          href: referenceForProvidedAPI(api),
-          name: ['Details', 'YAML', 'Subscription', 'Events'].includes(api.displayName)
-            ? `${api.displayName} Operand`
-            : api.displayName || api.kind,
-          component: ProvidedAPIPage,
-          pageData: {
-            csv: obj,
-            kind: referenceForProvidedAPI(api),
-          },
-        })),
-      ];
-    },
-    [subscription, subscriptions, subscriptionsLoadError, subscriptionsLoaded],
-  );
+      })),
+    ];
+  }, []);
 
   return (
     <DetailsPage
       {...props}
       obj={{ data: csv, loaded: csvLoaded, loadError: csvLoadError }}
+      customData={{ subscriptions, subscription, subscriptionsLoaded, subscriptionsLoadError }}
       breadcrumbsFor={() => [
         {
           name: t('olm~Installed Operators'),
@@ -1349,7 +1347,12 @@ export type ClusterServiceVersionsDetailsPageProps = {
 
 export type ClusterServiceVersionDetailsProps = {
   obj: ClusterServiceVersionKind;
-  subscriptions: SubscriptionKind[];
+  customData: {
+    subscriptions: SubscriptionKind[];
+    subscription: SubscriptionKind;
+    subscriptionsLoaded: boolean;
+    subscriptionsLoadError?: any;
+  };
 };
 
 type ConsolePluginsProps = {
@@ -1390,13 +1393,9 @@ type ManagedNamespacesProps = {
 
 export type CSVSubscriptionProps = Omit<
   SubscriptionDetailsProps,
-  'obj' | 'clusterServiceVersions'
-> & {
-  obj: ClusterServiceVersionKind;
-  subscription: SubscriptionKind;
-  loaded: boolean;
-  loadError?: any;
-};
+  'obj' | 'clusterServiceVersions' | 'subscriptions'
+> &
+  ClusterServiceVersionDetailsProps;
 
 type InitializationResourceAlertProps = {
   csv: ClusterServiceVersionKind;
