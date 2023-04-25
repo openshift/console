@@ -73,6 +73,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/helm-releases',
         '/upload-jar',
         '/search-page',
+        '/builds',
       ],
       component: NamespaceRedirect,
     },

@@ -40,16 +40,19 @@ const BuildConfigForm: React.FC<FormikProps<BuildConfigFormikValues> & {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
 
-  const namespace = watchedBuildConfig?.metadata?.namespace || activeNamespace;
+  const isNew =
+    !watchedBuildConfig?.metadata?.name || watchedBuildConfig?.metadata?.name === '~new';
+  const isStale =
+    !isNew && watchedBuildConfig?.metadata?.resourceVersion !== values.resourceVersion;
 
-  const isStale = watchedBuildConfig?.metadata?.resourceVersion !== values.resourceVersion;
+  const namespace = watchedBuildConfig?.metadata?.namespace || activeNamespace;
 
   const formEditor = <BuildConfigFormEditor namespace={namespace} />;
   const yamlEditor = (
     <YAMLEditorField
       name="yamlData"
       model={BuildConfigModel}
-      showSamples={!watchedBuildConfig}
+      showSamples={isNew}
       onSave={handleSubmit}
     />
   );
@@ -97,14 +100,14 @@ const BuildConfigForm: React.FC<FormikProps<BuildConfigFormikValues> & {
         />
       </FormBody>
       <FormFooter
-        handleReset={onReload}
+        handleReset={isNew ? null : onReload}
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
         infoTitle={t('devconsole~This object has been updated.')}
         infoMessage={t('devconsole~Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Save')}
+        submitLabel={isNew ? t('devconsole~Create') : t('devconsole~Save')}
         disableSubmit={
           (values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
           isSubmitting
