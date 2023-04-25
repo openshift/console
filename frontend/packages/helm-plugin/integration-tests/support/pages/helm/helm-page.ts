@@ -7,7 +7,7 @@ export const helmPage = {
   verifyInstallHelmLink: () =>
     cy
       .get('a')
-      .contains('Browse the catalog to discover and install Helm Charts')
+      .contains('Browse the catalog to discover available Helm Charts')
       .should('be.visible'),
   search: (name: string) => {
     cy.get(helmPO.search)
