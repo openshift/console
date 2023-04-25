@@ -68,6 +68,7 @@ export const init = () => {
         'service-binding-plugin',
         'topology',
         'vsphere-plugin',
+        'webterminal-plugin',
         ...pluginStore.getI18nNamespaces(),
       ],
       defaultNS: 'public',
