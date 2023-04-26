@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/base64"
 	"fmt"
@@ -17,8 +18,13 @@ import (
 	"k8s.io/klog"
 )
 
-var websocketPingInterval = 30 * time.Second
-var websocketTimeout = 30 * time.Second
+const (
+	dialerKeepalive       = 30 * time.Second
+	dialerTimeout         = 5 * time.Minute // Maximum request timeout for most browsers.
+	tlsHandshakeTimeout   = 10 * time.Second
+	websocketPingInterval = 30 * time.Second
+	websocketTimeout      = 30 * time.Second
+)
 
 type Config struct {
 	HeaderBlacklist []string
@@ -53,15 +59,18 @@ func FilterHeaders(r *http.Response) error {
 }
 
 func NewProxy(cfg *Config) *Proxy {
-	// Copy of http.DefaultTransport with TLSClientConfig added
+	dialer := &net.Dialer{
+		Timeout:   dialerTimeout,
+		KeepAlive: dialerKeepalive,
+	}
+
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
-		Dial: (&net.Dialer{
-			Timeout:   30 * time.Second,
-			KeepAlive: 30 * time.Second,
-		}).Dial,
+		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+			return dialer.DialContext(ctx, network, addr)
+		},
 		TLSClientConfig:     cfg.TLSClientConfig,
-		TLSHandshakeTimeout: 10 * time.Second,
+		TLSHandshakeTimeout: tlsHandshakeTimeout,
 	}
 
 	reverseProxy := httputil.NewSingleHostReverseProxy(cfg.Endpoint)
