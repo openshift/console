@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { ActionGroup, Alert, Button, Checkbox } from '@patternfly/react-core';
+import {
+  ActionGroup,
+  Alert,
+  AlertActionCloseButton,
+  Button,
+  Checkbox,
+  TextInput,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
@@ -14,7 +21,6 @@ import {
   Firehose,
   getDocumentationURL,
   getURLSearchParams,
-  getQueryArgument,
   history,
   MsgBox,
   NsDropdown,
@@ -78,18 +84,19 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const { provider, channels = [], packageName, catalogSource, catalogSourceNamespace } =
     packageManifest?.status ?? {};
 
-  const { catalogNamespace, pkg } = getURLSearchParams();
+  const [roleARNText, setRoleARNText] = React.useState(null);
+  const { catalogNamespace, channel, pkg, tokenizedAuth, version } = getURLSearchParams();
   const [targetNamespace, setTargetNamespace] = React.useState(null);
   const [installMode, setInstallMode] = React.useState(null);
 
-  const channel = getQueryArgument('channel');
   const defaultChannel = defaultChannelNameFor(packageManifest);
   const [updateChannelName, setUpdateChannelName] = React.useState(channel || defaultChannel);
   const { currentCSVDesc } = channels.find((ch) => ch.name === updateChannelName) ?? {};
   const { installModes = [], version: currentLatestVersion } = currentCSVDesc ?? {};
 
-  const version = getQueryArgument('version');
   const [updateVersion, setUpdateVersion] = React.useState(version || currentLatestVersion);
+
+  const [showSTSWarn, setShowSTSWarn] = React.useState(true);
 
   const [approval, setApproval] = React.useState(
     updateVersion !== currentLatestVersion
@@ -253,10 +260,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   );
 
   React.useEffect(() => {
-    if (version !== currentLatestVersion || manualSubscriptionsInNamespace?.length > 0) {
+    if (
+      version !== currentLatestVersion ||
+      manualSubscriptionsInNamespace?.length > 0 ||
+      tokenizedAuth === 'AWS'
+    ) {
       setApproval(InstallPlanApproval.Manual);
     } else setApproval(InstallPlanApproval.Automatic);
-  }, [version, currentLatestVersion, manualSubscriptionsInNamespace?.length]);
+  }, [version, currentLatestVersion, manualSubscriptionsInNamespace?.length, tokenizedAuth]);
 
   const singleInstallMode = installModes.find(
     (m) => m.type === InstallModeType.InstallModeTypeOwnNamespace,
@@ -415,6 +426,17 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       },
     };
 
+    if (tokenizedAuth === 'AWS') {
+      subscription.spec.config = {
+        env: [
+          {
+            name: 'ROLEARN',
+            value: roleARNText,
+          },
+        ],
+      };
+    }
+
     try {
       if (isSuggestedNamespaceSelected && !suggestedNamespaceExists) {
         await k8sCreate(NamespaceModel, ns);
@@ -461,7 +483,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     subscriptionExists(selectedTargetNamespace) ||
     !namespaceSupports(selectedTargetNamespace)(selectedInstallMode) ||
     (selectedTargetNamespace && cannotResolve) ||
-    !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace));
+    !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) ||
+    (tokenizedAuth === 'AWS' && _.isNull(roleARNText));
 
   const formError = () => {
     return (
@@ -735,9 +758,46 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         )}
       />
       <div className="co-m-pane__body">
+        {tokenizedAuth === 'AWS' && showSTSWarn && (
+          <Alert
+            isInline
+            variant="warning"
+            title={t('olm~Cluster in STS Mode')}
+            actionClose={<AlertActionCloseButton onClose={() => setShowSTSWarn(false)} />}
+            className="pf-u-mb-lg"
+          >
+            <p>
+              {t(
+                'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Manual subscriptions are highly recommended as steps should be taken prior to upgrade to ensure that the permissions required by the next version are properly accounted for in the role. Please see the operator description for more details.',
+              )}
+            </p>
+          </Alert>
+        )}
         <div className="row">
           <div className="col-xs-6">
             <>
+              {tokenizedAuth === 'AWS' && (
+                <div className="form-group">
+                  <fieldset>
+                    <label className="co-required">{t('olm~role ARN')}</label>
+                    <FieldLevelHelp>
+                      {t('olm~The role ARN required for the operator to access the cloud API.')}
+                    </FieldLevelHelp>
+                    <div className="co-toolbar__item">
+                      <TextInput
+                        autoFocus
+                        placeholder={'role ARN'}
+                        aria-label={'role ARN'}
+                        type="text"
+                        value={roleARNText}
+                        onChange={(value) => {
+                          setRoleARNText(value);
+                        }}
+                      />
+                    </div>
+                  </fieldset>
+                </div>
+              )}
               <div className="form-group">
                 <fieldset>
                   <label className="co-required">{t('olm~Update channel')}</label>
