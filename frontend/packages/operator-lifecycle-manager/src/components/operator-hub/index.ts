@@ -1,4 +1,10 @@
-import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
+import {
+  InfrastructureKind,
+  CloudCredentialKind,
+  AuthenticationKind,
+  K8sResourceKind,
+  ObjectMetadata,
+} from '@console/internal/module/k8s';
 import { PackageManifestKind, SubscriptionKind } from '../../types';
 
 export enum InstalledState {
@@ -54,6 +60,9 @@ export type OperatorHubItem = {
   [key: string]: any;
   validSubscription: string[];
   infraFeatures: InfraFeatures[];
+  cloudCredentials: CloudCredentialKind;
+  infrastructure: InfrastructureKind;
+  authentication: AuthenticationKind;
 };
 
 export enum OperatorHubCSVAnnotationKey {

@@ -14,12 +14,22 @@ import {
   skeletonCatalog,
   StatusBox,
 } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
+import {
+  referenceForModel,
+  CloudCredentialKind,
+  InfrastructureKind,
+  AuthenticationKind,
+} from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { iconFor } from '..';
+import {
+  CloudCredentialModel,
+  AuthenticationModel,
+  InfrastructureModel,
+} from '../../../../../public/models';
 import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../../const';
 import {
   ClusterServiceVersionModel,
@@ -73,6 +83,9 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
   packageManifests,
   subscriptions,
   clusterServiceVersions,
+  cloudCredentials,
+  authentication,
+  infrastructure,
 }) => {
   const { t } = useTranslation();
   const items: OperatorHubItem[] = React.useMemo(() => {
@@ -155,6 +168,12 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
           const subscription =
             loaded && subscriptionFor(subscriptions?.data)(operatorGroups?.data)(pkg)(namespace);
 
+          const cloudCredential = loaded && cloudCredentials?.data;
+
+          const infra = loaded && infrastructure?.data;
+
+          const auth = loaded && authentication?.data;
+
           const clusterServiceVersion =
             loaded &&
             clusterServiceVersionFor(
@@ -203,6 +222,9 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             validSubscriptionFilters,
             infraFeatures,
             keywords: currentCSVDesc?.keywords ?? [],
+            cloudCredentials: cloudCredential,
+            infrastructure: infra,
+            authentication: auth,
           };
         },
       );
@@ -214,6 +236,9 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
     operatorGroups,
     packageManifests,
     subscriptions,
+    cloudCredentials,
+    infrastructure,
+    authentication,
   ]);
 
   const uniqueItems = _.uniqBy(items, 'uid');
@@ -325,6 +350,21 @@ export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => {
                   namespace: props.match.params.ns,
                   prop: 'clusterServiceVersions',
                 },
+                {
+                  kind: referenceForModel(CloudCredentialModel),
+                  prop: 'cloudCredentials',
+                  name: 'cluster',
+                },
+                {
+                  kind: referenceForModel(InfrastructureModel),
+                  prop: 'infrastructure',
+                  name: 'cluster',
+                },
+                {
+                  kind: referenceForModel(AuthenticationModel),
+                  prop: 'authentication',
+                  name: 'cluster',
+                },
               ]}
             >
               {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
@@ -347,6 +387,9 @@ export type OperatorHubListProps = {
   packageManifests: { loaded: boolean; data?: PackageManifestKind[] };
   marketplacePackageManifests: { loaded: boolean; data?: PackageManifestKind[] };
   subscriptions: { loaded: boolean; data?: SubscriptionKind[] };
+  cloudCredentials: { loaded: boolean; data?: CloudCredentialKind };
+  infrastructure: { loaded: boolean; data?: InfrastructureKind };
+  authentication: { loaded: boolean; data?: AuthenticationKind };
   loaded: boolean;
   loadError?: string;
   clusterServiceVersions: { loaded: boolean; data?: ClusterServiceVersionKind[] };
