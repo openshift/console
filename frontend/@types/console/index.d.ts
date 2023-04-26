@@ -52,7 +52,6 @@ declare interface Window {
     i18nNamespaces: string[]; // Available i18n namespaces
     quickStarts: string;
     projectAccessClusterRoles: string;
-    clusters: string[]; // TODO remove multicluster
     controlPlaneTopology: string;
     telemetry: Record<string, string>;
     nodeArchitectures: string[];

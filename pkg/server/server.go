@@ -92,7 +92,6 @@ type jsGlobals struct {
 	AuthDisabled                    bool                       `json:"authDisabled"`
 	BasePath                        string                     `json:"basePath"`
 	Branding                        string                     `json:"branding"`
-	Clusters                        []string                   `json:"clusters"` // TODO remove multicluster
 	ConsolePlugins                  []string                   `json:"consolePlugins"`
 	ConsoleVersion                  string                     `json:"consoleVersion"`
 	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
@@ -785,7 +784,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		AddPage:                    s.AddPage,
 		ProjectAccessClusterRoles:  s.ProjectAccessClusterRoles,
 		Perspectives:               s.Perspectives,
-		Clusters:                   s.getManagedClusterList(), // TODO remove multicluster
 		Telemetry:                  s.Telemetry,
 		ReleaseVersion:             s.ReleaseVersion,
 		NodeArchitectures:          s.NodeArchitectures,
