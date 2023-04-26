@@ -14,7 +14,7 @@ declare module '*.png' {
 
 declare interface Window {
   SERVER_FLAGS: {
-    copiedCSVsDisabled: Record<string, boolean>; // TODO remove multicluster
+    copiedCSVsDisabled: boolean;
     alertManagerBaseURL: string;
     alertmanagerUserWorkloadBaseURL: string;
     authDisabled: boolean;

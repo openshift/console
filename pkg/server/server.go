@@ -96,7 +96,7 @@ type jsGlobals struct {
 	ConsolePlugins                  []string                   `json:"consolePlugins"`
 	ConsoleVersion                  string                     `json:"consoleVersion"`
 	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
-	CopiedCSVsDisabled              map[string]bool            `json:"copiedCSVsDisabled"` // TODO remove multicluster
+	CopiedCSVsDisabled              bool                       `json:"copiedCSVsDisabled"`
 	CustomLogoURL                   string                     `json:"customLogoURL"`
 	CustomProductName               string                     `json:"customProductName"`
 	DevCatalogCategories            string                     `json:"developerCatalogCategories"`
@@ -150,7 +150,7 @@ type Server struct {
 	Branding                            string
 	ClusterManagementProxyConfig        *proxy.Config
 	ControlPlaneTopology                string
-	CopiedCSVsDisabled                  map[string]bool // TODO remove multicluster
+	CopiedCSVsDisabled                  bool
 	CustomLogoFile                      string
 	CustomProductName                   string
 	DevCatalogCategories                string

@@ -269,8 +269,7 @@ type ManagedClusterOAuthConfig struct {
 // ManagedClusterConfig enables proxying to an ACM managed cluster
 // TODO remove multicluster
 type ManagedClusterConfig struct {
-	Name               string                        `json:"name" yaml:"name"`           // ManagedCluster name, provided through ACM
-	APIServer          ManagedClusterAPIServerConfig `json:"apiServer" yaml:"apiServer"` // TODO Remove this property once conosle operator has been updated
-	OAuth              ManagedClusterOAuthConfig     `json:"oauth" yaml:"oauth"`
-	CopiedCSVsDisabled bool                          `json:"copiedCSVsDisabled" yaml:"copiedCSVsDisabled"`
+	Name      string                        `json:"name" yaml:"name"`           // ManagedCluster name, provided through ACM
+	APIServer ManagedClusterAPIServerConfig `json:"apiServer" yaml:"apiServer"` // TODO Remove this property once conosle operator has been updated
+	OAuth     ManagedClusterOAuthConfig     `json:"oauth" yaml:"oauth"`
 }

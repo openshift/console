@@ -282,12 +282,6 @@ func main() {
 		hubConsoleURL = bridge.ValidateFlagIsURL("hub-console-url", *fHubConsoleURL)
 	}
 
-	// TODO remove multicluster
-	// Update to bool
-	clusterCopiedCSVsDisabled := map[string]bool{
-		serverutils.LocalClusterName: *fCopiedCSVsDisabled,
-	}
-
 	srv := &server.Server{
 		PublicDir:                    *fPublicDir,
 		BaseURL:                      baseURL,
@@ -323,6 +317,7 @@ func main() {
 		HubConsoleURL:                hubConsoleURL, // TODO remove multicluster
 		AuthMetrics:                  auth.NewMetrics(),
 		K8sMode:                      *fK8sMode,
+		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 	}
 
 	// TODO remove multicluster
@@ -722,8 +717,6 @@ func main() {
 				if srv.Authers[managedCluster.Name], err = auth.NewAuthenticator(context.Background(), managedClusterOIDCClientConfig); err != nil {
 					klog.Fatalf("Error initializing managed cluster authenticator: %v", err)
 				}
-
-				clusterCopiedCSVsDisabled[managedCluster.Name] = managedCluster.CopiedCSVsDisabled
 			}
 		}
 	case "disabled":
@@ -751,9 +744,6 @@ func main() {
 	default:
 		bridge.FlagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift")
 	}
-
-	// TODO remove multicluster
-	srv.CopiedCSVsDisabled = clusterCopiedCSVsDisabled
 
 	monitoringDashboardHttpClientTransport := &http.Transport{
 		TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
