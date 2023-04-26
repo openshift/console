@@ -31,6 +31,8 @@ export enum InfraFeatures {
   cni = 'Container Network Interface',
   csi = 'Container Storage Interface',
   sno = 'Single Node Clusters',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  'Short-lived token authentication' = 'Short-lived token authentication',
 }
 
 export enum ValidSubscriptionValue {
@@ -81,6 +83,7 @@ export enum OperatorHubCSVAnnotationKey {
   infrastructureFeatures = 'operators.openshift.io/infrastructure-features',
   validSubscription = 'operators.openshift.io/valid-subscription',
   tags = 'tags',
+  tokenAuthAWS = 'operators.openshift.io/infrastructure-features/token-auth/aws',
 }
 
 export type OperatorHubCSVAnnotations = {
@@ -99,6 +102,7 @@ export type OperatorHubCSVAnnotations = {
   [OperatorHubCSVAnnotationKey.infrastructureFeatures]?: string;
   [OperatorHubCSVAnnotationKey.validSubscription]?: string;
   [OperatorHubCSVAnnotationKey.tags]?: string[];
+  [OperatorHubCSVAnnotationKey.tokenAuthAWS]?: string;
 } & ObjectMetadata['annotations'];
 
 type OperatorHubSpec = {

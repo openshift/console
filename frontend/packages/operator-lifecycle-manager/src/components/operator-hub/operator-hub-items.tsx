@@ -31,6 +31,7 @@ import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../con
 import { SubscriptionModel } from '../../models';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
+import { shortLivedTokenAuth } from './operator-hub-utils';
 import {
   OperatorHubItem,
   InstalledState,
@@ -216,8 +217,10 @@ const infraFeaturesSort = (infrastructure) => {
       return 1;
     case InfraFeatures.FipsMode:
       return 2;
-    default:
+    case InfraFeatures[shortLivedTokenAuth]:
       return 3;
+    default:
+      return 4;
   }
 };
 
