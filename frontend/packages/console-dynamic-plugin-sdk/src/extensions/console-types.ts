@@ -59,6 +59,14 @@ export type K8sResourceCommon = {
   metadata?: ObjectMetadata;
 };
 
+export type K8sResourceKind = K8sResourceCommon & {
+  spec?: {
+    [key: string]: any;
+  };
+  status?: { [key: string]: any };
+  data?: { [key: string]: any };
+};
+
 export type K8sVerb =
   | 'create'
   | 'get'
@@ -669,4 +677,12 @@ export type ErrorBoundaryFallbackProps = {
   componentStack: string;
   stack: string;
   title: string;
+};
+
+export type ResourceDeleteModalProps = {
+  isOpen: boolean;
+  kind: K8sModel;
+  resource: K8sResourceCommon;
+  onClose: () => void;
+  btnText?: string;
 };
