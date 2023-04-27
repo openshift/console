@@ -94,6 +94,7 @@ export const EditYAML_ = connect(stateToProps)(
             stale: false,
             sampleObj: props.sampleObj,
             showSidebar: !!props.create,
+            hover: true,
             owner: null,
           };
           this.monacoRef = React.createRef();
@@ -569,6 +570,15 @@ export const EditYAML_ = connect(stateToProps)(
           window.dispatchEvent(new Event('sidebar_toggle'));
         };
 
+        toggleHover = () => {
+          this.setState(
+            (state) => {
+              return { hover: !state.hover };
+            },
+            () => this.monacoRef.current.editor.updateOptions({ hover: this.state.hover }),
+          );
+        };
+
         sanitizeYamlContent = (id, yaml, kind) => {
           const contentObj = this.getYamlContent_(id, yaml, kind);
           const sanitizedYaml = this.convertObjToYAMLString(contentObj);
@@ -599,6 +609,7 @@ export const EditYAML_ = connect(stateToProps)(
 
           const {
             errors,
+            hover,
             success,
             stale,
             showSidebar,
@@ -641,6 +652,11 @@ export const EditYAML_ = connect(stateToProps)(
                 {t('public~View sidebar')}
               </Button>
             ) : null;
+          const hoverLink = (
+            <Button type="button" variant="link" isInline onClick={this.toggleHover}>
+              {hover ? t('public~Hide tooltips') : t('public~Show tooltips')}
+            </Button>
+          );
 
           const editYamlComponent = (
             <div className="co-file-dropzone co-file-dropzone__flex">
@@ -682,7 +698,7 @@ export const EditYAML_ = connect(stateToProps)(
                         options={options}
                         showShortcuts={!genericYAML}
                         minHeight="100px"
-                        toolbarLinks={sidebarLink ? [sidebarLink] : []}
+                        toolbarLinks={sidebarLink ? [hoverLink, sidebarLink] : [hoverLink]}
                         onChange={onChange}
                         onSave={() => (allowMultiple ? this.saveAll() : this.save())}
                       />
