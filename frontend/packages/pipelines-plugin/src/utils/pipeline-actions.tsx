@@ -16,6 +16,7 @@ import {
 } from '../components/pipelines/modals';
 import { getPipelineRunData } from '../components/pipelines/modals/common/utils';
 import { EventListenerModel, PipelineModel, PipelineRunModel } from '../models';
+import { DataState } from '../test-data/pipeline-data';
 import { PipelineKind, PipelineRunKind } from '../types';
 import { shouldHidePipelineRunStop } from './pipeline-augment';
 
@@ -177,8 +178,11 @@ export const rerunPipelineRunAndRedirect: KebabAction = (
   });
 };
 
-export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: PipelineRunKind) => {
-  // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
+export const stopPipelineRun: KebabAction = (
+  kind: K8sKind,
+  pipelineRun: PipelineRunKind,
+  version,
+) => {
   return {
     // t('pipelines-plugin~Stop')
     labelKey: 'pipelines-plugin~Stop',
@@ -192,7 +196,10 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
           {
             op: 'replace',
             path: `/spec/status`,
-            value: 'PipelineRunCancelled',
+            value:
+              version.major === 1 && version.minor < 9
+                ? DataState.PIPELINE_RUN_CANCELLED
+                : DataState.STOPPED_RUN_FINALLY,
           },
         ],
       );
@@ -258,11 +265,11 @@ export const getPipelineKebabActions = (
   Kebab.factory.Delete,
 ];
 
-export const getPipelineRunKebabActions = (redirectReRun?: boolean): KebabAction[] => [
+export const getPipelineRunKebabActions = (version, redirectReRun?: boolean): KebabAction[] => [
   redirectReRun
     ? (model, pipelineRun) => rerunPipelineRunAndRedirect(model, pipelineRun)
     : (model, pipelineRun) => reRunPipelineRun(model, pipelineRun),
-  (model, pipelineRun) => stopPipelineRun(model, pipelineRun),
+  (model, pipelineRun) => stopPipelineRun(model, pipelineRun, version),
   Kebab.factory.Delete,
 ];
 

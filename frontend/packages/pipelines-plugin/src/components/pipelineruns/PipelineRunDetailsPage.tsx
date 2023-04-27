@@ -6,6 +6,7 @@ import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { getPipelineRunKebabActions } from '../../utils/pipeline-actions';
 import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
 import { usePipelinesBreadcrumbsFor } from '../pipelines/hooks';
+import { usePipelineOperatorVersion } from '../pipelines/utils/pipeline-operator';
 import { PipelineRunDetails } from './detail-page-tabs/PipelineRunDetails';
 import { PipelineRunLogsWithActiveTask } from './detail-page-tabs/PipelineRunLogs';
 import TaskRuns from './detail-page-tabs/TaskRuns';
@@ -15,8 +16,9 @@ import { useMenuActionsWithUserAnnotation } from './triggered-by';
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const { kindObj, match } = props;
+  const version = usePipelineOperatorVersion(props.namespace)?.version;
   const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
-    getPipelineRunKebabActions(true),
+    getPipelineRunKebabActions(version, true),
   );
   const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
   const badge = usePipelineTechPreviewBadge(props.namespace);

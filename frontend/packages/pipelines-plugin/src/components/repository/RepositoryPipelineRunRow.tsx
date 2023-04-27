@@ -19,6 +19,7 @@ import { pipelineRunDuration } from '../../utils/pipeline-utils';
 import LinkedPipelineRunTaskStatus from '../pipelineruns/status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../pipelineruns/status/PipelineRunStatus';
 import { ResourceKebabWithUserLabel } from '../pipelineruns/triggered-by';
+import { usePipelineOperatorVersion } from '../pipelines/utils/pipeline-operator';
 import {
   RepositoryLabels,
   RepositoryFields,
@@ -46,6 +47,7 @@ const PLRStatus: React.FC<PLRStatusProps> = ({ obj }) => {
 const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj }) => {
   const plrLabels = obj.metadata.labels;
   const plrAnnotations = obj.metadata.annotations;
+  const version = usePipelineOperatorVersion(obj.metadata.namespace);
 
   return (
     <>
@@ -96,7 +98,7 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ 
       </TableData>
       <TableData className={tableColumnClasses[8]}>
         <ResourceKebabWithUserLabel
-          actions={getPipelineRunKebabActions()}
+          actions={getPipelineRunKebabActions(version)}
           kind={pipelinerunReference}
           resource={obj}
         />

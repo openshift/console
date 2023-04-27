@@ -17,6 +17,7 @@ export enum DataState {
   SKIPPED = 'Skipped',
   PIPELINE_RUN_PENDING = 'PipelineRunPending',
   PIPELINE_RUN_CANCELLED = 'PipelineRunCancelled',
+  STOPPED_RUN_FINALLY = 'StoppedRunFinally',
 }
 
 export enum PipelineExampleNames {

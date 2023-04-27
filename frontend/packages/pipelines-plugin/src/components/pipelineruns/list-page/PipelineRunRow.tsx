@@ -10,6 +10,7 @@ import {
   pipelineRunTitleFilterReducer,
 } from '../../../utils/pipeline-filter-reducer';
 import { pipelineRunDuration } from '../../../utils/pipeline-utils';
+import { usePipelineOperatorVersion } from '../../pipelines/utils/pipeline-operator';
 import LinkedPipelineRunTaskStatus from '../status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../status/PipelineRunStatus';
 import { ResourceKebabWithUserLabel } from '../triggered-by';
@@ -32,6 +33,7 @@ const PLRStatus: React.FC<PLRStatusProps> = ({ obj }) => {
 };
 
 const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj }) => {
+  const version = usePipelineOperatorVersion(obj.metadata.namespace);
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -57,7 +59,7 @@ const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj }) => 
       <TableData className={tableColumnClasses[5]}>{pipelineRunDuration(obj)}</TableData>
       <TableData className={tableColumnClasses[6]}>
         <ResourceKebabWithUserLabel
-          actions={getPipelineRunKebabActions()}
+          actions={getPipelineRunKebabActions(version)}
           kind={pipelinerunReference}
           resource={obj}
         />
