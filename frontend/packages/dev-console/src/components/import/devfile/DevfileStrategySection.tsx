@@ -6,7 +6,7 @@ import { getGitService, ImportStrategy, GitProvider } from '@console/git-service
 import { InputField } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
-import { ImportTypes } from '../import-types';
+import { ImportTypes, SampleRuntime } from '../import-types';
 import FormSection from '../section/FormSection';
 import { useDevfileServer, useDevfileSource, useSelectedDevfileSample } from './devfileHooks';
 import DevfileInfo from './DevfileInfo';
@@ -30,8 +30,10 @@ const DevfileStrategySection: React.FC = () => {
 
   const devfileInfo = React.useMemo(() => {
     let info;
-    if (selectedSample) info = selectedSample;
-    else if (devfile.devfileContent) {
+    if (selectedSample) {
+      info = selectedSample;
+      setFieldValue('devfile.devfileProjectType', SampleRuntime[selectedSample.projectType]);
+    } else if (devfile.devfileContent) {
       const devfileJSON = safeYAMLToJS(devfile.devfileContent);
       info = {
         displayName: devfileJSON.metadata?.name || 'Devfile',
@@ -40,7 +42,7 @@ const DevfileStrategySection: React.FC = () => {
       };
     }
     return info;
-  }, [selectedSample, devfile]);
+  }, [selectedSample, devfile.devfileContent, setFieldValue]);
 
   const handleDevfileChange = React.useCallback(async () => {
     const gitService = getGitService(url, type, ref, dir, secretResource, devfile.devfilePath);

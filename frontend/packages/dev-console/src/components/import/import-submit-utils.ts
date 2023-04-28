@@ -48,6 +48,7 @@ import { LimitsData } from '@console/shared/src/types';
 import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
+import { RUNTIME_LABEL } from '../../const';
 import {
   getAppLabels,
   getPodLabels,
@@ -331,7 +332,14 @@ export const createOrUpdateDeployment = (
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
-  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
+  const runtimeIcon = imageStream && imageStream.metadata.labels?.[RUNTIME_LABEL];
+  const defaultLabels = getAppLabels({
+    name,
+    applicationName,
+    imageStreamName,
+    selectedTag,
+    runtimeIcon,
+  });
   const imageName = name;
   const defaultAnnotations = {
     ...getCommonAnnotations(),
@@ -559,7 +567,7 @@ export const createDevfileResources = async (
   const {
     name,
     project: { name: namespace },
-    devfile: { devfileSuggestedResources },
+    devfile: { devfileSuggestedResources, devfileProjectType },
   } = formData;
 
   const devfileResourceObjects: DevfileSuggestedResources = Object.keys(
@@ -583,6 +591,7 @@ export const createDevfileResources = async (
           namespace,
           labels: {
             ...resource.metadata?.labels,
+            ...(devfileProjectType ? { [RUNTIME_LABEL]: devfileProjectType } : {}),
           },
         },
       },
