@@ -162,7 +162,7 @@
     "type": "console.action/provider",
     "properties": {
       "contextId": "topology-actions",
-      "provider": { "$codeRef": "actions.useTopologyWorloadActionProvider" }
+      "provider": { "$codeRef": "actions.useTopologyWorkloadActionProvider" }
     }
   },
   {
