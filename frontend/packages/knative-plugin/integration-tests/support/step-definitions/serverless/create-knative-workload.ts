@@ -5,7 +5,6 @@ import {
   catalogCards,
   catalogTypes,
   devNavigationMenu,
-  gitAdvancedOptions,
 } from '@console/dev-console/integration-tests/support/constants';
 import { gitPO, topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
@@ -79,11 +78,10 @@ Then('user will be redirected to page with header name {string}', (headerName: s
 Then('Knative Service option is displayed under Resources section', () => {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(4000);
-  gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
-  cy.get(gitPO.advancedOptions.resourcesDropdown)
+  cy.get(gitPO.resourcesDropdown)
     .scrollIntoView()
     .click();
-  cy.get(gitPO.advancedOptions.resources.knative)
+  cy.get(gitPO.resources.knative)
     .scrollIntoView()
     .should('be.visible');
 });

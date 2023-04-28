@@ -528,7 +528,7 @@
   "Select an icon": "Select an icon",
   "A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.": "A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.",
   "A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.": "A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.",
-  "Select the resource type to generate": "Select the resource type to generate",
+  "Resource type to generate. The default can be set in <2>User Preferences</2>.": "Resource type to generate. The default can be set in <2>User Preferences</2>.",
   "Domain mapping": "Domain mapping",
   "Add domain": "Add domain",
   "Enter custom domain to map to the Knative service": "Enter custom domain to map to the Knative service",

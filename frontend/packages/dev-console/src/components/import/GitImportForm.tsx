@@ -12,6 +12,7 @@ import DevfileStrategySection from './devfile/DevfileStrategySection';
 import GitSection from './git/GitSection';
 import { GitImportFormProps, ImportTypes } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
+import ResourceSection from './section/ResourceSection';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
   values,
@@ -63,6 +64,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
             {importType !== ImportTypes.devfile &&
               values.import.selectedStrategy.type !== ImportStrategy.DEVFILE && (
                 <>
+                  <ResourceSection />
                   <PipelineSection builderImages={builderImages} />
                   <AdvancedSection values={values} />
                 </>
