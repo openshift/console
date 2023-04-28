@@ -5,3 +5,4 @@ export enum CTALabel {
 }
 
 export const TEKTONHUB = 'tektonhub';
+export const ARTIFACTHUB = 'artifactHub';

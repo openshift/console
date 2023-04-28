@@ -7,3 +7,4 @@ export const PIPELINE_RUNTIME_VERSION_LABEL = 'pipeline.openshift.io/runtime-ver
 export const PIPELINE_STRATEGY_LABEL = 'pipeline.openshift.io/strategy';
 export const PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY = 'pipeline.preferredPipelinePageTab';
 export const FUNC_PIPELINE_RUNTIME_LABEL = 'function.knative.dev/runtime';
+export const API_PROXY_URL = '/api/dev-console/proxy/internet';

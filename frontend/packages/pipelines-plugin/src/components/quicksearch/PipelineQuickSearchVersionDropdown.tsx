@@ -27,13 +27,14 @@ const PipelineQuickSearchVersionDropdown: React.FC<PipelineQuickSearchVersionDro
     return null;
   }
   const versionItems = versions.reduce((acc, { version }) => {
-    acc[version.toString()] =
+    acc[
+      item.attributes.installed.length === 3 ? parseFloat(version.toString()) : version.toString()
+    ] =
       version === item.data?.latestVersion?.version
         ? i18n.t('pipelines-plugin~{{version}} (latest)', { version })
         : version;
     return acc;
   }, {});
-
   return (
     <Dropdown
       data-test="task-version"

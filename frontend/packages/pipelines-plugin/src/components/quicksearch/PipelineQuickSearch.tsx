@@ -7,6 +7,7 @@ import {
   CatalogService,
   CatalogServiceProvider,
 } from '@console/shared';
+import { createArtifactHubTask, updateArtifactHubTask } from '../catalog/apis/artifactHub';
 import { TektonTaskProviders } from '../pipelines/const';
 import { useCleanupOnFailure, useLoadingTaskCleanup } from '../pipelines/pipeline-builder/hooks';
 import {
@@ -18,6 +19,7 @@ import {
   createTask,
   findInstalledTask,
   getSelectedVersionUrl,
+  isArtifactHubTask,
   isTaskSearchable,
   updateTask,
 } from './pipeline-quicksearch-utils';
@@ -67,25 +69,49 @@ const Contents: React.FC<
 
     item.cta.callback = ({ selectedVersion }) => {
       return new Promise((resolve) => {
-        if (item.provider === TektonTaskProviders.community) {
+        if (!isArtifactHubTask(item)) {
+          if (item.provider === TektonTaskProviders.community) {
+            const selectedVersionUrl = getSelectedVersionUrl(item, selectedVersion);
+            if (installedTask) {
+              if (selectedVersion === item.attributes.installed) {
+                resolve(savedCallback.current(installedTask.data));
+              } else {
+                resolve(savedCallback.current({ metadata: { name: item.data.name } }));
+                updateTask(selectedVersionUrl, installedTask, namespace, item.data.name).catch(() =>
+                  setFailedTasks([...failedTasks, item.data.name]),
+                );
+              }
+            } else {
+              resolve(savedCallback.current({ metadata: { name: item.data.name } }));
+              createTask(selectedVersionUrl, namespace).catch(() =>
+                setFailedTasks([...failedTasks, item.data.name]),
+              );
+            }
+          } else {
+            resolve(savedCallback.current(item.data));
+          }
+        }
+
+        if (item.provider === TektonTaskProviders.community && isArtifactHubTask(item)) {
           const selectedVersionUrl = getSelectedVersionUrl(item, selectedVersion);
           if (installedTask) {
             if (selectedVersion === item.attributes.installed) {
               resolve(savedCallback.current(installedTask.data));
             } else {
-              resolve(savedCallback.current({ metadata: { name: item.data.name } }));
-              updateTask(selectedVersionUrl, installedTask, namespace, item.data.name).catch(() =>
-                setFailedTasks([...failedTasks, item.data.name]),
-              );
+              resolve(savedCallback.current({ metadata: { name: item.data.task.name } }));
+              updateArtifactHubTask(
+                selectedVersionUrl,
+                installedTask,
+                namespace,
+                item.data.task.name,
+              ).catch(() => setFailedTasks([...failedTasks, item.data.task.name]));
             }
           } else {
-            resolve(savedCallback.current({ metadata: { name: item.data.name } }));
-            createTask(selectedVersionUrl, namespace).catch(() =>
-              setFailedTasks([...failedTasks, item.data.name]),
+            resolve(savedCallback.current({ metadata: { name: item.data.task.name } }));
+            createArtifactHubTask(selectedVersionUrl, namespace).catch(() =>
+              setFailedTasks([...failedTasks, item.data.task.name]),
             );
           }
-        } else {
-          resolve(savedCallback.current(item.data));
         }
       });
     };
