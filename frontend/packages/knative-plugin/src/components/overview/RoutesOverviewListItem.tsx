@@ -23,15 +23,15 @@ const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({
       <div className="row">
         <div className="col-xs-10">
           <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
-          {url.length > 0 && <RoutesUrlLink urls={[url]} title={t('knative-plugin~Location')} />}
-          {uniqueRoutes?.length > 0 && (
-            <RoutesUrlLink urls={uniqueRoutes} title={t('knative-plugin~Unique Route')} />
-          )}
         </div>
         {percent.length > 0 && (
           <span className="col-xs-2 pf-u-text-align-right">{totalPercent || percent}</span>
         )}
       </div>
+      {url.length > 0 && <RoutesUrlLink urls={[url]} title={t('knative-plugin~Location')} />}
+      {uniqueRoutes?.length > 0 && (
+        <RoutesUrlLink urls={uniqueRoutes} title={t('knative-plugin~Unique Route')} />
+      )}
     </li>
   );
 };
