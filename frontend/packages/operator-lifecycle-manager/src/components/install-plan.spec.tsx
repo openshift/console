@@ -20,7 +20,8 @@ import {
   useAccessReview,
 } from '@console/internal/components/utils';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
-import * as k8s from '@console/internal/module/k8s';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { testInstallPlan } from '../../mocks';
 import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel } from '../models';
 import { InstallPlanKind, InstallPlanApproval } from '../types';
@@ -53,7 +54,7 @@ describe('InstallPlanTableRow', () => {
   let wrapper: ShallowWrapper;
 
   const updateWrapper = () => {
-    const rowArgs: RowFunctionArgs<k8s.K8sResourceKind> = {
+    const rowArgs: RowFunctionArgs<K8sResourceKind> = {
       obj,
     } as any;
 
@@ -76,7 +77,7 @@ describe('InstallPlanTableRow', () => {
         .childAt(0)
         .find(ResourceLink)
         .props().kind,
-    ).toEqual(k8s.referenceForModel(InstallPlanModel));
+    ).toEqual(referenceForModel(InstallPlanModel));
     expect(
       wrapper
         .childAt(0)
@@ -127,7 +128,7 @@ describe('InstallPlanTableRow', () => {
         .find(ResourceIcon)
         .at(0)
         .props().kind,
-    ).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
+    ).toEqual(referenceForModel(ClusterServiceVersionModel));
   });
 
   it('render column for install plan components list', () => {
@@ -136,7 +137,7 @@ describe('InstallPlanTableRow', () => {
         .childAt(3)
         .find(ResourceLink)
         .props().kind,
-    ).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
+    ).toEqual(referenceForModel(ClusterServiceVersionModel));
     expect(
       wrapper
         .childAt(3)
@@ -207,13 +208,13 @@ describe('InstallPlansPage', () => {
     expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(InstallPlansList);
     expect(wrapper.find(MultiListPage).props().resources).toEqual([
       {
-        kind: k8s.referenceForModel(InstallPlanModel),
+        kind: referenceForModel(InstallPlanModel),
         namespace: 'default',
         namespaced: true,
         prop: 'installPlan',
       },
       {
-        kind: k8s.referenceForModel(OperatorGroupModel),
+        kind: referenceForModel(OperatorGroupModel),
         namespace: 'default',
         namespaced: true,
         prop: 'operatorGroup',
@@ -297,12 +298,14 @@ describe('InstallPlanPreview', () => {
   });
 
   it('calls `k8sPatch` to set `approved: true` when button is clicked', (done) => {
-    jest.spyOn(k8s, 'k8sPatch').mockImplementation((model, data) => Promise.resolve(data));
+    jest
+      .spyOn(k8sResourceModule, 'k8sPatch')
+      .mockImplementation((model, data) => Promise.resolve(data));
 
-    spyAndExpect(spyOn(k8s, 'k8sPatch'))(Promise.resolve(testInstallPlan))
+    spyAndExpect(spyOn(k8sResourceModule, 'k8sPatch'))(Promise.resolve(testInstallPlan))
       .then(([model, installPlan]) => {
         expect(model).toEqual(InstallPlanModel);
-        expect(jest.spyOn(k8s, 'k8sPatch')).toHaveBeenLastCalledWith(
+        expect(jest.spyOn(k8sResourceModule, 'k8sPatch')).toHaveBeenLastCalledWith(
           InstallPlanModel,
           installPlan,
           [
@@ -434,7 +437,7 @@ describe('InstallPlanDetails', () => {
         .find(Link)
         .props().to,
     ).toEqual(
-      `/k8s/ns/default/${k8s.referenceForModel(InstallPlanModel)}/${
+      `/k8s/ns/default/${referenceForModel(InstallPlanModel)}/${
         testInstallPlan.metadata.name
       }/components`,
     );

@@ -1,5 +1,5 @@
 import * as redux from 'react-redux';
-import * as plugins from '@console/plugin-sdk';
+import * as useExtensionsModule from '@console/plugin-sdk/src/api/useExtensions';
 import * as userHooks from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
 import { TourActions } from '../const';
@@ -80,7 +80,7 @@ describe('guided-tour-context', () => {
           B: false,
         },
       );
-      spyOn(plugins, 'useExtensions').and.returnValue(mockTourExtension);
+      spyOn(useExtensionsModule, 'useExtensions').and.returnValue(mockTourExtension);
       spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
         { completed: false },
         () => null,
@@ -110,7 +110,7 @@ describe('guided-tour-context', () => {
           B: false,
         },
       );
-      spyOn(plugins, 'useExtensions').and.returnValue([]);
+      spyOn(useExtensionsModule, 'useExtensions').and.returnValue([]);
       spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
         { completed: false },
         () => null,
@@ -133,7 +133,7 @@ describe('guided-tour-context', () => {
           B: false,
         },
       );
-      spyOn(plugins, 'useExtensions').and.returnValue(mockTourExtension);
+      spyOn(useExtensionsModule, 'useExtensions').and.returnValue(mockTourExtension);
       spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
         { completed: false },
         () => null,

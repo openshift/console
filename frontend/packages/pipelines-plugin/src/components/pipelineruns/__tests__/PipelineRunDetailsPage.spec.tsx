@@ -8,9 +8,9 @@ import * as hookUtils from '../../pipelines/hooks';
 import TaskRuns from '../detail-page-tabs/TaskRuns';
 import PipelineRunEvents from '../events/PipelineRunEvents';
 import PipelineRunDetailsPage from '../PipelineRunDetailsPage';
-import * as utils from '../triggered-by';
+import * as triggerHooksModule from '../triggered-by/hooks';
 
-const menuActions = jest.spyOn(utils, 'useMenuActionsWithUserAnnotation');
+const menuActions = jest.spyOn(triggerHooksModule, 'useMenuActionsWithUserAnnotation');
 const breadCrumbs = jest.spyOn(hookUtils, 'useDevPipelinesBreadcrumbsFor');
 type PipelineRunDetailsPageProps = React.ComponentProps<typeof PipelineRunDetailsPage>;
 const i18nNS = 'public';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
-import * as utils from '@console/internal/components/utils';
+import * as rbacModule from '@console/internal/components/utils/rbac';
 import { sampleDeployments } from '../../../utils/__tests__/test-resource-data';
 import HealthChecksAlert from '../HealthChecksAlert';
 
@@ -10,7 +10,7 @@ jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
 }));
 
 describe('HealthChecksAlert', () => {
-  const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+  const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
   it('should show alert when health check probes not present', () => {
     spyUseAccessReview.mockReturnValue(true);
     const wrapper = shallow(<HealthChecksAlert resource={sampleDeployments.data[1]} />);

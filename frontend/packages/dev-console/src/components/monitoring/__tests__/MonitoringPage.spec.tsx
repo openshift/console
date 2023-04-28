@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import * as utils from '@console/internal/components/utils';
+import { PageHeading, HorizontalNav } from '@console/internal/components/utils';
+import * as rbacModule from '@console/internal/components/utils/rbac';
 import CreateProjectListPage from '../../projects/CreateProjectListPage';
 import { PageContents } from '../MonitoringPage';
 
@@ -9,7 +10,7 @@ describe('Monitoring Page ', () => {
   let spyUseAccessReview;
 
   beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(true);
   });
 
@@ -46,11 +47,11 @@ describe('Monitoring Page ', () => {
     };
 
     const component = shallow(<PageContents {...monPageProps} />);
-    expect(component.find(utils.PageHeading).exists()).toBe(true);
-    expect(component.find(utils.PageHeading).prop('title')).toBe('Observe');
-    expect(component.find(utils.HorizontalNav).exists()).toBe(true);
+    expect(component.find(PageHeading).exists()).toBe(true);
+    expect(component.find(PageHeading).prop('title')).toBe('Observe');
+    expect(component.find(HorizontalNav).exists()).toBe(true);
     const actualTabs = component
-      .find(utils.HorizontalNav)
+      .find(HorizontalNav)
       .prop('pages')
       .map((page) => page.nameKey.replace('devconsole~', ''));
     expect(actualTabs).toEqual(expectedTabs);
@@ -72,7 +73,7 @@ describe('Monitoring Page ', () => {
 
     const component = shallow(<PageContents {...monPageProps} />);
     const actualTabs = component
-      .find(utils.HorizontalNav)
+      .find(HorizontalNav)
       .prop('pages')
       .map((page) => page.nameKey.replace('devconsole~', ''));
     expect(actualTabs).toEqual(expectedTabs);

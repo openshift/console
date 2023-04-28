@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, mount, ShallowWrapper } from 'enzyme';
 import { Alert } from '@patternfly/react-core';
-import * as utils from '@console/internal/components/utils';
+import * as rbacModule from '@console/internal/components/utils/rbac';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   isClusterExternallyManaged,
@@ -337,7 +337,7 @@ describe('Update Link', () => {
   let spyUseAccessReview;
 
   beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(true);
     cv = clusterVersionProps;
     wrapper = shallow(<UpdateLink cv={cv} canUpgrade={true} />);

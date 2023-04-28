@@ -3,7 +3,8 @@ import { Button } from '@patternfly/react-core';
 import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import * as modal from '@console/internal/components/factory/modal';
-import * as k8s from '@console/internal/module/k8s';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { testResourceInstance, testModel } from '../../../../mocks';
 import {
   ResourceRequirementsModal,
@@ -66,8 +67,8 @@ describe(ResourceRequirementsModal.name, () => {
       .find('input[name="ephemeral-storage"]')
       .simulate('change', { target: { value: '50Mi' } });
 
-    spyAndExpect(spyOn(k8s, 'k8sUpdate'))(Promise.resolve())
-      .then(([model, newObj]: [k8s.K8sKind, k8s.K8sResourceKind]) => {
+    spyAndExpect(spyOn(k8sResourceModule, 'k8sUpdate'))(Promise.resolve())
+      .then(([model, newObj]: [K8sKind, K8sResourceKind]) => {
         expect(model).toEqual(testModel);
         expect(newObj.spec.resources.requests).toEqual({
           cpu: '200m',
@@ -84,7 +85,7 @@ describe(ResourceRequirementsModal.name, () => {
 
 describe(ResourceRequirementsModalLink.displayName, () => {
   let wrapper: ShallowWrapper<ResourceRequirementsModalLinkProps>;
-  let obj: k8s.K8sResourceKind;
+  let obj: K8sResourceKind;
 
   beforeEach(() => {
     obj = _.cloneDeep(testResourceInstance);

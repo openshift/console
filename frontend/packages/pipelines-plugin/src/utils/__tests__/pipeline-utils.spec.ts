@@ -5,7 +5,7 @@ import {
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
-import * as k8s from '@console/internal/module/k8s';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { ContainerStatus } from '@console/internal/module/k8s';
 import { SecretAnnotationId, TektonResourceLabel } from '../../components/pipelines/const';
 import { PipelineRunModel } from '../../models';
@@ -40,7 +40,7 @@ const plRun = {
 };
 
 beforeAll(() => {
-  jest.spyOn(k8s, 'k8sUpdate').mockImplementation((model, data) => data);
+  jest.spyOn(k8sResourceModule, 'k8sUpdate').mockImplementation((model, data) => data);
 });
 
 describe('pipeline-utils ', () => {

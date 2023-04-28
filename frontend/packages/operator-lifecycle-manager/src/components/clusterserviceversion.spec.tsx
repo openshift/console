@@ -4,7 +4,7 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import { Link, Router } from 'react-router-dom';
-import * as utils from '@console/dynamic-plugin-sdk';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import {
   DetailsPage,
   Table,
@@ -577,7 +577,7 @@ describe(ClusterServiceVersionDetailsPage.displayName, () => {
   const ns = 'default';
 
   beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
     spyUseAccessReview.mockReturnValue([true, false]);
 
     window.SERVER_FLAGS.copiedCSVsDisabled = { 'local-cluster': false };
