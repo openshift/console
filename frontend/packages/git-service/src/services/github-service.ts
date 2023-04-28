@@ -62,8 +62,19 @@ export class GithubService extends BaseService {
         return RepoStatus.Reachable;
       }
     } catch (e) {
-      if (e.status === 403) {
-        return RepoStatus.RateLimitExceeded;
+      switch (e.status) {
+        case 403: {
+          return RepoStatus.RateLimitExceeded;
+        }
+        case 404: {
+          return RepoStatus.PrivateRepo;
+        }
+        case 422: {
+          return RepoStatus.InvalidGitTypeSelected;
+        }
+        default: {
+          return RepoStatus.Unreachable;
+        }
       }
     }
     return RepoStatus.Unreachable;

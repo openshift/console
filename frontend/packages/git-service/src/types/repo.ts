@@ -25,4 +25,8 @@ export enum RepoStatus {
   Reachable,
   Unreachable,
   RateLimitExceeded,
+  GitTypeNotDetected,
+  InvalidGitTypeSelected,
+  PrivateRepo,
+  ResourceNotFound,
 }
