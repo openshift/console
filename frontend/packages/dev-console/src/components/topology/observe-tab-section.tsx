@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import {
   DaemonSetModel,
   DeploymentConfigModel,
@@ -9,7 +10,9 @@ import {
 import { getResource } from '@console/topology/src/utils';
 import MonitoringTab from '../monitoring/overview/MonitoringTab';
 
-export const getObserveSideBarTabSection = (element: GraphElement) => {
+export const useObserveSideBarTabSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   const resource = getResource(element);
   if (
     ![
@@ -18,8 +21,10 @@ export const getObserveSideBarTabSection = (element: GraphElement) => {
       StatefulSetModel.kind,
       DaemonSetModel.kind,
     ].includes(resource.kind)
-  )
-    return undefined;
+  ) {
+    return [undefined, true, undefined];
+  }
   const { resources } = element.getData();
-  return <MonitoringTab item={resources} />;
+  const section = resources ? <MonitoringTab item={resources} /> : undefined;
+  return [section, true, undefined];
 };
