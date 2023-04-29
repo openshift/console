@@ -495,8 +495,10 @@ export const getGraphDataModel = (
       const minLevelDep = _.minBy(v, (d) => d.level);
       const nearestDeps = v.filter((v1) => v1.level === minLevelDep.level);
       nearestDeps.forEach((nd) => {
-        if (nd.level - vertex.level <= 1 || vertex.dependancyNames.length === 0) {
-          runAfterTasks.push(nd.name);
+        if (vertex.dependancyNames.includes(nd.name)) {
+          if (nd.level - vertex.level <= 1 || vertex.dependancyNames.length === 0) {
+            runAfterTasks.push(nd.name);
+          }
         }
       });
     }
