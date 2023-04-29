@@ -172,18 +172,18 @@ func sendEvent(invokeRequest InvokeServiceRequestBody) (invokeResponse InvokeSer
 	}
 	json.Unmarshal(bytes, &cevent)
 
-	ceventBodyData, err := json.Marshal(cevent.Data.Data)
+	ceventBodyData, err := json.Marshal(cevent.Data)
 	if err != nil {
 		return InvokeServiceResponseBody{}, fmt.Errorf("Error fetching event response body: %v", err)
 	}
 
 	var ceventHeader = make(http.Header)
-	ceventHeader["Content-Type"] = []string{cevent.Data.Datacontenttype}
-	ceventHeader["ID"] = []string{cevent.Data.ID}
-	ceventHeader["Spec-Version"] = []string{cevent.Data.Specversion}
-	ceventHeader["Source"] = []string{cevent.Data.Source}
-	ceventHeader["Type"] = []string{cevent.Data.Type}
-	ceventHeader["Date"] = []string{cevent.Data.Time}
+	ceventHeader["Content-Type"] = []string{cevent.Datacontenttype}
+	ceventHeader["ID"] = []string{cevent.ID}
+	ceventHeader["Spec-Version"] = []string{cevent.Specversion}
+	ceventHeader["Source"] = []string{cevent.Source}
+	ceventHeader["Type"] = []string{cevent.Type}
+	ceventHeader["Date"] = []string{cevent.Time}
 
 	klog.Infof("CloudEvent Service Invoke response: %v", string(ceventBodyData))
 	return InvokeServiceResponseBody{

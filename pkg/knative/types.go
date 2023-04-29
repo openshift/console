@@ -72,19 +72,11 @@ type InvokeServiceResponseBody struct {
 
 // CloudEventResponse is the response body returned on submitting a cloud event
 type CloudEventResponse struct {
-	Specversion     string `json:"specversion,omitempty"`
-	ID              string `json:"id,omitempty"`
-	Source          string `json:"source,omitempty"`
-	Type            string `json:"type,omitempty"`
-	Datacontenttype string `json:"datacontenttype,omitempty"`
-	Time            string `json:"time,omitempty"`
-	Data            struct {
-		ID              string      `json:"id,omitempty"`
-		Time            string      `json:"time,omitempty"`
-		Type            string      `json:"type,omitempty"`
-		Source          string      `json:"source,omitempty"`
-		Specversion     string      `json:"specversion,omitempty"`
-		Datacontenttype string      `json:"datacontenttype,omitempty"`
-		Data            interface{} `json:"data,omitempty"`
-	}
+	Specversion     string      `json:"specversion,omitempty"`
+	ID              string      `json:"id,omitempty"`
+	Source          string      `json:"source,omitempty"`
+	Type            string      `json:"type,omitempty"`
+	Datacontenttype string      `json:"datacontenttype,omitempty"`
+	Time            string      `json:"time,omitempty"`
+	Data            interface{} `json:"data,omitempty"`
 }
