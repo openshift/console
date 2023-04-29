@@ -26,6 +26,7 @@ import (
 	"github.com/openshift/console/pkg/devfile"
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
+	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/metrics"
 	"github.com/openshift/console/pkg/plugins"
 	"github.com/openshift/console/pkg/proxy"
@@ -66,6 +67,7 @@ const (
 	helmChartRepoProxyEndpoint            = "/api/helm/charts/"
 	indexPageTemplateName                 = "index.html"
 	k8sProxyEndpoint                      = "/api/kubernetes/"
+	knativeProxyEndpoint                  = "/api/console/knative/"
 	localesEndpoint                       = "/locales/resource.json"
 	multiclusterLogoutPageTemplateName    = "multicluster-logout.html" // TODO remove multicluster
 	operandsListEndpoint                  = "/api/list-operands/"
@@ -527,9 +529,15 @@ func (s *Server) HTTPHandler() http.Handler {
 	))
 
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
+	// Knative
+	trimURLPrefix := proxy.SingleJoiningSlash(s.BaseURL.Path, knativeProxyEndpoint)
+	knativeHandler := knative.NewKnativeHandler(trimURLPrefix,
+		s.K8sClient,
+		s.K8sProxyConfig.Endpoint.String())
+	handle(knativeProxyEndpoint, authHandlerWithUser(knativeHandler.Handle))
+	// TODO: move the knative-event-sources and knative-channels handler into the knative module.
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
-	handle("/api/console/version", authHandler(s.versionHandler))
 
 	// User settings
 	userSettingHandler := usersettings.UserSettingsHandler{
@@ -711,6 +719,8 @@ func (s *Server) HTTPHandler() http.Handler {
 			})),
 		)
 	}
+
+	handle("/api/console/version", authHandler(s.versionHandler))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
