@@ -13,6 +13,7 @@ export enum RepositoryFields {
 export enum RepoAnnotationFields {
   SHA_MESSAGE = 'sha_message',
   SHA_URL = 'sha_url',
+  REPO_URL = 'repo_url',
 }
 
 export const RepositoryLabels: Record<RepositoryFields, string> = {
@@ -27,6 +28,7 @@ export const RepositoryLabels: Record<RepositoryFields, string> = {
 export const RepositoryAnnotations: Record<RepoAnnotationFields, string> = {
   [RepoAnnotationFields.SHA_MESSAGE]: 'pipelinesascode.tekton.dev/sha-title',
   [RepoAnnotationFields.SHA_URL]: 'pipelinesascode.tekton.dev/sha-url',
+  [RepoAnnotationFields.REPO_URL]: 'pipelinesascode.tekton.dev/repo-url',
 };
 
 export const baseURL = 'https://github.com';
