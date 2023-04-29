@@ -26,9 +26,7 @@ export const DeleteApplicationAction = (
         resourceType: ApplicationModel.label,
         onSubmit: () => {
           application.resources.forEach((resource) => {
-            reqs.push(
-              cleanUpWorkload(resource.resource, resource.data?.isKnativeResource ?? false),
-            );
+            reqs.push(cleanUpWorkload(resource.resource));
           });
           return Promise.all(reqs);
         },
@@ -38,18 +36,14 @@ export const DeleteApplicationAction = (
   };
 };
 
-export const DeleteResourceAction = (
-  kind: K8sModel,
-  obj: K8sResourceKind,
-  isKnativeResource?: boolean,
-): Action => ({
+export const DeleteResourceAction = (kind: K8sModel, obj: K8sResourceKind): Action => ({
   id: `delete-resource`,
   label: i18next.t('devconsole~Delete {{kind}}', { kind: kind.kind }),
   cta: () =>
     deleteModal({
       kind,
       resource: obj,
-      deleteAllResources: () => cleanUpWorkload(obj, isKnativeResource),
+      deleteAllResources: () => cleanUpWorkload(obj),
     }),
   accessReview: asAccessReview(kind, obj, 'delete'),
 });
