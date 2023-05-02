@@ -35,6 +35,20 @@ import {
   fetchChannelsCrd,
   isDynamicEventResourceKind,
 } from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
+import {
+  EventListenerKind,
+  TriggerTemplateKind,
+} from '@console/pipelines-plugin/src/components/pipelines/resource-types';
+import {
+  EventListenerModel,
+  PipelineModel,
+  TriggerTemplateModel,
+} from '@console/pipelines-plugin/src/models';
+import {
+  getEventListeners,
+  getPipeline,
+  getTriggerTemplates,
+} from '@console/pipelines-plugin/src/utils/pipeline-utils';
 import { getBuildConfigsForResource } from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
 import { listInstanceResources } from './connector-utils';
@@ -150,96 +164,150 @@ const safeKill = async (model: K8sKind, obj: K8sResourceKind) => {
   return null;
 };
 
-const deleteWebhooks = async (resource: K8sResourceKind, buildConfigs: K8sResourceKind[]) => {
+const deleteWebhooks = async (resource: K8sResourceKind, buildConfigs?: K8sResourceKind[]) => {
   const deploymentsAnnotations = resource.metadata?.annotations ?? {};
   const gitType = detectGitType(deploymentsAnnotations['app.openshift.io/vcs-uri']);
   const secretList = await k8sList(SecretModel, {
     ns: resource.metadata.namespace,
   });
-  return buildConfigs?.reduce((requests, bc) => {
-    const triggers = bc.spec?.triggers ?? [];
-    const reqs = triggers.reduce((a, t) => {
-      let secretResource: K8sResourceKind;
-      const webhookType = t.generic ? 'generic' : gitType;
-      const webhookTypeObj = t.generic || t[gitType];
-      if (webhookTypeObj) {
-        const secretName =
-          webhookTypeObj.secretReference?.name ??
-          `${resource.metadata.name}-${webhookType}-webhook-secret`;
-        secretResource = secretList.find(
-          (secret: K8sResourceKind) => secret.metadata.name === secretName,
-        );
-      }
-      return secretResource ? [...a, safeKill(SecretModel, secretResource)] : a;
+  let webhooks;
+  if (buildConfigs?.length > 0) {
+    webhooks = buildConfigs?.reduce((requests, bc) => {
+      const triggers = bc.spec?.triggers ?? [];
+      const reqs = triggers.reduce((a, t) => {
+        let secretResource: K8sResourceKind;
+        const webhookType = t.generic ? 'generic' : gitType;
+        const webhookTypeObj = t.generic || t[gitType];
+        if (webhookTypeObj) {
+          const secretName =
+            webhookTypeObj.secretReference?.name ??
+            `${resource.metadata.name}-${webhookType}-webhook-secret`;
+          secretResource = secretList.find(
+            (secret: K8sResourceKind) => secret.metadata.name === secretName,
+          );
+        }
+        return secretResource ? [...a, safeKill(SecretModel, secretResource)] : a;
+      }, []);
+      return [...requests, ...reqs];
     }, []);
-    return [...requests, ...reqs];
-  }, []);
+  } else {
+    const secretGenericResource = secretList.find(
+      (secret: K8sResourceKind) =>
+        secret.metadata.name === `${resource.metadata.name}-generic-webhook-secret`,
+    );
+    const secretGittypeResource = secretList.find(
+      (secret: K8sResourceKind) =>
+        secret.metadata.name === `${resource.metadata.name}-${gitType}-webhook-secret`,
+    );
+    webhooks = [
+      safeKill(SecretModel, secretGenericResource),
+      safeKill(SecretModel, secretGittypeResource),
+    ];
+  }
+  return webhooks;
 };
 
 export const cleanUpWorkload = async (resource: K8sResourceKind): Promise<K8sResourceKind[]> => {
   const reqs = [];
-  const buildConfigs = await k8sList(BuildConfigModel, { ns: resource.metadata.namespace });
-  const builds = await k8sList(BuildModel, { ns: resource.metadata.namespace });
-  const channelModels = await fetchChannelsCrd();
-  const resourceModel = modelFor(referenceFor(resource));
-  const resources = {
-    buildConfigs: {
-      data: buildConfigs,
-      loaded: true,
-      loadError: null,
-    },
-    builds: {
-      data: builds,
-      loaded: true,
-      loadError: null,
-    },
-  };
-  const resourceBuildConfigs = getBuildConfigsForResource(resource, resources);
-  const isBuildConfigPresent = !_.isEmpty(resourceBuildConfigs);
+  let buildConfigs;
+  let builds;
+  let pipelines;
+  let triggerTemplates;
+  let eventListeners;
+  let channelModels;
 
-  const deleteModels = [ServiceModel, RouteModel, ImageStreamModel];
-  const knativeDeleteModels = [KnativeServiceModel, ImageStreamModel];
-  const resourceData = _.cloneDeep(resource);
-  const deleteRequest = (model: K8sKind, resourceObj: K8sResourceKind) => {
-    const req = safeKill(model, resourceObj);
-    req && reqs.push(req);
-  };
-  if (isBuildConfigPresent) {
-    resourceBuildConfigs.forEach((bc) => {
-      deleteRequest(BuildConfigModel, bc);
+  try {
+    buildConfigs = await k8sList(BuildConfigModel, { ns: resource.metadata.namespace });
+    builds = await k8sList(BuildModel, { ns: resource.metadata.namespace });
+    pipelines = await k8sList(PipelineModel, { ns: resource.metadata.namespace });
+    triggerTemplates = await k8sList(TriggerTemplateModel, {
+      ns: resource.metadata.namespace,
     });
-  }
-  const batchDeleteRequests = (models: K8sKind[], resourceObj: K8sResourceKind): void => {
-    models.forEach((model) => deleteRequest(model, resourceObj));
-  };
-  if (isDynamicEventResourceKind(referenceFor(resource)))
-    deleteRequest(modelFor(referenceFor(resource)), resource);
-  if (channelModels.find((channel) => channel.kind === resource.kind)) {
-    deleteRequest(resourceModel, resource);
-  }
-  switch (resource.kind) {
-    case DaemonSetModel.kind:
-    case StatefulSetModel.kind:
-    case JobModel.kind:
-    case CronJobModel.kind:
-    case EventingBrokerModel.kind:
+    eventListeners = await k8sList(EventListenerModel, { ns: resource.metadata.namespace });
+    channelModels = await fetchChannelsCrd();
+
+    const resourceModel = modelFor(referenceFor(resource));
+    const resources = {
+      buildConfigs: {
+        data: buildConfigs,
+        loaded: true,
+        loadError: null,
+      },
+      builds: {
+        data: builds,
+        loaded: true,
+        loadError: null,
+      },
+    };
+    const resourceBuildConfigs = getBuildConfigsForResource(resource, resources);
+    const isBuildConfigPresent = !_.isEmpty(resourceBuildConfigs);
+    const pipeline = getPipeline(resource, pipelines);
+    let resourceTriggerTemplates: TriggerTemplateKind[] = [];
+    let resourceEventListeners: EventListenerKind[] = [];
+
+    const deleteModels = [ServiceModel, RouteModel, ImageStreamModel];
+    const knativeDeleteModels = [KnativeServiceModel, ImageStreamModel];
+
+    if (!_.isEmpty(pipeline)) {
+      deleteModels.push(PipelineModel);
+      knativeDeleteModels.push(PipelineModel);
+      resourceTriggerTemplates = getTriggerTemplates(pipeline, triggerTemplates);
+      resourceEventListeners = getEventListeners(resourceTriggerTemplates, eventListeners);
+    }
+    const resourceData = _.cloneDeep(resource);
+    const deleteRequest = (model: K8sKind, resourceObj: K8sResourceKind) => {
+      const req = safeKill(model, resourceObj);
+      req && reqs.push(req);
+    };
+    if (isBuildConfigPresent) {
+      resourceBuildConfigs.forEach((bc) => {
+        deleteRequest(BuildConfigModel, bc);
+      });
+    }
+    const batchDeleteRequests = (models: K8sKind[], resourceObj: K8sResourceKind): void => {
+      models.forEach((model) => deleteRequest(model, resourceObj));
+    };
+    if (isDynamicEventResourceKind(referenceFor(resource)))
+      deleteRequest(modelFor(referenceFor(resource)), resource);
+    if (channelModels.find((channel) => channel.kind === resource.kind)) {
       deleteRequest(resourceModel, resource);
-      break;
-    case DeploymentModel.kind:
-    case DeploymentConfigModel.kind:
-      deleteRequest(resourceModel, resource);
-      batchDeleteRequests(deleteModels, resource);
-      break;
-    case KnativeServiceModel.kind:
-      batchDeleteRequests(knativeDeleteModels, resourceData);
-      break;
-    case CamelKameletBindingModel.kind:
-    case KafkaSinkModel.kind:
-      deleteRequest(resourceModel, resource);
-      break;
-    default:
-      break;
+    }
+    if (resourceTriggerTemplates.length > 0) {
+      resourceTriggerTemplates.forEach((tt) => deleteRequest(TriggerTemplateModel, tt));
+    }
+
+    if (resourceEventListeners.length > 0) {
+      resourceEventListeners.forEach((et) => deleteRequest(EventListenerModel, et));
+    }
+
+    switch (resource.kind) {
+      case DaemonSetModel.kind:
+      case StatefulSetModel.kind:
+      case JobModel.kind:
+      case CronJobModel.kind:
+      case EventingBrokerModel.kind:
+        deleteRequest(resourceModel, resource);
+        break;
+      case DeploymentModel.kind:
+      case DeploymentConfigModel.kind:
+        deleteRequest(resourceModel, resource);
+        batchDeleteRequests(deleteModels, resource);
+        break;
+      case KnativeServiceModel.kind:
+        batchDeleteRequests(knativeDeleteModels, resourceData);
+        break;
+      case CamelKameletBindingModel.kind:
+      case KafkaSinkModel.kind:
+        deleteRequest(resourceModel, resource);
+        break;
+      default:
+        break;
+    }
+    isBuildConfigPresent && reqs.push(...(await deleteWebhooks(resource, resourceBuildConfigs)));
+    !!pipeline && reqs.push(...(await deleteWebhooks(resource)));
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn(err);
   }
-  isBuildConfigPresent && reqs.push(...(await deleteWebhooks(resource, resourceBuildConfigs)));
   return Promise.all(reqs);
 };
