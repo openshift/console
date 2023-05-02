@@ -4,7 +4,7 @@ import Helmet from 'react-helmet';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
-import { PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
+import { ObjectMetadata, PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
 import { PodExecLoader } from '@console/internal/components/pod';
 import { PodModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -12,6 +12,17 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { resourcePath } from './utils/resource-link';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { isWindowsPod } from '../module/k8s/pods';
+
+const pickWorkloadAnnotations = (
+  annotations: ObjectMetadata['annotations'],
+): ObjectMetadata['annotations'] =>
+  Object.keys(annotations)
+    .filter((k) =>
+      ['resources.workload.openshift.io/', 'target.workload.openshift.io/'].find((prefix) =>
+        k.startsWith(prefix),
+      ),
+    )
+    .reduce((res, k) => Object.assign(res, { [k]: annotations[k] }), {});
 
 const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: string) => {
   const debugPod: PodKind = _.cloneDeep(podToDebug);
@@ -21,11 +32,12 @@ const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: s
   delete debugPod.metadata.name;
   delete debugPod.metadata.ownerReferences;
   delete debugPod.metadata.labels;
-  debugPod.metadata.generateName = debugPodName;
+  debugPod.metadata.annotations = pickWorkloadAnnotations(debugPod.metadata.annotations);
   debugPod.metadata.annotations['debug.openshift.io/source-container'] = containerName;
   debugPod.metadata.annotations[
     'debug.openshift.io/source-resource'
   ] = `/v1, Resource=pods/${podToDebug?.metadata?.name}`;
+  debugPod.metadata.generateName = debugPodName;
   debugPod.spec.restartPolicy = 'Never';
 
   debugPod.spec.containers.forEach((container) => {
