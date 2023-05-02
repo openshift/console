@@ -29,7 +29,7 @@ import { SecretWrappper } from '../../../wrapper/k8s/secret-wrapper';
 import { ServiceAccountWrappper } from '../../../wrapper/k8s/service-account-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../wrapper/vm/persistent-volume-claim-wrapper';
 import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
-/* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
+/* eslint-disable @typescript-eslint/naming-convention, no-await-in-loop */
 import { CreateVMParams } from '../../vm/create/types';
 import { ImporterResult } from '../../vm/types';
 import { getVmwareConfigMap } from '../v2vvmware-configmap';

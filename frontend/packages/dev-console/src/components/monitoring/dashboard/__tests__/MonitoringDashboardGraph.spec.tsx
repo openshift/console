@@ -8,7 +8,7 @@ import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGrap
 
 describe('Monitoring Dashboard graph', () => {
   // FIXME upgrading redux types is causing many errors at this time
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const spyDispatch = jest.spyOn(redux, 'useDispatch');
   spyDispatch.mockReturnValue(() => {});

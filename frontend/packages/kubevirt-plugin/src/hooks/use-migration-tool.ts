@@ -80,7 +80,7 @@ const useMigrationTool = (): useMigrationResult => {
         kind: ForkliftControllerModel.kind,
         apiVersion: apiVersionForModel(ForkliftControllerModel),
         metadata: { name: 'forklift-controller', namespace: mtvSubscription?.metadata?.namespace },
-        // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         spec: { feature_ui: 'true', feature_validation: 'true' },
       });
     } catch (e) {

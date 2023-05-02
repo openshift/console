@@ -3,7 +3,7 @@ import { parsePrometheusDuration } from '@openshift-console/plugin-shared/src/da
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
 import {

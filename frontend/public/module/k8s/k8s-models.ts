@@ -1,6 +1,6 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector } from 'react-redux';
 

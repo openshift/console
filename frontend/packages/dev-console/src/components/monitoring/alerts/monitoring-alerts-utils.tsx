@@ -3,7 +3,7 @@ import { SortByDirection } from '@patternfly/react-table';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 // FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';

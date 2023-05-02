@@ -36,28 +36,28 @@ export const usePacGHManifest = (): { loaded: boolean; manifestData: GHManifestD
   const manifestData: GHManifestData = {
     name: PAC_GH_APP_NAME,
     url: locURL,
-    // eslint-disable-next-line @typescript-eslint/camelcase
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     hook_attributes: {
       url: elRoute || '',
     },
-    // eslint-disable-next-line @typescript-eslint/camelcase
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     redirect_url: locURL,
-    // eslint-disable-next-line @typescript-eslint/camelcase
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     callback_urls: [locURL],
     public: true,
-    // eslint-disable-next-line @typescript-eslint/camelcase
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     default_permissions: {
       checks: 'write',
       contents: 'write',
       issues: 'write',
       members: 'read',
       metadata: 'read',
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       organization_plan: 'read',
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       pull_requests: 'write',
     },
-    // eslint-disable-next-line @typescript-eslint/camelcase
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     default_events: ['check_run', 'issue_comment', 'pull_request', 'push'],
   };
 

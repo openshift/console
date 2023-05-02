@@ -152,7 +152,7 @@ export class WSFactory {
       return;
     }
 
-    this.ws.onopen = function() {
+    this.ws.onopen = function () {
       // eslint-disable-next-line no-console
       console.log(`websocket open: ${that.id}`);
       that.state = 'open';
@@ -162,20 +162,20 @@ export class WSFactory {
         that.connectionAttempt = null;
       }
     };
-    this.ws.onclose = function(evt: CloseEvent) {
+    this.ws.onclose = function (evt: CloseEvent) {
       // eslint-disable-next-line no-console
       console.log(`websocket closed: ${that.id}`, evt);
       that.state = 'closed';
       that.triggerEvent('close', evt);
       that.reconnect();
     };
-    this.ws.onerror = function(evt: Event) {
+    this.ws.onerror = function (evt: Event) {
       // eslint-disable-next-line no-console
       console.log(`websocket error: ${that.id}`);
       that.state = 'error';
       that.triggerEvent('error', evt);
     };
-    this.ws.onmessage = function(evt: Parameters<typeof WebSocket.prototype.onmessage>[0]) {
+    this.ws.onmessage = function (evt: Parameters<typeof WebSocket.prototype.onmessage>[0]) {
       const msg = that.options?.jsonParse ? JSON.parse(evt.data) : evt.data;
       // In some browsers, onmessage can fire after onclose/error. Don't update state to be incorrect.
       if (that.state !== 'destroyed' && that.state !== 'closed') {
@@ -200,7 +200,7 @@ export class WSFactory {
     if (!handlers) {
       return;
     }
-    handlers.forEach(function(h) {
+    handlers.forEach(function (h) {
       try {
         h(data);
       } catch (e) {
