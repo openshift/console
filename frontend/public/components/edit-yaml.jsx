@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
 import { connect } from 'react-redux';
-import { ActionGroup, Alert, Button } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button, Checkbox } from '@patternfly/react-core';
 import { DownloadIcon, InfoCircleIcon } from '@patternfly/react-icons';
 import { Trans, withTranslation } from 'react-i18next';
 
@@ -13,6 +13,9 @@ import {
   getBadgeFromType,
   withPostFormSubmissionCallback,
   getResourceSidebarSamples,
+  SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
+  SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
+  useUserSettingsCompatibility,
 } from '@console/shared';
 import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
 import YAMLEditorSidebar from '@console/shared/src/components/editor/YAMLEditorSidebar';
@@ -67,11 +70,22 @@ const WithYamlTemplates = (Component) =>
     const [templateExtensions, resolvedTemplates] = useResolvedExtensions(
       React.useCallback((e) => isYAMLTemplate(e) && e.properties.model.kind === kind, [kind]),
     );
+    const [showTooltips, setShowTooltips] = useUserSettingsCompatibility(
+      SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
+      SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
+      true,
+      true,
+    );
 
     return !resolvedTemplates ? (
       <LoadingBox />
     ) : (
-      <Component templateExtensions={templateExtensions} {...props} />
+      <Component
+        templateExtensions={templateExtensions}
+        showTooltips={showTooltips}
+        setShowTooltips={setShowTooltips}
+        {...props}
+      />
     );
   };
 
@@ -570,13 +584,8 @@ export const EditYAML_ = connect(stateToProps)(
           window.dispatchEvent(new Event('sidebar_toggle'));
         };
 
-        toggleHover = () => {
-          this.setState(
-            (state) => {
-              return { hover: !state.hover };
-            },
-            () => this.monacoRef.current.editor.updateOptions({ hover: this.state.hover }),
-          );
+        toggleShowTooltips = (showTooltips) => {
+          this.props.setShowTooltips(showTooltips);
         };
 
         sanitizeYamlContent = (id, yaml, kind) => {
@@ -602,14 +611,15 @@ export const EditYAML_ = connect(stateToProps)(
             onChange = () => null,
             t,
             models,
+            showTooltips,
           } = this.props;
           const klass = classNames('co-file-dropzone-container', {
             'co-file-dropzone--drop-over': isOver,
           });
+          this?.monacoRef.current?.editor.updateOptions({ hover: showTooltips });
 
           const {
             errors,
-            hover,
             success,
             stale,
             showSidebar,
@@ -652,10 +662,16 @@ export const EditYAML_ = connect(stateToProps)(
                 {t('public~View sidebar')}
               </Button>
             ) : null;
-          const hoverLink = (
-            <Button type="button" variant="link" isInline onClick={this.toggleHover}>
-              {hover ? t('public~Hide tooltips') : t('public~Show tooltips')}
-            </Button>
+          const tooltipCheckBox = (
+            <Checkbox
+              label={t('public~Show tooltips')}
+              id="showTooltips"
+              isChecked={showTooltips}
+              data-checked-state={showTooltips}
+              onChange={(checked) => {
+                this.toggleShowTooltips(checked);
+              }}
+            />
           );
 
           const editYamlComponent = (
@@ -698,7 +714,9 @@ export const EditYAML_ = connect(stateToProps)(
                         options={options}
                         showShortcuts={!genericYAML}
                         minHeight="100px"
-                        toolbarLinks={sidebarLink ? [hoverLink, sidebarLink] : [hoverLink]}
+                        toolbarLinks={
+                          sidebarLink ? [tooltipCheckBox, sidebarLink] : [tooltipCheckBox]
+                        }
                         onChange={onChange}
                         onSave={() => (allowMultiple ? this.saveAll() : this.save())}
                       />
