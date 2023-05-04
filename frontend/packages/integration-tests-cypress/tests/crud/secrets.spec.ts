@@ -34,12 +34,20 @@ describe('Create key/value secrets', () => {
   });
 
   beforeEach(() => {
+    // ensure the test project is selected to avoid flakes
+    cy.visit(`/k8s/cluster/projects/${testName}`);
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     listPage.titleShouldHaveText('Secrets');
     secrets.clickCreateKeyValSecretDropdownButton();
   });
 
   afterEach(() => {
+    cy.exec(
+      `oc delete secret -n ${testName} ${binarySecretName} ${asciiSecretName} ${unicodeSecretName}`,
+      {
+        failOnNonZeroExit: false,
+      },
+    );
     checkErrors();
   });
 
@@ -53,7 +61,9 @@ describe('Create key/value secrets', () => {
     cy.byLegacyTestID('file-input-textarea').should('not.exist');
     cy.get(infoMessage).should('exist');
     cy.byTestID('save-changes').click();
+    cy.byTestID('loading-indicator').should('not.exist');
     detailsPage.isLoaded();
+    detailsPage.titleShouldContain(binarySecretName);
     cy.exec(
       `oc get secret -n ${testName} ${binarySecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
       {
@@ -68,17 +78,19 @@ describe('Create key/value secrets', () => {
 
   it(`Validate a key/value secret whose value is an ascii file`, () => {
     populateSecretForm(asciiSecretName, secretKey, asciiFilename);
-    cy.byLegacyTestID('file-input-textarea').should('exist');
-    cy.get(infoMessage).should('not.exist');
-    cy.byTestID('save-changes').click();
-    detailsPage.isLoaded();
-    cy.exec(
-      `oc get secret -n ${testName} ${asciiSecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
-      {
-        failOnNonZeroExit: false,
-      },
-    ).then((value) => {
-      cy.fixture(asciiFilename, 'ascii').then((asciiSecret) => {
+    cy.fixture(asciiFilename, 'ascii').then((asciiSecret) => {
+      cy.byLegacyTestID('file-input-textarea').should('contain.text', asciiSecret);
+      cy.get(infoMessage).should('not.exist');
+      cy.byTestID('save-changes').click();
+      cy.byTestID('loading-indicator').should('not.exist');
+      detailsPage.isLoaded();
+      detailsPage.titleShouldContain(asciiSecretName);
+      cy.exec(
+        `oc get secret -n ${testName} ${asciiSecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
+        {
+          failOnNonZeroExit: false,
+        },
+      ).then((value) => {
         expect(asciiSecret).toEqual(value.stdout);
       });
     });
@@ -86,17 +98,19 @@ describe('Create key/value secrets', () => {
 
   it(`Validate a key/value secret whose value is a unicode file`, () => {
     populateSecretForm(unicodeSecretName, secretKey, unicodeFilename);
-    cy.byLegacyTestID('file-input-textarea').should('exist');
-    cy.get(infoMessage).should('not.exist');
-    cy.byTestID('save-changes').click();
-    detailsPage.isLoaded();
-    cy.exec(
-      `oc get secret -n ${testName} ${unicodeSecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
-      {
-        failOnNonZeroExit: false,
-      },
-    ).then((value) => {
-      cy.fixture(unicodeFilename, 'utf8').then((unicodeSecret) => {
+    cy.fixture(unicodeFilename, 'utf8').then((unicodeSecret) => {
+      cy.byLegacyTestID('file-input-textarea').should('contain.text', unicodeSecret);
+      cy.get(infoMessage).should('not.exist');
+      cy.byTestID('save-changes').click();
+      cy.byTestID('loading-indicator').should('not.exist');
+      detailsPage.isLoaded();
+      detailsPage.titleShouldContain(unicodeSecretName);
+      cy.exec(
+        `oc get secret -n ${testName} ${unicodeSecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
+        {
+          failOnNonZeroExit: false,
+        },
+      ).then((value) => {
         expect(unicodeSecret).toEqual(value.stdout);
       });
     });
