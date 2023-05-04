@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { match as Match } from 'react-router';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
@@ -213,6 +214,12 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
       items: allStrategies,
     },
   ];
+
+  const namespace = props.namespace ?? props.match?.params?.ns;
+  const createProps = {
+    to: `/k8s/ns/${namespace || 'default'}/buildconfigs/~new/form`,
+  };
+
   return (
     <ListPage
       {...props}
@@ -220,6 +227,7 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
       kind={BuildConfigsReference}
       ListComponent={BuildConfigsList}
       canCreate={props.canCreate ?? true}
+      createProps={createProps}
       filterLabel={props.filterLabel}
       rowFilters={filters}
     />
@@ -232,6 +240,8 @@ export type BuildConfigsDetailsProps = {
 };
 
 export type BuildConfigsPageProps = {
+  namespace: string;
+  match?: Match<{ ns: string; name: string }>;
   canCreate?: boolean;
   filterLabel?: string;
   mock?: boolean;

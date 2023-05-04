@@ -15,7 +15,7 @@ const ContainerField: React.FC = () => {
   const containerName = containers[0]?.name;
   return (
     <FormGroup fieldId="container-name">
-      <span style={{ fontWeight: 'bold' }}>
+      <span style={{ fontWeight: 'bold', position: 'relative' }}>
         <Trans t={t} ns="devconsole">
           Container: <ResourceIcon kind={ContainerModel.kind} />
           {{ containerName }}

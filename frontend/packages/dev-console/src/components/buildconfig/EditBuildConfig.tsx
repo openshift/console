@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { history } from '@console/internal/components/utils';
+import { history, resourcePathFromModel } from '@console/internal/components/utils';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
@@ -64,24 +64,13 @@ const EditBuildConfig: React.FC<EditBuildConfigProps> = ({
         ? await k8sCreate<BuildConfig>(BuildConfigModel, changedBuildConfig)
         : await k8sUpdate<BuildConfig>(BuildConfigModel, changedBuildConfig, namespace, name);
 
-      helpers.setFieldValue(
-        'yamlData',
-        safeJSToYAML(updatedBuildConfig, '', { skipInvalid: true }),
-        false,
+      history.push(
+        resourcePathFromModel(
+          BuildConfigModel,
+          updatedBuildConfig.metadata.name,
+          updatedBuildConfig.metadata.namespace,
+        ),
       );
-      helpers.setFieldValue('resourceVersion', updatedBuildConfig.metadata.resourceVersion, true);
-      helpers.setStatus({
-        submitSuccess: t('devconsole~{{name}} has been updated to version {{resVersion}}', {
-          name: updatedBuildConfig.metadata.name,
-          resVersion: updatedBuildConfig.metadata.resourceVersion,
-        }),
-        submitError: '',
-      });
-      if (isNew) {
-        history.replace(
-          history.location.pathname.replace('~new', updatedBuildConfig.metadata.name),
-        );
-      }
     } catch (err) {
       helpers.setStatus({ submitSuccess: '', submitError: err.message });
     }
