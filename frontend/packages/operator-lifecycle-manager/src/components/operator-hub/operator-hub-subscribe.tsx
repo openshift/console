@@ -12,6 +12,7 @@ import {
   FieldLevelHelp,
   Firehose,
   getDocumentationURL,
+  getURLSearchParams,
   history,
   MsgBox,
   NsDropdown,
@@ -66,13 +67,11 @@ import {
   supportedInstallModesFor,
 } from '../index';
 import { installedFor, supports, providedAPIsForOperatorGroup, isGlobal } from '../operator-group';
-import { OperatorInstallStatusPage } from '../operator-install-page';
 
 export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
-  const [inProgress, setInProgress] = React.useState(false);
+  const { catalogNamespace, pkg } = getURLSearchParams();
   const [targetNamespace, setTargetNamespace] = React.useState(null);
   const [installMode, setInstallMode] = React.useState(null);
-  const [showInstallStatusPage, setShowInstallStatusPage] = React.useState(false);
   const [updateChannel, setUpdateChannel] = React.useState(null);
   const [approval, setApproval] = React.useState(InstallPlanApproval.Automatic);
   const [cannotResolve, setCannotResolve] = React.useState(false);
@@ -237,6 +236,13 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   );
   const supportsGlobal = globalInstallMode && globalInstallMode.supported;
 
+  const navigateToInstallPage = React.useCallback(() => {
+    const currentCSV = channels.find((ch) => ch.name === selectedUpdateChannel)?.currentCSV;
+    history.push(
+      `/operatorhub/install/${catalogNamespace}/${pkg}/${currentCSV}/to/${selectedTargetNamespace}`,
+    );
+  }, [catalogNamespace, channels, pkg, selectedTargetNamespace, selectedUpdateChannel]);
+
   if (!supportsSingle && !supportsGlobal) {
     return (
       <MsgBox
@@ -288,8 +294,6 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const submit = async () => {
     // Clear any previous errors.
     setError('');
-    setInProgress(true);
-
     const ns: K8sResourceCommon = {
       metadata: {
         name: selectedTargetNamespace,
@@ -406,16 +410,13 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           },
         ]);
       }
-      setInProgress(false);
-      setShowInstallStatusPage(true);
+      navigateToInstallPage();
     } catch (err) {
       setError(err.message || t('olm~Could not create Operator Subscription.'));
-      setInProgress(false);
     }
   };
 
   const formValid = () =>
-    inProgress ||
     [selectedUpdateChannel, selectedInstallMode, selectedTargetNamespace, selectedApproval].some(
       (v) => _.isNil(v) || _.isEmpty(v),
     ) ||
@@ -425,9 +426,6 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace));
 
   const formError = () => {
-    if (inProgress) {
-      return null;
-    }
     return (
       (error && (
         <Alert
@@ -657,16 +655,6 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   );
 
   const providedAPIs = providedAPIsForChannel(props.packageManifest.data[0])(selectedUpdateChannel);
-
-  if (showInstallStatusPage) {
-    return (
-      <OperatorInstallStatusPage
-        targetNamespace={selectedTargetNamespace}
-        pkgNameWithVersion={channels.find((ch) => ch.name === selectedUpdateChannel).currentCSV}
-      />
-    );
-  }
-
   const manualSubscriptionsInNamespace = getManualSubscriptionsInNamespace(
     props.subscription.data,
     selectedTargetNamespace,
