@@ -1,6 +1,6 @@
 import { yamlEditor } from './app';
 
-export const vulnerability = {
+export const importYaml = {
   setYAMLEditorContent: (yamlLocation: string) => {
     cy.get('[data-test="import-yaml"]').click();
     cy.get('.yaml-editor').should('be.visible');

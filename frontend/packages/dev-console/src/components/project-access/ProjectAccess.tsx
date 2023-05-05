@@ -16,11 +16,11 @@ import {
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import {
-  getRolesWithNameChange,
   getNewRoles,
   getRemovedRoles,
   sendRoleBindingRequest,
   getRolesWithMultipleSubjects,
+  getRolesToUpdate,
 } from './project-access-form-submit-utils';
 import { getUserRoleBindings, Roles } from './project-access-form-utils';
 import { Verb, UserRoleBinding } from './project-access-form-utils-types';
@@ -48,6 +48,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
   const userRoleBindings: UserRoleBinding[] = getUserRoleBindings(
     roleBindings.data,
     Object.keys(roles.data),
+    namespace,
   );
 
   const rbacURL = getDocumentationURL(documentationURLs.usingRBAC);
@@ -59,7 +60,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
   const handleSubmit = (values, actions) => {
     let newRoles = getNewRoles(initialValues.projectAccess, values.projectAccess);
     let removeRoles = getRemovedRoles(initialValues.projectAccess, values.projectAccess);
-    const updateRoles = getRolesWithNameChange(newRoles, removeRoles);
+    const updateRoles = getRolesToUpdate(newRoles, removeRoles);
 
     const updateRolesWithMultipleSubjects = getRolesWithMultipleSubjects(
       newRoles,
@@ -108,7 +109,10 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
 
   const projectAccessForm = (
     <>
-      <PageHeading title={fullFormView ? t('devconsole~Project access') : null}>
+      <PageHeading
+        title={fullFormView ? t('devconsole~Project access') : null}
+        data-test="project-access-page"
+      >
         <Trans t={t} ns="devconsole">
           {
             "Project access allows you to add or remove a user's access to the project. More advanced management of role-based access control appear in "
