@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { isMac, ShortcutCommand } from '../shortcuts/Shortcut';
 import ShortcutsLink from './ShortcutsLink';
 
-import './YAMLEditorToolbar.scss';
+import './CodeEditorToolbar.scss';
 
-interface YAMLEditorToolbarProps {
+interface CodeEditorToolbarProps {
   showShortcuts?: boolean;
   toolbarLinks?: React.ReactNodeArray;
 }
 
-const YAMLEditorToolbar: React.FC<YAMLEditorToolbarProps> = ({ showShortcuts, toolbarLinks }) => {
+const CodeEditorToolbar: React.FC<CodeEditorToolbarProps> = ({ showShortcuts, toolbarLinks }) => {
   const { t } = useTranslation();
   if (!showShortcuts && !toolbarLinks?.length) return null;
   return (
@@ -41,4 +41,4 @@ const YAMLEditorToolbar: React.FC<YAMLEditorToolbarProps> = ({ showShortcuts, to
     </div>
   );
 };
-export default YAMLEditorToolbar;
+export default CodeEditorToolbar;

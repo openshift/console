@@ -7,7 +7,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   FormFooter,
   SyncedEditorField,
-  YAMLEditorField,
+  CodeEditorField,
   FlexForm,
   FormBody,
 } from '@console/shared';
@@ -41,7 +41,7 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
 }) => {
   const { t } = useTranslation();
   const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'knative.eventSourceForm.editor.lastView';
-  const yamlEditor = <YAMLEditorField name="yamlData" showSamples onSave={handleSubmit} />;
+  const yamlEditor = <CodeEditorField name="yamlData" showSamples onSave={handleSubmit} />;
 
   const sanitizeToYaml = () =>
     safeJSToYAML(getCatalogEventSourceResource(values as EventSourceSyncFormData), 'yamlData', {

@@ -8,7 +8,7 @@ import {
   FormHeader,
   FlexForm,
   SyncedEditorField,
-  YAMLEditorField,
+  CodeEditorField,
 } from '@console/shared/src';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
@@ -48,7 +48,7 @@ const CreateHelmChartRepositoryForm: React.FC<FormikProps<FormikValues> & {
   );
 
   const yamlEditor = (
-    <YAMLEditorField
+    <CodeEditorField
       name="yamlData"
       model={
         formData.scope === ProjectHelmChartRepositoryModel.kind

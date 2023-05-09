@@ -9,7 +9,7 @@ import {
   FormBody,
   FormFooter,
   SyncedEditorField,
-  YAMLEditorField,
+  CodeEditorField,
 } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { sanitizeHPAToForm } from './hpa-utils';
@@ -38,7 +38,7 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
   const isForm = values.editorType === EditorType.Form;
   const formEditor = <HPADetailsForm />;
   const yamlEditor = (
-    <YAMLEditorField
+    <CodeEditorField
       name="yamlData"
       model={HorizontalPodAutoscalerModel}
       showSamples={!existingHPA}

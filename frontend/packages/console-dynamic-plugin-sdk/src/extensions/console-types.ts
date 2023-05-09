@@ -626,7 +626,7 @@ export type SelfSubjectAccessReviewKind = {
   };
 };
 
-export type YAMLEditorProps = {
+export type CodeEditorProps = {
   value?: string;
   language?: string;
   options?: object;
@@ -637,7 +637,7 @@ export type YAMLEditorProps = {
   onSave?: () => void;
 };
 
-export type YAMLEditorRef = {
+export type CodeEditorRef = {
   editor?: MonacoEditor['editor'];
 };
 

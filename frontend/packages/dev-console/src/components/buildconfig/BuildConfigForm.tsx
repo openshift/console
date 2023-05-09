@@ -9,7 +9,7 @@ import {
   FormHeader,
   SyncedEditorField,
   useActiveNamespace,
-  YAMLEditorField,
+  CodeEditorField,
 } from '@console/shared/src';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
@@ -49,7 +49,7 @@ const BuildConfigForm: React.FC<FormikProps<BuildConfigFormikValues> & {
 
   const formEditor = <BuildConfigFormEditor namespace={namespace} />;
   const yamlEditor = (
-    <YAMLEditorField
+    <CodeEditorField
       name="yamlData"
       model={BuildConfigModel}
       showSamples={isNew}

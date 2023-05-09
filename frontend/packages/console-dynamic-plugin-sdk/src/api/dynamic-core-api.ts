@@ -22,13 +22,13 @@ import {
   InventoryItemTitleProps,
   InventoryItemBodyProps,
   InventoryItemStatusProps,
-  YAMLEditorProps,
+  CodeEditorProps,
   ResourceYAMLEditorProps,
   ResourceEventStreamProps,
   UsePrometheusPoll,
   TimestampProps,
   NamespaceBarProps,
-  YAMLEditorRef,
+  CodeEditorRef,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -564,6 +564,7 @@ export const InventoryItemLoading: React.FC = require('@console/shared/src/compo
 export { useFlag } from '../utils/flags';
 
 /**
+ * @deprecated Use {@link CodeEditor} instead.
  * A basic lazy loaded YAML editor with hover help and completion.
  * @example
  * ```tsx
@@ -574,6 +575,7 @@ export { useFlag } from '../utils/flags';
  * </React.Suspense>
  * ```
  * @param {YAMLEditorProps['value']} value - String representing the yaml code to render.
+ * @param {CodeEditorProps['language']} language - String representing the language of the editor.
  * @param {YAMLEditorProps['options']} options - Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html.
  * @param {YAMLEditorProps['minHeight']} minHeight - Minimum editor height in valid CSS height values.
  * @param {YAMLEditorProps['showShortcuts']} showShortcuts - Boolean to show shortcuts on top of the editor.
@@ -582,8 +584,34 @@ export { useFlag } from '../utils/flags';
  * @param {YAMLEditorProps['onSave']} onSave - Callback called when the command CTRL / CMD + S is triggered.
  * @param {YAMLEditorRef} ref - React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html.
  */
-export const YAMLEditor: React.ForwardRefExoticComponent<YAMLEditorProps & React.RefAttributes<YAMLEditorRef>> = require('@console/internal/components/AsyncYAMLEditor')
-  .AsyncYAMLEditor;
+export const YAMLEditor: React.ForwardRefExoticComponent<CodeEditorProps &
+  React.RefAttributes<CodeEditorRef>> = require('@console/internal/components/AsyncCodeEditor')
+  .AsyncCodeEditor;
+
+/**
+ * A basic lazy loaded Code editor with hover help and completion.
+ * @example
+ * ```tsx
+ * <React.Suspense fallback={<LoadingBox />}>
+ *   <CodeEditor
+ *     value={code}
+ *     language="yaml"
+ *   />
+ * </React.Suspense>
+ * ```
+ * @param {CodeEditorProps['value']} value - String representing the yaml code to render.
+ * @param {CodeEditorProps['language']} language - String representing the language of the editor.
+ * @param {CodeEditorProps['options']} options - Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html.
+ * @param {CodeEditorProps['minHeight']} minHeight - Minimum editor height in valid CSS height values.
+ * @param {CodeEditorProps['showShortcuts']} showShortcuts - Boolean to show shortcuts on top of the editor.
+ * @param {CodeEditorProps['toolbarLinks']} toolbarLinks - Array of ReactNode rendered on the toolbar links section on top of the editor.
+ * @param {CodeEditorProps['onChange']} onChange - Callback for on code change event.
+ * @param {CodeEditorProps['onSave']} onSave - Callback called when the command CTRL / CMD + S is triggered.
+ * @param {CodeEditorRef} ref - React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html.
+ */
+export const CodeEditor: React.ForwardRefExoticComponent<CodeEditorProps &
+  React.RefAttributes<CodeEditorRef>> = require('@console/internal/components/AsyncCodeEditor')
+  .AsyncCodeEditor;
 
 /**
  * A lazy loaded YAML editor for Kubernetes resources with hover help and completion.

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik/dist/types';
-import { YAMLEditorField } from '@console/shared/src';
+import { CodeEditorField } from '@console/shared/src';
 import { getcurrentLanguage } from '../utils';
 
 const RequestBody: React.FC<FormikProps<FormikValues>> = ({ values }) => {
@@ -8,7 +8,7 @@ const RequestBody: React.FC<FormikProps<FormikValues>> = ({ values }) => {
 
   return (
     <div className="kn-test-sf-modal__editor">
-      <YAMLEditorField
+      <CodeEditorField
         name="request.body.data"
         minHeight="460px"
         showSamples={false}

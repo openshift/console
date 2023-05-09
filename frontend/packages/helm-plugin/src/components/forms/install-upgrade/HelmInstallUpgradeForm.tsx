@@ -8,7 +8,7 @@ import {
   InputField,
   FormFooter,
   FormBody,
-  YAMLEditorField,
+  CodeEditorField,
   DynamicFormField,
   SyncedEditorField,
   FormHeader,
@@ -70,7 +70,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   );
 
   const yamlEditor = chartHasValues && (
-    <YAMLEditorField
+    <CodeEditorField
       name="yamlData"
       label={t('helm-plugin~Helm Release')}
       schema={formSchema}

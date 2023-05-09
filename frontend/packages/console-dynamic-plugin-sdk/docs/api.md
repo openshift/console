@@ -53,7 +53,7 @@
 51.  [`InventoryItemStatus`](#inventoryitemstatus)
 52.  [`InventoryItemLoading`](#inventoryitemloading)
 53.  [`useFlag`](#useflag)
-54.  [`YAMLEditor`](#yamleditor)
+54.  [`CodeEditor`](#codeeditor)
 55.  [`ResourceYAMLEditor`](#resourceyamleditor)
 56.  [`ResourceEventStream`](#resourceeventstream)
 57.  [`usePrometheusPoll`](#useprometheuspoll)
@@ -65,6 +65,7 @@
 63. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
 64. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
 65. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+66. [DEPRECATED] [`YAMLEditor`](#yamleditor)
 
 ---
 
@@ -1874,11 +1875,11 @@ the boolean value of the requested feature flag or undefined
 
 ---
 
-## `YAMLEditor`
+## `CodeEditor`
 
 ### Summary 
 
-A basic lazy loaded YAML editor with hover help and completion.
+A basic lazy loaded Code editor with hover help and completion.
 
 
 
@@ -1887,8 +1888,9 @@ A basic lazy loaded YAML editor with hover help and completion.
 
 ```tsx
 <React.Suspense fallback={<LoadingBox />}>
-  <YAMLEditor
+  <CodeEditor
     value={code}
+    language="yaml"
   />
 </React.Suspense>
 ```
@@ -1902,6 +1904,7 @@ A basic lazy loaded YAML editor with hover help and completion.
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `value` | String representing the yaml code to render. |
+| `language` | String representing the language of the editor. |
 | `options` | Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html. |
 | `minHeight` | Minimum editor height in valid CSS height values. |
 | `showShortcuts` | Boolean to show shortcuts on top of the editor. |
@@ -2252,5 +2255,46 @@ The isAllowed boolean value.
 ### Returns
 
 An array with a pair of state value and it's set function.
+
+
+---
+
+## `YAMLEditor`
+
+### Summary [DEPRECATED]
+
+@deprecated Use {@link CodeEditor} instead.<br/>A basic lazy loaded YAML editor with hover help and completion.
+
+
+
+### Example
+
+
+```tsx
+<React.Suspense fallback={<LoadingBox />}>
+  <YAMLEditor
+    value={code}
+  />
+</React.Suspense>
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `value` | String representing the yaml code to render. |
+| `language` | String representing the language of the editor. |
+| `options` | Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html. |
+| `minHeight` | Minimum editor height in valid CSS height values. |
+| `showShortcuts` | Boolean to show shortcuts on top of the editor. |
+| `toolbarLinks` | Array of ReactNode rendered on the toolbar links section on top of the editor. |
+| `onChange` | Callback for on code change event. |
+| `onSave` | Callback called when the command CTRL / CMD + S is triggered. |
+| `ref` | React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html. |
+
 
 
