@@ -2,7 +2,7 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { getBadgeFromType, labelKeyForNodeKind } from '@console/shared';
+import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import {
@@ -139,7 +139,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   };
   const titleProviderValues = {
     telemetryPrefix: props?.kindObj?.kind,
-    titlePrefix: `${props.name} · ${labelKeyForNodeKind(props?.kindObj?.kind)}`,
+    titlePrefix: `${props.name} · ${getTitleForNodeKind(props?.kindObj?.kind)}`,
   };
 
   return (

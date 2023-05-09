@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { labelKeyForNodeKind } from '@console/shared';
+import { getTitleForNodeKind } from '@console/shared';
 import { OdcNodeModel } from '../../topology-types';
 import ApplicationGroupResource from './ApplicationGroupResource';
 
@@ -27,7 +27,7 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
       {_.map(_.keys(resourcesData), (key) => (
         <ApplicationGroupResource
           key={`${group}-${key}`}
-          title={labelKeyForNodeKind(key)}
+          title={getTitleForNodeKind(key)}
           resourcesData={resourcesData[key]}
           group={group}
         />

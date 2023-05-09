@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router-dom';
-import { getBadgeFromType, labelKeyForNodeKind } from '@console/shared';
+import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { connectToPlural } from '../kinds';
 import { ErrorPage404 } from './error';
@@ -113,7 +113,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
 
   const titleProviderValues = {
     telemetryPrefix: props.kindObj?.kind,
-    titlePrefix: `${props.match.params.name} · ${labelKeyForNodeKind(props.kindObj?.kind)}`,
+    titlePrefix: `${props.match.params.name} · ${getTitleForNodeKind(props.kindObj?.kind)}`,
   };
 
   return (
