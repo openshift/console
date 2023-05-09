@@ -4,6 +4,7 @@ import { WidgetProps } from '@rjsf/core';
 import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { RadioGroup } from '@console/internal/components/radio';
 import { NumberSpinner, ListDropdown, Dropdown } from '@console/internal/components/utils';
 import { K8sKind, GroupVersionKind, ImagePullPolicy } from '@console/internal/module/k8s';
@@ -119,7 +120,7 @@ export const K8sResourceWidget: React.FC<K8sResourceWidgetProps> = ({
   onChange,
 }) => {
   const { t } = useTranslation();
-  const { model, groupVersionKind } = options;
+  const { model, groupVersionKind, selector } = options;
   const { namespace } = formContext;
   const selectedKey = value ? `${value}-${groupVersionKind}` : null;
 
@@ -129,7 +130,9 @@ export const K8sResourceWidget: React.FC<K8sResourceWidgetProps> = ({
         <ListDropdown
           key={id}
           id={id}
-          resources={[{ kind: groupVersionKind, namespace: model.namespaced ? namespace : null }]}
+          resources={[
+            { kind: groupVersionKind, selector, namespace: model.namespaced ? namespace : null },
+          ]}
           desc={label}
           placeholder={t('console-shared~Select {{label}}', { label: model.label })}
           onChange={(next) => onChange(next)}
@@ -196,6 +199,7 @@ type K8sResourceWidgetProps = WidgetProps & {
   options: {
     model: K8sKind;
     groupVersionKind: GroupVersionKind;
+    selector: Selector;
   };
 };
 
