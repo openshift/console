@@ -22,6 +22,7 @@ declare global {
       dropdownSwitchTo(dropdownMenuOption: string): Chainable<Element>;
       isDropdownVisible(): Chainable<Element>;
       checkErrors(): Chainable<Element>;
+      waitUntilEnabled(selector: string): Chainable<Element>;
     }
   }
 }
@@ -147,5 +148,25 @@ Cypress.Commands.add('checkErrors', () => {
     } else if ($body.find('button[aria-label="Close"]').length !== 0) {
       cy.get('button[aria-label="Close"]').click({ force: true });
     }
+  });
+});
+
+Cypress.Commands.add('waitUntilEnabled', (selector, timeout = 20000) => {
+  const start = new Date().getTime();
+
+  return cy.get(selector).then(($el) => {
+    return new Promise((resolve, reject) => {
+      const checkEnabled = () => {
+        if ($el.is(':enabled')) {
+          resolve($el);
+        } else if (new Date().getTime() - start > timeout) {
+          reject(new Error(`Timed out waiting for ${selector} to become enabled`));
+        } else {
+          setTimeout(checkEnabled, 100);
+        }
+      };
+
+      checkEnabled();
+    });
   });
 });

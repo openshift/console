@@ -35,6 +35,7 @@ Then(
 
 Given('user is at Start Pipeline modal for pipeline {string}', (pipelineName: string) => {
   navigateTo(devNavigationMenu.Pipelines);
+  cy.get(pipelinesPO.pipelinesTab).click();
   pipelinesPage.search(pipelineName);
   pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
   modal.modalTitleShouldContain('Start Pipeline');

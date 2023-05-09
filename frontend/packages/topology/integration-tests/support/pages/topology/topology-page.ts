@@ -320,6 +320,7 @@ export const topologyPage = {
     topologyPage.getDeploymentNode(nodeName).click();
   },
   clickOnApplicationGroupings: (appName: string) => {
+    cy.reload();
     const id = `[data-id="group:${appName}"] .odc-resource-icon-application`;
     cy.get(id)
       .next('text')

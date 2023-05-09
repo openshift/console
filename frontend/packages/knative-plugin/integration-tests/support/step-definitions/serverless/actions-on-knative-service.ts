@@ -200,6 +200,7 @@ Given('service should have at least 2 revisions', () => {
 When(
   'user selects {string} context menu option of knative service {string}',
   (option: string, knativeServiceName: string) => {
+    cy.get(topologyPO.graph.fitToScreen).click();
     topologyPage.rightClickOnGroup(knativeServiceName);
     topologyPage.selectContextMenuAction(option);
   },
@@ -329,6 +330,7 @@ Then(
 );
 
 Then('{string} service should not be displayed in project', (serviceName: string) => {
+  cy.reload();
   cy.get(topologyPO.graph.knativeServiceNode)
     .should('not.exist')
     .then(() => {

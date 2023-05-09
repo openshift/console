@@ -123,16 +123,16 @@ Feature: Create the different workloads from Add page
               And Application Name, Name fields displayed in General section
               And Advanced options sections are displayed
               And Create button is in disabled state
-
+              
         Scenario Outline: Create Sample Application from Add page: GS-03-TC05
             Given user is at Add page
              When user clicks on the Samples card
               And user selects "<card_name>" sample from Samples
               And user is able to see the form header name as "<form_header>"
-              And user clicks on Create button
+              And user clicks on Create button for creating sample
              Then user will be redirected to Topology page
               And user is able to see workload "<workload_name>" in topology page list view
-              
+
         Examples:
                   | card_name | form_header               | workload_name |
                   | Httpd     | Create Sample application | httpd-sample  |
