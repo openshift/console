@@ -1,6 +1,6 @@
 # Operator Descriptors
 
-The Operator Lifecycle Manager allows adding descriptors to Custom Resource Definitions, which are used to describe different fields on the object and actions that can be peformed.
+The Operator Lifecycle Manager allows adding descriptors to Custom Resource Definitions, which are used to describe different fields on the object.
 
 There are three types of descriptors:
 
@@ -8,7 +8,6 @@ Type   | Directory | Description
 -------|-----------|------------
 Spec   | `spec/`   | References fields in the `spec` block of an object
 Status | `status/` | References fields in the `status` block of an object
-Action | `action/` | References actions that can be performed on an object
 
 The schema for a descriptor is the same, regardless of type:
 
@@ -94,7 +93,7 @@ The ordering of form fields depends on whether a field has a specDescriptor, is 
 To add a new React component associated with a spec/status descriptor, make a pull request against this repo that satisfies the following requirements:
 
 1. Make a React component that accepts props of type `DescriptorProps` and renders the spec/status value.
-  - Place component in its own module in either the `spec`, `status`, or `action` directory
+  - Place component in its own module in either the `spec` or `status` directory
   - Ensure that **empty values** and **errors** are properly handled
 2. Add a new "capability" URN to the `SpecCapability`/`StatusCapability` enum in `types.ts`
 3. Update the `capabilityComponents` map with the capability/component key-value pair.
