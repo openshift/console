@@ -7,7 +7,7 @@ import { RootState } from '@console/internal/redux';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
 import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
-import isMultiClusterEnabled from '../../utils/isMultiClusterEnabled';
+import isMultiClusterEnabled from '../../utils/isMultiClusterEnabled'; // TODO remove multicluster
 import useCloudShellAvailable from './useCloudShellAvailable';
 
 type DispatchProps = {
@@ -26,6 +26,7 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
 
   const { t } = useTranslation();
 
+  // TODO remove multicluster
   if (!terminalAvailable || isMultiClusterEnabled()) {
     return null;
   }

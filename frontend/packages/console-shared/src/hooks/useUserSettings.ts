@@ -99,7 +99,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
             namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
             isList: false,
             name: `user-settings-${userUid}`,
-            cluster: HUB_CLUSTER_NAME,
+            cluster: HUB_CLUSTER_NAME, // TODO remove multicluster
           },
     [userUid, isLocalStorage],
   );

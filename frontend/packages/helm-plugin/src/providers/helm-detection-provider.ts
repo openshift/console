@@ -1,5 +1,5 @@
 import * as React from 'react';
-import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
+import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled'; // TODO remove multicluster
 import { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { usePoll } from '@console/internal/components/utils/poll-hook';
@@ -14,8 +14,9 @@ export const hasEnabledHelmCharts = (helmChartRepositories: K8sResourceKind[]): 
 
 export const useDetectHelmChartRepositories = (setFeatureFlag: SetFeatureFlag) => {
   const [namespace] = useActiveNamespace();
-  const [delay, setDelay] = React.useState<number>(isMultiClusterEnabled() ? null : 10 * 1000);
+  const [delay, setDelay] = React.useState<number>(isMultiClusterEnabled() ? null : 10 * 1000); // TODO remove multicluster
   const fetchHelmChartRepositories = React.useCallback(() => {
+    // TODO remove multicluster
     if (isMultiClusterEnabled()) {
       setFeatureFlag(FLAG_OPENSHIFT_HELM, false);
       return;

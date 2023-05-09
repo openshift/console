@@ -183,6 +183,7 @@ func validatePerspectives(value string) ([]Perspective, error) {
 	return perspectives, nil
 }
 
+// TODO remove multicluster
 func ValidateManagedClusterConfig(managedCluster ManagedClusterConfig) error {
 	errors := []string{}
 	if managedCluster.Name == "" {

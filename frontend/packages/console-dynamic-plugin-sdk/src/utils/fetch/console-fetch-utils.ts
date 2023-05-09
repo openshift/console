@@ -17,7 +17,7 @@ export const getConsoleRequestHeaders = (targetCluster?: string): ConsoleRequest
   if (!store) return undefined;
   const state = store.getState();
 
-  // Set X-Cluster header
+  // TODO remove multicluster
   const cluster = getActiveCluster(state);
   const headers: ConsoleRequestHeaders = {
     'X-Cluster': targetCluster ?? cluster,

@@ -112,7 +112,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config Config) (err error) {
 	addHelmConfig(fs, &config.Helm)
 	addPlugins(fs, config.Plugins)
 	addI18nNamespaces(fs, config.I18nNamespaces)
-	addManagedClusters(fs, config.ManagedClusterConfigFile)
+	addManagedClusters(fs, config.ManagedClusterConfigFile) // TODO remove multicluster
 	err = addProxy(fs, &config.Proxy)
 	if err != nil {
 		return err
@@ -381,6 +381,7 @@ func addI18nNamespaces(fs *flag.FlagSet, i18nNamespaces []string) {
 	fs.Set("i18n-namespaces", strings.Join(i18nNamespaces, ","))
 }
 
+// TODO remove multicluster
 func addManagedClusters(fs *flag.FlagSet, fileName string) {
 	if fileName != "" {
 		klog.V(4).Info("Setting managed-clusters flag from config file")

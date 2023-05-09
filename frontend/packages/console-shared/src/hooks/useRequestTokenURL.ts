@@ -3,7 +3,7 @@ import { consoleFetchJSON as coFetchJSON } from '@console/dynamic-plugin-sdk/src
 import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster';
 
 export const useRequestTokenURL = (): [string] => {
-  const [clusterName] = useActiveCluster();
+  const [clusterName] = useActiveCluster(); // TODO remove multicluster
   const [requestTokenURL, setClusterTokenURL] = React.useState<string>();
   React.useEffect(() => {
     const url = '/api/request-token';

@@ -1,5 +1,5 @@
 import { act } from 'react-dom/test-utils';
-import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
+import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled'; // TODO remove multicluster
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import * as clientUtils from '@console/internal/graphql/client';
@@ -27,7 +27,7 @@ jest.mock('@console/app/src/utils/isMultiClusterEnabled', () => ({
 
 const settleAllPromisesMock = settleAllPromises as jest.Mock;
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
-const isMultiClusterEnabledMock = isMultiClusterEnabled as jest.Mock;
+const isMultiClusterEnabledMock = isMultiClusterEnabled as jest.Mock; // TODO remove multicluster
 
 describe('hasEnabledHelmCharts', () => {
   it('should return false if all chart repositories are disabled', () => {
@@ -56,7 +56,9 @@ describe('hasEnabledHelmCharts', () => {
 describe('useDetectHelmChartRepositories', () => {
   const setFeatureFlag = jest.fn();
   const fetchK8sSpy = jest.spyOn(clientUtils, 'fetchK8s');
-  const helmChartRepositoryList = { items: mockHelmChartRepositories };
+  const helmChartRepositoryList = {
+    items: mockHelmChartRepositories,
+  };
 
   beforeEach(() => {
     jest.useFakeTimers();
@@ -72,6 +74,7 @@ describe('useDetectHelmChartRepositories', () => {
     jest.useRealTimers();
   });
 
+  // TODO remove multicluster
   it('should not call fetchK8s and call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if multi cluster is enabled', async () => {
     isMultiClusterEnabledMock.mockReturnValue(true);
     testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
@@ -160,8 +163,12 @@ describe('useDetectHelmChartRepositories', () => {
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if fetchK8s returns rejected promise for both cluster and project scoped helm chart repositories with atleast one of them being error 404', async () => {
     isMultiClusterEnabledMock.mockReturnValue(false);
-    const error404 = new HttpError('404', 404, { status: 404 } as Response);
-    const error200 = new HttpError('200', 200, { status: 200 } as Response);
+    const error404 = new HttpError('404', 404, {
+      status: 404,
+    } as Response);
+    const error200 = new HttpError('200', 200, {
+      status: 200,
+    } as Response);
 
     fetchK8sSpy.mockReturnValueOnce(error404).mockReturnValueOnce(error200);
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error404, error200], []]));
@@ -176,7 +183,9 @@ describe('useDetectHelmChartRepositories', () => {
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and undefined if fetchK8s returns rejected promise for both cluster and project scoped helm chart repositories with none of them being error 404', async () => {
     isMultiClusterEnabledMock.mockReturnValue(false);
-    const error200 = new HttpError('200', 200, { status: 200 } as Response);
+    const error200 = new HttpError('200', 200, {
+      status: 200,
+    } as Response);
     fetchK8sSpy.mockReturnValueOnce(error200).mockReturnValueOnce(error200);
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error200, error200], []]));
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
@@ -203,8 +212,12 @@ describe('useDetectHelmChartRepositories', () => {
 
   it('should not call fetchK8s every 10 seconds if fetchK8s returns rejected promise for both cluster and project scoped helm chart repositories', async () => {
     isMultiClusterEnabledMock.mockReturnValue(false);
-    const error404 = new HttpError('404', 404, { status: 404 } as Response);
-    const error200 = new HttpError('200', 200, { status: 200 } as Response);
+    const error404 = new HttpError('404', 404, {
+      status: 404,
+    } as Response);
+    const error200 = new HttpError('200', 200, {
+      status: 200,
+    } as Response);
     fetchK8sSpy.mockReturnValueOnce(error404).mockReturnValueOnce(error200);
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error404, error200], []]));
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));

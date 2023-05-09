@@ -1,3 +1,4 @@
+// TODO remove multicluster
 import { checkErrors } from '../../support';
 import { projectDropdown } from '../../views/common';
 import { guidedTour } from '../../views/guided-tour';

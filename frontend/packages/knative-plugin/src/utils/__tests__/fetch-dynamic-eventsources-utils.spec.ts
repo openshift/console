@@ -24,7 +24,9 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
   beforeEach(() => {
     jest.spyOn(coFetch, 'coFetch').mockImplementation(() =>
       Promise.resolve({
-        json: () => ({ ...mockEventSourcCRDData }),
+        json: () => ({
+          ...mockEventSourcCRDData,
+        }),
       }),
     );
   });
@@ -35,6 +37,7 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
     expect(fetchSpy).toHaveBeenCalled();
   });
 
+  // TODO remove multicluster
   it('should return empty evenSourceModel and resultList when MultiClusterEnabled', async () => {
     window.SERVER_FLAGS.clusters = ['clustera', 'clusterb'];
     await fetchEventSourcesCrd();

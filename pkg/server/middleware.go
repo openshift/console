@@ -1,3 +1,4 @@
+// TODO remove multicluster
 package server
 
 import (
@@ -15,6 +16,8 @@ import (
 
 // Middleware generates a middleware wrapper for request hanlders.
 // Responds with 401 for requests with missing/invalid/incomplete token with verified email address.
+// TODO remove multicluster
+// Revert to *auth.Authenticator arg
 func authMiddleware(authers map[string]*auth.Authenticator, hdlr http.HandlerFunc) http.Handler {
 	f := func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		hdlr.ServeHTTP(w, r)
@@ -22,6 +25,8 @@ func authMiddleware(authers map[string]*auth.Authenticator, hdlr http.HandlerFun
 	return authMiddlewareWithUser(authers, f)
 }
 
+// TODO remove multicluster
+// Revert to *auth.Authenticator arg
 func authMiddlewareWithUser(authers map[string]*auth.Authenticator, handlerFunc func(user *auth.User, w http.ResponseWriter, r *http.Request)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the correct Auther for the cluster.

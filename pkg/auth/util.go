@@ -29,6 +29,7 @@ func randomString(length int) string {
 	return base64.StdEncoding.EncodeToString(bytes)
 }
 
+// TODO remove multicluster
 func GetCookieName(clusterName string) string {
 	if clusterName == serverutils.LocalClusterName {
 		return openshiftAccessTokenCookieName
