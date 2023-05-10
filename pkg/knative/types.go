@@ -46,20 +46,22 @@ type EventSourceList struct {
 // ChannelList is a list of CRD per Channel
 type ChannelList = EventSourceList
 
+type InvokeBody struct {
+	InvokeHeader      http.Header         `json:"invoke-header,omitempty"`
+	InvokeQuery       map[string][]string `json:"invoke-query,omitempty"`
+	InvokeMessage     string              `json:"invoke-message,omitempty"`
+	InvokeEndpoint    string              `json:"invoke-endpoint,omitempty"`
+	InvokeFormat      string              `json:"invoke-format,omitempty"`
+	InvokeContentType string              `json:"invoke-contentType,omitempty"`
+}
+
 // InvokeServiceRequestBody is the request body sent to the endpoint from frontend
 type InvokeServiceRequestBody struct {
 	AllowInsecure bool                `json:"allowInsecure,omitempty"`
 	Method        string              `json:"method,omitempty"`
 	Query         map[string][]string `json:"query,omitempty"`
 	Header        http.Header         `json:"header,omitempty"`
-	Body          struct {
-		InvokeHeader      http.Header         `json:"invoke-header,omitempty"`
-		InvokeQuery       map[string][]string `json:"invoke-query,omitempty"`
-		InvokeMessage     string              `json:"invoke-message,omitempty"`
-		InvokeEndpoint    string              `json:"invoke-endpoint,omitempty"`
-		InvokeFormat      string              `json:"invoke-format,omitempty"`
-		InvokeContentType string              `json:"invoke-contentType,omitempty"`
-	} `json:"body,omitempty"`
+	Body          InvokeBody          `json:"body,omitempty"`
 }
 
 // InvokeServiceResponseBody is the response body sent to the frontend

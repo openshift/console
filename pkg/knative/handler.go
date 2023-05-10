@@ -22,25 +22,31 @@ import (
 	"k8s.io/klog"
 )
 
-type IKnativeHandler interface {
-	Handle(user *auth.User, w http.ResponseWriter, r *http.Request)
-	getService(user *auth.User, namespace string, service string, w http.ResponseWriter, r *http.Request) (interface{}, error)
-	getServiceEndpoints(user *auth.User, namespace string, service string, w http.ResponseWriter, r *http.Request) (interface{}, error)
-	invokeService(r *http.Request) (InvokeServiceResponseBody, error)
-}
-
 type KnativeHandler struct {
 	trimURLPrefix string
 	k8sClient     *http.Client
 	k8sEndpoint   string
 }
 
-func NewKnativeHandler(trimURLPrefix string, k8sClient *http.Client, k8sEndpoint string) IKnativeHandler {
+func NewKnativeHandler(trimURLPrefix string, k8sClient *http.Client, k8sEndpoint string) *KnativeHandler {
 	return &KnativeHandler{
 		trimURLPrefix,
 		k8sClient,
 		k8sEndpoint,
 	}
+}
+
+func (h *KnativeHandler) generateClient(user *auth.User) (dynamic.Interface, error) {
+	config := &rest.Config{
+		Host:        h.k8sEndpoint,
+		Transport:   h.k8sClient.Transport,
+		BearerToken: user.Token,
+	}
+	client, err := dynamic.NewForConfig(config)
+	if err != nil {
+		return nil, fmt.Errorf("Error creating dynamic client: %v", err)
+	}
+	return client, nil
 }
 
 func (h *KnativeHandler) Handle(user *auth.User, w http.ResponseWriter, r *http.Request) {
@@ -50,34 +56,39 @@ func (h *KnativeHandler) Handle(user *auth.User, w http.ResponseWriter, r *http.
 		namespace := parts[1]
 		service := parts[3]
 
-		var handler (func(user *auth.User, namespace string, service string, w http.ResponseWriter, r *http.Request) (interface{}, error))
-
-		// GET /namespaces/{namespace}/services/{service}
-		if r.Method == http.MethodGet && len(parts) == 4 {
-			handler = h.getService
-		} else
-		// GET /namespaces/{namespace}/services/{service}/endpoints
-		if r.Method == http.MethodGet && len(parts) == 5 && parts[4] == "endpoints" {
-			handler = h.getServiceEndpoints
-		} else
 		// GET /namespaces/{namespace}/services/{service}/invoke
 		if r.Method == http.MethodGet && len(parts) == 5 && parts[4] == "invoke" {
 			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only POST is allowed"})
 			return
 		}
-		if handler != nil {
-			result, err := handler(user, namespace, service, w, r)
+
+		// GET /namespaces/{namespace}/services/{service}/endpoints
+		if r.Method == http.MethodGet && len(parts) == 5 && parts[4] == "endpoints" {
+			client, err := h.generateClient(user)
 			if err != nil {
-				serverutils.SendResponse(w, http.StatusInternalServerError, err)
+				klog.Errorf("Error creating dynamic client: %v", err)
+				serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
 				return
 			}
-			serverutils.SendResponse(w, http.StatusOK, result)
+			url, err := getServiceEndpoints(client, namespace, service)
+			if err != nil {
+				klog.Errorf("Error Fetching Route URL for Knative Service: %v", err)
+				serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
+				return
+			}
+			serverutils.SendResponse(w, http.StatusOK, json.RawMessage(fmt.Sprintf(`{"url": "%s"}`, url)))
 			return
 		}
 
 		// POST /namespaces/{namespace}/services/{service}/invoke
 		if r.Method == http.MethodPost && len(parts) == 5 && parts[4] == "invoke" {
-			response, err := h.invokeService(r)
+			client, err := h.generateClient(user)
+			if err != nil {
+				klog.Errorf("Error creating dynamic client: %v", err)
+				serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
+				return
+			}
+			response, err := invokeService(client, namespace, service, r)
 			if err != nil {
 				klog.Errorf("Error During Knative Function Invokation: %v", err)
 				serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
@@ -86,19 +97,45 @@ func (h *KnativeHandler) Handle(user *auth.User, w http.ResponseWriter, r *http.
 			serverutils.SendResponse(w, http.StatusOK, response)
 			return
 		}
-
 	}
 }
 
-func (h *KnativeHandler) invokeService(r *http.Request) (InvokeServiceResponseBody, error) {
+func getServiceEndpoints(client dynamic.Interface, namespace string, service string) (url string, err error) {
+
+	resource := schema.GroupVersionResource{
+		Group:    "serving.knative.dev",
+		Version:  "v1",
+		Resource: "routes",
+	}
+	knRoutes, err := client.Resource(resource).Namespace(namespace).List(context.Background(), v1.ListOptions{
+		LabelSelector: "serving.knative.dev/service=" + service,
+	})
+	if err != nil {
+		return "", fmt.Errorf("Error fetching routes: %v", err)
+	}
+
+	if len(knRoutes.Items) == 0 {
+		return "", fmt.Errorf("No routes found for service %s", service)
+	}
+
+	url, _, err = unstructured.NestedString(knRoutes.Items[0].Object, "status", "url")
+	if err != nil {
+		return "", fmt.Errorf("Error fetching route url: %v", err)
+	}
+
+	return url, nil
+}
+
+func invokeService(client dynamic.Interface, namespace string, service string, r *http.Request) (InvokeServiceResponseBody, error) {
+
 	var invokeRequest InvokeServiceRequestBody
 	err := json.NewDecoder(r.Body).Decode(&invokeRequest)
 	if err != nil {
 		return InvokeServiceResponseBody{}, fmt.Errorf("Failed to parse request: %v", err)
 	}
-
-	if invokeRequest.Body.InvokeEndpoint == "" {
-		return InvokeServiceResponseBody{}, fmt.Errorf("Missing invoke endpoint")
+	endpoint, err := getServiceEndpoints(client, namespace, service)
+	if err != nil {
+		return InvokeServiceResponseBody{}, fmt.Errorf("Error fetching route url for service %s: %v", service, err)
 	}
 	if invokeRequest.Body.InvokeFormat == "" {
 		return InvokeServiceResponseBody{}, fmt.Errorf("Missing invoke format")
@@ -106,15 +143,15 @@ func (h *KnativeHandler) invokeService(r *http.Request) (InvokeServiceResponseBo
 
 	switch invokeRequest.Body.InvokeFormat {
 	case "http":
-		return sendPost(invokeRequest)
+		return sendPost(invokeRequest, endpoint)
 	case "ce":
-		return sendEvent(invokeRequest)
+		return sendEvent(invokeRequest, endpoint)
 	default:
 		return InvokeServiceResponseBody{}, fmt.Errorf("Unsupported invoke format")
 	}
 }
 
-func sendEvent(invokeRequest InvokeServiceRequestBody) (invokeResponse InvokeServiceResponseBody, err error) {
+func sendEvent(invokeRequest InvokeServiceRequestBody, endpoint string) (invokeResponse InvokeServiceResponseBody, err error) {
 
 	event := cloudevents.NewEvent()
 
@@ -145,17 +182,17 @@ func sendEvent(invokeRequest InvokeServiceRequestBody) (invokeResponse InvokeSer
 		serviceTransport := &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
-		ceServiceClient, err = cloudevents.NewClientHTTP(cloudevents.WithTarget(invokeRequest.Body.InvokeEndpoint),
+		ceServiceClient, err = cloudevents.NewClientHTTP(cloudevents.WithTarget(endpoint),
 			cloudevents.WithRoundTripper(serviceTransport))
 	} else {
-		ceServiceClient, err = cloudevents.NewClientHTTP(cloudevents.WithTarget(invokeRequest.Body.InvokeEndpoint))
+		ceServiceClient, err = cloudevents.NewClientHTTP(cloudevents.WithTarget(endpoint))
 	}
 
 	if err != nil {
 		return InvokeServiceResponseBody{}, fmt.Errorf("Failed to create client: %v", err)
 	}
 
-	evt, result := ceServiceClient.Request(cloudevents.ContextWithTarget(context.Background(), invokeRequest.Body.InvokeEndpoint), event)
+	evt, result := ceServiceClient.Request(cloudevents.ContextWithTarget(context.Background(), endpoint), event)
 
 	if cloudevents.IsUndelivered(result) {
 		return InvokeServiceResponseBody{}, fmt.Errorf("Failed to send: %v", result)
@@ -194,8 +231,8 @@ func sendEvent(invokeRequest InvokeServiceRequestBody) (invokeResponse InvokeSer
 	}, nil
 }
 
-func sendPost(invokeRequest InvokeServiceRequestBody) (invokeResponse InvokeServiceResponseBody, err error) {
-	serviceRequest, err := http.NewRequest(http.MethodPost, invokeRequest.Body.InvokeEndpoint, strings.NewReader(invokeRequest.Body.InvokeMessage))
+func sendPost(invokeRequest InvokeServiceRequestBody, endpoint string) (invokeResponse InvokeServiceResponseBody, err error) {
+	serviceRequest, err := http.NewRequest(http.MethodPost, endpoint, strings.NewReader(invokeRequest.Body.InvokeMessage))
 	if err != nil {
 		return InvokeServiceResponseBody{}, fmt.Errorf("Failed to create request: %v", err)
 	}
@@ -242,75 +279,5 @@ func sendPost(invokeRequest InvokeServiceRequestBody) (invokeResponse InvokeServ
 		StatusCode: serviceResponse.StatusCode,
 		Header:     serviceResponse.Header,
 		Body:       string(serviceResponseBody),
-	}, nil
-}
-
-func (h *KnativeHandler) getService(user *auth.User, namespace string, service string, w http.ResponseWriter, r *http.Request) (interface{}, error) {
-
-	context := context.TODO()
-	config := &rest.Config{
-		Host:        h.k8sEndpoint,
-		Transport:   h.k8sClient.Transport,
-		BearerToken: user.Token,
-	}
-	client, err := dynamic.NewForConfig(config)
-	if err != nil {
-		return nil, err
-	}
-	version := r.URL.Query().Get("version")
-	if version == "" {
-		version = "v1"
-	}
-	resource := schema.GroupVersionResource{
-		Group:    "serving.knative.dev",
-		Version:  version,
-		Resource: "services",
-	}
-	knService, err := client.Resource(resource).Namespace(namespace).Get(context, service, v1.GetOptions{})
-	if err != nil {
-		return nil, err
-	}
-	return knService, nil
-}
-
-func (h *KnativeHandler) getServiceEndpoints(user *auth.User, namespace string, service string, w http.ResponseWriter, r *http.Request) (interface{}, error) {
-
-	context := context.TODO()
-	config := &rest.Config{
-		Host:        h.k8sEndpoint,
-		Transport:   h.k8sClient.Transport,
-		BearerToken: user.Token,
-	}
-	client, err := dynamic.NewForConfig(config)
-	if err != nil {
-		return nil, err
-	}
-	version := r.URL.Query().Get("version")
-	if version == "" {
-		version = "v1"
-	}
-	resource := schema.GroupVersionResource{
-		Group:    "serving.knative.dev",
-		Version:  version,
-		Resource: "routes",
-	}
-	knRoutes, err := client.Resource(resource).Namespace(namespace).List(context, v1.ListOptions{
-		LabelSelector: "serving.knative.dev/service=" + service,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	if len(knRoutes.Items) == 0 {
-		serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "not found"})
-		return nil, nil
-	}
-
-	url, _, err := unstructured.NestedString(knRoutes.Items[0].Object, "status", "url")
-	if err != nil {
-		return nil, err
-	}
-	return map[string]string{
-		"url": url,
 	}, nil
 }
