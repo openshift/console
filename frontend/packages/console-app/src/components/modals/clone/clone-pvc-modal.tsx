@@ -39,12 +39,13 @@ import {
 } from '@console/internal/module/k8s';
 import { isCephProvisioner } from '@console/shared';
 import { getRequestedPVCSize } from '@console/shared/src/selectors';
+import { StorageClassDropdown } from '../../../../../../public/components/utils/storage-class-dropdown';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
-
 import './_clone-pvc-modal.scss';
 
 const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const { t } = useTranslation();
+  const [storageClass, setStorageClass] = React.useState('');
   const { close, cancel, resource, handlePromise, errorMessage, inProgress } = props;
   const { name: pvcName, namespace } = resource?.metadata;
   const defaultSize: string[] = validate.split(getRequestedPVCSize(resource));
@@ -56,6 +57,10 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const [requestedUnit, setRequestedUnit] = React.useState(defaultSize[1] || 'Ti');
   const [validSize, setValidSize] = React.useState(true);
   const pvcAccessMode = getPVCAccessModes(resource, 'title');
+
+  const handleStorageClass = (updatedStorageClass) => {
+    setStorageClass(updatedStorageClass?.metadata?.name);
+  };
 
   const [scResource, scResourceLoaded, scResourceLoadError] = useK8sGet<StorageClassResourceKind>(
     StorageClassModel,
@@ -73,6 +78,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
     null,
     humanizeBinaryBytes,
   );
+
   const pvcUsedCapacity = pvcUsedCapacityQueryResult?.[0]?.label || '-';
   const requestedSizeInputChange = ({ value, unit }) => {
     setRequestedSize(value);
@@ -94,7 +100,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
         namespace: resource.metadata.namespace,
       },
       spec: {
-        storageClassName: resource.spec.storageClassName,
+        storageClassName: storageClass,
         dataSource: {
           name: pvcName,
           kind: PersistentVolumeClaimModel.kind,
@@ -169,6 +175,15 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
               <div className="skeleton-text" />
             )}
           </FormGroup>
+          <StorageClassDropdown
+            onChange={handleStorageClass}
+            id="storageclass-dropdown"
+            data-test="storageclass-dropdown"
+            describedBy="storageclass-dropdown-help"
+            required={false}
+            name="storageClass"
+            filter={(p) => p?.provisioner === scResource?.provisioner}
+          />
           <div className="co-clone-pvc-modal__details">
             <p className="text-muted">{t('console-app~PVC details')}</p>
             <div className="co-clone-pvc-modal__details-section">
@@ -184,7 +199,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
                   <p className="co-clone-pvc-modal__pvc-details">{t('console-app~StorageClass')}</p>
                   <p>
                     <ResourceIcon kind={StorageClassModel.kind} />
-                    {resource.spec?.storageClassName || '-'}
+                    {storageClass || '-'}
                   </p>
                 </div>
               </div>
@@ -201,8 +216,9 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
                   </p>
                   <div>
                     {!loading && !error && pvcUsedCapacity}
-                    {loading && <LoadingInline />}
                     {!loading && error && '-'}
+                    {loading && <LoadingInline />}
+                    {'-'}
                   </div>
                 </div>
               </div>
