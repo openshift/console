@@ -1,23 +1,24 @@
-import { TFunction } from 'i18next';
 import {
   k8sCreate,
   k8sGet,
   K8sModel,
   k8sPatch,
 } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { NodeKind } from '@console/internal/module/k8s';
 import {
+  FAILURE_DOMAIN_NAME,
   KUBE_CONTROLLER_MANAGER_NAME,
   VSPHERE_CONFIGMAP_NAME,
   VSPHERE_CONFIGMAP_NAMESPACE,
   VSPHERE_CREDS_SECRET_NAME,
   VSPHERE_CREDS_SECRET_NAMESPACE,
 } from '../constants';
-import { ConfigMap, KubeControllerManager, Secret } from '../resources';
+import { ConfigMap, Infrastructure, KubeControllerManager, Secret } from '../resources';
 import { ConnectionFormContextValues } from './types';
 import { encodeBase64, mergeCloudProviderConfig } from './utils';
 
 const persistSecret = async (
-  t: TFunction,
   secretModel: K8sModel,
   config: ConnectionFormContextValues,
 ): Promise<string | undefined> => {
@@ -52,7 +53,9 @@ const persistSecret = async (
         ],
       });
     } catch (e) {
-      return t('vsphere-plugin~Failed to patch {{secret}}', { secret: VSPHERE_CREDS_SECRET_NAME });
+      return i18next.t('vsphere-plugin~Failed to patch {{secret}}', {
+        secret: VSPHERE_CREDS_SECRET_NAME,
+      });
     }
   } catch (e) {
     // Not found, create one
@@ -72,7 +75,7 @@ const persistSecret = async (
         data,
       });
     } catch (e2) {
-      return t('vsphere-plugin~Failed to create {{secret}} secret', {
+      return i18next.t('vsphere-plugin~Failed to create {{secret}} secret', {
         secret: VSPHERE_CREDS_SECRET_NAME,
       });
     }
@@ -84,7 +87,6 @@ const persistSecret = async (
 
 /** oc patch kubecontrollermanager cluster -p='{"spec": {"forceRedeploymentReason": "recovery-'"$( date --rfc-3339=ns )"'"}}' --type=merge */
 const patchKubeControllerManager = async (
-  t: TFunction,
   kubeControllerManagerModel: K8sModel,
 ): Promise<string | undefined> => {
   try {
@@ -94,7 +96,7 @@ const patchKubeControllerManager = async (
     });
 
     if (!cm) {
-      return t('vsphere-plugin~Failed to load kubecontrollermanager');
+      return i18next.t('vsphere-plugin~Failed to load kubecontrollermanager');
     }
 
     cm.spec = cm.spec || {};
@@ -117,14 +119,13 @@ const patchKubeControllerManager = async (
       ],
     });
   } catch (e) {
-    return t('vsphere-plugin~Failed to patch kubecontrollermanager');
+    return i18next.t('vsphere-plugin~Failed to patch kubecontrollermanager');
   }
 
   return undefined;
 };
 
 const persistProviderConfigMap = async (
-  t: TFunction,
   configMapModel: K8sModel,
   config: ConnectionFormContextValues,
   cloudProviderConfig?: ConfigMap,
@@ -155,7 +156,7 @@ const persistProviderConfigMap = async (
         ],
       });
     } catch (e) {
-      return t('vsphere-plugin~Failed to patch {{cm}}', { cm: VSPHERE_CONFIGMAP_NAME });
+      return i18next.t('vsphere-plugin~Failed to patch {{cm}}', { cm: VSPHERE_CONFIGMAP_NAME });
     }
   } else {
     // Not found - create new one
@@ -194,32 +195,178 @@ datacenters = "${datacenter}"
         data,
       });
     } catch (e) {
-      return t('vsphere-plugin~Failed to create {{cm}} ConfigMap', { cm: VSPHERE_CONFIGMAP_NAME });
+      return i18next.t('vsphere-plugin~Failed to create {{cm}} ConfigMap', {
+        cm: VSPHERE_CONFIGMAP_NAME,
+      });
     }
   }
 
   return undefined;
 };
 
+const taintValue = {
+  key: 'node.cloudprovider.kubernetes.io/uninitialized',
+  value: 'true',
+  effect: 'NoSchedule',
+};
+
+const addTaints = async (nodesModel: K8sModel) => {
+  const nodes = await k8sListResourceItems<NodeKind>({ model: nodesModel, queryParams: {} });
+  const patchRequests = [];
+  for (const node of nodes) {
+    if (!node.spec.taints) {
+      patchRequests.push(
+        k8sPatch({
+          model: nodesModel,
+          resource: node,
+          data: [
+            {
+              op: 'add',
+              path: `/spec/taints`,
+              value: [taintValue],
+            },
+          ],
+        }),
+      );
+    } else {
+      const taintIndex = node.spec.taints.findIndex(
+        (taint) => taint.key === 'node.cloudprovider.kubernetes.io/uninitialized',
+      );
+      if (taintIndex === -1) {
+        patchRequests.push(
+          k8sPatch({
+            model: nodesModel,
+            resource: node,
+            data: [
+              {
+                op: 'add',
+                path: `/spec/taints/-`,
+                value: taintValue,
+              },
+            ],
+          }),
+        );
+      } else {
+        const taint = node.spec.taints[taintIndex];
+        if (taint.effect === taintValue.value && taint.key === taintValue.key) {
+          // nothing to do
+          patchRequests.push(Promise.resolve());
+        } else {
+          patchRequests.push(
+            k8sPatch({
+              model: nodesModel,
+              resource: node,
+              data: [
+                {
+                  op: 'replace',
+                  path: `/spec/taints/${taintIndex}`,
+                  value: taintValue,
+                },
+              ],
+            }),
+          );
+        }
+      }
+    }
+  }
+  const results = await Promise.allSettled(patchRequests);
+  const rejectedPromise = results.findIndex((r) => r.status === 'rejected');
+  if (rejectedPromise !== -1) {
+    return i18next.t('vsphere-plugin~Failed to add taint to node {{node}}', {
+      node: nodes[rejectedPromise].metadata?.name,
+    });
+  }
+  return undefined;
+};
+
+const persistInfrastructure = async (
+  infrastructureModel: K8sModel,
+  config: ConnectionFormContextValues,
+) => {
+  const spec: Infrastructure['spec'] = {
+    cloudConfig: {
+      key: 'config',
+      name: VSPHERE_CONFIGMAP_NAME,
+    },
+    platformSpec: {
+      type: 'VSphere',
+      vsphere: {
+        failureDomains: [
+          {
+            name: FAILURE_DOMAIN_NAME,
+            region: 'generated-region',
+            server: config.vcenter,
+            topology: {
+              computeCluster: `/${config.datacenter}/host/${config.vCenterCluster}`,
+              datacenter: config.datacenter,
+              datastore: config.defaultDatastore,
+              networks: [config.vCenterCluster],
+              resourcePool: `/${config.datacenter}/host/${config.vCenterCluster}/Resources`,
+            },
+            zone: 'generated-zone',
+          },
+        ],
+        nodeNetworking: {
+          external: {},
+          internal: {},
+        },
+        vcenters: [
+          {
+            datacenters: [config.datacenter],
+            port: 443,
+            server: config.vcenter,
+          },
+        ],
+      },
+    },
+  };
+  try {
+    await k8sPatch({
+      model: infrastructureModel,
+      resource: {
+        metadata: {
+          name: 'cluster',
+        },
+      },
+      data: [
+        {
+          op: 'replace',
+          path: `/spec`,
+          value: spec,
+        },
+      ],
+    });
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+    return i18next.t('vsphere-plugin~Failed to patch infrastructure spec');
+  }
+  return undefined;
+};
+
 export const persist = async (
-  t: TFunction,
   {
     secretModel,
     configMapModel,
     kubeControllerManagerModel,
+    nodeModel,
+    infrastructureModel,
   }: {
     secretModel: K8sModel;
     configMapModel: K8sModel;
     kubeControllerManagerModel: K8sModel;
+    nodeModel: K8sModel;
+    infrastructureModel: K8sModel;
   },
   config: ConnectionFormContextValues,
   cloudProviderConfig?: ConfigMap,
 ): Promise<string | undefined> => {
   // return "undefined" if success
   return (
-    (await persistSecret(t, secretModel, config)) ||
-    (await patchKubeControllerManager(t, kubeControllerManagerModel)) ||
-    // eslint-disable-next-line no-return-await
-    (await persistProviderConfigMap(t, configMapModel, config, cloudProviderConfig))
+    (await persistSecret(secretModel, config)) ||
+    (await patchKubeControllerManager(kubeControllerManagerModel)) ||
+    (await persistProviderConfigMap(configMapModel, config, cloudProviderConfig)) ||
+    (await addTaints(nodeModel)) ||
+    persistInfrastructure(infrastructureModel, config)
   );
 };
