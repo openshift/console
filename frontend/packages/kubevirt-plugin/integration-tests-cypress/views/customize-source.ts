@@ -2,12 +2,8 @@ export const PROVIDER = 'foo';
 
 export const customizeSource = {
   fillForm: ({ vmtName }: { vmtName: string }) => {
-    cy.get('#vmt-name')
-      .clear()
-      .type(vmtName);
-    cy.get('#vmt-provider')
-      .clear()
-      .type(PROVIDER);
+    cy.get('#vmt-name').clear().type(vmtName);
+    cy.get('#vmt-provider').clear().type(PROVIDER);
     cy.byTestID('start-customize').click();
     cy.byTestID('status-text').should('exist');
   },

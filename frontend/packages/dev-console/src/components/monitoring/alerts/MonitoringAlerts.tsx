@@ -41,12 +41,12 @@ type StateProps = {
   listSorts: { [key: string]: any };
 };
 
-type props = MonitoringAlertsProps & StateProps;
+type Props = MonitoringAlertsProps & StateProps;
 
 const reduxID = 'devMonitoringAlerts';
 const textFilter = 'resource-list-text';
 
-export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listSorts }) => {
+export const MonitoringAlerts: React.FC<Props> = ({ match, rules, filters, listSorts }) => {
   const { t } = useTranslation();
   const [sortBy, setSortBy] = React.useState<{ index: number; direction: SortByDirection }>({
     index: null,

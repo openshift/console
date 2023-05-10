@@ -26,7 +26,7 @@ const normalizeBuilderImages = (
     const icon = getImageStreamIcon(tag);
     const imgUrl = getImageForIconClass(icon);
     const iconClass = imgUrl ? null : icon;
-    const description = tag?.['annotations']?.['description'] ?? '';
+    const description = tag?.annotations?.description ?? '';
     const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
     const href = `/samples/ns/${activeNamespace}/${name}/${imageStreamNS}`;
@@ -69,7 +69,7 @@ const useBuilderImageSamples: ExtensionHook<CatalogItem[]> = ({ namespace }) => 
   const normalizedBuilderImages = React.useMemo<CatalogItem[]>(() => {
     const filteredImageStreams = imageStreams.filter((imageStream) => {
       const recentTag = getMostRecentBuilderTag(imageStream);
-      const sampleRepo = recentTag?.annotations?.['sampleRepo'];
+      const sampleRepo = recentTag?.annotations?.sampleRepo;
       return isBuilder(imageStream) && sampleRepo;
     });
     return normalizeBuilderImages(filteredImageStreams, namespace, t);

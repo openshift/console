@@ -26,7 +26,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const [field] = useField<Resources[]>('resourceTypesNotValid');
   const fieldName = 'resources';
   const { values, setFieldValue } = useFormikContext<FormikValues>();
-  const invalidTypes = field.value || [];
+  const invalidTypes = React.useMemo(() => field.value || [], [field]);
 
   const [resourceType] = useResourceType();
 

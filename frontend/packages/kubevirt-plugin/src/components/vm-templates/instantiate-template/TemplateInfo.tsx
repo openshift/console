@@ -22,10 +22,7 @@ export const TemplateInfo: React.FC<TemplateInfoProps> = ({ template, isCreateTe
   const displayName = annotations[ANNOTATIONS.displayName] || name;
   const documentationURL = annotations[ANNOTATIONS.documentationURL];
   const supportURL = annotations[ANNOTATIONS.supportURL];
-  const tags = (annotations.tags || '')
-    .toUpperCase()
-    .split(',')
-    .join(' ');
+  const tags = (annotations.tags || '').toUpperCase().split(',').join(' ');
   const osIconURL = getTemplateOSIcon(template);
 
   return (

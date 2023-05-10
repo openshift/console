@@ -30,9 +30,7 @@ When('user will redirects to Add Git Repository page', () => {
 });
 
 When('user enter the GitRepo URL {string}', (GitRepoURL: string) => {
-  cy.get('#form-input-gitUrl-field')
-    .clear()
-    .type(GitRepoURL);
+  cy.get('#form-input-gitUrl-field').clear().type(GitRepoURL);
 });
 
 When('user enters the name {string}', (name: string) => {

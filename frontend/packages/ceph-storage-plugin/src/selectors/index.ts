@@ -7,6 +7,7 @@ import { OCS_OPERATOR, ODF_OPERATOR } from '../constants';
 
 export const cephStorageLabel = 'cluster.ocs.openshift.io/openshift-storage';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const enum status {
   BOUND = 'Bound',
   AVAILABLE = 'Available',

@@ -168,9 +168,7 @@ Given('user is at Serving page', () => {
 });
 
 When('user clicks on Create dropdown button', () => {
-  cy.get(eventingPO.createEventDropDownMenu)
-    .contains('Create')
-    .click({ force: true });
+  cy.get(eventingPO.createEventDropDownMenu).contains('Create').click({ force: true });
 });
 
 When('user clicks on List view button', () => {

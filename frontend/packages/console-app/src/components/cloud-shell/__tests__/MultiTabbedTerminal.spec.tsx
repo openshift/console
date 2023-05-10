@@ -56,19 +56,10 @@ describe('MultiTabTerminal', () => {
   });
 
   it('should remove terminals on remove terminal icon click', () => {
-    multiTabTerminalWrapper
-      .find('[data-test="close-terminal-icon"]')
-      .at(0)
-      .simulate('click');
+    multiTabTerminalWrapper.find('[data-test="close-terminal-icon"]').at(0).simulate('click');
     expect(multiTabTerminalWrapper.find(ChoudShellTerminal).length).toBe(7);
-    multiTabTerminalWrapper
-      .find('[data-test="close-terminal-icon"]')
-      .at(0)
-      .simulate('click');
-    multiTabTerminalWrapper
-      .find('[data-test="close-terminal-icon"]')
-      .at(0)
-      .simulate('click');
+    multiTabTerminalWrapper.find('[data-test="close-terminal-icon"]').at(0).simulate('click');
+    multiTabTerminalWrapper.find('[data-test="close-terminal-icon"]').at(0).simulate('click');
     expect(multiTabTerminalWrapper.find(ChoudShellTerminal).length).toBe(5);
   });
 

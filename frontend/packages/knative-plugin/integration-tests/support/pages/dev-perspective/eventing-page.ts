@@ -3,11 +3,7 @@ import { eventingPO } from '../../pageObjects/global-po';
 
 export const createEventPage = {
   clearYAMLEditor: () => {
-    cy.get(eventingPO.yamlEditor)
-      .click()
-      .focused()
-      .type('{ctrl}a')
-      .clear();
+    cy.get(eventingPO.yamlEditor).click().focused().type('{ctrl}a').clear();
   },
   setYAMLContent: (yamlLocation: string) => {
     cy.readFile(yamlLocation).then((str) => {

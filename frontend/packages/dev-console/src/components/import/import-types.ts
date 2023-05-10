@@ -364,6 +364,7 @@ export interface AutoscaleWindowType {
 
 export enum CPUUnits {
   m = 'millicores',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   '' = 'cores',
 }
 

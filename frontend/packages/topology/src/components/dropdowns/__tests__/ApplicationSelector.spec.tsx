@@ -54,10 +54,7 @@ describe('ApplicationSelector', () => {
 
   it('should reset the selectedKey if the applications are not loaded', () => {
     wrapper.setProps({ noProjectsAvailable: false });
-    wrapper
-      .find(ApplicationDropdown)
-      .props()
-      .onLoad({});
+    wrapper.find(ApplicationDropdown).props().onLoad({});
     expect(setFieldValue).toHaveBeenCalledWith('application.selectedKey', '');
   });
 
@@ -67,10 +64,7 @@ describe('ApplicationSelector', () => {
       .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
     spyUseField.mockImplementationOnce(() => [{ value: CREATE_APPLICATION_KEY }]);
     wrapper.setProps({ noProjectsAvailable: false });
-    wrapper
-      .find(ApplicationDropdown)
-      .props()
-      .onLoad({});
+    wrapper.find(ApplicationDropdown).props().onLoad({});
     expect(setFieldValue).toHaveBeenCalledWith('application.selectedKey', '');
     expect(setFieldValue).toHaveBeenCalledWith('application.name', '');
     expect(setFieldValue).toHaveBeenCalledTimes(2);
@@ -81,10 +75,7 @@ describe('ApplicationSelector', () => {
       .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
       .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
     wrapper.setProps({ noProjectsAvailable: false });
-    wrapper
-      .find(ApplicationDropdown)
-      .props()
-      .onChange('one', 'test-application');
+    wrapper.find(ApplicationDropdown).props().onChange('one', 'test-application');
 
     expect(setFieldValue).toHaveBeenCalledWith('application.selectedKey', 'one');
     expect(setFieldValue).toHaveBeenCalledWith('application.name', 'test-application');
@@ -97,10 +88,7 @@ describe('ApplicationSelector', () => {
       .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
       .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
     wrapper.setProps({ noProjectsAvailable: false });
-    wrapper
-      .find(ApplicationDropdown)
-      .props()
-      .onChange('one', undefined);
+    wrapper.find(ApplicationDropdown).props().onChange('one', undefined);
 
     expect(setFieldValue).toHaveBeenCalledWith('application.selectedKey', 'one');
     expect(setFieldTouched).toHaveBeenCalledWith('application.selectedKey', true);

@@ -6,25 +6,19 @@ export const editDeployment = {
     cy.get(topologyPO.createSecret.formInputs.secretFormTitle).should('be.visible');
   },
   addSecretName: (secretName: string) => {
-    cy.get(topologyPO.createSecret.formInputs.secretName)
-      .clear()
-      .type(secretName);
+    cy.get(topologyPO.createSecret.formInputs.secretName).clear().type(secretName);
   },
   selectAuthenticationType: (authenticationType: authenticationTypes | string) => {
     cy.get(topologyPO.createSecret.formInputs.authenticationType).click();
     switch (authenticationType) {
       case 'Image registry credentials':
       case authenticationTypes.ImageRegistryCredentials: {
-        cy.byTestActionID(authenticationType)
-          .should('be.visible')
-          .click();
+        cy.byTestActionID(authenticationType).should('be.visible').click();
         break;
       }
       case 'Upload configuration file':
       case authenticationTypes.UploadConfigurationFile: {
-        cy.byTestActionID(authenticationType)
-          .should('be.visible')
-          .click();
+        cy.byTestActionID(authenticationType).should('be.visible').click();
         break;
       }
       default: {
@@ -33,24 +27,16 @@ export const editDeployment = {
     }
   },
   addServerAddress: (serverUrl: string) => {
-    cy.get(topologyPO.createSecret.formInputs.registryServerAddress)
-      .clear()
-      .type(serverUrl);
+    cy.get(topologyPO.createSecret.formInputs.registryServerAddress).clear().type(serverUrl);
   },
   enterUsername: (username: string) => {
-    cy.get(topologyPO.createSecret.formInputs.userName)
-      .clear()
-      .type(username);
+    cy.get(topologyPO.createSecret.formInputs.userName).clear().type(username);
   },
   enterPassword: (password: string) => {
-    cy.get(topologyPO.createSecret.formInputs.password)
-      .clear()
-      .type(password);
+    cy.get(topologyPO.createSecret.formInputs.password).clear().type(password);
   },
   enterEmail: (email: string) => {
-    cy.get(topologyPO.createSecret.formInputs.email)
-      .clear()
-      .type(email);
+    cy.get(topologyPO.createSecret.formInputs.email).clear().type(email);
   },
   saveSecret: () => {
     cy.get(topologyPO.createSecret.formInputs.saveSecret).click();

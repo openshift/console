@@ -129,7 +129,7 @@ const commonPipelineSchema = () =>
         description: yup.string(),
         value: yup
           .string()
-          .test('test-if-param-can-be-empty', i18next.t('pipelines-plugin~Required'), function(
+          .test('test-if-param-can-be-empty', i18next.t('pipelines-plugin~Required'), function (
             value: string,
           ) {
             return paramIsRequired(this.parent) ? !!value : true;

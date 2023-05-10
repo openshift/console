@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -8,7 +9,6 @@ import {
   BuildConfigModel,
   SecretModel,
 } from '@console/internal/models';
-import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import * as knativeUtils from '@console/knative-plugin/src/utils/create-knative-utils';
 import * as pipelineUtils from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import * as triggerUtils from '@console/pipelines-plugin/src/components/pipelines/modals/triggers/submit-utils';

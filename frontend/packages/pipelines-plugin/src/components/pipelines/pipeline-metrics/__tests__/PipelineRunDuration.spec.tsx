@@ -75,11 +75,7 @@ describe('Pipeline Run Duration Graph', () => {
     expect(PipelineRunDurationGraphWrapper.find(LoadingInline).exists()).toBe(false);
     expect(PipelineRunDurationGraphWrapper.find(GraphEmpty).exists()).toBe(false);
     expect(
-      PipelineRunDurationGraphWrapper.find(Measure)
-        .dive()
-        .dive()
-        .find(LineChart)
-        .exists(),
+      PipelineRunDurationGraphWrapper.find(Measure).dive().dive().find(LineChart).exists(),
     ).toBe(true);
   });
 });

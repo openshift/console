@@ -22,9 +22,7 @@ export const repositoriesPage = {
   },
 
   verifyNameInRepositoriesTable: (repoName: string) => {
-    cy.get(pipelinesPO.search)
-      .clear()
-      .type(repoName);
+    cy.get(pipelinesPO.search).clear().type(repoName);
     cy.get('[title="Repository"]')
       .next('a')
       .then(($el) => {

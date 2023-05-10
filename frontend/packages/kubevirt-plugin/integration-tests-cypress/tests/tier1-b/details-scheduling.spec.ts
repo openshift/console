@@ -81,9 +81,7 @@ describe('Test VM scheduling policy', () => {
     cy.exec(getFirstNode).then((output) => {
       const node = output.stdout;
       labelNode(node, key1, value1);
-      cy.get(nodeSelector)
-        .find(detailsTab.vmEditWithPencil)
-        .click();
+      cy.get(nodeSelector).find(detailsTab.vmEditWithPencil).click();
       addLabel('label', key1, value1);
       cy.get(nodeSelector).should('contain', `${key1}=${value1}`);
       vm.start();
@@ -91,12 +89,8 @@ describe('Test VM scheduling policy', () => {
       unlabelNode(node, key1);
     });
     vm.stop();
-    cy.get(nodeSelector)
-      .find(editBtnIcon)
-      .should('exist');
-    cy.get(nodeSelector)
-      .find(editBtnIcon)
-      .click();
+    cy.get(nodeSelector).find(editBtnIcon).should('exist');
+    cy.get(nodeSelector).find(editBtnIcon).click();
     removeLabel('label');
     cy.get(nodeSelector).should('contain', noSelector);
   });
@@ -113,9 +107,7 @@ describe('Test VM scheduling policy', () => {
           cy.exec(getThirdNode).then((output3) => {
             const node3 = output3.stdout;
             taintNode(node3, 'key3', 'value3');
-            cy.get(tolerations)
-              .find(detailsTab.vmEditWithPencil)
-              .click();
+            cy.get(tolerations).find(detailsTab.vmEditWithPencil).click();
             addLabel('toleration', 'key3', 'value3');
             cy.get(tolerations).should('contain', '1 Toleration rule');
             vm.start();
@@ -127,12 +119,8 @@ describe('Test VM scheduling policy', () => {
         untaintNode(node, key1);
       });
       vm.stop();
-      cy.get(tolerations)
-        .find(editBtnIcon)
-        .should('exist');
-      cy.get(tolerations)
-        .find(editBtnIcon)
-        .click();
+      cy.get(tolerations).find(editBtnIcon).should('exist');
+      cy.get(tolerations).find(editBtnIcon).click();
       removeLabel('toleration');
       cy.get(tolerations).should('contain', zeroTolerationRules);
     }
@@ -142,9 +130,7 @@ describe('Test VM scheduling policy', () => {
     cy.exec(getFirstNode).then((output) => {
       const node = output.stdout;
       labelNode(node, key1, value1);
-      cy.get(affinityRules)
-        .find(detailsTab.vmEditWithPencil)
-        .click();
+      cy.get(affinityRules).find(detailsTab.vmEditWithPencil).click();
       cy.byButtonText('Add Affinity rule').click();
       cy.get(keyInput('affinity-expression')).type(key1);
       cy.get(affinityRuleValueInput).click();
@@ -160,12 +146,8 @@ describe('Test VM scheduling policy', () => {
       unlabelNode(node, key1);
     });
     vm.stop();
-    cy.get(affinityRules)
-      .find(editBtnIcon)
-      .should('exist');
-    cy.get(affinityRules)
-      .find(editBtnIcon)
-      .click();
+    cy.get(affinityRules).find(editBtnIcon).should('exist');
+    cy.get(affinityRules).find(editBtnIcon).click();
     cy.byLegacyTestID('kebab-button').click();
     cy.byTestActionID('Delete').click();
     cy.get(modalConfirm).click();

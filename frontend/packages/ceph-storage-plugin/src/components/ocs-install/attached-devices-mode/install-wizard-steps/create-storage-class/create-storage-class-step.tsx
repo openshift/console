@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, Alert, Button, Grid, GridItem, WizardContextConsumer } from '@patternfly/react-core';

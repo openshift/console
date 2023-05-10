@@ -217,7 +217,7 @@ export const clickListPageCreateYAMLButton = async () => {
   );
 };
 
-export const createNamespacedResourceWithDefaultYAML = async function(resourceType: string) {
+export const createNamespacedResourceWithDefaultYAML = async function (resourceType: string) {
   await browser.get(`${appHost}/k8s/ns/${testName}/${resourceType}`);
   await isLoaded();
   await clickListPageCreateYAMLButton();

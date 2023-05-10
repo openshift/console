@@ -49,7 +49,7 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
         dispatch(dashboardsSetEndTime(null, activePerspective));
       }
     },
-    [activePerspective, dispatch],
+    [activePerspective, dispatch, setModalOpen],
   );
 
   const items = {

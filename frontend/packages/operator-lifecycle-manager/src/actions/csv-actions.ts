@@ -13,9 +13,9 @@ export const CSVDefaultActions = {
       label: i18next.t('olm~Edit {{item}}', { item: kindObj.label }),
       cta: {
         href: kindObj.namespaced
-          ? `/k8s/ns/${resource.metadata.namespace}/${
-              ClusterServiceVersionModel.plural
-            }/${csvName || csvNameFromWindow()}/${reference}/${resource.metadata.name}/yaml`
+          ? `/k8s/ns/${resource.metadata.namespace}/${ClusterServiceVersionModel.plural}/${
+              csvName || csvNameFromWindow()
+            }/${reference}/${resource.metadata.name}/yaml`
           : `/k8s/cluster/${reference}/${resource.metadata.name}/yaml`,
       },
       accessReview: {

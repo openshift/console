@@ -20,7 +20,7 @@ export enum Perspective {
 export const pageSidebar = $('#page-sidebar .pf-c-nav .pf-c-nav__list');
 export const sideHeader = $('#page-sidebar .oc-nav-header h1');
 
-export const switchPerspective = async function(perspective: Perspective) {
+export const switchPerspective = async function (perspective: Perspective) {
   await browser.wait(until.elementToBeClickable(switcher), 5000);
   await switcher.click();
   await browser.wait(until.visibilityOf(switcherMenu));

@@ -15,6 +15,7 @@ import UploadJar from './UploadJar';
 
 type UploadJarPageProps = RouteComponentProps<{ ns?: string }>;
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 type watchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };

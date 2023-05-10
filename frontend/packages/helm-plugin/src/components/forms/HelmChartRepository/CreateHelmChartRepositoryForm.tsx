@@ -18,12 +18,14 @@ import { HelmChartRepositoryType } from '../../../types/helm-types';
 import CreateHelmChartRepositoryFormEditor from './CreateHelmChartRepositoryFormEditor';
 import { convertToForm, convertToHelmChartRepository } from './helmchartrepository-create-utils';
 
-const CreateHelmChartRepositoryForm: React.FC<FormikProps<FormikValues> & {
-  namespace: string;
-  handleCancel: () => void;
-  showScopeType: boolean;
-  existingRepo: HelmChartRepositoryType;
-}> = ({
+const CreateHelmChartRepositoryForm: React.FC<
+  FormikProps<FormikValues> & {
+    namespace: string;
+    handleCancel: () => void;
+    showScopeType: boolean;
+    existingRepo: HelmChartRepositoryType;
+  }
+> = ({
   namespace,
   errors,
   handleSubmit,

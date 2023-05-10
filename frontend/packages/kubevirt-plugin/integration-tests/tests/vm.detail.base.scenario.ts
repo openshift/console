@@ -94,18 +94,12 @@ describe('Kubevirt VM details tab', () => {
       await vm.start();
       // Empty fields turn into non-empty
       expect(await vmView.vmDetailIP(testName, vmName).getText()).not.toEqual(NOT_AVAILABLE);
-      expect(
-        await vmView
-          .vmDetailPod(testName, vmName)
-          .$('a')
-          .getText(),
-      ).toContain('virt-launcher');
-      expect(
-        await vmView
-          .vmDetailNode(testName, vmName)
-          .$('a')
-          .getText(),
-      ).not.toEqual(NOT_AVAILABLE);
+      expect(await vmView.vmDetailPod(testName, vmName).$('a').getText()).toContain(
+        'virt-launcher',
+      );
+      expect(await vmView.vmDetailNode(testName, vmName).$('a').getText()).not.toEqual(
+        NOT_AVAILABLE,
+      );
     },
     VM_BOOTUP_TIMEOUT_SECS,
   );

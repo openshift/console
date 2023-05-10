@@ -11,23 +11,10 @@ export const configMapPage = {
     value: string = 'test-value',
   ) => {
     navigateTo(devNavigationMenu.ConfigMaps);
-    cy.get(pagePO.create)
-      .should('be.visible')
-      .click();
-    cy.get(configMapPO.name)
-      .should('be.visible')
-      .clear()
-      .type(configMapName);
-    cy.get(configMapPO.initialKey)
-      .scrollIntoView()
-      .should('be.visible')
-      .clear()
-      .type(key);
-    cy.get(configMapPO.value)
-      .scrollIntoView()
-      .should('be.visible')
-      .clear()
-      .type(value);
+    cy.get(pagePO.create).should('be.visible').click();
+    cy.get(configMapPO.name).should('be.visible').clear().type(configMapName);
+    cy.get(configMapPO.initialKey).scrollIntoView().should('be.visible').clear().type(key);
+    cy.get(configMapPO.value).scrollIntoView().should('be.visible').clear().type(value);
     createForm.clickCreate();
     detailsPage.titleShouldContain(configMapName);
   },

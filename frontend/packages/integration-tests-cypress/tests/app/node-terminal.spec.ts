@@ -26,8 +26,6 @@ describe('Node terminal', () => {
     cy.byTestID('node-terminal-error').should('not.exist');
     cy.get('[class="xterm-viewport"]').should('exist');
     // navigate back to Overview tab so the temporary namespace is deleted
-    cy.get('a[data-test-id="horizontal-link-Overview"]')
-      .should('exist')
-      .click();
+    cy.get('a[data-test-id="horizontal-link-Overview"]').should('exist').click();
   });
 });

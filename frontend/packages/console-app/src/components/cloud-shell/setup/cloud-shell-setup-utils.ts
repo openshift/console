@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-type advancedOptions = {
+type AdvancedOptions = {
   timeout?: {
     limit?: number;
     unit?: string;
@@ -12,7 +12,7 @@ export type CloudShellSetupFormData = {
   namespace?: string;
   newNamespace?: string;
   createNamespace?: boolean;
-  advancedOptions?: advancedOptions;
+  advancedOptions?: AdvancedOptions;
 };
 
 export const CREATE_NAMESPACE_KEY = '#CREATE_NAMESPACE_KEY#';

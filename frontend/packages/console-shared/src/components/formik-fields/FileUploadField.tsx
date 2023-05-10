@@ -3,8 +3,9 @@ import { FileUpload } from '@patternfly/react-core';
 import BaseInputField from './BaseInputField';
 import { BaseInputFieldProps } from './field-types';
 
-const FileUploadField: React.FunctionComponent<Omit<BaseInputFieldProps, 'onChange'> &
-  React.ComponentProps<typeof FileUpload>> = ({ onChange, ...baseProps }) => {
+const FileUploadField: React.FunctionComponent<
+  Omit<BaseInputFieldProps, 'onChange'> & React.ComponentProps<typeof FileUpload>
+> = ({ onChange, ...baseProps }) => {
   const onChangeHandle = (
     valueData: string | File,
     filenameData: string,

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import * as k8sGet from '@console/internal/components/utils/k8s-get-hook';
 import { MultiTabListPage } from '@console/shared';
-import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { t } from '../../../../../../__mocks__/i18next';
 import { sampleSecretData } from '../../../test-data/pac-data';
 import * as pipelinesHooks from '../../../utils/hooks';

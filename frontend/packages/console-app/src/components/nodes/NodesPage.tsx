@@ -367,36 +367,35 @@ const NodesTableRow: React.FC<RowFunctionArgs<NodeKind>> = ({
 };
 NodesTableRow.displayName = 'NodesTableRow';
 
-const NodesTable: React.FC<NodesTableProps &
-  WithUserSettingsCompatibilityProps<TableColumnsType>> = React.memo(
-  ({ userSettingState: tableColumns, ...props }) => {
-    const { t } = useTranslation();
-    const selectedColumns: Set<string> =
-      tableColumns?.[columnManagementID]?.length > 0
-        ? new Set(tableColumns[columnManagementID])
-        : null;
+const NodesTable: React.FC<
+  NodesTableProps & WithUserSettingsCompatibilityProps<TableColumnsType>
+> = React.memo(({ userSettingState: tableColumns, ...props }) => {
+  const { t } = useTranslation();
+  const selectedColumns: Set<string> =
+    tableColumns?.[columnManagementID]?.length > 0
+      ? new Set(tableColumns[columnManagementID])
+      : null;
 
-    const customData = React.useMemo(
-      () => ({
-        tableColumns: tableColumns?.[columnManagementID],
-      }),
-      [tableColumns],
-    );
-    return (
-      <Table
-        {...props}
-        activeColumns={selectedColumns}
-        columnManagementID={columnManagementID}
-        aria-label={t('console-app~Nodes')}
-        showNamespaceOverride
-        Header={NodeTableHeader}
-        Row={NodesTableRow}
-        customData={customData}
-        virtualize
-      />
-    );
-  },
-);
+  const customData = React.useMemo(
+    () => ({
+      tableColumns: tableColumns?.[columnManagementID],
+    }),
+    [tableColumns],
+  );
+  return (
+    <Table
+      {...props}
+      activeColumns={selectedColumns}
+      columnManagementID={columnManagementID}
+      aria-label={t('console-app~Nodes')}
+      showNamespaceOverride
+      Header={NodeTableHeader}
+      Row={NodesTableRow}
+      customData={customData}
+      virtualize
+    />
+  );
+});
 
 type NodesTableProps = React.ComponentProps<typeof Table> & {
   data: NodeKind[];

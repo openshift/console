@@ -58,9 +58,7 @@ export default ({ vmName }) =>
     });
 
     it('should open SSH service modal', () => {
-      cy.get('[data-test="ssh-access-details-item"]')
-        .find(detailsTab.vmEditWithPencil)
-        .click();
+      cy.get('[data-test="ssh-access-details-item"]').find(detailsTab.vmEditWithPencil).click();
     });
 
     it('checking SSH service checkbox is checked', () => {

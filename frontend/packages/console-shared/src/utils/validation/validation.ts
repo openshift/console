@@ -80,10 +80,7 @@ export const alignWithDNS1123 = (str) => {
     return '';
   }
 
-  const chars = str
-    .toLowerCase()
-    .replace(/\./g, '-')
-    .split('');
+  const chars = str.toLowerCase().replace(/\./g, '-').split('');
 
   const firstValidCharIndex = chars.findIndex((c) => c.match(alphanumericRegex));
   const lastValidCharIndex = _.findLastIndex(chars, (c: string) => c.match(alphanumericRegex));

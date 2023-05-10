@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* eslint-disable camelcase, tsdoc/syntax */
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
@@ -586,8 +586,9 @@ const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, 
             setLoaded(true);
           } catch (error) {
             setLoadError({
-              message: `Error parsing Alertmanager config.original: ${error.message ||
-                'invalid YAML'}`,
+              message: `Error parsing Alertmanager config.original: ${
+                error.message || 'invalid YAML'
+              }`,
             });
           }
         }

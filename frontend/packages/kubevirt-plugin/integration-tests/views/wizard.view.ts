@@ -97,10 +97,7 @@ export const clickKebabAction = async (resourceName: string, actionLabel: string
 
 export const tableRow = (name: string) => $(`tr[data-id="${name}"]`);
 export const tableRowAttribute = async (name: string, columnIndex: number): Promise<string> => {
-  return tableRow(name)
-    .$$('td')
-    .get(columnIndex)
-    .getText();
+  return tableRow(name).$$('td').get(columnIndex).getText();
 };
 
 export const uploadLink = element(by.linkText('upload a new disk image'));

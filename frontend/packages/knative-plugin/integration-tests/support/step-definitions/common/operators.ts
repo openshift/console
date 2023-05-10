@@ -41,13 +41,13 @@ When('user has created Knative Serving and Knative Eventing CR', () => {
 
   cy.exec(`oc apply -f ${servingYaml} -n ${Cypress.env('NAMESPACE')} `, {
     failOnNonZeroExit: false,
-  }).then(function(result) {
+  }).then(function (result) {
     cy.log(result.stdout);
   });
 
   cy.exec(`oc apply -f ${eventingYaml} -n ${Cypress.env('NAMESPACE')} `, {
     failOnNonZeroExit: false,
-  }).then(function(result) {
+  }).then(function (result) {
     cy.log(result.stdout);
   });
 });

@@ -3,6 +3,7 @@ import { Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   Table,
   MultiListPage,
@@ -21,7 +22,6 @@ import {
 } from '@console/internal/components/utils';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { testInstallPlan } from '../../mocks';
 import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel } from '../models';
 import { InstallPlanKind, InstallPlanApproval } from '../types';
@@ -72,84 +72,48 @@ describe('InstallPlanTableRow', () => {
   });
 
   it('renders column for install plan name', () => {
-    expect(
-      wrapper
-        .childAt(0)
-        .find(ResourceLink)
-        .props().kind,
-    ).toEqual(referenceForModel(InstallPlanModel));
-    expect(
-      wrapper
-        .childAt(0)
-        .find(ResourceLink)
-        .props().namespace,
-    ).toEqual(testInstallPlan.metadata.namespace);
-    expect(
-      wrapper
-        .childAt(0)
-        .find(ResourceLink)
-        .props().name,
-    ).toEqual(testInstallPlan.metadata.name);
+    expect(wrapper.childAt(0).find(ResourceLink).props().kind).toEqual(
+      referenceForModel(InstallPlanModel),
+    );
+    expect(wrapper.childAt(0).find(ResourceLink).props().namespace).toEqual(
+      testInstallPlan.metadata.namespace,
+    );
+    expect(wrapper.childAt(0).find(ResourceLink).props().name).toEqual(
+      testInstallPlan.metadata.name,
+    );
   });
 
   it('renders column for install plan namespace', () => {
-    expect(
-      wrapper
-        .childAt(1)
-        .find(ResourceLink)
-        .props().kind,
-    ).toEqual('Namespace');
+    expect(wrapper.childAt(1).find(ResourceLink).props().kind).toEqual('Namespace');
   });
 
   it('renders column for install plan status', () => {
-    expect(
-      wrapper
-        .childAt(2)
-        .render()
-        .find('[data-test="status-text"]')
-        .text(),
-    ).toEqual(testInstallPlan.status.phase);
+    expect(wrapper.childAt(2).render().find('[data-test="status-text"]').text()).toEqual(
+      testInstallPlan.status.phase,
+    );
   });
 
   it('renders column with fallback status if `status.phase` is undefined', () => {
     obj = { ..._.cloneDeep(testInstallPlan), status: null };
     wrapper = updateWrapper();
 
-    expect(
-      wrapper
-        .childAt(2)
-        .render()
-        .text(),
-    ).toEqual('Unknown');
+    expect(wrapper.childAt(2).render().text()).toEqual('Unknown');
     expect(wrapper.childAt(3).find(ResourceIcon).length).toEqual(1);
-    expect(
-      wrapper
-        .childAt(3)
-        .find(ResourceIcon)
-        .at(0)
-        .props().kind,
-    ).toEqual(referenceForModel(ClusterServiceVersionModel));
+    expect(wrapper.childAt(3).find(ResourceIcon).at(0).props().kind).toEqual(
+      referenceForModel(ClusterServiceVersionModel),
+    );
   });
 
   it('render column for install plan components list', () => {
-    expect(
-      wrapper
-        .childAt(3)
-        .find(ResourceLink)
-        .props().kind,
-    ).toEqual(referenceForModel(ClusterServiceVersionModel));
-    expect(
-      wrapper
-        .childAt(3)
-        .find(ResourceLink)
-        .props().name,
-    ).toEqual(testInstallPlan.spec.clusterServiceVersionNames.toString());
-    expect(
-      wrapper
-        .childAt(3)
-        .find(ResourceLink)
-        .props().namespace,
-    ).toEqual(testInstallPlan.metadata.namespace);
+    expect(wrapper.childAt(3).find(ResourceLink).props().kind).toEqual(
+      referenceForModel(ClusterServiceVersionModel),
+    );
+    expect(wrapper.childAt(3).find(ResourceLink).props().name).toEqual(
+      testInstallPlan.spec.clusterServiceVersionNames.toString(),
+    );
+    expect(wrapper.childAt(3).find(ResourceLink).props().namespace).toEqual(
+      testInstallPlan.metadata.namespace,
+    );
   });
 
   it('renders column for parent subscription(s) determined by `metadata.ownerReferences`', () => {
@@ -286,15 +250,7 @@ describe('InstallPlanPreview', () => {
         }}
       />,
     );
-    expect(
-      wrapper
-        .find(HintBlock)
-        .shallow()
-        .find(Button)
-        .at(0)
-        .render()
-        .text(),
-    ).toEqual('Approve');
+    expect(wrapper.find(HintBlock).shallow().find(Button).at(0).render().text()).toEqual('Approve');
   });
 
   it('calls `k8sPatch` to set `approved: true` when button is clicked', (done) => {
@@ -333,12 +289,7 @@ describe('InstallPlanPreview', () => {
       />,
     );
 
-    wrapper
-      .find(HintBlock)
-      .shallow()
-      .find(Button)
-      .at(0)
-      .simulate('click');
+    wrapper.find(HintBlock).shallow().find(Button).at(0).simulate('click');
   });
 
   it('renders button to deny install plan if requires approval', () => {
@@ -354,15 +305,7 @@ describe('InstallPlanPreview', () => {
         }}
       />,
     );
-    expect(
-      wrapper
-        .find(HintBlock)
-        .shallow()
-        .find(Button)
-        .at(1)
-        .render()
-        .text(),
-    ).toEqual('Deny');
+    expect(wrapper.find(HintBlock).shallow().find(Button).at(1).render().text()).toEqual('Deny');
   });
 
   it('renders section for each resolving `ClusterServiceVersion`', () => {
@@ -375,43 +318,23 @@ describe('InstallPlanPreview', () => {
 
   it('renders link to view install plan component if it exists', () => {
     const wrapper = shallow(<InstallPlanPreview obj={obj} />);
-    const row = wrapper
-      .find('.co-m-pane__body')
-      .find('tbody')
-      .find('tr')
-      .at(0);
+    const row = wrapper.find('.co-m-pane__body').find('tbody').find('tr').at(0);
 
-    expect(
-      row
-        .find('td')
-        .at(0)
-        .find(ResourceLink)
-        .props().name,
-    ).toEqual(obj.status.plan[0].resource.name);
+    expect(row.find('td').at(0).find(ResourceLink).props().name).toEqual(
+      obj.status.plan[0].resource.name,
+    );
   });
 
   it('renders link to open preview modal for install plan component if not created yet', () => {
     const wrapper = shallow(<InstallPlanPreview obj={obj} />);
-    const row = wrapper
-      .find('.co-m-pane__body')
-      .find('tbody')
-      .find('tr')
-      .at(1);
+    const row = wrapper.find('.co-m-pane__body').find('tbody').find('tr').at(1);
     const modalSpy = spyOn(modal, 'installPlanPreviewModal').and.returnValue(null);
 
-    expect(
-      row
-        .find('td')
-        .at(0)
-        .find(ResourceIcon)
-        .props().kind,
-    ).toEqual(referenceForStepResource(obj.status.plan[1].resource));
+    expect(row.find('td').at(0).find(ResourceIcon).props().kind).toEqual(
+      referenceForStepResource(obj.status.plan[1].resource),
+    );
 
-    row
-      .find('td')
-      .at(0)
-      .find(Button)
-      .simulate('click');
+    row.find('td').at(0).find(Button).simulate('click');
 
     expect(modalSpy.calls.argsFor(0)[0].stepResource).toEqual(obj.status.plan[1].resource);
   });
@@ -430,13 +353,7 @@ describe('InstallPlanDetails', () => {
     installPlan.spec.approved = false;
     wrapper = wrapper.setProps({ obj: installPlan });
 
-    expect(
-      wrapper
-        .find(HintBlock)
-        .shallow()
-        .find(Link)
-        .props().to,
-    ).toEqual(
+    expect(wrapper.find(HintBlock).shallow().find(Link).props().to).toEqual(
       `/k8s/ns/default/${referenceForModel(InstallPlanModel)}/${
         testInstallPlan.metadata.name
       }/components`,

@@ -20,23 +20,8 @@ describe('Monitoring Alerts Section', () => {
 
   it('should show Alert according to Severity', () => {
     const component = shallow(<MonitoringOverviewAlerts {...monitoringOverviewProps} />);
-    expect(
-      component
-        .find(Alert)
-        .at(0)
-        .prop('variant'),
-    ).toBe('danger');
-    expect(
-      component
-        .find(Alert)
-        .at(1)
-        .prop('variant'),
-    ).toBe('warning');
-    expect(
-      component
-        .find(Alert)
-        .at(2)
-        .prop('variant'),
-    ).toBe('warning');
+    expect(component.find(Alert).at(0).prop('variant')).toBe('danger');
+    expect(component.find(Alert).at(1).prop('variant')).toBe('warning');
+    expect(component.find(Alert).at(2).prop('variant')).toBe('warning');
   });
 });

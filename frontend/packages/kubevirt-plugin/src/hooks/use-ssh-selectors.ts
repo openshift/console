@@ -15,7 +15,7 @@ export type SSHState = {
   sshServices: { [key: string]: { running: boolean; port: number } };
 };
 
-export type useSSHSelectorsResult = SSHState & {
+export type UseSSHSelectorsResult = SSHState & {
   updateSSHKey: (namespace: string, decodedKey: string) => void;
   updateSSHTempKey: (sshKey?: string) => void;
   setIsValidSSHKey: (value: boolean) => void;
@@ -24,7 +24,7 @@ export type useSSHSelectorsResult = SSHState & {
   setEnableSSHService: (value: boolean) => void;
 };
 
-const useSSHSelectors = (): useSSHSelectorsResult => {
+const useSSHSelectors = (): UseSSHSelectorsResult => {
   const dispatch = useDispatch();
   const sshState = useSelector(
     (state: RootStateOrAny): SSHState => state?.plugins?.kubevirt?.authorizedSSHKeys,

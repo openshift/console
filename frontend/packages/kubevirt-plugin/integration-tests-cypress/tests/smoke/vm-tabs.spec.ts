@@ -37,9 +37,7 @@ describe('smoke tests', () => {
   describe('visit vm tabs', () => {
     before(() => {
       cy.visitVMsList();
-      cy.byLegacyTestID(vmData.name)
-        .should('exist')
-        .click();
+      cy.byLegacyTestID(vmData.name).should('exist').click();
     });
 
     it('vm overview tab is loaded', () => {
@@ -91,12 +89,8 @@ describe('smoke tests', () => {
   describe('visit vm/vmi tabs', () => {
     before(() => {
       cy.byLegacyTestID('horizontal-link-Overview').click();
-      cy.get('[title="VirtualMachineInstance"]')
-        .contains('VMI')
-        .click();
-      cy.byLegacyTestID(vmData.name)
-        .contains(vmData.name)
-        .click();
+      cy.get('[title="VirtualMachineInstance"]').contains('VMI').click();
+      cy.byLegacyTestID(vmData.name).contains(vmData.name).click();
     });
 
     it('vm/vmi overview tab is loaded', () => {

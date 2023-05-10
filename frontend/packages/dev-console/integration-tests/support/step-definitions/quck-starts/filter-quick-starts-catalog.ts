@@ -61,9 +61,7 @@ When('user clicks on Status filter menu', () => {
 });
 
 When('user clicks on completed', () => {
-  cy.get(quickStartsPO.statusComplete)
-    .should('be.visible')
-    .click();
+  cy.get(quickStartsPO.statusComplete).should('be.visible').click();
 });
 
 Then('user can see {string} Quick Start is present', (quickStartDisplayName: string) => {

@@ -16,7 +16,7 @@ import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForM
 import { DataSourceKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 
-export const useVmTemplatesResources = (namespace: string): useVmTemplatesResourcesValues => {
+export const useVmTemplatesResources = (namespace: string): UseVmTemplatesResourcesValues => {
   const [userTemplates, utLoaded, utError] = useK8sWatchResource<TemplateKind[]>({
     kind: TemplateModel.kind,
     namespace,
@@ -97,7 +97,7 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
   ]);
 };
 
-type useVmTemplatesResourcesValues = {
+type UseVmTemplatesResourcesValues = {
   pods: PodKind[];
   dataVolumes: V1alpha1DataVolume[];
   pvcs: PersistentVolumeClaimKind[];

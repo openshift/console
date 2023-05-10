@@ -42,35 +42,10 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should prefill Request Header more options list input default values as empty', () => {
-    expect(
-      wrapper
-        .find(ListInput)
-        .at(0)
-        .props().initialValues,
-    ).toEqual(undefined);
-    expect(
-      wrapper
-        .find(ListInput)
-        .at(1)
-        .props().initialValues,
-    ).toEqual(undefined);
-    expect(
-      wrapper
-        .find(ListInput)
-        .at(2)
-        .props().initialValues,
-    ).toEqual(undefined);
-    expect(
-      wrapper
-        .find(ListInput)
-        .at(3)
-        .props().initialValues,
-    ).toEqual(undefined);
-    expect(
-      wrapper
-        .find(ListInput)
-        .at(4)
-        .props().initialValues,
-    ).toEqual(undefined);
+    expect(wrapper.find(ListInput).at(0).props().initialValues).toEqual(undefined);
+    expect(wrapper.find(ListInput).at(1).props().initialValues).toEqual(undefined);
+    expect(wrapper.find(ListInput).at(2).props().initialValues).toEqual(undefined);
+    expect(wrapper.find(ListInput).at(3).props().initialValues).toEqual(undefined);
+    expect(wrapper.find(ListInput).at(4).props().initialValues).toEqual(undefined);
   });
 });

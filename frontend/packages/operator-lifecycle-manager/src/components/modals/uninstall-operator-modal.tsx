@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Alert, Progress, ProgressSize } from '@patternfly/react-core';
 import * as _ from 'lodash';
@@ -45,6 +46,12 @@ import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { getClusterServiceVersionPlugins } from '../../utils';
 import { OperandLink } from '../operand/operand-link';
 import Timeout = NodeJS.Timeout;
+
+const deleteOptions = {
+  kind: 'DeleteOptions',
+  apiVersion: 'v1',
+  propagationPolicy: 'Foreground',
+};
 
 export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   cancel,
@@ -123,12 +130,6 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     subscriptionNamespace,
   );
 
-  const deleteOptions = {
-    kind: 'DeleteOptions',
-    apiVersion: 'v1',
-    propagationPolicy: 'Foreground',
-  };
-
   const uninstallOperator = React.useCallback(async () => {
     const patch = removePlugins
       ? getPatchForRemovingPlugins(consoleOperatorConfig, enabledPlugins)
@@ -181,7 +182,6 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       });
   }, [
     consoleOperatorConfig,
-    deleteOptions,
     enabledPlugins,
     handleOperatorUninstallPromise,
     k8sKill,

@@ -13,9 +13,7 @@ export const helmChartRepository = {
     cy.log(`Deleting ${type} ${name}`);
     cy.get(devNavigationMenuPO.search).click();
     cy.get('[aria-label="Options menu"]').click();
-    cy.get('[placeholder="Select Resource"]')
-      .should('be.visible')
-      .type(type);
+    cy.get('[placeholder="Select Resource"]').should('be.visible').type(type);
     if (type === 'projecthelmchartrepository') {
       cy.get('[data-filter-text="PHCRProjectHelmChartRepository"]').click();
       filterByName(name);

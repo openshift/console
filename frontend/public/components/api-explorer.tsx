@@ -503,9 +503,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
       resource: plural,
       verb,
     };
-    k8sCreate(accessReviewModel, req, { ns: namespace })
-      .then(setAccessResponse)
-      .catch(setError);
+    k8sCreate(accessReviewModel, req, { ns: namespace }).then(setAccessResponse).catch(setError);
   }, [apiGroup, apiVersion, plural, namespace, verb]);
 
   if (error) {

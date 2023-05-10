@@ -1,11 +1,11 @@
 import * as _ from 'lodash';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_WAITING,
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
-import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { ContainerStatus } from '@console/internal/module/k8s';
 import { SecretAnnotationId, TektonResourceLabel } from '../../components/pipelines/const';
 import { PipelineRunModel } from '../../models';

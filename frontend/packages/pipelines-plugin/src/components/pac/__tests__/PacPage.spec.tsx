@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { LoadingBox, AccessDenied } from '@console/internal/components/utils';
-import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { sampleSecretData } from '../../../test-data/pac-data';
 import * as pacHooks from '../hooks/usePacData';
 import PacForm from '../PacForm';

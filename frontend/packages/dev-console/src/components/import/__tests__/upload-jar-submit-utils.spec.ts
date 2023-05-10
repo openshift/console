@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -8,7 +9,6 @@ import {
   BuildConfigModel,
   SecretModel,
 } from '@console/internal/models';
-import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { uploadJarMockFormData } from '../__mocks__/upload-jar-mock';
 import * as importSubmitUtils from '../import-submit-utils';
 import { Resources } from '../import-types';

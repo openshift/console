@@ -1,9 +1,7 @@
 /* eslint-disable no-console, promise/catch-or-return */
 before(() => {
   cy.login();
-  cy.document()
-    .its('readyState')
-    .should('eq', 'complete');
+  cy.document().its('readyState').should('eq', 'complete');
 });
 
 after(() => {

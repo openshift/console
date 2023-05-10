@@ -116,10 +116,14 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const { t } = useTranslation();
 
   const asId = prefixedID.bind(null, 'disk');
-  const disk = props.disk || new DiskWrapper();
-  const volume = props.volume || new VolumeWrapper();
-  const dataVolume = props.dataVolume || new DataVolumeWrapper();
-  const tValidations = templateValidations || new TemplateValidations();
+  const disk = React.useMemo(() => props.disk || new DiskWrapper(), [props.disk]);
+  const volume = React.useMemo(() => props.volume || new VolumeWrapper(), [props.volume]);
+  const dataVolume = React.useMemo(() => props.dataVolume || new DataVolumeWrapper(), [
+    props.dataVolume,
+  ]);
+  const tValidations = React.useMemo(() => templateValidations || new TemplateValidations(), [
+    templateValidations,
+  ]);
   const [autoDetach, setAutoDetach] = React.useState(false);
 
   const combinedDisk = new CombinedDisk({

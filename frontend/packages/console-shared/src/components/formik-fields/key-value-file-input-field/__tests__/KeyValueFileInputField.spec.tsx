@@ -15,7 +15,7 @@ const TestKeyValueInputField: React.FC<FormikConfig<any> & { disableRemoveAction
     initialValues={initialValues}
     validate={(values) => {
       const errors: FormikErrors<{ keyValueInput: {} }> = {};
-      values?.keyValueInput?.map((entry) => {
+      values?.keyValueInput?.forEach((entry) => {
         if (entry.key === '') {
           errors.keyValueInput = [{ key: 'Required' }];
         }

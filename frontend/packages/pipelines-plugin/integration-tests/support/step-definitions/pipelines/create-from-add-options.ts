@@ -226,9 +226,7 @@ When('user selects Import Strategy as Dockerfile', () => {
 });
 
 When('user enters Dockerfile path as {string}', (dockerfilePath: string) => {
-  cy.get('#form-input-docker-dockerfilePath-field')
-    .clear()
-    .type(dockerfilePath);
+  cy.get('#form-input-docker-dockerfilePath-field').clear().type(dockerfilePath);
 });
 
 When('user enters secret as {string}', (secret: string) => {

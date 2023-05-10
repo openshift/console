@@ -7,11 +7,7 @@ type NodeRolesProps = {
 };
 
 const NodeRoles: React.FC<NodeRolesProps> = ({ node }) => (
-  <>
-    {getNodeRoles(node)
-      .sort()
-      .join(', ') || DASH}
-  </>
+  <>{getNodeRoles(node).sort().join(', ') || DASH}</>
 );
 
 export default NodeRoles;

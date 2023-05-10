@@ -14,10 +14,7 @@ describe('RoutesOverviewListItem', () => {
   let wrapper: ShallowWrapper<RoutesOverviewListItemProps>;
 
   const getRouteUrlLinkProps = (pos: number): RoutesUrlLinkProps =>
-    wrapper
-      .find(RoutesUrlLink)
-      .at(pos)
-      .props();
+    wrapper.find(RoutesUrlLink).at(pos).props();
 
   beforeEach(() => {
     const [routeLink] = getKnativeRoutesLinks(
@@ -29,32 +26,19 @@ describe('RoutesOverviewListItem', () => {
 
   it('should list the Route', () => {
     expect(wrapper.find('li')).toHaveLength(1);
-    expect(
-      wrapper
-        .find('li')
-        .at(0)
-        .props().className,
-    ).toEqual('list-group-item');
+    expect(wrapper.find('li').at(0).props().className).toEqual('list-group-item');
   });
 
   it('should have ResourceLink with proper kind', () => {
     expect(wrapper.find(ResourceLink)).toHaveLength(1);
-    expect(
-      wrapper
-        .find(ResourceLink)
-        .at(0)
-        .props().kind,
-    ).toEqual(referenceForModel(RouteModel));
+    expect(wrapper.find(ResourceLink).at(0).props().kind).toEqual(referenceForModel(RouteModel));
   });
 
   it('should have route ExternalLink with proper href', () => {
     expect(wrapper.find(RoutesUrlLink)).toHaveLength(1);
-    expect(
-      wrapper
-        .find(RoutesUrlLink)
-        .at(0)
-        .props().urls,
-    ).toEqual(['http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com']);
+    expect(wrapper.find(RoutesUrlLink).at(0).props().urls).toEqual([
+      'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
+    ]);
   });
 
   it('should have route of specific revision as RoutesUrlLink with tag url and base url', () => {

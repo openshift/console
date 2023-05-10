@@ -55,6 +55,7 @@ const MetricsQueryInput: React.FC = () => {
   const [metric, setMetric] = React.useState('');
   const [showPromQl, setShowPromQl] = React.useState(false);
   const [isPromQlDisabled, setIsPromQlDisabled] = React.useState(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
   React.useEffect(() => {
     const runQueries = () => dispatch(queryBrowserRunQueries());

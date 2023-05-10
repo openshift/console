@@ -18,7 +18,7 @@ export const validRunAfter = (formData: PipelineBuilderFormValues, thisTask: Pip
   return yup.array().of(
     yup
       .string()
-      .test('tasks-matches-runAfters', i18n.t('pipelines-plugin~Invalid runAfter'), function(
+      .test('tasks-matches-runAfters', i18n.t('pipelines-plugin~Invalid runAfter'), function (
         runAfter: string,
       ) {
         return runAfterMatches(formData, [runAfter], thisTask.name);
@@ -73,7 +73,7 @@ const taskValidationYAMLSchema = (formData: PipelineBuilderFormValues) => {
         .test(
           'taskRef-or-taskSpec',
           i18n.t('pipelines-plugin~TaskSpec or TaskRef must be provided.'),
-          function(task: PipelineTask) {
+          function (task: PipelineTask) {
             return !!task.taskRef || !!task.taskSpec;
           },
         ),

@@ -26,19 +26,9 @@ export const serialConnectButton = element(by.buttonText('Connect'));
 const terminalInteractionTimeout = 200;
 export const sendCommandToConsole = async (terminal, command) => {
   await browser.wait(until.presenceOf(terminal), PAGE_LOAD_TIMEOUT_SECS);
-  await browser
-    .actions()
-    .mouseMove(terminal)
-    .click()
-    .perform();
-  await browser
-    .actions()
-    .sendKeys(command)
-    .perform();
+  await browser.actions().mouseMove(terminal).click().perform();
+  await browser.actions().sendKeys(command).perform();
   await browser.sleep(terminalInteractionTimeout);
-  await browser
-    .actions()
-    .sendKeys(Key.ENTER)
-    .perform();
+  await browser.actions().sendKeys(Key.ENTER).perform();
   return browser.sleep(terminalInteractionTimeout);
 };

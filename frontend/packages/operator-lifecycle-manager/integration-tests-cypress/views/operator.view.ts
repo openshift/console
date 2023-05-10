@@ -121,9 +121,7 @@ export const operator = {
     }
     cy.url().should('contain', '~new');
     cy.log('create a new operand');
-    cy.get('[id="root_metadata_name"]')
-      .should('not.be.disabled')
-      .clear();
+    cy.get('[id="root_metadata_name"]').should('not.be.disabled').clear();
     cy.get('[id="root_metadata_name"]').type(exampleName);
     cy.get(submitButton).click();
   },

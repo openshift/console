@@ -35,7 +35,7 @@ export const clickNavLink = async (path: [string, string]) => {
   await navItem.click();
 };
 
-export const switchPerspective = async function(perspective: Perspective) {
+export const switchPerspective = async function (perspective: Perspective) {
   await browser.wait(until.elementToBeClickable(switcher), 5000);
   await switcher.click();
   await browser.wait(until.visibilityOf(switcherMenu));

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -7,8 +8,6 @@ import {
   RouteModel,
 } from '@console/internal/models';
 import * as k8sInternalResourceModule from '@console/internal/module/k8s/resource';
-import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-
 import { getSuggestedName } from '../../../utils/imagestream-utils';
 import {
   mockDeployImageFormData,

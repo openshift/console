@@ -79,20 +79,29 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
             });
       }, [mapperLoader]);
 
-      const additionalResourcesData = {};
-      let additionalResourcesLoaded = true;
-      let additionalResourcesLoadError = false;
-      if (additionalResources) {
-        additionalResourcesLoaded = Object.keys(additionalResources)
-          .filter((key) => !additionalResources[key].optional)
-          .every((key) => resources[key].loaded);
-        Object.keys(additionalResources).forEach((key) => {
-          additionalResourcesData[key] = resources[key].data;
-        });
-        additionalResourcesLoadError = Object.keys(additionalResources)
-          .filter((key) => !additionalResources[key].optional)
-          .some((key) => !!resources[key].loadError);
-      }
+      const [
+        additionalResourcesData,
+        additionalResourcesLoaded,
+        additionalResourcesLoadError,
+      ] = React.useMemo(() => {
+        const resourcesData = {};
+        let resourcesLoaded = true;
+        let resourcesLoadError = false;
+
+        if (additionalResources) {
+          resourcesLoaded = Object.keys(additionalResources)
+            .filter((key) => !additionalResources[key].optional)
+            .every((key) => resources[key].loaded);
+          Object.keys(additionalResources).forEach((key) => {
+            resourcesData[key] = resources[key].data;
+          });
+          resourcesLoadError = Object.keys(additionalResources)
+            .filter((key) => !additionalResources[key].optional)
+            .some((key) => !!resources[key].loadError);
+        }
+
+        return [resourcesData, resourcesLoaded, resourcesLoadError];
+      }, [additionalResources, resources]);
 
       const ExpandedComponent = React.useCallback(
         () => (

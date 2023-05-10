@@ -22,30 +22,19 @@ And('user selects sinks provided by Red Hat', () => {
 });
 
 And('user switches to form view', () => {
-  cy.byTestID('form-view-input')
-    .should('be.visible')
-    .click();
+  cy.byTestID('form-view-input').should('be.visible').click();
 });
 
 And('user creates a BootStrapServer as {string}', (serverName: string) => {
-  cy.get(eventingPO.bootstrapServers)
-    .should('be.visible')
-    .clear()
-    .type(serverName)
-    .type('{enter}');
+  cy.get(eventingPO.bootstrapServers).should('be.visible').clear().type(serverName).type('{enter}');
 });
 
 And('user creates a Topic as {string}', (name: string) => {
-  cy.byTestID('kafkasink-topic-field')
-    .should('be.visible')
-    .clear()
-    .type(name);
+  cy.byTestID('kafkasink-topic-field').should('be.visible').clear().type(name);
 });
 
 And('user clicks on Create button for kafkasink form', () => {
-  cy.get(eventingPO.submit)
-    .should('be.enabled')
-    .click();
+  cy.get(eventingPO.submit).should('be.enabled').click();
 });
 
 And('user is at Topology Graph view', () => {
@@ -95,9 +84,7 @@ When('user selects the auto populated name of subscription', () => {
 });
 
 When('user selects the Subscriber {string}', (subscriberName: string) => {
-  cy.get(topologyPO.graph.subscriber.filterItemLink)
-    .contains(subscriberName)
-    .click();
+  cy.get(topologyPO.graph.subscriber.filterItemLink).contains(subscriberName).click();
 });
 
 When('user clicks on Add button', () => {

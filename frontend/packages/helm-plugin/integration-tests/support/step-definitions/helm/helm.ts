@@ -21,9 +21,7 @@ import {
 } from '@console/dev-console/integration-tests/support/pages';
 
 When('user selects YAML view', () => {
-  cy.document()
-    .its('readyState')
-    .should('eq', 'complete');
+  cy.document().its('readyState').should('eq', 'complete');
   cy.get(catalogPO.installHelmChart.yamlView).click();
   cy.testA11y('Pipeline Builder page - YAML view');
 });
@@ -113,9 +111,7 @@ Then(
 );
 
 When('user clicks on quick start link in helm catalog description', () => {
-  cy.get('[data-test-id="catalog-page-description"]>a')
-    .should('be.visible')
-    .click();
+  cy.get('[data-test-id="catalog-page-description"]>a').should('be.visible').click();
 });
 
 Then('user will see {string} quick start', (quickStartName: string) => {

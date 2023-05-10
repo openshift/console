@@ -34,12 +34,7 @@ describe(BreadCrumbs.displayName, () => {
     breadcrumbs.forEach((crumb, i) => {
       if (i < links.length) {
         expect(links.at(i).props().to).toEqual(crumb.path);
-        expect(
-          links
-            .at(i)
-            .childAt(0)
-            .text(),
-        ).toEqual(crumb.name);
+        expect(links.at(i).childAt(0).text()).toEqual(crumb.name);
       } else {
         expect(nonLink.render().text()).toEqual(crumb.name);
       }

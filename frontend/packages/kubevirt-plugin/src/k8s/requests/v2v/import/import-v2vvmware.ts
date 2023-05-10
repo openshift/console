@@ -62,10 +62,7 @@ const createConversionPodSecret = async ({
     .filter((storage) => storage.type === VMWizardStorageType.V2V_VMWARE_IMPORT)
     .map(({ importData }) => importData.fileName);
 
-  const hostPath = (vm?.detail?.hostPath || '')
-    .split('/')
-    .map(encodeURIComponent)
-    .join('/');
+  const hostPath = (vm?.detail?.hostPath || '').split('/').map(encodeURIComponent).join('/');
 
   const secretWrapper = new SecretWrappper()
     .init({ namespace, generateName: CONVERSION_GENERATE_NAME })

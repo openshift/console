@@ -57,12 +57,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
   });
 
   it('renders YAML editor by default', () => {
-    expect(
-      wrapper
-        .find(Button)
-        .childAt(0)
-        .text(),
-    ).toEqual('Edit Form');
+    expect(wrapper.find(Button).childAt(0).text()).toEqual('Edit Form');
     expect(wrapper.find(OperandYAML).exists()).toBe(true);
     expect(wrapper.find(OperandForm).exists()).toBe(false);
   });
@@ -78,12 +73,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
   it('switches to form component when button is clicked', () => {
     wrapper.find(Button).simulate('click');
 
-    expect(
-      wrapper
-        .find(Button)
-        .childAt(0)
-        .text(),
-    ).toEqual('Edit YAML');
+    expect(wrapper.find(Button).childAt(0).text()).toEqual('Edit YAML');
     expect(wrapper.find(OperandYAML).exists()).toBe(false);
     expect(wrapper.find(OperandForm).exists()).toBe(true);
   });
@@ -160,12 +150,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
         () => new Promise<void>((resolve) => setTimeout(() => resolve(), 10)),
       )
       .then(() => {
-        expect(
-          wrapper
-            .find(Alert)
-            .at(0)
-            .props().title,
-        ).toEqual(error.message);
+        expect(wrapper.find(Alert).at(0).props().title).toEqual(error.message);
         done();
       })
       .catch((err) => fail(err));

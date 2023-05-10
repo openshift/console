@@ -31,7 +31,7 @@ export const dataLayerTop = element(by.css('[data-layer-id="top"]'));
 export const topologyNodes = element.all(by.css('[data-kind="node"]'));
 
 // Locate a node through its data-id="group:testapp-1105-1557-1699" data-kind="node" data-type="part-of"
-export const findNodes = function(nodeName: string) {
+export const findNodes = function (nodeName: string) {
   const tempString = '[data-id="group:';
   const searchString = tempString.concat(nodeName, '"]');
   const returnNode = element.all(by.css(searchString));
@@ -39,7 +39,7 @@ export const findNodes = function(nodeName: string) {
 };
 
 // Locate a node through its data-id="group:testapp-1105-1557-1699" data-kind="node" data-type="part-of"
-export const findNode = function(nodeName: string) {
+export const findNode = function (nodeName: string) {
   const tempString = '[data-id="group:';
   const searchString = tempString.concat(nodeName, '"]');
   const returnNode = element(by.css(searchString));
@@ -47,7 +47,7 @@ export const findNode = function(nodeName: string) {
 };
 
 // Locate a workload node through its data-id="group:testapp-1105-1557-1699" data-kind="node" data-type="part-of"
-export const findWorkloadNode = function(nodeName: string) {
+export const findWorkloadNode = function (nodeName: string) {
   const tempString = '[data-id="group:';
   const searchString = tempString.concat(nodeName, '"]');
   const returnNode = element
@@ -93,7 +93,7 @@ export const topologyViewObj = {
 };
 
 // Navigate to topology tab
-export const navigateTopology = async function() {
+export const navigateTopology = async function () {
   await browser.wait(until.elementToBeClickable(topologyNavigate));
   await topologyNavigate.click();
 };
@@ -124,7 +124,7 @@ export enum Actions {
   DeleteDeployment = 'Delete Deployment',
 }
 
-export const selectActionInSideBar = async function(action: Actions) {
+export const selectActionInSideBar = async function (action: Actions) {
   switch (action) {
     case Actions.DeleteDeployment: {
       await selectByVisibleText(sideBarObj.ActionsMenu, Actions.DeleteDeployment);
@@ -184,13 +184,13 @@ export const selectActionInSideBar = async function(action: Actions) {
   }
 };
 
-export const deleteAppName = async function(nodeName: string) {
+export const deleteAppName = async function (nodeName: string) {
   await click(findNode(nodeName));
   await selectActionInSideBar(Actions.DeleteDeployment);
   await browser.wait(until.alertIsPresent(), WAIT);
 };
 
-export const verifyCreatedAppsInTopology = async function() {
+export const verifyCreatedAppsInTopology = async function () {
   await browser.wait(
     until.visibilityOf(listViewObj.workloadSection),
     WAIT,

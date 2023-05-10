@@ -126,9 +126,7 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
 
   const alertActionLink = showAlertActionLink ? (
     <AlertActionLink onClick={onAlertActionClick}>{alertAction.label as string}</AlertActionLink>
-  ) : (
-    undefined
-  );
+  ) : undefined;
 
   return replicaFailure
     ? {

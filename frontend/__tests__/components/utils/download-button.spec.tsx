@@ -39,12 +39,7 @@ describe(DownloadButton.displayName, () => {
 
   it('renders "Downloading..." if download is in flight', (done) => {
     spyAndExpect(spyOn(coFetchModule, 'consoleFetch'))(Promise.resolve()).then(() => {
-      expect(
-        wrapper
-          .find(Button)
-          .text()
-          .trim(),
-      ).toEqual('Downloading...');
+      expect(wrapper.find(Button).text().trim()).toEqual('Downloading...');
       done();
     });
 

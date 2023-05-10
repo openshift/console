@@ -73,15 +73,9 @@ type AddTemplateSourceModalProps = CDIUploadContextProps & {
   template: TemplateKind;
 };
 
-export const AddTemplateSourceModal: React.FC<ModalComponentProps &
-  AddTemplateSourceModalProps> = ({
-  cancel,
-  uploadData,
-  close,
-  template,
-  uploads,
-  uploadProxyURL,
-}) => {
+export const AddTemplateSourceModal: React.FC<
+  ModalComponentProps & AddTemplateSourceModalProps
+> = ({ cancel, uploadData, close, template, uploads, uploadProxyURL }) => {
   const { t } = useTranslation();
   const baseImageName = getPVCName(template);
   const baseImageNamespace = getPVCNamespace(template);

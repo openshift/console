@@ -51,13 +51,9 @@ describe('PackageManifestTableRow', () => {
   });
 
   it('renders column for package name and logo', () => {
-    expect(
-      wrapper
-        .childAt(0)
-        .dive()
-        .find(ClusterServiceVersionLogo)
-        .props().displayName,
-    ).toEqual(testPackageManifest.status.channels[0].currentCSVDesc.displayName);
+    expect(wrapper.childAt(0).dive().find(ClusterServiceVersionLogo).props().displayName).toEqual(
+      testPackageManifest.status.channels[0].currentCSVDesc.displayName,
+    );
   });
 
   it('renders column for latest CSV version for package in catalog', () => {
@@ -65,23 +61,14 @@ describe('PackageManifestTableRow', () => {
       name,
       currentCSVDesc: { version },
     } = testPackageManifest.status.channels[0];
-    expect(
-      wrapper
-        .childAt(1)
-        .dive()
-        .text(),
-    ).toEqual(`${version} (${name})`);
+    expect(wrapper.childAt(1).dive().text()).toEqual(`${version} (${name})`);
   });
 
   it('renders column for creation timestamp', () => {
     const pkgManifestCreationTimestamp = testPackageManifest.metadata.creationTimestamp;
-    expect(
-      wrapper
-        .childAt(2)
-        .dive()
-        .find(Timestamp)
-        .props().timestamp,
-    ).toEqual(`${pkgManifestCreationTimestamp}`);
+    expect(wrapper.childAt(2).dive().find(Timestamp).props().timestamp).toEqual(
+      `${pkgManifestCreationTimestamp}`,
+    );
   });
 
   // This is to verify cataloSource column gets rendered on the Search page for PackageManifest resource
@@ -96,12 +83,8 @@ describe('PackageManifestTableRow', () => {
         columns={columns}
       />,
     );
-    expect(
-      wrapper
-        .childAt(3)
-        .dive()
-        .find(ResourceLink)
-        .props().name,
-    ).toEqual(`${catalogSourceName}`);
+    expect(wrapper.childAt(3).dive().find(ResourceLink).props().name).toEqual(
+      `${catalogSourceName}`,
+    );
   });
 });

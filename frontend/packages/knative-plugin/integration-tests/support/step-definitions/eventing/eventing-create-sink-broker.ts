@@ -31,9 +31,7 @@ Then('user will see Name field for broker', () => {
 });
 
 When('user selects YAML view', () => {
-  cy.get(eventingPO.yamlView)
-    .should('be.visible')
-    .click();
+  cy.get(eventingPO.yamlView).should('be.visible').click();
 });
 
 When('user clicks on Create button to create broker', () => {
@@ -54,15 +52,11 @@ Given('user has created broker {string}', (brokerName: string) => {
 });
 
 When('user selects {string} event source', (sourceType: string) => {
-  cy.get(eventingPO.catlogTiles)
-    .contains(sourceType)
-    .click();
+  cy.get(eventingPO.catlogTiles).contains(sourceType).click();
 });
 
 When('user clicks on Create Event Source button', () => {
-  cy.get(eventingPO.createCatalog)
-    .contains('Create Event Source')
-    .click({ force: true });
+  cy.get(eventingPO.createCatalog).contains('Create Event Source').click({ force: true });
 });
 
 When('user enters schedule as {string}', (schedule: string) => {
@@ -73,15 +67,11 @@ When('user enters schedule as {string}', (schedule: string) => {
 When('user selects {string} broker from Resource dropdown', (brokerName: string) => {
   cy.get(eventSourcePO.createPingSource.resourceToggleButton).click();
   cy.get(eventSourcePO.createPingSource.resourceDropDownField).click();
-  cy.get(eventSourcePO.createPingSource.resourceDropDownItem)
-    .contains(brokerName)
-    .click();
+  cy.get(eventSourcePO.createPingSource.resourceDropDownItem).contains(brokerName).click();
 });
 
 When('user enters name {string} of the PingSource event source', (name: string) => {
-  cy.get(eventSourcePO.createPingSource.name)
-    .clear()
-    .type(name);
+  cy.get(eventSourcePO.createPingSource.name).clear().type(name);
 });
 
 When('user clicks on the Create button', () => {
@@ -114,7 +104,5 @@ When('user enters kind', () => {
 });
 
 When('user enters name {string} of the EventSource event source', (name: string) => {
-  cy.get(eventSourcePO.apiServerSource.name)
-    .clear()
-    .type(name);
+  cy.get(eventSourcePO.apiServerSource.name).clear().type(name);
 });

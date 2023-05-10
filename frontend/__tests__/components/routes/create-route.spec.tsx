@@ -108,10 +108,7 @@ describe('Create Route', () => {
 
     expect(wrapper.find(AlternateServicesGroup).exists()).toBe(true);
     expect(wrapper.contains('Remove alternate Service')).toBeTruthy();
-    wrapper
-      .find(Button)
-      .at(0)
-      .simulate('click');
+    wrapper.find(Button).at(0).simulate('click');
     expect(wrapper.find(AlternateServicesGroup).exists()).toBe(false);
     expect(wrapper.contains('Remove alternate Service')).not.toBeTruthy();
   });

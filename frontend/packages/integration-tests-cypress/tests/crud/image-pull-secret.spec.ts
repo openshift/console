@@ -30,15 +30,11 @@ const populateImageSecretForm = (
   typeValue('image-secret-address', address);
   typeValue('image-secret-username', username);
   typeValue('image-secret-password', password);
-  cy.byTestID('image-secret-email')
-    .type(email)
-    .blur();
+  cy.byTestID('image-secret-email').type(email).blur();
 };
 
 const isWhitespaceRemoved = (testId: string, expectedValue: string) => {
-  cy.byTestID(testId)
-    .invoke('val')
-    .should('have.length', expectedValue.length);
+  cy.byTestID(testId).invoke('val').should('have.length', expectedValue.length);
 };
 
 describe('Create image pull secret', () => {

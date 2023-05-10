@@ -38,10 +38,7 @@ describe('Create namespace from install operators', () => {
     cy.byTestID('A specific namespace on the cluster-radio-input').click();
 
     // configure operator install ("^=Create_"" will match "Create_Namespace" and "Create_Project")
-    cy.byTestID('dropdown-selectbox')
-      .click()
-      .get('[data-test-dropdown-menu^="Create_"]')
-      .click();
+    cy.byTestID('dropdown-selectbox').click().get('[data-test-dropdown-menu^="Create_"]').click();
 
     // verify namespace modal is opened
     modal.shouldBeOpened();
@@ -52,9 +49,7 @@ describe('Create namespace from install operators', () => {
     // verify the dropdown selection shows the newly created namespace
     cy.byTestID('dropdown-selectbox').should('contain', `${nsName}`);
 
-    cy.get('button')
-      .contains('Install')
-      .click();
+    cy.get('button').contains('Install').click();
 
     // verify operator began installation
     cy.byTestID('view-installed-operators-btn').should(

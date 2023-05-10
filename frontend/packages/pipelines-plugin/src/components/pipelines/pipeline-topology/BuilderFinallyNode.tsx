@@ -75,9 +75,9 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
           <IntegralShape taskIndex={i} />
           <g
             data-test={`finally-task-node ${ft.name}`}
-            transform={`translate(${leftPadding}, ${NODE_HEIGHT * i +
-              FINALLY_NODE_VERTICAL_SPACING * i +
-              FINALLY_NODE_PADDING})`}
+            transform={`translate(${leftPadding}, ${
+              NODE_HEIGHT * i + FINALLY_NODE_VERTICAL_SPACING * i + FINALLY_NODE_PADDING
+            })`}
             onClick={ft.onTaskSelection}
           >
             <PipelineVisualizationTask
@@ -104,9 +104,11 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
           <IntegralShape taskIndex={i + finallyTasks.length} />
           <g
             transform={`translate(${leftPadding},
-          ${NODE_HEIGHT * (i + finallyTasks.length) +
+          ${
+            NODE_HEIGHT * (i + finallyTasks.length) +
             FINALLY_NODE_VERTICAL_SPACING * (i + finallyTasks.length) +
-            FINALLY_NODE_PADDING})`}
+            FINALLY_NODE_PADDING
+          })`}
           >
             <LoadingTask width={NODE_WIDTH} height={NODE_HEIGHT} name={fld.name} key={fld.name} />
           </g>
@@ -117,10 +119,12 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
           <IntegralShape taskIndex={i + finallyTasks.length + finallyLoadingTasks.length} />
           <g
             transform={`translate(${leftPadding},
-              ${NODE_HEIGHT * (i + finallyTasks.length + finallyLoadingTasks.length) +
+              ${
+                NODE_HEIGHT * (i + finallyTasks.length + finallyLoadingTasks.length) +
                 FINALLY_NODE_VERTICAL_SPACING *
                   (i + finallyTasks.length + finallyLoadingTasks.length) +
-                FINALLY_NODE_PADDING})`}
+                FINALLY_NODE_PADDING
+              })`}
           >
             <TaskList
               width={NODE_WIDTH}
@@ -149,17 +153,19 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
           />
           <g
             transform={`translate(${leftPadding},
-              ${NODE_HEIGHT *
-                (i +
-                  finallyTasks.length +
-                  finallyLoadingTasks.length +
-                  finallyInvalidListTasks.length) +
+              ${
+                NODE_HEIGHT *
+                  (i +
+                    finallyTasks.length +
+                    finallyLoadingTasks.length +
+                    finallyInvalidListTasks.length) +
                 FINALLY_NODE_VERTICAL_SPACING *
                   (i +
                     finallyTasks.length +
                     finallyLoadingTasks.length +
                     finallyInvalidListTasks.length) +
-                FINALLY_NODE_PADDING})`}
+                FINALLY_NODE_PADDING
+              })`}
           >
             <TaskList
               width={NODE_WIDTH}
@@ -174,11 +180,13 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
       ))}
       {
         <g
-          transform={`translate(${finallyTaskLinkX}, ${allTasksLength * NODE_HEIGHT +
+          transform={`translate(${finallyTaskLinkX}, ${
+            allTasksLength * NODE_HEIGHT +
             (allTasksLength - 1) * FINALLY_NODE_VERTICAL_SPACING +
             NODE_HEIGHT +
             FINALLY_ADD_LINK_TEXT_HEIGHT +
-            FINALLY_NODE_PADDING})`}
+            FINALLY_NODE_PADDING
+          })`}
           style={{ cursor: 'pointer' }}
           onClick={addNewFinallyListNode}
         >

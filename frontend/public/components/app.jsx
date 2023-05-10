@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { render } from 'react-dom';
@@ -349,6 +350,7 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const [updateError, setUpdateError] = React.useState();
   const [newPlugins, setNewPlugins] = React.useState();
   const [pluginManifestsData, setPluginManifestsData] = React.useState();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
   const fetchPluginManifest = (pluginName) =>
     coFetchJSON(

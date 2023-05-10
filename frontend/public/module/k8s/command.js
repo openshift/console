@@ -1,6 +1,6 @@
 export const fromArgs = (args) => {
   return args
-    .map(function(arg) {
+    .map(function (arg) {
       if (!arg) {
         // empty argument is still valid argument and needs to be quoted
         return "''";
@@ -26,7 +26,7 @@ export const toArgs = (cmd) => {
   let quoteKind = null;
   let quotedArgs = [];
 
-  parts.forEach(function(part) {
+  parts.forEach(function (part) {
     if (quotedArgs.length === 0) {
       if (part[0] === "'" || part[0] === '"') {
         // first time we see single/double quote?

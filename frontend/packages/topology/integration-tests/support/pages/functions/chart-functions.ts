@@ -24,9 +24,7 @@ export const verifyMultipleWorkloadInTopologyPage = (workloadNames: string[]) =>
 export const createWorkloadUsingOptions = (optionName: string, optionalData?: string) => {
   switch (optionName) {
     case 'Go Sample':
-      cy.get(chartAreaPO.submitButton)
-        .should('be.enabled')
-        .click();
+      cy.get(chartAreaPO.submitButton).should('be.enabled').click();
       break;
 
     case 'Import From Git':
@@ -39,9 +37,7 @@ export const createWorkloadUsingOptions = (optionName: string, optionalData?: st
       break;
 
     case 'Container Image':
-      cy.get(chartAreaPO.deployImage)
-        .clear()
-        .type('openshift/hello-openshift');
+      cy.get(chartAreaPO.deployImage).clear().type('openshift/hello-openshift');
       cy.get(chartAreaPO.validationText).should('have.text', 'Validated');
       cy.get(chartAreaPO.submitButton).click();
       break;
@@ -58,11 +54,7 @@ export const createWorkloadUsingOptions = (optionName: string, optionalData?: st
     case 'Operator Backed':
       cy.get(chartAreaPO.yamlView).click();
       yamlEditor.isLoaded();
-      cy.get(chartAreaPO.yamlEditor)
-        .click()
-        .focused()
-        .type('{ctrl}a')
-        .clear();
+      cy.get(chartAreaPO.yamlEditor).click().focused().type('{ctrl}a').clear();
 
       // eslint-disable-next-line no-case-declarations
       const yamlLocation = `support/${optionalData}`;
@@ -73,9 +65,7 @@ export const createWorkloadUsingOptions = (optionName: string, optionalData?: st
       break;
 
     case 'Helm Chart':
-      cy.get(chartAreaPO.helmReleaseName)
-        .clear()
-        .type('helm-nodejs');
+      cy.get(chartAreaPO.helmReleaseName).clear().type('helm-nodejs');
       cy.get(chartAreaPO.submitButton).click();
       break;
 

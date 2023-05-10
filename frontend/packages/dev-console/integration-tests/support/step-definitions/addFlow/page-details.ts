@@ -106,9 +106,7 @@ Then('user will see {string} option', (addPageOption: string) => {
 Given('add page Details toggle shows {string}', (label: string) => {
   // Just waiting until the switch with all options is shown.
   // This doesn't ensure that the right label is shown because its hidden via CSS!
-  cy.get(addPagePO.detailsOnOffSwitch)
-    .find('.pf-c-switch__label')
-    .should('contain', label);
+  cy.get(addPagePO.detailsOnOffSwitch).find('.pf-c-switch__label').should('contain', label);
   // Check the checkbox checked value and change it if needed.
   cy.get(addPagePO.detailsOnOffSwitch).then((s) => {
     const toggleIsChecked = s.find('input:checked').length > 0;

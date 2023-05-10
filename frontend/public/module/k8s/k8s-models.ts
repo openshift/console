@@ -70,10 +70,7 @@ export const modelFor = (ref: K8sResourceKindReference) => {
   }
 
   // FIXME: Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
-  m = store
-    .getState()
-    .k8s.getIn(['RESOURCES', 'models'])
-    .get(ref);
+  m = store.getState().k8s.getIn(['RESOURCES', 'models']).get(ref);
   if (m) {
     return m;
   }
@@ -84,10 +81,7 @@ export const modelFor = (ref: K8sResourceKindReference) => {
     return _.merge(m, metadata);
   }
 
-  m = store
-    .getState()
-    .k8s.getIn(['RESOURCES', 'models'])
-    .get(kindForReference(ref));
+  m = store.getState().k8s.getIn(['RESOURCES', 'models']).get(kindForReference(ref));
   if (m) {
     return m;
   }

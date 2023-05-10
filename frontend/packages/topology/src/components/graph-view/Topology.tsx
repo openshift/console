@@ -129,10 +129,9 @@ interface TopologyProps {
   setVisualization: (vis: Visualization) => void;
 }
 
-const Topology: React.FC<TopologyProps &
-  StateProps &
-  DispatchProps &
-  WithUserSettingsCompatibilityProps<object>> = ({
+const Topology: React.FC<
+  TopologyProps & StateProps & DispatchProps & WithUserSettingsCompatibilityProps<object>
+> = ({
   model,
   application,
   namespace,
@@ -140,10 +139,9 @@ const Topology: React.FC<TopologyProps &
   setVisualization,
   onGraphModelChange,
   getStoredGraphModel,
-  userSettingState: topologyLayoutData,
+  userSettingState: topologyLayoutDataJson,
   setUserSettingState: setTopologyLayoutData,
 }) => {
-  const topologyLayoutDataJson = topologyLayoutData || {};
   const applicationRef = React.useRef<string>(null);
   const [visualizationReady, setVisualizationReady] = React.useState<boolean>(false);
   const [dragHint, setDragHint] = React.useState<string>('');

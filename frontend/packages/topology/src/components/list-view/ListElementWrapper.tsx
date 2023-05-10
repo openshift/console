@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Node, isNode } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';

@@ -28,9 +28,7 @@ export const containerImagePage = {
       .get(containerImagePO.imageSection.externalRegistry.validatedMessage)
       .should('have.text', messages.addFlow.gitUrlValidated),
   enterAppName: (gitUrl: string) => {
-    cy.byLegacyTestID('application-form-app-name')
-      .clear()
-      .type(gitUrl);
+    cy.byLegacyTestID('application-form-app-name').clear().type(gitUrl);
   },
   selectRunTimeIcon: (runTimeIcon: string) => {
     cy.selectValueFromAutoCompleteDropDown(

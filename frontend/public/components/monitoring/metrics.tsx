@@ -308,6 +308,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
     _.isEmpty(observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const tick = () => {

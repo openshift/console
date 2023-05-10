@@ -48,13 +48,9 @@ describe('VM creation wizard Cloud init editor fields', () => {
       .then(() => {
         cy.get(`#${testName}-Project-link`).click();
       });
-    cy.get(wizardView.vmName)
-      .clear()
-      .type(vmData.name);
+    cy.get(wizardView.vmName).clear().type(vmData.name);
     cy.get(wizardView.customizeBtn).click();
-    cy.get(wizardView.wizardNavLink)
-      .filter(':contains("Advanced")')
-      .click();
+    cy.get(wizardView.wizardNavLink).filter(':contains("Advanced")').click();
     cy.get(wizardView.cloudInit).then((accordion) => {
       if (accordion.attr('area-expanded') === 'false') {
         accordion.click();
@@ -76,15 +72,9 @@ describe('VM creation wizard Cloud init editor fields', () => {
 
   it('ID(CNV-6878) VM creation wizard advanced cloud init editor should preserve state when moving from yaml editor to form editor', () => {
     const { cloudInit } = vmData;
-    cy.get(wizardView.username)
-      .clear()
-      .type(cloudInit.userName);
-    cy.get(wizardView.password)
-      .clear()
-      .type(cloudInit.password);
-    cy.get(wizardView.hostname)
-      .clear()
-      .type(cloudInit.hostname);
+    cy.get(wizardView.username).clear().type(cloudInit.userName);
+    cy.get(wizardView.password).clear().type(cloudInit.password);
+    cy.get(wizardView.hostname).clear().type(cloudInit.hostname);
     cy.get(wizardView.yamlView).click();
     editor
       .getEditorContent()

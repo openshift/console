@@ -105,12 +105,7 @@ describe(KindFilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(
-      wrapper
-        .find(SelectOption)
-        .first()
-        .props().isChecked,
-    ).toBeTruthy();
+    expect(wrapper.find(SelectOption).first().props().isChecked).toBeTruthy();
   });
 
   it('should show resource counts correctly', () => {

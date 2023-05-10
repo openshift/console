@@ -84,7 +84,5 @@ And('user continously clicks on zoom-out button until it gets maximum zoomed out
 });
 
 Then('user is able to see yellow background on workload for resource quota alert', () => {
-  cy.byLegacyTestID('ex-node-js1')
-    .get(topologyPO.graph.warningBackground)
-    .should('be.visible');
+  cy.byLegacyTestID('ex-node-js1').get(topologyPO.graph.warningBackground).should('be.visible');
 });

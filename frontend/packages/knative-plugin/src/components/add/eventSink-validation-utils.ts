@@ -31,10 +31,7 @@ const sinkDataSpecSchema = (t: TFunction) =>
       is: KafkaSinkModel.kind,
       then: yup.object().shape({
         [KafkaSinkModel.kind]: yup.object().shape({
-          bootstrapServers: yup
-            .array()
-            .of(yup.string())
-            .min(1, t('knative-plugin~Required')),
+          bootstrapServers: yup.array().of(yup.string()).min(1, t('knative-plugin~Required')),
           topic: yup.string().required(t('knative-plugin~Required')),
           auth: yup.object().shape({
             secret: yup.object().shape({

@@ -17,6 +17,7 @@ export enum InfraFeatures {
   Disconnected = 'Disconnected',
   disconnected = 'Disconnected',
   Proxy = 'Proxy-aware',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   'proxy-aware' = 'Proxy-aware',
   FipsMode = 'FIPS Mode',
   fips = 'FIPS Mode',

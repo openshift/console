@@ -14,9 +14,7 @@ const requiredMessage = 'Required';
 
 describe('Pipeline Builder YAML to Form switch validation schema', () => {
   it('should pass initial values', async () => {
-    await withFormData(formDataBasicPassState, '', {})
-      .then(hasResults)
-      .catch(shouldHavePassed);
+    await withFormData(formDataBasicPassState, '', {}).then(hasResults).catch(shouldHavePassed);
   });
 
   it('should pass if there is an invalid name', async () => {

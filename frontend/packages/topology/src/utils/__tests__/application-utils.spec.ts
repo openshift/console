@@ -1,5 +1,6 @@
 import { Model } from '@patternfly/react-topology';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   ImageStreamModel,
   ServiceModel,
@@ -10,7 +11,6 @@ import {
   StatefulSetModel,
 } from '@console/internal/models';
 import * as k8sModelsModule from '@console/internal/module/k8s/k8s-models';
-import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   CamelKameletBindingModel,
   KafkaSinkModel,

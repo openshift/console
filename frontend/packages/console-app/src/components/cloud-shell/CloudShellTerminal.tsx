@@ -42,8 +42,9 @@ type Props = {
 
 type CloudShellTerminalProps = StateProps & Props;
 
-const CloudShellTerminal: React.FC<CloudShellTerminalProps &
-  WithUserSettingsCompatibilityProps<string>> = ({
+const CloudShellTerminal: React.FC<
+  CloudShellTerminalProps & WithUserSettingsCompatibilityProps<string>
+> = ({
   user,
   onCancel,
   userSettingState: namespace,

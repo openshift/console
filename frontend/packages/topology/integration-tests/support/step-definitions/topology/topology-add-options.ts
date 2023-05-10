@@ -69,9 +69,7 @@ When('user right clicks on Application Grouping {string}', (appName: string) => 
 });
 
 When('user hovers on Add to application', () => {
-  cy.get('.odc-topology-context-menu')
-    .contains('Add to application')
-    .trigger('mouseover');
+  cy.get('.odc-topology-context-menu').contains('Add to application').trigger('mouseover');
 });
 
 Then(
@@ -85,9 +83,7 @@ Then(
 );
 
 When('user clicks on Delete application', () => {
-  cy.get('.odc-topology-context-menu')
-    .contains('Delete application')
-    .click();
+  cy.get('.odc-topology-context-menu').contains('Delete application').click();
 });
 
 When(

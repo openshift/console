@@ -43,17 +43,7 @@ describe('Add Identity Provider: GitHub', () => {
   });
 
   it('should prefill GitHub list input default values as empty', () => {
-    expect(
-      wrapper
-        .find(ListInput)
-        .at(0)
-        .props().initialValues,
-    ).toEqual(undefined);
-    expect(
-      wrapper
-        .find(ListInput)
-        .at(1)
-        .props().initialValues,
-    ).toEqual(undefined);
+    expect(wrapper.find(ListInput).at(0).props().initialValues).toEqual(undefined);
+    expect(wrapper.find(ListInput).at(1).props().initialValues).toEqual(undefined);
   });
 });

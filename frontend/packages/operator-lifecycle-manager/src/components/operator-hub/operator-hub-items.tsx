@@ -341,9 +341,7 @@ export const keywordCompare = (filterString, item) => {
 
   return (
     item.name.toLowerCase().includes(filterString) ||
-    _.get(item, 'obj.metadata.name', '')
-      .toLowerCase()
-      .includes(filterString) ||
+    _.get(item, 'obj.metadata.name', '').toLowerCase().includes(filterString) ||
     (item.description && item.description.toLowerCase().includes(filterString)) ||
     (item.tags && item.tags.includes(filterString)) ||
     keywords.includes(filterString)

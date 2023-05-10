@@ -56,7 +56,7 @@ export const OperatorGroupSelector: React.FC<OperatorGroupSelectorProps> = (prop
       }
       onChange={
         props.onChange ||
-        function() {
+        function () {
           return null;
         }
       }
@@ -169,10 +169,7 @@ export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>
   (og?.metadata?.annotations?.['olm.providedAPIs'] ?? '')
     .split(',')
     .map((api) => ({
-      group: api
-        .split('.')
-        .slice(2)
-        .join('.'),
+      group: api.split('.').slice(2).join('.'),
       version: api.split('.')[1],
       kind: api.split('.')[0],
     }))

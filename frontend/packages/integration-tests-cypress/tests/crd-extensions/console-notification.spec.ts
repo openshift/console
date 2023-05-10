@@ -53,9 +53,7 @@ describe(`${crd} CRD`, () => {
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}/${name}`);
     detailsPage.titleShouldContain(name);
 
-    cy.get(notification)
-      .contains(text)
-      .should('exist');
+    cy.get(notification).contains(text).should('exist');
 
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}/${name}/yaml`);
     yamlEditor.isLoaded();
@@ -77,9 +75,7 @@ describe(`${crd} CRD`, () => {
       });
     });
 
-    cy.get(altNotification)
-      .contains(altText)
-      .should('exist');
+    cy.get(altNotification).contains(altText).should('exist');
 
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
     listPage.rows.shouldBeLoaded();

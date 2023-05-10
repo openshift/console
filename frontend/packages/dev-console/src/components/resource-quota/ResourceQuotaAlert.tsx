@@ -67,7 +67,10 @@ export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespac
     [appliedclusterresourcequotas],
   );
 
-  let totalResourcesAtQuota = [...totalRQatQuota, ...totalACRQatQuota];
+  let totalResourcesAtQuota = React.useMemo(() => [...totalRQatQuota, ...totalACRQatQuota], [
+    totalRQatQuota,
+    totalACRQatQuota,
+  ]);
   totalResourcesAtQuota = totalResourcesAtQuota.filter((resourceAtQuota) => resourceAtQuota !== 0);
 
   React.useEffect(() => {

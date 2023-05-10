@@ -15,12 +15,12 @@ import { getServicePort } from '../selectors/service/selectors';
 import { VMIKind, VMKind } from '../types';
 import useSSHSelectors from './use-ssh-selectors';
 
-export type useSSHServiceResult = {
+type UseSSHServiceResult = {
   sshServices: { running: boolean; port: number };
   createOrDeleteSSHService: (vm: VMKind | VMIKind) => void;
 };
 
-const useSSHService = (vm?: VMKind | VMIKind): useSSHServiceResult => {
+const useSSHService = (vm?: VMKind | VMIKind): UseSSHServiceResult => {
   const dispatch = useDispatch();
   const { metadata } = vm || {};
   const [activeNamespace] = useActiveNamespace();

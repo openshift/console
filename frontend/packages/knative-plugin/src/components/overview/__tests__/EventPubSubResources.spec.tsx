@@ -79,12 +79,9 @@ describe('EventPubSubResources', () => {
     expect(findPubSubList).toHaveLength(1);
     expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
     expect(findPubSubSubscriberList).toHaveLength(1);
-    expect(
-      findPubSubSubscriberList
-        .dive()
-        .find(SidebarSectionHeading)
-        .props().text,
-    ).toEqual('Subscribers');
+    expect(findPubSubSubscriberList.dive().find(SidebarSectionHeading).props().text).toEqual(
+      'Subscribers',
+    );
   });
 
   it('should render broker section if the kind is Broker and  without subscribers ', () => {
@@ -115,12 +112,9 @@ describe('EventPubSubResources', () => {
     const findPubSubList = wrapper.find(PubSubResourceOverviewList);
     expect(findPubSubList).toHaveLength(3);
     expect(findPubSubSubscriberList).toHaveLength(1);
-    expect(
-      findPubSubSubscriberList
-        .dive()
-        .find(SidebarSectionHeading)
-        .props().text,
-    ).toEqual('Subscribers');
+    expect(findPubSubSubscriberList.dive().find(SidebarSectionHeading).props().text).toEqual(
+      'Subscribers',
+    );
   });
 });
 

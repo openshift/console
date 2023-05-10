@@ -370,7 +370,7 @@ const StorageClassFormWithTranslation = withTranslation()(
           returnVal.error = t('public~Storage name is required');
           returnVal.nameIsValid = false;
         } else if (this.resources) {
-          _.each(this.resources.data, function(storageClass) {
+          _.each(this.resources.data, function (storageClass) {
             if (storageClass.metadata.name === updatedName.toLowerCase()) {
               returnVal.error = t('public~Storage name must be unique');
               returnVal.nameIsValid = false;

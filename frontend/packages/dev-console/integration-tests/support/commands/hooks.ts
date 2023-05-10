@@ -3,9 +3,7 @@ before(() => {
   const bridgePasswordUsername: string = Cypress.env('BRIDGE_HTPASSWD_USERNAME');
   const bridgePasswordPassword: string = Cypress.env('BRIDGE_KUBEADMIN_PASSWORD');
   cy.login(bridgePasswordIDP, bridgePasswordUsername, bridgePasswordPassword);
-  cy.document()
-    .its('readyState')
-    .should('eq', 'complete');
+  cy.document().its('readyState').should('eq', 'complete');
 });
 
 after(() => {

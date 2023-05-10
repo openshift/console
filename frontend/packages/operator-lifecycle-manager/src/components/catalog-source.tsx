@@ -470,10 +470,7 @@ const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceNa
     setVisible(false);
   }, []);
   const onClickEnable = React.useCallback(
-    () =>
-      enableSource(OperatorHubModel, operatorHub, sourceName)
-        .callback()
-        .then(close),
+    () => enableSource(OperatorHubModel, operatorHub, sourceName).callback().then(close),
     [close, operatorHub, sourceName],
   );
   const { t } = useTranslation();

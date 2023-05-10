@@ -12,7 +12,8 @@ export const withRequestTokenURL = <Props extends WithRequestTokenURLProps>(
     const requestTokenURL = useRequestTokenURL();
     return <WrappedComponent {...props} clusterTokenURL={requestTokenURL} />;
   };
-  Component.displayName = `withRequestTokenURL(${WrappedComponent.displayName ||
-    WrappedComponent.name})`;
+  Component.displayName = `withRequestTokenURL(${
+    WrappedComponent.displayName || WrappedComponent.name
+  })`;
   return Component;
 };

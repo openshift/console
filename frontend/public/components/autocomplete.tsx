@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { useDocumentListener, getLabelsAsString } from '@console/shared';

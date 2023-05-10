@@ -51,24 +51,12 @@ describe(InstallPlanApprovalModal.name, () => {
   });
 
   it('pre-selects the approval strategy option that is currently being used by a subscription', () => {
-    expect(
-      wrapper
-        .find(ModalBody)
-        .find(RadioInput)
-        .at(0)
-        .props().checked,
-    ).toBe(true);
+    expect(wrapper.find(ModalBody).find(RadioInput).at(0).props().checked).toBe(true);
   });
 
   it('pre-selects the approval strategy option that is currently being used by an install plan', () => {
     wrapper = wrapper.setProps({ obj: _.cloneDeep(testInstallPlan) });
-    expect(
-      wrapper
-        .find(ModalBody)
-        .find(RadioInput)
-        .at(0)
-        .props().checked,
-    ).toBe(true);
+    expect(wrapper.find(ModalBody).find(RadioInput).at(0).props().checked).toBe(true);
   });
 
   it('calls `props.k8sUpdate` to update the subscription when form is submitted', () => {

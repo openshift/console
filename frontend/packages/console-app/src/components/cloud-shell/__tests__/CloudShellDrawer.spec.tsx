@@ -11,13 +11,9 @@ describe('CloudShellDrawerComponent', () => {
         <p data-test="terminal-content">Terminal content</p>
       </CloudShellDrawer>,
     );
-    expect(
-      wrapper
-        .find(Drawer)
-        .children()
-        .find('[data-test="terminal-content"]')
-        .text(),
-    ).toEqual('Terminal content');
+    expect(wrapper.find(Drawer).children().find('[data-test="terminal-content"]').text()).toEqual(
+      'Terminal content',
+    );
   });
 
   it('should call onClose when clicked on close button', () => {
@@ -27,10 +23,7 @@ describe('CloudShellDrawerComponent', () => {
         <p>Terminal content</p>
       </CloudShellDrawer>,
     );
-    const closeButton = wrapper
-      .find(Drawer)
-      .shallow()
-      .find(CloseButton);
+    const closeButton = wrapper.find(Drawer).shallow().find(CloseButton);
     expect(closeButton.props().ariaLabel).toEqual('Close terminal');
     closeButton.simulate('click');
     expect(onClose).toHaveBeenCalled();

@@ -46,7 +46,7 @@ module.exports = {
       format: ['PascalCase'],
     },
     {
-      selector: 'enum',
+      selector: ['enum', 'typeParameter'],
       format: ['PascalCase', 'UPPER_CASE'],
     },
     {

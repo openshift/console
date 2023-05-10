@@ -14,7 +14,7 @@ import {
   SubscriptionsKind,
 } from '../utils/migration-tool-utils';
 
-type useMigrationResult = [
+type UseMigrationResult = [
   SubscriptionsKind,
   PackageManifestKind,
   ForkLiftKind,
@@ -25,7 +25,7 @@ type useMigrationResult = [
   string,
 ];
 
-const useMigrationTool = (): useMigrationResult => {
+const useMigrationTool = (): UseMigrationResult => {
   const [mtvSubscription, setMtvSubscription] = React.useState<SubscriptionsKind>();
   const [mtvOperator, setMtvOperator] = React.useState<PackageManifestKind>();
   const [mtvForkLift, setMtvForkLift] = React.useState<ForkLiftKind>();

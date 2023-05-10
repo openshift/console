@@ -30,7 +30,7 @@ Given('user has created shipwright builds with resources', () => {
 Given('user has created workload using yaml {string}', (yamlFileName: string) => {
   cy.exec(`oc create -n ${Cypress.env('NAMESPACE')} -f ${yamlFileName}`, {
     failOnNonZeroExit: false,
-  }).then(function(result) {
+  }).then(function (result) {
     cy.log(result.stdout);
   });
 });
@@ -38,7 +38,7 @@ Given('user has created workload using yaml {string}', (yamlFileName: string) =>
 Then('user will delete the workload using yaml {string}', (yamlFileName: string) => {
   cy.exec(`oc delete -n ${Cypress.env('NAMESPACE')} -f ${yamlFileName}`, {
     failOnNonZeroExit: false,
-  }).then(function(result) {
+  }).then(function (result) {
     cy.log(result.stdout);
   });
 });
@@ -48,9 +48,7 @@ When(
   (workload: string, type: string) => {
     topologyPage.verifyWorkloadInTopologyPage(workload);
 
-    cy.get(topologyPO.filterByResourceDropDown)
-      .should('be.visible')
-      .click();
+    cy.get(topologyPO.filterByResourceDropDown).should('be.visible').click();
     cy.get(`[data-test="${type}"] input`).check();
   },
 );
@@ -70,9 +68,7 @@ Then('user will be able to see the buildRun logs', () => {
 
 When('user clicks on the workload of type {string}', (type: string) => {
   if (type === 'Service') {
-    cy.get('g.odc-knative-service__label > text')
-      .first()
-      .click({ force: true });
+    cy.get('g.odc-knative-service__label > text').first().click({ force: true });
   } else {
     cy.get(topologyPO.highlightNode).within(() => {
       cy.get('g.pf-topology__node__label > text').click({ force: true });
@@ -115,16 +111,12 @@ When(
       cy.get('g.odc-knative-service__label > text').click({ force: true });
 
       cy.get('div.ocs-sidebar-tabsection:nth-child(6)').should('be.visible');
-      cy.get('ul.list-group > li.odc-build-run-item')
-        .contains('View logs')
-        .click({ force: true });
+      cy.get('ul.list-group > li.odc-build-run-item').contains('View logs').click({ force: true });
     } else {
       cy.get('g.pf-topology__node__label > text').click({ force: true });
 
       cy.get('div.ocs-sidebar-tabsection:nth-child(5)').should('be.visible');
-      cy.get('ul.list-group > li.odc-build-run-item')
-        .contains('View logs')
-        .click({ force: true });
+      cy.get('ul.list-group > li.odc-build-run-item').contains('View logs').click({ force: true });
     }
   },
 );

@@ -1,3 +1,4 @@
+/* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import Helmet from 'react-helmet';
@@ -898,10 +899,10 @@ export const PullSecret = (props) => {
 
   const secrets = () => {
     if (error) {
-      return (<Alert variant="danger" isInline title={t('Error loading default pull Secrets')} />);
+      return <Alert variant="danger" isInline title={t('Error loading default pull Secrets')} />;
     }
     return data.length > 0 ? (
-      (data.map((secret) => (
+      data.map((secret) => (
         <div key={secret.name}>
           <ResourceLink
             kind="Secret"
@@ -910,12 +911,12 @@ export const PullSecret = (props) => {
             linkTo={canViewSecrets}
           />
         </div>
-      )))
+      ))
     ) : (
-      (<Button variant="link" type="button" isInline onClick={modal}>
+      <Button variant="link" type="button" isInline onClick={modal}>
         {t('public~Not configured')}
         <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-      </Button>)
+      </Button>
     );
   };
 

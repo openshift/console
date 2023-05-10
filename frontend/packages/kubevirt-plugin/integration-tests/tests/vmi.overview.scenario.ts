@@ -84,18 +84,10 @@ describe('Test VMI Details', () => {
     expect(equal).toBe(true);
 
     expect(await vmView.vmDetailIP(testName, vmiName).getText()).not.toEqual(NOT_AVAILABLE);
-    expect(
-      await vmView
-        .vmDetailPod(testName, vmiName)
-        .$('a')
-        .getText(),
-    ).toContain('virt-launcher');
-    expect(
-      await vmView
-        .vmDetailNode(testName, vmiName)
-        .$('a')
-        .getText(),
-    ).not.toEqual(NOT_AVAILABLE);
+    expect(await vmView.vmDetailPod(testName, vmiName).$('a').getText()).toContain('virt-launcher');
+    expect(await vmView.vmDetailNode(testName, vmiName).$('a').getText()).not.toEqual(
+      NOT_AVAILABLE,
+    );
   });
 
   it('ID(CNV-3704) Check VMI services', async () => {

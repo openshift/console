@@ -52,9 +52,9 @@ const FinallyNode: React.FC<FinallyNodeProps> = ({ element }) => {
               }
             />
             <g
-              transform={`translate(${leftPadding}, ${NODE_HEIGHT * i +
-                FINALLY_NODE_VERTICAL_SPACING * i +
-                FINALLY_NODE_PADDING})`}
+              transform={`translate(${leftPadding}, ${
+                NODE_HEIGHT * i + FINALLY_NODE_VERTICAL_SPACING * i + FINALLY_NODE_PADDING
+              })`}
             >
               <PipelineVisualizationTask
                 pipelineRunName={pipelineRun?.metadata?.name}

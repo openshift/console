@@ -36,9 +36,7 @@ if (Cypress.env('BRIDGE_AWS')) {
       listPage.rows.clickKebabAction(PVC.metadata.name, 'Clone PVC');
       modal.shouldBeOpened();
       modal.submitShouldBeEnabled();
-      cy.byTestID('input-request-size')
-        .clear()
-        .type(cloneSize);
+      cy.byTestID('input-request-size').clear().type(cloneSize);
       modal.submit();
       modal.shouldBeClosed();
       cy.location('pathname').should(

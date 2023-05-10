@@ -16,16 +16,12 @@ export default () =>
     it('check vm ssh secret is present and equal to key', () => {
       cy.contains(`authorizedsshkeys-`).click();
       cy.contains('Reveal values').click();
-      cy.byTestID('copy-to-clipboard')
-        .invoke('text')
-        .should('eq', sshFixure.key);
+      cy.byTestID('copy-to-clipboard').invoke('text').should('eq', sshFixure.key);
     });
 
     it('check project ssh secret is present and equal to key', () => {
       cy.byLegacyTestID('authorizedsshkeys').click();
       cy.contains('Reveal values').click();
-      cy.byTestID('copy-to-clipboard')
-        .invoke('text')
-        .should('eq', sshFixure.key);
+      cy.byTestID('copy-to-clipboard').invoke('text').should('eq', sshFixure.key);
     });
   });

@@ -6,7 +6,7 @@ const ELEMENT_WAIT = 15000;
 export const elementByDataTestID = (id: string) => $(`[data-test-id="${id}"]`);
 
 // clear the text field for given element with in given time
-export const clearText = async function(ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
+export const clearText = async function (ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
   await browser.wait(
     EC.visibilityOf(ele),
     timeoutInMilliseconds,
@@ -19,7 +19,7 @@ export const clearText = async function(ele: any, timeoutInMilliseconds = ELEMEN
 };
 
 // Enter the data in textbox by passing parameters like element finder property and text
-export const enterText = async function(
+export const enterText = async function (
   ele: any,
   text: string,
   timeoutInMilliseconds = ELEMENT_WAIT,
@@ -35,7 +35,7 @@ export const enterText = async function(
 };
 
 // Perform click action on given element with in given time
-export const click = async function(ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
+export const click = async function (ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
   await browser.wait(
     EC.elementToBeClickable(ele),
     timeoutInMilliseconds,
@@ -46,7 +46,7 @@ export const click = async function(ele: any, timeoutInMilliseconds = ELEMENT_WA
 };
 
 // Perform click action on given element with in given time
-export const getText = async function(ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
+export const getText = async function (ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
   await browser.wait(
     EC.elementToBeClickable(ele),
     timeoutInMilliseconds,
@@ -58,7 +58,7 @@ export const getText = async function(ele: any, timeoutInMilliseconds = ELEMENT_
 };
 
 // It is useful in Resources section [but currently not using it]
-export const enterTextSelectDropDown = async function(
+export const enterTextSelectDropDown = async function (
   textEle: any,
   text: string,
   drpEle: any,
@@ -90,22 +90,18 @@ export const enterTextSelectDropDown = async function(
 };
 
 // Perform mouseHover on the given element and perform click action with in given time
-export const mouseHoverClick = async function(ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
+export const mouseHoverClick = async function (ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
   await browser.executeScript('arguments[0].scrollIntoView();', ele);
   await browser.wait(
     EC.presenceOf(ele),
     timeoutInMilliseconds,
     `${ele} is not able to click in DOM, even after ${timeoutInMilliseconds} milliseconds`,
   );
-  await browser
-    .actions()
-    .mouseMove(ele)
-    .click()
-    .perform();
+  await browser.actions().mouseMove(ele).click().perform();
 };
 
 // Select the dropdown value from given dropdown element with in given time
-export const selectByVisibleText = async function(
+export const selectByVisibleText = async function (
   ele: any,
   drpdownListvalue: string,
   timeoutInMilliseconds = ELEMENT_WAIT,
@@ -127,7 +123,7 @@ export const selectByVisibleText = async function(
 };
 
 /* Select the dropdown value based on the index for given dropdown element with in given time. If index is not provided by default 0th index is considered */
-export const selectByIndex = async function(
+export const selectByIndex = async function (
   ele: any,
   index: number = 0,
   timeoutInMilliseconds = ELEMENT_WAIT,
@@ -146,14 +142,11 @@ export const selectByIndex = async function(
       `Unable to view the dropdown options even after ${timeoutInMilliseconds} ms`,
     ),
   );
-  await element
-    .all(by.css('li button.pf-c-dropdown__menu-item'))
-    .get(index)
-    .click();
+  await element.all(by.css('li button.pf-c-dropdown__menu-item')).get(index).click();
 };
 
 /* Verify the checkbox is selecetd or not with in given time */
-export const verifyCheckBox = async function(ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
+export const verifyCheckBox = async function (ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
   await browser.wait(
     EC.elementToBeClickable(ele),
     timeoutInMilliseconds,
@@ -167,7 +160,7 @@ export const verifyCheckBox = async function(ele: any, timeoutInMilliseconds = E
 };
 
 /* Select the checkbox with in given time */
-export const selectCheckBox = async function(ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
+export const selectCheckBox = async function (ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
   await browser.wait(
     EC.elementToBeClickable(ele),
     timeoutInMilliseconds,

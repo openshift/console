@@ -89,9 +89,7 @@ describe('Validate root disk', () => {
     // test with a template with boot source available
 
     // add a check about rootdisk is able to be deleted.
-    cy.get(rootdisk)
-      .find(kebabBtn)
-      .click();
+    cy.get(rootdisk).find(kebabBtn).click();
     cy.get(deleteBtn).click();
 
     addDisk(registryDisk);

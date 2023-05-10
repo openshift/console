@@ -34,7 +34,7 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
     queryPrefix,
     metricsLevel,
   });
-  const pipelineRunDurationData = runData?.data?.result ?? [];
+  const pipelineRunDurationData = React.useMemo(() => runData?.data?.result ?? [], [runData]);
 
   const chartHeight = DEFAULT_LEGEND_CHART_HEIGHT;
 

@@ -83,53 +83,36 @@ Given(
     topologyPage.rightClickOnKnativeService(knativeService);
     topologyPage.selectContextMenuAction(`Edit ${knativeService}`);
     detailsPage.titleShouldContain('Deploy Image');
-    cy.get('button')
-      .contains('Labels')
-      .scrollIntoView()
-      .click();
+    cy.get('button').contains('Labels').scrollIntoView().click();
     gitPage.enterLabels('app=frontend');
     cy.get(formPO.create).click();
     topologyPage.verifyTopologyPage();
     topologyPage.clickOnKnativeService(knativeService);
     topologySidePane.selectTab('Resources');
     topologySidePane.verifySection('Revisions');
-    cy.get('.revision-overview-list')
-      .next('ul')
-      .find('li')
-      .should('have.length', 2);
+    cy.get('.revision-overview-list').next('ul').find('li').should('have.length', 2);
   },
 );
 
 Given('user created another revision for knative Service {string}', (knativeService: string) => {
   // Update the workload details, then automatically new revision gets created
   topologyPage.clickOnKnativeService(knativeService);
-  cy.get(topologyPO.sidePane.knativeServiceIcon)
-    .next('a')
-    .click();
+  cy.get(topologyPO.sidePane.knativeServiceIcon).next('a').click();
   cy.contains('Service details').should('be.visible');
   cy.byLegacyTestID('horizontal-link-Details').click();
-  cy.get('button')
-    .contains('Labels')
-    .scrollIntoView()
-    .click();
+  cy.get('button').contains('Labels').scrollIntoView().click();
   gitPage.enterLabels('app=frontend');
   cy.get(formPO.create).click();
   navigateTo(devNavigationMenu.Topology);
   topologyPage.clickOnKnativeService(knativeService);
   topologySidePane.selectTab('Resources');
   topologySidePane.verifySection('Revisions');
-  cy.get('.revision-overview-list')
-    .next('ul')
-    .find('li')
-    .should('have.length', 2);
+  cy.get('.revision-overview-list').next('ul').find('li').should('have.length', 2);
 });
 
 When('user modifies the details of knative service', () => {
   app.waitForLoad();
-  cy.get('button')
-    .contains('Labels')
-    .scrollIntoView()
-    .click();
+  cy.get('button').contains('Labels').scrollIntoView().click();
   gitPage.enterLabels('app=frontend');
 });
 
@@ -141,10 +124,7 @@ Then(
     );
     topologySidePane.selectTab('Resources');
     topologySidePane.verifySection('Revisions');
-    cy.get('.revision-overview-list')
-      .next('ul')
-      .find('li')
-      .should('have.length', 2);
+    cy.get('.revision-overview-list').next('ul').find('li').should('have.length', 2);
   },
 );
 
@@ -242,12 +222,8 @@ When('user enters {string} into the Split text box of new revision', (splitPerce
 });
 
 When('user selects another revision from Revision drop down', () => {
-  cy.byLegacyTestID('dropdown-button')
-    .eq(1)
-    .click();
-  cy.byLegacyTestID('dropdown-menu')
-    .first()
-    .click();
+  cy.byLegacyTestID('dropdown-button').eq(1).click();
+  cy.byLegacyTestID('dropdown-menu').first().click();
 });
 
 Then(
@@ -266,9 +242,7 @@ Then(
     topologyPage.clickOnGroup(serviceName);
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
-    cy.byTestID('label-list')
-      .find('a')
-      .should('be.visible');
+    cy.byTestID('label-list').find('a').should('be.visible');
     cy.contains(label, { timeout: 80000 }).should('not.exist');
   },
 );
@@ -364,9 +338,7 @@ When('user enters the Name as {string} in Make Serverless form', (workloadName: 
 });
 
 When('user clicks on Create button in Make Serverless form', () => {
-  cy.get(formPO.save)
-    .should('be.enabled')
-    .click({ force: true });
+  cy.get(formPO.save).should('be.enabled').click({ force: true });
 });
 
 When(

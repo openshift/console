@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { act } from 'react-dom/test-utils';
-import * as rbacModule from '@console/internal/components/utils/rbac';
-import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
+import * as rbacModule from '@console/internal/components/utils/rbac';
 import * as useIsMobileModule from '@console/shared/src/hooks/useIsMobile';
 import { ExportModel } from '../../../models';
 import ExportApplication from '../ExportApplication';

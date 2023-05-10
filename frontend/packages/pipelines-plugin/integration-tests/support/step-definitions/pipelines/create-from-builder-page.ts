@@ -197,7 +197,7 @@ And('user selects the {string} task from finally task list', (finallyTask: strin
     {
       failOnNonZeroExit: false,
     },
-  ).then(function(result) {
+  ).then(function (result) {
     cy.log(result.stdout);
   });
   pipelineBuilderPage.selectFinallyTask(finallyTask);
@@ -234,7 +234,7 @@ Given('user has chain of 3 tasks created in series', () => {
     {
       failOnNonZeroExit: false,
     },
-  ).then(function(result) {
+  ).then(function (result) {
     cy.log(result.stdout);
   });
   cy.exec(
@@ -244,14 +244,12 @@ Given('user has chain of 3 tasks created in series', () => {
     {
       failOnNonZeroExit: false,
     },
-  ).then(function(result) {
+  ).then(function (result) {
     cy.log(result.stdout);
   });
   cy.fixture(`pipelines-workspaces/sum-and-multiply-pipeline/sum-and-multiply-pipeline.yaml`).then(
     (yaml) => {
-      cy.get(pipelineBuilderPO.yamlCreatePipeline.yamlEditor)
-        .click()
-        .focused();
+      cy.get(pipelineBuilderPO.yamlCreatePipeline.yamlEditor).click().focused();
       yamlEditor.setEditorContent(yaml);
     },
   );
@@ -418,9 +416,7 @@ And('user enters url under Parameters section {string}', (url: string) => {
 });
 
 And('user adds {string} workspace as {string}', (workspace: string, wName: string) => {
-  cy.get(`[data-test="workspaces ${workspace}"]`)
-    .scrollIntoView()
-    .select(wName);
+  cy.get(`[data-test="workspaces ${workspace}"]`).scrollIntoView().select(wName);
 });
 
 Given('user has applied yaml {string}', (yamlFile: string) => {
@@ -431,7 +427,7 @@ Given('user has applied yaml {string}', (yamlFile: string) => {
     {
       failOnNonZeroExit: false,
     },
-  ).then(function(result) {
+  ).then(function (result) {
     cy.log(result.stdout);
   });
 });
@@ -498,7 +494,7 @@ Given('user has imported YAML {string} and {string}', (task1: string, task2: str
     {
       failOnNonZeroExit: false,
     },
-  ).then(function(result) {
+  ).then(function (result) {
     cy.log(result.stdout);
   });
   cy.exec(
@@ -508,7 +504,7 @@ Given('user has imported YAML {string} and {string}', (task1: string, task2: str
     {
       failOnNonZeroExit: false,
     },
-  ).then(function(result) {
+  ).then(function (result) {
     cy.log(result.stdout);
   });
 });
@@ -521,9 +517,7 @@ And('user is at YAML view of Pipeline Builder page', () => {
 
 When('user enters the yaml content from yaml file {string}', (yamlFile: string) => {
   cy.fixture(`pipelines-workspaces/sum-and-multiply-pipeline/${yamlFile}`).then((yaml) => {
-    cy.get(pipelineBuilderPO.yamlCreatePipeline.yamlEditor)
-      .click()
-      .focused();
+    cy.get(pipelineBuilderPO.yamlCreatePipeline.yamlEditor).click().focused();
     yamlEditor.setEditorContent(yaml);
   });
 });
@@ -553,9 +547,7 @@ When('user selects {string} from {string}', (taskName: string, publisher: string
 
 When('user selects {string} from git community', () => {
   cy.get('[aria-label="Quick search list"]').should('be.visible');
-  cy.get('li')
-    .contains('git-clone')
-    .click();
+  cy.get('li').contains('git-clone').click();
 });
 
 When('user clicks on Install and add button', () => {
@@ -572,9 +564,7 @@ When('user clicks on Add in selected task', () => {
 
 When('user adds a task in series', () => {
   cy.mouseHover(pipelineBuilderPO.formView.task);
-  cy.get(pipelineBuilderPO.formView.plusTaskIcon)
-    .first()
-    .click({ force: true });
+  cy.get(pipelineBuilderPO.formView.plusTaskIcon).first().click({ force: true });
 });
 
 When('user should see the Create button enabled after installation', () => {
@@ -596,9 +586,7 @@ When('user hovers over the newly added task', () => {
 });
 
 When('user clicks on delete icon', () => {
-  cy.get(pipelineBuilderPO.formView.deleteTaskIcon)
-    .first()
-    .click({ force: true });
+  cy.get(pipelineBuilderPO.formView.deleteTaskIcon).first().click({ force: true });
 });
 
 Then('user can see the task in series gets removed', () => {
@@ -628,11 +616,7 @@ When(
 
 When('user changes version to {string}', (menuItem: string) => {
   cy.get(pipelineBuilderPO.formView.versionTask).click();
-  cy.get("[role='menu']")
-    .find('li')
-    .contains(menuItem)
-    .should('be.visible')
-    .click();
+  cy.get("[role='menu']").find('li').contains(menuItem).should('be.visible').click();
 });
 
 When('user clicks on Update and Add button', () => {
