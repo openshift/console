@@ -1155,6 +1155,235 @@ Object {
           "vcsRef": "master",
           "vcsURI": "https://github.com/redhat-developer/topology-example",
         },
+        "id": "02f680df-680f-11e9-b69e-5254003f9382",
+        "name": "nodejs-with-bc",
+        "resource": Object {
+          "apiVersion": "apps/v1",
+          "kind": "DeploymentConfig",
+          "metadata": Object {
+            "annotations": Object {
+              "app.openshift.io/vcs-ref": "master",
+              "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
+            },
+            "creationTimestamp": "2019-04-22T11:58:33Z",
+            "generation": 2,
+            "labels": Object {
+              "app": "nodejs-with-bc",
+              "app.kubernetes.io/instance": "nodejs-with-bc",
+              "app.openshift.io/part-of": "nodejs-with-bc",
+              "app.openshift.io/runtime": "nodejs",
+            },
+            "name": "nodejs-with-bc",
+            "namespace": "testproject",
+            "resourceVersion": "732186",
+            "uid": "02f680df-680f-11e9-b69e-5254003f9382",
+          },
+          "spec": Object {
+            "strategy": Object {
+              "type": "Rolling",
+            },
+            "template": Object {
+              "metadata": Object {
+                "creationTimestamp": null,
+                "labels": Object {
+                  "app": "nodejs-with-bc",
+                  "deploymentconfig": "nodejs-with-bc",
+                },
+              },
+              "spec": Object {},
+            },
+            "triggers": Array [
+              Object {
+                "imageChangeParams": Object {
+                  "automatic": true,
+                  "containerNames": Array [
+                    "nodejs-with-bc",
+                  ],
+                  "from": Object {
+                    "kind": "ImageStreamTag",
+                    "name": "nodejs:latest",
+                    "namespace": "testproject",
+                  },
+                },
+                "type": "ImageChange",
+              },
+              Object {
+                "type": "ConfigChange",
+              },
+            ],
+          },
+          "status": Object {
+            "availableReplicas": 1,
+            "latestVersion": 1,
+            "readyReplicas": 1,
+            "replicas": 1,
+            "unavailableReplicas": 0,
+            "updatedReplicas": 1,
+          },
+        },
+        "resources": Object {
+          "hpas": undefined,
+          "isMonitorable": true,
+          "isOperatorBackedService": false,
+          "monitoringAlerts": Array [],
+          "obj": Object {
+            "apiVersion": "apps/v1",
+            "kind": "DeploymentConfig",
+            "metadata": Object {
+              "annotations": Object {
+                "app.openshift.io/vcs-ref": "master",
+                "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
+              },
+              "creationTimestamp": "2019-04-22T11:58:33Z",
+              "generation": 2,
+              "labels": Object {
+                "app": "nodejs-with-bc",
+                "app.kubernetes.io/instance": "nodejs-with-bc",
+                "app.openshift.io/part-of": "nodejs-with-bc",
+                "app.openshift.io/runtime": "nodejs",
+              },
+              "name": "nodejs-with-bc",
+              "namespace": "testproject",
+              "resourceVersion": "732186",
+              "uid": "02f680df-680f-11e9-b69e-5254003f9382",
+            },
+            "spec": Object {
+              "strategy": Object {
+                "type": "Rolling",
+              },
+              "template": Object {
+                "metadata": Object {
+                  "creationTimestamp": null,
+                  "labels": Object {
+                    "app": "nodejs-with-bc",
+                    "deploymentconfig": "nodejs-with-bc",
+                  },
+                },
+                "spec": Object {},
+              },
+              "triggers": Array [
+                Object {
+                  "imageChangeParams": Object {
+                    "automatic": true,
+                    "containerNames": Array [
+                      "nodejs-with-bc",
+                    ],
+                    "from": Object {
+                      "kind": "ImageStreamTag",
+                      "name": "nodejs:latest",
+                      "namespace": "testproject",
+                    },
+                  },
+                  "type": "ImageChange",
+                },
+                Object {
+                  "type": "ConfigChange",
+                },
+              ],
+            },
+            "status": Object {
+              "availableReplicas": 1,
+              "latestVersion": 1,
+              "readyReplicas": 1,
+              "replicas": 1,
+              "unavailableReplicas": 0,
+              "updatedReplicas": 1,
+            },
+          },
+        },
+        "type": "workload",
+      },
+      "group": false,
+      "height": 104,
+      "id": "02f680df-680f-11e9-b69e-5254003f9382",
+      "label": "nodejs-with-bc",
+      "resource": Object {
+        "apiVersion": "apps/v1",
+        "kind": "DeploymentConfig",
+        "metadata": Object {
+          "annotations": Object {
+            "app.openshift.io/vcs-ref": "master",
+            "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
+          },
+          "creationTimestamp": "2019-04-22T11:58:33Z",
+          "generation": 2,
+          "labels": Object {
+            "app": "nodejs-with-bc",
+            "app.kubernetes.io/instance": "nodejs-with-bc",
+            "app.openshift.io/part-of": "nodejs-with-bc",
+            "app.openshift.io/runtime": "nodejs",
+          },
+          "name": "nodejs-with-bc",
+          "namespace": "testproject",
+          "resourceVersion": "732186",
+          "uid": "02f680df-680f-11e9-b69e-5254003f9382",
+        },
+        "spec": Object {
+          "strategy": Object {
+            "type": "Rolling",
+          },
+          "template": Object {
+            "metadata": Object {
+              "creationTimestamp": null,
+              "labels": Object {
+                "app": "nodejs-with-bc",
+                "deploymentconfig": "nodejs-with-bc",
+              },
+            },
+            "spec": Object {},
+          },
+          "triggers": Array [
+            Object {
+              "imageChangeParams": Object {
+                "automatic": true,
+                "containerNames": Array [
+                  "nodejs-with-bc",
+                ],
+                "from": Object {
+                  "kind": "ImageStreamTag",
+                  "name": "nodejs:latest",
+                  "namespace": "testproject",
+                },
+              },
+              "type": "ImageChange",
+            },
+            Object {
+              "type": "ConfigChange",
+            },
+          ],
+        },
+        "status": Object {
+          "availableReplicas": 1,
+          "latestVersion": 1,
+          "readyReplicas": 1,
+          "replicas": 1,
+          "unavailableReplicas": 0,
+          "updatedReplicas": 1,
+        },
+      },
+      "resourceKind": "apps~v1~DeploymentConfig",
+      "shape": undefined,
+      "style": Object {
+        "padding": Array [
+          0,
+          20,
+        ],
+      },
+      "type": "workload",
+      "visible": true,
+      "width": 104,
+    },
+    Object {
+      "data": Object {
+        "data": Object {
+          "builderImage": "test-file-stub",
+          "editURL": undefined,
+          "isKnativeResource": false,
+          "kind": "apps~v1~DeploymentConfig",
+          "monitoringAlerts": Array [],
+          "vcsRef": "master",
+          "vcsURI": "https://github.com/redhat-developer/topology-example",
+        },
         "id": "02f680df-b69e-5254003f9382",
         "name": "nodejs-ex",
         "resource": Object {
