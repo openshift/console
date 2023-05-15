@@ -757,7 +757,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
         isCSV(obj) ||
         _.isUndefined(
           all.find(({ metadata }) =>
-            [obj?.status?.currentCSV, obj?.spec?.startingCSV].includes(metadata.name),
+            [obj?.status?.currentCSV, obj?.spec?.startingCSV].includes(metadata?.name),
           ),
         ),
     );
