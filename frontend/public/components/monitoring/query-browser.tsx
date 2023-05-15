@@ -70,7 +70,6 @@ import { PrometheusAPIError } from './types';
 import { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
-export const colors = queryBrowserTheme.line.colorScale;
 
 // Use exponential notation for small or very large numbers to avoid labels with too many characters
 const formatPositiveValue = (v: number): string =>
@@ -427,6 +426,8 @@ const Graph: React.FC<GraphProps> = React.memo(
 
     const GroupComponent = isStack ? ChartStack : ChartGroup;
     const ChartComponent = isStack ? ChartArea : ChartLine;
+
+    const colors = queryBrowserTheme.line.colorScale;
 
     return (
       <Chart

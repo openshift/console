@@ -66,7 +66,8 @@ import { setAllQueryArguments } from '../utils/router';
 import { useBoolean } from './hooks/useBoolean';
 import KebabDropdown from './kebab-dropdown';
 import IntervalDropdown from './poll-interval-dropdown';
-import { colors, Error, QueryBrowser } from './query-browser';
+import { Error, QueryBrowser } from './query-browser';
+import { queryBrowserTheme } from './query-browser-theme';
 import TablePagination from './table-pagination';
 import { PrometheusAPIError } from './types';
 
@@ -162,6 +163,8 @@ const ExpandButton = ({ isExpanded, onClick }) => {
 
 const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
   const { t } = useTranslation();
+
+  const colors = queryBrowserTheme.line.colorScale;
 
   const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ observe }: RootState) => {
     const disabledSeries = observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries']);
