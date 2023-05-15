@@ -5,13 +5,13 @@ import { queryBrowserDeleteAllQueries } from '@console/internal/actions/observe'
 import { QueryTable } from '@console/internal/components/monitoring/metrics';
 import {
   QueryBrowser,
-  QueryObj,
   QueryBrowserProps,
 } from '@console/internal/components/monitoring/query-browser';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import EmptyStateQuery from './EmptyStateQuery';
 import './MetricsChart.scss';
+import { QueryObj } from './types';
 
 type StateProps = {
   queries: QueryObj[];

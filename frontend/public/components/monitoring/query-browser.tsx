@@ -993,15 +993,6 @@ type GraphDataPoint = {
 
 type Series = [PrometheusLabels, GraphDataPoint[]] | [];
 
-export type QueryObj = {
-  disabledSeries?: PrometheusLabels[];
-  isEnabled?: boolean;
-  isExpanded?: boolean;
-  query?: string;
-  series?: PrometheusLabels[];
-  text?: string;
-};
-
 export type FormatSeriesTitle = (labels: PrometheusLabels, i?: number) => string;
 
 type ErrorProps = {
