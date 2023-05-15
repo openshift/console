@@ -8,6 +8,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import {
   ActionGroup,
+  Alert,
   Button,
   Dropdown,
   DropdownItem,
@@ -66,7 +67,7 @@ import { setAllQueryArguments } from '../utils/router';
 import { useBoolean } from './hooks/useBoolean';
 import KebabDropdown from './kebab-dropdown';
 import IntervalDropdown from './poll-interval-dropdown';
-import { Error, QueryBrowser } from './query-browser';
+import { QueryBrowser } from './query-browser';
 import { queryBrowserTheme } from './query-browser-theme';
 import TablePagination from './table-pagination';
 import { PrometheusAPIError } from './types';
@@ -346,7 +347,14 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
   if (error) {
     return (
       <div className="query-browser__table-message">
-        <Error error={error} title={t('public~Error loading values')} />
+        <Alert
+          className="co-alert"
+          isInline
+          title={t('public~Error loading values')}
+          variant="danger"
+        >
+          {_.get(error, 'json.error', error.message)}
+        </Alert>
       </div>
     );
   }

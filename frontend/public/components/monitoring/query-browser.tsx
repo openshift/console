@@ -82,7 +82,7 @@ const valueFormatter = (units: string): ((v: number) => string) =>
     ? (v: number) => formatNumber(String(v), undefined, units)
     : formatValue;
 
-export const Error: React.FC<ErrorProps> = ({ error, title = 'An error occurred' }) => (
+const Error: React.FC<ErrorProps> = ({ error, title = 'An error occurred' }) => (
   <Alert isInline className="co-alert" title={title} variant="danger">
     {_.get(error, 'json.error', error.message)}
   </Alert>
