@@ -12,6 +12,7 @@ import {
   topologyPO,
   adminNavigationMenuPO,
 } from '../pageObjects';
+import { userPreferencePO } from '../pageObjects/userPreference-po';
 
 export const app = {
   waitForDocumentLoad: () => {
@@ -262,12 +263,24 @@ export const projectNameSpace = {
     app.waitForLoad();
     cy.url().then((url) => {
       if (url.includes('add/all-namespaces')) {
-        cy.get('tr[data-test-rows="resource-row"]').should('have.length.at.least', 1);
+        cy.get(userPreferencePO.userMenu, {
+          timeout: 50000,
+        }).then(($ele) => {
+          if ($ele.text().includes('kube:admin')) {
+            cy.get('tr[data-test-rows="resource-row"]').should('have.length.at.least', 1);
+          } else {
+            cy.get('[data-test="empty-message"]').should('have.text', 'No Projects found');
+          }
+        });
       }
     });
     projectNameSpace.clickProjectDropdown();
-    cy.byTestID('showSystemSwitch').check(); // Ensure that all projects are showing
-    cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);
+    cy.get('body').then(($body) => {
+      if ($body.find(userPreferencePO.userMenu).text().includes('kube:admin')) {
+        cy.byTestID('showSystemSwitch').check(); // Ensure that all projects are showing
+        cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);
+      }
+    });
     // Bug: ODC-6164 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
     // cy.testA11y('Create Project modal');
     cy.byTestID('dropdown-text-filter').type(projectName);
