@@ -10,7 +10,7 @@ export const withRequestTokenURL = <Props extends WithRequestTokenURLProps>(
 ): React.FC<Omit<Props, keyof WithRequestTokenURLProps>> => {
   const Component = (props: Props) => {
     const requestTokenURL = useRequestTokenURL();
-    return <WrappedComponent {...props} clusterTokenURL={requestTokenURL} />;
+    return <WrappedComponent {...props} requestTokenURL={requestTokenURL} />;
   };
   Component.displayName = `withRequestTokenURL(${
     WrappedComponent.displayName || WrappedComponent.name

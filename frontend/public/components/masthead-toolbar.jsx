@@ -541,7 +541,7 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _renderMenu(mobile) {
-    const { clusterTokenURL, flags, consoleLinks, t } = this.props;
+    const { requestTokenURL, flags, consoleLinks, t } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
     const additionalUserActions = this._getAdditionalActions(
       this._getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
@@ -579,10 +579,10 @@ class MastheadToolbarContents_ extends React.Component {
         }
       };
 
-      if (clusterTokenURL) {
+      if (requestTokenURL) {
         userActions.unshift({
           label: t('public~Copy login command'),
-          href: clusterTokenURL,
+          href: requestTokenURL,
           externalLink: true,
         });
       }
