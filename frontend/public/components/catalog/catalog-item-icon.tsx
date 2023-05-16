@@ -82,6 +82,7 @@ import * as rhIntegrationImg from '../../imgs/logos/rh-integration.svg';
 import * as rhSpringBoot from '../../imgs/logos/rh-spring-boot.svg';
 import * as rhTomcatImg from '../../imgs/logos/rh-tomcat.svg';
 import * as rubyImg from '../../imgs/logos/ruby.svg';
+import * as rustImg from '../../imgs/logos/rust.svg';
 import * as scalaImg from '../../imgs/logos/scala.svg';
 import * as shadowmanImg from '../../imgs/logos/shadowman.svg';
 import * as springImg from '../../imgs/logos/spring.svg';
@@ -176,6 +177,7 @@ const logos = new Map<string, any>()
   .set('icon-redis', redisImg)
   .set('icon-rh-integration', rhIntegrationImg)
   .set('icon-rh-spring-boot', rhSpringBoot)
+  .set('icon-rust', rustImg)
   .set('icon-serverless-function', serverlessFuncImage)
   .set('icon-java', openjdkImg)
   // Use the upstream icon.
