@@ -404,7 +404,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const createItems =
     providedAPIs.length > 1
       ? providedAPIs.reduce(
-          (acc, api) => ({ ...acc, [referenceForProvidedAPI(api)]: api.displayName }),
+          (acc, api) => ({ ...acc, [referenceForProvidedAPI(api)]: api.displayName || api.kind }),
           {},
         )
       : {};
