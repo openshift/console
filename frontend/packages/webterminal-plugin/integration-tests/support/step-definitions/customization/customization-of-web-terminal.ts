@@ -32,7 +32,7 @@ When('user clicks on Web Terminal tab', () => {
   cy.get('[role="presentation"]').contains('Web Terminal').should('be.visible').click();
 });
 
-Then('user should see Web Terminal Congiguration page', () => {
+Then('user should see Web Terminal Configuration page', () => {
   cy.byTestID('web-terminal form-section').should('be.visible');
 });
 
@@ -40,8 +40,11 @@ Given('user is at Web Terminal Configuration page', () => {
   webTerminalConfiguration();
 });
 
+When('user switches to Developer tab', () => {
+  cy.get('[role="presentation"]').contains('Developer').should('be.visible').click();
+});
+
 When('user increase the timeout value and set unit as {string}', (unit: string) => {
-  cy.wait(2000);
   cy.get('[data-test-id="Increment"]').should('be.visible').click();
   cy.byLegacyTestID('dropdown-button').click();
   cy.byLegacyTestID('dropdown-menu').contains(unit).click();
@@ -65,7 +68,6 @@ When('user checks checkboxes to save data even after operator restarts or update
 });
 
 When('user unchecks checkboxes to save data even after operator restarts or update', () => {
-  cy.wait(2000);
   cy.get('[data-test="timeout-value-checkbox"]').should('be.enabled').uncheck();
   cy.get('[data-test="image-value-checkbox"]').should('be.enabled').uncheck();
 });
@@ -73,4 +75,54 @@ When('user unchecks checkboxes to save data even after operator restarts or upda
 When('user navigates to Cluster configuration page', () => {
   cy.byLegacyTestID('actions-menu-button').should('be.visible').click();
   cy.byTestActionID('Customize').should('be.visible').click();
+});
+
+Then(
+  'user should see timeout checkbox to save data even after operator restarts or update is unchecked',
+  () => {
+    cy.get('[data-test="timeout-value-checkbox"]').should('not.be.checked');
+  },
+);
+
+Then(
+  'user should see image checkbox to save data even after operator restarts or update is unchecked',
+  () => {
+    cy.get('[data-test="image-value-checkbox"]').should('not.be.checked');
+  },
+);
+
+Then(
+  'user should see timeout checkbox to save data even after operator restarts or update is checked',
+  () => {
+    cy.get('[data-test="timeout-value-checkbox"]').should('be.checked');
+  },
+);
+
+Then(
+  'user should see image checkbox to save data even after operator restarts or update is checked',
+  () => {
+    cy.get('[data-test="image-value-checkbox"]').should('be.checked');
+  },
+);
+
+When(
+  'user decides not to save image value by unchecking the checkbox to save data even after operator restarts or update in Web Terminal Configuration page',
+  () => {
+    cy.get('[data-test="image-value-checkbox"]').should('be.enabled').uncheck();
+  },
+);
+
+When(
+  ' user decides not to save timeout value by unchecking the checkbox to save data even after operator restarts or update in Web Terminal Configuration page',
+  () => {
+    cy.get('[data-test="timeout-value-checkbox"]').should('be.enabled').uncheck();
+  },
+);
+
+Then('user should see new image value as {string}', (imageValue: string) => {
+  cy.get('[data-test="web-terminal-image"]').should('have.value', imageValue);
+});
+
+Then('user should see new timeout unit as {string}', (unitValue: string) => {
+  cy.byLegacyTestID('dropdown-button').should('include.text', unitValue);
 });
