@@ -1228,6 +1228,7 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
     [csv, subscriptions],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const menuActions = React.useCallback(
     !subscription
       ? () => [Kebab.factory.Delete(ClusterServiceVersionModel, csv)]

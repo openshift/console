@@ -1,6 +1,6 @@
+import { act } from '@testing-library/react';
 import { Simulate } from 'react-dom/test-utils';
 import { PluginStore } from '@console/plugin-sdk/src/store';
-import { act } from '@testing-library/react';
 import { ConsolePluginManifestJSON } from '../../schema/plugin-manifest';
 import { Extension } from '../../types';
 import {
