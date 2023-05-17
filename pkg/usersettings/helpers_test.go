@@ -54,7 +54,7 @@ func TestNewUserSettingsMeta(t *testing.T) {
 				UID:                "1234",
 				ResourceIdentifier: "1234",
 				OwnerReferences: []meta.OwnerReference{
-					meta.OwnerReference{
+					{
 						APIVersion: "user.openshift.io/v1",
 						Kind:       "User",
 						Name:       "kube:admin",
@@ -81,7 +81,7 @@ func TestNewUserSettingsMeta(t *testing.T) {
 				UID:                "1234",
 				ResourceIdentifier: "1234",
 				OwnerReferences: []meta.OwnerReference{
-					meta.OwnerReference{
+					{
 						APIVersion: "user.openshift.io/v1",
 						Kind:       "User",
 						Name:       "developer",

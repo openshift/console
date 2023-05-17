@@ -190,7 +190,7 @@ func (m *Metrics) calculatePluginInfo(
 
 	if lastPluginInfo != nil {
 		for lastPluginVendor, lastPluginStates := range *lastPluginInfo {
-			for lastPluginState, _ := range lastPluginStates {
+			for lastPluginState := range lastPluginStates {
 				if pluginInfo[lastPluginVendor] == nil {
 					pluginInfo[lastPluginVendor] = make(map[PluginState]int)
 				}
@@ -223,7 +223,7 @@ func (m *Metrics) calculatePluginInfo(
 	}
 
 	if m.config != nil && m.config.Plugins != nil {
-		for pluginName, _ := range m.config.Plugins {
+		for pluginName := range m.config.Plugins {
 			if found := consolePluginNames[pluginName]; !found {
 				vendor := knownPluginVendors[pluginName]
 				if vendor == "" {
