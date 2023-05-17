@@ -12,7 +12,7 @@ const ImageSection: React.FC = () => {
         type={TextInputTypes.text}
         name="advancedOptions.image"
         label={t('console-app~Image')}
-        helpText={t('console-app~Set custom image for the terminal.')}
+        helpText={t('console-app~Custom image used for your command line terminal.')}
       />
     </FormSection>
   );

@@ -67,9 +67,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
             : undefined
         }
         onLoad={handleOnLoad}
-        helpText={t(
-          'console-app~This Project will be used to initialize your command line terminal',
-        )}
+        helpText={t('console-app~Project used to initialize your command line terminal.')}
       />
       {namespace.value === CREATE_NAMESPACE_KEY && (
         <InputField

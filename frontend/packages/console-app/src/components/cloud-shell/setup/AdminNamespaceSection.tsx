@@ -12,9 +12,7 @@ const AdminNamespaceSection: React.FC = () => {
         type={TextInputTypes.text}
         name="namespace"
         label={t('console-app~Project')}
-        helpText={t(
-          'console-app~This Project will be used to initialize your command line terminal',
-        )}
+        helpText={t('console-app~Project used to initialize your command line terminal.')}
         isDisabled
         required
       />
