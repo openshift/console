@@ -29,7 +29,7 @@ import { useUpdateKnScalingDefaultValues } from '../serverless/useUpdateKnScalin
 import AddServerlessFunctionForm from './AddServerlessFunctionForm';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-type watchResource = {
+type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };
 
@@ -107,7 +107,7 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
       isList: true,
     },
   };
-  const resourcesData: WatchK8sResults<watchResource> = useK8sWatchResources<watchResource>(
+  const resourcesData: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>(
     watchedResources,
   );
 
