@@ -18,7 +18,7 @@ func newUserSettingMeta(userInfo *unstructured.Unstructured) (*UserSettingMeta, 
 	if uid != "" {
 		resourceIdentifier = string(uid)
 		ownerReferences = []meta.OwnerReference{
-			meta.OwnerReference{
+			{
 				APIVersion: userInfo.GetAPIVersion(),
 				Kind:       userInfo.GetKind(),
 				Name:       name,
@@ -51,7 +51,7 @@ func createRole(userSettingMeta *UserSettingMeta) *rbac.Role {
 			OwnerReferences: userSettingMeta.OwnerReferences,
 		},
 		Rules: []rbac.PolicyRule{
-			rbac.PolicyRule{
+			{
 				APIGroups: []string{
 					"", // Core group, not "v1"
 				},
@@ -84,7 +84,7 @@ func createRoleBinding(userSettingMeta *UserSettingMeta) *rbac.RoleBinding {
 			OwnerReferences: userSettingMeta.OwnerReferences,
 		},
 		Subjects: []rbac.Subject{
-			rbac.Subject{
+			{
 				APIGroup: "rbac.authorization.k8s.io",
 				Kind:     "User",
 				Name:     userSettingMeta.Username,

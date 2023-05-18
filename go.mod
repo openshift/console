@@ -1,6 +1,6 @@
 module github.com/openshift/console
 
-go 1.18
+go 1.20
 
 require (
 	github.com/coreos/go-oidc v2.1.0+incompatible
