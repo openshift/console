@@ -3,9 +3,11 @@ import * as React from 'react';
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 
+import { FormatSeriesTitle } from '@console/dynamic-plugin-sdk';
+import { QueryBrowser } from '@console/shared/src/components/query-browser';
+
 import { dashboardsSetEndTime, dashboardsSetTimespan } from '../../../actions/observe';
 import { RootState } from '../../../redux';
-import { FormatSeriesTitle, QueryBrowser } from '../query-browser';
 import { DEFAULT_GRAPH_SAMPLES, getActivePerspective } from './monitoring-dashboard-utils';
 
 import { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';

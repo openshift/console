@@ -45,6 +45,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { withFallback } from '@console/shared/src/components/error';
+import { QueryBrowser, queryBrowserTheme } from '@console/shared/src/components/query-browser';
 
 import {
   queryBrowserAddQuery,
@@ -67,8 +68,6 @@ import { setAllQueryArguments } from '../utils/router';
 import { useBoolean } from './hooks/useBoolean';
 import KebabDropdown from './kebab-dropdown';
 import IntervalDropdown from './poll-interval-dropdown';
-import { QueryBrowser } from './query-browser';
-import { queryBrowserTheme } from './query-browser-theme';
 import TablePagination from './table-pagination';
 import { PrometheusAPIError } from './types';
 

@@ -1,13 +1,4 @@
-import classNames from 'classnames';
-import * as _ from 'lodash-es';
 import * as React from 'react';
-import {
-  PrometheusEndpoint,
-  PrometheusLabels,
-  PrometheusResponse,
-  PrometheusResult,
-  PrometheusValue,
-} from '@console/dynamic-plugin-sdk';
 import {
   formatPrometheusDuration,
   parsePrometheusDuration,
@@ -39,41 +30,54 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
+import classNames from 'classnames';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { VictoryPortal } from 'victory-core';
-
-import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
-
+import {
+  FormatSeriesTitle,
+  PrometheusEndpoint,
+  PrometheusLabels,
+  PrometheusResponse,
+  PrometheusResult,
+  PrometheusValue,
+  QueryBrowserProps,
+} from '@console/dynamic-plugin-sdk';
 import {
   queryBrowserDeleteAllSeries,
   queryBrowserPatchQuery,
   queryBrowserSetTimespan,
-} from '../../actions/observe';
-import { RootState } from '../../redux';
-import { GraphEmpty } from '../graphs/graph-empty';
-import { getPrometheusURL } from '../graphs/helpers';
-import { humanizeNumberSI, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
+} from '@console/internal/actions/observe';
+import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
+import { getPrometheusURL } from '@console/internal/components/graphs/helpers';
+import { formatNumber } from '@console/internal/components/monitoring/format';
+import { useBoolean } from '@console/internal/components/monitoring/hooks/useBoolean';
+import { PrometheusAPIError } from '@console/internal/components/monitoring/types';
+import {
+  humanizeNumberSI,
+  LoadingInline,
+  usePoll,
+  useRefWidth,
+  useSafeFetch,
+} from '@console/internal/components/utils';
 import {
   dateFormatterNoYear,
   dateTimeFormatterWithSeconds,
   timeFormatter,
   timeFormatterWithSeconds,
-} from '../utils/datetime';
-import { formatNumber } from './format';
-import { useBoolean } from './hooks/useBoolean';
-import { queryBrowserTheme } from './query-browser-theme';
-import { PrometheusAPIError } from './types';
-
-import { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
+} from '@console/internal/components/utils/datetime';
+import { RootState } from '@console/internal/redux';
+import withFallback from '../error/fallbacks/withFallback';
+import { queryBrowserTheme } from './theme';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 
 // Use exponential notation for small or very large numbers to avoid labels with too many characters
 const formatPositiveValue = (v: number): string =>
-  v === 0 || (0.001 <= v && v < 1e23) ? humanizeNumberSI(v).string : v.toExponential(1);
+  v === 0 || (v >= 0.001 && v < 1e23) ? humanizeNumberSI(v).string : v.toExponential(1);
 
 const formatValue = (v: number): string => (v < 0 ? '-' : '') + formatPositiveValue(Math.abs(v));
 
@@ -187,6 +191,7 @@ const TOOLTIP_MAX_RIGHT_JUT_OUT = 45;
 
 type TooltipSeries = {
   color: string;
+  key: string;
   labels: PrometheusLabels;
   name: string;
   total: number;
@@ -194,7 +199,14 @@ type TooltipSeries = {
 };
 
 // For performance, use this instead of PatternFly's ChartTooltip or Victory VictoryTooltip
-const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style, width, x }) => {
+const TooltipWrapped: React.FC<TooltipProps> = ({
+  activePoints,
+  center,
+  height,
+  style,
+  width,
+  x,
+}) => {
   const time = activePoints?.[0]?.x;
 
   if (!_.isDate(time) || !_.isFinite(x)) {
@@ -226,6 +238,7 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
     ) {
       const point = {
         color: style[i]?.fill,
+        key: String(i),
         labels: style[i]?.labels,
         name: style[i]?.name,
         total,
@@ -259,6 +272,7 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
     if (_.isEmpty(series.labels)) {
       return '{}';
     }
+    // eslint-disable-next-line no-underscore-dangle
     const name = series.labels.__name__ ?? '';
     const otherLabels = _.intersection(allSeriesSorted, Object.keys(series.labels));
     return `${name}{${otherLabels.map((l) => `${l}=${series.labels[l]}`).join(',')}}`;
@@ -283,8 +297,8 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
               <div className="query-browser__tooltip-time">
                 {dateTimeFormatterWithSeconds.format(time)}
               </div>
-              {allSeries.map((s, i) => (
-                <div className="query-browser__tooltip-series" key={i}>
+              {allSeries.map((s) => (
+                <div className="query-browser__tooltip-series" key={s.key}>
                   <div className="query-browser__series-btn" style={{ backgroundColor: s.color }} />
                   <div className="co-nowrap co-truncate">{getSeriesName(s)}</div>
                   <div className="query-browser__tooltip-value">{s.value}</div>
@@ -298,7 +312,7 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
     </>
   );
 };
-const Tooltip = withFallback(Tooltip_);
+const Tooltip = withFallback(TooltipWrapped);
 
 const graphContainer = (
   // Set activateData to false to work around VictoryVoronoiContainer crash (see
@@ -307,7 +321,7 @@ const graphContainer = (
     activateData={false}
     labelComponent={<Tooltip />}
     labels={() => ' '}
-    mouseFollowTooltips={true}
+    mouseFollowTooltips
     voronoiDimension="x"
     voronoiPadding={0}
   />
@@ -454,11 +468,12 @@ const Graph: React.FC<GraphProps> = React.memo(
               return null;
             }
             const color = colors[i % colors.length];
+            const labels = tooltipSeriesLabels[i];
             const style = {
               data: { [isStack ? 'fill' : 'stroke']: color },
               labels: {
                 fill: color,
-                labels: tooltipSeriesLabels[i],
+                labels,
                 name: tooltipSeriesNames[i],
                 units,
               },
@@ -469,7 +484,7 @@ const Graph: React.FC<GraphProps> = React.memo(
               <ChartComponent
                 data={values}
                 groupComponent={<g />}
-                key={i}
+                key={_.map(labels, (v, k) => `${k}=${v}`).join(',')}
                 name={`series-${i}`}
                 style={style}
               />
@@ -646,7 +661,8 @@ const Loading = () => (
 const getMaxSamplesForSpan = (span: number) =>
   _.clamp(Math.round(span / minStep), minSamples, maxSamples);
 
-const QueryBrowser_: React.FC<QueryBrowserProps> = ({
+const QueryBrowserWrapped: React.FC<QueryBrowserProps> = ({
+  customDataSource,
   defaultSamples,
   defaultTimespan = parsePrometheusDuration('30m'),
   disabledSeries,
@@ -660,7 +676,6 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   namespace,
   onZoom,
   pollInterval,
-  customDataSource,
   queries,
   showLegend,
   showStackedControl = false,
@@ -861,7 +876,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
         {error && !isRangeVector && <Error error={error} />}
         <div className="query-browser__wrapper query-browser__wrapper--hidden">
           <div className="graph-wrapper graph-wrapper--query-browser">
-            <div ref={containerRef} style={{ width: '100%' }}></div>
+            <div ref={containerRef} style={{ width: '100%' }} />
           </div>
         </div>
       </>
@@ -982,7 +997,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     </div>
   );
 };
-export const QueryBrowser = withFallback(QueryBrowser_);
+export const QueryBrowser = withFallback(QueryBrowserWrapped);
 
 type AxisDomain = [number, number];
 
@@ -992,8 +1007,6 @@ type GraphDataPoint = {
 };
 
 type Series = [PrometheusLabels, GraphDataPoint[]] | [];
-
-export type FormatSeriesTitle = (labels: PrometheusLabels, i?: number) => string;
 
 type ErrorProps = {
   error: PrometheusAPIError;
@@ -1020,28 +1033,6 @@ type GraphProps = {
 type GraphOnZoom = (from: number, to: number) => void;
 
 type ZoomableGraphProps = GraphProps & { onZoom: GraphOnZoom };
-
-export type QueryBrowserProps = {
-  defaultSamples?: number;
-  defaultTimespan?: number;
-  disabledSeries?: PrometheusLabels[][];
-  disableZoom?: boolean;
-  filterLabels?: PrometheusLabels;
-  fixedEndTime?: number;
-  formatSeriesTitle?: FormatSeriesTitle;
-  GraphLink?: React.ComponentType<{}>;
-  hideControls?: boolean;
-  isStack?: boolean;
-  namespace?: string;
-  onZoom?: GraphOnZoom;
-  pollInterval?: number;
-  customDataSource?: CustomDataSource;
-  queries: string[];
-  showLegend?: boolean;
-  showStackedControl?: boolean;
-  timespan?: number;
-  units?: string;
-};
 
 type SpanControlsProps = {
   defaultSpanText: string;

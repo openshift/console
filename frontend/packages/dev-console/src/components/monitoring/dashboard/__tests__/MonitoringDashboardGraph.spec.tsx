@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as redux from 'react-redux';
-import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
+import { QueryBrowser } from '@console/shared/src/components/query-browser';
 import { t } from '../../../../../../../__mocks__/i18next';
 import { monitoringDashboardQueries } from '../../queries';
 import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGraph';
