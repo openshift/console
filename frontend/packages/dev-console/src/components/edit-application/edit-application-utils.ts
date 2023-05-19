@@ -15,7 +15,7 @@ import {
   KNATIVE_CONCURRENCYUTILIZATION_ANNOTATION,
   KNATIVE_MAXSCALE_ANNOTATION,
   KNATIVE_MINSCALE_ANNOTATION,
-  KNATIVE_SERVING_LABEL,
+  PRIVATE_KNATIVE_SERVING_LABEL,
   ServiceModel,
 } from '@console/knative-plugin';
 import { isDockerPipeline } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
@@ -167,7 +167,7 @@ export const getKsvcRouteData = (resource: K8sResourceKind) => {
   const containers = spec?.template?.spec?.containers ?? [];
   const port = containers?.[0]?.ports?.[0]?.containerPort ?? '';
   const routeData = {
-    create: metadata?.labels?.[`${KNATIVE_SERVING_LABEL}/visibility`] !== 'cluster-local',
+    create: metadata?.labels?.[PRIVATE_KNATIVE_SERVING_LABEL] !== 'cluster-local',
     unknownTargetPort: _.toString(port),
     targetPort: _.toString(port),
     defaultUnknownPort: 8080,
