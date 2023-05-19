@@ -225,7 +225,7 @@ describe('getKsvcRouteData', () => {
 
   it('should return values of route(clusterlocal and ports) based on the resource', () => {
     const routeData = {
-      create: true,
+      create: false,
       unknownTargetPort: '8080',
       targetPort: '8080',
       defaultUnknownPort: 8080,
