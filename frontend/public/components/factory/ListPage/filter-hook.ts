@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { useLocation } from 'react-router-dom';
 import { UseListPageFilter, FilterValue } from '@console/dynamic-plugin-sdk';
 
+import { useExactSearch } from '@console/app/src/components/user-preferences/search';
 import { getAllTableFilters, FilterMap } from '../table-filters';
 
 const filterData = <D>(
@@ -20,7 +21,7 @@ const filterData = <D>(
 
 export const useListPageFilter: UseListPageFilter = (data, rowFilters, staticFilters) => {
   const [filter, setFilter] = React.useState<{ [key: string]: FilterValue }>();
-
+  const [isExactSearch] = useExactSearch();
   const location = useLocation();
 
   React.useEffect(() => {
@@ -37,11 +38,11 @@ export const useListPageFilter: UseListPageFilter = (data, rowFilters, staticFil
   );
 
   return React.useMemo(() => {
-    const tableFilters = getAllTableFilters(rowFilters);
+    const tableFilters = getAllTableFilters(rowFilters, isExactSearch);
 
     const staticData = filterData(data, staticFilters, tableFilters);
     const filteredData = filterData(staticData, filter, tableFilters);
 
     return [staticData, filteredData, onFilterChange];
-  }, [data, filter, onFilterChange, rowFilters, staticFilters]);
+  }, [data, filter, isExactSearch, onFilterChange, rowFilters, staticFilters]);
 };
