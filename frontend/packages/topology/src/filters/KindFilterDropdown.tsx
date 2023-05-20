@@ -2,9 +2,8 @@ import * as React from 'react';
 import { Button, Select, SelectOption, SelectVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
-import { modelFor } from '@console/internal/module/k8s';
+import { labelForNodeKind, labelKeyForNodeKind } from '../components/list-view/list-view-utils';
 import { TopologyDisplayFilterType, DisplayFilters } from '../topology-types';
-
 import './KindFilterDropdown.scss';
 
 type KindFilterDropdownProps = {
@@ -31,11 +30,11 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
   const selectedFilterCount = kindFilters.filter((f) => f.value).length;
   kindFilters = Object.keys(supportedKinds).reduce((acc, kind) => {
     if (!filters.find((f) => f.id === kind)) {
-      const model = modelFor(kind);
       acc.push({
         type: TopologyDisplayFilterType.kind,
         id: kind,
-        label: model ? model.label : kind,
+        label: labelForNodeKind(kind),
+        labelKey: labelKeyForNodeKind(kind),
         value: false,
         priority: 1,
       });
@@ -81,7 +80,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
           data-test={filter.label}
         >
           <ResourceIcon kind={filter.id} />
-          {filter.label} ({supportedKinds[filter.id]})
+          {t(filter.labelKey)} ({supportedKinds[filter.id]})
         </SelectOption>
       ))}
     </div>
