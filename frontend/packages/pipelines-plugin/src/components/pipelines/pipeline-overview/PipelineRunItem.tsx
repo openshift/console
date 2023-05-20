@@ -12,6 +12,7 @@ import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
 import LogSnippetBlock from '../../pipelineruns/logs/LogSnippetBlock';
 import { getPLRLogSnippet } from '../../pipelineruns/logs/pipelineRunLogSnippet';
 import './PipelineRunItem.scss';
+import { useTaskRuns } from '../../taskruns/useTaskRuns';
 
 type PipelineRunItemProps = {
   pipelineRun: PipelineRunKind;
@@ -23,11 +24,12 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
     metadata: { name, namespace, creationTimestamp },
     status,
   } = pipelineRun;
+  const [taskRuns] = useTaskRuns(pipelineRun?.metadata?.namespace, pipelineRun?.metadata?.name);
   const path = resourcePath(referenceForModel(PipelineRunModel), name, namespace);
   const lastUpdated = status
     ? status.completionTime || status.startTime || creationTimestamp
     : creationTimestamp;
-  const logDetails = getPLRLogSnippet(pipelineRun);
+  const logDetails = getPLRLogSnippet(pipelineRun, taskRuns);
 
   return (
     <li className="odc-pipeline-run-item list-group-item">
