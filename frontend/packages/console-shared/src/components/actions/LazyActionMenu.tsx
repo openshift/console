@@ -12,7 +12,6 @@ import { ActionMenuVariant } from './types';
 type LazyMenuRendererProps = {
   isOpen: boolean;
   actions: Action[];
-  containerRef: React.RefObject<HTMLDivElement>;
   menuRef: React.RefObject<HTMLDivElement>;
   toggleRef: React.RefObject<HTMLButtonElement>;
 } & React.ComponentProps<typeof ActionMenuContent>;
@@ -20,7 +19,6 @@ type LazyMenuRendererProps = {
 const LazyMenuRenderer: React.FC<LazyMenuRendererProps> = ({
   isOpen,
   actions,
-  containerRef,
   menuRef,
   toggleRef,
   ...restProps
@@ -54,7 +52,6 @@ const LazyMenuRenderer: React.FC<LazyMenuRendererProps> = ({
       popper={menu}
       placement="bottom-end"
       isVisible={isOpen}
-      appendTo={containerRef.current}
       popperMatchesTriggerWidth={false}
     />
   );
@@ -71,7 +68,6 @@ const LazyActionMenu: React.FC<LazyActionMenuProps> = ({
   const [initActionLoader, setInitActionLoader] = React.useState<boolean>(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
   const toggleRef = React.useRef<HTMLButtonElement>(null);
-  const containerRef = React.useRef<HTMLDivElement>(null);
 
   const hideMenu = () => {
     setIsOpen(false);
@@ -82,7 +78,7 @@ const LazyActionMenu: React.FC<LazyActionMenuProps> = ({
   }, []);
 
   return (
-    <div ref={containerRef}>
+    <>
       <ActionMenuToggle
         isOpen={isOpen}
         isDisabled={isDisabled}
@@ -104,7 +100,6 @@ const LazyActionMenu: React.FC<LazyActionMenuProps> = ({
                   isOpen={isOpen}
                   actions={extra ? menuActions : actions}
                   options={extra ? menuOptions : options}
-                  containerRef={containerRef}
                   menuRef={menuRef}
                   toggleRef={toggleRef}
                   onClick={hideMenu}
@@ -115,7 +110,7 @@ const LazyActionMenu: React.FC<LazyActionMenuProps> = ({
           }}
         </ActionServiceProvider>
       )}
-    </div>
+    </>
   );
 };
 
