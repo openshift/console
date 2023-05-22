@@ -16,7 +16,7 @@ const normalizeDevfileSamples = (devfileSamples: DevfileSample[], t: TFunction):
 
     const item: CatalogItem = {
       uid,
-      type: 'Sample',
+      type: 'Devfile',
       name: displayName,
       description,
       tags,
