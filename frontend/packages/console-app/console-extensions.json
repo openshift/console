@@ -431,7 +431,7 @@
       "id": "console.enableExactSearch",
       "label": "%console-app~Search%",
       "groupId": "general",
-      "description": "%console-app~Enable/disable exact string match when filtering on resources.%",
+      "description": "%console-app~Enable exact string match filtering on resources.%",
       "field": {
         "type": "checkbox",
         "userSettingsKey": "console.enableExactSearch",

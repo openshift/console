@@ -26,7 +26,7 @@
   "Form": "Form",
   "YAML": "YAML",
   "Search": "Search",
-  "Enable/disable exact string match when filtering on resources.": "Enable/disable exact string match when filtering on resources.",
+  "Enable exact string match filtering on resources.": "Enable exact string match filtering on resources.",
   "Enable exact string match": "Enable exact string match",
   "Select the language you want to use for the console.": "Select the language you want to use for the console.",
   "User workload notifications": "User workload notifications",
