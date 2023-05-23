@@ -22,6 +22,8 @@ export type TriggersSectionFormData = {
       otherTriggers: {
         type: string;
         secret: string;
+        allowEnv?: boolean;
+        data?: { [key: string]: any };
       }[];
     };
   };
