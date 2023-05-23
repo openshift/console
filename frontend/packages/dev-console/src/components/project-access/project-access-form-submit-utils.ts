@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { RoleBindingModel } from '@console/internal/models';
 import { k8sCreate, k8sKill, k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
 import { generateSecret } from '../import/import-submit-utils';
-import { Verb, UserRoleBinding, RoleBinding } from './project-access-form-utils-types';
+import { Verb, UserRoleBinding, RoleBinding, SubjectType } from './project-access-form-utils-types';
 
 export const getRolesWithNameChange = (
   newRoles: UserRoleBinding[],
@@ -21,6 +21,32 @@ export const getRolesWithNameChange = (
     ),
   );
   return rolesWithNameChange;
+};
+
+export const getRolesWithSubjectChange = (
+  newRoles: UserRoleBinding[],
+  removeRoles: UserRoleBinding[],
+): UserRoleBinding[] => {
+  const createRoles = _.filter(newRoles, 'roleBindingName');
+  const deleteRoles = _.filter(removeRoles, (o1) =>
+    createRoles.find((o2) => o1.roleBindingName === o2.roleBindingName),
+  );
+  const rolesWithSubjectChange = _.filter(createRoles, (o1) =>
+    deleteRoles.find(
+      (o2) =>
+        o1.roleBindingName === o2.roleBindingName &&
+        (o1.subject.kind !== o2.subject.kind || o1.subject.namespace !== o2.subject.namespace) &&
+        o1.role === o2.role,
+    ),
+  );
+  return rolesWithSubjectChange;
+};
+
+export const getRolesToUpdate = (newRoles: UserRoleBinding[], removeRoles: UserRoleBinding[]) => {
+  return [
+    ...getRolesWithSubjectChange(newRoles, removeRoles),
+    ...getRolesWithNameChange(newRoles, removeRoles),
+  ];
 };
 
 export const sendK8sRequest = (
@@ -53,11 +79,15 @@ export const getNewRoles = (
     _.filter(
       formValues,
       (o1) =>
-        !initialRoles.find((o2) => o1.subject.name === o2.subject.name && o1.role === o2.role),
+        !initialRoles.find(
+          (o2) =>
+            o1.subject.name === o2.subject.name &&
+            o1.subject.kind === o2.subject.kind &&
+            o1.role === o2.role &&
+            o1.subject.namespace === o2.subject.namespace,
+        ),
     ),
-    function(user) {
-      return JSON.stringify([user.subject.name, user.role]);
-    },
+    (user) => JSON.stringify([user.subject.name, user.subject.kind, user.role]),
   );
   return newRoles;
 };
@@ -70,10 +100,26 @@ export const getRemovedRoles = (
     initialRoles,
     (o1) =>
       !formValues.find(
-        (o2: UserRoleBinding) => o1.subject.name === o2.subject.name && o1.role === o2.role,
+        (o2: UserRoleBinding) =>
+          o1.subject.name === o2.subject.name &&
+          o1.subject.kind === o2.subject.kind &&
+          o1.role === o2.role &&
+          o1.subject.namespace === o2.subject.namespace,
       ),
   );
   return removeRoles;
+};
+
+export const getUpdatedSubjects = (subjects: SubjectType[]) => {
+  return subjects.map((sub) => {
+    if (sub.kind === 'ServiceAccount') {
+      delete sub.apiGroup;
+      return sub;
+    }
+
+    delete sub.namespace;
+    return sub;
+  });
 };
 
 export const sendRoleBindingRequest = (
@@ -92,14 +138,16 @@ export const sendRoleBindingRequest = (
       verb === Verb.Create || verb === Verb.Remove
         ? [
             {
-              apiGroup: 'rbac.authorization.k8s.io',
-              kind: user.subject?.kind || 'User',
+              ...(user.subject.kind === 'ServiceAccount'
+                ? { namespace: user.subject.namespace }
+                : { apiGroup: 'rbac.authorization.k8s.io' }),
+              kind: user.subject.kind,
               name: user.subject.name,
             },
           ]
         : user.subjects.length > 1
-        ? user.subjects
-        : [user.subject];
+        ? getUpdatedSubjects(user.subjects)
+        : getUpdatedSubjects([user.subject]);
     rb.roleRef.name = user.role;
     rb.metadata.name = roleBindingName;
     finalArray.push(sendK8sRequest(verb, rb));

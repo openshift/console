@@ -69,6 +69,7 @@ export interface DropdownFieldProps extends FieldProps {
   disabled?: boolean;
   autocompleteFilter?: (text: string, item: object, key?: string) => boolean;
   onChange?: (value: string) => void;
+  placeholder?: string;
 }
 
 export type FormSelectFieldOption<T = any> = {

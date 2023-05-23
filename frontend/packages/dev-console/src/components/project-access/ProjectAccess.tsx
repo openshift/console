@@ -14,11 +14,11 @@ import {
 } from '@console/internal/components/utils';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
 import {
-  getRolesWithNameChange,
   getNewRoles,
   getRemovedRoles,
   sendRoleBindingRequest,
   getRolesWithMultipleSubjects,
+  getRolesToUpdate,
 } from './project-access-form-submit-utils';
 import { getUserRoleBindings, Roles } from './project-access-form-utils';
 import { Verb, UserRoleBinding, roleBinding } from './project-access-form-utils-types';
@@ -40,6 +40,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, 
   const userRoleBindings: UserRoleBinding[] = getUserRoleBindings(
     roleBindings.data,
     Object.keys(roles.data),
+    namespace,
   );
 
   const rbacLink = isUpstream()
@@ -53,7 +54,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, 
   const handleSubmit = (values, actions) => {
     let newRoles = getNewRoles(initialValues.projectAccess, values.projectAccess);
     let removeRoles = getRemovedRoles(initialValues.projectAccess, values.projectAccess);
-    const updateRoles = getRolesWithNameChange(newRoles, removeRoles);
+    const updateRoles = getRolesToUpdate(newRoles, removeRoles);
 
     const updateRolesWithMultipleSubjects = getRolesWithMultipleSubjects(
       newRoles,

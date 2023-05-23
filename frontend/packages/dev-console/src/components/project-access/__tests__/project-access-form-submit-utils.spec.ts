@@ -3,6 +3,7 @@ import {
   getNewRoles,
   getRemovedRoles,
   getRolesWithMultipleSubjects,
+  getRolesToUpdate,
 } from '../project-access-form-submit-utils';
 import {
   roleBindingsToBeCreated1,
@@ -120,7 +121,7 @@ describe('Project Access handleSubmit Utils', () => {
       },
     ]);
   });
-  it('should create delete the old rolebinding and create a new one if the role is changed', () => {
+  it('should delete the old rolebinding and create a new one if the role is changed', () => {
     const initialRoles = [
       {
         role: 'edit',
@@ -254,6 +255,205 @@ describe('Project Access handleSubmit Utils', () => {
             apiGroup: 'rbac.authorization.k8s.io',
             kind: 'Group',
             name: 'a-group',
+          },
+        ],
+      },
+    ]);
+  });
+  it('should create new rolebinding with ServiceAccount subject kind', () => {
+    const initialRoles = [
+      {
+        role: 'edit',
+        roleBindingName: 'edit',
+        subject: {
+          kind: 'ServiceAccount',
+          name: 'pipeline',
+          namespace: 'xyz',
+        },
+        subjects: [
+          {
+            kind: 'ServiceAccount',
+            name: 'pipeline',
+            namespace: 'xyz',
+          },
+        ],
+      },
+      {
+        role: 'admin',
+        roleBindingName: 'admin',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'User',
+          name: 'kube:admin',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'User',
+            name: 'kube:admin',
+          },
+        ],
+      },
+    ];
+
+    const formRoles = [
+      {
+        role: 'edit',
+        roleBindingName: 'edit',
+        subject: {
+          kind: 'ServiceAccount',
+          name: 'pipeline',
+          namespace: 'xyz',
+        },
+        subjects: [
+          {
+            kind: 'ServiceAccount',
+            name: 'pipeline',
+            namespace: 'xyz',
+          },
+        ],
+      },
+      {
+        role: 'admin',
+        roleBindingName: 'admin',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'User',
+          name: 'kube:admin',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'User',
+            name: 'kube:admin',
+          },
+        ],
+      },
+      {
+        role: 'admin',
+        roleBindingName: 'sa-rb',
+        subject: {
+          kind: 'ServiceAccount',
+          name: 'sa-test',
+          namespace: 'abc',
+        },
+        subjects: [
+          {
+            namespace: 'abc',
+            kind: 'ServiceAccount',
+            name: 'sa-test',
+          },
+        ],
+      },
+    ];
+    expect(getNewRoles(initialRoles, formRoles)).toEqual([
+      {
+        role: 'admin',
+        roleBindingName: 'sa-rb',
+        subject: {
+          namespace: 'abc',
+          kind: 'ServiceAccount',
+          name: 'sa-test',
+        },
+        subjects: [
+          {
+            namespace: 'abc',
+            kind: 'ServiceAccount',
+            name: 'sa-test',
+          },
+        ],
+      },
+    ]);
+  });
+  it('should update subject for rolebinding with ServiceAccount subject kind', () => {
+    const initialRoles = [
+      {
+        role: 'edit',
+        roleBindingName: 'edit',
+        subject: {
+          kind: 'ServiceAccount',
+          name: 'pipeline',
+          namespace: 'xyz',
+        },
+        subjects: [
+          {
+            kind: 'ServiceAccount',
+            name: 'pipeline',
+            namespace: 'xyz',
+          },
+        ],
+      },
+      {
+        role: 'admin',
+        roleBindingName: 'admin',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'User',
+          name: 'kube:admin',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'User',
+            name: 'kube:admin',
+          },
+        ],
+      },
+    ];
+
+    const formRoles = [
+      {
+        role: 'edit',
+        roleBindingName: 'edit',
+        subject: {
+          kind: 'ServiceAccount',
+          name: 'pipeline',
+          namespace: 'abc',
+        },
+        subjects: [
+          {
+            kind: 'ServiceAccount',
+            name: 'pipeline',
+            namespace: 'xyz',
+          },
+        ],
+      },
+      {
+        role: 'admin',
+        roleBindingName: 'admin',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'User',
+          name: 'kube:admin',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'User',
+            name: 'kube:admin',
+          },
+        ],
+      },
+    ];
+    expect(
+      getRolesToUpdate(
+        getNewRoles(initialRoles, formRoles),
+        getRemovedRoles(initialRoles, formRoles),
+      ),
+    ).toEqual([
+      {
+        role: 'edit',
+        roleBindingName: 'edit',
+        subject: {
+          kind: 'ServiceAccount',
+          name: 'pipeline',
+          namespace: 'abc',
+        },
+        subjects: [
+          {
+            kind: 'ServiceAccount',
+            name: 'pipeline',
+            namespace: 'xyz',
           },
         ],
       },
