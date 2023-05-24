@@ -20,5 +20,5 @@
     "**/dist",
     "packages/console-dynamic-plugin-sdk/scripts"
   ],
-  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]
+  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json", "../test-count.js"]
 }

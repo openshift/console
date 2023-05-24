@@ -71,6 +71,9 @@ case $SCENARIO in
   *) CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO";;
 esac
 
+# Run test-count script on CI
+node ./test-count.js
+
 # Disable color codes in Cypress since they do not render well CI test logs.
 # https://docs.cypress.io/guides/guides/continuous-integration.html#Colors
 export NO_COLOR=1
