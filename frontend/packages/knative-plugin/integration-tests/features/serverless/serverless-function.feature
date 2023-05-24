@@ -158,3 +158,11 @@ Feature: Creation and Visualisation of serverless fuctions
                   | git_url                                                                 | workload_name                  | invoke_format |
                   | https://github.com/openshift-dev-console/kn-func-typescript-http        | kn-func-typescript-http        | HTTP          |
                   | https://github.com/openshift-dev-console/kn-func-typescript-cloudevents | kn-func-typescript-cloudevents | CloudEvent    |
+        
+        
+        @regression @odc-7316
+        Scenario: Create serverless form extensions cards: SF-01-TC11
+            Given user is at Add page
+             When user clicks on Create Serverless function card
+             Then user will be able to see VSCode extension card
+              And user will be able to see IntelliJ extension card

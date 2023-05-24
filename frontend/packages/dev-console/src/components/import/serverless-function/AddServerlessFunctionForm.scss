@@ -1,0 +1,54 @@
+@import '../../../../../../public/style/mixin/catalog-logo-background';
+
+$serverless-extension-item-icon-size: 40px;
+
+.odc-serverless-extensions-card {
+  margin-top: var(--pf-global--spacer--lg);
+  padding: 0 var(--pf-global--spacer--md) var(--pf-global--spacer--md) 0;
+}
+
+.odc-serverless-extension-provider {
+  font-weight: var(--pf-global--FontWeight--normal);
+  font-family: var(--pf-global--FontFamily--sans-serif);
+}
+
+.odc-serverless-extensions-card-title {
+  align-items: flex-start;
+  display: flex;
+  &__icon {
+    @include catalog-logo-background();
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    margin: 0 var(--pf-global--spacer--md) var(--pf-global--spacer--form-element) 0;
+  }
+  &__name {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    &__link {
+      font-size: var(--pf-global--FontSize--md);
+      margin-bottom: var(--pf-global--spacer--sm);
+    }
+  }
+}
+
+.odc-serverless-extensions-logo {
+  @include catalog-logo-background();
+  margin-right: var(--pf-global--spacer--md);
+  &__bg {
+    align-items: center;
+    display: flex;
+    min-height: 40px;
+    min-width: 40px; // prevent Firefox from collapsing the img since it assigns base64 encoded svg without height and width values to 0 https://bugzilla.mozilla.org/show_bug.cgi?id=1328124 and https://jsbin.com/kuzovihumo/edit?js,console
+  }  
+  &__img {
+    max-height: $serverless-extension-item-icon-size;
+    max-width: $serverless-extension-item-icon-size;
+    &[src$='.svg'] {
+      width: $serverless-extension-item-icon-size;
+    }
+    width: 100%; // prevent image size collapse to 0
+  }
+}

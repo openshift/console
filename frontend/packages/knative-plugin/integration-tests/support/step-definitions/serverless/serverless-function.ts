@@ -63,3 +63,11 @@ Given('user created Serverless Function node Pipeline', () => {
     cy.log(result.stdout);
   });
 });
+
+Then('user will be able to see VSCode extension card', () => {
+  cy.byTestID('odc-serverless-vscode-extension-card').should('be.visible');
+});
+
+Then('user will be able to see IntelliJ extension card', () => {
+  cy.byTestID('odc-serverless-intellij-extension-card').should('be.visible');
+});
