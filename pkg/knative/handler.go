@@ -82,13 +82,7 @@ func (h *KnativeHandler) Handle(user *auth.User, w http.ResponseWriter, r *http.
 
 		// POST /namespaces/{namespace}/services/{service}/invoke
 		if r.Method == http.MethodPost && len(parts) == 5 && parts[4] == "invoke" {
-			client, err := h.generateClient(user)
-			if err != nil {
-				klog.Errorf("Error creating dynamic client: %v", err)
-				serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
-				return
-			}
-			response, err := invokeService(client, namespace, service, r)
+			response, err := invokeService(service, r)
 			if err != nil {
 				klog.Errorf("Error During Knative Function Invokation: %v", err)
 				serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
@@ -126,14 +120,21 @@ func getServiceEndpoints(client dynamic.Interface, namespace string, service str
 	return url, nil
 }
 
-func invokeService(client dynamic.Interface, namespace string, service string, r *http.Request) (InvokeServiceResponseBody, error) {
+func invokeService(service string, r *http.Request) (InvokeServiceResponseBody, error) {
 
 	var invokeRequest InvokeServiceRequestBody
 	err := json.NewDecoder(r.Body).Decode(&invokeRequest)
 	if err != nil {
 		return InvokeServiceResponseBody{}, fmt.Errorf("Failed to parse request: %v", err)
 	}
-	endpoint, err := getServiceEndpoints(client, namespace, service)
+
+	var endpoint string
+	if invokeRequest.Body.InvokeEndpoint == "" {
+		return InvokeServiceResponseBody{}, fmt.Errorf("Missing invoke endpoint")
+	} else {
+		endpoint = invokeRequest.Body.InvokeEndpoint
+	}
+
 	if err != nil {
 		return InvokeServiceResponseBody{}, fmt.Errorf("Error fetching route url for service %s: %v", service, err)
 	}

@@ -66,7 +66,6 @@ func TestInvokeService(t *testing.T) {
 		namespace   string
 		expected    string
 		requestBody InvokeServiceRequestBody
-		route       *unstructured.Unstructured
 	}{
 		{
 			testName:  "success invoke",
@@ -79,23 +78,8 @@ func TestInvokeService(t *testing.T) {
 					InvokeMessage:     "{\"message\": \"Hello world\"}",
 					InvokeFormat:      "http",
 					InvokeContentType: "application/json",
+					InvokeEndpoint:    "https://hello-func-node.apps.openshift.com",
 					InvokeHeader:      http.Header{},
-				},
-			},
-			route: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"apiVersion": "serving.knative.dev/v1",
-					"kind":       "Route",
-					"metadata": map[string]interface{}{
-						"name":      "hello-func-node",
-						"namespace": "default",
-						"labels": map[string]interface{}{
-							"serving.knative.dev/service": "hello-func-node",
-						},
-					},
-					"status": map[string]interface{}{
-						"url": "https://hello-func-node.apps.openshift.com",
-					},
 				},
 			},
 		},
@@ -112,11 +96,7 @@ func TestInvokeService(t *testing.T) {
 
 			defer server.Close()
 
-			tt.route.Object["status"] = map[string]interface{}{
-				"url": server.URL,
-			}
-
-			dynamicClient := dynamicfake.NewSimpleDynamicClient(runtime.NewScheme(), tt.route)
+			tt.requestBody.Body.InvokeEndpoint = server.URL
 
 			requestBytes, err := json.Marshal(tt.requestBody)
 			if err != nil {
@@ -126,7 +106,7 @@ func TestInvokeService(t *testing.T) {
 			req := httptest.NewRequest(http.MethodPost, "/bar", bytes.NewBuffer(requestBytes))
 			req.Header.Set("Content-Type", "application/json")
 
-			actual, err := invokeService(dynamicClient, tt.namespace, tt.svcName, req)
+			actual, err := invokeService(tt.svcName, req)
 			if err != nil {
 				t.Errorf("Unexpected error: %s", err)
 			}
