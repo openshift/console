@@ -239,6 +239,7 @@
   "You cannot delete the last {{revlabel}} for the {{serviceLabel}}.": "You cannot delete the last {{revlabel}} for the {{serviceLabel}}.",
   "OK": "OK",
   "Reason": "Reason",
+  "Route details": "Route details",
   "URL": "URL",
   "Traffic": "Traffic",
   "Generation": "Generation",
