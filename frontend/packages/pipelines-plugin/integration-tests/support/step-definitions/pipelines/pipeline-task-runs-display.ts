@@ -130,9 +130,7 @@ Then('user is redirected to Task Run Details tab', () => {
 });
 
 When('user clicks on task run {string}', (pipelineRunsName: string) => {
-  cy.get(`[data-test-id^="${pipelineRunsName}-"]`)
-    .eq(0)
-    .click();
+  cy.get(`[data-test-id^="${pipelineRunsName}-"]`).eq(0).click();
 });
 
 Given('user is at pipeline details page with pipeline runs {string}', (pipelineName: string) => {
@@ -153,22 +151,16 @@ Given(
       {
         failOnNonZeroExit: false,
       },
-    ).then(function(result) {
+    ).then(function (result) {
       cy.log(result.stdout);
     });
   },
 );
 
 Then('user can see Status, Message and Log snippet in Details tab', () => {
-  cy.get(pipelineRunDetailsPO.taskRunsDetails.status)
-    .contains('Status')
-    .should('be.visible');
-  cy.get(pipelineRunDetailsPO.taskRunsDetails.status)
-    .contains('Message')
-    .should('be.visible');
-  cy.get(pipelineRunDetailsPO.taskRunsDetails.status)
-    .contains('Log snippet')
-    .should('be.visible');
+  cy.get(pipelineRunDetailsPO.taskRunsDetails.status).contains('Status').should('be.visible');
+  cy.get(pipelineRunDetailsPO.taskRunsDetails.status).contains('Message').should('be.visible');
+  cy.get(pipelineRunDetailsPO.taskRunsDetails.status).contains('Log snippet').should('be.visible');
 });
 
 Given(
@@ -179,7 +171,7 @@ Given(
       {
         failOnNonZeroExit: false,
       },
-    ).then(function(result) {
+    ).then(function (result) {
       cy.log(result.stdout);
     });
   },
@@ -199,12 +191,8 @@ When('user clicks on Pipeline Run {string}', (pipelineRunsName: string) => {
 });
 
 Then('user can see Name and Value column under Task Run results', () => {
-  cy.get('[role="grid"]')
-    .contains('Name')
-    .should('be.visible');
-  cy.get('[role="grid"]')
-    .contains('Value')
-    .should('be.visible');
+  cy.get('[role="grid"]').contains('Name').should('be.visible');
+  cy.get('[role="grid"]').contains('Value').should('be.visible');
 });
 
 When('user clicks manage columns button', () => {

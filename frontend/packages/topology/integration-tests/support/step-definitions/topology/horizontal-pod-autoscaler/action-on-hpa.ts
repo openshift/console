@@ -40,15 +40,11 @@ Given('user is at developer perspective', () => {
 
 Given('user is at HorizontalPodAutoscaler page under workloads section', () => {
   cy.get(hpaPO.navWorkloads).click();
-  cy.get(hpaPO.nav)
-    .contains('HorizontalPodAutoscalers')
-    .click();
+  cy.get(hpaPO.nav).contains('HorizontalPodAutoscalers').click();
 });
 
 Given('user has created HorizontalPodAutoscaler', () => {
-  cy.get(hpaPO.createItem)
-    .contains('Create HorizontalPodAutoscaler')
-    .click();
+  cy.get(hpaPO.createItem).contains('Create HorizontalPodAutoscaler').click();
   cy.get(hpaPO.saveChanges).click();
 });
 
@@ -71,12 +67,8 @@ Given('user has a deployment workload {string} with HPA assigned to it', (worklo
   topologyPage.componentNode(workloadName).click({ force: true });
   cy.get(hpaPO.actionMenu).click();
   cy.byTestActionID('Add HorizontalPodAutoscaler').click();
-  cy.get(hpaPO.cpu)
-    .clear()
-    .type('50');
-  cy.get(hpaPO.memory)
-    .clear()
-    .type('50');
+  cy.get(hpaPO.cpu).clear().type('50');
+  cy.get(hpaPO.memory).clear().type('50');
   cy.get(hpaPO.submitBtn).click();
   cy.get(hpaPO.switchToggler).should('be.visible');
 });
@@ -84,13 +76,9 @@ Given('user has a deployment workload {string} with HPA assigned to it', (worklo
 When('user clicks the HPA associated with the workload', () => {
   cy.get(hpaPO.resourceTitle).should('include.text', 'example');
   cy.get(hpaPO.hpaHeading).should('be.visible');
-  cy.get(hpaPO.nav)
-    .contains('HorizontalPodAutoscalers')
-    .click();
+  cy.get(hpaPO.nav).contains('HorizontalPodAutoscalers').click();
   cy.get(hpaPO.itemFilter).type('example');
-  cy.get(hpaPO.resourceItem)
-    .contains('example')
-    .click();
+  cy.get(hpaPO.resourceItem).contains('example').click();
 });
 
 When('user selects {string} option from Actions menu in HPA details page', (option: string) => {
@@ -100,9 +88,7 @@ When('user selects {string} option from Actions menu in HPA details page', (opti
 });
 
 When('user sees Delete Horizontal Pod Autoscaler modal opens', () => {
-  cy.get(hpaPO.modalTitle)
-    .should('be.visible')
-    .contains('Delete HorizontalPodAutoscaler?');
+  cy.get(hpaPO.modalTitle).should('be.visible').contains('Delete HorizontalPodAutoscaler?');
 });
 
 When('user clicks Delete', () => {
@@ -129,33 +115,23 @@ When('user selects {string} option from Actions menu', (option: string) => {
 });
 
 When('user enters Name as {string} in Horizontal Pod Autoscaler page', (hpaName: string) => {
-  cy.get(hpaPO.nameHPA)
-    .clear()
-    .type(hpaName);
+  cy.get(hpaPO.nameHPA).clear().type(hpaName);
 });
 
 When('user sets Minimum Pods value to {string}', (minPod: string) => {
-  cy.get(hpaPO.minhpaPod)
-    .clear()
-    .type(minPod);
+  cy.get(hpaPO.minhpaPod).clear().type(minPod);
 });
 
 When('user sets Maximum Pods value to {string}', (maxPod: string) => {
-  cy.get(hpaPO.maxhpaPod)
-    .clear()
-    .type(maxPod);
+  cy.get(hpaPO.maxhpaPod).clear().type(maxPod);
 });
 
 When('user enters CPU Utilization as {string}', (cpuUtilisation: string) => {
-  cy.get(hpaPO.cpu)
-    .clear()
-    .type(cpuUtilisation);
+  cy.get(hpaPO.cpu).clear().type(cpuUtilisation);
 });
 
 When('user enters Memory Utilization as {string}', (memoryUtilization: string) => {
-  cy.get(hpaPO.memory)
-    .clear()
-    .type(memoryUtilization);
+  cy.get(hpaPO.memory).clear().type(memoryUtilization);
 });
 
 When('user clicks on Save button', () => {
@@ -196,27 +172,19 @@ When('user checks the name value but cannot edit it', () => {
 });
 
 When('user checks and edit the value to {string} for maximum pods', (maxPod: string) => {
-  cy.get(hpaPO.maxhpaPod)
-    .clear()
-    .type(maxPod);
+  cy.get(hpaPO.maxhpaPod).clear().type(maxPod);
 });
 
 When('user checks and edit the value to {string} for minimum pods', (minPod: string) => {
-  cy.get(hpaPO.minhpaPod)
-    .clear()
-    .type(minPod);
+  cy.get(hpaPO.minhpaPod).clear().type(minPod);
 });
 
 When('user checks and edit the cpu value to {string}', (cpuUtilisation: string) => {
-  cy.get(hpaPO.cpu)
-    .clear()
-    .type(cpuUtilisation);
+  cy.get(hpaPO.cpu).clear().type(cpuUtilisation);
 });
 
 When('user checks and edit the memory value to {string}', (memoryUtilization: string) => {
-  cy.get(hpaPO.memory)
-    .clear()
-    .type(memoryUtilization);
+  cy.get(hpaPO.memory).clear().type(memoryUtilization);
 });
 
 Then('user goes to the details tab', () => {
@@ -250,7 +218,5 @@ When('user selects Resources tab on sidebar', () => {
 Then('user can not see HorizontalPodAutoscalers section', () => {
   cy.reload();
   app.waitForDocumentLoad();
-  cy.get(hpaPO.sectionHeading)
-    .contains('HorizontalPodAutoscalers')
-    .should('not.exist');
+  cy.get(hpaPO.sectionHeading).contains('HorizontalPodAutoscalers').should('not.exist');
 });

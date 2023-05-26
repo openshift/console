@@ -1,7 +1,7 @@
 // TODO remove multicluster
 import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';

@@ -47,9 +47,7 @@ const loadApp = () => {
   guidedTour.close();
 };
 const checkConsoleUpdateToast = () => {
-  cy.byTestID(refreshWebConsoleLink)
-    .should('exist')
-    .click();
+  cy.byTestID(refreshWebConsoleLink).should('exist').click();
   cy.get(refreshWebConsoleLink).should('not.exist');
   cy.byTestID('loading-indicator').should('not.exist');
 };

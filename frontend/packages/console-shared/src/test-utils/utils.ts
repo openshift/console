@@ -130,9 +130,7 @@ export async function fillInput(elem: any, value: string) {
 async function selectDropdownOptionByLocator(dropdownId: string, optionLocator: By) {
   await click($(dropdownId));
   await browser.wait(until.presenceOf(element(optionLocator)));
-  await $(`${dropdownId} + ul`)
-    .element(optionLocator)
-    .click();
+  await $(`${dropdownId} + ul`).element(optionLocator).click();
 }
 
 export async function selectDropdownOption(dropdownId: string, optionText: string) {

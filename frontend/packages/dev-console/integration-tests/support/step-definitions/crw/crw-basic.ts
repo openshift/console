@@ -15,9 +15,7 @@ Then('user is redirected to Codeready Workspaces Dashboard', () => {
   const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
   const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
   cy.byLegacyTestID('login').should('be.visible');
-  cy.contains(idp)
-    .should('be.visible')
-    .click();
+  cy.contains(idp).should('be.visible').click();
   cy.get('#inputUsername').type(username);
   cy.get('#inputPassword').type(password);
   cy.get(submitButton).click();

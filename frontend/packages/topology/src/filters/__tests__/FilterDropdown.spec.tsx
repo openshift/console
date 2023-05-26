@@ -95,11 +95,6 @@ describe(FilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(
-      wrapper
-        .find(SelectOption)
-        .first()
-        .props().isDisabled,
-    ).toBeTruthy();
+    expect(wrapper.find(SelectOption).first().props().isDisabled).toBeTruthy();
   });
 });

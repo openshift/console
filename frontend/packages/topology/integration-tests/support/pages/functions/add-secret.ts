@@ -25,12 +25,7 @@ export const checkPodsText = (tries: number = 5) => {
   }
   // eslint-disable-next-line promise/catch-or-return
   cy.get('body').then(($body) => {
-    if (
-      !$body
-        .find(topologyPO.sidePane.podText)
-        .text()
-        .includes('1Pod')
-    ) {
+    if (!$body.find(topologyPO.sidePane.podText).text().includes('1Pod')) {
       cy.reload();
       app.waitForDocumentLoad();
       topologySidePane.selectTab('Details');

@@ -10,11 +10,10 @@ interface ConditionListPageProps {
   canCreate?: boolean;
 }
 
-const ConditionListPage: React.FC<Omit<
-  React.ComponentProps<typeof ListPage>,
-  'canCreate' | 'kind' | 'ListComponent'
-> &
-  ConditionListPageProps> = ({ hideBadge, ...props }) => {
+const ConditionListPage: React.FC<
+  Omit<React.ComponentProps<typeof ListPage>, 'canCreate' | 'kind' | 'ListComponent'> &
+    ConditionListPageProps
+> = ({ hideBadge, ...props }) => {
   const badge = usePipelineTechPreviewBadge(props.namespace);
   return (
     <ListPage

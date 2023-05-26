@@ -12,8 +12,9 @@ export const EditImportApplication = (kind: K8sKind, obj: K8sResourceKind): Acti
     }),
   }),
   cta: {
-    href: `/edit/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${obj.kind ||
-      kind.kind}`,
+    href: `/edit/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${
+      obj.kind || kind.kind
+    }`,
   },
   insertAfter: 'edit-resource-limits',
   accessReview: {

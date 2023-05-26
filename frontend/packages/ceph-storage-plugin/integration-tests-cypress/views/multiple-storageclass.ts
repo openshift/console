@@ -20,9 +20,7 @@ export const addCapacity = (uid: string, scName: string) => {
   cy.byLegacyTestID('kebab-button').click(); // 'data-test-id'
   cy.byTestActionID('Add Capacity').click(); // 'data-test-action'
   cy.byTestID('add-cap-sc-dropdown').click(); // 'data-test'
-  cy.byTestID('dropdown-menu-item-link')
-    .contains(scName)
-    .click();
+  cy.byTestID('dropdown-menu-item-link').contains(scName).click();
   cy.byTestID('confirm-action').click();
 };
 

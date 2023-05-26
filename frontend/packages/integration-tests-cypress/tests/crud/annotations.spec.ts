@@ -170,9 +170,7 @@ describe('Annotations', () => {
     cy.log('Delete 2nd annotation');
     detailsPage.clickPageActionFromDropdown('Edit annotations');
     modal.shouldBeOpened();
-    cy.byTestID('delete-button')
-      .eq(1)
-      .click();
+    cy.byTestID('delete-button').eq(1).click();
     modal.submit();
     modal.shouldBeClosed();
     cy.byTestID('edit-annotations').contains('2 annotations');
@@ -188,9 +186,7 @@ describe('Annotations', () => {
       nameValueEquals(row, ANNOTATION_KEY, annotations[2].value); // new key
     });
     cy.log('Delete all annotations');
-    cy.byTestID('delete-button')
-      .first()
-      .click();
+    cy.byTestID('delete-button').first().click();
     cy.byTestID('delete-button').click();
     modal.submit();
     modal.shouldBeClosed();

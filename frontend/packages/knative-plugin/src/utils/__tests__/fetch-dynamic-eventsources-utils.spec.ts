@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash';
-import * as coFetch from '@console/internal/co-fetch';
+import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { EVENTING_IMC_KIND } from '../../const';
 import { ServiceModel } from '../../models';
@@ -22,7 +22,7 @@ import {
 
 describe('fetch-dynamic-eventsources: EventSources', () => {
   beforeEach(() => {
-    jest.spyOn(coFetch, 'coFetch').mockImplementation(() =>
+    jest.spyOn(coFetchModule, 'consoleFetch').mockImplementation(() =>
       Promise.resolve({
         json: () => ({
           ...mockEventSourcCRDData,
@@ -32,7 +32,7 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
   });
 
   it('should call coFetch to fetch CRDs for duck type', async () => {
-    const fetchSpy = jest.spyOn(coFetch, 'coFetch');
+    const fetchSpy = jest.spyOn(coFetchModule, 'consoleFetch');
     await fetchEventSourcesCrd();
     expect(fetchSpy).toHaveBeenCalled();
   });
@@ -53,7 +53,7 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
     jest.spyOn(console, 'warn').mockImplementation(jest.fn());
 
     jest
-      .spyOn(coFetch, 'coFetch')
+      .spyOn(coFetchModule, 'consoleFetch')
       .mockImplementation(() => Promise.reject(new Error('Test Error')));
     await fetchEventSourcesCrd();
     expect(getEventSourceModels()).toHaveLength(0);
@@ -122,7 +122,7 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
 
 describe('fetch-dynamic-eventsources: Channels', () => {
   beforeEach(async () => {
-    jest.spyOn(coFetch, 'coFetch').mockImplementation(() =>
+    jest.spyOn(coFetchModule, 'consoleFetch').mockImplementation(() =>
       Promise.resolve({
         json: () => ({ ...mockChannelCRDData }),
       }),

@@ -21,28 +21,18 @@ export const catalogPage = {
   },
   search: (keyword: string) => {
     cy.get('.skeleton-catalog--grid').should('not.exist');
-    cy.get(catalogPO.search)
-      .clear()
-      .type(keyword);
+    cy.get(catalogPO.search).clear().type(keyword);
   },
   verifyDialog: () => cy.get(catalogPO.sidePane.dialog).should('be.visible'),
   verifyCreateHelmReleasePage: () =>
-    cy
-      .get('form h1')
-      .eq(0)
-      .should('have.text', pageTitle.CreateHelmRelease),
+    cy.get('form h1').eq(0).should('have.text', pageTitle.CreateHelmRelease),
   verifySelectOperatorBackedCard: (cardName: string) => {
-    cy.byTestID(`OperatorBackedService-${cardName}`)
-      .first()
-      .click();
+    cy.byTestID(`OperatorBackedService-${cardName}`).first().click();
   },
   verifyCreateOperatorBackedPage: (title: string) =>
     detailsPage.titleShouldContain(`Create ${title}`),
   enterOperatorBackedName: (OperatorBackedName: string) =>
-    cy
-      .get(catalogPO.operatorBacked.name)
-      .clear()
-      .type(OperatorBackedName),
+    cy.get(catalogPO.operatorBacked.name).clear().type(OperatorBackedName),
   clickButtonOnCatalogPageSidePane: () => {
     catalogPage.verifyDialog();
     cy.get(catalogPO.sidePane.instantiateTemplate).click({ force: true });
@@ -106,81 +96,52 @@ export const catalogPage = {
     cy.log(`Select Template category ${templateCategoryTitle}`);
   },
   selectKnativeServingCard: () =>
-    cy
-      .get(cardTitle, { timeout: 40000 })
-      .contains('Knative Serving')
-      .click(),
-  selectHelmChartCard: (cardName: string) =>
-    cy
-      .byTestID(`HelmChart-${cardName}`)
-      .first()
-      .click(),
+    cy.get(cardTitle, { timeout: 40000 }).contains('Knative Serving').click(),
+  selectHelmChartCard: (cardName: string) => cy.byTestID(`HelmChart-${cardName}`).first().click(),
   clickOnInstallButton: () => {
     cy.get(catalogPO.installHelmChart.create).click();
     cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
   },
   enterReleaseName: (releaseName: string) =>
-    cy
-      .get(catalogPO.installHelmChart.releaseName)
-      .clear()
-      .type(releaseName),
+    cy.get(catalogPO.installHelmChart.releaseName).clear().type(releaseName),
   selectCardInCatalog: (card: catalogCards | string) => {
     cy.get('.skeleton-catalog--grid').should('not.exist');
     cy.byLegacyTestID('perspective-switcher-toggle').click();
     switch (card) {
       case catalogCards.mariaDB || 'MariaDB': {
-        cy.get(catalogPO.cards.mariaDBTemplate)
-          .first()
-          .click();
+        cy.get(catalogPO.cards.mariaDBTemplate).first().click();
         break;
       }
       case catalogCards.cakePhp || 'CakePHP + MySQL': {
-        cy.get(catalogPO.cards.phpCakeTemplate)
-          .first()
-          .click();
+        cy.get(catalogPO.cards.phpCakeTemplate).first().click();
         break;
       }
       case catalogCards.nodeJs || 'Node.js': {
-        cy.get(catalogPO.cards.nodeJsBuilderImage)
-          .first()
-          .click();
+        cy.get(catalogPO.cards.nodeJsBuilderImage).first().click();
         break;
       }
       case catalogCards.nodeJsPostgreSQL: {
-        cy.get(catalogPO.cards.nodejsPostgreSQL)
-          .first()
-          .click();
+        cy.get(catalogPO.cards.nodejsPostgreSQL).first().click();
         break;
       }
       case catalogCards.apacheHTTPServer: {
-        cy.get(catalogPO.cards.apacheHTTPServer)
-          .first()
-          .click();
+        cy.get(catalogPO.cards.apacheHTTPServer).first().click();
         break;
       }
       case catalogCards.nginxHTTPServer: {
-        cy.get(catalogPO.cards.nginxHTTPServer)
-          .first()
-          .click();
+        cy.get(catalogPO.cards.nginxHTTPServer).first().click();
         break;
       }
       case catalogCards.knativeKafka: {
-        cy.get(catalogPO.cards.knativeKafka)
-          .first()
-          .click();
+        cy.get(catalogPO.cards.knativeKafka).first().click();
         break;
       }
       case catalogCards.jenkins: {
-        cy.get('div.catalog-tile-pf-title')
-          .contains('Jenkins')
-          .first()
-          .click();
+        cy.get('div.catalog-tile-pf-title').contains('Jenkins').first().click();
         break;
       }
       case 'Nodejs': {
-        cy.get(catalogPO.cards.helmNodejs)
-          .first()
-          .click();
+        cy.get(catalogPO.cards.helmNodejs).first().click();
         break;
       }
       default: {
@@ -300,9 +261,5 @@ export const catalogInstallPageObj = {
 };
 
 export const sidePaneObj = {
-  verifyChartVersion: () =>
-    cy
-      .get(helmPO.sidePane.chartVersion)
-      .eq(0)
-      .should('have.text', '0.2.1'),
+  verifyChartVersion: () => cy.get(helmPO.sidePane.chartVersion).eq(0).should('have.text', '0.2.1'),
 };

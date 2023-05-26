@@ -101,9 +101,7 @@ export const createInternalStorageCluster = (encrypted: boolean) => {
   commonFlows.checkAll().should('be.checked');
   // Two dropdowns in the same page.
   // (Todo: )make dropdown data-test-id be something that can be passed as a prop
-  cy.byLegacyTestID('dropdown-button')
-    .first()
-    .click();
+  cy.byLegacyTestID('dropdown-button').first().click();
   cy.byTestDropDownMenu('512Gi').click();
   wizard.next();
 

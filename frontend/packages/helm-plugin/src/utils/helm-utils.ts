@@ -127,10 +127,7 @@ export const getChartIndexEntry = (
   chartName: string,
   chartRepoName: string,
 ) => {
-  const repoName = chartRepoName
-    .toLowerCase()
-    .split(' ')
-    .join('-');
+  const repoName = chartRepoName.toLowerCase().split(' ').join('-');
   const indexEntry = Object.keys(chartEntries).find((val) =>
     val.includes(`${chartName}--${repoName}`),
   );

@@ -32,7 +32,7 @@ export const usePacData = (
             method: 'POST',
           });
           const data = await response.json();
-          // eslint-disable-next-line @typescript-eslint/camelcase
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           const { name, id, pem, webhook_secret, html_url } = data;
           const secret = await createPACSecret(id.toString(), pem, webhook_secret, name, html_url);
           await updatePACInfo(html_url);

@@ -10,11 +10,10 @@ interface ClusterTaskListPageProps {
   canCreate?: boolean;
 }
 
-const ClusterTaskListPage: React.FC<Omit<
-  React.ComponentProps<typeof ListPage>,
-  'canCreate' | 'kind' | 'ListComponent'
-> &
-  ClusterTaskListPageProps> = ({ hideBadge, ...props }) => {
+const ClusterTaskListPage: React.FC<
+  Omit<React.ComponentProps<typeof ListPage>, 'canCreate' | 'kind' | 'ListComponent'> &
+    ClusterTaskListPageProps
+> = ({ hideBadge, ...props }) => {
   const badge = usePipelineTechPreviewBadge(props.namespace);
   return (
     <ListPage

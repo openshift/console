@@ -1,5 +1,5 @@
 import { K8sModel } from '../../../api/common-types';
-import * as k8sUtil from '../../fetch';
+import * as coFetchModule from '../../fetch/console-fetch';
 import { k8sGet, k8sList, k8sGetResource } from '../k8s-resource';
 
 describe('k8s-Resource', () => {
@@ -16,7 +16,7 @@ describe('k8s-Resource', () => {
   let spyCoFetchJSON;
 
   beforeEach(() => {
-    spyCoFetchJSON = jest.spyOn(k8sUtil, 'consoleFetchJSON');
+    spyCoFetchJSON = jest.spyOn(coFetchModule, 'consoleFetchJSON');
   });
 
   afterEach(() => {

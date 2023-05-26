@@ -1,4 +1,4 @@
-import * as k8s from '@console/internal/module/k8s';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { OdcNodeModel } from '../topology-types';
 import {
@@ -11,7 +11,7 @@ let patchData = null;
 
 describe('Topology Utils', () => {
   beforeAll(() => {
-    jest.spyOn(k8s, 'k8sPatch').mockImplementation((model, item, patch) => {
+    jest.spyOn(k8sResourceModule, 'k8sPatch').mockImplementation((model, item, patch) => {
       patchData = patch;
       return Promise.resolve();
     });

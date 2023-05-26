@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
-import * as utils from '@console/internal/components/utils';
+import * as rbacModule from '@console/internal/components/utils/rbac';
 import TopologyPageToolbar from '../components/page/TopologyPageToolbar';
 import { TopologyViewType } from '../topology-types';
 
@@ -34,7 +34,7 @@ describe('TopologyPageToolbar tests', () => {
   let spyUseAccessReview;
 
   beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(true);
   });
 

@@ -14,6 +14,7 @@ export const networkTypes = {
 
 export enum NetworkTypes {
   SRIOV = 'SR-IOV',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   'CNV-Bridge' = 'CNV Linux bridge',
 }
 

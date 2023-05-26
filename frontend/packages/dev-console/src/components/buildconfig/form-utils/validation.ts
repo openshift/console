@@ -31,10 +31,7 @@ const sourceSchema = () =>
 
 const imageSchema = (allowedTypes: string[]) =>
   yup.object({
-    type: yup
-      .string()
-      .required(i18n.t('devconsole~Required'))
-      .oneOf(allowedTypes),
+    type: yup.string().required(i18n.t('devconsole~Required')).oneOf(allowedTypes),
     imageStreamTag: yup.object().when('type', {
       is: 'imageStreamTag',
       then: yup.object({

@@ -45,26 +45,19 @@ export const operatorsPage = {
 
   selectSourceType: (sourceType: string = 'redHat') => {
     if (sourceType === 'redHat') {
-      cy.get(operatorsPO.operatorHub.redHatSourceType)
-        .scrollIntoView()
-        .click();
+      cy.get(operatorsPO.operatorHub.redHatSourceType).scrollIntoView().click();
     }
   },
 
   searchOperator: (operatorName: string | operators) => {
-    cy.get(operatorsPO.search)
-      .should('be.visible')
-      .clear()
-      .type(operatorName);
+    cy.get(operatorsPO.search).should('be.visible').clear().type(operatorName);
   },
 
   searchOperatorInInstallPage: (operatorName: string | operators) => {
     cy.get('.co-installed-operators').should('be.visible');
     cy.get('body').then(($body) => {
       if ($body.find(operatorsPO.installOperators.noOperatorsDetails).length === 0) {
-        cy.get(operatorsPO.installOperators.search)
-          .clear()
-          .type(operatorName);
+        cy.get(operatorsPO.installOperators.search).clear().type(operatorName);
       } else {
         cy.log(
           `${operatorName} operator is not installed in this cluster, so lets install it from operator Hub`,
@@ -77,19 +70,14 @@ export const operatorsPage = {
     cy.get(operatorsPO.subscription.logo).should('have.text', operatorLogo),
 
   verifyInstalledOperator: (operatorName: string) => {
-    cy.get(operatorsPO.installOperators.search)
-      .should('be.visible')
-      .clear()
-      .type(operatorName);
+    cy.get(operatorsPO.installOperators.search).should('be.visible').clear().type(operatorName);
     cy.get(operatorsPO.installOperators.operatorStatus, {
       timeout: 100000,
     }).should('contain.text', 'Succeeded');
   },
 
   verifyOperatorNotAvailable: (operatorName: string) => {
-    cy.get(operatorsPO.installOperators.search)
-      .clear()
-      .type(operatorName);
+    cy.get(operatorsPO.installOperators.search).clear().type(operatorName);
     cy.get(operatorsPO.installOperators.noOperatorFoundMessage).should(
       'have.text',
       'No Operators Found',
@@ -226,9 +214,7 @@ export const operatorsPage = {
 
   verifyOperatorInNavigationMenu: (operatorName: string) => {
     cy.get(operatorsPO.nav.menuItems).should('have.length.greaterThan', 62);
-    cy.get(operatorsPO.nav.menuItems)
-      .contains(operatorName)
-      .should('be.visible');
+    cy.get(operatorsPO.nav.menuItems).contains(operatorName).should('be.visible');
   },
 
   clickOnCreate: () => cy.byButtonText('Install').click(),

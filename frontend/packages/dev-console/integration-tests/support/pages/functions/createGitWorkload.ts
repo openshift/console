@@ -81,15 +81,9 @@ export const createGitWorkloadWithResourceLimit = (
   gitPage.enterComponentName(componentName);
   gitPage.selectResource(resourceType);
   gitPage.enterAppName(appName);
-  cy.byLegacyTestID('import-git-form')
-    .contains('Resource limits')
-    .click();
-  cy.get(topologyPO.resourceLimits.limitCPU)
-    .clear()
-    .type(limitCPU);
-  cy.get(topologyPO.resourceLimits.limitMemory)
-    .clear()
-    .type(limitMemory);
+  cy.byLegacyTestID('import-git-form').contains('Resource limits').click();
+  cy.get(topologyPO.resourceLimits.limitCPU).clear().type(limitCPU);
+  cy.get(topologyPO.resourceLimits.limitMemory).clear().type(limitMemory);
   if (isPipelineSelected === true) {
     gitPage.selectAddPipeline();
   }

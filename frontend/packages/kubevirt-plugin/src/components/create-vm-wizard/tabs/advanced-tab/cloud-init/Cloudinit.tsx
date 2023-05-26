@@ -2,7 +2,7 @@ import * as React from 'react';
 import yamlParser from 'js-yaml';
 import { isEmpty, isEqual } from 'lodash';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import useCloudinitValidations from '../../../../../hooks/use-cloudinit-validations';
@@ -68,7 +68,7 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
         try {
           const loadedYaml = yamlParser?.load(data);
           const keys = fn instanceof Function ? fn(loadedYaml?.ssh_authorized_keys) : fn;
-          // eslint-disable-next-line @typescript-eslint/camelcase
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           return yamlParser.dump({ ...loadedYaml, ssh_authorized_keys: keys });
         } catch (e) {
           // eslint-disable-next-line no-console
@@ -96,7 +96,7 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
         const nonEmptyKeys = yamlAsJS?.ssh_authorized_keys?.filter((key: string) => !isEmpty(key));
         const loadedYaml = yamlParser?.load(yaml);
         if (!isEmpty(nonEmptyKeys)) {
-          // eslint-disable-next-line @typescript-eslint/camelcase
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           loadedYaml.ssh_authorized_keys = nonEmptyKeys;
         } else {
           delete loadedYaml?.ssh_authorized_keys;

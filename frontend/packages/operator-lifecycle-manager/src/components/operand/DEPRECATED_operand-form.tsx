@@ -509,7 +509,7 @@ const OperandFormInputGroup: React.FC<OperandFormInputGroupProps> = ({ error, fi
   ) : null;
 };
 
-// eslint-disable-next-line @typescript-eslint/camelcase
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   formData,
   csv,

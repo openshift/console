@@ -51,9 +51,7 @@ describe('test custom template creation support', () => {
 
     // add source
     cy.get('#image-source-type-dropdown').click();
-    cy.get('.pf-c-select__menu')
-      .contains(ProvisionSource.REGISTRY.getDescription())
-      .click();
+    cy.get('.pf-c-select__menu').contains(ProvisionSource.REGISTRY.getDescription()).click();
     cy.get('input[id="provision-source-container"]').type(ProvisionSource.REGISTRY.getSource());
 
     // finish creation of the new template

@@ -28,9 +28,7 @@ Then('user is able to see a context menu with option {string}', (option: string)
 
 Then('user enters the uri as {string} in {string} modal', (uri: string, header: string) => {
   modal.modalTitleShouldContain(header);
-  cy.byLegacyTestID('edit-sink-uri')
-    .clear()
-    .type(uri);
+  cy.byLegacyTestID('edit-sink-uri').clear().type(uri);
 });
 
 Then(
@@ -67,9 +65,7 @@ When('user selects sink to Resource option', () => {
 When('user selects the resource from Select Resource dropdown', () => {
   cy.get(eventSourcePO.createSinkBinding.resourceDropDownField).click();
   cy.get(eventSourcePO.createSinkBinding.resourceSearchField).type('kn-event');
-  cy.get(eventSourcePO.createSinkBinding.resourceDropDownItem)
-    .eq(0)
-    .click();
+  cy.get(eventSourcePO.createSinkBinding.resourceDropDownItem).eq(0).click();
 });
 
 When('user clicks on Save button', () => {

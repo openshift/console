@@ -1,7 +1,7 @@
 import { safeLoad } from 'js-yaml';
 import { omit } from 'lodash';
-import * as coFetch from '@console/internal/co-fetch';
-import * as k8s from '@console/internal/module/k8s';
+import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { CatalogItem } from '../../../../../console-dynamic-plugin-sdk/src';
 import {
   sampleTektonHubCatalogItem,
@@ -272,8 +272,8 @@ describe('pipeline-quicksearch-utils', () => {
   });
   describe('updateTask', () => {
     beforeEach(() => {
-      jest.spyOn(k8s, 'k8sUpdate').mockImplementation((model, data) => data);
-      jest.spyOn(coFetch, 'coFetch').mockImplementation((url) =>
+      jest.spyOn(k8sResourceModule, 'k8sUpdate').mockImplementation((model, data) => data);
+      jest.spyOn(coFetchModule, 'consoleFetch').mockImplementation((url) =>
         Promise.resolve({
           text: () =>
             url === 'oc-task-0.1/url'

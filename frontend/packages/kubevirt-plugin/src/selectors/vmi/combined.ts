@@ -49,8 +49,9 @@ export const getSerialConsoleConnectionDetails = (
 
   const protocol = isConnectionEncrypted() ? 'wss' : 'ws';
   return {
-    host: `${protocol}://${window.location.hostname}:${window.location.port ||
-      (isConnectionEncrypted() ? '443' : '80')}`,
+    host: `${protocol}://${window.location.hostname}:${
+      window.location.port || (isConnectionEncrypted() ? '443' : '80')
+    }`,
     path: `/${getVMISubresourcePath()}/${getVMIApiPath(vmi)}/console`, // CSRF Token will be added in WSFactory
   };
 };

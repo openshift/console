@@ -145,9 +145,7 @@ export const pipelineRunDetailsPage = {
     }
   },
   verifyWorkspacesSection: () => {
-    cy.get(pipelineRunDetailsPO.details.workspacesSection)
-      .scrollIntoView()
-      .should('be.visible');
+    cy.get(pipelineRunDetailsPO.details.workspacesSection).scrollIntoView().should('be.visible');
   },
 };
 
@@ -158,18 +156,13 @@ export const pipelineRunsPage = {
     cy.get(pipelineRunsPO.pipelineRunsTable.table).should('exist');
     cy.log(`user selects the kebab menu of pipeline : "${pipelineRunName}"`);
     cy.get(pipelineRunsPO.pipelineRunsTable.pipelineRunName).then(() => {
-      cy.get('tbody tr')
-        .first()
-        .find('td:nth-child(6) button')
-        .click({ force: true });
+      cy.get('tbody tr').first().find('td:nth-child(6) button').click({ force: true });
     });
   },
   verifyPipelineRunsTableDisplay: () =>
     cy.get(pipelineRunsPO.pipelineRunsTable.table).should('be.visible'),
   filterByStatus: (status: string = 'Succeeded') => {
-    cy.byLegacyTestID('filter-dropdown-toggle')
-      .find('button')
-      .click();
+    cy.byLegacyTestID('filter-dropdown-toggle').find('button').click();
     switch (status) {
       case 'Succeeded': {
         cy.get('#Succeeded').click();
@@ -191,9 +184,7 @@ export const pipelineRunsPage = {
         throw new Error('operator is not available');
       }
     }
-    cy.byLegacyTestID('filter-dropdown-toggle')
-      .find('button')
-      .click();
+    cy.byLegacyTestID('filter-dropdown-toggle').find('button').click();
   },
   verifyStatusInPipelineRunsTable: (status: string) => {
     cy.get(pipelineRunsPO.pipelineRunsTable.status).should('have.text', status);

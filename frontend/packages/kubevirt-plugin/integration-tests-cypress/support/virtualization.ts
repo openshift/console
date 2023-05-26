@@ -3,7 +3,7 @@ import { createTemplate, createVM, templateYAML, vmYAML } from '../views/selecto
 
 declare global {
   namespace Cypress {
-    interface Chainable<Subject> {
+    interface Chainable {
       loaded(): Chainable<Element>;
       visitVMsList(): Chainable<Element>;
       visitVMTemplatesList(): Chainable<Element>;
@@ -29,9 +29,7 @@ Cypress.Commands.add('visitVMTemplatesList', () => {
 });
 
 Cypress.Commands.add('filterByName', (name: string) => {
-  cy.get(nameFilter)
-    .clear()
-    .type(name);
+  cy.get(nameFilter).clear().type(name);
 });
 
 Cypress.Commands.add('createDefaultVM', () => {

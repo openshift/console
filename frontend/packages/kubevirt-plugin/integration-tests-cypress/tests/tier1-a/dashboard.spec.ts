@@ -47,9 +47,7 @@ describe('Test VM dashboard tab', () => {
     });
 
     it('ID(CNV-3332) Guest agent required shows in dashboard tab ', () => {
-      cy.byLegacyTestID(vmData.name)
-        .should('exist')
-        .click();
+      cy.byLegacyTestID(vmData.name).should('exist').click();
 
       cy.get(dashboardTab.detailsCardItem)
         .eq(3)
@@ -77,56 +75,28 @@ describe('Test VM dashboard tab', () => {
       cy.get(resourceStatus).should('contain', VM_STATUS.Stopped);
 
       // Details card
-      cy.get(dashboardTab.detailsCardItem)
-        .eq(0)
-        .should('contain', YAML_VM_NAME);
-      cy.get(dashboardTab.detailsCardItem)
-        .eq(1)
-        .should('contain', testName);
-      cy.get(dashboardTab.detailsCardItem)
-        .eq(3)
-        .should('contain', DEFAULT_VALUES.VM_NOT_RUNNING); // Hostname
-      cy.get(dashboardTab.detailsCardItem)
-        .eq(4)
-        .should('contain', DEFAULT_VALUES.NOT_AVAILABLE); // Node
-      cy.get(dashboardTab.detailsCardItem)
-        .eq(5)
-        .should('contain', DEFAULT_VALUES.NOT_AVAILABLE); // IP Address
-      cy.get(dashboardTab.detailsCardItem)
-        .eq(6)
-        .should('contain', TEMPLATE.RHEL8.os); // OS
-      cy.get(dashboardTab.detailsCardItem)
-        .eq(7)
-        .should('contain', DEFAULT_VALUES.VM_NOT_RUNNING); // Time Zone
-      cy.get(dashboardTab.detailsCardItem)
-        .eq(8)
-        .should('contain', DEFAULT_VALUES.VM_NOT_RUNNING); // Active Users
+      cy.get(dashboardTab.detailsCardItem).eq(0).should('contain', YAML_VM_NAME);
+      cy.get(dashboardTab.detailsCardItem).eq(1).should('contain', testName);
+      cy.get(dashboardTab.detailsCardItem).eq(3).should('contain', DEFAULT_VALUES.VM_NOT_RUNNING); // Hostname
+      cy.get(dashboardTab.detailsCardItem).eq(4).should('contain', DEFAULT_VALUES.NOT_AVAILABLE); // Node
+      cy.get(dashboardTab.detailsCardItem).eq(5).should('contain', DEFAULT_VALUES.NOT_AVAILABLE); // IP Address
+      cy.get(dashboardTab.detailsCardItem).eq(6).should('contain', TEMPLATE.RHEL8.os); // OS
+      cy.get(dashboardTab.detailsCardItem).eq(7).should('contain', DEFAULT_VALUES.VM_NOT_RUNNING); // Time Zone
+      cy.get(dashboardTab.detailsCardItem).eq(8).should('contain', DEFAULT_VALUES.VM_NOT_RUNNING); // Active Users
 
       // Status card
       cy.get(dashboardTab.vmHealth).should('contain', VM_STATUS.Stopped);
       cy.get(dashboardTab.guestAgentHealth).should('contain', DEFAULT_VALUES.VM_NOT_RUNNING);
 
       // Utilization card
-      cy.get(dashboardTab.utilsCardItem)
-        .eq(0)
-        .should('contain', DEFAULT_VALUES.NOT_AVAILABLE);
-      cy.get(dashboardTab.utilsCardItem)
-        .eq(1)
-        .should('contain', DEFAULT_VALUES.NOT_AVAILABLE);
-      cy.get(dashboardTab.utilsCardItem)
-        .eq(2)
-        .should('contain', DEFAULT_VALUES.NOT_AVAILABLE);
-      cy.get(dashboardTab.utilsCardItem)
-        .eq(3)
-        .should('contain', DEFAULT_VALUES.NOT_AVAILABLE);
+      cy.get(dashboardTab.utilsCardItem).eq(0).should('contain', DEFAULT_VALUES.NOT_AVAILABLE);
+      cy.get(dashboardTab.utilsCardItem).eq(1).should('contain', DEFAULT_VALUES.NOT_AVAILABLE);
+      cy.get(dashboardTab.utilsCardItem).eq(2).should('contain', DEFAULT_VALUES.NOT_AVAILABLE);
+      cy.get(dashboardTab.utilsCardItem).eq(3).should('contain', DEFAULT_VALUES.NOT_AVAILABLE);
 
       // Inventory card
-      cy.get(dashboardTab.inventoryCardItem)
-        .eq(0)
-        .should('contain', '1 NIC');
-      cy.get(dashboardTab.inventoryCardItem)
-        .eq(1)
-        .should('contain', '2 Disks');
+      cy.get(dashboardTab.inventoryCardItem).eq(0).should('contain', '1 NIC');
+      cy.get(dashboardTab.inventoryCardItem).eq(1).should('contain', '2 Disks');
 
       // Events card
       cy.get(dashboardTab.eventsCardBody).should('not.exist');
@@ -150,30 +120,20 @@ describe('Test VM dashboard tab', () => {
         cy.get(resourceStatus).should('contain', VM_STATUS.Running);
 
         // Details card
-        cy.get(dashboardTab.detailsCardItem)
-          .eq(0)
-          .should('contain', YAML_VM_NAME);
-        cy.get(dashboardTab.detailsCardItem)
-          .eq(1)
-          .should('contain', testName);
-        cy.get(dashboardTab.detailsCardItem)
-          .eq(3)
-          .should('contain', YAML_VM_NAME); // Hostname
+        cy.get(dashboardTab.detailsCardItem).eq(0).should('contain', YAML_VM_NAME);
+        cy.get(dashboardTab.detailsCardItem).eq(1).should('contain', testName);
+        cy.get(dashboardTab.detailsCardItem).eq(3).should('contain', YAML_VM_NAME); // Hostname
         cy.get(dashboardTab.detailsCardItem)
           .eq(4)
           .should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE); // Node
         cy.get(dashboardTab.detailsCardItem)
           .eq(5)
           .should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE); // IP Address
-        cy.get(dashboardTab.detailsCardItem)
-          .eq(6)
-          .should('contain', 'Red Hat Enterprise Linux'); // OS
+        cy.get(dashboardTab.detailsCardItem).eq(6).should('contain', 'Red Hat Enterprise Linux'); // OS
         cy.get(dashboardTab.detailsCardItem)
           .eq(7)
           .should('not.contain', DEFAULT_VALUES.GUEST_AGENT_REQUIRED); // Time Zone
-        cy.get(dashboardTab.detailsCardItem)
-          .eq(8)
-          .should('contain', 'No users logged in'); // Active Users
+        cy.get(dashboardTab.detailsCardItem).eq(8).should('contain', 'No users logged in'); // Active Users
 
         // Utilization card
         cy.get(dashboardTab.utilsCardItem)
@@ -190,12 +150,8 @@ describe('Test VM dashboard tab', () => {
           .should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE);
 
         // Inventory card
-        cy.get(dashboardTab.inventoryCardItem)
-          .eq(0)
-          .should('contain', '1 NIC');
-        cy.get(dashboardTab.inventoryCardItem)
-          .eq(1)
-          .should('contain', '2 Disks');
+        cy.get(dashboardTab.inventoryCardItem).eq(0).should('contain', '1 NIC');
+        cy.get(dashboardTab.inventoryCardItem).eq(1).should('contain', '2 Disks');
 
         // Events card
         cy.get(dashboardTab.eventsCardBody).should('exist');

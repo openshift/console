@@ -19,11 +19,13 @@ import { convertBuildConfigToFormData, convertFormDataToYAML } from './form-util
 import { BuildConfigFormikValues } from './form-utils/types';
 import { BuildConfig, BuildConfigModel } from './types';
 
-const BuildConfigForm: React.FC<FormikProps<BuildConfigFormikValues> & {
-  heading: string;
-  buildConfig: BuildConfig;
-  handleCancel: () => void;
-}> = ({
+const BuildConfigForm: React.FC<
+  FormikProps<BuildConfigFormikValues> & {
+    heading: string;
+    buildConfig: BuildConfig;
+    handleCancel: () => void;
+  }
+> = ({
   heading,
   buildConfig: watchedBuildConfig,
   status,

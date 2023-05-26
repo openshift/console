@@ -29,9 +29,7 @@ describe('Test disk preallocation', () => {
     cy.createProject(testName);
     vm.create(vmData);
     cy.visitVMsList();
-    cy.byLegacyTestID(vmData.name)
-      .should('exist')
-      .click();
+    cy.byLegacyTestID(vmData.name).should('exist').click();
   });
 
   after(() => {

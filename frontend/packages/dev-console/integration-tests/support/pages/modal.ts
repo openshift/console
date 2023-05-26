@@ -2,11 +2,7 @@ import { modal } from '@console/cypress-integration-tests/views/modal';
 import { eventSourcePO } from '../pageObjects';
 
 export const editLabels = {
-  enterLabel: (labelName: string) =>
-    cy
-      .byTestID('tags-input')
-      .type(labelName)
-      .type('{enter}'),
+  enterLabel: (labelName: string) => cy.byTestID('tags-input').type(labelName).type('{enter}'),
   numberOfLabels: () => {
     return cy.get('tags-input span.tag-item-content');
   },
@@ -17,36 +13,23 @@ export const editLabels = {
 
 export const addSubscription = {
   enterSubscriberName: (name: string) =>
-    cy
-      .get('#form-input-metadata-name-field')
-      .clear()
-      .type(name),
+    cy.get('#form-input-metadata-name-field').clear().type(name),
   selectKnativeService: (knativeService: string = 'nodejs-ex-git') => {
     cy.get('[id$="subscriber-ref-name-field"]').click();
-    cy.get('li')
-      .contains(knativeService)
-      .click();
+    cy.get('li').contains(knativeService).click();
   },
 };
 
 export const editAnnotations = {
   add: () => cy.byTestID('add-button').click(),
   enterKey: (key: string) => {
-    cy.byTestID('pairs-list-name')
-      .last()
-      .type(key);
+    cy.byTestID('pairs-list-name').last().type(key);
   },
-  enterValue: (value: string) =>
-    cy
-      .byTestID('pairs-list-value')
-      .last()
-      .type(value),
+  enterValue: (value: string) => cy.byTestID('pairs-list-value').last().type(value),
   removeAnnotation: (annotationKey: string) => {
     cy.byTestID('pairs-list-name').each(($el, index) => {
       if ($el.prop('value').includes(annotationKey)) {
-        cy.get('button[data-test="delete-button"]')
-          .eq(index)
-          .click();
+        cy.get('button[data-test="delete-button"]').eq(index).click();
       }
     });
   },
@@ -54,12 +37,7 @@ export const editAnnotations = {
 
 export const setTrafficDistribution = {
   add: () => cy.byTestID('add-action').click(),
-  enterSplit: (split: string) =>
-    cy
-      .get('[id$="percent-field"]')
-      .last()
-      .clear()
-      .type(split),
+  enterSplit: (split: string) => cy.get('[id$="percent-field"]').last().clear().type(split),
   selectRevision: (revisionName: string) => {
     cy.get('[id$="revisionName-field"]').click();
     cy.get(`[data-test-dropdown-menu^="${revisionName}"]`).click();
@@ -77,9 +55,7 @@ export const editApplicationGrouping = {
   createApplication: (appName: string) => {
     cy.get('#form-dropdown-application-name-field').click();
     editApplicationGrouping.clickCreateApplication();
-    cy.byLegacyTestID('application-form-app-input')
-      .clear()
-      .type(appName);
+    cy.byLegacyTestID('application-form-app-input').clear().type(appName);
   },
   enterApplicationName: (appName: string) => {
     cy.byLegacyTestID('application-form-app-input').type(appName);
@@ -88,14 +64,9 @@ export const editApplicationGrouping = {
 
 export const deleteApplication = {
   enterApplication: (appName: string) =>
-    cy
-      .get('#form-input-resourceName-field')
-      .clear()
-      .type(appName),
+    cy.get('#form-input-resourceName-field').clear().type(appName),
   clickDelete: () => {
-    cy.byTestID('confirm-action')
-      .should('be.enabled')
-      .click();
+    cy.byTestID('confirm-action').should('be.enabled').click();
     cy.get('form').should('not.exist');
   },
   deleteApp: () => {
@@ -119,9 +90,7 @@ export const moveSink = {
   },
   enterURI: (uri: string) => {
     cy.get(eventSourcePO.sinkBinding.sink.uriRadioButton).should('be.checked');
-    cy.byLegacyTestID('sink-section-uri')
-      .clear()
-      .type(uri);
+    cy.byLegacyTestID('sink-section-uri').clear().type(uri);
   },
   verifyResourceDropDown: () =>
     cy.get(eventSourcePO.sinkBinding.sink.resource.resourceDropdown).should('be.visible'),
@@ -129,8 +98,6 @@ export const moveSink = {
 
 export const editPodCount = {
   enterPodCount: (podCount: string) => {
-    cy.get('input[type="number"]')
-      .clear()
-      .type(podCount);
+    cy.get('input[type="number"]').clear().type(podCount);
   },
 };

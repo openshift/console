@@ -64,9 +64,7 @@ describe('Test VM/VMI actions', () => {
   describe('Test VM detail view action', () => {
     before(() => {
       vm.create(vmData);
-      cy.byLegacyTestID(vmData.name)
-        .should('exist')
-        .click();
+      cy.byLegacyTestID(vmData.name).should('exist').click();
       cy.byLegacyTestID('horizontal-link-Details').click();
       waitForStatus(VM_STATUS.Running);
     });
@@ -124,9 +122,7 @@ describe('Test VM/VMI actions', () => {
     });
 
     it('ID(CNV-3699) Test VMI detail view action', () => {
-      cy.byLegacyTestID(vmiData.name)
-        .should('exist')
-        .click();
+      cy.byLegacyTestID(vmiData.name).should('exist').click();
       cy.byLegacyTestID('horizontal-link-Details').click();
       cy.get('.loading-box__loaded').should('be.visible');
       vm.delete();

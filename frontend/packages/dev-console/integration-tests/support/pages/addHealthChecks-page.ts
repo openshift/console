@@ -10,15 +10,10 @@ export const addHealthChecksPage = {
   clickSave: () => cy.get(addHealthChecksPO.save).click(),
   verifyHealthChecksForm: () => cy.get(addHealthChecksPO.healthChecksForm).should('be.visible'),
   verifySuccessText: (text: string) =>
-    cy
-      .get(addHealthChecksPO.successText)
-      .contains(text)
-      .should('be.visible'),
+    cy.get(addHealthChecksPO.successText).contains(text).should('be.visible'),
   clickProbeLink: (probeName: string) => {
     cy.wait(5000);
-    cy.byButtonText(probeName)
-      .scrollIntoView()
-      .click();
+    cy.byButtonText(probeName).scrollIntoView().click();
   },
   addReadinessProbe: () => {
     addHealthChecksPage.clickProbeLink('Add Readiness probe');
@@ -28,24 +23,16 @@ export const addHealthChecksPage = {
   },
   removeReadinessProbe: () => {
     cy.wait(5000);
-    cy.byButtonText('Readiness probe added')
-      .parent()
-      .next()
-      .find('[role="img"]')
-      .click();
+    cy.byButtonText('Readiness probe added').parent().next().find('[role="img"]').click();
   },
   addLivenessProbe: () => {
-    cy.contains('Add Liveness probe')
-      .scrollIntoView()
-      .click();
+    cy.contains('Add Liveness probe').scrollIntoView().click();
     cy.get('div.odc-heath-check-probe-form').should('be.visible');
     addHealthChecksPage.clickCheckIcon();
     addHealthChecksPage.verifySuccessText('Liveness probe added');
   },
   addStartupProbe: () => {
-    cy.byButtonText('Add Startup probe')
-      .scrollIntoView()
-      .click();
+    cy.byButtonText('Add Startup probe').scrollIntoView().click();
     cy.get('div.odc-heath-check-probe-form').should('be.visible');
     addHealthChecksPage.clickCheckIcon();
     addHealthChecksPage.verifySuccessText('Startup probe added');

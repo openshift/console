@@ -59,10 +59,13 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind>(null);
   const [isOpen, setOpen] = React.useState(false);
   const onToggle = (open: boolean) => setOpen(open);
-  const items: RequirementItems = {
-    maxUnavailable: t('console-app~maxUnavailable'),
-    minAvailable: t('console-app~minAvailable'),
-  };
+  const items: RequirementItems = React.useMemo(
+    () => ({
+      maxUnavailable: t('console-app~maxUnavailable'),
+      minAvailable: t('console-app~minAvailable'),
+    }),
+    [t],
+  );
   const selectedRequirement = getSelectedRequirement(formValues.requirement, items);
 
   const onFormValuesChange = React.useCallback(

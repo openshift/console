@@ -344,9 +344,7 @@ const defaultSamples = (t: TFunction) =>
                   const yaml = sortedExtensions
                     .map((extension) => {
                       const { id, label, description } = extension.properties;
-                      const labelComment = translateExtension(label)
-                        .split('\n')
-                        .join('\n  # ');
+                      const labelComment = translateExtension(label).split('\n').join('\n  # ');
                       const descriptionComment = translateExtension(description)
                         .split('\n')
                         .join('\n  # ');

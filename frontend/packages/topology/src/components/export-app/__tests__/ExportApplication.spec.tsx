@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { act } from 'react-dom/test-utils';
-import * as utils from '@console/internal/components/utils';
-import * as k8s from '@console/internal/module/k8s';
-import * as shared from '@console/shared';
+import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
+import * as rbacModule from '@console/internal/components/utils/rbac';
+import * as useIsMobileModule from '@console/shared/src/hooks/useIsMobile';
 import { ExportModel } from '../../../models';
 import ExportApplication from '../ExportApplication';
 import { mockExportData } from './export-data';
 
 describe('ExportApplication', () => {
-  const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
-  const spyUseFlag = jest.spyOn(shared, 'useFlag');
-  const spyUseIsMobile = jest.spyOn(shared, 'useIsMobile');
+  const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
+  const spyUseFlag = jest.spyOn(flagsModule, 'useFlag');
+  const spyUseIsMobile = jest.spyOn(useIsMobileModule, 'useIsMobile');
 
   it('should render export app btn when feature flag is present and user has access export CR and not mobile', () => {
     spyUseFlag.mockReturnValue(true);
@@ -41,7 +42,7 @@ describe('ExportApplication', () => {
   });
 
   it('should call k8sGet with correct data on click of export button', async () => {
-    const spyk8sGet = jest.spyOn(k8s, 'k8sGet');
+    const spyk8sGet = jest.spyOn(k8sResourceModule, 'k8sGet');
     spyk8sGet.mockReturnValue(Promise.resolve(mockExportData));
     spyUseFlag.mockReturnValue(true);
     spyUseAccessReview.mockReturnValue(true);

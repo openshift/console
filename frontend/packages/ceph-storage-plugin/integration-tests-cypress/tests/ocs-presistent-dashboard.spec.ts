@@ -19,13 +19,9 @@ xdescribe('Check OCS Dashboards', () => {
 
   it('Check Status Card is in Healthy', () => {
     cy.log('Check if OCS Cluster is Healthy');
-    cy.byTestID('success-icon')
-      .first()
-      .should('be.visible');
+    cy.byTestID('success-icon').first().should('be.visible');
     cy.log('Check if Data Resiliency is Healthy');
-    cy.byTestID('success-icon')
-      .last()
-      .should('be.visible');
+    cy.byTestID('success-icon').last().should('be.visible');
   });
 
   it('Check Details card is correct', () => {
@@ -33,9 +29,7 @@ xdescribe('Check OCS Dashboards', () => {
       .contains('OpenShift Container Storage')
       .scrollIntoView()
       .should('be.visible');
-    cy.contains('ocs-storagecluster')
-      .scrollIntoView()
-      .should('be.visible');
+    cy.contains('ocs-storagecluster').scrollIntoView().should('be.visible');
   });
 
   it('Check Inventory card is correct', () => {

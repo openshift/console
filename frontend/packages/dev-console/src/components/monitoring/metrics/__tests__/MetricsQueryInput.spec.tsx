@@ -8,12 +8,12 @@ import { QueryInput } from '../QueryInput';
 
 describe('Metrics Query Input', () => {
   // FIXME upgrading redux types is causing many errors at this time
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const spySelector = jest.spyOn(redux, 'useSelector');
   spySelector.mockReturnValue({ queryBrowser: { queries: [] } });
   // FIXME upgrading redux types is causing many errors at this time
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const spyDispatch = jest.spyOn(redux, 'useDispatch');
   spyDispatch.mockReturnValue(() => {});
@@ -39,10 +39,7 @@ describe('Metrics Query Input', () => {
 
   it('Custom Querey selection should update Dropdown title, show QueryInput and Button in disabled state', () => {
     const wrapper = shallow(<MetricsQueryInput />);
-    wrapper
-      .find(Dropdown)
-      .props()
-      .onChange('#ADD_NEW_QUERY#');
+    wrapper.find(Dropdown).props().onChange('#ADD_NEW_QUERY#');
     expect(wrapper.find(QueryInput)).toHaveLength(1);
     expect(wrapper.find(Button).props().children).toEqual('Hide PromQL');
     expect(wrapper.find(Button).props().isDisabled).toBe(true);
@@ -51,10 +48,7 @@ describe('Metrics Query Input', () => {
 
   it('Metric selection should update Dropdown title and show Button in enabled state', () => {
     const wrapper = shallow(<MetricsQueryInput />);
-    wrapper
-      .find(Dropdown)
-      .props()
-      .onChange('PODS_BY_CPU');
+    wrapper.find(Dropdown).props().onChange('PODS_BY_CPU');
     expect(wrapper.find(Button).props().isDisabled).toBe(false);
     expect(wrapper.find(Dropdown).props().title).toEqual('CPU usage');
   });

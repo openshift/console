@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import * as utils from '@console/dynamic-plugin-sdk';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import * as k8sGet from '@console/internal/components/utils/k8s-get-hook';
 import { MultiTabListPage } from '@console/shared';
-import * as shared from '@console/shared';
 import { t } from '../../../../../../__mocks__/i18next';
 import { sampleSecretData } from '../../../test-data/pac-data';
 import * as pipelinesHooks from '../../../utils/hooks';
@@ -22,9 +22,9 @@ describe('PipelinesListPage', () => {
   let spyK8sGet;
 
   beforeEach(() => {
-    spyUseFlag = jest.spyOn(shared, 'useFlag');
+    spyUseFlag = jest.spyOn(flagsModule, 'useFlag');
     spyPipelineTechPreviewBadge = jest.spyOn(pipelinesHooks, 'usePipelineTechPreviewBadge');
-    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
     spyK8sGet = jest.spyOn(k8sGet, 'useK8sGet');
 
     spyUseFlag.mockReturnValue(true);

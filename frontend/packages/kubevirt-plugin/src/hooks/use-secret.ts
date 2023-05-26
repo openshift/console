@@ -3,12 +3,12 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { SecretModel } from '@console/internal/models';
 import { k8sCreate, k8sUpdate, SecretKind, K8sKind } from '@console/internal/module/k8s';
 
-type useSecretArgs = {
+type UseSecretArgs = {
   secretName: string;
   namespace: string;
 };
 
-export type useSecretResult = {
+export type UseSecretResult = {
   secret: SecretKind;
   isSecretLoaded: boolean;
   secretLoadingError: string;
@@ -19,7 +19,7 @@ export type useSecretResult = {
   ) => void;
 };
 
-const useSecret = ({ secretName, namespace }: useSecretArgs) => {
+const useSecret = ({ secretName, namespace }: UseSecretArgs) => {
   const [secret, isSecretLoaded, secretLoadingError] = useK8sWatchResource<SecretKind>({
     kind: SecretModel.kind,
     name: secretName,

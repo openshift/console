@@ -75,9 +75,7 @@ When('user goes to the pipelines page', () => {
 });
 
 Then('user can see the {string} pipeline is succeeded', (workloadName: string) => {
-  cy.byLegacyTestID('item-filter')
-    .clear()
-    .type(workloadName);
+  cy.byLegacyTestID('item-filter').clear().type(workloadName);
   cy.byTestID('status-text', { timeout: 180000 }).should('include.text', 'Succeeded');
 });
 
@@ -87,9 +85,7 @@ When('user goes to the Administrator perspective', () => {
 
 When('user clicks on the Persistent Volume Claims in Storage tab', () => {
   cy.get(topologyPO.pipelines.storageNav).click();
-  cy.get(topologyPO.pipelines.pvcOption)
-    .eq(0)
-    .click();
+  cy.get(topologyPO.pipelines.pvcOption).eq(0).click();
 });
 
 When('user can see workspace created for the resource', () => {
@@ -99,9 +95,7 @@ When('user can see workspace created for the resource', () => {
 });
 
 When('user clicks on Start on the {string} pipeline', (workloadName: string) => {
-  cy.byLegacyTestID('item-filter')
-    .clear()
-    .type(workloadName);
+  cy.byLegacyTestID('item-filter').clear().type(workloadName);
   cy.wait(2000);
   cy.byLegacyTestID('kebab-button').click();
   cy.get(topologyPO.pipelines.startAction).click();
@@ -114,9 +108,7 @@ When('user can see "PVC" in workspace with name of PVC', () => {
 });
 
 When('user clicks on Add Trigger on the {string} pipeline', (workloadName: string) => {
-  cy.byLegacyTestID('item-filter')
-    .clear()
-    .type(workloadName);
+  cy.byLegacyTestID('item-filter').clear().type(workloadName);
   cy.wait(2000);
   cy.byLegacyTestID('kebab-button').click();
   cy.get(topologyPO.pipelines.addTriggerAction).click();
@@ -139,9 +131,7 @@ When('user can not see Build configuration option in Advanced Options', () => {
 });
 
 When('user can see Pipeline section is present', () => {
-  cy.get(topologyPO.pipelines.pipelineSection)
-    .scrollIntoView()
-    .should('be.visible');
+  cy.get(topologyPO.pipelines.pipelineSection).scrollIntoView().should('be.visible');
 });
 
 When('user can see Pipeline checkbox is present in enabled state', () => {

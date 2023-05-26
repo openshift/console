@@ -34,7 +34,7 @@ export const init = () => {
     .init({
       backend: {
         loadPath: '/locales/resource.json?lng={{lng}}&ns={{ns}}',
-        parse: function(data, lng, ns) {
+        parse: function (data, lng, ns) {
           const parsed = JSON.parse(data);
           return ns?.startsWith('plugin__') ? transformNamespace(lng, parsed) : parsed;
         },
@@ -75,7 +75,7 @@ export const init = () => {
       keySeparator: false,
       postProcess: ['pseudo'],
       interpolation: {
-        format: function(value, format, lng, options) {
+        format: function (value, format, lng, options) {
           if (format === 'number') {
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Browser_compatibility
             return new Intl.NumberFormat(lng).format(value);
@@ -96,7 +96,7 @@ export const init = () => {
         transSupportBasicHtmlNodes: true, // allow <br/> and simple html elements in translations
       },
       saveMissing: true,
-      missingKeyHandler: function(lng, ns, key) {
+      missingKeyHandler: function (lng, ns, key) {
         window.windowError = `Missing i18n key "${key}" in namespace "${ns}" and language "${lng}."`;
         // eslint-disable-next-line no-console
         console.error(window.windowError);

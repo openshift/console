@@ -21,9 +21,7 @@ const testOperand: TestOperandProps = {
 };
 
 const alertExists = (titleText: string) => {
-  cy.get('.pf-c-alert__title')
-    .contains(titleText)
-    .should('exist');
+  cy.get('.pf-c-alert__title').contains(titleText).should('exist');
 };
 
 const uninstallAndVerify = () => {

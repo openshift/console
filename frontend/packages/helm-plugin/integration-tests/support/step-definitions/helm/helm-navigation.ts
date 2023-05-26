@@ -241,10 +241,7 @@ When('user clicks on Helm release in create action menu', () => {
 });
 
 When('user enters Chart repository name as {string}', (name: string) => {
-  cy.get(helmChartRepositoriesPO.name)
-    .should('be.visible')
-    .clear()
-    .type(name);
+  cy.get(helmChartRepositoriesPO.name).should('be.visible').clear().type(name);
 });
 
 When('user enters Description as {string}', (description: string) => {
@@ -256,11 +253,7 @@ When('user enters Description as {string}', (description: string) => {
 });
 
 When('user enters URL as {string}', (url: string) => {
-  cy.get(helmChartRepositoriesPO.url)
-    .scrollIntoView()
-    .should('be.visible')
-    .clear()
-    .type(url);
+  cy.get(helmChartRepositoriesPO.url).scrollIntoView().should('be.visible').clear().type(url);
 });
 
 When('user clicks on Create button', () => {
@@ -287,9 +280,7 @@ When('user enters Display name as {string}', (displayName: string) => {
 Then(
   'user can see {string} {string} updated with {string} in the list page',
   (type: string, repoName: string, updatedValue: string) => {
-    cy.byLegacyTestID('item-filter')
-      .should('be.visible')
-      .type(repoName);
+    cy.byLegacyTestID('item-filter').should('be.visible').type(repoName);
     cy.wait(3000);
     cy.get('[data-test-rows="resource-row"]').contains(updatedValue);
     deleteChartRepositoryFromDetailsPage(repoName, type);
@@ -297,10 +288,7 @@ Then(
 );
 
 When('user edits {string} {string}', (name: string, type: string) => {
-  cy.byLegacyTestID('item-filter')
-    .should('be.visible')
-    .clear()
-    .type(name);
+  cy.byLegacyTestID('item-filter').should('be.visible').clear().type(name);
   cy.wait(3000);
   cy.byLegacyTestID('kebab-button').click();
   cy.byTestActionID(`Edit ${type}`).click();
@@ -308,9 +296,7 @@ When('user edits {string} {string}', (name: string, type: string) => {
 });
 
 When('user selects cluster-scoped scope type', () => {
-  cy.get(`[data-test="HelmChartRepository-view-input"]`)
-    .should('be.visible')
-    .click();
+  cy.get(`[data-test="HelmChartRepository-view-input"]`).should('be.visible').click();
 });
 
 When('user navigates to Helm page', () => {

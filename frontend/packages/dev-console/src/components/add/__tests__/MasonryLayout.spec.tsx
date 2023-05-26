@@ -23,21 +23,9 @@ describe('Masonry Layout', () => {
     wrapper.find(Measure).prop('onResize')(getContentRect(1400, 900));
 
     // Should show 4 columns (Math.floor(1400 / 300))
-    expect(
-      wrapper
-        .dive()
-        .dive()
-        .find(Masonry)
-        .prop('columnCount'),
-    ).toBe(4);
+    expect(wrapper.dive().dive().find(Masonry).prop('columnCount')).toBe(4);
     // Should render 4 placeholders
-    expect(
-      wrapper
-        .dive()
-        .dive()
-        .find(Masonry)
-        .find(AddCardSectionSkeleton),
-    ).toHaveLength(4);
+    expect(wrapper.dive().dive().find(Masonry).find(AddCardSectionSkeleton)).toHaveLength(4);
   });
 
   it('should render children if loading is false', () => {
@@ -53,21 +41,9 @@ describe('Masonry Layout', () => {
     wrapper.find(Measure).prop('onResize')(getContentRect(1400, 900));
 
     // Should show 4 columns (Math.floor(1400 / 300))
-    expect(
-      wrapper
-        .dive()
-        .dive()
-        .find(Masonry)
-        .prop('columnCount'),
-    ).toBe(4);
+    expect(wrapper.dive().dive().find(Masonry).prop('columnCount')).toBe(4);
     // Should render all childrens
-    expect(
-      wrapper
-        .dive()
-        .dive()
-        .find(Masonry)
-        .find('div'),
-    ).toHaveLength(5);
+    expect(wrapper.dive().dive().find(Masonry).find('div')).toHaveLength(5);
   });
 
   it('should change columns if a resize event exceeds threshold', () => {
@@ -85,13 +61,7 @@ describe('Masonry Layout', () => {
 
     wrapper.find(Measure).prop('onResize')(getContentRect(900, 800));
     // Should show 3 columns now (Math.floor(900 / 300))
-    expect(
-      wrapper
-        .dive()
-        .dive()
-        .find(Masonry)
-        .prop('columnCount'),
-    ).toBe(3);
+    expect(wrapper.dive().dive().find(Masonry).prop('columnCount')).toBe(3);
   });
 
   it('should not change columns if a resize event does not exceed threshold', () => {
@@ -109,12 +79,6 @@ describe('Masonry Layout', () => {
 
     wrapper.find(Measure).prop('onResize')(getContentRect(1190, 800));
     // Should still show 4 columns because new width does not exceed threshold
-    expect(
-      wrapper
-        .dive()
-        .dive()
-        .find(Masonry)
-        .prop('columnCount'),
-    ).toBe(4);
+    expect(wrapper.dive().dive().find(Masonry).prop('columnCount')).toBe(4);
   });
 });

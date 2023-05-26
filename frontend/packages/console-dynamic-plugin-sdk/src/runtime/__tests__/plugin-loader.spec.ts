@@ -1,3 +1,4 @@
+import { act } from '@testing-library/react';
 import { Simulate } from 'react-dom/test-utils';
 import { PluginStore } from '@console/plugin-sdk/src/store';
 import { ConsolePluginManifestJSON } from '../../schema/plugin-manifest';
@@ -108,7 +109,9 @@ describe('loadDynamicPlugin', () => {
     const { pluginMap } = getStateForTestPurposes();
     pluginMap.get('Test@1.2.3').entryCallbackFired = true;
 
-    Simulate.load(getScriptElement(manifest));
+    act(() => {
+      Simulate.load(getScriptElement(manifest));
+    });
 
     expect(await promise).toBe('Test@1.2.3');
   });
@@ -117,7 +120,9 @@ describe('loadDynamicPlugin', () => {
     const manifest = getPluginManifest('Test', '1.2.3');
     const promise = loadDynamicPlugin('http://example.com/test/', manifest);
 
-    Simulate.load(getScriptElement(manifest));
+    act(() => {
+      Simulate.load(getScriptElement(manifest));
+    });
 
     try {
       await promise;
@@ -137,7 +142,9 @@ describe('loadDynamicPlugin', () => {
     const manifest = getPluginManifest('Test', '1.2.3');
     const promise = loadDynamicPlugin('http://example.com/test/', manifest);
 
-    Simulate.error(getScriptElement(manifest));
+    act(() => {
+      Simulate.error(getScriptElement(manifest));
+    });
 
     try {
       await promise;

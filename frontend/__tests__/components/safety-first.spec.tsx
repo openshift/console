@@ -26,7 +26,7 @@ describe('When calling setter from `useState()` hook in an unsafe React componen
 
     let wrapper = mount<Props>(<Unsafe loader={null} />);
     const loader = () =>
-      new Promise((resolve) => {
+      new Promise<void>((resolve) => {
         expect(wrapper.text()).toEqual('Loading...');
         wrapper.unmount();
         resolve();
@@ -67,7 +67,7 @@ describe('useSafetyFirst', () => {
 
   it('does not attempt to set React state if unmounted (using hook)', (done) => {
     const loader = () =>
-      new Promise((resolve) => {
+      new Promise<void>((resolve) => {
         expect(wrapper.text()).toEqual('Loading...');
         wrapper.unmount();
         resolve();
@@ -90,7 +90,7 @@ describe('useSafetyFirst', () => {
 
   it('will set React state if mounted (using hook)', (done) => {
     const loader = () =>
-      new Promise((resolve) => {
+      new Promise<void>((resolve) => {
         expect(wrapper.text()).toEqual('Loading...');
         resolve();
       });

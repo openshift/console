@@ -71,11 +71,7 @@ describe('TaskRun Duration Graph', () => {
     expect(PipelineRunTaskRunGraphWrapper.find(LoadingInline).exists()).toBe(false);
     expect(PipelineRunTaskRunGraphWrapper.find(GraphEmpty).exists()).toBe(false);
     expect(
-      PipelineRunTaskRunGraphWrapper.find(Measure)
-        .dive()
-        .dive()
-        .find(LineChart)
-        .exists(),
+      PipelineRunTaskRunGraphWrapper.find(Measure).dive().dive().find(LineChart).exists(),
     ).toBe(true);
   });
 });

@@ -40,17 +40,9 @@ export async function createProject(name: string) {
   if (!exists) {
     await createYAMLButton.click();
     await browser.wait(until.presenceOf($('.modal-body__field')));
-    await $$('.modal-body__field')
-      .get(0)
-      .$('input')
-      .sendKeys(name);
-    await $$('.modal-body__field')
-      .get(1)
-      .$('input')
-      .sendKeys(`test-name=${name}`);
-    await $('.modal-content')
-      .$('#confirm-action')
-      .click();
+    await $$('.modal-body__field').get(0).$('input').sendKeys(name);
+    await $$('.modal-body__field').get(1).$('input').sendKeys(`test-name=${name}`);
+    await $('.modal-content').$('#confirm-action').click();
     await browser.wait(until.urlContains(`/${name}`), PAGE_LOAD_TIMEOUT_SECS);
   }
 }
@@ -124,19 +116,14 @@ export async function getListTexts(selector: any): Promise<string[]> {
 }
 
 export function getRandStr(length: number) {
-  return Math.random()
-    .toString(36)
-    .replace(/[.]/g, '')
-    .substr(1, length); // First char is always 0
+  return Math.random().toString(36).replace(/[.]/g, '').substr(1, length); // First char is always 0
 }
 
 export function getRandomMacAddress() {
   const getRandByte = () => {
     let byte: string;
     do {
-      byte = Math.random()
-        .toString(16)
-        .substr(2, 2);
+      byte = Math.random().toString(16).substr(2, 2);
     } while (byte.length !== 2);
     return byte;
   };
@@ -239,7 +226,7 @@ export const getDataVolumeByPrefix = (prefix: string) => {
  */
 export function deepFreeze(o: {}) {
   Object.freeze(o);
-  Object.getOwnPropertyNames(o).forEach(function(prop) {
+  Object.getOwnPropertyNames(o).forEach(function (prop) {
     if (
       o.hasOwnProperty(prop) &&
       o[prop] !== null &&

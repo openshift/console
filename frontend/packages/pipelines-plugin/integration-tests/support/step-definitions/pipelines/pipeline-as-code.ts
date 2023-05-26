@@ -248,7 +248,7 @@ Given('pipeline run is displayed for {string}', (repoName) => {
     {
       failOnNonZeroExit: false,
     },
-  ).then(function(result) {
+  ).then(function (result) {
     cy.log(result.stdout);
   });
   navigateTo(devNavigationMenu.Pipelines);
@@ -275,9 +275,7 @@ Then(
 );
 
 Then('user hovers over the commit id', () => {
-  cy.get('.co-external-link')
-    .focus()
-    .trigger('mouseover');
+  cy.get('.co-external-link').focus().trigger('mouseover');
 });
 
 Then('user should see commit message in tooltip', () => {
@@ -300,9 +298,7 @@ Then('user navigates to the Repositories Tab on the Pipelines Page', () => {
 });
 
 When('user clicks on Setup GitHub App button', () => {
-  cy.byTestID('secondary-action')
-    .should('be.visible')
-    .click();
+  cy.byTestID('secondary-action').should('be.visible').click();
 });
 
 Then('user can see {string}, {string} and {string}', (el1, el2, el3: string) => {

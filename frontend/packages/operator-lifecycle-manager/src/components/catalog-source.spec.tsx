@@ -39,19 +39,11 @@ describe(CatalogSourceDetails.displayName, () => {
   });
 
   it('renders name and publisher of the catalog', () => {
-    expect(
-      wrapper
-        .find(DetailsItem)
-        .at(1)
-        .props().obj.spec.displayName,
-    ).toEqual(obj.spec.displayName);
+    expect(wrapper.find(DetailsItem).at(1).props().obj.spec.displayName).toEqual(
+      obj.spec.displayName,
+    );
 
-    expect(
-      wrapper
-        .find(DetailsItem)
-        .at(2)
-        .props().obj.spec.publisher,
-    ).toEqual(obj.spec.publisher);
+    expect(wrapper.find(DetailsItem).at(2).props().obj.spec.publisher).toEqual(obj.spec.publisher);
   });
 });
 
@@ -131,21 +123,10 @@ describe(CreateSubscriptionYAML.displayName, () => {
     wrapper = wrapper.setProps({
       packageManifest: { loaded: true, data: testPackageManifest },
     } as any);
-    const createYAML = wrapper
-      .find(Firehose)
-      .childAt(0)
-      .dive()
-      .dive();
+    const createYAML = wrapper.find(Firehose).childAt(0).dive().dive();
 
     expect(createYAML.find(ErrorBoundary).exists()).toBe(true);
-    expect(
-      createYAML
-        .find(ErrorBoundary)
-        .childAt(0)
-        .dive()
-        .find(CreateYAML)
-        .exists(),
-    ).toBe(true);
+    expect(createYAML.find(ErrorBoundary).childAt(0).dive().find(CreateYAML).exists()).toBe(true);
   });
 
   it('passes example YAML templates using the package default channel', () => {
@@ -174,20 +155,9 @@ describe(CreateSubscriptionYAML.displayName, () => {
 
   it('does not render YAML editor component if `PackageManifest` has not loaded yet', () => {
     wrapper = wrapper.setProps({ packageManifest: { loaded: false } } as any);
-    const createYAML = wrapper
-      .find(Firehose)
-      .childAt(0)
-      .dive()
-      .dive();
+    const createYAML = wrapper.find(Firehose).childAt(0).dive().dive();
 
     expect(createYAML.find(CreateYAML).exists()).toBe(false);
-    expect(
-      createYAML
-        .find(ErrorBoundary)
-        .childAt(0)
-        .dive()
-        .find(LoadingBox)
-        .exists(),
-    ).toBe(true);
+    expect(createYAML.find(ErrorBoundary).childAt(0).dive().find(LoadingBox).exists()).toBe(true);
   });
 });

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -6,7 +7,7 @@ import {
   ServiceModel,
   RouteModel,
 } from '@console/internal/models';
-import * as k8s from '@console/internal/module/k8s';
+import * as k8sInternalResourceModule from '@console/internal/module/k8s/resource';
 import { getSuggestedName } from '../../../utils/imagestream-utils';
 import {
   mockDeployImageFormData,
@@ -68,9 +69,9 @@ describe('DeployImage Submit Utils', () => {
   });
 
   describe('createOrUpdateImageStream', () => {
-    const k8sCreate = jest.spyOn(k8s, 'k8sCreate');
-    const k8sUpdate = jest.spyOn(k8s, 'k8sUpdate');
-    const k8sWaitForUpdate = jest.spyOn(k8s, 'k8sWaitForUpdate');
+    const k8sCreate = jest.spyOn(k8sResourceModule, 'k8sCreate');
+    const k8sUpdate = jest.spyOn(k8sResourceModule, 'k8sUpdate');
+    const k8sWaitForUpdate = jest.spyOn(k8sInternalResourceModule, 'k8sWaitForUpdate');
 
     beforeEach(() => {
       jest.resetAllMocks();
@@ -163,7 +164,7 @@ describe('DeployImage Submit Utils', () => {
   describe('createDeployment tests', () => {
     beforeAll(() => {
       jest
-        .spyOn(k8s, 'k8sCreate')
+        .spyOn(k8sResourceModule, 'k8sCreate')
         .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
     });
 
@@ -267,7 +268,7 @@ describe('DeployImage Submit Utils', () => {
   describe('createResource tests', () => {
     beforeAll(() => {
       jest
-        .spyOn(k8s, 'k8sCreate')
+        .spyOn(k8sResourceModule, 'k8sCreate')
         .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
     });
 

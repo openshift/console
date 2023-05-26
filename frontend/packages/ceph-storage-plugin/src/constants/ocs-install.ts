@@ -31,6 +31,7 @@ export enum CLUSTER_STATUS {
   PROGRESSING = 'Progressing',
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export enum defaultRequestSize {
   BAREMETAL = '1',
   NON_BAREMETAL = '2Ti',

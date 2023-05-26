@@ -28,28 +28,17 @@ describe('withHandlePromise', () => {
 
   it('passes `props.inProgress` as true when calling `props.handlePromise()`', () => {
     const wrapper = shallow(<Test promise={Promise.resolve(42)} />);
-    wrapper
-      .dive()
-      .find('button')
-      .simulate('click');
+    wrapper.dive().find('button').simulate('click');
 
     expect(wrapper.dive().text()).toEqual('Loading...');
   });
 
   it('passes message if an error is thrown from handling the promise', (done) => {
     const wrapper = shallow(<Test promise={Promise.reject(42)} />);
-    wrapper
-      .dive()
-      .find('button')
-      .simulate('click');
+    wrapper.dive().find('button').simulate('click');
 
     setTimeout(() => {
-      expect(
-        wrapper
-          .dive()
-          .find('h1')
-          .text(),
-      ).toEqual('An error occurred. Please try again.');
+      expect(wrapper.dive().find('h1').text()).toEqual('An error occurred. Please try again.');
       done();
     }, 10);
   });

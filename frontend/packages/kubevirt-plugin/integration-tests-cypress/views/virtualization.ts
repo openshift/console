@@ -3,11 +3,7 @@ import { ADD_SOURCE, TEMPLATE_ACTION } from '../utils/const/index';
 import { wizard } from './wizard';
 
 export const getRow = (templateName: string, within: VoidFunction) =>
-  cy
-    .get(`[data-test-rows="resource-row"]`)
-    .contains(templateName)
-    .parents('tr')
-    .within(within);
+  cy.get(`[data-test-rows="resource-row"]`).contains(templateName).parents('tr').within(within);
 
 export const virtualization = {
   vms: {
@@ -26,11 +22,7 @@ export const virtualization = {
     },
     addSource: (templateName: string) =>
       getRow(templateName, () =>
-        cy
-          .byTestID('template-source')
-          .find('button')
-          .should('have.text', ADD_SOURCE)
-          .click(),
+        cy.byTestID('template-source').find('button').should('have.text', ADD_SOURCE).click(),
       ),
     testProvider: (templateName: string, provider: string) =>
       getRow(templateName, () => cy.byTestID('template-provider').should('include.text', provider)),

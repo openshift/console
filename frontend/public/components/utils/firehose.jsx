@@ -1,3 +1,4 @@
+/* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
@@ -7,11 +8,13 @@ import { Map as ImmutableMap } from 'immutable';
 import { inject } from './inject';
 import { makeReduxID, makeQuery } from './k8s-watcher';
 import * as k8sActions from '../../actions/k8s';
+
+// TODO remove multicluster
+import { getActiveCluster } from '@console/dynamic-plugin-sdk/src/app/core/reducers/coreSelectors';
 import {
-  getActiveCluster, // TODO remove multicluster
   INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL,
   INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
 import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 
 const shallowMapEquals = (a, b) => {

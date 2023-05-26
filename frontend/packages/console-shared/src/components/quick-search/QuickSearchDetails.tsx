@@ -40,9 +40,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
         )}
         {selectedItem.badges?.length > 0 ? (
           <CatalogBadges badges={selectedItem.badges} />
-        ) : (
-          undefined
-        )}
+        ) : undefined}
         <Button
           variant={ButtonVariant.primary}
           className="ocs-quick-search-details__form-button"

@@ -121,8 +121,9 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
 
     const redirectURL =
       actionOrigin && isHelmEnabled
-        ? `/catalog/ns/${HelmChartRepositoryRes.metadata.namespace ??
-            namespace}?catalogType=HelmChart`
+        ? `/catalog/ns/${
+            HelmChartRepositoryRes.metadata.namespace ?? namespace
+          }?catalogType=HelmChart`
         : HelmChartRepositoryRes.kind === ProjectHelmChartRepositoryModel.kind
         ? `/k8s/ns/${HelmChartRepositoryRes.metadata.namespace}/${referenceFor(
             HelmChartRepositoryRes,

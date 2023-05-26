@@ -42,7 +42,7 @@ export const pipelineYaml = element(by.css('[data-test-id="horizontal-link-YAML"
 export const pipelineRunLogList = element(by.css('[data-test-id="logs-tasklist"]'));
 export const pipelineRunLogContainer = element(by.css('[data-test-id="logs-task-container"]'));
 
-export const pipelineScriptRunner = async function() {
+export const pipelineScriptRunner = async function () {
   await browser.wait(until.presenceOf(createPipelineYaml));
   await createPipelineYaml.click();
   await browser.wait(until.presenceOf(selectTask));
@@ -54,7 +54,7 @@ export const pipelineScriptRunner = async function() {
   await browser.wait(until.visibilityOf(pipelineGraph));
 };
 
-export const pipelinecheckStatus = async function() {
+export const pipelinecheckStatus = async function () {
   await pipelineTab.click();
   await browser.wait(until.textToBePresentInElement(pipelinePage, 'Pipelines'));
 };

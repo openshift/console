@@ -22,9 +22,7 @@ Then('user will see the {string} card', (cardName: string) => {
 
 When('user clicks on the {string} card', (cardName: string) => {
   cy.byTestID(`EventSource-${cardName}`).click();
-  cy.get(eventingPO.createCatalog)
-    .contains('Create Event Source')
-    .click({ force: true });
+  cy.get(eventingPO.createCatalog).contains('Create Event Source').click({ force: true });
 });
 
 When('user creates {string}', (eventName: string) => {

@@ -11,7 +11,7 @@ export const mockRepository: RepositoryKind = {
     resourceVersion: '171973',
     uid: 'd1ec5cd2-a55b-413c-afae-8b3f25e0723b',
   },
-  // eslint-disable-next-line @typescript-eslint/camelcase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   pipelinerun_status: [
     {
       completionTime: '2021-07-13T09:19:30Z',
@@ -30,7 +30,7 @@ export const mockRepository: RepositoryKind = {
       sha: '72954b86ee80eb9cf561b109b2fce63e57d10561',
       startTime: '2021-07-13T09:18:09Z',
       title: 'Delete test-1.txt',
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       event_type: 'pull_request',
     },
     {
@@ -50,7 +50,7 @@ export const mockRepository: RepositoryKind = {
       sha: 'fa854c0a4821eac3dcc7f862e08396835fec2804',
       startTime: '2021-07-13T10:28:45Z',
       title: 'test push two test push',
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       event_type: 'push',
     },
     {
@@ -70,7 +70,7 @@ export const mockRepository: RepositoryKind = {
       sha: 'dc204e919fc6fd984d24ac6f146b183c1695113d',
       startTime: '2021-07-13T10:33:08Z',
       title: 'Delete test-1.txt',
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       event_type: 'pull_request',
     },
     {
@@ -90,7 +90,7 @@ export const mockRepository: RepositoryKind = {
       sha: '9ef2e6554d1846a7b0782c2dcdd8844070ecf242',
       startTime: '2021-07-13T10:44:45Z',
       title: 'Delete test-2.txt',
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       event_type: 'pull_request',
     },
   ],

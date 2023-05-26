@@ -35,8 +35,8 @@ const initSegment = () => {
     'setAnonymousId',
     'addDestinationMiddleware',
   ];
-  analytics.factory = function(e: string) {
-    return function() {
+  analytics.factory = function (e: string) {
+    return function () {
       // eslint-disable-next-line prefer-rest-params
       const t = Array.prototype.slice.call(arguments);
       t.unshift(e);
@@ -47,7 +47,7 @@ const initSegment = () => {
   for (const key of analytics.methods) {
     analytics[key] = analytics.factory(key);
   }
-  analytics.load = function(key: string, e: Event) {
+  analytics.load = function (key: string, e: Event) {
     const t = document.createElement('script');
     t.type = 'text/javascript';
     t.async = true;

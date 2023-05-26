@@ -49,9 +49,7 @@ xdescribe('Test Object Bucket Claim resource', () => {
     cy.byTestID('resource-status').contains(BOUND, { timeout: MINUTE });
 
     cy.log('Test if owner and creation date are shown correctly');
-    cy.byTestSelector('details-item-value__Owner')
-      .scrollIntoView()
-      .contains('No owner');
+    cy.byTestSelector('details-item-value__Owner').scrollIntoView().contains('No owner');
 
     cy.log('Test if secret data is masked');
     cy.contains('Reveal Values');

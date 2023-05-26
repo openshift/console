@@ -318,7 +318,8 @@ export const withCreateConnector = <P extends WithCreateConnectorProps & Element
       </WrappedComponent>
     );
   };
-  Component.displayName = `withCreateConnector(${WrappedComponent.displayName ||
-    WrappedComponent.name})`;
+  Component.displayName = `withCreateConnector(${
+    WrappedComponent.displayName || WrappedComponent.name
+  })`;
   return observer(Component);
 };

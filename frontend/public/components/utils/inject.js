@@ -16,7 +16,7 @@ export const inject = (children, props) => {
 const lastKind = new Set();
 
 /**
- * @deprecated: Use `modelFor` or `connectToModel`.
+ * @deprecated Use `modelFor` or `connectToModel`.
  * Provides a synchronous way to acquire a statically-defined Kubernetes model.
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */

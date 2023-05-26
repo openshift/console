@@ -125,7 +125,7 @@ export const getFilterGroupCounts = (
 
   _.each(filterGroups, (filterGroup) => {
     _.each(_.keys(activeFilters[filterGroup]), (key) => {
-      const filterValues = [activeFilters[filterGroup]?.[key]?.['value']];
+      const filterValues = [activeFilters[filterGroup]?.[key]?.value];
 
       const matchedItems = _.filter(items, (item) => {
         const filterValue = item[filterGroup] || item.attributes?.[filterGroup];

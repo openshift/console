@@ -32,10 +32,7 @@ describe('YAMLTemplate', () => {
     const baseTemplateEntries = _.values(baseTemplates.entrySeq().toObject()) as TemplateEntry[];
     const baseTemplateKeys = _.flatMap(baseTemplateEntries.map(entryToKeys));
     const pluginTemplateKeys = _.flatMap(
-      testedExtensions
-        .toArray()
-        .filter(isYAMLTemplate)
-        .map(extensionToKeys),
+      testedExtensions.toArray().filter(isYAMLTemplate).map(extensionToKeys),
     );
     const allTemplateKeys = baseTemplateKeys.concat(pluginTemplateKeys);
     const duplicateTemplateKeys = getDuplicates(allTemplateKeys);

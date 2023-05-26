@@ -18,9 +18,10 @@ import {
   FirehoseResourcesResult,
   ResourceLink,
 } from '@console/internal/components/utils';
-import * as k8sModels from '@console/internal/module/k8s';
+import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
+import * as k8sModelsModule from '@console/internal/module/k8s/k8s-models';
 import store from '@console/internal/redux';
-import * as extensionHooks from '@console/plugin-sdk';
+import * as useExtensionsModule from '@console/plugin-sdk/src/api/useExtensions';
 import { LazyActionMenu } from '@console/shared';
 import {
   testCRD,
@@ -131,7 +132,7 @@ describe(OperandTableRow.displayName, () => {
   let wrapper: ReactWrapper<OperandTableRowProps>;
 
   beforeEach(() => {
-    spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
+    spyOn(useExtensionsModule, 'useExtensions').and.returnValue([]);
     wrapper = mount(<OperandTableRow obj={testResourceInstance} columns={[]} showNamespace />, {
       wrappingComponent: (props) => (
         <Router history={history}>
@@ -188,11 +189,11 @@ describe(OperandTableRow.displayName, () => {
 
 describe(OperandList.displayName, () => {
   let wrapper: ReactWrapper<OperandListProps>;
-  let resources: k8sModels.K8sResourceKind[];
+  let resources: K8sResourceKind[];
 
   beforeEach(() => {
     resources = [testResourceInstance];
-    spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
+    spyOn(useExtensionsModule, 'useExtensions').and.returnValue([]);
     wrapper = mount(<OperandList loaded data={resources} showNamespace />, {
       wrappingComponent: (props) => (
         <Router history={history}>
@@ -243,10 +244,7 @@ describe(OperandDetails.displayName, () => {
   });
 
   it('renders description title', () => {
-    const title = wrapper
-      .find('SectionHeading')
-      .first()
-      .prop('text');
+    const title = wrapper.find('SectionHeading').first().prop('text');
     expect(title).toEqual('Test Resource overview');
   });
 
@@ -278,11 +276,7 @@ describe(OperandDetails.displayName, () => {
 
   xit('[CONSOLE-2336] renders spec descriptor fields if the custom resource is `owned`', () => {
     expect(
-      wrapper
-        .find(DescriptorDetailsItemList)
-        .last()
-        .shallow()
-        .find(DescriptorDetailsItem).length,
+      wrapper.find(DescriptorDetailsItemList).last().shallow().find(DescriptorDetailsItem).length,
     ).toEqual(
       testClusterServiceVersion.spec.customresourcedefinitions.owned[0].specDescriptors.length,
     );
@@ -297,21 +291,12 @@ describe(OperandDetails.displayName, () => {
     wrapper = wrapper.setProps({ csv });
 
     expect(
-      wrapper
-        .find(DescriptorDetailsItemList)
-        .last()
-        .shallow()
-        .find(DescriptorDetailsItem).length,
+      wrapper.find(DescriptorDetailsItemList).last().shallow().find(DescriptorDetailsItem).length,
     ).toEqual(csv.spec.customresourcedefinitions.required[0].specDescriptors.length);
   });
 
   it('renders a Condtions table', () => {
-    expect(
-      wrapper
-        .find('SectionHeading')
-        .at(1)
-        .prop('text'),
-    ).toEqual('Conditions');
+    expect(wrapper.find('SectionHeading').at(1).prop('text')).toEqual('Conditions');
 
     expect(wrapper.find('Conditions').prop('conditions')).toEqual(
       testResourceInstance.status.conditions,
@@ -328,9 +313,9 @@ describe(OperandDetails.displayName, () => {
 });
 
 describe('ResourcesList', () => {
-  const currentURL = `/k8s/ns/default/${
-    ClusterServiceVersionModel.plural
-  }/etcd/${k8sModels.referenceFor(testResourceInstance)}/my-etcd`;
+  const currentURL = `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/${referenceFor(
+    testResourceInstance,
+  )}/my-etcd`;
   const routePath = `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`;
   it('uses the resources defined in the CSV', () => {
     const wrapper = mountWithRoute(
@@ -391,12 +376,7 @@ describe(OperandDetailsPage.displayName, () => {
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
     const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
-    expect(
-      wrapper
-        .find(DetailsPage)
-        .props()
-        .breadcrumbsFor(null),
-    ).toEqual([
+    expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
       {
         name: 'Installed Operators',
         path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}`,
@@ -419,12 +399,7 @@ describe(OperandDetailsPage.displayName, () => {
       routePath,
     );
 
-    expect(
-      wrapper
-        .find(DetailsPage)
-        .props()
-        .breadcrumbsFor(null),
-    ).toEqual([
+    expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
       {
         name: 'Installed Operators',
         path: `/k8s/ns/example/${ClusterServiceVersionModel.plural}`,
@@ -511,7 +486,7 @@ describe(ProvidedAPIsPage.displayName, () => {
 
   beforeAll(() => {
     // Since crd models have not been loaded into redux state, just force return of the correct model type
-    spyOn(k8sModels, 'modelFor').and.returnValue(testModel);
+    spyOn(k8sModelsModule, 'modelFor').and.returnValue(testModel);
   });
 
   beforeEach(() => {
@@ -528,12 +503,7 @@ describe(ProvidedAPIsPage.displayName, () => {
     expect(wrapper.find(ListPageFilter).exists()).toBe(true);
   });
   it('render ListPageCreateDropdown with the correct text', () => {
-    expect(
-      wrapper
-        .find(ListPageCreateDropdown)
-        .children()
-        .text(),
-    ).toEqual('Create new');
+    expect(wrapper.find(ListPageCreateDropdown).children().text()).toEqual('Create new');
   });
   it('passes `items` props and render ListPageCreateDropdown create button if app has multiple owned CRDs', () => {
     const obj = _.cloneDeep(testClusterServiceVersion);
@@ -552,12 +522,7 @@ describe(ProvidedAPIsPage.displayName, () => {
     });
   });
   it('check if ListPageBody component renders the correct children', () => {
-    expect(
-      wrapper
-        .find(ListPageBody)
-        .children()
-        .children().length,
-    ).toBe(2);
+    expect(wrapper.find(ListPageBody).children().children().length).toBe(2);
   });
 });
 
@@ -584,20 +549,10 @@ describe(ProvidedAPIPage.displayName, () => {
     );
   });
   it('render ListPageCreateLink with the correct text', () => {
-    expect(
-      wrapper
-        .find(ListPageCreateLink)
-        .children()
-        .text(),
-    ).toEqual('Create Test Resource');
+    expect(wrapper.find(ListPageCreateLink).children().text()).toEqual('Create Test Resource');
   });
   it('check if ListPageBody component renders the correct children', () => {
-    expect(
-      wrapper
-        .find(ListPageBody)
-        .children()
-        .children().length,
-    ).toBe(2);
+    expect(wrapper.find(ListPageBody).children().children().length).toBe(2);
   });
 });
 

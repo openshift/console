@@ -65,20 +65,10 @@ describe(ProgressiveList.displayName, () => {
         </ProgressiveListItem>
       </ProgressiveList>,
     );
-    expect(
-      wrapper
-        .find(ProgressiveListFooter)
-        .shallow()
-        .find(Button)
-        .render()
-        .text(),
-    ).toEqual('Dummy');
-    expect(
-      wrapper
-        .find(ProgressiveListFooter)
-        .shallow()
-        .find(Button),
-    ).toHaveLength(1);
+    expect(wrapper.find(ProgressiveListFooter).shallow().find(Button).render().text()).toEqual(
+      'Dummy',
+    );
+    expect(wrapper.find(ProgressiveListFooter).shallow().find(Button)).toHaveLength(1);
     expect(wrapper.find(DummyComponent).exists()).toBe(false);
     expect(visibleItems).toHaveLength(0);
     wrapper
@@ -90,11 +80,6 @@ describe(ProgressiveList.displayName, () => {
     expect(visibleItems.includes('Dummy')).toBe(true);
     wrapper.setProps({ visibleItems });
     expect(wrapper.find(DummyComponent).exists()).toBe(true);
-    expect(
-      wrapper
-        .find(ProgressiveListFooter)
-        .shallow()
-        .find(Button),
-    ).toHaveLength(0);
+    expect(wrapper.find(ProgressiveListFooter).shallow().find(Button)).toHaveLength(0);
   });
 });

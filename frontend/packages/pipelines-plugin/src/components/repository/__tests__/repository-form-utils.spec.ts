@@ -91,10 +91,10 @@ describe('createRepositoryResources', () => {
         kind: 'Repository',
         metadata: { name: 'test-repo', namespace: 'test-ns' },
         spec: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           git_provider: {
             secret: { key: 'provider.token', name: expect.anything() },
-            // eslint-disable-next-line @typescript-eslint/camelcase
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             webhook_secret: { key: 'webhook.secret', name: expect.anything() },
           },
           url: 'https://github.com/sample/repo',
@@ -120,7 +120,7 @@ describe('createRepositoryResources', () => {
       data: expect.objectContaining({
         spec: {
           url: 'https://customgithost.com/sample/repo',
-          // eslint-disable-next-line @typescript-eslint/camelcase
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           git_provider: {
             url: 'customgithost.com',
           },

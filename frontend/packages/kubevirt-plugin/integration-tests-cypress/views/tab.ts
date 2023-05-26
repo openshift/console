@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export enum tabs {
   Overview = 'horizontal-link-Overview',
   Details = 'horizontal-link-Details',

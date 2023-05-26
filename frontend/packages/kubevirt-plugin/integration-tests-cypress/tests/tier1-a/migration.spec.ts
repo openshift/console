@@ -46,9 +46,7 @@ describe('Test VM Migration', () => {
     cy.contains('Virtualization').click();
 
     if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
-      cy.byLegacyTestID(vmData.name)
-        .should('exist')
-        .click();
+      cy.byLegacyTestID(vmData.name).should('exist').click();
       tab.navigateToDetails();
       vm.migrate(false);
       waitForStatus(VM_STATUS.Migrating);
@@ -63,18 +61,14 @@ describe('Test VM Migration', () => {
     }
     if (Cypress.env('STORAGE_CLASS') === 'hostpath-provisioner') {
       vm.migrate(false);
-      cy.get(errorAlert)
-        .contains('all PVCs must be shared')
-        .should('exist');
+      cy.get(errorAlert).contains('all PVCs must be shared').should('exist');
     }
   });
 
   it('ID(CNV-2133) Migrate already migrated VM', () => {
     cy.visitVMsList();
     if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
-      cy.byLegacyTestID(vmData.name)
-        .should('exist')
-        .click();
+      cy.byLegacyTestID(vmData.name).should('exist').click();
       cy.byLegacyTestID('horizontal-link-Details').click();
 
       // migrate again

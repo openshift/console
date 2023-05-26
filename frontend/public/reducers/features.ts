@@ -40,7 +40,9 @@ export const defaults = _.mapValues(FLAGS, (flag) => {
     case FLAGS.AUTH_ENABLED:
       return !window.SERVER_FLAGS.authDisabled;
     case FLAGS.MONITORING:
-      return !!window.SERVER_FLAGS.prometheusBaseURL && !!window.SERVER_FLAGS.prometheusTenancyBaseURL;
+      return (
+        !!window.SERVER_FLAGS.prometheusBaseURL && !!window.SERVER_FLAGS.prometheusTenancyBaseURL
+      );
     default:
       return undefined;
   }

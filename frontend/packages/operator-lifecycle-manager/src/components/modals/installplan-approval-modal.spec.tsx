@@ -7,7 +7,7 @@ import {
   ModalBody,
 } from '@console/internal/components/factory/modal';
 import { RadioInput } from '@console/internal/components/radio';
-import * as k8sModels from '@console/internal/module/k8s';
+import * as k8sModelsModule from '@console/internal/module/k8s/k8s-models';
 import { testSubscription, testInstallPlan } from '../../../mocks';
 import { SubscriptionModel, InstallPlanModel } from '../../models';
 import { SubscriptionKind, InstallPlanApproval } from '../../types';
@@ -51,28 +51,16 @@ describe(InstallPlanApprovalModal.name, () => {
   });
 
   it('pre-selects the approval strategy option that is currently being used by a subscription', () => {
-    expect(
-      wrapper
-        .find(ModalBody)
-        .find(RadioInput)
-        .at(0)
-        .props().checked,
-    ).toBe(true);
+    expect(wrapper.find(ModalBody).find(RadioInput).at(0).props().checked).toBe(true);
   });
 
   it('pre-selects the approval strategy option that is currently being used by an install plan', () => {
     wrapper = wrapper.setProps({ obj: _.cloneDeep(testInstallPlan) });
-    expect(
-      wrapper
-        .find(ModalBody)
-        .find(RadioInput)
-        .at(0)
-        .props().checked,
-    ).toBe(true);
+    expect(wrapper.find(ModalBody).find(RadioInput).at(0).props().checked).toBe(true);
   });
 
   it('calls `props.k8sUpdate` to update the subscription when form is submitted', () => {
-    spyOn(k8sModels, 'modelFor').and.returnValue(SubscriptionModel);
+    spyOn(k8sModelsModule, 'modelFor').and.returnValue(SubscriptionModel);
     k8sUpdate.and.callFake((modelArg, subscriptionArg) => {
       expect(modelArg).toEqual(SubscriptionModel);
       expect(subscriptionArg?.spec?.installPlanApproval).toEqual(InstallPlanApproval.Manual);
@@ -89,7 +77,7 @@ describe(InstallPlanApprovalModal.name, () => {
 
   it('calls `props.k8sUpdate` to update the install plan when form is submitted', () => {
     wrapper = wrapper.setProps({ obj: _.cloneDeep(testInstallPlan) });
-    spyOn(k8sModels, 'modelFor').and.returnValue(InstallPlanModel);
+    spyOn(k8sModelsModule, 'modelFor').and.returnValue(InstallPlanModel);
     k8sUpdate.and.callFake((modelArg, installPlanArg) => {
       expect(modelArg).toEqual(InstallPlanModel);
       expect(installPlanArg?.spec?.approval).toEqual(InstallPlanApproval.Manual);

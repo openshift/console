@@ -57,17 +57,13 @@ describe('Monitoring: Alerts', () => {
     cy.testA11y('Alerting details page');
 
     cy.log('drill down to the Alerting rule details page');
-    cy.byTestID('alert-rules-detail-resource-link')
-      .contains('Watchdog')
-      .click();
+    cy.byTestID('alert-rules-detail-resource-link').contains('Watchdog').click();
     shouldBeWatchdogAlertRulesPage();
     cy.testA11y('Alerting rule details page');
 
     cy.log('drill back up to the Alert details page');
     // Active alerts list should contain a link back to the Alert details page
-    cy.byTestID('active-alerts')
-      .first()
-      .click();
+    cy.byTestID('active-alerts').first().click();
     shouldBeWatchdogAlertDetailsPage();
   });
 
@@ -91,9 +87,7 @@ describe('Monitoring: Alerts', () => {
     // Change duration
     cy.byTestID('silence-for-toggle').click();
     cy.byTestID('silence-for').should('contain', '1h');
-    cy.byTestID('silence-for')
-      .contains(/^1h$/)
-      .click();
+    cy.byTestID('silence-for').contains(/^1h$/).click();
     cy.byTestID('silence-until').should('have.value', '1h from now');
     // Change to not start now
     cy.byTestID('silence-start-immediately').click();
@@ -120,9 +114,7 @@ describe('Monitoring: Alerts', () => {
     // Change duration back again
     cy.byTestID('silence-for-toggle').click();
     cy.byTestID('silence-for').should('contain', '2h');
-    cy.byTestID('silence-for')
-      .contains(/^2h$/)
-      .click();
+    cy.byTestID('silence-for').contains(/^2h$/).click();
     cy.byTestID('silence-until').should('have.value', '2h from now');
     // Add comment and submit
     cy.byTestID('silence-comment').type('test comment');
@@ -133,26 +125,18 @@ describe('Monitoring: Alerts', () => {
     cy.testA11y('Silence details page');
     cy.log('shows the silenced Alert in the Silenced Alerts list');
     // Click the link to navigate back to the Alert details link
-    cy.byTestID('firing-alerts')
-      .first()
-      .should('have.text', 'Watchdog')
-      .click();
+    cy.byTestID('firing-alerts').first().should('have.text', 'Watchdog').click();
     shouldBeWatchdogAlertDetailsPage();
 
     cy.log('shows the newly created Silence in the Silenced By list');
     // Click the link to navigate back to the Silence details page
-    cy.byLegacyTestID('silence-resource-link')
-      .first()
-      .should('have.text', 'Watchdog')
-      .click();
+    cy.byLegacyTestID('silence-resource-link').first().should('have.text', 'Watchdog').click();
     shouldBeWatchdogSilencePage();
 
     cy.log('expires the Silence');
     cy.byTestID('silence-actions-toggle').click();
     cy.byTestID('silence-actions').should('contain', 'Expire silence');
-    cy.byTestID('silence-actions')
-      .contains('Expire silence')
-      .click();
+    cy.byTestID('silence-actions').contains('Expire silence').click();
     cy.testA11y('Expire silence modal');
     cy.get('button.pf-m-primary').click();
     cy.get(errorMessage).should('not.exist');

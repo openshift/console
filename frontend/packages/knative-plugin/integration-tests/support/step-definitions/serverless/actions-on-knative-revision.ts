@@ -94,10 +94,7 @@ Given('knative service {string} with multiple revisions', (serviceName: string) 
   topologyPage.selectContextMenuAction(`Edit ${serviceName}`);
 
   app.waitForLoad();
-  cy.get('button')
-    .contains('Labels')
-    .scrollIntoView()
-    .click();
+  cy.get('button').contains('Labels').scrollIntoView().click();
   gitPage.enterLabels('app=frontend');
   cy.get(formPO.create).click();
   topologyPage.verifyTopologyPage();
@@ -114,19 +111,13 @@ Given('knative service {string} with multiple revisions', (serviceName: string) 
   cy.log(`user is able to see revisions in knative service : ${serviceName} of topology side pane`);
   topologySidePane.selectTab('Resources');
   topologySidePane.verifySection('Revisions');
-  cy.get('.revision-overview-list')
-    .next('ul')
-    .find('li')
-    .should('have.length', 2);
+  cy.get('.revision-overview-list').next('ul').find('li').should('have.length', 2);
 });
 
 When(
   'user right clicks on the revision of knative service {string} to open the context menu',
   (serviceName: string) => {
-    topologyPage
-      .getRevisionNode(serviceName)
-      .first()
-      .trigger('contextmenu', { force: true });
+    topologyPage.getRevisionNode(serviceName).first().trigger('contextmenu', { force: true });
   },
 );
 
@@ -219,10 +210,7 @@ Then('save, cancel buttons are displayed', () => {
 Then(
   'user can see the label {string} in the Details tab of the Sidebar of {string}',
   (label: string, serviceName: string) => {
-    topologyPage
-      .getRevisionNode(serviceName)
-      .first()
-      .click({ force: true });
+    topologyPage.getRevisionNode(serviceName).first().click({ force: true });
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
     topologySidePane.verifyLabel(label);
@@ -232,10 +220,7 @@ Then(
 Then(
   'user will not see the label {string} in the Details tab of the Sidebar of {string}',
   (label: string, serviceName: string) => {
-    topologyPage
-      .getRevisionNode(serviceName)
-      .first()
-      .click({ force: true });
+    topologyPage.getRevisionNode(serviceName).first().click({ force: true });
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
     const labelName = label.split('=');
@@ -249,12 +234,8 @@ Then(
 );
 
 Then('key, value columns are displayed with respective text fields', () => {
-  cy.byTestID('pairs-list-name')
-    .its('length')
-    .should('be.gte', 1);
-  cy.byTestID('pairs-list-value')
-    .its('length')
-    .should('be.gte', 1);
+  cy.byTestID('pairs-list-name').its('length').should('be.gte', 1);
+  cy.byTestID('pairs-list-value').its('length').should('be.gte', 1);
 });
 
 Then('Add more link is enabled', () => {
@@ -264,9 +245,7 @@ Then('Add more link is enabled', () => {
 Then(
   'user can see the annotation {string} in the Details tab of the Sidebar of {string}',
   (numOfAnnotations: string, serviceName: string) => {
-    cy.byLegacyTestID('base-node-handler')
-      .find('g.odc-resource-icon')
-      .click({ force: true });
+    cy.byLegacyTestID('base-node-handler').find('g.odc-resource-icon').click({ force: true });
     cy.log(numOfAnnotations, serviceName);
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
@@ -302,9 +281,7 @@ Then(
 Then(
   'number of Annotations increased to {string} in revision side bar details of service {string}',
   (numOfAnnotations: string, serviceName: string) => {
-    cy.byLegacyTestID('base-node-handler')
-      .find('g.odc-resource-icon')
-      .click({ force: true });
+    cy.byLegacyTestID('base-node-handler').find('g.odc-resource-icon').click({ force: true });
     cy.log(serviceName);
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
@@ -341,10 +318,7 @@ Then('user clicks on "remove" icon for the annotation with key {string}', (key: 
 When(
   'user selects {string} option from knative revision context menu of knative service {string}',
   (option: string, serviceName: string) => {
-    topologyPage
-      .getRevisionNode(serviceName)
-      .first()
-      .trigger('contextmenu', { force: true });
+    topologyPage.getRevisionNode(serviceName).first().trigger('contextmenu', { force: true });
     cy.byTestActionID(option).click();
   },
 );

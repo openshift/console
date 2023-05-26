@@ -1,4 +1,4 @@
-import * as utils from '@console/internal/components/utils/rbac';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { PodControllerOverviewItem } from '../../types';
@@ -123,7 +123,7 @@ describe('checkPodEditAccess', () => {
 
   it('should have access true if check Access return allowed true', (done) => {
     jest
-      .spyOn(utils, 'checkAccess')
+      .spyOn(rbacModule, 'checkAccess')
       .mockImplementation(() => Promise.resolve({ status: { allowed: true } }));
     checkPodEditAccess(obj, DeploymentConfigModel, undefined)
       .then((resp) => {
@@ -135,7 +135,7 @@ describe('checkPodEditAccess', () => {
 
   it('should have access false if check Access return allowed false', (done) => {
     jest
-      .spyOn(utils, 'checkAccess')
+      .spyOn(rbacModule, 'checkAccess')
       .mockImplementation(() => Promise.resolve({ status: { allowed: false } }));
     checkPodEditAccess(obj, DeploymentConfigModel, undefined)
       .then((resp) => {

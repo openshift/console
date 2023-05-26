@@ -69,9 +69,7 @@ Then('user can see Add to project button', () => {
 });
 
 When('user clicks Add to project button', () => {
-  cy.get(quickSearchAddPO.quickSearchButton)
-    .should('be.visible')
-    .click();
+  cy.get(quickSearchAddPO.quickSearchButton).should('be.visible').click();
 });
 
 Then('user can see Add to project search bar', () => {
@@ -87,15 +85,11 @@ When('user selects django+PostgreSQL option', () => {
 });
 
 When('user clicks on instantiate template', () => {
-  cy.get(quickSearchAddPO.quickSearchCreateButton)
-    .should('be.visible')
-    .click();
+  cy.get(quickSearchAddPO.quickSearchCreateButton).should('be.visible').click();
 });
 
 When('user clicks on create with default values in Instantiate Template form', () => {
-  cy.get(catalogPO.create)
-    .scrollIntoView()
-    .click();
+  cy.get(catalogPO.create).scrollIntoView().click();
 });
 
 Then(
@@ -111,15 +105,11 @@ When('user selects .Net core option', () => {
 });
 
 When('user clicks on Create Application', () => {
-  cy.get(quickSearchAddPO.quickSearchCreateButton)
-    .should('be.visible')
-    .click();
+  cy.get(quickSearchAddPO.quickSearchCreateButton).should('be.visible').click();
 });
 
 When('user clicks on create with default values in Create Application form', () => {
-  cy.get(catalogPO.create)
-    .scrollIntoView()
-    .click();
+  cy.get(catalogPO.create).scrollIntoView().click();
 });
 
 Then('user can see {string} workload in topology list view', (workloadName: string) => {
@@ -127,9 +117,7 @@ Then('user can see {string} workload in topology list view', (workloadName: stri
 });
 
 When('user clicks on View all developer catalog items link', () => {
-  cy.get(quickSearchAddPO.viewInDevCatalog)
-    .scrollIntoView()
-    .click();
+  cy.get(quickSearchAddPO.viewInDevCatalog).scrollIntoView().click();
 });
 
 Then('user will see Catalog with {string} text filter', (filterWord: string) => {
@@ -146,9 +134,7 @@ When('user selects Monitor your sample application option', () => {
 });
 
 When('user clicks on Start button', () => {
-  cy.get(quickSearchAddPO.quickSearchCreateButton)
-    .should('be.visible')
-    .click();
+  cy.get(quickSearchAddPO.quickSearchCreateButton).should('be.visible').click();
 });
 
 Then('Monitor your sample application quick start displays in the Topology', () => {
@@ -189,9 +175,7 @@ When('user selects Basic NodeJS Samples option', () => {
 });
 
 When('user clicks on Create Devfile Samples', () => {
-  cy.get(quickSearchAddPO.quickSearchCreateButton)
-    .should('be.visible')
-    .click();
+  cy.get(quickSearchAddPO.quickSearchCreateButton).should('be.visible').click();
 });
 
 When('user enters Name as {string} in Import from Devfile page', (name: string) => {

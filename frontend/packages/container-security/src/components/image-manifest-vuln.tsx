@@ -40,11 +40,7 @@ import { quayURLFor } from './summary';
 import './image-manifest-vuln.scss';
 
 const shortenImage = (img: string) =>
-  (img ?? '')
-    .replace('@sha256', '')
-    .split('/')
-    .slice(1, 3)
-    .join('/');
+  (img ?? '').replace('@sha256', '').split('/').slice(1, 3).join('/');
 const shortenHash = (hash: string): string => (hash ?? '').slice(7, 18);
 export const totalCount = (obj: ImageManifestVuln) => {
   if (!obj.status) return 0;

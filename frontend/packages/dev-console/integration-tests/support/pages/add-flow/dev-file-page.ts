@@ -2,18 +2,10 @@ import { authenticationType, messages } from '../../constants';
 import { devFilePO, createSourceSecret, gitPO } from '../../pageObjects';
 
 export const devFilePage = {
-  clickTrySample: () =>
-    cy
-      .get(devFilePO.form)
-      .find('button')
-      .first()
-      .click(),
+  clickTrySample: () => cy.get(devFilePO.form).find('button').first().click(),
 
   enterSourceSecret: (secretName: string, type: authenticationType) => {
-    cy.get(devFilePO.form)
-      .find('button')
-      .contains('Show advanced Git options')
-      .click();
+    cy.get(devFilePO.form).find('button').contains('Show advanced Git options').click();
     cy.get(devFilePO.formFields.advancedGitOptions.sourceSecret).click();
     cy.get('[data-test-dropdown-menu="create-source-secret"]').click();
     cy.get(createSourceSecret.secretName).type(secretName);

@@ -33,10 +33,7 @@ describe('NamespaceSection', () => {
 
   it('should switch to create namespace mode if there are no projects', () => {
     const wrapper = shallow(<InternalNamespaceSection flags={canCreateFlags} />);
-    wrapper
-      .find(ResourceDropdownField)
-      .props()
-      .onLoad({});
+    wrapper.find(ResourceDropdownField).props().onLoad({});
     expect(useFormikContext().setFieldValue).toHaveBeenCalledWith(
       'namespace',
       CREATE_NAMESPACE_KEY,
@@ -46,19 +43,13 @@ describe('NamespaceSection', () => {
     (useField as jest.Mock).mockReturnValueOnce([{ value: 'test-namespace' }]);
 
     const wrapper = shallow(<InternalNamespaceSection flags={noFlags} />);
-    wrapper
-      .find(ResourceDropdownField)
-      .props()
-      .onLoad({});
+    wrapper.find(ResourceDropdownField).props().onLoad({});
     expect(useFormikContext().setFieldValue).toHaveBeenCalledWith('namespace', undefined);
   });
 
   it('should update namespace value', () => {
     const wrapper = shallow(<InternalNamespaceSection flags={canCreateFlags} />);
-    wrapper
-      .find(ResourceDropdownField)
-      .props()
-      .onChange('test');
+    wrapper.find(ResourceDropdownField).props().onChange('test');
     expect(useFormikContext().setFieldValue).toHaveBeenCalledWith('namespace', 'test');
   });
 

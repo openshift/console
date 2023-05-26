@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Menu, MenuContent, MenuGroup, MenuItem, MenuList, Divider } from '@patternfly/react-core';
 import { Action, GroupedMenuOption, MenuOption, MenuOptionType } from '@console/dynamic-plugin-sdk';

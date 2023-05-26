@@ -7,7 +7,7 @@ export {}; // needed in files which don't have an import to trigger ES6 module u
 
 declare global {
   namespace Cypress {
-    interface Chainable<Subject> {
+    interface Chainable {
       alertTitleShouldContain(title: string): Chainable<Element>;
       clickNavLink(path: [string, string]): Chainable<Element>;
       selectByDropDownText(selector: string, dropdownText: string): Chainable<Element>;
@@ -35,16 +35,12 @@ Cypress.Commands.add('clickNavLink', (path: [string, string]) => {
   cy.get(`[data-component="pf-nav-expandable"]`) // this assumes all top level menu items are expandable
     .contains(path[0])
     .click(); // open top, expandable menu
-  cy.get('#page-sidebar')
-    .contains(path[1])
-    .click();
+  cy.get('#page-sidebar').contains(path[1]).click();
 });
 
 Cypress.Commands.add('selectByDropDownText', (selector: string, dropdownText: string) => {
   cy.get(selector).click();
-  cy.get('li')
-    .contains(dropdownText)
-    .click({ force: true });
+  cy.get('li').contains(dropdownText).click({ force: true });
 });
 
 Cypress.Commands.add(
@@ -58,17 +54,11 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('verifyDropdownselected', (selector: string) => {
   cy.get(selector).should('be.visible');
-  cy.get(selector)
-    .click()
-    .get('.pf-c-dropdown__menu')
-    .should('be.visible');
+  cy.get(selector).click().get('.pf-c-dropdown__menu').should('be.visible');
 });
 
 Cypress.Commands.add('mouseHover', (selector: string) => {
-  cy.get(selector)
-    .invoke('show')
-    .should('be.visible')
-    .trigger('mouseover', { force: true });
+  cy.get(selector).invoke('show').should('be.visible').trigger('mouseover', { force: true });
 });
 
 Cypress.Commands.add(
@@ -76,21 +66,14 @@ Cypress.Commands.add(
   (selector: string, dropdownText: string) => {
     cy.get(selector).click();
     cy.byLegacyTestID('dropdown-text-filter').type(dropdownText);
-    cy.get('ul[role="listbox"]')
-      .find('li')
-      .contains(dropdownText)
-      .click();
+    cy.get('ul[role="listbox"]').find('li').contains(dropdownText).click();
   },
 );
 
 Cypress.Commands.add('selectActionsMenuOption', (actionsMenuOption: string) => {
-  cy.byLegacyTestID('actions-menu-button')
-    .should('be.visible')
-    .click();
+  cy.byLegacyTestID('actions-menu-button').should('be.visible').click();
   app.waitForLoad();
-  cy.byTestActionID(actionsMenuOption)
-    .should('be.visible')
-    .click();
+  cy.byTestActionID(actionsMenuOption).should('be.visible').click();
 });
 
 Cypress.Commands.add('dropdownSwitchTo', (dropdownMenuOption: string) => {

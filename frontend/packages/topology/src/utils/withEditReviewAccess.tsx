@@ -22,7 +22,8 @@ export const withEditReviewAccess = (verb: K8sVerb) => (WrappedComponent: React.
     });
     return <WrappedComponent {...(props as any)} canEdit={editAccess} />;
   };
-  Component.displayName = `withEditReviewAccess(${WrappedComponent.displayName ||
-    WrappedComponent.name})`;
+  Component.displayName = `withEditReviewAccess(${
+    WrappedComponent.displayName || WrappedComponent.name
+  })`;
   return observer(Component);
 };

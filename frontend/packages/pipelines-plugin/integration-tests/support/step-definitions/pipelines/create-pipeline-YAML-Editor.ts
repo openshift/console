@@ -23,7 +23,7 @@ When(
   (yamlFile: string, namespace: string) => {
     cy.exec(`oc apply -f ${yamlFile} -n ${namespace}`, {
       failOnNonZeroExit: false,
-    }).then(function(result) {
+    }).then(function (result) {
       cy.log(result.stdout);
     });
   },

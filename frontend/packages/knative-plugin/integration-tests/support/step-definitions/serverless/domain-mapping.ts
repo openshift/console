@@ -17,16 +17,11 @@ import { formPO } from '../../../../../dev-console/integration-tests/support/pag
 import { domainPO } from '../../pageObjects/global-po';
 
 When('user enters Domain mapping as {string}', (domain: string) => {
-  cy.get(domainPO.domainMapping)
-    .clear()
-    .type(domain)
-    .should('have.value', domain);
+  cy.get(domainPO.domainMapping).clear().type(domain).should('have.value', domain);
 });
 
 When('user clicks on {string} in dropdown', () => {
-  cy.get(eventingPO.kafka.dropdownOptions)
-    .contains('Create')
-    .click();
+  cy.get(eventingPO.kafka.dropdownOptions).contains('Create').click();
   cy.get(domainPO.chipGroup).should('be.visible');
 });
 
@@ -39,9 +34,7 @@ Then(
   'user will see {string} under Domain Mappings of Resources tab on sidebar',
   (domain: string) => {
     topologySidePane.verifySelectedTab('Resources');
-    cy.get(`[href="https://${domain}"]`)
-      .scrollIntoView()
-      .should('be.visible');
+    cy.get(`[href="https://${domain}"]`).scrollIntoView().should('be.visible');
   },
 );
 
@@ -50,9 +43,7 @@ When('user clicks Save button', () => {
 });
 
 When('user clicks on Show advanced Routing options', () => {
-  cy.get(domainPO.contentScroll)
-    .contains('Show advanced Routing options')
-    .click();
+  cy.get(domainPO.contentScroll).contains('Show advanced Routing options').click();
 });
 
 When('user clicks create button', () => {
@@ -77,13 +68,8 @@ Given(
     );
     topologyPage.rightClickOnGroup(workloadName);
     topologyPage.selectContextMenuAction(`Edit ${workloadName}`);
-    cy.get(domainPO.contentScroll)
-      .contains('Show advanced Routing options')
-      .click();
-    cy.get(domainPO.domainMapping)
-      .clear()
-      .type(domain)
-      .should('have.value', domain);
+    cy.get(domainPO.contentScroll).contains('Show advanced Routing options').click();
+    cy.get(domainPO.domainMapping).clear().type(domain).should('have.value', domain);
     cy.get(eventingPO.kafka.dropdownOptions).click();
     cy.get(domainPO.chipGroup).should('be.visible');
     cy.get(formPO.create).click();
@@ -103,16 +89,8 @@ When(
 );
 
 When('user removes already added custom domain mapping {string} and {string}', (d1, d2) => {
-  cy.get(domainPO.chipText)
-    .contains(d1)
-    .parent()
-    .find(domainPO.removeLabel)
-    .click();
-  cy.get(domainPO.chipText)
-    .contains(d2)
-    .parent()
-    .find(domainPO.removeLabel)
-    .click();
+  cy.get(domainPO.chipText).contains(d1).parent().find(domainPO.removeLabel).click();
+  cy.get(domainPO.chipText).contains(d2).parent().find(domainPO.removeLabel).click();
   cy.get(domainPO.removeLabel).should('not.exist');
 });
 
@@ -130,10 +108,6 @@ Given('user can see knative service {string} exist in topology page', (workloadN
 });
 
 When('user removes already added custom domain mapping {string}', (d1) => {
-  cy.get(domainPO.chipText)
-    .contains(d1)
-    .parent()
-    .find(domainPO.removeLabel)
-    .click();
+  cy.get(domainPO.chipText).contains(d1).parent().find(domainPO.removeLabel).click();
   cy.get(domainPO.removeLabel).should('not.exist');
 });

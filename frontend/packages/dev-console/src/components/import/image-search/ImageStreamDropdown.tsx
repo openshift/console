@@ -14,6 +14,7 @@ const ImageStreamDropdown: React.FC<{
   reloadCount?: number;
 }> = ({ disabled = false, formContextField, reloadCount }) => {
   const { t } = useTranslation();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const imgCollection = {};
 
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();

@@ -2,8 +2,9 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { act } from 'react-dom/test-utils';
-import * as k8s from '@console/internal/module/k8s';
-import * as shared from '@console/shared';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
+import * as useToastModule from '@console/shared/src/components/toast/useToast';
+import * as useUserSettingsModule from '@console/shared/src/hooks/useUserSettings';
 import { getExportAppData } from '@console/topology/src/utils/export-app-utils';
 import { ExportModel } from '../../../models';
 import { ExportApplicationModal } from '../ExportApplicationModal';
@@ -11,8 +12,8 @@ import ExportViewLogButton from '../ExportViewLogButton';
 import { mockExportData } from './export-data';
 
 describe('ExportApplicationModal', () => {
-  const spyUseToast = jest.spyOn(shared, 'useToast');
-  const spyUseUserSettings = jest.spyOn(shared, 'useUserSettings');
+  const spyUseToast = jest.spyOn(useToastModule, 'default');
+  const spyUseUserSettings = jest.spyOn(useUserSettingsModule, 'useUserSettings');
 
   beforeEach(() => {
     spyUseToast.mockReturnValue({ addToast: (v) => ({ v }) });
@@ -62,7 +63,7 @@ describe('ExportApplicationModal', () => {
   });
 
   it('should call k8sCreate with correct data on click of Ok button when the export resource is not created', async () => {
-    const spyk8sCreate = jest.spyOn(k8s, 'k8sCreate');
+    const spyk8sCreate = jest.spyOn(k8sResourceModule, 'k8sCreate');
     const wrapper = shallow(
       <ExportApplicationModal namespace="my-app" name="my-export" cancel={jest.fn()} />,
     );
@@ -75,8 +76,8 @@ describe('ExportApplicationModal', () => {
   });
 
   it('should call k8sKill and k8sCreate with correct data on click of Ok button when the export resource already exists', async () => {
-    const spyk8sKill = jest.spyOn(k8s, 'k8sKill');
-    const spyk8sCreate = jest.spyOn(k8s, 'k8sCreate');
+    const spyk8sKill = jest.spyOn(k8sResourceModule, 'k8sKill');
+    const spyk8sCreate = jest.spyOn(k8sResourceModule, 'k8sCreate');
 
     const wrapper = shallow(
       <ExportApplicationModal
@@ -97,8 +98,8 @@ describe('ExportApplicationModal', () => {
   });
 
   it('should call k8sKill and k8sCreate with correct data on click of restart button when export app is in progress', async () => {
-    const spyk8sKill = jest.spyOn(k8s, 'k8sKill');
-    const spyk8sCreate = jest.spyOn(k8s, 'k8sCreate');
+    const spyk8sKill = jest.spyOn(k8sResourceModule, 'k8sKill');
+    const spyk8sCreate = jest.spyOn(k8sResourceModule, 'k8sCreate');
     const exportData = _.cloneDeep(mockExportData);
     exportData.status.completed = false;
     const wrapper = shallow(
@@ -116,7 +117,7 @@ describe('ExportApplicationModal', () => {
   });
 
   it('should call k8sKill with correct data on click of cancel button when export app is in progress', async () => {
-    const spyk8sKill = jest.spyOn(k8s, 'k8sKill');
+    const spyk8sKill = jest.spyOn(k8sResourceModule, 'k8sKill');
     const exportData = _.cloneDeep(mockExportData);
     exportData.status.completed = false;
     const wrapper = shallow(

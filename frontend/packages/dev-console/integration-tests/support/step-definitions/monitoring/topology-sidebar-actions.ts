@@ -41,16 +41,12 @@ When('user clicks on Observe tab', () => {
 });
 
 When('user clicks on Memory usage chart', () => {
-  cy.get('[data-test="memory-usage"]')
-    .contains('a', 'Inspect')
-    .click();
+  cy.get('[data-test="memory-usage"]').contains('a', 'Inspect').click();
 });
 
 Then('page redirected to the Observe Metrics page for the chart', () => {
   detailsPage.titleShouldContain('Observe');
-  cy.get('.co-m-horizontal-nav-item--active')
-    .find(monitoringPO.tabs.metrics)
-    .should('be.visible');
+  cy.get('.co-m-horizontal-nav-item--active').find(monitoringPO.tabs.metrics).should('be.visible');
 });
 
 When('user selects {string} from Context Menu', (menuOption: string) => {
@@ -149,9 +145,7 @@ When(
 
 When('user edits the application {string}', (name: string) => {
   topologyPage.rightClickOnNode(name);
-  cy.byTestActionID(`Edit ${name}`)
-    .should('be.visible')
-    .click();
+  cy.byTestActionID(`Edit ${name}`).should('be.visible').click();
 });
 
 When(
@@ -191,9 +185,7 @@ Then('user will be taken to Dashboard tab on the Monitoring page', () => {
 
 Then('user wont see Monitoring tab', () => {
   topologySidePane.verify();
-  cy.get(topologyPO.sidePane.tabName)
-    .contains(sideBarTabs.Observe)
-    .should('not.be.visible');
+  cy.get(topologyPO.sidePane.tabName).contains(sideBarTabs.Observe).should('not.be.visible');
 });
 
 Then('user will see View dashboard link', () => {

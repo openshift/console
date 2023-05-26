@@ -64,15 +64,11 @@ When('user selects Create Event Source', () => {
 });
 
 When('user enters Resource APIVERSION as {string}', (apiVersion: string) => {
-  cy.get(eventSourcePO.apiServerSource.apiVersion)
-    .should('be.visible')
-    .type(apiVersion);
+  cy.get(eventSourcePO.apiServerSource.apiVersion).should('be.visible').type(apiVersion);
 });
 
 When('user enters Resource KIND as {string}', (version: string) => {
-  cy.get(eventSourcePO.apiServerSource.kind)
-    .should('be.visible')
-    .type(version);
+  cy.get(eventSourcePO.apiServerSource.kind).should('be.visible').type(version);
 });
 
 When(
@@ -218,18 +214,10 @@ Then('page contains Container, Environment variables, Sink, Application and node
 });
 
 Then('container has Image, Name, Arguments text fields and Add args link', () => {
-  cy.get(eventSourcePO.containerImage.image)
-    .scrollIntoView()
-    .should('be.visible');
-  cy.get(eventSourcePO.containerImage.name)
-    .scrollIntoView()
-    .should('be.visible');
-  cy.get(eventSourcePO.containerImage.arguments)
-    .scrollIntoView()
-    .should('be.visible');
-  cy.get(eventSourcePO.containerImage.addArgs)
-    .scrollIntoView()
-    .should('be.visible');
+  cy.get(eventSourcePO.containerImage.image).scrollIntoView().should('be.visible');
+  cy.get(eventSourcePO.containerImage.name).scrollIntoView().should('be.visible');
+  cy.get(eventSourcePO.containerImage.arguments).scrollIntoView().should('be.visible');
+  cy.get(eventSourcePO.containerImage.addArgs).scrollIntoView().should('be.visible');
 });
 
 Then('environment variables has Name, Value fields and Add More link', () => {
@@ -239,9 +227,7 @@ Then('environment variables has Name, Value fields and Add More link', () => {
   cy.get(eventSourcePO.containerImage.environmentVariableValue)
     .scrollIntoView()
     .should('be.visible');
-  cy.get(eventSourcePO.containerImage.addMoreRow)
-    .scrollIntoView()
-    .should('be.visible');
+  cy.get(eventSourcePO.containerImage.addMoreRow).scrollIntoView().should('be.visible');
 });
 
 Then('page contains Data, Schedule, Sink, Application and node name', () => {
@@ -266,21 +252,11 @@ Then('page contains Subject, Sink', () => {
 Then(
   'Subject has apiVersion, Kind, Match Labels with Name, Value fields and Add Values link',
   () => {
-    cy.get(eventSourcePO.sinkBinding.apiVersion)
-      .scrollIntoView()
-      .should('be.visible');
-    cy.get(eventSourcePO.sinkBinding.kind)
-      .scrollIntoView()
-      .should('be.visible');
-    cy.get(eventSourcePO.sinkBinding.matchLabels.name)
-      .scrollIntoView()
-      .should('be.visible');
-    cy.get(eventSourcePO.sinkBinding.matchLabels.value)
-      .scrollIntoView()
-      .should('be.visible');
-    cy.get(eventSourcePO.containerImage.addMoreRow)
-      .scrollIntoView()
-      .should('be.visible');
+    cy.get(eventSourcePO.sinkBinding.apiVersion).scrollIntoView().should('be.visible');
+    cy.get(eventSourcePO.sinkBinding.kind).scrollIntoView().should('be.visible');
+    cy.get(eventSourcePO.sinkBinding.matchLabels.name).scrollIntoView().should('be.visible');
+    cy.get(eventSourcePO.sinkBinding.matchLabels.value).scrollIntoView().should('be.visible');
+    cy.get(eventSourcePO.containerImage.addMoreRow).scrollIntoView().should('be.visible');
   },
 );
 
@@ -354,9 +330,7 @@ Given('user has created Integration Platform CR {string}', (name: string) => {
   cy.get(eventingPO.eventSource.camelK).click();
   cy.get(eventingPO.eventSource.integrationPlatform).click();
   cy.get(eventingPO.eventSource.create).click();
-  cy.get(eventingPO.eventSource.name)
-    .clear()
-    .type(name);
+  cy.get(eventingPO.eventSource.name).clear().type(name);
   cy.get(eventingPO.eventSource.submit).click();
 });
 
@@ -367,9 +341,7 @@ Then(
     cy.byTestID(`EventSource-${c1}`).should('be.visible');
     const cards = [c2, c3, c4, c5, c6];
     cards.forEach((card) => {
-      cy.get(eventingPO.eventSource.searchCatalog)
-        .clear()
-        .type(card);
+      cy.get(eventingPO.eventSource.searchCatalog).clear().type(card);
       cy.byTestID(`EventSource-${card}`).should('be.visible');
     });
   },

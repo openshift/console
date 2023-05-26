@@ -6,7 +6,7 @@ export const inputPVCName = $('#pvc-name');
 export const inputPVCSize = $('[name=requestSizeValue]');
 export const inputMountPath = $('#mount-path');
 
-export const addNewStorageToWorkload = async function(
+export const addNewStorageToWorkload = async function (
   pvcName: string,
   pvcSize: string,
   mountPath: string,

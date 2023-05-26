@@ -12,17 +12,13 @@ When('user clicks on Metrics tab', () => {
 });
 
 Then('user can see Time Range with a default value of {string}', (defaultTimeRange: string) => {
-  cy.get('.form-group button')
-    .first()
-    .should('contain.text', defaultTimeRange);
+  cy.get('.form-group button').first().should('contain.text', defaultTimeRange);
 });
 
 Then(
   'user can see and Refresh Interval with a default value of {string}',
   (defaultRefreshInterval: string) => {
-    cy.get('.form-group button')
-      .eq(1)
-      .should('contain.text', defaultRefreshInterval);
+    cy.get('.form-group button').eq(1).should('contain.text', defaultRefreshInterval);
   },
 );
 

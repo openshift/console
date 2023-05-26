@@ -23,9 +23,7 @@ describe('smoke tests', () => {
   describe('visit template tabs', () => {
     before(() => {
       cy.visitVMTemplatesList();
-      cy.byLegacyTestID(template)
-        .should('exist')
-        .click();
+      cy.byLegacyTestID(template).should('exist').click();
     });
 
     it('template details tab is loaded', () => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { NativeTypes } from 'react-dnd-html5-backend';

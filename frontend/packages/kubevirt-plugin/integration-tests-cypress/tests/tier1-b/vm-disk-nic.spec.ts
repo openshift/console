@@ -85,18 +85,9 @@ describe('Test VM Disk/NIC', () => {
 
     it('ID(CNV-4038) Test example VM NIC sets', () => {
       tab.navigateToNetwork();
-      cy.byDataID(EXAMPLE_VM_NIC.Name)
-        .find('td')
-        .eq(1)
-        .should('contain', EXAMPLE_VM_NIC.Model);
-      cy.byDataID(EXAMPLE_VM_NIC.Name)
-        .find('td')
-        .eq(2)
-        .should('contain', EXAMPLE_VM_NIC.Network);
-      cy.byDataID(EXAMPLE_VM_NIC.Name)
-        .find('td')
-        .eq(3)
-        .should('contain', EXAMPLE_VM_NIC.Type);
+      cy.byDataID(EXAMPLE_VM_NIC.Name).find('td').eq(1).should('contain', EXAMPLE_VM_NIC.Model);
+      cy.byDataID(EXAMPLE_VM_NIC.Name).find('td').eq(2).should('contain', EXAMPLE_VM_NIC.Network);
+      cy.byDataID(EXAMPLE_VM_NIC.Name).find('td').eq(3).should('contain', EXAMPLE_VM_NIC.Type);
     });
   });
 
@@ -111,58 +102,35 @@ describe('Test VM Disk/NIC', () => {
     });
 
     it('ID(CNV-2073) Test NIC default set', () => {
-      cy.byDataID(EXAMPLE_VM_NIC.Name)
-        .find('td')
-        .eq(1)
-        .should('contain', NIC_MODEL.e1000e);
-      cy.byDataID(EXAMPLE_VM_NIC.Name)
-        .find('td')
-        .eq(2)
-        .should('contain', EXAMPLE_VM_NIC.Network);
-      cy.byDataID(EXAMPLE_VM_NIC.Name)
-        .find('td')
-        .eq(3)
-        .should('contain', EXAMPLE_VM_NIC.Type);
+      cy.byDataID(EXAMPLE_VM_NIC.Name).find('td').eq(1).should('contain', NIC_MODEL.e1000e);
+      cy.byDataID(EXAMPLE_VM_NIC.Name).find('td').eq(2).should('contain', EXAMPLE_VM_NIC.Network);
+      cy.byDataID(EXAMPLE_VM_NIC.Name).find('td').eq(3).should('contain', EXAMPLE_VM_NIC.Type);
     });
 
     it('ID(CNV-4781) Test NIC supported models', () => {
       cy.get(nicDialog.addNIC).click();
       cy.get(nicDialog.model).click();
       cy.get(menuItemMain).should('have.length', 2);
-      cy.get(menuItemMain)
-        .eq(0)
-        .should('contain', NIC_MODEL.virtio);
-      cy.get(menuItemMain)
-        .eq(1)
-        .should('contain', NIC_MODEL.e1000e);
+      cy.get(menuItemMain).eq(0).should('contain', NIC_MODEL.virtio);
+      cy.get(menuItemMain).eq(1).should('contain', NIC_MODEL.e1000e);
       cy.get(modalCancel).click();
     });
 
     it('Test NIC supported types', () => {
       cy.get(nicDialog.addNIC).click();
-      cy.get(nicDialog.NAD)
-        .select(nic1.nad)
-        .should('have.value', nic1.nad);
+      cy.get(nicDialog.NAD).select(nic1.nad).should('have.value', nic1.nad);
       cy.get(nicDialog.nicType).click();
       cy.get(menuItemMain).should('have.length', 2);
-      cy.get(menuItemMain)
-        .eq(0)
-        .should('contain', NIC_TYPE.Bridge);
-      cy.get(menuItemMain)
-        .eq(1)
-        .should('contain', NIC_TYPE.SR_IOV);
+      cy.get(menuItemMain).eq(0).should('contain', NIC_TYPE.Bridge);
+      cy.get(menuItemMain).eq(1).should('contain', NIC_TYPE.SR_IOV);
       cy.get(modalCancel).click();
     });
 
     it('ID(CNV-4780) NIC model is disabled when SR-IOV is selected', () => {
       cy.get(nicDialog.addNIC).click();
-      cy.get(nicDialog.NAD)
-        .select(nic1.nad)
-        .should('have.value', nic1.nad);
+      cy.get(nicDialog.NAD).select(nic1.nad).should('have.value', nic1.nad);
       cy.get(nicDialog.nicType).click();
-      cy.get(menuItemMain)
-        .eq(1)
-        .click();
+      cy.get(menuItemMain).eq(1).click();
       cy.get(nicDialog.model).should('be.disabled');
       cy.get(modalCancel).click();
     });

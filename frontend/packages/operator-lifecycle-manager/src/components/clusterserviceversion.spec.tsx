@@ -4,7 +4,7 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import { Link, Router } from 'react-router-dom';
-import * as utils from '@console/dynamic-plugin-sdk';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import {
   DetailsPage,
   Table,
@@ -118,12 +118,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
     expect(col.find(Link).props().to).toEqual(
       resourceObjPath(testClusterServiceVersion, referenceForModel(ClusterServiceVersionModel)),
     );
-    expect(
-      col
-        .find(Link)
-        .find(ClusterServiceVersionLogo)
-        .exists(),
-    ).toBe(true);
+    expect(col.find(Link).find(ClusterServiceVersionLogo).exists()).toBe(true);
   });
 
   it('renders column for managedNamespace', () => {
@@ -152,30 +147,14 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
     });
     const col = wrapper.childAt(2);
 
-    expect(
-      col
-        .childAt(0)
-        .find('ClusterServiceVersionStatus')
-        .render()
-        .text(),
-    ).toEqual('Deleting');
+    expect(col.childAt(0).find('ClusterServiceVersionStatus').render().text()).toEqual('Deleting');
   });
 
   it('renders column with each CRD provided by the Operator', () => {
     const col = wrapper.childAt(4);
     testClusterServiceVersion.spec.customresourcedefinitions.owned.forEach((desc, i) => {
-      expect(
-        col
-          .find(Link)
-          .at(i)
-          .props().title,
-      ).toEqual(desc.name);
-      expect(
-        col
-          .find(Link)
-          .at(i)
-          .props().to,
-      ).toEqual(
+      expect(col.find(Link).at(i).props().title).toEqual(desc.name);
+      expect(col.find(Link).at(i).props().to).toEqual(
         `${resourceObjPath(
           testClusterServiceVersion,
           referenceForModel(ClusterServiceVersionModel),
@@ -274,12 +253,7 @@ describe(CRDCard.displayName, () => {
   it('renders a link to create a new instance', () => {
     const wrapper = shallow(<CRDCard canCreate crd={crd} csv={testClusterServiceVersion} />);
 
-    expect(
-      wrapper
-        .find(CardFooter)
-        .find(Link)
-        .props().to,
-    ).toEqual(
+    expect(wrapper.find(CardFooter).find(Link).props().to).toEqual(
       `/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${
         ClusterServiceVersionModel.plural
       }/${testClusterServiceVersion.metadata.name}/${referenceForProvidedAPI(crd)}/~new`,
@@ -291,12 +265,7 @@ describe(CRDCard.displayName, () => {
       <CRDCard canCreate={false} crd={crd} csv={testClusterServiceVersion} />,
     );
 
-    expect(
-      wrapper
-        .find(CardFooter)
-        .find(Link)
-        .exists(),
-    ).toBe(false);
+    expect(wrapper.find(CardFooter).find(Link).exists()).toBe(false);
   });
 });
 
@@ -328,14 +297,9 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   });
 
   it('renders description section for ClusterServiceVersion', () => {
-    expect(
-      wrapper
-        .find('.co-m-pane__body')
-        .at(0)
-        .find(SectionHeading)
-        .at(1)
-        .props().text,
-    ).toEqual('Description');
+    expect(wrapper.find('.co-m-pane__body').at(0).find(SectionHeading).at(1).props().text).toEqual(
+      'Description',
+    );
   });
 
   it('renders creation date from ClusterServiceVersion', () => {
@@ -355,18 +319,10 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
     testClusterServiceVersion.spec.maintainers.forEach((maintainer, i) => {
       expect(maintainers.at(i).text()).toContain(maintainer.name);
-      expect(
-        maintainers
-          .at(i)
-          .find('.co-break-all')
-          .text(),
-      ).toEqual(maintainer.email);
-      expect(
-        maintainers
-          .at(i)
-          .find('.co-break-all')
-          .props().href,
-      ).toEqual(`mailto:${maintainer.email}`);
+      expect(maintainers.at(i).find('.co-break-all').text()).toEqual(maintainer.email);
+      expect(maintainers.at(i).find('.co-break-all').props().href).toEqual(
+        `mailto:${maintainer.email}`,
+      );
     });
   });
 
@@ -413,23 +369,15 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   });
 
   it('renders info section for ClusterServiceVersion', () => {
-    expect(
-      wrapper
-        .find('.co-m-pane__body')
-        .at(1)
-        .find(SectionHeading)
-        .props().text,
-    ).toEqual('ClusterServiceVersion details');
+    expect(wrapper.find('.co-m-pane__body').at(1).find(SectionHeading).props().text).toEqual(
+      'ClusterServiceVersion details',
+    );
   });
 
   it('renders conditions section for ClusterServiceVersion', () => {
-    expect(
-      wrapper
-        .find('.co-m-pane__body')
-        .at(2)
-        .find(SectionHeading)
-        .props().text,
-    ).toEqual('Conditions');
+    expect(wrapper.find('.co-m-pane__body').at(2).find(SectionHeading).props().text).toEqual(
+      'Conditions',
+    );
   });
 
   it('does not render service accounts section if empty', () => {
@@ -559,12 +507,8 @@ describe(CSVSubscription.displayName, () => {
     );
 
     expect(
-      wrapper
-        .find(StatusBox)
-        .find(SubscriptionDetails)
-        .dive()
-        .find(SubscriptionUpdates)
-        .props().pkg,
+      wrapper.find(StatusBox).find(SubscriptionDetails).dive().find(SubscriptionUpdates).props()
+        .pkg,
     ).toEqual(testPackageManifest);
   });
 });
@@ -577,7 +521,7 @@ describe(ClusterServiceVersionDetailsPage.displayName, () => {
   const ns = 'default';
 
   beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
     spyUseAccessReview.mockReturnValue([true, false]);
 
     window.SERVER_FLAGS.copiedCSVsDisabled = { 'local-cluster': false };

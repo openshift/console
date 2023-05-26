@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import * as utils from '@console/internal/components/utils';
 import { ContainerDropdown, ResourceLink } from '@console/internal/components/utils';
+import * as utils from '@console/internal/components/utils/rbac';
 import { FormFooter } from '@console/shared';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';

@@ -107,6 +107,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   UNSAFE_componentWillReceiveProps(nextProps: ResourceDropdownProps) {
     const {
       loaded,

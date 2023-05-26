@@ -17,7 +17,7 @@ import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
@@ -221,6 +221,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
 
   const dispatch = useDispatch();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const [isError, setIsError] = React.useState(false);
@@ -590,6 +591,13 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
     [panel],
   );
 
+  const handleZoom = React.useCallback((timeRange: number, endTime: number) => {
+    setQueryArguments({
+      endTime: endTime.toString(),
+      timeRange: timeRange.toString(),
+    });
+  }, []);
+
   if (panel.type === 'row') {
     return (
       <>
@@ -613,13 +621,6 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
     (_.some(queries, _.isUndefined) && dataSourceInfoLoading) || customDataSource === undefined;
 
   const panelClassModifier = getPanelClassModifier(panel);
-
-  const handleZoom = React.useCallback((timeRange: number, endTime: number) => {
-    setQueryArguments({
-      endTime: endTime.toString(),
-      timeRange: timeRange.toString(),
-    });
-  }, []);
 
   return (
     <div

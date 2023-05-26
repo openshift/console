@@ -1076,10 +1076,10 @@ describe('Firehose together with useK8sWatchResources', () => {
     expect(lastFirehoseChildProps.pod.data).toEqual(lastUseResourcesHookResult.pod.data);
 
     // And they also should return the same instance for lists
-    expect(lastFirehoseChildProps.pods.data).not.toBe(lastUseResourcesHookResult.pods.data); // Could be the same!
-    expect(lastFirehoseChildProps.pods.data[0]).not.toBe(lastUseResourcesHookResult.pods.data[0]); // Should be the same!!!
-    expect(lastFirehoseChildProps.pods.data[1]).not.toBe(lastUseResourcesHookResult.pods.data[1]); // Should be the same!!!
-    expect(lastFirehoseChildProps.pods.data[2]).not.toBe(lastUseResourcesHookResult.pods.data[2]); // Should be the same!!!
+    expect(lastFirehoseChildProps.pods.data).toBe(lastUseResourcesHookResult.pods.data);
+    expect(lastFirehoseChildProps.pods.data[0]).toBe(lastUseResourcesHookResult.pods.data[0]);
+    expect(lastFirehoseChildProps.pods.data[1]).toBe(lastUseResourcesHookResult.pods.data[1]);
+    expect(lastFirehoseChildProps.pods.data[2]).toBe(lastUseResourcesHookResult.pods.data[2]);
 
     // And they also should return the same instance for single items
     expect(lastFirehoseChildProps.pod.data).not.toBe(lastUseResourcesHookResult.pod.data); // Should be the same, or?
@@ -1171,10 +1171,10 @@ describe('Firehose together with useK8sWatchResources', () => {
     expect(lastFirehoseChildProps.pod.data).toEqual(lastUseResourcesHookResult.pod.data);
 
     // And they also should return the same instance for lists
-    expect(lastFirehoseChildProps.pods.data).not.toBe(lastUseResourcesHookResult.pods.data); // Could be the same!
-    expect(lastFirehoseChildProps.pods.data[0]).not.toBe(lastUseResourcesHookResult.pods.data[0]); // Should be the same!!!
-    expect(lastFirehoseChildProps.pods.data[1]).not.toBe(lastUseResourcesHookResult.pods.data[1]); // Should be the same!!!
-    expect(lastFirehoseChildProps.pods.data[2]).not.toBe(lastUseResourcesHookResult.pods.data[2]); // Should be the same!!!
+    expect(lastFirehoseChildProps.pods.data).toBe(lastUseResourcesHookResult.pods.data);
+    expect(lastFirehoseChildProps.pods.data[0]).toBe(lastUseResourcesHookResult.pods.data[0]);
+    expect(lastFirehoseChildProps.pods.data[1]).toBe(lastUseResourcesHookResult.pods.data[1]);
+    expect(lastFirehoseChildProps.pods.data[2]).toBe(lastUseResourcesHookResult.pods.data[2]);
 
     // And they also should return the same instance for single items
     expect(lastFirehoseChildProps.pod.data).not.toBe(lastUseResourcesHookResult.pod.data); // Should be the same, or?

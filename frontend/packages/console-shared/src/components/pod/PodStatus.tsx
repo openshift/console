@@ -111,8 +111,6 @@ const PodStatus: React.FC<PodStatusProps> = ({
         subTitle={truncSubTitle}
         allowTooltip={false}
         labels={() => null}
-        /*
-            // @ts-ignore */
         padAngle={({ datum }) => (datum.y > 0 ? 2 : 0)}
         style={{
           data: {

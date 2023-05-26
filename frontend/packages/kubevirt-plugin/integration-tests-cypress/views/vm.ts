@@ -141,9 +141,7 @@ export const vm = {
     virtualization.templates.visit();
     cy.contains(row, 'Add source').should('exist');
     cy.contains(row, vmData.template.name).should('exist');
-    cy.contains(row, vmData.template.name)
-      .find(createVMBtn)
-      .click();
+    cy.contains(row, vmData.template.name).find(createVMBtn).click();
     if (customize) {
       advanceWizardFlow(vmData);
     } else {

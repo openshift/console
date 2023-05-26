@@ -12,9 +12,7 @@ export const overviewPage = {
     cy.get('.odc-topology-list-view__label-cell').contains(name);
   },
   clickProjectOverviewListItem: (name) => {
-    cy.get('.odc-topology-list-view__label-cell')
-      .contains(name)
-      .click();
+    cy.get('.odc-topology-list-view__label-cell').contains(name).click();
   },
   detailsSidebarShouldExist: (exist = true) => {
     cy.get('.resource-overview').should(exist ? 'exist' : 'not.exist');

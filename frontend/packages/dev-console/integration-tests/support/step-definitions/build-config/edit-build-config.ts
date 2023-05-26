@@ -24,9 +24,7 @@ When('user navigates to build tab', () => {
 
 When('user clicks on kebab menu for {string} build config', (nodeName: string) => {
   cy.get(search).type(nodeName);
-  cy.get(buildConfigPO.kebabButton)
-    .eq(0)
-    .click();
+  cy.get(buildConfigPO.kebabButton).eq(0).click();
 });
 
 When('user clicks on Edit BuildConfig', () => {
@@ -47,21 +45,15 @@ Then('user will see the Image configuration section', () => {
 });
 
 Then('user will see the Environment Variables section', () => {
-  cy.byTestID('section environment-variables')
-    .scrollIntoView()
-    .should('be.visible');
+  cy.byTestID('section environment-variables').scrollIntoView().should('be.visible');
 });
 
 Given('user is at Edit Build Config page of deployment {string}', (nodeName: string) => {
   navigateTo(devNavigationMenu.Builds);
   cy.get(search).type(nodeName);
-  cy.get(buildConfigPO.kebabButton)
-    .eq(0)
-    .click();
+  cy.get(buildConfigPO.kebabButton).eq(0).click();
   cy.byTestActionID('Edit BuildConfig').click();
-  cy.get(helmChartRepositoriesPO.formTitle)
-    .should('be.visible')
-    .contains('Edit BuildConfig');
+  cy.get(helmChartRepositoriesPO.formTitle).should('be.visible').contains('Edit BuildConfig');
 });
 
 When('user clicks on Advanced option {string}', (optionName: string) => {
@@ -91,9 +83,7 @@ When('user switches to Form view', () => {
 });
 
 When('user changes Git Rpository URL to {string} menu of build config', (gitRepoUrl: string) => {
-  cy.get(gitPO.gitRepoUrl)
-    .clear()
-    .type(gitRepoUrl);
+  cy.get(gitPO.gitRepoUrl).clear().type(gitRepoUrl);
   cy.get(gitPO.gitRepoUrl).should('have.value', gitRepoUrl);
 });
 
@@ -102,26 +92,18 @@ When(
   (imageStream: string, imageStreamTag: string) => {
     cy.get(buildConfigPO.buildFrom.imageStreamDropdown).click();
     cy.get(eventSourcePO.createSinkBinding.resourceSearchField).type(imageStream);
-    cy.get(eventSourcePO.createSinkBinding.resourceDropDownItem)
-      .eq(0)
-      .click();
+    cy.get(eventSourcePO.createSinkBinding.resourceDropDownItem).eq(0).click();
     cy.get(buildConfigPO.buildFrom.imageStreamTagDropdown).click();
     cy.get(eventSourcePO.createSinkBinding.resourceSearchField).type(imageStreamTag);
-    cy.get(eventSourcePO.createSinkBinding.resourceDropDownItem)
-      .eq(1)
-      .click();
+    cy.get(eventSourcePO.createSinkBinding.resourceDropDownItem).eq(1).click();
   },
 );
 
 When(
   'user enters Name and Value as {string} and {string} respectively in Environment Variables',
   (name: string, value: string) => {
-    cy.get(gitPO.advancedOptions.deployment.envName)
-      .scrollIntoView()
-      .type(name);
-    cy.get(gitPO.advancedOptions.deployment.envValue)
-      .scrollIntoView()
-      .type(value);
+    cy.get(gitPO.advancedOptions.deployment.envName).scrollIntoView().type(name);
+    cy.get(gitPO.advancedOptions.deployment.envValue).scrollIntoView().type(value);
   },
 );
 
@@ -131,9 +113,7 @@ When('user selects External container image option from Build from dropdown', ()
 });
 
 When('user enters image registry as {string}', (containerImage: string) => {
-  cy.get(buildConfigPO.imageRegistryField)
-    .clear()
-    .type(containerImage);
+  cy.get(buildConfigPO.imageRegistryField).clear().type(containerImage);
 });
 
 When('user click Save button on Edit build Config page', () => {
@@ -174,9 +154,7 @@ When('user clicks Show advanced Git options', () => {
 });
 
 When('user changes value of Context Dir to {string}', (dir: string) => {
-  cy.get(buildConfigPO.contentDirectoryField)
-    .clear()
-    .type(dir);
+  cy.get(buildConfigPO.contentDirectoryField).clear().type(dir);
 });
 
 Then('user will see Context dir as {string}', (dir: string) => {
@@ -209,10 +187,6 @@ Then(
 When('And user goes to Environment tab', () => {
   cy.get(helmChartRepositoriesPO.cancelButton).click();
   cy.get(buildConfigPO.environmentTab).click();
-  cy.get(gitPO.advancedOptions.buildConfig.envName)
-    .scrollIntoView()
-    .should('be.visible');
-  cy.get(gitPO.advancedOptions.buildConfig.envValue)
-    .scrollIntoView()
-    .should('be.visible');
+  cy.get(gitPO.advancedOptions.buildConfig.envName).scrollIntoView().should('be.visible');
+  cy.get(gitPO.advancedOptions.buildConfig.envValue).scrollIntoView().should('be.visible');
 });

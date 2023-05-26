@@ -1,4 +1,4 @@
-import * as fetchUtils from '../../../public/co-fetch';
+import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
 import { resourcePathFromModel } from '../../../public/components/utils/resource-link';
 import { K8sKind } from '../../../public/module/k8s';
 import {
@@ -11,7 +11,7 @@ import {
 
 describe('resourcePathFromModel', () => {
   beforeEach(() => {
-    spyOn(fetchUtils, 'coFetch').and.callFake(() => Promise.resolve({}));
+    spyOn(coFetchModule, 'consoleFetch').and.callFake(() => Promise.resolve({}));
   });
   const testResourcePath = (model: K8sKind, name: string, namespace: string, expected: string) => {
     it(`${model.plural}${name ? `/${name}` : ''}${

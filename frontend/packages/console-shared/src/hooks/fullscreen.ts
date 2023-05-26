@@ -48,7 +48,7 @@ const ms: FullScreenAPI = {
 const allPrefixes: FullScreenAPI[] = [spec, moz, webkit, ms];
 
 const nativeAPI: FullScreenAPI =
-  (function(doc) {
+  (function (doc) {
     return allPrefixes.find((x: FullScreenAPI) => !!doc[x.fullscreenEnabled]);
   })(document) ?? spec;
 

@@ -15,9 +15,7 @@ export const initTerminalPage = {
   },
 
   clickStartButton: () => {
-    cy.get(formPO.create)
-      .should('be.enabled')
-      .click();
+    cy.get(formPO.create).should('be.enabled').click();
   },
 
   selectProject: (projectName: string) => {

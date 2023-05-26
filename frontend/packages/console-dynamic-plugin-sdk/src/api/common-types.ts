@@ -1,6 +1,6 @@
 import { Extension } from '../types';
 
-export { ResolvedExtension } from '../types';
+export type { ResolvedExtension } from '../types';
 
 // Type for extension hook
 export type ExtensionHook<T, R = any> = (options: R) => ExtensionHookResult<T>;

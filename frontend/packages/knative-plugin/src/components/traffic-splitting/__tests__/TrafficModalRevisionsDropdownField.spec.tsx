@@ -21,17 +21,10 @@ describe('TrafficModalRevisionsDropdownField', () => {
     const wrapper = shallow(
       <TrafficModalRevisionsDropdownField {...props} name="revisionName" title="Select Revision" />,
     );
-    expect(
-      wrapper
-        .find(DropdownField)
-        .first()
-        .props().items,
-    ).toHaveProperty('overlayimage-tkvz5', 'overlayimage-tkvz5');
-    expect(
-      wrapper
-        .find(DropdownField)
-        .first()
-        .props().title,
-    ).toBe('overlayimage-tkvz5');
+    expect(wrapper.find(DropdownField).first().props().items).toHaveProperty(
+      'overlayimage-tkvz5',
+      'overlayimage-tkvz5',
+    );
+    expect(wrapper.find(DropdownField).first().props().title).toBe('overlayimage-tkvz5');
   });
 });

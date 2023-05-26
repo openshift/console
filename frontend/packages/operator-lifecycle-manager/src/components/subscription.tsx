@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Alert, Button, Popover } from '@patternfly/react-core';
 import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';

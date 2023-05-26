@@ -32,24 +32,9 @@ describe(ConfigureUpdateStrategy.displayName, () => {
   });
 
   it('renders two choices for different update strategy types', () => {
-    expect(
-      wrapper
-        .find(RadioInput)
-        .at(0)
-        .props().value,
-    ).toEqual('RollingUpdate');
-    expect(
-      wrapper
-        .find(RadioInput)
-        .at(1)
-        .props().value,
-    ).toEqual('Recreate');
-    expect(
-      wrapper
-        .find(RadioInput)
-        .at(1)
-        .props().checked,
-    ).toBe(true);
+    expect(wrapper.find(RadioInput).at(0).props().value).toEqual('RollingUpdate');
+    expect(wrapper.find(RadioInput).at(1).props().value).toEqual('Recreate');
+    expect(wrapper.find(RadioInput).at(1).props().checked).toBe(true);
   });
 
   it('is a controlled component', () => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Checkbox, Switch } from '@patternfly/react-core';
 import { WidgetProps } from '@rjsf/core';

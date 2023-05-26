@@ -31,9 +31,9 @@ const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
 
 const LabelComponent = ({ clusterID, ...props }) => (
   <ExternalLink
-    href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}?total_risk=${riskSorting[
-      props.datum.id
-    ] + 1}`}
+    href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}?total_risk=${
+      riskSorting[props.datum.id] + 1
+    }`}
   >
     <ChartLabel {...props} style={{ fill: 'var(--pf-global--link--Color)' }} />
   </ExternalLink>

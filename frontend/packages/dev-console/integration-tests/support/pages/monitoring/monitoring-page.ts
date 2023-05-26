@@ -3,10 +3,7 @@ import { monitoringPO } from '../../pageObjects';
 
 export const detailsPage = {
   isTabSelected: (tabSelector: string) =>
-    cy
-      .get(tabSelector)
-      .parent('li')
-      .should('have.class', 'active'),
+    cy.get(tabSelector).parent('li').should('have.class', 'active'),
   selectTab: (tabSelector: string) => cy.get(tabSelector).click(),
 };
 
@@ -20,9 +17,7 @@ export const monitoringPage = {
     selectDashboard: (dashboardName: string) => {
       cy.get(monitoringPO.dashboardTab.dashboardDropdown).click();
       cy.get('input.pf-m-search').type(dashboardName);
-      cy.get('button.monitoring-dashboards__dashboard_dropdown_item')
-        .first()
-        .click();
+      cy.get('button.monitoring-dashboards__dashboard_dropdown_item').first().click();
     },
     verifySection: () => cy.get(monitoringPO.dashboardTab.dashboard).should('exist'),
     verifyCpuUsageGraph: () => cy.get(monitoringPO.dashboardTab.sections.cpuUsage).should('exist'),
@@ -62,18 +57,12 @@ export const monitoringPage = {
       alertState: string[] = new Array('firing'),
       severity: string[] = new Array('Critical'),
     ) => {
-      cy.byLegacyTestID('filter-dropdown-toggle')
-        .find('button')
-        .click();
+      cy.byLegacyTestID('filter-dropdown-toggle').find('button').click();
       cy.get(`[data-test-row-filter="${alertState}"]`).click();
       //  To Do
       cy.byLegacyTestID(`[data-test-row-filter="${severity}"]`).click();
     },
-    clickFilter: () =>
-      cy
-        .byLegacyTestID('filter-dropdown-toggle')
-        .find('button')
-        .click(),
+    clickFilter: () => cy.byLegacyTestID('filter-dropdown-toggle').find('button').click(),
   },
   events: {
     selectResources: (resourceName: string) => {

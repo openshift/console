@@ -41,9 +41,7 @@ export const helmDetailsPage = {
     cy.byLegacyTestID(`horizontal-link-${name}`).should('exist');
   },
   selectHelmTab: (name: string) => {
-    cy.byLegacyTestID(`horizontal-link-${name}`)
-      .should('exist')
-      .click();
+    cy.byLegacyTestID(`horizontal-link-${name}`).should('exist').click();
   },
   selectedHelmTab: (name: string) => {
     cy.byLegacyTestID(`horizontal-link-${name}`)
@@ -54,31 +52,21 @@ export const helmDetailsPage = {
   verifyHelmActionsDropdown: () => cy.byLegacyTestID('dropdown-button').should('be.visible'),
   clickHelmActionButton: () => cy.byLegacyTestID('dropdown-button').click(),
   verifyActionsInCreateMenu: () => {
-    cy.byLegacyTestID('dropdown-menu')
-      .contains('Repository')
-      .should('exist');
-    cy.byLegacyTestID('dropdown-menu')
-      .contains('Helm Release')
-      .should('exist');
+    cy.byLegacyTestID('dropdown-menu').contains('Repository').should('exist');
+    cy.byLegacyTestID('dropdown-menu').contains('Helm Release').should('exist');
   },
   clickCreateMenu: (createMenuOption: string) => {
     cy.byLegacyTestID('dropdown-button').click();
-    cy.byLegacyTestID('dropdown-menu')
-      .contains(createMenuOption)
-      .click();
+    cy.byLegacyTestID('dropdown-menu').contains(createMenuOption).click();
   },
   clickHelmChartRepository: (repoName: string) => cy.byLegacyTestID(repoName).click(),
   clickCreateHelmRelease: () => {
     cy.byLegacyTestID('dropdown-button').click();
-    cy.byLegacyTestID('dropdown-menu')
-      .contains('Helm Release')
-      .click();
+    cy.byLegacyTestID('dropdown-menu').contains('Helm Release').click();
   },
   clickCreateRepository: () => {
     cy.byLegacyTestID('dropdown-button').click();
-    cy.byLegacyTestID('dropdown-menu')
-      .contains('Repository')
-      .click();
+    cy.byLegacyTestID('dropdown-menu').contains('Repository').click();
   },
   clickRevisionHistoryTab: () => cy.get(helmPO.revisionHistoryTab).click(),
 };

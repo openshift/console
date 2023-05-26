@@ -4,7 +4,7 @@ import * as React from 'react';
 export const useCollisionChecker = <T>(
   entity: T,
   isEqual: (outdatedEntity: T, newEntity: T) => boolean,
-): useCollisionCheckerValues => {
+): UseCollisionCheckerValues => {
   const [initialEntity, setInitialEntity] = React.useState<T>(entity);
   const [showCollisionAlert, setCollisionAlert] = React.useState<boolean>(false);
 
@@ -22,7 +22,7 @@ export const useCollisionChecker = <T>(
   return [showCollisionAlert, onReload];
 };
 
-type useCollisionCheckerValues = [
+type UseCollisionCheckerValues = [
   boolean, // showCollisionAlert
   () => void, // onReload
 ];

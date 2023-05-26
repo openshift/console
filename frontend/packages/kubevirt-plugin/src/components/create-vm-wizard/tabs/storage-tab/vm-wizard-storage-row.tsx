@@ -40,7 +40,7 @@ const menuActionRemove = (
   isDisabled: isDeleteDisabled,
   callback: () =>
     withProgress(
-      new Promise((resolve) => {
+      new Promise<void>((resolve) => {
         removeStorage(id);
         resolve();
       }),

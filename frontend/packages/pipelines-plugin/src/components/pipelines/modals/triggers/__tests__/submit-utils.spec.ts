@@ -1,4 +1,4 @@
-import * as k8s from '@console/internal/module/k8s';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { EventListenerModel, TriggerTemplateModel } from '../../../../../models';
 import { PipelineExampleNames, pipelineTestData } from '../../../../../test-data/pipeline-data';
 import { formValues } from '../../../../../test-data/trigger-data';
@@ -10,7 +10,9 @@ const pipelineData = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
 
 describe('submitTrigger', () => {
   beforeAll(() => {
-    jest.spyOn(k8s, 'k8sCreate').mockImplementation((model, data) => Promise.resolve(data));
+    jest
+      .spyOn(k8sResourceModule, 'k8sCreate')
+      .mockImplementation((model, data) => Promise.resolve(data));
     jest.spyOn(submitUtils, 'exposeRoute').mockImplementation(() => Promise.resolve());
   });
   afterAll(() => {

@@ -6,9 +6,7 @@ import { devFilePage, gitPage, topologyPage } from '../../pages';
 import { addQuickSearch } from '../../pages/add-flow/add-quick-search';
 
 When('user clicks Add to project button', () => {
-  cy.get(quickSearchAddPO.quickSearchButton)
-    .should('be.visible')
-    .click();
+  cy.get(quickSearchAddPO.quickSearchButton).should('be.visible').click();
 });
 
 Then('user can see Add to project search bar', () => {
@@ -27,23 +25,17 @@ Then(
   'user will see {string} label associated with {string}',
   (labelName: string, catalogName: string) => {
     cy.get(`[data-test^="item-name-${catalogName}-Operator Backed"]`).click();
-    cy.get(catalogPO.catalogBatch)
-      .should('be.visible')
-      .contains(labelName);
+    cy.get(catalogPO.catalogBatch).should('be.visible').contains(labelName);
   },
 );
 
 When('user clicks on {string}', (buttonName: string) => {
   cy.log(buttonName, 'is clicked');
-  cy.get(quickSearchAddPO.quickSearchCreateButton)
-    .should('be.visible')
-    .click();
+  cy.get(quickSearchAddPO.quickSearchCreateButton).should('be.visible').click();
 });
 
 When('user clicks on create with default values in Instantiate Template form', () => {
-  cy.get(catalogPO.create)
-    .scrollIntoView()
-    .click();
+  cy.get(catalogPO.create).scrollIntoView().click();
 });
 
 Then(
@@ -55,9 +47,7 @@ Then(
 );
 
 When('user clicks on View all developer catalog items link', () => {
-  cy.get(quickSearchAddPO.viewInDevCatalog)
-    .scrollIntoView()
-    .click();
+  cy.get(quickSearchAddPO.viewInDevCatalog).scrollIntoView().click();
 });
 
 Then('user will see Catalog with {string} text filter', (filterWord: string) => {
@@ -70,9 +60,7 @@ Then('user will see {string}', (searchResult: string) => {
 });
 
 Then('{string} quick start displays in the Add page', (quickStartName: string) => {
-  cy.get(quickStartSidebarPO.quickStartSidebar)
-    .should('be.visible')
-    .contains(quickStartName);
+  cy.get(quickStartSidebarPO.quickStartSidebar).should('be.visible').contains(quickStartName);
 });
 
 When('user clicks on Create button in the Import from Git page', () => {

@@ -2,7 +2,7 @@ import { detectBuildTypes, isModernWebApp } from '../build-tool-detector';
 import { packageJson1, packageJson2 } from './mock-data';
 
 describe('Build tool detection tests', () => {
-  it('should return nodejs build type', function() {
+  it('should return nodejs build type', function () {
     const files = ['package.json', 'public', 'src'];
     const buildTypes = detectBuildTypes(files);
     expect(buildTypes[0].buildType).toEqual('nodejs');

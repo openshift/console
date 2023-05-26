@@ -14,7 +14,7 @@ import {
   SubscriptionsKind,
 } from '../utils/migration-tool-utils';
 
-type useMigrationResult = [
+type UseMigrationResult = [
   SubscriptionsKind,
   PackageManifestKind,
   ForkLiftKind,
@@ -25,7 +25,7 @@ type useMigrationResult = [
   string,
 ];
 
-const useMigrationTool = (): useMigrationResult => {
+const useMigrationTool = (): UseMigrationResult => {
   const [mtvSubscription, setMtvSubscription] = React.useState<SubscriptionsKind>();
   const [mtvOperator, setMtvOperator] = React.useState<PackageManifestKind>();
   const [mtvForkLift, setMtvForkLift] = React.useState<ForkLiftKind>();
@@ -80,7 +80,7 @@ const useMigrationTool = (): useMigrationResult => {
         kind: ForkliftControllerModel.kind,
         apiVersion: apiVersionForModel(ForkliftControllerModel),
         metadata: { name: 'forklift-controller', namespace: mtvSubscription?.metadata?.namespace },
-        // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         spec: { feature_ui: 'true', feature_validation: 'true' },
       });
     } catch (e) {

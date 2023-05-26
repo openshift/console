@@ -19,12 +19,9 @@ describe('ConfigurationsOverviewListItem', () => {
       <ConfigurationsOverviewListItem configuration={sampleKnativeConfigurations.data[0]} />,
     );
     expect(wrapper.find(ResourceLink)).toHaveLength(1);
-    expect(
-      wrapper
-        .find(ResourceLink)
-        .at(0)
-        .props().kind,
-    ).toEqual(referenceForModel(ConfigurationModel));
+    expect(wrapper.find(ResourceLink).at(0).props().kind).toEqual(
+      referenceForModel(ConfigurationModel),
+    );
   });
 
   it('should display latestCreatedRevisionName and latestReadyRevisionName', () => {

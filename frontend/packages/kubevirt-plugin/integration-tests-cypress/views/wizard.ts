@@ -14,18 +14,14 @@ const fillBootSource = (
   pvcSize?: string,
 ) => {
   cy.get(wizardView.imageSourceDropdown).click();
-  cy.get(wizardView.selectMenu)
-    .contains(provisionSource.getDescription())
-    .click({ force: true });
+  cy.get(wizardView.selectMenu).contains(provisionSource.getDescription()).click({ force: true });
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
   switch (provisionSource) {
     case ProvisionSource.URL: {
       cy.get(wizardView.sourceURL).type(provisionSource.getSource());
       if (pvcSize) {
-        cy.get(wizardView.pvcSize)
-          .clear()
-          .type(pvcSize);
+        cy.get(wizardView.pvcSize).clear().type(pvcSize);
       }
       break;
     }
@@ -48,13 +44,9 @@ const fillBootSource = (
       break;
     }
     case ProvisionSource.REGISTRY: {
-      cy.get(wizardView.sourceRegistry)
-        .clear()
-        .type(provisionSource.getSource());
+      cy.get(wizardView.sourceRegistry).clear().type(provisionSource.getSource());
       if (pvcSize) {
-        cy.get(wizardView.pvcSize)
-          .clear()
-          .type(pvcSize);
+        cy.get(wizardView.pvcSize).clear().type(pvcSize);
       }
       break;
     }
@@ -71,10 +63,7 @@ export const wizard = {
       cy.get(wizardView.vmWizard).click();
     },
     selectTemplate: (vmData: VirtualMachineData) => {
-      cy.get(wizardView.templateTitle)
-        .contains(vmData.template.name)
-        .should('exist')
-        .click();
+      cy.get(wizardView.templateTitle).contains(vmData.template.name).should('exist').click();
       cy.get(wizardView.next).click();
       cy.get('body').then(($body) => {
         if ($body.find(modalTitle).length) {
@@ -89,13 +78,9 @@ export const wizard = {
         cy.get(wizardView.cdrom).click();
       }
       if (Cypress.env('STORAGE_CLASS')) {
-        cy.get(storageClass.advanced)
-          .find('.pf-c-expandable-section__toggle-icon')
-          .click();
+        cy.get(storageClass.advanced).find('.pf-c-expandable-section__toggle-icon').click();
         cy.get(storageClass.dropdown).click();
-        cy.get(wizardView.dropDownItemLink)
-          .contains(Cypress.env('STORAGE_CLASS'))
-          .click();
+        cy.get(wizardView.dropDownItemLink).contains(Cypress.env('STORAGE_CLASS')).click();
         cy.contains('Access mode').should('exist');
       }
       cy.get(wizardView.next).click();
@@ -110,20 +95,14 @@ export const wizard = {
       cy.contains(wizardTitle).should('exist');
       if (namespace !== undefined) {
         cy.get(wizardView.projectDropdown).click();
-        cy.get(wizardView.dropDownItemLink)
-          .contains(namespace)
-          .click();
+        cy.get(wizardView.dropDownItemLink).contains(namespace).click();
       }
       if (name !== undefined) {
-        cy.get(wizardView.vmName)
-          .clear()
-          .type(name);
+        cy.get(wizardView.vmName).clear().type(name);
       }
       if (flavor !== undefined) {
         cy.get(wizardView.flavorSelect).click();
-        cy.get('button')
-          .contains(flavor)
-          .click();
+        cy.get('button').contains(flavor).click();
       }
       if (!sshEnable) {
         cy.get(wizardView.sshCheckbox).click();
@@ -147,34 +126,24 @@ export const wizard = {
         pvcName,
         pvcNS,
       } = vmData;
-      cy.get(wizardView.vmName)
-        .clear()
-        .type(name);
+      cy.get(wizardView.vmName).clear().type(name);
       if (templateProvider !== undefined) {
-        cy.get(wizardView.templateProvider)
-          .clear()
-          .type(templateProvider);
+        cy.get(wizardView.templateProvider).clear().type(templateProvider);
       }
       if (templateSupport !== undefined && !templateSupport) {
         cy.get(wizardView.templateSupport).click();
-        cy.get(wizardView.selectItem)
-          .contains(TEMPLATE_SUPPORT)
-          .click();
+        cy.get(wizardView.selectItem).contains(TEMPLATE_SUPPORT).click();
       }
       if (os !== undefined) {
         cy.get(wizardView.osDropdown).click();
-        cy.get(wizardView.selectItem)
-          .contains(os)
-          .click({ force: true });
+        cy.get(wizardView.selectItem).contains(os).click({ force: true });
       }
       if (!sourceAvailable) {
         fillBootSource(provisionSource, pvcName, pvcNS);
       }
       if (flavor !== undefined) {
         cy.get(wizardView.flavorDropdown).click();
-        cy.get(wizardView.selectItem)
-          .contains(flavor)
-          .click();
+        cy.get(wizardView.selectItem).contains(flavor).click();
       }
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(3000);
@@ -195,14 +164,10 @@ export const wizard = {
     fillStorageForm: (vmData: VirtualMachineData) => {
       const { disks, provisionSource } = vmData;
       if (Cypress.env('STORAGE_CLASS') && provisionSource !== ProvisionSource.CLONE_PVC) {
-        cy.get(wizardView.rootdisk)
-          .find(wizardView.kebabBtn)
-          .click();
+        cy.get(wizardView.rootdisk).find(wizardView.kebabBtn).click();
         cy.get('[data-test-action="Edit"]').click();
         cy.get(storageClass.dropdown).click();
-        cy.get(wizardView.dropDownItemLink)
-          .contains(Cypress.env('STORAGE_CLASS'))
-          .click();
+        cy.get(wizardView.dropDownItemLink).contains(Cypress.env('STORAGE_CLASS')).click();
         cy.contains('Access mode').should('exist');
         cy.get(modalConfirm).click();
         cy.get(modalCancel).should('not.exist');
@@ -220,24 +185,14 @@ export const wizard = {
         cy.get(wizardView.cloudInit).click();
         if (cloudInit.yamlView) {
           cy.get(wizardView.yamlView).click();
-          cy.get(wizardView.yamlEditor)
-            .clear()
-            .type(cloudInit.customScript);
+          cy.get(wizardView.yamlEditor).clear().type(cloudInit.customScript);
         } else {
-          cy.get(wizardView.username)
-            .clear()
-            .type(cloudInit.userName);
-          cy.get(wizardView.password)
-            .clear()
-            .type(cloudInit.password);
-          cy.get(wizardView.hostname)
-            .clear()
-            .type(cloudInit.hostname);
+          cy.get(wizardView.username).clear().type(cloudInit.userName);
+          cy.get(wizardView.password).clear().type(cloudInit.password);
+          cy.get(wizardView.hostname).clear().type(cloudInit.hostname);
           if (cloudInit.sshKeys !== undefined) {
             cloudInit.sshKeys.forEach((key: string, index: number) => {
-              cy.get(wizardView.sshKeys(index))
-                .clear()
-                .type(key);
+              cy.get(wizardView.sshKeys(index)).clear().type(key);
               cy.get(wizardView.addSSHKey).click();
             });
           }
@@ -284,18 +239,12 @@ export const wizard = {
       cy.get('#template-provider').type(provider);
       if (supported) {
         cy.get('#template-supported').click();
-        cy.get('button')
-          .contains('Support by template provider')
-          .click();
+        cy.get('button').contains('Support by template provider').click();
       }
       cy.get('#operating-system-dropdown').click();
-      cy.get('button')
-        .contains(baseOS)
-        .click({ force: true });
+      cy.get('button').contains(baseOS).click({ force: true });
       cy.get('#image-source-type-dropdown').click();
-      cy.get('.pf-c-select__menu')
-        .contains(ProvisionSource.REGISTRY.getDescription())
-        .click();
+      cy.get('.pf-c-select__menu').contains(ProvisionSource.REGISTRY.getDescription()).click();
       cy.get('#provision-source-container').type(ProvisionSource.REGISTRY.getSource());
       cy.get('#create-vm-wizard-reviewandcreate-btn').click();
       cy.get('#create-vm-wizard-submit-btn').click();

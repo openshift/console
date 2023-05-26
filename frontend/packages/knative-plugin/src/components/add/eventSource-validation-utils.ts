@@ -13,7 +13,7 @@ export const sinkTypeUriValidation = (t: TFunction) =>
     uri: yup
       .string()
       .max(2000, t('knative-plugin~Please enter a URI that is less then 2000 characters.'))
-      .test('validate-uri', t('knative-plugin~Invalid URI.'), function(value) {
+      .test('validate-uri', t('knative-plugin~Invalid URI.'), function (value) {
         return isValidUrl(value);
       })
       .required(t('knative-plugin~Required')),
@@ -92,15 +92,9 @@ export const sourceDataSpecSchema = (t: TFunction) =>
       is: EventSources.KafkaSource,
       then: yup.object().shape({
         [EventSources.KafkaSource]: yup.object().shape({
-          bootstrapServers: yup
-            .array()
-            .of(yup.string())
-            .min(1, t('knative-plugin~Required')),
+          bootstrapServers: yup.array().of(yup.string()).min(1, t('knative-plugin~Required')),
           consumerGroup: yup.string().required(t('knative-plugin~Required')),
-          topics: yup
-            .array()
-            .of(yup.string())
-            .min(1, t('knative-plugin~Required')),
+          topics: yup.array().of(yup.string()).min(1, t('knative-plugin~Required')),
           net: yup.object().shape({
             sasl: yup.object().shape({
               enable: yup.boolean(),

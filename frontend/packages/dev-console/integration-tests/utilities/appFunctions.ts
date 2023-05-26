@@ -20,7 +20,7 @@ export enum Perspective {
   Administrator = ' Administrator Perspective',
 }
 
-export const naviagteTo = async function(opt: NavigationMenu) {
+export const naviagteTo = async function (opt: NavigationMenu) {
   switch (opt) {
     case NavigationMenu.Add: {
       await click($('[data-test-id="+Add-header"]'));
@@ -78,7 +78,7 @@ export const naviagteTo = async function(opt: NavigationMenu) {
   }
 };
 
-export const switchPerspective = async function(perspective: Perspective) {
+export const switchPerspective = async function (perspective: Perspective) {
   await click(elementByDataTestID('perspective-switcher-toggle'));
   await browser.wait(
     EC.visibilityOf(elementByDataTestID('perspective-switcher-menu'), ELEMENT_WAIT),

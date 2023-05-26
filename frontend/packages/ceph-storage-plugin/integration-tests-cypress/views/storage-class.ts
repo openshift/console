@@ -19,9 +19,7 @@ const configureKms = () => {
 export const createStorageClass = (scName: string, poolName?: string, encrypted?: boolean) => {
   cy.clickNavLink(['Storage', 'StorageClasses']);
   cy.byTestID('item-create').click();
-  cy.byLegacyTestID('storage-class-form')
-    .get('input#storage-class-name')
-    .type(scName);
+  cy.byLegacyTestID('storage-class-form').get('input#storage-class-name').type(scName);
 
   cy.log('Selecting Ceph RBD provisioner');
   cy.byTestID('storage-class-provisioner-dropdown').click();
@@ -39,9 +37,7 @@ export const createStorageClass = (scName: string, poolName?: string, encrypted?
   cy.log('Creating new StorageClass');
   cy.byTestID('storage-class-volume-binding-mode').click();
   cy.byTestDropDownMenu('Immediate').click();
-  cy.byLegacyTestID('storage-class-form')
-    .get('button#save-changes')
-    .click();
+  cy.byLegacyTestID('storage-class-form').get('button#save-changes').click();
   cy.byLegacyTestID('resource-title').contains(scName);
 };
 

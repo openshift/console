@@ -6,7 +6,7 @@ import { ResourceLink, history } from '@console/internal/components/utils';
 import store from '@console/internal/redux';
 import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 import { testModel, testResourceInstance } from '../../../../mocks';
-import { Descriptor, StatusCapability, SpecCapability, DescriptorType } from '../types';
+import { Descriptor, StatusCapability, DescriptorType } from '../types';
 
 const OBJ = {
   ...testResourceInstance,
@@ -59,9 +59,7 @@ describe('Status descriptor details items', () => {
   });
 
   it('renders a resource status', () => {
-    descriptor['x-descriptors'] = [
-      `${StatusCapability.k8sResourcePrefix}Service`,
-    ] as SpecCapability[];
+    descriptor['x-descriptors'] = [`${StatusCapability.k8sResourcePrefix}Service`];
     descriptor.path = 'service';
     wrapper = wrapper.setProps({ descriptor });
     const resourceLink = wrapper.find(ResourceLink);

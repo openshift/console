@@ -20,7 +20,9 @@ import { NamespacePolicyType } from './constants/bucket-class';
 export type SpecProvider = typeof PROVIDERS_NOOBAA_MAP[keyof typeof PROVIDERS_NOOBAA_MAP];
 export type SpecType = typeof NOOBAA_TYPE_MAP[keyof typeof NOOBAA_TYPE_MAP];
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export type nsSpecProvider = typeof NS_PROVIDERS_NOOBAA_MAP[keyof typeof NS_PROVIDERS_NOOBAA_MAP];
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export type nsSpecType = typeof NS_NOOBAA_TYPE_MAP[keyof typeof NS_NOOBAA_TYPE_MAP];
 
 export enum PlacementPolicy {

@@ -65,7 +65,7 @@ const testIncrementActiveWatch = (watchAction, type, key) => {
 };
 
 describe('dashboards-actions', () => {
-  afterEach(function() {
+  afterEach(function () {
     window.SERVER_FLAGS.prometheusBaseURL = undefined;
   });
 

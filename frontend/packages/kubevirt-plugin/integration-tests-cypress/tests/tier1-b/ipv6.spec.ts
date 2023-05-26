@@ -34,9 +34,7 @@ describe('Test multiple IP addresses are displayed for VM', () => {
       cy.visitVMsList();
       vm.create(vmData);
       listViewAction(VM_ACTION.Start);
-      cy.contains('+1 more')
-        .should('be.visible')
-        .click();
+      cy.contains('+1 more').should('be.visible').click();
       cy.contains(ipPopOverContent, 'IP Addresses (2)').should('be.visible');
     }
   });

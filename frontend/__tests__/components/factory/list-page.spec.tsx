@@ -98,12 +98,7 @@ describe(FireMan.displayName, () => {
       })
       .find('#yaml-create');
 
-    expect(
-      wrapper
-        .find('#yaml-create')
-        .childAt(0)
-        .text(),
-    ).toEqual('Create Me!');
+    expect(wrapper.find('#yaml-create').childAt(0).text()).toEqual('Create Me!');
 
     Object.keys(createProps).forEach((key) => {
       expect(createProps[key] === button.props()[key]).toBe(true);

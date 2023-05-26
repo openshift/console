@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import * as utils from '@console/dynamic-plugin-sdk';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { LoadingBox, AccessDenied } from '@console/internal/components/utils';
-import * as shared from '@console/shared';
 import { sampleSecretData } from '../../../test-data/pac-data';
 import * as pacHooks from '../hooks/usePacData';
 import PacForm from '../PacForm';
@@ -36,8 +36,8 @@ describe('PacPage', () => {
   let spyPacHooks;
 
   beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
-    spyUseFlag = jest.spyOn(shared, 'useFlag');
+    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
+    spyUseFlag = jest.spyOn(flagsModule, 'useFlag');
     spyPacHooks = jest.spyOn(pacHooks, 'usePacData');
 
     spyUseAccessReview.mockReturnValue([true, false]);

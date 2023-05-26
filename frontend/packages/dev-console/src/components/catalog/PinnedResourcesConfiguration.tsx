@@ -120,7 +120,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
 
   type ItemProps = { title?: string; model?: K8sKind };
 
-  const Item: React.FC<ItemProps> = ({ model }) => (
+  const Item: React.FC<ItemProps> = React.memo(({ model }) => (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-item">
         <span className="co-resource-icon--fixed-width">
@@ -141,9 +141,9 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
         </span>
       </span>
     </div>
-  );
+  ));
 
-  const InvalidItem: React.FC<ItemProps> = ({ title }) => (
+  const InvalidItem: React.FC<ItemProps> = React.memo(({ title }) => (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-icon--fixed-width">
         <Tooltip position="top" content={t('devconsole~Resource not found')}>
@@ -154,7 +154,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
         <span>{title}</span>
       </span>
     </div>
-  );
+  ));
 
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
     PerspectivesConsoleConfig
@@ -200,7 +200,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
         return <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />;
       })
       .toArray();
-  }, [resources, t]);
+  }, [resources, t, Item]);
 
   const availableResources = React.useMemo<React.ReactElement<ItemProps>[]>(() => {
     if (!consoleConfigLoaded) {
@@ -236,7 +236,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
     });
     configuredResources = configuredResources?.filter((element) => element !== undefined);
     return configuredResources || [];
-  }, [consoleConfigLoaded, items, pinnedResources]);
+  }, [consoleConfigLoaded, items, pinnedResources, InvalidItem]);
 
   const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {

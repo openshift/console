@@ -8,6 +8,7 @@ import { Board } from './types';
 
 export const useFetchDashboards = (namespace: string): [Board[], boolean, string] => {
   const { t } = useTranslation();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
   const [boards, setBoards] = React.useState<Board[]>([]);
   const [error, setError] = React.useState<string>();

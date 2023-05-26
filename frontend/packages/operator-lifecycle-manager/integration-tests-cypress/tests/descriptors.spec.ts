@@ -133,9 +133,7 @@ describe('Using OLM descriptor components', () => {
       testCR.spec.arrayFieldGroup[0].itemTwo,
     );
     cy.get('#root_spec_hiddenFieldGroup_field-group').should('not.exist');
-    cy.get('#root_metadata_name')
-      .clear()
-      .type(testCR.metadata.name);
+    cy.get('#root_metadata_name').clear().type(testCR.metadata.name);
     cy.byTestID('create-dynamic-form').click();
     // TODO figure out why this element is detaching
     cy.byTestOperandLink(testCR.metadata.name).click({ force: true });

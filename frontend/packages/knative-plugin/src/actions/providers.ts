@@ -119,8 +119,8 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
 export const useBrokerActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
-  const addActions: Action[] = [];
   const actions = React.useMemo(() => {
+    const addActions: Action[] = [];
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
     addActions.push(addTriggerBroker(kindObj, resource));
     if (isEventSinkTypeEnabled) {
@@ -130,7 +130,7 @@ export const useBrokerActionProvider = (resource: K8sResourceKind) => {
     }
     addActions.push(...getCommonResourceActions(kindObj, resource));
     return addActions;
-  }, [addActions, isEventSinkTypeEnabled, kindObj, resource]);
+  }, [isEventSinkTypeEnabled, kindObj, resource]);
 
   return [actions, !inFlight, undefined];
 };
@@ -155,8 +155,8 @@ export const useCommonActionsProvider = (resource: K8sResourceKind) => {
 export const useChannelActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
-  const addActions: Action[] = [];
   const actions = React.useMemo(() => {
+    const addActions: Action[] = [];
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
     addActions.push(addSubscriptionChannel(kindObj, resource));
     if (isEventSinkTypeEnabled) {
@@ -166,7 +166,7 @@ export const useChannelActionProvider = (resource: K8sResourceKind) => {
     }
     addActions.push(...getCommonResourceActions(kindObj, resource));
     return addActions;
-  }, [addActions, isEventSinkTypeEnabled, kindObj, resource]);
+  }, [isEventSinkTypeEnabled, kindObj, resource]);
 
   return [actions, !inFlight, undefined];
 };
@@ -397,7 +397,7 @@ export const topologyServerlessActionsFilter = (
 };
 
 export const useKnativeEventSinkActionProvider = (element: Node) => {
-  const resource = element.getData()?.resources?.obj || {};
+  const resource = React.useMemo(() => element.getData()?.resources?.obj || {}, [element]);
   const [k8sModel] = useK8sModel(referenceFor(resource));
   const actions = React.useMemo(() => {
     const type = element.getType();

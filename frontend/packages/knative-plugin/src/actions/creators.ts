@@ -87,8 +87,9 @@ export const editKnativeService = (kind: K8sKind, obj: K8sResourceKind): Action 
     applicationName: truncateMiddle(obj.metadata.name, { length: RESOURCE_NAME_TRUNCATE_LENGTH }),
   }),
   cta: {
-    href: `/edit/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${obj.kind ||
-      kind.kind}`,
+    href: `/edit/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${
+      obj.kind || kind.kind
+    }`,
   },
   insertAfter: 'edit-resource-limits',
   accessReview: {

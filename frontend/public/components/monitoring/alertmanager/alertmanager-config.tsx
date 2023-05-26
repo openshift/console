@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* eslint-disable camelcase, tsdoc/syntax */
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
@@ -335,7 +335,11 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
   const { receiver: defaultReceiverName, routes } = route;
   const { t } = useTranslation();
 
-  const routingLabelsByReceivers = _.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes, {});
+  const routingLabelsByReceivers = React.useMemo(
+    () => (_.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes, {})),
+    [routes],
+  );
+
   const EmptyMsg = () => (
     <MsgBox title={t('public~No Receivers match filter {{filterValue}}', { filterValue })} />
   );
@@ -570,6 +574,7 @@ export type AlertmanagerReceiver = {
   pagerdutyConfigs?: PagerDutyConfig[];
 };
 
+// eslint-disable-next-line no-redeclare
 export type AlertmanagerConfig = {
   global: { [key: string]: string };
   route: AlertmanagerRoute;
