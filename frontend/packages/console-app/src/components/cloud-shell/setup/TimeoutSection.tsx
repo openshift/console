@@ -20,7 +20,7 @@ const TimeoutSection: React.FC = () => {
         label={t('console-app~Timeout')}
         unitName="advancedOptions.timeout.unit"
         unitOptions={TimeoutUnits}
-        helpText={t('console-app~Set timeout for the terminal.')}
+        helpText={t('console-app~Pod timeout for your command line terminal.')}
       />
     </FormSection>
   );
