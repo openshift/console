@@ -178,6 +178,9 @@ func (m *Metrics) getConsolePlugins(
 		return nil, err
 	}
 	resp, err := client.Resource(consolePluginResource).List(ctx, v1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
 	return &resp.Items, err
 }
 
