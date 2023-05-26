@@ -32,6 +32,8 @@ export DBUS_SESSION_BUS_ADDRESS
 
 SCENARIO="${1:-e2e}"
 
+node ./test-count.js
+
 case $SCENARIO in
   login|olmFull|ceph|kubevirt-gating|nightly-cypress) ;; # no protractor tests
   *) CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO";;
