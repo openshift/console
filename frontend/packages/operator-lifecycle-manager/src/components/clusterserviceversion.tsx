@@ -724,6 +724,11 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
 export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProps> = (props) => {
   const { t } = useTranslation();
   const [cluster] = useActiveCluster(); // TODO remove multicluster
+  const [canListAllSubscriptions] = useAccessReview({
+    group: SubscriptionModel.apiGroup,
+    resource: SubscriptionModel.plural,
+    verb: 'list',
+  });
   const title = t('olm~Installed Operators');
   const olmURL = getDocumentationURL(documentationURLs.operators);
   const helpText = (
@@ -785,6 +790,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
           {
             kind: referenceForModel(SubscriptionModel),
             prop: 'subscriptions',
+            namespace: canListAllSubscriptions ? undefined : props.namespace,
             optional: true,
           },
           {
