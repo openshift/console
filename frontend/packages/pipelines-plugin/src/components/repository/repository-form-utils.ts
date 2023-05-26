@@ -73,6 +73,7 @@ const createTokenSecret = async (
 export const createRepositoryResources = async (
   values: RepositoryFormValues,
   namespace: string,
+  labels: { [key: string]: string } = {},
   dryRun?: boolean,
 ): Promise<K8sResourceKind> => {
   const {
@@ -103,6 +104,7 @@ export const createRepositoryResources = async (
     metadata: {
       name,
       namespace,
+      ...(labels || {}),
     },
     spec: {
       url: gitUrl,
