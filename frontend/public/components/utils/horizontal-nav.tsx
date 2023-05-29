@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
-import { History, Location } from 'history';
 import * as _ from 'lodash-es';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
@@ -11,10 +10,10 @@ import {
   Route,
   Switch,
   Link,
-  withRouter,
   match as Match,
   matchPath,
   RouteComponentProps,
+  useRouteMatch,
 } from 'react-router-dom';
 import {
   HorizontalNavTab as DynamicResourceNavTab,
@@ -180,7 +179,7 @@ export const navFactory: NavFactory = {
   }),
 };
 
-export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => {
+export const NavBar: React.FC<NavBarProps> = ({ pages, baseURL, basePath }) => {
   const { t } = useTranslation();
   const { telemetryPrefix, titlePrefix } = React.useContext(PageTitleContext);
 
@@ -231,7 +230,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
       <ul className="co-m-horizontal-nav__menu">{tabs}</ul>
     </>
   );
-});
+};
 NavBar.displayName = 'NavBar';
 
 export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
@@ -376,16 +375,15 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
 }, _.isEqual);
 
 /*
- *Component consumed by the dynamic plugin SDK
+ * Component consumed by the dynamic plugin SDK
  * Changes to the underlying component has to support props used in this facade
  */
-export const HorizontalNavFacade = withRouter<HorizontalNavFacadeProps & RouteComponentProps>(
-  ({ resource, pages, match }) => {
-    const obj = { data: resource, loaded: true };
+export const HorizontalNavFacade: React.FC<HorizontalNavFacadeProps> = ({ resource, pages }) => {
+  const obj = { data: resource, loaded: true };
+  const match = useRouteMatch();
 
-    return <HorizontalNav obj={obj} pages={pages} match={match} noStatusBox />;
-  },
-);
+  return <HorizontalNav obj={obj} pages={pages} match={match} noStatusBox />;
+};
 
 export type PodsComponentProps = {
   obj: K8sResourceKind;
@@ -415,9 +413,6 @@ export type NavBarProps = {
   pages: Page[];
   baseURL: string;
   basePath: string;
-  history: History;
-  location: Location<any>;
-  match: Match<any>;
 };
 
 export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resource'> & {

@@ -154,7 +154,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
 const CreateOperandPage: React.FC<CreateOperandPageProps> = ({ match }) => {
   const { t } = useTranslation();
   const createResourceExtension = useCreateResourceExtension(match.params.plural);
-  const { csvName, ns } = useParams();
+  const { csvName, ns } = useParams<{ csvName?: string; ns?: string }>();
   const [csv, loaded, loadError] = useClusterServiceVersion(csvName, ns);
 
   return (

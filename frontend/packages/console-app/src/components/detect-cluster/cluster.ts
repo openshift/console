@@ -58,7 +58,7 @@ export const useValuesForClusterContext = () => {
           const oldPath = window.location.pathname;
           const newPath = formatNamespaceRoute(activeNamespace, oldPath, window.location, true);
           if (newPath !== oldPath) {
-            history.pushPath(newPath);
+            history.push(newPath);
           }
         }
       },

@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
+import { CompatRouter } from 'react-router-dom-v5-compat';
 import { createModal, GetModalContainer } from '@console/internal/components/factory';
 import { ModalErrorContent } from '@console/internal/components/modals/error-modal';
 import {
@@ -73,14 +74,16 @@ export const createModalResourceLauncher: CreateModalResourceLauncher = (
   const getModalContainer: GetModalContainer = (onClose) => (
     <Provider store={store}>
       <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
-        <Firehose resources={resources}>
-          <ModalComponentWrapper
-            Component={Component}
-            onClose={onClose}
-            resourcesToProps={resourcesToProps}
-            modalProps={props}
-          />
-        </Firehose>
+        <CompatRouter>
+          <Firehose resources={resources}>
+            <ModalComponentWrapper
+              Component={Component}
+              onClose={onClose}
+              resourcesToProps={resourcesToProps}
+              modalProps={props}
+            />
+          </Firehose>
+        </CompatRouter>
       </Router>
     </Provider>
   );

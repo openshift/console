@@ -151,7 +151,7 @@ export const linkForCsvResource = (
 
 export const Resources: React.FC<ResourcesProps> = (props) => {
   const { t } = useTranslation();
-  const { plural } = useParams();
+  const { plural } = useParams<{ plural?: string }>();
   const providedAPI = providedAPIForReference(props.csv, plural);
 
   const firehoseResources = (providedAPI?.resources ?? DEFAULT_RESOURCES).map(

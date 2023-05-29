@@ -40,6 +40,6 @@ describe('helmReleaseResourcesRow', () => {
       <HelmReleaseResourceStatus resource={rowArgs.obj} />,
     );
     expect(helmReleaseResourceStatus1.find(Link).exists()).toBe(true);
-    expect(helmReleaseResourceStatus1.find(Link).props().title).toEqual('Pods');
+    expect(helmReleaseResourceStatus1.find<any>(Link).props().title).toEqual('Pods');
   });
 });

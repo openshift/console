@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet';
 import { linkify } from 'react-linkify';
 import { Provider, useSelector } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
+import { CompatRouter } from 'react-router-dom-v5-compat';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
 import store, { applyReduxExtensions } from '../redux';
@@ -276,20 +277,22 @@ const AppRouter = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
   return (
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-      <Switch>
-        {standaloneRouteExtensions.map((e) => (
-          <Route
-            key={e.uid}
-            render={(componentProps) => (
-              <AsyncComponent loader={e.properties.component} {...componentProps} />
-            )}
-            path={e.properties.path}
-            exact={e.properties.exact}
-          />
-        ))}
-        <Route path="/terminal" component={CloudShellTab} />
-        <Route path="/" component={AppWithExtensions} />
-      </Switch>
+      <CompatRouter>
+        <Switch>
+          {standaloneRouteExtensions.map((e) => (
+            <Route
+              key={e.uid}
+              render={(componentProps) => (
+                <AsyncComponent loader={e.properties.component} {...componentProps} />
+              )}
+              path={e.properties.path}
+              exact={e.properties.exact}
+            />
+          ))}
+          <Route path="/terminal" component={CloudShellTab} />
+          <Route path="/" component={AppWithExtensions} />
+        </Switch>
+      </CompatRouter>
     </Router>
   );
 };

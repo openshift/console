@@ -1213,7 +1213,7 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
   props,
 ) => {
   const { t } = useTranslation();
-  const { name, ns } = useParams();
+  const { name, ns } = useParams<{ name?: string; ns?: string }>();
   const [csv, csvLoaded, csvLoadError] = useClusterServiceVersion(name, ns);
   const namespace = operatorNamespaceFor(csv);
   const [subscriptions, subscriptionsLoaded, subscriptionsLoadError] = useK8sWatchResource<

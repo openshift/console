@@ -735,9 +735,15 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
 });
 
 const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps) => {
+  type RouteParams = {
+    appName?: string;
+    ns?: string;
+    name?: string;
+    plural?: string;
+  };
   const { t } = useTranslation();
-  const match = useRouteMatch();
-  const { appName, ns, name, plural } = useParams();
+  const match = useRouteMatch<RouteParams>();
+  const { appName, ns, name, plural } = useParams<RouteParams>();
   const [csv] = useClusterServiceVersion(appName, ns);
   const actionItems = React.useCallback((resourceModel: K8sKind, resource: K8sResourceKind) => {
     const context = {
@@ -793,7 +799,7 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
 };
 
 export const OperandDetailsPage = (props) => {
-  const { plural, ns, name } = useParams();
+  const { plural, ns, name } = useParams<{ plural?: string; ns?: string; name?: string }>();
   const resourceDetailsPage = useResourceDetailsPage(plural);
   const [k8sModel, inFlight] = useK8sModel(plural);
   if (inFlight && !k8sModel) {
