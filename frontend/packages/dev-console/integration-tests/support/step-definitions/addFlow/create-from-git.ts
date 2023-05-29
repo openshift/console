@@ -256,3 +256,19 @@ Then('user is able to see {string} value is selected in TLS termination', (value
 Then('user is able to see {string} value is selected in Insecure traffic', (value: string) => {
   cy.get(gitPO.advancedOptions.routing.insecureTraffic).should('have.text', value);
 });
+
+Then('devfile import strategy is disabled', () => {
+  gitPage.checkIfDevfileImportStrategyDisabled();
+});
+
+When('user clicks on Edit import strategy', () => {
+  gitPage.clickEditImportStrategy();
+});
+
+When('user enters Devfile Path as {string}', (devfilePath: string) => {
+  gitPage.enterDevfilePath(devfilePath);
+});
+
+Then('user see message {string}', (message: string) => {
+  gitPage.checkDevFileHelpText(message);
+});

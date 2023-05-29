@@ -409,6 +409,7 @@
   "Could not fetch devfile resources.": "Could not fetch devfile resources.",
   "The Devfile in your Git repository is invalid.": "The Devfile in your Git repository is invalid.",
   "Validated": "Validated",
+  "Could not get Devfile for an unknown Git type": "Could not get Devfile for an unknown Git type",
   "Devfile not detected": "Devfile not detected",
   "Allows the builds to use a different path to locate your Devfile, relative to the Context Dir field": "Allows the builds to use a different path to locate your Devfile, relative to the Context Dir field",
   "Import is not possible.": "Import is not possible.",

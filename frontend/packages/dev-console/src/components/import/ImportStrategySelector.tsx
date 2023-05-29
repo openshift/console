@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { FormGroup, Grid, GridItem, Tile } from '@patternfly/react-core';
+import { FormGroup, Grid, GridItem, Tile, Tooltip } from '@patternfly/react-core';
 import { LayerGroupIcon, CubeIcon, GitAltIcon, StarIcon } from '@patternfly/react-icons';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { ImportStrategy } from '@console/git-service/src';
+import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { getFieldId, useFormikValidationFix } from '@console/shared/src';
 import './ImportStrategySelector.scss';
@@ -14,6 +14,7 @@ const ImportStrategySelector: React.FC = () => {
     values: {
       import: { recommendedStrategy, selectedStrategy },
       build: { strategy },
+      git: { type },
     },
     setFieldValue,
   } = useFormikContext<FormikValues>();
@@ -27,6 +28,11 @@ const ImportStrategySelector: React.FC = () => {
       priority: 2,
       detectedFiles: [],
       icon: <LayerGroupIcon />,
+      isDisabled: type === GitProvider.UNSURE,
+      disabledReason:
+        type === GitProvider.UNSURE
+          ? t('devconsole~Could not get Devfile for an unknown Git type')
+          : null,
     },
     {
       name: 'Dockerfile',
@@ -63,24 +69,47 @@ const ImportStrategySelector: React.FC = () => {
   return (
     <FormGroup fieldId={fieldId} label={t('devconsole~Import Strategy')}>
       <Grid hasGutter>
-        {itemList.map((item) => (
-          <GridItem span={4} key={item.name}>
-            <Tile
-              className="odc-import-strategy-selector__tile"
-              data-test={`import-strategy ${item.name}`}
-              title={item.name}
-              icon={item.icon}
-              onClick={() => onSelect(item)}
-              isSelected={selectedStrategy.type === item.type}
-            >
-              {recommendedStrategy?.type === item.type && (
-                <span className="odc-import-strategy-selector__recommended">
-                  <StarIcon />
-                </span>
-              )}
-            </Tile>
-          </GridItem>
-        ))}
+        {itemList.map((item) =>
+          item.disabledReason ? (
+            <Tooltip content={item.disabledReason}>
+              <GridItem span={4} key={item.name}>
+                <Tile
+                  className="odc-import-strategy-selector__tile"
+                  data-test={`import-strategy-${item.name}`}
+                  title={item.name}
+                  icon={item.icon}
+                  onClick={() => onSelect(item)}
+                  isSelected={selectedStrategy.type === item.type}
+                  isDisabled={item.isDisabled}
+                >
+                  {recommendedStrategy?.type === item.type && (
+                    <span className="odc-import-strategy-selector__recommended">
+                      <StarIcon />
+                    </span>
+                  )}
+                </Tile>
+              </GridItem>
+            </Tooltip>
+          ) : (
+            <GridItem span={4} key={item.name}>
+              <Tile
+                className="odc-import-strategy-selector__tile"
+                data-test={`import-strategy-${item.name}`}
+                title={item.name}
+                icon={item.icon}
+                onClick={() => onSelect(item)}
+                isSelected={selectedStrategy.type === item.type}
+                isDisabled={item.isDisabled}
+              >
+                {recommendedStrategy?.type === item.type && (
+                  <span className="odc-import-strategy-selector__recommended">
+                    <StarIcon />
+                  </span>
+                )}
+              </Tile>
+            </GridItem>
+          ),
+        )}
       </Grid>
     </FormGroup>
   );

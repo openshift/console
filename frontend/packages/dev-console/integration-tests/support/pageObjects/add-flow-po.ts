@@ -98,6 +98,12 @@ export const gitPO = {
     },
     labels: 'input[data-test="labels"]',
   },
+  importStrategy: {
+    devFileStrategy: '[data-test=import-strategy-Devfile]',
+    editImportStrategyBtn: '[data-test=import-strategy-button]',
+    devFilePathInput: '[data-test=git-form-devfile-path-input]',
+    devFileHelperText: '.pf-c-form__helper-text',
+  },
 };
 
 export const catalogPO = {
