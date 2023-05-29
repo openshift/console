@@ -215,6 +215,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
       cy.get('body').then(($body) => {
         if ($body.text().includes('Consoles')) {
           cy.byTestID('nav').contains('Consoles').click();
+          cy.byTestID('cluster').should('be.visible').click();
         } else {
           cy.get(devNavigationMenuPO.search).click();
           cy.get('[aria-label="Options menu"]').click();

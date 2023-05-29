@@ -54,13 +54,6 @@
     }
   },
   {
-    "type": "console.redux-reducer",
-    "properties": {
-      "scope": "console",
-      "reducer": { "$codeRef": "reduxReducer" }
-    }
-  },
-  {
     "type": "console.navigation/resource-cluster",
     "properties": {
       "id": "volumesnapshotcontents",
@@ -323,7 +316,6 @@
       ]
     }
   },
-
   {
     "type": "console.user-preference/group",
     "properties": {
