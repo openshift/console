@@ -88,11 +88,6 @@ export const PVCStatus = ({ pvc }) => {
   );
 };
 
-const getQuery = (name) => {
-  const query = _.template('kubelet_volume_stats_used_bytes${name}');
-  return name ? query({ name: `{persistentvolumeclaim='${name}'}` }) : query();
-};
-
 const tableColumnClasses = [
   '', // name
   '', // namespace
@@ -165,7 +160,8 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
 
 const Details_ = ({ flags, obj: pvc }) => {
   const canListPV = flags[FLAGS.CAN_LIST_PV];
-
+  const name = pvc?.metadata?.name;
+  const namespace = pvc?.metadata?.namespace;
   const labelSelector = pvc?.spec?.selector;
   const storageClassName = pvc?.spec?.storageClassName;
   const volumeName = pvc?.spec?.volumeName;
@@ -174,11 +170,14 @@ const Details_ = ({ flags, obj: pvc }) => {
   const accessModes = pvc?.status?.accessModes;
   const volumeMode = pvc?.spec?.volumeMode;
   const conditions = pvc?.status?.conditions;
-
+  const query =
+    name && namespace
+      ? `kubelet_volume_stats_used_bytes{persistentvolumeclaim='${name}',namespace='${namespace}'}`
+      : '';
   const [response, loadError, loading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,
-    namespace: pvc.metadata.namespace,
-    query: getQuery(pvc.metadata.name),
+    namespace,
+    query,
   });
 
   const totalCapacityMetric = convertToBaseValue(storage);
@@ -374,12 +373,11 @@ export const PersistentVolumeClaimsPage = (props) => {
   const { t } = useTranslation();
   const createPropExtensions = useExtensions(isPVCCreateProp);
   const { namespace = undefined } = props;
-  const query = getQuery();
   const dispatch = useDispatch();
   const [response, loadError, loading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,
     namespace,
-    query,
+    query: 'kubelet_volume_stats_used_bytes',
   });
   const pvcMetrics =
     _.isEmpty(loadError) && !loading
