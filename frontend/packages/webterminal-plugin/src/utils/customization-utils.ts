@@ -1,14 +1,17 @@
 import {
   CloudShellComponent,
   CloudShellResource,
-} from './components/cloud-shell/cloud-shell-utils';
+} from '../components/cloud-shell/cloud-shell-utils';
 
 export const getUpdatedComponentTimeout = (
   existingTerminalExecComponents: CloudShellComponent[],
   timeout: string,
   terminalExecResource: CloudShellComponent,
 ) => {
-  if (!existingTerminalExecComponents && timeout) {
+  if (
+    (!existingTerminalExecComponents || existingTerminalExecComponents?.length === 0) &&
+    timeout
+  ) {
     return [
       {
         name: 'web-terminal-exec',
@@ -19,9 +22,11 @@ export const getUpdatedComponentTimeout = (
       },
     ];
   }
+
   const terminalIdleTimeoutEnvVariable = terminalExecResource?.container?.env?.find(
     (e) => e.name === 'WEB_TERMINAL_IDLE_TIMEOUT',
   );
+
   if (terminalExecResource && !terminalIdleTimeoutEnvVariable?.value && timeout) {
     let newEnvVariables;
     if (terminalExecResource?.container?.env) {
@@ -94,7 +99,7 @@ export const getUpdatedComponentImage = (
   newImage: string,
   terminalToolingResource: CloudShellComponent,
 ) => {
-  if (!existingTerminalToolingComponents) {
+  if (!existingTerminalToolingComponents || existingTerminalToolingComponents?.length === 0) {
     return [
       {
         name: 'web-terminal-tooling',

@@ -12,7 +12,7 @@ Feature: Customization of web terminal options
             Given user is at Consoles page
              When user navigates to Cluster configuration page
               And user clicks on Web Terminal tab
-             Then user should see Web Terminal Congiguration page
+             Then user should see Web Terminal Configuration page
 
 
         @smoke
@@ -24,9 +24,45 @@ Feature: Customization of web terminal options
               And user clicks on Save button to save web terminal settings
              Then user should see a success alert
 
+        
+        @smoke
+        Scenario: When user changes web terminal default image and timeout: WT-02-TC03
+            Given user is at Web Terminal Configuration page
+             When user increase the timeout value and set unit as "Hours"
+              And user enters image value as "registry.redhat.io/web-terminal/web-terminal-tooling-rhel8@sha256:9ff1f660fccd3a2f0515ba997d48ad87d2ba47c40b67062c74580bbea9446806" 
+              And user checks checkboxes to save data even after operator restarts or update
+              And user clicks on Save button to save web terminal settings
+              And user switches to Developer tab
+              And user clicks on Web Terminal tab
+             Then user should see new image value as "registry.redhat.io/web-terminal/web-terminal-tooling-rhel8@sha256:9ff1f660fccd3a2f0515ba997d48ad87d2ba47c40b67062c74580bbea9446806"
+              And user should see new timeout unit as "Hours"
+              And user should see timeout checkbox to save data even after operator restarts or update is checked             
+              And user should see image checkbox to save data even after operator restarts or update is checked
+
+        @regression
+        Scenario: When user selects not to save data after operator restarts or update: WT-02-TC04
+            Given user is at Web Terminal Configuration page
+             When user increase the timeout value and set unit as "Hours"
+              And user enters image value as "registry.redhat.io/web-terminal/web-terminal-tooling-rhel8@sha256:9ff1f660fccd3a2f0515ba997d48ad87d2ba47c40b67062c74580bbea9446806" 
+              And user unchecks checkboxes to save data even after operator restarts or update
+              And user clicks on Save button to save web terminal settings
+             Then user should see a success alert
+
+        @regression
+        Scenario: When user selects not to save data after operator restarts or update: WT-02-TC05
+            Given user is at Web Terminal Configuration page
+             When user increase the timeout value and set unit as "Hours"
+              And user enters image value as "registry.redhat.io/web-terminal/web-terminal-tooling-rhel8@sha256:9ff1f660fccd3a2f0515ba997d48ad87d2ba47c40b67062c74580bbea9446806" 
+              And user unchecks checkboxes to save data even after operator restarts or update
+              And user clicks on Save button to save web terminal settings
+              And user switches to Developer tab
+              And user clicks on Web Terminal tab
+             Then user should see timeout checkbox to save data even after operator restarts or update is unchecked             
+              And user should see image checkbox to save data even after operator restarts or update is unchecked
+
 
         @regression @manual
-        Scenario: When web terminal timeout value is changed: WT-02-TC03
+        Scenario: When web terminal timeout value is changed: WT-02-TC06
             Given user has updated timeout value in Web Terminal Congiguration page
               And user decided to save timeout value even after operator restarts or update
               And user is at namespace "openshift-operators"
@@ -38,7 +74,7 @@ Feature: Customization of web terminal options
 
         
         @regression @manual
-        Scenario: When web terminal image value is changed: WT-02-TC04
+        Scenario: When web terminal image value is changed: WT-02-TC07
             Given user has updated image value in Web Terminal Congiguration page
               And user decided to save image value even after operator restarts or update
               And user is at namespace "openshift-operators"
@@ -47,37 +83,5 @@ Feature: Customization of web terminal options
               And user switches to the YAML tab
              Then user should see new image value in 'spec.components' for resource name "web-terminal-tooling" in "container.image" value
               And user should see "web-terminal.redhat.com/unmanaged-state: 'true'" got added in "metadata.annotations"
-
-
-        @regression
-        Scenario: When user selects not to save data after operator restarts or update: WT-02-TC05
-            Given user is at Web Terminal Configuration page
-             When user unchecks checkboxes to save data even after operator restarts or update
-              And user clicks on Save button to save web terminal settings
-             Then user should see a success alert
-
-
-        @regression @manual
-        Scenario: When user decided not to save timeout value: WT-02-TC06
-            Given user has updated timeout value in Web Terminal Congiguration page
-              And user decided to save timeout value even after operator restarts or update
-              And user is at namespace "openshift-operators"
-             When user decides not to save timeout value by unchecking the checkbox to save data even after operator restarts or update in Web Terminal Configuration page
-              And user searches "DevWorkspaceTemplates" in Search page
-              And user selects "web-terminal-exec" resource
-              And user switches to the YAML tab
-             Then user should see "web-terminal.redhat.com/unmanaged-state: 'false'" got added in "metadata.annotations"
-
-        
-        @regression @manual
-        Scenario: When user decided not to save image value: WT-02-TC07
-            Given user has updated image value in Web Terminal Congiguration page
-              And user decided to save image value even after operator restarts or update
-              And user is at namespace "openshift-operators"
-             When user decides not to save image value by unchecking the checkbox to save data even after operator restarts or update in Web Terminal Configuration page
-              And user searches "DevWorkspaceTemplates" in Search page
-              And user selects "web-terminal-tooling" resource
-              And user switches to the YAML tab
-             Then user should see "web-terminal.redhat.com/unmanaged-state: 'false'" got added in "metadata.annotations"
 
 

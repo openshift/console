@@ -22,7 +22,7 @@ import {
 } from '@console/shared/src/components/cluster-configuration';
 import { DevWorkspaceTemplateModel } from '../../../models';
 import { DEFAULT_NS_OPERATORS } from '../../const';
-import { updatedWebTerminalExec, updatedWebTerminalTooling } from '../../utils';
+import { updatedWebTerminalExec, updatedWebTerminalTooling } from '../../utils/customization-utils';
 import { CloudShellResource } from './cloud-shell-utils';
 import { getCloudShellTimeout } from './setup/cloud-shell-setup-utils';
 import useCloudShellNamespace from './useCloudShellNamespace';
