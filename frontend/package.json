@@ -173,7 +173,7 @@
     "gherkin-lint": "^4.1.3",
     "git-url-parse": "^11.4.0",
     "graphql": "^14.0.0",
-    "history": "4.9.0",
+    "history": "^4.9.0",
     "hoist-non-react-statics": "3.x",
     "i18next": "^21.8.14",
     "i18next-browser-languagedetector": "^6.0.1",
