@@ -509,8 +509,21 @@ export const EditYAML_ = connect(stateToProps)(
               return;
             }
             if (objs.length === 1) {
-              this.save();
-              return;
+              if (
+                objs[0]?.apiVersion === 'v1' &&
+                objs[0]?.kind?.includes('List') &&
+                objs[0]?.items
+              ) {
+                if (objs[0]?.items?.length > 0) {
+                  objs = objs[0].items;
+                } else {
+                  this.handleError(t('public~"items" list is empty'));
+                  return;
+                }
+              } else {
+                this.save();
+                return;
+              }
             } else if (objs.length === 0) {
               return;
             }
