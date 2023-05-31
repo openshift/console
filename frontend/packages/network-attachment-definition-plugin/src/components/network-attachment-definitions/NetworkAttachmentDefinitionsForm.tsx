@@ -11,7 +11,9 @@ import {
   history,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
+  K8sResourceKind,
   k8sCreate,
   modelFor,
   referenceForGroupVersionKind,
@@ -19,7 +21,12 @@ import {
 } from '@console/internal/module/k8s';
 import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
 import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
-import { networkTypeParams, networkTypes } from '../../constants';
+import {
+  cnvBridgeNetworkType,
+  networkTypeParams,
+  networkTypes,
+  ovnKubernetesNetworkType,
+} from '../../constants';
 import {
   NetworkAttachmentDefinitionAnnotations,
   NetworkAttachmentDefinitionConfig,
@@ -27,7 +34,12 @@ import {
 } from '../../types';
 import NetworkTypeOptions from './NetworkTypeOptions';
 
-const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefinitionConfig => {
+const buildConfig = (
+  name,
+  networkType,
+  typeParamsData,
+  namespace,
+): NetworkAttachmentDefinitionConfig => {
   const config: NetworkAttachmentDefinitionConfig = {
     name,
     type: networkType,
@@ -41,20 +53,23 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
     console.error('Could not parse ipam.value JSON', e); // eslint-disable-line no-console
   }
 
-  if (networkType === 'cnv-bridge') {
+  if (networkType === cnvBridgeNetworkType) {
     config.bridge = _.get(typeParamsData, 'bridge.value', '');
     config.vlan = parseInt(typeParamsData?.vlanTagNum?.value, 10) || undefined;
     config.macspoofchk = _.get(typeParamsData, 'macspoofchk.value', true);
     config.ipam = ipam;
   } else if (networkType === 'sriov') {
     config.ipam = ipam;
+  } else if (networkType === ovnKubernetesNetworkType) {
+    config.topology = 'layer2';
+    config.netAttachDefName = `${name}/${namespace}`;
   }
 
   return config;
 };
 
 const getResourceName = (networkType, typeParamsData): string => {
-  return networkType === 'cnv-bridge'
+  return networkType === cnvBridgeNetworkType
     ? `bridge.network.kubevirt.io/${_.get(typeParamsData, 'bridge.value', '')}`
     : `openshift.io/${_.get(typeParamsData, 'resourceName.value', '')}`;
 };
@@ -74,7 +89,7 @@ const createNetAttachDef = (
   setLoading(true);
   setError(null);
 
-  const config = JSON.stringify(buildConfig(name, networkType, typeParamsData));
+  const config = JSON.stringify(buildConfig(name, networkType, typeParamsData, namespace));
 
   const annotations: NetworkAttachmentDefinitionAnnotations = {
     'k8s.v1.cni.cncf.io/resourceName': getResourceName(networkType, typeParamsData),
@@ -140,14 +155,18 @@ const handleNameChange = (enteredName, fieldErrors, setName, setFieldErrors) => 
   setFieldErrors(fieldErrorsUpdate);
 };
 
-const getNetworkTypes = (hasSriovNetNodePolicyCRD, hasHyperConvergedCRD) => {
+const getNetworkTypes = (hasSriovNetNodePolicyCRD, hasHyperConvergedCRD, hasOVNK8sNetwork) => {
   const types = _.clone(networkTypes);
   if (!hasSriovNetNodePolicyCRD) {
     delete types.sriov;
   }
 
   if (!hasHyperConvergedCRD) {
-    delete types['cnv-bridge'];
+    delete types[cnvBridgeNetworkType];
+  }
+
+  if (!hasOVNK8sNetwork) {
+    delete types[ovnKubernetesNetworkType];
   }
 
   return types;
@@ -198,15 +217,32 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   const [error, setError] = React.useState(null);
   const [fieldErrors, setFieldErrors] = React.useState<FieldErrors>({});
 
-  const networkTypeDropdownItems = getNetworkTypes(hasSriovNetNodePolicyCRD, hasHyperConvergedCRD);
-
   const formIsValid = React.useMemo(
     () => validateForm(fieldErrors, name, networkType, typeParamsData, setError),
     [fieldErrors, name, networkType, typeParamsData],
   );
 
-  React.useEffect(() => setLoading(hasSriovNetNodePolicyCRD && !loaded), [
+  const [networkConfig, networkConfigLoaded] = useK8sWatchResource<K8sResourceKind>({
+    groupVersionKind: {
+      kind: 'Network',
+      version: 'v1',
+      group: 'operator.openshift.io',
+    },
+    isList: false,
+    name: 'cluster',
+    namespaced: false,
+  });
+
+  const hasOVNK8sNetwork = networkConfig?.spec?.defaultNetwork?.type === 'OVNKubernetes';
+  const networkTypeDropdownItems = getNetworkTypes(
     hasSriovNetNodePolicyCRD,
+    hasHyperConvergedCRD,
+    hasOVNK8sNetwork,
+  );
+
+  React.useEffect(() => setLoading(hasSriovNetNodePolicyCRD && !loaded && !networkConfigLoaded), [
+    hasSriovNetNodePolicyCRD,
+    networkConfigLoaded,
     resources,
     loaded,
   ]);

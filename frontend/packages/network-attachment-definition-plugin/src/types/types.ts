@@ -25,6 +25,8 @@ export type NetworkAttachmentDefinitionConfig = {
   vlan?: number;
   ipam?: IPAMConfig;
   plugins?: NetworkAttachmentDefinitionPlugin[];
+  topology?: string;
+  netAttachDefName?: string;
 };
 
 // The config is a JSON object with the NetworkAttachmentDefinitionConfig type stored as a string
