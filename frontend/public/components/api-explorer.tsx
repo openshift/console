@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 import { ALL_NAMESPACES_KEY, FLAGS, APIError, getTitleForNodeKind } from '@console/shared';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { Page, PageHeading, useAccessReview } from '@console/internal/components/utils';
 
@@ -41,7 +42,7 @@ import { RootState } from '../redux';
 import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';
-import { fuzzyCaseInsensitive } from './factory/table-filters';
+import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
 import { getResourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import {
@@ -192,6 +193,8 @@ const APIResourcesList = compose(
     },
     { [ALL]: t('public~All groups'), '': t('public~No group') },
   );
+  const [isExactSearch] = useExactSearch();
+  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const groupSpacer = new Set<string>();
   if (sortedGroups.length) {
@@ -246,7 +249,7 @@ const APIResourcesList = compose(
     }
 
     if (textFilter) {
-      return fuzzyCaseInsensitive(textFilter, kind);
+      return matchFn(textFilter, kind);
     }
 
     return true;
