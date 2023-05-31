@@ -22,7 +22,7 @@ import { requesterFilter } from '@console/shared/src/components/namespace';
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
 
-export const exactMatch = (a: string, b: string): boolean => !a || b.includes(a);
+export const exactMatch = (a: string, b: string): boolean => !a || b?.includes(a);
 
 const clusterServiceVersionDisplayName = (csv: K8sResourceKind): string =>
   csv?.spec?.displayName || csv?.metadata?.name;

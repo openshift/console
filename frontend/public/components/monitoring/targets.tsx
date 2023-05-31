@@ -16,6 +16,7 @@ import {
   useListPageFilter,
   VirtualizedTable,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search';
 import {
   Alert,
   AlertActionCloseButton,
@@ -45,7 +46,8 @@ import { LoadingInline, StatusBox } from '../utils/status-box';
 import { useBoolean } from './hooks/useBoolean';
 import { Labels } from './labels';
 import { AlertSource, PrometheusAPIError, Target } from './types';
-import { fuzzyCaseInsensitive, PROMETHEUS_BASE_PATH, targetSource } from './utils';
+import { PROMETHEUS_BASE_PATH, targetSource } from './utils';
+import { exactMatch, fuzzyCaseInsensitive } from '../factory/table-filters';
 
 enum MonitorType {
   ServiceMonitor = 'serviceMonitor',
@@ -450,11 +452,12 @@ const ListPage: React.FC<ListPageProps> = ({ loaded, loadError, targets }) => {
 
   const [, , serviceMonitorsLoadError] = React.useContext(ServiceMonitorsWatchContext);
   const [, , podMonitorsLoadError] = React.useContext(PodMonitorsWatchContext);
-
+  const [isExactSearch] = useExactSearch();
+  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
   const nameFilter: RowFilter = {
     filter: (filter, target: Target) =>
-      fuzzyCaseInsensitive(filter.selected?.[0], target.scrapeUrl) ||
-      fuzzyCaseInsensitive(filter.selected?.[0], target.labels?.namespace),
+      matchFn(filter.selected?.[0], target.scrapeUrl) ||
+      matchFn(filter.selected?.[0], target.labels?.namespace),
     items: [],
     type: 'name',
   } as RowFilter;
