@@ -33,6 +33,7 @@ import {
   K8sResourceCommon,
 } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
+import { ConsoleRouteParams } from '@console/shared/src/types';
 import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
 import { OperandLink } from './operand/operand-link';
 import { providedAPIForReference } from './index';
@@ -151,7 +152,7 @@ export const linkForCsvResource = (
 
 export const Resources: React.FC<ResourcesProps> = (props) => {
   const { t } = useTranslation();
-  const { plural } = useParams<{ plural?: string }>();
+  const { plural } = useParams<ConsoleRouteParams>();
   const providedAPI = providedAPIForReference(props.csv, plural);
 
   const firehoseResources = (providedAPI?.resources ?? DEFAULT_RESOURCES).map(

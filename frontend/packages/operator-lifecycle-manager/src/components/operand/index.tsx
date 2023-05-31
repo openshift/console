@@ -73,6 +73,7 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { useResourceDetailsPage } from '@console/shared/src/hooks/useResourceDetailsPage';
 import { useResourceListPage } from '@console/shared/src/hooks/useResourceListPage';
+import { ConsoleRouteParams } from '@console/shared/src/types';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { useClusterServiceVersion } from '../../utils/useClusterServiceVersion';
@@ -735,15 +736,9 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
 });
 
 const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps) => {
-  type RouteParams = {
-    appName?: string;
-    ns?: string;
-    name?: string;
-    plural?: string;
-  };
   const { t } = useTranslation();
-  const match = useRouteMatch<RouteParams>();
-  const { appName, ns, name, plural } = useParams<RouteParams>();
+  const match = useRouteMatch<ConsoleRouteParams>();
+  const { appName, ns, name, plural } = useParams<ConsoleRouteParams>();
   const [csv] = useClusterServiceVersion(appName, ns);
   const actionItems = React.useCallback((resourceModel: K8sKind, resource: K8sResourceKind) => {
     const context = {
@@ -799,7 +794,7 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
 };
 
 export const OperandDetailsPage = (props) => {
-  const { plural, ns, name } = useParams<{ plural?: string; ns?: string; name?: string }>();
+  const { plural, ns, name } = useParams<ConsoleRouteParams>();
   const resourceDetailsPage = useResourceDetailsPage(plural);
   const [k8sModel, inFlight] = useK8sModel(plural);
   if (inFlight && !k8sModel) {

@@ -77,6 +77,7 @@ import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { useActiveCluster } from '@console/shared/src/hooks/useActiveCluster'; // TODO remove multicluster
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { ConsoleRouteParams } from '@console/shared/src/types';
 import { isPluginEnabled } from '@console/shared/src/utils';
 import { GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
 import {
@@ -1213,7 +1214,7 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
   props,
 ) => {
   const { t } = useTranslation();
-  const { name, ns } = useParams<{ name?: string; ns?: string }>();
+  const { name, ns } = useParams<ConsoleRouteParams>();
   const [csv, csvLoaded, csvLoadError] = useClusterServiceVersion(name, ns);
   const namespace = operatorNamespaceFor(csv);
   const [subscriptions, subscriptionsLoaded, subscriptionsLoadError] = useK8sWatchResource<

@@ -33,6 +33,7 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
+import { ConsoleRouteParams } from '@console/shared/src/types';
 import {
   ClusterServiceVersionModel,
   InstallPlanModel,
@@ -294,10 +295,7 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
 
 const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }) => {
   const { t } = useTranslation();
-  const { currentCSV, targetNamespace } = useParams<{
-    currentCSV?: string;
-    targetNamespace?: string;
-  }>();
+  const { currentCSV, targetNamespace } = useParams<ConsoleRouteParams>();
   let loading = true;
   let status = '';
   let installObj: ClusterServiceVersionKind | InstallPlanKind =
@@ -422,12 +420,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
 };
 
 export const OperatorInstallStatusPage: React.FC<OperatorInstallPageProps> = () => {
-  const { pkg, catalogNamespace, currentCSV, targetNamespace } = useParams<{
-    pkg?: string;
-    catalogNamespace?: string;
-    currentCSV?: string;
-    targetNamespace?: string;
-  }>();
+  const { pkg, catalogNamespace, currentCSV, targetNamespace } = useParams<ConsoleRouteParams>();
   const installPageResources = [
     {
       kind: referenceForModel(ClusterServiceVersionModel),
