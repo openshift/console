@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
+import { SilencesPage } from '@console/internal/components/monitoring/alerting';
 import MonitoringDashboardsPage from '@console/internal/components/monitoring/dashboards';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import {
@@ -60,6 +61,12 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
             // t('devconsole~Alerts')
             nameKey: 'devconsole~Alerts',
             component: ConnectedMonitoringAlerts,
+          },
+          {
+            href: 'silences',
+            // t('public~Silences')
+            nameKey: 'public~Silences',
+            component: SilencesPage,
           },
         ]
       : []),

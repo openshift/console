@@ -1403,13 +1403,9 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
             <BreadcrumbItem>
               <Link
                 className="pf-c-breadcrumb__link"
-                to={
-                  perspective === 'dev'
-                    ? `/dev-monitoring/ns/${namespace}/alerts`
-                    : '/monitoring/silences'
-                }
+                to={namespace ? `/dev-monitoring/ns/${namespace}/silences` : '/monitoring/silences'}
               >
-                {perspective === 'dev' ? t('public~Alerts') : t('public~Silences')}
+                {t('public~Silences')}
               </Link>
             </BreadcrumbItem>
             <BreadcrumbItem isActive>{t('public~Silence details')}</BreadcrumbItem>
@@ -1624,7 +1620,7 @@ const getAdditionalSources = <T extends Alert | Rule>(
   return [];
 };
 
-const AlertsPage_: React.FC<Alerts> = () => {
+const AlertsPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   const { data, loaded = false, loadError }: Alerts = useSelector(
@@ -1951,8 +1947,11 @@ const silenceStateOrder = (silence: Silence) => [
   _.get(silence, silenceState(silence) === SilenceStates.Pending ? 'startsAt' : 'endsAt'),
 ];
 
-const SilencesPage_: React.FC<Silences> = () => {
+const SilencesPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
+
+  const [namespace] = useActiveNamespace();
+  const [perspective] = useActivePerspective();
 
   const { data, loaded = false, loadError }: Silences = useSelector(
     ({ observe }: RootState) => observe.get('silences') || {},
@@ -1980,8 +1979,17 @@ const SilencesPage_: React.FC<Silences> = () => {
     },
   ];
 
+  const namespacedData: Silence[] = React.useMemo(() => {
+    if (!data || !namespace || perspective !== 'dev') {
+      return data;
+    }
+    return data.filter((silence: Silence) =>
+      silence.matchers.some((m) => m.name === 'namespace' && m.value === namespace),
+    );
+  }, [data, namespace]);
+
   const allFilters: RowFilter[] = [nameFilter, ...rowFilters];
-  const [staticData, filteredData, onFilterChange] = useListPageFilter(data, allFilters);
+  const [staticData, filteredData, onFilterChange] = useListPageFilter(namespacedData, allFilters);
 
   const columns = React.useMemo<TableColumn<Silence>[]>(
     () => [
@@ -2069,7 +2077,7 @@ const SilencesPage_: React.FC<Silences> = () => {
     </>
   );
 };
-const SilencesPage = withFallback(SilencesPage_);
+export const SilencesPage = withFallback(SilencesPage_);
 
 const Tab: React.FC<{ active: boolean; children: React.ReactNode }> = ({ active, children }) => (
   <li
