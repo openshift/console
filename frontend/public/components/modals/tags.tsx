@@ -2,7 +2,11 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { k8sPatch, K8sResourceKind, K8sKind } from '../../module/k8s';
+import {
+  AnnotationsModalProps,
+  TagsModalProps,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { k8sPatch } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { NameValueEditorPair, withHandlePromise, HandlePromiseProps } from '../utils';
 import { AsyncComponent } from '../utils/async';
@@ -18,7 +22,7 @@ const NameValueEditorComponent = (props) => (
   />
 );
 
-export const TagsModal = withHandlePromise((props: TagsModalProps) => {
+export const TagsModal = withHandlePromise((props: TagsModalProps & HandlePromiseProps) => {
   // Track tags as an array instead of an object / Map so we can preserve the order during editing and so we can have
   // duplicate keys during editing. However, the ordering and any duplicate keys are lost when the form is submitted.
   const [tags, setTags] = React.useState(
@@ -66,7 +70,7 @@ export const TagsModal = withHandlePromise((props: TagsModalProps) => {
   );
 });
 
-export const annotationsModal = createModalLauncher((props: AnnotationsModalProps) => (
+export const AnnotationsModal: React.FC<AnnotationsModalProps> = (props) => (
   <TagsModal
     path="/metadata/annotations"
     tags={props.resource.metadata.annotations}
@@ -74,20 +78,8 @@ export const annotationsModal = createModalLauncher((props: AnnotationsModalProp
     titleKey="public~Edit annotations"
     {...props}
   />
-));
+);
 
-type TagsModalProps = {
-  tags?: { [key: string]: string };
-  path: string;
-  titleKey: string;
-  kind: K8sKind;
-  resource: K8sResourceKind;
-  inProgress: boolean;
-  errorMessage: string;
-  cancel?: () => void;
-  close?: () => void;
-} & HandlePromiseProps;
-
-type AnnotationsModalProps = Omit<TagsModalProps, 'path' | 'tags'>;
+export const annotationsModal = createModalLauncher(AnnotationsModal);
 
 TagsModal.displayName = 'TagsModal';
