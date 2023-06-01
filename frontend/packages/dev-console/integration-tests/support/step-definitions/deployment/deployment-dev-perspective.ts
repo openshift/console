@@ -1,7 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { devNavigationMenu } from '../../constants';
-import { eventSourcePO, pagePO } from '../../pageObjects';
+import { deploymentStrategyFormP0, eventSourcePO, pagePO } from '../../pageObjects';
 import { createForm, navigateTo } from '../../pages';
 
 Given('user is at Deployments page', () => {
@@ -40,4 +40,15 @@ When('user clicks on Create button', () => {
 Then('user sees {string} deployment created', (name: string) => {
   cy.get(pagePO.breadcrumb).contains('Deployments').should('be.visible');
   detailsPage.titleShouldContain(name);
+});
+
+When('user selects ImageStream with id {string}', (imageStreamId: string) => {
+  cy.get(deploymentStrategyFormP0.images.deployFromImageStreamCheckbox).check();
+  cy.get(deploymentStrategyFormP0.images.projectDropdown).click();
+  cy.get(deploymentStrategyFormP0.images.selectProjectOpenshift).click();
+  cy.get(deploymentStrategyFormP0.images.imageStreamDropdown).click();
+  cy.get(imageStreamId).click();
+  cy.get(deploymentStrategyFormP0.images.tagDropdown).click();
+  cy.get(deploymentStrategyFormP0.images.selectTagLatest).click();
+  cy.get(eventSourcePO.createPingSource.name).scrollIntoView();
 });

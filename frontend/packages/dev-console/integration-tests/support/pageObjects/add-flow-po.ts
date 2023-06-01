@@ -383,3 +383,14 @@ export const helmChartRepositoriesPO = {
   description: '#form-input-formData-repoDescription-field',
   url: '#form-input-formData-repoUrl-field',
 };
+
+export const deploymentStrategyFormP0 = {
+  images: {
+    deployFromImageStreamCheckbox: '#form-checkbox-formData-fromImageStreamTag-field',
+    projectDropdown: '#form-ns-dropdown-formData-imageStream-namespace-field',
+    selectProjectOpenshift: '#openshift-link',
+    imageStreamDropdown: '#form-ns-dropdown-formData-imageStream-image-field',
+    tagDropdown: '#form-dropdown-formData-imageStream-tag-field',
+    selectTagLatest: '#latest-link',
+  },
+};
