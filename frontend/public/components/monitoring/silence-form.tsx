@@ -25,6 +25,7 @@ import { useSelector } from 'react-redux';
 
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { withFallback } from '@console/shared/src/components/error';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { RootState } from '../../redux';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { ButtonBar } from '../utils/button-bar';
@@ -92,6 +93,8 @@ const NegativeMatcherHelp = () => {
 const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
   const { t } = useTranslation();
 
+  const [namespace] = useActiveNamespace();
+
   const durationOff = '-';
   const durations = {
     [durationOff]: durationOff,
@@ -149,6 +152,16 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  React.useEffect(() => {
+    if (namespace) {
+      setMatchers([
+        { isRegex: false, name: 'namespace', value: namespace },
+        ...matchers.filter((m) => m.name !== 'namespace'),
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [namespace]);
+
   const getEndsAtValue = (): string => {
     const startsAtDate = Date.parse(startsAt);
     return startsAtDate
@@ -183,8 +196,10 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
       return;
     }
 
-    const { alertManagerBaseURL } = window.SERVER_FLAGS;
-    if (!alertManagerBaseURL) {
+    const url = namespace
+      ? `api/alertmanager-tenancy/api/v2/silences?namespace=${namespace}`
+      : `${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silences`;
+    if (!url) {
       setError('Alertmanager URL not set');
       return;
     }
@@ -207,11 +222,15 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
     };
 
     consoleFetchJSON
-      .post(`${alertManagerBaseURL}/api/v2/silences`, body)
+      .post(url, body)
       .then(({ silenceID }) => {
         setError(undefined);
         refreshNotificationPollers();
-        history.push(`${SilenceResource.plural}/${encodeURIComponent(silenceID)}`);
+        history.push(
+          namespace
+            ? `/dev-monitoring/ns/${namespace}/silences/${encodeURIComponent(silenceID)}`
+            : `/monitoring/silences/${encodeURIComponent(silenceID)}`,
+        );
       })
       .catch((err) => {
         const errorMessage =
@@ -325,62 +344,71 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               </Trans>
             </p>
 
-            {_.map(matchers, (matcher, i: number) => (
-              <div className="row" key={i}>
-                <div className="form-group col-sm-4">
-                  <label>{t('public~Label name')}</label>
-                  <TextInput
-                    aria-label={t('public~Label name')}
-                    isRequired
-                    onChange={(v: string) => setMatcherField(i, 'name', v)}
-                    placeholder={t('public~Name')}
-                    value={matcher.name}
-                  />
-                </div>
-                <div className="form-group col-sm-4">
-                  <label>{t('public~Label value')}</label>
-                  <TextInput
-                    aria-label={t('public~Label value')}
-                    isRequired
-                    onChange={(v: string) => setMatcherField(i, 'value', v)}
-                    placeholder={t('public~Value')}
-                    value={matcher.value}
-                  />
-                </div>
-                <div className="form-group col-sm-4">
-                  <div className="monitoring-silence-alert__label-options">
-                    <label>
-                      <input
-                        checked={matcher.isRegex}
-                        onChange={(e) => setMatcherField(i, 'isRegex', e.currentTarget.checked)}
-                        type="checkbox"
-                      />
-                      &nbsp; {t('public~RegEx')}
-                    </label>
-                    <Tooltip content={<NegativeMatcherHelp />}>
-                      <label>
-                        <input
-                          checked={matcher.isEqual === false}
-                          onChange={(e) => setMatcherField(i, 'isEqual', !e.currentTarget.checked)}
-                          type="checkbox"
-                        />
-                        &nbsp; {t('public~Negative matcher')}
-                      </label>
-                    </Tooltip>
-                    <Tooltip content={t('public~Remove')}>
-                      <Button
-                        type="button"
-                        onClick={() => removeMatcher(i)}
-                        aria-label={t('public~Remove')}
-                        variant="plain"
-                      >
-                        <MinusCircleIcon />
-                      </Button>
-                    </Tooltip>
+            {_.map(matchers, (matcher, i: number) => {
+              const isNamespace = !!namespace && matcher.name === 'namespace';
+              return (
+                <div className="row" key={i}>
+                  <div className="form-group col-sm-4">
+                    <label>{t('public~Label name')}</label>
+                    <TextInput
+                      aria-label={t('public~Label name')}
+                      isDisabled={isNamespace}
+                      isRequired
+                      onChange={(v: string) => setMatcherField(i, 'name', v)}
+                      placeholder={t('public~Name')}
+                      value={matcher.name}
+                    />
                   </div>
+                  <div className="form-group col-sm-4">
+                    <label>{t('public~Label value')}</label>
+                    <TextInput
+                      aria-label={t('public~Label value')}
+                      isDisabled={isNamespace}
+                      isRequired
+                      onChange={(v: string) => setMatcherField(i, 'value', v)}
+                      placeholder={t('public~Value')}
+                      value={matcher.value}
+                    />
+                  </div>
+                  {!isNamespace && (
+                    <div className="form-group col-sm-4">
+                      <div className="monitoring-silence-alert__label-options">
+                        <label>
+                          <input
+                            checked={matcher.isRegex}
+                            onChange={(e) => setMatcherField(i, 'isRegex', e.currentTarget.checked)}
+                            type="checkbox"
+                          />
+                          &nbsp; {t('public~RegEx')}
+                        </label>
+                        <Tooltip content={<NegativeMatcherHelp />}>
+                          <label>
+                            <input
+                              checked={matcher.isEqual === false}
+                              onChange={(e) =>
+                                setMatcherField(i, 'isEqual', !e.currentTarget.checked)
+                              }
+                              type="checkbox"
+                            />
+                            &nbsp; {t('public~Negative matcher')}
+                          </label>
+                        </Tooltip>
+                        <Tooltip content={t('public~Remove')}>
+                          <Button
+                            type="button"
+                            onClick={() => removeMatcher(i)}
+                            aria-label={t('public~Remove')}
+                            variant="plain"
+                          >
+                            <MinusCircleIcon />
+                          </Button>
+                        </Tooltip>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             <div className="form-group">
               <Button
@@ -453,7 +481,11 @@ const EditInfo = () => {
 export const EditSilence = ({ match }) => {
   const { t } = useTranslation();
 
-  const silences: Silences = useSelector(({ observe }: RootState) => observe.get('silences'));
+  const [namespace] = useActiveNamespace();
+
+  const silences: Silences = useSelector(({ observe }: RootState) =>
+    observe.get(namespace ? 'devSilences' : 'silences'),
+  );
 
   const silence: Silence = _.find(silences?.data, { id: match.params.id });
   const isExpired = silenceState(silence) === SilenceStates.Expired;

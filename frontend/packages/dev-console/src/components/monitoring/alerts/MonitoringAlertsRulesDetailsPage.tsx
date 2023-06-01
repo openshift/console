@@ -17,6 +17,7 @@ import {
 import { history, StatusBox, LoadingBox } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
+import { useAlertManagerSilencesDispatch } from './monitoring-alerts-utils';
 
 interface MonitoringAlertsDetailsPageProps {
   match: RMatch<{
@@ -41,6 +42,7 @@ const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = 
   const { path } = match;
   const dispatch = useDispatch();
   const [response, loadError, loading] = usePrometheusRulesPoll({ namespace });
+  useAlertManagerSilencesDispatch({ namespace });
   const thanosAlertsAndRules = React.useMemo(
     () => (!loading && !loadError ? getAlertsAndRules(response?.data) : { rules: [], alerts: [] }),
     [response, loadError, loading],

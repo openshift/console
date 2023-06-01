@@ -34,7 +34,7 @@ describe('Monitoring Page ', () => {
 
   it('should render all Tabs of Monitoring page for selected project', () => {
     spyUseAccessReview.mockReturnValue(true);
-    const expectedTabs: string[] = ['Dashboard', 'Metrics', 'Alerts', 'Events'];
+    const expectedTabs: string[] = ['Dashboard', 'Metrics', 'Alerts', 'Silences', 'Events'];
     monPageProps = {
       match: {
         path: '/dev-monitoring/ns/:ns',
