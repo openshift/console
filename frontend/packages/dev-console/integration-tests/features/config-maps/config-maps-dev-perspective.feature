@@ -1,3 +1,4 @@
+@config-maps
 Feature: Config maps form view
               As a user, I need the ability to create and edit config-maps in dev perspective.
 

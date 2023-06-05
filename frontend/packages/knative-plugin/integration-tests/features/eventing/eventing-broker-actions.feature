@@ -1,4 +1,4 @@
-@knative-eventing
+@knative-eventing @knative
 Feature: Perform actions on Broker
               As a user, I should be able to perform actions on broker
 

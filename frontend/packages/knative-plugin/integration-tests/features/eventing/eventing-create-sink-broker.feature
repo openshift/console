@@ -1,4 +1,4 @@
-@knative-eventing
+@knative-eventing @knative
 Feature: Knative Eventing Broker Support
               As a user, I should be able to create broker and sink it with event sources
 

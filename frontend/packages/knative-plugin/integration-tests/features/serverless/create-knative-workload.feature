@@ -1,4 +1,4 @@
-@knative-serverless
+@knative-serverless @knative
 Feature: Create a workload of 'knative Service' type resource
               As a user, I want to create workload from Add Flow page
 

@@ -1,4 +1,4 @@
-@monitoring @broken-test
+@monitoring @dev-console @broken-test
 Feature: Observe Page
               As a user, I should be able to perform actions related to observe a project and deployments inside it
 

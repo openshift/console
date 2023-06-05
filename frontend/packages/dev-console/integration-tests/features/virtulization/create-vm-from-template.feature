@@ -1,4 +1,4 @@
-@cnv
+@cnv @dev-console
 Feature: Create Virtual Machines using Template from Developer perspective
               As a user, I should be able create Virtual Machines using Template from Developer perspective
 

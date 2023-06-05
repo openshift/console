@@ -1,4 +1,4 @@
-@getting-started
+@getting-started @dev-console
 Feature: Getting Started tour of developer perspective
               As a user I want to take tour of developer perspective
 

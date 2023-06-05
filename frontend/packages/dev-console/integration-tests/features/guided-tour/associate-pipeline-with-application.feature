@@ -1,4 +1,4 @@
-@guided-tour
+@guided-tour @dev-console
 Feature: Deploying an application with a pipeline tour
               As a user, I want to take a guided tour to deploy an application with a pipeline feature
 

@@ -1,4 +1,4 @@
-@knative-serverless
+@knative-serverless @knative
 Feature: Perform actions on knative service
               As a user I want to perform edit or delete operations and Set Traffic Distribution on knative Service in topology page
 

@@ -1,4 +1,4 @@
-@knative-eventing
+@knative-eventing @knative
 Feature: Create event sinks
               As a user, I want to create event sinks
 

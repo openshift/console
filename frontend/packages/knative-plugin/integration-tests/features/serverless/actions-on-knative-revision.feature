@@ -1,4 +1,4 @@
-@knative-serverless
+@knative-serverless @knative
 Feature: Perform actions on knative revision
               As a user, I want to perform edit or delete operations on knative revision in topology page
 

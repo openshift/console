@@ -1,4 +1,4 @@
-@project-access
+@project-access @dev-console
 Feature: Project Access page
               As a administrator, I want to customize the roles which are being shown in the Project Access tab in the Developer console, this includes removing default roles as well as adding custom roles.
 

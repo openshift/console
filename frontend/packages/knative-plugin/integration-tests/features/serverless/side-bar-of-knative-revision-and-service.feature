@@ -1,4 +1,4 @@
-@knative-serverless
+@knative-serverless @knative
 Feature: side bar details
               As a user, I want to see the details of the revision and service in side bar
 

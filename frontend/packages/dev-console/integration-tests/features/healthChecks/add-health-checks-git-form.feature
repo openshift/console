@@ -1,4 +1,4 @@
-@health-checks
+@health-checks @dev-console
 Feature: Health Checks
               As a user, I should be able to perform Health Checks on workloads
 

@@ -1,4 +1,4 @@
-@knative-kafka
+@knative-kafka @knative
 Feature: Kafka event Sources actions
               As a user, I should be able to visit the Event Sources page
 

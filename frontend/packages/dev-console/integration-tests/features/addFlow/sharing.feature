@@ -1,4 +1,4 @@
-@add-flow @odc-6452
+@add-flow @dev-console @odc-6452
 Feature: Project Access page
               As a user, I want to access project access page through Add page
 

@@ -1,4 +1,4 @@
-@guided-tour
+@guided-tour @dev-console
 Feature: Install the OpenShift Serverless Operator tour
               As a user, I want to take a guided tour of Install the OpenShift Serverless Operator feature
 

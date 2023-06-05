@@ -1,4 +1,4 @@
-@knative-eventing
+@knative-eventing @knative
 Feature: Knative Eventing Broker and Trigger
     User should be able to trigger the Broker to the Knative Service and perform actions on it
 

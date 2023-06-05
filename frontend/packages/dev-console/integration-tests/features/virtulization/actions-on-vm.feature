@@ -1,4 +1,4 @@
-@cnv
+@cnv @dev-console
 Feature: Perform Actions on created VM
               As a user, I should be able to perform Actions on imported VM
 
