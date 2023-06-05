@@ -1,9 +1,10 @@
 /* eslint-disable global-require */
 /* eslint-disable @typescript-eslint/no-require-imports */
 
+import { SharedModuleNames } from './shared-modules';
 import { SharedModuleResolution, RemoteEntryModule } from './types';
 
-const modules: SharedModuleResolution = {
+const modules: SharedModuleResolution<SharedModuleNames> = {
   '@openshift-console/dynamic-plugin-sdk': async () => () =>
     require('@console/dynamic-plugin-sdk/src/lib-core'),
   '@openshift-console/dynamic-plugin-sdk-internal': async () => () =>
@@ -16,6 +17,7 @@ const modules: SharedModuleResolution = {
   'react-i18next': async () => () => require('react-i18next'),
   'react-router': async () => () => require('react-router'),
   'react-router-dom': async () => () => require('react-router-dom'),
+  'react-router-dom-v5-compat': async () => () => require('react-router-dom-v5-compat'),
   'react-redux': async () => () => require('react-redux'),
   redux: async () => () => require('redux'),
   'redux-thunk': async () => () => require('redux-thunk'),
