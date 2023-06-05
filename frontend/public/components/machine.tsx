@@ -17,6 +17,7 @@ import { MachineModel } from '../models';
 import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search';
 import { DetailsPage } from './factory';
 import ListPageFilter from './factory/ListPage/ListPageFilter';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
@@ -273,6 +274,7 @@ export const MachinePage: React.FC<MachinePageProps> = ({
   hideColumnManagement,
 }) => {
   const { t } = useTranslation();
+  const [isExactSearch] = useExactSearch();
 
   const [machines, loaded, loadError] = useK8sWatchResource<MachineKind[]>({
     kind: referenceForModel(MachineModel),
@@ -282,7 +284,7 @@ export const MachinePage: React.FC<MachinePageProps> = ({
   });
 
   // FIXME - there isn't a type for a simple filter like this nor is there an easy way to add this type
-  const machineFilter = [{ type: 'name', filter: tableFilters.machine }];
+  const machineFilter = [{ type: 'name', filter: tableFilters(isExactSearch).machine }];
   //@ts-ignore
   const [data, filteredData, onFilterChange] = useListPageFilter(machines, machineFilter);
 

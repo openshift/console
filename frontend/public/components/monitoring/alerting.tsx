@@ -41,6 +41,7 @@ import { useExtensions } from '@console/plugin-sdk';
 import { withFallback } from '@console/shared/src/components/error';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search';
 import {
   Alert as PFAlert,
   Breadcrumb,
@@ -124,7 +125,6 @@ import {
   alertSeverityOrder,
   alertState,
   alertURL,
-  fuzzyCaseInsensitive,
   getAlertsAndRules,
   labelsToParams,
   RuleResource,
@@ -132,6 +132,7 @@ import {
   SilenceResource,
   silenceState,
 } from './utils';
+import { exactMatch, fuzzyCaseInsensitive } from '../factory/table-filters';
 
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
@@ -1633,10 +1634,11 @@ const AlertsPage_: React.FC<Alerts> = () => {
   const silencesLoadError = useSelector(
     ({ observe }: RootState) => observe.get('silences')?.loadError,
   );
+  const [isExactSearch] = useExactSearch();
+  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const nameFilter: RowFilter = {
-    filter: (filter, alert: Alert) =>
-      fuzzyCaseInsensitive(filter.selected?.[0], alert.labels?.alertname),
+    filter: (filter, alert: Alert) => matchFn(filter.selected?.[0], alert.labels?.alertname),
     items: [],
     type: 'name',
   } as RowFilter;
@@ -1811,6 +1813,8 @@ const RuleTableRow: React.FC<RowProps<Rule>> = ({ obj }) => {
 
 const RulesPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
+  const [isExactSearch] = useExactSearch();
+  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const data: Rule[] = useSelector(({ observe }: RootState) => observe.get('rules'));
   const { loaded = false, loadError }: Alerts = useSelector(
@@ -1821,7 +1825,7 @@ const RulesPage_: React.FC<{}> = () => {
   );
 
   const nameFilter: RowFilter = {
-    filter: (filter, rule: Rule) => fuzzyCaseInsensitive(filter.selected?.[0], rule.name),
+    filter: (filter, rule: Rule) => matchFn(filter.selected?.[0], rule.name),
     items: [],
     type: 'name',
   } as RowFilter;
@@ -1953,13 +1957,15 @@ const silenceStateOrder = (silence: Silence) => [
 
 const SilencesPage_: React.FC<Silences> = () => {
   const { t } = useTranslation();
+  const [isExactSearch] = useExactSearch();
+  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const { data, loaded = false, loadError }: Silences = useSelector(
     ({ observe }: RootState) => observe.get('silences') || {},
   );
 
   const nameFilter: RowFilter = {
-    filter: (filter, silence: Silence) => fuzzyCaseInsensitive(filter.selected?.[0], silence.name),
+    filter: (filter, silence: Silence) => matchFn(filter.selected?.[0], silence.name),
     items: [],
     type: 'name',
   } as RowFilter;

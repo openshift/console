@@ -420,6 +420,22 @@
   {
     "type": "console.user-preference/item",
     "properties": {
+      "id": "console.enableExactSearch",
+      "label": "%console-app~Search%",
+      "groupId": "general",
+      "description": "%console-app~Enable exact string match filtering on resources.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.enableExactSearch",
+        "label": "%console-app~Enable exact string match%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": false      }
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
       "id": "console.preferredLanguage",
       "label": "%console-app~Language%",
       "groupId": "language",
