@@ -3,7 +3,8 @@ export const webTerminalPO = {
   terminalWindow: 'canvas.xterm-cursor-layer',
   terminalWindowWithEnabledMouseEvent: 'div.xterm-screen>canvas.xterm-cursor-layer',
   terminalOpenInNewTabBtn: "a[href='/terminal']",
-  terminalCloseWindowBtn: "button[aria-label='Close terminal']",
+  terminalCloseWindowBtn: "div.ocs-drawer__header button[aria-label='Close terminal']",
+  terminalXtermTextArea: "textarea[aria-label='Terminal input']",
   terminalInnactivityMessageArea: 'div.co-cloudshell-exec__error-msg',
   createProjectMenu: {
     createProjectDropdownMenu: 'button#form-ns-dropdown-namespace-field',

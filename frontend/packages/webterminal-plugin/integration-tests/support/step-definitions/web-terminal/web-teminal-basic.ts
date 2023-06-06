@@ -1,5 +1,6 @@
-import { When, Then, And } from 'cypress-cucumber-preprocessor/steps';
+import { When, Then, And, Given } from 'cypress-cucumber-preprocessor/steps';
 import { webTerminalPage } from '@console/webterminal-plugin/integration-tests/support/step-definitions/pages/web-terminal/webTerminal-page';
+import { verifyAndInstallWebTerminalOperator } from '../../../../../dev-console/integration-tests/support/pages/functions/installOperatorOnCluster';
 
 When('user clicks on Open Terminal in new tab button on the terminal window', () => {
   webTerminalPage.verifyOpenInNewTabButton();
@@ -12,7 +13,8 @@ Then('user will see the terminal window opened in new tab', () => {
 });
 
 And('user does nothing with displayed terminal window 1 minutes', () => {
-  const terminalIdlingTimeout: number = Number(Cypress.env('TERMINAL_IDLING_TIMEOUT')) || 60000;
+  const terminalIdlingTimeout: number = Number(Cypress.env('TERMINAL_IDLING_TIMEOUT')) || 45000;
+  webTerminalPage.typeTextAndEnter(`wtoctl set timeout ${String(terminalIdlingTimeout / 1000)}s`);
   cy.wait(terminalIdlingTimeout);
   webTerminalPage.verifyInnactivityMessage(terminalIdlingTimeout);
 });
@@ -23,3 +25,6 @@ Then(
     webTerminalPage.verifyRestartTerminalButton();
   },
 );
+Given('user with basic rights has installed Web Terminal operator', () => {
+  verifyAndInstallWebTerminalOperator();
+});

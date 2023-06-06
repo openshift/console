@@ -10,29 +10,37 @@ import { checkTerminalIcon } from '@console/dev-console/integration-tests/suppor
 import { webTerminalPage } from '@console/webterminal-plugin/integration-tests/support/step-definitions/pages/web-terminal/webTerminal-page';
 
 const idp = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'consoledeveloper';
-const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'consoledeveloper';
+const username = Cypress.env('BRIDGE_HTPASSWD_BASIC_USERNAME') || 'consoledeveloper';
 const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'developer';
 const kubeAdmUserName = Cypress.env('KUBEADMIN_NAME') || 'kubeadmin';
 const kubeAdmUserPass = Cypress.env('BRIDGE_KUBEADMIN_PASSWORD');
 
 // create web terminal instance in dedicated namespace  under basic user and relogin as admin with oc client
-function installDevWsAndReconfigureIdlingTimeout(dedicatedNamespace: string) {
+function installDevWsAndWebTerminalForBasicUser(dedicatedNamespace: string) {
   // we need to create an active terminal session in background before test, also
   // we rewrite default idling timeout for the terminal (because 15 min - too long change it to 1 min)
   try {
+    let podName: string = '';
     cy.exec(`oc login -u ${username}  -p ${password} --insecure-skip-tls-verify`);
-    cy.exec(`oc new-project  ${dedicatedNamespace}`);
-    cy.exec(`oc apply -f testData/yamls/web-terminal/web-terminal.yaml -n ${dedicatedNamespace}`);
+    cy.exec(`oc new-project  ${dedicatedNamespace} || oc project ${dedicatedNamespace}`);
+    // average time for project reconciling for slow infrastructure
+    cy.exec(
+      `oc apply -f ../../dev-console/integration-tests/testData/yamls/web-terminal/web-terminal.yaml -n ${dedicatedNamespace}`,
+    );
+    // average time for CR reconciling for slow infrastructure
+    cy.exec(
+      `oc get pods -n ${dedicatedNamespace} --no-headers -o custom-columns=":metadata.name"`,
+    ).then((pod) => {
+      podName = pod.stdout;
+      cy.log(`pod name is :${podName}`);
+      cy.exec(`oc wait --for=condition=Ready=true po ${podName}`);
+    });
     cy.exec(`oc login -u ${kubeAdmUserName}  -p ${kubeAdmUserPass} --insecure-skip-tls-verify`);
   } catch (err) {
     // relogin as admin if something went wrong
     cy.exec(`oc login -u ${kubeAdmUserName}  -p ${kubeAdmUserPass} --insecure-skip-tls-verify`);
     throw err;
   }
-  // override the default idling timeout from 15 minutes to 1 minute
-  cy.exec(
-    'oc apply -f testData/yamls/web-terminal/dev-ws-custom-idling-config.yaml -n openshift-operators',
-  );
 }
 
 Given('user can see terminal icon on masthead', () => {
@@ -53,6 +61,7 @@ Then('user will see the terminal window', () => {
 // It needs the web-terminal-basic.feature
 Given('user has installed webTerminal in namespace {string}', (namespace: string) => {
   let devWsExistingOutput: string = '';
+
   cy.exec(`oc get DevWorkspace -n ${namespace}`, { failOnNonZeroExit: false })
     .then((result) => {
       devWsExistingOutput = result.stderr;
@@ -60,9 +69,10 @@ Given('user has installed webTerminal in namespace {string}', (namespace: string
     .then(() => {
       if (
         devWsExistingOutput.startsWith('No resources found') ||
+        devWsExistingOutput.includes('error: Missing or incomplete configuration info') ||
         devWsExistingOutput.includes('Forbidden')
       ) {
-        installDevWsAndReconfigureIdlingTimeout(namespace);
+        installDevWsAndWebTerminalForBasicUser(namespace);
       }
     });
 });

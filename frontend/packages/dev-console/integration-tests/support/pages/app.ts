@@ -266,8 +266,12 @@ export const projectNameSpace = {
       }
     });
     projectNameSpace.clickProjectDropdown();
-    cy.byTestID('showSystemSwitch').check(); // Ensure that all projects are showing
-    cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);
+    cy.get('div.pf-c-menu__search').then(($search) => {
+      if ($search.find('[data-test="showSystemSwitch"]').length > 0) {
+        cy.byTestID('showSystemSwitch').check(); // Ensure that all projects are showing
+        cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);
+      }
+    });
     // Bug: ODC-6164 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
     // cy.testA11y('Create Project modal');
     cy.byTestID('dropdown-text-filter').type(projectName);
