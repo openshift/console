@@ -221,7 +221,7 @@ const getCatalogSources = (
 
 export const InstallPlansPage: React.FC<InstallPlansPageProps> = (props) => {
   const { t } = useTranslation();
-  const namespace = props.match?.params?.ns;
+  const namespace = props.namespace || props.match?.params?.ns;
   return (
     <MultiListPage
       {...props}
