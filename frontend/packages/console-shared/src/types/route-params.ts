@@ -1,14 +1,3 @@
-export type ConsoleRouteParams = Partial<
-  Record<
-    | 'appName'
-    | 'catalogNamespace'
-    | 'csvName'
-    | 'currentCSV'
-    | 'name'
-    | 'ns'
-    | 'pkg'
-    | 'plural'
-    | 'targetNamespace',
-    string
-  >
->;
+export type RouteParams<P extends string> = {
+  [K in P]?: string;
+};
