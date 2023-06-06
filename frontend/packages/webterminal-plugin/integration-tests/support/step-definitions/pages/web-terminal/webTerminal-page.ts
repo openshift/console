@@ -43,4 +43,8 @@ export const webTerminalPage = {
     cy.alertTitleShouldContain('Close terminal?');
     cy.byTestID('confirm-action').click();
   },
+
+  typeTextAndEnter (text: string){
+    cy.get(webTerminalPO.terminalXtermTextArea).type(`${text}{enter}`);
+  }
 };

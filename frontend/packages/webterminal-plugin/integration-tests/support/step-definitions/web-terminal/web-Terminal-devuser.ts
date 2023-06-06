@@ -26,12 +26,13 @@ When('user clicks on Start button', () => {
 Then(
   'user will see the terminal instance for developer namespace {string}',
   (nameSpace: string) => {
-    projectNameSpace.selectProject(nameSpace);
+    projectNameSpace.selectOrCreateProject(nameSpace);
     perspective.switchTo(switchPerspective.Administrator);
     searchResource.searchResourceByNameAsAdmin('DevWorkspace');
     searchResource.selectSearchedItem('terminal');
     devWorkspacePage.verifyDevWsResourceStatus(devWorkspaceStatuses.running);
     cy.exec(`oc delete namespace ${nameSpace}`, { failOnNonZeroExit: true });
+    projectNameSpace.selectOrCreateProject(`${nameSpace}-existed`);
   },
 );
 
