@@ -50,14 +50,22 @@ BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='
 export BRIDGE_BASE_ADDRESS
 
 # Add htpasswd IDP
-oc apply -f ./frontend/integration-tests/data/htpasswd-secret.yaml
-oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-htpasswd.yaml)" --type=merge
-set +x
-echo "waiting for authentication operator to start Progressing 'test' idp..."
-waitForAuthOperatorProgressing "True"
-echo "waiting for authentication operator to finish Progressing 'test' idp..."
-waitForAuthOperatorProgressing "False"
-set -x
+# Skip wait for authentication operator to start Progressing when the Secret already exists.
+# And ignore any kind of errors when the Secret doesn't exist.
+
+htpasswd_secret_name=$(oc get --ignore-not-found secret -n openshift-config htpass-secret -o name 2> /dev/null)
+
+
+if [ "$htpasswd_secret_name" == "" ]; then
+  oc create -f ./frontend/integration-tests/data/htpasswd-secret.yaml
+  oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-htpasswd.yaml)" --type=merge
+  set +x
+  echo "waiting for authentication operator to start Progressing 'test' idp..."
+  waitForAuthOperatorProgressing "True"
+  echo "waiting for authentication operator to finish Progressing 'test' idp..."
+  waitForAuthOperatorProgressing "False"
+  set -x
+fi
 
 # "fake" dbus address to prevent errors
 # https://github.com/SeleniumHQ/docker-selenium/issues/87
