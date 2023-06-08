@@ -576,7 +576,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             isChecked={enableMonitoring}
             data-checked-state={enableMonitoring}
           />
-          {props.packageManifest.data[0].metadata.labels['opsrc-provider'] !== 'redhat' && (
+          {props.packageManifest.data[0].metadata.labels.provider !== 'Red Hat' && (
             <Alert
               isInline
               className="co-alert pf-c-alert--top-margin"
