@@ -64,8 +64,8 @@ describe('RevisionsOverviewList', () => {
       'q',
       `serving.knative.dev/service=${MockKnativeResources.ksservices.data[0].metadata?.name}`,
     );
-    expect(wrapper.find(Link).at(0).props().to).toEqual(`${url}?${params.toString()}`);
-    expect(wrapper.find(Link).at(0).props().children).toEqual('View all (4)');
+    expect(wrapper.find<any>(Link).at(0).props().to).toEqual(`${url}?${params.toString()}`);
+    expect(wrapper.find<any>(Link).at(0).props().children).toEqual('View all (4)');
   });
 
   it('should not show Resource Link if number of revisions is less than MAX_REVISIONS', () => {

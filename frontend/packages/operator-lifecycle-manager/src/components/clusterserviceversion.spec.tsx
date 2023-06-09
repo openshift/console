@@ -115,7 +115,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   it('renders clickable column for app logo and name', () => {
     const col = wrapper.childAt(0);
 
-    expect(col.find(Link).props().to).toEqual(
+    expect(col.find<any>(Link).props().to).toEqual(
       resourceObjPath(testClusterServiceVersion, referenceForModel(ClusterServiceVersionModel)),
     );
     expect(col.find(Link).find(ClusterServiceVersionLogo).exists()).toBe(true);
@@ -153,8 +153,8 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   it('renders column with each CRD provided by the Operator', () => {
     const col = wrapper.childAt(4);
     testClusterServiceVersion.spec.customresourcedefinitions.owned.forEach((desc, i) => {
-      expect(col.find(Link).at(i).props().title).toEqual(desc.name);
-      expect(col.find(Link).at(i).props().to).toEqual(
+      expect(col.find<any>(Link).at(i).props().title).toEqual(desc.name);
+      expect(col.find<any>(Link).at(i).props().to).toEqual(
         `${resourceObjPath(
           testClusterServiceVersion,
           referenceForModel(ClusterServiceVersionModel),
@@ -253,7 +253,7 @@ describe(CRDCard.displayName, () => {
   it('renders a link to create a new instance', () => {
     const wrapper = shallow(<CRDCard canCreate crd={crd} csv={testClusterServiceVersion} />);
 
-    expect(wrapper.find(CardFooter).find(Link).props().to).toEqual(
+    expect(wrapper.find(CardFooter).find<any>(Link).props().to).toEqual(
       `/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${
         ClusterServiceVersionModel.plural
       }/${testClusterServiceVersion.metadata.name}/${referenceForProvidedAPI(crd)}/~new`,

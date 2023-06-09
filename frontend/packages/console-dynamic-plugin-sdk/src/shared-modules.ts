@@ -32,18 +32,18 @@ export const sharedPluginModules = [
   'react-i18next',
   'react-router',
   'react-router-dom',
+  'react-router-dom-v5-compat',
   'react-redux',
   'redux',
   'redux-thunk',
 ] as const;
 
+export type SharedModuleNames = typeof sharedPluginModules[number];
+
 /**
  * Metadata associated with the shared modules.
  */
-export const sharedPluginModulesMetadata: Record<
-  typeof sharedPluginModules[number],
-  SharedModuleMetadata
-> = {
+export const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
   '@openshift-console/dynamic-plugin-sdk': {},
   '@openshift-console/dynamic-plugin-sdk-internal': {},
   '@patternfly/react-core': {},
@@ -54,6 +54,7 @@ export const sharedPluginModulesMetadata: Record<
   'react-i18next': {},
   'react-router': {},
   'react-router-dom': {},
+  'react-router-dom-v5-compat': {},
   'react-redux': {},
   redux: {},
   'redux-thunk': {},

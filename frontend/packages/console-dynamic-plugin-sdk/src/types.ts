@@ -45,7 +45,9 @@ export type ExtensionDeclaration<T extends string, P extends {}> = Extension<P> 
 /**
  * Resolution of modules shared between the Console application and its dynamic plugins.
  */
-export type SharedModuleResolution = { [moduleRequest: string]: () => Promise<() => any> };
+export type SharedModuleResolution<M extends string = string> = {
+  [moduleRequest in M]: () => Promise<() => any>;
+};
 
 /**
  * Remote webpack container entry module interface.

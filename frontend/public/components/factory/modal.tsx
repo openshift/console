@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import * as Modal from 'react-modal';
 import { Router } from 'react-router-dom';
+import { CompatRouter } from 'react-router-dom-v5-compat';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { ActionGroup, Button, Text, TextContent, TextVariants } from '@patternfly/react-core';
@@ -44,21 +45,23 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
     return (
       <Provider store={store}>
         <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
-          <Modal
-            isOpen={true}
-            contentLabel={i18next.t('public~Modal')}
-            onRequestClose={_handleClose}
-            className={classNames('modal-dialog', props.modalClassName)}
-            overlayClassName="co-overlay"
-            shouldCloseOnOverlayClick={!props.blocking}
-            parentSelector={() => document.getElementById('modal-container')}
-          >
-            <Component
-              {...(_.omit(props, 'blocking', 'modalClassName') as any)}
-              cancel={_handleCancel}
-              close={_handleClose}
-            />
-          </Modal>
+          <CompatRouter>
+            <Modal
+              isOpen={true}
+              contentLabel={i18next.t('public~Modal')}
+              onRequestClose={_handleClose}
+              className={classNames('modal-dialog', props.modalClassName)}
+              overlayClassName="co-overlay"
+              shouldCloseOnOverlayClick={!props.blocking}
+              parentSelector={() => document.getElementById('modal-container')}
+            >
+              <Component
+                {...(_.omit(props, 'blocking', 'modalClassName') as any)}
+                cancel={_handleCancel}
+                close={_handleClose}
+              />
+            </Modal>
+          </CompatRouter>
         </Router>
       </Provider>
     );

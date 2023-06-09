@@ -29,7 +29,7 @@ import { find, includes, isEmpty } from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { Link, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
+import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import {
   NamespaceModel,
@@ -202,14 +202,15 @@ const WatchErrorAlert: React.FC<WatchErrorAlertProps> = ({ loadError, title }) =
   );
 };
 
-type DetailsProps = RouteComponentProps<{ scrapeUrl?: string }> & {
+type DetailsProps = {
   loaded: boolean;
   loadError: string;
   targets: Target[];
 };
 
-const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets }) => {
+const Details: React.FC<DetailsProps> = ({ loaded, loadError, targets }) => {
   const { t } = useTranslation();
+  const match = useRouteMatch<{ scrapeUrl?: string }>();
 
   let scrapeUrl: string = '';
   let target: Target | undefined;
@@ -319,7 +320,7 @@ const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets })
       </StatusBox>
     </>
   );
-});
+};
 
 const tableClasses = [
   'pf-u-w-25-on-md', // Endpoint

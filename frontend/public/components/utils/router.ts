@@ -25,10 +25,10 @@ const removeBasePath = (url = '/') =>
 
 // Monkey patch history to slice off the base path
 (history as any).__replace__ = history.replace;
-history.replace = (url) => (history as any).__replace__(removeBasePath(url));
+history.replace = (url: string) => (history as any).__replace__(removeBasePath(url));
 
 (history as any).__push__ = history.push;
-history.push = (url) => (history as any).__push__(removeBasePath(url));
+history.push = (url: string) => (history as any).__push__(removeBasePath(url));
 (history as any).pushPath = (path) => (history as any).__push__(path);
 
 export const getQueryArgument = (arg: string) =>

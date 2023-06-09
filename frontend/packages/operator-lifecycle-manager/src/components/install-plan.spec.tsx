@@ -353,7 +353,7 @@ describe('InstallPlanDetails', () => {
     installPlan.spec.approved = false;
     wrapper = wrapper.setProps({ obj: installPlan });
 
-    expect(wrapper.find(HintBlock).shallow().find(Link).props().to).toEqual(
+    expect(wrapper.find(HintBlock).shallow().find<any>(Link).props().to).toEqual(
       `/k8s/ns/default/${referenceForModel(InstallPlanModel)}/${
         testInstallPlan.metadata.name
       }/components`,
