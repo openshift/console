@@ -23,7 +23,6 @@ export const pipelineDetailsPage = {
     cy.get(pipelineDetailsPO.yamlTab).should('be.visible');
     cy.get(pipelineDetailsPO.pipelineRunsTab).should('be.visible');
     cy.get(pipelineDetailsPO.parametersTab).should('be.visible');
-    cy.get(pipelineDetailsPO.resourcesTab).should('be.visible');
   },
 
   verifyFieldsInDetailsTab: () => {

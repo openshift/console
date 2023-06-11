@@ -38,7 +38,7 @@ Feature: Entire pipeline flow from Builder page
             Given user is at pipelines page
              When user clicks pipeline name "flow" on Pipelines page
              Then user will be redirected to Pipeline Details page with header name "flow"
-              And user is able to see Details, Metrics, YAML, Pipeline Runs, Parameters and Resources tabs
+              And user is able to see Details, Metrics, YAML, Pipeline Runs and Parameters tabs
               And Details tab is displayed with field names Name, Labels, Annotations, Created At, Owner and Tasks
               And Actions dropdown display in the top right corner of the page
               And Actions menu contains options Start, Add Trigger, Edit Pipeline, Delete Pipeline

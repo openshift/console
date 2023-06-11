@@ -18,16 +18,9 @@ import {
   useFlag,
 } from '@console/shared';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE, FLAG_OPENSHIFT_PIPELINE_CONDITION } from '../../const';
-import {
-  PipelineModel,
-  PipelineResourceModel,
-  ConditionModel,
-  PipelineRunModel,
-  RepositoryModel,
-} from '../../models';
+import { PipelineModel, ConditionModel, PipelineRunModel, RepositoryModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { PAC_SECRET_NAME } from '../pac/const';
-import PipelineResourcesListPage from '../pipeline-resources/list-page/PipelineResourcesListPage';
 import PipelineRunsResourceList from '../pipelineruns/PipelineRunsResourceList';
 import { PIPELINE_NAMESPACE } from '../pipelines/const';
 import PipelinesList from '../pipelines/list-page/PipelinesList';
@@ -62,7 +55,6 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
       onSelection: (key: string, action: MenuAction, url: string) => `${url}/builder`,
     },
     pipelineRun: { model: PipelineRunModel },
-    pipelineResource: { model: PipelineResourceModel },
     ...(isConditionsEnabled ? { condition: { model: ConditionModel } } : {}),
     ...(isRepositoryEnabled
       ? {
@@ -86,13 +78,6 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
       nameKey: PipelineRunModel.labelPluralKey,
       component: PipelineRunsResourceList,
       pageData: { showTitle, hideBadge, canCreate },
-    },
-    {
-      href: 'pipeline-resources',
-      // t(PipelineResourceModel.labelPluralKey)
-      nameKey: PipelineResourceModel.labelPluralKey,
-      component: PipelineResourcesListPage,
-      pageData: { showTitle, hideBadge },
     },
     ...(isConditionsEnabled
       ? [

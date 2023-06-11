@@ -18,7 +18,35 @@
     "properties": {
       "model": {
         "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "color": "#38812f",
+      "label": "%pipelines-plugin~Pipeline%",
+      "labelPlural": "%pipelines-plugin~Pipelines%",
+      "abbr": "PL"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
         "version": "v1beta1",
+        "kind": "PipelineRun"
+      },
+      "color": "#38812f",
+      "label": "%pipelines-plugin~PipelineRun%",
+      "labelPlural": "%pipelines-plugin~PipelineRuns%",
+      "abbr": "PLR"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
         "kind": "PipelineRun"
       },
       "color": "#38812f",
@@ -46,7 +74,35 @@
     "properties": {
       "model": {
         "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Task"
+      },
+      "color": "#38812f",
+      "label": "%pipelines-plugin~Task%",
+      "labelPlural": "%pipelines-plugin~Tasks%",
+      "abbr": "T"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
         "version": "v1beta1",
+        "kind": "TaskRun"
+      },
+      "color": "#38812f",
+      "label": "%pipelines-plugin~TaskRun%",
+      "labelPlural": "%pipelines-plugin~TaskRuns%",
+      "abbr": "TR"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
         "kind": "TaskRun"
       },
       "color": "#38812f",
@@ -202,6 +258,17 @@
         "version": "v1beta1",
         "kind": "Pipeline"
       },
+      "flag": "OPENSHIFT_PIPELINE_V1BETA1"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
       "flag": "OPENSHIFT_PIPELINE"
     }
   },
@@ -211,6 +278,17 @@
       "model": {
         "group": "tekton.dev",
         "version": "v1beta1",
+        "kind": "Pipeline"
+      },
+      "component": { "$codeRef": "pipelinesComponent.PipelineDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
         "kind": "Pipeline"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelineDetailsPage" }
@@ -257,7 +335,29 @@
     "properties": {
       "model": {
         "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "component": { "$codeRef": "pipelinesComponent.PipelineRunDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
         "version": "v1beta1",
+        "kind": "TaskRun"
+      },
+      "component": { "$codeRef": "tasksComponent.TaskRunDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
         "kind": "TaskRun"
       },
       "component": { "$codeRef": "tasksComponent.TaskRunDetailsPage" }
@@ -291,6 +391,17 @@
       "model": {
         "group": "tekton.dev",
         "version": "v1beta1",
+        "kind": "Task"
+      },
+      "component": { "$codeRef": "tasksComponent.TaskDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
         "kind": "Task"
       },
       "component": { "$codeRef": "tasksComponent.TaskDetailsPage" }
@@ -368,6 +479,28 @@
       "model": {
         "group": "tekton.dev",
         "version": "v1beta1",
+        "kind": "PipelineRun"
+      },
+      "component": { "$codeRef": "pipelinesComponent.PipelineRunsResourceList" }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "component": { "$codeRef": "pipelinesComponent.PipelinesResourceList" }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
         "kind": "PipelineRun"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelineRunsResourceList" }
@@ -498,7 +631,27 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
+      "path": "/k8s/ns/:ns/tekton.dev~v1~Pipeline/~new/builder",
+      "component": {
+        "$codeRef": "pipelinesComponent.PipelineBuilderPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
       "path": "/k8s/ns/:ns/tekton.dev~v1beta1~Pipeline/:pipelineName/builder",
+      "component": {
+        "$codeRef": "pipelinesComponent.PipelineBuilderEditPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/k8s/ns/:ns/tekton.dev~v1~Pipeline/:pipelineName/builder",
       "component": {
         "$codeRef": "pipelinesComponent.PipelineBuilderEditPage"
       }
@@ -573,12 +726,33 @@
   {
     "type": "dev-console.add/action",
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE"]
+      "required": ["OPENSHIFT_PIPELINE_V1BETA1"]
     },
     "properties": {
       "id": "pipeline",
       "groupId": "pipelines",
       "href": "/k8s/ns/:namespace/tekton.dev~v1beta1~Pipeline/~new/builder",
+      "label": "%pipelines-plugin~Pipelines%",
+      "description": "%pipelines-plugin~Create a Tekton Pipeline to automate delivery of your application%",
+      "icon": { "$codeRef": "icons.pipelineIconSVG" },
+      "accessReview": [
+        {
+          "group": "tekton.dev",
+          "resource": "pipelines",
+          "verb": "create"
+        }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    },
+    "properties": {
+      "id": "pipeline",
+      "groupId": "pipelines",
+      "href": "/k8s/ns/:namespace/tekton.dev~v1~Pipeline/~new/builder",
       "label": "%pipelines-plugin~Pipelines%",
       "description": "%pipelines-plugin~Create a Tekton Pipeline to automate delivery of your application%",
       "icon": { "$codeRef": "icons.pipelineIconSVG" },

@@ -172,12 +172,9 @@ Then(
   },
 );
 
-Then(
-  'user is able to see Details, Metrics, YAML, Pipeline Runs, Parameters and Resources tabs',
-  () => {
-    pipelineDetailsPage.verifyTabs();
-  },
-);
+Then('user is able to see Details, Metrics, YAML, Pipeline Runs and Parameters tabs', () => {
+  pipelineDetailsPage.verifyTabs();
+});
 
 Then(
   'Details tab is displayed with field names Name, Labels, Annotations, Created At, Owner and Tasks',
