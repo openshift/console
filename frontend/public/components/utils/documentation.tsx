@@ -44,6 +44,10 @@ export const documentationURLs: documentationURLsType = {
     downstream: 'html/operators/understanding-operators#olm-what-operators-are',
     upstream: 'operators/understanding/olm-what-operators-are.html',
   },
+  pipelines: {
+    downstream: 'html/cicd/pipelines#understanding-openshift-pipelines',
+    upstream: 'cicd/pipelines/understanding-openshift-pipelines.html',
+  },
   postInstallationMachineConfigurationTasks: {
     downstream: 'html/post-installation_configuration/index',
     upstream: 'post_installation_configuration/machine-configuration-tasks.html',

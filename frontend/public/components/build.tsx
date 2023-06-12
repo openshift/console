@@ -31,7 +31,9 @@ import {
   BuildHooks,
   BuildStrategy,
   DetailsItem,
+  documentationURLs,
   ExternalLink,
+  getDocumentationURL,
   history,
   humanizeBinaryBytes,
   humanizeCpuCores,
@@ -235,7 +237,7 @@ export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
       <Trans t={t} ns="public">
         With the release of{' '}
         <ExternalLink
-          href="https://openshift.github.io/pipelines-docs/"
+          href={getDocumentationURL(documentationURLs.pipelines)}
           text={t('public~OpenShift Pipelines based on Tekton')}
         />
         , the pipelines build strategy has been deprecated. Users should either use Jenkins files
