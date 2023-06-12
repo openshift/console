@@ -31,10 +31,13 @@ import {
   BuildHooks,
   BuildStrategy,
   DetailsItem,
+  documentationURLs,
   ExternalLink,
+  getDocumentationURL,
   history,
   humanizeBinaryBytes,
   humanizeCpuCores,
+  isUpstream,
   Kebab,
   KebabAction,
   navFactory,
@@ -223,6 +226,16 @@ const BuildMetrics = ({ obj }) => {
   ) : null;
 };
 
+const OpenShiftPipelines: React.FC = () => {
+  const { t } = useTranslation();
+  const text = t('public~OpenShift Pipelines based on Tekton');
+  return isUpstream() ? (
+    <>{text}</>
+  ) : (
+    <ExternalLink href={getDocumentationURL(documentationURLs.pipelines)} text={text} />
+  );
+};
+
 export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
   const { t } = useTranslation();
   return (
@@ -233,13 +246,9 @@ export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
       title={t('public~Pipeline build strategy deprecation')}
     >
       <Trans t={t} ns="public">
-        With the release of{' '}
-        <ExternalLink
-          href="https://openshift.github.io/pipelines-docs/"
-          text={t('public~OpenShift Pipelines based on Tekton')}
-        />
-        , the pipelines build strategy has been deprecated. Users should either use Jenkins files
-        directly on Jenkins or use cloud-native CI/CD with Openshift Pipelines.
+        With the release of <OpenShiftPipelines />, the pipelines build strategy has been
+        deprecated. Users should either use Jenkins files directly on Jenkins or use cloud-native
+        CI/CD with Openshift Pipelines.{' '}
         <ExternalLink
           href="https://github.com/openshift/pipelines-tutorial/"
           text={t('public~Try the OpenShift Pipelines tutorial')}
