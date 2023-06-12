@@ -4,7 +4,6 @@ import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import i18n from '@console/internal/i18n';
 import { modelFor } from '@console/internal/module/k8s';
-import { selectorFromString } from '@console/internal/module/k8s/selector';
 import { getSchemaAtPath } from '@console/shared';
 import {
   getJSONSchemaOrder,
@@ -34,16 +33,14 @@ export const hideAllExistingProperties = (schema: JSONSchema7) => {
 };
 
 const k8sResourceCapabilityToUISchema = (capability: SpecCapability): UiSchema => {
-  const [, groupVersionKindToken, selectorToken] =
-    capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
+  const [, groupVersionKindToken, selector] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
   const groupVersionKind = groupVersionKindToken?.replace(/:/g, '~');
-  const selector = selectorFromString(selectorToken);
 
   const model = groupVersionKind && modelFor(groupVersionKind);
   if (model) {
     return {
       'ui:widget': 'K8sResourceWidget',
-      'ui:options': { model, groupVersionKind, selector },
+      'ui:options': { model, groupVersionKind, ...(selector ? { selector } : {}) },
     };
   }
   return {};

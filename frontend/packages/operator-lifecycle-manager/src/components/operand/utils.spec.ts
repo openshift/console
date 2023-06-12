@@ -1,5 +1,4 @@
 import { ServiceAccountModel } from '@console/internal/models';
-import { selectorFromString } from '@console/internal/module/k8s/selector';
 import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
 import { SpecCapability } from '../descriptors/types';
 import { capabilitiesToUISchema } from './utils';
@@ -107,9 +106,7 @@ describe('capabilitiesToUISchema', () => {
     expect(uiSchema['ui:widget']).toEqual('K8sResourceWidget');
     expect(uiSchema['ui:options'].model).toEqual(ServiceAccountModel);
     expect(uiSchema['ui:options'].groupVersionKind).toEqual('ServiceAccount');
-    expect(uiSchema['ui:options'].selector).toEqual(
-      selectorFromString('label!=test,level=production'),
-    );
+    expect(uiSchema['ui:options'].selector).toEqual('label!=test,level=production');
   });
   it('Handles SpecCapability.k8sResourcePrefix with set-based label queries', () => {
     const uiSchema = capabilitiesToUISchema([
@@ -118,9 +115,7 @@ describe('capabilitiesToUISchema', () => {
     expect(uiSchema['ui:widget']).toEqual('K8sResourceWidget');
     expect(uiSchema['ui:options'].model).toEqual(ServiceAccountModel);
     expect(uiSchema['ui:options'].groupVersionKind).toEqual('ServiceAccount');
-    expect(uiSchema['ui:options'].selector).toEqual(
-      selectorFromString('level in (production, qa)'),
-    );
+    expect(uiSchema['ui:options'].selector).toEqual('level in (production,qa)');
   });
   it('Handles SpecCapablitiy.select', () => {
     const uiSchema = capabilitiesToUISchema([
