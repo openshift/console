@@ -17,6 +17,7 @@ import okdLogoImg from '../imgs/okd-logo.svg';
 import openshiftLogoImg from '../imgs/openshift-logo.svg';
 import onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
+import rosaLogoImg from '../imgs/openshift-service-on-aws-logo.svg';
 
 export const getBrandingDetails = () => {
   let logoImg, productName;
@@ -41,6 +42,10 @@ export const getBrandingDetails = () => {
     case 'azure':
       logoImg = openshiftLogoImg;
       productName = 'Azure Red Hat OpenShift';
+      break;
+    case 'rosa':
+      logoImg = rosaLogoImg;
+      productName = 'Red Hat OpenShift Service on AWS';
       break;
     default:
       logoImg = okdLogoImg;

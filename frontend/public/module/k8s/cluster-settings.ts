@@ -273,6 +273,9 @@ export const getReportBugLink = (
     case 'azure':
       productName = 'Azure Red Hat OpenShift';
       break;
+    case 'rosa':
+      productName = 'Red Hat OpenShift Service on AWS';
+      break;
     default:
       productName = 'OKD';
   }
