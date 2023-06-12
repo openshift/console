@@ -146,6 +146,12 @@ form.pf-c-form {
   --pf-c-button--PaddingRight: 0;
 }
 
+@media print {
+  .pf-c-data-list__cell {
+    padding: 1px !important;
+  }
+}
+
 //set pf datalist item background to transparent
 .pf-c-data-list__item--transparent-bg {
   --pf-c-data-list__item--BackgroundColor: transparent;
@@ -247,6 +253,12 @@ form.pf-c-form {
       .pf-c-nav__link {
         font-size: $co-side-nav-font-size;
       }
+    }
+  }
+
+  @media print {
+    .pf-c-page__sidebar {
+      display: none !important;
     }
   }
 }
