@@ -3,7 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { match as Match } from 'react-router';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { K8sResourceKind, K8sResourceKindReference, referenceFor } from '../module/k8s';
+import {
+  K8sResourceKind,
+  K8sResourceKindReference,
+  referenceFor,
+  referenceForModel,
+} from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { errorModal } from './modals';
@@ -13,7 +18,6 @@ import {
   history,
   Kebab,
   KebabAction,
-  LabelList,
   navFactory,
   ResourceKebab,
   ResourceLink,
@@ -30,10 +34,14 @@ import {
   PipelineBuildStrategyAlert,
 } from './build';
 import { ResourceEventStream } from './events';
-import { BuildConfigModel } from '../models';
+import { BuildConfigModel, BuildModel } from '../models';
 import Helmet from 'react-helmet';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import { Status } from '@console/shared';
+import i18next from 'i18next';
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
+const BuildsReference: K8sResourceKindReference = 'Build';
 
 const startBuildAction: KebabAction = (kind, buildConfig) => ({
   // t('public~Start build')
@@ -110,12 +118,56 @@ BuildConfigsDetailsPage.displayName = 'BuildConfigsDetailsPage';
 const tableColumnClasses = [
   '',
   '',
-  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
-const BuildConfigsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
+const displayDurationInWords = (start: string, stop: string): string => {
+  if (!start || !stop) {
+    return '-';
+  }
+  const startTime = new Date(start).getTime();
+  const stopTime = new Date(stop).getTime();
+  let duration = (stopTime - startTime) / 1000;
+  const time = [];
+  let durationInWords = '';
+  while (duration >= 60) {
+    time.push(duration % 60);
+    duration = Math.floor(duration / 60);
+  }
+  time.push(duration);
+  if (time[2]) {
+    durationInWords += `${time[2]} ${
+      time[2] > 1 ? i18next.t('public~hours') : i18next.t('public~hour')
+    } `;
+  }
+  if (time[1]) {
+    durationInWords += `${time[1]} ${
+      time[1] > 1 ? i18next.t('public~minutes') : i18next.t('public~minute')
+    } `;
+  }
+  if (time[0]) {
+    durationInWords += `${time[0]} ${
+      time[0] > 1 ? i18next.t('public~seconds') : i18next.t('public~second')
+    } `;
+  }
+  return durationInWords.trim();
+};
+
+const BuildConfigsTableRow: React.FC<RowFunctionArgs<K8sResourceKind, CustomData>> = ({
+  obj,
+  customData,
+}) => {
+  const latestBuild = customData.builds.latestByBuildName[obj.metadata.name];
+
+  const duration = displayDurationInWords(
+    latestBuild?.status?.startTimestamp,
+    latestBuild?.status?.completionTimestamp,
+  );
+
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -132,22 +184,41 @@ const BuildConfigsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj 
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={BuildConfigsReference} labels={obj.metadata.labels} />
+        {latestBuild ? (
+          <ResourceLink
+            kind={BuildsReference}
+            name={latestBuild.metadata?.name}
+            namespace={latestBuild.metadata?.namespace}
+          />
+        ) : (
+          '-'
+        )}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        {latestBuild ? <Status status={latestBuild.status?.phase} /> : '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
+        {latestBuild ? <Timestamp timestamp={latestBuild.metadata?.creationTimestamp} /> : '-'}
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>{latestBuild ? duration : '-'}</TableData>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={BuildConfigsReference} resource={obj} />
       </TableData>
     </>
   );
 };
 
+const isBuildNewerThen = (newBuild: K8sResourceKind, prevBuild: K8sResourceKind | undefined) => {
+  const prevCreationTime = new Date(prevBuild?.metadata?.creationTimestamp);
+  const newCreationTime = new Date(newBuild?.metadata?.creationTimestamp);
+  const timeDifference = newCreationTime.getTime() - prevCreationTime.getTime();
+  return timeDifference > 0;
+};
+
 const buildStrategy = (buildConfig: K8sResourceKind): BuildStrategyType =>
   buildConfig.spec.strategy.type;
 
-export const BuildConfigsList: React.SFC = (props) => {
+export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
   const { t } = useTranslation();
   const BuildConfigsTableHeader = () => {
     return [
@@ -165,31 +236,58 @@ export const BuildConfigsList: React.SFC = (props) => {
         id: 'namespace',
       },
       {
-        title: t('public~Labels'),
-        sortField: 'metadata.labels',
-        transforms: [sortable],
+        title: t('public~Last run'),
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('public~Created'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
+        title: t('public~Last run status'),
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: '',
+        title: t('public~Last run time'),
         props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: t('public~Last run duration'),
+        props: { className: tableColumnClasses[5] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[6] },
       },
     ];
   };
   BuildConfigsTableHeader.displayName = 'BuildConfigsTableHeader';
-
+  const buildModel = referenceForModel(BuildModel);
+  const BUILDCONFIG_TO_BUILD_REFERENCE_LABEL = 'openshift.io/build-config.name';
+  const [builds, buildsLoaded, buildsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
+    kind: buildModel,
+    namespace: props.namespace,
+    isList: true,
+  });
+  const customData = React.useMemo<CustomData>(
+    () => ({
+      builds: {
+        latestByBuildName: builds.reduce<Record<string, K8sResourceKind>>((acc, build) => {
+          const name = build.metadata.labels?.[BUILDCONFIG_TO_BUILD_REFERENCE_LABEL];
+          if (!acc[name] || isBuildNewerThen(build, acc[name])) {
+            acc[name] = build;
+          }
+          return acc;
+        }, {}),
+        loaded: buildsLoaded,
+        error: buildsLoadError,
+      },
+    }),
+    [builds, buildsLoaded, buildsLoadError],
+  );
   return (
     <Table
       {...props}
       aria-label={t('public~BuildConfigs')}
       Header={BuildConfigsTableHeader}
       Row={BuildConfigsTableRow}
+      customData={customData}
       virtualize
     />
   );
@@ -241,6 +339,10 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
 };
 BuildConfigsPage.displayName = 'BuildConfigsListPage';
 
+type BuildConfigsListProps = {
+  namespace: string;
+};
+
 export type BuildConfigsDetailsProps = {
   obj: K8sResourceKind;
 };
@@ -255,4 +357,12 @@ export type BuildConfigsPageProps = {
 
 export type BuildConfigsDetailsPageProps = {
   match: any;
+};
+
+type CustomData = {
+  builds: {
+    latestByBuildName: Record<string, K8sResourceKind>;
+    loaded: boolean;
+    error: Error | undefined;
+  };
 };
