@@ -245,12 +245,6 @@ dl.co-inline {
   background-color: #d64456;
 }
 
-.co-action-divider {
-  color: $pf-color-black-600;
-  display: inline-block;
-  margin: 0 10px 0 10px;
-}
-
 .co-break-word {
   @include co-break-word;
 }

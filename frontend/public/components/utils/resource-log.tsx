@@ -9,6 +9,7 @@ import {
   AlertActionLink,
   Button,
   Checkbox,
+  Divider,
   Select,
   SelectOption,
   SelectVariant,
@@ -282,83 +283,96 @@ export const LogControls: React.FC<LogControlsProps> = ({
           </Tooltip>
         )}
       </div>
-      <div className="co-toolbar__group co-toolbar__group--right" data-test="log-links">
-        {!_.isEmpty(podLogLinks) &&
-          _.map(_.sortBy(podLogLinks, 'metadata.name'), (link) => {
-            const namespace = resource.metadata.namespace;
-            const namespaceFilter = link.spec.namespaceFilter;
-            if (namespaceFilter) {
-              try {
-                const namespaceRegExp = new RegExp(namespaceFilter, 'g');
-                if (namespace.search(namespaceRegExp)) {
+      <div
+        className="co-toolbar__group co-toolbar__group--right co-toolbar__group--right"
+        data-test="log-links"
+      >
+        <div className="pf-l-flex">
+          {!_.isEmpty(podLogLinks) &&
+            _.map(_.sortBy(podLogLinks, 'metadata.name'), (link) => {
+              const namespace = resource.metadata.namespace;
+              const namespaceFilter = link.spec.namespaceFilter;
+              if (namespaceFilter) {
+                try {
+                  const namespaceRegExp = new RegExp(namespaceFilter, 'g');
+                  if (namespace.search(namespaceRegExp)) {
+                    return null;
+                  }
+                } catch (e) {
+                  // eslint-disable-next-line no-console
+                  console.warn('invalid log link regex', namespaceFilter, e);
                   return null;
                 }
-              } catch (e) {
-                // eslint-disable-next-line no-console
-                console.warn('invalid log link regex', namespaceFilter, e);
-                return null;
               }
-            }
-            const url = replaceVariables(link.spec.hrefTemplate, {
-              resourceName: resource.metadata.name,
-              resourceUID: resource.metadata.uid,
-              containerName,
-              resourceNamespace: namespace,
-              resourceNamespaceUID: namespaceUID,
-              podLabels: JSON.stringify(resource.metadata.labels),
-            });
-            return (
-              <React.Fragment key={link.metadata.uid}>
-                <ExternalLink href={url} text={link.spec.text} dataTestID={link.metadata.name} />
-                <span aria-hidden="true" className="co-action-divider hidden-xs">
-                  |
-                </span>
-              </React.Fragment>
-            );
-          })}
-        <Checkbox
-          label={t('public~Wrap lines')}
-          id="wrapLogLines"
-          isChecked={isWrapLines}
-          data-checked-state={isWrapLines}
-          onChange={(checked: boolean) => {
-            toggleWrapLines(checked);
-          }}
-        />
-        <span aria-hidden="true" className="co-action-divider hidden-xs">
-          |
-        </span>
-        <a href={currentLogURL} target="_blank" rel="noopener noreferrer">
-          <OutlinedWindowRestoreIcon className="co-icon-space-r" />
-          {t('public~Raw')}
-        </a>
-        <span aria-hidden="true" className="co-action-divider hidden-xs">
-          |
-        </span>
-        <a href={currentLogURL} download={`${resource.metadata.name}-${containerName}.log`}>
-          <DownloadIcon className="co-icon-space-r" />
-          {t('public~Download')}
-        </a>
-        {screenfull.enabled && (
-          <>
-            <span aria-hidden="true" className="co-action-divider hidden-xs">
-              |
-            </span>
-            <Button variant="link" isInline onClick={toggleFullscreen}>
-              {isFullscreen ? (
-                <>
-                  <CompressIcon className="co-icon-space-r" />
-                  {t('public~Collapse')}
-                </>
-              ) : (
-                <>
-                  <ExpandIcon className="co-icon-space-r" />
-                  {t('public~Expand')}
-                </>
-              )}
-            </Button>
-          </>
-        )}
+              const url = replaceVariables(link.spec.hrefTemplate, {
+                resourceName: resource.metadata.name,
+                resourceUID: resource.metadata.uid,
+                containerName,
+                resourceNamespace: namespace,
+                resourceNamespaceUID: namespaceUID,
+                podLabels: JSON.stringify(resource.metadata.labels),
+              });
+              return (
+                <React.Fragment key={link.metadata.uid}>
+                  <ExternalLink href={url} text={link.spec.text} dataTestID={link.metadata.name} />
+                  <Divider
+                    orientation={{
+                      default: 'vertical',
+                    }}
+                  />
+                </React.Fragment>
+              );
+            })}
+          <Checkbox
+            label={t('public~Wrap lines')}
+            id="wrapLogLines"
+            isChecked={isWrapLines}
+            data-checked-state={isWrapLines}
+            onChange={(checked: boolean) => {
+              toggleWrapLines(checked);
+            }}
+          />
+          <Divider
+            orientation={{
+              default: 'vertical',
+            }}
+          />
+          <a href={currentLogURL} target="_blank" rel="noopener noreferrer">
+            <OutlinedWindowRestoreIcon className="co-icon-space-r" />
+            {t('public~Raw')}
+          </a>
+          <Divider
+            orientation={{
+              default: 'vertical',
+            }}
+          />
+          <a href={currentLogURL} download={`${resource.metadata.name}-${containerName}.log`}>
+            <DownloadIcon className="co-icon-space-r" />
+            {t('public~Download')}
+          </a>
+          {screenfull.enabled && (
+            <>
+              <Divider
+                orientation={{
+                  default: 'vertical',
+                }}
+              />
+              <Button variant="link" isInline onClick={toggleFullscreen}>
+                {isFullscreen ? (
+                  <>
+                    <CompressIcon className="co-icon-space-r" />
+                    {t('public~Collapse')}
+                  </>
+                ) : (
+                  <>
+                    <ExpandIcon className="co-icon-space-r" />
+                    {t('public~Expand')}
+                  </>
+                )}
+              </Button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
