@@ -1266,62 +1266,6 @@
     "flags": { "required": ["CAN_LIST_CRD"] }
   },
   {
-    "type": "console.navigation/href",
-    "flags": {
-      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
-    },
-    "properties": {
-      "perspective": "admin",
-      "section": "observe",
-      "id": "monitoringalerts",
-      "name": "%console-app~Alerting%",
-      "href": "/monitoring/alerts",
-      "startsWith": ["monitoring/alertrules", "monitoring/silences"]
-    }
-  },
-  {
-    "type": "console.navigation/href",
-    "flags": {
-      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
-    },
-    "properties": {
-      "perspective": "admin",
-      "section": "observe",
-      "id": "monitoringmetrics",
-      "insertAfter": "monitoringalerts",
-      "href": "/monitoring/query-browser",
-      "name": "%console-app~Metrics%"
-    }
-  },
-  {
-    "type": "console.navigation/href",
-    "flags": {
-      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
-    },
-    "properties": {
-      "perspective": "admin",
-      "section": "observe",
-      "id": "monitoringdashboards",
-      "insertAfter": "monitoringmetrics",
-      "name": "%console-app~Dashboards%",
-      "href": "/monitoring/dashboards"
-    }
-  },
-  {
-    "type": "console.navigation/href",
-    "flags": {
-      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
-    },
-    "properties": {
-      "perspective": "admin",
-      "section": "observe",
-      "id": "monitoringtargets",
-      "insertAfter": "monitoringdashboards",
-      "name": "%console-app~Targets%",
-      "href": "/monitoring/targets"
-    }
-  },
-  {
     "type": "console.dashboards/overview/health/resource",
     "properties": {
       "title": "%console-app~Dynamic Plugins%",

@@ -533,33 +533,6 @@ const AppContents: React.FC<{}> = () => {
       />
 
       <LazyRoute
-        path="/monitoring/alerts"
-        exact
-        loader={() =>
-          import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
-            (m) => m.MonitoringUI,
-          )
-        }
-      />
-      <LazyRoute
-        path="/monitoring/alertrules"
-        exact
-        loader={() =>
-          import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
-            (m) => m.MonitoringUI,
-          )
-        }
-      />
-      <LazyRoute
-        path="/monitoring/silences"
-        exact
-        loader={() =>
-          import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
-            (m) => m.MonitoringUI,
-          )
-        }
-      />
-      <LazyRoute
         path="/monitoring/alertmanageryaml"
         exact
         loader={() =>
@@ -593,14 +566,6 @@ const AppContents: React.FC<{}> = () => {
           import(
             './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
           ).then((m) => m.EditReceiver)
-        }
-      />
-      <LazyRoute
-        path="/monitoring"
-        loader={() =>
-          import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
-            (m) => m.MonitoringUI,
-          )
         }
       />
 
