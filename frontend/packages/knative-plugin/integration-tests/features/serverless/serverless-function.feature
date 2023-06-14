@@ -131,3 +131,30 @@ Feature: Creation and Visualisation of serverless fuctions
         Examples:
                   | git_url                                          | workload_name      |
                   | https://github.com/vikram-raj/hello-func-quarkus | hello-func-quarkus |
+
+
+        @regression @odc-7275
+        Scenario Outline: Test Serverless Functions: SF-01-TC10
+            Given user is at Add page
+             When user clicks on Create Serverless function card
+              And user enters git url "<git_url>"
+              And user clicks on Create button on Create Serverless function
+              And user sees workload "<workload_name>" along with a revision in topology page
+              And user clicks on the Knative Service workload "<workload_name>"
+              And user selects option "Test Serverless Function" from Actions menu
+              And user sees the Test Serverless Function modal
+              And user selects "<invoke_format>" from the Format drop down field
+              And user clicks on the "Advanced Settings" option
+              And user enters the "demo.fn" in the Type field
+              And user enters the "/demo/fn" in the Source field
+              And user clicks on Add optional headers and enter "Auth" under Name and "true" under Value
+              And user pastes the "request-body" code in "<invoke_format>" in the editor
+              And user clicks the "Test" Button
+             Then user is able to see a Success Alert
+              And user is able to see the Response Body as "response-body" code for the "<invoke_format>" format
+              And user clicks the "Close" Button
+
+        Examples:
+                  | git_url                                                                 | workload_name                  | invoke_format |
+                  | https://github.com/openshift-dev-console/kn-func-typescript-http        | kn-func-typescript-http        | HTTP          |
+                  | https://github.com/openshift-dev-console/kn-func-typescript-cloudevents | kn-func-typescript-cloudevents | CloudEvent    |

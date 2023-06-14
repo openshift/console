@@ -1,87 +1,69 @@
-@import '../../../../../public/style/vars';
+//Prevent layout shift when Advanced section is opened
+.pf-c-modal-box__body {
+  scrollbar-gutter: stable;
+  padding-right: var(--pf-global--spacer--sm);
 
-.kn-test-sf-modal__size {
-  height: 90vh;
-  width: 80vw;
+  @-moz-document url-prefix() {
+    /* Firefox scrollbar fix */
+    padding-right: var(--pf-global--spacer--lg);
+  }
+}
+
+.pf-c-modal-box__header {
+  padding-bottom: var(--pf-global--spacer--md);
 }
 
 .kn-test-sf-modal {
-  @media (max-width: $pf-global--breakpoint--md) {
-    &__split {
-      display: none;
-    }
-  }
-  @media (min-width: $pf-global--breakpoint--md) {
-    &__tabbed {
-      display: none;
-    }
+  &__body {
+    padding-bottom: var(--pf-global--FontSize--3xl);
   }
 }
 
-.kn-test-sf-modal__title {
-  padding: 0.5rem 0.5rem 1.5rem 0.5rem;
-
-  &__icon {
-    margin-right: 8px;
-    color: #0468ce;
-  }
-
-  &__badge {
-    vertical-align: 2px;
+.kn-test-sf-modal__editor {
+  @media screen and (max-width: 768px) {
+    margin-top: var(--pf-global--FontSize--4xl);
+    margin-left: var(--pf-global--spacer--md);
+    margin-right: var(--pf-global--spacer--md);
   }
 }
 
-.kn-test-sf-modal__body {
-  padding: 0 0.5rem 0 0.5rem;
-
-  &__description {
-    margin-bottom: 1.25rem;
+.kn-test-sf-modal-request {
+  &__advanced-settings {
+    margin-top: var(--pf-global--spacer--md);
+    margin-bottom: var(--pf-global--spacer--md);
+  }
+  &__custom-headers {
+    margin-top: var(--pf-global--spacer--xl);
   }
 }
 
-.kn-test-sf-modal__footer {
-  margin-right: 1rem;
-  margin-left: 0.5rem;
-  margin-bottom: 0.5rem;
-}
+.kn-test-sf-modal-response {
+  &__notification {
+    padding-bottom: var(--pf-global--FontSize--xl);
+  }
 
-.kn-test-sf-modal__splitItem {
-  max-width: 49%;
-}
+  &__headers {
+    margin-bottom: var(--pf-global--FontSize--xl);
+  }
 
-@media (max-width: $pf-global--breakpoint--md) {
-  .kn-test-sf-modal__editor {
-    margin-top: 1.5rem;
-    margin-left: 2rem;
-    margin-right: 2rem;
+  &__loading {
+    margin: 40% 48%;
   }
 }
 
-.kn-test-sf-modal-request-pane--options__size {
-  margin-top: 1rem;
-  margin-left: 1.4rem;
-  margin-right: 10rem;
+.header-section {
+  color: var(--pf-global--Color--100);
+  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+  padding: var(--pf-global--spacer--md);
 }
 
-.kn-test-sf-modal-request-pane--options__custom-headers {
-  margin-top: 3rem;
-  margin-right: -4rem;
-}
-
-.kn-test-sf-modal-response-pane--info__size {
-  margin-left: 1rem;
-}
-
-.kn-test-sf-modal-response-pane--info__status {
+.header-row {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: var(--pf-global--spacer--xs);
+}
 
-  &__label {
-    padding-right: 0.5rem;
-    padding-top: 0.2rem;
-  }
-
-  &__code {
-    font-weight: bold !important;
-  }
+.header-name {
+  font-weight: bold;
+  margin-right: var(--pf-global--spacer--xs);
 }

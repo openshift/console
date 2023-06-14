@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
+import { coFetchJSON } from '@console/internal/co-fetch';
 import { ServiceKind } from '../../types';
 import TestFunctionModal from './TestFunctionModal';
-import { InvokeFormat } from './types';
+import { InvokeFormat, TestFunctionFormikValues } from './types';
+import { generatePayload, parseResponse } from './utils';
 
 export interface TestFunctionProps {
   service: ServiceKind;
@@ -10,34 +12,14 @@ export interface TestFunctionProps {
   close?: () => void;
 }
 
-export type TestFunctionFormikValues = {
-  request: {
-    format: InvokeFormat;
-    contentType: string;
-    type: string;
-    source: string;
-    customHeaders: string[][];
-    body: {
-      data: string;
-    };
-  };
-  response: {
-    url: string;
-    status: string;
-    statusCode: number;
-    headers: Record<string, string[]>;
-    body: string;
-  };
-  endpoint: {
-    url: URL | string;
-  };
-};
-
 const TestFunction: React.FC<TestFunctionProps> = ({ service, cancel, close }) => {
+  const svcName = service.data.metadata.name;
+  const svcNamespace = service.data.metadata.namespace;
   const initialValues: TestFunctionFormikValues = {
     request: {
       format: InvokeFormat.CloudEvent,
       contentType: 'application/json',
+      isAdvancedSettingsExpanded: false,
       type: '',
       source: '',
       customHeaders: [[]],
@@ -46,27 +28,28 @@ const TestFunction: React.FC<TestFunctionProps> = ({ service, cancel, close }) =
       },
     },
     response: {
-      url: '',
       status: '',
-      statusCode: 0,
-      headers: {
-        'content-type': ['application/json'],
-        'ce-type': ['boson.fn'],
-        'ce-source': ['/boson/fn'],
-        'ce-hello': ['World', 'sds'],
-        'ce-lorem': ['Ipsum'],
-      },
-      body: '{"message": "Response Data!"}',
-    },
-    endpoint: {
-      url: '',
+      statusCode: null,
+      header: {},
+      body: '',
     },
   };
 
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
-    // eslint-disable-next-line no-console
-    console.log('!!!Invoking Function!!!');
-    action.setStatus({ error: '' });
+    coFetchJSON
+      .post(
+        `/api/console/knative/namespaces/${svcNamespace}/services/${svcName}/invoke`,
+        generatePayload(values),
+      )
+      .then((res) => {
+        parseResponse(res, action);
+      })
+      .catch((err) => {
+        action.setFieldValue('response.status', err.message);
+        action.setFieldValue('response.statusCode', 500);
+        action.setFieldValue('response.body', `{ "error": "${err.message}" }`);
+        action.setStatus({ error: err.message });
+      });
   };
   return (
     <Formik
