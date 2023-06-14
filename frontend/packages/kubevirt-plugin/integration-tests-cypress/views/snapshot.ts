@@ -15,9 +15,7 @@ export const restoreBtn = (name: string) => `button[id="${name}-restore-btn"]`;
 
 export const takeSnapshot = (name: string) => {
   cy.get(takeSnapshotBtn).click();
-  cy.get(snapshotName)
-    .clear()
-    .type(name);
+  cy.get(snapshotName).clear().type(name);
   cy.get(approveCheckbox).click();
   cy.get(saveBtn).click();
   cy.get(modalCancelBtn).should('not.exist');

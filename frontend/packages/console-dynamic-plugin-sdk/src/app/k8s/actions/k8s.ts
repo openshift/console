@@ -6,7 +6,7 @@ import { getReferenceForModel } from '../../../utils/k8s/k8s-ref';
 import { k8sList, k8sGet } from '../../../utils/k8s/k8s-resource';
 import { k8sWatch } from '../../../utils/k8s/k8s-utils';
 import { WSFactory } from '../../../utils/k8s/ws-factory';
-import { getImpersonate, getActiveCluster } from '../../core/reducers/coreSelectors';
+import { getImpersonate, getActiveCluster } from '../../core/reducers/coreSelectors'; // TODO remove multicluster
 
 type K8sResourceKind = K8sResourceCommon & {
   spec?: {
@@ -99,9 +99,11 @@ export const watchK8sList = (
     return _.noop;
   }
 
+  // TODO remove multicluster
   if (!query.cluster) {
     query.cluster = getActiveCluster(getState());
   }
+
   dispatch(startWatchK8sList(id, query));
   REF_COUNTS[id] = 1;
 
@@ -127,7 +129,7 @@ export const watchK8sList = (
       },
       true,
       requestOptions,
-      query.cluster,
+      query.cluster, // TODO remove multicluster
     );
 
     if (!REF_COUNTS[id]) {
@@ -257,6 +259,7 @@ export const watchK8sObject = (
   const watch = dispatch(startWatchK8sObject(id));
   REF_COUNTS[id] = 1;
 
+  // TODO remove multicluster
   if (!query.cluster) {
     query.cluster = getActiveCluster(getState());
   }
@@ -273,7 +276,7 @@ export const watchK8sObject = (
     : {};
 
   const poller = () => {
-    k8sGet(k8sType, name, namespace, { cluster: query.cluster }, requestOptions)
+    k8sGet(k8sType, name, namespace, { cluster: query.cluster }, requestOptions) // TODO remove multicluster
       .then(
         (o) => dispatch(modifyObject(id, o)),
         (e) => dispatch(errored(id, e)),

@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
@@ -73,6 +73,7 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { useResourceDetailsPage } from '@console/shared/src/hooks/useResourceDetailsPage';
 import { useResourceListPage } from '@console/shared/src/hooks/useResourceListPage';
+import { RouteParams } from '@console/shared/src/types';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { useClusterServiceVersion } from '../../utils/useClusterServiceVersion';
@@ -120,7 +121,13 @@ const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {
     };
   }
 
-  const trueConditions = conditions?.filter((c: K8sResourceCondition) => c.status === 'True');
+  const conditionsIsObject =
+    typeof conditions === 'object' && !Array.isArray(conditions) && conditions !== null;
+  const formattedConditions = conditionsIsObject ? [conditions] : conditions;
+
+  const trueConditions = formattedConditions?.filter(
+    (c: K8sResourceCondition) => c.status === 'True',
+  );
   if (trueConditions?.length) {
     const types = trueConditions.map((c: K8sResourceCondition) => c.type);
     return {
@@ -147,7 +154,9 @@ export const OperandStatus: React.FC<OperandStatusProps> = ({ operand }) => {
   const { type, value } = status;
   return (
     <span className="co-icon-and-text">
-      {type}: {value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />}
+      {type}
+      <span className="pf-u-pr-sm">:</span>{' '}
+      {value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />}
     </span>
   );
 };
@@ -726,10 +735,12 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
   );
 });
 
+type OperandDetailsPageRouteParams = RouteParams<'appName' | 'ns' | 'name' | 'plural'>;
+
 const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps) => {
   const { t } = useTranslation();
-  const match = useRouteMatch();
-  const { appName, ns, name, plural } = useParams();
+  const match = useRouteMatch<OperandDetailsPageRouteParams>();
+  const { appName, ns, name, plural } = useParams<OperandDetailsPageRouteParams>();
   const [csv] = useClusterServiceVersion(appName, ns);
   const actionItems = React.useCallback((resourceModel: K8sKind, resource: K8sResourceKind) => {
     const context = {
@@ -773,7 +784,8 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
         navFactory.details((props) => <OperandDetails {...props} csv={csv} />),
         navFactory.editYaml(),
         {
-          name: t('olm~Resources'),
+          // t('olm~Resources')
+          nameKey: 'olm~Resources',
           href: 'resources',
           component: (props) => <Resources {...props} csv={csv} />,
         },
@@ -784,7 +796,7 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
 };
 
 export const OperandDetailsPage = (props) => {
-  const { plural, ns, name } = useParams();
+  const { plural, ns, name } = useParams<OperandDetailsPageRouteParams>();
   const resourceDetailsPage = useResourceDetailsPage(plural);
   const [k8sModel, inFlight] = useK8sModel(plural);
   if (inFlight && !k8sModel) {

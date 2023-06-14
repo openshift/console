@@ -15,7 +15,7 @@ import UploadJar from './UploadJar';
 
 type UploadJarPageProps = RouteComponentProps<{ ns?: string }>;
 
-type watchResource = {
+type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };
 
@@ -25,7 +25,7 @@ const UploadJarPage: React.FunctionComponent<UploadJarPageProps> = ({ match, loc
   const imageStreamName = 'java';
   const params = new URLSearchParams(location.search);
 
-  const resources: WatchK8sResults<watchResource> = useK8sWatchResources<watchResource>({
+  const resources: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>({
     projects: {
       kind: ProjectModel.kind,
       isList: true,

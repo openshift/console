@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { TextInputTypes } from '@patternfly/react-core';
+import { Flex, FlexItem, TextInputTypes, Title } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { getGitService, ImportStrategy } from '@console/git-service/src';
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
-import { FormHeader, InputField, useDebounceCallback } from '@console/shared';
+import { FormHeader, getBadgeFromType, InputField, useDebounceCallback } from '@console/shared';
+import { RepositoryModel } from '../../../models';
 import { useBuilderImages } from '../hooks/useBuilderImages';
 import {
   recommendRepositoryName,
@@ -56,9 +57,18 @@ const RepositoryFormSection = () => {
   };
   const debouncedHandleGitUrlChange = useDebounceCallback(handleGitUrlChange);
 
+  const title = (
+    <Flex className="odc-pipeline-builder-header__content">
+      <FlexItem grow={{ default: 'grow' }}>
+        <Title headingLevel="h1">{t('pipelines-plugin~Add Git Repository')}</Title>
+      </FlexItem>
+      <FlexItem>{getBadgeFromType(RepositoryModel.badge)}</FlexItem>
+    </Flex>
+  );
+
   return (
     <>
-      <FormHeader title={t('pipelines-plugin~Add Git Repository')} />
+      <FormHeader title={title} />
       <FormSection>
         <InputField
           label={t('pipelines-plugin~Git Repo URL')}

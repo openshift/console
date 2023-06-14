@@ -17,7 +17,7 @@ import {
 import { perspective } from '@console/dev-console/integration-tests/support/pages/app';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { pipelineActions, pipelineBuilderText } from '../../constants';
+import { pipelineActions, pipelineBuilderText, pipelineTabs } from '../../constants';
 import {
   pipelineRunDetailsPO,
   pipelineRunsPO,
@@ -254,11 +254,11 @@ Then('user will be redirected to Pipeline Run Details page', () => {
 });
 
 Then('page will be redirected to pipeline runs page', () => {
-  pipelineRunsPage.verifyTitle();
+  pipelinesPage.verifySelectedTab(pipelineTabs.PipelineRuns);
 });
 
 Then('user will remain on pipeline runs page', () => {
-  pipelineRunsPage.verifyTitle();
+  pipelinesPage.verifySelectedTab(pipelineTabs.PipelineRuns);
 });
 
 Then('side bar is displayed with the pipelines section', () => {
@@ -439,9 +439,7 @@ When('user navigates to Workspaces section', () => {
 When(
   'user clicks on {string} workspace dropdown with Empty Directory selected by default',
   (workspaceName: string) => {
-    cy.get('.modal-content')
-      .contains(workspaceName)
-      .should('be.visible');
+    cy.get('.modal-content').contains(workspaceName).should('be.visible');
     cy.get(pipelinesPO.startPipeline.sharedWorkspace)
       .find('span')
       .should('contain.text', 'Empty Directory');
@@ -461,9 +459,7 @@ When('user selects {string} option from workspace dropdown', (workspaceType: str
 });
 
 When('user clicks Show VolumeClaimTemplate options', () => {
-  cy.get('button')
-    .contains('Show VolumeClaimTemplate options')
-    .click();
+  cy.get('button').contains('Show VolumeClaimTemplate options').click();
 });
 
 When('user selects Storage Class as {string} from dropdown', (storageClassName: string) => {
@@ -554,17 +550,13 @@ Then('user can see status as Failure', () => {
 
 Then('user can view failure message under Message heading', () => {
   cy.get(pipelineRunDetailsPO.statusMessage).within(() => {
-    cy.get('dl dt')
-      .contains('Message')
-      .should('be.visible');
+    cy.get('dl dt').contains('Message').should('be.visible');
   });
 });
 
 Then('user can see Log snippet to get know what taskruns failed', () => {
   cy.get(pipelineRunDetailsPO.statusMessage).within(() => {
-    cy.get('dl dt')
-      .contains('Log snippet')
-      .should('be.visible');
+    cy.get('dl dt').contains('Log snippet').should('be.visible');
   });
 });
 
@@ -576,7 +568,7 @@ Given('user has passed pipeline run', () => {
     {
       failOnNonZeroExit: false,
     },
-  ).then(function(result) {
+  ).then(function (result) {
     cy.log(result.stdout);
   });
 });
@@ -606,15 +598,11 @@ When('user opens sidebar of the node {string}', (name: string) => {
 });
 
 When('user scrolls down to pipeline runs section', () => {
-  cy.get(topologyPO.sidePane.pipelineRunsDetails)
-    .contains('PipelineRuns')
-    .should('be.visible');
+  cy.get(topologyPO.sidePane.pipelineRunsDetails).contains('PipelineRuns').should('be.visible');
 });
 
 Then('user will see the pipeline run name with failed status', () => {
-  cy.get(pipelinesPO.pipelinesTable.lastRunStatus)
-    .contains('Failed')
-    .should('be.visible');
+  cy.get(pipelinesPO.pipelinesTable.lastRunStatus).contains('Failed').should('be.visible');
 });
 
 Then('user will see failure message below pipeline runs', () => {
@@ -678,9 +666,7 @@ When('user is at the Pipeline Details page of pipeline {string}', (pipelineName:
 
 When('user starts the pipeline {string} in Pipeline Details page', (pipelineName: string) => {
   pipelineDetailsPage.verifyTitle(pipelineName);
-  cy.get(triggerTemplateDetailsPO.detailsTab)
-    .should('be.visible')
-    .click();
+  cy.get(triggerTemplateDetailsPO.detailsTab).should('be.visible').click();
   cy.byLegacyTestID('breadcrumb-link-0').click();
   pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
   modal.modalTitleShouldContain('Start Pipeline');

@@ -47,6 +47,13 @@ export const pipelinesPage = {
     }
   },
 
+  verifySelectedTab: (tabName: pipelineTabs) => {
+    cy.get('.co-m-horizontal-nav__menu-item.co-m-horizontal-nav-item--active > a').should(
+      'have.text',
+      tabName,
+    );
+  },
+
   selectKebabMenu: (pipelineName: string) => {
     cy.get(pipelinesPO.pipelinesTable.table).within(() => {
       cy.get(pipelinesPO.pipelinesTable.pipelineName).each(($el, index) => {
@@ -77,18 +84,10 @@ export const pipelinesPage = {
 
   verifyDefaultPipelineColumnValues: (defaultValue: string = '-') => {
     cy.get(pipelinesPO.pipelinesTable.columnValues).as('colValues');
-    cy.get('@colValues')
-      .eq(1)
-      .should('have.text', defaultValue);
-    cy.get('@colValues')
-      .eq(2)
-      .should('have.text', defaultValue);
-    cy.get('@colValues')
-      .eq(3)
-      .should('have.text', defaultValue);
-    cy.get('@colValues')
-      .eq(4)
-      .should('have.text', defaultValue);
+    cy.get('@colValues').eq(1).should('have.text', defaultValue);
+    cy.get('@colValues').eq(2).should('have.text', defaultValue);
+    cy.get('@colValues').eq(3).should('have.text', defaultValue);
+    cy.get('@colValues').eq(4).should('have.text', defaultValue);
   },
 
   selectAction: (action: pipelineActions) => {
@@ -145,10 +144,7 @@ export const pipelinesPage = {
   },
 
   search: (name: string) => {
-    cy.get(pipelinesPO.search)
-      .should('be.visible')
-      .clear()
-      .type(name);
+    cy.get(pipelinesPO.search).should('be.visible').clear().type(name);
     cy.get('tbody tr')
       .eq(0)
       .within(() => {
@@ -158,11 +154,7 @@ export const pipelinesPage = {
   },
 
   clearYAMLEditor: () => {
-    cy.get(pipelineBuilderPO.yamlView.yamlEditor)
-      .click()
-      .focused()
-      .type('{ctrl}a')
-      .clear();
+    cy.get(pipelineBuilderPO.yamlView.yamlEditor).click().focused().type('{ctrl}a').clear();
   },
 
   setEditorContent: (yamlLocation: string) => {
@@ -177,12 +169,7 @@ export const pipelinesPage = {
     cy.get(pipelinesPO.pipelinesTable.table).should('exist');
     cy.get(pipelinesPO.pipelinesTable.pipelineName).each(($el, index) => {
       if ($el.text().includes(pipelineName)) {
-        cy.get('tbody tr')
-          .eq(index)
-          .find('td')
-          .eq(1)
-          .find('a')
-          .click({ force: true });
+        cy.get('tbody tr').eq(index).find('td').eq(1).find('a').click({ force: true });
       }
     });
   },
@@ -202,10 +189,7 @@ export const pipelinesPage = {
   verifyKebabMenu: () => cy.get(pipelinesPO.pipelinesTable.kebabMenu).should('be.visible'),
 
   verifyNameInPipelinesTable: (pipelineName: string) => {
-    cy.get(pipelinesPO.search)
-      .should('be.visible')
-      .clear()
-      .type(pipelineName);
+    cy.get(pipelinesPO.search).should('be.visible').clear().type(pipelineName);
     cy.get('[title="Pipeline"]')
       .next('a')
       .then(($el) => {
@@ -252,17 +236,11 @@ export const startPipelineInPipelinesPage = {
   clickCancel: () => cy.byLegacyTestID('modal-cancel-action').click(),
   verifySections: () => {
     cy.get(pipelinesPO.startPipeline.sectionTitle).as('sectionTitle');
-    cy.get('@sectionTitle')
-      .eq(0)
-      .should('have.text', 'Git resources');
-    cy.get('@sectionTitle')
-      .eq(1)
-      .should('have.text', 'Advanced options');
+    cy.get('@sectionTitle').eq(0).should('have.text', 'Git resources');
+    cy.get('@sectionTitle').eq(1).should('have.text', 'Advanced options');
   },
   enterGitUrl: (gitUrl: string) => {
-    cy.get(pipelinesPO.startPipeline.gitUrl)
-      .should('be.enabled')
-      .type(gitUrl);
+    cy.get(pipelinesPO.startPipeline.gitUrl).should('be.enabled').type(gitUrl);
   },
   verifyGitRepoUrlAndEnterGitUrl: (gitUrl: string) => {
     cy.get(pipelinesPO.startPipeline.gitResourceDropdown).then(($btn) => {
@@ -290,9 +268,7 @@ export const startPipelineInPipelinesPage = {
   },
 
   enterRevision: (revision: string) => {
-    cy.get(pipelinesPO.startPipeline.revision)
-      .should('be.visible')
-      .type(revision);
+    cy.get(pipelinesPO.startPipeline.revision).should('be.visible').type(revision);
   },
   addGitResource: (gitUrl: string, revision: string = 'master') => {
     modal.shouldBeOpened();

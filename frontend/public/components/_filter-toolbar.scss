@@ -22,6 +22,12 @@
   padding: 0 var(--pf-global--spacer--xs);
 }
 
+@media (min-width: $pf-global--breakpoint--md) {
+  .co-filter-group {
+    width: 350px !important; // enable full placeholder text to display
+  }
+}
+
 .co-filter-search--full-width {
   flex-grow: 1;
   .has-feedback {

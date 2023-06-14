@@ -71,43 +71,32 @@ describe('Test VM Clone', () => {
   it('ID(CNV-3058) Clones VM to a different namespace', () => {
     selectActionFromDropdown(VM_ACTION.Clone, actionButtons.kebabButton);
     cy.get(cloneView.vmName).should('have.value', `${vmData.name}-clone`);
-    cy.get(cloneView.nameSpace)
-      .select(cloneNS)
-      .should('have.value', cloneNS);
+    cy.get(cloneView.nameSpace).select(cloneNS).should('have.value', cloneNS);
     cy.get(cloneView.startOnClone).click();
     cy.get('#confirm-action').click();
   });
 
   it('ID(CNV-1732) Validates VM name', () => {
     cy.visitVMsList();
-    cy.byLegacyTestID(vmData.name)
-      .should('exist')
-      .click();
+    cy.byLegacyTestID(vmData.name).should('exist').click();
     tab.navigateToDetails();
     selectActionFromDropdown(VM_ACTION.Clone, actionButtons.actionDropdownButton);
 
     // Check warning is displayed when VM has same name as existing VM
-    cy.get(cloneView.vmName)
-      .clear()
-      .type(vmData.name)
-      .should('have.value', vmData.name);
+    cy.get(cloneView.vmName).clear().type(vmData.name).should('have.value', vmData.name);
     cy.get(cloneView.helpText)
       .contains('Name is already used by another virtual machine in this namespace')
       .should('exist');
 
     // Check warning is displayed when VM has same name as existing VM in another namespace
-    cy.get(cloneView.nameSpace)
-      .select(cloneNS)
-      .should('have.value', cloneNS);
+    cy.get(cloneView.nameSpace).select(cloneNS).should('have.value', cloneNS);
     cy.get(cloneView.helpText).should('not.exist');
     cy.get(cloneView.cancel).click();
   });
 
   it('ID(CNV-2825) Running VM is stopped when cloned', () => {
     cy.visitVMsList();
-    cy.byLegacyTestID(vmData.name)
-      .should('exist')
-      .click();
+    cy.byLegacyTestID(vmData.name).should('exist').click();
     tab.navigateToDetails();
     waitForStatus(VM_STATUS.Stopped);
   });
@@ -115,18 +104,14 @@ describe('Test VM Clone', () => {
   it('ID(CNV-1733) Start cloned VM on creation', () => {
     cy.visitVMsList();
     cy.selectProject(cloneNS);
-    cy.byLegacyTestID(`${vmData.name}-clone`)
-      .should('exist')
-      .click();
+    cy.byLegacyTestID(`${vmData.name}-clone`).should('exist').click();
     tab.navigateToDetails();
     waitForStatus(VM_STATUS.Running);
   });
 
   it('ID(CNV-1734) Cloned VM has changed MAC address', () => {
     cy.visitVMsList();
-    cy.byLegacyTestID(`${vmData.name}-clone`)
-      .should('exist')
-      .click();
+    cy.byLegacyTestID(`${vmData.name}-clone`).should('exist').click();
     tab.navigateToNetwork();
     let mac1;
     cy.get('tr[data-id="default"]>td')
@@ -136,9 +121,7 @@ describe('Test VM Clone', () => {
       });
     cy.visitVMsList();
     cy.selectProject(testName);
-    cy.byLegacyTestID(vmData.name)
-      .should('exist')
-      .click();
+    cy.byLegacyTestID(vmData.name).should('exist').click();
     tab.navigateToNetwork();
     cy.get('tr[data-id="default"]>td')
       .eq(4)
@@ -151,9 +134,7 @@ describe('Test VM Clone', () => {
   it('ID(CNV-1744) Clone VM with added NIC and disk', () => {
     cy.selectProject(testName);
     cy.visitVMsList();
-    cy.byLegacyTestID(vmData.name)
-      .should('exist')
-      .click();
+    cy.byLegacyTestID(vmData.name).should('exist').click();
 
     tab.navigateToNetwork();
     addNIC(nic1);
@@ -163,15 +144,11 @@ describe('Test VM Clone', () => {
     cy.get(`[data-id="${disk1.name}"]`).should('exist');
 
     selectActionFromDropdown(VM_ACTION.Clone, actionButtons.actionDropdownButton);
-    cy.get(cloneView.vmName)
-      .clear()
-      .type(cloneVMName);
+    cy.get(cloneView.vmName).clear().type(cloneVMName);
     cy.get(cloneView.confirmCloneButton).click();
 
     cy.visitVMsList();
-    cy.byLegacyTestID(cloneVMName)
-      .should('exist')
-      .click();
+    cy.byLegacyTestID(cloneVMName).should('exist').click();
 
     tab.navigateToNetwork();
     cy.get(`[data-id=${nic1.name}]`).should('exist');

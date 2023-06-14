@@ -55,8 +55,17 @@ const TaskRunsHeader = (showPipelineColumn: boolean = true) => () => {
       id: 'started',
     },
     {
-      title: '',
+      title: i18next.t('pipelines-plugin~Duration'),
+      sortField: 'status.completionTime',
+      transforms: [sortable],
       props: { className: tableColumnClasses[7] },
+      id: 'duration',
+      additional: true,
+    },
+    {
+      title: '',
+      id: '',
+      props: { className: tableColumnClasses[8] },
     },
   ].filter((item) => !(item.id === 'pipeline' && !showPipelineColumn));
 };

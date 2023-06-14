@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import * as utils from '@console/internal/components/utils';
+import * as rbacModule from '@console/internal/components/utils/rbac';
 import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import RoutesOverviewList from '../RoutesOverviewList';
@@ -20,7 +20,7 @@ describe('RoutesOverviewList', () => {
   });
 
   it('should show info if no Routes present', () => {
-    const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(true);
     wrapper = shallow(
       <RoutesOverviewList ksroutes={[]} resource={MockKnativeResources.revisions.data[0]} />,

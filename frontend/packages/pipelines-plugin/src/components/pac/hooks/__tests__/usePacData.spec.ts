@@ -34,9 +34,9 @@ describe('usePacData', () => {
             name: 'test',
             id: '12',
             pem: 'pemData',
-            // eslint-disable-next-line @typescript-eslint/camelcase
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             webhook_secret: 'https://www.example.com',
-            // eslint-disable-next-line @typescript-eslint/camelcase
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             html_url: 'https://www.example.com',
           }),
       }),

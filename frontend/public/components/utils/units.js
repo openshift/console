@@ -95,7 +95,7 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
 
   // find which unit we're given
   let truncateStringAt = -1;
-  const startingUnitIndex = _.findIndex(units_, function(currentUnitValue) {
+  const startingUnitIndex = _.findIndex(units_, function (currentUnitValue) {
     const index = value.indexOf(currentUnitValue);
     if (index > -1) {
       truncateStringAt = index;

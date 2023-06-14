@@ -191,6 +191,7 @@ export type DevfileData = {
   devfileSourceUrl?: string;
   devfileHasError: boolean;
   devfileSuggestedResources?: DevfileSuggestedResources;
+  devfileProjectType?: string;
 };
 
 export type PacData = {
@@ -308,6 +309,16 @@ export enum SupportedRuntime {
 
 export const notSupportedRuntime = ['go', 'rust', 'springboot', 'python'];
 
+export enum SampleRuntime {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  'Node.js' = 'nodejs',
+  Quarkus = 'quarkus',
+  dotnet = 'dotnet',
+  Python = 'python',
+  Go = 'golang',
+  springboot = 'spring-boot',
+}
+
 export const ReadableResourcesNames: Record<Resources, string> = {
   [Resources.OpenShift]: DeploymentConfigModel.labelKey,
   [Resources.Kubernetes]: DeploymentModel.labelKey,
@@ -354,6 +365,7 @@ export interface AutoscaleWindowType {
 
 export enum CPUUnits {
   m = 'millicores',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   '' = 'cores',
 }
 

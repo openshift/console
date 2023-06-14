@@ -46,13 +46,14 @@ const BuildsTabListPage: React.FC<BuildsTabListPageProps> = ({ match }) => {
   if (namespace) {
     menuActions.buildConfig = {
       label: t('devconsole~BuildConfig'),
-      onSelection: () => `/k8s/ns/${namespace}/buildconfigs/~new`,
+      onSelection: () => `/k8s/ns/${namespace}/buildconfigs/~new/form`,
     };
   }
   if (buildConfigComponent) {
     pages.push({
       href: '',
-      name: t('devconsole~BuildConfigs'),
+      // t('devconsole~BuildConfigs')
+      nameKey: 'devconsole~BuildConfigs',
       component: buildConfigComponent,
       pageData: extraProps,
     });
@@ -84,7 +85,8 @@ const BuildsTabListPage: React.FC<BuildsTabListPageProps> = ({ match }) => {
     };
     pages.push({
       href: 'shipwright-builds',
-      name: t('devconsole~Shipwright Builds'),
+      // t('devconsole~Shipwright Builds')
+      nameKey: 'devconsole~Shipwright Builds',
       component: shipwrightBuildComponent,
       pageData: extraProps,
     });
@@ -113,7 +115,13 @@ const BuildsTabListPage: React.FC<BuildsTabListPageProps> = ({ match }) => {
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-      <MultiTabListPage title={title} pages={pages} match={match} menuActions={menuActions} />
+      <MultiTabListPage
+        title={title}
+        pages={pages}
+        match={match}
+        menuActions={menuActions}
+        telemetryPrefix="Builds"
+      />
     </NamespacedPage>
   );
 };

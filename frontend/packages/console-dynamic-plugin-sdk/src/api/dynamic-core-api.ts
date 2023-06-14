@@ -22,13 +22,13 @@ import {
   InventoryItemTitleProps,
   InventoryItemBodyProps,
   InventoryItemStatusProps,
-  YAMLEditorProps,
+  CodeEditorProps,
   ResourceYAMLEditorProps,
   ResourceEventStreamProps,
   UsePrometheusPoll,
   TimestampProps,
   NamespaceBarProps,
-  YAMLEditorRef,
+  CodeEditorRef,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -264,12 +264,16 @@ export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = req
  * @param {boolean} loaded - indicates that data has loaded
  * @param {function} onFilterChange - callback function for when filter is updated
  * @param {RowFilter[]} [rowFilters] - (optional) An array of RowFilter elements that define the available filter options
+ * @param {string} [labelFilter] - (optional) a unique name key for label filter. This may be useful if there are multiple `ListPageFilter` components rendered at once.
+ * @param {string} [labelPath] - (optional) the path to labels to filter from
+ * @param {string} [nameFilterTitle] - (optional) title for name filter
  * @param {string} [nameFilterPlaceholder] -  (optional) placeholder for name filter
  * @param {string} [labelFilterPlaceholder] -  (optional) placeholder for label filter
  * @param {boolean} [hideLabelFilter] -  (optional) only shows the name filter instead of both name and label filter
  * @param {boolean} [hideNameLabelFilter] -  (optional) hides both name and label filter
  * @param {ColumnLayout} [columnLayout] -  (optional) column layout object
  * @param {boolean} [hideColumnManagement] -  (optional) flag to hide the column management
+ * @param {string} [nameFilter] - (optional) a unique name key for name filter. This may be useful if there are multiple `ListPageFilter` components rendered at once.
  * @example
  * ```tsx
  *   // See implementation for more details on RowFilter and FilterValue types
@@ -325,7 +329,7 @@ export const useListPageFilter: UseListPageFilter = require('@console/internal/c
 /**
  * Component that creates a link to a specific resource type with an icon badge
  * @param {K8sResourceKindReference} [kind] - (optional) the kind of resource i.e. Pod, Deployment, Namespace
- * @param {K8sGroupVersionKind} [groupVersionKind] - (optional) object with groupd, version, and kind
+ * @param {K8sGroupVersionKind} [groupVersionKind] - (optional) object with group, version, and kind
  * @param {string} [className] -  (optional) class style for component
  * @param {string} [displayName] -  (optional) display name for component, overwrites the resource name if set
  * @param {boolean} [inline=false] -  (optional) flag to create icon badge and name inline with children
@@ -560,6 +564,7 @@ export const InventoryItemLoading: React.FC = require('@console/shared/src/compo
 export { useFlag } from '../utils/flags';
 
 /**
+ * @deprecated Use {@link CodeEditor} instead.
  * A basic lazy loaded YAML editor with hover help and completion.
  * @example
  * ```tsx
@@ -570,6 +575,7 @@ export { useFlag } from '../utils/flags';
  * </React.Suspense>
  * ```
  * @param {YAMLEditorProps['value']} value - String representing the yaml code to render.
+ * @param {CodeEditorProps['language']} language - String representing the language of the editor.
  * @param {YAMLEditorProps['options']} options - Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html.
  * @param {YAMLEditorProps['minHeight']} minHeight - Minimum editor height in valid CSS height values.
  * @param {YAMLEditorProps['showShortcuts']} showShortcuts - Boolean to show shortcuts on top of the editor.
@@ -578,8 +584,34 @@ export { useFlag } from '../utils/flags';
  * @param {YAMLEditorProps['onSave']} onSave - Callback called when the command CTRL / CMD + S is triggered.
  * @param {YAMLEditorRef} ref - React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html.
  */
-export const YAMLEditor: React.ForwardRefExoticComponent<YAMLEditorProps & React.RefAttributes<YAMLEditorRef>> = require('@console/internal/components/AsyncYAMLEditor')
-  .AsyncYAMLEditor;
+export const YAMLEditor: React.ForwardRefExoticComponent<CodeEditorProps &
+  React.RefAttributes<CodeEditorRef>> = require('@console/internal/components/AsyncCodeEditor')
+  .AsyncCodeEditor;
+
+/**
+ * A basic lazy loaded Code editor with hover help and completion.
+ * @example
+ * ```tsx
+ * <React.Suspense fallback={<LoadingBox />}>
+ *   <CodeEditor
+ *     value={code}
+ *     language="yaml"
+ *   />
+ * </React.Suspense>
+ * ```
+ * @param {CodeEditorProps['value']} value - String representing the yaml code to render.
+ * @param {CodeEditorProps['language']} language - String representing the language of the editor.
+ * @param {CodeEditorProps['options']} options - Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html.
+ * @param {CodeEditorProps['minHeight']} minHeight - Minimum editor height in valid CSS height values.
+ * @param {CodeEditorProps['showShortcuts']} showShortcuts - Boolean to show shortcuts on top of the editor.
+ * @param {CodeEditorProps['toolbarLinks']} toolbarLinks - Array of ReactNode rendered on the toolbar links section on top of the editor.
+ * @param {CodeEditorProps['onChange']} onChange - Callback for on code change event.
+ * @param {CodeEditorProps['onSave']} onSave - Callback called when the command CTRL / CMD + S is triggered.
+ * @param {CodeEditorRef} ref - React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html.
+ */
+export const CodeEditor: React.ForwardRefExoticComponent<CodeEditorProps &
+  React.RefAttributes<CodeEditorRef>> = require('@console/internal/components/AsyncCodeEditor')
+  .AsyncCodeEditor;
 
 /**
  * A lazy loaded YAML editor for Kubernetes resources with hover help and completion.

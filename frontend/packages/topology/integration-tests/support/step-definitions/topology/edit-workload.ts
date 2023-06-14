@@ -32,9 +32,7 @@ When('user clicks on Show advanced image options', () => {
 });
 
 When('user clicks on Create new secret', () => {
-  cy.get(topologyPO.createSecret.createSecretButton)
-    .contains('Create new Secret')
-    .click();
+  cy.get(topologyPO.createSecret.createSecretButton).contains('Create new Secret').click();
 });
 
 When('user creates a new secret {string}', (secretName: string) => {
@@ -42,9 +40,7 @@ When('user creates a new secret {string}', (secretName: string) => {
 });
 
 When('user clicks on {string} from context action menu', (actionItem: string) => {
-  cy.byTestActionID(actionItem)
-    .should('be.visible')
-    .click();
+  cy.byTestActionID(actionItem).should('be.visible').click();
 });
 
 Then('user will see {string} in secret name dropdown under Pull secret', (secretName: string) => {
@@ -64,27 +60,19 @@ Then('user will see {string} in secret name dropdown under Pull secret', (secret
 });
 
 When('user enters value of CPU Request as {string}', (requestCPU: string) => {
-  cy.get(topologyPO.resourceLimits.requestCPU)
-    .clear()
-    .type(requestCPU);
+  cy.get(topologyPO.resourceLimits.requestCPU).clear().type(requestCPU);
 });
 
 When('user enters value of CPU Limit as {string}', (limitCPU: string) => {
-  cy.get(topologyPO.resourceLimits.limitCPU)
-    .clear()
-    .type(limitCPU);
+  cy.get(topologyPO.resourceLimits.limitCPU).clear().type(limitCPU);
 });
 
 When('user enters value of Memory Request as {string}', (requestMemory: string) => {
-  cy.get(topologyPO.resourceLimits.requestMemory)
-    .clear()
-    .type(requestMemory);
+  cy.get(topologyPO.resourceLimits.requestMemory).clear().type(requestMemory);
 });
 
 When('user enters value of Memory Limit as {string}', (limitMemory: string) => {
-  cy.get(topologyPO.resourceLimits.limitMemory)
-    .clear()
-    .type(limitMemory);
+  cy.get(topologyPO.resourceLimits.limitMemory).clear().type(limitMemory);
 });
 
 When('user clicks on Save', () => {
@@ -104,12 +92,8 @@ When('user selects {string} Strategy type under Deployment Strategy', (strategyT
 When(
   'user enters value of Maximum number of unavailable Pods and Maximum number of surge Pods as {string}',
   (podPercentage: string) => {
-    cy.get(topologyPO.deploymentStrategy.maxUnavailablePods)
-      .clear()
-      .type(podPercentage);
-    cy.get(topologyPO.deploymentStrategy.maxSurgePods)
-      .clear()
-      .type(podPercentage);
+    cy.get(topologyPO.deploymentStrategy.maxUnavailablePods).clear().type(podPercentage);
+    cy.get(topologyPO.deploymentStrategy.maxSurgePods).clear().type(podPercentage);
   },
 );
 
@@ -123,12 +107,8 @@ When(
 );
 
 When('user enters NAME as {string} and VALUE as {string}', (envName: string, envValue: string) => {
-  cy.get(topologyPO.deploymentStrategy.envName)
-    .clear()
-    .type(envName);
-  cy.get(topologyPO.deploymentStrategy.envValue)
-    .clear()
-    .type(envValue);
+  cy.get(topologyPO.deploymentStrategy.envName).clear().type(envName);
+  cy.get(topologyPO.deploymentStrategy.envValue).clear().type(envValue);
 });
 
 When('user selects secret {string} from Pull secret dropdown', (secretName: string) => {
@@ -139,19 +119,13 @@ When('user selects secret {string} from Pull secret dropdown', (secretName: stri
 });
 
 When('user selects the Pause rollouts check box under advanced options section', () => {
-  cy.get(topologyPO.deploymentStrategy.advancedOptions)
-    .eq(0)
-    .click();
+  cy.get(topologyPO.deploymentStrategy.advancedOptions).eq(0).click();
   cy.get(topologyPO.deploymentStrategy.pauseRolloutsCheckbox).click();
 });
 
 When('user enters Replicas as {string} under Scaling section', (replicaCount: string) => {
-  cy.get(topologyPO.deploymentStrategy.advancedOptions)
-    .find('Scaling')
-    .click();
-  cy.get(topologyPO.deploymentStrategy.enterReplica)
-    .clear()
-    .type(replicaCount);
+  cy.get(topologyPO.deploymentStrategy.advancedOptions).find('Scaling').click();
+  cy.get(topologyPO.deploymentStrategy.enterReplica).clear().type(replicaCount);
 });
 
 When('user will be redirected to Topology with the updated deployment', () => {
@@ -163,15 +137,11 @@ When('user saves the changes', () => {
 });
 
 When('user enters Timeout value as {string}', (timeoutValue: string) => {
-  cy.get(topologyPO.deploymentStrategy.timeout)
-    .clear()
-    .type(timeoutValue);
+  cy.get(topologyPO.deploymentStrategy.timeout).clear().type(timeoutValue);
 });
 
 When('user clicks on Show additional parameters and lifcycle hooks', () => {
-  cy.get(topologyPO.createSecret.advancedOptions)
-    .eq(0)
-    .click();
+  cy.get(topologyPO.createSecret.advancedOptions).eq(0).click();
 });
 
 When(
@@ -203,24 +173,16 @@ When('user unchecks Deploy image from an image stream tag checkbox', () => {
 });
 
 When('user enters value of Image name as {string}', (imageLink: string) => {
-  cy.get(topologyPO.deploymentStrategy.imageName)
-    .clear()
-    .type(imageLink);
+  cy.get(topologyPO.deploymentStrategy.imageName).clear().type(imageLink);
 });
 
 When('user enters key as {string}', (annotationKey: string) => {
   cy.get(topologyPO.graph.addNewAnnotations).click();
-  cy.get(topologyPO.deploymentStrategy.envName)
-    .last()
-    .clear()
-    .type(annotationKey);
+  cy.get(topologyPO.deploymentStrategy.envName).last().clear().type(annotationKey);
 });
 
 When('user enters value as {string} to which it will be connected', (annotationValue: string) => {
-  cy.get(topologyPO.deploymentStrategy.envValue)
-    .last()
-    .clear()
-    .type(annotationValue);
+  cy.get(topologyPO.deploymentStrategy.envValue).last().clear().type(annotationValue);
   cy.get(topologyPO.graph.deleteWorkload).click();
 });
 

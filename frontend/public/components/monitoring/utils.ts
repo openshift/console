@@ -89,15 +89,6 @@ export const silenceMatcherEqualitySymbol = (isEqual: boolean, isRegex: boolean)
 export const alertDescription = (alert: Alert | Rule): string =>
   alert.annotations?.description || alert.annotations?.message || alert.labels?.alertname;
 
-export const alertAdditionalSource = (alert: Alert): string => {
-  const ruleSourceLabel = alert.rule?.labels?.source;
-  const sourceId = alert.rule.sourceId ?? '';
-  if (ruleSourceLabel) {
-    return `${_.startCase(sourceId)} - ${_.startCase(ruleSourceLabel)}`;
-  }
-  return _.startCase(sourceId);
-};
-
 // Determine if an Alert is silenced by a Silence (if all of the Silence's matchers match one of the
 // Alert's labels)
 export const isSilenced = (alert: Alert, silence: Silence): boolean =>

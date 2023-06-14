@@ -4,7 +4,7 @@ let lastID = 0;
 
 const getNextReduxID = () => String(++lastID);
 
-export const withReduxID = <T, _>(Component: React.ComponentType<T>) => {
+export const withReduxID = <T,>(Component: React.ComponentType<T>) => {
   class IdComponent extends React.Component<T> {
     id = getNextReduxID();
 

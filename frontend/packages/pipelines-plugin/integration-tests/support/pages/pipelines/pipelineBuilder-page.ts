@@ -15,9 +15,7 @@ export const pipelineBuilderSidePane = {
     cy.get(pipelineBuilderPO.formView.sidePane.dialog).within(() => {
       cy.selectByDropDownText(pipelineBuilderPO.formView.sidePane.actions, 'Remove task');
     });
-    cy.get('[data-test="confirm-action"]')
-      .should('be.visible')
-      .click();
+    cy.get('[data-test="confirm-action"]').should('be.visible').click();
   },
 
   enterParameterUrl: (url: string = 'https://github.com/sclorg/golang-ex.git') => {
@@ -40,9 +38,7 @@ export const pipelineBuilderSidePane = {
 
   selectWorkspace: (workspaceName: string) => {
     pipelineBuilderSidePane.verifyDialog();
-    cy.get(pipelineBuilderPO.formView.sidePane.workspaces)
-      .scrollIntoView()
-      .select(workspaceName);
+    cy.get(pipelineBuilderPO.formView.sidePane.workspaces).scrollIntoView().select(workspaceName);
   },
 };
 
@@ -54,12 +50,15 @@ export const pipelineBuilderPage = {
   verifyDefaultPipelineName: (pipelineName: string = pipelineBuilderText.pipelineName) =>
     cy.get(pipelineBuilderPO.formView.name).should('have.value', pipelineName),
   enterPipelineName: (pipelineName: string) => {
-    cy.get(pipelineBuilderPO.formView.name)
-      .clear()
-      .type(pipelineName);
+    cy.get(pipelineBuilderPO.formView.name).clear().type(pipelineName);
   },
   AddTask: (taskName: string = 'kn') => {
     cy.get(pipelineBuilderPO.formView.quickSearch).type(taskName);
+    cy.byTestID('task-cta').click();
+  },
+  addRedHatTask: (taskName: string) => {
+    cy.get(pipelineBuilderPO.formView.quickSearch).type(taskName);
+    cy.byTestID(`item-name-${taskName}-Red Hat`).click();
     cy.byTestID('task-cta').click();
   },
   clickAddTask: () => {
@@ -75,17 +74,13 @@ export const pipelineBuilderPage = {
   },
   selectParallelTask: (taskName: string) => {
     cy.mouseHover(pipelineBuilderPO.formView.task);
-    cy.get(pipelineBuilderPO.formView.plusTaskIcon)
-      .eq(2)
-      .click({ force: true });
+    cy.get(pipelineBuilderPO.formView.plusTaskIcon).eq(2).click({ force: true });
     cy.get(pipelineBuilderPO.formView.parallelTask).click();
-    pipelineBuilderPage.AddTask(taskName);
+    pipelineBuilderPage.addRedHatTask(taskName);
   },
   selectSeriesTask: (taskName: string) => {
     cy.mouseHover(pipelineBuilderPO.formView.task);
-    cy.get(pipelineBuilderPO.formView.plusTaskIcon)
-      .first()
-      .click({ force: true });
+    cy.get(pipelineBuilderPO.formView.plusTaskIcon).first().click({ force: true });
     cy.get(pipelineBuilderPO.formView.seriesTask).click();
     pipelineBuilderPage.AddTask(taskName);
   },
@@ -104,26 +99,16 @@ export const pipelineBuilderPage = {
     cy.get(pipelineBuilderPO.formView.addParams.defaultValue).type(defaultValue);
   },
   addResource: (resourceName: string, resourceType: string = 'Git') => {
-    cy.get(pipelineBuilderPO.formView.addResourcesLink)
-      .eq(1)
-      .click();
+    cy.get(pipelineBuilderPO.formView.addResourcesLink).eq(1).click();
     cy.get(pipelineBuilderPO.formView.addResources.name).type(resourceName);
     cy.get(pipelineBuilderPO.formView.addResources.resourceType).select(resourceType);
   },
   verifySection: () => {
     cy.get(pipelineBuilderPO.formView.sectionTitle).as('sectionTitle');
-    cy.get('@sectionTitle')
-      .eq(0)
-      .should('contain.text', pipelineBuilderText.formView.Tasks);
-    cy.get('@sectionTitle')
-      .eq(1)
-      .should('contain.text', pipelineBuilderText.formView.Parameters);
-    cy.get('@sectionTitle')
-      .eq(2)
-      .should('contain.text', pipelineBuilderText.formView.Resources);
-    cy.get('@sectionTitle')
-      .eq(3)
-      .should('contain.text', pipelineBuilderText.formView.Workspaces);
+    cy.get('@sectionTitle').eq(0).should('contain.text', pipelineBuilderText.formView.Tasks);
+    cy.get('@sectionTitle').eq(1).should('contain.text', pipelineBuilderText.formView.Parameters);
+    cy.get('@sectionTitle').eq(2).should('contain.text', pipelineBuilderText.formView.Resources);
+    cy.get('@sectionTitle').eq(3).should('contain.text', pipelineBuilderText.formView.Workspaces);
   },
   clickCreateButton: () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting

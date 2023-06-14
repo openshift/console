@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 export enum detailsTab {
   // general fields
   vmName = '[data-test-selector="details-item-value__Name"]',

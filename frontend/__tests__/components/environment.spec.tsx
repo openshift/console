@@ -6,9 +6,9 @@ import { EnvironmentPage, UnconnectedEnvironmentPage } from '../../public/compon
 // eslint-disable-next-line import/no-duplicates
 import { FieldLevelHelp } from '../../public/components/utils';
 // eslint-disable-next-line import/no-duplicates
-import * as utils from '../../public/components/utils';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import { DeploymentModel } from '../../public/models';
-import * as k8s from '../../public/module/k8s';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 
 describe(EnvironmentPage.name, () => {
   const configMaps = {},
@@ -45,7 +45,7 @@ describe(EnvironmentPage.name, () => {
 
   describe('When user does not have permission', () => {
     beforeEach(() => {
-      spyOn(utils, 'checkAccess').and.callFake(() =>
+      spyOn(rbacModule, 'checkAccess').and.callFake(() =>
         Promise.resolve({ status: { allowed: false } }),
       );
       environmentPageRO = (
@@ -72,8 +72,8 @@ describe(EnvironmentPage.name, () => {
 
   describe('When readOnly attribute is "false"', () => {
     beforeEach(() => {
-      spyOn(k8s, 'k8sGet').and.callFake(() => Promise.resolve());
-      spyOn(utils, 'checkAccess').and.callFake(() =>
+      spyOn(k8sResourceModule, 'k8sGet').and.callFake(() => Promise.resolve());
+      spyOn(rbacModule, 'checkAccess').and.callFake(() =>
         Promise.resolve({ status: { allowed: true } }),
       );
       environmentPage = (
@@ -95,18 +95,12 @@ describe(EnvironmentPage.name, () => {
     });
 
     it('renders save and reload buttons', () => {
-      expect(
-        wrapper
-          .find({ type: 'submit', variant: 'primary' })
-          .childAt(0)
-          .text(),
-      ).toEqual('Save');
-      expect(
-        wrapper
-          .find({ type: 'button', variant: 'secondary' })
-          .childAt(0)
-          .text(),
-      ).toEqual('Reload');
+      expect(wrapper.find({ type: 'submit', variant: 'primary' }).childAt(0).text()).toEqual(
+        'Save',
+      );
+      expect(wrapper.find({ type: 'button', variant: 'secondary' }).childAt(0).text()).toEqual(
+        'Reload',
+      );
     });
   });
 

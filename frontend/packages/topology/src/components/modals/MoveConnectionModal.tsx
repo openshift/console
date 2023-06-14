@@ -45,8 +45,9 @@ const nodeItem = (node: Node) => (
   </span>
 );
 
-const MoveConnectionForm: React.FC<FormikProps<FormikValues> &
-  MoveConnectionModalProps & { setTranslator: (t: TFunction) => void }> = ({
+const MoveConnectionForm: React.FC<
+  FormikProps<FormikValues> & MoveConnectionModalProps & { setTranslator: (t: TFunction) => void }
+> = ({
   handleSubmit,
   isSubmitting,
   setTranslator,

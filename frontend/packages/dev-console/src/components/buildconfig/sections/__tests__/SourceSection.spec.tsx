@@ -2,7 +2,7 @@ import * as React from 'react';
 import { configure, render, screen, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
-import * as utils from '@console/dynamic-plugin-sdk/src';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import { GitProvider } from '@console/git-service/src';
 import * as serverlessFxUtils from '@console/git-service/src/utils/serverless-strategy-detector';
 import store from '@console/internal/redux';
@@ -28,7 +28,7 @@ jest.mock('../EditorField', () =>
   require.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
-const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
 const spyEvaluateFunc = jest.spyOn(serverlessFxUtils, 'evaluateFunc');
 
 configure({ testIdAttribute: 'data-test' });

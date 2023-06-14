@@ -32,7 +32,7 @@ export const STORAGE_PREFIX = 'bridge';
 
 export const USERSETTINGS_PREFIX = 'console';
 
-export const LAST_CLUSTER_USER_SETTINGS_KEY = `${USERSETTINGS_PREFIX}.lastCluster`;
+export const LAST_CLUSTER_USER_SETTINGS_KEY = `${USERSETTINGS_PREFIX}.lastCluster`; // TODO remove multicluster
 // This localStorage key predates the storage prefix.
 export const NAMESPACE_USERSETTINGS_PREFIX = `${USERSETTINGS_PREFIX}.namespace`;
 export const NAMESPACE_LOCAL_STORAGE_KEY = 'dropdown-storage-namespaces';
@@ -46,7 +46,8 @@ export const COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY = `${USERSETTINGS_PREF
 export const PINNED_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/pinned-resources`;
 export const COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/table-columns`;
 export const LOG_WRAP_LINES_USERSETTINGS_KEY = `${USERSETTINGS_PREFIX}.log.wrapLines`;
-
+export const SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY = `${USERSETTINGS_PREFIX}.showYAMLEditorTooltips`;
+export const SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/showYAMLEditorTooltips`;
 // Bootstrap user for OpenShift 4.0 clusters (kube:admin)
 export const KUBE_ADMIN_USERNAMES = ['kube:admin'];
 
@@ -102,4 +103,4 @@ export enum REQUESTER_FILTER {
 export const CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER =
   'https://api.openshift.com/api/upgrades_info/v1/graph';
 
-export const HUB_CLUSTER_NAME = 'local-cluster';
+export const HUB_CLUSTER_NAME = 'local-cluster'; // TODO remove multicluster

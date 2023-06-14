@@ -61,9 +61,7 @@ When('user selects the Delete option on {string} modal', (modalTitle: string) =>
 });
 
 Then('event source {string} will not be displayed in topology page', (eventSourceName: string) => {
-  cy.get('[data-type="event-source"] text')
-    .contains(eventSourceName)
-    .should('not.be.visible');
+  cy.get('[data-id="odc-topology-graph"]').should('not.have.text', eventSourceName);
 });
 
 Then('Resource dropdown is displayed in Move Sink modal', () => {
@@ -99,11 +97,7 @@ When('user clicks save on Move Sink modal', () => {
 });
 
 When('user clicks on event source {string} to open side bar', (eventSourceName: string) => {
-  topologyPage.search(eventSourceName);
-  cy.get('[data-type="event-source"]')
-    .eq(0)
-    .click();
-  topologySidePane.verify();
+  topologyPage.componentNode(eventSourceName).click({ force: true });
 });
 
 When('user selects {string} from side bar Action menu', (action: string) => {

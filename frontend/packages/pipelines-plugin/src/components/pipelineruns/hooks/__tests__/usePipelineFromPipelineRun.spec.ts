@@ -1,5 +1,5 @@
 import { act } from 'react-dom/test-utils';
-import * as k8s from '@console/internal/module/k8s';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
 import {
   DataState,
@@ -15,7 +15,7 @@ describe('usePipelineFromPipelineRun', () => {
   const plrWithEmbeddedPipeline =
     pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[DataState.SUCCESS];
   const plrWithoutPipelineSpec = { ...pipelineRun, status: null };
-  const k8sGetSpy = jest.spyOn(k8s, 'k8sGet');
+  const k8sGetSpy = jest.spyOn(k8sResourceModule, 'k8sGet');
 
   afterEach(() => {
     jest.resetAllMocks();

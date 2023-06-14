@@ -1,16 +1,20 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
-import * as utils from '@console/internal/components/utils';
+import * as rbacModule from '@console/internal/components/utils/rbac';
 import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
+import * as taskRunsUtils from '../../../components/taskruns/useTaskRuns';
 import { ConnectedPipelineRunDecorator } from '../PipelineRunDecorator';
 import { connectedPipelineOne } from './decorator-data';
+
+const spyUseTaskRuns = jest.spyOn(taskRunsUtils, 'useTaskRuns');
 
 describe('PipelineRunDecorator renders', () => {
   let spyUseAccessReview;
   beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(true);
+    spyUseTaskRuns.mockReturnValue([[], true]);
   });
 
   it('expect a log link when it contains at least one PipelineRun', () => {

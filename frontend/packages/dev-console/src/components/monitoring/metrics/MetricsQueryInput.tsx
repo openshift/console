@@ -4,7 +4,7 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -55,6 +55,7 @@ const MetricsQueryInput: React.FC = () => {
   const [metric, setMetric] = React.useState('');
   const [showPromQl, setShowPromQl] = React.useState(false);
   const [isPromQlDisabled, setIsPromQlDisabled] = React.useState(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
   React.useEffect(() => {
     const runQueries = () => dispatch(queryBrowserRunQueries());

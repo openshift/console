@@ -25,7 +25,7 @@ export * from './useUserSettingsCompatibility';
 export * from './hpa-hooks';
 export * from './usePinnedResources';
 export * from './perspective-utils';
-export * from './useActiveCluster';
+export * from './useActiveCluster'; // TODO remove multicluster
 export * from './useActiveNamespace';
 export * from './useIsMobile';
 export * from './useResizeObserver';

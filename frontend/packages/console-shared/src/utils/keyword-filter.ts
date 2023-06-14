@@ -11,7 +11,7 @@ export const keywordFilter = <T>(
   const keywords = _.uniq(filterText.match(/\S+/g)).map((w) => w.toLowerCase());
 
   // Sort the longest keyword fist
-  keywords.sort(function(a: string, b: string) {
+  keywords.sort(function (a: string, b: string) {
     return b.length - a.length;
   });
 

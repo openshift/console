@@ -2,7 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router-dom';
-import { getBadgeFromType } from '@console/shared';
+import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { connectToPlural } from '../kinds';
 import { ErrorPage404 } from './error';
 import { withStartGuide } from './start-guide';
@@ -110,11 +111,13 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     );
   const defaultPage = () => Promise.resolve(DefaultDetailsPage);
 
+  const titleProviderValues = {
+    telemetryPrefix: props.kindObj?.kind,
+    titlePrefix: `${props.match.params.name} · ${getTitleForNodeKind(props.kindObj?.kind)}`,
+  };
+
   return (
-    <>
-      <Helmet>
-        <title>{`${decodedName} · Details`}</title>
-      </Helmet>
+    <PageTitleContext.Provider value={titleProviderValues}>
       <AsyncComponent
         loader={componentLoader || defaultPage}
         match={props.match}
@@ -124,7 +127,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
         name={decodedName}
         badge={getBadgeFromType(kindObj.badge)}
       />
-    </>
+    </PageTitleContext.Provider>
   );
 });
 

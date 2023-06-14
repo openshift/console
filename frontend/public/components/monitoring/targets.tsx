@@ -16,6 +16,7 @@ import {
   useListPageFilter,
   VirtualizedTable,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search';
 import {
   Alert,
   AlertActionCloseButton,
@@ -28,7 +29,7 @@ import { find, includes, isEmpty } from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { Link, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
+import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import {
   NamespaceModel,
@@ -45,7 +46,8 @@ import { LoadingInline, StatusBox } from '../utils/status-box';
 import { useBoolean } from './hooks/useBoolean';
 import { Labels } from './labels';
 import { AlertSource, PrometheusAPIError, Target } from './types';
-import { fuzzyCaseInsensitive, PROMETHEUS_BASE_PATH, targetSource } from './utils';
+import { PROMETHEUS_BASE_PATH, targetSource } from './utils';
+import { exactMatch, fuzzyCaseInsensitive } from '../factory/table-filters';
 
 enum MonitorType {
   ServiceMonitor = 'serviceMonitor',
@@ -200,14 +202,15 @@ const WatchErrorAlert: React.FC<WatchErrorAlertProps> = ({ loadError, title }) =
   );
 };
 
-type DetailsProps = RouteComponentProps<{ scrapeUrl?: string }> & {
+type DetailsProps = {
   loaded: boolean;
   loadError: string;
   targets: Target[];
 };
 
-const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets }) => {
+const Details: React.FC<DetailsProps> = ({ loaded, loadError, targets }) => {
   const { t } = useTranslation();
+  const match = useRouteMatch<{ scrapeUrl?: string }>();
 
   let scrapeUrl: string = '';
   let target: Target | undefined;
@@ -317,7 +320,7 @@ const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets })
       </StatusBox>
     </>
   );
-});
+};
 
 const tableClasses = [
   'pf-u-w-25-on-md', // Endpoint
@@ -450,11 +453,12 @@ const ListPage: React.FC<ListPageProps> = ({ loaded, loadError, targets }) => {
 
   const [, , serviceMonitorsLoadError] = React.useContext(ServiceMonitorsWatchContext);
   const [, , podMonitorsLoadError] = React.useContext(PodMonitorsWatchContext);
-
+  const [isExactSearch] = useExactSearch();
+  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
   const nameFilter: RowFilter = {
     filter: (filter, target: Target) =>
-      fuzzyCaseInsensitive(filter.selected?.[0], target.scrapeUrl) ||
-      fuzzyCaseInsensitive(filter.selected?.[0], target.labels?.namespace),
+      matchFn(filter.selected?.[0], target.scrapeUrl) ||
+      matchFn(filter.selected?.[0], target.labels?.namespace),
     items: [],
     type: 'name',
   } as RowFilter;
@@ -570,6 +574,7 @@ export const TargetsUI: React.FC<{}> = () => {
     kind: referenceForModel(PodMonitorModel),
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const tick = () =>

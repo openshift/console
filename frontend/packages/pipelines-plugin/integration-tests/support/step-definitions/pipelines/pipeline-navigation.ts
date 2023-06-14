@@ -1,7 +1,8 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
-import { pipelineTabs } from '../../constants';
+import { pipelineTabs, repositoryDetailsTabs } from '../../constants';
+import { repositoryDetailsPage } from '../../pages';
 import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
 import { repositoriesPage } from '../../pages/pipelines/repositories-page';
 
@@ -29,9 +30,7 @@ When('user will redirects to Add Git Repository page', () => {
 });
 
 When('user enter the GitRepo URL {string}', (GitRepoURL: string) => {
-  cy.get('#form-input-gitUrl-field')
-    .clear()
-    .type(GitRepoURL);
+  cy.get('#form-input-gitUrl-field').clear().type(GitRepoURL);
 });
 
 When('user enters the name {string}', (name: string) => {
@@ -55,4 +54,16 @@ Then('user will be redirected to PipelineRuns tab', () => {
     'have.text',
     'PipelineRuns',
   );
+});
+
+Then('user will see page title as {string}', (pageTitle: string) => {
+  cy.title().should('equal', pageTitle);
+});
+
+Then('user clicks on Details tab', () => {
+  repositoryDetailsPage.selectTab(repositoryDetailsTabs.Details);
+});
+
+Then('user clicks on YAML tab', () => {
+  repositoryDetailsPage.selectTab(repositoryDetailsTabs.YAML);
 });

@@ -2,8 +2,9 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import * as modal from '@console/internal/components/factory/modal';
-import * as k8s from '@console/internal/module/k8s';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { testResourceInstance, testModel } from '../../../../mocks';
 import {
   ResourceRequirementsModal,
@@ -44,18 +45,8 @@ describe(ResourceRequirementsModal.name, () => {
 
   it('renders a modal form with given title and description', () => {
     expect(wrapper.find('form').exists()).toBe(true);
-    expect(
-      wrapper
-        .find(modal.ModalTitle)
-        .childAt(0)
-        .text(),
-    ).toEqual(title);
-    expect(
-      wrapper
-        .find(modal.ModalBody)
-        .childAt(0)
-        .text(),
-    ).toContain(description);
+    expect(wrapper.find(modal.ModalTitle).childAt(0).text()).toEqual(title);
+    expect(wrapper.find(modal.ModalBody).childAt(0).text()).toContain(description);
     expect(wrapper.find(modal.ModalSubmitFooter).props().submitText).toEqual('Save');
   });
 
@@ -66,8 +57,8 @@ describe(ResourceRequirementsModal.name, () => {
       .find('input[name="ephemeral-storage"]')
       .simulate('change', { target: { value: '50Mi' } });
 
-    spyAndExpect(spyOn(k8s, 'k8sUpdate'))(Promise.resolve())
-      .then(([model, newObj]: [k8s.K8sKind, k8s.K8sResourceKind]) => {
+    spyAndExpect(spyOn(k8sResourceModule, 'k8sUpdate'))(Promise.resolve())
+      .then(([model, newObj]: [K8sKind, K8sResourceKind]) => {
         expect(model).toEqual(testModel);
         expect(newObj.spec.resources.requests).toEqual({
           cpu: '200m',
@@ -84,7 +75,7 @@ describe(ResourceRequirementsModal.name, () => {
 
 describe(ResourceRequirementsModalLink.displayName, () => {
   let wrapper: ShallowWrapper<ResourceRequirementsModalLinkProps>;
-  let obj: k8s.K8sResourceKind;
+  let obj: K8sResourceKind;
 
   beforeEach(() => {
     obj = _.cloneDeep(testResourceInstance);
@@ -106,34 +97,23 @@ describe(ResourceRequirementsModalLink.displayName, () => {
     const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.limits;
     wrapper = wrapper.setProps({ type: 'requests' });
 
-    expect(
-      wrapper
-        .find(Button)
-        .render()
-        .text(),
-    ).toEqual(`CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`);
+    expect(wrapper.find(Button).render().text()).toEqual(
+      `CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`,
+    );
   });
 
   it('renders a button link with the resource limits', () => {
     const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.requests;
-    expect(
-      wrapper
-        .find(Button)
-        .render()
-        .text(),
-    ).toEqual(`CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`);
+    expect(wrapper.find(Button).render().text()).toEqual(
+      `CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`,
+    );
   });
 
   it('renders default values if undefined', () => {
     obj.spec.resources = undefined;
     wrapper.setProps({ obj });
 
-    expect(
-      wrapper
-        .find(Button)
-        .render()
-        .text(),
-    ).toEqual('CPU: None, Memory: None, Storage: None');
+    expect(wrapper.find(Button).render().text()).toEqual('CPU: None, Memory: None, Storage: None');
   });
 
   it('opens resource requirements modal when clicked', (done) => {

@@ -126,11 +126,11 @@ export enum TLSTerminationValues {
   Passthrough = 'Passthrough',
   ReEncrypt = 'Re-encrypt',
 }
-export const setPipelineForGitFlow = async function() {
+export const setPipelineForGitFlow = async function () {
   await pipelineObj.addPipeline.click();
 };
 
-export const selectAdvancedOptions = async function(opt: AdvancedOptions) {
+export const selectAdvancedOptions = async function (opt: AdvancedOptions) {
   switch (opt) {
     case AdvancedOptions.Routing: {
       await click(
@@ -178,21 +178,21 @@ export const selectAdvancedOptions = async function(opt: AdvancedOptions) {
   }
 };
 
-export const navigateImportFromGit = async function() {
+export const navigateImportFromGit = async function () {
   await browser.wait(until.elementToBeClickable(addNavigate), WAIT);
   await addNavigate.click();
   await browser.wait(until.elementToBeClickable(gitImportButton));
   await gitImportButton.click();
 };
 
-export const enterGitRepoUrl = async function(gitUrl: string) {
+export const enterGitRepoUrl = async function (gitUrl: string) {
   await browser.wait(until.presenceOf(gitRepoUrl), WAIT);
   await gitRepoUrl.sendKeys(gitUrl);
   await element(by.css('label[for="form-input-git-url-field"]')).click();
   await browser.wait(until.visibilityOf(gitUrlHelper), WAIT);
 };
 
-export const safeSendKeys = async function(
+export const safeSendKeys = async function (
   uiElement: any,
   uiElementName: string,
   newValue: string,
@@ -213,13 +213,13 @@ export const safeSendKeys = async function(
   await uiElement.click();
   await uiElement.sendKeys('text was', Key.chord(Key.CONTROL, 'a'), newValue);
 
-  uiElement.getAttribute('value').then(async function(insertedValue) {
+  uiElement.getAttribute('value').then(async function (insertedValue) {
     if (insertedValue !== newValue) {
       console.info('sendKeys failed for ', uiElementName, ' - retry', insertedValue, newValue);
       await uiElement.sendKeys('text was', Key.chord(Key.CONTROL, 'a'), newValue);
 
       // eslint-disable-next-line promise/no-nesting
-      uiElement.getAttribute('value').then(async function(insertedValue2) {
+      uiElement.getAttribute('value').then(async function (insertedValue2) {
         if (insertedValue2 !== newValue) {
           console.info(
             'sendKeys failed for ',
@@ -235,7 +235,7 @@ export const safeSendKeys = async function(
   });
 };
 
-export const addApplication = async function(name: string, nodeName: string) {
+export const addApplication = async function (name: string, nodeName: string) {
   // These are not visible when a user first runs the UI on an empty project
   //  await applicationSelector.click();
   //  await browser.wait(until.presenceOf(applicationDropdown));
@@ -245,7 +245,7 @@ export const addApplication = async function(name: string, nodeName: string) {
   await safeSendKeys(appName, 'appName', nodeName);
 };
 
-export const addApplicationWithExistingApps = async function(name: string, nodeName: string) {
+export const addApplicationWithExistingApps = async function (name: string, nodeName: string) {
   await browser.wait(until.visibilityOf(applicationSelector));
   await browser.wait(until.elementToBeClickable(applicationSelector));
   await applicationSelector.click();
@@ -256,7 +256,7 @@ export const addApplicationWithExistingApps = async function(name: string, nodeN
   await safeSendKeys(appName, 'appName', nodeName);
 };
 
-export const addApplicationInGeneral = async function(name: string, nodeName: string) {
+export const addApplicationInGeneral = async function (name: string, nodeName: string) {
   browser.wait(until.visibilityOf(await element(by.css('[id$=application-name-field]'))), WAIT);
   await element(by.css('[id$=application-name-field]'))
     .getTagName()
@@ -269,18 +269,18 @@ export const addApplicationInGeneral = async function(name: string, nodeName: st
     });
 };
 
-export const setBuilderImage = async function() {
+export const setBuilderImage = async function () {
   await builderImage.click();
 };
 
 // Automating Advanced options present in git import flow
-export const setRouting = async function(hostname: string, path: string) {
+export const setRouting = async function (hostname: string, path: string) {
   await enterText(routingObj.hostname, hostname);
   await enterText(routingObj.path, path);
   await selectByIndex(routingObj.targetPort);
 };
 
-export const setSecureRoute = async function(
+export const setSecureRoute = async function (
   tlsTerminationValue: TLSTerminationValues,
   insecureTrafficValue: string = 'None',
 ) {
@@ -294,37 +294,37 @@ export const setSecureRoute = async function(
   await selectByVisibleText(routingObj.insecureTraffic, insecureTrafficValue);
 };
 
-export const setEnvVariables = async function(envName: string, envValue: string, index = 0) {
+export const setEnvVariables = async function (envName: string, envValue: string, index = 0) {
   const count: number = await buildConfigObj.envRows.count();
   if (count === 1) {
     await enterText(buildConfigObj.envName.get(index), envName);
     await enterText(buildConfigObj.envValue.get(index), envValue);
   }
 };
-export const setBuildConfig = async function(envName: string, envValue: string) {
+export const setBuildConfig = async function (envName: string, envValue: string) {
   await setEnvVariables(envName, envValue, 0);
 };
 
-export const setDeployment = async function(envName: string, envValue: string) {
+export const setDeployment = async function (envName: string, envValue: string) {
   await setEnvVariables(envName, envValue, 1);
 };
 
-export const setScaling = async function(replicaCount) {
+export const setScaling = async function (replicaCount) {
   await enterText(scalingObj.replicaCount, replicaCount);
 };
 
-export const setResources = async function(cpuRequest, cpuLimit, memoryRequest, memoryLimit) {
+export const setResources = async function (cpuRequest, cpuLimit, memoryRequest, memoryLimit) {
   await enterText(resourceLimitsObj.cpuRequest, cpuRequest);
   await enterText(resourceLimitsObj.cpuLimit, cpuLimit);
   await enterText(resourceLimitsObj.memoryRequest, memoryRequest);
   await enterText(resourceLimitsObj.memoryLimit, memoryLimit);
 };
 
-export const setLabel = async function(labelName) {
+export const setLabel = async function (labelName) {
   await enterText(labelsObj.labelName, labelName);
 };
 
-export const clicKOnCreateButton = async function() {
+export const clicKOnCreateButton = async function () {
   await browser.wait(until.elementToBeClickable(createButton), WAIT);
   await createButton.click();
 };

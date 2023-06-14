@@ -26,8 +26,7 @@
     "showdown": "1.8.6"
   },
   "devDependencies": {
-    "@types/showdown": "1.9.4",
-    "typescript": "4.2.x"
+    "@types/showdown": "1.9.4"
   },
   "peerDependencies": {
     "react": "^17.0.1"

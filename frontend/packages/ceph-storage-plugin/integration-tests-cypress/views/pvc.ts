@@ -19,9 +19,7 @@ export const pvc = {
   expandPVC: (expansionSize) => {
     cy.byLegacyTestID('actions-menu-button').click();
     cy.byTestActionID('Expand PVC').click();
-    cy.byTestID('pvc-expand-size-input')
-      .clear()
-      .type(expansionSize);
+    cy.byTestID('pvc-expand-size-input').clear().type(expansionSize);
     cy.byTestID('confirm-action').click();
   },
 };

@@ -18,6 +18,7 @@ const DynamicPluginsPopover: React.FC<DynamicPluginsPopoverProps> = ({ consolePl
   const pendingPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'Pending');
   const loadedPlugins = pluginInfoEntries.filter(isLoadedDynamicPluginInfo);
   const enabledPlugins = loadedPlugins.filter((plugin) => plugin.enabled === true);
+  const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';
 
   return (
     <Stack hasGutter>
@@ -41,8 +42,8 @@ const DynamicPluginsPopover: React.FC<DynamicPluginsPopoverProps> = ({ consolePl
           secondColumn={
             <>
               {t('console-app~{{enabledCount}}/{{totalCount}} enabled', {
-                enabledCount: enabledPlugins.length,
-                totalCount: consolePlugins.data.length,
+                enabledCount: developmentMode ? loadedPlugins.length : enabledPlugins.length,
+                totalCount: developmentMode ? loadedPlugins.length : consolePlugins.data.length,
               })}
             </>
           }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 // FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector } from 'react-redux';
 import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
@@ -99,7 +99,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
             namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
             isList: false,
             name: `user-settings-${userUid}`,
-            cluster: HUB_CLUSTER_NAME,
+            cluster: HUB_CLUSTER_NAME, // TODO remove multicluster
           },
     [userUid, isLocalStorage],
   );

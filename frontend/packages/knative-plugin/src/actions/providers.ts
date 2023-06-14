@@ -29,6 +29,7 @@ import {
   EVENT_SINK_CATALOG_TYPE_ID,
   EVENT_SOURCE_ACTION_ID,
   EVENT_SOURCE_CATALOG_TYPE_ID,
+  KNATIVE_SERVERLESS_FUNCTION_TEST,
 } from '../const';
 import { RevisionModel, EventingBrokerModel, ServiceModel } from '../models';
 import {
@@ -63,6 +64,7 @@ import {
   editKnativeService,
   setTrafficDistribution,
   moveSinkSource,
+  testServerlessFunction,
 } from './creators';
 import { hideKnatifyAction, MakeServerless } from './knatify';
 
@@ -86,6 +88,11 @@ export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
 };
 
 export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
+  /* For testing purpose only */
+  if (localStorage.getItem(KNATIVE_SERVERLESS_FUNCTION_TEST) === null) {
+    localStorage.setItem(KNATIVE_SERVERLESS_FUNCTION_TEST, 'false');
+  }
+
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const actions = React.useMemo(() => {
     return [
@@ -99,6 +106,10 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
       ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
         ? [DeleteResourceAction(kindObj, resource)]
         : [CommonActionFactory.Delete(kindObj, resource)]),
+      ...(resource?.metadata?.labels?.['function.knative.dev'] === 'true' &&
+      localStorage.getItem(KNATIVE_SERVERLESS_FUNCTION_TEST) === 'true'
+        ? [testServerlessFunction(kindObj, resource)]
+        : []),
     ];
   }, [kindObj, resource]);
 
@@ -108,8 +119,8 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
 export const useBrokerActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
-  const addActions: Action[] = [];
   const actions = React.useMemo(() => {
+    const addActions: Action[] = [];
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
     addActions.push(addTriggerBroker(kindObj, resource));
     if (isEventSinkTypeEnabled) {
@@ -119,7 +130,7 @@ export const useBrokerActionProvider = (resource: K8sResourceKind) => {
     }
     addActions.push(...getCommonResourceActions(kindObj, resource));
     return addActions;
-  }, [addActions, isEventSinkTypeEnabled, kindObj, resource]);
+  }, [isEventSinkTypeEnabled, kindObj, resource]);
 
   return [actions, !inFlight, undefined];
 };
@@ -144,8 +155,8 @@ export const useCommonActionsProvider = (resource: K8sResourceKind) => {
 export const useChannelActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
-  const addActions: Action[] = [];
   const actions = React.useMemo(() => {
+    const addActions: Action[] = [];
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
     addActions.push(addSubscriptionChannel(kindObj, resource));
     if (isEventSinkTypeEnabled) {
@@ -155,7 +166,7 @@ export const useChannelActionProvider = (resource: K8sResourceKind) => {
     }
     addActions.push(...getCommonResourceActions(kindObj, resource));
     return addActions;
-  }, [addActions, isEventSinkTypeEnabled, kindObj, resource]);
+  }, [isEventSinkTypeEnabled, kindObj, resource]);
 
   return [actions, !inFlight, undefined];
 };
@@ -386,7 +397,7 @@ export const topologyServerlessActionsFilter = (
 };
 
 export const useKnativeEventSinkActionProvider = (element: Node) => {
-  const resource = element.getData()?.resources?.obj || {};
+  const resource = React.useMemo(() => element.getData()?.resources?.obj || {}, [element]);
   const [k8sModel] = useK8sModel(referenceFor(resource));
   const actions = React.useMemo(() => {
     const type = element.getType();

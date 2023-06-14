@@ -15,6 +15,7 @@ import {
   createEventSinkPage,
 } from '@console/dev-console/integration-tests/support/pages';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
+import { eventingPO } from '../../pageObjects/global-po';
 
 When('user clicks on Event Sink card', () => {
   navigateTo(devNavigationMenu.Add);
@@ -31,6 +32,7 @@ When('user clicks on Create Event Sink', () => {
 });
 
 When('user selects Output Target as {string}', (target: string) => {
+  cy.get(eventingPO.formView).click();
   createEventSinkPage.selectOutputTargetName(target);
 });
 
@@ -56,9 +58,7 @@ When('user selects Types as Event Sinks', () => {
 });
 
 When('user switches to YAML view', () => {
-  cy.get('[id="form-radiobutton-editorType-yaml-field"]')
-    .should('be.visible')
-    .click();
+  cy.get('[id="form-radiobutton-editorType-yaml-field"]').should('be.visible').click();
 });
 
 Given('user is at Topology page', () => {
@@ -71,8 +71,6 @@ When('user right clicks in empty space of topology', () => {
 });
 
 When('user selects {string} from Add to project', (option: string) => {
-  cy.get(topologyPO.graph.contextMenuOptions.addToProject)
-    .focus()
-    .trigger('mouseover');
+  cy.get(topologyPO.graph.contextMenuOptions.addToProject).focus().trigger('mouseover');
   cy.byTestActionID(option).click({ force: true });
 });

@@ -1,7 +1,8 @@
 import { safeDump } from 'js-yaml';
 import * as _ from 'lodash';
-import * as utils from '@console/internal/components/utils';
-import * as k8sModels from '@console/internal/module/k8s';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import * as k8sModelsModule from '@console/internal/module/k8s/k8s-models';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
 import { EventSourceFormData, EventSources } from '../../components/add/import-types';
 import {
@@ -42,21 +43,21 @@ describe('Create knative Utils', () => {
       ...defaultEventingData,
       yamlData: safeDump(getEventSourcesDepResource(defaultEventingData.formData)),
     };
-    const knEventingResource: k8sModels.K8sResourceKind = loadYamlData(mockData);
+    const knEventingResource: K8sResourceKind = loadYamlData(mockData);
     expect(knEventingResource.kind).toBe(EVENT_SOURCE_CAMEL_KIND);
     expect(knEventingResource.apiVersion).toBe(`${KNATIVE_EVENT_SOURCE_APIGROUP}/v1alpha1`);
     expect(knEventingResource.metadata?.namespace).toEqual('mock-project');
   });
 
   it('expect response of loadYamlData to update namespace if not there yamlEditor', () => {
-    jest.spyOn(k8sModels, 'modelFor').mockImplementation(() => ({ namespaced: true }));
+    jest.spyOn(k8sModelsModule, 'modelFor').mockImplementation(() => ({ namespaced: true }));
     const defaultEventingData = getDefaultEventingData(EVENT_SOURCE_CAMEL_KIND);
     defaultEventingData.formData.project.name = '';
     const mockData = {
       ...getDefaultEventingData(EVENT_SOURCE_CAMEL_KIND),
       yamlData: safeDump(getEventSourcesDepResource(defaultEventingData.formData)),
     };
-    const knEventingResource: k8sModels.K8sResourceKind = loadYamlData(mockData);
+    const knEventingResource: K8sResourceKind = loadYamlData(mockData);
     expect(knEventingResource.kind).toBe(EVENT_SOURCE_CAMEL_KIND);
     expect(knEventingResource.apiVersion).toBe(`${KNATIVE_EVENT_SOURCE_APIGROUP}/v1alpha1`);
     expect(knEventingResource.metadata?.namespace).toEqual('mock-project');
@@ -68,8 +69,10 @@ describe('Create knative Utils', () => {
       { apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP, plural: 'sinkbindings' },
       { apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP, plural: 'kafkasources' },
       { apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP, plural: 'camelsources' },
-    ] as k8sModels.K8sKind[];
-    spyOn(utils, 'checkAccess').and.callFake(() => Promise.resolve({ status: { allowed: true } }));
+    ] as K8sKind[];
+    spyOn(rbacModule, 'checkAccess').and.callFake(() =>
+      Promise.resolve({ status: { allowed: true } }),
+    );
     const eventSourceData = getEventSourceModelsWithAccess('my-app', eventSourcesModel);
     Promise.all(eventSourceData)
       .then((results) => {
@@ -247,8 +250,7 @@ describe('sanitizeSourceToForm always returns valid Event Source', () => {
   };
 
   it('expect an empty form to return a EventSource data with updated properties', () => {
-    const pingSourceData: k8sModels.K8sResourceKind =
-      MockKnativeResources[EVENT_SOURCE_PING_KIND].data[0];
+    const pingSourceData: K8sResourceKind = MockKnativeResources[EVENT_SOURCE_PING_KIND].data[0];
     const newFormDataValue = {
       ...pingSourceData,
       spec: {
@@ -265,8 +267,7 @@ describe('sanitizeSourceToForm always returns valid Event Source', () => {
   });
 
   it('expect an empty form to return a EventSource data with proper application group if partof added', () => {
-    const pingSourceData: k8sModels.K8sResourceKind =
-      MockKnativeResources[EVENT_SOURCE_PING_KIND].data[0];
+    const pingSourceData: K8sResourceKind = MockKnativeResources[EVENT_SOURCE_PING_KIND].data[0];
     const newFormDataValue = {
       ...pingSourceData,
       metadata: {
@@ -284,8 +285,7 @@ describe('sanitizeSourceToForm always returns valid Event Source', () => {
   });
 
   it('expect an empty form to return a EventSource data with proper application group if partof not added', () => {
-    const pingSourceData: k8sModels.K8sResourceKind =
-      MockKnativeResources[EVENT_SOURCE_PING_KIND].data[0];
+    const pingSourceData: K8sResourceKind = MockKnativeResources[EVENT_SOURCE_PING_KIND].data[0];
     const formData = sanitizeSourceToForm(pingSourceData, formDataValues);
     expect(formData).toBeTruthy();
     expect(formData.type).toBe(EVENT_SOURCE_PING_KIND);

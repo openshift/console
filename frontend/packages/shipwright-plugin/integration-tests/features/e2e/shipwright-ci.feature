@@ -4,9 +4,9 @@ Feature: Shipwright build details page
 
         Background:
             Given user has installed OpenShift Pipelines Operator
+              And user has installed Shipwright Operator
               And user is at developer perspective
               And user has created or selected namespace "aut-shipwright-build-details"
-              And user has installed Shipwright Operator
               And user is at Add page
               And user has created shipwright builds
 

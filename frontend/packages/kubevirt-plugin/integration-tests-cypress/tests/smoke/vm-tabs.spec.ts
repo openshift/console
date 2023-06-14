@@ -37,9 +37,7 @@ describe('smoke tests', () => {
   describe('visit vm tabs', () => {
     before(() => {
       cy.visitVMsList();
-      cy.byLegacyTestID(vmData.name)
-        .should('exist')
-        .click();
+      cy.byLegacyTestID(vmData.name).should('exist').click();
     });
 
     it('vm overview tab is loaded', () => {
@@ -53,7 +51,7 @@ describe('smoke tests', () => {
     });
 
     it('vm yaml tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~YAML').click();
+      cy.byLegacyTestID('horizontal-link-YAML').click();
       cy.get('.yaml-editor').should('be.visible');
     });
 
@@ -63,7 +61,7 @@ describe('smoke tests', () => {
     });
 
     it('vm events tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~Events').click();
+      cy.byLegacyTestID('horizontal-link-Events').click();
       cy.get('.co-sysevent-stream').should('be.visible');
     });
 
@@ -91,12 +89,8 @@ describe('smoke tests', () => {
   describe('visit vm/vmi tabs', () => {
     before(() => {
       cy.byLegacyTestID('horizontal-link-Overview').click();
-      cy.get('[title="VirtualMachineInstance"]')
-        .contains('VMI')
-        .click();
-      cy.byLegacyTestID(vmData.name)
-        .contains(vmData.name)
-        .click();
+      cy.get('[title="VirtualMachineInstance"]').contains('VMI').click();
+      cy.byLegacyTestID(vmData.name).contains(vmData.name).click();
     });
 
     it('vm/vmi overview tab is loaded', () => {
@@ -109,12 +103,12 @@ describe('smoke tests', () => {
     });
 
     it('vm/vmi yaml tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~YAML').click();
+      cy.byLegacyTestID('horizontal-link-YAML').click();
       cy.get('.yaml-editor').should('be.visible');
     });
 
     it('vm/vmi events tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~Events').click();
+      cy.byLegacyTestID('horizontal-link-Events').click();
       cy.get('.co-sysevent-stream').should('be.visible');
     });
 

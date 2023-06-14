@@ -1,9 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export enum tabs {
   Overview = 'horizontal-link-Overview',
   Details = 'horizontal-link-Details',
-  YAML = 'horizontal-link-public~YAML',
+  YAML = 'horizontal-link-YAML',
   Environment = 'horizontal-link-Environment',
-  Events = 'horizontal-link-public~Events',
+  Events = 'horizontal-link-Events',
   Console = 'horizontal-link-Console',
   NetworkInterfaces = 'horizontal-link-Network Interfaces',
   Disks = 'horizontal-link-Disks',

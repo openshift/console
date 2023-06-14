@@ -19,7 +19,7 @@ Given('user has created Kafka Connection {string}', () => {
   const yamlFile = 'support/testData/createKafkaConnection.yaml';
   cy.exec(`oc apply -f ${yamlFile} -n ${Cypress.env('NAMESPACE')} `, {
     failOnNonZeroExit: false,
-  }).then(function(result) {
+  }).then(function (result) {
     cy.log(result.stdout);
   });
 });
@@ -28,7 +28,7 @@ Given('user has created Secret {string}', () => {
   const yamlFile = 'support/testData/createSecret.yaml';
   cy.exec(`oc apply -n ${Cypress.env('NAMESPACE')} -f ${yamlFile}`, {
     failOnNonZeroExit: false,
-  }).then(function(result) {
+  }).then(function (result) {
     cy.log(result.stdout);
   });
 });
@@ -60,25 +60,18 @@ When('user selects resource {string} under User', (resource: string) => {
 });
 
 When('user selects key as {string} under User', (key: string) => {
-  cy.get(eventingPO.kafkaSource.toggleText)
-    .contains('Select a key')
-    .eq(0)
-    .click({ force: true });
+  cy.get(eventingPO.kafkaSource.toggleText).contains('Select a key').eq(0).click({ force: true });
   cy.get(`#${key}-link`).click();
 });
 
 When('user selects resource {string} under Password', (resource: string) => {
-  cy.get(eventingPO.kafkaSource.toggleText)
-    .contains('Select a resource')
-    .click({ force: true });
+  cy.get(eventingPO.kafkaSource.toggleText).contains('Select a resource').click({ force: true });
   cy.get(eventingPO.kafkaSource.dropdownInput).type(resource);
   cy.get(eventingPO.kafkaSource.rhSecret).click();
 });
 
 When('user selects key as {string} under Password', (key: string) => {
-  cy.get(eventingPO.kafkaSource.toggleText)
-    .contains('Select a key')
-    .click({ force: true });
+  cy.get(eventingPO.kafkaSource.toggleText).contains('Select a key').click({ force: true });
   cy.get(`#${key}-link`).click();
 });
 
@@ -98,9 +91,7 @@ When('user selects Application group as {string}', () => {
 });
 
 When('user enters Application Name as {string}', (name: string) => {
-  cy.get(eventingPO.kafkaSource.appName)
-    .clear()
-    .type(name);
+  cy.get(eventingPO.kafkaSource.appName).clear().type(name);
 });
 
 When('user clicks on Create button on form page', () => {
@@ -110,9 +101,7 @@ When('user clicks on Create button on form page', () => {
 When(
   'user clicks on the connector connecting to kafka source {string} from kafka service {string}',
   () => {
-    cy.get(eventingPO.kafkaSource.eventSourceLink)
-      .should('be.visible')
-      .click();
+    cy.get(eventingPO.kafkaSource.eventSourceLink).should('be.visible').click();
   },
 );
 
@@ -127,11 +116,7 @@ Then(
   'user will see kafka source {string} and kafka service {string} under Connection in Resource tab of sidebar',
   () => {
     cy.get(eventingPO.kafkaSource.headingTitle).should('include.text', 'Event source connector');
-    cy.get(eventingPO.kafkaSource.listItem)
-      .eq(0)
-      .should('include.text', 'kafka-source');
-    cy.get(eventingPO.kafkaSource.listItem)
-      .eq(1)
-      .should('include.text', 'hello-openshift');
+    cy.get(eventingPO.kafkaSource.listItem).eq(0).should('include.text', 'kafka-source');
+    cy.get(eventingPO.kafkaSource.listItem).eq(1).should('include.text', 'hello-openshift');
   },
 );

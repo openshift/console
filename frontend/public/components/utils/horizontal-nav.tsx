@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
-import { History, Location } from 'history';
 import * as _ from 'lodash-es';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
@@ -10,10 +10,10 @@ import {
   Route,
   Switch,
   Link,
-  withRouter,
   match as Match,
   matchPath,
   RouteComponentProps,
+  useRouteMatch,
 } from 'react-router-dom';
 import {
   HorizontalNavTab as DynamicResourceNavTab,
@@ -22,6 +22,7 @@ import {
   isTab as DynamicIsNavTab,
   ExtensionK8sGroupModel,
 } from '@console/dynamic-plugin-sdk';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor, referenceForExtensionModel } from '../../module/k8s/k8s';
@@ -178,8 +179,10 @@ export const navFactory: NavFactory = {
   }),
 };
 
-export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => {
+export const NavBar: React.FC<NavBarProps> = ({ pages, baseURL, basePath }) => {
   const { t } = useTranslation();
+  const { telemetryPrefix, titlePrefix } = React.useContext(PageTitleContext);
+
   basePath = basePath.replace(/\/$/, '');
 
   const tabs = (
@@ -196,7 +199,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
           <li className={klass} key={href}>
             <Link
               to={`${baseURL.replace(/\/$/, '')}/${removeLeadingSlash(href)}`}
-              data-test-id={`horizontal-link-${nameKey || name}`}
+              data-test-id={`horizontal-link-${nameKey ? nameKey.split('~')[1] : name}`}
             >
               {nameKey ? t(nameKey) : name}
             </Link>
@@ -206,8 +209,28 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
     </>
   );
 
-  return <ul className="co-m-horizontal-nav__menu">{tabs}</ul>;
-});
+  const activePage = pages.find(({ href, path }) => {
+    const matchURL = matchPath(location.pathname, {
+      path: `${basePath}/${removeLeadingSlash(path || href)}`,
+      exact: true,
+    });
+    return matchURL?.isExact;
+  });
+
+  const labelId = activePage?.nameKey?.split('~')[1] || activePage?.name || 'Details';
+  return (
+    <>
+      <Helmet>
+        <title data-telemetry={telemetryPrefix ? `${telemetryPrefix} · ${labelId}` : labelId}>
+          {titlePrefix
+            ? `${titlePrefix} · ${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`
+            : `${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`}
+        </title>
+      </Helmet>
+      <ul className="co-m-horizontal-nav__menu">{tabs}</ul>
+    </>
+  );
+};
 NavBar.displayName = 'NavBar';
 
 export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
@@ -352,16 +375,15 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
 }, _.isEqual);
 
 /*
- *Component consumed by the dynamic plugin SDK
+ * Component consumed by the dynamic plugin SDK
  * Changes to the underlying component has to support props used in this facade
  */
-export const HorizontalNavFacade = withRouter<HorizontalNavFacadeProps & RouteComponentProps>(
-  ({ resource, pages, match }) => {
-    const obj = { data: resource, loaded: true };
+export const HorizontalNavFacade: React.FC<HorizontalNavFacadeProps> = ({ resource, pages }) => {
+  const obj = { data: resource, loaded: true };
+  const match = useRouteMatch();
 
-    return <HorizontalNav obj={obj} pages={pages} match={match} noStatusBox />;
-  },
-);
+  return <HorizontalNav obj={obj} pages={pages} match={match} noStatusBox />;
+};
 
 export type PodsComponentProps = {
   obj: K8sResourceKind;
@@ -391,9 +413,6 @@ export type NavBarProps = {
   pages: Page[];
   baseURL: string;
   basePath: string;
-  history: History;
-  location: Location<any>;
-  match: Match<any>;
 };
 
 export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resource'> & {

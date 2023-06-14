@@ -3,7 +3,7 @@ import { TextInputTypes } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DropdownField, InputField } from '@console/shared';
-import { TriggersAndImageStreamFormData } from '../../edit-deployment/utils/edit-deployment-types';
+import { TriggersAndImageStreamFormData } from '../../deployments/utils/deployment-types';
 import ImageStream from '../../import/image-search/ImageStream';
 import FormSection from '../../import/section/FormSection';
 import { BuildStrategyType } from '../types';
@@ -33,7 +33,8 @@ const ImageOption: React.FC<{
   fallbackTitle: string;
   items: Record<string, string>;
   dataTest: string;
-}> = ({ fieldPrefix, label, fallbackTitle, items, dataTest }) => {
+  required?: boolean;
+}> = ({ fieldPrefix, label, fallbackTitle, items, dataTest, required }) => {
   const { t } = useTranslation();
   const [{ value: type }] = useField<ImageOptionType>(`${fieldPrefix}.type`);
 
@@ -45,6 +46,7 @@ const ImageOption: React.FC<{
         items={items}
         title={items[type] || fallbackTitle}
         dataTest={`${dataTest} type`}
+        required={required}
       />
 
       {type === 'imageStreamTag' ? (
@@ -111,6 +113,7 @@ const ImagesSection: React.FC<{}> = () => {
         fallbackTitle={t('devconsole~Please select')}
         items={buildFromItems}
         dataTest="build-from"
+        required
       />
       <ImageOption
         fieldPrefix="formData.images.pushTo"

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import {

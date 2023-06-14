@@ -10,9 +10,7 @@ export const eventSourcesPage = {
     cy.byTestID(`EventSource-${eventSourceName}`).should('be.visible');
   },
   clickEventSourceType: (eventSourceName: string | eventSourceCards) => {
-    cy.byTestID(`EventSource-${eventSourceName}`)
-      .should('be.visible')
-      .click();
+    cy.byTestID(`EventSource-${eventSourceName}`).scrollIntoView().should('be.visible').click();
   },
   clickCreateEventSourceOnSidePane: () => {
     cy.get(catalogPO.sidePane.createApplication).click({ force: true });
@@ -20,20 +18,10 @@ export const eventSourcesPage = {
 };
 export const createEventSourcePage = {
   enterEventSourceName: (eventSourceName: string) =>
-    cy
-      .get(eventSourcePO.sinkBinding.name)
-      .clear()
-      .type(eventSourceName),
+    cy.get(eventSourcePO.sinkBinding.name).clear().type(eventSourceName),
   enterApiVersion: (apiVersion: string) =>
-    cy
-      .get(eventSourcePO.sinkBinding.apiVersion)
-      .clear()
-      .type(apiVersion),
-  enterKind: (kind: string) =>
-    cy
-      .get(eventSourcePO.sinkBinding.kind)
-      .clear()
-      .type(kind),
+    cy.get(eventSourcePO.sinkBinding.apiVersion).clear().type(apiVersion),
+  enterKind: (kind: string) => cy.get(eventSourcePO.sinkBinding.kind).clear().type(kind),
   selectServiceType: (serviceAccountName: string = 'default') => {
     cy.selectByAutoCompleteDropDownText(
       eventSourcePO.apiServerSource.serviceAccountName,

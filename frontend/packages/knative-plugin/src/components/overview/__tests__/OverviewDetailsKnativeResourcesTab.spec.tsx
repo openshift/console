@@ -28,12 +28,7 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
   it('should render OperatorBackedOwnerReferences with proper props', () => {
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab item={knItem.item} />);
     expect(wrapper.find(OperatorBackedOwnerReferences)).toHaveLength(1);
-    expect(
-      wrapper
-        .find(OperatorBackedOwnerReferences)
-        .at(0)
-        .props().item,
-    ).toEqual(knItem.item);
+    expect(wrapper.find(OperatorBackedOwnerReferences).at(0).props().item).toEqual(knItem.item);
   });
   it('should render Routes, Configuration and revision list on sidebar in case of kn deployment', () => {
     knItem.item = {

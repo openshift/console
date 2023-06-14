@@ -11,23 +11,12 @@ const templateName = `tmpl-${testName}`;
 const vmName = `vm-${testName}`;
 
 const verifyWinGuestTools = () => {
-  cy.get(wizardView.wizardNavLink)
-    .contains('Storage')
-    .should('not.be.disabled')
-    .click();
-  cy.get(row)
-    .contains(WIN_GT)
-    .should('exist');
-  cy.get(wizardView.wizardNavLink)
-    .contains('General')
-    .click();
+  cy.get(wizardView.wizardNavLink).contains('Storage').should('not.be.disabled').click();
+  cy.get(row).contains(WIN_GT).should('exist');
+  cy.get(wizardView.wizardNavLink).contains('General').click();
   cy.get(wizardView.mountGuestTool).uncheck();
-  cy.get(wizardView.wizardNavLink)
-    .contains('Storage')
-    .click();
-  cy.get(row)
-    .contains(WIN_GT)
-    .should('not.exist');
+  cy.get(wizardView.wizardNavLink).contains('Storage').click();
+  cy.get(row).contains(WIN_GT).should('not.exist');
   cy.get('#create-vm-wizard-reviewandcreate-btn').click();
   cy.get('.kubevirt-create-vm-modal__review-tab__footer').then(($ftr) => {
     if ($ftr.find(wizardView.startOnCreation).length > 0) {
@@ -37,13 +26,9 @@ const verifyWinGuestTools = () => {
   cy.get('#create-vm-wizard-submit-btn').click();
   cy.byLegacyTestID('kubevirt-wizard-success-result').should('be.visible');
   cy.get('button.pf-m-primary').click();
-  cy.get(resourceTitle)
-    .contains(testName)
-    .should('exist');
+  cy.get(resourceTitle).contains(testName).should('exist');
   tab.navigateToDisk();
-  cy.get(row)
-    .contains(WIN_GT)
-    .should('not.exist');
+  cy.get(row).contains(WIN_GT).should('not.exist');
 };
 
 describe('Windows guest tool mount', () => {
@@ -62,23 +47,13 @@ describe('Windows guest tool mount', () => {
     cy.visitVMTemplatesList();
     cy.get('#item-create').click();
     cy.get('#wizard-link').click();
-    cy.get(wizardView.vmName)
-      .clear()
-      .type(templateName);
-    cy.get(wizardView.templateProvider)
-      .clear()
-      .type(`CNV-QE`);
+    cy.get(wizardView.vmName).clear().type(templateName);
+    cy.get(wizardView.templateProvider).clear().type(`CNV-QE`);
     cy.get(wizardView.osDropdown).click();
-    cy.get('button')
-      .contains(OperatingSystem.WINDOWS_10)
-      .click({ force: true });
+    cy.get('button').contains(OperatingSystem.WINDOWS_10).click({ force: true });
     cy.get(wizardView.imageSourceDropdown).click();
-    cy.get(wizardView.selectMenu)
-      .contains(ProvisionSource.REGISTRY.getDescription())
-      .click();
-    cy.get(wizardView.sourceRegistry)
-      .clear()
-      .type(ProvisionSource.REGISTRY.getSource());
+    cy.get(wizardView.selectMenu).contains(ProvisionSource.REGISTRY.getDescription()).click();
+    cy.get(wizardView.sourceRegistry).clear().type(ProvisionSource.REGISTRY.getSource());
     verifyWinGuestTools();
   });
 
@@ -86,21 +61,13 @@ describe('Windows guest tool mount', () => {
     cy.visitVMsList();
     cy.byLegacyTestID('item-create').click();
     cy.byLegacyTestID('vm-wizard').click();
-    cy.get(wizardView.templateTitle)
-      .contains(OperatingSystem.WINDOWS_10)
-      .click({ force: true });
+    cy.get(wizardView.templateTitle).contains(OperatingSystem.WINDOWS_10).click({ force: true });
     cy.get(wizardView.next).click();
     cy.get(wizardView.imageSourceDropdown).click();
-    cy.get(wizardView.selectMenu)
-      .contains(ProvisionSource.REGISTRY.getDescription())
-      .click();
-    cy.get(wizardView.sourceRegistry)
-      .clear()
-      .type(ProvisionSource.REGISTRY.getSource());
+    cy.get(wizardView.selectMenu).contains(ProvisionSource.REGISTRY.getDescription()).click();
+    cy.get(wizardView.sourceRegistry).clear().type(ProvisionSource.REGISTRY.getSource());
     cy.get(wizardView.next).click();
-    cy.get(wizardView.vmName)
-      .clear()
-      .type(vmName);
+    cy.get(wizardView.vmName).clear().type(vmName);
     cy.get(wizardView.customizeBtn).click();
     verifyWinGuestTools();
   });

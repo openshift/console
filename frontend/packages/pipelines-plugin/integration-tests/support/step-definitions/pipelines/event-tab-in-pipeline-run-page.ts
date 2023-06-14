@@ -26,9 +26,7 @@ When('pipeline named {string} is available with pipeline run', (pipelineName: st
   tasksPage.togglePipelineSidebar();
   tasksPage.clickOnCreatePipeline();
   cy.get(pipelineBuilderPO.formView.switchToFormView).click();
-  cy.get(pipelineBuilderPO.formView.name)
-    .clear()
-    .type(pipelineName);
+  cy.get(pipelineBuilderPO.formView.name).clear().type(pipelineName);
   cy.byTestID('task-list').click();
   cy.get(pipelineBuilderPO.formView.quickSearch).type('kn');
   cy.byTestID('task-cta').click();
@@ -53,7 +51,7 @@ When('user clicks on pipeline run for pipeline {string}', (pipelineName: string)
 });
 
 When('user clicks on Events tab', () => {
-  cy.get(`[data-test-id="horizontal-link-public~Events"]`).click();
+  cy.get(`[data-test-id="horizontal-link-Events"]`).click();
 });
 
 When('user clicks on Events tab in pipeline Runs page', () => {
@@ -89,9 +87,7 @@ When('task named {string} is available with task run', () => {
 });
 
 When('user clicks on Tasks', () => {
-  cy.byTestID('nav')
-    .contains('Tasks')
-    .click();
+  cy.byTestID('nav').contains('Tasks').click();
 });
 
 When('user goes to Task Runs tab', () => {
@@ -99,9 +95,7 @@ When('user goes to Task Runs tab', () => {
 });
 
 When('user opens task run for pipeline {string}', (pipelineName: string) => {
-  cy.get(`[data-test-id^="${pipelineName}-"]`)
-    .eq(0)
-    .click();
+  cy.get(`[data-test-id^="${pipelineName}-"]`).eq(0).click();
 });
 
 When('user can see events streaming for task runs and all associated pods', () => {
@@ -114,9 +108,7 @@ When('task named {string} is available with task run for pipeline', () => {
 });
 
 When('user clicks on available pipeline {string}', (pipelineName: string) => {
-  cy.get(`[data-test-id^="${pipelineName}"]`)
-    .eq(0)
-    .click();
+  cy.get(`[data-test-id^="${pipelineName}"]`).eq(0).click();
 });
 
 When('user opens pipeline run {string}', (pipelineName: string) => {
@@ -124,9 +116,7 @@ When('user opens pipeline run {string}', (pipelineName: string) => {
 });
 
 When('user opens task run {string}', (pipelineName: string) => {
-  cy.get(`[data-test-id^="${pipelineName}-"]`)
-    .eq(0)
-    .click();
+  cy.get(`[data-test-id^="${pipelineName}-"]`).eq(0).click();
 });
 
 When('user clicks on Pipelines Tab', () => {

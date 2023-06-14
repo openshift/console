@@ -11,7 +11,7 @@ metadata:
     - apiVersion: build.openshift.io/v1
       kind: BuildConfig
       name: fruits-app-1
-      uid: 44291715-6933-4fac-82f1-481ea0fe7f29
+      uid: 69bb984a-7ba8-48e9-b90b-be1dae5aad38
       controller: true
   labels:
     app: fruits-app-1
@@ -58,45 +58,34 @@ status:
   outputDockerImageReference: >-
     image-registry.openshift-image-registry.svc:5000/aut-form-edit-build-config/fruits-app-1:latest
   duration: 53000000000
-  startTimestamp: '2021-05-04T07:45:14Z'
   stages:
+    - name: FetchInputs
+      durationMilliseconds: 506
+      steps:
+        - name: FetchGitSource
+          durationMilliseconds: 506
     - name: PullImages
-      startTime: '2021-05-04T07:45:20Z'
-      durationMilliseconds: 21036
+      durationMilliseconds: 14461
       steps:
         - name: PullBaseImage
-          startTime: '2021-05-04T07:45:20Z'
-          durationMilliseconds: 21036
+          durationMilliseconds: 14461
     - name: Build
-      startTime: '2021-05-04T07:45:41Z'
-      durationMilliseconds: 19070
+      durationMilliseconds: 13449
       steps:
         - name: DockerBuild
-          startTime: '2021-05-04T07:45:41Z'
-          durationMilliseconds: 19070
+          durationMilliseconds: 13449
     - name: PushImage
-      startTime: '2021-05-04T07:46:00Z'
-      durationMilliseconds: 6184
+      durationMilliseconds: 8848
       steps:
         - name: PushImage
-          startTime: '2021-05-04T07:46:00Z'
-          durationMilliseconds: 6184
+          durationMilliseconds: 8848
   conditions:
     - type: New
       status: 'False'
-      lastUpdateTime: '2021-05-04T07:45:14Z'
-      lastTransitionTime: '2021-05-04T07:45:14Z'
     - type: Pending
       status: 'False'
-      lastUpdateTime: '2021-05-04T07:45:18Z'
-      lastTransitionTime: '2021-05-04T07:45:18Z'
     - type: Running
       status: 'False'
-      lastUpdateTime: '2021-05-04T07:46:07Z'
-      lastTransitionTime: '2021-05-04T07:46:07Z'
     - type: Complete
       status: 'True'
-      lastUpdateTime: '2021-05-04T07:46:07Z'
-      lastTransitionTime: '2021-05-04T07:46:07Z'
-  completionTimestamp: '2021-05-04T07:46:07Z'
   phase: Complete

@@ -17,8 +17,6 @@ export const useHpaTabSectionForTopologySideBar: DetailsTabSectionExtensionHook 
     <TopologySideBarTabSection>
       <HPAOverview hpas={hpas} />
     </TopologySideBarTabSection>
-  ) : (
-    undefined
-  );
+  ) : undefined;
   return [section, true, undefined];
 };

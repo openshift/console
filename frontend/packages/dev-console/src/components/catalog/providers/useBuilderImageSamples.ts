@@ -26,12 +26,12 @@ const normalizeBuilderImages = (
     const icon = getImageStreamIcon(tag);
     const imgUrl = getImageForIconClass(icon);
     const iconClass = imgUrl ? null : icon;
-    const description = tag?.['annotations']?.['description'] ?? '';
+    const description = tag?.annotations?.description ?? '';
     const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
     const href = `/samples/ns/${activeNamespace}/${name}/${imageStreamNS}`;
     const createLabel = t('devconsole~Create');
-    const type = 'Sample';
+    const type = 'BuilderImage';
 
     const item: CatalogItem = {
       uid: `${type}-${uid}`,
@@ -56,25 +56,24 @@ const normalizeBuilderImages = (
 };
 
 const useBuilderImageSamples: ExtensionHook<CatalogItem[]> = ({ namespace }) => {
+  const { t } = useTranslation();
   const resourceSelector = {
-    isList: true,
     kind: 'ImageStream',
     namespace: 'openshift',
-    prop: 'imageStreams',
+    isList: true,
   };
-  const { t } = useTranslation();
   const [imageStreams, loaded, loadedError] = useK8sWatchResource<K8sResourceKind[]>(
     resourceSelector,
   );
 
-  const builderImageStreams = React.useMemo(() => _.filter(imageStreams, isBuilder), [
-    imageStreams,
-  ]);
-
-  const normalizedBuilderImages = React.useMemo(
-    () => normalizeBuilderImages(builderImageStreams, namespace, t),
-    [builderImageStreams, namespace, t],
-  );
+  const normalizedBuilderImages = React.useMemo<CatalogItem[]>(() => {
+    const filteredImageStreams = imageStreams.filter((imageStream) => {
+      const recentTag = getMostRecentBuilderTag(imageStream);
+      const sampleRepo = recentTag?.annotations?.sampleRepo;
+      return isBuilder(imageStream) && sampleRepo;
+    });
+    return normalizeBuilderImages(filteredImageStreams, namespace, t);
+  }, [t, namespace, imageStreams]);
 
   return [normalizedBuilderImages, loaded, loadedError];
 };

@@ -357,7 +357,6 @@ export const convertBuilderFormToPipeline = (
       params: sanitizePipelineParams(
         params.length > 0 ? params : existingPipeline?.spec?.params ?? [],
       ),
-      resources: resources.length > 0 ? resources : existingPipeline?.spec?.resources ?? [],
       workspaces: workspaces.length > 0 ? workspaces : existingPipeline?.spec?.workspaces ?? [],
       tasks:
         tasks.length > 0

@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { SortByDirection } from '@patternfly/react-table';
 import { useDeepCompareMemoize } from '@console/shared';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search';
 
 import { RootState } from '../../redux';
 import { tableFilters } from './table-filters';
@@ -16,13 +17,14 @@ export const getFilteredRows = <D = any>(
   filters: Filter[],
   rowFilters: RowFilter[],
   objects: D[],
+  exactSearch?: boolean,
 ) => {
   if (_.isEmpty(filters)) {
     return objects;
   }
 
   const allTableFilters = {
-    ...tableFilters,
+    ...tableFilters(exactSearch),
     ...(rowFilters || [])
       .filter((f) => f.type && _.isFunction(f.filter))
       .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {}),
@@ -87,6 +89,8 @@ export const useTableData = ({
     initCustomData,
   ]);
 
+  const [isExactSearch] = useExactSearch();
+
   const tableSelectorCreator = React.useMemo(
     () =>
       createSelectorCreator(
@@ -117,7 +121,7 @@ export const useTableData = ({
 
   return React.useMemo(() => {
     const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
-    const data = getFilteredRows(allFilters, rowFilters, propData);
+    const data = getFilteredRows(allFilters, rowFilters, propData, isExactSearch);
 
     if (loaded) {
       let sortBy: string | Function = 'metadata.name';
@@ -181,6 +185,7 @@ export const useTableData = ({
     defaultSortField,
     defaultSortFunc,
     filters,
+    isExactSearch,
     isPinned,
     listId,
     loaded,

@@ -2,10 +2,7 @@ import * as yamlEditor from './yaml-editor';
 
 export const listPage = {
   titleShouldHaveText: (title: string) =>
-    cy
-      .byLegacyTestID('resource-title')
-      .contains(title)
-      .should('exist'),
+    cy.byLegacyTestID('resource-title').contains(title).should('exist'),
   clickCreateYAMLdropdownButton: () => {
     cy.byTestID('item-create')
       .click()
@@ -28,9 +25,7 @@ export const listPage = {
   },
   filter: {
     byName: (name: string) => {
-      cy.byTestID('name-filter-input')
-        .clear()
-        .type(name);
+      cy.byTestID('name-filter-input').clear().type(name);
     },
     numberOfActiveFiltersShouldBe: (numFilters: number) => {
       cy.get("[class='pf-c-toolbar__item pf-m-chip-group']").should('have.length', numFilters);
@@ -48,15 +43,14 @@ export const listPage = {
     clearAllFilters: () => {
       cy.log('Clearing all filters');
       cy.get('.pf-c-toolbar__content').within(() => {
-        cy.get('button')
-          .last()
-          .click();
+        cy.get('button').last().click();
       });
     },
     by: (rowFilter: string) => {
       cy.get('.pf-c-toolbar__content-section').within(() => {
         cy.byLegacyTestID('filter-dropdown-toggle')
           .find('button')
+          .as('filterDropdownToggleButton')
           .click();
         /* PF Filter dropdown menu items are:
            <li id="cluster">
@@ -67,6 +61,7 @@ export const listPage = {
          */
         cy.get(`#${rowFilter}`).click(); // clicking on the <li /> works!
         cy.url().should('include', '?rowFilter');
+        cy.get('@filterDropdownToggleButton').click();
       });
     },
   },
@@ -81,11 +76,7 @@ export const listPage = {
       cy.get(`[data-test-rows="resource-row"`).should('have.length.within', min, max);
     },
     clickFirstLinkInFirstRow: () => {
-      cy.get(`[data-test-rows="resource-row"]`)
-        .first()
-        .find('a')
-        .first()
-        .click({ force: true }); // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
+      cy.get(`[data-test-rows="resource-row"]`).first().find('a').first().click({ force: true }); // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
     },
     clickKebabAction: (resourceName: string, actionName: string) => {
       cy.get(`[data-test-rows="resource-row"]`)

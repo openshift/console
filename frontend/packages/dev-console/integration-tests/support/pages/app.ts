@@ -15,9 +15,7 @@ import {
 
 export const app = {
   waitForDocumentLoad: () => {
-    cy.document()
-      .its('readyState')
-      .should('eq', 'complete');
+    cy.document().its('readyState').should('eq', 'complete');
   },
   waitForLoad: (timeout: number = 160000, skipInline = false) => {
     // observe dashboard contains lots of loaders that only disappear when scrolled into view
@@ -25,7 +23,7 @@ export const app = {
     cy.url().then((url) => {
       if (url.includes('/dev-monitoring/') || skipInline) {
         cy.get('body').then((body) => {
-          body.find('.co-m-loader').each(function() {
+          body.find('.co-m-loader').each(function () {
             if (!this.className.includes('co-m-loader--inline')) {
               cy.wrap(this).should('not.exist');
             }
@@ -67,9 +65,7 @@ export const perspective = {
       if ($body.find('[aria-label="Close drawer panel"]').length) {
         if ($body.find('[data-test="Next button"]').length) {
           cy.get('[aria-label="Close drawer panel"]').click();
-          cy.get('button')
-            .contains('Leave')
-            .click();
+          cy.get('button').contains('Leave').click();
         } else {
           cy.get('[aria-label="Close drawer panel"]').click();
         }
@@ -151,9 +147,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     }
     case devNavigationMenu.ConfigMaps: {
       perspective.switchTo(switchPerspective.Developer);
-      cy.byTestID('draggable-pinned-resource-item')
-        .contains('ConfigMaps')
-        .click();
+      cy.byTestID('draggable-pinned-resource-item').contains('ConfigMaps').click();
       detailsPage.titleShouldContain(pageTitle.ConfigMaps);
       cy.testA11y('Config maps Page in dev perspective');
       break;
@@ -173,27 +167,19 @@ export const navigateTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Routes: {
       cy.get('body').then(($body) => {
         if ($body.text().includes('Routes')) {
-          cy.byTestID('draggable-pinned-resource-item')
-            .contains('Routes')
-            .click();
+          cy.byTestID('draggable-pinned-resource-item').contains('Routes').click();
         } else {
           cy.get(devNavigationMenuPO.search).click();
           cy.get('[aria-label="Options menu"]').click();
-          cy.get('[placeholder="Select Resource"]')
-            .should('be.visible')
-            .type('route');
+          cy.get('[placeholder="Select Resource"]').should('be.visible').type('route');
           cy.get('[data-filter-text="RTRoute"]').then(($el) => {
             if ($el.text().includes('route.openshift.io/v1')) {
-              cy.wrap($el)
-                .contains('route.openshift.io/v1')
-                .click();
+              cy.wrap($el).contains('route.openshift.io/v1').click();
             } else {
               cy.wrap($el).click();
             }
           });
-          cy.get('.co-search-group__pin-toggle')
-            .should('be.visible')
-            .click();
+          cy.get('.co-search-group__pin-toggle').should('be.visible').click();
           cy.byTestID('draggable-pinned-resource-item')
             .contains('Routes')
             .should('be.visible')
@@ -207,19 +193,13 @@ export const navigateTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Deployments: {
       cy.get('body').then(($body) => {
         if ($body.text().includes('Deployments')) {
-          cy.byTestID('draggable-pinned-resource-item')
-            .contains('Deployments')
-            .click();
+          cy.byTestID('draggable-pinned-resource-item').contains('Deployments').click();
         } else {
           cy.get(devNavigationMenuPO.search).click();
           cy.get('[aria-label="Options menu"]').click();
-          cy.get('[placeholder="Select Resource"]')
-            .should('be.visible')
-            .type('Deployment');
+          cy.get('[placeholder="Select Resource"]').should('be.visible').type('Deployment');
           cy.get('[data-filter-text="DDeployment"]').click();
-          cy.get('.co-search-group__pin-toggle')
-            .should('be.visible')
-            .click();
+          cy.get('.co-search-group__pin-toggle').should('be.visible').click();
           cy.wait(3000);
           cy.byTestID('draggable-pinned-resource-item')
             .contains('Deployments')
@@ -234,30 +214,21 @@ export const navigateTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Consoles: {
       cy.get('body').then(($body) => {
         if ($body.text().includes('Consoles')) {
-          cy.byTestID('nav')
-            .contains('Consoles')
-            .click();
+          cy.byTestID('nav').contains('Consoles').click();
+          cy.byTestID('cluster').should('be.visible').click();
         } else {
           cy.get(devNavigationMenuPO.search).click();
           cy.get('[aria-label="Options menu"]').click();
-          cy.get('[placeholder="Select Resource"]')
-            .should('be.visible')
-            .type('console');
+          cy.get('[placeholder="Select Resource"]').should('be.visible').type('console');
           cy.get('[data-filter-text="CConsole"]').then(($el) => {
             if ($el.text().includes('operator.openshift.io')) {
-              cy.wrap($el)
-                .contains('operator.openshift.io')
-                .click();
+              cy.wrap($el).contains('operator.openshift.io').click();
             } else {
               cy.wrap($el).click();
             }
           });
-          cy.get('.co-search-group__pin-toggle')
-            .should('be.visible')
-            .click();
-          cy.byTestID('cluster')
-            .should('be.visible')
-            .click();
+          cy.get('.co-search-group__pin-toggle').should('be.visible').click();
+          cy.byTestID('cluster').should('be.visible').click();
         }
       });
       cy.testA11y('cluster Page in dev perspective');
@@ -271,10 +242,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
 
 export const projectNameSpace = {
   clickProjectDropdown: () => {
-    cy.byLegacyTestID('namespace-bar-dropdown')
-      .find('button')
-      .first()
-      .click();
+    cy.byLegacyTestID('namespace-bar-dropdown').find('button').first().click();
   },
   selectCreateProjectOption: () => {
     cy.document().then((doc) => {
@@ -380,26 +348,10 @@ export const projectNameSpace = {
 export const createForm = {
   clickOnFormView: () => cy.get(formPO.configureVia.formView).click(),
   clickOnYAMLView: () => cy.get(formPO.configureVia.yamlView).click(),
-  clickCreate: () =>
-    cy
-      .get(formPO.create)
-      .should('be.enabled')
-      .click(),
-  clickCancel: () =>
-    cy
-      .get(formPO.cancel)
-      .should('be.enabled')
-      .click(),
-  clickSave: () =>
-    cy
-      .get(formPO.save)
-      .should('be.enabled')
-      .click(),
-  clickConfirm: () =>
-    cy
-      .get(formPO.confirm)
-      .should('be.enabled')
-      .click(),
+  clickCreate: () => cy.get(formPO.create).should('be.enabled').click(),
+  clickCancel: () => cy.get(formPO.cancel).should('be.enabled').click(),
+  clickSave: () => cy.get(formPO.save).should('be.enabled').click(),
+  clickConfirm: () => cy.get(formPO.confirm).should('be.enabled').click(),
   sectionTitleShouldContain: (sectionTitle: string) =>
     cy.get(gitPO.sectionTitle).should('have.text', sectionTitle),
 };
@@ -411,11 +363,7 @@ export const yamlEditor = {
   },
 
   clearYAMLEditor: () => {
-    cy.get(yamlPO.yamlEditor)
-      .click()
-      .focused()
-      .type('{ctrl}a')
-      .clear();
+    cy.get(yamlPO.yamlEditor).click().focused().type('{ctrl}a').clear();
   },
 
   setEditorContent: (yamlLocation: string) => {
@@ -431,10 +379,7 @@ export const yamlEditor = {
 
 export const kebabMenu = {
   openKebabMenu: (name: string) => {
-    cy.get('input[data-test-id="item-filter"]')
-      .should('be.visible')
-      .clear()
-      .type(name);
+    cy.get('input[data-test-id="item-filter"]').should('be.visible').clear().type(name);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
     cy.get('div[role="grid"]').should('be.visible');

@@ -4,7 +4,7 @@ import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { SemVer } from 'semver';
-import * as sdkUtils from '@console/dynamic-plugin-sdk';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/useActivePerspective';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory/';
@@ -20,7 +20,7 @@ import {
 } from '../../../test-data/tekon-config-data';
 import { PipelineRunKind } from '../../../types';
 import { getPipelineKebabActions } from '../../../utils/pipeline-actions';
-import * as utils from '../../pipelineruns/triggered-by';
+import * as triggerHooksModule from '../../pipelineruns/triggered-by/hooks';
 import { PipelineMetricsLevel } from '../const';
 import * as hookUtils from '../hooks';
 import { MetricsQueryPrefix } from '../pipeline-metrics/pipeline-metrics-utils';
@@ -29,12 +29,12 @@ import * as configUtils from '../utils/pipeline-config';
 import * as operatorUtils from '../utils/pipeline-operator';
 import * as triggerUtils from '../utils/triggers';
 
-const menuActions = jest.spyOn(utils, 'useMenuActionsWithUserAnnotation');
+const menuActions = jest.spyOn(triggerHooksModule, 'useMenuActionsWithUserAnnotation');
 const breadCrumbs = jest.spyOn(hookUtils, 'usePipelinesBreadcrumbsFor');
 const templateNames = jest.spyOn(triggerUtils, 'usePipelineTriggerTemplateNames');
 const latestPipelineRun = jest.spyOn(hookUtils, 'useLatestPipelineRun');
 const operatorVersion = jest.spyOn(operatorUtils, 'usePipelineOperatorVersion');
-const spyUseAccessReview = jest.spyOn(sdkUtils, 'useAccessReview');
+const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
 const spyPipelineConfig = jest.spyOn(configUtils, 'usePipelineConfig');
 
 const useActivePerspectiveMock = useActivePerspective as jest.Mock;
@@ -171,9 +171,9 @@ describe('PipelineDetailsPage:', () => {
     test('It should contain metrics tab if the user has view permission in the openshift pipelines namespace', async () => {
       const wrapper: ReactWrapper = await renderPipelineDetailsPage();
       const tabs = wrapper.find(DetailsPage).props().pages;
-      const metricsTab = tabs.find((t) => t.name === 'Metrics');
+      const metricsTab = tabs.find((t) => t.nameKey === 'pipelines-plugin~Metrics');
 
-      expect(tabs).toHaveLength(6);
+      expect(tabs).toHaveLength(5);
       expect(metricsTab).toBeDefined();
     });
 
@@ -185,9 +185,9 @@ describe('PipelineDetailsPage:', () => {
       ]);
       const wrapper: ReactWrapper = await renderPipelineDetailsPage();
       const tabs = wrapper.find(DetailsPage).props().pages;
-      const metricsTab = tabs.find((t) => t.name === 'Metrics');
+      const metricsTab = tabs.find((t) => t.nameKey === 'pipelines-plugin~Metrics');
 
-      expect(tabs).toHaveLength(6);
+      expect(tabs).toHaveLength(5);
       expect(metricsTab).toBeDefined();
     });
   });

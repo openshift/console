@@ -4,9 +4,7 @@ export const operatorModal = $('.pf-c-modal-box');
 export const operatorModalBody = $('[data-test-id="operator-modal-box"]');
 export const operatorModalInstallBtn = $('[data-test-id="operator-install-btn"]');
 export const viewInstalledOperator = () =>
-  $('.co-hint-block')
-    .element(by.linkText('View it here.'))
-    .click();
+  $('.co-hint-block').element(by.linkText('View it here.')).click();
 
 export const createSubscriptionFormName = $(
   '.co-clusterserviceversion-logo__name__clusterserviceversion',

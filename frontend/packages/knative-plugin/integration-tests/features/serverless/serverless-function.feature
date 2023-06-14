@@ -23,7 +23,7 @@ Feature: Creation and Visualisation of serverless fuctions
              Then user will see name of the serverless function as KSVC label followed by fx label and name "nodetest"
 
 
-        @regression @to-do
+        @regression @manual
         Scenario: Sidebar of serverless function: SF-01-TC03
             Given user has created serverless function "nodetest"
               And user is at Topology chart page
@@ -32,7 +32,7 @@ Feature: Creation and Visualisation of serverless fuctions
               And user will see Labels as boson.dev/function=true and boson.dev/runtime=node
 
 
-        @regression @to-do
+        @regression @manual
         Scenario: Service details page of serverless function: SF-01-TC04
             Given user has created serverless function "nodetest"
               And user is at Topology chart page

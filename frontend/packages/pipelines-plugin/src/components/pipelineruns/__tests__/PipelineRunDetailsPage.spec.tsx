@@ -8,12 +8,13 @@ import * as hookUtils from '../../pipelines/hooks';
 import TaskRuns from '../detail-page-tabs/TaskRuns';
 import PipelineRunEvents from '../events/PipelineRunEvents';
 import PipelineRunDetailsPage from '../PipelineRunDetailsPage';
-import * as utils from '../triggered-by';
+import * as triggerHooksModule from '../triggered-by/hooks';
 
-const menuActions = jest.spyOn(utils, 'useMenuActionsWithUserAnnotation');
-const breadCrumbs = jest.spyOn(hookUtils, 'usePipelinesBreadcrumbsFor');
+const menuActions = jest.spyOn(triggerHooksModule, 'useMenuActionsWithUserAnnotation');
+const breadCrumbs = jest.spyOn(hookUtils, 'useDevPipelinesBreadcrumbsFor');
 type PipelineRunDetailsPageProps = React.ComponentProps<typeof PipelineRunDetailsPage>;
 const i18nNS = 'public';
+const i18nPipelineNS = 'pipelines-plugin';
 
 describe('PipelineRunDetailsPage:', () => {
   let pipelineRunDetailsPageProps: PipelineRunDetailsPageProps;
@@ -55,7 +56,7 @@ describe('PipelineRunDetailsPage:', () => {
   it('Should contain task runs page', () => {
     const { pages } = wrapper.props();
 
-    const taskRunsPage = pages.find((page) => page.name === 'TaskRuns');
+    const taskRunsPage = pages.find((page) => page.nameKey.includes('TaskRuns'));
     expect(taskRunsPage).toBeDefined();
     expect(taskRunsPage.component).toBe(TaskRuns);
   });
@@ -63,7 +64,7 @@ describe('PipelineRunDetailsPage:', () => {
   it('Should contain Parameters page', () => {
     const { pages } = wrapper.props();
 
-    const parametersPage = pages.find((page) => page.name === 'Parameters');
+    const parametersPage = pages.find((page) => page.nameKey === `${i18nPipelineNS}~Parameters`);
     expect(parametersPage).toBeDefined();
   });
 });

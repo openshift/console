@@ -3,7 +3,7 @@ import { mount, ReactWrapper } from 'enzyme';
 import Spy = jasmine.Spy;
 
 import { PullSecret } from '../../public/components/namespace';
-import * as k8s from '../../public/module/k8s';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { LoadingInline } from '../../public/components/utils';
 import { testNamespace } from '../../__mocks__/k8sResourcesMocks';
 import { ServiceAccountModel } from '../../public/models';
@@ -20,7 +20,7 @@ describe(PullSecret.displayName, () => {
     );
 
   it('renders link to open modal once pull secrets are loaded', (done) => {
-    spyAndExpect(spyOn(k8s, 'k8sGet'))(Promise.resolve({ items: [] }))
+    spyAndExpect(spyOn(k8sResourceModule, 'k8sGet'))(Promise.resolve({ items: [] }))
       .then(([model, name, namespace, options]) => {
         expect(model).toEqual(ServiceAccountModel);
         expect(name).toBe('default');
@@ -38,7 +38,7 @@ describe(PullSecret.displayName, () => {
   });
 
   it('does not render link if still loading', () => {
-    spyOn(k8s, 'k8sGet').and.returnValue(Promise.resolve({ items: [] }));
+    spyOn(k8sResourceModule, 'k8sGet').and.returnValue(Promise.resolve({ items: [] }));
     wrapper = mount(<PullSecret namespace={testNamespace} />);
 
     expect(wrapper.find(LoadingInline).exists()).toBe(true);

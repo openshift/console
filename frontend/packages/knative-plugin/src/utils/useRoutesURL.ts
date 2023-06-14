@@ -23,7 +23,11 @@ export const useRoutesURL = (resource: K8sResourceKind): string => {
         },
   );
 
-  const routes = loaded && !loadError ? allRoutes : [];
+  const routes = React.useMemo(() => (loaded && !loadError ? allRoutes : []), [
+    loaded,
+    loadError,
+    allRoutes,
+  ]);
   const watchedURL = React.useMemo(() => getRoutesURL(resource, routes), [resource, routes]);
 
   const url = annotationURL || watchedURL;

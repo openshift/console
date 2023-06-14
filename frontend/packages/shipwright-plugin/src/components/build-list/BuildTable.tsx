@@ -2,22 +2,30 @@ import * as React from 'react';
 import { sortable, SortByDirection } from '@patternfly/react-table';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import {
   Table,
   TableProps,
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
-import { referenceFor } from '@console/internal/module/k8s';
+import { Kebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import { Build } from '../../types';
+import { BUILDRUN_TO_BUILD_REFERENCE_LABEL } from '../../const';
+import { BuildRunModel } from '../../models';
+import { Build, BuildRun } from '../../types';
+import { isBuildRunNewerThen } from '../../utils';
+import BuildRunDuration from '../buildrun-duration/BuildRunDuration';
+import BuildRunStatus from '../buildrun-status/BuildRunStatus';
 
 const columnClassNames = [
   '', // name
   '', // namespace
-  'pf-m-hidden pf-m-visible-on-xl', // output
-  'pf-m-hidden pf-m-visible-on-lg', // status
+  'pf-m-hidden pf-m-visible-on-lg', // last run
+  'pf-m-hidden pf-m-visible-on-lg', // last run status
+  'pf-m-hidden pf-m-visible-on-lg', // last run time
+  'pf-m-hidden pf-m-visible-on-lg', // last run duration
   Kebab.columnClass,
 ];
 
@@ -40,27 +48,36 @@ export const BuildHeader = () => {
       props: { className: columnClassNames[1] },
     },
     {
-      title: t('shipwright-plugin~Output'),
-      sortField: 'spec.output.image',
-      transforms: [sortable],
+      title: t('shipwright-plugin~Last run'),
       props: { className: columnClassNames[2] },
     },
     {
-      title: t('shipwright-plugin~Status'),
-      sortField: 'status.message',
-      transforms: [sortable],
+      title: t('shipwright-plugin~Last run status'),
       props: { className: columnClassNames[3] },
     },
     {
-      title: '',
+      title: t('shipwright-plugin~Last run time'),
       props: { className: columnClassNames[4] },
+    },
+    {
+      title: t('shipwright-plugin~Last run duration'),
+      props: { className: columnClassNames[5] },
+    },
+    {
+      title: '',
+      props: { className: columnClassNames[6] },
     },
   ];
 };
 
-export const BuildRow: React.FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
+export const BuildRow: React.FC<RowFunctionArgs<Build, CustomData>> = ({
+  obj: build,
+  customData,
+}) => {
   const kindReference = referenceFor(build);
   const context = { [kindReference]: build };
+  const buildRunKindReference = referenceForModel(BuildRunModel);
+  const latestBuildRun = customData.buildRuns.latestByBuildName[build.metadata.name];
 
   return (
     <>
@@ -74,17 +91,74 @@ export const BuildRow: React.FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
       <TableData className={columnClassNames[1]} columnID="namespace">
         <ResourceLink kind="Namespace" name={build.metadata.namespace} />
       </TableData>
-      <TableData className={columnClassNames[2]}>{build.spec?.output?.image}</TableData>
-      <TableData className={columnClassNames[3]}>{build.status?.message}</TableData>
+      <TableData className={columnClassNames[2]}>
+        {latestBuildRun ? (
+          <ResourceLink
+            kind={buildRunKindReference}
+            name={latestBuildRun.metadata?.name}
+            namespace={latestBuildRun.metadata?.namespace}
+          />
+        ) : (
+          '-'
+        )}
+      </TableData>
+      <TableData className={columnClassNames[3]}>
+        {latestBuildRun ? <BuildRunStatus buildRun={latestBuildRun} /> : '-'}
+      </TableData>
       <TableData className={columnClassNames[4]}>
+        {latestBuildRun ? (
+          <Timestamp timestamp={latestBuildRun.metadata?.creationTimestamp} />
+        ) : (
+          '-'
+        )}
+      </TableData>
+      <TableData className={columnClassNames[5]}>
+        {latestBuildRun ? <BuildRunDuration buildRun={latestBuildRun} /> : '-'}
+      </TableData>
+      <TableData className={columnClassNames[6]}>
         <LazyActionMenu context={context} />
       </TableData>
     </>
   );
 };
 
-export const BuildTable: React.FC<TableProps> = (props) => {
+type CustomData = {
+  buildRuns: {
+    latestByBuildName: Record<string, BuildRun>;
+    loaded: boolean;
+    error: Error | undefined;
+  };
+};
+
+type BuildTableProps = TableProps & {
+  namespace: string;
+};
+
+export const BuildTable: React.FC<BuildTableProps> = (props) => {
   const { t } = useTranslation();
+  const buildRunModel = referenceForModel(BuildRunModel);
+  const [buildRuns, buildRunsLoaded, buildRunsLoadError] = useK8sWatchResource<BuildRun[]>({
+    kind: buildRunModel,
+    namespace: props.namespace,
+    isList: true,
+  });
+
+  const customData = React.useMemo<CustomData>(
+    () => ({
+      buildRuns: {
+        latestByBuildName: buildRuns.reduce<Record<string, BuildRun>>((acc, buildRun) => {
+          const name = buildRun.metadata.labels?.[BUILDRUN_TO_BUILD_REFERENCE_LABEL];
+          if (!acc[name] || isBuildRunNewerThen(buildRun, acc[name])) {
+            acc[name] = buildRun;
+          }
+          return acc;
+        }, {}),
+        loaded: buildRunsLoaded,
+        error: buildRunsLoadError,
+      },
+    }),
+    [buildRuns, buildRunsLoaded, buildRunsLoadError],
+  );
 
   return (
     <Table
@@ -94,6 +168,7 @@ export const BuildTable: React.FC<TableProps> = (props) => {
       Row={BuildRow}
       defaultSortField="metadata.name"
       defaultSortOrder={SortByDirection.asc}
+      customData={customData}
       virtualize
     />
   );

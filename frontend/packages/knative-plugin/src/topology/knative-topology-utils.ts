@@ -612,7 +612,7 @@ export const createPubSubDataItems = (
     (acc, subs) => {
       const subUid = _.get(subs, 'metadata.uid');
       const subscribers = spec?.subscribable?.subscribers || spec?.subscribers;
-      const isSubscribableData = _.findIndex(subscribers, function({ uid }) {
+      const isSubscribableData = _.findIndex(subscribers, function ({ uid }) {
         return uid === subUid;
       });
       if (isSubscribableData !== -1) {

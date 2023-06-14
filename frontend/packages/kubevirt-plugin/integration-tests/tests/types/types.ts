@@ -75,6 +75,7 @@ export type KubevirtResourceConfig = {
   bootableDevice?: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export type vmwareConfig = {
   instance?: string;
   hostname?: string;
@@ -83,6 +84,7 @@ export type vmwareConfig = {
   saveInstance?: boolean;
 };
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export type rhvConfig = {
   instance?: string;
   apiUrl?: string;

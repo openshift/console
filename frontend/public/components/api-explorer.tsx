@@ -18,8 +18,11 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
-import { ALL_NAMESPACES_KEY, FLAGS, APIError } from '@console/shared';
-import { PageHeading, useAccessReview } from '@console/internal/components/utils';
+import { ALL_NAMESPACES_KEY, FLAGS, APIError, getTitleForNodeKind } from '@console/shared';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { Page, PageHeading, useAccessReview } from '@console/internal/components/utils';
+
 import { connectToModel } from '../kinds';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
 import {
@@ -39,7 +42,7 @@ import { RootState } from '../redux';
 import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';
-import { fuzzyCaseInsensitive } from './factory/table-filters';
+import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
 import { getResourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import {
@@ -190,6 +193,8 @@ const APIResourcesList = compose(
     },
     { [ALL]: t('public~All groups'), '': t('public~No group') },
   );
+  const [isExactSearch] = useExactSearch();
+  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const groupSpacer = new Set<string>();
   if (sortedGroups.length) {
@@ -244,7 +249,7 @@ const APIResourcesList = compose(
     }
 
     if (textFilter) {
-      return fuzzyCaseInsensitive(textFilter, kind);
+      return matchFn(textFilter, kind);
     }
 
     return true;
@@ -501,9 +506,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
       resource: plural,
       verb,
     };
-    k8sCreate(accessReviewModel, req, { ns: namespace })
-      .then(setAccessResponse)
-      .catch(setError);
+    k8sCreate(accessReviewModel, req, { ns: namespace }).then(setAccessResponse).catch(setError);
   }, [apiGroup, apiVersion, plural, namespace, verb]);
 
   if (error) {
@@ -728,15 +731,17 @@ const APIResourcePage_ = ({
     },
   ];
 
-  const pages = [
+  const pages: Page[] = [
     {
       href: '',
-      name: t('public~Details'),
+      // t('public~Details')
+      nameKey: 'public~Details',
       component: APIResourceDetails,
     },
     {
       href: 'schema',
-      name: t('public~Schema'),
+      // t('public~Schema')
+      nameKey: 'public~Schema',
       component: APIResourceSchema,
     },
   ];
@@ -744,7 +749,8 @@ const APIResourcePage_ = ({
   if (_.isEmpty(kindObj.verbs) || kindObj.verbs.includes('list')) {
     pages.push({
       href: 'instances',
-      name: t('public~Instances'),
+      // t('public~Instances')
+      nameKey: 'public~Instances',
       component: APIResourceInstances,
     });
   }
@@ -752,23 +758,33 @@ const APIResourcePage_ = ({
   if (flags[FLAGS.OPENSHIFT] && canCreateResourceAccessReview) {
     pages.push({
       href: 'access',
-      name: t('public~Access review'),
+      // t('public~Access review')
+      nameKey: 'public~Access review',
       component: APIResourceAccessReview,
     });
   }
 
+  const titleProviderValues = {
+    telemetryPrefix: kindObj?.kind,
+    titlePrefix: getTitleForNodeKind(kindObj?.kind),
+  };
+
   return (
     <>
-      <ScrollToTopOnMount />
-      <Helmet>
-        <title>{kindObj.label}</title>
-      </Helmet>
-      <PageHeading
-        title={<div data-test-id="api-explorer-resource-title">{kindObj.label}</div>}
-        breadcrumbs={breadcrumbs}
-        detail
-      />
-      <HorizontalNav pages={pages} match={match} customData={{ kindObj, namespace }} noStatusBox />
+      <PageTitleContext.Provider value={titleProviderValues}>
+        <ScrollToTopOnMount />
+        <PageHeading
+          title={<div data-test-id="api-explorer-resource-title">{kindObj.label}</div>}
+          breadcrumbs={breadcrumbs}
+          detail
+        />
+        <HorizontalNav
+          pages={pages}
+          match={match}
+          customData={{ kindObj, namespace }}
+          noStatusBox
+        />
+      </PageTitleContext.Provider>
     </>
   );
 };

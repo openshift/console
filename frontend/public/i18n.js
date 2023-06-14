@@ -12,6 +12,12 @@ import { dateTimeFormatter, fromNow } from './components/utils/datetime';
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 
+let resolvedLoading;
+
+export const loading = new Promise((resolve) => {
+  resolvedLoading = resolve;
+});
+
 export const init = () => {
   i18n
     .use(new Pseudo({ enabled: pseudolocalizationEnabled, wrapped: true }))
@@ -28,7 +34,7 @@ export const init = () => {
     .init({
       backend: {
         loadPath: '/locales/resource.json?lng={{lng}}&ns={{ns}}',
-        parse: function(data, lng, ns) {
+        parse: function (data, lng, ns) {
           const parsed = JSON.parse(data);
           return ns?.startsWith('plugin__') ? transformNamespace(lng, parsed) : parsed;
         },
@@ -62,6 +68,7 @@ export const init = () => {
         'service-binding-plugin',
         'topology',
         'vsphere-plugin',
+        'webterminal-plugin',
         ...pluginStore.getI18nNamespaces(),
       ],
       defaultNS: 'public',
@@ -69,7 +76,7 @@ export const init = () => {
       keySeparator: false,
       postProcess: ['pseudo'],
       interpolation: {
-        format: function(value, format, lng, options) {
+        format: function (value, format, lng, options) {
           if (format === 'number') {
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Browser_compatibility
             return new Intl.NumberFormat(lng).format(value);
@@ -90,12 +97,26 @@ export const init = () => {
         transSupportBasicHtmlNodes: true, // allow <br/> and simple html elements in translations
       },
       saveMissing: true,
-      missingKeyHandler: function(lng, ns, key) {
+      missingKeyHandler: function (lng, ns, key) {
         window.windowError = `Missing i18n key "${key}" in namespace "${ns}" and language "${lng}."`;
         // eslint-disable-next-line no-console
         console.error(window.windowError);
       },
+    })
+    // Update loading promise and pass values and errors to the caller
+    .then((value) => {
+      resolvedLoading(true);
+      return value;
+    })
+    .catch((error) => {
+      resolvedLoading(false);
+      throw error;
     });
 };
+
+if (process.env.NODE_ENV !== 'production') {
+  // Expose i18next for debugging
+  window.i18n = i18n;
+}
 
 export default i18n;

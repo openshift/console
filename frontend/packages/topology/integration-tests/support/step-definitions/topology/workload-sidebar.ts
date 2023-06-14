@@ -79,17 +79,11 @@ When('user deletes the existing annotation for route', () => {
 
 When('user enters key as {string}', (annotationKey: string) => {
   cy.get(topologyPO.graph.addNewAnnotations).click();
-  cy.get(topologyPO.deploymentStrategy.envName)
-    .last()
-    .clear()
-    .type(annotationKey);
+  cy.get(topologyPO.deploymentStrategy.envName).last().clear().type(annotationKey);
 });
 
 When('user enters value as {string}', (annotationValue: string) => {
-  cy.get(topologyPO.deploymentStrategy.envValue)
-    .last()
-    .clear()
-    .type(annotationValue);
+  cy.get(topologyPO.deploymentStrategy.envValue).last().clear().type(annotationValue);
   cy.get(topologyPO.graph.deleteWorkload).click();
 });
 

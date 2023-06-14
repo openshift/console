@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
@@ -21,9 +22,10 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
   const { t } = useTranslation();
   const { loaded: modelsLoaded, eventSourceModels } = useEventSourceModels();
   const isKameletEnabled = useFlag(FLAG_CAMEL_KAMELETS);
-  const sourcesModel = isKameletEnabled
-    ? [...eventSourceModels, CamelKameletBindingModel]
-    : eventSourceModels;
+  const sourcesModel = React.useMemo(
+    () => (isKameletEnabled ? [...eventSourceModels, CamelKameletBindingModel] : eventSourceModels),
+    [isKameletEnabled, eventSourceModels],
+  );
   const flatten = (resources) =>
     modelsLoaded
       ? sourcesModel.flatMap((model) => resources[referenceForModel(model)]?.data ?? [])
@@ -65,14 +67,19 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
     [t, sourcesModel, getModelId],
   );
   return (
-    <MultiListPage
-      {...props}
-      label={t('knative-plugin~Event Sources')}
-      rowFilters={eventSourceRowFilters}
-      flatten={flatten}
-      resources={resources}
-      ListComponent={EventSourceList}
-    />
+    <>
+      <Helmet>
+        <title>{t('knative-plugin~Event Sources')}</title>
+      </Helmet>
+      <MultiListPage
+        {...props}
+        label={t('knative-plugin~Event Sources')}
+        rowFilters={eventSourceRowFilters}
+        flatten={flatten}
+        resources={resources}
+        ListComponent={EventSourceList}
+      />
+    </>
   );
 };
 

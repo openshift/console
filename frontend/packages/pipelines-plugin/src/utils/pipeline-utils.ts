@@ -16,11 +16,17 @@ import {
   SecretKind,
   K8sResourceCommon,
   K8sKind,
+  K8sResourceKind,
   PersistentVolumeClaimKind,
 } from '@console/internal/module/k8s';
-import { PIPELINE_SERVICE_ACCOUNT, SecretAnnotationId } from '../components/pipelines/const';
+import {
+  PIPELINE_SERVICE_ACCOUNT,
+  SecretAnnotationId,
+  TektonResourceLabel,
+} from '../components/pipelines/const';
 import { PipelineModalFormWorkspace } from '../components/pipelines/modals/common/types';
 import { getDuration } from '../components/pipelines/pipeline-metrics/pipeline-metrics-utils';
+import { EventListenerKind, TriggerTemplateKind } from '../components/pipelines/resource-types';
 import {
   PipelineRunModel,
   TaskRunModel,
@@ -44,6 +50,7 @@ import {
   PipelineKind,
   TaskRunKind,
   TektonParam,
+  TaskRunStatus,
 } from '../types';
 import { getLatestRun } from './pipeline-augment';
 import {
@@ -117,14 +124,19 @@ export const PipelineResourceListFilterLabels = {
  * @param pipelineRun
  * @param isFinallyTasks
  */
-export const appendPipelineRunStatus = (pipeline, pipelineRun, isFinallyTasks = false) => {
+export const appendPipelineRunStatus = (
+  pipeline,
+  pipelineRun,
+  taskRuns: TaskRunKind[],
+  isFinallyTasks = false,
+) => {
   const tasks = (isFinallyTasks ? pipeline.spec.finally : pipeline.spec.tasks) || [];
 
   return tasks.map((task) => {
     if (!pipelineRun.status) {
       return task;
     }
-    if (!pipelineRun?.status?.taskRuns) {
+    if (!taskRuns || taskRuns.length === 0) {
       if (pipelineRun.spec.status === SucceedConditionReason.PipelineRunCancelled) {
         return _.merge(task, { status: { reason: ComputedStatus.Cancelled } });
       }
@@ -133,8 +145,17 @@ export const appendPipelineRunStatus = (pipeline, pipelineRun, isFinallyTasks = 
       }
       return _.merge(task, { status: { reason: ComputedStatus.Failed } });
     }
+
+    const taskRun = _.find(
+      taskRuns,
+      (tr) => tr.metadata.labels[TektonResourceLabel.pipelineTask] === task.name,
+    );
+    const taskStatus: TaskRunStatus = taskRun?.status;
+
     const mTask = _.merge(task, {
-      status: _.get(_.find(pipelineRun.status.taskRuns, { pipelineTaskName: task.name }), 'status'),
+      status: pipelineRun?.status?.taskRuns
+        ? _.get(_.find(pipelineRun.status.taskRuns, { pipelineTaskName: task.name }), 'status')
+        : taskStatus,
     });
     // append task duration
     if (mTask.status && mTask.status.completionTime && mTask.status.startTime) {
@@ -163,13 +184,14 @@ export const getPipelineTasks = (
     kind: 'PipelineRun',
     spec: {},
   },
+  taskRuns: TaskRunKind[],
 ): PipelineTask[][] => {
   // Each unit in 'out' array is termed as stage | out = [stage1 = [task1], stage2 = [task2,task3], stage3 = [task4]]
   const out = [];
   if (!pipeline.spec?.tasks || _.isEmpty(pipeline.spec.tasks)) {
     return out;
   }
-  const taskList = appendPipelineRunStatus(pipeline, pipelineRun);
+  const taskList = appendPipelineRunStatus(pipeline, pipelineRun, taskRuns);
 
   // Step 1: Push all nodes without any dependencies in different stages
   taskList.forEach((task) => {
@@ -240,8 +262,11 @@ export const getPipelineTasks = (
   return out;
 };
 
-export const getFinallyTasksWithStatus = (pipeline: PipelineKind, pipelineRun: PipelineRunKind) =>
-  appendPipelineRunStatus(pipeline, pipelineRun, true);
+export const getFinallyTasksWithStatus = (
+  pipeline: PipelineKind,
+  pipelineRun: PipelineRunKind,
+  taskRuns: TaskRunKind[],
+) => appendPipelineRunStatus(pipeline, pipelineRun, taskRuns, true);
 
 export const containerToLogSourceStatus = (container: ContainerStatus): string => {
   if (!container) {
@@ -442,4 +467,38 @@ export const getMatchedPVCs = (
       (reference) => reference.name === ownerResourceName && reference.kind === ownerResourceKind,
     );
   });
+};
+
+export const getPipeline = (resource: K8sResourceKind, pipelines: PipelineKind[]): PipelineKind => {
+  const pipeline = pipelines.find((p: PipelineKind) => p.metadata.name === resource.metadata.name);
+  return pipeline;
+};
+
+export const getTriggerTemplates = (
+  pipeline: PipelineKind,
+  triggerTemplates: TriggerTemplateKind[],
+): TriggerTemplateKind[] => {
+  const triggerTemplate = triggerTemplates.filter(
+    (tt: TriggerTemplateKind) =>
+      !!tt.spec.resourcetemplates.find(
+        (rt) => rt.spec.pipelineRef?.name === pipeline.metadata.name,
+      ),
+  );
+  return triggerTemplate;
+};
+
+export const getEventListeners = (
+  triggerTemplates: TriggerTemplateKind[],
+  eventListeners: EventListenerKind[],
+): EventListenerKind[] => {
+  const resourceEventListeners = eventListeners.reduce((acc, et: EventListenerKind) => {
+    const triggers = et.spec.triggers.filter((t) =>
+      triggerTemplates.find((tt) => tt?.metadata.name === t?.template?.ref),
+    );
+    if (triggers.length > 0) {
+      acc.push(et);
+    }
+    return acc;
+  }, []);
+  return resourceEventListeners;
 };

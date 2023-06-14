@@ -451,7 +451,7 @@
   "Storage Efficiency": "스토리지 효율성",
   "OpenShift Container Storage Overview": "OpenShift Container Storage 개요",
   "Block and File": "블록 및 파일",
-  "Object": "개체",
+  "Object_0": "개체",
   "BlockPools": "블록 풀",
   "Storage Classes": "스토리지 클래스",
   "Pods": "Pod",

@@ -15,7 +15,6 @@ import {
   testSubscriptions,
   testClusterServiceVersion,
   testPackageManifest,
-  testCatalogSource,
 } from '../../mocks';
 import {
   SubscriptionModel,
@@ -23,7 +22,6 @@ import {
   PackageManifestModel,
   OperatorGroupModel,
   InstallPlanModel,
-  CatalogSourceModel,
 } from '../models';
 import { SubscriptionKind, SubscriptionState } from '../types';
 import {
@@ -63,27 +61,15 @@ describe('SubscriptionTableRow', () => {
   });
 
   it('renders column for subscription name', () => {
-    expect(
-      wrapper
-        .childAt(0)
-        .shallow()
-        .find(ResourceLink)
-        .props().name,
-    ).toEqual(subscription.metadata.name);
-    expect(
-      wrapper
-        .childAt(0)
-        .shallow()
-        .find(ResourceLink)
-        .props().namespace,
-    ).toEqual(subscription.metadata.namespace);
-    expect(
-      wrapper
-        .childAt(0)
-        .shallow()
-        .find(ResourceLink)
-        .props().kind,
-    ).toEqual(referenceForModel(SubscriptionModel));
+    expect(wrapper.childAt(0).shallow().find(ResourceLink).props().name).toEqual(
+      subscription.metadata.name,
+    );
+    expect(wrapper.childAt(0).shallow().find(ResourceLink).props().namespace).toEqual(
+      subscription.metadata.namespace,
+    );
+    expect(wrapper.childAt(0).shallow().find(ResourceLink).props().kind).toEqual(
+      referenceForModel(SubscriptionModel),
+    );
   });
 
   it('renders actions kebab', () => {
@@ -118,87 +104,45 @@ describe('SubscriptionTableRow', () => {
   });
 
   it('renders column for namespace name', () => {
-    expect(
-      wrapper
-        .childAt(1)
-        .shallow()
-        .find(ResourceLink)
-        .props().name,
-    ).toEqual(subscription.metadata.namespace);
-    expect(
-      wrapper
-        .childAt(1)
-        .shallow()
-        .find(ResourceLink)
-        .props().kind,
-    ).toEqual('Namespace');
+    expect(wrapper.childAt(1).shallow().find(ResourceLink).props().name).toEqual(
+      subscription.metadata.namespace,
+    );
+    expect(wrapper.childAt(1).shallow().find(ResourceLink).props().kind).toEqual('Namespace');
   });
 
   it('renders column for subscription state when update available', () => {
     subscription.status.state = SubscriptionState.SubscriptionStateUpgradeAvailable;
     wrapper = updateWrapper();
 
-    expect(
-      wrapper
-        .childAt(2)
-        .find(SubscriptionStatus)
-        .shallow()
-        .text(),
-    ).toContain('Upgrade available');
+    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain(
+      'Upgrade available',
+    );
   });
 
   it('renders column for subscription state when unknown state', () => {
-    expect(
-      wrapper
-        .childAt(2)
-        .find(SubscriptionStatus)
-        .shallow()
-        .text(),
-    ).toEqual('Unknown failure');
+    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toEqual('Unknown failure');
   });
 
   it('renders column for subscription state when update in progress', () => {
     subscription.status.state = SubscriptionState.SubscriptionStateUpgradePending;
     wrapper = updateWrapper();
 
-    expect(
-      wrapper
-        .childAt(2)
-        .find(SubscriptionStatus)
-        .shallow()
-        .text(),
-    ).toContain('Upgrading');
+    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain('Upgrading');
   });
 
   it('renders column for subscription state when no updates available', () => {
     subscription.status.state = SubscriptionState.SubscriptionStateAtLatest;
     wrapper = updateWrapper();
 
-    expect(
-      wrapper
-        .childAt(2)
-        .find(SubscriptionStatus)
-        .shallow()
-        .text(),
-    ).toContain('Up to date');
+    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain('Up to date');
   });
 
   it('renders column for current subscription channel', () => {
-    expect(
-      wrapper
-        .childAt(3)
-        .shallow()
-        .text(),
-    ).toEqual(subscription.spec.channel);
+    expect(wrapper.childAt(3).shallow().text()).toEqual(subscription.spec.channel);
   });
 
   it('renders column for approval strategy', () => {
-    expect(
-      wrapper
-        .childAt(4)
-        .shallow()
-        .text(),
-    ).toEqual('Automatic');
+    expect(wrapper.childAt(4).shallow().text()).toEqual('Automatic');
   });
 });
 
@@ -271,7 +215,7 @@ describe('SubscriptionUpdates', () => {
   beforeEach(() => {
     wrapper = shallow(
       <SubscriptionUpdates
-        catalogSource={testCatalogSource}
+        catalogHealth={{ healthy: true }}
         obj={testSubscription}
         pkg={testPackageManifest}
         subscriptions={testSubscriptions}
@@ -324,7 +268,6 @@ describe('SubscriptionDetails', () => {
       <SubscriptionDetails
         obj={testSubscription}
         packageManifests={[testPackageManifest]}
-        catalogSources={[testCatalogSource]}
         subscriptions={testSubscriptions}
       />,
     );
@@ -419,11 +362,6 @@ describe('SubscriptionDetailsPage', () => {
         isList: true,
         namespace: 'default',
         prop: 'clusterServiceVersions',
-      },
-      {
-        kind: referenceForModel(CatalogSourceModel),
-        isList: true,
-        prop: 'catalogSources',
       },
       {
         kind: referenceForModel(SubscriptionModel),

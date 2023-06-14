@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { ChartVoronoiContainer } from '@patternfly/react-charts';
+import { ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts';
 import { Grid, GridItem } from '@patternfly/react-core';
+import { global_Color_200 as grayColor } from '@patternfly/react-tokens/dist/js/global_Color_200';
+import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import Measure from 'react-measure';
@@ -17,6 +19,12 @@ import {
 } from './pipeline-metrics-utils';
 
 import './pipeline-chart.scss';
+
+const statusColor = {
+  cancelled: grayColor.value,
+  failed: dangerColor.value,
+  success: ChartThemeColor.green,
+};
 
 const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
   pipeline,
@@ -39,7 +47,7 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
     queryPrefix,
     metricsLevel,
   });
-  const pipelineSuccessData = runData?.data?.result ?? [];
+  const pipelineSuccessData = React.useMemo(() => runData?.data?.result ?? [], [runData]);
 
   React.useEffect(() => {
     if (!loaded && onInitialLoad) {
@@ -76,6 +84,7 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
       sortOrder,
       y: parseFloat(percentage),
       name: `${obj.x}: ${percentage}%`,
+      fill: statusColor[obj.x as string],
     };
   });
   let successTimeSeriesObj = finalArray.reduce((acc, obj) => {
@@ -101,7 +110,7 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
       },
     };
   }
-  const successValue = _.find(finalArray, { x: 'success' })?.['count'] ?? 0;
+  const successValue = _.find(finalArray, { x: 'success' })?.count ?? 0;
   const successData = _.sortBy(finalArray, 'sortOrder');
   const OVERLAP = 20;
   return (

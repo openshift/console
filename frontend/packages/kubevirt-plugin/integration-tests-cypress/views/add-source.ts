@@ -16,9 +16,7 @@ type DiskSourceOpts = {
 export const addSource = {
   addBootSource: (provisionSource: ProvisionSource, opts?: DiskSourceOpts, provider?: string) => {
     cy.get('#image-source-type-dropdown').click();
-    cy.get('.pf-c-select__menu')
-      .contains(provisionSource.getDescription())
-      .click();
+    cy.get('.pf-c-select__menu').contains(provisionSource.getDescription()).click();
     const sourceInput = provisionSourceInputs[provisionSource.getValue()];
     if (sourceInput) {
       cy.get(sourceInput).type(provisionSource.getSource());
@@ -34,22 +32,13 @@ export const addSource = {
       cy.dropFile(Cypress.env('UPLOAD_IMG'), 'cirros', '.pf-c-file-upload');
     }
     if (provisionSource !== ProvisionSource.CLONE_PVC) {
-      cy.get('#request-size-input')
-        .clear()
-        .type('5');
+      cy.get('#request-size-input').clear().type('5');
     }
     cy.get('#form-ds-provider-input').type(provider || TEST_PROVIDER);
     if (Cypress.env('STORAGE_CLASS')) {
-      cy.byTestID('advanced-section').within(() =>
-        cy
-          .get('button')
-          .contains('Advanced')
-          .click(),
-      );
+      cy.byTestID('advanced-section').within(() => cy.get('button').contains('Advanced').click());
       cy.get(storageClass.dropdown).click();
-      cy.get(dropDownItemLink)
-        .contains(Cypress.env('STORAGE_CLASS'))
-        .click();
+      cy.get(dropDownItemLink).contains(Cypress.env('STORAGE_CLASS')).click();
       cy.contains('Access mode').should('exist');
     }
     cy.get('#confirm-action').should('not.be.disabled');

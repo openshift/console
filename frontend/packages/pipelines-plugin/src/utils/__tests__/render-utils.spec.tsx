@@ -6,11 +6,11 @@ import { handleURLs, GROUP_MATCH_REGEXP } from '../render-utils';
 describe('handleURLs', () => {
   it('should return the same value if it is not a string', () => {
     // We will only likely get strings, but it shouldn't break/NPE if they are not
-    expect(handleURLs(null)).toBe(null);
+    expect(handleURLs(null)).toBe('null');
     expect(handleURLs(undefined)).toBe(undefined);
-    expect(handleURLs(true as any)).toBe(true);
+    expect(handleURLs(true as any)).toBe('true');
     const v = {};
-    expect(handleURLs(v as any)).toBe(v);
+    expect(handleURLs(v as any)).toBe('{}');
   });
 
   it('should not do anything if there are no URLs in the string', () => {
@@ -50,7 +50,7 @@ describe('handleURLs', () => {
   });
 
   describe('Test edge-case URL Examples', () => {
-    const enzymeExternalLink = '< />'; // how enzyme represents <ExternalLink /> in .text() format
+    const enzymeExternalLink = '<ExternalLink />'; // how enzyme represents <ExternalLink /> in .text() format
 
     it('should create multiple ExternalLinks and not lose the interim prefix/suffix values', () => {
       const data =

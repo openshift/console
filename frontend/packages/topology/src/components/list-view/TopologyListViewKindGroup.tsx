@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { GraphElement, isNode, Node, observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { labelKeyForNodeKind } from './list-view-utils';
+import { getTitleForNodeKind } from '@console/shared';
 import ListElementWrapper from './ListElementWrapper';
 
 interface TopologyListViewKindGroupProps {
@@ -28,7 +28,7 @@ const TopologyListViewKindGroup: React.FC<TopologyListViewKindGroupProps> = ({
   onSelect,
 }) => {
   const { t } = useTranslation();
-  const resourceLabel = t(labelKeyForNodeKind(kind));
+  const resourceLabel = getTitleForNodeKind(kind);
 
   const childNodes = childElements.filter((n) => isNode(n)) as Node[];
   childNodes.sort((a, b) => a.getLabel().localeCompare(b.getLabel()));

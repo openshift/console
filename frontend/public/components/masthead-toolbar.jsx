@@ -28,9 +28,9 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
-import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
-import CloudShellMastheadAction from '@console/app/src/components/cloud-shell/CloudShellMastheadAction';
-import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
+import CloudShellMastheadButton from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
+import CloudShellMastheadAction from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
+import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled'; // TODO remove multicluster
 import { getUser } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
 import { connectToFlags } from '../reducers/connectToFlags';
@@ -47,6 +47,8 @@ import { ConsoleLinkModel } from '../models';
 import { withTelemetry, withQuickStartContext, withRequestTokenURL } from '@console/shared/src/hoc';
 import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
 import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
+import { FeedbackModal } from '@patternfly/react-user-feedback';
+import { useFeedbackLocal } from './feedback-local';
 
 const defaultHelpLinks = [
   {
@@ -65,13 +67,28 @@ const defaultHelpLinks = [
 
 const MultiClusterToolbarGroup = () => {
   const showMultiClusterToolbarGroup =
-    usePerspectiveExtension(ACM_PERSPECTIVE_ID) || isMultiClusterEnabled();
+    usePerspectiveExtension(ACM_PERSPECTIVE_ID) || isMultiClusterEnabled(); // TODO remove multicluster
+
   return (
     showMultiClusterToolbarGroup && (
       <ToolbarGroup spacer={{ default: 'spacerNone' }}>
         <ClusterMenu />
       </ToolbarGroup>
     )
+  );
+};
+
+const FeedbackModalLocalized = ({ isOpen, onClose, reportBugLink }) => {
+  const feedbackLocales = useFeedbackLocal(reportBugLink);
+  return (
+    <FeedbackModal
+      onShareFeedback="https://console.redhat.com/self-managed-feedback-form?source=openshift"
+      onOpenSupportCase={reportBugLink.href}
+      feedbackLocale={feedbackLocales}
+      onJoinMailingList="https://console.redhat.com/self-managed-research-form?source=openshift"
+      isOpen={isOpen}
+      onClose={onClose}
+    />
   );
 };
 
@@ -101,6 +118,8 @@ class MastheadToolbarContents_ extends React.Component {
       username: null,
       isKubeAdmin: false,
       showAboutModal: false,
+      isFeedbackModalOpen: false,
+      reportBugLink: null,
     };
 
     this._getStatuspageData = this._getStatuspageData.bind(this);
@@ -120,6 +139,7 @@ class MastheadToolbarContents_ extends React.Component {
     this._onHelpDropdownSelect = this._onHelpDropdownSelect.bind(this);
     this._onHelpDropdownToggle = this._onHelpDropdownToggle.bind(this);
     this._onAboutModal = this._onAboutModal.bind(this);
+    this._onFeedbackModal = this._onFeedbackModal.bind(this);
     this._closeAboutModal = this._closeAboutModal.bind(this);
     this._resetInactivityTimeout = this._resetInactivityTimeout.bind(this);
     this.userInactivityTimeout = null;
@@ -159,6 +179,7 @@ class MastheadToolbarContents_ extends React.Component {
     const { flags, user } = this.props;
     clearTimeout(this.userInactivityTimeout);
     this.userInactivityTimeout = setTimeout(() => {
+      // TODO remove multicluster
       if (isMultiClusterEnabled()) {
         authSvc.logoutMulticluster();
       } else if (flags[FLAGS.OPENSHIFT]) {
@@ -240,6 +261,9 @@ class MastheadToolbarContents_ extends React.Component {
     });
   }
 
+  _onFeedbackModal(bugLink) {
+    this.setState({ isFeedbackModalOpen: true, reportBugLink: bugLink });
+  }
   _onAboutModal(e) {
     e.preventDefault();
     this.setState({ showAboutModal: true });
@@ -375,6 +399,7 @@ class MastheadToolbarContents_ extends React.Component {
             fireTelemetryEvent('Documentation Clicked');
           },
         },
+        // TODO remove multicluster
         ...(isMultiClusterEnabled()
           ? [
               {
@@ -411,9 +436,12 @@ class MastheadToolbarContents_ extends React.Component {
         ...(reportBugLink
           ? [
               {
-                label: reportBugLink.label,
-                externalLink: true,
-                href: reportBugLink.href,
+                label: t('public~Share Feedback'),
+                component: 'button',
+                callback: (e) => {
+                  e.preventDefault();
+                  this._onFeedbackModal(reportBugLink);
+                },
               },
             ]
           : []),
@@ -513,7 +541,7 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _renderMenu(mobile) {
-    const { clusterTokenURL, flags, consoleLinks, t } = this.props;
+    const { requestTokenURL, flags, consoleLinks, t } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
     const additionalUserActions = this._getAdditionalActions(
       this._getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
@@ -541,6 +569,7 @@ class MastheadToolbarContents_ extends React.Component {
     if (flags[FLAGS.AUTH_ENABLED]) {
       const logout = (e) => {
         e.preventDefault();
+        // TODO remove multicluster
         if (isMultiClusterEnabled()) {
           authSvc.logoutMulticluster();
         } else if (flags[FLAGS.OPENSHIFT]) {
@@ -550,10 +579,10 @@ class MastheadToolbarContents_ extends React.Component {
         }
       };
 
-      if (clusterTokenURL) {
+      if (requestTokenURL) {
         userActions.unshift({
           label: t('public~Copy login command'),
-          href: clusterTokenURL,
+          href: requestTokenURL,
           externalLink: true,
         });
       }
@@ -748,6 +777,13 @@ class MastheadToolbarContents_ extends React.Component {
           </ToolbarContent>
         </Toolbar>
         <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />
+        {this.state.reportBugLink ? (
+          <FeedbackModalLocalized
+            reportBugLink={this.state.reportBugLink}
+            isOpen={this.state.isFeedbackModalOpen}
+            onClose={() => this.setState({ isFeedbackModalOpen: false })}
+          />
+        ) : null}
       </>
     );
   }

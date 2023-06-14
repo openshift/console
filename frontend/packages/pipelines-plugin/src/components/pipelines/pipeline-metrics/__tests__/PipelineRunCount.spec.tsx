@@ -57,11 +57,6 @@ describe('Pipeline Run Count Graph', () => {
     const PipelineRunCountWrapper = shallow(<PipelineRunCount {...PipelineRunCountProps} />);
     expect(PipelineRunCountWrapper.find(LoadingInline).exists()).toBe(false);
     expect(PipelineRunCountWrapper.find(GraphEmpty).exists()).toBe(false);
-    expect(
-      PipelineRunCountWrapper.dive()
-        .dive()
-        .find(TimeSeriesChart)
-        .exists(),
-    ).toBe(true);
+    expect(PipelineRunCountWrapper.dive().dive().find(TimeSeriesChart).exists()).toBe(true);
   });
 });

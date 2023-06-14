@@ -2,6 +2,7 @@ import * as React from 'react';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import * as semver from 'semver';
+import { ExternalLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
@@ -45,6 +46,27 @@ const PerspectiveSwitcherTourText: React.FC = () => {
 };
 
 export const perspectiveSwitcherTourText = <PerspectiveSwitcherTourText />;
+
+const WebTerminalGuidedTourText: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <p>
+        {t(
+          'devconsole~Use command line tools directly from the Console. CLIs are pre-installed and fully authenticated when you need them.',
+        )}
+      </p>
+      <p>
+        <ExternalLink
+          href="https://developers.redhat.com/products/odo/overview"
+          text={t('devconsole~Access odo CLI')}
+        />
+      </p>
+    </>
+  );
+};
+
+export const webTerminalGuidedTourText = <WebTerminalGuidedTourText />;
 
 export const SearchTourText: React.FC = () => {
   const { t } = useTranslation();

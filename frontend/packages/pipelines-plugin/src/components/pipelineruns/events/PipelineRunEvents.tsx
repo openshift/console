@@ -16,10 +16,14 @@ const PipelineRunEvents: React.FC<PipelineRunEventsProps> = ({
   match: {
     params: { ns: namespace },
   },
-}) => (
-  <ResourcesEventStream
-    filters={usePipelineRunFilters(namespace, pipelineRun)}
-    namespace={namespace}
-  />
-);
+}) => {
+  return (
+    <>
+      <ResourcesEventStream
+        filters={usePipelineRunFilters(namespace, pipelineRun)}
+        namespace={namespace}
+      />
+    </>
+  );
+};
 export default PipelineRunEvents;

@@ -19,15 +19,16 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
         <PipelineRunDetailsSection pipelineRun={pipelineRun} />
       </div>
 
-      {pipelineRun.status?.pipelineResults && (
-        <div className="co-m-pane__body">
-          <ResultsList
-            results={pipelineRun.status?.pipelineResults}
-            resourceName={t(PipelineRunModel.labelKey)}
-            status={pipelineRunFilterReducer(pipelineRun)}
-          />
-        </div>
-      )}
+      {pipelineRun.status?.pipelineResults ||
+        (pipelineRun.status?.results && (
+          <div className="co-m-pane__body">
+            <ResultsList
+              results={pipelineRun.status?.pipelineResults || pipelineRun.status?.results}
+              resourceName={t(PipelineRunModel.labelKey)}
+              status={pipelineRunFilterReducer(pipelineRun)}
+            />
+          </div>
+        ))}
     </>
   );
 };

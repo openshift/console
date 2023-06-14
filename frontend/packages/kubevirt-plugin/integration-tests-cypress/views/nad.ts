@@ -12,9 +12,7 @@ export const macSpoofCHK = '#network-type-params-macspoofchk-checkbox';
 
 export const createNAD = (name: string, bridge: string, uncheckmacspoof?: boolean) => {
   cy.byTestID('item-create').click();
-  cy.get(nameID)
-    .type(name)
-    .should('have.value', name);
+  cy.get(nameID).type(name).should('have.value', name);
   cy.get(type).click();
   cy.get(cnvBridgeLink).click();
   cy.get(bridgeName).type(bridge);
@@ -26,9 +24,7 @@ export const createNAD = (name: string, bridge: string, uncheckmacspoof?: boolea
 };
 
 export const deleteNAD = (name: string) => {
-  cy.contains(row, name)
-    .find(kebabBtn)
-    .click();
+  cy.contains(row, name).find(kebabBtn).click();
   cy.get(deleteAction).click();
   cy.get(confirmBtn).click();
   cy.contains(row, name).should('not.exist');

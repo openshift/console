@@ -64,7 +64,7 @@ The addition of the namespace-scoped Helm repository does not impact the behavio
 1. To create a project helm chart repository that supports basic authentication, create a secret with `username` and `password` in the same namespace where the repository is getting instantiated, for example, in the `my-namespace` namespace:
 
 ```bash
-$ cat <<EOF | kubectl apply --namespace my-namespace 
+$ cat <<EOF | kubectl apply --namespace my-namespace
 -f -
 apiVersion: v1
 kind: Secret
@@ -76,7 +76,7 @@ stringData:
 EOF
 ```
 
-2. To add a new namespace-scoped Helm repository that supports basic authentication, add a custom Helm Chart Repository CR, for example, `azure-sample-repo` CR to your `my-namespace` namespace. Also, reference the secret created, in the `basicAuthConfig` field of the `ProjectHelmChartRepository` CR:
+2. To add a new namespace-scoped Helm repository that supports basic authentication, add a custom Helm Chart Repository CR, for example, `azure-sample-repo` CR to your `my-namespace` namespace. Also, reference the secret created, in `name` section of `basicAuthConfig` field of the `ProjectHelmChartRepository` CR:
 
 ```bash
 $ cat <<EOF | kubectl apply --namespace my-namespace -f -
@@ -88,7 +88,8 @@ spec:
   name: azure-sample-repo
   connectionConfig:
     url: https://raw.githubusercontent.com/Azure-Samples/helm-charts/master/docs
-    basicAuthConfig: basic-secret
+    basicAuthConfig:
+      name: basic-secret
 EOF
 ```
 
@@ -99,7 +100,7 @@ $ kubectl get projecthelmchartrepositories --namespace my-namespace
 NAME          AGE
 azure-sample-repo        1m
 ```
- 
+
 ## API Endpoint `/api/helm/charts/index.yaml`
 
 The `/api/helm/charts/index.yaml` endpoint supports a `namespace` query parameter. For example, a GET request to `/api/helm/charts/index.yaml?namespace=my-namespace` will respond an aggregated `index.yaml` file with entities extracted from both cluster-scoped and namespace-scoped Helm repositories.

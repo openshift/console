@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useLocation } from 'react-router-dom';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import {
@@ -365,7 +365,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   }}
                   categoryName={translatedNameFilterTitle}
                 >
-                  <div className="pf-c-input-group">
+                  <div className="pf-c-input-group co-filter-group">
                     {!hideLabelFilter && (
                       <DropdownInternal
                         items={filterDropdownItems}

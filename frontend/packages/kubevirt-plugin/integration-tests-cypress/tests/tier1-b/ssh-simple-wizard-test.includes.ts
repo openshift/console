@@ -8,12 +8,8 @@ export default ({ vmName }) =>
       virtualization.vms.visit();
       cy.byLegacyTestID('item-create').click();
       cy.byLegacyTestID('vm-wizard').click();
-      cy.get('.kv-select-template__tile')
-        .eq(1)
-        .click();
-      cy.byLegacyTestID('wizard-next')
-        .as('nextButton')
-        .click();
+      cy.get('.kv-select-template__tile').eq(1).click();
+      cy.byLegacyTestID('wizard-next').as('nextButton').click();
       cy.get('body').then(($body) => {
         if ($body.find('[data-test-id="modal-title"]').length) {
           cy.get('#confirm-action').click();
@@ -23,9 +19,7 @@ export default ({ vmName }) =>
       cy.contains('Import via Registry (creates PVC)').click();
       cy.get('#provision-source-container').type(ProvisionSource.REGISTRY.getSource());
       cy.get('@nextButton').click();
-      cy.get('#vm-name')
-        .clear()
-        .type(vmName);
+      cy.get('#vm-name').clear().type(vmName);
     });
 
     it('checking if SSH keys message is visible when SSH service is checked', () => {

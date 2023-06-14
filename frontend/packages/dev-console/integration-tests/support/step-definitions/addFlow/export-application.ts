@@ -35,23 +35,17 @@ When('user navigates to Topology page', () => {
 });
 
 When('user clicks on Export Application option', () => {
-  cy.byTestID('item export-application')
-    .should('be.visible')
-    .click();
+  cy.byTestID('item export-application').should('be.visible').click();
 });
 
 When('user clicks on Ok button on Export Application modal to start the export', () => {
   cy.get('.modal-body').contains('Do you want to export your application?');
-  cy.byTestID('close-btn')
-    .should('be.visible')
-    .click();
+  cy.byTestID('close-btn').should('be.visible').click();
 });
 
 When('user clicks on Export Application option again', () => {
   navigateTo(devNavigationMenu.Add);
-  cy.byTestID('item export-application')
-    .should('be.visible')
-    .click();
+  cy.byTestID('item export-application').should('be.visible').click();
 });
 
 Then('user can see a toast message saying {string}', (message: string) => {

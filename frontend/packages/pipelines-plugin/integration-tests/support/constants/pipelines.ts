@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 export enum pipelineActions {
   Start = 'Start',
   AddTrigger = 'Add Trigger',
@@ -16,6 +18,7 @@ export enum pipelineActions {
 export enum pipelineTabs {
   Pipelines = 'Pipelines',
   Repositories = 'Repositories',
+  PipelineRuns = 'PipelineRuns',
 }
 
 export enum pipelineDetailsTabs {

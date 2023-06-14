@@ -5,7 +5,6 @@ import {
   catalogCards,
   catalogTypes,
   devNavigationMenu,
-  gitAdvancedOptions,
 } from '@console/dev-console/integration-tests/support/constants';
 import { gitPO, topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
@@ -79,13 +78,8 @@ Then('user will be redirected to page with header name {string}', (headerName: s
 Then('Knative Service option is displayed under Resources section', () => {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(4000);
-  gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
-  cy.get(gitPO.advancedOptions.resourcesDropdown)
-    .scrollIntoView()
-    .click();
-  cy.get(gitPO.advancedOptions.resources.knative)
-    .scrollIntoView()
-    .should('be.visible');
+  cy.get(gitPO.resourcesDropdown).scrollIntoView().click();
+  cy.get(gitPO.resources.knative).scrollIntoView().should('be.visible');
 });
 
 Given('user is on Import from Git form', () => {
@@ -130,9 +124,7 @@ When('user selects Import Strategy as Dockerfile', () => {
 });
 
 When('user enters Dockerfile path as {string}', (dockerfilePath: string) => {
-  cy.get('#form-input-docker-dockerfilePath-field')
-    .clear()
-    .type(dockerfilePath);
+  cy.get('#form-input-docker-dockerfilePath-field').clear().type(dockerfilePath);
 });
 
 When('user enters workload name as {string}', (name: string) => {

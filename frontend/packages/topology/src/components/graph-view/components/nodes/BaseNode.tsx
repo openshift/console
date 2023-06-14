@@ -97,10 +97,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   const showLabel = useShowLabel(hover || contextMenuOpen);
   const kindData = kind && getKindStringAndAbbreviation(kind);
 
-  const detailsLevel = element
-    .getController()
-    .getGraph()
-    .getDetailsLevel();
+  const detailsLevel = element.getController().getGraph().getDetailsLevel();
   const showDetails = hover || contextMenuOpen || detailsLevel !== ScaleDetailsLevel.low;
   const badgeClassName = kindData
     ? classNames('odc-resource-icon', {

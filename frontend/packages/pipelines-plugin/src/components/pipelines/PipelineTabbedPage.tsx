@@ -20,11 +20,11 @@ import {
   FLAG_OPENSHIFT_PIPELINE_AS_CODE,
   PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY,
 } from '../../const';
-import { PipelineModel, RepositoryModel } from '../../models';
+import { PipelineModel, PipelineRunModel, RepositoryModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
+import { PipelineRunsResourceList } from '../pipelineruns';
 import RepositoriesList from '../repository/list-page/RepositoriesList';
 import PipelinesList from './list-page/PipelinesList';
-import { PipelinesPage } from './PipelinesPage';
 
 type PipelineTabbedPageProps = RouteComponentProps<{ ns: string }>;
 
@@ -43,9 +43,12 @@ export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
   );
 
   React.useEffect(() => {
-    if (preferredTabLoaded) {
+    if (preferredTabLoaded && namespace) {
       if (isRepositoryEnabled && preferredTab === 'repositories') {
         history.push(`/dev-pipelines/ns/${namespace}/repositories`);
+      }
+      if (preferredTab === 'pipeline-runs') {
+        history.push(`/dev-pipelines/ns/${namespace}/pipeline-runs`);
       }
     }
   }, [isRepositoryEnabled, namespace, preferredTab, preferredTabLoaded]);
@@ -56,6 +59,7 @@ export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
       model: PipelineModel,
       onSelection: (key: string, action: MenuAction, url: string) => `${url}/builder`,
     },
+    pipelineRun: { model: PipelineRunModel },
     repository: {
       model: RepositoryModel,
       onSelection: (_key: string, _action: MenuAction, url: string) => `${url}/form`,
@@ -64,29 +68,39 @@ export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
   const pages: Page[] = [
     {
       href: '',
-      name: t(PipelineModel.labelPluralKey),
+      // t(PipelineModel.labelPluralKey)
+      nameKey: PipelineModel.labelPluralKey,
       component: PipelinesList,
     },
     {
-      href: 'repositories',
-      name: t(RepositoryModel.labelPluralKey),
-      component: RepositoriesList,
+      href: 'pipeline-runs',
+      // t(PipelineRunModel.labelPluralKey)
+      nameKey: PipelineRunModel.labelPluralKey,
+      component: PipelineRunsResourceList,
       pageData: { showTitle, hideBadge, canCreate },
     },
+    ...(isRepositoryEnabled
+      ? [
+          {
+            href: 'repositories',
+            // t(RepositoryModel.labelPluralKey)
+            nameKey: RepositoryModel.labelPluralKey,
+            component: RepositoriesList,
+            pageData: { showTitle, hideBadge, canCreate },
+          },
+        ]
+      : []),
   ];
 
   return namespace ? (
-    isRepositoryEnabled ? (
-      <MultiTabListPage
-        pages={pages}
-        match={props.match}
-        title={t('pipelines-plugin~Pipelines')}
-        badge={badge}
-        menuActions={menuActions}
-      />
-    ) : (
-      <PipelinesPage {...props} />
-    )
+    <MultiTabListPage
+      pages={pages}
+      match={props.match}
+      title={t('pipelines-plugin~Pipelines')}
+      badge={badge}
+      menuActions={menuActions}
+      telemetryPrefix="Pipelines"
+    />
   ) : (
     <CreateProjectListPage title={t('pipelines-plugin~Pipelines')}>
       {(openProjectModal) => (

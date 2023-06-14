@@ -62,16 +62,18 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      onReset={handleReset}
-      validationSchema={validationSchema}
-    >
-      {(formikProps) => (
-        <PipelineFormComponent namespace={obj.metadata.namespace} {...formikProps} />
-      )}
-    </Formik>
+    <>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        onReset={handleReset}
+        validationSchema={validationSchema}
+      >
+        {(formikProps) => (
+          <PipelineFormComponent namespace={obj.metadata.namespace} {...formikProps} />
+        )}
+      </Formik>
+    </>
   );
 };
 

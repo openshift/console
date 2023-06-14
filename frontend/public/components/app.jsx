@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { render } from 'react-dom';
@@ -5,6 +6,7 @@ import { Helmet } from 'react-helmet';
 import { linkify } from 'react-linkify';
 import { Provider, useSelector } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
+import { CompatRouter } from 'react-router-dom-v5-compat';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
 import store, { applyReduxExtensions } from '../redux';
@@ -23,10 +25,10 @@ import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, startAPIDiscovery } from '../actions/k8s';
 import { pluginStore } from '../plugins';
 // cloud shell imports must come later than features
-import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
-import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
+import CloudShell from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
+import CloudShellTab from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
-import DetectCluster from '@console/app/src/components/detect-cluster/DetectCluster';
+import DetectCluster from '@console/app/src/components/detect-cluster/DetectCluster'; // TODO remove multicluster
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
 import FeatureFlagExtensionLoader from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
@@ -38,6 +40,7 @@ import {
   isStandaloneRoutePage,
   AppInitSDK,
   getUser,
+  useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
@@ -63,7 +66,7 @@ const PF_BREAKPOINT_XL = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
-import { withoutSensitiveInformations } from './utils/telemetry';
+import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { graphQLReady } from '../graphql/client';
 
 initI18n();
@@ -234,7 +237,9 @@ class App_ extends React.PureComponent {
 
     return (
       <DetectPerspective>
+        <CaptureTelemetry />
         <DetectNamespace>
+          {/* TODO remove multicluster */}
           <DetectCluster>
             <ModalProvider>
               {contextProviderExtensions.reduce(
@@ -272,32 +277,35 @@ const AppRouter = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
   return (
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-      <Switch>
-        {standaloneRouteExtensions.map((e) => (
-          <Route
-            key={e.uid}
-            render={(componentProps) => (
-              <AsyncComponent loader={e.properties.component} {...componentProps} />
-            )}
-            path={e.properties.path}
-            exact={e.properties.exact}
-          />
-        ))}
-        <Route path="/terminal" component={CloudShellTab} />
-        <Route path="/" component={AppWithExtensions} />
-      </Switch>
+      <CompatRouter>
+        <Switch>
+          {standaloneRouteExtensions.map((e) => (
+            <Route
+              key={e.uid}
+              render={(componentProps) => (
+                <AsyncComponent loader={e.properties.component} {...componentProps} />
+              )}
+              path={e.properties.path}
+              exact={e.properties.exact}
+            />
+          ))}
+          <Route path="/terminal" component={CloudShellTab} />
+          <Route path="/" component={AppWithExtensions} />
+        </Switch>
+      </CompatRouter>
     </Router>
   );
 };
 
 const CaptureTelemetry = React.memo(function CaptureTelemetry() {
+  const [perspective] = useActivePerspective();
   const fireTelemetryEvent = useTelemetry();
 
   // notify of identity change
   const user = useSelector(getUser);
   React.useEffect(() => {
     if (user.metadata?.uid || user.metadata?.name) {
-      fireTelemetryEvent('identify', { user });
+      fireTelemetryEvent('identify', { perspective, user });
     }
     // Only trigger identify event when the user identifier changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -306,21 +314,26 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   // notify url change events
   // Debouncing the url change events so that redirects don't fire multiple events.
   // Also because some pages update the URL as the user enters a search term.
-  const fireUrlChangeEvent = useDebounceCallback(fireTelemetryEvent);
+  const fireUrlChangeEvent = useDebounceCallback((location) => {
+    fireTelemetryEvent('page', {
+      perspective,
+      title: getTelemetryTitle(),
+      ...withoutSensitiveInformations(location),
+    });
+  });
   React.useEffect(() => {
-    fireUrlChangeEvent('page', withoutSensitiveInformations(history.location));
-
+    fireUrlChangeEvent(history.location);
     let { pathname, search } = history.location;
     const unlisten = history.listen((location) => {
       const { pathname: nextPathname, search: nextSearch } = history.location;
       if (pathname !== nextPathname || search !== nextSearch) {
         pathname = nextPathname;
         search = nextSearch;
-        fireUrlChangeEvent('page', withoutSensitiveInformations(location));
+        fireUrlChangeEvent(location);
       }
     });
     return () => unlisten();
-  }, [fireUrlChangeEvent]);
+  }, [perspective, fireUrlChangeEvent]);
 
   return null;
 });
@@ -338,7 +351,9 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
 
   const [updateData, setUpdateData] = React.useState();
   const [updateError, setUpdateError] = React.useState();
+  const [newPlugins, setNewPlugins] = React.useState();
   const [pluginManifestsData, setPluginManifestsData] = React.useState();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
   const fetchPluginManifest = (pluginName) =>
     coFetchJSON(
@@ -373,26 +388,41 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const prevUpdateData = prevUpdateDataRef.current;
   const prevPluginManifestsData = prevPluginManifestsDataRef.current;
   const stateInitialized = _.isEmpty(updateError) && !_.isEmpty(prevUpdateData);
+  const pluginsAddedList = updateData?.plugins.filter((x) => !prevUpdateData?.plugins.includes(x));
+  const pluginsRemovedList = prevUpdateData?.plugins.filter(
+    (x) => !updateData?.plugins.includes(x),
+  );
+  const pluginsAdded = !_.isEmpty(pluginsAddedList);
+  const pluginsRemoved = !_.isEmpty(pluginsRemovedList);
 
-  const pluginsListChanged = !_.isEmpty(_.xor(prevUpdateData?.plugins, updateData?.plugins));
-  if (stateInitialized && pluginsListChanged && !pluginsChanged) {
+  if (stateInitialized && pluginsAdded && !pluginsChanged) {
     setPluginsChanged(true);
+    setNewPlugins(pluginsAddedList);
+  }
+
+  if (stateInitialized && pluginsRemoved && !consoleChanged) {
+    setConsoleChanged(true);
   }
 
   if (pluginsChanged && !allPluginEndpointsReady && !isFetchingPluginEndpoints) {
-    const pluginEndpointsReady = updateData?.plugins?.map((pluginName) =>
-      fetchPluginManifest(pluginName),
-    );
-    Promise.all(pluginEndpointsReady)
-      .then(() => {
+    const pluginEndpointsReady =
+      newPlugins?.map((pluginName) => fetchPluginManifest(pluginName)) ?? [];
+    if (!_.isEmpty(pluginEndpointsReady)) {
+      settleAllPromises(pluginEndpointsReady).then(([, rejectedReasons]) => {
+        if (!_.isEmpty(rejectedReasons)) {
+          setAllPluginEndpointsReady(false);
+          setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
+          return;
+        }
         setAllPluginEndpointsReady(true);
         setIsFetchingPluginEndpoints(false);
-      })
-      .catch(() => {
-        setAllPluginEndpointsReady(false);
-        setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
+        setNewPlugins(null);
       });
-    setIsFetchingPluginEndpoints(true);
+      setIsFetchingPluginEndpoints(true);
+    } else {
+      setAllPluginEndpointsReady(true);
+      setIsFetchingPluginEndpoints(false);
+    }
   }
 
   const pluginManifestsVersionsChanged = pluginManifestsData?.some((manifest) => {
@@ -416,6 +446,7 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
     setConsoleChanged(true);
   }
 
+  // TODO remove multicluster
   const managedClustersChanged = !_.isEmpty(
     _.xor(prevUpdateData?.managedClusters, updateData?.managedClusters),
   );
@@ -575,7 +606,6 @@ graphQLReady.onReady(() => {
               initPlugins,
             }}
           >
-            <CaptureTelemetry />
             <ToastProvider>
               <PollConsoleUpdates />
               <AppRouter />

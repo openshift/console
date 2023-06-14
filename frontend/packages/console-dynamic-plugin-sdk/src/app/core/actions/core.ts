@@ -12,6 +12,8 @@ export const setUser = (user: UserKind) => action(ActionType.SetUser, { user });
 export const beginImpersonate = (kind: string, name: string, subprotocols: string[]) =>
   action(ActionType.BeginImpersonate, { kind, name, subprotocols });
 export const endImpersonate = () => action(ActionType.EndImpersonate);
+
+// TODO remove multicluster
 export const setActiveCluster = (cluster) => action(ActionType.SetActiveCluster, { cluster });
 
 const coreActions = {

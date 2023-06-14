@@ -43,10 +43,7 @@ When('user will click on the Subscriber dropdown on the modal', () => {
 Then(
   'Subscriber has knative service dropdown with {string} and {string} options',
   (option1: string, option2: string) => {
-    cy.get("[role='listbox']")
-      .should('be.visible')
-      .and('contain', option1)
-      .and('contain', option2);
+    cy.get("[role='listbox']").should('be.visible').and('contain', option1).and('contain', option2);
   },
 );
 
@@ -55,9 +52,7 @@ When('user selects the auto populated name of subscription', () => {
 });
 
 When('user selects the Subscriber {string}', (subscriberName: string) => {
-  cy.get(topologyPO.graph.subscriber.filterItemLink)
-    .contains(subscriberName)
-    .click();
+  cy.get(topologyPO.graph.subscriber.filterItemLink).contains(subscriberName).click();
 });
 
 When('user clicks on Add button', () => {
@@ -71,9 +66,7 @@ Then('user will see connection between Broker and Subscriber', () => {
 Given('user is having Broker {string} on the Topology page', (brokerName: string) => {
   navigateTo(devNavigationMenu.Topology);
   topologyPage.verifyWorkloadInTopologyPage(brokerName);
-  cy.get(topologyPO.clearFilter)
-    .contains('Clear all filters')
-    .click({ force: true });
+  cy.get(topologyPO.clearFilter).contains('Clear all filters').click({ force: true });
 });
 
 Given('user has already added the trigger', () => {
@@ -87,15 +80,11 @@ When('user right clicks on the Trigger to open the context menu', () => {
 });
 
 When('user clicks on the Move Trigger', () => {
-  cy.get(topologyPO.graph.nodeContextMenu)
-    .contains('Move Trigger')
-    .click();
+  cy.get(topologyPO.graph.nodeContextMenu).contains('Move Trigger').click();
 });
 
 When('user clicks on the Delete Trigger', () => {
-  cy.get(topologyPO.graph.nodeContextMenu)
-    .contains('Delete Trigger')
-    .click();
+  cy.get(topologyPO.graph.nodeContextMenu).contains('Delete Trigger').click();
 });
 
 When('user clicks on the Delete button on the modal', () => {
@@ -109,15 +98,11 @@ Then('trigger will get deleted', () => {
 When('user selects the Subscriber {string} from dropdown', (subscriberName: string) => {
   cy.get(topologyPO.graph.subscriber.filterField).click();
   cy.get(topologyPO.graph.subscriber.filterText).type(subscriberName);
-  cy.get(topologyPO.graph.subscriber.filterItemLink)
-    .eq(0)
-    .click();
+  cy.get(topologyPO.graph.subscriber.filterItemLink).eq(0).click();
   cy.get(topologyPO.graph.confirmModal).click();
 });
 
 Given('user is having knative service {string}', (serviceName: string) => {
   topologyPage.verifyWorkloadInTopologyPage(serviceName);
-  cy.get(topologyPO.clearFilter)
-    .contains('Clear all filters')
-    .click({ force: true });
+  cy.get(topologyPO.clearFilter).contains('Clear all filters').click({ force: true });
 });

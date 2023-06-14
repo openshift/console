@@ -1,6 +1,6 @@
 {
   "{{count}} Worker Node": "{{count}} Worker Node",
-  "{{count}} Worker Node_plural": "{{count}} Worker Node",
+  "{{count}} Worker Node_plural": "{{count}} Worker Nodes",
   "Worker Nodes": "Worker Nodes",
   "Custom Overview Detail Info": "Custom Overview Detail Info",
   "Oops something went wrong in your dynamic plug-in": "Oops something went wrong in your dynamic plug-in",

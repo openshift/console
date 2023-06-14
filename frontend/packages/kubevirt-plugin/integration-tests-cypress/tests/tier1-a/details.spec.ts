@@ -48,9 +48,7 @@ describe('Test VM details tab', () => {
     });
 
     it('ID(CNV-4037) Guest agent required shows in details tab', () => {
-      cy.byLegacyTestID(vmData.name)
-        .should('exist')
-        .click();
+      cy.byLegacyTestID(vmData.name).should('exist').click();
       tab.navigateToDetails();
 
       cy.get(detailsTab.vmHostname).should('contain', DEFAULT_VALUES.GUEST_AGENT_REQUIRED);
@@ -122,9 +120,7 @@ describe('Test VM details tab', () => {
       // make it downstream only as VMs created from yaml have guest agent enabled
       if (Cypress.env('DOWNSTREAM')) {
         tab.navigateToDisk();
-        cy.get(fileSystems)
-          .find(loadingBox)
-          .should('exist');
+        cy.get(fileSystems).find(loadingBox).should('exist');
         cy.get(fileSystems).should('contain', 'Mount Point');
       }
     });

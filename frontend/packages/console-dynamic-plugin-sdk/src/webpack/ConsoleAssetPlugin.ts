@@ -81,11 +81,7 @@ export class ConsoleAssetPlugin {
         () => {
           compilation.updateAsset(remoteEntryFile, (source) => {
             const newSource = new webpack.sources.ReplaceSource(source);
-
-            const fromIndex = source
-              .source()
-              .toString()
-              .indexOf(`${this.remoteEntryCallback}(`);
+            const fromIndex = source.source().toString().indexOf(`${this.remoteEntryCallback}(`);
 
             if (fromIndex < 0) {
               const error = new webpack.WebpackError(`Missing call to ${this.remoteEntryCallback}`);

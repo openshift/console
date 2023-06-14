@@ -2,7 +2,12 @@ import * as React from 'react';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import {
+  ExtensionHook,
+  CatalogItem,
+  CatalogItemDetailsDescription,
+  CatalogItemDetailsProperty,
+} from '@console/dynamic-plugin-sdk';
 import {
   getImageForIconClass,
   getImageStreamIcon,
@@ -29,23 +34,24 @@ const normalizeBuilderImages = (
     const icon = getImageStreamIcon(tag);
     const imgUrl = getImageForIconClass(icon);
     const iconClass = imgUrl ? null : icon;
-    const description = tag?.['annotations']?.['description'] ?? '';
+    const description = tag?.annotations?.description ?? '';
     const tags = getAnnotationTags(tag);
     const createLabel = t('devconsole~Create');
     const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const href = `/catalog/source-to-image?imagestream=${name}&imagestream-ns=${namespace}&preselected-ns=${activeNamespace}`;
-    const builderImageTag = _.head(imageStream.spec?.tags);
-    const sampleRepo = builderImageTag?.['annotations']?.['sampleRepo'];
+    const builderImageTag = _.head(imageStream.spec?.tags) as any;
+    const sampleRepo = builderImageTag?.annotations?.sampleRepo;
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
 
-    const detailsProperties = [
-      {
+    const detailsProperties: CatalogItemDetailsProperty[] = [];
+    if (sampleRepo) {
+      detailsProperties.push({
         label: t('devconsole~Sample repository'),
         value: (
           <ExternalLink href={sampleRepo} additionalClassName="co-break-all" text={sampleRepo} />
         ),
-      },
-    ];
+      });
+    }
 
     const imageStreamText = (
       <>
@@ -85,7 +91,7 @@ const normalizeBuilderImages = (
       </>
     );
 
-    const detailsDescriptions = [
+    const detailsDescriptions: CatalogItemDetailsDescription[] = [
       {
         value: <p>{description}</p>,
       },

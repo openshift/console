@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { connect, useDispatch } from 'react-redux';
 import { Link, match as RMatch } from 'react-router-dom';
@@ -181,7 +182,7 @@ export type FireManProps = {
   helpText?: React.ReactNode;
   title: string;
   autoFocus?: boolean;
-  cluster?: string;
+  cluster?: string; // TODO remove multicluster
 };
 
 type FireManState = {
@@ -206,7 +207,7 @@ export const FireMan = connect<{}, { filterList: typeof filterList }, FireManPro
         makeReduxID(
           kindObj(r.kind),
           makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
-          this.props.cluster,
+          this.props.cluster, // TODO remove multicluster
         ),
       );
       this.state = { reduxIDs };
@@ -217,7 +218,7 @@ export const FireMan = connect<{}, { filterList: typeof filterList }, FireManPro
         makeReduxID(
           kindObj(r.kind),
           makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
-          cluster,
+          cluster, // TODO remove multicluster
         ),
       );
       if (_.isEqual(reduxIDs, this.state.reduxIDs)) {

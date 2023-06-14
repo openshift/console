@@ -19,22 +19,14 @@ describe('KSRouteSplitListItem', () => {
 
   it('should list the Route', () => {
     expect(wrapper.find('li')).toHaveLength(1);
-    expect(
-      wrapper
-        .find('li')
-        .at(0)
-        .props().className,
-    ).toEqual('list-group-item');
+    expect(wrapper.find('li').at(0).props().className).toEqual('list-group-item');
   });
 
   it('should have route ExternalLink with proper href', () => {
     expect(wrapper.find(ExternalLink)).toHaveLength(1);
-    expect(
-      wrapper
-        .find(ExternalLink)
-        .at(0)
-        .props().href,
-    ).toEqual('http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com');
+    expect(wrapper.find(ExternalLink).at(0).props().href).toEqual(
+      'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
+    );
   });
 
   it('should not render if url is not available', () => {

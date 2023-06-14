@@ -25,7 +25,8 @@ export type TaskRunStatus = {
   podName?: string;
   startTime?: string;
   steps?: PLRTaskRunStep[];
-  taskResults?: TektonResultsRun[];
+  taskResults?: TektonResultsRun[]; // in tekton v1 taskResults is renamed to results
+  results?: TektonResultsRun[];
 };
 
 export type TaskRunKind = K8sResourceCommon & {

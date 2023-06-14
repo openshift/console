@@ -8,16 +8,12 @@ export const detailsPage = {
     cy.byTestActionID(actionID).click();
   },
   clickPageActionButton: (action: string) => {
-    cy.byLegacyTestID('details-actions')
-      .contains(action)
-      .click();
+    cy.byLegacyTestID('details-actions').contains(action).click();
   },
   isLoaded: () => cy.byTestID('skeleton-detail-view').should('not.exist'),
   breadcrumb: (breadcrumbIndex: number) => cy.byLegacyTestID(`breadcrumb-link-${breadcrumbIndex}`),
   selectTab: (name: string) => {
-    cy.get(`a[data-test-id="horizontal-link-public~${name}"]`)
-      .should('exist')
-      .click();
+    cy.get(`a[data-test-id="horizontal-link-${name}"]`).should('exist').click();
   },
 };
 

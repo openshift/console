@@ -11,6 +11,7 @@ import {
   referenceForModel,
   referenceForGroupVersionKind,
 } from '@console/internal/module/k8s';
+import { OPERATOR_NAMESPACE_ANNOTATION } from '../const';
 import { OperatorGroupModel } from '../models';
 import {
   OperatorGroupKind,
@@ -20,11 +21,11 @@ import {
 } from '../types';
 
 export const targetNamespacesFor = (obj: K8sResourceKind) =>
-  obj?.metadata?.annotations?.['olm.targetNamespaces'];
+  obj?.metadata?.annotations?.['olm.targetNamespaces']; // FIXME magic string
 export const operatorNamespaceFor = (obj: K8sResourceKind) =>
-  obj?.metadata?.annotations?.['olm.operatorNamespace'];
+  obj?.metadata?.annotations?.[OPERATOR_NAMESPACE_ANNOTATION];
 export const operatorGroupFor = (obj: K8sResourceKind) =>
-  obj?.metadata?.annotations?.['olm.operatorGroup'];
+  obj?.metadata?.annotations?.['olm.operatorGroup']; // FIXME magic string
 
 export const NoOperatorGroupMsg: React.FC = () => {
   const { t } = useTranslation();
@@ -55,7 +56,7 @@ export const OperatorGroupSelector: React.FC<OperatorGroupSelectorProps> = (prop
       }
       onChange={
         props.onChange ||
-        function() {
+        function () {
           return null;
         }
       }
@@ -168,10 +169,7 @@ export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>
   (og?.metadata?.annotations?.['olm.providedAPIs'] ?? '')
     .split(',')
     .map((api) => ({
-      group: api
-        .split('.')
-        .slice(2)
-        .join('.'),
+      group: api.split('.').slice(2).join('.'),
       version: api.split('.')[1],
       kind: api.split('.')[0],
     }))

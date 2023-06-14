@@ -17,7 +17,7 @@ import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
@@ -221,6 +221,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
 
   const dispatch = useDispatch();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const [isError, setIsError] = React.useState(false);
@@ -590,6 +591,13 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
     [panel],
   );
 
+  const handleZoom = React.useCallback((timeRange: number, endTime: number) => {
+    setQueryArguments({
+      endTime: endTime.toString(),
+      timeRange: timeRange.toString(),
+    });
+  }, []);
+
   if (panel.type === 'row') {
     return (
       <>
@@ -614,47 +622,28 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
 
   const panelClassModifier = getPanelClassModifier(panel);
 
-  const handleZoom = React.useCallback((timeRange: number, endTime: number) => {
-    setQueryArguments({
-      endTime: endTime.toString(),
-      timeRange: timeRange.toString(),
-    });
-  }, []);
-
   return (
     <div
       className={`monitoring-dashboards__panel monitoring-dashboards__panel--${panelClassModifier}`}
     >
-      {isError ? (
-        <PFCard
-          className={classNames('monitoring-dashboards__card', {
-            'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
-          })}
-          data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
-        >
-          <CardHeader className="monitoring-dashboards__card-header">
-            <CardTitle>{panel.title}</CardTitle>
-          </CardHeader>
-          <CardBody className="co-dashboard-card__body--dashboard">
+      <PFCard
+        className={classNames('monitoring-dashboards__card', {
+          'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
+        })}
+        data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
+      >
+        <CardHeader className="monitoring-dashboards__card-header">
+          <CardTitle>{panel.title}</CardTitle>
+          <CardActions className="co-overview-card__actions">
+            {!isLoading && <QueryBrowserLink queries={queries} />}
+          </CardActions>
+        </CardHeader>
+        <CardBody className="co-dashboard-card__body--dashboard">
+          {isError ? (
             <>
               <RedExclamationCircleIcon /> {t('public~Error loading card')}
             </>
-          </CardBody>
-        </PFCard>
-      ) : (
-        <PFCard
-          className={classNames('monitoring-dashboards__card', {
-            'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
-          })}
-          data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
-        >
-          <CardHeader className="monitoring-dashboards__card-header">
-            <CardTitle>{panel.title}</CardTitle>
-            <CardActions className="co-overview-card__actions">
-              {!isLoading && <QueryBrowserLink queries={queries} />}
-            </CardActions>
-          </CardHeader>
-          <CardBody className="co-dashboard-card__body--dashboard">
+          ) : (
             <div className="monitoring-dashboards__card-body-content" ref={ref}>
               {isLoading || !wasEverVisible ? (
                 <div className={panel.type === 'graph' ? 'query-browser__wrapper' : ''}>
@@ -704,9 +693,9 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
                 </>
               )}
             </div>
-          </CardBody>
-        </PFCard>
-      )}
+          )}
+        </CardBody>
+      </PFCard>
     </div>
   );
 });

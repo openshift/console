@@ -1,0 +1,79 @@
+[
+  {
+    "type": "console.redux-reducer",
+    "properties": {
+      "scope": "console",
+      "reducer": { "$codeRef": "reduxReducer" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "actions.useWebTerminalProvider" }
+    }
+  },
+  {
+    "type": "console.cluster-configuration/group",
+    "properties": {
+      "id": "webTerminal",
+      "label": "%webterminal-plugin~Web Terminal%",
+      "insertAfter": "developer"
+    },
+    "flags": {
+      "required": ["WEB_TERMINAL"]
+    }
+  },
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
+      "id": "webterminal.WebTerminalConfiguration",
+      "groupId": "webTerminal",
+      "label": "%webterminal-plugin~Web Terminal%",
+      "description": "%webterminal-plugin~Configure default timeout and image of web terminal operator.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "webTerminalConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        },
+        {
+          "group": "workspace.devfile.io/v1alpha2",
+          "resource": "DevWorkspaceTemplate",
+          "verb": "get",
+          "name": "web-terminal-exec"
+        },
+        {
+          "group": "workspace.devfile.io/v1alpha2",
+          "resource": "DevWorkspaceTemplate",
+          "verb": "get",
+          "name": "web-terminal-tooling"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        },
+        {
+          "group": "workspace.devfile.io/v1alpha2",
+          "resource": "DevWorkspaceTemplate",
+          "verb": "patch",
+          "name": "web-terminal-exec"
+        },
+        {
+          "group": "workspace.devfile.io/v1alpha2",
+          "resource": "DevWorkspaceTemplate",
+          "verb": "patch",
+          "name": "web-terminal-tooling"
+        }
+      ]
+    }
+  }
+]

@@ -26,13 +26,9 @@ const ImageStreamTagDropdown: React.FC<{
   const unmounted = React.useRef(false);
   let imageStreamTagList = {};
   const { values, setFieldValue, initialValues, touched } = useFormikContext<FormikValues>();
-  const {
-    name: resourceName,
-    imageStream,
-    application,
-    formType,
-    isi: { ports: isiPorts },
-  } = _.get(values, formContextField) || values;
+  const { name: resourceName, imageStream, application, formType, isi: isiValues } =
+    _.get(values, formContextField) || values;
+  const isiPorts = isiValues?.ports;
   const { imageStream: initialImageStream, route: initialRoute } =
     _.get(initialValues, formContextField) || initialValues;
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
@@ -43,6 +39,7 @@ const ImageStreamTagDropdown: React.FC<{
   const isStreamsAvailable = isNamespaceSelected && hasImageStreams && !loading;
   const isTagsAvailable = isStreamsAvailable && !_.isEmpty(imageStreamTagList);
   const isImageStreamSelected = imageStream.image !== '';
+  const initialImageStreamImage = initialImageStream?.image;
 
   const searchImageTag = React.useCallback(
     (selectedTag: string) => {
@@ -129,7 +126,7 @@ const ImageStreamTagDropdown: React.FC<{
       initialRoute &&
       getIn(_.get(touched, `${fieldPrefix}imageStream`), 'image') &&
       !getIn(_.get(touched, `${fieldPrefix}route`), 'targetPort') &&
-      !_.isEqual(initialImageStream.image, imageStream.image)
+      !_.isEqual(initialImageStreamImage, imageStream.image)
     ) {
       const targetPort: ContainerPort = _.head(isiPorts);
       targetPort && setFieldValue(`${fieldPrefix}route.targetPort`, makePortName(targetPort));
@@ -141,7 +138,7 @@ const ImageStreamTagDropdown: React.FC<{
     setFieldValue,
     isiPorts,
     initialRoute,
-    initialImageStream.image,
+    initialImageStreamImage,
     fieldPrefix,
     touched,
   ]);

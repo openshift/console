@@ -98,7 +98,7 @@ const ConfigMaps = (props) => {
 
 const ConfigMapsPage = (props) => {
   const createProps = {
-    to: `/k8s/ns/${props.namespace || 'default'}/configmaps/~new`,
+    to: `/k8s/ns/${props.namespace || 'default'}/configmaps/~new/form`,
   };
   return (
     <ListPage ListComponent={ConfigMaps} canCreate={true} createProps={createProps} {...props} />

@@ -8,9 +8,7 @@ When('user searches and selects {string} helm chart from catalog page', (helmCha
 });
 
 Then('user will see the information of all the chart versions', () => {
-  cy.get('ul.pf-c-dropdown__menu')
-    .find('li button')
-    .should('have.length.gte', 1);
+  cy.get('ul.pf-c-dropdown__menu').find('li button').should('have.length.gte', 1);
   cy.byLegacyTestID('reset-button').click();
 });
 
@@ -28,9 +26,7 @@ When('user selects the YAML view', () => {
 });
 
 When('user enters Replica count as {string}', (replicaCount: string) => {
-  cy.get(catalogPO.installHelmChart.replicaCount)
-    .clear()
-    .type(replicaCount);
+  cy.get(catalogPO.installHelmChart.replicaCount).clear().type(replicaCount);
 });
 
 When('user selects the Form View', () => {

@@ -38,9 +38,7 @@ When('user clicks on Kafka Source', () => {
 });
 
 When('user clicks on Create Event Source on Kafka Source side pane', () => {
-  cy.get(eventingPO.kafka.modalHeader)
-    .contains('Create Event Source')
-    .click({ force: true });
+  cy.get(eventingPO.kafka.modalHeader).contains('Create Event Source').click({ force: true });
 });
 
 Then('user will see the items in BootStrapServers dropdown', () => {
@@ -61,30 +59,20 @@ When('user selects multiple BootStrapServers', () => {
     'Add bootstrap servers',
   );
   cy.get(eventingPO.kafka.dropdownOptions, { timeout: 20000 }).should('have.length', 2);
-  cy.get(eventingPO.kafka.dropdownOptions)
-    .eq(0)
-    .click();
-  cy.get(eventingPO.kafka.dropdownOptions)
-    .eq(1)
-    .click();
+  cy.get(eventingPO.kafka.dropdownOptions).eq(0).click();
+  cy.get(eventingPO.kafka.dropdownOptions).eq(1).click();
   cy.get(eventingPO.kafka.bootstrapServerDropdown).click();
 });
 
 When('user selects multiple Topics', () => {
   cy.get(eventingPO.kafka.topicsDropdown).click();
-  cy.get(eventingPO.kafka.dropdownOptions)
-    .eq(0)
-    .click();
-  cy.get(eventingPO.kafka.dropdownOptions)
-    .eq(1)
-    .click();
+  cy.get(eventingPO.kafka.dropdownOptions).eq(0).click();
+  cy.get(eventingPO.kafka.dropdownOptions).eq(1).click();
   cy.get(eventingPO.kafka.topicsDropdown).click();
 });
 
 When('user enters consumer group name as {string}', (name: string) => {
-  cy.byLegacyTestID('kafkasource-consumergroup-field')
-    .clear()
-    .type(name);
+  cy.byLegacyTestID('kafkasource-consumergroup-field').clear().type(name);
 });
 
 When('user verify that Target resource is selected', () => {
@@ -96,9 +84,7 @@ When('user verify that Application is selected', () => {
 });
 
 When('user enters Kafka Source name as {string}', (name: string) => {
-  cy.byLegacyTestID('application-form-app-name')
-    .clear()
-    .type(name);
+  cy.byLegacyTestID('application-form-app-name').clear().type(name);
 });
 
 When('user clicks on Create button on EventSource page', () => {

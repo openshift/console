@@ -44,6 +44,12 @@ export const gitPO = {
     addPipeline: '#form-checkbox-pipeline-enabled-field',
     pipelineDropdown: '#form-dropdown-pipeline-templateSelected-field',
   },
+  resourcesDropdown: '#form-select-input-resources-field',
+  resources: {
+    deployment: '#select-option-resources-kubernetes',
+    deploymentConfig: '#select-option-resources-openshift',
+    knative: '#select-option-resources-knative',
+  },
   advancedOptions: {
     createRoute: '#form-checkbox-route-create-field',
     routing: {
@@ -65,6 +71,7 @@ export const gitPO = {
       // Count for Rows in Environment Variables section
       envRows: 'div.row.pairs-list__row',
       deleteRowButton: 'button[data-test="delete-button"]',
+      advanceGitOptions: '[data-test="advanced-git-options"]',
     },
     deployment: {
       deploymentTriggerImage: 'input#form-checkbox-deployment-triggers-image-field',
@@ -91,12 +98,12 @@ export const gitPO = {
       memoryLimitHelperText: 'div#form-resource-limit-limits-memory-limit-field-helper',
     },
     labels: 'input[data-test="labels"]',
-    resourcesDropdown: '#form-select-input-resources-field',
-    resources: {
-      deployment: '#select-option-resources-kubernetes',
-      deploymentConfig: '#select-option-resources-openshift',
-      knative: '#select-option-resources-knative',
-    },
+  },
+  importStrategy: {
+    devFileStrategy: '[data-test=import-strategy-Devfile]',
+    editImportStrategyBtn: '[data-test=import-strategy-button]',
+    devFilePathInput: '[data-test=git-form-devfile-path-input]',
+    devFileHelperText: '.pf-c-form__helper-text',
   },
 };
 
@@ -218,8 +225,8 @@ export const catalogPO = {
 export const samplesPO = {
   search: 'input[placeholder="Filter by keyword..."]',
   cards: {
-    httpdTemplate: 'a[data-test="Sample-Httpd"] .catalog-tile-pf-title',
-    basicgoTemplate: 'a[data-test="Sample-Basic Go"] .catalog-tile-pf-title',
+    httpdTemplate: 'a[data-test="BuilderImage-Httpd"] .catalog-tile-pf-title',
+    basicgoTemplate: 'a[data-test="Devfile-Basic Go"] .catalog-tile-pf-title',
   },
 };
 
@@ -281,7 +288,7 @@ export const eventSourcePO = {
     notifierMessage: 'div[aria-label="Default Alert"] div.pf-c-alert__description',
   },
   pingSource: {
-    data: '[id$="PingSource-jsonData-field"]',
+    data: '[id$="PingSource-data-field"]',
     schedule: '[id$="PingSource-schedule-field"]',
     name: '[id$="name-field"]',
   },
@@ -296,7 +303,7 @@ export const eventSourcePO = {
     addMoreRow: '[data-test="add-button"]',
   },
   createPingSource: {
-    data: '#form-input-formData-data-PingSource-jsonData-field',
+    data: '#form-input-formData-data-PingSource-data-field',
     schedule: '#form-input-formData-data-PingSource-schedule-field',
     name: '#form-input-formData-name-field',
     resourceToggleButton: '[id="form-radiobutton-formData-sinkType-resource-field"]',
@@ -375,4 +382,15 @@ export const helmChartRepositoriesPO = {
   displayName: '#form-input-formData-repoDisplayName-field',
   description: '#form-input-formData-repoDescription-field',
   url: '#form-input-formData-repoUrl-field',
+};
+
+export const deploymentStrategyFormP0 = {
+  images: {
+    deployFromImageStreamCheckbox: '#form-checkbox-formData-fromImageStreamTag-field',
+    projectDropdown: '#form-ns-dropdown-formData-imageStream-namespace-field',
+    selectProjectOpenshift: '#openshift-link',
+    imageStreamDropdown: '#form-ns-dropdown-formData-imageStream-image-field',
+    tagDropdown: '#form-dropdown-formData-imageStream-tag-field',
+    selectTagLatest: '#latest-link',
+  },
 };

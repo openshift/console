@@ -1,4 +1,4 @@
-export const newApplicationName = function(): string {
+export const newApplicationName = function (): string {
   const d = new Date();
   const month = d.getMonth() < 9 ? `0${d.getMonth() + 1}` : `${d.getMonth() + 1}`;
   const day = d.getDate() < 10 ? `0${d.getDate()}` : `${d.getDate()}`;
@@ -9,13 +9,13 @@ export const newApplicationName = function(): string {
   return appName;
 };
 
-export const newApplicationShortName = function(): string {
+export const newApplicationShortName = function (): string {
   const randomNumber = Math.round(Math.random() * 10000);
   const appName = `testapp-${randomNumber}`;
   return appName;
 };
 
-export const newAppName = function(): string {
+export const newAppName = function (): string {
   const d = new Date();
   const month = d.getMonth() < 9 ? `0${d.getMonth() + 1}` : `${d.getMonth() + 1}`;
   const day = d.getDate() < 10 ? `0${d.getDate()}` : `${d.getDate()}`;
@@ -26,7 +26,7 @@ export const newAppName = function(): string {
   return nodeName;
 };
 
-export const newAppShortName = function(): string {
+export const newAppShortName = function (): string {
   const randomNumber = Math.round(Math.random() * 10000);
   const nodeName = `app-${randomNumber}`;
   return nodeName;

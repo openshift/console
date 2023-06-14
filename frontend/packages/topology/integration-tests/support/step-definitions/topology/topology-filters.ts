@@ -101,9 +101,7 @@ Then('user will see workload in text view', () => {
 });
 
 When('user checks the pod count option', () => {
-  cy.get(topologyPO.displayFilter.podLabelOptions)
-    .eq(2)
-    .check();
+  cy.get(topologyPO.displayFilter.podLabelOptions).eq(2).check();
 });
 
 Then('user will able to see the pod count inside workload', () => {
@@ -111,9 +109,7 @@ Then('user will able to see the pod count inside workload', () => {
 });
 
 When('user unchecks the labels option', () => {
-  cy.get(topologyPO.displayFilter.podLabelOptions)
-    .eq(3)
-    .uncheck();
+  cy.get(topologyPO.displayFilter.podLabelOptions).eq(3).uncheck();
 });
 
 Then('user will not able to see the labels on workload', () => {

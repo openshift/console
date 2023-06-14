@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
@@ -103,6 +104,10 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
   return _.map(data, (volume: RowVolumeData) => {
     const { container, mountPath, name, readOnly, resource, subPath, volumeDetail } = volume;
     const pod = getPodTemplate(resource);
+    const podVolume = pod.spec?.volumes?.find((v) => name === v.name);
+    const podVolumeIsReadOnly = podVolume
+      ? Object.values(podVolume).some((v) => v.readOnly === 'true')
+      : false;
     return [
       {
         title: name,
@@ -131,7 +136,10 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
         },
       },
       {
-        title: readOnly ? i18next.t('public~Read-only') : i18next.t('public~Read/Write'),
+        title:
+          readOnly || podVolumeIsReadOnly
+            ? i18next.t('public~Read-only')
+            : i18next.t('public~Read/Write'),
         props: {
           className: volumeRowColumnClasses[4],
         },

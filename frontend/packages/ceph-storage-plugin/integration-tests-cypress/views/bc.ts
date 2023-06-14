@@ -97,9 +97,7 @@ const tierLevelToButton = (level: number, tier: Tier) =>
 const setGeneralData = (type: BucketClassType) => {
   // be.visible check added to wait for the page to load
   cy.byTestID(`${type.toLowerCase()}-radio`).click();
-  cy.byTestID('bucket-class-name')
-    .scrollIntoView()
-    .should('be.visible');
+  cy.byTestID('bucket-class-name').scrollIntoView().should('be.visible');
   cy.byTestID('bucket-class-name').type(bcName);
   cy.byTestID('bucket-class-description').type(bcDescription);
 };

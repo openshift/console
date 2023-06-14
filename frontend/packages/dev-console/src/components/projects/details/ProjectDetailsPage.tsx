@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
@@ -53,19 +53,22 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
   const pages: Page[] = [
     {
       href: '',
-      name: t('devconsole~Overview'),
+      // t('devconsole~Overview')
+      nameKey: 'devconsole~Overview',
       component: ProjectDashboard,
     },
     {
       href: 'details',
-      name: t('devconsole~Details'),
+      // t('devconsole~Details')
+      nameKey: 'devconsole~Details',
       component: NamespaceDetails,
     },
   ];
   if (canListRoleBindings && canCreateRoleBindings) {
     pages.push({
       href: 'access',
-      name: t('devconsole~Project access'),
+      // t('devconsole~Project access')
+      nameKey: 'devconsole~Project access',
       component: ProjectAccessPage,
     });
   }

@@ -3,7 +3,6 @@ import * as webpack from 'webpack';
 import * as path from 'path';
 import * as _ from 'lodash';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
-import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
@@ -12,6 +11,8 @@ import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modu
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { ConsoleActivePluginsModule } from '@console/plugin-sdk/src/webpack/ConsoleActivePluginsModule';
 import { CircularDependencyPreset } from './webpack.circular-deps';
+
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 interface Configuration extends webpack.Configuration {
   devServer?: WebpackDevServerConfiguration;
@@ -211,13 +212,20 @@ const config: Configuration = {
   },
   plugins: [
     new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
-    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, memoryLimit: 4096 }),
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        configFile: path.resolve(__dirname, 'tsconfig.json'),
+        diagnosticOptions: { syntactic: true, semantic: true },
+        memoryLimit: 4096,
+      },
+    }),
     new HtmlWebpackPlugin({
       filename: './tokener.html',
       template: './public/tokener.html',
       inject: false,
       chunksSortMode: 'none',
     }),
+    // TODO Remove multicluster
     new HtmlWebpackPlugin({
       filename: './multicluster-logout.html',
       template: './public/multicluster-logout.html',
@@ -231,7 +239,7 @@ const config: Configuration = {
       chunksSortMode: 'none',
     }),
     new MonacoWebpackPlugin({
-      languages: ['yaml', 'dockerfile'],
+      languages: ['yaml', 'dockerfile', 'json', 'plaintext'],
     }),
     new CopyWebpackPlugin([{ from: './public/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/console-shared/locales', to: 'locales' }]),
@@ -245,6 +253,7 @@ const config: Configuration = {
     new CopyWebpackPlugin([{ from: './packages/pipelines-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/service-binding-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/shipwright-plugin/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([{ from: './packages/webterminal-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/topology/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/helm-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/rhoas-plugin/locales', to: 'locales' }]),

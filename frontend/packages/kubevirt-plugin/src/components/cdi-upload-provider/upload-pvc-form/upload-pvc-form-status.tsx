@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import {
   Alert,
@@ -30,6 +31,7 @@ import { DataUpload } from '../cdi-upload-provider';
 import { UPLOAD_STATUS } from '../consts';
 import { getProgressVariant } from '../upload-pvc-popover';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export enum uploadErrorType {
   MISSING = 'missing',
   ALLOCATE = 'allocate',

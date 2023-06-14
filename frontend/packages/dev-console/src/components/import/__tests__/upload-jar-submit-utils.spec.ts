@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -8,7 +9,6 @@ import {
   BuildConfigModel,
   SecretModel,
 } from '@console/internal/models';
-import * as k8s from '@console/internal/module/k8s';
 import { uploadJarMockFormData } from '../__mocks__/upload-jar-mock';
 import * as importSubmitUtils from '../import-submit-utils';
 import { Resources } from '../import-types';
@@ -21,7 +21,7 @@ describe('Upload Jar Submit Utils', () => {
   describe('create Deployment tests', () => {
     beforeAll(() => {
       jest
-        .spyOn(k8s, 'k8sCreate')
+        .spyOn(k8sResourceModule, 'k8sCreate')
         .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
     });
 
@@ -83,7 +83,7 @@ describe('Upload Jar Submit Utils', () => {
   describe('create Resource tests', () => {
     beforeAll(() => {
       jest
-        .spyOn(k8s, 'k8sCreate')
+        .spyOn(k8sResourceModule, 'k8sCreate')
         .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
       jest.spyOn(submitUtils, 'instantiateBinaryBuild').mockImplementation(() => ({}));
     });

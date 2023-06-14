@@ -2,7 +2,8 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { getBadgeFromType } from '@console/shared';
+import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import {
   useExtensions,
@@ -129,7 +130,6 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   }, []);
   let allPages = [...pages, ...pluginPages];
   allPages = allPages.length ? allPages : null;
-
   const objResource: FirehoseResource = {
     kind: props.kind,
     name: props.name,
@@ -137,8 +137,13 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
     isList: false,
     prop: 'obj',
   };
+  const titleProviderValues = {
+    telemetryPrefix: props?.kindObj?.kind,
+    titlePrefix: `${props.name} · ${getTitleForNodeKind(props?.kindObj?.kind)}`,
+  };
+
   return (
-    <>
+    <PageTitleContext.Provider value={titleProviderValues}>
       {resolvedBreadcrumbExtension && (
         <DetailsBreadcrumbResolver
           useBreadcrumbs={resolvedBreadcrumbExtension.properties.breadcrumbsProvider}
@@ -147,6 +152,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           kind={kindObj}
         />
       )}
+
       <Firehose
         resources={[...(_.isNil(props.obj) ? [objResource] : []), ...(props.resources ?? [])]}
       >
@@ -184,7 +190,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           createRedirect={props.createRedirect}
         />
       </Firehose>
-    </>
+    </PageTitleContext.Provider>
   );
 }, ErrorBoundaryFallbackPage);
 

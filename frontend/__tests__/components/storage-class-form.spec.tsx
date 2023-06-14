@@ -8,7 +8,7 @@ import {
   StorageClassFormState,
 } from '../../public/components/storage-class-form';
 import { PageHeading } from '../../public/components/utils';
-import * as plugins from '@console/dynamic-plugin-sdk';
+import * as useResolvedExtensionsModule from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 
 const extensions = [
   {
@@ -43,7 +43,7 @@ describe(ConnectedStorageClassForm.displayName, () => {
   let extensionSpy: Spy;
 
   beforeEach(() => {
-    extensionSpy = spyOn(plugins, 'useResolvedExtensions').and.returnValue([
+    extensionSpy = spyOn(useResolvedExtensionsModule, 'useResolvedExtensions').and.returnValue([
       extensions,
       true,
       null,

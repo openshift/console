@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import {
   getPodsForResource,
   ActionServiceProvider,
@@ -52,6 +53,7 @@ const tableColumnClasses = [
   '',
   '',
   'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-md',
   'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-xl',
   'pf-m-hidden pf-m-visible-on-xl pf-u-w-25-on-xl',
   Kebab.columnClass,
@@ -77,12 +79,15 @@ const CronJobTableRow: React.FC<RowFunctionArgs<CronJobKind>> = ({ obj: cronjob 
       </TableData>
       <TableData className={tableColumnClasses[2]}>{cronjob.spec.schedule}</TableData>
       <TableData className={tableColumnClasses[3]}>
-        {_.get(cronjob.spec, 'concurrencyPolicy', '-')}
+        {cronjob.spec?.suspend ? i18next.t('public~True') : i18next.t('public~False')}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        {_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}
+        {_.get(cronjob.spec, 'concurrencyPolicy', '-')}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
+        {_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
         <LazyActionMenu context={context} />
       </TableData>
     </>
@@ -100,6 +105,9 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
             <SectionHeading text={t('public~CronJob details')} />
             <ResourceSummary resource={cronjob}>
               <DetailsItem label={t('public~Schedule')} obj={cronjob} path="spec.schedule" />
+              <DetailsItem label={t('public~Suspend')} obj={cronjob} path="spec.suspend">
+                {cronjob.spec?.suspend ? t('public~True') : t('public~False')}
+              </DetailsItem>
               <DetailsItem
                 label={t('public~Concurrency policy')}
                 obj={cronjob}
@@ -267,20 +275,26 @@ export const CronJobsList: React.FC = (props) => {
       props: { className: tableColumnClasses[2] },
     },
     {
+      title: t('public~Suspend'),
+      sortField: 'spec.suspend',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
       title: t('public~Concurrency policy'),
       sortField: 'spec.concurrencyPolicy',
       transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
+      props: { className: tableColumnClasses[4] },
     },
     {
       title: t('public~Starting deadline seconds'),
       sortField: 'spec.startingDeadlineSeconds',
       transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
+      props: { className: tableColumnClasses[5] },
     },
     {
       title: '',
-      props: { className: tableColumnClasses[5] },
+      props: { className: tableColumnClasses[6] },
     },
   ];
 

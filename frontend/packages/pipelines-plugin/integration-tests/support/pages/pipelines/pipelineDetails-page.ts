@@ -23,7 +23,6 @@ export const pipelineDetailsPage = {
     cy.get(pipelineDetailsPO.yamlTab).should('be.visible');
     cy.get(pipelineDetailsPO.pipelineRunsTab).should('be.visible');
     cy.get(pipelineDetailsPO.parametersTab).should('be.visible');
-    cy.get(pipelineDetailsPO.resourcesTab).should('be.visible');
   },
 
   verifyFieldsInDetailsTab: () => {
@@ -84,9 +83,7 @@ export const pipelineDetailsPage = {
   },
 
   selectPipelineRun: () => {
-    cy.get(pipelineDetailsPO.pipelineRuns.pipelineRunIcon)
-      .next('a')
-      .click();
+    cy.get(pipelineDetailsPO.pipelineRuns.pipelineRunIcon).next('a').click();
   },
   finallyNode: () => {
     return cy.get('[data-test="pipeline-visualization"] [data-test="finally-node"]');

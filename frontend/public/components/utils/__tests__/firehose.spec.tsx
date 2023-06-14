@@ -272,10 +272,10 @@ describe('Firehose', () => {
     expect(k8sListMock).toHaveBeenCalledTimes(1);
     expect(k8sListMock.mock.calls[0]).toEqual([
       PodModel,
-      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' }, // TODO remove multicluster
       true,
       {},
-      'local-cluster',
+      'local-cluster', // TODO remove multicluster
     ]);
     k8sListMock.mockClear();
 
@@ -292,7 +292,7 @@ describe('Firehose', () => {
     const podsNotLoadedYetProps = {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
-      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace"}'],
+      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace"}'], // TODO remove multicluster
       loaded: false,
       // Yes, same data twice at the moment.
       pods: podsNotLoadedYet,
@@ -325,7 +325,7 @@ describe('Firehose', () => {
     const podsLoadedProps = {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
-      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace"}'],
+      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace"}'], // TODO remove multicluster
       loaded: true,
       // Yes, same data twice at the moment.
       pods: podsLoaded,
@@ -371,7 +371,7 @@ describe('Firehose', () => {
       PodModel,
       'my-pod',
       'my-namespace',
-      { cluster: 'local-cluster' },
+      { cluster: 'local-cluster' }, // TODO remove multicluster
       {},
     ]);
     k8sGetMock.mockClear();
@@ -386,7 +386,7 @@ describe('Firehose', () => {
     const podsNotLoadedYetProps = {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
-      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}'],
+      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}'], // TODO remove multicluster
       loaded: false,
       // Yes, same data twice at the moment.
       pod: podNotLoadedYet,
@@ -416,7 +416,7 @@ describe('Firehose', () => {
     const podLoadedProps = {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
-      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}'],
+      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}'], // TODO remove multicluster
       loaded: true,
       // Yes, same data twice at the moment.
       pod: podLoaded,
@@ -461,10 +461,10 @@ describe('Firehose', () => {
     expect(k8sListMock).toHaveBeenCalledTimes(1);
     expect(k8sListMock.mock.calls[0]).toEqual([
       PodModel,
-      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' }, // TODO remove multicluster
       true,
       {},
-      'local-cluster',
+      'local-cluster', // TODO remove multicluster
     ]);
     k8sListMock.mockClear();
 
@@ -481,7 +481,7 @@ describe('Firehose', () => {
     const podsNotLoadedYetProps = {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
-      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace"}'],
+      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace"}'], // TODO remove multicluster
       loaded: false,
       // Yes, same data twice at the moment.
       pods: podsNotLoadedYet,
@@ -506,7 +506,7 @@ describe('Firehose', () => {
     const podsLoadedProps = {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
-      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace"}'],
+      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace"}'], // TODO remove multicluster
       loaded: false,
       loadError: new Error('Network issue'),
       // Yes, same data twice at the moment.
@@ -554,7 +554,7 @@ describe('Firehose', () => {
       PodModel,
       'my-pod',
       'my-namespace',
-      { cluster: 'local-cluster' },
+      { cluster: 'local-cluster' }, // TODO remove multicluster
       {},
     ]);
     k8sGetMock.mockClear();
@@ -569,7 +569,7 @@ describe('Firehose', () => {
     const podsNotLoadedYetProps = {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
-      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}'],
+      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}'], // TODO remove multicluster
       loaded: false,
       // Yes, same data twice at the moment.
       pod: podNotLoadedYet,
@@ -591,7 +591,7 @@ describe('Firehose', () => {
     const podLoadedProps = {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
-      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}'],
+      reduxIDs: ['local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}'], // TODO remove multicluster
       loaded: false,
       loadError: new Error('Network issue'),
       // Yes, same data twice at the moment.
@@ -644,10 +644,10 @@ describe('Firehose', () => {
     expect(k8sListMock).toHaveBeenCalledTimes(1);
     expect(k8sListMock.mock.calls[0]).toEqual([
       PodModel,
-      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' }, // TODO remove multicluster
       true,
       {},
-      'local-cluster',
+      'local-cluster', // TODO remove multicluster
     ]);
     k8sListMock.mockClear();
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
@@ -655,7 +655,7 @@ describe('Firehose', () => {
       PodModel,
       'my-pod',
       'my-namespace',
-      { cluster: 'local-cluster' },
+      { cluster: 'local-cluster' }, // TODO remove multicluster
       {},
     ]);
     k8sGetMock.mockClear();
@@ -680,8 +680,8 @@ describe('Firehose', () => {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
       reduxIDs: [
-        'local-clustercore~v1~Pod---{"ns":"my-namespace"}',
-        'local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}',
+        'local-clustercore~v1~Pod---{"ns":"my-namespace"}', // TODO remove multicluster
+        'local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}', // TODO remove multicluster
       ],
       loaded: false,
       // Yes, same data twice at the moment.
@@ -732,8 +732,8 @@ describe('Firehose', () => {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
       reduxIDs: [
-        'local-clustercore~v1~Pod---{"ns":"my-namespace"}',
-        'local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}',
+        'local-clustercore~v1~Pod---{"ns":"my-namespace"}', // TODO remove multicluster
+        'local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}', // TODO remove multicluster
       ],
       loaded: true,
       // Yes, same data twice at the moment.
@@ -798,10 +798,10 @@ describe('Firehose', () => {
     expect(k8sListMock).toHaveBeenCalledTimes(1);
     expect(k8sListMock.mock.calls[0]).toEqual([
       PodModel,
-      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' }, // TODO remove multicluster
       true,
       {},
-      'local-cluster',
+      'local-cluster', // TODO remove multicluster
     ]);
     k8sListMock.mockClear();
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
@@ -809,7 +809,7 @@ describe('Firehose', () => {
       PodModel,
       'my-pod',
       'my-namespace',
-      { cluster: 'local-cluster' },
+      { cluster: 'local-cluster' }, // TODO remove multicluster
       {},
     ]);
     k8sGetMock.mockClear();
@@ -834,8 +834,8 @@ describe('Firehose', () => {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
       reduxIDs: [
-        'local-clustercore~v1~Pod---{"ns":"my-namespace"}',
-        'local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}',
+        'local-clustercore~v1~Pod---{"ns":"my-namespace"}', // TODO remove multicluster
+        'local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}', // TODO remove multicluster
       ],
       loaded: false,
       // Yes, same data twice at the moment.
@@ -886,8 +886,8 @@ describe('Firehose', () => {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
       reduxIDs: [
-        'local-clustercore~v1~Pod---{"ns":"my-namespace"}',
-        'local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}',
+        'local-clustercore~v1~Pod---{"ns":"my-namespace"}', // TODO remove multicluster
+        'local-clustercore~v1~Pod---{"ns":"my-namespace","name":"my-pod"}', // TODO remove multicluster
       ],
       loaded: true,
       // Yes, same data twice at the moment.
@@ -1034,10 +1034,10 @@ describe('Firehose together with useK8sWatchResources', () => {
     expect(k8sListMock).toHaveBeenCalledTimes(1);
     expect(k8sListMock.mock.calls[0]).toEqual([
       PodModel,
-      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' }, // TODO remove multicluster
       true,
       {},
-      'local-cluster',
+      'local-cluster', // TODO remove multicluster
     ]);
     k8sListMock.mockClear();
 
@@ -1046,7 +1046,7 @@ describe('Firehose together with useK8sWatchResources', () => {
       PodModel,
       'my-pod',
       'my-namespace',
-      { cluster: 'local-cluster' },
+      { cluster: 'local-cluster' }, // TODO remove multicluster
       {},
     ]);
     k8sGetMock.mockClear();
@@ -1076,10 +1076,10 @@ describe('Firehose together with useK8sWatchResources', () => {
     expect(lastFirehoseChildProps.pod.data).toEqual(lastUseResourcesHookResult.pod.data);
 
     // And they also should return the same instance for lists
-    expect(lastFirehoseChildProps.pods.data).not.toBe(lastUseResourcesHookResult.pods.data); // Could be the same!
-    expect(lastFirehoseChildProps.pods.data[0]).not.toBe(lastUseResourcesHookResult.pods.data[0]); // Should be the same!!!
-    expect(lastFirehoseChildProps.pods.data[1]).not.toBe(lastUseResourcesHookResult.pods.data[1]); // Should be the same!!!
-    expect(lastFirehoseChildProps.pods.data[2]).not.toBe(lastUseResourcesHookResult.pods.data[2]); // Should be the same!!!
+    expect(lastFirehoseChildProps.pods.data).toBe(lastUseResourcesHookResult.pods.data);
+    expect(lastFirehoseChildProps.pods.data[0]).toBe(lastUseResourcesHookResult.pods.data[0]);
+    expect(lastFirehoseChildProps.pods.data[1]).toBe(lastUseResourcesHookResult.pods.data[1]);
+    expect(lastFirehoseChildProps.pods.data[2]).toBe(lastUseResourcesHookResult.pods.data[2]);
 
     // And they also should return the same instance for single items
     expect(lastFirehoseChildProps.pod.data).not.toBe(lastUseResourcesHookResult.pod.data); // Should be the same, or?
@@ -1129,10 +1129,10 @@ describe('Firehose together with useK8sWatchResources', () => {
     expect(k8sListMock).toHaveBeenCalledTimes(1);
     expect(k8sListMock.mock.calls[0]).toEqual([
       PodModel,
-      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' }, // TODO remove multicluster
       true,
       {},
-      'local-cluster',
+      'local-cluster', // TODO remove multicluster
     ]);
     k8sListMock.mockClear();
 
@@ -1141,7 +1141,7 @@ describe('Firehose together with useK8sWatchResources', () => {
       PodModel,
       'my-pod',
       'my-namespace',
-      { cluster: 'local-cluster' },
+      { cluster: 'local-cluster' }, // TODO remove multicluster
       {},
     ]);
     k8sGetMock.mockClear();
@@ -1171,10 +1171,10 @@ describe('Firehose together with useK8sWatchResources', () => {
     expect(lastFirehoseChildProps.pod.data).toEqual(lastUseResourcesHookResult.pod.data);
 
     // And they also should return the same instance for lists
-    expect(lastFirehoseChildProps.pods.data).not.toBe(lastUseResourcesHookResult.pods.data); // Could be the same!
-    expect(lastFirehoseChildProps.pods.data[0]).not.toBe(lastUseResourcesHookResult.pods.data[0]); // Should be the same!!!
-    expect(lastFirehoseChildProps.pods.data[1]).not.toBe(lastUseResourcesHookResult.pods.data[1]); // Should be the same!!!
-    expect(lastFirehoseChildProps.pods.data[2]).not.toBe(lastUseResourcesHookResult.pods.data[2]); // Should be the same!!!
+    expect(lastFirehoseChildProps.pods.data).toBe(lastUseResourcesHookResult.pods.data);
+    expect(lastFirehoseChildProps.pods.data[0]).toBe(lastUseResourcesHookResult.pods.data[0]);
+    expect(lastFirehoseChildProps.pods.data[1]).toBe(lastUseResourcesHookResult.pods.data[1]);
+    expect(lastFirehoseChildProps.pods.data[2]).toBe(lastUseResourcesHookResult.pods.data[2]);
 
     // And they also should return the same instance for single items
     expect(lastFirehoseChildProps.pod.data).not.toBe(lastUseResourcesHookResult.pod.data); // Should be the same, or?
@@ -1219,10 +1219,10 @@ describe('Firehose together with useK8sWatchResources', () => {
       expect(k8sListMock).toHaveBeenCalledTimes(1);
       expect(k8sListMock.mock.calls[0]).toEqual([
         PodModel,
-        { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+        { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' }, // TODO remove multicluster
         true,
         {},
-        'local-cluster',
+        'local-cluster', // TODO remove multicluster
       ]);
       k8sListMock.mockClear();
 
@@ -1316,10 +1316,10 @@ describe('Firehose together with useK8sWatchResources', () => {
       expect(k8sListMock).toHaveBeenCalledTimes(1);
       expect(k8sListMock.mock.calls[0]).toEqual([
         PodModel,
-        { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+        { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' }, // TODO remove multicluster
         true,
         {},
-        'local-cluster',
+        'local-cluster', // TODO remove multicluster
       ]);
       k8sListMock.mockClear();
 
@@ -1416,7 +1416,7 @@ describe('Firehose together with useK8sWatchResources', () => {
         PodModel,
         '', // Without a name above this calls the get api, but it still returns a list.
         'my-namespace',
-        { cluster: 'local-cluster' },
+        { cluster: 'local-cluster' }, // TODO remove multicluster
         {},
       ]);
       k8sGetMock.mockClear();
@@ -1529,7 +1529,7 @@ describe('Firehose together with useK8sWatchResources', () => {
         PodModel,
         '', // Without a name above this calls the get api, but it still returns a list.
         'my-namespace',
-        { cluster: 'local-cluster' },
+        { cluster: 'local-cluster' }, // TODO remove multicluster
         {},
       ]);
       k8sGetMock.mockClear();

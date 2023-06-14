@@ -33,13 +33,14 @@ import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { RouteParams } from '@console/shared/src/types';
 import { exampleForModel, providedAPIForModel } from '..';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { useClusterServiceVersion } from '../../utils/useClusterServiceVersion';
 import ModelStatusBox from '../model-status-box';
 import { DEFAULT_K8S_SCHEMA } from './const';
-// eslint-disable-next-line @typescript-eslint/camelcase
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
 import { OperandForm } from './operand-form';
 import { OperandYAML } from './operand-yaml';
@@ -100,7 +101,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
       getSchemaErrors(baseSchema).length ||
       hasNoFields((baseSchema?.properties?.spec ?? {}) as JSONSchema7);
     return useFallback
-      ? // eslint-disable-next-line @typescript-eslint/camelcase
+      ? // eslint-disable-next-line @typescript-eslint/naming-convention
         [baseSchema, DEPRECATED_CreateOperandForm]
       : [
           _.defaultsDeep({}, DEFAULT_K8S_SCHEMA, _.omit(baseSchema, 'properties.status')),
@@ -151,10 +152,12 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   );
 };
 
+type CreateOperandPageRouteParams = RouteParams<'csvName' | 'ns'>;
+
 const CreateOperandPage: React.FC<CreateOperandPageProps> = ({ match }) => {
   const { t } = useTranslation();
   const createResourceExtension = useCreateResourceExtension(match.params.plural);
-  const { csvName, ns } = useParams();
+  const { csvName, ns } = useParams<CreateOperandPageRouteParams>();
   const [csv, loaded, loadError] = useClusterServiceVersion(csvName, ns);
 
   return (

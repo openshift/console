@@ -70,19 +70,21 @@ export const PageContents: React.FC<HelmTabbedPageProps> = (props) => {
     projectHelmChartRepository: {
       label:
         projectHelmChartCreateAccess || helmChartCreateAccess ? t('helm-plugin~Repository') : null,
-      onSelection: () => `/ns/${namespace}/helmchartrepositories/~new`,
+      onSelection: () => `/ns/${namespace}/helmchartrepositories/~new/form`,
     },
   };
 
   const pages: Page[] = [
     {
       href: '',
-      name: t('helm-plugin~Helm Releases'),
+      // t('helm-plugin~Helm Releases')
+      nameKey: 'helm-plugin~Helm Releases',
       component: HelmReleaseList,
     },
     {
       href: 'repositories',
-      name: t('helm-plugin~Repositories'),
+      // t('helm-plugin~Repositories')
+      nameKey: 'helm-plugin~Repositories',
       component: RepositoriesPage,
       pageData: {
         showTitle,
@@ -110,6 +112,7 @@ export const PageContents: React.FC<HelmTabbedPageProps> = (props) => {
         match={props.match}
         title={t('helm-plugin~Helm')}
         menuActions={menuActions}
+        telemetryPrefix="Helm"
       />
     ) : (
       <HelmReleaseListPage {...props} />

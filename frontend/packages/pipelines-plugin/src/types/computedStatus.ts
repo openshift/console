@@ -3,6 +3,7 @@ export enum ComputedStatus {
   Succeeded = 'Succeeded',
   Failed = 'Failed',
   Running = 'Running',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   'In Progress' = 'In Progress',
   FailedToStart = 'FailedToStart',
   PipelineNotStarted = 'PipelineNotStarted',

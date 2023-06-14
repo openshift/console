@@ -45,9 +45,7 @@ When('user selects Channel', () => {
 
 When('user selects Default channels', () => {
   cy.get(eventingPO.channel.typeField).click();
-  cy.get(eventingPO.channel.typeFieldMenu)
-    .contains('Default Channel')
-    .click();
+  cy.get(eventingPO.channel.typeFieldMenu).contains('Default Channel').click();
 });
 
 Then('user will see channel created', () => {

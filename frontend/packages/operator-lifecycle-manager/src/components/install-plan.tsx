@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { match, Link } from 'react-router-dom';
@@ -98,7 +98,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
 
       {/* Components */}
       <TableData className={tableColumnClasses[3]}>
-        <ul className="list-unstyled">
+        <ul className="pf-c-list pf-m-plain">
           {obj.spec.clusterServiceVersionNames.map((csvName) => (
             <li key={csvName}>
               {obj.status?.phase === 'Complete' ? (
@@ -124,7 +124,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
         {(obj.metadata.ownerReferences || [])
           .filter((ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel))
           .map((ref) => (
-            <ul key={ref.uid} className="list-unstyled">
+            <ul key={ref.uid} className="pf-c-list pf-m-plain">
               <li>
                 <ResourceLink
                   kind={referenceForModel(SubscriptionModel)}
@@ -221,7 +221,7 @@ const getCatalogSources = (
 
 export const InstallPlansPage: React.FC<InstallPlansPageProps> = (props) => {
   const { t } = useTranslation();
-  const namespace = props.match?.params?.ns;
+  const namespace = props.namespace || props.match?.params?.ns;
   return (
     <MultiListPage
       {...props}

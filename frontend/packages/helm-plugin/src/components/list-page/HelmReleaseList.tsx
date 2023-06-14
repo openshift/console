@@ -7,6 +7,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -127,7 +128,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
         {isHelmEnabled ? (
           <EmptyStateSecondaryActions>
             <Link to={installURL}>
-              {t('helm-plugin~Browse the catalog to discover and install Helm Charts')}
+              {t('helm-plugin~Browse the catalog to discover available Helm Charts')}
             </Link>
           </EmptyStateSecondaryActions>
         ) : null}
@@ -136,21 +137,26 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
   };
 
   return (
-    <CustomResourceList
-      resources={releases}
-      loaded={secretsLoaded && releasesLoaded && newCount === secretsCountRef.current}
-      EmptyMsg={emptyState}
-      queryArg="rowFilter-helm-release-status"
-      textFilter="name"
-      rowFilters={helmReleasesRowFilters(t)}
-      sortBy="name"
-      sortOrder={SortByDirection.asc}
-      rowFilterReducer={filterHelmReleasesByStatus}
-      textFilterReducer={filterHelmReleasesByName}
-      ResourceRow={HelmReleaseListRow}
-      resourceHeader={HelmReleaseListHeader(t)}
-      getRowProps={getRowProps}
-    />
+    <>
+      <Helmet>
+        <title>{t('helm-plugin~Helm Releases')}</title>
+      </Helmet>
+      <CustomResourceList
+        resources={releases}
+        loaded={secretsLoaded && releasesLoaded && newCount === secretsCountRef.current}
+        EmptyMsg={emptyState}
+        queryArg="rowFilter-helm-release-status"
+        textFilter="name"
+        rowFilters={helmReleasesRowFilters(t)}
+        sortBy="name"
+        sortOrder={SortByDirection.asc}
+        rowFilterReducer={filterHelmReleasesByStatus}
+        textFilterReducer={filterHelmReleasesByName}
+        ResourceRow={HelmReleaseListRow}
+        resourceHeader={HelmReleaseListHeader(t)}
+        getRowProps={getRowProps}
+      />
+    </>
   );
 };
 

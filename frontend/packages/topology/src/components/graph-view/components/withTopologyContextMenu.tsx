@@ -60,8 +60,9 @@ const withContextMenu = <E extends GraphElement>(
       </>
     );
   };
-  Component.displayName = `withContextMenu(${WrappedComponent.displayName ||
-    WrappedComponent.name})`;
+  Component.displayName = `withContextMenu(${
+    WrappedComponent.displayName || WrappedComponent.name
+  })`;
   return observer(Component);
 };
 

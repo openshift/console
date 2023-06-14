@@ -2,6 +2,8 @@
   "Eventing": "이벤트",
   "Event Source": "이벤트 소스",
   "Create an Event source to register interest in a class of events from a particular system": "이벤트 소스를 생성하여 특정 시스템에서 관심있는 이벤트 클래스에 등록합니다.",
+  "Create Serverless function": "서버리스 함수 만들기",
+  "Create and deploy stateless, Serverless functions": "상태 비저장 서버리스 함수 생성 및 배포",
   "Broker": "브로커",
   "Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers": "이벤트 풀을 수집하기 위한 이벤트 메시를 정의하고 속성을 기반으로 트리거를 통해 해당 이벤트를 라우팅하는 브로커를 생성합니다.",
   "Channel": "채널",

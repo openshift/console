@@ -459,7 +459,7 @@ DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
 export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (props) => {
   const createProps = {
-    to: `/create-deployment/ns/${props.namespace || 'default'}/~new/form?kind=DeploymentConfig`,
+    to: `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/~new/form`,
   };
   return (
     <ListPage

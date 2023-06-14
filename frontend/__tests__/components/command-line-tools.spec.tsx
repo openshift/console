@@ -1,49 +1,60 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
+import store from '@console/internal/redux';
+import { CommandLineTools } from '@console/internal/components/command-line-tools';
 
-import { CommandLineTools } from '../../public/components/command-line-tools';
+const obj = {
+  data: [
+    {
+      metadata: {
+        name: 'helm-download-links',
+        uid: '1',
+      },
+      spec: {
+        displayName: 'helm - Helm 3 CLI',
+        links: [],
+      },
+    },
+    {
+      metadata: {
+        name: 'oc-cli-downloads',
+        uid: '2',
+      },
+      spec: {
+        displayName: 'oc - OpenShift Command Line Interface (CLI)',
+        links: [],
+      },
+    },
+  ],
+  loaded: true,
+  loadError: null,
+};
+
+// We have to mock the native ResizeObserver class or this test case will fail.
+const nativeResizeObserver = window.ResizeObserver;
+class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
 
 describe('CommandLineTools', () => {
-  let wrapper;
-  const obj = {
-    data: [
-      {
-        metadata: {
-          name: 'helm-download-links',
-          uid: '1',
-        },
-        spec: {
-          displayName: 'helm - Helm 3 CLI',
-          links: [],
-        },
-      },
-      {
-        metadata: {
-          name: 'oc-cli-downloads',
-          uid: '2',
-        },
-        spec: {
-          displayName: 'oc - OpenShift Command Line Interface (CLI)',
-          links: [],
-        },
-      },
-    ],
-    loadError: '',
-    loaded: true,
-  };
-
   describe('When ordering is correct', () => {
-    beforeEach(() => {
-      wrapper = shallow(<CommandLineTools obj={obj} />);
+    beforeAll(() => {
+      window.ResizeObserver = ResizeObserver;
     });
-
+    afterAll(() => {
+      window.ResizeObserver = nativeResizeObserver;
+    });
     it('shows oc first', () => {
-      expect(
-        wrapper
-          .find('.co-section-heading')
-          .first()
-          .text(),
-      ).toEqual('oc - OpenShift Command Line Interface (CLI)');
+      const wrapper = mount(<CommandLineTools obj={obj} />, {
+        wrappingComponent: Provider,
+        wrappingComponentProps: { store },
+      });
+      expect(wrapper.find('.co-section-heading').first().text()).toEqual(
+        'oc - OpenShift Command Line Interface (CLI)',
+      );
     });
   });
 });

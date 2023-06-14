@@ -131,9 +131,11 @@ const LazyRoute = (props) => (
   />
 );
 
-const LazyDynamicRoute: React.FC<Omit<React.ComponentProps<typeof Route>, 'component'> & {
-  component: LoadedExtension<DynamicRoutePage>['properties']['component'];
-}> = ({ component, ...props }) => {
+const LazyDynamicRoute: React.FC<
+  Omit<React.ComponentProps<typeof Route>, 'component'> & {
+    component: LoadedExtension<DynamicRoutePage>['properties']['component'];
+  }
+> = ({ component, ...props }) => {
   const LazyComponent = React.useMemo(
     () =>
       React.lazy(async () => {
@@ -174,9 +176,7 @@ const getPluginPageRoutes = (
   const inactiveRoutes = [...routePages, ...dynamicRoutePages]
     .filter((r) => r.properties.perspective && r.properties.perspective !== activePerspective)
     .map((r) => {
-      const key = Array.from(r.properties.path)
-        .concat([r.properties.perspective])
-        .join(',');
+      const key = Array.from(r.properties.path).concat([r.properties.perspective]).join(',');
 
       return (
         <Route
@@ -376,7 +376,7 @@ const AppContents: React.FC<{}> = () => {
         }
       />
       <LazyRoute
-        path="/k8s/ns/:ns/configmaps/~new"
+        path="/k8s/ns/:ns/configmaps/~new/form"
         exact
         kind="ConfigMap"
         loader={() =>
@@ -386,7 +386,7 @@ const AppContents: React.FC<{}> = () => {
         }
       />
       <LazyRoute
-        path="/k8s/ns/:ns/configmaps/:name/edit"
+        path="/k8s/ns/:ns/configmaps/:name/form"
         exact
         kind="ConfigMap"
         loader={() =>
@@ -424,7 +424,7 @@ const AppContents: React.FC<{}> = () => {
       />
 
       <LazyRoute
-        path="/k8s/ns/:ns/routes/~new"
+        path="/k8s/ns/:ns/routes/~new/form"
         exact
         kind="Route"
         loader={() =>
@@ -435,7 +435,7 @@ const AppContents: React.FC<{}> = () => {
       />
 
       <LazyRoute
-        path="/k8s/ns/:ns/routes/:name/edit"
+        path="/k8s/ns/:ns/routes/:name/form"
         exact
         kind="Route"
         loader={() =>

@@ -14,10 +14,11 @@ const ImageStreamDropdown: React.FC<{
   reloadCount?: number;
 }> = ({ disabled = false, formContextField, reloadCount }) => {
   const { t } = useTranslation();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const imgCollection = {};
 
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
-  const { imageStream } = _.get(values, formContextField) || values;
+  const { imageStream, formType } = _.get(values, formContextField) || values;
   const { isi: initialIsi } = _.get(initialValues, formContextField) || initialValues;
   const { state, dispatch, hasImageStreams, setHasImageStreams } = React.useContext(
     ImageStreamContext,
@@ -46,18 +47,19 @@ const ImageStreamDropdown: React.FC<{
         `${fieldPrefix}imageStream.tag`,
         img === imageStream.image ? imageStream.tag : '',
       );
-      setFieldValue(`${fieldPrefix}isi`, initialIsi);
+      formType !== 'edit' && setFieldValue(`${fieldPrefix}isi`, initialIsi);
       const image = _.get(imgCollection, [imageStream.namespace, img], {});
       dispatch({ type: ImageStreamActions.setSelectedImageStream, value: image });
     },
     [
       setFieldValue,
       fieldPrefix,
-      imageStream.tag,
       imageStream.image,
+      imageStream.tag,
+      imageStream.namespace,
+      formType,
       initialIsi,
       imgCollection,
-      imageStream.namespace,
       dispatch,
     ],
   );

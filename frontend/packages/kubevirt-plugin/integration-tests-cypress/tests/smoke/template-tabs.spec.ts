@@ -23,9 +23,7 @@ describe('smoke tests', () => {
   describe('visit template tabs', () => {
     before(() => {
       cy.visitVMTemplatesList();
-      cy.byLegacyTestID(template)
-        .should('exist')
-        .click();
+      cy.byLegacyTestID(template).should('exist').click();
     });
 
     it('template details tab is loaded', () => {
@@ -33,7 +31,7 @@ describe('smoke tests', () => {
     });
 
     it('template yaml tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~YAML').click();
+      cy.byLegacyTestID('horizontal-link-YAML').click();
       cy.get('.yaml-editor').should('be.visible');
     });
 

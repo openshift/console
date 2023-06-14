@@ -28,15 +28,15 @@ Then('user is able to see a context menu with option {string}', (option: string)
 
 Then('user enters the uri as {string} in {string} modal', (uri: string, header: string) => {
   modal.modalTitleShouldContain(header);
-  cy.byLegacyTestID('edit-sink-uri')
-    .clear()
-    .type(uri);
+  cy.byLegacyTestID('edit-sink-uri').clear().type(uri);
 });
 
 Then(
   'user will see that event source {string} is sinked with uri {string}',
   (eventSourceName: string, uri: string) => {
     cy.log(`${eventSourceName} is linked with ${uri}`);
+    navigateTo(devNavigationMenu.Add);
+    navigateTo(devNavigationMenu.Topology);
     topologyPage.clickOnNode(eventSourceName);
     topologySidePane.verify();
     cy.get(`[href="${uri}"]`).should('be.visible');
@@ -65,9 +65,7 @@ When('user selects sink to Resource option', () => {
 When('user selects the resource from Select Resource dropdown', () => {
   cy.get(eventSourcePO.createSinkBinding.resourceDropDownField).click();
   cy.get(eventSourcePO.createSinkBinding.resourceSearchField).type('kn-event');
-  cy.get(eventSourcePO.createSinkBinding.resourceDropDownItem)
-    .eq(0)
-    .click();
+  cy.get(eventSourcePO.createSinkBinding.resourceDropDownItem).eq(0).click();
 });
 
 When('user clicks on Save button', () => {
@@ -77,7 +75,7 @@ When('user clicks on Save button', () => {
 
 Then('user will see that event source is now connected to new resource', () => {
   cy.get(eventSourcePO.createSinkBinding.eventSourceNode).click();
-  cy.byLegacyTestID('kn-event').should('be.visible');
+  cy.get('[data-test-id="kn-event"]', { timeout: 50000 }).should('be.visible');
 });
 
 Then('user will see that the already existed URI will get vanished', () => {

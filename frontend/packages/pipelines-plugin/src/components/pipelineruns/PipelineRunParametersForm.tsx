@@ -15,25 +15,29 @@ const PipelineRunParametersForm: React.FC<PipelineRunParametersFormProps> = ({ o
     parameters: _.get(obj.spec, 'params', []),
   };
   return (
-    <Formik initialValues={initialValues} onSubmit={null}>
-      {() => (
-        <div className="co-m-pane__body">
-          <PipelineRunParameters
-            fieldName="parameters"
-            isReadOnly
-            nameLabel={t('pipelines-plugin~Name')}
-            nameFieldName="name"
-            valueLabel={t('pipelines-plugin~Value')}
-            valueFieldName="value"
-            emptyMessage={t('pipelines-plugin~No parameters are associated with this PipelineRun.')}
-            emptyValues={{
-              name: '',
-              value: '',
-            }}
-          />
-        </div>
-      )}
-    </Formik>
+    <>
+      <Formik initialValues={initialValues} onSubmit={null}>
+        {() => (
+          <div className="co-m-pane__body">
+            <PipelineRunParameters
+              fieldName="parameters"
+              isReadOnly
+              nameLabel={t('pipelines-plugin~Name')}
+              nameFieldName="name"
+              valueLabel={t('pipelines-plugin~Value')}
+              valueFieldName="value"
+              emptyMessage={t(
+                'pipelines-plugin~No parameters are associated with this PipelineRun.',
+              )}
+              emptyValues={{
+                name: '',
+                value: '',
+              }}
+            />
+          </div>
+        )}
+      </Formik>
+    </>
   );
 };
 

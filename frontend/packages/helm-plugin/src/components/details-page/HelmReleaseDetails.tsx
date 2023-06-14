@@ -13,7 +13,7 @@ import {
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
-import { K8sResourceCommon, K8sResourceKindReference } from '@console/internal/module/k8s';
+import { K8sResourceKindReference, SecretKind } from '@console/internal/module/k8s';
 import { ActionMenu, ActionMenuVariant, Status, ActionServiceProvider } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
 import { fetchHelmRelease, HelmReleaseStatusLabels, releaseStatus } from '../../utils/helm-utils';
@@ -29,49 +29,52 @@ interface HelmReleaseDetailsProps {
     ns?: string;
     name?: string;
   }>;
-  secret?: FirehoseResult;
+  secrets?: FirehoseResult<SecretKind[]>;
 }
 
 interface LoadedHelmReleaseDetailsProps extends HelmReleaseDetailsProps {
-  helmReleaseData: HelmRelease;
+  helmRelease: {
+    loaded: boolean;
+    loadError: Error;
+    data: HelmRelease;
+  };
 }
 
 export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> = ({
   match,
-  secret,
-  helmReleaseData,
+  helmRelease,
+  secrets,
 }) => {
   const { t } = useTranslation();
   const namespace = match.params.ns;
-  if (!helmReleaseData || !secret || (!secret.loaded && _.isEmpty(secret.loadError))) {
+
+  if (helmRelease.loadError) {
+    return <StatusBox loadError={helmRelease.loadError} />;
+  }
+  if (helmRelease.loaded && secrets.loadError) {
+    return <StatusBox loadError={secrets.loadError} />;
+  }
+  if (!helmRelease.loaded || !secrets.loaded) {
     return <LoadingBox />;
   }
-
-  if (secret.loadError) {
-    return <StatusBox loaded={secret.loaded} loadError={secret.loadError} />;
+  if (!helmRelease.data || _.isEmpty(secrets.data)) {
+    return <ErrorPage404 />;
   }
 
-  const secretResources = secret.data;
+  const sortedSecrets = _.orderBy(secrets.data, (o) => Number(o.metadata.labels.version), 'desc');
 
-  if (_.isEmpty(secretResources)) return <ErrorPage404 />;
-
-  const sortedSecretResources = _.orderBy(
-    secretResources,
-    (o) => Number(o.metadata.labels.version),
-    'desc',
-  );
-
-  const latestReleaseSecret = sortedSecretResources[0];
-  const secretName = latestReleaseSecret?.metadata.name;
-  const releaseName = helmReleaseData?.name;
+  const releaseName = helmRelease.data?.name;
+  const latestReleaseSecret = sortedSecrets[0];
+  const latestSecretName = latestReleaseSecret?.metadata.name;
+  const latestSecretStatus = latestReleaseSecret?.metadata?.labels?.status;
 
   const title = (
     <>
       {releaseName}
       <Badge isRead style={{ verticalAlign: 'middle', marginLeft: 'var(--pf-global--spacer--md)' }}>
         <Status
-          status={releaseStatus(latestReleaseSecret?.metadata?.labels?.status)}
-          title={HelmReleaseStatusLabels[latestReleaseSecret?.metadata?.labels?.status]}
+          status={releaseStatus(latestSecretStatus)}
+          title={HelmReleaseStatusLabels[latestSecretStatus]}
         />
       </Badge>
     </>
@@ -81,8 +84,8 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
     release: {
       name: releaseName,
       namespace,
-      version: helmReleaseData.version,
-      info: { status: latestReleaseSecret?.metadata?.labels?.status },
+      version: helmRelease.data?.version,
+      info: { status: latestSecretStatus },
     },
     actionOrigin: HelmActionOrigins.details,
   };
@@ -102,9 +105,9 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
       kindObj={SecretModel}
       match={match}
       customActionMenu={customActionMenu}
-      name={secretName}
+      name={latestSecretName}
       namespace={namespace}
-      customData={helmReleaseData}
+      customData={helmRelease.data}
       breadcrumbsFor={() => [
         {
           name: t('helm-plugin~Helm Releases'),
@@ -118,17 +121,20 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
         navFactory.details(HelmReleaseOverview),
         {
           href: 'resources',
-          name: t('helm-plugin~Resources'),
+          // t('helm-plugin~Resources')
+          nameKey: 'helm-plugin~Resources',
           component: HelmReleaseResources,
         },
         {
           href: 'history',
-          name: t('helm-plugin~Revision history'),
+          // t('helm-plugin~Revision history')
+          nameKey: 'helm-plugin~Revision history',
           component: HelmReleaseHistory,
         },
         {
           href: 'releasenotes',
-          name: t('helm-plugin~Release notes'),
+          // t('helm-plugin~Release notes')
+          nameKey: 'helm-plugin~Release notes',
           component: HelmReleaseNotes,
         },
       ]}
@@ -142,47 +148,75 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = ({ match }) => {
   const helmReleaseName = match.params.name;
 
   const [helmReleaseData, setHelmReleaseData] = React.useState<HelmRelease>();
+  const [helmReleaseError, setHelmReleaseError] = React.useState<Error>();
 
-  const [secrets, secretLoaded, secretLoaderror] = useK8sWatchResource<K8sResourceCommon[]>({
-    namespace,
-    groupVersionKind: {
-      version: 'v1',
-      kind: SecretModel.kind,
-    },
-    selector: { matchLabels: { name: `${helmReleaseData?.name}` } },
-    isList: true,
-  });
+  const [secrets, secretLoaded, secretLoadError] = useK8sWatchResource<SecretKind[]>(
+    helmReleaseData
+      ? {
+          namespace,
+          groupVersionKind: {
+            version: 'v1',
+            kind: SecretModel.kind,
+          },
+          selector: { matchLabels: { name: helmReleaseData.name } },
+          isList: true,
+        }
+      : {
+          isList: true,
+        },
+  );
+
   React.useEffect(() => {
-    let ignore = false;
+    let mounted = true;
 
     const getHelmRelease = async () => {
       try {
         const helmRelease = await fetchHelmRelease(namespace, helmReleaseName);
-        if (!ignore) {
+        if (mounted) {
           setHelmReleaseData(helmRelease);
         }
-        // eslint-disable-next-line no-empty
-      } catch {}
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log('Error while loading helm release', err);
+        setHelmReleaseError(err);
+      }
     };
 
-    getHelmRelease();
+    // Implementation note: secretLoaded is initially true also when no helmReleaseData
+    // is available and NO SECRETS are yet loaded. See helmReleaseData condition above.
+    // It jumps to false when the data are loading... and back to true as soon as
+    // the initial or updated data are fetched.
+    // This if statement helps a little bit (there are still 2 calls) to reduce unneccessary API calls.
+    if (secretLoaded) {
+      getHelmRelease();
+    }
 
     return () => {
-      ignore = true;
+      mounted = false;
     };
     // On upgrading/rolling back to another version a new helm release is created.
-    // For fetching and showing the details of the new release adding secret.data as depedency here
-    // since secret's data list gets updated when a new release is created.
-  }, [helmReleaseName, namespace, secrets]);
+    // For fetching and showing the details of the new release adding secrets and
+    // secretLoaded as dependency here since they are updated when a new release is created.
+  }, [namespace, helmReleaseName, secrets, secretLoaded]);
 
-  const secret = {
-    data: secrets,
+  const helmRelease = {
+    loaded: !!(helmReleaseData || helmReleaseError),
+    loadError: helmReleaseError,
+    data: helmReleaseData,
+  };
+
+  const secretsFirehoseResult: FirehoseResult<SecretKind[]> = {
     loaded: secretLoaded,
-    loadError: secretLoaderror,
+    loadError: secretLoadError,
+    data: secrets,
   };
 
   return (
-    <LoadedHelmReleaseDetails match={match} secret={secret} helmReleaseData={helmReleaseData} />
+    <LoadedHelmReleaseDetails
+      match={match}
+      helmRelease={helmRelease}
+      secrets={secretsFirehoseResult}
+    />
   );
 };
 

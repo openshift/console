@@ -1,12 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
-import {
-  addOptions,
-  devNavigationMenu,
-  gitAdvancedOptions,
-  switchPerspective,
-} from '../../constants';
+import { addOptions, devNavigationMenu, switchPerspective } from '../../constants';
 import { gitPO } from '../../pageObjects';
 import {
   getPreferenceDropdown,
@@ -31,14 +26,8 @@ Given('user is at admin perspective', () => {
 });
 
 When('user clicks on user dropdown on masthead and selects {string}', (menuItem: string) => {
-  cy.get(userPreferencePO.userMenu)
-    .should('be.visible')
-    .click();
-  cy.get("[role='menu']")
-    .find('li')
-    .contains(menuItem)
-    .should('be.visible')
-    .click();
+  cy.get(userPreferencePO.userMenu).should('be.visible').click();
+  cy.get("[role='menu']").find('li').contains(menuItem).should('be.visible').click();
 });
 
 Then('user sees {string} tab selected on User Preferences page', (sideTab: string) => {
@@ -75,18 +64,12 @@ When('user selects {string} from the project menu', (projectName: string) => {
 });
 
 When('user clicks on {string} dropdown on User Preferences page', (group: string) => {
-  cy.get(getPreferenceDropdown(group))
-    .should('be.visible')
-    .click();
+  cy.get(getPreferenceDropdown(group)).should('be.visible').click();
 });
 
 When('user searches and selects project {string} from the dropdown', (preference: string) => {
-  cy.get(userPreferencePO.namespaceTypeahead)
-    .clear()
-    .should('not.have.value');
-  cy.get(userPreferencePO.namespaceTypeahead)
-    .type(preference)
-    .should('have.value', preference);
+  cy.get(userPreferencePO.namespaceTypeahead).clear().should('not.have.value');
+  cy.get(userPreferencePO.namespaceTypeahead).type(preference).should('have.value', preference);
   cy.get('[data-test="dropdown console.preferredNamespace"]')
     .find('li')
     .contains(preference)
@@ -109,18 +92,12 @@ Then('user can see project {string} is selected', (projectName: string) => {
 });
 
 When('user types project {string} in search bar', (preference: string) => {
-  cy.get(userPreferencePO.namespaceTypeahead)
-    .clear()
-    .should('not.have.value');
-  cy.get(userPreferencePO.namespaceTypeahead)
-    .type(preference)
-    .should('have.value', preference);
+  cy.get(userPreferencePO.namespaceTypeahead).clear().should('not.have.value');
+  cy.get(userPreferencePO.namespaceTypeahead).type(preference).should('have.value', preference);
 });
 
 When('user clicks on Create project option from the dropdown', () => {
-  cy.get(userPreferencePO.creteProjectButton)
-    .should('be.visible')
-    .click();
+  cy.get(userPreferencePO.creteProjectButton).should('be.visible').click();
 });
 
 When('user clicks on Create with name {string} in Create Project modal', (projectName: string) => {
@@ -188,15 +165,11 @@ Then('user can see YAML view option selected in Install Helm Chart page', () => 
 });
 
 When('user clicks on {string} tab on User Preferences page', (tab: string) => {
-  cy.get(getTab(tab))
-    .should('be.visible')
-    .click();
+  cy.get(getTab(tab)).should('be.visible').click();
 });
 
 When('user clicks on the checkbox to uncheck it', () => {
-  cy.get(userPreferencePO.checkboxPreferredLanguage)
-    .should('be.visible')
-    .uncheck();
+  cy.get(userPreferencePO.checkboxPreferredLanguage).should('be.visible').uncheck();
 });
 
 Then('user will see the language change to 日本語', () => {
@@ -242,6 +215,5 @@ When('user clicks on Container images', () => {
 });
 
 Then('user is able to see resources DeploymentConfig is selected', () => {
-  gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
-  cy.get(gitPO.advancedOptions.resourcesDropdown).should('contain.text', 'DeploymentConfig');
+  cy.get(gitPO.resourcesDropdown).should('contain.text', 'DeploymentConfig');
 });

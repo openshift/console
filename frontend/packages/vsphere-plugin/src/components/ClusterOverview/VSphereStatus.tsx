@@ -59,7 +59,7 @@ export const healthHandler: PrometheusHealthHandler = (responses, t, additionalR
       message = health.message;
       break;
     case HealthState.OK:
-      message = t('vsphere-plugin~No error is reported, open for detailed status.');
+      message = t('vsphere-plugin~No errors are reported. Click the link for details.');
       break;
     default:
       break;

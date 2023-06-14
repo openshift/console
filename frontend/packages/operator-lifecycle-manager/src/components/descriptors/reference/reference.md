@@ -141,6 +141,15 @@ x-descriptors:
 …
 ```
 
+With optional label selector being specified:
+
+```yaml
+…
+x-descriptors:
+- urn:alm:descriptor:io.kubernetes:Deployment?tier!=frontend,environment in (production, qa)'
+…
+```
+
 **UI**
 <table style="width:100%">
   <tr valign="top">

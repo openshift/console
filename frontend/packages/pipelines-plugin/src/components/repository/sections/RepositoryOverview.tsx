@@ -1,11 +1,20 @@
 import * as React from 'react';
-import { Flex, FlexItem, Text, Title, TitleSizes, FormGroup } from '@patternfly/react-core';
+import {
+  Flex,
+  FlexItem,
+  Text,
+  Title,
+  TitleSizes,
+  FormGroup,
+  ClipboardCopy,
+} from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
 import EditorField from '@console/dev-console/src/components/buildconfig/sections/EditorField';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { GitProvider } from '@console/git-service/src';
 import { ExternalLink } from '@console/internal/components/utils';
-import YAMLEditorToolbar from '@console/shared/src/components/editor/YAMLEditorToolbar';
+import CodeEditorToolbar from '@console/shared/src/components/editor/CodeEditorToolbar';
 import CopyPipelineRunButton from '../form-fields/CopyPipelineRunButton';
 import { RepositoryFormValues } from '../types';
 
@@ -59,7 +68,7 @@ const RepositoryOverview = () => {
           </Text>
         </Trans>
         <>
-          <YAMLEditorToolbar showShortcuts toolbarLinks={[]} />
+          <CodeEditorToolbar showShortcuts toolbarLinks={[]} />
           <EditorField
             name="yamlData"
             height={200}
@@ -88,7 +97,29 @@ const RepositoryOverview = () => {
           {t('pipelines-plugin~Commit these changes and push them to your Git repository.')}
         </Text>
       </FormGroup>
-      <FormGroup fieldId="step-4">
+      {!(
+        values.gitProvider === GitProvider.GITHUB &&
+        values.method === GitProvider.GITHUB &&
+        values.githubAppAvailable === true
+      ) &&
+        values?.webhook?.url && (
+          <FormGroup fieldId="step-4">
+            <Title headingLevel="h4" size={TitleSizes.md}>
+              {t('pipelines-plugin~Step 4')}
+            </Title>
+            <Text>
+              <Trans t={t} ns="pipelines-plugin">
+                Webhook URL to configure the webhook in your Git repository:
+              </Trans>
+            </Text>
+            <Text>
+              <ClipboardCopy isReadOnly hoverTip="Copy" clickTip="Copied" style={{ flex: '1' }}>
+                {values.webhook.url}
+              </ClipboardCopy>
+            </Text>
+          </FormGroup>
+        )}
+      <FormGroup fieldId="step-5">
         <Text>
           <Trans t={t} ns="pipelines-plugin">
             You can install Tekton CLI from{' '}

@@ -90,6 +90,7 @@ const Details = ({ obj: pv }) => {
   const accessModes = _.get(pv, 'spec.accessModes');
   const volumeMode = _.get(pv, 'spec.volumeMode');
   const reclaimPolicy = _.get(pv, 'spec.persistentVolumeReclaimPolicy');
+  const nfsExport = _.get(pv, 'spec.csi.volumeAttributes.share');
   return (
     <div className="co-m-pane__body">
       <SectionHeading text={t('public~PersistentVolume details')} />
@@ -134,6 +135,12 @@ const Details = ({ obj: pv }) => {
                 <dd>
                   <ResourceLink kind="PersistentVolumeClaim" name={pvcName} namespace={namespace} />
                 </dd>
+              </>
+            )}
+            {nfsExport && (
+              <>
+                <dt>{t('public~NFS-export')}</dt>
+                <dd>{nfsExport}</dd>
               </>
             )}
           </dl>

@@ -11,13 +11,14 @@ import (
 	"k8s.io/klog"
 )
 
+// TODO remove multicluster: Remove cluster arg.
 func (s *Server) GetKubeVersion(cluster string) string {
 	if s.KubeVersion != "" {
 		return s.KubeVersion
 	}
 	config := &rest.Config{
-		Host:      s.LocalK8sProxyConfig.Endpoint.String(),
-		Transport: s.LocalK8sClient.Transport,
+		Host:      s.K8sProxyConfig.Endpoint.String(),
+		Transport: s.K8sClient.Transport,
 	}
 
 	if cluster != serverutils.LocalClusterName {

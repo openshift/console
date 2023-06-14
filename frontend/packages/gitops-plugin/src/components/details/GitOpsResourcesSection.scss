@@ -8,5 +8,14 @@
   }
   &__list {
     display: flex;
+    max-width: 203px;
+  }
+
+  .pf-l-split.pf-m-gutter {
+    justify-content: space-between;
+
+    &>*:not(:last-child) {
+      margin-right: var(--pf-global--spacer--sm);
+    }
   }
 }

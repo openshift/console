@@ -1,7 +1,8 @@
+import i18next from 'i18next';
 import { JSONSchema7 } from 'json-schema';
-import { toPath } from 'lodash';
+import { startCase, toPath } from 'lodash';
 import { FirehoseResult } from '@console/internal/components/utils/types';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sKind, K8sResourceKind, modelFor } from '@console/internal/module/k8s';
 import { getUID } from '../selectors/common';
 
 export type EntityMap<A> = { [propertyName: string]: A };
@@ -88,4 +89,31 @@ export const alphanumericCompare = (a: string, b: string): number => {
     numeric: true,
     sensitivity: 'base',
   });
+};
+
+export const translationForResourceKind = {
+  // t('console-shared~Helm Release')
+  HelmRelease: `console-shared~Helm Release`,
+};
+
+export const labelForNodeKind = (kindString: string) => {
+  const model: K8sKind | undefined = modelFor(kindString);
+  if (model) {
+    return model.label;
+  }
+  return startCase(kindString);
+};
+
+export const getTitleForNodeKind = (kindString: string) => {
+  const model: K8sKind | undefined = modelFor(kindString);
+  if (model) {
+    if (model.labelKey) {
+      return i18next.t(model.labelKey);
+    }
+    return model.label;
+  }
+  if (translationForResourceKind[kindString]) {
+    return i18next.t(translationForResourceKind[kindString]);
+  }
+  return startCase(kindString);
 };

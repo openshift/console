@@ -81,9 +81,7 @@ export const deleteKind = (kind: string, humanizeKind: boolean) =>
 
 export const create = (obj) => {
   const filename = [
-    Cypress.config('screenshotsFolder')
-      .toString()
-      .replace('/cypress/screenshots', ''),
+    Cypress.config('screenshotsFolder').toString().replace('/cypress/screenshots', ''),
     `${obj.metadata.name}.${obj.kind.toLowerCase()}.json`,
   ].join('/');
   cy.writeFile(filename, JSON.stringify(obj));

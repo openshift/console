@@ -37,15 +37,11 @@ Given('user selected Add Trigger from kebab menu of pipeline {string}', (pipelin
 });
 
 When('user clicks on {string} link', (linkName: string) => {
-  cy.get(pipelinesPO.addTrigger.variablesLink)
-    .contains(linkName)
-    .click();
+  cy.get(pipelinesPO.addTrigger.variablesLink).contains(linkName).click();
 });
 
 Then('user should be able to see {string} link with variables section', (linkName: string) => {
-  cy.get(pipelinesPO.addTrigger.variablesLink)
-    .contains(linkName)
-    .should('be.visible');
+  cy.get(pipelinesPO.addTrigger.variablesLink).contains(linkName).should('be.visible');
 });
 
 Then('variables section displayed with message {string}', (text: string) => {
@@ -184,16 +180,12 @@ Then('Actions dropdown display on Cluster Trigger Binding page', () => {
 });
 
 When('user selects the first option from the Trigger Template drop down field', () => {
-  cy.get(pipelinesPO.removeTrigger.triggerTemplate)
-    .should('be.enabled')
-    .click();
+  cy.get(pipelinesPO.removeTrigger.triggerTemplate).should('be.enabled').click();
   cy.byLegacyTestID('dropdown-menu').click();
 });
 
 When('user clicks on Remove button', () => {
-  cy.get(pipelinesPO.removeTrigger.remove)
-    .should('be.enabled')
-    .click({ force: true });
+  cy.get(pipelinesPO.removeTrigger.remove).should('be.enabled').click({ force: true });
   modal.shouldBeClosed();
 });
 
@@ -215,10 +207,7 @@ Then(
   (option: string, pipelineName: string) => {
     pipelinesPage.search(pipelineName);
     pipelinesPage.selectKebabMenu(pipelineName);
-    cy.byLegacyTestID('action-items')
-      .find('li')
-      .contains(option)
-      .should('not.exist');
+    cy.byLegacyTestID('action-items').find('li').contains(option).should('not.exist');
   },
 );
 

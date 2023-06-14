@@ -13,20 +13,8 @@ import {
 
 export const controlButtonTest = (wrapper: ShallowWrapper) => {
   expect(wrapper.find(ButtonBar).exists()).toBe(true);
-  expect(
-    wrapper
-      .find(Button)
-      .at(0)
-      .childAt(0)
-      .text(),
-  ).toEqual('Add');
-  expect(
-    wrapper
-      .find(Button)
-      .at(1)
-      .childAt(0)
-      .text(),
-  ).toEqual('Cancel');
+  expect(wrapper.find(Button).at(0).childAt(0).text()).toEqual('Add');
+  expect(wrapper.find(Button).at(1).childAt(0).text()).toEqual('Cancel');
 };
 
 describe('Add Identity Provider: BasicAuthentication', () => {

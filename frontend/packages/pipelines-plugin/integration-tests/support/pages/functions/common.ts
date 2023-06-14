@@ -13,10 +13,7 @@ export const tableFunctions = {
   verifyColumnValue: (columnName: string, columnValue: string) => {
     cy.get('tr th').each(($el, index) => {
       if ($el.text().includes(columnName)) {
-        cy.get('tbody tr')
-          .find('td')
-          .eq(index)
-          .should('have.text', columnValue);
+        cy.get('tbody tr').find('td').eq(index).should('have.text', columnValue);
       }
     });
   },
@@ -25,10 +22,7 @@ export const tableFunctions = {
     cy.get('div[role="grid"]').within(() => {
       cy.get('tr td:nth-child(1)').each(($el, index) => {
         if ($el.text().includes(name)) {
-          cy.get('tbody tr')
-            .eq(index)
-            .find('[data-test-id="kebab-button"]')
-            .click({ force: true });
+          cy.get('tbody tr').eq(index).find('[data-test-id="kebab-button"]').click({ force: true });
         }
       });
     });

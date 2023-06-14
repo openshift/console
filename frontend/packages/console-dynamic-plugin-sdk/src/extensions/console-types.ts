@@ -3,7 +3,6 @@ import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import MonacoEditor from 'react-monaco-editor/lib/editor';
 import { RouteComponentProps } from 'react-router';
-import { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
@@ -14,6 +13,7 @@ import {
   Selector,
 } from '../api/common-types';
 import { Extension, ExtensionTypeGuard } from '../types';
+import { CustomDataSource } from './dashboard-data-source';
 
 export type OwnerReference = {
   name: string;
@@ -185,7 +185,7 @@ export type WatchK8sResource = {
   fieldSelector?: string;
   optional?: boolean;
   partialMetadata?: boolean;
-  cluster?: string;
+  cluster?: string; // TODO remove multicluster
 };
 
 export type ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] };
@@ -256,7 +256,7 @@ export type ConsoleFetch = (
   url: string,
   options?: RequestInit,
   timeout?: number,
-  cluster?: string,
+  cluster?: string, // TODO remove multicluster
 ) => Promise<Response>;
 
 export type ConsoleFetchJSON<T = any> = {
@@ -265,35 +265,35 @@ export type ConsoleFetchJSON<T = any> = {
     method?: string,
     options?: RequestInit,
     timeout?: number,
-    cluster?: string,
+    cluster?: string, // TODO remove multicluster
   ): Promise<T>;
   delete(
     url: string,
     json?: any,
     options?: RequestInit,
     timeout?: number,
-    cluster?: string,
+    cluster?: string, // TODO remove multicluster
   ): Promise<T>;
   post(
     url: string,
     json: any,
     options?: RequestInit,
     timeout?: number,
-    cluster?: string,
+    cluster?: string, // TODO remove multicluster
   ): Promise<T>;
   put(
     url: string,
     json: any,
     options?: RequestInit,
     timeout?: number,
-    cluster?: string,
+    cluster?: string, // TODO remove multicluster
   ): Promise<T>;
   patch(
     url: string,
     json: any,
     options?: RequestInit,
     timeout?: number,
-    cluster?: string,
+    cluster?: string, // TODO remove multicluster
   ): Promise<T>;
 };
 
@@ -451,6 +451,7 @@ export type ListPageFilterProps<D = any> = {
   columnLayout?: ColumnLayout;
   onFilterChange: OnFilterChange;
   hideColumnManagement?: boolean;
+  nameFilter?: string;
 };
 
 export type UseListPageFilter = <D, R>(
@@ -625,8 +626,9 @@ export type SelfSubjectAccessReviewKind = {
   };
 };
 
-export type YAMLEditorProps = {
+export type CodeEditorProps = {
   value?: string;
+  language?: string;
   options?: object;
   minHeight?: string | number;
   showShortcuts?: boolean;
@@ -635,7 +637,7 @@ export type YAMLEditorProps = {
   onSave?: () => void;
 };
 
-export type YAMLEditorRef = {
+export type CodeEditorRef = {
   editor?: MonacoEditor['editor'];
 };
 

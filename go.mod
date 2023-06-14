@@ -1,6 +1,6 @@
 module github.com/openshift/console
 
-go 1.18
+go 1.20
 
 require (
 	github.com/coreos/go-oidc v2.1.0+incompatible
@@ -16,6 +16,7 @@ require (
 	github.com/openshift/library-go v0.0.0-20200424095618-2aeb4725dadf
 	github.com/operator-framework/kubectl-operator v0.3.0
 	github.com/prometheus/client_golang v1.14.0
+	github.com/prometheus/common v0.37.0
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
 	github.com/redhat-certification/chart-verifier v0.0.0-20220927162416-f4f07c9860f7
 	github.com/stretchr/testify v1.8.1
@@ -32,6 +33,12 @@ require (
 	k8s.io/klog/v2 v2.80.1
 	sigs.k8s.io/controller-runtime v0.12.1
 	sigs.k8s.io/yaml v1.3.0
+)
+
+require (
+	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/multierr v1.6.0 // indirect
+	go.uber.org/zap v1.19.1 // indirect
 )
 
 require (
@@ -54,6 +61,7 @@ require (
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/chai2010/gettext-go v1.0.2 // indirect
+	github.com/cloudevents/sdk-go/v2 v2.14.0
 	github.com/containerd/containerd v1.6.15 // indirect
 	github.com/containerd/continuity v0.3.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.3 // indirect
@@ -149,7 +157,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/pquerna/cachecontrol v0.1.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
-	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/rubenv/sql-migrate v1.2.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect

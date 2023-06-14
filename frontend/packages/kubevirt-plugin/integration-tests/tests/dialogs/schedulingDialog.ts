@@ -16,12 +16,7 @@ export class AddDialog {
     if ((await view.emptyKeyInputs(placeholder).count()) === 0) {
       await click(view.addLabelBtn);
     }
-    return this.extractID(
-      await view
-        .emptyKeyInputs(placeholder)
-        .first()
-        .getAttribute('id'),
-    );
+    return this.extractID(await view.emptyKeyInputs(placeholder).first().getAttribute('id'));
   }
 
   async addLabel(name: string, placeholder: string, key: string, value: string) {

@@ -1,5 +1,7 @@
+/* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import Helmet from 'react-helmet';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
@@ -15,7 +17,7 @@ import {
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 // FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -897,10 +899,10 @@ export const PullSecret = (props) => {
 
   const secrets = () => {
     if (error) {
-      return (<Alert variant="danger" isInline title={t('Error loading default pull Secrets')} />);
+      return <Alert variant="danger" isInline title={t('Error loading default pull Secrets')} />;
     }
     return data.length > 0 ? (
-      (data.map((secret) => (
+      data.map((secret) => (
         <div key={secret.name}>
           <ResourceLink
             kind="Secret"
@@ -909,12 +911,12 @@ export const PullSecret = (props) => {
             linkTo={canViewSecrets}
           />
         </div>
-      )))
+      ))
     ) : (
-      (<Button variant="link" type="button" isInline onClick={modal}>
+      <Button variant="link" type="button" isInline onClick={modal}>
         {t('public~Not configured')}
         <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-      </Button>)
+      </Button>
     );
   };
 
@@ -1054,6 +1056,9 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return (
     <div>
+      <Helmet>
+        <title>{t('public~Project details')}</title>
+      </Helmet>
       <div className="co-m-pane__body">
         {!customData?.hideHeading && (
           <SectionHeading text={t('public~{{kind}} details', { kind: ns.kind })} />
@@ -1064,7 +1069,7 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
       {!_.isEmpty(links) && (
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~Launcher')} />
-          <ul className="list-unstyled">
+          <ul className="pf-c-list pf-m-plain">
             {_.map(_.sortBy(links, 'spec.text'), (link) => {
               return (
                 <li key={link.metadata.uid}>
@@ -1079,13 +1084,15 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   );
 };
 
-const RolesPage = ({ obj: { metadata } }) => (
-  <RoleBindingsPage
-    createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
-    namespace={metadata.name}
-    showTitle={false}
-  />
-);
+const RolesPage = ({ obj: { metadata } }) => {
+  return (
+    <RoleBindingsPage
+      createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
+      namespace={metadata.name}
+      showTitle={false}
+    />
+  );
+};
 
 export const NamespacesDetailsPage = (props) => (
   <DetailsPage
@@ -1100,7 +1107,6 @@ export const NamespacesDetailsPage = (props) => (
 );
 
 export const ProjectsDetailsPage = (props) => {
-  const { t } = useTranslation();
   return (
     <DetailsPage
       {...props}
@@ -1108,12 +1114,14 @@ export const ProjectsDetailsPage = (props) => {
       pages={[
         {
           href: '',
-          name: t('public~Overview'),
+          // t('public~Overview')
+          nameKey: 'public~Overview',
           component: ProjectDashboard,
         },
         {
           href: 'details',
-          name: t('public~Details'),
+          // t('public~Details')
+          nameKey: 'public~Details',
           component: NamespaceDetails,
         },
         navFactory.editYaml(),

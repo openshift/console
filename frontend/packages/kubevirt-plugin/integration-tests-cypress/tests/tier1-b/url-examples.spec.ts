@@ -20,13 +20,8 @@ xdescribe('Import URL examples', () => {
     for (const [key, value] of Object.entries(TEMPLATE)) {
       if (key !== 'DEFAULT') {
         wizard.vm.open();
-        cy.get('.pf-c-card')
-          .contains(value.os)
-          .should('exist')
-          .click();
-        cy.get(wizardView.next)
-          .should('not.be.disabled')
-          .click();
+        cy.get('.pf-c-card').contains(value.os).should('exist').click();
+        cy.get(wizardView.next).should('not.be.disabled').click();
         cy.get('body').then(($body) => {
           if ($body.find('.ReactModal__Overlay').length > 0) {
             cy.get('#confirm-action').click();
@@ -51,9 +46,7 @@ xdescribe('Import URL examples', () => {
             .contains(value.exampleRegUrl)
             .should('exist');
         }
-        cy.get('button')
-          .contains('Cancel')
-          .click();
+        cy.get('button').contains('Cancel').click();
       }
     }
   });

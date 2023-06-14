@@ -64,6 +64,5 @@ export type ModalParameter = TektonParam & {
 export type CommonPipelineModalFormikValues = FormikValues & {
   namespace: string;
   parameters: ModalParameter[];
-  resources: PipelineModalFormResource[];
   workspaces: PipelineModalFormWorkspace[];
 };

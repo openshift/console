@@ -7,12 +7,10 @@ export const helmPage = {
   verifyInstallHelmLink: () =>
     cy
       .get('a')
-      .contains('Browse the catalog to discover and install Helm Charts')
+      .contains('Browse the catalog to discover available Helm Charts')
       .should('be.visible'),
   search: (name: string) => {
-    cy.get(helmPO.search)
-      .clear()
-      .type(name);
+    cy.get(helmPO.search).clear().type(name);
   },
   verifyHelmReleasesDisplayed: () => cy.get(helmPO.table).should('be.visible'),
   clickHelmReleaseName: (name: string) => cy.get(`a[title="${name}"]`).click(),
@@ -50,18 +48,13 @@ export const helmPage = {
     cy.get('tr td:nth-child(1)').each(($el, index) => {
       const text = $el.text();
       if (text.includes(helmReleaseName)) {
-        cy.get('tbody tr')
-          .eq(index)
-          .find('td:nth-child(4) button')
-          .click();
+        cy.get('tbody tr').eq(index).find('td:nth-child(4) button').click();
       }
     });
   },
   selectKebabMenu: () => {
     cy.get(helmPO.table).should('exist');
-    cy.byLegacyTestID('kebab-button')
-      .first()
-      .click();
+    cy.byLegacyTestID('kebab-button').first().click();
   },
   verifyHelmChartsListed: () => {
     cy.get(helmPO.noHelmSearchMessage)
@@ -96,33 +89,21 @@ export const helmPage = {
     helmPage.selectHelmFilterDropDown();
     switch (filterName) {
       case 'Deployed': {
-        cy.get(helmPO.deployedCheckbox)
-          .uncheck()
-          .should('not.be.checked');
+        cy.get(helmPO.deployedCheckbox).uncheck().should('not.be.checked');
         break;
       }
       case 'Failed': {
-        cy.get(helmPO.failedCheckbox)
-          .uncheck()
-          .should('not.be.checked');
+        cy.get(helmPO.failedCheckbox).uncheck().should('not.be.checked');
         break;
       }
       case 'Other': {
-        cy.get(helmPO.failedCheckbox)
-          .uncheck()
-          .should('not.be.checked');
+        cy.get(helmPO.failedCheckbox).uncheck().should('not.be.checked');
         break;
       }
       case 'All': {
-        cy.get(helmPO.deployedCheckbox)
-          .uncheck()
-          .should('not.be.checked');
-        cy.get(helmPO.failedCheckbox)
-          .uncheck()
-          .should('not.be.checked');
-        cy.get(helmPO.otherCheckbox)
-          .uncheck()
-          .should('not.be.checked');
+        cy.get(helmPO.deployedCheckbox).uncheck().should('not.be.checked');
+        cy.get(helmPO.failedCheckbox).uncheck().should('not.be.checked');
+        cy.get(helmPO.otherCheckbox).uncheck().should('not.be.checked');
         break;
       }
       default: {
@@ -161,9 +142,7 @@ export const helmPage = {
     // eslint-disable-next-line promise/catch-or-return
     cy.get(helmPO.filterToolBar).then((body) => {
       if (body.find(helmPO.clearAllFilter).length >= 0) {
-        cy.get(helmPO.clearAllFilter)
-          .eq(1)
-          .click();
+        cy.get(helmPO.clearAllFilter).eq(1).click();
       }
     });
   },
@@ -187,10 +166,7 @@ export const helmPage = {
     }
   },
   verifyInstallHelmChartLink: (installLink: string) =>
-    cy
-      .get('a')
-      .contains(installLink)
-      .should('be.visible'),
+    cy.get('a').contains(installLink).should('be.visible'),
   verifyDropdownItem: (item1: string, item2: string, item3: string) => {
     cy.get(helmPO.filterDropdown).click();
     cy.get(helmPO.filter.pendingInstall).within(() => {

@@ -97,7 +97,40 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
   const [rows, setRows] = React.useState([]);
   const [sortBy, setSortBy] = React.useState<ISortBy>({});
   const pluginColumns = ['name', 'version', 'description', 'status'];
+  const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';
   React.useEffect(() => {
+    const placeholder = '-';
+    if (developmentMode) {
+      const data = pluginInfoEntries.filter(isLoadedDynamicPluginInfo).map((plugin) => {
+        return {
+          name: plugin.metadata.name,
+          version: plugin.metadata.version,
+          description: plugin.metadata?.description || placeholder,
+          enabled: plugin.enabled,
+          status: plugin.status,
+        };
+      });
+      setRows(
+        data?.map((item) => {
+          return {
+            cells: [
+              {
+                title: item.name,
+              },
+              item.version,
+              item.description,
+              {
+                title: <Status status={item.status} title={item.status} />,
+              },
+              {
+                title: t('console-app~Enabled'),
+              },
+            ],
+          };
+        }),
+      );
+      return;
+    }
     const data = consolePlugins.map((plugin) => {
       const pluginName = plugin?.metadata?.name;
       const loadedPluginInfo = pluginInfoEntries
@@ -132,7 +165,6 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
             : undefined,
       };
     });
-    const placeholder = '-';
     const sortedData = !_.isEmpty(sortBy)
       ? data.sort((a, b) => {
           const sortCol = pluginColumns[sortBy.index];
@@ -184,19 +216,19 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
   const headers = [
     {
       title: t('console-app~Name'),
-      transforms: [sortable],
+      transforms: developmentMode ? [] : [sortable],
     },
     {
       title: t('console-app~Version'),
-      transforms: [sortable],
+      transforms: developmentMode ? [] : [sortable],
     },
     {
       title: t('console-app~Description'),
-      transforms: [sortable],
+      transforms: developmentMode ? [] : [sortable],
     },
     {
       title: t('console-app~Status'),
-      transforms: [sortable],
+      transforms: developmentMode ? [] : [sortable],
     },
     { title: '' },
   ];

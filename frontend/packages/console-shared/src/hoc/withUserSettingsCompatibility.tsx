@@ -28,7 +28,8 @@ export const withUserSettingsCompatibility = <
       <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
     ) : null;
   };
-  Component.displayName = `withUserSettingsCompatibility(${WrappedComponent.displayName ||
-    WrappedComponent.name})`;
+  Component.displayName = `withUserSettingsCompatibility(${
+    WrappedComponent.displayName || WrappedComponent.name
+  })`;
   return Component;
 };

@@ -115,6 +115,7 @@ describe('Kubernetes resource CRUD operations', () => {
     'Route',
     'DeploymentConfig',
     'Deployment',
+    'BuildConfig',
   ]);
 
   testObjs.forEach((testObj, resource) => {
@@ -166,6 +167,29 @@ describe('Kubernetes resource CRUD operations', () => {
                     spec: {
                       selector: { app: name },
                       template: { metadata: { labels: { app: name } } },
+                    },
+                  }
+                : {}),
+              ...(kind === 'BuildConfig'
+                ? {
+                    spec: {
+                      strategy: {
+                        type: 'Source',
+                        sourceStrategy: {
+                          from: {
+                            kind: 'ImageStreamTag',
+                            namespace: 'aut-form-edit-build-config',
+                            name: 'nodejs-ex-git:latest',
+                          },
+                        },
+                      },
+                      source: {
+                        type: 'Git',
+                        git: {
+                          uri: 'https://github.com/sclorg/nodejs-ex.git',
+                        },
+                        contextDir: '/',
+                      },
                     },
                   }
                 : {}),

@@ -683,7 +683,8 @@ export const pipelineTestData: PipelineTestData = {
         },
         status: {
           pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
-          completionTime: '2019-10-29T11:57:53Z',
+          completionTime: 'Mon Mar 27 2023 18:09:11',
+          startTime: 'Mon Mar 27 2023 18:08:19',
           conditions: [
             {
               lastTransitionTime: '2019-09-12T20:38:01Z',
@@ -3215,7 +3216,7 @@ export const mockRepositories: RepositoryKind[] = [
     },
     spec: {
       branch: 'main',
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       event_type: 'pull_request',
       namespace: 'karthik',
       url: 'https://github.com/karthikjeeyar/demo-app',
@@ -3239,6 +3240,31 @@ export const mockRepositories: RepositoryKind[] = [
     metadata: {
       name: 'aa',
       namespace: 'test',
+    },
+  },
+  {
+    apiVersion: 'pipelinesascode.tekton.dev/v1alpha1',
+    kind: 'Repository',
+    metadata: {
+      name: 'aa',
+      namespace: 'test',
+    },
+    spec: {
+      namespace: 'karthik',
+      url: 'https://github.com/karthikjeeyar/demo-app',
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      git_provider: {
+        user: 'lokanandap',
+        secret: {
+          key: 'provider.token',
+          name: 'git-hello-func-token-s79pk',
+        },
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        webhook_secret: {
+          key: 'webhook.secret',
+          name: 'git-hello-func-token-s79pk',
+        },
+      },
     },
   },
 ];

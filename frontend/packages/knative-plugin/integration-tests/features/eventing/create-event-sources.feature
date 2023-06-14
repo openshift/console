@@ -54,17 +54,8 @@ Feature: Create event sources
               And sink has knative service dropdown with "Service" and "KSVC" options
               And Create button is disabled
 
-
-        @regression
-        Scenario: Event source details for CamelSource event source type: KE-02-TC06
-             When user selects event source type "CamelSource"
-              And user selects Create Event Source
-             Then page contains CamelSource section
-              And Create button is enabled
-
-
         @smoke
-        Scenario: Create ApiServerSource event source: KE-02-TC07
+        Scenario: Create ApiServerSource event source: KE-02-TC06
              When user selects event source type "Api Server Source"
               And user selects Create Event Source
               And user enters Resource APIVERSION as "sources.knative.dev/v1alpha1"
@@ -79,7 +70,7 @@ Feature: Create event sources
 
 
         @smoke
-        Scenario: Create ContainerSource event source: KE-02-TC08
+        Scenario: Create ContainerSource event source: KE-02-TC07
              When user selects event source type "Container Source"
               And user selects Create Event Source
               And user enters Container Image as "openshift/hello-openshift"
@@ -90,7 +81,7 @@ Feature: Create event sources
 
 
         @smoke
-        Scenario: Create PingSource event source: KE-02-TC09
+        Scenario: Create PingSource event source: KE-02-TC08
              When user selects event source type "Ping Source"
               And user selects Create Event Source
               And user enters schedule as "*/2 * * * *"
@@ -101,7 +92,7 @@ Feature: Create event sources
 
 
         @smoke
-        Scenario: Create SinkBinding event source linked with knative service: KE-02-TC10
+        Scenario: Create SinkBinding event source linked with knative service: KE-02-TC09
              When user selects event source type "Sink Binding"
               And user selects Create Event Source
               And user enters Subject apiVersion as "batch/v1"
@@ -114,7 +105,7 @@ Feature: Create event sources
 
 
         @smoke
-        Scenario: Create SinkBinding event source linked with uri: KE-02-TC11
+        Scenario: Create SinkBinding event source linked with uri: KE-02-TC10
              When user selects event source type "Sink Binding"
               And user selects Create Event Source
               And user enters Subject apiVersion as "batch/v1"
@@ -128,7 +119,7 @@ Feature: Create event sources
 
 
         @regression @manual
-        Scenario: Create CamelSource event source: KE-02-TC12
+        Scenario: Create CamelSource event source: KE-02-TC11
             Given user has installed Red Hat Integration - Camel K Operator
               And user has created or selected namespace "aut-knative"
               And user has created knative service "kn-event"
@@ -141,11 +132,12 @@ Feature: Create event sources
 
 
         @regression
-        Scenario: Kamelets on Event Sources page: KE-02-TC13
+        Scenario: Kamelets on Event Sources page: KE-02-TC12
             Given user has created Knative Serving and Knative Eventing CR
               And user has installed Red Hat Integration - Camel K Operator
-              And user has created Integration Platform CR
-              And user has created or selected "aut-test-kamelets" namespace
-              And user is at Developer Catalog page
+              And user has created Integration Platform CR "camel-ipcr"
+              And user has created or selected namespace "aut-test-kamelets"
+              And user is at developer perspective
+              And user is at Add page
              When user clicks on Event Sources
-             Then user will see cards of AWS Kinesis Source, AWS SQS Source, Jira Source, Salesforce Source, Slack Source, Telegram Source
+             Then user will see cards of "AWS Kinesis Source","AWS SQS Source","Jira Source","Salesforce Source","Slack Source","Telegram Source"

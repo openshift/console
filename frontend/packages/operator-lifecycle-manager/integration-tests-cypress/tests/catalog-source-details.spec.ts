@@ -24,9 +24,7 @@ describe(`Interacting with CatalogSource page`, () => {
     nav.sidenav.clickNavLink(['Administration', 'Cluster Settings']);
     cy.byLegacyTestID('horizontal-link-Configuration').click();
     cy.byTestID('loading-indicator').should('not.exist');
-    cy.byLegacyTestID('OperatorHub')
-      .scrollIntoView()
-      .click();
+    cy.byLegacyTestID('OperatorHub').scrollIntoView().click();
 
     // verfiy operatorHub details page is open
     detailsPage.sectionHeaderShouldExist('OperatorHub details');
@@ -71,9 +69,7 @@ describe(`Interacting with CatalogSource page`, () => {
     );
 
     // validate RegistryPollInterval field
-    cy.byTestID('Registry poll interval')
-      .scrollIntoView()
-      .should('be.visible');
+    cy.byTestID('Registry poll interval').scrollIntoView().should('be.visible');
     cy.byTestSelector('details-item-value__Registry poll interval')
       .scrollIntoView()
       .should('be.visible');
@@ -93,7 +89,7 @@ describe(`Interacting with CatalogSource page`, () => {
     // verfiy catalogSource details page is open
     detailsPage.sectionHeaderShouldExist('CatalogSource details');
 
-    cy.byLegacyTestID('horizontal-link-olm~Operators').click();
+    cy.byLegacyTestID('horizontal-link-Operators').click();
     cy.get('[data-label=Name]').should('exist');
   });
 
@@ -103,9 +99,7 @@ describe(`Interacting with CatalogSource page`, () => {
     cy.byTestID('Registry poll interval-details-item__edit-button').click();
     modal.modalTitleShouldContain('Edit registry poll interval');
     cy.byLegacyTestID('dropdown-button').click();
-    cy.byTestDropDownMenu('30m')
-      .should('be.visible')
-      .click();
+    cy.byTestDropDownMenu('30m').should('be.visible').click();
     modal.submit();
 
     // verify that registryPollInterval is updated

@@ -19,15 +19,11 @@ export class CreateOBCHandler {
     cy.clickNavLink(['Storage', 'Object Bucket Claims']);
     projectNameSpace.selectOrCreateProject(this.namespace);
     cy.clickNavLink(['Storage', 'Object Bucket Claims']);
-    cy.byLegacyTestID('namespace-bar-dropdown')
-      .contains('Project')
-      .click();
+    cy.byLegacyTestID('namespace-bar-dropdown').contains('Project').click();
     cy.contains(this.namespace);
     cy.byTestID('item-create').click();
     cy.byTestID('obc-name').type(this.name);
-    cy.byTestID('sc-dropdown')
-      .should('be.visible')
-      .click();
+    cy.byTestID('sc-dropdown').should('be.visible').click();
     cy.contains('openshift-storage.noobaa.io').click();
     modal.submit();
     cy.byLegacyTestID('resource-title').contains(this.name, { timeout: MINUTE });
@@ -46,11 +42,9 @@ export class CreateOBCHandler {
   }
 
   deploymentReady(deploymentName: string) {
-    cy.byLegacyTestID('horizontal-link-public~Details').click();
+    cy.byLegacyTestID('horizontal-link-Details').click();
     cy.contains(DEPLOYMENT_REPLICAS_STATUS, { timeout: MINUTE });
-    cy.byTestSelector('details-item-value__Name')
-      .should('be.visible')
-      .contains(deploymentName);
+    cy.byTestSelector('details-item-value__Name').should('be.visible').contains(deploymentName);
   }
 
   deleteBucketClaim() {
@@ -59,15 +53,11 @@ export class CreateOBCHandler {
       .byLegacyTestID('actions-menu-button')
       .should('be.visible')
       .click();
-    cy.byLegacyTestID('details-actions')
-      .byLegacyTestID('action-items')
-      .should('be.visible');
+    cy.byLegacyTestID('details-actions').byLegacyTestID('action-items').should('be.visible');
     cy.byTestActionID('Delete Object Bucket Claim')
       .should('be.visible')
       .should('be.enabled')
       .click();
-    cy.byTestID('confirm-action')
-      .should('be.visible')
-      .click();
+    cy.byTestID('confirm-action').should('be.visible').click();
   }
 }

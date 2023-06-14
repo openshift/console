@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { getTitleForNodeKind } from '@console/shared';
 import { OdcNodeModel } from '../../topology-types';
-import { labelKeyForNodeKind } from '../list-view/list-view-utils';
 import ApplicationGroupResource from './ApplicationGroupResource';
 
 import './TopologyApplicationResources.scss';
@@ -16,7 +15,6 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
   resources,
   group,
 }) => {
-  const { t } = useTranslation();
   const resourcesData = resources.reduce((acc, { resource }) => {
     if (resource?.kind) {
       acc[resource.kind] = [...(acc[resource.kind] ? acc[resource.kind] : []), resource];
@@ -29,7 +27,7 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
       {_.map(_.keys(resourcesData), (key) => (
         <ApplicationGroupResource
           key={`${group}-${key}`}
-          title={t(labelKeyForNodeKind(key))}
+          title={getTitleForNodeKind(key)}
           resourcesData={resourcesData[key]}
           group={group}
         />

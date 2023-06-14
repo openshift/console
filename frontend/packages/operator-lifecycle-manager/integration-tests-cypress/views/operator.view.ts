@@ -112,7 +112,7 @@ export const operator = {
     if (installedNamespace !== GlobalInstalledNamespace) {
       operator.horizontalNavTab(testOperand.name).click();
     } else {
-      operator.horizontalNavTab('olm~All instances').click();
+      operator.horizontalNavTab('All instances').click();
     }
     cy.byTestOperandLink(exampleName).should('not.exist');
     cy.byTestID('item-create').click();
@@ -121,9 +121,7 @@ export const operator = {
     }
     cy.url().should('contain', '~new');
     cy.log('create a new operand');
-    cy.get('[id="root_metadata_name"]')
-      .should('not.be.disabled')
-      .clear();
+    cy.get('[id="root_metadata_name"]').should('not.be.disabled').clear();
     cy.get('[id="root_metadata_name"]').type(exampleName);
     cy.get(submitButton).click();
   },
@@ -138,7 +136,7 @@ export const operator = {
     if (installedNamespace !== GlobalInstalledNamespace) {
       operator.horizontalNavTab(testOperand.name).click();
     } else {
-      operator.horizontalNavTab('olm~All instances').click();
+      operator.horizontalNavTab('All instances').click();
     }
     cy.byTestID(exampleName).should('exist');
     cy.log(`navigate to the operand "Details" tab`);
@@ -156,7 +154,7 @@ export const operator = {
     if (installedNamespace !== GlobalInstalledNamespace) {
       operator.horizontalNavTab(testOperand.name).click();
     } else {
-      operator.horizontalNavTab('olm~All instances').click();
+      operator.horizontalNavTab('All instances').click();
     } // drilldown to Operand details page
     cy.byTestOperandLink(exampleName).click();
 
@@ -177,7 +175,7 @@ export const operator = {
     if (installedNamespace !== GlobalInstalledNamespace) {
       operator.horizontalNavTab(testOperand.name).click();
     } else {
-      operator.horizontalNavTab('olm~All instances').click();
+      operator.horizontalNavTab('All instances').click();
     }
     cy.byTestID(exampleName).should('not.exist');
   },
@@ -207,7 +205,7 @@ export type TestOperandProps = {
   group: string;
   version: string;
   kind: string;
-  createActionID: string;
+  createActionID?: string;
   exampleName: string;
   deleteURL?: string;
 };

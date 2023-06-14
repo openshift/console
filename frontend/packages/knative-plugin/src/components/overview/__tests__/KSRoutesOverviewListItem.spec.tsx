@@ -18,32 +18,19 @@ describe('KSRoutesOverviewListItem', () => {
 
   it('should list the Route', () => {
     expect(wrapper.find('li')).toHaveLength(1);
-    expect(
-      wrapper
-        .find('li')
-        .at(0)
-        .props().className,
-    ).toEqual('list-group-item');
+    expect(wrapper.find('li').at(0).props().className).toEqual('list-group-item');
   });
 
   it('should have ResourceLink with proper kind', () => {
     expect(wrapper.find(ResourceLink)).toHaveLength(1);
-    expect(
-      wrapper
-        .find(ResourceLink)
-        .at(0)
-        .props().kind,
-    ).toEqual(referenceForModel(RouteModel));
+    expect(wrapper.find(ResourceLink).at(0).props().kind).toEqual(referenceForModel(RouteModel));
   });
 
   it('should have route ExternalLink with proper href', () => {
     expect(wrapper.find(ExternalLink)).toHaveLength(1);
-    expect(
-      wrapper
-        .find(ExternalLink)
-        .at(0)
-        .props().href,
-    ).toEqual('http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com');
+    expect(wrapper.find(ExternalLink).at(0).props().href).toEqual(
+      'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
+    );
   });
 
   it('should not show the route url if it is not available', () => {
@@ -57,12 +44,7 @@ describe('KSRoutesOverviewListItem', () => {
     const ksroute = _.omit(MockKnativeResources.ksroutes.data[0], 'status');
     wrapper.setProps({ ksroute });
     expect(wrapper.find(ResourceLink).exists()).toBe(true);
-    expect(
-      wrapper
-        .find(ResourceLink)
-        .at(0)
-        .props().kind,
-    ).toEqual(referenceForModel(RouteModel));
+    expect(wrapper.find(ResourceLink).at(0).props().kind).toEqual(referenceForModel(RouteModel));
     expect(wrapper.find(ExternalLink).exists()).toBe(false);
   });
 });

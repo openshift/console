@@ -2,6 +2,8 @@
   "Eventing": "事件",
   "Event Source": "事件源",
   "Create an Event source to register interest in a class of events from a particular system": "创建一个事件源以注册对特定系统中的一类事件的兴趣",
+  "Create Serverless function": "创建无服务器函数",
+  "Create and deploy stateless, Serverless functions": "创建和部署无状态、Serverless 函数",
   "Broker": "代理",
   "Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers": "通过触发器创建代理来定义事件网格，以收集事件池并根据属性路由这些事件",
   "Channel": "频道",
@@ -239,7 +241,7 @@
   "Traffic": "网络流量",
   "Generation": "代",
   "Connects <strong>{{resourceName}}</strong> to": "连接 <strong>{{resourceName}}</strong> 到",
-  "Select a sink": "选择一个接收器（sink）。",
+  "Select a sink": "选择一个接收器（sink）",
   "Save": "保存",
   "Editing this URI will affect all associated Event Sources.": "编辑此 URI 将影响所有关联的事件源。",
   "Add Revision": "修订",
@@ -274,5 +276,6 @@
   "Knative Services": "Knative 服务",
   "All Revisions are autoscaled to 0.": "所有修订版本都将自动缩放到 0。",
   "No Source found for this resource.": "没有找到此资源的源。",
-  "Domain mappings": "域映射"
+  "Domain mappings": "域映射",
+  "{{OKcount}} OK / {{conditionsSize}}": "{{OKcount}}个 OK(共{{conditionsSize}}个)"
 }

@@ -133,9 +133,9 @@ interface TopologyListViewProps {
   setVisualization: (vis: Visualization) => void;
 }
 
-const ConnectedTopologyListView: React.FC<TopologyListViewProps &
-  TopologyListViewPropsFromDispatch &
-  TopologyListViewPropsFromState> = observer(function TopologyListView({
+const ConnectedTopologyListView: React.FC<
+  TopologyListViewProps & TopologyListViewPropsFromDispatch & TopologyListViewPropsFromState
+> = observer(function TopologyListView({
   model,
   onSelect,
   setVisualization,

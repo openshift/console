@@ -1,6 +1,7 @@
 import * as React from 'react';
+import Helmet from 'react-helmet';
 import * as _ from 'lodash-es';
-
+import { useTranslation } from 'react-i18next';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -46,6 +47,7 @@ export const getNamespaceDashboardConsoleLinks = (
 };
 
 export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
+  const { t } = useTranslation();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -65,11 +67,16 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
   );
 
   return (
-    <ProjectDashboardContext.Provider value={context}>
-      <Dashboard>
-        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rc} />
-      </Dashboard>
-    </ProjectDashboardContext.Provider>
+    <>
+      <Helmet>
+        <title>{t('public~Project overview')}</title>
+      </Helmet>
+      <ProjectDashboardContext.Provider value={context}>
+        <Dashboard>
+          <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rc} />
+        </Dashboard>
+      </ProjectDashboardContext.Provider>
+    </>
   );
 };
 

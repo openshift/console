@@ -11,14 +11,10 @@ adminOnlyDescribe('Test Virtualization Overview cards', () => {
     cy.get(virtOverview.detailsCard)
       .should('exist')
       .within(() => {
-        cy.get(virtOverview.cardTitle)
-          .contains('Details')
-          .should('exist');
+        cy.get(virtOverview.cardTitle).contains('Details').should('exist');
         ['Service name', 'Provider', 'OpenShift Virtualization version', 'Update Channel'].forEach(
           (article) => {
-            cy.get(virtOverview.itemTitle)
-              .contains(article)
-              .should('exist');
+            cy.get(virtOverview.itemTitle).contains(article).should('exist');
           },
         );
       });
@@ -28,9 +24,7 @@ adminOnlyDescribe('Test Virtualization Overview cards', () => {
     cy.get(virtOverview.perTemplateCard)
       .should('exist')
       .within(() => {
-        cy.get(virtOverview.cardTitle)
-          .contains('Running VMs per template')
-          .should('exist');
+        cy.get(virtOverview.cardTitle).contains('Running VMs per template').should('exist');
       });
   });
 
@@ -38,9 +32,7 @@ adminOnlyDescribe('Test Virtualization Overview cards', () => {
     cy.get(virtOverview.statusCard)
       .should('exist')
       .within(() => {
-        cy.get(virtOverview.cardTitle)
-          .contains('Status')
-          .should('exist');
+        cy.get(virtOverview.cardTitle).contains('Status').should('exist');
         cy.get(virtOverview.cardActions).should('exist');
         cy.get(virtOverview.virtHealthItem).should('exist');
         cy.get(virtOverview.virtHealthIcon).should('exist');
@@ -54,22 +46,14 @@ adminOnlyDescribe('Test Virtualization Overview cards', () => {
     cy.get(virtOverview.inventoryCard)
       .should('exist')
       .within(() => {
-        cy.get(virtOverview.cardTitle)
-          .contains('Inventory')
-          .should('exist');
-        cy.get(virtOverview.vmsLink)
-          .contains('Virtual Machines')
-          .should('exist');
+        cy.get(virtOverview.cardTitle).contains('Inventory').should('exist');
+        cy.get(virtOverview.vmsLink).contains('Virtual Machines').should('exist');
         cy.get(virtOverview.templatesLink)
           .contains('Templates')
           .should('exist')
           .and('have.attr', 'href', `/k8s/ns/${OS_IMAGES_NS}/virtualmachinetemplates`);
-        cy.get(virtOverview.nodesLink)
-          .contains('Nodes')
-          .should('exist');
-        cy.get(virtOverview.networksLink)
-          .contains('Networks')
-          .should('exist');
+        cy.get(virtOverview.nodesLink).contains('Nodes').should('exist');
+        cy.get(virtOverview.networksLink).contains('Networks').should('exist');
       });
   });
 
@@ -77,24 +61,14 @@ adminOnlyDescribe('Test Virtualization Overview cards', () => {
     cy.get(virtOverview.activityCard)
       .should('exist')
       .within(() => {
-        cy.get(virtOverview.cardTitle)
-          .contains('Activity')
-          .should('exist');
+        cy.get(virtOverview.cardTitle).contains('Activity').should('exist');
         cy.get(virtOverview.cardActions).should('exist');
         cy.get(virtOverview.ongoingTitle).should('exist');
         cy.get(virtOverview.ongoingActivity).should('exist');
         cy.get(virtOverview.recentActivity).should('exist');
-        cy.get(virtOverview.pauseButton)
-          .should('exist')
-          .should('have.text', 'Pause')
-          .click();
-        cy.get(virtOverview.pauseButton)
-          .should('exist')
-          .should('have.text', 'Resume')
-          .click();
-        cy.get(virtOverview.pauseButton)
-          .should('exist')
-          .should('have.text', 'Pause');
+        cy.get(virtOverview.pauseButton).should('exist').should('have.text', 'Pause').click();
+        cy.get(virtOverview.pauseButton).should('exist').should('have.text', 'Resume').click();
+        cy.get(virtOverview.pauseButton).should('exist').should('have.text', 'Pause');
       });
   });
 
@@ -102,31 +76,21 @@ adminOnlyDescribe('Test Virtualization Overview cards', () => {
     cy.get(virtOverview.permissionsCard)
       .should('exist')
       .within(() => {
-        cy.get(virtOverview.cardTitle)
-          .contains('Permissions')
-          .should('exist');
+        cy.get(virtOverview.cardTitle).contains('Permissions').should('exist');
         cy.get(virtOverview.successIcon).should('exist');
-        cy.get(virtOverview.accessPopupButton)
-          .should('exist')
-          .click();
+        cy.get(virtOverview.accessPopupButton).should('exist').click();
       });
-    cy.get(virtOverview.modalTitle)
-      .contains('Permissions')
-      .should('exist');
+    cy.get(virtOverview.modalTitle).contains('Permissions').should('exist');
     cy.get(virtOverview.taskItem).should('have.length', 6);
     cy.get(virtOverview.taskIcon).should('have.length', 6);
-    cy.get(virtOverview.closeButton)
-      .should('exist')
-      .click();
+    cy.get(virtOverview.closeButton).should('exist').click();
   });
 
   it('ID(CNV-7934) Top consumers card with items is displayed', () => {
     cy.get(virtOverview.topConsumersCard)
       .should('exist')
       .within(() => {
-        cy.get(virtOverview.cardTitle)
-          .contains('Top consumers')
-          .should('exist');
+        cy.get(virtOverview.cardTitle).contains('Top consumers').should('exist');
         cy.get(virtOverview.cardActions).should('exist');
         cy.get(virtOverview.amountButton).should('exist');
       });

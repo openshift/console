@@ -12,9 +12,7 @@ export const switchPerspective = (perspective: Perspective) => {
   cy.byLegacyTestID('perspective-switcher-menu').should('be.visible');
   switch (perspective) {
     case Perspective.Developer:
-      cy.get('.pf-c-dropdown__menu-item')
-        .contains('Developer')
-        .click();
+      cy.get('.pf-c-dropdown__menu-item').contains('Developer').click();
       // skip tour
       cy.get('body').then(($body) => {
         if ($body.find(tour).length) {
@@ -23,9 +21,7 @@ export const switchPerspective = (perspective: Perspective) => {
       });
       break;
     case Perspective.Administrator:
-      cy.get('.pf-c-dropdown__menu-item')
-        .contains('Administrator')
-        .click();
+      cy.get('.pf-c-dropdown__menu-item').contains('Administrator').click();
       // skip tour
       cy.get('body').then(($body) => {
         if ($body.find(tour).length) {

@@ -58,10 +58,7 @@ describe('KubeVirt VM scheduling', () => {
       );
 
       await vm.start();
-      const actualNode = virtualMachineView
-        .vmDetailNode(testName, vm.name)
-        .$('a')
-        .getText();
+      const actualNode = virtualMachineView.vmDetailNode(testName, vm.name).$('a').getText();
       expect(actualNode).toContain(node);
 
       await vm.stop();
@@ -110,10 +107,7 @@ describe('KubeVirt VM scheduling', () => {
       );
 
       await vm.start();
-      const actualNode = virtualMachineView
-        .vmDetailNode(testName, vm.name)
-        .$('a')
-        .getText();
+      const actualNode = virtualMachineView.vmDetailNode(testName, vm.name).$('a').getText();
       expect(actualNode).toContain(node);
 
       await vm.stop();
@@ -142,10 +136,7 @@ describe('KubeVirt VM scheduling', () => {
       }
 
       await vm.start();
-      const actualNode = virtualMachineView
-        .vmDetailNode(testName, vm.name)
-        .$('a')
-        .getText();
+      const actualNode = virtualMachineView.vmDetailNode(testName, vm.name).$('a').getText();
       expect(actualNode).toContain(node);
 
       await vm.stop();
@@ -170,10 +161,7 @@ describe('KubeVirt VM scheduling', () => {
       );
 
       await vm.start();
-      const actualNode = virtualMachineView
-        .vmDetailNode(testName, vm.name)
-        .$('a')
-        .getText();
+      const actualNode = virtualMachineView.vmDetailNode(testName, vm.name).$('a').getText();
       expect(actualNode).toContain(node);
 
       await vm.stop();

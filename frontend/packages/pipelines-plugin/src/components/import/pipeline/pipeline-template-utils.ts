@@ -96,6 +96,7 @@ export const createPipelineForImportFlow = async (
   dockerfilePath: string,
   tag: string,
   buildEnv: (NameValuePair | NameValueFromPair)[],
+  labels: { [key: string]: string } = {},
 ) => {
   const template = _.cloneDeep(pipeline.template);
 
@@ -104,6 +105,7 @@ export const createPipelineForImportFlow = async (
     namespace,
     labels: {
       ...template.metadata?.labels,
+      ...labels,
       'app.kubernetes.io/instance': name,
       'app.kubernetes.io/name': name,
       ...(!isDockerPipeline(template) && {
@@ -158,12 +160,13 @@ export const updatePipelineForImportFlow = async (
   dockerfilePath: string,
   tag: string,
   buildEnv: (NameValuePair | NameValueFromPair)[],
+  labels: { [key: string]: string } = {},
 ): Promise<PipelineKind> => {
   let updatedPipeline = _.cloneDeep(pipeline);
 
   if (!template) {
     updatedPipeline.metadata.labels = _.omit(
-      updatedPipeline.metadata.labels,
+      { ...updatedPipeline.metadata.labels, ...labels },
       'app.kubernetes.io/instance',
     );
   } else {
@@ -175,6 +178,7 @@ export const updatePipelineForImportFlow = async (
         namespace,
         labels: {
           ...template.metadata?.labels,
+          ...labels,
           'app.kubernetes.io/instance': name,
           'app.kubernetes.io/name': name,
           ...(!isDockerPipeline(template) && { [PIPELINE_RUNTIME_VERSION_LABEL]: tag }),

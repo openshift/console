@@ -80,7 +80,7 @@ describe('NetworkPolicyForm with unknown network features', () => {
 });
 
 describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
-  // eslint-disable-next-line @typescript-eslint/camelcase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   const cm = { data: { policy_egress: 'false', policy_peer_ipblock_exceptions: 'false' } };
   (useK8sGet as jest.Mock).mockReturnValue([cm, true, null]);
   const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);
@@ -103,7 +103,7 @@ describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
 });
 
 describe('NetworkPolicyForm with OVN Kubernetes CNI type', () => {
-  // eslint-disable-next-line @typescript-eslint/camelcase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   const cm = { data: { policy_egress: 'true', policy_peer_ipblock_exceptions: 'true' } };
   (useK8sGet as jest.Mock).mockReturnValue([cm, true, null]);
   const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);

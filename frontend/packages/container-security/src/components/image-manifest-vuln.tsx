@@ -40,11 +40,7 @@ import { quayURLFor } from './summary';
 import './image-manifest-vuln.scss';
 
 const shortenImage = (img: string) =>
-  (img ?? '')
-    .replace('@sha256', '')
-    .split('/')
-    .slice(1, 3)
-    .join('/');
+  (img ?? '').replace('@sha256', '').split('/').slice(1, 3).join('/');
 const shortenHash = (hash: string): string => (hash ?? '').slice(7, 18);
 export const totalCount = (obj: ImageManifestVuln) => {
   if (!obj.status) return 0;
@@ -122,7 +118,6 @@ export const AffectedPods: React.FC<AffectedPodsProps> = (props) => {
 export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPageProps> = (
   props,
 ) => {
-  const { t } = useTranslation();
   return (
     <DetailsPage
       match={props.match}
@@ -141,7 +136,8 @@ export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPage
         navFactory.editYaml(),
         {
           href: 'pods',
-          name: t('container-security~Affected Pods'),
+          // t('container-security~Affected Pods')
+          nameKey: 'container-security~Affected Pods',
           component: AffectedPods,
         },
       ]}

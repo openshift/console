@@ -21,9 +21,7 @@ export const topologyPage = {
     // eslint-disable-next-line promise/catch-or-return
     cy.get('body').then(($body) => {
       if ($body.find('.odc-topology-list-view').length !== 0) {
-        cy.get(topologyPO.switcher)
-          .should('be.enabled')
-          .click({ force: true });
+        cy.get(topologyPO.switcher).should('be.enabled').click({ force: true });
         cy.get(topologyPO.graph.fitToScreen).should('be.visible');
       }
     });
@@ -33,9 +31,7 @@ export const topologyPage = {
     // eslint-disable-next-line promise/catch-or-return
     cy.get('body').then(($body) => {
       if ($body.find('.odc-topology-graph-view').length !== 0) {
-        cy.get(topologyPO.switcher)
-          .should('be.enabled')
-          .click({ force: true });
+        cy.get(topologyPO.switcher).should('be.enabled').click({ force: true });
         cy.get(topologyPO.list.switchGraph).should('be.visible');
       }
     });
@@ -74,10 +70,7 @@ export const topologyPage = {
     topologyHelper.verifyWorkloadDeleted(appName, options);
   },
   clickDisplayOptionDropdown: () =>
-    cy
-      .get('.odc-topology-filter-dropdown__select')
-      .contains('Display options')
-      .click(),
+    cy.get('.odc-topology-filter-dropdown__select').contains('Display options').click(),
   checkConnectivityMode: () => cy.get(topologyPO.graph.displayOptions.connectivityMode).click(),
   checkConsumptionMode: () => cy.get(topologyPO.graph.displayOptions.consumptionMode).click(),
   verifyConnectivityModeChecked: () =>
@@ -175,9 +168,7 @@ export const topologyPage = {
     }
   },
   filterByResource: (resourceName: string) => {
-    cy.get(topologyPO.graph.filterDropdown)
-      .contains('Filter by Resource')
-      .click();
+    cy.get(topologyPO.graph.filterDropdown).contains('Filter by Resource').click();
     cy.get(`[id$="${resourceName}"]`).check();
   },
   verifyPipelineRunStatus: (status: string) =>
@@ -199,15 +190,9 @@ export const topologyPage = {
     });
   },
   verifyHelmReleaseSidePaneTabs: () => {
-    cy.get(topologyPO.sidePane.tabName)
-      .eq(0)
-      .should('contain.text', sideBarTabs.Details);
-    cy.get(topologyPO.sidePane.tabName)
-      .eq(1)
-      .should('contain.text', sideBarTabs.Resources);
-    cy.get(topologyPO.sidePane.tabs)
-      .eq(2)
-      .should('contain.text', sideBarTabs.ReleaseNotes);
+    cy.get(topologyPO.sidePane.tabName).eq(0).should('contain.text', sideBarTabs.Details);
+    cy.get(topologyPO.sidePane.tabName).eq(1).should('contain.text', sideBarTabs.Resources);
+    cy.get(topologyPO.sidePane.tabs).eq(2).should('contain.text', sideBarTabs.ReleaseNotes);
   },
   getAppNode: (appName: string) => {
     return cy.get(`[data-id="group:${appName}"] g.odc-resource-icon text`).contains('A');
@@ -252,38 +237,21 @@ export const topologyPage = {
     });
   },
   verifyDecorators: (nodeName: string, numOfDecorators: number) =>
-    topologyPage
-      .componentNode(nodeName)
-      .siblings('a')
-      .should('have.length', numOfDecorators),
+    topologyPage.componentNode(nodeName).siblings('a').should('have.length', numOfDecorators),
   selectContextMenuAction: (action: nodeActions | string) => {
-    cy.byTestActionID(action)
-      .should('be.visible')
-      .click();
+    cy.byTestActionID(action).should('be.visible').click();
   },
   getNode: (nodeName: string) => {
-    return cy
-      .get(topologyPO.graph.nodeLabel)
-      .should('be.visible')
-      .contains(nodeName);
+    return cy.get(topologyPO.graph.nodeLabel).should('be.visible').contains(nodeName);
   },
   getNodeLabel: (nodeName: string) => {
-    return cy
-      .get(topologyPO.graph.selectNodeLabel)
-      .should('be.visible')
-      .contains(nodeName);
+    return cy.get(topologyPO.graph.selectNodeLabel).should('be.visible').contains(nodeName);
   },
   getKnativeNode: (nodeName: string) => {
-    return cy
-      .get(topologyPO.graph.knativeNodeLabel)
-      .should('be.visible')
-      .contains(nodeName);
+    return cy.get(topologyPO.graph.knativeNodeLabel).should('be.visible').contains(nodeName);
   },
   getGroup: (groupName: string) => {
-    return cy
-      .get(topologyPO.graph.groupLabel)
-      .should('be.visible')
-      .contains(groupName);
+    return cy.get(topologyPO.graph.groupLabel).should('be.visible').contains(groupName);
   },
   getDeploymentNode: (nodeName: string) => {
     return cy
@@ -302,10 +270,7 @@ export const topologyPage = {
   },
   rightClickOnApplicationGroupings: (appName: string) => {
     const id = `[data-id="group:${appName}"]`;
-    cy.get(id)
-      .should('be.visible')
-      .first()
-      .trigger('contextmenu', { force: true });
+    cy.get(id).should('be.visible').first().trigger('contextmenu', { force: true });
   },
   clickOnNode: (nodeName: string) => {
     topologyPage.getNode(nodeName).click({ force: true });
@@ -320,10 +285,9 @@ export const topologyPage = {
     topologyPage.getDeploymentNode(nodeName).click();
   },
   clickOnApplicationGroupings: (appName: string) => {
+    cy.reload();
     const id = `[data-id="group:${appName}"] .odc-resource-icon-application`;
-    cy.get(id)
-      .next('text')
-      .click({ force: true });
+    cy.get(id).next('text').click({ force: true });
   },
   verifyApplicationGroupingsDeleted: (appName: string) => {
     cy.reload();
@@ -355,14 +319,10 @@ export const topologyPage = {
     cy.get(topologyPO.graph.node, { timeout: 300000 }).should('be.visible');
   },
   rightClickOnHelmWorkload: () => {
-    cy.get(topologyPO.graph.node)
-      .find('circle')
-      .trigger('contextmenu', { force: true });
+    cy.get(topologyPO.graph.node).find('circle').trigger('contextmenu', { force: true });
   },
   clickOnHelmWorkload: () => {
-    cy.get(topologyPO.graph.node)
-      .find('circle')
-      .click({ force: true });
+    cy.get(topologyPO.graph.node).find('circle').click({ force: true });
   },
   clickWorkloadUrl: (workloadName: string) => {
     cy.get('[data-type="workload"] text')
@@ -390,10 +350,7 @@ export const topologyPage = {
         selectStorageClass: (storageClass: string = 'standard') => {
           cy.get(topologyPO.addStorage.pvc.createNewClaim.storageClass).click();
           cy.byLegacyTestID('dropdown-text-filter').type(storageClass);
-          cy.get('ul[role="listbox"]')
-            .find('li')
-            .contains(storageClass)
-            .click();
+          cy.get('ul[role="listbox"]').find('li').contains(storageClass).click();
         },
         enterPVCName: (name: string) => {
           cy.get(topologyPO.addStorage.pvc.createNewClaim.pvcName).type(name);
@@ -430,9 +387,7 @@ export const topologyPage = {
       .and('include', runTimeIcon);
   },
   deleteApplication: (appName: string) => {
-    cy.get(topologyPO.graph.deleteApplication)
-      .clear()
-      .type(appName);
+    cy.get(topologyPO.graph.deleteApplication).clear().type(appName);
     cy.get(topologyPO.graph.deleteWorkload).click();
     cy.wait(15000);
   },
@@ -441,14 +396,10 @@ export const topologyPage = {
     cy.get(topologyPO.sidePane.resourcesTabApplicationGroupings).should('be.visible');
   },
   startBuild: () => {
-    cy.get('button[data-test-id="start-build-action"]')
-      .should('be.visible')
-      .click({ force: true });
+    cy.get('button[data-test-id="start-build-action"]').should('be.visible').click({ force: true });
   },
   verifyNodeAlert: (nodeName: string) => {
-    cy.get('[data-type="workload"]')
-      .find('.pf-topology__node.pf-m-warning')
-      .contains(nodeName);
+    cy.get('[data-type="workload"]').find('.pf-topology__node.pf-m-warning').contains(nodeName);
   },
   verifyListNodeAlert: (nodeName: string) => {
     cy.get('.odc-topology-list-view__label-cell')
@@ -492,19 +443,10 @@ export const createServiceBindingConnect = (
   recieverNode: string,
 ) => {
   topologyPage.rightClickOnNode(senderNode);
-  cy.byTestActionID('Create Service Binding')
-    .should('be.visible')
-    .click();
-  cy.get('#form-input-name-field')
-    .should('be.visible')
-    .clear()
-    .type(bindingName);
-  cy.get('#form-ns-dropdown-service-field')
-    .should('be.visible')
-    .click();
-  cy.get(`#${recieverNode}-link`)
-    .should('be.visible')
-    .click();
+  cy.byTestActionID('Create Service Binding').should('be.visible').click();
+  cy.get('#form-input-name-field').should('be.visible').clear().type(bindingName);
+  cy.get('#form-ns-dropdown-service-field').should('be.visible').click();
+  cy.get(`#${recieverNode}-link`).should('be.visible').click();
   cy.get('#confirm-action').click();
   navigateTo(devNavigationMenu.Add);
   navigateTo(devNavigationMenu.Topology);

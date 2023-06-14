@@ -19,16 +19,9 @@ export type CreateServiceBindingFormProps = {
   cancel?: () => void;
 };
 
-const CreateServiceBindingForm: React.FC<FormikProps<FormikValues> &
-  CreateServiceBindingFormProps> = ({
-  source,
-  target,
-  handleSubmit,
-  isSubmitting,
-  cancel,
-  status,
-  errors,
-}) => {
+const CreateServiceBindingForm: React.FC<
+  FormikProps<FormikValues> & CreateServiceBindingFormProps
+> = ({ source, target, handleSubmit, isSubmitting, cancel, status, errors }) => {
   const { t } = useTranslation();
 
   const sourceName = source.metadata.name;

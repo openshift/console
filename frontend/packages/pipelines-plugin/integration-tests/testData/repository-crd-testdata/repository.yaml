@@ -114,3 +114,11 @@ pipelinerun_status:
    event_type: push
 spec:
  url: 'https://github.com/karthikjeeyar/demo-app'
+ git_provider:
+   user: 'lokanandap'
+   secret:
+       key: 'provider.token'
+       name: 'git-hello-func-token-s79pk'
+   webhook_secret:
+       key: 'webhook.secret'
+       name: 'git-hello-func-token-s79pk'

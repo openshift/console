@@ -102,14 +102,14 @@ export const getVolumeType = (volume: Volume) => {
   if (!volume) {
     return null;
   }
-  return _.find(VolumeSource, function(v) {
+  return _.find(VolumeSource, function (v) {
     return !!volume[v.id];
   });
 };
 
 const genericFormatter = (volInfo) => {
   const keys = Object.keys(volInfo).sort();
-  const parts = keys.map(function(key) {
+  const parts = keys.map(function (key) {
     if (key === 'readOnly') {
       return '';
     }

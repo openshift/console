@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { Page, navFactory, viewYamlComponent } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
@@ -13,8 +12,6 @@ import BuildEventsTab from './BuildEventsTab';
 import BuildRunsTab from './BuildRunsTab';
 
 const BuildDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { t } = useTranslation();
-
   const customActionMenu = (_, build) => {
     const kindReference = referenceFor(build);
     const context = { [kindReference]: build };
@@ -34,7 +31,8 @@ const BuildDetailsPage: React.FC<DetailsPageProps> = (props) => {
     navFactory.editYaml(viewYamlComponent),
     {
       href: 'buildruns',
-      name: t('shipwright-plugin~BuildRuns'),
+      // t('shipwright-plugin~BuildRuns')
+      nameKey: 'shipwright-plugin~BuildRuns',
       component: BuildRunsTab,
     },
     navFactory.events(BuildEventsTab),

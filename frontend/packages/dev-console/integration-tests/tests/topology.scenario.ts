@@ -40,7 +40,7 @@ import {
 describe('Topology', () => {
   const importFromGitHeader = $('[data-test-id="resource-title"]');
 
-  const createApp = async function(newProject: boolean, newApplication: string, newApp: string) {
+  const createApp = async function (newProject: boolean, newApplication: string, newApp: string) {
     await navigateImportFromGit();
     await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from Git'));
     expect(importFromGitHeader.getText()).toContain('Import from Git');
@@ -55,11 +55,11 @@ describe('Topology', () => {
       await addApplicationWithExistingApps(newApplication, newApp);
     }
 
-    await applicationName.getAttribute('value').then(function(text) {
+    await applicationName.getAttribute('value').then(function (text) {
       expect(text).toContain(newApplication);
     });
 
-    await appName.getAttribute('value').then(function(text) {
+    await appName.getAttribute('value').then(function (text) {
       expect(text).toContain(newApp);
     });
 
@@ -91,7 +91,7 @@ describe('Topology', () => {
 
     // Wait for elements of topology to load to check if it's empty or filled
     browser.sleep(5000);
-    const topologyFlag = await emptyStateTitle.isPresent().then(function(result) {
+    const topologyFlag = await emptyStateTitle.isPresent().then(function (result) {
       return result;
     });
     if (topologyFlag) {
@@ -108,7 +108,7 @@ describe('Topology', () => {
     await browser.wait(until.presenceOf(topologyGraph));
     await browser.wait(until.presenceOf(topologyToolbar));
     await browser.wait(until.presenceOf(topologyNodes.first()));
-    const topologyNodesNumber = await topologyNodes.count().then(function(value) {
+    const topologyNodesNumber = await topologyNodes.count().then(function (value) {
       return value;
     });
     await expect(topologyNodes.count()).toBe(topologyNodesNumber);
@@ -123,14 +123,8 @@ describe('Topology', () => {
 
     // Open the modal dialog to edit the annotations
     const el = findWorkloadNode(newApplication1);
-    await browser
-      .actions()
-      .mouseMove(el)
-      .perform();
-    await browser
-      .actions()
-      .click(protractor.Button.RIGHT)
-      .perform();
+    await browser.actions().mouseMove(el).perform();
+    await browser.actions().click(protractor.Button.RIGHT).perform();
 
     // Edit the annotations - to create a visual connection from app #1 to app #2
     await browser.wait(until.presenceOf(editAnnotations));

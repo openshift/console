@@ -13,7 +13,7 @@ import {
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import * as _ from 'lodash';
-import { DomainPropType } from 'victory-core';
+import { DomainPropType, DomainTuple } from 'victory-core';
 import { DEFAULT_CHART_HEIGHT } from '../../const';
 import { formatDate, formatValue, getXaxisValues } from '../pipeline-metrics-utils';
 
@@ -22,6 +22,9 @@ type TimeSeriesChart = {
   bar?: boolean;
   yTickFormatter?: (v: number) => string;
 };
+
+type DomainType = { x?: DomainTuple; y?: DomainTuple };
+
 export const TimeSeriesChart: React.FC<TimeSeriesChart & ChartProps & ChartLineProps> = ({
   data = null,
   timespan,
@@ -37,15 +40,16 @@ export const TimeSeriesChart: React.FC<TimeSeriesChart & ChartProps & ChartLineP
   const startTimespan = timespan - parsePrometheusDuration('1d');
   const endDate = new Date(Date.now()).setHours(0, 0, 0, 0);
   const startDate = new Date(Date.now() - startTimespan).setHours(0, 0, 0, 0);
+  const { x: domainX, y: domainY } = (domain as DomainType) || {};
   const domainValue: DomainPropType = {
-    x: domain?.['x'] || [startDate, endDate],
-    y: domain?.['y'] || undefined,
+    x: domainX || [startDate, endDate],
+    y: domainY || undefined,
   };
   let yTickFormat = formatValue;
   const tickValues = getXaxisValues(timespan);
   const gData: { [x: string]: any }[] = data.filter((values) => !!values);
 
-  if (!domain?.['y']) {
+  if (!domainY) {
     let minY: number = _.minBy(gData, 'y')?.y ?? 0;
     let maxY: number = _.maxBy(gData, 'y')?.y ?? 0;
     if (minY === 0 && maxY === 0) {

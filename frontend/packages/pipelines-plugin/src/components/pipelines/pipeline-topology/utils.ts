@@ -17,6 +17,7 @@ import {
   PipelineRunKind,
   PipelineTask,
   PipelineTaskWithStatus,
+  TaskRunKind,
 } from '../../../types';
 import { getRunStatusColor } from '../../../utils/pipeline-augment';
 import {
@@ -318,9 +319,10 @@ export const connectFinallyTasksToNodes = (
   nodes: PipelineMixedNodeModel[],
   pipeline?: PipelineKind,
   pipelineRun?: PipelineRunKind,
+  taskRuns?: TaskRunKind[],
 ): PipelineMixedNodeModel[] => {
   const finallyTasks = pipelineRun
-    ? getFinallyTasksWithStatus(pipeline, pipelineRun)
+    ? getFinallyTasksWithStatus(pipeline, pipelineRun, taskRuns)
     : pipeline.spec?.finally ?? [];
   if (finallyTasks.length === 0) {
     return nodes;
@@ -349,14 +351,16 @@ export const connectFinallyTasksToNodes = (
 export const getTopologyNodesEdges = (
   pipeline: PipelineKind,
   pipelineRun?: PipelineRunKind,
+  taskRuns?: TaskRunKind[],
 ): { nodes: PipelineMixedNodeModel[]; edges: PipelineEdgeModel[] } => {
-  const taskList: PipelineTask[] = _.flatten(getPipelineTasks(pipeline, pipelineRun));
+  const taskList: PipelineTask[] = _.flatten(getPipelineTasks(pipeline, pipelineRun, taskRuns));
   const taskNodes: PipelineMixedNodeModel[] = tasksToNodes(taskList, pipeline, pipelineRun);
 
   const nodes: PipelineMixedNodeModel[] = connectFinallyTasksToNodes(
     taskNodes,
     pipeline,
     pipelineRun,
+    taskRuns,
   );
   const edges: PipelineEdgeModel[] = getEdgesFromNodes(nodes);
 
@@ -431,6 +435,7 @@ export const getGraphDataModel = (
     kind: 'PipelineRun',
     spec: {},
   },
+  taskRuns: TaskRunKind[],
 ): {
   graph: GraphModel;
   nodes: PipelineMixedNodeModel[];
@@ -440,7 +445,7 @@ export const getGraphDataModel = (
     return null;
   }
 
-  const taskList = _.flatten(getPipelineTasks(pipeline, pipelineRun));
+  const taskList = _.flatten(getPipelineTasks(pipeline, pipelineRun, taskRuns));
 
   const dag = new DAG();
   taskList?.forEach((task: PipelineTask) => {
@@ -495,8 +500,10 @@ export const getGraphDataModel = (
       const minLevelDep = _.minBy(v, (d) => d.level);
       const nearestDeps = v.filter((v1) => v1.level === minLevelDep.level);
       nearestDeps.forEach((nd) => {
-        if (nd.level - vertex.level <= 1 || vertex.dependancyNames.length === 0) {
-          runAfterTasks.push(nd.name);
+        if (vertex.dependancyNames.includes(nd.name)) {
+          if (nd.level - vertex.level <= 1 || vertex.dependancyNames.length === 0) {
+            runAfterTasks.push(nd.name);
+          }
         }
       });
     }
@@ -522,7 +529,7 @@ export const getGraphDataModel = (
     );
   });
 
-  const finallyTaskList = appendPipelineRunStatus(pipeline, pipelineRun, true);
+  const finallyTaskList = appendPipelineRunStatus(pipeline, pipelineRun, taskRuns, true);
 
   const maxFinallyNodeName =
     finallyTaskList.sort((a, b) => b.name.length - a.name.length)[0]?.name || '';

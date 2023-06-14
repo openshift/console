@@ -43,8 +43,9 @@ const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHu
               canEdit={canEditDefaultSources}
               onEdit={() => editDefaultSourcesModal({ operatorHub })}
               editAsGroup
+              hideEmpty
             >
-              {operatorHub.status.sources
+              {operatorHub.status?.sources
                 .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''))
                 .map((source, idx) => {
                   return (
@@ -74,13 +75,13 @@ const Sources: React.FC<CatalogSourceListPageProps> = (props) => (
 );
 
 export const OperatorHubDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { t } = useTranslation();
   const pages = [
     navFactory.details(OperatorHubDetails),
     navFactory.editYaml(),
     {
       href: 'sources',
-      name: t('olm~Sources'),
+      // t('olm~Sources')
+      nameKey: 'olm~Sources',
       component: Sources,
     },
   ];

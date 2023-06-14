@@ -161,7 +161,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
     (snapshotClass: VolumeSnapshotClassKind) => provisioner?.includes(snapshotClass?.driver),
     [provisioner],
   );
-  const vscList = vscObj?.items || [];
+  const vscList = React.useMemo(() => vscObj?.items || [], [vscObj]);
   const getDefaultItem = React.useCallback(
     (snapFilter) => {
       const filteredVSC = vscList.filter(snapFilter);

@@ -2,7 +2,11 @@ import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import {
+  CatalogItem,
+  CatalogItemDetailsDescription,
+  CatalogItemDetailsProperty,
+} from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ExternalLink } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -69,6 +73,7 @@ export const normalizeHelmCharts = (
         const maintainers = chart.maintainers?.length > 0 && (
           <>
             {chart.maintainers?.map((maintainer, index) => (
+              // eslint-disable-next-line react/no-array-index-key
               <React.Fragment key={index}>
                 {maintainer.name}
                 <br />
@@ -83,7 +88,7 @@ export const normalizeHelmCharts = (
           <ExternalLink href={chart.home} additionalClassName="co-break-all" text={chart.home} />
         );
 
-        const detailsProperties = [
+        const detailsProperties: CatalogItemDetailsProperty[] = [
           {
             label: t('helm-plugin~Latest Chart version'),
             value: version,
@@ -114,7 +119,7 @@ export const normalizeHelmCharts = (
           },
         ];
 
-        const detailsDescriptions = [
+        const detailsDescriptions: CatalogItemDetailsDescription[] = [
           {
             label: t('helm-plugin~Description'),
             value: <p>{description}</p>,
@@ -130,7 +135,7 @@ export const normalizeHelmCharts = (
           },
         ];
 
-        const helmChart = {
+        const helmChart: CatalogItem = {
           uid: `${chartRepoName}--${chartURL}`,
           type: 'HelmChart',
           name: displayName,

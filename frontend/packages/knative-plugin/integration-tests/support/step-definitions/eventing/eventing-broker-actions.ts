@@ -16,16 +16,12 @@ import { eventingPO } from '../../pageObjects';
 
 When('user selects on {string} from {string} card', (eventName: string, addFlowCard: string) => {
   cy.get(eventingPO.broker.eventingCard).contains(addFlowCard);
-  cy.get(eventingPO.broker.createEvent)
-    .contains(eventName)
-    .click();
+  cy.get(eventingPO.broker.createEvent).contains(eventName).click();
 });
 
 When('user selects {string} from Actions drop down', (actionName: string) => {
   cy.get(eventingPO.broker.actionMenu).click();
-  cy.get(eventingPO.broker.actionDropDown)
-    .contains(actionName)
-    .click();
+  cy.get(eventingPO.broker.actionDropDown).contains(actionName).click();
 });
 
 When('user selects Form view', () => {
@@ -35,14 +31,9 @@ When('user selects Form view', () => {
 When(
   'user enters broker name as {string} in application groupings {string}',
   (brokerName: string, appName: string) => {
-    cy.get(eventingPO.broker.applicationGrouping.dropdown).click();
-    cy.get(eventingPO.broker.applicationGrouping.create).click();
-    cy.get(eventingPO.broker.applicationGrouping.formData)
-      .clear()
-      .type(appName);
-    cy.get(eventingPO.broker.applicationGrouping.nameField)
-      .clear()
-      .type(brokerName);
+    cy.get(eventingPO.broker.applicationGrouping.dropdown).should('not.exist');
+    cy.get(eventingPO.broker.applicationGrouping.formData).clear().type(appName);
+    cy.get(eventingPO.broker.applicationGrouping.nameField).clear().type(brokerName);
   },
 );
 
@@ -64,15 +55,11 @@ Given(
 );
 
 When('user right clicks on {string} broker', (nodeName: string) => {
-  cy.get(eventingPO.broker.topologyNode)
-    .contains(nodeName)
-    .trigger('contextmenu', { force: true });
+  cy.get(eventingPO.broker.topologyNode).contains(nodeName).trigger('contextmenu', { force: true });
 });
 
 Then('user will see option {string}', (optionName: string) => {
-  cy.get(eventingPO.broker.sidebar.dropdownMenu)
-    .contains(optionName)
-    .should('be.visible');
+  cy.get(eventingPO.broker.sidebar.dropdownMenu).contains(optionName).should('be.visible');
 });
 
 When('user clicks on the {string} broker to open the sidebar', (nodeName: string) => {
@@ -81,9 +68,7 @@ When('user clicks on the {string} broker to open the sidebar', (nodeName: string
 });
 
 When('user selects Details tab', () => {
-  cy.get(eventingPO.broker.sidebar.navBar)
-    .contains('Details')
-    .click();
+  cy.get(eventingPO.broker.sidebar.navBar).contains('Details').click();
 });
 
 Then('user will see name of broker as {string}', (brokerName) => {
@@ -110,9 +95,7 @@ When('user right click on the {string} broker to open the context menu', (broker
 });
 
 When('user clicks on {string}', (optionName: string) => {
-  cy.get(eventingPO.broker.sidebar.dropdownMenu)
-    .contains(optionName)
-    .click();
+  cy.get(eventingPO.broker.sidebar.dropdownMenu).contains(optionName).click();
 });
 
 When('user will click on Application drop down on the modal', () => {
@@ -120,9 +103,7 @@ When('user will click on Application drop down on the modal', () => {
 });
 
 When('user selects {string} from Application drop down', (optionName: string) => {
-  cy.get(eventingPO.broker.applicationGrouping.menu)
-    .contains(optionName)
-    .click();
+  cy.get(eventingPO.broker.applicationGrouping.menu).contains(optionName).click();
 });
 
 When('user enters application name as {string}', (appName: string) => {
@@ -138,9 +119,7 @@ Then('user will see {string} application created', (appName: string) => {
 });
 
 When('user adds new label {string}', (labelName: string) => {
-  cy.get(eventingPO.broker.label)
-    .click()
-    .type(labelName);
+  cy.get(eventingPO.broker.label).click().type(labelName);
 });
 
 When('user clicks on the Save button on the modal', () => {
@@ -153,17 +132,13 @@ When('user clicks on the Save button on the modal', () => {
 
 When('user enters name of trigger as {string}', (triggerName) => {
   cy.get(eventingPO.broker.sidebar.close).click({ force: true });
-  cy.get(eventingPO.broker.sidebar.triggerName)
-    .clear()
-    .type(triggerName);
+  cy.get(eventingPO.broker.sidebar.triggerName).clear().type(triggerName);
 });
 
 When('user selects {string} from Subscriber drop down', (subscriberName: string) => {
   cy.get(eventingPO.broker.sidebar.subscriberDropDown).click();
   cy.get(eventingPO.broker.sidebar.subscriberFilter).type(subscriberName);
-  cy.get(eventingPO.broker.sidebar.subscriberItem)
-    .eq(0)
-    .click();
+  cy.get(eventingPO.broker.sidebar.subscriberItem).eq(0).click();
 });
 
 When('user clicks on Add button', () => {
@@ -174,35 +149,27 @@ Then('user will see {string} created', (triggerName) => {
   cy.reload();
   cy.get(topologyPO.resetView).click();
   cy.get(eventingPO.broker.topologyNode).click({ force: true });
-  cy.get(eventingPO.broker.sidebar.navBar)
-    .contains('Resources')
-    .click();
+  cy.get(eventingPO.broker.sidebar.navBar).contains('Resources').click();
   cy.get(eventingPO.broker.sidebar.resource, { timeout: 20000 })
     .contains(triggerName)
     .should('exist');
 });
 
 When('user selects Resources tab', () => {
-  cy.get(eventingPO.broker.sidebar.navBar)
-    .contains('Resources')
-    .click();
+  cy.get(eventingPO.broker.sidebar.navBar).contains('Resources').click();
 });
 
 Given('user has ping-source event source sinked to {string} broker', (brokerName: string) => {
   navigateTo(devNavigationMenu.Add);
   cy.get(eventingPO.createKnativeEvent).click();
   cy.get(eventingPO.pingSource.create).click();
-  cy.get(eventingPO.createSidebar)
-    .contains('Create Event Source')
-    .click({ force: true });
+  cy.get(eventingPO.createSidebar).contains('Create Event Source').click({ force: true });
   cy.get(eventingPO.pingSource.dataField).type('Message');
   cy.get(eventingPO.pingSource.scheduleField).type('* * * * *');
   cy.get(eventSourcePO.createPingSource.resourceToggleButton).click();
   cy.get(eventSourcePO.createPingSource.resourceDropDownField).click();
   cy.get(eventingPO.pingSource.resourceFilter).type(brokerName);
-  cy.get(eventSourcePO.createPingSource.resourceDropDownItem)
-    .eq(0)
-    .click();
+  cy.get(eventSourcePO.createPingSource.resourceDropDownItem).eq(0).click();
   cy.get(eventingPO.pingSource.save).click();
 });
 
@@ -215,9 +182,7 @@ Then('user will see {string} under Subscribers', (subscriberName: string) => {
 });
 
 Then('user will see Pods and Deployments section', () => {
-  cy.get(eventingPO.broker.sidebar.heading)
-    .should('contain', 'Pods')
-    .and('contain', 'Deployments');
+  cy.get(eventingPO.broker.sidebar.heading).should('contain', 'Pods').and('contain', 'Deployments');
 });
 
 Then('user will not see {string} application', (appName: string) => {
@@ -237,9 +202,7 @@ Then('user will not see {string} broker', (brokerName: string) => {
 });
 
 When('user clicks on the Delete button on the modal', () => {
-  cy.get(topologyPO.graph.deleteWorkload)
-    .contains('Delete')
-    .click();
+  cy.get(topologyPO.graph.deleteWorkload).contains('Delete').click();
 });
 
 Then('user will see the newly added label {string}', (labelName: string) => {
@@ -248,12 +211,8 @@ Then('user will see the newly added label {string}', (labelName: string) => {
 
 When('user adds new annotation {string} and type {string}', (annotation: string, type: string) => {
   cy.get(eventingPO.broker.addAnnotations).click();
-  cy.get('[placeholder="Key"]')
-    .last()
-    .type(annotation);
-  cy.get('[placeholder="Value"]')
-    .last()
-    .type(type);
+  cy.get('[placeholder="Key"]').last().type(annotation);
+  cy.get('[placeholder="Value"]').last().type(type);
 });
 
 Then(

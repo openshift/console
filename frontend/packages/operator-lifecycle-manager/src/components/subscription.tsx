@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Alert, Button, Popover } from '@patternfly/react-core';
 import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
@@ -7,6 +8,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match, Link } from 'react-router-dom';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { Conditions } from '@console/internal/components/conditions';
 import {
   DetailsPage,
@@ -113,6 +115,16 @@ export const SourceMissingStatus: React.FC = () => {
     <>
       <WarningStatus title={t('olm~Cannot update')} />
       <span className="text-muted">{t('olm~CatalogSource not found')}</span>
+    </>
+  );
+};
+
+export const SourceUnhealthyStatus: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <WarningStatus title={t('olm~Cannot update')} />
+      <span className="text-muted">{t('olm~CatalogSource unhealthy')}</span>
     </>
   );
 };
@@ -320,22 +332,50 @@ export const SubscriptionsPage: React.FC<SubscriptionsPageProps> = (props) => {
   );
 };
 
-export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
-  catalogSources = [],
-  clusterServiceVersions = [],
-  installPlans = [],
-  obj,
-  packageManifests = [],
-  subscriptions = [],
-}) => {
+const CatalogSourceHealthAlert = ({ health, source, sourceNamespace }) => {
   const { t } = useTranslation();
-  const catalogSource = catalogSourceForSubscription(catalogSources, obj);
-  const catalogSourceName = getName(catalogSource);
-  const catalogSourceHealthy = obj?.status?.catalogHealth?.find(
-    (ch) => (ch.catalogSourceRef.name = catalogSourceName),
-  )?.healthy;
-  const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
-  const installPlan = installPlanForSubscription(installPlans, obj);
+  if (!health) {
+    return (
+      <Alert
+        isInline
+        className="co-alert"
+        variant="warning"
+        title={t('olm~CatalogSource health unknown')}
+      >
+        {t(
+          'olm~This operator cannot be updated. The health of CatalogSource "{{source}}" is unknown. It may have been disabled or removed from the cluster.',
+          { source },
+        )}
+        {source && sourceNamespace && (
+          <ResourceLink
+            displayName={t('olm~View CatalogSource')}
+            groupVersionKind={getGroupVersionKindForModel(CatalogSourceModel)}
+            name={source}
+            namespace={sourceNamespace}
+            title={source}
+          />
+        )}
+      </Alert>
+    );
+  }
+  return health.healthy ? null : (
+    <Alert isInline className="co-alert" variant="warning" title={t('olm~CatalogSource unhealthy')}>
+      {t('olm~This operator cannot be updated. CatalogSource "{{source}}" is unhealthy.', {
+        source,
+      })}
+      <ResourceLink
+        displayName={t('olm~View CatalogSource')}
+        groupVersionKind={getGroupVersionKindForModel(CatalogSourceModel)}
+        name={source}
+        namespace={sourceNamespace}
+        title={source}
+      />
+    </Alert>
+  );
+};
+
+const InstallFailedAlert = ({ installPlan }) => {
+  const { t } = useTranslation();
   const installStatusPhase = installPlan?.status?.phase;
   const installFailedCondition = installPlan?.status?.conditions?.find(
     ({ type, status }) => type === 'Installed' && status === 'False',
@@ -345,6 +385,49 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
     installFailedCondition?.reason ||
     t('olm~InstallPlan failed');
 
+  return installStatusPhase === InstallPlanPhase.InstallPlanPhaseFailed ? (
+    <Alert
+      isInline
+      className="co-alert co-alert--scrollable"
+      variant="danger"
+      title={installStatusPhase}
+    >
+      {installFailedMessage}
+    </Alert>
+  ) : null;
+};
+
+const CatalogSourceStatusIconAndText = ({ healthy }) => {
+  const { t } = useTranslation();
+  switch (healthy) {
+    case true:
+      return <StatusIconAndText icon={<GreenCheckCircleIcon />} title={t('olm~Healthy')} />;
+    case false:
+      return <StatusIconAndText icon={<RedExclamationCircleIcon />} title={t('olm~Unhealthy')} />;
+    default:
+      return (
+        <StatusIconAndText
+          icon={<YellowExclamationTriangleIcon />}
+          title={t('olm~Health unknown')}
+        />
+      );
+  }
+};
+
+export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
+  clusterServiceVersions = [],
+  installPlans = [],
+  obj,
+  packageManifests = [],
+  subscriptions = [],
+}) => {
+  const { t } = useTranslation();
+  const { source, sourceNamespace } = obj?.spec ?? {};
+  const catalogHealth = obj?.status?.catalogHealth?.find(
+    (ch) => ch.catalogSourceRef.name === source,
+  );
+  const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
+  const installPlan = installPlanForSubscription(installPlans, obj);
   const pkg = packageForSubscription(packageManifests, obj);
   if (new URLSearchParams(window.location.search).has('showDelete')) {
     createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: obj })
@@ -355,32 +438,16 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   return (
     <>
       <div className="co-m-pane__body">
-        {!catalogSource && (
-          <Alert
-            isInline
-            className="co-alert"
-            variant="warning"
-            title={t('olm~CatalogSource removed')}
-          >
-            {t(
-              'olm~The CatalogSource for this Operator has been removed. The CatalogSource must be added back in order for this Operator to receive any updates.',
-            )}
-          </Alert>
-        )}
-        {installStatusPhase === InstallPlanPhase.InstallPlanPhaseFailed && (
-          <Alert
-            isInline
-            className="co-alert co-alert--scrollable"
-            variant="danger"
-            title={installStatusPhase}
-          >
-            {installFailedMessage}
-          </Alert>
-        )}
+        <CatalogSourceHealthAlert
+          health={catalogHealth}
+          source={source}
+          sourceNamespace={sourceNamespace}
+        />
+        <InstallFailedAlert installPlan={installPlan} />
         <SectionHeading text={t('olm~Subscription details')} />
         <div className="co-m-pane__body-group">
           <SubscriptionUpdates
-            catalogSource={catalogSource}
+            catalogHealth={catalogHealth}
             pkg={pkg}
             obj={obj}
             installedCSV={installedCSV}
@@ -412,25 +479,16 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                 <dd>{obj.spec.startingCSV || t('olm~None')}</dd>
                 <dt>{t('olm~CatalogSource')}</dt>
                 <dd>
-                  {catalogSource ? (
+                  {source && sourceNamespace ? (
                     <ResourceLink
                       kind={referenceForModel(CatalogSourceModel)}
-                      name={catalogSourceName}
-                      namespace={getNamespace(catalogSource)}
-                      title={getName(catalogSource)}
+                      name={source}
+                      namespace={sourceNamespace}
+                      title={source}
                     >
-                      {catalogSourceHealthy !== undefined && (
-                        <ResourceStatus badgeAlt>
-                          {catalogSourceHealthy ? (
-                            <StatusIconAndText icon={<GreenCheckCircleIcon />} title="Healthy" />
-                          ) : (
-                            <StatusIconAndText
-                              icon={<RedExclamationCircleIcon />}
-                              title="Unhealthy"
-                            />
-                          )}
-                        </ResourceStatus>
-                      )}
+                      <ResourceStatus badgeAlt>
+                        <CatalogSourceStatusIconAndText healthy={catalogHealth?.healthy} />
+                      </ResourceStatus>
                     </ResourceLink>
                   ) : (
                     t('olm~None')
@@ -462,8 +520,19 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   );
 };
 
+const SubscriptionUpgradeStatus = ({ catalogHealth, subscription }) => {
+  if (!catalogHealth) {
+    return <SourceMissingStatus />;
+  }
+  return catalogHealth.healthy ? (
+    <SubscriptionStatus subscription={subscription} />
+  ) : (
+    <SourceUnhealthyStatus />
+  );
+};
+
 export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
-  catalogSource,
+  catalogHealth,
   installedCSV,
   installPlan,
   obj,
@@ -586,17 +655,11 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
         <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
           <dl className="co-m-pane__details">
             <dt className="co-detail-table__section-header">{t('olm~Upgrade status')}</dt>
-            {catalogSource ? (
-              <dd>
-                <SubscriptionStatus subscription={obj} />
-              </dd>
-            ) : (
-              <dd>
-                <SourceMissingStatus />
-              </dd>
-            )}
+            <dd>
+              <SubscriptionUpgradeStatus catalogHealth={catalogHealth} subscription={obj} />
+            </dd>
           </dl>
-          {catalogSource && (
+          {catalogHealth && catalogHealth.healthy && (
             <>
               <div className="co-detail-table__bracket" />
               <div className="co-detail-table__breakdown">
@@ -660,11 +723,6 @@ export const SubscriptionDetailsPage: React.FC<SubscriptionDetailsPageProps> = (
         prop: 'clusterServiceVersions',
       },
       {
-        kind: referenceForModel(CatalogSourceModel),
-        isList: true,
-        prop: 'catalogSources',
-      },
-      {
         kind: referenceForModel(SubscriptionModel),
         namespace: props.namespace,
         isList: true,
@@ -688,7 +746,7 @@ export type SubscriptionsListProps = {
 };
 
 export type SubscriptionUpdatesProps = {
-  catalogSource: CatalogSourceKind;
+  catalogHealth: { healthy?: boolean };
   obj: SubscriptionKind;
   pkg: PackageManifestKind;
   installedCSV?: ClusterServiceVersionKind;
@@ -703,7 +761,6 @@ export type SubscriptionUpdatesState = {
 };
 
 export type SubscriptionDetailsProps = {
-  catalogSources?: CatalogSourceKind[];
   clusterServiceVersions?: ClusterServiceVersionKind[];
   installPlans?: InstallPlanKind[];
   obj: SubscriptionKind;

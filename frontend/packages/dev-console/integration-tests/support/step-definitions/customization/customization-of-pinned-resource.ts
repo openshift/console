@@ -7,19 +7,12 @@ Given('user is at Consoles page', () => {
 });
 
 When('user navigates to Cluster configuration page', () => {
-  cy.byLegacyTestID('actions-menu-button')
-    .should('be.visible')
-    .click();
-  cy.byTestActionID('Customize')
-    .should('be.visible')
-    .click();
+  cy.byLegacyTestID('actions-menu-button').should('be.visible').click();
+  cy.byTestActionID('Customize').should('be.visible').click();
 });
 
 When('user clicks on Developer tab', () => {
-  cy.get('[role="presentation"]')
-    .contains('Developer')
-    .should('be.visible')
-    .click();
+  cy.get('[role="presentation"]').contains('Developer').should('be.visible').click();
 });
 
 Then('user should see Pre-pinned navigation items section', () => {

@@ -1,5 +1,6 @@
+// TODO remove multicluster
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -57,7 +58,7 @@ export const useValuesForClusterContext = () => {
           const oldPath = window.location.pathname;
           const newPath = formatNamespaceRoute(activeNamespace, oldPath, window.location, true);
           if (newPath !== oldPath) {
-            history.pushPath(newPath);
+            history.push(newPath);
           }
         }
       },

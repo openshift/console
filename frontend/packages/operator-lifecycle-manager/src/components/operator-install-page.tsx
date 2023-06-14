@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { errorModal } from '@console/internal/components/modals';
@@ -33,6 +33,7 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
+import { RouteParams } from '@console/shared/src/types';
 import {
   ClusterServiceVersionModel,
   InstallPlanModel,
@@ -247,6 +248,7 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
     </>
   );
 };
+
 const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj }) => {
   const { t } = useTranslation();
   const reason = (obj as ClusterServiceVersionKind)?.status?.reason || '';
@@ -291,14 +293,17 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
   );
 };
 
-const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
-  const { t } = useTranslation();
-  const { resources, targetNamespace, pkgNameWithVersion } = props;
+type OperatorInstallStatusPageRouteParams = RouteParams<
+  'pkg' | 'catalogNamespace' | 'currentCSV' | 'targetNamespace'
+>;
 
+const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }) => {
+  const { t } = useTranslation();
+  const { currentCSV, targetNamespace } = useParams<OperatorInstallStatusPageRouteParams>();
   let loading = true;
   let status = '';
   let installObj: ClusterServiceVersionKind | InstallPlanKind =
-    resources?.clusterServiceVersions?.data;
+    resources?.clusterServiceVersion?.data;
   const subscription = resources?.subscription?.data;
   status = installObj?.status?.phase;
   if (installObj && status) {
@@ -308,7 +313,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
     loading = false;
     status = subscription?.status?.state || null;
     const installPlanName = subscription?.status?.installPlanRef?.name || '';
-    const installPlan: InstallPlanKind = resources?.installPlan?.data?.find(
+    const installPlan: InstallPlanKind = resources?.installPlans?.data?.find(
       (ip) => ip.metadata.name === installPlanName,
     );
     if (installPlan) {
@@ -343,11 +348,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
   let installMessage = <InstallingMessage namespace={targetNamespace} obj={installObj} />;
   if (isStatusFailed) {
     installMessage = (
-      <InstallFailedMessage
-        namespace={targetNamespace}
-        obj={installObj}
-        csvName={pkgNameWithVersion}
-      />
+      <InstallFailedMessage namespace={targetNamespace} obj={installObj} csvName={currentCSV} />
     );
   } else if (isApprovalNeeded) {
     installMessage = (
@@ -360,17 +361,13 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
     );
   } else if (isStatusSucceeded) {
     installMessage = (
-      <InstallSucceededMessage
-        namespace={targetNamespace}
-        csvName={pkgNameWithVersion}
-        obj={installObj}
-      />
+      <InstallSucceededMessage namespace={targetNamespace} csvName={currentCSV} obj={installObj} />
     );
   }
 
-  const pkgManifest = resources.packageManifest.data[0];
+  const pkgManifest = resources.packageManifest.data;
   const channels = pkgManifest.status?.channels || [];
-  const channel = channels.find((ch) => ch.currentCSV === pkgNameWithVersion) || channels[0];
+  const channel = channels.find((ch) => ch.currentCSV === currentCSV) || channels[0];
   const displayName = channel?.currentCSVDesc?.displayName || '';
   const logoVersion = channel?.currentCSVDesc?.version || '';
 
@@ -426,63 +423,60 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
   );
 };
 
-export const OperatorInstallStatusPage: React.FC<OperatorInstallPageProps> = (props) => {
-  const { pkgNameWithVersion, targetNamespace } = props;
-  const namespace = targetNamespace;
-  const pkg = new URLSearchParams(window.location.search).get('pkg');
+export const OperatorInstallStatusPage: React.FC<OperatorInstallPageProps> = () => {
+  const { pkg, catalogNamespace, currentCSV, targetNamespace } = useParams<
+    OperatorInstallStatusPageRouteParams
+  >();
+
   const installPageResources = [
     {
       kind: referenceForModel(ClusterServiceVersionModel),
       namespaced: true,
       isList: false,
-      name: pkgNameWithVersion,
-      namespace,
-      prop: 'clusterServiceVersions',
+      name: currentCSV,
+      namespace: targetNamespace,
+      prop: 'clusterServiceVersion',
     },
     {
       kind: referenceForModel(SubscriptionModel),
       namespaced: true,
       isList: false,
       name: pkg,
-      namespace,
+      namespace: targetNamespace,
       optional: true,
       prop: 'subscription',
     },
     {
       kind: referenceForModel(InstallPlanModel),
-      prop: 'installPlan',
+      prop: 'installPlans',
       namespaced: true,
-      namespace,
+      namespace: targetNamespace,
       isList: true,
       optional: true,
     },
     {
-      isList: true,
       kind: referenceForModel(PackageManifestModel),
-      namespace: new URLSearchParams(window.location.search).get('catalogNamespace'),
-      fieldSelector: `metadata.name=${pkg}`,
-      selector: {
-        matchLabels: {
-          catalog: new URLSearchParams(window.location.search).get('catalog'),
-        },
-      },
+      namespace: catalogNamespace,
+      name: pkg,
       prop: 'packageManifest',
     },
   ];
 
   return (
     <Firehose resources={installPageResources}>
-      <OperatorInstallStatus {...props} />
+      <OperatorInstallStatus />
     </Firehose>
   );
 };
 
 export type OperatorInstallPageProps = {
-  targetNamespace: string;
-  pkgNameWithVersion: string;
-  resources?: OperatorResources;
+  resources?: {
+    clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;
+    subscription: FirehoseResult<SubscriptionKind>;
+    installPlans: FirehoseResult<InstallPlanKind[]>;
+    packageManifest: FirehoseResult<PackageManifestKind>;
+  };
 };
-
 type InstallSuccededMessageProps = {
   namespace: string;
   obj: ClusterServiceVersionKind | InstallPlanKind;
@@ -515,9 +509,3 @@ type InitializationResourceButtonProps = {
 type ViewOperatorButtonProps = {
   namespace: string;
 };
-export interface OperatorResources {
-  clusterServiceVersions: FirehoseResult<ClusterServiceVersionKind>;
-  subscription: FirehoseResult<SubscriptionKind>;
-  installPlan: FirehoseResult<InstallPlanKind[]>;
-  packageManifest: FirehoseResult<PackageManifestKind[]>;
-}

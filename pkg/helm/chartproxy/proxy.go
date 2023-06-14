@@ -60,7 +60,7 @@ func New(k8sConfig RestConfigProvider, kubeVersionGetter version.KubeVersionGett
 
 	p := &proxy{
 		config:      config,
-		kubeVersion: kubeVersionGetter.GetKubeVersion(serverutils.LocalClusterName),
+		kubeVersion: kubeVersionGetter.GetKubeVersion(serverutils.LocalClusterName), // TODO remove multicluster. Remove cluster arg.
 	}
 
 	if len(opts) == 0 {

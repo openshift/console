@@ -49,20 +49,8 @@ describe('NetworkPolicyForm', () => {
   it('should render control buttons in a button bar with create disabled', () => {
     const buttonBar = wrapper.find(ButtonBar);
     expect(buttonBar.exists()).toBe(true);
-    expect(
-      buttonBar
-        .find(Button)
-        .at(0)
-        .childAt(0)
-        .text(),
-    ).toEqual('Create');
-    expect(
-      buttonBar
-        .find(Button)
-        .at(1)
-        .childAt(0)
-        .text(),
-    ).toEqual('Cancel');
+    expect(buttonBar.find(Button).at(0).childAt(0).text()).toEqual('Create');
+    expect(buttonBar.find(Button).at(1).childAt(0).text()).toEqual('Cancel');
   });
 
   it('should render multiple rules', () => {

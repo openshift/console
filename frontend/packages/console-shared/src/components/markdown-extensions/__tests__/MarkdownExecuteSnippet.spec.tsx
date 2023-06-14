@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import useCloudShellAvailable from '@console/app/src/components/cloud-shell/useCloudShellAvailable';
+import useCloudShellAvailable from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
 import MarkdownExecuteSnippet, { ExecuteSnippet } from '../MarkdownExecuteSnippet';
 import { htmlDocumentForExecuteButton } from './test-data';
 
-jest.mock('@console/app/src/components/cloud-shell/useCloudShellAvailable', () => ({
+jest.mock('@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable', () => ({
   default: jest.fn(),
 }));
 

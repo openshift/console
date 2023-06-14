@@ -6,7 +6,7 @@ Feature: Display task runs page
             Given user has created or selected namespace "aut-pipelines"
               And user is at pipelines page
 
- 
+
         @smoke
         Scenario: Task runs tab: P-05-TC01
             Given pipeline run is displayed for "pipe-one" with resource
@@ -79,3 +79,22 @@ Feature: Display task runs page
              Then user is redirected to Task Run Details tab
              When user scrolls to the Task Run results section
              Then user can see Name and Value column under Task Run results
+
+        @regression
+        Scenario: Check for Duration column when enabled: P-05-TC07
+            Given user is at PipelineRuns tab with pipeline runs for pipeline "pipe-one"
+             When user clicks on Pipeline Run for "pipe-one"
+              And user clicks on TaskRuns tab
+              And user clicks manage columns button
+              And user enables Duration column
+             Then user sees Duration column
+
+        @regression
+        Scenario: Check for absence of Duration column when disabled: P-05-TC08
+            Given user is at PipelineRuns tab with pipeline runs for pipeline "pipe-one"
+             When user clicks on Pipeline Run for "pipe-one"
+              And user clicks on TaskRuns tab
+              And user verifies that duration column is visible
+              And user clicks manage columns button
+              And user disables Duration column
+             Then user does not see Duration column

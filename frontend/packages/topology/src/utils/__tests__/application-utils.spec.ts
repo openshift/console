@@ -1,5 +1,6 @@
 import { Model } from '@patternfly/react-topology';
-import * as utils from '@console/internal/components/utils';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   ImageStreamModel,
   ServiceModel,
@@ -9,7 +10,7 @@ import {
   DaemonSetModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import * as k8s from '@console/internal/module/k8s';
+import * as k8sModelsModule from '@console/internal/module/k8s/k8s-models';
 import {
   CamelKameletBindingModel,
   KafkaSinkModel,
@@ -100,13 +101,13 @@ describe('ApplicationUtils ', () => {
   let mockSecrets = [];
 
   beforeEach(() => {
-    spy = spyOn(k8s, 'k8sKill');
-    checkAccessSpy = spyOn(utils, 'checkAccess');
-    spyK8sGet = spyOn(k8s, 'k8sGet');
+    spy = spyOn(k8sResourceModule, 'k8sKill');
+    checkAccessSpy = spyOn(rbacModule, 'checkAccess');
+    spyK8sGet = spyOn(k8sResourceModule, 'k8sGet');
     spyAndReturn(spy)(Promise.resolve({}));
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: true } }));
     spyAndReturn(spyK8sGet)(Promise.resolve(true));
-    spyOn(k8s, 'k8sList').and.callFake((model) => {
+    spyOn(k8sResourceModule, 'k8sList').and.callFake((model) => {
       if (model.kind === 'Build') {
         return Promise.resolve(mockBuilds);
       }
@@ -235,7 +236,7 @@ describe('ApplicationUtils ', () => {
       CamelKameletBindingModel.plural,
       true,
     );
-    spyAndReturn(spyOn(k8s, 'modelFor'))(CamelKameletBindingModel);
+    spyAndReturn(spyOn(k8sModelsModule, 'modelFor'))(CamelKameletBindingModel);
     cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
@@ -256,7 +257,7 @@ describe('ApplicationUtils ', () => {
       CamelKameletBindingModel.plural,
       true,
     );
-    spyAndReturn(spyOn(k8s, 'modelFor'))(KafkaSinkModel);
+    spyAndReturn(spyOn(k8sModelsModule, 'modelFor'))(KafkaSinkModel);
     cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();

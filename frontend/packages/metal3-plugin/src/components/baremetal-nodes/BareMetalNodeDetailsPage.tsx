@@ -31,12 +31,14 @@ const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPag
     (node: NodeKind) => [
       {
         href: '',
-        name: t('metal3-plugin~Overview'),
+        // t('metal3-plugin~Overview')
+        nameKey: 'metal3-plugin~Overview',
         component: BareMetalNodeDashboard,
       },
       {
         href: 'details',
-        name: t('metal3-plugin~Details'),
+        // t('metal3-plugin~Details')
+        nameKey: 'metal3-plugin~Details',
         component: BareMetalNodeDetails,
       },
       editYaml(),
@@ -50,10 +52,17 @@ const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPag
           (k === 'node.openshift.io/os_id' && v === 'Windows') ||
           (k === 'corev1.LabelOSStable' && v === 'windows'),
       )
-        ? [{ href: 'terminal', name: t('metal3-plugin~Terminal'), component: NodeTerminal }]
+        ? [
+            {
+              href: 'terminal',
+              // t('metal3-plugin~Terminal')
+              nameKey: 'metal3-plugin~Terminal',
+              component: NodeTerminal,
+            },
+          ]
         : []),
     ],
-    [t],
+    [],
   );
 
   const resources: FirehoseResource[] = [

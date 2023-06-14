@@ -21,9 +21,7 @@ describe('Project dashboard', () => {
       const expectedTitles = ['Name', 'Requester', 'Labels', 'Description'];
       cy.byTestID('detail-item-title').should('have.length', 4);
       expectedTitles.forEach((title, i) => {
-        cy.byTestID('detail-item-title')
-          .eq(i)
-          .should('have.text', title);
+        cy.byTestID('detail-item-title').eq(i).should('have.text', title);
       });
 
       const expectedValues = [
@@ -34,9 +32,7 @@ describe('Project dashboard', () => {
       ];
       cy.byTestID('detail-item-value').should('have.length', 4);
       expectedValues.forEach(({ assertion, value }, i) => {
-        cy.byTestID('detail-item-value')
-          .eq(i)
-          .should(assertion, value);
+        cy.byTestID('detail-item-value').eq(i).should(assertion, value);
       });
     });
 
@@ -76,9 +72,7 @@ describe('Project dashboard', () => {
           .eq(i)
           .invoke('text')
           .should('match', new RegExp(`^[0-9]+ ${item.kind}s?$`));
-        cy.byTestID('resource-inventory-item')
-          .eq(i)
-          .should('have.attr', 'href', item.path);
+        cy.byTestID('resource-inventory-item').eq(i).should('have.attr', 'href', item.path);
       });
     });
   });
@@ -89,9 +83,7 @@ describe('Project dashboard', () => {
       const utilizationItems = ['CPU', 'Memory', 'Filesystem', 'Network transfer', 'Pod count'];
       cy.byLegacyTestID('utilization-item').should('have.length', utilizationItems.length);
       utilizationItems.forEach((title, i) => {
-        cy.byTestID('utilization-item-title')
-          .eq(i)
-          .should('have.text', title);
+        cy.byTestID('utilization-item-title').eq(i).should('have.text', title);
       });
     });
     it('has duration dropdown', () => {
@@ -107,9 +99,7 @@ describe('Project dashboard', () => {
         .and('have.attr', 'href', `/k8s/ns/${testName}/events`);
     });
     it('has Pause events button', () => {
-      cy.byTestID('events-pause-button')
-        .should('be.visible')
-        .and('have.text', 'Pause');
+      cy.byTestID('events-pause-button').should('be.visible').and('have.text', 'Pause');
       cy.byTestID('events-pause-button').click();
       cy.byTestID('events-pause-button').should('have.text', 'Resume');
     });

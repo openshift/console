@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import useCloudShellAvailable from '@console/app/src/components/cloud-shell/useCloudShellAvailable';
-import { useCloudShellCommandDispatch } from '@console/app/src/redux/actions/cloud-shell-dispatchers';
+import useCloudShellAvailable from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
+import { useCloudShellCommandDispatch } from '@console/webterminal-plugin/src/redux/actions/cloud-shell-dispatchers';
 import { useEventListener } from '../../hooks';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { MARKDOWN_EXECUTE_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';

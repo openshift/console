@@ -1,0 +1,10 @@
+# Artifacts fetched my chartmuseum.sh when running test-backend.sh
+/actions/*.tar.gz
+/actions/*/chartmuseum
+/actions/*/LICENSE
+/actions/*/README.md
+
+/chartproxy/*.tar.gz
+/chartproxy/*/chartmuseum
+/chartproxy/*/LICENSE
+/chartproxy/*/README.md

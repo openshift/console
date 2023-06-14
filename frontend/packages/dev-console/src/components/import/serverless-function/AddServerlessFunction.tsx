@@ -28,7 +28,8 @@ import { validationSchema } from '../import-validation-utils';
 import { useUpdateKnScalingDefaultValues } from '../serverless/useUpdateKnScalingDefaultValues';
 import AddServerlessFunctionForm from './AddServerlessFunctionForm';
 
-type watchResource = {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };
 
@@ -106,7 +107,7 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
       isList: true,
     },
   };
-  const resourcesData: WatchK8sResults<watchResource> = useK8sWatchResources<watchResource>(
+  const resourcesData: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>(
     watchedResources,
   );
 

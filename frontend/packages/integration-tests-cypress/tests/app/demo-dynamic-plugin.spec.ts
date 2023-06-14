@@ -13,8 +13,7 @@ const PLUGIN_PULL_SPEC = Cypress.env('PLUGIN_PULL_SPEC');
 /* The update wait is the value to wait for the poll of /api/check-updates to return with the updated list of plugins
  after the plugin is enabled and loaded. This wait will be longer on ci than when debugging locally. */
 const CHECK_UPDATE_WAIT = 300000;
-const WAIT_OPTIONS = { requestTimeout: CHECK_UPDATE_WAIT };
-
+const CHECK_UPDATES_ALIAS = 'checkUpdates';
 /*
   These tests are meant to:
     1. show how to test a dynamic plugin using demo as the plugin instance
@@ -32,15 +31,16 @@ const WAIT_OPTIONS = { requestTimeout: CHECK_UPDATE_WAIT };
  */
 
 const enableDemoPlugin = (enable: boolean) => {
+  cy.visit('/');
+  nav.sidenav.switcher.changePerspectiveTo('Administrator');
+  nav.sidenav.switcher.shouldHaveText('Administrator');
   // find console demo plugin and enable it
   cy.visit('k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins');
   cy.url().should(
     'include',
     'k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins',
   );
-  cy.get('.co-resource-item__resource-name')
-    .byLegacyTestID(PLUGIN_NAME)
-    .should('be.visible');
+  cy.get('.co-resource-item__resource-name').byLegacyTestID(PLUGIN_NAME).should('be.visible');
   cy.byLegacyTestID(PLUGIN_NAME)
     .parents('tr')
     .within(() => {
@@ -59,9 +59,12 @@ const enableDemoPlugin = (enable: boolean) => {
       cy.byTestID('edit-console-plugin').contains(enable ? 'Enabled' : 'Disabled');
     });
   if (isLocalDevEnvironment) {
-    // for local dev env just trigger any change in the return value to activate the toast
-    cy.intercept('/api/check-updates*', { plugins: [] }).as('checkUpdates');
-    cy.wait('@checkUpdates', WAIT_OPTIONS);
+    // for local dev env trigger a change by removing the plugin to activate the toast
+    cy.intercept('/api/check-updates', {
+      consoleCommit: '',
+      plugins: [],
+    }).as(CHECK_UPDATES_ALIAS);
+    cy.wait(`@${CHECK_UPDATES_ALIAS}`, { requestTimeout: CHECK_UPDATE_WAIT });
     cy.log('Running plugin test locally using bridge.');
   } else {
     cy.log(`Running plugin test on ci using PLUGIN_PULL_SPEC: ${PLUGIN_PULL_SPEC}`);

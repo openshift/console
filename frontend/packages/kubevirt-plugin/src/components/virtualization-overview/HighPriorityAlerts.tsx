@@ -9,7 +9,7 @@ import './high-priority-alerts.scss';
 
 const OPERATOR_LABEL_KEY = 'kubernetes_operator_part_of';
 const isKubeVirtAlert = (alert) => alert?.labels?.[OPERATOR_LABEL_KEY] === 'kubevirt';
-const isHighPriorityAlert = (alert) => alert?.labels?.['priority'] === 'high';
+const isHighPriorityAlert = (alert) => alert?.labels?.priority === 'high';
 const isKubeVirtHighPriorityAlert = (alert) => isKubeVirtAlert(alert) && isHighPriorityAlert(alert);
 
 enum AlertVariant {

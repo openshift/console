@@ -2,10 +2,9 @@ import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { InputField } from '@console/shared';
-import { PipelineResources, PipelineWorkspaces } from '../detail-page-tabs';
+import { PipelineWorkspaces } from '../detail-page-tabs';
 import PipelineParameters from '../PipelineParameters';
 import PipelineBuilderVisualization from './PipelineBuilderVisualization';
-import PipelineWorkspaceSuggestionIcon from './PipelineWorkspaceSuggestionIcon';
 import {
   PipelineBuilderTaskResources,
   PipelineBuilderTaskGroup,
@@ -79,17 +78,7 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (pro
       </div>
 
       <div>
-        <h2>{t('pipelines-plugin~Resources')}</h2>
-        <PipelineResources
-          addLabel={t('pipelines-plugin~Add resource')}
-          fieldName="formData.resources"
-        />
-      </div>
-
-      <div>
-        <h2>
-          {t('pipelines-plugin~Workspaces')} <PipelineWorkspaceSuggestionIcon />
-        </h2>
+        <h2>{t('pipelines-plugin~Workspaces')}</h2>
         <PipelineWorkspaces
           addLabel={t('pipelines-plugin~Add workspace')}
           fieldName="formData.workspaces"

@@ -38,11 +38,15 @@ export const SelectedReleaseStatuses = [
 
 export const OtherReleaseStatuses = ['unknown', 'uninstalled', 'superseded', 'uninstalling'];
 
-export const releaseStatus = (status: string) =>
-  status
+export const releaseStatus = (status: string) => {
+  if (!status) {
+    return 'Unknown';
+  }
+  return status
     .split('-')
     .map((s) => toTitleCase(s))
     .join('');
+};
 
 export const releaseStatusReducer = (release: HelmRelease) => {
   if (OtherReleaseStatuses.includes(release.info.status)) {
@@ -123,10 +127,7 @@ export const getChartIndexEntry = (
   chartName: string,
   chartRepoName: string,
 ) => {
-  const repoName = chartRepoName
-    .toLowerCase()
-    .split(' ')
-    .join('-');
+  const repoName = chartRepoName.toLowerCase().split(' ').join('-');
   const indexEntry = Object.keys(chartEntries).find((val) =>
     val.includes(`${chartName}--${repoName}`),
   );

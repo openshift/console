@@ -32,7 +32,8 @@ export type PLRTaskRunData = {
     startTime: string;
     steps?: PLRTaskRunStep[];
     taskSpec?: TektonTaskSpec;
-    taskResults?: { name: string; value: string }[];
+    taskResults?: { name: string; value: string }[]; // in tekton v1 taskResults is renamed to results
+    results?: { name: string; value: string }[];
   };
 };
 
@@ -136,7 +137,8 @@ export type PipelineRunStatus = {
   skippedTasks?: {
     name: string;
   }[];
-  pipelineResults?: TektonResultsRun[];
+  pipelineResults?: TektonResultsRun[]; // in tekton v1 pipelineResults is renamed to results
+  results?: TektonResultsRun[];
 };
 
 export type PipelineRunKind = K8sResourceCommon & {
@@ -150,6 +152,11 @@ export type PipelineRunKind = K8sResourceCommon & {
     timeout?: string;
     // Only used in a single case - cancelling a pipeline; should not be copied between PLRs
     status?: 'StoppedRunFinally' | 'PipelineRunPending' | 'CancelledRunFinally';
+    // In tekton v1 ServiceAccountName is moved
+    // to TaskRunTemplate as TaskRunTemplate.ServiceAccountName
+    taskRunTemplate?: {
+      serviceAccountName?: string;
+    };
   };
   status?: PipelineRunStatus;
 };

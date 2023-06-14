@@ -10,6 +10,8 @@ type MonitoringAlertColumn = {
   props?: { [className: string]: string };
 };
 
+// https://github.com/typescript-eslint/typescript-eslint/issues/6188
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const MonitoringAlertColumn = (t: TFunction): MonitoringAlertColumn[] => [
   {
     title: t('devconsole~Name'),

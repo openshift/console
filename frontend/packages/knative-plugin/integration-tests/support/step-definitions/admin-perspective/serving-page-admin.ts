@@ -28,9 +28,7 @@ When('user clicks on Routes tab', () => {
 Then('user will see Search by name field', () => {
   cy.get(servingPO.filter.Toolbar).within(() => {
     cy.get(servingPO.filter.TypeMenu).click();
-    cy.get(servingPO.filter.Type)
-      .contains('Name')
-      .click();
+    cy.get(servingPO.filter.Type).contains('Name').click();
   });
 });
 

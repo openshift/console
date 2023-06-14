@@ -30,7 +30,8 @@
     "@console/shared": "0.0.0-fixed",
     "@console/topology": "0.0.0-fixed",
     "@console/telemetry-plugin": "0.0.0-fixed",
-    "@console/vsphere-plugin": "0.0.0-fixed"
+    "@console/vsphere-plugin": "0.0.0-fixed",
+    "@console/webterminal-plugin": "0.0.0-fixed"
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx",
@@ -39,7 +40,6 @@
       "quickStartContext": "src/components/quick-starts/utils/quick-start-context.tsx",
       "quickStartConfiguration": "src/components/quick-starts/QuickStartConfiguration.tsx",
       "fileUploadContext": "src/components/file-upload/file-upload-context.ts",
-      "reduxReducer": "src/redux/reducer.ts",
       "actions": "src/actions",
       "clusterConfiguration": "src/components/cluster-configuration",
       "userPreferences": "src/components/user-preferences",

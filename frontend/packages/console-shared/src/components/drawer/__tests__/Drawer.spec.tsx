@@ -56,12 +56,7 @@ describe('DrawerComponent', () => {
     expect(wrapper.find('.ocs-drawer__header').children()).toHaveLength(0);
     wrapper.setProps({ header: <p>This is header</p> });
     expect(wrapper.find('.ocs-drawer__header').children()).toHaveLength(1);
-    expect(
-      wrapper
-        .find('.ocs-drawer__header')
-        .children()
-        .html(),
-    ).toBe('<p>This is header</p>');
+    expect(wrapper.find('.ocs-drawer__header').children().html()).toBe('<p>This is header</p>');
   });
 
   it('should render children', () => {

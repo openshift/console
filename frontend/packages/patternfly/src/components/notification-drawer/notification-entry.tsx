@@ -11,6 +11,7 @@ import {
 import { history, Timestamp, ExternalLink } from '@console/internal/components/utils';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 
+// eslint-disable-next-line no-shadow
 export enum NotificationTypes {
   info = 'info',
   warning = 'warning',

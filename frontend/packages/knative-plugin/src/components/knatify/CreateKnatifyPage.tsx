@@ -26,6 +26,7 @@ import {
 } from '../../utils/knatify-utils';
 import KnatifyForm from './KnatifyForm';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 type watchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };

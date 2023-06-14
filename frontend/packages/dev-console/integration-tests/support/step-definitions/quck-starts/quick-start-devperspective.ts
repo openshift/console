@@ -23,9 +23,7 @@ Then('user can see the "View all quick starts" on the card', () => {
 });
 
 When('user clicks on the "View all quick starts" on Build with guided documentation card', () => {
-  cy.get(addPagePO.viewAllQuickStarts)
-    .should('be.visible')
-    .click();
+  cy.get(addPagePO.viewAllQuickStarts).should('be.visible').click();
 });
 
 Then(
@@ -60,9 +58,7 @@ Given('user has completed {string} Quick Start', (quickStartDisplayName: string)
 Then(
   'user can see time taken to complete the {string} tour on the card',
   (quickStartDisplayName: string) => {
-    cy.get(quickStartCard(quickStartDisplayName))
-      .find(quickStartsPO.duration)
-      .should('be.visible');
+    cy.get(quickStartCard(quickStartDisplayName)).find(quickStartsPO.duration).should('be.visible');
   },
 );
 
@@ -85,9 +81,7 @@ Given('user has not completed {string} Quick Start', (quickStartDisplayName: str
 Then(
   'user can see time taken to complete the {string} tour on the card',
   (quickStartDisplayName: string) => {
-    cy.get(quickStartCard(quickStartDisplayName))
-      .find(quickStartsPO.duration)
-      .should('be.visible');
+    cy.get(quickStartCard(quickStartDisplayName)).find(quickStartsPO.duration).should('be.visible');
   },
 );
 
@@ -105,35 +99,25 @@ When('user clicks on first Quick Starts link on the Build with guided documentat
     .then(($link) => {
       quickStartLink = $link.get(0).innerText;
     });
-  cy.get(addPagePO.buildWithGuidedDocumentationItems)
-    .first()
-    .click();
+  cy.get(addPagePO.buildWithGuidedDocumentationItems).first().click();
   cy.get(quickStartSidebarPO.quickStartSidebarBody).should('be.visible');
 });
 
 When('user clicks on the Start button', () => {
-  cy.get(quickStartSidebarPO.quickStartSidebarBody)
-    .find(quickStartSidebarPO.startButton)
-    .click();
+  cy.get(quickStartSidebarPO.quickStartSidebarBody).find(quickStartSidebarPO.startButton).click();
 });
 
 When('user clicks on close button', () => {
-  cy.get(quickStartSidebarPO.closePanel)
-    .should('be.visible')
-    .click();
+  cy.get(quickStartSidebarPO.closePanel).should('be.visible').click();
 });
 
 When('user clicks on Leave button in the Leave the tour modal box', () => {
   cy.get(quickStartLeaveModalPO.leaveModal).should('be.visible');
-  cy.get(quickStartLeaveModalPO.leaveButton)
-    .should('be.visible')
-    .click();
+  cy.get(quickStartLeaveModalPO.leaveButton).should('be.visible').click();
 });
 
 Then('user can see the first Quick Starts link', () => {
-  cy.get(addPagePO.buildWithGuidedDocumentationItems)
-    .first()
-    .should('have.text', quickStartLink);
+  cy.get(addPagePO.buildWithGuidedDocumentationItems).first().should('have.text', quickStartLink);
 });
 
 Given('user is at Quick Starts catalog page', () => {
@@ -145,14 +129,10 @@ Given('user has completed {string} Quick Start', (quickStartDisplayName: string)
 });
 
 When('user clicks on Restart on {string} quick start sidebar', (quickStartDisplayName: string) => {
-  cy.get(quickStartCard(quickStartDisplayName))
-    .scrollIntoView()
-    .click();
+  cy.get(quickStartCard(quickStartDisplayName)).scrollIntoView().click();
   app.waitForDocumentLoad();
   cy.get(quickStartSidebarPO.quickStartSidebarBody).should('be.visible');
-  cy.get(quickStartSidebarPO.restartSideNoteAction)
-    .should('be.visible')
-    .click();
+  cy.get(quickStartSidebarPO.restartSideNoteAction).should('be.visible').click();
 });
 
 Then('user can see Start button', () => {
@@ -166,10 +146,7 @@ Then('user can see {string} Steps visible for the Quick Start', (steps: string) 
 });
 
 When('user clicks {string} card', (quickStartDisplayName: string) => {
-  cy.get(quickStartCard(quickStartDisplayName))
-    .scrollIntoView()
-    .should('be.visible')
-    .click();
+  cy.get(quickStartCard(quickStartDisplayName)).scrollIntoView().should('be.visible').click();
   cy.get(quickStartSidebarPO.quickStartSidebarBody).should('be.visible');
 });
 

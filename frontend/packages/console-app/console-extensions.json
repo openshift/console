@@ -54,13 +54,6 @@
     }
   },
   {
-    "type": "console.redux-reducer",
-    "properties": {
-      "scope": "console",
-      "reducer": { "$codeRef": "reduxReducer" }
-    }
-  },
-  {
     "type": "console.navigation/resource-cluster",
     "properties": {
       "id": "volumesnapshotcontents",
@@ -323,7 +316,6 @@
       ]
     }
   },
-
   {
     "type": "console.user-preference/group",
     "properties": {
@@ -423,6 +415,22 @@
         ]
       },
       "insertAfter": "topology.preferredView"
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.enableExactSearch",
+      "label": "%console-app~Search%",
+      "groupId": "general",
+      "description": "%console-app~Enable exact string match filtering on resources.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.enableExactSearch",
+        "label": "%console-app~Enable exact string match%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": false      }
     }
   },
   {
@@ -1247,7 +1255,7 @@
       "perspective": "admin",
       "section": "administration",
       "id": "customresourcedefinitions",
-      "insertAfter": "metering",
+      "insertAfter": "limitranges",
       "name": "%console-app~CustomResourceDefinitions%",
       "model": {
         "group": "apiextensions.k8s.io",

@@ -1,3 +1,4 @@
+/* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
@@ -196,6 +197,7 @@ ListDropdown.propTypes = {
     PropTypes.shape({
       kind: PropTypes.string.isRequired,
       namespace: PropTypes.string,
+      selector: PropTypes.object,
     }),
   ).isRequired,
   placeholder: PropTypes.string,

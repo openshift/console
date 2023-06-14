@@ -1,7 +1,8 @@
 import { Model, NodeModel, EdgeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
-import * as utils from '@console/internal/components/utils';
-import * as k8s from '@console/internal/module/k8s';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { MockBaseResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { TEST_KINDS_MAP } from '@console/topology/src/__tests__/topology-test-data';
@@ -159,9 +160,9 @@ describe('knative data transformer ', () => {
       (n) => (n as OdcNodeModel).resource.metadata.name === 'overlayimage',
     ) as OdcNodeModel;
 
-    const spy = spyOn(k8s, 'k8sKill');
-    const checkAccessSpy = spyOn(utils, 'checkAccess');
-    const spyK8sList = spyOn(k8s, 'k8sList');
+    const spy = spyOn(k8sResourceModule, 'k8sKill');
+    const checkAccessSpy = spyOn(rbacModule, 'checkAccess');
+    const spyK8sList = spyOn(k8sResourceModule, 'k8sList');
     spyAndReturn(spy)(Promise.resolve({}));
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: true } }));
     spyAndReturn(spyK8sList)(Promise.resolve([]));
@@ -220,7 +221,7 @@ describe('knative data transformer ', () => {
     const graphData = await getTransformedTopologyData(mockResources, [isKnativeResource]);
     const eventPubSubNodes = getNodesByType(TYPE_EVENT_PUB_SUB, graphData);
     const [brokerNode] = eventPubSubNodes.filter(
-      (node) => node?.data?.data.kind === k8s.referenceForModel(EventingBrokerModel),
+      (node) => node?.data?.data.kind === referenceForModel(EventingBrokerModel),
     );
     expect(brokerNode.data.resources.deployments).toHaveLength(1);
     expect(brokerNode.data.resources.ksservices).toHaveLength(1);

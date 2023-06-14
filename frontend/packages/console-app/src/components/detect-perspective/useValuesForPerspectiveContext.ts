@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { PerspectiveType } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
-import { usePerspectives, useTelemetry } from '@console/shared/src';
+import { usePerspectiveExtension, usePerspectives, useTelemetry } from '@console/shared';
+import { ACM_PERSPECTIVE_ID } from '../../consts';
 import { usePreferredPerspective } from '../user-preferences';
 import { useLastPerspective } from './useLastPerspective';
 
@@ -17,7 +18,10 @@ export const useValuesForPerspectiveContext = (): [
   const [activePerspective, setActivePerspective] = React.useState('');
   const loaded = lastPerspectiveLoaded && preferredPerspectiveLoaded;
   const latestPerspective = loaded && (preferredPerspective || lastPerspective);
-  const perspective = activePerspective || latestPerspective;
+  const acmPerspectiveExtension = usePerspectiveExtension(ACM_PERSPECTIVE_ID);
+  const existingPerspective = activePerspective || latestPerspective;
+  const perspective =
+    !!acmPerspectiveExtension && !existingPerspective ? ACM_PERSPECTIVE_ID : existingPerspective;
   const isValidPerspective =
     loaded && perspectiveExtensions.some((p) => p.properties.id === perspective);
 

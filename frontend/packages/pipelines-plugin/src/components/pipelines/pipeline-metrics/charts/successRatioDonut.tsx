@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ChartDonut, ChartDonutProps, ChartLabel, ChartThemeColor } from '@patternfly/react-charts';
-import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
+import { ChartDonut, ChartDonutProps, ChartLabel } from '@patternfly/react-charts';
 import * as _ from 'lodash';
 
 interface SuccessRatioDonutProps {
@@ -22,9 +21,8 @@ const SuccessRatioDonut: React.FC<SuccessRatioDonutProps & ChartDonutProps> = ({
       ariaTitle={ariaTitle}
       constrainToVisibleArea
       data={data}
-      sortKey={successValue ? ['success', 'failed'] : ['failed']}
+      sortKey={successValue ? ['success', 'failed', 'cancelled'] : ['failed', 'cancelled']}
       labels={({ datum }) => `${_.capitalize(datum.x)}: ${datum.y}%`}
-      colorScale={successValue ? [ChartThemeColor.green, dangerColor.value] : [dangerColor.value]}
       padding={{
         bottom: 20,
         left: 20,
@@ -38,6 +36,11 @@ const SuccessRatioDonut: React.FC<SuccessRatioDonutProps & ChartDonutProps> = ({
       title={title}
       titleComponent={<ChartLabel style={{ fill: 'var(--pf-global--Color--100)', fontSize: 24 }} />}
       width={width}
+      style={{
+        data: {
+          fill: ({ datum }) => datum.fill,
+        },
+      }}
     />
   );
 };

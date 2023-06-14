@@ -22,7 +22,7 @@ type Config struct {
 	MonitoringInfo           `yaml:"monitoringInfo,omitempty"`
 	Plugins                  MultiKeyValue `yaml:"plugins,omitempty"`
 	I18nNamespaces           []string      `yaml:"i18nNamespaces,omitempty"`
-	ManagedClusterConfigFile string        `yaml:"managedClusterConfigFile,omitempty"`
+	ManagedClusterConfigFile string        `yaml:"managedClusterConfigFile,omitempty"` // TODO remove multicluster
 	Proxy                    Proxy         `yaml:"proxy,omitempty"`
 	Telemetry                MultiKeyValue `yaml:"telemetry,omitempty"`
 }
@@ -74,6 +74,7 @@ type ClusterInfo struct {
 	ControlPlaneTopology configv1.TopologyMode `yaml:"controlPlaneTopology,omitempty"`
 	ReleaseVersion       string                `yaml:"releaseVersion,omitempty"`
 	NodeArchitectures    []string              `yaml:"nodeArchitectures,omitempty"`
+	NodeOperatingSystems []string              `yaml:"nodeOperatingSystems,omitempty"`
 	CopiedCSVsDisabled   bool                  `yaml:"copiedCSVsDisabled,omitempty"`
 }
 
@@ -251,12 +252,14 @@ type Helm struct {
 }
 
 // TODO Remove this type once the console operator has been updated. It is obsolete now that we are using the MCE cluster proxy.
+// TODO remove multicluster
 type ManagedClusterAPIServerConfig struct {
 	URL    string `json:"url" yaml:"url"`
 	CAFile string `json:"caFile" yaml:"caFile"`
 }
 
 // ManagedClusterOauthConfig enables proxying managed cluster auth
+// TODO remove multicluster
 type ManagedClusterOAuthConfig struct {
 	ClientID     string `json:"clientID" yaml:"clientID"`
 	ClientSecret string `json:"clientSecret" yaml:"clientSecret"`
@@ -264,6 +267,7 @@ type ManagedClusterOAuthConfig struct {
 }
 
 // ManagedClusterConfig enables proxying to an ACM managed cluster
+// TODO remove multicluster
 type ManagedClusterConfig struct {
 	Name               string                        `json:"name" yaml:"name"`           // ManagedCluster name, provided through ACM
 	APIServer          ManagedClusterAPIServerConfig `json:"apiServer" yaml:"apiServer"` // TODO Remove this property once conosle operator has been updated

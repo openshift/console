@@ -1,9 +1,9 @@
-@knative-serverless
+@broken-test
 Feature: Create Knative service from existing Deployment/Deployment Config workloads
               As a user, I should be able to create a serverless app(knative service) from existing deployment/deployment-config and specify any advanced options which I'm able to specify upon creating a knative service
 
         Background:
-            Given user has created or selected namespace "aut-deployment-knative"
+            Given user has created or selected namespace "1aut-deployment-knative"
 
 
         @regression
@@ -65,7 +65,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
              When user right clicks on the knative workload "nodejs-ex-git1-sev" to open the Context Menu
               And user selects option "Edit nodejs…t1-sev" from context options
               And user clicks on Scaling in Advanced option of Import from Git form
-              #Bug: Can't change the values by typing in Concurrency utilization field - https://issues.redhat.com/browse/OCPBUGS-2306
+    #Bug: Can't change the values by typing in Concurrency utilization field - https://issues.redhat.com/browse/OCPBUGS-2306
               And user scales value of Concurrency utilization to '4'
               And user clicks on save button
               And user right clicks on the knative service workoad "nodejs-ex-git1-sev" in Topology page
@@ -76,7 +76,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
         @regression @broken-test
         Scenario: Create serverless workload (ksvc) for existing Deployment having HPA associated with it from context menu: KN-04-TC06
             Given user has created a deployment workload "nodejs-ex-git2" with CPU resource limit "100" and Memory resource limit "100"
-              #Bug: Can't change the values by typing in max and min pod fields - https://issues.redhat.com/browse/OCPBUGS-2306
+    #Bug: Can't change the values by typing in max and min pod fields - https://issues.redhat.com/browse/OCPBUGS-2306
               And user has added HPA to workload "nodejs-ex-git2" with Min and Max pod value as "3" and "6" respectively with CPU and Memory utilisation values as "60" and "30" respectively
               And user is at the Topology page
               And user clicks on "nodejs-ex-git2" to verify that build is completed

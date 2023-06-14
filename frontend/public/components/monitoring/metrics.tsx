@@ -39,7 +39,7 @@ import {
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -247,7 +247,13 @@ const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
     <DropdownItem key="toggle-query" component="button" onClick={toggleIsEnabled}>
       {isEnabled ? t('public~Disable query') : t('public~Enable query')}
     </DropdownItem>,
-    <DropdownItem key="toggle-all-series" component="button" onClick={toggleAllSeries}>
+    <DropdownItem
+      tooltip={!isEnabled ? t('Query must be enabled') : undefined}
+      isDisabled={!isEnabled}
+      key="toggle-all-series"
+      component="button"
+      onClick={toggleAllSeries}
+    >
       {isDisabledSeriesEmpty ? t('public~Hide all series') : t('public~Show all series')}
     </DropdownItem>,
     <DropdownItem key="delete" component="button" onClick={doDelete}>
@@ -302,6 +308,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
     _.isEmpty(observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const tick = () => {

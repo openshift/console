@@ -6,6 +6,7 @@ export const ClusterDashboardContext = React.createContext<ClusterDashboardConte
   infrastructureError: null,
 });
 
+// eslint-disable-next-line no-redeclare
 type ClusterDashboardContext = {
   infrastructure?: K8sResourceKind;
   infrastructureLoaded: boolean;

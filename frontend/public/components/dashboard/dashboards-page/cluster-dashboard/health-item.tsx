@@ -36,12 +36,14 @@ import { uniqueResource } from './utils';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 import { ClusterDashboardContext } from './context';
 
-const OperatorRow: React.FC<OperatorRowProps & {
-  LoadingComponent: () => JSX.Element;
-  Component: React.ComponentType<OperatorRowProps> | LazyLoader<OperatorRowProps>;
-  key: string;
-  isResolved: boolean;
-}> = ({ operatorStatus, isResolved, key, Component, LoadingComponent }) => {
+const OperatorRow: React.FC<
+  OperatorRowProps & {
+    LoadingComponent: () => JSX.Element;
+    Component: React.ComponentType<OperatorRowProps> | LazyLoader<OperatorRowProps>;
+    key: string;
+    isResolved: boolean;
+  }
+> = ({ operatorStatus, isResolved, key, Component, LoadingComponent }) => {
   const ResolvedComponent = Component as React.ComponentType<OperatorRowProps>;
   return isResolved ? (
     <ResolvedComponent key={key} operatorStatus={operatorStatus} />

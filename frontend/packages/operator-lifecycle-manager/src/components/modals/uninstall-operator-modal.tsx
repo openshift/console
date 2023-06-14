@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Alert, Progress, ProgressSize } from '@patternfly/react-core';
 import * as _ from 'lodash';
@@ -45,6 +46,12 @@ import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { getClusterServiceVersionPlugins } from '../../utils';
 import { OperandLink } from '../operand/operand-link';
 import Timeout = NodeJS.Timeout;
+
+const deleteOptions = {
+  kind: 'DeleteOptions',
+  apiVersion: 'v1',
+  propagationPolicy: 'Foreground',
+};
 
 export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   cancel,
@@ -123,12 +130,6 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     subscriptionNamespace,
   );
 
-  const deleteOptions = {
-    kind: 'DeleteOptions',
-    apiVersion: 'v1',
-    propagationPolicy: 'Foreground',
-  };
-
   const uninstallOperator = React.useCallback(async () => {
     const patch = removePlugins
       ? getPatchForRemovingPlugins(consoleOperatorConfig, enabledPlugins)
@@ -181,7 +182,6 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       });
   }, [
     consoleOperatorConfig,
-    deleteOptions,
     enabledPlugins,
     handleOperatorUninstallPromise,
     k8sKill,
@@ -204,7 +204,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   );
 
   const pollOperands = React.useCallback((): Timeout => {
-    const url = `${window.SERVER_FLAGS.basePath}api/list-operands?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
+    const url = `${window.SERVER_FLAGS.basePath}api/list-operands/?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
     const interval = setInterval(() => {
       coFetchJSON(url)
         .then((curOperands) => {
@@ -299,10 +299,6 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const instructions = (
     <>
       <p>
-        <Trans t={t} ns="olm">
-          Operator <strong>{{ name }}</strong> will be removed from <strong>{{ namespace }}</strong>
-          .
-        </Trans>
         {showOperandsContent && (
           <>
             {' '}
@@ -322,12 +318,6 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
           })}
         </p>
       )}
-      {uninstallMessage && (
-        <>
-          <h2>{t('olm~Message from Operator developer')}</h2>
-          <p>{uninstallMessage}</p>
-        </>
-      )}
     </>
   );
 
@@ -335,21 +325,23 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     <OperandsLoadedErrorAlert operandsLoadedErrorMessage={operandsLoadedErrorMessage} />
   ) : (
     showOperandsContent && (
-      <span className="co-operator-uninstall__operands-section">
-        <h2>{t('olm~Operand instances')}</h2>
-        <OperandsTable
-          operands={operands}
-          loaded={operandsLoaded}
-          csvName={csvName}
-          cancel={cancel} // for breadcrumbs & cancel modal when clicking on operand links
-        />
+      <>
+        <span className="co-operator-uninstall__operands-section">
+          <h2>{t('olm~Operand instances')}</h2>
+          <OperandsTable
+            operands={operands}
+            loaded={operandsLoaded}
+            csvName={csvName}
+            cancel={cancel} // for breadcrumbs & cancel modal when clicking on operand links
+          />
+        </span>
         <Checkbox
           onChange={({ currentTarget }) => setDeleteOperands(currentTarget.checked)}
           name="delete-all-operands"
           label={t('olm~Delete all operand instances for this operator')}
           checked={deleteOperands}
         />
-      </span>
+      </>
     )
   );
 
@@ -390,10 +382,22 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('olm~Uninstall Operator?')}
       </ModalTitle>
       <ModalBody>
-        {showInstructions && !optedOut && (
+        {showInstructions && (
           <>
-            {instructions}
-            {operandsSection}
+            <p>
+              <Trans t={t} ns="olm">
+                Operator <strong>{{ name }}</strong> will be removed from{' '}
+                <strong>{{ namespace }}</strong>.
+              </Trans>
+            </p>
+            {!optedOut && <>{instructions}</>}
+            {uninstallMessage && (
+              <>
+                <h2>{t('olm~Message from Operator developer')}</h2>
+                <p>{uninstallMessage}</p>
+              </>
+            )}
+            {!optedOut && <>{operandsSection}</>}
           </>
         )}
         {operandsDeleteInProgress && (
@@ -569,7 +573,7 @@ const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName
       <table className="pf-c-table pf-m-compact pf-m-border-rows">
         <thead>
           <tr key="operand-table-header-row">
-            <th>{t('olm~Name')}</th>
+            <th className="pf-m-width-35">{t('olm~Name')}</th>
             <th>{t('olm~Kind')}</th>
             <th>{t('olm~Namespace')}</th>
           </tr>
@@ -613,7 +617,7 @@ const OperandErrorList: React.FC<OperandErrorListProps> = ({ operandErrors, csvN
       {_.map(operandErrors, (operandError) => (
         <li
           key={operandError.operand.metadata.uid}
-          className="list-unstyled co-operator-uninstall-alert__list-item"
+          className="pf-c-list pf-m-plain co-operator-uninstall-alert__list-item"
         >
           <OperandLink obj={operandError.operand} csvName={csvName} onClick={cancel} />{' '}
           {operandError.operand.kind}

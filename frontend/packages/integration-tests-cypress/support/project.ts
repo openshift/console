@@ -4,7 +4,7 @@ import { modal } from '../views/modal';
 
 declare global {
   namespace Cypress {
-    interface Chainable<Subject> {
+    interface Chainable {
       createProject(name: string): Chainable<Element>;
       deleteProject(name: string): Chainable<Element>;
     }
@@ -17,14 +17,10 @@ declare global {
 // ex: cy.createProject(name)
 Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false) => {
   cy.log(`create project`);
-  cy.visit(`/k8s/cluster/projects`)
-    .its('yaml-create')
-    .should('be.visible');
+  cy.visit(`/k8s/cluster/projects`).its('yaml-create').should('be.visible');
   listPage.clickCreateYAMLbutton();
   modal.shouldBeOpened();
-  cy.byTestID('input-name')
-    .click()
-    .type(name);
+  cy.byTestID('input-name').click().type(name);
   cy.testA11y('Create Project modal');
   modal.submit();
   modal.shouldBeClosed();

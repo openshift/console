@@ -21,6 +21,7 @@ import {
   createEventSourcePage,
   verifyAndInstallKnativeOperator,
   createChannel,
+  verifyAndInstallOperator,
 } from '@console/dev-console/integration-tests/support/pages';
 import { eventingPO } from '@console/knative-plugin/integration-tests/support/pageObjects/global-po';
 
@@ -166,10 +167,8 @@ Given('user is at Serving page', () => {
   operatorsPage.navigateToServingPage();
 });
 
-When('user clicks on Create button', () => {
-  cy.get(eventingPO.createEventDropDownMenu)
-    .contains('Create')
-    .click({ force: true });
+When('user clicks on Create dropdown button', () => {
+  cy.get(eventingPO.createEventDropDownMenu).contains('Create').click({ force: true });
 });
 
 When('user clicks on List view button', () => {
@@ -179,4 +178,8 @@ When('user clicks on List view button', () => {
   } else {
     cy.log('You are already on List View');
   }
+});
+
+Given('user has installed RHOAS operator', () => {
+  verifyAndInstallOperator(operators.RHOAS);
 });

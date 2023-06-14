@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Node, isNode } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
+import { labelForNodeKind } from '@console/shared';
 import { getResourceKind } from '../../utils/topology-utils';
-import { labelForNodeKind } from './list-view-utils';
 import { listViewNodeComponentFactory } from './listViewComponentFactory';
 
 interface ListElementWrapperProps {

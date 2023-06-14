@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, mount, ShallowWrapper } from 'enzyme';
 import { Alert } from '@patternfly/react-core';
-import * as utils from '@console/internal/components/utils';
+import * as rbacModule from '@console/internal/components/utils/rbac';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   isClusterExternallyManaged,
@@ -71,80 +71,28 @@ describe('Cluster Settings page', () => {
   it('should render ClusterSettingsPage component', () => {
     expect(wrapper.exists()).toBe(true);
   });
-  it('should render correct Cluster Settings page title', () => {
-    expect(wrapper.contains('Cluster Settings')).toBeTruthy();
-  });
   it('should render the Firehose Component with the props', () => {
     expect(wrapper.find(Firehose).exists()).toBe(true);
-    expect(
-      wrapper
-        .find(Firehose)
-        .at(0)
-        .props().resources.length,
-    ).toBe(1);
-    expect(
-      wrapper
-        .find(Firehose)
-        .at(0)
-        .props().resources[0].kind,
-    ).toBe('config.openshift.io~v1~ClusterVersion');
-    expect(
-      wrapper
-        .find(Firehose)
-        .at(0)
-        .props().resources[0].name,
-    ).toBe('version');
-    expect(
-      wrapper
-        .find(Firehose)
-        .at(0)
-        .props().resources[0].isList,
-    ).toBe(false);
+    expect(wrapper.find(Firehose).at(0).props().resources.length).toBe(1);
+    expect(wrapper.find(Firehose).at(0).props().resources[0].kind).toBe(
+      'config.openshift.io~v1~ClusterVersion',
+    );
+    expect(wrapper.find(Firehose).at(0).props().resources[0].name).toBe('version');
+    expect(wrapper.find(Firehose).at(0).props().resources[0].isList).toBe(false);
   });
   it('should render the HorizontalNav Component with the props', () => {
     expect(wrapper.find(HorizontalNav).exists()).toBe(true);
-    expect(
-      wrapper
-        .find(HorizontalNav)
-        .at(0)
-        .props().pages.length,
-    ).toBe(3);
-    expect(
-      wrapper
-        .find(HorizontalNav)
-        .at(0)
-        .props().pages[0].name,
-    ).toBe('Details');
-    expect(
-      wrapper
-        .find(HorizontalNav)
-        .at(0)
-        .props().pages[1].name,
-    ).toBe('ClusterOperators');
-    expect(
-      wrapper
-        .find(HorizontalNav)
-        .at(0)
-        .props().pages[2].name,
-    ).toBe('Configuration');
-    expect(
-      wrapper
-        .find(HorizontalNav)
-        .at(0)
-        .props().pages[0].component,
-    ).toEqual(ClusterVersionDetailsTable);
-    expect(
-      wrapper
-        .find(HorizontalNav)
-        .at(0)
-        .props().pages[1].component,
-    ).toEqual(ClusterOperatorTabPage);
-    expect(
-      wrapper
-        .find(HorizontalNav)
-        .at(0)
-        .props().pages[2].component,
-    ).toEqual(GlobalConfigPage);
+    expect(wrapper.find(HorizontalNav).at(0).props().pages.length).toBe(3);
+    expect(wrapper.find(HorizontalNav).at(0).props().pages[0].nameKey).toMatch('Details');
+    expect(wrapper.find(HorizontalNav).at(0).props().pages[1].nameKey).toMatch('ClusterOperators');
+    expect(wrapper.find(HorizontalNav).at(0).props().pages[2].nameKey).toMatch('Configuration');
+    expect(wrapper.find(HorizontalNav).at(0).props().pages[0].component).toEqual(
+      ClusterVersionDetailsTable,
+    );
+    expect(wrapper.find(HorizontalNav).at(0).props().pages[1].component).toEqual(
+      ClusterOperatorTabPage,
+    );
+    expect(wrapper.find(HorizontalNav).at(0).props().pages[2].component).toEqual(GlobalConfigPage);
   });
 });
 
@@ -174,18 +122,8 @@ describe('Cluster Version Details Table page', () => {
     expect(wrapper.find(Timestamp).exists()).toBe(true);
   });
   it('should render correct values of ClusterVersionDetailsTable component', () => {
-    expect(
-      wrapper
-        .find(CurrentChannel)
-        .at(0)
-        .props().cv.spec.channel,
-    ).toEqual('stable-4.5');
-    expect(
-      wrapper
-        .find(CurrentVersion)
-        .at(0)
-        .props().cv.status.desired.version,
-    ).toEqual('4.5.2');
+    expect(wrapper.find(CurrentChannel).at(0).props().cv.spec.channel).toEqual('stable-4.5');
+    expect(wrapper.find(CurrentVersion).at(0).props().cv.status.desired.version).toEqual('4.5.2');
     expect(wrapper.find('[data-test-id="cv-details-table-cid"]').text()).toEqual(
       '727841c6-242d-4592-90d1-699925c4cfba',
     );
@@ -194,24 +132,9 @@ describe('Cluster Version Details Table page', () => {
     );
     expect(wrapper.find('[data-test-id="cv-details-table-version"]').text()).toEqual('4.5.2');
     expect(wrapper.find('[data-test-id="cv-details-table-state"]').text()).toEqual('Completed');
-    expect(
-      wrapper
-        .find(ResourceLink)
-        .at(0)
-        .props().name,
-    ).toEqual('version');
-    expect(
-      wrapper
-        .find(Timestamp)
-        .at(0)
-        .props().timestamp,
-    ).toEqual('2020-08-05T17:21:48Z');
-    expect(
-      wrapper
-        .find(Timestamp)
-        .at(1)
-        .props().timestamp,
-    ).toEqual('2020-08-05T17:49:47Z');
+    expect(wrapper.find(ResourceLink).at(0).props().name).toEqual('version');
+    expect(wrapper.find(Timestamp).at(0).props().timestamp).toEqual('2020-08-05T17:21:48Z');
+    expect(wrapper.find(Timestamp).at(1).props().timestamp).toEqual('2020-08-05T17:49:47Z');
   });
 });
 
@@ -340,7 +263,7 @@ describe('Update Link', () => {
   let spyUseAccessReview;
 
   beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(true);
     cv = clusterVersionProps;
     wrapper = shallow(<UpdateLink cv={cv} canUpgrade={true} />);
@@ -352,12 +275,9 @@ describe('Update Link', () => {
 
   it('should render Update Link component', () => {
     expect(wrapper.exists()).toBe(true);
-    expect(
-      wrapper
-        .find('[data-test-id="cv-update-button"]')
-        .render()
-        .text(),
-    ).toBe('Select a version');
+    expect(wrapper.find('[data-test-id="cv-update-button"]').render().text()).toBe(
+      'Select a version',
+    );
   });
 });
 
@@ -374,36 +294,16 @@ describe('Updates Graph', () => {
     expect(wrapper.props().cv).toEqual(cv);
   });
   it('should render the value of current channel', () => {
-    expect(
-      wrapper
-        .find(ChannelName)
-        .at(0)
-        .text(),
-    ).toBe('stable-4.5 channel');
+    expect(wrapper.find(ChannelName).at(0).text()).toBe('stable-4.5 channel');
   });
   it('should render the value of current version', () => {
-    expect(
-      wrapper
-        .find(ChannelVersion)
-        .at(0)
-        .text(),
-    ).toBe('4.5.2');
+    expect(wrapper.find(ChannelVersion).at(0).text()).toBe('4.5.2');
   });
   it('should render the value of next available version', () => {
-    expect(
-      wrapper
-        .find(ChannelVersion)
-        .at(1)
-        .text(),
-    ).toBe('4.5.4');
+    expect(wrapper.find(ChannelVersion).at(1).text()).toBe('4.5.4');
   });
   it('should render the value of available channel', () => {
-    expect(
-      wrapper
-        .find(ChannelName)
-        .at(1)
-        .text(),
-    ).toBe('stable-4.6 channel');
+    expect(wrapper.find(ChannelName).at(1).text()).toBe('stable-4.6 channel');
   });
 });
 
@@ -413,6 +313,7 @@ describe('Cluster Version Details Table page while updating', () => {
 
   beforeEach(() => {
     cv = clusterVersionUpdatingProps;
+    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
     wrapper = shallow(<ClusterVersionDetailsTable obj={cv} autoscalers={[]} />);
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
     (useCanClusterUpgrade as jest.Mock).mockReturnValueOnce([[], true]);
@@ -481,18 +382,8 @@ describe('Update In Progress while updating', () => {
   it('should render the child components of UpdateInProgress component', () => {
     expect(wrapper.find(UpdatesProgress)).toHaveLength(1);
     expect(wrapper.find(ClusterOperatorsLink)).toHaveLength(1);
-    expect(
-      wrapper
-        .find(NodesUpdatesGroup)
-        .at(0)
-        .props().name,
-    ).toBe('Control plane');
-    expect(
-      wrapper
-        .find(NodesUpdatesGroup)
-        .at(1)
-        .props().name,
-    ).toBe('Worker');
+    expect(wrapper.find(NodesUpdatesGroup).at(0).props().name).toBe('Control plane');
+    expect(wrapper.find(NodesUpdatesGroup).at(1).props().name).toBe('Worker');
   });
 });
 

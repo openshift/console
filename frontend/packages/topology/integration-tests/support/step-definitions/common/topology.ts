@@ -169,7 +169,7 @@ When('user clicks Start building your application', () => {
 
 When('user enters {string} builder image in Quick Search bar', (searchItem: string) => {
   cy.get(topologyPO.quickSearch).type(searchItem);
-  cy.byTestID('item-name-.NET-Builder Images').click();
+  cy.byTestID('item-name-.NET-Builder Images').first().click();
 });
 
 When('user clicks Create application on Quick Search Dialog', () => {
@@ -177,9 +177,7 @@ When('user clicks Create application on Quick Search Dialog', () => {
   cy.get('ul[aria-label="Quick search list"] li')
     .contains('Builder Images', { timeout: 60000 })
     .click();
-  cy.get('button')
-    .contains('Create')
-    .click();
+  cy.get('button').contains('Create').click();
 });
 
 When(

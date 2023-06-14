@@ -2,7 +2,6 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
   addOptions,
   devNavigationMenu,
-  gitAdvancedOptions,
 } from '@console/dev-console/integration-tests/support/constants';
 import { formPO, gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
@@ -48,15 +47,10 @@ Then('user will be redirected to topology with knative workload {string}', (node
 });
 
 When('user clicks on kebab button {string} to open kebab menu', (nodeName: string) => {
-  cy.get('input[data-test-id="item-filter"]')
-    .should('be.visible')
-    .clear()
-    .type(nodeName);
+  cy.get('input[data-test-id="item-filter"]').should('be.visible').clear().type(nodeName);
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(2000);
-  cy.byLegacyTestID('kebab-button')
-    .eq(0)
-    .click();
+  cy.byLegacyTestID('kebab-button').eq(0).click();
 });
 
 export const checkBuildComplete = (tries: number = 4) => {
@@ -99,17 +93,10 @@ Given('user is at Deployments page', () => {
 Given('user has created deployment workload {string} with no Route defined', (nodeName: string) => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.ContainerImage);
-  cy.byLegacyTestID('deploy-image-search-term')
-    .clear()
-    .type(`openshift/${nodeName}`);
+  cy.byLegacyTestID('deploy-image-search-term').clear().type(`openshift/${nodeName}`);
   cy.get('#form-input-searchTerm-field-helper').should('have.text', 'Validated');
-  gitPage.selectAdvancedOptions(gitAdvancedOptions.Resources);
-  cy.get(gitPO.advancedOptions.resourcesDropdown)
-    .scrollIntoView()
-    .click();
-  cy.get(gitPO.advancedOptions.resources.deployment)
-    .scrollIntoView()
-    .click();
+  cy.get(gitPO.resourcesDropdown).scrollIntoView().click();
+  cy.get(gitPO.resources.deployment).scrollIntoView().click();
   cy.get('#form-checkbox-route-create-field').uncheck();
   cy.byLegacyTestID('submit-button').click();
   topologyPage.verifyWorkloadInTopologyPage(nodeName);
@@ -142,9 +129,7 @@ Given(
 );
 
 When('user clicks on Scaling in Advanced option of Import from Git form', () => {
-  cy.get('body')
-    .contains('Scaling')
-    .click();
+  cy.get('body').contains('Scaling').click();
 });
 
 When('user scales value of Concurrency utilization to {string}', (value: string) => {
@@ -185,18 +170,10 @@ Given(
   (nodeName: string, minPod: string, maxPod: string, cpuUtil: string, memoryUtil: string) => {
     topologyPage.rightClickOnNode(nodeName);
     cy.get(hpaPO.addHPA, { timeout: 120000 }).click();
-    cy.get(hpaPO.minhpaPod)
-      .clear()
-      .type(minPod);
-    cy.get(hpaPO.maxhpaPod)
-      .clear()
-      .type(maxPod);
-    cy.get(hpaPO.cpu)
-      .clear()
-      .type(cpuUtil);
-    cy.get(hpaPO.memory)
-      .clear()
-      .type(memoryUtil);
+    cy.get(hpaPO.minhpaPod).clear().type(minPod);
+    cy.get(hpaPO.maxhpaPod).clear().type(maxPod);
+    cy.get(hpaPO.cpu).clear().type(cpuUtil);
+    cy.get(hpaPO.memory).clear().type(memoryUtil);
     cy.byLegacyTestID('submit-button').click();
   },
 );
@@ -236,9 +213,7 @@ When(
 );
 
 Then('user is able to see value of {string} as {string}', (util: string, utilValue: string) => {
-  cy.get('.ocs-yaml-editor__wrapper')
-    .contains(`${util}: '${utilValue}'`)
-    .should('be.visible');
+  cy.get('.ocs-yaml-editor__wrapper').contains(`${util}: '${utilValue}'`).should('be.visible');
 });
 
 Then(

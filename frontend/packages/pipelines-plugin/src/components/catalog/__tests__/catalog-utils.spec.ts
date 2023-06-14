@@ -15,7 +15,7 @@ describe('catalog-utils', () => {
   const sampleTekonhubTasks = Object.values(tekonHubPlatformTasks);
 
   describe('filterBySupportedPlatforms', () => {
-    afterEach(function() {
+    afterEach(function () {
       window.SERVER_FLAGS.GOOS = '';
       window.SERVER_FLAGS.GOARCH = '';
     });

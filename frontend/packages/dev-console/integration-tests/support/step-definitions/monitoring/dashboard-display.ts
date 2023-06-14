@@ -64,9 +64,7 @@ When('user selects {string} from Types dropdown', (typeName: string) => {
 });
 
 When('user enters {string} in the Filter field', (filterCriteria: string) => {
-  cy.byLegacyTestID('item-filter')
-    .clear()
-    .type(filterCriteria);
+  cy.byLegacyTestID('item-filter').clear().type(filterCriteria);
 });
 
 Then('user will see Dashboard, Metrics, Alerts, Events tabs', () => {
@@ -81,21 +79,15 @@ Then('user will see the dropdown selected with All Workloads by default', () => 
 });
 
 Then('user will see the CPU Usage on Metrics tab', () => {
-  cy.get(monitoringPO.dashboardTab.sections.cpuUsage)
-    .scrollIntoView()
-    .should('be.visible');
+  cy.get(monitoringPO.dashboardTab.sections.cpuUsage).scrollIntoView().should('be.visible');
 });
 
 Then('user will see the Memory Usage on Metrics tab', () => {
-  cy.get(monitoringPO.dashboardTab.sections.memoryUsage)
-    .scrollIntoView()
-    .should('be.visible');
+  cy.get(monitoringPO.dashboardTab.sections.memoryUsage).scrollIntoView().should('be.visible');
 });
 
 Then('user will see Receive Bandwidth on Metrics tab', () => {
-  cy.get(monitoringPO.dashboardTab.sections.receiveBandwidth)
-    .scrollIntoView()
-    .should('be.visible');
+  cy.get(monitoringPO.dashboardTab.sections.receiveBandwidth).scrollIntoView().should('be.visible');
 });
 
 Then('user will see Transmit Bandwidth on Metrics tab', () => {
@@ -162,21 +154,15 @@ Then('user is able to see Name, Severity, Alert State and Notifications', () => 
 });
 
 Then('user will see the CPU Usage on Dashboard tab', () => {
-  cy.get(monitoringPO.dashboardTab.sections.cpuUsage)
-    .scrollIntoView()
-    .should('be.visible');
+  cy.get(monitoringPO.dashboardTab.sections.cpuUsage).scrollIntoView().should('be.visible');
 });
 
 Then('user will see the Memory Usage on Dashboard tab', () => {
-  cy.get(monitoringPO.dashboardTab.sections.memoryUsage)
-    .scrollIntoView()
-    .should('be.visible');
+  cy.get(monitoringPO.dashboardTab.sections.memoryUsage).scrollIntoView().should('be.visible');
 });
 
 Then('user will see Receive Bandwidth on Dashboard tab', () => {
-  cy.get(monitoringPO.dashboardTab.sections.receiveBandwidth)
-    .scrollIntoView()
-    .should('be.visible');
+  cy.get(monitoringPO.dashboardTab.sections.receiveBandwidth).scrollIntoView().should('be.visible');
 });
 
 Then('user will see Transmit Bandwidth on Dashboard tab', () => {
@@ -214,15 +200,11 @@ Given('user is on Observe page', () => {
 });
 
 When('user clicks on Dashboard tab', () => {
-  cy.get(monitoringPO.tabs.dashboard)
-    .should('be.visible')
-    .click();
+  cy.get(monitoringPO.tabs.dashboard).should('be.visible').click();
 });
 
 When('user clicks on Dashboard dropdown', () => {
-  cy.get(monitoringPO.dashboardTab.dashboardFilter)
-    .should('be.visible')
-    .click();
+  cy.get(monitoringPO.dashboardTab.dashboardFilter).should('be.visible').click();
 });
 
 When('user can see {string} and {string} option', (option1: string, option2: string) => {
@@ -281,9 +263,7 @@ When('user selects {string} option from the dropdown', (workloadName: string) =>
 });
 
 When('user selects the first option from the dropdown', () => {
-  cy.get('.pf-c-select__menu-item')
-    .first()
-    .click();
+  cy.get('.pf-c-select__menu-item').first().click();
 });
 
 When('user clicks on Inspect on {string} chart', (chartTitle: string) => {
@@ -293,9 +273,7 @@ When('user clicks on Inspect on {string} chart', (chartTitle: string) => {
 });
 
 Then('user will see Metrics tab in Observe page', () => {
-  cy.get('.co-m-horizontal-nav-item--active')
-    .find(monitoringPO.tabs.metrics)
-    .should('be.visible');
+  cy.get('.co-m-horizontal-nav-item--active').find(monitoringPO.tabs.metrics).should('be.visible');
 });
 
 Then('{string} option selected by default', (metric) => {

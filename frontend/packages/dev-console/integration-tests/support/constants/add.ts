@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 export enum addOptions {
   ImportFromGit = 'Import From Git',
   ContainerImage = 'Container Image',

@@ -8,7 +8,7 @@
 # You can test the image using `./builder-run.sh`. For instance:
 #   $ ./builder-run.sh ./build-backend.sh
 
-FROM golang:1.18-stretch
+FROM golang:1.20-bullseye
 
 MAINTAINER Ed Rooth - CoreOS
 
@@ -16,7 +16,7 @@ MAINTAINER Ed Rooth - CoreOS
 RUN go install github.com/jstemmer/go-junit-report@latest
 
 ### Install NodeJS and yarn
-ENV NODE_VERSION="v14.16.0"
+ENV NODE_VERSION="v14.21.3"
 ENV YARN_VERSION="v1.22.10"
 
 # yarn needs a home writable by any user running the container
@@ -30,7 +30,7 @@ RUN apt-get update \
     libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
     # ^^ additional Cypress dependencies: https://docs.cypress.io/guides/guides/continuous-integration.html#Dependencies
 
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.4/bin/linux/$(go env GOARCH)/kubectl && \
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.27.1/bin/linux/$(go env GOARCH)/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl
 

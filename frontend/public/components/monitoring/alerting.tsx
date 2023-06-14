@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import {
   Action,
   Alert,
@@ -40,6 +41,7 @@ import { useExtensions } from '@console/plugin-sdk';
 import { withFallback } from '@console/shared/src/components/error';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search';
 import {
   Alert as PFAlert,
   Breadcrumb,
@@ -77,7 +79,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
@@ -117,14 +119,12 @@ import { CreateSilence, EditSilence } from './silence-form';
 import { TargetsUI } from './targets';
 import { Alerts, AlertSource, MonitoringResource, Silences } from './types';
 import {
-  alertAdditionalSource,
   alertDescription,
   alertingRuleStateOrder,
   AlertResource,
   alertSeverityOrder,
   alertState,
   alertURL,
-  fuzzyCaseInsensitive,
   getAlertsAndRules,
   labelsToParams,
   RuleResource,
@@ -132,6 +132,7 @@ import {
   SilenceResource,
   silenceState,
 } from './utils';
+import { exactMatch, fuzzyCaseInsensitive } from '../factory/table-filters';
 
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
@@ -1535,7 +1536,6 @@ const AlertTableRow: React.FC<RowProps<Alert>> = ({ obj }) => {
       </DropdownItem>,
     );
   }
-  const additionalSource = alertAdditionalSource(obj);
 
   return (
     <>
@@ -1560,10 +1560,7 @@ const AlertTableRow: React.FC<RowProps<Alert>> = ({ obj }) => {
         <AlertStateDescription alert={obj} />
       </td>
       <td className={tableAlertClasses[3]} title={title}>
-        {additionalSource ||
-          (alertSource(obj) === AlertSource.User
-            ? i18next.t('public~User')
-            : i18next.t('public~Platform'))}
+        {getSourceKey(t, _.startCase(alertSource(obj)))}
       </td>
       <td className={tableAlertClasses[4]} title={title}>
         <KebabDropdown dropdownItems={dropdownItems} />
@@ -1637,10 +1634,11 @@ const AlertsPage_: React.FC<Alerts> = () => {
   const silencesLoadError = useSelector(
     ({ observe }: RootState) => observe.get('silences')?.loadError,
   );
+  const [isExactSearch] = useExactSearch();
+  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const nameFilter: RowFilter = {
-    filter: (filter, alert: Alert) =>
-      fuzzyCaseInsensitive(filter.selected?.[0], alert.labels?.alertname),
+    filter: (filter, alert: Alert) => matchFn(filter.selected?.[0], alert.labels?.alertname),
     items: [],
     type: 'name',
   } as RowFilter;
@@ -1815,6 +1813,8 @@ const RuleTableRow: React.FC<RowProps<Rule>> = ({ obj }) => {
 
 const RulesPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
+  const [isExactSearch] = useExactSearch();
+  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const data: Rule[] = useSelector(({ observe }: RootState) => observe.get('rules'));
   const { loaded = false, loadError }: Alerts = useSelector(
@@ -1825,7 +1825,7 @@ const RulesPage_: React.FC<{}> = () => {
   );
 
   const nameFilter: RowFilter = {
-    filter: (filter, rule: Rule) => fuzzyCaseInsensitive(filter.selected?.[0], rule.name),
+    filter: (filter, rule: Rule) => matchFn(filter.selected?.[0], rule.name),
     items: [],
     type: 'name',
   } as RowFilter;
@@ -1901,7 +1901,8 @@ const RulesPage_: React.FC<{}> = () => {
       <div className="co-m-pane__body">
         <ListPageFilter
           data={staticData}
-          labelFilter="alerts"
+          labelFilter="observe-rules"
+          labelPath="labels"
           loaded={loaded}
           onFilterChange={onFilterChange}
           rowFilters={rowFilters}
@@ -1956,13 +1957,15 @@ const silenceStateOrder = (silence: Silence) => [
 
 const SilencesPage_: React.FC<Silences> = () => {
   const { t } = useTranslation();
+  const [isExactSearch] = useExactSearch();
+  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const { data, loaded = false, loadError }: Silences = useSelector(
     ({ observe }: RootState) => observe.get('silences') || {},
   );
 
   const nameFilter: RowFilter = {
-    filter: (filter, silence: Silence) => fuzzyCaseInsensitive(filter.selected?.[0], silence.name),
+    filter: (filter, silence: Silence) => matchFn(filter.selected?.[0], silence.name),
     items: [],
     type: 'name',
   } as RowFilter;

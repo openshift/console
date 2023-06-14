@@ -298,6 +298,15 @@ $co-affinity-row-margin: 15px;
   padding-bottom: var(--pf-global--spacer--sm);
 }
 
+// Enable inner table to scroll if needed
+@media (min-width: $pf-global--breakpoint--md) and (min-height: 600px) {
+  .co-operator-uninstall__operands-section {
+    display: block;
+    max-height: calc(100vh - 400px);
+    overflow-y: auto;
+  }
+}
+
 .co-operator-uninstall__operands-section loading-skeleton--table::after {
   min-height: 160px;
 }
@@ -318,11 +327,10 @@ $co-affinity-row-margin: 15px;
   margin-right: var(--pf-global--spacer--xl);
 }
 
-.co-operator-details__toggle-value .radio-inline input[type="radio"]
-{
-  position: relative;  //To override bootstrap absolute position
+.co-operator-details__toggle-value .radio-inline input[type='radio'] {
+  position: relative; //To override bootstrap absolute position
 }
 
 .co-operator-details__toggle-value label {
- font-weight: var(--pf-global--FontWeight--normal);
+  font-weight: var(--pf-global--FontWeight--normal);
 }

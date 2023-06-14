@@ -34,12 +34,7 @@ describe(ErrorBoundary.name, () => {
     wrapper = wrapper.setState({ hasError: true });
 
     expect(wrapper.find(Child).exists()).toBe(false);
-    expect(
-      wrapper
-        .at(0)
-        .shallow()
-        .text(),
-    ).toEqual('');
+    expect(wrapper.at(0).shallow().text()).toEqual('');
   });
 });
 

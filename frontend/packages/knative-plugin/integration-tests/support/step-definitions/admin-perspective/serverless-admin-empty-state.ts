@@ -45,7 +45,5 @@ Then('user will see {string} message on Routes tab', (message: string) => {
 });
 
 Then('user will see Create button', () => {
-  cy.get(eventingPO.createEventDropDownMenu)
-    .contains('Create')
-    .should('exist');
+  cy.get(eventingPO.createEventDropDownMenu).contains('Create').should('exist');
 });

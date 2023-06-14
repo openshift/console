@@ -11,32 +11,19 @@ Given('user is at ConfigMaps page', () => {
 });
 
 When('user clicks on Create ConfigMap', () => {
-  cy.get(pagePO.create)
-    .should('be.visible')
-    .click();
+  cy.get(pagePO.create).should('be.visible').click();
 });
 
 When('user enters name of config map as {string}', (name: string) => {
-  cy.get(configMapPO.name)
-    .should('be.visible')
-    .clear()
-    .type(name);
+  cy.get(configMapPO.name).should('be.visible').clear().type(name);
 });
 
 When('user enters key as {string}', (key: string) => {
-  cy.get(configMapPO.initialKey)
-    .scrollIntoView()
-    .should('be.visible')
-    .clear()
-    .type(key);
+  cy.get(configMapPO.initialKey).scrollIntoView().should('be.visible').clear().type(key);
 });
 
 When('user enters value as {string}', (value: string) => {
-  cy.get(configMapPO.value)
-    .scrollIntoView()
-    .should('be.visible')
-    .clear()
-    .type(value);
+  cy.get(configMapPO.value).scrollIntoView().should('be.visible').clear().type(value);
 });
 
 When('user clicks on Create button', () => {
@@ -60,18 +47,11 @@ When('user clicks on Edit ConfigMap', () => {
 });
 
 When('user clicks on add key-value', () => {
-  cy.get(configMapPO.addKeyValue)
-    .first()
-    .should('be.visible')
-    .click();
+  cy.get(configMapPO.addKeyValue).first().should('be.visible').click();
 });
 
 When('user enters new key as {string}', (key: string) => {
-  cy.get(configMapPO.secondKey)
-    .scrollIntoView()
-    .should('be.visible')
-    .clear()
-    .type(key);
+  cy.get(configMapPO.secondKey).scrollIntoView().should('be.visible').clear().type(key);
 });
 
 When('user clicks on Save button', () => {
@@ -79,7 +59,5 @@ When('user clicks on Save button', () => {
 });
 
 Then('user can see {string} under Data section', (key: string) => {
-  cy.get('.co-m-pane__body')
-    .contains(key)
-    .should('be.visible');
+  cy.get('.co-m-pane__body').contains(key).should('be.visible');
 });

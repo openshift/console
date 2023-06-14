@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
@@ -292,27 +293,21 @@ const kebabFactory: KebabFactory = {
     let href: string;
     switch (kind.kind) {
       case ConfigMapModel.kind:
-        href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/edit`;
-        break;
+      case RouteModel.kind:
       case BuildConfigModel.kind:
-        href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/form`;
-        break;
       case DeploymentModel.kind:
       case DeploymentConfigModel.kind:
-        href = `/edit-deployment/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${kind.kind}`;
-        break;
-      case RouteModel.kind:
-        href = `/k8s/ns/${obj.metadata.namespace}/routes/${obj.metadata.name}/edit`;
+        href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/form`;
         break;
       case HelmChartRepositoryModel.kind:
-        href = `/k8s/cluster/helmchartrepositories/${obj.metadata.name}/edit?kind=${referenceFor(
+        href = `/k8s/cluster/helmchartrepositories/${obj.metadata.name}/form?kind=${referenceFor(
           obj,
         )}`;
         break;
       case ProjectHelmChartRepositoryModel.kind:
         href = `/ns/${obj.metadata.namespace}/helmchartrepositories/${
           obj.metadata.name
-        }/edit?kind=${referenceFor(obj)}`;
+        }/form?kind=${referenceFor(obj)}`;
         break;
       default:
         href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`;
@@ -667,6 +662,7 @@ export type ResourceKebabProps = {
   terminatingTooltip?: string;
 };
 
+// eslint-disable-next-line no-redeclare
 type KebabSubMenu = {
   label?: string;
   labelKey?: string;

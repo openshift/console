@@ -5,9 +5,11 @@ import { useFormikValidationFix } from '../../hooks';
 import { BaseInputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const BaseInputField: React.FC<BaseInputFieldProps & {
-  children: (props) => React.ReactNode;
-}> = ({
+const BaseInputField: React.FC<
+  BaseInputFieldProps & {
+    children: (props) => React.ReactNode;
+  }
+> = ({
   label,
   helpText,
   required,

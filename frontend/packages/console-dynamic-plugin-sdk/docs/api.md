@@ -53,7 +53,7 @@
 51.  [`InventoryItemStatus`](#inventoryitemstatus)
 52.  [`InventoryItemLoading`](#inventoryitemloading)
 53.  [`useFlag`](#useflag)
-54.  [`YAMLEditor`](#yamleditor)
+54.  [`CodeEditor`](#codeeditor)
 55.  [`ResourceYAMLEditor`](#resourceyamleditor)
 56.  [`ResourceEventStream`](#resourceeventstream)
 57.  [`usePrometheusPoll`](#useprometheuspoll)
@@ -65,6 +65,7 @@
 63. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
 64. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
 65. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+66. [DEPRECATED] [`YAMLEditor`](#yamleditor)
 
 ---
 
@@ -858,12 +859,16 @@ Component that generates filter for list page
 | `loaded` | indicates that data has loaded |
 | `onFilterChange` | callback function for when filter is updated |
 | `rowFilters` | (optional) An array of RowFilter elements that define the available filter options |
+| `labelFilter` | (optional) a unique name key for label filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
+| `labelPath` | (optional) the path to labels to filter from |
+| `nameFilterTitle` | (optional) title for name filter |
 | `nameFilterPlaceholder` | (optional) placeholder for name filter |
 | `labelFilterPlaceholder` | (optional) placeholder for label filter |
 | `hideLabelFilter` | (optional) only shows the name filter instead of both name and label filter |
 | `hideNameLabelFilter` | (optional) hides both name and label filter |
 | `columnLayout` | (optional) column layout object |
 | `hideColumnManagement` | (optional) flag to hide the column management |
+| `nameFilter` | (optional) a unique name key for name filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
 
 
 
@@ -948,7 +953,7 @@ Component that creates a link to a specific resource type with an icon badge
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `kind` | (optional) the kind of resource i.e. Pod, Deployment, Namespace |
-| `groupVersionKind` | (optional) object with groupd, version, and kind |
+| `groupVersionKind` | (optional) object with group, version, and kind |
 | `className` | (optional) class style for component |
 | `displayName` | (optional) display name for component, overwrites the resource name if set |
 | `inline` | (optional) flag to create icon badge and name inline with children |
@@ -1870,11 +1875,11 @@ the boolean value of the requested feature flag or undefined
 
 ---
 
-## `YAMLEditor`
+## `CodeEditor`
 
 ### Summary 
 
-A basic lazy loaded YAML editor with hover help and completion.
+A basic lazy loaded Code editor with hover help and completion.
 
 
 
@@ -1883,8 +1888,9 @@ A basic lazy loaded YAML editor with hover help and completion.
 
 ```tsx
 <React.Suspense fallback={<LoadingBox />}>
-  <YAMLEditor
+  <CodeEditor
     value={code}
+    language="yaml"
   />
 </React.Suspense>
 ```
@@ -1898,6 +1904,7 @@ A basic lazy loaded YAML editor with hover help and completion.
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `value` | String representing the yaml code to render. |
+| `language` | String representing the language of the editor. |
 | `options` | Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html. |
 | `minHeight` | Minimum editor height in valid CSS height values. |
 | `showShortcuts` | Boolean to show shortcuts on top of the editor. |
@@ -2034,7 +2041,23 @@ A component to render timestamp.<br/>The timestamps are synchronized between inv
 
 ### Summary 
 
-A hook to launch Modals.<br/><br/>```tsx<br/>const AppPage: React.FC = () => {<br/> const [launchModal] = useModal();<br/> const onClick = () => launchModal(ModalComponent);<br/> return (<br/>   <Button onClick={onClick}>Launch a Modal</Button><br/> )<br/>}<br/>```
+A hook to launch Modals.
+
+
+
+### Example
+
+
+```tsx
+const AppPage: React.FC = () => {
+ const [launchModal] = useModal();
+ const onClick = () => launchModal(ModalComponent);
+ return (
+   <Button onClick={onClick}>Launch a Modal</Button>
+ )
+}
+```
+
 
 
 
@@ -2232,5 +2255,46 @@ The isAllowed boolean value.
 ### Returns
 
 An array with a pair of state value and it's set function.
+
+
+---
+
+## `YAMLEditor`
+
+### Summary [DEPRECATED]
+
+@deprecated Use {@link CodeEditor} instead.<br/>A basic lazy loaded YAML editor with hover help and completion.
+
+
+
+### Example
+
+
+```tsx
+<React.Suspense fallback={<LoadingBox />}>
+  <YAMLEditor
+    value={code}
+  />
+</React.Suspense>
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `value` | String representing the yaml code to render. |
+| `language` | String representing the language of the editor. |
+| `options` | Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html. |
+| `minHeight` | Minimum editor height in valid CSS height values. |
+| `showShortcuts` | Boolean to show shortcuts on top of the editor. |
+| `toolbarLinks` | Array of ReactNode rendered on the toolbar links section on top of the editor. |
+| `onChange` | Callback for on code change event. |
+| `onSave` | Callback called when the command CTRL / CMD + S is triggered. |
+| `ref` | React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html. |
+
 
 

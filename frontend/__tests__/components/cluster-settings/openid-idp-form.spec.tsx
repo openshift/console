@@ -43,29 +43,9 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should prefill OpenID list input default values', () => {
-    expect(
-      wrapper
-        .find(ListInput)
-        .at(0)
-        .props().initialValues,
-    ).toEqual(['preferred_username']);
-    expect(
-      wrapper
-        .find(ListInput)
-        .at(1)
-        .props().initialValues,
-    ).toEqual(['name']);
-    expect(
-      wrapper
-        .find(ListInput)
-        .at(2)
-        .props().initialValues,
-    ).toEqual(['email']);
-    expect(
-      wrapper
-        .find(ListInput)
-        .at(3)
-        .props().initialValues,
-    ).toEqual(undefined);
+    expect(wrapper.find(ListInput).at(0).props().initialValues).toEqual(['preferred_username']);
+    expect(wrapper.find(ListInput).at(1).props().initialValues).toEqual(['name']);
+    expect(wrapper.find(ListInput).at(2).props().initialValues).toEqual(['email']);
+    expect(wrapper.find(ListInput).at(3).props().initialValues).toEqual(undefined);
   });
 });

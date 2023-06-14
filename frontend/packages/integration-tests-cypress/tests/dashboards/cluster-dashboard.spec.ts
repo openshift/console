@@ -26,9 +26,7 @@ describe('Cluster dashboard', () => {
       ];
       cy.byTestID('detail-item-title').should('have.length', 6);
       expectedTitles.forEach((title, i) => {
-        cy.byTestID('detail-item-title')
-          .eq(i)
-          .should('have.text', title);
+        cy.byTestID('detail-item-title').eq(i).should('have.text', title);
       });
       const expectedValues = [
         { assertion: 'include.text', value: 'https://' },
@@ -40,9 +38,7 @@ describe('Cluster dashboard', () => {
       ];
       cy.byTestID('detail-item-value').should('have.length', 6);
       expectedValues.forEach(({ assertion, value }, i) => {
-        cy.byTestID('detail-item-value')
-          .eq(i)
-          .should(assertion, value);
+        cy.byTestID('detail-item-value').eq(i).should(assertion, value);
       });
     });
     it('has View settings link', () => {
@@ -77,13 +73,8 @@ describe('Cluster dashboard', () => {
         { title: 'PersistentVolumeClaim', link: '/k8s/all-namespaces/persistentvolumeclaims' },
       ];
       inventoryItems.forEach((item, i) => {
-        cy.byTestID('resource-inventory-item')
-          .eq(i)
-          .invoke('text')
-          .should('include', item.title);
-        cy.byTestID('resource-inventory-item')
-          .eq(i)
-          .should('have.attr', 'href', item.link);
+        cy.byTestID('resource-inventory-item').eq(i).invoke('text').should('include', item.title);
+        cy.byTestID('resource-inventory-item').eq(i).should('have.attr', 'href', item.link);
       });
     });
   });
@@ -94,9 +85,7 @@ describe('Cluster dashboard', () => {
       const utilizationItems = ['CPU', 'Memory', 'Filesystem', 'Network transfer', 'Pod count'];
       cy.byLegacyTestID('utilization-item').should('have.length', utilizationItems.length);
       utilizationItems.forEach((title, i) => {
-        cy.byTestID('utilization-item-title')
-          .eq(i)
-          .should('have.text', title);
+        cy.byTestID('utilization-item-title').eq(i).should('have.text', title);
       });
     });
     it('has duration dropdown', () => {
@@ -111,9 +100,7 @@ describe('Cluster dashboard', () => {
         .and('have.attr', 'href', `/k8s/all-namespaces/events`);
     });
     it('has Pause events button', () => {
-      cy.byTestID('events-pause-button')
-        .should('be.visible')
-        .and('have.text', 'Pause');
+      cy.byTestID('events-pause-button').should('be.visible').and('have.text', 'Pause');
     });
   });
 

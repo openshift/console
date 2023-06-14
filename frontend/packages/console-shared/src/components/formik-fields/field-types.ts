@@ -112,10 +112,13 @@ export interface MultiColumnFieldProps extends FieldProps {
   tooltipAddRow?: string;
 }
 
-export interface YAMLEditorFieldProps extends FieldProps {
+export interface CodeEditorFieldProps extends FieldProps {
   model?: K8sKind;
+  minHeight?: string;
+  language?: string;
   schema?: JSONSchema7;
   showSamples: boolean;
+  showShortcuts?: boolean;
   onSave?: () => void;
 }
 

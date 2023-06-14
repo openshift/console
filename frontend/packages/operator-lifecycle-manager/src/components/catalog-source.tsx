@@ -470,10 +470,7 @@ const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceNa
     setVisible(false);
   }, []);
   const onClickEnable = React.useCallback(
-    () =>
-      enableSource(OperatorHubModel, operatorHub, sourceName)
-        .callback()
-        .then(close),
+    () => enableSource(OperatorHubModel, operatorHub, sourceName).callback().then(close),
     [close, operatorHub, sourceName],
   );
   const { t } = useTranslation();
@@ -506,7 +503,7 @@ const flatten = ({
   packageManifests,
 }: FlattenArgType): CatalogSourceTableRowObj[] => {
   const defaultSources: CatalogSourceTableRowObj[] = _.map(
-    operatorHub.status.sources,
+    operatorHub.status?.sources,
     (defaultSource) => {
       const catalogSource = _.find(catalogSources.data, {
         metadata: { name: defaultSource.name, namespace: DEFAULT_SOURCE_NAMESPACE },

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -8,7 +9,6 @@ import {
   BuildConfigModel,
   SecretModel,
 } from '@console/internal/models';
-import * as k8s from '@console/internal/module/k8s';
 import * as knativeUtils from '@console/knative-plugin/src/utils/create-knative-utils';
 import * as pipelineUtils from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import * as triggerUtils from '@console/pipelines-plugin/src/components/pipelines/modals/triggers/submit-utils';
@@ -34,7 +34,7 @@ describe('Import Submit Utils', () => {
   describe('createDeployment tests', () => {
     beforeAll(() => {
       jest
-        .spyOn(k8s, 'k8sCreate')
+        .spyOn(k8sResourceModule, 'k8sCreate')
         .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
     });
 
@@ -92,7 +92,7 @@ describe('Import Submit Utils', () => {
   describe('createResource tests', () => {
     beforeAll(() => {
       jest
-        .spyOn(k8s, 'k8sCreate')
+        .spyOn(k8sResourceModule, 'k8sCreate')
         .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
     });
 
@@ -176,8 +176,12 @@ describe('Import Submit Utils', () => {
 
   describe('createPipelineResource tests', () => {
     beforeEach(() => {
-      jest.spyOn(k8s, 'k8sCreate').mockImplementation((model, data) => Promise.resolve(data));
-      jest.spyOn(k8s, 'k8sGet').mockReturnValue(Promise.resolve(sampleClusterTriggerBinding));
+      jest
+        .spyOn(k8sResourceModule, 'k8sCreate')
+        .mockImplementation((model, data) => Promise.resolve(data));
+      jest
+        .spyOn(k8sResourceModule, 'k8sGet')
+        .mockReturnValue(Promise.resolve(sampleClusterTriggerBinding));
       jest.spyOn(triggerUtils, 'submitTrigger').mockImplementation(jest.fn());
       jest.spyOn(triggerUtils, 'createTrigger').mockImplementation(() => Promise.resolve([]));
     });
@@ -224,6 +228,7 @@ describe('Import Submit Utils', () => {
         mockData.docker.dockerfilePath,
         mockData.image.tag,
         mockData.build.env,
+        {},
       );
       expect(createPipelineRunResourceSpy).toHaveBeenCalledTimes(1);
       expect(createPipelineWebhookSpy).toHaveBeenCalledTimes(1);
@@ -255,6 +260,7 @@ describe('Import Submit Utils', () => {
         mockData.docker.dockerfilePath,
         mockData.image.tag,
         mockData.build.env,
+        {},
       );
       const pipelineRunResource = returnValue[1];
       expect(pipelineRunResource.metadata.name.includes(mockData.name)).toEqual(true);
@@ -358,9 +364,9 @@ describe('Import Submit Utils', () => {
       mockData.git.secret = 'sample-secret';
 
       const k8sUpdateMock = jest
-        .spyOn(k8s, 'k8sUpdate')
+        .spyOn(k8sResourceModule, 'k8sUpdate')
         .mockImplementation((_model, data) => Promise.resolve(data));
-      const k8sGetMock = jest.spyOn(k8s, 'k8sGet').mockImplementation((model) => {
+      const k8sGetMock = jest.spyOn(k8sResourceModule, 'k8sGet').mockImplementation((model) => {
         if (model.kind === 'Secret') {
           return Promise.resolve({ metadata: { annotations: {} } });
         }
@@ -397,7 +403,7 @@ describe('Import Submit Utils', () => {
   describe('createDevfileResources', () => {
     beforeAll(() => {
       jest
-        .spyOn(k8s, 'k8sCreate')
+        .spyOn(k8sResourceModule, 'k8sCreate')
         .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
     });
 

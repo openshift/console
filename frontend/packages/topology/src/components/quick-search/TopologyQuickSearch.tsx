@@ -17,12 +17,14 @@ interface QuickSearchProps {
   setIsOpen: (isOpen: boolean) => void;
 }
 
-const Contents: React.FC<{
-  quickStarts: QuickStart[];
-  quickStartsLoaded: boolean;
-  catalogService: CatalogService;
-  catalogServiceSample: CatalogService;
-} & QuickSearchProps> = ({
+const Contents: React.FC<
+  {
+    quickStarts: QuickStart[];
+    quickStartsLoaded: boolean;
+    catalogService: CatalogService;
+    catalogServiceSample: CatalogService;
+  } & QuickSearchProps
+> = ({
   quickStarts,
   quickStartsLoaded,
   catalogService,

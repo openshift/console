@@ -8,6 +8,30 @@ export type Infrastructure = K8sResourceCommon & {
     };
     platformSpec: {
       type: string; // VSphere;
+      vsphere?: {
+        failureDomains?: {
+          name?: string;
+          region?: string;
+          server?: string;
+          topology?: {
+            computeCluster?: string;
+            datacenter?: string;
+            datastore?: string;
+            networks?: string[];
+            resourcePool?: string;
+          };
+          zone?: string;
+        }[];
+        nodeNetworking?: {
+          external?: {};
+          internal?: {};
+        };
+        vcenters?: {
+          datacenters?: string[];
+          port?: number;
+          server?: string;
+        }[];
+      };
     };
   };
   status?: {
