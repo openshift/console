@@ -16,6 +16,7 @@ export const RouteMetrics = connectToFlags<RouteMetricsProps>(FLAGS.CAN_GET_NS)(
       return null;
     }
     const namespaceRouteQuery = `{exported_namespace="${obj.metadata.namespace}",route="${obj.metadata.name}"}[5m]`;
+    const namespaceRouteRPSQuery = `{namespace="${obj.metadata.namespace}",route_name="${obj.metadata.name}"}`;
     return (
       <Dashboard className="resource-metrics-dashboard">
         <Grid hasGutter>
@@ -54,6 +55,16 @@ export const RouteMetrics = connectToFlags<RouteMetricsProps>(FLAGS.CAN_GET_NS)(
                 <Area
                   query={`sum without (instance,exported_pod,exported_service,pod,server) (irate(haproxy_backend_connections_total${namespaceRouteQuery}))`}
                 />
+              </CardBody>
+            </Card>
+          </GridItem>
+          <GridItem xl={6} lg={12}>
+            <Card className="resource-metrics-dashboard__card">
+              <CardHeader>
+                <CardTitle>{t('public~RPS')}</CardTitle>
+              </CardHeader>
+              <CardBody className="resource-metrics-dashboard__card-body">
+                <Area query={`sum (cloud:routes:rps${namespaceRouteRPSQuery}) OR on() vector(0)`} />
               </CardBody>
             </Card>
           </GridItem>

@@ -45,6 +45,7 @@ export const convertRouteToEditForm = (
     secure: !!spec?.tls,
     namespace: metadata?.namespace || getActiveNamespace(),
     labels: metadata?.labels,
+    routeType: metadata?.labels?.router,
     alternateServices: Array.isArray(spec?.alternateBackends)
       ? spec.alternateBackends.map((b) => ({
           name: b.name,
@@ -103,6 +104,7 @@ export const convertEditFormToRoute = (
     targetPort: selectedPort,
     namespace,
     alternateServices,
+    routeType,
   } = formData;
 
   const tls = createRoteTls(formData);
@@ -111,6 +113,10 @@ export const convertEditFormToRoute = (
   const labels = _.merge(
     _.get(service, 'metadata.labels'),
     _.get(existingRoute, 'metadata.labels'),
+    {
+      router: routeType,
+    },
+
   );
 
   // If the port is unnamed, there is only one port. Use the port number.

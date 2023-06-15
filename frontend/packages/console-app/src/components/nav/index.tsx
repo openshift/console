@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Nav, NavProps, PageSidebar } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import NavHeader from './NavHeader';
 import PerspectiveNav from './PerspectiveNav';
 
 type NavigationProps = {
@@ -20,7 +19,6 @@ export const Navigation: React.FC<NavigationProps> = React.memo(function Navigat
     <PageSidebar
       nav={
         <Nav aria-label={t('console-app~Nav')} onSelect={onNavSelect} theme="dark">
-          <NavHeader onPerspectiveSelected={onPerspectiveSelected} />
           <PerspectiveNav />
         </Nav>
       }

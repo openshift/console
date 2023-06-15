@@ -65,6 +65,7 @@ class CreateRouteWithTranslation extends React.Component<
     labels: {},
     portOptions: {},
     alternateServices: [],
+    routeType: 'private',
   };
 
   componentDidMount() {
@@ -158,6 +159,11 @@ class CreateRouteWithTranslation extends React.Component<
     );
   };
 
+  onRouteTypeChange = (routeType: string) => {
+    this.setState({ routeType });
+    this.props.formik.setFieldValue('formData.routeType', routeType);
+  };
+
   onCertificateChange = (certificate: string) => {
     this.setState({ certificate });
     this.props.formik.setFieldValue('formData.certificate', certificate);
@@ -234,6 +240,7 @@ class CreateRouteWithTranslation extends React.Component<
       termination,
       alternateServices,
       insecureEdgeTerminationPolicy,
+      routeType,
     } = this.state;
     const serviceOptions = {};
     _.each(
@@ -263,6 +270,11 @@ class CreateRouteWithTranslation extends React.Component<
     const passthroughInsecureTrafficTypes = {
       None: 'None',
       Redirect: 'Redirect',
+    };
+    const routeTypes = {
+      private: 'Private',
+      'inter-dc': 'Inter-DC',
+      public: 'Public',
     };
     const alternateServicesList = _.map(alternateServices, (entryData, index) => {
       return (
@@ -312,6 +324,22 @@ class CreateRouteWithTranslation extends React.Component<
           />
           <div className="help-block" id="name-help">
             <p>{t('public~A unique name for the Route within the project.')}</p>
+          </div>
+        </div>
+        <div className="form-group co-create-route__type">
+          <label className="co-required" htmlFor="route-type">
+            {t('public~Route type')}
+          </label>
+          <Dropdown
+            items={routeTypes}
+            title={t('public~Select route type')}
+            dropDownClassName="dropdown--full-width"
+            id="route-type"
+            onChange={this.onRouteTypeChange}
+            selectedKey={routeType}
+          />
+          <div className="help-block" id="route-type-help">
+            <p>{t('public~Route type')}</p>
           </div>
         </div>
         <div className="form-group co-create-route__hostname">
@@ -658,6 +686,7 @@ export type RouteFormProps = {
   namespace: string;
   labels: object;
   alternateServices: AlternateServiceEntryType[];
+  routeType: string;
 };
 
 export type CreateRouteState = RouteFormProps & {
