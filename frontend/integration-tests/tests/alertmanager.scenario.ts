@@ -25,6 +25,10 @@ const getGlobalsAndReceiverConfig = (configName: string, yamlStr: string) => {
 };
 
 describe('Alertmanager: PagerDuty Receiver Form', () => {
+  // Disabled to resolve https://issues.redhat.com/browse/OCPBUGS-14964
+  // Follow-up issue to fix the Alertmanager and reeanble this tests: https://issues.redhat.com/browse/OCPBUGS-15036
+  pending('Temporary disabled, see OCPBUGS-14964 and OCPBUGS-15036');
+
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
@@ -204,6 +208,10 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
 });
 
 describe('Alertmanager: Email Receiver Form', () => {
+  // Disabled to resolve https://issues.redhat.com/browse/OCPBUGS-14964
+  // Follow-up issue to fix the Alertmanager and reeanble this tests: https://issues.redhat.com/browse/OCPBUGS-15036
+  pending('Temporary disabled, see OCPBUGS-14964 and OCPBUGS-15036');
+
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
@@ -328,6 +336,10 @@ describe('Alertmanager: Email Receiver Form', () => {
 });
 
 describe('Alertmanager: Slack Receiver Form', () => {
+  // Disabled to resolve https://issues.redhat.com/browse/OCPBUGS-14964
+  // Follow-up issue to fix the Alertmanager and reeanble this tests: https://issues.redhat.com/browse/OCPBUGS-15036
+  pending('Temporary disabled, see OCPBUGS-14964 and OCPBUGS-15036');
+
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
@@ -441,6 +453,10 @@ describe('Alertmanager: Slack Receiver Form', () => {
 });
 
 describe('Alertmanager: Webhook Receiver Form', () => {
+  // Disabled to resolve https://issues.redhat.com/browse/OCPBUGS-14964
+  // Follow-up issue to fix the Alertmanager and reeanble this tests: https://issues.redhat.com/browse/OCPBUGS-15036
+  pending('Temporary disabled, see OCPBUGS-14964 and OCPBUGS-15036');
+
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,

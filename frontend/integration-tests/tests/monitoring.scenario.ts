@@ -10,6 +10,10 @@ import * as horizontalnavView from '../views/horizontal-nav.view';
 import { execSync } from 'child_process';
 
 describe('Alertmanager: YAML', () => {
+  // Disabled to resolve https://issues.redhat.com/browse/OCPBUGS-14964
+  // Follow-up issue to fix the Alertmanager and reeanble this tests: https://issues.redhat.com/browse/OCPBUGS-15036
+  pending('Temporary disabled, see OCPBUGS-14964 and OCPBUGS-15036');
+
   afterEach(() => {
     checkLogs();
     checkErrors();
@@ -38,6 +42,10 @@ describe('Alertmanager: YAML', () => {
 });
 
 describe('Alertmanager: Configuration', () => {
+  // Disabled to resolve https://issues.redhat.com/browse/OCPBUGS-14964
+  // Follow-up issue to fix the Alertmanager and reeanble this tests: https://issues.redhat.com/browse/OCPBUGS-15036
+  pending('Temporary disabled, see OCPBUGS-14964 and OCPBUGS-15036');
+
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
