@@ -1,0 +1,44 @@
+##################################################
+#
+# go backend build
+ARG NPM_PROXY_ADDRESS="https://repo.snapp.tech/repository/npm-proxy"
+
+FROM quay.io/coreos/tectonic-console-builder:v25 AS gobuilder
+#ENV http_proxy=
+#ENV https_proxy=
+RUN yarn config set registry ${NPM_PROXY_ADDRESS}
+RUN mkdir -p /go/src/github.com/openshift/console/
+ADD . /go/src/github.com/openshift/console/
+WORKDIR /go/src/github.com/openshift/console/
+RUN ./build-backend.sh
+RUN cd frontend
+RUN cd frontend && \
+    yarn config set registry ${NPM_PROXY_ADDRESS} && \
+    yarn install
+RUN cd frontend && yarn run build
+
+
+##################################################
+#
+# actual base image for final product
+FROM openshift/origin-base
+RUN mkdir -p /opt/bridge/bin
+COPY --from=gobuilder /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin
+COPY --from=gobuilder /go/src/github.com/openshift/console/frontend/public/dist /opt/bridge/static
+COPY --from=gobuilder /go/src/github.com/openshift/console/pkg/graphql/schema.graphql /pkg/graphql/schema.graphql
+
+WORKDIR /
+# doesn't require a root user.
+USER 1001
+
+CMD [ "/opt/bridge/bin/bridge", "--public-dir=/opt/bridge/static" ]
+
+LABEL \
+        io.k8s.description="This is a component of OpenShift Container Platform and provides a web console." \
+        com.redhat.component="openshift-enterprise-console-container" \
+        maintainer="Samuel Padgett <spadgett@redhat.com>" \
+        name="openshift3/ose-console" \
+        License="Apache 2.0" \
+        io.k8s.display-name="OpenShift Console" \
+        vendor="Red Hat" \
+        io.openshift.tags="openshift,console"
