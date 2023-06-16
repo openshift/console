@@ -68,8 +68,8 @@ export const editChartRepository = (
       hcr.kind === ProjectHelmChartRepositoryModel.kind
         ? `/ns/${hcr.metadata.namespace}/helmchartrepositories/${
             hcr.metadata.name
-          }/edit?kind=${referenceFor(hcr)}`
-        : `/k8s/cluster/helmchartrepositories/${hcr.metadata.name}/edit?kind=${referenceFor(hcr)}`,
+          }/form?kind=${referenceFor(hcr)}`
+        : `/k8s/cluster/helmchartrepositories/${hcr.metadata.name}/form?kind=${referenceFor(hcr)}`,
   },
   accessReview: {
     group: model.apiGroup,
