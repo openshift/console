@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp, ExternalLink } from '@console/internal/components/utils';
+import { ResourceLink, Timestamp, ExternalLinkWithCopy } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src';
 import { RevisionModel, RouteModel } from '../../models';
@@ -29,10 +29,10 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         {(obj.status && obj.status.url && (
-          <ExternalLink
-            href={obj.status.url}
-            additionalClassName="co-external-link--block"
+          <ExternalLinkWithCopy
+            link={obj.status.url}
             text={obj.status.url}
+            additionalClassName="co-external-link--block"
           />
         )) ||
           '-'}

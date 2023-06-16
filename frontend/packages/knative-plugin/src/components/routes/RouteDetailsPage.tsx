@@ -8,7 +8,7 @@ import { RoutesDetailsProps } from '@console/internal/components/routes';
 import {
   DetailsItem,
   detailsPage,
-  ExternalLink,
+  ExternalLinkWithCopy,
   navFactory,
   ResourceSummary,
   SectionHeading,
@@ -48,10 +48,10 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                     {route?.status?.url}
                   </ClipboardCopy>
                 ) : (
-                  <ExternalLink
-                    href={route?.status?.url}
-                    additionalClassName="co-external-link--block"
+                  <ExternalLinkWithCopy
+                    link={route?.status?.url}
                     text={route?.status?.url}
+                    additionalClassName="co-external-link--block"
                   />
                 )}
               </DetailsItem>

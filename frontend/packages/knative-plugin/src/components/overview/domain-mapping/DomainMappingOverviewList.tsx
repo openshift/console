@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ExternalLink,
+  ExternalLinkWithCopy,
   ResourceLink,
   SidebarSectionHeading,
 } from '@console/internal/components/utils';
@@ -37,10 +37,10 @@ const DomainMappingOverviewList: React.FC<DomainMappingOverviewListProps> = ({
               {status?.url?.length > 0 && (
                 <>
                   <span className="text-muted">{t('knative-plugin~Location:')}</span>
-                  <ExternalLink
-                    href={status.url}
-                    additionalClassName="co-external-link--block"
+                  <ExternalLinkWithCopy
+                    link={status.url}
                     text={status.url}
+                    additionalClassName="co-external-link--block"
                   />
                 </>
               )}
