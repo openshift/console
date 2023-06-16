@@ -1,5 +1,6 @@
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, ExtensionDeclaration } from '../types';
+import { StorageClass } from './console-types';
 
 export type ProvisionerProps = {
   onParamChange: (id: string, paramName: string, checkbox: boolean) => void;
@@ -35,6 +36,7 @@ export type ProvisionerDetails = {
       validationMsg?: string;
     };
   };
+  mutator?: CodeRef<(storageClass: StorageClass) => StorageClass>;
 };
 
 /** Adds a new storage class provisioner as an option during storage class creation. */
