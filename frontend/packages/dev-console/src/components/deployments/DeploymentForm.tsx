@@ -54,7 +54,7 @@ const EditDeploymentForm: React.FC<
     <CodeEditorField
       name="yamlData"
       model={resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel}
-      showSamples={!resource}
+      showSamples={isNew}
       onSave={handleSubmit}
     />
   );
