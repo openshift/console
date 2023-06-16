@@ -622,6 +622,8 @@ export type RouteKind = {
   };
   status?: {
     ingress: RouteIngress[];
+    url?: string;
+    conditions?: K8sResourceCondition[];
   };
 } & K8sResourceCommon;
 
