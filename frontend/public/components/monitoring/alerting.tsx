@@ -5,6 +5,7 @@ import {
   AlertSeverity,
   AlertStates,
   BlueInfoCircleIcon,
+  FormatSeriesTitle,
   GreenCheckCircleIcon,
   K8sKind,
   PrometheusAlert,
@@ -39,6 +40,7 @@ import {
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { useExtensions } from '@console/plugin-sdk';
 import { withFallback } from '@console/shared/src/components/error';
+import { QueryBrowser } from '@console/shared/src/components/query-browser';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search';
@@ -114,7 +116,6 @@ import { useBoolean } from './hooks/useBoolean';
 import KebabDropdown from './kebab-dropdown';
 import { Labels } from './labels';
 import { QueryBrowserPage, ToggleGraph } from './metrics';
-import { FormatSeriesTitle, QueryBrowser } from './query-browser';
 import { CreateSilence, EditSilence } from './silence-form';
 import { TargetsUI } from './targets';
 import { Alerts, AlertSource, MonitoringResource, Silences } from './types';

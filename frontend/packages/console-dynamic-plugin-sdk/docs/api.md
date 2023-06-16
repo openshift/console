@@ -62,10 +62,11 @@
 60.  [`ActionServiceProvider`](#actionserviceprovider)
 61.  [`NamespaceBar`](#namespacebar)
 62.  [`ErrorBoundaryFallbackPage`](#errorboundaryfallbackpage)
-63. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
-64. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
-65. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
-66. [DEPRECATED] [`YAMLEditor`](#yamleditor)
+63.  [`QueryBrowser`](#querybrowser)
+64. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
+65. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
+66. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+67. [DEPRECATED] [`YAMLEditor`](#yamleditor)
 
 ---
 
@@ -2181,6 +2182,63 @@ Creates full page ErrorBoundaryFallbackPage component to display the "Oh no! Som
 | `componentStack` | component trace of the exception |
 | `stack` | stack trace of the exception |
 | `title` | title to render as the header of the error boundary page |
+
+
+
+---
+
+## `QueryBrowser`
+
+### Summary 
+
+A component that renders a graph of the results from a Prometheus PromQL query along with controls for interacting with the graph.
+
+
+
+### Example
+
+
+```tsx
+<QueryBrowser
+  defaultTimespan={15 * 60 * 1000}
+  namespace={namespace}
+  pollInterval={30 * 1000}
+  queries={[
+    'process_resident_memory_bytes{job="console"}',
+    'sum(irate(container_network_receive_bytes_total[6h:5m])) by (pod)',
+  ]}
+/>
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `customDataSource` | (optional) Base URL of an API endpoint that handles PromQL queries. If provided, this is used instead of the default API for fetching data. |
+| `defaultSamples` | (optional) The default number of data samples plotted for each data series. If there are many data series, QueryBrowser might automatically pick a lower number of data samples than specified here. |
+| `defaultTimespan` | (optional) The default timespan for the graph in milliseconds - defaults to 1,800,000 (30 minutes). |
+| `disabledSeries` | (optional) Disable (don't display) data series with these exact label / value pairs. |
+| `disableZoom` | (optional) Flag to disable the graph zoom controls. |
+| `filterLabels` | (optional) Optionally filter the returned data series to only those that match these label / value pairs. |
+| `fixedEndTime` | (optional) Set the end time for the displayed time range rather than showing data up to the current time. |
+| `formatSeriesTitle` | (optional) Function that returns a string to use as the title for a single data series. |
+| `GraphLink` | (optional) Component for rendering a link to another page (for example getting more information about this query). |
+| `hideControls` | (optional) Flag to hide the graph controls for changing the graph timespan, and so on. |
+| `isStack` | (optional) Flag to display a stacked graph instead of a line graph. If showStackedControl is set, it will still be possible for the user to switch to a line graph. |
+| `namespace` | (optional) If provided, data is only returned for this namespace (only series that have this namespace label). |
+| `onZoom` | (optional) Callback called when the graph is zoomed. |
+| `pollInterval` | (optional) If set, determines how often the graph is updated to show the latest data (in milliseconds). |
+| `queries` | Array of PromQL queries to run and display the results in the graph. |
+| `showLegend` | (optional) Flag to enable displaying a legend below the graph. |
+| `showStackedControl` | Flag to enable displaying a graph control for switching between stacked graph mode and line graph mode. |
+| `timespan` | (optional) The timespan that should be covered by the graph in milliseconds. |
+| `units` | (optional) Units to display on the Y-axis and in the tooltip.
+
+ |
 
 
 
