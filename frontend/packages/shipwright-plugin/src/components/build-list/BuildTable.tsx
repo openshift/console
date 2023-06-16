@@ -77,7 +77,8 @@ export const BuildRow: React.FC<RowFunctionArgs<Build, CustomData>> = ({
   const kindReference = referenceFor(build);
   const context = { [kindReference]: build };
   const buildRunKindReference = referenceForModel(BuildRunModel);
-  const latestBuildRun = customData.buildRuns.latestByBuildName[build.metadata.name];
+  const latestBuildRun =
+    customData.buildRuns.latestByBuildName[`${build.metadata.name}-${build.metadata.namespace}`];
 
   return (
     <>
@@ -148,8 +149,11 @@ export const BuildTable: React.FC<BuildTableProps> = (props) => {
       buildRuns: {
         latestByBuildName: buildRuns.reduce<Record<string, BuildRun>>((acc, buildRun) => {
           const name = buildRun.metadata.labels?.[BUILDRUN_TO_BUILD_REFERENCE_LABEL];
-          if (!acc[name] || isBuildRunNewerThen(buildRun, acc[name])) {
-            acc[name] = buildRun;
+          if (
+            !acc[`${name}-${buildRun.metadata.namespace}`] ||
+            isBuildRunNewerThen(buildRun, acc[`${name}-${buildRun.metadata.namespace}`])
+          ) {
+            acc[`${name}-${buildRun.metadata.namespace}`] = buildRun;
           }
           return acc;
         }, {}),

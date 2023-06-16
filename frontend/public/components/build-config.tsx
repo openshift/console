@@ -161,7 +161,8 @@ const BuildConfigsTableRow: React.FC<RowFunctionArgs<K8sResourceKind, CustomData
   obj,
   customData,
 }) => {
-  const latestBuild = customData.builds.latestByBuildName[obj.metadata.name];
+  const latestBuild =
+    customData.builds.latestByBuildName[`${obj.metadata.name}-${obj.metadata.namespace}`];
 
   const duration = displayDurationInWords(
     latestBuild?.status?.startTimestamp,
@@ -270,8 +271,11 @@ export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
       builds: {
         latestByBuildName: builds.reduce<Record<string, K8sResourceKind>>((acc, build) => {
           const name = build.metadata.labels?.[BUILDCONFIG_TO_BUILD_REFERENCE_LABEL];
-          if (!acc[name] || isBuildNewerThen(build, acc[name])) {
-            acc[name] = build;
+          if (
+            !acc[`${name}-${build.metadata.namespace}`] ||
+            isBuildNewerThen(build, acc[`${name}-${build.metadata.namespace}`])
+          ) {
+            acc[`${name}-${build.metadata.namespace}`] = build;
           }
           return acc;
         }, {}),
