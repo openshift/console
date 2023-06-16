@@ -60,9 +60,15 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
         </dd>
       </dl>
       <dl>
-        <dt>{t('pipelines-plugin~Started')}</dt>
+        <dt>{t('pipelines-plugin~Start time')}</dt>
         <dd>
           <Timestamp timestamp={pipelineRun?.status?.startTime} />
+        </dd>
+      </dl>
+      <dl>
+        <dt>{t('pipelines-plugin~Completion time')}</dt>
+        <dd>
+          <Timestamp timestamp={pipelineRun?.status?.completionTime} />
         </dd>
       </dl>
       <dl>

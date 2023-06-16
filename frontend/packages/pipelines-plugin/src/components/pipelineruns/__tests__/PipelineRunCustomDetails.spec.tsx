@@ -42,9 +42,13 @@ describe('PipelineRunCustomDetails', () => {
     renderResult.getAllByText('Pipeline');
     renderResult.getAllByText('simple-pipeline');
 
-    // Started
-    renderResult.getAllByText('Started');
+    // Start time
+    renderResult.getAllByText('Start time');
     renderResult.getAllByText('Mar 27, 2023, 6:08 PM');
+
+    // Completion time
+    renderResult.getAllByText('Completion time');
+    renderResult.getAllByText('Mar 27, 2023, 6:09 PM');
 
     // Duration
     renderResult.getAllByText('Duration');

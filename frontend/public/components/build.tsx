@@ -16,6 +16,7 @@ import {
 
 import { ONE_HOUR, ONE_MINUTE, Status, usePrometheusGate } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import {
   K8sResourceKindReference,
   referenceFor,
@@ -50,7 +51,7 @@ import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
 import { Area } from './graphs';
-import { BuildModel } from '../models';
+import { BuildConfigModel, BuildModel } from '../models';
 import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 
@@ -250,11 +251,14 @@ export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
 };
 
 export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => {
-  const { logSnippet, message, startTimestamp } = build.status;
+  const { logSnippet, message, startTimestamp, completionTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
   const duration = formatBuildDuration(build);
   const hasPipeline = build.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
   const { t } = useTranslation();
+  const BUILDCONFIG_TO_BUILD_REFERENCE_LABEL = 'openshift.io/build-config.name';
+  const buildConfigName =
+    build.status.config?.name || build.metadata.labels?.[BUILDCONFIG_TO_BUILD_REFERENCE_LABEL];
   return (
     <>
       <div className="co-m-pane__body">
@@ -278,20 +282,41 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
               >
                 {triggeredBy}
               </DetailsItem>
-              <DetailsItem
-                label={t('public~Started')}
-                obj={build}
-                path="status.startTimestamp"
-                hideEmpty
-              >
-                <Timestamp timestamp={startTimestamp} />
-              </DetailsItem>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
             <BuildStrategy resource={build}>
               <DetailsItem label={t('public~Status')} obj={build} path="status.phase">
                 <Status status={build.status.phase} />
+              </DetailsItem>
+
+              {buildConfigName && (
+                <DetailsItem label={t('public~BuildConfig')} obj={build} path="status.config">
+                  <ResourceLink
+                    groupVersionKind={getGroupVersionKindForModel(BuildConfigModel)}
+                    namespace={build.metadata.namespace}
+                    name={buildConfigName}
+                  />
+                </DetailsItem>
+              )}
+              <DetailsItem
+                label={t('public~Start time')}
+                obj={build}
+                path="status.startTimestamp"
+                hideEmpty
+              >
+                <Timestamp timestamp={startTimestamp} />
+              </DetailsItem>
+              <DetailsItem
+                label={t('public~Completion time')}
+                obj={build}
+                path="status.completionTimestamp"
+                hideEmpty
+              >
+                <Timestamp timestamp={completionTimestamp} />
+              </DetailsItem>
+              <DetailsItem label={t('public~Duration')} obj={build} path="status.duration">
+                {duration}
               </DetailsItem>
               <DetailsItem label={t('public~Message')} obj={build} path="status.message" hideEmpty>
                 {message}
@@ -303,14 +328,6 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
                 hideEmpty
               >
                 <pre className="co-pre">{logSnippet}</pre>
-              </DetailsItem>
-              <DetailsItem
-                label={t('public~Duration')}
-                obj={build}
-                path="status.duration"
-                hideEmpty
-              >
-                {duration}
               </DetailsItem>
             </BuildStrategy>
           </div>
