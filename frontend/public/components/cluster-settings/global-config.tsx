@@ -115,21 +115,24 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
         };
       });
       const allItems = [...winnowedResponses, ...usableConfigs]
-        .map((item) => {
-          const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
-          const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
-          return {
-            label: item.model.kind,
-            apiGroup: item.model.apiGroup,
-            id: item.id,
-            description: getResourceDescription(item.model),
-            path: resourceLink,
-            menuItems: [
-              editYAMLMenuItem(item.model.kind, resourceLink),
-              viewAPIExplorerMenuItem(item.model.kind, apiExplorerLink),
-              ...(item.model.kind === 'OAuth' ? oauthMenuItems : []),
-            ],
-          };
+        .flatMap((item) => {
+          if (item.model) {
+            const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
+            const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
+            return {
+              label: item.model.kind,
+              apiGroup: item.model.apiGroup,
+              id: item.id,
+              description: getResourceDescription(item.model),
+              path: resourceLink,
+              menuItems: [
+                editYAMLMenuItem(item.model.kind, resourceLink),
+                viewAPIExplorerMenuItem(item.model.kind, apiExplorerLink),
+                ...(item.model.kind === 'OAuth' ? oauthMenuItems : []),
+              ],
+            };
+          }
+          return [];
         })
         .concat([
           {
