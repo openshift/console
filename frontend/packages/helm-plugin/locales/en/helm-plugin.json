@@ -88,7 +88,7 @@
   "TLS Client config": "TLS Client config",
   "Select Secret": "Select Secret",
   "Edit Helm Chart Repository": "Edit Helm Chart Repository",
-  "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.": "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.",
+  "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.": "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.",
   "The repository name cannot exceed than 100 characters.": "The repository name cannot exceed than 100 characters.",
   "Required": "Required",
   "The repository name cannot exceed than 2048 characters.": "The repository name cannot exceed than 2048 characters.",

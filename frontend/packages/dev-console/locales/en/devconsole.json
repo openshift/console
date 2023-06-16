@@ -353,7 +353,7 @@
   "This is not a supported in-context type": "This is not a supported in-context type",
   "{{label}} Utilization": "{{label}} Utilization",
   "{{label}} request and limit must be set before {{label}} utilization can be set.": "{{label}} request and limit must be set before {{label}} utilization can be set.",
-  "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.": "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.",
+  "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.": "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.",
   "Cannot be longer than 253 characters.": "Cannot be longer than 253 characters.",
   "Minimum Pods must be an integer.": "Minimum Pods must be an integer.",
   "Minimum Pods must greater than or equal to 1.": "Minimum Pods must greater than or equal to 1.",

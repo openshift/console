@@ -6,6 +6,7 @@ import {
   DeployImageFormData,
   UploadJarFormData,
 } from '../components/import/import-types';
+import { createResourceName } from '../components/import/import-validation-utils';
 import { makePortName } from './imagestream-utils';
 import {
   getAppLabels,
@@ -90,7 +91,7 @@ export const createService = (
     kind: 'Service',
     apiVersion: 'v1',
     metadata: {
-      name,
+      name: createResourceName(name),
       namespace,
       labels: { ...defaultLabels, ...userLabels },
       annotations: { ...defaultAnnotations },

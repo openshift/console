@@ -29,7 +29,7 @@ export const repositoryValidationSchema = (t: TFunction) =>
       .string()
       .matches(nameRegex, {
         message: t(
-          'pipelines-plugin~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+          'pipelines-plugin~Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.',
         ),
         excludeEmptyString: true,
       })
