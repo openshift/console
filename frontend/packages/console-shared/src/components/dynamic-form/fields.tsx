@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
 import { FieldProps, UiSchema } from '@rjsf/core';
 import SchemaField, { SchemaFieldProps } from '@rjsf/core/dist/cjs/components/fields/SchemaField';
-import { getUiOptions } from '@rjsf/core/dist/cjs/utils';
+import { retrieveSchema, getUiOptions } from '@rjsf/core/dist/cjs/utils';
 import * as classnames from 'classnames';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
@@ -322,7 +322,25 @@ export const DropdownField: React.FC<FieldProps> = ({
 
 export const CustomSchemaField: React.FC<SchemaFieldProps> = (props) => {
   // If the provided schema will not generate any form field elements, return null.
-  if (hasNoFields(props.schema, props.uiSchema)) {
+  // To check that, it's required to resolving definition references ($ref) in the
+  // JSON schema as it is implemented in the origin SchemaField:
+  // https://github.com/rjsf-team/react-jsonschema-form/blob/v2.5.1/packages/core/src/components/fields/SchemaField.js#L226-L244
+  const {
+    schema: fieldSchema,
+    registry: { rootSchema },
+    formData,
+    uiSchema,
+  } = props;
+
+  let resolvedSchema = fieldSchema;
+  try {
+    resolvedSchema = retrieveSchema(fieldSchema, rootSchema, formData);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('dynamic-form CustomSchemaField retrieveSchema error:', error);
+  }
+
+  if (hasNoFields(resolvedSchema, uiSchema)) {
     return null;
   }
 

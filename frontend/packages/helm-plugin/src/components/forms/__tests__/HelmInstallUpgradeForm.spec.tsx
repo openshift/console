@@ -7,13 +7,17 @@ import { InputField, SyncedEditorField, FormHeader, FormFooter } from '@console/
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { HelmActionType } from '../../../types/helm-types';
-import HelmInstallUpgradeForm from '../install-upgrade/HelmInstallUpgradeForm';
+import HelmInstallUpgradeForm, {
+  HelmInstallUpgradeFormData,
+} from '../install-upgrade/HelmInstallUpgradeForm';
 
-const formValues = {
+const formValues: HelmInstallUpgradeFormData = {
   releaseName: 'helm-release',
   chartName: 'helm-release',
+  chartRepoName: 'helm-repo',
   chartVersion: '0.3',
   chartReadme: 'some-readme',
+  appVersion: '0.3',
   yamlData: 'chart-yaml-values',
   formData: {
     test: 'data',
@@ -53,6 +57,7 @@ const componentProps = {
 const props: React.ComponentProps<typeof HelmInstallUpgradeForm> = {
   ...componentProps,
   ...formikFormProps,
+  initialValues: formValues,
   values: formValues,
   namespace: 'xyz',
 };

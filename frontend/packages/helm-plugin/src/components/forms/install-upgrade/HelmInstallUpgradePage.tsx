@@ -31,27 +31,12 @@ import {
 } from '../../../utils/helm-utils';
 import { getHelmActionValidationSchema } from '../../../utils/helm-validation-utils';
 import HelmChartMetaDescription from './HelmChartMetaDescription';
-import HelmInstallUpgradeForm from './HelmInstallUpgradeForm';
+import HelmInstallUpgradeForm, { HelmInstallUpgradeFormData } from './HelmInstallUpgradeForm';
 
 export type HelmInstallUpgradePageProps = RouteComponentProps<{
   ns?: string;
   releaseName?: string;
 }>;
-
-export type HelmInstallUpgradeFormData = {
-  releaseName: string;
-  chartURL?: string;
-  chartName: string;
-  chartIndexEntry?: string;
-  chartRepoName: string;
-  chartVersion: string;
-  chartReadme: string;
-  appVersion: string;
-  yamlData: string;
-  formData: any;
-  formSchema: JSONSchema7;
-  editorType: EditorType;
-};
 
 const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProps> = ({
   location,
@@ -162,26 +147,39 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     let valuesObj;
 
     if (editorType === EditorType.Form) {
-      const ajv = new Ajv();
-      const validSchema = ajv.validateSchema(formSchema);
-      const prunedFormData = prune(formData);
-      const validFormData = validSchema && ajv.validate(formSchema, prunedFormData);
-      if (validFormData) {
-        valuesObj = prunedFormData;
-      } else {
+      const ajv = new Ajv({ schemaId: 'auto' });
+      // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+      ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
+      try {
+        const validSchema = ajv.validateSchema(formSchema);
+        const prunedFormData = prune(formData);
+        const validFormData = validSchema && ajv.validate(formSchema, prunedFormData);
+        if (validFormData) {
+          valuesObj = prunedFormData;
+        } else {
+          actions.setStatus({
+            submitError: t('helm-plugin~Errors in the form - {{errorsText}}', {
+              errorsText: ajv.errorsText(),
+            }),
+          });
+          return Promise.resolve();
+        }
+      } catch (err) {
         actions.setStatus({
-          submitError: t('helm-plugin~Errors in the form - {{errorsText}}', {
-            errorsText: ajv.errorsText(),
+          submitError: t('helm-plugin~Invalid Form Schema - {{errorText}}', {
+            errorText: err.toString(),
           }),
         });
-        return Promise.resolve();
+        return Promise.reject(err);
       }
     } else if (yamlData) {
       try {
         valuesObj = safeLoad(yamlData);
       } catch (err) {
-        actions.setStatus({ submitError: t('helm-plugin~Invalid YAML - {{err}}', { err }) });
-        return Promise.resolve();
+        actions.setStatus({
+          submitError: t('helm-plugin~Invalid YAML - {{errorText}}', { errorText: err.toString() }),
+        });
+        return Promise.reject(err);
       }
     }
 

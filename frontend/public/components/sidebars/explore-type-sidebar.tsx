@@ -44,7 +44,10 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     ? currentSelection.path
     : [kindObj ? getDefinitionKey(kindObj, allDefinitions) : 'custom-schema'];
   const currentDefinition: SwaggerDefinition = _.get(allDefinitions, currentPath);
-  const currentProperties = currentDefinition?.properties || currentDefinition?.items?.properties;
+  const currentProperties =
+    currentDefinition?.properties ||
+    currentDefinition?.items?.properties ||
+    currentDefinition?.definitions;
 
   // Prefer the description saved in `currentSelection`. It won't always be defined in the definition itself.
   const description = currentSelection
@@ -130,13 +133,17 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
             {_.map(currentProperties, (definition: SwaggerDefinition, name: string) => {
               const path = getDrilldownPath(name);
               const definitionType = definition.type || getTypeForRef(getRef(definition));
+              const definitionTypeStr = Array.isArray(definitionType)
+                ? definitionType.join(' ')
+                : definitionType;
+
               return (
                 <li key={name} className="co-resource-sidebar-item">
                   <h5 className="co-resource-sidebar-item__header co-break-word">
                     <CamelCaseWrap value={name} />
                     &nbsp;
                     <small>
-                      <span className="co-break-word">{definitionType}</span>
+                      <span className="co-break-word">{definitionTypeStr}</span>
                       {required.has(name) && <> &ndash; required</>}
                     </small>
                   </h5>
