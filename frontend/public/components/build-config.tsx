@@ -9,8 +9,8 @@ import {
   referenceFor,
   referenceForModel,
 } from '../module/k8s';
-import { startBuild } from '../module/k8s/builds';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { cloneBuild, startBuild } from '../module/k8s/builds';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs, TableProps } from './factory';
 import { errorModal } from './modals';
 import {
   BuildHooks,
@@ -32,6 +32,7 @@ import {
   BuildEnvironmentComponent,
   BuildStrategyType,
   PipelineBuildStrategyAlert,
+  allPhases,
 } from './build';
 import { ResourceEventStream } from './events';
 import { BuildConfigModel, BuildModel } from '../models';
@@ -65,8 +66,32 @@ const startBuildAction: KebabAction = (kind, buildConfig) => ({
   },
 });
 
+const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig) => ({
+  // t('public~Start last run')
+  labelKey: 'public~Start last run',
+  hidden: !buildConfig.latestBuild,
+  callback: () =>
+    cloneBuild(buildConfig.latestBuild)
+      .then((clone) => {
+        history.push(resourceObjPath(clone, referenceFor(clone)));
+      })
+      .catch((err) => {
+        const error = err.message;
+        errorModal({ error });
+      }),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.plural,
+    subresource: 'instantiate',
+    name: buildConfig.metadata.name,
+    namespace: buildConfig.metadata.namespace,
+    verb: 'create',
+  },
+});
+
 const menuActions = [
   startBuildAction,
+  startLastBuildAction,
   ...Kebab.getExtensionsActionsForKind(BuildConfigModel),
   ...Kebab.factory.common,
 ];
@@ -157,12 +182,8 @@ const displayDurationInWords = (start: string, stop: string): string => {
   return durationInWords.trim();
 };
 
-const BuildConfigsTableRow: React.FC<RowFunctionArgs<K8sResourceKind, CustomData>> = ({
-  obj,
-  customData,
-}) => {
-  const latestBuild =
-    customData.builds.latestByBuildName[`${obj.metadata.name}-${obj.metadata.namespace}`];
+const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) => {
+  const latestBuild = obj?.latestBuild;
 
   const duration = displayDurationInWords(
     latestBuild?.status?.startTimestamp,
@@ -219,6 +240,8 @@ const isBuildNewerThen = (newBuild: K8sResourceKind, prevBuild: K8sResourceKind 
 const buildStrategy = (buildConfig: K8sResourceKind): BuildStrategyType =>
   buildConfig.spec.strategy.type;
 
+const buildStatus = (buildConfig: BuildConfig) => buildConfig?.latestBuild?.status?.phase;
+
 export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
   const { t } = useTranslation();
   const BuildConfigsTableHeader = () => {
@@ -238,18 +261,26 @@ export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
       },
       {
         title: t('public~Last run'),
+        transforms: [sortable],
+        sortField: 'latestBuild.metadata.name',
         props: { className: tableColumnClasses[2] },
       },
       {
         title: t('public~Last run status'),
+        transforms: [sortable],
+        sortField: 'latestBuild.status.phase',
         props: { className: tableColumnClasses[3] },
       },
       {
         title: t('public~Last run time'),
+        transforms: [sortable],
+        sortField: 'latestBuild.status.completionTimestamp',
         props: { className: tableColumnClasses[4] },
       },
       {
         title: t('public~Last run duration'),
+        transforms: [sortable],
+        sortFunc: 'latestRunDuration',
         props: { className: tableColumnClasses[5] },
       },
       {
@@ -285,13 +316,29 @@ export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
     }),
     [builds, buildsLoaded, buildsLoadError],
   );
+
+  const buildResource = props.data.map((buildConfig) => {
+    buildConfig.latestBuild =
+      customData.builds.latestByBuildName[
+        `${buildConfig.metadata.name}-${buildConfig.metadata.namespace}`
+      ];
+    return buildConfig;
+  });
+
   return (
     <Table
       {...props}
+      data={buildResource}
       aria-label={t('public~BuildConfigs')}
       Header={BuildConfigsTableHeader}
       Row={BuildConfigsTableRow}
-      customData={customData}
+      customSorts={{
+        latestRunDuration: (obj) =>
+          displayDurationInWords(
+            obj?.latestBuild?.status?.startTimestamp,
+            obj?.latestBuild?.status?.completionTimestamp,
+          ),
+      }}
       virtualize
     />
   );
@@ -309,12 +356,20 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
     { id: BuildStrategyType.Custom, title: t('public~Custom') },
   ];
 
+  const statusFilters = allPhases.map((phase) => ({ id: phase, title: phase }));
+
   const filters = [
     {
       filterGroupName: t('public~Build strategy'),
       type: 'build-strategy',
       reducer: buildStrategy,
       items: allStrategies,
+    },
+    {
+      filterGroupName: t('public~Build status'),
+      type: 'build-status',
+      reducer: buildStatus,
+      items: statusFilters,
     },
   ];
 
@@ -343,7 +398,7 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
 };
 BuildConfigsPage.displayName = 'BuildConfigsListPage';
 
-type BuildConfigsListProps = {
+type BuildConfigsListProps = TableProps & {
   namespace: string;
 };
 
@@ -369,4 +424,8 @@ type CustomData = {
     loaded: boolean;
     error: Error | undefined;
   };
+};
+
+type BuildConfig = K8sResourceKind & {
+  latestBuild?: K8sResourceKind;
 };

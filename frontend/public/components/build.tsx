@@ -503,7 +503,7 @@ BuildsList.displayName = 'BuildsList';
 
 export const buildPhase = (build) => build.status.phase;
 
-const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
+export const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
 
 export const BuildsPage: React.SFC<BuildsPageProps> = (props) => {
   const { t } = useTranslation();
