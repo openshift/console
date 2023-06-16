@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
 import {
   getDefinitionKey,
-  getSwaggerDefinitions,
   getSwaggerPath,
   K8sKind,
   SwaggerDefinition,
   SwaggerDefinitions,
+  fetchSwagger,
 } from '../../module/k8s';
 import { EmptyBox, LinkifyExternal } from '../utils';
 
@@ -27,14 +27,27 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   const [drilldownHistory, setDrilldownHistory] = React.useState([]);
   const { kindObj, schema } = props;
   const { t } = useTranslation();
+  const [allDefinitions, setAllDefinitions] = React.useState<SwaggerDefinitions>(null);
+
+  React.useEffect(() => {
+    if (kindObj) {
+      fetchSwagger()
+        .then((response) => {
+          setAllDefinitions(response);
+        })
+        .catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Could not fetch swagger definitions', err);
+        });
+    } else if (schema) {
+      setAllDefinitions({ 'custom-schema': schema });
+    }
+  }, [kindObj, schema]);
 
   if (!kindObj && !schema) {
     return null;
   }
 
-  const allDefinitions: SwaggerDefinitions = kindObj
-    ? getSwaggerDefinitions()
-    : schema && { 'custom-schema': schema };
   if (!allDefinitions) {
     return null;
   }
@@ -84,8 +97,11 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // - Inline property declartions for array items
   const getDrilldownPath = (name: string): string[] => {
     const path = kindObj
-      ? getSwaggerPath(allDefinitions, currentPath, name, true)
+      ? currentDefinition.items
+        ? getSwaggerPath(allDefinitions, [...currentPath, 'items'], name, true)
+        : getSwaggerPath(allDefinitions, currentPath, name, true)
       : [...currentPath, 'properties', name];
+
     // Only allow drilldown if the reference has additional properties to explore.
     const child = _.get(allDefinitions, path) as SwaggerDefinition;
     return _.has(child, 'properties') || _.has(child, 'items.properties') ? path : null;
