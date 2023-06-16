@@ -67,6 +67,8 @@ func NewProxy(cfg *Config) *Proxy {
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+			ctx, cancel := context.WithTimeout(ctx, dialerTimeout)
+			defer cancel()
 			return dialer.DialContext(ctx, network, addr)
 		},
 		TLSClientConfig:     cfg.TLSClientConfig,
