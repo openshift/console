@@ -3,17 +3,27 @@ export enum InvokeFormat {
   CloudEvent = 'CloudEvent',
 }
 
-export enum HTTPMessageTypes {
+export enum ModalPanel {
   Request = 'Request',
   Response = 'Response',
 }
 
-export enum RequestPaneTab {
-  Body = 'Body',
-  Options = 'Options',
-}
-
-export enum ResponsePaneTab {
-  Body = 'Body',
-  Info = 'Info',
-}
+export type TestFunctionFormikValues = {
+  request: {
+    format: InvokeFormat;
+    contentType: string;
+    isAdvancedSettingsExpanded: boolean;
+    type: string;
+    source: string;
+    customHeaders: string[][];
+    body: {
+      data: string;
+    };
+  };
+  response: {
+    status: string;
+    statusCode: number;
+    header: Record<string, string[]>;
+    body: string;
+  };
+};

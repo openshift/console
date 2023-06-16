@@ -632,6 +632,7 @@ export type CodeEditorProps = {
   options?: object;
   minHeight?: string | number;
   showShortcuts?: boolean;
+  showMiniMap?: boolean;
   toolbarLinks?: React.ReactNodeArray;
   onChange?: (newValue, event) => void;
   onSave?: () => void;

@@ -31,7 +31,9 @@ export const createModal: CreateModal = (getModalContainer) => {
   return { result };
 };
 
-export const createModalLauncher: CreateModalLauncher = (Component) => (props) => {
+export const createModalLauncher: CreateModalLauncher = (Component, modalWrapper = true) => (
+  props,
+) => {
   const getModalContainer: GetModalContainer = (onClose) => {
     const _handleClose = (e: React.SyntheticEvent) => {
       onClose && onClose(e);
@@ -46,21 +48,29 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
       <Provider store={store}>
         <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
           <CompatRouter>
-            <Modal
-              isOpen={true}
-              contentLabel={i18next.t('public~Modal')}
-              onRequestClose={_handleClose}
-              className={classNames('modal-dialog', props.modalClassName)}
-              overlayClassName="co-overlay"
-              shouldCloseOnOverlayClick={!props.blocking}
-              parentSelector={() => document.getElementById('modal-container')}
-            >
+            {modalWrapper ? (
+              <Modal
+                isOpen={true}
+                contentLabel={i18next.t('public~Modal')}
+                onRequestClose={_handleClose}
+                className={classNames('modal-dialog', props.modalClassName)}
+                overlayClassName="co-overlay"
+                shouldCloseOnOverlayClick={!props.blocking}
+                parentSelector={() => document.getElementById('modal-container')}
+              >
+                <Component
+                  {...(_.omit(props, 'blocking', 'modalClassName') as any)}
+                  cancel={_handleCancel}
+                  close={_handleClose}
+                />
+              </Modal>
+            ) : (
               <Component
                 {...(_.omit(props, 'blocking', 'modalClassName') as any)}
                 cancel={_handleCancel}
                 close={_handleClose}
               />
-            </Modal>
+            )}
           </CompatRouter>
         </Router>
       </Provider>
@@ -92,9 +102,9 @@ export const ModalTitle: React.SFC<ModalTitleProps> = ({
   </div>
 );
 
-export const ModalBody: React.SFC<ModalBodyProps> = ({ children, className }) => (
+export const ModalBody: React.SFC<ModalBodyProps> = ({ children }) => (
   <div className="modal-body">
-    <div className={classNames('modal-body-content', className)}>{children}</div>
+    <div className="modal-body-content">{children}</div>
   </div>
 );
 
@@ -103,11 +113,10 @@ export const ModalFooter: React.SFC<ModalFooterProps> = ({
   errorMessage,
   inProgress,
   children,
-  className = 'modal-footer',
 }) => {
   return (
     <ButtonBar
-      className={className}
+      className="modal-footer"
       errorMessage={errorMessage}
       infoMessage={message}
       inProgress={inProgress}
@@ -260,4 +269,5 @@ export type ModalSubmitFooterProps = {
 
 export type CreateModalLauncher = <P extends ModalComponentProps>(
   C: React.ComponentType<P>,
+  modalWrapper?: boolean,
 ) => (props: P & CreateModalLauncherProps) => { result: Promise<{}> };

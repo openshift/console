@@ -1,22 +1,14 @@
 import * as React from 'react';
-import { Modal, ModalVariant } from '@patternfly/react-core';
+import { Button, Modal, ModalVariant, Title, TitleSizes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import ServerlessFxIcon from '@console/dev-console/src/components/import/ServerlessFxIcon';
-import {
-  getGroupVersionKindForModel,
-  ResourceIcon,
-} from '@console/dynamic-plugin-sdk/src/lib-core';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalComponentProps,
-} from '@console/internal/components/factory/modal';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { ServiceModel } from '../../models';
+import { ModalComponentProps } from '@console/internal/components/factory/modal';
 import { ServiceKind } from '../../types';
-import ModalBodyWrapper from './modal-components/ModalBodyWrapper';
+import RequestPane from './RequestPane';
+import ResponsePane from './ResponsePane';
+import { ModalPanel } from './types';
+import { clearResponseValues } from './utils';
+
 import './TestFunctionModal.scss';
 
 interface TestFunctionModalProps {
@@ -27,59 +19,80 @@ type Props = FormikProps<FormikValues> & TestFunctionModalProps & ModalComponent
 
 const TestFunctionModal: React.FC<Props> = (props) => {
   const { t } = useTranslation();
-  const { handleSubmit, cancel, close, isSubmitting, status, service, setFieldValue } = props;
-  const { name, namespace } = service.data.metadata;
-  const [svc, loaded] = useK8sGet<ServiceKind>(ServiceModel, name, namespace);
+  const { handleSubmit, cancel, close, isSubmitting } = props;
+  const [currentView, setCurrentView] = React.useState(ModalPanel.Request);
+  const header = (
+    <>
+      <Title id="modal-custom-header-label" headingLevel="h1" size={TitleSizes['2xl']}>
+        {t(`knative-plugin~Test Serverless Function`)}
+      </Title>
+    </>
+  );
 
-  React.useEffect(() => {
-    if (loaded) {
-      setFieldValue('endpoint.url', svc.status.url);
-    }
-  }, [loaded, svc, setFieldValue]);
+  const footer = (
+    <>
+      {currentView === ModalPanel.Request ? (
+        <form
+          onSubmit={() => {
+            handleSubmit();
+            setCurrentView(ModalPanel.Response);
+          }}
+        >
+          <Button type="submit" variant="primary" data-test="test-action" isDisabled={isSubmitting}>
+            {t('knative-plugin~Test')}
+          </Button>
+          &nbsp; &nbsp;
+          <Button type="button" variant="secondary" data-test="cancel-action" onClick={cancel}>
+            {t('knative-plugin~Cancel')}
+          </Button>
+        </form>
+      ) : (
+        <>
+          <Button
+            type="button"
+            variant="primary"
+            data-test="back-action"
+            onClick={() => {
+              clearResponseValues(props);
+              setCurrentView(ModalPanel.Request);
+            }}
+          >
+            {t('knative-plugin~Back')}
+          </Button>
+          &nbsp;
+          <Button
+            type="button"
+            variant="secondary"
+            data-test="close-action"
+            onClick={() => {
+              clearResponseValues(props);
+              close();
+            }}
+          >
+            {t('knative-plugin~Close')}
+          </Button>
+        </>
+      )}
+    </>
+  );
 
   return (
     <Modal
+      variant={ModalVariant.small}
       isOpen
-      showClose={false}
-      variant={ModalVariant.large}
+      header={header}
+      className="kn-test-sf-modal"
+      onClose={close}
       position="top"
-      positionOffset="3%"
-      className="kn-test-sf-modal__size"
-      footer={
-        <form onSubmit={handleSubmit}>
-          <ModalSubmitFooter
-            inProgress={isSubmitting}
-            submitDisabled={isSubmitting}
-            submitText={t('knative-plugin~Invoke')}
-            cancelText={t('knative-plugin~Cancel')}
-            className="kn-test-sf-modal__footer"
-            cancel={cancel}
-            errorMessage={status.error}
-            buttonAlignment="left"
-          />
-        </form>
-      }
+      footer={footer}
+      data-test="test-serverless-function"
     >
-      <div className="modal-content">
-        <ModalTitle close={close} className="kn-test-sf-modal__title">
-          <span className="kn-test-sf-modal__title__icon">
-            <ServerlessFxIcon />
-          </span>
-          {t(`knative-plugin~Test Serverless Function`)} &nbsp;
-          <ResourceIcon
-            groupVersionKind={getGroupVersionKindForModel(ServiceModel)}
-            className="kn-test-sf-modal__title__badge"
-          />
-          {t(`knative-plugin~${name}`)}
-        </ModalTitle>
-        <ModalBody className="kn-test-sf-modal__body">
-          <p className="kn-test-sf-modal__body__description">
-            {t(
-              'knative-plugin~Invokes the function by sending a test request to the currently running function instance',
-            )}
-          </p>
-          <ModalBodyWrapper {...props} />
-        </ModalBody>
+      <div className="kn-test-sf-modal__body">
+        {currentView === ModalPanel.Request ? (
+          <RequestPane {...props} />
+        ) : (
+          <ResponsePane {...props} />
+        )}
       </div>
     </Modal>
   );
