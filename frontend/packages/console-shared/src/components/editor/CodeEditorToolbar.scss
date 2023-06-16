@@ -1,23 +1,16 @@
 @import '../../../../../public/style/vars';
 
-.ocs-yaml-editor-toolbar {
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  justify-content: flex-end;
-  margin: 2px;
-  z-index: 1;
-
-  @media(max-width: $screen-sm-max) {
-    display: none;
-  }
-}
-
-.ocs-yaml-editor-toolbar__link {
-  display: inline-block;
-}
-
 .ocs-yaml-editor-shortcut__text {
   color: var(--pf-global--Color--200);
   margin-left: var(--pf-global--spacer--sm);
+}
+
+.ocs-yaml-editor-toolbar {
+  align-items: center;
+}
+
+@media(max-width: $screen-sm-max) {
+  .ocs-yaml-editor-toolbar__link {
+      display: none;
+    }
 }
