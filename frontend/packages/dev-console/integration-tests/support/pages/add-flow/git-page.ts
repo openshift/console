@@ -363,4 +363,17 @@ export const gitPage = {
     cy.get(gitPO.advancedOptions.routing.labels).type(labelRouteName),
   notificationVerify: (message: string) =>
     cy.get(gitPO.pipeline.infoMessage).should('contain.text', message),
+  checkIfDevfileImportStrategyDisabled: () =>
+    cy.get(gitPO.importStrategy.devFileStrategy).should('have.attr', 'aria-disabled', 'true'),
+  clickEditImportStrategy: () => cy.get(gitPO.importStrategy.editImportStrategyBtn).click(),
+  enterDevfilePath: (devfilePath: string) => {
+    cy.get(gitPO.importStrategy.devFilePathInput)
+      .clear()
+      .type(devfilePath);
+  },
+  checkDevFileHelpText: (message: string) => {
+    cy.get(gitPO.importStrategy.devFileHelperText)
+      .contains(message)
+      .should('exist');
+  },
 };
