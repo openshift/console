@@ -68,6 +68,14 @@ export const getPipelineName = (pipeline?: PipelineKind, latestRun?: PipelineRun
   return null;
 };
 
+export const getPipelineRunGenerateName = (pipelineRun: PipelineRunKind): string => {
+  if (pipelineRun.metadata.generateName) {
+    return pipelineRun.metadata.generateName;
+  }
+
+  return `${pipelineRun.metadata.name?.replace(/-[a-z0-9]{5,6}$/, '')}-`;
+};
+
 export const getPipelineRunData = (
   pipeline: PipelineKind = null,
   latestRun?: PipelineRunKind,
@@ -112,7 +120,10 @@ export const getPipelineRunData = (
             generateName: `${pipelineName}-`,
           }
         : {
-            name: `${pipelineName}-${getRandomChars()}`,
+            name:
+              latestRun?.metadata?.name !== undefined
+                ? `${getPipelineRunGenerateName(latestRun)}${getRandomChars()}`
+                : `${pipelineName}-${getRandomChars()}`,
           }),
       annotations,
       namespace: pipeline ? pipeline.metadata.namespace : latestRun.metadata.namespace,
