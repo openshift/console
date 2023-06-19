@@ -61,6 +61,7 @@
   "{{ready, number}} of {{count, number}} Pod_other": "{{ready, number}}/{{count, number}} Pod",
   "{{length}} Pods": "{{length}} Pod",
   "Rollout in progress...": "ロールアウトが進行中...",
+  "Helm Release": "Helm リリース",
   "{{groupLabel}} {{resourceLabel}}": "{{groupLabel}} {{resourceLabel}}",
   "{{resourceLabel}} sub-resources": "{{resourceLabel}} サブリソース",
   "{{kindLabel}} {{label}}": "{{kindLabel}} {{label}}",

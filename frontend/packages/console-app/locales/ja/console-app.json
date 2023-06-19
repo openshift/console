@@ -560,6 +560,7 @@
   "Unable to load": "ロードできません",
   "Select a perspective": "パースペクティブの選択",
   "Select an option": "オプションの選択",
+  "User Preferences {{activeTab}}": "ユーザー設定 {{activeTab}}",
   "User Preferences": "ユーザー設定",
   "Set your individual preferences for the console experience. Any changes will be autosaved.": "コンソールエクスペリエンスに個別の設定を行います。変更は自動保存されます。",
   "Only {{volumeMode}} volume mode is available for {{storageClass}} with {{accessMode}} access mode": "{{accessMode}} アクセスモードの {{storageClass}} には {{volumeMode}} ボリュームモードのみを使用できます",
