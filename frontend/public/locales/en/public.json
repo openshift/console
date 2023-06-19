@@ -76,7 +76,7 @@
   "Source": "Source",
   "Custom": "Custom",
   "Build strategy": "Build strategy",
-  "Build status": "Build status",
+  "BuildRun status": "BuildRun status",
   "Pipeline build logs are available through Jenkins (linked below)": "Pipeline build logs are available through Jenkins (linked below)",
   "A link to the Jenkins pipeline build logs will appear below when the build starts": "A link to the Jenkins pipeline build logs will appear below when the build starts",
   "See Jenkins log": "See Jenkins log",

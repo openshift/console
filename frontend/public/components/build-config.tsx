@@ -366,10 +366,14 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
       items: allStrategies,
     },
     {
-      filterGroupName: t('public~Build status'),
-      type: 'build-status',
+      filterGroupName: t('public~BuildRun status'),
+      type: 'build-run-status',
       reducer: buildStatus,
       items: statusFilters,
+      filter: (filterValue, build: BuildConfig): boolean => {
+        const status = build?.latestBuild?.status?.phase;
+        return !filterValue.selected?.length || (status && filterValue.selected.includes(status));
+      },
     },
   ];
 
