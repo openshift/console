@@ -32,7 +32,6 @@ import {
   BuildEnvironmentComponent,
   BuildStrategyType,
   PipelineBuildStrategyAlert,
-  allPhases,
 } from './build';
 import { ResourceEventStream } from './events';
 import { BuildConfigModel, BuildModel } from '../models';
@@ -66,28 +65,32 @@ const startBuildAction: KebabAction = (kind, buildConfig) => ({
   },
 });
 
-const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig) => ({
-  // t('public~Start last run')
-  labelKey: 'public~Start last run',
-  hidden: !buildConfig.latestBuild,
-  callback: () =>
-    cloneBuild(buildConfig.latestBuild)
-      .then((clone) => {
-        history.push(resourceObjPath(clone, referenceFor(clone)));
-      })
-      .catch((err) => {
-        const error = err.message;
-        errorModal({ error });
-      }),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    subresource: 'instantiate',
-    name: buildConfig.metadata.name,
-    namespace: buildConfig.metadata.namespace,
-    verb: 'create',
-  },
-});
+const isLastbuildPresent = (build) => (build ? true : false);
+
+const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig) => {
+  return {
+    // t('public~Start last run')
+    labelKey: 'public~Start last run',
+    callback: () =>
+      cloneBuild(buildConfig.latestBuild)
+        .then((clone) => {
+          history.push(resourceObjPath(clone, referenceFor(clone)));
+        })
+        .catch((err) => {
+          const error = err.message;
+          errorModal({ error });
+        }),
+    hidden: !isLastbuildPresent(buildConfig.latestBuild),
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.plural,
+      subresource: 'instantiate',
+      name: buildConfig.metadata.name,
+      namespace: buildConfig.metadata.namespace,
+      verb: 'create',
+    },
+  };
+};
 
 const menuActions = [
   startBuildAction,
@@ -151,11 +154,11 @@ const tableColumnClasses = [
 ];
 
 const displayDurationInWords = (start: string, stop: string): string => {
-  if (!start || !stop) {
+  if (!start) {
     return '-';
   }
   const startTime = new Date(start).getTime();
-  const stopTime = new Date(stop).getTime();
+  const stopTime = stop ? new Date(stop).getTime() : new Date().getTime();
   let duration = (stopTime - startTime) / 1000;
   const time = [];
   let durationInWords = '';
@@ -184,11 +187,6 @@ const displayDurationInWords = (start: string, stop: string): string => {
 
 const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) => {
   const latestBuild = obj?.latestBuild;
-
-  const duration = displayDurationInWords(
-    latestBuild?.status?.startTimestamp,
-    latestBuild?.status?.completionTimestamp,
-  );
 
   return (
     <>
@@ -222,7 +220,12 @@ const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) =
       <TableData className={tableColumnClasses[4]}>
         {latestBuild ? <Timestamp timestamp={latestBuild.metadata?.creationTimestamp} /> : '-'}
       </TableData>
-      <TableData className={tableColumnClasses[5]}>{latestBuild ? duration : '-'}</TableData>
+      <TableData className={tableColumnClasses[5]}>
+        {displayDurationInWords(
+          latestBuild?.status?.startTimestamp,
+          latestBuild?.status?.completionTimestamp,
+        )}
+      </TableData>
       <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={BuildConfigsReference} resource={obj} />
       </TableData>
@@ -240,7 +243,12 @@ const isBuildNewerThen = (newBuild: K8sResourceKind, prevBuild: K8sResourceKind 
 const buildStrategy = (buildConfig: K8sResourceKind): BuildStrategyType =>
   buildConfig.spec.strategy.type;
 
-const buildStatus = (buildConfig: BuildConfig) => buildConfig?.latestBuild?.status?.phase;
+const buildStatus = (buildConfig: BuildConfig) => {
+  if (buildConfig.latestBuild) {
+    return buildConfig.latestBuild?.status?.phase;
+  }
+  return 'Unknown';
+};
 
 export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
   const { t } = useTranslation();
@@ -356,7 +364,16 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
     { id: BuildStrategyType.Custom, title: t('public~Custom') },
   ];
 
-  const statusFilters = allPhases.map((phase) => ({ id: phase, title: phase }));
+  const statusFilters = [
+    { id: 'New', title: t('public~New') },
+    { id: 'Pending', title: t('public~Pending') },
+    { id: 'Running', title: t('public~Running') },
+    { id: 'Complete', title: t('public~Complete') },
+    { id: 'Failed', title: t('public~Failed') },
+    { id: 'Error', title: t('public~Error') },
+    { id: 'Cancelled', title: t('public~Cancelled') },
+    { id: 'Unknown', title: t('public~Unknown') },
+  ];
 
   const filters = [
     {
@@ -371,7 +388,7 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
       reducer: buildStatus,
       items: statusFilters,
       filter: (filterValue, build: BuildConfig): boolean => {
-        const status = build?.latestBuild?.status?.phase;
+        const status = build?.latestBuild?.status?.phase ?? 'Unknown';
         return !filterValue.selected?.length || (status && filterValue.selected.includes(status));
       },
     },
