@@ -369,14 +369,14 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
   const channels = pkgManifest.status?.channels || [];
   const channel = channels.find((ch) => ch.currentCSV === currentCSV) || channels[0];
   const displayName = channel?.currentCSVDesc?.displayName || '';
-  const logoVersion = channel?.currentCSVDesc?.version || '';
+  const startingCSV = resources.subscription.data?.spec?.startingCSV;
 
   const CSVLogo = (
     <ClusterServiceVersionLogo
       displayName={displayName}
       icon={iconFor(pkgManifest)}
       provider={pkgManifest.status?.provider?.name || ''}
-      version={logoVersion}
+      version={startingCSV}
     />
   );
 

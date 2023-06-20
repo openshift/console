@@ -159,7 +159,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             loaded &&
             clusterServiceVersionFor(
               clusterServiceVersions?.data,
-              subscription?.status?.currentCSV,
+              subscription?.status?.installedCSV,
             );
 
           const installed = loaded && clusterServiceVersion?.status?.phase === 'Succeeded';

@@ -962,6 +962,10 @@ export const mockProviderStrings = [
 export const operatorHubDetailsProps = {
   item: operatorHubTileViewPageProps.items[0],
   closeOverlay: null,
+  channel: 'foo',
+  version: '1.0.0-Beta',
+  setUpdateChannel: () => {},
+  setUpdateVersion: () => {},
 };
 
 export const itemWithLongDescription = {
