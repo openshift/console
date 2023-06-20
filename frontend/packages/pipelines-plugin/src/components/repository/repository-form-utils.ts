@@ -4,6 +4,7 @@ import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { gitUrlRegex } from '@console/dev-console/src/components/import/validation-schema';
+import { bitBucketUserNameRegex } from '@console/dev-console/src/utils/yup-validation-util';
 import {
   k8sCreateResource,
   k8sGetResource,
@@ -18,7 +19,7 @@ import { nameRegex } from '@console/shared/src';
 import { RepositoryModel } from '../../models';
 import { PAC_TEMPLATE_DEFAULT } from '../pac/const';
 import { PIPELINERUN_TEMPLATE_NAMESPACE } from '../pipelines/const';
-import { RepositoryRuntimes } from './consts';
+import { RepositoryRuntimes, gitProviderTypesHosts } from './consts';
 import { RepositoryFormValues } from './types';
 
 export const dryRunOpt = { dryRun: 'All' };
@@ -39,7 +40,75 @@ export const repositoryValidationSchema = (t: TFunction) =>
       .matches(gitUrlRegex, t('pipelines-plugin~Invalid Git URL.'))
       .required(t('pipelines-plugin~Required')),
     accessToken: yup.string(),
+    webhook: yup
+      .object()
+      .when('gitProvider', {
+        is: GitProvider.BITBUCKET,
+        then: yup.object().shape({
+          user: yup
+            .string()
+            .matches(bitBucketUserNameRegex, {
+              message: t(
+                'pipelines-plugin~Name must consist of lower-case letters, numbers, underscores and hyphens. It must start with a letter and end with a letter or number.',
+              ),
+              excludeEmptyString: true,
+            })
+            .required(t('pipelines-plugin~Required')),
+        }),
+      })
+      .when(['method', 'gitProvider', 'gitUrl'], {
+        is: (method, gitProvider, gitUrl) =>
+          gitUrl && !(gitProvider === GitProvider.GITHUB && method === GitProvider.GITHUB),
+        then: yup.object().shape({
+          token: yup.string().test('oneOfRequired', 'Required', function () {
+            return this.parent.token || this.parent.secretRef;
+          }),
+          secretRef: yup.string().test('oneOfRequired', 'Required', function () {
+            return this.parent.token || this.parent.secretRef;
+          }),
+        }),
+      }),
   });
+
+export const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
+  yup.object().shape({
+    webhook: yup
+      .object()
+      .when('gitProvider', {
+        is: GitProvider.BITBUCKET,
+        then: yup.object().shape({
+          user: yup
+            .string()
+            .matches(nameRegex, {
+              message: t(
+                'pipelines-plugin~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+              ),
+              excludeEmptyString: true,
+            })
+            .required(t('pipelines-plugin~Required')),
+        }),
+      })
+      .when(['method', 'gitProvider', 'gitUrl'], {
+        is: (method, gitProvider, gitUrl) =>
+          gitUrl &&
+          gitProvider &&
+          !(gitProvider === GitProvider.GITHUB && method === GitProvider.GITHUB),
+        then: yup.object().shape({
+          token: yup.string().test('oneOfRequired', 'Required', function () {
+            return this.parent.token || this.parent.secretRef;
+          }),
+          secretRef: yup.string().test('oneOfRequired', 'Required', function () {
+            return this.parent.token || this.parent.secretRef;
+          }),
+        }),
+      }),
+  });
+
+export const importFlowRepositoryValidationSchema = (t: TFunction) => {
+  return yup.object().shape({
+    repository: pipelinesAccessTokenValidationSchema(t),
+  });
+};
 
 const createTokenSecret = async (
   repositoryName: string,
@@ -79,7 +148,7 @@ export const createRepositoryResources = async (
   const {
     name,
     gitUrl,
-    webhook: { secretObj, method, token, secret: webhookSecret },
+    webhook: { secretObj, method, token, secret: webhookSecret, user },
   } = values;
   const encodedSecret = Base64.encode(webhookSecret);
   let secret: SecretKind;
@@ -112,7 +181,12 @@ export const createRepositoryResources = async (
         ? {
             // eslint-disable-next-line @typescript-eslint/naming-convention
             git_provider: {
-              ...(gitHost !== 'github.com' ? { url: gitHost } : {}),
+              ...(!gitProviderTypesHosts.includes(gitHost) ? { url: gitHost } : {}),
+              ...(gitHost === 'bitbucket.org'
+                ? {
+                    user,
+                  }
+                : {}),
               ...(secretRef
                 ? {
                     secret: {

@@ -3,6 +3,7 @@ import { ExpandableSection } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { GitProvider } from '@console/git-service';
+import { PacConfigurationTypes } from '../consts';
 import { usePacInfo } from '../hooks/pac-hook';
 import { RepositoryFormValues } from '../types';
 import ConfigTypeSection from './ConfigTypeSection';
@@ -18,6 +19,9 @@ const AdvancedConfigurations = () => {
     if (loaded && !!pac && pac.data['app-link']) {
       setGithubAppAvailable(true);
       setFieldValue('githubAppAvailable', true);
+      setFieldValue('method', PacConfigurationTypes.GITHUB);
+    } else {
+      setFieldValue('method', PacConfigurationTypes.WEBHOOK);
     }
   }, [pac, loaded, setFieldValue]);
 
