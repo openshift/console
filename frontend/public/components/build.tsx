@@ -24,7 +24,7 @@ import {
   k8sPatch,
   K8sKind,
 } from '../module/k8s';
-import { cloneBuild, formatBuildDuration, getBuildNumber } from '../module/k8s/builds';
+import { cloneBuild, getBuildNumber } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { errorModal, confirmModal } from './modals';
 import {
@@ -54,6 +54,7 @@ import { Area } from './graphs';
 import { BuildConfigModel, BuildModel } from '../models';
 import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import { displayDurationInWords } from './utils/build-utils';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
@@ -253,7 +254,6 @@ export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
 export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => {
   const { logSnippet, message, startTimestamp, completionTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
-  const duration = formatBuildDuration(build);
   const hasPipeline = build.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
   const { t } = useTranslation();
   const BUILDCONFIG_TO_BUILD_REFERENCE_LABEL = 'openshift.io/build-config.name';
@@ -316,7 +316,10 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
                 <Timestamp timestamp={completionTimestamp} />
               </DetailsItem>
               <DetailsItem label={t('public~Duration')} obj={build} path="status.duration">
-                {duration}
+                {displayDurationInWords(
+                  build?.status?.startTimestamp,
+                  build?.status?.completionTimestamp,
+                )}
               </DetailsItem>
               <DetailsItem label={t('public~Message')} obj={build} path="status.message" hideEmpty>
                 {message}
@@ -442,7 +445,10 @@ const BuildsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => 
         <Status status={obj.status?.phase} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.status?.startTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        {displayDurationInWords(obj.status?.startTimestamp, obj.status?.completionTimestamp)}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={BuildsReference} resource={obj} />
@@ -475,8 +481,14 @@ export const BuildsList: React.SFC = (props) => {
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('public~Created'),
-        sortField: 'metadata.creationTimestamp',
+        title: t('public~Start time'),
+        sortField: 'status.startTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('public~Duration'),
+        sortField: 'status.duration',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
       },

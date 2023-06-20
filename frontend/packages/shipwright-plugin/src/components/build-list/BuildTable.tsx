@@ -99,8 +99,8 @@ export const BuildRow: React.FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
         {build.latestBuild ? (
           <ResourceLink
             kind={buildRunKindReference}
-            name={build?.latestBuild?.metadata?.name}
-            namespace={build?.latestBuild?.metadata?.namespace}
+            name={build.latestBuild.metadata?.name}
+            namespace={build.latestBuild.metadata?.namespace}
           />
         ) : (
           '-'
@@ -147,7 +147,7 @@ export const BuildTable: React.FC<BuildTableProps> = (props) => {
     isList: true,
   });
 
-  const customData = React.useMemo<CustomData>(
+  const data = React.useMemo<CustomData>(
     () => ({
       buildRuns: {
         latestByBuildName: buildRuns.reduce<Record<string, BuildRun>>((acc, buildRun) => {
@@ -168,9 +168,7 @@ export const BuildTable: React.FC<BuildTableProps> = (props) => {
   );
   const buildResource = props.data.map((sBuild) => {
     sBuild.latestBuild =
-      customData.buildRuns.latestByBuildName[
-        `${sBuild.metadata.name}-${sBuild.metadata.namespace}`
-      ];
+      data.buildRuns.latestByBuildName[`${sBuild.metadata.name}-${sBuild.metadata.namespace}`];
     return sBuild;
   });
 

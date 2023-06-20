@@ -38,7 +38,7 @@ import { BuildConfigModel, BuildModel } from '../models';
 import Helmet from 'react-helmet';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { Status } from '@console/shared';
-import i18next from 'i18next';
+import { displayDurationInWords } from './utils/build-utils';
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 const BuildsReference: K8sResourceKindReference = 'Build';
@@ -65,8 +65,6 @@ const startBuildAction: KebabAction = (kind, buildConfig) => ({
   },
 });
 
-const isLastbuildPresent = (build) => (build ? true : false);
-
 const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig) => {
   return {
     // t('public~Start last run')
@@ -80,7 +78,7 @@ const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig) => {
           const error = err.message;
           errorModal({ error });
         }),
-    hidden: !isLastbuildPresent(buildConfig.latestBuild),
+    hidden: !!buildConfig.latestBuild,
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
@@ -153,38 +151,6 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const displayDurationInWords = (start: string, stop: string): string => {
-  if (!start) {
-    return '-';
-  }
-  const startTime = new Date(start).getTime();
-  const stopTime = stop ? new Date(stop).getTime() : new Date().getTime();
-  let duration = (stopTime - startTime) / 1000;
-  const time = [];
-  let durationInWords = '';
-  while (duration >= 60) {
-    time.push(duration % 60);
-    duration = Math.floor(duration / 60);
-  }
-  time.push(duration);
-  if (time[2]) {
-    durationInWords += `${time[2]} ${
-      time[2] > 1 ? i18next.t('public~hours') : i18next.t('public~hour')
-    } `;
-  }
-  if (time[1]) {
-    durationInWords += `${time[1]} ${
-      time[1] > 1 ? i18next.t('public~minutes') : i18next.t('public~minute')
-    } `;
-  }
-  if (time[0]) {
-    durationInWords += `${time[0]} ${
-      time[0] > 1 ? i18next.t('public~seconds') : i18next.t('public~second')
-    } `;
-  }
-  return durationInWords.trim();
-};
-
 const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) => {
   const latestBuild = obj?.latestBuild;
 
@@ -243,11 +209,8 @@ const isBuildNewerThen = (newBuild: K8sResourceKind, prevBuild: K8sResourceKind 
 const buildStrategy = (buildConfig: K8sResourceKind): BuildStrategyType =>
   buildConfig.spec.strategy.type;
 
-const buildStatus = (buildConfig: BuildConfig) => {
-  if (buildConfig.latestBuild) {
-    return buildConfig.latestBuild?.status?.phase;
-  }
-  return 'Unknown';
+const getBuildStatus = (buildConfig: BuildConfig) => {
+  return buildConfig?.latestBuild?.status?.phase || 'Unknown';
 };
 
 export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
@@ -305,7 +268,7 @@ export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
     namespace: props.namespace,
     isList: true,
   });
-  const customData = React.useMemo<CustomData>(
+  const data = React.useMemo<CustomData>(
     () => ({
       builds: {
         latestByBuildName: builds.reduce<Record<string, K8sResourceKind>>((acc, build) => {
@@ -327,7 +290,7 @@ export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
 
   const buildResource = props.data.map((buildConfig) => {
     buildConfig.latestBuild =
-      customData.builds.latestByBuildName[
+      data.builds.latestByBuildName[
         `${buildConfig.metadata.name}-${buildConfig.metadata.namespace}`
       ];
     return buildConfig;
@@ -383,9 +346,9 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
       items: allStrategies,
     },
     {
-      filterGroupName: t('public~BuildRun status'),
+      filterGroupName: t('public~Build status'),
       type: 'build-run-status',
-      reducer: buildStatus,
+      reducer: getBuildStatus,
       items: statusFilters,
       filter: (filterValue, build: BuildConfig): boolean => {
         const status = build?.latestBuild?.status?.phase ?? 'Unknown';

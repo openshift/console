@@ -45,14 +45,10 @@ const BuildRunSection: React.FC<BuildRunSectionProps> = ({ buildRun }) => {
         <Timestamp timestamp={buildRun.status?.completionTime} />
       </DetailsItem>
 
-      {buildRun.status?.startTime && buildRun.status?.completionTime ? (
-        <>
-          <dt>{t('shipwright-plugin~Duration')}</dt>
-          <dd>
-            <BuildRunDuration buildRun={buildRun} />
-          </dd>
-        </>
-      ) : null}
+      <>
+        <dt>{t('shipwright-plugin~Duration')}</dt>
+        <dd>{buildRun.status?.startTime ? <BuildRunDuration buildRun={buildRun} /> : '-'}</dd>
+      </>
     </dl>
   );
 };
