@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ClipboardCopy } from '@patternfly/react-core/dist/esm/components/ClipboardCopy';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLinkWithCopy } from '@console/internal/components/utils';
 
 export type RoutesUrlLinkProps = {
   urls: string[];
@@ -17,9 +17,9 @@ const RoutesUrlLink: React.FC<RoutesUrlLinkProps> = ({ urls = [], title }) =>
             {url}
           </ClipboardCopy>
         ) : (
-          <ExternalLink
+          <ExternalLinkWithCopy
             key={url}
-            href={url}
+            link={url}
             text={url}
             additionalClassName="co-external-link--block"
           />

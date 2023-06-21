@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
+import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
 import { knativeRouteObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { RouteKind } from '../../../types';
 import RouteRow from '../RouteRow';
@@ -20,8 +20,11 @@ describe('RouteRow', () => {
     const wrapper = shallow(<RouteRow {...routeData} />);
     const serviceDataTable = wrapper.find(TableData).at(2);
     expect(wrapper.find(TableData)).toHaveLength(7);
-    expect(serviceDataTable.find(ExternalLink)).toHaveLength(1);
-    expect(serviceDataTable.find(ExternalLink).props().href).toEqual(
+    expect(serviceDataTable.find(ExternalLinkWithCopy)).toHaveLength(1);
+    expect(serviceDataTable.find(ExternalLinkWithCopy).props().link).toEqual(
+      'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
+    );
+    expect(serviceDataTable.find(ExternalLinkWithCopy).props().text).toEqual(
       'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     );
   });
@@ -30,7 +33,7 @@ describe('RouteRow', () => {
     routeData = _.omit(routeData, 'obj.status');
     const wrapper = shallow(<RouteRow {...routeData} />);
     const serviceDataTable = wrapper.find(TableData).at(2);
-    expect(serviceDataTable.find(ExternalLink)).toHaveLength(0);
+    expect(serviceDataTable.find(ExternalLinkWithCopy)).toHaveLength(0);
   });
 
   it('should show appropriate conditions', () => {
