@@ -27,8 +27,9 @@ const AnnotationsModalComponent: ModalComponent<AnnotationsModalProps> = ({
  * @returns a function which will launch a modal for editing a resource's annotations.
  * @example
  * const PodAnnotationsButton = ({ pod }) => {
+ *   const { t } = useTranslation();
  *   const launchAnnotationsModal = useAnnotationsModal<PodKind>(pod);
- *   return <button onClick={launchAnnotationsModal}>Edit Pod Annotations</button>
+ *   return <button onClick={launchAnnotationsModal}>{t('Edit Pod Annotations')}</button>
  * }
  */
 export const useAnnotationsModal: UseAnnotationsModal = (resource) => {
