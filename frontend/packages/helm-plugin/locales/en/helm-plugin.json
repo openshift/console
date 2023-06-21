@@ -108,6 +108,7 @@
   "The Helm Chart is currently unavailable. {{chartError}}": "The Helm Chart is currently unavailable. {{chartError}}",
   "Release name": "Release name",
   "A unique name for the Helm Release.": "A unique name for the Helm Release.",
+  "Helm release is not configurable since the Helm Chart doesn't define any values.": "Helm release is not configurable since the Helm Chart doesn't define any values.",
   "Errors in the form - {{errorsText}}": "Errors in the form - {{errorsText}}",
   "Invalid Form Schema - {{errorText}}": "Invalid Form Schema - {{errorText}}",
   "Invalid YAML - {{errorText}}": "Invalid YAML - {{errorText}}",

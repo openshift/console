@@ -162,16 +162,25 @@ const HelmInstallUpgradeForm: React.FC<
             </GridItem>
           </Grid>
         </FormSection>
-        {!chartError && (
-          <SyncedEditorField
-            name="editorType"
-            formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
-            yamlContext={{ name: 'yamlData', editor: yamlEditor }}
-            lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
-            prune={prune}
-            noMargin
-          />
-        )}
+        {!chartError &&
+          (!formSchema && !chartHasValues ? (
+            <Alert
+              variant="info"
+              title={t(
+                "helm-plugin~Helm release is not configurable since the Helm Chart doesn't define any values.",
+              )}
+              isInline
+            />
+          ) : (
+            <SyncedEditorField
+              name="editorType"
+              formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
+              yamlContext={{ name: 'yamlData', editor: yamlEditor }}
+              lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+              prune={prune}
+              noMargin
+            />
+          ))}
       </FormBody>
       <FormFooter
         handleReset={handleReset}

@@ -38,3 +38,11 @@ Feature: Helm Chart Installation View
               And user selects the YAML view
               And user comes back to Form view
              Then user will see Release Name, Replica count as "nodejs-release-3", "3" respectively
+
+        @regression
+        Scenario: When Helm Release is not configurable: HR-04-TC04
+            Given user is at Add page
+             When user selects "Helm Chart" card from add page
+              And user searches and selects "Httpd Imagestreams" card from catalog page
+              And user clicks on the Create button on side bar
+             Then user should see message "Helm release is not configurable since the Helm Chart doesn't define any values." 
