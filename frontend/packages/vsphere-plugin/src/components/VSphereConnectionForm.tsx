@@ -107,7 +107,18 @@ export const VSphereConnectionForm: React.FC<Pick<
           ref={vcenterRef}
         />
       </FormGroup>
-      <FormGroup label={t('vCenter cluster')} isRequired fieldId="connection-vcenter-cluster">
+      <FormGroup
+        label={t('vCenter cluster')}
+        isRequired
+        fieldId="connection-vcenter-cluster"
+        labelIcon={
+          <PopoverHelpButton
+            content={t(
+              'Enter the name of the vSphere vCenter cluster where OpenShift Container Platform is installed.',
+            )}
+          />
+        }
+      >
         <TextInput
           isRequired
           type="text"
