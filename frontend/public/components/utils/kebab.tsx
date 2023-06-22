@@ -4,8 +4,8 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { connect } from 'react-redux';
 /* eslint-disable import/named */
-import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
-import i18next, { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import { KEY_CODES, Tooltip, FocusTrap } from '@patternfly/react-core';
 import { AngleRightIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
@@ -486,53 +486,37 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   );
 });
 
-class KebabWithTranslation extends React.Component<
-  KebabProps & WithTranslation,
-  { active: boolean }
-> {
-  static factory: KebabFactory = kebabFactory;
+export const Kebab: KebabComponent = (props) => {
+  const { t } = useTranslation();
+  const { options, isDisabled, terminatingTooltip } = props;
+  const dropdownElement = React.useRef<HTMLButtonElement>();
+  const divElement = React.useRef<HTMLDivElement>();
+  const [active, setActive] = React.useState(false);
 
-  // public static columnClass: string = 'pf-c-table__action';
-  public static columnClass: string = 'dropdown-kebab-pf pf-c-table__action';
-
-  private dropdownElement = React.createRef<HTMLButtonElement>();
-
-  private divElement = React.createRef<HTMLDivElement>();
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      active: false,
-    };
-  }
-
-  onClick = (event, option: KebabOption) => {
+  const onClick = (event, option: KebabOption) => {
     event.preventDefault();
-
     if (option.callback) {
       option.callback();
     }
-
-    this.hide();
-
+    hide();
     if (option.href) {
       history.push(option.href);
     }
   };
 
-  hide = () => {
-    this.dropdownElement.current && this.dropdownElement.current.focus();
-    this.setState({ active: false });
+  const hide = () => {
+    dropdownElement.current && dropdownElement.current.focus();
+    setActive(false);
   };
 
-  toggle = () => {
-    this.setState((state) => ({ active: !state.active }));
+  const toggle = () => {
+    setActive((prev) => !prev);
   };
 
-  onHover = () => {
+  const onHover = () => {
     // Check access when hovering over a kebab to minimize flicker when opened.
     // This depends on `checkAccess` being memoized.
-    _.each(this.props.options, (option: KebabOption) => {
+    _.each(options, (option: KebabOption) => {
       if (option.accessReview) {
         checkAccess(option.accessReview).catch((e) => {
           // eslint-disable-next-line no-console
@@ -542,90 +526,77 @@ class KebabWithTranslation extends React.Component<
     });
   };
 
-  handleRequestClose = (e?: MouseEvent) => {
-    if (
-      !e ||
-      !this.dropdownElement.current ||
-      !this.dropdownElement.current.contains(e.target as Node)
-    ) {
-      this.hide();
+  const handleRequestClose = (e?: MouseEvent) => {
+    if (!e || !dropdownElement.current || !dropdownElement.current.contains(e.target as Node)) {
+      hide();
     }
   };
 
-  getPopperReference = () => this.dropdownElement.current;
+  const getPopperReference = () => dropdownElement.current;
 
-  getDivReference = () => this.divElement.current;
+  const getDivReference = () => divElement.current;
 
-  render() {
-    const { options, isDisabled, t, terminatingTooltip } = this.props;
+  const menuOptions = kebabOptionsToMenu(options);
 
-    const menuOptions = kebabOptionsToMenu(options);
-
-    return (
-      <Tooltip
-        content={terminatingTooltip}
-        trigger={isDisabled && terminatingTooltip ? 'mouseenter' : 'manual'}
+  return (
+    <Tooltip
+      content={terminatingTooltip}
+      trigger={isDisabled && terminatingTooltip ? 'mouseenter' : 'manual'}
+    >
+      <div
+        className={classNames({
+          'pf-c-dropdown': true,
+          'pf-m-expanded': active,
+        })}
       >
-        <div
-          className={classNames({
-            'pf-c-dropdown': true,
-            'pf-m-expanded': this.state.active,
-          })}
+        <button
+          id={props.id}
+          ref={dropdownElement}
+          type="button"
+          aria-expanded={active}
+          aria-haspopup="true"
+          aria-label={t('public~Actions')}
+          className="pf-c-dropdown__toggle pf-m-plain"
+          data-test-id="kebab-button"
+          disabled={isDisabled}
+          onClick={toggle}
+          onFocus={onHover}
+          onMouseEnter={onHover}
         >
-          <button
-            ref={this.dropdownElement}
-            type="button"
-            aria-expanded={this.state.active}
-            aria-haspopup="true"
-            aria-label={t('public~Actions')}
-            className="pf-c-dropdown__toggle pf-m-plain"
-            data-test-id="kebab-button"
-            disabled={isDisabled}
-            onClick={this.toggle}
-            onFocus={this.onHover}
-            onMouseEnter={this.onHover}
+          <EllipsisVIcon />
+        </button>
+        <Popper
+          open={!isDisabled && active}
+          placement="bottom-end"
+          closeOnEsc
+          closeOnOutsideClick
+          onRequestClose={handleRequestClose}
+          reference={getPopperReference}
+        >
+          <FocusTrap
+            focusTrapOptions={{
+              clickOutsideDeactivates: true,
+              returnFocusOnDeactivate: false,
+              fallbackFocus: getDivReference, // fallback to popover content wrapper div if there are no tabbable elements
+            }}
           >
-            <EllipsisVIcon />
-          </button>
-          <Popper
-            open={!isDisabled && this.state.active}
-            placement="bottom-end"
-            closeOnEsc
-            closeOnOutsideClick
-            onRequestClose={this.handleRequestClose}
-            reference={this.getPopperReference}
-          >
-            <FocusTrap
-              focusTrapOptions={{
-                clickOutsideDeactivates: true,
-                returnFocusOnDeactivate: false,
-                fallbackFocus: this.getDivReference, // fallback to popover content wrapper div if there are no tabbable elements
-              }}
-            >
-              <div ref={this.divElement} className="pf-c-dropdown pf-m-expanded" tabIndex={-1}>
-                <KebabMenuItems
-                  options={menuOptions}
-                  onClick={this.onClick}
-                  className="oc-kebab__popper-items"
-                  focusItem={menuOptions[0]}
-                />
-              </div>
-            </FocusTrap>
-          </Popper>
-        </div>
-      </Tooltip>
-    );
-  }
-}
-
-function restoreStaticProperties(Kebab) {
-  Kebab.factory = KebabWithTranslation.factory;
-  Kebab.getExtensionsActionsForKind = getExtensionsKebabActionsForKind;
-  Kebab.columnClass = KebabWithTranslation.columnClass;
-  return Kebab;
-}
-
-export const Kebab = restoreStaticProperties(withTranslation()(KebabWithTranslation));
+            <div ref={divElement} className="pf-c-dropdown pf-m-expanded" tabIndex={-1}>
+              <KebabMenuItems
+                options={menuOptions}
+                onClick={onClick}
+                className="oc-kebab__popper-items"
+                focusItem={menuOptions[0]}
+              />
+            </div>
+          </FocusTrap>
+        </Popper>
+      </div>
+    </Tooltip>
+  );
+};
+Kebab.factory = kebabFactory;
+Kebab.columnClass = 'dropdown-kebab-pf pf-c-table__action';
+Kebab.getExtensionsActionsForKind = getExtensionsKebabActionsForKind;
 
 export type KebabOption = {
   hidden?: boolean;
@@ -672,12 +643,11 @@ type KebabSubMenu = {
 export type KebabMenuOption = KebabSubMenu | KebabOption;
 
 type KebabProps = {
-  factory: any;
-  t: TFunction;
   options: KebabOption[];
   isDisabled?: boolean;
-  columnClass?: string;
   terminatingTooltip?: string;
+  active?: boolean;
+  id?: string;
 };
 
 type KebabItemProps = {
@@ -696,5 +666,12 @@ export type KebabItemsProps = {
 
 export type KebabFactory = { [name: string]: KebabAction } & { common?: KebabAction[] };
 
+type KebabStaticProperties = {
+  columnClass: string;
+  factory: KebabFactory;
+  getExtensionsActionsForKind: (kind: K8sKind) => KebabAction[];
+};
+
+type KebabComponent = React.FC<KebabProps> & KebabStaticProperties;
 KebabItems.displayName = 'KebabItems';
 ResourceKebab.displayName = 'ResourceKebab';

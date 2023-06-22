@@ -642,49 +642,104 @@ Dropdown.propTypes = {
   dataTest: PropTypes.string,
 };
 
-class ActionsMenuDropdown_ extends DropdownMixin {
-  render() {
-    const { actions, title = undefined, t } = this.props;
-    const onClick = (event, option) => {
-      event.preventDefault();
+const ActionsMenuDropdown = (props) => {
+  const { t } = useTranslation();
+  const [active, setActive] = React.useState(!!props.active);
 
-      if (option.callback) {
-        option.callback();
+  const dropdownElement = React.useRef();
+
+  const show = () => {
+    setActive(true);
+  };
+
+  const hide = (e) => {
+    e?.stopPropagation();
+    setActive(false);
+  };
+
+  const listener = React.useCallback(
+    (event) => {
+      if (!active) {
+        return;
       }
 
-      if (option.href) {
-        history.push(option.href);
+      const { current } = dropdownElement;
+      if (!current) {
+        return;
       }
 
-      this.hide();
+      if (event.target === current || current.contains(event.target)) {
+        return;
+      }
+
+      hide(event);
+    },
+    [active, dropdownElement],
+  );
+
+  React.useEffect(() => {
+    if (active) {
+      window.addEventListener('click', listener);
+    } else {
+      window.removeEventListener('click', listener);
+    }
+    return () => {
+      window.removeEventListener('click', listener);
     };
-    return (
-      <div
-        ref={this.dropdownElement}
-        className={classNames({
-          'co-actions-menu pf-c-dropdown': true,
-          'pf-m-expanded': this.state.active,
-        })}
-      >
-        <button
-          type="button"
-          aria-haspopup="true"
-          aria-label={t('public~Actions')}
-          aria-expanded={this.state.active}
-          className="pf-c-dropdown__toggle"
-          onClick={this.toggle}
-          data-test-id="actions-menu-button"
-        >
-          <span className="pf-c-dropdown__toggle-text">{title || t('public~Actions')}</span>
-          <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
-        </button>
-        {this.state.active && <KebabItems options={actions} onClick={onClick} />}
-      </div>
-    );
-  }
-}
+  }, [active, listener]);
 
-const ActionsMenuDropdown = withTranslation()(ActionsMenuDropdown_);
+  const toggle = (e) => {
+    e.preventDefault();
+
+    if (props.disabled) {
+      return;
+    }
+
+    if (active) {
+      hide(e);
+    } else {
+      show(e);
+    }
+  };
+
+  const onClick = (event, option) => {
+    event.preventDefault();
+
+    if (option.callback) {
+      option.callback();
+    }
+
+    if (option.href) {
+      history.push(option.href);
+    }
+
+    hide();
+  };
+
+  return (
+    <div
+      ref={dropdownElement}
+      className={classNames({
+        'co-actions-menu pf-c-dropdown': true,
+        'pf-m-expanded': active,
+      })}
+    >
+      <button
+        type="button"
+        aria-haspopup="true"
+        aria-label={t('public~Actions')}
+        aria-expanded={active}
+        className="pf-c-dropdown__toggle"
+        onClick={toggle}
+        data-test-id="actions-menu-button"
+      >
+        <span className="pf-c-dropdown__toggle-text">{props.title || t('public~Actions')}</span>
+        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+      </button>
+      {active && <KebabItems options={props.actions} onClick={onClick} />}
+    </div>
+  );
+};
 
 const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
   const [isVisible, setVisible] = useSafetyFirst(false);

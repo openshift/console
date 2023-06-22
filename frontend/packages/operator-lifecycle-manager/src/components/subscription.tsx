@@ -18,6 +18,7 @@ import {
   RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
+  KebabAction,
   FieldLevelHelp,
   Kebab,
   LoadingInline,
@@ -190,7 +191,7 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
   }
 };
 
-const menuActions = [
+const menuActions: KebabAction[] = [
   Kebab.factory.Edit,
   (kind, obj) => ({
     // t('olm~Remove Subscription')
