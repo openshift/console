@@ -710,7 +710,7 @@ export const createOrUpdateResources = async (
     return createDevfileResources(formData, dryRun, appResources, generatedImageStreamName);
   }
 
-  if (pipeline.type === PipelineType.PAC) {
+  if (pipeline.type === PipelineType.PAC && formData?.pipeline?.enabled) {
     const pacRepository = formData?.pac?.repository;
     const labels = formData?.labels;
     const repo = await createRepositoryResources(pacRepository, namespace, labels, dryRun);

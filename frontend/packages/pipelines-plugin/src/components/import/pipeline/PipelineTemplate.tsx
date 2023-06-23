@@ -64,7 +64,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
 
   const {
     values: {
-      import: { recommendedStrategy },
+      import: { recommendedStrategy, selectedStrategy },
       git: { url, type, ref, dir, secretResource },
       pipeline,
       image,
@@ -72,6 +72,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
       resources,
     },
     setFieldValue,
+    setFieldTouched,
   } = useFormikContext<FormikValues>();
 
   const isDockerStrategy = build.strategy === 'Docker';
@@ -92,14 +93,28 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
       setIsPacRepo(true);
       setFieldValue('pipeline.enabled', true);
       setFieldValue('pipeline.type', PipelineType.PAC);
-      setFieldValue('pac.repository.gitUrl', url);
+      setFieldValue('pac.pipelineType', PipelineType.PAC);
+      setFieldValue('pac.pipelineEnabled', true);
     } else {
       setFieldValue('pipeline.enabled', false);
       setFieldValue('pipeline.type', PipelineType.PIPELINE);
-      setFieldValue('pac.repository.gitUrl', '');
+      setFieldValue('pac.pipelineType', PipelineType.PIPELINE);
+      setFieldValue('pac.pipelineEnabled', false);
     }
     setIsPipelineTypeChanged(true);
   }, [url, type, ref, dir, secretResource, isRepositoryEnabled, setFieldValue]);
+
+  React.useEffect(() => {
+    pipelineStorageRef.current = {};
+  }, [selectedStrategy]);
+
+  React.useEffect(() => {
+    setFieldValue('pac.pipelineEnabled', !!pipeline.enabled);
+    // Added setTimeout to re-validate yup validation after onchange event
+    setTimeout(() => {
+      setFieldTouched('pipeline.enabled', true);
+    }, 0);
+  }, [pipeline.enabled, setFieldValue, setFieldTouched]);
 
   React.useEffect(() => {
     let ignore = false;
@@ -118,7 +133,10 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     }
     const fetchPipelineTemplate = async () => {
       let fetchedPipelines: PipelineKind[] = null;
-      if (!pipelineStorageRef.current[image.selected]) {
+      if (
+        !pipelineStorageRef.current[image.selected] ||
+        !pipelineStorageRef.current[image.selected]?.length
+      ) {
         fetchedPipelines = (await k8sList(PipelineModel, {
           ns: CLUSTER_PIPELINE_NS,
           labelSelector,
@@ -215,6 +233,15 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     );
   }
 
+  const onChangePipelineType = (value: PipelineType) => {
+    setFieldValue('pac.pipelineType', value);
+    setFieldValue('pipeline.type', value);
+    // Added setTimeout to re-validate yup validation after onchange event
+    setTimeout(() => {
+      setFieldTouched('pipeline.type', true);
+    }, 0);
+  };
+
   return pipeline.template ? (
     <>
       <CheckboxField
@@ -226,6 +253,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
         <RadioGroupField
           className="odc-pipeline-section-pac__radio-intent"
           name={'pipeline.type'}
+          onChange={(val: string) => onChangePipelineType(val as PipelineType)}
           options={[
             {
               value: PipelineType.PAC,
