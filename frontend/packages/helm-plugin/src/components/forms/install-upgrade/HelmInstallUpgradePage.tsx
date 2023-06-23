@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Ajv from 'ajv';
 import { Formik } from 'formik';
 import { safeDump, safeLoad } from 'js-yaml';
 import { JSONSchema7 } from 'json-schema';
@@ -141,26 +140,18 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       chartIndexEntry,
       yamlData,
       formData,
-      formSchema,
       editorType,
     }: HelmInstallUpgradeFormData = values;
     let valuesObj;
 
     if (editorType === EditorType.Form) {
-      const ajv = new Ajv({ schemaId: 'auto' });
-      // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-      ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
       try {
-        const validSchema = ajv.validateSchema(formSchema);
         const prunedFormData = prune(formData);
-        const validFormData = validSchema && ajv.validate(formSchema, prunedFormData);
-        if (validFormData) {
+        if (prunedFormData) {
           valuesObj = prunedFormData;
         } else {
           actions.setStatus({
-            submitError: t('helm-plugin~Errors in the form - {{errorsText}}', {
-              errorsText: ajv.errorsText(),
-            }),
+            submitError: t('helm-plugin~Errors in the form data.'),
           });
           return Promise.resolve();
         }
@@ -170,7 +161,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
             errorText: err.toString(),
           }),
         });
-        return Promise.reject(err);
+        return Promise.resolve();
       }
     } else if (yamlData) {
       try {
@@ -179,7 +170,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
         actions.setStatus({
           submitError: t('helm-plugin~Invalid YAML - {{errorText}}', { errorText: err.toString() }),
         });
-        return Promise.reject(err);
+        return Promise.resolve();
       }
     }
 
