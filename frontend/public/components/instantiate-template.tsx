@@ -133,6 +133,7 @@ class TemplateForm_ extends React.Component<
   TemplateFormProps & WithTranslation,
   TemplateFormState
 > {
+  private isInitialLoad: boolean;
   constructor(props: TemplateFormProps & WithTranslation) {
     super(props);
 
@@ -144,9 +145,16 @@ class TemplateForm_ extends React.Component<
       inProgress: false,
       error: '',
     };
+    this.isInitialLoad = true;
   }
 
   componentDidUpdate(prevProps: TemplateFormProps & WithTranslation) {
+    const { obj } = this.props;
+    if (this.isInitialLoad && obj.loaded) {
+      const parameters = this.getParameterValues(this.props);
+      this.setState({ parameters });
+      this.isInitialLoad = false;
+    }
     if (this.props.obj.data?.parameters !== prevProps.obj.data?.parameters) {
       const parameters = this.getParameterValues(this.props);
       this.setState({ parameters });
