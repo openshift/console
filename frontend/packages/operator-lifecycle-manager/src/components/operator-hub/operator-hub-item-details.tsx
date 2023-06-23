@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
 import {
+  Alert,
+  AlertActionCloseButton,
   DescriptionList,
   DescriptionListTerm,
   DescriptionListGroup,
@@ -17,7 +19,12 @@ import {
   getQueryArgument,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceForModel } from '@console/internal/module/k8s';
+import {
+  CloudCredentialKind,
+  InfrastructureKind,
+  AuthenticationKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import { DefaultCatalogSource } from '../../const';
 import { ClusterServiceVersionModel } from '../../models';
@@ -146,6 +153,18 @@ const InstallingHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({ s
   );
 };
 
+const isAWSSTSCluster = (
+  cloudcreds: CloudCredentialKind,
+  infra: InfrastructureKind,
+  auth: AuthenticationKind,
+) => {
+  return (
+    cloudcreds?.spec?.credentialsMode === 'Manual' &&
+    infra?.status?.platform === 'AWS' &&
+    auth?.spec?.serviceAccountIssuer !== ''
+  );
+};
+
 const OperatorHubItemDetailsHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = (props) => {
   const { t } = useTranslation();
   const { installed, isInstalling, catalogSource } = props;
@@ -222,6 +241,9 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
     support,
     validSubscription,
     version,
+    cloudCredentials,
+    infrastructure,
+    authentication,
   } = item;
 
   const installChannel = getQueryArgument('channel');
@@ -240,6 +262,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
     selectedChannelCreatedAt
   );
 
+  const [showWarn, setShowWarn] = React.useState(true);
   const mappedData = (data) => data?.map?.((d) => <div key={d}>{d}</div>) ?? notAvailable;
 
   const mappedInfraFeatures = mappedData(infraFeatures);
@@ -349,6 +372,21 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
               />
             </PropertiesSidePanel>
             <div className="co-catalog-page__overlay-description">
+              {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) && showWarn && (
+                <Alert
+                  isInline
+                  variant="warning"
+                  title={t('olm~Cluster in STS Mode')}
+                  actionClose={<AlertActionCloseButton onClose={() => setShowWarn(false)} />}
+                  className="pf-u-mb-lg"
+                >
+                  <p>
+                    {t(
+                      'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
+                    )}
+                  </p>
+                </Alert>
+              )}
               <OperatorHubItemDetailsHintBlock
                 installed={installed}
                 isInstalling={isInstalling}
@@ -356,6 +394,9 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                 catalogSource={catalogSource}
                 subscription={subscription}
                 installedChannel={installedChannel}
+                cloudCredentials={cloudCredentials}
+                authentication={authentication}
+                infrastructure={infrastructure}
               />
               {longDescription ? <MarkdownView content={longDescription} /> : description}
             </div>
@@ -376,6 +417,9 @@ type OperatorHubItemDetailsHintBlockProps = {
   catalogSource: string;
   subscription: SubscriptionKind;
   installedChannel: string;
+  cloudCredentials: CloudCredentialKind;
+  authentication: AuthenticationKind;
+  infrastructure: InfrastructureKind;
 };
 
 export type OperatorHubItemDetailsProps = {

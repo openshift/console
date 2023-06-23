@@ -1260,3 +1260,23 @@ export const ConsolePluginModel: K8sKind = {
   labelPluralKey: 'public~ConsolePlugins',
   crd: true,
 };
+
+export const CloudCredentialModel: K8sKind = {
+  kind: 'CloudCredential',
+  label: 'CloudCredential',
+  labelPlural: 'CloudCredentials',
+  apiGroup: 'operator.openshift.io',
+  apiVersion: 'v1',
+  abbr: 'CO',
+  plural: 'cloudcredentials',
+};
+
+export const AuthenticationModel: K8sKind = {
+  kind: 'Authentication',
+  label: 'Authentication',
+  labelPlural: 'Authentications',
+  apiGroup: 'config.openshift.io',
+  apiVersion: 'v1',
+  plural: 'authentications',
+  abbr: 'AU',
+};

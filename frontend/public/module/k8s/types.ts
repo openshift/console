@@ -627,6 +627,24 @@ export type RouteKind = {
   };
 } & K8sResourceCommon;
 
+export type CloudCredentialKind = {
+  spec: {
+    credentialsMode: string;
+  };
+} & K8sResourceCommon;
+
+export type InfrastructureKind = {
+  status: {
+    platform: string;
+  };
+} & K8sResourceCommon;
+
+export type AuthenticationKind = {
+  spec: {
+    serviceAccountIssuer: string;
+  };
+} & K8sResourceCommon;
+
 export type TemplateParameter = {
   name: string;
   value?: string;
