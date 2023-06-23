@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Ajv from 'ajv';
 import { Formik } from 'formik';
 import { safeDump, safeLoad } from 'js-yaml';
 import { JSONSchema7 } from 'json-schema';
@@ -156,22 +155,25 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       chartIndexEntry,
       yamlData,
       formData,
-      formSchema,
       editorType,
     }: HelmInstallUpgradeFormData = values;
     let valuesObj;
 
     if (editorType === EditorType.Form) {
-      const ajv = new Ajv();
-      const validSchema = ajv.validateSchema(formSchema);
-      const prunedFormData = prune(formData);
-      const validFormData = validSchema && ajv.validate(formSchema, prunedFormData);
-      if (validFormData) {
-        valuesObj = prunedFormData;
-      } else {
+      try {
+        const prunedFormData = prune(formData);
+        if (prunedFormData) {
+          valuesObj = prunedFormData;
+        } else {
+          actions.setStatus({
+            submitError: t('helm-plugin~Errors in the form data.'),
+          });
+          return Promise.resolve();
+        }
+      } catch (err) {
         actions.setStatus({
           submitError: t('helm-plugin~Errors in the form - {{errorsText}}', {
-            errorsText: ajv.errorsText(),
+            errorsText: err.toString(),
           }),
         });
         return Promise.resolve();
@@ -180,7 +182,9 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       try {
         valuesObj = safeLoad(yamlData);
       } catch (err) {
-        actions.setStatus({ submitError: t('helm-plugin~Invalid YAML - {{err}}', { err }) });
+        actions.setStatus({
+          submitError: t('helm-plugin~Invalid YAML - {{errorText}}', { errorText: err.toString() }),
+        });
         return Promise.resolve();
       }
     }
