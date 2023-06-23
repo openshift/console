@@ -14,6 +14,8 @@ import { GitImportFormProps, ImportTypes } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
 import ResourceSection from './section/ResourceSection';
 
+import './GitImportForm.scss';
+
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
   values,
   errors,
@@ -57,16 +59,22 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
             ) : (
               <ImportStrategySection builderImages={builderImages} />
             )}
-            <AppSection
-              project={values.project}
-              noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
-            />
+            <div className="odc-git-import-form__section-heading">
+              <AppSection
+                project={values.project}
+                noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+              />
+            </div>
             {importType !== ImportTypes.devfile &&
               values.import.selectedStrategy.type !== ImportStrategy.DEVFILE && (
                 <>
                   <ResourceSection />
-                  <PipelineSection builderImages={builderImages} />
-                  <AdvancedSection values={values} />
+                  <div className="odc-git-import-form__section-heading">
+                    <PipelineSection builderImages={builderImages} />
+                  </div>
+                  <div className="odc-git-import-form__section-heading">
+                    <AdvancedSection values={values} />
+                  </div>
                 </>
               )}
           </>

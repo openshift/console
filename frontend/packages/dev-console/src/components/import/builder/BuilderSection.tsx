@@ -7,6 +7,8 @@ import FormSection from '../section/FormSection';
 import BuilderImageSelector from './BuilderImageSelector';
 import BuilderImageTagSelector from './BuilderImageTagSelector';
 
+import './BuilderSection.scss';
+
 export interface ImageSectionProps {
   builderImages: NormalizedBuilderImages;
   existingPipeline?: PipelineKind;
@@ -75,12 +77,14 @@ const BuilderSection: React.FC<ImageSectionProps> = ({ builderImages, existingPi
         />
       </FormSection>
       {builderImages[image.selected] && image.tag && (
-        <FormSection>
-          <BuilderImageTagSelector
-            selectedBuilderImage={builderImages[image.selected]}
-            selectedImageTag={image.tag}
-          />
-        </FormSection>
+        <div className="odc-import-strategy-section__builder-tag-section">
+          <FormSection>
+            <BuilderImageTagSelector
+              selectedBuilderImage={builderImages[image.selected]}
+              selectedImageTag={image.tag}
+            />
+          </FormSection>
+        </div>
       )}
     </>
   );
