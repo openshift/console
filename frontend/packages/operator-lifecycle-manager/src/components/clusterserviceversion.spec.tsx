@@ -78,7 +78,7 @@ jest.mock('@console/shared/src/hooks/useActiveCluster', () => ({
 describe(ClusterServiceVersionTableRow.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionTableRowProps>;
   beforeEach(() => {
-    window.SERVER_FLAGS.copiedCSVsDisabled = { 'local-cluster': false };
+    window.SERVER_FLAGS.copiedCSVsDisabled = false;
     wrapper = shallow(
       <ClusterServiceVersionTableRow
         catalogSourceMissing={false}
@@ -524,7 +524,7 @@ describe(ClusterServiceVersionDetailsPage.displayName, () => {
     spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
     spyUseAccessReview.mockReturnValue([true, false]);
 
-    window.SERVER_FLAGS.copiedCSVsDisabled = { 'local-cluster': false };
+    window.SERVER_FLAGS.copiedCSVsDisabled = false;
     wrapper = mount(
       <ClusterServiceVersionDetailsPage
         match={{ params: { ns, name }, isExact: true, url: '', path: '' }}

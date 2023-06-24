@@ -94,11 +94,10 @@ type jsGlobals struct {
 	AuthDisabled                    bool                       `json:"authDisabled"`
 	BasePath                        string                     `json:"basePath"`
 	Branding                        string                     `json:"branding"`
-	Clusters                        []string                   `json:"clusters"` // TODO remove multicluster
 	ConsolePlugins                  []string                   `json:"consolePlugins"`
 	ConsoleVersion                  string                     `json:"consoleVersion"`
 	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
-	CopiedCSVsDisabled              map[string]bool            `json:"copiedCSVsDisabled"` // TODO remove multicluster
+	CopiedCSVsDisabled              bool                       `json:"copiedCSVsDisabled"`
 	CustomLogoURL                   string                     `json:"customLogoURL"`
 	CustomProductName               string                     `json:"customProductName"`
 	DevCatalogCategories            string                     `json:"developerCatalogCategories"`
@@ -152,7 +151,7 @@ type Server struct {
 	Branding                            string
 	ClusterManagementProxyConfig        *proxy.Config
 	ControlPlaneTopology                string
-	CopiedCSVsDisabled                  map[string]bool // TODO remove multicluster
+	CopiedCSVsDisabled                  bool
 	CustomLogoFile                      string
 	CustomProductName                   string
 	DevCatalogCategories                string
@@ -795,7 +794,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		AddPage:                    s.AddPage,
 		ProjectAccessClusterRoles:  s.ProjectAccessClusterRoles,
 		Perspectives:               s.Perspectives,
-		Clusters:                   s.getManagedClusterList(), // TODO remove multicluster
 		Telemetry:                  s.Telemetry,
 		ReleaseVersion:             s.ReleaseVersion,
 		NodeArchitectures:          s.NodeArchitectures,

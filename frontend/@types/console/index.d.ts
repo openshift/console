@@ -14,7 +14,7 @@ declare module '*.png' {
 
 declare interface Window {
   SERVER_FLAGS: {
-    copiedCSVsDisabled: Record<string, boolean>; // TODO remove multicluster
+    copiedCSVsDisabled: boolean;
     alertManagerBaseURL: string;
     alertmanagerUserWorkloadBaseURL: string;
     authDisabled: boolean;
@@ -52,7 +52,6 @@ declare interface Window {
     i18nNamespaces: string[]; // Available i18n namespaces
     quickStarts: string;
     projectAccessClusterRoles: string;
-    clusters: string[]; // TODO remove multicluster
     controlPlaneTopology: string;
     telemetry: Record<string, string>;
     nodeArchitectures: string[];

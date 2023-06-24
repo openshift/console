@@ -17,12 +17,7 @@ import {
 import fuzzysearch from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import {
-  alphanumericCompare,
-  HUB_CLUSTER_NAME,
-  useActiveCluster,
-  usePerspectiveExtension,
-} from '@console/shared';
+import { useActiveCluster, usePerspectiveExtension } from '@console/shared';
 import { ACM_PERSPECTIVE_ID } from '../../consts';
 import ClusterMenuToggle from './ClusterMenuToggle';
 
@@ -135,21 +130,11 @@ const ClusterMenu = () => {
             },
           ]
         : []),
-      ...window.SERVER_FLAGS.clusters
-        .sort((a, b) => {
-          if (a === HUB_CLUSTER_NAME) {
-            return -1;
-          }
-          if (b === HUB_CLUSTER_NAME) {
-            return 1;
-          }
-          return alphanumericCompare(a, b);
-        })
-        .map((cluster) => ({
-          key: cluster,
-          title: cluster,
-          onClick: () => onClusterClick(cluster),
-        })),
+      {
+        key: 'local-cluster',
+        title: 'local-cluster',
+        onClick: () => onClusterClick('local-cluster'),
+      },
     ],
     [acmPerspectiveExtension, onAllClustersClick, onClusterClick],
   );
