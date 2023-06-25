@@ -1,4 +1,4 @@
-@web-terminal @dev-console
+@web-terminal
 Feature: Web Terminal
               As a basic user, I should be able to use web terminal
 

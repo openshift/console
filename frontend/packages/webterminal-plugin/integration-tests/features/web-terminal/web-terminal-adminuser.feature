@@ -1,4 +1,4 @@
-@web-terminal @dev-console
+@web-terminal
 Feature: Web Terminal for Admin user
               As a user with admin rights, I should be able to use web terminal
 
