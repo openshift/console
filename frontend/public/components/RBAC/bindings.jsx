@@ -78,6 +78,7 @@ const getKindLabel = (kind) => (kind.labelKey ? i18next.t(kind.labelKey) : kind.
 
 const menuActions = ({ subjectIndex, subjects }, startImpersonate) => {
   const subject = subjects[subjectIndex];
+  
   const actions = [
     (kind, obj) => ({
       label: i18next.t('public~Duplicate {{kindLabel}}', {
