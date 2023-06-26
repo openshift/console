@@ -461,8 +461,8 @@ const OperandsLoadedErrorAlert: React.FC<{ operandsLoadedErrorMessage: string }>
         {t(
           'olm~There was an error loading operands for this operator. Operands will need to be deleted manually.',
         )}
-        <div>{operandsLoadedErrorMessage}</div>
       </p>
+      <p>{operandsLoadedErrorMessage}</p>
     </Alert>
   );
 };
