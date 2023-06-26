@@ -92,9 +92,11 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
       setIsPacRepo(true);
       setFieldValue('pipeline.enabled', true);
       setFieldValue('pipeline.type', PipelineType.PAC);
+      setFieldValue('pac.repository.gitUrl', url);
     } else {
       setFieldValue('pipeline.enabled', false);
       setFieldValue('pipeline.type', PipelineType.PIPELINE);
+      setFieldValue('pac.repository.gitUrl', '');
     }
     setIsPipelineTypeChanged(true);
   }, [url, type, ref, dir, secretResource, isRepositoryEnabled, setFieldValue]);
