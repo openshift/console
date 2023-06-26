@@ -102,7 +102,6 @@ import {
 import { RootState } from '../../redux';
 import { getPrometheusURL } from '../graphs/helpers';
 import { refreshNotificationPollers } from '../notification-drawer';
-import { AsyncComponent } from '../utils';
 import { SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { history } from '../utils/router';
@@ -785,6 +784,8 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
     .filter((extension) => extension.properties.sourceId === sourceId)
     .map((extension) => extension.properties.chart);
 
+  const AlertsChart = alertsChart?.[0];
+
   return (
     <>
       <Helmet>
@@ -865,8 +866,8 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                     query={rule?.query}
                     ruleDuration={rule?.duration}
                   />
-                ) : alertsChart && alertsChart.length > 0 && !hideGraphs ? (
-                  <AsyncComponent loader={alertsChart[0]} rule={rule} />
+                ) : AlertsChart && rule && !hideGraphs ? (
+                  <AlertsChart rule={rule} />
                 ) : null}
               </div>
             </div>
@@ -1088,6 +1089,8 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
     .filter((extension) => extension.properties.sourceId === sourceId)
     .map((extension) => extension.properties.chart);
 
+  const AlertsChart = alertsChart?.[0];
+
   const formatSeriesTitle = (alertLabels) => {
     const nameLabel = alertLabels.__name__ ?? '';
     const otherLabels = _.omit(alertLabels, '__name__');
@@ -1236,8 +1239,8 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                     ruleDuration={rule?.duration}
                     showLegend
                   />
-                ) : alertsChart && alertsChart.length > 0 ? (
-                  <AsyncComponent loader={alertsChart[0]} rule={rule} />
+                ) : AlertsChart && rule ? (
+                  <AlertsChart rule={rule} />
                 ) : null}
               </div>
             </div>

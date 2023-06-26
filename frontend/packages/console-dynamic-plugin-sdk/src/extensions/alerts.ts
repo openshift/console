@@ -1,7 +1,7 @@
 import { Rule, PrometheusRulesResponse } from '../api/common-types';
 import { CodeRef, Extension, ExtensionDeclaration } from '../types';
 
-type AlertingRulesFetch = () => Promise<PrometheusRulesResponse>;
+type AlertingRulesFetch = (namespace?: string) => Promise<PrometheusRulesResponse>;
 
 /** Alerting rules from additional sources other than Prometheus */
 export type AlertingRulesSourceExtension = ExtensionDeclaration<
