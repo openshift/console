@@ -506,7 +506,7 @@ const flatten = ({
   packageManifests,
 }: FlattenArgType): CatalogSourceTableRowObj[] => {
   const defaultSources: CatalogSourceTableRowObj[] = _.map(
-    operatorHub.status.sources,
+    operatorHub.status?.sources,
     (defaultSource) => {
       const catalogSource = _.find(catalogSources.data, {
         metadata: { name: defaultSource.name, namespace: DEFAULT_SOURCE_NAMESPACE },

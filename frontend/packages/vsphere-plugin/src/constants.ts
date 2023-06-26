@@ -8,3 +8,5 @@ export const VSPHERE_CONFIGMAP_NAME = 'cloud-provider-config';
 export const VSPHERE_CONFIGMAP_NAMESPACE = 'openshift-config';
 
 export const KUBE_CONTROLLER_MANAGER_NAME = 'cluster';
+
+export const FAILURE_DOMAIN_NAME = 'generated-failure-domain';

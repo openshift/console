@@ -72,7 +72,7 @@ describe('PipelineAugment test getRunStatusColor handles all ComputedStatus valu
 describe('PipelineAugment test correct task status state is pulled from pipeline/pipelineruns', () => {
   it('expect no arguments to produce a net-zero result', () => {
     // Null check + showcasing we get at least 1 value out of the function
-    const emptyTaskStatus = getTaskStatus(null, null);
+    const emptyTaskStatus = getTaskStatus(null, null, null);
     expect(emptyTaskStatus).toEqual({
       PipelineNotStarted: 1,
       Pending: 0,
@@ -98,6 +98,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         simpleTestData.pipelineRuns[DataState.SUCCESS],
         simpleTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(simpleTestData.pipeline);
 
@@ -113,6 +114,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         complexTestData.pipelineRuns[DataState.SUCCESS],
         complexTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
@@ -128,6 +130,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         finallyTestData.pipelineRuns[DataState.SUCCESS],
         finallyTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(finallyTestData.pipeline);
 
@@ -151,6 +154,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         simpleTestData.pipelineRuns[DataState.IN_PROGRESS],
         simpleTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(simpleTestData.pipeline);
 
@@ -166,6 +170,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         complexTestData.pipelineRuns[DataState.IN_PROGRESS],
         complexTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
@@ -224,11 +229,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
 
     it('expect a partial pipeline to have task-count equal to Failed and Cancelled states', () => {
       const partialTestData = pipelineTestData[PipelineExampleNames.PARTIAL_PIPELINE];
-
       const expectedTaskCount = getExpectedTaskCount(partialTestData.pipeline);
       const taskStatus = getTaskStatus(
         partialTestData.pipelineRuns[DataState.FAILED_BUT_COMPLETE],
         partialTestData.pipeline,
+        null,
       );
       const taskCount = totalPipelineRunTasks(partialTestData.pipeline);
 
@@ -244,6 +249,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         complexTestData.pipelineRuns[DataState.CANCELLED1],
         complexTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
@@ -260,6 +266,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         complexTestData.pipelineRuns[DataState.FAILED1],
         complexTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
@@ -276,6 +283,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         complexTestData.pipelineRuns[DataState.CANCELLED2],
         complexTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
@@ -292,6 +300,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         complexTestData.pipelineRuns[DataState.FAILED2],
         complexTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
@@ -308,6 +317,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         complexTestData.pipelineRuns[DataState.CANCELLED3],
         complexTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
@@ -324,6 +334,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         complexTestData.pipelineRuns[DataState.FAILED3],
         complexTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
@@ -347,6 +358,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const taskStatus = getTaskStatus(
         complexTestData.pipelineRuns[DataState.SKIPPED],
         complexTestData.pipeline,
+        [],
       );
       const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
