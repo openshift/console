@@ -473,22 +473,13 @@
     }
   },
   {
-    "type": "console.navigation/section",
-    "properties": {
-      "perspective": "admin",
-      "id": "home",
-      "name": "%console-app~Home%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-home" }
-    }
-  },
-  {
     "type": "console.navigation/href",
     "properties": {
       "id": "topology",
       "perspective": "admin",
       "name": "%console-app~Topology%",
       "href": "/topology",
-      "insertAfter": "home",
+      "insertAfter": "add",
       "namespaced": true,
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-topology",
@@ -516,6 +507,16 @@
     },
     "flags": {
       "required": ["OPENSHIFT", "MONITORING"]
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "home",
+      "name": "%console-app~Home%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-home" },
+      "insertAfter": "add"
     }
   },
   {
@@ -994,7 +995,8 @@
         "version": "v1",
         "kind": "VolumeSnapshot"
       }
-    }
+    },
+    "flags": { "required": ["CAN_LIST_NS"] }
   },
   {
     "type": "console.navigation/resource-cluster",
@@ -1009,8 +1011,7 @@
         "version": "v1",
         "kind": "VolumeSnapshotClass"
       }
-    },
-    "flags": { "required": ["CAN_LIST_NS"] }
+    }
   },
   {
     "type": "console.navigation/resource-ns",

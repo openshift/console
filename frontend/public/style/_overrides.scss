@@ -35,7 +35,7 @@ form.pf-c-form {
   }
 }
 
-.catalog-item-header-pf-icon  {
+.catalog-item-header-pf-icon {
   @include catalog-logo-background(var(--pf-global--spacer--sm));
 }
 
@@ -92,6 +92,11 @@ form.pf-c-form {
 .pf-c-about-modal-box__brand-image,
 .pf-c-brand {
   max-width: 100%;
+}
+
+.pf-c-about-modal-box__brand-image,
+img.pf-c-brand {
+  max-width: 180px !important;
 }
 
 .pf-c-alert--top-margin {
@@ -212,13 +217,11 @@ form.pf-c-form {
   font-size: var(--pf-c-masthead__toggle--c-button--FontSize);
 }
 
-
 :where(:root:not(.pf-theme-dark)) .pf-c-page {
   --pf-c-page__sidebar--BoxShadow: none;
 }
 
 .pf-c-page__sidebar {
-
   // Perspective switcher
   &.pf-m-dark .pf-c-dropdown {
     --pf-global--Color--100: var(--pf-global--Color--dark-100);
@@ -259,7 +262,7 @@ form.pf-c-form {
 }
 
 // Remove when upstream issue is addressed. https://github.com/patternfly/patternfly/issues/4889
-.pf-theme-dark .pf-c-card  {
+.pf-theme-dark .pf-c-card {
   --pf-c-card--BoxShadow: var(--pf-global--BoxShadow--md);
 }
 
