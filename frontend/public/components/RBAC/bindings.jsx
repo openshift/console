@@ -78,7 +78,7 @@ const getKindLabel = (kind) => (kind.labelKey ? i18next.t(kind.labelKey) : kind.
 
 const menuActions = ({ subjectIndex, subjects }, startImpersonate) => {
   const subject = subjects[subjectIndex];
-  
+
   const actions = [
     (kind, obj) => ({
       label: i18next.t('public~Duplicate {{kindLabel}}', {
@@ -91,7 +91,11 @@ const menuActions = ({ subjectIndex, subjects }, startImpersonate) => {
       // It's not practical to check namespace role bindings since we don't know what namespace the user will pick in the form.
       accessReview: _.get(obj, 'metadata.namespace')
         ? null
-        : { group: kind.apiGroup, resource: kind.plural, verb: 'create' },
+        : {
+            group: kind.apiGroup,
+            resource: kind.plural,
+            verb: 'create',
+          },
     }),
     (kind, obj) => ({
       label: i18next.t('public~Edit {{kindLabel}} subject', {
@@ -121,7 +125,12 @@ const menuActions = ({ subjectIndex, subjects }, startImpersonate) => {
               ),
               btnText: i18next.t('public~Delete subject'),
               executeFn: () =>
-                k8sPatch(kind, binding, [{ op: 'remove', path: `/subjects/${subjectIndex}` }]),
+                k8sPatch(kind, binding, [
+                  {
+                    op: 'remove',
+                    path: `/subjects/${subjectIndex}`,
+                  },
+                ]),
             }),
           accessReview: {
             group: kind.apiGroup,
