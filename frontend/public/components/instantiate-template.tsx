@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
 import { ActionGroup, Button, Divider } from '@patternfly/react-core';
 /* eslint-disable import/named */
-import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 import { ANNOTATIONS, withActivePerspective } from '@console/shared';
 
@@ -129,55 +129,30 @@ const stateToProps = (state: RootState) => ({
   models: state.k8s.getIn(['RESOURCES', 'models']),
 });
 
-class TemplateForm_ extends React.Component<
-  TemplateFormProps & WithTranslation,
-  TemplateFormState
-> {
-  constructor(props: TemplateFormProps & WithTranslation) {
-    super(props);
+const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
+  const { preselectedNamespace: ns = '', activePerspective, perspectiveExtensions, obj } = props;
 
-    const { preselectedNamespace: namespace = '' } = this.props;
-    const parameters = this.getParameterValues(props);
-    this.state = {
-      namespace,
-      parameters,
-      inProgress: false,
-      error: '',
-    };
-  }
+  const [namespace, setNamespace] = React.useState(ns);
+  const [parameters, setParameters] = React.useState([]);
+  const [inProgress, setInProgress] = React.useState(false);
+  const [error, setError] = React.useState('');
 
-  componentDidUpdate(prevProps: TemplateFormProps & WithTranslation) {
-    if (this.props.obj.data?.parameters !== prevProps.obj.data?.parameters) {
-      const parameters = this.getParameterValues(this.props);
-      this.setState({ parameters });
-    }
-  }
+  const { t } = useTranslation();
 
-  getParameterValues = (props: TemplateFormProps & WithTranslation) => {
-    const templateParameters: TemplateParameter[] = props.obj.data.parameters || [];
-    return templateParameters.reduce((acc, { name, value }: TemplateParameter) => {
+  React.useEffect(() => {
+    const object = (obj.data.parameters || []).reduce((acc, { name, value }) => {
       acc[name] = value;
       return acc;
     }, {});
-  };
+    setParameters(object);
+  }, [obj]);
 
-  onNamespaceChange = (namespace: string) => {
-    this.setState({ namespace });
-  };
-
-  onParameterChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
+  const onParameterChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
     const { name, value } = event.currentTarget;
-    this.setState(({ parameters }) => ({
-      parameters: {
-        ...parameters,
-        [name]: value,
-      },
-    }));
+    setParameters((prevParams) => ({ ...prevParams, [name]: value }));
   };
 
-  createTemplateSecret(): Promise<K8sResourceKind> {
-    const { obj } = this.props;
-    const { namespace, parameters } = this.state;
+  const createTemplateSecret = () => {
     const secret = {
       apiVersion: 'v1',
       kind: 'Secret',
@@ -192,11 +167,9 @@ class TemplateForm_ extends React.Component<
       model: SecretModel,
       data: secret,
     });
-  }
+  };
 
-  createTemplateInstance(secret: K8sResourceKind): Promise<K8sResourceKind> {
-    const { obj } = this.props;
-    const { namespace } = this.state;
+  const createTemplateInstance = (secret: K8sResourceKind) => {
     const instance: TemplateInstanceKind = {
       apiVersion: 'template.openshift.io/v1',
       kind: 'TemplateInstance',
@@ -215,12 +188,9 @@ class TemplateForm_ extends React.Component<
       model: TemplateInstanceModel,
       data: instance,
     });
-  }
+  };
 
-  updatesecretOwnerRef(
-    secret: K8sResourceKind,
-    templateInstance: K8sResourceKind,
-  ): Promise<K8sResourceKind> {
+  const updatesecretOwnerRef = (secret: K8sResourceKind, templateInstance: K8sResourceKind) => {
     const updatedSecret = {
       ...secret,
       metadata: {
@@ -241,136 +211,130 @@ class TemplateForm_ extends React.Component<
       name: secret.metadata.name,
       ns: secret.metadata.namespace,
     });
-  }
-
-  save = (event: React.FormEvent<EventTarget>) => {
-    event.preventDefault();
-    const { namespace } = this.state;
-    if (!namespace) {
-      this.setState({ error: 'Please complete all fields.' });
-      return;
-    }
-    const { activePerspective, perspectiveExtensions } = this.props;
-
-    this.setState({ error: '', inProgress: true });
-    this.createTemplateSecret()
-      .then((secret: K8sResourceKind) => {
-        return this.createTemplateInstance(secret).then(
-          async (templateInstance: K8sResourceKind) => {
-            await this.updatesecretOwnerRef(secret, templateInstance);
-            this.setState({ inProgress: false });
-            const activeExtension = perspectiveExtensions.find(
-              (p) => p.properties.id === activePerspective,
-            );
-            const url = (await activeExtension.properties.importRedirectURL())(namespace);
-            history.push(url);
-          },
-        );
-      })
-      .catch((err) => this.setState({ inProgress: false, error: err.message }));
   };
 
-  render() {
-    const { obj, t } = this.props;
-    if (obj.loadError) {
-      return (
-        <LoadError
-          message={obj.loadError.message}
-          label={t('public~Template')}
-          className="loading-box loading-box__errored"
-        />
-      );
+  const save = (event: React.FormEvent<EventTarget>) => {
+    event.preventDefault();
+    if (!namespace) {
+      setError('Please complete all fields.');
+      return;
     }
 
-    if (!obj.loaded) {
-      return <LoadingBox />;
-    }
+    setError('');
+    setInProgress(true);
 
-    const template: TemplateKind = obj.data;
-    const parameters = template.parameters || [];
+    createTemplateSecret()
+      .then((secret: K8sResourceKind) => {
+        return createTemplateInstance(secret).then(async (templateInstance: K8sResourceKind) => {
+          await updatesecretOwnerRef(secret, templateInstance);
+          setInProgress(false);
+          const activeExtension = perspectiveExtensions.find(
+            (p) => p.properties.id === activePerspective,
+          );
+          const url = (await activeExtension.properties.importRedirectURL())(namespace);
+          history.push(url);
+        });
+      })
+      .catch((err) => {
+        setInProgress(false);
+        setError(err.message);
+      });
+  };
 
+  if (obj.loadError) {
     return (
-      <div className="row">
-        <div className="col-md-7 col-md-push-5 co-catalog-item-info">
-          <TemplateInfo template={template} />
-        </div>
-        <div className="col-md-5 col-md-pull-7">
-          <form className="co-instantiate-template-form" onSubmit={this.save}>
-            <div className="form-group">
-              <label className="control-label co-required" htmlFor="namespace">
-                {t('public~Namespace')}
-              </label>
-              <NsDropdown
-                selectedKey={this.state.namespace}
-                onChange={this.onNamespaceChange}
-                id="namespace"
-              />
-            </div>
-            {parameters.map(
-              ({
-                name,
-                displayName,
-                description,
-                required: requiredParam,
-                generate,
-              }: TemplateParameter) => {
-                const value = this.state.parameters[name] || '';
-                const helpID = description ? `${name}-help` : '';
-                const placeholder = generate ? t('public~(generated if empty)') : '';
-                // Only set required for parameters not generated.
-                const requiredInput = requiredParam && !generate;
-                return (
-                  <div className="form-group" key={name}>
-                    <label
-                      className={classNames('control-label', { 'co-required': requiredInput })}
-                      htmlFor={name}
-                    >
-                      {displayName || name}
-                    </label>
-                    <input
-                      type="text"
-                      className="pf-c-form-control"
-                      id={name}
-                      name={name}
-                      value={value}
-                      onChange={this.onParameterChanged}
-                      required={requiredInput}
-                      placeholder={placeholder}
-                      aria-describedby={helpID}
-                    />
-                    {description && (
-                      <div className="help-block" id={helpID}>
-                        {description}
-                      </div>
-                    )}
-                  </div>
-                );
-              },
-            )}
-            <ButtonBar
-              className="co-instantiate-template-form__button-bar"
-              errorMessage={this.state.error}
-              inProgress={this.state.inProgress}
-            >
-              <ActionGroup className="pf-c-form">
-                <Button type="submit" variant="primary">
-                  {t('public~Create')}
-                </Button>
-                <Button type="button" variant="secondary" onClick={history.goBack}>
-                  {t('public~Cancel')}
-                </Button>
-              </ActionGroup>
-            </ButtonBar>
-          </form>
-        </div>
-      </div>
+      <LoadError
+        message={obj.loadError.message}
+        label={t('public~Template')}
+        className="loading-box loading-box__errored"
+      />
     );
   }
-}
+
+  if (!obj.loaded) {
+    return <LoadingBox />;
+  }
+
+  const template: TemplateKind = obj.data;
+  const params = template.parameters || [];
+
+  return (
+    <div className="row">
+      <div className="col-md-7 col-md-push-5 co-catalog-item-info">
+        <TemplateInfo template={template} />
+      </div>
+      <div className="col-md-5 col-md-pull-7">
+        <form className="co-instantiate-template-form" onSubmit={save}>
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="namespace">
+              {t('public~Namespace')}
+            </label>
+            <NsDropdown selectedKey={namespace} onChange={(v) => setNamespace(v)} id="namespace" />
+          </div>
+          {params.map(
+            ({
+              name,
+              displayName,
+              description,
+              required: requiredParam,
+              generate,
+            }: TemplateParameter) => {
+              const value = parameters[name] || '';
+              const helpID = description ? `${name}-help` : '';
+              const placeholder = generate ? t('public~(generated if empty)') : '';
+              // Only set required for parameters not generated.
+              const requiredInput = requiredParam && !generate;
+              return (
+                <div className="form-group" key={name}>
+                  <label
+                    className={classNames('control-label', { 'co-required': requiredInput })}
+                    htmlFor={name}
+                  >
+                    {displayName || name}
+                  </label>
+                  <input
+                    type="text"
+                    className="pf-c-form-control"
+                    id={name}
+                    name={name}
+                    value={value}
+                    onChange={onParameterChanged}
+                    required={requiredInput}
+                    placeholder={placeholder}
+                    aria-describedby={helpID}
+                  />
+                  {description && (
+                    <div className="help-block" id={helpID}>
+                      {description}
+                    </div>
+                  )}
+                </div>
+              );
+            },
+          )}
+          <ButtonBar
+            className="co-instantiate-template-form__button-bar"
+            errorMessage={error}
+            inProgress={inProgress}
+          >
+            <ActionGroup className="pf-c-form">
+              <Button type="submit" variant="primary">
+                {t('public~Create')}
+              </Button>
+              <Button type="button" variant="secondary" onClick={history.goBack}>
+                {t('public~Cancel')}
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 const TemplateForm = connect(stateToProps)(
   withExtensions<ExtensionsProps>({ perspectiveExtensions: isPerspective })(
-    withActivePerspective<TemplateFormProps>(withTranslation()(TemplateForm_)),
+    withActivePerspective<TemplateFormProps>(TemplateForm_),
   ),
 );
 
@@ -422,13 +386,4 @@ type TemplateFormProps = ExtensionsProps & {
   preselectedNamespace: string;
   models: any;
   activePerspective: string;
-};
-
-type TemplateFormState = {
-  namespace: string;
-  parameters: {
-    [name: string]: string;
-  };
-  inProgress: boolean;
-  error: string;
 };
