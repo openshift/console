@@ -676,7 +676,7 @@ const exampleList: React.FC<MyProps> = () => {
   return (
     <>
       <ListPageHeader title="Example Pod List Page"/>
-        <ListPageCreate groupVersionKind="Pod">Create Pod</ListPageCreate>
+        <ListPageCreate groupVersionKind={{ group: 'app'; version: 'v1'; kind: 'Deployment' }}>Create Pod</ListPageCreate>
       </ListPageHeader>
     </>
   );
@@ -691,7 +691,7 @@ const exampleList: React.FC<MyProps> = () => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `groupVersionKind` | the resource group/version/kind to represent |
+| `groupVersionKind` | group, version, kind of k8s resource {@link K8sGroupVersionKind} is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` {@link K8sResourceKindReference}. |
 
 
 

@@ -91,7 +91,7 @@ export type GroupVersionKind = string;
  * The canonical, unique identifier for a Kubernetes resource type.
  * Maintains backwards-compatibility with references using the `kind` string field.
  */
-export type K8sResourceKindReference = GroupVersionKind | string;
+export type K8sResourceKindReference = string;
 
 export type K8sGroupVersionKind = { group?: string; version: string; kind: string };
 
@@ -370,13 +370,13 @@ export type ListPageHeaderProps = {
 
 export type CreateWithPermissionsProps = {
   createAccessReview?: {
-    groupVersionKind: GroupVersionKind;
+    groupVersionKind: K8sResourceKindReference | K8sGroupVersionKind;
     namespace?: string;
   };
 };
 
 export type ListPageCreateProps = CreateWithPermissionsProps & {
-  groupVersionKind: GroupVersionKind;
+  groupVersionKind: K8sResourceKindReference | K8sGroupVersionKind;
 };
 
 export type ListPageCreateLinkProps = CreateWithPermissionsProps & {
