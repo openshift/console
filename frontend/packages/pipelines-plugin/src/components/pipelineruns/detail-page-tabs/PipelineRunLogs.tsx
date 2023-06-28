@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { withTranslation } from 'react-i18next';
+import Helmet from 'react-helmet';
+import { useTranslation, withTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
@@ -207,10 +208,16 @@ export const PipelineRunLogsWithActiveTask: React.FC<PipelineRunLogsWithActiveTa
   obj,
   params,
 }) => {
+  const { t } = useTranslation();
   const activeTask = _.get(params, 'match.params.name');
   const [taskRuns, taskRunsLoaded] = useTaskRuns(obj?.metadata?.namespace, obj?.metadata?.name);
   return (
-    taskRunsLoaded && <PipelineRunLogs obj={obj} activeTask={activeTask} taskRuns={taskRuns} />
+    <>
+      <Helmet>
+        <title>{t('pipelines-plugin~PipelineRun logs')}</title>
+      </Helmet>
+      {taskRunsLoaded && <PipelineRunLogs obj={obj} activeTask={activeTask} taskRuns={taskRuns} />}
+    </>
   );
 };
 

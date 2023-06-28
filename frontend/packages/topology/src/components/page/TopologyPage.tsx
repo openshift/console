@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router-dom';
 import NamespacedPage, {
@@ -67,7 +66,6 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
   hideProjects = false,
   defaultViewType = TopologyViewType.graph,
 }) => {
-  const { t } = useTranslation();
   const [preferredTopologyView, preferredTopologyViewLoaded] = usePreferredTopologyView();
   const [
     topologyLastView,
@@ -136,9 +134,6 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
   return (
     <FilterProvider>
       <DataModelProvider namespace={namespace}>
-        <Helmet>
-          <title>{t('topology~Topology')}</title>
-        </Helmet>
         <NamespacedPage
           variant={namespacedPageVariant}
           onNamespaceChange={handleNamespaceChange}

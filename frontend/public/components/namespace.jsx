@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
+import Helmet from 'react-helmet';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -1054,6 +1055,9 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return (
     <div>
+      <Helmet>
+        <title>{t('public~Project details')}</title>
+      </Helmet>
       <div className="co-m-pane__body">
         {!customData?.hideHeading && (
           <SectionHeading text={t('public~{{kind}} details', { kind: ns.kind })} />
@@ -1079,13 +1083,21 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   );
 };
 
-const RolesPage = ({ obj: { metadata } }) => (
-  <RoleBindingsPage
-    createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
-    namespace={metadata.name}
-    showTitle={false}
-  />
-);
+const RolesPage = ({ obj: { metadata } }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Helmet>
+        <title>{t('public~RoleBindings')}</title>
+      </Helmet>
+      <RoleBindingsPage
+        createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
+        namespace={metadata.name}
+        showTitle={false}
+      />
+    </>
+  );
+};
 
 export const NamespacesDetailsPage = (props) => (
   <DetailsPage
