@@ -1,5 +1,5 @@
 before(() => {
-  cy.exec(`./testData/create_user.sh`, { failOnNonZeroExit: false });
+  cy.exec(`../../../../create-user.sh`, { failOnNonZeroExit: false });
   const bridgePasswordIDP: string = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'test';
   const bridgePasswordUsername: string = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
   const bridgePasswordPassword: string = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
