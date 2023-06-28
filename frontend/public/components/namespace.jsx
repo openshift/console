@@ -45,7 +45,7 @@ import {
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   ConsoleLinkModel,
   NamespaceModel,
@@ -1048,6 +1048,7 @@ export const NamespaceSummary = ({ ns }) => {
 
 export const NamespaceDetails = ({ obj: ns, customData }) => {
   const { t } = useTranslation();
+  const [perspective] = useActivePerspective();
   const [consoleLinks] = useK8sWatchResource({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -1056,9 +1057,11 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return (
     <div>
-      <Helmet>
-        <title>{t('public~Project details')}</title>
-      </Helmet>
+      {perspective === 'dev' && (
+        <Helmet>
+          <title>{t('public~Project details')}</title>
+        </Helmet>
+      )}
       <div className="co-m-pane__body">
         {!customData?.hideHeading && (
           <SectionHeading text={t('public~{{kind}} details', { kind: ns.kind })} />
