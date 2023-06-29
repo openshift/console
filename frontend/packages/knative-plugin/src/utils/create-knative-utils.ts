@@ -44,12 +44,13 @@ export const getKnativeServiceDepResource = (
       env,
       triggers: { image: imagePolicy },
     },
-    import: { selectedStrategy },
     healthChecks,
     resources,
     formType,
   } = formData;
   const { fileUpload } = formData as UploadJarFormData;
+  const selectedStrategy = formData?.import?.selectedStrategy;
+
   const contTargetPort = parseInt(unknownTargetPort, 10) || defaultUnknownPort;
   const imgPullPolicy = imagePolicy ? ImagePullPolicy.Always : ImagePullPolicy.IfNotPresent;
   const {
@@ -109,9 +110,10 @@ export const getKnativeServiceDepResource = (
         ...(((formData as GitImportFormData).pipeline?.enabled || generatedImageStreamName) && {
           'app.kubernetes.io/name': name,
         }),
-        ...(selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION && {
-          'function.knative.dev': 'true',
-        }),
+        ...(selectedStrategy &&
+          selectedStrategy?.type === ImportStrategy.SERVERLESS_FUNCTION && {
+            'function.knative.dev': 'true',
+          }),
       },
       annotations: fileUpload ? { ...annotations, jarFileName: fileUpload.name } : annotations,
     },
