@@ -102,6 +102,7 @@ export const getPipelineRunData = (
       },
   );
   delete annotations['kubectl.kubernetes.io/last-applied-configuration'];
+  delete annotations['tekton.dev/v1beta1TaskRuns'];
 
   const newPipelineRun = {
     apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,
