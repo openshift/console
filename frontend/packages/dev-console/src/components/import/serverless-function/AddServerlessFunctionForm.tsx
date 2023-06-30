@@ -139,11 +139,11 @@ const AddServerlessFunctionForm: React.FC<FormikProps<FormikValues> &
             <Alert
               variant="warning"
               isInline
-              title={t('devconsole~func.yaml is not present or builder strategy is not s2i')}
+              title={t('devconsole~func.yaml is not present and builder strategy is not s2i')}
             >
               <p>
                 {t(
-                  'devconsole~func.yaml must be present or builder strategy should be s2i to create a Serverless function',
+                  'devconsole~func.yaml must be present and builder strategy should be s2i to create a Serverless function',
                 )}
               </p>
             </Alert>
