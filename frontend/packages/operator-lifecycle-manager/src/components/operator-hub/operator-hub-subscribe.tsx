@@ -256,7 +256,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     if (version !== currentLatestVersion || manualSubscriptionsInNamespace?.length > 0) {
       setApproval(InstallPlanApproval.Manual);
     } else setApproval(InstallPlanApproval.Automatic);
-  }, [version, currentLatestVersion, manualSubscriptionsInNamespace]);
+  }, [version, currentLatestVersion, manualSubscriptionsInNamespace?.length]);
 
   const singleInstallMode = installModes.find(
     (m) => m.type === InstallModeType.InstallModeTypeOwnNamespace,
