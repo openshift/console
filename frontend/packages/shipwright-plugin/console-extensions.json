@@ -5,8 +5,7 @@
       "model": {
         "group": "shipwright.io"
       },
-      "color": "#7c8fa4",
-      "badge": "tech"
+      "color": "#7c8fa4"
     }
   },
   {
@@ -20,8 +19,7 @@
       "color": "#7c8fa4",
       "label": "%shipwright-plugin~Build%",
       "labelPlural": "%shipwright-plugin~Builds%",
-      "abbr": "B",
-      "badge": "tech"
+      "abbr": "B"
     }
   },
   {
@@ -35,8 +33,7 @@
       "color": "#7c8fa4",
       "label": "%shipwright-plugin~BuildRun%",
       "labelPlural": "%shipwright-plugin~BuildRuns%",
-      "abbr": "BR",
-      "badge": "tech"
+      "abbr": "BR"
     }
   },
   {
