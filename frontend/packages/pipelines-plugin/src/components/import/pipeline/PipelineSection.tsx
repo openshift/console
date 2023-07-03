@@ -10,7 +10,7 @@ import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import { FlagsObject } from '@console/internal/reducers/features';
 import { TechPreviewBadge } from '@console/shared';
 import { FLAG_OPENSHIFT_PIPELINE, CLUSTER_PIPELINE_NS } from '../../../const';
-import { PipelineModel, PipelineResourceModel } from '../../../models';
+import { PipelineModel } from '../../../models';
 import { PipelineKind } from '../../../types';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import PipelineTemplate from './PipelineTemplate';
@@ -38,14 +38,7 @@ const usePipelineAccessReview = (): boolean => {
     verb: 'create',
   });
 
-  const canCreatePipelineResource = useAccessReview({
-    group: PipelineResourceModel.apiGroup,
-    resource: PipelineResourceModel.plural,
-    namespace: getActiveNamespace(),
-    verb: 'create',
-  });
-
-  return canListPipelines && canCreatePipelines && canCreatePipelineResource;
+  return canListPipelines && canCreatePipelines;
 };
 
 const PipelineSection: React.FC<PipelineSectionProps> = ({
