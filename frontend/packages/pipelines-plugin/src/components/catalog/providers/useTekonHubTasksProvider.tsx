@@ -5,7 +5,7 @@ import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { ResourceIcon, useAccessReview } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskModel } from '../../../models/pipelines';
-import { TektonTaskProviders } from '../../pipelines/const';
+import { TaskProviders } from '../../pipelines/const';
 import { TektonHubTask, useInclusterTektonHubURLs, useTektonHubResources } from '../apis/tektonHub';
 import { filterBySupportedPlatforms, useTektonHubIntegration } from '../catalog-utils';
 
@@ -22,14 +22,14 @@ const normalizeTektonHubTasks = (
       }
       const { id, name } = task;
       const { description } = task.latestVersion;
-      const provider = TektonTaskProviders.community;
+      const provider = TaskProviders.tektonHub;
       const tags = task.tags?.map((t) => t.name) ?? [];
       const categories = task.categories?.map((ct) => ct.name) ?? [];
       const [secondaryLabelName] = categories;
       const versions = [];
       const normalizedTektonTask: CatalogItem<TektonHubTask> = {
         uid: id.toString(),
-        type: TektonTaskProviders.community,
+        type: TaskProviders.community,
         name,
         description,
         provider,

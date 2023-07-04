@@ -4,8 +4,8 @@ import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
-import { ClusterTaskModel, TaskModel } from '../../models';
-import { TektonTaskAnnotation, TektonTaskProviders } from '../pipelines/const';
+import { ClusterTaskModel, TaskModel, TaskModelV1Beta1 } from '../../models';
+import { TektonTaskAnnotation, TaskProviders } from '../pipelines/const';
 import { ARTIFACTHUB, CTALabel, TEKTONHUB } from './const';
 
 export const isSelectedVersionInstalled = (item: CatalogItem, selectedVersion: string): boolean => {
@@ -21,13 +21,11 @@ export const isOneVersionInstalled = (item: CatalogItem): boolean => {
 };
 
 export const isTektonHubTaskWithoutVersions = (item: CatalogItem): boolean => {
-  return (
-    item.provider === TektonTaskProviders.community && item?.attributes?.versions?.length === 0
-  );
+  return item.provider === TaskProviders.tektonHub && item?.attributes?.versions?.length === 0;
 };
 
 export const isArtifactHubTask = (item: CatalogItem): boolean => {
-  return item.data.source === 'artifactHub' && item.provider === TektonTaskProviders.community;
+  return item.data.source === 'artifactHub' && item.provider === TaskProviders.artifactHub;
 };
 
 export const isSelectedVersionUpgradable = (
@@ -115,7 +113,12 @@ export const updateTask = async (
         ...getInstalledFromAnnotation(),
       };
       task.metadata = _.merge({}, taskData.data.metadata, task.metadata);
-      return k8sUpdate(TaskModel, task, namespace, name);
+      return k8sUpdate(
+        task.apiVersion === 'tekton.dev/v1' ? TaskModel : TaskModelV1Beta1,
+        task,
+        namespace,
+        name,
+      );
     })
     .catch((err) => {
       // eslint-disable-next-line no-console
@@ -134,7 +137,7 @@ export const createTask = (url: string, namespace: string) => {
         ...task.metadata.annotations,
         [TektonTaskAnnotation.installedFrom]: TEKTONHUB,
       };
-      await k8sCreate(TaskModel, task);
+      await k8sCreate(task.apiVersion === 'tekton.dev/v1' ? TaskModel : TaskModelV1Beta1, task);
     })
     .catch((err) => {
       // eslint-disable-next-line no-console

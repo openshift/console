@@ -4,15 +4,54 @@ import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
-import { API_PROXY_URL } from '../../../const';
-import { TaskModelV1Beta1 } from '../../../models';
+import { API_PROXY_URL, ARTIFACTHUB_API_BASE_URL } from '../../../const';
+import { TaskModel, TaskModelV1Beta1 } from '../../../models';
 import { TektonTaskAnnotation } from '../../pipelines/const';
 import { ARTIFACTHUB } from '../../quicksearch/const';
 import { getInstalledFromAnnotation } from '../../quicksearch/pipeline-quicksearch-utils';
 import { ApiResult } from '../hooks/useApiResponse';
 
+export type ArtifactHubRepositiry = {
+  name: string;
+  kind: number;
+  url: string;
+  display_name: string;
+  repository_id: string;
+  organization_name: string;
+  organization_display_name: string;
+};
+
+export type ArtifactHubVersion = {
+  version: string;
+  contains_security_update: boolean;
+  prerelease: boolean;
+  ts: number;
+};
+
+export type ArtifactHubTask = {
+  package_id: string;
+  name: string;
+  description: string;
+  version: string;
+  display_name: string;
+  repository: ArtifactHubRepositiry;
+};
+
+export type ArtifactHubTaskDetails = {
+  package_id: string;
+  name: string;
+  description: string;
+  display_name: string;
+  keywords: string[];
+  platforms: string[];
+  version: ArtifactHubVersion[];
+  available_version: [];
+  content_url: string;
+  repository: ArtifactHubRepositiry;
+};
+
 export const getArtifactHubTaskDetails = async (item: CatalogItem): Promise<any> => {
-  const API_BASE_URL = 'https://artifacthub.io/api/v1/packages/tekton-task';
+  const API_BASE_URL = `${ARTIFACTHUB_API_BASE_URL}/packages/tekton-task`;
   const { name, data } = item;
   const {
     task: {
@@ -30,8 +69,7 @@ export const useGetArtifactHubTasks = (hasPermission: boolean): ApiResult<any> =
   const [loaded, setLoaded] = React.useState(false);
   const [loadedError, setLoadedError] = React.useState<string>();
 
-  const API_URL =
-    'https://artifacthub.io/api/v1/packages/search?offset=0&limit=60&facets=false&kind=7&deprecated=false&sort=relevance';
+  const API_URL = `${ARTIFACTHUB_API_BASE_URL}/packages/search?offset=0&limit=60&facets=false&kind=7&deprecated=false&sort=relevance`;
 
   React.useEffect(() => {
     let mounted = true;
@@ -56,7 +94,7 @@ export const useGetArtifactHubTasks = (hasPermission: boolean): ApiResult<any> =
     return () => {
       mounted = false;
     };
-  }, [hasPermission]);
+  }, [hasPermission, API_URL]);
   return [resultData, loaded, loadedError];
 };
 
@@ -70,7 +108,7 @@ export const createArtifactHubTask = (url: string, namespace: string) => {
         ...task.metadata.annotations,
         [TektonTaskAnnotation.installedFrom]: ARTIFACTHUB,
       };
-      await k8sCreate(TaskModelV1Beta1, task);
+      await k8sCreate(task.apiVersion === 'tekton.dev/v1' ? TaskModel : TaskModelV1Beta1, task);
     })
     .catch((err) => {
       // eslint-disable-next-line no-console
@@ -95,7 +133,12 @@ export const updateArtifactHubTask = async (
         ...getInstalledFromAnnotation(),
       };
       task.metadata = _.merge({}, taskData.data.metadata, task.metadata);
-      return k8sUpdate(TaskModelV1Beta1, task, namespace, name);
+      return k8sUpdate(
+        task.apiVersion === 'tekton.dev/v1' ? TaskModel : TaskModelV1Beta1,
+        task,
+        namespace,
+        name,
+      );
     })
     .catch((err) => {
       // eslint-disable-next-line no-console

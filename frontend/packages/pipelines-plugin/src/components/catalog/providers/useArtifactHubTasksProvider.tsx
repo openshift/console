@@ -4,39 +4,42 @@ import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { ResourceIcon, useAccessReview } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskModel } from '../../../models/pipelines';
-import { TektonTaskProviders } from '../../pipelines/const';
-import { useGetArtifactHubTasks } from '../apis/artifactHub';
+import { TaskProviders } from '../../pipelines/const';
+import { ArtifactHubTask, useGetArtifactHubTasks } from '../apis/artifactHub';
 import { TektonHubTask } from '../apis/tektonHub';
 
-const normalizeArtifactHubTasks = (tektonHubTasks: any[]): CatalogItem<any>[] => {
-  const normalizedTektonHubTasks: CatalogItem<any>[] = tektonHubTasks.reduce((acc, task) => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { package_id, name, description } = task;
-    const provider = TektonTaskProviders.community;
-    const normalizedArtifactHubTask: CatalogItem<any> = {
-      uid: package_id.toString(),
-      type: TektonTaskProviders.community,
-      name,
-      description,
-      provider,
-      icon: {
-        node: <ResourceIcon kind={referenceForModel(TaskModel)} />,
-      },
-      attributes: { installed: '' },
-      cta: {
-        label: i18next.t('pipelines-plugin~Add'),
-      },
-      data: {
-        task,
-        source: 'artifactHub',
-      },
-    };
-    acc.push(normalizedArtifactHubTask);
+const normalizeArtifactHubTasks = (artifactHubTasks: ArtifactHubTask[]): CatalogItem<any>[] => {
+  const normalizedArtifactHubTasks: CatalogItem<ArtifactHubTask>[] = artifactHubTasks.reduce(
+    (acc, task) => {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const { package_id, name, description } = task;
+      const provider = TaskProviders.artifactHub;
+      const normalizedArtifactHubTask: CatalogItem<any> = {
+        uid: package_id.toString(),
+        type: TaskProviders.community,
+        name,
+        description,
+        provider,
+        icon: {
+          node: <ResourceIcon kind={referenceForModel(TaskModel)} />,
+        },
+        attributes: { installed: '' },
+        cta: {
+          label: i18next.t('pipelines-plugin~Add'),
+        },
+        data: {
+          task,
+          source: 'artifactHub',
+        },
+      };
+      acc.push(normalizedArtifactHubTask);
 
-    return acc;
-  }, []);
+      return acc;
+    },
+    [],
+  );
 
-  return normalizedTektonHubTasks;
+  return normalizedArtifactHubTasks;
 };
 
 const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
@@ -60,11 +63,11 @@ const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
     verb: 'update',
   });
 
-  const [tektonHubTasks, tasksLoaded, tasksError] = useGetArtifactHubTasks(
+  const [artifactHubTasks, tasksLoaded, tasksError] = useGetArtifactHubTasks(
     canCreateTask && canUpdateTask,
   );
-  React.useMemo(() => setNormalizedArtifactHubTasks(normalizeArtifactHubTasks(tektonHubTasks)), [
-    tektonHubTasks,
+  React.useMemo(() => setNormalizedArtifactHubTasks(normalizeArtifactHubTasks(artifactHubTasks)), [
+    artifactHubTasks,
   ]);
   return [normalizedArtifactHubTasks, tasksLoaded, tasksError];
 };

@@ -8,7 +8,7 @@ import {
   CatalogServiceProvider,
 } from '@console/shared';
 import { createArtifactHubTask, updateArtifactHubTask } from '../catalog/apis/artifactHub';
-import { TektonTaskProviders } from '../pipelines/const';
+import { TaskProviders } from '../pipelines/const';
 import { useCleanupOnFailure, useLoadingTaskCleanup } from '../pipelines/pipeline-builder/hooks';
 import {
   PipelineBuilderTaskGroup,
@@ -60,7 +60,7 @@ const Contents: React.FC<
   const catalogServiceItems = catalogService.items.reduce((acc, item) => {
     const installedTask = findInstalledTask(catalogService.items, item);
 
-    if (item.provider === TektonTaskProviders.community) {
+    if (item.provider === TaskProviders.artifactHub || item.provider === TaskProviders.tektonHub) {
       item.attributes.installed = '';
       if (installedTask) {
         item.attributes.installed = installedTask.attributes?.versions[0]?.version.toString();
@@ -70,7 +70,7 @@ const Contents: React.FC<
     item.cta.callback = ({ selectedVersion }) => {
       return new Promise((resolve) => {
         if (!isArtifactHubTask(item)) {
-          if (item.provider === TektonTaskProviders.community) {
+          if (item.provider === TaskProviders.tektonHub) {
             const selectedVersionUrl = getSelectedVersionUrl(item, selectedVersion);
             if (installedTask) {
               if (selectedVersion === item.attributes.installed) {
@@ -92,7 +92,7 @@ const Contents: React.FC<
           }
         }
 
-        if (item.provider === TektonTaskProviders.community && isArtifactHubTask(item)) {
+        if (item.provider === TaskProviders.artifactHub && isArtifactHubTask(item)) {
           const selectedVersionUrl = getSelectedVersionUrl(item, selectedVersion);
           if (installedTask) {
             if (selectedVersion === item.attributes.installed) {
