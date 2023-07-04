@@ -25,7 +25,7 @@ export const isTektonHubTaskWithoutVersions = (item: CatalogItem): boolean => {
 };
 
 export const isArtifactHubTask = (item: CatalogItem): boolean => {
-  return item.data.source === 'artifactHub' && item.provider === TaskProviders.artifactHub;
+  return item.data.source === ARTIFACTHUB && item.provider === TaskProviders.artifactHub;
 };
 
 export const isSelectedVersionUpgradable = (

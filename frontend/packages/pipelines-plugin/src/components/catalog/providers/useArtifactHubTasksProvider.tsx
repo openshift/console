@@ -5,6 +5,7 @@ import { ResourceIcon, useAccessReview } from '@console/internal/components/util
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskModel } from '../../../models/pipelines';
 import { TaskProviders } from '../../pipelines/const';
+import { ARTIFACTHUB } from '../../quicksearch/const';
 import { ArtifactHubTask, useGetArtifactHubTasks } from '../apis/artifactHub';
 import { TektonHubTask } from '../apis/tektonHub';
 
@@ -29,7 +30,7 @@ const normalizeArtifactHubTasks = (artifactHubTasks: ArtifactHubTask[]): Catalog
         },
         data: {
           task,
-          source: 'artifactHub',
+          source: ARTIFACTHUB,
         },
       };
       acc.push(normalizedArtifactHubTask);

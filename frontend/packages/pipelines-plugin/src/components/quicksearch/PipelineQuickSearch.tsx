@@ -60,7 +60,10 @@ const Contents: React.FC<
   const catalogServiceItems = catalogService.items.reduce((acc, item) => {
     const installedTask = findInstalledTask(catalogService.items, item);
 
-    if (item.provider === TaskProviders.artifactHub || item.provider === TaskProviders.tektonHub) {
+    if (
+      (item.provider === TaskProviders.artifactHub || item.provider === TaskProviders.tektonHub) &&
+      item.type !== TaskProviders.redhat
+    ) {
       item.attributes.installed = '';
       if (installedTask) {
         item.attributes.installed = installedTask.attributes?.versions[0]?.version.toString();
