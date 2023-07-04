@@ -16,8 +16,8 @@ import { BUILDRUN_TO_BUILD_REFERENCE_LABEL } from '../../const';
 import { BuildRunModel } from '../../models';
 import { Build, BuildRun } from '../../types';
 import { isBuildRunNewerThen } from '../../utils';
-import BuildRunDuration from '../buildrun-duration/BuildRunDuration';
-import BuildRunStatus from '../buildrun-status/BuildRunStatus';
+import BuildRunDuration, { getBuildRunDuration } from '../buildrun-duration/BuildRunDuration';
+import BuildRunStatus, { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
 
 const columnClassNames = [
   '', // name
@@ -49,18 +49,26 @@ export const BuildHeader = () => {
     },
     {
       title: t('shipwright-plugin~Last run'),
+      transforms: [sortable],
+      sortField: 'latestBuild.metadata.name',
       props: { className: columnClassNames[2] },
     },
     {
       title: t('shipwright-plugin~Last run status'),
+      transforms: [sortable],
+      sortFunc: 'latestBuildStatus',
       props: { className: columnClassNames[3] },
     },
     {
       title: t('shipwright-plugin~Last run time'),
+      transforms: [sortable],
+      sortField: 'latestBuild.status.completionTime',
       props: { className: columnClassNames[4] },
     },
     {
       title: t('shipwright-plugin~Last run duration'),
+      transforms: [sortable],
+      sortFunc: 'latestRunDuration',
       props: { className: columnClassNames[5] },
     },
     {
@@ -70,15 +78,10 @@ export const BuildHeader = () => {
   ];
 };
 
-export const BuildRow: React.FC<RowFunctionArgs<Build, CustomData>> = ({
-  obj: build,
-  customData,
-}) => {
+export const BuildRow: React.FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
   const kindReference = referenceFor(build);
   const context = { [kindReference]: build };
   const buildRunKindReference = referenceForModel(BuildRunModel);
-  const latestBuildRun =
-    customData.buildRuns.latestByBuildName[`${build.metadata.name}-${build.metadata.namespace}`];
 
   return (
     <>
@@ -93,28 +96,28 @@ export const BuildRow: React.FC<RowFunctionArgs<Build, CustomData>> = ({
         <ResourceLink kind="Namespace" name={build.metadata.namespace} />
       </TableData>
       <TableData className={columnClassNames[2]}>
-        {latestBuildRun ? (
+        {build.latestBuild ? (
           <ResourceLink
             kind={buildRunKindReference}
-            name={latestBuildRun.metadata?.name}
-            namespace={latestBuildRun.metadata?.namespace}
+            name={build.latestBuild.metadata?.name}
+            namespace={build.latestBuild.metadata?.namespace}
           />
         ) : (
           '-'
         )}
       </TableData>
       <TableData className={columnClassNames[3]}>
-        {latestBuildRun ? <BuildRunStatus buildRun={latestBuildRun} /> : '-'}
+        {build.latestBuild ? <BuildRunStatus buildRun={build.latestBuild} /> : '-'}
       </TableData>
       <TableData className={columnClassNames[4]}>
-        {latestBuildRun ? (
-          <Timestamp timestamp={latestBuildRun.metadata?.creationTimestamp} />
+        {build.latestBuild ? (
+          <Timestamp timestamp={build?.latestBuild.metadata?.creationTimestamp} />
         ) : (
           '-'
         )}
       </TableData>
       <TableData className={columnClassNames[5]}>
-        {latestBuildRun ? <BuildRunDuration buildRun={latestBuildRun} /> : '-'}
+        {build?.latestBuild ? <BuildRunDuration buildRun={build.latestBuild} /> : '-'}
       </TableData>
       <TableData className={columnClassNames[6]}>
         <LazyActionMenu context={context} />
@@ -144,7 +147,7 @@ export const BuildTable: React.FC<BuildTableProps> = (props) => {
     isList: true,
   });
 
-  const customData = React.useMemo<CustomData>(
+  const data = React.useMemo<CustomData>(
     () => ({
       buildRuns: {
         latestByBuildName: buildRuns.reduce<Record<string, BuildRun>>((acc, buildRun) => {
@@ -163,16 +166,25 @@ export const BuildTable: React.FC<BuildTableProps> = (props) => {
     }),
     [buildRuns, buildRunsLoaded, buildRunsLoadError],
   );
+  const buildResource = props.data.map((sBuild) => {
+    sBuild.latestBuild =
+      data.buildRuns.latestByBuildName[`${sBuild.metadata.name}-${sBuild.metadata.namespace}`];
+    return sBuild;
+  });
 
   return (
     <Table
       {...props}
+      data={buildResource}
       aria-label={t('shipwright-plugin~Builds')}
       Header={BuildHeader}
       Row={BuildRow}
       defaultSortField="metadata.name"
       defaultSortOrder={SortByDirection.asc}
-      customData={customData}
+      customSorts={{
+        latestBuildStatus: (obj) => getBuildRunStatus(obj.latestBuild),
+        latestRunDuration: (obj) => getBuildRunDuration(obj.latestBuild),
+      }}
       virtualize
     />
   );

@@ -4,7 +4,7 @@ import Status, { StatusProps } from '@console/dynamic-plugin-sdk/src/app/compone
 import { BuildRun, ComputedBuildRunStatus } from '../../types';
 
 const getSucceededCondition = (buildRun: BuildRun) =>
-  buildRun.status?.conditions?.find((condition) => condition.type === 'Succeeded');
+  buildRun?.status?.conditions?.find((condition) => condition.type === 'Succeeded');
 
 export const getBuildRunStatus = (buildRun: BuildRun): ComputedBuildRunStatus => {
   const succeededCondition = getSucceededCondition(buildRun);
