@@ -300,15 +300,6 @@ export enum Resources {
   KnativeService = 'knative',
 }
 
-export enum SupportedRuntime {
-  Node = 'node',
-  NodeJS = 'nodejs',
-  TypeScript = 'typescript',
-  Quarkus = 'quarkus',
-}
-
-export const notSupportedRuntime = ['go', 'rust', 'springboot', 'python'];
-
 export enum SampleRuntime {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   'Node.js' = 'nodejs',

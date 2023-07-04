@@ -39,6 +39,9 @@ export const keywordCompare = (filterString: string, items: CatalogItem[]): Cata
 
 export const getIconProps = (item: CatalogItem) => {
   const { icon } = item;
+  if (!icon) {
+    return {};
+  }
   if (icon.url) {
     return { iconImg: icon.url, iconClass: null };
   }

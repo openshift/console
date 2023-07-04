@@ -1,24 +1,11 @@
 import * as React from 'react';
-import { QuickStart, isDisabledQuickStart, getDisabledQuickStarts } from '@patternfly/quickstarts';
+import { QuickStart } from '@patternfly/quickstarts';
 import { QuickStartsLoaderProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceForModel } from '@console/internal/module/k8s/k8s';
-import { QuickStartModel } from '../../../models';
+import { useQuickStarts } from '../utils/useQuickStarts';
 import QuickStartPermissionChecker from './QuickStartPermissionChecker';
 
 const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = ({ children }) => {
-  const [quickStarts, quickStartsLoaded] = useK8sWatchResource<QuickStart[]>({
-    kind: referenceForModel(QuickStartModel),
-    isList: true,
-  });
-
-  const enabledQuickstarts = React.useMemo(() => {
-    const disabledQuickStarts = getDisabledQuickStarts();
-    if (quickStartsLoaded && disabledQuickStarts.length > 0) {
-      return quickStarts.filter((qs) => !isDisabledQuickStart(qs, disabledQuickStarts));
-    }
-    return quickStarts;
-  }, [quickStarts, quickStartsLoaded]);
+  const [quickStarts, quickStartsLoaded] = useQuickStarts();
 
   const [allowedQuickStarts, setAllowedQuickStarts] = React.useState<QuickStart[]>([]);
   const [permissionsLoaded, setPermissionsLoaded] = React.useState<boolean>(false);
@@ -27,20 +14,20 @@ const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = ({ children }) => {
   const handlePermissionCheck = React.useCallback(
     (quickStart, hasPermission) => {
       permissionChecks.current[quickStart.metadata.name] = hasPermission;
-      if (Object.keys(permissionChecks.current).length === enabledQuickstarts.length) {
-        const filteredQuickStarts = enabledQuickstarts.filter(
+      if (Object.keys(permissionChecks.current).length === quickStarts.length) {
+        const filteredQuickStarts = quickStarts.filter(
           (quickstart) => permissionChecks.current[quickstart.metadata.name],
         );
         setAllowedQuickStarts(filteredQuickStarts);
         setPermissionsLoaded(true);
       }
     },
-    [enabledQuickstarts],
+    [quickStarts],
   );
 
   return (
     <>
-      {enabledQuickstarts.map((quickstart) => {
+      {quickStarts.map((quickstart) => {
         return (
           <QuickStartPermissionChecker
             key={quickstart.metadata.name}
@@ -51,7 +38,7 @@ const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = ({ children }) => {
       })}
       {children(
         allowedQuickStarts,
-        quickStartsLoaded && (enabledQuickstarts.length === 0 || permissionsLoaded),
+        quickStartsLoaded && (quickStarts.length === 0 || permissionsLoaded),
       )}
     </>
   );

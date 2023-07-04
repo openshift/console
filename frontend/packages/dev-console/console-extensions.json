@@ -24,6 +24,18 @@
   },
 
   {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsoleSample"
+      },
+      "flag": "CONSOLESAMPLES"
+    }
+  },
+
+  {
     "type": "console.cluster-configuration/item",
     "properties": {
       "id": "dev-console.project-access.ProjectAccessRolesConfiguration",
@@ -537,8 +549,20 @@
     "type": "console.catalog/item-provider",
     "properties": {
       "catalogId": "samples-catalog",
+      "type": "ConsoleSample",
+      "title": "%devconsole~Console sample%",
+      "provider": { "$codeRef": "catalog.useConsoleSamplesCatalogProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT", "CONSOLESAMPLES"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "samples-catalog",
       "type": "BuilderImage",
-      "title": "%devconsole~Builder Images%",
+      "title": "%devconsole~Builder Image%",
       "provider": { "$codeRef": "catalog.builderImageSamplesProvider" }
     },
     "flags": {
@@ -550,7 +574,7 @@
     "properties": {
       "catalogId": "samples-catalog",
       "type": "Devfile",
-      "title": "%devconsole~Devfiles%",
+      "title": "%devconsole~Devfile%",
       "provider": { "$codeRef": "catalog.devfileSamplesProvider" }
     },
     "flags": {

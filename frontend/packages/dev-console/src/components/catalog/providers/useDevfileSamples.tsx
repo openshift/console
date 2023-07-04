@@ -13,9 +13,16 @@ const normalizeDevfileSamples = (
 ): CatalogItem[] => {
   const normalizedDevfileSamples = devfileSamples.map((sample) => {
     const { name: uid, displayName, description, tags, git, icon, provider } = sample;
-    const gitRepoUrl = Object.values(git.remotes)[0];
+    const gitRepositoryUrl = Object.values(git.remotes)[0];
     const label = t('devconsole~Create Devfile Sample');
-    const href = `/import/ns/${activeNamespace}?importType=devfile&formType=sample&devfileName=${uid}&gitRepo=${gitRepoUrl}`;
+
+    const searchParams = new URLSearchParams();
+    searchParams.set('formType', 'sample');
+    searchParams.set('importType', 'devfile');
+    searchParams.set('devfileName', uid);
+    searchParams.set('git.repository', gitRepositoryUrl);
+
+    const href = `/import/ns/${activeNamespace}?${searchParams}`;
     const iconUrl = icon || '';
 
     const item: CatalogItem = {

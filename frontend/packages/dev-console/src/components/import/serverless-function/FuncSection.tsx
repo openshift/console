@@ -7,10 +7,14 @@ import { BuilderImage } from '@console/dev-console/src/utils/imagestream-utils';
 import { getGitService } from '@console/git-service/src';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
 import { Loading } from '@console/internal/components/utils';
+import {
+  notSupportedRuntime,
+  SupportedRuntime,
+  getRuntimeImage,
+} from '../../../utils/serverless-functions';
 import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
-import { notSupportedRuntime, Resources, SupportedRuntime } from '../import-types';
+import { Resources } from '../import-types';
 import { useResourceType } from '../section/useResourceType';
-import { getRuntimeImage } from './func-utils';
 import './FuncSection.scss';
 
 const FuncSection = ({ builderImages }) => {

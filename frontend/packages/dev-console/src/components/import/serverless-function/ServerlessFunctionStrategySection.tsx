@@ -3,8 +3,8 @@ import { Alert, ValidatedOptions } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src';
+import { notSupportedRuntime } from '../../../utils/serverless-functions';
 import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
-import { notSupportedRuntime } from '../import-types';
 import FormSection from '../section/FormSection';
 
 const ServerlessFunctionStrategySection = ({ builderImages }) => {

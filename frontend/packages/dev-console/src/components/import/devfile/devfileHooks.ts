@@ -120,7 +120,7 @@ export const useDevfileServer = (
 
 export const useDevfileSource = () => {
   const searchParams = new URLSearchParams(window.location.search);
-  const devfileSourceUrl = searchParams.get('gitRepo');
+  const devfileSourceUrl = searchParams.get('git.repository');
   const devfileName = searchParams.get('devfileName');
   const formType = searchParams.get('formType');
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
