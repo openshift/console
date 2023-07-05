@@ -8,6 +8,7 @@ import { TaskProviders } from '../../pipelines/const';
 import { ARTIFACTHUB } from '../../quicksearch/const';
 import { ArtifactHubTask, useGetArtifactHubTasks } from '../apis/artifactHub';
 import { TektonHubTask } from '../apis/tektonHub';
+import { useTektonHubIntegration } from '../catalog-utils';
 
 const normalizeArtifactHubTasks = (artifactHubTasks: ArtifactHubTask[]): CatalogItem<any>[] => {
   const normalizedArtifactHubTasks: CatalogItem<ArtifactHubTask>[] = artifactHubTasks.reduce(
@@ -46,6 +47,7 @@ const normalizeArtifactHubTasks = (artifactHubTasks: ArtifactHubTask[]): Catalog
 const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, string] => {
+  const artifactHubIntegration = useTektonHubIntegration();
   const canCreateTask = useAccessReview({
     group: TaskModel.apiGroup,
     resource: TaskModel.plural,
@@ -61,7 +63,7 @@ const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
   });
 
   const [artifactHubTasks, tasksLoaded, tasksError] = useGetArtifactHubTasks(
-    canCreateTask && canUpdateTask,
+    canCreateTask && canUpdateTask && artifactHubIntegration,
   );
   const normalizedArtifactHubTasks = React.useMemo<CatalogItem<TektonHubTask>[]>(
     () => normalizeArtifactHubTasks(artifactHubTasks),
