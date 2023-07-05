@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
-import { API_PROXY_URL, ARTIFACTHUB_API_BASE_URL } from '../../../const';
+import { K8sResourceKind, k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
+import { consoleProxyFetchJSON } from '@console/shared/src/utils/proxy';
+import { ARTIFACTHUB_API_BASE_URL } from '../../../const';
 import { TaskModel, TaskModelV1Beta1 } from '../../../models';
 import { TektonTaskAnnotation } from '../../pipelines/const';
 import { ARTIFACTHUB } from '../../quicksearch/const';
 import { getInstalledFromAnnotation } from '../../quicksearch/pipeline-quicksearch-utils';
 import { ApiResult } from '../hooks/useApiResponse';
 
-export type ArtifactHubRepositiry = {
+export type ArtifactHubRepository = {
   name: string;
   kind: number;
   url: string;
@@ -34,7 +33,7 @@ export type ArtifactHubTask = {
   description: string;
   version: string;
   display_name: string;
-  repository: ArtifactHubRepositiry;
+  repository: ArtifactHubRepository;
 };
 
 export type ArtifactHubTaskDetails = {
@@ -45,12 +44,16 @@ export type ArtifactHubTaskDetails = {
   keywords: string[];
   platforms: string[];
   version: ArtifactHubVersion[];
-  available_version: [];
+  available_versions: [];
   content_url: string;
-  repository: ArtifactHubRepositiry;
+  repository: ArtifactHubRepository;
 };
 
-export const getArtifactHubTaskDetails = async (item: CatalogItem): Promise<any> => {
+const ARTIFACRHUB_TASKS_SEARCH_URL = `${ARTIFACTHUB_API_BASE_URL}/packages/search?offset=0&limit=60&facets=false&kind=7&deprecated=false&sort=relevance`;
+
+export const getArtifactHubTaskDetails = async (
+  item: CatalogItem,
+): Promise<ArtifactHubTaskDetails> => {
   const API_BASE_URL = `${ARTIFACTHUB_API_BASE_URL}/packages/tekton-task`;
   const { name, data } = item;
   const {
@@ -59,27 +62,26 @@ export const getArtifactHubTaskDetails = async (item: CatalogItem): Promise<any>
       repository: { name: repoName },
     },
   } = data;
-  const API_URL = `${API_BASE_URL}/${repoName}/${name}/${version}`;
-  const response = await consoleFetchJSON.post(API_PROXY_URL, { url: API_URL, method: 'GET' });
-  return response ?? {};
+  const url = `${API_BASE_URL}/${repoName}/${name}/${version}`;
+  return consoleProxyFetchJSON({ url, method: 'GET' });
 };
 
-export const useGetArtifactHubTasks = (hasPermission: boolean): ApiResult<any> => {
-  const [resultData, setResult] = React.useState([]);
+export const useGetArtifactHubTasks = (hasPermission: boolean): ApiResult<ArtifactHubTask[]> => {
+  const [resultData, setResult] = React.useState<ArtifactHubTask[]>([]);
   const [loaded, setLoaded] = React.useState(false);
   const [loadedError, setLoadedError] = React.useState<string>();
-
-  const API_URL = `${ARTIFACTHUB_API_BASE_URL}/packages/search?offset=0&limit=60&facets=false&kind=7&deprecated=false&sort=relevance`;
 
   React.useEffect(() => {
     let mounted = true;
     if (hasPermission) {
-      consoleFetchJSON
-        .post(API_PROXY_URL, { url: API_URL, method: 'GET' })
-        .then((res) => {
+      consoleProxyFetchJSON<{ packages: ArtifactHubTask[] }>({
+        url: ARTIFACRHUB_TASKS_SEARCH_URL,
+        method: 'GET',
+      })
+        .then(({ packages }) => {
           if (mounted) {
             setLoaded(true);
-            setResult(JSON.parse(res.body)?.packages);
+            setResult(packages);
           }
         })
         .catch((err) => {
@@ -94,25 +96,23 @@ export const useGetArtifactHubTasks = (hasPermission: boolean): ApiResult<any> =
     return () => {
       mounted = false;
     };
-  }, [hasPermission, API_URL]);
+  }, [hasPermission]);
   return [resultData, loaded, loadedError];
 };
 
 export const createArtifactHubTask = (url: string, namespace: string) => {
-  return consoleFetchJSON
-    .post(API_PROXY_URL, { url, method: 'GET' })
-    .then(async (res) => {
-      const task = safeLoad(res.body);
+  return consoleProxyFetchJSON({ url, method: 'GET' })
+    .then((task: K8sResourceKind) => {
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
         ...task.metadata.annotations,
         [TektonTaskAnnotation.installedFrom]: ARTIFACTHUB,
       };
-      await k8sCreate(task.apiVersion === 'tekton.dev/v1' ? TaskModel : TaskModelV1Beta1, task);
+      return k8sCreate(task.apiVersion === 'tekton.dev/v1' ? TaskModel : TaskModelV1Beta1, task);
     })
     .catch((err) => {
       // eslint-disable-next-line no-console
-      console.warn('Error:', err);
+      console.warn('Error while importing ArtifactHub Task:', err);
       throw err;
     });
 };
@@ -123,10 +123,8 @@ export const updateArtifactHubTask = async (
   namespace: string,
   name: string,
 ) => {
-  return consoleFetchJSON
-    .post(API_PROXY_URL, { url, method: 'GET' })
-    .then(async (res) => {
-      const task = safeLoad(res.body);
+  return consoleProxyFetchJSON({ url, method: 'GET' })
+    .then((task: K8sResourceKind) => {
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
         ...task.metadata.annotations,
@@ -142,7 +140,7 @@ export const updateArtifactHubTask = async (
     })
     .catch((err) => {
       // eslint-disable-next-line no-console
-      console.warn('Error:', err);
+      console.warn('Error while updating ArtifactHub Task:', err);
       throw err;
     });
 };

@@ -137,7 +137,7 @@ export const createTask = (url: string, namespace: string) => {
         ...task.metadata.annotations,
         [TektonTaskAnnotation.installedFrom]: TEKTONHUB,
       };
-      await k8sCreate(task.apiVersion === 'tekton.dev/v1' ? TaskModel : TaskModelV1Beta1, task);
+      return k8sCreate(task.apiVersion === 'tekton.dev/v1' ? TaskModel : TaskModelV1Beta1, task);
     })
     .catch((err) => {
       // eslint-disable-next-line no-console

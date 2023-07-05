@@ -85,8 +85,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
       const debouncedLoadDetails = debounce(async () => {
         if (mounted) {
           try {
-            const itemDetails = await getArtifactHubTaskDetails(selectedItem);
-            const item = JSON.parse(itemDetails.body);
+            const item = await getArtifactHubTaskDetails(selectedItem);
             selectedItem.attributes.versions = item.available_versions;
             selectedItem.attributes.selectedVersionContentUrl = item.content_url;
             selectedItem.tags = item.keywords;

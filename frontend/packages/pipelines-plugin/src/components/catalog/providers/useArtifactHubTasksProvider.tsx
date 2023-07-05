@@ -46,10 +46,6 @@ const normalizeArtifactHubTasks = (artifactHubTasks: ArtifactHubTask[]): Catalog
 const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, string] => {
-  const [normalizedArtifactHubTasks, setNormalizedArtifactHubTasks] = React.useState<
-    CatalogItem<TektonHubTask>[]
-  >([]);
-
   const canCreateTask = useAccessReview({
     group: TaskModel.apiGroup,
     resource: TaskModel.plural,
@@ -67,9 +63,10 @@ const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
   const [artifactHubTasks, tasksLoaded, tasksError] = useGetArtifactHubTasks(
     canCreateTask && canUpdateTask,
   );
-  React.useMemo(() => setNormalizedArtifactHubTasks(normalizeArtifactHubTasks(artifactHubTasks)), [
-    artifactHubTasks,
-  ]);
+  const normalizedArtifactHubTasks = React.useMemo<CatalogItem<TektonHubTask>[]>(
+    () => normalizeArtifactHubTasks(artifactHubTasks),
+    [artifactHubTasks],
+  );
   return [normalizedArtifactHubTasks, tasksLoaded, tasksError];
 };
 
