@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select, SelectOption } from '@patternfly/react-core';
+import { Alert, Select, SelectOption } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { setQueryArgument } from '@console/internal/components/utils';
 import { alphanumericCompare } from '@console/shared';
@@ -62,6 +62,7 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
   selectedUpdateChannel,
   updateVersion,
   setUpdateVersion,
+  showVersionAlert = false,
 }) => {
   const { t } = useTranslation();
   const [isVersionSelectOpen, setIsVersionSelectOpen] = React.useState(false);
@@ -107,6 +108,16 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
       >
         {versionSelectOptions}
       </Select>
+      {showVersionAlert && selectedUpdateVersion !== defaultVersionForChannel && (
+        <Alert
+          variant="info"
+          isInline
+          className="co-alert co-alert--margin-top co-alert__update-approval"
+          title={t(
+            'olm~Manual update approval is required when not installing the latest version for the selected channel.',
+          )}
+        />
+      )}
     </>
   );
 };
@@ -116,4 +127,5 @@ type OperatorVersionSelectProps = {
   selectedUpdateChannel: string;
   updateVersion: string;
   setUpdateVersion: (updateVersion: string) => void;
+  showVersionAlert?: boolean;
 };
