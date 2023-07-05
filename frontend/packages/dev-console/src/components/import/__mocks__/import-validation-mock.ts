@@ -1,4 +1,5 @@
 import { GitProvider } from '@console/git-service/src';
+import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { GitImportFormData, Resources } from '../import-types';
 import { serverlessInitialValues } from './serverless-mock';
@@ -91,4 +92,10 @@ export const mockFormData: GitImportFormData = {
     },
   },
   healthChecks: healthChecksProbeInitialData,
+  pac: {
+    pacHasError: false,
+    repository: {
+      ...defaultRepositoryFormValues,
+    },
+  },
 };
