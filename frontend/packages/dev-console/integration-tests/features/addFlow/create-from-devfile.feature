@@ -1,4 +1,4 @@
-@add-flow
+@add-flow @dev-console
 Feature: Create Application from Devfile
               As a user, I want to deploy an application from git repo with devfile
 

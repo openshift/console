@@ -1,4 +1,4 @@
-@knative-admin
+@knative-admin @knative
 Feature: Eventing page at Administrator perspective
               As a user, I should be able to access event sources, channels, brokers at Administrator perspective
 

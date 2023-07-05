@@ -1,3 +1,4 @@
+@user-preference @dev-console
 Feature: Manage user preferences
               As a user, I need the ability to set/edit my preferences for the OCP Console.
 

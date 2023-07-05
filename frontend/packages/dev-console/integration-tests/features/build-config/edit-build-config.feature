@@ -1,3 +1,4 @@
+@build-config @dev-console
 Feature: Form based edit for Build Configs
               As a user, I can have form based edit for Build Configs to improve the user experience.
 

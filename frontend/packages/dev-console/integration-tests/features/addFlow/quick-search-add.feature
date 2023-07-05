@@ -1,4 +1,4 @@
-@add-flow @odc-6303
+@add-flow @dev-console @odc-6303
 Feature: Provide quick search in Add page
               As a user, I should be able to have a quick way to search for items to add to my application/project in the Add page
 

@@ -1,4 +1,4 @@
-@knative-admin
+@knative-admin @knative
 Feature: Filters on Serving and Eventing page
               As a user, I should be able to use filters as per the use
 

@@ -1,4 +1,4 @@
-@manual
+@knative-kafka @knative @manual
 Feature: Support for Managed Services
               As a user, I want to create the Kafka connection and support the manage services
 

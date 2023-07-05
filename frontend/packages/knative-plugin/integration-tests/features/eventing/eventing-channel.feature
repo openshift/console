@@ -1,4 +1,4 @@
-@knative-eventing
+@knative-eventing @knative
 Feature: Knative Eventing Channel Support
     User should be able to experience the Knative Eventing Channel and associated features
 

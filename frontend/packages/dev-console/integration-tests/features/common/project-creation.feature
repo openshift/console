@@ -1,3 +1,4 @@
+@common @dev-console
 Feature: OpenShift Namespaces
               As a user, I want to create the namespace to group and isolate related objects
 

@@ -1,6 +1,6 @@
-@add-flow @ODC6771
+@add-flow @dev-console @ODC6771
 Feature: Update user in Add page if Quotas has been reached in a namespace
-            If any resource reached resource quota limit, a warning alert will be displayed for the user in Add page.
+              If any resource reached resource quota limit, a warning alert will be displayed for the user in Add page.
 
         Background:
             Given user is at developer perspective

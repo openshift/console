@@ -1,4 +1,4 @@
-@broken-test
+@topology @broken-test
 # Pipelines operator not installing correctly
 
 Feature: Improve the integration of Pipelines & Builds.

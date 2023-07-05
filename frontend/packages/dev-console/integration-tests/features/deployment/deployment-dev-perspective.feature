@@ -1,3 +1,4 @@
+@deployment @dev-console
 Feature: Deployment form view
               As a user, I need the ability to create deployment in dev perspective through form view.
 

@@ -1,4 +1,4 @@
-@add-flow
+@add-flow @dev-console
 Feature: Add page on Developer Console
               As a user, I should be able select a way to create an Application, component or service from one of the options provided on Add page
 

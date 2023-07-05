@@ -1,4 +1,4 @@
-@knative-serverless
+@knative-serverless @knative
 Feature: Creation and Visualisation of serverless fuctions
               As a user, I want to create and verify a serverless function from Add Options and I should be able to differentiate between a plain Knative Service and a Serverless Function when looking at the Details page of the KSVC and the details tab of the side panel in Topology.
 

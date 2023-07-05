@@ -1,4 +1,4 @@
-@guided-tour
+@guided-tour @dev-console
 Feature: Creating a Serverless application tour
               As a user, I want to take a guided tour of creating a serverless application feature
 

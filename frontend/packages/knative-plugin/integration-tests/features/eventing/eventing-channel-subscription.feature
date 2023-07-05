@@ -1,4 +1,4 @@
-@knative-eventing
+@knative-eventing @knative
 Feature: Knative Eventing Channel and Subscription
     User should be able to subscribe the Channel to the Knative Service and perform actions on it
 

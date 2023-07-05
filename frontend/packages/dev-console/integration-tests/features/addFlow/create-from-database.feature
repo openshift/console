@@ -1,4 +1,4 @@
-@add-flow
+@add-flow @dev-console
 Feature: Create Application from Database
               As a user, I want to create the application, component or service from Database using Add Flow
 

@@ -1,4 +1,4 @@
-@knative-camelk
+@knative-camelk @knative
 Feature: Event Sources Installation View
               As a user, I should be able switch between YAML and Form view to install Event Sources
 

@@ -1,4 +1,4 @@
-@getting-started
+@getting-started @dev-console
 Feature: Login to developer perspective
               As a user I want to land on developer perspective when login to openshift console as a developer
 

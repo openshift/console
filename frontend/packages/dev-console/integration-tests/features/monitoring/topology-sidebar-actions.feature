@@ -1,4 +1,4 @@
-@monitoring @broken-test
+@monitoring @dev-console @broken-test
 Feature: Observe tab on the topology Sidebar
               As a user, I should be able to see Observe tab on the sidebar of topology page and add Health Checks
 
@@ -22,8 +22,8 @@ Feature: Observe tab on the topology Sidebar
               And user will see "<resourceType>" option selected in the Type dropdown
 
         Examples:
-                  | workload      | resourceType      |
-                  | parks-test-d  | deployment        |
+                  | workload     | resourceType |
+                  | parks-test-d | deployment   |
 
 
         @smoke @odc-3698

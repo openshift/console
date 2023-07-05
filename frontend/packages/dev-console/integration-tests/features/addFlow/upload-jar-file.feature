@@ -1,4 +1,4 @@
-@add-flow
+@add-flow @dev-console
 Feature: Upload JAR file
               As a user, I want to upload a JAR file from using Upload JAR file card from Add page
 

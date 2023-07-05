@@ -1,4 +1,4 @@
-@Pod-Traffic-Status
+@pod-list @dev-console
 Feature: Traffic Status details for pods
               As a administrator, I want to see whether a pod is receiving traffic or not.
 
@@ -10,12 +10,12 @@ Feature: Traffic Status details for pods
               And user navigates to administrator perspective
               And user navigates to pods tab
  
-        @regression 
+        @regression
         Scenario: Checking traffic status for pods in a project: P-01-TC01
              When user selects Receiving Traffic column to show in table
              Then user is able to see Receiving Traffic column in the list
 
-        @regression 
+        @regression
         Scenario: Checking traffic status for pods for all projects: P-01-TC02
              When user selects "All Projects" from the project menu
               And user selects Receiving Traffic column to show in table

@@ -1,4 +1,4 @@
-@knative-camelk
+@knative-camelk @knative
 Feature: CamelK Connector Event Sources
     User should be able to install Connector Event Sources
 

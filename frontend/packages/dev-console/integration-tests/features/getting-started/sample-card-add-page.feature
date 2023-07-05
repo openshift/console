@@ -1,4 +1,4 @@
-@getting-started
+@getting-started @dev-console
 Feature: Create Sample Application
               As a user I want to create the Sample Application from +Add page
 

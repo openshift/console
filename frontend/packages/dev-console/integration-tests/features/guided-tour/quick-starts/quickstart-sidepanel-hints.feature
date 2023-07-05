@@ -1,4 +1,4 @@
-@guided-tour
+@guided-tour @dev-console
 Feature: Enable hints interaction in Quick Starts sidepanel
               As a user, I should be able to click on a hint link in the Quick Starts content and see the hint being highlighted in the UI.
 
