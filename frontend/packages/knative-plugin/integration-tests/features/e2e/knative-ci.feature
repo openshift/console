@@ -3,13 +3,14 @@ Feature: Perform actions on knative service and revision
               As a user, I want to perform edit or delete operations on knative revision in topology page
 
         Background:
-            Given user has created or selected namespace "knative-ci"
               And user is at Topology page
 
 
         @pre-condition
         Scenario Outline: Create knative workload using Container image with extrenal registry on Add page: KN-05-TC05
-            Given user is at Add page
+            Given user has logged in as a basic user
+              And user has created or selected namespace "knative-ci"
+              And user is at Add page
               And user is at Deploy Image page
              When user enters Image name from external registry as "<image_name>"
               And user enters workload name as "<workload_name>"

@@ -22,8 +22,15 @@ import {
   verifyAndInstallKnativeOperator,
   createChannel,
   verifyAndInstallOperator,
+  app,
 } from '@console/dev-console/integration-tests/support/pages';
 import { eventingPO } from '@console/knative-plugin/integration-tests/support/pageObjects/global-po';
+import { userLoginPage } from '../../pages/dev-perspective/common';
+
+Given('user has logged in as a basic user', () => {
+  app.waitForDocumentLoad();
+  userLoginPage.nonAdminUserlogin();
+});
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
