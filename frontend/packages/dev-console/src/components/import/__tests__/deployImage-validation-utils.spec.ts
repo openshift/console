@@ -38,7 +38,7 @@ describe('Deploy Image ValidationUtils', () => {
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
-            'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+            'Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.',
           );
         });
     });

@@ -1,4 +1,4 @@
-@monitoring
+@monitoring @dev-console
 Feature: Alert Icon on Topology for Workloads in sidebar and Alerts tab on Observe page
     User should be aware of alerts related to workloads and should see alerts in the sidebar
 

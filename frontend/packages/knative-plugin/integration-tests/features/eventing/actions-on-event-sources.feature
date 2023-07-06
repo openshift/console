@@ -1,4 +1,4 @@
-@knative-eventing
+@knative-eventing @knative
 Feature: Event Sources actions
               As a user, I want to perform actions on event sources
 

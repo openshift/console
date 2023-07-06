@@ -123,6 +123,7 @@
   "Repositories": "存储库",
   "Select a Project to view its details<1></1>.": "选择一个项目查看它的详情<1></1>。",
   "No repositories found": "没有找到软件仓库",
+  "Helm Repositories": "Helm 仓库",
   "Helm release is {{status}}": "Helm 发行为 {{status}}",
   "Unable to find resource for {{helmLabel}}": "无法为 {{helmLabel}} 找到资源",
   " / App Version {{appVersion}}": " / 应用程序版本 {{appVersion}}",

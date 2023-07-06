@@ -37,6 +37,7 @@ export type Build = K8sResourceCommon & {
   kind: 'Build';
   spec?: BuildSpec;
   status?: BuildStatus;
+  latestBuild?: BuildRun;
 };
 
 export type BuildSpec = {

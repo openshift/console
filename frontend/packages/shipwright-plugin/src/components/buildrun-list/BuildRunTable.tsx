@@ -51,7 +51,7 @@ export const BuildRunHeader = () => {
       props: { className: columnClassNames[2] },
     },
     {
-      title: t('shipwright-plugin~Age'),
+      title: t('shipwright-plugin~Started'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: columnClassNames[3] },

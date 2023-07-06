@@ -1,17 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
+import { QueryBrowserProps } from '@console/dynamic-plugin-sdk';
 import { queryBrowserDeleteAllQueries } from '@console/internal/actions/observe';
 import { QueryTable } from '@console/internal/components/monitoring/metrics';
-import {
-  QueryBrowser,
-  QueryObj,
-  QueryBrowserProps,
-} from '@console/internal/components/monitoring/query-browser';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
+import { QueryBrowser } from '@console/shared/src/components/query-browser';
 import EmptyStateQuery from './EmptyStateQuery';
 import './MetricsChart.scss';
+import { QueryObj } from './types';
 
 type StateProps = {
   queries: QueryObj[];

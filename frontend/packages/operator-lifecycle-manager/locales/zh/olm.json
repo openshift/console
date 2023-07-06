@@ -292,6 +292,7 @@
   "The {{namespace}} Namespace is reserved for global Operators that watch all Namespaces. To install an Operator in a single Namespace, select a different Namespace where the operand should run.": "{{namespace}} 命名空间为监视所有命名空间的全局 Operator 保留的。要在单个命名空间中安装 Operator，请选择一个不同的命名空间。",
   "The OperatorGroup in the {{namespace}} Namespace does not support the {{mode}} installation mode. Select a different installation Namespace that supports this mode.": "{{namespace}} 命名空间中的 OperatorGroup 不支持 {{mode}} 安装模式。选择一个支持这个模式的安装命名空间。",
   "A Subscription for this Operator already exists in Namespace \"{{namespace}}\"": "命名空间 \"{{namespace}}\" 中已存在这个 Operator 的订阅",
+  "Remove the <2>existing Subscription</2> in order to install this Operator in Namespace \"{{selectedTargetNamespace}}\"": "删除<2>现存的订阅</2>，以便在命名空间 \"{{selectedTargetNamespace}}\" 中安装此 Operator",
   "Operator conflicts exist": "存在 Operator 冲突",
   "Installing this Operator in the selected Namespace would cause conflicts with another Operator providing these APIs:": "在所选命名空间中安装此 Operator 可能会导致与提供这些下 API 的另一个 Operator 冲突：",
   "Operator not available for selected Namespaces": "Operator 对于所选的命名空间不可用",

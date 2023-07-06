@@ -1,4 +1,4 @@
-@knative-admin
+@knative-admin @knative
 Feature: Serving and Eventing pages at Administrator perspective
               As a user, Brokers, Channels and Event Sources must be easily accessible in the Admin perspective
 

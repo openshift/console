@@ -3,13 +3,14 @@ Feature: Perform actions on knative service and revision
               As a user, I want to perform edit or delete operations on knative revision in topology page
 
         Background:
-            Given user has created or selected namespace "knative-ci"
               And user is at Topology page
 
 
         @pre-condition
         Scenario Outline: Create knative workload using Container image with extrenal registry on Add page: KN-05-TC05
-            Given user is at Add page
+            Given user has logged in as a basic user
+              And user has created or selected namespace "knative-ci"
+              And user is at Add page
               And user is at Deploy Image page
              When user enters Image name from external registry as "<image_name>"
               And user enters workload name as "<workload_name>"
@@ -130,3 +131,20 @@ Feature: Perform actions on knative service and revision
              When user selects "Delete Service" context menu option of knative service "kn-service"
               And user clicks Delete button on Delete Service modal
              Then "kn-service" service should not be displayed in project
+
+        Scenario Outline: Create serverless function using Create Serverless function form with Builder Images: SF-01-TC06
+            Given user is at Add page
+             When user clicks on Create Serverless function card
+              And user enters git url "<git_url>"
+              And user is able to see builder image version dropdown
+              And user is able to see the runtime details
+              And user clicks on Create button on Create Serverless function
+             Then user will be redirected to Topology page
+              And user is able to see workload "<workload_name>" in topology page
+              And user clicks on the Knative Service workload "<workload_name>"
+              And user switches to the "Details" tab
+              And user is able to see Type as Function
+
+        Examples:
+                  | git_url                                           | workload_name       |
+                  | https://github.com/vikram-raj/hello-func-node-env | hello-func-node-env |

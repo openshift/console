@@ -345,8 +345,7 @@ describe('ResourcesList', () => {
 describe(OperandDetailsPage.displayName, () => {
   const currentURL = `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`;
   const routePath = `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`;
-  // TODO remove multicluster
-  window.SERVER_FLAGS.copiedCSVsDisabled = { 'local-cluster': false };
+  window.SERVER_FLAGS.copiedCSVsDisabled = false;
 
   it('renders a `DetailsPage` with the correct subpages', () => {
     const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);

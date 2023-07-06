@@ -45,7 +45,7 @@ describe('ValidationUtils', () => {
   describe('createComponentName', () => {
     const invalidConvertedtoValidNamePair: { [key: string]: string } = {
       '-2name': 'ocp-2-name',
-      '0name': 'ocp-0-name',
+      '.0name': 'ocp-0-name',
       Name: 'name',
       '-name': 'name',
       'name-': 'name',
@@ -153,7 +153,7 @@ describe('ValidationUtils', () => {
       ).toEqual('wild-west-frontend');
       expect(
         detectGitRepoName('https://github.com/openshift-evangelists/wild-west-frontend.git'),
-      ).toEqual('wild-west-frontend-git');
+      ).toEqual('wild-west-frontend.git');
       expect(
         detectGitRepoName('https://github.com/openshift-evangelists/Wild-West-Frontend123'),
       ).toEqual('wild-west-frontend-123');
@@ -175,7 +175,7 @@ describe('ValidationUtils', () => {
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
-            'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+            'Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.',
           );
         });
     });

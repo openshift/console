@@ -33,6 +33,10 @@
       <title>Azure Red Hat OpenShift</title>
       <meta name="application-name" content="Azure Red Hat OpenShift">
       [[ end ]]
+      [[ if eq .Branding "rosa" ]]
+      <title>Red Hat OpenShift Service on AWS</title>
+      <meta name="application-name" content="Red Hat OpenShift Service on AWS">
+      [[ end ]]
 
       [[ if eq .Branding "okd" ]]
       <link rel="shortcut icon" href="<%= require('./imgs/okd-favicon.png') %>">

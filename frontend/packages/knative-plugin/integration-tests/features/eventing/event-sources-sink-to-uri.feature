@@ -1,4 +1,4 @@
-@knative-eventing
+@knative-eventing @knative
 Feature: Event Sources can able sink to URI as well as Resource
   User should be able to sink Event Sources with resource as well as with URI
 

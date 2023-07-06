@@ -1,4 +1,4 @@
-@guided-tour
+@guided-tour @dev-console
 Feature: Add ability to filter Quick Starts catalog
               As a user, i want to be able to filter Quick Starts in the catalog by status of the Quick Starts and search Quick Starts catalog by name, description, tags and prerequisites.
 

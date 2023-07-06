@@ -1,4 +1,4 @@
-@cnv
+@cnv @dev-console
 Feature: Virtual Machines page
               As a user, I should be able visit Vitual Machines page
 

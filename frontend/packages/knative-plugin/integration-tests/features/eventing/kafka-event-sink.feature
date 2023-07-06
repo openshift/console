@@ -1,4 +1,4 @@
-@knative-kafka
+@knative-kafka @knative
 Feature: Kafka Event Sink
     User should be able to create Kafka sink by adding BootStrapServer and Topic
 
@@ -29,7 +29,7 @@ Feature: Kafka Event Sink
               And user has created KafkaSink "kafka-sink-test3" in topology
               And user is at Topology page
               And user is at Topology Graph view
-             When user right clicks on the Broker "broker-test1" to open the context menu 
+             When user right clicks on the Broker "broker-test1" to open the context menu
               And user clicks on the Add Trigger
               And user selects the auto populated name of subscription
               And user will click on the Subscriber dropdown on the modal

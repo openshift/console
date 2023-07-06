@@ -560,6 +560,7 @@
   "Unable to load": "无法上传",
   "Select a perspective": "选择一个视角",
   "Select an option": "选择一个选项",
+  "User Preferences {{activeTab}}": "用户首选 {{activeTab}}",
   "User Preferences": "用户首选项",
   "Set your individual preferences for the console experience. Any changes will be autosaved.": "为增强控制台体验设置您的个人首选项。任何更改都将自动保存。",
   "Only {{volumeMode}} volume mode is available for {{storageClass}} with {{accessMode}} access mode": "使用 {{accessMode}} 访问模式的 {{storageClass}} 只有 {{volumeMode}} 卷模式可用",

@@ -1,3 +1,4 @@
+@common @dev-console
 Feature: Operators
               As a user I want to install or uninstall the operators
 

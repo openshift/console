@@ -2,6 +2,9 @@ import {
   K8sResourceKind,
   K8sKind,
   CustomResourceDefinitionKind,
+  CloudCredentialKind,
+  AuthenticationKind,
+  InfrastructureKind,
 } from '@console/internal/module/k8s';
 import { StatusCapability, SpecCapability } from './src/components/descriptors/types';
 import { OperatorHubItem } from './src/components/operator-hub';
@@ -616,6 +619,30 @@ const federationv2PackageManifest = {
   },
 };
 
+const manualCred: CloudCredentialKind = {
+  spec: {
+    credentialsMode: 'Manual',
+  },
+};
+
+const mintCred: CloudCredentialKind = {
+  spec: {
+    credentialsMode: 'Mint',
+  },
+};
+
+const infra: InfrastructureKind = {
+  status: {
+    platform: 'AWS',
+  },
+};
+
+const auth: AuthenticationKind = {
+  spec: {
+    serviceAccountIssuer: '',
+  },
+};
+
 const prometheusPackageManifest = {
   apiVersion: 'packages.operators.coreos.com/v1' as PackageManifestKind['apiVersion'],
   kind: 'PackageManifest' as PackageManifestKind['kind'],
@@ -728,6 +755,9 @@ export const operatorHubListPageProps = {
     ] as PackageManifestKind[],
   },
   clusterServiceVersions: null,
+  cloudCredentials: { loaded: true, data: manualCred },
+  infrastructure: { loaded: true, data: infra },
+  authentication: { loaded: true, data: auth },
 };
 
 export const operatorHubTileViewPageProps = {
@@ -759,6 +789,9 @@ export const operatorHubTileViewPageProps = {
       catalogSourceNamespace: 'openshift-marketplace',
       validSubscription: undefined,
       infraFeatures: undefined,
+      cloudCredentials: manualCred,
+      infrastructure: infra,
+      authentication: auth,
     },
     {
       obj: etcdPackageManifest,
@@ -786,6 +819,9 @@ export const operatorHubTileViewPageProps = {
       catalogSourceNamespace: 'openshift-marketplace',
       validSubscription: undefined,
       infraFeatures: undefined,
+      cloudCredentials: mintCred,
+      infrastructure: infra,
+      authentication: auth,
     },
     {
       obj: federationv2PackageManifest,
@@ -813,6 +849,9 @@ export const operatorHubTileViewPageProps = {
       catalogSourceNamespace: 'openshift-marketplace',
       validSubscription: undefined,
       infraFeatures: undefined,
+      cloudCredentials: manualCred,
+      infrastructure: infra,
+      authentication: auth,
     },
     {
       obj: prometheusPackageManifest,
@@ -839,6 +878,9 @@ export const operatorHubTileViewPageProps = {
       catalogSourceNamespace: 'openshift-marketplace',
       validSubscription: undefined,
       infraFeatures: undefined,
+      cloudCredentials: mintCred,
+      infrastructure: infra,
+      authentication: auth,
     },
   ] as OperatorHubItem[],
   openOverlay: null,
@@ -874,6 +916,9 @@ export const operatorHubTileViewPagePropsWithDummy = {
       catalogSourceNamespace: 'openshift-marketplace',
       validSubscription: undefined,
       infraFeatures: undefined,
+      cloudCredentials: manualCred,
+      infrastructure: infra,
+      authentication: auth,
     },
   ],
   openOverlay: null,
@@ -962,6 +1007,10 @@ export const mockProviderStrings = [
 export const operatorHubDetailsProps = {
   item: operatorHubTileViewPageProps.items[0],
   closeOverlay: null,
+  channel: 'foo',
+  version: '1.0.0-Beta',
+  setUpdateChannel: () => {},
+  setUpdateVersion: () => {},
 };
 
 export const itemWithLongDescription = {
@@ -991,4 +1040,7 @@ export const itemWithLongDescription = {
   catalogSourceNamespace: 'openshift-marketplace',
   validSubscription: undefined,
   infraFeatures: undefined,
+  cloudCredentials: mintCred,
+  infrastructure: infra,
+  authentication: auth,
 };

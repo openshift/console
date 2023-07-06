@@ -632,6 +632,7 @@ export type CodeEditorProps = {
   options?: object;
   minHeight?: string | number;
   showShortcuts?: boolean;
+  showMiniMap?: boolean;
   toolbarLinks?: React.ReactNodeArray;
   onChange?: (newValue, event) => void;
   onSave?: () => void;
@@ -669,4 +670,28 @@ export type ErrorBoundaryFallbackProps = {
   componentStack: string;
   stack: string;
   title: string;
+};
+
+export type FormatSeriesTitle = (labels: PrometheusLabels, i?: number) => string;
+
+export type QueryBrowserProps = {
+  customDataSource?: CustomDataSource;
+  defaultSamples?: number;
+  defaultTimespan?: number;
+  disabledSeries?: PrometheusLabels[][];
+  disableZoom?: boolean;
+  filterLabels?: PrometheusLabels;
+  fixedEndTime?: number;
+  formatSeriesTitle?: FormatSeriesTitle;
+  GraphLink?: React.ComponentType<{}>;
+  hideControls?: boolean;
+  isStack?: boolean;
+  namespace?: string;
+  onZoom?: (from: number, to: number) => void;
+  pollInterval?: number;
+  queries: string[];
+  showLegend?: boolean;
+  showStackedControl?: boolean;
+  timespan?: number;
+  units?: string;
 };

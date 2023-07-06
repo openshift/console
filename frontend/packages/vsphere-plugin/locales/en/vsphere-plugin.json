@@ -26,6 +26,7 @@
   "Enter the network address of the vCenter server. It can either be a domain name or IP address. It appears in the vSphere web client URL. Example:  ": "Enter the network address of the vCenter server. It can either be a domain name or IP address. It appears in the vSphere web client URL. Example:  ",
   "Can be either domain name or IP address. See tooltip for details.": "Can be either domain name or IP address. See tooltip for details.",
   "vCenter cluster": "vCenter cluster",
+  "Enter the name of the vSphere vCenter cluster where OpenShift Container Platform is installed.": "Enter the name of the vSphere vCenter cluster where OpenShift Container Platform is installed.",
   "Username": "Username",
   "Enter the vSphere vCenter username. An incorrect username will render the cluster nodes unschedulable (known issue: OCPBUGS-2353).": "Enter the vSphere vCenter username. An incorrect username will render the cluster nodes unschedulable (known issue: OCPBUGS-2353).",
   "Password": "Password",

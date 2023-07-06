@@ -13,6 +13,7 @@ import { LoadingBox, history } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import {
   ALL_APPLICATIONS_KEY,
   usePerspectives,
@@ -91,6 +92,12 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
     },
     pipeline: {
       enabled: false,
+    },
+    pac: {
+      pacHasError: false,
+      repository: {
+        ...defaultRepositoryFormValues,
+      },
     },
   };
 

@@ -1,4 +1,4 @@
-@knative-admin
+@knative-admin @knative
 Feature: Serving page at Administrator perspective
               As a user, I should be able to access KSVC, it's revisions and routes at Administrator perspective
 

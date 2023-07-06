@@ -1,4 +1,4 @@
-@add-flow @odc-6452
+@add-flow @dev-console @odc-6452
 Feature: Install the Helm Release
               As a user, I want to install project helm repository
 

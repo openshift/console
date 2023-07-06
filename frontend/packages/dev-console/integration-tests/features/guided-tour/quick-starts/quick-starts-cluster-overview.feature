@@ -1,4 +1,4 @@
-@guided-tour
+@guided-tour @dev-console
 Feature: Build with guided documentation card on cluster overview
               As a user, I should be able to access and discover Quick Starts from the Cluster Overview in the Administrator view
 

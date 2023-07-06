@@ -1,4 +1,4 @@
-@add-flow
+@add-flow @dev-console
 Feature: Developer Catalog Page
               As a user, I should be able to use Developer Catalog page to deploy application
 

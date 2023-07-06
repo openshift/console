@@ -1,11 +1,11 @@
-@add-flow  @odc-6684
+@add-flow @dev-console @odc-6684
 Feature: Export of application from the Add page
               As a user, I have an unmanaged application which I want to export. I'd like to be able to later add that code to git or some shared location so that I can share with others, or import into a new cluster or same cluster but different project, or be able to apply updates to an existing application.
 
 
 
         Background:
-             Given user has installed Gitops primer Operator
+            Given user has installed Gitops primer Operator
               And user is at developer perspective
               And user has created or selected namespace "aut-add-export-application"
 

@@ -37,5 +37,6 @@ export type RepositoryFormValues = {
     secret: string;
     url: string;
     secretObj?: SecretKind;
+    user?: string;
   };
 };

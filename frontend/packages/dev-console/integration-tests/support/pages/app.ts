@@ -12,6 +12,7 @@ import {
   topologyPO,
   adminNavigationMenuPO,
 } from '../pageObjects';
+import { userPreferencePO } from '../pageObjects/userPreference-po';
 
 export const app = {
   waitForDocumentLoad: () => {
@@ -262,12 +263,20 @@ export const projectNameSpace = {
     app.waitForLoad();
     cy.url().then((url) => {
       if (url.includes('add/all-namespaces')) {
-        cy.get('tr[data-test-rows="resource-row"]').should('have.length.at.least', 1);
+        cy.get(userPreferencePO.userMenu, {
+          timeout: 50000,
+        }).then(($ele) => {
+          if ($ele.text().includes('kube:admin')) {
+            cy.get('tr[data-test-rows="resource-row"]').should('have.length.at.least', 1);
+          } else {
+            cy.get('[data-test="empty-message"]').should('have.text', 'No Projects found');
+          }
+        });
       }
     });
     projectNameSpace.clickProjectDropdown();
-    cy.get('div.pf-c-menu__search').then(($search) => {
-      if ($search.find('[data-test="showSystemSwitch"]').length > 0) {
+    cy.get('body').then(($body) => {
+      if ($body.find(userPreferencePO.userMenu).text().includes('kube:admin')) {
         cy.byTestID('showSystemSwitch').check(); // Ensure that all projects are showing
         cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);
       }

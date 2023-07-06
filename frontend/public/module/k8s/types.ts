@@ -622,6 +622,26 @@ export type RouteKind = {
   };
   status?: {
     ingress: RouteIngress[];
+    url?: string;
+    conditions?: K8sResourceCondition[];
+  };
+} & K8sResourceCommon;
+
+export type CloudCredentialKind = {
+  spec: {
+    credentialsMode: string;
+  };
+} & K8sResourceCommon;
+
+export type InfrastructureKind = {
+  status: {
+    platform: string;
+  };
+} & K8sResourceCommon;
+
+export type AuthenticationKind = {
+  spec: {
+    serviceAccountIssuer: string;
   };
 } & K8sResourceCommon;
 

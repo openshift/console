@@ -1,4 +1,4 @@
-@monitoring @odc-3698
+@monitoring @dev-console @odc-3698
 Feature: Changing context in Observe Dashboard
               As a user, I should be able to change the filter in the Observe Dashboard
 

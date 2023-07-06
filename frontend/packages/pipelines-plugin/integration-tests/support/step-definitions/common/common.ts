@@ -17,10 +17,17 @@ import {
   perspective,
   projectNameSpace,
   verifyAndInstallKnativeOperator,
+  app,
 } from '@console/dev-console/integration-tests/support/pages';
+import { userLoginPage } from '../../pages/functions/common';
 
 Given('user has installed OpenShift Serverless Operator', () => {
   verifyAndInstallKnativeOperator();
+});
+
+Given('user has logged in as a basic user', () => {
+  app.waitForDocumentLoad();
+  userLoginPage.nonAdminUserlogin();
 });
 
 Given('user is at developer perspective', () => {

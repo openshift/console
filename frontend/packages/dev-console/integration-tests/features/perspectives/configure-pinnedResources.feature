@@ -1,4 +1,4 @@
-@configure-pinnedResources
+@perspective @dev-console
 Feature: Configure pinned resources
               As a administrator, I want to configure the default pre-pinned resources for new users and users who have not customized their navigation items.
 
@@ -31,5 +31,5 @@ Feature: Configure pinned resources
         Scenario: User removing the pinnedResources customization from the console config: CPR-01-TC04
             Given user is at cluster YAML of "operator.openshift.io/v1" console
              When user removes the pinnedResources customization for "id: dev"
-              And user clicks on Save button and refreshes the browser 
+              And user clicks on Save button and refreshes the browser
              Then user will see "DeploymentConfigs", "Deployments", "Secrets", "ConfigMaps", and "Pods" on the Developer Perspective navigation

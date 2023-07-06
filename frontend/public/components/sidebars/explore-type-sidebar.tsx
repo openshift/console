@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
 import {
   getDefinitionKey,
-  getSwaggerDefinitions,
   getSwaggerPath,
   K8sKind,
   SwaggerDefinition,
   SwaggerDefinitions,
+  fetchSwagger,
 } from '../../module/k8s';
 import { EmptyBox, LinkifyExternal } from '../utils';
 
@@ -27,14 +27,27 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   const [drilldownHistory, setDrilldownHistory] = React.useState([]);
   const { kindObj, schema } = props;
   const { t } = useTranslation();
+  const [allDefinitions, setAllDefinitions] = React.useState<SwaggerDefinitions>(null);
+
+  React.useEffect(() => {
+    if (kindObj) {
+      fetchSwagger()
+        .then((response) => {
+          setAllDefinitions(response);
+        })
+        .catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Could not fetch swagger definitions', err);
+        });
+    } else if (schema) {
+      setAllDefinitions({ 'custom-schema': schema });
+    }
+  }, [kindObj, schema]);
 
   if (!kindObj && !schema) {
     return null;
   }
 
-  const allDefinitions: SwaggerDefinitions = kindObj
-    ? getSwaggerDefinitions()
-    : schema && { 'custom-schema': schema };
   if (!allDefinitions) {
     return null;
   }
@@ -44,7 +57,10 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     ? currentSelection.path
     : [kindObj ? getDefinitionKey(kindObj, allDefinitions) : 'custom-schema'];
   const currentDefinition: SwaggerDefinition = _.get(allDefinitions, currentPath);
-  const currentProperties = currentDefinition?.properties || currentDefinition?.items?.properties;
+  const currentProperties =
+    currentDefinition?.properties ||
+    currentDefinition?.items?.properties ||
+    currentDefinition?.definitions;
 
   // Prefer the description saved in `currentSelection`. It won't always be defined in the definition itself.
   const description = currentSelection
@@ -81,8 +97,11 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // - Inline property declartions for array items
   const getDrilldownPath = (name: string): string[] => {
     const path = kindObj
-      ? getSwaggerPath(allDefinitions, currentPath, name, true)
+      ? currentDefinition.items
+        ? getSwaggerPath(allDefinitions, [...currentPath, 'items'], name, true)
+        : getSwaggerPath(allDefinitions, currentPath, name, true)
       : [...currentPath, 'properties', name];
+
     // Only allow drilldown if the reference has additional properties to explore.
     const child = _.get(allDefinitions, path) as SwaggerDefinition;
     return _.has(child, 'properties') || _.has(child, 'items.properties') ? path : null;
@@ -130,13 +149,17 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
             {_.map(currentProperties, (definition: SwaggerDefinition, name: string) => {
               const path = getDrilldownPath(name);
               const definitionType = definition.type || getTypeForRef(getRef(definition));
+              const definitionTypeStr = Array.isArray(definitionType)
+                ? definitionType.join(' ')
+                : definitionType;
+
               return (
                 <li key={name} className="co-resource-sidebar-item">
                   <h5 className="co-resource-sidebar-item__header co-break-word">
                     <CamelCaseWrap value={name} />
                     &nbsp;
                     <small>
-                      <span className="co-break-word">{definitionType}</span>
+                      <span className="co-break-word">{definitionTypeStr}</span>
                       {required.has(name) && <> &ndash; required</>}
                     </small>
                   </h5>

@@ -1,4 +1,4 @@
-@cnv
+@cnv @dev-console
 Feature: Create Virtual Machine templates
               As a user, I should be able create virutal machine template to create virtual machine
 

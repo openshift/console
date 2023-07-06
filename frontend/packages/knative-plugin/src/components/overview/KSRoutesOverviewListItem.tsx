@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ClipboardCopy } from '@patternfly/react-core/dist/esm/components/ClipboardCopy';
 import { useTranslation } from 'react-i18next';
-import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
+import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { PRIVATE_KNATIVE_SERVING_LABEL } from '../../const';
 import { RouteModel } from '../../models';
@@ -33,10 +33,10 @@ const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksr
                   {status.url}
                 </ClipboardCopy>
               ) : (
-                <ExternalLink
-                  href={status.url}
-                  additionalClassName="co-external-link--block"
+                <ExternalLinkWithCopy
+                  link={status.url}
                   text={status.url}
+                  additionalClassName="co-external-link--block"
                 />
               )}
             </>

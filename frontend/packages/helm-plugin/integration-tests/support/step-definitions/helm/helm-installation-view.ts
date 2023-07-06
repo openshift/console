@@ -46,3 +46,7 @@ Then(
     cy.byLegacyTestID('reset-button').click();
   },
 );
+
+Then('user should see message {string}', (message: string) => {
+  cy.get('h4.pf-c-alert__title').should('contain.text', message).should('exist');
+});

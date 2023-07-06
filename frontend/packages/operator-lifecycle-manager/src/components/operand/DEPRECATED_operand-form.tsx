@@ -100,14 +100,6 @@ const GROUP_PATTERN = new RegExp(`^(${FIELD_GROUP_PATTERN}|${ARRAY_FIELD_GROUP_P
 // Default max nesting depth the form should display
 const MAX_DEPTH = 1;
 
-enum Validations {
-  maximum = 'maximum',
-  minimum = 'minimum',
-  maxLength = 'maxLength',
-  minLength = 'minLength',
-  pattern = 'pattern',
-}
-
 const idFromPath = (path) => `DEPRECATED_root_${path.split('.').join('_')}`;
 
 /*
@@ -346,7 +338,6 @@ const flattenNestedProperties = (
         path: `spec.${path}`,
         required,
         type: property.type,
-        validation: _.pick(property, Object.keys(Validations)),
       } as OperandField,
     ];
   };
@@ -437,7 +428,6 @@ const specDescriptorToFields = (
         capabilities,
         type: null,
         required: null,
-        validation: null,
       })),
     );
   }
@@ -448,7 +438,6 @@ const specDescriptorToFields = (
       description,
       type: null,
       required: null,
-      validation: null,
       capabilities,
     },
   ];
@@ -486,7 +475,7 @@ const FieldGroup: React.FC<FieldGroupProps> = ({ children, isExpanded = false, i
 };
 
 // Wrapper for individual operand form inputs
-const OperandFormInputGroup: React.FC<OperandFormInputGroupProps> = ({ error, field, input }) => {
+const OperandFormInputGroup: React.FC<OperandFormInputGroupProps> = ({ field, input }) => {
   const { description, displayName, path, required } = field;
   const id = idFromPath(path);
   return input ? (
@@ -504,7 +493,6 @@ const OperandFormInputGroup: React.FC<OperandFormInputGroupProps> = ({ error, fi
           {description}
         </span>
       )}
-      {error && <span className="co-error">{error}</span>}
     </div>
   ) : null;
 };
@@ -578,7 +566,6 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   }, [immutableFormData]);
 
   const [error, setError] = React.useState<string>();
-  const [formErrors, setFormErrors] = React.useState<FieldErrors>({});
 
   // Group fields into advanced, arrayFieldGroup, fieldGroup, and normal fields for rendering.
   // Note that arrayFieldGroup and fieldGroup fields are still flat after this. The memoized
@@ -681,53 +668,21 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
 
   const getFormData = (path): any => immutableFormData.getIn(pathToArray(path));
 
-  // Validate form and submit API request if no validation failures
-  const submit = (event) => {
-    event.preventDefault();
-    const errors = fields
-      .filter((f) => !_.isNil(f.validation) || !_.isEmpty(f.validation))
-      .filter((f) => f.required || !_.isEqual(getFormData(f.path), defaultValueFor(f.capabilities)))
-      .reduce<FieldErrors>((allErrors, field) => {
-        // NOTE: Use server-side validation in Kubernetes 1.16 (https://github.com/kubernetes/kubernetes/issues/80718#issuecomment-521081640)
-        const fieldErrors = _.map(field.validation, (val, rule: Validations) => {
-          const formVal = getFormData(field.path);
-          switch (rule) {
-            case Validations.minimum:
-              return formVal >= val ? null : `Must be greater than ${val}.`;
-            case Validations.maximum:
-              return formVal <= val ? null : `Must be less than ${val}.`;
-            case Validations.minLength:
-              return formVal.length >= val ? null : `Must be at least ${val} characters.`;
-            case Validations.maxLength:
-              return formVal.length <= val ? null : `Must be greater than ${val} characters.`;
-            case Validations.pattern:
-              return new RegExp(val as string).test(formVal)
-                ? null
-                : `Does not match required pattern ${val}`;
-            default:
-              return null;
-          }
-        });
-        // Just use first error
-        return { ...allErrors, [field.path]: fieldErrors.find((e) => !_.isNil(e)) };
-      }, {});
-    setFormErrors(errors);
-
-    if (_.isEmpty(_.compact(_.values(errors)))) {
-      k8sCreate(
-        model,
-        model.namespaced
-          ? immutableFormData.setIn(['metadata', 'namespace'], match.params.ns).toJS()
-          : immutableFormData.toJS(),
-      )
-        .then((res) => postFormCallback(res))
-        .then(() => next && history.push(next))
-        .catch((err: Error) => setError(err.message || 'Unknown error.'));
-    }
+  const submit = (e) => {
+    e.preventDefault();
+    k8sCreate(
+      model,
+      model.namespaced
+        ? immutableFormData.setIn(['metadata', 'namespace'], match.params.ns).toJS()
+        : immutableFormData.toJS(),
+    )
+      .then((res) => postFormCallback(res))
+      .then(() => next && history.push(next))
+      .catch((err: Error) => setError(err.message || 'Unknown error.'));
   };
 
   // TODO(alecmerdler): Move this into a single `<SpecDescriptorInput>` entry component in the `descriptors/` directory
-  const inputFor = ({ capabilities, displayName, path, required, validation }: OperandField) => {
+  const inputFor = ({ capabilities, displayName, path, required }: OperandField) => {
     const id = idFromPath(path);
     const formDataValue = getFormData(path);
     const currentValue = _.isNil(formDataValue) ? defaultValueFor(capabilities) : formDataValue;
@@ -820,7 +775,6 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
             className="pf-c-form-control"
             id={id}
             type="password"
-            {...validation}
             onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
             value={currentValue}
           />
@@ -1073,12 +1027,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                 </div>
               )}
               {_.map(fieldList, (field) => (
-                <OperandFormInputGroup
-                  key={field.path}
-                  error={formErrors?.[field.path]}
-                  field={field}
-                  input={inputFor(field)}
-                />
+                <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
               ))}
             </React.Fragment>
           ))}
@@ -1105,12 +1054,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       return (
         <FieldGroup key={id} id={id} isExpanded={isExpanded} label={_.startCase(groupName)}>
           {_.map(fieldList, (field) => (
-            <OperandFormInputGroup
-              key={field.path}
-              error={formErrors?.[field.path]}
-              field={field}
-              input={inputFor(field)}
-            />
+            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
           ))}
         </FieldGroup>
       );
@@ -1118,12 +1062,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
 
   const renderNormalFields = () =>
     _.map(normalFields, (field) => (
-      <OperandFormInputGroup
-        key={field.path}
-        field={field}
-        input={inputFor(field)}
-        error={formErrors?.[field.path]}
-      />
+      <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
     ));
 
   const renderAdvancedFields = () =>
@@ -1134,12 +1073,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           textCollapsed={t('olm~Advanced configuration')}
         >
           {_.map(advancedFields, (field) => (
-            <OperandFormInputGroup
-              key={field.path}
-              field={field}
-              input={inputFor(field)}
-              error={formErrors?.[field.path]}
-            />
+            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
           ))}
         </ExpandCollapse>
       </div>
@@ -1212,14 +1146,14 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
               {renderNormalFields()}
               {renderAdvancedFields()}
             </Accordion>
-            {(!_.isEmpty(error) || !_.isEmpty(_.compact(_.values(formErrors)))) && (
+            {error && (
               <Alert
                 isInline
                 className="co-alert co-break-word co-alert--scrollable"
                 variant="danger"
                 title="Error"
               >
-                {error || t('olm~Fix above errors')}
+                {error}
               </Alert>
             )}
             <div style={{ paddingBottom: '30px' }}>
@@ -1250,13 +1184,6 @@ type OperandField = {
   description?: string;
   type: JSONSchema6TypeName;
   required: boolean;
-  validation: {
-    [Validations.maximum]?: number;
-    [Validations.minimum]?: number;
-    [Validations.maxLength]?: number;
-    [Validations.pattern]?: string;
-    [Validations.minLength]?: number;
-  };
   capabilities: Capability[];
 };
 
@@ -1267,14 +1194,9 @@ type FlattenNestedPropertiesAccumulator = {
   required: boolean;
 };
 
-type FieldErrors = {
-  [path: string]: string;
-};
-
 type OperandFormInputGroupProps = {
   field: OperandField;
   input: JSX.Element;
-  error: string;
 };
 
 type FieldGroupProps = {

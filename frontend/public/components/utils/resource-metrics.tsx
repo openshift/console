@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { Grid, GridItem, Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 
-import { QueryBrowser } from '../monitoring/query-browser';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import { QueryBrowser } from '@console/shared/src/components/query-browser';
 import {
   ResourceUtilizationQuery,
   useResourceMetricsQueries,

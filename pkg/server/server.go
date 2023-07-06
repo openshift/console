@@ -23,6 +23,7 @@ import (
 	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
+	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
 	"github.com/openshift/console/pkg/devfile"
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
@@ -68,6 +69,7 @@ const (
 	indexPageTemplateName                 = "index.html"
 	k8sProxyEndpoint                      = "/api/kubernetes/"
 	knativeProxyEndpoint                  = "/api/console/knative/"
+	devConsoleEndpoint                    = "/api/dev-console/"
 	localesEndpoint                       = "/locales/resource.json"
 	multiclusterLogoutPageTemplateName    = "multicluster-logout.html" // TODO remove multicluster
 	operandsListEndpoint                  = "/api/list-operands/"
@@ -92,11 +94,10 @@ type jsGlobals struct {
 	AuthDisabled                    bool                       `json:"authDisabled"`
 	BasePath                        string                     `json:"basePath"`
 	Branding                        string                     `json:"branding"`
-	Clusters                        []string                   `json:"clusters"` // TODO remove multicluster
 	ConsolePlugins                  []string                   `json:"consolePlugins"`
 	ConsoleVersion                  string                     `json:"consoleVersion"`
 	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
-	CopiedCSVsDisabled              map[string]bool            `json:"copiedCSVsDisabled"` // TODO remove multicluster
+	CopiedCSVsDisabled              bool                       `json:"copiedCSVsDisabled"`
 	CustomLogoURL                   string                     `json:"customLogoURL"`
 	CustomProductName               string                     `json:"customProductName"`
 	DevCatalogCategories            string                     `json:"developerCatalogCategories"`
@@ -150,7 +151,7 @@ type Server struct {
 	Branding                            string
 	ClusterManagementProxyConfig        *proxy.Config
 	ControlPlaneTopology                string
-	CopiedCSVsDisabled                  map[string]bool // TODO remove multicluster
+	CopiedCSVsDisabled                  bool
 	CustomLogoFile                      string
 	CustomProductName                   string
 	DevCatalogCategories                string
@@ -539,6 +540,14 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
 
+	// Dev-Console Proxy
+	handle(devConsoleEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, devConsoleEndpoint),
+		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			devconsoleProxy.Handler(w, r)
+		})),
+	)
+
 	// User settings
 	userSettingHandler := usersettings.UserSettingsHandler{
 		Client:              s.K8sClient,
@@ -785,7 +794,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		AddPage:                    s.AddPage,
 		ProjectAccessClusterRoles:  s.ProjectAccessClusterRoles,
 		Perspectives:               s.Perspectives,
-		Clusters:                   s.getManagedClusterList(), // TODO remove multicluster
 		Telemetry:                  s.Telemetry,
 		ReleaseVersion:             s.ReleaseVersion,
 		NodeArchitectures:          s.NodeArchitectures,

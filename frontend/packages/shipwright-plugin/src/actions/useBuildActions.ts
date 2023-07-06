@@ -7,7 +7,7 @@ import { errorModal } from '@console/internal/components/modals';
 import { resourceObjPath } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { startBuild } from '../api';
+import { rerunBuildRun, startBuild } from '../api';
 import { BuildRunModel } from '../models';
 import { Build } from '../types';
 
@@ -16,8 +16,9 @@ const useBuildActions = (build: Build) => {
   const history = useHistory();
   const [kindObj, inFlight] = useK8sModel(referenceFor(build));
 
-  const actions = React.useMemo<Action[]>(() => {
-    const start: Action = {
+  const actionsMenu = React.useMemo<Action[]>(() => {
+    const actions: Action[] = [];
+    actions.push({
       id: 'shipwright-build-start',
       label: t('shipwright-plugin~Start'),
       cta: () => {
@@ -35,12 +36,36 @@ const useBuildActions = (build: Build) => {
         resource: BuildRunModel.plural,
         namespace: build.metadata?.namespace,
       },
-    };
+    });
 
-    return [start, ...getCommonResourceActions(kindObj, build)];
+    if (build.latestBuild) {
+      actions.push({
+        id: 'shipwright-build-start-last-run',
+        label: t('shipwright-plugin~Start last run'),
+        disabled: !build.latestBuild,
+        cta: () => {
+          rerunBuildRun(build.latestBuild)
+            .then((newBuildRun) => {
+              history.push(resourceObjPath(newBuildRun, referenceFor(newBuildRun)));
+            })
+            .catch((err) => {
+              const error = err.message;
+              errorModal({ error });
+            });
+        },
+        accessReview: {
+          verb: 'create',
+          group: BuildRunModel.apiGroup,
+          resource: BuildRunModel.plural,
+          namespace: build.metadata?.namespace,
+        },
+      });
+    }
+    actions.push(...getCommonResourceActions(kindObj, build));
+    return actions;
   }, [t, build, kindObj, history]);
 
-  return [actions, !inFlight, undefined];
+  return [actionsMenu, !inFlight, undefined];
 };
 
 export default useBuildActions;

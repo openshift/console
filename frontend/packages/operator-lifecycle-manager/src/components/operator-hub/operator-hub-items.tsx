@@ -12,7 +12,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink, getQueryArgument } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import i18n from '@console/internal/i18n';
@@ -31,6 +31,7 @@ import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../con
 import { SubscriptionModel } from '../../models';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
+import { shortLivedTokenAuth } from './operator-hub-utils';
 import {
   OperatorHubItem,
   InstalledState,
@@ -216,8 +217,10 @@ const infraFeaturesSort = (infrastructure) => {
       return 1;
     case InfraFeatures.FipsMode:
       return 2;
-    default:
+    case InfraFeatures[shortLivedTokenAuth]:
       return 3;
+    default:
+      return 4;
   }
 };
 
@@ -360,7 +363,6 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
   if (!item) {
     return null;
   }
-
   const { uid, name, imgUrl, provider, description, installed } = item;
   const vendor = provider ? t('olm~provided by {{provider}}', { provider }) : null;
   const badges = item?.catalogSourceDisplayName
@@ -403,6 +405,9 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
     boolean
   >(userSettingsKey, storeKey, false);
+  const [updateChannel, setUpdateChannel] = React.useState('');
+  const [updateVersion, setUpdateVersion] = React.useState('');
+  const installVersion = getQueryArgument('version');
   const filteredItems =
     activeCluster === HUB_CLUSTER_NAME ? filterByArchAndOS(props.items) : props.items; // TODO remove multicluster
 
@@ -430,9 +435,14 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   const closeOverlay = () => {
     const params = new URLSearchParams(window.location.search);
     params.delete('details-item');
+    params.delete('channel');
+    params.delete('version');
     setURLParams(params);
     setDetailsItem(null);
     setShowDetails(false);
+    // reset version and channel state so that switching between operator cards does not carry over previous selections
+    setUpdateChannel('');
+    setUpdateVersion('');
   };
 
   const openOverlay = (item: OperatorHubItem) => {
@@ -450,12 +460,12 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   };
 
   const renderTile = (item: OperatorHubItem) => (
-    <OperatorHubTile item={item} onClick={openOverlay} />
+    <OperatorHubTile updateChannel={updateChannel} item={item} onClick={openOverlay} />
   );
 
   const createLink =
     detailsItem &&
-    `/operatorhub/subscribe?pkg=${detailsItem.obj.metadata.name}&catalog=${detailsItem.catalogSource}&catalogNamespace=${detailsItem.catalogSourceNamespace}&targetNamespace=${props.namespace}`;
+    `/operatorhub/subscribe?pkg=${detailsItem.obj.metadata.name}&catalog=${detailsItem.catalogSource}&catalogNamespace=${detailsItem.catalogSourceNamespace}&targetNamespace=${props.namespace}&channel=${updateChannel}&version=${updateVersion}`;
 
   const uninstallLink = () =>
     detailsItem &&
@@ -536,12 +546,13 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 iconImg={detailsItem.imgUrl}
                 title={detailsItem.name}
                 vendor={t('olm~{{version}} provided by {{provider}}', {
-                  version: detailsItem.version,
+                  version: updateVersion || installVersion || detailsItem.version,
                   provider: detailsItem.provider,
                 })}
                 data-test-id="operator-modal-header"
                 id="catalog-item-header"
               />
+
               <div className="co-catalog-page__overlay-actions">
                 {remoteWorkflowUrl && (
                   <ExternalLink
@@ -595,7 +606,13 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
           onClose={closeOverlay}
           title={detailsItem.name}
         >
-          <OperatorHubItemDetails item={detailsItem} />
+          <OperatorHubItemDetails
+            item={detailsItem}
+            updateChannel={updateChannel}
+            setUpdateChannel={setUpdateChannel}
+            updateVersion={updateVersion}
+            setUpdateVersion={setUpdateVersion}
+          />
         </Modal>
       )}
     </>
@@ -605,6 +622,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
 type OperatorHubTileProps = {
   item: OperatorHubItem;
   onClick: (item: OperatorHubItem) => void;
+  updateChannel: string;
 };
 
 export type OperatorHubTileViewProps = {

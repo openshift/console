@@ -1,4 +1,4 @@
-@knative-serverless
+@knative-serverless @knative
 Feature: Custom Domain Mapping Support
               As a user, I would like to have the ability to provide a custom domain for the routes configured for serverless applications.
 

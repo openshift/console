@@ -1,3 +1,4 @@
+@route-dev @dev-console
 Feature: Route form view
               As a user, I need the ability to create and edit routes in dev perspective.
 

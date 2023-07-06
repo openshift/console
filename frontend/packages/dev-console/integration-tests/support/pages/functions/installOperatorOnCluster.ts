@@ -99,7 +99,6 @@ export const waitForCRDs = (operator: operators) => {
         6,
       );
       cy.get('[data-test-id="TektonPipeline"]', { timeout: 80000 }).should('be.visible');
-      cy.get('[data-test-id="PipelineResource"]', { timeout: 80000 }).should('be.visible');
       cy.get('[data-test-id="PipelineRun"]', { timeout: 80000 }).should('be.visible');
       cy.get('[data-test-id="Pipeline"]', { timeout: 80000 }).should('be.visible');
       break;

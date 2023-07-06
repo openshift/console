@@ -79,6 +79,10 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   React.useEffect(() => {
     setRequirement(formValues.requirement);
 
+    if (formValues.requirement !== i18next.t('console-app~Requirement')) {
+      setDisabled(false);
+    }
+
     if (!_.isEmpty(existingResource) && _.isEmpty(formValues.name)) {
       onFormValuesChange(initialValuesFromK8sResource(existingResource));
     }
