@@ -120,7 +120,13 @@ const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {
     };
   }
 
-  const trueConditions = conditions?.filter((c: K8sResourceCondition) => c.status === 'True');
+  const conditionsIsObject =
+    typeof conditions === 'object' && !Array.isArray(conditions) && conditions !== null;
+  const formattedConditions = conditionsIsObject ? [conditions] : conditions;
+
+  const trueConditions = formattedConditions?.filter(
+    (c: K8sResourceCondition) => c.status === 'True',
+  );
   if (trueConditions?.length) {
     const types = trueConditions.map((c: K8sResourceCondition) => c.type);
     return {
