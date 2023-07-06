@@ -360,3 +360,21 @@ Feature: Create the pipeline from builder page
                   | pipeline_yaml                                | pipeline_name                 |
                   | testData/pipelineWithParameterTypeArray.yaml | pipeline-with-array-parameter |
 
+        @regression @odc-7246
+        Scenario: Install task provided by ArtifactHub and add create a Pipeline: P-02-TC25
+            Given user is at Pipeline Builder page
+             When user enters pipeline name as "pl-task-from-artifacthub"
+              And user clicks Add task button under Tasks section
+              And user searches "git-clone" in quick search bar
+              And user selects "git-clone" from Artifacthub
+              And user clicks on Add button
+              And user selects the "git-clone" node
+              And user adds the git url in the url Parameter in cluster task sidebar
+              And user clicks on Add workspace
+              And user adds the Workspace name as "git-opt"
+              And user clicks on Optional Workspace checkbox
+              And user selects the "git-clone" node
+              And user selects the "git-opt" workspace in the Output of Workspaces in cluster task sidebar
+              And user clicks Create button on Pipeline Builder page
+             Then user will be redirected to Pipeline Details page with header name "pl-task-from-artifacthub"
+              And user will see workspace mentioned as "git-opt (optional)" in the Workspaces section of Pipeline Details page

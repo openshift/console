@@ -135,7 +135,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                         </SplitItem>
                         <SplitItem>
                           {item.secondaryLabel ?? (
-                            <TextContent>
+                            <TextContent data-test={`item-name-${item.name}-${item.provider}`}>
                               <Text component={TextVariants.small}>{item.provider}</Text>
                             </TextContent>
                           )}
