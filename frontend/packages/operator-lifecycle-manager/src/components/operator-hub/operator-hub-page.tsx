@@ -45,7 +45,11 @@ import {
 } from '../../types';
 import { subscriptionFor } from '../operator-group';
 import { OperatorHubTileView } from './operator-hub-items';
-import { getCatalogSourceDisplayName } from './operator-hub-utils';
+import {
+  getCatalogSourceDisplayName,
+  shortLivedTokenAuth,
+  isAWSSTSCluster,
+} from './operator-hub-utils';
 import {
   OperatorHubItem,
   OperatorHubCSVAnnotations,
@@ -160,6 +164,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             createdAt,
             support,
             capabilities: capabilityLevel,
+            [OperatorHubCSVAnnotationKey.tokenAuthAWS]: tokenAuthAWS,
             [OperatorHubCSVAnnotationKey.actionText]: marketplaceActionText,
             [OperatorHubCSVAnnotationKey.remoteWorkflow]: marketplaceRemoteWorkflow,
             [OperatorHubCSVAnnotationKey.supportWorkflow]: marketplaceSupportWorkflow,
@@ -173,6 +178,13 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
           const infra = loaded && infrastructure?.data;
 
           const auth = loaded && authentication?.data;
+
+          // FIXME: this is a temporary hack and should be fixed as part of
+          // a refactor to include the new style of infrastructure features
+          // tracked in PORTENABLE-525
+          if (tokenAuthAWS === 'true' && isAWSSTSCluster(cloudCredential, infra, auth)) {
+            infraFeatures.push(shortLivedTokenAuth);
+          }
 
           const clusterServiceVersion =
             loaded &&

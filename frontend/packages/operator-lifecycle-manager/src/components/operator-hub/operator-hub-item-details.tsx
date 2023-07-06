@@ -32,7 +32,8 @@ import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { MarkdownView } from '../clusterserviceversion';
 import { defaultChannelNameFor } from '../index';
 import { OperatorChannelSelect, OperatorVersionSelect } from './operator-channel-version-select';
-import { OperatorHubItem } from './index';
+import { shortLivedTokenAuth, isAWSSTSCluster } from './operator-hub-utils';
+import { InfraFeatures, OperatorHubItem } from './index';
 
 // t('olm~Basic Install'),
 // t('olm~Seamless Upgrades'),
@@ -150,18 +151,6 @@ const InstallingHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({ s
         <Link to={to}>{t('olm~View it here.')}</Link>
       </p>
     </HintBlock>
-  );
-};
-
-const isAWSSTSCluster = (
-  cloudcreds: CloudCredentialKind,
-  infra: InfrastructureKind,
-  auth: AuthenticationKind,
-) => {
-  return (
-    cloudcreds?.spec?.credentialsMode === 'Manual' &&
-    infra?.status?.platform === 'AWS' &&
-    auth?.spec?.serviceAccountIssuer !== ''
   );
 };
 
@@ -372,21 +361,23 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
               />
             </PropertiesSidePanel>
             <div className="co-catalog-page__overlay-description">
-              {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) && showWarn && (
-                <Alert
-                  isInline
-                  variant="warning"
-                  title={t('olm~Cluster in STS Mode')}
-                  actionClose={<AlertActionCloseButton onClose={() => setShowWarn(false)} />}
-                  className="pf-u-mb-lg"
-                >
-                  <p>
-                    {t(
-                      'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
-                    )}
-                  </p>
-                </Alert>
-              )}
+              {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) &&
+                showWarn &&
+                infraFeatures?.find((i) => i === InfraFeatures[shortLivedTokenAuth]) && (
+                  <Alert
+                    isInline
+                    variant="warning"
+                    title={t('olm~Cluster in STS Mode')}
+                    actionClose={<AlertActionCloseButton onClose={() => setShowWarn(false)} />}
+                    className="pf-u-mb-lg"
+                  >
+                    <p>
+                      {t(
+                        'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
+                      )}
+                    </p>
+                  </Alert>
+                )}
               <OperatorHubItemDetailsHintBlock
                 installed={installed}
                 isInstalling={isInstalling}
