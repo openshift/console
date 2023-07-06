@@ -83,7 +83,7 @@ export enum OperatorHubCSVAnnotationKey {
   infrastructureFeatures = 'operators.openshift.io/infrastructure-features',
   validSubscription = 'operators.openshift.io/valid-subscription',
   tags = 'tags',
-  tokenAuthAWS = 'operators.openshift.io/infrastructure-features/token-auth/aws',
+  tokenAuthAWS = 'features.operators.openshift.io/token-auth-aws',
 }
 
 export type OperatorHubCSVAnnotations = {
