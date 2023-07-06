@@ -273,12 +273,11 @@ const Details = ({ obj: s }) => {
   );
 };
 
-const { details, pods, editYaml } = navFactory;
 const ServicesDetailsPage = (props) => (
   <DetailsPage
     {...props}
     menuActions={menuActions}
-    pages={[details(Details), editYaml(), pods()]}
+    pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.pods()]}
   />
 );
 

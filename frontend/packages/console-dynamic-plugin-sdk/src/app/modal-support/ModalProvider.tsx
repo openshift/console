@@ -1,14 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 
 type CloseModal = () => void;
 
-export type ModalComponent = React.FC<{
-  closeModal: CloseModal;
-  [key: string]: unknown;
-}>;
+type UnknownProps = { [key: string]: unknown };
+export type ModalComponent<P = UnknownProps> = React.FC<P & { closeModal: CloseModal }>;
 
-export type LaunchModal = (component: ModalComponent, extraProps: Record<string, unknown>) => void;
+export type LaunchModal = <P = UnknownProps>(component: ModalComponent<P>, extraProps: P) => void;
 
 type ModalContextValue = {
   launchModal: LaunchModal;
@@ -16,28 +13,28 @@ type ModalContextValue = {
 };
 
 export const ModalContext = React.createContext<ModalContextValue>({
-  launchModal: _.noop,
-  closeModal: _.noop,
+  launchModal: () => {},
+  closeModal: () => {},
 });
 
 export const ModalProvider: React.FC = ({ children }) => {
   const [isOpen, setOpen] = React.useState(false);
   const [Component, setComponent] = React.useState<ModalComponent>();
-  const [componentProps, setComponentProps] = React.useState<unknown>({});
+  const [componentProps, setComponentProps] = React.useState({});
 
-  const launchModal = React.useCallback(
-    (component: ModalComponent, compProps: unknown) => {
+  const launchModal = React.useCallback<LaunchModal>(
+    (component, compProps) => {
       setComponent(() => component);
       setComponentProps(compProps);
       setOpen(true);
     },
     [setOpen, setComponent, setComponentProps],
   );
-  const closeModal = React.useCallback(() => setOpen(false), [setOpen]);
+  const closeModal = React.useCallback<CloseModal>(() => setOpen(false), [setOpen]);
 
   return (
     <ModalContext.Provider value={{ launchModal, closeModal }}>
-      {isOpen && !!Component && <Component {...(componentProps as {})} closeModal={closeModal} />}
+      {isOpen && !!Component && <Component {...componentProps} closeModal={closeModal} />}
       {children}
     </ModalContext.Provider>
   );

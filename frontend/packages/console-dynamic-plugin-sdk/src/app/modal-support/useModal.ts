@@ -8,7 +8,7 @@ type UseModalLauncher = () => LaunchModal;
  * @example
  *```tsx
  * const AppPage: React.FC = () => {
- *  const [launchModal] = useModal();
+ *  const launchModal = useModal();
  *  const onClick = () => launchModal(ModalComponent);
  *  return (
  *    <Button onClick={onClick}>Launch a Modal</Button>

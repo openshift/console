@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useCanClusterUpgrade } from '@console/shared';
-
+import { useAnnotationsModal } from '@console/dynamic-plugin-sdk/src/app/components/modals/useAnnotationsModal';
 import { DetailsItem } from './details-item';
 import { Kebab } from './kebab';
 import { LabelList } from './label-list';
@@ -67,6 +67,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
   const model = modelFor(reference);
   const tolerationsPath = getTolerationsPath(resource);
   const tolerations: Toleration[] = _.get(resource, tolerationsPath);
+  const annotationsModalLauncher = useAnnotationsModal(resource);
   const canUpdateAccess = useAccessReview({
     group: model.apiGroup,
     resource: model.plural,
@@ -141,7 +142,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
               data-test="edit-annotations"
               type="button"
               isInline
-              onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}
+              onClick={annotationsModalLauncher}
               variant="link"
             >
               {t('public~{{count}} annotation', { count: _.size(metadata.annotations) })}
