@@ -46,7 +46,7 @@ export const documentationURLs: documentationURLsType = {
   },
   pipelines: {
     downstream: 'html/cicd/pipelines#understanding-openshift-pipelines',
-    upstream: 'cicd/pipelines/understanding-openshift-pipelines.html',
+    upstream: '', // intentionally blank as there is no upstream equivalent
   },
   postInstallationMachineConfigurationTasks: {
     downstream: 'html/post-installation_configuration/index',
