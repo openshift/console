@@ -30,6 +30,7 @@ export const KNATIVE_AUTOSCALEWINDOW_ANNOTATION = `${KNATIVE_AUTOSCALING_APIGROU
 export const SERVERLESS_FUNCTION_LABEL_DEPRECATED = 'boson.dev/function'; // TODO: remove deprecated label for serverless function
 export const SERVERLESS_FUNCTION_LABEL = 'function.knative.dev';
 export const GLOBAL_OPERATOR_NS = 'openshift-operators';
+export const CAMEL_K_OPERATOR_NS = 'camel-k-operator';
 export const EVENTING_KAFKA_CHANNEL_KIND = 'KafkaChannel';
 export const EVENTING_CHANNEL_KIND = 'Channel';
 export const EVENTING_IMC_KIND = 'InMemoryChannel';
