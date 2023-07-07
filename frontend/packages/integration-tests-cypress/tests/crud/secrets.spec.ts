@@ -16,6 +16,12 @@ const populateSecretForm = (name: string, key: string, fileName: string) => {
   cy.byTestID('file-input').attachFile(fileName);
 };
 
+const modifySecretForm = (key: string) => {
+  detailsPage.clickPageActionFromDropdown('Edit Secret');
+  cy.get('.co-m-pane__heading').contains('Edit key/value secret');
+  cy.byTestID('secret-key').clear().type(key);
+};
+
 describe('Create key/value secrets', () => {
   const binarySecretName = `${testName}binarysecretname`;
   const asciiSecretName = `${testName}asciisecretname`;
@@ -24,6 +30,7 @@ describe('Create key/value secrets', () => {
   const asciiFilename = 'asciisecret.txt';
   const unicodeFilename = 'unicodesecret.utf8';
   const secretKey = `secretkey`;
+  const modifiedSecretKey = 'modifiedsecretkey';
 
   before(() => {
     cy.login();
@@ -56,7 +63,7 @@ describe('Create key/value secrets', () => {
     cy.logout();
   });
 
-  it(`Validate a key/value secret whose value is a binary file`, () => {
+  it(`Validate create and edit of a key/value secret whose value is a binary file`, () => {
     populateSecretForm(binarySecretName, secretKey, binaryFilename);
     cy.byLegacyTestID('file-input-textarea').should('not.exist');
     cy.get(infoMessage).should('exist');
@@ -66,6 +73,21 @@ describe('Create key/value secrets', () => {
     detailsPage.titleShouldContain(binarySecretName);
     cy.exec(
       `oc get secret -n ${testName} ${binarySecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
+      {
+        failOnNonZeroExit: false,
+      },
+    ).then((value) => {
+      cy.fixture(binaryFilename, 'binary').then((binarySecret) => {
+        expect(binarySecret).toEqual(value.stdout);
+      });
+    });
+    modifySecretForm(modifiedSecretKey);
+    cy.byTestID('save-changes').click();
+    cy.byTestID('loading-indicator').should('not.exist');
+    detailsPage.isLoaded();
+    detailsPage.titleShouldContain(binarySecretName);
+    cy.exec(
+      `oc get secret -n ${testName} ${binarySecretName} --template '{{.data.${modifiedSecretKey}}}' | base64 -d`,
       {
         failOnNonZeroExit: false,
       },
