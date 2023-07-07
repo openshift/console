@@ -27,9 +27,7 @@ const PipelineQuickSearchVersionDropdown: React.FC<PipelineQuickSearchVersionDro
     return null;
   }
   const versionItems = versions.reduce((acc, { version }) => {
-    acc[
-      item.attributes.installed.length === 3 ? parseFloat(version.toString()) : version.toString() // in case of artifacthub installed tasks label `app.kubernetes.io/version` value is 0.x where as version in available version is 0.x.0. To match both the version parseFloat is needed
-    ] =
+    acc[version.toString()] =
       version === item.data?.latestVersion?.version
         ? i18n.t('pipelines-plugin~{{version}} (latest)', { version })
         : version;

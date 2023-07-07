@@ -107,11 +107,12 @@ const Contents: React.FC<
                 installedTask,
                 namespace,
                 item.data.task.name,
+                selectedVersion,
               ).catch(() => setFailedTasks([...failedTasks, item.data.task.name]));
             }
           } else {
             resolve(savedCallback.current({ metadata: { name: item.data.task.name } }));
-            createArtifactHubTask(selectedVersionUrl, namespace).catch(() =>
+            createArtifactHubTask(selectedVersionUrl, namespace, selectedVersion).catch(() =>
               setFailedTasks([...failedTasks, item.data.task.name]),
             );
           }

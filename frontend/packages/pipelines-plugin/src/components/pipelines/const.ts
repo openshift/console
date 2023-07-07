@@ -9,6 +9,7 @@ export enum TektonTaskAnnotation {
   tags = 'tekton.dev/tags',
   categories = 'tekton.dev/categories',
   installedFrom = 'openshift.io/installed-from',
+  semVersion = 'openshift.io/sem-version',
 }
 export enum TaskProviders {
   redhat = 'Red Hat',

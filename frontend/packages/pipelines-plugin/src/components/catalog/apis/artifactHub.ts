@@ -7,7 +7,6 @@ import { ARTIFACTHUB_API_BASE_URL } from '../../../const';
 import { TaskModel, TaskModelV1Beta1 } from '../../../models';
 import { TektonTaskAnnotation } from '../../pipelines/const';
 import { ARTIFACTHUB } from '../../quicksearch/const';
-import { getInstalledFromAnnotation } from '../../quicksearch/pipeline-quicksearch-utils';
 import { ApiResult } from '../hooks/useApiResponse';
 
 export type ArtifactHubRepository = {
@@ -53,6 +52,7 @@ const ARTIFACRHUB_TASKS_SEARCH_URL = `${ARTIFACTHUB_API_BASE_URL}/packages/searc
 
 export const getArtifactHubTaskDetails = async (
   item: CatalogItem,
+  v?: string,
 ): Promise<ArtifactHubTaskDetails> => {
   const API_BASE_URL = `${ARTIFACTHUB_API_BASE_URL}/packages/tekton-task`;
   const { name, data } = item;
@@ -62,7 +62,7 @@ export const getArtifactHubTaskDetails = async (
       repository: { name: repoName },
     },
   } = data;
-  const url = `${API_BASE_URL}/${repoName}/${name}/${version}`;
+  const url = `${API_BASE_URL}/${repoName}/${name}/${v || version}`;
   return consoleProxyFetchJSON({ url, method: 'GET' });
 };
 
@@ -100,13 +100,14 @@ export const useGetArtifactHubTasks = (hasPermission: boolean): ApiResult<Artifa
   return [resultData, loaded, loadedError];
 };
 
-export const createArtifactHubTask = (url: string, namespace: string) => {
+export const createArtifactHubTask = (url: string, namespace: string, version: string) => {
   return consoleProxyFetchJSON({ url, method: 'GET' })
     .then((task: K8sResourceKind) => {
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
         ...task.metadata.annotations,
         [TektonTaskAnnotation.installedFrom]: ARTIFACTHUB,
+        [TektonTaskAnnotation.semVersion]: version,
       };
       return k8sCreate(task.apiVersion === 'tekton.dev/v1' ? TaskModel : TaskModelV1Beta1, task);
     })
@@ -122,13 +123,14 @@ export const updateArtifactHubTask = async (
   taskData: CatalogItem,
   namespace: string,
   name: string,
+  version: string,
 ) => {
   return consoleProxyFetchJSON({ url, method: 'GET' })
     .then((task: K8sResourceKind) => {
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
         ...task.metadata.annotations,
-        ...getInstalledFromAnnotation(),
+        [TektonTaskAnnotation.semVersion]: version,
       };
       task.metadata = _.merge({}, taskData.data.metadata, task.metadata);
       return k8sUpdate(

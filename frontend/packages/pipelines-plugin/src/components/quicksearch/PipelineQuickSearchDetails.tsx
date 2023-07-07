@@ -52,6 +52,29 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
     setHasInstalledVersion(isOneVersionInstalled(selectedItem));
   }, [selectedItem]);
 
+  const onChangeVersion = React.useCallback(
+    (key) => {
+      setSelectedVersion(key);
+      if (isArtifactHubTask(selectedItem)) {
+        getArtifactHubTaskDetails(selectedItem, key)
+          .then((item) => {
+            selectedItem.attributes.versions = item.available_versions;
+            selectedItem.attributes.selectedVersionContentUrl = item.content_url;
+            selectedItem.tags = item.keywords;
+
+            setVersions([...item.available_versions]);
+            setHasInstalledVersion(isOneVersionInstalled(selectedItem));
+          })
+          .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.warn('Error while getting ArtifactHub Task details:', err);
+            resetVersions();
+          });
+      }
+    },
+    [resetVersions, selectedItem],
+  );
+
   React.useEffect(() => {
     resetVersions();
     let mounted = true;
@@ -157,7 +180,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
                   versions={versions}
                   item={selectedItem}
                   selectedVersion={selectedVersion}
-                  onChange={(key) => setSelectedVersion(key)}
+                  onChange={onChangeVersion}
                 />
               </SplitItem>
             )}
