@@ -249,7 +249,7 @@ const StorageClassFormWithTranslation = withTranslation()(
         } = this.state.newStorageClass;
         const dataParameters = this.getFormParams();
         const annotations = description ? { description } : {};
-        const data: StorageClass = {
+        let data: StorageClass = {
           metadata: {
             name: this.state.newStorageClass.name,
             annotations,
@@ -272,6 +272,10 @@ const StorageClassFormWithTranslation = withTranslation()(
           : allowVolumeExpansion;
         if (shouldAllowVolumeExpansion) {
           data.allowVolumeExpansion = expansion;
+        }
+        const { mutator } = this.storageTypes[type];
+        if (_.isFunction(mutator)) {
+          data = mutator(data);
         }
 
         k8sCreate(StorageClassModel, data)

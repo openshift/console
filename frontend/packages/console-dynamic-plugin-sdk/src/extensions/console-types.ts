@@ -695,3 +695,11 @@ export type QueryBrowserProps = {
   timespan?: number;
   units?: string;
 };
+
+export type StorageClass = K8sResourceCommon & {
+  provisioner: string;
+  parameters: object;
+  reclaimPolicy?: string;
+  volumeBindingMode?: string;
+  allowVolumeExpansion?: boolean;
+};
