@@ -654,5 +654,7 @@ Then('user see the pipeline succeeded', () => {
 });
 
 When('user selects {string} from Artifacthub', (taskName: string) => {
-  cy.byTestID(`item-name-${taskName}-ArtifactHub`).should('have.text', 'ArtifactHub').click();
+  cy.byTestID(`item-name-${taskName}-ArtifactHub-secondary-label`)
+    .should('have.text', 'ArtifactHub')
+    .click();
 });
