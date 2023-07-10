@@ -1,14 +1,19 @@
 import * as React from 'react';
 import { QuickStartContextValues, QuickStartContext } from '@patternfly/quickstarts';
-import { Alert } from '@patternfly/react-core';
-import { Trans } from 'react-i18next';
+import { Alert, AlertVariant } from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import { isModifiedEvent } from '@console/shared/src';
+import { PipelineMetricsLevel } from '../const';
 
 type PipelineMetricsQuickstartInfoProps = {
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
   to: { pathname: string; search: string };
+};
+
+type PipelineMetricsQuickstartProps = {
+  metricsLevel?: string;
 };
 
 export const PipelineMetricsQuickstartInfo: React.FC<PipelineMetricsQuickstartInfoProps> = ({
@@ -26,7 +31,8 @@ export const PipelineMetricsQuickstartInfo: React.FC<PipelineMetricsQuickstartIn
   </Trans>
 );
 
-const PipelineMetricsQuickstart: React.FC = () => {
+const PipelineMetricsQuickstart: React.FC<PipelineMetricsQuickstartProps> = ({ metricsLevel }) => {
+  const { t } = useTranslation();
   const PIPELINE_METRICS_CONFIGURATION_QUICKSTART = 'configure-pipeline-metrics';
   const { pathname, search } = useLocation();
   const { setActiveQuickStart } = React.useContext<QuickStartContextValues>(QuickStartContext);
@@ -59,9 +65,19 @@ const PipelineMetricsQuickstart: React.FC = () => {
           <>
             {isPipelineMetricsQSAvailable && (
               <Alert
-                variant="info"
+                variant={
+                  metricsLevel === PipelineMetricsLevel.UNSUPPORTED_LEVEL
+                    ? AlertVariant.warning
+                    : AlertVariant.info
+                }
                 isInline
-                title="Pipeline metrics configuration defaults to pipeline and task level"
+                title={
+                  metricsLevel === PipelineMetricsLevel.UNSUPPORTED_LEVEL
+                    ? t('pipelines-plugin~Pipeline metrics configuration is unsupported.')
+                    : t(
+                        'pipelines-plugin~Pipeline metrics configuration defaults to pipeline and task level.',
+                      )
+                }
               >
                 <PipelineMetricsQuickstartInfo
                   data-test-id="pipeline-metrics-quickstart-link"

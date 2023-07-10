@@ -14,6 +14,7 @@ import PipelineMetricsEmptyState from '../PipelineMetricsEmptyState';
 import PipelineMetricsQuickstart from '../PipelineMetricsQuickstart';
 import PipelineMetricsRefreshDropdown from '../PipelineMetricsRefreshDropdown';
 import PipelineMetricsTimeRangeDropdown from '../PipelineMetricsTimeRangeDropdown';
+import PipelineMetricsUnsupported from '../PipelineMetricsUnsupported';
 import PipelineRunCount from '../PipelineRunCount';
 import PipelineRunDurationGraph from '../PipelineRunDurationGraph';
 import PipelineRunTaskRunGraph from '../PipelineRunTaskRunGraph';
@@ -144,5 +145,19 @@ describe('Pipeline Metrics', () => {
       .update();
 
     expect(pipelineMetricsWrapper.find(PipelineMetricsQuickstart).exists()).toBe(false);
+  });
+
+  it('Should render Pipeline Metrics Unsupported empty page', () => {
+    latestPipelineRunSpy.mockReturnValue(pipelineRun);
+    const pipelineMetricsWrapper = shallow(<PipelineMetrics {...PipelineMetricsProps} />);
+    pipelineMetricsWrapper
+      .setProps({
+        customData: {
+          metricsLevel: PipelineMetricsLevel.UNSUPPORTED_LEVEL,
+          hasUpdatePermission: true,
+        },
+      })
+      .update();
+    expect(pipelineMetricsWrapper.find(PipelineMetricsUnsupported).exists()).toBe(true);
   });
 });
