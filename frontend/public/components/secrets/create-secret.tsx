@@ -23,7 +23,7 @@ import { ModalBody, ModalTitle, ModalSubmitFooter } from '../factory/modal';
 import { AsyncComponent } from '../utils/async';
 import { SecretModel } from '../../models';
 import { WebHookSecretKey } from '../secret';
-
+import { containsNonPrintableCharacters } from '../utils/file-input';
 export enum SecretTypeAbstraction {
   generic = 'generic',
   source = 'source',
@@ -1061,6 +1061,7 @@ export const SSHAuthSubform = withTranslation()(SSHAuthSubformWithTranslation);
 
 type KeyValueEntryFormState = {
   isBase64?: boolean;
+  isBinary?: boolean;
   key: string;
   value: string;
 };
@@ -1110,20 +1111,26 @@ class GenericSecretFormWithTranslation extends React.Component<
     if (_.isEmpty(genericSecretObject)) {
       return [this.newGenericSecretEntry()];
     }
-    return _.map(genericSecretObject, (value, key) => ({
-      uid: _.uniqueId(),
-      entry: {
-        key,
-        value,
-      },
-    }));
+    return _.map(genericSecretObject, (value, key) => {
+      const isBinary = containsNonPrintableCharacters(value);
+      return {
+        uid: _.uniqueId(),
+        entry: {
+          key,
+          value: isBinary ? Base64.btoa(value) : value,
+          isBase64: isBinary,
+          isBinary,
+        },
+      };
+    });
   }
   genericSecretArrayToObject(genericSecretArray) {
     return _.reduce(
       genericSecretArray,
       (acc, k) =>
         _.assign(acc, {
-          [k.entry.key]: k.entry?.isBase64 ? k.entry.value : Base64.encode(k.entry.value),
+          [k.entry.key]:
+            k.entry?.isBase64 || k.entry?.isBinary ? k.entry.value : Base64.encode(k.entry.value),
         }),
       {},
     );
@@ -1214,6 +1221,7 @@ class KeyValueEntryFormWithTranslation extends React.Component<
     this.state = {
       key: props.entry.key,
       value: props.entry.value,
+      isBinary: props.entry.isBinary,
     };
     this.onValueChange = this.onValueChange.bind(this);
     this.onKeyChange = this.onKeyChange.bind(this);
@@ -1266,6 +1274,7 @@ class KeyValueEntryFormWithTranslation extends React.Component<
               inputFieldHelpText={t(
                 'public~Drag and drop file with your value here or browse to upload it.',
               )}
+              inputFileIsBinary={this.state.isBinary}
             />
           </div>
         </div>
