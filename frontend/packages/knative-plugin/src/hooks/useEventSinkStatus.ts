@@ -4,7 +4,7 @@ import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { KnEventCatalogMetaData } from '../components/add/import-types';
-import { GLOBAL_OPERATOR_NS } from '../const';
+import { CAMEL_K_OPERATOR_NS, GLOBAL_OPERATOR_NS } from '../const';
 import { CamelKameletBindingModel, CamelKameletModel, KafkaSinkModel } from '../models';
 import { getEventSinkMetadata } from '../utils/create-eventsink-utils';
 import { getKameletMetadata } from '../utils/create-eventsources-utils';
@@ -32,9 +32,15 @@ export const useEventSinkStatus = (
     kameletName,
     GLOBAL_OPERATOR_NS,
   );
+  const [kameletGlobalNs2, kameletGlobalNs2Loaded] = useK8sGet<K8sResourceKind>(
+    CamelKameletModel,
+    kameletName,
+    CAMEL_K_OPERATOR_NS,
+  );
 
-  const kameletLoaded = kameletNsLoaded && kameletGlobalNsLoaded;
-  const kamelet = kameletName && kameletLoaded && (kameletNs || kameletGlobalNs);
+  const kameletLoaded = kameletNsLoaded && kameletGlobalNsLoaded && kameletGlobalNs2Loaded;
+  const kamelet =
+    kameletName && kameletLoaded && (kameletNs || kameletGlobalNs || kameletGlobalNs2);
 
   const isKameletSink = kameletName && sinkKindProp === CamelKameletBindingModel.kind;
   const isSinkKindPresent = sinkKindProp || isKameletSink;

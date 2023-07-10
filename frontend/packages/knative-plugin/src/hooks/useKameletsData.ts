@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { GLOBAL_OPERATOR_NS } from '../const';
+import { CAMEL_K_OPERATOR_NS, GLOBAL_OPERATOR_NS } from '../const';
 import { CamelKameletModel } from '../models';
 
 export const useKameletsData = (namespace: string): [K8sResourceKind[], boolean, any] => {
@@ -23,6 +23,12 @@ export const useKameletsData = (namespace: string): [K8sResourceKind[], boolean,
         namespace: GLOBAL_OPERATOR_NS,
         optional: true,
       },
+      kameletsGlobalNs2: {
+        isList: true,
+        kind: referenceForModel(CamelKameletModel),
+        namespace: CAMEL_K_OPERATOR_NS,
+        optional: true,
+      },
     }),
     [namespace],
   );
@@ -36,12 +42,20 @@ export const useKameletsData = (namespace: string): [K8sResourceKind[], boolean,
     const resDataloadError = Object.keys(extraResources).every(
       (key) => extraResources[key].loadError,
     );
-    const { kamelets: kameletsData, kameletsGlobalNs } = extraResources;
+    const { kamelets: kameletsData, kameletsGlobalNs, kameletsGlobalNs2 } = extraResources;
     if (resDataLoaded) {
-      setKamelets(kameletsData.data.length > 0 ? kameletsData.data : kameletsGlobalNs.data);
-      setKameletsLoaded(kameletsData.loaded || kameletsGlobalNs.loaded);
+      if (kameletsData.data.length > 0) {
+        setKamelets(kameletsData.data);
+      } else if (kameletsGlobalNs.data.length > 0) {
+        setKamelets(kameletsGlobalNs.data);
+      } else {
+        setKamelets(kameletsGlobalNs2.data);
+      }
+      setKameletsLoaded(kameletsData.loaded || kameletsGlobalNs.loaded || kameletsGlobalNs2.loaded);
     } else if (resDataloadError) {
-      setKameletsLoadError(kameletsGlobalNs.loadError || kameletsGlobalNs.loadError);
+      setKameletsLoadError(
+        kameletsGlobalNs.loadError || kameletsGlobalNs.loadError || kameletsGlobalNs2.loadError,
+      );
     }
   }, [extraResources]);
 
