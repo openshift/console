@@ -1,15 +1,15 @@
 {
+  "Name": "Nom",
+  "Error": "Erreur",
+  "Status": "Statut",
+  "Services": "Services",
+  "Namespace": "Namespace",
+  "Conditions": "Conditions",
+  "Created": "Créée",
   "ServiceBinding": "ServiceBinding",
   "ServiceBindings": "ServiceBindings",
-  "ServiceBinding details": "ServiceBinding details",
-  "Conditions": "Conditions",
-  "Status": "Status",
-  "Label Selector": "Label Selector",
+  "ServiceBinding details": "Détails ServiceBinding",
+  "Label Selector": "Sélecteur Label",
   "Application": "Application",
-  "Services": "Services",
-  "Connected": "Connected",
-  "Error": "Error",
-  "Name": "Name",
-  "Namespace": "Namespace",
-  "Created": "Created"
+  "Connected": "Connecté"
 }
