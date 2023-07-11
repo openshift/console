@@ -55,8 +55,7 @@ export const documentationURLs: documentationURLsType = {
   understandingUpgradeChannels: {
     downstream:
       'html/updating_clusters/understanding-upgrade-channels-releases#understanding-upgrade-channels_understanding-upgrade-channels-releases',
-    upstream:
-      'updating/understanding-upgrade-channels-release.html#understanding-upgrade-channels_understanding-upgrade-channels-releases',
+    upstream: 'updating/index.html#updating-clusters-overview-upgrade-channels-and-releases',
   },
   updateService: {
     downstream:
