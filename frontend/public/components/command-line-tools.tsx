@@ -15,13 +15,12 @@ import { useRequestTokenURL } from '@console/shared/src/hooks/useRequestTokenURL
 export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const [requestTokenURL] = useRequestTokenURL();
-  const title = 'Command Line Tools';
   const data = _.sortBy(_.get(obj, 'data'), 'spec.displayName');
   const cliData = _.remove(data, (item) => item.metadata.name === 'oc-cli-downloads');
 
   const additionalCommandLineTools = _.map(cliData.concat(data), (tool) => {
     const displayName = tool.spec.displayName;
-    const defaultLinkText = `Download ${displayName}`;
+    const defaultLinkText = t('Download {{displayName}}', { displayName });
     return (
       <React.Fragment key={tool.metadata.uid}>
         <Divider className="co-divider" />
@@ -53,11 +52,11 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
   return (
     <>
       <Helmet>
-        <title>{title}</title>
+        <title>{t('public~Command line tools')}</title>
       </Helmet>
       <div className="co-m-pane__body">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name">{title}</div>
+          <div className="co-m-pane__name">{t('public~Command line tools')}</div>
         </h1>
         {requestTokenURL && (
           <>
