@@ -4,17 +4,14 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { ListInput } from '../../../public/components/utils';
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
 import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
-import {
-  AddRequestHeaderPage,
-  AddRequestHeaderPageState,
-} from '../../../public/components/cluster-settings/request-header-idp-form';
+import { AddRequestHeaderPage } from '../../../public/components/cluster-settings/request-header-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: Request Header', () => {
-  let wrapper: ShallowWrapper<{}, AddRequestHeaderPageState>;
+  let wrapper: ShallowWrapper<any>;
 
   beforeEach(() => {
-    wrapper = shallow(<AddRequestHeaderPage />).dive();
+    wrapper = shallow(<AddRequestHeaderPage />);
   });
 
   it('should render AddRequestHeaderPage component', () => {
@@ -38,7 +35,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should prefill request-header in name field by default', () => {
-    expect(wrapper.find(IDPNameInput).props().value).toEqual(wrapper.state().name);
+    expect(wrapper.find(IDPNameInput).props().value).toEqual('request-header');
   });
 
   it('should prefill Request Header more options list input default values as empty', () => {

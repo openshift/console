@@ -1,38 +1,58 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
-import { withTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ConfigMapModel, SecretModel } from '../../models';
-import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
-import { ButtonBar, ListInput, PromiseComponent, history, PageHeading } from '../utils';
-import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
+import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
+import { ButtonBar, ListInput, history, PageHeading } from '../utils';
+import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-class AddLDAPPageWithTranslation extends PromiseComponent<AddLDAPPageProps, AddLDAPPageState> {
-  readonly state: AddLDAPPageState = {
-    name: 'ldap',
-    url: '',
-    bindDN: '',
-    bindPassword: '',
-    attributesID: ['dn'],
-    attributesPreferredUsername: ['uid'],
-    attributesName: ['cn'],
-    attributesEmail: [],
-    caFileContent: '',
-    inProgress: false,
-    errorMessage: '',
+export const AddLDAPPage = () => {
+  const [inProgress, setInProgress] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const [name, setName] = React.useState('ldap');
+  const [url, setUrl] = React.useState('');
+  const [bindDN, setBindDN] = React.useState('');
+  const [bindPassword, setBindPassword] = React.useState('');
+  const [attributesID, setAttributesID] = React.useState(['dn']);
+  const [attributesPreferredUsername, setAttributesPreferredUsername] = React.useState(['uid']);
+  const [attributesName, setAttributesName] = React.useState(['cn']);
+  const [attributesEmail, setAttributesEmail] = React.useState([]);
+  const [caFileContent, setCaFileContent] = React.useState('');
+
+  const { t } = useTranslation();
+
+  const thenPromise = (res) => {
+    setInProgress(false);
+    setErrorMessage('');
+    return res;
   };
 
-  getOAuthResource(): Promise<OAuthKind> {
-    return this.handlePromise(getOAuthResource());
-  }
+  const catchError = (error) => {
+    const err = error.message || t('public~An error occurred. Please try again.');
+    setInProgress(false);
+    setErrorMessage(err);
+    return Promise.reject(err);
+  };
 
-  createCAConfigMap(): Promise<K8sResourceKind> {
-    const { caFileContent } = this.state;
+  const handlePromise = (promise) => {
+    setInProgress(true);
+
+    return promise.then(
+      (res) => thenPromise(res),
+      (error) => catchError(error),
+    );
+  };
+
+  const getOAuthResource = () => {
+    return handlePromise(getOAuth());
+  };
+
+  const createCAConfigMap = () => {
     if (!caFileContent) {
       return Promise.resolve(null);
     }
@@ -49,11 +69,10 @@ class AddLDAPPageWithTranslation extends PromiseComponent<AddLDAPPageProps, AddL
       },
     };
 
-    return this.handlePromise(k8sCreate(ConfigMapModel, ca));
-  }
+    return handlePromise(k8sCreate(ConfigMapModel, ca));
+  };
 
-  createBindPasswordSecret(): Promise<K8sResourceKind> {
-    const { bindPassword } = this.state;
+  const createBindPasswordSecret = () => {
     if (!bindPassword) {
       return Promise.resolve(null);
     }
@@ -70,24 +89,15 @@ class AddLDAPPageWithTranslation extends PromiseComponent<AddLDAPPageProps, AddL
       },
     };
 
-    return this.handlePromise(k8sCreate(SecretModel, secret));
-  }
+    return handlePromise(k8sCreate(SecretModel, secret));
+  };
 
-  addLDAPIDP(
+  const addLDAPIDP = (
     oauth: OAuthKind,
     bindPasswordSecretName: string,
     caConfigMapName: string,
     dryRun?: boolean,
-  ): Promise<K8sResourceKind> {
-    const {
-      name,
-      url,
-      bindDN,
-      attributesID,
-      attributesPreferredUsername,
-      attributesName,
-      attributesEmail,
-    } = this.state;
+  ) => {
     const idp: IdentityProvider = {
       name,
       mappingMethod: 'claim',
@@ -120,202 +130,149 @@ class AddLDAPPageWithTranslation extends PromiseComponent<AddLDAPPageProps, AddL
       };
     }
 
-    return this.handlePromise(addIDP(oauth, idp, dryRun));
-  }
+    return handlePromise(addIDP(oauth, idp, dryRun));
+  };
 
-  submit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const submit = (e) => {
     e.preventDefault();
     // Clear any previous errors.
-    this.setState({ errorMessage: '' });
-    this.getOAuthResource().then((oauth: OAuthKind) => {
-      const mockSecret = this.state.bindPassword ? mockNames.secret : '';
-      const mockCA = this.state.caFileContent ? mockNames.ca : '';
-      this.addLDAPIDP(oauth, mockSecret, mockCA, true)
+    setErrorMessage('');
+    getOAuthResource().then((oauth: OAuthKind) => {
+      const mockSecret = bindPassword ? mockNames.secret : '';
+      const mockCA = caFileContent ? mockNames.ca : '';
+      addLDAPIDP(oauth, mockSecret, mockCA, true)
         .then(() => {
-          const promises = [this.createBindPasswordSecret(), this.createCAConfigMap()];
+          const promises = [createBindPasswordSecret(), createCAConfigMap()];
 
           Promise.all(promises)
             .then(([bindPasswordSecret, caConfigMap]) => {
               const bindPasswordSecretName = _.get(bindPasswordSecret, 'metadata.name');
               const caConfigMapName = _.get(caConfigMap, 'metadata.name');
-              return this.addLDAPIDP(oauth, bindPasswordSecretName, caConfigMapName);
+              return addLDAPIDP(oauth, bindPasswordSecretName, caConfigMapName);
             })
             .then(redirectToOAuthPage);
         })
         .catch((err) => {
-          this.setState({ errorMessage: err });
+          setErrorMessage(err);
         });
     });
   };
 
-  nameChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({ name: event.currentTarget.value });
-  };
+  const title = t('public~Add Identity Provider: LDAP');
 
-  urlChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({ url: event.currentTarget.value });
-  };
-
-  bindDNChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({ bindDN: event.currentTarget.value });
-  };
-
-  bindPasswordChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({ bindPassword: event.currentTarget.value });
-  };
-
-  attributesIDChanged = (attributesID: string[]) => {
-    this.setState({ attributesID });
-  };
-
-  attributesPreferredUsernameChanged = (attributesPreferredUsername: string[]) => {
-    this.setState({ attributesPreferredUsername });
-  };
-
-  attributesNameChanged = (attributesName: string[]) => {
-    this.setState({ attributesName });
-  };
-
-  attributesEmailChanged = (attributesEmail: string[]) => {
-    this.setState({ attributesEmail });
-  };
-
-  caFileChanged = (caFileContent: string) => {
-    this.setState({ caFileContent });
-  };
-
-  render() {
-    const {
-      name,
-      url,
-      bindDN,
-      bindPassword,
-      attributesID,
-      attributesPreferredUsername,
-      attributesName,
-      caFileContent,
-    } = this.state;
-    const { t } = this.props;
-    const title = t('public~Add Identity Provider: LDAP');
-    return (
-      <div className="co-m-pane__form">
-        <Helmet>
-          <title>{title}</title>
-        </Helmet>
-        <PageHeading
-          title={title}
-          helpText={t('public~Integrate with an LDAP identity provider.')}
-        />
-        <div className="co-m-pane__body">
-          <form onSubmit={this.submit} name="form" className="co-m-pane__body-group">
-            <IDPNameInput value={name} onChange={this.nameChanged} />
-            <div className="form-group">
-              <label className="control-label co-required" htmlFor="url">
-                {t('public~URL')}
-              </label>
-              <input
-                className="pf-c-form-control"
-                type="url"
-                onChange={this.urlChanged}
-                value={url}
-                id="url"
-                required
-                aria-describedby="url-help"
-              />
-              <div className="help-block" id="url-help">
-                {t('public~An RFC 2255 URL which specifies the LDAP search parameters to use.')}
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="control-label" htmlFor="bind-dn">
-                {t('public~Bind DN')}
-              </label>
-              <input
-                className="pf-c-form-control"
-                type="text"
-                onChange={this.bindDNChanged}
-                value={bindDN}
-                id="bind-dn"
-                aria-describedby="bind-dn-help"
-              />
-              <div className="help-block" id="bind-dn-help">
-                {t('public~DN to bind with during the search phase.')}
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="control-label" htmlFor="bind-password">
-                {t('public~Bind password')}
-              </label>
-              <input
-                className="pf-c-form-control"
-                type="password"
-                onChange={this.bindPasswordChanged}
-                value={bindPassword}
-                id="bind-password"
-                aria-describedby="bind-password-help"
-              />
-              <div className="help-block" id="bind-password-help">
-                {t('public~Password to bind with during the search phase.')}
-              </div>
-            </div>
-            <div className="co-form-section__separator" />
-            <h3>{t('public~Attributes')}</h3>
-            <p className="co-help-text">
-              {t('public~Attributes map LDAP attributes to identities.')}
-            </p>
-            <ListInput
-              label={t('public~ID')}
+  return (
+    <div className="co-m-pane__form">
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <PageHeading title={title} helpText={t('public~Integrate with an LDAP identity provider.')} />
+      <div className="co-m-pane__body">
+        <form onSubmit={submit} name="form" className="co-m-pane__body-group">
+          <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="url">
+              {t('public~URL')}
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="url"
+              onChange={(e) => setUrl(e.currentTarget.value)}
+              value={url}
+              id="url"
               required
-              initialValues={attributesID}
-              onChange={this.attributesIDChanged}
-              helpText={t(
-                'public~The list of attributes whose values should be used as the user ID.',
-              )}
+              aria-describedby="url-help"
             />
-            <ListInput
-              label={t('public~Preferred username')}
-              initialValues={attributesPreferredUsername}
-              onChange={this.attributesPreferredUsernameChanged}
-              helpText={t(
-                'public~The list of attributes whose values should be used as the preferred username.',
-              )}
+            <div className="help-block" id="url-help">
+              {t('public~An RFC 2255 URL which specifies the LDAP search parameters to use.')}
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="control-label" htmlFor="bind-dn">
+              {t('public~Bind DN')}
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="text"
+              onChange={(e) => setBindDN(e.currentTarget.value)}
+              value={bindDN}
+              id="bind-dn"
+              aria-describedby="bind-dn-help"
             />
-            <ListInput
-              label={t('public~Name')}
-              initialValues={attributesName}
-              onChange={this.attributesNameChanged}
-              helpText={t(
-                'public~The list of attributes whose values should be used as the display name.',
-              )}
+            <div className="help-block" id="bind-dn-help">
+              {t('public~DN to bind with during the search phase.')}
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="control-label" htmlFor="bind-password">
+              {t('public~Bind password')}
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="password"
+              onChange={(e) => setBindPassword(e.currentTarget.value)}
+              value={bindPassword}
+              id="bind-password"
+              aria-describedby="bind-password-help"
             />
-            <ListInput
-              label={t('public~Email')}
-              onChange={this.attributesEmailChanged}
-              helpText={t(
-                'public~The list of attributes whose values should be used as the email address.',
-              )}
-            />
-            <div className="co-form-section__separator" />
-            <h3>{t('public~More options')}</h3>
-            <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
-            <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-              <ActionGroup className="pf-c-form">
-                <Button type="submit" variant="primary" data-test-id="add-idp">
-                  {t('public~Add')}
-                </Button>
-                <Button type="button" variant="secondary" onClick={history.goBack}>
-                  {t('public~Cancel')}
-                </Button>
-              </ActionGroup>
-            </ButtonBar>
-          </form>
-        </div>
+            <div className="help-block" id="bind-password-help">
+              {t('public~Password to bind with during the search phase.')}
+            </div>
+          </div>
+          <div className="co-form-section__separator" />
+          <h3>{t('public~Attributes')}</h3>
+          <p className="co-help-text">
+            {t('public~Attributes map LDAP attributes to identities.')}
+          </p>
+          <ListInput
+            label={t('public~ID')}
+            required
+            initialValues={attributesID}
+            onChange={(c: string[]) => setAttributesID(c)}
+            helpText={t(
+              'public~The list of attributes whose values should be used as the user ID.',
+            )}
+          />
+          <ListInput
+            label={t('public~Preferred username')}
+            initialValues={attributesPreferredUsername}
+            onChange={(c: string[]) => setAttributesPreferredUsername(c)}
+            helpText={t(
+              'public~The list of attributes whose values should be used as the preferred username.',
+            )}
+          />
+          <ListInput
+            label={t('public~Name')}
+            initialValues={attributesName}
+            onChange={(c: string[]) => setAttributesName(c)}
+            helpText={t(
+              'public~The list of attributes whose values should be used as the display name.',
+            )}
+          />
+          <ListInput
+            label={t('public~Email')}
+            onChange={(c: string[]) => setAttributesEmail(c)}
+            helpText={t(
+              'public~The list of attributes whose values should be used as the email address.',
+            )}
+          />
+          <div className="co-form-section__separator" />
+          <h3>{t('public~More options')}</h3>
+          <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
+          <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button type="submit" variant="primary" data-test-id="add-idp">
+                {t('public~Add')}
+              </Button>
+              <Button type="button" variant="secondary" onClick={history.goBack}>
+                {t('public~Cancel')}
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
       </div>
-    );
-  }
-}
-
-export const AddLDAPPage = withTranslation()(AddLDAPPageWithTranslation);
+    </div>
+  );
+};
 
 export type AddLDAPPageState = {
   name: string;
@@ -329,8 +286,4 @@ export type AddLDAPPageState = {
   caFileContent: string;
   inProgress: boolean;
   errorMessage: string;
-};
-
-type AddLDAPPageProps = {
-  t: TFunction;
 };

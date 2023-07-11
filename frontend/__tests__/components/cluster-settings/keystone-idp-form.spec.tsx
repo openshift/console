@@ -5,16 +5,15 @@ import { IDPNameInput } from '../../../public/components/cluster-settings/idp-na
 import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
 import {
   AddKeystonePage,
-  AddKeystonePageState,
   DroppableFileInput as KeystoneFileInput,
 } from '../../../public/components/cluster-settings/keystone-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: Keystone', () => {
-  let wrapper: ShallowWrapper<{}, AddKeystonePageState>;
+  let wrapper: ShallowWrapper<any>;
 
   beforeEach(() => {
-    wrapper = shallow(<AddKeystonePage />).dive();
+    wrapper = shallow(<AddKeystonePage />);
   });
 
   it('should render AddKeystonePage component', () => {
@@ -38,6 +37,6 @@ describe('Add Identity Provider: Keystone', () => {
   });
 
   it('should prefill keystone in name field by default', () => {
-    expect(wrapper.find(IDPNameInput).props().value).toEqual(wrapper.state().name);
+    expect(wrapper.find(IDPNameInput).props().value).toEqual('keystone');
   });
 });

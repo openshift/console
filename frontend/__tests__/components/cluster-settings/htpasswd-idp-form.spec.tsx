@@ -4,16 +4,15 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
 import {
   AddHTPasswdPage,
-  AddHTPasswdPageState,
   DroppableFileInput as HTDroppableInput,
 } from '../../../public/components/cluster-settings/htpasswd-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: HTPasswd', () => {
-  let wrapper: ShallowWrapper<{}, AddHTPasswdPageState>;
+  let wrapper: ShallowWrapper<any>;
 
   beforeEach(() => {
-    wrapper = shallow(<AddHTPasswdPage />).dive();
+    wrapper = shallow(<AddHTPasswdPage />);
   });
 
   it('should render AddHTPasswdPage component', () => {
@@ -34,6 +33,6 @@ describe('Add Identity Provider: HTPasswd', () => {
   });
 
   it('should prefill htpasswd in name field by default', () => {
-    expect(wrapper.find(IDPNameInput).props().value).toEqual(wrapper.state().name);
+    expect(wrapper.find(IDPNameInput).props().value).toEqual('htpasswd');
   });
 });
