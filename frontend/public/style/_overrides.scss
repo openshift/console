@@ -224,6 +224,10 @@ form.pf-c-form {
 }
 
 .pf-c-page__sidebar {
+  
+  @media print {
+    display: none !important;
+  }
 
   // Perspective switcher
   &.pf-m-dark .pf-c-dropdown {
@@ -256,11 +260,6 @@ form.pf-c-form {
     }
   }
 
-  @media print {
-    .pf-c-page__sidebar {
-      display: none !important;
-    }
-  }
 }
 
 // Reset our tables to our base font-size
