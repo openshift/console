@@ -1,11 +1,11 @@
 {
+  "Close": "Fermer",
   "Notifications": "Notifications",
-  "{{count}} unread_one": "{{count}} unread",
-  "{{count}} unread_other": "{{count}} unreads",
-  "Close": "Close",
-  "Warning notification:": "Warning notification:",
-  "Critical notification:": "Critical notification:",
-  "Success notification:": "Success notification:",
-  "Update notification:": "Update notification:",
-  "Info notification:": "Info notification:"
+  "{{count}} unread_one": "{{count}} unread_one",
+  "{{count}} unread_other": "{{count}} unread_other",
+  "Warning notification:": "Notification d'avertissement :",
+  "Critical notification:": "Notification critique :",
+  "Success notification:": "Notification de réussite :",
+  "Update notification:": "Notification de mise à jour:",
+  "Info notification:": "Notification d'info:"
 }
