@@ -6,6 +6,7 @@ import { ResourceLink, DetailsItem, ExternalLink } from '@console/internal/compo
 import { SecretModel } from '@console/internal/models';
 import { ClusterBuildStrategyModel, BuildStrategyModel } from '../../models';
 import { Build, BuildRun, BuildSpec } from '../../types';
+import BuildOutput from '../build-list/BuildOutput';
 
 type BuildSpecSectionProps = {
   obj: Build | BuildRun;
@@ -123,9 +124,7 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           obj={obj}
           path={`${path}.output.image`}
         >
-          <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>
-            {buildSpec.output.image}
-          </ClipboardCopy>
+          <BuildOutput buildSpec={buildSpec} />
         </DetailsItem>
       ) : null}
 
