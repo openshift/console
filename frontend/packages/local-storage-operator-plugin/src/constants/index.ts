@@ -26,6 +26,7 @@ export const DISK_TYPES: {
 export const deviceTypeDropdownItems = Object.freeze({
   DISK: 'Disk',
   PART: 'Part',
+  MPATH: 'Mpath',
 });
 
 export const fsTypeDropdownItems = Object.freeze({
