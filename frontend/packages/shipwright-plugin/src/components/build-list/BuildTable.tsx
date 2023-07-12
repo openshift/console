@@ -18,10 +18,12 @@ import { Build, BuildRun } from '../../types';
 import { isBuildRunNewerThen } from '../../utils';
 import BuildRunDuration, { getBuildRunDuration } from '../buildrun-duration/BuildRunDuration';
 import BuildRunStatus, { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
+import BuildOutput from './BuildOutput';
 
 const columnClassNames = [
   '', // name
   '', // namespace
+  '', // output
   'pf-m-hidden pf-m-visible-on-lg', // last run
   'pf-m-hidden pf-m-visible-on-lg', // last run status
   'pf-m-hidden pf-m-visible-on-lg', // last run time
@@ -48,32 +50,36 @@ export const BuildHeader = () => {
       props: { className: columnClassNames[1] },
     },
     {
+      title: t('shipwright-plugin~Output'),
+      props: { className: columnClassNames[2] },
+    },
+    {
       title: t('shipwright-plugin~Last run'),
       transforms: [sortable],
       sortField: 'latestBuild.metadata.name',
-      props: { className: columnClassNames[2] },
+      props: { className: columnClassNames[3] },
     },
     {
       title: t('shipwright-plugin~Last run status'),
       transforms: [sortable],
       sortFunc: 'latestBuildStatus',
-      props: { className: columnClassNames[3] },
+      props: { className: columnClassNames[4] },
     },
     {
       title: t('shipwright-plugin~Last run time'),
       transforms: [sortable],
       sortField: 'latestBuild.status.completionTime',
-      props: { className: columnClassNames[4] },
+      props: { className: columnClassNames[5] },
     },
     {
       title: t('shipwright-plugin~Last run duration'),
       transforms: [sortable],
       sortFunc: 'latestRunDuration',
-      props: { className: columnClassNames[5] },
+      props: { className: columnClassNames[6] },
     },
     {
       title: '',
-      props: { className: columnClassNames[6] },
+      props: { className: columnClassNames[7] },
     },
   ];
 };
@@ -96,6 +102,9 @@ export const BuildRow: React.FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
         <ResourceLink kind="Namespace" name={build.metadata.namespace} />
       </TableData>
       <TableData className={columnClassNames[2]}>
+        <BuildOutput buildSpec={build.spec} />
+      </TableData>
+      <TableData className={columnClassNames[3]}>
         {build.latestBuild ? (
           <ResourceLink
             kind={buildRunKindReference}
@@ -106,20 +115,20 @@ export const BuildRow: React.FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
           '-'
         )}
       </TableData>
-      <TableData className={columnClassNames[3]}>
+      <TableData className={columnClassNames[4]}>
         {build.latestBuild ? <BuildRunStatus buildRun={build.latestBuild} /> : '-'}
       </TableData>
-      <TableData className={columnClassNames[4]}>
+      <TableData className={columnClassNames[5]}>
         {build.latestBuild ? (
           <Timestamp timestamp={build?.latestBuild.metadata?.creationTimestamp} />
         ) : (
           '-'
         )}
       </TableData>
-      <TableData className={columnClassNames[5]}>
+      <TableData className={columnClassNames[6]}>
         {build?.latestBuild ? <BuildRunDuration buildRun={build.latestBuild} /> : '-'}
       </TableData>
-      <TableData className={columnClassNames[6]}>
+      <TableData className={columnClassNames[7]}>
         <LazyActionMenu context={context} />
       </TableData>
     </>

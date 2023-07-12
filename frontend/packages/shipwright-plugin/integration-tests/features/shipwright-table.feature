@@ -4,7 +4,7 @@ Feature: Shipwright builds table view
 
         Background:
             Given user has installed OpenShift Pipelines Operator
-              And user has installed Shipwright Operator    
+              And user has installed Shipwright Operator
               And user is at developer perspective
               And user has created or selected namespace "aut-shipwright-build-details"
               And user has created shipwright builds
@@ -15,9 +15,10 @@ Feature: Shipwright builds table view
             Given user is at Builds page
              When user clicks on "Shipwright Builds" tab
              Then user will see "Name"
+              And user will see "Output"
               And user will see "Last run"
               And user will see "Last run status"
-              And user will see "Last run time"  
+              And user will see "Last run time"
               And user will see "Last run duration"
 
 
