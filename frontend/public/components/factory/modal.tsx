@@ -7,7 +7,6 @@ import { Router } from 'react-router-dom';
 import { CompatRouter } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button, Text, TextContent, TextVariants } from '@patternfly/react-core';
-import { ModalWrapperProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import CloseButton from '@console/shared/src/components/close-button';
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
@@ -219,6 +218,12 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
       </ActionGroup>
     </ModalFooter>
   );
+};
+
+export type ModalWrapperProps = {
+  blocking?: boolean;
+  className?: string;
+  onClose?: (event?: React.SyntheticEvent) => void;
 };
 
 export type GetModalContainer = (onClose: (e?: React.SyntheticEvent) => void) => React.ReactElement;

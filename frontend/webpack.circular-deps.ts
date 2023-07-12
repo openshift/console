@@ -120,9 +120,7 @@ export class CircularDependencyPreset {
               return;
             }
 
-            const hash = compilation.getStats().hash;
-            const builtAt = compilation.getStats().endTime.toString();
-            const header = `webpack compilation ${hash} built at ${builtAt}\n`;
+            const header = `webpack compilation ${compilation.getStats().hash}\n`;
 
             const reportPath = path.resolve(__dirname, this.options.reportFile);
             fs.writeFileSync(

@@ -1,9 +1,9 @@
 import {
   K8sResourceKindReference,
-  Selector,
-  K8sResourceKind,
   K8sResourceCommon,
-} from '../../module/k8s';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { K8sResourceKind } from '../../module/k8s/types';
 
 export type FirehoseResult<
   R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceKind[]

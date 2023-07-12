@@ -2236,9 +2236,7 @@ A component that renders a graph of the results from a Prometheus PromQL query a
 | `showLegend` | (optional) Flag to enable displaying a legend below the graph. |
 | `showStackedControl` | Flag to enable displaying a graph control for switching between stacked graph mode and line graph mode. |
 | `timespan` | (optional) The timespan that should be covered by the graph in milliseconds. |
-| `units` | (optional) Units to display on the Y-axis and in the tooltip.
-
- |
+| `units` | (optional) Units to display on the Y-axis and in the tooltip. |
 
 
 

@@ -776,8 +776,6 @@ export const ErrorBoundaryFallbackPage: React.FC<ErrorBoundaryFallbackProps> = r
  * @param {boolean} showStackedControl - Flag to enable displaying a graph control for switching between stacked graph mode and line graph mode.
  * @param {number} timespan - (optional) The timespan that should be covered by the graph in milliseconds.
  * @param {string} units - (optional) Units to display on the Y-axis and in the tooltip.
-
-
  * @example
  * ```tsx
  * <QueryBrowser

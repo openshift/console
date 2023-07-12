@@ -2,13 +2,12 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import {
-  AnnotationsModalProps,
-  TagsModalProps,
-} from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { k8sPatch } from '../../module/k8s';
+import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
+import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { NameValueEditorPair, withHandlePromise, HandlePromiseProps } from '../utils';
+import { NameValueEditorPair } from '../utils/types';
+import { withHandlePromise, HandlePromiseProps } from '../utils/promise-component';
 import { AsyncComponent } from '../utils/async';
 
 /**
@@ -83,3 +82,15 @@ export const AnnotationsModal: React.FC<AnnotationsModalProps> = (props) => (
 export const annotationsModal = createModalLauncher(AnnotationsModal);
 
 TagsModal.displayName = 'TagsModal';
+
+export type TagsModalProps = {
+  cancel?: () => void;
+  close?: () => void;
+  kind: K8sModel;
+  path: string;
+  resource: K8sResourceCommon;
+  tags?: { [key: string]: string };
+  titleKey: string;
+};
+
+export type AnnotationsModalProps = Omit<TagsModalProps, 'path' | 'tags' | 'titleKey'>;

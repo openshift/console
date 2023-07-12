@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { AnnotationsModalProps } from '../../../api/internal-types';
-import { K8sResourceCommon, getGroupVersionKindForResource, useK8sModel } from '../../../lib-core';
-import { AnnotationsModal, ModalWrapper } from '../../../lib-internal';
-import { ModalComponent } from '../../modal-support/ModalProvider';
-import { useModal } from '../../modal-support/useModal';
+import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
+import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
+import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { ModalWrapper } from '@console/internal/components/factory/modal';
+import { AnnotationsModal, AnnotationsModalProps } from '@console/internal/components/modals/tags';
 
 type UseAnnotationsModal = (resource: K8sResourceCommon) => () => void;
 

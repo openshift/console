@@ -1229,7 +1229,7 @@ export type ReplicationControllerKind = {
     availableReplicas?: number;
     conditions?: DeploymentCondition[];
     fullyLabeledReplicas?: number;
-    observedGeneratio?: number;
+    observedGeneration?: number;
     readyReplicas?: number;
     replicas: number;
   };

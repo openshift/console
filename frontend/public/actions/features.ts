@@ -12,13 +12,13 @@ import {
   FeatureFlag as DynamicFeatureFlag,
   isFeatureFlag as isDynamicFeatureFlag,
   SetFeatureFlag,
-  setUser,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
+import { setUser } from '@console/dynamic-plugin-sdk/src/app/core/actions/core';
 import { resolveExtension } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import store from '../redux';
 import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
-import { ClusterVersionKind } from '../module/k8s';
-import { receivedResources } from './k8s';
+import { ClusterVersionKind } from '../module/k8s/types';
+import { receivedResources } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { setClusterID, setCreateProjectMessage } from './common';
 import client, { fetchURL } from '../graphql/client';
 import { SSARQuery } from './features.gql';
