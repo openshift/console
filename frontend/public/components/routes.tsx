@@ -7,7 +7,8 @@ import { sortable } from '@patternfly/react-table';
 import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import i18next from 'i18next';
 
-import { Status, usePrometheusGate } from '@console/shared';
+import { Status } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants';
 import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
 import {
   CopyToClipboard,
@@ -30,6 +31,7 @@ import {
   K8sResourceCondition,
 } from '../module/k8s';
 import { RouteModel } from '../models';
+import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
 import { Conditions } from './conditions';
 import { RouteMetrics } from './routes/route-metrics';
 
@@ -491,22 +493,21 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
   );
 };
 
-export const RoutesDetailsPage: React.FC<RoutesDetailsPageProps> = (props) => {
-  const prometheusIsAvailable = usePrometheusGate();
-  return (
-    <DetailsPage
-      {...props}
-      getResourceStatus={routeStatus}
-      kind={RoutesReference}
-      menuActions={menuActions}
-      pages={[
-        navFactory.details(detailsPage(RouteDetails)),
-        ...(prometheusIsAvailable ? [navFactory.metrics(RouteMetrics)] : []),
-        navFactory.editYaml(),
-      ]}
-    />
-  );
-};
+export const RoutesDetailsPage = connectToFlags<RoutesDetailsPageProps>(
+  FLAGS.CAN_GET_NS,
+)((props) => (
+  <DetailsPage
+    {..._.omit(props, 'flags')}
+    getResourceStatus={routeStatus}
+    kind={RoutesReference}
+    menuActions={menuActions}
+    pages={[
+      navFactory.details(detailsPage(RouteDetails)),
+      ...(props.flags[FLAGS.CAN_GET_NS] ? [navFactory.metrics(RouteMetrics)] : []),
+      navFactory.editYaml(),
+    ]}
+  />
+));
 
 export const RoutesList: React.FC = (props) => {
   const { t } = useTranslation();
@@ -621,7 +622,7 @@ export type RoutesDetailsProps = {
 
 export type RoutesDetailsPageProps = {
   match: any;
-};
+} & WithFlagsProps;
 
 export type RouteIngressStatusProps = {
   route: RouteKind;
