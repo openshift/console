@@ -31,7 +31,7 @@ import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../con
 import { SubscriptionModel } from '../../models';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
-import { shortLivedTokenAuth } from './operator-hub-utils';
+import { isAWSSTSCluster, shortLivedTokenAuth } from './operator-hub-utils';
 import {
   OperatorHubItem,
   InstalledState,
@@ -407,6 +407,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   >(userSettingsKey, storeKey, false);
   const [updateChannel, setUpdateChannel] = React.useState('');
   const [updateVersion, setUpdateVersion] = React.useState('');
+  const [tokenizedAuth, setTokenizedAuth] = React.useState(null);
   const installVersion = getQueryArgument('version');
   const filteredItems =
     activeCluster === HUB_CLUSTER_NAME ? filterByArchAndOS(props.items) : props.items; // TODO remove multicluster
@@ -418,6 +419,17 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     });
     setDetailsItem(currentItem);
     setShowDetails(!_.isNil(currentItem));
+    if (
+      currentItem &&
+      isAWSSTSCluster(
+        currentItem.cloudCredentials,
+        currentItem.infrastructure,
+        currentItem.authentication,
+      ) &&
+      currentItem.infraFeatures?.find((i) => i === InfraFeatures[shortLivedTokenAuth])
+    ) {
+      setTokenizedAuth('AWS');
+    }
   }, [filteredItems]);
 
   const showCommunityOperator = (item: OperatorHubItem) => (ignoreWarning = false) => {
@@ -443,6 +455,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     // reset version and channel state so that switching between operator cards does not carry over previous selections
     setUpdateChannel('');
     setUpdateVersion('');
+    setTokenizedAuth('');
   };
 
   const openOverlay = (item: OperatorHubItem) => {
@@ -465,7 +478,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
 
   const createLink =
     detailsItem &&
-    `/operatorhub/subscribe?pkg=${detailsItem.obj.metadata.name}&catalog=${detailsItem.catalogSource}&catalogNamespace=${detailsItem.catalogSourceNamespace}&targetNamespace=${props.namespace}&channel=${updateChannel}&version=${updateVersion}`;
+    `/operatorhub/subscribe?pkg=${detailsItem.obj.metadata.name}&catalog=${detailsItem.catalogSource}&catalogNamespace=${detailsItem.catalogSourceNamespace}&targetNamespace=${props.namespace}&channel=${updateChannel}&version=${updateVersion}&tokenizedAuth=${tokenizedAuth}`;
 
   const uninstallLink = () =>
     detailsItem &&
