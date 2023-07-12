@@ -21,10 +21,11 @@ var websocketPingInterval = 30 * time.Second
 var websocketTimeout = 30 * time.Second
 
 type Config struct {
-	HeaderBlacklist []string
-	Endpoint        *url.URL
-	TLSClientConfig *tls.Config
-	Origin          string
+	HeaderBlacklist         []string
+	Endpoint                *url.URL
+	TLSClientConfig         *tls.Config
+	Origin                  string
+	UseProxyFromEnvironment bool
 }
 
 type Proxy struct {
@@ -219,6 +220,9 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	dialer := &websocket.Dialer{
 		TLSClientConfig: p.config.TLSClientConfig,
+	}
+	if p.config.UseProxyFromEnvironment == true {
+		dialer.Proxy = http.ProxyFromEnvironment
 	}
 
 	backend, resp, err := dialer.Dial(r.URL.String(), proxiedHeader)
