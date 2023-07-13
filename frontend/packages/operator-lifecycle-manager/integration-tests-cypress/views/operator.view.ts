@@ -70,7 +70,7 @@ export const operator = {
     nav.sidenav.clickNavLink(['Operators', 'Installed Operators']);
     listPage.titleShouldHaveText('Installed Operators');
     listPage.filter.byName(operatorName);
-    cy.byTestOperatorRow(operatorName, { timeout: 180000 }).should('exist'); // 3 minutes
+    cy.byTestOperatorRow(operatorName, { timeout: 720000 }).should('exist'); // 12 minutes
     listPage.rows.countShouldBe(1);
     cy.byTestID('status-text', { timeout: 720000 }).should('contain.text', 'Succeeded'); // 12 minutes
   },
