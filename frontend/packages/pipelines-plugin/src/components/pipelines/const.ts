@@ -76,3 +76,5 @@ export enum PipelineMetricsLevel {
   UNSUPPORTED_LEVEL = 'unsupported',
   UNSIMPLIFIED_METRICS_LEVEL = 'unsimplified',
 }
+
+export const FLAG_TEKTON_V1_ENABLED = 'FLAG_TEKTON_V1_ENABLED';
