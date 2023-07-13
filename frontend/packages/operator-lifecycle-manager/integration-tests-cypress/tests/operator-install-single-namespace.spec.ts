@@ -5,21 +5,20 @@ import { nav } from '../../../integration-tests-cypress/views/nav';
 import { GlobalInstalledNamespace, operator, TestOperandProps } from '../views/operator.view';
 
 const testOperator = {
-  name: 'Red Hat Integration - 3scale - Managed Application Services',
+  name: 'Red Hat Integration - 3scale',
   operatorHubCardTestID: '3scale-operator-redhat-operators-openshift-marketplace',
   installedNamespace: testName,
 };
 
 const testOperand: TestOperandProps = {
-  name: '3scale Backend Schema',
+  name: '3scale Backend',
   group: 'capabilities.3scale.net',
   version: 'v1beta1',
   kind: 'Backend',
-  createActionID: 'list-page-create-dropdown-item-capabilities.3scale.net~v1beta1~Backend',
   exampleName: `backend1-sample`,
 };
 
-xdescribe(`Installing "${testOperator.name}" operator in test namespace`, () => {
+describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
   before(() => {
     cy.login();
     cy.visit('/');
