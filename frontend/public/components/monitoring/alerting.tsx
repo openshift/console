@@ -38,7 +38,6 @@ import {
   VirtualizedTable,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
-import { useExtensions } from '@console/plugin-sdk';
 import { withFallback } from '@console/shared/src/components/error';
 import { QueryBrowser } from '@console/shared/src/components/query-browser';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
@@ -722,7 +721,9 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const sourceId = rule?.sourceId;
 
   // Load alert metrics chart from plugin
-  const alertsChartExtensions = useExtensions<AlertingRuleChartExtension>(isAlertingRuleChart);
+  const [alertsChartExtensions] = useResolvedExtensions<AlertingRuleChartExtension>(
+    isAlertingRuleChart,
+  );
   const alertsChart = alertsChartExtensions
     .filter((extension) => extension.properties.sourceId === sourceId)
     .map((extension) => extension.properties.chart);
@@ -1022,7 +1023,9 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const sourceId = rule?.sourceId;
 
   // Load alert metrics chart from plugin
-  const alertsChartExtensions = useExtensions<AlertingRuleChartExtension>(isAlertingRuleChart);
+  const [alertsChartExtensions] = useResolvedExtensions<AlertingRuleChartExtension>(
+    isAlertingRuleChart,
+  );
   const alertsChart = alertsChartExtensions
     .filter((extension) => extension.properties.sourceId === sourceId)
     .map((extension) => extension.properties.chart);

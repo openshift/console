@@ -1,6 +1,10 @@
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { PrometheusEndpoint, RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
+import {
+  PrometheusEndpoint,
+  RedExclamationCircleIcon,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
 import {
   Button,
   Label,
@@ -70,7 +74,6 @@ import {
   getAllVariables,
 } from './monitoring-dashboard-utils';
 
-import { useExtensions } from '@console/plugin-sdk/src';
 import {
   isDataSource,
   DataSource as DataSourceExtension,
@@ -207,6 +210,7 @@ const VariableOption = ({ itemKey }) =>
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace }) => {
   const { t } = useTranslation();
+
   const activePerspective = getActivePerspective(namespace);
 
   const timespan = useSelector(({ observe }: RootState) =>
@@ -227,7 +231,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
   const [isError, setIsError] = React.useState(false);
 
   const customDataSourceName = variable?.datasource?.name;
-  const extensions = useExtensions<DataSourceExtension>(isDataSource);
+  const [extensions] = useResolvedExtensions<DataSourceExtension>(isDataSource);
   const hasExtensions = !_.isEmpty(extensions);
 
   const getURL = React.useCallback(
@@ -239,7 +243,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
           const extension = extensions.find(
             (ext) => ext?.properties?.contextId === 'monitoring-dashboards',
           );
-          const getDataSource = await extension?.properties?.getDataSource();
+          const getDataSource = extension?.properties?.getDataSource;
           const dataSource = await getDataSource(customDataSourceName);
           return getPrometheusURL(prometheusProps, dataSource?.basePath);
         }
@@ -418,6 +422,7 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
 
 export const PollIntervalDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
   const { t } = useTranslation();
+
   const refreshIntervalFromParams = getQueryArgument('refreshInterval');
   const activePerspective = getActivePerspective(namespace);
   const interval = useSelector(({ observe }: RootState) =>
@@ -476,6 +481,7 @@ const HeaderTop: React.FC<{}> = React.memo(() => {
 
 const QueryBrowserLink = ({ queries }) => {
   const { t } = useTranslation();
+
   const params = new URLSearchParams();
   queries.forEach((q, i) => params.set(`query${i}`, q));
   const namespace = React.useContext(NamespaceContext);
@@ -547,7 +553,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
   const [dataSourceInfoLoading, setDataSourceInfoLoading] = React.useState<boolean>(true);
   const [customDataSource, setCustomDataSource] = React.useState<CustomDataSource>(undefined);
   const customDataSourceName = panel.datasource?.name;
-  const extensions = useExtensions<DataSourceExtension>(isDataSource);
+  const [extensions] = useResolvedExtensions<DataSourceExtension>(isDataSource);
   const hasExtensions = !_.isEmpty(extensions);
 
   React.useEffect(() => {
@@ -560,7 +566,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
         const extension = extensions.find(
           (ext) => ext?.properties?.contextId === 'monitoring-dashboards',
         );
-        const getDataSource = await extension?.properties?.getDataSource();
+        const getDataSource = extension?.properties?.getDataSource;
         const dataSource = await getDataSource(customDataSourceName);
         setCustomDataSource(dataSource);
         setDataSourceInfoLoading(false);
