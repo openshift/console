@@ -38,8 +38,12 @@ describe('Project Access handleSubmit Utils', () => {
     expect(rolesWithNameChange).toEqual(rolesWithNameChangeResult);
   });
   it('should get roles with multiple subjects', () => {
-    const result = getRolesWithMultipleSubjects(newRoles, removeRoles, updateRoles);
-    expect(result).toEqual([
+    const { updateRolesWithMultipleSubjects } = getRolesWithMultipleSubjects(
+      newRoles,
+      removeRoles,
+      updateRoles,
+    );
+    expect(updateRolesWithMultipleSubjects).toEqual([
       {
         role: 'admin',
         roleBindingName: 'admin-d',
