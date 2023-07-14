@@ -40,7 +40,10 @@ import (
 // Compatibility level 1: Stable within a major release for a minimum of 12 months or 3 minor releases (whichever is longer).
 // +openshift:compatibility-gen:level=1
 type Route struct {
-	metav1.TypeMeta   `json:",inline"`
+	metav1.TypeMeta `json:",inline"`
+
+	// metadata is the standard object's metadata.
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
 	// spec is the desired state of the route
@@ -58,6 +61,9 @@ type Route struct {
 // +openshift:compatibility-gen:level=1
 type RouteList struct {
 	metav1.TypeMeta `json:",inline"`
+
+	// metadata is the standard list's metadata.
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
 	// items is a list of routes
@@ -161,6 +167,7 @@ type RouteTargetReference struct {
 	// +optional
 	// +kubebuilder:validation:Minimum=0
 	// +kubebuilder:validation:Maximum=256
+	// +kubebuilder:default=100
 	Weight *int32 `json:"weight" protobuf:"varint,3,opt,name=weight"`
 }
 
@@ -228,7 +235,7 @@ type RouteIngressCondition struct {
 // generate host names and routing table entries when a routing shard is
 // allocated for a specific route.
 // Caveat: This is WIP and will likely undergo modifications when sharding
-//         support is added.
+// support is added.
 type RouterShard struct {
 	// shardName uniquely identifies a router shard in the "set" of
 	// routers used for routing traffic to the services.
@@ -239,6 +246,9 @@ type RouterShard struct {
 }
 
 // TLSConfig defines config used to secure a route and provide termination
+//
+// +kubebuilder:validation:XValidation:rule="has(self.termination) && has(self.insecureEdgeTerminationPolicy) ? !((self.termination=='passthrough') && (self.insecureEdgeTerminationPolicy=='Allow')) : true", message="cannot have both spec.tls.termination: passthrough and spec.tls.insecureEdgeTerminationPolicy: Allow"
+// +openshift:validation:FeatureSetAwareXValidation:featureSet=TechPreviewNoUpgrade;CustomNoUpgrade,rule="!(has(self.certificate) && has(self.externalCertificate))", message="cannot have both spec.tls.certificate and spec.tls.externalCertificate"
 type TLSConfig struct {
 	// termination indicates termination type.
 	//
@@ -269,10 +279,32 @@ type TLSConfig struct {
 	// insecureEdgeTerminationPolicy indicates the desired behavior for insecure connections to a route. While
 	// each router may make its own decisions on which ports to expose, this is normally port 80.
 	//
-	// * Allow - traffic is sent to the server on the insecure port (default)
-	// * Disable - no traffic is allowed on the insecure port.
+	// * Allow - traffic is sent to the server on the insecure port (edge/reencrypt terminations only) (default).
+	// * None - no traffic is allowed on the insecure port.
 	// * Redirect - clients are redirected to the secure port.
+	//
+	// +kubebuilder:validation:Enum=Allow;None;Redirect;""
 	InsecureEdgeTerminationPolicy InsecureEdgeTerminationPolicyType `json:"insecureEdgeTerminationPolicy,omitempty" protobuf:"bytes,6,opt,name=insecureEdgeTerminationPolicy,casttype=InsecureEdgeTerminationPolicyType"`
+
+	// externalCertificate provides certificate contents as a secret reference.
+	// This should be a single serving certificate, not a certificate
+	// chain. Do not include a CA certificate. The secret referenced should
+	// be present in the same namespace as that of the Route.
+	// Forbidden when `certificate` is set.
+	//
+	// +openshift:enable:FeatureSets=CustomNoUpgrade;TechPreviewNoUpgrade
+	// +optional
+	ExternalCertificate LocalObjectReference `json:"externalCertificate,omitempty" protobuf:"bytes,7,opt,name=externalCertificate"`
+}
+
+// LocalObjectReference contains enough information to let you locate the
+// referenced object inside the same namespace.
+// +structType=atomic
+type LocalObjectReference struct {
+	// name of the referent.
+	// More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+	// +optional
+	Name string `json:"name,omitempty" protobuf:"bytes,1,opt,name=name"`
 }
 
 // TLSTerminationType dictates where the secure communication will stop
