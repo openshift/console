@@ -408,7 +408,12 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
       )}
       <ButtonBar errorMessage={error} inProgress={inProgress}>
         <ActionGroup className="pf-c-form">
-          <Button type="submit" variant="primary" id="save-changes">
+          <Button
+            type="submit"
+            variant="primary"
+            id="save-changes"
+            isDisabled={showCreatePVC === 'existing' && !claimName}
+          >
             {t('public~Save')}
           </Button>
           <Button type="button" variant="secondary" onClick={history.goBack}>
