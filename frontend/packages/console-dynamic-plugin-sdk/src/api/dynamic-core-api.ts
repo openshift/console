@@ -175,14 +175,14 @@ export const ListPageHeader: React.FC<ListPageHeaderProps> = require('@console/i
 
 /**
  * Component for adding a create button for a specific resource kind that automatically generates a link to the create YAML for this resource
- * @param {GroupVersionKind} groupVersionKind - the resource group/version/kind to represent
+ * @param groupVersionKind group, version, kind of k8s resource {@link K8sGroupVersionKind} is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` {@link K8sResourceKindReference}.
  * @example
  * ```ts
  * const exampleList: React.FC<MyProps> = () => {
  *   return (
  *     <>
  *       <ListPageHeader title="Example Pod List Page"/>
- *         <ListPageCreate groupVersionKind="Pod">Create Pod</ListPageCreate>
+ *         <ListPageCreate groupVersionKind={{ group: 'app'; version: 'v1'; kind: 'Deployment' }}>Create Pod</ListPageCreate>
  *       </ListPageHeader>
  *     </>
  *   );
@@ -585,9 +585,9 @@ export { useFlag } from '../utils/flags';
  * @param {YAMLEditorProps['onSave']} onSave - Callback called when the command CTRL / CMD + S is triggered.
  * @param {YAMLEditorRef} ref - React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html.
  */
-export const YAMLEditor: React.ForwardRefExoticComponent<CodeEditorProps &
-  React.RefAttributes<CodeEditorRef>> = require('@console/internal/components/AsyncCodeEditor')
-  .AsyncCodeEditor;
+export const YAMLEditor: React.ForwardRefExoticComponent<
+  CodeEditorProps & React.RefAttributes<CodeEditorRef>
+> = require('@console/internal/components/AsyncCodeEditor').AsyncCodeEditor;
 
 /**
  * A basic lazy loaded Code editor with hover help and completion.
@@ -610,9 +610,9 @@ export const YAMLEditor: React.ForwardRefExoticComponent<CodeEditorProps &
  * @param {CodeEditorProps['onSave']} onSave - Callback called when the command CTRL / CMD + S is triggered.
  * @param {CodeEditorRef} ref - React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html.
  */
-export const CodeEditor: React.ForwardRefExoticComponent<CodeEditorProps &
-  React.RefAttributes<CodeEditorRef>> = require('@console/internal/components/AsyncCodeEditor')
-  .AsyncCodeEditor;
+export const CodeEditor: React.ForwardRefExoticComponent<
+  CodeEditorProps & React.RefAttributes<CodeEditorRef>
+> = require('@console/internal/components/AsyncCodeEditor').AsyncCodeEditor;
 
 /**
  * A lazy loaded YAML editor for Kubernetes resources with hover help and completion.

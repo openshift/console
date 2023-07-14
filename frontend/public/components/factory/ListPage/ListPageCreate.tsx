@@ -97,7 +97,9 @@ const ListPageCreate: React.FC<ListPageCreateProps> = ({
   groupVersionKind,
   children,
 }) => {
-  const [k8sModel] = useK8sModel(groupVersionKind);
+  const kind = typeof groupVersionKind !== 'string' ? groupVersionKind.kind : groupVersionKind;
+
+  const [k8sModel] = useK8sModel(kind);
   const [namespace] = useActiveNamespace();
   let to: string;
   if (k8sModel) {
@@ -111,8 +113,8 @@ const ListPageCreate: React.FC<ListPageCreateProps> = ({
       : `/k8s/cluster/${k8sModel.plural}/~new`;
     if (k8sModel.crd) {
       to = usedNamespace
-        ? `/k8s/ns/${usedNamespace || 'default'}/${groupVersionKind}/~new`
-        : `/k8s/cluster/${groupVersionKind}/~new`;
+        ? `/k8s/ns/${usedNamespace || 'default'}/${kind}/~new`
+        : `/k8s/cluster/${kind}/~new`;
     }
   }
 
