@@ -198,7 +198,7 @@ export const sampleTektonHubCatalogItem: CatalogItem = {
   type: 'Community',
   name: 'ansible-runner',
   description: 'Task to run Ansible playbooks using Ansible Runner',
-  provider: 'Community',
+  provider: 'TektonHub',
   tags: ['cli'],
   icon: {
     class: 'build',

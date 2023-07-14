@@ -4,4 +4,5 @@ export enum CTALabel {
   Update = 'Update',
 }
 
-export const TEKTONHUB = 'tektonhub';
+export const TEKTONHUB = 'Tektonhub';
+export const ARTIFACTHUB = 'ArtifactHub';

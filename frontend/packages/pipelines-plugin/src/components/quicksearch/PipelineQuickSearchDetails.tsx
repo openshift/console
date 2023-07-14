@@ -20,10 +20,12 @@ import { ExternalLink } from '@console/internal/components/utils';
 import { handleCta } from '@console/shared';
 import { QuickSearchDetailsRendererProps } from '@console/shared/src/components/quick-search/QuickSearchDetails';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { getArtifactHubTaskDetails } from '../catalog/apis/artifactHub';
 import { getHubUIPath, getTektonHubTaskVersions } from '../catalog/apis/tektonHub';
 import {
   getCtaButtonText,
   getTaskCtaType,
+  isArtifactHubTask,
   isOneVersionInstalled,
   isTaskVersionInstalled,
   isTektonHubTaskWithoutVersions,
@@ -44,17 +46,39 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
   const [hasInstalledVersion, setHasInstalledVersion] = React.useState<boolean>(
     isOneVersionInstalled(selectedItem),
   );
-
   const resetVersions = React.useCallback(() => {
     setVersions(selectedItem?.attributes?.versions ?? []);
     setSelectedVersion(selectedItem?.attributes?.installed ?? '');
     setHasInstalledVersion(isOneVersionInstalled(selectedItem));
   }, [selectedItem]);
 
+  const onChangeVersion = React.useCallback(
+    (key) => {
+      setSelectedVersion(key);
+      if (isArtifactHubTask(selectedItem)) {
+        getArtifactHubTaskDetails(selectedItem, key)
+          .then((item) => {
+            selectedItem.attributes.versions = item.available_versions;
+            selectedItem.attributes.selectedVersionContentUrl = item.content_url;
+            selectedItem.tags = item.keywords;
+
+            setVersions([...item.available_versions]);
+            setHasInstalledVersion(isOneVersionInstalled(selectedItem));
+          })
+          .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.warn('Error while getting ArtifactHub Task details:', err);
+            resetVersions();
+          });
+      }
+    },
+    [resetVersions, selectedItem],
+  );
+
   React.useEffect(() => {
     resetVersions();
     let mounted = true;
-    if (isTektonHubTaskWithoutVersions(selectedItem)) {
+    if (isTektonHubTaskWithoutVersions(selectedItem) && !isArtifactHubTask(selectedItem)) {
       const debouncedLoadVersions = debounce(async () => {
         if (mounted) {
           try {
@@ -80,6 +104,28 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
       debouncedLoadVersions();
     }
 
+    if (isArtifactHubTask(selectedItem)) {
+      const debouncedLoadDetails = debounce(async () => {
+        if (mounted) {
+          try {
+            const item = await getArtifactHubTaskDetails(selectedItem);
+            selectedItem.attributes.versions = item.available_versions;
+            selectedItem.attributes.selectedVersionContentUrl = item.content_url;
+            selectedItem.tags = item.keywords;
+            if (mounted) {
+              setVersions([...item.available_versions]);
+              setHasInstalledVersion(isOneVersionInstalled(selectedItem));
+            }
+          } catch (err) {
+            if (mounted) {
+              resetVersions();
+            }
+          }
+        }
+      }, 10);
+      debouncedLoadDetails();
+    }
+
     return () => (mounted = false);
   }, [resetVersions, selectedItem]);
 
@@ -87,7 +133,10 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
     if (isTaskVersionInstalled(selectedItem)) {
       setSelectedVersion(selectedItem.attributes.installed);
     } else {
-      setSelectedVersion(selectedItem.data?.latestVersion?.version?.toString());
+      setSelectedVersion(
+        selectedItem.data?.latestVersion?.version?.toString() ||
+          selectedItem.data?.task?.version?.toString(),
+      );
     }
   }, [selectedItem]);
   const loadedVersion = React.useMemo(
@@ -96,7 +145,6 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
   );
 
   const hubLink = getHubUIPath(loadedVersion?.hubURLPath, selectedItem.attributes.uiURL);
-
   return (
     <div className="opp-quick-search-details">
       <Level hasGutter>
@@ -132,7 +180,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
                   versions={versions}
                   item={selectedItem}
                   selectedVersion={selectedVersion}
-                  onChange={(key) => setSelectedVersion(key)}
+                  onChange={onChangeVersion}
                 />
               </SplitItem>
             )}

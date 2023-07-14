@@ -7,7 +7,8 @@ import {
   CatalogService,
   CatalogServiceProvider,
 } from '@console/shared';
-import { TektonTaskProviders } from '../pipelines/const';
+import { createArtifactHubTask, updateArtifactHubTask } from '../catalog/apis/artifactHub';
+import { TaskProviders } from '../pipelines/const';
 import { useCleanupOnFailure, useLoadingTaskCleanup } from '../pipelines/pipeline-builder/hooks';
 import {
   PipelineBuilderTaskGroup,
@@ -18,6 +19,7 @@ import {
   createTask,
   findInstalledTask,
   getSelectedVersionUrl,
+  isArtifactHubTask,
   isTaskSearchable,
   updateTask,
 } from './pipeline-quicksearch-utils';
@@ -58,7 +60,10 @@ const Contents: React.FC<
   const catalogServiceItems = catalogService.items.reduce((acc, item) => {
     const installedTask = findInstalledTask(catalogService.items, item);
 
-    if (item.provider === TektonTaskProviders.community) {
+    if (
+      (item.provider === TaskProviders.artifactHub || item.provider === TaskProviders.tektonHub) &&
+      item.type !== TaskProviders.redhat
+    ) {
       item.attributes.installed = '';
       if (installedTask) {
         item.attributes.installed = installedTask.attributes?.versions[0]?.version.toString();
@@ -67,25 +72,50 @@ const Contents: React.FC<
 
     item.cta.callback = ({ selectedVersion }) => {
       return new Promise((resolve) => {
-        if (item.provider === TektonTaskProviders.community) {
+        if (!isArtifactHubTask(item)) {
+          if (item.provider === TaskProviders.tektonHub) {
+            const selectedVersionUrl = getSelectedVersionUrl(item, selectedVersion);
+            if (installedTask) {
+              if (selectedVersion === item.attributes.installed) {
+                resolve(savedCallback.current(installedTask.data));
+              } else {
+                resolve(savedCallback.current({ metadata: { name: item.data.name } }));
+                updateTask(selectedVersionUrl, installedTask, namespace, item.data.name).catch(() =>
+                  setFailedTasks([...failedTasks, item.data.name]),
+                );
+              }
+            } else {
+              resolve(savedCallback.current({ metadata: { name: item.data.name } }));
+              createTask(selectedVersionUrl, namespace).catch(() =>
+                setFailedTasks([...failedTasks, item.data.name]),
+              );
+            }
+          } else {
+            resolve(savedCallback.current(item.data));
+          }
+        }
+
+        if (item.provider === TaskProviders.artifactHub && isArtifactHubTask(item)) {
           const selectedVersionUrl = getSelectedVersionUrl(item, selectedVersion);
           if (installedTask) {
             if (selectedVersion === item.attributes.installed) {
               resolve(savedCallback.current(installedTask.data));
             } else {
-              resolve(savedCallback.current({ metadata: { name: item.data.name } }));
-              updateTask(selectedVersionUrl, installedTask, namespace, item.data.name).catch(() =>
-                setFailedTasks([...failedTasks, item.data.name]),
-              );
+              resolve(savedCallback.current({ metadata: { name: item.data.task.name } }));
+              updateArtifactHubTask(
+                selectedVersionUrl,
+                installedTask,
+                namespace,
+                item.data.task.name,
+                selectedVersion,
+              ).catch(() => setFailedTasks([...failedTasks, item.data.task.name]));
             }
           } else {
-            resolve(savedCallback.current({ metadata: { name: item.data.name } }));
-            createTask(selectedVersionUrl, namespace).catch(() =>
-              setFailedTasks([...failedTasks, item.data.name]),
+            resolve(savedCallback.current({ metadata: { name: item.data.task.name } }));
+            createArtifactHubTask(selectedVersionUrl, namespace, selectedVersion).catch(() =>
+              setFailedTasks([...failedTasks, item.data.task.name]),
             );
           }
-        } else {
-          resolve(savedCallback.current(item.data));
         }
       });
     };

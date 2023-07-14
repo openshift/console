@@ -6,8 +6,9 @@ import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { TaskKind } from '../../../types';
 import { getModelReferenceFromTaskKind } from '../../../utils/pipeline-augment';
-import { TektonTaskAnnotation, TektonTaskLabel, TektonTaskProviders } from '../../pipelines/const';
+import { TektonTaskAnnotation, TektonTaskLabel, TaskProviders } from '../../pipelines/const';
 import { PipelineBuilderFormikValues } from '../../pipelines/pipeline-builder/types';
+import { ARTIFACTHUB } from '../../quicksearch/const';
 
 const normalizeTektonTasks = (tektonTasks: TaskKind[]): CatalogItem<TaskKind>[] => {
   const normalizedTektonTasks: CatalogItem<TaskKind>[] = _.reduce(
@@ -17,13 +18,23 @@ const normalizeTektonTasks = (tektonTasks: TaskKind[]): CatalogItem<TaskKind>[] 
       const { description } = task.spec;
       const tags = annotations[TektonTaskAnnotation.tags]?.split(/\s*,\s*/) || [];
       const categories = annotations[TektonTaskAnnotation.categories]?.split(/\s*,\s*/) || [];
-      const provider = labels[TektonTaskLabel.providerType] || TektonTaskProviders.redhat;
-      const versions = labels[TektonTaskLabel.version]
-        ? [{ id: labels[TektonTaskLabel.version], version: labels[TektonTaskLabel.version] }]
-        : [];
+      const provider = annotations[TektonTaskAnnotation.installedFrom] || TaskProviders.redhat;
+      const versions =
+        annotations[TektonTaskAnnotation.installedFrom] === ARTIFACTHUB
+          ? labels[TektonTaskLabel.version]
+            ? [
+                {
+                  id: annotations[TektonTaskAnnotation.semVersion],
+                  version: annotations[TektonTaskAnnotation.semVersion],
+                },
+              ]
+            : []
+          : labels[TektonTaskLabel.version]
+          ? [{ id: labels[TektonTaskLabel.version], version: labels[TektonTaskLabel.version] }]
+          : [];
       const normalizedTektonTask: CatalogItem<TaskKind> = {
         uid,
-        type: TektonTaskProviders.redhat,
+        type: TaskProviders.redhat,
         name,
         description,
         provider,
@@ -32,7 +43,14 @@ const normalizeTektonTasks = (tektonTasks: TaskKind[]): CatalogItem<TaskKind>[] 
         icon: {
           node: <ResourceIcon kind={getModelReferenceFromTaskKind(task.kind)} />,
         },
-        attributes: { installed: labels[TektonTaskLabel.version], versions, categories },
+        attributes: {
+          installed:
+            annotations[TektonTaskAnnotation.installedFrom] === ARTIFACTHUB
+              ? annotations[TektonTaskAnnotation.semVersion]
+              : labels[TektonTaskLabel.version],
+          versions,
+          categories,
+        },
         cta: {
           label: i18next.t('pipelines-plugin~Add'),
           callback: () => {},

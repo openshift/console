@@ -9,10 +9,13 @@ export enum TektonTaskAnnotation {
   tags = 'tekton.dev/tags',
   categories = 'tekton.dev/categories',
   installedFrom = 'openshift.io/installed-from',
+  semVersion = 'openshift.io/sem-version',
 }
-export enum TektonTaskProviders {
+export enum TaskProviders {
   redhat = 'Red Hat',
   community = 'Community',
+  tektonHub = 'TektonHub',
+  artifactHub = 'ArtifactHub',
 }
 export enum TektonTaskLabel {
   providerType = 'operator.tekton.dev/provider-type',

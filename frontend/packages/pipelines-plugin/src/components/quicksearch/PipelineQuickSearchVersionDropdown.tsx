@@ -33,7 +33,6 @@ const PipelineQuickSearchVersionDropdown: React.FC<PipelineQuickSearchVersionDro
         : version;
     return acc;
   }, {});
-
   return (
     <Dropdown
       data-test="task-version"

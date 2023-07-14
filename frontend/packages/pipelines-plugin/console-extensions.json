@@ -936,6 +936,18 @@
     }
   },
   {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "pipelines-task-catalog",
+      "type": "Community",
+      "title": "%pipelines-plugin~Tasks%",
+      "provider": { "$codeRef": "catalog.ArtifactHubTaskProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
+  },
+  {
     "type": "console.topology/details/tab-section",
     "properties": {
       "id": "topology-tab-section-pipelines-overview",
