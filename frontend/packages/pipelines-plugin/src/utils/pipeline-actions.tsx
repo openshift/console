@@ -137,7 +137,7 @@ const rerunPipeline: KebabAction = (
   return {
     ...sharedProps,
     callback: () => {
-      k8sCreate(PipelineRunModel, getPipelineRunData(null, pipelineRun))
+      k8sCreate(kind, getPipelineRunData(null, pipelineRun))
         .then(typeof onComplete === 'function' ? onComplete : () => {})
         .catch((err) => errorModal({ error: err.message }));
     },
