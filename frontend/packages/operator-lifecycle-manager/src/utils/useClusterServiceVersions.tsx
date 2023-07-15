@@ -10,10 +10,11 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ExpandCollapse } from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getImageForCSVIcon } from '@console/shared';
 import { providedAPIsForCSV, referenceForProvidedAPI } from '../components';
+import { GLOBAL_COPIED_CSV_NAMESPACE, GLOBAL_OPERATOR_NAMESPACES } from '../const';
 import { ClusterServiceVersionModel } from '../models';
 import { ProvidedAPI, ClusterServiceVersionKind } from '../types';
 
@@ -145,25 +146,41 @@ const useClusterServiceVersions: ExtensionHook<CatalogItem[]> = ({
   const { t } = useTranslation();
   const resourceSelector = React.useMemo(
     () => ({
-      isList: true,
-      kind: referenceForModel(ClusterServiceVersionModel),
-      namespaced: ClusterServiceVersionModel.namespaced,
-      namespace,
-      prop: referenceForModel(ClusterServiceVersionModel),
+      csvs: {
+        isList: true,
+        kind: referenceForModel(ClusterServiceVersionModel),
+        namespaced: ClusterServiceVersionModel.namespaced,
+        namespace,
+      },
+      ...(window.SERVER_FLAGS.copiedCSVsDisabled && !GLOBAL_OPERATOR_NAMESPACES.includes(namespace)
+        ? {
+            globalCsvs: {
+              isList: true,
+              kind: referenceForModel(ClusterServiceVersionModel),
+              namespaced: ClusterServiceVersionModel.namespaced,
+              namespace: GLOBAL_COPIED_CSV_NAMESPACE,
+            },
+          }
+        : {}),
     }),
     [namespace],
   );
 
-  const [clusterServiceVersions, loaded, loadedError] = useK8sWatchResource<
-    ClusterServiceVersionKind[]
-  >(resourceSelector);
+  const csvsResources = useK8sWatchResources<{
+    csvs: ClusterServiceVersionKind[];
+    globalCsvs?: ClusterServiceVersionKind[];
+  }>(resourceSelector);
 
   const normalizedCSVs = React.useMemo(
-    () => normalizeClusterServiceVersions(clusterServiceVersions, t),
-    [clusterServiceVersions, t],
+    () =>
+      normalizeClusterServiceVersions(
+        [...(csvsResources.csvs?.data ?? []), ...(csvsResources.globalCsvs?.data ?? [])],
+        t,
+      ),
+    [csvsResources, t],
   );
 
-  return [normalizedCSVs, loaded, loadedError];
+  return [normalizedCSVs, csvsResources.csvs?.loaded, csvsResources.csvs?.loadError];
 };
 
 export default useClusterServiceVersions;
