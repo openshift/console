@@ -1228,6 +1228,11 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
         }
       : null,
   );
+  const [canListClusterScopeInstallPlans] = useAccessReview({
+    group: InstallPlanModel?.apiGroup,
+    resource: InstallPlanModel?.plural,
+    verb: 'list',
+  });
 
   const subscription = React.useMemo(
     () => (subscriptions ?? []).find((s) => s.status.installedCSV === csv?.metadata?.name),
@@ -1292,7 +1297,12 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
       ]}
       resources={[
         { kind: referenceForModel(PackageManifestModel), isList: true, prop: 'packageManifests' },
-        { kind: referenceForModel(InstallPlanModel), isList: true, prop: 'installPlans' },
+        {
+          kind: referenceForModel(InstallPlanModel),
+          isList: true,
+          prop: 'installPlans',
+          ...(canListClusterScopeInstallPlans ? {} : { namespace }),
+        },
       ]}
       icon={({ obj }) => (
         <ClusterServiceVersionLogo
