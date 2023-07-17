@@ -346,3 +346,11 @@ ul.pf-c-tree-view__list {
 .pf-c-skip-to-content {
   position: absolute !important;
 }
+
+
+.properties-side-panel-pf-property-value {
+  .pf-c-alert__title,
+  .pf-c-select__toggle {
+    font-size: $font-size-base;
+  }
+}

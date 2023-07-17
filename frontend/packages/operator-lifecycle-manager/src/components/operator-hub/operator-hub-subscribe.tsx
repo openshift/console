@@ -15,7 +15,6 @@ import { Link } from 'react-router-dom';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import {
   documentationURLs,
-  Dropdown,
   ExternalLink,
   FieldLevelHelp,
   Firehose,
@@ -26,7 +25,6 @@ import {
   NsDropdown,
   PageHeading,
   ResourceIcon,
-  ResourceName,
   resourcePathFromModel,
   StatusBox,
 } from '@console/internal/components/utils';
@@ -182,23 +180,15 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     (props.operatorGroup?.data || ([] as OperatorGroupKind[])).find(
       (og) => og.metadata.name === 'global-operators',
     )?.metadata?.namespace || 'openshift-operators';
-  const items = {
-    [globalNS]: <ResourceName kind="Project" name={globalNS} />,
-  };
 
   let selectedTargetNamespace = targetNamespace || props.targetNamespace;
   const operatorSuggestedNamespace = suggestedNamespaceTemplateName || suggestedNamespace;
+
   if (selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces) {
     if (operatorSuggestedNamespace) {
-      items[operatorSuggestedNamespace] = (
-        <ResourceName
-          kind="Project"
-          name={`${operatorSuggestedNamespace} (Operator recommended)`}
-        />
-      );
       selectedTargetNamespace = targetNamespace || operatorSuggestedNamespace;
     } else {
-      selectedTargetNamespace = globalNS;
+      selectedTargetNamespace = targetNamespace || globalNS;
     }
   }
   if (
@@ -643,55 +633,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     </>
   );
 
-  const globalNamespaceInstallMode = (
-    <>
-      <div className="form-group">
-        <Dropdown
-          id="dropdown-selectbox"
-          dataTest="dropdown-selectbox"
-          dropDownClassName="dropdown--full-width"
-          menuClassName="dropdown-menu--text-wrap"
-          items={items}
-          title={
-            <ResourceName
-              kind="Project"
-              name={
-                isSuggestedNamespaceSelected
-                  ? `${selectedTargetNamespace} (Operator recommended)`
-                  : selectedTargetNamespace
-              }
-            />
-          }
-          disabled={_.size(items) === 1}
-          selectedKey={selectedTargetNamespace}
-          onChange={(ns: string) => {
-            setTargetNamespace(ns);
-            setCannotResolve(false);
-          }}
-        />
-      </div>
-      {suggestedNamespaceDetails}
-      {operatorSuggestedNamespace && operatorSuggestedNamespace !== selectedTargetNamespace && (
-        <Alert
-          isInline
-          className="co-alert pf-c-alert--top-margin"
-          variant="warning"
-          title={t(
-            'olm~Not installing the Operator into the recommended namespace can cause unexpected behavior.',
-          )}
-        />
-      )}
-    </>
-  );
-
-  const singleNamespaceInstallMode = !suggestedNamespace ? (
-    <NsDropdown
-      id="dropdown-selectbox"
-      selectedKey={selectedTargetNamespace}
-      onChange={(ns) => setTargetNamespace(ns)}
-      dataTest="dropdown-selectbox"
-    />
-  ) : (
+  const installedNamespaceOptions = (
     <div className="form-group">
       <RadioInput
         onChange={() => {
@@ -706,7 +648,6 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         <ResourceIcon kind="Project" />
         <b>{operatorSuggestedNamespace}</b>
       </RadioInput>
-      {useSuggestedNSForSingleInstallMode && suggestedNamespaceDetails}
       <RadioInput
         onChange={() => {
           setUseSuggestedNSForSingleInstallMode(false);
@@ -724,23 +665,54 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             onChange={(ns) => setTargetNamespace(ns)}
             dataTest="dropdown-selectbox"
           />
-
-          {suggestedNamespace !== selectedTargetNamespace && (
-            <Alert
-              isInline
-              className="co-alert pf-c-alert--top-margin"
-              variant="warning"
-              title={t(
-                'olm~Not installing the Operator into the recommended namespace can cause unexpected behavior.',
-              )}
-            />
-          )}
+          <Alert
+            isInline
+            className="co-alert pf-c-alert--top-margin"
+            variant="warning"
+            title={t(
+              'olm~Not installing the Operator into the recommended namespace can cause unexpected behavior.',
+            )}
+          />
         </>
       )}
     </div>
   );
 
+  const installedNamespaceSelect = (
+    <div className="form-group">
+      <NsDropdown
+        id="dropdown-selectbox"
+        selectedKey={selectedTargetNamespace}
+        onChange={(ns) => setTargetNamespace(ns)}
+        dataTest="dropdown-selectbox"
+      />
+    </div>
+  );
+
+  const globalNamespaceInstallMode = (
+    <>
+      {operatorSuggestedNamespace ? (
+        <>{installedNamespaceOptions}</>
+      ) : (
+        <>{installedNamespaceSelect}</>
+      )}
+      {useSuggestedNSForSingleInstallMode && suggestedNamespaceDetails}
+    </>
+  );
+
+  const singleNamespaceInstallMode = !suggestedNamespace ? (
+    <>{installedNamespaceSelect}</>
+  ) : (
+    <>
+      {installedNamespaceOptions}
+      {useSuggestedNSForSingleInstallMode && suggestedNamespaceDetails}
+    </>
+  );
+
   const providedAPIs = providedAPIsForChannel(props.packageManifest.data[0])(updateChannelName);
+
+  const isApprovalItemDisabled =
+    version !== currentLatestVersion || manualSubscriptionsInNamespace?.length > 0;
 
   return (
     <>
@@ -820,6 +792,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     selectedUpdateChannel={updateChannelName}
                     updateVersion={updateVersion}
                     setUpdateVersion={setUpdateVersion}
+                    showVersionAlert
                   />
                 </fieldset>
               </div>
@@ -883,8 +856,15 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                   <RadioGroup
                     currentValue={approval}
                     items={[
-                      { value: InstallPlanApproval.Automatic, title: t('olm~Automatic') },
-                      { value: InstallPlanApproval.Manual, title: t('olm~Manual') },
+                      {
+                        value: InstallPlanApproval.Automatic,
+                        title: t('olm~Automatic'),
+                        disabled: isApprovalItemDisabled,
+                      },
+                      {
+                        value: InstallPlanApproval.Manual,
+                        title: t('olm~Manual'),
+                      },
                     ]}
                     onChange={(e) => {
                       const { value } = e.currentTarget;
