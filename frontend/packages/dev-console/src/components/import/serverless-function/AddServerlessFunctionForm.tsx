@@ -217,10 +217,10 @@ const AddServerlessFunctionForm: React.FC<
             >
               <ExtensionCard
                 icon={vscodeImg}
-                link="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-knative"
+                link="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-openshift-connector"
                 title={t('devconsole~VSCode')}
                 description={t(
-                  'devconsole~This extension for Knative provides the app developer the tools and experience needed when working with Knative & Serverless Functions on a Kubernetes cluster. Using this extension, developers can develop and deploy functions in a serverless way through guided IDE workflow.',
+                  'devconsole~The OpenShift Serverless Functions support in the VSCode IDE extension enables developers to effortlessly create, build, run, invoke and deploy serverless functions on OpenShift, providing a seamless development experience within the familiar VSCode environment.',
                 )}
               />
             </FlexItem>
