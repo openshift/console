@@ -4,11 +4,17 @@ import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
 import { PipelineRunModel } from '../../../models';
+import { usePipelineOperatorVersion } from '../../pipelines/utils/pipeline-operator';
 import PipelineRunHeader from './PipelineRunHeader';
 import PipelineRunRow from './PipelineRunRow';
 
-export const PipelineRunList: React.FC = (props) => {
+type PipelineRunListProps = {
+  namespace: string;
+};
+
+export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
   const { t } = useTranslation();
+  const operatorVersion = usePipelineOperatorVersion(props.namespace);
 
   return (
     <>
@@ -22,6 +28,7 @@ export const PipelineRunList: React.FC = (props) => {
         defaultSortOrder={SortByDirection.desc}
         Header={PipelineRunHeader}
         Row={PipelineRunRow}
+        customData={operatorVersion}
         virtualize
       />
     </>

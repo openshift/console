@@ -31,7 +31,10 @@ const PLRStatus: React.FC<PLRStatusProps> = ({ obj }) => {
   );
 };
 
-const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj }) => {
+const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
+  obj,
+  customData: operatorVersion,
+}) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -57,7 +60,7 @@ const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj }) => 
       <TableData className={tableColumnClasses[5]}>{pipelineRunDuration(obj)}</TableData>
       <TableData className={tableColumnClasses[6]}>
         <ResourceKebabWithUserLabel
-          actions={getPipelineRunKebabActions()}
+          actions={getPipelineRunKebabActions(operatorVersion)}
           kind={pipelinerunReference}
           resource={obj}
         />

@@ -44,7 +44,10 @@ const PLRStatus: React.FC<PLRStatusProps> = ({ obj }) => {
   );
 };
 
-const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj }) => {
+const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
+  obj,
+  customData,
+}) => {
   const plrLabels = obj.metadata.labels;
   const plrAnnotations = obj.metadata.annotations;
 
@@ -97,7 +100,7 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ 
       </TableData>
       <TableData className={tableColumnClasses[8]}>
         <ResourceKebabWithUserLabel
-          actions={getPipelineRunKebabActions()}
+          actions={getPipelineRunKebabActions(customData)}
           kind={pipelinerunReference}
           resource={obj}
         />
