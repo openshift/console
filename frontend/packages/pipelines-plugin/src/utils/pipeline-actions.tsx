@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import * as _ from 'lodash';
+import { SemVer } from 'semver';
 import { errorModal } from '@console/internal/components/modals';
 import {
   history,
@@ -177,7 +178,11 @@ export const rerunPipelineRunAndRedirect: KebabAction = (
   });
 };
 
-export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: PipelineRunKind) => {
+export const stopPipelineRun: KebabAction = (
+  kind: K8sKind,
+  pipelineRun: PipelineRunKind,
+  operatorVersion: SemVer,
+) => {
   // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
   return {
     // t('pipelines-plugin~Stop')
@@ -192,7 +197,10 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
           {
             op: 'replace',
             path: `/spec/status`,
-            value: 'PipelineRunCancelled',
+            value:
+              operatorVersion.major === 1 && operatorVersion.minor < 9
+                ? 'PipelineRunCancelled'
+                : 'StoppedRunFinally',
           },
         ],
       );
@@ -258,11 +266,14 @@ export const getPipelineKebabActions = (
   Kebab.factory.Delete,
 ];
 
-export const getPipelineRunKebabActions = (redirectReRun?: boolean): KebabAction[] => [
+export const getPipelineRunKebabActions = (
+  operatorVersion: SemVer,
+  redirectReRun?: boolean,
+): KebabAction[] => [
   redirectReRun
     ? (model, pipelineRun) => rerunPipelineRunAndRedirect(model, pipelineRun)
     : (model, pipelineRun) => reRunPipelineRun(model, pipelineRun),
-  (model, pipelineRun) => stopPipelineRun(model, pipelineRun),
+  (model, pipelineRun) => stopPipelineRun(model, pipelineRun, operatorVersion),
   Kebab.factory.Delete,
 ];
 
