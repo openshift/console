@@ -60,7 +60,8 @@ func (cs Constraints) Check(v *Version) bool {
 	for _, o := range cs.constraints {
 		joy := true
 		for _, c := range o {
-			if check, _ := c.check(v); !check {
+			if check, err := c.check(v); !check {
+				fmt.Println(err, "ERROR CWNAKNVCIEJVOEJVJO")
 				joy = false
 				break
 			}
@@ -586,7 +587,7 @@ func rewriteRange(i string) string {
 	}
 	o := i
 	for _, v := range m {
-		t := fmt.Sprintf(">= %s, <= %s", v[1], v[11])
+		t := fmt.Sprintf(">= %s, <= %s ", v[1], v[11])
 		o = strings.Replace(o, v[0], t, 1)
 	}
 
