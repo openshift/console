@@ -1,21 +1,12 @@
 import * as _ from 'lodash';
 import { ActionType as Action, action } from 'typesafe-actions';
-import { DiscoveryResources, K8sModel, MatchLabels, Selector } from '../../../api/common-types';
-import { K8sResourceCommon, FilterValue } from '../../../extensions/console-types';
+import { DiscoveryResources, K8sModel } from '../../../api/common-types';
+import { FilterValue, K8sResourceKind } from '../../../extensions/console-types';
 import { getReferenceForModel } from '../../../utils/k8s/k8s-ref';
 import { k8sList, k8sGet } from '../../../utils/k8s/k8s-resource';
 import { k8sWatch } from '../../../utils/k8s/k8s-utils';
 import { WSFactory } from '../../../utils/k8s/ws-factory';
 import { getImpersonate, getActiveCluster } from '../../core/reducers/coreSelectors'; // TODO remove multicluster
-
-type K8sResourceKind = K8sResourceCommon & {
-  spec?: {
-    selector?: Selector | MatchLabels;
-    [key: string]: any;
-  };
-  status?: { [key: string]: any };
-  data?: { [key: string]: any };
-};
 
 export enum ActionType {
   ReceivedResources = 'resources',

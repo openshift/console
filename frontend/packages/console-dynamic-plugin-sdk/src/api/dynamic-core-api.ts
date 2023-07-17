@@ -31,6 +31,7 @@ import {
   CodeEditorRef,
   QueryBrowserProps,
   UseAnnotationsModal,
+  UseDeleteModal,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -809,3 +810,22 @@ export const QueryBrowser: React.FC<QueryBrowserProps> = require('@console/share
  */
 export const useAnnotationsModal: UseAnnotationsModal = require('@console/shared/src/hooks/useAnnotationsModal')
   .useAnnotationsModal;
+
+/**
+ * A hook for launching a modal for deleting a resource.
+ *
+ * @param resource - The resource to delete.
+ * @param redirectTo - (optional) A location to redirect to after deleting the resource.
+ * @param message - (optional) A message to display in the modal.
+ * @param btnText - (optional) The text to display on the delete button.
+ * @param deleteAllResources - (optional) A function to delete all resources of the same kind.
+ * @returns A function which will launch a modal for deleting a resource.
+ * @example
+ * const DeletePodButton = ({ pod }) => {
+ *   const { t } = useTranslation();
+ *   const launchDeleteModal = useDeleteModal(pod);
+ *   return <button onClick={launchDeleteModal}>{t('Delete Pod')}</button>
+ * }
+ */
+export const useDeleteModal: UseDeleteModal = require('@console/shared/src/hooks/useDeleteModal')
+  .useDeleteModal;

@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
+import { LocationDescriptor } from 'history';
 import MonacoEditor from 'react-monaco-editor/lib/editor';
 import { RouteComponentProps } from 'react-router';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
+  MatchLabels,
   PrometheusEndpoint,
   PrometheusLabels,
   PrometheusValue,
@@ -57,6 +59,15 @@ export type K8sResourceCommon = {
   apiVersion?: string;
   kind?: string;
   metadata?: ObjectMetadata;
+};
+
+export type K8sResourceKind = K8sResourceCommon & {
+  spec?: {
+    selector?: Selector | MatchLabels;
+    [key: string]: any;
+  };
+  status?: { [key: string]: any };
+  data?: { [key: string]: any };
 };
 
 export type K8sVerb =
@@ -705,3 +716,11 @@ export type StorageClass = K8sResourceCommon & {
 };
 
 export type UseAnnotationsModal = (resource: K8sResourceCommon) => () => void;
+
+export type UseDeleteModal = (
+  resource: K8sResourceCommon,
+  redirectTo?: LocationDescriptor,
+  message?: JSX.Element,
+  btnText?: React.ReactNode,
+  deleteAllResources?: () => Promise<K8sResourceKind[]>,
+) => () => void;
