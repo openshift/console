@@ -7,12 +7,17 @@ import { Table } from '@console/internal/components/factory';
 import { useUserSettings } from '@console/shared/src';
 import { PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY } from '../../../const';
 import { PipelineRunModel } from '../../../models';
+import { usePipelineOperatorVersion } from '../../pipelines/utils/pipeline-operator';
 import PipelineRunHeader from './PipelineRunHeader';
 import PipelineRunRow from './PipelineRunRow';
 
-export const PipelineRunList: React.FC = (props) => {
-  const { t } = useTranslation();
+type PipelineRunListProps = {
+  namespace: string;
+};
 
+export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
+  const { t } = useTranslation();
+  const operatorVersion = usePipelineOperatorVersion(props.namespace);
   const activePerspective = useActivePerspective()[0];
   const [, setPreferredTab, preferredTabLoaded] = useUserSettings<string>(
     PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY,
@@ -37,6 +42,7 @@ export const PipelineRunList: React.FC = (props) => {
         defaultSortOrder={SortByDirection.desc}
         Header={PipelineRunHeader}
         Row={PipelineRunRow}
+        customData={operatorVersion}
         virtualize
       />
     </>

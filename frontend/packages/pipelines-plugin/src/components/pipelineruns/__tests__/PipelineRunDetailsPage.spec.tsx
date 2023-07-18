@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { SemVer } from 'semver';
 import { DetailsPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
@@ -32,7 +33,7 @@ describe('PipelineRunDetailsPage:', () => {
         },
       },
     };
-    menuActions.mockReturnValue([getPipelineRunKebabActions(true)]);
+    menuActions.mockReturnValue([getPipelineRunKebabActions(new SemVer('1.9.0'), true)]);
     breadCrumbs.mockReturnValue([{ label: 'PipelineRuns' }, { label: 'PipelineRuns Details' }]);
     wrapper = shallow(<PipelineRunDetailsPage {...pipelineRunDetailsPageProps} />);
   });
