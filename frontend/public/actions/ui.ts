@@ -207,7 +207,7 @@ export const setActiveNamespace = (namespace: string = '') => {
     const oldPath = window.location.pathname;
     const newPath = formatNamespaceRoute(namespace, oldPath, window.location);
     if (newPath !== oldPath) {
-      history.pushPath(newPath);
+      history.push(newPath);
     }
     // save last namespace in session storage (persisted only for current browser tab). Used to remember/restore if
     // "All Projects" was selected when returning to the list view (typically from details view) via breadcrumb or

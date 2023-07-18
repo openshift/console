@@ -1,8 +1,6 @@
 import * as _ from 'lodash-es';
 import { createBrowserHistory, createMemoryHistory, History } from 'history';
 
-type AppHistory = History & { pushPath: History['push'] };
-
 let createHistory;
 
 try {
@@ -16,7 +14,7 @@ try {
   createHistory = createBrowserHistory;
 }
 
-export const history: AppHistory = createHistory({ basename: window.SERVER_FLAGS.basePath });
+export const history: History = createHistory({ basename: window.SERVER_FLAGS.basePath });
 
 const removeBasePath = (url = '/') =>
   _.startsWith(url, window.SERVER_FLAGS.basePath)
@@ -29,7 +27,6 @@ history.replace = (url: string) => (history as any).__replace__(removeBasePath(u
 
 (history as any).__push__ = history.push;
 history.push = (url: string) => (history as any).__push__(removeBasePath(url));
-(history as any).pushPath = (path) => (history as any).__push__(path);
 
 export const getQueryArgument = (arg: string) =>
   new URLSearchParams(window.location.search).get(arg);
