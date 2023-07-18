@@ -5,49 +5,21 @@ import Spy = jasmine.Spy;
 import {
   ConnectedStorageClassForm,
   StorageClassFormProps,
-  StorageClassFormState,
 } from '../../public/components/storage-class-form';
 import { PageHeading } from '../../public/components/utils';
-import * as useResolvedExtensionsModule from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-
-const extensions = [
-  {
-    properties: {
-      OTHERS: {
-        title: 'AWS Elastic Block Storage',
-        provisioner: 'kubernetes.io/aws-ebs',
-        allowVolumeExpansion: () => true,
-        documentationLink: () => '',
-        parameters: {
-          type: {
-            name: 'Type',
-            values: { io1: 'io1', gp2: 'gp2', sc1: 'sc1', st1: 'st1' },
-            hintText: 'Select AWS Type',
-          },
-        },
-      },
-    },
-  },
-];
 
 describe(ConnectedStorageClassForm.displayName, () => {
   const Component: React.ComponentType<Omit<
     StorageClassFormProps,
     't' | 'i18n' | 'tReady'
   >> = ConnectedStorageClassForm.WrappedComponent as any;
-  let wrapper: ShallowWrapper<StorageClassFormProps, StorageClassFormState>;
+  let wrapper: ShallowWrapper<StorageClassFormProps>;
   let onClose: Spy;
   let watchK8sList: Spy;
   let stopK8sWatch: Spy;
   let k8s: Spy;
-  let extensionSpy: Spy;
 
   beforeEach(() => {
-    extensionSpy = spyOn(useResolvedExtensionsModule, 'useResolvedExtensions').and.returnValue([
-      extensions,
-      true,
-      null,
-    ]);
     onClose = jasmine.createSpy('onClose');
     watchK8sList = jasmine.createSpy('watchK8sList');
     stopK8sWatch = jasmine.createSpy('stopK8sWatch');
@@ -60,9 +32,7 @@ describe(ConnectedStorageClassForm.displayName, () => {
         stopK8sWatch={stopK8sWatch}
         k8s={k8s}
       />,
-    )
-      .dive()
-      .dive();
+    ).dive();
   });
 
   it('renders the proper header', () => {
@@ -82,23 +52,16 @@ describe(ConnectedStorageClassForm.displayName, () => {
   });
 
   it('renders type-specific settings when storage type is set', () => {
-    expect(wrapper.find({ title: 'Select AWS Type' }).exists()).toBe(false);
-    wrapper.setState({
-      newStorageClass: {
-        ...wrapper.state().newStorageClass,
-        type: 'kubernetes.io/aws-ebs',
-      },
-    });
-    wrapper.instance().componentDidUpdate({}, {});
-    expect(extensionSpy).toHaveBeenCalled();
-    wrapper.instance().forceUpdate();
-    expect(wrapper.find({ title: 'Select AWS Type' }).exists()).toBe(true);
+    expect(wrapper.find({ children: 'Additional parameters' }).exists()).toBe(false);
+    wrapper.find('#storage-class-provisioner').invoke('onChange')('kubernetes.io/aws-ebs' as any);
+    wrapper.update();
+    expect(wrapper.find({ children: 'Additional parameters' }).exists()).toBe(true);
   });
 
-  it('renders an error message when storage class creation fails', () => {
-    const errorMsg = 'Storage creation failed';
-    expect(wrapper.find({ errorMessage: errorMsg }).exists()).toBe(false);
-    wrapper.setState({ error: { message: errorMsg } });
-    expect(wrapper.find({ errorMessage: errorMsg }).exists()).toBe(true);
+  it('renders an error message with invalid input', () => {
+    const input = wrapper.find('#storage-class-name');
+    input.simulate('change', { target: { value: 'Changed' } });
+    input.simulate('change', { target: { value: '' } });
+    expect(wrapper.find('.help-block').first().render().text() === 'Storage name is required');
   });
 });
