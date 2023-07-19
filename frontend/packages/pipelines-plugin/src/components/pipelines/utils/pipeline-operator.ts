@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { compare, gt, gte, parse, SemVer } from 'semver';
-import { useAccessReview } from '@console/dynamic-plugin-sdk';
+import { SetFeatureFlag, useAccessReview } from '@console/dynamic-plugin-sdk';
 import { k8sList } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import {
   ClusterServiceVersionKind,
   ClusterServiceVersionModel,
   ClusterServiceVersionPhase,
 } from '@console/operator-lifecycle-manager';
+import { useActiveNamespace } from '@console/shared/src';
 import { TektonConfigModel } from '../../../models';
 import {
   PIPELINE_UNSIMPLIFIED_METRICS_VERSION,
@@ -14,6 +15,7 @@ import {
   TRIGGERS_GA_VERSION,
   PipelineMetricsLevel,
   PIPELINE_NAMESPACE,
+  FLAG_TEKTON_V1_ENABLED,
 } from '../const';
 import { MetricsQueryPrefix } from '../pipeline-metrics/pipeline-metrics-utils';
 import { getPipelineMetricsLevel, usePipelineConfig } from './pipeline-config';
@@ -91,4 +93,11 @@ export const usePipelineMetricsLevel = (namespace: string) => {
     queryPrefix,
     hasUpdatePermission,
   };
+};
+
+export const useIsTektonV1VersionPresent = (setFeatureFlag: SetFeatureFlag) => {
+  const [activeNamespace] = useActiveNamespace();
+  const operatorVersion = usePipelineOperatorVersion(activeNamespace);
+  const isTektonV1VersionPresent = operatorVersion?.major === 1 && operatorVersion?.minor >= 11;
+  setFeatureFlag(FLAG_TEKTON_V1_ENABLED, isTektonV1VersionPresent);
 };
