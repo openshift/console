@@ -129,7 +129,6 @@ type jsGlobals struct {
 	PrometheusTenancyBaseURL        string                     `json:"prometheusTenancyBaseURL"`
 	QuickStarts                     string                     `json:"quickStarts"`
 	ReleaseVersion                  string                     `json:"releaseVersion"`
-	RequestTokenURL                 string                     `json:"requestTokenURL"`
 	StatuspageID                    string                     `json:"statuspageID"`
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ThanosPublicURL                 string                     `json:"thanosPublicURL"`
@@ -807,7 +806,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	if !s.authDisabled() {
 		specialAuthURLs := localAuther.GetSpecialURLs()
-		jsg.RequestTokenURL = specialAuthURLs.RequestToken
 		jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
 	}
 

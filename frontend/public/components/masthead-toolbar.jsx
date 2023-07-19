@@ -584,6 +584,7 @@ class MastheadToolbarContents_ extends React.Component {
           label: t('public~Copy login command'),
           href: requestTokenURL,
           externalLink: true,
+          dataTest: 'copy-login-command',
         });
       }
 

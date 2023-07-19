@@ -37,7 +37,6 @@ declare interface Window {
     prometheusTenancyBaseURL: string;
     quickStarts: string;
     releaseVersion: string;
-    requestTokenURL: string;
     inactivityTimeout: number;
     statuspageID: string;
     GOARCH: string;

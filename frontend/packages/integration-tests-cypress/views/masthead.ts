@@ -9,6 +9,8 @@ export const masthead = {
         .byTestID(Cypress.env('BRIDGE_KUBEADMIN_PASSWORD') ? 'user-dropdown' : 'username')
         .should('have.text', text),
   },
+  userDropdown: () => cy.byTestID('user-dropdown'),
+  copyLoginCommand: () => cy.byTestID('copy-login-command'),
   clickMastheadLink: (path: string) => {
     return cy.byTestID(path).click();
   },
