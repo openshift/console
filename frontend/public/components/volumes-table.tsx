@@ -250,7 +250,9 @@ const VolumeKebab = connectToModel((props: VolumeKebabProps) => {
   return (
     <Kebab
       options={options}
-      isDisabled={isDisabled !== undefined ? isDisabled : resource?.metadata?.deletionTimestamp}
+      isDisabled={
+        isDisabled !== undefined ? isDisabled : resource?.metadata?.deletionTimestamp?.length > 0
+      }
     />
   );
 });

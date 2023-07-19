@@ -643,7 +643,7 @@ export type UninstallOperatorModalProps = {
     resource: K8sResourceKind,
     data: { op: string; path: string; value: any }[],
   ) => Promise<any>;
-  subscription: SubscriptionKind;
+  subscription: SubscriptionKind | K8sResourceKind;
   csv?: ClusterServiceVersionKind;
   blocking?: boolean;
 };
