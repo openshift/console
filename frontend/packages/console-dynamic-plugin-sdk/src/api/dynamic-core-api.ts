@@ -175,14 +175,14 @@ export const ListPageHeader: React.FC<ListPageHeaderProps> = require('@console/i
 
 /**
  * Component for adding a create button for a specific resource kind that automatically generates a link to the create YAML for this resource
- * @param groupVersionKind group, version, kind of k8s resource {@link K8sGroupVersionKind} is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` {@link K8sResourceKindReference}.
+ * @param groupVersionKind group, version, kind of k8s resource {@link K8sGroupVersionKind} is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` {@link K8sResourceKindReference}. Core resources with no API group should leave off the `group` property
  * @example
  * ```ts
  * const exampleList: React.FC<MyProps> = () => {
  *   return (
  *     <>
- *       <ListPageHeader title="Example Pod List Page"/>
- *         <ListPageCreate groupVersionKind={{ group: 'app'; version: 'v1'; kind: 'Deployment' }}>Create Pod</ListPageCreate>
+ *       <ListPageHeader title="Example List Page"/>
+ *         <ListPageCreate groupVersionKind={{ group: 'app'; version: 'v1'; kind: 'Deployment' }}>Create Deployment</ListPageCreate>
  *       </ListPageHeader>
  *     </>
  *   );
