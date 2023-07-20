@@ -365,6 +365,9 @@
         { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
         { "group": "", "resource": "services", "verb": "create" }
       ]
+    },
+    "flags": {
+      "required": ["JAVA_IMAGE_STREAM_ENABLED"]
     }
   },
   {
