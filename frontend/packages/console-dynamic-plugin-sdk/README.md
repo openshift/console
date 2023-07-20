@@ -156,8 +156,11 @@ const config = {
 export default config;
 ```
 
-`ConsoleRemotePlugin` has no configuration options; it automatically detects your plugin's metadata and
-extension declarations and generates the corresponding assets.
+`ConsoleRemotePlugin` automatically detects your plugin's metadata and extension declarations and
+generates the corresponding assets.
+
+`ConsoleRemotePlugin` constructor supports an options object used to tweak its behavior. Refer to
+`ConsoleRemotePluginOptions` type for details on supported options.
 
 ## Generated assets
 
