@@ -21,6 +21,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 
 import { RequireCreatePermission } from '../../utils';
+import { transformGroupVersionKindToReference } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 const CreateWithPermissions: React.FC<CreateWithPermissionsProps> = ({
   createAccessReview,
@@ -97,9 +98,9 @@ const ListPageCreate: React.FC<ListPageCreateProps> = ({
   groupVersionKind,
   children,
 }) => {
-  const kind = typeof groupVersionKind !== 'string' ? groupVersionKind.kind : groupVersionKind;
+  const reference = transformGroupVersionKindToReference(groupVersionKind);
 
-  const [k8sModel] = useK8sModel(kind);
+  const [k8sModel] = useK8sModel(groupVersionKind);
   const [namespace] = useActiveNamespace();
   let to: string;
   if (k8sModel) {
@@ -113,8 +114,8 @@ const ListPageCreate: React.FC<ListPageCreateProps> = ({
       : `/k8s/cluster/${k8sModel.plural}/~new`;
     if (k8sModel.crd) {
       to = usedNamespace
-        ? `/k8s/ns/${usedNamespace || 'default'}/${kind}/~new`
-        : `/k8s/cluster/${kind}/~new`;
+        ? `/k8s/ns/${usedNamespace || 'default'}/${reference}/~new`
+        : `/k8s/cluster/${reference}/~new`;
     }
   }
 
