@@ -31,13 +31,15 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
       <div className="modal-body-content">
         <div className="co-catalog-page__overlay-body">
           <PropertiesSidePanel>
-            {details?.properties?.map((property) => (
-              <PropertyItem
-                key={property.label}
-                label={property.label}
-                value={property.value || notAvailable}
-              />
-            ))}
+            {details?.properties
+              ?.filter((property) => !property?.isHidden)
+              ?.map((property) => (
+                <PropertyItem
+                  key={property.label}
+                  label={property.label}
+                  value={property.value || notAvailable}
+                />
+              ))}
             {!customPropertyPresent(details, providerLabel) && (
               <PropertyItem label={providerLabel} value={provider || notAvailable} />
             )}
