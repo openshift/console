@@ -13,7 +13,6 @@ import {
   UtilizationBodyProps,
   UtilizationDurationDropdownProps,
   UseUtilizationDuration,
-  UseActiveNamespace,
   VirtualizedGridProps,
   LazyActionMenuProps,
   UseDashboardResources,
@@ -58,8 +57,6 @@ export const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = require('@con
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
   .useUtilizationDuration;
-export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
-  .useActiveNamespace;
 export const ServicesList = require('@console/internal/components/service').ServicesList;
 export const useDashboardResources: UseDashboardResources = require('@console/shared/src/hooks/useDashboardResources')
   .useDashboardResources;

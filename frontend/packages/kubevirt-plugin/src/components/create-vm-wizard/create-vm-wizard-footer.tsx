@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { useActiveNamespace } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useShowErrorToggler } from '../../hooks/use-show-error-toggler';
 import { getDialogUIError, getSimpleDialogUIError } from '../../utils';
 import { iGetIsLoaded, iGetLoadError } from '../../utils/immutable';

@@ -7,7 +7,7 @@ import {
   Resources,
 } from '@console/dev-console/src/components/import/import-types';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { useActiveNamespace } from '@console/shared/src';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import './PacSection.scss';
 
 const InfoPanel: React.FC = () => {
