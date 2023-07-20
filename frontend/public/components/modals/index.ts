@@ -47,8 +47,10 @@ export const configureNamespacePullSecretModal = (props) =>
     './configure-ns-pull-secret-modal' /* webpackChunkName: "configure-ns-pull-secret-modal" */
   ).then((m) => m.configureNamespacePullSecretModal(props));
 
-export const labelsModal = (props) =>
-  import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) => m.labelsModal(props));
+export const labelsModalLauncher = (props) =>
+  import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
+    m.labelsModalLauncher(props),
+  );
 
 export const podSelectorModal = (props) =>
   import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>

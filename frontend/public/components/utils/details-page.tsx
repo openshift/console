@@ -21,11 +21,11 @@ import {
   referenceFor,
   Toleration,
 } from '../../module/k8s';
-import { configureClusterUpstreamModal, labelsModal } from '../modals';
+import { configureClusterUpstreamModal, labelsModalLauncher } from '../modals';
 
 export const editLabelsModal = (e, props) => {
   e.preventDefault();
-  labelsModal(props);
+  labelsModalLauncher(props);
 };
 
 export const pluralize = (

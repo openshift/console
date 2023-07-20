@@ -21,7 +21,7 @@ import {
   configureReplicaCountModal,
   taintsModal,
   tolerationsModal,
-  labelsModal,
+  labelsModalLauncher,
   podSelectorModal,
   deleteModal,
   expandPVCModal,
@@ -326,7 +326,7 @@ const kebabFactory: KebabFactory = {
     // t('public~Edit labels')
     labelKey: 'public~Edit labels',
     callback: () =>
-      labelsModal({
+      labelsModalLauncher({
         kind,
         resource: obj,
         blocking: true,

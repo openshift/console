@@ -3,7 +3,7 @@ import { Action } from '@console/dynamic-plugin-sdk';
 import {
   annotationsModal,
   deleteModal,
-  labelsModal,
+  labelsModalLauncher,
   configureReplicaCountModal,
   podSelectorModal,
   tolerationsModal,
@@ -50,7 +50,7 @@ export const CommonActionFactory: ResourceActionFactory = {
     id: 'edit-labels',
     label: i18next.t('console-app~Edit labels'),
     cta: () =>
-      labelsModal({
+      labelsModalLauncher({
         kind,
         resource: obj,
         blocking: true,

@@ -100,9 +100,8 @@ const BaseLabelsModal = withHandlePromise((props) => {
   );
 });
 
-export const labelsModal = createModalLauncher((props) => (
-  <BaseLabelsModal path={LABELS_PATH} {...props} />
-));
+export const LabelsModal = (props) => <BaseLabelsModal path={LABELS_PATH} {...props} />;
+export const labelsModalLauncher = createModalLauncher(LabelsModal);
 
 export const podSelectorModal = createModalLauncher((props) => {
   const { t } = useTranslation();
