@@ -17,7 +17,7 @@ import {
 } from '@console/helm-plugin/src/models';
 import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import {
-  annotationsModal,
+  annotationsModalLauncher,
   configureReplicaCountModal,
   taintsModal,
   tolerationsModal,
@@ -348,7 +348,7 @@ const kebabFactory: KebabFactory = {
     // t('public~Edit annotations')
     labelKey: 'public~Edit annotations',
     callback: () =>
-      annotationsModal({
+      annotationsModalLauncher({
         kind,
         resource: obj,
         blocking: true,

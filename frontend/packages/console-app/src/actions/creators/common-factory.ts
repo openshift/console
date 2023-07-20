@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import {
-  annotationsModal,
+  annotationsModalLauncher,
   deleteModal,
   labelsModalLauncher,
   configureReplicaCountModal,
@@ -61,7 +61,7 @@ export const CommonActionFactory: ResourceActionFactory = {
     id: 'edit-annotations',
     label: i18next.t('console-app~Edit annotations'),
     cta: () =>
-      annotationsModal({
+      annotationsModalLauncher({
         kind,
         resource: obj,
         blocking: true,

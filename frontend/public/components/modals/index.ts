@@ -67,8 +67,8 @@ export const configureUpdateStrategyModal = (props) =>
     './configure-update-strategy-modal' /* webpackChunkName: "configure-update-strategy-modal" */
   ).then((m) => m.configureUpdateStrategyModal(props));
 
-export const annotationsModal = (props) =>
-  import('./tags' /* webpackChunkName: "tags" */).then((m) => m.annotationsModal(props));
+export const annotationsModalLauncher = (props) =>
+  import('./tags' /* webpackChunkName: "tags" */).then((m) => m.annotationsModalLauncher(props));
 
 export const deleteModal = (props) =>
   import('./delete-modal' /* webpackChunkName: "delete-modal" */).then((m) => m.deleteModal(props));
