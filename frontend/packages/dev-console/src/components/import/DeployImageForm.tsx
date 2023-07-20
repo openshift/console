@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
 import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/form-utils';
+import { hasSampleQueryParameter } from '../../utils/samples';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import ImageSearchSection from './image-search/ImageSearchSection';
@@ -24,6 +25,9 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
   const { t } = useTranslation();
   usePreventDataLossLock(isSubmitting);
 
+  const isSample = hasSampleQueryParameter();
+  const showAdvancedSections = !isSample;
+
   return (
     <FlexForm className="co-deploy-image" data-test-id="deploy-image-form" onSubmit={handleSubmit}>
       <FormBody>
@@ -33,8 +37,12 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
           project={values.project}
           noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
         />
-        <ResourceSection />
-        <AdvancedSection values={values} />
+        {showAdvancedSections && (
+          <>
+            <ResourceSection />
+            <AdvancedSection values={values} />
+          </>
+        )}
       </FormBody>
       <FormFooter
         handleReset={handleReset}

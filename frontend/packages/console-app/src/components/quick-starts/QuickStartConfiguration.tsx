@@ -7,7 +7,6 @@ import {
   getGroupVersionKindForModel,
   ResourceIcon,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useTelemetry } from '@console/shared/src';
 import {
@@ -19,6 +18,7 @@ import {
   SaveStatusProps,
 } from '@console/shared/src/components/cluster-configuration';
 import { QuickStartModel } from '../../models';
+import { getQuickStartNameRef, useQuickStarts } from './utils/useQuickStarts';
 
 type DisabledQuickStartsConsoleConfig = K8sResourceKind & {
   spec: {
@@ -39,7 +39,7 @@ const Item: React.FC<ItemProps> = ({ id, quickStart }) => (
         <ResourceIcon groupVersionKind={getGroupVersionKindForModel(QuickStartModel)} />
         <div>
           <div>{quickStart.spec.displayName || quickStart.metadata.name}</div>
-          {quickStart.spec.displayName ? <div>{quickStart.metadata.name}</div> : null}
+          {quickStart.spec.displayName ? <div>{id}</div> : null}
         </div>
       </>
     ) : (
@@ -53,12 +53,7 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
   const fireTelemetryEvent = useTelemetry();
 
   // All available quick starts
-  const [allQuickStarts, allQuickStartsLoaded, allQuickStartsError] = useK8sWatchResource<
-    QuickStart[]
-  >({
-    groupVersionKind: getGroupVersionKindForModel(QuickStartModel),
-    isList: true,
-  });
+  const [allQuickStarts, allQuickStartsLoaded, allQuickStartsError] = useQuickStarts(false);
 
   // Current configuration
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
@@ -77,7 +72,7 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
       return [];
     }
     return allQuickStarts
-      .filter((quickStart) => !disabled || !disabled.includes(quickStart.metadata.name))
+      .filter((quickStart) => !disabled || !disabled.includes(getQuickStartNameRef(quickStart)))
       .sort((quickStartA, quickStartB) => {
         const displayNameA = quickStartA.spec.displayName || quickStartA.metadata.name;
         const displayNameB = quickStartB.spec.displayName || quickStartB.metadata.name;
@@ -86,7 +81,7 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
       .map((quickStart) => (
         <Item
           key={quickStart.metadata.name}
-          id={quickStart.metadata.name}
+          id={getQuickStartNameRef(quickStart)}
           quickStart={quickStart}
         />
       ));
@@ -97,7 +92,7 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
     }
     const quickStartsByName = allQuickStarts.reduce<Record<string, QuickStart>>(
       (acc, quickStart) => {
-        acc[quickStart.metadata.name] = quickStart;
+        acc[getQuickStartNameRef(quickStart)] = quickStart;
         return acc;
       },
       {},

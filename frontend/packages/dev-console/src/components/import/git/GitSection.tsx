@@ -23,12 +23,14 @@ import {
   useFlag,
 } from '@console/shared';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
+import { isGitImportSource } from '../../../types/samples';
 import {
   getSampleRepo,
   getSampleRef,
   getSampleContextDir,
   NormalizedBuilderImages,
 } from '../../../utils/imagestream-utils';
+import { getSample, getGitImportSample } from '../../../utils/samples';
 import { GitData, GitReadableTypes, DetectedStrategyFormData } from '../import-types';
 import { detectGitRepoName, detectGitType } from '../import-validation-utils';
 import FormSection from '../section/FormSection';
@@ -106,14 +108,13 @@ const GitSection: React.FC<GitSectionProps> = ({
     setFieldTouched: formikSetFieldTouched,
   } = useFormikContext<GitSectionFormData>();
 
-  const [knativeServiceAccess] = useAccessReview({
+  const isKnativeServingAvailable = useFlag(FLAG_KNATIVE_SERVING_SERVICE);
+  const [canCreateKnativeService, canCreateKnativeServiceLoading] = useAccessReview({
     group: ksvcModel.apiGroup,
     resource: ksvcModel.plural,
     namespace: getActiveNamespace(),
     verb: 'create',
   });
-
-  const canIncludeKnative = useFlag(FLAG_KNATIVE_SERVING_SERVICE) && knativeServiceAccess;
 
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const setFieldValue = React.useCallback(
@@ -155,8 +156,8 @@ const GitSection: React.FC<GitSectionProps> = ({
         : null,
     [defaultSampleURL, defaultSampleDir, defaultSampleRef],
   );
-  const tag = isEmpty(values.image.tagObj) ? defaultSampleTagObj : values.image.tagObj;
-  const sampleRepo = showSample && getSampleRepo(tag);
+  const imageStreamTag = isEmpty(values.image.tagObj) ? defaultSampleTagObj : values.image.tagObj;
+  const imageStreamTagSampleRepo = showSample && getSampleRepo(imageStreamTag);
   const {
     name: nameTouched,
     application: { name: applicationNameTouched } = {},
@@ -234,6 +235,7 @@ const GitSection: React.FC<GitSectionProps> = ({
 
   const handleGitUrlChange = React.useCallback(
     async (url: string, ref: string, dir: string) => {
+      if (isKnativeServingAvailable && canCreateKnativeServiceLoading) return;
       if (isSubmitting || status?.submitError) return;
       setValidated(ValidatedOptions.default);
       setFieldValue('git.validated', ValidatedOptions.default);
@@ -280,7 +282,11 @@ const GitSection: React.FC<GitSectionProps> = ({
         values.docker?.dockerfilePath,
       );
 
-      const importStrategyData = await detectImportStrategies(url, gitService, canIncludeKnative);
+      const importStrategyData = await detectImportStrategies(
+        url,
+        gitService,
+        isKnativeServingAvailable && canCreateKnativeService,
+      );
 
       const {
         loaded,
@@ -404,7 +410,9 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.application.name,
       values.application.selectedKey,
       values.build.strategy,
-      canIncludeKnative,
+      isKnativeServingAvailable,
+      canCreateKnativeService,
+      canCreateKnativeServiceLoading,
       nameTouched,
       importType,
       imageStreamName,
@@ -417,16 +425,25 @@ const GitSection: React.FC<GitSectionProps> = ({
 
   const debouncedHandleGitUrlChange = useDebounceCallback(handleGitUrlChange);
 
-  const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(() => {
-    const url = sampleRepo;
-    const ref = getSampleRef(tag);
-    const dir = getSampleContextDir(tag);
-    setFieldValue('git.url', url);
-    setFieldValue('git.dir', dir);
-    setFieldValue('git.ref', ref);
-    setFieldTouched('git.url', true);
-    handleGitUrlChange(url, ref, dir);
-  }, [handleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
+  const fillImageStreamTagSample = React.useCallback(() => {
+    if (isKnativeServingAvailable && canCreateKnativeServiceLoading) return;
+    const url = imageStreamTagSampleRepo;
+    const ref = getSampleRef(imageStreamTag);
+    const dir = getSampleContextDir(imageStreamTag);
+    setFieldValue('git.url', imageStreamTagSampleRepo, false);
+    setFieldValue('git.ref', ref, false);
+    setFieldValue('git.dir', dir, false);
+    setFieldTouched('git.url', true, true);
+    debouncedHandleGitUrlChange(url, ref, dir);
+  }, [
+    debouncedHandleGitUrlChange,
+    imageStreamTagSampleRepo,
+    setFieldTouched,
+    setFieldValue,
+    imageStreamTag,
+    isKnativeServingAvailable,
+    canCreateKnativeServiceLoading,
+  ]);
 
   React.useEffect(() => {
     (!dirty || gitDirTouched || gitTypeTouched || formReloadCount || values.git.secretResource) &&
@@ -517,11 +534,87 @@ const GitSection: React.FC<GitSectionProps> = ({
 
   useFormikValidationFix(values.git.url);
 
+  /**
+   * Automatically focus the git repository field and prefill it with different
+   * sample types.
+   *
+   * 1. ConsoleSample
+   * 2. ImageStream samples
+   */
   React.useEffect(() => {
+    // Skip handling until Knative Service status is unknown!
+    if (canCreateKnativeServiceLoading) return;
+
     inputRef.current?.focus();
-    sampleRepo && fillSample(null);
+
+    const { sampleName, repository: sampleRepository } = getGitImportSample();
+    if (sampleRepository?.url) {
+      const name = detectGitRepoName(sampleRepository.url);
+      setFieldValue('name', name, false);
+      setFieldValue('application.name', `${name}-app`, false);
+      setFieldValue('git.url', sampleRepository.url, false);
+      if (sampleRepository.revision) {
+        setFieldValue('git.ref', sampleRepository.revision, false);
+      }
+      if (sampleRepository.contextDir) {
+        setFieldValue('git.dir', sampleRepository.contextDir, false);
+      }
+      setFieldTouched('git.url', true, true);
+      debouncedHandleGitUrlChange(
+        sampleRepository.url,
+        sampleRepository.revision,
+        sampleRepository.contextDir,
+      );
+    }
+    if (sampleName) {
+      getSample(sampleName)
+        .then((sample) => {
+          if (isGitImportSource(sample.spec.source)) {
+            const { gitImport } = sample.spec.source;
+            if (!sampleRepository?.url) {
+              const name = detectGitRepoName(sampleRepository.url);
+              setFieldValue('name', name, false);
+              setFieldValue('application.name', `${name}-app`, false);
+              setFieldValue('git.url', gitImport.repository.url, false);
+              if (sampleRepository.revision) {
+                setFieldValue('git.ref', sampleRepository.revision, false);
+              }
+              if (sampleRepository.contextDir) {
+                setFieldValue('git.dir', sampleRepository.contextDir, false);
+              }
+              setFieldTouched('git.url', true, true);
+              debouncedHandleGitUrlChange(
+                gitImport.repository.url,
+                gitImport.repository.revision,
+                gitImport.repository.contextDir,
+              );
+            }
+            if (gitImport?.service?.targetPort && gitImport?.service?.targetPort !== 8080) {
+              setFieldValue(
+                'route.unknownTargetPort',
+                gitImport.service.targetPort.toString(),
+                false,
+              );
+            }
+            // handleSearch(containerImport.image);
+          } else {
+            // eslint-disable-next-line no-console
+            console.error(
+              `Unsupported ConsoleSample "${sampleName}" source type ${sample.spec?.source?.type}`,
+            );
+          }
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error(`Error while loading ConsoleSample "${sampleName}":`, error);
+        });
+    } else if (formType === 'sample' && imageStreamTagSampleRepo) {
+      fillImageStreamTagSample();
+    }
+
+    // Disable deps to load the samples only once when the component is loaded.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [canCreateKnativeServiceLoading]);
 
   return (
     <FormSection title={title ?? t('devconsole~Git')}>
@@ -546,9 +639,11 @@ const GitSection: React.FC<GitSectionProps> = ({
         }}
         data-test-id="git-form-input-url"
         required
-        isDisabled={formType === 'sample' && sampleRepo}
+        isDisabled={formType === 'sample' && imageStreamTagSampleRepo}
       />
-      {formType !== 'sample' && sampleRepo && <SampleRepo onClick={fillSample} />}
+      {formType !== 'sample' && imageStreamTagSampleRepo && (
+        <SampleRepo onClick={fillImageStreamTagSample} />
+      )}
       {values.git.showGitType && (
         <>
           <DropdownField

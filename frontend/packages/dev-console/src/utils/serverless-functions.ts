@@ -1,5 +1,13 @@
-import { BuilderImage, NormalizedBuilderImages } from '../../../utils/imagestream-utils';
-import { SupportedRuntime } from '../import-types';
+import { BuilderImage, NormalizedBuilderImages } from './imagestream-utils';
+
+export enum SupportedRuntime {
+  Node = 'node',
+  NodeJS = 'nodejs',
+  TypeScript = 'typescript',
+  Quarkus = 'quarkus',
+}
+
+export const notSupportedRuntime = ['go', 'rust', 'springboot', 'python'];
 
 export const getRuntimeImage = (
   runtime: SupportedRuntime,
