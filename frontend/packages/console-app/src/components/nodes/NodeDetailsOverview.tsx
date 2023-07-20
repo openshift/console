@@ -14,10 +14,13 @@ import {
   Timestamp,
 } from '@console/internal/components/utils';
 import { DetailsItem } from '@console/internal/components/utils/details-item';
-import { editLabelsModal } from '@console/internal/components/utils/details-page';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
-import { getNodeMachineNameAndNamespace, getNodeAddresses } from '@console/shared';
+import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
+import {
+  getNodeMachineNameAndNamespace,
+  getNodeAddresses,
+} from '@console/shared/src/selectors/node';
 import NodeIPList from './NodeIPList';
 import NodeStatus from './NodeStatus';
 import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
@@ -27,6 +30,7 @@ type NodeDetailsOverviewProps = {
 };
 
 const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
+  const launchLabelsModal = useLabelsModal(node);
   const machine = getNodeMachineNameAndNamespace(node);
   const canUpdate = useAccessReview({
     group: NodeModel.apiGroup,
@@ -64,7 +68,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
               obj={node}
               path="metadata.labels"
               valueClassName="details-item__value--labels"
-              onEdit={(e) => editLabelsModal(e, { resource: node, kind: NodeModel })}
+              onEdit={launchLabelsModal}
               canEdit={canUpdate}
               editAsGroup
             >
