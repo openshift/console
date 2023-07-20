@@ -65,10 +65,11 @@
 63.  [QueryBrowser](#querybrowser)
 64.  [useAnnotationsModal](#useannotationsmodal)
 65.  [useDeleteModal](#usedeletemodal)
-66. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-67. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-68. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
-69. [DEPRECATED] [YAMLEditor](#yamleditor)
+66.  [useLabelsModal](#uselabelsmodal)
+67. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+68. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+69. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+70. [DEPRECATED] [YAMLEditor](#yamleditor)
 
 ---
 
@@ -2248,7 +2249,7 @@ A component that renders a graph of the results from a Prometheus PromQL query a
 
 ### Summary 
 
-A hook for launching a modal for editing a Kubernetes resource's annotations.
+A hook that provides a callback to launch a modal for editing Kubernetes resource annotations.
 
 
 
@@ -2286,7 +2287,7 @@ A function which will launch a modal for editing a resource's annotations.
 
 ### Summary 
 
-A hook for launching a modal for deleting a resource.
+A hook that provides a callback to launch a modal for deleting a resource.
 
 
 
@@ -2318,6 +2319,44 @@ const DeletePodButton = ({ pod }) => {
 ### Returns
 
 A function which will launch a modal for deleting a resource.
+
+
+---
+
+## `useLabelsModal`
+
+### Summary 
+
+A hook that provides a callback to launch a modal for editing Kubernetes resource labels.
+
+
+
+### Example
+
+
+```tsx
+const PodLabelsButton = ({ pod }) => {
+  const { t } = useTranslation();
+  const launchLabelsModal = useLabelsModal<PodKind>(pod);
+  return <button onClick={launchLabelsModal}>{t('Edit Pod Labels')}</button>
+}
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `resource` | The resource to edit labels for, an object of K8sResourceCommon type. |
+
+
+
+### Returns
+
+A function which will launch a modal for editing a resource's labels.
 
 
 ---
