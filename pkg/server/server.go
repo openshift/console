@@ -205,6 +205,20 @@ func (s *Server) getLocalAuther() *auth.Authenticator {
 	return s.Authers[serverutils.LocalClusterName]
 }
 
+func disableDirectoryListing(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// If the request is for a directory, return a 404.
+		// Directory path is expected to end with a slash or be empty,
+		// since we are stripping the '/static/' prefix from the path.
+		if strings.HasSuffix(r.URL.Path, "/") || r.URL.Path == "" {
+
+			http.NotFound(w, r)
+			return
+		}
+		handler.ServeHTTP(w, r)
+	})
+}
+
 func (s *Server) authDisabled() bool {
 	return s.getLocalAuther() == nil
 }
@@ -312,7 +326,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	handleFunc("/api/", notFoundHandler)
 
-	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), http.FileServer(http.Dir(s.PublicDir)))
+	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), disableDirectoryListing(http.FileServer(http.Dir(s.PublicDir))))
 	handle("/static/", gzipHandler(securityHeadersMiddleware(staticHandler)))
 
 	if s.CustomLogoFile != "" {
