@@ -1000,6 +1000,7 @@ export const PodsPage: React.FC<PodPageProps> = ({
   hideColumnManagement,
   nameFilter,
   showNamespaceOverride,
+  mock = false,
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -1090,6 +1091,7 @@ export const PodsPage: React.FC<PodPageProps> = ({
             showNamespaceOverride={showNamespaceOverride}
             showNodes={showNodes}
             namespace={namespace}
+            mock={mock}
           />
         </ListPageBody>
       </>
@@ -1159,6 +1161,7 @@ type PodListProps = {
   showNodes?: boolean;
   showNamespaceOverride?: boolean;
   namespace?: string;
+  mock?: boolean;
 };
 
 type PodPageProps = {
@@ -1173,6 +1176,7 @@ type PodPageProps = {
   hideColumnManagement?: boolean;
   nameFilter?: string;
   showNamespaceOverride?: boolean;
+  mock?: boolean;
 };
 
 type PodDetailsPageProps = {
