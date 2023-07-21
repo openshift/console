@@ -6,10 +6,11 @@ import { connect } from 'react-redux';
 import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/internal/components/utils';
 import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
-import { PipelineRunModel, PipelineRunModelV1Beta1 } from '../../../models';
+import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
 import { rerunPipelineAndStay } from '../../../utils/pipeline-actions';
 import { getLatestRun } from '../../../utils/pipeline-augment';
+import { returnValidPipelineRunModel } from '../../../utils/pipeline-utils';
 import { usePipelineRunWithUserAnnotation } from '../../pipelineruns/triggered-by';
 
 type TriggerLastRunButtonProps = {
@@ -25,8 +26,9 @@ const TriggerLastRunButton: React.FC<TriggerLastRunButtonProps> = ({
 }) => {
   const { t } = useTranslation();
   const latestRun = usePipelineRunWithUserAnnotation(getLatestRun(pipelineRuns, 'startTimestamp'));
+  const pipelineRunModel = returnValidPipelineRunModel(latestRun);
   const { labelKey, callback, accessReview: utilityAccessReview } = rerunPipelineAndStay(
-    latestRun.apiVersion === 'tekton.dev/v1' ? PipelineRunModel : PipelineRunModelV1Beta1,
+    pipelineRunModel,
     latestRun,
   );
   const defaultAccessReview: AccessReviewResourceAttributes = {

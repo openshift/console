@@ -7,8 +7,8 @@ import { RouteComponentProps } from 'react-router-dom';
 import { history } from '@console/internal/components/utils';
 import { k8sCreate, k8sUpdate, referenceForModel } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { PipelineModel } from '../../../models';
 import { PipelineKind } from '../../../types';
+import { returnValidPipelineModel } from '../../../utils/pipeline-utils';
 import { initialPipelineFormData } from './const';
 import { sanitizeToYaml } from './form-switcher-validation';
 import PipelineBuilderForm from './PipelineBuilderForm';
@@ -65,15 +65,16 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
     }
 
     let resourceCall: Promise<any>;
+    const pipelineModel = returnValidPipelineModel(pipeline);
     if (existingPipeline) {
-      resourceCall = k8sUpdate(PipelineModel, pipeline, ns, existingPipeline.metadata.name);
+      resourceCall = k8sUpdate(pipelineModel, pipeline, ns, existingPipeline.metadata.name);
     } else {
-      resourceCall = k8sCreate(PipelineModel, pipeline);
+      resourceCall = k8sCreate(pipelineModel, pipeline);
     }
 
     return resourceCall
       .then(() => {
-        history.push(`/k8s/ns/${ns}/${referenceForModel(PipelineModel)}/${pipeline.metadata.name}`);
+        history.push(`/k8s/ns/${ns}/${referenceForModel(pipelineModel)}/${pipeline.metadata.name}`);
       })
       .catch((e) => {
         actions.setStatus({ submitError: e.message });
