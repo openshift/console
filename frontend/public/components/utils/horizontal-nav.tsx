@@ -14,6 +14,7 @@ import {
   matchPath,
   RouteComponentProps,
   useRouteMatch,
+  useLocation,
 } from 'react-router-dom';
 import {
   HorizontalNavTab as DynamicResourceNavTab,
@@ -182,6 +183,7 @@ export const navFactory: NavFactory = {
 export const NavBar: React.FC<NavBarProps> = ({ pages, baseURL, basePath }) => {
   const { t } = useTranslation();
   const { telemetryPrefix, titlePrefix } = React.useContext(PageTitleContext);
+  const location = useLocation();
 
   basePath = basePath.replace(/\/$/, '');
 
