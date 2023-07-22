@@ -36,7 +36,15 @@ export const init = () => {
         loadPath: '/locales/resource.json?lng={{lng}}&ns={{ns}}',
         parse: function (data, lng, ns) {
           const parsed = JSON.parse(data);
-          return ns?.startsWith('plugin__') ? transformNamespace(lng, parsed) : parsed;
+          // i18next-v4-format-converter functions differently for plurals in
+          // 'en' compared to other languages. Therefore, two conversions are
+          // needed: one in the correct language, then a second one in English
+          // to catch the missing plural cases.
+          if (ns?.startsWith('plugin__')) {
+            const firstTransform = transformNamespace(lng, parsed);
+            return transformNamespace('en', firstTransform);
+          }
+          return parsed;
         },
       },
       lng: getLastLanguage(),
