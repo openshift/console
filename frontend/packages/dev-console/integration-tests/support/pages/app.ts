@@ -215,7 +215,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Consoles: {
       cy.get('body').then(($body) => {
         if ($body.text().includes('Consoles')) {
-          cy.byTestID('nav').contains('Consoles').click();
+          cy.byLegacyTestID('dev-perspective-nav').contains('Consoles').click();
           cy.byTestID('cluster').should('be.visible').click();
         } else {
           cy.get(devNavigationMenuPO.search).click();
