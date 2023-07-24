@@ -33,6 +33,9 @@ type RoutePageProperties = {
  *
  * Under the hood we use React Router.
  * See https://v5.reactrouter.com/
+ *
+ * Note: This extension should not be used for resource list and details page. Instead please use [console.navigation/resource-ns](#consolenavigationresource-ns) extension,
+which will add both list and details page for a resource, rendering elementary fields.
  */
 export type RoutePage = ExtensionDeclaration<'console.page/route', RoutePageProperties>;
 

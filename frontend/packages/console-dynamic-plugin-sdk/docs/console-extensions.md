@@ -768,7 +768,7 @@ Adds new resource list page to Console router.
 
 ### Summary 
 
-Adds new page to Console router.<br/><br/>Under the hood we use React Router.<br/>See https://v5.reactrouter.com/
+Adds new page to Console router.<br/><br/>Under the hood we use React Router.<br/>See https://v5.reactrouter.com/<br/><br/>Note: This extension should not be used for resource list and details page. Instead please use [console.navigation/resource-ns](#consolenavigationresource-ns) extension,<br/>which will add both list and details page for a resource, rendering elementary fields.
 
 ### Properties
 
