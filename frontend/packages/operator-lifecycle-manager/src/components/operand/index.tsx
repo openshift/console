@@ -203,7 +203,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, showNames
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <LazyActionMenu context={context} />
+        <LazyActionMenu context={context} isDisabled={_.has(obj.metadata, 'deletionTimestamp')} />
       </TableData>
     </>
   );
