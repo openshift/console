@@ -7,13 +7,14 @@ import * as _ from 'lodash';
  *
  * @param base Base URL.
  * @param to Target resource URL.
- * @param options Resolution options.
+ * @param processURL Custom URL processing callback.
  */
 export const resolveURL = (
   base: string,
   to: string,
+  processURL: (url: URL) => URL = _.identity,
   getDocumentOrigin: () => string = _.constant(window.location.origin),
 ) => {
   const baseAbsoluteURL = base.indexOf('://') === -1 ? getDocumentOrigin() + base : base;
-  return new URL(to, baseAbsoluteURL).toString();
+  return processURL(new URL(to, baseAbsoluteURL)).toString();
 };

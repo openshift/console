@@ -3,6 +3,7 @@
 import * as _ from 'lodash';
 import * as semver from 'semver';
 import { PluginStore } from '@console/plugin-sdk/src/store';
+import { getRandomChars } from '@console/shared/src/utils/utils';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
 import { remoteEntryFile } from '../constants';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
@@ -46,9 +47,14 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
       entryCallbackFired: false,
     });
 
+    const scriptURL = resolveURL(baseURL, remoteEntryFile, (url) => {
+      url.search = `?cacheBuster=${getRandomChars()}`;
+      return url;
+    });
+
     const script = document.createElement('script');
     script.id = getScriptElementID(manifest);
-    script.src = resolveURL(baseURL, remoteEntryFile);
+    script.src = scriptURL;
     script.async = true;
 
     script.onload = () => {
@@ -60,10 +66,12 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
     };
 
     script.onerror = (event) => {
-      reject(new ErrorWithCause(`Error while loading entry script for plugin ${pluginID}`, event));
+      reject(
+        new ErrorWithCause(`Error while loading plugin entry script from ${scriptURL}`, event),
+      );
     };
 
-    console.info(`Loading entry script for plugin ${pluginID} from ${script.src}`);
+    console.info(`Loading entry script for plugin ${pluginID}`);
     document.head.appendChild(script);
   });
 

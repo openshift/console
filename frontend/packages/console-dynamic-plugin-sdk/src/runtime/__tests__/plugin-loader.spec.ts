@@ -1,6 +1,7 @@
 import { act } from '@testing-library/react';
 import { Simulate } from 'react-dom/test-utils';
 import { PluginStore } from '@console/plugin-sdk/src/store';
+import * as utilsModule from '@console/shared/src/utils/utils';
 import { ConsolePluginManifestJSON } from '../../schema/plugin-manifest';
 import { Extension } from '../../types';
 import {
@@ -27,6 +28,7 @@ const {
 const fetchPluginManifest = jest.spyOn(pluginManifestModule, 'fetchPluginManifest');
 const resolvePluginDependencies = jest.spyOn(pluginDependenciesModule, 'resolvePluginDependencies');
 const loadDynamicPluginMock = jest.spyOn(pluginLoaderModule, 'loadDynamicPlugin');
+const getRandomCharsMock = jest.spyOn(utilsModule, 'getRandomChars');
 
 const originalConsole = { ...console };
 const originalServerFlags = window.SERVER_FLAGS;
@@ -57,6 +59,10 @@ describe('loadDynamicPlugin', () => {
   const getAllScriptElements = () =>
     document.querySelectorAll<HTMLScriptElement>(`[id^="${scriptIDPrefix}"]`);
 
+  beforeEach(() => {
+    getRandomCharsMock.mockImplementation(() => 'r4nd0m');
+  });
+
   it('updates pluginMap and adds a script element to document head', () => {
     const manifest = getPluginManifest('Test', '1.2.3');
     loadDynamicPlugin('http://example.com/test/', manifest);
@@ -71,7 +77,9 @@ describe('loadDynamicPlugin', () => {
     expect(script instanceof HTMLScriptElement).toBe(true);
     expect(script.parentElement).toBe(document.head);
     expect(script.id).toBe(getScriptElementID(manifest));
-    expect(script.src).toBe('http://example.com/test/plugin-entry.js');
+    expect(script.src).toBe('http://example.com/test/plugin-entry.js?cacheBuster=r4nd0m');
+
+    expect(getRandomCharsMock).toHaveBeenCalledTimes(1);
   });
 
   it('throws an error if a plugin with the same name is already registered', async () => {
@@ -93,12 +101,12 @@ describe('loadDynamicPlugin', () => {
       const allScripts = getAllScriptElements();
       expect(allScripts.length).toBe(1);
       expect(allScripts[0].id).toBe(getScriptElementID(manifest1));
-      expect(allScripts[0].src).toBe('http://example.com/test1/plugin-entry.js');
+      expect(allScripts[0].src).toBe('http://example.com/test1/plugin-entry.js?cacheBuster=r4nd0m');
+
+      expect(getRandomCharsMock).toHaveBeenCalledTimes(1);
 
       expect(consoleMock).toHaveBeenCalledTimes(1);
-      expect(consoleMock).toHaveBeenCalledWith(
-        'Loading entry script for plugin Test@1.2.3 from http://example.com/test1/plugin-entry.js',
-      );
+      expect(consoleMock).toHaveBeenCalledWith('Loading entry script for plugin Test@1.2.3');
     }
   });
 
@@ -132,9 +140,7 @@ describe('loadDynamicPlugin', () => {
         new Error('Entry script for plugin Test@1.2.3 loaded without callback'),
       );
       expect(consoleMock).toHaveBeenCalledTimes(1);
-      expect(consoleMock).toHaveBeenCalledWith(
-        'Loading entry script for plugin Test@1.2.3 from http://example.com/test/plugin-entry.js',
-      );
+      expect(consoleMock).toHaveBeenCalledWith('Loading entry script for plugin Test@1.2.3');
     }
   });
 
@@ -154,9 +160,7 @@ describe('loadDynamicPlugin', () => {
         new Error('Entry script for plugin Test@1.2.3 loaded without callback'),
       );
       expect(consoleMock).toHaveBeenCalledTimes(1);
-      expect(consoleMock).toHaveBeenCalledWith(
-        'Loading entry script for plugin Test@1.2.3 from http://example.com/test/plugin-entry.js',
-      );
+      expect(consoleMock).toHaveBeenCalledWith('Loading entry script for plugin Test@1.2.3');
     }
   });
 });
