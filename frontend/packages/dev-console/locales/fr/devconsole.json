@@ -649,7 +649,7 @@
   "Select a Project to view its details<1></1>.": "Sélectionnez un projet pour en voir les détails<1></1>.",
   "{{kindForRefPlural}} in {{apiVersionForRefPlural}}": "{{kindForRefPlural}} dans {{apiVersionForRefPlural}}",
   "The server doesn't have a resource type {{missingType}}. Try refreshing the page if it was recently added.": "Le serveur n'a pas de type de ressource {{missingType}}. Essayez d'actualiser la page si elle a été ajoutée récemment.",
-  "Select a Project to view the list of {{projectLabelPlural}}<2></2>.": "Sélectionnez un Projet pour afficher la liste des {{projetLabelPlural}}<2></2>.",
+  "Select a Project to view the list of {{projectLabelPlural}}<2></2>.": "Sélectionnez un Projet pour afficher la liste des {{projectLabelPlural}}<2></2>.",
   "Select a Project to search inside<1></1>.": "Sélectionnez un projet pour y effectuer une recherche<1></1>.",
   "BindableKinds": "BindableKinds",
   "Secure route": "Route sécurisé",
