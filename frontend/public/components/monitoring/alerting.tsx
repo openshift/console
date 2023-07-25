@@ -7,7 +7,6 @@ import {
   BlueInfoCircleIcon,
   FormatSeriesTitle,
   GreenCheckCircleIcon,
-  K8sKind,
   PrometheusAlert,
   PrometheusEndpoint,
   PrometheusLabels,
@@ -47,6 +46,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Button,
+  Checkbox,
   CodeBlock,
   CodeBlockCode,
   Dropdown,
@@ -82,7 +82,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, Redirect, Route, Switch } from 'react-router-dom';
+import { Link, Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import {
   alertingErrored,
   alertingLoaded,
@@ -132,6 +132,11 @@ import {
   silenceState,
 } from './utils';
 import { exactMatch, fuzzyCaseInsensitive } from '../factory/table-filters';
+
+const SelectedSilencesContext = React.createContext({
+  selectedSilences: new Set(),
+  setSelectedSilences: undefined,
+});
 
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
@@ -244,6 +249,7 @@ export const StateTimestamp = ({ text, timestamp }) => (
 
 const AlertStateDescription: React.FC<{ alert }> = ({ alert }) => {
   const { t } = useTranslation();
+
   if (alert && !_.isEmpty(alert.silencedBy)) {
     return (
       <StateTimestamp
@@ -361,6 +367,7 @@ const PopoverField: React.FC<{ bodyContent: React.ReactNode; label: string }> = 
 
 const AlertStateHelp: React.FC<{}> = () => {
   const { t } = useTranslation();
+
   return (
     <dl className="co-inline">
       <dt>
@@ -394,6 +401,7 @@ const AlertStateHelp: React.FC<{}> = () => {
 
 const SeverityHelp: React.FC<{}> = () => {
   const { t } = useTranslation();
+
   return (
     <dl className="co-inline">
       <dt>
@@ -429,6 +437,7 @@ const SeverityHelp: React.FC<{}> = () => {
 
 const SourceHelp: React.FC<{}> = () => {
   const { t } = useTranslation();
+
   return (
     <dl className="co-inline">
       <dt>
@@ -493,6 +502,7 @@ const Graph: React.FC<GraphProps> = ({
 };
 
 const tableSilenceClasses = [
+  'pf-c-table__action', // Checkbox
   'pf-u-w-50 pf-u-w-33-on-sm', // Name
   'pf-m-hidden pf-m-visible-on-sm', // Firing alerts
   '', // State
@@ -513,16 +523,41 @@ const SilenceMatchersList = ({ silence }) => (
 );
 
 const SilenceTableRow: React.FC<RowProps<Silence>> = ({ obj }) => {
+  const { t } = useTranslation();
+
   const { createdBy, endsAt, firingAlerts, id, name, startsAt } = obj;
   const state = silenceState(obj);
 
-  const { t } = useTranslation();
+  const { selectedSilences, setSelectedSilences } = React.useContext(SelectedSilencesContext);
+
+  const onCheckboxChange = React.useCallback(
+    (isChecked: boolean) => {
+      setSelectedSilences((oldSet) => {
+        const newSet = new Set(oldSet);
+        if (isChecked) {
+          newSet.add(id);
+        } else {
+          newSet.delete(id);
+        }
+        return newSet;
+      });
+    },
+    [id, setSelectedSilences],
+  );
 
   const [namespace] = useActiveNamespace();
 
   return (
     <>
       <td className={tableSilenceClasses[0]}>
+        <Checkbox
+          id={id}
+          isChecked={selectedSilences.has(id)}
+          isDisabled={state === SilenceStates.Expired}
+          onChange={onCheckboxChange}
+        />
+      </td>
+      <td className={tableSilenceClasses[1]}>
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={SilenceResource} />
           <Link
@@ -542,10 +577,10 @@ const SilenceTableRow: React.FC<RowProps<Silence>> = ({ obj }) => {
           <SilenceMatchersList silence={obj} />
         </div>
       </td>
-      <td className={tableSilenceClasses[1]}>
+      <td className={tableSilenceClasses[2]}>
         <SeverityCounts alerts={firingAlerts} />
       </td>
-      <td className={classNames(tableSilenceClasses[2], 'co-break-word')}>
+      <td className={classNames(tableSilenceClasses[3], 'co-break-word')}>
         <SilenceState silence={obj} />
         {state === SilenceStates.Pending && (
           <StateTimestamp text={t('public~Starts')} timestamp={startsAt} />
@@ -557,15 +592,17 @@ const SilenceTableRow: React.FC<RowProps<Silence>> = ({ obj }) => {
           <StateTimestamp text={t('public~Expired')} timestamp={endsAt} />
         )}
       </td>
-      <td className={tableSilenceClasses[3]}>{createdBy || '-'}</td>
-      <td className={tableSilenceClasses[4]}>
+      <td className={tableSilenceClasses[4]}>{createdBy || '-'}</td>
+      <td className={tableSilenceClasses[5]}>
         <SilenceDropdownKebab silence={obj} />
       </td>
     </>
   );
 };
 
-export const alertMessageResources: { [labelName: string]: K8sKind } = {
+export const alertMessageResources: {
+  [labelName: string]: { kind: string; namespaced?: boolean };
+} = {
   container: ContainerModel,
   daemonset: DaemonSetModel,
   deployment: DeploymentModel,
@@ -661,27 +698,27 @@ const SilencedByList: React.FC<{ silences: Silence[] }> = ({ silences }) => {
     () => [
       {
         id: 'name',
-        props: { className: tableSilenceClasses[0] },
+        props: { className: tableSilenceClasses[1] },
         title: t('public~Name'),
       },
       {
         id: 'firingAlerts',
-        props: { className: tableSilenceClasses[1] },
+        props: { className: tableSilenceClasses[2] },
         title: t('public~Firing alerts'),
       },
       {
         id: 'state',
-        props: { className: tableSilenceClasses[2] },
+        props: { className: tableSilenceClasses[3] },
         title: t('public~State'),
       },
       {
         id: 'createdBy',
-        props: { className: tableSilenceClasses[3] },
+        props: { className: tableSilenceClasses[4] },
         title: t('public~Creator'),
       },
       {
         id: 'actions',
-        props: { className: tableSilenceClasses[4] },
+        props: { className: tableSilenceClasses[5] },
         title: '',
       },
     ],
@@ -964,6 +1001,7 @@ const PrometheusTemplate = ({ text }) => (
 
 const ActiveAlerts: React.FC<{ alerts; ruleID: string; namespace: string }> = (props) => {
   const { t } = useTranslation();
+
   const { alerts, ruleID, namespace } = props;
 
   return (
@@ -1217,13 +1255,13 @@ export const AlertRulesDetailsPage = withFallback(AlertRulesDetailsPage_);
 type ExpireSilenceModalProps = {
   isOpen: boolean;
   setClosed: () => void;
-  silenceId: string;
+  silenceID: string;
 };
 
 const ExpireSilenceModal: React.FC<ExpireSilenceModalProps> = ({
   isOpen,
   setClosed,
-  silenceId,
+  silenceID,
 }) => {
   const { t } = useTranslation();
 
@@ -1235,8 +1273,8 @@ const ExpireSilenceModal: React.FC<ExpireSilenceModalProps> = ({
   const expireSilence = () => {
     setInProgress();
     const url = namespace
-      ? `api/alertmanager-tenancy/api/v2/silence/${silenceId}?namespace=${namespace}`
-      : `${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silenceId}`;
+      ? `api/alertmanager-tenancy/api/v2/silence/${silenceID}?namespace=${namespace}`
+      : `${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silenceID}`;
     consoleFetchJSON
       .delete(url)
       .then(() => {
@@ -1244,7 +1282,7 @@ const ExpireSilenceModal: React.FC<ExpireSilenceModalProps> = ({
         setClosed();
       })
       .catch((err) => {
-        setErrorMessage(_.get(err, 'json.error') || err.message || 'Error saving silence');
+        setErrorMessage(_.get(err, 'json.error') || err.message || 'Error expiring silence');
         setNotInProgress();
       })
       .then(setNotInProgress);
@@ -1290,6 +1328,13 @@ const ExpireSilenceModal: React.FC<ExpireSilenceModalProps> = ({
       </Flex>
     </Modal>
   );
+};
+
+type SilenceDropdownProps = {
+  className?: string;
+  isPlain?: boolean;
+  silence: Silence;
+  Toggle: React.FC<{ onToggle: OnToggle }>;
 };
 
 const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
@@ -1341,7 +1386,7 @@ const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
         position={DropdownPosition.right}
         toggle={<Toggle onToggle={setIsOpen} />}
       />
-      <ExpireSilenceModal isOpen={isModalOpen} setClosed={setModalClosed} silenceId={silence.id} />
+      <ExpireSilenceModal isOpen={isModalOpen} setClosed={setModalClosed} silenceID={silence.id} />
     </>
   );
 };
@@ -1620,6 +1665,7 @@ export const severityRowFilter = (): RowFilter => ({
 
 const SilencesNotLoadedWarning: React.FC<{ silencesLoadError: any }> = ({ silencesLoadError }) => {
   const { t } = useTranslation();
+
   return (
     <PFAlert
       className="co-alert"
@@ -1820,8 +1866,9 @@ const tableRuleClasses = [
 ];
 
 const RuleTableRow: React.FC<RowProps<Rule>> = ({ obj }) => {
-  const title: string = obj.annotations?.description || obj.annotations?.message;
   const { t } = useTranslation();
+
+  const title: string = obj.annotations?.description || obj.annotations?.message;
 
   return (
     <>
@@ -1848,6 +1895,7 @@ const RuleTableRow: React.FC<RowProps<Rule>> = ({ obj }) => {
 
 const RulesPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
+
   const [isExactSearch] = useExactSearch();
   const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
@@ -1962,7 +2010,7 @@ const RulesPage_: React.FC<{}> = () => {
 };
 const RulesPage = withFallback(RulesPage_);
 
-const CreateButton: React.FC<{}> = React.memo(() => {
+const CreateSilenceButton: React.FC<{}> = React.memo(() => {
   const { t } = useTranslation();
 
   const [namespace] = useActiveNamespace();
@@ -1972,12 +2020,61 @@ const CreateButton: React.FC<{}> = React.memo(() => {
       className="co-m-primary-action"
       to={namespace ? `/dev-monitoring/ns/${namespace}/silences/~new` : '/monitoring/silences/~new'}
     >
-      <Button variant="primary" data-test="create-silence-btn">
+      <Button data-test="create-silence-btn" variant="primary">
         {t('public~Create silence')}
       </Button>
     </Link>
   );
 });
+
+type ExpireAllSilencesButtonProps = {
+  setErrorMessage: (string) => void;
+};
+
+const ExpireAllSilencesButton: React.FC<ExpireAllSilencesButtonProps> = ({ setErrorMessage }) => {
+  const { t } = useTranslation('public');
+
+  const [namespace] = useActiveNamespace();
+
+  const [isInProgress, , setInProgress, setNotInProgress] = useBoolean(false);
+
+  const { selectedSilences, setSelectedSilences } = React.useContext(SelectedSilencesContext);
+
+  const onClick = () => {
+    setInProgress();
+    Promise.allSettled(
+      [...selectedSilences].map((silenceID) =>
+        consoleFetchJSON.delete(
+          namespace
+            ? `api/alertmanager-tenancy/api/v2/silence/${silenceID}?namespace=${namespace}`
+            : `${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silenceID}`,
+        ),
+      ),
+    ).then((values) => {
+      setNotInProgress();
+      setSelectedSilences(new Set());
+      refreshNotificationPollers();
+      const errors = values.filter((v) => v.status === 'rejected').map((v: any) => v.reason);
+      if (errors.length > 0) {
+        const messages = errors.map(
+          (err) => _.get(err, 'json.error') || err.message || 'Error expiring silence',
+        );
+        setErrorMessage(messages.join(', '));
+      }
+    });
+  };
+
+  return (
+    <Button
+      isDisabled={selectedSilences.size === 0}
+      isLoading={isInProgress}
+      onClick={onClick}
+      variant="secondary"
+    >
+      {t('Expire {{count}} silence', { count: selectedSilences.size })}
+    </Button>
+  );
+};
 
 const silenceFiringAlertsOrder = (silence: Silence) => {
   const counts = _.countBy(silence.firingAlerts, 'labels.severity');
@@ -1995,10 +2092,38 @@ const silenceStateOrder = (silence: Silence) => [
   _.get(silence, silenceState(silence) === SilenceStates.Pending ? 'startsAt' : 'endsAt'),
 ];
 
+const SelectAllCheckbox: React.FC<{ silences: Silence[] }> = ({ silences }) => {
+  const { selectedSilences, setSelectedSilences } = React.useContext(SelectedSilencesContext);
+
+  const activeSilences = _.filter(silences, (s) => silenceState(s) !== SilenceStates.Expired);
+  const isAllSelected =
+    activeSilences.length > 0 && _.every(activeSilences, (s) => selectedSilences.has(s.id));
+
+  const onChange = React.useCallback(
+    (isChecked: boolean) => {
+      const ids = isChecked ? activeSilences.map((s) => s.id) : [];
+      setSelectedSilences(new Set(ids));
+    },
+    [activeSilences, setSelectedSilences],
+  );
+
+  return (
+    <Checkbox
+      id="select-all-silences-checkbox"
+      isChecked={isAllSelected}
+      isDisabled={activeSilences.length === 0}
+      onChange={onChange}
+    />
+  );
+};
+
 const SilencesPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   const [namespace] = useActiveNamespace();
+
+  const [selectedSilences, setSelectedSilences] = React.useState(new Set());
+  const [errorMessage, setErrorMessage] = React.useState();
 
   const [isExactSearch] = useExactSearch();
   const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
@@ -2035,15 +2160,20 @@ const SilencesPage_: React.FC<{}> = () => {
   const columns = React.useMemo<TableColumn<Silence>[]>(
     () => [
       {
-        id: 'name',
+        id: 'checkbox',
         props: { className: tableSilenceClasses[0] },
+        title: (<SelectAllCheckbox silences={filteredData} />) as any,
+      },
+      {
+        id: 'name',
+        props: { className: tableSilenceClasses[1] },
         sort: 'name',
         title: t('public~Name'),
         transforms: [sortable],
       },
       {
         id: 'firingAlerts',
-        props: { className: tableSilenceClasses[1] },
+        props: { className: tableSilenceClasses[2] },
         sort: (silences: Silence[], direction: 'asc' | 'desc') =>
           _.orderBy(silences, silenceFiringAlertsOrder, [direction]),
         title: t('public~Firing alerts'),
@@ -2051,7 +2181,7 @@ const SilencesPage_: React.FC<{}> = () => {
       },
       {
         id: 'state',
-        props: { className: tableSilenceClasses[2] },
+        props: { className: tableSilenceClasses[3] },
         sort: (silences: Silence[], direction: 'asc' | 'desc') =>
           _.orderBy(silences, silenceStateOrder, [direction]),
         title: t('public~State'),
@@ -2059,18 +2189,18 @@ const SilencesPage_: React.FC<{}> = () => {
       },
       {
         id: 'createdBy',
-        props: { className: tableSilenceClasses[3] },
+        props: { className: tableSilenceClasses[4] },
         sort: 'createdBy',
         title: t('public~Creator'),
         transforms: [sortable],
       },
       {
         id: 'actions',
-        props: { className: tableSilenceClasses[4] },
+        props: { className: tableSilenceClasses[5] },
         title: '',
       },
     ],
-    [t],
+    [filteredData, t],
   );
 
   return (
@@ -2079,41 +2209,55 @@ const SilencesPage_: React.FC<{}> = () => {
         <title>Alerting</title>
       </Helmet>
       <div className="co-m-pane__body">
-        <div className="co-m-pane__createLink--no-title">
-          <CreateButton />
-        </div>
-        <ListPageFilter
-          data={staticData}
-          hideLabelFilter
-          loaded={loaded}
-          onFilterChange={onFilterChange}
-          rowFilters={rowFilters}
-        />
-        {loadError && (
-          <PFAlert
-            className="co-alert"
-            isInline
-            title={t(
-              'public~Error loading silences from Alertmanager. Alertmanager may be unavailable.',
-            )}
-            variant="danger"
-          >
-            {typeof loadError === 'string' ? loadError : loadError.message}
-          </PFAlert>
-        )}
-        <div className="row">
-          <div className="col-xs-12">
-            <VirtualizedTable<Silence>
-              aria-label={t('public~Silences')}
-              columns={columns}
-              data={filteredData ?? []}
-              loaded={loaded}
-              loadError={loadError}
-              Row={SilenceTableRow}
-              unfilteredData={data}
-            />
+        <SelectedSilencesContext.Provider value={{ selectedSilences, setSelectedSilences }}>
+          <Flex>
+            <FlexItem>
+              <ListPageFilter
+                data={staticData}
+                hideLabelFilter
+                loaded={loaded}
+                onFilterChange={onFilterChange}
+                rowFilters={rowFilters}
+              />
+            </FlexItem>
+            <FlexItem>
+              <CreateSilenceButton />
+            </FlexItem>
+            <FlexItem>
+              <ExpireAllSilencesButton setErrorMessage={setErrorMessage} />
+            </FlexItem>
+          </Flex>
+          {loadError && (
+            <PFAlert
+              className="co-alert"
+              isInline
+              title={t(
+                'public~Error loading silences from Alertmanager. Alertmanager may be unavailable.',
+              )}
+              variant="danger"
+            >
+              {typeof loadError === 'string' ? loadError : loadError.message}
+            </PFAlert>
+          )}
+          {errorMessage && (
+            <PFAlert className="co-alert" isInline title={t('error')} variant="danger">
+              {errorMessage}
+            </PFAlert>
+          )}
+          <div className="row">
+            <div className="col-xs-12">
+              <VirtualizedTable<Silence>
+                aria-label={t('public~Silences')}
+                columns={columns}
+                data={filteredData ?? []}
+                loaded={loaded}
+                loadError={loadError}
+                Row={SilenceTableRow}
+                unfilteredData={data}
+              />
+            </div>
           </div>
-        </div>
+        </SelectedSilencesContext.Provider>
       </div>
     </>
   );
@@ -2130,7 +2274,7 @@ const Tab: React.FC<{ active: boolean; children: React.ReactNode }> = ({ active,
   </li>
 );
 
-const AlertingPage: React.FC<{ match: { url: string } }> = ({ match }) => {
+const AlertingPage: React.FC<RouteComponentProps<{ url: string }>> = ({ match }) => {
   const { t } = useTranslation();
 
   const alertsPath = '/monitoring/alerts';
@@ -2172,6 +2316,7 @@ const AlertingPage: React.FC<{ match: { url: string } }> = ({ match }) => {
 
 const PollerPages = () => {
   const dispatch = useDispatch();
+
   const [customExtensions] = useResolvedExtensions<AlertingRulesSourceExtension>(
     isAlertingRulesSource,
   );
@@ -2199,7 +2344,9 @@ const PollerPages = () => {
             dispatch(alertingLoaded(alertsKey, alerts));
             dispatch(alertingSetRules(rulesKey, rules));
           })
-          .catch((e) => dispatch(alertingErrored(alertsKey, e)))
+          .catch((e) => {
+            dispatch(alertingErrored(alertsKey, e));
+          })
           .then(() => {
             if (pollerTimeouts[alertsKey]) {
               clearTimeout(pollerTimeouts[alertsKey]);
@@ -2213,7 +2360,7 @@ const PollerPages = () => {
       dispatch(alertingErrored('alerts', new Error('prometheusBaseURL not set')));
     }
     return () => _.each(pollerTimeouts, clearTimeout);
-  }, [dispatch, alertsSource]);
+  }, [alertsSource, dispatch]);
 
   return (
     <Switch>
@@ -2275,10 +2422,3 @@ type MonitoringResourceIconProps = {
 };
 
 type OnToggle = (value: boolean, e: MouseEvent) => void;
-
-type SilenceDropdownProps = {
-  className?: string;
-  isPlain?: boolean;
-  silence: Silence;
-  Toggle: React.FC<{ onToggle: OnToggle }>;
-};
