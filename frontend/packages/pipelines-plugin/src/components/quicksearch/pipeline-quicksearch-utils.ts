@@ -4,7 +4,8 @@ import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
-import { ClusterTaskModel, TaskModel, TaskModelV1Beta1 } from '../../models';
+import { ClusterTaskModel, TaskModel } from '../../models';
+import { returnValidTaskModel } from '../../utils/pipeline-utils';
 import { TektonTaskAnnotation, TaskProviders } from '../pipelines/const';
 import { ARTIFACTHUB, CTALabel, TEKTONHUB } from './const';
 
@@ -113,12 +114,8 @@ export const updateTask = async (
         ...getInstalledFromAnnotation(),
       };
       task.metadata = _.merge({}, taskData.data.metadata, task.metadata);
-      return k8sUpdate(
-        task.apiVersion === 'tekton.dev/v1' ? TaskModel : TaskModelV1Beta1,
-        task,
-        namespace,
-        name,
-      );
+      const taskModel = returnValidTaskModel(task);
+      return k8sUpdate(taskModel, task, namespace, name);
     })
     .catch((err) => {
       // eslint-disable-next-line no-console
@@ -137,7 +134,8 @@ export const createTask = (url: string, namespace: string) => {
         ...task.metadata.annotations,
         [TektonTaskAnnotation.installedFrom]: TEKTONHUB,
       };
-      return k8sCreate(task.apiVersion === 'tekton.dev/v1' ? TaskModel : TaskModelV1Beta1, task);
+      const taskModel = returnValidTaskModel(task);
+      return k8sCreate(taskModel, task);
     })
     .catch((err) => {
       // eslint-disable-next-line no-console

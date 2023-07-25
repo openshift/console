@@ -18,6 +18,7 @@ import {
   K8sKind,
   K8sResourceKind,
   PersistentVolumeClaimKind,
+  K8sModel,
 } from '@console/internal/module/k8s';
 import {
   PIPELINE_SERVICE_ACCOUNT,
@@ -40,6 +41,9 @@ import {
   TaskModel,
   EventListenerModel,
   RepositoryModel,
+  PipelineModelV1Beta1,
+  PipelineRunModelV1Beta1,
+  TaskModelV1Beta1,
 } from '../models';
 import {
   ComputedStatus,
@@ -51,6 +55,7 @@ import {
   TaskRunKind,
   TektonParam,
   TaskRunStatus,
+  TaskKind,
 } from '../types';
 import { getLatestRun } from './pipeline-augment';
 import {
@@ -501,4 +506,25 @@ export const getEventListeners = (
     return acc;
   }, []);
   return resourceEventListeners;
+};
+
+export const returnValidPipelineModel = (pipeline: PipelineKind): K8sModel => {
+  if (pipeline.apiVersion === 'tekton.dev/v1beta1') {
+    return PipelineModelV1Beta1;
+  }
+  return PipelineModel;
+};
+
+export const returnValidPipelineRunModel = (pipelineRun: PipelineRunKind): K8sModel => {
+  if (pipelineRun.apiVersion === 'tekton.dev/v1beta1') {
+    return PipelineRunModelV1Beta1;
+  }
+  return PipelineRunModel;
+};
+
+export const returnValidTaskModel = (task: TaskKind): K8sModel => {
+  if (task.apiVersion === 'tekton.dev/v1beta1') {
+    return TaskModelV1Beta1;
+  }
+  return TaskModel;
 };
