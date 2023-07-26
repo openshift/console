@@ -134,5 +134,11 @@
   "Upgrade Helm Release": "Mise à jour du Release Helm",
   "Upgrade by selecting a new chart version or manually changing the form values.": "Mettre à jour en sélectionnant une nouvelle version du chart ou en modifiant manuellement les valeurs du formulaire.",
   "Upgrade by selecting a new chart version or manually changing YAML.": "Mettre à jour en sélectionnant une nouvelle version du chart ou en changeant manuellement YAML.",
-  "Rollback Helm Release": "Revenir à une Release Helm"
+  "Rollback Helm Release": "Revenir à une Release Helm",
+  "Browse the catalog to discover available Helm Charts": "Parcourez le catalogue pour découvrir les Helm Charts disponibles",
+  "Invalid YAML - {{errorText}}": "YAML Invalide - {{errorText}}",
+  "Invalid Form Schema - {{errorText}}": "Schéma du Formulaire Invalide - {{errorText}}",
+  "Errors in the form data.": "Erreurs dans les données du formulaire.",
+  "Helm release is not configurable since the Helm Chart doesn't define any values.": "Le Helm release n'est pas configurable puisqu'elle ne définit aucune valeur.",
+  "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.": "Nom doit être composé de caractères alphanumériques minuscules, de traits d'union ou de points, et doit commencer et se terminer par un caractère alphanumérique."
 }
