@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as yup from 'yup';
 import { GitProvider } from '@console/git-service/src';
 import { importFlowRepositoryValidationSchema } from '@console/pipelines-plugin/src/components/repository/repository-form-utils';
-import { nameValidationSchema, nameRegex, resourceNameRegex } from '@console/shared';
+import { nameValidationSchema, nameRegex } from '@console/shared';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 import {
   projectNameValidationSchema,
@@ -68,17 +68,6 @@ export const detectGitType = (url: string): GitProvider => {
 
 export const createComponentName = (nameString: string): string => {
   if (nameRegex.test(nameString)) {
-    return nameString;
-  }
-
-  const kebabCaseStr = _.kebabCase(nameString);
-  return nameString.match(/^\d/) || kebabCaseStr.match(/^\d/)
-    ? `ocp-${kebabCaseStr}`
-    : kebabCaseStr;
-};
-
-export const createResourceName = (nameString: string): string => {
-  if (resourceNameRegex.test(nameString)) {
     return nameString;
   }
 
