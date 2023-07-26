@@ -188,6 +188,7 @@ export const ConfigureUpdateStrategyModal = withHandlePromise(
             onChangeStrategyType={setStrategyType}
             onChangeMaxUnavailable={setMaxUnavailable}
             onChangeMaxSurge={setMaxSurge}
+            replicas={props.deployment.spec.replicas}
           />
         </ModalBody>
         <ModalSubmitFooter
