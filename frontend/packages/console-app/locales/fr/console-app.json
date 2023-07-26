@@ -589,5 +589,7 @@
   "Cluster": "Cluster",
   "Control Plane": "Control Plane",
   "Control Plane status": "État du Control Plane",
-  "Cluster operators": "Opérateurs du cluster"
+  "Cluster operators": "Opérateurs du cluster",
+  "Enable exact string match": "Activer la correspondance exacte des chaînes",
+  "Enable exact string match filtering on resources.": "Activer le filtrage exacte des chaînes de caractères sur les ressources."
 }
