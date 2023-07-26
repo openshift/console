@@ -1,15 +1,13 @@
 import { TFunction } from 'i18next';
 import * as yup from 'yup';
 
-// eslint-disable-next-line no-useless-escape
-export const nameRegex = /^[a-z0-9](?!.*\.\.)(?!.*-\.)(?!.*\.-)[a-z0-9\.-]*[a-z0-9]$/;
-export const resourceNameRegex = /^[a-z]([a-z0-9-]?)*[a-z0-9]$/;
+export const nameRegex = /^[a-z]([a-z0-9]-?)*[a-z0-9]$/;
 export const nameValidationSchema = (t: TFunction, maxLength = 263) =>
   yup
     .string()
     .matches(nameRegex, {
       message: t(
-        'console-shared~Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.',
+        'console-shared~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
       ),
       excludeEmptyString: true,
     })

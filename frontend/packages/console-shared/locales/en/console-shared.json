@@ -298,7 +298,7 @@
   "Set minAvailable to 25%": "Set minAvailable to 25%",
   "An eviction is allowed if at least 25% of pods selected by \"selector\" will still be available after the eviction.": "An eviction is allowed if at least 25% of pods selected by \"selector\" will still be available after the eviction.",
   "Helm Release": "Helm Release",
-  "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.": "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.",
+  "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.": "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.",
   "Cannot be longer than {{characterCount}} characters.": "Cannot be longer than {{characterCount}} characters.",
   "Required": "Required"
 }

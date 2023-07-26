@@ -32,7 +32,6 @@ import { createRoute, createService, dryRunOpt } from '../../utils/shared-submit
 import { AppResources } from '../edit-application/edit-application-types';
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import { DeployImageFormData, Resources } from './import-types';
-import { createResourceName } from './import-validation-utils';
 
 const WAIT_FOR_IMAGESTREAM_UPDATE_TIMEOUT = 5000;
 const WAIT_FOR_IMAGESTREAM_GENERATION = 2;
@@ -213,7 +212,7 @@ export const createOrUpdateDeployment = (
           volumes,
           containers: [
             {
-              name: createResourceName(name),
+              name,
               image: imageRef,
               ports,
               volumeMounts,
@@ -280,7 +279,7 @@ export const createOrUpdateDeploymentConfig = (
           volumes,
           containers: [
             {
-              name: createResourceName(name),
+              name,
               image: _.get(image, ['dockerImageMetadata', 'Config', 'Image']),
               ports,
               volumeMounts,
