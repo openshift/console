@@ -56,7 +56,7 @@ export const dashboardsVariableOptionsLoaded = (
 ) => action(ActionType.DashboardsVariableOptionsLoaded, { key, newOptions, perspective });
 
 export const alertingLoading = (
-  key: 'alerts' | 'silences' | 'notificationAlerts',
+  key: 'alerts' | 'silences' | 'notificationAlerts' | 'devSilences',
   perspective = 'admin',
 ) =>
   action(ActionType.AlertingSetData, {
@@ -65,7 +65,7 @@ export const alertingLoading = (
   });
 
 export const alertingLoaded = (
-  key: 'alerts' | 'silences' | 'notificationAlerts' | 'devAlerts',
+  key: 'alerts' | 'silences' | 'notificationAlerts' | 'devAlerts' | 'devSilences',
   alerts: any,
   perspective = 'admin',
 ) =>
@@ -75,7 +75,7 @@ export const alertingLoaded = (
   });
 
 export const alertingErrored = (
-  key: 'alerts' | 'silences' | 'notificationAlerts' | 'devAlerts',
+  key: 'alerts' | 'silences' | 'notificationAlerts' | 'devAlerts' | 'devSilences',
   loadError: Error,
   perspective = 'admin',
 ) =>

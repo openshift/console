@@ -13,6 +13,7 @@ import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
+import { MonitoringSilencesPage } from './alerts/monitoring-silences';
 import ConnectedMonitoringAlerts from './alerts/MonitoringAlerts';
 import MonitoringEvents from './events/MonitoringEvents';
 import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
@@ -60,6 +61,12 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
             // t('devconsole~Alerts')
             nameKey: 'devconsole~Alerts',
             component: ConnectedMonitoringAlerts,
+          },
+          {
+            href: 'silences',
+            // t('devconsole~Silences')
+            nameKey: 'devconsole~Silences',
+            component: MonitoringSilencesPage,
           },
         ]
       : []),

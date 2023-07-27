@@ -134,15 +134,17 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       return state.set(action.payload.key, action.payload.data);
 
     case ActionType.AlertingSetData: {
-      const alertKey = action.payload.data.perspective === 'admin' ? 'alerts' : 'devAlerts';
-      const alerts = action.payload.key === alertKey ? action.payload.data : state.get(alertKey);
+      const alertsKey = action.payload.data.perspective === 'admin' ? 'alerts' : 'devAlerts';
+      const alerts = action.payload.key === alertsKey ? action.payload.data : state.get(alertsKey);
       // notificationAlerts used by notification drawer and certain dashboards
       const notificationAlerts: NotificationAlerts =
         action.payload.key === 'notificationAlerts'
           ? action.payload.data
           : state.get('notificationAlerts');
+
+      const silencesKey = action.payload.data.perspective === 'admin' ? 'silences' : 'devSilences';
       const silences =
-        action.payload.key === 'silences' ? action.payload.data : state.get('silences');
+        action.payload.key === silencesKey ? action.payload.data : state.get(silencesKey);
 
       const isAlertFiring = (alert) =>
         alert?.state === AlertStates.Firing || alert?.state === AlertStates.Silenced;
@@ -150,14 +152,14 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       silenceFiringAlerts(firingAlerts, silences);
       silenceFiringAlerts(_.filter(notificationAlerts?.data, isAlertFiring), silences);
       notificationAlerts.data = _.reject(notificationAlerts.data, { state: AlertStates.Silenced });
-      state = state.set(alertKey, alerts);
+      state = state.set(alertsKey, alerts);
       state = state.set('notificationAlerts', notificationAlerts);
 
       // For each Silence, store a list of the Alerts it is silencing
       _.each(_.get(silences, 'data'), (s) => {
         s.firingAlerts = _.filter(firingAlerts, (a) => isSilenced(a, s));
       });
-      return state.set('silences', silences);
+      return state.set(silencesKey, silences);
     }
 
     case ActionType.ToggleGraphs:
