@@ -497,7 +497,7 @@
   "View sidebar": "View sidebar",
   "Show tooltips": "Show tooltips",
   "Drop file here": "Drop file here",
-  "Drag and drop YAML or JSON files into the editor, or manually enter files and use <1>---</1> to separate each definition.": "Drag and drop YAML or JSON files into the editor, or manually enter files and use <1>---</1> to separate each definition.",
+  "Drag and drop YAML or JSON files into the editor, or manually enter files and use <2>---</2> to separate each definition.": "Drag and drop YAML or JSON files into the editor, or manually enter files and use <2>---</2> to separate each definition.",
   "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.": "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.",
   "An error occurred": "An error occurred",
   "Reload": "Reload",
