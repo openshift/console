@@ -10,7 +10,7 @@ import { CompatRouter } from 'react-router-dom-v5-compat';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
 import store, { applyReduxExtensions } from '../redux';
-import { withTranslation, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { coFetchJSON, appInternalFetch } from '../co-fetch';
 
 import { detectFeatures } from '../actions/features';
@@ -80,37 +80,57 @@ const EnhancedProvider = ({ provider: ContextProvider, useValueHook, children })
   return <ContextProvider value={value}>{children}</ContextProvider>;
 };
 
-class App_ extends React.PureComponent {
-  constructor(props) {
-    super(props);
+const App = (props) => {
+  const { contextProviderExtensions } = props;
 
-    this._onNavToggle = this._onNavToggle.bind(this);
-    this._onNavSelect = this._onNavSelect.bind(this);
-    this._onNotificationDrawerToggle = this._onNotificationDrawerToggle.bind(this);
-    this._isDesktop = this._isDesktop.bind(this);
-    this._isMobile = this._isMobile.bind(this);
-    this._onResize = this._onResize.bind(this);
-    this.previousDesktopState = this._isDesktop();
-    this.previousMobileState = this._isMobile();
-    this.previousDrawerInlineState = this._isLargeLayout();
+  const isLargeLayout = () => {
+    return window.innerWidth >= NOTIFICATION_DRAWER_BREAKPOINT;
+  };
 
-    this.state = {
-      isMastheadStacked: this._isMobile(),
-      isNavOpen: this._isDesktop(),
-      isDrawerInline: this._isLargeLayout(),
+  const isDesktop = () => {
+    return window.innerWidth >= PF_BREAKPOINT_XL;
+  };
+
+  const isMobile = () => {
+    return window.innerWidth < PF_BREAKPOINT_MD;
+  };
+
+  const [prevProps, setPrevProps] = React.useState(props);
+
+  const [isMastheadStacked, setIsMastheadStacked] = React.useState(isMobile());
+  const [isNavOpen, setIsNavOpen] = React.useState(isDesktop());
+  const [isDrawerInline, setIsDrawerInline] = React.useState(isLargeLayout());
+
+  const previousDesktopState = React.useRef(isDesktop());
+  const previousMobileState = React.useRef(isMobile());
+  const previousDrawerInlineState = React.useRef(isLargeLayout());
+
+  const onResize = React.useCallback(() => {
+    const desktop = isDesktop();
+    const mobile = isMobile();
+    const drawerInline = isLargeLayout();
+    if (previousDesktopState.current !== desktop) {
+      setIsNavOpen(desktop);
+      previousDesktopState.current = desktop;
+    }
+    if (previousMobileState.current !== mobile) {
+      setIsMastheadStacked(mobile);
+      previousMobileState.current = mobile;
+    }
+    if (previousDrawerInlineState.current !== drawerInline) {
+      setIsDrawerInline(drawerInline);
+      previousDrawerInlineState.current = drawerInline;
+    }
+  }, []);
+
+  React.useEffect(() => {
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
     };
-  }
+  }, [onResize]);
 
-  UNSAFE_componentWillMount() {
-    window.addEventListener('resize', this._onResize);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this._onResize);
-  }
-
-  componentDidUpdate(prevProps) {
-    const props = this.props;
+  React.useLayoutEffect(() => {
     // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)
     const oldLocation = _.omit(prevProps.location, ['key']);
     const newLocation = _.omit(props.location, ['key']);
@@ -120,156 +140,117 @@ class App_ extends React.PureComponent {
     // two way data binding :-/
     const { pathname } = props.location;
     store.dispatch(UIActions.setCurrentLocation(pathname));
-  }
+    setPrevProps(props);
+  }, [props, prevProps.location, prevProps.match]);
 
-  _isLargeLayout() {
-    return window.innerWidth >= NOTIFICATION_DRAWER_BREAKPOINT;
-  }
-
-  _isDesktop() {
-    return window.innerWidth >= PF_BREAKPOINT_XL;
-  }
-
-  _isMobile() {
-    return window.innerWidth < PF_BREAKPOINT_MD;
-  }
-
-  _onNavToggle() {
+  const onNavToggle = () => {
     // Some components, like svg charts, need to reflow when nav is toggled.
     // Fire event after a short delay to allow nav animation to complete.
     setTimeout(() => {
       window.dispatchEvent(new Event('sidebar_toggle'));
     }, 100);
 
-    this.setState((prevState) => {
-      return {
-        isNavOpen: !prevState.isNavOpen,
-      };
-    });
-  }
+    setIsNavOpen((prevState) => !prevState);
+  };
 
-  _onNotificationDrawerToggle() {
-    if (this._isLargeLayout()) {
+  const onNotificationDrawerToggle = () => {
+    if (isLargeLayout()) {
       // Fire event after the drawer animation speed delay.
       setTimeout(() => {
         window.dispatchEvent(new Event('sidebar_toggle'));
       }, 250);
     }
-  }
+  };
 
-  _onNavSelect() {
+  const onNavSelect = () => {
     //close nav on mobile nav selects
-    if (!this._isDesktop()) {
-      this.setState({ isNavOpen: false });
+    if (!isDesktop()) {
+      setIsNavOpen(false);
     }
-  }
+  };
 
-  _onResize() {
-    const isDesktop = this._isDesktop();
-    const isMobile = this._isMobile();
-    const isDrawerInline = this._isLargeLayout();
-    if (this.previousDesktopState !== isDesktop) {
-      this.setState({ isNavOpen: isDesktop });
-      this.previousDesktopState = isDesktop;
-    }
-    if (this.previousMobileState !== isMobile) {
-      this.setState({ isMastheadStacked: isMobile });
-      this.previousMobileState = isMobile;
-    }
-    if (this.previousDrawerInlineState !== isDrawerInline) {
-      this.setState({ isDrawerInline });
-      this.previousDrawerInlineState = isDrawerInline;
-    }
-  }
+  const { productName } = getBrandingDetails();
 
-  render() {
-    const { isNavOpen, isDrawerInline, isMastheadStacked } = this.state;
-    const { contextProviderExtensions } = this.props;
-    const { productName } = getBrandingDetails();
-
-    const content = (
-      <>
-        <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-        <ConsoleNotifier location="BannerTop" />
-        <QuickStartDrawer>
-          <div id="app-content" className="co-m-app__content">
-            <Page
-              // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
-              mainTabIndex={null}
-              header={
-                <Masthead
-                  isNavOpen={isNavOpen}
-                  onNavToggle={this._onNavToggle}
-                  isMastheadStacked={isMastheadStacked}
-                />
-              }
-              sidebar={
-                <Navigation
-                  isNavOpen={isNavOpen}
-                  onNavSelect={this._onNavSelect}
-                  onPerspectiveSelected={this._onNavSelect}
-                />
-              }
-              skipToContent={
-                <SkipToContent
-                  href={`${this.props.location.pathname}${this.props.location.search}#content`}
-                >
-                  Skip to Content
-                </SkipToContent>
-              }
+  const content = (
+    <>
+      <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+      <ConsoleNotifier location="BannerTop" />
+      <QuickStartDrawer>
+        <div id="app-content" className="co-m-app__content">
+          <Page
+            // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
+            mainTabIndex={null}
+            header={
+              <Masthead
+                isNavOpen={isNavOpen}
+                onNavToggle={onNavToggle}
+                isMastheadStacked={isMastheadStacked}
+              />
+            }
+            sidebar={
+              <Navigation
+                isNavOpen={isNavOpen}
+                onNavSelect={onNavSelect}
+                onPerspectiveSelected={onNavSelect}
+              />
+            }
+            skipToContent={
+              <SkipToContent href={`${props.location.pathname}${props.location.search}#content`}>
+                Skip to Content
+              </SkipToContent>
+            }
+          >
+            <ConnectedNotificationDrawer
+              isDesktop={isDrawerInline}
+              onDrawerChange={onNotificationDrawerToggle}
             >
-              <ConnectedNotificationDrawer
-                isDesktop={isDrawerInline}
-                onDrawerChange={this._onNotificationDrawerToggle}
-              >
-                <AppContents />
-              </ConnectedNotificationDrawer>
-            </Page>
-            <CloudShell />
-            <GuidedTour />
-          </div>
-          <div id="modal-container" role="dialog" aria-modal="true" />
-        </QuickStartDrawer>
-        <ConsoleNotifier location="BannerBottom" />
-        <FeatureFlagExtensionLoader />
-      </>
-    );
+              <AppContents />
+            </ConnectedNotificationDrawer>
+          </Page>
+          <CloudShell />
+          <GuidedTour />
+        </div>
+        <div id="modal-container" role="dialog" aria-modal="true" />
+      </QuickStartDrawer>
+      <ConsoleNotifier location="BannerBottom" />
+      <FeatureFlagExtensionLoader />
+    </>
+  );
 
-    return (
-      <DetectPerspective>
-        <CaptureTelemetry />
-        <DetectNamespace>
-          {/* TODO remove multicluster */}
-          <DetectCluster>
-            <ModalProvider>
-              {contextProviderExtensions.reduce(
-                (children, e) => (
-                  <EnhancedProvider key={e.uid} {...e.properties}>
-                    {children}
-                  </EnhancedProvider>
-                ),
-                content,
-              )}
-            </ModalProvider>
-          </DetectCluster>
-        </DetectNamespace>
-        <DetectLanguage />
-      </DetectPerspective>
-    );
-  }
-}
+  return (
+    <DetectPerspective>
+      <CaptureTelemetry />
+      <DetectNamespace>
+        {/* TODO remove multicluster */}
+        <DetectCluster>
+          <ModalProvider>
+            {contextProviderExtensions.reduce(
+              (children, e) => (
+                <EnhancedProvider key={e.uid} {...e.properties}>
+                  {children}
+                </EnhancedProvider>
+              ),
+              content,
+            )}
+          </ModalProvider>
+        </DetectCluster>
+      </DetectNamespace>
+      <DetectLanguage />
+    </DetectPerspective>
+  );
+};
 
-const AppWithExtensions = withTranslation()(function AppWithExtensions(props) {
+const AppWithExtensions = (props) => {
   const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions(isReduxReducer);
   const [contextProviderExtensions, providersResolved] = useResolvedExtensions(isContextProvider);
 
   if (reducersResolved && providersResolved) {
     applyReduxExtensions(reduxReducerExtensions);
-    return <App_ contextProviderExtensions={contextProviderExtensions} {...props} />;
+    return <App contextProviderExtensions={contextProviderExtensions} {...props} />;
   }
 
   return <LoadingBox />;
-});
+};
 
 render(<LoadingBox />, document.getElementById('app'));
 
