@@ -30,6 +30,7 @@ import {
   NamespaceBarProps,
   CodeEditorRef,
   QueryBrowserProps,
+  UseAnnotationsModal,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -776,8 +777,6 @@ export const ErrorBoundaryFallbackPage: React.FC<ErrorBoundaryFallbackProps> = r
  * @param {boolean} showStackedControl - Flag to enable displaying a graph control for switching between stacked graph mode and line graph mode.
  * @param {number} timespan - (optional) The timespan that should be covered by the graph in milliseconds.
  * @param {string} units - (optional) Units to display on the Y-axis and in the tooltip.
-
-
  * @example
  * ```tsx
  * <QueryBrowser
@@ -793,3 +792,20 @@ export const ErrorBoundaryFallbackPage: React.FC<ErrorBoundaryFallbackProps> = r
  */
 export const QueryBrowser: React.FC<QueryBrowserProps> = require('@console/shared/src/components/query-browser')
   .default;
+
+/**
+ * A hook for launching a modal for editing a Kubernetes resource's annotations.
+ *
+ * @param {object} resource - The resource to edit annotations for, an object of K8sResourceCommon type.
+ * @returns A function which will launch a modal for editing a resource's annotations.
+ * @example
+ * ```tsx
+ * const PodAnnotationsButton = ({ pod }) => {
+ *   const { t } = useTranslation();
+ *   const launchAnnotationsModal = useAnnotationsModal<PodKind>(pod);
+ *   return <button onClick={launchAnnotationsModal}>{t('Edit Pod Annotations')}</button>
+ * }
+ * ```
+ */
+export const useAnnotationsModal: UseAnnotationsModal = require('@console/shared/src/hooks/useAnnotationsModal')
+  .useAnnotationsModal;

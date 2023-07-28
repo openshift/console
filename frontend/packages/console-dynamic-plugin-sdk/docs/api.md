@@ -63,10 +63,11 @@
 61.  [`NamespaceBar`](#namespacebar)
 62.  [`ErrorBoundaryFallbackPage`](#errorboundaryfallbackpage)
 63.  [`QueryBrowser`](#querybrowser)
-64. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
-65. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
-66. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
-67. [DEPRECATED] [`YAMLEditor`](#yamleditor)
+64.  [`useAnnotationsModal`](#useannotationsmodal)
+65. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
+66. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
+67. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+68. [DEPRECATED] [`YAMLEditor`](#yamleditor)
 
 ---
 
@@ -2236,10 +2237,46 @@ A component that renders a graph of the results from a Prometheus PromQL query a
 | `showLegend` | (optional) Flag to enable displaying a legend below the graph. |
 | `showStackedControl` | Flag to enable displaying a graph control for switching between stacked graph mode and line graph mode. |
 | `timespan` | (optional) The timespan that should be covered by the graph in milliseconds. |
-| `units` | (optional) Units to display on the Y-axis and in the tooltip.
+| `units` | (optional) Units to display on the Y-axis and in the tooltip. |
 
- |
 
+
+---
+
+## `useAnnotationsModal`
+
+### Summary 
+
+A hook for launching a modal for editing a Kubernetes resource's annotations.
+
+
+
+### Example
+
+
+```tsx
+const PodAnnotationsButton = ({ pod }) => {
+  const { t } = useTranslation();
+  const launchAnnotationsModal = useAnnotationsModal<PodKind>(pod);
+  return <button onClick={launchAnnotationsModal}>{t('Edit Pod Annotations')}</button>
+}
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `resource` | The resource to edit annotations for, an object of K8sResourceCommon type. |
+
+
+
+### Returns
+
+A function which will launch a modal for editing a resource's annotations.
 
 
 ---

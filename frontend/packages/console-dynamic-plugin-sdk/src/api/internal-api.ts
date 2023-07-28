@@ -21,8 +21,6 @@ import {
   QuickStartsLoaderProps,
   UseURLPoll,
   UseLastNamespace,
-  AnnotationsModalProps,
-  ModalWrapperProps,
 } from './internal-types';
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
@@ -71,7 +69,3 @@ export const useURLPoll: UseURLPoll = require('@console/internal/components/util
   .useURLPoll;
 export const useLastNamespace: UseLastNamespace = require('@console/app/src/components/detect-namespace/useLastNamespace')
   .useLastNamespace;
-export const ModalWrapper: React.FC<ModalWrapperProps> = require('@console/internal/components/factory/modal')
-  .ModalWrapper;
-export const AnnotationsModal: React.FC<AnnotationsModalProps> = require('@console/internal/components/modals/tags')
-  .AnnotationsModal;

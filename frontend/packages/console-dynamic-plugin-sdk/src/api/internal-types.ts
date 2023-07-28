@@ -294,21 +294,3 @@ export type UseURLPoll = <R>(
   delay?: number,
   ...dependencies: any[]
 ) => [R, any, boolean];
-
-export type ModalWrapperProps = {
-  blocking?: boolean;
-  className?: string;
-  onClose?: (event?: React.SyntheticEvent) => void;
-};
-
-export type TagsModalProps = {
-  cancel?: () => void;
-  close?: () => void;
-  kind: K8sModel;
-  path: string;
-  resource: K8sResourceCommon;
-  tags?: { [key: string]: string };
-  titleKey: string;
-};
-
-export type AnnotationsModalProps = Omit<TagsModalProps, 'path' | 'tags' | 'titleKey'>;

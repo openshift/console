@@ -21,8 +21,8 @@ import {
   isHorizontalNavTab as DynamicIsResourceNavTab,
   NavTab as DynamicNavTab,
   isTab as DynamicIsNavTab,
-  ExtensionK8sGroupModel,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
+import { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
