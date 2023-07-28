@@ -1,6 +1,13 @@
 import { Base64 } from 'js-base64';
 import * as ParseBitbucketUrl from 'parse-bitbucket-url';
 import 'whatwg-fetch';
+import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
+import {
+  API_PROXY_URL,
+  ProxyResponse,
+  consoleProxyFetchJSON,
+  convertHeaders,
+} from '@console/shared/src/utils/proxy';
 import {
   GitSource,
   SecretType,
@@ -40,9 +47,34 @@ export class BitbucketService extends BaseService {
     }
   };
 
-  protected fetchJson = async (url: string) => {
+  protected fetchJson = async (
+    url: string,
+    requestMethod?: string,
+    headers?: object,
+    body?: object,
+  ) => {
     const authHeaders = this.getAuthProvider();
-    const response = await fetch(url, { headers: { Accept: 'application/json', ...authHeaders } });
+
+    const requestHeaders = {
+      Accept: 'application/json',
+      ...authHeaders,
+      ...headers,
+    };
+
+    if (this.isServer) {
+      return consoleProxyFetchJSON({
+        url,
+        method: requestMethod || 'GET',
+        headers: convertHeaders(requestHeaders),
+        ...(body && { body: JSON.stringify(body) }),
+      });
+    }
+
+    const response = await fetch(url, {
+      method: requestMethod || 'GET',
+      headers: requestHeaders,
+      ...(body && { body: JSON.stringify(body) }),
+    });
     if (!response.ok) {
       throw response;
     }
@@ -144,6 +176,32 @@ export class BitbucketService extends BaseService {
     } catch (e) {
       return { languages: [] };
     }
+  };
+
+  createRepoWebhook = async (token: string, webhookURL: string): Promise<boolean> => {
+    const headers = {
+      'Content-Type': ['application/json'],
+      Authorization: [`Basic ${token}`],
+    };
+    const body = {
+      url: webhookURL,
+      events: ['repo:push', 'pullrequest:created', 'pullrequest:updated'],
+      skip_cert_verification: true,
+      active: true,
+    };
+    const url = this.isServer
+      ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}/hooks`
+      : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/hooks`;
+
+    /* Using DevConsole Proxy to create webhook as Bitbucket is giving CORS error */
+    const webhookResponse: ProxyResponse = await consoleFetchJSON.post(API_PROXY_URL, {
+      url,
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    return webhookResponse.statusCode === 201;
   };
 
   isFilePresent = async (path: string): Promise<boolean> => {

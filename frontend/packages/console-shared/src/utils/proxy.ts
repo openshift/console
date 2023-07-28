@@ -2,7 +2,7 @@ import { safeLoad } from 'js-yaml';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 
-const API_PROXY_URL = '/api/dev-console/proxy/internet';
+export const API_PROXY_URL = '/api/dev-console/proxy/internet';
 
 type ProxyRequest = {
   method: string;
@@ -12,7 +12,7 @@ type ProxyRequest = {
   body?: string;
 };
 
-type ProxyResponse = {
+export type ProxyResponse = {
   statusCode: number;
   headers: Record<string, string[]>;
   body: string;
@@ -25,6 +25,13 @@ const isJSONString = (str: string): boolean => {
     return false;
   }
   return true;
+};
+
+export const convertHeaders = (headers): Record<string, string[]> => {
+  return Object.keys(headers).reduce((output, key) => {
+    output[key] = [headers[key]];
+    return output;
+  }, {});
 };
 
 /**

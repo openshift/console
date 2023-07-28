@@ -102,7 +102,8 @@ const RepositoryOverview = () => {
         values.method === GitProvider.GITHUB &&
         values.githubAppAvailable === true
       ) &&
-        values?.webhook?.url && (
+        values?.webhook?.url &&
+        !values?.webhook?.autoAttach && (
           <FormGroup fieldId="step-4">
             <Title headingLevel="h4" size={TitleSizes.md}>
               {t('pipelines-plugin~Step 4')}
