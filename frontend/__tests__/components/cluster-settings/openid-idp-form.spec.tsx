@@ -4,17 +4,14 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { ListInput } from '../../../public/components/utils';
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
 import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
-import {
-  AddOpenIDIDPPage,
-  AddOpenIDIDPPageState,
-} from '../../../public/components/cluster-settings/openid-idp-form';
+import { AddOpenIDIDPPage } from '../../../public/components/cluster-settings/openid-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: OpenID Connect', () => {
-  let wrapper: ShallowWrapper<{}, AddOpenIDIDPPageState>;
+  let wrapper: ShallowWrapper<any>;
 
   beforeEach(() => {
-    wrapper = shallow(<AddOpenIDIDPPage />).dive();
+    wrapper = shallow(<AddOpenIDIDPPage />);
   });
 
   it('should render AddOpenIDIDPPage component', () => {
@@ -39,7 +36,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should prefill openid in name field by default', () => {
-    expect(wrapper.find(IDPNameInput).props().value).toEqual(wrapper.state().name);
+    expect(wrapper.find(IDPNameInput).props().value).toEqual('openid');
   });
 
   it('should prefill OpenID list input default values', () => {

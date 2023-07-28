@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { withTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
-import { AsyncComponent, ButtonBar, PromiseComponent, history, PageHeading } from '../utils';
-import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
+import { AsyncComponent, ButtonBar, history, PageHeading } from '../utils';
+import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 
 export const DroppableFileInput = (props: any) => (
@@ -17,22 +16,41 @@ export const DroppableFileInput = (props: any) => (
   />
 );
 
-class AddHTPasswdPageWithTranslation extends PromiseComponent<
-  AddHTPasswdPageProps,
-  AddHTPasswdPageState
-> {
-  readonly state: AddHTPasswdPageState = {
-    name: 'htpasswd',
-    htpasswdFileContent: '',
-    inProgress: false,
-    errorMessage: '',
+export const AddHTPasswdPage = () => {
+  const [inProgress, setInProgress] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const [name, setName] = React.useState('htpasswd');
+  const [htpasswdFileContent, setHtpasswdFileContent] = React.useState('');
+
+  const { t } = useTranslation();
+
+  const thenPromise = (res) => {
+    setInProgress(false);
+    setErrorMessage('');
+    return res;
   };
 
-  getOAuthResource(): Promise<OAuthKind> {
-    return this.handlePromise(getOAuthResource());
-  }
+  const catchError = (error) => {
+    const err = error.message || t('public~An error occurred. Please try again.');
+    setInProgress(false);
+    setErrorMessage(err);
+    return Promise.reject(err);
+  };
 
-  createHTPasswdSecret(): Promise<K8sResourceKind> {
+  const handlePromise = (promise) => {
+    setInProgress(true);
+
+    return promise.then(
+      (res) => thenPromise(res),
+      (error) => catchError(error),
+    );
+  };
+
+  const getOAuthResource = () => {
+    return handlePromise(getOAuth());
+  };
+
+  const createHTPasswdSecret = () => {
     const secret = {
       apiVersion: 'v1',
       kind: 'Secret',
@@ -41,15 +59,14 @@ class AddHTPasswdPageWithTranslation extends PromiseComponent<
         namespace: 'openshift-config',
       },
       stringData: {
-        htpasswd: this.state.htpasswdFileContent,
+        htpasswd: htpasswdFileContent,
       },
     };
 
-    return this.handlePromise(k8sCreate(SecretModel, secret));
-  }
+    return handlePromise(k8sCreate(SecretModel, secret));
+  };
 
-  addHTPasswdIDP(oauth: OAuthKind, secretName: string, dryRun?: boolean): Promise<K8sResourceKind> {
-    const { name } = this.state;
+  const addHTPasswdIDP = (oauth: OAuthKind, secretName: string, dryRun?: boolean) => {
     const idp: IdentityProvider = {
       name,
       type: 'HTPasswd',
@@ -61,99 +78,79 @@ class AddHTPasswdPageWithTranslation extends PromiseComponent<
       },
     };
 
-    return this.handlePromise(addIDP(oauth, idp, dryRun));
-  }
+    return handlePromise(addIDP(oauth, idp, dryRun));
+  };
 
-  submit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const submit = (e) => {
     e.preventDefault();
-    if (!this.state.htpasswdFileContent) {
-      this.setState({
-        errorMessage: this.props.t('public~You must specify an HTPasswd file.'),
-      });
+    if (!htpasswdFileContent) {
+      setErrorMessage(t('public~You must specify an HTPasswd file.'));
       return;
     }
 
     // Clear any previous errors.
-    this.setState({ errorMessage: '' });
-    this.getOAuthResource().then((oauth: OAuthKind) => {
-      this.addHTPasswdIDP(oauth, mockNames.secret, true)
+    setErrorMessage('');
+    getOAuthResource().then((oauth: OAuthKind) => {
+      addHTPasswdIDP(oauth, mockNames.secret, true)
         .then(() => {
-          return this.createHTPasswdSecret()
-            .then((secret: K8sResourceKind) => this.addHTPasswdIDP(oauth, secret.metadata.name))
+          return createHTPasswdSecret()
+            .then((secret: K8sResourceKind) => addHTPasswdIDP(oauth, secret.metadata.name))
             .then(redirectToOAuthPage);
         })
         .catch((err) => {
-          this.setState({ errorMessage: err });
+          setErrorMessage(err);
         });
     });
   };
 
-  nameChanged: React.ReactEventHandler<HTMLInputElement> = (e) => {
-    this.setState({ name: e.currentTarget.value });
-  };
+  const title = t('public~Add Identity Provider: HTPasswd');
 
-  htpasswdFileChanged = (htpasswdFileContent: string) => {
-    this.setState({ htpasswdFileContent });
-  };
-
-  render() {
-    const { name, htpasswdFileContent } = this.state;
-    const { t } = this.props;
-    const title = t('public~Add Identity Provider: HTPasswd');
-
-    return (
-      <div className="co-m-pane__form">
-        <Helmet>
-          <title>{title}</title>
-        </Helmet>
-        <PageHeading
-          title={title}
-          helpText={t(
-            'public~HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.',
-          )}
-        />
-        <div className="co-m-pane__body">
-          <form onSubmit={this.submit} name="form" className="co-m-pane__body-group">
-            <IDPNameInput value={name} onChange={this.nameChanged} />
-            <div className="form-group">
-              <DroppableFileInput
-                onChange={this.htpasswdFileChanged}
-                inputFileData={htpasswdFileContent}
-                id="htpasswd-file"
-                label={t('public~HTPasswd file')}
-                inputFieldHelpText={t(
-                  'public~Upload an HTPasswd file created using the htpasswd command.',
-                )}
-                isRequired
-                hideContents
-              />
-            </div>
-            <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-              <ActionGroup className="pf-c-form">
-                <Button type="submit" variant="primary">
-                  {t('public~Add')}
-                </Button>
-                <Button type="button" variant="secondary" onClick={history.goBack}>
-                  {t('public~Cancel')}
-                </Button>
-              </ActionGroup>
-            </ButtonBar>
-          </form>
-        </div>
+  return (
+    <div className="co-m-pane__form">
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <PageHeading
+        title={title}
+        helpText={t(
+          'public~HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.',
+        )}
+      />
+      <div className="co-m-pane__body">
+        <form onSubmit={submit} name="form" className="co-m-pane__body-group">
+          <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
+          <div className="form-group">
+            <DroppableFileInput
+              onChange={(c: string) => setHtpasswdFileContent(c)}
+              inputFileData={htpasswdFileContent}
+              id="htpasswd-file"
+              label={t('public~HTPasswd file')}
+              inputFieldHelpText={t(
+                'public~Upload an HTPasswd file created using the htpasswd command.',
+              )}
+              isRequired
+              hideContents
+            />
+          </div>
+          <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button type="submit" variant="primary">
+                {t('public~Add')}
+              </Button>
+              <Button type="button" variant="secondary" onClick={history.goBack}>
+                {t('public~Cancel')}
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
       </div>
-    );
-  }
-}
-
-export const AddHTPasswdPage = withTranslation()(AddHTPasswdPageWithTranslation);
+    </div>
+  );
+};
 
 export type AddHTPasswdPageState = {
   name: string;
   htpasswdFileContent: string;
   inProgress: boolean;
   errorMessage: string;
-};
-
-type AddHTPasswdPageProps = {
-  t: TFunction;
 };

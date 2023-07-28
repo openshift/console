@@ -1,34 +1,51 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { withTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
-import { ButtonBar, PromiseComponent, history, PageHeading } from '../utils';
-import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
+import { ButtonBar, history, PageHeading } from '../utils';
+import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 
-class AddGooglePageWithTranslation extends PromiseComponent<
-  AddGooglePageProps,
-  AddGooglePageState
-> {
-  readonly state: AddGooglePageState = {
-    name: 'google',
-    clientID: '',
-    clientSecret: '',
-    hostedDomain: '',
-    inProgress: false,
-    errorMessage: '',
+export const AddGooglePage = () => {
+  const [inProgress, setInProgress] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const [name, setName] = React.useState('google');
+  const [clientID, setClientID] = React.useState('');
+  const [clientSecret, setClientSecret] = React.useState('');
+  const [hostedDomain, setHostedDomain] = React.useState('');
+
+  const { t } = useTranslation();
+
+  const thenPromise = (res) => {
+    setInProgress(false);
+    setErrorMessage('');
+    return res;
   };
 
-  getOAuthResource(): Promise<OAuthKind> {
-    return this.handlePromise(getOAuthResource());
-  }
+  const catchError = (error) => {
+    const err = error.message || t('public~An error occurred. Please try again.');
+    setInProgress(false);
+    setErrorMessage(err);
+    return Promise.reject(err);
+  };
 
-  createClientSecret(): Promise<K8sResourceKind> {
-    const { clientSecret } = this.state;
+  const handlePromise = (promise) => {
+    setInProgress(true);
+
+    return promise.then(
+      (res) => thenPromise(res),
+      (error) => catchError(error),
+    );
+  };
+
+  const getOAuthResource = () => {
+    return handlePromise(getOAuth());
+  };
+
+  const createClientSecret = () => {
     const secret = {
       apiVersion: 'v1',
       kind: 'Secret',
@@ -41,15 +58,10 @@ class AddGooglePageWithTranslation extends PromiseComponent<
       },
     };
 
-    return this.handlePromise(k8sCreate(SecretModel, secret));
-  }
+    return handlePromise(k8sCreate(SecretModel, secret));
+  };
 
-  addGoogleIDP(
-    oauth: OAuthKind,
-    clientSecretName: string,
-    dryRun?: boolean,
-  ): Promise<K8sResourceKind> {
-    const { name, clientID, hostedDomain } = this.state;
+  const addGoogleIDP = (oauth: OAuthKind, clientSecretName: string, dryRun?: boolean) => {
     const idp: IdentityProvider = {
       name,
       type: 'Google',
@@ -63,122 +75,101 @@ class AddGooglePageWithTranslation extends PromiseComponent<
       },
     };
 
-    return this.handlePromise(addIDP(oauth, idp, dryRun));
-  }
+    return handlePromise(addIDP(oauth, idp, dryRun));
+  };
 
-  submit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const submit = (e) => {
     e.preventDefault();
 
     // Clear any previous errors.
-    this.setState({ errorMessage: '' });
-    this.getOAuthResource().then((oauth: OAuthKind) => {
-      this.addGoogleIDP(oauth, mockNames.secret, true)
+    setErrorMessage('');
+    getOAuthResource().then((oauth: OAuthKind) => {
+      addGoogleIDP(oauth, mockNames.secret, true)
         .then(() => {
-          return this.createClientSecret()
-            .then((secret: K8sResourceKind) => this.addGoogleIDP(oauth, secret.metadata.name))
+          return createClientSecret()
+            .then((secret: K8sResourceKind) => addGoogleIDP(oauth, secret.metadata.name))
             .then(redirectToOAuthPage);
         })
         .catch((err) => {
-          this.setState({ errorMessage: err });
+          setErrorMessage(err);
         });
     });
   };
 
-  nameChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({ name: event.currentTarget.value });
-  };
+  const title = t('public~Add Identity Provider: Google');
 
-  clientIDChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({ clientID: event.currentTarget.value });
-  };
-
-  clientSecretChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({ clientSecret: event.currentTarget.value });
-  };
-
-  hostedDomainChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({ hostedDomain: event.currentTarget.value });
-  };
-
-  render() {
-    const { name, clientID, clientSecret, hostedDomain } = this.state;
-    const { t } = this.props;
-    const title = t('public~Add Identity Provider: Google');
-    return (
-      <div className="co-m-pane__form">
-        <Helmet>
-          <title>{title}</title>
-        </Helmet>
-        <PageHeading
-          title={title}
-          helpText={t(
-            'public~You can use Google integration for users authenticating with Google credentials.',
-          )}
-        />
-        <div className="co-m-pane__body">
-          <form onSubmit={this.submit} name="form" className="co-m-pane__body-group">
-            <IDPNameInput value={name} onChange={this.nameChanged} />
-            <div className="form-group">
-              <label className="control-label co-required" htmlFor="client-id">
-                {t('public~Client ID')}
-              </label>
-              <input
-                className="pf-c-form-control"
-                type="text"
-                onChange={this.clientIDChanged}
-                value={clientID}
-                id="client-id"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label className="control-label co-required" htmlFor="client-secret">
-                {t('public~Client secret')}
-              </label>
-              <input
-                className="pf-c-form-control"
-                type="password"
-                onChange={this.clientSecretChanged}
-                value={clientSecret}
-                id="client-secret"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label className="control-label co-required" htmlFor="hosted-domain">
-                {t('public~Hosted domain')}
-              </label>
-              <input
-                className="pf-c-form-control"
-                type="text"
-                onChange={this.hostedDomainChanged}
-                value={hostedDomain}
-                id="hosted-domain"
-                aria-describedby="idp-hosted-domain-help"
-                required
-              />
-              <p className="help-block" id="idp-hosted-domain-help">
-                {t('public~Restrict users to a Google App domain.')}
-              </p>
-            </div>
-            <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-              <ActionGroup className="pf-c-form">
-                <Button type="submit" variant="primary" data-test-id="add-idp">
-                  {t('public~Add')}
-                </Button>
-                <Button type="button" variant="secondary" onClick={history.goBack}>
-                  {t('public~Cancel')}
-                </Button>
-              </ActionGroup>
-            </ButtonBar>
-          </form>
-        </div>
+  return (
+    <div className="co-m-pane__form">
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <PageHeading
+        title={title}
+        helpText={t(
+          'public~You can use Google integration for users authenticating with Google credentials.',
+        )}
+      />
+      <div className="co-m-pane__body">
+        <form onSubmit={submit} name="form" className="co-m-pane__body-group">
+          <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="client-id">
+              {t('public~Client ID')}
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="text"
+              onChange={(e) => setClientID(e.currentTarget.value)}
+              value={clientID}
+              id="client-id"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="client-secret">
+              {t('public~Client secret')}
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="password"
+              onChange={(e) => setClientSecret(e.currentTarget.value)}
+              value={clientSecret}
+              id="client-secret"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="hosted-domain">
+              {t('public~Hosted domain')}
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="text"
+              onChange={(e) => setHostedDomain(e.currentTarget.value)}
+              value={hostedDomain}
+              id="hosted-domain"
+              aria-describedby="idp-hosted-domain-help"
+              required
+            />
+            <p className="help-block" id="idp-hosted-domain-help">
+              {t('public~Restrict users to a Google App domain.')}
+            </p>
+          </div>
+          <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button type="submit" variant="primary" data-test-id="add-idp">
+                {t('public~Add')}
+              </Button>
+              <Button type="button" variant="secondary" onClick={history.goBack}>
+                {t('public~Cancel')}
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
       </div>
-    );
-  }
-}
-
-export const AddGooglePage = withTranslation()(AddGooglePageWithTranslation);
+    </div>
+  );
+};
 
 export type AddGooglePageState = {
   name: string;
@@ -187,8 +178,4 @@ export type AddGooglePageState = {
   clientSecret: string;
   inProgress: boolean;
   errorMessage: string;
-};
-
-type AddGooglePageProps = {
-  t: TFunction;
 };
