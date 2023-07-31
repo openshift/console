@@ -1,0 +1,162 @@
+[
+    {
+      "name": ".eslintrc",
+      "path": ".eslintrc",
+      "sha": "f9d619ca7dbe59d7fa9ca8fd7c5a9122b254d03d",
+      "size": 458,
+      "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/.eslintrc?ref=main",
+      "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/.eslintrc",
+      "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/f9d619ca7dbe59d7fa9ca8fd7c5a9122b254d03d",
+      "download_url": "https://raw.githubusercontent.com/openshift-dev-console/kn-func-typescript-http/main/.eslintrc",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/.eslintrc?ref=main",
+        "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/f9d619ca7dbe59d7fa9ca8fd7c5a9122b254d03d",
+        "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/.eslintrc"
+      }
+    },
+    {
+      "name": ".gitignore",
+      "path": ".gitignore",
+      "sha": "3abd5fdff11e295a0d72346ac99fe7034da1c6cb",
+      "size": 126,
+      "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/.gitignore?ref=main",
+      "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/.gitignore",
+      "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/3abd5fdff11e295a0d72346ac99fe7034da1c6cb",
+      "download_url": "https://raw.githubusercontent.com/openshift-dev-console/kn-func-typescript-http/main/.gitignore",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/.gitignore?ref=main",
+        "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/3abd5fdff11e295a0d72346ac99fe7034da1c6cb",
+        "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/.gitignore"
+      }
+    },
+    {
+      "name": ".prettierrc",
+      "path": ".prettierrc",
+      "sha": "0706fd1552751fdb3b3e69defb7135b426b18616",
+      "size": 90,
+      "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/.prettierrc?ref=main",
+      "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/.prettierrc",
+      "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/0706fd1552751fdb3b3e69defb7135b426b18616",
+      "download_url": "https://raw.githubusercontent.com/openshift-dev-console/kn-func-typescript-http/main/.prettierrc",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/.prettierrc?ref=main",
+        "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/0706fd1552751fdb3b3e69defb7135b426b18616",
+        "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/.prettierrc"
+      }
+    },
+    {
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "d6cc12f6d20a25cf0bf414ca0099e0dd1270d8c9",
+      "size": 1889,
+      "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/README.md?ref=main",
+      "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/README.md",
+      "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/d6cc12f6d20a25cf0bf414ca0099e0dd1270d8c9",
+      "download_url": "https://raw.githubusercontent.com/openshift-dev-console/kn-func-typescript-http/main/README.md",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/README.md?ref=main",
+        "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/d6cc12f6d20a25cf0bf414ca0099e0dd1270d8c9",
+        "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/README.md"
+      }
+    },
+    {
+      "name": "func.yaml",
+      "path": "func.yaml",
+      "sha": "91767c9c02cee2efe4fe901e10ca94a2fbda3f54",
+      "size": 406,
+      "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/func.yaml?ref=main",
+      "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/func.yaml",
+      "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/91767c9c02cee2efe4fe901e10ca94a2fbda3f54",
+      "download_url": "https://raw.githubusercontent.com/openshift-dev-console/kn-func-typescript-http/main/func.yaml",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/func.yaml?ref=main",
+        "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/91767c9c02cee2efe4fe901e10ca94a2fbda3f54",
+        "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/func.yaml"
+      }
+    },
+    {
+      "name": "package-lock.json",
+      "path": "package-lock.json",
+      "sha": "ac311a535ab217264cfd5d8510112a40f4f07f9b",
+      "size": 296890,
+      "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/package-lock.json?ref=main",
+      "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/package-lock.json",
+      "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/ac311a535ab217264cfd5d8510112a40f4f07f9b",
+      "download_url": "https://raw.githubusercontent.com/openshift-dev-console/kn-func-typescript-http/main/package-lock.json",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/package-lock.json?ref=main",
+        "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/ac311a535ab217264cfd5d8510112a40f4f07f9b",
+        "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/package-lock.json"
+      }
+    },
+    {
+      "name": "package.json",
+      "path": "package.json",
+      "sha": "3736c3a890ae67db07e77ec5b12fd22680d50faf",
+      "size": 1301,
+      "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/package.json?ref=main",
+      "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/package.json",
+      "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/3736c3a890ae67db07e77ec5b12fd22680d50faf",
+      "download_url": "https://raw.githubusercontent.com/openshift-dev-console/kn-func-typescript-http/main/package.json",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/package.json?ref=main",
+        "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/3736c3a890ae67db07e77ec5b12fd22680d50faf",
+        "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/package.json"
+      }
+    },
+    {
+      "name": "src",
+      "path": "src",
+      "sha": "80c0fadc3c8404384d87c8bd0cfadada12556314",
+      "size": 0,
+      "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/src?ref=main",
+      "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/tree/main/src",
+      "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/trees/80c0fadc3c8404384d87c8bd0cfadada12556314",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/src?ref=main",
+        "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/trees/80c0fadc3c8404384d87c8bd0cfadada12556314",
+        "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/tree/main/src"
+      }
+    },
+    {
+      "name": "test",
+      "path": "test",
+      "sha": "9c3fe3b01ca33d4caefa4599074dbd3634f9d809",
+      "size": 0,
+      "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/test?ref=main",
+      "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/tree/main/test",
+      "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/trees/9c3fe3b01ca33d4caefa4599074dbd3634f9d809",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/test?ref=main",
+        "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/trees/9c3fe3b01ca33d4caefa4599074dbd3634f9d809",
+        "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/tree/main/test"
+      }
+    },
+    {
+      "name": "tsconfig.json",
+      "path": "tsconfig.json",
+      "sha": "bbe4487b41fd333aea843fd133e3d250160fb703",
+      "size": 1830,
+      "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/tsconfig.json?ref=main",
+      "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/tsconfig.json",
+      "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/bbe4487b41fd333aea843fd133e3d250160fb703",
+      "download_url": "https://raw.githubusercontent.com/openshift-dev-console/kn-func-typescript-http/main/tsconfig.json",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/tsconfig.json?ref=main",
+        "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/bbe4487b41fd333aea843fd133e3d250160fb703",
+        "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/tsconfig.json"
+      }
+    }
+  ]

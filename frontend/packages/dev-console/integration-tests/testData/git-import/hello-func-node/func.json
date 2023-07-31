@@ -1,0 +1,18 @@
+{
+  "name": "func.yaml",
+  "path": "func.yaml",
+  "sha": "296531d91cee272407f90494bca2a20736b4ff30",
+  "size": 364,
+  "url": "https://api.github.com/repos/vikram-raj/hello-func-node/contents/func.yaml?ref=master",
+  "html_url": "https://github.com/vikram-raj/hello-func-node/blob/master/func.yaml",
+  "git_url": "https://api.github.com/repos/vikram-raj/hello-func-node/git/blobs/296531d91cee272407f90494bca2a20736b4ff30",
+  "download_url": "https://raw.githubusercontent.com/vikram-raj/hello-func-node/master/func.yaml",
+  "type": "file",
+  "content": "c3BlY1ZlcnNpb246IDAuMzQuMApuYW1lOiBoZWxsby1mdW5jLW5vZGUKcnVu\ndGltZTogbm9kZQpyZWdpc3RyeTogJycKaW1hZ2U6ICcnCmludm9jYXRpb246\nCiAgZm9ybWF0OiBodHRwCmJ1aWxkOgogIGJ1aWxkcGFja3M6IFtdCiAgYnVp\nbGRlcjogczJpCiAgYnVpbGRFbnZzOiBbXQpydW46CiAgdm9sdW1lczogW10K\nICBlbnZzOgogIC0gbmFtZTogTVlfQVBJX0tFWQogICAgdmFsdWU6ICcxMjM0\nNScKZGVwbG95OgogIGFubm90YXRpb25zOiB7fQogIG9wdGlvbnM6IHt9CiAg\nbGFiZWxzOiBbXQogIGhlYWx0aEVuZHBvaW50czoKICAgIGxpdmVuZXNzOiAv\naGVhbHRoL2xpdmVuZXNzCiAgICByZWFkaW5lc3M6IC9oZWFsdGgvcmVhZGlu\nZXNzCg==\n",
+  "encoding": "base64",
+  "_links": {
+    "self": "https://api.github.com/repos/vikram-raj/hello-func-node/contents/func.yaml?ref=master",
+    "git": "https://api.github.com/repos/vikram-raj/hello-func-node/git/blobs/296531d91cee272407f90494bca2a20736b4ff30",
+    "html": "https://github.com/vikram-raj/hello-func-node/blob/master/func.yaml"
+  }
+}

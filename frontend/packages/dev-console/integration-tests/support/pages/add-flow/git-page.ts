@@ -45,6 +45,11 @@ export const gitPage = {
         statusCode: responses.devFileResources ? 200 : 404,
         body: responses.devFileResources,
       }).as('getDevfileResources');
+
+      cy.intercept('GET', `${apiBaseUrl}/contents//func.yaml`, {
+        statusCode: responses.funcJson ? 200 : 404,
+        body: responses.funcJson,
+      }).as('getFuncJson');
     }
 
     cy.get(gitPO.gitRepoUrl).clear().type(gitUrl);

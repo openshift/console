@@ -1,0 +1,18 @@
+{
+  "name": "func.yaml",
+  "path": "func.yaml",
+  "sha": "91767c9c02cee2efe4fe901e10ca94a2fbda3f54",
+  "size": 406,
+  "url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/func.yaml?ref=main",
+  "html_url": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/func.yaml",
+  "git_url": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/91767c9c02cee2efe4fe901e10ca94a2fbda3f54",
+  "download_url": "https://raw.githubusercontent.com/openshift-dev-console/kn-func-typescript-http/main/func.yaml",
+  "type": "file",
+  "content": "c3BlY1ZlcnNpb246IDAuMzUuMApuYW1lOiBrbi1mdW5jLXR5cGVzY3JpcHQt\naHR0cApydW50aW1lOiB0eXBlc2NyaXB0CnJlZ2lzdHJ5OiAiIgppbWFnZTog\nIiIKaW1hZ2VEaWdlc3Q6ICIiCmJ1aWxkOgogIGJ1aWxkcGFja3M6IFtdCiAg\nYnVpbGRlcjogczJpCiAgYnVpbGRFbnZzOgogIC0gbmFtZTogQlBfTk9ERV9S\nVU5fU0NSSVBUUwogICAgdmFsdWU6IGJ1aWxkCnJ1bjoKICB2b2x1bWVzOiBb\nXQogIGVudnM6IFtdCmRlcGxveToKICBuYW1lc3BhY2U6ICIiCiAgcmVtb3Rl\nOiBmYWxzZQogIGFubm90YXRpb25zOiB7fQogIG9wdGlvbnM6IHt9CiAgbGFi\nZWxzOiBbXQogIGhlYWx0aEVuZHBvaW50czoKICAgIGxpdmVuZXNzOiAvaGVh\nbHRoL2xpdmVuZXNzCiAgICByZWFkaW5lc3M6IC9oZWFsdGgvcmVhZGluZXNz\nCg==\n",
+  "encoding": "base64",
+  "_links": {
+      "self": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/contents/func.yaml?ref=main",
+      "git": "https://api.github.com/repos/openshift-dev-console/kn-func-typescript-http/git/blobs/91767c9c02cee2efe4fe901e10ca94a2fbda3f54",
+      "html": "https://github.com/openshift-dev-console/kn-func-typescript-http/blob/main/func.yaml"
+  }
+}
