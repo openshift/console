@@ -62,13 +62,15 @@ const buildConfig = (
     config.ipam = ipam;
   } else if (networkType === ovnKubernetesNetworkType) {
     config.topology = 'layer2';
-    config.netAttachDefName = `${name}/${namespace}`;
+    config.netAttachDefName = `${namespace}/${name}`;
   }
 
   return config;
 };
 
 const getResourceName = (networkType, typeParamsData): string => {
+  if (_.isEmpty(typeParamsData)) return null;
+
   return networkType === cnvBridgeNetworkType
     ? `bridge.network.kubevirt.io/${_.get(typeParamsData, 'bridge.value', '')}`
     : `openshift.io/${_.get(typeParamsData, 'resourceName.value', '')}`;
@@ -90,11 +92,12 @@ const createNetAttachDef = (
   setError(null);
 
   const config = JSON.stringify(buildConfig(name, networkType, typeParamsData, namespace));
-
+  const resourceName = getResourceName(networkType, typeParamsData);
   const annotations: NetworkAttachmentDefinitionAnnotations = {
-    'k8s.v1.cni.cncf.io/resourceName': getResourceName(networkType, typeParamsData),
+    ...(resourceName && { 'k8s.v1.cni.cncf.io/resourceName': resourceName }),
   };
-  if (description !== '') {
+
+  if (!_.isEmpty(description)) {
     annotations.description = description;
   }
 
@@ -104,10 +107,7 @@ const createNetAttachDef = (
     metadata: {
       name,
       namespace,
-      annotations: {
-        'k8s.v1.cni.cncf.io/resourceName': getResourceName(networkType, typeParamsData),
-        description: _.isEmpty(description) ? undefined : description,
-      },
+      annotations,
     },
     spec: {
       config,
