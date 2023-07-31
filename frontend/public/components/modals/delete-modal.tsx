@@ -14,19 +14,22 @@ import {
   k8sKill,
   k8sList,
   referenceForOwnerRef,
-  K8sKind,
   K8sResourceKind,
+  K8sModel,
+  K8sResourceCommon,
+  OwnerReference,
 } from '../../module/k8s/';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { findOwner } from '../../module/k8s/managed-by';
 import { ResourceLink } from '../utils/resource-link';
+import { LocationDescriptor } from 'history';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
-const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromiseProps) => {
+export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromiseProps) => {
   const [isChecked, setIsChecked] = React.useState(true);
   const [isDeleteOtherResourcesChecked, setIsDeleteOtherResourcesChecked] = React.useState(true);
-  const [owner, setOwner] = React.useState(null);
+  const [owner, setOwner] = React.useState<OwnerReference>(undefined);
 
   const { t } = useTranslation();
 
@@ -38,17 +41,17 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromisePr
     const propagationPolicy = isChecked && kind ? kind.propagationPolicy : 'Orphan';
     const json = propagationPolicy
       ? { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
-      : null;
+      : undefined;
 
     props.handlePromise(k8sKill(kind, resource, {}, {}, json), () => {
-      props.close();
+      props?.close && props.close();
 
       if (deleteAllResources && isDeleteOtherResourcesChecked) {
         deleteAllResources();
       }
 
       // If we are currently on the deleted resource's page, redirect to the resource list page
-      const re = new RegExp(`/${resource.metadata.name}(/|$)`);
+      const re = new RegExp(`/${resource?.metadata?.name}(/|$)`);
       if (re.test(window.location.pathname)) {
         const listPath = props.redirectTo
           ? props.redirectTo
@@ -67,7 +70,7 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromisePr
     k8sList(ClusterServiceVersionModel, { ns: namespace })
       .then((data) => {
         const resourceOwner = findOwner(props.resource, data);
-        setOwner(resourceOwner);
+        resourceOwner && setOwner(resourceOwner);
       })
       .catch((e) => {
         // eslint-disable-next-line no-console
@@ -90,13 +93,18 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromisePr
           {_.has(resource.metadata, 'namespace') ? (
             <Trans t={t} ns="public">
               Are you sure you want to delete{' '}
-              <strong className="co-break-word">{{ resourceName: resource.metadata.name }}</strong>{' '}
-              in namespace <strong>{{ namespace: resource.metadata.namespace }}</strong>?
+              <strong className="co-break-word">
+                {{ resourceName: resource?.metadata?.name }}
+              </strong>{' '}
+              in namespace <strong>{{ namespace: resource?.metadata?.namespace }}</strong>?
             </Trans>
           ) : (
             <Trans t={t} ns="public">
               Are you sure you want to delete{' '}
-              <strong className="co-break-word">{{ resourceName: resource.metadata.name }}</strong>?
+              <strong className="co-break-word">
+                {{ resourceName: resource?.metadata?.name }}
+              </strong>
+              ?
             </Trans>
           )}
           {_.has(kind, 'propagationPolicy') && (
@@ -161,12 +169,12 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromisePr
 export const deleteModal = createModalLauncher(DeleteModal);
 
 export type DeleteModalProps = {
-  kind: K8sKind;
-  resource: any;
+  kind: K8sModel;
+  resource: K8sResourceCommon;
   close?: () => void;
-  redirectTo?: any;
+  redirectTo?: LocationDescriptor;
   message?: JSX.Element;
   cancel?: () => void;
-  btnText?: string;
+  btnText?: React.ReactNode;
   deleteAllResources?: () => Promise<K8sResourceKind[]>;
 };

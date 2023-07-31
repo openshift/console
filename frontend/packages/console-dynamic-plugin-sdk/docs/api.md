@@ -64,10 +64,11 @@
 62.  [`ErrorBoundaryFallbackPage`](#errorboundaryfallbackpage)
 63.  [`QueryBrowser`](#querybrowser)
 64.  [`useAnnotationsModal`](#useannotationsmodal)
-65. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
-66. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
-67. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
-68. [DEPRECATED] [`YAMLEditor`](#yamleditor)
+65.  [`useDeleteModal`](#usedeletemodal)
+66. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
+67. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
+68. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+69. [DEPRECATED] [`YAMLEditor`](#yamleditor)
 
 ---
 
@@ -2277,6 +2278,46 @@ const PodAnnotationsButton = ({ pod }) => {
 ### Returns
 
 A function which will launch a modal for editing a resource's annotations.
+
+
+---
+
+## `useDeleteModal`
+
+### Summary 
+
+A hook for launching a modal for deleting a resource.
+
+
+
+### Example
+
+
+const DeletePodButton = ({ pod }) => {
+  const { t } = useTranslation();
+  const launchDeleteModal = useDeleteModal(pod);
+  return <button onClick={launchDeleteModal}>{t('Delete Pod')}</button>
+}
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `resource` | The resource to delete. |
+| `redirectTo` | (optional) A location to redirect to after deleting the resource. |
+| `message` | (optional) A message to display in the modal. |
+| `btnText` | (optional) The text to display on the delete button. |
+| `deleteAllResources` | (optional) A function to delete all resources of the same kind. |
+
+
+
+### Returns
+
+A function which will launch a modal for deleting a resource.
 
 
 ---
