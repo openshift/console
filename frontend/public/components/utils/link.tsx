@@ -109,12 +109,14 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
     <div className={classNames(additionalClassName)}>
       <a href={link} target="_blank" rel="noopener noreferrer" data-test-id={dataTestID}>
         {text ?? link}
+        <span className="co-icon-nowrap">
+          &nbsp;
+          <span className="co-external-link-with-copy__icon co-external-link-with-copy__externallinkicon">
+            <ExternalLinkAltIcon />
+          </span>
+        </span>
       </a>
       <span className="co-icon-nowrap">
-        &nbsp;
-        <span className="co-external-link-with-copy__icon co-external-link-with-copy__externallinkicon">
-          <ExternalLinkAltIcon />
-        </span>
         <Tooltip content={tooltipContent} trigger="click mouseenter focus" exitDelay={1250}>
           <CTC text={link} onCopy={() => setCopied(true)}>
             <span
