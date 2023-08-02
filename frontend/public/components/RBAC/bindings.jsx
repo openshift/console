@@ -455,9 +455,10 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
       },
       subjects: [
         {
-          apiGroup: 'rbac.authorization.k8s.io',
           kind: subjectKind || 'User',
           name: subjectName || '',
+          apiGroup:
+            subjectKind === 'ServiceAccount' || !subjectKind ? '' : 'rbac.authorization.k8s.io',
         },
       ],
     });
