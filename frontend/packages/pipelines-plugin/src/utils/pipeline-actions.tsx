@@ -16,8 +16,9 @@ import {
   removeTriggerModal,
 } from '../components/pipelines/modals';
 import { getPipelineRunData } from '../components/pipelines/modals/common/utils';
+import { getTaskRunsOfPipelineRun } from '../components/taskruns/useTaskRuns';
 import { EventListenerModel, PipelineModel, PipelineRunModel } from '../models';
-import { PipelineKind, PipelineRunKind } from '../types';
+import { PipelineKind, PipelineRunKind, TaskRunKind } from '../types';
 import { shouldHidePipelineRunStop, shouldHidePipelineRunCancel } from './pipeline-augment';
 
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
@@ -182,7 +183,9 @@ export const stopPipelineRun: KebabAction = (
   kind: K8sKind,
   pipelineRun: PipelineRunKind,
   operatorVersion: SemVer,
+  taskRuns: TaskRunKind[],
 ) => {
+  const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, pipelineRun?.metadata?.name);
   // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
   return {
     // t('pipelines-plugin~Stop')
@@ -207,7 +210,7 @@ export const stopPipelineRun: KebabAction = (
         ],
       );
     },
-    hidden: shouldHidePipelineRunStop(pipelineRun),
+    hidden: shouldHidePipelineRunStop(pipelineRun, PLRTasks),
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
@@ -221,7 +224,9 @@ export const stopPipelineRun: KebabAction = (
 export const cancelPipelineRunFinally: KebabAction = (
   kind: K8sKind,
   pipelineRun: PipelineRunKind,
+  taskRuns: TaskRunKind[],
 ) => {
+  const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, pipelineRun?.metadata?.name);
   // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
   return {
     // t('pipelines-plugin~Cancel')
@@ -244,7 +249,7 @@ export const cancelPipelineRunFinally: KebabAction = (
         ],
       );
     },
-    hidden: shouldHidePipelineRunCancel(pipelineRun),
+    hidden: shouldHidePipelineRunCancel(pipelineRun, PLRTasks),
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
@@ -307,13 +312,14 @@ export const getPipelineKebabActions = (
 
 export const getPipelineRunKebabActions = (
   operatorVersion: SemVer,
+  taskRuns: TaskRunKind[],
   redirectReRun?: boolean,
 ): KebabAction[] => [
   redirectReRun
     ? (model, pipelineRun) => rerunPipelineRunAndRedirect(model, pipelineRun)
     : (model, pipelineRun) => reRunPipelineRun(model, pipelineRun),
-  (model, pipelineRun) => stopPipelineRun(model, pipelineRun, operatorVersion),
-  (model, pipelineRun) => cancelPipelineRunFinally(model, pipelineRun),
+  (model, pipelineRun) => stopPipelineRun(model, pipelineRun, operatorVersion, taskRuns),
+  (model, pipelineRun) => cancelPipelineRunFinally(model, pipelineRun, taskRuns),
   Kebab.factory.Delete,
 ];
 
