@@ -2,7 +2,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export type NetworkAttachmentDefinitionAnnotations = {
   description?: string;
-  'k8s.v1.cni.cncf.io/resourceName': string;
+  'k8s.v1.cni.cncf.io/resourceName'?: string;
 };
 
 export type IPAMConfig = {
