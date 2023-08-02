@@ -2,7 +2,7 @@
 
 <%# Table of contents _%>
 <% apis.forEach((api, index) => { _%>
-<%- index + 1 %>. <%- api.doc.deprecated ? '[DEPRECATED]' : '' %> [`<%- api.name %>`](#<%- toLowerCase(api.name) %>)
+<%- index + 1 %>. <%- api.doc.deprecated ? '[DEPRECATED]' : '' %> [<%- api.name %>](#<%- toLowerCase(api.name) %>)
 <% }); _%>
 
 <%# Generate one section per extension type _%>
