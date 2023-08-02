@@ -8,6 +8,7 @@ import { useUserSettings } from '@console/shared/src';
 import { PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY } from '../../../const';
 import { PipelineRunModel } from '../../../models';
 import { usePipelineOperatorVersion } from '../../pipelines/utils/pipeline-operator';
+import { useTaskRuns } from '../../taskruns/useTaskRuns';
 import PipelineRunHeader from './PipelineRunHeader';
 import PipelineRunRow from './PipelineRunRow';
 
@@ -23,6 +24,7 @@ export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
     PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY,
     'pipelines',
   );
+  const [taskRuns, taskRunsLoaded] = useTaskRuns(props.namespace);
 
   React.useEffect(() => {
     if (preferredTabLoaded && activePerspective === 'dev') {
@@ -42,7 +44,7 @@ export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
         defaultSortOrder={SortByDirection.desc}
         Header={PipelineRunHeader}
         Row={PipelineRunRow}
-        customData={operatorVersion}
+        customData={{ operatorVersion, taskRuns: taskRunsLoaded ? taskRuns : [] }}
         virtualize
       />
     </>
