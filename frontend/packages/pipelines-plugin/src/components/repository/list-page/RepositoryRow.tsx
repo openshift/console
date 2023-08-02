@@ -19,14 +19,16 @@ import {
 import { pipelineRunDuration } from '../../../utils/pipeline-utils';
 import LinkedPipelineRunTaskStatus from '../../pipelineruns/status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../../pipelineruns/status/PipelineRunStatus';
+import { getTaskRunsOfPipelineRun } from '../../taskruns/useTaskRuns';
 import { RepositoryFields, RepositoryLabels } from '../consts';
 import { RepositoryKind } from '../types';
 import { repositoriesTableColumnClasses } from './RepositoryHeader';
 
-const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj }) => {
+const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customData }) => {
   const {
     metadata: { name, namespace },
   } = obj;
+  const { taskRuns } = customData;
 
   const [pipelineRun, loaded] = useK8sWatchResource<PipelineRunKind[]>({
     kind: referenceForModel(PipelineRunModel),
@@ -39,6 +41,8 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj }) => {
 
   const latestPLREventType =
     latestRun && latestRun?.metadata?.labels[RepositoryLabels[RepositoryFields.EVENT_TYPE]];
+
+  const PLRTaskRuns = getTaskRunsOfPipelineRun(taskRuns, latestRun?.metadata?.name);
   return (
     <>
       <TableData className={repositoriesTableColumnClasses[0]}>
@@ -69,7 +73,7 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj }) => {
         {}
         {loaded ? (
           latestRun ? (
-            <LinkedPipelineRunTaskStatus pipelineRun={latestRun} />
+            <LinkedPipelineRunTaskStatus pipelineRun={latestRun} taskRuns={PLRTaskRuns} />
           ) : (
             '-'
           )
@@ -83,6 +87,7 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj }) => {
             status={pipelineRunFilterReducer(latestRun)}
             title={pipelineRunTitleFilterReducer(latestRun)}
             pipelineRun={latestRun}
+            taskRuns={PLRTaskRuns}
           />
         ) : (
           <LoadingInline />
