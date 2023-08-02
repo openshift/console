@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import { useLocation, useParams, Link } from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import * as _ from 'lodash-es';
@@ -23,7 +24,6 @@ import { useExactSearch } from '@console/app/src/components/user-preferences/sea
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { Page, PageHeading, useAccessReview } from '@console/internal/components/utils';
 
-import { connectToModel } from '../kinds';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
 import {
   apiVersionForModel,
@@ -37,7 +37,6 @@ import {
   ResourceAccessReviewResponse,
 } from '../module/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
-import { FlagsObject } from '../reducers/features';
 import { RootState } from '../redux';
 import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';
@@ -63,6 +62,7 @@ import {
   ResourceListPage as DynamicResourceListPage,
   isResourceListPage as isDynamicResourceListPage,
 } from '@console/dynamic-plugin-sdk';
+import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   return {
@@ -689,18 +689,15 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   );
 };
 
-const APIResourcePage_ = ({
-  match,
-  kindObj,
-  kindsInFlight,
-  flags,
-}: {
-  match: any;
-  kindObj: K8sKind;
-  kindsInFlight: boolean;
-  flags: FlagsObject;
-}) => {
-  const namespace = kindObj?.namespaced ? match.params.ns : undefined;
+const APIResourcePage_ = (props) => {
+  const params = useParams();
+  const location = useLocation();
+
+  const kind: string = props.kind || params?.plural;
+  const kindObj = getK8sModel(props.k8s, kind);
+  const kindsInFlight = props.k8s.getIn(['RESOURCES', 'inFlight']);
+
+  const namespace = kindObj?.namespaced ? params.ns : undefined;
   const { t } = useTranslation();
 
   const canCreateResourceAccessReview = useAccessReview({
@@ -731,7 +728,7 @@ const APIResourcePage_ = ({
     },
     {
       name: t('public~Resource details'),
-      path: match.url,
+      path: location.pathname,
     },
   ];
 
@@ -759,7 +756,7 @@ const APIResourcePage_ = ({
     });
   }
 
-  if (flags[FLAGS.OPENSHIFT] && canCreateResourceAccessReview) {
+  if (props.flags[FLAGS.OPENSHIFT] && canCreateResourceAccessReview) {
     pages.push({
       href: 'access',
       // t('public~Access review')
@@ -782,17 +779,19 @@ const APIResourcePage_ = ({
           breadcrumbs={breadcrumbs}
           detail
         />
-        <HorizontalNav
-          pages={pages}
-          match={match}
-          customData={{ kindObj, namespace }}
-          noStatusBox
-        />
+        <HorizontalNav pages={pages} customData={{ kindObj, namespace }} noStatusBox />
       </PageTitleContext.Provider>
     </>
   );
 };
-export const APIResourcePage = connectToModel(connectToFlags(FLAGS.OPENSHIFT)(APIResourcePage_));
+
+const k8StateToProps = ({ k8s }) => ({
+  k8s,
+});
+
+export const APIResourcePage = connect(k8StateToProps)(
+  connectToFlags(FLAGS.OPENSHIFT)(APIResourcePage_),
+);
 
 type APIResourceLinkStateProps = {
   activeNamespace: string;

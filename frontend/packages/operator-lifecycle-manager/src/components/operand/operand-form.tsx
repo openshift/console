@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
+import { useParams } from 'react-router-dom-v5-compat';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   history,
@@ -18,7 +19,6 @@ import { getUISchema } from './utils';
 export const OperandForm: React.FC<OperandFormProps> = ({
   csv,
   formData,
-  match,
   model,
   next,
   onChange,
@@ -27,12 +27,13 @@ export const OperandForm: React.FC<OperandFormProps> = ({
   schema,
 }) => {
   const [errors, setErrors] = React.useState<string[]>([]);
+  const params = useParams();
   const postFormCallback = usePostFormSubmitAction<K8sResourceKind>();
   const processFormData = ({ metadata, ...rest }) => {
     const data = {
       metadata: {
         ...metadata,
-        ...(match?.params?.ns && model.namespaced && { namespace: match.params.ns }),
+        ...(params?.ns && model.namespaced && { namespace: params.ns }),
       },
       ...rest,
     };
@@ -83,7 +84,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
           <DynamicForm
             noValidate
             errors={errors}
-            formContext={{ namespace: match.params.ns }}
+            formContext={{ namespace: params.ns }}
             uiSchema={uiSchema}
             formData={formData}
             onChange={onChange}
@@ -103,7 +104,6 @@ type ProvidedAPI = CRDDescription | APIServiceDefinition;
 export type OperandFormProps = {
   formData?: K8sResourceKind;
   onChange?: (formData?: any) => void;
-  match: { params: { ns: string } };
   next?: string;
   csv: ClusterServiceVersionKind;
   model: K8sKind;

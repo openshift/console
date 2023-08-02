@@ -7,7 +7,7 @@ import {
 import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+import { Link, useParams, useLocation, Navigate } from 'react-router-dom-v5-compat';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { HorizontalNav, useAccessReview2 } from '@console/internal/components/utils';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -25,31 +25,37 @@ import { VirtualMachinesPage } from './vm';
 import { VirtualMachinesPage as NewVirtualMachinesPage } from './vm-page-new';
 import './virtualization.scss';
 
-export const RedirectToVirtualizationPage: React.FC<RouteComponentProps<{ ns: string }>> = (
-  props,
-) => (
-  <Redirect
-    to={{
-      pathname: props.match.params.ns
-        ? `/k8s/ns/${props.match.params.ns}/${VIRTUALMACHINES_BASE_URL}`
-        : `/k8s/all-namespaces/${VIRTUALMACHINES_BASE_URL}`,
-      search: decodeURI(props.location.search),
-    }}
-  />
-);
+export const RedirectToVirtualizationPage: React.FC = () => {
+  const params = useParams();
+  const location = useLocation();
+  return (
+    <Navigate
+      to={{
+        pathname: params.ns
+          ? `/k8s/ns/${params.ns}/${VIRTUALMACHINES_BASE_URL}`
+          : `/k8s/all-namespaces/${VIRTUALMACHINES_BASE_URL}`,
+        search: decodeURI(location.search),
+      }}
+      replace
+    />
+  );
+};
 
-export const RedirectToVirtualizationTemplatePage: React.FC<RouteComponentProps<{ ns: string }>> = (
-  props,
-) => (
-  <Redirect
-    to={{
-      pathname: props.match.params.ns
-        ? `/k8s/ns/${props.match.params.ns}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`
-        : `/k8s/all-namespaces/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`,
-      search: decodeURI(props.location.search),
-    }}
-  />
-);
+export const RedirectToVirtualizationTemplatePage: React.FC = () => {
+  const params = useParams();
+  const location = useLocation();
+  return (
+    <Navigate
+      to={{
+        pathname: params.ns
+          ? `/k8s/ns/${params.ns}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`
+          : `/k8s/all-namespaces/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`,
+        search: decodeURI(location.search),
+      }}
+      replace
+    />
+  );
+};
 
 const vmMenuItems = (t: TFunction) => [
   {
@@ -70,8 +76,9 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
   const { t } = useTranslation();
   const [isOpen, setOpen] = React.useState(false);
   const printableVmStatusFlag = useFlag(FLAG_KUBEVIRT_HAS_PRINTABLESTATUS);
+  const params = useParams();
 
-  const namespace = props.match.params.ns;
+  const namespace = params.ns;
 
   const [canCreate] = useAccessReview2({
     group: VirtualMachineModel?.apiGroup,
@@ -144,7 +151,6 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
       <HorizontalNav
         {...props}
         pages={pages}
-        match={props.match}
         obj={obj}
         hideNav
         customData={{ showTitle: false, noProjectsAvailable: props.noProjectsAvailable }}
@@ -154,7 +160,6 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
 };
 
 type VirtualizationPageProps = {
-  match: any;
   skipAccessReview?: boolean;
   noProjectsAvailable?: boolean;
   location?: { search?: string };

@@ -11,7 +11,7 @@ import {
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import * as classNames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   ExternalLink,
   HintBlock,

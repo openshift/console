@@ -4,7 +4,7 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
@@ -1181,5 +1181,4 @@ type PodPageProps = {
 
 type PodDetailsPageProps = {
   kind: K8sResourceKindReference;
-  match: any;
 };

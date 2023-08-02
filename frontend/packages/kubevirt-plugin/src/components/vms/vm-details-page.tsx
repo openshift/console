@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
@@ -41,23 +42,25 @@ import { VMDetailsFirehose } from './vm-details';
 import { VMEnvironmentFirehose } from './vm-environment/vm-environment-page';
 import { VMEvents } from './vm-events';
 
-export const breadcrumbsForVMPage = (t: TFunction, match: any) => () => [
+export const breadcrumbsForVMPage = (t: TFunction, location: any, params: any) => () => [
   {
     name: t('kubevirt-plugin~Virtualization'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
+    path: `/k8s/ns/${params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
   },
   {
     name: t('kubevirt-plugin~Virtual Machines'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
+    path: `/k8s/ns/${params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
   },
   {
-    name: t('kubevirt-plugin~{{name}} Details', { name: match.params.name }),
-    path: `${match.url}`,
+    name: t('kubevirt-plugin~{{name}} Details', { name: params.name }),
+    path: `${location.pathname}`,
   },
 ];
 
-export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
-  const { name, ns: namespace } = props.match.params;
+export const VirtualMachinesDetailsPage: React.FC = (props) => {
+  const params = useParams();
+  const location = useLocation();
+  const { name, ns: namespace } = params;
   const { t } = useTranslation();
   const [snapshotResource] = useK8sModel(kubevirtReferenceForModel(VirtualMachineSnapshotModel));
   const vmStatusBundle = useVMStatus(name, namespace);
@@ -185,15 +188,11 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       }}
       pages={pages}
       resources={resources}
-      breadcrumbsFor={breadcrumbsForVMPage(t, props.match)}
+      breadcrumbsFor={breadcrumbsForVMPage(t, location, params)}
       customData={{ kindObj: VirtualMachineModel }}
       getResourceStatus={() => vmStatusBundle.status.getSimpleLabel()}
     >
       <PendingChangesWarningFirehose name={name} namespace={namespace} />
     </DetailsPage>
   );
-};
-
-export type VirtualMachinesDetailsPageProps = {
-  match: any;
 };

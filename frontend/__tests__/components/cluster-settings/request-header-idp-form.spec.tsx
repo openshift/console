@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom-v5-compat';
+import store from '@console/internal/redux';
 
 import { ListInput } from '../../../public/components/utils';
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
@@ -8,10 +11,15 @@ import { AddRequestHeaderPage } from '../../../public/components/cluster-setting
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: Request Header', () => {
-  let wrapper: ShallowWrapper<any>;
-
+  let wrapper;
   beforeEach(() => {
-    wrapper = shallow(<AddRequestHeaderPage />);
+    wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <AddRequestHeaderPage />
+        </BrowserRouter>
+      </Provider>,
+    );
   });
 
   it('should render AddRequestHeaderPage component', () => {

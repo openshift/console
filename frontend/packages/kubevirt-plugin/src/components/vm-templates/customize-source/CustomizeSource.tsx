@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { StatusBox } from '@console/internal/components/utils';
 import { TEMPLATE_CUSTOMIZED_ANNOTATION } from '../../../constants';
 import { useCustomizeVMTResources } from '../../../hooks/use-customize-vmt-resources';
@@ -11,8 +11,9 @@ import CustomizeSourceConsole from './CustomizeSourceConsole';
 import CustomizeSourceFinish from './CustomizeSourceFinish';
 import CustomizeSourceStatus from './CustomizeSourceStatus';
 
-const CustomizeSource: React.FC<RouteComponentProps> = ({ location }) => {
+const CustomizeSource: React.FC = () => {
   const { t } = useTranslation();
+  const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const name = urlParams.get('vm');
   const namespace = urlParams.get('vmNs');

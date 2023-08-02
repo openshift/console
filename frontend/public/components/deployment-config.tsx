@@ -348,9 +348,7 @@ const DetailsActionMenu: React.FC<DetailsActionMenuProps> = ({ kindObj, obj }) =
   );
 };
 
-export const DeploymentConfigsDetailsPage: React.FC<DeploymentConfigsDetailsPageProps> = (
-  props,
-) => {
+export const DeploymentConfigsDetailsPage: React.FC = (props) => {
   const customActionMenu = (kindObj, obj) => {
     return <DetailsActionMenu kindObj={kindObj} obj={obj} />;
   };
@@ -428,8 +426,4 @@ type ReplicationControllersTabProps = {
 type DeploymentConfigsPageProps = {
   filterLabel: string;
   namespace: string;
-};
-
-type DeploymentConfigsDetailsPageProps = {
-  match: any;
 };

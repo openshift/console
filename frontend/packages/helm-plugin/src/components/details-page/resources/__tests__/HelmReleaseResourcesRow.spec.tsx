@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';

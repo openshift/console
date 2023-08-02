@@ -3,7 +3,7 @@ import { Formik, FormikBag } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { history } from '@console/internal/components/utils';
 import { k8sCreate, k8sUpdate, referenceForModel } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
@@ -18,18 +18,14 @@ import { validationSchema } from './validation-utils';
 
 import './PipelineBuilderPage.scss';
 
-type PipelineBuilderPageProps = RouteComponentProps<{ ns?: string }> & {
+type PipelineBuilderPageProps = {
   existingPipeline?: PipelineKind;
 };
 
 const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
   const { t } = useTranslation();
-  const {
-    existingPipeline,
-    match: {
-      params: { ns },
-    },
-  } = props;
+  const { ns } = useParams();
+  const { existingPipeline } = props;
 
   const initialValues: PipelineBuilderFormYamlValues = {
     editorType: EditorType.Form,

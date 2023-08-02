@@ -2,7 +2,7 @@ import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import classNames from 'classnames';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Link, Routes, Route } from 'react-router-dom-v5-compat';
 
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 import { AlertmanagerConfig } from './alertmanager-config';
@@ -45,7 +45,7 @@ const AlertmanagerPage: React.FC<{ match: { url: string } }> = ({ match }) => {
             'co-m-horizontal-nav-item--active': url === configPath,
           })}
         >
-          <Link to={configPath} data-test-id="horizontal-link-details">
+          <Link to={configPath} data-test="horizontal-link-details">
             {t('public~Details')}
           </Link>
         </li>
@@ -55,14 +55,14 @@ const AlertmanagerPage: React.FC<{ match: { url: string } }> = ({ match }) => {
           })}
         >
           <Link to={YAMLPath} data-test-id="horizontal-link-yaml">
-            {t('public~YAML')}
+            {t('public~Details')}
           </Link>
         </li>
       </ul>
-      <Switch>
-        <Route path={configPath} exact component={AlertmanagerConfig} />
-        <Route path={YAMLPath} exact component={AlertmanagerYAML} />
-      </Switch>
+      <Routes>
+        <Route path={configPath} element={<AlertmanagerConfig />} />
+        <Route path={YAMLPath} element={<AlertmanagerYAML />} />
+      </Routes>
     </>
   );
 };

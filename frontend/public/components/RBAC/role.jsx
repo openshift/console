@@ -1,12 +1,11 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
-// import { Link } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import { RoleModel, RoleBindingModel, ClusterRoleBindingModel } from '../../models';
 import * as classNames from 'classnames';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
-// import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { BindingName, BindingsList, flatten as bindingsFlatten } from './bindings';
 import { RulesList } from './rules';
@@ -216,10 +215,8 @@ const BindingsListComponent = (props) => {
 };
 
 export const BindingsForRolePage = (props) => {
+  const { name, ns } = useParams();
   const {
-    match: {
-      params: { name, ns },
-    },
     obj: { kind },
   } = props;
   const resources = [{ kind: 'RoleBinding', namespaced: true }];
@@ -252,7 +249,7 @@ export const BindingsForRolePage = (props) => {
   );
 };
 
-const getBreadcrumbs = (model, kindObj, match) => {
+const getBreadcrumbs = (model, kindObj, location) => {
   const lastNamespace = getLastNamespace();
   return [
     {
@@ -266,12 +263,13 @@ const getBreadcrumbs = (model, kindObj, match) => {
       name: i18next.t('public~{{kind}} details', {
         kind: kindObj.labelKey ? i18next.t(kindObj.labelKey) : kindObj.label,
       }),
-      path: `${match.url}`,
+      path: `${location.pathname}`,
     },
   ];
 };
 
 export const RolesDetailsPage = (props) => {
+  const location = useLocation();
   return (
     <DetailsPage
       {...props}
@@ -286,7 +284,7 @@ export const RolesDetailsPage = (props) => {
         },
       ]}
       menuActions={menuActions}
-      breadcrumbsFor={() => getBreadcrumbs(RoleModel, props.kindObj, props.match)}
+      breadcrumbsFor={() => getBreadcrumbs(RoleModel, props.kindObj, location)}
     />
   );
 };
@@ -296,13 +294,14 @@ export const ClusterRolesDetailsPage = RolesDetailsPage;
 export const ClusterRoleBindingsDetailsPage = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
   const actions = [...Kebab.getExtensionsActionsForKind(ClusterRoleBindingModel), ...common];
+  const location = useLocation();
 
   return (
     <DetailsPage
       {...props}
       menuActions={actions}
       pages={pages}
-      breadcrumbsFor={() => getBreadcrumbs(RoleBindingModel, props.kindObj, props.match)}
+      breadcrumbsFor={() => getBreadcrumbs(RoleBindingModel, props.kindObj, location)}
     />
   );
 };

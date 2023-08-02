@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { match as Rmatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { Page, AsyncComponent } from '@console/internal/components/utils';
 import { useFlag, MenuActions, MultiTabListPage, getBadgeFromType } from '@console/shared';
@@ -9,19 +9,16 @@ import { useResourceListPages } from '@console/shared/src/hooks/useResourceListP
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
-interface BuildsTabListPageProps {
-  match: Rmatch<{ ns?: string }>;
-}
-
 /**
  * We might add a generic extension for multi tab list pages in the future.
  * Currently we just check if some well known build (BuildConfigs and Shipwright Builds)
  * are available and load their (dynamic) resource list page.
  */
-const BuildsTabListPage: React.FC<BuildsTabListPageProps> = ({ match }) => {
+const BuildsTabListPage: React.FC = () => {
   const { t } = useTranslation();
+  const params = useParams();
   const title = t('devconsole~Builds');
-  const namespace = match.params.ns;
+  const namespace = params.ns;
   const menuActions: MenuActions = {};
   const pages: Page[] = [];
 
@@ -29,7 +26,6 @@ const BuildsTabListPage: React.FC<BuildsTabListPageProps> = ({ match }) => {
   const extraProps = {
     showTitle: false,
     canCreate: false,
-    match,
   };
 
   // BuildConfigs from @console/internal
@@ -113,7 +109,7 @@ const BuildsTabListPage: React.FC<BuildsTabListPageProps> = ({ match }) => {
   if (buildConfigLoader && pages.length === 1) {
     return (
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-        <AsyncComponent loader={buildConfigLoader} match={match} />
+        <AsyncComponent loader={buildConfigLoader} />
       </NamespacedPage>
     );
   }
@@ -123,7 +119,6 @@ const BuildsTabListPage: React.FC<BuildsTabListPageProps> = ({ match }) => {
       <MultiTabListPage
         title={title}
         pages={pages}
-        match={match}
         menuActions={menuActions}
         telemetryPrefix="Builds"
       />

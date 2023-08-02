@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { ResourceIcon, resourcePath } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { getResource } from '@console/topology/src/utils';

@@ -15,8 +15,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
-import { match } from 'react-router';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 import { QuickStartModel } from '@console/app/src/models';
 import { GenericStatus } from '@console/dynamic-plugin-sdk';
 import {
@@ -278,8 +277,9 @@ VMList.displayName = 'VMList';
 
 export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
   const { t } = useTranslation();
+  const params = useParams();
   const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
-  const namespace = props.match.params.ns;
+  const namespace = params.ns;
   const vmStatusResources = useVmStatusResources(namespace);
 
   const resources = React.useMemo(
@@ -395,7 +395,6 @@ type VMListProps = {
 };
 
 type VirtualMachinesPageProps = {
-  match: match<{ ns?: string }>;
   customData: {
     showTitle?: boolean;
     skipAccessReview?: boolean;

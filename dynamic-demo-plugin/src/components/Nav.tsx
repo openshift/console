@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { HorizontalNav } from '@openshift-console/dynamic-plugin-sdk';
 
 const Thor: React.FC = () => (
@@ -14,7 +13,7 @@ const Loki: React.FC = () => (
   </div>
 );
 
-const Asgard: React.FC<RouteComponentProps> = () => {
+const Asgard: React.FC = () => {
   const pages = [
     {
       href: '',

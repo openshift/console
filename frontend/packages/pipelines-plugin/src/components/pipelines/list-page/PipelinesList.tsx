@@ -1,23 +1,16 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { match as Rmatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { Firehose } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
 import { filters } from './PipelineAugmentRuns';
 import PipelineAugmentRunsWrapper from './PipelineAugmentRunsWrapper';
 
-interface PipelinesListProps {
-  match: Rmatch<any>;
-}
-
-const PipelinesList: React.FC<PipelinesListProps> = ({
-  match: {
-    params: { ns: namespace },
-  },
-}) => {
+const PipelinesList: React.FC = () => {
   const { t } = useTranslation();
+  const { ns: namespace } = useParams();
   const resources = [
     {
       isList: true,

@@ -1,20 +1,18 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { match as RMatch } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Firehose } from '@console/internal/components/utils';
 import { useProjectAccessRoles } from './hooks';
 import ProjectAccess from './ProjectAccess';
 
-export interface ProjectAccessPageProps {
-  match: RMatch<{ ns?: string }>;
-}
-
-const ProjectAccessPage: React.FC<ProjectAccessPageProps> = ({ match, ...props }) => {
+const ProjectAccessPage: React.FC = (props) => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const params = useParams();
+  const location = useLocation();
+  const namespace = params.ns;
   const roles = useProjectAccessRoles();
-  const showFullForm = match.path.includes('project-access');
+  const showFullForm = location.pathname.includes('project-access');
   return (
     <>
       <Helmet>

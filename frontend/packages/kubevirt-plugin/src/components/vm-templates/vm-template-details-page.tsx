@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { match as routerMatch } from 'react-router';
+import { useParams, useLocation, Location } from 'react-router-dom-v5-compat';
 import { DetailsPage } from '@console/internal/components/factory/details';
 import { isUpstream } from '@console/internal/components/utils';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
@@ -32,25 +32,31 @@ import { VMNics } from '../vm-nics';
 import { menuActionsCreator } from './menu-actions';
 import { VMTemplateDetails } from './vm-template-details';
 
-export const breadcrumbsForVMTemplatePage = (t: TFunction, match: VMTemplateMatch) => () => [
+export const breadcrumbsForVMTemplatePage = (
+  t: TFunction,
+  location: Location,
+  params: { [key: string]: string },
+) => () => [
   {
     name: t('kubevirt-plugin~Virtualization'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
+    path: `/k8s/ns/${params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
   },
   {
     name: t('kubevirt-plugin~Templates'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`,
+    path: `/k8s/ns/${params.ns || 'default'}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`,
   },
   {
-    name: t('kubevirt-plugin~{{name}} Details', { name: match.params.name }),
-    path: `${match.url}`,
+    name: t('kubevirt-plugin~{{name}} Details', { name: params.name }),
+    path: `${location}`,
   },
 ];
 
 export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (props) => {
   const { t } = useTranslation();
-  const { name } = props.match.params;
-  const namespace = props.match.params.ns;
+  const params = useParams();
+  const location = useLocation();
+  const { name } = params;
+  const namespace = params.ns;
   const [dataVolumes, dvLoaded, dvError] = useK8sWatchResource<V1alpha1DataVolume[]>({
     kind: kubevirtReferenceForModel(DataVolumeModel),
     isList: true,
@@ -123,7 +129,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
       namespace={namespace}
       menuActions={menuActionsCreator}
       pages={pages}
-      breadcrumbsFor={breadcrumbsForVMTemplatePage(t, props.match)}
+      breadcrumbsFor={breadcrumbsForVMTemplatePage(t, location, params)}
       customData={{
         withSupportModal,
         sourceStatus,
@@ -138,11 +144,8 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
   );
 };
 
-type VMTemplateMatch = routerMatch<{ ns?: string; name?: string }>;
-
 type VMTemplateDetailsPageProps = {
   name: string;
   namespace: string;
   kind: K8sResourceKindReference;
-  match: VMTemplateMatch;
 };

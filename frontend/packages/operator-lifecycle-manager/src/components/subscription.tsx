@@ -7,7 +7,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { match, Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom-v5-compat';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { Conditions } from '@console/internal/components/conditions';
@@ -698,46 +698,48 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
   );
 };
 
-export const SubscriptionDetailsPage: React.FC<SubscriptionDetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    namespace={props.match.params.ns}
-    kind={referenceForModel(SubscriptionModel)}
-    name={props.match.params.name}
-    pages={[navFactory.details(SubscriptionDetails), navFactory.editYaml()]}
-    resources={[
-      {
-        kind: referenceForModel(PackageManifestModel),
-        isList: true,
-        namespace: props.namespace,
-        prop: 'packageManifests',
-      },
-      {
-        kind: referenceForModel(InstallPlanModel),
-        isList: true,
-        namespace: props.namespace,
-        prop: 'installPlans',
-      },
-      {
-        kind: referenceForModel(ClusterServiceVersionModel),
-        namespace: props.namespace,
-        isList: true,
-        prop: 'clusterServiceVersions',
-      },
-      {
-        kind: referenceForModel(SubscriptionModel),
-        namespace: props.namespace,
-        isList: true,
-        prop: 'subscriptions',
-      },
-    ]}
-    menuActions={menuActions}
-  />
-);
+export const SubscriptionDetailsPage: React.FC<SubscriptionDetailsPageProps> = (props) => {
+  const params = useParams();
+  return (
+    <DetailsPage
+      {...props}
+      namespace={params.ns}
+      kind={referenceForModel(SubscriptionModel)}
+      name={params.name}
+      pages={[navFactory.details(SubscriptionDetails), navFactory.editYaml()]}
+      resources={[
+        {
+          kind: referenceForModel(PackageManifestModel),
+          isList: true,
+          namespace: props.namespace,
+          prop: 'packageManifests',
+        },
+        {
+          kind: referenceForModel(InstallPlanModel),
+          isList: true,
+          namespace: props.namespace,
+          prop: 'installPlans',
+        },
+        {
+          kind: referenceForModel(ClusterServiceVersionModel),
+          namespace: props.namespace,
+          isList: true,
+          prop: 'clusterServiceVersions',
+        },
+        {
+          kind: referenceForModel(SubscriptionModel),
+          namespace: props.namespace,
+          isList: true,
+          prop: 'subscriptions',
+        },
+      ]}
+      menuActions={menuActions}
+    />
+  );
+};
 
 export type SubscriptionsPageProps = {
   namespace?: string;
-  match?: match<{ ns?: string }>;
 };
 
 export type SubscriptionsListProps = {
@@ -771,7 +773,6 @@ export type SubscriptionDetailsProps = {
 };
 
 export type SubscriptionDetailsPageProps = {
-  match: match<{ ns: string; name: string }>;
   namespace: string;
 };
 

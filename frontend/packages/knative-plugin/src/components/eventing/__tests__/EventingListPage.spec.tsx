@@ -1,25 +1,23 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import * as Router from 'react-router-dom-v5-compat';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import { MultiTabListPage } from '@console/shared';
 import EventingListPage from '../EventingListPage';
 
-let eventingListPageProps: React.ComponentProps<typeof EventingListPage>;
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+}));
+
 let wrapper: ShallowWrapper;
 
 describe('EventingListPage', () => {
   beforeEach(() => {
-    eventingListPageProps = {
-      match: {
-        isExact: true,
-        path: '/eventing/ns/:ns',
-        url: 'eventing/ns/my-project',
-        params: {
-          ns: 'my-project',
-        },
-      },
-    };
-    wrapper = shallow(<EventingListPage {...eventingListPageProps} />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: 'my-project',
+    });
+    wrapper = shallow(<EventingListPage />);
   });
 
   it('should render NamespaceBar and MultiTabListPage', () => {
@@ -36,6 +34,7 @@ describe('EventingListPage', () => {
   });
 
   it('should show correct url for creation for valid namespace', () => {
+    wrapper = shallow(<EventingListPage />);
     const multiTablistPage = wrapper.find(MultiTabListPage);
     expect(Object.keys(multiTablistPage.props().menuActions)).toHaveLength(3);
     expect(multiTablistPage.props().menuActions.eventSource).toBeDefined();
@@ -47,17 +46,10 @@ describe('EventingListPage', () => {
   });
 
   it('should show correct url for creation if namespace is not defined', () => {
-    eventingListPageProps = {
-      match: {
-        isExact: true,
-        path: '/eventing/all-namespaces',
-        url: 'eventing/all-namespaces',
-        params: {
-          ns: undefined,
-        },
-      },
-    };
-    wrapper = shallow(<EventingListPage {...eventingListPageProps} />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: undefined,
+    });
+    wrapper = shallow(<EventingListPage />);
     const multiTablistPage = wrapper.find(MultiTabListPage);
     expect(Object.keys(multiTablistPage.props().menuActions)).toHaveLength(3);
     expect(multiTablistPage.props().menuActions.eventSource).toBeDefined();

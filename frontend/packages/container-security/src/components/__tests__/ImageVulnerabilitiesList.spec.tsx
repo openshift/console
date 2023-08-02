@@ -10,12 +10,6 @@ describe('ImageVulnerabilitiesList', () => {
   const vuln = fakeVulnFor(Priority.Critical);
   const props: ImageVulnerabilitiesListProps = {
     obj: vuln,
-    match: {
-      url: '',
-      isExact: false,
-      path: '',
-      params: { ns: 'namespace' },
-    },
   };
   const wrapper: ShallowWrapper<ImageVulnerabilitiesListProps> = shallow(
     <ImageVulnerabilitiesList {...props} />,

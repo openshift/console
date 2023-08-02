@@ -23,11 +23,11 @@ import { AngleRightIcon } from '@patternfly/react-icons/dist/esm/icons/angle-rig
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useParams, Link, useNavigate } from 'react-router-dom-v5-compat';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
-import { Link } from 'react-router-dom';
 
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
@@ -47,7 +47,6 @@ import { RootState } from '../../../redux';
 import { getPrometheusURL } from '../../graphs/helpers';
 import {
   getQueryArgument,
-  history,
   LoadingInline,
   removeQueryArgument,
   setQueryArgument,
@@ -759,11 +758,13 @@ const Board: React.FC<BoardProps> = ({ rows }) => (
   </>
 );
 
-const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ match }) => {
+const MonitoringDashboardsPage: React.FC = () => {
   const { t } = useTranslation();
+  const params = useParams();
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
-  const namespace = match.params?.ns;
+  const namespace = params?.ns;
   const activePerspective = getActivePerspective(namespace);
   const [board, setBoard] = React.useState<string>();
   const [boards, isLoading, error] = useFetchDashboards(namespace);
@@ -805,8 +806,8 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         endTime = null;
         // persist only the refresh Interval when dashboard is changed
         if (refreshInterval) {
-          const params = new URLSearchParams({ refreshInterval });
-          url = `${url}?${params.toString()}`;
+          const urlParams = new URLSearchParams({ refreshInterval });
+          url = `${url}?${urlParams.toString()}`;
         }
       } else {
         timeSpan = getQueryArgument('timeRange');
@@ -818,7 +819,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
       }
       if (newBoard !== board) {
         if (getQueryArgument('dashboard') !== newBoard) {
-          history.replace(url);
+          navigate(url, { replace: true });
         }
 
         const allVariables = getAllVariables(boards, newBoard, namespace);
@@ -840,16 +841,16 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         setBoard(newBoard);
       }
     },
-    [activePerspective, board, boards, dispatch, namespace],
+    [activePerspective, board, boards, dispatch, namespace, navigate],
   );
 
   // Display dashboard present in the params or show the first board
   React.useEffect(() => {
     if (!board && !_.isEmpty(boards)) {
       const boardName = getQueryArgument('dashboard');
-      changeBoard((namespace ? boardName : match.params.board) || boards?.[0]?.name);
+      changeBoard((namespace ? boardName : params.board) || boards?.[0]?.name);
     }
-  }, [board, boards, changeBoard, match.params.board, namespace]);
+  }, [board, boards, changeBoard, params.board, namespace]);
 
   React.useEffect(() => {
     const newBoard = getQueryArgument('dashboard');
@@ -948,12 +949,6 @@ type BoardProps = {
 
 type CardProps = {
   panel: Panel;
-};
-
-type MonitoringDashboardsPageProps = {
-  match: {
-    params: { board: string; ns?: string };
-  };
 };
 
 export default withFallback(MonitoringDashboardsPage, ErrorBoundaryFallbackPage);

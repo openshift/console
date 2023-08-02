@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { safeLoad } from 'js-yaml';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { CreateYAMLProps } from '@console/internal/components/create-yaml';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { AsyncComponent, LoadingBox } from '@console/internal/components/utils';
@@ -21,8 +22,9 @@ import { VMKind } from '../../types/vm';
 import { CreateVMTemplateYAML } from '../vm-templates/vm-template-create-yaml';
 
 const VMCreateYAMLConnected = connectToPlural(
-  ({ match, kindsInFlight, kindObj = VirtualMachineModel, resourceObjPath }: CreateYAMLProps) => {
+  ({ kindsInFlight, kindObj = VirtualMachineModel, resourceObjPath }: CreateYAMLProps) => {
     const [defaultVM, setDefaultVM] = React.useState<VMKind>(null);
+    const params = useParams();
 
     React.useEffect(() => {
       k8sList(TemplateModel, {
@@ -46,7 +48,7 @@ const VMCreateYAMLConnected = connectToPlural(
             await resolveDefaultVM({
               commonTemplate,
               name: 'vm-example',
-              namespace: match.params.ns || 'default',
+              namespace: params.ns || 'default',
               baseOSName: osSelection.getValue(),
               containerImage: osSelection.getContainerImage(),
             }),
@@ -56,11 +58,11 @@ const VMCreateYAMLConnected = connectToPlural(
           setDefaultVM(
             new VMWrapper(safeLoad(VirtualMachineYAMLTemplates.getIn(['default'])))
               .init()
-              .setNamespace(match.params.ns || 'default')
+              .setNamespace(params.ns || 'default')
               .asResource(),
           );
         });
-    }, [match.params.ns]);
+    }, [params.ns]);
 
     if ((!kindObj && kindsInFlight) || !defaultVM) {
       return <LoadingBox />;
@@ -86,8 +88,8 @@ const VMCreateYAMLConnected = connectToPlural(
 );
 
 export const VMCreateYAML = (props: any) => {
-  const search = props.location?.search;
-  const userMode = new URLSearchParams(search).get('mode');
+  const location = useLocation();
+  const userMode = new URLSearchParams(location.search).get('mode');
 
   return userMode === 'template' ? (
     <CreateVMTemplateYAML {...props} />

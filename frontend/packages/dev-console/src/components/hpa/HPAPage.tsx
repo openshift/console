@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { LoadingBox, LoadingInline, PageComponentProps } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -12,13 +13,9 @@ import { getLimitWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 import HPAFormikForm from './HPAFormikForm';
 import HPAPageHeader from './HPAPageHeader';
 
-const HPAPage: React.FC<PageComponentProps> = (props) => {
+const HPAPage: React.FC<PageComponentProps> = () => {
   const { t } = useTranslation();
-  const {
-    match: {
-      params: { ns, resourceRef, name },
-    },
-  } = props;
+  const { ns, resourceRef, name } = useParams();
   const breakdown = getGroupVersionKind(resourceRef) || [];
   const [group, version, kind] = breakdown;
   const [hpa, hpaLoaded, hpaError] = useRelatedHPA(`${group}/${version}`, kind, name, ns);

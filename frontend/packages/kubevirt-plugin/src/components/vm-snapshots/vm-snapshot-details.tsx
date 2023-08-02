@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Conditions } from '@console/internal/components/conditions';
 import { DetailsPage } from '@console/internal/components/factory';
 import {
@@ -91,8 +91,9 @@ const SnapshotDetails: React.FC<DetailsProps> = ({ obj, customData: { restores }
   );
 };
 
-export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match, ...props }) => {
-  const { ns: namespace, name: snapshotName } = match.params;
+export const SnapshotDetailsPage: React.FC = (props) => {
+  const { ns: namespace, name: snapshotName } = useParams();
+  const location = useLocation();
 
   const resource: FirehoseResource = {
     kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
@@ -133,7 +134,7 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
       },
       {
         name: `${snapshotName} Details`,
-        path: `${match.url}`,
+        path: `${location.pathname}`,
       },
     ];
   };
@@ -143,7 +144,6 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
   return (
     <DetailsPage
       {...props}
-      match={match}
       name={snapshotName}
       namespace={namespace}
       kind={kubevirtReferenceForModel(VirtualMachineSnapshotModel)}
@@ -156,6 +156,5 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
     />
   );
 };
-type SnapshotDetailsPageProps = RouteComponentProps<{ ns?: string; name?: string }>;
 
 type DetailsProps = { obj: VMSnapshot; customData: { restores: { [key: string]: VMRestore } } };

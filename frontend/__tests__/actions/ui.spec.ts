@@ -4,7 +4,6 @@ import { formatNamespacedRouteForResource } from '@console/shared/src/utils/name
 import '../../__mocks__/localStorage';
 import store from '../../public/redux';
 import * as UIActions from '../../public/actions/ui';
-import * as router from '../../public/components/utils/router';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 
 const setActiveNamespace = (ns) => store.dispatch(UIActions.setActiveNamespace(ns));
@@ -79,12 +78,7 @@ describe('ui-actions', () => {
       expect(getActiveNamespace(store.getState())).toEqual('dessert-topping');
     });
 
-    it('should redirect to list view if current path is "new" and setting to "all-namespaces"', () => {
-      const spy = spyOn(router.history, 'push');
-      window.location.pathname = '/k8s/ns/floorwax/pods/~new';
-      setActiveNamespace(ALL_NAMESPACES_KEY);
-      expect(spy.calls.argsFor(0)[0]).toEqual('/k8s/all-namespaces/pods');
-    });
+    // removed 'should redirect to list view if current path is "new" and setting to "all-namespaces"' test because setActiveNamespace no longer navigates
   });
 
   describe('getNamespacedRoute', () => {

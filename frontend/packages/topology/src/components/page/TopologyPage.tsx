@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { match as RMatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -25,24 +25,18 @@ import TopologyDataRenderer from './TopologyDataRenderer';
 import TopologyPageToolbar from './TopologyPageToolbar';
 
 interface TopologyPageProps {
-  match: RMatch<{
-    name?: string;
-  }>;
   activeViewStorageKey?: string;
   hideProjects?: boolean;
   defaultViewType?: TopologyViewType;
 }
 
 type PageContentsProps = {
-  match: RMatch<{
-    name?: string;
-  }>;
   viewType: TopologyViewType;
 };
 
-const PageContents: React.FC<PageContentsProps> = ({ match, viewType }) => {
+const PageContents: React.FC<PageContentsProps> = ({ viewType }) => {
   const { t } = useTranslation();
-  const namespace = match.params.name;
+  const { name: namespace } = useParams();
 
   return namespace ? (
     <TopologyDataRenderer viewType={viewType} />
@@ -61,7 +55,6 @@ const PageContents: React.FC<PageContentsProps> = ({ match, viewType }) => {
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
 export const TopologyPage: React.FC<TopologyPageProps> = ({
-  match,
   activeViewStorageKey = LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
   hideProjects = false,
   defaultViewType = TopologyViewType.graph,
@@ -76,6 +69,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
     activeViewStorageKey,
     defaultViewType,
   );
+  const params = useParams();
 
   const loaded: boolean = preferredTopologyViewLoaded && isTopologyLastViewLoaded;
 
@@ -91,7 +85,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
     return (preferredTopologyView || topologyLastView) as TopologyViewType;
   }, [loaded, preferredTopologyView, topologyLastView]);
 
-  const namespace = match.params.name;
+  const namespace = params.name;
   const queryParams = useQueryParams();
   const viewType =
     (queryParams.get('view') as TopologyViewType) || topologyViewState || defaultViewType;
@@ -143,7 +137,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
             viewType === TopologyViewType.graph ? 'topology-graph-page' : 'topology-list-page'
           }
         >
-          <PageContentsWithStartGuide match={match} viewType={viewType} />
+          <PageContentsWithStartGuide viewType={viewType} />
         </NamespacedPage>
       </DataModelProvider>
     </FilterProvider>

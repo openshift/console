@@ -15,6 +15,7 @@ import {
 } from '@patternfly/react-table/deprecated';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { useAccessReview, WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
@@ -278,6 +279,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
 export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
   typeof DetailsPage
 >> = (props) => {
+  const location = useLocation();
   const pages = [
     navFactory.details(DetailsForKind),
     navFactory.editYaml(),
@@ -311,7 +313,7 @@ export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
       pages={pages}
       menuActions={menuActions}
       breadcrumbsFor={() =>
-        breadcrumbsForGlobalConfig(ConsoleOperatorConfigModel.label, props.match.url)
+        breadcrumbsForGlobalConfig(ConsoleOperatorConfigModel.label, location.pathname)
       }
     />
   );

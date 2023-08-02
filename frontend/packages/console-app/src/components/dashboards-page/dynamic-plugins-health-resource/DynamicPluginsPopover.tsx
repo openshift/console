@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { WatchK8sResults, WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';
 import { ConsolePluginKind, referenceForModel } from '@console/internal/module/k8s';

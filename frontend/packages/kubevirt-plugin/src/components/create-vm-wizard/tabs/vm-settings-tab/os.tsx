@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, ButtonVariant, Checkbox, Text } from '@patternfly/react-core';
 import { SelectOption as SelectOptionDeprecated } from '@patternfly/react-core/deprecated';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { ResourceLink, useAccessReview } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { getPVCUploadURL } from '../../../../constants';

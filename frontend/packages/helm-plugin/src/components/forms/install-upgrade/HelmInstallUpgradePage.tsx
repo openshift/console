@@ -5,7 +5,7 @@ import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -32,21 +32,15 @@ import { getHelmActionValidationSchema } from '../../../utils/helm-validation-ut
 import HelmChartMetaDescription from './HelmChartMetaDescription';
 import HelmInstallUpgradeForm, { HelmInstallUpgradeFormData } from './HelmInstallUpgradeForm';
 
-export type HelmInstallUpgradePageProps = RouteComponentProps<{
-  ns?: string;
-  releaseName?: string;
-}>;
-
-const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProps> = ({
-  location,
-  match,
-}) => {
+const HelmInstallUpgradePage: React.FunctionComponent = () => {
+  const location = useLocation();
+  const params = useParams();
   const searchParams = new URLSearchParams(location.search);
 
-  const namespace = match.params.ns || searchParams.get('preselected-ns');
+  const namespace = params.ns || searchParams.get('preselected-ns');
   const initialChartURL = searchParams.get('chartURL');
   const indexEntry = searchParams.get('indexEntry');
-  const initialReleaseName = match.params.releaseName || '';
+  const initialReleaseName = params.releaseName || '';
   const helmChartName = searchParams.get('chartName');
   const helmChartRepoName = searchParams.get('chartRepoName');
   const helmActionOrigin = searchParams.get('actionOrigin') as HelmActionOrigins;

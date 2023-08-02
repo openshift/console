@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
@@ -24,7 +24,6 @@ import {
   ExternalLink,
   Firehose,
   FirehoseResult,
-  history,
   NameValueEditorPair,
   PageHeading,
   resourceObjPath,
@@ -55,6 +54,7 @@ type StorageProvisionerMap = {
 
 const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [newStorageClass, setNewStorageClass] = React.useState<{
     name: string;
@@ -420,7 +420,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     k8sCreate(StorageClassModel, data)
       .then((resource) => {
         setLoading(false);
-        history.push(resourceObjPath(resource, referenceFor(resource)));
+        navigate(resourceObjPath(resource, referenceFor(resource)));
       })
       .catch((err) => {
         setLoading(false);
@@ -707,7 +707,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
               </Button>
               <Button
                 id="cancel"
-                onClick={() => history.push('/k8s/cluster/storageclasses')}
+                onClick={() => navigate('/k8s/cluster/storageclasses')}
                 type="button"
                 variant="secondary"
               >

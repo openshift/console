@@ -10,6 +10,7 @@ import {
 import { RocketIcon } from '@patternfly/react-icons/dist/esm/icons/rocket-icon';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import { QuickStartModel } from '@console/app/src/models';
 import { ListPage, Table, TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { history, Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
@@ -187,7 +188,8 @@ NetworkAttachmentDefinitionsList.displayName = 'NetworkAttachmentDefinitionsList
 export const NetworkAttachmentDefinitionsPage: React.FC<NetworkAttachmentDefinitionsPageProps> = (
   props,
 ) => {
-  const namespace = props.namespace || props.match?.params?.ns;
+  const params = useParams();
+  const namespace = props.namespace || params?.ns;
   const createProps = {
     to: getCreateLink(namespace),
   };

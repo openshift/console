@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
@@ -21,7 +22,6 @@ import {
   ButtonBar,
   ExternalLink,
   Firehose,
-  history,
   LoadError,
   LoadingBox,
   NsDropdown,
@@ -138,6 +138,7 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
   const [error, setError] = React.useState('');
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const object = (obj.data.parameters || []).reduce((acc, { name, value }) => {
@@ -232,7 +233,7 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
             (p) => p.properties.id === activePerspective,
           );
           const url = (await activeExtension.properties.importRedirectURL())(namespace);
-          history.push(url);
+          navigate(url);
         });
       })
       .catch((err) => {
@@ -321,7 +322,7 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
               <Button type="submit" variant="primary">
                 {t('public~Create')}
               </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
+              <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>
@@ -340,6 +341,7 @@ const TemplateForm = connect(stateToProps)(
 
 export const InstantiateTemplatePage: React.FC<{}> = (props) => {
   const title = 'Instantiate Template';
+  const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const templateName = searchParams.get('template');
   const templateNamespace = searchParams.get('template-ns');

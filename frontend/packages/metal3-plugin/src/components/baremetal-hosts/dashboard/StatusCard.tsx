@@ -10,7 +10,7 @@ import {
 import { RebootingIcon } from '@patternfly/react-icons/dist/esm/icons/rebooting-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { Alert, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import {
   DashboardItemProps,

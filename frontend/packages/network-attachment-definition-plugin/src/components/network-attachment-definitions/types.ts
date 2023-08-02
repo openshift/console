@@ -12,5 +12,4 @@ export type NetAttachDefBundle = {
 export type NetworkAttachmentDefinitionsPageProps = {
   filterLabel: string;
   namespace?: string;
-  match: any;
 };

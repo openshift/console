@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { match } from 'react-router-dom';
+import { useLocation, useParams, Location } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 
 import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
@@ -84,6 +84,9 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
     <AsyncComponent loader={page.properties.loader} {...cProps} />
   );
 
+  const params = useParams();
+  const location = useLocation();
+
   const resourcePageExtensions = useExtensions<ResourceTabPage>(isResourceTabPage);
   const [dynamicResourcePageExtensions] = useResolvedExtensions<DynamicResourceTabPage>(
     isDynamicResourceTabPage,
@@ -148,7 +151,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         <DetailsBreadcrumbResolver
           useBreadcrumbs={resolvedBreadcrumbExtension.properties.breadcrumbsProvider}
           onBreadcrumbsResolved={onBreadcrumbsResolved}
-          urlMatch={props.match}
+          urlMatch={location}
           kind={kindObj}
         />
       )}
@@ -168,7 +171,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           breadcrumbs={pluginBreadcrumbs}
           breadcrumbsFor={
             props.breadcrumbsFor ??
-            (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(kindObj, props.match) : undefined)
+            (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(kindObj, params, location) : undefined)
           }
           resourceKeys={resourceKeys}
           getResourceStatus={props.getResourceStatus}
@@ -183,7 +186,6 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           pages={allPages}
           pagesFor={props.pagesFor}
           className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
-          match={props.match}
           label={props.label || (props.kind as any).label}
           resourceKeys={resourceKeys}
           customData={props.customData}
@@ -196,7 +198,6 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
 
 export type DetailsPageProps = {
   obj?: FirehoseResult<K8sResourceKind>;
-  match: match<any>;
   title?: string | JSX.Element;
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
   menuActions?: KebabAction[] | KebabOptionsCreator;
@@ -213,7 +214,9 @@ export type DetailsPageProps = {
   name?: string;
   namespace?: string;
   resources?: FirehoseResource[];
-  breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
+  breadcrumbsFor?: (
+    obj: K8sResourceKind,
+  ) => ({ name: string; path: string } | { name: string; path: Location })[];
   customData?: any;
   badge?: React.ReactNode;
   icon?: React.ComponentType<{ obj: K8sResourceKind }>;

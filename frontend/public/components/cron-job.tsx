@@ -313,7 +313,7 @@ export const CronJobsPage: React.FC<CronJobsPageProps> = (props) => (
   <ListPage {...props} ListComponent={CronJobsList} kind={kind} canCreate={true} />
 );
 
-export const CronJobsDetailsPage: React.FC<CronJobsDetailsPageProps> = (props) => {
+export const CronJobsDetailsPage: React.FC = (props) => {
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
@@ -351,8 +351,4 @@ type CronJobsPageProps = {
   showTitle?: boolean;
   namespace?: string;
   selector?: any;
-};
-
-type CronJobsDetailsPageProps = {
-  match: any;
 };

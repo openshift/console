@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
@@ -31,14 +31,10 @@ type watchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };
 
-type CreateKnatifyPageProps = RouteComponentProps<{ ns?: string }>;
-
-const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
-  match,
-  location,
-}) => {
+const CreateKnatifyPage: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const { ns: namespace } = useParams();
+  const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const kind = queryParams.get('kind');
   const appName = queryParams.get('name');

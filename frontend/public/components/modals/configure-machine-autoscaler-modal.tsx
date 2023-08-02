@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation, Trans } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 
 import { MachineAutoscalerModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import {
   HandlePromiseProps,
-  history,
   NumberSpinner,
   resourcePathFromModel,
   withHandlePromise,
@@ -15,6 +15,7 @@ import { k8sCreate, K8sResourceKind } from '../../module/k8s';
 
 const ConfigureMachineAutoscalerModal = withHandlePromise(
   (props: ConfigureMachineAutoscalerModalProps) => {
+    const navigate = useNavigate();
     const [minReplicas, setMinReplicas] = React.useState(1);
     const [maxReplicas, setMaxReplicas] = React.useState(12);
 
@@ -67,7 +68,7 @@ const ConfigureMachineAutoscalerModal = withHandlePromise(
       const promise = createAutoscaler();
       props.handlePromise(promise, (obj: K8sResourceKind) => {
         close();
-        history.push(
+        navigate(
           resourcePathFromModel(MachineAutoscalerModel, obj.metadata.name, obj.metadata.namespace),
         );
       });

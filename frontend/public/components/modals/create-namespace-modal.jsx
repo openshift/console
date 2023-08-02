@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { Popover, Button } from '@patternfly/react-core';
 import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/outlined-question-circle-icon';
 import {
@@ -13,7 +14,7 @@ import { FLAGS } from '@console/shared';
 import { k8sCreate, referenceFor } from '../../module/k8s';
 import { NamespaceModel, ProjectRequestModel, NetworkPolicyModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { Dropdown, history, isManaged, resourceObjPath, SelectorInput } from '../utils';
+import { Dropdown, isManaged, resourceObjPath, SelectorInput } from '../utils';
 import { setFlag } from '../../actions/features';
 
 const allow = 'allow';
@@ -33,6 +34,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const CreateNamespaceModalWithTranslation_ = (props) => {
   const { hideStartGuide, close, onSubmit, cancel } = props;
+  const navigate = useNavigate();
 
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -112,7 +114,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
         if (onSubmit) {
           onSubmit(obj);
         } else {
-          history.push(resourceObjPath(obj, referenceFor(obj)));
+          navigate(resourceObjPath(obj, referenceFor(obj)));
         }
       })
       .catch((err) => {

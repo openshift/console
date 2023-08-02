@@ -21,9 +21,9 @@ import { usePipelineMetricsLevel } from './utils/pipeline-operator';
 import { usePipelineTriggerTemplateNames } from './utils/triggers';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { name, namespace, kindObj, match } = props;
+  const { name, namespace, kindObj } = props;
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
-  const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj, match);
+  const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj);
   const [, pipelineLoaded, pipelineError] = useK8sGet<PipelineKind>(PipelineModel, name, namespace);
   const latestPipelineRun = useLatestPipelineRun(name, namespace);
   const badge = usePipelineTechPreviewBadge(namespace);

@@ -9,6 +9,7 @@ import i18next from 'i18next';
 import { KeyTypes, Tooltip, FocusTrap } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons/dist/esm/icons/angle-right-icon';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import { KebabActions, isKebabActions } from '@console/plugin-sdk/src/typings/kebab-actions';
 import Popper from '@console/shared/src/components/popper/Popper';
@@ -29,7 +30,7 @@ import {
   clonePVCModal,
   restorePVCModal,
 } from '../modals';
-import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
+import { asAccessReview, checkAccess, resourceObjPath, useAccessReview } from './index';
 import {
   AccessReviewResourceAttributes,
   K8sKind,
@@ -489,6 +490,7 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
 
 export const Kebab: KebabComponent = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { options, isDisabled, terminatingTooltip } = props;
   const dropdownElement = React.useRef<HTMLButtonElement>();
   const divElement = React.useRef<HTMLDivElement>();
@@ -501,7 +503,7 @@ export const Kebab: KebabComponent = (props) => {
     }
     hide();
     if (option.href) {
-      history.push(option.href);
+      navigate(option.href);
     }
   };
 

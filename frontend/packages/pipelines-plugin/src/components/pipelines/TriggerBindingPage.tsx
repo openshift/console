@@ -6,8 +6,8 @@ import TriggerBindingDetails from './detail-page-tabs/TriggerBindingDetails';
 import { useTriggersBreadcrumbsFor } from './hooks';
 
 const TriggerBindingPage: React.FC<DetailsPageProps> = (props) => {
-  const { kindObj, match } = props;
-  const breadcrumbsFor = useTriggersBreadcrumbsFor(kindObj, match);
+  const { kindObj } = props;
+  const breadcrumbsFor = useTriggersBreadcrumbsFor(kindObj);
   const badge = useTriggersTechPreviewBadge(props.namespace);
 
   return (

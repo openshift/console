@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
   useQueryParams,
@@ -13,15 +13,11 @@ import {
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
-type CatalogPageProps = RouteComponentProps<{
-  ns?: string;
-}>;
-
-const CatalogPage: React.FC<CatalogPageProps> = ({ match }) => {
+const CatalogPage: React.FC = () => {
   const { t } = useTranslation();
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
-  const namespace = match.params.ns;
+  const { ns: namespace } = useParams();
   const categories = useCatalogCategories();
   const isCatalogEnabled = isCatalogTypeEnabled(catalogType);
   return catalogType && !isCatalogEnabled ? (

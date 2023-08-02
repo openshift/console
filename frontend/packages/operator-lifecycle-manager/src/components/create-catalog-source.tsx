@@ -11,11 +11,9 @@ import {
 } from '@patternfly/react-core';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { match } from 'react-router-dom';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
   ButtonBar,
-  HandlePromiseProps,
   history,
   NsDropdown,
   PageHeading,
@@ -29,7 +27,7 @@ enum AvailabilityValue {
   SINGLE_NAMESPACE = '1',
 }
 
-export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandlePromise(
+export const CreateCatalogSource: React.FC = withHandlePromise(
   ({ handlePromise, inProgress, errorMessage }) => {
     const [availability, setAvailability] = React.useState(AvailabilityValue.ALL_NAMESPACES);
     const [image, setImage] = React.useState('');
@@ -190,7 +188,3 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
     );
   },
 );
-
-type CreateCatalogSourceProps = HandlePromiseProps & {
-  match: match;
-};

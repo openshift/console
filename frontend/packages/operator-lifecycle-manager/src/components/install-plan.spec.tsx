@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom-v5-compat';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   Table,
@@ -33,7 +34,6 @@ import {
   InstallPlansPageProps,
   InstallPlanDetailsPage,
   InstallPlanPreview,
-  InstallPlanDetailsPageProps,
   InstallPlanDetails,
   InstallPlanDetailsProps,
 } from './install-plan';
@@ -42,6 +42,11 @@ import { referenceForStepResource } from '.';
 import Spy = jasmine.Spy;
 
 const i18nNS = 'public';
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+}));
 
 jest.mock('@console/internal/components/utils/rbac', () => ({
   useAccessReview: jest.fn(),
@@ -156,14 +161,12 @@ describe('InstallPlansList', () => {
 
 describe('InstallPlansPage', () => {
   let wrapper: ShallowWrapper<InstallPlansPageProps>;
-  const match: any = {
-    params: {
-      ns: 'default',
-    },
-  };
 
   beforeEach(() => {
-    wrapper = shallow(<InstallPlansPage match={match} />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: 'default',
+    });
+    wrapper = shallow(<InstallPlansPage />);
   });
 
   it('renders a `MultiListPage` with the correct props', () => {
@@ -366,17 +369,13 @@ describe('InstallPlanDetails', () => {
 });
 
 describe('InstallPlanDetailsPage', () => {
-  let wrapper: ShallowWrapper<InstallPlanDetailsPageProps>;
-  let match: InstallPlanDetailsPageProps['match'];
+  let wrapper: ShallowWrapper;
 
   beforeEach(() => {
-    match = {
-      isExact: true,
-      path: '',
-      url: '',
-      params: { ns: 'default', name: testInstallPlan.metadata.name },
-    };
-    wrapper = shallow(<InstallPlanDetailsPage match={match} />);
+    jest
+      .spyOn(Router, 'useParams')
+      .mockReturnValue({ ns: 'default', name: testInstallPlan.metadata.name });
+    wrapper = shallow(<InstallPlanDetailsPage />);
   });
 
   it('renders a `DetailsPage` with correct props', () => {

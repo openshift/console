@@ -1,12 +1,12 @@
-import { match } from 'react-router';
+import { Location } from 'react-router-dom-v5-compat';
 import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { K8sKind } from '@console/internal/module/k8s';
 import { Extension } from './base';
 
 export type DetailsPageBreadCrumbsHook = (
   kind: K8sKind,
-  urlMatch: match<any>,
-) => { name: string; path: string }[];
+  urlMatch: any,
+) => ({ name: string; path: string } | { name: string; path: Location })[];
 
 namespace ExtensionProperties {
   export interface DetailPageBreadCrumbs {

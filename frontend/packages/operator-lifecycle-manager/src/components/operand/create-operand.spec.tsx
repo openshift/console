@@ -3,6 +3,7 @@ import { Alert, Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { safeDump } from 'js-yaml';
 import * as _ from 'lodash';
+import * as Router from 'react-router-dom-v5-compat';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
@@ -29,6 +30,11 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+}));
+
 (useK8sWatchResource as jest.Mock).mockImplementation((res) => [
   res.kind === CustomResourceDefinitionModel.kind ? testCRD : testClusterServiceVersion,
   true,
@@ -39,16 +45,9 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
   let wrapper: ShallowWrapper<CreateOperandProps>;
 
   beforeEach(() => {
-    const match = {
-      params: { csvName: 'app', ns: 'default', plural: k8s.referenceFor(testResourceInstance) },
-      isExact: true,
-      url: '',
-      path: '',
-    };
     wrapper = shallow(
       <CreateOperand
         initialEditorType={EditorType.YAML}
-        match={match}
         csv={testClusterServiceVersion}
         loaded
         loadError={undefined}
@@ -91,9 +90,9 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
     );
 
   beforeEach(() => {
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default' });
     wrapper = shallow(
       <OperandForm
-        match={{ params: { ns: 'default' } }}
         model={testModel}
         providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
         csv={testClusterServiceVersion}
@@ -163,20 +162,7 @@ describe(OperandYAML.displayName, () => {
   let wrapper: ShallowWrapper<OperandYAMLProps>;
 
   beforeEach(() => {
-    wrapper = shallow(
-      <OperandYAML
-        match={{
-          isExact: true,
-          url: '',
-          path: '',
-          params: {
-            ns: 'default',
-            csvName: 'example',
-            plural: k8s.referenceFor(testResourceInstance),
-          },
-        }}
-      />,
-    );
+    wrapper = shallow(<OperandYAML />);
   });
 
   it('renders `CreateYAML` component with correct props', () => {

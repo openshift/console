@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Alert, Button, Tooltip } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import * as classNames from 'classnames';
@@ -11,7 +12,6 @@ import { BlueInfoCircleIcon, APIError } from '@console/shared';
 import { ButtonBar } from '../../utils/button-bar';
 import { Dropdown } from '../../utils/dropdown';
 import { Firehose } from '../../utils/firehose';
-import { history } from '../../utils/router';
 import { StatusBox } from '../../utils/status-box';
 import {
   getAlertmanagerConfig,
@@ -186,6 +186,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   editReceiverNamed,
   alertmanagerGlobals, // contains default props not in alertmanager.yaml's config.global
 }) => {
+  const navigate = useNavigate();
   const [saveErrorMsg, setSaveErrorMsg] = React.useState<string>();
   const [inProgress, setInProgress] = React.useState<boolean>(false);
   const { config, errorMessage: loadErrorMsg } = getAlertmanagerConfig(secret);
@@ -344,7 +345,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
       () => {
         setSaveErrorMsg('');
         setInProgress(false);
-        history.push('/monitoring/alertmanagerconfig');
+        navigate('/monitoring/alertmanagerconfig');
       },
       (err) => {
         setSaveErrorMsg(err.message);
@@ -458,7 +459,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
               type="button"
               variant="secondary"
               data-test-id="cancel"
-              onClick={history.goBack}
+              onClick={() => navigate(-1)}
             >
               {t('public~Cancel')}
             </Button>
@@ -596,8 +597,9 @@ export const CreateReceiver = () => {
   );
 };
 
-export const EditReceiver = ({ match: { params } }) => {
+export const EditReceiver = () => {
   const { t } = useTranslation();
+  const params = useParams();
   return (
     <Firehose resources={resources}>
       <ReceiverWrapper

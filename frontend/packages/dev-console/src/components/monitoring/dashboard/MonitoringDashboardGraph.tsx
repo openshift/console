@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import { BrowserRouter, Link } from 'react-router-dom';
+import { BrowserRouter, Link } from 'react-router-dom-v5-compat';
 import { dashboardsSetEndTime, dashboardsSetTimespan } from '@console/internal/actions/observe';
 import { Humanize } from '@console/internal/components/utils';
 import { QueryBrowser } from '@console/shared/src/components/query-browser';

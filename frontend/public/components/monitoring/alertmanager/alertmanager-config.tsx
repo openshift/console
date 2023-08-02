@@ -2,7 +2,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
-import { Link } from 'react-router-dom';
+import classNames from 'classnames';
+import { Link, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -13,15 +14,19 @@ import {
   Label as PfLabel,
   LabelGroup as PfLabelGroup,
   EmptyStateHeader,
+  Breadcrumb,
+  BreadcrumbItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 
+import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
+
 import { K8sResourceKind } from '../../../module/k8s';
 import { Table, TableData, TextFilter, RowFunctionArgs } from '../../factory';
 import { confirmModal, createAlertRoutingModal } from '../../modals';
-import { Firehose, history, Kebab, MsgBox, SectionHeading, StatusBox } from '../../utils';
+import { Firehose, Kebab, MsgBox, SectionHeading, StatusBox } from '../../utils';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
@@ -216,6 +221,7 @@ const deleteReceiver = (
   secret: K8sResourceKind,
   config: AlertmanagerConfig,
   receiverName: string,
+  navigate: any,
 ) => {
   // remove any routes which use receiverToDelete
   _.update(config, 'route.routes', (routes) => {
@@ -228,7 +234,7 @@ const deleteReceiver = (
     return receivers;
   });
   return patchAlertmanagerConfig(secret, config).then(() => {
-    history.push('/monitoring/alertmanagerconfig');
+    navigate('/monitoring/alertmanagerconfig');
   });
 };
 
@@ -245,6 +251,7 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
   customData: { routingLabelsByReceivers, defaultReceiverName, config, secret },
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   // filter to routing labels belonging to current Receiver
   const receiverRoutingLabels = _.filter(routingLabelsByReceivers, { receiver: receiver.name });
   const receiverIntegrationTypes = getIntegrationTypes(receiver);
@@ -270,7 +277,7 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
         const targetUrl = canUseEditForm
           ? `/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`
           : `/monitoring/alertmanageryaml`;
-        return history.push(targetUrl);
+        return navigate(targetUrl);
       },
     },
     {
@@ -286,7 +293,7 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
             receiverName,
           }),
           btnText: t('public~Delete Receiver'),
-          executeFn: () => deleteReceiver(secret, config, receiverName),
+          executeFn: () => deleteReceiver(secret, config, receiverName, navigate),
         }),
     },
   ];
@@ -508,21 +515,72 @@ const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps> = Reac
   },
 );
 
-export const AlertmanagerConfig = () => (
-  <Firehose
-    resources={[
-      {
-        kind: 'Secret',
-        name: 'alertmanager-main',
-        namespace: 'openshift-monitoring',
-        isList: false,
-        prop: 'obj',
-      },
-    ]}
-  >
-    <AlertmanagerConfigWrapper />
-  </Firehose>
-);
+export const AlertmanagerConfig: React.FC = () => {
+  const { t } = useTranslation();
+  const { pathname: url } = useLocation();
+
+  const configPath = '/monitoring/alertmanagerconfig';
+  const YAMLPath = '/monitoring/alertmanageryaml';
+
+  const breadcrumbs = breadcrumbsForGlobalConfig('Alertmanager', configPath);
+
+  return (
+    <>
+      <div className="pf-c-page__main-breadcrumb">
+        <Breadcrumb className="monitoring-breadcrumbs">
+          <BreadcrumbItem>
+            <Link className="pf-c-breadcrumb__link" to={breadcrumbs[0].path}>
+              {breadcrumbs[0].name}
+            </Link>
+          </BreadcrumbItem>
+          <BreadcrumbItem isActive>{breadcrumbs[1].name}</BreadcrumbItem>
+        </Breadcrumb>
+      </div>
+      <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
+        <h1 className="co-m-pane__heading">
+          <div className="co-m-pane__name co-resource-item">
+            <span className="co-resource-item__resource-name" data-test-id="resource-title">
+              {t('public~Alertmanager')}
+            </span>
+          </div>
+        </h1>
+      </div>
+      <ul className="co-m-horizontal-nav__menu">
+        <li
+          className={classNames('co-m-horizontal-nav__menu-item', {
+            'co-m-horizontal-nav-item--active': url === configPath,
+          })}
+        >
+          <Link to={configPath} data-test-id="horizontal-link-details">
+            {t('public~Details')}
+          </Link>
+        </li>
+        <li
+          className={classNames('co-m-horizontal-nav__menu-item', {
+            'co-m-horizontal-nav-item--active': url === YAMLPath,
+          })}
+        >
+          <Link to={YAMLPath} data-test-id="horizontal-link-yaml">
+            {t('public~YAML')}
+          </Link>
+        </li>
+      </ul>
+      <Firehose
+        resources={[
+          {
+            kind: 'Secret',
+            name: 'alertmanager-main',
+            namespace: 'openshift-monitoring',
+            isList: false,
+            prop: 'obj',
+          },
+        ]}
+      >
+        <AlertmanagerConfigWrapper />
+      </Firehose>
+    </>
+  );
+};
 
 type AlertmanagerConfigWrapperProps = {
   obj?: {

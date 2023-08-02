@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { getResource } from '@console/topology/src/utils';
 import { TYPE_HELM_RELEASE } from '../../components/const';

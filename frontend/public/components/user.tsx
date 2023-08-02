@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link, match } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { Button, TextContent } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -32,9 +32,13 @@ const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
   startImpersonate,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
-    callback: () => startImpersonate('User', obj.metadata.name),
+    callback: () => {
+      startImpersonate('User', obj.metadata.name);
+      navigate(window.SERVER_FLAGS.basePath);
+    },
     // Must use API group authorization.k8s.io, NOT user.openshift.io
     // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
     accessReview: {
@@ -218,14 +222,15 @@ type UserKebabProps = {
   user: UserKind;
 };
 
-const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> = ({
-  startImpersonate,
-  ...props
-}) => {
+const UserDetailsPage_: React.FC<UserKebabDispatchProps> = ({ startImpersonate, ...props }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
-    callback: () => startImpersonate('User', obj.metadata.name),
+    callback: () => {
+      startImpersonate('User', obj.metadata.name);
+      navigate(window.SERVER_FLAGS.basePath);
+    },
     // Must use API group authorization.k8s.io, NOT user.openshift.io
     // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
     accessReview: {
@@ -249,7 +254,7 @@ const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> 
   );
 };
 
-export const UserDetailsPage = connect<{}, UserKebabDispatchProps, UserDetailsPageProps>(null, {
+export const UserDetailsPage = connect<{}, UserKebabDispatchProps>(null, {
   startImpersonate: UIActions.startImpersonate,
 })(UserDetailsPage_);
 
@@ -264,8 +269,4 @@ type RoleBindingsTabProps = {
 
 type UserDetailsProps = {
   obj: UserKind;
-};
-
-type UserDetailsPageProps = {
-  match: match<any>;
 };

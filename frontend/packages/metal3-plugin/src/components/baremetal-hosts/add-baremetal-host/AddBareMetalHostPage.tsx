@@ -1,17 +1,13 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import AddBareMetalHost from './AddBareMetalHost';
 
-export type AddBareMetalHostPageProps = RouteComponentProps<{ ns?: string; name?: string }>;
-
-const AddBareMetalHostPage: React.FunctionComponent<AddBareMetalHostPageProps> = ({
-  match,
-  location,
-}) => {
+const AddBareMetalHostPage: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const { name, ns: namespace } = match.params;
+  const location = useLocation();
+  const { name, ns: namespace } = useParams();
   const enablePowerMgmt = new URLSearchParams(location.search).has('powerMgmt');
 
   const isEditing = !!name;

@@ -35,6 +35,9 @@ const ServiceBindingListPage: React.FC<ServiceBindingListPageProps> = (props) =>
     },
   ];
 
+  const propsWithoutName = { ...props };
+  delete propsWithoutName.name;
+
   return (
     <ListPage
       title={t('service-binding-plugin~ServiceBindings')}
@@ -42,7 +45,7 @@ const ServiceBindingListPage: React.FC<ServiceBindingListPageProps> = (props) =>
       ListComponent={ServiceBindingTable}
       rowFilters={filters}
       canCreate
-      {...props}
+      {...propsWithoutName}
     />
   );
 };

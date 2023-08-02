@@ -1,22 +1,16 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { match as RMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { withStartGuide } from '../../../../../public/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 import AddPageLayout from './AddPageLayout';
 
-export interface AddPageProps {
-  match: RMatch<{
-    ns?: string;
-  }>;
-}
-
 // Exported for testing
-export const PageContents: React.FC<AddPageProps> = ({ match }) => {
+export const PageContents: React.FC = () => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const { ns: namespace } = useParams();
 
   return namespace ? (
     <AddPageLayout title={t('devconsole~Add')} />
@@ -34,9 +28,9 @@ export const PageContents: React.FC<AddPageProps> = ({ match }) => {
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-const AddPage: React.FC<AddPageProps> = ({ match }) => {
+const AddPage: React.FC = () => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const { ns: namespace } = useParams();
   const nsVariant = namespace ? null : NamespacedPageVariants.light;
 
   return (
@@ -45,7 +39,7 @@ const AddPage: React.FC<AddPageProps> = ({ match }) => {
         <title data-test-id="page-title">{`+${t('devconsole~Add')}`}</title>
       </Helmet>
       <NamespacedPage variant={nsVariant} hideApplications>
-        <PageContentsWithStartGuide match={match} />
+        <PageContentsWithStartGuide />
       </NamespacedPage>
     </>
   );

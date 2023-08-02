@@ -233,7 +233,7 @@ const ReplicaSetsTab: React.FC<ReplicaSetsTabProps> = ({ obj }) => {
   );
 };
 
-export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (props) => {
+export const DeploymentsDetailsPage: React.FC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
@@ -333,8 +333,4 @@ type DeploymentsPageProps = {
   showTitle?: boolean;
   namespace?: string;
   selector?: any;
-};
-
-type DeploymentsDetailsPageProps = {
-  match: any;
 };

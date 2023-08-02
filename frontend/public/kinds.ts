@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import { match } from 'react-router-dom';
 
 import {
   K8sKind,
@@ -14,7 +13,7 @@ import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/use
 
 export const connectToModel = connect(
   ({ k8s }: RootState, props: { kind: K8sResourceKindReference } & any) => {
-    const kind: string = props.kind || props.match?.params?.plural;
+    const kind: string = props.kind || props.match?.params?.plural || props.params?.plural;
     return {
       kindObj: getK8sModel(k8s, kind),
       kindsInFlight: k8s.getIn(['RESOURCES', 'inFlight']),
@@ -43,10 +42,11 @@ export const connectToPlural: ConnectToPlural = connect(
     { k8s }: RootState,
     props: {
       plural?: GroupVersionKind | string;
-      match: match<{ plural: GroupVersionKind | string }>;
+      match?: any;
+      params?: any;
     },
   ) => {
-    const plural = props.plural || props.match?.params?.plural;
+    const plural = props.plural || props.params?.plural || props.match?.params?.plural;
     const groupVersionKind = getGroupVersionKind(plural);
 
     let kindObj: K8sKind = null;

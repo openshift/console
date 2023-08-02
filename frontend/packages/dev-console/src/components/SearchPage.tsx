@@ -1,16 +1,13 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { match as RMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { SearchPage } from '@console/internal/components/search';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from './NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 
 export interface SearchPageProps {
-  match: RMatch<{
-    ns?: string;
-  }>;
   noProjectsAvailable?: boolean;
 }
 
@@ -30,8 +27,9 @@ const ProjectListPage = () => {
 
 const ProjectListPageWithStartGuide = withStartGuide(ProjectListPage);
 
-const PageContents: React.FC<SearchPageProps> = ({ noProjectsAvailable, ...props }) => {
-  const namespace = props.match.params.ns;
+const PageContents: React.FC<SearchPageProps> = ({ noProjectsAvailable }) => {
+  const params = useParams();
+  const namespace = params.ns;
   return namespace ? (
     <SearchPage namespace={namespace} noProjectsAvailable={noProjectsAvailable} />
   ) : (

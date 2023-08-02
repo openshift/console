@@ -1,10 +1,9 @@
-import { match } from 'react-router';
 import { K8sModel } from '../api/common-types';
 import { CodeRef, Extension, ExtensionDeclaration } from '../types';
 
 export type DetailsPageBreadCrumbsHook = (
   kind: K8sModel,
-  urlMatch: match<any>,
+  urlMatch: any,
 ) => { name: string; path: string }[];
 
 export type DetailPageBreadCrumbs = ExtensionDeclaration<

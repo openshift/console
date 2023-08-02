@@ -10,15 +10,13 @@ import {
   DropdownToggle as DropdownToggleDeprecated,
 } from '@patternfly/react-core/deprecated';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
-import { Link } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import { useQueryParams } from '@console/shared';
 import { ClusterOperatorModel, OAuthModel } from '../../models';
 import { IdentityProvider, OAuthKind, referenceForModel } from '../../module/k8s';
 import { DetailsPage } from '../factory';
 import {
   EmptyBox,
-  history,
   Kebab,
   navFactory,
   resourcePathFromModel,
@@ -82,6 +80,7 @@ export const addIDPItems = Object.freeze({
 });
 
 const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) => {
+  const navigate = useNavigate();
   const [isIDPOpen, setIDPOpen] = React.useState(false);
   const { identityProviders, tokenConfig } = obj.spec;
   const { t } = useTranslation();
@@ -122,7 +121,7 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
         component="button"
         id={key}
         data-test-id={key}
-        onClick={(e) => history.push(`/settings/idp/${e.currentTarget.id}`)}
+        onClick={(e) => navigate(`/settings/idp/${e.currentTarget.id}`)}
       >
         {getAddIDPItemLabels(value)}
       </DropdownItemDeprecated>
@@ -191,7 +190,7 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
   );
 };
 
-export const OAuthDetailsPage: React.FC<OAuthDetailsPageProps> = (props) => (
+export const OAuthDetailsPage: React.FC = (props) => (
   <DetailsPage
     {...props}
     kind={oAuthReference}
@@ -206,8 +205,4 @@ type IdentityProvidersProps = {
 
 type OAuthDetailsProps = {
   obj: OAuthKind;
-};
-
-type OAuthDetailsPageProps = {
-  match: any;
 };

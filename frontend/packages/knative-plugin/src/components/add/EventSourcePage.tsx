@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -12,11 +12,10 @@ import { CamelKameletBindingModel } from '../../models';
 import ConnectedEventSource from './EventSource';
 import EventSourceAlert from './EventSourceAlert';
 
-type EventSourcePageProps = RouteComponentProps<{ ns?: string }>;
-
-const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) => {
+const EventSourcePage: React.FC = () => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const { ns: namespace } = useParams();
+  const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const sourceKindProp = searchParams.get('sourceKind');
   const kameletName = sourceKindProp && searchParams.get('name');

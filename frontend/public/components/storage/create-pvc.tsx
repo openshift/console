@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
+
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { isObjectSC } from '@console/shared/src/utils';
@@ -12,7 +13,6 @@ import {
   AsyncComponent,
   ButtonBar,
   RequestSizeInput,
-  history,
   resourceObjPath,
   PageHeading,
 } from '../utils';
@@ -239,6 +239,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
 
 export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [error, setError] = React.useState('');
   const [inProgress, setInProgress] = React.useState(false);
   const [pvcObj, setPvcObj] = React.useState(null);
@@ -251,7 +252,7 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
     k8sCreate(PersistentVolumeClaimModel, pvcObj).then(
       (resource) => {
         setInProgress(false);
-        history.push(resourceObjPath(resource, referenceFor(resource)));
+        navigate(resourceObjPath(resource, referenceFor(resource)));
       },
       ({ message }: { message: string }) => {
         setError(message || 'Could not create persistent volume claim.');
@@ -286,7 +287,7 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
               <Button id="save-changes" data-test="create-pvc" type="submit" variant="primary">
                 {t('public~Create')}
               </Button>
-              <Button onClick={history.goBack} type="button" variant="secondary">
+              <Button onClick={() => navigate(-1)} type="button" variant="secondary">
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>
@@ -297,7 +298,8 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
   );
 };
 
-export const CreatePVC = ({ match: { params } }) => {
+export const CreatePVC = () => {
+  const params = useParams();
   return <CreatePVCPage namespace={params.ns} />;
 };
 

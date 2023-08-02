@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { NodeInventoryItem } from '@console/app/src/components/nodes/node-dashboard/InventoryCard';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import { resourcePathFromModel } from '@console/internal/components/utils';

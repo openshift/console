@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -11,11 +11,10 @@ import { useEventSinkStatus } from '../../hooks/useEventSinkStatus';
 import EventSink from './EventSink';
 import EventSinkAlert from './EventSinkAlert';
 
-type EventSinkPageProps = RouteComponentProps<{ ns?: string }>;
-
-const EventSinkPage: React.FC<EventSinkPageProps> = ({ match, location }) => {
+const EventSinkPage: React.FC = () => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const { ns: namespace } = useParams();
+  const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const sinkKindProp = searchParams.get('sinkKind');
   const kameletName = sinkKindProp && searchParams.get('name');

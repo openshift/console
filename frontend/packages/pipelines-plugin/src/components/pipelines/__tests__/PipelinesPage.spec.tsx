@@ -1,43 +1,30 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import * as Router from 'react-router-dom-v5-compat';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { PipelineModel } from '../../../models';
 import { PipelinesPage } from '../PipelinesPage';
 import PipelinesResourceList from '../PipelinesResourceList';
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
 describe('Pipeline List', () => {
   it('Should render a PipelineResourcelist', () => {
-    const pipelinePageProps: React.ComponentProps<typeof PipelinesPage> = {
-      history: null,
-      location: null,
-      match: {
-        isExact: true,
-        path: `/k8s/ns/:ns/${referenceForModel(PipelineModel)}`,
-        url: 'k8s/ns/my-project/tekton.dev~v1alpha1~Pipeline',
-        params: {
-          ns: 'my-project',
-        },
-      },
-    };
-    const pipelineWrapperNS = shallow(<PipelinesPage {...pipelinePageProps} />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: 'my-project',
+    });
+    const pipelineWrapperNS = shallow(<PipelinesPage />);
     expect(pipelineWrapperNS.find(PipelinesResourceList).exists()).toBe(true);
   });
 
   it('Should render ProjecListPage when no namespace is selected', () => {
-    const pipelinePagePropsWNS: React.ComponentProps<typeof PipelinesPage> = {
-      history: null,
-      location: null,
-      match: {
-        isExact: true,
-        path: `/k8s/ns/:ns/${referenceForModel(PipelineModel)}`,
-        url: 'k8s/ns/all-projects/tekton.dev~v1alpha1~Pipeline',
-        params: {
-          ns: undefined,
-        },
-      },
-    };
-    const pipelineWrapperWNS = shallow(<PipelinesPage {...pipelinePagePropsWNS} />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: undefined,
+    });
+    const pipelineWrapperWNS = shallow(<PipelinesPage />);
     expect(pipelineWrapperWNS.find(CreateProjectListPage).exists()).toBe(true);
   });
 });

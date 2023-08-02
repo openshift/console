@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
@@ -8,15 +8,9 @@ import { PipelineRunModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import PipelineRunsResourceList from './PipelineRunsResourceList';
 
-type PipelineRunsPageProps = RouteComponentProps<{ ns: string }>;
-
-const PipelineRunsPage: React.FC<PipelineRunsPageProps> = (props) => {
+const PipelineRunsPage: React.FC = (props) => {
   const { t } = useTranslation();
-  const {
-    match: {
-      params: { ns: namespace },
-    },
-  } = props;
+  const { ns: namespace } = useParams();
   const badge = usePipelineTechPreviewBadge(namespace);
   const { labelPlural: pipelineRunLabel } = PipelineRunModel;
   return namespace ? (

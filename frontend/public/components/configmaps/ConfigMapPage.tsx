@@ -1,18 +1,16 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { ConfigMapModel } from '@console/internal/models';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { StatusBox } from '../utils/status-box';
 import ConfigMapForm from './ConfigMapForm';
 import { ConfigMap } from './types';
 
-export type ConfigMapProps = RouteComponentProps<{ ns: string; name: string }>;
-
-const ConfigMapPage: React.FC<ConfigMapProps> = ({ match }) => {
+const ConfigMapPage: React.FC = () => {
   const { t } = useTranslation();
-  const { ns: namespace, name } = match.params;
+  const { ns: namespace, name } = useParams();
   const isCreateFlow: boolean = !name || name === '~new';
 
   const [watchedConfigMap, loaded, loadError] = useK8sWatchResource<ConfigMap>(

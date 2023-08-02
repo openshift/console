@@ -2,14 +2,10 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import {
-  history,
-  resourceListPathFromModel,
-  withHandlePromise,
-  HandlePromiseProps,
-} from '../utils';
+import { resourceListPathFromModel, withHandlePromise, HandlePromiseProps } from '../utils';
 import {
   k8sKill,
   k8sList,
@@ -27,6 +23,7 @@ import { LocationDescriptor } from 'history';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
 export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromiseProps) => {
+  const navigate = useNavigate();
   const [isChecked, setIsChecked] = React.useState(true);
   const [isDeleteOtherResourcesChecked, setIsDeleteOtherResourcesChecked] = React.useState(true);
   const [owner, setOwner] = React.useState<OwnerReference>(undefined);
@@ -56,7 +53,7 @@ export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePr
         const listPath = props.redirectTo
           ? props.redirectTo
           : resourceListPathFromModel(kind, _.get(resource, 'metadata.namespace'));
-        history.push(listPath);
+        navigate(listPath);
       }
     });
   };

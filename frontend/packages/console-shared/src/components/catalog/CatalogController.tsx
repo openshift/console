@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { ResolvedExtension, CatalogItemType } from '@console/dynamic-plugin-sdk';
 import { CatalogItem, CatalogItemAttribute } from '@console/dynamic-plugin-sdk/src/extensions';
 import {

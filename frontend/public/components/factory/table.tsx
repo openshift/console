@@ -3,7 +3,6 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
-import { match as RMatch } from 'react-router-dom';
 import { TableGridBreakpoint, SortByDirection, OnSelect } from '@patternfly/react-table';
 import {
   Table as PfTable,
@@ -19,6 +18,7 @@ import {
   WindowScroller,
 } from '@patternfly/react-virtualized-extension';
 import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import {
   getNodeRoles,
   getMachinePhase,
@@ -380,13 +380,11 @@ const getComponentProps = (
   data: any[],
   filters: Filter[],
   selected: boolean,
-  match: RMatch<any>,
   kindObj: K8sResourceKindReference,
 ): ComponentProps => ({
   data,
   filters,
   selected,
-  match,
   kindObj,
 });
 
@@ -394,7 +392,6 @@ export const Table: React.FC<TableProps> = ({
   onSelect,
   filters: initFilters,
   selected,
-  match,
   kindObj,
   Header: initHeader,
   activeColumns,
@@ -448,11 +445,12 @@ export const Table: React.FC<TableProps> = ({
   });
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   const [sortBy, setSortBy] = React.useState({});
 
   const [columns, componentProps] = React.useMemo(() => {
-    const cProps = getComponentProps(data, filters, selected, match, kindObj);
+    const cProps = getComponentProps(data, filters, selected, kindObj);
     return [
       getActiveColumns(
         windowWidth,
@@ -470,7 +468,6 @@ export const Table: React.FC<TableProps> = ({
     data,
     filters,
     selected,
-    match,
     kindObj,
     activeColumns,
     columnManagementID,
@@ -499,11 +496,14 @@ export const Table: React.FC<TableProps> = ({
 
   const applySort = React.useCallback(
     (sortField, sortFunc, direction, columnTitle) => {
-      dispatch(
-        UIActions.sortList(listId, sortField, sortFunc || currentSortFunc, direction, columnTitle),
-      );
+      dispatch(UIActions.sortList(listId, sortField, sortFunc || currentSortFunc, direction));
+      const url = new URL(window.location.href);
+      const sp = new URLSearchParams(window.location.search);
+      sp.set('orderBy', direction);
+      sp.set('sortBy', columnTitle);
+      navigate(`${url.pathname}?${sp.toString()}${url.hash}`, { replace: true });
     },
-    [currentSortFunc, dispatch, listId],
+    [currentSortFunc, dispatch, listId, navigate],
   );
 
   const onSort = React.useCallback(
@@ -674,6 +674,5 @@ export type ComponentProps<D = any> = {
   data: D[];
   filters: Filter[];
   selected: boolean;
-  match: RMatch<any>;
   kindObj: K8sResourceKindReference;
 };

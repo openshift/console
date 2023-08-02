@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { match as Match } from 'react-router';
+import { useParams, redirect } from 'react-router-dom-v5-compat';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
@@ -15,7 +15,6 @@ import { errorModal } from './modals';
 import {
   BuildHooks,
   BuildStrategy,
-  history,
   Kebab,
   KebabAction,
   navFactory,
@@ -49,7 +48,7 @@ const startBuildAction: KebabAction = (kind, buildConfig) => ({
   callback: () =>
     startBuild(buildConfig)
       .then((build) => {
-        history.push(resourceObjPath(build, referenceFor(build)));
+        return redirect(resourceObjPath(build, referenceFor(build)));
       })
       .catch((err) => {
         const error = err.message;
@@ -72,7 +71,7 @@ const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig) => {
     callback: () =>
       cloneBuild(buildConfig.latestBuild)
         .then((clone) => {
-          history.push(resourceObjPath(clone, referenceFor(clone)));
+          return redirect(resourceObjPath(clone, referenceFor(clone)));
         })
         .catch((err) => {
           const error = err.message;
@@ -136,7 +135,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const BuildConfigsDetailsPage: React.SFC<BuildConfigsDetailsPageProps> = (props) => (
+export const BuildConfigsDetailsPage: React.SFC = (props) => (
   <DetailsPage {...props} kind={BuildConfigsReference} menuActions={menuActions} pages={pages} />
 );
 BuildConfigsDetailsPage.displayName = 'BuildConfigsDetailsPage';
@@ -321,6 +320,7 @@ BuildConfigsList.displayName = 'BuildConfigsList';
 
 export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
   const { t } = useTranslation();
+  const params = useParams();
   const allStrategies = [
     { id: BuildStrategyType.Docker, title: t('public~Docker') },
     { id: BuildStrategyType.Devfile, title: t('public~Devfile') },
@@ -359,7 +359,7 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
     },
   ];
 
-  const namespace = props.namespace ?? props.match?.params?.ns;
+  const namespace = props.namespace ?? params?.ns;
   const createProps = {
     to: `/k8s/ns/${namespace || 'default'}/buildconfigs/~new/form`,
   };
@@ -394,14 +394,9 @@ export type BuildConfigsDetailsProps = {
 
 export type BuildConfigsPageProps = {
   namespace: string;
-  match?: Match<{ ns: string; name: string }>;
   canCreate?: boolean;
   filterLabel?: string;
   mock?: boolean;
-};
-
-export type BuildConfigsDetailsPageProps = {
-  match: any;
 };
 
 type CustomData = {

@@ -5,15 +5,7 @@ import { mockHelmReleases } from '../../../__tests__/helm-release-mock-data';
 import HelmReleaseResources from '../HelmReleaseResources';
 
 describe('HelmReleaseResources', () => {
-  const match = {
-    params: { ns: 'default', name: 'nodejs-example' },
-    isExact: true,
-    path: '',
-    url: '',
-  };
-
   const helmReleaseResourcesProps: React.ComponentProps<typeof HelmReleaseResources> = {
-    match,
     customData: mockHelmReleases[0],
   };
 

@@ -16,7 +16,7 @@ import { PausedIcon } from '@patternfly/react-icons/dist/esm/icons/paused-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { GenericStatus } from '@console/dynamic-plugin-sdk';
 import { ResourceLink, resourcePath } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';

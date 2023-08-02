@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -16,15 +16,9 @@ import HelmReleaseList from './HelmReleaseList';
 import HelmReleaseListPage from './HelmReleaseListPage';
 import RepositoriesPage from './RepositoriesListPage';
 
-type HelmTabbedPageProps = RouteComponentProps<{ ns: string }>;
-
-export const PageContents: React.FC<HelmTabbedPageProps> = (props) => {
+export const PageContents: React.FC = () => {
   const { t } = useTranslation();
-  const {
-    match: {
-      params: { ns: namespace },
-    },
-  } = props;
+  const { ns: namespace } = useParams();
   const isHelmVisible = useFlag('HELM_CHARTS_CATALOG_TYPE');
   const [showTitle, canCreate] = [false, false];
   const [projectHelmChartCreateAccess, loadingCreatePHCR] = useAccessReview({
@@ -109,13 +103,12 @@ export const PageContents: React.FC<HelmTabbedPageProps> = (props) => {
     (helmChartListAccess && helmChartCreateAccess && helmChartEditAccess) ? (
       <MultiTabListPage
         pages={pages}
-        match={props.match}
         title={t('helm-plugin~Helm')}
         menuActions={menuActions}
         telemetryPrefix="Helm"
       />
     ) : (
-      <HelmReleaseListPage {...props} />
+      <HelmReleaseListPage />
     )
   ) : (
     <CreateProjectListPage title={t('helm-plugin~Helm')}>
@@ -131,7 +124,7 @@ export const PageContents: React.FC<HelmTabbedPageProps> = (props) => {
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-const HelmTabbedPage: React.FC<HelmTabbedPageProps> = (props) => {
+const HelmTabbedPage: React.FC = (props) => {
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
       <PageContentsWithStartGuide {...props} />

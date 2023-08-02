@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Label as PfLabel, LabelGroup as PfLabelGroup } from '@patternfly/react-core';

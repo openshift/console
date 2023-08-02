@@ -6,7 +6,7 @@ import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { match } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import { DefaultList } from '@console/internal/components/default-resource';
 import {
@@ -115,20 +115,18 @@ export const AffectedPods: React.FC<AffectedPodsProps> = (props) => {
   );
 };
 
-export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPageProps> = (
-  props,
-) => {
+export const ImageManifestVulnDetailsPage: React.FC = () => {
+  const params = useParams();
   return (
     <DetailsPage
-      match={props.match}
       kindObj={ImageManifestVulnModel}
       titleFunc={(obj: ImageManifestVuln) => {
         const image = shortenImage(obj?.spec?.image);
         const hash = obj?.spec?.manifest ? `@${shortenHash(obj.spec.manifest)}` : '';
         return image ? `${image}${hash}` : null;
       }}
-      name={props.match.params.name}
-      namespace={props.match.params.ns}
+      name={params.name}
+      namespace={params.ns}
       kind={referenceForModel(ImageManifestVulnModel)}
       menuActions={[]}
       pages={[
@@ -273,8 +271,9 @@ export const ImageManifestVulnList: React.FC<ImageManifestVulnListProps> = (prop
 
 export const ImageManifestVulnPage: React.FC<ImageManifestVulnPageProps> = (props) => {
   const { t } = useTranslation();
+  const params = useParams();
   const { showTitle = true, hideNameLabelFilters = true } = props;
-  const namespace = props.namespace || props.match?.params?.ns || props.match?.params?.name;
+  const namespace = props.namespace || params?.ns || params?.name;
   return (
     <MultiListPage
       {...props}
@@ -386,13 +385,14 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
 };
 
 export const ImageManifestVulnPodTab: React.FC<ImageManifestVulnPodTabProps> = (props) => {
+  const params = useParams();
   return (
     <Firehose
       resources={[
         {
           isList: true,
           kind: referenceForModel(ImageManifestVulnModel),
-          namespace: props.match.params.ns,
+          namespace: params.ns,
           selector: {
             matchLabels: { [podKey(props.obj)]: 'true' },
           },
@@ -412,13 +412,8 @@ export type ContainerVulnerabilitiesProps = {
   imageManifestVuln: FirehoseResult<ImageManifestVuln[]>;
 };
 
-export type ImageManifestVulnDetailsPageProps = {
-  match: match<{ ns: string; name: string }>;
-};
-
 export type ImageManifestVulnPageProps = {
   namespace?: string;
-  match?: match<{ ns?: string; name?: string }>;
   hideNameLabelFilters?: boolean;
   showTitle?: boolean;
   selector?: { [key: string]: string };
@@ -439,7 +434,6 @@ export type AffectedPodsProps = {
 };
 
 export type ImageManifestVulnPodTabProps = {
-  match: match<{ ns: string; name: string }>;
   obj: PodKind;
 };
 

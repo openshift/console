@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 
 import { ResourceIcon } from './resource-icon';

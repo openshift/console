@@ -22,10 +22,9 @@ import {
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { getURLWithParams, VirtualizedGrid } from '@console/shared';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom-v5-compat';
 import { isModifiedEvent } from '@console/shared/src/utils';
 
-import { history } from './router';
 import { isModalOpen } from '../modals';
 import { Dropdown } from '../utils';
 
@@ -416,35 +415,6 @@ const getFilterGroupCounts = (
   return newFilterCounts;
 };
 
-const setURLParams = (params) => {
-  const location = window.location;
-  const url = new URL(location);
-  const searchParams = `?${params.toString()}${url.hash}`;
-
-  history.replace(`${url.pathname}${searchParams}`);
-};
-
-export const updateURLParams = (paramName, value) => {
-  const params = new URLSearchParams(window.location.search);
-
-  if (value) {
-    params.set(paramName, Array.isArray(value) ? JSON.stringify(value) : value);
-  } else {
-    params.delete(paramName);
-  }
-  setURLParams(params);
-};
-
-const clearFilterURLParams = (selectedCategoryId) => {
-  const params = new URLSearchParams();
-
-  if (selectedCategoryId) {
-    params.set(FilterTypes.category, selectedCategoryId);
-  }
-
-  setURLParams(params);
-};
-
 const getActiveValuesFromURL = (availableFilters, filterGroups, groupByTypes) => {
   const searchParams = new URLSearchParams(window.location.search);
   const categoryParam = searchParams.get(FilterTypes.category);
@@ -516,6 +486,7 @@ export const TileViewPage = (props) => {
   } = props;
 
   const { t } = useTranslation();
+  const [, setSearchParams] = useSearchParams();
   const filterByKeywordInput = React.useRef();
   const [prevProps, setPrevProps] = React.useState(props);
 
@@ -527,6 +498,27 @@ export const TileViewPage = (props) => {
   const [filterCounts, setFilterCounts] = React.useState(null);
   const [filterGroupsShowAll, setFilterGroupsShowAll] = React.useState({});
   const [groupBy, setGroupBy] = React.useState(groupByTypes ? groupByTypes.None : '');
+
+  const updateURLParams = (paramName, value) => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (value) {
+      params.set(paramName, Array.isArray(value) ? JSON.stringify(value) : value);
+    } else {
+      params.delete(paramName);
+    }
+    setSearchParams(params);
+  };
+
+  const clearFilterURLParams = () => {
+    const params = new URLSearchParams();
+
+    if (selectedCategoryId) {
+      params.set(FilterTypes.category, selectedCategoryId);
+    }
+
+    setSearchParams(params);
+  };
 
   const getUpdatedState = React.useCallback((selectedCategories, categoryId, filters) => {
     if (!items) {
@@ -555,6 +547,7 @@ export const TileViewPage = (props) => {
         keywordCompare,
       ),
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const initState = () => {
@@ -629,7 +622,7 @@ export const TileViewPage = (props) => {
   ]);
 
   const clearFilters = () => {
-    clearFilterURLParams(selectedCategoryId);
+    clearFilterURLParams();
 
     const clearedFilters = clearActiveFilters(activeFilters, filterGroups);
 

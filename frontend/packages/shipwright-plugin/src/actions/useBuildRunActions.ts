@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
 import { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
 import { errorModal } from '@console/internal/components/modals';
@@ -13,7 +13,7 @@ import { BuildRun } from '../types';
 
 const useBuildRunActions = (buildRun: BuildRun) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [kindObj, inFlight] = useK8sModel(referenceFor(buildRun));
 
   const actions = React.useMemo<Action[]>(() => {
@@ -23,7 +23,7 @@ const useBuildRunActions = (buildRun: BuildRun) => {
       cta: () => {
         rerunBuildRun(buildRun)
           .then((newBuildRun) => {
-            history.push(resourceObjPath(newBuildRun, referenceFor(newBuildRun)));
+            navigate(resourceObjPath(newBuildRun, referenceFor(newBuildRun)));
           })
           .catch((err) => {
             const error = err.message;
@@ -42,7 +42,7 @@ const useBuildRunActions = (buildRun: BuildRun) => {
       ...(canRerunBuildRun(buildRun) ? [rerun] : []),
       ...getCommonResourceActions(kindObj, buildRun),
     ];
-  }, [t, buildRun, kindObj, history]);
+  }, [t, buildRun, kindObj, navigate]);
 
   return [actions, !inFlight, undefined];
 };

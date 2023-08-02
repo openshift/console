@@ -2,20 +2,16 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { match } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { MultiListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 import RepositoriesList from './RepositoriesList';
 
-interface RepositoriesPageProps {
-  match: match<{ ns?: string }>;
-}
-
-const RepositoriesPage: React.FC<RepositoriesPageProps> = (props) => {
+const RepositoriesPage: React.FC = () => {
   const { t } = useTranslation();
-  const namespace = props.match.params.ns;
+  const { ns: namespace } = useParams();
   const [projectHelmChartListAccess] = useAccessReview({
     group: ProjectHelmChartRepositoryModel.apiGroup,
     resource: ProjectHelmChartRepositoryModel.plural,

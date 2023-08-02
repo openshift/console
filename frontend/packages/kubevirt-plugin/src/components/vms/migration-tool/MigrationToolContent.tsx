@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import {
   createModalLauncher,
   ModalBody,
@@ -30,10 +30,10 @@ const MigrationTool: React.FC<MigrationToolProps> = ({
   close,
 }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onSubmit = () => {
-    mtvSubscription ? createForkLift() : history.push(createInstallUrl(mtvOperator));
+    mtvSubscription ? createForkLift() : navigate(createInstallUrl(mtvOperator));
     close();
   };
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
+import * as Router from 'react-router-dom-v5-compat';
 import { mount, ReactWrapper } from 'enzyme';
 
 import store from '@console/internal/redux';
@@ -8,16 +9,21 @@ import { PodModel, ConfigMapModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Firehose } from '@console/internal/components/utils';
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
 describe(DetailsPage.displayName, () => {
   let wrapper: ReactWrapper<DetailsPageProps>;
 
   beforeEach(() => {
-    const match = { params: { ns: 'default' }, isExact: true, path: '', url: '' };
-
     // Need full mount with redux store since this is a redux-connected component
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default' });
+    jest.spyOn(Router, 'useLocation').mockReturnValue({ pathname: '' });
     wrapper = mount(
       <DetailsPage
-        match={match}
         name="test-name"
         namespace="default"
         kind={referenceForModel(PodModel)}
@@ -25,7 +31,11 @@ describe(DetailsPage.displayName, () => {
         kindObj={PodModel}
       />,
       {
-        wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+        wrappingComponent: ({ children }) => (
+          <Provider store={store}>
+            <Router.BrowserRouter>{children}</Router.BrowserRouter>
+          </Provider>
+        ),
       },
     );
   });

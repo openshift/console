@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -14,13 +14,12 @@ import { kindForReference } from '@console/internal/module/k8s';
 import { useQueryParams } from '@console/shared/src';
 import CreateHelmChartRepository from './CreateHelmChartRepository';
 
-export type CreateHelmChartRepositoryPageProps = RouteComponentProps<{ ns: string; name: string }>;
-
-const CreateHelmChartRepositoryPage: React.FC<CreateHelmChartRepositoryPageProps> = ({ match }) => {
+const CreateHelmChartRepositoryPage: React.FC = () => {
   const { t } = useTranslation();
+  const params = useParams();
   const queryParams = useQueryParams();
   const resourceKind: K8sResourceKindReference = queryParams.get('kind');
-  const existingRepo = match.params.name;
+  const existingRepo = params.name;
   const isEditForm = !!existingRepo;
   const hideNamespacedPage =
     isEditForm && resourceKind && kindForReference(resourceKind) === HelmChartRepositoryModel.kind;
@@ -47,7 +46,7 @@ const CreateHelmChartRepositoryPage: React.FC<CreateHelmChartRepositoryPageProps
       </Helmet>
       <CreateHelmChartRepository
         showScopeType={canCreateHCR && canCreatePHCR}
-        existingRepoName={match.params.name}
+        existingRepoName={params.name}
       />
     </>
   );

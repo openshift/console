@@ -1,24 +1,25 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Formik } from 'formik';
+import * as Router from 'react-router-dom-v5-compat';
 import { pipelineTestData, PipelineExampleNames } from '../../../../test-data/pipeline-data';
 import PipelineBuilderPage from '../PipelineBuilderPage';
 
 type PipelineBuilderPageProps = React.ComponentProps<typeof PipelineBuilderPage>;
 type BuilderProps = React.ComponentProps<typeof Formik>;
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+}));
+
 const { pipeline } = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
 describe('PipelineBuilderPage Form', () => {
-  let formProps: PipelineBuilderPageProps;
   let PipelineBuilderPageWrapper: ShallowWrapper<PipelineBuilderPageProps>;
 
   beforeEach(() => {
-    formProps = {
-      history: null,
-      location: null,
-      match: { params: { ns: 'default' }, isExact: true, path: '', url: '' },
-    };
-    PipelineBuilderPageWrapper = shallow(<PipelineBuilderPage {...formProps} />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default' });
+    PipelineBuilderPageWrapper = shallow(<PipelineBuilderPage />);
   });
 
   it('should render a Formik component', () => {
@@ -37,9 +38,8 @@ describe('PipelineBuilderPage Form', () => {
   });
 
   it('should contain the given pipeline values in intialValues', () => {
-    PipelineBuilderPageWrapper = shallow(
-      <PipelineBuilderPage {...formProps} existingPipeline={pipeline} />,
-    );
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default' });
+    PipelineBuilderPageWrapper = shallow(<PipelineBuilderPage existingPipeline={pipeline} />);
     const PipelineBuilderForm = PipelineBuilderPageWrapper.find(Formik);
     const builderProps = PipelineBuilderForm.props() as BuilderProps;
     const { name, tasks } = builderProps.initialValues.formData;

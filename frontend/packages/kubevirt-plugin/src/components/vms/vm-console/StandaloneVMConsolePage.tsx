@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
@@ -21,13 +21,11 @@ import { VMIKind, VMKind } from '../../../types/vm';
 import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
 import VMConsoles from './VMConsoles';
 
-const StandaloneVMConsolePage: React.FC<RouteComponentProps<{ name: string; ns: string }>> = ({
-  match,
-  location,
-}) => {
+const StandaloneVMConsolePage: React.FC = () => {
+  const location = useLocation();
   const params = new URLSearchParams(location.search);
   const type = ConsoleType.fromString(params.get('type'));
-  const { name, ns: namespace } = match.params;
+  const { name, ns: namespace } = useParams();
 
   const [vm, vmLoaded] = useK8sWatchResource<VMKind>({
     kind: kubevirtReferenceForModel(VirtualMachineModel),

@@ -1,17 +1,10 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { FirehoseResource, Firehose } from '@console/internal/components/utils';
 import AddHealthChecksForm from './AddHealthChecksForm';
 
-type HealthChecksProps = RouteComponentProps<{
-  ns: string;
-  kind: string;
-  name: string;
-  containerName: string;
-}>;
-
-const HealthChecksPage: React.FC<HealthChecksProps> = ({ match }) => {
-  const { ns, kind, name, containerName } = match.params;
+const HealthChecksPage: React.FC = () => {
+  const { ns, kind, name, containerName } = useParams();
   const resource: FirehoseResource[] = [
     {
       kind,

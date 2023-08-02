@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -13,12 +14,15 @@ import {
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 
 const RevisionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const { kindObj, match } = props;
+  const location = useLocation();
+  const params = useParams();
+  const { kindObj } = props;
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
   const breadcrumbs = useTabbedTableBreadcrumbsFor(
     kindObj,
-    match,
+    location,
+    params,
     'serving',
     serverlessTab(kindObj.kind),
     undefined,

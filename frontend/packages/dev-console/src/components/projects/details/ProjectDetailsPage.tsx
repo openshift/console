@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { match as RMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
 import { DetailsPage } from '@console/internal/components/factory';
 import { NamespaceDetails, projectMenuActions } from '@console/internal/components/namespace';
@@ -16,9 +16,6 @@ import CreateProjectListPage, { CreateAProjectButton } from '../CreateProjectLis
 export const PROJECT_DETAILS_ALL_NS_PAGE_URI = '/project-details/all-namespaces';
 
 interface MonitoringPageProps {
-  match: RMatch<{
-    ns?: string;
-  }>;
   noProjectsAvailable?: boolean;
 }
 
@@ -28,13 +25,10 @@ const handleNamespaceChange = (newNamespace: string): void => {
   }
 };
 
-export const PageContents: React.FC<MonitoringPageProps> = ({
-  noProjectsAvailable,
-  match,
-  ...props
-}) => {
+export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailable, ...props }) => {
   const { t } = useTranslation();
-  const activeNamespace = match.params.ns;
+  const params = useParams();
+  const activeNamespace = params.ns;
 
   const canListRoleBindings = useAccessReview({
     group: RoleBindingModel.apiGroup,
@@ -76,7 +70,6 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
   return !noProjectsAvailable && activeNamespace ? (
     <DetailsPage
       {...props}
-      match={match}
       breadcrumbsFor={() => []}
       name={activeNamespace}
       kind={ProjectModel.kind}

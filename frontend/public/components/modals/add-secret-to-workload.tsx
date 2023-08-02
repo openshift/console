@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
+import { useNavigate } from 'react-router-dom-v5-compat';
 
 import { K8sKind, k8sList, k8sPatch, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { Dropdown, history, ResourceIcon, ResourceName, resourcePathFromModel } from '../utils';
+import { Dropdown, ResourceIcon, ResourceName, resourcePathFromModel } from '../utils';
 import { RadioInput } from '../radio';
 /* eslint-disable import/named */
 import { Trans, useTranslation } from 'react-i18next';
@@ -17,6 +18,7 @@ const getContainers = (workload: K8sResourceKind) =>
 export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> = (props) => {
   const { namespace, secretName } = props;
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -146,7 +148,7 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
         setInProgress(false);
         props.close();
         const { name, namespace: ns } = obj.metadata;
-        history.push(resourcePathFromModel(model, name, ns));
+        navigate(resourcePathFromModel(model, name, ns));
       })
       .catch(({ message: err }) => {
         setInProgress(false);

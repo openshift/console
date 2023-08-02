@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -11,10 +12,8 @@ import { ServiceTypeValue } from '../../types';
 import { ServiceDetailsPage } from '../services';
 import { KnativeServiceTypeContext } from './ServiceTypeContext';
 
-const FunctionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const {
-    params: { ns, name },
-  } = props.match;
+const FunctionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = () => {
+  const params = useParams();
   const handleNamespaceChange = (newNamespace: string): void => {
     if (newNamespace === ALL_NAMESPACES_KEY) {
       history.push('/functions/all-namespaces');
@@ -30,11 +29,10 @@ const FunctionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = 
         onNamespaceChange={handleNamespaceChange}
       >
         <ServiceDetailsPage
-          match={props.match}
           kind={referenceForModel(ServiceModel)}
           kindObj={ServiceModel}
-          name={name}
-          namespace={ns}
+          name={params.name}
+          namespace={params.ns}
         />
       </NamespacedPage>
     </KnativeServiceTypeContext.Provider>

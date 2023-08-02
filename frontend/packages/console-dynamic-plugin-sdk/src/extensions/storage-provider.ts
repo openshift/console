@@ -1,4 +1,3 @@
-import { RouteComponentProps } from 'react-router';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 /** This extension can be used to contribute a new storage provider to select,
@@ -9,7 +8,7 @@ export type StorageProvider = ExtensionDeclaration<
     /** Displayed name of the provider. */
     name: string;
     /** Provider specific component to render. */
-    Component: CodeRef<React.ComponentType<Partial<RouteComponentProps>>>;
+    Component: CodeRef<React.ComponentType>;
   }
 >;
 

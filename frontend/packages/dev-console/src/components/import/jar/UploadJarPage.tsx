@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
@@ -13,15 +13,14 @@ import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import QueryFocusApplication from '../../QueryFocusApplication';
 import UploadJar from './UploadJar';
 
-type UploadJarPageProps = RouteComponentProps<{ ns?: string }>;
-
 type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };
 
-const UploadJarPage: React.FunctionComponent<UploadJarPageProps> = ({ match, location }) => {
+const UploadJarPage: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const { ns: namespace } = useParams();
+  const location = useLocation();
   const params = new URLSearchParams(location.search);
 
   const resources: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>({

@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import {
   ContainerSpec,
   k8sCreate,
@@ -10,7 +11,7 @@ import {
   k8sPatch,
   referenceFor,
 } from '../../module/k8s';
-import { ButtonBar, history, LoadingBox, resourceObjPath } from '../utils';
+import { ButtonBar, LoadingBox, resourceObjPath } from '../utils';
 import { Checkbox } from '../checkbox';
 import { RadioInput } from '../radio';
 import { CreatePVCForm } from './create-pvc';
@@ -40,6 +41,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   const { kindObj, resourceName, namespace } = props;
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const supportedKinds = [
     'Deployment',
@@ -255,7 +257,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
       (pvcName: string) => {
         return k8sPatch(kindObj, obj, getVolumePatches(pvcName)).then((resource) => {
           setInProgress(false);
-          history.push(resourceObjPath(resource, referenceFor(resource)));
+          navigate(resourceObjPath(resource, referenceFor(resource)));
         });
       },
       (err) => {
@@ -416,7 +418,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
           >
             {t('public~Save')}
           </Button>
-          <Button type="button" variant="secondary" onClick={history.goBack}>
+          <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
             {t('public~Cancel')}
           </Button>
         </ActionGroup>
@@ -425,7 +427,8 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   );
 };
 
-export const AttachStorage = ({ kindObj, kindsInFlight, match: { params } }) => {
+export const AttachStorage = ({ kindObj, kindsInFlight }) => {
+  const params = useParams();
   if (!kindObj && kindsInFlight) {
     return <LoadingBox />;
   }

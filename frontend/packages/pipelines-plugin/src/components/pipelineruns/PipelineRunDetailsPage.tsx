@@ -24,14 +24,14 @@ import { useMenuActionsWithUserAnnotation } from './triggered-by';
 import './PipelineRunDetailsPage.scss';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { kindObj, match, namespace, name } = props;
+  const { kindObj, namespace, name } = props;
   const { t } = useTranslation();
   const operatorVersion = usePipelineOperatorVersion(namespace);
   const [taskRuns] = useTaskRuns(namespace, name);
   const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineRunKebabActions(operatorVersion, taskRuns, true),
   );
-  const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj, match);
+  const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj);
   const badge = usePipelineTechPreviewBadge(props.namespace);
   const resourceTitleFunc = (obj: PipelineRunKind): string | JSX.Element => {
     return (
