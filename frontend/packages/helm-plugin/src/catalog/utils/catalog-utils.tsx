@@ -117,6 +117,11 @@ export const normalizeHelmCharts = (
             label: t('helm-plugin~Maintainers'),
             value: maintainers,
           },
+          {
+            label: t('helm-plugin~Documentation'),
+            value: '',
+            isHidden: true,
+          },
         ];
 
         const detailsDescriptions: CatalogItemDetailsDescription[] = [

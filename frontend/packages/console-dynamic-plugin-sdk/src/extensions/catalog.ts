@@ -169,6 +169,7 @@ export type CatalogItemDetails = {
 export type CatalogItemDetailsProperty = {
   label: string;
   value: string | React.ReactNode;
+  isHidden?: boolean;
 };
 
 export type CatalogItemDetailsDescription = {
