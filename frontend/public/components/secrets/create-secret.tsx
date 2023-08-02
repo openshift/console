@@ -8,7 +8,7 @@ import { Base64 } from 'js-base64';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
-import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor, SecretKind } from '../../module/k8s';
+import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import {
   ButtonBar,
   Dropdown,
@@ -134,193 +134,174 @@ const determineSecretType = (stringData): SecretType => {
   return SecretType.opaque;
 };
 
-export const SecretFormWrapper = withTranslation()(
-  class SecretFormWrapper extends React.Component<
-    BaseEditSecretProps_ & WithT,
-    BaseEditSecretState_
-  > {
-    constructor(props) {
-      super(props);
-      const existingSecret = _.pick(props.obj, ['metadata', 'type']);
-      const defaultSecretType = toDefaultSecretType(this.props.secretTypeAbstraction);
-      const secret = _.defaultsDeep({}, props.fixed, existingSecret, {
-        apiVersion: 'v1',
-        data: {},
-        kind: 'Secret',
-        metadata: {
-          name: '',
-        },
-        type: defaultSecretType,
-      });
+export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
+  const { isCreate, modal, onCancel = history.goBack } = props;
+  const { t } = useTranslation();
 
-      this.state = {
-        secretTypeAbstraction: this.props.secretTypeAbstraction,
-        secret,
-        inProgress: false,
-        type: defaultSecretType,
-        stringData: _.mapValues(_.get(props.obj, 'data'), (value) => {
-          return value ? Base64.atob(value) : '';
-        }),
-        disableForm: false,
-      };
-      this.onDataChanged = this.onDataChanged.bind(this);
-      this.onNameChanged = this.onNameChanged.bind(this);
-      this.onError = this.onError.bind(this);
-      this.onFormDisable = this.onFormDisable.bind(this);
-      this.save = this.save.bind(this);
-    }
-    onDataChanged(secretsData) {
-      this.setState({
-        stringData: { ...secretsData?.stringData },
-        base64StringData: { ...secretsData?.base64StringData },
-      });
-    }
-    onError(err) {
-      this.setState({
-        error: err,
-        inProgress: false,
-      });
-    }
-    onNameChanged(event) {
-      const name = event.target.value;
-      this.setState((state: BaseEditSecretState_) => {
-        const secret = _.cloneDeep(state.secret);
-        secret.metadata.name = name;
-        return { secret };
-      });
-    }
-    onFormDisable(disable) {
-      this.setState({
-        disableForm: disable,
-      });
-    }
+  const existingSecret = _.pick(props.obj, ['metadata', 'type']);
+  const defaultSecretType = toDefaultSecretType(props.secretTypeAbstraction);
+  const initialSecret = _.defaultsDeep({}, props.fixed, existingSecret, {
+    apiVersion: 'v1',
+    data: {},
+    kind: 'Secret',
+    metadata: {
+      name: '',
+    },
+    type: defaultSecretType,
+  });
 
-    save(e) {
-      e.preventDefault();
-      const { metadata } = this.state.secret;
-      this.setState({ inProgress: true });
-      const data = {
-        ..._.mapValues(this.state.stringData, (value) => {
-          return Base64.btoa(value);
-        }),
-        ...this.state?.base64StringData,
-      };
-      const newSecret = _.assign(
-        {},
-        this.state.secret,
-        {
-          data,
-        },
-        // When creating new Secret, determine it's type from the `stringData` keys.
-        // When updating a Secret, use it's type.
-        this.props.isCreate ? { type: determineSecretType(this.state.stringData) } : {},
-      );
-      (this.props.isCreate
-        ? k8sCreate(SecretModel, newSecret)
-        : k8sUpdate(SecretModel, newSecret, metadata.namespace, newSecret.metadata.name)
-      ).then(
-        (secret) => {
-          this.setState({ inProgress: false });
-          if (this.props.onSave) {
-            this.props.onSave(secret.metadata.name);
-          }
-          if (!this.props.modal) {
-            history.push(resourceObjPath(secret, referenceFor(secret)));
-          }
-        },
-        (err) => this.setState({ error: err.message, inProgress: false }),
-      );
-    }
+  const [secretTypeAbstraction] = React.useState(props.secretTypeAbstraction);
+  const [secret, setSecret] = React.useState(initialSecret);
+  const [inProgress, setInProgress] = React.useState(false);
+  const [error, setError] = React.useState();
+  const [stringData, setStringData] = React.useState(
+    _.mapValues(_.get(props.obj, 'data'), (value) => {
+      return value ? Base64.atob(value) : '';
+    }),
+  );
+  const [base64StringData, setBase64StringData] = React.useState({});
+  const [disableForm, setDisableForm] = React.useState(false);
 
-    renderBody = () => {
-      const { t, secretTypeAbstraction } = this.props;
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      const SubForm = secretFormFactory(secretTypeAbstraction);
+  const onDataChanged = (secretsData) => {
+    setStringData({ ...secretsData?.stringData });
+    setBase64StringData({ ...secretsData?.base64StringData });
+  };
 
-      return (
-        <>
-          <fieldset disabled={!this.props.isCreate}>
-            <div className="form-group">
-              <label className="control-label co-required" htmlFor="secret-name">
-                {t('public~Secret name')}
-              </label>
-              <div>
-                <input
-                  className="pf-c-form-control"
-                  type="text"
-                  onChange={this.onNameChanged}
-                  value={this.state.secret.metadata.name}
-                  aria-describedby="secret-name-help"
-                  id="secret-name"
-                  data-test="secret-name"
-                  required
-                />
-                <p className="help-block" id="secret-name-help">
-                  {t('public~Unique name of the new secret.')}
-                </p>
-              </div>
-            </div>
-          </fieldset>
-          <SubForm
-            onChange={this.onDataChanged}
-            onError={this.onError}
-            onFormDisable={this.onFormDisable}
-            stringData={this.state.stringData}
-            secretType={this.state.secret.type}
-            isCreate={this.props.isCreate}
-          />
-        </>
-      );
+  const onError = (err) => {
+    setError(err);
+    setInProgress(false);
+  };
+
+  const onNameChanged = (event) => {
+    const name = event.target.value;
+    const newSecret = _.cloneDeep(secret);
+    newSecret.metadata.name = name;
+    setSecret(newSecret);
+  };
+
+  const save = (e) => {
+    e.preventDefault();
+    const { metadata } = secret;
+    setInProgress(true);
+    const data = {
+      ..._.mapValues(stringData, (value) => {
+        return Base64.btoa(value);
+      }),
+      ...base64StringData,
     };
+    const newSecret = _.assign(
+      {},
+      secret,
+      {
+        data,
+      },
+      // When creating new Secret, determine it's type from the `stringData` keys.
+      // When updating a Secret, use it's type.
+      isCreate ? { type: determineSecretType(stringData) } : {},
+    );
+    (isCreate
+      ? k8sCreate(SecretModel, newSecret)
+      : k8sUpdate(SecretModel, newSecret, metadata.namespace, newSecret.metadata.name)
+    ).then(
+      (s) => {
+        setInProgress(false);
+        if (props.onSave) {
+          props.onSave(s.metadata.name);
+        }
+        if (!props.modal) {
+          history.push(resourceObjPath(s, referenceFor(s)));
+        }
+      },
+      (err) => {
+        setError(err.message);
+        setInProgress(false);
+      },
+    );
+  };
 
-    render() {
-      const { secretTypeAbstraction } = this.state;
-      const { t, isCreate, modal, onCancel = history.goBack } = this.props;
+  const renderBody = () => {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    const SubForm = secretFormFactory(props.secretTypeAbstraction);
 
-      const title = secretDisplayType(isCreate, secretTypeAbstraction, t);
-      return modal ? (
-        <form className="co-create-secret-form modal-content" onSubmit={this.save}>
-          <ModalTitle>{title}</ModalTitle>
-          <ModalBody>{this.renderBody()}</ModalBody>
-          <ModalSubmitFooter
-            errorMessage={this.state.error || ''}
-            inProgress={this.state.inProgress}
-            submitText={t('public~Create')}
-            cancel={this.props.onCancel}
-          />
-        </form>
-      ) : (
-        <div className="co-m-pane__form">
-          <Helmet>
-            <title>{title}</title>
-          </Helmet>
-          <PageHeading title={title} helpText={this.props.explanation} />
-          <div className="co-m-pane__body">
-            <form className="co-m-pane__body-group co-create-secret-form" onSubmit={this.save}>
-              {this.renderBody()}
-              <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-                <ActionGroup className="pf-c-form">
-                  <Button
-                    type="submit"
-                    data-test="save-changes"
-                    isDisabled={this.state.disableForm}
-                    variant="primary"
-                    id="save-changes"
-                  >
-                    {this.props.saveButtonText || t('public~Create')}
-                  </Button>
-                  <Button type="button" variant="secondary" id="cancel" onClick={onCancel}>
-                    {t('public~Cancel')}
-                  </Button>
-                </ActionGroup>
-              </ButtonBar>
-            </form>
+    return (
+      <>
+        <fieldset disabled={!isCreate}>
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="secret-name">
+              {t('public~Secret name')}
+            </label>
+            <div>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={onNameChanged}
+                value={secret?.metadata?.name}
+                aria-describedby="secret-name-help"
+                id="secret-name"
+                data-test="secret-name"
+                required
+              />
+              <p className="help-block" id="secret-name-help">
+                {t('public~Unique name of the new secret.')}
+              </p>
+            </div>
           </div>
-        </div>
-      );
-    }
-  },
-);
+        </fieldset>
+        <SubForm
+          onChange={onDataChanged}
+          onError={onError}
+          onFormDisable={(disable) => setDisableForm(disable)}
+          stringData={stringData}
+          secretType={secret.type}
+          isCreate={isCreate}
+        />
+      </>
+    );
+  };
+
+  const title = secretDisplayType(isCreate, secretTypeAbstraction, t);
+
+  return modal ? (
+    <form className="co-create-secret-form modal-content" onSubmit={save}>
+      <ModalTitle>{title}</ModalTitle>
+      <ModalBody>{renderBody()}</ModalBody>
+      <ModalSubmitFooter
+        errorMessage={error || ''}
+        inProgress={inProgress}
+        submitText={t('public~Create')}
+        cancel={props.onCancel}
+      />
+    </form>
+  ) : (
+    <div className="co-m-pane__form">
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <PageHeading title={title} helpText={props.explanation} />
+      <div className="co-m-pane__body">
+        <form className="co-m-pane__body-group co-create-secret-form" onSubmit={save}>
+          {renderBody()}
+          <ButtonBar errorMessage={error} inProgress={inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button
+                type="submit"
+                data-test="save-changes"
+                isDisabled={disableForm}
+                variant="primary"
+                id="save-changes"
+              >
+                {props.saveButtonText || t('public~Create')}
+              </Button>
+              <Button type="button" variant="secondary" id="cancel" onClick={onCancel}>
+                {t('public~Cancel')}
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 const getImageSecretKey = (secretType: SecretType): string => {
   switch (secretType) {
@@ -1391,21 +1372,6 @@ type SecretLoadingWrapperProps = {
 
 type SecretLoadingWrapperState = {
   secretTypeAbstraction: SecretTypeAbstraction;
-};
-
-type BaseEditSecretState_ = {
-  secretTypeAbstraction?: SecretTypeAbstraction;
-  secret: SecretKind;
-  inProgress: boolean;
-  type: SecretType;
-  stringData: {
-    [key: string]: string;
-  };
-  base64StringData?: {
-    [key: string]: string;
-  };
-  error?: any;
-  disableForm: boolean;
 };
 
 type BaseEditSecretProps_ = {
