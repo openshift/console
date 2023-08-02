@@ -5,6 +5,7 @@ import { Map } from 'immutable';
 import * as redux from 'react-redux';
 import * as Router from 'react-router-dom-v5-compat';
 import { AlertStates, PrometheusRulesResponse, RuleStates } from '@console/dynamic-plugin-sdk/src';
+import * as Router from 'react-router-dom-v5-compat';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { EmptyBox } from '@console/internal/components/utils';

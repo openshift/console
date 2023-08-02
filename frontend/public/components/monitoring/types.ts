@@ -13,14 +13,14 @@ export type MonitoringResource = {
 };
 
 export type Silences = {
-  data: Silence[];
-  loaded: boolean;
+  data?: Silence[];
+  loaded?: boolean;
   loadError?: string | Error;
 };
 
 export type Alerts = {
-  data: Alert[];
-  loaded: boolean;
+  data?: Alert[];
+  loaded?: boolean;
   loadError?: string | Error;
 };
 
