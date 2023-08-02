@@ -120,7 +120,6 @@ import KebabDropdown from './kebab-dropdown';
 import { Labels } from './labels';
 import { ToggleGraph } from './metrics';
 import { CreateSilence, EditSilence } from './silence-form';
-import { TargetsUI } from './targets';
 import { Alerts, AlertSource, MonitoringResource, Silences } from './types';
 import {
   alertDescription,
@@ -2434,7 +2433,6 @@ export const MonitoringUI = () => (
     <Route path="dashboards/:board" element={<MonitoringDashboardsPage />} />
     <Route path="graph" element={<PrometheusUIRedirect />} />
     <Route path="silences/~new" element={<CreateSilence />} />
-    <Route path="targets/*" element={<TargetsUI />} />
     <Route element={PollerPages} />
   </Routes>
 );
