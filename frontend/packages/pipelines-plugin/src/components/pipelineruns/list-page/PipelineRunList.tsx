@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
 import { PipelineRunModel } from '../../../models';
 import { usePipelineOperatorVersion } from '../../pipelines/utils/pipeline-operator';
+import { useTaskRuns } from '../../taskruns/useTaskRuns';
 import PipelineRunHeader from './PipelineRunHeader';
 import PipelineRunRow from './PipelineRunRow';
 
@@ -15,6 +16,7 @@ type PipelineRunListProps = {
 export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
   const { t } = useTranslation();
   const operatorVersion = usePipelineOperatorVersion(props.namespace);
+  const [taskRuns, taskRunsLoaded] = useTaskRuns(props.namespace);
 
   return (
     <>
@@ -28,7 +30,7 @@ export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
         defaultSortOrder={SortByDirection.desc}
         Header={PipelineRunHeader}
         Row={PipelineRunRow}
-        customData={operatorVersion}
+        customData={{ operatorVersion, taskRuns: taskRunsLoaded ? taskRuns : [] }}
         virtualize
       />
     </>

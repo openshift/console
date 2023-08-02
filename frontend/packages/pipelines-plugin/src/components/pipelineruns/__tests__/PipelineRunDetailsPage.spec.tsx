@@ -6,6 +6,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
 import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
 import * as hookUtils from '../../pipelines/hooks';
+import * as taskRunUtils from '../../taskruns/useTaskRuns';
 import TaskRuns from '../detail-page-tabs/TaskRuns';
 import PipelineRunEvents from '../events/PipelineRunEvents';
 import PipelineRunDetailsPage from '../PipelineRunDetailsPage';
@@ -13,6 +14,7 @@ import * as utils from '../triggered-by';
 
 const menuActions = jest.spyOn(utils, 'useMenuActionsWithUserAnnotation');
 const breadCrumbs = jest.spyOn(hookUtils, 'usePipelinesBreadcrumbsFor');
+const taskRuns = jest.spyOn(taskRunUtils, 'useTaskRuns');
 type PipelineRunDetailsPageProps = React.ComponentProps<typeof PipelineRunDetailsPage>;
 const i18nNS = 'public';
 
@@ -32,8 +34,9 @@ describe('PipelineRunDetailsPage:', () => {
         },
       },
     };
-    menuActions.mockReturnValue([getPipelineRunKebabActions(new SemVer('1.9.0'), true)]);
+    menuActions.mockReturnValue([getPipelineRunKebabActions(new SemVer('1.9.0'), [], true)]);
     breadCrumbs.mockReturnValue([{ label: 'PipelineRuns' }, { label: 'PipelineRuns Details' }]);
+    taskRuns.mockReturnValue([]);
     wrapper = shallow(<PipelineRunDetailsPage {...pipelineRunDetailsPageProps} />);
   });
 

@@ -12,7 +12,6 @@ import {
   apiVersionForModel,
 } from '@console/internal/module/k8s';
 import { TektonResourceLabel } from '../components/pipelines/const';
-import { getTaskRuns } from '../components/taskruns/useTaskRuns';
 import {
   ClusterTaskModel,
   ClusterTriggerBindingModel,
@@ -274,27 +273,30 @@ export const getModelReferenceFromTaskKind = (kind: string): GroupVersionKind =>
   return referenceForModel(model);
 };
 
-export const countRunningTasks = (pipelineRun: PipelineRunKind): number => {
-  let taskRuns: TaskRunKind[] = [];
-  getTaskRuns(pipelineRun.metadata.namespace, pipelineRun.metadata.name)
-    .then((response: TaskRunKind[]) => {
-      taskRuns = response;
-    })
-    .catch(() => {});
+export const countRunningTasks = (
+  pipelineRun: PipelineRunKind,
+  taskRuns: TaskRunKind[],
+): number => {
   const taskStatuses = taskRuns && getTaskStatus(pipelineRun, undefined, taskRuns);
   return taskStatuses?.Running;
 };
 
-export const shouldHidePipelineRunStop = (pipelineRun: PipelineRunKind): boolean =>
+export const shouldHidePipelineRunStop = (
+  pipelineRun: PipelineRunKind,
+  taskRuns: TaskRunKind[],
+): boolean =>
   !(
     pipelineRun &&
-    (countRunningTasks(pipelineRun) > 0 ||
+    (countRunningTasks(pipelineRun, taskRuns) > 0 ||
       pipelineRunFilterReducer(pipelineRun) === ComputedStatus.Running)
   );
 
-export const shouldHidePipelineRunCancel = (pipelineRun: PipelineRunKind): boolean =>
+export const shouldHidePipelineRunCancel = (
+  pipelineRun: PipelineRunKind,
+  taskRuns: TaskRunKind[],
+): boolean =>
   !(
     pipelineRun &&
-    countRunningTasks(pipelineRun) > 0 &&
+    countRunningTasks(pipelineRun, taskRuns) > 0 &&
     pipelineRunFilterReducer(pipelineRun) !== ComputedStatus.Cancelled
   );
