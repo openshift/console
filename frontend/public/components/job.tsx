@@ -185,7 +185,7 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
 const JobPods: React.FC<JobPodsProps> = (props) => <PodsComponent {...props} showNodes />;
 
 const { details, pods, editYaml, events } = navFactory;
-const JobsDetailsPage: React.FC<JobsDetailsPageProps> = (props) => {
+const JobsDetailsPage: React.FC = (props) => {
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
@@ -279,8 +279,4 @@ type JobsPageProps = {
 
 type JobPodsProps = {
   obj: K8sResourceKind;
-};
-
-type JobsDetailsPageProps = {
-  match: any;
 };

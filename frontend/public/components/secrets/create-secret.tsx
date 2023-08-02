@@ -7,6 +7,7 @@ import i18next, { TFunction, WithT } from 'i18next';
 import { Base64 } from 'js-base64';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useParams } from 'react-router-dom-v5-compat';
 
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import {
@@ -1318,39 +1319,25 @@ export const SecretLoadingWrapper = withTranslation()(
   },
 );
 
-export const CreateSecret = ({ match: { params } }: CreateSecretProps) => {
-  const secretTypeAbstraction = params.type;
+export const CreateSecret = () => {
+  const params = useParams();
+  const secretTypeAbstraction = params.type as SecretTypeAbstraction;
   return (
     <SecretFormWrapper
       fixed={{ metadata: { namespace: params.ns } }}
       secretTypeAbstraction={secretTypeAbstraction}
-      explanation={secretFormExplanation(params.type)}
+      explanation={secretFormExplanation(secretTypeAbstraction)}
       isCreate={true}
     />
   );
 };
 
-type CreateSecretProps = {
-  match: {
-    params: {
-      type: SecretTypeAbstraction;
-      ns: string;
-    };
-  };
-};
-
 type EditSecretProps = {
-  match: {
-    params: {
-      type: SecretTypeAbstraction;
-      ns: string;
-      name: string;
-    };
-  };
   kind: string;
 };
 
-export const EditSecret = ({ match: { params }, kind }: EditSecretProps) => {
+export const EditSecret = ({ kind }: EditSecretProps) => {
+  const params = useParams();
   const { t } = useTranslation();
   return (
     <Firehose

@@ -493,7 +493,7 @@ export const MachineSetPage: React.FC<MachineSetPageProps> = ({
   );
 };
 
-export const MachineSetDetailsPage: React.SFC<MachineSetDetailsPageProps> = (props) => (
+export const MachineSetDetailsPage: React.SFC = (props) => (
   <DetailsPage
     {...props}
     menuActions={menuActions}
@@ -527,8 +527,4 @@ export type MachineSetPageProps = {
   hideLabelFilter?: boolean;
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
-};
-
-export type MachineSetDetailsPageProps = {
-  match: any;
 };

@@ -10,8 +10,8 @@ import {
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { match } from 'react-router';
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import {
   documentationURLs,
@@ -81,6 +81,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const { name: pkgName } = packageManifest?.metadata ?? {};
   const { provider, channels = [], packageName, catalogSource, catalogSourceNamespace } =
     packageManifest?.status ?? {};
+
+  const { pathname: url } = useLocation();
 
   const [roleARNText, setRoleARNText] = React.useState(null);
   const { catalogNamespace, channel, pkg, tokenizedAuth, version } = getURLSearchParams();
@@ -723,7 +725,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         title={t('olm~Install Operator')}
         breadcrumbs={[
           { name: t('olm~OperatorHub'), path: `/operatorhub?${search.toString()}` },
-          { name: t('olm~Operator Installation'), path: props.match.url },
+          { name: t('olm~Operator Installation'), path: url },
         ]}
         helpText={t(
           'olm~Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.',
@@ -971,7 +973,7 @@ const OperatorHubSubscribe: React.FC<OperatorHubSubscribeFormProps> = (props) =>
   </StatusBox>
 );
 
-export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> = (props) => {
+export const OperatorHubSubscribePage: React.SFC = (props) => {
   return (
     <Firehose
       resources={[
@@ -1015,12 +1017,7 @@ export type OperatorHubSubscribeFormProps = {
   targetNamespace?: string;
   operatorGroup: { loaded: boolean; data: OperatorGroupKind[] };
   packageManifest: { loaded: boolean; data: PackageManifestKind[] };
-  match: match;
   subscription: { loaded: boolean; data: SubscriptionKind[] };
-};
-
-export type OperatorHubSubscribePageProps = {
-  match: match;
 };
 
 OperatorHubSubscribe.displayName = 'OperatorHubSubscribe';

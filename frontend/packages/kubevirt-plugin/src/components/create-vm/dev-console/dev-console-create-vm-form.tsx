@@ -12,7 +12,6 @@ import { TFunction } from 'i18next';
 import { isEmpty } from 'lodash';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
 import {
   ButtonBar,
   ExternalLink,
@@ -72,7 +71,7 @@ const DevConsoleCreateVmFormEmptyState: React.FC<{ templateParam: string; t: TFu
   );
 };
 
-export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
+export const DevConsoleCreateVmForm: React.FC = () => {
   const { t } = useTranslation();
   const urlParams = new URLSearchParams(window.location.search);
   const templateParam = urlParams.get('template');

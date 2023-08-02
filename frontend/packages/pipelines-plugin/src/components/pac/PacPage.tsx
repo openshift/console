@@ -1,6 +1,7 @@
 import * as React from 'react';
 // import { useTranslation } from 'react-i18next';
-import { useLocation, match as Rmatch, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -14,13 +15,7 @@ import { usePacData } from './hooks/usePacData';
 import PacForm from './PacForm';
 import PacOverview from './PacOverview';
 
-type PacPageProps = {
-  match: Rmatch<{
-    ns?: string;
-  }>;
-};
-
-const PacPage: React.FC<PacPageProps> = ({ match }) => {
+const PacPage: React.FC = () => {
   // const { t } = useTranslation();
   const location = useLocation();
   const history = useHistory();
@@ -32,9 +27,7 @@ const PacPage: React.FC<PacPageProps> = ({ match }) => {
     resource: 'secrets',
   });
   const code = queryParams.get('code');
-  const {
-    params: { ns: namespace },
-  } = match;
+  const { ns: namespace } = useParams();
 
   React.useEffect(() => {
     if (isPipelinesEnabled && namespace !== PIPELINE_NAMESPACE) {

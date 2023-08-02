@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { match as Match } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { History } from 'history';
 import {
   ListDropdown,
@@ -114,11 +114,8 @@ const AttachStorage: React.FC<AttachStorageProps> = (props) => {
 };
 
 const AttachStorageWrapper: React.FC<AttachStorageWrapperProps> = (props) => {
-  const {
-    kindObj,
-    kindsInFlight,
-    match: { params },
-  } = props;
+  const { kindObj, kindsInFlight } = props;
+  const params = useParams();
   return !kindObj && kindsInFlight ? (
     <LoadingBox />
   ) : (
@@ -129,7 +126,6 @@ const AttachStorageWrapper: React.FC<AttachStorageWrapperProps> = (props) => {
 type AttachStorageWrapperProps = {
   kindObj: K8sKind;
   kindsInFlight: any;
-  match?: Match<{ ns: string; name: string }>;
   history: History;
 };
 

@@ -1,17 +1,22 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import * as Router from 'react-router-dom-v5-compat';
 import { PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import NamespacedPage from '../../NamespacedPage';
 import ProjectAccess from '../ProjectAccess';
 import ProjectAccessPage from '../ProjectAccessPage';
 
-type ProjectAccessPageProps = React.ComponentProps<typeof ProjectAccessPage>;
-
 const useK8sWatchResourcesMock = useK8sWatchResources as jest.Mock;
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
+}));
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
 }));
 
 describe('Project Access Page', () => {
@@ -21,17 +26,13 @@ describe('Project Access Page', () => {
   });
   it('should render Project access tab', () => {
     window.SERVER_FLAGS.projectAccessClusterRoles = '["edit", "admin", "view"]';
-    const projectAccessPageProps: ProjectAccessPageProps = {
-      match: {
-        isExact: false,
-        path: '/project-details/ns/:ns/access',
-        url: '/project-details/ns/abc/access',
-        params: {
-          ns: 'abc',
-        },
-      },
-    };
-    const projectAccessPageWrapper = shallow(<ProjectAccessPage {...projectAccessPageProps} />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: 'abc',
+    });
+    jest
+      .spyOn(Router, 'useLocation')
+      .mockReturnValue({ pathname: '/project-details/ns/abc/access' });
+    const projectAccessPageWrapper = shallow(<ProjectAccessPage />);
     expect(projectAccessPageWrapper.find(ProjectAccess).exists()).toBe(true);
     expect(
       projectAccessPageWrapper
@@ -45,17 +46,11 @@ describe('Project Access Page', () => {
 
   it('should render Project access full form view', () => {
     window.SERVER_FLAGS.projectAccessClusterRoles = '["edit", "admin", "view"]';
-    const projectAccessPageProps: ProjectAccessPageProps = {
-      match: {
-        isExact: false,
-        path: '/project-access/ns/:ns',
-        url: '/project-access/ns/abc',
-        params: {
-          ns: 'abc',
-        },
-      },
-    };
-    const projectAccessPageWrapper = shallow(<ProjectAccessPage {...projectAccessPageProps} />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: 'abc',
+    });
+    jest.spyOn(Router, 'useLocation').mockReturnValue({ pathname: '/project-access/ns/abc' });
+    const projectAccessPageWrapper = shallow(<ProjectAccessPage />);
     expect(
       projectAccessPageWrapper
         .setProps({ roleBindings: { data: [], loaded: true, loadError: null } })

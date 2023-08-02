@@ -3,7 +3,6 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
-import { match as RMatch } from 'react-router-dom';
 import {
   Table as PfTable,
   TableHeader,
@@ -372,13 +371,11 @@ const getComponentProps = (
   data: any[],
   filters: Filter[],
   selected: boolean,
-  match: RMatch<any>,
   kindObj: K8sResourceKindReference,
 ): ComponentProps => ({
   data,
   filters,
   selected,
-  match,
   kindObj,
 });
 
@@ -386,7 +383,6 @@ export const Table: React.FC<TableProps> = ({
   onSelect,
   filters: initFilters,
   selected,
-  match,
   kindObj,
   Header: initHeader,
   activeColumns,
@@ -443,7 +439,7 @@ export const Table: React.FC<TableProps> = ({
   const [sortBy, setSortBy] = React.useState({});
 
   const [columns, componentProps] = React.useMemo(() => {
-    const cProps = getComponentProps(data, filters, selected, match, kindObj);
+    const cProps = getComponentProps(data, filters, selected, kindObj);
     return [
       getActiveColumns(
         windowWidth,
@@ -461,7 +457,6 @@ export const Table: React.FC<TableProps> = ({
     data,
     filters,
     selected,
-    match,
     kindObj,
     activeColumns,
     columnManagementID,
@@ -663,6 +658,5 @@ export type ComponentProps<D = any> = {
   data: D[];
   filters: Filter[];
   selected: boolean;
-  match: RMatch<any>;
   kindObj: K8sResourceKindReference;
 };

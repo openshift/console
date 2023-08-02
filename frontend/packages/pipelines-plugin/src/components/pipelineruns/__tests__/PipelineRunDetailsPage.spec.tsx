@@ -2,7 +2,6 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { SemVer } from 'semver';
 import { DetailsPage } from '@console/internal/components/factory';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
 import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
 import * as hookUtils from '../../pipelines/hooks';
@@ -24,14 +23,6 @@ describe('PipelineRunDetailsPage:', () => {
     pipelineRunDetailsPageProps = {
       kind: PipelineRunModel.kind,
       kindObj: PipelineRunModel,
-      match: {
-        isExact: true,
-        path: `/k8s/ns/:ns/${referenceForModel(PipelineRunModel)}/events`,
-        url: `k8s/ns/rhd-test/${referenceForModel(PipelineRunModel)}/events`,
-        params: {
-          ns: 'rhd-test',
-        },
-      },
     };
     menuActions.mockReturnValue([getPipelineRunKebabActions(new SemVer('1.9.0'), true)]);
     breadCrumbs.mockReturnValue([{ label: 'PipelineRuns' }, { label: 'PipelineRuns Details' }]);

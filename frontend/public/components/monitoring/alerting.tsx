@@ -38,7 +38,6 @@ import {
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { withFallback } from '@console/shared/src/components/error';
 import { QueryBrowser } from '@console/shared/src/components/query-browser';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search';
 import {
@@ -82,7 +81,8 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom-v5-compat';
 import {
   alertingErrored,
   alertingLoaded,
@@ -106,7 +106,6 @@ import { SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
-import AlertmanagerPage from './alertmanager/alertmanager-page';
 import MonitoringDashboardsPage from './dashboards';
 import { fetchAlerts } from './fetch-alerts';
 import { useBoolean } from './hooks/useBoolean';
@@ -131,6 +130,8 @@ import {
   silenceState,
 } from './utils';
 import { exactMatch, fuzzyCaseInsensitive } from '../factory/table-filters';
+import { AlertmanagerConfig } from './alertmanager/alertmanager-config';
+import AlertmanagerYAML from './alertmanager/alertmanager-yaml-editor';
 
 const SelectedSilencesContext = React.createContext({
   selectedSilences: new Set(),
@@ -138,7 +139,9 @@ const SelectedSilencesContext = React.createContext({
 });
 
 const ruleURL = (rule: Rule, namespace: string) =>
-  namespace ? `/dev-monitoring/ns/${namespace}/rules/${rule?.id}` : `/monitoring/rules/${rule?.id}`;
+  namespace
+    ? `/dev-monitoring/ns/${namespace}/alertrules/${rule?.id}`
+    : `/monitoring/alertrules/${rule?.id}`;
 
 const alertingRuleSource = (rule: Rule): AlertSource | string => {
   if (rule.sourceId === undefined || rule.sourceId === 'prometheus') {
@@ -548,7 +551,7 @@ const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, showCheckbox }) 
     [id, setSelectedSilences],
   );
 
-  const [namespace] = useActiveNamespace();
+  const { ns: namespace } = useParams();
 
   return (
     <>
@@ -747,11 +750,12 @@ const SilencedByList: React.FC<{ silences: Silence[] }> = ({ silences }) => {
   );
 };
 
-const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
+const AlertsDetailsPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
+  const params = useParams();
 
-  const isDevPerspective = _.has(match.params, 'ns');
-  const namespace = match.params?.ns;
+  const isDevPerspective = _.has(params, 'ns');
+  const namespace = params?.ns;
   const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
 
   const alerts: Alerts = useSelector(({ observe }: RootState) =>
@@ -761,7 +765,7 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const silencesLoaded = ({ observe }) =>
     observe.get(isDevPerspective ? 'devSilences' : 'silences')?.loaded;
 
-  const ruleAlerts = _.filter(alerts?.data, (a) => a.rule.id === match?.params?.ruleID);
+  const ruleAlerts = _.filter(alerts?.data, (a) => a.rule.id === params?.ruleID);
   const rule = ruleAlerts?.[0]?.rule;
   const alert = _.find(ruleAlerts, (a) => _.isEqual(a.labels, getURLSearchParams()));
 
@@ -1064,16 +1068,17 @@ const ActiveAlerts: React.FC<{ alerts; ruleID: string; namespace: string }> = (p
   );
 };
 
-const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
+const AlertRulesDetailsPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
+  const params = useParams();
 
-  const isDevPerspective = _.has(match.params, 'ns');
-  const namespace = match.params?.ns;
+  const isDevPerspective = _.has(params, 'ns');
+  const namespace = params?.ns;
 
   const rules: Rule[] = useSelector(({ observe }: RootState) =>
     observe.get(isDevPerspective ? 'devRules' : 'rules'),
   );
-  const rule = _.find(rules, { id: _.get(match, 'params.id') });
+  const rule = _.find(rules, { id: params?.id });
 
   const { loaded, loadError }: Alerts = useSelector(
     ({ observe }: RootState) => observe.get(isDevPerspective ? 'devAlerts' : 'alerts') || {},
@@ -1273,8 +1278,7 @@ const ExpireSilenceModal: React.FC<ExpireSilenceModalProps> = ({
   silenceID,
 }) => {
   const { t } = useTranslation();
-
-  const [namespace] = useActiveNamespace();
+  const { ns: namespace } = useParams();
 
   const [isInProgress, , setInProgress, setNotInProgress] = useBoolean(false);
   const [errorMessage, setErrorMessage] = React.useState();
@@ -1354,7 +1358,7 @@ const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const [namespace] = useActiveNamespace();
+  const { ns: namespace } = useParams();
 
   const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
   const [isModalOpen, , setModalOpen, setModalClosed] = useBoolean(false);
@@ -1417,7 +1421,7 @@ const SilenceDropdownActions: React.FC<{ silence: Silence }> = ({ silence }) => 
 const SilencedAlertsList = ({ alerts }) => {
   const { t } = useTranslation();
 
-  const [namespace] = useActiveNamespace();
+  const { ns: namespace } = useParams();
 
   return _.isEmpty(alerts) ? (
     <div className="pf-u-text-align-center">{t('public~None found')}</div>
@@ -1468,10 +1472,10 @@ const SilencedAlertsList = ({ alerts }) => {
   );
 };
 
-const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
+const SilencesDetailsPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
-
-  const [namespace] = useActiveNamespace();
+  const params = useParams();
+  const { ns: namespace } = params;
 
   const alertsLoaded = useSelector(
     ({ observe }: RootState) => observe.get(namespace ? 'devAlerts' : 'alerts')?.loaded,
@@ -1480,7 +1484,7 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const silences: Silences = useSelector(({ observe }: RootState) =>
     observe.get(namespace ? 'devSilences' : 'silences'),
   );
-  const silence = _.find(silences?.data, { id: _.get(match, 'params.id') });
+  const silence = _.find(silences?.data, { id: params?.id });
 
   return (
     <>
@@ -1616,7 +1620,7 @@ const AlertTableRow: React.FC<RowProps<Alert>> = ({ obj }) => {
 
   const title: string = obj.annotations?.description || obj.annotations?.message;
 
-  const [namespace] = useActiveNamespace();
+  const { ns: namespace } = useParams();
 
   const dropdownItems = [
     <DropdownItem key="view-rule" onClick={() => history.push(ruleURL(obj.rule, namespace))}>
@@ -1884,7 +1888,7 @@ const RuleTableRow: React.FC<RowProps<Rule>> = ({ obj }) => {
 
   const title: string = obj.annotations?.description || obj.annotations?.message;
 
-  const [namespace] = useActiveNamespace();
+  const { ns: namespace } = useParams();
 
   return (
     <>
@@ -2029,7 +2033,7 @@ const RulesPage = withFallback(RulesPage_);
 const CreateSilenceButton: React.FC<{}> = React.memo(() => {
   const { t } = useTranslation();
 
-  const [namespace] = useActiveNamespace();
+  const { ns: namespace } = useParams();
 
   return (
     <Link
@@ -2050,7 +2054,7 @@ type ExpireAllSilencesButtonProps = {
 const ExpireAllSilencesButton: React.FC<ExpireAllSilencesButtonProps> = ({ setErrorMessage }) => {
   const { t } = useTranslation('public');
 
-  const [namespace] = useActiveNamespace();
+  const { ns: namespace } = useParams();
 
   const [isInProgress, , setInProgress, setNotInProgress] = useBoolean(false);
 
@@ -2135,8 +2139,7 @@ const SelectAllCheckbox: React.FC<{ silences: Silence[] }> = ({ silences }) => {
 
 const SilencesPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
-
-  const [namespace] = useActiveNamespace();
+  const { ns: namespace } = useParams();
 
   const [selectedSilences, setSelectedSilences] = React.useState(new Set());
   const [errorMessage, setErrorMessage] = React.useState();
@@ -2171,7 +2174,15 @@ const SilencesPage_: React.FC<{}> = () => {
   ];
 
   const allFilters: RowFilter[] = [nameFilter, ...rowFilters];
-  const [staticData, filteredData, onFilterChange] = useListPageFilter(data, allFilters);
+  let [staticData, filteredData, onFilterChange] = useListPageFilter(data, allFilters);
+
+  if (namespace) {
+    filteredData = filteredData?.filter((item) => {
+      const matchers = item.matchers;
+      const nsMatcher = matchers?.find((m) => m.name === 'namespace');
+      return nsMatcher?.value === namespace;
+    });
+  }
 
   const columns = React.useMemo<TableColumn<Silence>[]>(
     () => [
@@ -2290,14 +2301,14 @@ const Tab: React.FC<{ active: boolean; children: React.ReactNode }> = ({ active,
   </li>
 );
 
-const AlertingPage: React.FC<RouteComponentProps<{ url: string }>> = ({ match }) => {
+const AlertingPage: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   const alertsPath = '/monitoring/alerts';
   const rulesPath = '/monitoring/alertrules';
   const silencesPath = '/monitoring/silences';
 
-  const { url } = match;
+  const { pathname: url } = useLocation();
 
   return (
     <>
@@ -2321,16 +2332,22 @@ const AlertingPage: React.FC<RouteComponentProps<{ url: string }>> = ({ match })
           <Link to={rulesPath}>{t('public~Alerting rules')}</Link>
         </Tab>
       </ul>
-      <Switch>
-        <Route path={alertsPath} exact component={AlertsPage} />
-        <Route path={rulesPath} exact component={RulesPage} />
-        <Route path={silencesPath} exact component={SilencesPage} />
-      </Switch>
+      {url === alertsPath && <AlertsPage />}
+      {url === rulesPath && <RulesPage />}
+      {url === silencesPath && <SilencesPage />}
     </>
   );
 };
 
-const PollerPages = () => {
+// Handles links that have the Prometheus UI's URL format (expected for links in alerts sent by
+// Alertmanager). The Prometheus UI specifies the PromQL query with the GET param `g0.expr`, so we
+// use that if it exists. Otherwise, just go to the query browser page with no query.
+const PrometheusUIRedirect = () => {
+  const params = getURLSearchParams();
+  return <Navigate to={`/monitoring/query-browser?query0=${params['g0.expr'] || ''}`} replace />;
+};
+
+export const MonitoringUI = () => {
   const dispatch = useDispatch();
 
   const [customExtensions] = useResolvedExtensions<AlertingRulesSourceExtension>(
@@ -2379,39 +2396,28 @@ const PollerPages = () => {
   }, [alertsSource, dispatch]);
 
   return (
-    <Switch>
-      <Route path="/monitoring/(alerts|alertrules|silences)" exact component={AlertingPage} />
-      <Route path="/monitoring/alertrules/:id" exact component={AlertRulesDetailsPage} />
-      <Route path="/monitoring/alerts/:ruleID" exact component={AlertsDetailsPage} />
-      <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
-      <Route path="/monitoring/silences/:id/edit" exact component={EditSilence} />
-    </Switch>
+    <Routes>
+      {/* This redirect also handles the `/monitoring/#/alerts?...` link URLs generated by
+    Alertmanager (because the `#` is considered the end of the URL) */}
+      <Route path="" element={<Navigate to="/monitoring/alerts" replace />} />
+      <Route path="alertmanagerconfig" element={<AlertmanagerConfig />} />
+      <Route path="alertmanageryaml" element={<AlertmanagerYAML />} />
+      <Route path="dashboards" element={<MonitoringDashboardsPage />} />
+      <Route path="dashboards/:board" element={<MonitoringDashboardsPage />} />
+      <Route path="graph" element={<PrometheusUIRedirect />} />
+      <Route path="query-browser" element={<QueryBrowserPage />} />
+      <Route path="silences/~new" element={<CreateSilence />} />
+      <Route path="targets/*" element={<TargetsUI />} />
+      <Route path="alerts" element={<AlertingPage />} />
+      <Route path="alertrules" element={<AlertingPage />} />
+      <Route path="silences" element={<AlertingPage />} />
+      <Route path="alertrules/:id" element={<AlertRulesDetailsPage />} />
+      <Route path="alerts/:ruleID" element={<AlertsDetailsPage />} />
+      <Route path="silences/:id" element={<SilencesDetailsPage />} />
+      <Route path="silences/:id/edit" element={<EditSilence />} />
+    </Routes>
   );
 };
-
-// Handles links that have the Prometheus UI's URL format (expected for links in alerts sent by
-// Alertmanager). The Prometheus UI specifies the PromQL query with the GET param `g0.expr`, so we
-// use that if it exists. Otherwise, just go to the query browser page with no query.
-const PrometheusUIRedirect = () => {
-  const params = getURLSearchParams();
-  return <Redirect to={`/monitoring/query-browser?query0=${params['g0.expr'] || ''}`} />;
-};
-
-export const MonitoringUI = () => (
-  <Switch>
-    {/* This redirect also handles the `/monitoring/#/alerts?...` link URLs generated by
-    Alertmanager (because the `#` is considered the end of the URL) */}
-    <Redirect from="/monitoring" exact to="/monitoring/alerts" />
-    <Route path="/monitoring/alertmanagerconfig" exact component={AlertmanagerPage} />
-    <Route path="/monitoring/alertmanageryaml" exact component={AlertmanagerPage} />
-    <Route path="/monitoring/dashboards/:board?" exact component={MonitoringDashboardsPage} />
-    <Route path="/monitoring/graph" exact component={PrometheusUIRedirect} />
-    <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
-    <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
-    <Route path="/monitoring/targets" component={TargetsUI} />
-    <Route component={PollerPages} />
-  </Switch>
-);
 
 type AlertStateProps = {
   state: AlertStates;

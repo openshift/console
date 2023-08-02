@@ -7,7 +7,8 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
-import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { ListPageBody, K8sModel } from '@console/dynamic-plugin-sdk';
 import { getResources } from '@console/internal/actions/k8s';
 import { Conditions } from '@console/internal/components/conditions';
@@ -349,7 +350,7 @@ const getK8sWatchResources = (
 
 export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const { t } = useTranslation();
-  const match = useRouteMatch();
+  const location = useLocation();
   const [namespace] = useActiveNamespace();
   const [showOperandsInAllNamespaces] = useShowOperandsInAllNamespaces();
   const {
@@ -416,7 +417,8 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
         )
       : {};
 
-  const createNavigate = (kind) => history.push(`${match.url.replace('instances', kind)}/~new`);
+  const createNavigate = (kind) =>
+    history.push(`${location.pathname.replace('instances', kind)}/~new`);
 
   const data = React.useMemo(() => flatten(resources), [resources, flatten]);
 
@@ -483,7 +485,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 
 const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) => {
   const { t } = useTranslation();
-  const match = useRouteMatch();
+  const location = useLocation();
   const [showOperandsInAllNamespaces] = useShowOperandsInAllNamespaces();
 
   const {
@@ -494,7 +496,7 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
     hideNameLabelFilters = false,
     hideColumnManagement = false,
   } = props;
-  const createPath = `${match.url}/~new`;
+  const createPath = `${location.pathname}/~new`;
 
   const {
     apiGroup: group,
@@ -739,8 +741,9 @@ type OperandDetailsPageRouteParams = RouteParams<'appName' | 'ns' | 'name' | 'pl
 
 const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps) => {
   const { t } = useTranslation();
-  const match = useRouteMatch<OperandDetailsPageRouteParams>();
-  const { appName, ns, name, plural } = useParams<OperandDetailsPageRouteParams>();
+  const params = useParams();
+  const { appName, ns, name, plural } = params;
+  const location = useLocation();
   const [csv] = useClusterServiceVersion(appName, ns);
   const actionItems = React.useCallback((resourceModel: K8sKind, resource: K8sResourceKind) => {
     const context = {
@@ -752,7 +755,6 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
 
   return (
     <DetailsPage
-      match={match}
       name={name}
       kind={plural}
       namespace={ns}
@@ -769,15 +771,15 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
       breadcrumbsFor={() => [
         {
           name: t('olm~Installed Operators'),
-          path: `/k8s/ns/${match.params.ns}/${ClusterServiceVersionModel.plural}`,
+          path: `/k8s/ns/${params.ns}/${ClusterServiceVersionModel.plural}`,
         },
         {
-          name: match.params.appName,
-          path: match.url.slice(0, match.url.lastIndexOf('/')),
+          name: params.appName,
+          path: location.pathname.slice(0, location.pathname.lastIndexOf('/')),
         },
         {
-          name: t('olm~{{item}} details', { item: kindForReference(match.params.plural) }), // Use url param in case model doesn't exist
-          path: `${match.url}`,
+          name: t('olm~{{item}} details', { item: kindForReference(params.plural) }), // Use url param in case model doesn't exist
+          path: `${location.pathname}`,
         },
       ]}
       pages={[

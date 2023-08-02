@@ -64,7 +64,6 @@ export const useResolvedExtensions: UseResolvedExtensions = require('@console/dy
  * - `console.tab/horizontalNav` can be used to add additional content to any horizontal nav.
  * @param {object} [resource] - The resource associated with this Navigation, an object of K8sResourceCommon type
  * @param {NavPage[]} pages - An array of page objects
- * @param {object} match - match object provided by React Router
  * @example
  * ```ts
  * const HomePage: React.FC = (props) => {
@@ -73,7 +72,7 @@ export const useResolvedExtensions: UseResolvedExtensions = require('@console/dy
  *       name: 'Home',
  *       component: () => <>Home</>
  *     }
- *     return <HorizontalNav match={props.match} pages={[page]} />
+ *     return <HorizontalNav pages={[page]} />
  * }
  * ```
  */

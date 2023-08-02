@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import { match } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
@@ -47,13 +47,11 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
     inProgress,
     errorMessage,
     handlePromise,
-    match: {
-      params: { ns, appName },
-    },
     minRequiredKeys: { configMaps, secrets: encodedKeys, storageClasses },
     downloadFile,
   } = props;
   const { t } = useTranslation();
+  const { ns, appName } = useParams();
 
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
   const [fileData, setFileData] = React.useState('');
@@ -249,7 +247,6 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
 });
 
 type CreateExternalClusterProps = HandlePromiseProps & {
-  match: match<{ ns?: string; appName?: string }>;
   minRequiredKeys?: { [key: string]: string[] };
   downloadFile: string;
 };

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
 import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -24,8 +24,8 @@ const BlockPoolIcon: React.FC<BlockPoolIconProps> = ({ name, kind }) => {
   );
 };
 
-const BlockPoolDetailsPage: React.FC<BlockPoolDetailsPagePros> = (props) => {
-  const { poolName } = props.match.params;
+const BlockPoolDetailsPage: React.FC = (props) => {
+  const { poolName } = useParams();
   const { editYaml } = navFactory;
   const { t } = useTranslation();
   const location = useLocation();
@@ -65,7 +65,6 @@ const BlockPoolDetailsPage: React.FC<BlockPoolDetailsPagePros> = (props) => {
   return (
     <DetailsPage
       {...props}
-      match={props.match}
       name={poolName}
       namespace={CEPH_STORAGE_NAMESPACE}
       kind={kind}
@@ -83,7 +82,5 @@ type BlockPoolIconProps = {
   name: string;
   kind: string;
 };
-
-type BlockPoolDetailsPagePros = RouteComponentProps<{ poolName: string }>;
 
 export default BlockPoolDetailsPage;

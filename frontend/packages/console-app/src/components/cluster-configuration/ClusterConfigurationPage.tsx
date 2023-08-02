@@ -12,7 +12,7 @@ import {
 import { LockIcon } from '@patternfly/react-icons';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { LoadingBox, history } from '@console/internal/components/utils';
 import { PageLayout, isModifiedEvent } from '@console/shared';
 import ClusterConfigurationField from './ClusterConfigurationField';
@@ -20,20 +20,18 @@ import useClusterConfigurationGroups from './useClusterConfigurationGroups';
 import useClusterConfigurationItems from './useClusterConfigurationItems';
 import './ClusterConfigurationPage.scss';
 
-export type ClusterConfigurationPageProps = RouteComponentProps<{ group: string }>;
-
-const ClusterConfigurationPage: React.FC<ClusterConfigurationPageProps> = ({ match }) => {
+const ClusterConfigurationPage: React.FC = () => {
   const { t } = useTranslation();
+  const params = useParams();
 
-  const groupId = match.params.group || 'general';
+  const groupId = params.group || 'general';
   const onSelect = (event: React.MouseEvent<HTMLElement>, newGroupId: string) => {
     if (isModifiedEvent(event)) {
       return;
     }
     event.preventDefault();
-    const path = match.path.includes(':group')
-      ? match.path.replace(':group', newGroupId)
-      : `${match.path}/${newGroupId}`;
+
+    const path = `/cluster-configuration/${newGroupId}`;
     history.replace(path);
   };
 

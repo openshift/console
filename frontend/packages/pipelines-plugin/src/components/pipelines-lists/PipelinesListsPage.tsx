@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { match as Rmatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -26,17 +26,11 @@ import { PIPELINE_NAMESPACE } from '../pipelines/const';
 import PipelinesList from '../pipelines/list-page/PipelinesList';
 import RepositoriesList from '../repository/list-page/RepositoriesList';
 
-interface PipelinesListPageProps {
-  match: Rmatch<any>;
-}
-
-const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
+const PipelinesListPage: React.FC = () => {
   const { t } = useTranslation();
+  const { ns: namespace } = useParams();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const isConditionsEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_CONDITION);
-  const {
-    params: { ns: namespace },
-  } = match;
   const badge = usePipelineTechPreviewBadge(namespace);
   const [hasCreateAccess, hasCreateAccessLoading] = useAccessReview({
     namespace: PIPELINE_NAMESPACE,
@@ -122,7 +116,6 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
       <MultiTabListPage
         pages={pages}
-        match={match}
         title={t('pipelines-plugin~Pipelines')}
         badge={badge}
         menuActions={menuActions}

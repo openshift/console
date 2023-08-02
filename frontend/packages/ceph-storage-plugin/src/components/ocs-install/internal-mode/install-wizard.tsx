@@ -3,7 +3,7 @@ import * as React from 'react';
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { match as RouteMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   Alert,
   Wizard,
@@ -61,13 +61,9 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
   return Promise.all(promises).then(() => k8sCreate(OCSServiceModel, storageCluster));
 };
 
-export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
-  match,
-  mode,
-  navUtils,
-}) => {
+export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ mode, navUtils }) => {
   const { t } = useTranslation();
-  const { appName, ns } = match.params;
+  const { appName, ns } = useParams();
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [showInfoAlert, setShowInfoAlert] = React.useState(true);
   const [inProgress, setInProgress] = React.useState(false);
@@ -184,6 +180,5 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
 
 type CreateInternalClusterProps = {
   navUtils: NavUtils;
-  match: RouteMatch<{ appName: string; ns: string }>;
   mode: string;
 };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { match as Rmatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -19,15 +19,9 @@ import EventListenersPage from './EventListnersPage';
 import TriggerBindingsPage from './TriggerBindingsPage';
 import TriggerTemplatesPage from './TriggerTemplatesPage';
 
-interface TriggersPageProps {
-  match: Rmatch<any>;
-}
-
-const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
+const TriggersPage: React.FC = () => {
   const { t } = useTranslation();
-  const {
-    params: { ns: namespace },
-  } = match;
+  const { ns: namespace } = useParams();
   const badge = useTriggersTechPreviewBadge(namespace);
   const [showTitle, canCreate] = [false, false];
   const menuActions = {
@@ -86,7 +80,6 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
       <MultiTabListPage
         pages={pages}
-        match={match}
         title={t('pipelines-plugin~Triggers')}
         badge={badge}
         menuActions={menuActions}

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { configure, render, cleanup } from '@testing-library/react';
 import { Provider } from 'react-redux';
+import * as Router from 'react-router-dom-v5-compat';
 import { usePreferredCreateEditMethod } from '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import store from '@console/internal/redux';
 import { useUserSettings } from '@console/shared/src';
-import BuildConfigFormPage, { BuildConfigFormPageProps } from '../BuildConfigFormPage';
+import BuildConfigFormPage from '../BuildConfigFormPage';
 import { BuildConfig } from '../types';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
@@ -36,6 +37,11 @@ jest.mock(
   }),
 );
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+}));
+
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const useUserSettingsMock = useUserSettings as jest.Mock;
 const usePreferredCreateEditMethodMock = usePreferredCreateEditMethod as jest.Mock;
@@ -58,13 +64,11 @@ describe('BuildConfigFormPage', () => {
   it('should not fetch when creating a new BuildConfig (url contains name ~new)', async () => {
     useK8sWatchResourceMock.mockReturnValue([null, true, '']);
 
-    const props = {
-      match: { params: { ns: 'a-namespace', name: '~new' } },
-    } as BuildConfigFormPageProps;
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: '~new' });
 
     const renderResult = render(
       <Wrapper>
-        <BuildConfigFormPage {...props} />
+        <BuildConfigFormPage />
       </Wrapper>,
     );
     renderResult.findByText('Create BuildConfig');
@@ -81,13 +85,11 @@ describe('BuildConfigFormPage', () => {
   it('should fetch BuildConfig and render loading until BuildConfig is loaded', () => {
     useK8sWatchResourceMock.mockReturnValue([null, false, '']);
 
-    const props = {
-      match: { params: { ns: 'a-namespace', name: 'a-buildconfig' } },
-    } as BuildConfigFormPageProps;
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
     const renderResult = render(
       <Wrapper>
-        <BuildConfigFormPage {...props} />
+        <BuildConfigFormPage />
       </Wrapper>,
     );
     expect(renderResult.queryByText('Create BuildConfig')).toBeFalsy();
@@ -115,13 +117,11 @@ describe('BuildConfigFormPage', () => {
     };
     useK8sWatchResourceMock.mockReturnValue([watchedBuildConfig, true, '']);
 
-    const props = {
-      match: { params: { ns: 'a-namespace', name: 'a-buildconfig' } },
-    } as BuildConfigFormPageProps;
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
     const renderResult = render(
       <Wrapper>
-        <BuildConfigFormPage {...props} />
+        <BuildConfigFormPage />
       </Wrapper>,
     );
     expect(renderResult.queryByText('Create BuildConfig')).toBeFalsy();
@@ -142,13 +142,11 @@ describe('BuildConfigFormPage', () => {
   it('should render an error when the BuildConfig fetching fails', () => {
     useK8sWatchResourceMock.mockReturnValue([null, true, new Error('Something went wrong')]);
 
-    const props = {
-      match: { params: { ns: 'a-namespace', name: 'a-buildconfig' } },
-    } as BuildConfigFormPageProps;
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
     const renderResult = render(
       <Wrapper>
-        <BuildConfigFormPage {...props} />
+        <BuildConfigFormPage />
       </Wrapper>,
     );
     renderResult.findByText('Error Loading');

@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { match } from 'react-router';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import {
   DOC_URL_RED_HAT_MARKETPLACE,
@@ -290,7 +290,8 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
   );
 };
 
-export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => {
+export const OperatorHubPage = withFallback((props) => {
+  const params = useParams();
   const isDevCatalogEnabled = useIsDeveloperCatalogEnabled();
   const isOperatorBackedServiceEnabled = isCatalogTypeEnabled(
     OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID,
@@ -336,14 +337,14 @@ export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => {
                 {
                   isList: true,
                   kind: referenceForModel(PackageManifestModel),
-                  namespace: props.match.params.ns,
+                  namespace: params.ns,
                   selector: { 'openshift-marketplace': 'true' },
                   prop: 'marketplacePackageManifests',
                 },
                 {
                   isList: true,
                   kind: referenceForModel(PackageManifestModel),
-                  namespace: props.match.params.ns,
+                  namespace: params.ns,
                   selector: fromRequirements([
                     { key: 'opsrc-owner-name', operator: 'DoesNotExist' },
                     { key: 'csc-owner-name', operator: 'DoesNotExist' },
@@ -359,7 +360,7 @@ export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => {
                   kind: referenceForModel(ClusterServiceVersionModel),
                   namespaced: true,
                   isList: true,
-                  namespace: props.match.params.ns,
+                  namespace: params.ns,
                   prop: 'clusterServiceVersions',
                 },
                 {
@@ -380,7 +381,7 @@ export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => {
               ]}
             >
               {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-              <OperatorHubList {...(props as any)} namespace={props.match.params.ns} />
+              <OperatorHubList {...(props as any)} namespace={params.ns} />
             </Firehose>
           </div>
         </div>
@@ -388,10 +389,6 @@ export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => {
     </>
   );
 }, ErrorBoundaryFallbackPage);
-
-export type OperatorHubPageProps = {
-  match: match<{ ns?: string }>;
-};
 
 export type OperatorHubListProps = {
   namespace?: string;

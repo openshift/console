@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamTagModel } from '../models';
@@ -275,20 +276,25 @@ const pages = [
 ];
 export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPageProps> = (props) => {
   const { t } = useTranslation();
+  const params = useParams();
+  const location = useLocation();
   return (
     <DetailsPage
       {...props}
       breadcrumbsFor={(obj) => {
         const { imageStreamName } = getImageStreamNameAndTag(obj);
         return [
-          { name: t('public~ImageStreams'), path: getBreadcrumbPath(props.match, 'imagestreams') },
+          {
+            name: t('public~ImageStreams'),
+            path: getBreadcrumbPath(params, 'imagestreams'),
+          },
           {
             name: imageStreamName,
-            path: `${getBreadcrumbPath(props.match, 'imagestreams')}/${imageStreamName}`,
+            path: `${getBreadcrumbPath(params, 'imagestreams')}/${imageStreamName}`,
           },
           {
             name: t('public~ImageStreamTag details'),
-            path: props.match.url,
+            path: location.pathname,
           },
         ];
       }}
@@ -320,7 +326,6 @@ export type ImageStreamTagsDetailsProps = {
 };
 
 export type ImageStreamTagsDetailsPageProps = {
-  match: any;
   namespace: string;
   name: string;
 };

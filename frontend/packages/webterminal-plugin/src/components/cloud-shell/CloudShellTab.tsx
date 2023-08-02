@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect } from 'react-router';
+import { Navigate } from 'react-router-dom-v5-compat';
 import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled'; // TODO remove multicluster
 import { useFlag } from '@console/shared';
 import { FLAG_DEVWORKSPACE } from '../../const';
@@ -13,7 +13,7 @@ const CloudShellTab: React.FC = () => {
   const devWorkspaceFlag = useFlag(FLAG_DEVWORKSPACE);
 
   // TODO remove multicluster
-  if (devWorkspaceFlag === false || isMultiClusterEnabled()) return <Redirect to="/" />;
+  if (devWorkspaceFlag === false || isMultiClusterEnabled()) return <Navigate to="/" replace />;
 
   return (
     <>

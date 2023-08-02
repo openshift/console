@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { match as RouteMatch } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -27,8 +27,9 @@ import { POOL_STATE } from '../../constants/storage-pool-const';
 
 import './create-block-pool.scss';
 
-const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
-  const { params, url } = match;
+const CreateBlockPool: React.FC = () => {
+  const params = useParams();
+  const location = useLocation();
   const { t } = useTranslation();
 
   const [state, dispatch] = React.useReducer(blockPoolReducer, blockPoolInitialState);
@@ -40,8 +41,8 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
 
   // OCS create pool page url ends with ~new, ODF create pool page ends with /create/~new
   const blockPoolPageUrl = params?.appName
-    ? url.replace('/~new', '')
-    : url.replace('/create/~new', '');
+    ? location.pathname.replace('/~new', '')
+    : location.pathname.replace('/create/~new', '');
 
   const onClose = () => {
     history.goBack();
@@ -128,10 +129,6 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
       </div>
     </>
   );
-};
-
-type CreateBlockPoolProps = {
-  match: RouteMatch<{ appName: string; systemName: string }>;
 };
 
 export default CreateBlockPool;

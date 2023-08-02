@@ -68,7 +68,7 @@ describe('Monitoring: Alerts', () => {
   });
 
   it('creates and expires a Silence', () => {
-    cy.visit('monitoring/alerts');
+    cy.visit('/monitoring/alerts');
     listPage.rows.shouldBeLoaded();
     cy.log('filter to Watchdog alert');
     listPage.filter.byName('Watchdog');

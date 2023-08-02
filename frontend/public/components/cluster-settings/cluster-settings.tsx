@@ -1321,7 +1321,7 @@ export const ClusterOperatorTabPage: React.FC<ClusterOperatorTabPageProps> = ({ 
   <ClusterOperatorPage cv={cv} autoFocus={false} showTitle={false} />
 );
 
-export const ClusterSettingsPage: React.FC<ClusterSettingsPageProps> = ({ match }) => {
+export const ClusterSettingsPage: React.FC = () => {
   const { t } = useTranslation();
   const hasClusterAutoscaler = useFlag(FLAGS.CLUSTER_AUTOSCALER);
   const title = t('public~Cluster Settings');
@@ -1370,7 +1370,7 @@ export const ClusterSettingsPage: React.FC<ClusterSettingsPageProps> = ({ match 
     <PageTitleContext.Provider value={titleProviderValues}>
       <PageHeading title={<div data-test-id="cluster-settings-page-heading">{title}</div>} />
       <Firehose resources={resources}>
-        <HorizontalNav pages={pages} match={match} resourceKeys={resourceKeys} />
+        <HorizontalNav pages={pages} resourceKeys={resourceKeys} />
       </Firehose>
     </PageTitleContext.Provider>
   );
@@ -1504,10 +1504,6 @@ type ClusterVersionDetailsTableProps = {
 
 type ClusterVersionConditionsLinkProps = {
   cv: ClusterVersionKind;
-};
-
-type ClusterSettingsPageProps = {
-  match: any;
 };
 
 type ClusterOperatorTabPageProps = {

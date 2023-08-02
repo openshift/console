@@ -236,7 +236,7 @@ const DaemonSetPods: React.FC<DaemonSetPodsProps> = (props) => (
   <PodsComponent {...props} showNodes />
 );
 
-export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (props) => {
+export const DaemonSetsDetailsPage: React.FC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
@@ -295,8 +295,4 @@ type DaemonSetsPageProps = {
 
 type DaemonSetPodsProps = {
   obj: K8sResourceKind;
-};
-
-type DaemonSetsDetailsPageProps = {
-  match: any;
 };

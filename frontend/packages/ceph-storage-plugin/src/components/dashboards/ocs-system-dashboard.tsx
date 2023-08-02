@@ -9,7 +9,7 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { OverviewGridCard } from '@console/dynamic-plugin-sdk';
 import {
   DashboardsPageProps,
@@ -124,12 +124,7 @@ const ObjectServiceDashboard: React.FC = () => {
   );
 };
 
-const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({
-  match,
-  kindsInFlight,
-  k8sModels,
-  history,
-}) => {
+const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels }) => {
   const isIndependent = useFlag(OCS_INDEPENDENT_FLAG);
   const isObjectServiceAvailable = useFlag(MCG_FLAG);
   const isCephAvailable = useFlag(CEPH_FLAG);
@@ -138,6 +133,7 @@ const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({
   const title = t('ceph-storage-plugin~OpenShift Container Storage Overview');
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isOCS = location.pathname.includes('ocs-dashboards');
 
@@ -194,12 +190,12 @@ const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({
   React.useEffect(() => {
     if (!location.pathname.includes(BLOCK_FILE) && !location.pathname.includes(OBJECT)) {
       if (isCephAvailable === true) {
-        history.push(`${match.url}/${BLOCK_FILE}`);
+        navigate(`${location.pathname}/${BLOCK_FILE}`);
       } else if (isCephAvailable === false && isObjectServiceAvailable) {
-        history.push(`${match.url}/${OBJECT}`);
+        navigate(`${location.pathname}/${OBJECT}`);
       }
     }
-  }, [isCephAvailable, isObjectServiceAvailable, history, match.url, location.pathname]);
+  }, [isCephAvailable, isObjectServiceAvailable, location.pathname, navigate]);
 
   return kindsInFlight && k8sModels.size === 0 ? (
     <LoadingBox />
@@ -207,7 +203,7 @@ const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({
     <>
       {isOCS && <Helmet>{title}</Helmet>}
       {isOCS && <PageHeading title={title} detail />}
-      <HorizontalNav match={match} pages={pages} noStatusBox />
+      <HorizontalNav pages={pages} noStatusBox />
     </>
   );
 };

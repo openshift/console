@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import {
   Kebab,
   navFactory,
@@ -31,9 +31,11 @@ const csvResource = {
   isList: true,
 };
 
-export const GenericDetailsPage: React.FC<GenericDetailsPageProps> = (props) => {
+export const GenericDetailsPage: React.FC<GenericDetailsPageProps> = () => {
   const { t } = useTranslation();
-  const [model] = useK8sModel(props.match.params.resourceKind);
+  const params = useParams();
+  const location = useLocation();
+  const [model] = useK8sModel(params.resourceKind);
 
   const crdResource = React.useMemo(
     () => ({
@@ -59,23 +61,22 @@ export const GenericDetailsPage: React.FC<GenericDetailsPageProps> = (props) => 
     let commonActions = [...Kebab.factory.common];
     if (
       referenceForModel(NooBaaBucketClassModel).toLocaleLowerCase() ===
-      props.match.params.resourceKind.toLocaleLowerCase()
+      params.resourceKind.toLocaleLowerCase()
     ) {
       const bucketClassActions = editBucketClass(t);
       commonActions = [bucketClassActions, ...commonActions];
     }
     return commonActions;
-  }, [t, props.match.params.resourceKind]);
+  }, [t, params.resourceKind]);
 
   if (csvError) {
-    return <LoadError label={props.match.params.resourceKind} />;
+    return <LoadError label={params.resourceKind} />;
   }
 
   return !isLoading ? (
     <DetailsPage
-      match={props.match}
-      name={props.match.params.resourceName}
-      kind={props.match.params.resourceKind}
+      name={params.resourceName}
+      kind={params.resourceKind}
       namespace={CEPH_STORAGE_NAMESPACE}
       breadcrumbsFor={() => [
         {
@@ -83,21 +84,21 @@ export const GenericDetailsPage: React.FC<GenericDetailsPageProps> = (props) => 
           path: '/odf/overview',
         },
         {
-          name: props.match.params.resourceKind,
-          path: `/odf/resource/${props.match.params.resourceKind}`,
+          name: params.resourceKind,
+          path: `/odf/resource/${params.resourceKind}`,
         },
         {
           name: t('ceph-storage-plugin~{{resource}} details', {
-            resource: props.match.params.resourceName,
+            resource: params.resourceName,
           }),
-          path: `${props.match.url}`,
+          path: `${location.pathname}`,
         },
       ]}
       pages={[
         navFactory.details((detailsProps) => (
           <OperandDetails
             {...detailsProps}
-            appName={props.match.params.resourceName}
+            appName={params.resourceName}
             kindObj={model}
             crd={crd}
             csv={ocsCSV}
@@ -113,9 +114,6 @@ export const GenericDetailsPage: React.FC<GenericDetailsPageProps> = (props) => 
   );
 };
 
-type GenericDetailsPageProps = RouteComponentProps<{
-  resourceKind: string;
-  resourceName: string;
-}> & {
+type GenericDetailsPageProps = {
   actions?: KebabAction[];
 };

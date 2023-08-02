@@ -1,26 +1,23 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import * as Router from 'react-router-dom-v5-compat';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import { MultiTabListPage } from '@console/shared';
-import { RevisionModel } from '../../../../models';
 import ServingListPage from '../ServingListsPage';
 
-let servingListPageProps: React.ComponentProps<typeof ServingListPage>;
 let wrapper: ShallowWrapper;
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+}));
 
 describe('ServingListPage', () => {
   beforeEach(() => {
-    servingListPageProps = {
-      match: {
-        isExact: true,
-        path: `/serving/ns/:ns/${RevisionModel.plural}`,
-        url: 'serving/ns/my-project/revisions',
-        params: {
-          ns: 'my-project',
-        },
-      },
-    };
-    wrapper = shallow(<ServingListPage {...servingListPageProps} />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: 'my-project',
+    });
+    wrapper = shallow(<ServingListPage />);
   });
 
   it('should render NamespaceBar and MultiTabListPage', () => {

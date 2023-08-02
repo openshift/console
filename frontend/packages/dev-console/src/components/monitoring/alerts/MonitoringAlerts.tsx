@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, connect } from 'react-redux';
-import { match as RMatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   RowFilter as RowFilterExt,
   Rule,
@@ -30,12 +30,6 @@ import { MonitoringAlertColumn } from './MonitoringAlertColumn';
 import './MonitoringAlerts.scss';
 import { useRulesAlertsPoller } from './useRuleAlertsPoller';
 
-type MonitoringAlertsProps = {
-  match: RMatch<{
-    ns?: string;
-  }>;
-};
-
 type StateProps = {
   rules: Rule[];
   alerts: NotificationAlerts;
@@ -43,13 +37,14 @@ type StateProps = {
   listSorts: { [key: string]: any };
 };
 
-type Props = MonitoringAlertsProps & StateProps;
+type Props = StateProps;
 
 const reduxID = 'devMonitoringAlerts';
 const textFilter = 'resource-list-text';
 
-export const MonitoringAlerts: React.FC<Props> = ({ match, rules, alerts, filters, listSorts }) => {
+export const MonitoringAlerts: React.FC<Props> = ({ rules, alerts, filters, listSorts }) => {
   const { t } = useTranslation();
+  const params = useParams();
   const [sortBy, setSortBy] = React.useState<{ index: number; direction: SortByDirection }>({
     index: null,
     direction: SortByDirection.asc,
@@ -57,7 +52,7 @@ export const MonitoringAlerts: React.FC<Props> = ({ match, rules, alerts, filter
   const [rows, setRows] = React.useState([]);
   const [collapsedRowsIds, setCollapsedRowsIds] = React.useState([]);
   const dispatch = useDispatch();
-  const namespace = match.params.ns;
+  const namespace = params.ns;
   const { sortBy: listSortBy, orderBy: listOrderBy } = getURLSearchParams();
   const monitoringAlertColumn = React.useMemo(() => MonitoringAlertColumn(t), [t]);
   const columnIndex = _.findIndex(monitoringAlertColumn, { title: listSortBy });

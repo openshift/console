@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { isObjectSC } from '@console/shared/src/utils';
@@ -297,7 +298,8 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
   );
 };
 
-export const CreatePVC = ({ match: { params } }) => {
+export const CreatePVC = () => {
+  const params = useParams();
   return <CreatePVCPage namespace={params.ns} />;
 };
 

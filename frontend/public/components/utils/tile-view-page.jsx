@@ -553,6 +553,7 @@ export const TileViewPage = (props) => {
         keywordCompare,
       ),
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const initState = () => {

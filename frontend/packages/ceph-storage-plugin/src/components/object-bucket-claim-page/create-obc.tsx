@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
-import { match } from 'react-router';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   ButtonBar,
   history,
@@ -138,10 +138,10 @@ export const CreateOBCForm: React.FC<CreateOBCFormProps> = (props) => {
   );
 };
 
-export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
+export const CreateOBCPage: React.FC = () => {
   const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(commonReducer, defaultState);
-  const namespace = props.match.params.ns;
+  const { ns: namespace } = useParams();
 
   const save = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
@@ -188,8 +188,4 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
       </form>
     </div>
   );
-};
-
-type CreateOBCPageProps = {
-  match: match<{ ns?: string }>;
 };

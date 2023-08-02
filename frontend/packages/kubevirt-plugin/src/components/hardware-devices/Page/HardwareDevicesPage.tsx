@@ -42,7 +42,7 @@ export const HardwareDevicesPage: React.FC<any> = (props) => {
           </FieldLevelHelp>
         </h1>
       </div>
-      <HorizontalNav {...props} pages={pages} match={props.match} obj={obj} />
+      <HorizontalNav {...props} pages={pages} obj={obj} />
     </div>
   );
 };

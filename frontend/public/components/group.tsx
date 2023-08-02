@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 
@@ -182,7 +181,7 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   />
 );
 
-export const GroupDetailsPage: React.FC<GroupDetailsPageProps> = (props) => (
+export const GroupDetailsPage: React.FC = (props) => (
   <DetailsPage
     {...props}
     kind={referenceForModel(GroupModel)}
@@ -216,8 +215,4 @@ type GroupDetailsProps = {
 
 type RoleBindingsTabProps = {
   obj: GroupKind;
-};
-
-type GroupDetailsPageProps = {
-  match: match<any>;
 };

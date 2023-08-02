@@ -406,7 +406,7 @@ export const BuildEnvironmentComponent = (props) => {
   );
 };
 
-export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = (props) => {
+export const BuildsDetailsPage: React.SFC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
   return (
     <DetailsPage
@@ -559,8 +559,4 @@ export type BuildsPageProps = {
   showTitle?: boolean;
   namespace?: string;
   selector?: any;
-};
-
-export type BuildsDetailsPageProps = {
-  match: any;
 };

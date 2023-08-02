@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { Title, Wizard, WizardStep } from '@patternfly/react-core';
 import {
   apiVersionForModel,
@@ -35,10 +35,10 @@ enum CreateStepsBC {
   REVIEW = 'REVIEW',
 }
 
-const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
+const CreateBucketClass: React.FC = () => {
   const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(reducer, initialState);
-  const { ns = CEPH_STORAGE_NAMESPACE, appName } = match.params;
+  const { ns = CEPH_STORAGE_NAMESPACE, appName } = useParams();
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
   const isODF = useFlag(ODF_MODEL_FLAG);
 
@@ -316,7 +316,5 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     </>
   );
 };
-
-type CreateBCProps = RouteComponentProps<{ ns?: string; appName?: string }>;
 
 export default CreateBucketClass;

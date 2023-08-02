@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+// import { BrowserRouter } from 'react-router-dom';
+import * as Router from 'react-router-dom-v5-compat';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useEventSinkStatus } from '../../../hooks/useEventSinkStatus';
 import {
@@ -15,34 +17,30 @@ jest.mock('../../../hooks/useEventSinkStatus', () => ({
   useEventSinkStatus: jest.fn(),
 }));
 
-const useEventSinkStatusMock = useEventSinkStatus as jest.Mock;
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+}));
 
-let eventSinkPageProps: React.ComponentProps<typeof EventSinkPage>;
+const useEventSinkStatusMock = useEventSinkStatus as jest.Mock;
 
 describe('EventSinkPage', () => {
   beforeEach(() => {
-    eventSinkPageProps = {
-      history: null,
-      location: {
-        pathname: '/catalog/ns/my-app/eventsink?sinkKind=KameletBinding&name=log-sink',
-        search: '/catalog/ns/my-app/eventsink?sinkKind=KameletBinding&name=log-sink',
-        state: null,
-        hash: null,
-      },
-      match: {
-        isExact: true,
-        path: '/catalog/ns/my-app/eventsink?sinkKind=KameletBinding&name=log-sink',
-        url: '/catalog/ns/my-app/eventsink?sinkKind=KameletBinding&name=log-sink',
-        params: {
-          ns: 'my-app',
-        },
-      },
-    };
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: 'my-app',
+    });
+    jest.spyOn(Router, 'useLocation').mockReturnValue({
+      pathname: '/catalog/ns/my-app/eventsink?sinkKind=KameletBinding&name=log-sink',
+      search: '/catalog/ns/my-app/eventsink?sinkKind=KameletBinding&name=log-sink',
+      state: null,
+      hash: null,
+    });
   });
 
   it('should show loading if resource is not loaded yet', () => {
     useEventSinkStatusMock.mockReturnValue({ isValidSink: false, loaded: false });
-    const wrapper = shallow(<EventSinkPage {...eventSinkPageProps} />);
+    const wrapper = shallow(<EventSinkPage />);
     expect(wrapper.find(LoadingBox).exists()).toBe(true);
     expect(wrapper.find(EventSinkAlert).exists()).toBe(false);
     expect(wrapper.find(EventSink).exists()).toBe(false);
@@ -57,7 +55,7 @@ describe('EventSinkPage', () => {
       normalizedSink: mockNormalizedSink,
       kamelet: mockKameletSink,
     });
-    const wrapper = shallow(<EventSinkPage {...eventSinkPageProps} />);
+    const wrapper = shallow(<EventSinkPage />);
     expect(wrapper.find(EventSink).exists()).toBe(true);
     expect(wrapper.find(EventSinkAlert).exists()).toBe(false);
     expect(wrapper.find(LoadingBox).exists()).toBe(false);
@@ -72,30 +70,13 @@ describe('EventSinkPage', () => {
       normalizedSink: mockNormalizedSink,
       kamelet: mockKameletSink,
     });
-    const wrapper = shallow(<EventSinkPage {...eventSinkPageProps} />);
+    const wrapper = shallow(<EventSinkPage />);
     expect(wrapper.find(EventSinkAlert).exists()).toBe(true);
     expect(wrapper.find(EventSink).exists()).toBe(false);
     expect(wrapper.find(LoadingBox).exists()).toBe(false);
   });
 
   it('should render EventSink if resource is loaded and is valid for kafka sink', () => {
-    const kafkaSinkPageProps = {
-      history: null,
-      location: {
-        pathname: '/catalog/ns/my-app/eventsink?sinkKind=KafkaSink',
-        search: '/catalog/ns/my-app/eventsink?sinkKind=KafkaSink',
-        state: null,
-        hash: null,
-      },
-      match: {
-        isExact: true,
-        path: '/catalog/ns/my-app/eventsink?sinkKind=KafkaSink',
-        url: '/catalog/ns/my-app/eventsink?sinkKind=KafkaSink',
-        params: {
-          ns: 'my-app',
-        },
-      },
-    };
     useEventSinkStatusMock.mockReturnValue({
       isValidSink: true,
       loaded: true,
@@ -104,7 +85,16 @@ describe('EventSinkPage', () => {
       normalizedSink: mockNormalizedKafkaSink,
       kamelet: null,
     });
-    const wrapper = shallow(<EventSinkPage {...kafkaSinkPageProps} />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: 'my-app',
+    });
+    jest.spyOn(Router, 'useLocation').mockReturnValue({
+      pathname: '/catalog/ns/my-app/eventsink?sinkKind=KafkaSink',
+      search: '/catalog/ns/my-app/eventsink?sinkKind=KafkaSink',
+      state: null,
+      hash: null,
+    });
+    const wrapper = shallow(<EventSinkPage />);
     expect(wrapper.find(EventSink).exists()).toBe(true);
     expect(wrapper.find(EventSink).props().namespace).toEqual('my-app');
     expect(wrapper.find(EventSink).props().kameletSink).toBeNull();
@@ -112,3 +102,7 @@ describe('EventSinkPage', () => {
     expect(wrapper.find(LoadingBox).exists()).toBe(false);
   });
 });
+
+// describe('servicebinding', () => {
+//   it('', () => {});
+// });

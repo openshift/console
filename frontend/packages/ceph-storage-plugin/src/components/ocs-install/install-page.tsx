@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { match as RouteMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   ListKind,
   referenceForModel,
@@ -37,10 +37,8 @@ const INDEP_MODE_SUPPORTED_PLATFORMS = [
   'IBMCloud',
 ];
 
-const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
-  const {
-    params: { ns, appName },
-  } = match;
+const InstallCluster: React.FC = () => {
+  const { ns, appName } = useParams();
   const csvResource = {
     kind: referenceForModel(ClusterServiceVersionModel),
     name: appName,
@@ -170,33 +168,21 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
       {persistMode === MODES.INTERNAL && (
         <CreateInternalCluster
           navUtils={{ getStep, getParamString, getIndex, getAnchor }}
-          match={match}
           mode={persistMode}
         />
       )}
       {persistMode === MODES.EXTERNAL && (
-        <CreateExternalCluster
-          match={match}
-          minRequiredKeys={independentReqdKeys}
-          downloadFile={downloadFile}
-        />
+        <CreateExternalCluster minRequiredKeys={independentReqdKeys} downloadFile={downloadFile} />
       )}
       {persistMode === MODES.ATTACHED_DEVICES && (
         <CreateAttachedDevicesCluster
           navUtils={{ getStep, getParamString, getIndex, getAnchor }}
-          match={match}
           mode={persistMode}
         />
       )}
-      {disableClusterCreation && (
-        <ExistingClusterModal match={match} storageCluster={storageCluster} />
-      )}
+      {disableClusterCreation && <ExistingClusterModal storageCluster={storageCluster} />}
     </>
   );
 };
 
 export default InstallCluster;
-
-type InstallClusterProps = {
-  match: RouteMatch<{ ns: string; appName: string }>;
-};

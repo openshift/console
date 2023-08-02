@@ -298,7 +298,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.history(ImageStreamHistory),
 ];
-export const ImageStreamsDetailsPage: React.SFC<ImageStreamsDetailsPageProps> = (props) => (
+export const ImageStreamsDetailsPage: React.SFC = (props) => (
   <DetailsPage {...props} kind={ImageStreamsReference} menuActions={menuActions} pages={pages} />
 );
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
@@ -428,8 +428,4 @@ export type ImageStreamsDetailsProps = {
 
 export type ImageStreamsPageProps = {
   filterLabel: string;
-};
-
-export type ImageStreamsDetailsPageProps = {
-  match: any;
 };

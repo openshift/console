@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { safeLoad } from 'js-yaml';
+import { useParams } from 'react-router-dom-v5-compat';
 /* eslint-disable lines-between-class-members */
 import { CreateYAMLProps } from '@console/internal/components/create-yaml';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -25,8 +26,10 @@ import { VMTemplateYAMLTemplates } from '../../models/templates';
 import { getName, getNamespace } from '../../selectors';
 
 const CreateVMTemplateYAMLConnected = connectToPlural(
-  ({ match, kindsInFlight, kindObj }: CreateYAMLProps) => {
+  ({ kindsInFlight, kindObj }: CreateYAMLProps) => {
     const [defaultTemplate, setDefaultTemplate] = React.useState<TemplateKind>(null);
+
+    const params = useParams();
 
     React.useEffect(() => {
       k8sList(TemplateModel, {
@@ -50,7 +53,7 @@ const CreateVMTemplateYAMLConnected = connectToPlural(
             resolveDefaultVMTemplate({
               commonTemplate,
               name: 'vm-template-example',
-              namespace: match.params.ns || 'default',
+              namespace: params.ns || 'default',
               baseOSName: osSelection.getValue(),
               containerImage: osSelection.getContainerImage(),
             }),
@@ -60,11 +63,11 @@ const CreateVMTemplateYAMLConnected = connectToPlural(
           setDefaultTemplate(
             new VMTemplateWrapper(safeLoad(VMTemplateYAMLTemplates.getIn(['vm-template'])))
               .init()
-              .setNamespace(match.params.ns || 'default')
+              .setNamespace(params.ns || 'default')
               .asResource(),
           );
         });
-    }, [match.params.ns]);
+    }, [params.ns]);
 
     if ((!kindObj && kindsInFlight) || !defaultTemplate) {
       return <LoadingBox />;

@@ -19,6 +19,7 @@ import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector } from 'react-redux';
@@ -93,7 +94,7 @@ const NegativeMatcherHelp = () => {
 const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
   const { t } = useTranslation();
 
-  const [namespace] = useActiveNamespace();
+  const { ns: namespace } = useParams();
 
   const durationOff = '-';
   const durations = {
@@ -478,8 +479,9 @@ const EditInfo = () => {
   );
 };
 
-export const EditSilence = ({ match }) => {
+export const EditSilence = () => {
   const { t } = useTranslation();
+  const params = useParams();
 
   const [namespace] = useActiveNamespace();
 
@@ -487,7 +489,7 @@ export const EditSilence = ({ match }) => {
     observe.get(namespace ? 'devSilences' : 'silences'),
   );
 
-  const silence: Silence = _.find(silences?.data, { id: match.params.id });
+  const silence: Silence = _.find(silences?.data, { id: params.id });
   const isExpired = silenceState(silence) === SilenceStates.Expired;
   const defaults = _.pick(silence, [
     'comment',

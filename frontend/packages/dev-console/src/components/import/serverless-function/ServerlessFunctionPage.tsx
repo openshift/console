@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { PageHeading } from '@console/internal/components/utils';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import QueryFocusApplication from '../../QueryFocusApplication';
 import AddServerlessFunction from './AddServerlessFunction';
 
-type ServerlessFunctionPageProps = RouteComponentProps<{ ns?: string }>;
-
-const ServerlessFunctionPage: React.FC<ServerlessFunctionPageProps> = ({ match }) => {
-  const namespace = match.params.ns;
+const ServerlessFunctionPage: React.FC = () => {
+  const { ns: namespace } = useParams();
   const { t } = useTranslation();
   return (
     <QueryFocusApplication>

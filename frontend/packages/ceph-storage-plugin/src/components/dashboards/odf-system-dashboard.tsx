@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { useLocation, match as Match } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import {
   DashboardsPageProps,
   mapStateToProps,
@@ -16,21 +17,20 @@ import { CEPH_STORAGE_NAMESPACE } from '../../constants';
 import { CephBlockPoolModel } from '../../models';
 import { MCG_FLAG, CEPH_FLAG, OCS_INDEPENDENT_FLAG } from '../../features';
 
-type ODFSystemDashboardPageProps = Omit<DashboardsPageProps, 'match'> & {
-  match: Match<{ systemName: string }>;
-};
+type ODFSystemDashboardPageProps = Omit<DashboardsPageProps, 'match'>;
 
 const blockPoolRef = referenceForModel(CephBlockPoolModel);
 
 const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
   kindsInFlight,
   k8sModels,
-  ...rest
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isObjectServiceAvailable = useFlag(MCG_FLAG);
   const isCephAvailable = useFlag(CEPH_FLAG);
-  const { systemName } = rest.match.params;
+  const params = useParams();
+  const { systemName } = params;
   const dashboardTab = !isCephAvailable && isObjectServiceAvailable ? OBJECT : BLOCK_FILE;
   const defaultDashboard = React.useRef(dashboardTab);
   const [pages, setPages] = React.useState<Page[]>([
@@ -72,28 +72,28 @@ const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
     },
   ];
 
-  const title = rest.match.params.systemName;
+  const title = params.systemName;
 
   const location = useLocation();
 
   React.useEffect(() => {
     if (location.pathname.endsWith(systemName)) {
-      rest.history.push(`${location.pathname}/overview/${defaultDashboard.current}`);
+      navigate(`${location.pathname}/overview/${defaultDashboard.current}`);
     } else if (location.pathname.endsWith('overview')) {
-      rest.history.push(`${location.pathname}/${defaultDashboard.current}`);
+      navigate(`${location.pathname}/${defaultDashboard.current}`);
     } else if (defaultDashboard.current !== dashboardTab) {
       const pathname = location.pathname.substring(0, location.pathname.lastIndexOf('/overview'));
-      rest.history.push(`${pathname}/overview/${dashboardTab}`);
+      navigate(`${pathname}/overview/${dashboardTab}`);
       defaultDashboard.current = dashboardTab;
     }
-  }, [rest.history, location.pathname, systemName, dashboardTab]);
+  }, [navigate, location.pathname, systemName, dashboardTab]);
 
   return kindsInFlight && k8sModels.size === 0 ? (
     <LoadingBox />
   ) : (
     <>
       <PageHeading title={title} breadcrumbs={breadcrumbs} detail />
-      <HorizontalNav match={rest.match} pages={pages} noStatusBox />
+      <HorizontalNav pages={pages} noStatusBox />
     </>
   );
 };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { Title } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
 import { getName } from '@console/shared';
@@ -11,9 +11,9 @@ import '../noobaa-provider-endpoints/noobaa-provider-endpoints.scss';
 import { NooBaaNamespaceStoreModel } from '../../models';
 import { ODF_MODEL_FLAG, CEPH_STORAGE_NAMESPACE } from '../../constants';
 
-const CreateNamespaceStore: React.FC<CreateNamespaceStoreProps> = ({ match }) => {
+const CreateNamespaceStore: React.FC = () => {
   const { t } = useTranslation();
-  const { ns = CEPH_STORAGE_NAMESPACE, appName } = match.params;
+  const { ns = CEPH_STORAGE_NAMESPACE, appName } = useParams();
   const onCancel = () => history.goBack();
   const isODF = useFlag(ODF_MODEL_FLAG);
 
@@ -46,7 +46,5 @@ const CreateNamespaceStore: React.FC<CreateNamespaceStoreProps> = ({ match }) =>
     </>
   );
 };
-
-type CreateNamespaceStoreProps = RouteComponentProps<{ ns: string; appName: string }>;
 
 export default CreateNamespaceStore;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { match as RouterMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
@@ -107,13 +107,12 @@ const createCluster = async (
 };
 
 const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
-  match,
   mode,
   lsoNs,
   navUtils,
 }) => {
   const { t } = useTranslation();
-  const { appName, ns } = match.params;
+  const { appName, ns } = useParams();
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [showInfoAlert, setShowInfoAlert] = React.useState(true);
   const [inProgress, setInProgress] = React.useState(false);
@@ -291,7 +290,6 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
 
 type CreateStorageClusterWizardProps = {
   navUtils: NavUtils;
-  match: RouterMatch<{ appName: string; ns: string }>;
   mode: string;
   lsoNs: string;
 };

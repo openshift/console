@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { LoadingBox } from '@console/internal/components/utils';
 import GitOpsDetails from './details/GitOpsDetails';
 import GitOpsEmptyState from './GitOpsEmptyState';
@@ -15,10 +15,10 @@ type GitOpsOverviewPageProps = {
     manifestURL: string;
   };
 };
-type GitOpsDetailsPageProps = RouteComponentProps<{ appName?: string }> & GitOpsOverviewPageProps;
+type GitOpsDetailsPageProps = GitOpsOverviewPageProps;
 const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = (props) => {
   const [envsData, setEnvsData] = React.useState<GitOpsEnvironment[]>(null);
-  const { appName } = props.match.params;
+  const { appName } = useParams();
   const environmentBaseURI = `/api/gitops/environments`;
   const environmentBaseURIV2 = `/api/gitops/environment`;
   const { envs, emptyStateMsg, applicationBaseURI, manifestURL } = props.customData;

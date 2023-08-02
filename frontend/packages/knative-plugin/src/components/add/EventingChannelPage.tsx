@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -10,10 +10,9 @@ import { PageHeading } from '@console/internal/components/utils';
 import { useChannelList } from '../../utils/create-channel-utils';
 import AddChannel from './channels/AddChannel';
 
-type EventingChannelPageProps = RouteComponentProps<{ ns?: string }>;
-
-const EventingChannelPage: React.FC<EventingChannelPageProps> = ({ match, location }) => {
-  const namespace = match.params.ns;
+const EventingChannelPage: React.FC = () => {
+  const { ns: namespace } = useParams();
+  const location = useLocation();
   const channels = useChannelList(namespace);
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);

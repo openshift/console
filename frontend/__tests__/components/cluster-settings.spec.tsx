@@ -61,10 +61,9 @@ jest.mock('@console/shared/src/hooks/useCanClusterUpgrade', () => ({
 
 describe('Cluster Settings page', () => {
   let wrapper: ShallowWrapper<any>;
-  const match = { url: '/settings/cluster', params: {}, isExact: true, path: '/settings/cluster' };
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterSettingsPage match={match} />);
+    wrapper = shallow(<ClusterSettingsPage />);
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
   });
 

@@ -1,22 +1,17 @@
 import * as React from 'react';
-import { match as RMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { ResourcesEventStream } from '@console/internal/components/events';
 import { TaskRunKind } from '../../../types';
 import { useTaskRunFilters } from '../../pipelineruns/events/event-utils';
 
 type TaskRunEventsProps = {
   obj: TaskRunKind;
-  match: RMatch<{
-    ns?: string;
-  }>;
 };
 
-const TaskRunEvents: React.FC<TaskRunEventsProps> = ({
-  obj: taskRun,
-  match: {
-    params: { ns: namespace },
-  },
-}) => (
-  <ResourcesEventStream filters={useTaskRunFilters(namespace, taskRun)} namespace={namespace} />
-);
+const TaskRunEvents: React.FC<TaskRunEventsProps> = ({ obj: taskRun }) => {
+  const { ns: namespace } = useParams();
+  return (
+    <ResourcesEventStream filters={useTaskRunFilters(namespace, taskRun)} namespace={namespace} />
+  );
+};
 export default TaskRunEvents;

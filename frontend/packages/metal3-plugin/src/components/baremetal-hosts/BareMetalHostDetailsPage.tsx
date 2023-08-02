@@ -18,7 +18,6 @@ import { menuActionsCreator } from './host-menu-actions';
 type BareMetalHostDetailsPageProps = {
   namespace: string;
   name: string;
-  match: any;
 };
 
 const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props) => {

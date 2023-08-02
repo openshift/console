@@ -315,7 +315,7 @@ export const MachinePage: React.FC<MachinePageProps> = ({
   );
 };
 
-export const MachineDetailsPage: React.SFC<MachineDetailsPageProps> = (props) => (
+export const MachineDetailsPage: React.SFC = (props) => (
   <DetailsPage
     {...props}
     kind={machineReference}
@@ -340,8 +340,4 @@ export type MachinePageProps = {
   hideLabelFilter?: boolean;
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
-};
-
-export type MachineDetailsPageProps = {
-  match: any;
 };

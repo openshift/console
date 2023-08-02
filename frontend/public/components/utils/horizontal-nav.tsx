@@ -5,17 +5,7 @@ import * as _ from 'lodash-es';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import {
-  Redirect,
-  Route,
-  Switch,
-  Link,
-  match as Match,
-  matchPath,
-  RouteComponentProps,
-  useRouteMatch,
-  useLocation,
-} from 'react-router-dom';
+import { Link, Routes, Route, useParams, Navigate, useLocation } from 'react-router-dom-v5-compat';
 import {
   HorizontalNavTab as DynamicResourceNavTab,
   isHorizontalNavTab as DynamicIsResourceNavTab,
@@ -180,22 +170,26 @@ export const navFactory: NavFactory = {
   }),
 };
 
-export const NavBar: React.FC<NavBarProps> = ({ pages, baseURL, basePath }) => {
+export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
   const { t } = useTranslation();
   const { telemetryPrefix, titlePrefix } = React.useContext(PageTitleContext);
   const location = useLocation();
 
-  basePath = basePath.replace(/\/$/, '');
+  const sliced = location.pathname.split('/');
+  const lastElement = sliced.pop();
+  const defaultPage =
+    pages.filter((p) => {
+      return p.href === lastElement;
+    }).length === 0;
+  const baseURL = defaultPage ? location.pathname : sliced.join('/');
 
   const tabs = (
     <>
-      {pages.map(({ name, nameKey, href, path }) => {
-        const matchURL = matchPath(location.pathname, {
-          path: `${basePath}/${removeLeadingSlash(path || href)}`,
-          exact: true,
-        });
+      {pages.map(({ name, nameKey, href }) => {
+        const isURLMatch = defaultPage ? href === '' : lastElement === href;
+
         const klass = classNames('co-m-horizontal-nav__menu-item', {
-          'co-m-horizontal-nav-item--active': matchURL?.isExact,
+          'co-m-horizontal-nav-item--active': isURLMatch,
         });
         return (
           <li className={klass} key={href}>
@@ -211,12 +205,8 @@ export const NavBar: React.FC<NavBarProps> = ({ pages, baseURL, basePath }) => {
     </>
   );
 
-  const activePage = pages.find(({ href, path }) => {
-    const matchURL = matchPath(location.pathname, {
-      path: `${basePath}/${removeLeadingSlash(path || href)}`,
-      exact: true,
-    });
-    return matchURL?.isExact;
+  const activePage = pages.find(({ href }) => {
+    return defaultPage ? href === '' : lastElement === href;
   });
 
   const labelId = activePage?.nameKey?.split('~')[1] || activePage?.name || 'Details';
@@ -236,11 +226,13 @@ export const NavBar: React.FC<NavBarProps> = ({ pages, baseURL, basePath }) => {
 NavBar.displayName = 'NavBar';
 
 export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
+  const params = useParams();
+
   const renderContent = (routes: JSX.Element[]) => {
     const { noStatusBox, obj, EmptyMsg, label } = props;
     const content = (
       <React.Suspense fallback={<LoadingBox />}>
-        <Switch>{routes}</Switch>
+        <Routes>{routes}</Routes>
       </React.Suspense>
     );
 
@@ -276,7 +268,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   };
 
   const componentProps = {
-    ..._.pick(props, ['filters', 'selected', 'match', 'loaded']),
+    ..._.pick(props, ['filters', 'selected', 'loaded']),
     obj: _.get(props.obj, 'data'),
   };
   const extraResources = _.reduce(
@@ -299,8 +291,8 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
         .filter((tab) => referenceForModel(tab.properties.model) === objReference)
         .map((tab) => ({
           ...tab.properties.page,
-          component: (params: PageComponentProps) => (
-            <AsyncComponent {...params} loader={tab.properties.loader} />
+          component: (pageProps: PageComponentProps) => (
+            <AsyncComponent {...pageProps} loader={tab.properties.loader} />
           ),
         })),
     [navTabExtensions, objReference],
@@ -315,8 +307,8 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
       )
       .map((tab) => ({
         ...tab.properties.page,
-        component: (params: PageComponentProps) => (
-          <AsyncComponent {...params} loader={tab.properties.component} />
+        component: (pageProps: PageComponentProps) => (
+          <AsyncComponent {...pageProps} loader={tab.properties.component} />
         ),
       }));
 
@@ -325,8 +317,8 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
       .map((tab) => ({
         name: tab.properties.name,
         href: tab.properties.href,
-        component: (params: PageComponentProps) => (
-          <AsyncComponent {...params} loader={tab.properties.component} />
+        component: (pageProps: PageComponentProps) => (
+          <AsyncComponent {...pageProps} loader={tab.properties.component} />
         ),
       }));
 
@@ -342,35 +334,36 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   ];
 
   const routes = pages.map((p) => {
-    const path = `${props.match.path}/${removeLeadingSlash(p.path || p.href)}`;
-    const render = (params: RouteComponentProps) => {
-      return (
-        <ErrorBoundaryPage>
-          <p.component
-            {...params}
-            {...componentProps}
-            {...extraResources}
-            {...p.pageData}
-            customData={props.customData}
-            params={params}
-          />
-        </ErrorBoundaryPage>
-      );
-    };
-    return <Route path={path} exact key={p.nameKey || p.name} render={render} />;
+    return (
+      <Route
+        path={p.path || p.href}
+        key={p.nameKey || p.name}
+        element={
+          <ErrorBoundaryPage>
+            <p.component
+              {...params}
+              {...componentProps}
+              {...extraResources}
+              {...p.pageData}
+              customData={props.customData}
+              params={params}
+            />
+          </ErrorBoundaryPage>
+        }
+      />
+    );
   });
+
   // Handle cases where matching Routes do not exist and show the details page instead of a blank page
   if (props.createRedirect && routes.length >= 1) {
-    routes.push(<Redirect key="fallback_redirect" to={routes[0].props.path} />);
+    routes.push(
+      <Route key="fallback_redirect" element={<Navigate to={routes[0].props.path} replace />} />,
+    );
   }
 
   return (
     <div className={classNames('co-m-page__body', props.className)}>
-      <div className="co-m-horizontal-nav">
-        {!props.hideNav && (
-          <NavBar pages={pages} baseURL={props.match.url} basePath={props.match.path} />
-        )}
-      </div>
+      <div className="co-m-horizontal-nav">{!props.hideNav && <NavBar pages={pages} />}</div>
       {renderContent(routes)}
     </div>
   );
@@ -382,9 +375,8 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
  */
 export const HorizontalNavFacade: React.FC<HorizontalNavFacadeProps> = ({ resource, pages }) => {
   const obj = { data: resource, loaded: true };
-  const match = useRouteMatch();
 
-  return <HorizontalNav obj={obj} pages={pages} match={match} noStatusBox />;
+  return <HorizontalNav obj={obj} pages={pages} noStatusBox />;
 };
 
 export type PodsComponentProps = {
@@ -413,13 +405,12 @@ export type Page<D = any> = Partial<Omit<NavPage, 'component'>> & {
 
 export type NavBarProps = {
   pages: Page[];
-  baseURL: string;
-  basePath: string;
+  baseURL?: string;
+  basePath?: string;
 };
 
 export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resource'> & {
   /* The facade support a limited set of properties for pages */
-  match: Match<any>;
   className?: string;
   createRedirect?: boolean;
   contextId?: string;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
@@ -9,15 +9,9 @@ import { withStartGuide } from '@console/internal/components/start-guide';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import PipelinesResourceList from './PipelinesResourceList';
 
-type PipelinesPageProps = RouteComponentProps<{ ns: string }>;
-
-export const PipelinesPage: React.FC<PipelinesPageProps> = (props) => {
+export const PipelinesPage: React.FC = (props) => {
   const { t } = useTranslation();
-  const {
-    match: {
-      params: { ns: namespace },
-    },
-  } = props;
+  const { ns: namespace } = useParams();
   const badge = usePipelineTechPreviewBadge(namespace);
 
   return (

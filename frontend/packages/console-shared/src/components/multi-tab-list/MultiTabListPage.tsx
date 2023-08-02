@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { ActionList, ActionListItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, match as Rmatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   history,
   PageHeading,
@@ -18,7 +19,6 @@ interface MultiTabListPageProps {
   badge?: React.ReactNode;
   menuActions?: MenuActions;
   pages: Page[];
-  match: Rmatch<any>;
   secondaryButtonAction?: SecondaryButtonAction;
   telemetryPrefix?: string;
 }
@@ -28,14 +28,11 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
   badge,
   pages,
   menuActions,
-  match,
   secondaryButtonAction,
   telemetryPrefix,
 }) => {
   const { t } = useTranslation();
-  const {
-    params: { ns },
-  } = match;
+  const { ns } = useParams();
   const onSelectCreateAction = (actionName: string): void => {
     const selectedMenuItem: MenuAction = menuActions[actionName];
     let url: string;
@@ -102,7 +99,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
           </ActionListItem>
         </ActionList>
       </PageHeading>
-      <HorizontalNav pages={pages} match={match} noStatusBox />
+      <HorizontalNav pages={pages} noStatusBox />
     </PageTitleContext.Provider>
   );
 };

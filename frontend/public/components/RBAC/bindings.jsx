@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -756,7 +757,9 @@ const BaseEditRoleBinding = (props) => {
   );
 };
 
-export const CreateRoleBinding = ({ match: { params }, location }) => {
+export const CreateRoleBinding = () => {
+  const params = useParams();
+  const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const roleKind = searchParams.get('rolekind');
   const roleName = searchParams.get('rolename');
@@ -808,8 +811,9 @@ const BindingLoadingWrapper = (props) => {
   );
 };
 
-export const EditRoleBinding = ({ match: { params }, kind }) => {
+export const EditRoleBinding = ({ kind }) => {
   const { t } = useTranslation();
+  const params = useParams();
   return (
     <Firehose
       resources={[{ kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj' }]}
@@ -824,8 +828,9 @@ export const EditRoleBinding = ({ match: { params }, kind }) => {
   );
 };
 
-export const CopyRoleBinding = ({ match: { params }, kind }) => {
+export const CopyRoleBinding = ({ kind }) => {
   const { t } = useTranslation();
+  const params = useParams();
   return (
     <Firehose
       resources={[{ kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj' }]}

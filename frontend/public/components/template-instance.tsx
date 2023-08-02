@@ -198,7 +198,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
   );
 };
 
-export const TemplateInstanceDetailsPage: React.SFC<TemplateInstanceDetailsPageProps> = (props) => (
+export const TemplateInstanceDetailsPage: React.SFC = (props) => (
   <DetailsPage
     {...props}
     kind="TemplateInstance"
@@ -214,8 +214,4 @@ type TemplateInstancePageProps = {
 
 type TemplateInstanceDetailsProps = {
   obj: TemplateInstanceKind;
-};
-
-type TemplateInstanceDetailsPageProps = {
-  match: any;
 };

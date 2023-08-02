@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   ContainerSpec,
   k8sCreate,
@@ -425,7 +426,8 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   );
 };
 
-export const AttachStorage = ({ kindObj, kindsInFlight, match: { params } }) => {
+export const AttachStorage = ({ kindObj, kindsInFlight }) => {
+  const params = useParams();
   if (!kindObj && kindsInFlight) {
     return <LoadingBox />;
   }

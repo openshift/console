@@ -3,8 +3,7 @@ import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { match as RouterMatch } from 'react-router';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   PageHeading,
@@ -16,7 +15,6 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import {
   K8sResourceKind,
-  K8sResourceKindReference,
   kindForReference,
   nameForModel,
   CustomResourceDefinitionKind,
@@ -47,13 +45,13 @@ import { OperandYAML } from './operand-yaml';
 
 export const CreateOperand: React.FC<CreateOperandProps> = ({
   initialEditorType,
-  match,
   csv,
   loaded,
   loadError,
 }) => {
   const { t } = useTranslation();
-  const [model] = useK8sModel(match.params.plural);
+  const params = useParams();
+  const [model] = useK8sModel(params.plural);
   const [crd] = useK8sWatchResource<CustomResourceDefinitionKind>(
     model
       ? {
@@ -73,11 +71,9 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   const next =
     activePerspective === 'dev'
       ? '/topology'
-      : `${resourcePathFromModel(
-          ClusterServiceVersionModel,
-          match.params.csvName,
-          match.params.ns,
-        )}/${match.params.plural}`;
+      : `${resourcePathFromModel(ClusterServiceVersionModel, params.csvName, params.ns)}/${
+          params.plural
+        }`;
 
   const providedAPI = React.useMemo<ProvidedAPI>(() => providedAPIForModel(csv, model), [
     csv,
@@ -137,8 +133,8 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
       />
       <SyncedEditor
         context={{
-          formContext: { csv, match, model, next, schema, providedAPI },
-          yamlContext: { next, match },
+          formContext: { csv, model, next, schema, providedAPI },
+          yamlContext: { next },
         }}
         FormEditor={FormComponent}
         initialData={sample}
@@ -154,28 +150,28 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
 
 type CreateOperandPageRouteParams = RouteParams<'csvName' | 'ns'>;
 
-const CreateOperandPage: React.FC<CreateOperandPageProps> = ({ match }) => {
+const CreateOperandPage: React.FC = () => {
   const { t } = useTranslation();
-  const createResourceExtension = useCreateResourceExtension(match.params.plural);
+  const params = useParams();
+  const createResourceExtension = useCreateResourceExtension(params.plural);
   const { csvName, ns } = useParams<CreateOperandPageRouteParams>();
   const [csv, loaded, loadError] = useClusterServiceVersion(csvName, ns);
 
   return (
     <>
       <Helmet>
-        <title>{t('olm~Create {{item}}', { item: kindForReference(match.params.plural) })}</title>
+        <title>{t('olm~Create {{item}}', { item: kindForReference(params.plural) })}</title>
       </Helmet>
-      <ModelStatusBox groupVersionKind={match.params.plural}>
+      <ModelStatusBox groupVersionKind={params.plural}>
         {createResourceExtension ? (
           <ErrorBoundaryPage>
             <AsyncComponent
               loader={createResourceExtension.properties.component}
-              namespace={match.params.ns}
+              namespace={params.ns}
             />
           </ErrorBoundaryPage>
         ) : (
           <CreateOperand
-            match={match}
             initialEditorType={EditorType.Form}
             csv={csv}
             loaded={loaded}
@@ -191,12 +187,7 @@ export default CreateOperandPage;
 
 export type CreateOperandProps = {
   initialEditorType: EditorType;
-  match: RouterMatch<{ csvName: string; ns: string; plural: K8sResourceKindReference }>;
   csv: ClusterServiceVersionKind;
   loaded: boolean;
   loadError: any;
-};
-
-export type CreateOperandPageProps = {
-  match: CreateOperandProps['match'];
 };

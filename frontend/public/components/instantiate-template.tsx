@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useLocation } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
@@ -340,6 +341,7 @@ const TemplateForm = connect(stateToProps)(
 
 export const InstantiateTemplatePage: React.FC<{}> = (props) => {
   const title = 'Instantiate Template';
+  const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const templateName = searchParams.get('template');
   const templateNamespace = searchParams.get('template-ns');

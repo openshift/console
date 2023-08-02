@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
-import { match as RMatch } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import {
   useResolvedExtensions,
   AlertingRulesSourceExtension,
@@ -20,16 +20,6 @@ import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import { useAlertManagerSilencesDispatch } from './monitoring-alerts-utils';
 import { useRulesAlertsPoller } from './useRuleAlertsPoller';
 
-interface MonitoringAlertsDetailsPageProps {
-  match: RMatch<{
-    ns?: string;
-    name?: string;
-  }>;
-}
-
-const ALERT_DETAILS_PATH = '/dev-monitoring/ns/:ns/alerts/:ruleID';
-const RULE_DETAILS_PATH = '/dev-monitoring/ns/:ns/rules/:id';
-
 const handleNamespaceChange = (newNamespace: string): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {
     history.push('/dev-monitoring/all-namespaces');
@@ -38,9 +28,9 @@ const handleNamespaceChange = (newNamespace: string): void => {
   }
 };
 
-const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = ({ match }) => {
-  const namespace = match.params.ns;
-  const { path } = match;
+const MonitoringAlertsDetailsPage: React.FC = () => {
+  const { ns: namespace } = useParams();
+  const location = useLocation();
   const dispatch = useDispatch();
   const alerts = useSelector(({ observe }: RootState) => observe.get('devAlerts'));
   const [customExtensions] = useResolvedExtensions<AlertingRulesSourceExtension>(
@@ -72,8 +62,8 @@ const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = 
       hideApplications
       onNamespaceChange={handleNamespaceChange}
     >
-      {path === ALERT_DETAILS_PATH && <AlertsDetailsPage match={match} />}
-      {path === RULE_DETAILS_PATH && <AlertRulesDetailsPage match={match} />}
+      {location.pathname.includes('alerts') && <AlertsDetailsPage />}
+      {location.pathname.includes('rules') && <AlertRulesDetailsPage />}
     </NamespacedPage>
   );
 };

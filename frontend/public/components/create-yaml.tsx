@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { match as RouterMatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import {
@@ -20,9 +20,9 @@ import {
 import { ErrorPage404 } from './error';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 
-export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
+export const CreateYAMLInner = (props) => {
   const {
-    match,
+    params,
     kindsInFlight,
     kindObj,
     hideHeader = false,
@@ -30,7 +30,6 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     resourceObjPath,
     isCreate = true,
   } = props;
-  const { params } = match;
   const { t } = useTranslation();
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
     React.useCallback(
@@ -83,9 +82,17 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
       onChange={onChange}
     />
   );
-});
+};
+
+const CreateYAML_ = connectToPlural(CreateYAMLInner);
+
+export const CreateYAML = (props) => {
+  const params = useParams();
+  return <CreateYAML_ {...props} params={params} />;
+};
 
 export const EditYAMLPage: React.SFC<EditYAMLPageProps> = (props) => {
+  const params = useParams();
   const Wrapper = (wrapperProps) => (
     <AsyncComponent
       {...wrapperProps}
@@ -99,8 +106,8 @@ export const EditYAMLPage: React.SFC<EditYAMLPageProps> = (props) => {
       resources={[
         {
           kind: props.kind,
-          name: props.match.params.name,
-          namespace: props.match.params.ns,
+          name: params.name,
+          namespace: params.ns,
           isList: false,
           prop: 'obj',
         },
@@ -112,7 +119,8 @@ export const EditYAMLPage: React.SFC<EditYAMLPageProps> = (props) => {
 };
 
 export type CreateYAMLProps = {
-  match: RouterMatch<{ ns: string; plural: string; appName?: string }>;
+  match?: any;
+  params?: any;
   kindsInFlight: boolean;
   kindObj: K8sKind;
   template?: string;
@@ -125,8 +133,8 @@ export type CreateYAMLProps = {
 };
 
 export type EditYAMLPageProps = {
-  match: RouterMatch<{ ns: string; name: string }>;
   kind: string;
 };
 
+CreateYAML.displayName = 'CreateYAML';
 EditYAMLPage.displayName = 'EditYAMLPage';

@@ -14,12 +14,12 @@ import PipelineRunParametersForm from './PipelineRunParametersForm';
 import { useMenuActionsWithUserAnnotation } from './triggered-by';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { kindObj, match } = props;
+  const { kindObj } = props;
   const operatorVersion = usePipelineOperatorVersion(props.namespace);
   const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineRunKebabActions(operatorVersion, true),
   );
-  const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj, match);
+  const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj);
   const badge = usePipelineTechPreviewBadge(props.namespace);
 
   return (

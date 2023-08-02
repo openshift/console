@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { safeLoad } from 'js-yaml';
+import { useParams } from 'react-router-dom-v5-compat';
 import { CreateYAMLProps } from '@console/internal/components/create-yaml';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
@@ -15,19 +16,20 @@ import { NetworkAttachmentDefinitionModel } from '../../models';
 import { NetworkAttachmentDefinitionsYAMLTemplates } from '../../models/templates';
 
 const CreateNetAttachDefYAMLConnected = connectToPlural(
-  ({ match, kindsInFlight, kindObj }: CreateYAMLProps) => {
+  ({ kindsInFlight, kindObj }: CreateYAMLProps) => {
     if (!kindObj) {
       if (kindsInFlight) {
         return <LoadingBox />;
       }
       return <ErrorPage404 />;
     }
+    const params = useParams();
 
     const template = NetworkAttachmentDefinitionsYAMLTemplates.getIn(['default']);
     const obj = safeLoad(template);
     obj.kind = kindObj.kind;
     obj.metadata = obj.metadata || {};
-    obj.metadata.namespace = match.params.ns || 'default';
+    obj.metadata.namespace = params.ns || 'default';
 
     const netAttachDefTemplatePath = (o: K8sResourceKind) =>
       resourcePathFromModel(NetworkAttachmentDefinitionModel, getName(o), getNamespace(o));

@@ -120,7 +120,7 @@ const StatefulSetPods: React.FC<StatefulSetPodsProps> = (props) => (
   <PodsComponent {...props} showNodes />
 );
 
-export const StatefulSetsDetailsPage: React.FC<StatefulSetsDetailsPageProps> = (props) => {
+export const StatefulSetsDetailsPage: React.FC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
@@ -175,8 +175,4 @@ type StatefulSetsPageProps = {
 
 type StatefulSetPodsProps = {
   obj: K8sResourceKind;
-};
-
-type StatefulSetsDetailsPageProps = {
-  match: any;
 };

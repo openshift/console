@@ -471,7 +471,7 @@ const HomePage: React.FC = (props) => {
       name: 'Home',
       component: () => <>Home</>
     }
-    return <HorizontalNav match={props.match} pages={[page]} />
+    return <HorizontalNav pages={[page]} />
 }
 ```
 
@@ -485,7 +485,6 @@ const HomePage: React.FC = (props) => {
 | -------------- | ----------- |
 | `resource` | The resource associated with this Navigation, an object of K8sResourceCommon type |
 | `pages` | An array of page objects |
-| `match` | match object provided by React Router |
 
 
 

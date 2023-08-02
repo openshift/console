@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
-import { match as RouteMatch } from 'react-router';
 import { Button, Text, TextContent } from '@patternfly/react-core';
 import { Modal } from '@console/shared/src/components/modal';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
@@ -10,10 +10,8 @@ import { ListKind, referenceForModel } from '@console/internal/module/k8s';
 import { StorageClusterKind } from '../../types';
 import { OCSServiceModel } from '../../models';
 
-const ExistingClusterModal: React.FC<ExistingClusterModalProps> = ({ match, storageCluster }) => {
-  const {
-    params: { ns, appName },
-  } = match;
+const ExistingClusterModal: React.FC<ExistingClusterModalProps> = ({ storageCluster }) => {
+  const { ns, appName } = useParams();
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(true);
 
@@ -73,7 +71,6 @@ const ExistingClusterModal: React.FC<ExistingClusterModalProps> = ({ match, stor
 };
 
 type ExistingClusterModalProps = {
-  match: RouteMatch<{ ns: string; appName: string }>;
   storageCluster: ListKind<StorageClusterKind>;
 };
 

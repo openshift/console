@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { Alert, AlertActionCloseButton, Title } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
 import CreateBackingStoreForm from './create-bs';
 import '../noobaa-provider-endpoints/noobaa-provider-endpoints.scss';
 
-const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({ match }) => {
+const CreateBackingStoreFormPage: React.FC = () => {
   const { t } = useTranslation();
   const [showHelp, setShowHelp] = React.useState(true);
-  const { ns, appName } = match.params;
+  const { ns, appName } = useParams();
 
   const onCancel = () => {
     history.goBack();
@@ -55,7 +55,5 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
     </>
   );
 };
-
-type CreateBackingStoreFormPageProps = RouteComponentProps<{ ns?: string; appName?: string }>;
 
 export default CreateBackingStoreFormPage;

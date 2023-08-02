@@ -21,6 +21,7 @@ import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
@@ -748,11 +749,12 @@ const Board: React.FC<BoardProps> = ({ rows }) => (
   </>
 );
 
-const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ match }) => {
+const MonitoringDashboardsPage: React.FC = () => {
   const { t } = useTranslation();
+  const params = useParams();
 
   const dispatch = useDispatch();
-  const namespace = match.params?.ns;
+  const namespace = params?.ns;
   const activePerspective = getActivePerspective(namespace);
   const [board, setBoard] = React.useState<string>();
   const [boards, isLoading, error] = useFetchDashboards(namespace);
@@ -794,8 +796,8 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         endTime = null;
         // persist only the refresh Interval when dashboard is changed
         if (refreshInterval) {
-          const params = new URLSearchParams({ refreshInterval });
-          url = `${url}?${params.toString()}`;
+          const urlParams = new URLSearchParams({ refreshInterval });
+          url = `${url}?${urlParams.toString()}`;
         }
       } else {
         timeSpan = getQueryArgument('timeRange');
@@ -836,9 +838,9 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
   React.useEffect(() => {
     if (!board && !_.isEmpty(boards)) {
       const boardName = getQueryArgument('dashboard');
-      changeBoard((namespace ? boardName : match.params.board) || boards?.[0]?.name);
+      changeBoard((namespace ? boardName : params.board) || boards?.[0]?.name);
     }
-  }, [board, boards, changeBoard, match.params.board, namespace]);
+  }, [board, boards, changeBoard, params.board, namespace]);
 
   React.useEffect(() => {
     const newBoard = getQueryArgument('dashboard');
@@ -937,12 +939,6 @@ type BoardProps = {
 
 type CardProps = {
   panel: Panel;
-};
-
-type MonitoringDashboardsPageProps = {
-  match: {
-    params: { board: string; ns?: string };
-  };
 };
 
 export default withFallback(MonitoringDashboardsPage, ErrorBoundaryFallbackPage);

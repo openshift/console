@@ -6,10 +6,6 @@ export const OverviewListPageLoader = () =>
     (m) => m.OverviewListPage,
   );
 
-type OverviewListPageProps = {
-  match: any;
-};
-
-export const OverviewListPage: React.FC<OverviewListPageProps> = (props) => {
+export const OverviewListPage: React.FC = (props) => {
   return <AsyncComponent loader={OverviewListPageLoader} {...props} />;
 };

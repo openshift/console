@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import { ActionGroup, Alert, Button, Tooltip } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import * as classNames from 'classnames';
@@ -632,8 +633,9 @@ export const CreateReceiver = () => {
   );
 };
 
-export const EditReceiver = ({ match: { params } }) => {
+export const EditReceiver = () => {
   const { t } = useTranslation();
+  const params = useParams();
   return (
     <Firehose resources={resources}>
       <ReceiverWrapper

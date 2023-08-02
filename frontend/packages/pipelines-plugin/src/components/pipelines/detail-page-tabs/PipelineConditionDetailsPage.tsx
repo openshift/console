@@ -6,8 +6,8 @@ import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import { usePipelinesBreadcrumbsFor } from '../hooks';
 
 const PipelineConditionDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { kindObj, match, kind } = props;
-  const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
+  const { kindObj, kind } = props;
+  const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj);
   const badge = usePipelineTechPreviewBadge(props.namespace);
 
   return (

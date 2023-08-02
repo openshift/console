@@ -2,6 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
+import * as Router from 'react-router-dom-v5-compat';
 import { CreateYAML, CreateYAMLProps } from '@console/internal/components/create-yaml';
 import { DetailsPage } from '@console/internal/components/factory';
 import { Firehose, LoadingBox, DetailsItem } from '@console/internal/components/utils';
@@ -19,14 +20,18 @@ import {
   CatalogSourceDetails,
   CatalogSourceDetailsProps,
   CatalogSourceDetailsPage,
-  CatalogSourceDetailsPageProps,
   CreateSubscriptionYAML,
-  CreateSubscriptionYAMLProps,
   CatalogSourceOperatorsPage,
 } from './catalog-source';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
+}));
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
 }));
 
 describe(CatalogSourceDetails.displayName, () => {
@@ -48,13 +53,12 @@ describe(CatalogSourceDetails.displayName, () => {
 });
 
 describe(CatalogSourceDetailsPage.displayName, () => {
-  let wrapper: ShallowWrapper<CatalogSourceDetailsPageProps>;
-  let match: CatalogSourceDetailsPageProps['match'];
+  let wrapper: ShallowWrapper;
 
   beforeEach(() => {
     (useK8sWatchResource as jest.Mock).mockReturnValue([dummyPackageManifest, true, null]);
-    match = { isExact: true, params: { ns: 'default', name: 'some-catalog' }, path: '', url: '' };
-    wrapper = shallow(<CatalogSourceDetailsPage match={match} />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default', name: 'some-catalog' });
+    wrapper = shallow(<CatalogSourceDetailsPage />);
   });
 
   it('renders `DetailsPage` with correct props', () => {
@@ -74,31 +78,25 @@ describe(CatalogSourceDetailsPage.displayName, () => {
       {
         kind: referenceForModel(PackageManifestModel),
         isList: true,
-        namespace: match.params.ns,
         prop: 'packageManifests',
+        namespace: 'default',
       },
     ]);
   });
 });
 
 describe(CreateSubscriptionYAML.displayName, () => {
-  let wrapper: ShallowWrapper<CreateSubscriptionYAMLProps>;
+  let wrapper: ShallowWrapper;
 
   beforeEach(() => {
-    wrapper = shallow(
-      <CreateSubscriptionYAML
-        match={{
-          isExact: true,
-          url: '',
-          path: '',
-          params: { ns: 'default', pkgName: testPackageManifest.metadata.name },
-        }}
-        location={{
-          ...window.location,
-          search: `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`,
-        }}
-      />,
-    );
+    jest
+      .spyOn(Router, 'useParams')
+      .mockReturnValue({ ns: 'default', pkgName: testPackageManifest.metadata.name });
+    jest.spyOn(Router, 'useLocation').mockReturnValue({
+      ...window.location,
+      search: `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`,
+    });
+    wrapper = shallow(<CreateSubscriptionYAML />);
   });
 
   it('renders a `Firehose` for the `PackageManfest` specified in the URL', () => {

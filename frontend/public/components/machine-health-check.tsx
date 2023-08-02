@@ -174,9 +174,7 @@ export const MachineHealthCheckPage: React.FC<MachineHealthCheckPageProps> = (pr
   />
 );
 
-export const MachineHealthCheckDetailsPage: React.FC<MachineHealthCheckDetailsPageProps> = (
-  props,
-) => (
+export const MachineHealthCheckDetailsPage: React.FC = (props) => (
   <DetailsPage
     {...props}
     menuActions={menuActions}
@@ -193,8 +191,4 @@ type MachineHealthCheckPageProps = {
 
 export type MachineHealthCheckDetailsProps = {
   obj: MachineHealthCheckKind;
-};
-
-export type MachineHealthCheckDetailsPageProps = {
-  match: any;
 };

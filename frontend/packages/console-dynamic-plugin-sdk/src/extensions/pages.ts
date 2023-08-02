@@ -1,4 +1,3 @@
-import { RouteComponentProps } from 'react-router';
 import { ExtensionK8sGroupKindModel, ExtensionK8sModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
@@ -8,7 +7,6 @@ type ResourcePageProperties = {
   /** The component to be rendered when the route matches. */
   component: CodeRef<
     React.ComponentType<{
-      match: RouteComponentProps['match'];
       /** The namespace for which this resource page links to. */
       namespace: string;
       /** The model for which this resource page links to. */
@@ -21,7 +19,7 @@ type RoutePageProperties = {
   /** The perspective to which this page belongs to. If not specified, contributes to all perspectives. */
   perspective?: string;
   /** The component to be rendered when the route matches. */
-  component: CodeRef<React.ComponentType<RouteComponentProps>>;
+  component: CodeRef<React.ComponentType>;
   /** Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. */
   path: string | string[];
   /** When true, will only match if the path matches the `location.pathname` exactly. */
@@ -59,7 +57,7 @@ export type ResourceTabPage = ExtensionDeclaration<
   'console.page/resource/tab',
   Omit<ResourcePageProperties, 'component'> & {
     /** The component to be rendered when the route matches. */
-    component: CodeRef<React.ComponentType<RouteComponentProps>>;
+    component: CodeRef<React.ComponentType>;
     /** The name of the tab. */
     name: string;
     /** The optional href for the tab link. If not provided, the first `path` is used. */

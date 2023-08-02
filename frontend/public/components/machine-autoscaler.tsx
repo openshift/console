@@ -168,9 +168,7 @@ export const MachineAutoscalerPage: React.FC<MachineAutoscalerPageProps> = (prop
   />
 );
 
-export const MachineAutoscalerDetailsPage: React.FC<MachineAutoscalerDetailsPageProps> = (
-  props,
-) => (
+export const MachineAutoscalerDetailsPage: React.FC = (props) => (
   <DetailsPage
     {...props}
     menuActions={menuActions}
@@ -191,8 +189,4 @@ type MachineAutoscalerTargetLinkProps = {
 
 export type MachineAutoscalerDetailsProps = {
   obj: K8sResourceKind;
-};
-
-export type MachineAutoscalerDetailsPageProps = {
-  match: any;
 };

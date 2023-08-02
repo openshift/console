@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentModel } from '@console/internal/models';
@@ -9,11 +9,9 @@ import { DeploymentKind, K8sResourceKind } from '@console/internal/module/k8s';
 import EditDeployment from './EditDeployment';
 import { getDefaultDeployment } from './utils/deployment-utils';
 
-export type DeploymentPageProps = RouteComponentProps<{ ns: string; name: string }>;
-
-const DeploymentPage: React.FC<DeploymentPageProps> = ({ match }) => {
+const DeploymentPage: React.FC = () => {
   const { t } = useTranslation();
-  const { ns: namespace, name } = match.params;
+  const { ns: namespace, name } = useParams();
 
   const isNew = !name || name === '~new';
 

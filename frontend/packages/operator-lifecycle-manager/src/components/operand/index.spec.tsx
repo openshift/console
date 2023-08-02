@@ -2,7 +2,8 @@ import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
-import { MemoryRouter, Router, Route } from 'react-router-dom';
+import { MemoryRouter, BrowserRouter, Router, Route } from 'react-router-dom';
+import * as ReactRouter from 'react-router-dom-v5-compat';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { Table, DetailsPage, MultiListPage } from '@console/internal/components/factory';
 import {
@@ -60,6 +61,12 @@ const mountWithRoute = <T,>(component, currentURL, routePath): ReactWrapper<T> =
       </Provider>
     ),
   });
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+}));
 
 jest.mock('@console/shared/src/hooks/useK8sModels', () => ({
   useK8sModels: () => [
@@ -343,12 +350,30 @@ describe('ResourcesList', () => {
 });
 
 describe(OperandDetailsPage.displayName, () => {
-  const currentURL = `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`;
-  const routePath = `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`;
   window.SERVER_FLAGS.copiedCSVsDisabled = false;
 
+  beforeEach(() => {
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
+      ns: 'default',
+      appName: 'testapp',
+      plural: 'testapp.coreos.com~v1alpha1~TestResource',
+      name: 'my-test-resource',
+    });
+
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`,
+    });
+  });
+
   it('renders a `DetailsPage` with the correct subpages', () => {
-    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
+    const wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <OperandDetailsPage />
+        </BrowserRouter>
+      </Provider>,
+    );
+
     const detailsPage = wrapper.find(DetailsPage);
     expect(detailsPage.props().pages[0].nameKey).toEqual(`${i18nNS}~Details`);
     expect(detailsPage.props().pages[0].href).toEqual('');
@@ -359,7 +384,13 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('renders a `DetailsPage` which also watches the parent CSV', () => {
-    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
+    const wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <OperandDetailsPage />
+        </BrowserRouter>
+      </Provider>,
+    );
     expect(wrapper.find(DetailsPage).prop('resources')[0]).toEqual({
       kind: 'CustomResourceDefinition',
       name: 'testresources.testapp.coreos.com',
@@ -369,12 +400,24 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('menu actions to `DetailsPage`', () => {
-    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
+    const wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <OperandDetailsPage />
+        </BrowserRouter>
+      </Provider>,
+    );
     expect(wrapper.find(DetailsPage).prop('customActionMenu')).toBeTruthy();
   });
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
-    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
+    const wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <OperandDetailsPage />
+        </BrowserRouter>
+      </Provider>,
+    );
     expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
       {
         name: 'Installed Operators',
@@ -392,10 +435,23 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('creates correct breadcrumbs even if `namespace`, `plural`, `appName`, and `name` URL parameters are the same', () => {
-    const wrapper = mountWithRoute(
-      <OperandDetailsPage />,
-      `/k8s/ns/example/${ClusterServiceVersionModel.plural}/example/example/example`,
-      routePath,
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
+      ns: 'example',
+      appName: 'example',
+      plural: 'example',
+      name: 'example',
+    });
+
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      pathname: `/k8s/ns/example/${ClusterServiceVersionModel.plural}/example/example/example`,
+    });
+
+    const wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <OperandDetailsPage />
+        </BrowserRouter>
+      </Provider>,
     );
 
     expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
@@ -415,10 +471,12 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('passes `flatten` function to Resources component which returns only objects with `ownerReferences` to each other or parent object', () => {
-    const wrapper = mountWithRoute(
-      <Resources csv={testClusterServiceVersion} obj={testResourceInstance} />,
-      currentURL,
-      routePath,
+    const wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <Resources csv={testClusterServiceVersion} obj={testResourceInstance} />
+        </BrowserRouter>
+      </Provider>,
     );
     const { flatten } = wrapper.find(MultiListPage).props();
     const pod = {
@@ -489,21 +547,35 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   beforeEach(() => {
-    wrapper = mountWithRoute<ProvidedAPIsPageProps>(
-      <ProvidedAPIsPage obj={testClusterServiceVersion} />,
-      `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/instances`,
-      `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/instances`,
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
+      ns: 'default',
+      appName: 'testapp',
+    });
+
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/instances`,
+    });
+
+    wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <ProvidedAPIsPage obj={testClusterServiceVersion} />
+        </BrowserRouter>
+      </Provider>,
     );
   });
+
   it('render listpage components', () => {
     expect(wrapper.find(ListPageHeader).exists()).toBe(true);
     expect(wrapper.find(ListPageCreateDropdown).exists()).toBe(true);
     expect(wrapper.find(ListPageBody).exists()).toBe(true);
     expect(wrapper.find(ListPageFilter).exists()).toBe(true);
   });
+
   it('render ListPageCreateDropdown with the correct text', () => {
     expect(wrapper.find(ListPageCreateDropdown).children().text()).toEqual('Create new');
   });
+
   it('passes `items` props and render ListPageCreateDropdown create button if app has multiple owned CRDs', () => {
     const obj = _.cloneDeep(testClusterServiceVersion);
     obj.spec.customresourcedefinitions.owned.push({
@@ -512,7 +584,15 @@ describe(ProvidedAPIsPage.displayName, () => {
       version: 'v1',
       kind: 'FooBar',
     });
-    wrapper.setProps({ obj });
+
+    wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <ProvidedAPIsPage obj={obj} />
+        </BrowserRouter>
+      </Provider>,
+    );
+
     const listPageCreateDropdown = wrapper.find(ListPageCreateDropdown);
 
     expect(listPageCreateDropdown.props().items).toEqual({
@@ -520,6 +600,7 @@ describe(ProvidedAPIsPage.displayName, () => {
       'testapp.coreos.com~v1~FooBar': 'Foo Bars',
     });
   });
+
   it('check if ListPageBody component renders the correct children', () => {
     expect(wrapper.find(ListPageBody).children().children().length).toBe(2);
   });
@@ -529,10 +610,22 @@ describe(ProvidedAPIPage.displayName, () => {
   let wrapper: ReactWrapper<ProvidedAPIPageProps>;
 
   beforeEach(() => {
-    wrapper = mountWithRoute(
-      <ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} />,
-      `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResourceRO`,
-      `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural`,
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
+      ns: 'default',
+      appName: 'testapp',
+      plural: 'TestResourceRO',
+    });
+
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResourceRO`,
+    });
+
+    wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} />
+        </BrowserRouter>
+      </Provider>,
     );
   });
 
@@ -542,14 +635,17 @@ describe(ProvidedAPIPage.displayName, () => {
     expect(wrapper.find(ListPageBody).exists()).toBe(true);
     expect(wrapper.find(ListPageFilter).exists()).toBe(true);
   });
+
   it('render ListPageCreateLink with the correct props for create button if app has single owned CRDs', () => {
     expect(wrapper.find(ListPageCreateLink).props().to).toEqual(
       `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResourceRO/~new`,
     );
   });
+
   it('render ListPageCreateLink with the correct text', () => {
     expect(wrapper.find(ListPageCreateLink).children().text()).toEqual('Create Test Resource');
   });
+
   it('check if ListPageBody component renders the correct children', () => {
     expect(wrapper.find(ListPageBody).children().children().length).toBe(2);
   });

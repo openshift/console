@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link, match } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { Button, TextContent } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -210,10 +210,7 @@ type UserKebabProps = {
   user: UserKind;
 };
 
-const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> = ({
-  startImpersonate,
-  ...props
-}) => {
+const UserDetailsPage_: React.FC<UserKebabDispatchProps> = ({ startImpersonate, ...props }) => {
   const { t } = useTranslation();
   const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
@@ -233,7 +230,7 @@ const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> 
   );
 };
 
-export const UserDetailsPage = connect<{}, UserKebabDispatchProps, UserDetailsPageProps>(null, {
+export const UserDetailsPage = connect<{}, UserKebabDispatchProps>(null, {
   startImpersonate: UIActions.startImpersonate,
 })(UserDetailsPage_);
 
@@ -248,8 +245,4 @@ type RoleBindingsTabProps = {
 
 type UserDetailsProps = {
   obj: UserKind;
-};
-
-type UserDetailsPageProps = {
-  match: match<any>;
 };

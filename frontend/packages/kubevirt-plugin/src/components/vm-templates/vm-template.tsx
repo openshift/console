@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { match } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { ListPage, MultiListPage } from '@console/internal/components/factory';
 import { isUpstream } from '@console/internal/components/utils';
@@ -62,7 +62,8 @@ const VirtualMachineTemplatesPage: React.FC<
 > = (props) => {
   const { t } = useTranslation();
   const { skipAccessReview, noProjectsAvailable, showTitle } = props?.customData || {};
-  const namespace = props.match.params.ns;
+  const params = useParams();
+  const namespace = params.ns;
 
   const resources = [
     {
@@ -170,7 +171,6 @@ const VirtualMachineTemplatesPage: React.FC<
 };
 
 type VirtualMachineTemplatesPageProps = {
-  match: match<{ ns?: string }>;
   customData: {
     showTitle?: boolean;
     skipAccessReview?: boolean;

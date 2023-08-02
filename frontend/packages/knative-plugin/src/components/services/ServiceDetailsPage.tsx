@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -15,7 +16,9 @@ import { serverlessTab } from '../../utils/serverless-tab-utils';
 import ServerlessFunctionType from '../overview/ServerlessFunctionType';
 
 const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const { kindObj, match, kind } = props;
+  const { kindObj, kind } = props;
+  const params = useParams();
+  const location = useLocation();
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const renderTypeForServerlessFunction = (obj: K8sResourceKind) =>
     isServerlessFunction(obj) ? <ServerlessFunctionType /> : null;
@@ -38,7 +41,8 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
   };
   const breadcrumbs = useTabbedTableBreadcrumbsFor(
     kindObj,
-    match,
+    location,
+    params,
     'serving',
     serverlessTab(kindObj.kind),
     undefined,

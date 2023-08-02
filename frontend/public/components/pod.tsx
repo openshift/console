@@ -1177,5 +1177,4 @@ type PodPageProps = {
 
 type PodDetailsPageProps = {
   kind: K8sResourceKindReference;
-  match: any;
 };

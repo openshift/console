@@ -180,7 +180,7 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
   );
 };
 
-export const OAuthDetailsPage: React.FC<OAuthDetailsPageProps> = (props) => (
+export const OAuthDetailsPage: React.FC = (props) => (
   <DetailsPage
     {...props}
     kind={oAuthReference}
@@ -195,8 +195,4 @@ type IdentityProvidersProps = {
 
 type OAuthDetailsProps = {
   obj: OAuthKind;
-};
-
-type OAuthDetailsPageProps = {
-  match: any;
 };

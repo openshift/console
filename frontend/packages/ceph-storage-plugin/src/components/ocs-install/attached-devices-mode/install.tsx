@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { match as RouterMatch } from 'react-router';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Alert, Button } from '@patternfly/react-core';
@@ -22,7 +21,6 @@ const goToLSOInstallationPage = () =>
   );
 
 export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesClusterProps> = ({
-  match,
   mode,
   navUtils,
 }) => {
@@ -78,12 +76,11 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
       </Trans>
     </Alert>
   ) : (
-    <CreateStorageClusterWizard navUtils={navUtils} match={match} lsoNs={lsoNs} mode={mode} />
+    <CreateStorageClusterWizard navUtils={navUtils} lsoNs={lsoNs} mode={mode} />
   );
 };
 
 type CreateAttachedDevicesClusterProps = {
   navUtils: NavUtils;
-  match: RouterMatch<{ appName: string; ns: string }>;
   mode: string;
 };

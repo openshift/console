@@ -8,8 +8,8 @@ import TaskRunDetails from './TaskRunDetails';
 import TaskRunLog from './TaskRunLog';
 
 const TaskRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { kindObj, match } = props;
-  const breadcrumbsFor = useTasksBreadcrumbsFor(kindObj, match);
+  const { kindObj } = props;
+  const breadcrumbsFor = useTasksBreadcrumbsFor(kindObj);
   const badge = usePipelineTechPreviewBadge(props.namespace);
 
   return (

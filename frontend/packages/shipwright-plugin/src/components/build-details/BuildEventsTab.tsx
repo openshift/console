@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { match as RMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { ResourcesEventStream } from '@console/internal/components/events';
 import { EventInvolvedObject } from '@console/internal/module/k8s';
 import { Build } from '../../types';
 
 type BuildEventsTabProps = {
   obj: Build;
-  match: RMatch<{
-    ns?: string;
-  }>;
 };
 
 const getFilters = (build: Build) => {
@@ -29,12 +26,8 @@ const getFilters = (build: Build) => {
   ];
 };
 
-const BuildEventsTab: React.FC<BuildEventsTabProps> = ({
-  obj: build,
-  match: {
-    params: { ns: namespace },
-  },
-}) => {
+const BuildEventsTab: React.FC<BuildEventsTabProps> = ({ obj: build }) => {
+  const { ns: namespace } = useParams();
   return <ResourcesEventStream filters={getFilters(build)} namespace={namespace} />;
 };
 

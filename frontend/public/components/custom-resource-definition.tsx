@@ -307,9 +307,7 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
     textFilter="custom-resource-definition-name"
   />
 );
-export const CustomResourceDefinitionsDetailsPage: React.FC<CustomResourceDefinitionsDetailsPageProps> = (
-  props,
-) => {
+export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
   return (
     <DetailsPage
       {...props}
@@ -340,10 +338,6 @@ type InstancesProps = {
 
 CustomResourceDefinitionsList.displayName = 'CustomResourceDefinitionsList';
 CustomResourceDefinitionsPage.displayName = 'CustomResourceDefinitionsPage';
-
-type CustomResourceDefinitionsDetailsPageProps = {
-  match: any;
-};
 
 export type CRDVersionProps = {
   versions: CRDVersion[];

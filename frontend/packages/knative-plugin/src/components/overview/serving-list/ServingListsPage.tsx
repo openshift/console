@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { match as Rmatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -10,15 +10,9 @@ import RevisionsPage from '../../revisions/RevisionsPage';
 import RoutesPage from '../../routes/RoutesPage';
 import ServicesPage from '../../services/ServicesPage';
 
-interface ServingListPageProps {
-  match: Rmatch<{ ns: string }>;
-}
-
-const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
+const ServingListPage: React.FC = () => {
   const { t } = useTranslation();
-  const {
-    params: { ns: namespace },
-  } = match;
+  const { ns: namespace } = useParams();
   const [showTitle, canCreate] = [false, false];
   const menuActions: MenuActions = {
     service: { label: t('knative-plugin~Service'), model: ServiceModel },
@@ -67,7 +61,6 @@ const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
       <NamespaceBar />
       <MultiTabListPage
         pages={pages}
-        match={match}
         title={t('knative-plugin~Serving')}
         menuActions={menuActions}
         telemetryPrefix="Serving"

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ClipboardCopy } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -68,7 +69,9 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
 };
 
 const RouteDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const { kindObj, match } = props;
+  const { kindObj } = props;
+  const params = useParams();
+  const location = useLocation();
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const pages = [navFactory.details(detailsPage(RouteDetails)), navFactory.editYaml()];
   const actionMenu = (kindObjData: K8sKind, obj: K8sResourceKind) => {
@@ -86,7 +89,8 @@ const RouteDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pr
   };
   const breadcrumbs = useTabbedTableBreadcrumbsFor(
     kindObj,
-    match,
+    location,
+    params,
     'serving',
     serverlessTab(kindObj.kind),
     undefined,

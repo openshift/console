@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
 import { Kebab, ResourceKebab } from '@console/internal/components/utils';
 import {
   TableData,
@@ -183,7 +182,7 @@ const StorageSystemList: React.FC<StorageSystemListProps> = (props) => {
   );
 };
 
-const StorageSystemListPage: React.FC<RouteComponentProps> = (props) => {
+const StorageSystemListPage: React.FC = (props) => {
   const createProps = {
     to: `/k8s/ns/openshift-storage/${referenceForModel(
       ClusterServiceVersionModel,

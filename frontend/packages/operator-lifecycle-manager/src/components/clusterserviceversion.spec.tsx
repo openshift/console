@@ -3,7 +3,8 @@ import { CardTitle, CardBody, CardFooter } from '@patternfly/react-core';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
-import { Link, Router } from 'react-router-dom';
+import { Link, BrowserRouter } from 'react-router-dom';
+import * as ReactRouter from 'react-router-dom-v5-compat';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import {
   DetailsPage,
@@ -18,7 +19,7 @@ import {
   SectionHeading,
   resourceObjPath,
   StatusBox,
-  history,
+  //   history,
 } from '@console/internal/components/utils';
 import * as operatorLogo from '@console/internal/imgs/operator.svg';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -38,7 +39,6 @@ import { ClusterServiceVersionModel } from '../models';
 import { ClusterServiceVersionKind, ClusterServiceVersionPhase } from '../types';
 import {
   ClusterServiceVersionDetailsPage,
-  ClusterServiceVersionsDetailsPageProps,
   ClusterServiceVersionDetails,
   ClusterServiceVersionDetailsProps,
   ClusterServiceVersionTableRow,
@@ -69,6 +69,12 @@ jest.mock('@console/shared/src/hooks/redux-selectors', () => {
     useActiveNamespace: jest.fn(),
   };
 });
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+}));
 
 // TODO remove multicluster
 jest.mock('@console/shared/src/hooks/useActiveCluster', () => ({
@@ -514,7 +520,7 @@ describe(CSVSubscription.displayName, () => {
 });
 
 describe(ClusterServiceVersionDetailsPage.displayName, () => {
-  let wrapper: ReactWrapper<ClusterServiceVersionsDetailsPageProps>;
+  let wrapper: ReactWrapper;
   let spyUseAccessReview;
 
   const name = 'example';
@@ -524,18 +530,16 @@ describe(ClusterServiceVersionDetailsPage.displayName, () => {
     spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
     spyUseAccessReview.mockReturnValue([true, false]);
 
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({ name: 'example', ns: 'default' });
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({ pathname: '' });
+
     window.SERVER_FLAGS.copiedCSVsDisabled = false;
     wrapper = mount(
-      <ClusterServiceVersionDetailsPage
-        match={{ params: { ns, name }, isExact: true, url: '', path: '' }}
-      />,
-      {
-        wrappingComponent: (props) => (
-          <Router history={history}>
-            <Provider store={store} {...props} />
-          </Router>
-        ),
-      },
+      <Provider store={store}>
+        <BrowserRouter>
+          <ClusterServiceVersionDetailsPage />
+        </BrowserRouter>
+      </Provider>,
     );
   });
 

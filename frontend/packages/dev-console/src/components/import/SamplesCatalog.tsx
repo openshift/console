@@ -1,16 +1,14 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { CatalogController, CatalogServiceProvider } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
-type SampleCatalogProps = RouteComponentProps<{ ns?: string }>;
-
-const SampleCatalog: React.FC<SampleCatalogProps> = ({ match }) => {
+const SampleCatalog: React.FC = () => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const { ns: namespace } = useParams();
   return (
     <>
       <Helmet>

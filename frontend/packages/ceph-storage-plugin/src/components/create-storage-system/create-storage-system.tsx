@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { match as RouteMatch } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Wizard, WizardStep } from '@patternfly/react-core';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
@@ -18,7 +17,7 @@ import {
 import { StorageSystemKind } from '../../types';
 import { StorageSystemModel } from '../../models';
 
-const CreateStorageSystem: React.FC<CreateStorageSystemProps> = () => {
+const CreateStorageSystem: React.FC = () => {
   const { t } = useTranslation();
   const [state, dispatch] = React.useReducer<WizardReducer>(reducer, initialState);
   const [ssList, ssLoaded, ssLoadError] = useK8sGet<ListKind<StorageSystemKind>>(
@@ -74,10 +73,6 @@ const CreateStorageSystem: React.FC<CreateStorageSystemProps> = () => {
       />
     </>
   );
-};
-
-type CreateStorageSystemProps = {
-  match: RouteMatch<{ ns: string; appName: string }>;
 };
 
 export default CreateStorageSystem;

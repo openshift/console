@@ -5,7 +5,8 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import { Link, match as RMatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -363,7 +364,6 @@ export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   filters?: any;
   limit?: number;
   nameFilter?: string;
-  match?: RMatch<any>;
   skipAccessReview?: boolean;
 };
 
@@ -391,7 +391,6 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     showTitle = true,
     skipAccessReview,
     textFilter,
-    match,
     badge,
     hideLabelFilter,
     hideNameLabelFilters,
@@ -400,11 +399,12 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     flatten = (_resources) => _.get(_resources, name || kind, {} as FirehoseResult).data,
   } = props;
   const { t } = useTranslation();
+  const params = useParams();
   let { createProps } = props;
   const ko = kindObj(kind);
   const { label, labelKey, labelPlural, labelPluralKey, namespaced, plural } = ko;
   const title = props.title || t(labelPluralKey) || labelPlural;
-  const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') : namespace;
+  const usedNamespace = !namespace && namespaced ? params.ns : namespace;
 
   let href = usedNamespace
     ? `/k8s/ns/${usedNamespace || 'default'}/${plural}/~new`

@@ -1,17 +1,15 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import EditBuildConfig from './EditBuildConfig';
 import { BuildConfig, BuildConfigModel } from './types';
 
-export type BuildConfigFormPageProps = RouteComponentProps<{ ns: string; name: string }>;
-
-const BuildConfigFormPage: React.FC<BuildConfigFormPageProps> = ({ match }) => {
+const BuildConfigFormPage: React.FC = () => {
   const { t } = useTranslation();
-  const { ns: namespace, name } = match.params;
+  const { ns: namespace, name } = useParams();
 
   const isNew = !name || name === '~new';
   const [watchedBuildConfig, loaded, loadError] = useK8sWatchResource<BuildConfig>(

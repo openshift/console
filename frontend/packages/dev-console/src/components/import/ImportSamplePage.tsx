@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Formik } from 'formik';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   FirehoseResource,
   LoadingBox,
@@ -29,11 +29,9 @@ import { BaseFormData, GitImportFormData } from './import-types';
 import { detectGitType, validationSchema } from './import-validation-utils';
 import ImportSampleForm from './ImportSampleForm';
 
-type ImportSamplePageProps = RouteComponentProps<{ ns?: string; is?: string; isNs?: string }>;
-
-const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
+const ImportSamplePage: React.FC = () => {
   const { t } = useTranslation();
-  const { ns: namespace, is: imageStreamName, isNs: imageStreamNamespace } = match.params;
+  const { ns: namespace, is: imageStreamName, isNs: imageStreamNamespace } = useParams();
 
   const imageStreamResource: FirehoseResource = React.useMemo(
     () => ({

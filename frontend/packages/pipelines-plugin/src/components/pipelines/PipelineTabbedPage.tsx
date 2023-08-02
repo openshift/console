@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -8,7 +8,7 @@ import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { Page, history } from '@console/internal/components/utils';
+import { Page } from '@console/internal/components/utils';
 import {
   MenuAction,
   MenuActions,
@@ -26,15 +26,10 @@ import { PipelineRunsResourceList } from '../pipelineruns';
 import RepositoriesList from '../repository/list-page/RepositoriesList';
 import PipelinesList from './list-page/PipelinesList';
 
-type PipelineTabbedPageProps = RouteComponentProps<{ ns: string }>;
-
-export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
+export const PageContents: React.FC = () => {
   const { t } = useTranslation();
-  const {
-    match: {
-      params: { ns: namespace },
-    },
-  } = props;
+  const { ns: namespace } = useParams();
+  const navigate = useNavigate();
   const badge = usePipelineTechPreviewBadge(namespace);
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const [preferredTab, , preferredTabLoaded] = useUserSettings<string>(
@@ -45,13 +40,13 @@ export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
   React.useEffect(() => {
     if (preferredTabLoaded && namespace) {
       if (isRepositoryEnabled && preferredTab === 'repositories') {
-        history.push(`/dev-pipelines/ns/${namespace}/repositories`);
+        navigate(`/dev-pipelines/ns/${namespace}/repositories`);
       }
       if (preferredTab === 'pipeline-runs') {
-        history.push(`/dev-pipelines/ns/${namespace}/pipeline-runs`);
+        navigate(`/dev-pipelines/ns/${namespace}/pipeline-runs`);
       }
     }
-  }, [isRepositoryEnabled, namespace, preferredTab, preferredTabLoaded]);
+  }, [isRepositoryEnabled, namespace, preferredTab, preferredTabLoaded, navigate]);
 
   const [showTitle, hideBadge, canCreate] = [false, true, false];
   const menuActions: MenuActions = {
@@ -95,7 +90,6 @@ export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
   return namespace ? (
     <MultiTabListPage
       pages={pages}
-      match={props.match}
       title={t('pipelines-plugin~Pipelines')}
       badge={badge}
       menuActions={menuActions}
@@ -115,7 +109,7 @@ export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-const PipelineTabbedPage: React.FC<PipelineTabbedPageProps> = (props) => {
+const PipelineTabbedPage: React.FC = (props) => {
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
       <PageContentsWithStartGuide {...props} />

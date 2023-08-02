@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
@@ -73,13 +73,15 @@ export const getPluginTabPages = (
   });
 };
 
-const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, k8sModels }) => {
+const DashboardsPage_: React.FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels }) => {
   const { t } = useTranslation();
   const title = t('public~Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
   const dynamicTabExtensions = useExtensions<DynamicDashboardsTab>(isDynamicDashboardsTab);
   const dynamicCardExtensions = useExtensions<DynamicDashboardsCard>(isDynamicDashboardsCard);
+
+  const location = useLocation();
 
   const pluginPages = React.useMemo(
     () =>
@@ -104,12 +106,12 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
       },
       ...pluginPages,
     ],
-    [pluginPages, t],
+    [pluginPages],
   );
 
   const badge = React.useMemo(
-    () => allPages.find((page) => `/dashboards${page.href}` === match.path)?.badge,
-    [allPages, match],
+    () => allPages.find((page) => `/dashboards${page.href}` === location.pathname)?.badge,
+    [allPages, location.pathname],
   );
   const titleProviderValues = {
     telemetryPrefix: 'Overview',
@@ -122,7 +124,7 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
     <>
       <PageTitleContext.Provider value={titleProviderValues}>
         <PageHeading title={title} detail={true} badge={badge} />
-        <HorizontalNav match={match} pages={allPages} noStatusBox />
+        <HorizontalNav pages={allPages} noStatusBox />
       </PageTitleContext.Provider>
     </>
   );
@@ -135,7 +137,7 @@ export const mapStateToProps = (state: RootState) => ({
 
 export const DashboardsPage = connect(mapStateToProps)(DashboardsPage_);
 
-export type DashboardsPageProps = RouteComponentProps & {
+export type DashboardsPageProps = {
   kindsInFlight: boolean;
   k8sModels: ImmutableMap<string, any>;
 };
