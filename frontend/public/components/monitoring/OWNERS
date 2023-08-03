@@ -1,9 +1,13 @@
 reviewers:
+  - jgbernalp
   - kyoto
   - spadgett
   - TheRealJon
+  - zhuje
 approvers:
+  - jgbernalp
   - kyoto
   - spadgett
+  - zhuje
 labels:
   - component/monitoring
