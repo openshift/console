@@ -582,7 +582,8 @@ const EditYAMLInner = (props) => {
     if (callbackCommand === 'saveall') {
       saveAllCallback();
     }
-  }, [saving, callbackCommand, saveCallback, saveAllCallback]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saving, callbackCommand, saveAllCallback]);
 
   const download = () => {
     const data = getEditor().getValue();
