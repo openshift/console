@@ -175,7 +175,8 @@ const DroppableFileInputWithTranslation = withDragDropContext(
       this.state = {
         inputFileName: '',
         inputFileData: this.props.inputFileData || '',
-        inputFileIsBinary: containsNonPrintableCharacters(this.props.inputFileData),
+        inputFileIsBinary:
+          this.props.inputFileIsBinary || containsNonPrintableCharacters(this.props.inputFileData),
       };
       this.handleFileDrop = this.handleFileDrop.bind(this);
       this.onDataChange = this.onDataChange.bind(this);
@@ -256,6 +257,7 @@ export type DroppableFileInputProps = WithTranslation & {
   textareaFieldHelpText: string;
   isRequired: boolean;
   hideContents?: boolean;
+  inputFileIsBinary?: boolean;
 };
 
 export type DroppableFileInputState = {
