@@ -424,7 +424,7 @@ class MastheadToolbarContents_ extends React.Component {
                     }}
                     to="/command-line-tools"
                   >
-                    {t('public~Command line tools')}
+                    {t('public~Command Line Tools')}
                   </Link>
                 ),
               },

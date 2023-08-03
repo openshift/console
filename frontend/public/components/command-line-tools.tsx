@@ -52,11 +52,11 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
   return (
     <>
       <Helmet>
-        <title>{t('public~Command line tools')}</title>
+        <title>{t('public~Command Line Tools')}</title>
       </Helmet>
       <div className="co-m-pane__body">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name">{t('public~Command line tools')}</div>
+          <div className="co-m-pane__name">{t('public~Command Line Tools')}</div>
         </h1>
         {requestTokenURL && (
           <>
