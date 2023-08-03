@@ -12,8 +12,15 @@
     "sourceMap": true,
     "noUnusedLocals": true,
     "typeRoots": ["node_modules/@types", "@types"],
-    "types": ["node", "jest", "cypress", "cypress-axe", "cypress-file-upload", "console"]
+    "types": ["node", "jest", "cypress-axe", "console"]
   },
-  "exclude": [".yarn", "**/node_modules", "public/dist", "packages/console-dynamic-plugin-sdk/scripts"],
+  "exclude": [
+    ".yarn",
+    "**/node_modules",
+    "public/dist",
+    "packages/console-dynamic-plugin-sdk/scripts",
+    "**/integration-tests",
+    "**/integration-tests-cypress"
+  ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]
 }

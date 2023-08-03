@@ -11,22 +11,22 @@ declare global {
       byTestID(
         selector: string,
         options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
-      ): Chainable<Element>;
-      byTestActionID(selector: string): Chainable<Element>;
-      byLegacyTestID(selector: string): Chainable<Element>;
-      byButtonText(selector: string): Chainable<Element>;
-      byDataID(selector: string): Chainable<Element>;
+      ): Chainable<any>;
+      byTestActionID(selector: string): Chainable<any>;
+      byLegacyTestID(selector: string): Chainable<any>;
+      byButtonText(selector: string): Chainable<any>;
+      byDataID(selector: string): Chainable<any>;
       byTestSelector(
         selector: string,
         options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
-      ): Chainable<Element>;
-      byTestDropDownMenu(selector: string): Chainable<Element>;
+      ): Chainable<any>;
+      byTestDropDownMenu(selector: string): Chainable<any>;
       byTestOperatorRow(
         selector: string,
         options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
-      ): Chainable<Element>;
-      byTestSectionHeading(selector: string): Chainable<Element>;
-      byTestOperandLink(selector: string): Chainable<Element>;
+      ): Chainable<any>;
+      byTestSectionHeading(selector: string): Chainable<any>;
+      byTestOperandLink(selector: string): Chainable<any>;
     }
   }
 }

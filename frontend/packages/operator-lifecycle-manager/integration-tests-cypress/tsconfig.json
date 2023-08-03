@@ -4,6 +4,6 @@
     "types": ["cypress"]
   },
   "include": [
-    "../../node_modules/cypress", "**/*.ts"
+    "../../../node_modules/cypress", "**/*.ts"
   ]
 }

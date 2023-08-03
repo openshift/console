@@ -9,7 +9,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       alertTitleShouldContain(title: string): Chainable<Element>;
-      clickNavLink(path: [string, string]): Chainable<Element>;
+      clickNavLink(path: string[]): Chainable<Element>;
       selectByDropDownText(selector: string, dropdownText: string): Chainable<Element>;
       selectByAutoCompleteDropDownText(selector: string, dropdownText: string): Chainable<Element>;
       verifyDropdownselected(selector: string): Chainable<Element>;
@@ -22,7 +22,7 @@ declare global {
       dropdownSwitchTo(dropdownMenuOption: string): Chainable<Element>;
       isDropdownVisible(): Chainable<Element>;
       checkErrors(): Chainable<Element>;
-      waitUntilEnabled(selector: string): Chainable<Element>;
+      waitUntilEnabled(selector: string): Chainable<any>;
     }
   }
 }
@@ -31,7 +31,7 @@ Cypress.Commands.add('alertTitleShouldContain', (alertTitle: string) => {
   cy.byLegacyTestID('modal-title').should('contain.text', alertTitle);
 });
 
-Cypress.Commands.add('clickNavLink', (path: [string, string]) => {
+Cypress.Commands.add('clickNavLink', (path: string[]) => {
   cy.get(`[data-component="pf-nav-expandable"]`) // this assumes all top level menu items are expandable
     .contains(path[0])
     .click(); // open top, expandable menu
