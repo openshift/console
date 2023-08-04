@@ -17,6 +17,7 @@ import { ConfigMapModel, SecretModel } from '@console/internal/models';
 import { ConfigMapKind, SecretKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { nameRegex } from '@console/shared/src';
 import { RepositoryModel } from '../../models';
+import { PipelineType } from '../import/import-types';
 import { PAC_TEMPLATE_DEFAULT } from '../pac/const';
 import { PIPELINERUN_TEMPLATE_NAMESPACE } from '../pipelines/const';
 import { RepositoryRuntimes, gitProviderTypesHosts } from './consts';
@@ -106,7 +107,10 @@ export const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
 
 export const importFlowRepositoryValidationSchema = (t: TFunction) => {
   return yup.object().shape({
-    repository: pipelinesAccessTokenValidationSchema(t),
+    repository: yup.object().when(['pipelineType', 'pipelineEnabled'], {
+      is: (pipelineType, pipelineEnabled) => pipelineType === PipelineType.PAC && pipelineEnabled,
+      then: pipelinesAccessTokenValidationSchema(t),
+    }),
   });
 };
 
