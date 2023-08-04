@@ -150,7 +150,6 @@
   "Update blocked": "Update blocked",
   "See the alert above the visualization for instructions on how to unblock this version.": "See the alert above the visualization for instructions on how to unblock this version.",
   "{{name}} {{resource}} may continue to update after the update of {{master}} {{resource}} and {{resource2}} are complete.": "{{name}} {{resource}} may continue to update after the update of {{master}} {{resource}} and {{resource2}} are complete.",
-  "Update is paused. Resume update as soon as possible.": "Update is paused. Resume update as soon as possible.",
   "{{updatedMCPNodes}} of {{totalMCPNodes}}": "{{updatedMCPNodes}} of {{totalMCPNodes}}",
   "Resume update": "Resume update",
   "Pause update": "Pause update",
