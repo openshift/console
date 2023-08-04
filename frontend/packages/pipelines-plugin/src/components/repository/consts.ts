@@ -59,6 +59,7 @@ export const defaultRepositoryFormValues: RepositoryFormValues = {
     secret: '',
     url: '',
     user: '',
+    autoAttach: false,
   },
 };
 

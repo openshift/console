@@ -79,7 +79,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
 
   const HelpText = (): React.ReactElement => {
     let helpText: React.ReactNode;
-    switch (values.gitProvider) {
+    switch (gitProvider) {
       case GitProvider.GITHUB:
         helpText = (
           <Trans t={t} ns="pipelines-plugin">
@@ -125,7 +125,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
               link
             </a>{' '}
             to create a token with Read and Write scopes in Account, Workspace membership, Projects,
-            Issues, Pull requests and give your token an expiration i.e 30d.
+            Issues, Pull requests and Webhooks.
           </Trans>
         );
         break;
@@ -204,7 +204,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
           fieldId="test"
           label={t('pipelines-plugin~Webhook URL')}
           helperText={t(
-            'pipelines-plugin~We have detected a URL that can be used to configure the webhook.',
+            'pipelines-plugin~We have detected a URL that can be used to configure the webhook. It will be created and attached to the Git repository.',
           )}
         >
           <ClipboardCopy
