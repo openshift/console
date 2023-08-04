@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Link, match as RMatch } from 'react-router-dom';
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -168,7 +168,7 @@ ListPageWrapper.displayName = 'ListPageWrapper_';
 
 export type FireManProps = {
   canCreate?: boolean;
-  textFilter: string;
+  textFilter?: string;
   createAccessReview?: {
     model: K8sKind;
     namespace?: string;
@@ -180,189 +180,172 @@ export type FireManProps = {
   resources: FirehoseResource[];
   badge?: React.ReactNode;
   helpText?: React.ReactNode;
-  title: string;
+  title?: string;
   autoFocus?: boolean;
   cluster?: string; // TODO remove multicluster
 };
 
-type FireManState = {
-  reduxIDs: string[];
-  expand?: boolean;
-};
+export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }> = (props) => {
+  const {
+    cluster,
+    resources,
+    textFilter,
+    canCreate,
+    createAccessReview,
+    createButtonText,
+    createProps = {},
+    helpText,
+    badge,
+    title,
+  } = props;
 
-export const FireMan = connect<{}, { filterList: typeof filterList }, FireManProps, FireManState>(
-  null,
-  { filterList },
-)(
-  class ConnectedFireMan extends React.PureComponent<
-    FireManProps & { filterList: typeof filterList },
-    FireManState
-  > {
-    constructor(props) {
-      super(props);
-      this.onExpandChange = this.onExpandChange.bind(this);
-      this.applyFilter = this.applyFilter.bind(this);
+  const [reduxIDs, setReduxIDs] = React.useState([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [expand] = React.useState();
 
-      const reduxIDs = props.resources.map((r) =>
-        makeReduxID(
-          kindObj(r.kind),
-          makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
-          this.props.cluster, // TODO remove multicluster
-        ),
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    params.forEach((v, k) => applyFilter(k, v));
+
+    const reduxId = resources.map((r) =>
+      makeReduxID(
+        kindObj(r.kind),
+        makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
+        cluster, // TODO remove multicluster
+      ),
+    );
+    setReduxIDs(reduxId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
+    const reduxId = resources.map((r) =>
+      makeReduxID(
+        kindObj(r.kind),
+        makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
+        cluster, // TODO remove multicluster
+      ),
+    );
+
+    if (_.isEqual(reduxId, reduxIDs)) {
+      return;
+    }
+
+    // reapply filters to the new list...
+    setReduxIDs(reduxId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cluster, resources]);
+
+  const updateURL = (filterName: string, options: any) => {
+    if (filterName !== textFilter) {
+      // TODO (ggreer): support complex filters (objects, not just strings)
+      return;
+    }
+    const params = new URLSearchParams(window.location.search);
+    if (options) {
+      params.set(filterName, options);
+    } else {
+      params.delete(filterName);
+    }
+    const url = new URL(window.location.href);
+    history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+  };
+
+  const applyFilter = (filterName: string, options: any) => {
+    // TODO: (ggreer) lame blacklist of query args. Use a whitelist based on resource filters
+    if (['q', 'kind', 'orderBy', 'sortBy'].includes(filterName)) {
+      return;
+    }
+    if (filterName.indexOf(storagePrefix) === 0) {
+      return;
+    }
+    reduxIDs.forEach((id) => props.filterList(id, filterName, options));
+    updateURL(filterName, options);
+  };
+
+  const runOrNavigate = (itemName: string) => {
+    const action = _.isFunction(createProps.action) && createProps.action(itemName);
+    if (action) {
+      action();
+    } else if (_.isFunction(createProps.createLink)) {
+      history.push(createProps.createLink(itemName));
+    }
+  };
+
+  let createLink: any;
+
+  if (canCreate) {
+    if (createProps.to) {
+      createLink = (
+        <Link className="co-m-primary-action" to={createProps.to}>
+          <Button variant="primary" id="yaml-create" data-test="item-create">
+            {createButtonText}
+          </Button>
+        </Link>
       );
-      this.state = { reduxIDs };
-    }
-
-    UNSAFE_componentWillReceiveProps({ resources, cluster }: FireManProps) {
-      const reduxIDs = resources.map((r) =>
-        makeReduxID(
-          kindObj(r.kind),
-          makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
-          cluster, // TODO remove multicluster
-        ),
+    } else if (createProps.items) {
+      createLink = (
+        <div className="co-m-primary-action">
+          <Dropdown
+            buttonClassName="pf-m-primary"
+            id="item-create"
+            dataTest="item-create"
+            menuClassName={classNames({ 'pf-m-align-right-on-md': title })}
+            title={createButtonText}
+            noSelection
+            items={createProps.items}
+            onChange={runOrNavigate}
+          />
+        </div>
       );
-      if (_.isEqual(reduxIDs, this.state.reduxIDs)) {
-        return;
-      }
-
-      // reapply filters to the new list...
-      // TODO (kans): we probably just need to be able to create new lists with filters already applied
-      this.setState({ reduxIDs }, () => this.UNSAFE_componentWillMount());
+    } else {
+      createLink = (
+        <div className="co-m-primary-action">
+          <Button variant="primary" id="yaml-create" data-test="item-create" {...createProps}>
+            {createButtonText}
+          </Button>
+        </div>
+      );
     }
-
-    onExpandChange(expand) {
-      this.setState({ expand });
+    if (!_.isEmpty(createAccessReview)) {
+      createLink = (
+        <RequireCreatePermission
+          model={createAccessReview.model}
+          namespace={createAccessReview.namespace}
+        >
+          {createLink}
+        </RequireCreatePermission>
+      );
     }
+  }
 
-    updateURL(filterName, options) {
-      if (filterName !== this.props.textFilter) {
-        // TODO (ggreer): support complex filters (objects, not just strings)
-        return;
-      }
-      const params = new URLSearchParams(window.location.search);
-      if (options) {
-        params.set(filterName, options);
-      } else {
-        params.delete(filterName);
-      }
-      const url = new URL(window.location.href);
-      history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
-    }
-
-    applyFilter(filterName, options) {
-      // TODO: (ggreer) lame blacklist of query args. Use a whitelist based on resource filters
-      if (['q', 'kind', 'orderBy', 'sortBy'].includes(filterName)) {
-        return;
-      }
-      if (filterName.indexOf(storagePrefix) === 0) {
-        return;
-      }
-      this.state.reduxIDs.forEach((id) => this.props.filterList(id, filterName, options));
-      this.updateURL(filterName, options);
-    }
-
-    UNSAFE_componentWillMount() {
-      const params = new URLSearchParams(window.location.search);
-      params.forEach((v, k) => this.applyFilter(k, v));
-    }
-
-    runOrNavigate = (itemName) => {
-      const { createProps = {} } = this.props;
-      const action = _.isFunction(createProps.action) && createProps.action(itemName);
-      if (action) {
-        action();
-      } else if (_.isFunction(createProps.createLink)) {
-        history.push(createProps.createLink(itemName));
-      }
-    };
-
-    render() {
-      const {
-        canCreate,
-        createAccessReview,
-        createButtonText,
-        createProps = {},
-        helpText,
-        resources,
-        badge,
-        title,
-      } = this.props;
-
-      let createLink;
-      if (canCreate) {
-        if (createProps.to) {
-          createLink = (
-            <Link className="co-m-primary-action" to={createProps.to}>
-              <Button variant="primary" id="yaml-create" data-test="item-create">
-                {createButtonText}
-              </Button>
-            </Link>
-          );
-        } else if (createProps.items) {
-          createLink = (
-            <div className="co-m-primary-action">
-              <Dropdown
-                buttonClassName="pf-m-primary"
-                id="item-create"
-                dataTest="item-create"
-                menuClassName={classNames({ 'pf-m-align-right-on-md': title })}
-                title={createButtonText}
-                noSelection
-                items={createProps.items}
-                onChange={this.runOrNavigate}
-              />
-            </div>
-          );
-        } else {
-          createLink = (
-            <div className="co-m-primary-action">
-              <Button variant="primary" id="yaml-create" data-test="item-create" {...createProps}>
-                {createButtonText}
-              </Button>
-            </div>
-          );
-        }
-        if (!_.isEmpty(createAccessReview)) {
-          createLink = (
-            <RequireCreatePermission
-              model={createAccessReview.model}
-              namespace={createAccessReview.namespace}
-            >
-              {createLink}
-            </RequireCreatePermission>
-          );
-        }
-      }
-
-      return (
-        <>
-          {/* Badge rendered from PageHeading only when title is present */}
-          <PageHeading
-            title={title}
-            badge={title ? badge : null}
-            className={classNames({ 'co-m-nav-title--row': createLink })}
-          >
-            {createLink && (
-              <div className={classNames({ 'co-m-pane__createLink--no-title': !title })}>
-                {createLink}
-              </div>
-            )}
-            {!title && badge && <div>{badge}</div>}
-          </PageHeading>
-          {helpText && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
-          <div className="co-m-pane__body co-m-pane__body--no-top-margin">
-            {inject(this.props.children, {
-              resources,
-              expand: this.state.expand,
-              reduxIDs: this.state.reduxIDs,
-              applyFilter: this.applyFilter,
-            })}
+  return (
+    <>
+      {/* Badge rendered from PageHeading only when title is present */}
+      <PageHeading
+        title={title}
+        badge={title ? badge : null}
+        className={classNames({ 'co-m-nav-title--row': createLink })}
+      >
+        {createLink && (
+          <div className={classNames({ 'co-m-pane__createLink--no-title': !title })}>
+            {createLink}
           </div>
-        </>
-      );
-    }
-  },
-);
+        )}
+        {!title && badge && <div>{badge}</div>}
+      </PageHeading>
+      {helpText && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
+      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+        {inject(props.children, {
+          resources,
+          expand,
+          reduxIDs,
+          applyFilter,
+        })}
+      </div>
+    </>
+  );
+};
 FireMan.displayName = 'FireMan';
 
 export type Flatten<

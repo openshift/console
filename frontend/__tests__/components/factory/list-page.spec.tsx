@@ -72,8 +72,8 @@ describe(FireMan.displayName, () => {
   let wrapper: ShallowWrapper<any>;
 
   beforeEach(() => {
-    const resources = [{ kind: 'Node' }];
-    wrapper = shallow(<FireMan.WrappedComponent resources={resources} />);
+    const resources = [{ kind: 'Node', prop: 'obj' }];
+    wrapper = shallow(<FireMan resources={resources} />);
   });
 
   it('renders `title` if given `title`', () => {
