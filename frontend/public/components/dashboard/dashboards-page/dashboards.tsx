@@ -2,7 +2,6 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 
 import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
@@ -10,6 +9,7 @@ import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '..
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { RestoreGettingStartedButton } from '@console/shared/src/components/getting-started';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import {
   useExtensions,
   DashboardsCard,
@@ -97,7 +97,8 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
     () => [
       {
         href: '',
-        name: t('public~Cluster'),
+        // t('public~Cluster')
+        nameKey: 'public~Cluster',
         component: ClusterDashboard,
         badge: <RestoreGettingStartedButton userSettingsKey={USER_SETTINGS_KEY} />,
       },
@@ -110,16 +111,19 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
     () => allPages.find((page) => `/dashboards${page.href}` === match.path)?.badge,
     [allPages, match],
   );
+  const titleProviderValues = {
+    telemetryPrefix: 'Overview',
+    titlePrefix: title,
+  };
 
   return kindsInFlight && k8sModels.size === 0 ? (
     <LoadingBox />
   ) : (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <PageHeading title={title} detail={true} badge={badge} />
-      <HorizontalNav match={match} pages={allPages} noStatusBox />
+      <PageTitleContext.Provider value={titleProviderValues}>
+        <PageHeading title={title} detail={true} badge={badge} />
+        <HorizontalNav match={match} pages={allPages} noStatusBox />
+      </PageTitleContext.Provider>
     </>
   );
 };
