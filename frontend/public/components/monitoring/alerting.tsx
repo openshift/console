@@ -138,7 +138,8 @@ const SelectedSilencesContext = React.createContext({
   setSelectedSilences: undefined,
 });
 
-const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
+const ruleURL = (rule: Rule, namespace: string) =>
+  namespace ? `/dev-monitoring/ns/${namespace}/rules/${rule?.id}` : `/monitoring/rules/${rule?.id}`;
 
 const alertingRuleSource = (rule: Rule): AlertSource | string => {
   if (rule.sourceId === undefined || rule.sourceId === 'prometheus') {
@@ -161,8 +162,6 @@ const silenceAlert = (alert: Alert, namespace?: string) =>
       ? `/dev-monitoring/ns/${namespace}/silences/~new/?${labelsToParams(alert.labels)}`
       : `/monitoring/silences/~new/?${labelsToParams(alert.labels)}`,
   );
-
-const viewAlertRule = (alert: Alert) => history.push(ruleURL(alert.rule));
 
 const MonitoringResourceIcon: React.FC<MonitoringResourceIconProps> = ({ className, resource }) => (
   <span
@@ -949,11 +948,7 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                     <div className="co-resource-item">
                       <MonitoringResourceIcon resource={RuleResource} />
                       <Link
-                        to={
-                          namespace
-                            ? `/dev-monitoring/ns/${namespace}/rules/${rule?.id}`
-                            : ruleURL(rule)
-                        }
+                        to={ruleURL(rule, namespace)}
                         data-test="alert-rules-detail-resource-link"
                         className="co-resource-item__resource-name"
                       >
@@ -1443,7 +1438,10 @@ const SilencedAlertsList = ({ alerts }) => {
             <div className="dropdown-kebab-pf">
               <KebabDropdown
                 dropdownItems={[
-                  <DropdownItem key="view-rule" onClick={() => viewAlertRule(a)}>
+                  <DropdownItem
+                    key="view-rule"
+                    onClick={() => history.push(ruleURL(a.rule, namespace))}
+                  >
                     {t('public~View alerting rule')}
                   </DropdownItem>,
                 ]}
@@ -1604,8 +1602,10 @@ const AlertTableRow: React.FC<RowProps<Alert>> = ({ obj }) => {
 
   const title: string = obj.annotations?.description || obj.annotations?.message;
 
+  const [namespace] = useActiveNamespace();
+
   const dropdownItems = [
-    <DropdownItem key="view-rule" onClick={() => viewAlertRule(obj)}>
+    <DropdownItem key="view-rule" onClick={() => history.push(ruleURL(obj.rule, namespace))}>
       {t('public~View alerting rule')}
     </DropdownItem>,
   ];
@@ -1870,12 +1870,14 @@ const RuleTableRow: React.FC<RowProps<Rule>> = ({ obj }) => {
 
   const title: string = obj.annotations?.description || obj.annotations?.message;
 
+  const [namespace] = useActiveNamespace();
+
   return (
     <>
       <td className={tableRuleClasses[0]} title={title}>
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={RuleResource} />
-          <Link to={ruleURL(obj)} className="co-resource-item__resource-name">
+          <Link to={ruleURL(obj, namespace)} className="co-resource-item__resource-name">
             {obj.name}
           </Link>
         </div>
