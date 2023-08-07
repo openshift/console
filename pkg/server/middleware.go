@@ -11,6 +11,8 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/serverutils"
 
+	"github.com/gorilla/websocket"
+
 	"k8s.io/klog"
 )
 
@@ -57,13 +59,18 @@ func authMiddlewareWithUser(authers map[string]*auth.Authenticator, handlerFunc 
 			"TRACE":
 			safe = true
 		}
-		if !safe {
+
+		wsUpgrade := websocket.IsWebSocketUpgrade(r)
+
+		if !safe || wsUpgrade {
 			if err := auther.VerifySourceOrigin(r); err != nil {
 				klog.Errorf("invalid source origin: %v", err)
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
+		}
 
+		if !safe {
 			if err := auther.VerifyCSRFToken(r); err != nil {
 				klog.Errorf("invalid CSRFToken: %v", err)
 				w.WriteHeader(http.StatusForbidden)
