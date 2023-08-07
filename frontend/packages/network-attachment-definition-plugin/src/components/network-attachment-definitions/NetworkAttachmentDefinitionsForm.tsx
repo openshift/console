@@ -58,6 +58,7 @@ const buildConfig = (
     config.vlan = parseInt(typeParamsData?.vlanTagNum?.value, 10) || undefined;
     config.macspoofchk = _.get(typeParamsData, 'macspoofchk.value', true);
     config.ipam = ipam;
+    config.preserveDefaultVlan = false;
   } else if (networkType === 'sriov') {
     config.ipam = ipam;
   } else if (networkType === ovnKubernetesNetworkType) {
