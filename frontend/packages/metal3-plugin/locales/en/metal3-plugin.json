@@ -202,5 +202,8 @@
   "This host was provisioned outside of this cluster and added manually.": "This host was provisioned outside of this cluster and added manually.",
   "Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.": "Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.",
   "Under maintenance": "Under maintenance",
-  "Stopping maintenance": "Stopping maintenance"
+  "Stopping maintenance": "Stopping maintenance",
+  "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.": "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.",
+  "Cannot be longer than {{characterCount}} characters.": "Cannot be longer than {{characterCount}} characters.",
+  "Required": "Required"
 }

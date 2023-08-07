@@ -13,7 +13,7 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import { referenceForModel, SecretKind } from '@console/internal/module/k8s';
-import { getName, nameValidationSchema } from '@console/shared';
+import { getName } from '@console/shared';
 import { usePrevious } from '@console/shared/src/hooks/previous';
 import { createBareMetalHost, updateBareMetalHost } from '../../../k8s/requests/bare-metal-host';
 import { BareMetalHostModel } from '../../../models';
@@ -26,9 +26,10 @@ import {
 } from '../../../selectors';
 import { getSecretPassword, getSecretUsername } from '../../../selectors/secret';
 import { BareMetalHostKind } from '../../../types';
+import { MAC_REGEX, BMC_ADDRESS_REGEX } from '../../../validations/regex';
+import { nameValidationSchema } from '../../../validations/validations';
 import AddBareMetalHostForm from './AddBareMetalHostForm';
 import { AddBareMetalHostFormValues } from './types';
-import { MAC_REGEX, BMC_ADDRESS_REGEX } from './utils';
 
 const getInitialValues = (
   host: BareMetalHostKind,
@@ -124,7 +125,10 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
   const initialValues = getInitialValues(host, secret, !!name, enablePowerMgmt);
   const prevInitialValues = getInitialValues(initialHost, initialSecret, !!name, enablePowerMgmt);
 
-  const showUpdated = !_.isEmpty(initialHost) && !_.isEqual(prevInitialValues, initialValues);
+  const showUpdated =
+    (credentialsName ? !_.isEmpty(initialSecret) : true) &&
+    !_.isEmpty(initialHost) &&
+    !_.isEqual(prevInitialValues, initialValues);
 
   const addHostValidationSchema = Yup.lazy(({ enablePowerManagement }) =>
     Yup.object().shape({
@@ -177,6 +181,8 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
       });
   };
 
+  const isEditing = !!name;
+
   return (
     <Formik
       initialValues={initialValues}
@@ -184,8 +190,19 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
       onSubmit={handleSubmit}
       onReset={() => setReload(true)}
       validationSchema={addHostValidationSchema}
+      validateOnMount={isEditing}
+      initialTouched={
+        isEditing
+          ? Object.keys(initialValues).reduce((acc, curr) => {
+              acc[curr] = true;
+              return acc;
+            }, {})
+          : undefined
+      }
     >
-      {(props) => <AddBareMetalHostForm {...props} isEditing={!!name} showUpdated={showUpdated} />}
+      {(props) => (
+        <AddBareMetalHostForm {...props} isEditing={isEditing} showUpdated={showUpdated} />
+      )}
     </Formik>
   );
 };
