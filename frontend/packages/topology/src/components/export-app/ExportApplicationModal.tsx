@@ -257,7 +257,7 @@ export const handleExportApplication = async (
     });
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.warn(err, 'Resource not found');
+    console.warn('Error while getting export resource:', err);
     exportApplicationModal({
       name,
       namespace,
