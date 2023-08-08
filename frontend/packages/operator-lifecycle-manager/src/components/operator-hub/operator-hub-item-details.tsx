@@ -32,7 +32,7 @@ import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { MarkdownView } from '../clusterserviceversion';
 import { defaultChannelNameFor } from '../index';
 import { OperatorChannelSelect, OperatorVersionSelect } from './operator-channel-version-select';
-import { shortLivedTokenAuth, isAWSSTSCluster } from './operator-hub-utils';
+import { isAWSSTSCluster, isAzureWIFCluster } from './operator-hub-utils';
 import { InfraFeatures, OperatorHubItem } from './index';
 
 // t('olm~Basic Install'),
@@ -363,7 +363,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             <div className="co-catalog-page__overlay-description">
               {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) &&
                 showWarn &&
-                infraFeatures?.find((i) => i === InfraFeatures[shortLivedTokenAuth]) && (
+                infraFeatures?.find((i) => i === InfraFeatures.TokenAuth) && (
                   <Alert
                     isInline
                     variant="warning"
@@ -374,6 +374,23 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                     <p>
                       {t(
                         'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
+                      )}
+                    </p>
+                  </Alert>
+                )}
+              {isAzureWIFCluster(cloudCredentials, infrastructure, authentication) &&
+                showWarn &&
+                infraFeatures?.find((i) => i === InfraFeatures.TokenAuth) && (
+                  <Alert
+                    isInline
+                    variant="warning"
+                    title={t('olm~Cluster in Azure Workload Identity / Federated Identity Mode')}
+                    actionClose={<AlertActionCloseButton onClose={() => setShowWarn(false)} />}
+                    className="pf-u-mb-lg"
+                  >
+                    <p>
+                      {t(
+                        'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. See the operator description for more details.',
                       )}
                     </p>
                   </Alert>
