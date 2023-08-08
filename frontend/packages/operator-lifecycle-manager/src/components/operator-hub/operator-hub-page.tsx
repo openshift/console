@@ -47,8 +47,8 @@ import { subscriptionFor } from '../operator-group';
 import { OperatorHubTileView } from './operator-hub-items';
 import {
   getCatalogSourceDisplayName,
-  shortLivedTokenAuth,
   isAWSSTSCluster,
+  isAzureWIFCluster,
 } from './operator-hub-utils';
 import {
   OperatorHubItem,
@@ -168,8 +168,8 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             // tlsProfiles requires addtional changes
             // [OperatorHubCSVAnnotationKey.tlsProfiles]: tlsProfiles,
             [OperatorHubCSVAnnotationKey.tokenAuthAWS]: tokenAuthAWS,
-            // tokenAuthAzure and tokenAuthGCP require additional changes
-            // [OperatorHubCSVAnnotationKey.tokenAuthAzure]: tokenAuthAzure,
+            [OperatorHubCSVAnnotationKey.tokenAuthAzure]: tokenAuthAzure,
+            // tokenAuthGCP requires additional changes
             // [OperatorHubCSVAnnotationKey.tokenAuthGCP]: tokenAuthGCP,
             [OperatorHubCSVAnnotationKey.actionText]: marketplaceActionText,
             [OperatorHubCSVAnnotationKey.remoteWorkflow]: marketplaceRemoteWorkflow,
@@ -185,10 +185,12 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
 
           const auth = loaded && authentication?.data;
 
+          // old infra feature annotation
           let infrastructureFeatures: InfraFeatures[] = parsedInfraFeatures.map(
             (key) => InfraFeatures[key],
           );
 
+          // new infra feature annotation
           const featuresAnnotationsObjects = [
             { key: InfraFeatures.Disconnected, value: disconnected },
             { key: InfraFeatures.FipsMode, value: fipsCompliant },
@@ -198,6 +200,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             { key: InfraFeatures.csi, value: csi },
           ];
 
+          // override old with new
           featuresAnnotationsObjects.forEach(({ key, value }) => {
             if (value === 'false') {
               // override existing operators.openshift.io/infrastructure-features annotation value
@@ -208,7 +211,9 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
           });
 
           if (tokenAuthAWS === 'true' && isAWSSTSCluster(cloudCredential, infra, auth)) {
-            infrastructureFeatures.push(InfraFeatures[shortLivedTokenAuth]);
+            infrastructureFeatures.push(InfraFeatures.TokenAuth);
+          } else if (tokenAuthAzure === 'true' && isAzureWIFCluster(cloudCredential, infra, auth)) {
+            infrastructureFeatures.push(InfraFeatures.TokenAuth);
           }
 
           const infraFeatures = _.uniq(_.compact(infrastructureFeatures));

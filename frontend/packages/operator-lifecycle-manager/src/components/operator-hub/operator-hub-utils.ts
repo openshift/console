@@ -20,8 +20,6 @@ export const getCatalogSourceDisplayName = (packageManifest: PackageManifestKind
   );
 };
 
-export const shortLivedTokenAuth = 'Short-lived token authentication';
-
 export const isAWSSTSCluster = (
   cloudcreds: CloudCredentialKind,
   infra: InfrastructureKind,
@@ -30,6 +28,18 @@ export const isAWSSTSCluster = (
   return (
     cloudcreds?.spec?.credentialsMode === 'Manual' &&
     infra?.status?.platform === 'AWS' &&
+    auth?.spec?.serviceAccountIssuer !== ''
+  );
+};
+
+export const isAzureWIFCluster = (
+  cloudcreds: CloudCredentialKind,
+  infra: InfrastructureKind,
+  auth: AuthenticationKind,
+) => {
+  return (
+    cloudcreds?.spec?.credentialsMode === 'Manual' &&
+    infra?.status?.platform === 'Azure' &&
     auth?.spec?.serviceAccountIssuer !== ''
   );
 };

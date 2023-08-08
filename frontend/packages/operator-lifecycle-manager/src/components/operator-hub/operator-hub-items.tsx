@@ -31,7 +31,7 @@ import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../con
 import { SubscriptionModel } from '../../models';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
-import { isAWSSTSCluster, shortLivedTokenAuth } from './operator-hub-utils';
+import { isAWSSTSCluster, isAzureWIFCluster } from './operator-hub-utils';
 import {
   OperatorHubItem,
   InstalledState,
@@ -217,7 +217,7 @@ const infraFeaturesSort = (infrastructure) => {
       return 1;
     case InfraFeatures.FipsMode:
       return 2;
-    case InfraFeatures[shortLivedTokenAuth]:
+    case InfraFeatures.TokenAuth:
       return 3;
     default:
       return 4;
@@ -426,9 +426,20 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         currentItem.infrastructure,
         currentItem.authentication,
       ) &&
-      currentItem.infraFeatures?.find((i) => i === InfraFeatures[shortLivedTokenAuth])
+      currentItem.infraFeatures?.find((i) => i === InfraFeatures.TokenAuth)
     ) {
       setTokenizedAuth('AWS');
+    }
+    if (
+      currentItem &&
+      isAzureWIFCluster(
+        currentItem.cloudCredentials,
+        currentItem.infrastructure,
+        currentItem.authentication,
+      ) &&
+      currentItem.infraFeatures?.find((i) => i === InfraFeatures.TokenAuth)
+    ) {
+      setTokenizedAuth('Azure');
     }
   }, [filteredItems]);
 
