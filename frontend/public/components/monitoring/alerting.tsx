@@ -521,7 +521,12 @@ const SilenceMatchersList = ({ silence }) => (
   </div>
 );
 
-const SilenceTableRow: React.FC<RowProps<Silence>> = ({ obj }) => {
+type SilenceTableRowProps = {
+  obj: Silence;
+  showCheckbox?: boolean;
+};
+
+const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, showCheckbox }) => {
   const { t } = useTranslation();
 
   const { createdBy, endsAt, firingAlerts, id, name, startsAt } = obj;
@@ -548,14 +553,16 @@ const SilenceTableRow: React.FC<RowProps<Silence>> = ({ obj }) => {
 
   return (
     <>
-      <td className={tableSilenceClasses[0]}>
-        <Checkbox
-          id={id}
-          isChecked={selectedSilences.has(id)}
-          isDisabled={state === SilenceStates.Expired}
-          onChange={onCheckboxChange}
-        />
-      </td>
+      {showCheckbox && (
+        <td className={tableSilenceClasses[0]}>
+          <Checkbox
+            id={id}
+            isChecked={selectedSilences.has(id)}
+            isDisabled={state === SilenceStates.Expired}
+            onChange={onCheckboxChange}
+          />
+        </td>
+      )}
       <td className={tableSilenceClasses[1]}>
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={SilenceResource} />
@@ -598,6 +605,10 @@ const SilenceTableRow: React.FC<RowProps<Silence>> = ({ obj }) => {
     </>
   );
 };
+
+const SilenceTableRowWithCheckbox: React.FC<RowProps<Silence>> = ({ obj }) => (
+  <SilenceTableRow showCheckbox={true} obj={obj} />
+);
 
 export const alertMessageResources: {
   [labelName: string]: { kind: string; namespaced?: boolean };
@@ -2254,7 +2265,7 @@ const SilencesPage_: React.FC<{}> = () => {
                 data={filteredData ?? []}
                 loaded={loaded}
                 loadError={loadError}
-                Row={SilenceTableRow}
+                Row={SilenceTableRowWithCheckbox}
                 unfilteredData={data}
               />
             </div>
