@@ -8,7 +8,9 @@ import {
   ExpandableSection,
   TextVariants,
   Button,
+  Tooltip,
 } from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 import { FormikValues, useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { Base64 } from 'js-base64';
@@ -155,6 +157,20 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
       <RadioGroupField
         name={`${fieldPrefix}webhook.method`}
         label={t('pipelines-plugin~Secret')}
+        labelIcon={
+          <Tooltip
+            position="right"
+            content={
+              <p>
+                {t(
+                  'pipelines-plugin~The secret is used to attach the webhook to the Git repository.',
+                )}
+              </p>
+            }
+          >
+            <HelpIcon />
+          </Tooltip>
+        }
         required
         options={[
           {
