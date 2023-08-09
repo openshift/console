@@ -2,36 +2,37 @@
 import * as React from 'react';
 import { ActionServiceProviderProps } from '../extensions/actions';
 import {
+  CodeEditorProps,
+  CodeEditorRef,
   ErrorBoundaryFallbackProps,
   HorizontalNavProps,
-  UseResolvedExtensions,
-  VirtualizedTableFC,
-  TableDataProps,
-  UseActiveColumns,
-  ListPageHeaderProps,
-  ListPageCreateProps,
-  ListPageCreateLinkProps,
-  ListPageCreateButtonProps,
-  ListPageCreateDropdownProps,
-  ListPageFilterProps,
-  UseListPageFilter,
-  ResourceLinkProps,
-  ResourceIconProps,
-  OverviewProps,
-  OverviewGridProps,
-  InventoryItemTitleProps,
   InventoryItemBodyProps,
   InventoryItemStatusProps,
-  CodeEditorProps,
-  ResourceYAMLEditorProps,
-  ResourceEventStreamProps,
-  UsePrometheusPoll,
-  TimestampProps,
+  InventoryItemTitleProps,
+  ListPageCreateButtonProps,
+  ListPageCreateDropdownProps,
+  ListPageCreateLinkProps,
+  ListPageCreateProps,
+  ListPageFilterProps,
+  ListPageHeaderProps,
   NamespaceBarProps,
-  CodeEditorRef,
+  OverviewGridProps,
+  OverviewProps,
   QueryBrowserProps,
+  ResourceEventStreamProps,
+  ResourceIconProps,
+  ResourceLinkProps,
+  ResourceYAMLEditorProps,
+  TableDataProps,
+  TimestampProps,
+  UseActiveColumns,
   UseAnnotationsModal,
   UseDeleteModal,
+  UseLabelsModal,
+  UseListPageFilter,
+  UsePrometheusPoll,
+  UseResolvedExtensions,
+  VirtualizedTableFC,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -795,7 +796,7 @@ export const QueryBrowser: React.FC<QueryBrowserProps> = require('@console/share
   .default;
 
 /**
- * A hook for launching a modal for editing a Kubernetes resource's annotations.
+ * A hook that provides a callback to launch a modal for editing Kubernetes resource annotations.
  *
  * @param {object} resource - The resource to edit annotations for, an object of K8sResourceCommon type.
  * @returns A function which will launch a modal for editing a resource's annotations.
@@ -812,7 +813,7 @@ export const useAnnotationsModal: UseAnnotationsModal = require('@console/shared
   .useAnnotationsModal;
 
 /**
- * A hook for launching a modal for deleting a resource.
+ * A hook that provides a callback to launch a modal for deleting a resource.
  *
  * @param resource - The resource to delete.
  * @param redirectTo - (optional) A location to redirect to after deleting the resource.
@@ -829,3 +830,19 @@ export const useAnnotationsModal: UseAnnotationsModal = require('@console/shared
  */
 export const useDeleteModal: UseDeleteModal = require('@console/shared/src/hooks/useDeleteModal')
   .useDeleteModal;
+
+/**
+ * A hook that provides a callback to launch a modal for editing Kubernetes resource labels.
+ *
+ * @param {object} resource - The resource to edit labels for, an object of K8sResourceCommon type.
+ * @returns A function which will launch a modal for editing a resource's labels.
+ * @example
+ * ```tsx
+ * const PodLabelsButton = ({ pod }) => {
+ *   const { t } = useTranslation();
+ *   const launchLabelsModal = useLabelsModal<PodKind>(pod);
+ *   return <button onClick={launchLabelsModal}>{t('Edit Pod Labels')}</button>
+ * }
+ * ```
+ */
+export const useLabelsModal: UseLabelsModal = require('@console/shared/src/hooks/useLabelsModal');

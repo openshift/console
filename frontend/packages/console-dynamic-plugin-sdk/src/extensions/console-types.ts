@@ -724,3 +724,5 @@ export type UseDeleteModal = (
   btnText?: React.ReactNode,
   deleteAllResources?: () => Promise<K8sResourceKind[]>,
 ) => () => void;
+
+export type UseLabelsModal = (resource: K8sResourceCommon) => () => void;

@@ -47,8 +47,10 @@ export const configureNamespacePullSecretModal = (props) =>
     './configure-ns-pull-secret-modal' /* webpackChunkName: "configure-ns-pull-secret-modal" */
   ).then((m) => m.configureNamespacePullSecretModal(props));
 
-export const labelsModal = (props) =>
-  import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) => m.labelsModal(props));
+export const labelsModalLauncher = (props) =>
+  import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
+    m.labelsModalLauncher(props),
+  );
 
 export const podSelectorModal = (props) =>
   import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
@@ -65,8 +67,8 @@ export const configureUpdateStrategyModal = (props) =>
     './configure-update-strategy-modal' /* webpackChunkName: "configure-update-strategy-modal" */
   ).then((m) => m.configureUpdateStrategyModal(props));
 
-export const annotationsModal = (props) =>
-  import('./tags' /* webpackChunkName: "tags" */).then((m) => m.annotationsModal(props));
+export const annotationsModalLauncher = (props) =>
+  import('./tags' /* webpackChunkName: "tags" */).then((m) => m.annotationsModalLauncher(props));
 
 export const deleteModal = (props) =>
   import('./delete-modal' /* webpackChunkName: "delete-modal" */).then((m) => m.deleteModal(props));

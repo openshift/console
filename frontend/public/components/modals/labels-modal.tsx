@@ -1,27 +1,46 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { k8sPatch, referenceForModel } from '../../module/k8s';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { ResourceIcon, SelectorInput, withHandlePromise } from '../utils';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { K8sResourceKind } from '../../module/k8s';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import {
+  createModalLauncher,
+  ModalBody,
+  ModalComponentProps,
+  ModalSubmitFooter,
+  ModalTitle,
+} from '../factory/modal';
+import { ResourceIcon, SelectorInput } from '../utils';
 
 const LABELS_PATH = '/metadata/labels';
 const TEMPLATE_SELECTOR_PATH = '/spec/template/metadata/labels';
 
-const BaseLabelsModal = withHandlePromise((props) => {
+const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
+  cancel,
+  close,
+  descriptionKey,
+  isPodSelector,
+  kind,
+  labelClassName,
+  messageKey,
+  messageVariables,
+  path,
+  resource,
+}) => {
+  const [handlePromise, , errorMessage] = usePromiseHandler<K8sResourceCommon>();
   const [labels, setLabels] = React.useState(
-    SelectorInput.arrayify(_.get(props.resource, props.path.split('/').slice(1))),
+    SelectorInput.arrayify(_.get(resource, path.split('/').slice(1))),
   );
   const createPath = !labels.length;
   const { t } = useTranslation();
 
   const submit = (e) => {
     e.preventDefault();
-
-    const { kind, path, resource, isPodSelector } = props;
-
-    const patch = [
+    const data = [
       {
         op: createPath ? 'add' : 'replace',
         path,
@@ -35,31 +54,23 @@ const BaseLabelsModal = withHandlePromise((props) => {
       isPodSelector && !_.isEmpty(_.get(resource, TEMPLATE_SELECTOR_PATH.split('/').slice(1)));
 
     if (updateTemplate) {
-      patch.push({
+      data.push({
         path: TEMPLATE_SELECTOR_PATH,
         op: 'replace',
         value: SelectorInput.objectify(labels),
       });
     }
-    const promise = k8sPatch(kind, resource, patch);
-    props.handlePromise(promise, props.close);
+    const promise = k8sPatchResource({ model: kind, resource, data });
+    handlePromise(promise).then(close);
   };
-
-  const {
-    kind,
-    resource,
-    descriptionKey,
-    messageKey,
-    messageVariables,
-    labelClassName,
-    errorMessage,
-  } = props;
 
   return (
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>
         {descriptionKey
-          ? t('public~Edit {{description}}', { description: t(descriptionKey) })
+          ? t('public~Edit {{description}}', {
+              description: t(descriptionKey),
+            })
           : t('public~Edit labels')}
       </ModalTitle>
       <ModalBody>
@@ -78,7 +89,7 @@ const BaseLabelsModal = withHandlePromise((props) => {
               {descriptionKey
                 ? t('{{description}} for', { description: t(descriptionKey) })
                 : t('public~Labels for')}{' '}
-              <ResourceIcon kind={kind.crd ? referenceForModel(kind) : kind.kind} />{' '}
+              <ResourceIcon groupVersionKind={getGroupVersionKindForModel(kind)} />{' '}
               {resource.metadata.name}
             </label>
             <SelectorInput
@@ -94,17 +105,18 @@ const BaseLabelsModal = withHandlePromise((props) => {
         errorMessage={errorMessage}
         inProgress={false}
         submitText={t('public~Save')}
-        cancel={props.cancel}
+        cancel={cancel}
       />
     </form>
   );
-});
+};
 
-export const labelsModal = createModalLauncher((props) => (
+export const LabelsModal: React.FC<LabelsModalProps> = (props) => (
   <BaseLabelsModal path={LABELS_PATH} {...props} />
-));
+);
+export const labelsModalLauncher = createModalLauncher<LabelsModalProps>(LabelsModal);
 
-export const podSelectorModal = createModalLauncher((props) => {
+export const podSelectorModal = createModalLauncher<PodSelectorModalProps>((props) => {
   const { t } = useTranslation();
   return (
     <BaseLabelsModal
@@ -126,3 +138,19 @@ export const podSelectorModal = createModalLauncher((props) => {
     />
   );
 });
+
+type BaseLabelsModalProps = {
+  descriptionKey?: string;
+  isPodSelector?: boolean;
+  kind: K8sModel;
+  labelClassName?: string;
+  messageKey?: string;
+  messageVariables?: { [key: string]: string };
+  path: string;
+  resource: K8sResourceKind;
+} & ModalComponentProps;
+export type LabelsModalProps = Omit<BaseLabelsModalProps, 'path'>;
+type PodSelectorModalProps = Omit<
+  BaseLabelsModalProps,
+  'descriptionKey' | 'isPodSelector' | 'labelClassName' | 'messageKey' | 'messageVariables' | 'path'
+>;
