@@ -690,24 +690,15 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
             )}
           </UpdatesType>
           <UpdatesBar>
-            {!isMaster && isPaused && !isUpdated ? (
-              <p>
-                <PauseCircleIcon />{' '}
-                {/* TODO:  change second sentence to 'Must resume before MM/DD/YY.'
-                once https://issues.redhat.com/browse/MCO-77 is complete */}
-                {t('public~Update is paused. Resume update as soon as possible.')}
-              </p>
-            ) : (
-              <Progress
-                title={t('public~{{updatedMCPNodes}} of {{totalMCPNodes}}', {
-                  updatedMCPNodes,
-                  totalMCPNodes,
-                })}
-                value={!_.isNaN(percentMCPNodes) ? percentMCPNodes : null}
-                size={ProgressSize.sm}
-                variant={percentMCPNodes === 100 ? ProgressVariant.success : null}
-              />
-            )}
+            <Progress
+              title={t('public~{{updatedMCPNodes}} of {{totalMCPNodes}}', {
+                updatedMCPNodes,
+                totalMCPNodes,
+              })}
+              value={!_.isNaN(percentMCPNodes) ? percentMCPNodes : null}
+              size={ProgressSize.sm}
+              variant={percentMCPNodes === 100 ? ProgressVariant.success : null}
+            />
           </UpdatesBar>
           {!isMaster && !isUpdated && machineConfigPoolIsEditable && (
             <Button
