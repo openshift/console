@@ -69,13 +69,13 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
   const getPermssionSectionHeading = (git: GitProvider) => {
     switch (git) {
       case GitProvider.GITHUB:
-        return t('pipelines-plugin~See GitHub permissions');
+        return t('pipelines-plugin~See GitHub Events');
       case GitProvider.GITLAB:
-        return t('pipelines-plugin~See Gitlab permissions');
+        return t('pipelines-plugin~See Gitlab Events');
       case GitProvider.BITBUCKET:
-        return t('pipelines-plugin~See BitBucket permissions');
+        return t('pipelines-plugin~See BitBucket Events');
       default:
-        return t('pipelines-plugin~See Git permissions');
+        return t('pipelines-plugin~See Git Events');
     }
   };
 
@@ -93,8 +93,8 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
             >
               link
             </a>{' '}
-            to create a token with repo, public_repo & admin:repo_hook scopes and give your token an
-            expiration, i.e 30d.
+            to create a <b>classic</b> token with <b>repo</b> & <b>admin:repo_hook</b> scopes and
+            give your token an expiration, i.e 30d.
           </Trans>
         );
         break;
@@ -102,7 +102,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
       case GitProvider.GITLAB:
         helpText = (
           <Trans t={t} ns="pipelines-plugin">
-            use your Gitlab Personal access token. Use this{' '}
+            Use your Gitlab Personal access token. Use this{' '}
             <a
               href={AccessTokenDocLinks[GitProvider.GITLAB]}
               target="_blank"
@@ -110,7 +110,8 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
             >
               link
             </a>{' '}
-            to create a token with api scope and give your token an expiration i.e 30d.
+            to create a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>.
+            Give your token an expiration i.e 30d.
           </Trans>
         );
         break;
@@ -118,7 +119,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
       case GitProvider.BITBUCKET:
         helpText = (
           <Trans t={t} ns="pipelines-plugin">
-            use your Bitbucket App password. Use this{' '}
+            Use your Bitbucket App password. Use this{' '}
             <a
               href={AccessTokenDocLinks[GitProvider.BITBUCKET]}
               target="_blank"
@@ -126,8 +127,8 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
             >
               link
             </a>{' '}
-            to create a token with Read and Write scopes in Account, Workspace membership, Projects,
-            Issues, Pull requests and Webhooks.
+            to create a token with <b>Read and Write </b>scopes in{' '}
+            <b>Account, Workspace membership, Projects, Issues, Pull requests and Webhooks</b>.
           </Trans>
         );
         break;
@@ -163,7 +164,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
             content={
               <p>
                 {t(
-                  'pipelines-plugin~The secret is used to attach the webhook to the Git repository.',
+                  'pipelines-plugin~The secret is required to set the Build status and to attach the webhook to the Git repository.',
                 )}
               </p>
             }
@@ -263,7 +264,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         <>
           <ExpandableSection toggleText={getPermssionSectionHeading(gitProvider)}>
             <FormGroup
-              label={t('pipelines-plugin~Repository Permissions:')}
+              label={t('pipelines-plugin~Events triggering the Webhook: ')}
               fieldId="repo-permissions"
             >
               <Text component={TextVariants.small}>

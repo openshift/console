@@ -55,6 +55,7 @@ export abstract class BaseService {
   abstract createRepoWebhook(
     token: string,
     webhookURL: string,
+    sslVerification: boolean,
     webhookSecret: string,
   ): Promise<boolean>;
 

@@ -18,10 +18,8 @@ const PermissionsSection: React.FC<PermissionsSectionProps> = ({ formContextFiel
     case GitProvider.GITHUB:
       permission = (
         <List>
-          <ListItem>Commit comments</ListItem>
-          <ListItem>Issue comments</ListItem>
           <ListItem>Pull request</ListItem>
-          <ListItem>Pushes</ListItem>
+          <ListItem>Push</ListItem>
         </List>
       );
       break;
@@ -30,7 +28,6 @@ const PermissionsSection: React.FC<PermissionsSectionProps> = ({ formContextFiel
         <List>
           <ListItem>Merge request Events</ListItem>
           <ListItem>Push Events</ListItem>
-          <ListItem>Note Events</ListItem>
         </List>
       );
       break;
@@ -40,7 +37,6 @@ const PermissionsSection: React.FC<PermissionsSectionProps> = ({ formContextFiel
           <ListItem>Repository: Push</ListItem>
           <ListItem>Pull Request: Created</ListItem>
           <ListItem>Pull Request: Updated</ListItem>
-          <ListItem>Pull Request: Comment Created</ListItem>
         </List>
       );
       break;
