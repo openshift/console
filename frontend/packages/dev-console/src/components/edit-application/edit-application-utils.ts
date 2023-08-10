@@ -4,12 +4,8 @@ import { ImportStrategy } from '@console/git-service/src';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
-import {
-  K8sResourceKind,
-  referenceFor,
-  referenceForModel,
-  ImagePullPolicy,
-} from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel, ImagePullPolicy } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s/k8s';
 import {
   KNATIVE_AUTOSCALEWINDOW_ANNOTATION,
   KNATIVE_CONCURRENCYTARGET_ANNOTATION,
