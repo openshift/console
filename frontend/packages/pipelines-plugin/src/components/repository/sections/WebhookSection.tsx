@@ -69,13 +69,13 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
   const getPermssionSectionHeading = (git: GitProvider) => {
     switch (git) {
       case GitProvider.GITHUB:
-        return t('pipelines-plugin~See GitHub Events');
+        return t('pipelines-plugin~See GitHub events');
       case GitProvider.GITLAB:
-        return t('pipelines-plugin~See Gitlab Events');
+        return t('pipelines-plugin~See Gitlab events');
       case GitProvider.BITBUCKET:
-        return t('pipelines-plugin~See BitBucket Events');
+        return t('pipelines-plugin~See BitBucket events');
       default:
-        return t('pipelines-plugin~See Git Events');
+        return t('pipelines-plugin~See Git events');
     }
   };
 
@@ -264,7 +264,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         <>
           <ExpandableSection toggleText={getPermssionSectionHeading(gitProvider)}>
             <FormGroup
-              label={t('pipelines-plugin~Events triggering the Webhook: ')}
+              label={t('pipelines-plugin~Events triggering the webhook: ')}
               fieldId="repo-permissions"
             >
               <Text component={TextVariants.small}>

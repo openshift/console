@@ -168,21 +168,21 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       .then(async (resources) => {
         if (pipelineEnabled && pipelineType === PipelineType.PAC) {
           const isWebHookAttached = await createRemoteWebhook(repository, pac, loaded);
-          if (!isWebHookAttached) {
-            toastContext.addToast({
-              variant: AlertVariant.danger,
-              title: t('devconsole~Webhook creation failed'),
-              content: (
-                <WebhookToastContent
-                  repositoryName={repository.name}
-                  git={values.git}
-                  projectName={projectName}
-                />
-              ),
-              timeout: true,
-              dismissible: true,
-            });
-          }
+          toastContext.addToast({
+            variant: isWebHookAttached ? AlertVariant.success : AlertVariant.danger,
+            title: isWebHookAttached
+              ? t('devconsole~Webhook attached to the Git Repository')
+              : t('devconsole~Could not attach webhook to the Git Repository'),
+            content: !isWebHookAttached ? (
+              <WebhookToastContent
+                repositoryName={repository.name}
+                git={values.git}
+                projectName={projectName}
+              />
+            ) : null,
+            timeout: true,
+            dismissible: true,
+          });
         }
 
         const deployedResources = resources.filter(
