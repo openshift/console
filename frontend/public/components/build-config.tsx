@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { match as Match } from 'react-router';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import * as _ from 'lodash-es';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -288,13 +289,17 @@ export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
     [builds, buildsLoaded, buildsLoadError],
   );
 
-  const buildResource = props.data.map((buildConfig) => {
-    buildConfig.latestBuild =
-      data.builds.latestByBuildName[
-        `${buildConfig.metadata.name}-${buildConfig.metadata.namespace}`
-      ];
-    return buildConfig;
-  });
+  const buildResource = _.isUndefined(props.data)
+    ? []
+    : props.data.map((buildConfig) => {
+        if (props.data) {
+          buildConfig.latestBuild =
+            data.builds.latestByBuildName[
+              `${buildConfig.metadata.name}-${buildConfig.metadata.namespace}`
+            ];
+        }
+        return buildConfig;
+      });
 
   return (
     <Table
