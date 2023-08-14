@@ -27,6 +27,7 @@ export type NetworkAttachmentDefinitionConfig = {
   plugins?: NetworkAttachmentDefinitionPlugin[];
   topology?: string;
   netAttachDefName?: string;
+  preserveDefaultVlan?: boolean;
 };
 
 // The config is a JSON object with the NetworkAttachmentDefinitionConfig type stored as a string
