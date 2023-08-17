@@ -86,8 +86,9 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
             );
 
             const resourceModel =
-              k8sModels.get(modelReference) ||
-              k8sModels.get(getGroupVersionKindForReference(modelReference).kind);
+              modelReference &&
+              (k8sModels.get(modelReference) ||
+                k8sModels.get(getGroupVersionKindForReference(modelReference).kind));
             if (!resourceModel) {
               ids[key] = {
                 noModel: true,
