@@ -2,22 +2,23 @@ import * as React from 'react';
 import * as _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { match as RMatch } from 'react-router';
-import { alertingLoaded, alertingSetRules } from '@console/internal/actions/observe';
-import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
+import {
+  useResolvedExtensions,
+  AlertingRulesSourceExtension,
+  isAlertingRulesSource,
+} from '@console/dynamic-plugin-sdk';
 import {
   AlertsDetailsPage,
   AlertRulesDetailsPage,
 } from '@console/internal/components/monitoring/alerting';
-import {
-  alertingRuleStateOrder,
-  getAlertsAndRules,
-} from '@console/internal/components/monitoring/utils';
 import { history, StatusBox, LoadingBox } from '@console/internal/components/utils';
+import { RootState } from '@console/internal/redux';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import { useAlertManagerSilencesDispatch } from './monitoring-alerts-utils';
+import { useRulesAlertsPoller } from './useRuleAlertsPoller';
 
 interface MonitoringAlertsDetailsPageProps {
   match: RMatch<{
@@ -41,25 +42,28 @@ const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = 
   const namespace = match.params.ns;
   const { path } = match;
   const dispatch = useDispatch();
-  const [response, loadError, loading] = usePrometheusRulesPoll({ namespace });
-  useAlertManagerSilencesDispatch({ namespace });
-  const thanosAlertsAndRules = React.useMemo(
-    () => (!loading && !loadError ? getAlertsAndRules(response?.data) : { rules: [], alerts: [] }),
-    [response, loadError, loading],
+  const alerts = useSelector(({ observe }: RootState) => observe.get('devAlerts'));
+  const [customExtensions] = useResolvedExtensions<AlertingRulesSourceExtension>(
+    isAlertingRulesSource,
+  );
+  const alertsSource = React.useMemo(
+    () =>
+      customExtensions
+        // 'dev-observe-alerting' is the id that plugin extensions can use to contribute alerting rules to this component
+        .filter((extension) => extension.properties.contextId === 'dev-observe-alerting')
+        .map((extension) => extension.properties),
+    [customExtensions],
   );
 
-  React.useEffect(() => {
-    const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, alertingRuleStateOrder);
-    dispatch(alertingSetRules('devRules', sortThanosRules, 'dev'));
-    dispatch(alertingLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
-  }, [dispatch, thanosAlertsAndRules]);
+  useAlertManagerSilencesDispatch({ namespace });
+  useRulesAlertsPoller(namespace, dispatch, alertsSource);
 
-  if (loading && _.isEmpty(loadError)) {
+  if (!alerts?.loaded && _.isEmpty(alerts?.loadError)) {
     return <LoadingBox />;
   }
 
-  if (!_.isEmpty(loadError)) {
-    return <StatusBox loaded={!loading} loadError={loadError} />;
+  if (!_.isEmpty(alerts?.loadError)) {
+    return <StatusBox loaded={alerts?.loaded} loadError={alerts?.loadError} />;
   }
 
   return (

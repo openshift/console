@@ -8,8 +8,9 @@ export const fetchAlerts = async (
   prometheusURL: string,
   externalAlertsFetch?: Array<{
     id: string;
-    getAlertingRules: () => Promise<PrometheusRulesResponse>;
+    getAlertingRules: (namespace?: string) => Promise<PrometheusRulesResponse>;
   }>,
+  namespace?: string,
 ): Promise<PrometheusRulesResponse> => {
   if (!externalAlertsFetch || externalAlertsFetch.length === 0) {
     return coFetchJSON(prometheusURL);
@@ -25,7 +26,7 @@ export const fetchAlerts = async (
   try {
     const groups = await Promise.allSettled([
       coFetchJSON(prometheusURL),
-      ...resolvedExternalAlertsSources.map((source) => source.fetch()),
+      ...resolvedExternalAlertsSources.map((source) => source.fetch(namespace)),
     ]).then((results) =>
       results
         .map((result, i) => ({ sourceId: sourceIds[i], alerts: result }))

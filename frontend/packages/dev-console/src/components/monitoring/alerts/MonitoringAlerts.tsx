@@ -7,17 +7,18 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { useDispatch, connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
-import { RowFilter as RowFilterExt, Rule } from '@console/dynamic-plugin-sdk';
-import { alertingLoaded, alertingSetRules } from '@console/internal/actions/observe';
+import {
+  RowFilter as RowFilterExt,
+  Rule,
+  useResolvedExtensions,
+  AlertingRulesSourceExtension,
+  isAlertingRulesSource,
+} from '@console/dynamic-plugin-sdk';
 import { sortList } from '@console/internal/actions/ui';
 import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
-import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
-import {
-  alertingRuleStateOrder,
-  getAlertsAndRules,
-} from '@console/internal/components/monitoring/utils';
 import { getURLSearchParams, EmptyBox, LoadingBox } from '@console/internal/components/utils';
+import { NotificationAlerts } from '@console/internal/reducers/observe';
 import { RootState } from '@console/internal/redux';
 import {
   monitoringAlertRows,
@@ -26,8 +27,8 @@ import {
   useAlertManagerSilencesDispatch,
 } from './monitoring-alerts-utils';
 import { MonitoringAlertColumn } from './MonitoringAlertColumn';
-
 import './MonitoringAlerts.scss';
+import { useRulesAlertsPoller } from './useRuleAlertsPoller';
 
 type MonitoringAlertsProps = {
   match: RMatch<{
@@ -37,6 +38,7 @@ type MonitoringAlertsProps = {
 
 type StateProps = {
   rules: Rule[];
+  alerts: NotificationAlerts;
   filters: { [key: string]: any };
   listSorts: { [key: string]: any };
 };
@@ -46,7 +48,7 @@ type Props = MonitoringAlertsProps & StateProps;
 const reduxID = 'devMonitoringAlerts';
 const textFilter = 'resource-list-text';
 
-export const MonitoringAlerts: React.FC<Props> = ({ match, rules, filters, listSorts }) => {
+export const MonitoringAlerts: React.FC<Props> = ({ match, rules, alerts, filters, listSorts }) => {
   const { t } = useTranslation();
   const [sortBy, setSortBy] = React.useState<{ index: number; direction: SortByDirection }>({
     index: null,
@@ -60,18 +62,22 @@ export const MonitoringAlerts: React.FC<Props> = ({ match, rules, filters, listS
   const monitoringAlertColumn = React.useMemo(() => MonitoringAlertColumn(t), [t]);
   const columnIndex = _.findIndex(monitoringAlertColumn, { title: listSortBy });
   const sortOrder = listOrderBy || SortByDirection.asc;
-  const [response, loadError, loading] = usePrometheusRulesPoll({ namespace });
-  const thanosAlertsAndRules = React.useMemo(
-    () => (!loading && !loadError ? getAlertsAndRules(response?.data) : { rules: [], alerts: [] }),
-    [response, loadError, loading],
+  const [customExtensions] = useResolvedExtensions<AlertingRulesSourceExtension>(
+    isAlertingRulesSource,
   );
-  useAlertManagerSilencesDispatch({ namespace });
 
-  React.useEffect(() => {
-    const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, alertingRuleStateOrder);
-    dispatch(alertingSetRules('devRules', sortThanosRules, 'dev'));
-    dispatch(alertingLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
-  }, [dispatch, thanosAlertsAndRules]);
+  const alertsSource = React.useMemo(
+    () =>
+      customExtensions
+        // 'dev-observe-alerting' is the id that plugin extensions can use to contribute alerting rules to this component
+        .filter((extension) => extension.properties.contextId === 'dev-observe-alerting')
+        .map((extension) => extension.properties),
+    [customExtensions],
+  );
+
+  useRulesAlertsPoller(namespace, dispatch, alertsSource);
+
+  useAlertManagerSilencesDispatch({ namespace });
 
   const filteredRules = React.useMemo(() => {
     const filtersObj = filters?.toJS();
@@ -123,10 +129,10 @@ export const MonitoringAlerts: React.FC<Props> = ({ match, rules, filters, listS
   );
 
   const Content = React.useMemo(() => {
-    if (loading && !loadError) {
+    if (!alerts?.loaded && !alerts?.loadError) {
       return <LoadingBox />;
     }
-    if (_.isEmpty(response?.data?.groups)) {
+    if (rules.length === 0) {
       return <EmptyBox label={t('devconsole~Alerts')} />;
     }
     return (
@@ -151,18 +157,7 @@ export const MonitoringAlerts: React.FC<Props> = ({ match, rules, filters, listS
         </Table>
       </div>
     );
-  }, [
-    handleSort,
-    loadError,
-    loading,
-    monitoringAlertColumn,
-    onCollapse,
-    response,
-    rows,
-    rules,
-    sortBy,
-    t,
-  ]);
+  }, [handleSort, alerts, monitoringAlertColumn, onCollapse, rows, rules, sortBy, t]);
 
   return <>{Content}</>;
 };
@@ -170,6 +165,7 @@ export const MonitoringAlerts: React.FC<Props> = ({ match, rules, filters, listS
 const mapStateToProps = (state: RootState): StateProps => {
   return {
     rules: state.observe.getIn(['devRules']),
+    alerts: state.observe.getIn(['devAlerts']),
     filters: state.k8s.getIn([reduxID, 'filters']),
     listSorts: state.UI.getIn(['listSorts', reduxID]),
   };
