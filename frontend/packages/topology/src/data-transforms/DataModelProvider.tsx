@@ -23,6 +23,8 @@ interface DataModelProviderProps {
 
 const flattenResource = (
   namespace: string,
+  extension: LoadedExtension<DynamicTopologyDataModelFactory>,
+  resourceKey: string,
   model?: ExtensionK8sGroupKindModel,
   opts = {} as Partial<WatchK8sResource>,
 ) => {
@@ -37,25 +39,43 @@ const flattenResource = (
 
   // If can't find reference for an extention model, fall back to internal reference
   const internalModel = modelForGroupKind(model.group, model.kind); // Return null for CRDs
-  const internalReference = internalModel && referenceForModel(internalModel);
+  if (!internalModel) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `Plugin "${extension.pluginID}": Could not find model (CRD) for group "${model.group}" and kind "${model.kind}" to determinate version. Please add a required flag to the extension to suppress this warning. The resource "${resourceKey}" will not be loaded and ignored in the topology view for now:`,
+      extension,
+      resourceKey,
+      model,
+      opts,
+    );
+    return null;
+  }
+  const internalReference = referenceForModel(internalModel);
   return { namespace, kind: internalReference, ...opts };
 };
 
 export const getNamespacedDynamicModelFactories = (
-  factories: LoadedExtension<DynamicTopologyDataModelFactory>[],
+  extensions: LoadedExtension<DynamicTopologyDataModelFactory>[],
 ) =>
-  factories.map(({ properties, ...ext }) => {
+  extensions.map((extension) => {
     return {
-      ...ext,
+      ...extension,
       properties: {
-        ...properties,
+        ...extension.properties,
         resources: (namespace: string) =>
-          Object.assign(
-            {},
-            ...Object.entries(properties.resources).map(([k, v]) => ({
-              [k]: flattenResource(namespace, v?.model, v?.opts),
-            })),
-          ),
+          Object.entries(extension.properties.resources || {}).reduce((acc, [key, resource]) => {
+            const flattenedResource = flattenResource(
+              namespace,
+              extension,
+              key,
+              resource?.model,
+              resource?.opts,
+            );
+            if (flattenedResource) {
+              acc[key] = flattenedResource;
+            }
+            return acc;
+          }, {}),
       },
     };
   });
