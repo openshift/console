@@ -582,7 +582,9 @@ const EditYAMLInner = (props) => {
     if (callbackCommand === 'saveall') {
       saveAllCallback();
     }
-  }, [saving, callbackCommand, saveCallback, saveAllCallback]);
+    // removed callback functions from deps array to prevent stream of errors after save
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saving, callbackCommand]);
 
   const download = () => {
     const data = getEditor().getValue();
