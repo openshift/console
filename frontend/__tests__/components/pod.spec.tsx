@@ -13,7 +13,6 @@ import {
 import { DetailsPage } from '../../public/components/factory';
 
 import {
-  history,
   NodeLink,
   ResourceLink,
   RuntimeClass,
@@ -21,7 +20,7 @@ import {
 } from '@console/internal/components/utils';
 import { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
 import { t } from '../../__mocks__/i18next';
-import { Router } from 'react-router-dom';
+// import { Router } from 'react-router-dom';
 import * as ReactRouter from 'react-router-dom-v5-compat';
 import { PodKind } from '@console/internal/module/k8s';
 
@@ -84,9 +83,9 @@ describe(PodDetailsList.displayName, () => {
     // Full mount needed, because links have to be rendered
     podDetailsList = mount(<PodDetailsList pod={pod} />, {
       wrappingComponent: ({ children }) => (
-        <Router history={history}>
+        <ReactRouter.BrowserRouter>
           <Provider store={store}>{children}</Provider>
-        </Router>
+        </ReactRouter.BrowserRouter>
       ),
     });
   });
@@ -115,9 +114,9 @@ describe(PodDetailsList.displayName, () => {
       <PodDetailsList pod={{ ...pod, spec: { ...pod.spec, activeDeadlineSeconds: 10 } }} />,
       {
         wrappingComponent: ({ children }) => (
-          <Router history={history}>
+          <ReactRouter.BrowserRouter>
             <Provider store={store}>{children}</Provider>
-          </Router>
+          </ReactRouter.BrowserRouter>
         ),
       },
     );

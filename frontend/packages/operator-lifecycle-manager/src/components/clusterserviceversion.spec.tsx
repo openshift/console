@@ -3,7 +3,6 @@ import { CardTitle, CardBody, CardFooter } from '@patternfly/react-core';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
-import { Link, BrowserRouter } from 'react-router-dom';
 import * as ReactRouter from 'react-router-dom-v5-compat';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import {
@@ -121,10 +120,10 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   it('renders clickable column for app logo and name', () => {
     const col = wrapper.childAt(0);
 
-    expect(col.find<any>(Link).props().to).toEqual(
+    expect(col.find<any>(ReactRouter.Link).props().to).toEqual(
       resourceObjPath(testClusterServiceVersion, referenceForModel(ClusterServiceVersionModel)),
     );
-    expect(col.find(Link).find(ClusterServiceVersionLogo).exists()).toBe(true);
+    expect(col.find(ReactRouter.Link).find(ClusterServiceVersionLogo).exists()).toBe(true);
   });
 
   it('renders column for managedNamespace', () => {
@@ -159,8 +158,8 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   it('renders column with each CRD provided by the Operator', () => {
     const col = wrapper.childAt(4);
     testClusterServiceVersion.spec.customresourcedefinitions.owned.forEach((desc, i) => {
-      expect(col.find<any>(Link).at(i).props().title).toEqual(desc.name);
-      expect(col.find<any>(Link).at(i).props().to).toEqual(
+      expect(col.find<any>(ReactRouter.Link).at(i).props().title).toEqual(desc.name);
+      expect(col.find<any>(ReactRouter.Link).at(i).props().to).toEqual(
         `${resourceObjPath(
           testClusterServiceVersion,
           referenceForModel(ClusterServiceVersionModel),
@@ -259,7 +258,7 @@ describe(CRDCard.displayName, () => {
   it('renders a link to create a new instance', () => {
     const wrapper = shallow(<CRDCard canCreate crd={crd} csv={testClusterServiceVersion} />);
 
-    expect(wrapper.find(CardFooter).find<any>(Link).props().to).toEqual(
+    expect(wrapper.find(CardFooter).find<any>(ReactRouter.Link).props().to).toEqual(
       `/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${
         ClusterServiceVersionModel.plural
       }/${testClusterServiceVersion.metadata.name}/${referenceForProvidedAPI(crd)}/~new`,
@@ -271,7 +270,7 @@ describe(CRDCard.displayName, () => {
       <CRDCard canCreate={false} crd={crd} csv={testClusterServiceVersion} />,
     );
 
-    expect(wrapper.find(CardFooter).find(Link).exists()).toBe(false);
+    expect(wrapper.find(CardFooter).find(ReactRouter.Link).exists()).toBe(false);
   });
 });
 
@@ -536,9 +535,9 @@ describe(ClusterServiceVersionDetailsPage.displayName, () => {
     window.SERVER_FLAGS.copiedCSVsDisabled = false;
     wrapper = mount(
       <Provider store={store}>
-        <BrowserRouter>
+        <ReactRouter.BrowserRouter>
           <ClusterServiceVersionDetailsPage />
-        </BrowserRouter>
+        </ReactRouter.BrowserRouter>
       </Provider>,
     );
   });

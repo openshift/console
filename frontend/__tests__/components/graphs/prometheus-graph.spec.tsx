@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { Link, Router } from 'react-router-dom';
+import { Link, BrowserRouter } from 'react-router-dom-v5-compat';
 import { mount, shallow } from 'enzyme';
 
 import { FLAGS } from '@console/shared';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { setFlag } from '@console/internal/actions/features';
 import * as UIActions from '@console/internal/actions/ui';
-import { history } from '@console/internal/components/utils/router';
 import {
   PrometheusGraph,
   PrometheusGraphLink,
@@ -52,9 +51,9 @@ describe('<PrometheusGraphLink />', () => {
         </PrometheusGraphLink>,
         {
           wrappingComponent: ({ children }) => (
-            <Router history={history}>
+            <BrowserRouter>
               <Provider store={store}>{children}</Provider>
-            </Router>
+            </BrowserRouter>
           ),
         },
       );

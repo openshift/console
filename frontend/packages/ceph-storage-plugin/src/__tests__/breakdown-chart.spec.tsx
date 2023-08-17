@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { Chart, ChartBar } from '@patternfly/react-charts';
 import { Tooltip } from '@patternfly/react-core';
 import {

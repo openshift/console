@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Nav } from '@patternfly/react-core';
 import { shallow, mount } from 'enzyme';
 import { Provider } from 'react-redux';
-import { Router } from 'react-router';
-import { history } from '@console/internal/components/utils';
+import { BrowserRouter } from 'react-router-dom-v5-compat';
 import store from '@console/internal/redux';
 import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
 import PerspectiveNav from '../PerspectiveNav';
@@ -61,13 +60,13 @@ describe('Perspective Nav', () => {
   it('should render non-draggable pinned items when only one pinned resource is available', () => {
     (usePinnedResources as jest.Mock).mockReturnValue([['core~v1~ConfigMap'], jest.fn(), true]);
     const wrapper = mount(
-      <Router history={history}>
+      <BrowserRouter>
         <Provider store={store}>
           <Nav>
             <PerspectiveNav />
           </Nav>
         </Provider>
-      </Router>,
+      </BrowserRouter>,
     );
     expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
     expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
@@ -80,13 +79,13 @@ describe('Perspective Nav', () => {
       true,
     ]);
     const wrapper = mount(
-      <Router history={history}>
+      <BrowserRouter>
         <Provider store={store}>
           <Nav>
             <PerspectiveNav />
           </Nav>
         </Provider>
-      </Router>,
+      </BrowserRouter>,
     );
     expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
     expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
@@ -99,13 +98,13 @@ describe('Perspective Nav', () => {
       true,
     ]);
     const wrapper = mount(
-      <Router history={history}>
+      <BrowserRouter>
         <Provider store={store}>
           <Nav>
             <PerspectiveNav />
           </Nav>
         </Provider>
-      </Router>,
+      </BrowserRouter>,
     );
     expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
     expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
@@ -118,13 +117,13 @@ describe('Perspective Nav', () => {
       true,
     ]);
     const wrapper = mount(
-      <Router history={history}>
+      <BrowserRouter>
         <Provider store={store}>
           <Nav>
             <PerspectiveNav />
           </Nav>
         </Provider>
-      </Router>,
+      </BrowserRouter>,
     );
     expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
     expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
@@ -137,13 +136,13 @@ describe('Perspective Nav', () => {
       true,
     ]);
     const wrapper = mount(
-      <Router history={history}>
+      <BrowserRouter>
         <Provider store={store}>
           <Nav>
             <PerspectiveNav />
           </Nav>
         </Provider>
-      </Router>,
+      </BrowserRouter>,
     );
     expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
     expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
@@ -156,13 +155,13 @@ describe('Perspective Nav', () => {
       true,
     ]);
     const wrapper = mount(
-      <Router history={history}>
+      <BrowserRouter>
         <Provider store={store}>
           <Nav>
             <PerspectiveNav />
           </Nav>
         </Provider>
-      </Router>,
+      </BrowserRouter>,
     );
     expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
     expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
@@ -171,13 +170,13 @@ describe('Perspective Nav', () => {
   it('should handle all invalid pinned resources', () => {
     (usePinnedResources as jest.Mock).mockReturnValue([['foo', 'bar', 'baz'], jest.fn(), true]);
     const wrapper = mount(
-      <Router history={history}>
+      <BrowserRouter>
         <Provider store={store}>
           <Nav>
             <PerspectiveNav />
           </Nav>
         </Provider>
-      </Router>,
+      </BrowserRouter>,
     );
     expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
     expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);

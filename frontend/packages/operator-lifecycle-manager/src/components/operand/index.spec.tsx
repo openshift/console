@@ -2,7 +2,6 @@ import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
-import { MemoryRouter, BrowserRouter, Router, Route } from 'react-router-dom';
 import * as ReactRouter from 'react-router-dom-v5-compat';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { Table, DetailsPage, MultiListPage } from '@console/internal/components/factory';
@@ -13,7 +12,6 @@ import {
 import ListPageFilter from '@console/internal/components/factory/ListPage/ListPageFilter';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
 import {
-  history,
   Timestamp,
   LabelList,
   FirehoseResourcesResult,
@@ -50,17 +48,6 @@ import {
   OperandStatus,
   OperandStatusProps,
 } from '.';
-
-const mountWithRoute = <T,>(component, currentURL, routePath): ReactWrapper<T> =>
-  mount<T>(component, {
-    wrappingComponent: ({ children }) => (
-      <Provider store={store}>
-        <MemoryRouter initialEntries={[currentURL]}>
-          <Route path={routePath}>{children}</Route>
-        </MemoryRouter>
-      </Provider>
-    ),
-  });
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...require.requireActual('react-router-dom-v5-compat'),
@@ -133,6 +120,12 @@ jest.mock('@console/shared/src/hooks/useActiveCluster', () => ({
   useActiveCluster: () => ['local-cluster', () => {}],
 }));
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
 const i18nNS = 'public';
 
 describe(OperandTableRow.displayName, () => {
@@ -142,9 +135,9 @@ describe(OperandTableRow.displayName, () => {
     spyOn(useExtensionsModule, 'useExtensions').and.returnValue([]);
     wrapper = mount(<OperandTableRow obj={testResourceInstance} columns={[]} showNamespace />, {
       wrappingComponent: (props) => (
-        <Router history={history}>
+        <ReactRouter.BrowserRouter>
           <Provider store={store} {...props} />
-        </Router>
+        </ReactRouter.BrowserRouter>
       ),
     });
   });
@@ -203,9 +196,9 @@ describe(OperandList.displayName, () => {
     spyOn(useExtensionsModule, 'useExtensions').and.returnValue([]);
     wrapper = mount(<OperandList loaded data={resources} showNamespace />, {
       wrappingComponent: (props) => (
-        <Router history={history}>
+        <ReactRouter.BrowserRouter>
           <Provider store={store} {...props} />
-        </Router>
+        </ReactRouter.BrowserRouter>
       ),
     });
   });
@@ -320,15 +313,27 @@ describe(OperandDetails.displayName, () => {
 });
 
 describe('ResourcesList', () => {
-  const currentURL = `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/${referenceFor(
-    testResourceInstance,
-  )}/my-etcd`;
-  const routePath = `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`;
+  jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+    pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/${referenceFor(
+      testResourceInstance,
+    )}/my-etcd`,
+  });
+  jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
+    ns: 'default',
+    appName: 'etcd',
+    plural: `${referenceFor(testResourceInstance)}`,
+    name: 'my-etcd',
+  });
   it('uses the resources defined in the CSV', () => {
-    const wrapper = mountWithRoute(
+    const wrapper = mount(
       <Resources csv={testClusterServiceVersion} obj={testResourceInstance} />,
-      currentURL,
-      routePath,
+      {
+        wrappingComponent: ({ children }) => (
+          <Provider store={store}>
+            <ReactRouter.BrowserRouter>{children}</ReactRouter.BrowserRouter>
+          </Provider>
+        ),
+      },
     );
     const multiListPage = wrapper.find(MultiListPage);
     expect(multiListPage.props().resources).toEqual(
@@ -339,11 +344,13 @@ describe('ResourcesList', () => {
   });
 
   it('uses the default resources if the kind is not found in the CSV', () => {
-    const wrapper = mountWithRoute(
-      <Resources csv={null} obj={testResourceInstance} />,
-      currentURL,
-      routePath,
-    );
+    const wrapper = mount(<Resources csv={null} obj={testResourceInstance} />, {
+      wrappingComponent: ({ children }) => (
+        <Provider store={store}>
+          <ReactRouter.BrowserRouter>{children}</ReactRouter.BrowserRouter>
+        </Provider>
+      ),
+    });
     const multiListPage = wrapper.find(MultiListPage);
     expect(multiListPage.props().resources.length > 5).toEqual(true);
   });
@@ -368,9 +375,9 @@ describe(OperandDetailsPage.displayName, () => {
   it('renders a `DetailsPage` with the correct subpages', () => {
     const wrapper = mount(
       <Provider store={store}>
-        <BrowserRouter>
+        <ReactRouter.BrowserRouter>
           <OperandDetailsPage />
-        </BrowserRouter>
+        </ReactRouter.BrowserRouter>
       </Provider>,
     );
 
@@ -386,9 +393,9 @@ describe(OperandDetailsPage.displayName, () => {
   it('renders a `DetailsPage` which also watches the parent CSV', () => {
     const wrapper = mount(
       <Provider store={store}>
-        <BrowserRouter>
+        <ReactRouter.BrowserRouter>
           <OperandDetailsPage />
-        </BrowserRouter>
+        </ReactRouter.BrowserRouter>
       </Provider>,
     );
     expect(wrapper.find(DetailsPage).prop('resources')[0]).toEqual({
@@ -402,9 +409,9 @@ describe(OperandDetailsPage.displayName, () => {
   it('menu actions to `DetailsPage`', () => {
     const wrapper = mount(
       <Provider store={store}>
-        <BrowserRouter>
+        <ReactRouter.BrowserRouter>
           <OperandDetailsPage />
-        </BrowserRouter>
+        </ReactRouter.BrowserRouter>
       </Provider>,
     );
     expect(wrapper.find(DetailsPage).prop('customActionMenu')).toBeTruthy();
@@ -413,9 +420,9 @@ describe(OperandDetailsPage.displayName, () => {
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
     const wrapper = mount(
       <Provider store={store}>
-        <BrowserRouter>
+        <ReactRouter.BrowserRouter>
           <OperandDetailsPage />
-        </BrowserRouter>
+        </ReactRouter.BrowserRouter>
       </Provider>,
     );
     expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
@@ -448,9 +455,9 @@ describe(OperandDetailsPage.displayName, () => {
 
     const wrapper = mount(
       <Provider store={store}>
-        <BrowserRouter>
+        <ReactRouter.BrowserRouter>
           <OperandDetailsPage />
-        </BrowserRouter>
+        </ReactRouter.BrowserRouter>
       </Provider>,
     );
 
@@ -473,9 +480,9 @@ describe(OperandDetailsPage.displayName, () => {
   it('passes `flatten` function to Resources component which returns only objects with `ownerReferences` to each other or parent object', () => {
     const wrapper = mount(
       <Provider store={store}>
-        <BrowserRouter>
+        <ReactRouter.BrowserRouter>
           <Resources csv={testClusterServiceVersion} obj={testResourceInstance} />
-        </BrowserRouter>
+        </ReactRouter.BrowserRouter>
       </Provider>,
     );
     const { flatten } = wrapper.find(MultiListPage).props();
@@ -558,9 +565,9 @@ describe(ProvidedAPIsPage.displayName, () => {
 
     wrapper = mount(
       <Provider store={store}>
-        <BrowserRouter>
+        <ReactRouter.BrowserRouter>
           <ProvidedAPIsPage obj={testClusterServiceVersion} />
-        </BrowserRouter>
+        </ReactRouter.BrowserRouter>
       </Provider>,
     );
   });
@@ -587,9 +594,9 @@ describe(ProvidedAPIsPage.displayName, () => {
 
     wrapper = mount(
       <Provider store={store}>
-        <BrowserRouter>
+        <ReactRouter.BrowserRouter>
           <ProvidedAPIsPage obj={obj} />
-        </BrowserRouter>
+        </ReactRouter.BrowserRouter>
       </Provider>,
     );
 
@@ -622,9 +629,9 @@ describe(ProvidedAPIPage.displayName, () => {
 
     wrapper = mount(
       <Provider store={store}>
-        <BrowserRouter>
+        <ReactRouter.BrowserRouter>
           <ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} />
-        </BrowserRouter>
+        </ReactRouter.BrowserRouter>
       </Provider>,
     );
   });

@@ -7,7 +7,6 @@ import { mount, ReactWrapper, shallow } from 'enzyme';
 import * as React from 'react';
 import store from '@console/internal/redux';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
 import * as ReactRouter from 'react-router-dom-v5-compat';
 import {
   Firehose,
@@ -67,7 +66,7 @@ describe(ContainerDetails.displayName, () => {
       containerDetails = mount(<ContainerDetails obj={obj} loaded={true} />, {
         wrappingComponent: ({ children }) => (
           <Provider store={store}>
-            <BrowserRouter>{children}</BrowserRouter>
+            <ReactRouter.BrowserRouter>{children}</ReactRouter.BrowserRouter>
           </Provider>
         ),
       });
@@ -101,9 +100,9 @@ describe(ContainerDetails.displayName, () => {
 
     const containerDetails = mount(
       <Provider store={store}>
-        <BrowserRouter>
+        <ReactRouter.BrowserRouter>
           <ContainerDetails obj={obj} loaded={true} />
-        </BrowserRouter>
+        </ReactRouter.BrowserRouter>
       </Provider>,
     );
 
@@ -116,9 +115,9 @@ describe(ContainerDetails.displayName, () => {
       .mockReturnValue({ podName: 'test-name', ns: 'default', name: 'crash-app' });
     jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({ pathname: '' });
     const containerDetails = mount(
-      <BrowserRouter>
+      <ReactRouter.BrowserRouter>
         <ContainerDetails obj={obj} loaded={false} />
-      </BrowserRouter>,
+      </ReactRouter.BrowserRouter>,
     );
 
     expect(containerDetails.containsMatchingElement(<LoadingBox />)).toBe(true);
@@ -134,7 +133,7 @@ describe(ContainerDetailsList.displayName, () => {
     const containerDetailsList = mount(<ContainerDetailsList obj={testPodInstance} />, {
       wrappingComponent: ({ children }) => (
         <Provider store={store}>
-          <BrowserRouter>{children}</BrowserRouter>
+          <ReactRouter.BrowserRouter>{children}</ReactRouter.BrowserRouter>
         </Provider>
       ),
     });

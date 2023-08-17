@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
-import { Router } from 'react-router';
-import { ResourceLink, history } from '@console/internal/components/utils';
+import { BrowserRouter } from 'react-router-dom-v5-compat';
+import { ResourceLink } from '@console/internal/components/utils';
 import store from '@console/internal/redux';
 import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 import { testModel, testResourceInstance } from '../../../../mocks';
@@ -37,9 +37,9 @@ describe('Status descriptor details items', () => {
       />,
       {
         wrappingComponent: (props) => (
-          <Router history={history}>
+          <BrowserRouter>
             <Provider store={store} {...props} />,
-          </Router>
+          </BrowserRouter>
         ),
       },
     );
