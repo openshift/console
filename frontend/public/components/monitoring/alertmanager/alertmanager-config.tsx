@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import classNames from 'classnames';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -20,7 +20,7 @@ import {
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom-v5-compat';
+
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
 import { K8sResourceKind } from '../../../module/k8s';

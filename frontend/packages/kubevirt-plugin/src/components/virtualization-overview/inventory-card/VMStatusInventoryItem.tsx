@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { OffIcon, PausedIcon, SyncAltIcon, InProgressIcon } from '@patternfly/react-icons';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 
 import './virt-overview-inventory-card.scss';

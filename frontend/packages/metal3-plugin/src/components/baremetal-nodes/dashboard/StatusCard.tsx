@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import NodeAlerts from '@console/app/src/components/nodes/node-dashboard/NodeAlerts';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import { HealthChecksItem } from '@console/app/src/components/nodes/node-dashboard/NodeHealth';

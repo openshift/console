@@ -14,8 +14,7 @@ import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, Link } from 'react-router-dom-v5-compat';
 import { QuickStartModel } from '@console/app/src/models';
 import {
   MultiListPage,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { FirehoseResourcesResult } from '@console/internal/components/utils';
 import { GetOperatorsWithStatuses, LazyLoader, OperatorRowProps } from '@console/plugin-sdk';
 import { getMostImportantStatuses } from './state-utils';

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { withRouter } from 'react-router-dom';
+import { useLocation, useParams, Link } from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import * as _ from 'lodash-es';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Popover, PopoverPosition, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { humanizeBinaryBytes, useAccessReview2 } from '@console/internal/components/utils';
 import { K8sVerb, TemplateKind } from '@console/internal/module/k8s';
 import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../../constants/url-params';

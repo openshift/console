@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { Button, TextContent } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';

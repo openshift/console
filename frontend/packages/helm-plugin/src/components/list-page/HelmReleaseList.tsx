@@ -9,8 +9,7 @@ import {
 import { SortByDirection } from '@patternfly/react-table';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

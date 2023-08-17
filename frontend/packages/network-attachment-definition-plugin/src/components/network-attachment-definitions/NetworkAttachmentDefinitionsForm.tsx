@@ -3,7 +3,7 @@ import { ActionGroup, Alert, Button, Form, FormGroup, TextInput } from '@pattern
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   ButtonBar,
   Dropdown,

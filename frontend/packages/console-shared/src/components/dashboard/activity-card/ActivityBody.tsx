@@ -3,7 +3,7 @@ import { Accordion, Button } from '@patternfly/react-core';
 import { PlayIcon, PauseIcon } from '@patternfly/react-icons';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   ActivityBodyProps,
   OngoingActivityBodyProps,

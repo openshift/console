@@ -29,8 +29,7 @@ import { find, includes, isEmpty } from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { Routes, Route, useParams } from 'react-router-dom-v5-compat';
+import { Routes, Route, useParams, Link } from 'react-router-dom-v5-compat';
 
 import {
   NamespaceModel,

@@ -7,7 +7,7 @@ import {
 } from '@patternfly/react-core';
 import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   useResolvedExtensions,
   DashboardsInventoryItemGroup as DynamicDashboardsInventoryItemGroup,

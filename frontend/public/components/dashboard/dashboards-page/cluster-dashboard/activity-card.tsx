@@ -30,7 +30,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from './utils';
 import { PrometheusResponse } from '../../../graphs';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 const viewEvents = '/k8s/all-namespaces/events';

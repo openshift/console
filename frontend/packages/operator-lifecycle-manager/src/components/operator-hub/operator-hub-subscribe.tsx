@@ -10,8 +10,7 @@ import {
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation, Link } from 'react-router-dom-v5-compat';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import {
   documentationURLs,

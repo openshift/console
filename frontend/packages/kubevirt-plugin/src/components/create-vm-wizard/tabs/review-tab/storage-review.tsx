@@ -3,7 +3,7 @@ import { Alert, AlertVariant, Stack, StackItem } from '@patternfly/react-core';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';

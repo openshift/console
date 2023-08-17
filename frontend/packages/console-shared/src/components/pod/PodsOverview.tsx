@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert, AlertActionLink } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { PodStatus } from '@console/internal/components/pod';
 import { PodTraffic } from '@console/internal/components/pod-traffic';
 import {

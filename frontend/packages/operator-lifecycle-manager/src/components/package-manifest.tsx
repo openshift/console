@@ -3,8 +3,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, match } from 'react-router-dom';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 import {
   MultiListPage,
   Table,
@@ -205,7 +204,6 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
 export type PackageManifestsPageProps = {
   catalogSource: CatalogSourceKind;
   namespace?: string;
-  match?: match<{ ns?: string }>;
 };
 
 export type PackageManifestListProps = {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   useK8sWatchResources,
   YellowExclamationTriangleIcon,

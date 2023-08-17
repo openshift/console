@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, ButtonVariant, Checkbox, SelectOption, Text } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { ResourceLink, useAccessReview } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { getPVCUploadURL } from '../../../../constants';

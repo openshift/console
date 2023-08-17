@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { SearchIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { humanizeNumber } from '@console/internal/components/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getGaugeValue } from '../../../../utils';

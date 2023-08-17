@@ -3,8 +3,7 @@ import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patte
 import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useParams, useLocation, Navigate } from 'react-router-dom-v5-compat';
+import { Link, useParams, useLocation, Navigate } from 'react-router-dom-v5-compat';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { HorizontalNav, useAccessReview2 } from '@console/internal/components/utils';
 import { useFlag } from '@console/shared/src/hooks/flag';

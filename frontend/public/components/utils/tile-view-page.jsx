@@ -20,7 +20,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { getURLWithParams, VirtualizedGrid } from '@console/shared';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { isModifiedEvent } from '@console/shared/src/utils';
 
 import { history } from './router';

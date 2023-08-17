@@ -11,7 +11,7 @@ import {
   Skeleton,
   SimpleListItem,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 

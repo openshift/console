@@ -5,8 +5,8 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router-dom-v5-compat';
+
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 

@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Grid, GridItem, ActionGroup, Button, Alert } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
 import {
   getAccessModeRadios,

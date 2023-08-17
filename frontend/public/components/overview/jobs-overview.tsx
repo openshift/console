@@ -4,7 +4,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { PodStatus, usePodsWatcher } from '@console/shared';
 import { ResourceLink, resourcePath, SidebarSectionHeading } from '../utils';
 import { K8sResourceKind, referenceFor, JobKind } from '../../module/k8s';

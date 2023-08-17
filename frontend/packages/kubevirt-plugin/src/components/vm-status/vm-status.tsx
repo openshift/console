@@ -18,7 +18,7 @@ import {
   UnknownIcon,
 } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { GenericStatus } from '@console/dynamic-plugin-sdk';
 import { ResourceLink, resourcePath } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';

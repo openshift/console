@@ -81,8 +81,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom-v5-compat';
+import { Routes, Route, Navigate, useLocation, useParams, Link } from 'react-router-dom-v5-compat';
 import {
   alertingErrored,
   alertingLoaded,

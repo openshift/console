@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { Alert, AlertStates, Rule, Silence } from '@console/dynamic-plugin-sdk';
 import {
   alertingErrored,

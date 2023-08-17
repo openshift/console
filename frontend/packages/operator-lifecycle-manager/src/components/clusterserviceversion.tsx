@@ -14,8 +14,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, Link } from 'react-router-dom-v5-compat';
 import {
   WatchK8sResource,
   ResourceStatus,

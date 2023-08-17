@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate, useLocation } from 'react-router-dom-v5-compat';
 import {
   DashboardsPageProps,
   mapStateToProps,

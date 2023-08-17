@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { Alert } from '@console/dynamic-plugin-sdk';
 import { sortEvents } from '@console/internal/components/events';
 import { FirehoseResult, LoadingBox } from '@console/internal/components/utils';

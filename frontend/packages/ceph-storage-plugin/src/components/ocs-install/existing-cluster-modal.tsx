@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
 import { Button, Text, TextContent } from '@patternfly/react-core';
 import { Modal } from '@console/shared/src/components/modal';

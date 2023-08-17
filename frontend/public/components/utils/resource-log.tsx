@@ -39,7 +39,7 @@ import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/mod
 import { RootState } from '../../redux';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { usePrevious } from '@console/shared/src/hooks/previous';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { resourcePath } from './resource-link';
 import { isWindowsPod } from '../../module/k8s/pods';
 import { getActiveCluster } from '@console/dynamic-plugin-sdk'; // TODO remove multicluster

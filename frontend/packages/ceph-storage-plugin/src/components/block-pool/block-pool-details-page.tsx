@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { DetailsPage } from '@console/internal/components/factory';

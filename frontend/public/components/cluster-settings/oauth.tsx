@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import { Alert, Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 
 import { useQueryParams } from '@console/shared';
 import { ClusterOperatorModel, OAuthModel } from '../../models';

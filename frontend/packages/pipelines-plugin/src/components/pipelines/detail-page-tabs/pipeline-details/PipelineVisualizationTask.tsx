@@ -4,7 +4,7 @@ import { Tooltip } from '@patternfly/react-core';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   Firehose,
   resourcePathFromModel,

@@ -21,12 +21,11 @@ import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
-import { Link } from 'react-router-dom';
 
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import ErrorAlert from '@console/shared/src/components/alerts/error';

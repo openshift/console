@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { resourceObjPath } from '@console/internal/components/utils';
 import { DaemonSetModel } from '@console/internal/models';
 import { K8sResourceKind, PodKind, podPhase } from '@console/internal/module/k8s';
