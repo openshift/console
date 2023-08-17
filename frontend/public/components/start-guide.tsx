@@ -6,7 +6,7 @@ import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 
 import { FLAGS } from '@console/shared/src/constants';
-import { useActiveNamespace } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { createProjectMessageStateToProps } from '../reducers/ui';
 import { Disabled, HintBlock, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';

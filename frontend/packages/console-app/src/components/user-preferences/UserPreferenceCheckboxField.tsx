@@ -4,7 +4,8 @@ import {
   UserPreferenceCheckboxField as CheckboxFieldType,
   UserPreferenceCheckboxFieldValue,
 } from '@console/dynamic-plugin-sdk/src';
-import { useTelemetry, useUserSettings } from '@console/shared';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { UserPreferenceFieldProps } from './types';
 
 import './UserPreferenceField.scss';

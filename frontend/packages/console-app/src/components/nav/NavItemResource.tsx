@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { NavItem } from '@patternfly/react-core';
 import { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
-import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
 import {
   formatNamespacedRouteForResource,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   ALL_NAMESPACES_KEY,
 } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useLocation } from '@console/shared/src/hooks/useLocation';
 import { NavLink, NavLinkProps } from './NavLink';

@@ -21,7 +21,13 @@ export const NamespaceContext = React.createContext<NamespaceContextType>({});
 
 const useUrlNamespace = () => getNamespace(useLocation().pathname);
 
-export const useValuesForNamespaceContext = () => {
+type UseValuesForNamespaceContext = () => {
+  namespace: string;
+  setNamespace: (ns: string) => void;
+  loaded: boolean;
+};
+
+export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => {
   const urlNamespace = useUrlNamespace();
   const [activeNamespace, setActiveNamespace] = React.useState<string>(urlNamespace);
   const [preferredNamespace, , preferredNamespaceLoaded] = usePreferredNamespace();

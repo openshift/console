@@ -180,8 +180,6 @@ export type Options = {
   cluster?: string;
 };
 
-export type UseActiveNamespace = () => [string, (ns: string) => void];
-
 export type UseLastNamespace = () => [
   string,
   React.Dispatch<React.SetStateAction<string>>,

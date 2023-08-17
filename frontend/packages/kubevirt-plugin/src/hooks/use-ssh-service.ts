@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ServiceModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useActiveNamespace } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { sshActions, SSHActionsNames } from '../components/ssh-service/redux/actions';
 import {
   createOrDeleteSSHService,

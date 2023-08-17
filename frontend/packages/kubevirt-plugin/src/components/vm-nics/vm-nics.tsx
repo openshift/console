@@ -6,7 +6,7 @@ import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { RowFunctionArgs, Table } from '@console/internal/components/factory';
 import { useAccessReview2 } from '@console/internal/components/utils';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { useActiveNamespace } from '@console/shared/src';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';

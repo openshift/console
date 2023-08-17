@@ -726,3 +726,11 @@ export type UseDeleteModal = (
 ) => () => void;
 
 export type UseLabelsModal = (resource: K8sResourceCommon) => () => void;
+
+export type UseValuesForNamespaceContext = () => {
+  namespace: string;
+  setNamespace: (ns: string) => void;
+  loaded: boolean;
+};
+
+export type UseActiveNamespace = () => [string, (ns: string) => void];

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-import { useActiveNamespace } from '@console/shared/src';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { QuickStartGettingStartedCard } from '../QuickStartGettingStartedCard';
 import { loadingQuickStarts, loadedQuickStarts } from './QuickStartGettingStartedCard.data';
 
