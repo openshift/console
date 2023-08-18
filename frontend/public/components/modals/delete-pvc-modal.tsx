@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { HandlePromiseProps, withHandlePromise, resourceListPathFromModel } from '../utils';
@@ -22,7 +22,7 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
   const pvcName = getName(pvc);
   const { t } = useTranslation();
   const pvcMetadata = { metadata: { ...pvc?.metadata } };
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const submit = (e) => {
     e.preventDefault();
@@ -36,7 +36,7 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
     handlePromise(Promise.all([promise, ...extensionPromises]), () => {
       close();
       // Redirect to resourcce list page if the resouce is deleted.
-      history.push(resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata.namespace));
+      navigate(resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata.namespace));
     });
   };
 

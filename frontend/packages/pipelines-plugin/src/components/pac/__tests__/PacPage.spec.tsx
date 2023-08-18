@@ -11,19 +11,14 @@ import PacForm from '../PacForm';
 import PacOverview from '../PacOverview';
 import PacPage from '../PacPage';
 
-const mockHistoryPush = jest.fn();
+// eslint-disable-next-line no-var
+var mockNavigate = jest.fn();
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...require.requireActual('react-router-dom-v5-compat'),
   useLocation: jest.fn(),
   useParams: jest.fn(),
-}));
-
-jest.mock('react-router-dom', () => ({
-  ...require.requireActual('react-router-dom'),
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
+  useNavigate: () => mockNavigate,
 }));
 
 // make jest synchronously run the useEffect inside shallow
@@ -62,8 +57,8 @@ describe('PacPage', () => {
       ns: 'openshift-new',
     });
     wrapper = shallow(<PacPage />);
-    expect(mockHistoryPush).toHaveBeenCalledTimes(1);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/pac/ns/openshift-pipelines');
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith('/pac/ns/openshift-pipelines');
   });
 
   it('should show 404, if pipeline operator is not installed', () => {

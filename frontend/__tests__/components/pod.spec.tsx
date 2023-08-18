@@ -20,7 +20,6 @@ import {
 } from '@console/internal/components/utils';
 import { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
 import { t } from '../../__mocks__/i18next';
-// import { Router } from 'react-router-dom';
 import * as ReactRouter from 'react-router-dom-v5-compat';
 import { PodKind } from '@console/internal/module/k8s';
 

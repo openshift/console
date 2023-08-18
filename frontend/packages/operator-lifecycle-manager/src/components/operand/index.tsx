@@ -7,8 +7,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { ListPageBody, K8sModel } from '@console/dynamic-plugin-sdk';
 import { getResources } from '@console/internal/actions/k8s';
 import { Conditions } from '@console/internal/components/conditions';
@@ -361,7 +360,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
     hideColumnManagement = false,
   } = props;
   const [models, inFlight] = useK8sModels();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [apiRefreshed, setAPIRefreshed] = React.useState(false);
 
@@ -417,8 +416,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
         )
       : {};
 
-  const createNavigate = (kind) =>
-    history.push(`${location.pathname.replace('instances', kind)}/~new`);
+  const createNavigate = (kind) => navigate(`${location.pathname.replace('instances', kind)}/~new`);
 
   const data = React.useMemo(() => flatten(resources), [resources, flatten]);
 

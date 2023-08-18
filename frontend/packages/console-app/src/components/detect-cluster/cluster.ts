@@ -3,7 +3,7 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { CoreState } from '@console/dynamic-plugin-sdk/src';
 import { setActiveCluster } from '@console/dynamic-plugin-sdk/src/app/core/actions';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/lib-core';
@@ -23,7 +23,7 @@ export const ClusterContext = React.createContext<ClusterContextType>({});
 
 export const useValuesForClusterContext = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [activeNamespace] = useActiveNamespace();
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const activeCluster = useSelector((state: CoreState) => state.activeCluster);
@@ -58,7 +58,7 @@ export const useValuesForClusterContext = () => {
           const oldPath = window.location.pathname;
           const newPath = formatNamespaceRoute(activeNamespace, oldPath, window.location, true);
           if (newPath !== oldPath) {
-            history.push(newPath);
+            navigate(newPath);
           }
         }
       },
@@ -67,7 +67,7 @@ export const useValuesForClusterContext = () => {
         activeNamespace,
         activePerspective,
         dispatch,
-        history,
+        navigate,
         setActivePerspective,
         setLastCluster,
       ],

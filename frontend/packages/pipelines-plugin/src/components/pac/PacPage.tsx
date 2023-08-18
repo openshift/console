@@ -1,7 +1,6 @@
 import * as React from 'react';
 // import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -18,7 +17,7 @@ import PacOverview from './PacOverview';
 const PacPage: React.FC = () => {
   // const { t } = useTranslation();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const isPipelinesEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE);
   const [isAdmin, isAdminCheckLoading] = useAccessReview({
@@ -31,9 +30,9 @@ const PacPage: React.FC = () => {
 
   React.useEffect(() => {
     if (isPipelinesEnabled && namespace !== PIPELINE_NAMESPACE) {
-      history.push(`/pac/ns/${PIPELINE_NAMESPACE}`);
+      navigate(`/pac/ns/${PIPELINE_NAMESPACE}`);
     }
-  }, [history, isPipelinesEnabled, namespace]);
+  }, [isPipelinesEnabled, namespace, navigate]);
 
   const { loaded, secretData, loadError, isFirstSetup } = usePacData(code);
 
