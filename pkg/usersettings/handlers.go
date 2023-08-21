@@ -27,9 +27,8 @@ var USER_RESOURCE = schema.GroupVersionResource{
 }
 
 type UserSettingsHandler struct {
-	Client              *http.Client
-	Endpoint            string
-	ServiceAccountToken string
+	Client   *http.Client
+	Endpoint string
 }
 
 func (h *UserSettingsHandler) HandleUserSettings(user *auth.User, w http.ResponseWriter, r *http.Request) {
@@ -147,9 +146,8 @@ func (h *UserSettingsHandler) deleteUserSettings(ctx context.Context, client *ku
 
 func (h *UserSettingsHandler) createServiceAccountClient() (*kubernetes.Clientset, error) {
 	config := &rest.Config{
-		Host:        h.Endpoint,
-		BearerToken: h.ServiceAccountToken,
-		Transport:   h.Client.Transport,
+		Host:      h.Endpoint,
+		Transport: h.Client.Transport,
 	}
 	return kubernetes.NewForConfig(config)
 }

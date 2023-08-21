@@ -378,9 +378,12 @@ func main() {
 	}
 
 	var k8sEndpoint *url.URL
+	var bearerTokenFilePath string
+
 	switch *fK8sMode {
 	case "in-cluster":
 		k8sEndpoint = &url.URL{Scheme: "https", Host: "kubernetes.default.svc"}
+		bearerTokenFilePath = k8sInClusterBearerToken
 
 		var err error
 		k8sCertPEM, err = ioutil.ReadFile(k8sInClusterCA)
@@ -395,9 +398,9 @@ func main() {
 			RootCAs: rootCAs,
 		})
 
-		bearerToken, err := ioutil.ReadFile(k8sInClusterBearerToken)
+		bearerToken, err := server.GetInClusterToken(bearerTokenFilePath)
 		if err != nil {
-			klog.Fatalf("failed to read bearer token: %v", err)
+			klog.Fatalf("Error inferring Kubernetes config from environment: %v", err)
 		}
 
 		srv.K8sProxyConfig = &proxy.Config{
@@ -566,11 +569,11 @@ func main() {
 		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
 	}
 	srv.KubeAPIServerURL = apiServerEndpoint
-	srv.K8sClient = &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
-		},
+	k8sClient, err := server.GetK8sClient(srv.K8sProxyConfig.TLSClientConfig, bearerTokenFilePath)
+	if err != nil {
+		klog.Fatalf("Error inferring Kubernetes config from environment: %v", err)
 	}
+	srv.K8sClient = k8sClient
 
 	clusterManagementURL, err := url.Parse(clusterManagementURL)
 	if err != nil {

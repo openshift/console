@@ -109,11 +109,10 @@ func (m *Metrics) GetCollectors() []prometheus.Collector {
 func (m *Metrics) MonitorPlugins(
 	userSettingsClient *http.Client,
 	userSettingsEndpoint string,
-	serviceAccountToken string,
 ) {
 	go func() {
 		time.Sleep(3 * time.Second)
-		go m.updatePluginMetric(userSettingsClient, userSettingsEndpoint, serviceAccountToken)
+		go m.updatePluginMetric(userSettingsClient, userSettingsEndpoint)
 	}()
 
 	ticker := time.NewTicker(updateConsolePluginInterval)
@@ -122,7 +121,7 @@ func (m *Metrics) MonitorPlugins(
 		for {
 			select {
 			case <-ticker.C:
-				m.updatePluginMetric(userSettingsClient, userSettingsEndpoint, serviceAccountToken)
+				m.updatePluginMetric(userSettingsClient, userSettingsEndpoint)
 			case <-quit:
 				ticker.Stop()
 				return
@@ -136,12 +135,11 @@ func (m *Metrics) MonitorPlugins(
 func (m *Metrics) updatePluginMetric(
 	k8sClient *http.Client,
 	k8sEndpoint string,
-	serviceAccountToken string,
 ) {
 	klog.Info("serverconfig.Metrics: Update ConsolePlugin metrics...\n")
 	startTime := time.Now()
 
-	consolePlugins, err := m.getConsolePlugins(k8sClient, k8sEndpoint, serviceAccountToken)
+	consolePlugins, err := m.getConsolePlugins(k8sClient, k8sEndpoint)
 	if err != nil {
 		klog.Errorf("serverconfig.Metrics: Failed to get all installed ConsolePlugins: %v\n", err)
 	}
@@ -165,13 +163,11 @@ func (m *Metrics) updatePluginMetric(
 func (m *Metrics) getConsolePlugins(
 	k8sClient *http.Client,
 	k8sEndpoint string,
-	serviceAccountToken string,
 ) (*[]unstructured.Unstructured, error) {
 	ctx := context.TODO()
 	config := &rest.Config{
-		Transport:   k8sClient.Transport,
-		Host:        k8sEndpoint,
-		BearerToken: serviceAccountToken,
+		Transport: k8sClient.Transport,
+		Host:      k8sEndpoint,
 	}
 	client, err := dynamic.NewForConfig(config)
 	if err != nil {

@@ -20,6 +20,7 @@ import (
 	"github.com/coreos/pkg/health"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"k8s.io/client-go/transport"
 	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
@@ -563,9 +564,8 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	// User settings
 	userSettingHandler := usersettings.UserSettingsHandler{
-		Client:              s.K8sClient,
-		Endpoint:            s.K8sProxyConfig.Endpoint.String(),
-		ServiceAccountToken: s.ServiceAccountToken,
+		Client:   s.K8sClient,
+		Endpoint: s.K8sProxyConfig.Endpoint.String(),
 	}
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
@@ -672,13 +672,11 @@ func (s *Server) HTTPHandler() http.Handler {
 	serverconfigMetrics.MonitorPlugins(
 		s.K8sClient,
 		s.K8sProxyConfig.Endpoint.String(),
-		s.ServiceAccountToken,
 	)
 	usageMetrics := usage.NewMetrics()
 	usageMetrics.MonitorUsers(
 		s.K8sClient,
 		s.K8sProxyConfig.Endpoint.String(),
-		s.ServiceAccountToken,
 	)
 	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...) // TODO remove multicluster
 	prometheus.MustRegister(serverconfigMetrics.GetCollectors()...)
@@ -978,6 +976,27 @@ func (s *Server) handleLogoutMulticluster(w http.ResponseWriter, r *http.Request
 		fmt.Printf("%v", err)
 		os.Exit(1)
 	}
+}
+
+func GetK8sClient(tlsConfig *tls.Config, bearerTokenFilePath string) (*http.Client, error) {
+	tr := &http.Transport{
+		TLSClientConfig: tlsConfig,
+	}
+	tripper, err := transport.NewBearerAuthWithRefreshRoundTripper("", bearerTokenFilePath, tr)
+	if err != nil {
+		return nil, fmt.Errorf("failed set round tripper with bearer token refresh: %v", err)
+	}
+	return &http.Client{
+		Transport: tripper,
+	}, nil
+}
+
+func GetInClusterToken(tokenPath string) (string, error) {
+	token, err := os.ReadFile(tokenPath)
+	if err != nil {
+		return "", fmt.Errorf("error reading bearer token file: %v", err)
+	}
+	return string(token), nil
 }
 
 // tokenToObjectName returns the oauthaccesstokens object name for the given raw token,

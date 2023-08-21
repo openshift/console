@@ -274,7 +274,7 @@ func TestUsersMetrics(t *testing.T) {
 			defer testserver.Close()
 
 			m := NewMetrics()
-			err := m.updateUsersMetric(&http.Client{}, testserver.URL, "ignored-service-account-token")
+			err := m.updateUsersMetric(&http.Client{}, testserver.URL)
 			if testcase.expectedError != "" {
 				assert.Equal(t, testcase.expectedError, err.Error())
 			} else {
@@ -408,7 +408,7 @@ func TestUsersMetricsRunningTwice(t *testing.T) {
 			{
 				testserver := httptest.NewServer(testcase.handlerOne)
 				defer testserver.Close()
-				assert.NoError(t, m.updateUsersMetric(&http.Client{}, testserver.URL, "ignored-service-account-token"))
+				assert.NoError(t, m.updateUsersMetric(&http.Client{}, testserver.URL))
 
 				assert.Equal(t,
 					metrics.RemoveComments(testcase.expectedMetricsOne),
@@ -418,7 +418,7 @@ func TestUsersMetricsRunningTwice(t *testing.T) {
 			{
 				testserver := httptest.NewServer(testcase.handlerTwo)
 				defer testserver.Close()
-				assert.NoError(t, m.updateUsersMetric(&http.Client{}, testserver.URL, "ignored-service-account-token"))
+				assert.NoError(t, m.updateUsersMetric(&http.Client{}, testserver.URL))
 
 				assert.Equal(t,
 					metrics.RemoveComments(testcase.expectedMetricsTwo),

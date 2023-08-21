@@ -131,7 +131,7 @@ func TestPluginMetrics(t *testing.T) {
 			defer testserver.Close()
 
 			m := NewMetrics(configuredPlugins)
-			m.updatePluginMetric(&http.Client{}, testserver.URL, "ignored-service-account-token")
+			m.updatePluginMetric(&http.Client{}, testserver.URL)
 
 			assert.Equal(t,
 				metrics.RemoveComments(testcase.expectedMetrics),
@@ -253,7 +253,7 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 					}
 				}))
 				defer testserver.Close()
-				m.updatePluginMetric(&http.Client{}, testserver.URL, "ignored-service-account-token")
+				m.updatePluginMetric(&http.Client{}, testserver.URL)
 			}
 			assert.Equal(t,
 				metrics.RemoveComments(testcase.expectedMetricsInitially),
@@ -278,7 +278,7 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 					}
 				}))
 				defer testserver.Close()
-				m.updatePluginMetric(&http.Client{}, testserver.URL, "ignored-service-account-token")
+				m.updatePluginMetric(&http.Client{}, testserver.URL)
 			}
 			assert.Equal(t,
 				metrics.RemoveComments(testcase.expectedMetricsAfterUpdate),

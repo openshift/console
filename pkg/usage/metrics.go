@@ -58,11 +58,10 @@ func (m *Metrics) HandleUsage(event string, perspective string) error {
 func (m *Metrics) MonitorUsers(
 	userSettingsClient *http.Client,
 	userSettingsEndpoint string,
-	serviceAccountToken string,
 ) {
 	go func() {
 		time.Sleep(5 * time.Second)
-		go m.updateUsersMetric(userSettingsClient, userSettingsEndpoint, serviceAccountToken)
+		go m.updateUsersMetric(userSettingsClient, userSettingsEndpoint)
 	}()
 
 	ticker := time.NewTicker(updateConsoleUsersInterval)
@@ -71,7 +70,7 @@ func (m *Metrics) MonitorUsers(
 		for {
 			select {
 			case <-ticker.C:
-				m.updateUsersMetric(userSettingsClient, userSettingsEndpoint, serviceAccountToken)
+				m.updateUsersMetric(userSettingsClient, userSettingsEndpoint)
 			case <-quit:
 				ticker.Stop()
 				return
@@ -83,16 +82,14 @@ func (m *Metrics) MonitorUsers(
 func (m *Metrics) updateUsersMetric(
 	userSettingsClient *http.Client,
 	userSettingsEndpoint string,
-	serviceAccountToken string,
 ) error {
 	klog.Info("usage.Metrics: Count console users...\n")
 	startTime := time.Now()
 
 	ctx := context.TODO()
 	config := &rest.Config{
-		Host:        userSettingsEndpoint,
-		BearerToken: serviceAccountToken,
-		Transport:   userSettingsClient.Transport,
+		Host:      userSettingsEndpoint,
+		Transport: userSettingsClient.Transport,
 	}
 	client, err := kubernetes.NewForConfig(config)
 	if err != nil {
