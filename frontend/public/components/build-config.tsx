@@ -288,13 +288,15 @@ export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
     [builds, buildsLoaded, buildsLoadError],
   );
 
-  const buildResource = props.data.map((buildConfig) => {
-    buildConfig.latestBuild =
-      data.builds.latestByBuildName[
-        `${buildConfig.metadata.name}-${buildConfig.metadata.namespace}`
-      ];
-    return buildConfig;
-  });
+  const buildResource = props.data
+    ? props.data.map((buildConfig) => {
+        buildConfig.latestBuild =
+          data.builds.latestByBuildName[
+            `${buildConfig.metadata.name}-${buildConfig.metadata.namespace}`
+          ];
+        return buildConfig;
+      })
+    : [];
 
   return (
     <Table
