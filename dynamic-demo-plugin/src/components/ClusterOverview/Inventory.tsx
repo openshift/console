@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { MonitoringIcon } from '@patternfly/react-icons';
 import {
   K8sResourceCommon,
