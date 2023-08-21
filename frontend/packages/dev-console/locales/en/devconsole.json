@@ -324,7 +324,7 @@
   "Success threshold": "Success threshold",
   "How many consecutive successes for the probe to be considered successful after having failed.": "How many consecutive successes for the probe to be considered successful after having failed.",
   "Initial delay": "Initial delay",
-  "How long to wait after the Container starts before checking it's health.": "How long to wait after the Container starts before checking it's health.",
+  "How long to wait after the Container starts before checking its health.": "How long to wait after the Container starts before checking its health.",
   "seconds": "seconds",
   "Period": "Period",
   "How often to perform the probe.": "How often to perform the probe.",
