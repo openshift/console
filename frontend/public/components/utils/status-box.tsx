@@ -64,7 +64,9 @@ export const Loading: React.FC<LoadingProps> = ({ className }) => (
 );
 Loading.displayName = 'Loading';
 
-export const LoadingInline: React.FC<{}> = () => <Loading className="co-m-loader--inline" />;
+export const LoadingInline: React.FC<Record<string, unknown>> = () => (
+  <Loading className="co-m-loader--inline" />
+);
 LoadingInline.displayName = 'LoadingInline';
 
 export const LoadingBox: React.FC<LoadingBoxProps> = ({ className, message }) => (

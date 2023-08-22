@@ -914,7 +914,7 @@ export type ClusterOperatorObjectReference = {
 };
 
 export type ClusterOperator = {
-  spec: {};
+  spec: Record<string, unknown>;
   status: {
     conditions?: K8sResourceCondition[];
     versions?: OperandVersion[];
@@ -1254,7 +1254,7 @@ export type ReplicationControllerKind = {
   };
 } & K8sResourceCommon;
 
-export type ReplicaSetKind = {} & ReplicationControllerKind;
+export type ReplicaSetKind = Record<string, unknown> & ReplicationControllerKind;
 
 type EndpointSlice = {
   kind?: string;

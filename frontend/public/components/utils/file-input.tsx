@@ -250,7 +250,7 @@ export const DroppableFileInput = withTranslation()(DroppableFileInputWithTransl
 
 export type DroppableFileInputProps = WithTranslation & {
   inputFileData: string;
-  onChange: Function;
+  onChange: (value: string, isBinary: any) => void;
   label: string;
   id: string;
   inputFieldHelpText: string;
@@ -280,7 +280,7 @@ export type FileInputProps = WithTranslation & {
   onDrop: (props: FileInputProps, monitor: DropTargetMonitor) => void;
   inputFileData: string;
   inputFileName: string;
-  onChange: Function;
+  onChange: (data: any) => void;
   label: string;
   id: string;
   inputFieldHelpText: string;

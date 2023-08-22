@@ -21,7 +21,7 @@ export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string) => 
 
 export const ThemeContext = React.createContext<string>('');
 
-export const ThemeProvider: React.FC<{}> = ({ children }) => {
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const htmlTagElement = document.documentElement;
   const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY);
   const [theme, , themeLoaded] = useUserSettings(

@@ -100,7 +100,11 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
       : dispatch({ type: 'securityAndNetwork/setVault', payload: kmsAdvanced });
     close();
   };
-  const readFile = (file: File, fn: Function, fileFn: Function) => {
+  const readFile = (
+    file: File,
+    fn: React.Dispatch<React.SetStateAction<string>>,
+    fileFn: React.Dispatch<React.SetStateAction<string>>,
+  ) => {
     const reader = new FileReader();
     reader.onload = () => {
       const input = reader.result;

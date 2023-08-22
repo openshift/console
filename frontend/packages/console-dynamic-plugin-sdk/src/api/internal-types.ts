@@ -109,14 +109,25 @@ export enum ByteDataTypes {
   DecimalBytesWithoutB = 'decimalBytesWithoutB',
 }
 
+export type HumanizeResult = {
+  string: string;
+  value: number;
+  unit: string;
+};
+
+export type Humanize = (
+  v: React.ReactText,
+  initialUnit?: string,
+  preferredUnit?: string,
+) => HumanizeResult;
+
 export type UtilizationItemProps = {
   title: string;
   utilization?: PrometheusResponse;
   limit?: PrometheusResponse;
   requested?: PrometheusResponse;
   isLoading: boolean;
-  // Todo(bipuladh): Make huamnize type Humanize once unit.js is converted
-  humanizeValue: Function;
+  humanizeValue: Humanize;
   query: string | string[];
   error: boolean;
   max?: number;

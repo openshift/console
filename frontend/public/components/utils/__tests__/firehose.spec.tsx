@@ -935,7 +935,7 @@ describe('Firehose together with useK8sWatchResources', () => {
   };
 
   const resourcesUpdate = jest.fn();
-  const WatchResources: React.FC<{ initResources: WatchK8sResources<{}> }> = ({
+  const WatchResources: React.FC<{ initResources: WatchK8sResources<Record<string, unknown>> }> = ({
     initResources,
   }) => {
     resourcesUpdate(useK8sWatchResources(initResources));
@@ -1005,7 +1005,7 @@ describe('Firehose together with useK8sWatchResources', () => {
         name: 'my-pod',
       },
     ];
-    const initResources: WatchK8sResources<{}> = {
+    const initResources: WatchK8sResources<Record<string, unknown>> = {
       pods: {
         kind: 'Pod',
         namespace: 'my-namespace',
@@ -1086,7 +1086,7 @@ describe('Firehose together with useK8sWatchResources', () => {
   });
 
   it('should fetch data just once and return the same data for both (useK8sWatchResources first)', async () => {
-    const initResources: WatchK8sResources<{}> = {
+    const initResources: WatchK8sResources<Record<string, unknown>> = {
       pods: {
         kind: 'Pod',
         namespace: 'my-namespace',
@@ -1193,7 +1193,7 @@ describe('Firehose together with useK8sWatchResources', () => {
           namespace: 'my-namespace',
         },
       ];
-      const initResources: WatchK8sResources<{}> = {
+      const initResources: WatchK8sResources<Record<string, unknown>> = {
         pods: {
           kind: 'Pod',
           namespace: 'my-namespace',
@@ -1282,7 +1282,7 @@ describe('Firehose together with useK8sWatchResources', () => {
 
     // And this 3 cases tests against other call orders / isList=true/false combinations...
     it('should return an array for Firehose isList=true even when useK8sWatchResources isList=false is called without a name (useK8sWatchResources first)', async () => {
-      const initResources: WatchK8sResources<{}> = {
+      const initResources: WatchK8sResources<Record<string, unknown>> = {
         pods: {
           kind: 'Pod',
           namespace: 'my-namespace',
@@ -1390,7 +1390,7 @@ describe('Firehose together with useK8sWatchResources', () => {
           name: '',
         },
       ];
-      const initResources: WatchK8sResources<{}> = {
+      const initResources: WatchK8sResources<Record<string, unknown>> = {
         pods: {
           kind: 'Pod',
           namespace: 'my-namespace',
@@ -1494,7 +1494,7 @@ describe('Firehose together with useK8sWatchResources', () => {
       // Without a name the k8sGet API is called, but it returns a list anyway.
       k8sGetMock.mockReturnValue(Promise.resolve(podList));
 
-      const initResources: WatchK8sResources<{}> = {
+      const initResources: WatchK8sResources<Record<string, unknown>> = {
         pods: {
           kind: 'Pod',
           namespace: 'my-namespace',

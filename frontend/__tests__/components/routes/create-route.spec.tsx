@@ -8,11 +8,12 @@ import {
   CreateRoute,
   CreateRouteState,
   AlternateServicesGroup,
+  CreateRouteProps,
 } from '../../../public/components/routes/create-route';
 import * as UIActions from '../../../public/actions/ui';
 
 describe('Create Route', () => {
-  let wrapper: ShallowWrapper<{}, CreateRouteState>;
+  let wrapper: ShallowWrapper<CreateRouteProps, CreateRouteState>;
 
   beforeEach(() => {
     spyOn(UIActions, 'getActiveNamespace').and.returnValue('default');

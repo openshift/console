@@ -125,7 +125,7 @@ const createRoute = (
 const createReceiver = (
   globals,
   formValues,
-  createReceiverConfig: Function,
+  createReceiverConfig: (globals: any, formValues: any, receiverConfig: any) => any,
   receiverToEdit: AlertmanagerReceiver,
 ): AlertmanagerReceiver => {
   const receiverConfig = createReceiverConfig(

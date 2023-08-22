@@ -241,7 +241,7 @@ export const KebabItem: React.FC<KebabItemProps> = (props) => {
 
 type KebabMenuItemsProps = {
   options: KebabMenuOption[];
-  onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  onClick: (event: React.MouseEvent<unknown>, option: KebabOption) => void;
   focusItem?: KebabOption;
   className?: string;
 };
@@ -652,14 +652,14 @@ type KebabProps = {
 
 type KebabItemProps = {
   option: KebabOption;
-  onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  onClick: (event: React.MouseEvent<unknown>, option: KebabOption) => void;
   autoFocus?: boolean;
   onEscape?: () => void;
 };
 
 export type KebabItemsProps = {
   options: KebabOption[];
-  onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  onClick: (event: React.MouseEvent<unknown>, option: KebabOption) => void;
   focusItem?: KebabOption;
   className?: string;
 };

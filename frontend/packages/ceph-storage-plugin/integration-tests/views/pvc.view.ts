@@ -45,7 +45,7 @@ export const goToPersistentVolumeClaims = async () => {
 export const createNewPersistentVolumeClaim = async (
   pvc: PvcType,
   waitForBinding: boolean,
-  performBeforeWaiting?: Function,
+  performBeforeWaiting?: () => Buffer,
 ) => {
   await goToPersistentVolumeClaims();
   await selectItemFromDropdown(pvc.namespace, namespaceDropdown);

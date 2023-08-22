@@ -274,4 +274,4 @@ export type ModalSubmitFooterProps = {
 export type CreateModalLauncher = <P extends ModalComponentProps>(
   C: React.ComponentType<P>,
   modalWrapper?: boolean,
-) => (props: P & CreateModalLauncherProps) => { result: Promise<{}> };
+) => (props: P & CreateModalLauncherProps) => { result: Promise<Record<string, unknown>> };

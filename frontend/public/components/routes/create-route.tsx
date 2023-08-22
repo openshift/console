@@ -573,9 +573,10 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
   };
 
   const { serviceOptions, availableServiceOptions, index, onChange } = props;
+  const updatedEntry: AlternateServiceEntryGroupData = { weight, name };
 
   React.useEffect(() => {
-    onChange({ name, weight }, index);
+    onChange(updatedEntry, index);
   }, [name, weight, index, onChange]);
 
   return (
@@ -631,12 +632,12 @@ type AlternateServiceEntryGroupProps = {
   name: string;
   weight: number;
   index: number;
-  onChange: Function;
+  onChange: (updatedEntry: AlternateServiceEntryGroupData, index: number) => void;
   serviceOptions: any;
   availableServiceOptions: any;
 };
 
-type CreateRouteProps = WithTranslation & {
+export type CreateRouteProps = WithTranslation & {
   t: TFunction;
   services: K8sResourceKind[];
   existingRoute?: RouteKind;

@@ -76,7 +76,7 @@ export interface ResourceDropdownProps {
     actionKey: string;
   }[];
   dataSelector: string[] | number[] | symbol[];
-  transformLabel?: Function;
+  transformLabel?: (kind: K8sResourceKind) => string;
   loaded?: boolean;
   loadError?: string;
   placeholder?: string;

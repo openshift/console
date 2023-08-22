@@ -86,7 +86,7 @@ export const SimpleTabNav = withTranslation()(SimpleTabNav_) as React.FC<SimpleT
 
 export type Tab = {
   name: string;
-  component: React.FunctionComponent<{}> | React.ReactElement;
+  component: React.FunctionComponent<Record<string, unknown>> | React.ReactElement;
 };
 
 type SimpleTabNavProps = {

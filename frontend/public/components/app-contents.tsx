@@ -193,7 +193,7 @@ const getPluginPageRoutes = (
   return [activeRoutes, inactiveRoutes];
 };
 
-const AppContents: React.FC<{}> = () => {
+const AppContents: React.FC<Record<string, never>> = () => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const routePageExtensions = useExtensions<RoutePage>(isRoutePage);
   const dynamicRoutePages = useExtensions<DynamicRoutePage>(isDynamicRoutePage);

@@ -454,7 +454,7 @@ const ListPage: React.FC<ListPageProps> = ({ loaded, loadError, targets }) => {
   const [, , serviceMonitorsLoadError] = React.useContext(ServiceMonitorsWatchContext);
   const [, , podMonitorsLoadError] = React.useContext(PodMonitorsWatchContext);
   const [isExactSearch] = useExactSearch();
-  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
+  const matchFn = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
   const nameFilter: RowFilter = {
     filter: (filter, target: Target) =>
       matchFn(filter.selected?.[0], target.scrapeUrl) ||
@@ -549,7 +549,7 @@ const ListPage: React.FC<ListPageProps> = ({ loaded, loadError, targets }) => {
 
 const POLL_INTERVAL = 15 * 1000;
 
-export const TargetsUI: React.FC<{}> = () => {
+export const TargetsUI: React.FC<Record<string, never>> = () => {
   const [error, setError] = React.useState<PrometheusAPIError>();
   const [loaded, setLoaded] = React.useState(false);
   const [targets, setTargets] = React.useState<Target[]>();

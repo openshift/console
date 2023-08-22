@@ -92,7 +92,7 @@ const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) =
   );
 };
 
-const EmptyVersionsMsg: React.FC<{}> = () => {
+const EmptyVersionsMsg: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
   return <EmptyBox label={t('public~CRD versions')} />;
 };
@@ -329,9 +329,9 @@ export const CustomResourceDefinitionsDetailsPage: React.FC<CustomResourceDefini
   );
 };
 
-export type CustomResourceDefinitionsListProps = {};
+export type CustomResourceDefinitionsListProps = Record<string, unknown>;
 
-export type CustomResourceDefinitionsPageProps = {};
+export type CustomResourceDefinitionsPageProps = Record<string, unknown>;
 
 type InstancesProps = {
   obj: CustomResourceDefinitionKind;

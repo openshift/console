@@ -102,7 +102,7 @@ type AutocompleteInputProps = {
   suggestionCount?: number;
   showSuggestions?: boolean;
   textValue: string;
-  setTextValue: React.Dispatch<React.SetStateAction<String>>;
+  setTextValue: React.Dispatch<React.SetStateAction<string>>;
   className?: string;
   data?: any;
   labelPath?: string;

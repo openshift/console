@@ -234,7 +234,7 @@ const getImageNameAndTag = (image: string) => {
   return { imageName, imageTag };
 };
 
-const getContainer = (pod: PodKind, name: String): ContainerSpec => {
+const getContainer = (pod: PodKind, name: string): ContainerSpec => {
   if (!pod.spec) {
     return null;
   }

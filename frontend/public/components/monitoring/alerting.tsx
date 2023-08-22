@@ -363,7 +363,7 @@ const PopoverField: React.FC<{ bodyContent: React.ReactNode; label: string }> = 
   </Popover>
 );
 
-const AlertStateHelp: React.FC<{}> = () => {
+const AlertStateHelp: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
 
   return (
@@ -397,7 +397,7 @@ const AlertStateHelp: React.FC<{}> = () => {
   );
 };
 
-const SeverityHelp: React.FC<{}> = () => {
+const SeverityHelp: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
 
   return (
@@ -433,7 +433,7 @@ const SeverityHelp: React.FC<{}> = () => {
   );
 };
 
-const SourceHelp: React.FC<{}> = () => {
+const SourceHelp: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
 
   return (
@@ -1720,7 +1720,7 @@ const getAdditionalSources = <T extends Alert | Rule>(
   return [];
 };
 
-const AlertsPage_: React.FC<{}> = () => {
+const AlertsPage_: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
 
   const { data, loaded = false, loadError }: Alerts = useSelector(
@@ -1730,7 +1730,7 @@ const AlertsPage_: React.FC<{}> = () => {
     ({ observe }: RootState) => observe.get('silences')?.loadError,
   );
   const [isExactSearch] = useExactSearch();
-  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
+  const matchFn = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const nameFilter: RowFilter = {
     filter: (filter, alert: Alert) => matchFn(filter.selected?.[0], alert.labels?.alertname),
@@ -1909,11 +1909,11 @@ const RuleTableRow: React.FC<RowProps<Rule>> = ({ obj }) => {
   );
 };
 
-const RulesPage_: React.FC<{}> = () => {
+const RulesPage_: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
 
   const [isExactSearch] = useExactSearch();
-  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
+  const matchFn = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const data: Rule[] = useSelector(({ observe }: RootState) => observe.get('rules'));
   const { loaded = false, loadError }: Alerts = useSelector(
@@ -2026,7 +2026,7 @@ const RulesPage_: React.FC<{}> = () => {
 };
 const RulesPage = withFallback(RulesPage_);
 
-const CreateSilenceButton: React.FC<{}> = React.memo(() => {
+const CreateSilenceButton: React.FC<Record<string, never>> = React.memo(() => {
   const { t } = useTranslation();
 
   const [namespace] = useActiveNamespace();
@@ -2133,7 +2133,7 @@ const SelectAllCheckbox: React.FC<{ silences: Silence[] }> = ({ silences }) => {
   );
 };
 
-const SilencesPage_: React.FC<{}> = () => {
+const SilencesPage_: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
 
   const [namespace] = useActiveNamespace();
@@ -2142,7 +2142,7 @@ const SilencesPage_: React.FC<{}> = () => {
   const [errorMessage, setErrorMessage] = React.useState();
 
   const [isExactSearch] = useExactSearch();
-  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
+  const matchFn = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const { data, loaded = false, loadError }: Silences = useSelector(
     ({ observe }: RootState) => observe.get(namespace ? 'devSilences' : 'silences') || {},

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 import { containsNonPrintableCharacters } from './utils/file-input';
 
-export const MaskedData: React.FC<{}> = () => {
+export const MaskedData: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
   return (
     <>

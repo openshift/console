@@ -29,7 +29,7 @@ const clusterServiceVersionDisplayName = (csv: K8sResourceKind): string =>
 
 // TODO: Table filters are undocumented, stringly-typed, and non-obvious. We can change that.
 export const tableFilters = (isExactSearch: boolean): FilterMap => {
-  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
+  const matchFn = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
   return {
     name: (filter, obj) => matchFn(filter.selected?.[0], obj.metadata.name),
 
