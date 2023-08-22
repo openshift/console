@@ -4,6 +4,7 @@ import { useTranslation, Trans } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { RootState } from '@console/internal/redux';
 import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -13,7 +14,6 @@ import {
   ModalSubmitFooter,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
-import { history } from '@console/internal/components/utils';
 import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
@@ -23,7 +23,7 @@ import {
 } from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { getActiveNamespace } from '../../reducers/ui';
-import { setActiveNamespace } from '../../actions/ui';
+import { setActiveNamespace, formatNamespaceRoute } from '../../actions/ui';
 
 export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
   cancel,
@@ -31,6 +31,7 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
   kind,
   resource,
 }) => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [confirmed, setConfirmed] = React.useState(false);
@@ -51,11 +52,18 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
     handlePromise(k8sKill(kind, resource))
       .then(() => {
         if (resource.metadata.name === activeNamespace) {
+          if (ALL_NAMESPACES_KEY !== activeNamespace) {
+            const oldPath = window.location.pathname;
+            const newPath = formatNamespaceRoute(ALL_NAMESPACES_KEY, oldPath, window.location);
+            if (newPath !== oldPath) {
+              navigate(newPath);
+            }
+          }
           dispatch(setActiveNamespace(ALL_NAMESPACES_KEY));
           setLastNamespace(ALL_NAMESPACES_KEY);
         }
         close?.();
-        history.push(`/k8s/cluster/${kind.plural}`);
+        navigate(`/k8s/cluster/${kind.plural}`);
       })
       .catch(() => {
         /* do nothing */

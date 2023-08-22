@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, redirect } from 'react-router-dom-v5-compat';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
@@ -15,7 +15,6 @@ import { errorModal } from './modals';
 import {
   BuildHooks,
   BuildStrategy,
-  history,
   Kebab,
   KebabAction,
   navFactory,
@@ -49,7 +48,7 @@ const startBuildAction: KebabAction = (kind, buildConfig) => ({
   callback: () =>
     startBuild(buildConfig)
       .then((build) => {
-        history.push(resourceObjPath(build, referenceFor(build)));
+        return redirect(resourceObjPath(build, referenceFor(build)));
       })
       .catch((err) => {
         const error = err.message;
@@ -72,7 +71,7 @@ const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig) => {
     callback: () =>
       cloneBuild(buildConfig.latestBuild)
         .then((clone) => {
-          history.push(resourceObjPath(clone, referenceFor(clone)));
+          return redirect(resourceObjPath(clone, referenceFor(clone)));
         })
         .catch((err) => {
           const error = err.message;

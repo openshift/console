@@ -19,7 +19,7 @@ import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector } from 'react-redux';
@@ -32,7 +32,6 @@ import { refreshNotificationPollers } from '../notification-drawer';
 import { ButtonBar } from '../utils/button-bar';
 import { PageHeading, SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams } from '../utils/link';
-import { history } from '../utils/router';
 import { StatusBox } from '../utils/status-box';
 import { useBoolean } from './hooks/useBoolean';
 import { Silences } from './types';
@@ -93,6 +92,7 @@ const NegativeMatcherHelp = () => {
 
 const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { ns: namespace } = useParams();
 
@@ -227,7 +227,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
       .then(({ silenceID }) => {
         setError(undefined);
         refreshNotificationPollers();
-        history.push(
+        navigate(
           namespace
             ? `/dev-monitoring/ns/${namespace}/silences/${encodeURIComponent(silenceID)}`
             : `/monitoring/silences/${encodeURIComponent(silenceID)}`,
@@ -449,7 +449,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 <Button type="submit" variant="primary">
                   {t('public~Silence')}
                 </Button>
-                <Button onClick={history.goBack} variant="secondary">
+                <Button onClick={() => navigate(-1)} variant="secondary">
                   {t('public~Cancel')}
                 </Button>
               </ActionGroup>

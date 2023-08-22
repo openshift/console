@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind, K8sResourceKind } from '../../module/k8s';
-import { ButtonBar, ListInput, history, PageHeading } from '../utils';
+import { ButtonBar, ListInput, PageHeading } from '../utils';
 import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
 export const AddRequestHeaderPage = () => {
+  const navigate = useNavigate();
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const [name, setName] = React.useState('request-header');
@@ -210,7 +212,7 @@ export const AddRequestHeaderPage = () => {
               <Button type="submit" variant="primary">
                 {t('public~Add')}
               </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
+              <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link, redirect } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
@@ -35,7 +35,6 @@ import {
   documentationURLs,
   ExternalLink,
   getDocumentationURL,
-  history,
   humanizeBinaryBytes,
   humanizeCpuCores,
   isUpstream,
@@ -67,7 +66,7 @@ const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) =>
   callback: () =>
     cloneBuild(build)
       .then((clone) => {
-        history.push(resourceObjPath(clone, referenceFor(clone)));
+        redirect(resourceObjPath(clone, referenceFor(clone)));
       })
       .catch((err) => {
         const error = err.message;

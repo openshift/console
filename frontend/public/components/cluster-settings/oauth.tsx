@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import { Alert, Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router-dom-v5-compat';
 
 import { useQueryParams } from '@console/shared';
 import { ClusterOperatorModel, OAuthModel } from '../../models';
@@ -13,7 +13,6 @@ import { IdentityProvider, OAuthKind, referenceForModel } from '../../module/k8s
 import { DetailsPage } from '../factory';
 import {
   EmptyBox,
-  history,
   Kebab,
   navFactory,
   resourcePathFromModel,
@@ -71,6 +70,7 @@ export const addIDPItems = Object.freeze({
 });
 
 const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) => {
+  const navigate = useNavigate();
   const [isIDPOpen, setIDPOpen] = React.useState(false);
   const { identityProviders, tokenConfig } = obj.spec;
   const { t } = useTranslation();
@@ -111,7 +111,7 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
         component="button"
         id={key}
         data-test-id={key}
-        onClick={(e) => history.push(`/settings/idp/${e.currentTarget.id}`)}
+        onClick={(e) => navigate(`/settings/idp/${e.currentTarget.id}`)}
       >
         {getAddIDPItemLabels(value)}
       </DropdownItem>

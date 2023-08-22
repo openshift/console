@@ -17,6 +17,11 @@ jest.mock('react-redux', () => {
   };
 });
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useNavigate: jest.fn(),
+}));
+
 describe(TextFilter.displayName, () => {
   let wrapper: ReactWrapper;
   let placeholder: string;

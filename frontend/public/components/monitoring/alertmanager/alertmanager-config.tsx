@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import classNames from 'classnames';
-import { Link, useLocation } from 'react-router-dom-v5-compat';
+import { Link, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -26,7 +26,7 @@ import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config
 import { K8sResourceKind } from '../../../module/k8s';
 import { Table, TableData, TextFilter, RowFunctionArgs } from '../../factory';
 import { confirmModal, createAlertRoutingModal } from '../../modals';
-import { Firehose, history, Kebab, MsgBox, SectionHeading, StatusBox } from '../../utils';
+import { Firehose, Kebab, MsgBox, SectionHeading, StatusBox } from '../../utils';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
@@ -224,6 +224,7 @@ const deleteReceiver = (
   secret: K8sResourceKind,
   config: AlertmanagerConfig,
   receiverName: string,
+  navigate: any,
 ) => {
   // remove any routes which use receiverToDelete
   _.update(config, 'route.routes', (routes) => {
@@ -236,7 +237,7 @@ const deleteReceiver = (
     return receivers;
   });
   return patchAlertmanagerConfig(secret, config).then(() => {
-    history.push('/monitoring/alertmanagerconfig');
+    navigate('/monitoring/alertmanagerconfig');
   });
 };
 
@@ -253,6 +254,7 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
   customData: { routingLabelsByReceivers, defaultReceiverName, config, secret },
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   // filter to routing labels belonging to current Receiver
   const receiverRoutingLabels = _.filter(routingLabelsByReceivers, { receiver: receiver.name });
   const receiverIntegrationTypes = getIntegrationTypes(receiver);
@@ -278,7 +280,7 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
         const targetUrl = canUseEditForm
           ? `/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`
           : `/monitoring/alertmanageryaml`;
-        return history.push(targetUrl);
+        return navigate(targetUrl);
       },
     },
     {
@@ -294,7 +296,7 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
             receiverName,
           }),
           btnText: t('public~Delete Receiver'),
-          executeFn: () => deleteReceiver(secret, config, receiverName),
+          executeFn: () => deleteReceiver(secret, config, receiverName, navigate),
         }),
     },
   ];

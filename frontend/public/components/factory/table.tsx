@@ -20,6 +20,7 @@ import {
   WindowScroller,
 } from '@patternfly/react-virtualized-extension';
 import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import {
   getNodeRoles,
   getMachinePhase,
@@ -435,6 +436,7 @@ export const Table: React.FC<TableProps> = ({
   });
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   const [sortBy, setSortBy] = React.useState({});
 
@@ -485,11 +487,14 @@ export const Table: React.FC<TableProps> = ({
 
   const applySort = React.useCallback(
     (sortField, sortFunc, direction, columnTitle) => {
-      dispatch(
-        UIActions.sortList(listId, sortField, sortFunc || currentSortFunc, direction, columnTitle),
-      );
+      dispatch(UIActions.sortList(listId, sortField, sortFunc || currentSortFunc, direction));
+      const url = new URL(window.location.href);
+      const sp = new URLSearchParams(window.location.search);
+      sp.set('orderBy', direction);
+      sp.set('sortBy', columnTitle);
+      navigate(`${url.pathname}?${sp.toString()}${url.hash}`, { replace: true });
     },
-    [currentSortFunc, dispatch, listId],
+    [currentSortFunc, dispatch, listId, navigate],
   );
 
   const onSort = React.useCallback(

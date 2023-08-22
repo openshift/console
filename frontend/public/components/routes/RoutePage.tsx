@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk/src';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
-import { StatusBox, history } from '@console/internal/components/utils';
+import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { RouteModel, ServiceModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel, RouteKind } from '@console/internal/module/k8s';
@@ -26,6 +26,7 @@ const defaultRouteYAML = baseTemplates.get(referenceForModel(RouteModel)).get('d
 
 export const RoutePage: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { ns: namespace, name } = useParams();
   const isEditForm = !!name;
   const heading = isEditForm ? t('public~Edit Route') : t('public~Create Route');
@@ -89,7 +90,7 @@ export const RoutePage: React.FC = () => {
       } else {
         resource = await k8sCreateResource({ model: RouteModel, data });
       }
-      history.push(`/k8s/ns/${resource.metadata.namespace}/routes/${resource.metadata.name}`);
+      navigate(`/k8s/ns/${resource.metadata.namespace}/routes/${resource.metadata.name}`);
     } catch (e) {
       helpers.setStatus({
         submitSuccess: '',
@@ -100,7 +101,7 @@ export const RoutePage: React.FC = () => {
     return resource;
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => navigate(-1);
 
   if (isEditForm && loaded && !route) {
     return <ErrorPage404 />;

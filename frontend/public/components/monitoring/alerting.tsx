@@ -81,7 +81,15 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
-import { Routes, Route, Navigate, useLocation, useParams, Link } from 'react-router-dom-v5-compat';
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useParams,
+  Link,
+  useNavigate,
+} from 'react-router-dom-v5-compat';
 import {
   alertingErrored,
   alertingLoaded,
@@ -103,7 +111,6 @@ import { getPrometheusURL } from '../graphs/helpers';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
-import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
 import MonitoringDashboardsPage from './dashboards';
 import { fetchAlerts } from './fetch-alerts';
@@ -157,8 +164,8 @@ const alertSource = (alert: Alert): AlertSource | string => alertingRuleSource(a
 const pollers = {};
 const pollerTimeouts = {};
 
-const silenceAlert = (alert: Alert, namespace?: string) =>
-  history.push(
+const silenceAlert = (alert: Alert, navigate: any, namespace?: string) =>
+  navigate(
     namespace
       ? `/dev-monitoring/ns/${namespace}/silences/~new/?${labelsToParams(alert.labels)}`
       : `/monitoring/silences/~new/?${labelsToParams(alert.labels)}`,
@@ -752,6 +759,7 @@ const SilencedByList: React.FC<{ silences: Silence[] }> = ({ silences }) => {
 const AlertsDetailsPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
   const params = useParams();
+  const navigate = useNavigate();
 
   const isDevPerspective = _.has(params, 'ns');
   const namespace = params?.ns;
@@ -824,7 +832,7 @@ const AlertsDetailsPage_: React.FC<{}> = () => {
               <div data-test-id="details-actions">
                 <Button
                   className="co-action-buttons__btn"
-                  onClick={() => silenceAlert(alert, namespace)}
+                  onClick={() => silenceAlert(alert, navigate, namespace)}
                   variant="primary"
                 >
                   {t('public~Silence alert')}
@@ -1011,6 +1019,7 @@ const PrometheusTemplate = ({ text }) => (
 
 const ActiveAlerts: React.FC<{ alerts; ruleID: string; namespace: string }> = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { alerts, ruleID, namespace } = props;
 
@@ -1052,7 +1061,7 @@ const ActiveAlerts: React.FC<{ alerts; ruleID: string; namespace: string }> = (p
                     <DropdownItem
                       component="button"
                       key="silence"
-                      onClick={() => silenceAlert(a, namespace)}
+                      onClick={() => silenceAlert(a, navigate, namespace)}
                     >
                       {t('public~Silence alert')}
                     </DropdownItem>,
@@ -1356,6 +1365,7 @@ const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
   Toggle,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { ns: namespace } = useParams();
 
@@ -1363,7 +1373,7 @@ const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
   const [isModalOpen, , setModalOpen, setModalClosed] = useBoolean(false);
 
   const editSilence = () => {
-    history.push(
+    navigate(
       namespace
         ? `/dev-monitoring/ns/${namespace}/silences/${silence.id}/edit`
         : `/monitoring/silences/${silence.id}/edit`,
@@ -1419,6 +1429,7 @@ const SilenceDropdownActions: React.FC<{ silence: Silence }> = ({ silence }) => 
 
 const SilencedAlertsList = ({ alerts }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { ns: namespace } = useParams();
 
@@ -1457,7 +1468,7 @@ const SilencedAlertsList = ({ alerts }) => {
                 dropdownItems={[
                   <DropdownItem
                     key="view-rule"
-                    onClick={() => history.push(ruleURL(a.rule, namespace))}
+                    onClick={() => navigate(ruleURL(a.rule, namespace))}
                   >
                     {t('public~View alerting rule')}
                   </DropdownItem>,
@@ -1612,6 +1623,7 @@ const tableAlertClasses = [
 
 const AlertTableRow: React.FC<RowProps<Alert>> = ({ obj }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { annotations = {}, labels } = obj;
   const description = annotations.description || annotations.message;
@@ -1622,13 +1634,13 @@ const AlertTableRow: React.FC<RowProps<Alert>> = ({ obj }) => {
   const { ns: namespace } = useParams();
 
   const dropdownItems = [
-    <DropdownItem key="view-rule" onClick={() => history.push(ruleURL(obj.rule, namespace))}>
+    <DropdownItem key="view-rule" onClick={() => navigate(ruleURL(obj.rule, namespace))}>
       {t('public~View alerting rule')}
     </DropdownItem>,
   ];
   if (state !== AlertStates.Silenced) {
     dropdownItems.unshift(
-      <DropdownItem key="silence-alert" onClick={() => silenceAlert(obj)}>
+      <DropdownItem key="silence-alert" onClick={() => silenceAlert(obj, navigate)}>
         {t('public~Silence alert')}
       </DropdownItem>,
     );

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Formik, FormikHelpers } from 'formik';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { ConfigMapModel } from '../../models';
-import { history } from '../../components/utils';
 import { ConfigMapFormEditor } from './ConfigMapFormEditor';
 import { ConfigMap, ConfigMapFormInitialValues } from './types';
 import { getConfigmapData, getConfigMapInitialValues, validationSchema } from './configmap-utils';
@@ -25,6 +25,7 @@ const ConfigmapForm: React.FC<ConfigMapProps> = ({
   configMap,
   isCreateFlow,
 }) => {
+  const navigate = useNavigate();
   const [initialValues] = React.useState(
     getConfigMapInitialValues(namespace, configMap, isCreateFlow),
   );
@@ -60,14 +61,14 @@ const ConfigmapForm: React.FC<ConfigMapProps> = ({
     }
     resourceCall
       .then(() => {
-        history.push(`/k8s/ns/${namespace}/configmaps/${configmap.metadata.name}`);
+        navigate(`/k8s/ns/${namespace}/configmaps/${configmap.metadata.name}`);
       })
       .catch((e) => {
         actions.setStatus({ submitError: e.message });
       });
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => navigate(-1);
 
   return (
     <Formik

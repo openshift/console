@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 /* eslint-disable import/named */
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { KEY_CODES, Tooltip, FocusTrap } from '@patternfly/react-core';
 import { AngleRightIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
@@ -28,7 +29,7 @@ import {
   clonePVCModal,
   restorePVCModal,
 } from '../modals';
-import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
+import { asAccessReview, checkAccess, resourceObjPath, useAccessReview } from './index';
 import {
   AccessReviewResourceAttributes,
   K8sKind,
@@ -488,6 +489,7 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
 
 export const Kebab: KebabComponent = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { options, isDisabled, terminatingTooltip } = props;
   const dropdownElement = React.useRef<HTMLButtonElement>();
   const divElement = React.useRef<HTMLDivElement>();
@@ -500,7 +502,7 @@ export const Kebab: KebabComponent = (props) => {
     }
     hide();
     if (option.href) {
-      history.push(option.href);
+      navigate(option.href);
     }
   };
 

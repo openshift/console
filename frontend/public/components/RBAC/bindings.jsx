@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -23,7 +23,6 @@ import {
   ButtonBar,
   Firehose,
   getQueryArgument,
-  history,
   Kebab,
   kindObj,
   ListDropdown,
@@ -77,7 +76,7 @@ export const flatten = (resources) =>
 
 const getKindLabel = (kind) => (kind.labelKey ? i18next.t(kind.labelKey) : kind.label);
 
-const menuActions = ({ subjectIndex, subjects }, startImpersonate) => {
+const menuActions = ({ subjectIndex, subjects }, startImpersonate, navigate) => {
   const subject = subjects[subjectIndex];
 
   const actions = [
@@ -146,7 +145,10 @@ const menuActions = ({ subjectIndex, subjects }, startImpersonate) => {
   if (subject.kind === 'User' || subject.kind === 'Group') {
     actions.unshift(() => ({
       label: i18next.t('public~Impersonate {{kind}} "{{name}}"', subject),
-      callback: () => startImpersonate(subject.kind, subject.name),
+      callback: () => {
+        startImpersonate(subject.kind, subject.name);
+        navigate(window.SERVER_FLAGS.basePath);
+      },
     }));
   }
 
@@ -212,15 +214,16 @@ export const BindingName = ({ binding }) => (
 
 export const BindingKebab = connect(null, {
   startImpersonate: UIActions.startImpersonate,
-})(({ binding, startImpersonate }) =>
-  binding.subjects ? (
+})(({ binding, startImpersonate }) => {
+  const navigate = useNavigate();
+  return binding.subjects ? (
     <ResourceKebab
-      actions={menuActions(binding, startImpersonate)}
+      actions={menuActions(binding, startImpersonate, navigate)}
       kind={bindingKind(binding)}
       resource={binding}
     />
-  ) : null,
-);
+  ) : null;
+});
 
 export const RoleLink = ({ binding }) => {
   const kind = binding.roleRef.kind;
@@ -446,6 +449,7 @@ const Section = ({ label, children }) => (
 
 const BaseEditRoleBinding = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { fixed, saveButtonText } = props;
 
@@ -580,7 +584,7 @@ const BaseEditRoleBinding = (props) => {
         if (metadata.namespace) {
           props.setActiveNamespace(metadata.namespace);
         }
-        history.push(resourceObjPath(obj, referenceFor(obj)));
+        navigate(resourceObjPath(obj, referenceFor(obj)));
       },
       (err) => {
         setError(err.message);
@@ -746,7 +750,7 @@ const BaseEditRoleBinding = (props) => {
               <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
                 {saveButtonText || t('public~Create')}
               </Button>
-              <Button onClick={history.goBack} id="cancel" variant="secondary">
+              <Button onClick={() => navigate(-1)} id="cancel" variant="secondary">
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, connect } from 'react-redux';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import {
   RowFilter as RowFilterExt,
   Rule,
@@ -44,6 +44,7 @@ const textFilter = 'resource-list-text';
 
 export const MonitoringAlerts: React.FC<Props> = ({ rules, alerts, filters, listSorts }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const params = useParams();
   const [sortBy, setSortBy] = React.useState<{ index: number; direction: SortByDirection }>({
     index: null,
@@ -115,12 +116,17 @@ export const MonitoringAlerts: React.FC<Props> = ({ rules, alerts, filters, list
           monitoringAlertColumn[index - 1].fieldName,
           monitoringAlertColumn[index - 1].sortFunc,
           direction,
-          monitoringAlertColumn[index - 1].title,
         ),
       );
       setSortBy({ index, direction });
+
+      const url = new URL(window.location.href);
+      const sp = new URLSearchParams(window.location.search);
+      sp.set('orderBy', direction);
+      sp.set('sortBy', monitoringAlertColumn[index - 1].title);
+      navigate(`${url.pathname}?${sp.toString()}${url.hash}`, { replace: true });
     },
-    [dispatch, monitoringAlertColumn],
+    [dispatch, monitoringAlertColumn, navigate],
   );
 
   const Content = React.useMemo(() => {

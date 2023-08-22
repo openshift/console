@@ -5,7 +5,7 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
 
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +25,6 @@ import {
   FirehoseResourcesResult,
   FirehoseResultObject,
   FirehoseResult,
-  history,
   inject,
   kindObj,
   makeQuery,
@@ -199,6 +198,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     badge,
     title,
   } = props;
+  const navigate = useNavigate();
 
   const [reduxIDs, setReduxIDs] = React.useState([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -249,7 +249,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       params.delete(filterName);
     }
     const url = new URL(window.location.href);
-    history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+    navigate(`${url.pathname}?${params.toString()}${url.hash}`, { replace: true });
   };
 
   const applyFilter = (filterName: string, options: any) => {
@@ -269,7 +269,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     if (action) {
       action();
     } else if (_.isFunction(createProps.createLink)) {
-      history.push(createProps.createLink(itemName));
+      navigate(createProps.createLink(itemName), { replace: true });
     }
   };
 

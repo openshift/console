@@ -13,6 +13,7 @@ import { MonitoringAlerts } from '../MonitoringAlerts';
 jest.mock('react-router-dom-v5-compat', () => ({
   ...require.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
+  useNavigate: jest.fn(),
 }));
 
 describe('MonitoringAlerts', () => {

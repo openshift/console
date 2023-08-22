@@ -4,7 +4,6 @@ import * as _ from 'lodash-es';
 
 // FIXME(alecmerdler): Do not `import store`
 import store from '../redux';
-import { history } from '../components/utils/router';
 import { OverviewItem } from '@console/shared';
 import {
   ALL_NAMESPACES_KEY,
@@ -204,11 +203,6 @@ export const setActiveNamespace = (namespace: string = '') => {
   // otherwise users will get page refresh and cry about
   // broken direct links and bookmarks
   if (namespace !== getActiveNamespace()) {
-    const oldPath = window.location.pathname;
-    const newPath = formatNamespaceRoute(namespace, oldPath, window.location);
-    if (newPath !== oldPath) {
-      history.push(newPath);
-    }
     // save last namespace in session storage (persisted only for current browser tab). Used to remember/restore if
     // "All Projects" was selected when returning to the list view (typically from details view) via breadcrumb or
     // sidebar navigation
@@ -258,27 +252,19 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
   subsClient.close(false, true);
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
-  history.push(window.SERVER_FLAGS.basePath);
 };
 export const stopImpersonate = () => (dispatch) => {
   dispatch(endImpersonate());
   subsClient.close(false, true);
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
-  history.push(window.SERVER_FLAGS.basePath);
 };
-export const sortList = (
-  listId: string,
-  field: string,
-  func: string,
-  orderBy: string,
-  column: string,
-) => {
-  const url = new URL(window.location.href);
-  const sp = new URLSearchParams(window.location.search);
-  sp.set('orderBy', orderBy);
-  sp.set('sortBy', column);
-  history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
+export const sortList = (listId: string, field: string, func: string, orderBy: string) => {
+  // const url = new URL(window.location.href);
+  // const sp = new URLSearchParams(window.location.search);
+  // sp.set('orderBy', orderBy);
+  // sp.set('sortBy', column);
+  // history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
 
   return action(ActionType.SortList, { listId, field, func, orderBy });
 };

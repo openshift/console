@@ -21,7 +21,7 @@ import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { useParams, Link, useNavigate } from 'react-router-dom-v5-compat';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
@@ -45,7 +45,6 @@ import { RootState } from '../../../redux';
 import { getPrometheusURL } from '../../graphs/helpers';
 import {
   getQueryArgument,
-  history,
   LoadingInline,
   removeQueryArgument,
   setQueryArgument,
@@ -751,6 +750,7 @@ const Board: React.FC<BoardProps> = ({ rows }) => (
 const MonitoringDashboardsPage: React.FC = () => {
   const { t } = useTranslation();
   const params = useParams();
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
   const namespace = params?.ns;
@@ -808,7 +808,7 @@ const MonitoringDashboardsPage: React.FC = () => {
       }
       if (newBoard !== board) {
         if (getQueryArgument('dashboard') !== newBoard) {
-          history.replace(url);
+          navigate(url, { replace: true });
         }
 
         const allVariables = getAllVariables(boards, newBoard, namespace);
@@ -830,7 +830,7 @@ const MonitoringDashboardsPage: React.FC = () => {
         setBoard(newBoard);
       }
     },
-    [activePerspective, board, boards, dispatch, namespace],
+    [activePerspective, board, boards, dispatch, namespace, navigate],
   );
 
   // Display dashboard present in the params or show the first board

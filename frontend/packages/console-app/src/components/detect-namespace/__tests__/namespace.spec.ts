@@ -20,6 +20,7 @@ jest.mock('react-redux', () => ({
 jest.mock('react-router-dom-v5-compat', () => ({
   ...require.requireActual('react-router-dom-v5-compat'),
   useLocation: jest.fn(),
+  useNavigate: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/hooks/flag', () => ({

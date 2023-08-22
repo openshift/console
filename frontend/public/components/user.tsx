@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { Button, TextContent } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -32,9 +32,13 @@ const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
   startImpersonate,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
-    callback: () => startImpersonate('User', obj.metadata.name),
+    callback: () => {
+      startImpersonate('User', obj.metadata.name);
+      navigate(window.SERVER_FLAGS.basePath);
+    },
   });
   return (
     <ResourceKebab
@@ -212,9 +216,13 @@ type UserKebabProps = {
 
 const UserDetailsPage_: React.FC<UserKebabDispatchProps> = ({ startImpersonate, ...props }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
-    callback: () => startImpersonate('User', obj.metadata.name),
+    callback: () => {
+      startImpersonate('User', obj.metadata.name);
+      navigate(window.SERVER_FLAGS.basePath);
+    },
   });
   return (
     <DetailsPage

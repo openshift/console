@@ -4,13 +4,13 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { CaretDownIcon, CheckIcon, StarIcon } from '@patternfly/react-icons';
 import { Divider } from '@patternfly/react-core';
 import { impersonateStateToProps, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useUserSettingsCompatibility } from '@console/shared';
 
 import { checkAccess } from './rbac';
-import { history } from './router';
 import { KebabItems } from './kebab';
 import { ResourceName } from './resource-icon';
 
@@ -644,6 +644,7 @@ Dropdown.propTypes = {
 
 const ActionsMenuDropdown = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [active, setActive] = React.useState(!!props.active);
 
   const dropdownElement = React.useRef();
@@ -710,7 +711,7 @@ const ActionsMenuDropdown = (props) => {
     }
 
     if (option.href) {
-      history.push(option.href);
+      navigate(option.href);
     }
 
     hide();
