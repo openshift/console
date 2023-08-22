@@ -111,7 +111,9 @@ export const AddRequestHeaderPage = () => {
             .then((configMap: K8sResourceKind) =>
               addRequestHeaderIDP(oauth, configMap.metadata.name),
             )
-            .then(redirectToOAuthPage);
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
         })
         .catch((err) => {
           setErrorMessage(err);

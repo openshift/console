@@ -141,7 +141,9 @@ export const AddOpenIDIDPPage = () => {
               const caName = configMap ? configMap.metadata.name : '';
               return addOpenIDIDP(oauth, secret.metadata.name, caName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
         })
         .catch((err) => {
           setErrorMessage(err);

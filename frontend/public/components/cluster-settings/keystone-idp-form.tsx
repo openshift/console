@@ -155,7 +155,9 @@ export const AddKeystonePage = () => {
               const secretName = tlsSecret ? tlsSecret.metadata.name : '';
               return addKeystoneIDP(oauth, secretName, caName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
         })
         .catch((err) => {
           setErrorMessage(err);

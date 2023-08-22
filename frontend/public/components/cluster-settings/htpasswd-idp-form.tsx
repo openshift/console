@@ -97,7 +97,9 @@ export const AddHTPasswdPage = () => {
         .then(() => {
           return createHTPasswdSecret()
             .then((secret: K8sResourceKind) => addHTPasswdIDP(oauth, secret.metadata.name))
-            .then(redirectToOAuthPage);
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
         })
         .catch((err) => {
           setErrorMessage(err);

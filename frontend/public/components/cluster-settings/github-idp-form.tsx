@@ -137,7 +137,9 @@ export const AddGitHubPage = () => {
               const caName = configMap ? configMap.metadata.name : '';
               return addGitHubIDP(oauth, secret.metadata.name, caName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
         })
         .catch((err) => {
           setErrorMessage(err);

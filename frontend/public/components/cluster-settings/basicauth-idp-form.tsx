@@ -153,7 +153,9 @@ export const AddBasicAuthPage: React.FC = () => {
               const secretName = tlsSecret ? tlsSecret.metadata.name : '';
               return addBasicAuthIDP(oauth, secretName, caName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
         })
         .catch((err) => {
           setErrorMessage(err);

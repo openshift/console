@@ -129,7 +129,9 @@ export const AddGitLabPage = () => {
               const caName = configMap ? configMap.metadata.name : '';
               return addGitLabIDP(oauth, secret.metadata.name, caName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
         })
         .catch((err) => {
           setErrorMessage(err);

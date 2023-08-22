@@ -90,7 +90,9 @@ export const AddGooglePage = () => {
         .then(() => {
           return createClientSecret()
             .then((secret: K8sResourceKind) => addGoogleIDP(oauth, secret.metadata.name))
-            .then(redirectToOAuthPage);
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
         })
         .catch((err) => {
           setErrorMessage(err);

@@ -152,7 +152,9 @@ export const AddLDAPPage = () => {
               const caConfigMapName = _.get(caConfigMap, 'metadata.name');
               return addLDAPIDP(oauth, bindPasswordSecretName, caConfigMapName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
         })
         .catch((err) => {
           setErrorMessage(err);
