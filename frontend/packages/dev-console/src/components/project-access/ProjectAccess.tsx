@@ -56,7 +56,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, 
     let removeRoles = getRemovedRoles(initialValues.projectAccess, values.projectAccess);
     const updateRoles = getRolesToUpdate(newRoles, removeRoles);
 
-    const updateRolesWithMultipleSubjects = getRolesWithMultipleSubjects(
+    const { updateRolesWithMultipleSubjects, removeRoleSubjectFlag } = getRolesWithMultipleSubjects(
       newRoles,
       removeRoles,
       updateRoles,
@@ -75,13 +75,19 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, 
     roleBinding.metadata.namespace = namespace;
 
     if (updateRoles.length > 0) {
-      roleBindingRequests.push(...sendRoleBindingRequest(Verb.Patch, updateRoles, roleBinding));
+      roleBindingRequests.push(
+        ...sendRoleBindingRequest(Verb.Patch, updateRoles, roleBinding, removeRoleSubjectFlag),
+      );
     }
     if (removeRoles.length > 0) {
-      roleBindingRequests.push(...sendRoleBindingRequest(Verb.Remove, removeRoles, roleBinding));
+      roleBindingRequests.push(
+        ...sendRoleBindingRequest(Verb.Remove, removeRoles, roleBinding, removeRoleSubjectFlag),
+      );
     }
     if (newRoles.length > 0) {
-      roleBindingRequests.push(...sendRoleBindingRequest(Verb.Create, newRoles, roleBinding));
+      roleBindingRequests.push(
+        ...sendRoleBindingRequest(Verb.Create, newRoles, roleBinding, removeRoleSubjectFlag),
+      );
     }
 
     return Promise.all(roleBindingRequests)

@@ -104,7 +104,8 @@ export const getRemovedRoles = (
           o1.subject.name === o2.subject.name &&
           o1.subject.kind === o2.subject.kind &&
           o1.role === o2.role &&
-          o1.subject.namespace === o2.subject.namespace,
+          o1.subject.namespace === o2.subject.namespace &&
+          o1.roleBindingName === o2.roleBindingName,
       ),
   );
   return removeRoles;
@@ -126,6 +127,7 @@ export const sendRoleBindingRequest = (
   verb: string,
   roles: UserRoleBinding[],
   roleBinding: RoleBinding,
+  removeRoleSubjectFlag: number,
 ) => {
   const rb = _.clone(roleBinding);
   const finalArray = [];
@@ -145,6 +147,8 @@ export const sendRoleBindingRequest = (
               name: user.subject.name,
             },
           ]
+        : removeRoleSubjectFlag === 1 && user.subjects.length > 0
+        ? getUpdatedSubjects(user.subjects)
         : user.subjects.length > 1
         ? getUpdatedSubjects(user.subjects)
         : getUpdatedSubjects([user.subject]);
@@ -160,6 +164,7 @@ export const getRolesWithMultipleSubjects = (
   removeRoles: UserRoleBinding[],
   updateRoles: UserRoleBinding[],
 ) => {
+  let removeRoleSubjectFlag = 0;
   const updateRolesWithMultipleSubjects: UserRoleBinding[] = [];
   _.remove(
     newRoles,
@@ -183,6 +188,7 @@ export const getRolesWithMultipleSubjects = (
       } else {
         const newSubs = removeRole.subjects.filter((sub) => sub.name !== removeRole.subject.name);
         updateRolesWithMultipleSubjects.push({ ...removeRole, subjects: newSubs });
+        removeRoleSubjectFlag = 1;
       }
       return true;
     }
@@ -199,5 +205,5 @@ export const getRolesWithMultipleSubjects = (
     }
     return false;
   });
-  return updateRolesWithMultipleSubjects;
+  return { updateRolesWithMultipleSubjects, removeRoleSubjectFlag };
 };
