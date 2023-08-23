@@ -39,6 +39,18 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
   const useProjects: boolean = useFlag(FLAGS.OPENSHIFT);
   const dispatch = useDispatch();
 
+  const updateNamespace = (ns) => {
+    if (ns !== activeNamespace) {
+      setActiveNamespace(ns);
+      const oldPath = window.location.pathname;
+      const newPath = formatNamespaceRoute(ns, oldPath, window.location);
+      if (newPath !== oldPath) {
+        navigate(newPath);
+      }
+    }
+    dispatch(setActiveNamespaceForStore(ns));
+  };
+
   // Set namespace when all pending namespace infos are loaded.
   // Automatically check if preferred and last namespace still exist.
   const resourcesLoaded: boolean =
@@ -47,15 +59,7 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
     if (!urlNamespace && resourcesLoaded) {
       getValueForNamespace(preferredNamespace, lastNamespace, useProjects)
         .then((ns: string) => {
-          if (ns !== activeNamespace) {
-            setActiveNamespace(ns);
-            const oldPath = window.location.pathname;
-            const newPath = formatNamespaceRoute(ns, oldPath, window.location);
-            if (newPath !== oldPath) {
-              navigate(newPath);
-            }
-          }
-          dispatch(setActiveNamespaceForStore(ns));
+          updateNamespace(ns);
         })
         .catch((e) => {
           // eslint-disable-next-line no-console
@@ -70,16 +74,9 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
   // This updates the redux state also after the initial rendering.
   React.useEffect(() => {
     if (urlNamespace) {
-      if (urlNamespace !== activeNamespace) {
-        setActiveNamespace(urlNamespace);
-        const oldPath = window.location.pathname;
-        const newPath = formatNamespaceRoute(urlNamespace, oldPath, window.location);
-        if (newPath !== oldPath) {
-          navigate(newPath);
-        }
-      }
-      dispatch(setActiveNamespaceForStore(urlNamespace));
+      updateNamespace(urlNamespace);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlNamespace, activeNamespace, dispatch, navigate]);
 
   // Change active namespace (in context and redux state) as well as last used namespace
@@ -87,16 +84,9 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
   const setNamespace = React.useCallback(
     (ns: string) => {
       ns !== lastNamespace && setLastNamespace(ns);
-      if (ns !== activeNamespace) {
-        setActiveNamespace(ns);
-        const oldPath = window.location.pathname;
-        const newPath = formatNamespaceRoute(ns, oldPath, window.location);
-        if (newPath !== oldPath) {
-          navigate(newPath);
-        }
-      }
-      dispatch(setActiveNamespaceForStore(ns));
+      updateNamespace(ns);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch, activeNamespace, setActiveNamespace, lastNamespace, setLastNamespace, navigate],
   );
 
