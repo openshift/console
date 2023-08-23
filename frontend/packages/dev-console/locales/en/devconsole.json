@@ -52,6 +52,7 @@
   "Project": "Project",
   "Builds": "Builds",
   "Add to Project": "Add to Project",
+  "Search and Add to Project": "Search and Add to Project",
   "Create Service Binding": "Create Service Binding",
   "Add to application": "Add to application",
   "Security": "Security",
@@ -654,5 +655,6 @@
   "BindableKinds": "BindableKinds",
   "Secure route": "Secure route",
   "Image name from external registry": "Image name from external registry",
-  "Image stream tag from internal registry": "Image stream tag from internal registry"
+  "Image stream tag from internal registry": "Image stream tag from internal registry",
+  "Search / Add to Project": "Search / Add to Project"
 }

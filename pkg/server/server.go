@@ -123,6 +123,7 @@ type jsGlobals struct {
 	NodeArchitectures               []string                   `json:"nodeArchitectures"`
 	CopiedCSVsDisabled              map[string]bool            `json:"copiedCSVsDisabled"`
 	HubConsoleURL                   string                     `json:"hubConsoleURL"`
+	TutorialUrls		 			string					   `json:"tutorialUrls"`
 }
 
 type Server struct {
@@ -188,6 +189,7 @@ type Server struct {
 	Telemetry                    serverconfig.MultiKeyValue
 	CopiedCSVsDisabled           map[string]bool
 	HubConsoleURL                *url.URL
+	TutorialUrls		 		 string
 
 	// TODO: only needed because handleLogoutMulticluster is part of the server type
 	AuthMetrics *auth.Metrics
@@ -819,6 +821,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		NodeArchitectures:          s.NodeArchitectures,
 		CopiedCSVsDisabled:         s.CopiedCSVsDisabled,
 		HubConsoleURL:              s.HubConsoleURL.String(),
+		TutorialUrls:				s.TutorialUrls,
 	}
 
 	localAuther := s.getLocalAuther()

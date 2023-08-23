@@ -42,6 +42,18 @@
     }
   },
   {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "managed-operators",
+      "section": "operators",
+      "name": "%olm~Managed Services%",
+      "href": "/catalog?catalogType=OperatorBackedService"
+    },
+    "flags": {
+      "required": ["DEVELOPER_CATALOG", "OPERATOR_BACKED_SERVICE_CATALOG_TYPE"]
+    }
+  },
+  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "id": "operators",

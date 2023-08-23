@@ -184,7 +184,7 @@
     "type": "dev-console.add/action-group",
     "properties": {
       "id": "developer-catalog",
-      "name": "%devconsole~Developer Catalog%",
+      "name": "%devconsole~Getting Started Resources%",
       "insertBefore": "git-repository"
     },
     "flags": {
@@ -237,34 +237,26 @@
   {
     "type": "dev-console.add/action",
     "properties": {
-      "id": "import-from-samples",
-      "groupId": "samples",
-      "href": "/samples/ns/:namespace",
-      "label": "%devconsole~Samples%",
-      "description": "%devconsole~Create an application from a code sample%",
-      "icon": { "$codeRef": "icons.samplesIconElement" },
-      "accessReview": [
-        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
-        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
-        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
-        { "group": "", "resource": "secrets", "verb": "create" },
-        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
-        { "group": "", "resource": "services", "verb": "create" }
-      ]
+      "id": "operator-backed",
+      "groupId": "developer-catalog",
+      "href": "/catalog/ns/:namespace?catalogType=OperatorBackedService",
+      "label": "%devconsole~Managed Services%",
+      "description": "%devconsole~Browse the catalog to discover and deploy operator managed services%",
+      "icon": "static/assets/manage-service.svg"
     },
     "flags": {
-      "required": ["DEVELOPER_CATALOG", "SAMPLE_CATALOG_TYPE"]
+      "required": ["DEVELOPER_CATALOG", "OPERATOR_BACKED_SERVICE_CATALOG_TYPE"]
     }
   },
   {
     "type": "dev-console.add/action",
     "properties": {
       "id": "import-from-git",
-      "groupId": "git-repository",
+      "groupId": "developer-catalog",
       "href": "/import/ns/:namespace",
       "label": "%devconsole~Import from Git%",
       "description": "%devconsole~Import code from your Git repository to be built and deployed%",
-      "icon": { "$codeRef": "icons.gitIconElement" },
+      "icon": "static/assets/git.svg",
       "accessReview": [
         { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
         { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
@@ -279,11 +271,11 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "deploy-image",
-      "groupId": "container-images",
+      "groupId": "developer-catalog",
       "href": "/deploy-image/ns/:namespace",
       "label": "%devconsole~Container images%",
       "description": "%devconsole~Deploy an existing Image from an Image registry or Image stream tag%",
-      "icon": { "$codeRef": "icons.deployIconElement" },
+      "icon": "static/assets/docker.svg",
       "accessReview": [
         { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
         { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
@@ -299,72 +291,11 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "import-yaml",
-      "groupId": "local-machine",
+      "groupId": "developer-catalog",
       "href": "/k8s/ns/:namespace/import",
       "label": "%devconsole~Import YAML%",
       "description": "%devconsole~Create resources from their YAML or JSON definitions%",
-      "icon": { "$codeRef": "icons.yamlIconElement" }
-    }
-  },
-  {
-    "type": "dev-console.add/action",
-    "properties": {
-      "id": "dev-catalog",
-      "groupId": "developer-catalog",
-      "href": "/catalog/ns/:namespace",
-      "label": "%devconsole~All services%",
-      "description": "%devconsole~Browse the catalog to discover, deploy and connect to services%",
-      "icon": { "$codeRef": "icons.devCatalogIconElement" }
-    },
-    "flags": {
-      "required": ["DEVELOPER_CATALOG"]
-    }
-  },
-  {
-    "type": "dev-console.add/action",
-    "properties": {
-      "id": "dev-catalog-databases",
-      "groupId": "developer-catalog",
-      "href": "/catalog/ns/:namespace?category=databases",
-      "label": "%devconsole~Database%",
-      "description": "%devconsole~Browse the catalog to discover database services to add to your application%",
-      "icon": { "$codeRef": "icons.databaseCatalogIconElement" }
-    },
-    "flags": {
-      "required": ["DEVELOPER_CATALOG"]
-    }
-  },
-  {
-    "type": "dev-console.add/action",
-    "properties": {
-      "id": "operator-backed",
-      "groupId": "developer-catalog",
-      "href": "/catalog/ns/:namespace?catalogType=OperatorBackedService",
-      "label": "%devconsole~Operator Backed%",
-      "description": "%devconsole~Browse the catalog to discover and deploy operator managed services%",
-      "icon": { "$codeRef": "icons.operatorCatalogIconElement" }
-    },
-    "flags": {
-      "required": ["DEVELOPER_CATALOG", "OPERATOR_BACKED_SERVICE_CATALOG_TYPE"]
-    }
-  },
-  {
-    "type": "dev-console.add/action",
-    "properties": {
-      "id": "upload-jar",
-      "groupId": "local-machine",
-      "href": "/upload-jar/ns/:namespace",
-      "label": "%devconsole~Upload JAR file%",
-      "description": "%devconsole~Upload a JAR file from your local desktop to OpenShift%",
-      "icon": { "$codeRef": "icons.uploadJarIconElement" },
-      "accessReview": [
-        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
-        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
-        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
-        { "group": "", "resource": "secrets", "verb": "create" },
-        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
-        { "group": "", "resource": "services", "verb": "create" }
-      ]
+      "icon": "static/assets/yaml.svg"
     }
   },
   {
@@ -380,30 +311,6 @@
     },
     "flags": {
       "required": ["ALLOW_EXPORT_APP"]
-    }
-  },
-  {
-    "type": "dev-console.add/action-group",
-    "properties": {
-      "id": "sharing",
-      "name": "%devconsole~Sharing%",
-      "insertAfter": "helm-chart-repositories",
-      "insertBefore": "local-machine"
-    }
-  },
-  {
-    "type": "dev-console.add/action",
-    "properties": {
-      "id": "project-access",
-      "groupId": "sharing",
-      "href": "/project-access/ns/:namespace",
-      "label": "%devconsole~Sharing%",
-      "description": "%devconsole~Project access allows you to add or remove a user's access to the project%",
-      "icon": { "$codeRef": "icons.shareProjectIconElement" },
-      "accessReview": [
-        { "group": "rbac.authorization.k8s.io", "resource": "rolebindings", "verb": "create" },
-        { "group": "rbac.authorization.k8s.io", "resource": "rolebindings", "verb": "list" }
-      ]
     }
   },
   {
@@ -1016,7 +923,7 @@
     "properties": {
       "exact": true,
       "path": ["/add/all-namespaces", "/add/ns/:ns"],
-      "component": { "$codeRef": "add.AddPage" }
+      "component": { "$codeRef": "addProject.AddPage" }
     }
   },
   {

@@ -14,9 +14,12 @@ type PageLayoutProps = {
 const PageLayout: React.FC<PageLayoutProps> = ({ children, title, hint, isDark }) => (
   <>
     <div className="ocs-page-layout__header">
-      <Text component="h1" className="ocs-page-layout__title">
-        {title}
-      </Text>
+      {title && (
+        <Text component="h1" className="ocs-page-layout__title">
+          {title}
+        </Text>
+      )}
+
       {hint && <div className="ocs-page-layout__hint">{hint}</div>}
     </div>
     <div className={cx('ocs-page-layout__content', { 'is-dark': isDark })}>{children}</div>

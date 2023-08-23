@@ -325,6 +325,15 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 		}
 	}
 
+	if customization.TutorialUrls.Sections != nil {
+		tutorialUrls, err := json.Marshal(customization.TutorialUrls)
+		if err == nil {
+			fs.Set("tutorial-urls", string(tutorialUrls))
+		} else {
+			klog.Fatalf("Could not marshal ConsoleConfig customization.tutorialUrls field: %v", err)
+		}
+	}
+
 	addPage, err := json.Marshal(customization.AddPage)
 	if err == nil {
 		fs.Set("add-page", string(addPage))

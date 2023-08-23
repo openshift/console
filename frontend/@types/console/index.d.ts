@@ -58,6 +58,7 @@ declare interface Window {
     telemetry: Record<string, string>;
     nodeArchitectures: string[];
     hubConsoleURL: string;
+    tutorialUrls: string;
   };
   windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;

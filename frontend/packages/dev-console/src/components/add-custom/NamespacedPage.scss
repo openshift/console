@@ -1,0 +1,35 @@
+.odc-namespaced-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+
+  &__content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: var(--pf-global--BackgroundColor--200);
+    position: relative;
+    overflow: auto;
+
+    &.is-light {
+      background-color: var(--pf-global--BackgroundColor--100);
+    }
+  }
+
+  &__toolbar {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+  }
+
+  // Override styles of namespace bar to support the addition of the application selector on mobile
+  & .co-namespace {
+    &-selector {
+      max-width: 100%;
+    }
+    &-bar__items {
+      flex-wrap: wrap;
+    }
+  }
+}

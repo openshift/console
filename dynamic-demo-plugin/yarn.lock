@@ -89,8 +89,8 @@
   version "0.0.0-fixed"
   dependencies:
     "@patternfly/quickstarts" "2.3.1"
-    "@patternfly/react-core" "4.276.5"
-    "@patternfly/react-table" "4.112.38"
+    "@patternfly/react-core" "4.276.6"
+    "@patternfly/react-table" "4.112.39"
     classnames "2.x"
     immutable "3.x"
     lodash "^4.17.21"
@@ -152,10 +152,10 @@
     tippy.js "5.1.2"
     tslib "^2.0.0"
 
-"@patternfly/react-core@4.276.5", "@patternfly/react-core@^4.276.5":
-  version "4.276.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-4.276.5.tgz#2f0e61bdaef38d6ba0ffef8d7805c373ff01f4b2"
-  integrity sha512-roSywj/Kwpoi1UcJrto4QS8QChNC0RSjHEQNMD6+RCX5JZ+LmEd8Qq3Vgm6j5Twse5TsC6DtZmRQCogKBhkAlQ==
+"@patternfly/react-core@4.276.6":
+  version "4.276.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-4.276.6.tgz#fa39aa61022f70bf350b2efc660bdeb096bda447"
+  integrity sha512-G0K+378jf9jw9g+hCAoKnsAe/UGTRspqPeuAYypF2FgNr+dC7dUpc7/VkNhZBVqSJzUWVEK8NyXcqkfi0IemIg==
   dependencies:
     "@patternfly/react-icons" "^4.93.6"
     "@patternfly/react-styles" "^4.92.6"
@@ -173,6 +173,19 @@
     "@patternfly/react-icons" "^4.72.3"
     "@patternfly/react-styles" "^4.71.3"
     "@patternfly/react-tokens" "^4.73.3"
+    focus-trap "6.9.2"
+    react-dropzone "9.0.0"
+    tippy.js "5.1.2"
+    tslib "^2.0.0"
+
+"@patternfly/react-core@^4.276.6":
+  version "4.276.8"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-4.276.8.tgz#7ef52830dcdda954bd5bec40132da6eef49aba6f"
+  integrity sha512-dn322rEzBeiVztZEuCZMUUittNb8l1hk30h9ZN31FLZLLVtXGlThFNV9ieqOJYA9zrYxYZrHMkTnOxSWVacMZg==
+  dependencies:
+    "@patternfly/react-icons" "^4.93.6"
+    "@patternfly/react-styles" "^4.92.6"
+    "@patternfly/react-tokens" "^4.94.6"
     focus-trap "6.9.2"
     react-dropzone "9.0.0"
     tippy.js "5.1.2"
@@ -220,12 +233,12 @@
     lodash "^4.17.19"
     tslib "^2.0.0"
 
-"@patternfly/react-table@4.112.38":
-  version "4.112.38"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-4.112.38.tgz#adb229a94d713fb216a6cacc872da6f278db2594"
-  integrity sha512-IR399yjUxo8pv8c9/xtWZ4R05fSfNC2QO80wCIQ+P2omtGTqL3MxMeYSVgDThJQ0aBl6rHMeIYB9jDDQ//B3hg==
+"@patternfly/react-table@4.112.39":
+  version "4.112.39"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-4.112.39.tgz#bf5b70b7aef4aa3c0d48aa8e6607b830dcdaee47"
+  integrity sha512-U+hOMgYlbghGH4M5MX+qt0GkVi/ocrGnxDnm11YiS3CtEGsd6Rr0NeqMmk0uoR46Od4Pr5tKuXxZhPP32sCL/w==
   dependencies:
-    "@patternfly/react-core" "^4.276.5"
+    "@patternfly/react-core" "^4.276.6"
     "@patternfly/react-icons" "^4.93.6"
     "@patternfly/react-styles" "^4.92.6"
     "@patternfly/react-tokens" "^4.94.6"

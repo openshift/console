@@ -47,6 +47,7 @@ import { ConsoleLinkModel } from '../models';
 import { withTelemetry, withQuickStartContext, withRequestTokenURL } from '@console/shared/src/hoc';
 import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
 import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
+import * as appLauncherImg from '../imgs/application-launcher.svg';
 
 const defaultHelpLinks = [
   {
@@ -656,6 +657,13 @@ class MastheadToolbarContents_ extends React.Component {
     } = this.props;
     const launchActions = this._launchActions();
     const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
+    const applicationLauncher = (
+      <span className="pf-c-dropdown__toggle">
+        <img src={appLauncherImg} alt="" width={18} />
+        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+      </span>
+    );
+
     return (
       <>
         <Toolbar isFullHeight isStatic>
@@ -679,6 +687,7 @@ class MastheadToolbarContents_ extends React.Component {
                     items={this._renderApplicationItems(this._launchActions())}
                     data-quickstart-id="qs-masthead-applications"
                     position="right"
+                    toggleIcon={applicationLauncher}
                     isGrouped
                   />
                 )}

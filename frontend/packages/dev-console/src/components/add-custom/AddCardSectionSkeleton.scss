@@ -1,0 +1,22 @@
+.odc-add-section-skeleton-placeholder {
+  &__container {
+    max-width: 100%;
+    padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--lg) var(--pf-global--spacer--2xl);
+  }
+  &__title {
+    margin-top: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md) 0;
+  }
+  &__item-header {
+    display: flex;
+    margin-top: var(--pf-global--spacer--xl);
+    &__title {
+      margin-left: var(--pf-global--spacer--sm);
+    }
+  }
+  &__item-desc {
+    margin-top: var(--pf-global--spacer--md);
+    & > * {
+      margin-top: var(--pf-global--spacer--xs);
+    }
+  }
+}

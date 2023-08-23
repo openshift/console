@@ -1,0 +1,72 @@
+@import '../../../../../public/style/vars';
+
+.odc-add-page-layout {
+  // Fix missing white background color above the header.
+  .ocs-page-layout__title {
+    margin-top: 0;
+    padding-top: var(--pf-global--spacer--lg);
+  }
+
+  // Drop padding below the hint to add this gap between hint and actions below.
+  .ocs-page-layout__hint {
+    padding-bottom: 0; /* override var(--pf-global--spacer--md) */
+    padding-right: 0;
+  }
+
+  &__hint-block {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    &__text {
+      flex: auto;
+      margin-right: -10px;
+      margin-bottom: var(--pf-global--spacer--md);
+      button {
+        text-align: left;
+      }
+    }
+
+    &__actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+
+      > * {
+        margin-right: var(--pf-global--spacer--lg);
+        margin-bottom: var(--pf-global--spacer--md);
+      }
+    }
+
+    &__details-switch {
+      &__loading-state {
+        display: flex;
+      }
+      &__text {
+        // Used font-size-base variable instead of --pf-global--FontSize--sm, which is getting calculated to 13px instead of 14px
+        font-size: $font-size-base;
+        font-weight: normal;
+        align-items: center;
+      }
+    }
+  }
+
+  &__additional-hint-block {
+    padding-bottom: var(--pf-global--spacer--md);
+  }
+
+  &__resource-quota-message-block {
+    margin-right: var(--pf-global--spacer--xl);
+  }
+}
+// Rest (Overwrite) style
+.pf-c-menu-toggle.co-namespace-dropdown__menu-toggle {
+  font-size: 20px !important;
+  padding-bottom: 15px !important;
+  padding-top: 15px !important;
+}
+
+.ocs-quick-search-modal__no-backdrop .pf-c-backdrop {
+  background: var(--pf-global--BackgroundColor--dark-transparent-100) !important;
+}

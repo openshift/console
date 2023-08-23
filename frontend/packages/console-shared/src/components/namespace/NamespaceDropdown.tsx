@@ -413,7 +413,7 @@ const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
         menuRef={menuRef}
         isOpen={isOpen}
         title={`${
-          isProjects ? t('console-shared~Project') : t('console-shared~Namespace')
+          isProjects ? t('console-shared~Select') : t('console-shared~Namespace')
         }: ${title}`}
         onToggle={(menuState) => {
           setOpen(menuState);

@@ -17,7 +17,12 @@
 
   // Skeleton dark
   --co-skeleton--dark--Color: var(--pf-global--palette--black-600);
-  --co-skeleton--dark--Color--300: var(--pf-global--palette--black-700)
+  --co-skeleton--dark--Color--300: var(--pf-global--palette--black-700);
+
+  // Custome Palette
+  --co-added--bg--Color: #f2f2f2;
+  --co-added--label--Color: #edeff2;
+  --co-added-hover--bg--Color: #e6e5ee;
 }
 
 :root:where(.pf-theme-dark) {
@@ -30,4 +35,9 @@
   // Skeleton
   --co-skeleton--Color: var(--co-skeleton--dark--Color);
   --co-skeleton--Color--300: var(--co-skeleton--dark--Color--300);
+
+  // Custome Palette
+  --co-added--bg--Color: #25272d;
+  --co-added--label--Color: #313744;
+  --co-added-hover--bg--Color: #232732;
 }

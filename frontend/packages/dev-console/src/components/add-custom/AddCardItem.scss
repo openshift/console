@@ -1,0 +1,54 @@
+.odc-add-card-item {
+  .pf-c-simple-list__item-link {
+    --pf-c-simple-list__item-link--focus--FontWeight: normal;
+    --pf-c-simple-list__item-link--active--FontWeight: normal;
+    --pf-c-simple-list__item-link--hover--FontWeight: normal;
+    background-color: var(--co-added--bg--Color) !important;
+    padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--lg) var(--pf-global--spacer--lg)
+      var(--pf-global--spacer--lg) !important;
+    .pf-c-label.pf-m-blue {
+      margin-left: var(--pf-global--spacer--md);
+      background: var(--co-added--label--Color);
+    }
+    &:hover {
+      background: var(--co-added-hover--bg--Color) !important;
+    }
+  }
+
+  margin-top: var(--pf-global--spacer--lg);
+  margin-left: calc(var(--pf-global--spacer--lg) - var(--pf-global--spacer--sm));
+
+  &__icon {
+    height: var(--pf-global--FontSize--3xl);
+    float: left;
+    max-width: var(--pf-global--spacer--3xl);
+    min-width: var(--pf-global--spacer--md);
+    color: var(--pf-global--Color--100) !important;
+    // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
+    font-size: var(--pf-global--FontSize--md);
+    margin-right: var(--pf-global--spacer--sm);
+  }
+
+  &__img-icon {
+    vertical-align: -0.125em;
+  }
+
+  &__title {
+    display: inline;
+    vertical-align: middle;
+    margin-left: var(--pf-global--spacer--sm);
+  }
+
+  &__description {
+    margin: var(--pf-global--spacer--sm) 0 0 var(--pf-global--spacer--sm);
+    color: var(--pf-global--Color--200);
+    line-height: 2.2;
+    // temporary fix since --pf-global--FontSize--sm is being computed to 13px instead of 14px
+    font-size: var(--pf-global--FontSize--md);
+  }
+
+  a {
+    padding-left: 0;
+    text-decoration: none;
+  }
+}

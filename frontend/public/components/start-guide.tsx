@@ -55,9 +55,11 @@ export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)
             Download the <Link to="/command-line-tools">command-line tools</Link>
           </Trans>
         </p>
+        <br />
         {canCreateProject && (
           <Button
-            variant="link"
+            variant="primary"
+            isLarge
             onClick={() =>
               createProjectModal({
                 blocking: true,

@@ -36,6 +36,7 @@
       "serviceBindingContext": "src/components/topology/bindable-services",
       "projectAccess": "src/components/project-access",
       "add": "src/components/add",
+      "addProject": "src/components/add-custom",
       "serverlessFunction": "src/components/import/serverless-function",
       "projects": "src/components/projects",
       "editApplication": "src/components/edit-application",

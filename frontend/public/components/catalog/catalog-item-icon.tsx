@@ -100,6 +100,9 @@ import * as wordpressImg from '../../imgs/logos/wordpress.svg';
 import * as xamarinImg from '../../imgs/logos/xamarin.svg';
 import * as zendImg from '../../imgs/logos/zend.svg';
 import * as operatorImg from '../../imgs/logos/operator.svg';
+import * as dockerImg from '../../imgs/logos/docker.svg';
+import * as yamlImg from '../../imgs/logos/yaml.svg';
+import * as serviceImg from '../../imgs/logos/manage-service.svg';
 
 const logos = new Map<string, any>()
   .set('icon-3scale', threeScaleImg)
@@ -201,7 +204,10 @@ const logos = new Map<string, any>()
   .set('icon-windows', windowsImg)
   .set('icon-wordpress', wordpressImg)
   .set('icon-xamarin', xamarinImg)
-  .set('icon-zend', zendImg);
+  .set('icon-zend', zendImg)
+  .set('icon-docker', dockerImg)
+  .set('icon-docker', yamlImg)
+  .set('icon-service', serviceImg);
 
 export const getIcons = (): { label: string; url: string }[] => {
   return Array.from(logos.entries()).map(([iconClass, url]) => ({
