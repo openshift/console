@@ -59,7 +59,10 @@ export class PodLogs extends React.Component {
     this._selectContainer = this._selectContainer.bind(this);
     this.state = {
       containers: {},
-      currentKey: getQueryArgument('container') || '',
+      currentKey:
+        getQueryArgument('container') ||
+        props.obj.metadata?.annotations?.['kubectl.kubernetes.io/default-container'] ||
+        '',
       initContainers: {},
     };
   }

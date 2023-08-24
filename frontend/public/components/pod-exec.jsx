@@ -41,9 +41,10 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
       this.state = {
         open: false,
         containers: [],
-        activeContainer: props.initialContainer
-          ? props.initialContainer
-          : props.obj?.spec.containers[0].name,
+        activeContainer:
+          props.initialContainer ||
+          props.obj.metadata?.annotations?.['kubectl.kubernetes.io/default-container'] ||
+          props.obj?.spec.containers[0].name,
       };
       this.terminal = React.createRef();
       this.onResize = (rows, cols) => this.onResize_(rows, cols);
