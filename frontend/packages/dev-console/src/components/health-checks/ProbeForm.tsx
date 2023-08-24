@@ -82,7 +82,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
           name={`healthChecks.${probeType}.data.initialDelaySeconds`}
           label={t('devconsole~Initial delay')}
           helpText={t(
-            "devconsole~How long to wait after the Container starts before checking it's health.",
+            'devconsole~How long to wait after the Container starts before checking its health.',
           )}
           afterInput={<InputGroupText>{t('devconsole~seconds')}</InputGroupText>}
           style={{ maxWidth: '100%' }}
