@@ -182,6 +182,7 @@ export const getKnativeServiceDepResource = (
     knativeServiceUpdated = _.omit(originalKnativeService, [
       'status',
       'spec.template.metadata.name',
+      'spec.template.spec.containers',
     ]);
   }
   const knativeDeployResource = mergeData(knativeServiceUpdated || {}, newKnativeDeployResource);
