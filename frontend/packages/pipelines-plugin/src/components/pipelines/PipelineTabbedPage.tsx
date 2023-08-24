@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, redirect } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -29,7 +29,6 @@ import PipelinesList from './list-page/PipelinesList';
 export const PageContents: React.FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
-  const navigate = useNavigate();
   const badge = usePipelineTechPreviewBadge(namespace);
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const [preferredTab, , preferredTabLoaded] = useUserSettings<string>(
@@ -40,13 +39,13 @@ export const PageContents: React.FC = () => {
   React.useEffect(() => {
     if (preferredTabLoaded && namespace) {
       if (isRepositoryEnabled && preferredTab === 'repositories') {
-        navigate(`/dev-pipelines/ns/${namespace}/repositories`);
+        redirect(`/dev-pipelines/ns/${namespace}/repositories`);
       }
       if (preferredTab === 'pipeline-runs') {
-        navigate(`/dev-pipelines/ns/${namespace}/pipeline-runs`);
+        redirect(`/dev-pipelines/ns/${namespace}/pipeline-runs`);
       }
     }
-  }, [isRepositoryEnabled, namespace, preferredTab, preferredTabLoaded, navigate]);
+  }, [isRepositoryEnabled, namespace, preferredTab, preferredTabLoaded]);
 
   const [showTitle, hideBadge, canCreate] = [false, true, false];
   const menuActions: MenuActions = {
