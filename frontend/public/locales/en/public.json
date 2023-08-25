@@ -163,7 +163,6 @@
   "View installed Operators": "View installed Operators",
   "{{resource}} updates are paused.": "{{resource}} updates are paused.",
   "Resume all updates": "Resume all updates",
-  "You can update your cluster, but make sure to resume your {{resource}} updates quickly to avoid failures.": "You can update your cluster, but make sure to resume your {{resource}} updates quickly to avoid failures.",
   "Control plane is hosted.": "Control plane is hosted.",
   "Update status": "Update status",
   "Click \"Select a version\" to view supported but not recommended versions.": "Click \"Select a version\" to view supported but not recommended versions.",
