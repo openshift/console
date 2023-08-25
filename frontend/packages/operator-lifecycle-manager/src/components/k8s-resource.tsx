@@ -34,7 +34,7 @@ import {
 } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { RouteParams } from '@console/shared/src/types';
-import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
+import { CRDDescription, ProvidedAPI } from '../types';
 import { OperandLink } from './operand/operand-link';
 import { providedAPIForReference } from './index';
 
@@ -155,7 +155,7 @@ type ResourcesPageRouteParams = RouteParams<'plural'>;
 export const Resources: React.FC<ResourcesProps> = (props) => {
   const { t } = useTranslation();
   const { plural } = useParams<ResourcesPageRouteParams>();
-  const providedAPI = providedAPIForReference(props.csv, plural);
+  const providedAPI = providedAPIForReference(props.customData, plural);
 
   const firehoseResources = (providedAPI?.resources ?? DEFAULT_RESOURCES).map(
     ({ name, kind, version }): FirehoseResource => {
@@ -203,7 +203,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
 
 export type ResourcesProps = {
   obj: K8sResourceKind;
-  csv: ClusterServiceVersionKind;
+  customData: any;
 };
 
 export type ResourceListProps = {};
