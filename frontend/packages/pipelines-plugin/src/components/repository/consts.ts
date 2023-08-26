@@ -58,6 +58,8 @@ export const defaultRepositoryFormValues: RepositoryFormValues = {
     method: 'token',
     secret: '',
     url: '',
+    user: '',
+    autoAttach: false,
   },
 };
 
@@ -75,3 +77,5 @@ export const WebhookDocLinks = {
     'https://docs.gitlab.com/ee/user/project/integrations/webhooks.html#configure-a-webhook-in-gitlab',
   [GitProvider.BITBUCKET]: 'https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/',
 };
+
+export const gitProviderTypesHosts = ['github.com', 'bitbucket.org', 'gitlab.com'];

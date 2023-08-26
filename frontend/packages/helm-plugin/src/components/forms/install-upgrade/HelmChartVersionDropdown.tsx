@@ -58,7 +58,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   const [helmChartEntries, setHelmChartEntries] = React.useState<HelmChartMetaData[]>([]);
   const [initialYamlData, setInitialYamlData] = React.useState<string>('');
   const [initialFormData, setInitialFormData] = React.useState<object>();
-
+  const [helmChartRepos, setHelmChartRepos] = React.useState<HelmChartEntries>({});
   const resourceSelector: WatchK8sResource = {
     isList: true,
     kind: referenceForModel(HelmChartRepositoryModel),
@@ -134,6 +134,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
           getChartIndexEntry(json?.entries, chartName, chartEntries[0].repoName),
         );
       }
+      setHelmChartRepos(json?.entries);
       setHelmChartEntries(chartEntries);
       setHelmChartVersions(getChartVersions(chartEntries, t));
     };
@@ -145,15 +146,15 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
 
   const onChartVersionChange = (value: string) => {
     const [version, repoName] = value.split('--');
-
     const chartURL = getChartURL(helmChartEntries, version, repoName);
+    const chartRepoIndex = getChartIndexEntry(helmChartRepos, chartName, repoName);
 
     setFieldValue('chartVersion', value);
     setFieldValue('chartURL', chartURL);
     coFetchJSON(
       `/api/helm/chart?url=${encodeURIComponent(
         chartURL,
-      )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartIndexEntry)}`,
+      )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartRepoIndex)}`,
     )
       .then((res: HelmChart) => {
         onVersionChange(res);

@@ -3,7 +3,9 @@ import { Accordion, ActionGroup, Button, Alert } from '@patternfly/react-core';
 import Form, { FormProps } from '@rjsf/core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
+import { ErrorBoundary } from '@console/shared/src/components/error';
 import { K8S_UI_SCHEMA } from './const';
 import defaultFields from './fields';
 import {
@@ -55,6 +57,19 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       />
     );
   }
+  const FormErrorFallbackComponent: React.FC<ErrorBoundaryFallbackProps> = () => {
+    return (
+      <Alert
+        isInline
+        className="co-alert co-break-word"
+        variant="danger"
+        title={t(
+          'console-shared~There is some issue in this form view. Please select "YAML view" for full control.',
+        )}
+      />
+    );
+  };
+
   return (
     <>
       {showAlert && (
@@ -68,40 +83,42 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         />
       )}
       <Accordion asDefinitionList={false} className="co-dynamic-form__accordion">
-        <Form
-          {...restProps}
-          className="co-dynamic-form"
-          noValidate={noValidate}
-          ArrayFieldTemplate={ArrayFieldTemplate}
-          fields={{ ...defaultFields, ...fields }}
-          FieldTemplate={FieldTemplate}
-          formContext={{ ...formContext, formData }}
-          formData={formData}
-          noHtml5Validate
-          ObjectFieldTemplate={ObjectFieldTemplate}
-          onChange={(next) => onChange(next.formData)}
-          onError={(newErrors) => onError(_.map(newErrors, (error) => error.stack))}
-          onSubmit={onSubmit}
-          schema={schema}
-          // Don't show the react-jsonschema-form error list at top
-          showErrorList={false}
-          uiSchema={customUISchema ? uiSchema : _.defaultsDeep({}, K8S_UI_SCHEMA, uiSchema)}
-          widgets={{ ...defaultWidgets, ...widgets }}
-        >
-          {errors.length > 0 && <ErrorTemplate errors={errors} />}
-          {!noActions && (
-            <div style={{ paddingBottom: '30px' }}>
-              <ActionGroup className="pf-c-form">
-                <Button type="submit" variant="primary" data-test="create-dynamic-form">
-                  {t('console-shared~Create')}
-                </Button>
-                <Button onClick={onCancel || history.goBack} variant="secondary">
-                  {t('console-shared~Cancel')}
-                </Button>
-              </ActionGroup>
-            </div>
-          )}
-        </Form>
+        <ErrorBoundary FallbackComponent={FormErrorFallbackComponent}>
+          <Form
+            {...restProps}
+            className="co-dynamic-form"
+            noValidate={noValidate}
+            ArrayFieldTemplate={ArrayFieldTemplate}
+            fields={{ ...defaultFields, ...fields }}
+            FieldTemplate={FieldTemplate}
+            formContext={{ ...formContext, formData }}
+            formData={formData}
+            noHtml5Validate
+            ObjectFieldTemplate={ObjectFieldTemplate}
+            onChange={(next) => onChange(next.formData)}
+            onError={(newErrors) => onError(_.map(newErrors, (error) => error.stack))}
+            onSubmit={onSubmit}
+            schema={schema}
+            // Don't show the react-jsonschema-form error list at top
+            showErrorList={false}
+            uiSchema={customUISchema ? uiSchema : _.defaultsDeep({}, K8S_UI_SCHEMA, uiSchema)}
+            widgets={{ ...defaultWidgets, ...widgets }}
+          >
+            {errors.length > 0 && <ErrorTemplate errors={errors} />}
+            {!noActions && (
+              <div style={{ paddingBottom: '30px' }}>
+                <ActionGroup className="pf-c-form">
+                  <Button type="submit" variant="primary" data-test="create-dynamic-form">
+                    {t('console-shared~Create')}
+                  </Button>
+                  <Button onClick={onCancel || history.goBack} variant="secondary">
+                    {t('console-shared~Cancel')}
+                  </Button>
+                </ActionGroup>
+              </div>
+            )}
+          </Form>
+        </ErrorBoundary>
       </Accordion>
     </>
   );

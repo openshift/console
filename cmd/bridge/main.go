@@ -471,9 +471,10 @@ func main() {
 		})
 
 		srv.LocalK8sProxyConfig = &proxy.Config{
-			TLSClientConfig: serviceProxyTLSConfig,
-			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-			Endpoint:        k8sEndpoint,
+			TLSClientConfig:         serviceProxyTLSConfig,
+			HeaderBlacklist:         []string{"Cookie", "X-CSRFToken"},
+			Endpoint:                k8sEndpoint,
+			UseProxyFromEnvironment: true,
 		}
 
 		// Disable metrics in off-cluster multicluster env
@@ -740,6 +741,12 @@ func main() {
 
 	srv.CopiedCSVsDisabled = clusterCopiedCSVsDisabled
 
+	monitoringDashboardHttpClientTransport := &http.Transport{
+		TLSClientConfig: srv.LocalK8sProxyConfig.TLSClientConfig,
+	}
+	if *fK8sMode == "off-cluster" {
+		monitoringDashboardHttpClientTransport.Proxy = http.ProxyFromEnvironment
+	}
 	srv.MonitoringDashboardConfigMapLister = server.NewResourceLister(
 		srv.ServiceAccountToken,
 		&url.URL{
@@ -751,9 +758,7 @@ func main() {
 			}.Encode(),
 		},
 		&http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: srv.LocalK8sProxyConfig.TLSClientConfig,
-			},
+			Transport: monitoringDashboardHttpClientTransport,
 		},
 		nil,
 	)

@@ -23,6 +23,7 @@ import (
 	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
+	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
 	"github.com/openshift/console/pkg/devfile"
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
@@ -54,6 +55,7 @@ const (
 	authLogoutMulticlusterEndpoint        = "/api/logout/multicluster"
 	k8sProxyEndpoint                      = "/api/kubernetes/"
 	graphQLEndpoint                       = "/api/graphql"
+	devConsoleEndpoint                    = "/api/dev-console/"
 	prometheusProxyEndpoint               = "/api/prometheus"
 	prometheusTenancyProxyEndpoint        = "/api/prometheus-tenancy"
 	alertManagerProxyEndpoint             = "/api/alertmanager"
@@ -570,6 +572,14 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
 	handle("/api/console/version", authHandler(s.versionHandler))
+
+	// Dev-Console Proxy
+	handle(devConsoleEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, devConsoleEndpoint),
+		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			devconsoleProxy.Handler(w, r)
+		})),
+	)
 
 	// User settings
 	userSettingHandler := usersettings.UserSettingsHandler{

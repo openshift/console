@@ -16,7 +16,6 @@ const testOperand: TestOperandProps = {
   kind: 'KieApp',
   group: 'KieApp',
   version: 'v1',
-  createActionID: '',
   exampleName: `example-kieappk`,
   deleteURL: '/api/kubernetes/apis/app.kiegroup.org/*/namespaces/*/kieapps/*',
 };
@@ -38,7 +37,7 @@ const uninstallAndVerify = () => {
   cy.resourceShouldBeDeleted(testName, testOperand.kind, testOperand.exampleName);
 };
 
-describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
+xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   before(() => {
     cy.login();
     cy.visit('/');

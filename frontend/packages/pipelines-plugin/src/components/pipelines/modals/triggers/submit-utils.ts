@@ -43,7 +43,7 @@ export const exposeRoute = async (elName: string, ns: string, iteration = 0) => 
 
     // Get the service, find out what port we are exposed on
     const serviceResource = await k8sGet(ServiceModel, serviceGeneratedName, ns);
-    const servicePort = serviceResource.spec?.ports?.[0]?.targetPort;
+    const servicePort = serviceResource.spec?.ports?.[0]?.name;
 
     // Build the exposed route on the correct port
     const route: RouteKind = createEventListenerRoute(

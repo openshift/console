@@ -112,11 +112,15 @@ const UserPreferencePage: React.FC<UserPreferencePageProps> = ({ match }) => {
     setActiveTabId(eventKey);
     history.replace(`${USER_PREFERENCES_BASE_URL}/${eventKey}`);
   };
-
+  const activeTab = sortedUserPreferenceGroups.find((group) => group.id === activeTabId)?.label;
   return (
     <div className="co-user-preference-page">
       <Helmet>
-        <title>{t('console-app~User Preferences')}</title>
+        <title>
+          {activeTab
+            ? t('console-app~User Preferences {{activeTab}}', { activeTab })
+            : t('console-app~User Preferences')}
+        </title>
       </Helmet>
       <PageLayout
         title={t('console-app~User Preferences')}

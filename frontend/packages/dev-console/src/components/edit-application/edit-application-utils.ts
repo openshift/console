@@ -4,19 +4,15 @@ import { ImportStrategy } from '@console/git-service/src';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
-import {
-  K8sResourceKind,
-  referenceFor,
-  referenceForModel,
-  ImagePullPolicy,
-} from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel, ImagePullPolicy } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s/k8s';
 import {
   KNATIVE_AUTOSCALEWINDOW_ANNOTATION,
   KNATIVE_CONCURRENCYTARGET_ANNOTATION,
   KNATIVE_CONCURRENCYUTILIZATION_ANNOTATION,
   KNATIVE_MAXSCALE_ANNOTATION,
   KNATIVE_MINSCALE_ANNOTATION,
-  KNATIVE_SERVING_LABEL,
+  PRIVATE_KNATIVE_SERVING_LABEL,
   ServiceModel,
 } from '@console/knative-plugin';
 import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
@@ -170,7 +166,7 @@ export const getKsvcRouteData = (resource: K8sResourceKind) => {
   const containers = spec?.template?.spec?.containers ?? [];
   const port = containers?.[0]?.ports?.[0]?.containerPort ?? '';
   const routeData = {
-    create: metadata?.labels?.[`${KNATIVE_SERVING_LABEL}/visibility`] !== 'cluster-local',
+    create: metadata?.labels?.[PRIVATE_KNATIVE_SERVING_LABEL] !== 'cluster-local',
     unknownTargetPort: _.toString(port),
     targetPort: _.toString(port),
     defaultUnknownPort: 8080,

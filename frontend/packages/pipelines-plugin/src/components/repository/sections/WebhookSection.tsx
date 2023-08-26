@@ -79,7 +79,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
 
   const HelpText = (): React.ReactElement => {
     let helpText: React.ReactNode;
-    switch (values.gitProvider) {
+    switch (gitProvider) {
       case GitProvider.GITHUB:
         helpText = (
           <Trans t={t} ns="pipelines-plugin">
@@ -125,7 +125,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
               link
             </a>{' '}
             to create a token with Read and Write scopes in Account, Workspace membership, Projects,
-            Issues, Pull requests and give your token an expiration i.e 30d.
+            Issues, Pull requests and Webhooks.
           </Trans>
         );
         break;
@@ -144,9 +144,18 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
 
   return (
     <FormSection fullWidth={!fieldPrefix} extraMargin>
+      {gitProvider && gitProvider === GitProvider.BITBUCKET ? (
+        <InputField
+          label={t('pipelines-plugin~Bitbucket username')}
+          name={`${fieldPrefix}webhook.user`}
+          type={TextInputTypes.text}
+          required
+        />
+      ) : null}
       <RadioGroupField
         name={`${fieldPrefix}webhook.method`}
         label={t('pipelines-plugin~Secret')}
+        required
         options={[
           {
             value: 'token',
@@ -195,7 +204,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
           fieldId="test"
           label={t('pipelines-plugin~Webhook URL')}
           helperText={t(
-            'pipelines-plugin~We have detected a URL that can be used to configure the webhook.',
+            'pipelines-plugin~We have detected a URL that can be used to configure the webhook. It will be created and attached to the Git repository.',
           )}
         >
           <ClipboardCopy
@@ -210,24 +219,29 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         </FormGroup>
       )}
 
-      <FormGroup fieldId={'webhook-secret-clipboard'} label={t('pipelines-plugin~Webhook secret')}>
-        <InputGroup style={{ display: 'flex' }}>
-          <ClipboardCopy
-            name={`${fieldPrefix}webhook.secret`}
-            hoverTip="Copy"
-            clickTip="Copied"
-            style={{ flex: '1' }}
-            onChange={(v) => {
-              setFieldValue(`${fieldPrefix}webhook.secret`, v);
-            }}
-          >
-            {webhookSecret}
-          </ClipboardCopy>
-          <Button data-test="generate-secret" variant="control" onClick={generateWebhookSecret}>
-            {t('pipelines-plugin~Generate')}
-          </Button>
-        </InputGroup>
-      </FormGroup>
+      {gitProvider && gitProvider !== GitProvider.BITBUCKET ? (
+        <FormGroup
+          fieldId={'webhook-secret-clipboard'}
+          label={t('pipelines-plugin~Webhook secret')}
+        >
+          <InputGroup style={{ display: 'flex' }}>
+            <ClipboardCopy
+              name={`${fieldPrefix}webhook.secret`}
+              hoverTip="Copy"
+              clickTip="Copied"
+              style={{ flex: '1' }}
+              onChange={(v) => {
+                setFieldValue(`${fieldPrefix}webhook.secret`, v);
+              }}
+            >
+              {webhookSecret}
+            </ClipboardCopy>
+            <Button data-test="generate-secret" variant="control" onClick={generateWebhookSecret}>
+              {t('pipelines-plugin~Generate')}
+            </Button>
+          </InputGroup>
+        </FormGroup>
+      ) : null}
 
       {gitProvider && gitProvider !== GitProvider.UNSURE ? (
         <>
