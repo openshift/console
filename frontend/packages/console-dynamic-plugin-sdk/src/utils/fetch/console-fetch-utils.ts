@@ -23,9 +23,9 @@ export const getCSRFToken = () => {
 };
 
 /**
- * A function that creates impersonation and multicluster related headers for API requests using current redux state.
+ * A function that creates impersonation- and multicluster-related headers for API requests using current redux state.
  * @param targetCluster override the current active cluster with the provided targetCluster
- * @returns an object containing the appropriate impersonation and clustr requst headers, based on redux state
+ * @returns An object containing the appropriate impersonation and clustr requst headers, based on redux state.
  */
 export const getConsoleRequestHeaders = (targetCluster?: string): ConsoleRequestHeaders => {
   const store = storeHandler.getStore();

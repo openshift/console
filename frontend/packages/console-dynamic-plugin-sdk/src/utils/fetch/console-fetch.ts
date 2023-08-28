@@ -6,12 +6,12 @@ import { TimeoutError } from '../error/http-error';
 import { getConsoleRequestHeaders } from './console-fetch-utils';
 
 /**
- * A custom wrapper around `fetch` that adds console specific headers and allows for retries and timeouts.
- * It also validates the response status code and throws appropriate error or logs out the user if required.
+ * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
+ * It also validates the response status code and throws an appropriate error or logs out the user if required.
  * @param url The URL to fetch
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
- * @returns A promise that resolves to the response
+ * @returns A promise that resolves to the response.
  */
 export const consoleFetch: ConsoleFetch = async (url, options = {}, timeout = 60000) => {
   const fetchPromise = getUtilsConfig().appFetch(url, options);
@@ -48,8 +48,8 @@ const consoleFetchCommon = async (
 };
 
 /**
- * A custom wrapper around `fetch` that adds console specific headers and allows for retries and timeouts.
- * It also validates the response status code and throws appropriate error or logs out the user if required.
+ * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
+ * It also validates the response status code and throws an appropriate error or logs out the user if required.
  * It returns the response as a JSON object.
  * Uses consoleFetch internally.
  * @param url The URL to fetch
@@ -74,10 +74,10 @@ export const consoleFetchJSON: ConsoleFetchJSON = (
 };
 
 /**
- * A custom wrapper around `fetch` that adds console specific headers and allows for retries and timeouts.
- * It also validates the response status code and throws appropriate error or logs out the user if required.
+ * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
+ * It also validates the response status code and throws an appropriate error or logs out the user if required.
  * It returns the response as a text.
- * Uses consoleFetch internally.
+ * Uses `consoleFetch` internally.
  * @param url The URL to fetch
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds

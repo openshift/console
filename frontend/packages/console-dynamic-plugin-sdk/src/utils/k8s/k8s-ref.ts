@@ -33,8 +33,8 @@ export const getReferenceForModel = (model: K8sModel): K8sResourceKindReference 
   getReference({ group: model.apiGroup, version: model.apiVersion, kind: model.kind });
 
 /**
- * Provides apiVersion for a k8s model.
- * @param model k8s model
+ * Provides `apiVersion` for a Kubernetes model.
+ * @param model Kubernetes model
  * @returns The apiVersion for the model i.e `group/version`.
  * */
 export const getAPIVersionForModel: GetAPIVersionForModel = (model) =>
@@ -42,9 +42,9 @@ export const getAPIVersionForModel: GetAPIVersionForModel = (model) =>
 
 /**
  * Provides a group, version, and kind for a resource.
- * @param resource k8s resource
+ * @param resource Kubernetes resource
  * @returns The group, version, kind for the provided resource.
- * If the resource does not have an API group, group "core" will be returned.
+ * If the resource does not have an API group, the group `core` is returned.
  * If the resource has an invalid apiVersion then it'll throw Error.
  * */
 export const getGroupVersionKindForResource: GetGroupVersionKindForResource = (resource) => {
@@ -64,7 +64,7 @@ export const getGroupVersionKindForResource: GetGroupVersionKindForResource = (r
 
 /**
  * Provides a group, version, and kind for a k8s model.
- * @param model k8s model
+ * @param model Kubernetes model
  * @returns The group, version, kind for the provided model.
  * If the model does not have an apiGroup, group "core" will be returned.
  * */
