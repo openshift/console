@@ -142,7 +142,7 @@ export const TableData: React.FC<TableDataProps> = require('@console/internal/co
  * @param {TableColumn<D>[]} options.columns - An array of all available TableColumns
  * @param {boolean} [options.showNamespaceOverride] - (optional) If true, a namespace column will be included, regardless of column management selections
  * @param {string} [options.columnManagementID] - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a `group~version~kind` string for a resource.
- * @returns It returns a tuple containing the current user-selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
+ * @returns A tuple containing the current user-selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
  * @example
  * ```tsx
  *   // See implementation for more details on TableColumn type
