@@ -240,7 +240,7 @@ Component for displaying a blue info circle icon.
 
 ### Summary 
 
-Component for displaying an error status popover
+Component for displaying an error status popover.
 
 
 
@@ -273,7 +273,7 @@ Component for displaying an error status popover
 
 ### Summary 
 
-Component for displaying an information status popover
+Component for displaying an information status popover.
 
 
 
@@ -339,7 +339,7 @@ Component for displaying a progressing status popover.
 
 ### Summary 
 
-Component for displaying a success status popover
+Component for displaying a success status popover.
 
 
 
@@ -622,7 +622,7 @@ A hook that provides a list of user-selected active TableColumns.
 
 ### Returns
 
-It returns a tuple containing the current user-selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
+A tuple containing the current user-selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
 
 
 ---
@@ -2453,7 +2453,7 @@ The isAllowed boolean value.
 
 ### Summary [DEPRECATED]
 
-@deprecated - This hook is not related to console functionality.<br/>Hook that ensures a safe asynchronnous setting of React state in case a given component could be unmounted.<br/>(https://github.com/facebook/react/issues/14113)
+@deprecated - This hook is not related to console functionality.<br/>Hook that ensures a safe asynchronnous setting of the React state in case a given component could be unmounted.<br/>(https://github.com/facebook/react/issues/14113)
 
 
 
