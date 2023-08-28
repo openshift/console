@@ -9,47 +9,40 @@ import (
 	"strings"
 
 	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/serverutils"
 
 	"github.com/gorilla/websocket"
 
 	"k8s.io/klog"
 )
 
+type HandlerWithUser func(*auth.User, http.ResponseWriter, *http.Request)
+
 // Middleware generates a middleware wrapper for request hanlders.
 // Responds with 401 for requests with missing/invalid/incomplete token with verified email address.
-// TODO remove multicluster
-// Revert to *auth.Authenticator arg
-func authMiddleware(authers map[string]*auth.Authenticator, hdlr http.HandlerFunc) http.Handler {
-	f := func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-		hdlr.ServeHTTP(w, r)
-	}
-	return authMiddlewareWithUser(authers, f)
+func authMiddleware(authenticator *auth.Authenticator, h http.HandlerFunc) http.Handler {
+	return authMiddlewareWithUser(
+		authenticator,
+		func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		},
+	)
 }
 
-// TODO remove multicluster
-// Revert to *auth.Authenticator arg
-func authMiddlewareWithUser(authers map[string]*auth.Authenticator, handlerFunc func(user *auth.User, w http.ResponseWriter, r *http.Request)) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Get the correct Auther for the cluster.
-		cluster := serverutils.GetCluster(r)
-		auther, autherFound := authers[cluster]
-
-		if !autherFound {
-			klog.Errorf("Bad Request. Invalid cluster: %v", cluster)
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(fmt.Sprintf("Bad Request. Invalid cluster: %v", cluster)))
-			return
-		}
-
-		user, err := auther.Authenticate(r)
+func authMiddlewareWithUser(authenticator *auth.Authenticator, h HandlerWithUser) http.Handler {
+	return csrfMiddleware(authenticator, func(w http.ResponseWriter, r *http.Request) {
+		user, err := authenticator.Authenticate(r)
 		if err != nil {
 			klog.V(4).Infof("authentication failed: %v", err)
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+		h(user, w, r)
+	})
+}
 
+func csrfMiddleware(authenticator *auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		safe := false
 		switch r.Method {
 		case
@@ -63,7 +56,7 @@ func authMiddlewareWithUser(authers map[string]*auth.Authenticator, handlerFunc 
 		wsUpgrade := websocket.IsWebSocketUpgrade(r)
 
 		if !safe || wsUpgrade {
-			if err := auther.VerifySourceOrigin(r); err != nil {
+			if err := authenticator.VerifySourceOrigin(r); err != nil {
 				klog.Errorf("invalid source origin: %v", err)
 				w.WriteHeader(http.StatusForbidden)
 				return
@@ -71,15 +64,14 @@ func authMiddlewareWithUser(authers map[string]*auth.Authenticator, handlerFunc 
 		}
 
 		if !safe {
-			if err := auther.VerifyCSRFToken(r); err != nil {
+			if err := authenticator.VerifyCSRFToken(r); err != nil {
 				klog.Errorf("invalid CSRFToken: %v", err)
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
 		}
-
-		handlerFunc(user, w, r)
-	})
+		h.ServeHTTP(w, r)
+	}
 }
 
 type gzipResponseWriter struct {

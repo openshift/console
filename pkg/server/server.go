@@ -289,17 +289,18 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	authHandler := func(hf http.HandlerFunc) http.Handler {
-		return authMiddleware(s.Authers, hf)
+		return authMiddleware(s.getLocalAuther(), hf)
 	}
-	authHandlerWithUser := func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
-		return authMiddlewareWithUser(s.Authers, hf)
+
+	authHandlerWithUser := func(hf HandlerWithUser) http.Handler {
+		return authMiddlewareWithUser(s.getLocalAuther(), hf)
 	}
 
 	if s.authDisabled() {
 		authHandler = func(hf http.HandlerFunc) http.Handler {
 			return hf
 		}
-		authHandlerWithUser = func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
+		authHandlerWithUser = func(hf HandlerWithUser) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				hf(s.StaticUser, w, r)
 			})
@@ -308,7 +309,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	if !s.authDisabled() {
 		handleFunc(authLoginEndpoint, localAuther.LoginFunc)
-		handleFunc(authLogoutEndpoint, localAuther.LogoutFunc)
+		handleFunc(authLogoutEndpoint, s.handleLogout)
 		handleFunc(AuthLoginCallbackEndpoint, localAuther.CallbackFunc(fn))
 		handleFunc(authLogoutMulticlusterEndpoint, s.handleLogoutMulticluster) // TODO remove multicluster
 		handle(requestTokenEndpoint, authHandler(s.handleClusterTokenURL))
@@ -978,6 +979,11 @@ func (s *Server) handleLogoutMulticluster(w http.ResponseWriter, r *http.Request
 		fmt.Printf("%v", err)
 		os.Exit(1)
 	}
+}
+
+func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
+	authenticator := s.getLocalAuther() // TODO remove multicluster
+	csrfMiddleware(authenticator, authenticator.LogoutFunc).ServeHTTP(w, r)
 }
 
 // tokenToObjectName returns the oauthaccesstokens object name for the given raw token,
