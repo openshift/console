@@ -158,6 +158,12 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 }
 
 func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported method is POST"})
+		return
+	}
+
 	// NOTE: cookies are going away, this should be removed in the future
 
 	// Delete session cookie
