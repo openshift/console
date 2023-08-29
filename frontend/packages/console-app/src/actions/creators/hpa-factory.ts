@@ -119,7 +119,7 @@ export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
     [extraResources.csvs.data, resource],
   );
 
-  const result = React.useMemo(() => {
+  const result = React.useMemo<[Action[], HorizontalPodAutoscalerKind[]]>(() => {
     return [supportsHPA ? getHpaActions(kindObj, resource, relatedHPAs) : [], relatedHPAs];
   }, [kindObj, relatedHPAs, resource, supportsHPA]);
 
