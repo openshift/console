@@ -1020,14 +1020,7 @@ export const MachineConfigPoolsArePausedAlert: React.FC<MachineConfigPoolsArePau
       }
       className="co-alert"
       data-test-id="cluster-settings-alerts-paused-nodes"
-    >
-      <p>
-        {t(
-          'public~You can update your cluster, but make sure to resume your {{resource}} updates quickly to avoid failures.',
-          { resource: NodeModel.label },
-        )}
-      </p>
-    </Alert>
+    />
   ) : null;
 };
 
