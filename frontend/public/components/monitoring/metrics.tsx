@@ -6,27 +6,8 @@ import {
   PrometheusLabels,
   YellowExclamationTriangleIcon,
 } from '@console/dynamic-plugin-sdk';
-import {
-  ActionGroup,
-  Alert,
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownPosition,
-  DropdownToggle,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  EmptyStateVariant,
-  Switch,
-  Title,
-} from '@patternfly/react-core';
-import {
-  AngleDownIcon,
-  AngleRightIcon,
-  ChartLineIcon,
-  CompressIcon,
-} from '@patternfly/react-icons';
+import { Alert, Button } from '@patternfly/react-core';
+import { ChartLineIcon, CompressIcon } from '@patternfly/react-icons';
 import {
   ISortBy,
   sortable,
@@ -38,88 +19,25 @@ import {
   wrappable,
 } from '@patternfly/react-table';
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 
-import { withFallback } from '@console/shared/src/components/error';
-import { QueryBrowser, queryBrowserTheme } from '@console/shared/src/components/query-browser';
+import { queryBrowserTheme } from '@console/shared/src/components/query-browser';
 
 import {
-  queryBrowserAddQuery,
-  queryBrowserDuplicateQuery,
-  queryBrowserDeleteAllQueries,
-  queryBrowserDeleteQuery,
-  queryBrowserPatchQuery,
-  queryBrowserRunQueries,
-  queryBrowserSetAllExpanded,
-  queryBrowserSetPollInterval,
   queryBrowserToggleAllSeries,
-  queryBrowserToggleIsEnabled,
   queryBrowserToggleSeries,
   toggleGraphs,
 } from '../../actions/observe';
 import { RootState } from '../../redux';
 import { getPrometheusURL } from '../graphs/helpers';
-import { AsyncComponent, getURLSearchParams, LoadingInline, usePoll, useSafeFetch } from '../utils';
-import { setAllQueryArguments } from '../utils/router';
-import { useBoolean } from './hooks/useBoolean';
-import KebabDropdown from './kebab-dropdown';
-import IntervalDropdown from './poll-interval-dropdown';
+import { LoadingInline, usePoll, useSafeFetch } from '../utils';
 import TablePagination from './table-pagination';
 import { PrometheusAPIError } from './types';
 
-// Stores information about the currently focused query input
-let focusedQuery;
-
-const MetricsActionsMenu: React.FC<{}> = () => {
-  const { t } = useTranslation();
-
-  const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
-
-  const isAllExpanded = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries']).every((q) => q.get('isExpanded')),
-  );
-
-  const dispatch = useDispatch();
-  const addQuery = React.useCallback(() => dispatch(queryBrowserAddQuery()), [dispatch]);
-
-  const doDelete = () => {
-    dispatch(queryBrowserDeleteAllQueries());
-    focusedQuery = undefined;
-  };
-
-  const dropdownItems = [
-    <DropdownItem key="add-query" component="button" onClick={addQuery}>
-      {t('public~Add query')}
-    </DropdownItem>,
-    <DropdownItem
-      key="collapse-all"
-      component="button"
-      onClick={() => dispatch(queryBrowserSetAllExpanded(!isAllExpanded))}
-    >
-      {isAllExpanded ? t('public~Collapse all query tables') : t('public~Expand all query tables')}
-    </DropdownItem>,
-    <DropdownItem key="delete-all" component="button" onClick={doDelete}>
-      {t('public~Delete all queries')}
-    </DropdownItem>,
-  ];
-
-  return (
-    <Dropdown
-      className="co-actions-menu"
-      dropdownItems={dropdownItems}
-      isOpen={isOpen}
-      onSelect={setClosed}
-      position={DropdownPosition.right}
-      toggle={<DropdownToggle onToggle={setIsOpen}>Actions</DropdownToggle>}
-    />
-  );
-};
-
-export const ToggleGraph: React.FC<{}> = () => {
+export const ToggleGraph: React.FC = () => {
   const { t } = useTranslation();
 
   const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
@@ -137,26 +55,6 @@ export const ToggleGraph: React.FC<{}> = () => {
       variant="link"
     >
       {icon} {hideGraphs ? t('public~Show graph') : t('public~Hide graph')}
-    </Button>
-  );
-};
-
-const ExpandButton = ({ isExpanded, onClick }) => {
-  const { t } = useTranslation();
-  const title = isExpanded ? t('public~Hide table') : t('public~Show table');
-  return (
-    <Button
-      aria-label={title}
-      className="query-browser__expand-button"
-      onClick={onClick}
-      title={title}
-      variant="plain"
-    >
-      {isExpanded ? (
-        <AngleDownIcon className="query-browser__expand-icon" />
-      ) : (
-        <AngleRightIcon className="query-browser__expand-icon" />
-      )}
     </Button>
   );
 };
@@ -213,61 +111,6 @@ const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
       />
     </div>
   );
-};
-
-const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
-  const { t } = useTranslation();
-
-  const isDisabledSeriesEmpty = useSelector(({ observe }: RootState) =>
-    _.isEmpty(observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
-  );
-  const isEnabled = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
-  );
-
-  const dispatch = useDispatch();
-
-  const toggleIsEnabled = React.useCallback(() => dispatch(queryBrowserToggleIsEnabled(index)), [
-    dispatch,
-    index,
-  ]);
-
-  const toggleAllSeries = React.useCallback(() => dispatch(queryBrowserToggleAllSeries(index)), [
-    dispatch,
-    index,
-  ]);
-
-  const doDelete = React.useCallback(() => {
-    dispatch(queryBrowserDeleteQuery(index));
-    focusedQuery = undefined;
-  }, [dispatch, index]);
-
-  const doClone = React.useCallback(() => {
-    dispatch(queryBrowserDuplicateQuery(index));
-  }, [dispatch, index]);
-
-  const dropdownItems = [
-    <DropdownItem key="toggle-query" component="button" onClick={toggleIsEnabled}>
-      {isEnabled ? t('public~Disable query') : t('public~Enable query')}
-    </DropdownItem>,
-    <DropdownItem
-      tooltip={!isEnabled ? t('Query must be enabled') : undefined}
-      isDisabled={!isEnabled}
-      key="toggle-all-series"
-      component="button"
-      onClick={toggleAllSeries}
-    >
-      {isDisabledSeriesEmpty ? t('public~Hide all series') : t('public~Show all series')}
-    </DropdownItem>,
-    <DropdownItem key="delete" component="button" onClick={doDelete}>
-      {t('public~Delete query')}
-    </DropdownItem>,
-    <DropdownItem key="duplicate" component="button" onClick={doClone}>
-      {t('public~Duplicate query')}
-    </DropdownItem>,
-  ];
-
-  return <KebabDropdown dropdownItems={dropdownItems} />;
 };
 
 export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
@@ -485,292 +328,6 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
     </>
   );
 };
-
-const PromQLExpressionInput = (props) => (
-  <AsyncComponent
-    loader={() => import('./promql-expression-input').then((c) => c.PromQLExpressionInput)}
-    {...props}
-  />
-);
-
-const Query: React.FC<{ index: number }> = ({ index }) => {
-  const { t } = useTranslation();
-
-  const id = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'id']),
-  );
-  const isEnabled = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
-  );
-  const isExpanded = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
-  );
-  const text = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries', index, 'text'], ''),
-  );
-
-  const dispatch = useDispatch();
-
-  const toggleIsEnabled = React.useCallback(() => dispatch(queryBrowserToggleIsEnabled(index)), [
-    dispatch,
-    index,
-  ]);
-
-  const toggleIsExpanded = React.useCallback(
-    () => dispatch(queryBrowserPatchQuery(index, { isExpanded: !isExpanded })),
-    [dispatch, index, isExpanded],
-  );
-
-  const handleTextChange = React.useCallback(
-    (value: string) => {
-      dispatch(queryBrowserPatchQuery(index, { text: value }));
-    },
-    [dispatch, index],
-  );
-
-  const handleExecuteQueries = React.useCallback(() => {
-    dispatch(queryBrowserRunQueries());
-  }, [dispatch]);
-
-  const handleSelectionChange = (
-    target: { focus: () => void; setSelectionRange: (start: number, end: number) => void },
-    start: number,
-    end: number,
-  ) => {
-    focusedQuery = { index, selection: { start, end }, target };
-  };
-
-  const switchKey = `${id}-${isEnabled}`;
-  const switchLabel = isEnabled ? t('public~Disable query') : t('public~Enable query');
-
-  return (
-    <div
-      className={classNames('query-browser__table', {
-        'query-browser__table--expanded': isExpanded,
-      })}
-    >
-      <div className="query-browser__query-controls">
-        <ExpandButton isExpanded={isExpanded} onClick={toggleIsExpanded} />
-        <PromQLExpressionInput
-          value={text}
-          onValueChange={handleTextChange}
-          onExecuteQuery={handleExecuteQueries}
-          onSelectionChange={handleSelectionChange}
-        />
-        <div title={switchLabel}>
-          <Switch
-            aria-label={switchLabel}
-            id={switchKey}
-            isChecked={isEnabled}
-            key={switchKey}
-            onChange={toggleIsEnabled}
-          />
-        </div>
-        <div className="dropdown-kebab-pf">
-          <QueryKebab index={index} />
-        </div>
-      </div>
-      <QueryTable index={index} />
-    </div>
-  );
-};
-
-const QueryBrowserWrapper: React.FC<{}> = () => {
-  const { t } = useTranslation();
-
-  const dispatch = useDispatch();
-
-  const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
-  const queriesList = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'queries']),
-  );
-
-  const queries = queriesList.toJS();
-
-  // Initialize queries from URL parameters
-  React.useEffect(() => {
-    const searchParams = getURLSearchParams();
-    for (let i = 0; _.has(searchParams, `query${i}`); ++i) {
-      const query = searchParams[`query${i}`];
-      dispatch(
-        queryBrowserPatchQuery(i, {
-          isEnabled: true,
-          isExpanded: true,
-          query,
-          text: query,
-        }),
-      );
-    }
-  }, [dispatch]);
-
-  /* eslint-disable react-hooks/exhaustive-deps */
-  // Use React.useMemo() to prevent these two arrays being recreated on every render, which would
-  // trigger unnecessary re-renders of QueryBrowser, which can be quite slow
-  const queriesMemoKey = JSON.stringify(_.map(queries, 'query'));
-  const queryStrings = React.useMemo(() => _.map(queries, 'query'), [queriesMemoKey]);
-  const disabledSeriesMemoKey = JSON.stringify(
-    _.reject(_.map(queries, 'disabledSeries'), _.isEmpty),
-  );
-  const disabledSeries = React.useMemo(() => _.map(queries, 'disabledSeries'), [
-    disabledSeriesMemoKey,
-  ]);
-  /* eslint-enable react-hooks/exhaustive-deps */
-
-  // Update the URL parameters when the queries shown in the graph change
-  React.useEffect(() => {
-    const newParams = {};
-    _.each(queryStrings, (q, i) => (newParams[`query${i}`] = q || ''));
-    setAllQueryArguments(newParams);
-  }, [queryStrings]);
-
-  if (hideGraphs) {
-    return null;
-  }
-
-  const insertExampleQuery = () => {
-    const focusedIndex = focusedQuery?.index ?? 0;
-    const index = queries[focusedIndex] ? focusedIndex : 0;
-    const text = 'sort_desc(sum(sum_over_time(ALERTS{alertstate="firing"}[24h])) by (alertname))';
-    dispatch(queryBrowserPatchQuery(index, { isEnabled: true, query: text, text }));
-  };
-
-  if (queryStrings.join('') === '') {
-    return (
-      <div className="query-browser__wrapper graph-empty-state">
-        <EmptyState variant={EmptyStateVariant.full}>
-          <EmptyStateIcon icon={ChartLineIcon} />
-          <Title headingLevel="h2" size="md">
-            {t('public~No query entered')}
-          </Title>
-          <EmptyStateBody>
-            {t('public~Enter a query in the box below to explore metrics for this cluster.')}
-          </EmptyStateBody>
-          <Button onClick={insertExampleQuery} variant="primary">
-            {t('public~Insert example query')}
-          </Button>
-        </EmptyState>
-      </div>
-    );
-  }
-
-  return (
-    <QueryBrowser
-      defaultTimespan={30 * 60 * 1000}
-      disabledSeries={disabledSeries}
-      queries={queryStrings}
-      showStackedControl
-    />
-  );
-};
-
-const AddQueryButton: React.FC<{}> = () => {
-  const { t } = useTranslation();
-
-  const dispatch = useDispatch();
-  const addQuery = React.useCallback(() => dispatch(queryBrowserAddQuery()), [dispatch]);
-
-  return (
-    <Button
-      className="query-browser__inline-control"
-      onClick={addQuery}
-      type="button"
-      variant="secondary"
-    >
-      {t('public~Add query')}
-    </Button>
-  );
-};
-
-const RunQueriesButton: React.FC<{}> = () => {
-  const { t } = useTranslation();
-
-  const dispatch = useDispatch();
-  const runQueries = React.useCallback(() => dispatch(queryBrowserRunQueries()), [dispatch]);
-
-  return (
-    <Button onClick={runQueries} type="submit" variant="primary">
-      {t('public~Run queries')}
-    </Button>
-  );
-};
-
-const QueriesList: React.FC<{}> = () => {
-  const count = useSelector(
-    ({ observe }: RootState) => observe.getIn(['queryBrowser', 'queries']).size,
-  );
-
-  return (
-    <>
-      {_.range(count).map((index) => {
-        const reversedIndex = count - index - 1;
-        return <Query index={reversedIndex} key={reversedIndex} />;
-      })}
-    </>
-  );
-};
-
-const PollIntervalDropdown = () => {
-  const interval = useSelector(({ observe }: RootState) =>
-    observe.getIn(['queryBrowser', 'pollInterval']),
-  );
-
-  const dispatch = useDispatch();
-  const setInterval = React.useCallback((v: number) => dispatch(queryBrowserSetPollInterval(v)), [
-    dispatch,
-  ]);
-
-  return <IntervalDropdown interval={interval} setInterval={setInterval} />;
-};
-
-const QueryBrowserPage_: React.FC<{}> = () => {
-  const { t } = useTranslation();
-
-  const dispatch = useDispatch();
-
-  // Clear queries on unmount
-  React.useEffect(() => () => dispatch(queryBrowserDeleteAllQueries()), [dispatch]);
-
-  return (
-    <>
-      <Helmet>
-        <title>{t('public~Metrics')}</title>
-      </Helmet>
-      <div className="co-m-nav-title">
-        <h1 className="co-m-pane__heading">
-          <span>{t('public~Metrics')}</span>
-          <div className="co-actions">
-            <PollIntervalDropdown />
-            <MetricsActionsMenu />
-          </div>
-        </h1>
-      </div>
-      <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-xs-12">
-            <div className="query-browser__toggle-graph-container">
-              <ToggleGraph />
-            </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-xs-12">
-            <QueryBrowserWrapper />
-            <div className="query-browser__controls">
-              <div className="query-browser__controls--right">
-                <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
-                  <AddQueryButton />
-                  <RunQueriesButton />
-                </ActionGroup>
-              </div>
-            </div>
-            <QueriesList />
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
-export const QueryBrowserPage = withFallback(QueryBrowserPage_);
 
 type QueryTableProps = {
   index: number;
