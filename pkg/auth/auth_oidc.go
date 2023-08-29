@@ -84,11 +84,12 @@ func (o *oidcAuth) login(w http.ResponseWriter, token *oauth2.Token) (*loginStat
 	return ls, nil
 }
 
-func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
+func (o *oidcAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
 	// The returned login state can be nil even if err == nil.
 	if ls, _ := o.getLoginState(r); ls != nil {
 		o.sessions.deleteSession(ls.sessionToken)
 	}
+
 	// Delete session cookie
 	cookie := http.Cookie{
 		Name:     openshiftAccessTokenCookieName,
@@ -99,6 +100,10 @@ func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
 		Secure:   o.secureCookies,
 	}
 	http.SetCookie(w, &cookie)
+}
+
+func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
+	o.deleteCookie(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
 
