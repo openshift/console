@@ -470,7 +470,6 @@
   "Triggers": "Triggers",
   "DeploymentConfig details": "DeploymentConfig details",
   "ReplicationControllers": "ReplicationControllers",
-  "Retry rollout": "Retry rollout",
   "DeploymentConfigs": "DeploymentConfigs",
   "Edit update strategy": "Edit update strategy",
   "Progress deadline seconds": "Progress deadline seconds",
