@@ -229,7 +229,6 @@ export type LazyActionMenuProps = {
   variant?: ActionMenuVariant;
   label?: string;
   isDisabled?: boolean;
-  extra?: any;
 };
 
 export type ActionContext = {
