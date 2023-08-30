@@ -16,9 +16,10 @@ const WebhookToastContent: React.FC<WebhookToastContentProps> = ({
   projectName,
 }) => {
   const { t } = useTranslation();
+  const translatedGitType = t(GitReadableTypes[git.detectedType]);
   return (
     <>
-      <Trans t={t} ns="devconsole">
+      <Trans t={t} ns="devconsole" values={{ translatedGitType }}>
         Copy the <b>Webhook URL</b> from the{' '}
         <a
           href={resourcePathFromModel(RepositoryModel, repositoryName, projectName)}
@@ -29,7 +30,7 @@ const WebhookToastContent: React.FC<WebhookToastContentProps> = ({
         </a>{' '}
         and attach it to the{' '}
         <a href={git.url} target="_blank" rel="noopener noreferrer">
-          {GitReadableTypes[git.detectedType]} repository
+          {{ translatedGitType }} repository
         </a>{' '}
         manually.
       </Trans>
