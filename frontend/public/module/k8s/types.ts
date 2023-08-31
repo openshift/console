@@ -324,6 +324,25 @@ export type DeploymentKind = {
   };
 } & K8sResourceCommon;
 
+export type DeploymentConfigKind = {
+  spec: {
+    paused?: boolean;
+    replicas?: number;
+    selector: Selector;
+    strategy?: {
+      rollingUpdate?: {
+        maxSurge: number | string;
+        maxUnavailable: number | string;
+      };
+      type?: string;
+    };
+    template: PodTemplate;
+  };
+  status?: {
+    latestVersion?: number;
+  };
+} & K8sResourceCommon;
+
 export type ResourceQuotaKind = {
   spec?: {
     hard?: { [key: string]: string };
