@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
-import styles from '@patternfly/react-styles/css/components/Topology/topology-components';
 import {
   hullPath,
   DefaultCreateConnector,
@@ -26,6 +25,7 @@ import {
   useCombineRefs,
   useHover,
 } from '@patternfly/react-topology';
+import styles from '@patternfly/react-topology/src/css/topology-components';
 import { observer } from 'mobx-react';
 
 //
