@@ -717,9 +717,6 @@
         "data-quickstart-id": "qs-nav-builds",
         "data-test-id": "build-header"
       }
-    },
-    "flags": {
-      "required": ["DEVCONSOLE_BUILDS"]
     }
   },
   {
@@ -728,9 +725,6 @@
       "exact": true,
       "path": ["/builds"],
       "component": { "$codeRef": "common.NamespaceRedirect" }
-    },
-    "flags": {
-      "required": ["DEVCONSOLE_BUILDS"]
     }
   },
   {
@@ -739,9 +733,6 @@
       "exact": false,
       "path": ["/builds/all-namespaces", "/builds/ns/:ns"],
       "component": { "$codeRef": "builds.BuildsTabListPage" }
-    },
-    "flags": {
-      "required": ["DEVCONSOLE_BUILDS"]
     }
   },
   {
