@@ -78,6 +78,17 @@
       "flag": "OPENSHIFT_TEMPLATE"
     }
   },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "BuildConfig"
+      },
+      "flag": "DEVCONSOLE_BUILDS"
+    }
+  },
 
   {
     "type": "console.cluster-configuration/item",

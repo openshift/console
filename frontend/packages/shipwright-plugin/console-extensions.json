@@ -36,6 +36,7 @@
       "abbr": "BR"
     }
   },
+
   {
     "type": "console.flag/model",
     "properties": {
@@ -58,6 +59,18 @@
       "flag": "SHIPWRIGHT_BUILDRUN"
     }
   },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      },
+      "flag": "DEVCONSOLE_BUILDS"
+    }
+  },
+
   {
     "type": "console.navigation/resource-ns",
     "properties": {
