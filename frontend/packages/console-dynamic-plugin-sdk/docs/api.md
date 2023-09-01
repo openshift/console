@@ -2295,11 +2295,13 @@ A hook that provides a callback to launch a modal for deleting a resource.
 ### Example
 
 
+```tsx
 const DeletePodButton = ({ pod }) => {
   const { t } = useTranslation();
-  const launchDeleteModal = useDeleteModal(pod);
+  const launchDeleteModal = useDeleteModal<PodKind>(pod);
   return <button onClick={launchDeleteModal}>{t('Delete Pod')}</button>
 }
+```
 
 
 

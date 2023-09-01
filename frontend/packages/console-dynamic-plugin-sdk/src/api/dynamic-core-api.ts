@@ -823,11 +823,13 @@ export const useAnnotationsModal: UseAnnotationsModal = require('@console/shared
  * @param deleteAllResources - (optional) A function to delete all resources of the same kind.
  * @returns A function which will launch a modal for deleting a resource.
  * @example
+ * ```tsx
  * const DeletePodButton = ({ pod }) => {
  *   const { t } = useTranslation();
- *   const launchDeleteModal = useDeleteModal(pod);
+ *   const launchDeleteModal = useDeleteModal<PodKind>(pod);
  *   return <button onClick={launchDeleteModal}>{t('Delete Pod')}</button>
  * }
+ * ```
  */
 export const useDeleteModal: UseDeleteModal = require('@console/shared/src/hooks/useDeleteModal')
 
