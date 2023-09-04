@@ -44,10 +44,14 @@ import {
   navFactory,
   togglePaused,
   RuntimeClass,
+  ExternalLink,
+  getDocumentationURL,
+  documentationURLs,
 } from './utils';
 import { ReplicationControllersPage } from './replication-controller';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { Alert } from '@patternfly/react-core';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
@@ -210,6 +214,33 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
   );
 };
 
+export const DeploymentConfigDeprecationAlert: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <Alert
+      isInline
+      variant="info"
+      title={t('public~DeploymentConfig is being deprecated with OpenShift 4.14')}
+    >
+      <p>
+        {t(
+          'public~Feature development of DeploymentConfigs will be deprecated in OpenShift Container Platform 4.14.',
+        )}
+      </p>
+      <p>
+        {t(
+          'public~DeploymentConfigs will continue to be supported for security and critical fixes, but you should migrate to Deployments wherever it is possible.',
+        )}
+      </p>
+      <ExternalLink
+        href={getDocumentationURL(documentationURLs.deprecatedDeploymentConfig)}
+        text={t('public~Learn more about Deployments')}
+        additionalClassName="pf-u-mt-md"
+      />
+    </Alert>
+  );
+};
+
 export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
   const { t } = useTranslation();
   return (
@@ -326,7 +357,10 @@ export const DeploymentConfigsDetailsPage: React.FC<DeploymentConfigsDetailsPage
       kind={DeploymentConfigsReference}
       customActionMenu={customActionMenu}
       pages={pages}
-    />
+    >
+      <DeploymentConfigDeprecationAlert />
+      <br />
+    </DetailsPage>
   );
 };
 DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
@@ -372,6 +406,7 @@ export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (prop
       ListComponent={DeploymentConfigsList}
       createProps={createProps}
       canCreate={true}
+      helpText={<DeploymentConfigDeprecationAlert />}
       {...props}
     />
   );
