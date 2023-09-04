@@ -4,11 +4,11 @@ export const defaultYamlTemplate = `
 apiVersion: ${ServiceModel.apiGroup}/${ServiceModel.apiVersion}
 kind: ${ServiceModel.kind}
 metadata:
-  name: sample
+  name: showcase
   namespace: default
 spec:
   template:
     spec:
       containers:
-      - image: openshift/hello-openshift
+      - image: quay.io/openshift-knative/showcase
 `;
