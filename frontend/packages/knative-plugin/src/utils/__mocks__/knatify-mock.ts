@@ -21,7 +21,7 @@ export const ksvcData: K8sResourceKind = {
         containers: [
           {
             name: 'overlayimage',
-            image: 'openshift/hello-openshift',
+            image: 'quay.io/openshift-knative/showcase',
             ports: [{ containerPort: 8080 }],
             imagePullPolicy: 'Always',
             resources: {},
