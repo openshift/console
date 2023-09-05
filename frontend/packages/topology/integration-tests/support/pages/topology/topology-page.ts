@@ -286,8 +286,17 @@ export const topologyPage = {
   },
   clickOnApplicationGroupings: (appName: string) => {
     cy.reload();
+    app.waitForLoad();
+    guidedTour.close();
     const id = `[data-id="group:${appName}"] .odc-resource-icon-application`;
-    cy.get(id).next('text').click({ force: true });
+    cy.log(id);
+    cy.get('[data-test-id="base-node-handler"] image').should('be.visible');
+    cy.get('body').then(($el) => {
+      if ($el.find(topologyPO.sidePane.applicationGroupingsTitle).length === 0) {
+        cy.get(id).next('text').click({ force: true });
+      }
+    });
+    // cy.get(id).next('text').click({ force: true });
   },
   verifyApplicationGroupingsDeleted: (appName: string) => {
     cy.reload();

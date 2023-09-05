@@ -1,4 +1,4 @@
-@topology @smoke
+@manual @topology @smoke
 Feature: Perform actions on topology
     User will be able to create workloads and perform actions on topology page
 

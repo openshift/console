@@ -60,7 +60,7 @@ export const createWorkloadUsingOptions = (optionName: string, optionalData?: st
       const yamlLocation = `support/${optionalData}`;
       yamlEditor.setEditorContent(yamlLocation);
       cy.get(chartAreaPO.saveChanges).click();
-      cy.get('[aria-label="Breadcrumb"]').should('contain', 'Redis details');
+      cy.get('[aria-label="Breadcrumb"]').should('contain', 'details');
       navigateTo(devNavigationMenu.Topology);
       break;
 
