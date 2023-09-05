@@ -1,9 +1,14 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import {
+  devNavigationMenu,
+  switchPerspective,
+} from '@console/dev-console/integration-tests/support/constants';
 import {
   app,
   createGitWorkload,
   navigateTo,
+  perspective,
   projectNameSpace,
   topologyActions,
 } from '@console/dev-console/integration-tests/support/pages';
@@ -85,6 +90,7 @@ When('user enters key as {string}', (annotationKey: string) => {
 When('user enters value as {string}', (annotationValue: string) => {
   cy.get(topologyPO.deploymentStrategy.envValue).last().clear().type(annotationValue);
   cy.get(topologyPO.graph.deleteWorkload).click();
+  cy.byLegacyTestID('modal-title').should('not.exist', { timeout: 20000 });
 });
 
 Then('user can see route decorator has been hidden for workload {string}', (appName: string) => {
@@ -150,10 +156,21 @@ When('user clicks on {string} from action menu', (actionItem: string) => {
   topologyActions.selectAction(actionItem);
 });
 
+Then('user can see show waiting pods with errors', () => {
+  topologySidePane.selectTab('Resources');
+  cy.get(topologyPO.sidePane.resourcesTab.waitingPods).should('be.visible');
+});
+
 Then('user can see traffic details for pod', () => {
   topologySidePane.selectTab('Resources');
   topologySidePane.verifySection('Pods');
+  cy.wait(20000);
+  cy.reload(true);
+  app.waitForLoad();
+  guidedTour.close();
   cy.get(topologyPO.sidePane.resourcesTab.waitingPods, { timeout: 100000 }).should('not.exist');
+  perspective.switchTo(switchPerspective.Administrator);
+  perspective.switchTo(switchPerspective.Developer);
   cy.get(topologyPO.sidePane.resourcesTab.podTrafficStatus, { timeout: 100000 }).should(
     'be.visible',
   );

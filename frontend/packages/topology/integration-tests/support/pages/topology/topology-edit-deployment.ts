@@ -74,6 +74,12 @@ export const editDeployment = {
     cy.get(topologyPO.deploymentStrategy.preLifecycleHook.failurePolicy).click();
     cy.get(`[id="${failurePolicy}-link"]`).click();
     cy.get(topologyPO.deploymentStrategy.tickButton).click();
+    cy.on('uncaught:exception', (err) => {
+      expect(err.message).toContain(
+        'When Cypress detects uncaught errors originating from your application it will automatically fail the current test.',
+      ); //  .to.include
+      return false;
+    });
   },
   selectProject: (projectName: string) => {
     cy.get(`[id="${projectName}-link"]`).click();

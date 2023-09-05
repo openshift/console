@@ -215,7 +215,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Consoles: {
       cy.get('body').then(($body) => {
         if ($body.text().includes('Consoles')) {
-          cy.byLegacyTestID('dev-perspective-nav').contains('Consoles').click();
+          cy.byTestID('draggable-pinned-resource-item').contains('Consoles').click();
           cy.byTestID('cluster').should('be.visible').click();
         } else {
           cy.get(devNavigationMenuPO.search).click();
@@ -289,6 +289,13 @@ export const projectNameSpace = {
     });
     // Bug: ODC-6164 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
     // cy.testA11y('Create Project modal');
+    cy.url().then(($url) => {
+      if ($url.includes('topology/all-namespaces')) {
+        cy.get('.odc-namespaced-page__content').should('be.visible');
+      } else if ($url.includes('topology/ns')) {
+        cy.byLegacyTestID('item-filter').should('be.visible');
+      }
+    });
     cy.byTestID('dropdown-text-filter').type(projectName);
     cy.get('[data-test-id="namespace-bar-dropdown"] span.pf-v5-c-menu-toggle__text')
       .first()
