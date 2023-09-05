@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { Flex, FlexItem, Text, Title, TitleSizes, FormGroup } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertVariant,
+  Flex,
+  FlexItem,
+  Text,
+  Title,
+  TitleSizes,
+  FormGroup,
+} from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
 import EditorField from '@console/dev-console/src/components/buildconfig/sections/EditorField';
@@ -14,10 +23,28 @@ const RepositoryOverview = () => {
   const { values } = useFormikContext<RepositoryFormValues>();
   return (
     <FormSection>
+      <FormGroup fieldId="alert-message">
+        <Alert
+          isInline
+          variant={values?.webhook?.autoAttach ? AlertVariant.success : AlertVariant.info}
+          title={
+            values?.webhook?.autoAttach
+              ? t('pipelines-plugin~Webhook attached to the Git Repository')
+              : t('pipelines-plugin~Could not attach webhook to the Git Repository.')
+          }
+        >
+          {!values?.webhook?.autoAttach &&
+            t(
+              'pipelines-plugin~Please follow the instructions below to attach the webhook manually.',
+            )}
+        </Alert>
+      </FormGroup>
       <FormGroup fieldId="title">
         <Title headingLevel="h4" size={TitleSizes.xl} data-test="repository-overview-title">
           {t('pipelines-plugin~Git repository added.')}
         </Title>
+      </FormGroup>
+      <FormGroup fieldId="instructions">
         <Text>
           <Trans t={t} ns="pipelines-plugin">
             Copy this code to <code className="co-code">.tekton</code> directory in your{' '}
@@ -28,8 +55,6 @@ const RepositoryOverview = () => {
             />
           </Trans>
         </Text>
-      </FormGroup>
-      <FormGroup fieldId="instructions">
         <Text>
           <Trans t={t} ns="pipelines-plugin">
             You can now add PipelineRuns to the <code className="co-code">.tekton</code> directory

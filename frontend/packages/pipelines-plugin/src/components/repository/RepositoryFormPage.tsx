@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
 import { history } from '@console/internal/components/utils';
 import { defaultRepositoryFormValues } from './consts';
+import { usePacInfo } from './hooks/pac-hook';
 import {
   createRemoteWebhook,
   createRepositoryResources,
@@ -20,11 +21,12 @@ const RepositoryFormPage: React.FC<RepositoryFormPageProps> = ({
   },
 }) => {
   const { t } = useTranslation();
+  const [pac, loaded] = usePacInfo();
 
   const handleSubmit = (values: RepositoryFormValues, actions): void => {
     createRepositoryResources(values, ns)
       .then(async () => {
-        const isWebHookAttached = await createRemoteWebhook(values);
+        const isWebHookAttached = await createRemoteWebhook(values, pac, loaded);
         if (isWebHookAttached) {
           actions.setFieldValue('webhook.autoAttach', true);
         }
