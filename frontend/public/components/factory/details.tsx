@@ -19,6 +19,7 @@ import {
   K8sModel,
   isDetailPageBreadCrumbs as isDynamicDetailPageBreadCrumbs,
   DetailPageBreadCrumbs as DynamicDetailPageBreadCrumbs,
+  FirehoseResult,
 } from '@console/dynamic-plugin-sdk';
 import {
   Firehose,
@@ -129,6 +130,13 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   let allPages = [...pages, ...pluginPages];
   allPages = allPages.length ? allPages : null;
 
+  const objResource: FirehoseResource = {
+    kind: props.kind,
+    name: props.name,
+    namespace: props.namespace,
+    isList: false,
+    prop: 'obj',
+  };
   return (
     <>
       {resolvedBreadcrumbExtension && (
@@ -140,18 +148,10 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         />
       )}
       <Firehose
-        resources={[
-          {
-            kind: props.kind,
-            kindObj,
-            name: props.name,
-            namespace: props.namespace,
-            isList: false,
-            prop: 'obj',
-          } as FirehoseResource,
-        ].concat(props.resources || [])}
+        resources={[...(_.isNil(props.obj) ? [objResource] : []), ...(props.resources ?? [])]}
       >
         <PageHeading
+          obj={props.obj}
           detail={true}
           title={props.title || props.name}
           titleFunc={props.titleFunc}
@@ -173,6 +173,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           {props.children}
         </PageHeading>
         <HorizontalNav
+          obj={props.obj}
           pages={allPages}
           pagesFor={props.pagesFor}
           className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
@@ -188,6 +189,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
 }, ErrorBoundaryFallbackPage);
 
 export type DetailsPageProps = {
+  obj?: FirehoseResult<K8sResourceKind>;
   match: match<any>;
   title?: string | JSX.Element;
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;

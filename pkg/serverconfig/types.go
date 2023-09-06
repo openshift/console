@@ -74,6 +74,7 @@ type ClusterInfo struct {
 	ControlPlaneTopology configv1.TopologyMode `yaml:"controlPlaneTopology,omitempty"`
 	ReleaseVersion       string                `yaml:"releaseVersion,omitempty"`
 	NodeArchitectures    []string              `yaml:"nodeArchitectures,omitempty"`
+	CopiedCSVsDisabled   bool                  `yaml:"copiedCSVsDisabled,omitempty"`
 }
 
 // Auth holds configuration for authenticating with OpenShift. The auth method is assumed to be "openshift".

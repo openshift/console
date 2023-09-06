@@ -147,6 +147,7 @@ func main() {
 	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control/infra nodes (External | HighlyAvailable | SingleReplica)")
 	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
+	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
 
 	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -293,6 +294,7 @@ func main() {
 		Telemetry:                    telemetryFlags,
 		ReleaseVersion:               *fReleaseVersion,
 		NodeArchitectures:            nodeArchitectures,
+		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 	}
 
 	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}

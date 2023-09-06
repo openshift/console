@@ -12,7 +12,8 @@ const testOperand: TestOperandProps = {
   group: 'binding.operators.coreos.com',
   version: 'v1alpha1',
   kind: 'ServiceBinding',
-  createActionID: 'list-page-create-dropdown-item-servicebindings.binding.operators.coreos.com',
+  createActionID:
+    'list-page-create-dropdown-item-binding.operators.coreos.com~v1alpha1~ServiceBinding',
   exampleName: 'example-servicebinding',
 };
 

@@ -217,6 +217,10 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 	if len(clusterInfo.NodeArchitectures) > 0 {
 		fs.Set("node-architectures", strings.Join(clusterInfo.NodeArchitectures, ","))
 	}
+
+	if clusterInfo.CopiedCSVsDisabled {
+		fs.Set("copied-csvs-disabled", "true")
+	}
 }
 
 func addAuth(fs *flag.FlagSet, auth *Auth) {
