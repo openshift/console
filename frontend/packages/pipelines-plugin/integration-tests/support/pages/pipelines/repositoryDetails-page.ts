@@ -42,11 +42,11 @@ export const repositoryDetailsPage = {
     cy.get(repositoryDetailsPO.details.fieldNames.annotations).should('be.visible');
     cy.get(repositoryDetailsPO.details.fieldNames.createdAt).should('be.visible');
     cy.get(repositoryDetailsPO.details.fieldNames.owner).should('be.visible');
-    cy.byTestID('pl-repository-customdetails').within(() => {
-      cy.get('dl dt')
-        .eq(0)
-        .should('have.text', 'Repository');
-    });
+    cy.get(repositoryDetailsPO.details.fieldNames.repository).should('be.visible');
+    cy.get(repositoryDetailsPO.details.fieldNames.userName).should('be.visible');
+    cy.get(repositoryDetailsPO.details.fieldNames.accessToken).should('be.visible');
+    cy.get(repositoryDetailsPO.details.fieldNames.webhookUrl).should('be.visible');
+    cy.get(repositoryDetailsPO.details.fieldNames.webhookSecret).should('be.visible');
   },
 
   verifyLabelInLabelsList: (label: string) => {

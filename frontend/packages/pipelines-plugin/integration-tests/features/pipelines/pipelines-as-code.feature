@@ -25,7 +25,7 @@ Feature: Perform Actions on repository
              When user clicks on the repository "<repository_name>" on Repositories page
              Then user will be redirected to Repository details page with header "<repository_name>"
               And user is able to see Details, YAML, Pipeline Runs tabs
-              And Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created at, Owner, Repository
+              And Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created at, Owner, Repository, Username, Git access token, Webhook URL, Webhook Secret
               And Actions menu display with options Edit labels, Edit annotations, Edit repository, Delete repository
 
         Examples:

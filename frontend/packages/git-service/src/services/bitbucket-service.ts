@@ -190,6 +190,7 @@ export class BitbucketService extends BaseService {
     const body = {
       url: webhookURL,
       events: ['repo:push', 'pullrequest:created', 'pullrequest:updated'],
+      /* eslint-disable @typescript-eslint/camelcase */
       skip_cert_verification: !sslVerification,
       active: true,
     };
