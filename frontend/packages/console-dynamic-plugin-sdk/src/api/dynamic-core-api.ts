@@ -832,7 +832,6 @@ export const useAnnotationsModal: UseAnnotationsModal = require('@console/shared
  * ```
  */
 export const useDeleteModal: UseDeleteModal = require('@console/shared/src/hooks/useDeleteModal')
-
   .useDeleteModal;
 
 /**
@@ -849,7 +848,8 @@ export const useDeleteModal: UseDeleteModal = require('@console/shared/src/hooks
  * }
  * ```
  */
-export const useLabelsModal: UseLabelsModal = require('@console/shared/src/hooks/useLabelsModal');
+export const useLabelsModal: UseLabelsModal = require('@console/shared/src/hooks/useLabelsModal')
+  .useLabelsModal;
 
 /**
  * Hook that provides the currently active namespace and a callback for setting the active namespace.
