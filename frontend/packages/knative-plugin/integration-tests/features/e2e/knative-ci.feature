@@ -20,8 +20,8 @@ Feature: Perform actions on knative service and revision
               And user is able to see workload "<workload_name>" in topology page
 
         Examples:
-                  | image_name                | workload_name |
-                  | openshift/hello-openshift | kn-service    |
+                  | image_name                         | workload_name |
+                  | quay.io/openshift-knative/showcase | kn-service    |
 
 
         Scenario: knative service menu options: KN-02-TC01
