@@ -12,6 +12,7 @@ export const devNavigationMenuPO = {
   secret: '#Secret',
   dropdownButton: '[data-test-id="dropdown-button"]',
   environments: '[data-test-id="environments-header"]',
+  functions: '[data-test-id="functions-details-header"]',
 };
 
 export const adminNavigationMenuPO = {

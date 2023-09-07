@@ -62,4 +62,5 @@ export const pageTitle = {
   Samples: 'Samples',
   CreateServerlessFunction: 'Create Serverless function',
   AddGitRepository: 'Add Git Repository',
+  Functions: 'Functions',
 };

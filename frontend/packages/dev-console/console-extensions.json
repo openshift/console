@@ -1157,7 +1157,8 @@
         "/helm-releases",
         "/upload-jar",
         "/search-page",
-        "/builds"
+        "/builds",
+        "/functions"
       ],
       "component": { "$codeRef": "common.NamespaceRedirect" }
     }
