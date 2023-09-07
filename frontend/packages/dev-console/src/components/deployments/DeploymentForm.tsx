@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { DeploymentConfigDeprecationAlert } from '@console/internal/components/deployment-config';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -51,12 +52,16 @@ const EditDeploymentForm: React.FC<
   const formEditor = <DeploymentFormEditor resourceType={resourceType} resourceObj={resource} />;
 
   const yamlEditor = (
-    <CodeEditorField
-      name="yamlData"
-      model={resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel}
-      showSamples={isNew}
-      onSave={handleSubmit}
-    />
+    <>
+      <DeploymentConfigDeprecationAlert />
+      <br />
+      <CodeEditorField
+        name="yamlData"
+        model={resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel}
+        showSamples={isNew}
+        onSave={handleSubmit}
+      />
+    </>
   );
 
   const sanitizeToForm = (yamlDeployment: K8sResourceKind) => {

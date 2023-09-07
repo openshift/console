@@ -80,6 +80,10 @@ export const documentationURLs: documentationURLsType = {
     downstream: 'html/building_applications/projects#working-with-projects',
     upstream: 'applications/projects/working-with-projects.html',
   },
+  deprecatedDeploymentConfig: {
+    downstream: 'html/building_applications/deployments',
+    upstream: 'applications/deployments/what-deployments-are.html',
+  },
 };
 
 export const isUpstream = () => window.SERVER_FLAGS.branding === 'okd';

@@ -164,7 +164,8 @@ export type FeatureAction = Action<
   typeof featureActions | typeof receivedResources | typeof clearFlags
 >;
 
-const openshiftPath = '/apis/apps.openshift.io/v1';
+// This config API contains the OpenShift Project, and other mandatory resources
+const openshiftPath = '/apis/config.openshift.io/v1';
 const detectOpenShift = (dispatch) =>
   fetchURL(openshiftPath).then(
     (res) => dispatch(setFlag(FLAGS.OPENSHIFT, _.size(res.resources) > 0)),

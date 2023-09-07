@@ -33,6 +33,39 @@
     }
   },
   {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "OPENSHIFT_BUILD",
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "Build"
+      }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "OPENSHIFT_DEPLOYMENTCONFIG",
+      "model": {
+        "group": "apps.openshift.io",
+        "version": "v1",
+        "kind": "DeploymentConfig"
+      }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "OPENSHIFT_BUILDCONFIG",
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "BuildConfig"
+      }
+    }
+  },
+  {
     "type": "console.context-provider",
     "properties": {
       "provider": { "$codeRef": "tourContext.TourContextProvider" },
@@ -134,6 +167,9 @@
         "kind": "DeploymentConfig"
       },
       "provider": { "$codeRef": "actions.useDeploymentConfigActionsProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_DEPLOYMENTCONFIG"]
     }
   },
   {
@@ -671,7 +707,7 @@
         "kind": "DeploymentConfig"
       }
     },
-    "flags": { "required": ["OPENSHIFT"] }
+    "flags": { "required": ["OPENSHIFT_DEPLOYMENTCONFIG"] }
   },
   {
     "type": "console.navigation/resource-ns",
@@ -974,7 +1010,8 @@
         "version": "v1",
         "kind": "BuildConfig"
       }
-    }
+    },
+    "flags": { "required": ["OPENSHIFT_BUILDCONFIG"] }
   },
   {
     "type": "console.navigation/resource-ns",
@@ -989,7 +1026,8 @@
         "version": "v1",
         "kind": "Build"
       }
-    }
+    },
+    "flags": { "required": ["OPENSHIFT_BUILD"] }
   },
   {
     "type": "console.navigation/resource-ns",

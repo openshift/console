@@ -14,6 +14,7 @@ import { RootState } from '@console/internal/redux';
 import { ServiceModel as knSvcModel } from '@console/knative-plugin/src';
 import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
+import { usePacInfo } from '@console/pipelines-plugin/src/components/repository/hooks/pac-hook';
 import { createRemoteWebhook } from '@console/pipelines-plugin/src/components/repository/repository-form-utils';
 import {
   ALL_APPLICATIONS_KEY,
@@ -69,6 +70,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   const perspectiveExtensions = usePerspectives();
   const postFormCallback = usePostFormSubmitAction();
   const toastContext = useToast();
+  const [pac, loaded] = usePacInfo();
 
   const initialBaseValues: BaseFormData = getBaseInitialValues(namespace, activeApplication);
   const initialValues: GitImportFormData = {
@@ -165,22 +167,22 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     return resourceActions
       .then(async (resources) => {
         if (pipelineEnabled && pipelineType === PipelineType.PAC) {
-          const isWebHookAttached = await createRemoteWebhook(repository);
-          if (!isWebHookAttached) {
-            toastContext.addToast({
-              variant: AlertVariant.danger,
-              title: t('devconsole~Webhook creation failed'),
-              content: (
-                <WebhookToastContent
-                  repositoryName={repository.name}
-                  git={values.git}
-                  projectName={projectName}
-                />
-              ),
-              timeout: true,
-              dismissible: true,
-            });
-          }
+          const isWebHookAttached = await createRemoteWebhook(repository, pac, loaded);
+          toastContext.addToast({
+            variant: isWebHookAttached ? AlertVariant.success : AlertVariant.danger,
+            title: isWebHookAttached
+              ? t('devconsole~Webhook attached to the Git Repository')
+              : t('devconsole~Could not attach webhook to the Git Repository'),
+            content: !isWebHookAttached ? (
+              <WebhookToastContent
+                repositoryName={repository.name}
+                git={values.git}
+                projectName={projectName}
+              />
+            ) : null,
+            timeout: true,
+            dismissible: true,
+          });
         }
 
         const deployedResources = resources.filter(

@@ -260,13 +260,22 @@ export const createRepositoryResources = async (
   return resource;
 };
 
-export const createRemoteWebhook = async (values: RepositoryFormValues): Promise<boolean> => {
+export const createRemoteWebhook = async (
+  values: RepositoryFormValues,
+  pac: ConfigMapKind,
+  loaded: boolean,
+): Promise<boolean> => {
   const {
     gitUrl,
     webhook: { method, token, secret: webhookSecret, url: webhookURL, secretObj, user },
   } = values;
   const detectedGitType = detectGitType(gitUrl);
   const gitService = getGitService(gitUrl, detectedGitType);
+
+  let sslVerification = true;
+  if (loaded && pac?.data?.['webhook-ssl-verification'] === 'false') {
+    sslVerification = false;
+  }
 
   let authToken: string;
   if (detectedGitType === GitProvider.BITBUCKET) {
@@ -281,6 +290,7 @@ export const createRemoteWebhook = async (values: RepositoryFormValues): Promise
   const webhookCreationStatus = await gitService.createRepoWebhook(
     authToken,
     webhookURL,
+    sslVerification,
     webhookSecret,
   );
 

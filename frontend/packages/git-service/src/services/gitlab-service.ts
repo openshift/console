@@ -167,6 +167,7 @@ export class GitlabService extends BaseService {
   createRepoWebhook = async (
     token: string,
     webhookURL: string,
+    sslVerification: boolean,
     webhookSecret: string,
   ): Promise<boolean> => {
     const projectID = await this.getProjectId();
@@ -178,7 +179,7 @@ export class GitlabService extends BaseService {
       url: webhookURL,
       push_events: true,
       merge_requests_events: true,
-      enable_ssl_verification: false,
+      enable_ssl_verification: sslVerification,
       token: webhookSecret,
     };
     /* Using DevConsole Proxy to create webhook as Gitlab is giving CORS error */
