@@ -20,6 +20,7 @@ export const useTabbedTableBreadcrumbsFor = (
   subTab: string = null,
   customBreadcrumbName?: string,
   customBreadcrumbURLRequired?: boolean,
+  customBreadCrumbDetailsPrefix?: string,
 ) => {
   const { t } = useTranslation();
   const { label, labelKey, labelPlural, labelPluralKey } = kindObj;
@@ -39,7 +40,7 @@ export const useTabbedTableBreadcrumbsFor = (
             },
             {
               name: t('console-shared~{{label}} details', {
-                label: labelKey ? t(labelKey) : label,
+                label: customBreadCrumbDetailsPrefix || (labelKey ? t(labelKey) : label),
               }),
               path: match.url,
             },
@@ -48,6 +49,7 @@ export const useTabbedTableBreadcrumbsFor = (
       subTab,
       customBreadcrumbName,
       customBreadcrumbURLRequired,
+      customBreadCrumbDetailsPrefix,
       labelPluralKey,
       t,
       labelPlural,

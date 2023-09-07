@@ -197,3 +197,9 @@ export enum DomainMappingResponseAction {
 export enum ServerlessBuildStrategyType {
   ServerlessFunction = 'ServerlessFunction',
 }
+
+export enum ServiceTypeValue {
+  Functions = 'Functions',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  'Non-functions' = 'Non-functions',
+}

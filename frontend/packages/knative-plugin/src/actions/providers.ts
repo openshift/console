@@ -22,6 +22,7 @@ import { MoveConnectorAction } from '@console/topology/src/actions/edgeActions';
 import { getModifyApplicationAction } from '@console/topology/src/actions/modify-application';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import { useKnativeEventingEnabled } from '../catalog/useEventSourceProvider';
+import { KnativeServiceTypeContext } from '../components/functions/ServiceTypeContext';
 import {
   EVENTING_BROKER_ACTION_ID,
   EVENTING_CHANNEL_ACTION_ID,
@@ -64,6 +65,7 @@ import {
   setTrafficDistribution,
   moveSinkSource,
   testServerlessFunction,
+  editKnativeServiceResource,
 } from './creators';
 import { hideKnatifyAction, MakeServerless } from './knatify';
 
@@ -88,6 +90,7 @@ export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
 
 export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
+  const serviceTypeValue = React.useContext(KnativeServiceTypeContext);
   const actions = React.useMemo(() => {
     return [
       setTrafficDistribution(kindObj, resource),
@@ -96,7 +99,7 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
       DeploymentActionFactory.EditResourceLimits(kindObj, resource),
       CommonActionFactory.ModifyLabels(kindObj, resource),
       CommonActionFactory.ModifyAnnotations(kindObj, resource),
-      CommonActionFactory.Edit(kindObj, resource),
+      editKnativeServiceResource(kindObj, resource, serviceTypeValue),
       ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
         ? [DeleteResourceAction(kindObj, resource)]
         : [CommonActionFactory.Delete(kindObj, resource)]),
@@ -104,7 +107,7 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
         ? [testServerlessFunction(kindObj, resource)]
         : []),
     ];
-  }, [kindObj, resource]);
+  }, [kindObj, resource, serviceTypeValue]);
 
   return [actions, !inFlight, undefined];
 };

@@ -235,6 +235,12 @@ export const navigateTo = (opt: devNavigationMenu) => {
       cy.testA11y('cluster Page in dev perspective');
       break;
     }
+    case devNavigationMenu.Functions: {
+      cy.get(devNavigationMenuPO.functions).click();
+      detailsPage.titleShouldContain(pageTitle.Functions);
+      cy.testA11y('Functions Page in dev perspective');
+      break;
+    }
     default: {
       throw new Error('Option is not available');
     }

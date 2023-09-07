@@ -13,6 +13,7 @@ export enum NavigationMenu {
   ProjectDetails = 'Project Details',
   ProjectAccess = 'Project Access',
   Pipelines = 'Pipelines',
+  Functions = 'Functions',
 }
 
 export enum Perspective {
@@ -70,6 +71,12 @@ export const naviagteTo = async function (opt: NavigationMenu) {
       await click($('a.pf-c-nav__link[data-component="pf-nav-expandable"]'));
       await click($('[data-test-id="more-project-access-header"]'));
       await browser.wait(EC.urlContains('project-access'), ELEMENT_WAIT);
+      break;
+    }
+    case NavigationMenu.Functions: {
+      await click($('a.pf-c-nav__link[data-component="pf-nav-expandable"]'));
+      await click($('[data-test-id="functions-details-header"]'));
+      await browser.wait(EC.urlContains('functions'), ELEMENT_WAIT);
       break;
     }
     default: {
