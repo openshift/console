@@ -2,10 +2,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import HealthChecks from '../../../health-checks/HealthChecks';
-import { Resources } from '../../import-types';
+import { BuildOptions, Resources } from '../../import-types';
 import AdvancedSection from '../AdvancedSection';
-import BuildConfigSection from '../BuildConfigSection';
-import DeploymentConfigSection from '../DeploymentConfigSection';
 import LabelSection from '../LabelSection';
 import ResourceLimitSection from '../ResourceLimitSection';
 import RouteSection from '../RouteSection';
@@ -32,6 +30,9 @@ describe('AdvancedSection', () => {
           name: 'my-app',
         },
         resources: Resources.Kubernetes,
+        build: {
+          option: BuildOptions.BUILDS,
+        },
         deployment: {
           env: [],
         },
@@ -48,8 +49,6 @@ describe('AdvancedSection', () => {
     const listItems = list.shallow();
     expect(wrapper.find(RouteSection).exists()).toBe(true);
     expect(listItems.find(HealthChecks).exists()).toBe(true);
-    expect(listItems.find(BuildConfigSection).exists()).toBe(true);
-    expect(listItems.find(DeploymentConfigSection).exists()).toBe(true);
     expect(listItems.find(ScalingSection).exists()).toBe(true);
     expect(listItems.find(ResourceLimitSection).exists()).toBe(true);
 
@@ -74,12 +73,10 @@ describe('AdvancedSection', () => {
     const listItems = list.shallow();
     expect(wrapper.find(RouteSection).exists()).toBe(true);
     expect(listItems.find(HealthChecks).exists()).toBe(true);
-    expect(listItems.find(DeploymentConfigSection).exists()).toBe(true);
     expect(listItems.find(ScalingSection).exists()).toBe(true);
     expect(listItems.find(ResourceLimitSection).exists()).toBe(true);
     expect(listItems.find(LabelSection).exists()).toBe(true);
 
-    expect(listItems.find(BuildConfigSection).exists()).toBe(false);
     expect(listItems.find(ServerlessScalingSection).exists()).toBe(false);
   });
 
@@ -96,8 +93,6 @@ describe('AdvancedSection', () => {
     const listItems = list.shallow();
     expect(wrapper.find(RouteSection).exists()).toBe(true);
     expect(listItems.find(HealthChecks).exists()).toBe(true);
-    expect(listItems.find(BuildConfigSection).exists()).toBe(true);
-    expect(listItems.find(DeploymentConfigSection).exists()).toBe(true);
     expect(listItems.find(ServerlessScalingSection).exists()).toBe(true);
     expect(listItems.find(ResourceLimitSection).exists()).toBe(true);
     expect(listItems.find(LabelSection).exists()).toBe(true);

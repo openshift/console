@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
-import { GitImportFormData, Resources } from '../../import/import-types';
+import { BuildOptions, GitImportFormData, Resources } from '../../import/import-types';
 import {
   getResourcesType,
   getFlowType,
@@ -62,6 +62,7 @@ describe('getInitialValues', () => {
         ...gitImportInitialValues.build,
         source: { type: undefined },
         triggers: { config: false, image: false, webhook: false },
+        option: BuildOptions.PIPELINES,
       },
       image: {
         ...gitImportInitialValues.image,

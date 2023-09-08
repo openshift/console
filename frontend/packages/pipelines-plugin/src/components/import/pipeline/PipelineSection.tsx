@@ -1,18 +1,17 @@
 import * as React from 'react';
-import { Alert, Split, SplitItem } from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { FLAG_OPENSHIFT_BUILDCONFIG } from '@console/dev-console/src/const';
 import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import { FlagsObject } from '@console/internal/reducers/features';
-import { TechPreviewBadge } from '@console/shared';
 import { FLAG_OPENSHIFT_PIPELINE, CLUSTER_PIPELINE_NS } from '../../../const';
 import { PipelineModel } from '../../../models';
 import { PipelineKind } from '../../../types';
-import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import PipelineTemplate from './PipelineTemplate';
 
 import './PipelineSection.scss';
@@ -47,25 +46,19 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({
   existingPipeline,
 }) => {
   const { t } = useTranslation();
-  const { values } = useFormikContext<FormikValues>();
+  const { values, setFieldValue } = useFormikContext<FormikValues>();
+
+  /* Set pipeline.enabled to true if the user has access to create pipelines and the Builds are not installed */
+  React.useEffect(() => {
+    if (flags[FLAG_OPENSHIFT_PIPELINE] && !flags[FLAG_OPENSHIFT_BUILDCONFIG]) {
+      setFieldValue('pipeline.enabled', true);
+    }
+  }, [setFieldValue, flags]);
 
   const hasCreatePipelineAccess = usePipelineAccessReview();
-  const badge = usePipelineTechPreviewBadge(values.project.name);
   if (flags[FLAG_OPENSHIFT_PIPELINE] && hasCreatePipelineAccess) {
-    const title = (
-      <Split className="odc-form-section-pipeline" hasGutter>
-        <SplitItem className="odc-form-section__heading">
-          {t('pipelines-plugin~Pipelines')}
-        </SplitItem>
-        {badge && (
-          <SplitItem>
-            <TechPreviewBadge />
-          </SplitItem>
-        )}
-      </Split>
-    );
     return (
-      <FormSection title={title}>
+      <FormSection>
         {values.image.selected || values.build.strategy === 'Docker' ? (
           <PipelineTemplate builderImages={builderImages} existingPipeline={existingPipeline} />
         ) : (
@@ -84,4 +77,7 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({
   return null;
 };
 
-export default connectToFlags<PipelineSectionProps>(FLAG_OPENSHIFT_PIPELINE)(PipelineSection);
+export default connectToFlags<PipelineSectionProps>(
+  FLAG_OPENSHIFT_PIPELINE,
+  FLAG_OPENSHIFT_BUILDCONFIG,
+)(PipelineSection);

@@ -37,6 +37,7 @@ import {
   ImportTypes,
 } from './import-types';
 import { validationSchema } from './import-validation-utils';
+import { useDefaultBuildOption } from './section/useDefaultBuildOption';
 import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScalingDefaultValues';
 import ImportToastContent from './toast/ImportToastContent';
 import WebhookToastContent from './toast/WebhookToastContent';
@@ -71,6 +72,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   const postFormCallback = usePostFormSubmitAction();
   const toastContext = useToast();
   const [pac, loaded] = usePacInfo();
+  const defaultBuildOption = useDefaultBuildOption();
 
   const initialBaseValues: BaseFormData = getBaseInitialValues(namespace, activeApplication);
   const initialValues: GitImportFormData = {
@@ -120,6 +122,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         config: true,
       },
       strategy: importData.buildStrategy || 'Devfile',
+      option: defaultBuildOption,
     },
     import: {
       loaded: false,

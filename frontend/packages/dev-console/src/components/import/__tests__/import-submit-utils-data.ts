@@ -5,6 +5,7 @@ import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { serverlessInitialValues } from '../__mocks__/serverless-mock';
 import {
+  BuildOptions,
   DevfileData,
   GitImportFormData,
   InsecureTrafficType,
@@ -134,6 +135,7 @@ export const defaultData: GitImportFormData = {
       config: true,
     },
     strategy: 'Source',
+    option: BuildOptions.BUILDS,
   },
   deployment: {
     env: [],

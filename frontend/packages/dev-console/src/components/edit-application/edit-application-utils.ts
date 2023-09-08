@@ -37,6 +37,7 @@ import {
   DeploymentData,
   GitReadableTypes,
   ServerlessData,
+  BuildOptions,
 } from '../import/import-types';
 import {
   detectGitType,
@@ -232,6 +233,16 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
   return routeData;
 };
 
+const getBuildOption = (buildConfig: K8sResourceKind, pipeline: PipelineKind) => {
+  if (buildConfig) {
+    return BuildOptions.BUILDS;
+  }
+  if (pipeline) {
+    return BuildOptions.PIPELINES;
+  }
+  return BuildOptions.DISABLED;
+};
+
 export const getBuildData = (
   buildConfig: K8sResourceKind,
   pipeline: PipelineKind,
@@ -261,6 +272,7 @@ export const getBuildData = (
       buildStrategyType ||
       (isDockerPipeline(pipeline) ? BuildStrategyType.Docker : BuildStrategyType.Source),
     source: { type: getBuildSourceType(buildConfig) },
+    option: getBuildOption(buildConfig, pipeline),
   };
   return buildData;
 };

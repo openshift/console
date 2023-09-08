@@ -21,6 +21,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
   noResultsFoundText,
   toggleOnSelection,
   hideClearButton,
+  isDisabled,
   onChange,
   getLabelFromValue,
 }) => {
@@ -91,6 +92,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
         onSelect={onSelect}
         onClear={hideClearButton ? Select.defaultProps.onClear : onClearSelection}
         isOpen={isOpen}
+        isDisabled={isDisabled}
         selections={getLabelFromValue ? getLabelFromValue(field.value as string) : field.value}
         placeholderText={placeholderText}
         isCreatable={isCreatable}

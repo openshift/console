@@ -7,9 +7,10 @@ import { FormBody, FormFooter } from '@console/shared/src/components/form-utils'
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import BuilderSection from './builder/BuilderSection';
+import { DeploySection } from './DeploySection';
 import GitSection from './git/GitSection';
-import { SourceToImageFormProps } from './import-types';
-import ResourceSection from './section/ResourceSection';
+import { BuildOptions, SourceToImageFormProps } from './import-types';
+import { BuildSection } from './section/BuildSection';
 
 const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormProps> = ({
   values,
@@ -34,8 +35,11 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
           project={values.project}
           noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
         />
-        <PipelineSection builderImages={builderImages} />
-        <ResourceSection />
+        <BuildSection values={values} />
+        {values.build?.option === BuildOptions.PIPELINES && (
+          <PipelineSection builderImages={builderImages} />
+        )}
+        <DeploySection values={values} />
         <AdvancedSection values={values} />
       </FormBody>
       <FormFooter

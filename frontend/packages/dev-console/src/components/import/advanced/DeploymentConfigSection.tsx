@@ -9,11 +9,13 @@ import FormSection from '../section/FormSection';
 export interface DeploymentConfigSectionProps {
   namespace: string;
   resource?: K8sResourceKind;
+  showHeader?: boolean;
 }
 
 const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
   namespace,
   resource,
+  showHeader,
 }) => {
   const { t } = useTranslation();
   const {
@@ -30,7 +32,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
   };
 
   return (
-    <FormSection title={t('devconsole~Deployment')} fullWidth>
+    <FormSection title={showHeader && t('devconsole~Deployment')} fullWidth>
       <CheckboxField
         name="deployment.triggers.image"
         label={t('devconsole~Auto deploy when new Image is available')}

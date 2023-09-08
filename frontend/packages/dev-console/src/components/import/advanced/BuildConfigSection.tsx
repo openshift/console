@@ -12,9 +12,14 @@ import FormSection from '../section/FormSection';
 export interface BuildConfigSectionProps {
   namespace: string;
   resource?: K8sResourceKind;
+  showHeader?: boolean;
 }
 
-const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, resource }) => {
+const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({
+  namespace,
+  resource,
+  showHeader,
+}) => {
   const { t } = useTranslation();
   const {
     values: {
@@ -40,7 +45,7 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, reso
         );
 
   return (
-    <FormSection title={t('devconsole~Build configuration')} fullWidth>
+    <FormSection title={showHeader && t('devconsole~Build configuration')} fullWidth>
       {typeof build?.triggers?.webhook === 'boolean' && (
         <CheckboxField
           name="build.triggers.webhook"
