@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
-import styles from '@patternfly/react-styles/css/components/Topology/topology-components';
 import {
   Edge,
   EdgeTerminalType,
@@ -11,6 +10,7 @@ import {
   WithTargetDragProps,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
+import styles from '@patternfly/react-topology/src/css/topology-components';
 import { ComputedServiceBindingStatus } from '@console/service-binding-plugin/src/types';
 import { getComputedServiceBindingStatus } from '@console/service-binding-plugin/src/utils';
 import BaseEdge from './BaseEdge';
