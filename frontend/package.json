@@ -149,7 +149,7 @@
     "@patternfly/react-catalog-view-extension": "4.96.0",
     "@patternfly/react-charts": "6.94.19",
     "@patternfly/react-core": "4.276.11",
-    "@patternfly/react-log-viewer": "4.87.100",
+    "@patternfly/react-log-viewer": "4.87.101",
     "@patternfly/react-table": "4.113.0",
     "@patternfly/react-tokens": "4.94.6",
     "@patternfly/react-topology": "4.93.6",
