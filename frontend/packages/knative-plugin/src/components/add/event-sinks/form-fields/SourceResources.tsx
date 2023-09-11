@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { FormGroup, Alert } from '@patternfly/react-core';
+import {
+  FormGroup,
+  Alert,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { isEmpty } from 'lodash';
@@ -61,18 +67,10 @@ const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink
   const resourceFilter = ({ metadata }: K8sResourceKind) => !metadata?.ownerReferences?.length;
 
   return (
-    <FormGroup
-      fieldId={fieldId}
-      helperText={
-        !contextAvailable
-          ? t('knative-plugin~This resource will be the source for the Event sink.')
-          : ''
-      }
-      isRequired
-    >
+    <FormGroup fieldId={fieldId} isRequired>
       {resourceAlert && (
         <>
-          <Alert variant="default" title={t('knative-plugin~No resources available')} isInline>
+          <Alert variant="custom" title={t('knative-plugin~No resources available')} isInline>
             {t('knative-plugin~Exit this form and create a Broker, or Channel first.')}
           </Alert>
           &nbsp;
@@ -96,6 +94,16 @@ const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink
         resourceFilter={resourceFilter}
         onLoad={handleOnLoad}
       />
+
+      {!contextAvailable && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              {t('knative-plugin~This resource will be the source for the Event sink.')}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      )}
     </FormGroup>
   );
 };

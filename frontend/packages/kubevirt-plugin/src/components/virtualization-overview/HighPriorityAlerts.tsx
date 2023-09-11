@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
+import { Alert, AlertProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 import { ExternalLink } from '@console/internal/components/utils';
@@ -19,7 +19,7 @@ enum AlertVariant {
   Default = 'default',
 }
 
-const asAlertVariant = (severity: AlertSeverity) => {
+const asAlertVariant = (severity: AlertSeverity): AlertProps['variant'] => {
   switch (severity) {
     case AlertSeverity.Warning:
       return AlertVariant.Warning;
@@ -29,7 +29,7 @@ const asAlertVariant = (severity: AlertSeverity) => {
       return AlertVariant.Info;
     case AlertSeverity.None:
     default:
-      return AlertVariant.Default;
+      return undefined;
   }
 };
 

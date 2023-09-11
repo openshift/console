@@ -1,14 +1,14 @@
 .pipeline-run-average {
-  padding: var(--pf-global--spacer--md);
+  padding: var(--pf-v5-global--spacer--md);
   &__body {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
   &__duration {
-    font-size: var(--pf-global--icon--FontSize--lg);
+    font-size: var(--pf-v5-global--icon--FontSize--lg);
   }
   &__duration-desc {
-    font-size: var(--pf-global--icon--FontSize--md);
+    font-size: var(--pf-v5-global--icon--FontSize--md);
   }
 }

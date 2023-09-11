@@ -81,7 +81,7 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
             isChecked={isPinned}
             data-checked-state={isPinned}
             isDisabled={!isLoaded(nodes) || inProgress}
-            onChange={(flag) => setIsPinned(flag)}
+            onChange={(_event, flag) => setIsPinned(flag)}
             id="dedicated-resources-checkbox"
           />
           <Text className="kubevirt-scheduling__helper-text" component={TextVariants.small}>

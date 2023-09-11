@@ -8,15 +8,16 @@ import {
 import {
   Button,
   Label,
-  Select,
-  SelectOption,
   Card as PFCard,
   CardBody,
   CardHeader,
   CardTitle,
-  CardActions,
   Tooltip,
 } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -150,7 +151,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
     setFilterText(undefined);
   };
 
-  const onToggle = (isExpanded: boolean) => {
+  const onToggle = (_event, isExpanded: boolean) => {
     if (isExpanded) {
       open();
     } else {
@@ -165,7 +166,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
     : items;
 
   return (
-    <Select
+    <SelectDeprecated
       className="monitoring-dashboards__variable-dropdown"
       hasInlineFilter={_.size(items) > 1}
       inlineFilterPlaceholderText={t('public~Filter options')}
@@ -191,21 +192,21 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
       {_.map(filteredItems, (v, k) => (
         <OptionComponent key={k} itemKey={k} />
       ))}
-    </Select>
+    </SelectDeprecated>
   );
 };
 
 const VariableOption = ({ itemKey }) =>
   isIntervalVariable(itemKey) ? (
     <Tooltip content={itemKey}>
-      <SelectOption key={itemKey} value={itemKey}>
+      <SelectOptionDeprecated key={itemKey} value={itemKey}>
         Auto interval
-      </SelectOption>
+      </SelectOptionDeprecated>
     </Tooltip>
   ) : (
-    <SelectOption key={itemKey} value={itemKey}>
+    <SelectOptionDeprecated key={itemKey} value={itemKey}>
       {itemKey === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY ? 'All' : itemKey}
-    </SelectOption>
+    </SelectOptionDeprecated>
   );
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace }) => {
@@ -331,7 +332,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
         {name}
       </label>
       {isError ? (
-        <Select
+        <SelectDeprecated
           isDisabled={true}
           onToggle={() => {}}
           placeholderText={
@@ -384,7 +385,10 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
     const uniqueTags = _.uniq(allTags);
 
     const OptionComponent = ({ itemKey }) => (
-      <SelectOption className="monitoring-dashboards__dashboard_dropdown_item" value={itemKey}>
+      <SelectOptionDeprecated
+        className="monitoring-dashboards__dashboard_dropdown_item"
+        value={itemKey}
+      >
         {items[itemKey]?.title}
         {items[itemKey]?.tags?.map((tag, i) => (
           <Tag
@@ -393,7 +397,7 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
             text={tag}
           />
         ))}
-      </SelectOption>
+      </SelectOptionDeprecated>
     );
 
     const selectItems = _.mapValues(items, 'title');
@@ -637,12 +641,18 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
           'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
         })}
         data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
+        isClickable
+        isSelectable
       >
-        <CardHeader className="monitoring-dashboards__card-header">
+        <CardHeader
+          actions={{
+            actions: <>{!isLoading && <QueryBrowserLink queries={queries} />}</>,
+            hasNoOffset: false,
+            className: 'co-overview-card__actions',
+          }}
+          className="monitoring-dashboards__card-header"
+        >
           <CardTitle>{panel.title}</CardTitle>
-          <CardActions className="co-overview-card__actions">
-            {!isLoading && <QueryBrowserLink queries={queries} />}
-          </CardActions>
         </CardHeader>
         <CardBody className="co-dashboard-card__body--dashboard">
           {isError ? (

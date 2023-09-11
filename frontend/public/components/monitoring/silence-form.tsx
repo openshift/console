@@ -4,17 +4,12 @@ import {
   formatPrometheusDuration,
   parsePrometheusDuration,
 } from '@openshift-console/plugin-shared/src/datetime/prometheus';
+import { Alert, ActionGroup, Button, TextArea, TextInput, Tooltip } from '@patternfly/react-core';
 import {
-  Alert,
-  ActionGroup,
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-  TextArea,
-  TextInput,
-  Tooltip,
-} from '@patternfly/react-core';
+  Dropdown as DropdownDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -243,9 +238,9 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   };
 
   const dropdownItems = _.map(durations, (displayText, key) => (
-    <DropdownItem key={key} onClick={() => setDuration(key)}>
+    <DropdownItemDeprecated key={key} onClick={() => setDuration(key)}>
       {displayText}
-    </DropdownItem>
+    </DropdownItemDeprecated>
   ));
 
   return (
@@ -283,16 +278,16 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               </div>
               <div className="form-group col-sm-4 col-md-2">
                 <label>{t('public~For...')}</label>
-                <Dropdown
+                <DropdownDeprecated
                   className="dropdown--full-width"
                   data-test="silence-for"
                   dropdownItems={dropdownItems}
                   isOpen={isOpen}
                   onSelect={setClosed}
                   toggle={
-                    <DropdownToggle data-test="silence-for-toggle" onToggle={setIsOpen}>
+                    <DropdownToggleDeprecated data-test="silence-for-toggle" onToggle={setIsOpen}>
                       {duration}
-                    </DropdownToggle>
+                    </DropdownToggleDeprecated>
                   }
                 />
               </div>
@@ -354,7 +349,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                       aria-label={t('public~Label name')}
                       isDisabled={isNamespace}
                       isRequired
-                      onChange={(v: string) => setMatcherField(i, 'name', v)}
+                      onChange={(_event, v: string) => setMatcherField(i, 'name', v)}
                       placeholder={t('public~Name')}
                       value={matcher.name}
                     />
@@ -365,7 +360,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                       aria-label={t('public~Label value')}
                       isDisabled={isNamespace}
                       isRequired
-                      onChange={(v: string) => setMatcherField(i, 'value', v)}
+                      onChange={(_event, v: string) => setMatcherField(i, 'value', v)}
                       placeholder={t('public~Value')}
                       value={matcher.value}
                     />
@@ -429,7 +424,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               <label>{t('public~Creator')}</label>
               <TextInput
                 aria-label={t('public~Creator')}
-                onChange={(v: string) => setCreatedBy(v)}
+                onChange={(_event, v: string) => setCreatedBy(v)}
                 value={createdBy}
               />
             </div>
@@ -438,13 +433,13 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               <TextArea
                 aria-label={t('public~Comment')}
                 isRequired
-                onChange={(v: string) => setComment(v)}
+                onChange={(_event, v: string) => setComment(v)}
                 data-test="silence-comment"
                 value={comment}
               />
             </div>
             <ButtonBar errorMessage={error} inProgress={inProgress}>
-              <ActionGroup className="pf-c-form">
+              <ActionGroup className="pf-v5-c-form">
                 <Button type="submit" variant="primary">
                   {t('public~Silence')}
                 </Button>

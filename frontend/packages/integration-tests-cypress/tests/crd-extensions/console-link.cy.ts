@@ -15,14 +15,14 @@ describe(`${crd} CRD`, () => {
     {
       name,
       dropdownMenuName: 'help menu',
-      dropdownToggle: '[data-test=help-dropdown-toggle] .pf-c-app-launcher__toggle',
+      dropdownToggle: '[data-test=help-dropdown-toggle] .pf-v5-c-app-launcher__toggle',
       menuLinkLocation: 'HelpMenu',
       menuLinkText: `${name} help menu link`,
     },
     {
       name,
       dropdownMenuName: 'user menu',
-      dropdownToggle: '[data-test=user-dropdown] .pf-c-app-launcher__toggle',
+      dropdownToggle: '[data-test=user-dropdown] .pf-v5-c-app-launcher__toggle',
       menuLinkLocation: 'UserMenu',
       menuLinkText: `${name} user menu link`,
     },
@@ -73,7 +73,7 @@ describe(`${crd} CRD`, () => {
         detailsPage.titleShouldContain(name);
 
         cy.get(dropdownToggle).click();
-        cy.get('.pf-c-app-launcher__menu')
+        cy.get('.pf-v5-c-app-launcher__menu')
           .find('[data-test="application-launcher-item"]')
           .contains(menuLinkText)
           .should('exist');

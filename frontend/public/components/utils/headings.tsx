@@ -63,7 +63,7 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
             crumb.name
           ) : (
             <Link
-              className="pf-c-breadcrumb__link"
+              className="pf-v5-c-breadcrumb__link"
               to={crumb.path}
               data-test-id={`breadcrumb-link-${i}`}
             >
@@ -140,7 +140,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   return (
     <>
       {showBreadcrumbs && (
-        <div className="pf-c-page__main-breadcrumb">
+        <div className="pf-v5-c-page__main-breadcrumb">
           <Split style={{ alignItems: 'baseline' }}>
             <SplitItem isFilled>
               <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />

@@ -1,4 +1,4 @@
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -11,11 +11,18 @@ import { OdcNodeModel } from '../topology-types';
 import BaseNode from './BaseNode';
 
 class OdcBaseNode extends BaseNode {
-  @observable.ref
-  private resource?: K8sResourceKind;
+  public resource?: K8sResourceKind | undefined = undefined;
 
-  @observable
-  private resourceKind?: K8sResourceKindReference;
+  public resourceKind?: K8sResourceKindReference | undefined = undefined;
+
+  constructor() {
+    super();
+
+    makeObservable(this, {
+      resource: observable.ref,
+      resourceKind: observable,
+    });
+  }
 
   getResource(): K8sResourceKind | undefined {
     return this.resource;

@@ -3,7 +3,12 @@ import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import { Alert, Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 
@@ -106,7 +111,7 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
     const [key, value] = idp;
 
     return (
-      <DropdownItem
+      <DropdownItemDeprecated
         key={`idp-${key}`}
         component="button"
         id={key}
@@ -114,7 +119,7 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
         onClick={(e) => history.push(`/settings/idp/${e.currentTarget.id}`)}
       >
         {getAddIDPItemLabels(value)}
-      </DropdownItem>
+      </DropdownItemDeprecated>
     );
   });
 
@@ -157,17 +162,17 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
             </>
           </Alert>
         )}
-        <Dropdown
+        <DropdownDeprecated
           className="co-m-pane__dropdown"
           toggle={
-            <DropdownToggle
+            <DropdownToggleDeprecated
               id="idp-dropdown"
               onToggle={() => setIDPOpen(!isIDPOpen)}
               toggleIndicator={CaretDownIcon}
               data-test-id="dropdown-button"
             >
               {t('public~Add')}
-            </DropdownToggle>
+            </DropdownToggleDeprecated>
           }
           isOpen={isIDPOpen}
           dropdownItems={IDPDropdownItems}

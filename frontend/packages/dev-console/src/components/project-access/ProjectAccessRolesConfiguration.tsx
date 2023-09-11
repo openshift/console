@@ -153,6 +153,7 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
 
   // Extract disabled string array from Items
   const onListChange = (
+    _event,
     newEnabledOptions: React.ReactElement<ItemProps>[],
     newDisabledOptions: React.ReactElement<ItemProps>[],
   ) => {

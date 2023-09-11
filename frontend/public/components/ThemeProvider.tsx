@@ -4,7 +4,7 @@ import { useUserSettings } from '@console/shared';
 export const THEME_USER_SETTING_KEY = 'console.theme';
 export const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
 const THEME_SYSTEM_DEFAULT = 'systemDefault';
-const THEME_DARK_CLASS = 'pf-theme-dark';
+const THEME_DARK_CLASS = 'pf-v5-theme-dark';
 const THEME_DARK = 'dark';
 
 export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string) => {

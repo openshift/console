@@ -95,6 +95,7 @@ const CatalogCategoriesConfiguration: React.FC<{ readonly: boolean }> = ({ reado
 
   // Extract types from Items
   const onListChange = (
+    _event,
     newEnabledOptions: DualListSelectorTreeItemData[],
     newDisabledOptions: DualListSelectorTreeItemData[],
   ) => {

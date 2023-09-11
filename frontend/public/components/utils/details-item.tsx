@@ -48,7 +48,7 @@ const EditButton: React.SFC<EditButtonProps> = (props) => {
       }
     >
       {props.children}
-      <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+      <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
     </Button>
   );
 };

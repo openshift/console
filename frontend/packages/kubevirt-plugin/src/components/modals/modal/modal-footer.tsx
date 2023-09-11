@@ -104,7 +104,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
       {errorMessage && !isSimpleError && <ModalErrorMessage message={errorMessage} />}
       {infoTitle && <ModalInfoMessage title={infoTitle}>{infoMessage}</ModalInfoMessage>}
 
-      <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right pf-v5-c-form__group--no-top-margin">
         {onCancel && (
           <Button
             type="button"

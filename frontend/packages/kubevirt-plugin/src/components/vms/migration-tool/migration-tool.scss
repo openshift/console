@@ -1,10 +1,10 @@
 .kv-migration-tool--popover {
   .modal-body {
-    background: var(--pf-global--BackgroundColor--100);
+    background: var(--pf-v5-global--BackgroundColor--100);
   }
 }
 
 .kv-migration-tool--main {
-  margin-right: var(--pf-global--spacer--sm);
+  margin-right: var(--pf-v5-global--spacer--sm);
   align-self: start;
 }

@@ -54,14 +54,14 @@ export const SizeUnitFormRow: React.FC<SizeUnitFormRowProps> = ({
             id={prefixedID(id, 'size')}
             value={size}
             isPositive
-            onChange={React.useCallback((v) => onSizeChanged(v), [onSizeChanged])}
+            onChange={React.useCallback((_, v) => onSizeChanged(v), [onSizeChanged])}
             aria-label={t('kubevirt-plugin~{{title}} size', { title })}
           />
         </SplitItem>
         <SplitItem>
           <FormSelect
             className="kubevirt-size-unit-form-row__unit"
-            onChange={React.useCallback((u) => onUnitChanged(u as BinaryUnit), [onUnitChanged])}
+            onChange={React.useCallback((_, u) => onUnitChanged(u as BinaryUnit), [onUnitChanged])}
             value={unit}
             id={prefixedID(id, 'unit')}
             isDisabled={isDisabled}

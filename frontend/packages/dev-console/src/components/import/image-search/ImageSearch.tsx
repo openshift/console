@@ -240,7 +240,7 @@ const ImageSearch: React.FC = () => {
   }, []);
 
   return (
-    <>
+    <div data-test-id="image-search-field">
       <InputField
         ref={inputRef}
         type={TextInputTypes.text}
@@ -298,7 +298,7 @@ const ImageSearch: React.FC = () => {
           }}
         />
       </div>
-    </>
+    </div>
   );
 };
 

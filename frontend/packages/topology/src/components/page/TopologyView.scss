@@ -17,15 +17,15 @@
     display: flex;
     pointer-events: none;
     position: absolute;
-    top: var(--pf-global--spacer--sm);
+    top: var(--pf-v5-global--spacer--sm);
     left: 0;
     right: 0;
   }
   &__hint-background {
-    background-color: var(--pf-global--BackgroundColor--100);
-    border: 1px solid var(--pf-global--BorderColor--light-100);
+    background-color: var(--pf-v5-global--BackgroundColor--100);
+    border: 1px solid var(--pf-v5-global--BorderColor--light-100);
     border-radius: 8px;
-    padding: var(--pf-global--spacer--xs) var(--pf-global--spacer--sm);
+    padding: var(--pf-v5-global--spacer--xs) var(--pf-v5-global--spacer--sm);
     pointer-events: none;
   }
 
@@ -39,64 +39,66 @@
   &__layout-group {
     display: flex;
     align-items: center;
-    margin: 0 var(--pf-global--spacer--sm);
+    margin: 0 var(--pf-v5-global--spacer--sm);
   }
 
   &__layout-button {
-    .pf-topology-control-bar__button.pf-c-button {
-      --pf-c-button--BorderRadius: 0;
+    .pf-topology-control-bar__button.pf-v5-c-button {
+      --pf-v5-c-button--BorderRadius: 0;
 
       margin-right: 0;
 
       &:focus {
         z-index: 10;
-        color: var(--pf-global--active-color--400);
+        color: var(--pf-v5-global--active-color--400);
       }
 
       &.pf-m-active {
-        background-color: var(--pf-global--Color--light-300);
-        color: var(--pf-global--icon--Color--dark);
+        background-color: var(--pf-v5-global--Color--light-300);
+        color: var(--pf-v5-global--icon--Color--dark);
       }
 
       &:hover {
         z-index: 20;
-        color: var(--pf-global--active-color--400);
+        color: var(--pf-v5-global--active-color--400);
         &.pf-m-active {
-          color: var(--pf-global--icon--Color--dark);
+          color: var(--pf-v5-global--icon--Color--dark);
         }
       }
     }
 
     &:first-of-type {
-      .pf-topology-control-bar__button.pf-c-button {
-        --pf-c-button--BorderRadius: var(--pf-global--BorderRadius--sm) 0 0 var(--pf-global--BorderRadius--sm);
+      .pf-topology-control-bar__button.pf-v5-c-button {
+        --pf-v5-c-button--BorderRadius: var(--pf-v5-global--BorderRadius--sm) 0 0
+          var(--pf-v5-global--BorderRadius--sm);
       }
     }
 
     &:last-of-type {
-      .pf-topology-control-bar__button.pf-c-button {
-        --pf-c-button--BorderRadius: 0 var(--pf-global--BorderRadius--sm) var(--pf-global--BorderRadius--sm) 0;
+      .pf-topology-control-bar__button.pf-v5-c-button {
+        --pf-v5-c-button--BorderRadius: 0 var(--pf-v5-global--BorderRadius--sm)
+          var(--pf-v5-global--BorderRadius--sm) 0;
       }
     }
 
     &__icon {
-      margin-right: var(--pf-global--spacer--xs);
+      margin-right: var(--pf-v5-global--spacer--xs);
     }
   }
 
   &__shortcuts-button {
-    margin-right: var(--pf-global--spacer--2xl);
+    margin-right: var(--pf-v5-global--spacer--2xl);
   }
 
   &__dropzone {
     background-color: rgba(0, 102, 204, 0.1) !important;
-    color: var(--pf-global--palette--black-900) !important;
+    color: var(--pf-v5-global--palette--black-900) !important;
     margin: 0 !important;
   }
 
   &__dropzone-text {
     top: 0%;
-    padding-top: var(--pf-global--spacer--lg);
+    padding-top: var(--pf-v5-global--spacer--lg);
   }
 
   .pf-topology-container {

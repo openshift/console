@@ -157,13 +157,13 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
   };
 
   const EmptyMsg = () => (
-    <EmptyState variant={EmptyStateVariant.large}>
+    <EmptyState variant={EmptyStateVariant.lg}>
       <p>{t('lso-plugin~Disks Not Found')}</p>
       {csvName && operatorNs && nodeRole !== 'control-plane' && (
         <Button
           isDisabled={lvdRequestInProgress}
           isLoading={lvdRequestInProgress}
-          className="pf-u-mt-0"
+          className="pf-v5-u-mt-0"
           onClick={() => makeLocalVolumeDiscoverRequest(operatorNs)}
           variant="primary"
           id="yaml-create"

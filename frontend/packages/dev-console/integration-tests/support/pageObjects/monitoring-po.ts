@@ -29,7 +29,7 @@ export const monitoringPO = {
   metricsTab: {
     selectQuery: '.odc-metrics-query-input button[type="button"]',
     queryExpression: 'textarea[placeholder="Expression (press Shift+Enter for newlines)"]',
-    cpuGraph: 'div.pf-c-chart.query-browser__graph-container',
+    cpuGraph: 'div.pf-v5-c-chart.query-browser__graph-container',
     podsList: 'table[aria-label="query results table"]',
     showPromQL: '',
     hidePromQL: '',

@@ -59,7 +59,7 @@ import { InstallPlanReview, referenceForStepResource } from './index';
 const tableColumnClasses = [
   '',
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-16-on-lg'),
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
@@ -68,7 +68,7 @@ const tableColumnClasses = [
 const componentsTableColumnClasses = [
   '',
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-16-on-lg'),
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
 ];
 
@@ -98,7 +98,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
 
       {/* Components */}
       <TableData className={tableColumnClasses[3]}>
-        <ul className="pf-c-list pf-m-plain">
+        <ul className="pf-v5-c-list pf-m-plain">
           {obj.spec.clusterServiceVersionNames.map((csvName) => (
             <li key={csvName}>
               {obj.status?.phase === 'Complete' ? (
@@ -124,7 +124,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
         {(obj.metadata.ownerReferences || [])
           .filter((ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel))
           .map((ref) => (
-            <ul key={ref.uid} className="pf-c-list pf-m-plain">
+            <ul key={ref.uid} className="pf-v5-c-list pf-m-plain">
               <li>
                 <ResourceLink
                   kind={referenceForModel(SubscriptionModel)}
@@ -433,8 +433,8 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
         <div className="co-m-pane__body">
           <HintBlock title={t('olm~Review manual InstallPlan')}>
             <InstallPlanReview installPlan={obj} />
-            <div className="pf-c-form">
-              <div className="pf-c-form__actions">
+            <div className="pf-v5-c-form">
+              <div className="pf-v5-c-form__actions">
                 <Button variant="primary" isDisabled={!needsApproval} onClick={() => approve()}>
                   {needsApproval ? t('olm~Approve') : t('olm~Approved')}
                 </Button>
@@ -460,7 +460,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
         <div key={steps[0].resolving} className="co-m-pane__body">
           <SectionHeading text={steps[0].resolving} />
           <div className="co-table-container">
-            <table className="pf-c-table pf-m-compact pf-m-border-rows">
+            <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
               <thead>
                 <tr>
                   <th className={componentsTableColumnClasses[0]}>{t('olm~Name')}</th>

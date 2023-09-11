@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 
 export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
@@ -25,14 +29,14 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   const { t } = useTranslation();
 
   const items: JSX.Element[] = options.map((item) => {
-    return <SelectOption key={item} value={item} />;
+    return <SelectOptionDeprecated key={item} value={item} />;
   });
   return (
     <div>
-      <Select
-        variant={SelectVariant.typeaheadMulti}
+      <SelectDeprecated
+        variant={SelectVariantDeprecated.typeaheadMulti}
         aria-label={t('console-shared~Select input')}
-        onToggle={setOpen}
+        onToggle={(_event, isExpanded: boolean) => setOpen(isExpanded)}
         onSelect={onSelect}
         selections={selected}
         isOpen={isOpen}
@@ -41,7 +45,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         noResultsFoundText={t('console-shared~No results found')}
       >
         {items}
-      </Select>
+      </SelectDeprecated>
     </div>
   );
 };

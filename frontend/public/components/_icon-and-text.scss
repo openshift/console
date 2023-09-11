@@ -4,8 +4,8 @@ $co-icon-and-text-icon-lg: 1.2rem;
   align-items: baseline;
   display: flex;
 
-  // fix bug where concurrent .pf-c-label are misaligned vertically
-  .pf-c-label__icon & {
+  // fix bug where concurrent .pf-v5-c-label are misaligned vertically
+  .pf-v5-c-label__icon & {
     display: block;
   }
 }

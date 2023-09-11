@@ -50,7 +50,7 @@ const CustomizeSourceModal: React.FC<CustomizeSourceModalProps> = ({ close, onCo
             <Checkbox
               id="show-customization"
               label={t('kubevirt-plugin~Do not show this message again')}
-              onChange={setDoNotShow}
+              onChange={(_event, value) => setDoNotShow(value)}
               isChecked={doNotShow}
               data-checked-state={doNotShow}
             />

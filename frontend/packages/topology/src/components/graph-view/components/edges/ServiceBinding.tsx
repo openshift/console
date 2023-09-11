@@ -10,7 +10,7 @@ import {
   WithTargetDragProps,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import styles from '@patternfly/react-topology/src/css/topology-components';
+import styles from '@patternfly/react-topology/dist/js/css/topology-components';
 import { ComputedServiceBindingStatus } from '@console/service-binding-plugin/src/types';
 import { getComputedServiceBindingStatus } from '@console/service-binding-plugin/src/utils';
 import BaseEdge from './BaseEdge';

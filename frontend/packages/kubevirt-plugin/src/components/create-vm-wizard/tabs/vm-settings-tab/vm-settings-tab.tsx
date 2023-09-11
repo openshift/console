@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Form, SelectOption, TextArea, TextInput } from '@patternfly/react-core';
+import { Form, TextArea, TextInput } from '@patternfly/react-core';
+import { SelectOption as SelectOptionDeprecated } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useAccessReview2 } from '@console/internal/components/utils';
@@ -135,7 +136,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         <FormField>
           <TextInput onChange={onChange(VMSettingsField.TEMPLATE_PROVIDER)} />
         </FormField>
-        <div className="pf-c-form__helper-text" aria-live="polite">
+        <div className="pf-v5-c-form__helper-text" aria-live="polite">
           {t('kubevirt-plugin~example: your company name')}
         </div>
       </FormFieldMemoRow>
@@ -152,9 +153,12 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
             }}
           >
             {TemplateSupport.getAll().map((templateSupport) => (
-              <SelectOption key={templateSupport.getValue()} value={templateSupport.getValue()}>
+              <SelectOptionDeprecated
+                key={templateSupport.getValue()}
+                value={templateSupport.getValue()}
+              >
                 {t(templateSupport.toString())}
-              </SelectOption>
+              </SelectOptionDeprecated>
             ))}
           </FormPFSelect>
         </FormField>

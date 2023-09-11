@@ -16,7 +16,7 @@ export const AddDeviceFormSelect: React.FC<AddDeviceFormSelectProps> = ({
     <FormSelect
       value=""
       id={id}
-      onChange={onAdd}
+      onChange={(_event, value) => onAdd(value)}
       className="kubevirt-boot-order__add-device-select"
     >
       <FormSelectOption label={label} value="" />

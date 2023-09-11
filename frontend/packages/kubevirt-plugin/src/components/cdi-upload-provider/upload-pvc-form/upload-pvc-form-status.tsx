@@ -9,7 +9,6 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  EmptyStateSecondaryActions,
   Progress,
   Spinner,
   Split,
@@ -17,6 +16,7 @@ import {
   Stack,
   StackItem,
   Title,
+  EmptyStateActions,
 } from '@patternfly/react-core';
 import { ErrorCircleOIcon, InProgressIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -193,7 +193,7 @@ const CDIInitErrorStatus: React.FC<CDIInitErrorStatus> = ({ onErrorClick, pvcNam
                 data-checked-state={shouldKillDv}
                 aria-label="kill datavolume checkbox"
                 label={t('kubevirt-plugin~Delete Data Volume: {{pvcName}}', { pvcName })}
-                onChange={(v) => setShouldKillDv(v)}
+                onChange={(_event, v) => setShouldKillDv(v)}
               />
               <SplitItem isFilled />
             </Split>
@@ -222,7 +222,7 @@ const CDIInitErrorStatus: React.FC<CDIInitErrorStatus> = ({ onErrorClick, pvcNam
           : t('kubevirt-plugin~Back to Form')}
       </Button>
       {podLoaded && !podError && pod && (
-        <EmptyStateSecondaryActions>
+        <EmptyStateActions>
           <Button
             id="cdi-upload-check-logs"
             onClick={() =>
@@ -232,7 +232,7 @@ const CDIInitErrorStatus: React.FC<CDIInitErrorStatus> = ({ onErrorClick, pvcNam
           >
             {t('kubevirt-plugin~Check Logs')}
           </Button>
-        </EmptyStateSecondaryActions>
+        </EmptyStateActions>
       )}
     </>
   );
@@ -282,11 +282,11 @@ const UploadingStatus: React.FC<UploadingStatusProps> = ({
         </Button>
       )}
       {onCancelClick && upload?.uploadStatus === UPLOAD_STATUS.UPLOADING && (
-        <EmptyStateSecondaryActions>
+        <EmptyStateActions>
           <Button id="cdi-upload-cancel-btn" onClick={onCancelClick} variant="link">
             {t('kubevirt-plugin~Cancel Upload')}
           </Button>
-        </EmptyStateSecondaryActions>
+        </EmptyStateActions>
       )}
     </>
   );

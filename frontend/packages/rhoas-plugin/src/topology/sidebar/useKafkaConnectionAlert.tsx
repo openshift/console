@@ -13,6 +13,6 @@ export const useKafkaConnectionAlert = (element: GraphElement): DetailsResourceA
     content: (
       <>{t('rhoas-plugin~This resource represents service that exist outside your cluster')}</>
     ),
-    variant: 'default',
+    variant: 'custom',
   };
 };

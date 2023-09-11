@@ -5,31 +5,31 @@
   display: flex;
   flex-direction: column;
   &__list {
-    border-top: var(--pf-c-data-list--sm--BorderTopWidth) solid
-      var(--pf-c-data-list--sm--BorderTopColor) !important;
-    border-bottom: var(--pf-c-data-list--sm--BorderTopWidth) solid
-      var(--pf-c-data-list--sm--BorderTopColor) !important;
+    border-top: var(--pf-v5-c-data-list--sm--BorderTopWidth) solid
+      var(--pf-v5-c-data-list--sm--BorderTopColor) !important;
+    border-bottom: var(--pf-v5-c-data-list--sm--BorderTopWidth) solid
+      var(--pf-v5-c-data-list--sm--BorderTopColor) !important;
     flex: 1;
     overflow-y: auto;
     margin-bottom: 0 !important;
   }
   &__item {
-    border-bottom: var(--pf-c-data-list__item--sm--BorderBottomWidth) solid
-      var(--pf-c-data-list__item--sm--BorderBottomColor) !important;
+    border-bottom: var(--pf-v5-c-data-list__item--sm--BorderBottomWidth) solid
+      var(--pf-v5-c-data-list__item--sm--BorderBottomColor) !important;
     &:last-of-type {
       .ocs-quick-search-content__list--overflow & {
         border-bottom: 0 !important;
       }
     }
     &--highlight {
-      background-color: var(--pf-global--BackgroundColor--200) !important;
+      background-color: var(--pf-v5-global--BackgroundColor--200) !important;
     }
     &:hover {
-      background-color: var(--pf-global--BackgroundColor--200);
+      background-color: var(--pf-v5-global--BackgroundColor--200);
     }
   }
   &__item-row {
-    padding: 0 var(--pf-global--spacer--sm) !important;
+    padding: 0 var(--pf-v5-global--spacer--sm) !important;
   }
   &__item-content {
     align-items: center;
@@ -42,16 +42,16 @@
     width: 30px;
   }
   &__item-name {
-    font-size: var(--pf-global--FontSize--md);
+    font-size: var(--pf-v5-global--FontSize--md);
     font-weight: 400;
-    font-family: var(--pf-global--FontFamily--heading--sans-serif);
+    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
   }
   &__all-items {
-    border-bottom: var(--pf-c-data-list__item--sm--BorderBottomWidth) solid
-      var(--pf-c-data-list__item--sm--BorderBottomColor) !important;
+    border-bottom: var(--pf-v5-c-data-list__item--sm--BorderBottomWidth) solid
+      var(--pf-v5-c-data-list__item--sm--BorderBottomColor) !important;
   }
   &__all-items-link {
-    padding: var(--pf-global--spacer--sm) 0 var(--pf-global--spacer--md);
+    padding: var(--pf-v5-global--spacer--sm) 0 var(--pf-v5-global--spacer--md);
     text-align: center;
     display: flex;
     flex-direction: column;

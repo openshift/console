@@ -33,6 +33,6 @@ export const MachineConfigPoolsSelector: React.FC<MachineConfigPoolsSelectorProp
 
 export type MachineConfigPoolsSelectorProps = {
   machineConfigPools: MachineConfigPoolKind[];
-  onChange: (checked: boolean, event: React.FormEvent<HTMLInputElement>) => void;
+  onChange: (event: React.FormEvent<HTMLInputElement>, checked: boolean) => void;
   selected: string[];
 };

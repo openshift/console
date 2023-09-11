@@ -85,9 +85,9 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
                 <TextInput
                   id={'cluster-version-default-upstream-server-url'}
                   type="url"
-                  isReadOnly
                   isDisabled
                   value={CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER}
+                  readOnlyVariant="default"
                 />
               </RadioInput>
               <RadioInput
@@ -101,7 +101,7 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
                   type="url"
                   placeholder="https://example.com/api/upgrades_info/v1/graph"
                   value={customURL}
-                  onChange={(text) => {
+                  onChange={(_event, text) => {
                     setCustomSelected(true);
                     setCustomURL(text);
                     setInvalidCustomURL(false);
@@ -109,8 +109,8 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
                   validated={invalidCustomURL ? 'error' : 'default'}
                 />
                 {invalidCustomURL && (
-                  <div className="pf-c-form">
-                    <div className="pf-c-form__helper-text pf-m-error">
+                  <div className="pf-v5-c-form">
+                    <div className="pf-v5-c-form__helper-text pf-m-error">
                       {t('public~Please enter a URL')}
                     </div>
                   </div>

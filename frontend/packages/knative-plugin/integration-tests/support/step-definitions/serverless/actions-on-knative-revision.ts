@@ -290,7 +290,7 @@ Then(
 );
 
 Then('modal with alert description {string} appears', (alertDescription: string) => {
-  cy.get('h4.pf-c-alert__title').should('contain.text', alertDescription);
+  cy.get('h4.pf-v5-c-alert__title').should('contain.text', alertDescription);
 });
 
 Then('user clicks the save button on the "Edit annotations" modal', () => {

@@ -21,7 +21,7 @@ export const LabelRow = <T extends IDLabel = IDLabel>({
           isRequired
           type="text"
           value={key}
-          onChange={(newKey) => onChange({ ...label, key: newKey })}
+          onChange={(_event, newKey) => onChange({ ...label, key: newKey })}
           aria-label={t('kubevirt-plugin~selector key')}
         />
       </GridItem>
@@ -33,7 +33,7 @@ export const LabelRow = <T extends IDLabel = IDLabel>({
           isRequired
           type="text"
           value={value}
-          onChange={(newValue) => onChange({ ...label, value: newValue })}
+          onChange={(_event, newValue) => onChange({ ...label, value: newValue })}
           aria-label={t('kubevirt-plugin~selector value')}
         />
       </GridItem>

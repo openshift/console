@@ -29,7 +29,7 @@ const FilteredTable: React.FC<FilteredTableProps> = ({
     <>
       {!_.isEmpty(data) && (
         <div className="co-m-pane__filter-row">
-          <TextFilter value={textFilter} onChange={setTextFilter} />
+          <TextFilter value={textFilter} onChange={(_event, value) => setTextFilter(value)} />
         </div>
       )}
       <Table {...props} data={filteredData} />

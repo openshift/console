@@ -154,7 +154,7 @@ export type DetailsResourceAlertContent = {
    */
   dismissible?: boolean;
   content: React.Component | undefined | JSX.Element | string;
-  variant?: 'success' | 'danger' | 'warning' | 'info' | 'default';
+  variant?: 'success' | 'danger' | 'warning' | 'info' | 'custom';
   actionLinks?: React.ReactNode;
 };
 

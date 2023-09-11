@@ -21,9 +21,9 @@ import {
 const menuActions = Kebab.factory.common;
 
 const tableColumnClasses = [
-  'pf-u-w-42-on-md',
-  'pf-u-w-42-on-md',
-  'pf-m-hidden pf-m-visible-on-md pf-u-w-16-on-md',
+  'pf-v5-u-w-42-on-md',
+  'pf-v5-u-w-42-on-md',
+  'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-16-on-md',
   Kebab.columnClass,
 ];
 

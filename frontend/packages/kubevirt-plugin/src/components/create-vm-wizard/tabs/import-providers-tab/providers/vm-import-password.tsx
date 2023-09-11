@@ -37,7 +37,7 @@ const VMImportPasswordConnected: React.FC<VMImportPasswordConnectedProps> = Reac
         <Split>
           <SplitItem isFilled>
             <FormField>
-              <TextInput onChange={onPasswordChange} type="password" />
+              <TextInput onChange={(_event, value) => onPasswordChange(value)} type="password" />
             </FormField>
           </SplitItem>
           <SplitItem>

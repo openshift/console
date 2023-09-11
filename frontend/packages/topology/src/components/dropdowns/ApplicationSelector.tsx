@@ -1,9 +1,21 @@
 import * as React from 'react';
-import { FormGroup, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  TextInputTypes,
+  ValidatedOptions,
+} from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { InputField, getFieldId, useFormikValidationFix } from '@console/shared';
+import {
+  InputField,
+  RedExclamationCircleIcon,
+  getFieldId,
+  useFormikValidationFix,
+} from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../../const';
 import { sanitizeApplicationValue } from '../../utils/application-utils';
 import ApplicationDropdown from './ApplicationDropdown';
@@ -92,13 +104,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
   return (
     <>
       {projectsAvailable && applicationsAvailable && (
-        <FormGroup
-          fieldId={fieldId}
-          label={label}
-          helperTextInvalid={errorMessage}
-          validated={isValid ? 'default' : 'error'}
-          helperText={t('topology~Select an Application to group this component.')}
-        >
+        <FormGroup fieldId={fieldId} label={label}>
           <ApplicationDropdown
             id={fieldId}
             ariaLabel={label}
@@ -111,6 +117,20 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
             onChange={onDropdownChange}
             onLoad={handleOnLoad}
           />
+
+          <FormHelperText>
+            <HelperText>
+              {!isValid ? (
+                <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                  {errorMessage}
+                </HelperTextItem>
+              ) : (
+                <HelperTextItem>
+                  {t('topology~Select an Application to group this component.')}
+                </HelperTextItem>
+              )}
+            </HelperText>
+          </FormHelperText>
         </FormGroup>
       )}
       {(!applicationsAvailable || selectedKey.value === CREATE_APPLICATION_KEY) && (

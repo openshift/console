@@ -11,7 +11,7 @@
 
 .graph-donut-subtitle {
   bottom: 20px;
-  color: var(--pf-global--palette--black-400);
+  color: var(--pf-v5-global--palette--black-400);
   line-height: 1.1;
   margin: 0 0 10px;
   position: relative;
@@ -40,7 +40,7 @@
 }
 
 .graph-title {
-  color: var(--pf-global--Color--100);
+  color: var(--pf-v5-global--Color--100);
   line-height: 1.4; // so descenders don't clip
   margin: 0 0 10px 0;
   overflow: hidden;
@@ -60,11 +60,11 @@
 }
 
 .graph-wrapper--status {
-  margin-bottom: 30px
+  margin-bottom: 30px;
 }
 
 .graph-status {
-  color: var(--pf-chart-color-black-200);
+  color: var(--pf-v5-chart-color-black-200);
   text-align: center;
 }
 
@@ -82,14 +82,14 @@
   margin-bottom: 2px;
 
   &.graph-status__short--error {
-    color: var(--pf-chart-global--danger--Color--100);
+    color: var(--pf-v5-chart-global--danger--Color--100);
   }
 
   &.graph-status__short--ok {
-    color: var(--pf-chart-color-green-300);
+    color: var(--pf-v5-chart-color-green-300);
   }
 
   &.graph-status__short--warn {
-    color: var(--pf-chart-global--warning--Color--200);
+    color: var(--pf-v5-chart-global--warning--Color--200);
   }
 }

@@ -4,11 +4,11 @@ import { Kebab } from '@console/internal/components/utils';
 import { RepositoryLabels, RepositoryFields } from './consts';
 
 export const tableColumnClasses = [
-  'pf-u-w-16-on-lg pf-u-w-25-on-md',
+  'pf-v5-u-w-16-on-lg pf-v5-u-w-25-on-md',
   'pf-m-u-w-16-on-md pf-m-u-w-8-on-lg',
-  'pf-u-w-16-on-md',
+  'pf-v5-u-w-16-on-md',
   'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-25-on-lg',
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-xl',
   'pf-m-hidden pf-m-visible-on-xl pf-m-u-8-on-xl',

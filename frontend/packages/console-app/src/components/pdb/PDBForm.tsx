@@ -7,15 +7,20 @@ import {
   FormGroup,
   Text,
   Title,
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
   ValidatedOptions,
   Stack,
   StackItem,
   Split,
   SplitItem,
+  HelperTextItem,
+  HelperText,
+  FormHelperText,
 } from '@patternfly/react-core';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+} from '@patternfly/react-core/deprecated';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +63,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   const [labels, setLabels] = React.useState([]);
   const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind>(null);
   const [isOpen, setOpen] = React.useState(false);
-  const onToggle = (open: boolean) => setOpen(open);
+  const onToggle = (_event, open: boolean) => setOpen(open);
   const items: RequirementItems = React.useMemo(
     () => ({
       maxUnavailable: t('console-app~maxUnavailable'),
@@ -88,7 +93,8 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
     }
   }, [existingResource, formValues, onFormValuesChange, requirement, items]);
 
-  const handleNameChange = (value: string) => onFormValuesChange({ ...formValues, name: value });
+  const handleNameChange = (_event, value: string) =>
+    onFormValuesChange({ ...formValues, name: value });
 
   const handleSelectorChange = (labelValues: string[]) => {
     const filterMatchLabels = labelValues.filter((f) => f.includes('='));
@@ -115,7 +121,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
       maxUnavailable: '',
     });
   };
-  const handleAvailabilityRequirementValueChange = (value: string | number) => {
+  const handleAvailabilityRequirementValueChange = (_event, value: string | number) => {
     onFormValuesChange({ ...formValues, [requirement]: value });
   };
 
@@ -183,13 +189,15 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
               />
               {matchingSelector && (
                 <StackItem>
-                  <FormGroup
-                    fieldId="pdb-labels-validation"
-                    helperText={t(
-                      'console-app~Resource is already covered by another PodDisruptionBudget',
-                    )}
-                    validated={'warning'}
-                  />
+                  <FormHelperText>
+                    <HelperText>
+                      <HelperTextItem variant="warning">
+                        {t(
+                          'console-app~Resource is already covered by another PodDisruptionBudget',
+                        )}
+                      </HelperTextItem>
+                    </HelperText>
+                  </FormHelperText>
                 </StackItem>
               )}
             </FormGroup>
@@ -202,20 +210,22 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
             />
             <Split hasGutter>
               <SplitItem isFilled>
-                <Dropdown
+                <DropdownDeprecated
                   className="dropdown--full-width"
                   toggle={
-                    <DropdownToggle onToggle={onToggle}>{selectedRequirement}</DropdownToggle>
+                    <DropdownToggleDeprecated onToggle={onToggle}>
+                      {selectedRequirement}
+                    </DropdownToggleDeprecated>
                   }
                   isOpen={isOpen}
                   dropdownItems={Object.keys(items).map((key) => (
-                    <DropdownItem
+                    <DropdownItemDeprecated
                       key={key}
                       component="button"
                       onClick={() => handleAvailabilityRequirementKeyChange(key)}
                     >
                       {items[key]}
-                    </DropdownItem>
+                    </DropdownItemDeprecated>
                   ))}
                 />
               </SplitItem>
@@ -241,18 +251,20 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
           </StackItem>
           {formValues.maxUnavailable === '0' && (
             <StackItem>
-              <FormGroup
-                fieldId="pdb-maxUnavailable-validation"
-                helperText={t(
-                  'console-app~The value of maxUnavailable = 0 might not protect your pods from disruption',
-                )}
-                validated={ValidatedOptions.warning}
-              />
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem variant="warning">
+                    {t(
+                      'console-app~The value of maxUnavailable = 0 might not protect your pods from disruption',
+                    )}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
             </StackItem>
           )}
           <StackItem>
             <ButtonBar errorMessage={error} inProgress={inProgress}>
-              <ActionGroup className="pf-c-form">
+              <ActionGroup className="pf-v5-c-form">
                 <Button
                   type="submit"
                   id="save-changes"

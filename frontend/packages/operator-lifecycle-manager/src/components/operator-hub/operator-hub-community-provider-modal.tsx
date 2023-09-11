@@ -50,7 +50,7 @@ export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityPro
             </p>
             <Checkbox
               className="co-modal-ignore-warning__checkbox"
-              onChange={setIgnoreWarnings}
+              onChange={(_event, value) => setIgnoreWarnings(value)}
               isChecked={ignoreWarnings}
               data-checked-state={ignoreWarnings}
               id="do-not-show-warning"

@@ -1,7 +1,7 @@
 $skeleton-color: var(--co-skeleton--Color);
 $skeleton-color--300: var(--co-skeleton--Color--300);
 
-$skeleton-animation: loading-skeleton 1s ease-out .15s infinite alternate;
+$skeleton-animation: loading-skeleton 1s ease-out 0.15s infinite alternate;
 $skeleton-bone-height-1line: 24px;
 
 // Dashboard Status
@@ -12,15 +12,26 @@ $skeleton-status-data-position: $skeleton-status-position;
 $skeleton-status-data-size: 200px;
 $skeleton-status-metadata-position: 45px 0;
 $skeleton-status-metadata-size: 80px 15px;
-$skeleton-status-resource-icon: radial-gradient(circle 12px at center, $skeleton-color 100%, transparent 0);
+$skeleton-status-resource-icon: radial-gradient(
+  circle 12px at center,
+  $skeleton-color 100%,
+  transparent 0
+);
 $skeleton-status-resource-icon-position: $skeleton-status-position;
 $skeleton-status-resource-icon-size: $skeleton-bone-height-1line $skeleton-bone-height-1line;
 $skeleton-status-resource-position: 45px 24px;
 $skeleton-status-resource-size: 75%;
 
 // Dashboard Activity
-$skeleton-activity-bone: linear-gradient($skeleton-color $skeleton-bone-height-1line, transparent 0);
-$skeleton-activity-icon: radial-gradient(circle 12px at center, $skeleton-color 100%, transparent 0);
+$skeleton-activity-bone: linear-gradient(
+  $skeleton-color $skeleton-bone-height-1line,
+  transparent 0
+);
+$skeleton-activity-icon: radial-gradient(
+  circle 12px at center,
+  $skeleton-color 100%,
+  transparent 0
+);
 $skeleton-activity-icon-position: 0 0;
 $skeleton-activity-icon-size: $skeleton-status-resource-icon-size;
 $skeleton-activity-position: 45px 0;
@@ -32,13 +43,13 @@ $skeleton-activity-size: auto;
   width: 100%;
   &::after {
     background-image: url('../images/skeleton-chart.svg');
-    .pf-theme-dark & {
-      opacity: .2;
+    .pf-v5-theme-dark & {
+      opacity: 0.2;
     }
     background-position: 0px bottom;
     background-repeat: no-repeat;
     background-size: cover;
-    content: "";
+    content: '';
     height: 100%;
     left: 0;
     position: absolute;
@@ -53,7 +64,7 @@ $skeleton-activity-size: auto;
   opacity: 0;
   &::after {
     background-repeat: no-repeat;
-    content: "";
+    content: '';
     display: block;
     height: 100%;
     width: 100%;

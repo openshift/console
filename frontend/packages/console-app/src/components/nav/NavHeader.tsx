@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
+import { Title } from '@patternfly/react-core';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -25,20 +30,18 @@ type PerspectiveDropdownItemProps = {
 
 const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
   perspective,
-  activePerspective,
   onClick,
 }) => {
   const LazyIcon = React.useMemo(() => React.lazy(perspective.properties.icon), [
     perspective.properties.icon,
   ]);
   return (
-    <DropdownItem
+    <DropdownItemDeprecated
       key={perspective.properties.id}
       onClick={(e: React.MouseEvent<HTMLLinkElement>) => {
         e.preventDefault();
         onClick(perspective.properties.id);
       }}
-      isHovered={perspective.properties.id === activePerspective}
     >
       <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
         <span className="oc-nav-header__icon">
@@ -48,7 +51,7 @@ const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
         </span>
         {perspective.properties.name}
       </Title>
-    </DropdownItem>
+    </DropdownItemDeprecated>
   );
 };
 
@@ -114,12 +117,11 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     ...perspectiveItems,
     ...(!acmPerspectiveExtension && acmLink
       ? [
-          <DropdownItem
+          <DropdownItemDeprecated
             key={ACM_LINK_ID}
             onClick={() => {
               window.location.href = acmLink.spec.href;
             }}
-            isHovered={ACM_LINK_ID === activePerspective}
           >
             <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
               <span className="oc-nav-header__icon">
@@ -127,7 +129,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
               </span>
               {t('console-app~Advanced Cluster Management')}
             </Title>
-          </DropdownItem>,
+          </DropdownItemDeprecated>,
         ]
       : []),
   ];
@@ -140,10 +142,10 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
           data-tour-id="tour-perspective-dropdown"
           data-quickstart-id="qs-perspective-switcher"
         >
-          <Dropdown
+          <DropdownDeprecated
             isOpen={isPerspectiveDropdownOpen}
             toggle={
-              <DropdownToggle
+              <DropdownToggleDeprecated
                 className={cx({
                   'oc-nav-header__dropdown-toggle--is-empty': perspectiveItems.length === 1,
                 })}
@@ -158,7 +160,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
                     {name}
                   </Title>
                 )}
-              </DropdownToggle>
+              </DropdownToggleDeprecated>
             }
             dropdownItems={perspectiveDropdownItems}
             data-test-id="perspective-switcher-menu"

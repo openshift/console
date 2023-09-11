@@ -54,8 +54,8 @@ const tableColumnClasses = [
   '',
   'pf-m-hidden pf-m-visible-on-md',
   'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-xl',
-  'pf-m-hidden pf-m-visible-on-xl pf-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-xl pf-v5-u-w-25-on-xl',
   Kebab.columnClass,
 ];
 

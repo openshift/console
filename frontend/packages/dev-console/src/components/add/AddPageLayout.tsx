@@ -86,7 +86,7 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
                           : t('devconsole~Hide add card details')
                       }
                       isChecked={showDetails}
-                      onChange={(checked) => {
+                      onChange={(_event, checked) => {
                         setShowDetails(checked);
                       }}
                       data-test="switch"

@@ -25,7 +25,7 @@ const VMEditWithPencil: React.FC<VMEditWithPencilProps> = ({
       variant="link"
     >
       {children}
-      {isEdit && <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />}
+      {isEdit && <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
     </Button>
   );
 };

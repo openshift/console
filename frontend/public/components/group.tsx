@@ -142,7 +142,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ group, users }) => {
             <td>
               <ResourceLink kind={referenceForModel(UserModel)} name={user} />
             </td>
-            <td className="dropdown-kebab-pf pf-c-table__action">
+            <td className="dropdown-kebab-pf pf-v5-c-table__action">
               <UserKebab group={group} user={user} />
             </td>
           </tr>

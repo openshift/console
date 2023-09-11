@@ -133,6 +133,7 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
 
   // Extract disabled string array from Items
   const onListChange = (
+    _event,
     newEnabledOptions: React.ReactElement<ItemProps>[],
     newDisabledOptions: React.ReactElement<ItemProps>[],
   ) => {

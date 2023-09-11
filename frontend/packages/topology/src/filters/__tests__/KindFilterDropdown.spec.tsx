@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SelectOption } from '@patternfly/react-core';
+import { SelectOption as SelectOptionDeprecated } from '@patternfly/react-core/deprecated';
 import { mount, shallow } from 'enzyme';
 import { DisplayFilters, TopologyDisplayFilterType } from '../../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS } from '../const';
@@ -43,7 +43,7 @@ describe(KindFilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(wrapper.find(SelectOption)).toHaveLength(Object.keys(supportedKinds).length);
+    expect(wrapper.find(SelectOptionDeprecated)).toHaveLength(Object.keys(supportedKinds).length);
   });
 
   it('should have no badge when there are no filters', () => {
@@ -105,7 +105,7 @@ describe(KindFilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(wrapper.find(SelectOption).first().props().isChecked).toBeTruthy();
+    expect(wrapper.find(SelectOptionDeprecated).first().props().isChecked).toBeTruthy();
   });
 
   it('should show resource counts correctly', () => {
@@ -117,12 +117,12 @@ describe(KindFilterDropdown.displayName, () => {
         opened
       />,
     );
-    const selectOptions = wrapper.find(SelectOption);
+    const selectOptions = wrapper.find(SelectOptionDeprecated);
     const firstType = selectOptions.at(0);
     const secondType = selectOptions.at(1);
     const thirdType = selectOptions.at(2);
-    expect(firstType.find('.pf-c-check__label').text()).toContain('(4)');
-    expect(secondType.find('.pf-c-check__label').text()).toContain('(3)');
-    expect(thirdType.find('.pf-c-check__label').text()).toContain('(2)');
+    expect(firstType.find('.pf-v5-c-check__label').text()).toContain('(4)');
+    expect(secondType.find('.pf-v5-c-check__label').text()).toContain('(3)');
+    expect(thirdType.find('.pf-v5-c-check__label').text()).toContain('(2)');
   });
 });

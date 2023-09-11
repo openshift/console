@@ -10,7 +10,7 @@ export interface SampleRepoProps {
 const SampleRepo = (props) => {
   const { t } = useTranslation();
   return (
-    <FormHelperText isHidden={false}>
+    <FormHelperText>
       <Button {...props} type="button" variant={ButtonVariant.link} isInline>
         {t('devconsole~Try sample')} <LevelUpAltIcon />
       </Button>

@@ -100,7 +100,7 @@ const getTitleComponent = (
   longSubtitle: boolean = false,
   reversed: boolean = false,
 ) => {
-  const labelClasses = classNames('pf-chart-donut-title', {
+  const labelClasses = classNames('pf-v5-chart-donut-title', {
     'pod-ring__center-text--reversed': reversed,
     'pod-ring__center-text': !reversed,
     'pod-ring__long-text': longTitle,

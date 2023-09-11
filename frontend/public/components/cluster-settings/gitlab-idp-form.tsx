@@ -156,7 +156,7 @@ export const AddGitLabPage = () => {
               {t('public~URL')}
             </label>
             <input
-              className="pf-c-form-control"
+              className="pf-v5-c-form-control"
               type="url"
               onChange={(e) => setUrl(e.currentTarget.value)}
               value={url}
@@ -173,7 +173,7 @@ export const AddGitLabPage = () => {
               {t('public~Client ID')}
             </label>
             <input
-              className="pf-c-form-control"
+              className="pf-v5-c-form-control"
               type="text"
               onChange={(e) => setClientID(e.currentTarget.value)}
               value={clientID}
@@ -186,7 +186,7 @@ export const AddGitLabPage = () => {
               {t('public~Client secret')}
             </label>
             <input
-              className="pf-c-form-control"
+              className="pf-v5-c-form-control"
               type="password"
               onChange={(e) => setClientSecret(e.currentTarget.value)}
               value={clientSecret}
@@ -196,7 +196,7 @@ export const AddGitLabPage = () => {
           </div>
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-c-form">
+            <ActionGroup className="pf-v5-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>

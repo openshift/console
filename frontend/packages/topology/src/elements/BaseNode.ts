@@ -25,32 +25,27 @@ import {
   Dimensions,
   Point,
 } from '@patternfly/react-topology';
-import { observable, computed } from 'mobx';
+import { observable, action, computed, makeObservable } from 'mobx';
 
 const createAnchorKey = (end: AnchorEnd = AnchorEnd.both, type: string = ''): string =>
   `${end}:${type}`;
 
 class BaseNode<E extends NodeModel = NodeModel, D = any> extends BaseElement<E, D>
   implements Node<E, D> {
-  @observable.shallow
   private anchors: { [type: string]: Anchor } = {
     [createAnchorKey()]: new CenterAnchor(this),
   };
 
-  @observable.ref
   private dimensions = new Dimensions();
 
-  @observable
   private dimensionsInitialized = false;
 
   private positioned = false;
 
   private uncollapsedCenter: Point = null;
 
-  @observable.ref
   private position = new Point();
 
-  @computed
   private get nodes(): Node[] {
     if (this.isCollapsed()) {
       return [];
@@ -59,22 +54,57 @@ class BaseNode<E extends NodeModel = NodeModel, D = any> extends BaseElement<E, 
     return this.getChildren().filter(isNode);
   }
 
-  @observable
   private group = false;
 
-  @observable
   private collapsed = false;
 
-  @observable
   private labelPosition = LabelPosition.bottom;
 
-  @observable
-  private shape: NodeShape | undefined;
+  private shape: NodeShape | undefined = undefined;
 
-  @observable
-  private status: NodeStatus | undefined;
+  private status: NodeStatus | undefined = undefined;
 
-  @computed
+  constructor() {
+    super();
+
+    makeObservable<
+      BaseElement,
+      | 'anchors'
+      | 'dimensions'
+      | 'dimensionsInitialized'
+      | 'position'
+      | 'nodes'
+      | 'group'
+      | 'collapsed'
+      | 'labelPosition'
+      | 'shape'
+      | 'status'
+      | 'groupBounds'
+      | 'sourceEdges'
+      | 'targetEdges'
+      | 'setDimensions'
+      | 'setBounds'
+      | 'setPosition'
+    >(this, {
+      anchors: observable.shallow,
+      dimensions: observable.ref,
+      dimensionsInitialized: observable,
+      position: observable.ref,
+      nodes: computed,
+      group: observable,
+      collapsed: observable,
+      labelPosition: observable,
+      shape: observable,
+      status: observable,
+      groupBounds: computed,
+      sourceEdges: computed,
+      targetEdges: computed,
+      setDimensions: action,
+      setBounds: action,
+      setPosition: action,
+    });
+  }
+
   private get groupBounds(): Rect {
     const children = this.getChildren()
       .filter(isNode)
@@ -109,14 +139,12 @@ class BaseNode<E extends NodeModel = NodeModel, D = any> extends BaseElement<E, 
     return rect.padding(padding);
   }
 
-  @computed
   private get sourceEdges(): Edge[] {
     return this.getGraph()
       .getEdges()
       .filter((e) => e.getSource() === this);
   }
 
-  @computed
   private get targetEdges(): Edge[] {
     return this.getGraph()
       .getEdges()

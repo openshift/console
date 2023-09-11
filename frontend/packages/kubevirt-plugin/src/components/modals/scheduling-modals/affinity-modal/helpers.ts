@@ -36,7 +36,7 @@ export const columnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-c-table__action', Kebab.columnClass),
+  classNames('pf-v5-c-table__action', Kebab.columnClass),
 ];
 
 const setIDsToEntity = (entity: any[]) => entity?.map((elm, i) => ({ ...elm, id: i }));

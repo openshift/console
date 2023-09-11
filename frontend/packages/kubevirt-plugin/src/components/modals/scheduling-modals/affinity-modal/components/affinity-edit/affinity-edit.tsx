@@ -102,7 +102,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
         <Form>
           <FormRow title={t('kubevirt-plugin~Type')} fieldId={'affinity-type'} isRequired>
             <FormSelect
-              onChange={(value) =>
+              onChange={(_event, value) =>
                 setFocusedAffinity({
                   ...focusedAffinity,
                   type: value as AffinityRowData['type'],
@@ -125,7 +125,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
           </FormRow>
           <FormRow title={t('kubevirt-plugin~Condition')} fieldId={'affinity-condition'} isRequired>
             <FormSelect
-              onChange={(value) =>
+              onChange={(_event, value) =>
                 setFocusedAffinity({
                   ...focusedAffinity,
                   condition: value as AffinityRowData['condition'],
@@ -162,7 +162,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
                 isDisabled={isDisabled}
                 id={'weight'}
                 value={focusedAffinity.weight || ''}
-                onChange={(value) =>
+                onChange={(_event, value) =>
                   setFocusedAffinity({ ...focusedAffinity, weight: parseInt(value, 10) })
                 }
               />
@@ -182,7 +182,9 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
                 isDisabled={isDisabled || isTopologyDisabled}
                 id={'topology-key'}
                 value={focusedAffinity.topologyKey || ''}
-                onChange={(value) => setFocusedAffinity({ ...focusedAffinity, topologyKey: value })}
+                onChange={(_event, value) =>
+                  setFocusedAffinity({ ...focusedAffinity, topologyKey: value })
+                }
               />
             </FormRow>
           )}

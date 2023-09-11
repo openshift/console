@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Node, ContextSubMenuItem, ContextMenuItem, Graph } from '@patternfly/react-topology';
+import {
+  Node,
+  ContextSubMenuItem,
+  ContextMenuItem,
+  Graph,
+  GraphElement,
+} from '@patternfly/react-topology';
 import {
   Action,
   GroupedMenuOption,
@@ -25,7 +31,7 @@ export const createContextMenuItems = (actions: MenuOption[]) => {
       case MenuOptionType.GROUP_MENU:
         return (
           <React.Fragment key={option.id}>
-            {option.label && <h1 className="pf-c-dropdown__group-title">{option.label}</h1>}
+            {option.label && <h1 className="pf-v5-c-dropdown__group-title">{option.label}</h1>}
             {createContextMenuItems((option as GroupedMenuOption).children)}
           </React.Fragment>
         );
@@ -45,7 +51,7 @@ export const groupActionContext = (element: Node, connectorSource?: Node) => ({
   'topology-context-actions': { element, connectorSource },
 });
 
-export const contextMenuActions = (element: Node) => {
+export const contextMenuActions = (element: GraphElement) => {
   const resource = getResource(element);
   const { csvName } = element.getData()?.data ?? {};
   return {

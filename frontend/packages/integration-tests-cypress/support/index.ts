@@ -7,6 +7,18 @@ import './i18n';
 import { a11yTestResults } from './a11y';
 import './admin';
 
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      visitAndWait(
+        url: string,
+        options?: Partial<Cypress.VisitOptions>,
+        selector?: string,
+      ): Chainable<Element>;
+    }
+  }
+}
+
 Cypress.Cookies.debug(true);
 
 Cypress.on('uncaught:exception', (err) => {
@@ -17,6 +29,32 @@ Cypress.on('uncaught:exception', (err) => {
 Cypress.Commands.overwrite('log', (originalFn, message) => {
   cy.task('log', `      ${message}`, { log: false }); // log:false means do not log task in runner GUI
   originalFn(message); // calls original cy.log(message)
+});
+
+const waitForElementToExist = (selector: string) =>
+  cy.get(selector, { timeout: 30000 }).should('exist');
+
+Cypress.Commands.add('visitAndWait', (url, options, selector = '#content') => {
+  if (url !== '/') {
+    cy.visit('/');
+    waitForElementToExist('#content');
+  }
+
+  cy.visit(url, options);
+  waitForElementToExist(selector);
+});
+
+Cypress.Commands.add('clickNavLink', (path: string[]) => {
+  cy.get('#page-sidebar')
+    .contains(path[0])
+    .then(($navItem) => {
+      if ($navItem.attr('aria-expanded') !== 'true') {
+        cy.wrap($navItem).click();
+      }
+    });
+  if (path.length === 2) {
+    cy.get('#page-sidebar').contains(path[1]).click();
+  }
 });
 
 before(() => {

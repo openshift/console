@@ -1,10 +1,10 @@
-import { LightMultiColorOrderedTheme } from '@patternfly/react-charts/dist/js/components/ChartTheme/themes/light/multi-color-ordered-theme';
+import { MultiColorOrderedTheme } from '@patternfly/react-charts/dist/js/components/ChartTheme/themes/colors/multi-ordered-theme';
 import * as _ from 'lodash';
 
 const swapArrayElems = (arr) => ([arr[0], arr[1]] = [arr[1], arr[0]]);
 
 export const getColorList = (numColors: number) => {
-  const originalColors = LightMultiColorOrderedTheme.pie.colorScale;
+  const originalColors = MultiColorOrderedTheme.pie.colorScale;
   const numOriginalColors = originalColors.length;
   const colorList = [].concat(originalColors);
 

@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   CardBody,
+  Icon,
   Spinner,
 } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
@@ -91,7 +92,7 @@ const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, 
           </>
         )}
       </p>
-      <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
         <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
           <Button variant="primary">{t('olm~View error')}</Button>
         </Link>
@@ -123,7 +124,7 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
       <h2 className="co-clusterserviceversion-install__heading">
         {t('olm~Manual approval required')}
       </h2>
-      <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
         <InstallPlanReview installPlan={installObj} />
         {((installObjIsInstallPlan && canPatchInstallPlans) || !installObjIsInstallPlan) && (
           <>
@@ -232,7 +233,7 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
           />
         </>
       )}
-      <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
         {initializationResource ? (
           <CreateInitializationResourceButton
             initializationResource={initializationResource}
@@ -279,7 +280,7 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
           obj={obj}
         />
       )}
-      <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
         {initializationResource && (
           <CreateInitializationResourceButton
             disabled
@@ -336,13 +337,25 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
 
   let indicator = <Spinner size="lg" />;
   if (isStatusFailed) {
-    indicator = <RedExclamationCircleIcon size="lg" />;
+    indicator = (
+      <Icon size="lg">
+        <RedExclamationCircleIcon />
+      </Icon>
+    );
   }
   if (isApprovalNeeded) {
-    indicator = <YellowExclamationTriangleIcon size="lg" />;
+    indicator = (
+      <Icon size="lg">
+        <YellowExclamationTriangleIcon />
+      </Icon>
+    );
   }
   if (isStatusSucceeded) {
-    indicator = <GreenCheckCircleIcon size="lg" />;
+    indicator = (
+      <Icon size="lg">
+        <GreenCheckCircleIcon />
+      </Icon>
+    );
   }
 
   let installMessage = <InstallingMessage namespace={targetNamespace} obj={installObj} />;

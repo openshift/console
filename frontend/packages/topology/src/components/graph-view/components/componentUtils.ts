@@ -38,15 +38,15 @@ const MOVE_CONNECTOR_OPERATION = 'moveconnector';
 const REGROUP_OPERATION = 'regroup';
 
 type GraphComponentProps = {
-  element: Graph;
+  element: GraphElement;
 };
 
 type NodeComponentProps = {
-  element: Node;
+  element: GraphElement;
 };
 
 type EdgeComponentProps = {
-  element: Edge;
+  element: GraphElement;
 };
 
 /**
@@ -101,7 +101,7 @@ const highlightNode = (monitor: DropTargetMonitor, element: Node): boolean => {
 export type NodeDragSourceSpecType = DragSourceSpec<
   DragObjectWithType,
   DragSpecOperationType<EditableDragOperationType>,
-  Node,
+  GraphElement,
   {
     dragging?: boolean;
     regrouping?: boolean;
@@ -116,7 +116,9 @@ const nodeDragSourceSpec = (
 ): NodeDragSourceSpecType => ({
   item: { type: NODE_DRAG_TYPE },
   operation: (monitor, props) => {
-    return (canEdit || props.canEdit) && allowRegroup && isWorkloadRegroupable(props.element)
+    return (canEdit || props.canEdit) &&
+      allowRegroup &&
+      isWorkloadRegroupable(props.element as Node)
       ? {
           [Modifiers.SHIFT]: { type: REGROUP_OPERATION, edit: true },
         }
@@ -127,14 +129,17 @@ const nodeDragSourceSpec = (
     return {
       element: props.element,
       allowRegroup:
-        (canEdit || props.canEdit) && allowRegroup && isWorkloadRegroupable(props.element),
+        (canEdit || props.canEdit) && allowRegroup && isWorkloadRegroupable(props.element as Node),
     };
   },
   end: async (dropResult, monitor, props) => {
     if (!monitor.isCancelled() && monitor.getOperation()?.type === REGROUP_OPERATION) {
       if (monitor.didDrop() && dropResult && props && props.element.getParent() !== dropResult) {
         const controller = props.element.getController();
-        await moveNodeToGroup(props.element, isNode(dropResult) ? (dropResult as Node) : null);
+        await moveNodeToGroup(
+          props.element as Node,
+          isNode(dropResult) ? (dropResult as Node) : null,
+        );
 
         // perform the optimistic update in an action so as not to render too soon
         action(() => {
@@ -193,15 +198,15 @@ const nodeDropTargetSpec: DropTargetSpec<
   accept: [EDGE_DRAG_TYPE, CREATE_CONNECTOR_DROP_TYPE],
   canDrop: (item, monitor, props) => {
     if (isEdge(item)) {
-      return canDropEdgeOnNode(monitor.getOperation()?.type, item as Edge, props.element);
+      return canDropEdgeOnNode(monitor.getOperation()?.type, item as Edge, props.element as Node);
     }
     if (!props.element || item === props.element) {
       return false;
     }
-    return !props.element.getTargetEdges().find((e) => e.getSource() === item);
+    return !(props.element as Node).getTargetEdges().find((e) => e.getSource() === item);
   },
   collect: (monitor, props) => ({
-    canDrop: highlightNode(monitor, props.element),
+    canDrop: highlightNode(monitor, props.element as Node),
     dropTarget: monitor.isOver({ shallow: true }),
     edgeDragging: nodesEdgeIsDragging(monitor, props),
   }),
@@ -291,18 +296,19 @@ const edgeDragSourceSpec = (
     return props.element;
   },
   drag: (event, monitor, props) => {
-    props.element.setEndPoint(event.x, event.y);
+    (props.element as Edge).setEndPoint(event.x, event.y);
   },
   end: (dropResult, monitor, props) => {
-    props.element.setEndPoint();
+    const edge = props.element as Edge;
+    edge.setEndPoint();
     if (
       monitor.didDrop() &&
       dropResult &&
-      canDropEdgeOnNode(monitor.getOperation()?.type, props.element, dropResult)
+      canDropEdgeOnNode(monitor.getOperation()?.type, edge, dropResult)
     ) {
       const title =
         failureTitle !== undefined ? failureTitle : i18next.t('topology~Error moving connection');
-      callback(props.element.getSource(), dropResult, props.element.getTarget()).catch((error) => {
+      callback(edge.getSource(), dropResult, edge.getTarget()).catch((error) => {
         errorModal({ title, error: error.message, showIcon: true });
       });
     }

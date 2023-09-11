@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CardActions, Card, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -74,13 +74,20 @@ export const VMActivityCard: React.FC = () => {
   )}/events`;
 
   return (
-    <Card className="co-overview-card--gradient">
-      <CardHeader>
+    <Card className="co-overview-card--gradient" isClickable isSelectable>
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <Link to={viewEventsLink}>{t('kubevirt-plugin~View all')}</Link>
+              <PauseButton paused={paused} togglePause={togglePause} />
+            </>
+          ),
+          hasNoOffset: false,
+          className: 'kubevirt-activity-card__actions co-overview-card__actions',
+        }}
+      >
         <CardTitle>{t('kubevirt-plugin~Events')}</CardTitle>
-        <CardActions className="kubevirt-activity-card__actions co-overview-card__actions">
-          <Link to={viewEventsLink}>{t('kubevirt-plugin~View all')}</Link>
-          <PauseButton paused={paused} togglePause={togglePause} />
-        </CardActions>
       </CardHeader>
       <ActivityBody>
         <RecentEvent vm={vmiLike} paused={paused} setPaused={setPaused} />

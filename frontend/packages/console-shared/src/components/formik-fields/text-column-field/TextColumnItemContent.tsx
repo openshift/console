@@ -73,7 +73,7 @@ const TextColumnItemContent: React.FC<TextColumnItemContentProps> = ({
     <div ref={previewDropRef} style={{ opacity }}>
       <Flex
         alignItems={{ default: 'alignItemsFlexStart' }}
-        style={{ marginBottom: 'var(--pf-global--spacer--sm)' }}
+        style={{ marginBottom: 'var(--pf-v5-global--spacer--sm)' }}
       >
         {dndEnabled && (
           <FlexItem style={{ cursor: 'move' }}>

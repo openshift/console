@@ -24,7 +24,7 @@ const HPAPageHeader: React.FC<HPAPageHeaderProps> = ({
   return (
     <PageHeading>
       <Flex direction={{ default: 'column' }}>
-        <h1 className="pf-c-title pf-m-2xl">{title}</h1>
+        <h1 className="pf-v5-c-title pf-m-2xl">{title}</h1>
         {validSupportedType ? (
           <>
             <div>

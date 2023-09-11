@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -75,7 +75,7 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
   }, [namespace]);
 
   return (
-    <FormGroup fieldId={fieldId} label={label} helperText={helpText} isRequired={required}>
+    <FormGroup fieldId={fieldId} label={label} isRequired={required}>
       <NameValueEditor
         nameValuePairs={nameValue}
         valueString={t('console-shared~Value')}
@@ -88,6 +88,12 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
         secrets={secrets}
         addConfigMapSecret
       />
+
+      <FormHelperText>
+        <HelperText>
+          <HelperTextItem>{helpText}</HelperTextItem>
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

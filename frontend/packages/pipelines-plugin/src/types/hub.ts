@@ -1,4 +1,4 @@
-import { K8sResourceCommon } from 'packages/console-dynamic-plugin-sdk/src';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk';
 import { Condition } from './pipelineRun';
 
 export type TektonHub = K8sResourceCommon & {

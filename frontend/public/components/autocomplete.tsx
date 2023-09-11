@@ -46,7 +46,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
     }
   };
 
-  const handleInput = (input: string) => {
+  const handleInput = (event: React.FormEvent<HTMLInputElement>, input: string) => {
     if (input) {
       setVisible(true);
     } else {

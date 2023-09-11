@@ -159,7 +159,7 @@ const tableColumnClasses = [
   '',
   '',
   // Status is less important than Location, so hide it earlier, but maintain its position for consistency with other tables
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v5-u-w-16-on-lg'),
   classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
@@ -482,7 +482,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
       )}
       {_.isEmpty(route.status.ingress) ? (
         <div className="cos-status-box">
-          <div className="pf-u-text-align-center">{t('public~No route status')}</div>
+          <div className="pf-v5-u-text-align-center">{t('public~No route status')}</div>
         </div>
       ) : (
         <div className="co-m-pane__body">

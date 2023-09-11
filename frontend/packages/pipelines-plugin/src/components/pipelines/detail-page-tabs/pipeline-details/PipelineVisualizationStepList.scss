@@ -2,9 +2,9 @@
   min-width: 10em;
 
   &__task-name {
-    font-weight: var(--pf-global--FontWeight--bold);
-    line-height: var(--pf-global--spacer--lg);
-    max-height: var(--pf-global--spacer--2xl);
+    font-weight: var(--pf-v5-global--FontWeight--bold);
+    line-height: var(--pf-v5-global--spacer--lg);
+    max-height: var(--pf-v5-global--spacer--2xl);
 
     // Limit the size of the title so the content doesn't have unnecessary whitespace in the middle
     max-width: 15em;
@@ -19,17 +19,17 @@
   }
 
   &__task-type {
-    line-height: var(--pf-global--spacer--xs);
-    max-height: var(--pf-global--spacer--2xl);
+    line-height: var(--pf-v5-global--spacer--xs);
+    max-height: var(--pf-v5-global--spacer--2xl);
     margin: 0 auto 10px auto;
   }
 
   &__step {
     display: flex;
-    margin-bottom: var(--pf-global--spacer--xs);
+    margin-bottom: var(--pf-v5-global--spacer--xs);
 
     &--task-run {
-      margin-bottom: var(--pf-global--spacer--sm);
+      margin-bottom: var(--pf-v5-global--spacer--sm);
     }
 
     &:last-child {
@@ -46,26 +46,26 @@
   }
 
   &__icon-backdrop {
-    fill: var(--pf-global--Color--light-100);
+    fill: var(--pf-v5-global--Color--light-100);
   }
 
   &__name {
     flex: 1 1 auto;
     overflow: hidden;
-    padding-left: var(--pf-global--spacer--sm);
+    padding-left: var(--pf-v5-global--spacer--sm);
     text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap;
 
     &.is-main-focus {
-      padding: 0 var(--pf-global--spacer--sm);
+      padding: 0 var(--pf-v5-global--spacer--sm);
       text-align: center;
     }
   }
 
   &__duration {
     flex: 0 0 auto;
-    padding-left: var(--pf-global--spacer--sm);
+    padding-left: var(--pf-v5-global--spacer--sm);
     text-align: right;
   }
 }

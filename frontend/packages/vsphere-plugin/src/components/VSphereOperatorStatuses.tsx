@@ -124,7 +124,7 @@ export const VSphereOperatorStatuses: React.FC = () => {
   const kubeApiServer = useOperatorHealth(t, 'kube-apiserver');
   const storage = useOperatorHealth(t, 'storage');
 
-  const onToggle = (value: boolean) => {
+  const onToggle = (_event, value: boolean) => {
     setIsExpanded(value);
   };
 

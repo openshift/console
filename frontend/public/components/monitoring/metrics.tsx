@@ -11,13 +11,15 @@ import { ChartLineIcon, CompressIcon } from '@patternfly/react-icons';
 import {
   ISortBy,
   sortable,
-  Table,
-  TableBody,
   TableGridBreakpoint,
-  TableHeader,
   TableVariant,
   wrappable,
 } from '@patternfly/react-table';
+import {
+  Table as TableDeprecated,
+  TableHeader as TableHeaderDeprecated,
+  TableBody as TableBodyDeprecated,
+} from '@patternfly/react-table/deprecated';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -304,7 +306,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
           >
             {isDisabledSeriesEmpty ? t('public~Unselect all') : t('public~Select all')}
           </Button>
-          <Table
+          <TableDeprecated
             aria-label={t('public~query results table')}
             cells={columns}
             gridBreakPoint={TableGridBreakpoint.none}
@@ -313,9 +315,9 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
             sortBy={sortBy}
             variant={TableVariant.compact}
           >
-            <TableHeader />
-            <TableBody />
-          </Table>
+            <TableHeaderDeprecated />
+            <TableBodyDeprecated />
+          </TableDeprecated>
         </div>
       </div>
       <TablePagination

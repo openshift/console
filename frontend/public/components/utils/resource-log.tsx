@@ -4,17 +4,12 @@ import * as React from 'react';
 // @ts-ignore
 import { useSelector } from 'react-redux';
 import { Base64 } from 'js-base64';
+import { Alert, AlertActionLink, Button, Checkbox, Divider, Tooltip } from '@patternfly/react-core';
 import {
-  Alert,
-  AlertActionLink,
-  Button,
-  Checkbox,
-  Divider,
-  Select,
-  SelectOption,
-  SelectVariant,
-  Tooltip,
-} from '@patternfly/react-core';
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 
 import * as _ from 'lodash-es';
@@ -179,9 +174,9 @@ export const LogControls: React.FC<LogControlsProps> = ({
 
   const logOption = (log: LogType) => {
     return (
-      <SelectOption key={log.type} value={log.type}>
+      <SelectOptionDeprecated key={log.type} value={log.type}>
         {log.text}
-      </SelectOption>
+      </SelectOptionDeprecated>
     );
   };
 
@@ -215,9 +210,9 @@ export const LogControls: React.FC<LogControlsProps> = ({
         <span id="logTypeSelect" hidden>
           Log type
         </span>
-        <Select
-          variant={SelectVariant.single}
-          onToggle={(isOpen: boolean) => {
+        <SelectDeprecated
+          variant={SelectVariantDeprecated.single}
+          onToggle={(_event, isOpen: boolean) => {
             setLogTypeOpen(isOpen);
           }}
           onSelect={(event: React.MouseEvent | React.ChangeEvent, value: LogTypeStatus) => {
@@ -230,7 +225,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
           aria-labelledby="logTypeSelect"
         >
           {logTypes.map((log) => logOption(log))}
-        </Select>
+        </SelectDeprecated>
       </span>
     );
     return hasPreviousLog ? (
@@ -285,7 +280,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
         className="co-toolbar__group co-toolbar__group--right co-toolbar__group--right"
         data-test="log-links"
       >
-        <div className="pf-l-flex">
+        <div className="pf-v5-l-flex">
           {!_.isEmpty(podLogLinks) &&
             _.map(_.sortBy(podLogLinks, 'metadata.name'), (link) => {
               const namespace = resource.metadata.namespace;
@@ -326,7 +321,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
             id="wrapLogLines"
             isChecked={isWrapLines}
             data-checked-state={isWrapLines}
-            onChange={(checked: boolean) => {
+            onChange={(_event, checked: boolean) => {
               toggleWrapLines(checked);
             }}
           />

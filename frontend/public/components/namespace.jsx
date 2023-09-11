@@ -10,9 +10,10 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  EmptyStatePrimary,
-  Title,
   Tooltip,
+  EmptyStateActions,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
@@ -426,12 +427,15 @@ export const NamespacesList = (props) => {
   );
   const NamespaceNotFoundMessage = () => (
     <EmptyState>
-      <EmptyStateIcon icon={SearchIcon} />
-      <Title size="md" headingLevel="h2">
-        {t('public~No namespaces found')}
-      </Title>
+      <EmptyStateHeader
+        titleText={<>{t('public~No namespaces found')}</>}
+        icon={<EmptyStateIcon icon={SearchIcon} />}
+        headingLevel="h2"
+      />
       <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
-      <EmptyStatePrimary />
+      <EmptyStateFooter>
+        <EmptyStateActions />
+      </EmptyStateFooter>
     </EmptyState>
   );
 
@@ -805,12 +809,15 @@ export const ProjectList = ({ data, ...tableProps }) => {
 
   const ProjectNotFoundMessage = () => (
     <EmptyState>
-      <EmptyStateIcon icon={SearchIcon} />
-      <Title size="md" headingLevel="h2">
-        {t('public~No projects found')}
-      </Title>
+      <EmptyStateHeader
+        titleText={<>{t('public~No projects found')}</>}
+        icon={<EmptyStateIcon icon={SearchIcon} />}
+        headingLevel="h2"
+      />
       <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
-      <EmptyStatePrimary />
+      <EmptyStateFooter>
+        <EmptyStateActions />
+      </EmptyStateFooter>
     </EmptyState>
   );
 
@@ -915,7 +922,7 @@ export const PullSecret = (props) => {
     ) : (
       <Button variant="link" type="button" isInline onClick={modal}>
         {t('public~Not configured')}
-        <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+        <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
       </Button>
     );
   };
@@ -1072,7 +1079,7 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
       {!_.isEmpty(links) && (
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~Launcher')} />
-          <ul className="pf-c-list pf-m-plain">
+          <ul className="pf-v5-c-list pf-m-plain">
             {_.map(_.sortBy(links, 'spec.text'), (link) => {
               return (
                 <li key={link.metadata.uid}>

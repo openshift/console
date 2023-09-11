@@ -85,7 +85,7 @@ Then('user can see project {string} is selected', (projectName: string) => {
   perspective.switchTo(switchPerspective.Developer);
   navigateTo(devNavigationMenu.Topology);
   app.waitForLoad();
-  cy.get('[data-test-id="namespace-bar-dropdown"] span.pf-c-menu-toggle__text').should(
+  cy.get('[data-test-id="namespace-bar-dropdown"] span.pf-v5-c-menu-toggle__text').should(
     'contain.text',
     projectName,
   );

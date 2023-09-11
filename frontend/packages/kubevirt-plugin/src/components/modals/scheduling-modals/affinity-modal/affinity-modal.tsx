@@ -11,7 +11,8 @@ import {
   StackItem,
   Text,
   TextVariants,
-  Title,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -260,9 +261,10 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
                 </Stack>
               ) : (
                 <EmptyState variant={EmptyStateVariant.full}>
-                  <Title headingLevel="h5" size="lg">
-                    {t('kubevirt-plugin~No Affinity rules found')}
-                  </Title>
+                  <EmptyStateHeader
+                    titleText={<>{t('kubevirt-plugin~No Affinity rules found')}</>}
+                    headingLevel="h5"
+                  />
                   <EmptyStateBody>
                     <div className="scheduling-modals__desc-container">
                       <Text className="scheduling-modals__desc" component={TextVariants.small}>
@@ -283,9 +285,11 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
                       </Text>
                     </div>
                   </EmptyStateBody>
-                  <Button variant="secondary" onClick={() => onAffinityClickAdd()}>
-                    {t('kubevirt-plugin~Add Affinity rule')}
-                  </Button>
+                  <EmptyStateFooter>
+                    <Button variant="secondary" onClick={() => onAffinityClickAdd()}>
+                      {t('kubevirt-plugin~Add Affinity rule')}
+                    </Button>
+                  </EmptyStateFooter>
                 </EmptyState>
               )}
             </ModalBody>

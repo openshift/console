@@ -42,7 +42,7 @@ const NotificationAction: React.FC<NotificationActionProps> = ({
   actionExternalLinkURL,
 }) => {
   return (
-    <div className="pf-c-notification-drawer__header-action">
+    <div className="pf-v5-c-notification-drawer__header-action">
       {actionExternalLinkURL ? (
         <ExternalLink text={text} href={actionExternalLinkURL} />
       ) : (
@@ -96,7 +96,7 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
   return (
     <li
       className={classNames(
-        `pf-c-notification-drawer__list-item pf-m-hoverable`,
+        `pf-v5-c-notification-drawer__list-item pf-m-hoverable`,
         type === NotificationTypes.update ? 'pf-m-default' : `pf-m-${type}`,
         {
           'pf-m-read': isRead,
@@ -112,12 +112,12 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
           : null
       }
     >
-      <div className="pf-c-notification-drawer__list-item-header">
-        <span className="pf-c-notification-drawer__list-item-header-icon">
+      <div className="pf-v5-c-notification-drawer__list-item-header">
+        <span className="pf-v5-c-notification-drawer__list-item-header-icon">
           <NotificationIcon type={type} />
         </span>
-        <h4 className="pf-c-notification-drawer__list-item-header-title">
-          <span className="pf-screen-reader">{notificationTypeString(type)}</span>
+        <h4 className="pf-v5-c-notification-drawer__list-item-header-title">
+          <span className="pf-v5-screen-reader">{notificationTypeString(type)}</span>
           {title}
         </h4>
         {actionText && (actionPath || alertAction || actionExternalLinkURL) && (
@@ -128,8 +128,8 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
           />
         )}
       </div>
-      <div className="pf-c-notification-drawer__list-item-description">{description}</div>
-      <div className="pf-c-notification-drawer__list-item-timestamp">
+      <div className="pf-v5-c-notification-drawer__list-item-description">{description}</div>
+      <div className="pf-v5-c-notification-drawer__list-item-timestamp">
         {timestamp && <Timestamp simple timestamp={timestamp} />}
       </div>
     </li>

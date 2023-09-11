@@ -107,7 +107,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
             {errors.length > 0 && <ErrorTemplate errors={errors} />}
             {!noActions && (
               <div style={{ paddingBottom: '30px' }}>
-                <ActionGroup className="pf-c-form">
+                <ActionGroup className="pf-v5-c-form">
                   <Button type="submit" variant="primary" data-test="create-dynamic-form">
                     {t('console-shared~Create')}
                   </Button>

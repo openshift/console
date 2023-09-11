@@ -7,8 +7,6 @@ import {
   ButtonVariant,
   Divider,
   InputGroup,
-  SelectOption,
-  SelectVariant,
   Split,
   SplitItem,
   Stack,
@@ -20,7 +18,12 @@ import {
   ToolbarFilter,
   ToolbarGroup,
   ToolbarItem,
+  InputGroupItem,
 } from '@patternfly/react-core';
+import {
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { SearchIcon } from '@patternfly/react-icons';
 import * as classnames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
@@ -278,7 +281,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                     <SplitItem>
                       <ToolbarItem>
                         <FormPFSelect
-                          variant={SelectVariant.single}
+                          variant={SelectVariantDeprecated.single}
                           aria-label={t('kubevirt-plugin~Project')}
                           onSelect={(e, val: string) =>
                             setNamespace(val === allProjects ? undefined : val)
@@ -313,9 +316,9 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                               ? [allProjects, ...namespaces.sort()]
                               : namespaces.sort()
                             ).map((ns) => (
-                              <SelectOption key={ns} value={ns}>
+                              <SelectOptionDeprecated key={ns} value={ns}>
                                 <ResourceName kind={ProjectModel.kind} name={ns} />
-                              </SelectOption>
+                              </SelectOptionDeprecated>
                             ))}
                           </>
                         </FormPFSelect>
@@ -332,7 +335,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                         }}
                       >
                         <FormPFSelect
-                          variant={SelectVariant.checkbox}
+                          variant={SelectVariantDeprecated.checkbox}
                           aria-label={t('kubevirt-plugin~Template provider')}
                           onSelect={(e, val) => onSelect('provider', val.toString())}
                           selections={filters.provider}
@@ -344,9 +347,9 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                           className="kv-select-template__filter"
                         >
                           {templateProviders(t).map((tp) => (
-                            <SelectOption key={tp.id} value={tp.id}>
+                            <SelectOptionDeprecated key={tp.id} value={tp.id}>
                               {tp.title}
-                            </SelectOption>
+                            </SelectOptionDeprecated>
                           ))}
                         </FormPFSelect>
                       </ToolbarFilter>
@@ -359,7 +362,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                         categoryName={{ key: 'bootSource', name: t('kubevirt-plugin~Boot source') }}
                       >
                         <FormPFSelect
-                          variant={SelectVariant.checkbox}
+                          variant={SelectVariantDeprecated.checkbox}
                           aria-label={t('kubevirt-plugin~Boot source')}
                           onSelect={(e, val) => onSelect('bootSource', val.toString())}
                           selections={filters.bootSource}
@@ -370,30 +373,34 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                           }
                           className="kv-select-template__filter"
                         >
-                          <SelectOption value={BOOT_SOURCE_AVAILABLE} />
-                          <SelectOption value={BOOT_SOURCE_REQUIRED} />
+                          <SelectOptionDeprecated value={BOOT_SOURCE_AVAILABLE} />
+                          <SelectOptionDeprecated value={BOOT_SOURCE_REQUIRED} />
                         </FormPFSelect>
                       </ToolbarFilter>
                     </SplitItem>
                   </Split>
                 </ToolbarGroup>
                 <ToolbarItem>
-                  <InputGroup>
-                    <TextInput
-                      name="textFilter"
-                      id="textFilter"
-                      type="search"
-                      aria-label={t('kubevirt-plugin~text filter')}
-                      onChange={(text) => onSelect('text', text)}
-                      value={filters.text || ''}
-                      placeholder={t('kubevirt-plugin~Search by name, OS ...')}
-                    />
-                    <Button
-                      variant={ButtonVariant.control}
-                      aria-label={t('kubevirt-plugin~Search')}
-                    >
-                      <SearchIcon />
-                    </Button>
+                  <InputGroup translate={t}>
+                    <InputGroupItem isFill>
+                      <TextInput
+                        name="textFilter"
+                        id="textFilter"
+                        type="search"
+                        aria-label={t('kubevirt-plugin~text filter')}
+                        onChange={(_event, text) => onSelect('text', text)}
+                        value={filters.text || ''}
+                        placeholder={t('kubevirt-plugin~Search by name, OS ...')}
+                      />
+                    </InputGroupItem>
+                    <InputGroupItem>
+                      <Button
+                        variant={ButtonVariant.control}
+                        aria-label={t('kubevirt-plugin~Search')}
+                      >
+                        <SearchIcon />
+                      </Button>
+                    </InputGroupItem>
                   </InputGroup>
                 </ToolbarItem>
               </ToolbarContent>

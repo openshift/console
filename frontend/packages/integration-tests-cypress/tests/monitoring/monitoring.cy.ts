@@ -23,7 +23,8 @@ const shouldBeWatchdogSilencePage = () => {
   detailsPage.labelShouldExist('alertname=Watchdog');
 };
 
-describe('Monitoring: Alerts', () => {
+// TODO, remove since these have been moved to https://github.com/openshift/monitoring-plugin
+xdescribe('Monitoring: Alerts', () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);

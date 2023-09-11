@@ -1,7 +1,7 @@
 html,
 body,
 #app,
-.pf-c-drawer {
+.pf-v5-c-drawer {
   height: 100%;
 }
 
@@ -30,7 +30,7 @@ body,
   height: 100%; // doesn't work on safari without height
 }
 
-.co-m-app__content > .pf-c-page {
+.co-m-app__content > .pf-v5-c-page {
   height: 0;
   flex: 1;
 }
@@ -60,10 +60,11 @@ body,
 
     &--bordered {
       @media (max-width: $screen-sm-max) {
-        border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+        border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
       }
       @media (min-width: $screen-md-min) {
-        border-left: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+        border-left: var(--pf-v5-global--BorderWidth--sm) solid
+          var(--pf-v5-global--BorderColor--100);
       }
     }
   }

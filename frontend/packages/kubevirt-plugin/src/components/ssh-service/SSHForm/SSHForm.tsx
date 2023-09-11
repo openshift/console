@@ -11,7 +11,7 @@ export type SSHFormProps = { className?: string; vm?: VMIKind | VMKind };
 const SSHForm: React.FC<SSHFormProps> = ({ vm, className = '' }) => {
   const { key, isSecretLoaded, secretLoadingError } = useSSHKeys(vm);
   return (
-    <Stack className={`pf-global--BackgroundColor--100 ${className}`}>
+    <Stack className={`pf-v5-global--BackgroundColor--100 ${className}`}>
       {key || isSecretLoaded || secretLoadingError ? <SSHFormKey /> : <Spinner size="lg" />}
     </Stack>
   );

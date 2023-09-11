@@ -200,6 +200,7 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
 
   // Extract types from Items
   const onListChange = (
+    _event,
     newEnabledOptions: React.ReactElement<ItemProps>[],
     newDisabledOptions: React.ReactElement<ItemProps>[],
   ) => {
@@ -239,7 +240,7 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
 
   return (
     <FormSection title={t('devconsole~Developer catalog')} data-test="catalog-types form-section">
-      <FormHelperText isHidden={false}>
+      <FormHelperText>
         {t(
           'devconsole~Another option to customize and standardize your development process. As an admin, you can disable the complete Developer Catalog, or individual sub-catalogs (available as Types in the Developer Catalog). Also here the "Search" and "Topology" will still show such resources.',
         )}

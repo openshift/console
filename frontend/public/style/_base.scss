@@ -2,7 +2,7 @@
 // Please DO NOT add rules of this type.
 
 dd {
-  margin-bottom: var(--pf-global--spacer--lg);
+  margin-bottom: var(--pf-v5-global--spacer--lg);
 }
 
 dd:last-child {
@@ -15,14 +15,14 @@ dl {
 
 // match pf4 styling / table col head styling
 dt {
-  font-weight: var(--pf-global--FontWeight--bold);
+  font-weight: var(--pf-v5-global--FontWeight--bold);
 }
 
 fieldset {
   border: 0;
 }
 
-input[type="number"] {
+input[type='number'] {
   -webkit-appearance: textfield;
   appearance: textfield;
   max-width: 100px;
@@ -32,7 +32,7 @@ input[type="number"] {
   }
 }
 
-input[type="radio"] {
+input[type='radio'] {
   margin-right: 7px;
 }
 

@@ -14,7 +14,7 @@ const TaskEdge: React.FC<{ element: Edge }> = ({ element }) => {
         startPoint.clone().translate(sourceNode.getBounds().width / 2 - 1, 0),
         endPoint.clone().translate(-targetNode.getBounds().width / 2, 0),
       )}
-      stroke="var(--pf-global--BorderColor--light-100)"
+      stroke="var(--pf-v5-global--BorderColor--light-100)"
       fill="none"
       transform="translate(0.5,0.5)"
     />

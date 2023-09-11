@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Icon } from '@patternfly/react-core';
 import { LayerGroupIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
@@ -30,7 +31,9 @@ const DevfileInfo: React.FC<DevfileInfoProps> = ({ devfileSample }) => {
             </span>
           </div>
         ) : (
-          <LayerGroupIcon size="xl" />
+          <Icon size="xl">
+            <LayerGroupIcon />
+          </Icon>
         )}
         &nbsp;
         <div>

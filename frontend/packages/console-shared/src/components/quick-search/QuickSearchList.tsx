@@ -32,7 +32,10 @@ interface QuickSearchListProps {
   searchTerm: string;
   namespace: string;
   limitItemCount?: number;
-  onSelectListItem: (itemId: string) => void;
+  onSelectListItem: (
+    event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>,
+    itemId: string,
+  ) => void;
   onListChange?: (items: number) => void;
   closeModal: () => void;
 }
@@ -118,7 +121,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                       </div>
                     </DataListCell>,
                     <DataListCell
-                      style={{ paddingTop: 'var(--pf-global--spacer--sm)' }}
+                      style={{ paddingTop: 'var(--pf-v5-global--spacer--sm)' }}
                       width={2}
                       wrapModifier="truncate"
                       key={`${item.uid}-name`}
@@ -159,7 +162,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
               id={catalogLink.catalogType}
               to={catalogLink.to}
               key={catalogLink.catalogType}
-              style={{ fontSize: 'var(--pf-global--FontSize--sm)' }}
+              style={{ fontSize: 'var(--pf-v5-global--FontSize--sm)' }}
             >
               {catalogLink.label}
             </Link>

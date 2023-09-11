@@ -8,15 +8,12 @@ import {
   EmptyStateVariant,
   PerPageOptions,
 } from '@patternfly/react-core';
+import { ISortBy, sortable, TableGridBreakpoint, TableVariant } from '@patternfly/react-table';
 import {
-  ISortBy,
-  sortable,
   Table as PFTable,
-  TableBody,
-  TableGridBreakpoint,
-  TableHeader,
-  TableVariant,
-} from '@patternfly/react-table';
+  TableBody as TableBodyDeprecated,
+  TableHeader as TableHeaderDeprecated,
+} from '@patternfly/react-table/deprecated';
 
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 
@@ -198,8 +195,8 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries, namespace, custo
           sortBy={sortBy}
           variant={TableVariant.compact}
         >
-          <TableHeader />
-          <TableBody />
+          <TableHeaderDeprecated />
+          <TableBodyDeprecated />
         </PFTable>
       </div>
       <TablePagination

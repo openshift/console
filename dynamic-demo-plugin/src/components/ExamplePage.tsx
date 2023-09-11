@@ -34,7 +34,7 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
           <Title headingLevel="h1">{title}</Title>
         </PageSection>
       }
-      groupProps={{ sticky: 'top' }}
+      groupProps={{ stickyOnBreakpoint: { 'default': 'top' }}}
     >
       <PageSection>
         <Stack hasGutter>

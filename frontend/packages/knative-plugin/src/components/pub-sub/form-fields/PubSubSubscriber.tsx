@@ -56,7 +56,7 @@ const PubSubSubscriber: React.FC = () => {
     >
       {resourceAlert && (
         <>
-          <Alert variant="default" title={t('knative-plugin~No Subscriber available')} isInline>
+          <Alert variant="custom" title={t('knative-plugin~No Subscriber available')} isInline>
             {t(
               'knative-plugin~To create a Subscriber, first create a Knative Service from the Add page.',
             )}

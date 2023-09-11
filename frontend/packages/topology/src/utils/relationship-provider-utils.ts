@@ -4,6 +4,7 @@ import {
   GraphElement,
   isEdge,
   isNode,
+  Node,
 } from '@patternfly/react-topology';
 import {
   canDropEdgeOnNode,
@@ -54,14 +55,15 @@ export const getRelationshipProvider = (): DropTargetSpec<
   return {
     accept: [EDGE_DRAG_TYPE, CREATE_CONNECTOR_DROP_TYPE],
     canDrop: (item, monitor, props) => {
+      const node = props.element as Node;
       if (isEdge(item)) {
-        return canDropEdgeOnNode(monitor.getOperation()?.type, item, props.element);
+        return canDropEdgeOnNode(monitor.getOperation()?.type, item, node);
       }
-      if (!props.element || item === props.element) {
+      if (!node || item === node) {
         return false;
       }
       const relationshipExtension = getRelExtension(monitor, props);
-      return !!relationshipExtension && !isEdgeConnected(monitor, props.element);
+      return !!relationshipExtension && !isEdgeConnected(monitor, node);
     },
     collect: (monitor, props) => {
       const relationshipExtension = getRelExtension(monitor, props);

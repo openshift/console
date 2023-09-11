@@ -25,7 +25,7 @@ export const URLSource: React.FC<URLSourceProps> = React.memo(
           isDisabled={dataVolumeWrapper.getType() !== DataVolumeSourceType.HTTP}
         >
           <TextInput
-            onChange={(url) =>
+            onChange={(_event, url) =>
               onProvisionSourceStorageChange({
                 ...storage,
                 dataVolume: new DataVolumeWrapper(storage?.dataVolume, true)

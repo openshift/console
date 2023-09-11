@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SelectVariant } from '@patternfly/react-core';
+import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { SelectInputField, SelectInputOption } from '@console/shared';
@@ -31,7 +31,7 @@ const PortInputField: React.FC<PortInputFieldProps> = ({ defaultPort }) => {
       placeholderText={placeholderPort.toString()}
       helpText={t('devconsole~Target port for traffic.')}
       options={portOptions}
-      variant={SelectVariant.typeahead}
+      variant={SelectVariantDeprecated.typeahead}
       isInputValuePersisted
       noResultsFoundText={t('devconsole~No results found')}
       toggleOnSelection

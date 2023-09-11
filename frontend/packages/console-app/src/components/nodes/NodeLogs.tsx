@@ -5,10 +5,13 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
-  Select,
-  SelectOption,
-  Title,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import classnames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
@@ -75,7 +78,7 @@ const LogControls: React.FC<LogControlsProps> = ({
   const options = (items) =>
     items.map((value) => {
       return (
-        <SelectOption
+        <SelectOptionDeprecated
           key={value}
           value={value}
           className={classnames({ 'co-node-logs__log-select-option': value.length > 50 })}
@@ -88,7 +91,7 @@ const LogControls: React.FC<LogControlsProps> = ({
     <div className="co-toolbar">
       <div className="co-toolbar__group co-toolbar__group--left">
         <div className="co-toolbar__item">
-          <Select
+          <SelectDeprecated
             aria-label={t('public~Select a path')}
             onToggle={onTogglePath}
             onSelect={onChangePath}
@@ -96,7 +99,7 @@ const LogControls: React.FC<LogControlsProps> = ({
             isOpen={isPathOpen}
           >
             {options(pathItems)}
-          </Select>
+          </SelectDeprecated>
         </div>
         {isJournal && <NodeLogsFilterUnit onChangeUnit={onChangeUnit} unit={unit} />}
         {!isJournal && (
@@ -105,7 +108,7 @@ const LogControls: React.FC<LogControlsProps> = ({
               <LoadingInline />
             ) : (
               logFilenamesExist && (
-                <Select
+                <SelectDeprecated
                   aria-label={logLabel}
                   placeholderText={logLabel}
                   onToggle={onToggleFilename}
@@ -115,7 +118,7 @@ const LogControls: React.FC<LogControlsProps> = ({
                   className="co-node-logs__log-select"
                 >
                   {options(logFilenames)}
-                </Select>
+                </SelectDeprecated>
               )
             )}
           </div>
@@ -133,7 +136,7 @@ const LogControls: React.FC<LogControlsProps> = ({
             id="wrapLogLines"
             isChecked={isWrapLines}
             data-checked-state={isWrapLines}
-            onChange={(checked: boolean) => {
+            onChange={(_event, checked: boolean) => {
               setWrapLines(checked);
             }}
           />
@@ -342,18 +345,25 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
         {isLoadingLog ? (
           !isJournal && !logFilename ? (
             <EmptyState variant={EmptyStateVariant.full} isFullHeight>
-              <Title headingLevel="h2" size="lg">
-                {isLoadingFilenames ? (
-                  <LoadingInline />
-                ) : logFilenamesExist ? (
-                  t('public~No log file selected')
-                ) : (
-                  t('public~No log files exist')
+              <EmptyStateHeader
+                titleText={
+                  <>
+                    {isLoadingFilenames ? (
+                      <LoadingInline />
+                    ) : logFilenamesExist ? (
+                      t('public~No log file selected')
+                    ) : (
+                      t('public~No log files exist')
+                    )}
+                  </>
+                }
+                headingLevel="h2"
+              />
+              <EmptyStateFooter>
+                {logFilenamesExist && (
+                  <EmptyStateBody>{t('public~Select a log file above')}</EmptyStateBody>
                 )}
-              </Title>
-              {logFilenamesExist && (
-                <EmptyStateBody>{t('public~Select a log file above')}</EmptyStateBody>
-              )}
+              </EmptyStateFooter>
             </EmptyState>
           ) : (
             <LoadingBox />

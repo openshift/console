@@ -13,14 +13,14 @@ $overview-sidebar-width: 550px;
   .overview__sidebar {
     background: #fff;
     bottom: 0;
-    box-shadow: var(--pf-global--BoxShadow--md);
+    box-shadow: var(--pf-v5-global--BoxShadow--md);
     display: none;
     position: absolute;
     right: 0;
     top: 0;
     width: calc(100% - 15px);
     z-index: 5;
-    @media(min-width: $screen-sm-min) {
+    @media (min-width: $screen-sm-min) {
       max-width: $overview-sidebar-width;
     }
   }
@@ -33,9 +33,7 @@ $overview-sidebar-width: 550px;
   .overview__sidebar-appear-active {
     opacity: 1;
     transform: translateX(0);
-    transition:
-      opacity 175ms ease-out,
-      transform 225ms ease-out;
+    transition: opacity 175ms ease-out, transform 225ms ease-out;
   }
 
   &.overview--sidebar-shown {
@@ -44,7 +42,7 @@ $overview-sidebar-width: 550px;
       flex-direction: column;
     }
 
-    @media(min-width: $screen-lg-min) {
+    @media (min-width: $screen-lg-min) {
       .overview__main-column {
         margin-right: $overview-sidebar-width;
       }
@@ -61,8 +59,8 @@ $overview-sidebar-width: 550px;
   padding-top: 5px;
 
   .co-m-pane__heading {
-    font-size: var(--pf-global--FontSize--xl);
-    margin: 0 20px var(--pf-global--spacer--md);
+    font-size: var(--pf-v5-global--FontSize--xl);
+    margin: 0 20px var(--pf-v5-global--spacer--md);
   }
 
   .co-actions-menu {
@@ -71,7 +69,7 @@ $overview-sidebar-width: 550px;
 }
 
 .overview__pod-donut-sm {
-  width: var(--pf-global--icon--FontSize--lg);
+  width: var(--pf-v5-global--icon--FontSize--lg);
 }
 
 .resource-overview {
@@ -86,7 +84,7 @@ $overview-sidebar-width: 550px;
 .resource-overview__body {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--pf-global--spacer--lg);
+  gap: var(--pf-v5-global--spacer--lg);
 }
 
 .resource-overview__details,
@@ -106,7 +104,7 @@ $overview-sidebar-width: 550px;
 
 .sidebar__section-view-all {
   font-size: 14px;
-  margin-left: var(--pf-global--spacer--sm);
+  margin-left: var(--pf-v5-global--spacer--sm);
 }
 
 .sidebar__section-owner-operator-heading {
@@ -114,5 +112,5 @@ $overview-sidebar-width: 550px;
 }
 
 .sidebar__section-owner-reference-operator {
-  padding-left: var(--pf-global--spacer--sm);
+  padding-left: var(--pf-v5-global--spacer--sm);
 }

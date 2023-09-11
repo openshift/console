@@ -1,7 +1,7 @@
 // Use this file to override styles from 3rd party dependencies
 
-form.pf-c-form {
-  --pf-c-form__helper-text--Color: var(--pf-global--Color--200);
+form.pf-v5-c-form {
+  --pf-v5-c-form__helper-text--Color: var(--pf-v5-global--Color--200);
 }
 
 // Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
@@ -21,22 +21,22 @@ form.pf-c-form {
     width: 100%;
   }
   .catalog-tile-pf-icon {
-    @include catalog-logo-background(var(--pf-global--spacer--sm));
+    @include catalog-logo-background(var(--pf-v5-global--spacer--sm));
     height: 50px;
-    margin-bottom: calc(-1 * var(--pf-global--spacer--sm)); // Cancels bottom padding
-    margin-left: calc(-1 * var(--pf-global--spacer--sm)); // Align logo with left edge
-    margin-top: calc(-1 * var(--pf-global--spacer--sm)); // Align logo with top edge
+    margin-bottom: calc(-1 * var(--pf-v5-global--spacer--sm)); // Cancels bottom padding
+    margin-left: calc(-1 * var(--pf-v5-global--spacer--sm)); // Align logo with left edge
+    margin-top: calc(-1 * var(--pf-v5-global--spacer--sm)); // Align logo with top edge
     max-width: 100%;
     min-width: 50px; // prevent collapsed state before img loads
-    :where(.pf-theme-dark) & {
+    :where(.pf-v5-theme-dark) & {
       margin-left: 0;
       margin-top: 0;
     }
   }
 }
 
-.catalog-item-header-pf-icon  {
-  @include catalog-logo-background(var(--pf-global--spacer--sm));
+.catalog-item-header-pf-icon {
+  @include catalog-logo-background(var(--pf-v5-global--spacer--sm));
 }
 
 .co-catalog-page__overlay-header {
@@ -48,21 +48,21 @@ form.pf-c-form {
 
 // Override to remove accordion left border and prevent overlap https://bugzilla.redhat.com/show_bug.cgi?id=1942193
 .co-create-operand__form--toggle-no-border {
-  .pf-c-accordion__toggle.pf-m-expanded {
-    --pf-c-accordion__toggle--before--BackgroundColor: transparent;
+  .pf-v5-c-accordion__toggle.pf-m-expanded {
+    --pf-v5-c-accordion__toggle--before--BackgroundColor: transparent;
   }
 }
 
-.co-installed-operators .pf-c-table tbody > tr > * {
+.co-installed-operators .pf-v5-c-table tbody > tr > * {
   vertical-align: top; // PF defaults to baseline which doesn't align correctly when Operator logos are within the table
 }
 
-.co-toolbar-no-padding .pf-c-toolbar__content {
-  // use negative margins so that pf-c-toolbar__expandable-content extends to the edges at mobile
-  margin-left: -$pf-global-gutter;
-  margin-right: -$pf-global-gutter;
-  --pf-c-toolbar--PaddingTop: 0;
-  --pf-c-toolbar--RowGap: var(--pf-global--spacer--md);
+.co-toolbar-no-padding .pf-v5-c-toolbar__content {
+  // use negative margins so that pf-v5-c-toolbar__expandable-content extends to the edges at mobile
+  margin-left: -$pf-v5-global-gutter;
+  margin-right: -$pf-v5-global-gutter;
+  --pf-v5-c-toolbar--PaddingTop: 0;
+  --pf-v5-c-toolbar--RowGap: var(--pf-v5-global--spacer--md);
 }
 
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be
@@ -73,8 +73,8 @@ form.pf-c-form {
 
 // PatternFly 4 overrides
 
-.pf-c-about-modal-box {
-  --pf-c-about-modal-box__brand-image--Height: auto !important; // allow logo to be taller
+.pf-v5-c-about-modal-box {
+  --pf-v5-c-about-modal-box__brand-image--Height: auto !important; // allow logo to be taller
 
   &__brand {
     align-items: flex-start; // so logos don't stretch vertically
@@ -84,47 +84,47 @@ form.pf-c-form {
 
 // Webpack will not properly bundle the background-image from PatternFly
 @media only screen and (min-width: 576px) {
-  .pf-c-about-modal-box__hero {
+  .pf-v5-c-about-modal-box__hero {
     background-image: url('../imgs/pfbg_992.jpg') !important;
   }
 }
 
-.pf-c-about-modal-box__brand-image,
-.pf-c-brand {
+.pf-v5-c-about-modal-box__brand-image,
+.pf-v5-c-brand {
   max-width: 100%;
 }
 
-.pf-c-alert--top-margin {
-  margin-top: var(--pf-global--spacer--lg);
+.pf-v5-c-alert--top-margin {
+  margin-top: var(--pf-v5-global--spacer--lg);
 }
 
-.pf-c-app-launcher__group-title {
+.pf-v5-c-app-launcher__group-title {
   // Reset font to RedHatText so it doesn't appear too bold
-  font-family: var(--pf-global--FontFamily--sans-serif);
+  font-family: var(--pf-v5-global--FontFamily--sans-serif);
 }
 
-.pf-c-button--align-right {
+.pf-v5-c-button--align-right {
   margin-left: auto !important;
 }
 
-.pf-c-button {
+.pf-v5-c-button {
   &:hover,
   &:focus {
-    .pf-c-button-icon--plain {
-      color: var(--pf-c-button--m-plain--hover--Color);
+    .pf-v5-c-button-icon--plain {
+      color: var(--pf-v5-c-button--m-plain--hover--Color);
     }
   }
 }
 
-.pf-c-button-icon--plain {
-  color: var(--pf-c-button--m-plain--Color);
+.pf-v5-c-button-icon--plain {
+  color: var(--pf-v5-c-button--m-plain--Color);
 }
 
-.pf-c-button.pf-c-button--no-default-values {
-  --pf-c-button--PaddingTop: 0;
-  --pf-c-button--PaddingRight: 0;
-  --pf-c-button--PaddingBottom: 0;
-  --pf-c-button--PaddingLeft: 0;
+.pf-v5-c-button.pf-v5-c-button--no-default-values {
+  --pf-v5-c-button--PaddingTop: 0;
+  --pf-v5-c-button--PaddingRight: 0;
+  --pf-v5-c-button--PaddingBottom: 0;
+  --pf-v5-c-button--PaddingLeft: 0;
 
   border: 0;
   font-size: unset;
@@ -134,144 +134,141 @@ form.pf-c-form {
   white-space: normal;
 }
 
-.pf-c-button.pf-m-inline {
-  text-align: left; // override default .pf-c-button text centering
+.pf-v5-c-button.pf-m-inline {
+  text-align: left; // override default .pf-v5-c-button text centering
 }
 
-.pf-c-button.pf-m-link--align-left {
-  --pf-c-button--PaddingLeft: 0;
+.pf-v5-c-button.pf-m-link--align-left {
+  --pf-v5-c-button--PaddingLeft: 0;
 }
 
-.pf-c-button.pf-m-link--align-right {
-  --pf-c-button--PaddingRight: 0;
+.pf-v5-c-button.pf-m-link--align-right {
+  --pf-v5-c-button--PaddingRight: 0;
 }
 
 @media print {
-  .pf-c-data-list__cell {
+  .pf-v5-c-data-list__cell {
     padding: 1px !important;
   }
 }
 
 //set pf datalist item background to transparent
-.pf-c-data-list__item--transparent-bg {
-  --pf-c-data-list__item--BackgroundColor: transparent;
+.pf-v5-c-data-list__item--transparent-bg {
+  --pf-v5-c-data-list__item--BackgroundColor: transparent;
 }
 
-// PF components that calculate their correct height based on --pf-global--FontSize--md: 1rem
-.pf-c-modal-box,
-.pf-c-switch {
-  --pf-global--FontSize--md: 1rem;
+// PF components that calculate their correct height based on --pf-v5-global--FontSize--md: 1rem
+.pf-v5-c-modal-box,
+.pf-v5-c-switch {
+  --pf-v5-global--FontSize--md: 1rem;
 }
 
 // Page
-.pf-c-page {
+.pf-v5-c-page {
   // Positions fullscreen terminal on top of mast header
   &__main.default-overflow {
-    z-index: calc(var(--pf-c-page__header--ZIndex) + 50);
+    z-index: calc(var(--pf-v5-c-page__header--ZIndex) + 50);
   }
 
   // Apply to primary content section to prevent yaml editor and topology sections from collapsing
-  .pf-page__main-section--flex {
+  .pf-v5-page__main-section--flex {
     display: flex;
     flex-direction: column;
     height: 100%;
   }
 }
 
-// specificity targeting form elements to override --pf-global--FontSize--md
-.pf-c-page,
+// specificity targeting form elements to override --pf-v5-global--FontSize--md
+.pf-v5-c-page,
 .modal-dialog {
-  .pf-c-app-launcher,
-  .pf-c-button,
-  .pf-c-dropdown,
-  .pf-c-dropdown__menu-item,
-  .pf-c-dropdown__toggle,
-  .pf-c-form-control {
+  .pf-v5-c-app-launcher,
+  .pf-v5-c-button,
+  .pf-v5-c-dropdown,
+  .pf-v5-c-dropdown__menu-item,
+  .pf-v5-c-dropdown__toggle,
+  .pf-v5-c-form-control {
     font-size: $font-size-base;
     height: auto;
   }
 
-  .pf-l-stack {
+  .pf-v5-l-stack {
     font-size: $font-size-base;
   }
 
-  .pf-c-form-control.pf-m-success,
-  .pf-c-form-control[aria-invalid='true'] {
-    --pf-global--FontSize--md: #{$font-size-base};
+  .pf-v5-c-form-control.pf-m-success,
+  .pf-v5-c-form-control[aria-invalid='true'] {
+    --pf-v5-global--FontSize--md: #{$font-size-base};
   }
 }
 
 // reset toggles to original size
-// overriding .pf-c-button rule above
-.pf-c-masthead__content {
-  .pf-c-app-launcher__toggle,
-  .pf-c-dropdown__toggle,
-  .pf-c-menu-toggle,
-  .pf-c-notification-badge {
-    font-size: $pf-header-icon-fontsize !important;
+// overriding .pf-v5-c-button rule above
+.pf-v5-c-masthead__content {
+  .pf-v5-c-app-launcher__toggle,
+  .pf-v5-c-dropdown__toggle,
+  .pf-v5-c-menu-toggle,
+  .pf-v5-c-notification-badge {
+    font-size: $pf-v5-header-icon-fontsize !important;
   }
 }
 
 // reset toggle to original size
-// overriding .pf-c-button rule above
-.pf-c-masthead__toggle .pf-c-button {
-  font-size: var(--pf-c-masthead__toggle--c-button--FontSize);
+// overriding .pf-v5-c-button rule above
+.pf-v5-c-masthead__toggle .pf-v5-c-button {
+  font-size: var(--pf-v5-c-masthead__toggle--c-button--FontSize);
 }
 
-
-:where(:root:not(.pf-theme-dark)) .pf-c-page {
-  --pf-c-page__sidebar--BoxShadow: none;
+:where(:root:not(.pf-v5-theme-dark)) .pf-v5-c-page {
+  --pf-v5-c-page__sidebar--BoxShadow: none;
 }
 
-.pf-c-page__sidebar {
-  
+.pf-v5-c-page__sidebar {
   @media print {
     display: none !important;
   }
 
   // Perspective switcher
-  &.pf-m-dark .pf-c-dropdown {
-    --pf-global--Color--100: var(--pf-global--Color--dark-100);
+  &.pf-m-dark .pf-v5-c-dropdown {
+    --pf-v5-global--Color--100: var(--pf-v5-global--Color--dark-100);
   }
 
-  .pf-c-nav {
-    --pf-c-nav__list-link--PaddingRight: var(--pf-global--spacer--sm);
-    --pf-c-nav__list-link--PaddinLeft: var(--pf-global--spacer--md);
-    --pf-c-nav__list-link--after--Left: var(--pf-global--spacer--md);
-    --pf-c-nav__link--FontSize: #{$co-side-nav-section-font-size};
-    --pf-c-nav__subnav__link--FontSize: #{$co-side-nav-font-size};
+  .pf-v5-c-nav {
+    --pf-v5-c-nav__list-link--PaddingRight: var(--pf-v5-global--spacer--sm);
+    --pf-v5-c-nav__list-link--PaddinLeft: var(--pf-v5-global--spacer--md);
+    --pf-v5-c-nav__list-link--after--Left: var(--pf-v5-global--spacer--md);
+    --pf-v5-c-nav__link--FontSize: #{$co-side-nav-section-font-size};
+    --pf-v5-c-nav__subnav__link--FontSize: #{$co-side-nav-font-size};
 
-    @media screen and (min-width: $pf-global--breakpoint--xl) {
-      --pf-c-nav__list-link--PaddingRight: var(--pf-global--spacer--md);
-      --pf-c-nav__list-link--PaddinLeft: var(--pf-global--spacer--lg);
-      --pf-c-nav__list-link--after--Left: var(--pf-global--spacer--lg);
-      --pf-c-nav__simple-list--nested__separator--MarginLeft: var(--pf-global--spacer--xl);
-      --pf-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-global--spacer--xl);
+    @media screen and (min-width: $pf-v5-global--breakpoint--xl) {
+      --pf-v5-c-nav__list-link--PaddingRight: var(--pf-v5-global--spacer--md);
+      --pf-v5-c-nav__list-link--PaddinLeft: var(--pf-v5-global--spacer--lg);
+      --pf-v5-c-nav__list-link--after--Left: var(--pf-v5-global--spacer--lg);
+      --pf-v5-c-nav__simple-list--nested__separator--MarginLeft: var(--pf-v5-global--spacer--xl);
+      --pf-v5-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-v5-global--spacer--xl);
     }
 
-    .pf-c-nav__link {
+    .pf-v5-c-nav__link {
       font-size: $co-side-nav-section-font-size;
     }
 
-    .pf-c-nav__subnav {
-      .pf-c-nav__link {
+    .pf-v5-c-nav__subnav {
+      .pf-v5-c-nav__link {
         font-size: $co-side-nav-font-size;
       }
     }
   }
-
 }
 
 // Reset our tables to our base font-size
-.pf-c-table {
+.pf-v5-c-table {
   tr > * {
-    --pf-c-table--cell--FontSize: $font-size-base;
+    --pf-v5-c-table--cell--FontSize: $font-size-base;
   }
 }
 
 // Remove when upstream issue is addressed. https://github.com/patternfly/patternfly/issues/4889
-.pf-theme-dark .pf-c-card  {
-  --pf-c-card--BoxShadow: var(--pf-global--BoxShadow--md);
+.pf-v5-theme-dark .pf-v5-c-card {
+  --pf-v5-c-card--BoxShadow: var(--pf-v5-global--BoxShadow--md);
 }
 
 .table {
@@ -283,14 +280,14 @@ form.pf-c-form {
     vertical-align: middle !important;
   }
   th {
-    font-weight: var(--pf-global--FontWeight--bold);
+    font-weight: var(--pf-v5-global--FontWeight--bold);
     padding-top: 0 !important;
   }
   thead > tr > th {
     border-bottom: 0;
   }
   tr:last-child {
-    border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
+    border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
   }
 }
 
@@ -300,12 +297,12 @@ form.pf-c-form {
   border-right: 1px solid transparent;
 }
 
-button.pf-c-dropdown__menu-item.pf-m-disabled {
+button.pf-v5-c-dropdown__menu-item.pf-m-disabled {
   // enables tooltips for disabled menu items
   pointer-events: auto;
 }
 
-#modal-container .pf-c-backdrop {
+#modal-container .pf-v5-c-backdrop {
   position: absolute !important;
 }
 
@@ -313,17 +310,17 @@ button.pf-c-dropdown__menu-item.pf-m-disabled {
   margin-bottom: ($form-group-margin-bottom * 2);
 }
 
-// Patternfly defaults to globally removing the list element bullets via ul {list-style:none} and selectively applies it using their List component via ul.pf-c-list. We chose to override this because of the amount of ul elements in our codebase that expect the default to be ul {list-style:disc}
+// Patternfly defaults to globally removing the list element bullets via ul {list-style:none} and selectively applies it using their List component via ul.pf-v5-c-list. We chose to override this because of the amount of ul elements in our codebase that expect the default to be ul {list-style:disc}
 ul {
   list-style: disc;
 }
 // And here we explicitly remove it from PF components so it doesn't show.
-ul.pf-c-alert-group,
-ul.pf-c-nav__list,
-ul.pf-c-options-menu__menu,
-ul.pf-c-select__menu,
-ul.pf-c-simple-list__list,
-ul.pf-c-tree-view__list {
+ul.pf-v5-c-alert-group,
+ul.pf-v5-c-nav__list,
+ul.pf-v5-c-options-menu__menu,
+ul.pf-v5-c-select__menu,
+ul.pf-v5-c-simple-list__list,
+ul.pf-v5-c-tree-view__list {
   list-style: none !important;
 }
 
@@ -333,23 +330,22 @@ ul.pf-c-tree-view__list {
 
 .odc-topology {
   .pf-topology-content {
-    background-color: var(--pf-global--BackgroundColor--200);
+    background-color: var(--pf-v5-global--BackgroundColor--200);
   }
 }
 
 .pfext-quick-start-footer {
-  background-color: var(--pf-global--BackgroundColor--100);
+  background-color: var(--pf-v5-global--BackgroundColor--100);
 }
 
 // TODO Remove this override when skip to content CSS is figured out.
-.pf-c-skip-to-content {
+.pf-v5-c-skip-to-content {
   position: absolute !important;
 }
 
-
 .properties-side-panel-pf-property-value {
-  .pf-c-alert__title,
-  .pf-c-select__toggle {
+  .pf-v5-c-alert__title,
+  .pf-v5-c-select__toggle {
     font-size: $font-size-base;
   }
 }

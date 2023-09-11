@@ -197,7 +197,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
         </ToolbarGroup>
         <ToolbarGroup
           variant={ToolbarGroupVariant['button-group']}
-          alignment={{ default: 'alignRight' }}
+          align={{ default: 'alignRight' }}
         >
           <ToolbarItem
             className={

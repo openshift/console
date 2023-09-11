@@ -7,7 +7,7 @@ import {
   EmptyState,
   EmptyStateIcon,
   EmptyStateBody,
-  Title,
+  EmptyStateHeader,
 } from '@patternfly/react-core';
 import { LockIcon } from '@patternfly/react-icons';
 import Helmet from 'react-helmet';
@@ -83,10 +83,11 @@ const ClusterConfigurationPage: React.FC<ClusterConfigurationPageProps> = ({ mat
           <LoadingBox />
         ) : tabs.length === 0 ? (
           <EmptyState>
-            <EmptyStateIcon icon={LockIcon} />
-            <Title headingLevel="h1" size="lg">
-              {t('console-app~Insufficient permissions')}
-            </Title>
+            <EmptyStateHeader
+              titleText={<>{t('console-app~Insufficient permissions')}</>}
+              icon={<EmptyStateIcon icon={LockIcon} />}
+              headingLevel="h1"
+            />
             <EmptyStateBody>
               {t(
                 'console-app~You do not have sufficient permissions to read any cluster configuration.',
@@ -96,11 +97,11 @@ const ClusterConfigurationPage: React.FC<ClusterConfigurationPageProps> = ({ mat
         ) : (
           <>
             <Tabs isVertical activeKey={groupId} onSelect={onSelect}>
-              {tabs}
+              <>{tabs}</>
             </Tabs>
             {groupNotFound ? (
               /* Similar to a TabContent */
-              <section className="co-cluster-configuration-page pf-c-tab-content">
+              <section className="co-cluster-configuration-page pf-v5-c-tab-content">
                 <h1>{t('console-app~{{section}} not found', { section: groupId })}</h1>
               </section>
             ) : null}

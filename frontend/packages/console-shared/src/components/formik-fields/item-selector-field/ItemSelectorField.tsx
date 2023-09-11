@@ -2,11 +2,15 @@ import * as React from 'react';
 import {
   FormGroup,
   EmptyState,
-  Title,
-  EmptyStatePrimary,
   Button,
   TextInput,
   EmptyStateBody,
+  EmptyStateActions,
+  EmptyStateHeader,
+  EmptyStateFooter,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
 } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
@@ -14,6 +18,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
 import { useDebounceCallback } from '../../../hooks/debounce';
+import { RedExclamationCircleIcon } from '../../status';
 import { getFieldId } from '../field-utils';
 import SelectorCard from './SelectorCard';
 import './ItemSelectorField.scss';
@@ -112,7 +117,7 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
 
   const debounceFilterText = useDebounceCallback<(text: string) => void>(filterSources);
 
-  const handleFilterChange = (text: string) => {
+  const handleFilterChange = (_event, text: string) => {
     setFilterText(text);
     debounceFilterText(text);
   };
@@ -131,13 +136,7 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
   const errorMessage = !isValid ? selectedError : '';
 
   return (
-    <FormGroup
-      fieldId={fieldId}
-      helperTextInvalid={errorMessage}
-      validated={isValid ? 'default' : 'error'}
-      label={label}
-      isRequired
-    >
+    <FormGroup fieldId={fieldId} label={label} isRequired>
       {loadingItems ? (
         <LoadingInline />
       ) : (
@@ -160,15 +159,18 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
           )}
           {showFilter && itemCount === 0 ? (
             <EmptyState>
-              <Title headingLevel="h2" size="lg">
-                {t('console-shared~No results match the filter criteria')}
-              </Title>
-              {emptyStateMessage && <EmptyStateBody>{emptyStateMessage}</EmptyStateBody>}
-              <EmptyStatePrimary>
-                <Button variant="link" onClick={handleClearFilter}>
-                  {t('console-shared~Clear filter')}
-                </Button>
-              </EmptyStatePrimary>
+              <EmptyStateHeader
+                titleText={<>{t('console-shared~No results match the filter criteria')}</>}
+                headingLevel="h2"
+              />
+              <EmptyStateFooter>
+                {emptyStateMessage && <EmptyStateBody>{emptyStateMessage}</EmptyStateBody>}
+                <EmptyStateActions>
+                  <Button variant="link" onClick={handleClearFilter}>
+                    {t('console-shared~Clear filter')}
+                  </Button>
+                </EmptyStateActions>
+              </EmptyStateFooter>
             </EmptyState>
           ) : (
             <div
@@ -191,6 +193,16 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
             </div>
           )}
         </>
+      )}
+
+      {!isValid && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       )}
     </FormGroup>
   );

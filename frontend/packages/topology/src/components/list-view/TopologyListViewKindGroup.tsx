@@ -60,7 +60,7 @@ const TopologyListViewKindGroup: React.FC<TopologyListViewKindGroupProps> = ({
         <DataList
           aria-label={t('topology~{{resourceLabel}} sub-resources', { resourceLabel })}
           selectedDataListItemId={selectedIds[0]}
-          onSelectDataListItem={(id) => onSelect(selectedIds[0] === id ? [] : [id])}
+          onSelectDataListItem={(_event, id) => onSelect(selectedIds[0] === id ? [] : [id])}
         >
           {childNodes.map((child) => (
             <ListElementWrapper

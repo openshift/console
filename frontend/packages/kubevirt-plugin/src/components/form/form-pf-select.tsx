@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { Select, SelectProps } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectProps as SelectPropsDeprecated,
+} from '@patternfly/react-core/deprecated';
 
 export const FormPFSelect: React.FC<FormPFSelectProps> = ({
   onSelect,
@@ -11,10 +14,10 @@ export const FormPFSelect: React.FC<FormPFSelectProps> = ({
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <Select
+    <SelectDeprecated
       menuAppendTo={menuAppendTo}
       isOpen={isOpen}
-      onToggle={(isExpanded) => setIsOpen(isExpanded)}
+      onToggle={(_event, isExpanded) => setIsOpen(isExpanded)}
       onSelect={(e, v, i) => {
         onSelect(e, v, i);
         closeOnSelect && setIsOpen(false);
@@ -22,10 +25,10 @@ export const FormPFSelect: React.FC<FormPFSelectProps> = ({
       {...props}
     >
       {children}
-    </Select>
+    </SelectDeprecated>
   );
 };
 
-type FormPFSelectProps = Omit<SelectProps, 'onToggle' | 'isOpen'> & {
+type FormPFSelectProps = Omit<SelectPropsDeprecated, 'onToggle' | 'isOpen'> & {
   closeOnSelect?: boolean;
 };

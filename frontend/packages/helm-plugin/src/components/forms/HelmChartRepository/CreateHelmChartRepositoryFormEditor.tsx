@@ -101,7 +101,7 @@ const CreateHelmChartRepositoryFormEditor: React.FC<CreateHelmChartRepositoryFor
         textCollapsed={t('helm-plugin~Show advanced options')}
       >
         <FormSection>
-          <p className="pf-c-form__helper-text">
+          <p className="pf-v5-c-form__helper-text">
             {t(
               'helm-plugin~Add credentials and custom certificate authority (CA) certificates to connect to private helm chart repository.',
             )}

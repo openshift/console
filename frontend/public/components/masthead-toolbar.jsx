@@ -10,16 +10,18 @@ import {
   QuestionCircleIcon,
 } from '@patternfly/react-icons';
 import {
-  ApplicationLauncher,
-  ApplicationLauncherGroup,
-  ApplicationLauncherItem,
-  ApplicationLauncherSeparator,
   NotificationBadge,
   Toolbar,
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
+import {
+  ApplicationLauncher,
+  ApplicationLauncherGroup,
+  ApplicationLauncherItem,
+  ApplicationLauncherSeparator,
+} from '@patternfly/react-core/deprecated';
 import { Link } from 'react-router-dom';
 import {
   ACM_LINK_ID,
@@ -93,7 +95,7 @@ const SystemStatusButton = ({ statuspageData }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
     <a
-      className="pf-c-button pf-m-plain"
+      className="pf-v5-c-button pf-m-plain"
       aria-label={t('public~System status')}
       href={statuspageData.page.url}
       target="_blank"
@@ -619,11 +621,11 @@ class MastheadToolbarContents_ extends React.Component {
     }
 
     const userToggle = (
-      <span className="pf-c-dropdown__toggle">
+      <span className="pf-v5-c-dropdown__toggle">
         <span className="co-username" data-test="username">
           {username}
         </span>
-        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+        <CaretDownIcon className="pf-v5-c-dropdown__toggle-icon" />
       </span>
     );
 
@@ -668,7 +670,7 @@ class MastheadToolbarContents_ extends React.Component {
           <ToolbarContent>
             <MultiClusterToolbarGroup />
             <ToolbarGroup
-              alignment={{ default: 'alignRight' }}
+              align={{ default: 'alignRight' }}
               spacer={{ default: 'spacerNone' }}
               visibility={{ default: isMastheadStacked ? 'hidden' : 'visible' }}
             >
@@ -701,7 +703,7 @@ class MastheadToolbarContents_ extends React.Component {
                 )}
                 <Link
                   to={this._getImportYAMLPath()}
-                  className="pf-c-button pf-m-plain"
+                  className="pf-v5-c-button pf-m-plain"
                   aria-label={t('public~Import YAML')}
                   data-quickstart-id="qs-masthead-import"
                   data-test="import-yaml"
@@ -733,7 +735,7 @@ class MastheadToolbarContents_ extends React.Component {
               <ToolbarItem>{this._renderMenu(false)}</ToolbarItem>
             </ToolbarGroup>
             <ToolbarGroup
-              alignment={{ default: 'alignRight' }}
+              align={{ default: 'alignRight' }}
               spacer={{ default: 'spacerNone' }}
               visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
             >

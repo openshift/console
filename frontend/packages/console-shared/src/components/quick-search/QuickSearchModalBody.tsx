@@ -138,7 +138,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   };
 
   const onSearch = React.useCallback(
-    (value: string) => {
+    (_event: React.FormEvent<HTMLInputElement>, value: string) => {
       setSearchTerm(value);
       if (value) {
         const { filteredItems, viewAllLinks, catalogItemTypes } = searchCatalog(value);
@@ -160,7 +160,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     const searchInput = ref.current?.firstElementChild?.children?.[1] as HTMLInputElement;
     if (searchInput?.value) {
       document.activeElement !== searchInput && searchInput.focus();
-      onSearch('');
+      onSearch(null, '');
     } else {
       closeModal();
     }

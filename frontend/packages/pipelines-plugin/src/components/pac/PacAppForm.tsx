@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { FormGroup, TextInputTypes } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  TextInputTypes,
+} from '@patternfly/react-core';
 import { FormikProps, FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -41,9 +47,6 @@ const PacAppForm: React.FC<FormikProps<FormikValues>> = ({
           <FormGroup
             label={t('pipelines-plugin~GitHub application name')}
             isRequired
-            helperText={t(
-              'pipelines-plugin~Provide a unique name for your GitHub app, e.g. "pipelines-ci-clustername"',
-            )}
             fieldId="app-name-field"
           >
             <InputField
@@ -55,6 +58,16 @@ const PacAppForm: React.FC<FormikProps<FormikValues>> = ({
               aria-label={t('pipelines-plugin~Enter name of application')}
             />
             <input type="text" name="manifest" id="manifest" value={manifestVal} hidden />
+
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem>
+                  {t(
+                    'pipelines-plugin~Provide a unique name for your GitHub app, e.g. "pipelines-ci-clustername"',
+                  )}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
           </FormGroup>
           <PacPermissions />
           <ExternalLink

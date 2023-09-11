@@ -73,7 +73,7 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
     <Stack hasGutter key={metricsLevel} className="pipeline-metrics">
       <StackItem className="pipeline-metrics-dashboard__toolbar">
         {hasUpdatePermission && metricsLevel === PipelineMetricsLevel.PIPELINE_TASK_LEVEL && (
-          <Grid hasGutter style={{ marginBottom: 'var(--pf-global--spacer--lg)' }}>
+          <Grid hasGutter style={{ marginBottom: 'var(--pf-v5-global--spacer--lg)' }}>
             <GridItem xl2={12} xl={12} lg={12}>
               <PipelineMetricsQuickstart />
             </GridItem>

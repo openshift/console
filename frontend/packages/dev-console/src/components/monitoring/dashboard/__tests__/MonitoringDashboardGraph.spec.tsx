@@ -1,5 +1,7 @@
 import * as React from 'react';
+import { screen, render } from '@testing-library/react';
 import { shallow } from 'enzyme';
+import '@testing-library/jest-dom';
 import * as redux from 'react-redux';
 import { QueryBrowser } from '@console/shared/src/components/query-browser';
 import { t } from '../../../../../../../__mocks__/i18next';
@@ -41,10 +43,13 @@ describe('Monitoring Dashboard graph', () => {
 
   it('should add link to line graph', () => {
     monitoringDashboardGraphProps.graphType = GraphTypes.line;
-    const wrapper = shallow(<MonitoringDashboardGraph {...monitoringDashboardGraphProps} />);
-    expect(wrapper.find('PrometheusGraphLink').exists()).toBe(true);
-    expect(wrapper.find('PrometheusGraphLink').prop('query')).toEqual(
-      monitoringDashboardGraphProps.query,
+    render(<MonitoringDashboardGraph {...monitoringDashboardGraphProps} />);
+
+    const link = screen.getByRole('link', { name: 'View metrics for Memory usage' });
+
+    expect(link).toBeTruthy();
+    expect(link.getAttribute('href')).toContain(
+      'sum%28container_memory_working_set_bytes%7Bcontainer%21%3D%22%22%2C+namespace%3D%27test-project%27%7D%29+by+%28pod%29',
     );
   });
 });

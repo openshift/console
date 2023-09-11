@@ -1,13 +1,13 @@
 .kv-validation-cell__cell--error {
-  color: var(--pf-global--danger-color--100);
+  color: var(--pf-v5-global--danger-color--100);
 }
 .kv-validation-cell__cell--warning {
-  color: var(--pf-global--Color--200);
+  color: var(--pf-v5-global--Color--200);
 }
 
 .kv-validation-cell__additional-label {
-  color: var(--pf-global--warning-color--200);
-  padding-left: var(--pf-global--spacer--sm);
+  color: var(--pf-v5-global--warning-color--200);
+  padding-left: var(--pf-v5-global--spacer--sm);
 }
 
 .kv-validation-cell__cell--row-flex-direction {

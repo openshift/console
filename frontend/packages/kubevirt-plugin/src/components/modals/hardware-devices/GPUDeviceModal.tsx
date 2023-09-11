@@ -29,7 +29,7 @@ export const GPUDevicesModal: React.FC<GPUDevicesModalProps> = ({
   const { t } = useTranslation();
 
   const emptyState = (
-    <div className="pf-c-empty-state">{t('kubevirt-plugin~No GPU devices found')}</div>
+    <div className="pf-v5-c-empty-state">{t('kubevirt-plugin~No GPU devices found')}</div>
   );
 
   return (

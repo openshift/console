@@ -1,4 +1,4 @@
-form.kv-sysprep--main.pf-c-form {
+form.kv-sysprep--main.pf-v5-c-form {
   width: 40vw;
   grid-gap: 0;
 }
@@ -6,11 +6,11 @@ form.kv-sysprep--main.pf-c-form {
 .kv-sysprep--title {
   display: inline-flex;
   align-items: baseline;
-  margin-top: var(--pf-global--spacer--md);
+  margin-top: var(--pf-v5-global--spacer--md);
 }
 
 .kv-sysprep--error {
-  color: var(--pf-global--danger-color--200);
+  color: var(--pf-v5-global--danger-color--200);
 }
 
 .kv-sysprep-info {

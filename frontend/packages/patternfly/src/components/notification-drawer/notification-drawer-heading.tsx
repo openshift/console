@@ -8,20 +8,20 @@ const NotificationDrawerHeading: React.FC<NotificationDrawerHeadingProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <div className="pf-c-notification-drawer">
-      <div className="pf-c-notification-drawer__header">
-        <h1 className="pf-c-notification-drawer__header-title">
+    <div className="pf-v5-c-notification-drawer">
+      <div className="pf-v5-c-notification-drawer__header">
+        <h1 className="pf-v5-c-notification-drawer__header-title">
           {t('notification-drawer~Notifications')}
         </h1>
         {count && (
-          <span className="pf-c-notification-drawer__header-status">
+          <span className="pf-v5-c-notification-drawer__header-status">
             {t('notification-drawer~{{count}} unread', { count })}
           </span>
         )}
-        <div className="pf-c-notification-drawer__header-action">
-          <div className="pf-c-notification-drawer__header-action-close">
+        <div className="pf-v5-c-notification-drawer__header-action">
+          <div className="pf-v5-c-notification-drawer__header-action-close">
             <button
-              className="pf-c-button pf-m-plain"
+              className="pf-v5-c-button pf-m-plain"
               type="button"
               aria-label={t('notification-drawer~Close')}
               onClick={onClose}
@@ -31,8 +31,8 @@ const NotificationDrawerHeading: React.FC<NotificationDrawerHeadingProps> = ({
           </div>
         </div>
       </div>
-      <div className="pf-c-notification-drawer__body">
-        <div className="pf-c-notification-drawer__group-list">{children}</div>
+      <div className="pf-v5-c-notification-drawer__body">
+        <div className="pf-v5-c-notification-drawer__group-list">{children}</div>
       </div>
     </div>
   );

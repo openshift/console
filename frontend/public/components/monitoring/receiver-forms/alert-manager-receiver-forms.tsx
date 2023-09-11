@@ -423,7 +423,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
         >
           <label className="control-label co-required">{t('public~Receiver name')}</label>
           <input
-            className="pf-c-form-control"
+            className="pf-v5-c-form-control"
             type="text"
             value={formValues.receiverName}
             onChange={(e) =>
@@ -481,7 +481,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
         )}
 
         <ButtonBar errorMessage={saveErrorMsg || loadErrorMsg} inProgress={inProgress}>
-          <ActionGroup className="pf-c-form">
+          <ActionGroup className="pf-v5-c-form">
             <Button
               type="submit"
               variant="primary"

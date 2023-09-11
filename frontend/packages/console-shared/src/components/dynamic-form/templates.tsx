@@ -28,9 +28,7 @@ export const AtomicFieldTemplate: React.FC<FieldTemplateProps> = ({
       {!_.isEmpty(rawErrors) && (
         <>
           {_.map(rawErrors, (error) => (
-            <FormHelperText key={error} isHidden={false} isError>
-              {_.capitalize(error)}
-            </FormHelperText>
+            <FormHelperText key={error}>{_.capitalize(error)}</FormHelperText>
           ))}
         </>
       )}

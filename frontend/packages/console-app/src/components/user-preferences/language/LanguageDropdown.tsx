@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Skeleton, SelectOption, Select, SelectVariant, Checkbox } from '@patternfly/react-core';
+import { Skeleton, Checkbox } from '@patternfly/react-core';
+import {
+  SelectOption as SelectOptionDeprecated,
+  Select as SelectDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { supportedLocales } from './const';
@@ -16,9 +21,9 @@ const LanguageDropdown: React.FC = () => {
   const selectOptions: JSX.Element[] = React.useMemo(
     () =>
       Object.keys(supportedLocales).map((lang) => (
-        <SelectOption key={lang} value={lang}>
+        <SelectOptionDeprecated key={lang} value={lang}>
           {supportedLocales[lang]}
-        </SelectOption>
+        </SelectOptionDeprecated>
       )),
     [],
   );
@@ -26,7 +31,7 @@ const LanguageDropdown: React.FC = () => {
   const [isUsingDefault, setIsUsingDefault] = React.useState<boolean>(!preferredLanguage);
   const checkboxLabel: string = t('console-app~Use the default browser language setting.');
 
-  const onToggle = (isOpen: boolean) => setDropdownOpen(isOpen);
+  const onToggle = (_event, isOpen: boolean) => setDropdownOpen(isOpen);
   const onSelect = (_, selection: string) => {
     if (selection !== preferredLanguage) {
       setPreferredLanguage(selection);
@@ -38,7 +43,7 @@ const LanguageDropdown: React.FC = () => {
     setDropdownOpen(false);
   };
 
-  const onUsingDefault = (checked: boolean) => {
+  const onUsingDefault = (_event, checked: boolean) => {
     setIsUsingDefault(checked);
     fireTelemetryEvent('User Preference Changed', {
       property: PREFERRED_LANGUAGE_USER_SETTING_KEY,
@@ -72,8 +77,8 @@ const LanguageDropdown: React.FC = () => {
         data-test="checkbox console.preferredLanguage"
         className="co-language-dropdown__system-default-checkbox"
       />
-      <Select
-        variant={SelectVariant.single}
+      <SelectDeprecated
+        variant={SelectVariantDeprecated.single}
         isOpen={dropdownOpen}
         selections={preferredLanguage}
         toggleId={'console.preferredLanguage'}
@@ -86,7 +91,7 @@ const LanguageDropdown: React.FC = () => {
         isDisabled={isUsingDefault}
       >
         {selectOptions}
-      </Select>
+      </SelectDeprecated>
     </>
   ) : (
     <>

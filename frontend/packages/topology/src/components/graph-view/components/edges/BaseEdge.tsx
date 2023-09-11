@@ -10,6 +10,7 @@ import {
   WithSourceDragProps,
   WithTargetDragProps,
   NodeStatus,
+  GraphElement,
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk';
@@ -18,7 +19,7 @@ import { getResource } from '../../../../utils/topology-utils';
 import './BaseEdge.scss';
 
 type BaseEdgeProps = {
-  element: Edge;
+  element: GraphElement;
   dragging?: boolean;
   className?: string;
   animationDuration?: number;
@@ -46,7 +47,7 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
   sourceDragRef,
   ...rest
 }) => {
-  const resourceObj = getResource(element.getSource());
+  const resourceObj = getResource((element as Edge).getSource());
   const resourceModel = resourceObj && modelFor(referenceFor(resourceObj));
   const [selected, onSelect] = useSelection({ controlled: true });
 

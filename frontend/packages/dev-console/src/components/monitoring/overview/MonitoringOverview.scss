@@ -3,32 +3,32 @@
     padding: 0;
   }
   &__alerts-toggle {
-    .pf-c-accordion__toggle-text {
+    .pf-v5-c-accordion__toggle-text {
       width: 100%;
     }
   }
   &__alerts-body {
-    .pf-c-accordion__expanded-content-body {
-      --pf-c-accordion__expanded-content-body--PaddingTop: var(--pf-global--spacer--sm);
-      --pf-c-accordion__expanded-content-body--PaddingRight: 0;
-      --pf-c-accordion__expanded-content-body--PaddingBottom: var(--pf-global--spacer--sm);
-      --pf-c-accordion__expanded-content-body--PaddingLeft: 0;
+    .pf-v5-c-accordion__expanded-content-body {
+      --pf-v5-c-accordion__expanded-content-body--PaddingTop: var(--pf-v5-global--spacer--sm);
+      --pf-v5-c-accordion__expanded-content-body--PaddingRight: 0;
+      --pf-v5-c-accordion__expanded-content-body--PaddingBottom: var(--pf-v5-global--spacer--sm);
+      --pf-v5-c-accordion__expanded-content-body--PaddingLeft: 0;
     }
   }
   &__view-monitoring-dashboard {
-    margin: var(--pf-global--spacer--sm) 0;
+    margin: var(--pf-v5-global--spacer--sm) 0;
     text-align: right;
   }
-  .pf-c-accordion__expanded-content.pf-m-expanded {
-    --pf-c-accordion__expanded-content-body--before--BackgroundColor: transparent;
+  .pf-v5-c-accordion__expanded-content.pf-m-expanded {
+    --pf-v5-c-accordion__expanded-content-body--before--BackgroundColor: transparent;
   }
-  .pf-c-accordion__toggle.pf-m-expanded {
-    --pf-c-accordion__toggle--before--BackgroundColor: transparent;
+  .pf-v5-c-accordion__toggle.pf-m-expanded {
+    --pf-v5-c-accordion__toggle--before--BackgroundColor: transparent;
   }
   &__empty-state {
     &-icon {
-      color: var(--pf-global--icon--Color--light);
-      font-size: var(--pf-global--FontSize--4xl);
+      color: var(--pf-v5-global--icon--Color--light);
+      font-size: var(--pf-v5-global--FontSize--4xl);
     }
   }
 }

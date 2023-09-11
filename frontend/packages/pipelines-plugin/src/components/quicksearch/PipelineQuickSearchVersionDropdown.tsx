@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { global_palette_green_500 as greenColor } from '@patternfly/react-tokens';
 import i18n from 'i18next';
@@ -34,11 +38,11 @@ const PipelineQuickSearchVersionDropdown: React.FC<PipelineQuickSearchVersionDro
     return acc;
   }, {});
   return (
-    <Dropdown
+    <DropdownDeprecated
       data-test="task-version"
       className="opp-quick-search-details__version-dropdown"
       dropdownItems={Object.keys(versionItems).map((key) => (
-        <DropdownItem
+        <DropdownItemDeprecated
           component="button"
           key={key}
           label={versionItems[key]}
@@ -52,17 +56,17 @@ const PipelineQuickSearchVersionDropdown: React.FC<PipelineQuickSearchVersionDro
             {versionItems[key]}
             {isSelectedVersionInstalled(item, key) && <CheckCircleIcon color={greenColor.value} />}
           </div>
-        </DropdownItem>
+        </DropdownItemDeprecated>
       ))}
       isOpen={isOpen}
       toggle={
-        <DropdownToggle
+        <DropdownToggleDeprecated
           isDisabled={versions.length === 1}
           data-test="task-version-toggle"
           onToggle={toggleIsOpen}
         >
           {versionItems[selectedVersion]}
-        </DropdownToggle>
+        </DropdownToggleDeprecated>
       }
     />
   );

@@ -1,16 +1,16 @@
 @import '~@patternfly/patternfly/sass-utilities/all';
 
 .co-row-filter {
-  background-color: var(--pf-global--BackgroundColor--100);
-  margin-bottom: $pf-global--spacer--xl;
+  background-color: var(--pf-v5-global--BackgroundColor--100);
+  margin-bottom: $pf-v5-global--spacer--xl;
   position: relative;
 
-  // use pseudo element for border so that .pf-c-toggle-group__item(s) overlap
-  @media screen and (min-width: $pf-global--breakpoint--md) {
+  // use pseudo element for border so that .pf-v5-c-toggle-group__item(s) overlap
+  @media screen and (min-width: $pf-v5-global--breakpoint--md) {
     &::before {
-      border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-      border-bottom-right-radius: var(--pf-global--BorderRadius--sm);
-      border-top-right-radius: var(--pf-global--BorderRadius--sm);
+      border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+      border-bottom-right-radius: var(--pf-v5-global--BorderRadius--sm);
+      border-top-right-radius: var(--pf-v5-global--BorderRadius--sm);
       bottom: 0;
       content: '';
       left: 0;
@@ -20,41 +20,41 @@
     }
   }
 
-  .pf-c-toggle-group {
+  .pf-v5-c-toggle-group {
     overflow: auto;
   }
 }
 
-// .pf-c-toggle-group has a default border-radius
-// Since .co-row-filter wraps both .pf-c-toggle-group and .co-row-filter__items with a boxed border at > 768px,
-// we move the top-right & bottom-right radius from .pf-c-toggle-group__item:list-child to the right side of the .co-row-filter box.
-@media screen and (min-width: $pf-global--breakpoint--md) {
-  .co-row-filter .pf-c-toggle-group__item:last-child .pf-c-toggle-group__button,
-  .co-row-filter .pf-c-toggle-group__item:last-child .pf-c-toggle-group__button::before {
+// .pf-v5-c-toggle-group has a default border-radius
+// Since .co-row-filter wraps both .pf-v5-c-toggle-group and .co-row-filter__items with a boxed border at > 768px,
+// we move the top-right & bottom-right radius from .pf-v5-c-toggle-group__item:list-child to the right side of the .co-row-filter box.
+@media screen and (min-width: $pf-v5-global--breakpoint--md) {
+  .co-row-filter .pf-v5-c-toggle-group__item:last-child .pf-v5-c-toggle-group__button,
+  .co-row-filter .pf-v5-c-toggle-group__item:last-child .pf-v5-c-toggle-group__button::before {
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;
   }
 }
 
 .co-row-filter__items {
-  font-weight: var(--pf-global--FontWeight--bold);
+  font-weight: var(--pf-v5-global--FontWeight--bold);
   white-space: nowrap;
 
-  @media screen and (min-width: $pf-global--breakpoint--md) {
-    padding: 0 var(--pf-global--spacer--md);
+  @media screen and (min-width: $pf-v5-global--breakpoint--md) {
+    padding: 0 var(--pf-v5-global--spacer--md);
   }
 }
 
 .co-row-filter__number-bubble {
-  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-  border-radius: var(--pf-global--BorderRadius--sm);
+  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  border-radius: var(--pf-v5-global--BorderRadius--sm);
   display: inline-block;
-  line-height: var(--pf-global--LineHeight--sm);;
-  margin-right: var(--pf-global--spacer--sm);
+  line-height: var(--pf-v5-global--LineHeight--sm);
+  margin-right: var(--pf-v5-global--spacer--sm);
   padding: 2px 5px 0;
   text-align: center;
 
   &.co-row-filter__number-bubble--active {
-    border-color: var(--pf-global--primary-color--100);
+    border-color: var(--pf-v5-global--primary-color--100);
   }
 }

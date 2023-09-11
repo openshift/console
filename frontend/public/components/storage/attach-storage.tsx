@@ -50,7 +50,7 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
     return providers;
   }, [memoizedStorageProviders, t]);
 
-  const handleChange = (_checked: boolean, e: React.FormEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
     const id = e?.currentTarget?.id;
     setActiveProvider(id as string);
   };

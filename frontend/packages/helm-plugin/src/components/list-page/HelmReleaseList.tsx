@@ -2,9 +2,10 @@ import * as React from 'react';
 import {
   EmptyState,
   EmptyStateIcon,
-  EmptyStateSecondaryActions,
   EmptyStateVariant,
-  Title,
+  EmptyStateActions,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
 import Helmet from 'react-helmet';
@@ -121,17 +122,20 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
     const installURL = { pathname: `/catalog/ns/${namespace}`, search: '?catalogType=HelmChart' };
     return (
       <EmptyState variant={EmptyStateVariant.full}>
-        <EmptyStateIcon variant="container" component={helmImage} />
-        <Title headingLevel="h3" size="lg">
-          {t('helm-plugin~No Helm Releases found')}
-        </Title>
-        {isHelmEnabled ? (
-          <EmptyStateSecondaryActions>
-            <Link to={installURL}>
-              {t('helm-plugin~Browse the catalog to discover available Helm Charts')}
-            </Link>
-          </EmptyStateSecondaryActions>
-        ) : null}
+        <EmptyStateHeader
+          titleText={<>{t('helm-plugin~No Helm Releases found')}</>}
+          icon={<EmptyStateIcon icon={helmImage} />}
+          headingLevel="h3"
+        />
+        <EmptyStateFooter>
+          {isHelmEnabled ? (
+            <EmptyStateActions>
+              <Link to={installURL}>
+                {t('helm-plugin~Browse the catalog to discover available Helm Charts')}
+              </Link>
+            </EmptyStateActions>
+          ) : null}
+        </EmptyStateFooter>
       </EmptyState>
     );
   };

@@ -15,23 +15,11 @@ const GitOpsRenderStatusLabel: React.FC<GitOpsRenderStatusLabelProps> = ({ statu
   const { t } = useTranslation();
   switch (status) {
     case 'Synced':
-      return (
-        <Label icon={<GreenCheckCircleIcon />} isTruncated>
-          {t('gitops-plugin~Synced')}
-        </Label>
-      );
+      return <Label icon={<GreenCheckCircleIcon />}>{t('gitops-plugin~Synced')}</Label>;
     case 'OutOfSync':
-      return (
-        <Label icon={<YellowExclamationTriangleIcon />} isTruncated>
-          {t('gitops-plugin~OutOfSync')}
-        </Label>
-      );
+      return <Label icon={<YellowExclamationTriangleIcon />}>{t('gitops-plugin~OutOfSync')}</Label>;
     case 'Unknown':
-      return (
-        <Label icon={<GrayUnknownIcon />} isTruncated>
-          {t('gitops-plugin~Unknown')}
-        </Label>
-      );
+      return <Label icon={<GrayUnknownIcon />}>{t('gitops-plugin~Unknown')}</Label>;
     default:
       return null;
   }

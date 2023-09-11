@@ -1,21 +1,13 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { Bullseye, Button, Spinner } from '@patternfly/react-core';
+import { Bullseye, Button, Icon, Spinner } from '@patternfly/react-core';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
-import {
-  TableComposable,
-  TableGridBreakpoint,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
+import { Table, TableGridBreakpoint, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { ResourceLink } from './utils';
 import { referenceFor } from '../module/k8s';
@@ -45,19 +37,25 @@ export const ImportYAMLPageStatus: React.FC<ImportYAMLPageStatusProps> = ({ erro
   } else if (!inFlight && !errors) {
     StatusBlock = (
       <>
-        <GreenCheckCircleIcon size="lg" />
+        <Icon size="lg">
+          <GreenCheckCircleIcon />
+        </Icon>
+
         <h2>{t('public~Resources successfully created')}</h2>
       </>
     );
   } else {
     StatusBlock = (
       <>
-        <YellowExclamationTriangleIcon size="lg" />
+        <Icon size="lg">
+          <YellowExclamationTriangleIcon />
+        </Icon>
+
         <h2>{t('public~One or more resources failed to be created')}</h2>
       </>
     );
   }
-  return <div className="co-import-yaml-status pf-u-text-align-center">{StatusBlock}</div>;
+  return <div className="co-import-yaml-status pf-v5-u-text-align-center">{StatusBlock}</div>;
 };
 
 export const ImportYAMLResourceStatus: React.FC<ImportYAMLResourceStatusProps> = ({
@@ -69,9 +67,17 @@ export const ImportYAMLResourceStatus: React.FC<ImportYAMLResourceStatusProps> =
   if (creating) {
     StatusIcon = <Spinner size="sm" className="co-icon-space-r" />;
   } else if (error) {
-    StatusIcon = <RedExclamationCircleIcon className="co-icon-space-r" size="sm" />;
+    StatusIcon = (
+      <Icon size="sm">
+        <RedExclamationCircleIcon className="co-icon-space-r" />
+      </Icon>
+    );
   } else {
-    StatusIcon = <GreenCheckCircleIcon className="co-icon-space-r" size="sm" />;
+    StatusIcon = (
+      <Icon size="sm">
+        <GreenCheckCircleIcon className="co-icon-space-r" />
+      </Icon>
+    );
   }
   return (
     <span>
@@ -136,11 +142,12 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
       <Bullseye>
         <div className="co-import-yaml-results-page__main">
           <ImportYAMLPageStatus inFlight={inFlight} errors={errors} />
-          <TableComposable
+          <Table
             gridBreakPoint={TableGridBreakpoint.none}
             variant="compact"
             aria-label={t('public~Import YAML results')}
             {...reactPropFix}
+            data-codemods="true"
           >
             <Thead {...reactPropFix}>
               <Tr {...reactPropFix}>
@@ -181,7 +188,7 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
                 );
               })}
             </Tbody>
-          </TableComposable>
+          </Table>
           {!inFlight && (
             <>
               {errors && (

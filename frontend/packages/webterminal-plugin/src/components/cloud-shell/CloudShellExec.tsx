@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, EmptyState, EmptyStateBody } from '@patternfly/react-core';
+import { Button, EmptyState, EmptyStateBody, EmptyStateFooter } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
 import { connect, Dispatch } from 'react-redux';
@@ -227,24 +227,26 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
       <div className="co-cloudshell-exec__container-error">
         <EmptyState>
           <EmptyStateBody className="co-cloudshell-exec__error-msg">{wsError}</EmptyStateBody>
-          <Button
-            variant="primary"
-            onClick={() => {
-              fireTelemetryEvent('Web Terminal Timeout', {
-                reconnect: customResource.status.phase === 'Running',
-              });
-              if (customResource && customResource.status.phase !== 'Running') {
-                startWorkspace(customResource);
-              } else if (!wsReopening) {
-                setWsReopening(true);
-              }
-              setWsError(undefined);
-            }}
-          >
-            {customResource.status.phase === 'Running'
-              ? t('webterminal-plugin~Reconnect to terminal')
-              : t('webterminal-plugin~Restart terminal')}
-          </Button>
+          <EmptyStateFooter>
+            <Button
+              variant="primary"
+              onClick={() => {
+                fireTelemetryEvent('Web Terminal Timeout', {
+                  reconnect: customResource.status.phase === 'Running',
+                });
+                if (customResource && customResource.status.phase !== 'Running') {
+                  startWorkspace(customResource);
+                } else if (!wsReopening) {
+                  setWsReopening(true);
+                }
+                setWsError(undefined);
+              }}
+            >
+              {customResource.status.phase === 'Running'
+                ? t('webterminal-plugin~Reconnect to terminal')
+                : t('webterminal-plugin~Restart terminal')}
+            </Button>
+          </EmptyStateFooter>
         </EmptyState>
       </div>
     );

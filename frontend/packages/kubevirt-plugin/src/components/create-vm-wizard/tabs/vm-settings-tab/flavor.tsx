@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SelectOption } from '@patternfly/react-core';
+import { SelectOption as SelectOptionDeprecated } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { CUSTOM_FLAVOR } from '../../../../constants';
 import { Flavor } from '../../../../constants/vm/flavor';
@@ -116,7 +116,7 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
                   getLabelValue(defaultTemplate, getFlavorLabel(f.getValue())) === 'true';
 
                 return (
-                  <SelectOption
+                  <SelectOptionDeprecated
                     key={f.getValue()}
                     value={f.getValue()}
                     description={t(f.getDescriptionKey())}
@@ -130,17 +130,17 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
                           'kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}} Memory',
                           flavorData,
                         )}
-                  </SelectOption>
+                  </SelectOptionDeprecated>
                 );
               })
               .concat([
-                <SelectOption
+                <SelectOptionDeprecated
                   key={CUSTOM_FLAVOR}
                   value={CUSTOM_FLAVOR}
                   description={t(Flavor.fromString(CUSTOM_FLAVOR).getDescriptionKey())}
                 >
                   {t('kubevirt-plugin~Custom')}
-                </SelectOption>,
+                </SelectOptionDeprecated>,
               ])}
           </FormPFSelect>
         </FormField>

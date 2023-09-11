@@ -604,7 +604,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                   isDisabled={!pkg}
                 >
                   {obj.spec.channel || 'default'}
-                  {pkg && <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />}
+                  {pkg && <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
                 </Button>
               )}
             </dd>
@@ -626,7 +626,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                   <div>
                     <Button type="button" isInline onClick={approvalModal} variant="link">
                       {obj.spec.installPlanApproval || 'Automatic'}
-                      <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                      <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
                     </Button>
                   </div>
                   {obj.spec.installPlanApproval === InstallPlanApproval.Automatic &&

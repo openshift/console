@@ -30,7 +30,7 @@ const CONNECT_TO_NEW_INSTANCE_ID = `30e4f40e-7ce1-4c90-98a1-14ef960b8549-${CONNE
 const VMImportSecretsConnected: React.FC<VMImportSecretsReviewProps> = React.memo(
   ({ secretField, secrets, onSecretChange, provider }) => {
     const { t } = useTranslation();
-    const onChange = (value) => {
+    const onChange = (_event, value) => {
       const isNewInstance = value === CONNECT_TO_NEW_INSTANCE_ID;
       const secret =
         isNewInstance || !value

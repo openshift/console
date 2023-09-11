@@ -5,7 +5,7 @@ export const operatorsPO = {
     operatorHub: 'a[data-test="nav"][href="/operatorhub"]',
     installedOperators:
       'a[data-test="nav"][href$="/operators.coreos.com~v1alpha1~ClusterServiceVersion"]',
-    link: 'li.pf-c-nav__item.pf-m-expandable',
+    link: 'li.pf-v5-c-nav__item.pf-m-expandable',
     menuItems: '#page-sidebar ul li',
     serverless: '[data-quickstart-id="qs-nav-serverless"]',
     eventing: `a[href^="/eventing/"]`,

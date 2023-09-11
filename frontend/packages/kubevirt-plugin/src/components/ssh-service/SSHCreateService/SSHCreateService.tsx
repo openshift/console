@@ -30,7 +30,7 @@ const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
           label={<SSHCreateServicePopup vmName={vmName} hidePopup={hidePopup} />}
           isChecked={enableSSHService}
           data-checked-state={enableSSHService}
-          onChange={(checked) => {
+          onChange={(_event, checked) => {
             setEnableSSHService(checked);
           }}
         />

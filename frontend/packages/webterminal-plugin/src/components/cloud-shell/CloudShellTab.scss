@@ -9,13 +9,13 @@
   }
 
   &__header {
-    background-color: var(--pf-global--BackgroundColor--200);
+    background-color: var(--pf-v5-global--BackgroundColor--200);
     align-items: center;
     display: flex;
     flex-shrink: 0;
-    min-height: var(--pf-global--target-size--MinHeight);
+    min-height: var(--pf-v5-global--target-size--MinHeight);
     &-text {
-      padding: 0 var(--pf-global--spacer--md);
+      padding: 0 var(--pf-v5-global--spacer--md);
     }
   }
 }

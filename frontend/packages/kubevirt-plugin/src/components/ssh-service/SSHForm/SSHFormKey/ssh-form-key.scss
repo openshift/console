@@ -4,23 +4,23 @@
 
 .SSHFormKey-helperText-error {
   @extend .SSHFormKey-helperText;
-  color: var(--pf-global--danger-color--100);
+  color: var(--pf-v5-global--danger-color--100);
 }
 
 .SSHFormKey-restore-button {
-  &.pf-c-button.pf-m-link.pf-m-inline {
-    padding-top: var(--pf-global--spacer--sm);
+  &.pf-v5-c-button.pf-m-link.pf-m-inline {
+    padding-top: var(--pf-v5-global--spacer--sm);
   }
 }
 
 .SSHFormKey-input-field {
-  .pf-c-file-upload__file-details {
+  .pf-v5-c-file-upload__file-details {
     textarea#simple-text-file {
-      min-height: var(--pf-global--spacer--3xl);
+      min-height: var(--pf-v5-global--spacer--3xl);
     }
   }
 }
 
 .SSHFormKey-flex {
-  margin-bottom: var(--pf-global--spacer--md);
+  margin-bottom: var(--pf-v5-global--spacer--md);
 }

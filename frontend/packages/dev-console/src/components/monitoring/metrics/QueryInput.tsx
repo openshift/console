@@ -217,10 +217,10 @@ export const QueryInput: React.FC<QueryInputProps> = ({ index }) => {
   const placeholder = t('public~Expression (press Shift+Enter for newlines)');
 
   return (
-    <div className="query-browser__query pf-c-dropdown">
+    <div className="query-browser__query pf-v5-c-dropdown">
       <textarea
         aria-label={placeholder}
-        className="pf-c-form-control query-browser__query-input"
+        className="pf-v5-c-form-control query-browser__query-input"
         onBlur={onBlur}
         onChange={onChange}
         onKeyDown={onKeyDown}
@@ -236,14 +236,14 @@ export const QueryInput: React.FC<QueryInputProps> = ({ index }) => {
         onClick={onClear}
       />
       {!_.isEmpty(allSuggestions) && (
-        <ul className="pf-c-dropdown__menu query-browser__metrics-dropdown-menu">
+        <ul className="pf-v5-c-dropdown__menu query-browser__metrics-dropdown-menu">
           {_.map(allSuggestions, (suggestions, title) => (
             <React.Fragment key={title}>
               <div className="text-muted query-browser__dropdown--subtitle">{title}</div>
               {_.map(suggestions, (s) => (
                 <li key={s}>
                   <button
-                    className="pf-c-dropdown__menu-item"
+                    className="pf-v5-c-dropdown__menu-item"
                     data-autocomplete={s}
                     onMouseDown={onMouseDown}
                     type="button"

@@ -162,7 +162,7 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, reso
                 {canUpdate ? (
                   <Button variant="link" type="button" isInline onClick={editReplicas}>
                     {desiredReplicasText}
-                    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                    <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
                   </Button>
                 ) : (
                   desiredReplicasText

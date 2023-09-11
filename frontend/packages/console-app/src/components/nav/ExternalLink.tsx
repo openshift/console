@@ -4,7 +4,7 @@ import { NavItem } from '@patternfly/react-core';
 export const ExternalLink = ({ href, name }: ExternalLinkProps): React.ReactElement => (
   <NavItem isActive={false}>
     <a
-      className="pf-c-nav__link"
+      className="pf-v5-c-nav__link"
       href={href}
       target="_blank"
       rel="noopener noreferrer"

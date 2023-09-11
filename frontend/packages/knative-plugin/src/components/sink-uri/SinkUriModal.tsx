@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Form, FormGroup, TextInputTypes } from '@patternfly/react-core';
+import {
+  Form,
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  TextInputTypes,
+} from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
@@ -33,13 +40,7 @@ const SinkUriModal: React.FC<Props> = ({
         <ModalTitle>{t('knative-plugin~Edit URI')}</ModalTitle>
         <ModalBody>
           <FormSection fullWidth>
-            <FormGroup
-              fieldId={fieldId}
-              helperText={t(
-                'knative-plugin~Editing this URI will affect all associated Event Sources.',
-              )}
-              isRequired
-            >
+            <FormGroup fieldId={fieldId} isRequired>
               <InputField
                 type={TextInputTypes.text}
                 name="uri"
@@ -47,6 +48,14 @@ const SinkUriModal: React.FC<Props> = ({
                 data-test-id="edit-sink-uri"
                 required
               />
+
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem>
+                    {t('knative-plugin~Editing this URI will affect all associated Event Sources.')}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
             </FormGroup>
           </FormSection>
         </ModalBody>

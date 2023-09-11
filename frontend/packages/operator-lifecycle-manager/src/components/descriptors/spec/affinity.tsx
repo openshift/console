@@ -104,7 +104,7 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
             {t('olm~Weight')}
           </label>
           <input
-            className="pf-c-form-control"
+            className="pf-v5-c-form-control"
             type="number"
             value={weight}
             onChange={onChangeWeight}
@@ -299,7 +299,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
               {t('olm~Weight')}
             </label>
             <input
-              className="pf-c-form-control"
+              className="pf-v5-c-form-control"
               type="number"
               value={weight}
               onChange={onChangeWeight}
@@ -313,7 +313,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
           </label>
           <input
             id={`topology-${key}`}
-            className="pf-c-form-control"
+            className="pf-v5-c-form-control"
             type="text"
             value={topologyKey}
             onChange={onChangeTopologyKey}

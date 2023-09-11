@@ -9,22 +9,23 @@
 }
 
 .co-utilization-card__item .co-utilization-card__item-chart.co-utilization-card__item-chart--times {
-  padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--lg) var(--pf-global--spacer--sm) var(--pf-global--spacer--md);
+  padding: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--lg)
+    var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--md);
   svg {
     overflow: visible;
   }
 }
 
 .co-utilization-card__item-header {
-  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+  border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
 }
 
-.co-utilization-card__item .pf-c-title {
+.co-utilization-card__item .pf-v5-c-title {
   margin-bottom: 0;
 }
 
 .co-utilization-card__item > * {
-  padding: var(--pf-global--spacer--md);
+  padding: var(--pf-v5-global--spacer--md);
 }
 
 .co-utilization-card__item-chart .graph-wrapper {
@@ -55,12 +56,12 @@
 }
 
 .co-utilization-card__item-text {
-  color: var(--pf-global--Color--200);
-  font-size: var(--pf-global--FontSize--sm);
+  color: var(--pf-v5-global--Color--200);
+  font-size: var(--pf-v5-global--FontSize--sm);
 }
 
 .co-utilization-card__item-icon {
-  margin-right: var(--pf-global--spacer--sm);
+  margin-right: var(--pf-v5-global--spacer--sm);
 }
 
 @media screen and (min-width: 1200px) {
@@ -73,21 +74,22 @@
     display: flex;
   }
 
-  .co-utilization-card__item .co-utilization-card__item-chart.co-utilization-card__item-chart--times {
+  .co-utilization-card__item
+    .co-utilization-card__item-chart.co-utilization-card__item-chart--times {
     padding-bottom: 0;
   }
 
-  .co-utilization-card__item > *{
+  .co-utilization-card__item > * {
     flex: 1 50%;
   }
 
-  .co-utilization-card__item >*:nth-child(even) {
+  .co-utilization-card__item > *:nth-child(even) {
     align-items: center;
-    padding: 0 var(--pf-global--spacer--lg) 0 var(--pf-global--spacer--md);
+    padding: 0 var(--pf-v5-global--spacer--lg) 0 var(--pf-v5-global--spacer--md);
   }
 
-  .co-utilization-card__item >*:nth-child(odd) {
+  .co-utilization-card__item > *:nth-child(odd) {
     align-items: flex-start;
-    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--lg);
+    padding: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--lg);
   }
 }

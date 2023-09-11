@@ -4,8 +4,9 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  EmptyStateSecondaryActions,
-  Title,
+  EmptyStateActions,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import { TopologyIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -19,23 +20,26 @@ export const LimitExceededState: React.FC<LimitExceededStateProps> = ({ onShowTo
   const { t } = useTranslation();
   return (
     <EmptyState>
-      <EmptyStateIcon variant="container" component={TopologyIcon} />
-      <Title headingLevel="h4" size="lg">
-        {t(`topology~Loading is taking longer than expected`)}
-      </Title>
+      <EmptyStateHeader
+        titleText={<>{t(`topology~Loading is taking longer than expected`)}</>}
+        icon={<EmptyStateIcon icon={TopologyIcon} />}
+        headingLevel="h4"
+      />
       <EmptyStateBody>
         {t(
           `topology~We noticed that it is taking a long time to visualize your application Topology. You can use Search to find specific resources or click Continue to keep waiting.`,
         )}
       </EmptyStateBody>
-      <Button variant="primary" component={(props) => <Link {...props} to="/search-page" />}>
-        {t('topology~Go to Search')}
-      </Button>
-      <EmptyStateSecondaryActions>
-        <Button variant="link" onClick={onShowTopologyAnyway}>
-          {t('topology~Continue')}
+      <EmptyStateFooter>
+        <Button variant="primary" component={(props) => <Link {...props} to="/search-page" />}>
+          {t('topology~Go to Search')}
         </Button>
-      </EmptyStateSecondaryActions>
+        <EmptyStateActions>
+          <Button variant="link" onClick={onShowTopologyAnyway}>
+            {t('topology~Continue')}
+          </Button>
+        </EmptyStateActions>
+      </EmptyStateFooter>
     </EmptyState>
   );
 };

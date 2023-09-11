@@ -1,6 +1,13 @@
 import * as React from 'react';
-import { ExpandableSection, FormGroup } from '@patternfly/react-core';
+import {
+  ExpandableSection,
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import { FieldLevelHelp, LoadingInline } from '@console/internal/components/utils';
 import { ValidationErrorType, ValidationObject } from '../../selectors';
 
@@ -49,13 +56,6 @@ export const FormRow: React.FC<FormRowProps> = ({
       label={title}
       isRequired={isRequired}
       fieldId={fieldId}
-      validated={type !== ValidationErrorType.Error ? 'default' : 'error'}
-      helperTextInvalid={
-        type === ValidationErrorType.Error ? errorExpandablePositioning : undefined
-      }
-      helperText={
-        type === ValidationErrorType.Info || type === ValidationErrorType.Warn ? message : undefined
-      }
       className={className}
       labelIcon={help && <FieldLevelHelp>{help}</FieldLevelHelp>}
     >
@@ -65,6 +65,18 @@ export const FormRow: React.FC<FormRowProps> = ({
         </span>
       )}
       {children}
+
+      <FormHelperText>
+        <HelperText>
+          {type === ValidationErrorType.Error ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorExpandablePositioning}
+            </HelperTextItem>
+          ) : (
+            <HelperTextItem>{message}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

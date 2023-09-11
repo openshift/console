@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select } from '@patternfly/react-core';
+import { Select as SelectDeprecated } from '@patternfly/react-core/deprecated';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
 import { useUserSettings } from '@console/shared';
@@ -38,7 +38,7 @@ describe('UserPreferenceDropdownField', () => {
     mockUserSettings.mockReturnValue(['value', () => {}, true]);
     wrapper = shallow(<UserPreferenceDropdownField {...props} />);
     expect(wrapper.find('[data-test="dropdown id"]').exists()).toBeTruthy();
-    expect(wrapper.find(Select).props().selections).toBe('label');
+    expect(wrapper.find(SelectDeprecated).props().selections).toBe('label');
   });
 
   it('should render select with selected value corresponding to defaultValue if user preference has loaded and is undefined', () => {
@@ -48,6 +48,6 @@ describe('UserPreferenceDropdownField', () => {
     });
     wrapper = shallow(<UserPreferenceDropdownField {...props} defaultValue="#LATEST#" />);
     expect(wrapper.find('[data-test="dropdown id"]').exists()).toBeTruthy();
-    expect(wrapper.find(Select).props().selections).toBe('Last viewed');
+    expect(wrapper.find(SelectDeprecated).props().selections).toBe('Last viewed');
   });
 });

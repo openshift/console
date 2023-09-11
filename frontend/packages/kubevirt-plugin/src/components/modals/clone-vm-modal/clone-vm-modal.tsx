@@ -3,13 +3,17 @@ import {
   Checkbox,
   Form,
   FormGroup,
+  FormHelperText,
   FormSelect,
   FormSelectOption,
+  HelperText,
+  HelperTextItem,
   TextArea,
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalBody,
@@ -154,35 +158,39 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
           ].filter((err) => err.message)}
         />
         <Form isHorizontal>
-          <FormGroup
-            label={t('kubevirt-plugin~Name')}
-            isRequired
-            fieldId={asId('name')}
-            validated={!(nameError?.type === ValidationErrorType.Error) ? 'default' : 'error'}
-            helperTextInvalid={nameError && t(nameError?.messageKey)}
-          >
+          <FormGroup label={t('kubevirt-plugin~Name')} isRequired fieldId={asId('name')}>
             <TextInput
               validated={!(nameError?.type === ValidationErrorType.Error) ? 'default' : 'error'}
               isRequired
               type="text"
               id={asId('name')}
               value={name}
-              onChange={(v) => setName(v)}
+              onChange={(_event, v) => setName(v)}
               aria-label={t('kubevirt-plugin~new VM name')}
             />
+
+            {nameError?.type === ValidationErrorType.Error && (
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                    {t(nameError?.messageKey)}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            )}
           </FormGroup>
           <FormGroup label={t('kubevirt-plugin~Description')} fieldId={asId('description')}>
             <TextArea
               id={asId('description')}
               value={description}
-              onChange={(v) => setDescription(v)}
+              onChange={(_event, v) => setDescription(v)}
               className="kubevirt-clone-vm-modal__description"
             />
           </FormGroup>
           <FormGroup isRequired label={t('kubevirt-plugin~Namespace')} fieldId={asId('namespace')}>
             <FormSelect
               value={namespace}
-              onChange={(v) => onNamespaceChanged(v)}
+              onChange={(_event, v) => onNamespaceChanged(v)}
               id={asId('namespace')}
             >
               {[...getLoadedData(namespaces, [])]
@@ -209,7 +217,7 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
               id={asId('start')}
               isChecked={startVM}
               data-checked-state={startVM}
-              onChange={setStartVM}
+              onChange={(_event, value) => setStartVM(value)}
               className="kubevirt-clone-vm-modal__start_vm_checkbox"
             />
           </FormGroup>

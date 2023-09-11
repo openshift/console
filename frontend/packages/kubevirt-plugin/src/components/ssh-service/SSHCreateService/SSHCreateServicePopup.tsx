@@ -25,8 +25,8 @@ const SSHCreateServicePopup: React.FC<SSHCreateServicePopupProps> = ({ vmName, h
       )}
       {!hidePopup && (
         <Popover position={PopoverPosition.right} bodyContent={SSHCreateServiceMessage}>
-          <button type="button" onClick={preventDefault} className="pf-c-form__group-label-help">
-            <HelpIcon noVerticalAlign />
+          <button type="button" onClick={preventDefault} className="pf-v5-c-form__group-label-help">
+            <HelpIcon />
           </button>
         </Popover>
       )}

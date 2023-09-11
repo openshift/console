@@ -172,7 +172,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
         <Form>
           <FormRow title={t('kubevirt-plugin~Flavor')} fieldId={getId('flavor')} isRequired>
             <FormSelect
-              onChange={(f) => {
+              onChange={(_event, f) => {
                 if (isCustomFlavor(f)) {
                   const isSourceCustom = isCustomFlavor(vmFlavor);
                   setMemSize(isSourceCustom ? sourceMemSize || '' : '');
@@ -206,7 +206,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
                   id={getId('cpu')}
                   value={cpus}
                   isPositive
-                  onChange={(v) => setCpus(v)}
+                  onChange={(_event, v) => setCpus(v)}
                   isFullWidth
                   aria-label={t('kubevirt-plugin~CPU count')}
                 />

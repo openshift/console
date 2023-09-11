@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Split, SplitItem } from '@patternfly/react-core';
+import { Icon, Split, SplitItem } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import { Trans, useTranslation } from 'react-i18next';
@@ -18,7 +18,9 @@ const RemoveTriggerForm: React.FC<RemoveTriggerFormProps> = (props) => {
   return (
     <Split className="odc-modal-content" hasGutter>
       <SplitItem>
-        <ExclamationTriangleIcon size="md" color={warningColor.value} />
+        <Icon size="md">
+          <ExclamationTriangleIcon color={warningColor.value} />
+        </Icon>
       </SplitItem>
       <SplitItem isFilled>
         <p className="co-break-word">

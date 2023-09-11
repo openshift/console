@@ -52,12 +52,12 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
           selectedItemId={selectedItemId}
           searchTerm={searchTerm}
           namespace={namespace}
-          onSelectListItem={onSelect}
+          onSelectListItem={(_event, itemId) => onSelect(itemId)}
           closeModal={closeModal}
           onListChange={onListChange}
         />
       </SplitItem>
-      <Divider component="div" isVertical />
+      <Divider component="div" orientation={{ default: 'vertical' }} />
       <SplitItem className="ocs-quick-search-content__details">
         <QuickSearchDetails
           detailsRenderer={detailsRenderer}

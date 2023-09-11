@@ -1,22 +1,22 @@
 .co-status-popup__status {
   align-items: center;
   display: flex;
-  padding-left: var(--pf-global--spacer--xs);
+  padding-left: var(--pf-v5-global--spacer--xs);
   white-space: nowrap;
 }
 
 .co-status-popup__icon {
-  padding-left: var(--pf-global--spacer--xs);
+  padding-left: var(--pf-v5-global--spacer--xs);
 }
 
 .co-status-popup__row {
   display: flex;
   justify-content: space-between;
-  padding-bottom: var(--pf-global--spacer--xs);
+  padding-bottom: var(--pf-v5-global--spacer--xs);
 }
 
 .co-status-popup__text--bold {
-  font-weight: var(--pf-global--FontWeight--bold);
+  font-weight: var(--pf-v5-global--FontWeight--bold);
 }
 
 .co-status-popup__title .co-resource-item__resource-name {

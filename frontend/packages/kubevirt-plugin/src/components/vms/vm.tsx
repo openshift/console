@@ -5,8 +5,9 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  EmptyStateSecondaryActions,
-  Title,
+  EmptyStateActions,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import { RocketIcon, VirtualMachineIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
@@ -78,7 +79,7 @@ import VMIP from './VMIP';
 import './vm.scss';
 
 const tableColumnClasses = (showNamespace: boolean) => [
-  'pf-u-w-16-on-xl pf-u-w-50-on-xs',
+  'pf-v5-u-w-16-on-xl pf-v5-u-w-50-on-xs',
   classNames('pf-m-hidden', { 'pf-m-visible-on-lg': showNamespace }),
   '',
   'pf-m-hidden pf-m-visible-on-xl',
@@ -194,10 +195,11 @@ const VMListEmpty: React.FC = () => {
     );
   return (
     <EmptyState>
-      <EmptyStateIcon icon={VirtualMachineIcon} />
-      <Title headingLevel="h4" size="lg">
-        {t('kubevirt-plugin~No virtual machines found')}
-      </Title>
+      <EmptyStateHeader
+        titleText={<>{t('kubevirt-plugin~No virtual machines found')}</>}
+        icon={<EmptyStateIcon icon={VirtualMachineIcon} />}
+        headingLevel="h4"
+      />
       <EmptyStateBody>
         <Trans ns="kubevirt-plugin">
           See the{' '}
@@ -210,33 +212,35 @@ const VMListEmpty: React.FC = () => {
           to quickly create a virtual machine from the available templates.
         </Trans>
       </EmptyStateBody>
-      <Button
-        data-test="create-vm-empty"
-        variant="primary"
-        onClick={() =>
-          history.push(
-            getVMWizardCreateLink({
-              namespace,
-              wizardName: VMWizardName.BASIC,
-              mode: VMWizardMode.VM,
-            }),
-          )
-        }
-      >
-        {t('kubevirt-plugin~Create virtual machine')}
-      </Button>
-      {hasQuickStarts && (
-        <EmptyStateSecondaryActions>
-          <Button
-            data-test="vm-quickstart"
-            variant="secondary"
-            onClick={() => history.push('/quickstart?keyword=virtual+machine')}
-          >
-            <RocketIcon className="kv-vm-quickstart-icon" />
-            {t('kubevirt-plugin~Learn how to use virtual machines')}
-          </Button>
-        </EmptyStateSecondaryActions>
-      )}
+      <EmptyStateFooter>
+        <Button
+          data-test="create-vm-empty"
+          variant="primary"
+          onClick={() =>
+            history.push(
+              getVMWizardCreateLink({
+                namespace,
+                wizardName: VMWizardName.BASIC,
+                mode: VMWizardMode.VM,
+              }),
+            )
+          }
+        >
+          {t('kubevirt-plugin~Create virtual machine')}
+        </Button>
+        {hasQuickStarts && (
+          <EmptyStateActions>
+            <Button
+              data-test="vm-quickstart"
+              variant="secondary"
+              onClick={() => history.push('/quickstart?keyword=virtual+machine')}
+            >
+              <RocketIcon className="kv-vm-quickstart-icon" />
+              {t('kubevirt-plugin~Learn how to use virtual machines')}
+            </Button>
+          </EmptyStateActions>
+        )}
+      </EmptyStateFooter>
     </EmptyState>
   );
 };

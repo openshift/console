@@ -9,15 +9,15 @@
   &__icon {
     height: 36px;
     max-width: 100%;
-    padding: var(--pf-global--spacer--xs);
-    border-radius: var(--pf-global--BorderRadius--sm);
-    background: var(--pf-global--palette--white);
+    padding: var(--pf-v5-global--spacer--xs);
+    border-radius: var(--pf-v5-global--BorderRadius--sm);
+    background: var(--pf-v5-global--palette--white);
   }
 
   &__title {
-    font-size: var(--pf-global--FontSize--sm);
-    font-weight: var(--pf-global--FontWeight--bold);
-    line-height: var(--pf-global--LineHeight--sm);
+    font-size: var(--pf-v5-global--FontSize--sm);
+    font-weight: var(--pf-v5-global--FontWeight--bold);
+    line-height: var(--pf-v5-global--LineHeight--sm);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -26,8 +26,8 @@
 
   &__recommended {
     position: absolute;
-    color: var(--pf-global--primary-color--100);
-    font-size: var(--pf-global--FontSize--md);
+    color: var(--pf-v5-global--primary-color--100);
+    font-size: var(--pf-v5-global--FontSize--md);
     top: 3px;
     right: 6px;
   }
@@ -36,11 +36,11 @@
   &:hover,
   &:focus,
   &:active {
-    outline: var(--pf-global--active-color--100) 3px solid;
+    outline: var(--pf-v5-global--active-color--100) 3px solid;
     outline-offset: -3px;
   }
 
-  .pf-c-card__body {
+  .pf-v5-c-card__body {
     padding: 5px !important;
   }
 }

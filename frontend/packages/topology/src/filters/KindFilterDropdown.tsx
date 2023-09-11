@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Button, Select, SelectOption, SelectVariant } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { getTitleForNodeKind } from '@console/shared';
@@ -23,7 +28,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(opened);
-  const onToggle = (open: boolean): void => setIsOpen(open);
+  const onToggle = (_event, open: boolean): void => setIsOpen(open);
   let kindFilters = filters.filter(
     (f) => f.type === TopologyDisplayFilterType.kind && supportedKinds[f.id],
   );
@@ -72,7 +77,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
         </Button>
       </span>
       {kindFilters.map((filter) => (
-        <SelectOption
+        <SelectOptionDeprecated
           key={filter.id}
           value={filter.id}
           isChecked={filter.value}
@@ -80,13 +85,13 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
         >
           <ResourceIcon kind={filter.id} />
           {filter.label} ({supportedKinds[filter.id]})
-        </SelectOption>
+        </SelectOptionDeprecated>
       ))}
     </div>
   );
   return (
-    <Select
-      variant={SelectVariant.checkbox}
+    <SelectDeprecated
+      variant={SelectVariantDeprecated.checkbox}
       onToggle={onToggle}
       customContent={selectContent}
       isOpen={isOpen}

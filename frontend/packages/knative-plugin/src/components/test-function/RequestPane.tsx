@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, SelectVariant, TextInputTypes, ExpandableSection } from '@patternfly/react-core';
+import { Button, TextInputTypes, ExpandableSection } from '@patternfly/react-core';
+import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { FormikProps, FormikValues } from 'formik/dist/types';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +35,7 @@ const RequestPane: React.FC<FormikProps<FormikValues>> = ({ setFieldValue, value
   } = values;
   const [isExpanded, setIsExpanded] = React.useState<boolean>(isAdvancedSettingsExpanded);
 
-  const onToggle = (expanded: boolean) => {
+  const onToggle = (_event, expanded: boolean) => {
     setIsExpanded(expanded);
     setFieldValue('request.isAdvancedSettingsExpanded', expanded);
   };
@@ -81,7 +82,7 @@ const RequestPane: React.FC<FormikProps<FormikValues>> = ({ setFieldValue, value
           name="request.contentType"
           label={t('knative-plugin~Content-Type')}
           options={contentTypeItems}
-          variant={SelectVariant.typeahead}
+          variant={SelectVariantDeprecated.typeahead}
           isInputValuePersisted
           toggleOnSelection
           hideClearButton

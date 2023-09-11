@@ -63,7 +63,6 @@ const SSHFormKey: React.FC = () => {
         type="text"
         value={tempSSHKey}
         filename={filename}
-        onChange={onChange}
         onReadStarted={() => setIsLoading(true)}
         onReadFinished={() => setIsLoading(false)}
         isLoading={isLoading}

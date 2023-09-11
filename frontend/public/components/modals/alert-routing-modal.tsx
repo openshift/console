@@ -70,11 +70,11 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-c-input-group">
+              <div className="pf-v5-c-input-group">
                 <input
                   placeholder="cluster, alertname"
                   type="text"
-                  className="pf-c-form-control"
+                  className="pf-v5-c-form-control"
                   id="input-group-by"
                   data-test-id="input-group-by"
                   defaultValue={_.get(config, ['route', 'group_by'])}
@@ -92,11 +92,11 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-c-input-group">
+              <div className="pf-v5-c-input-group">
                 <input
                   placeholder="30s"
                   type="text"
-                  className="pf-c-form-control"
+                  className="pf-v5-c-form-control"
                   id="input-group-wait"
                   data-test-id="input-group-wait"
                   defaultValue={_.get(config, ['route', 'group_wait'])}
@@ -114,11 +114,11 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-c-input-group">
+              <div className="pf-v5-c-input-group">
                 <input
                   placeholder="5m"
                   type="text"
-                  className="pf-c-form-control"
+                  className="pf-v5-c-form-control"
                   id="input-group-interval"
                   data-test-id="input-group-interval"
                   defaultValue={_.get(config, ['route', 'group_interval'])}
@@ -136,11 +136,11 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-c-input-group">
+              <div className="pf-v5-c-input-group">
                 <input
                   placeholder="3h"
                   type="text"
-                  className="pf-c-form-control"
+                  className="pf-v5-c-form-control"
                   id="input-repeat-interval"
                   data-test-id="input-repeat-interval"
                   defaultValue={_.get(config, ['route', 'repeat_interval'])}

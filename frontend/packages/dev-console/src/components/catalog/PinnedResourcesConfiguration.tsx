@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { DualListSelector, FormHelperText, FormSection, Tooltip } from '@patternfly/react-core';
+import {
+  DualListSelector,
+  FormHelperText,
+  FormSection,
+  Icon,
+  Tooltip,
+} from '@patternfly/react-core';
 import * as fuzzy from 'fuzzysearch';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 import { useTranslation } from 'react-i18next';
@@ -147,7 +153,9 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-icon--fixed-width">
         <Tooltip position="top" content={t('devconsole~Resource not found')}>
-          <YellowExclamationTriangleIcon size="md" />
+          <Icon size="md">
+            <YellowExclamationTriangleIcon />
+          </Icon>
         </Tooltip>
       </span>
       <span className="co-resource-item__resource-name">
@@ -265,6 +273,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
   }, 2000);
 
   const onListChange = (
+    _event,
     newEnabledOptions: React.ReactElement<ItemProps>[],
     newDisabledOptions: React.ReactElement<ItemProps>[],
   ) => {
@@ -305,7 +314,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
       title={t('devconsole~Pre-pinned navigation items')}
       data-test="pinned-resource form-section"
     >
-      <FormHelperText isHidden={false}>
+      <FormHelperText>
         {t(
           'devconsole~As admin you can change the pinned resources that are shown to users by default. Users can still override this configuration and add or reorder their pinned resources. As soon as a user changes the default settings, new default settings are no longer applied.',
         )}

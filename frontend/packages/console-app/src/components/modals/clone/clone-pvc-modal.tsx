@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Form, FormGroup, TextInput } from '@patternfly/react-core';
+import {
+  Form,
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  TextInput,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   ModalBody,
@@ -37,7 +44,7 @@ import {
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { isCephProvisioner } from '@console/shared';
+import { RedExclamationCircleIcon, isCephProvisioner } from '@console/shared';
 import { getRequestedPVCSize } from '@console/shared/src/selectors';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
 
@@ -131,7 +138,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
               type="text"
               className="co-clone-pvc-modal__name--margin"
               value={clonePVCName}
-              onChange={setClonePVCName}
+              onChange={(_event, value) => setClonePVCName(value)}
               aria-label={t('console-app~Clone PVC')}
             />
           </FormGroup>
@@ -149,10 +156,6 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
             isRequired
             fieldId="clone-pvc-modal__size"
             className="co-clone-pvc-modal__form--space"
-            helperTextInvalid={t(
-              'console-app~Size should be equal or greater than the requested size of PVC',
-            )}
-            validated={validSize ? 'default' : 'error'}
           >
             {scResourceLoaded ? (
               <RequestSizeInput
@@ -167,6 +170,18 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
               />
             ) : (
               <div className="skeleton-text" />
+            )}
+
+            {!validSize && (
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                    {t(
+                      'console-app~Size should be equal or greater than the requested size of PVC.',
+                    )}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
             )}
           </FormGroup>
           <div className="co-clone-pvc-modal__details">

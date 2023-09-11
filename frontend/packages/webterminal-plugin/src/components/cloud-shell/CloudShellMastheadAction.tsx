@@ -36,9 +36,9 @@ const ClouldShellMastheadAction: React.FC<Props> = ({ onClick, className, open }
         <span
           style={{
             marginLeft: 'auto',
-            color: 'var(--pf-global--active-color--100)',
-            fontSize: 'var(--pf-global--FontSize--xs)',
-            paddingLeft: 'var(--pf-global--spacer--md)',
+            color: 'var(--pf-v5-global--active-color--100)',
+            fontSize: 'var(--pf-v5-global--FontSize--xs)',
+            paddingLeft: 'var(--pf-v5-global--spacer--md)',
           }}
         >
           <CheckIcon />

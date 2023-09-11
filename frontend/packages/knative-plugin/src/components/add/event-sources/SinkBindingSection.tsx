@@ -78,7 +78,7 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidt
         required
       />
       <FormGroup fieldId={fieldId} label={t('knative-plugin~Match subject')}>
-        <div className="pf-c-form__helper-text">
+        <div className="pf-v5-c-form__helper-text">
           {t('knative-plugin~Match subject using name or labels.')}
         </div>
         <div className="form-group">

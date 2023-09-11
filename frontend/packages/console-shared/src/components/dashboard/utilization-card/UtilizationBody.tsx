@@ -18,7 +18,6 @@ const UtilizationAxis: React.FC = () => {
     <div ref={containerRef}>
       <ChartAxis
         containerComponent={<ChartContainer title={t('console-shared~time axis')} />}
-        scale={{ x: 'time' }}
         domain={{ x: [startDate, endDate] }}
         tickFormat={timeFormatter.format}
         orientation="top"

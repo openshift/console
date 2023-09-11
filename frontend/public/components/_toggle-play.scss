@@ -1,6 +1,6 @@
-.co-toggle-play.pf-c-button {
-  background-color: var(--pf-global--BackgroundColor--100);
-  border: var(--pf-global--BorderWidth--lg) solid var(--pf-global--BorderColor--100);
+.co-toggle-play.pf-v5-c-button {
+  background-color: var(--pf-v5-global--BackgroundColor--100);
+  border: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--BorderColor--100);
   border-radius: 50%;
   height: 32px;
   margin-right: 15px;
@@ -19,6 +19,8 @@
   }
 
   &.co-toggle-play--active {
-    border-color: var(--pf-global--palette--green-300); // brighter green that works for both light and dark themes
+    border-color: var(
+      --pf-v5-global--palette--green-300
+    ); // brighter green that works for both light and dark themes
   }
 }

@@ -4,7 +4,7 @@ import {
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
-  Title,
+  EmptyStateHeader,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { global_danger_color_200 as globalDanger200 } from '@patternfly/react-tokens/dist/js/global_danger_color_200';
@@ -27,10 +27,11 @@ const ErrorResultsComponent: React.FC<ErrorResultsProps> = ({
 
   return (
     <EmptyState variant={EmptyStateVariant.full} className={className}>
-      <EmptyStateIcon icon={ExclamationCircleIcon} color={globalDanger200.value} />
-      <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-error-result">
-        {iGet(mainError, 'title') || title}
-      </Title>
+      <EmptyStateHeader
+        titleText={<>{iGet(mainError, 'title') || title}</>}
+        icon={<EmptyStateIcon icon={ExclamationCircleIcon} color={globalDanger200.value} />}
+        headingLevel="h5"
+      />
       <EmptyStateBody>
         {iGet(mainError, 'message')}
         {iGet(mainError, 'detail') ? <div>${iGet(mainError, 'detail')}</div> : null}

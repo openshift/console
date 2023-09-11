@@ -54,7 +54,7 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
         </p>
         <input
           type="text"
-          className="pf-c-form-control"
+          className="pf-v5-c-form-control"
           onKeyUp={isConfirmed}
           placeholder={t('olm~Enter name')}
           data-test="delete-catalogsource-input"

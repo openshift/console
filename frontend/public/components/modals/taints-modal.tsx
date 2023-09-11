@@ -86,7 +86,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                   </div>
                   <input
                     type="text"
-                    className="pf-c-form-control taint-modal__input"
+                    className="pf-v5-c-form-control taint-modal__input"
                     value={c.key}
                     onChange={(e) => change(e, i, 'key')}
                     required
@@ -98,7 +98,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                   </div>
                   <input
                     type="text"
-                    className="pf-c-form-control taint-modal__input"
+                    className="pf-v5-c-form-control taint-modal__input"
                     value={c.value}
                     onChange={(e) => change(e, i, 'value')}
                   />

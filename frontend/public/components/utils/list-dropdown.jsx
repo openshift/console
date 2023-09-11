@@ -161,7 +161,7 @@ class ListDropdownWithTranslation extends React.Component {
         {loaded && _.isEmpty(items) && (desc || this.props.selectedKeyKind) && (
           <Alert
             isInline
-            className="co-alert pf-c-alert--top-margin"
+            className="co-alert pf-v5-c-alert--top-margin"
             variant="info"
             title={t('public~No {{selection}} found', {
               selection: desc || this.props.selectedKeyKind,

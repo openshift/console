@@ -14,10 +14,12 @@ import {
   Button,
   EmptyState,
   EmptyStateBody,
-  EmptyStateSecondaryActions,
   EmptyStateVariant,
   SearchInput,
   Title,
+  EmptyStateActions,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import { getURLWithParams, VirtualizedGrid } from '@console/shared';
 import { Link } from 'react-router-dom';
@@ -790,19 +792,19 @@ export const TileViewPage = (props) => {
   const renderEmptyState = () => {
     return (
       <EmptyState variant={EmptyStateVariant.full}>
-        <Title headingLevel="h2" size="lg">
-          {emptyStateTitle}
-        </Title>
+        <EmptyStateHeader titleText={<>{emptyStateTitle}</>} headingLevel="h2" />
         <EmptyStateBody>{emptyStateInfo}</EmptyStateBody>
-        <EmptyStateSecondaryActions>
-          <Button
-            variant="link"
-            onClick={() => clearFilters()}
-            data-test-id="catalog-clear-filters"
-          >
-            {t('public~Clear All Filters')}
-          </Button>
-        </EmptyStateSecondaryActions>
+        <EmptyStateFooter>
+          <EmptyStateActions>
+            <Button
+              variant="link"
+              onClick={() => clearFilters()}
+              data-test-id="catalog-clear-filters"
+            >
+              {i18n.t('public~Clear All Filters')}
+            </Button>
+          </EmptyStateActions>
+        </EmptyStateFooter>
       </EmptyState>
     );
   };

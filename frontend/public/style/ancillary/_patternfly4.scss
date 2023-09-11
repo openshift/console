@@ -4,40 +4,50 @@
 
 // Assigning PF component specific variables globally so we can use
 :root {
-  --pf-c-code-block--BackgroundColor: var(--pf-global--BackgroundColor--200);
-  --pf-c-code-block__pre--FontFamily: var(--pf-global--FontFamily--monospace);
-  --pf-c-code-block__pre--FontSize: var(--pf-global--FontSize--sm);
-  --pf-c-content--MarginBottom: var(--pf-global--spacer--md);
+  --pf-v5-c-code-block--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
+  --pf-v5-c-code-block__pre--FontFamily: var(--pf-v5-global--FontFamily--monospace);
+  --pf-v5-c-code-block__pre--FontSize: var(--pf-v5-global--FontSize--sm);
+  --pf-v5-c-content--MarginBottom: var(--pf-v5-global--spacer--md);
 }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--pf-global--FontFamily--heading--sans-serif);
-    font-weight: var(--pf-global--FontWeight--normal);
-    line-height: var(--pf-global--LineHeight--md);
-    margin-bottom: var(--pf-global--spacer--sm);
-    word-break: break-word;
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+  font-weight: var(--pf-v5-global--FontWeight--normal);
+  line-height: var(--pf-v5-global--LineHeight--md);
+  margin-bottom: var(--pf-v5-global--spacer--sm);
+  word-break: break-word;
+}
 
-  h1 {
-    font-size: var(--pf-global--FontSize--2xl);
-    line-height: var(--pf-global--LineHeight--sm);
-  }
+h1 {
+  font-size: var(--pf-v5-global--FontSize--2xl);
+  line-height: var(--pf-v5-global--LineHeight--sm);
+}
 
-  h2 {
-    font-size: var(--pf-global--FontSize--xl);
-  }
+h2 {
+  font-size: var(--pf-v5-global--FontSize--xl);
+}
 
-  h3 {
-    font-size: var(--pf-global--FontSize--lg);
-  }
+h3 {
+  font-size: var(--pf-v5-global--FontSize--lg);
+}
 
-  h4, h5, h6 {
-    font-size: var(--pf-global--FontSize--md);
-  }
+h4,
+h5,
+h6 {
+  font-size: var(--pf-v5-global--FontSize--md);
+}
 
-  // Override PF4 inheritance
-  button, input, optgroup, select, textarea,
-  .pf-c-badge {
-    font-family: var(--pf-global--FontFamily--sans-serif);
-  }
-
+// Override PF4 inheritance
+button,
+input,
+optgroup,
+select,
+textarea,
+.pf-v5-c-badge {
+  font-family: var(--pf-v5-global--FontFamily--sans-serif);
+}

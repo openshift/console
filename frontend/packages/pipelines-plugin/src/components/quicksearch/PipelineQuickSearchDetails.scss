@@ -1,9 +1,9 @@
 .opp-quick-search-details {
-  padding-top: var(--pf-global--spacer--md);
+  padding-top: var(--pf-v5-global--spacer--md);
 
   &__form-button,
   &__version-dropdown {
-    margin: var(--pf-global--spacer--md) 0px !important;
+    margin: var(--pf-v5-global--spacer--md) 0px !important;
     width: max-content;
   }
 
@@ -15,7 +15,7 @@
   }
 
   &__provider {
-    color: var(--pf-global--Color--200);
+    color: var(--pf-v5-global--Color--200);
   }
 
   &__description {
@@ -23,11 +23,11 @@
   }
 
   &__hublink {
-    margin-left: var(--pf-global--spacer--sm);
+    margin-left: var(--pf-v5-global--spacer--sm);
   }
 
   &__badges-section {
-    margin: var(--pf-global--spacer--md) 0;
-    --pf-l-stack--m-gutter--MarginBottom: var(--pf-global--spacer--sm) !important;
+    margin: var(--pf-v5-global--spacer--md) 0;
+    --pf-v5-l-stack--m-gutter--MarginBottom: var(--pf-v5-global--spacer--sm) !important;
   }
 }

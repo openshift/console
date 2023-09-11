@@ -81,7 +81,7 @@ const OvirtProviderClustersVMsConnected: React.FC<OvirtProviderClustersVMsConnec
       <>
         <FormFieldRow field={clusterField} fieldType={FormFieldType.SELECT}>
           <FormField>
-            <FormSelect onChange={onClusterChange}>
+            <FormSelect onChange={(_event, value) => onClusterChange(value)}>
               <FormSelectPlaceholderOption
                 placeholder={t(getPlaceholderKey(OvirtProviderField.CLUSTER))}
                 isDisabled={!!clusterName}
@@ -95,7 +95,7 @@ const OvirtProviderClustersVMsConnected: React.FC<OvirtProviderClustersVMsConnec
         </FormFieldRow>
         <FormFieldRow field={vmField} fieldType={FormFieldType.SELECT}>
           <FormField isDisabled={!clusterName}>
-            <FormSelect onChange={(v) => onVMChange(v, defaultStorageClass)}>
+            <FormSelect onChange={(_event, v) => onVMChange(v, defaultStorageClass)}>
               <FormSelectPlaceholderOption
                 placeholder={t(getPlaceholderKey(OvirtProviderField.VM))}
                 isDisabled={!!iGet(vmField, 'value')}

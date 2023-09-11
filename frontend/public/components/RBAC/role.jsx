@@ -154,10 +154,10 @@ class Details extends React.Component {
 const DetailsWithTranslation = withTranslation()(Details);
 
 const bindingsColumnClasses = [
-  'pf-u-w-33-on-sm',
-  'pf-u-w-16-on-sm',
-  'pf-u-w-33-on-sm',
-  'pf-u-w-16-on-sm',
+  'pf-v5-u-w-33-on-sm',
+  'pf-v5-u-w-16-on-sm',
+  'pf-v5-u-w-33-on-sm',
+  'pf-v5-u-w-16-on-sm',
 ];
 
 const BindingsTableRow = ({ obj: binding }) => {

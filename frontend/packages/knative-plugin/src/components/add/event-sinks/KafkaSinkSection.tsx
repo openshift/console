@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { SelectVariant, TextInputTypes } from '@patternfly/react-core';
+import { TextInputTypes } from '@patternfly/react-core';
+import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
@@ -37,7 +38,7 @@ const KafkaSinkSection: React.FC<KafkaSinkSectionProps> = ({ title, namespace, f
         name={`formData.data.${EVENT_SINK_KAFKA_KIND}.bootstrapServers`}
         label={t('knative-plugin~Bootstrap servers')}
         ariaLabel={t('knative-plugin~Bootstrap servers')}
-        variant={SelectVariant.typeaheadMulti}
+        variant={SelectVariantDeprecated.typeaheadMulti}
         options={bootstrapServers}
         placeholderText={bsPlaceholder}
         helpText={t('knative-plugin~The address of the Kafka broker')}

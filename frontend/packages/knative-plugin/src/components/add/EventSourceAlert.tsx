@@ -18,7 +18,7 @@ const EventSourceAlert: React.FC<EventSourceAlertProps> = ({
 
   return showAlert ? (
     <Alert
-      variant={!isValidSource ? 'danger' : 'default'}
+      variant={!isValidSource ? 'danger' : undefined}
       title={t('knative-plugin~Event source cannot be created')}
       isInline
     >

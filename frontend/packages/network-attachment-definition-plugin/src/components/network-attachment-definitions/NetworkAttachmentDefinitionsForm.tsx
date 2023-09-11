@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { ActionGroup, Alert, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
+import {
+  ActionGroup,
+  Alert,
+  Button,
+  Form,
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  TextInput,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -20,7 +30,11 @@ import {
   referenceForGroupVersionKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
+import {
+  RedExclamationCircleIcon,
+  validateDNS1123SubdomainValue,
+  ValidationErrorType,
+} from '@console/shared';
 import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
 import {
   cnvBridgeNetworkType,
@@ -285,10 +299,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
         </div>
       </h1>
       <Form>
-        <FormGroup
-          fieldId="basic-settings-name"
-          validated={fieldErrors.nameValidationMsg ? 'error' : null}
-        >
+        <FormGroup fieldId="basic-settings-name">
           <label className="control-label co-required" htmlFor="network-attachment-definition-name">
             {t('kubevirt-plugin~Name')}
           </label>
@@ -296,11 +307,20 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
             type="text"
             placeholder={name}
             id="network-attachment-definition-name"
-            onChange={(value) => handleNameChange(value, fieldErrors, setName, setFieldErrors)}
+            onChange={(_event, value) =>
+              handleNameChange(value, fieldErrors, setName, setFieldErrors)
+            }
             value={name}
           />
+
           {fieldErrors.nameValidationMsg && (
-            <div className="text-secondary">{t(fieldErrors.nameValidationMsg)}</div>
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                  {t(fieldErrors.nameValidationMsg)}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
           )}
         </FormGroup>
 
@@ -311,7 +331,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
           <TextInput
             type="text"
             id="network-attachment-definition-description"
-            onChange={setDescription}
+            onChange={(_event, value) => setDescription(value)}
             value={description}
           />
         </FormGroup>
@@ -355,7 +375,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
         </div>
 
         <ButtonBar errorMessage={error ? error.message : ''} inProgress={loading}>
-          <ActionGroup className="pf-c-form">
+          <ActionGroup className="pf-v5-c-form">
             <Button
               id="save-changes"
               isDisabled={!formIsValid}

@@ -1,6 +1,6 @@
 $catalog-capability-level-icon-left: -20px;
 $catalog-capability-level-icon-top: 4px;
-$catalog-capability-level-inactive-color: var(--pf-global--Color--400);
+$catalog-capability-level-inactive-color: var(--pf-v5-global--Color--400);
 $catalog-item-icon-size-lg: 40px;
 $catalog-item-icon-size-sm: 24px;
 $co-modal-ignore-warning-icon-width: 30px;
@@ -28,13 +28,13 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
 // Prevents our tile text from inheriting the link color
 .co-catalog-tile {
-  color: var(--pf-global--Color--100);
+  color: var(--pf-v5-global--Color--100);
 }
 
 .co-catalog-tile-view {
   display: flex;
   flex-wrap: wrap;
-  --pf-l-gallery--GridTemplateColumns: repeat(auto-fill, 260px) !important;
+  --pf-v5-l-gallery--GridTemplateColumns: repeat(auto-fill, 260px) !important;
 }
 
 .co-catalog__body {
@@ -54,7 +54,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__kind-label {
-    font-weight: var(--pf-global--FontWeight--bold);
+    font-weight: var(--pf-v5-global--FontWeight--bold);
   }
 
   &__name {
@@ -67,7 +67,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__tag {
-    color: var(--pf-global--Color--200);
+    color: var(--pf-v5-global--Color--200);
     font-size: ($font-size-base - 1);
     margin-right: 5px;
     text-transform: uppercase;
@@ -114,20 +114,20 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 }
 
 .co-catalog-page {
-  background: var(--pf-global--BackgroundColor--100);
-  border: 1px solid var(--pf-global--BorderColor--300);
+  background: var(--pf-v5-global--BackgroundColor--100);
+  border: 1px solid var(--pf-v5-global--BorderColor--300);
   display: flex;
   flex: 1;
-  padding-top: $pf-global-gutter;
+  padding-top: $pf-v5-global-gutter;
 
   &--with-sidebar {
-    margin: 0 $pf-global-gutter;
-    padding-bottom: $pf-global-gutter;
+    margin: 0 $pf-v5-global-gutter;
+    padding-bottom: $pf-v5-global-gutter;
   }
 
   &__btn-group__group-by {
     display: inline;
-    margin-left: var(--pf-global--spacer--md);
+    margin-left: var(--pf-v5-global--spacer--md);
   }
 
   &__content {
@@ -137,10 +137,10 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__description {
     margin-top: -10px;
-    padding: 0 $pf-global-gutter $pf-global-gutter;
-    @media (min-width: $pf-global--breakpoint--xl) {
-      padding-left: $pf-global-gutter--md;
-      padding-right: $pf-global-gutter--md;
+    padding: 0 $pf-v5-global-gutter $pf-v5-global-gutter;
+    @media (min-width: $pf-v5-global--breakpoint--xl) {
+      padding-left: $pf-v5-global-gutter--md;
+      padding-right: $pf-v5-global-gutter--md;
     }
   }
 
@@ -154,60 +154,60 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__grid {
-    background-color: var(--pf-global--BackgroundColor--200);
+    background-color: var(--pf-v5-global--BackgroundColor--200);
   }
 
   &__grouped-items {
-    margin-bottom: var(--pf-global--spacer--md);
+    margin-bottom: var(--pf-v5-global--spacer--md);
   }
 
   &__group-title {
-    margin-bottom: var(--pf-global--spacer--sm);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
   }
 
   &__header {
-    margin: 0 $pf-global-gutter--md 0 0;
+    margin: 0 $pf-v5-global-gutter--md 0 0;
   }
 
   &__heading {
     font-size: 16px;
-    margin: 0 $pf-global-gutter $pf-global-gutter;
-    @media (min-width: $pf-global--breakpoint--xl) {
-      margin-left: $pf-global-gutter--md;
-      margin-right: $pf-global-gutter--md;
+    margin: 0 $pf-v5-global-gutter $pf-v5-global-gutter;
+    @media (min-width: $pf-v5-global--breakpoint--xl) {
+      margin-left: $pf-v5-global-gutter--md;
+      margin-right: $pf-v5-global-gutter--md;
     }
   }
 
   &__hint {
-    margin: 0 0 var(--pf-global--spacer--md) 0;
+    margin: 0 0 var(--pf-v5-global--spacer--md) 0;
   }
 
   &__input {
-    margin: 0 $pf-global-gutter $pf-global-gutter--md;
-    @media (max-width: $pf-global--breakpoint--md) {
+    margin: 0 $pf-v5-global-gutter $pf-v5-global-gutter--md;
+    @media (max-width: $pf-v5-global--breakpoint--md) {
       max-width: 165px;
     }
-    @media (min-width: $pf-global--breakpoint--xl) {
-      margin-left: $pf-global-gutter--md;
-      margin-right: $pf-global-gutter--md;
+    @media (min-width: $pf-v5-global--breakpoint--xl) {
+      margin-left: $pf-v5-global-gutter--md;
+      margin-right: $pf-v5-global-gutter--md;
     }
   }
 
   &__sort {
     display: inline;
-    margin-left: var(--pf-global--spacer--md);
+    margin-left: var(--pf-v5-global--spacer--md);
   }
 
   &__num-items {
-    font-weight: var(--pf-global--FontWeight--bold);
+    font-weight: var(--pf-v5-global--FontWeight--bold);
     padding: 0 0 20px;
   }
 
   &__info-icon {
     vertical-align: middle;
-    color: var(--pf-global--icon--Color--light);
+    color: var(--pf-v5-global--icon--Color--light);
     &:hover {
-      color: var(--pf-global--icon--Color--dark);
+      color: var(--pf-v5-global--icon--Color--dark);
     }
   }
 
@@ -224,17 +224,17 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     bottom: 0;
     padding: 0 !important;
     right: 0;
-    top: 4.75rem; // --pf-c-page__header--MinHeight
+    top: 4.75rem; // --pf-v5-c-page__header--MinHeight
 
-    .pf-c-modal-box__body {
+    .pf-v5-c-modal-box__body {
       // Required to position scroll shadows correctly on Chrome
       display: flex;
       flex-direction: column;
       margin: 0 !important;
-      --pf-c-modal-box__body--PaddingTop: 0 !important;
-      --pf-c-modal-box__body--PaddingRight: 0 !important;
-      --pf-c-modal-box__body--PaddingLeft: 0 !important;
-      --pf-c-modal-box__body--last-child--PaddingBottom: 0 !important;
+      --pf-v5-c-modal-box__body--PaddingTop: 0 !important;
+      --pf-v5-c-modal-box__body--PaddingRight: 0 !important;
+      --pf-v5-c-modal-box__body--PaddingLeft: 0 !important;
+      --pf-v5-c-modal-box__body--last-child--PaddingBottom: 0 !important;
     }
 
     h1 {
@@ -245,7 +245,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__overlay-action {
     align-items: baseline;
     display: inline-flex !important;
-    margin: var(--pf-global--spacer--sm) var(--pf-global--spacer--sm) 0 0;
+    margin: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--sm) 0 0;
     overflow-x: hidden;
   }
 
@@ -263,17 +263,17 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__overlay-actions {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: var(--pf-global--spacer--md);
+    margin-bottom: var(--pf-v5-global--spacer--md);
     white-space: normal;
   }
 
   &__overlay-header {
-    margin-bottom: var(--pf-global--spacer--md);
+    margin-bottom: var(--pf-v5-global--spacer--md);
   }
 
   &__overlay-body {
     margin: 0;
-    padding-top: var(--pf-global--spacer--md);
+    padding-top: var(--pf-v5-global--spacer--md);
     @media (min-width: $screen-sm-min) {
       display: flex;
     }
@@ -289,7 +289,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     h2,
     h3 {
       color: var(
-        --pf-global--Color--100
+        --pf-v5-global--Color--100
       ); // same color as styles hardcoded in markdown text component
     }
 
@@ -301,7 +301,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     li,
     ol {
       color: var(
-        --pf-global--Color--100
+        --pf-v5-global--Color--100
       ); // same color as styles hardcoded in markdown text component
       font-size: $font-size-base !important;
     }
@@ -315,7 +315,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__tabs {
     flex: 0 0 220px;
-    margin: 0 $pf-global-gutter 0 0;
+    margin: 0 $pf-v5-global-gutter 0 0;
   }
 
   &__searchfilter {
@@ -323,18 +323,18 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 }
 
-.co-catalog-page__overlay.pf-c-modal-box {
+.co-catalog-page__overlay.pf-v5-c-modal-box {
   @media screen and (min-width: $screen-sm) {
-    --pf-c-modal-box--Width: 600px;
+    --pf-v5-c-modal-box--Width: 600px;
   }
 
   @media screen and (min-width: $screen-md) {
-    --pf-c-modal-box--Width: 900px;
+    --pf-v5-c-modal-box--Width: 900px;
   }
 }
 
 .co-catalog-tab__empty {
-  color: $pf-color-black-600;
+  color: $pf-v5-color-black-600;
 }
 
 .co-modal-ignore-warning {

@@ -49,13 +49,8 @@ import {
   Checkbox,
   CodeBlock,
   CodeBlockCode,
-  Dropdown,
-  DropdownItem,
-  DropdownPosition,
-  DropdownToggle,
   Flex,
   FlexItem,
-  KebabToggle,
   Label,
   Modal,
   ModalVariant,
@@ -65,6 +60,14 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+  DropdownPosition as DropdownPositionDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+  KebabToggle as KebabToggleDeprecated,
+  KebabToggleProps as KebabTogglePropsDeprecated,
+} from '@patternfly/react-core/deprecated';
 import {
   BanIcon,
   BellIcon,
@@ -500,12 +503,12 @@ const Graph: React.FC<GraphProps> = ({
 };
 
 const tableSilenceClasses = [
-  'pf-c-table__action', // Checkbox
-  'pf-u-w-50 pf-u-w-33-on-sm', // Name
+  'pf-v5-c-table__action', // Checkbox
+  'pf-v5-u-w-50 pf-v5-u-w-33-on-sm', // Name
   'pf-m-hidden pf-m-visible-on-sm', // Firing alerts
   '', // State
   'pf-m-hidden pf-m-visible-on-sm', // Creator
-  'dropdown-kebab-pf pf-c-table__action',
+  'dropdown-kebab-pf pf-v5-c-table__action',
 ];
 
 const SilenceMatchersList = ({ silence }) => (
@@ -534,7 +537,7 @@ const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, showCheckbox }) 
   const { selectedSilences, setSelectedSilences } = React.useContext(SelectedSilencesContext);
 
   const onCheckboxChange = React.useCallback(
-    (isChecked: boolean) => {
+    (_event, isChecked: boolean) => {
       setSelectedSilences((oldSet) => {
         const newSet = new Set(oldSet);
         if (isChecked) {
@@ -797,11 +800,11 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
         loaded={alerts?.loaded}
         loadError={alerts?.loadError}
       >
-        <div className="pf-c-page__main-breadcrumb">
+        <div className="pf-v5-c-page__main-breadcrumb">
           <Breadcrumb className="monitoring-breadcrumbs">
             <BreadcrumbItem>
               <Link
-                className="pf-c-breadcrumb__link"
+                className="pf-v5-c-breadcrumb__link"
                 to={namespace ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alerts'}
               >
                 {t('public~Alerts')}
@@ -837,7 +840,7 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               <ToolbarItem variant="label">
                 <SectionHeading text={t('public~Alert details')} />
               </ToolbarItem>
-              <ToolbarGroup alignment={{ default: 'alignRight' }}>
+              <ToolbarGroup align={{ default: 'alignRight' }}>
                 <ActionServiceProvider context={{ 'alert-detail-toolbar-actions': { alert } }}>
                   {({ actions, loaded }) =>
                     loaded
@@ -1046,13 +1049,13 @@ const ActiveAlerts: React.FC<{ alerts; ruleID: string; namespace: string }> = (p
               <div className="dropdown-kebab-pf">
                 <KebabDropdown
                   dropdownItems={[
-                    <DropdownItem
+                    <DropdownItemDeprecated
                       component="button"
                       key="silence"
                       onClick={() => silenceAlert(a, namespace)}
                     >
                       {t('public~Silence alert')}
-                    </DropdownItem>,
+                    </DropdownItemDeprecated>,
                   ]}
                 />
               </div>
@@ -1106,11 +1109,11 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
         <title>{t('public~{{name}} details', { name: rule?.name || RuleResource.label })}</title>
       </Helmet>
       <StatusBox data={rule} label={RuleResource.label} loaded={loaded} loadError={loadError}>
-        <div className="pf-c-page__main-breadcrumb">
+        <div className="pf-v5-c-page__main-breadcrumb">
           <Breadcrumb className="monitoring-breadcrumbs">
             <BreadcrumbItem>
               <Link
-                className="pf-c-breadcrumb__link"
+                className="pf-v5-c-breadcrumb__link"
                 to={namespace ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alertrules'}
               >
                 {namespace ? t('public~Alerts') : t('public~Alerting rules')}
@@ -1222,7 +1225,7 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                 <ToolbarItem variant="label">
                   <SectionHeading text={t('public~Active alerts')} />
                 </ToolbarItem>
-                <ToolbarGroup alignment={{ default: 'alignRight' }}>
+                <ToolbarGroup align={{ default: 'alignRight' }}>
                   <ToolbarItem>
                     <ToggleGraph />
                   </ToolbarItem>
@@ -1247,7 +1250,7 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
             <div className="row">
               <div className="col-xs-12">
                 {_.isEmpty(rule?.alerts) ? (
-                  <div className="pf-u-text-align-center">{t('public~None found')}</div>
+                  <div className="pf-v5-u-text-align-center">{t('public~None found')}</div>
                 ) : (
                   <ActiveAlerts alerts={rule.alerts} ruleID={rule?.id} namespace={namespace} />
                 )}
@@ -1343,7 +1346,7 @@ type SilenceDropdownProps = {
   className?: string;
   isPlain?: boolean;
   silence: Silence;
-  Toggle: React.FC<{ onToggle: OnToggle }>;
+  Toggle: React.FC<{ onToggle: KebabTogglePropsDeprecated['onToggle'] }>;
 };
 
 const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
@@ -1370,29 +1373,29 @@ const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
   const dropdownItems =
     silenceState(silence) === SilenceStates.Expired
       ? [
-          <DropdownItem key="edit-silence" component="button" onClick={editSilence}>
+          <DropdownItemDeprecated key="edit-silence" component="button" onClick={editSilence}>
             {t('public~Recreate silence')}
-          </DropdownItem>,
+          </DropdownItemDeprecated>,
         ]
       : [
-          <DropdownItem key="edit-silence" component="button" onClick={editSilence}>
+          <DropdownItemDeprecated key="edit-silence" component="button" onClick={editSilence}>
             {t('public~Edit silence')}
-          </DropdownItem>,
-          <DropdownItem key="cancel-silence" component="button" onClick={setModalOpen}>
+          </DropdownItemDeprecated>,
+          <DropdownItemDeprecated key="cancel-silence" component="button" onClick={setModalOpen}>
             {t('public~Expire silence')}
-          </DropdownItem>,
+          </DropdownItemDeprecated>,
         ];
 
   return (
     <>
-      <Dropdown
+      <DropdownDeprecated
         className={className}
         data-test="silence-actions"
         dropdownItems={dropdownItems}
         isOpen={isOpen}
         isPlain={isPlain}
         onSelect={setClosed}
-        position={DropdownPosition.right}
+        position={DropdownPositionDeprecated.right}
         toggle={<Toggle onToggle={setIsOpen} />}
       />
       <ExpireSilenceModal isOpen={isModalOpen} setClosed={setModalClosed} silenceID={silence.id} />
@@ -1401,13 +1404,16 @@ const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
 };
 
 const SilenceDropdownKebab: React.FC<{ silence: Silence }> = ({ silence }) => (
-  <SilenceDropdown isPlain silence={silence} Toggle={KebabToggle} />
+  <SilenceDropdown isPlain silence={silence} Toggle={KebabToggleDeprecated} />
 );
 
-const ActionsToggle: React.FC<{ onToggle: OnToggle }> = ({ onToggle, ...props }) => (
-  <DropdownToggle data-test="silence-actions-toggle" onToggle={onToggle} {...props}>
+const ActionsToggle: React.FC<{ onToggle: KebabTogglePropsDeprecated['onToggle'] }> = ({
+  onToggle,
+  ...props
+}) => (
+  <DropdownToggleDeprecated data-test="silence-actions-toggle" onToggle={onToggle} {...props}>
     Actions
-  </DropdownToggle>
+  </DropdownToggleDeprecated>
 );
 
 const SilenceDropdownActions: React.FC<{ silence: Silence }> = ({ silence }) => (
@@ -1420,7 +1426,7 @@ const SilencedAlertsList = ({ alerts }) => {
   const [namespace] = useActiveNamespace();
 
   return _.isEmpty(alerts) ? (
-    <div className="pf-u-text-align-center">{t('public~None found')}</div>
+    <div className="pf-v5-u-text-align-center">{t('public~None found')}</div>
   ) : (
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">
@@ -1452,12 +1458,12 @@ const SilencedAlertsList = ({ alerts }) => {
             <div className="dropdown-kebab-pf">
               <KebabDropdown
                 dropdownItems={[
-                  <DropdownItem
+                  <DropdownItemDeprecated
                     key="view-rule"
                     onClick={() => history.push(ruleURL(a.rule, namespace))}
                   >
                     {t('public~View alerting rule')}
-                  </DropdownItem>,
+                  </DropdownItemDeprecated>,
                 ]}
               />
             </div>
@@ -1495,11 +1501,11 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
         loaded={silences?.loaded}
         loadError={silences?.loadError}
       >
-        <div className="pf-c-page__main-breadcrumb">
+        <div className="pf-v5-c-page__main-breadcrumb">
           <Breadcrumb className="monitoring-breadcrumbs">
             <BreadcrumbItem>
               <Link
-                className="pf-c-breadcrumb__link"
+                className="pf-v5-c-breadcrumb__link"
                 to={namespace ? `/dev-monitoring/ns/${namespace}/silences` : '/monitoring/silences'}
               >
                 {t('public~Silences')}
@@ -1600,11 +1606,11 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
 export const SilencesDetailsPage = withFallback(SilencesDetailsPage_);
 
 const tableAlertClasses = [
-  'pf-u-w-50 pf-u-w-33-on-sm', // Name
+  'pf-v5-u-w-50 pf-v5-u-w-33-on-sm', // Name
   'pf-m-hidden pf-m-visible-on-sm', // Severity
   '', // State
   'pf-m-hidden pf-m-visible-on-sm', // Source
-  'dropdown-kebab-pf pf-c-table__action',
+  'dropdown-kebab-pf pf-v5-c-table__action',
 ];
 
 const AlertTableRow: React.FC<RowProps<Alert>> = ({ obj }) => {
@@ -1619,15 +1625,18 @@ const AlertTableRow: React.FC<RowProps<Alert>> = ({ obj }) => {
   const [namespace] = useActiveNamespace();
 
   const dropdownItems = [
-    <DropdownItem key="view-rule" onClick={() => history.push(ruleURL(obj.rule, namespace))}>
+    <DropdownItemDeprecated
+      key="view-rule"
+      onClick={() => history.push(ruleURL(obj.rule, namespace))}
+    >
       {t('public~View alerting rule')}
-    </DropdownItem>,
+    </DropdownItemDeprecated>,
   ];
   if (state !== AlertStates.Silenced) {
     dropdownItems.unshift(
-      <DropdownItem key="silence-alert" onClick={() => silenceAlert(obj)}>
+      <DropdownItemDeprecated key="silence-alert" onClick={() => silenceAlert(obj)}>
         {t('public~Silence alert')}
-      </DropdownItem>,
+      </DropdownItemDeprecated>,
     );
   }
 
@@ -1873,7 +1882,7 @@ export const alertStateFilter = (): RowFilter => ({
 });
 
 const tableRuleClasses = [
-  'pf-u-w-50 pf-u-w-33-on-sm', // Name
+  'pf-v5-u-w-50 pf-v5-u-w-33-on-sm', // Name
   'pf-m-hidden pf-m-visible-on-sm', // Severity
   '', // Alert state
   'pf-m-hidden pf-m-visible-on-sm', // Source
@@ -2116,7 +2125,7 @@ const SelectAllCheckbox: React.FC<{ silences: Silence[] }> = ({ silences }) => {
     activeSilences.length > 0 && _.every(activeSilences, (s) => selectedSilences.has(s.id));
 
   const onChange = React.useCallback(
-    (isChecked: boolean) => {
+    (_event, isChecked: boolean) => {
       const ids = isChecked ? activeSilences.map((s) => s.id) : [];
       setSelectedSilences(new Set(ids));
     },
@@ -2435,5 +2444,3 @@ type MonitoringResourceIconProps = {
   className?: string;
   resource: MonitoringResource;
 };
-
-type OnToggle = (value: boolean, e: MouseEvent) => void;

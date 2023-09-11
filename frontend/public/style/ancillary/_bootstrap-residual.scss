@@ -11,7 +11,9 @@
   display: block; // account for any element using help-block
   margin-top: 5px;
   margin-bottom: 10px;
-  color: var(--pf-global--Color--100); // matches --pf-c-helper-text__item-text--Color and picks up dark theme variable
+  color: var(
+    --pf-v5-global--Color--100
+  ); // matches --pf-v5-c-helper-text__item-text--Color and picks up dark theme variable
 }
 
 label {
@@ -21,11 +23,9 @@ label {
   font-weight: bold;
 }
 
-
 //
 // List groups
 // --------------------------------------------------
-
 
 // Base class
 //
@@ -37,7 +37,6 @@ label {
   padding-left: 0; // reset padding because ul and ol
 }
 
-
 // Individual list items
 //
 // Use on `li`s or `div`s within the `.list-group` parent.
@@ -48,8 +47,8 @@ label {
   padding: 10px 15px;
   // Place the border on the list items and negative margin up for better styling
   margin-bottom: -1px;
-  background-color: var(--pf-global--BackgroundColor--100);
-  border: 1px solid var(--pf-global--BorderColor--100);
+  background-color: var(--pf-v5-global--BackgroundColor--100);
+  border: 1px solid var(--pf-v5-global--BorderColor--100);
 }
 
 .radio,
@@ -75,10 +74,10 @@ label {
     cursor: pointer;
   }
 }
-.radio input[type="radio"],
-.radio-inline input[type="radio"],
-.checkbox input[type="checkbox"],
-.checkbox-inline input[type="checkbox"] {
+.radio input[type='radio'],
+.radio-inline input[type='radio'],
+.checkbox input[type='checkbox'],
+.checkbox-inline input[type='checkbox'] {
   position: absolute;
   margin-top: 4px \9;
   margin-left: -20px;
@@ -108,8 +107,9 @@ label {
   }
 }
 
-.small, small {
-  font-size: var(--pf-global--FontSize--sm) !important;
+.small,
+small {
+  font-size: var(--pf-v5-global--FontSize--sm) !important;
 }
 
 .table {
@@ -123,16 +123,18 @@ label {
     > tr {
       > th,
       > td {
-        padding: var(--pf-global--spacer--sm); // matches --pf-c-table--m-compact--cell--Padding
+        padding: var(
+          --pf-v5-global--spacer--sm
+        ); // matches --pf-v5-c-table--m-compact--cell--Padding
         vertical-align: top;
-        border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
+        border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
       }
     }
   }
   // Bottom align for column headings
   > thead > tr > th {
     vertical-align: bottom;
-    border-bottom: var(--pf-global--BorderWidth--md) solid var(--pf-global--BorderColor--300);
+    border-bottom: var(--pf-v5-global--BorderWidth--md) solid var(--pf-v5-global--BorderColor--300);
   }
   // Remove top border from thead by default
   > caption + thead,
@@ -148,9 +150,9 @@ label {
 }
 
 .text-muted {
-  color: var(--pf-global--Color--200);
+  color: var(--pf-v5-global--Color--200);
 }
 
 .text-secondary {
-  color: var(--pf-global--Color--200)
+  color: var(--pf-v5-global--Color--200);
 }

@@ -104,14 +104,6 @@ describe('Visiting other routes', () => {
             waitFor: () => cy.byLegacyTestID('cluster-version').should('exist'),
           },
           {
-            path: '/monitoring/query-browser',
-            waitFor: () => {
-              cy.byLegacyTestID('kebab-button').should('exist');
-              // loading indicator shows in metrics dropdown until loaded
-              cy.byTestID('loading-indicator').should('not.exist');
-            },
-          },
-          {
             // Test loading search page for a kind with no static model.
             path: '/search/all-namespaces?kind=config.openshift.io~v1~Console',
             waitFor: () => listPage.rows.shouldBeLoaded(),

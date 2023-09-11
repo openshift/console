@@ -3,6 +3,7 @@ import {
   Alert,
   Bullseye,
   Button,
+  Icon,
   Progress,
   ProgressMeasureLocation,
   ProgressVariant,
@@ -161,7 +162,9 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm, dataV
             <Stack hasGutter className="kv-customize-source__status--center">
               <StackItem>
                 {progressValue === 100 ? (
-                  <GreenCheckCircleIcon size="xl" />
+                  <Icon size="xl">
+                    <GreenCheckCircleIcon />
+                  </Icon>
                 ) : (
                   <Progress
                     value={progressValue}

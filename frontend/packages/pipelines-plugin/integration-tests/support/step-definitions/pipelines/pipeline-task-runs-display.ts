@@ -126,7 +126,7 @@ Then('user can see Details, Log, YAML and Events tab', () => {
 });
 
 Then('user is redirected to Task Run Details tab', () => {
-  cy.get('.pf-c-breadcrumb').should('include.text', 'TaskRun details');
+  cy.get('.pf-v5-c-breadcrumb').should('include.text', 'TaskRun details');
 });
 
 When('user clicks on task run {string}', (pipelineRunsName: string) => {
@@ -136,7 +136,7 @@ When('user clicks on task run {string}', (pipelineRunsName: string) => {
 Given('user is at pipeline details page with pipeline runs {string}', (pipelineName: string) => {
   detailsPage.titleShouldContain(pageTitle.Pipelines);
   pipelinesPage.selectPipeline(pipelineName);
-  cy.get('.pf-c-breadcrumb').should('include.text', 'Pipeline details');
+  cy.get('.pf-v5-c-breadcrumb').should('include.text', 'Pipeline details');
 });
 
 When('user clicks on pipeline runs tab', () => {

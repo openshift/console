@@ -99,7 +99,7 @@ describe('Using OLM descriptor components', () => {
     });
     getOperandFormFieldElement(SELECT_FIELD_ID).should('exist');
     getOperandFormFieldLabel(SELECT_FIELD_ID).should('have.text', 'Select');
-    cy.get(`#${SELECT_FIELD_ID} .pf-c-dropdown__toggle-text`).should(
+    cy.get(`#${SELECT_FIELD_ID} .pf-v5-c-dropdown__toggle-text`).should(
       'have.text',
       testCR?.spec?.select.toString(),
     );

@@ -295,7 +295,7 @@ export const MachineConfigPoolDetailsPage: React.SFC<any> = (props) => (
 
 const tableColumnClasses = [
   '',
-  'pf-m-hidden pf-m-visible-on-md pf-u-w-33-on-md',
+  'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-33-on-md',
   '',
   '',
   Kebab.columnClass,

@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 /* eslint-disable import/named */
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { KEY_CODES, Tooltip, FocusTrap } from '@patternfly/react-core';
+import { KeyTypes, Tooltip, FocusTrap } from '@patternfly/react-core';
 import { AngleRightIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import { KebabActions, isKebabActions } from '@console/plugin-sdk/src/typings/kebab-actions';
@@ -94,12 +94,12 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
 }) => {
   const { t } = useTranslation();
   const handleEscape = (e) => {
-    if (e.keyCode === KEY_CODES.ESCAPE_KEY) {
+    if (e.keyCode === KeyTypes.Escape) {
       onEscape();
     }
   };
   const disabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
-  const classes = classNames('pf-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
+  const classes = classNames('pf-v5-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
   return (
     <button
       className={classes}
@@ -142,7 +142,7 @@ const KebabSubMenu: React.FC<KebabSubMenuProps> = ({ option, onClick }) => {
     <>
       <button
         ref={nodeRef}
-        className="oc-kebab__sub pf-c-dropdown__menu-item"
+        className="oc-kebab__sub pf-v5-c-dropdown__menu-item"
         data-test-action={option.labelKey || option.label}
         // mouse enter will open the sub menu
         onMouseEnter={() => setOpen(true)}
@@ -185,7 +185,7 @@ const KebabSubMenu: React.FC<KebabSubMenuProps> = ({ option, onClick }) => {
           <div
             ref={subMenuCbRef}
             role="presentation"
-            className="pf-c-dropdown pf-m-expanded"
+            className="pf-v5-c-dropdown pf-m-expanded"
             tabIndex={-1}
             onMouseLeave={(e) => {
               // only close the sub menu if the mouse does not enter the item
@@ -253,7 +253,7 @@ export const KebabMenuItems: React.FC<KebabMenuItemsProps> = ({
   focusItem,
 }) => (
   <ul
-    className={classNames('pf-c-dropdown__menu pf-m-align-right', className)}
+    className={classNames('pf-v5-c-dropdown__menu pf-m-align-right', className)}
     data-test-id="action-items"
   >
     {_.map(options, (o, index) => (
@@ -545,7 +545,7 @@ export const Kebab: KebabComponent = (props) => {
     >
       <div
         className={classNames({
-          'pf-c-dropdown': true,
+          'pf-v5-c-dropdown': true,
           'pf-m-expanded': active,
         })}
       >
@@ -556,7 +556,7 @@ export const Kebab: KebabComponent = (props) => {
           aria-expanded={active}
           aria-haspopup="true"
           aria-label={t('public~Actions')}
-          className="pf-c-dropdown__toggle pf-m-plain"
+          className="pf-v5-c-dropdown__toggle pf-m-plain"
           data-test-id="kebab-button"
           disabled={isDisabled}
           onClick={toggle}
@@ -580,7 +580,7 @@ export const Kebab: KebabComponent = (props) => {
               fallbackFocus: getDivReference, // fallback to popover content wrapper div if there are no tabbable elements
             }}
           >
-            <div ref={divElement} className="pf-c-dropdown pf-m-expanded" tabIndex={-1}>
+            <div ref={divElement} className="pf-v5-c-dropdown pf-m-expanded" tabIndex={-1}>
               <KebabMenuItems
                 options={menuOptions}
                 onClick={onClick}
@@ -595,7 +595,7 @@ export const Kebab: KebabComponent = (props) => {
   );
 };
 Kebab.factory = kebabFactory;
-Kebab.columnClass = 'dropdown-kebab-pf pf-c-table__action';
+Kebab.columnClass = 'dropdown-kebab-pf pf-v5-c-table__action';
 Kebab.getExtensionsActionsForKind = getExtensionsKebabActionsForKind;
 
 export type KebabOption = {

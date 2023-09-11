@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
-import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
@@ -21,20 +21,27 @@ const DetailsCard: React.FC<DetailsCardProps> = () => {
   const hostRole = <BareMetalHostRole machine={machine} node={node} />;
 
   return (
-    <Card>
-      <CardHeader>
+    <Card isClickable isSelectable>
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <Link
+                to={`${resourcePathFromModel(
+                  BareMetalHostModel,
+                  getName(obj),
+                  getNamespace(obj),
+                )}/details`}
+              >
+                {t('metal3-plugin~View all')}
+              </Link>
+            </>
+          ),
+          hasNoOffset: false,
+          className: 'co-overview-card__actions',
+        }}
+      >
         <CardTitle>{t('metal3-plugin~Details')}</CardTitle>
-        <CardActions className="co-overview-card__actions">
-          <Link
-            to={`${resourcePathFromModel(
-              BareMetalHostModel,
-              getName(obj),
-              getNamespace(obj),
-            )}/details`}
-          >
-            {t('metal3-plugin~View all')}
-          </Link>
-        </CardActions>
       </CardHeader>
       <CardBody>
         <DetailsBody>

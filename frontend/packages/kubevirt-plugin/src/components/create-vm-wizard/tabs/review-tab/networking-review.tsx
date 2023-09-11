@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+import { TableVariant } from '@patternfly/react-table';
+import {
+  Table as TableDeprecated,
+  TableHeader as TableHeaderDeprecated,
+  TableBody as TableBodyDeprecated,
+} from '@patternfly/react-table/deprecated';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
@@ -33,16 +38,16 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({ netw
   return (
     <>
       {showNetworks && (
-        <Table
+        <TableDeprecated
           aria-label={t('kubevirt-plugin~Network Interfaces')}
           variant={TableVariant.compact}
           cells={headers}
           rows={rows}
           gridBreakPoint="grid-xl"
         >
-          <TableHeader />
-          <TableBody />
-        </Table>
+          <TableHeaderDeprecated />
+          <TableBodyDeprecated />
+        </TableDeprecated>
       )}
       {!showNetworks && (
         <p>

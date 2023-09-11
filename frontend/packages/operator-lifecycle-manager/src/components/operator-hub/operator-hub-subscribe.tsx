@@ -610,14 +610,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             id="enable-monitoring-checkbox"
             data-test="enable-monitoring"
             label={t('olm~Enable Operator recommended cluster monitoring on this Namespace')}
-            onChange={setEnableMonitoring}
+            onChange={(_event, value) => setEnableMonitoring(value)}
             isChecked={enableMonitoring}
             data-checked-state={enableMonitoring}
           />
           {props.packageManifest.data[0].metadata.labels['opsrc-provider'] !== 'redhat' && (
             <Alert
               isInline
-              className="co-alert pf-c-alert--top-margin"
+              className="co-alert pf-v5-c-alert--top-margin"
               variant="warning"
               title={t('olm~Namespace monitoring')}
             >
@@ -677,7 +677,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           />
           <Alert
             isInline
-            className="co-alert pf-c-alert--top-margin"
+            className="co-alert pf-v5-c-alert--top-margin"
             variant="warning"
             title={t(
               'olm~Not installing the Operator into the recommended namespace can cause unexpected behavior.',
@@ -746,7 +746,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             variant="warning"
             title={t('olm~Cluster in STS Mode')}
             actionClose={<AlertActionCloseButton onClose={() => setShowSTSWarn(false)} />}
-            className="pf-u-mb-lg"
+            className="pf-v5-u-mb-lg"
           >
             <p>
               {t(
@@ -928,7 +928,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             </>
             <div className="co-form-section__separator" />
             {formError()}
-            <ActionGroup className="pf-c-form">
+            <ActionGroup className="pf-v5-c-form">
               <Button
                 data-test="install-operator"
                 onClick={() => submit()}

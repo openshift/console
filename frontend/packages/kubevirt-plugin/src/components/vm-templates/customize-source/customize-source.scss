@@ -1,5 +1,5 @@
 .kv-customize-source {
-  padding: var(--pf-global--spacer--lg);
+  padding: var(--pf-v5-global--spacer--lg);
 }
 
 .kv-customize-source__cloud-init {
@@ -7,7 +7,7 @@
 }
 
 .kv-customize-source__status {
-  margin-top: var(--pf-global--spacer--3xl);
+  margin-top: var(--pf-v5-global--spacer--3xl);
 }
 
 .kv-customize-source__status--center {
@@ -23,11 +23,11 @@
   position: fixed;
   z-index: 1000;
   width: 100%;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.8);
   bottom: 0;
-  padding: var(--pf-global--spacer--md) 0;
+  padding: var(--pf-v5-global--spacer--md) 0;
 }
 
 .kv-customize-source__form-body {
-  padding-bottom: var(--pf-global--spacer--2xl);
+  padding-bottom: var(--pf-v5-global--spacer--2xl);
 }

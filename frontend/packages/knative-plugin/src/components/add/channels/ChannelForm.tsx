@@ -150,7 +150,7 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
             </>
           )}
         {channels && channels.loaded && _.isEmpty(channels.channelList) && (
-          <Alert variant="default" title={t('knative-plugin~Channel cannot be created')} isInline>
+          <Alert variant="custom" title={t('knative-plugin~Channel cannot be created')} isInline>
             {t('knative-plugin~You do not have write access in this project.')}
           </Alert>
         )}

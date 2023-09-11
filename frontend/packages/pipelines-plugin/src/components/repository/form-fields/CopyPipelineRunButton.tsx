@@ -25,7 +25,7 @@ const CopyPipelineRunButton = ({ text }) => {
             <Button
               type="button"
               variant="secondary"
-              className="pf-c-button--align-right hidden-sm hidden-xs"
+              className="pf-v5-c-button--align-right hidden-sm hidden-xs"
             >
               <CopyIcon /> {t('pipelines-plugin~Copy')}
             </Button>

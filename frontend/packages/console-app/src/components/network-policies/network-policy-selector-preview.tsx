@@ -47,7 +47,7 @@ export const NetworkPolicySelectorPreview: React.FC<NetworkPolicySelectorPreview
             <PodsPreview namespace={props.policyNamespace} podSelector={props.podSelector} />
           )
         }
-        reference={props.popoverRef}
+        triggerRef={props.popoverRef}
         position={'bottom'}
       />
     </>

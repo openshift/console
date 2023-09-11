@@ -1,13 +1,14 @@
 .lso-node-selection-table__table--scroll {
-  margin-bottom: var(--pf-global--spacer--md);
+  margin-bottom: var(--pf-v5-global--spacer--md);
   max-height: 300px;
   overflow-y: auto;
-  scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--palette--white);
+  scrollbar-color: var(--pf-v5-global--BackgroundColor--light-300)
+    var(--pf-v5-global--palette--white);
 
-  .pf-c-table {
-    border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+  .pf-v5-c-table {
+    border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
 
-    .pf-c-table__check {
+    .pf-v5-c-table__check {
       /* This overrides the default overrides of checkboxes for ocs based tables */
       width: 4.6% !important;
 
@@ -20,4 +21,3 @@
     }
   }
 }
-

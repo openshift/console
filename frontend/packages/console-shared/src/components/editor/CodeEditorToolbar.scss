@@ -1,16 +1,16 @@
 @import '../../../../../public/style/vars';
 
 .ocs-yaml-editor-shortcut__text {
-  color: var(--pf-global--Color--200);
-  margin-left: var(--pf-global--spacer--sm);
+  color: var(--pf-v5-global--Color--200);
+  margin-left: var(--pf-v5-global--spacer--sm);
 }
 
 .ocs-yaml-editor-toolbar {
   align-items: center;
 }
 
-@media(max-width: $screen-sm-max) {
+@media (max-width: $screen-sm-max) {
   .ocs-yaml-editor-toolbar__link {
-      display: none;
-    }
+    display: none;
+  }
 }

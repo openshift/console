@@ -125,7 +125,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
               variant="link"
             >
               {t('public~{{count}} toleration', { count: _.size(tolerations) })}
-              <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+              <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
             </Button>
           ) : (
             t('public~{{count}} toleration', { count: _.size(tolerations) })
@@ -143,7 +143,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
               variant="link"
             >
               {t('public~{{count}} annotation', { count: _.size(metadata.annotations) })}
-              <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+              <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
             </Button>
           ) : (
             t('public~{{count}} annotation', { count: _.size(metadata.annotations) })
@@ -214,7 +214,7 @@ export const UpstreamConfigDetailsItem: React.SFC<UpstreamConfigDetailsItemProps
           isDisabled={!canUpgrade}
         >
           {resource?.spec?.upstream || t('public~Default update server')}
-          {canUpgrade && <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />}
+          {canUpgrade && <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
         </Button>
       </div>
     </DetailsItem>

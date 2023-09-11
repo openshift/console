@@ -18,7 +18,7 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ children, onClose }) 
     DEFAULT_SIDE_BAR_SIZE,
   );
   const handleResizeCallback = React.useCallback(
-    (width: number) => {
+    (_event, width: number) => {
       setSideBarSize(width);
     },
     [setSideBarSize],

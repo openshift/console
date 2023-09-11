@@ -1,13 +1,13 @@
 .odc-logs {
-  padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md);
+  padding: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--md);
 
   &__name {
-    font-weight: var(--pf-global--FontWeight--bold);
+    font-weight: var(--pf-v5-global--FontWeight--bold);
     text-transform: uppercase;
   }
 
   &__content {
-    padding-left: var(--pf-global--spacer--md);
+    padding-left: var(--pf-v5-global--spacer--md);
     white-space: pre;
   }
 }

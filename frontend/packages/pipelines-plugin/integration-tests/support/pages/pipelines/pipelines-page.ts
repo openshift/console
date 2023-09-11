@@ -219,7 +219,7 @@ export const pipelinesPage = {
   },
 
   verifyOptionInKebabMenu: (option: string) => {
-    cy.get('ul.pf-c-dropdown__menu li button').each(($el) => {
+    cy.get('ul.pf-v5-c-dropdown__menu li button').each(($el) => {
       if ($el.text().includes(option)) {
         expect($el.text()).toMatch(option);
       }

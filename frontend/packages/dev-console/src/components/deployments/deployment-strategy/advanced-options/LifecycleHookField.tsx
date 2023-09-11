@@ -124,7 +124,7 @@ const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
   return (
     <div>
       <div className="co-section-heading-tertiary odc-lifecycle-hook-field__title">{title}</div>
-      <div className="pf-c-form__helper-text">{subTitle}</div>
+      <div className="pf-v5-c-form__helper-text">{subTitle}</div>
       {!showForm && (
         <Button
           className="pf-m-link--align-left"

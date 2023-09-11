@@ -20,7 +20,7 @@ jest.mock('react-redux', () => {
 describe(TextFilter.displayName, () => {
   let wrapper: ReactWrapper;
   let placeholder: string;
-  let onChange: (value: string, event: React.FormEvent<HTMLInputElement>) => void;
+  let onChange: (event: React.FormEvent<HTMLInputElement>, value: string) => void;
   let defaultValue: string;
 
   it('renders text input without label', () => {

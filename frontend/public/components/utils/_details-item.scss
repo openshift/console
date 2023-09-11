@@ -1,6 +1,6 @@
 .details-item {
   display: inline-block;
-  margin-bottom: var(--pf-global--spacer--lg);
+  margin-bottom: var(--pf-v5-global--spacer--lg);
 }
 
 .details-item__label {
@@ -15,9 +15,9 @@
 }
 
 .details-item__value--group {
-  border: 1px solid var(--pf-global--BorderColor--300);
-  margin-top: var(--pf-global--spacer--xs);
-  padding: var(--pf-global--spacer--md);
+  border: 1px solid var(--pf-v5-global--BorderColor--300);
+  margin-top: var(--pf-v5-global--spacer--xs);
+  padding: var(--pf-v5-global--spacer--md);
 
   dd:last-child {
     margin-bottom: 0 !important;
@@ -25,5 +25,5 @@
 }
 
 .details-item__value--labels {
-  padding: var(--pf-global--spacer--xs);
+  padding: var(--pf-v5-global--spacer--xs);
 }

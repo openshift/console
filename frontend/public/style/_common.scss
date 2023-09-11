@@ -1,12 +1,12 @@
 $co-external-link-padding-right: 15px;
 
 .co-breadcrumb {
-  padding-bottom: var(--pf-global--spacer--sm);
+  padding-bottom: var(--pf-v5-global--spacer--sm);
 }
 
 .co-divider {
-  margin-bottom: var(--pf-global--spacer--lg);
-  margin-top: var(--pf-global--spacer--lg);
+  margin-bottom: var(--pf-v5-global--spacer--lg);
+  margin-top: var(--pf-v5-global--spacer--lg);
 }
 
 dl.co-inline {
@@ -20,11 +20,11 @@ dl.co-inline {
 }
 
 .co-m-pane__body {
-  margin: $pf-global-gutter--md 0 0;
-  padding: 0 $pf-global-gutter $pf-global-gutter--md;
-  @media (min-width: $pf-global--breakpoint--xl) {
-    padding-left: $pf-global-gutter--md;
-    padding-right: $pf-global-gutter--md;
+  margin: $pf-v5-global-gutter--md 0 0;
+  padding: 0 $pf-v5-global-gutter $pf-v5-global-gutter--md;
+  @media (min-width: $pf-v5-global--breakpoint--xl) {
+    padding-left: $pf-v5-global-gutter--md;
+    padding-right: $pf-v5-global-gutter--md;
   }
   &--full-height {
     height: 100%;
@@ -36,23 +36,23 @@ dl.co-inline {
     padding-bottom: 0;
   }
   + .co-m-pane__body {
-    border-top: 1px solid var(--pf-global--BorderColor--100);
+    border-top: 1px solid var(--pf-v5-global--BorderColor--100);
     margin-top: 0;
-    padding-top: $pf-global-gutter--md;
+    padding-top: $pf-v5-global-gutter--md;
   }
 }
 
 .co-m-pane__createLink--no-title {
-  margin-bottom: $pf-global-gutter--md;
+  margin-bottom: $pf-v5-global-gutter--md;
 }
 
 .co-m-pane__filter-bar,
 .co-m-pane__help-text {
-  margin: 20px $pf-global-gutter;
-  @media (min-width: $pf-global--breakpoint--md) {
-    margin-left: $pf-global-gutter--md;
-    margin-right: $pf-global-gutter--md;
-    margin-top: $pf-global-gutter--md;
+  margin: 20px $pf-v5-global-gutter;
+  @media (min-width: $pf-v5-global--breakpoint--md) {
+    margin-left: $pf-v5-global-gutter--md;
+    margin-right: $pf-v5-global-gutter--md;
+    margin-top: $pf-v5-global-gutter--md;
   }
 }
 
@@ -65,7 +65,7 @@ dl.co-inline {
   flex-wrap: wrap;
   justify-content: space-between;
   .co-m-primary-action,
-  .pf-c-form-control {
+  .pf-v5-c-form-control {
     margin-bottom: 10px;
   }
 }
@@ -84,16 +84,16 @@ dl.co-inline {
   }
 }
 
-// Use to left align content filters that aren't using .pf-c-toolbar
+// Use to left align content filters that aren't using .pf-v5-c-toolbar
 .co-m-pane__filter-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-bottom: $pf-global-gutter--md;
+  margin-bottom: $pf-v5-global-gutter--md;
 }
 
 .co-m-pane__filter-row-action {
-  padding-top: $pf-global-gutter;
+  padding-top: $pf-v5-global-gutter;
   @media (min-width: $screen-xs-min) {
     padding-top: 0;
   }
@@ -102,7 +102,7 @@ dl.co-inline {
 .co-m-pane__heading {
   display: flex;
   justify-content: space-between;
-  margin-bottom: $pf-global-gutter--md !important;
+  margin-bottom: $pf-v5-global-gutter--md !important;
   &--baseline {
     align-items: baseline;
   }
@@ -119,19 +119,19 @@ dl.co-inline {
 
 .co-m-pane__heading-badge {
   @media (min-width: $screen-sm-min) {
-    margin-left: var(--pf-global--spacer--sm);
+    margin-left: var(--pf-v5-global--spacer--sm);
   }
 }
 
 .co-m-pane__heading-help-text {
-  margin-bottom: $pf-global-gutter--md !important;
+  margin-bottom: $pf-v5-global-gutter--md !important;
 }
 
 .co-m-pane__heading-owner {
   display: block;
   font-size: $font-size-base;
-  line-height: var(--pf-global--LineHeight--md);
-  padding-top: var(--pf-global--spacer--sm);
+  line-height: var(--pf-v5-global--LineHeight--md);
+  padding-top: var(--pf-v5-global--spacer--sm);
   span {
     display: inline;
   }
@@ -142,11 +142,11 @@ dl.co-inline {
 }
 
 .co-no-bold {
-  font-weight: var(--pf-global--FontWeight--normal);
+  font-weight: var(--pf-v5-global--FontWeight--normal);
 }
 
 .cos-error-title {
-  color: $pf-color-red-100;
+  color: $pf-v5-color-red-100;
 }
 
 .co-section-heading {
@@ -167,9 +167,9 @@ dl.co-inline {
 
 // TODO: remove when $font-size-base goes away or to 16px
 // and when override `label` font-weight style from _bootstrap-residual.scss is removed
-.co-switch-label .pf-c-switch__label {
+.co-switch-label .pf-v5-c-switch__label {
   font-size: $font-size-base;
-  font-weight: var(--pf-global--FontWeight--normal);
+  font-weight: var(--pf-v5-global--FontWeight--normal);
 }
 
 .co-table-container {
@@ -195,7 +195,7 @@ dl.co-inline {
 }
 
 .co-m-pane__explanation {
-  color: $pf-color-black-600;
+  color: $pf-v5-color-black-600;
   margin-bottom: 30px;
 }
 
@@ -204,12 +204,12 @@ dl.co-inline {
 }
 
 .co-help-text {
-  color: var(--pf-global--Color--200);
+  color: var(--pf-v5-global--Color--200);
 }
 
 .co-m-pane__explanation code {
-  background-color: var(--pf-global--BackgroundColor--200);
-  color: $pf-color-black-600;
+  background-color: var(--pf-v5-global--BackgroundColor--200);
+  color: $pf-v5-color-black-600;
 }
 
 .co-pre-line {
@@ -223,7 +223,7 @@ dl.co-inline {
 // Prevent iOS phones from zooming on form inputs
 @supports (-webkit-overflow-scrolling: touch) {
   // Target mobile Safari
-  @media (max-width: $pf-global--breakpoint--sm-max) {
+  @media (max-width: $pf-v5-global--breakpoint--sm-max) {
     // Target phones
     input,
     select,
@@ -235,12 +235,12 @@ dl.co-inline {
 }
 
 .co-error {
-  color: $pf-color-red-100;
+  color: $pf-v5-color-red-100;
   white-space: nowrap;
 }
 
 .error-message {
-  color: var(--pf-global--palette--white);
+  color: var(--pf-v5-global--palette--white);
   padding: 2px 12px;
   background-color: #d64456;
 }
@@ -267,12 +267,12 @@ dl.co-inline {
   position: relative;
   top: 0;
   width: 12px;
-  .pf-c-dropdown__menu-item & {
-    color: $pf-color-black-600;
+  .pf-v5-c-dropdown__menu-item & {
+    color: $pf-v5-color-black-600;
     margin-left: 5px;
   }
-  .pf-c-nav__link & {
-    color: $pf-color-black-500;
+  .pf-v5-c-nav__link & {
+    color: $pf-v5-color-black-500;
     margin-left: 4px;
   }
 }
@@ -287,17 +287,17 @@ dl.co-inline {
 
 .co-external-link-with-copy {
   &__icon {
-    color: var(--pf-global--link--Color);
+    color: var(--pf-v5-global--link--Color);
     cursor: pointer;
     &:hover {
-      color: var(--pf-global--Color--300);
+      color: var(--pf-v5-global--Color--300);
     }
   }
   &__externallinkicon {
-    padding-left: var(--pf-global--spacer--xs);
+    padding-left: var(--pf-v5-global--spacer--xs);
   }
   &__copyicon {
-    margin-left: var(--pf-global--spacer--md);
+    margin-left: var(--pf-v5-global--spacer--md);
   }
 }
 
@@ -394,7 +394,7 @@ dl.co-inline {
 
 .co-legend {
   border-bottom: 0;
-  font-weight: var(--pf-global--FontWeight--bold);
+  font-weight: var(--pf-v5-global--FontWeight--bold);
   font-size: $font-size-base;
   margin-bottom: 5px;
 
@@ -480,7 +480,7 @@ dl.co-inline {
   word-break: break-word;
   &::after {
     @include font-awesome-free-solid;
-    color: $pf-color-black-600;
+    color: $pf-v5-color-black-600;
     content: fa-content($fa-var-pencil-alt);
     line-height: 1;
     margin-left: 5px;
@@ -491,7 +491,7 @@ dl.co-inline {
     width: 15px;
   }
   &:hover::after {
-    color: $pf-color-black-700;
+    color: $pf-v5-color-black-700;
   }
 }
 
@@ -517,7 +517,7 @@ dl.co-inline {
     }
   }
   &__head {
-    font-weight: var(--pf-global--FontWeight--bold);
+    font-weight: var(--pf-v5-global--FontWeight--bold);
     padding: 0 20px 10px 0; // right padding to maintain alignment with __body .row
     a {
       cursor: pointer;
@@ -526,7 +526,8 @@ dl.co-inline {
   &--bordered {
     .co-m-table-grid__body .row,
     .co-m-table-grid__head {
-      border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
+      border-bottom: var(--pf-v5-global--BorderWidth--sm) solid
+        var(--pf-v5-global--BorderColor--300);
     }
   }
   .co-m-table-grid {
@@ -588,14 +589,14 @@ dl.co-inline {
 .co-overview-card--gradient {
   position: relative;
   &:after {
-    background: linear-gradient(rgba(255, 255, 255, 0), var(--pf-global--BackgroundColor--100));
+    background: linear-gradient(rgba(255, 255, 255, 0), var(--pf-v5-global--BackgroundColor--100));
     bottom: 0;
     content: '';
     left: 0;
     min-height: 2rem;
     pointer-events: none;
     position: absolute;
-    width: calc(100% - var(--pf-global--spacer--lg));
+    width: calc(100% - var(--pf-v5-global--spacer--lg));
   }
 }
 

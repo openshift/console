@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, ButtonVariant, SelectOption, Text, TextContent } from '@patternfly/react-core';
+import { Button, ButtonVariant, Text, TextContent } from '@patternfly/react-core';
+import { SelectOption as SelectOptionDeprecated } from '@patternfly/react-core/deprecated';
 import { Trans, useTranslation } from 'react-i18next';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { ValidationErrorType } from '../../../../selectors';
@@ -20,7 +21,7 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
       case ProvisionSource.URL:
         return (
           <TextContent>
-            <div className="pf-c-form__helper-text" aria-live="polite">
+            <div className="pf-v5-c-form__helper-text" aria-live="polite">
               <Trans ns="kubevirt-plugin" t={t}>
                 Enter URL below or edit the rootdisk in the{' '}
                 <strong>
@@ -66,7 +67,7 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
   };
 
   return (
-    <div className="pf-c-form__helper-text" aria-live="polite">
+    <div className="pf-v5-c-form__helper-text" aria-live="polite">
       {getStorageMsg()}
     </div>
   );
@@ -77,7 +78,7 @@ const ProvisionSourceNetHelpMsg: React.FC<ProvisionSourceNetHelpMsgProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <div className="pf-c-form__helper-text" aria-live="polite">
+    <div className="pf-v5-c-form__helper-text" aria-live="polite">
       <Trans ns="kubevirt-plugin" t={t}>
         Add a network interface in the{' '}
         <strong>
@@ -115,13 +116,13 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
               .map(ProvisionSource.fromString)
               .sort((a, b) => a?.getOrder() - b?.getOrder())
               .map((source) => (
-                <SelectOption
+                <SelectOptionDeprecated
                   key={source?.getValue()}
                   value={source?.getValue()}
                   description={t(source?.getDescriptionKey())}
                 >
                   {t(source?.toString())}
-                </SelectOption>
+                </SelectOptionDeprecated>
               ))}
           </FormPFSelect>
         </FormField>

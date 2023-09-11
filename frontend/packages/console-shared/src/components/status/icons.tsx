@@ -6,11 +6,7 @@ import {
   ResourcesAlmostFullIcon,
   ResourcesFullIcon,
 } from '@patternfly/react-icons';
-import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
-import { global_default_color_200 as blueDefaultColor } from '@patternfly/react-tokens/dist/js/global_default_color_200';
-import { global_disabled_color_100 as disabledColor } from '@patternfly/react-tokens/dist/js/global_disabled_color_100';
-import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
-import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
+import * as ReactTokens from '@patternfly/react-tokens';
 import { ColoredIconProps } from '@console/dynamic-plugin-sdk';
 
 export {
@@ -21,21 +17,41 @@ export {
 } from '@console/dynamic-plugin-sdk';
 
 export const GrayUnknownIcon: React.FC<ColoredIconProps> = ({ className, title }) => (
-  <UnknownIcon color={disabledColor.value} className={className} title={title} />
+  <UnknownIcon
+    color={ReactTokens.global_disabled_color_100.value}
+    className={className}
+    title={title}
+  />
 );
 
 export const BlueSyncIcon: React.FC<ColoredIconProps> = ({ className, title }) => (
-  <SyncAltIcon color={blueInfoColor.value} className={className} title={title} />
+  <SyncAltIcon
+    color={ReactTokens.global_palette_blue_300.value}
+    className={className}
+    title={title}
+  />
 );
 
 export const RedResourcesFullIcon: React.FC<ColoredIconProps> = ({ className, title }) => (
-  <ResourcesFullIcon color={dangerColor.value} className={className} title={title} />
+  <ResourcesFullIcon
+    color={ReactTokens.global_danger_color_100.value}
+    className={className}
+    title={title}
+  />
 );
 
 export const YellowResourcesAlmostFullIcon: React.FC<ColoredIconProps> = ({ className, title }) => (
-  <ResourcesAlmostFullIcon color={warningColor.value} className={className} title={title} />
+  <ResourcesAlmostFullIcon
+    color={ReactTokens.global_warning_color_100.value}
+    className={className}
+    title={title}
+  />
 );
 
 export const BlueArrowCircleUpIcon: React.FC<ColoredIconProps> = ({ className, title }) => (
-  <ArrowCircleUpIcon color={blueDefaultColor.value} className={className} title={title} />
+  <ArrowCircleUpIcon
+    color={ReactTokens.global_Color_200.value}
+    className={className}
+    title={title}
+  />
 );

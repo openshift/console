@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { Select, SelectVariant, SelectOption } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { UtilizationDurationDropdownProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { DurationKeys, DURATION_VALUES } from '../../../constants/duration';
@@ -28,20 +32,20 @@ export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownPr
 
   return (
     <div data-test-id="duration-select">
-      <Select
-        variant={SelectVariant.single}
-        onToggle={setOpen}
+      <SelectDeprecated
+        variant={SelectVariantDeprecated.single}
+        onToggle={(_event, isExpanded: boolean) => setOpen(isExpanded)}
         onSelect={onSelect}
         selections={selectedKey}
         isOpen={isOpen}
         isPlain
       >
         {Object.keys(items).map((key) => (
-          <SelectOption key={key} value={key}>
+          <SelectOptionDeprecated key={key} value={key}>
             {items[key]}
-          </SelectOption>
+          </SelectOptionDeprecated>
         ))}
-      </Select>
+      </SelectDeprecated>
     </div>
   );
 };

@@ -17,18 +17,20 @@ import {
   Alert,
   Button,
   Checkbox,
-  Dropdown,
-  DropdownItem,
-  DropdownPosition,
-  DropdownToggle,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
   InputGroup,
   TextInput,
-  Title,
+  EmptyStateHeader,
+  InputGroupItem,
 } from '@patternfly/react-core';
+import {
+  DropdownItem as DropdownItemDeprecated,
+  Dropdown as DropdownDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import classNames from 'classnames';
 import * as _ from 'lodash';
@@ -95,10 +97,11 @@ const Error: React.FC<ErrorProps> = ({ error, title = 'An error occurred' }) => 
 const GraphEmptyState: React.FC<GraphEmptyStateProps> = ({ children, title }) => (
   <div className="query-browser__wrapper graph-empty-state">
     <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateIcon icon={ChartLineIcon} />
-      <Title headingLevel="h2" size="md">
-        {title}
-      </Title>
+      <EmptyStateHeader
+        titleText={<>{title}</>}
+        icon={<EmptyStateIcon icon={ChartLineIcon} />}
+        headingLevel="h2"
+      />
       <EmptyStateBody>{children}</EmptyStateBody>
     </EmptyState>
   </div>
@@ -132,33 +135,42 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
     };
 
     const dropdownItems = spans.map((s) => (
-      <DropdownItem
+      <DropdownItemDeprecated
         className="query-browser__span-dropdown-item"
         key={s}
         onClick={() => setSpan(s, true)}
       >
         {s}
-      </DropdownItem>
+      </DropdownItemDeprecated>
     ));
 
     return (
       <>
-        <InputGroup className="query-browser__span">
-          <TextInput
-            aria-label={t('public~graph timespan')}
-            className="query-browser__span-text"
-            validated={isValid ? 'default' : 'error'}
-            onChange={(v) => setSpan(v, true)}
-            type="text"
-            value={text}
-          />
-          <Dropdown
-            dropdownItems={dropdownItems}
-            isOpen={isOpen}
-            onSelect={setClosed}
-            position={DropdownPosition.right}
-            toggle={<DropdownToggle aria-label={t('public~graph timespan')} onToggle={setIsOpen} />}
-          />
+        <InputGroup translate={t} className="query-browser__span">
+          <InputGroupItem isFill>
+            <TextInput
+              aria-label={t('public~graph timespan')}
+              className="query-browser__span-text"
+              validated={isValid ? 'default' : 'error'}
+              onChange={(_event, v) => setSpan(v, true)}
+              type="text"
+              value={text}
+            />
+          </InputGroupItem>
+          <InputGroupItem>
+            <DropdownDeprecated
+              dropdownItems={dropdownItems}
+              isOpen={isOpen}
+              onSelect={setClosed}
+              position="right"
+              toggle={
+                <DropdownToggleDeprecated
+                  aria-label={t('public~graph timespan')}
+                  onToggle={setIsOpen}
+                />
+              }
+            />
+          </InputGroupItem>
         </InputGroup>
         <Button
           className="query-browser__inline-control"
@@ -499,7 +511,7 @@ const Graph: React.FC<GraphProps> = React.memo(
             itemsPerRow={4}
             orientation="vertical"
             style={{
-              labels: { fontSize: 11, fill: 'var(--pf-global--Color--100)' },
+              labels: { fontSize: 11, fill: 'var(--pf-v5-global--Color--100)' },
             }}
             symbolSpacer={4}
           />
@@ -948,7 +960,7 @@ const QueryBrowserWrapped: React.FC<QueryBrowserProps> = ({
                 isChecked={isStacked}
                 data-checked-state={isStacked}
                 label={t('public~Stacked')}
-                onChange={(v) => setIsStacked(v)}
+                onChange={(_event, v) => setIsStacked(v)}
               />
             )}
           </div>

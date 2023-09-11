@@ -49,7 +49,7 @@ const SSHModal: React.FC<SSHModalProps> = ({ vm, close }) => {
               }
               isChecked={isEnabled}
               data-checked-state={isEnabled}
-              onChange={setEnabled}
+              onChange={(_event, value) => setEnabled(value)}
             />
           </StackItem>
           <StackItem>

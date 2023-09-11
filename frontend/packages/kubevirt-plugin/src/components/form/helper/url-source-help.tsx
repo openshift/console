@@ -62,7 +62,7 @@ export const URLSourceHelp: React.FC<URLSourceHelpProps> = ({ baseImageName, tem
     </Trans>
   );
   return (
-    <div className="pf-c-form__helper-text" aria-live="polite">
+    <div className="pf-v5-c-form__helper-text" aria-live="polite">
       {body}
     </div>
   );

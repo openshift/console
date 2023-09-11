@@ -148,7 +148,7 @@ const EventSink: React.FC<EventSinkProps> = ({
           cx={width * 0.5}
           cy={height * 0.5}
           r={width * 0.25}
-          fill="var(--pf-global--palette--white)"
+          fill="var(--pf-v5-global--palette--white)"
         />
         {typeof getEventSourceIcon(data.kind, resources.obj) === 'string' ? (
           <image

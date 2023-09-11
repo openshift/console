@@ -85,7 +85,7 @@ const ServiceLocation = ({ s }) => {
 const kind = 'Service';
 
 const tableColumnClasses = [
-  'pf-u-w-25-on-xl',
+  'pf-v5-u-w-25-on-xl',
   'pf-m-hidden pf-m-visible-on-md',
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-xl',

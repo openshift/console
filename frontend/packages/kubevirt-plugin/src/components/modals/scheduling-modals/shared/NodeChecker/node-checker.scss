@@ -1,5 +1,5 @@
 .kv-node-checker {
-  margin-top: var(--pf-global--spacer--lg);
+  margin-top: var(--pf-v5-global--spacer--lg);
 }
 .kv-node-checker__popover {
   .co-external-link {
@@ -8,10 +8,10 @@
     min-width: 110px;
     align-items: center;
   }
-  .kv-node-checker__preferred-status{
+  .kv-node-checker__preferred-status {
     display: flex;
     justify-content: flex-end;
-    margin-left: var(--pf-global--spacer--md);
-    padding-right: var(--pf-global--spacer--md);
+    margin-left: var(--pf-v5-global--spacer--md);
+    padding-right: var(--pf-v5-global--spacer--md);
   }
 }

@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { Flex, FlexItem, Button, FormGroup, TextInputTypes } from '@patternfly/react-core';
+import {
+  Flex,
+  FlexItem,
+  Button,
+  FormGroup,
+  TextInputTypes,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { FieldArray, FormikValues, useField, useFormikContext } from 'formik';
 import { get, uniqueId } from 'lodash';
@@ -45,7 +54,7 @@ const KeyValueFileInputField: React.FC<KeyValueEntryFormProps & FieldProps> = ({
       key={`${name}-${values.formReloadCount}`}
       name={name}
       render={(arrayHelpers) => (
-        <FormGroup fieldId={fieldId} label={label} helperText={helpText} isHelperTextBeforeField>
+        <FormGroup fieldId={fieldId} label={label}>
           {fieldValues?.map((v, idx) => {
             return (
               <Flex
@@ -106,6 +115,12 @@ const KeyValueFileInputField: React.FC<KeyValueEntryFormProps & FieldProps> = ({
             <PlusCircleIcon className="co-icon-space-r" />
             {t('console-shared~Add key/value')}
           </Button>
+
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem>{helpText}</HelperTextItem>
+            </HelperText>
+          </FormHelperText>
         </FormGroup>
       )}
     />

@@ -22,11 +22,11 @@ const useInlineExecuteCommandShowdownExtension = () => {
       ): string => {
         if (!group || !subGroup || !groupType || !groupId) return text;
         return removeTemplateWhitespace(
-          `<span class="pf-c-clipboard-copy pf-m-inline">
-              <span class="pf-c-clipboard-copy__text" ${MARKDOWN_SNIPPET_ID}="${groupId}">${group.trim()}</span>
-              <span class="pf-c-clipboard-copy__actions">
-                <span class="pf-c-clipboard-copy__actions-item">
-                  <button class="pf-c-button pf-m-plain" aria-label="${t(
+          `<span class="pf-v5-c-clipboard-copy pf-m-inline">
+              <span class="pf-v5-c-clipboard-copy__text" ${MARKDOWN_SNIPPET_ID}="${groupId}">${group.trim()}</span>
+              <span class="pf-v5-c-clipboard-copy__actions">
+                <span class="pf-v5-c-clipboard-copy__actions-item">
+                  <button class="pf-v5-c-button pf-m-plain" aria-label="${t(
                     'console-shared~Copy to clipboard',
                   )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupId}">
                     <i class="fas fa-copy" aria-hidden="true"></i>
@@ -34,8 +34,8 @@ const useInlineExecuteCommandShowdownExtension = () => {
                 </span>
                 ${
                   showExecuteButton
-                    ? `<span class="pf-c-clipboard-copy__actions-item ocs-markdown-execute-snippet__action">
-                    <button class="pf-c-button pf-m-plain ocs-markdown-execute-snippet__button" aria-label="${t(
+                    ? `<span class="pf-v5-c-clipboard-copy__actions-item ocs-markdown-execute-snippet__action">
+                    <button class="pf-v5-c-button pf-m-plain ocs-markdown-execute-snippet__button" aria-label="${t(
                       'console-shared~Run in Web Terminal',
                     )}" ${MARKDOWN_EXECUTE_BUTTON_ID}="${groupId}">
                       <i class="fas fa-play" aria-hidden="true"></i>

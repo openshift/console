@@ -113,7 +113,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                 <div className="form-group">
                   <input
                     type="text"
-                    className="pf-c-form-control"
+                    className="pf-v5-c-form-control"
                     data-test-id="label-name-default"
                     value={DEFAULT_RECEIVER_LABEL}
                     disabled
@@ -125,7 +125,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                 <div className="form-group">
                   <input
                     type="text"
-                    className="pf-c-form-control"
+                    className="pf-v5-c-form-control"
                     data-test-id="label-value-default"
                     value={DEFAULT_RECEIVER_LABEL}
                     disabled
@@ -151,7 +151,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                   >
                     <input
                       type="text"
-                      className="pf-c-form-control"
+                      className="pf-v5-c-form-control"
                       data-test-id={`label-name-${i}`}
                       onChange={onRoutingLabelChange(`${i}, name`)}
                       placeholder="Name"
@@ -165,7 +165,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                   <div className="form-group">
                     <input
                       type="text"
-                      className="pf-c-form-control"
+                      className="pf-v5-c-form-control"
                       data-test-id={`label-value-${i}`}
                       onChange={onRoutingLabelChange(`${i}, value`)}
                       placeholder="Value"

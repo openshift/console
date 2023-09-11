@@ -7,10 +7,6 @@ import { useDispatch } from 'react-redux';
 import {
   Badge,
   Button,
-  Select,
-  SelectGroup,
-  SelectOption,
-  SelectVariant,
   Toolbar,
   ToolbarChip,
   ToolbarContent,
@@ -20,6 +16,12 @@ import {
   ToolbarToggleGroup,
   Tooltip,
 } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectGroup as SelectGroupDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
 import {
   RowFilterItem,
@@ -181,12 +183,12 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
 
   // Map row filters to select groups
   const dropdownItems = generatedRowFilters.map((rowFilter) => (
-    <SelectGroup key={rowFilter.filterGroupName} label={rowFilter.filterGroupName}>
+    <SelectGroupDeprecated key={rowFilter.filterGroupName} label={rowFilter.filterGroupName}>
       {rowFilter.items?.map?.((item) =>
         item.hideIfEmpty && (item.count === 0 || item.count === '0') ? (
-          <></>
+          <React.Fragment key={item.id} />
         ) : (
-          <SelectOption
+          <SelectOptionDeprecated
             data-test-row-filter={item.id}
             key={item.id}
             inputId={item.id}
@@ -196,10 +198,10 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
             <Badge key={item.id} isRead>
               {item.count}
             </Badge>
-          </SelectOption>
+          </SelectOptionDeprecated>
         ),
       )}
-    </SelectGroup>
+    </SelectGroupDeprecated>
   ));
 
   const applyFilters = React.useCallback(
@@ -307,7 +309,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                         node: filtersNameMap[item],
                       };
                     })}
-                    deleteChip={(filter, chip: ToolbarChip) => updateRowFilterSelected([chip.key])}
+                    deleteChip={(_filter, chip: ToolbarChip) => updateRowFilterSelected([chip.key])}
                     categoryName={key}
                     deleteChipGroup={() => clearAllRowFilter(key)}
                     chipGroupCollapsedText={t('public~{{numRemaining}} more', {
@@ -319,7 +321,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   </ToolbarFilter>
                 ),
                 <div data-test-id="filter-dropdown-toggle">
-                  <Select
+                  <SelectDeprecated
                     placeholderText={
                       <span>
                         <FilterIcon className="span--icon__right-margin" />
@@ -327,18 +329,16 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                       </span>
                     }
                     isOpen={isOpen}
-                    onToggle={() => {
-                      setOpen(!isOpen);
-                    }}
+                    onToggle={(_toggleEvent, isExpanded) => setOpen(isExpanded)}
                     onSelect={onRowFilterSelect}
-                    variant={SelectVariant.checkbox}
+                    variant={SelectVariantDeprecated.checkbox}
                     selections={selectedRowFilters}
                     isCheckboxSelectionBadgeHidden
                     isGrouped
                     maxHeight="60vh"
                   >
                     {dropdownItems}
-                  </Select>
+                  </SelectDeprecated>
                 </div>,
               )}
             </ToolbarItem>
@@ -365,7 +365,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   }}
                   categoryName={translatedNameFilterTitle}
                 >
-                  <div className="pf-c-input-group co-filter-group">
+                  <div className="pf-v5-c-input-group co-filter-group">
                     {!hideLabelFilter && (
                       <DropdownInternal
                         items={filterDropdownItems}
@@ -391,7 +391,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                       <TextFilter
                         data-test="name-filter-input"
                         value={nameInputText}
-                        onChange={(value: string) => {
+                        onChange={(_event, value: string) => {
                           setNameInputText(value);
                           debounceApplyNameFilter(value);
                         }}

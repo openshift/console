@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
-import { Button, EmptyState, EmptyStateSecondaryActions, Title } from '@patternfly/react-core';
+import {
+  Button,
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateHeader,
+  EmptyStateFooter,
+} from '@patternfly/react-core';
 import { RocketIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -128,30 +134,33 @@ const NADListEmpty: React.FC = () => {
 
   return (
     <EmptyState>
-      <Title headingLevel="h4" size="lg">
-        {t('kubevirt-plugin~No network attachment definitions found')}
-      </Title>
-      <Button
-        data-test-id="create-nad-empty"
-        variant="primary"
-        onClick={() =>
-          history.push(getCreateLink(namespace === ALL_NAMESPACES_KEY ? undefined : namespace))
-        }
-      >
-        {t('kubevirt-plugin~Create network attachment definition')}
-      </Button>
-      {hasQuickStarts && (
-        <EmptyStateSecondaryActions>
-          <Button
-            data-test-id="nad-quickstart"
-            variant="secondary"
-            onClick={() => history.push('/quickstart?keyword=network+attachment+definition')}
-          >
-            <RocketIcon className="nad-quickstart-icon" />
-            {t('kubevirt-plugin~Learn how to use network attachment definitions')}
-          </Button>
-        </EmptyStateSecondaryActions>
-      )}
+      <EmptyStateHeader
+        titleText={<>{t('kubevirt-plugin~No network attachment definitions found')}</>}
+        headingLevel="h4"
+      />
+      <EmptyStateFooter>
+        <Button
+          data-test-id="create-nad-empty"
+          variant="primary"
+          onClick={() =>
+            history.push(getCreateLink(namespace === ALL_NAMESPACES_KEY ? undefined : namespace))
+          }
+        >
+          {t('kubevirt-plugin~Create network attachment definition')}
+        </Button>
+        {hasQuickStarts && (
+          <EmptyStateActions>
+            <Button
+              data-test-id="nad-quickstart"
+              variant="secondary"
+              onClick={() => history.push('/quickstart?keyword=network+attachment+definition')}
+            >
+              <RocketIcon className="nad-quickstart-icon" />
+              {t('kubevirt-plugin~Learn how to use network attachment definitions')}
+            </Button>
+          </EmptyStateActions>
+        )}
+      </EmptyStateFooter>
     </EmptyState>
   );
 };

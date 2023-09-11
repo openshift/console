@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { Card, SelectOption, SelectVariant } from '@patternfly/react-core';
+import { Card } from '@patternfly/react-core';
+import {
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { TopConsumerMetric } from '../../../constants/virt-overview/top-consumers-card/top-consumer-metric';
 import { TopConsumerScope } from '../../../constants/virt-overview/top-consumers-card/top-consumer-scope';
@@ -30,26 +34,29 @@ export const TopConsumerCard: React.FC<TopConsumersMetricCard> = ({
         <div>
           <FormPFSelect
             toggleId="kv-top-consumers-card-metric-select"
-            variant={SelectVariant.single}
+            variant={SelectVariantDeprecated.single}
             selections={t(metricValue.getDropdownLabel())}
             onSelect={(e, value) => onMetricSelect(value)}
             isCheckboxSelectionBadgeHidden
           >
             {TopConsumerMetric.getAll().map((metric) => (
-              <SelectOption key={metric.getValue()} value={t(metric.getDropdownLabel())} />
+              <SelectOptionDeprecated
+                key={metric.getValue()}
+                value={t(metric.getDropdownLabel())}
+              />
             ))}
           </FormPFSelect>
         </div>
         <div className="kv-top-consumers-card__scope-select">
           <FormPFSelect
             toggleId="kv-top-consumers-card-scope-select"
-            variant={SelectVariant.single}
+            variant={SelectVariantDeprecated.single}
             selections={t(scopeValue.getDropdownLabel())}
             onSelect={(e, value) => onScopeSelect(value)}
             isCheckboxSelectionBadgeHidden
           >
             {TopConsumerScope.getAll().map((scope) => (
-              <SelectOption key={scope.getValue()} value={t(scope.getDropdownLabel())} />
+              <SelectOptionDeprecated key={scope.getValue()} value={t(scope.getDropdownLabel())} />
             ))}
           </FormPFSelect>
         </div>

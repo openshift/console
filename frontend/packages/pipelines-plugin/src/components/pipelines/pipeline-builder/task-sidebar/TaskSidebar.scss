@@ -4,19 +4,19 @@ $overview-sidebar-width: 550px;
   width: $overview-sidebar-width;
   max-width: 100%;
   position: absolute;
-  background: var(--pf-global--BackgroundColor--100);
+  background: var(--pf-v5-global--BackgroundColor--100);
   right: 0;
   height: 100%;
-  box-shadow: var(--pf-global--BoxShadow--md);
+  box-shadow: var(--pf-v5-global--BoxShadow--md);
 
   &__header {
     // Hack for Popper to go under the header
-    background: var(--pf-global--BackgroundColor--100);
+    background: var(--pf-v5-global--BackgroundColor--100);
     z-index: 10000;
   }
 
   &__content {
-    padding: var(--pf-global--spacer--lg);
+    padding: var(--pf-v5-global--spacer--lg);
     overflow-y: auto;
   }
 
@@ -24,14 +24,14 @@ $overview-sidebar-width: 550px;
   &__resource,
   &__workspace,
   &__when-expressions {
-    margin-bottom: var(--pf-global--spacer--md);
+    margin-bottom: var(--pf-v5-global--spacer--md);
   }
 
   &__paragraph {
-    margin-bottom: var(--pf-c-content--MarginBottom);
+    margin-bottom: var(--pf-v5-c-content--MarginBottom);
   }
 
   h2 {
-    margin: 0 0 var(--pf-global--spacer--sm) 0;
+    margin: 0 0 var(--pf-v5-global--spacer--sm) 0;
   }
 }

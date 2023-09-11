@@ -16,7 +16,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-clusterserviceversion-details__field {
-  padding-bottom: var(--pf-global--spacer--lg);
+  padding-bottom: var(--pf-v5-global--spacer--lg);
 }
 
 .co-clusterserviceversion-details__field-description {
@@ -24,7 +24,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-clusterserviceversion-table-header__icon {
-  margin-left: var(--pf-global--spacer--xs);
+  margin-left: var(--pf-v5-global--spacer--xs);
 }
 
 .co-clusterserviceversion-link {
@@ -63,7 +63,7 @@ $co-affinity-row-margin: 15px;
   margin-bottom: 5px !important;
 }
 .co-m-pane__heading--logo .co-clusterserviceversion-logo__name__provider {
-  font-size: var(--pf-global--FontSize--sm);
+  font-size: var(--pf-v5-global--FontSize--sm);
 }
 
 .co-crd-card-row {
@@ -71,7 +71,7 @@ $co-affinity-row-margin: 15px;
   flex-wrap: wrap;
   margin-bottom: 15px;
 
-  .pf-c-card {
+  .pf-v5-c-card {
     margin-bottom: 20px;
     margin-right: 20px;
     width: 300px;
@@ -91,7 +91,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
-  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
 }
 
 .co-catalog-details {
@@ -117,7 +117,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-spec-descriptor--resource-requirements {
-  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
+  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
   padding: 20px 0 20px 20px;
   margin-top: 5px;
 }
@@ -130,21 +130,21 @@ $co-affinity-row-margin: 15px;
 
 // only used in packages and will be orphaned when packages move out
 .co-create-operand__header {
-  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-  padding: 0 $pf-global-gutter var(--pf-global--spacer--lg);
-  @media (min-width: $pf-global--breakpoint--xl) {
-    padding-left: $pf-global-gutter--md;
-    padding-right: $pf-global-gutter--md;
+  border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  padding: 0 $pf-v5-global-gutter var(--pf-v5-global--spacer--lg);
+  @media (min-width: $pf-v5-global--breakpoint--xl) {
+    padding-left: $pf-v5-global-gutter--md;
+    padding-right: $pf-v5-global-gutter--md;
   }
 }
 
 // only used in packages and will be orphaned when packages move out
 .co-create-operand__header-text {
-  margin: var(--pf-global--spacer--lg) 0 0 !important;
+  margin: var(--pf-v5-global--spacer--lg) 0 0 !important;
 }
 
 .co-affinity-term {
-  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
+  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
@@ -179,7 +179,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-operand-field-group {
-  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
+  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
@@ -194,8 +194,8 @@ $co-affinity-row-margin: 15px;
 }
 
 .catalog-source__table-row--disabled {
-  background-color: var(--pf-global--palette--black-200);
-  color: var(--pf-global--Color--400);
+  background-color: var(--pf-v5-global--palette--black-200);
+  color: var(--pf-v5-global--Color--400);
 }
 
 .key-operator-value__action {
@@ -214,7 +214,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .key-operator-value__heading-button {
-  height: 23px; // for vertical alignment with input field; equals $pf-global--LineHeight--md
+  height: 23px; // for vertical alignment with input field; equals $pf-v5-global--LineHeight--md
 }
 
 .key-operator-value__name-field,
@@ -236,26 +236,26 @@ $co-affinity-row-margin: 15px;
   display: flex;
   justify-content: start;
   & > div {
-    margin-right: var(--pf-global--spacer--sm);
+    margin-right: var(--pf-v5-global--spacer--sm);
     flex-grow: 1;
   }
 }
 
 #operator-install-page {
-  margin: 0 $pf-global-gutter;
+  margin: 0 $pf-v5-global-gutter;
   @media (min-width: $screen-sm-min) {
-    margin: $pf-global-gutter--md;
+    margin: $pf-v5-global-gutter--md;
     max-width: 600px;
     min-width: 375px;
     width: 100%;
   }
 }
 
-#operator-install-page .pf-c-card {
+#operator-install-page .pf-v5-c-card {
   margin: 10px auto;
 }
 
-#operator-install-page .pf-c-alert {
+#operator-install-page .pf-v5-c-alert {
   margin-bottom: 10px;
 }
 
@@ -264,9 +264,10 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-clusterserviceversion__box {
-  border: 1px solid var(--pf-global--BorderColor--300);
-  margin: var(--pf-global--spacer--md) 0;
-  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--xs);
+  border: 1px solid var(--pf-v5-global--BorderColor--300);
+  margin: var(--pf-v5-global--spacer--md) 0;
+  padding: var(--pf-v5-global--spacer--md) var(--pf-v5-global--spacer--md)
+    var(--pf-v5-global--spacer--xs);
 }
 
 .co-operator-install-page__indicator {
@@ -280,7 +281,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-operator-install-page__main {
-  background-color: var(--pf-global--BackgroundColor--200);
+  background-color: var(--pf-v5-global--BackgroundColor--200);
   height: 100%;
 }
 
@@ -295,11 +296,11 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-operator-uninstall-alert__list-item {
-  padding-bottom: var(--pf-global--spacer--sm);
+  padding-bottom: var(--pf-v5-global--spacer--sm);
 }
 
 // Enable inner table to scroll if needed
-@media (min-width: $pf-global--breakpoint--md) and (min-height: 600px) {
+@media (min-width: $pf-v5-global--breakpoint--md) and (min-height: 600px) {
   .co-operator-uninstall__operands-section {
     display: block;
     max-height: calc(100vh - 400px);
@@ -324,7 +325,7 @@ $co-affinity-row-margin: 15px;
 
 .co-operator-details__toggle-value {
   flex-grow: 1;
-  margin-right: var(--pf-global--spacer--xl);
+  margin-right: var(--pf-v5-global--spacer--xl);
 }
 
 .co-operator-details__toggle-value .radio-inline input[type='radio'] {
@@ -332,5 +333,5 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-operator-details__toggle-value label {
-  font-weight: var(--pf-global--FontWeight--normal);
+  font-weight: var(--pf-v5-global--FontWeight--normal);
 }

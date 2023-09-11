@@ -46,7 +46,7 @@ export const CommitRevision = ({
     children || (isSHARevision(revisionNumber) ? revisionNumber.substring(0, 10) : revisionNumber);
   return url !== null ? (
     <ExternalLink href={url}>
-      <span style={{ marginRight: 'var(--pf-global--spacer--xs)' }}>{content}</span>
+      <span style={{ marginRight: 'var(--pf-v5-global--spacer--xs)' }}>{content}</span>
     </ExternalLink>
   ) : (
     <span>{content}</span>

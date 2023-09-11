@@ -132,7 +132,7 @@ const kind = 'ReplicaSet';
 const tableColumnClasses = [
   '',
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-16-on-lg'),
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'),

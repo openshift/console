@@ -54,7 +54,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
       // TODO: Remove this hack once https://github.com/patternfly/patternfly-react/issues/5168 is fixed.
       // eslint-disable-next-line react/no-find-dom-node
       const toolbarDOMNode = ReactDOM.findDOMNode(inputRef.current) as HTMLDivElement;
-      return toolbarDOMNode.querySelector('.pf-c-search-input__text-input') as HTMLInputElement;
+      return toolbarDOMNode.querySelector('.pf-v5-c-search-input__text-input') as HTMLInputElement;
     });
 
     return (

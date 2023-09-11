@@ -50,8 +50,8 @@ const DEFAULT_RESOURCES: CRDDescription['resources'] = [
 
 const tableColumnClasses = [
   '',
-  'pf-u-w-16-on-md',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-16-on-lg',
+  'pf-v5-u-w-16-on-md',
+  'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-16-on-lg',
   'pf-m-hidden pf-m-visible-on-sm',
 ];
 

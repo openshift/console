@@ -46,7 +46,7 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
           {to && (
             <div className="co-catalog-page__overlay-actions">
               <Link
-                className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
+                className="pf-v5-c-button pf-m-primary co-catalog-page__overlay-action"
                 to={to}
                 role="button"
                 onClick={onClose}

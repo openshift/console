@@ -1,49 +1,49 @@
 //Prevent layout shift when Advanced section is opened
-.pf-c-modal-box__body {
+.pf-v5-c-modal-box__body {
   scrollbar-gutter: stable;
-  padding-right: var(--pf-global--spacer--sm);
+  padding-right: var(--pf-v5-global--spacer--sm);
 
   @-moz-document url-prefix() {
     /* Firefox scrollbar fix */
-    padding-right: var(--pf-global--spacer--lg);
+    padding-right: var(--pf-v5-global--spacer--lg);
   }
 }
 
-.pf-c-modal-box__header {
-  padding-bottom: var(--pf-global--spacer--md);
+.pf-v5-c-modal-box__header {
+  padding-bottom: var(--pf-v5-global--spacer--md);
 }
 
 .kn-test-sf-modal {
   &__body {
-    padding-bottom: var(--pf-global--FontSize--3xl);
+    padding-bottom: var(--pf-v5-global--FontSize--3xl);
   }
 }
 
 .kn-test-sf-modal__editor {
   @media screen and (max-width: 768px) {
-    margin-top: var(--pf-global--FontSize--4xl);
-    margin-left: var(--pf-global--spacer--md);
-    margin-right: var(--pf-global--spacer--md);
+    margin-top: var(--pf-v5-global--FontSize--4xl);
+    margin-left: var(--pf-v5-global--spacer--md);
+    margin-right: var(--pf-v5-global--spacer--md);
   }
 }
 
 .kn-test-sf-modal-request {
   &__advanced-settings {
-    margin-top: var(--pf-global--spacer--md);
-    margin-bottom: var(--pf-global--spacer--md);
+    margin-top: var(--pf-v5-global--spacer--md);
+    margin-bottom: var(--pf-v5-global--spacer--md);
   }
   &__custom-headers {
-    margin-top: var(--pf-global--spacer--xl);
+    margin-top: var(--pf-v5-global--spacer--xl);
   }
 }
 
 .kn-test-sf-modal-response {
   &__notification {
-    padding-bottom: var(--pf-global--FontSize--xl);
+    padding-bottom: var(--pf-v5-global--FontSize--xl);
   }
 
   &__headers {
-    margin-bottom: var(--pf-global--FontSize--xl);
+    margin-bottom: var(--pf-v5-global--FontSize--xl);
   }
 
   &__loading {
@@ -52,18 +52,18 @@
 }
 
 .header-section {
-  color: var(--pf-global--Color--100);
-  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-  padding: var(--pf-global--spacer--md);
+  color: var(--pf-v5-global--Color--100);
+  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  padding: var(--pf-v5-global--spacer--md);
 }
 
 .header-row {
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: var(--pf-global--spacer--xs);
+  margin-bottom: var(--pf-v5-global--spacer--xs);
 }
 
 .header-name {
   font-weight: bold;
-  margin-right: var(--pf-global--spacer--xs);
+  margin-right: var(--pf-v5-global--spacer--xs);
 }

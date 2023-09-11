@@ -15,7 +15,7 @@ const PipelineOverviewAlert: React.FC<PipelineOverviewAlertProps & AlertProps> =
   return (
     <Alert
       className="pipeline-overview-alert"
-      variant="default"
+      variant="custom"
       isInline
       title={title}
       actionClose={<AlertActionCloseButton onClose={onClose} />}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -67,7 +67,6 @@ const SourceSecretSelector: React.FC<{
       <FormGroup
         fieldId={getFieldId('source-secret', 'dropdown')}
         label={t('devconsole~Source Secret')}
-        helperText={t('devconsole~Secret with credentials for pulling your source code.')}
       >
         <SourceSecretDropdown
           dropDownClassName="dropdown--full-width"
@@ -87,6 +86,14 @@ const SourceSecretSelector: React.FC<{
           title={secret}
           onChange={handleDropdownChange}
         />
+
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              {t('devconsole~Secret with credentials for pulling your source code.')}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
     </>
   );

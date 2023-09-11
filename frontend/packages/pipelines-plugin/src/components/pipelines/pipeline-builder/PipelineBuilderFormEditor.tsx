@@ -50,7 +50,7 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (pro
       <div>
         <h2>
           {t('pipelines-plugin~Tasks')}
-          <span className="pf-c-form__label-required">*</span>
+          <span className="pf-v5-c-form__label-required">*</span>
         </h2>
         <PipelineBuilderVisualization
           onTaskSelection={onTaskSelection}

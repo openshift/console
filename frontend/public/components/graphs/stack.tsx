@@ -6,7 +6,6 @@ import {
   Chart,
   ChartStack,
   ChartThemeColor,
-  ChartThemeVariant,
   getCustomTheme,
 } from '@patternfly/react-charts';
 import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
@@ -48,7 +47,6 @@ export const StackChart: React.FC<AreaChartProps> = ({
 }) => {
   const theme = getCustomTheme(
     ChartThemeColor.multiUnordered,
-    ChartThemeVariant.default,
     // Note: Victory incorrectly typed ThemeBaseProps.padding as number instead of PaddingProps
     // @ts-ignore
     areaTheme,

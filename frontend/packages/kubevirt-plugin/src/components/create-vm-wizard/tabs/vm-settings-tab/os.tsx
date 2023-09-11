@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, ButtonVariant, Checkbox, SelectOption, Text } from '@patternfly/react-core';
+import { Button, ButtonVariant, Checkbox, Text } from '@patternfly/react-core';
+import { SelectOption as SelectOptionDeprecated } from '@patternfly/react-core/deprecated';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ResourceLink, useAccessReview } from '@console/internal/components/utils';
@@ -211,7 +212,7 @@ export const OS: React.FC<OSProps> = React.memo(
 
     const numOfMountedDisks = cloneBaseDiskImage + mountWindowsGuestTools; // using boolean addition operator to count true
     const mountedDisksHelpMsg = numOfMountedDisks > 0 && (
-      <Text className="pf-c-form__helper-text kv-create-vm__input-text-help-msg">
+      <Text className="pf-v5-c-form__helper-text kv-create-vm__input-text-help-msg">
         {numOfMountedDisks === 1 ? (
           <Trans t={t} ns="kubevirt-plugin">
             View the mounted disk in the{' '}
@@ -242,7 +243,7 @@ export const OS: React.FC<OSProps> = React.memo(
       </Text>
     );
     const mountedDisksErrorMsg = baseImagesLoadError && (
-      <Text className="pf-c-form__helper-text kv-create-vm__input-text-help-msg">
+      <Text className="pf-v5-c-form__helper-text kv-create-vm__input-text-help-msg">
         {t(
           'kubevirt-plugin~Could not access default operating system images. Contact your administrator to gain access to these images. Otherwise provide a manual boot source below.',
         )}
@@ -264,15 +265,15 @@ export const OS: React.FC<OSProps> = React.memo(
               }
             >
               {operatingSystemBaseImages.map(({ id, name, message }) => (
-                <SelectOption key={id} value={id}>
+                <SelectOptionDeprecated key={id} value={id}>
                   {name || id}
                   {message ? ` ${message}` : ''}
-                </SelectOption>
+                </SelectOptionDeprecated>
               ))}
             </FormPFSelect>
           </FormField>
           {baseImage && baseImage?.longMessage && (
-            <div className="pf-c-form__helper-text" aria-live="polite">
+            <div className="pf-v5-c-form__helper-text" aria-live="polite">
               {baseImage?.longMessage}
             </div>
           )}
@@ -286,7 +287,7 @@ export const OS: React.FC<OSProps> = React.memo(
           <FormField isCreateTemplate={isCreateTemplate}>
             <Checkbox
               id={getFieldId(cloneBaseDiskImageField)}
-              onChange={(v) => onChange(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE, v)}
+              onChange={(_event, v) => onChange(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE, v)}
               description={baseImage?.checkboxDescription}
             />
             {baseImage?.pvcName && baseImage?.pvcNamespace && (
@@ -312,7 +313,7 @@ export const OS: React.FC<OSProps> = React.memo(
             <Checkbox
               className="kv-create-vm__input-checkbox"
               id={getFieldId(VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)}
-              onChange={(v) => onChange(VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS, v)}
+              onChange={(_event, v) => onChange(VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS, v)}
             />
           </FormField>
         </FormFieldRow>

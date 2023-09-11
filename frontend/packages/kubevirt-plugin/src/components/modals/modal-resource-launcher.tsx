@@ -18,10 +18,10 @@ import store from '@console/internal/redux';
 import { RedExclamationCircleIcon } from '@console/shared';
 
 const NotFound: React.FC<NotFoundProps> = ({ message }) => (
-  <Box className="pf-u-text-align-center">
+  <Box className="pf-v5-u-text-align-center">
     <MsgBox title="Not Found" detail="Requested resource not found." />
     {_.isString(message) && (
-      <div className="alert alert-danger pf-u-text-align-left">
+      <div className="alert alert-danger pf-v5-u-text-align-left">
         <RedExclamationCircleIcon />
         {message}
       </div>

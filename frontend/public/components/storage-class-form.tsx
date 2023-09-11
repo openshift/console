@@ -505,7 +505,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
               </label>
               <input
                 type="text"
-                className="pf-c-form-control"
+                className="pf-v5-c-form-control"
                 value={_.get(newStorageClass, selectedKey, '')}
                 onChange={(event) => setParameterHandler(key, event, isCheckbox)}
                 id={paramId}
@@ -590,7 +590,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             </label>
             <input
               type="text"
-              className="pf-c-form-control"
+              className="pf-v5-c-form-control"
               placeholder={newStorageClass.name}
               id="storage-class-name"
               data-test="storage-class-name"
@@ -606,7 +606,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             <label htmlFor="storage-class-description">{t('public~Description')}</label>
             <input
               type="text"
-              className="pf-c-form-control"
+              className="pf-v5-c-form-control"
               id="storage-class-description"
               data-test="storage-class-description"
               onChange={(event) => setStorageHandler('description', event.target.value)}
@@ -695,7 +695,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           )}
 
           <ButtonBar errorMessage={error ? error.message : ''} inProgress={loading}>
-            <ActionGroup className="pf-c-form">
+            <ActionGroup className="pf-v5-c-form">
               <Button
                 id="save-changes"
                 isDisabled={!validationSuccessful}

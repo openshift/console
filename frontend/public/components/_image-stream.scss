@@ -4,7 +4,7 @@
 
 .co-images-stream-tag-timeline {
   font-size: 15px;
-  margin: 20px $pf-global-gutter--md;
+  margin: 20px $pf-v5-global-gutter--md;
   padding-left: 0;
   width: auto;
   @media (max-width: $screen-xs-max) {
@@ -19,20 +19,20 @@
 
 .co-images-stream-tag-timeline__circle-icon,
 .co-images-stream-tag-timeline__square-icon {
-  color: var(--pf-global--BorderColor--100);
+  color: var(--pf-v5-global--BorderColor--100);
   left: 8px;
   position: relative;
 }
 
 .co-images-stream-tag-timeline__info {
-  background-color: var(--pf-global--BackgroundColor--200);
+  background-color: var(--pf-v5-global--BackgroundColor--200);
   border-radius: 3px;
   line-height: 30px;
   margin: 8px 0 24px 40px;
   padding: 20px;
   width: 100%;
   & > div:first-of-type {
-    font-size: var(--pf-global--FontSize--sm);
+    font-size: var(--pf-v5-global--FontSize--sm);
     padding-bottom: 16px;
   }
 }
@@ -43,7 +43,7 @@
 }
 
 .co-images-stream-tag-timeline__line {
-  border: var(--pf-global--BorderWidth--md) solid var(--pf-global--BorderColor--100);
+  border: var(--pf-v5-global--BorderWidth--md) solid var(--pf-v5-global--BorderColor--100);
   left: 14px;
   position: relative;
 }

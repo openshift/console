@@ -4,15 +4,15 @@
   }
   &__relationship {
     align-items: center;
-    min-height: var(--pf-global--spacer--xl);
-    margin: 0 var(--pf-global--BorderWidth--md) var(--pf-global--BorderWidth--lg)
-      var(--pf-global--spacer--2xl);
+    min-height: var(--pf-v5-global--spacer--xl);
+    margin: 0 var(--pf-v5-global--BorderWidth--md) var(--pf-v5-global--BorderWidth--lg)
+      var(--pf-v5-global--spacer--2xl);
   }
 
   &__relationship-table {
     position: relative;
-    left: calc(var(--pf-global--spacer--md) * -1);
-    width: calc(100% + var(--pf-global--spacer--xl));
+    left: calc(var(--pf-v5-global--spacer--md) * -1);
+    width: calc(100% + var(--pf-v5-global--spacer--xl));
     &:not(:last-child) {
       margin-bottom: 10px;
     }

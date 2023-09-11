@@ -277,7 +277,7 @@ export const AddTemplateSourceModal: React.FC<
           />
         </ModalBody>
         <ModalFooter errorMessage={error} inProgress={false}>
-          <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
+          <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right pf-v5-c-form__group--no-top-margin">
             <Button
               type="button"
               variant="secondary"

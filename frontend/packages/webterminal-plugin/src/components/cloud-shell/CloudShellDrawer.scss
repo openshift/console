@@ -1,13 +1,13 @@
 .co-cloud-shell-drawer {
   &__heading {
-    padding-left: var(--pf-global--spacer--md);
+    padding-left: var(--pf-v5-global--spacer--md);
   }
   &__body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
     height: 100%;
-    & .pf-c-tabs {
+    & .pf-v5-c-tabs {
       flex-shrink: 0;
     }
   }

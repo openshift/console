@@ -294,7 +294,7 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
                   </label>
                   <input
                     type="text"
-                    className="pf-c-form-control"
+                    className="pf-v5-c-form-control"
                     id={name}
                     name={name}
                     value={value}
@@ -317,7 +317,7 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
             errorMessage={error}
             inProgress={inProgress}
           >
-            <ActionGroup className="pf-c-form">
+            <ActionGroup className="pf-v5-c-form">
               <Button type="submit" variant="primary">
                 {t('public~Create')}
               </Button>

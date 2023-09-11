@@ -33,7 +33,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
           {ports.map((port, idx) => {
             const key = `port-${idx}`;
             return (
-              <div className="pf-c-input-group" key={key}>
+              <div className="pf-v5-c-input-group" key={key}>
                 <Dropdown
                   items={{
                     TCP: <>TCP</>,
@@ -47,7 +47,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
                   data-test="port-protocol"
                 />
                 <input
-                  className="pf-c-form-control"
+                  className="pf-v5-c-form-control"
                   onChange={(event) =>
                     onSingleChange({ ...port, port: event.currentTarget.value }, idx)
                   }

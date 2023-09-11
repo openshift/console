@@ -5,7 +5,8 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
-  Title,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
@@ -91,7 +92,7 @@ const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
 };
 
 const Badge = ({ text }) => (
-  <span key={text} className="pf-c-badge pf-m-read">
+  <span key={text} className="pf-v5-c-badge pf-m-read">
     {text}
   </span>
 );
@@ -498,20 +499,20 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     return (
       <>
         <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
-          <Title headingLevel="h5" size="lg">
-            {t('olm~No Operators available')}
-          </Title>
-          {window.SERVER_FLAGS.GOOS && window.SERVER_FLAGS.GOARCH && (
-            <EmptyStateBody>
-              {t(
-                'olm~There are no Operators that match operating system {{os}} and architecture {{arch}}.',
-                {
-                  os: window.SERVER_FLAGS.GOOS,
-                  arch: window.SERVER_FLAGS.GOARCH,
-                },
-              )}
-            </EmptyStateBody>
-          )}
+          <EmptyStateHeader titleText={<>{t('olm~No Operators available')}</>} headingLevel="h5" />
+          <EmptyStateFooter>
+            {window.SERVER_FLAGS.GOOS && window.SERVER_FLAGS.GOARCH && (
+              <EmptyStateBody>
+                {t(
+                  'olm~There are no Operators that match operating system {{os}} and architecture {{arch}}.',
+                  {
+                    os: window.SERVER_FLAGS.GOOS,
+                    arch: window.SERVER_FLAGS.GOARCH,
+                  },
+                )}
+              </EmptyStateBody>
+            )}
+          </EmptyStateFooter>
         </EmptyState>
       </>
     );
@@ -565,7 +566,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
               <div className="co-catalog-page__overlay-actions">
                 {remoteWorkflowUrl && (
                   <ExternalLink
-                    additionalClassName="pf-c-button pf-m-primary co-catalog-page__overlay-action"
+                    additionalClassName="pf-v5-c-button pf-m-primary co-catalog-page__overlay-action"
                     href={remoteWorkflowUrl}
                     text={
                       <>
@@ -580,7 +581,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 {!detailsItem.installed ? (
                   <Link
                     className={classNames(
-                      'pf-c-button',
+                      'pf-v5-c-button',
                       {
                         'pf-m-secondary': remoteWorkflowUrl,
                       },

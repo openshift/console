@@ -15,7 +15,7 @@ exports[`Tabs should match snapshot (auto-generated) 1`] = `
 >
   <div
     aria-label="string"
-    className="pf-c-tabs ''"
+    className="pf-v5-c-tabs ''"
     data-ouia-component-id="OUIA-Generated-Tabs-1"
     data-ouia-component-type="PF4/Tabs"
     data-ouia-safe={true}
@@ -25,7 +25,7 @@ exports[`Tabs should match snapshot (auto-generated) 1`] = `
     <button
       aria-hidden={true}
       aria-label="'Scroll left'"
-      className="pf-c-tabs__scroll-button"
+      className="pf-v5-c-tabs__scroll-button"
       disabled={true}
       onClick={[Function]}
     >
@@ -36,7 +36,7 @@ exports[`Tabs should match snapshot (auto-generated) 1`] = `
       />
     </button>
     <ul
-      className="pf-c-tabs__list"
+      className="pf-v5-c-tabs__list"
       onScroll={[Function]}
     >
       <div
@@ -48,7 +48,7 @@ exports[`Tabs should match snapshot (auto-generated) 1`] = `
     <button
       aria-hidden={true}
       aria-label="'Scroll right'"
-      className="pf-c-tabs__scroll-button"
+      className="pf-v5-c-tabs__scroll-button"
       disabled={true}
       onClick={[Function]}
     >

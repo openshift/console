@@ -69,7 +69,7 @@ const WarningTabRow: React.FC<WarningTabRowProps> = ({
   pendingChanges,
   pendingChangesKey,
 }) => (
-  <Breadcrumb className="kv-warning--pf-c-breadcrumb">
+  <Breadcrumb className="kv-warning--pf-v5-c-breadcrumb">
     <BreadcrumbHeading key={`${tabName}-header-${tabProps.join('-')}`}>{tabName}</BreadcrumbHeading>
     <BreadcrumbItem key={`${tabName}-${tabProps.join('-')}`}>
       {tabProps.map((key, idx) => {
@@ -114,7 +114,7 @@ export const PendingChangesWarning: React.FC<PendingChangesWarningProps> = ({
   return (
     <PendingChangesAlert isWarning>
       {PENDING_CHANGES_WARNING_MESSAGE}
-      <List className="kv-warning--pf-c-list">
+      <List className="kv-warning--pf-v5-c-list">
         {Object.keys(pendingChangesByTab).map(
           (tabName) =>
             pendingChangesByTab[tabName].resources.length > 0 && (

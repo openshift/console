@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { FormGroup, TextInput } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  TextInput,
+} from '@patternfly/react-core';
 import { ClusterConfigurationTextField } from '@console/dynamic-plugin-sdk/src';
 import { FormLayout } from '@console/shared/src/components/cluster-configuration';
 import { useDebounceCallback } from './hooks';
@@ -22,7 +28,7 @@ const ClusterConfigurationTextField: React.FC<ClusterConfigurationTextFieldProps
 
     // k8s patch
   }, 2000);
-  const handleOnChange = (newValue: string) => {
+  const handleOnChange = (_event, newValue: string) => {
     // eslint-disable-next-line no-console
     console.log('xxx onChange', newValue);
     setValue(newValue);
@@ -30,12 +36,7 @@ const ClusterConfigurationTextField: React.FC<ClusterConfigurationTextFieldProps
   };
 
   return (
-    <FormGroup
-      fieldId={item.id}
-      label={item.label}
-      helperText={item.description}
-      data-test={`${item.id} field`}
-    >
+    <FormGroup fieldId={item.id} label={item.label} data-test={`${item.id} field`}>
       <FormLayout>
         <TextInput
           id={item.id}
@@ -44,6 +45,12 @@ const ClusterConfigurationTextField: React.FC<ClusterConfigurationTextFieldProps
           isDisabled={item.readonly}
         />
       </FormLayout>
+
+      <FormHelperText>
+        <HelperText>
+          <HelperTextItem>{item.description}</HelperTextItem>
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

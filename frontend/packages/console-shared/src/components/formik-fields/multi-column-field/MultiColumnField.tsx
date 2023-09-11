@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { FormGroup, gridItemSpanValueShape } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  gridItemSpanValueShape,
+} from '@patternfly/react-core';
 import { FieldArray, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useFormikValidationFix } from '../../../hooks/formik-validation-fix';
@@ -47,7 +53,6 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
             data-test={props['data-test'] || 'multicolumn-field'}
             fieldId={`form-multi-column-input-${name.replace(/\./g, '-')}-field`}
             label={label}
-            helperText={helpText}
             isRequired={required}
           >
             {fieldValue.length < 1 ? (
@@ -84,6 +89,12 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
                 onAdd={() => push(emptyValues)}
               />
             )}
+
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem>{helpText}</HelperTextItem>
+              </HelperText>
+            </FormHelperText>
           </FormGroup>
         );
       }}

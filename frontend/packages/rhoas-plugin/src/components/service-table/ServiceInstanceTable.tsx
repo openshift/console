@@ -5,21 +5,24 @@ import {
   EmptyStateBody,
   EmptyStateVariant,
   Bullseye,
-  Title,
   EmptyStateIcon,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import {
   sortable,
-  Table,
-  TableHeader,
-  TableBody,
   RowSelectVariant,
   SortByDirection,
   Tbody,
   Tr,
   Td,
 } from '@patternfly/react-table';
+import {
+  Table as TableDeprecated,
+  TableHeader as TableHeaderDeprecated,
+  TableBody as TableBodyDeprecated,
+} from '@patternfly/react-table/deprecated';
 import { useTranslation } from 'react-i18next';
 import { Timestamp } from '@console/internal/components/utils';
 import { CloudKafka } from '../../utils/rhoas-types';
@@ -100,17 +103,20 @@ const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
       <Tr translate>
         <Td translate colSpan={7}>
           <Bullseye>
-            <EmptyState variant={EmptyStateVariant.small}>
-              <EmptyStateIcon icon={SearchIcon} />
-              <Title headingLevel="h2" size="lg">
-                {t('rhoas-plugin~No Kafka instances found')}
-              </Title>
+            <EmptyState variant={EmptyStateVariant.sm}>
+              <EmptyStateHeader
+                titleText={<>{t('rhoas-plugin~No Kafka instances found')}</>}
+                icon={<EmptyStateIcon icon={SearchIcon} />}
+                headingLevel="h2"
+              />
               <EmptyStateBody>
                 {t('rhoas-plugin~No results match the filter criteria.')}
               </EmptyStateBody>
-              <Button variant="link" onClick={clearFilters}>
-                {t('rhoas-plugin~Clear filters')}
-              </Button>
+              <EmptyStateFooter>
+                <Button variant="link" onClick={clearFilters}>
+                  {t('rhoas-plugin~Clear filters')}
+                </Button>
+              </EmptyStateFooter>
             </EmptyState>
           </Bullseye>
         </Td>
@@ -149,7 +155,7 @@ const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
   };
 
   return formattedKafkas && pageKafkas ? (
-    <Table
+    <TableDeprecated
       aria-label={t('rhoas-plugin~List of Kafka Instances')}
       cells={tableColumns}
       rows={formattedKafkas}
@@ -159,9 +165,9 @@ const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
       onSort={onSort}
       sortBy={sortBy}
     >
-      <TableHeader />
-      {pageKafkas.length === 0 ? emptyStateRows : <TableBody />}
-    </Table>
+      <TableHeaderDeprecated />
+      {pageKafkas.length === 0 ? emptyStateRows : <TableBodyDeprecated />}
+    </TableDeprecated>
   ) : null;
 };
 

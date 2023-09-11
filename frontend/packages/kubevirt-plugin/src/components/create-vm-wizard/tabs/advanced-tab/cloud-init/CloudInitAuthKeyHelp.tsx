@@ -6,7 +6,7 @@ const CloudInitAuthKeyHelp: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="pf-c-form__helper-text" aria-live="polite">
+    <div className="pf-v5-c-form__helper-text" aria-live="polite">
       <Trans t={t} ns="kubevirt-plugin">
         Authorized keys must follow the SSH Public key format,
         <ExternalLink

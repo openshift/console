@@ -772,7 +772,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       return (
         <div>
           <input
-            className="pf-c-form-control"
+            className="pf-v5-c-form-control"
             id={id}
             type="password"
             onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
@@ -816,7 +816,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           data-checked-state={(_.isNil(currentValue) ? false : currentValue) as boolean}
           label={displayName}
           required={required}
-          onChange={(value) => handleFormDataUpdate(path, value)}
+          onChange={(_event, value) => handleFormDataUpdate(path, value)}
         />
       );
     }
@@ -826,7 +826,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           key={id}
           id={id}
           isChecked={(_.isNil(currentValue) ? false : currentValue) as boolean}
-          onChange={(value) => handleFormDataUpdate(path, value)}
+          onChange={(_event, value) => handleFormDataUpdate(path, value)}
           label={t('public~True')}
           labelOff={t('public~False')}
         />
@@ -868,7 +868,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
         <div>
           <input
             key={id}
-            className="pf-c-form-control"
+            className="pf-v5-c-form-control"
             id={id}
             type="text"
             onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
@@ -882,7 +882,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
         <div>
           <input
             key={path}
-            className="pf-c-form-control"
+            className="pf-v5-c-form-control"
             id={id}
             type="number"
             onChange={({ currentTarget: { value } }) =>
@@ -1115,7 +1115,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                   {t('public~Name')}
                 </label>
                 <input
-                  className="pf-c-form-control"
+                  className="pf-v5-c-form-control"
                   type="text"
                   onChange={({ target: { value } }) => handleFormDataUpdate('metadata.name', value)}
                   value={immutableFormData.getIn(['metadata', 'name']) || 'example'}
@@ -1157,7 +1157,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
               </Alert>
             )}
             <div style={{ paddingBottom: '30px' }}>
-              <ActionGroup className="pf-c-form">
+              <ActionGroup className="pf-v5-c-form">
                 <Button onClick={submit} type="submit" variant="primary">
                   {t('public~Create')}
                 </Button>

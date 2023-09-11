@@ -36,7 +36,7 @@ const UserPreferenceCheckboxField: React.FC<UserPreferenceCheckboxFieldProps> = 
   }
 
   // utils and callbacks
-  const onChange = (checked: boolean) => {
+  const onChange = (_event, checked: boolean) => {
     const checkedValue: UserPreferenceCheckboxFieldValue = checked ? trueValue : falseValue;
     checkedValue !== currentUserPreferenceValue && setCurrentUserPreferenceValue(checkedValue);
     fireTelemetryEvent('User Preference Changed', {

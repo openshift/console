@@ -1,15 +1,15 @@
 .odc-topology-context-menu {
   z-index: 1050;
-  &__kebab-wrapper.pf-c-dropdown__menu-item {
-    --pf-c-dropdown__menu-item--PaddingTop: 0;
-    --pf-c-dropdown__menu-item--PaddingRight: 0;
-    --pf-c-dropdown__menu-item--PaddingBottom: 0;
-    --pf-c-dropdown__menu-item--PaddingLeft: 0;
+  &__kebab-wrapper.pf-v5-c-dropdown__menu-item {
+    --pf-v5-c-dropdown__menu-item--PaddingTop: 0;
+    --pf-v5-c-dropdown__menu-item--PaddingRight: 0;
+    --pf-v5-c-dropdown__menu-item--PaddingBottom: 0;
+    --pf-v5-c-dropdown__menu-item--PaddingLeft: 0;
   }
 }
 
-:root:where(.pf-theme-dark) .pf-c-dropdown__menu-item-icon {
-    img {
-      filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
-    }
+:root:where(.pf-v5-theme-dark) .pf-v5-c-dropdown__menu-item-icon {
+  img {
+    filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
+  }
 }

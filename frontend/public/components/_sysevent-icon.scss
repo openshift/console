@@ -1,21 +1,20 @@
 .co-sysevent-icon {
-  background-color: var(--pf-global--BackgroundColor--100);
-  border: var(--pf-global--BorderWidth--lg) solid var(--pf-global--BorderColor--300);
-  border-radius: var(--pf-global--BorderRadius--lg);
-  color: var(--pf-global--Color--100);
+  background-color: var(--pf-v5-global--BackgroundColor--100);
+  border: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--BorderColor--300);
+  border-radius: var(--pf-v5-global--BorderRadius--lg);
+  color: var(--pf-v5-global--Color--100);
   position: relative;
   z-index: 10;
   height: 18px;
   width: 18px;
 }
 
-
 .co-sysevent--warning {
   .co-sysevent-icon,
   .co-sysevent__box {
-    border-color: var(--pf-global--warning-color--100);
+    border-color: var(--pf-v5-global--warning-color--100);
   }
   .co-sysevent__icon-line {
-    background-color: var(--pf-global--warning-color--100);
+    background-color: var(--pf-v5-global--warning-color--100);
   }
 }

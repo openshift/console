@@ -17,9 +17,9 @@ describe('Localization', () => {
     cy.visit('/dashboards?pseudolocalization=true&lng=en');
     masthead.clickMastheadLink('help-dropdown-toggle');
     // wait for both console help menu items and additionalHelpActions items to load
-    cy.get('.pf-c-app-launcher__group').should('have.length', 2);
+    cy.get('.pf-v5-c-app-launcher__group').should('have.length', 2);
     // Test that all links are translated
-    cy.get('.pf-c-app-launcher__group [role="menuitem"]').isPseudoLocalized();
+    cy.get('.pf-v5-c-app-launcher__group [role="menuitem"]').isPseudoLocalized();
   });
 
   it('pseudolocalizes navigation', () => {
@@ -57,21 +57,21 @@ describe('Localization', () => {
         cy.get(ListPageSelector.tableColumnHeaders).isPseudoLocalized();
         cy.get(DetailsPageSelector.horizontalNavTabs).isPseudoLocalized();
         // check applied filters are i18ned then clear all filters
-        cy.get('.pf-c-chip-group__main').then((groups) => {
+        cy.get('.pf-v5-c-chip-group__main').then((groups) => {
           if (groups.length >= 1) {
-            cy.get('[class*="pf-c-chip-group"]').isPseudoLocalized();
+            cy.get('[class*="pf-v5-c-chip-group"]').isPseudoLocalized();
           }
           listPage.filter.clearAllFilters();
         });
         // check filter dropdown items & search by items i18ned
         listPage.filter.clickFilterDropdown();
-        cy.get('.pf-c-select__menu').within(() => {
-          cy.get('.pf-c-select__menu-group-title').isPseudoLocalized();
+        cy.get('.pf-v5-c-select__menu').within(() => {
+          cy.get('.pf-v5-c-select__menu-group-title').isPseudoLocalized();
           cy.get('.co-filter-dropdown-item__name').isPseudoLocalized();
         });
         listPage.filter.clickSearchByDropdown();
-        cy.get('.pf-c-dropdown__menu').within(() => {
-          cy.get('.pf-c-dropdown__menu-item').isPseudoLocalized();
+        cy.get('.pf-v5-c-dropdown__menu').within(() => {
+          cy.get('.pf-v5-c-dropdown__menu-item').isPseudoLocalized();
         });
       } else {
         cy.byTestID('create-silence-btn').isPseudoLocalized();

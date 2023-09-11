@@ -55,7 +55,7 @@ const VMWareVMsConnected: React.FC<VMWareVMsConnectedProps> = React.memo(
     return (
       <FormFieldRow field={vmField} fieldType={FormFieldType.SELECT}>
         <FormField>
-          <FormSelect onChange={(v) => onVMChange(v, defaultStorageClass)}>
+          <FormSelect onChange={(_event, v) => onVMChange(v, defaultStorageClass)}>
             <FormSelectPlaceholderOption
               placeholder={t(getPlaceholderKey(VMWareProviderField.VM))}
               isDisabled={!!iGet(vmField, 'value')}

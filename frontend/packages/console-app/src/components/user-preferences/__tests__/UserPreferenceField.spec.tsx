@@ -33,6 +33,6 @@ describe('UserPreferenceField', () => {
 
   it('should return FormGroup with children as null if field type is of invalid or unknown', () => {
     wrapper = shallow(<UserPreferenceField item={userPreferenceItemWithUnknownField} />);
-    expect(wrapper.find(FormGroup).props().children).toBeNull();
+    expect(wrapper.find(FormGroup).props().children[0]).toBeNull();
   });
 });

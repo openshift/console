@@ -101,7 +101,7 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
       {showAlert ? (
         <div className="ocs-health-checks-alert">
           <Alert
-            variant="default"
+            variant="custom"
             title={t('console-shared~Health checks')}
             actionClose={<AlertActionCloseButton onClose={handleAlertAction} />}
             isInline

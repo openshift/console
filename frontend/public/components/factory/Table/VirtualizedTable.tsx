@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { TableGridBreakpoint, SortByDirection } from '@patternfly/react-table';
 import {
   Table as PfTable,
-  TableHeader,
-  TableGridBreakpoint,
-  SortByDirection,
-} from '@patternfly/react-table';
+  TableHeader as TableHeaderDeprecated,
+} from '@patternfly/react-table/deprecated';
 import { AutoSizer, WindowScroller } from '@patternfly/react-virtualized-extension';
 import { VirtualizedTableFC, TableColumn, TableDataProps } from '@console/dynamic-plugin-sdk';
 
@@ -208,7 +207,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
               className="pf-m-compact pf-m-border-rows"
               role="presentation"
             >
-              <TableHeader />
+              <TableHeaderDeprecated />
             </PfTable>
             {scrollNode ? (
               renderVirtualizedTable(scrollNode)

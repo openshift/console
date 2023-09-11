@@ -1,21 +1,21 @@
 .co-user-preference-page {
   display: flex;
   min-height: 100%;
-  background-color: var(--pf-global--BackgroundColor--200);
+  background-color: var(--pf-v5-global--BackgroundColor--200);
   overflow-y: auto;
   flex-direction: column;
 
   // Fix missing white background color above the header.
   .ocs-page-layout__title {
     margin-top: 0;
-    padding-top: var(--pf-global--spacer--lg);
+    padding-top: var(--pf-v5-global--spacer--lg);
   }
 }
 
 .co-user-preference-page-content {
   display: flex;
   flex-direction: row;
-  background-color: var(--pf-global--BackgroundColor--100);
+  background-color: var(--pf-v5-global--BackgroundColor--100);
   min-height: 100%;
   &__tabs {
     @media (min-width: 769px) {
@@ -31,12 +31,12 @@
     }
   }
   &__tab-content {
-    margin: var(--pf-global--spacer--lg);
+    margin: var(--pf-v5-global--spacer--lg);
     max-width: 100%;
   }
 
   //workaround for patternfly bug which causes the buttons to show even when isVertical prop is true
-  .pf-c-tabs__scroll-button {
+  .pf-v5-c-tabs__scroll-button {
     display: none;
   }
 }

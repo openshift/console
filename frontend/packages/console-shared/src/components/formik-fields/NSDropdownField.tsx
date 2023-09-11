@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { NsDropdown } from '@console/internal/components/utils';
 import { useFormikValidationFix } from '../../hooks';
+import { RedExclamationCircleIcon } from '../status';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -22,14 +23,7 @@ const NSDropdownField: React.FC<DropdownFieldProps> = ({
   useFormikValidationFix(field.value);
 
   return (
-    <FormGroup
-      fieldId={fieldId}
-      label={label}
-      helperText={helpText}
-      helperTextInvalid={errorMessage}
-      validated={isValid ? 'default' : 'error'}
-      isRequired={required}
-    >
+    <FormGroup fieldId={fieldId} label={label} isRequired={required}>
       <NsDropdown
         {...props}
         id={fieldId}
@@ -39,6 +33,18 @@ const NSDropdownField: React.FC<DropdownFieldProps> = ({
           setFieldTouched(props.name, true);
         }}
       />
+
+      <FormHelperText>
+        <HelperText>
+          {!isValid ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          ) : (
+            <HelperTextItem>{helpText}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

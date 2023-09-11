@@ -40,7 +40,7 @@ const Row: React.FC<RowFunctionArgs> = ({ obj, customData: { findModel } }) => {
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         {resource}
-        {group && <div className="pf-u-display-none-on-md text-muted">{group}</div>}
+        {group && <div className="pf-v5-u-display-none-on-md text-muted">{group}</div>}
       </TableData>
       <TableData className={tableColumnClasses[2]}>{group || '-'}</TableData>
       <TableData className={tableColumnClasses[3]}>

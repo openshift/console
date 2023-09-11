@@ -48,7 +48,7 @@ const FinishCustomizationModal: React.FC<FinishCustomizationModalProps> = ({
               label={t(
                 'kubevirt-plugin~I have sealed the boot source so it can be used as a template.*',
               )}
-              onChange={setConfirmed}
+              onChange={(_event, value) => setConfirmed(value)}
               isChecked={confirmed}
               data-checked-state={confirmed}
               className="kv-finish-modal__checkbox"

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SelectVariant } from '@patternfly/react-core';
+import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -106,11 +106,11 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
           name={fieldName}
           label={t('devconsole~Resource type')}
           options={selectInputOptions}
-          variant={SelectVariant.single}
+          variant={SelectVariantDeprecated.single}
           onChange={onChange}
           getLabelFromValue={(value: string) => t(ReadableResourcesNames[value])}
           helpText={
-            <p className="pf-c-form__helper-text">
+            <p className="pf-v5-c-form__helper-text">
               <Trans t={t} ns="devconsole">
                 Resource type to generate. The default can be set in{' '}
                 <Link to="/user-preferences/applications">User Preferences</Link>.

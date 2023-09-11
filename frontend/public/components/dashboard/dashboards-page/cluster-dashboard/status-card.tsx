@@ -32,14 +32,7 @@ import {
   useResolvedExtensions,
   WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
-import {
-  Gallery,
-  GalleryItem,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardActions,
-} from '@patternfly/react-core';
+import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { BlueArrowCircleUpIcon, FLAGS, useCanClusterUpgrade } from '@console/shared';
 
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
@@ -236,14 +229,26 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   }
 
   return (
-    <Card data-test-id="status-card" className="co-overview-card--gradient">
-      <CardHeader>
+    <Card
+      data-test-id="status-card"
+      className="co-overview-card--gradient"
+      isClickable
+      isSelectable
+    >
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <Link to="/monitoring/alerts" data-test="status-card-view-alerts">
+                {t('public~View alerts')}
+              </Link>
+            </>
+          ),
+          hasNoOffset: false,
+          className: 'co-overview-card__actions',
+        }}
+      >
         <CardTitle>{t('public~Status')}</CardTitle>
-        <CardActions className="co-overview-card__actions">
-          <Link to="/monitoring/alerts" data-test="status-card-view-alerts">
-            {t('public~View alerts')}
-          </Link>
-        </CardActions>
       </CardHeader>
       <HealthBody>
         <Gallery className="co-overview-status__health" hasGutter>

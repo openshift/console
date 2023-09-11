@@ -1,20 +1,20 @@
 @import '../../../../../public/style/vars';
 
 .co-synced-editor__editor-toggle {
-  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-  border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-  padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--lg);
-  @media (min-width: $pf-global--breakpoint--xl) {
-    padding-left: $pf-global-gutter--md;
-    padding-right: $pf-global-gutter--md;
+  border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  padding: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--lg);
+  @media (min-width: $pf-v5-global--breakpoint--xl) {
+    padding-left: $pf-v5-global-gutter--md;
+    padding-right: $pf-v5-global-gutter--md;
   }
 }
 
 .co-synced-editor__editor-toggle-label {
-  font-size: $font-size-base - 1; // match --pf-c-form__label--FontSize that's used for the osc-yaml-editor
+  font-size: $font-size-base - 1; // match --pf-v5-c-form__label--FontSize that's used for the osc-yaml-editor
   margin-bottom: 0;
 }
 
 .co-synced-editor__yaml-warning {
-  margin: $pf-global-gutter--md $pf-global-gutter--md 0;
+  margin: $pf-v5-global-gutter--md $pf-v5-global-gutter--md 0;
 }

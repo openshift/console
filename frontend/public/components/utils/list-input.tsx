@@ -56,7 +56,7 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
           <div className="co-list-input__row" key={i}>
             <div className="co-list-input__value">
               <input
-                className="pf-c-form-control"
+                className="pf-v5-c-form-control"
                 type="text"
                 value={v}
                 onChange={(e: React.FormEvent<HTMLInputElement>) =>

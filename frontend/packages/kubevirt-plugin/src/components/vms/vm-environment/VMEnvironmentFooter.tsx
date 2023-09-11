@@ -26,7 +26,7 @@ const VMEnvironmentFooter: React.FC<VMEnvironmentFooterProps> = ({
     <footer className="co-m-btn-bar">
       {errorMsg && <ModalErrorMessage message={errorMsg} />}
       {!errorMsg && isSuccess && <ModalSimpleMessage message="Success" variant="success" />}
-      <ActionGroup className="pf-c-form">
+      <ActionGroup className="pf-v5-c-form">
         <Button isDisabled={isSaveBtnDisabled} type="submit" variant="primary" onClick={save}>
           {t('kubevirt-plugin~Save')}
         </Button>

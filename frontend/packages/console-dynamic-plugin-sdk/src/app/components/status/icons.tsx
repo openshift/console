@@ -12,7 +12,7 @@ import './icons.scss';
 export type ColoredIconProps = {
   className?: string;
   title?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: number;
 };
 
 /**

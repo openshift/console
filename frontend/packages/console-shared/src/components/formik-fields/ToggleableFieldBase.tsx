@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField } from 'formik';
+import { RedExclamationCircleIcon } from '../status';
 import { CheckboxFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -23,15 +24,9 @@ const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
   const fieldId = getFieldId(name, 'checkbox');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
+
   return (
-    <FormGroup
-      fieldId={fieldId}
-      label={formLabel}
-      helperText={helpText}
-      helperTextInvalid={errorMessage}
-      validated={isValid ? 'default' : 'error'}
-      isRequired={required}
-    >
+    <FormGroup fieldId={fieldId} label={formLabel} isRequired={required}>
       {children({
         ...field,
         ...props,
@@ -41,11 +36,23 @@ const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
         isChecked: field.checked,
         isValid,
         'aria-describedby': helpText ? `${fieldId}-helper` : undefined,
-        onChange: (val, event) => {
+        onChange: (event, val) => {
           field.onChange(event);
           onChange && onChange(val);
         },
       })}
+
+      <FormHelperText>
+        <HelperText>
+          {!isValid ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          ) : (
+            <HelperTextItem>{helpText}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

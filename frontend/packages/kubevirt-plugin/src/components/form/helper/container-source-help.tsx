@@ -47,7 +47,7 @@ export const ContainerSourceHelp: React.FC<ContainerSourceHelpProps> = ({ imageN
   const container = labelImage();
 
   return (
-    <div className="pf-c-form__helper-text" aria-live="polite" data-test="ContainerSourceHelp">
+    <div className="pf-v5-c-form__helper-text" aria-live="polite" data-test="ContainerSourceHelp">
       {container !== NO_LABEL && t('kubevirt-plugin~Example: {{container}}', { container })}
     </div>
   );

@@ -1,14 +1,12 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { sortable, SortByDirection, TableVariant } from '@patternfly/react-table';
 import {
-  sortable,
-  SortByDirection,
   Table as PFTable,
-  TableBody,
-  TableHeader,
-  TableVariant,
-} from '@patternfly/react-table';
+  TableBody as TableBodyDeprecated,
+  TableHeader as TableHeaderDeprecated,
+} from '@patternfly/react-table/deprecated';
 import { BanIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -64,8 +62,8 @@ const menuActions: KebabAction[] = [
 ];
 
 const tableColumnClasses = [
-  'pf-m-u-w-33-on-md pf-u-w-25-on-lg',
-  'pf-m-u-w-33-on-md pf-u-w-25-on-lg',
+  'pf-m-u-w-33-on-md pf-v5-u-w-25-on-lg',
+  'pf-m-u-w-33-on-md pf-v5-u-w-25-on-lg',
   'pf-m-hidden pf-m-visible-on-md',
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-xl',
@@ -145,8 +143,8 @@ const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
       onSort={onSort}
       sortBy={sortBy}
     >
-      <TableHeader />
-      <TableBody />
+      <TableHeaderDeprecated />
+      <TableBodyDeprecated />
     </PFTable>
   ) : (
     <EmptyVersionsMsg />

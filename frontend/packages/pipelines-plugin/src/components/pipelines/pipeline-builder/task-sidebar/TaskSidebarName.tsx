@@ -1,9 +1,16 @@
 import * as React from 'react';
-import { FormGroup, TextInput, TextInputTypes } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  TextInput,
+  TextInputTypes,
+} from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { nameValidationSchema } from '@console/shared';
+import { RedExclamationCircleIcon, nameValidationSchema } from '@console/shared';
 import { STATUS_KEY_NAME_ERROR } from '../const';
 import { NameErrorStatus, PipelineBuilderFormikValues } from '../types';
 
@@ -51,19 +58,13 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
   };
 
   return (
-    <FormGroup
-      fieldId="task-name"
-      label={t('pipelines-plugin~Display name')}
-      helperTextInvalid={errorMessage}
-      validated={isValid ? 'default' : 'error'}
-      isRequired
-    >
+    <FormGroup fieldId="task-name" label={t('pipelines-plugin~Display name')} isRequired>
       <TextInput
         data-test={`task-name ${interimName}`}
         id="task-name"
         validated={isValid ? 'default' : 'error'}
         isRequired
-        onChange={(value) => {
+        onChange={(_event, value) => {
           setInterimName(value);
 
           if (reservedNames.includes(value)) {
@@ -92,6 +93,16 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
         type={TextInputTypes.text}
         value={interimName}
       />
+
+      {!isValid && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      )}
     </FormGroup>
   );
 };

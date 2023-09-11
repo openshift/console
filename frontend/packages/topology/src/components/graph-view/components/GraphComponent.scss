@@ -19,7 +19,7 @@
 }
 
 .topology-connector__remove-icon {
-  color: var(--pf-global--Color--light-100);
+  color: var(--pf-v5-global--Color--light-100);
   cursor: pointer;
   .odc-m-drag-active & {
     display: none;

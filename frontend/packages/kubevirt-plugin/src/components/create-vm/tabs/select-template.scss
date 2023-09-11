@@ -3,22 +3,22 @@
 }
 
 .kv-select-template__grid {
-  background-color: var(--pf-global--palette--black-150);
+  background-color: var(--pf-v5-global--palette--black-150);
 }
 
 .kv-select-template__title {
-  padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--lg) 0;
+  padding: var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--lg) 0;
 }
 
 .kv-select-template__project {
-  .pf-c-select__menu {
+  .pf-v5-c-select__menu {
     overflow-x: auto;
     max-height: 60vh;
   }
 }
 
 .kv-select-template__create-project-btn {
-  color: var(--pf-c-button--m-plain--active--Color);
+  color: var(--pf-v5-c-button--m-plain--active--Color);
 }
 
 .kv-select-template__tile {
@@ -35,11 +35,11 @@
 }
 
 .kv-select-template__filter {
-  .pf-c-check__description {
+  .pf-v5-c-check__description {
     white-space: nowrap;
   }
 }
 
 .kv-select-template__tile-desc {
-  --pf-l-stack--m-gutter--MarginBottom: var(--pf-global--spacer--sm);
+  --pf-v5-l-stack--m-gutter--MarginBottom: var(--pf-v5-global--spacer--sm);
 }

@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patternfly/react-core';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
@@ -87,7 +91,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
 
   const getMenuItem = React.useCallback(
     ({ test, wizardName, mode, label }) => (
-      <DropdownItem
+      <DropdownItemDeprecated
         key={label}
         component={
           <Link
@@ -117,18 +121,21 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
           {canCreate && (
             <div className="co-actions" data-test-id="details-actions">
               <MigrationTool />
-              <Dropdown
+              <DropdownDeprecated
                 data-test-id="item-create"
                 onSelect={() => setOpen(false)}
                 toggle={
-                  <DropdownToggle onToggle={setOpen} isPrimary>
+                  <DropdownToggleDeprecated
+                    onToggle={(_event, isExpanded) => setOpen(isExpanded)}
+                    toggleVariant="primary"
+                  >
                     {t('kubevirt-plugin~Create')}
-                  </DropdownToggle>
+                  </DropdownToggleDeprecated>
                 }
                 isOpen={isOpen}
                 dropdownItems={[vmMenuItems(t).map(getMenuItem)]}
                 isGrouped
-                position={DropdownPosition.right}
+                position="right"
               />
             </div>
           )}

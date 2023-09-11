@@ -6,31 +6,31 @@
 }
 
 .co-dynamic-form__accordion {
-  --pf-c-accordion--BoxShadow: none !important;
-  --pf-c-accordion--PaddingBottom: 0rem !important;
-  --pf-c-accordion--PaddingTop: 0rem !important;
-  .pf-c-accordion__toggle label {
+  --pf-v5-c-accordion--BoxShadow: none !important;
+  --pf-v5-c-accordion--PaddingBottom: 0rem !important;
+  --pf-v5-c-accordion--PaddingTop: 0rem !important;
+  .pf-v5-c-accordion__toggle label {
     margin-bottom: 0;
   }
 }
 
 .co-dynamic-form__field-group {
-  --pf-c-accordion__toggle--PaddingLeft: 0rem !important;
-  --pf-c-accordion__toggle--PaddingRight: 0.9375rem !important;
-  --pf-c-accordion__toggle--m-expanded--BorderLeftColor: none !important;
-  --pf-c-accordion__expanded-content-body--PaddingLeft: 0.9375rem !important;
-  --pf-c-accordion__expanded-content--Color: var(--pf-global--Color--100) !important;
-  --pf-c-accordion__toggle-text--active--Color: var(--pf-global--Color--100) !important;
-  --pf-c-accordion__toggle-text--active--FontWeight: 600 !important;
-  --pf-c-accordion__toggle-text--expanded--Color: var(--pf-global--Color--100) !important;
-  --pf-c-accordion__toggle-text--expanded--FontWeight: 600 !important;
-  --pf-c-accordion__toggle-text--focus--Color: var(--pf-global--Color--100) !important;
-  --pf-c-accordion__toggle-text--focus--FontWeight: 600 !important;
-  --pf-c-accordion__toggle-text--hover--Color: var(--pf-global--Color--100) !important;
-  --pf-c-accordion__toggle-text--hover--FontWeight: 600 !important;
+  --pf-v5-c-accordion__toggle--PaddingLeft: 0rem !important;
+  --pf-v5-c-accordion__toggle--PaddingRight: 0.9375rem !important;
+  --pf-v5-c-accordion__toggle--m-expanded--BorderLeftColor: none !important;
+  --pf-v5-c-accordion__expanded-content-body--PaddingLeft: 0.9375rem !important;
+  --pf-v5-c-accordion__expanded-content--Color: var(--pf-v5-global--Color--100) !important;
+  --pf-v5-c-accordion__toggle-text--active--Color: var(--pf-v5-global--Color--100) !important;
+  --pf-v5-c-accordion__toggle-text--active--FontWeight: 600 !important;
+  --pf-v5-c-accordion__toggle-text--expanded--Color: var(--pf-v5-global--Color--100) !important;
+  --pf-v5-c-accordion__toggle-text--expanded--FontWeight: 600 !important;
+  --pf-v5-c-accordion__toggle-text--focus--Color: var(--pf-v5-global--Color--100) !important;
+  --pf-v5-c-accordion__toggle-text--focus--FontWeight: 600 !important;
+  --pf-v5-c-accordion__toggle-text--hover--Color: var(--pf-v5-global--Color--100) !important;
+  --pf-v5-c-accordion__toggle-text--hover--FontWeight: 600 !important;
   margin-bottom: 0.5rem;
 
-  .pf-c-accordion__toggle {
+  .pf-v5-c-accordion__toggle {
     &:before,
     &:after {
       display: none;
@@ -39,7 +39,7 @@
 
   h3 {
     margin: 0rem;
-    font-size: var(--pf-global--FontSize);
+    font-size: var(--pf-v5-global--FontSize);
   }
 
   .help-block {

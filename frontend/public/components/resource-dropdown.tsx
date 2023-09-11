@@ -8,7 +8,11 @@ import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from './utils';
 import { K8sKind, K8sResourceKindReference, modelFor, referenceForModel } from '../module/k8s';
 import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 
 // Blacklist known duplicate resources.
 const blacklistGroups = ImmutableSet([
@@ -65,7 +69,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
 
   const items = resources
     .map((model: K8sKind) => (
-      <SelectOption
+      <SelectOptionDeprecated
         key={referenceForModel(model)}
         value={referenceForModel(model)}
         data-filter-text={`${model.abbr}${model.labelKey ? t(model.labelKey) : model.kind}`}
@@ -90,7 +94,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
             )}
           </span>
         </span>
-      </SelectOption>
+      </SelectOptionDeprecated>
     ))
     .toArray();
 
@@ -108,13 +112,13 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
     onChange(referenceForModel(modelFor(value)));
   };
 
-  const onToggle = (newOpenState: boolean) => {
+  const onToggle = (_event, newOpenState: boolean) => {
     setOpen(newOpenState);
   };
 
   return (
-    <Select
-      variant={SelectVariant.checkbox}
+    <SelectDeprecated
+      variant={SelectVariantDeprecated.checkbox}
       onToggle={onToggle}
       onSelect={handleSelected}
       selections={selectedOptions}
@@ -128,7 +132,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       maxHeight="60vh"
     >
       {items}
-    </Select>
+    </SelectDeprecated>
   );
 };
 

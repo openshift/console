@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EmptyState, EmptyStateIcon, Title, TitleSizes } from '@patternfly/react-core';
+import { EmptyState, EmptyStateIcon, TitleSizes, EmptyStateHeader } from '@patternfly/react-core';
 import { VirtualMachineIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -8,15 +8,16 @@ type EmptyStateNoVMsProps = {
   className?: string;
 };
 
-export const EmptyStateNoVMs: React.FC<EmptyStateNoVMsProps> = ({ titleSize, className }) => {
+export const EmptyStateNoVMs: React.FC<EmptyStateNoVMsProps> = ({ className }) => {
   const { t } = useTranslation();
 
   return (
     <EmptyState className={className}>
-      <EmptyStateIcon icon={VirtualMachineIcon} />
-      <Title headingLevel="h4" size={titleSize}>
-        {t('kubevirt-plugin~No virtual machines found')}
-      </Title>
+      <EmptyStateHeader
+        titleText={<>{t('kubevirt-plugin~No virtual machines found')}</>}
+        icon={<EmptyStateIcon icon={VirtualMachineIcon} />}
+        headingLevel="h4"
+      />
     </EmptyState>
   );
 };

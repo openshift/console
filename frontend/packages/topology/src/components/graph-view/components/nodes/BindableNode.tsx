@@ -6,6 +6,7 @@ import {
   WithContextMenuProps,
   WithDragNodeProps,
   WithSelectionProps,
+  GraphElement,
 } from '@patternfly/react-topology';
 import * as openshiftImg from '@console/internal/imgs/logos/openshift.svg';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
@@ -15,7 +16,7 @@ import { getRelationshipProvider } from '../../../../utils/relationship-provider
 import BaseNode from './BaseNode';
 
 type BindableNodeProps = {
-  element: Node;
+  element: GraphElement;
   tooltipLabel?: string;
 } & WithSelectionProps &
   WithDragNodeProps &
@@ -29,10 +30,11 @@ const BindableNode: React.FC<BindableNodeProps> = ({
   tooltipLabel,
   ...rest
 }) => {
+  const nodeElement = element as Node;
   const spec = React.useMemo(() => getRelationshipProvider(), []);
-  const { width, height } = element.getBounds();
+  const { width, height } = nodeElement.getBounds();
   const iconRadius = Math.min(width, height) * 0.25;
-  const [dndDropProps, dndDropRef] = useDndDrop(spec, { element, ...rest });
+  const [dndDropProps, dndDropRef] = useDndDrop(spec, { element: nodeElement, ...rest });
   const resourceObj = getTopologyResourceObject(element.getData());
   const resourceModel = modelFor(referenceFor(resourceObj));
   const iconData = element.getData()?.data?.icon || openshiftImg;
@@ -47,7 +49,7 @@ const BindableNode: React.FC<BindableNodeProps> = ({
       kind={kind}
       innerRadius={iconRadius}
       selected={selected}
-      element={element}
+      element={nodeElement}
       {...rest}
       dndDropRef={dndDropRef}
       {...dndDropProps}

@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { RequestSizeInput } from '@console/internal/components/utils';
 import { useFormikValidationFix } from '../../hooks';
+import { RedExclamationCircleIcon } from '../status';
 import { ResourceLimitFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -23,14 +24,7 @@ const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
   useFormikValidationFix(field.value);
 
   return (
-    <FormGroup
-      fieldId={fieldId}
-      label={label}
-      helperText={helpText}
-      helperTextInvalid={errorMessage}
-      validated={isValid ? 'default' : 'error'}
-      isRequired={props.required}
-    >
+    <FormGroup fieldId={fieldId} label={label} isRequired={props.required}>
       <RequestSizeInput
         {...props}
         onChange={(val) => {
@@ -43,6 +37,18 @@ const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
         defaultRequestSizeValue={field.value}
         describedBy={`${fieldId}-helper`}
       />
+
+      <FormHelperText>
+        <HelperText>
+          {!isValid ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          ) : (
+            <HelperTextItem>{helpText}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

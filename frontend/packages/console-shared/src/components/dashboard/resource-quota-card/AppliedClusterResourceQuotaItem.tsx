@@ -19,7 +19,7 @@ const AppliedClusterResourceQuotaItem: React.FC<AppliedClusterResourceQuotaItemP
       <Split hasGutter>
         <SplitItem isFilled>
           <ExpandableSection
-            onToggle={setExpanded}
+            onToggle={(_event, isOpen: boolean) => setExpanded(isOpen)}
             isExpanded={isExpanded}
             toggleContent={
               <ResourceLink

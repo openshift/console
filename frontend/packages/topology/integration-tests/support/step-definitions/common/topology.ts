@@ -173,7 +173,7 @@ When('user enters {string} builder image in Quick Search bar', (searchItem: stri
 });
 
 When('user clicks Create application on Quick Search Dialog', () => {
-  cy.get('.pf-c-spinner__tail-ball').should('not.exist');
+  cy.get('.pf-v5-c-spinner__tail-ball').should('not.exist');
   cy.get('ul[aria-label="Quick search list"] li')
     .contains('Builder Images', { timeout: 60000 })
     .click();

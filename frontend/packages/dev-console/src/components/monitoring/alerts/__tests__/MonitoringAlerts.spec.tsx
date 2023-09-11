@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { Table, TableHeader, TableBody } from '@patternfly/react-table';
+import {
+  Table as TableDeprecated,
+  TableHeader as TableHeaderDeprecated,
+  TableBody as TableBodyDeprecated,
+} from '@patternfly/react-table/deprecated';
 import { shallow } from 'enzyme';
 import { Map } from 'immutable';
 import * as redux from 'react-redux';
@@ -98,9 +102,9 @@ describe('MonitoringAlerts', () => {
 
     const wrapper = shallow(<MonitoringAlerts {...propsWithAlertsAndRules} />);
     expect(wrapper.find(FilterToolbar).exists()).toBe(true);
-    expect(wrapper.find(Table).exists()).toBe(true);
-    expect(wrapper.find(TableHeader).exists()).toBe(true);
-    expect(wrapper.find(TableBody).exists()).toBe(true);
+    expect(wrapper.find(TableDeprecated).exists()).toBe(true);
+    expect(wrapper.find(TableHeaderDeprecated).exists()).toBe(true);
+    expect(wrapper.find(TableBodyDeprecated).exists()).toBe(true);
   });
   it('should show empty state message', () => {
     const propsWithEmptyRules = {

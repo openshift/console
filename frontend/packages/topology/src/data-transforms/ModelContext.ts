@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import { Model } from '@patternfly/react-topology';
-import { observable, computed } from 'mobx';
+import { observable, computed, makeObservable } from 'mobx';
 import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -28,29 +28,33 @@ export type ModelExtensionContext = {
 export class ExtensibleModel {
   private extensions: { [id: string]: ModelExtensionContext } = {};
 
-  @observable
-  public namespace: string;
+  public namespace: string = undefined;
 
-  @observable.ref
   public model: Model = { nodes: [], edges: [] };
 
-  @observable
   public loaded: boolean = false;
 
-  @observable
-  public loadError: string;
+  public loadError: string = undefined;
 
-  @observable
   public extensionsLoaded: boolean = false;
 
-  @observable.ref
   public watchedResources: WatchK8sResources<any> = {};
-
-  public onExtensionsLoaded: (extensibleModel: ExtensibleModel) => void;
 
   public constructor(namespace?: string) {
     this.namespace = namespace;
+
+    makeObservable(this, {
+      namespace: observable,
+      model: observable.ref,
+      loaded: observable,
+      loadError: observable,
+      extensionsLoaded: observable,
+      watchedResources: observable.ref,
+      isEmptyModel: computed,
+    });
   }
+
+  public onExtensionsLoaded: (extensibleModel: ExtensibleModel) => void;
 
   private updateExtensionsLoaded(): void {
     const extensionKeys = Object.keys(this.extensions);
@@ -153,7 +157,6 @@ export class ExtensibleModel {
     }, []);
   }
 
-  @computed
   public get isEmptyModel(): boolean {
     return (this.model?.nodes?.length ?? 0) === 0;
   }

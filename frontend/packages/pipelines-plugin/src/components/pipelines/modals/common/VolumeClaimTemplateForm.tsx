@@ -179,7 +179,7 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
             data-test-id="pvc-size-input"
           />
           {requestSizeError ? (
-            <p className="pf-c-form__helper-text pf-m-error">{requestSizeError}</p>
+            <p className="pf-v5-c-form__helper-text pf-m-error">{requestSizeError}</p>
           ) : (
             <p className="help-block">{t('pipelines-plugin~Desired storage capacity')}</p>
           )}
