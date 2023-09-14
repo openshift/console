@@ -253,6 +253,10 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
       const csiLoaded = props.resources?.csi?.loaded;
       const scData = (props.resources?.sc?.data || []) as K8sResourceKind[];
       const csiData = (props.resources?.csi?.data || []) as K8sResourceKind[];
+      // making sure csi provisioners are added to "storageTypes" (if loaded) before running "validateForm"
+      if (csiLoaded) {
+        csiProvisionerMap(csiData);
+      }
       if (loaded) {
         resources.current = {
           data: scData,
@@ -260,9 +264,6 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           loaded,
         };
         validateForm();
-      }
-      if (csiLoaded) {
-        csiProvisionerMap(csiData);
       }
     }
 
