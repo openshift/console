@@ -13,6 +13,8 @@ import {
   useResolvedExtensions,
   AlertingRulesSourceExtension,
   isAlertingRulesSource,
+  AlertStates,
+  RuleStates,
 } from '@console/dynamic-plugin-sdk';
 import { sortList } from '@console/internal/actions/ui';
 import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
@@ -95,9 +97,26 @@ export const MonitoringAlerts: React.FC<Props> = ({ match, rules, alerts, filter
   }, [filters, listSorts, columnIndex, rules, listOrderBy, monitoringAlertColumn, sortOrder]);
 
   React.useEffect(() => {
-    const tableRows = monitoringAlertRows(filteredRules, collapsedRowsIds, namespace);
+    // TODO: This works around a bug where the rule's state is never set to silenced in Redux
+    const newRules = _.cloneDeep(filteredRules);
+    if (newRules) {
+      const alertRules = alerts?.data?.map((alert) => alert.rule) ?? [];
+      const silencedAlertRules = alertRules.filter((rule) => rule.state === RuleStates.Silenced);
+      silencedAlertRules.forEach((alertRule) => {
+        newRules.forEach((rule) => {
+          if (rule.id === alertRule.id) {
+            rule.state = RuleStates.Silenced;
+            rule.alerts.forEach((alert) => {
+              alert.state = AlertStates.Silenced;
+            });
+          }
+        });
+      });
+    }
+
+    const tableRows = monitoringAlertRows(newRules, collapsedRowsIds, namespace);
     setRows(tableRows);
-  }, [collapsedRowsIds, filteredRules, namespace]);
+  }, [alerts?.data, collapsedRowsIds, filteredRules, namespace]);
 
   const onCollapse = React.useCallback(
     (event: React.MouseEvent, rowKey: number, isOpen: boolean) => {
@@ -132,7 +151,7 @@ export const MonitoringAlerts: React.FC<Props> = ({ match, rules, alerts, filter
     if (!alerts?.loaded && !alerts?.loadError) {
       return <LoadingBox />;
     }
-    if (rules.length === 0) {
+    if (rules?.length === 0) {
       return <EmptyBox label={t('devconsole~Alerts')} />;
     }
     return (
