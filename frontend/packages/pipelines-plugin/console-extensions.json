@@ -818,5 +818,35 @@
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"]
     }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "page": {
+        "name": "%pipelines-plugin~Metrics%",
+        "href": "metrics"
+      },
+      "component": { "$codeRef": "pipelinesComponent.PipelineMetrics" }
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Pipeline"
+      },
+      "page": {
+        "name": "%pipelines-plugin~Metrics%",
+        "href": "metrics"
+      },
+      "component": { "$codeRef": "pipelinesComponent.PipelineMetrics" }
+    }
   }
 ]
