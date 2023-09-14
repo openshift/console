@@ -201,7 +201,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
       return false;
     }
 
-    const allParamsForType = storageTypes.current[storageType].parameters;
+    const allParamsForType = storageTypes.current[storageType]?.parameters;
 
     const requiredKeys = _.keys(allParamsForType).filter((key) => paramIsRequired(key));
     const allReqdFieldsEntered = _.every(requiredKeys, (key) => {
@@ -365,7 +365,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     const dataParameters = _.pickBy(
       _.mapValues(newStorageClass.parameters, (value, key) => {
         let finalValue = value.value;
-        if (storageTypes.current[type].parameters[key]?.format) {
+        if (storageTypes.current[type]?.parameters[key]?.format) {
           finalValue = storageTypes.current[type].parameters[key].format(value.value);
         }
         return finalValue;
