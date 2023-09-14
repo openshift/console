@@ -360,10 +360,10 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     return _.fromPairs(c);
   };
 
-  const getFormParams = () => {
-    const type = newStorageClass.type;
+  const getFormParams = (newStorageClassBeforeCreation) => {
+    const type = newStorageClassBeforeCreation.type;
     const dataParameters = _.pickBy(
-      _.mapValues(newStorageClass.parameters, (value, key) => {
+      _.mapValues(newStorageClassBeforeCreation.parameters, (value, key) => {
         let finalValue = value.value;
         if (storageTypes.current[type]?.parameters[key]?.format) {
           finalValue = storageTypes.current[type].parameters[key].format(value.value);
@@ -383,10 +383,9 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     setError(null);
 
     const newStorage = addDefaultParams();
-    setNewStorageClass(newStorage);
 
     const { name, description, type, reclaim, expansion, volumeBindingMode } = newStorage;
-    const dataParameters = getFormParams();
+    const dataParameters = getFormParams(newStorage);
     const annotations = description ? { description } : {};
     let data: StorageClass = {
       metadata: {
