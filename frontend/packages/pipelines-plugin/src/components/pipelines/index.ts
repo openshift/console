@@ -11,3 +11,4 @@ export { default as PipelineBuilderPage } from './pipeline-builder/PipelineBuild
 export { default as PipelineBuilderEditPage } from './pipeline-builder/PipelineBuilderEditPage';
 export { default as PipelineTabbedPage } from './PipelineTabbedPage';
 export { default as PipelineParameters } from './PipelineParameters';
+export { default as PipelineMetrics } from './pipeline-metrics/PipelineMetrics';
