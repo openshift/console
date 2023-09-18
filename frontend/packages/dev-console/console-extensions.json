@@ -78,6 +78,17 @@
       "flag": "OPENSHIFT_TEMPLATE"
     }
   },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "flag": "OPENSHIFT_PIPELINE"
+    }
+  },
 
   {
     "type": "console.cluster-configuration/item",
@@ -332,6 +343,28 @@
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "import-from-git",
+      "groupId": "git-repository",
+      "href": "/import/ns/:namespace",
+      "label": "%devconsole~Import from Git%",
+      "description": "%devconsole~Import code from your Git repository to be built and deployed%",
+      "icon": { "$codeRef": "icons.gitIconElement" },
+      "accessReview": [
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" },
+        { "group": "tekton.dev", "resource": "pipelines", "verb": "create" }
+      ]
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"],
+      "disallowed": ["OPENSHIFT_BUILDCONFIG"]
     }
   },
   {
@@ -1125,6 +1158,17 @@
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/import/all-namespaces", "/import/ns/:ns"],
+      "component": { "$codeRef": "import.ImportPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
     }
   },
   {
