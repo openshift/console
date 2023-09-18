@@ -202,7 +202,7 @@ describe('Get knative resources', () => {
       const domainMappingResource = knativeCamelDomainMappingResourceWatchers(SAMPLE_NAMESPACE);
       expect(domainMappingResource.domainmappings).toEqual({
         isList: true,
-        kind: 'serving.knative.dev~v1alpha1~DomainMapping',
+        kind: 'serving.knative.dev~v1beta1~DomainMapping',
         namespace: 'mynamespace',
         optional: true,
       });
