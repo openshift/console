@@ -988,7 +988,8 @@
       "insertBefore": "devconsole.routingOptions"
     },
     "flags": {
-      "disallowed": ["KNATIVE_SERVING_SERVICE"]
+      "disallowed": ["KNATIVE_SERVING_SERVICE"],
+      "required": ["OPENSHIFT_DEPLOYMENTCONFIG"]
     }
   },
   {
@@ -1029,6 +1030,74 @@
       "insertBefore": "devconsole.routingOptions"
     },
     "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "OPENSHIFT_DEPLOYMENTCONFIG"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "devconsole.preferredResource",
+      "label": "%devconsole~Resource type%",
+      "groupId": "applications",
+      "description": "%devconsole~If resource type is not selected, the console default to the latest.%",
+      "field": {
+        "type": "dropdown",
+        "userSettingsKey": "devconsole.preferredResourceType",
+        "defaultValue": "kubernetes",
+        "description": "%devconsole~The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.%",
+        "options": [
+          {
+            "value": "latest",
+            "label": "%devconsole~Last used%",
+            "description": "%devconsole~The last resource type used when adding a resource.%"
+          },
+          {
+            "value": "kubernetes",
+            "label": "%devconsole~Deployment%",
+            "description": "%devconsole~A Deployment enables declarative updates for Pods and ReplicaSets.%"
+          }
+        ]
+      },
+      "insertBefore": "devconsole.routingOptions"
+    },
+    "flags": {
+      "disallowed": ["OPENSHIFT_DEPLOYMENTCONFIG", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "devconsole.preferredResource",
+      "label": "%devconsole~Resource type%",
+      "groupId": "applications",
+      "description": "%devconsole~If resource type is not selected, the console default to the latest.%",
+      "field": {
+        "type": "dropdown",
+        "userSettingsKey": "devconsole.preferredResourceType",
+        "defaultValue": "kubernetes",
+        "description": "%devconsole~The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.%",
+        "options": [
+          {
+            "value": "latest",
+            "label": "%devconsole~Last used%",
+            "description": "%devconsole~The last resource type used when adding a resource.%"
+          },
+          {
+            "value": "kubernetes",
+            "label": "%devconsole~Deployment%",
+            "description": "%devconsole~A Deployment enables declarative updates for Pods and ReplicaSets.%"
+          },
+          {
+            "value": "knative",
+            "label": "%devconsole~Serverless Deployment%",
+            "description": "%devconsole~A type of deployment that enables Serverless scaling to 0 when idle.%"
+          }
+        ]
+      },
+      "insertBefore": "devconsole.routingOptions"
+    },
+    "flags": {
+      "disallowed": ["OPENSHIFT_DEPLOYMENTCONFIG"],
       "required": ["KNATIVE_SERVING_SERVICE"]
     }
   },
