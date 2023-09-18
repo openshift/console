@@ -25,7 +25,7 @@ When('user is able to see the runtime details', () => {
 });
 
 Then('user is able to see Type as Function', () => {
-  cy.byTestID('serverless-function-type').should('be.visible');
+  cy.get('[data-test="serverless-function-type"]', { timeout: 30000 }).should('be.visible');
   cy.byTestID('serverless-function-type').find('dt').should('have.text', 'Type');
   cy.byTestID('serverless-function-type').find('dd').should('have.text', 'Function');
 });

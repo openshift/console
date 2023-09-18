@@ -1,0 +1,18 @@
+{
+    "name": "func.yaml",
+    "path": "func.yaml",
+    "sha": "afa4aa0b8b1cce8265bd358ece2aab321d38ad77",
+    "size": 1014,
+    "url": "https://api.github.com/repos/vikram-raj/hello-func-quarkus/contents/func.yaml?ref=master",
+    "html_url": "https://github.com/vikram-raj/hello-func-quarkus/blob/master/func.yaml",
+    "git_url": "https://api.github.com/repos/vikram-raj/hello-func-quarkus/git/blobs/afa4aa0b8b1cce8265bd358ece2aab321d38ad77",
+    "download_url": "https://raw.githubusercontent.com/vikram-raj/hello-func-quarkus/master/func.yaml",
+    "type": "file",
+    "content": "c3BlY1ZlcnNpb246IDAuMzQuMApuYW1lOiBoZWxsby1mdW5jLXF1YXJrdXMK\ncnVudGltZTogcXVhcmt1cwpyZWdpc3RyeTogcXVheS5pby92aXJhal8xCmlt\nYWdlOiBxdWF5LmlvL3ZpcmFqXzEvaGVsbG8tZnVuYy1xdWFya3VzOmxhdGVz\ndAppbWFnZURpZ2VzdDogc2hhMjU2OmFkNjMyZDNkNGQ0N2Q0NjM3YjA2Yjk3\nZjU1M2ZiMWRlODIxYTg2Mjk0ODU0MzE1Njc2YjViZDM2ZTllZWRiMzAKY3Jl\nYXRlZDogMjAyMi0xMS0xNlQxNjoxNjoxNC4wNTgzNDg2MDIrMDU6MzAKaW52\nb2NhdGlvbjoKICBmb3JtYXQ6IGh0dHAKYnVpbGQ6CiAgYnVpbGRwYWNrczog\nW10KICBidWlsZGVyOiBzMmkKICBidWlsZEVudnM6CiAgLSBuYW1lOiBCUF9O\nQVRJVkVfSU1BR0UKICAgIHZhbHVlOiAiZmFsc2UiCiAgLSBuYW1lOiBCUF9N\nQVZFTl9CVUlMVF9BUlRJRkFDVAogICAgdmFsdWU6IGZ1bmMueWFtbCB0YXJn\nZXQvcXVhcmt1cy1hcHAvbGliLyB0YXJnZXQvcXVhcmt1cy1hcHAvKi5qYXIg\ndGFyZ2V0L3F1YXJrdXMtYXBwL2FwcC8KICAgICAgdGFyZ2V0L3F1YXJrdXMt\nYXBwL3F1YXJrdXMvCiAgLSBuYW1lOiBCUF9NQVZFTl9CVUlMRF9BUkdVTUVO\nVFMKICAgIHZhbHVlOiBwYWNrYWdlIC1Ec2tpcFRlc3RzPXRydWUgLURtYXZl\nbi5qYXZhZG9jLnNraXA9dHJ1ZSAtRHF1YXJrdXMucGFja2FnZS50eXBlPWZh\nc3QtamFyCiAgLSBuYW1lOiBNQVZFTl9TMklfQVJUSUZBQ1RfRElSUwogICAg\ndmFsdWU6IHRhcmdldC9xdWFya3VzLWFwcAogIC0gbmFtZTogUzJJX1NPVVJD\nRV9ERVBMT1lNRU5UU19GSUxURVIKICAgIHZhbHVlOiBsaWIgcXVhcmt1cy1y\ndW4uamFyIGFwcCBxdWFya3VzCnJ1bjoKICB2b2x1bWVzOiBbXQogIGVudnM6\nIFtdCmRlcGxveToKICBuYW1lc3BhY2U6IHZpcmFqCiAgYW5ub3RhdGlvbnM6\nIHt9CiAgb3B0aW9uczoge30KICBsYWJlbHM6IFtdCiAgaGVhbHRoRW5kcG9p\nbnRzOgogICAgbGl2ZW5lc3M6IC9oZWFsdGgvbGl2ZW5lc3MKICAgIHJlYWRp\nbmVzczogL2hlYWx0aC9yZWFkaW5lc3MK\n",
+    "encoding": "base64",
+    "_links": {
+        "self": "https://api.github.com/repos/vikram-raj/hello-func-quarkus/contents/func.yaml?ref=master",
+        "git": "https://api.github.com/repos/vikram-raj/hello-func-quarkus/git/blobs/afa4aa0b8b1cce8265bd358ece2aab321d38ad77",
+        "html": "https://github.com/vikram-raj/hello-func-quarkus/blob/master/func.yaml"
+    }
+}

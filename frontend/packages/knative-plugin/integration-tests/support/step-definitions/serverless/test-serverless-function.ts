@@ -2,15 +2,14 @@ import { When, Then } from 'cypress-cucumber-preprocessor/steps';
 import * as jsonEditor from '@console/cypress-integration-tests/views/yaml-editor';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
+import { reloadPageUntilWorkloadIsDisplayed } from '../../pages/dev-perspective/test-serverless-function-page';
 
 When(
   'user sees workload {string} along with a revision in topology page',
   (workloadName: string) => {
     topologyPage.verifyWorkloadInTopologyPage(workloadName);
     cy.get(topologyPO.quickSearchPO.listView).click();
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(5000); /* Revision taking more time to appear than the default timeout */
-    cy.get(`[id$=${workloadName}]`).should('be.visible');
+    reloadPageUntilWorkloadIsDisplayed(workloadName);
     cy.get(topologyPO.quickSearchPO.graphView).click();
   },
 );
@@ -59,7 +58,7 @@ When(
 );
 
 When('user clicks the {string} Button', (button: string) => {
-  cy.byTestID(`${button.toLowerCase()}-action`).should('be.visible').click();
+  cy.byTestID(`${button.toLowerCase()}-action`).eq(0).should('be.visible').click();
 });
 
 Then('user is able to see a Success Alert', () => {

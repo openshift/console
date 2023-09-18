@@ -80,6 +80,7 @@ Feature: Creation and Visualisation of serverless fuctions
         Scenario Outline: Create Serverless Function from the Import from Git Form on Add page with Pipeline: SF-01-TC07
             Given user has installed OpenShift Pipelines Operator
            # Below manual creation of the Piepline and ClusterTasks can be removed when Serverless new version 1.28 is released
+              And user has created or selected namespace "aut-serverless-function"
               And user created Serverless Function node Pipeline
               And user is at Add page
               And user is at Import from Git form
@@ -87,7 +88,6 @@ Feature: Creation and Visualisation of serverless fuctions
               And user enters Name as "<workload_name>"
               And user selects Add Pipeline checkbox in Pipelines section
               And user clicks Create button on Add page
-              And user clicks on List view button
              Then user is able to see workload "<workload_name>" in topology page
               And user clicks on the Knative Service workload "<workload_name>"
               And user switches to the "Details" tab
@@ -121,7 +121,6 @@ Feature: Creation and Visualisation of serverless fuctions
 
         @regression @odc-6360
         Scenario Outline: Pipeline section should not present in Create Serverless function form if Pipeline is not available: SF-01-TC09
-            Given user has installed OpenShift Pipelines Operator
               And user is at Add page
              When user clicks on Create Serverless function card
               And user enters git url "<git_url>"
@@ -158,8 +157,8 @@ Feature: Creation and Visualisation of serverless fuctions
                   | git_url                                                                 | workload_name                  | invoke_format |
                   | https://github.com/openshift-dev-console/kn-func-typescript-http        | kn-func-typescript-http        | HTTP          |
                   | https://github.com/openshift-dev-console/kn-func-typescript-cloudevents | kn-func-typescript-cloudevents | CloudEvent    |
-        
-        
+
+
         @regression @odc-7316
         Scenario: Create serverless form extensions cards: SF-01-TC11
             Given user is at Add page
