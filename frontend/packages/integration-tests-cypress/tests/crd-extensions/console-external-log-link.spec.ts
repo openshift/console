@@ -22,7 +22,7 @@ describe(`${crd} CRD`, () => {
     cy.visit('/');
     nav.sidenav.switcher.changePerspectiveTo('Administrator');
     nav.sidenav.switcher.shouldHaveText('Administrator');
-    cy.createProject(testName);
+    cy.exec(`oc new-project ${testName}`);
   });
 
   afterEach(() => {
@@ -30,15 +30,16 @@ describe(`${crd} CRD`, () => {
   });
 
   after(() => {
-    cy.deleteProject(testName);
+    cy.exec(`oc delete project ${testName}`);
     cy.logout();
   });
 
   it(`creates, displays, modifies, and deletes a new ${crd} instance`, () => {
     cy.visit(`/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`);
     listPage.rows.shouldBeLoaded();
-    listPage.rows.clickKebabAction(crd, 'View instances');
-    listPage.titleShouldHaveText(crd);
+    listPage.rows.clickRowByName(crd);
+    detailsPage.titleShouldContain('consoleexternalloglinks.console.openshift.io');
+    detailsPage.selectTab('Instances');
     listPage.clickCreateYAMLbutton();
     yamlEditor.isLoaded();
     yamlEditor.getEditorContent().then((content) => {
