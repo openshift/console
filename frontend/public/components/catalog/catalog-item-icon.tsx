@@ -77,6 +77,7 @@ import * as pythonImg from '../../imgs/logos/python.svg';
 import * as quarkusImg from '../../imgs/logos/quarkus.svg';
 import * as rabbitmqImg from '../../imgs/logos/rabbitmq.svg';
 import * as railsImg from '../../imgs/logos/rails.svg';
+import * as reactImg from '../../imgs/logos/react.svg';
 import * as redisImg from '../../imgs/logos/redis.svg';
 import * as rhIntegrationImg from '../../imgs/logos/rh-integration.svg';
 import * as rhSpringBoot from '../../imgs/logos/rh-spring-boot.svg';
@@ -174,6 +175,7 @@ const logos = new Map<string, any>()
   .set('icon-quarkus', quarkusImg)
   .set('icon-rabbitmq', rabbitmqImg)
   .set('icon-rails', railsImg)
+  .set('icon-react', reactImg)
   .set('icon-redis', redisImg)
   .set('icon-rh-integration', rhIntegrationImg)
   .set('icon-rh-spring-boot', rhSpringBoot)
