@@ -23,7 +23,7 @@ import { useModelsLoaded } from './useModelsLoaded';
 import { usePrevious } from './usePrevious';
 
 /**
- * Hook that retrieves the k8s resources along with their respective status for loaded and error.
+ * Hook that retrieves the Kubernetes resources along with their respective status for loaded and error.
  * @param initResources resources need to be watched as key-value pair, wherein key will be unique to resource and value will be options needed to watch for the respective resource.
  * @returns A map where keys are as provided in initResouces and value has three properties data, loaded and error.
  * @example

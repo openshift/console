@@ -116,7 +116,7 @@ A tuple containing the current active perspective and setter callback.
 
 ### Summary 
 
-Component for displaying a green check mark circle icon
+Component for displaying a green check mark circle icon.
 
 
 
@@ -147,7 +147,7 @@ Component for displaying a green check mark circle icon
 
 ### Summary 
 
-Component for displaying a red exclamation mark circle icon
+Component for displaying a red exclamation mark circle icon.
 
 
 
@@ -178,7 +178,7 @@ Component for displaying a red exclamation mark circle icon
 
 ### Summary 
 
-Component for displaying a yellow triangle exclamation icon
+Component for displaying a yellow triangle exclamation icon.
 
 
 
@@ -209,7 +209,7 @@ Component for displaying a yellow triangle exclamation icon
 
 ### Summary 
 
-Component for displaying a blue info circle icon
+Component for displaying a blue info circle icon.
 
 
 
@@ -240,7 +240,7 @@ Component for displaying a blue info circle icon
 
 ### Summary 
 
-Component for displaying an error status popover
+Component for displaying an error status popover.
 
 
 
@@ -261,7 +261,7 @@ Component for displaying an error status popover
 | -------------- | ----------- |
 | `title` | (optional) status text |
 | `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, tooltip won't be displayed |
+| `noTooltip` | (optional) if true, tooltip is not displayed |
 | `className` | (optional) additional class name for the component |
 | `popoverTitle` | (optional) title for popover |
 
@@ -273,7 +273,7 @@ Component for displaying an error status popover
 
 ### Summary 
 
-Component for displaying an information status popover
+Component for displaying an information status popover.
 
 
 
@@ -294,7 +294,7 @@ Component for displaying an information status popover
 | -------------- | ----------- |
 | `title` | (optional) status text |
 | `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, tooltip won't be displayed |
+| `noTooltip` | (optional) if true, tooltip is not displayed |
 | `className` | (optional) additional class name for the component |
 | `popoverTitle` | (optional) title for popover |
 
@@ -306,7 +306,7 @@ Component for displaying an information status popover
 
 ### Summary 
 
-Component for displaying a progressing status popover
+Component for displaying a progressing status popover.
 
 
 
@@ -327,7 +327,7 @@ Component for displaying a progressing status popover
 | -------------- | ----------- |
 | `title` | (optional) status text |
 | `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, tooltip won't be displayed |
+| `noTooltip` | (optional) if true, tooltip is not displayed |
 | `className` | (optional) additional class name for the component |
 | `popoverTitle` | (optional) title for popover |
 
@@ -339,7 +339,7 @@ Component for displaying a progressing status popover
 
 ### Summary 
 
-Component for displaying a success status popover
+Component for displaying a success status popover.
 
 
 
@@ -360,7 +360,7 @@ Component for displaying a success status popover
 | -------------- | ----------- |
 | `title` | (optional) status text |
 | `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, tooltip won't be displayed |
+| `noTooltip` | (optional) if true, tooltip is not displayed |
 | `className` | (optional) additional class name for the component |
 | `popoverTitle` | (optional) title for popover |
 
@@ -413,7 +413,7 @@ Hook that provides information about user access to a given resource.
 
 ### Returns
 
-Array with isAllowed and loading values.
+Array with `isAllowed` and `loading` values.
 
 
 ---
@@ -457,7 +457,7 @@ Tuple containing a list of adapted extension instances with resolved code refere
 
 ### Summary 
 
-A component that creates a Navigation bar for a page.<br/><br/>- Routing is handled as part of the component.<br/>- `console.tab/horizontalNav` can be used to add additional content to any horizontal nav.
+A component that creates a Navigation bar for a page.<br/>Routing is handled as part of the component.<br/>`console.tab/horizontalNav` can be used to add additional content to any horizontal nav.
 
 
 
@@ -483,8 +483,8 @@ const HomePage: React.FC = (props) => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `resource` | The resource associated with this Navigation, an object of K8sResourceCommon type |
-| `pages` | An array of page objects |
+| `resource` | the resource associated with this Navigation, an object of K8sResourceCommon type |
+| `pages` | an array of page objects |
 | `match` | match object provided by React Router |
 
 
@@ -616,13 +616,13 @@ A hook that provides a list of user-selected active TableColumns.
 | `options` | Which are passed as a key-value map |
 | `` |  {TableColumn<D>[]} options.columns - An array of all available TableColumns |
 | `` |  {boolean} [options.showNamespaceOverride] - (optional) If true, a namespace column will be included, regardless of column management selections |
-| `` |  {string} [options.columnManagementID] - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a 'group~verion~kind' string for a resource. |
+| `` |  {string} [options.columnManagementID] - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a `group~version~kind` string for a resource. |
 
 
 
 ### Returns
 
-A tuple containing the current user selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
+A tuple containing the current user-selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
 
 
 ---
@@ -668,7 +668,7 @@ const exampleList: React.FC = () => {
 
 ### Summary 
 
-Component for adding a create button for a specific resource kind that automatically generates a link to the create YAML for this resource
+Component for adding a create button for a specific resource kind that automatically generates a link to the create YAML for this resource.
 
 
 
@@ -705,7 +705,7 @@ const exampleList: React.FC<MyProps> = () => {
 
 ### Summary 
 
-Component for creating a stylized link
+Component for creating a stylized link.
 
 
 
@@ -744,7 +744,7 @@ const exampleList: React.FC<MyProps> = () => {
 
 ### Summary 
 
-Component for creating button
+Component for creating button.
 
 
 
@@ -782,7 +782,7 @@ const exampleList: React.FC<MyProps> = () => {
 
 ### Summary 
 
-Component for creating a dropdown wrapped with permissions check
+Component for creating a dropdown wrapped with permissions check.
 
 
 
@@ -826,7 +826,7 @@ const exampleList: React.FC<MyProps> = () => {
 
 ### Summary 
 
-Component that generates filter for list page
+Component that generates filter for list page.
 
 
 
@@ -934,7 +934,7 @@ A tuple containing the data filtered by all static filteres, the data filtered b
 
 ### Summary 
 
-Component that creates a link to a specific resource type with an icon badge
+Component that creates a link to a specific resource type with an icon badge.
 
 
 
@@ -957,14 +957,14 @@ Component that creates a link to a specific resource type with an icon badge
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `kind` | (optional) the kind of resource i.e. Pod, Deployment, Namespace |
+| `kind` | (optional) the kind of resource such as Pod, Deployment, Namespace |
 | `groupVersionKind` | (optional) object with group, version, and kind |
 | `className` | (optional) class style for component |
 | `displayName` | (optional) display name for component, overwrites the resource name if set |
 | `inline` | (optional) flag to create icon badge and name inline with children |
-| `linkTo` | (optional) flag to create a Link object - defaults to true |
+| `linkTo` | (optional) flag to create a Link object, defaults to true |
 | `name` | (optional) name of resource |
-| `namesapce` | (optional) specific namespace for the kind resource to link to |
+| `namespace` | (optional) specific namespace for the kind resource to link to |
 | `hideIcon` | (optional) flag to hide the icon badge |
 | `title` | (optional) title for the link object (not displayed) |
 | `dataTest` | (optional) identifier for testing |
@@ -979,7 +979,7 @@ Component that creates a link to a specific resource type with an icon badge
 
 ### Summary 
 
-Component that creates an icon badge for a specific resource type
+Component that creates an icon badge for a specific resource type.
 
 
 
@@ -998,7 +998,7 @@ Component that creates an icon badge for a specific resource type
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `kind` | (optional) the kind of resource i.e. Pod, Deployment, Namespace |
+| `kind` | (optional) the kind of resource such as Pod, Deployment, Namespace |
 | `groupVersionKind` | (optional) object with group, version, and kind |
 | `className` | (optional) class style for component |
 
@@ -1078,7 +1078,7 @@ An array with the first item as the list of k8s model and second item as inFligh
 
 ### Summary 
 
-Hook that retrieves the k8s resource along with status for loaded and error.
+Hook that retrieves the Kubernetes resource along with their respective status for loaded and error.
 
 
 
@@ -1103,7 +1103,7 @@ const Component: React.FC = () => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `initResource` | options needed to watch for resource. |
+| `initResource` | resources need to be watched as key-value pair, wherein key will be unique to resource and value will be options needed to watch for the respective resource. |
 
 
 
@@ -1118,7 +1118,7 @@ An array with first item as resource(s), second item as loaded status and third 
 
 ### Summary 
 
-Hook that retrieves the k8s resources along with their respective status for loaded and error.
+Hook that retrieves the Kubernetes resources along with their respective status for loaded and error.
 
 
 
@@ -1160,7 +1160,7 @@ A map where keys are as provided in initResouces and value has three properties 
 
 ### Summary 
 
-A custom wrapper around `fetch` that adds console specific headers and allows for retries and timeouts.<br/>It also validates the response status code and throws appropriate error or logs out the user if required.
+A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.<br/>It also validates the response status code and throws an appropriate error or logs out the user if required.
 
 
 
@@ -1177,7 +1177,7 @@ A custom wrapper around `fetch` that adds console specific headers and allows fo
 
 ### Returns
 
-A promise that resolves to the response
+A promise that resolves to the response.
 
 
 ---
@@ -1186,7 +1186,7 @@ A promise that resolves to the response
 
 ### Summary 
 
-A custom wrapper around `fetch` that adds console specific headers and allows for retries and timeouts.<br/>It also validates the response status code and throws appropriate error or logs out the user if required.<br/>It returns the response as a JSON object.<br/>Uses consoleFetch internally.
+A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.<br/>It also validates the response status code and throws an appropriate error or logs out the user if required.<br/>It returns the response as a JSON object.<br/>Uses consoleFetch internally.
 
 
 
@@ -1214,7 +1214,7 @@ A promise that resolves to the response as JSON object.
 
 ### Summary 
 
-A custom wrapper around `fetch` that adds console specific headers and allows for retries and timeouts.<br/>It also validates the response status code and throws appropriate error or logs out the user if required.<br/>It returns the response as a text.<br/>Uses consoleFetch internally.
+A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.<br/>It also validates the response status code and throws an appropriate error or logs out the user if required.<br/>It returns the response as a text.<br/>Uses `consoleFetch` internally.
 
 
 
@@ -1241,7 +1241,7 @@ A promise that resolves to the response as text.
 
 ### Summary 
 
-A function that creates impersonation and multicluster related headers for API requests using current redux state.
+A function that creates impersonation- and multicluster-related headers for API requests using current redux state.
 
 
 
@@ -1256,7 +1256,7 @@ A function that creates impersonation and multicluster related headers for API r
 
 ### Returns
 
-an object containing the appropriate impersonation and clustr requst headers, based on redux state
+An object containing the appropriate impersonation and clustr requst headers, based on redux state.
 
 
 ---
@@ -1265,7 +1265,7 @@ an object containing the appropriate impersonation and clustr requst headers, ba
 
 ### Summary 
 
-It fetches a resource from the cluster, based on the provided options.<br/>If the name is provided it returns one resource else it returns all the resources matching the model.
+It fetches a resource from the cluster, based on the provided options.<br/>If the name is provided it returns resource, else it returns all the resources matching the model.
 
 
 
@@ -1275,8 +1275,8 @@ It fetches a resource from the cluster, based on the provided options.<br/>If th
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `options` | Which are passed as key-value pairs in the map |
-| `` |  options.model - k8s model |
-| `` |  options.name - The name of the resource, if not provided then it'll look for all the resources matching the model. |
+| `` |  options.model - Kubernetes model |
+| `` |  options.name - The name of the resource, if not provided then it looks for all the resources matching the model. |
 | `` |  options.ns - The namespace to look into, should not be specified for cluster-scoped resources. |
 | `` |  options.path - Appends as subpath if provided |
 | `` |  options.queryParams - The query parameters to be included in the URL. |
@@ -1286,7 +1286,7 @@ It fetches a resource from the cluster, based on the provided options.<br/>If th
 
 ### Returns
 
-A promise that resolves to the response as JSON object with a resource if the name is provided<br/>else it returns all the resources matching the model. In case of failure, the promise gets rejected with HTTP error response.
+A promise that resolves to the response as JSON object with a resource if the name is provided, else<br/>it returns all the resources matching the model. In case of failure, the promise gets rejected with HTTP error response.
 
 
 ---
@@ -1305,7 +1305,7 @@ It creates a resource in the cluster, based on the provided options.
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `options` | Which are passed as key-value pairs in the map |
-| `` |  options.model - k8s model |
+| `` |  options.model - Kubernetes model |
 | `` |  options.data - payload for the resource to be created |
 | `` |  options.path - Appends as subpath if provided |
 | `` |  options.queryParams - The query parameters to be included in the URL. |
@@ -1314,7 +1314,7 @@ It creates a resource in the cluster, based on the provided options.
 
 ### Returns
 
-A promise that resolves to the response of the resource created.<br/>In case of failure promise gets rejected with HTTP error response.
+A promise that resolves to the response of the resource created.<br/>In case of failure, the promise gets rejected with HTTP error response.
 
 
 ---
@@ -1323,7 +1323,7 @@ A promise that resolves to the response of the resource created.<br/>In case of 
 
 ### Summary 
 
-It updates the entire resource in the cluster, based on provided options.<br/>When a client needs to replace an existing resource entirely, they can use k8sUpdate.<br/>Alternatively can use k8sPatch to perform the partial update.
+It updates the entire resource in the cluster, based on the provided options.<br/>When a client needs to replace an existing resource entirely, the client can use k8sUpdate.<br/>Alternatively, the client can use k8sPatch to perform the partial update.
 
 
 
@@ -1333,11 +1333,11 @@ It updates the entire resource in the cluster, based on provided options.<br/>Wh
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `options` | which are passed as key-value pair in the map |
-| `` |  options.model - k8s model |
-| `` |  options.data - payload for the k8s resource to be updated |
+| `` |  options.model - Kubernetes model |
+| `` |  options.data - payload for the Kubernetes resource to be updated |
 | `` |  options.ns - namespace to look into, it should not be specified for cluster-scoped resources. |
 | `` |  options.name - resource name to be updated. |
-| `` |  options.path - Appends as subpath if provided |
+| `` |  options.path - appends as subpath if provided. |
 | `` |  options.queryParams - The query parameters to be included in the URL. |
 
 
@@ -1353,7 +1353,7 @@ A promise that resolves to the response of the resource updated.<br/>In case of 
 
 ### Summary 
 
-It patches any resource in the cluster, based on provided options.<br/>When a client needs to perform the partial update, they can use k8sPatch.<br/>Alternatively can use k8sUpdate to replace an existing resource entirely.<br/>See more https://datatracker.ietf.org/doc/html/rfc6902
+It patches any resource in the cluster, based on the provided options.<br/>When a client needs to perform the partial update, the client can use k8sPatch.<br/>Alternatively, the client can use k8sUpdate to replace an existing resource entirely.<br/>See more https://datatracker.ietf.org/doc/html/rfc6902
 
 
 
@@ -1363,7 +1363,7 @@ It patches any resource in the cluster, based on provided options.<br/>When a cl
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `options` | Which are passed as key-value pairs in the map. |
-| `` |  options.model - k8s model |
+| `` |  options.model - Kubernetes model |
 | `` |  options.resource - The resource to be patched. |
 | `` |  options.data - Only the data to be patched on existing resource with the operation, path, and value. |
 | `` |  options.path - Appends as subpath if provided. |
@@ -1382,7 +1382,7 @@ A promise that resolves to the response of the resource patched.<br/>In case of 
 
 ### Summary 
 
-It deletes resources from the cluster, based on the provided model, resource.<br/>The garbage collection works based on 'Foreground' | 'Background', can be configured with propagationPolicy property in provided model or passed in json.
+It deletes resources from the cluster, based on the provided model and resource.<br/>The garbage collection works based on 'Foreground' | 'Background', can be configured with `propagationPolicy` property in provided model or passed in json.
 
 
 
@@ -1402,12 +1402,12 @@ It deletes resources from the cluster, based on the provided model, resource.<br
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `options` | which are passed as key-value pair in the map. |
-| `` |  options.model - k8s model |
+| `` |  options.model - Kubernetes model |
 | `` |  options.resource - The resource to be deleted. |
-| `` |  options.path - Appends as subpath if provided |
+| `` |  options.path - Appends as subpath if provided. |
 | `` |  options.queryParams - The query parameters to be included in the URL. |
 | `` |  options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc. See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html } |
-| `` |  options.json - Can control garbage collection of resources explicitly if provided else will default to model's "propagationPolicy". |
+| `` |  options.json - Can control garbage collection of resources explicitly if provided else will default to model's `propagationPolicy`. |
 
 
 
@@ -1422,7 +1422,7 @@ A promise that resolves to the response of kind Status.<br/>In case of failure p
 
 ### Summary 
 
-Lists the resources as an array in the cluster, based on provided options.
+Lists the resources as an array in the cluster, based on the provided options.
 
 
 
@@ -1431,10 +1431,10 @@ Lists the resources as an array in the cluster, based on provided options.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `options` | Which are passed as key-value pairs in the map |
-| `` |  options.model - k8s model |
-| `` |  options.queryParams - The query parameters to be included in the URL and can pass label selector's as well with key "labelSelector". |
-| `` |  options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc. See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html } |
+| `options` | Which are passed as key-value pairs in the map. |
+| `` |  options.model - Kubernetes model |
+| `` |  options.queryParams - The query parameters to be included in the URL. It can also pass label selectors by using the `labelSelector` key. |
+| `` |  options.requestInit - The fetch init object to use. This can have request headers, method, redirect, and so forth. See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html } |
 
 
 
@@ -1449,7 +1449,7 @@ A promise that resolves to the response
 
 ### Summary 
 
-Same interface as {@link k8sListResource} but returns the sub items.
+Same interface as k8sListResource but returns the sub items.
 
 
 
@@ -1462,7 +1462,7 @@ Same interface as {@link k8sListResource} but returns the sub items.
 
 ### Summary 
 
-Provides apiVersion for a k8s model.
+Provides `apiVersion` for a Kubernetes model.
 
 
 
@@ -1471,7 +1471,7 @@ Provides apiVersion for a k8s model.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `model` | k8s model |
+| `model` | Kubernetes model |
 
 
 
@@ -1495,13 +1495,13 @@ Provides a group, version, and kind for a resource.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `resource` | k8s resource |
+| `resource` | Kubernetes resource |
 
 
 
 ### Returns
 
-The group, version, kind for the provided resource.<br/>If the resource does not have an API group, group "core" will be returned.<br/>If the resource has an invalid apiVersion then it'll throw Error.
+The group, version, kind for the provided resource.<br/>If the resource does not have an API group, the group `core` is returned.<br/>If the resource has an invalid apiVersion then it'll throw Error.
 
 
 ---
@@ -1519,7 +1519,7 @@ Provides a group, version, and kind for a k8s model.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `model` | k8s model |
+| `model` | Kubernetes model |
 
 
 
@@ -1534,7 +1534,7 @@ The group, version, kind for the provided model.<br/>If the model does not have 
 
 ### Summary 
 
-Component that shows the status in a popup window. Helpful component for building `console.dashboards/overview/health/resource` extensions
+Component that shows the status in a popup window. Can be used when building `console.dashboards/overview/health/resource` extensions.
 
 
 
@@ -1575,7 +1575,7 @@ Component that shows the status in a popup window. Helpful component for buildin
 
 ### Summary 
 
-Status element used in status popup; used in `StatusPopupSection`
+Status element used in status popup. Used in in `StatusPopupSection`.
 
 
 
@@ -1616,7 +1616,7 @@ Status element used in status popup; used in `StatusPopupSection`
 
 ### Summary 
 
-Creates a wrapper component for a dashboard
+Creates a wrapper component for a dashboard.
 
 
 
@@ -1648,7 +1648,7 @@ Creates a wrapper component for a dashboard
 
 ### Summary 
 
-Creates a grid of card elements for a dashboard; used within `Overview`
+Creates a grid of card elements for a dashboard. Used within `Overview`.
 
 
 
@@ -1681,7 +1681,7 @@ Creates a grid of card elements for a dashboard; used within `Overview`
 
 ### Summary 
 
-Creates an inventory card item
+Creates an inventory card item.
 
 
 
@@ -1717,7 +1717,7 @@ Creates an inventory card item
 
 ### Summary 
 
-Creates a title for an inventory card item; used within `InventoryItem`
+Creates a title for an inventory card item. Used within `InventoryItem`.
 
 
 
@@ -1753,7 +1753,7 @@ Creates a title for an inventory card item; used within `InventoryItem`
 
 ### Summary 
 
-Creates the body of an inventory card; used within `InventoryCard` and can be used with `InventoryTitle`
+Creates the body of an inventory card. Used within `InventoryCard` and can be used with `InventoryTitle`.
 
 
 
@@ -1779,7 +1779,7 @@ Creates the body of an inventory card; used within `InventoryCard` and can be us
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `children` | elements to render inside the Inventory Card or title |
+| `children` | elements to render inside the inventory card or title |
 | `error` | elements of the div |
 
 
@@ -1790,7 +1790,7 @@ Creates the body of an inventory card; used within `InventoryCard` and can be us
 
 ### Summary 
 
-Creates a count and icon for an inventory card with optional link address; used within `InventoryItemBody`
+Creates a count and icon for an inventory card with optional link address. Used within `InventoryItemBody`.
 
 
 
@@ -1828,7 +1828,7 @@ Creates a count and icon for an inventory card with optional link address; used 
 
 ### Summary 
 
-Creates a skeleton container for when an inventory card is loading; used with `InventoryItem` and related components
+Creates a skeleton container for when an inventory card is loading. Used with `InventoryItem` and related components.
 
 
 
@@ -1926,7 +1926,7 @@ A basic lazy loaded Code editor with hover help and completion.
 
 ### Summary 
 
-A lazy loaded YAML editor for Kubernetes resources with hover help and completion.<br/>The component use the YAMLEditor and add on top of it more functionality like<br/>resource update handling, alerts, save, cancel and reload buttons, accessibility and more.<br/>Unless onSave callback is provided, the resource update is automatically handled.<br/>It should be wrapped in a React.Suspense component.
+A lazy loaded YAML editor for Kubernetes resources with hover help and completion.<br/>The component uses the YAML editor and adds functionality, such as<br/>resource update handling, alerts, save; cancel and reload buttons; and accessibility.<br/>Unless `onSave` callback is provided, the resource update is automatically handled.<br/>It should be wrapped in a `React.Suspense` component.
 
 
 
@@ -1951,9 +1951,9 @@ A lazy loaded YAML editor for Kubernetes resources with hover help and completio
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `initialResource` | YAML/Object representing a resource to be shown by the editor. This prop is used only during the inital render |
-| `header` | Add a header on top of the YAML editor |
-| `onSave` | Callback for the Save button. Passing it will override the default update performed on the resource by the editor |
+| `initialResource` | YAML/Object representing a resource to be shown by the editor. This prop is used only during the inital render. |
+| `header` | Add a header on top of the YAML editor. |
+| `onSave` | Callback for the Save button. Passing it will override the default update performed on the resource by the editor. |
 
 
 
@@ -2024,7 +2024,7 @@ A tuple containing the query response, a boolean flag indicating whether the res
 
 ### Summary 
 
-A component to render timestamp.<br/>The timestamps are synchronized between invidual instances of the Timestamp component.<br/>The provided timestamp is formatted according to user locale.
+A component to render timestamp.<br/>The timestamps are synchronized between individual instances of the Timestamp component.<br/>The provided timestamp is formatted according to user locale.
 
 
 
@@ -2142,7 +2142,7 @@ A component that renders a horizontal toolbar with a namespace dropdown menu in 
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `onNamespaceChange` | (optional) A function that is executed when a namespace option is selected. It accepts the new namespace in the form of a string as its only argument. The active namespace is updated automatically when an option is selected, but additional logic can be applied via this function. When the namespace is changed, the namespace parameter in the URL will be changed from the previous namespace to the newly selected namespace. |
+| `onNamespaceChange` | (optional) A function that is executed when a namespace option is selected. It accepts the new namespace in the form of a string as its only argument. The active namespace is updated automatically when an option is selected, but additional logic can be applied through this function. When the namespace is changed, the namespace parameter in the URL will be changed from the previous namespace to the newly selected namespace. |
 | `isDisabled` | (optional) A boolean flag that disables the namespace dropdown if set to true. This option only applies to the namespace dropdown and has no effect on child components. |
 | `children` | (optional) Additional elements to be rendered inside the toolbar to the right of the namespace dropdown. |
 
@@ -2154,7 +2154,7 @@ A component that renders a horizontal toolbar with a namespace dropdown menu in 
 
 ### Summary 
 
-Creates full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong."<br/>message along with the stack trace and other helpful debugging information. This is to be used in<br/>conjunction with an <ErrorBoundary> component.
+Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong."<br/>message along with the stack trace and other helpful debugging information. This is to be used in<br/>conjunction with an <ErrorBoundary> component.
 
 
 
@@ -2455,7 +2455,7 @@ The isAllowed boolean value.
 
 ### Summary [DEPRECATED]
 
-@deprecated - This hook is not related to console functionality.<br/>Hook that ensures a safe asynchronnous setting of React state in case a given component could be unmounted.<br/>(https://github.com/facebook/react/issues/14113)
+@deprecated - This hook is not related to console functionality.<br/>Hook that ensures a safe asynchronnous setting of the React state in case a given component could be unmounted.<br/>(https://github.com/facebook/react/issues/14113)
 
 
 
@@ -2504,13 +2504,13 @@ An array with a pair of state value and it's set function.
 | -------------- | ----------- |
 | `value` | String representing the yaml code to render. |
 | `language` | String representing the language of the editor. |
-| `options` | Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html. |
+| `options` | Monaco editor options. For more details, see https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html. |
 | `minHeight` | Minimum editor height in valid CSS height values. |
 | `showShortcuts` | Boolean to show shortcuts on top of the editor. |
 | `toolbarLinks` | Array of ReactNode rendered on the toolbar links section on top of the editor. |
 | `onChange` | Callback for on code change event. |
-| `onSave` | Callback called when the command CTRL / CMD + S is triggered. |
-| `ref` | React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html. |
+| `onSave` | Callback called when the command `CTRL + S` / `CMD + S` is triggered. |
+| `ref` | React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, see https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html. |
 
 
 

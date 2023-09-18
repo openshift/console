@@ -5,10 +5,10 @@ import GenericStatus from './GenericStatus';
 import { RedExclamationCircleIcon, GreenCheckCircleIcon, BlueInfoCircleIcon } from './icons';
 
 /**
- * Component for displaying an error status popover
+ * Component for displaying an error status popover.
  * @param {string} [title] - (optional) status text
  * @param {boolean} [iconOnly] - (optional) if true, only displays icon
- * @param {boolean} [noTooltip] - (optional) if true, tooltip won't be displayed
+ * @param {boolean} [noTooltip] - (optional) if true, tooltip is not displayed
  * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [popoverTitle] - (optional) title for popover
  * @example
@@ -22,10 +22,10 @@ export const ErrorStatus: React.FC<StatusComponentProps> = (props) => (
 ErrorStatus.displayName = 'ErrorStatus';
 
 /**
- * Component for displaying an information status popover
+ * Component for displaying an information status popover.
  * @param {string} [title] - (optional) status text
  * @param {boolean} [iconOnly] - (optional) if true, only displays icon
- * @param {boolean} [noTooltip] - (optional) if true, tooltip won't be displayed
+ * @param {boolean} [noTooltip] - (optional) if true, tooltip is not displayed
  * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [popoverTitle] - (optional) title for popover
  * @example
@@ -39,10 +39,10 @@ export const InfoStatus: React.FC<StatusComponentProps> = (props) => (
 InfoStatus.displayName = 'InfoStatus';
 
 /**
- * Component for displaying a progressing status popover
+ * Component for displaying a progressing status popover.
  * @param {string} [title] - (optional) status text
  * @param {boolean} [iconOnly] - (optional) if true, only displays icon
- * @param {boolean} [noTooltip] - (optional) if true, tooltip won't be displayed
+ * @param {boolean} [noTooltip] - (optional) if true, tooltip is not displayed
  * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [popoverTitle] - (optional) title for popover
  * @example
@@ -56,10 +56,10 @@ export const ProgressStatus: React.FC<StatusComponentProps> = (props) => (
 ProgressStatus.displayName = 'ProgressStatus';
 
 /**
- * Component for displaying a success status popover
+ * Component for displaying a success status popover.
  * @param {string} [title] - (optional) status text
  * @param {boolean} [iconOnly] - (optional) if true, only displays icon
- * @param {boolean} [noTooltip] - (optional) if true, tooltip won't be displayed
+ * @param {boolean} [noTooltip] - (optional) if true, tooltip is not displayed
  * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [popoverTitle] - (optional) title for popover
  * @example
