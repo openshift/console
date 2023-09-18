@@ -4,6 +4,7 @@ import { FormikValues, useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { FLAG_OPENSHIFT_DEPLOYMENTCONFIG } from '@console/dev-console/src/const';
 import { ImportStrategy } from '@console/git-service/src';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
@@ -46,6 +47,9 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
     flags[FLAG_KNATIVE_SERVING_SERVICE] &&
     knativeServiceAccess;
 
+  const canIncludeDeploymentConfig =
+    !invalidTypes.includes(Resources.OpenShift) && flags[FLAG_OPENSHIFT_DEPLOYMENTCONFIG];
+
   const [, setResourceType] = useResourceType();
 
   const onChange = React.useCallback(
@@ -69,7 +73,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
         ),
       });
     }
-    if (!invalidTypes.includes(Resources.OpenShift)) {
+    if (canIncludeDeploymentConfig) {
       options.push({
         label: t(ReadableResourcesNames[Resources.OpenShift]),
         value: Resources.OpenShift,
@@ -90,7 +94,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
       });
     }
     return options;
-  }, [invalidTypes, canIncludeKnative, t]);
+  }, [invalidTypes, canIncludeDeploymentConfig, canIncludeKnative, t]);
 
   if (
     !['edit', 'knatify'].includes(values.formType) &&
@@ -122,4 +126,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   return null;
 };
 
-export default connectToFlags(FLAG_KNATIVE_SERVING_SERVICE)(ResourceSection);
+export default connectToFlags(
+  FLAG_KNATIVE_SERVING_SERVICE,
+  FLAG_OPENSHIFT_DEPLOYMENTCONFIG,
+)(ResourceSection);
