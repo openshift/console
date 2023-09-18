@@ -756,6 +756,7 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
       name={name}
       kind={plural}
       namespace={ns}
+      customData={csv}
       resources={[
         {
           kind: CustomResourceDefinitionModel.kind,
@@ -787,7 +788,7 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
           // t('olm~Resources')
           nameKey: 'olm~Resources',
           href: 'resources',
-          component: (props) => <Resources {...props} csv={csv} />,
+          component: Resources,
         },
         navFactory.events(ResourceEventStream),
       ]}
@@ -888,7 +889,7 @@ export type OperandDetailsProps = {
   crd: CustomResourceDefinitionKind;
 };
 
-type DefaultOperandDetailsPageProps = { k8sModel: K8sModel };
+type DefaultOperandDetailsPageProps = { customData: any; k8sModel: K8sModel };
 
 export type OperandResourceDetailsProps = {
   csv?: { data: ClusterServiceVersionKind };
