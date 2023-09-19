@@ -160,9 +160,9 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 
 	resp, err := p.Client.Do(newRequest)
 	if err != nil {
-		errMsg := fmt.Sprintf("GET request for %q plugin failed: %v", pluginName, err)
+		errMsg := fmt.Sprintf("failed to send GET request for %q plugin: %v", pluginName, err)
 		klog.Error(errMsg)
-		serverutils.SendResponse(w, resp.StatusCode, serverutils.ApiError{Err: errMsg})
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
 		return
 	}
 	defer resp.Body.Close()
