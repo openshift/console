@@ -375,8 +375,15 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 	return func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query()
 		qErr := q.Get("error")
+		qErrDesc := q.Get("error_description")
 		code := q.Get("code")
 		urlState := q.Get("state")
+
+		if qErr != "" && qErrDesc != "" {
+			klog.Errorf("OAuth error: %s", qErrDesc)
+			a.redirectAuthError(w, qErrDesc)
+			return
+		}
 
 		cookieState, err := r.Cookie(stateCookieName)
 		if err != nil {

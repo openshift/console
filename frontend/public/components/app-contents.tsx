@@ -689,12 +689,6 @@ const AppContents: React.FC<{}> = () => {
       <Route path="/k8s/all-namespaces/:plural/:name" component={ResourceDetailsPage} />
 
       {inactivePluginPageRoutes}
-
-      <LazyRoute
-        path="/error"
-        exact
-        loader={() => import('./error' /* webpackChunkName: "error" */).then((m) => m.ErrorPage)}
-      />
       <Route path="/" exact component={DefaultPage} />
 
       {allPluginsProcessed ? (
