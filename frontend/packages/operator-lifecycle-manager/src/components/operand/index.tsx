@@ -616,7 +616,9 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     [
       ...(csv?.spec?.customresourcedefinitions?.owned ?? []),
       ...(csv?.spec?.customresourcedefinitions?.required ?? []),
-    ].find((def) => def.name === crd?.metadata?.name) ?? {};
+    ].find(
+      (def) => def.name === crd?.metadata?.name && obj.apiVersion.endsWith(`/${def.version}`),
+    ) ?? {};
 
   const schema =
     crd?.spec?.versions?.find((v) => v.name === version)?.schema?.openAPIV3Schema ??
