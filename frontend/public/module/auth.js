@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-
 import { coFetch } from '../co-fetch';
 import { stripBasePath } from '../components/utils/link';
 
@@ -53,6 +52,14 @@ export const authSvc = {
   name: () => loginStateItem(name),
   email: () => loginStateItem(email),
 
+  logoutRedirect: (next) => {
+    if (window.SERVER_FLAGS.logoutRedirect && !next) {
+      window.location = window.SERVER_FLAGS.logoutRedirect;
+    } else {
+      authSvc.login();
+    }
+  },
+
   // Avoid logging out multiple times if concurrent requests return unauthorized.
   // TODO remove multicluster
   logout: _.once((next, cluster) => {
@@ -64,33 +71,23 @@ export const authSvc = {
     )
       // eslint-disable-next-line no-console
       .catch((e) => console.error('Error logging out', e))
-      .then(() => {
-        if (window.SERVER_FLAGS.logoutRedirect && !next) {
-          window.location = window.SERVER_FLAGS.logoutRedirect;
-        } else {
-          authSvc.login(cluster); // TODO remove multicluster
-        }
-      });
+      .then(() => authSvc.logoutRedirect(next));
   }),
 
   // Extra steps are needed if this is OpenShift to delete the user's access
   // token and logout the kube:admin user.
   logoutOpenShift: (isKubeAdmin = false) => {
-    return authSvc.deleteOpenShiftToken().then(() => {
-      if (isKubeAdmin) {
-        authSvc.logoutKubeAdmin();
-      } else {
-        authSvc.logout();
-      }
-    });
-  },
-
-  deleteOpenShiftToken: () => {
-    return (
-      coFetch('/api/openshift/delete-token', { method: 'POST' })
-        // eslint-disable-next-line no-console
-        .catch((e) => console.error('Error deleting token', e))
-    );
+    clearLocalStorage(clearLocalStorageKeys);
+    coFetch('/api/openshift/delete-token', { method: 'POST' })
+      // eslint-disable-next-line no-console
+      .catch((e) => console.error('Error deleting token', e))
+      .then(() => {
+        if (isKubeAdmin) {
+          authSvc.logoutKubeAdmin();
+        } else {
+          authSvc.logoutRedirect();
+        }
+      });
   },
 
   // The kube:admin user has a special logout flow. The OAuth server has a
@@ -98,29 +95,22 @@ export const authSvc = {
   // endpoint, otherwise the user will be logged in again immediately after
   // logging out.
   logoutKubeAdmin: () => {
-    clearLocalStorage(clearLocalStorageKeys);
-    // First POST to the console server to clear the console session cookie.
-    coFetch(window.SERVER_FLAGS.logoutURL, { method: 'POST' })
-      // eslint-disable-next-line no-console
-      .catch((e) => console.error('Error logging out', e))
-      .then(() => {
-        // We need to POST to the kube:admin logout URL. Since this is a
-        // cross-origin request, use a hidden form to POST.
-        const form = document.createElement('form');
-        form.action = window.SERVER_FLAGS.kubeAdminLogoutURL;
-        form.method = 'POST';
+    // We need to POST to the kube:admin logout URL. Since this is a
+    // cross-origin request, use a hidden form to POST.
+    const form = document.createElement('form');
+    form.action = window.SERVER_FLAGS.kubeAdminLogoutURL;
+    form.method = 'POST';
 
-        // Redirect back to the console when logout is complete by passing a
-        // `then` parameter.
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'then';
-        input.value = window.SERVER_FLAGS.loginSuccessURL;
-        form.appendChild(input);
+    // Redirect back to the console when logout is complete by passing a
+    // `then` parameter.
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'then';
+    input.value = window.SERVER_FLAGS.loginSuccessURL;
+    form.appendChild(input);
 
-        document.body.appendChild(form);
-        form.submit();
-      });
+    document.body.appendChild(form);
+    form.submit();
   },
 
   // TODO remove multicluster
