@@ -5,6 +5,7 @@ import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-erro
 export const API_PROXY_URL = '/api/dev-console/proxy/internet';
 
 type ProxyRequest = {
+  allowInsecure?: boolean;
   method: string;
   url: string;
   headers?: Record<string, string[]>;
