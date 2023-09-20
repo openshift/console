@@ -772,7 +772,9 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
       breadcrumbsFor={() => [
         {
           name: t('olm~Installed Operators'),
-          path: `/k8s/ns/${match.params.ns}/${ClusterServiceVersionModel.plural}`,
+          path: `/k8s/${match.params.ns ? `ns/${match.params.ns}` : 'all-namespaces'}/${
+            ClusterServiceVersionModel.plural
+          }`,
         },
         {
           name: match.params.appName,
