@@ -37,3 +37,5 @@ export const ADD_TO_PROJECT = 'add-to-project';
 export const FLAG_JAVA_IMAGE_STREAM_ENABLED = 'JAVA_IMAGE_STREAM_ENABLED';
 export const IMAGESTREAM_NAMESPACE = 'openshift';
 export const JAVA_IMAGESTREAM_NAME = 'java';
+
+export const FLAG_OPENSHIFT_DEPLOYMENTCONFIG = 'OPENSHIFT_DEPLOYMENTCONFIG';
