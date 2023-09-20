@@ -750,6 +750,9 @@
         "data-quickstart-id": "qs-nav-builds",
         "data-test-id": "build-header"
       }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_BUILDCONFIG"]
     }
   },
   {
@@ -758,6 +761,9 @@
       "exact": true,
       "path": ["/builds"],
       "component": { "$codeRef": "common.NamespaceRedirect" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_BUILDCONFIG"]
     }
   },
   {
@@ -766,6 +772,9 @@
       "exact": false,
       "path": ["/builds/all-namespaces", "/builds/ns/:ns"],
       "component": { "$codeRef": "builds.BuildsTabListPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_BUILDCONFIG"]
     }
   },
   {
