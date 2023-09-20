@@ -157,7 +157,7 @@ export const deploymentData: K8sResourceKind = {
         containers: [
           {
             name: 'hello-openshift',
-            image: 'openshift/hello-openshift',
+            image: 'quay.io/openshift-knative/showcase',
             ports: [{ containerPort: 8080, protocol: 'TCP' }],
             resources: {},
             terminationMessagePath: '/dev/termination-log',
@@ -306,7 +306,7 @@ export const deploymentKnativeData: K8sResourceKind = {
         containers: [
           {
             name: 'hello-openshift',
-            image: 'openshift/hello-openshift',
+            image: 'quay.io/openshift-knative/showcase',
             ports: [{ containerPort: 8080, protocol: 'TCP' }],
             resources: {},
             terminationMessagePath: '/dev/termination-log',
@@ -465,7 +465,7 @@ export const getEventSourceDeploymentData = (EventSourceModel: K8sKind): K8sReso
           containers: [
             {
               name: 'hello-openshift',
-              image: 'openshift/hello-openshift',
+              image: 'quay.io/openshift-knative/showcase',
               ports: [{ containerPort: 8080, protocol: 'TCP' }],
               resources: {},
               terminationMessagePath: '/dev/termination-log',

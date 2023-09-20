@@ -46,7 +46,7 @@ describe('knatify-utils', () => {
     const knatifyFormInitialVal = {
       ...knatifyFormCommonInitialValues,
       runtimeIcon: null,
-      searchTerm: 'openshift/hello-openshift',
+      searchTerm: 'quay.io/openshift-knative/showcase',
       registry: 'external',
       allowInsecureRegistry: false,
       imageStream: { image: '', tag: '', namespace: '' },

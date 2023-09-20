@@ -73,7 +73,7 @@ Feature: Create event sources
         Scenario: Create ContainerSource event source: KE-02-TC07
              When user selects event source type "Container Source"
               And user selects Create Event Source
-              And user enters Container Image as "openshift/hello-openshift"
+              And user enters Container Image as "quay.io/openshift-knative/showcase"
               And user selects an "kn-event" option from knative service field
               And user clicks on Create button
              Then user will be redirected to Topology page
