@@ -15,4 +15,7 @@ export const functionsPage = {
   verifyServiceRevision: () => cy.byTestID('Revisions').should('be.visible'),
   verifyContainerSection: () =>
     cy.get('[data-test-section-heading="Containers"]').should('be.visible'),
+  verifyRevisionsTab: () => cy.get(functionsPO.revisionsTab).should('be.visible'),
+  verifyRoutesTab: () => cy.get(functionsPO.routesTab).should('be.visible'),
+  verifyPodsTab: () => cy.get(functionsPO.podsTab).should('be.visible'),
 };

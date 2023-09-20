@@ -28,5 +28,6 @@ Feature: Navigations to Serverless Functions page
              Then user will see the Details page opened
               And user is able to see service URL and Revisions details
               And user is able to see Containers sections
+              And user is able to see Revisions, Routes and Pods tabs
 
  

@@ -7,7 +7,6 @@ import {
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
 import { disabledActionsFilter } from '@console/dev-console/src/actions/add-resources';
-import { DeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { Action } from '@console/dynamic-plugin-sdk';
 import {
@@ -66,6 +65,7 @@ import {
   moveSinkSource,
   testServerlessFunction,
   editKnativeServiceResource,
+  deleteKnativeServiceResource,
 } from './creators';
 import { hideKnatifyAction, MakeServerless } from './knatify';
 
@@ -101,8 +101,8 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
       CommonActionFactory.ModifyAnnotations(kindObj, resource),
       editKnativeServiceResource(kindObj, resource, serviceTypeValue),
       ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
-        ? [DeleteResourceAction(kindObj, resource)]
-        : [CommonActionFactory.Delete(kindObj, resource)]),
+        ? [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, true)]
+        : [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, false)]),
       ...(resource?.metadata?.labels?.['function.knative.dev'] === 'true'
         ? [testServerlessFunction(kindObj, resource)]
         : []),

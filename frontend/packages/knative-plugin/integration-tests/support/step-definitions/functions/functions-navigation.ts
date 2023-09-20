@@ -62,3 +62,9 @@ Then('user is able to see service URL and Revisions details', () => {
 Then('user is able to see Containers sections', () => {
   functionsPage.verifyContainerSection();
 });
+
+Then('user is able to see Revisions, Routes and Pods tabs', () => {
+  functionsPage.verifyRevisionsTab();
+  functionsPage.verifyRoutesTab();
+  functionsPage.verifyPodsTab();
+});

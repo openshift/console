@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import { DetailsPage } from '@console/internal/components/factory';
+import { PodsPage } from '@console/internal/components/pod';
 import {
   ContainerTable,
   DetailsItem,
@@ -20,12 +21,18 @@ import {
   ActionServiceProvider,
   useTabbedTableBreadcrumbsFor,
 } from '@console/shared';
-import { RevisionModel } from '../../models';
+import { RevisionModel, RouteModel } from '../../models';
 import { isServerlessFunction } from '../../topology/knative-topology-utils';
 import { RevisionKind, ServiceKind, ServiceTypeValue } from '../../types';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 import { KnativeServiceTypeContext } from '../functions/ServiceTypeContext';
 import RevisionsOverviewList from '../overview/RevisionsOverviewList';
+import { RevisionsPage } from '../revisions';
+import { RoutesPage } from '../routes';
+
+type FunctionsPodsProps = {
+  obj: K8sResourceKind;
+};
 
 const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
   const { t } = useTranslation();
@@ -33,15 +40,9 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
     kind: referenceForModel(RevisionModel),
     namespace: obj.metadata.namespace,
     isList: true,
+    selector: { matchLabels: { 'serving.knative.dev/service': obj.metadata.name } },
   });
 
-  const revisionsForService =
-    revisionLoaded &&
-    !revisionErrorLoad &&
-    revisions.filter(
-      (revision) =>
-        _.get(revision.metadata, `labels["serving.knative.dev/service"]`) === obj.metadata.name,
-    );
   return (
     <>
       <div className="co-m-pane__body">
@@ -55,29 +56,27 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
             />
           </div>
           <div className="col-md-6">
-            {isServerlessFunction(obj) && (
-              <DetailsItem label={t('knative-plugin~Type')} obj={obj}>
-                {t('knative-plugin~Function')}
-              </DetailsItem>
-            )}
-            {obj?.status?.url && (
-              <DetailsItem label={t('knative-plugin~URL')} obj={obj} path="status.url">
-                <ExternalLink
-                  href={obj.status.url}
-                  additionalClassName="co-external-link--block"
-                  text={obj.status.url}
-                />
-              </DetailsItem>
-            )}
-            {revisionsForService && revisionLoaded && !revisionErrorLoad && (
-              <DetailsItem label={t('knative-plugin~Revisions')} obj={obj} path="status.traffic">
-                <RevisionsOverviewList
-                  revisions={revisionsForService}
-                  service={obj}
-                  hideSectionHeading
-                />
-              </DetailsItem>
-            )}
+            <dl>
+              {isServerlessFunction(obj) && (
+                <DetailsItem label={t('knative-plugin~Type')} obj={obj}>
+                  {t('knative-plugin~Function')}
+                </DetailsItem>
+              )}
+              {obj?.status?.url && (
+                <DetailsItem label={t('knative-plugin~URL')} obj={obj} path="status.url">
+                  <ExternalLink
+                    href={obj.status.url}
+                    additionalClassName="co-external-link--block"
+                    text={obj.status.url}
+                  />
+                </DetailsItem>
+              )}
+              {revisions && revisionLoaded && !revisionErrorLoad && (
+                <DetailsItem label={t('knative-plugin~Revisions')} obj={obj} path="status.traffic">
+                  <RevisionsOverviewList revisions={revisions} service={obj} hideSectionHeading />
+                </DetailsItem>
+              )}
+            </dl>
           </div>
         </div>
       </div>
@@ -95,12 +94,48 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
   );
 };
 
+const FunctionsPods: React.FC<FunctionsPodsProps> = ({ obj }) => (
+  <PodsPage
+    showTitle={false}
+    selector={{ matchLabels: { 'serving.knative.dev/service': obj.metadata.name } }}
+    showNamespaceOverride
+    canCreate={false}
+    namespace={obj.metadata.namespace}
+  />
+);
+
 const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { t } = useTranslation();
   const serviceTypeValue = React.useContext(KnativeServiceTypeContext);
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const { kindObj, match } = props;
-  const pages = [navFactory.details(ServiceDetails), navFactory.editYaml()];
+  const pages = [
+    navFactory.details(ServiceDetails),
+    navFactory.editYaml(),
+    {
+      href: RevisionModel.plural,
+      // t('knative-plugin~Revisions')
+      nameKey: 'knative-plugin~Revisions',
+      component: RevisionsPage,
+      pageData: {
+        kind: referenceForModel(RevisionModel),
+        namespace: match.params.ns,
+        showTitle: false,
+      },
+    },
+    {
+      href: RouteModel.plural,
+      // t('knative-plugin~Routes')
+      nameKey: 'knative-plugin~Routes',
+      component: RoutesPage,
+      pageData: {
+        kind: referenceForModel(RouteModel),
+        namespace: match.params.ns,
+        showTitle: false,
+      },
+    },
+    navFactory.pods(FunctionsPods),
+  ];
   const actionMenu = (kindObjData: K8sKind, obj: K8sResourceKind) => {
     const resourceKind = referenceForModel(kindObjData);
     const context = { [resourceKind]: obj };
@@ -117,11 +152,11 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
   const breadcrumbs = useTabbedTableBreadcrumbsFor(
     kindObj,
     match,
-    serviceTypeValue === ServiceTypeValue.Functions ? 'functions' : 'serving',
+    serviceTypeValue === ServiceTypeValue.Function ? 'functions' : 'serving',
     serverlessTab(kindObj.kind),
-    serviceTypeValue === ServiceTypeValue.Functions ? t('knative-plugin~Functions') : undefined,
-    serviceTypeValue === ServiceTypeValue.Functions ? true : isAdminPerspective,
-    serviceTypeValue === ServiceTypeValue.Functions ? t('knative-plugin~Function') : undefined,
+    serviceTypeValue === ServiceTypeValue.Function ? t('knative-plugin~Functions') : undefined,
+    serviceTypeValue === ServiceTypeValue.Function ? true : isAdminPerspective,
+    serviceTypeValue === ServiceTypeValue.Function ? t('knative-plugin~Function') : undefined,
   );
   return (
     <DetailsPage
@@ -129,6 +164,11 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
       breadcrumbsFor={() => breadcrumbs}
       pages={pages}
       customActionMenu={actionMenu}
+      customData={
+        serviceTypeValue === ServiceTypeValue.Function
+          ? { selectResourcesForName: match.params.name }
+          : undefined
+      }
     />
   );
 };

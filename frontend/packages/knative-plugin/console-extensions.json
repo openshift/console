@@ -451,7 +451,7 @@
       }
     },
     "flags": {
-      "required": ["OPENSHIFT", "KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
     }
   },
   {
@@ -467,7 +467,7 @@
       "component": { "$codeRef": "overviewComponent.FunctionDetailsPage" }
     },
     "flags": {
-      "required": ["OPENSHIFT", "KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
     }
   },
   {

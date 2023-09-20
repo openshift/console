@@ -199,7 +199,6 @@ export enum ServerlessBuildStrategyType {
 }
 
 export enum ServiceTypeValue {
-  Functions = 'Functions',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  'Non-functions' = 'Non-functions',
+  Function = 'Function',
+  Service = 'Service',
 }

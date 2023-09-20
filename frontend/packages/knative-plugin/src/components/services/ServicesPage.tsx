@@ -13,8 +13,8 @@ const ServicesPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) =>
   const { t } = useTranslation();
 
   const filterReducer = (service): ServiceTypeValue => {
-    if (isServerlessFunction(service)) return ServiceTypeValue.Functions;
-    return ServiceTypeValue['Non-functions'];
+    if (isServerlessFunction(service)) return ServiceTypeValue.Function;
+    return ServiceTypeValue.Service;
   };
 
   const filters: RowFilter<ServiceKind>[] = [
@@ -22,14 +22,14 @@ const ServicesPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) =>
       type: 'type',
       filterGroupName: t('knative-plugin~Type'),
       items: [
-        { id: ServiceTypeValue.Functions, title: t('knative-plugin~Functions') },
-        { id: ServiceTypeValue['Non-functions'], title: t('knative-plugin~Non-functions') },
+        { id: ServiceTypeValue.Function, title: t('knative-plugin~Functions') },
+        { id: ServiceTypeValue.Service, title: t('knative-plugin~Non-functions') },
       ],
       reducer: filterReducer,
       filter: (filterValue, service) => {
         const functionIndicator = isServerlessFunction(service)
-          ? ServiceTypeValue.Functions
-          : ServiceTypeValue['Non-functions'];
+          ? ServiceTypeValue.Function
+          : ServiceTypeValue.Service;
         return !filterValue?.selected?.length || filterValue?.selected.includes(functionIndicator);
       },
     },

@@ -21,7 +21,7 @@ const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (prop
     params: { ns: namespace },
   } = props.match;
   return namespace ? (
-    <KnativeServiceTypeContext.Provider value={ServiceTypeValue.Functions}>
+    <KnativeServiceTypeContext.Provider value={ServiceTypeValue.Function}>
       <Helmet>
         <title>{t('knative-plugin~Functions')}</title>
       </Helmet>
