@@ -333,7 +333,7 @@ type K8sDeleteResource = <R extends K8sResourceCommon>(options: OptionsDelete<R>
  * @param options.resource - The resource to be deleted.
  * @param options.path - Appends as subpath if provided.
  * @param options.queryParams - The query parameters to be included in the URL.
- * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc. See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html }
+ * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc. See more https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html
  * @param options.json - Can control garbage collection of resources explicitly if provided else will default to model's `propagationPolicy`.
  * @example
  * ```
@@ -399,11 +399,11 @@ type K8sListResource = <R extends K8sResourceCommon>(
 ) => Promise<R[] | (K8sResourceCommon & { items: R[] })>;
 
 /**
- * Lists the resources as an array in the cluster, based on the provided options.
+ * It lists the resources as an array in the cluster, based on the provided options.
  * @param options Which are passed as key-value pairs in the map.
  * @param options.model - Kubernetes model
  * @param options.queryParams - The query parameters to be included in the URL. It can also pass label selectors by using the `labelSelector` key.
- * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, and so forth. See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html }
+ * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, and so forth. See more https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html
  * @returns A promise that resolves to the response
  */
 export const k8sListResource: K8sListResource = adapterFunc(k8sList, [

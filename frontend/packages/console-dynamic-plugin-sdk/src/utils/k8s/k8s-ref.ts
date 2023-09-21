@@ -66,7 +66,7 @@ export const getGroupVersionKindForResource: GetGroupVersionKindForResource = (r
  * Provides a group, version, and kind for a k8s model.
  * @param model Kubernetes model
  * @returns The group, version, kind for the provided model.
- * If the model does not have an apiGroup, group "core" will be returned.
+ * If the model does not have an apiGroup, group `core` will be returned.
  * */
 export const getGroupVersionKindForModel: GetGroupVersionKindForModel = ({
   apiGroup,

@@ -613,7 +613,7 @@ A hook that provides a list of user-selected active TableColumns.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `options` | Which are passed as a key-value map |
+| `options` | Which are passed as a key-value in the map |
 | `` |  {TableColumn<D>[]} options.columns - An array of all available TableColumns |
 | `` |  {boolean} [options.showNamespaceOverride] - (optional) If true, a namespace column will be included, regardless of column management selections |
 | `` |  {string} [options.columnManagementID] - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a `group~version~kind` string for a resource. |
@@ -695,7 +695,7 @@ const exampleList: React.FC<MyProps> = () => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `groupVersionKind` | group, version, kind of k8s resource {@link K8sGroupVersionKind} is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` {@link K8sResourceKindReference}. Core resources with no API group should leave off the `group` property |
+| `groupVersionKind` | group, version, kind of k8s resource `K8sGroupVersionKind` is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` `K8sResourceKindReference`. Core resources with no API group should leave off the `group` property |
 
 
 
@@ -1032,7 +1032,7 @@ const Component: React.FC = () => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `groupVersionKind` | group, version, kind of k8s resource {@link K8sGroupVersionKind} is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` {@link K8sResourceKindReference}. |
+| `groupVersionKind` | group, version, kind of k8s resource `K8sGroupVersionKind` is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` {@link K8sResourceKindReference}. |
 
 
 
@@ -1406,7 +1406,7 @@ It deletes resources from the cluster, based on the provided model and resource.
 | `` |  options.resource - The resource to be deleted. |
 | `` |  options.path - Appends as subpath if provided. |
 | `` |  options.queryParams - The query parameters to be included in the URL. |
-| `` |  options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc. See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html } |
+| `` |  options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc. See more https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html |
 | `` |  options.json - Can control garbage collection of resources explicitly if provided else will default to model's `propagationPolicy`. |
 
 
@@ -1422,7 +1422,7 @@ A promise that resolves to the response of kind Status.<br/>In case of failure p
 
 ### Summary 
 
-Lists the resources as an array in the cluster, based on the provided options.
+It lists the resources as an array in the cluster, based on the provided options.
 
 
 
@@ -1434,7 +1434,7 @@ Lists the resources as an array in the cluster, based on the provided options.
 | `options` | Which are passed as key-value pairs in the map. |
 | `` |  options.model - Kubernetes model |
 | `` |  options.queryParams - The query parameters to be included in the URL. It can also pass label selectors by using the `labelSelector` key. |
-| `` |  options.requestInit - The fetch init object to use. This can have request headers, method, redirect, and so forth. See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html } |
+| `` |  options.requestInit - The fetch init object to use. This can have request headers, method, redirect, and so forth. See more https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html |
 
 
 
@@ -1525,7 +1525,7 @@ Provides a group, version, and kind for a k8s model.
 
 ### Returns
 
-The group, version, kind for the provided model.<br/>If the model does not have an apiGroup, group "core" will be returned.
+The group, version, kind for the provided model.<br/>If the model does not have an apiGroup, group `core` will be returned.
 
 
 ---
@@ -2154,7 +2154,7 @@ A component that renders a horizontal toolbar with a namespace dropdown menu in 
 
 ### Summary 
 
-Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong."<br/>message along with the stack trace and other helpful debugging information. This is to be used in<br/>conjunction with an <ErrorBoundary> component.
+Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong." message along with the stack trace and other helpful debugging information. This is to be used in conjunction with an <ErrorBoundary> component.
 
 
 
@@ -2479,7 +2479,7 @@ An array with a pair of state value and it's set function.
 
 ### Summary [DEPRECATED]
 
-@deprecated Use {@link CodeEditor} instead.<br/>A basic lazy loaded YAML editor with hover help and completion.
+@deprecated Use `CodeEditor` instead.<br/>A basic lazy loaded YAML editor with hover help and completion.
 
 
 
