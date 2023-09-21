@@ -13,8 +13,10 @@ export const useCanClusterUpgrade = (): boolean => {
     name: 'version',
   });
   const notExternallyManaged = !isClusterExternallyManaged();
-  const brandingNotDedicated = window.SERVER_FLAGS.branding !== 'dedicated';
-  const canPerformUpgrade = hasPermissionsToUpdate && brandingNotDedicated && notExternallyManaged;
+  const brandingManagedUpdates =
+    window.SERVER_FLAGS.branding === 'dedicated' || window.SERVER_FLAGS.branding === 'rosa';
+  const canPerformUpgrade =
+    hasPermissionsToUpdate && !brandingManagedUpdates && notExternallyManaged;
 
   return canPerformUpgrade;
 };
