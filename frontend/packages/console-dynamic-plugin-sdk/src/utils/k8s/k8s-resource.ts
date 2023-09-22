@@ -88,9 +88,8 @@ type K8sGetResource = <R extends K8sResourceCommon>(options: OptionsGet) => Prom
  * @param options.ns - The namespace to look into, should not be specified for cluster-scoped resources.
  * @param options.path - Appends as subpath if provided
  * @param options.queryParams - The query parameters to be included in the URL.
- * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc. See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html }
- * @returns A promise that resolves to the response as JSON object with a resource if the name is provided, else
- * it returns all the resources matching the model. In case of failure, the promise gets rejected with HTTP error response.
+ * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc. See more https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html
+ * @returns A promise that resolves to the response as JSON object with a resource if the name is provided, else it returns all the resources matching the model. In case of failure, the promise gets rejected with HTTP error response.
  */
 export const k8sGetResource: K8sGetResource = adapterFunc(k8sGet, [
   'model',

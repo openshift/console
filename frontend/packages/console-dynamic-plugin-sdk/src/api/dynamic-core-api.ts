@@ -139,9 +139,9 @@ export const TableData: React.FC<TableDataProps> = require('@console/internal/co
 /**
  * A hook that provides a list of user-selected active TableColumns.
  * @param {Object} options - Which are passed as a key-value in the map
- * @param {TableColumn<D>[]} options.columns - An array of all available TableColumns
- * @param {boolean} [options.showNamespaceOverride] - (optional) If true, a namespace column will be included, regardless of column management selections
- * @param {string} [options.columnManagementID] - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a `group~version~kind` string for a resource.
+ * @param options.columns - An array of all available TableColumns
+ * @param options.showNamespaceOverride - (optional) If true, a namespace column will be included, regardless of column management selections
+ * @param options.columnManagementID - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a `group~version~kind` string for a resource.
  * @returns A tuple containing the current user-selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
  * @example
  * ```tsx
@@ -568,7 +568,7 @@ export const InventoryItemLoading: React.FC = require('@console/shared/src/compo
 export { useFlag } from '../utils/flags';
 
 /**
- * @deprecated Use `CodeEditor` instead.
+ * @deprecated Use [CodeEditor](#codeeditor) instead.
  * A basic lazy loaded YAML editor with hover help and completion.
  * @example
  * ```tsx
@@ -733,7 +733,8 @@ export const NamespaceBar: React.FC<NamespaceBarProps> = require('@console/inter
   .NamespaceBar;
 
 /**
- * Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong." message along with the stack trace and other helpful debugging information. This is to be used in conjunction with an <ErrorBoundary> component.
+ * Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong." message along with the stack trace and other helpful debugging information. 
+ * This is to be used in conjunction with an `ErrorBoundary` component.
  *
  * @param {string} errorMessage - text description of the error message
  * @param {string} componentStack - component trace of the exception
