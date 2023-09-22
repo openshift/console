@@ -165,6 +165,18 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
       cy.logout();
     });
 
+    it(`test Dashboard Card nav item`, () => {
+      nav.sidenav.clickNavLink(['Home', `Overview`]);
+      cy.get('[data-test-id="horizontal-link-Demo Dashboard"]')
+        .should('have.text', 'Demo Dashboard')
+        .click();
+      cy.get('[data-test="demo-plugin-dashboard-card"]').should(
+        'contain',
+        'Metrics Dashboard Card example',
+      );
+      cy.get('div.graph-wrapper').should('exist');
+    });
+
     it(`test Dynamic Nav items`, () => {
       const dynamicNavIDs = ['1', '2'];
       dynamicNavIDs.forEach((id) => dynamicNavTest(id));
