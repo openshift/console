@@ -106,7 +106,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
           name: plugin.metadata.name,
           version: plugin.metadata.version,
           description: plugin.metadata?.description || placeholder,
-          enabled: plugin.enabled,
+          enabled: !!obj?.spec?.plugins?.includes(plugin.metadata.name),
           status: plugin.status,
         };
       });
@@ -115,7 +115,13 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
           return {
             cells: [
               {
-                title: item.name,
+                title: (
+                  <ResourceLink
+                    kind={referenceForModel(ConsolePluginModel)}
+                    name={item.name}
+                    hideIcon
+                  />
+                ),
               },
               item.version,
               item.description,
@@ -123,7 +129,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
                 title: <Status status={item.status} title={item.status} />,
               },
               {
-                title: t('console-app~Enabled'),
+                title: <ConsolePluginStatus plugin={item.name} enabled={item.enabled} />,
               },
             ],
           };
