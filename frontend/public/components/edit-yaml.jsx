@@ -225,7 +225,7 @@ const EditYAMLInner = (props) => {
           yaml = allowMultiple ? appendYAMLString(obj) : obj;
         } else {
           try {
-            yaml = safeDump(obj);
+            yaml = safeDump(obj, { lineWidth: -1 });
             checkEditAccess(obj);
           } catch (e) {
             yaml = t('public~Error getting YAML: {{e}}', { e });
