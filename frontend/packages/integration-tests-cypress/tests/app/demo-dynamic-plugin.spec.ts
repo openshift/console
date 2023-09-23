@@ -167,13 +167,10 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
 
     it(`test Dashboard Card nav item`, () => {
       nav.sidenav.clickNavLink(['Home', `Overview`]);
-      cy.get('[data-test-id="horizontal-link-Demo Dashboard"]')
+      cy.byLegacyTestID('horizontal-link-Demo Dashboard')
         .should('have.text', 'Demo Dashboard')
         .click();
-      cy.get('[data-test="demo-plugin-dashboard-card"]').should(
-        'contain',
-        'Metrics Dashboard Card example',
-      );
+      cy.byTestID('demo-plugin-dashboard-card').should('contain', 'Metrics Dashboard Card example');
       cy.get('div.graph-wrapper').should('exist');
     });
 
