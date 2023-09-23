@@ -324,7 +324,7 @@ export type PageHeadingProps = {
   detail?: boolean;
   kind?: K8sResourceKindReference;
   kindObj?: K8sKind;
-  menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
+  menuActions?: KebabAction[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
   customActionMenu?:
     | React.ReactNode
     | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.

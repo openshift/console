@@ -634,14 +634,14 @@ export type TableProps<D = any, C = any> = Partial<ComponentProps<D>> & {
   defaultSortOrder?: SortByDirection;
   showNamespaceOverride?: boolean;
   Header: HeaderFunc;
-  loadError?: string | Object;
+  loadError?: string | Record<string, unknown>;
   Row?: React.FC<RowFunctionArgs<D, C>>;
   Rows?: (args: RowsArgs<C>) => PfTableProps['rows'];
   'aria-label': string;
   onSelect?: OnSelect;
   virtualize?: boolean;
-  NoDataEmptyMsg?: React.ComponentType<{}>;
-  EmptyMsg?: React.ComponentType<{}>;
+  NoDataEmptyMsg?: React.ComponentType<Record<string, never>>;
+  EmptyMsg?: React.ComponentType<Record<string, never>>;
   loaded?: boolean;
   reduxID?: string;
   reduxIDs?: string[];

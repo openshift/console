@@ -107,7 +107,7 @@ const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps
   },
 );
 
-const AlertmanagerYAML: React.FC<{}> = () => (
+const AlertmanagerYAML: React.FC<Record<string, never>> = () => (
   <Firehose
     resources={[
       {

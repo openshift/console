@@ -34,7 +34,7 @@ export const pluralize = (
   return includeCount ? `${i || 0} ${pluralized}` : pluralized;
 };
 
-export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) =>
+export const detailsPage = <T extends Record<string, unknown>>(Component: React.ComponentType<T>) =>
   function DetailsPage(props: T) {
     return <Component {...props} />;
   };

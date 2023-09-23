@@ -70,7 +70,7 @@ export const createSecret = async (
   linkElement: any,
   ns: string,
   name: string,
-  updateForm: Function,
+  updateForm: () => Promise<void>,
 ) => {
   await crudView.createItemButton.click();
   await linkElement.click();
@@ -81,10 +81,15 @@ export const createSecret = async (
   expect(crudView.errorMessage.isPresent()).toBe(false);
 };
 
+type SecretValue = string | number | boolean | null | SecretKeyValue;
+interface SecretKeyValue {
+  [key: string]: SecretValue;
+}
+
 export const checkSecret = async (
   ns: string,
   name: string,
-  keyValuesToCheck: Object,
+  keyValuesToCheck: SecretKeyValue,
   jsonOutput: boolean = false,
 ) => {
   await browser.wait(until.urlContains(`/k8s/ns/${ns}/secrets/${name}`));
@@ -99,7 +104,7 @@ export const checkSecret = async (
   expect(renderedKeyValues).toEqual(keyValuesToCheck);
 };
 
-export const editSecret = async (ns: string, name: string, updateForm: Function) => {
+export const editSecret = async (ns: string, name: string, updateForm: () => void) => {
   await crudView.clickDetailsPageAction('Edit Secret');
   await browser.wait(until.urlContains(`/k8s/ns/${ns}/secrets/${name}/edit`));
   await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(secretNameInput)));

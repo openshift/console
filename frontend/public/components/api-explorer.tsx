@@ -100,11 +100,14 @@ const APIResourceLink_: React.FC<APIResourceLinkStateProps & APIResourceLinkOwnP
     </span>
   );
 };
-const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOwnProps>(
-  mapStateToProps,
+const APIResourceLink = connect<
+  APIResourceLinkStateProps,
+  Record<string, unknown>,
+  APIResourceLinkOwnProps
+>(mapStateToProps,
 )(APIResourceLink_);
 
-const EmptyAPIResourcesMsg: React.FC<{}> = () => {
+const EmptyAPIResourcesMsg: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
   return <EmptyBox label={t('public~API resources')} />;
 };
@@ -194,7 +197,7 @@ const APIResourcesList = compose(
     { [ALL]: t('public~All groups'), '': t('public~No group') },
   );
   const [isExactSearch] = useExactSearch();
-  const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
+  const matchFn = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
   const groupSpacer = new Set<string>();
   if (sortedGroups.length) {
@@ -369,7 +372,7 @@ const APIResourcesList = compose(
 });
 APIResourcesList.displayName = 'APIResourcesList';
 
-export const APIExplorerPage: React.FC<{}> = () => {
+export const APIExplorerPage: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
   const title = t('public~API Explorer');
   return (
@@ -471,7 +474,7 @@ const Subject: React.FC<{ value: string }> = ({ value }) => {
   );
 };
 
-const EmptyAccessReviewMsg: React.FC<{}> = () => {
+const EmptyAccessReviewMsg: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
   return <EmptyBox label={t('public~Subjects')} />;
 };

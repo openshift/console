@@ -55,7 +55,7 @@ type TimeDurationDropdownProps = {
   id: string;
   placeholder?: string;
   inputClassName?: string;
-  onChange: Function;
+  onChange: (event: any, setValidated: any) => void;
   required?: boolean;
   testID?: string;
   inputID?: string;

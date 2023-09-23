@@ -8,6 +8,8 @@ import {
   BasicAuthSubform,
   SSHAuthSubform,
   CreateConfigSubform,
+  BasicAuthSubformState,
+  SSHAuthSubformState,
 } from '@console/internal/components/secrets/create-secret';
 import { ButtonBar } from '@console/internal/components/utils';
 import { DropdownField, InputField, ActionGroupWithIcons } from '@console/shared';
@@ -19,7 +21,7 @@ const renderSecretForm = (
   stringData: {
     [key: string]: any;
   },
-  onDataChanged: (value: string) => void,
+  onDataChanged: (value: string | Readonly<BasicAuthSubformState | SSHAuthSubformState>) => void,
 ) => {
   switch (type) {
     case SecretType.basicAuth:

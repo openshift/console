@@ -414,8 +414,8 @@ type ConfigEntryFormState = {
 
 type ConfigEntryFormProps = {
   id: number;
-  entry: Object;
-  onChange: Function;
+  entry: Record<string, any>;
+  onChange: (state: any, id: number) => void;
 };
 
 class ConfigEntryFormWithTranslation extends React.Component<
@@ -1050,11 +1050,11 @@ type KeyValueEntryFormState = {
 type KeyValueEntryFormProps = {
   entry: KeyValueEntryFormState;
   id: number;
-  onChange: Function;
+  onChange: (state: any, id: number) => void;
 };
 
 type GenericSecretFormProps = {
-  onChange: Function;
+  onChange: ({ base64StringData }: { base64StringData: any }) => void;
   stringData: {
     [key: string]: string;
   };
@@ -1388,7 +1388,7 @@ type BaseEditSecretProps_ = {
 };
 
 type BasicAuthSubformProps = {
-  onChange: Function;
+  onChange: (value: Readonly<BasicAuthSubformState>) => void;
   stringData: {
     [key: string]: string;
   };
@@ -1405,9 +1405,9 @@ type ImageSecretFormState = {
 };
 
 type ImageSecretFormProps = {
-  onChange: Function;
-  onError: Function;
-  onFormDisable: Function;
+  onChange: (secretsData: any) => void;
+  onError: (err: any) => void;
+  onFormDisable: (value: any) => void;
   stringData: {
     [key: string]: string;
   };
@@ -1416,7 +1416,7 @@ type ImageSecretFormProps = {
 };
 
 type CreateConfigSubformProps = {
-  onChange: Function;
+  onChange: (value: string | Record<string, unknown> | { auths: Record<string, unknown> }) => void;
   stringData: {
     [key: string]: any;
   };
@@ -1428,19 +1428,19 @@ type UploadConfigSubformState = {
 };
 
 type UploadConfigSubformProps = {
-  onChange: Function;
-  onDisable: Function;
+  onChange: (secretData: any) => void;
+  onDisable: (value: boolean) => void;
   stringData: {
-    [key: string]: Object;
+    [key: string]: Record<string, unknown>;
   };
 };
 
-type SSHAuthSubformState = {
+export type SSHAuthSubformState = {
   'ssh-privatekey': string;
 };
 
 type SSHAuthSubformProps = {
-  onChange: Function;
+  onChange: (value: Readonly<SSHAuthSubformState>) => void;
   stringData: {
     [key: string]: string;
   };
@@ -1455,7 +1455,7 @@ type SourceSecretFormState = {
 };
 
 type SourceSecretFormProps = {
-  onChange: Function;
+  onChange: (state: any) => void;
   stringData: {
     [key: string]: string;
   };
@@ -1470,9 +1470,9 @@ type WebHookSecretFormState = {
 };
 
 type WebHookSecretFormProps = {
-  onChange: Function;
-  onError: Function;
-  onFormDisable: Function;
+  onChange: (secretsData: any) => void;
+  onError: (err: any) => void;
+  onFormDisable: (value: any) => void;
   secretType: string;
   stringData: {
     [key: string]: string;

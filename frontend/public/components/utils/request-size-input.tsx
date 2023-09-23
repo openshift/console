@@ -86,7 +86,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
 export type RequestSizeInputProps = {
   placeholder?: string;
   name: string;
-  onChange: Function;
+  onChange: (obj: any) => void;
   required?: boolean;
   dropdownUnits: any;
   defaultRequestSizeUnit: string;

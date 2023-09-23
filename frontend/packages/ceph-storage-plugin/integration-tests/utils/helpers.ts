@@ -69,7 +69,7 @@ export const testPodIsSucceeded = (podPhase: string) => expect(podPhase).toBe('S
 export const getDataFromRowAndCol = async (
   row: number,
   col: number,
-  filter: Function,
+  filter: (name: string) => string,
 ): Promise<string> => {
   /**
    * Row is the data-row you want to parse ( row count starts from 0 )
@@ -83,9 +83,9 @@ export const getDataFromRowAndCol = async (
   return filtered;
 };
 
-export const podNameFilter = (name) => name.split('\n')[2];
+export const podNameFilter = (name: string): string => name.split('\n')[2];
 // Works for status and readiness
-export const statusFilter = (stat) => stat.split('\n')[0];
+export const statusFilter = (stat: string): string => stat.split('\n')[0];
 
 export const sendKeys = async (element, keys: string) => {
   await browser.wait(until.visibilityOf(element));

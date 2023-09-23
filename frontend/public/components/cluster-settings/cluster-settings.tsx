@@ -339,7 +339,7 @@ const FailingMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   );
 };
 
-export const UpToDateMessage: React.FC<{}> = () => {
+export const UpToDateMessage: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
   return (
     <span>
@@ -452,7 +452,7 @@ export const CurrentVersionHeader: React.FC<CurrentVersionProps> = ({ cv }) => {
   );
 };
 
-export const ChannelDocLink: React.FC<{}> = () => {
+export const ChannelDocLink: React.FC<Record<string, never>> = () => {
   const upgradeURL = getDocumentationURL(documentationURLs.understandingUpgradeChannels);
   const { t } = useTranslation();
   return (
@@ -460,7 +460,7 @@ export const ChannelDocLink: React.FC<{}> = () => {
   );
 };
 
-const ChannelHeader: React.FC<{}> = () => {
+const ChannelHeader: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
   return (
     <>

@@ -4,6 +4,7 @@ import HTML5Backend from 'react-dnd-html5-backend';
 
 const dndContext = createDndContext(HTML5Backend);
 
+// @ts-ignore
 const withDragDropContext = <TProps extends {}>(
   Component: React.ComponentClass<TProps> | React.FC<TProps>,
 ) => (props: TProps) => {

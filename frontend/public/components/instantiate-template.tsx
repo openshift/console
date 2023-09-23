@@ -338,7 +338,7 @@ const TemplateForm = connect(stateToProps)(
   ),
 );
 
-export const InstantiateTemplatePage: React.FC<{}> = (props) => {
+export const InstantiateTemplatePage: React.FC<Record<string, never>> = (props) => {
   const title = 'Instantiate Template';
   const searchParams = new URLSearchParams(location.search);
   const templateName = searchParams.get('template');

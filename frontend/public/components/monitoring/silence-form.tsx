@@ -530,6 +530,6 @@ export const CreateSilence = () => {
 
 type SilenceFormProps = {
   defaults: any;
-  Info?: React.ComponentType<{}>;
+  Info?: React.ComponentType<Record<string, unknown>>;
   title: string;
 };

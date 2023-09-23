@@ -124,6 +124,7 @@ export const useTableData = ({
     const data = getFilteredRows(allFilters, rowFilters, propData, isExactSearch);
 
     if (loaded) {
+      // @ts-ignore // TODO: Function typing
       let sortBy: string | Function = 'metadata.name';
       const sortFunc = currentSortFunc || defaultSortFunc;
       const sortField = currentSortField || (currentSortFunc ? undefined : defaultSortField);

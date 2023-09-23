@@ -5,7 +5,7 @@ import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/componen
 import { K8sResourceCommon, TableColumn, RowProps } from '@console/dynamic-plugin-sdk';
 import { TableRow } from '../table';
 
-type VirtualizedTableBodyProps<D, R = {}> = {
+type VirtualizedTableBodyProps<D, R = Record<string, unknown>> = {
   Row: React.ComponentType<RowProps<D, R>>;
   data: D[];
   height: number;
@@ -24,7 +24,7 @@ const RowMemo = React.memo<RowProps<any, any> & { Row: React.ComponentType<RowPr
   ({ Row, ...props }) => <Row {...props} />,
 );
 
-const VirtualizedTableBody = <D extends any, R extends any = {}>({
+const VirtualizedTableBody = <D extends any, R extends any = Record<string, unknown>>({
   Row,
   height,
   isScrolling,

@@ -45,7 +45,7 @@ const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
   );
 };
 
-const UserKebab = connect<{}, UserKebabDispatchProps, UserKebabProps>(null, {
+const UserKebab = connect<Record<string, unknown>, UserKebabDispatchProps, UserKebabProps>(null, {
   startImpersonate: UIActions.startImpersonate,
 })(UserKebab_);
 
@@ -233,7 +233,11 @@ const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> 
   );
 };
 
-export const UserDetailsPage = connect<{}, UserKebabDispatchProps, UserDetailsPageProps>(null, {
+export const UserDetailsPage = connect<
+  Record<string, unknown>,
+  UserKebabDispatchProps,
+  UserDetailsPageProps
+>(null, {
   startImpersonate: UIActions.startImpersonate,
 })(UserDetailsPage_);
 

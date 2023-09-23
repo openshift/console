@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import { get, isEmpty, set } from 'lodash';
 import sshpk from 'sshpk';
 import validator from 'validator';
@@ -37,7 +38,7 @@ export const checkName = (
 export const checkHostname = (
   obj: { [key: string]: string | string[] },
   errorCatcher: ErrorCatcher,
-  t: Function,
+  t: TFunction,
 ) => {
   errorCatcher.removeError('hostname');
   if (obj?.hostname) {

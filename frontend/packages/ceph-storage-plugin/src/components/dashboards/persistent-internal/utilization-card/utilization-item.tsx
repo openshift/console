@@ -207,8 +207,7 @@ type UtilizationItemProps = {
   limit?: PrometheusResponse;
   requested?: PrometheusResponse;
   isLoading: boolean;
-  // Todo(bipuladh): Make humanize type Humanize once unit.js is converted
-  humanizeValue: Function;
+  humanizeValue: Humanize;
   query: string | string[];
   error: boolean;
   max?: number;

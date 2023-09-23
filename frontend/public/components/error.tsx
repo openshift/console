@@ -90,7 +90,7 @@ export type ErrorComponentProps = {
   message?: string;
 };
 
-export type ErrorPageProps = {};
+export type ErrorPageProps = Record<string, unknown>;
 export type ErrorPage404Props = Omit<ErrorComponentProps, 'title'>;
 
 export const ErrorState: React.FC = () => {

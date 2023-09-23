@@ -29,6 +29,7 @@ module.exports = {
   },
   plugins: ['react', 'react-hooks', '@typescript-eslint', 'graphql', 'eslint-plugin-tsdoc'],
   rules: {
+    '@typescript-eslint/ban-types': ['error'],
     camelcase: [
       'error',
       { allow: ['UNSAFE_componentWillReceiveProps', 'UNSAFE_componentWillMount'] },
