@@ -182,7 +182,7 @@ export const enableYAMLValidation = (
 ) => {
   const pendingValidationRequests = new Map();
 
-  const getModel = () => monaco.editor.getModels()[0];
+  const getModel = () => monaco.editor?.getModels()[0];
 
   const cleanPendingValidation = (document) => {
     const request = pendingValidationRequests.get(document.uri);
@@ -221,18 +221,20 @@ export const enableYAMLValidation = (
     tryFolding();
   }
 
-  getModel().onDidChangeContent(() => {
-    tryFolding();
+  setTimeout(() => {
+    getModel()?.onDidChangeContent(() => {
+      tryFolding();
 
-    const document = createDocument(getModel());
-    cleanPendingValidation(document);
-    pendingValidationRequests.set(
-      document.uri,
-      setTimeout(() => {
-        pendingValidationRequests.delete(document.uri);
-        doValidate(document);
-      }),
-    );
+      const document = createDocument(getModel());
+      cleanPendingValidation(document);
+      pendingValidationRequests.set(
+        document.uri,
+        setTimeout(() => {
+          pendingValidationRequests.delete(document.uri);
+          doValidate(document);
+        }),
+      );
+    });
   });
 };
 
