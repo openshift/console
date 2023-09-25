@@ -142,10 +142,10 @@ export const TableData: React.FC<TableDataProps> = require('@console/internal/co
 
 /**
  * A hook that provides a list of user-selected active TableColumns.
- * @param {Object} options - Which are passed as a key-value map
- * @param {TableColumn<D>[]} options.columns - An array of all available TableColumns
- * @param {boolean} [options.showNamespaceOverride] - (optional) If true, a namespace column will be included, regardless of column management selections
- * @param {string} [options.columnManagementID] - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a `group~version~kind` string for a resource.
+ * @param {Object} options - Which are passed as a key-value in the map
+ * @param options.columns - An array of all available TableColumns
+ * @param options.showNamespaceOverride - (optional) If true, a namespace column will be included, regardless of column management selections
+ * @param options.columnManagementID - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a `group~version~kind` string for a resource.
  * @returns A tuple containing the current user-selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
  * @example
  * ```tsx
@@ -182,7 +182,7 @@ export const ListPageHeader: React.FC<ListPageHeaderProps> = require('@console/i
 
 /**
  * Component for adding a create button for a specific resource kind that automatically generates a link to the create YAML for this resource.
- * @param groupVersionKind group, version, kind of k8s resource {@link K8sGroupVersionKind} is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` {@link K8sResourceKindReference}. Core resources with no API group should leave off the `group` property
+ * @param groupVersionKind group, version, kind of k8s resource `K8sGroupVersionKind` is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` `K8sResourceKindReference`. Core resources with no API group should leave off the `group` property
  * @example
  * ```ts
  * const exampleList: React.FC<MyProps> = () => {
@@ -572,7 +572,7 @@ export const InventoryItemLoading: React.FC = require('@console/shared/src/compo
 export { useFlag } from '../utils/flags';
 
 /**
- * @deprecated Use {@link CodeEditor} instead.
+ * @deprecated Use [CodeEditor](#codeeditor) instead.
  * A basic lazy loaded YAML editor with hover help and completion.
  * @example
  * ```tsx
@@ -737,9 +737,8 @@ export const NamespaceBar: React.FC<NamespaceBarProps> = require('@console/inter
   .NamespaceBar;
 
 /**
- * Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong."
- * message along with the stack trace and other helpful debugging information. This is to be used in
- * conjunction with an <ErrorBoundary> component.
+ * Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong." message along with the stack trace and other helpful debugging information. 
+ * This is to be used in conjunction with an `ErrorBoundary` component.
  *
  * @param {string} errorMessage - text description of the error message
  * @param {string} componentStack - component trace of the exception
