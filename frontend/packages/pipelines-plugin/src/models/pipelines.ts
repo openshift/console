@@ -324,3 +324,20 @@ export const TektonHubModel: K8sKind = {
   labelPlural: 'TektonHubs',
   crd: true,
 };
+
+export const TektonResultModel: K8sKind = {
+  apiGroup: 'operator.tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'TektonResult',
+  // t('pipelines-plugin~TektonResult')
+  labelKey: 'pipelines-plugin~TektonResult',
+  // t('pipelines-plugin~TektonResults')
+  labelPluralKey: 'pipelines-plugin~TektonResults',
+  plural: 'tektonresults',
+  abbr: 'TR',
+  namespaced: false,
+  kind: 'TektonResult',
+  id: 'tektonresult',
+  labelPlural: 'TektonResults',
+  crd: true,
+};

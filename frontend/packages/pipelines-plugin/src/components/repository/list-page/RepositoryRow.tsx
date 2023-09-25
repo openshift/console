@@ -10,16 +10,15 @@ import {
   resourcePath,
   Timestamp,
 } from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { getLatestRun } from '@console/pipelines-plugin/src/utils/pipeline-augment';
 import { PipelineRunModel, RepositoryModel } from '../../../models';
-import { PipelineRunKind } from '../../../types';
 import {
   pipelineRunFilterReducer,
   pipelineRunTitleFilterReducer,
 } from '../../../utils/pipeline-filter-reducer';
 import { pipelineRunDuration } from '../../../utils/pipeline-utils';
+import { useGetPipelineRuns } from '../../pipelineruns/hooks/useTektonResults';
 import LinkedPipelineRunTaskStatus from '../../pipelineruns/status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../../pipelineruns/status/PipelineRunStatus';
 import { getTaskRunsOfPipelineRun } from '../../taskruns/useTaskRuns';
@@ -33,14 +32,9 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
   } = obj;
   const { taskRuns } = customData;
 
-  const [pipelineRun, loaded] = useK8sWatchResource<PipelineRunKind[]>({
-    kind: referenceForModel(PipelineRunModel),
-    namespace,
-    isList: true,
-    selector: { matchLabels: { [RepositoryLabels[RepositoryFields.REPOSITORY]]: name } },
-  });
+  const [pipelineRuns, loaded] = useGetPipelineRuns(namespace, { name, kind: obj.kind });
 
-  const latestRun = loaded && getLatestRun(pipelineRun, 'creationTimestamp');
+  const latestRun = loaded && getLatestRun(pipelineRuns, 'creationTimestamp');
 
   const latestPLREventType =
     latestRun && latestRun?.metadata?.labels[RepositoryLabels[RepositoryFields.EVENT_TYPE]];

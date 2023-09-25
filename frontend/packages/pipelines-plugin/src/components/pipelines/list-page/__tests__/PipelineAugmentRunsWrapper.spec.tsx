@@ -4,6 +4,7 @@ import { ListPageWrapper } from '@console/internal/components/factory';
 import { EmptyBox, LoadingBox } from '@console/internal/components/utils';
 import { useUserSettings } from '@console/shared';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
+import * as tektonResultsHooks from '../../../pipelineruns/hooks/useTektonResults';
 import PipelineAugmentRunsWrapper from '../PipelineAugmentRunsWrapper';
 
 const mockData = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
@@ -20,6 +21,8 @@ const mockUserSettings = useUserSettings as jest.Mock;
 describe('Pipeline Augment Run Wrapper', () => {
   let pipelineAugmentRunsWrapperProps: PipelineAugmentRunsWrapperProps;
   let wrapper: ShallowWrapper;
+  jest.spyOn(tektonResultsHooks, 'useGetPipelineRuns').mockReturnValue([[], true, '']);
+
   beforeEach(() => {
     mockUserSettings.mockReturnValue(['pipelines', jest.fn(), true]);
     pipelineAugmentRunsWrapperProps = {

@@ -20,7 +20,7 @@ import { getTaskRunsOfPipelineRun } from '../components/taskruns/useTaskRuns';
 import { EventListenerModel, PipelineModel, PipelineRunModel, TaskRunModel } from '../models';
 import { PipelineKind, PipelineRunKind, TaskRunKind } from '../types';
 import { shouldHidePipelineRunStop, shouldHidePipelineRunCancel } from './pipeline-augment';
-import { getSbomTaskRun } from './pipeline-utils';
+import { getSbomTaskRun, returnValidPipelineRunModel } from './pipeline-utils';
 
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
   history.push(
@@ -48,7 +48,7 @@ export const reRunPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipeli
     const namespace = _.get(pipelineRun, 'metadata.namespace');
     const { pipelineRef, pipelineSpec } = pipelineRun.spec;
     if (namespace && (pipelineRef?.name || pipelineSpec)) {
-      k8sCreate(PipelineRunModel, getPipelineRunData(null, pipelineRun));
+      k8sCreate(returnValidPipelineRunModel(pipelineRun), getPipelineRunData(null, pipelineRun));
     } else {
       errorModal({
         error: i18n.t(

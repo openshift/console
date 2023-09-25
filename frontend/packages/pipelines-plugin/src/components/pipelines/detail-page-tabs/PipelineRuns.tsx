@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { ListPage } from '@console/internal/components/factory';
+// import { ListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
@@ -10,6 +10,8 @@ import {
   pipelineRunStatusFilter,
 } from '../../../utils/pipeline-filter-reducer';
 import { ListFilterId, ListFilterLabels } from '../../../utils/pipeline-utils';
+import { ListPage } from '../../ListPage';
+import { useGetPipelineRuns } from '../../pipelineruns/hooks/useTektonResults';
 import PipelineRunsList from '../../pipelineruns/list-page/PipelineRunList';
 import { PipelineDetailsTabProps } from './types';
 
@@ -32,6 +34,22 @@ export const runFilters = (t: TFunction): RowFilter[] => {
 
 const PipelineRuns: React.FC<PipelineDetailsTabProps> = ({ obj }) => {
   const { t } = useTranslation();
+  const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] = useGetPipelineRuns(
+    obj.metadata.namespace,
+    { name: obj.metadata.name, kind: obj.kind },
+  );
+
+  const resources = React.useMemo(
+    () => ({
+      [referenceForModel(PipelineRunModel)]: {
+        data: pipelineRuns,
+        kind: referenceForModel(PipelineRunModel),
+        loadError: pipelineRunsLoadError,
+        loaded: pipelineRunsLoaded,
+      },
+    }),
+    [pipelineRunsLoadError, pipelineRunsLoaded, pipelineRuns],
+  );
   return (
     <ListPage
       showTitle={false}
@@ -43,6 +61,7 @@ const PipelineRuns: React.FC<PipelineDetailsTabProps> = ({ obj }) => {
       }}
       ListComponent={PipelineRunsList}
       rowFilters={runFilters(t)}
+      data={resources}
     />
   );
 };
