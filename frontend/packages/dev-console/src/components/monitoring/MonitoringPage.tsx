@@ -66,10 +66,11 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
       component: MonitoringEvents,
     },
   ];
+
   return activeNamespace ? (
     <div className="odc-monitoring-page">
       <PageHeading title={t('devconsole~Observe')} />
-      <HorizontalNav pages={pages} match={match} noStatusBox />
+      <HorizontalNav contextId="dev-console-observe" pages={pages} match={match} noStatusBox />
     </div>
   ) : (
     <CreateProjectListPage title={t('devconsole~Observe')}>

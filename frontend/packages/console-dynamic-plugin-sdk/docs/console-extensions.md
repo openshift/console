@@ -52,28 +52,29 @@
 50.  [`console.redux-reducer`](#consoleredux-reducer)
 51.  [`console.resource/create`](#consoleresourcecreate)
 52.  [`console.storage-provider`](#consolestorage-provider)
-53.  [`console.tab/horizontalNav`](#consoletabhorizontalNav)
-54.  [`console.telemetry/listener`](#consoletelemetrylistener)
-55.  [`console.topology/adapter/build`](#consoletopologyadapterbuild)
-56.  [`console.topology/adapter/network`](#consoletopologyadapternetwork)
-57.  [`console.topology/adapter/pod`](#consoletopologyadapterpod)
-58.  [`console.topology/component/factory`](#consoletopologycomponentfactory)
-59.  [`console.topology/create/connector`](#consoletopologycreateconnector)
-60.  [`console.topology/data/factory`](#consoletopologydatafactory)
-61.  [`console.topology/decorator/provider`](#consoletopologydecoratorprovider)
-62.  [`console.topology/details/resource-alert`](#consoletopologydetailsresource-alert)
-63.  [`console.topology/details/resource-link`](#consoletopologydetailsresource-link)
-64.  [`console.topology/details/tab`](#consoletopologydetailstab)
-65.  [`console.topology/details/tab-section`](#consoletopologydetailstab-section)
-66.  [`console.topology/display/filters`](#consoletopologydisplayfilters)
-67.  [`console.topology/relationship/provider`](#consoletopologyrelationshipprovider)
-68.  [`console.user-preference/group`](#consoleuser-preferencegroup)
-69.  [`console.user-preference/item`](#consoleuser-preferenceitem)
-70.  [`console.yaml-template`](#consoleyaml-template)
-71.  [`dev-console.add/action`](#dev-consoleaddaction)
-72.  [`dev-console.add/action-group`](#dev-consoleaddaction-group)
-73.  [`dev-console.import/environment`](#dev-consoleimportenvironment)
-74. [DEPRECATED] [`console.page/resource/tab`](#consolepageresourcetab)
+53.  [`console.tab`](#consoletab)
+54.  [`console.tab/horizontalNav`](#consoletabhorizontalNav)
+55.  [`console.telemetry/listener`](#consoletelemetrylistener)
+56.  [`console.topology/adapter/build`](#consoletopologyadapterbuild)
+57.  [`console.topology/adapter/network`](#consoletopologyadapternetwork)
+58.  [`console.topology/adapter/pod`](#consoletopologyadapterpod)
+59.  [`console.topology/component/factory`](#consoletopologycomponentfactory)
+60.  [`console.topology/create/connector`](#consoletopologycreateconnector)
+61.  [`console.topology/data/factory`](#consoletopologydatafactory)
+62.  [`console.topology/decorator/provider`](#consoletopologydecoratorprovider)
+63.  [`console.topology/details/resource-alert`](#consoletopologydetailsresource-alert)
+64.  [`console.topology/details/resource-link`](#consoletopologydetailsresource-link)
+65.  [`console.topology/details/tab`](#consoletopologydetailstab)
+66.  [`console.topology/details/tab-section`](#consoletopologydetailstab-section)
+67.  [`console.topology/display/filters`](#consoletopologydisplayfilters)
+68.  [`console.topology/relationship/provider`](#consoletopologyrelationshipprovider)
+69.  [`console.user-preference/group`](#consoleuser-preferencegroup)
+70.  [`console.user-preference/item`](#consoleuser-preferenceitem)
+71.  [`console.yaml-template`](#consoleyaml-template)
+72.  [`dev-console.add/action`](#dev-consoleaddaction)
+73.  [`dev-console.add/action-group`](#dev-consoleaddaction-group)
+74.  [`dev-console.import/environment`](#dev-consoleimportenvironment)
+75. [DEPRECATED] [`console.page/resource/tab`](#consolepageresourcetab)
 
 ---
 
@@ -946,6 +947,23 @@ Adds new reducer to Console Redux store which operates on `plugins.<scope>` subs
 | ---- | ---------- | -------- | ----------- |
 | `name` | `string` | no |  |
 | `Component` | `CodeRef<React.ComponentType<Partial<RouteComponentProps<{}, StaticContext, any>>>>` | no |  |
+
+---
+
+## `console.tab`
+
+### Summary 
+
+Adds a tab to a horizontal nav matching the `contextId`.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `contextId` | `string` | no | Context ID assigned to the horizontal nav in which the tab will be injected.<br/>Possible values:<br/>- `dev-console-observe` |
+| `name` | `string` | no | The display label of the tab |
+| `href` | `string` | no | The href appended to the existing URL |
+| `component` | `CodeRef<React.ComponentType<PageComponentProps<K8sResourceCommon>>>` | no | Tab content component. |
 
 ---
 
