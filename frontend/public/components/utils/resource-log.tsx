@@ -42,7 +42,7 @@ import { usePrevious } from '@console/shared/src/hooks/previous';
 import { Link } from 'react-router-dom';
 import { resourcePath } from './resource-link';
 import { isWindowsPod } from '../../module/k8s/pods';
-import { getActiveCluster } from '@console/dynamic-plugin-sdk'; // TODO remove multicluster
+import { getActiveCluster, getImpersonate } from '@console/dynamic-plugin-sdk'; // TODO remove multicluster
 
 export const STREAM_EOF = 'eof';
 export const STREAM_LOADING = 'loading';
@@ -411,6 +411,9 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   const previousTotalLineCount = usePrevious(totalLineCount);
   const linkURL = getResourceLogURL(cluster, resource, containerName, null, false, logType); // TODO remove multicluster
   const watchURL = getResourceLogURL(cluster, resource, containerName, null, true, logType); // TODO remove multicluster
+  const imp = getImpersonate(useSelector((state: RootState) => state));
+  const subprotocols = ['base64.binary.k8s.io'];
+  imp?.subprotocols && subprotocols.push(...imp.subprotocols);
   const [wrapLines, setWrapLines] = useUserSettings<boolean>(
     LOG_WRAP_LINES_USERSETTINGS_KEY,
     false,
@@ -521,7 +524,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     ws.current = new WSFactory(watchURL, {
       host: 'auto',
       path: watchURL,
-      subprotocols: ['base64.binary.k8s.io'],
+      subprotocols,
     })
       .onclose(onClose)
       .onerror(onError)
