@@ -3,11 +3,10 @@ import { coFetch } from '../co-fetch';
 import { stripBasePath } from '../components/utils/link';
 
 export const LOGIN_ERROR_PATH = window.SERVER_FLAGS.loginErrorURL
-  ? new URL(window.SERVER_FLAGS.loginErrorURL).pathname
+  ? new URL(window.SERVER_FLAGS.loginErrorURL, window.location.href).pathname
   : '';
 
-const isLoginErrorPath = (path) =>
-  path && LOGIN_ERROR_PATH.pathname && path === LOGIN_ERROR_PATH.pathname;
+const isLoginErrorPath = (path) => path && path === LOGIN_ERROR_PATH;
 
 const loginState = (key) => localStorage.getItem(key);
 
