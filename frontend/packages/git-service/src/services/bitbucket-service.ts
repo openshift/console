@@ -178,7 +178,11 @@ export class BitbucketService extends BaseService {
     }
   };
 
-  createRepoWebhook = async (token: string, webhookURL: string): Promise<boolean> => {
+  createRepoWebhook = async (
+    token: string,
+    webhookURL: string,
+    sslVerification: boolean,
+  ): Promise<boolean> => {
     const headers = {
       'Content-Type': ['application/json'],
       Authorization: [`Basic ${token}`],
@@ -187,7 +191,7 @@ export class BitbucketService extends BaseService {
       url: webhookURL,
       events: ['repo:push', 'pullrequest:created', 'pullrequest:updated'],
       /* eslint-disable @typescript-eslint/camelcase */
-      skip_cert_verification: true,
+      skip_cert_verification: !sslVerification,
       active: true,
     };
     const url = this.isServer

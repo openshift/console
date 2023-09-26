@@ -25,7 +25,7 @@ Feature: Perform Actions on repository
              When user clicks on the repository "<repository_name>" on Repositories page
              Then user will be redirected to Repository details page with header "<repository_name>"
               And user is able to see Details, YAML, Pipeline Runs tabs
-              And Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created at, Owner, Repository
+              And Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created at, Owner, Repository, Username, Git access token, Webhook URL, Webhook Secret
               And Actions menu display with options Edit labels, Edit annotations, Edit repository, Delete repository
 
         Examples:
@@ -161,7 +161,6 @@ Feature: Perform Actions on repository
              When user clicks on Create Repository button
               And user enters Git Repo URL of repository as "<repository_url>"
               And user enters Name of repository as "<repository_name>"
-              And user clicks on Show configuration options
               And user enters personal access token in the git access token field
               And user clicks on Generate button under Webhook secret
               And user clicks on Add button
@@ -205,7 +204,6 @@ Feature: Perform Actions on repository
              When user clicks on Create Repository button
               And user enters Git Repo URL of repository as "<repository_url>"
               And user enters Name of repository as "<repository_name>"
-              And user clicks on Show configuration options
               And user clicks "Use GitHub App"
               And user clicks on "https://github.com/apps/pipelines-ci-clustername1"
               And user clicks on Install button in github page

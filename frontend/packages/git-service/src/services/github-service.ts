@@ -135,6 +135,7 @@ export class GithubService extends BaseService {
   createRepoWebhook = async (
     token: string,
     webhookURL: string,
+    sslVerification: boolean,
     webhookSecret: string,
   ): Promise<boolean> => {
     const headers = {
@@ -149,8 +150,7 @@ export class GithubService extends BaseService {
         url: webhookURL,
         /* eslint-disable @typescript-eslint/camelcase */
         content_type: 'json',
-        /* eslint-disable @typescript-eslint/camelcase */
-        insecure_ssl: '1',
+        insecure_ssl: sslVerification ? '0' : '1',
         secret: webhookSecret,
       },
       events: ['push', 'pull_request'],

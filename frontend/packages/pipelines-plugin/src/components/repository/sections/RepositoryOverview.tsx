@@ -1,9 +1,20 @@
 import * as React from 'react';
-import { Flex, FlexItem, Text, Title, TitleSizes, FormGroup } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertVariant,
+  Flex,
+  FlexItem,
+  Text,
+  Title,
+  TitleSizes,
+  FormGroup,
+  ClipboardCopy,
+} from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
 import EditorField from '@console/dev-console/src/components/buildconfig/sections/EditorField';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { GitProvider } from '@console/git-service/src';
 import { ExternalLink } from '@console/internal/components/utils';
 import YAMLEditorToolbar from '@console/shared/src/components/editor/YAMLEditorToolbar';
 import CopyPipelineRunButton from '../form-fields/CopyPipelineRunButton';
@@ -14,10 +25,28 @@ const RepositoryOverview = () => {
   const { values } = useFormikContext<RepositoryFormValues>();
   return (
     <FormSection>
+      <FormGroup fieldId="alert-message">
+        <Alert
+          isInline
+          variant={values?.webhook?.autoAttach ? AlertVariant.success : AlertVariant.info}
+          title={
+            values?.webhook?.autoAttach
+              ? t('pipelines-plugin~Webhook attached to the Git Repository')
+              : t('pipelines-plugin~Could not attach webhook to the Git Repository.')
+          }
+        >
+          {!values?.webhook?.autoAttach &&
+            t(
+              'pipelines-plugin~Please follow the instructions below to attach the webhook manually.',
+            )}
+        </Alert>
+      </FormGroup>
       <FormGroup fieldId="title">
         <Title headingLevel="h4" size={TitleSizes.xl} data-test="repository-overview-title">
           {t('pipelines-plugin~Git repository added.')}
         </Title>
+      </FormGroup>
+      <FormGroup fieldId="instructions">
         <Text>
           <Trans t={t} ns="pipelines-plugin">
             Copy this code to <code className="co-code">.tekton</code> directory in your{' '}
@@ -28,8 +57,6 @@ const RepositoryOverview = () => {
             />
           </Trans>
         </Text>
-      </FormGroup>
-      <FormGroup fieldId="instructions">
         <Text>
           <Trans t={t} ns="pipelines-plugin">
             You can now add PipelineRuns to the <code className="co-code">.tekton</code> directory
@@ -88,7 +115,30 @@ const RepositoryOverview = () => {
           {t('pipelines-plugin~Commit these changes and push them to your Git repository.')}
         </Text>
       </FormGroup>
-      <FormGroup fieldId="step-4">
+      {!(
+        values.gitProvider === GitProvider.GITHUB &&
+        values.method === GitProvider.GITHUB &&
+        values.githubAppAvailable === true
+      ) &&
+        values?.webhook?.url &&
+        !values?.webhook?.autoAttach && (
+          <FormGroup fieldId="step-4">
+            <Title headingLevel="h4" size={TitleSizes.md}>
+              {t('pipelines-plugin~Step 4')}
+            </Title>
+            <Text>
+              <Trans t={t} ns="pipelines-plugin">
+                Webhook URL to configure the webhook in your Git repository:
+              </Trans>
+            </Text>
+            <Text>
+              <ClipboardCopy isReadOnly hoverTip="Copy" clickTip="Copied" style={{ flex: '1' }}>
+                {values.webhook.url}
+              </ClipboardCopy>
+            </Text>
+          </FormGroup>
+        )}
+      <FormGroup fieldId="step-5">
         <Text>
           <Trans t={t} ns="pipelines-plugin">
             You can install Tekton CLI from{' '}
