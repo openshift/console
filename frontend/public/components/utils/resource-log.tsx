@@ -691,6 +691,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
             ref={logViewerRef}
             height="100%"
             isTextWrapped={wrapLinesCheckbox}
+            retainWhitespace
             toolbar={logControls}
             footer={
               <FooterButton
