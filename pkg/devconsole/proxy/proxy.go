@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -69,7 +70,17 @@ func serve(r *http.Request) (ProxyResponse, error) {
 	}
 	serviceRequest.URL.RawQuery = query.Encode()
 
-	serviceClient := &http.Client{}
+	var serviceClient *http.Client
+	if request.AllowInsecure {
+		serviceTransport := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		serviceClient = &http.Client{
+			Transport: serviceTransport,
+		}
+	} else {
+		serviceClient = &http.Client{}
+	}
 
 	serviceResponse, err := serviceClient.Do(serviceRequest)
 	if err != nil {
