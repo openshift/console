@@ -351,6 +351,7 @@ type VirtualizedTableProps<D, R extends any = {}> = {
   'aria-label'?: string;
   gridBreakPoint?: TableGridBreakpoint;
   rowData?: R;
+  mock?: boolean;
 };
 
 export type VirtualizedTableFC = <D, R extends any = {}>(
