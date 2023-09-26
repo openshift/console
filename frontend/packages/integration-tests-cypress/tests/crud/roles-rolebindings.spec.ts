@@ -4,6 +4,7 @@ import { checkErrors, testName } from '../../support';
 import { projectDropdown } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
 import { errorMessage } from '../../views/form';
+import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
@@ -105,6 +106,10 @@ const deleteClusterExamples = () => {
 describe('Roles and RoleBindings', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
+    cy.visit('/');
+    nav.sidenav.switcher.changePerspectiveTo('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Administrator');
     cy.createProject(testName);
     createExampleRoles();
     createExampleRoleBindings();
