@@ -51,10 +51,12 @@ import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { useToast } from '@console/shared/src/components/toast';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
 import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
 import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core'; // PF4 Imports
+import { AuthenticationErrorPage } from './error';
 import '../vendor.scss';
 import '../style.scss';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
@@ -256,10 +258,13 @@ render(<LoadingBox />, document.getElementById('app'));
 
 const AppRouter = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
+  // Treat the authentication error page as a standalone route. There is no need to render the rest
+  // of the app if we know authentication has failed.
   return (
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
       <CompatRouter>
         <Switch>
+          <Route path={LOGIN_ERROR_PATH} component={AuthenticationErrorPage} />
           {standaloneRouteExtensions.map((e) => (
             <Route
               key={e.uid}

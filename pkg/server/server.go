@@ -46,7 +46,7 @@ import (
 // Public constants
 const (
 	AuthLoginCallbackEndpoint = "/auth/callback"
-	AuthLoginErrorEndpoint    = "/error"
+	AuthLoginErrorEndpoint    = "/auth/error"
 	AuthLoginSuccessEndpoint  = "/"
 )
 

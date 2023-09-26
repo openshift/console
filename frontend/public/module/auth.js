@@ -2,6 +2,13 @@ import * as _ from 'lodash-es';
 import { coFetch } from '../co-fetch';
 import { stripBasePath } from '../components/utils/link';
 
+export const LOGIN_ERROR_PATH = window.SERVER_FLAGS.loginErrorURL
+  ? new URL(window.SERVER_FLAGS.loginErrorURL).pathname
+  : '';
+
+const isLoginErrorPath = (path) =>
+  path && LOGIN_ERROR_PATH.pathname && path === LOGIN_ERROR_PATH.pathname;
+
 const loginState = (key) => localStorage.getItem(key);
 
 const loginStateItem = (key) => loginState(key);
@@ -19,8 +26,7 @@ const setNext = (next) => {
 
   try {
     // Don't redirect the user back to the error page after logging in.
-    const path = stripBasePath(next);
-    localStorage.setItem('next', path.startsWith('/error') ? '/' : path);
+    localStorage.setItem('next', isLoginErrorPath(next) ? '/' : stripBasePath(next));
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Failed to next URL in localStorage', e);
@@ -53,9 +59,18 @@ export const authSvc = {
   email: () => loginStateItem(email),
 
   logoutRedirect: (next) => {
-    if (window.SERVER_FLAGS.logoutRedirect && !next) {
-      window.location = window.SERVER_FLAGS.logoutRedirect;
-    } else {
+    const logoutRedirect = next ? '' : window.SERVER_FLAGS.logoutRedirect;
+    if (logoutRedirect) {
+      window.location.assign(logoutRedirect);
+      return;
+    }
+
+    // If we're on the login error page, this means there was a problem with the last
+    // authentication attempt. Show the error from the previous attempt instead of redirecting
+    // login again. This is necessary because login may not be available (e.g. if the OAuth
+    // provider is not configured for browser authentication) and we don't want to get stuck in
+    // a loop.
+    if (!isLoginErrorPath(window.location.pathname)) {
       authSvc.login();
     }
   },
