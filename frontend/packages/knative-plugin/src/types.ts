@@ -197,3 +197,8 @@ export enum DomainMappingResponseAction {
 export enum ServerlessBuildStrategyType {
   ServerlessFunction = 'ServerlessFunction',
 }
+
+export enum ServiceTypeValue {
+  Function = 'Function',
+  Service = 'Service',
+}

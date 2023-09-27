@@ -13,11 +13,16 @@ import './RevisionsOverviewList.scss';
 export type RevisionsOverviewListProps = {
   revisions: K8sResourceKind[];
   service: K8sResourceKind;
+  hideSectionHeading?: boolean;
 };
 
 const MAX_REVISIONS: number = 3;
 
-const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions, service }) => {
+const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({
+  revisions,
+  service,
+  hideSectionHeading,
+}) => {
   const { t } = useTranslation();
   const canSetTrafficDistribution = useAccessReview({
     group: ServiceModel.apiGroup,
@@ -53,26 +58,28 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
 
   return (
     <>
-      <SidebarSectionHeading
-        text={t('knative-plugin~Revisions')}
-        className="revision-overview-list"
-      >
-        {revisions?.length > MAX_REVISIONS && (
-          <Link className="sidebar__section-view-all" to={getRevisionsLink()}>
-            {t('knative-plugin~View all ({{revLength}})', { revLength: revisions.length })}
-          </Link>
-        )}
+      {!hideSectionHeading && (
+        <SidebarSectionHeading
+          text={t('knative-plugin~Revisions')}
+          className="revision-overview-list"
+        >
+          {revisions?.length > MAX_REVISIONS && (
+            <Link className="sidebar__section-view-all" to={getRevisionsLink()}>
+              {t('knative-plugin~View all ({{revLength}})', { revLength: revisions.length })}
+            </Link>
+          )}
 
-        {canSetTrafficDistribution && (
-          <Button
-            variant="secondary"
-            onClick={() => setTrafficDistributionModal({ obj: service })}
-            isDisabled={!(revisions && revisions.length)}
-          >
-            {t('knative-plugin~Set traffic distribution')}
-          </Button>
-        )}
-      </SidebarSectionHeading>
+          {canSetTrafficDistribution && (
+            <Button
+              variant="secondary"
+              onClick={() => setTrafficDistributionModal({ obj: service })}
+              isDisabled={!(revisions && revisions.length)}
+            >
+              {t('knative-plugin~Set traffic distribution')}
+            </Button>
+          )}
+        </SidebarSectionHeading>
+      )}
       {_.isEmpty(revisions) ? (
         <span className="text-muted">
           {t('knative-plugin~No Revisions found for this resource.')}

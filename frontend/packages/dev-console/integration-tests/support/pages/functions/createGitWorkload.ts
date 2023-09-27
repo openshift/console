@@ -10,12 +10,15 @@ export const createGitWorkload = (
   resourceType: string = 'Deployment',
   appName: string = 'nodejs-ex-git-app',
   isPipelineSelected: boolean = false,
+  isServerlessFunction: boolean = false,
 ) => {
   addPage.selectCardFromOptions(addOptions.ImportFromGit);
   gitPage.enterGitUrl(gitUrl);
   gitPage.verifyValidatedMessage(gitUrl);
   gitPage.enterComponentName(componentName);
-  gitPage.selectResource(resourceType);
+  if (!isServerlessFunction) {
+    gitPage.selectResource(resourceType);
+  }
   gitPage.enterAppName(appName);
   if (isPipelineSelected === true) {
     gitPage.selectAddPipeline();
@@ -42,6 +45,7 @@ export const createGitWorkloadIfNotExistsOnTopologyPage = (
   resourceType: string = 'Deployment',
   appName?: string,
   isPipelineSelected: boolean = false,
+  isServerlessFunction: boolean = false,
 ) => {
   navigateTo(devNavigationMenu.Topology);
   topologyPage.waitForLoad();
@@ -49,7 +53,14 @@ export const createGitWorkloadIfNotExistsOnTopologyPage = (
     if ($body.find(topologyPO.emptyStateIcon).length) {
       cy.log(`Topology doesn't have workload "${componentName}", lets create it`);
       navigateTo(devNavigationMenu.Add);
-      createGitWorkload(gitUrl, componentName, resourceType, appName);
+      createGitWorkload(
+        gitUrl,
+        componentName,
+        resourceType,
+        appName,
+        isPipelineSelected,
+        isServerlessFunction,
+      );
       topologyPage.verifyWorkloadInTopologyPage(componentName);
     } else {
       topologyPage.search(componentName);
@@ -58,7 +69,14 @@ export const createGitWorkloadIfNotExistsOnTopologyPage = (
           cy.log(`knative service: ${componentName} is already created`);
         } else {
           navigateTo(devNavigationMenu.Add);
-          createGitWorkload(gitUrl, componentName, resourceType, appName, isPipelineSelected);
+          createGitWorkload(
+            gitUrl,
+            componentName,
+            resourceType,
+            appName,
+            isPipelineSelected,
+            isServerlessFunction,
+          );
           topologyPage.verifyWorkloadInTopologyPage(componentName);
         }
       });

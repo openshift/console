@@ -17,6 +17,7 @@ export enum devNavigationMenu {
   Routes = 'Routes',
   Deployments = 'Deployments',
   Consoles = 'Consoles',
+  Functions = 'Functions',
 }
 
 export enum adminNavigationBar {
