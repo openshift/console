@@ -658,14 +658,14 @@ export const ResourceEventStream: React.FC<ResourceEventStreamProps> = require('
 
 /**
  * Sets up a poll to Prometheus for a single query.
- * @param {PrometheusEndpoint} props.endpoint - one of the PrometheusEndpoint (label, query, range, rules, targets)
- * @param {string} [props.query] - (optional) Prometheus query string. If empty or undefined, polling is not started.
- * @param {number} [props.delay] - (optional) polling delay interval (ms)
- * @param {number} [props.endTime] - (optional) for QUERY_RANGE enpoint, end of the query range
- * @param {number} [props.samples] - (optional) for QUERY_RANGE enpoint
- * @param {number} [options.timespan] - (optional) for QUERY_RANGE enpoint
- * @param {string} [options.namespace] - (optional) a search param to append
- * @param {string} [options.timeout] - (optional) a search param to append
+ * @param {PrometheusEndpoint} endpoint - one of the PrometheusEndpoint (label, query, range, rules, targets)
+ * @param {string} [query] - (optional) Prometheus query string. If empty or undefined, polling is not started.
+ * @param {number} [delay] - (optional) polling delay interval (ms)
+ * @param {number} [endTime] - (optional) for QUERY_RANGE enpoint, end of the query range
+ * @param {number} [samples] - (optional) for QUERY_RANGE enpoint
+ * @param {number} [timespan] - (optional) for QUERY_RANGE enpoint
+ * @param {string} [namespace] - (optional) a search param to append
+ * @param {string} [timeout] - (optional) a search param to append
  * @returns A tuple containing the query response, a boolean flag indicating whether the response has completed, and any errors encountered during the request or post-processing of the request
  */
 export const usePrometheusPoll: UsePrometheusPoll = (options) => {
