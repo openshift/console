@@ -194,7 +194,7 @@
   "Ready": "준비 상태",
   "Conditions": "상태",
   "Created": "작성",
-  "{{OKcount}} OK / {{conditionsSize}}": "{{OKcount}} OK / {{conditionsSize}}",
+  "{{OKcount}} OK / {{conditionsSize}}": "OK",
   "Subscriber": "구독자",
   "Filters": "필터",
   "There is an existing placeholder Service with name {{name}} in namespace {{namespace}}. Please provide another name": "네임스페이스 {{namespace}}에 이름{{name}}의 기존 자리 표시자 서비스가 있습니다. 다른 이름을 입력하십시오",

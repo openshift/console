@@ -202,5 +202,8 @@
   "This host was provisioned outside of this cluster and added manually.": "このホストはこのクラスター外にプロビジョニングされ、手動で追加されています。",
   "Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.": "Baseboard Management Controller (BMC) の認証情報が提供されるまで、このホストで電源操作を行うことはできません。",
   "Under maintenance": "メンテナンス中",
-  "Stopping maintenance": "メンテナンスの停止"
+  "Stopping maintenance": "メンテナンスの停止",
+  "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.": "名前は小文字の英数字、ハイフン、またはドットで設定され、開始と終了は英数字である必要があります。",
+  "Cannot be longer than {{characterCount}} characters.": "{{characterCount}} 文字を超えることはできません。",
+  "Required": "必須"
 }

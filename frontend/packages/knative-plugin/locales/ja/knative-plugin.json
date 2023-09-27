@@ -250,7 +250,7 @@
   "CloudEvent": "CloudEvent",
   "HTTP": "HTTP",
   "application/json": "application/json",
-  "application/yaml": "application/yaml",
+  "application/yaml": "アプリケーション名:",
   "Format": "フォーマット",
   "Content-Type": "Content-Type",
   "Advanced Settings": "詳細設定",

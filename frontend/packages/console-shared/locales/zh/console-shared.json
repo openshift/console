@@ -298,7 +298,7 @@
   "Set minAvailable to 25%": "将 minAvailable 设置为 25%",
   "An eviction is allowed if at least 25% of pods selected by \"selector\" will still be available after the eviction.": "如果在驱除后，由\"selector\"选择的 pod 有最小 25% 可用时允许驱除。",
   "Helm Release": "Helm 发行",
-  "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.": "名称必须由小写字母数字字符、连字符或句点组成，且必须以一个字母数字字符开头和结尾。",
+  "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.": "名称必须由小写字母、数字和连字符组成。且需要以字母或数字开头。",
   "Cannot be longer than {{characterCount}} characters.": "不能超过 {{characterCount}} 个字符。",
   "Required": "必需"
 }

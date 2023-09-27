@@ -335,7 +335,7 @@
   "Virtual machine": "가상 머신",
   "A new disk has been added to support the CD-ROM boot source.": "CD-ROM 부팅 소스를 지원하기 위해 새 디스크가 추가되었습니다.",
   "Not available": "사용할 수 없음",
-  "{{flavor}}: {{count}} CPU | {{memory}}": "CPU",
+  "{{flavor}}: {{count}} CPU | {{memory}}": "{{flavor}}: {{count}} CPU | {{memory}}",
   "Type": "유형",
   "Details": "세부 정보",
   "You will be able to change the flavor after selecting this template": "이 템플릿을 선택한 후 플레이버를 변경할 수 있습니다.",

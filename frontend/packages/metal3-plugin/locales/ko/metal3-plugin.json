@@ -202,5 +202,8 @@
   "This host was provisioned outside of this cluster and added manually.": "이 호스트는이 클러스터 외부에서 프로비저닝되었으며 수동으로 추가되었습니다.",
   "Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.": " Baseboard Management Controller (BMC) 인증 정보가 제공될 때 까지 이 호스트에서 전원 작업을 수행할 수 없습니다.",
   "Under maintenance": "유지 보수 중",
-  "Stopping maintenance": "유지 보수 중지"
+  "Stopping maintenance": "유지 보수 중지",
+  "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.": "이름은 소문자 영숫자, 하이픈, 점으로 구성되어야하며 영숫자나 문자로 시작하고 끝나야 합니다.",
+  "Cannot be longer than {{characterCount}} characters.": "{{characterCount}}자를 초과할 수 없습니다.",
+  "Required": "필수 항목"
 }
