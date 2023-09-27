@@ -1,6 +1,10 @@
 const UPSTREAM_LATEST = 'https://docs.okd.io/latest/';
 
 // Prefer the documentation base URL passed as a flag, but fall back to the latest upstream docs if none was specified.
+// Expected values for openshiftHelpBase:
+// dedicated: https://docs.openshift.com/dedicated/
+// rosa: https://docs.openshift.com/rosa/
+// upstream: https://access.redhat.com/documentation/en-us/openshift_container_platform/4.x/
 export const openshiftHelpBase = window.SERVER_FLAGS.documentationBaseURL || UPSTREAM_LATEST;
 
 export const DOC_URL_OPENSHIFT_WHATS_NEW = 'https://www.openshift.com/learn/whats-new';
@@ -52,9 +56,11 @@ export const documentationURLs: documentationURLsType = {
     downstream: 'html/post-installation_configuration/index',
     upstream: 'post_installation_configuration/machine-configuration-tasks.html',
   },
-  understandingUpgradeChannels: {
+  upgradeChannels: {
+    dedicated: 'upgrading/osd-upgrades.html',
     downstream:
       'html/updating_clusters/understanding-upgrade-channels-releases#understanding-upgrade-channels_understanding-upgrade-channels-releases',
+    rosa: 'upgrading/rosa-upgrading.html',
     upstream: 'updating/index.html#updating-clusters-overview-upgrade-channels-and-releases',
   },
   updateService: {
@@ -88,10 +94,18 @@ export const documentationURLs: documentationURLsType = {
 
 export const isUpstream = () => window.SERVER_FLAGS.branding === 'okd';
 
-export const getDocumentationURL = (docURLs: docURLs) =>
-  isUpstream()
-    ? `${UPSTREAM_LATEST}${docURLs.upstream}`
-    : `${window.SERVER_FLAGS.documentationBaseURL}${docURLs.downstream}`;
+export const getDocumentationURL = (docURLs: docURLs, branding?: string) => {
+  switch (branding) {
+    case 'dedicated':
+      return `${window.SERVER_FLAGS.documentationBaseURL}${docURLs.dedicated}`;
+    case 'rosa':
+      return `${window.SERVER_FLAGS.documentationBaseURL}${docURLs.rosa}`;
+    default:
+      return isUpstream()
+        ? `${UPSTREAM_LATEST}${docURLs.upstream}`
+        : `${window.SERVER_FLAGS.documentationBaseURL}${docURLs.downstream}`;
+  }
+};
 
 export const getNetworkPolicyDocURL = (openshiftFlag: boolean) => {
   const networkLink = getDocumentationURL(documentationURLs.networkPolicy);
@@ -104,7 +118,9 @@ type documentationURLsType = {
 };
 
 type docURLs = {
+  dedicated?: string;
   downstream: string;
   kube?: string;
+  rosa?: string;
   upstream: string;
 };

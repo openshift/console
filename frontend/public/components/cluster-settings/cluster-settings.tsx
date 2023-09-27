@@ -453,7 +453,10 @@ export const CurrentVersionHeader: React.FC<CurrentVersionProps> = ({ cv }) => {
 };
 
 export const ChannelDocLink: React.FC<{}> = () => {
-  const upgradeURL = getDocumentationURL(documentationURLs.understandingUpgradeChannels);
+  const upgradeURL = getDocumentationURL(
+    documentationURLs.upgradeChannels,
+    window.SERVER_FLAGS.branding,
+  );
   const { t } = useTranslation();
   return (
     <ExternalLink href={upgradeURL} text={t('public~Learn more about OpenShift update channels')} />
