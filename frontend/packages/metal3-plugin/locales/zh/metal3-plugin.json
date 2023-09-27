@@ -202,5 +202,8 @@
   "This host was provisioned outside of this cluster and added manually.": "此主机在此集群外置备并由手动添加。",
   "Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.": "提供 Baseboard Management Controller(BMC)凭证前，不能在此主机上执行电源操作。",
   "Under maintenance": "正在维护",
-  "Stopping maintenance": "停止维护"
+  "Stopping maintenance": "停止维护",
+  "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.": "名称必须由小写字母数字字符、连字符或句点组成，且必须以一个字母数字字符开头和结尾。",
+  "Cannot be longer than {{characterCount}} characters.": "不能超过 {{characterCount}} 个字符。",
+  "Required": "必需"
 }

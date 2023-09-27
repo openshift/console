@@ -298,7 +298,7 @@
   "Set minAvailable to 25%": "minAvailable を 25% に設定します",
   "An eviction is allowed if at least 25% of pods selected by \"selector\" will still be available after the eviction.": "「selector」で選択され 25% 以上の Pod がエビクション後も引き続き利用可能である場合、エビクションが許可されます。",
   "Helm Release": "Helm リリース",
-  "Name must consist of lower case alphanumeric characters, hyphens or dots, and must start and end with an alphanumeric character.": "名前は小文字の英数字、ハイフン、またはドットで設定され、開始と終了は英数字である必要があります。",
+  "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.": "名前は、小文字、数字、およびハイフンで構成される必要があります。これは文字で始まり、文字または数字で終了する必要があります。",
   "Cannot be longer than {{characterCount}} characters.": "{{characterCount}} 文字を超えることはできません。",
   "Required": "必須"
 }
