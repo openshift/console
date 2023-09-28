@@ -201,7 +201,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
       return false;
     }
 
-    const allParamsForType = storageTypes.current[storageType].parameters;
+    const allParamsForType = storageTypes.current[storageType]?.parameters;
 
     const requiredKeys = _.keys(allParamsForType).filter((key) => paramIsRequired(key));
     const allReqdFieldsEntered = _.every(requiredKeys, (key) => {
@@ -253,6 +253,10 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
       const csiLoaded = props.resources?.csi?.loaded;
       const scData = (props.resources?.sc?.data || []) as K8sResourceKind[];
       const csiData = (props.resources?.csi?.data || []) as K8sResourceKind[];
+      // making sure csi provisioners are added to "storageTypes" (if loaded) before running "validateForm"
+      if (csiLoaded) {
+        csiProvisionerMap(csiData);
+      }
       if (loaded) {
         resources.current = {
           data: scData,
@@ -260,9 +264,6 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           loaded,
         };
         validateForm();
-      }
-      if (csiLoaded) {
-        csiProvisionerMap(csiData);
       }
     }
 
@@ -360,12 +361,12 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     return _.fromPairs(c);
   };
 
-  const getFormParams = () => {
-    const type = newStorageClass.type;
+  const getFormParams = (newStorageClassBeforeCreation) => {
+    const type = newStorageClassBeforeCreation.type;
     const dataParameters = _.pickBy(
-      _.mapValues(newStorageClass.parameters, (value, key) => {
+      _.mapValues(newStorageClassBeforeCreation.parameters, (value, key) => {
         let finalValue = value.value;
-        if (storageTypes.current[type].parameters[key]?.format) {
+        if (storageTypes.current[type]?.parameters[key]?.format) {
           finalValue = storageTypes.current[type].parameters[key].format(value.value);
         }
         return finalValue;
@@ -383,10 +384,9 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     setError(null);
 
     const newStorage = addDefaultParams();
-    setNewStorageClass(newStorage);
 
     const { name, description, type, reclaim, expansion, volumeBindingMode } = newStorage;
-    const dataParameters = getFormParams();
+    const dataParameters = getFormParams(newStorage);
     const annotations = description ? { description } : {};
     let data: StorageClass = {
       metadata: {
