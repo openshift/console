@@ -2006,14 +2006,14 @@ Sets up a poll to Prometheus for a single query.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `` |  {PrometheusEndpoint} props.endpoint - one of the PrometheusEndpoint (label, query, range, rules, targets) |
-| `` |  {string} [props.query] - (optional) Prometheus query string. If empty or undefined, polling is not started. |
-| `` |  {number} [props.delay] - (optional) polling delay interval (ms) |
-| `` |  {number} [props.endTime] - (optional) for QUERY_RANGE enpoint, end of the query range |
-| `` |  {number} [props.samples] - (optional) for QUERY_RANGE enpoint |
-| `` |  {number} [options.timespan] - (optional) for QUERY_RANGE enpoint |
-| `` |  {string} [options.namespace] - (optional) a search param to append |
-| `` |  {string} [options.timeout] - (optional) a search param to append |
+| `endpoint` | one of the PrometheusEndpoint (label, query, range, rules, targets) |
+| `query` | (optional) Prometheus query string. If empty or undefined, polling is not started. |
+| `delay` | (optional) polling delay interval (ms) |
+| `endTime` | (optional) for QUERY_RANGE enpoint, end of the query range |
+| `samples` | (optional) for QUERY_RANGE enpoint |
+| `timespan` | (optional) for QUERY_RANGE enpoint |
+| `namespace` | (optional) a search param to append |
+| `timeout` | (optional) a search param to append |
 
 
 
