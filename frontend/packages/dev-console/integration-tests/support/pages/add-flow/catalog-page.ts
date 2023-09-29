@@ -137,7 +137,7 @@ export const catalogPage = {
         break;
       }
       case catalogCards.jenkins: {
-        cy.get('div.catalog-tile-pf-title').contains('Jenkins').first().click();
+        cy.get(catalogPO.cards.jenkinsTemplate).first().click();
         break;
       }
       case 'Nodejs': {

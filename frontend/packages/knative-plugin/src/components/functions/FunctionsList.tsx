@@ -20,12 +20,8 @@ const FunctionIcon = () => (
 const FunctionsList: React.FC<TableProps> = (props) => {
   const { t } = useTranslation();
   const EmptyMsg = () => (
-    <EmptyState variant={EmptyStateVariant.small}>
-      <EmptyStateIcon
-        variant="container"
-        component={FunctionIcon}
-        className="odc-functions__empty-list__icon"
-      />
+    <EmptyState variant={EmptyStateVariant.sm}>
+      <EmptyStateIcon icon={FunctionIcon} className="odc-functions__empty-list__icon" />
       <Title data-test="empty-state-title" headingLevel="h3">
         {t('knative-plugin~No functions found')}
       </Title>

@@ -51,7 +51,7 @@ describe('Visiting other routes', () => {
     },
     {
       path: '/api-resource/ns/default/core~v1~Pod/instances',
-      waitFor: () => cy.byTestID('empty-message').should('exist'),
+      waitFor: () => cy.byLegacyTestID('api-explorer-resource-title').contains('Pod'),
     },
     ...(Cypress.env('openshift') === true
       ? [
@@ -134,6 +134,7 @@ describe('Test perspective query parameters', () => {
     cy.initAdmin();
     cy.visit('/k8s/cluster/projects');
     listPage.rows.shouldBeLoaded();
+    guidedTour.close();
   });
 
   afterEach(() => {

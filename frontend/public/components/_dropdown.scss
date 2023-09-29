@@ -11,8 +11,8 @@
   margin-left: -1px;
   min-width: auto !important;
   .pf-v5-c-dropdown {
-    --pf-v5-c-dropdown__toggle-icon--MarginRight: 0 !important;
-    --pf-v5-c-dropdown__toggle-icon--MarginLeft: 0 !important;
+    --pf-c-dropdown__toggle-icon--MarginRight: 0 !important;
+    --pf-c-dropdown__toggle-icon--MarginLeft: 0 !important;
   }
 }
 
@@ -135,7 +135,7 @@
   max-width: 100%;
 }
 
-.pf-v5-c-dropdown__toggle .pf-v5-c-dropdown__toggle-icon {
+.pf-v5-c-dropdown__toggle .pf-c-dropdown__toggle-icon {
   flex: 0 0 auto; // so arrow doesn't shrink
 }
 

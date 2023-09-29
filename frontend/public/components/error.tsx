@@ -7,11 +7,12 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  EmptyStateSecondaryActions,
   Stack,
   StackItem,
   EmptyStateHeader,
+  EmptyStateActions,
   Icon,
+  Title,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { global_danger_color_100 as globalDangerColor100 } from '@patternfly/react-tokens';
@@ -142,9 +143,9 @@ export const AuthenticationErrorPage: React.FC = () => {
             </StackItem>
           </Stack>
         </EmptyStateBody>
-        <EmptyStateSecondaryActions>
+        <EmptyStateActions>
           <a href="/logout">{t('public~Try again')}</a>
-        </EmptyStateSecondaryActions>
+        </EmptyStateActions>
       </EmptyState>
     </>
   );

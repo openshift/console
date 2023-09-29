@@ -373,7 +373,6 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
         ) : (
           <LogViewer
             isTextWrapped={isWrapLines}
-            retainWhitespace
             data={trimmedContent || content}
             toolbar={logControls}
             theme="dark"

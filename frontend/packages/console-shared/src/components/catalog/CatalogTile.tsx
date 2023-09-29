@@ -25,9 +25,9 @@ type CatalogTileProps = {
 const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }) => {
   const { t } = useTranslation();
   const { name, title, provider, description, type, typeLabel, badges } = item;
-
   const vendor = provider ? t('console-shared~Provided by {{provider}}', { provider }) : null;
   const catalogType = _.find(catalogTypes, ['value', type]);
+  const inputId = `${type}-${name.trim().replace(/ /g, '-').replace('.', '')}`.toLowerCase();
 
   const typeBadges = [
     <CatalogTileBadge>
@@ -38,6 +38,7 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, 
   const isDescriptionReactElement = React.isValidElement(description);
   return (
     <PfCatalogTile
+      id={inputId}
       className="odc-catalog-tile co-catalog-tile"
       onClick={(e: React.MouseEvent<HTMLElement>) => {
         if (isModifiedEvent(e)) return;

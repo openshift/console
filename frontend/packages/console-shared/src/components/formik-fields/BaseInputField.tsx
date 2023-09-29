@@ -54,14 +54,14 @@ const BaseInputField: React.FC<
         },
       })}
 
-      <FormHelperText>
+      <FormHelperText id={`${fieldId}-helper`}>
         <HelperText>
           {!isValid ? (
             <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
               {errorMessage || helpTextInvalid}
             </HelperTextItem>
           ) : (
-            <HelperTextItem>{helpText}</HelperTextItem>
+            <HelperTextItem variant={validated}>{helpText}</HelperTextItem>
           )}
         </HelperText>
       </FormHelperText>

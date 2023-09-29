@@ -625,7 +625,7 @@ class MastheadToolbarContents_ extends React.Component {
         <span className="co-username" data-test="username">
           {username}
         </span>
-        <CaretDownIcon className="pf-v5-c-dropdown__toggle-icon" />
+        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
       </span>
     );
 

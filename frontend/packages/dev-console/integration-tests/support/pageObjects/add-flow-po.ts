@@ -148,16 +148,15 @@ export const catalogPO = {
     Other: '[data-test="tab other"]',
   },
   cards: {
-    mariaDBTemplate: 'a[data-test="Template-MariaDB"] .catalog-tile-pf-title',
-    phpCakeTemplate: '[data-test="Template-CakePHP + MySQL"] .catalog-tile-pf-title',
-    nodeJsBuilderImage: 'a[data-test="BuilderImage-Node.js"] .catalog-tile-pf-title',
-    nodejsPostgreSQL:
-      'a[data-test="Template-Node.js + PostgreSQL (Ephemeral)"] .catalog-tile-pf-title',
-    apacheHTTPServer: 'a[data-test="Template-Apache HTTP Server"] .catalog-tile-pf-title',
-    nginxHTTPServer:
-      'a[data-test="Template-Nginx HTTP server and a reverse proxy"] .catalog-tile-pf-title',
+    mariaDBTemplate: 'a[data-test="Template-MariaDB"]',
+    phpCakeTemplate: '[data-test="Template-CakePHP + MySQL"]',
+    nodeJsBuilderImage: 'a[data-test="BuilderImage-Node.js"]',
+    nodejsPostgreSQL: 'a[data-test="Template-Node.js + PostgreSQL (Ephemeral)"]',
+    apacheHTTPServer: 'a[data-test="Template-Apache HTTP Server"]',
+    nginxHTTPServer: 'a[data-test="Template-Nginx HTTP server and a reverse proxy"]',
     knativeKafka: '[data-test="OperatorBackedService-Knative Kafka"]',
     helmNodejs: '[data-test="HelmChart-Nodejs"]',
+    jenkinsTemplate: '[data-test="Template-Jenkins"]',
   },
   sidePane: {
     dialog: '[role="dialog"]',
@@ -225,8 +224,8 @@ export const catalogPO = {
 export const samplesPO = {
   search: 'input[placeholder="Filter by keyword..."]',
   cards: {
-    httpdTemplate: 'a[data-test="BuilderImage-Httpd"] .catalog-tile-pf-title',
-    basicgoTemplate: 'a[data-test="Devfile-Basic Go"] .catalog-tile-pf-title',
+    httpdTemplate: 'a[data-test="BuilderImage-Httpd"]',
+    basicgoTemplate: 'a[data-test="Devfile-Basic Go"]',
   },
 };
 

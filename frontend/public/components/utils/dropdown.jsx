@@ -471,7 +471,7 @@ class Dropdown_ extends DropdownMixin {
                   {titlePrefix && `${titlePrefix}: `}
                   {title}
                 </span>
-                <CaretDownIcon className="pf-v5-c-dropdown__toggle-icon" />
+                <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
               </div>
             </button>
             {active && (
@@ -546,7 +546,7 @@ class Dropdown_ extends DropdownMixin {
               {titlePrefix && `${titlePrefix}: `}
               {title}
             </span>
-            <CaretDownIcon className="pf-v5-c-dropdown__toggle-icon" />
+            <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
           </button>
           {active && (
             <ul
@@ -734,7 +734,7 @@ const ActionsMenuDropdown = (props) => {
         data-test-id="actions-menu-button"
       >
         <span className="pf-v5-c-dropdown__toggle-text">{props.title || t('public~Actions')}</span>
-        <CaretDownIcon className="pf-v5-c-dropdown__toggle-icon" />
+        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
       </button>
       {active && <KebabItems options={props.actions} onClick={onClick} />}
     </div>
