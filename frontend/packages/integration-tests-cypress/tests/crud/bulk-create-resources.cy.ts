@@ -1,6 +1,5 @@
 import { checkErrors, testName } from '../../support';
 import { errorMessage } from '../../views/form';
-import { nav } from '../../views/nav';
 import * as yamlEditor from '../../views/yaml-editor';
 
 describe('Bulk import operation', () => {
@@ -78,17 +77,12 @@ stringData:
     cy.createProjectWithCLI(namespace);
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
 
   after(() => {
     cy.deleteProjectWithCLI(namespace);
-    cy.logout();
   });
 
   it('fail to import duplicate yaml definitions (local validation)', () => {

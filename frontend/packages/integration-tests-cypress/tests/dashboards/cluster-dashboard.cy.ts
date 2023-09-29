@@ -1,5 +1,5 @@
 import { checkErrors } from '../../support';
-import { nav } from '../../views/nav';
+import { isLocalDevEnvironment } from '../../views/common';
 
 describe('Cluster dashboard', () => {
   before(() => {
@@ -7,14 +7,13 @@ describe('Cluster dashboard', () => {
   });
 
   beforeEach(() => {
-    cy.initAdmin();
     cy.visit(`/dashboards`);
   });
 
   describe('Details Card', () => {
     it('has all fields populated', () => {
       cy.byLegacyTestID('details-card').should('be.visible');
-      const expectedTitles = [
+      let expectedTitles = [
         'Cluster API address',
         'Cluster ID',
         'Infrastructure provider',
@@ -22,11 +21,14 @@ describe('Cluster dashboard', () => {
         'Service Level Agreement (SLA)',
         'Update channel',
       ];
-      cy.byTestID('detail-item-title').should('have.length', 6);
+      if (isLocalDevEnvironment) {
+        expectedTitles = expectedTitles.slice(5, 1);
+      }
+      cy.byTestID('detail-item-title').should('have.length', isLocalDevEnvironment ? 5 : 6);
       expectedTitles.forEach((title, i) => {
         cy.byTestID('detail-item-title').eq(i).should('have.text', title);
       });
-      const expectedValues = [
+      let expectedValues = [
         { assertion: 'include.text', value: 'https://' },
         { assertion: 'include.text', value: '-' },
         { assertion: 'not.to.be.empty' },
@@ -34,7 +36,10 @@ describe('Cluster dashboard', () => {
         { assertion: 'not.to.be.empty' },
         { assertion: 'not.to.be.empty' },
       ];
-      cy.byTestID('detail-item-value').should('have.length', 6);
+      if (isLocalDevEnvironment) {
+        expectedValues = expectedValues.slice(5, 1);
+      }
+      cy.byTestID('detail-item-value').should('have.length', isLocalDevEnvironment ? 5 : 6);
       expectedValues.forEach(({ assertion, value }, i) => {
         cy.byTestID('detail-item-value').eq(i).should(assertion, value);
       });

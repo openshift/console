@@ -8,7 +8,7 @@ declare global {
       createProject(name: string): Chainable<Element>;
       createProjectWithCLI(name: string): Chainable<Element>;
       deleteProject(name: string): Chainable<Element>;
-      deleteProjectWithCLI(name: string): Chainable<Element>;
+      deleteProjectWithCLI(name: string, timeout?: number): Chainable<Element>;
     }
   }
 }

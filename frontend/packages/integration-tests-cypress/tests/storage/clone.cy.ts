@@ -29,7 +29,6 @@ if (Cypress.env('BRIDGE_AWS')) {
       cy.exec(`echo '${JSON.stringify(testerDeployment)}' | oc delete -n ${testName} -f -`);
       cy.exec(`echo '${JSON.stringify(PVC)}' | oc delete -n ${testName} -f -`);
       cy.deleteProjectWithCLI(testName);
-      cy.logout();
     });
 
     it('Creates PVC Clone', () => {

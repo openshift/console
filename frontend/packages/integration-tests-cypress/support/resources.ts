@@ -9,7 +9,7 @@ declare global {
         namespace: string,
         resource: K8sResourceKindReference | string,
         name: string,
-      ): Chainable<any>;
+      ): Chainable<Cypress.Exec>;
     }
   }
 }

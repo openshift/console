@@ -15,10 +15,6 @@ describe('Node terminal', () => {
     checkErrors();
   });
 
-  after(() => {
-    cy.logout();
-  });
-
   it('Opens a debug terminal', () => {
     cy.visit(`/k8s/cluster/nodes`);
     listPage.titleShouldHaveText('Nodes');

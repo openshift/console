@@ -206,6 +206,7 @@ export const operator = {
   },
   filterByName: (name: string) => {
     cy.byTestID('name-filter-input').focus();
+    cy.byTestID('name-filter-input').clear();
     cy.byTestID('name-filter-input').type(name);
   },
 };

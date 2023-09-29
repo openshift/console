@@ -1,7 +1,7 @@
 import { checkErrors, testName } from '../../support';
+import { projectDropdown } from '../../views/common';
 import { listPage } from '../../views/list-page';
 import { nav } from '../../views/nav';
-import { projectDropdown } from '../../views/common';
 
 const clickCreateImagePullSecretDropdownButton = () => {
   cy.byTestID('item-create')
@@ -55,10 +55,6 @@ describe('Create image pull secret', () => {
   });
 
   beforeEach(() => {
-    cy.initAdmin();
-  });
-
-  beforeEach(() => {
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     listPage.titleShouldHaveText('Secrets');
     projectDropdown.selectProject(testName);
@@ -72,7 +68,6 @@ describe('Create image pull secret', () => {
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it(`Validate a image pull secret whose input values contained whitespace`, () => {

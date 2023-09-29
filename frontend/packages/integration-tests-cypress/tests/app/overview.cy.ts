@@ -11,7 +11,6 @@ import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { errorMessage } from '../../views/form';
 import { masthead } from '../../views/masthead';
-import { nav } from '../../views/nav';
 import { overviewPage } from '../../views/overview';
 import * as yamlEditor from '../../views/yaml-editor';
 
@@ -37,7 +36,6 @@ describe('Visiting Overview page', () => {
       const resourceName = `${testName}-${kindModel.kind.toLowerCase()}`;
 
       before(() => {
-        cy.initAdmin();
         cy.visit(`k8s/ns/${testName}/${kindModel.plural}/~new`);
         masthead.username.shouldBeVisible();
         yamlEditor.isLoaded();
@@ -53,10 +51,6 @@ describe('Visiting Overview page', () => {
             detailsPage.sectionHeaderShouldExist(`${kindModel.label} details`);
           });
         });
-      });
-
-      beforeEach(() => {
-        cy.initAdmin();
       });
 
       it(`displays a ${kindModel.id} in the overview list page`, () => {

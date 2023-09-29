@@ -6,7 +6,6 @@ import { detailsPage } from '../../views/details-page';
 import { errorMessage } from '../../views/form';
 import { labels } from '../../views/labels';
 import { modal } from '../../views/modal';
-import { nav } from '../../views/nav';
 import * as yamlEditor from '../../views/yaml-editor';
 
 describe('Editing labels', () => {
@@ -44,7 +43,6 @@ describe('Editing labels', () => {
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it(`Adds a resource instance label, updates the resource instance label, and makes sure the link works`, () => {

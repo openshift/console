@@ -33,7 +33,6 @@ if (Cypress.env('BRIDGE_AWS')) {
       cy.exec(`oc delete pvc ${snapshotName}-restore -n ${testName}`);
       cy.exec(`echo '${JSON.stringify(SnapshotClass)}' | oc delete -f -`);
       cy.deleteProjectWithCLI(testName);
-      cy.logout();
     });
 
     it('Creates Snapshot', () => {

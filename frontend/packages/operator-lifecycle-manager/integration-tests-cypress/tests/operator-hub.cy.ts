@@ -7,17 +7,12 @@ describe('Interacting with OperatorHub', () => {
     cy.createProjectWithCLI(testName);
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it('displays OperatorHub tile view with expected available Operators', () => {
@@ -60,7 +55,7 @@ describe('Interacting with OperatorHub', () => {
       .first()
       .find('.catalog-tile-pf-title')
       .should('have.text', operatorName);
-    cy.byTestID('search-operatorhub').clear();
+    cy.byTestID('search-operatorhub').find('input').clear();
 
     cy.log('displays "Clear All Filters" link when text filter removes all Operators from display');
     cy.log('enter a search query that will return zero results');

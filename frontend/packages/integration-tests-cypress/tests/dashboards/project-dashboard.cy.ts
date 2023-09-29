@@ -1,5 +1,4 @@
 import { checkErrors, testName } from '../../support';
-import { nav } from '../../views/nav';
 
 describe('Project dashboard', () => {
   before(() => {
@@ -8,7 +7,6 @@ describe('Project dashboard', () => {
   });
 
   beforeEach(() => {
-    cy.initAdmin();
     cy.visit(`/k8s/cluster/projects/${testName}`);
   });
 

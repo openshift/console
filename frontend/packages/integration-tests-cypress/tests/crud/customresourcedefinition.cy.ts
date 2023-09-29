@@ -4,7 +4,6 @@ import { CustomResourceDefinitionKind } from '@console/internal/module/k8s';
 import { checkErrors, testName } from '../../support';
 import { errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
-import { nav } from '../../views/nav';
 import * as yamlEditor from '../../views/yaml-editor';
 
 describe('CustomResourceDefinitions', () => {
@@ -76,17 +75,12 @@ describe('CustomResourceDefinitions', () => {
     cy.createProjectWithCLI(testName);
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it('creates, displays, and deletes `CustomResourceDefinitions` and creates a new custom resource instance', () => {

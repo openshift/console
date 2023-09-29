@@ -5,7 +5,6 @@ import { detailsPage } from '../../views/details-page';
 import { errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
-import { nav } from '../../views/nav';
 import * as yamlEditor from '../../views/yaml-editor';
 
 const WORKLOAD_NAME = `filter-${testName}`;
@@ -14,7 +13,6 @@ const WORKLOAD_LABEL = `lbl-filter=${testName}`;
 describe('Filtering and Searching', () => {
   before(() => {
     cy.login();
-    cy.initAdmin();
     cy.createProjectWithCLI(testName);
     cy.visit(`/k8s/ns/${testName}/deployments`);
     listPage.clickCreateYAMLbutton();
@@ -34,10 +32,6 @@ describe('Filtering and Searching', () => {
     });
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
@@ -51,7 +45,6 @@ describe('Filtering and Searching', () => {
     modal.submit();
     modal.shouldBeClosed();
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it('filters Pod from object detail', () => {

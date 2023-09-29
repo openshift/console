@@ -24,17 +24,12 @@ describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
     cy.createProjectWithCLI(testName);
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it(`Installs ${testOperator.name} operator in test namespace and creates ${testOperand.name} operand instance`, () => {

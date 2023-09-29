@@ -30,10 +30,6 @@ describe(`${crd} CRD`, () => {
     checkErrors();
   });
 
-  after(() => {
-    cy.logout();
-  });
-
   it(`creates, displays, modifies, and deletes a new ${crd} instance`, () => {
     cy.visit(`/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`);
     listPage.rows.shouldBeLoaded();

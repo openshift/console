@@ -1,16 +1,15 @@
 import { safeLoad, safeDump } from 'js-yaml';
 import { defaultsDeep } from 'lodash';
 import { checkErrors, testName } from '../../support';
+import { projectDropdown } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
 import { errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
 import * as yamlEditor from '../../views/yaml-editor';
-import { projectDropdown } from '../../views/common';
 
 const createExampleConfigMapInstance = () => {
-  cy.initAdmin();
   nav.sidenav.clickNavLink(['Workloads', 'ConfigMaps']);
   cy.byLegacyTestID('resource-title').should('have.text', 'ConfigMaps');
   projectDropdown.selectProject(testName);
@@ -81,7 +80,6 @@ describe('Annotations', () => {
   after(() => {
     deleteExampleConfigMapInstance();
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it(`Creates, Edits, Updates, and Deletes Annotations`, () => {

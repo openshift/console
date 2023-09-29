@@ -112,10 +112,6 @@ describe('Roles and RoleBindings', () => {
     createExampleRoleBindings();
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
@@ -123,7 +119,6 @@ describe('Roles and RoleBindings', () => {
   after(() => {
     deleteClusterExamples();
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   const allProjectsDropdownLabel = 'All Projects';

@@ -97,7 +97,6 @@ describe('Quotas', () => {
   after(() => {
     deleteClusterExamples();
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it(`'All Projects' shows ResourceQuotas`, () => {

@@ -83,5 +83,6 @@ module.exports = (on, config) => {
   config.env.BRIDGE_HTPASSWD_USERNAME = process.env.BRIDGE_HTPASSWD_USERNAME;
   config.env.BRIDGE_HTPASSWD_PASSWORD = process.env.BRIDGE_HTPASSWD_PASSWORD;
   config.env.BRIDGE_KUBEADMIN_PASSWORD = process.env.BRIDGE_KUBEADMIN_PASSWORD;
+  config.env.OAUTH_BASE_ADDRESS = process.env.OAUTH_BASE_ADDRESS;
   return config;
 };

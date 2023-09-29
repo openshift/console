@@ -38,10 +38,6 @@ describe('Create key/value secrets', () => {
   });
 
   beforeEach(() => {
-    cy.initAdmin();
-  });
-
-  beforeEach(() => {
     // ensure the test project is selected to avoid flakes
     cy.visit(`/k8s/cluster/projects/${testName}`);
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
@@ -61,7 +57,6 @@ describe('Create key/value secrets', () => {
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it(`Validate create and edit of a key/value secret whose value is a binary file`, () => {

@@ -1,5 +1,6 @@
 import { checkErrors } from '../../support';
 import { detailsPage } from '../../views/details-page';
+import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { nav } from '../../views/nav';
 
@@ -8,16 +9,8 @@ describe('Visiting other routes', () => {
     cy.login();
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
-  });
-
-  after(() => {
-    cy.logout();
   });
 
   const otherRoutes: { path: string; waitFor: () => void }[] = [
@@ -155,10 +148,6 @@ describe('Test perspective query parameters', () => {
     checkErrors();
   });
 
-  after(() => {
-    cy.logout();
-  });
-
   it('tests Developer query parameter', () => {
     cy.visit('/topology/all-namespaces', {
       qs: {
@@ -167,10 +156,12 @@ describe('Test perspective query parameters', () => {
       },
     });
     nav.sidenav.switcher.shouldHaveText('Developer');
+    guidedTour.close();
   });
   it('tests Administrator query parameter', () => {
     nav.sidenav.switcher.changePerspectiveTo('Developer');
     nav.sidenav.switcher.shouldHaveText('Developer');
+    guidedTour.close();
     cy.visit('/dashboards', {
       qs: {
         perspective: 'admin',

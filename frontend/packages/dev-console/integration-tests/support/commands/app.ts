@@ -22,7 +22,7 @@ declare global {
       dropdownSwitchTo(dropdownMenuOption: string): Chainable<Element>;
       isDropdownVisible(): Chainable<Element>;
       checkErrors(): Chainable<Element>;
-      waitUntilEnabled(selector: string): Chainable<any>;
+      waitUntilEnabled(selector: string): void;
     }
   }
 }

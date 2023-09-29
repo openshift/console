@@ -11,17 +11,12 @@ describe('Namespace', () => {
     cy.createProjectWithCLI(testName);
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   const newName = `${testName}-ns`;

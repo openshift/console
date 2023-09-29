@@ -17,7 +17,6 @@ describe(`Interacting with CatalogSource page`, () => {
   });
 
   beforeEach(() => {
-    cy.initAdmin();
     cy.log('navigate to Catalog Source page');
     nav.sidenav.clickNavLink(['Administration', 'Cluster Settings']);
     cy.byLegacyTestID('horizontal-link-Configuration').click();
@@ -37,7 +36,6 @@ describe(`Interacting with CatalogSource page`, () => {
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it(`renders details about the ${managedCatalogSource.name} catalog source`, () => {

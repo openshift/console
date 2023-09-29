@@ -5,7 +5,6 @@ import { detailsPage } from '../../views/details-page';
 import { errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
-import { nav } from '../../views/nav';
 import * as yamlEditor from '../../views/yaml-editor';
 
 const crd = 'ConsoleExternalLogLink';
@@ -22,17 +21,12 @@ describe(`${crd} CRD`, () => {
     cy.createProjectWithCLI(testName);
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it(`creates, displays, modifies, and deletes a new ${crd} instance`, () => {

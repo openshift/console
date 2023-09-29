@@ -1,5 +1,4 @@
 import { checkErrors } from '../../../integration-tests-cypress/support';
-import { nav } from '../../../integration-tests-cypress/views/nav';
 import { operator, GlobalInstalledNamespace, TestOperandProps } from '../views/operator.view';
 
 const testOperator = {
@@ -22,10 +21,6 @@ describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstall
     operator.install(testOperator.name, testOperator.operatorHubCardTestID);
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
@@ -33,7 +28,6 @@ describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstall
   after(() => {
     operator.uninstall(testOperator.name);
     operator.shouldNotExist(testOperator.name);
-    cy.logout();
   });
 
   it(`Globally installs ${testOperator.name} operator in ${GlobalInstalledNamespace} and creates ${testOperand.name} operand`, () => {

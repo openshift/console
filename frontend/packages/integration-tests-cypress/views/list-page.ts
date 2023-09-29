@@ -47,7 +47,7 @@ export const listPage = {
       });
     },
     by: (rowFilter: string) => {
-      cy.get('.pf-c-toolbar__content-section').within(() => {
+      cy.get('[data-test="filter-toolbar"] .pf-c-toolbar__content-section').within(() => {
         cy.byLegacyTestID('filter-dropdown-toggle')
           .find('button')
           .as('filterDropdownToggleButton')
@@ -55,11 +55,8 @@ export const listPage = {
         /* PF Filter dropdown menu items are:
            <li id="cluster">
              <a data-test-row-filter="cluster">
-           Tried cy.get(`[data-test-row-filter="${rowFilter}"]`).click() which found the <a /> but said not clickable due to
-           it's css having 'pointer-events: none'.  Tried ...click({force: true}) which did the click but page not reloaded with
-           '?rowFilter=...'.
          */
-        cy.get(`#${rowFilter}`).click(); // clicking on the <li /> works!
+        cy.get(`#${rowFilter}`).click({ force: true }); // clicking on the <li /> works!
         cy.url().should('include', '?rowFilter');
         cy.get('@filterDropdownToggleButton').click();
       });

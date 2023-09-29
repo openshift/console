@@ -1,15 +1,10 @@
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
-import { nav } from '../../../integration-tests-cypress/views/nav';
 
 describe('Create namespace from install operators', () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
-  });
-
-  beforeEach(() => {
-    cy.initAdmin();
   });
 
   afterEach(() => {
@@ -18,7 +13,6 @@ describe('Create namespace from install operators', () => {
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   const nsName = `${testName}-ns`;

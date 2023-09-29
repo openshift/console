@@ -7,9 +7,14 @@ describe('Auth test', () => {
   const KUBEADMIN_IDP = 'kube:admin';
   const KUBEADMIN_USERNAME = 'kubeadmin';
 
+  beforeEach(() => {
+    // clear any existing sessions
+    Cypress.session.clearAllSavedSessions();
+  });
+
   afterEach(() => {
     checkErrors();
-    cy.logout();
+    Cypress.session.clearAllSavedSessions();
   });
 
   if (Cypress.env('BRIDGE_KUBEADMIN_PASSWORD')) {

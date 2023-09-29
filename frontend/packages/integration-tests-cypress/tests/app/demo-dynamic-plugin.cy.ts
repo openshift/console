@@ -13,7 +13,6 @@ const PLUGIN_PULL_SPEC = Cypress.env('PLUGIN_PULL_SPEC');
 /* The update wait is the value to wait for the poll of /api/check-updates to return with the updated list of plugins
  after the plugin is enabled and loaded. This wait will be longer on ci than when debugging locally. */
 const CHECK_UPDATE_WAIT = 300000;
-const CHECK_UPDATES_ALIAS = 'checkUpdates';
 /*
   These tests are meant to:
     1. show how to test a dynamic plugin using demo as the plugin instance
@@ -94,49 +93,49 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
         if (!isLocalDevEnvironment && PLUGIN_PULL_SPEC) {
           console.log('this is not a local env, setting the pull spec for the deployment');
           deployment.spec.template.spec.containers[0].image = PLUGIN_PULL_SPEC;
+          const service = yamlManifest.find(({ kind }) => kind === 'Service');
+          const consolePlugin = yamlManifest.find(({ kind }) => kind === 'ConsolePlugin');
+          cy.exec(` echo '${JSON.stringify(deployment)}' | oc create -f -`, {
+            failOnNonZeroExit: false,
+          })
+            .its('stdout')
+            .should('contain', 'created')
+            .then(() =>
+              cy
+                .exec(` echo '${JSON.stringify(service)}' | oc create -f -`, {
+                  failOnNonZeroExit: false,
+                })
+                .then((result) => {
+                  console.log('Error: ', result.stderr);
+                  console.log('Success: ', result.stdout);
+                })
+                .its('stdout')
+                .should('contain', 'created'),
+            )
+            .then(() =>
+              cy
+                .exec(` echo '${JSON.stringify(consolePlugin)}' | oc create -f -`, {
+                  failOnNonZeroExit: false,
+                })
+                .then((result) => {
+                  console.log('Error: ', result.stderr);
+                  console.log('Success: ', result.stdout);
+                })
+                .its('stdout')
+                .should('contain', 'created'),
+            )
+            .then(() => {
+              cy.visit(`/k8s/ns/${PLUGIN_NAME}/deployments`);
+              listPage.rows.shouldBeLoaded();
+              listPage.filter.byName(PLUGIN_NAME);
+              listPage.rows.shouldExist(PLUGIN_NAME);
+              if (!isLocalDevEnvironment && PLUGIN_PULL_SPEC) {
+                enableDemoPlugin(true);
+              }
+            });
         } else {
           console.log('this IS A local env, not setting the pull spec for the deployment');
         }
-        const service = yamlManifest.find(({ kind }) => kind === 'Service');
-        const consolePlugin = yamlManifest.find(({ kind }) => kind === 'ConsolePlugin');
-        cy.exec(` echo '${JSON.stringify(deployment)}' | oc create -f -`, {
-          failOnNonZeroExit: false,
-        })
-          .its('stdout')
-          .should('contain', 'created')
-          .then(() =>
-            cy
-              .exec(` echo '${JSON.stringify(service)}' | oc create -f -`, {
-                failOnNonZeroExit: false,
-              })
-              .then((result) => {
-                console.log('Error: ', result.stderr);
-                console.log('Success: ', result.stdout);
-              })
-              .its('stdout')
-              .should('contain', 'created'),
-          )
-          .then(() =>
-            cy
-              .exec(` echo '${JSON.stringify(consolePlugin)}' | oc create -f -`, {
-                failOnNonZeroExit: false,
-              })
-              .then((result) => {
-                console.log('Error: ', result.stderr);
-                console.log('Success: ', result.stdout);
-              })
-              .its('stdout')
-              .should('contain', 'created'),
-          )
-          .then(() => {
-            cy.visit(`/k8s/ns/${PLUGIN_NAME}/deployments`);
-            listPage.rows.shouldBeLoaded();
-            listPage.filter.byName(PLUGIN_NAME);
-            listPage.rows.shouldExist(PLUGIN_NAME);
-            if (!isLocalDevEnvironment && PLUGIN_PULL_SPEC) {
-              enableDemoPlugin(true);
-            }
-          });
       });
     });
 
@@ -149,7 +148,6 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
         enableDemoPlugin(false);
       }
       cy.deleteProjectWithCLI(PLUGIN_NAME);
-      cy.logout();
     });
 
     it(`test Dashboard Card nav item`, () => {

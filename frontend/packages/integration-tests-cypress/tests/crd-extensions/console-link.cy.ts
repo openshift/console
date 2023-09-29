@@ -44,10 +44,6 @@ describe(`${crd} CRD`, () => {
     checkErrors();
   });
 
-  after(() => {
-    cy.logout();
-  });
-
   testObjs.forEach(
     ({ name: instanceName, dropdownMenuName, dropdownToggle, menuLinkLocation, menuLinkText }) => {
       it(`creates, displays, and deletes a new ${crd} ${dropdownMenuName} instance`, () => {

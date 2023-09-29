@@ -17,6 +17,7 @@ module.exports = defineConfig({
     openMode: 0,
   },
   e2e: {
+    // TODO: see https://issues.redhat.com/browse/CONSOLE-3781
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
@@ -26,5 +27,6 @@ module.exports = defineConfig({
     specPattern: 'tests/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: '../../integration-tests-cypress/support/index.ts',
     baseUrl: 'http://localhost:9000',
+    testIsolation: false,
   },
 });

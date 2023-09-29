@@ -9,10 +9,6 @@ import './admin';
 
 Cypress.Cookies.debug(true);
 
-Cypress.Cookies.defaults({
-  preserve: ['openshift-session-token', 'csrf-token'],
-});
-
 Cypress.on('uncaught:exception', (err) => {
   console.error('Uncaught exception', err);
   return true; // test fails

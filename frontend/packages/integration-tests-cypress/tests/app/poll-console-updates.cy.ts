@@ -61,10 +61,6 @@ describe('PollConsoleUpdates Test', () => {
     checkErrors();
   });
 
-  after(() => {
-    cy.logout();
-  });
-
   it('triggers the console update toast when consoleCommit changes', () => {
     loadApp();
     cy.intercept(CHECK_UPDATES_URL, UPDATES_DEFAULT).as(CHECK_UPDATES_ALIAS);

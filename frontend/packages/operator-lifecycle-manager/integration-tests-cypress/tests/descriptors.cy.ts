@@ -4,13 +4,13 @@ import { testCR, testCRD, testCSV } from '../mocks';
 
 describe('Using OLM descriptor components', () => {
   before(() => {
-    cy.login();
     cy.createProjectWithCLI(testName);
     create(testCRD);
     create(testCSV);
   });
 
   beforeEach(() => {
+    cy.login();
     cy.initAdmin();
   });
 
@@ -24,7 +24,6 @@ describe('Using OLM descriptor components', () => {
     cy.exec(`oc delete crd ${testCRD.metadata.name}`);
     cy.exec(`oc delete -n ${testName} clusterserviceversion ${testCSV.metadata.name}`);
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   const ARRAY_FIELD_GROUP_ID = 'root_spec_arrayFieldGroup';

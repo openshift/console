@@ -23,10 +23,6 @@ describe('Add storage is applicable for all workloads', () => {
     cy.createProjectWithCLI(testName);
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
@@ -42,7 +38,6 @@ describe('Add storage is applicable for all workloads', () => {
       }
     });
     cy.deleteProjectWithCLI(testName, 300000); // increase timeout to allow cascading deletes above to complete
-    cy.logout();
   });
 
   resourceObjs.forEach((resourceType) => {

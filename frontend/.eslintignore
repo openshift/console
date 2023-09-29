@@ -9,5 +9,4 @@ public/lib
 Godeps
 @types
 dynamic-demo-plugin
-**/integration-tests
-**/integration-tests-cypress
+integration-tests

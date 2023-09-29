@@ -15,30 +15,7 @@ import {
   ResourceIcon,
   TableColumn,
 } from '@openshift-console/dynamic-plugin-sdk';
-
-const columns: TableColumn<K8sResourceCommon>[] = [
-  {
-    title: 'Name',
-    id: 'name',
-  },
-  {
-    title: 'Namespace',
-    id: 'namespace',
-  },
-];
-
-const PodRow: React.FC<RowProps<K8sResourceCommon>> = ({ obj, activeColumnIDs }) => {
-  return (
-    <>
-      <TableData id={columns[0].id} activeColumnIDs={activeColumnIDs}>
-        <ResourceLink kind="Pod" name={obj.metadata.name} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData id={columns[1].id} activeColumnIDs={activeColumnIDs}>
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-    </>
-  );
-};
+import { useTranslation } from 'react-i18next';
 
 type PodsTableProps = {
   data: K8sResourceCommon[];
@@ -48,6 +25,32 @@ type PodsTableProps = {
 };
 
 const PodsTable: React.FC<PodsTableProps> = ({ data, unfilteredData, loaded, loadError }) => {
+  const { t } = useTranslation();
+
+  const columns: TableColumn<K8sResourceCommon>[] = [
+    {
+      title: t('plugin__console-demo-plugin~Name'),
+      id: 'name',
+    },
+    {
+      title: t('plugin__console-demo-plugin~Namespace'),
+      id: 'namespace',
+    },
+  ];
+
+  const PodRow: React.FC<RowProps<K8sResourceCommon>> = ({ obj, activeColumnIDs }) => {
+    return (
+      <>
+        <TableData id={columns[0].id} activeColumnIDs={activeColumnIDs}>
+          <ResourceLink kind="Pod" name={obj.metadata.name} namespace={obj.metadata.namespace} />
+        </TableData>
+        <TableData id={columns[1].id} activeColumnIDs={activeColumnIDs}>
+          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        </TableData>
+      </>
+    );
+  };
+
   return (
     <VirtualizedTable<K8sResourceCommon>
       data={data}
@@ -92,6 +95,7 @@ const ListPage = () => {
     isList: true,
     namespaced: true,
   });
+  const { t } = useTranslation();
 
   const [data, filteredData, onFilterChange] = useListPageFilter(pods, filters, {
     name: { selected: ['openshift'] },
@@ -99,8 +103,8 @@ const ListPage = () => {
 
   return (
     <>
-      <ListPageHeader title="OpenShift Pods List Page">
-        <ListPageCreate groupVersionKind="Pod">Create Pod</ListPageCreate>
+      <ListPageHeader title={t('plugin__console-demo-plugin~OpenShift Pods List Page')}>
+        <ListPageCreate groupVersionKind="Pod">{t('plugin__console-demo-plugin~Create Pod')}</ListPageCreate>
       </ListPageHeader>
       <ListPageBody>
         <ListPageFilter
@@ -117,7 +121,7 @@ const ListPage = () => {
         />
       </ListPageBody>
       <ListPageBody>
-        <p>Sample ResourceIcon</p>
+        <p>{t('plugin__console-demo-plugin~Sample ResourceIcon')}</p>
         <ResourceIcon kind="Pod" />
       </ListPageBody>
     </>

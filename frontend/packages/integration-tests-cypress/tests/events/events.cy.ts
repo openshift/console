@@ -1,6 +1,4 @@
 import { testName, checkErrors } from '../../support';
-import { guidedTour } from '../../views/guided-tour';
-import { nav } from '../../views/nav';
 
 const name = `${testName}-event-test-pod`;
 const testpod = {
@@ -43,10 +41,6 @@ describe('Events', () => {
     }
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
@@ -58,7 +52,6 @@ describe('Events', () => {
       console.error(`\nFailed to delete pod ${name}:\n${error}`);
     }
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it('event view displays created pod', () => {

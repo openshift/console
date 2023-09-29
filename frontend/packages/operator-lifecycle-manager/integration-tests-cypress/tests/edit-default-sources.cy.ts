@@ -15,10 +15,6 @@ describe('Create namespace from install operators', () => {
     checkErrors();
   });
 
-  after(() => {
-    cy.logout();
-  });
-
   it('disables default catalog sources from operatorHub details page', () => {
     cy.log('navigate to operatorHub page');
     cy.visit(`/settings/cluster`);

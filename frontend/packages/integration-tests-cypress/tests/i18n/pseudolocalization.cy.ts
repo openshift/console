@@ -8,16 +8,8 @@ describe('Localization', () => {
     cy.login();
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
-  });
-
-  after(() => {
-    cy.logout();
   });
 
   it('pseudolocalizes masthead', () => {
@@ -55,7 +47,8 @@ describe('Localization', () => {
     });
   });
 
-  it('pseudolocalizes monitoring pages', () => {
+  // disabled as monitoring has moved to a separate repo
+  xit('pseudolocalizes monitoring pages', () => {
     const monitoringPages = ['alerts', 'silences', 'alertrules'];
     monitoringPages.forEach((page) => {
       cy.visit(`/monitoring/${page}?pseudolocalization=true&lng=en`);

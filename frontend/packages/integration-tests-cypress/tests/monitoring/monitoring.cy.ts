@@ -29,17 +29,12 @@ describe('Monitoring: Alerts', () => {
     cy.createProjectWithCLI(testName);
   });
 
-  beforeEach(() => {
-    cy.initAdmin();
-  });
-
   afterEach(() => {
     checkErrors();
   });
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   it('displays and filters the Alerts list page, links to detail pages', () => {

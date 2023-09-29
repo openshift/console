@@ -8,7 +8,6 @@ import { errorMessage } from '../../views/form';
 import { listPage, ListPageSelector } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
-import { init } from 'i18next';
 
 type TestDefinition = {
   kind: string;
@@ -30,7 +29,6 @@ describe('Kubernetes resource CRUD operations', () => {
 
   after(() => {
     cy.deleteProjectWithCLI(testName);
-    cy.logout();
   });
 
   const k8sObjs = OrderedMap<string, TestDefinition>()
@@ -133,10 +131,6 @@ describe('Kubernetes resource CRUD operations', () => {
     }
     describe(kind, () => {
       const name = `${testName}-${_.kebabCase(kind)}`;
-
-      beforeEach(() => {
-        cy.initAdmin();
-      });
 
       it(`creates the resource instance`, () => {
         cy.visit(
