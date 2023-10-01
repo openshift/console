@@ -88,6 +88,17 @@
     }
   },
   {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "CONSOLE_QUICKSTARTS",
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsoleQuickStart"
+      }
+    }
+  },
+  {
     "type": "console.context-provider",
     "properties": {
       "provider": { "$codeRef": "tourContext.TourContextProvider" },

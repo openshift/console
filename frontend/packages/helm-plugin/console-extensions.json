@@ -129,6 +129,9 @@
         "/k8s/cluster/helmchartrepositories/:name/form"
       ],
       "component": { "$codeRef": "helmComponents.HelmChartRepositoryForm" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
     }
   },
   {
@@ -147,9 +150,6 @@
   },
   {
     "type": "dev-console.add/action",
-    "flags": {
-      "required": ["OPENSHIFT_HELM", "DEVELOPER_CATALOG", "HELM_CHARTS_CATALOG_TYPE"]
-    },
     "properties": {
       "id": "helm",
       "groupId": "developer-catalog",
@@ -157,6 +157,9 @@
       "label": "%helm-plugin~Helm Chart%",
       "description": "%helm-plugin~Browse the catalog to discover and install Helm Charts%",
       "icon": { "$codeRef": "helmUtils.helmCatalogIconSVG" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM", "DEVELOPER_CATALOG", "HELM_CHARTS_CATALOG_TYPE"]
     }
   },
   {
@@ -171,6 +174,9 @@
       "accessReview": [
         { "group": "helm.openshift.io", "resource": "ProjectHelmChartRepository", "verb": "create" }
       ]
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
     }
   },
   {
