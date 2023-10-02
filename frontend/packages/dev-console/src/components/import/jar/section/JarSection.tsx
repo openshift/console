@@ -66,6 +66,8 @@ const JarSection: React.FunctionComponent = () => {
         filename={fileName}
         label={t('devconsole~JAR file')}
         filenamePlaceholder={t('devconsole~Drag a file here or browse to upload')}
+        browseButtonText={t('devconsole~Browse...')}
+        clearButtonText={t('devconsole~Clear')}
         onChange={updatedJarFile}
         hideDefaultPreview
         dropzoneProps={{

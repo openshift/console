@@ -499,6 +499,8 @@
   "JAR": "JAR",
   "JAR file": "JAR file",
   "Drag a file here or browse to upload": "Drag a file here or browse to upload",
+  "Browse...": "Browse...",
+  "Clear": "Clear",
   "Optional Java arguments": "Optional Java arguments",
   "Optional Java arguments are saved as JAVA_ARGS environment variable to customize your application.": "Optional Java arguments are saved as JAVA_ARGS environment variable to customize your application.",
   "JAVA_ARGS": "JAVA_ARGS",
