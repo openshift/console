@@ -57,6 +57,7 @@
   "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.": "웹 콘솔에 대한 업데이트가 있습니다. 변경 사항이 저장되었는지 확인하고 브라우저를 새로 고침하여 최신 버전에 액세스하십시오.",
   "Refresh web console": "웹 콘솔 새로 고침",
   "Start build": "빌드 시작",
+  "Start last run": "마지막 실행 시작",
   "BuildConfig details": "빌드 설정 세부 정보",
   "hours": "시간",
   "hour": "hour",

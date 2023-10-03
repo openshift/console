@@ -57,6 +57,7 @@
   "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.": "Web コンソールへの更新があります。変更を保存してから、ブラウザーをリフレッシュして最新バージョンにアクセスします。",
   "Refresh web console": "Web コンソールの更新",
   "Start build": "ビルドの開始",
+  "Start last run": "最終実行の開始",
   "BuildConfig details": "BuildConfig の詳細",
   "hours": "時間",
   "hour": "hour",
