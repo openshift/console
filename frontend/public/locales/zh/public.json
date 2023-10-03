@@ -57,6 +57,7 @@
   "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.": "Web 控制台已更新。请确保已保存所有更改并刷新浏览器以访问最新版本。",
   "Refresh web console": "刷新 Web 控制台",
   "Start build": "开始构建",
+  "Start last run": "启动最后的运行",
   "BuildConfig details": "构建配置详情",
   "hours": "小时",
   "hour": "hour",
