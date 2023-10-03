@@ -130,7 +130,7 @@ const persistProviderConfigMap = async (
   config: ConnectionFormContextValues,
   cloudProviderConfig?: ConfigMap,
 ): Promise<string | undefined> => {
-  const { vcenter, datacenter, defaultDatastore, folder } = config;
+  const { vcenter, datacenter, defaultDatastore, folder, vCenterCluster } = config;
 
   if (cloudProviderConfig) {
     const configIniString = mergeCloudProviderConfig(
@@ -172,6 +172,7 @@ server = "${vcenter}"
 datacenter = "${datacenter}"
 default-datastore = "${defaultDatastore}"
 folder = "${folder}"
+resourcepool-path = "/${datacenter}/host/${vCenterCluster}/Resources"
 
 [VirtualCenter "${vcenter}"]
 datacenters = "${datacenter}"
