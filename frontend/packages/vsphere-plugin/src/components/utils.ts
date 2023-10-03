@@ -27,7 +27,13 @@ export const decodeBase64 = (data: string) => Buffer.from(data, 'base64').toStri
 
 export const mergeCloudProviderConfig = (
   existingIni: string,
-  { vcenter, datacenter, defaultDatastore: defaultdatastore, folder }: ConnectionFormContextValues,
+  {
+    vcenter,
+    datacenter,
+    defaultDatastore: defaultdatastore,
+    folder,
+    vCenterCluster,
+  }: ConnectionFormContextValues,
 ): string => {
   const configIni = decode(existingIni);
 
@@ -42,6 +48,7 @@ export const mergeCloudProviderConfig = (
   configIni.Workspace.datacenter = datacenter;
   configIni.Workspace['default-datastore'] = defaultdatastore;
   configIni.Workspace.folder = folder;
+  configIni.Workspace['resourcepool-path'] = `/${datacenter}/host/${vCenterCluster}/Resources`;
 
   Object.keys(configIni).forEach((k: string) => {
     if (k.startsWith('VirtualCenter')) {
