@@ -7,30 +7,55 @@ import { TektonResourceLabel } from '../pipelines/const';
 
 export const useTaskRuns = (
   namespace: string,
-  pipelineRunName: string,
-): [TaskRunKind[], boolean, unknown] =>
-  useK8sWatchResource<TaskRunKind[]>({
-    kind: referenceForModel(TaskRunModel),
-    namespace,
-    selector: {
-      matchLabels: {
-        [TektonResourceLabel.pipelinerun]: pipelineRunName,
-      },
-    },
-    isList: true,
-  });
-
-export const getTaskRuns = async (namespace: string, pipelineRunName: string) => {
-  const taskRuns = await k8sListResource({
-    model: TaskRunModel,
-    queryParams: {
-      ns: namespace,
-      labelSelector: {
-        matchLabels: {
-          [TektonResourceLabel.pipelinerun]: pipelineRunName,
+  pipelineRunName?: string,
+): [TaskRunKind[], boolean, unknown] => {
+  const taskRunResource = pipelineRunName
+    ? {
+        kind: referenceForModel(TaskRunModel),
+        namespace,
+        selector: {
+          matchLabels: {
+            [TektonResourceLabel.pipelinerun]: pipelineRunName,
+          },
         },
-      },
-    },
-  });
+        isList: true,
+      }
+    : {
+        kind: referenceForModel(TaskRunModel),
+        namespace,
+        isList: true,
+      };
+  return useK8sWatchResource<TaskRunKind[]>(taskRunResource);
+};
+
+export const getTaskRuns = async (namespace: string, pipelineRunName?: string) => {
+  const taskRunResource = pipelineRunName
+    ? {
+        model: TaskRunModel,
+        queryParams: {
+          ns: namespace,
+          labelSelector: {
+            matchLabels: {
+              [TektonResourceLabel.pipelinerun]: pipelineRunName,
+            },
+          },
+        },
+      }
+    : {
+        model: TaskRunModel,
+        queryParams: {
+          ns: namespace,
+        },
+      };
+  const taskRuns = await k8sListResource(taskRunResource);
   return taskRuns;
+};
+
+export const getTaskRunsOfPipelineRun = (
+  taskRuns: TaskRunKind[],
+  pipelineRunName: string,
+): TaskRunKind[] => {
+  return taskRuns.filter(
+    (taskRun) => taskRun.metadata?.labels[TektonResourceLabel.pipelinerun] === pipelineRunName,
+  );
 };
