@@ -18,3 +18,10 @@
 .pipeline-metrics-empty-state {
   background-color: var(--pf-global--BackgroundColor--200);
 }
+
+.pipeline-metrics {
+  &__pipelinerun-taskrun-card-body {
+    //reduce padding pipelinerun taskrun duration card to provide extra space for the legends
+    padding: 10px 15px 10px 10px;
+  }
+}

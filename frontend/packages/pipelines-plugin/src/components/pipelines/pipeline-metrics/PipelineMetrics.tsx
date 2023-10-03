@@ -70,7 +70,7 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
   }
 
   return (
-    <Stack hasGutter key={metricsLevel}>
+    <Stack hasGutter key={metricsLevel} className="pipeline-metrics">
       <StackItem className="pipeline-metrics-dashboard__toolbar">
         {hasUpdatePermission && metricsLevel === PipelineMetricsLevel.PIPELINE_TASK_LEVEL && (
           <Grid hasGutter style={{ marginBottom: 'var(--pf-global--spacer--lg)' }}>
@@ -160,7 +160,7 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
                   <CardHeader>
                     <CardTitle>{t('pipelines-plugin~TaskRun Duration')}</CardTitle>
                   </CardHeader>
-                  <CardBody>
+                  <CardBody className="pipeline-metrics__pipelinerun-taskrun-card-body">
                     <PipelineRunTaskRunGraph
                       interval={interval}
                       timespan={timespan}
