@@ -25,11 +25,6 @@ describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstall
     checkErrors();
   });
 
-  after(() => {
-    operator.uninstall(testOperator.name);
-    operator.shouldNotExist(testOperator.name);
-  });
-
   it(`Globally installs ${testOperator.name} operator in ${GlobalInstalledNamespace} and creates ${testOperand.name} operand`, () => {
     operator.installedSucceeded(testOperator.name);
     operator.navToDetailsPage(testOperator.name);
@@ -43,5 +38,8 @@ describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstall
 
     operator.deleteOperand(testOperator.name, testOperand);
     operator.operandShouldNotExist(testOperator.name, testOperand);
+
+    operator.uninstall(testOperator.name);
+    operator.shouldNotExist(testOperator.name);
   });
 });

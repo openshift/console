@@ -114,8 +114,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const isSubmitFinished =
     !isSubmitInProgress && (!deleteOperands || operandsDeleteFinished) && operatorUninstallFinished;
 
-  const hasSubmitErrors =
-    operandDeletionErrors.length > 0 || operatorUninstallErrorMessage.length > 0;
+  const hasSubmitErrors = operandDeletionErrors.length > 0 || operatorUninstallErrorMessage !== '';
 
   // Skip loading the operands if we are not going to delete them if they opted Out
   const optOutAnnotation = 'console.openshift.io/disable-operand-delete';
@@ -144,7 +143,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         });
         return true;
       } catch (err) {
-        if (err.json.code !== 404) {
+        if (err.response.status !== 404) {
           setClusterServiceVersionExistsError(err.message);
         }
         return false;
