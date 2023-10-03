@@ -16,7 +16,7 @@ MAINTAINER Ed Rooth - CoreOS
 RUN go install github.com/jstemmer/go-junit-report@latest
 
 ### Install NodeJS and yarn
-ENV NODE_VERSION="v14.21.3"
+ENV NODE_VERSION="v18.18.1"
 ENV YARN_VERSION="v1.22.10"
 
 # yarn needs a home writable by any user running the container

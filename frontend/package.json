@@ -266,7 +266,7 @@
     "browser-env": "3.x",
     "cache-loader": "^4.1.0",
     "chalk": "2.4.x",
-    "chromedriver": "90.x",
+    "chromedriver": "118.x",
     "circular-dependency-plugin": "5.x",
     "comment-json": "4.x",
     "copy-webpack-plugin": "^5.1.1",
@@ -327,7 +327,7 @@
     "webpack-virtual-modules": "^0.4.3"
   },
   "engines": {
-    "node": ">=14.x"
+    "node": ">=18.x"
   },
   "resolutions": {
     "@types/react-router": "^5.1.20",

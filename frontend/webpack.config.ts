@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import * as _crypto from 'crypto';
 
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
@@ -30,6 +31,14 @@ const ANALYZE_BUNDLE = process.env.ANALYZE_BUNDLE || 'false';
 const REACT_REFRESH = process.env.REACT_REFRESH;
 const OPENSHIFT_CI = process.env.OPENSHIFT_CI;
 const WDS_PORT = 8080;
+
+// A workaround fix for the breaking change in Node.js v18 due to the change in hashing algorithm.
+// This code change override the default webpack v4 default hashing algorithm -"md4".
+// This change can be remove when console UI update webpack to version 5 in the future.
+const hash = _crypto.createHash;
+Object.assign(_crypto, {
+  createHash: (): _crypto.Hash => hash('sha256'),
+});
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({
