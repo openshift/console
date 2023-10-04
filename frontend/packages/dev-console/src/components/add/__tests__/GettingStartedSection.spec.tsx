@@ -45,7 +45,7 @@ describe('GettingStartedSection', () => {
     expect(wrapper.find(GettingStartedGrid).props().children.length).toEqual(3);
   });
 
-  it('should render nothing when useFlags(FLAGS.OPENSHIFT) return false', () => {
+  it('should render nothing when useFlag(FLAGS.OPENSHIFT) return false', () => {
     useFlagMock.mockReturnValue(false);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
