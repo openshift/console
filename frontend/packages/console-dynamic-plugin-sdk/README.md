@@ -11,9 +11,9 @@ ranges.
 
 ## Related Documentation
 
-_[Extension Documentation](./docs/console-extensions.md)_ - Detailed documentation of every available console extension point.
+_[Extension Documentation](https://github.com/openshift/console/blob/ffdd759f8f431a81be5f9b34a3290ef1b7e077ff/frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md)_ - Detailed documentation of every available console extension point.
 
-_[API Documentation](./docs/api.md)_ - Detailed documentation of hooks, components, and other APIs provided by this package.
+_[API Documentation](https://github.com/openshift/console/blob/ffdd759f8f431a81be5f9b34a3290ef1b7e077ff/frontend/packages/console-dynamic-plugin-sdk/docs/api.md)_ - Detailed documentation of hooks, components, and other APIs provided by this package.
 
 _[OpenShift Console Dynamic Plugins feature page](https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md)_ - A high level overview of dynamic plugins in relation to OLM operators and cluster administration.
 
