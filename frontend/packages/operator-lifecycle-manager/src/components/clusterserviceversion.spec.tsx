@@ -300,7 +300,11 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     wrapper = shallow(
       <ClusterServiceVersionDetails
         obj={_.cloneDeep(testClusterServiceVersion)}
-        subscriptions={testSubscriptions}
+        customData={{
+          subscriptions: testSubscriptions,
+          subscription: testSubscription,
+          subscriptionsLoaded: true,
+        }}
       />,
     );
   });
@@ -427,7 +431,11 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     wrapper = shallow(
       <ClusterServiceVersionDetails
         obj={emptyTestClusterServiceVersion}
-        subscriptions={testSubscriptions}
+        customData={{
+          subscriptions: testSubscriptions,
+          subscription: testSubscription,
+          subscriptionsLoaded: true,
+        }}
       />,
     );
     expect(emptyTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(0);
@@ -445,7 +453,11 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     wrapper = shallow(
       <ClusterServiceVersionDetails
         obj={duplicateTestClusterServiceVersion}
-        subscriptions={testSubscriptions}
+        customData={{
+          subscriptions: testSubscriptions,
+          subscription: testSubscription,
+          subscriptionsLoaded: true,
+        }}
       />,
     );
     expect(duplicateTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(2);
@@ -467,9 +479,12 @@ describe(CSVSubscription.displayName, () => {
     wrapper = shallow(
       <CSVSubscription
         obj={testClusterServiceVersion}
+        customData={{
+          subscriptions: [],
+          subscription: undefined,
+          subscriptionsLoaded: true,
+        }}
         packageManifests={[]}
-        subscriptions={[]}
-        catalogSources={[]}
         installPlans={[]}
       />,
     );
@@ -490,9 +505,12 @@ describe(CSVSubscription.displayName, () => {
     wrapper = shallow(
       <CSVSubscription
         obj={obj}
+        customData={{
+          subscription,
+          subscriptions: [testSubscription, subscription],
+          subscriptionsLoaded: true,
+        }}
         packageManifests={[testPackageManifest]}
-        subscriptions={[testSubscription, subscription]}
-        catalogSources={[testCatalogSource]}
         installPlans={[testInstallPlan]}
       />,
     );
@@ -524,9 +542,12 @@ describe(CSVSubscription.displayName, () => {
       <CSVSubscription
         obj={obj}
         packageManifests={[testPackageManifest, otherPkg]}
-        subscriptions={[testSubscription, subscription]}
-        catalogSources={[testCatalogSource]}
         installPlans={[testInstallPlan]}
+        customData={{
+          subscription,
+          subscriptionsLoaded: true,
+          subscriptions: [testSubscription, subscription],
+        }}
       />,
     );
 
