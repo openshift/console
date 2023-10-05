@@ -46,6 +46,7 @@ import {
 import { ReplicaSetsPage } from './replicaset';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { VerticalPodAutoscalerRecommendations } from '@console/app/src/components/vpa/VerticalPodAutoscalerRecommendations';
 
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
 const { ModifyCount, AddStorage, common } = Kebab.factory;
@@ -141,6 +142,7 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
       </DetailsItem>
       <RuntimeClass obj={deployment} />
       <PodDisruptionBudgetField obj={deployment} />
+      <VerticalPodAutoscalerRecommendations obj={deployment} />
     </dl>
   );
 };
