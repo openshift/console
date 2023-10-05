@@ -139,6 +139,7 @@ export type ClusterServiceVersionKind = {
   status?: {
     phase: ClusterServiceVersionPhase;
     reason: CSVConditionReason;
+    message?: string;
     requirementStatus?: RequirementStatus[];
   };
 } & K8sResourceKind;

@@ -107,7 +107,7 @@ import { useClusterServiceVersion } from '../utils/useClusterServiceVersion';
 import { useClusterServiceVersionPath } from '../utils/useClusterServiceVersionPath';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { ProvidedAPIsPage, ProvidedAPIPage, ProvidedAPIPageProps } from './operand';
-import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
+import { operatorGroupFor, operatorNamespaceFor, targetNamespacesFor } from './operator-group';
 import { CreateInitializationResourceButton } from './operator-install-page';
 import {
   SourceMissingStatus,
@@ -227,19 +227,28 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
 
 const ManagedNamespaces: React.FC<ManagedNamespacesProps> = ({ obj }) => {
   const { t } = useTranslation();
-  const olmTargetNamespaces = obj?.metadata?.annotations?.['olm.targetNamespaces'] ?? '';
-  const managedNamespaces = olmTargetNamespaces?.split(',') || [];
-
-  if (managedNamespaces.length === 1 && managedNamespaces[0] === '') {
-    return t('olm~All Namespaces');
+  const managedNamespaces = targetNamespacesFor(obj)?.split(',') || [];
+  if (isCopiedCSV(obj)) {
+    return (
+      <>
+        <ResourceLink
+          kind="Namespace"
+          title={obj.metadata.namespace}
+          name={obj.metadata.namespace}
+        />
+        <span className="text-muted">{obj.status.message}</span>
+      </>
+    );
   }
 
   switch (managedNamespaces.length) {
     case 0:
-      return <span className="text-muted">{t('olm~All Namespaces')}</span>;
+      return t('olm~All Namespaces');
     case 1:
-      return (
+      return managedNamespaces[0] ? (
         <ResourceLink kind="Namespace" title={managedNamespaces[0]} name={managedNamespaces[0]} />
+      ) : (
+        t('olm~All Namespaces')
       );
     default:
       return (
@@ -668,20 +677,22 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
     if (obj.kind === 'Subscription') {
       return t('olm~None');
     }
-    const namespaces = obj.metadata.annotations?.['olm.targetNamespaces']?.split(',') || [];
-    if (namespaces.length === 1 && namespaces[0] === '') {
-      return t('olm~All Namespaces');
+
+    if (isCopiedCSV(obj)) {
+      return obj.metadata.namespace;
     }
 
-    switch (namespaces.length) {
+    const targetNamespaces = targetNamespacesFor(obj)?.split(',') ?? [];
+    switch (targetNamespaces.length) {
       case 0:
         return t('olm~All Namespaces');
       case 1:
-        return namespaces[0];
+        return targetNamespaces[0];
       default:
-        return t('olm~{{count}} Namespaces', { count: namespaces.length });
+        return t('olm~{{count}} Namespaces', { count: targetNamespaces.length });
     }
   };
+
   const getOperatorNamespace = (
     obj: ClusterServiceVersionKind | SubscriptionKind,
   ): string | null => {
@@ -942,9 +953,9 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
   const { spec, metadata, status } = props.obj;
   const { subscription } = props.customData;
   const providedAPIs = providedAPIsForCSV(props.obj);
+  // TODO (jon) remove annotation destructuring and use helper functions
   const {
     'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow,
-    'olm.targetNamespaces': olmTargetNamespaces = '',
     'operatorframework.io/initialization-resource': initializationResourceJSON,
   } = metadata.annotations || {};
 
@@ -1105,11 +1116,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   </Popover>
                 </dt>
                 <dd>
-                  {olmTargetNamespaces === '' ? (
-                    t('olm~All Namespaces')
-                  ) : (
-                    <ResourceLink kind="Namespace" name={props.obj.metadata.namespace} />
-                  )}
+                  <ManagedNamespaces obj={props.obj} />
                 </dd>
               </ResourceSummary>
             </div>
