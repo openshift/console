@@ -1911,5 +1911,8 @@
   "Disable": "禁用",
   "default": "默认",
   "Disabled": "禁用",
-  "Enabled": "已启用"
+  "Enabled": "已启用",
+  "Create RoleBinding": "创建角色绑定",
+  "Edit RoleBinding": "编辑角色绑定",
+  "Duplicate RoleBinding": "复制角色绑定"
 }
