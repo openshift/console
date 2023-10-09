@@ -164,11 +164,7 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
       breadcrumbsFor={() => breadcrumbs}
       pages={pages}
       customActionMenu={actionMenu}
-      customData={
-        serviceTypeValue === ServiceTypeValue.Function
-          ? { selectResourcesForName: match.params.name }
-          : undefined
-      }
+      customData={{ selectResourcesForName: match.params.name }}
     />
   );
 };
