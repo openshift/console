@@ -832,6 +832,9 @@
         "href": "metrics"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelineMetrics" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAIL_METRICS_TAB"]
     }
   },
   {
@@ -847,6 +850,9 @@
         "href": "metrics"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelineMetrics" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAIL_METRICS_TAB"]
     }
   }
 ]
