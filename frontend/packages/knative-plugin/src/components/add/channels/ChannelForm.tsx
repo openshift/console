@@ -84,7 +84,9 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
         }),
       );
       setFieldTouched('yamlData', true);
-      validateForm();
+      setTimeout(() => {
+        validateForm();
+      }, 0);
     },
     [setErrors, setStatus, setFieldValue, setFieldTouched, values.formData, validateForm],
   );
