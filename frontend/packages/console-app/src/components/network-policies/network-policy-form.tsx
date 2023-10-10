@@ -19,6 +19,7 @@ import {
   ExternalLink,
   getNetworkPolicyDocURL,
   history,
+  isManaged,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
 import { NetworkPolicyModel } from '@console/internal/models';
@@ -217,13 +218,15 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
               <p>
                 {t('Refer to your cluster administrator to know which network provider is used.')}
               </p>
-              <p>
-                {t('console-app~More information:')}&nbsp;
-                <ExternalLink
-                  href={getNetworkPolicyDocURL(isOpenShift)}
-                  text={t('console-app~NetworkPolicies documentation')}
-                />
-              </p>
+              {!isManaged() && (
+                <p>
+                  {t('console-app~More information:')}&nbsp;
+                  <ExternalLink
+                    href={getNetworkPolicyDocURL(isOpenShift)}
+                    text={t('console-app~NetworkPolicies documentation')}
+                  />
+                </p>
+              )}
             </Alert>
           )}
         <div className="form-group co-create-networkpolicy__name">
