@@ -94,6 +94,20 @@ Finally run the console and visit [localhost:9000](http://localhost:9000):
 ./examples/run-bridge.sh
 ```
 
+#### Enabling Monitoring Locally
+In order to enable the monitoring UI and see the "Observe" navigation item while running locally, you'll need to run the OpenShift Monitoring dynamic plugin alongside Bridge. To do so, follow these steps:
+
+1. Clone the monitoring-plugin repo: https://github.com/openshift/monitoring-plugin
+2. `cd` to the monitoring-plugin root dir
+3. Run
+  ```
+  yarn && yarn start
+  ```
+4. Run Bridge in another terminal following the steps above, but set the following environment variable before starting Bridge:
+  ```
+  export BRIDGE_PLUGINS="monitoring-plugin=http://localhost:9001"
+  ```
+
 #### CodeReady Containers
 
 If you want to use CodeReady for local development, first make sure [it is set up](https://crc.dev/crc/#setting-up-codeready-containers_gsg), and the [OpenShift cluster is started](https://crc.dev/crc/#starting-the-virtual-machine_gsg).
