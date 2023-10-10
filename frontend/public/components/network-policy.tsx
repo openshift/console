@@ -19,7 +19,7 @@ import {
   ExternalLink,
 } from './utils';
 import { NetworkPolicyModel } from '../models';
-import { getNetworkPolicyDocURL } from './utils/documentation';
+import { getNetworkPolicyDocURL, isManaged } from './utils/documentation';
 import {
   NetworkPolicyKind,
   NetworkPolicyPort,
@@ -297,6 +297,7 @@ const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => 
   const affectsIngress = explicitPolicyTypes ? np.spec.policyTypes.includes('Ingress') : true;
   const egressDenied = affectsEgress && (!np.spec.egress || np.spec.egress.length === 0);
   const ingressDenied = affectsIngress && (!np.spec.ingress || np.spec.ingress.length === 0);
+
   return (
     <>
       <div className="co-m-pane__body">
@@ -311,17 +312,20 @@ const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => 
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~Ingress rules')} />
           <p className="co-m-pane__explanation">
-            <Trans ns="public">
-              Pods accept all traffic by default. They can be isolated via NetworkPolicies which
-              specify a whitelist of ingress rules. When a Pod is selected by a NetworkPolicy, it
-              will reject all traffic not explicitly allowed via a NetworkPolicy. See more details
-              in:{' '}
-              <ExternalLink
-                href={getNetworkPolicyDocURL(flags[FLAGS.OPENSHIFT])}
-                text={t('public~NetworkPolicies documentation')}
-              />
-              .
-            </Trans>
+            {t(
+              'public~Pods accept all traffic by default. They can be isolated via NetworkPolicies which specify a whitelist of ingress rules. When a Pod is selected by a NetworkPolicy, it will reject all traffic not explicitly allowed via a NetworkPolicy.',
+            )}
+            {!isManaged() && (
+              <Trans ns="public">
+                {' '}
+                See more details in:{' '}
+                <ExternalLink
+                  href={getNetworkPolicyDocURL(flags[FLAGS.OPENSHIFT])}
+                  text={t('public~NetworkPolicies documentation')}
+                />
+                .
+              </Trans>
+            )}
           </p>
           {ingressDenied ? (
             t('public~All incoming traffic is denied to Pods in {{namespace}}', {
@@ -351,17 +355,20 @@ const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => 
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~Egress rules')} />
           <p className="co-m-pane__explanation">
-            <Trans ns="public">
-              All outgoing traffic is allowed by default. Egress rules can be used to restrict
-              outgoing traffic if the cluster network provider allows it. When using the OpenShift
-              SDN cluster network provider, egress network policy is not supported. See more details
-              in:{' '}
-              <ExternalLink
-                href={getNetworkPolicyDocURL(flags[FLAGS.OPENSHIFT])}
-                text={t('public~NetworkPolicies documentation')}
-              />
-              .
-            </Trans>
+            {t(
+              'public~All outgoing traffic is allowed by default. Egress rules can be used to restrict outgoing traffic if the cluster network provider allows it. When using the OpenShift SDN cluster network provider, egress network policy is not supported.',
+            )}
+            {!isManaged() && (
+              <Trans ns="public">
+                {' '}
+                See more details in:{' '}
+                <ExternalLink
+                  href={getNetworkPolicyDocURL(flags[FLAGS.OPENSHIFT])}
+                  text={t('public~NetworkPolicies documentation')}
+                />
+                .
+              </Trans>
+            )}
           </p>
           {egressDenied ? (
             t('public~All outgoing traffic is denied from Pods in {{namespace}}', {
