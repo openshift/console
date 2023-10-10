@@ -238,6 +238,8 @@ export const tableFilters: FilterMap = {
       fuzzyCaseInsensitive(str.selected?.[0], displayName)
     );
   },
+  // Filter secrets by name in ServiceAccount details page
+  'secrets-service-account': (secrets, obj) => secrets.selected.includes(obj.metadata.name),
 };
 
 const rowFiltersToFilterFuncs = (rowFilters: RowFilter[]): FilterMap => {
