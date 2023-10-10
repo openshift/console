@@ -796,7 +796,7 @@ export const ErrorBoundaryFallbackPage: React.FC<ErrorBoundaryFallbackProps> = r
  * ```
  */
 export const QueryBrowser: React.FC<QueryBrowserProps> = require('@console/shared/src/components/query-browser')
-  .default;
+         .QueryBrowser;
 
 /**
  * A hook that provides a callback to launch a modal for editing Kubernetes resource annotations.

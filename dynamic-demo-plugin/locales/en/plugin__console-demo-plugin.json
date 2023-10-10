@@ -3,6 +3,7 @@
   "{{count}} Worker Node_plural": "{{count}} Worker Nodes",
   "Worker Nodes": "Worker Nodes",
   "Custom Overview Detail Info": "Custom Overview Detail Info",
+  "Metrics Dashboard Card example": "Metrics Dashboard Card example",
   "Oops something went wrong in your dynamic plug-in": "Oops something went wrong in your dynamic plug-in",
   "Sample Error Boundary Page": "Sample Error Boundary Page",
   "Create an exception": "Create an exception",
@@ -50,6 +51,7 @@
   "Bar item": "Bar item",
   "Custom Overview Detail Title": "Custom Overview Detail Title",
   "Example Namespaced Page": "Example Namespaced Page",
+  "Dashboard Card": "Dashboard Card",
   "Dynamic Page 1": "Dynamic Page 1",
   "Dynamic Page 2": "Dynamic Page 2"
 }

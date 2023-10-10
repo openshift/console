@@ -63,6 +63,7 @@
       "clusterOverview": "./utils/cluster-overview",
       "yamlEditor": "./components/YAMLEditorPage",
       "events": "./components/APIServerEvents",
+      "dashboardCard": "./components/DashboardCard",
       "overviewDetailItem": "./components/OverviewDetailItem",
       "customOverviewDetailItem": "./components/CustomOverviewDetailItem",
       "projectOverviewInventory": "./components/ProjectOverview/Inventory",

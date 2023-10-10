@@ -323,6 +323,22 @@
     }
   },
   {
+    "type": "console.dashboards/tab",
+    "properties": {
+      "id": "demo-plugin-tab",
+      "navSection": "home",
+      "title": "Demo Dashboard"
+    }
+  },
+  {
+    "type": "console.dashboards/card",
+    "properties": {
+      "tab": "demo-plugin-tab",
+      "position": "LEFT",
+      "component": { "$codeRef": "dashboardCard.default" }
+    }
+  },
+  {
     "type": "console.dashboards/overview/detail/item",
     "properties": {
       "component": { "$codeRef": "overviewDetailItem.default" }
