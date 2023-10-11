@@ -281,20 +281,21 @@ export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = req
  * @param {ColumnLayout} [columnLayout] -  (optional) column layout object
  * @param {boolean} [hideColumnManagement] -  (optional) flag to hide the column management
  * @param {string} [nameFilter] - (optional) a unique name key for name filter. This may be useful if there are multiple `ListPageFilter` components rendered at once.
+ * @param {RowSearchFilter[]} [rowSearchFilters] - (optional) An array of RowSearchFilters elements that define search text filters added on top of Name and Label filters
  * @example
  * ```tsx
  *   // See implementation for more details on RowFilter and FilterValue types
  *   const [staticData, filteredData, onFilterChange] = useListPageFilter(
  *     data,
- *     rowFilters,
+ *     [...rowFilters, ...searchFilters],
  *     staticFilters,
  *   );
  *   // ListPageFilter updates filter state based on user interaction and resulting filtered data can be rendered in an independent component.
  *   return (
  *     <>
- *       <ListPageHeader .../>
+ *       <ListPageHeader />
  *       <ListPagBody>
- *         <ListPageFilter data={staticData} onFilterChange={onFilterChange} />
+ *         <ListPageFilter data={staticData} onFilterChange={onFilterChange} rowFilters={rowFilters} rowSearchFilters={searchFilters} />
  *         <List data={filteredData} />
  *       </ListPageBody>
  *     </>
