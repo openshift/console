@@ -285,7 +285,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           item: channels?.[0]?.currentCSVDesc?.displayName,
         })}
         detail={t(
-          'olm~The operator does not support single namespace or global installation modes.',
+          'olm~The Operator does not support to be made available in a single namespace (OwnNamespace installMode) or global installation (AllNamespaces installMode).  Use the CLI to install this Operator instead.',
         )}
       />
     );
