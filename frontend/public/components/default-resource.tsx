@@ -3,7 +3,8 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
-
+import { useResourceDetailsItemExtensions } from '@console/shared/src/hooks/useResourceDetailsItemExtensions';
+import { ExtensionDetailsItem } from '@console/shared/src/components/details-page/ExtensionDetailsItem';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData, TableProps, RowFunctionArgs } from './factory';
 import {
@@ -28,21 +29,23 @@ const { common } = Kebab.factory;
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
-export const DetailsForKind = (
-  kind: string,
-  additionalDetailsCallback?: (obj: K8sResourceKind) => React.ReactNode,
-) =>
+export const DetailsForKind = (kind: string) =>
   function DetailsForKind_({ obj }) {
     const { t } = useTranslation();
+    const leftDetailsItemExtensions = useResourceDetailsItemExtensions(obj, 'left');
+    const rightDetailsItemExtensions = useResourceDetailsItemExtensions(obj, 'right');
+    const leftDetailsItems = leftDetailsItemExtensions.map((extension) => (
+      <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj} />
+    ));
+
+    const rightDetailsItems = rightDetailsItemExtensions.map((extension) => (
+      <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj} />
+    ));
 
     const getKindLabel = (item: K8sResourceKindReference) => {
       const model = modelFor(item);
       return model?.labelKey ? t(model.labelKey) : kindForReference(item);
     };
-
-    const additionalDetails: React.ReactNode =
-      additionalDetailsCallback && additionalDetailsCallback(obj);
-
     return (
       <>
         <div className="co-m-pane__body">
@@ -55,9 +58,13 @@ export const DetailsForKind = (
                 resource={obj}
                 podSelector="spec.podSelector"
                 showNodeSelector={false}
-              />
+              >
+                {leftDetailsItems}
+              </ResourceSummary>
             </div>
-            {additionalDetails && <div className="col-md-6">{additionalDetails}</div>}
+            {rightDetailsItems.length > 0 && (
+              <dl className="co-m-pane__details col-md-6">{rightDetailsItems}</dl>
+            )}
           </div>
         </div>
         {_.isArray(obj?.status?.conditions) && (
