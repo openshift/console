@@ -1,6 +1,6 @@
 # Getting Started
 
-- Guidelines related to Setup, Standards, Review process are present in [README.md](frontend/packages/dev-console/integration-tests/README.md)
+- Guidelines related to Setup, Standards, Review process are present in [README.md](../../dev-console/integration-tests/README.md)
 
 ## Directory Structure
 
@@ -31,7 +31,7 @@ frontend/packages/gitops-plugin/integration-tests/
 |   |   |   └──common.ts
 ├── testData                                 <--- Test data required for scripts and installation yaml files
 |   ├── install-gitops-operator.yaml    <--- GitOps installation yaml file
-├── cypress.json            <--- cypress configuration file
+├── cypress.config.js            <--- cypress configuration file
 ├── tsconfig.json           <--- typescript configuration file
 ├── reporter-config.json    <--- reporter configuration file
 ```
@@ -40,7 +40,7 @@ frontend/packages/gitops-plugin/integration-tests/
 
 Feature file - "regression" suite - execution from Cypress Dashboard
 
-1. Update the TAGS under env section in config file [Cypress.json file](frontend/packages/gitops-plugin/integration-tests/cypress.json) as
+1. Update the TAGS under env section in config file [Cypress.config.js file](frontend/packages/gitops-plugin/integration-tests/cypress.config.js) as
    "env": { "TAGS": "@regression and not @manual and not @to-do" }
 2. In command prompt, navigate to frontend folder
 3. Execute command `yarn run test-cypress-gitops` and select that particular file or run all files in cypress dashboard
