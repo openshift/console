@@ -461,8 +461,8 @@ const OperandsLoadedErrorAlert: React.FC<{ operandsLoadedErrorMessage: string }>
         {t(
           'olm~There was an error loading operands for this operator. Operands will need to be deleted manually.',
         )}
-        <div>{operandsLoadedErrorMessage}</div>
       </p>
+      <p>{operandsLoadedErrorMessage}</p>
     </Alert>
   );
 };
@@ -582,27 +582,25 @@ const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName
           {operands
             .sort((a, b) => a.metadata.name.localeCompare(b.metadata.name))
             .map((operand) => (
-              <>
-                <tr key={operand.metadata.uid}>
-                  <td>
-                    <OperandLink obj={operand} csvName={csvName} onClick={cancel} />
-                  </td>
-                  <td className="co-break-word" data-test-operand-kind={operand.kind}>
-                    {operand.kind}
-                  </td>
-                  <td>
-                    {operand.metadata.namespace ? (
-                      <ResourceLink
-                        kind="Namespace"
-                        name={operand.metadata.namespace}
-                        onClick={cancel}
-                      />
-                    ) : (
-                      '-'
-                    )}
-                  </td>
-                </tr>
-              </>
+              <tr key={operand.metadata.uid}>
+                <td>
+                  <OperandLink obj={operand} csvName={csvName} onClick={cancel} />
+                </td>
+                <td className="co-break-word" data-test-operand-kind={operand.kind}>
+                  {operand.kind}
+                </td>
+                <td>
+                  {operand.metadata.namespace ? (
+                    <ResourceLink
+                      kind="Namespace"
+                      name={operand.metadata.namespace}
+                      onClick={cancel}
+                    />
+                  ) : (
+                    '-'
+                  )}
+                </td>
+              </tr>
             ))}
         </tbody>
       </table>

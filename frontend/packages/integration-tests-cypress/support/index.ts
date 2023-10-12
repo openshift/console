@@ -5,12 +5,9 @@ import './nav';
 import './resources';
 import './i18n';
 import { a11yTestResults } from './a11y';
+import './admin';
 
 Cypress.Cookies.debug(true);
-
-Cypress.Cookies.defaults({
-  preserve: ['openshift-session-token', 'csrf-token'],
-});
 
 Cypress.on('uncaught:exception', (err) => {
   console.error('Uncaught exception', err);

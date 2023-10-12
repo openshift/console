@@ -12,21 +12,21 @@ declare global {
         selector: string,
         options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
       ): Chainable<Element>;
-      byTestActionID(selector: string): Chainable<Element>;
-      byLegacyTestID(selector: string): Chainable<Element>;
-      byButtonText(selector: string): Chainable<Element>;
-      byDataID(selector: string): Chainable<Element>;
+      byTestActionID(selector: string): Chainable<JQuery<HTMLElement>>;
+      byLegacyTestID(selector: string): Chainable<JQuery<HTMLElement>>;
+      byButtonText(selector: string): Chainable<JQuery<HTMLElement>>;
+      byDataID(selector: string): Chainable<JQuery<HTMLElement>>;
       byTestSelector(
         selector: string,
         options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
-      ): Chainable<Element>;
-      byTestDropDownMenu(selector: string): Chainable<Element>;
+      ): Chainable<JQuery<HTMLElement>>;
+      byTestDropDownMenu(selector: string): Chainable<JQuery<HTMLElement>>;
       byTestOperatorRow(
         selector: string,
         options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
-      ): Chainable<Element>;
-      byTestSectionHeading(selector: string): Chainable<Element>;
-      byTestOperandLink(selector: string): Chainable<Element>;
+      ): Chainable<JQuery<HTMLElement>>;
+      byTestSectionHeading(selector: string): Chainable<JQuery<HTMLElement>>;
+      byTestOperandLink(selector: string): Chainable<JQuery<HTMLElement>>;
     }
   }
 }
