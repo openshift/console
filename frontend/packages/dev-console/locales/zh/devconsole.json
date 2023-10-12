@@ -323,6 +323,7 @@
   "How many times the probe will try starting or restarting before giving up.": "在放弃前，探测将尝试开始或重启的次数。",
   "Success threshold": "成功阈值",
   "How many consecutive successes for the probe to be considered successful after having failed.": "失败后，在达到探测连续成功的次数后认为是成功的。",
+  "How long to wait after the Container starts before checking its health.": "容器启动后等待多长时间再检查其健康状态。",
   "Initial delay": "初始延迟",
   "How long to wait after the Container starts before checking its health.": "容器启动后等待多久才能检查其健康状况。",
   "seconds": "秒",

@@ -323,6 +323,7 @@
   "How many times the probe will try starting or restarting before giving up.": "プローブが試行を終了するまでに起動または再起動を試行する回数。",
   "Success threshold": "成功のしきい値",
   "How many consecutive successes for the probe to be considered successful after having failed.": "失敗後にプローブが成功したと見なされるための条件となる連続して成功する回数。",
+  "How long to wait after the Container starts before checking its health.": "コンテナが起動してから、その健康状態をチェックする前に待機する時間はどれくらいですか？。",
   "Initial delay": "初回の遅延",
   "How long to wait after the Container starts before checking its health.": "コンテナーの起動から、その正常性をチェックするまでの待機時間。",
   "seconds": "秒",

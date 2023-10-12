@@ -323,6 +323,7 @@
   "How many times the probe will try starting or restarting before giving up.": "프로브가 시도를 종료하기 전에 시작하거나 재시작을 시도하는 횟수입니다.",
   "Success threshold": "성공 임계 값",
   "How many consecutive successes for the probe to be considered successful after having failed.": "실패 후 프로브가 성공한 것으로 간주되는 프로브의 연속 성공 횟수입니다.",
+  "How long to wait after the Container starts before checking its health.": "컨테이너 시작 후 건강 상태를 확인하기 전에 얼마나 기다려야 하는가.",
   "Initial delay": "초기 지연",
   "How long to wait after the Container starts before checking its health.": "컨테이너가 시작된 후 상태를 확인하기 전까지의 대기 시간입니다.",
   "seconds": "초",
