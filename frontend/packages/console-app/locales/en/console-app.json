@@ -270,6 +270,7 @@
   "Required": "Required",
   "Service binding already exists. Select a different service to connect to.": "Service binding already exists. Select a different service to connect to.",
   "All Clusters": "All Clusters",
+  "local-cluster": "local-cluster",
   "Remove from navigation?": "Remove from navigation?",
   "Remove": "Remove",
   "Nav": "Nav",
