@@ -283,7 +283,7 @@ export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
   typeof DetailsPage
 >> = (props) => {
   const pages = [
-    navFactory.details(DetailsForKind(props.kind)),
+    navFactory.details(DetailsForKind),
     navFactory.editYaml(),
     {
       href: 'console-plugins',

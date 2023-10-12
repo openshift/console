@@ -6,7 +6,7 @@ import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import { usePipelinesBreadcrumbsFor } from '../hooks';
 
 const PipelineResourceDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { kindObj, match, kind } = props;
+  const { kindObj, match } = props;
   const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
   const badge = usePipelineTechPreviewBadge(props.namespace);
 
@@ -16,7 +16,7 @@ const PipelineResourceDetailsPage: React.FC<DetailsPageProps> = (props) => {
       badge={badge}
       menuActions={Kebab.factory.common}
       breadcrumbsFor={() => breadcrumbsFor}
-      pages={[navFactory.details(DetailsForKind(kind)), navFactory.editYaml()]}
+      pages={[navFactory.details(DetailsForKind), navFactory.editYaml()]}
     />
   );
 };

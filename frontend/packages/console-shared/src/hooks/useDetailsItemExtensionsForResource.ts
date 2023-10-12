@@ -14,10 +14,12 @@ import { referenceFor, referenceForExtensionModel } from '@console/internal/modu
  *
  * @param obj The k8s resource for which details are being rendered.
  * @param column The column in which the details item will be rendered.
- * @returns A sorted list of details item extensions for the given resource and column. Always
- * returns an array, even if no extensions are found.
+ * @returns A sorted list of details item extensions for the given resource and column. Null safe.
  */
-export const useResourceDetailsItemExtensions: UseResourceDetailItemExtensions = (obj, column) => {
+export const useDetailsItemExtensionsForResource: UseDetailsItemExtensionsForResource = (
+  obj,
+  column,
+) => {
   const typeGuard = React.useCallback<ExtensionTypeGuard<DetailsItem>>(
     (e): e is DetailsItem => {
       const columnMatches = e.properties.column === column;
@@ -40,7 +42,7 @@ export const useResourceDetailsItemExtensions: UseResourceDetailItemExtensions =
   );
 };
 
-type UseResourceDetailItemExtensions = (
+type UseDetailsItemExtensionsForResource = (
   obj: K8sResourceCommon,
   column: DetailsItemColumn,
 ) => ResolvedExtension<DetailsItem>[];

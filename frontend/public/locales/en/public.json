@@ -451,7 +451,6 @@
   "The debug pod failed.": "The debug pod failed.",
   "Debug {{name}}": "Debug {{name}}",
   "Debug container": "Debug container",
-  "{{kindLabel}} details": "{{kindLabel}} details",
   "Start rollout": "Start rollout",
   "Resume rollouts": "Resume rollouts",
   "Pause rollouts": "Pause rollouts",
