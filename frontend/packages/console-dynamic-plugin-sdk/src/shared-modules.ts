@@ -43,7 +43,7 @@ type SharedModuleNames = typeof sharedPluginModules[number];
 /**
  * Metadata associated with the shared modules.
  */
-export const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
+const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
   '@openshift-console/dynamic-plugin-sdk': { singleton: true, allowFallback: false },
   '@openshift-console/dynamic-plugin-sdk-internal': { singleton: true, allowFallback: false },
   '@patternfly/react-core': {},
@@ -60,6 +60,9 @@ export const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModule
   'redux-thunk': { singleton: true, allowFallback: false },
 };
 
+/**
+ * Retrieve full metadata for the given shared module.
+ */
 export const getSharedModuleMetadata = (
   moduleName: SharedModuleNames,
 ): Required<SharedModuleMetadata> => {

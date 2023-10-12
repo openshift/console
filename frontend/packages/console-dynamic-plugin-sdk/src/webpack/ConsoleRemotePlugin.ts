@@ -1,46 +1,65 @@
+import * as path from 'path';
+import { DynamicRemotePlugin, EncodedExtension } from '@openshift/dynamic-plugin-sdk-webpack';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
 import * as semver from 'semver';
 import * as webpack from 'webpack';
-import { remoteEntryFile } from '../constants';
-import { ConsolePackageJSON } from '../schema/plugin-package';
+import { ConsolePluginBuildMetadata } from '../build-types';
+import { extensionsFile } from '../constants';
 import { sharedPluginModules, getSharedModuleMetadata } from '../shared-modules';
+import { parseJSONC } from '../utils/jsonc';
+import { loadSchema } from '../utils/schema';
+import { ExtensionValidator } from '../validation/ExtensionValidator';
 import { SchemaValidator } from '../validation/SchemaValidator';
 import { ValidationResult } from '../validation/ValidationResult';
-import { loadSchema, ConsoleAssetPlugin } from './ConsoleAssetPlugin';
 
-const loadPackageManifest = (moduleName: string) =>
+type ConsolePluginPackageJSON = readPkg.PackageJson & {
+  consolePlugin?: ConsolePluginBuildMetadata;
+};
+
+const loadPluginPackageJSON = () => readPkg.sync({ normalize: false }) as ConsolePluginPackageJSON;
+
+const loadVendorPackageJSON = (moduleName: string) =>
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   require(`${moduleName}/package.json`) as readPkg.PackageJson;
 
-const validatePackageFileSchema = (pkg: ConsolePackageJSON) => {
-  const schema = loadSchema('plugin-package.json');
-  const validator = new SchemaValidator('package.json');
+// https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
+const getWebpackSharedModules = () =>
+  sharedPluginModules.reduce((acc, moduleName) => {
+    const { singleton, allowFallback } = getSharedModuleMetadata(moduleName);
+    const moduleConfig: Record<string, any> = { singleton };
 
-  if (pkg.consolePlugin) {
-    validator.validate(schema, pkg.consolePlugin, 'pkg.consolePlugin');
-
-    validator.assert.validDNSSubdomainName(pkg.consolePlugin.name, 'pkg.consolePlugin.name');
-    validator.assert.validSemverString(pkg.consolePlugin.version, 'pkg.consolePlugin.version');
-
-    if (_.isPlainObject(pkg.consolePlugin.dependencies)) {
-      Object.entries(pkg.consolePlugin.dependencies).forEach(([depName, versionRange]) => {
-        validator.assert.validSemverRangeString(
-          versionRange,
-          `pkg.consolePlugin.dependencies['${depName}']`,
-        );
-      });
+    if (!allowFallback) {
+      moduleConfig.import = false;
     }
-  } else {
-    validator.result.addError('pkg.consolePlugin object is missing');
-  }
 
-  return validator.result;
+    acc[moduleName] = moduleConfig;
+    return acc;
+  }, {});
+
+/**
+ * Perform (additional) build-time validation of Console plugin metadata.
+ *
+ * Note that `DynamicRemotePlugin` takes care of basic build metadata validation.
+ * Therefore, this function only performs additional Console specific validations.
+ */
+const validateConsoleBuildMetadata = (metadata: ConsolePluginBuildMetadata) => {
+  const result = new ValidationResult('Console plugin metadata');
+  result.assertions.validDNSSubdomainName(metadata.name, 'metadata.name');
+  return result;
+};
+
+export const validateConsoleExtensionsFileSchema = (
+  extensions: EncodedExtension[],
+  description = 'console-extensions.json',
+) => {
+  const schema = loadSchema('console-extensions.json');
+  return new SchemaValidator(description).validate(schema, extensions);
 };
 
 const validateConsoleProvidedSharedModules = (
-  pkg: ConsolePackageJSON,
-  sdkPkg = loadPackageManifest('@openshift-console/dynamic-plugin-sdk'),
+  pkg = loadPluginPackageJSON(),
+  sdkPkg = loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk'),
 ) => {
   const pluginDeps = { ...pkg.devDependencies, ...pkg.dependencies };
   const result = new ValidationResult('package.json');
@@ -55,7 +74,7 @@ const validateConsoleProvidedSharedModules = (
     }
 
     const providedVersionRange = sdkPkg.dependencies[moduleName];
-    const consumedVersion = loadPackageManifest(moduleName).version;
+    const consumedVersion = loadVendorPackageJSON(moduleName).version;
 
     if (semver.validRange(providedVersionRange) && semver.valid(consumedVersion)) {
       result.assertThat(
@@ -70,154 +89,155 @@ const validateConsoleProvidedSharedModules = (
 
 export type ConsoleRemotePluginOptions = Partial<{
   /**
-   * Validate the plugin's `package.json` file schema?
+   * Console dynamic plugin metadata.
    *
-   * This controls the validation of `consolePlugin` object within the plugin's package
-   * manifest using the `plugin-package.json` schema. The `consolePlugin` object should
-   * exist and contain valid Console dynamic plugin metadata.
+   * If not specified, plugin metadata will be parsed from `consolePlugin` object within
+   * the `package.json` file.
    *
-   * @default true
+   * Plugin metadata should meet the following requirements:
+   *
+   * - `name` should be the same as `metadata.name` of the corresponding `ConsolePlugin`
+   *   resource on the cluster.
+   * - `version` must be semver compliant.
+   * - `dependencies` values must be valid semver ranges or `*` representing any version.
+   *
+   * Additional runtime environment specific dependencies available to Console plugins:
+   *
+   * - `@console/pluginAPI` - Console web application. This dependency is matched against
+   *   the Console release version, as provided by the Console operator.
    */
-  validatePackageSchema: boolean;
+  pluginMetadata: ConsolePluginBuildMetadata;
 
   /**
-   * Validate Console provided shared modules which are consumed by the plugin?
+   * List of extensions contributed by the plugin.
    *
-   * Console provided shared modules can be reflected as `dependencies` in the core plugin
-   * SDK package manifest. For each shared module where a fallback version is not allowed,
-   * check that the version consumed by the plugin satisfies the expected semver range as
-   * declared in the core plugin SDK package manifest.
-   *
-   * @default true
+   * If not specified, extensions will be parsed from `console-extensions.json` file.
    */
-  validateSharedModules: boolean;
+  extensions: EncodedExtension[];
 
   /**
-   * Validate the plugin's `console-extensions.json` file schema?
-   *
-   * This controls the validation of extension declarations using the `console-extensions.json`
-   * schema.
+   * Validate extension objects using the `console-extensions.json` schema?
    *
    * @default true
    */
   validateExtensionSchema: boolean;
 
   /**
-   * Validate the integrity of extensions declared in `console-extensions.json` file?
+   * Validate integrity of extensions contributed by the plugin?
    *
-   * This controls whether to use `ExtensionValidator` to check extension declarations:
+   * This option controls whether to use `ExtensionValidator` to check the following criteria:
    * - each exposed module must have at least one code reference
    * - each code reference must point to a valid webpack module export
    *
    * @default true
    */
   validateExtensionIntegrity: boolean;
+
+  /**
+   * Validate Console provided shared module dependencies?
+   *
+   * Console provided shared modules can be reflected as `dependencies` within the manifest of
+   * the `@openshift-console/dynamic-plugin-sdk` package. For each shared module where a fallback
+   * version is not allowed, check that the version consumed by the plugin satisfies the expected
+   * semver range as declared in the Console core SDK package manifest.
+   *
+   * @default true
+   */
+  validateSharedModules: boolean;
 }>;
 
 /**
  * Generates Console dynamic plugin remote container and related assets.
  *
- * Default configuration for modules shared between the Console application and its dynamic plugins:
- * - shared modules are treated as singletons
- * - plugins won't bring their own fallback version of shared modules
- *
- * If you're facing `ExtensionValidator` related issues, set the `validateExtensionIntegrity` option
- * to `false` or pass `CONSOLE_PLUGIN_SKIP_EXT_VALIDATOR=true` env. variable to your webpack command.
+ * Refer to `frontend/packages/console-dynamic-plugin-sdk/src/shared-modules.ts` for details on
+ * Console application vs. dynamic plugins shared module configuration.
  *
  * @see {@link sharedPluginModules}
+ * @see {@link getSharedModuleMetadata}
  */
-export class ConsoleRemotePlugin {
-  private readonly options: Required<ConsoleRemotePluginOptions>;
-
-  private readonly pkg: ConsolePackageJSON;
+export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
+  private readonly adaptedOptions: Required<ConsoleRemotePluginOptions>;
 
   constructor(options: ConsoleRemotePluginOptions = {}) {
-    this.pkg = readPkg.sync({ normalize: false }) as ConsolePackageJSON;
-
-    this.options = {
-      validatePackageSchema: options.validatePackageSchema ?? true,
-      validateSharedModules: options.validateSharedModules ?? true,
+    this.adaptedOptions = {
+      pluginMetadata: options.pluginMetadata ?? loadPluginPackageJSON().consolePlugin,
+      extensions: options.extensions ?? parseJSONC(path.resolve(process.cwd(), extensionsFile)),
       validateExtensionSchema: options.validateExtensionSchema ?? true,
       validateExtensionIntegrity: options.validateExtensionIntegrity ?? true,
+      validateSharedModules: options.validateSharedModules ?? true,
     };
 
-    if (this.options.validatePackageSchema) {
-      validatePackageFileSchema(this.pkg).report();
+    if (this.adaptedOptions.validateExtensionSchema) {
+      validateConsoleExtensionsFileSchema(this.adaptedOptions.extensions).report();
     }
 
-    if (this.options.validateSharedModules) {
-      validateConsoleProvidedSharedModules(this.pkg).report();
+    if (this.adaptedOptions.validateSharedModules) {
+      validateConsoleProvidedSharedModules().report();
     }
   }
 
   apply(compiler: webpack.Compiler) {
-    const logger = compiler.getInfrastructureLogger(ConsoleRemotePlugin.name);
-    const publicPath = `/api/plugins/${this.pkg.consolePlugin.name}/`;
-    const containerName = this.pkg.consolePlugin.name;
-    const remoteEntryCallback = 'window.loadPluginEntry';
+    const { pluginMetadata, extensions, validateExtensionIntegrity } = this.adaptedOptions;
 
-    // Validate webpack options
+    const {
+      name,
+      version,
+      dependencies,
+      customProperties,
+      exposedModules,
+      displayName,
+      description,
+      disableStaticPlugins,
+    } = pluginMetadata;
+
+    const logger = compiler.getInfrastructureLogger(ConsoleRemotePlugin.name);
+    const publicPath = `/api/plugins/${name}/`;
+
     if (compiler.options.output.publicPath !== undefined) {
       logger.warn(`output.publicPath is defined, but will be overridden to ${publicPath}`);
     }
-    if (compiler.options.output.uniqueName !== undefined) {
-      logger.warn(`output.uniqueName is defined, but will be overridden to ${containerName}`);
-    }
-
-    const containerLibrary = {
-      type: 'jsonp',
-      name: remoteEntryCallback,
-    };
-
-    const containerModules = _.mapValues(
-      this.pkg.consolePlugin.exposedModules || {},
-      (moduleRequest, moduleName) => ({
-        import: moduleRequest,
-        name: `exposed-${moduleName}`,
-      }),
-    );
-
-    // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
-    const sharedModules = sharedPluginModules.reduce((acc, moduleName) => {
-      const { singleton, allowFallback } = getSharedModuleMetadata(moduleName);
-      const moduleConfig: Record<string, any> = { singleton };
-      if (!allowFallback) {
-        moduleConfig.import = false;
-      }
-      acc[moduleName] = moduleConfig;
-      return acc;
-    }, {});
 
     compiler.options.output.publicPath = publicPath;
-    compiler.options.output.uniqueName = containerName;
 
-    // Generate webpack federated module container assets
-    new webpack.container.ModuleFederationPlugin({
-      name: containerName,
-      library: containerLibrary,
-      filename: remoteEntryFile,
-      exposes: containerModules,
-      shared: sharedModules,
+    new DynamicRemotePlugin({
+      pluginMetadata: {
+        name,
+        version,
+        dependencies,
+        customProperties: _.merge({}, customProperties, {
+          console: { displayName, description, disableStaticPlugins },
+        }),
+        exposedModules,
+      },
+      extensions,
+      sharedModules: getWebpackSharedModules(),
+      entryCallbackSettings: {
+        name: 'loadPluginEntry',
+        pluginID: `${name}@${version}`,
+      },
+      entryScriptFilename:
+        process.env.NODE_ENV === 'production'
+          ? 'plugin-entry.[fullhash].min.js'
+          : 'plugin-entry.js',
     }).apply(compiler);
 
-    // ModuleFederationPlugin does not generate a container entry when the provided
-    // exposes option is empty; we fix that by invoking the ContainerPlugin manually
-    if (_.isEmpty(containerModules)) {
-      new webpack.container.ContainerPlugin({
-        name: containerName,
-        library: containerLibrary,
-        filename: remoteEntryFile,
-        exposes: containerModules,
-      }).apply(compiler);
-    }
+    validateConsoleBuildMetadata(pluginMetadata).report();
 
-    // Generate and/or post-process Console plugin assets
-    new ConsoleAssetPlugin(
-      this.pkg,
-      remoteEntryCallback,
-      this.options.validateExtensionSchema,
-      this.options.validateExtensionIntegrity &&
-        process.env.CONSOLE_PLUGIN_SKIP_EXT_VALIDATOR !== 'true',
-    ).apply(compiler);
+    if (validateExtensionIntegrity) {
+      compiler.hooks.emit.tap(ConsoleRemotePlugin.name, (compilation) => {
+        const result = new ExtensionValidator('Console plugin extensions').validate(
+          compilation,
+          extensions,
+          exposedModules ?? {},
+        );
+
+        if (result.hasErrors()) {
+          const error = new webpack.WebpackError('ExtensionValidator has reported errors');
+          error.details = result.formatErrors();
+          error.file = extensionsFile;
+          compilation.errors.push(error);
+        }
+      });
+    }
   }
 }

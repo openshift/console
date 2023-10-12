@@ -4,7 +4,7 @@ import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
 import { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import * as jsoncModule from '@console/dynamic-plugin-sdk/src/utils/jsonc';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
-import * as assetPluginModule from '@console/dynamic-plugin-sdk/src/webpack/ConsoleAssetPlugin';
+import * as remotePluginModule from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
 import { Extension } from '../../typings';
 import { trimStartMultiLine } from '../../utils/string';
 import { getTemplatePackage } from '../../utils/test-utils';
@@ -12,7 +12,11 @@ import * as activePluginsModule from '../active-plugins';
 import { PluginPackage } from '../plugin-resolver';
 
 const parseJSONC = jest.spyOn(jsoncModule, 'parseJSONC');
-const validateExtensionsFileSchema = jest.spyOn(assetPluginModule, 'validateExtensionsFileSchema');
+
+const validateConsoleExtensionsFileSchema = jest.spyOn(
+  remotePluginModule,
+  'validateConsoleExtensionsFileSchema',
+);
 
 const {
   getActivePluginsModule,
@@ -22,7 +26,7 @@ const {
 } = activePluginsModule;
 
 beforeEach(() => {
-  [parseJSONC, validateExtensionsFileSchema].forEach((mock) => mock.mockReset());
+  [parseJSONC, validateConsoleExtensionsFileSchema].forEach((mock) => mock.mockReset());
 });
 
 describe('getActivePluginsModule', () => {
@@ -280,7 +284,7 @@ describe('getDynamicExtensions', () => {
 
     fsExistsSync.mockImplementation(() => true);
     parseJSONC.mockImplementation(() => extensionsJSON);
-    validateExtensionsFileSchema.mockImplementation(() => new ValidationResult('test'));
+    validateConsoleExtensionsFileSchema.mockImplementation(() => new ValidationResult('test'));
 
     getExecutableCodeRefSourceMock.mockImplementation((ref: EncodedCodeRef) => {
       if (_.isEqual(ref, { $codeRef: 'a.b' })) {
@@ -328,7 +332,10 @@ describe('getDynamicExtensions', () => {
 
     expect(fsExistsSync).toHaveBeenCalledWith(extensionsFilePath);
     expect(parseJSONC).toHaveBeenCalledWith(extensionsFilePath);
-    expect(validateExtensionsFileSchema).toHaveBeenCalledWith(extensionsJSON, extensionsFilePath);
+    expect(validateConsoleExtensionsFileSchema).toHaveBeenCalledWith(
+      extensionsJSON,
+      extensionsFilePath,
+    );
 
     expect(getExecutableCodeRefSourceMock.mock.calls.length).toBe(2);
     expect(getExecutableCodeRefSourceMock.mock.calls[0]).toEqual([
@@ -367,7 +374,7 @@ describe('getDynamicExtensions', () => {
     expect(codeRefTransformer).not.toHaveBeenCalled();
     expect(fsExistsSync).toHaveBeenCalledWith(extensionsFilePath);
     expect(parseJSONC).not.toHaveBeenCalled();
-    expect(validateExtensionsFileSchema).not.toHaveBeenCalled();
+    expect(validateConsoleExtensionsFileSchema).not.toHaveBeenCalled();
     expect(getExecutableCodeRefSourceMock).not.toHaveBeenCalled();
   });
 
@@ -386,7 +393,7 @@ describe('getDynamicExtensions', () => {
 
     fsExistsSync.mockImplementation(() => true);
     parseJSONC.mockImplementation(() => extensionsJSON);
-    validateExtensionsFileSchema.mockImplementation(() => {
+    validateConsoleExtensionsFileSchema.mockImplementation(() => {
       const result = new ValidationResult('test');
       result.addError('schema validation error');
       return result;
@@ -400,7 +407,10 @@ describe('getDynamicExtensions', () => {
     expect(codeRefTransformer).not.toHaveBeenCalled();
     expect(fsExistsSync).toHaveBeenCalledWith(extensionsFilePath);
     expect(parseJSONC).toHaveBeenCalledWith(extensionsFilePath);
-    expect(validateExtensionsFileSchema).toHaveBeenCalledWith(extensionsJSON, extensionsFilePath);
+    expect(validateConsoleExtensionsFileSchema).toHaveBeenCalledWith(
+      extensionsJSON,
+      extensionsFilePath,
+    );
     expect(getExecutableCodeRefSourceMock).not.toHaveBeenCalled();
   });
 
@@ -423,7 +433,7 @@ describe('getDynamicExtensions', () => {
 
     fsExistsSync.mockImplementation(() => true);
     parseJSONC.mockImplementation(() => extensionsJSON);
-    validateExtensionsFileSchema.mockImplementation(() => new ValidationResult('test'));
+    validateConsoleExtensionsFileSchema.mockImplementation(() => new ValidationResult('test'));
 
     getExecutableCodeRefSourceMock.mockImplementation(
       (
@@ -457,7 +467,10 @@ describe('getDynamicExtensions', () => {
 
     expect(fsExistsSync).toHaveBeenCalledWith(extensionsFilePath);
     expect(parseJSONC).toHaveBeenCalledWith(extensionsFilePath);
-    expect(validateExtensionsFileSchema).toHaveBeenCalledWith(extensionsJSON, extensionsFilePath);
+    expect(validateConsoleExtensionsFileSchema).toHaveBeenCalledWith(
+      extensionsJSON,
+      extensionsFilePath,
+    );
 
     expect(getExecutableCodeRefSourceMock.mock.calls.length).toBe(2);
     expect(getExecutableCodeRefSourceMock.mock.calls[0]).toEqual([

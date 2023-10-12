@@ -1,3 +1,3 @@
-import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
+import { StandardConsolePluginManifest } from '../build-types';
 
-export const getPluginID = (m: ConsolePluginManifestJSON) => `${m.name}@${m.version}`;
+export const getPluginID = (m: StandardConsolePluginManifest) => `${m.name}@${m.version}`;

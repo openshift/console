@@ -2,7 +2,7 @@ import { act } from '@testing-library/react';
 import { Simulate } from 'react-dom/test-utils';
 import { PluginStore } from '@console/plugin-sdk/src/store';
 import * as utilsModule from '@console/shared/src/utils/utils';
-import { ConsolePluginManifestJSON } from '../../schema/plugin-manifest';
+import { StandardConsolePluginManifest, LegacyConsolePluginManifest } from '../../build-types';
 import { Extension } from '../../types';
 import {
   getPluginManifest,
@@ -15,11 +15,11 @@ import * as pluginManifestModule from '../plugin-manifest';
 import { getPluginID } from '../plugin-utils';
 
 const {
-  scriptIDPrefix,
   getScriptElementID,
   loadDynamicPlugin,
   getPluginEntryCallback,
   registerPluginEntryCallback,
+  adaptPluginManifest,
   loadAndEnablePlugin,
   getStateForTestPurposes,
   resetStateAndEnvForTestPurposes,
@@ -30,34 +30,26 @@ const resolvePluginDependencies = jest.spyOn(pluginDependenciesModule, 'resolveP
 const loadDynamicPluginMock = jest.spyOn(pluginLoaderModule, 'loadDynamicPlugin');
 const getRandomCharsMock = jest.spyOn(utilsModule, 'getRandomChars');
 
-const originalConsole = { ...console };
 const originalServerFlags = window.SERVER_FLAGS;
-const consoleMock = jest.fn();
 
 beforeEach(() => {
   jest.resetAllMocks();
   resetStateAndEnvForTestPurposes();
-  // eslint-disable-next-line no-console
-  ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = consoleMock));
-});
-
-afterEach(() => {
-  // eslint-disable-next-line no-console
-  ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = originalConsole[key]));
 });
 
 describe('getScriptElementID', () => {
-  it('returns a string formatted as {prefix}@{name}', () => {
-    expect(getScriptElementID(getPluginManifest('Test', '1.2.3'))).toBe('console-plugin-Test');
+  it('returns a string formatted as {pluginName}/{scriptName}', () => {
+    expect(getScriptElementID('Test', 'plugin-entry.js')).toBe('Test/plugin-entry.js');
   });
 });
 
 describe('loadDynamicPlugin', () => {
-  const getScriptElement = (manifest: ConsolePluginManifestJSON) =>
-    document.querySelector<HTMLScriptElement>(`[id="${getScriptElementID(manifest)}"]`);
+  const getAllScripts = () => Array.from(document.scripts);
 
-  const getAllScriptElements = () =>
-    document.querySelectorAll<HTMLScriptElement>(`[id^="${scriptIDPrefix}"]`);
+  const getFirstPluginScript = (manifest: StandardConsolePluginManifest) =>
+    getAllScripts().find(
+      (element) => element.id === getScriptElementID(manifest.name, manifest.loadScripts[0]),
+    );
 
   beforeEach(() => {
     getRandomCharsMock.mockImplementation(() => 'r4nd0m');
@@ -65,7 +57,7 @@ describe('loadDynamicPlugin', () => {
 
   it('updates pluginMap and adds a script element to document head', () => {
     const manifest = getPluginManifest('Test', '1.2.3');
-    loadDynamicPlugin('http://example.com/test/', manifest);
+    loadDynamicPlugin(manifest);
 
     const { pluginMap } = getStateForTestPurposes();
     expect(pluginMap.size).toBe(1);
@@ -73,11 +65,12 @@ describe('loadDynamicPlugin', () => {
     expect(pluginMap.get('Test@1.2.3').manifest).toBe(manifest);
     expect(pluginMap.get('Test@1.2.3').entryCallbackFired).toBe(false);
 
-    const script = getScriptElement(manifest);
+    const script = getFirstPluginScript(manifest);
     expect(script instanceof HTMLScriptElement).toBe(true);
     expect(script.parentElement).toBe(document.head);
-    expect(script.id).toBe(getScriptElementID(manifest));
-    expect(script.src).toBe('http://example.com/test/plugin-entry.js?cacheBuster=r4nd0m');
+    expect(script.id).toBe('Test/plugin-entry.js');
+    expect(script.src).toBe('http://example.com/Test/plugin-entry.js?cacheBuster=r4nd0m');
+    expect(getAllScripts().length).toBe(1);
 
     expect(getRandomCharsMock).toHaveBeenCalledTimes(1);
   });
@@ -85,11 +78,11 @@ describe('loadDynamicPlugin', () => {
   it('throws an error if a plugin with the same name is already registered', async () => {
     const manifest1 = getPluginManifest('Test', '1.2.3');
     const manifest2 = getPluginManifest('Test', '2.3.4');
-    loadDynamicPlugin('http://example.com/test1/', manifest1);
+    loadDynamicPlugin(manifest1);
 
     try {
-      await loadDynamicPlugin('http://example.com/test2/', manifest2);
-      fail('Expected that loadDynamicPlugin fails and throw an error');
+      await loadDynamicPlugin(manifest2);
+      fail('Expected that loadDynamicPlugin fails and throws an error');
     } catch (error) {
       expect(error).toEqual(new Error('Attempt to reload plugin Test@1.2.3 with Test@2.3.4'));
 
@@ -98,27 +91,41 @@ describe('loadDynamicPlugin', () => {
       expect(pluginMap.get('Test@1.2.3').manifest).toBe(manifest1);
       expect(pluginMap.get('Test@1.2.3').entryCallbackFired).toBe(false);
 
-      const allScripts = getAllScriptElements();
-      expect(allScripts.length).toBe(1);
-      expect(allScripts[0].id).toBe(getScriptElementID(manifest1));
-      expect(allScripts[0].src).toBe('http://example.com/test1/plugin-entry.js?cacheBuster=r4nd0m');
+      const script = getFirstPluginScript(manifest1);
+      expect(script.id).toBe('Test/plugin-entry.js');
+      expect(script.src).toBe('http://example.com/Test/plugin-entry.js?cacheBuster=r4nd0m');
+      expect(getAllScripts().length).toBe(1);
+    }
+  });
 
-      expect(getRandomCharsMock).toHaveBeenCalledTimes(1);
+  it('throws an error if a plugin does not use callback registration method', async () => {
+    const manifest = getPluginManifest('Test', '1.2.3');
+    manifest.registrationMethod = 'custom';
 
-      expect(consoleMock).toHaveBeenCalledTimes(1);
-      expect(consoleMock).toHaveBeenCalledWith('Loading entry script for plugin Test@1.2.3');
+    try {
+      await loadDynamicPlugin(manifest);
+      fail('Expected that loadDynamicPlugin fails and throws an error');
+    } catch (error) {
+      expect(error).toEqual(
+        new Error('Plugin Test@1.2.3 does not use callback registration method'),
+      );
+
+      const { pluginMap } = getStateForTestPurposes();
+      expect(pluginMap.size).toBe(0);
+
+      expect(getAllScripts().length).toBe(0);
     }
   });
 
   it('returns plugin ID if the script was loaded successfully and the entry callback was fired', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
-    const promise = loadDynamicPlugin('http://example.com/test/', manifest);
+    const promise = loadDynamicPlugin(manifest);
 
     const { pluginMap } = getStateForTestPurposes();
     pluginMap.get('Test@1.2.3').entryCallbackFired = true;
 
     act(() => {
-      Simulate.load(getScriptElement(manifest));
+      Simulate.load(getFirstPluginScript(manifest));
     });
 
     expect(await promise).toBe('Test@1.2.3');
@@ -126,41 +133,37 @@ describe('loadDynamicPlugin', () => {
 
   it('throws an error if the script was loaded successfully but the entry callback was not fired', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
-    const promise = loadDynamicPlugin('http://example.com/test/', manifest);
+    const promise = loadDynamicPlugin(manifest);
+    const script = getFirstPluginScript(manifest);
 
     act(() => {
-      Simulate.load(getScriptElement(manifest));
+      Simulate.load(script);
     });
 
     try {
       await promise;
-      fail('Expected that loadDynamicPlugin fails and throw an error');
+      fail('Expected that loadDynamicPlugin fails and throws an error');
     } catch (error) {
       expect(error).toEqual(
-        new Error('Entry script for plugin Test@1.2.3 loaded without callback'),
+        new Error('Scripts of plugin Test@1.2.3 loaded without entry callback'),
       );
-      expect(consoleMock).toHaveBeenCalledTimes(1);
-      expect(consoleMock).toHaveBeenCalledWith('Loading entry script for plugin Test@1.2.3');
     }
   });
 
   it('throws an error if the script was not loaded successfully', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
-    const promise = loadDynamicPlugin('http://example.com/test/', manifest);
+    const promise = loadDynamicPlugin(manifest);
+    const script = getFirstPluginScript(manifest);
 
-    act(() => {
-      Simulate.error(getScriptElement(manifest));
-    });
+    // Invoke script.onerror DOM event handler directly, since the Simulate.error() function
+    // does not seem to work as expected (it invokes script.onload DOM event handler instead)
+    script.onerror('Test Error Event');
 
     try {
       await promise;
-      fail('Expected that loadDynamicPlugin fails and throw an error');
+      fail('Expected that loadDynamicPlugin fails and throws an error');
     } catch (error) {
-      expect(error).toEqual(
-        new Error('Entry script for plugin Test@1.2.3 loaded without callback'),
-      );
-      expect(consoleMock).toHaveBeenCalledTimes(1);
-      expect(consoleMock).toHaveBeenCalledWith('Loading entry script for plugin Test@1.2.3');
+      expect(error).toEqual(new Error('Detected errors while loading plugin entry scripts'));
     }
   });
 });
@@ -308,18 +311,49 @@ describe('window.loadPluginEntry', () => {
     expect(initSharedPluginModules).toHaveBeenCalledWith(entryModule);
     expect(resolveEncodedCodeRefs).not.toHaveBeenCalled();
     expect(addDynamicPlugin).not.toHaveBeenCalled();
+  });
+});
 
-    expect(consoleMock).toHaveBeenCalledTimes(1);
-    expect(consoleMock).toHaveBeenCalledWith(
-      'Failed to initialize shared modules for plugin Test@1.2.3',
-      new Error('boom'),
+describe('adaptPluginManifest', () => {
+  it('returns the same manifest if it already meets the standard format', () => {
+    const manifest = getPluginManifest('Test', '1.2.3');
+    const adaptedManifest = adaptPluginManifest(manifest, 'http://example.com/Test/');
+
+    expect(adaptedManifest).toBe(manifest);
+  });
+
+  it('adapts the legacy manifest to the standard format', () => {
+    const manifest: LegacyConsolePluginManifest = {
+      name: 'Test',
+      version: '1.2.3',
+      extensions: [],
+      displayName: 'Test Plugin',
+      description: 'Test Plugin Description',
+      disableStaticPlugins: ['StaticTest'],
+      dependencies: { RequiredTest: '*' },
+    };
+
+    const adaptedManifest = adaptPluginManifest(manifest, 'http://example.com/Test/');
+
+    expect(adaptedManifest).not.toBe(manifest);
+
+    expect(adaptedManifest.name).toBe(manifest.name);
+    expect(adaptedManifest.version).toBe(manifest.version);
+    expect(adaptedManifest.extensions).toBe(manifest.extensions);
+    expect(adaptedManifest.dependencies).toBe(manifest.dependencies);
+    expect(adaptedManifest.baseURL).toBe('http://example.com/Test/');
+    expect(adaptedManifest.loadScripts).toEqual(['plugin-entry.js']);
+    expect(adaptedManifest.registrationMethod).toBe('callback');
+
+    expect(adaptedManifest.customProperties.console.displayName).toBe(manifest.displayName);
+    expect(adaptedManifest.customProperties.console.description).toBe(manifest.description);
+    expect(adaptedManifest.customProperties.console.disableStaticPlugins).toBe(
+      manifest.disableStaticPlugins,
     );
   });
 });
 
 describe('loadAndEnablePlugin', () => {
-  const manifest = getPluginManifest('Test', '1.2.3');
-
   let pluginStore: PluginStore;
   let setDynamicPluginEnabled: jest.SpyInstance<typeof pluginStore.setDynamicPluginEnabled>;
 
@@ -334,18 +368,20 @@ describe('loadAndEnablePlugin', () => {
   });
 
   it('loads the plugin from URL {basePath}api/plugins/{pluginName}/', async () => {
+    const manifest = getPluginManifest('Test', '1.2.3');
+
     fetchPluginManifest.mockImplementation(() => Promise.resolve(manifest));
     resolvePluginDependencies.mockImplementation(() => Promise.resolve());
     loadDynamicPluginMock.mockImplementation(() => Promise.resolve('Test@1.2.3'));
 
     window.SERVER_FLAGS.basePath = '/test/';
-    window.SERVER_FLAGS.releaseVersion = '4.11.1-test.2';
+    window.SERVER_FLAGS.releaseVersion = '4.11.1-test.2'; // semver compliant
 
     await loadAndEnablePlugin('Test', pluginStore);
 
     expect(fetchPluginManifest).toHaveBeenLastCalledWith('/test/api/plugins/Test/');
     expect(resolvePluginDependencies).toHaveBeenLastCalledWith(manifest, '4.11.1-test.2', ['Test']);
-    expect(loadDynamicPluginMock).toHaveBeenLastCalledWith('/test/api/plugins/Test/', manifest);
+    expect(loadDynamicPluginMock).toHaveBeenLastCalledWith(manifest);
 
     [fetchPluginManifest, resolvePluginDependencies, loadDynamicPluginMock].forEach((mock) => {
       expect(mock).toHaveBeenCalledTimes(1);
@@ -357,14 +393,39 @@ describe('loadAndEnablePlugin', () => {
 
     expect(fetchPluginManifest).toHaveBeenLastCalledWith('/test/api/plugins/Test/');
     expect(resolvePluginDependencies).toHaveBeenLastCalledWith(manifest, null, ['Test']);
-    expect(loadDynamicPluginMock).toHaveBeenLastCalledWith('/test/api/plugins/Test/', manifest);
+    expect(loadDynamicPluginMock).toHaveBeenLastCalledWith(manifest);
 
     [fetchPluginManifest, resolvePluginDependencies, loadDynamicPluginMock].forEach((mock) => {
       expect(mock).toHaveBeenCalledTimes(2);
     });
   });
 
+  it('ensures that the plugin manifest is adapted to the standard format', async () => {
+    const manifest: LegacyConsolePluginManifest = {
+      name: 'Test',
+      version: '1.2.3',
+      extensions: [],
+      displayName: 'Test Plugin',
+      description: 'Test Plugin Description',
+      disableStaticPlugins: ['StaticTest'],
+      dependencies: { RequiredTest: '*' },
+    };
+
+    fetchPluginManifest.mockImplementation(() => Promise.resolve(manifest));
+    resolvePluginDependencies.mockImplementation(() => Promise.resolve());
+    loadDynamicPluginMock.mockImplementation(() => Promise.resolve('Test@1.2.3'));
+
+    window.SERVER_FLAGS.basePath = '/';
+
+    await loadAndEnablePlugin('Test', pluginStore);
+
+    expect(loadDynamicPluginMock).toHaveBeenLastCalledWith(
+      adaptPluginManifest(manifest, '/api/plugins/Test/'),
+    );
+  });
+
   it('enables the plugin if it was loaded successfully', async () => {
+    const manifest = getPluginManifest('Test', '1.2.3');
     const onError = jest.fn();
 
     fetchPluginManifest.mockImplementation(() => Promise.resolve(manifest));
@@ -378,6 +439,7 @@ describe('loadAndEnablePlugin', () => {
   });
 
   it('calls the provided error handler when the plugin fails to load properly', async () => {
+    const manifest = getPluginManifest('Test', '1.2.3');
     const onError = jest.fn();
 
     fetchPluginManifest.mockImplementation(() => Promise.reject(new Error('boom1')));
@@ -411,7 +473,7 @@ describe('loadAndEnablePlugin', () => {
 
     expect(onError).toHaveBeenCalledTimes(3);
     expect(onError).toHaveBeenLastCalledWith(
-      'Failed to load entry script of plugin Test',
+      'Failed to load scripts of plugin Test',
       new Error('boom3'),
     );
 

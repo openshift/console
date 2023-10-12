@@ -8,7 +8,7 @@ import { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/co
 import { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
-import { validateExtensionsFileSchema } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleAssetPlugin';
+import { validateConsoleExtensionsFileSchema } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
 import { Extension, ActivePlugin } from '../typings';
 import { trimStartMultiLine } from '../utils/string';
 import { consolePkgScope, PluginPackage } from './plugin-resolver';
@@ -123,7 +123,7 @@ export const getDynamicExtensions = (
   }
 
   const ext = parseJSONC<ConsoleExtensionsJSON>(extensionsFilePath);
-  const schemaValidationResult = validateExtensionsFileSchema(ext, extensionsFilePath);
+  const schemaValidationResult = validateConsoleExtensionsFileSchema(ext, extensionsFilePath);
 
   if (schemaValidationResult.hasErrors()) {
     errorCallback(schemaValidationResult.formatErrors());

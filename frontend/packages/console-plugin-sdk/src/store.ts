@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import * as _ from 'lodash';
-import { ConsolePluginManifestJSON } from '@console/dynamic-plugin-sdk/src/schema/plugin-manifest';
+import { StandardConsolePluginManifest } from '@console/dynamic-plugin-sdk/src/build-types';
 import { Extension, LoadedExtension, ActivePlugin } from './typings';
 
 export const sanitizeExtension = <E extends Extension>(e: E): E => {
@@ -119,7 +119,7 @@ export class PluginStore {
 
   addDynamicPlugin(
     pluginID: string,
-    manifest: ConsolePluginManifestJSON,
+    manifest: StandardConsolePluginManifest,
     resolvedExtensions: Extension[],
   ) {
     if (this.loadedDynamicPlugins.has(pluginID)) {
@@ -145,7 +145,7 @@ export class PluginStore {
       enabled: false,
     });
 
-    (manifest.disableStaticPlugins || [])
+    (manifest.customProperties?.console?.disableStaticPlugins ?? [])
       .filter(
         (pluginName) =>
           !this.disabledStaticPluginNames.has(pluginName) &&
@@ -228,7 +228,7 @@ export class PluginStore {
         acc.push({
           status: 'Loaded',
           pluginID,
-          metadata: _.omit(plugin.manifest, 'extensions'),
+          metadata: _.omit(plugin.manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: plugin.enabled,
         });
         return acc;
@@ -285,9 +285,12 @@ type StaticPlugin = {
   extensions: LoadedExtension[];
 };
 
-type DynamicPluginManifest = Readonly<ConsolePluginManifestJSON>;
+type DynamicPluginManifest = Readonly<StandardConsolePluginManifest>;
 
-type DynamicPluginMetadata = Omit<DynamicPluginManifest, 'extensions'>;
+type DynamicPluginMetadata = Omit<
+  DynamicPluginManifest,
+  'extensions' | 'loadScripts' | 'registrationMethod'
+>;
 
 type LoadedDynamicPlugin = {
   manifest: DynamicPluginManifest;

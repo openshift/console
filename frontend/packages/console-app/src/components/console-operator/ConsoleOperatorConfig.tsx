@@ -107,7 +107,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
         return {
           name: plugin.metadata.name,
           version: plugin.metadata.version,
-          description: plugin.metadata?.description || placeholder,
+          description: plugin.metadata?.customProperties?.console?.description || placeholder,
           enabled: !!obj?.spec?.plugins?.includes(plugin.metadata.name),
           status: plugin.status,
         };
@@ -156,7 +156,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
         return {
           name: plugin?.metadata?.name,
           version: loadedPluginInfo?.metadata?.version,
-          description: loadedPluginInfo?.metadata?.description,
+          description: loadedPluginInfo?.metadata?.customProperties?.console?.description,
           enabled,
           status: loadedPluginInfo?.status,
         };

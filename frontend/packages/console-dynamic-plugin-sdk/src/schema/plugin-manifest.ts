@@ -1,10 +1,6 @@
-import { ConsoleExtensionsJSON } from './console-extensions';
-import { ConsolePluginMetadata } from './plugin-package';
+import { AnyConsolePluginManifest } from '../build-types';
 
 /**
  * Schema of Console plugin's `plugin-manifest.json` file.
  */
-export type ConsolePluginManifestJSON = Omit<ConsolePluginMetadata, 'exposedModules'> & {
-  /** List of extensions contributed by the plugin. */
-  extensions: ConsoleExtensionsJSON;
-};
+export type ConsolePluginManifestJSON = AnyConsolePluginManifest;

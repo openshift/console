@@ -1,6 +1,5 @@
+import { StandardConsolePluginManifest } from '../build-types';
 import { applyCodeRefSymbol } from '../coderefs/coderef-resolver';
-import { ConsoleExtensionsJSON } from '../schema/console-extensions';
-import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { Extension, RemoteEntryModule, CodeRef, Update } from '../types';
 
 export const getPluginManifest = (
@@ -8,11 +7,14 @@ export const getPluginManifest = (
   version: string,
   extensions: Extension[] = [],
   disableStaticPlugins?: string[],
-): ConsolePluginManifestJSON => ({
+): StandardConsolePluginManifest => ({
   name,
   version,
-  extensions: extensions as ConsoleExtensionsJSON,
-  disableStaticPlugins,
+  extensions,
+  customProperties: { console: { disableStaticPlugins } },
+  baseURL: `http://example.com/${name}/`,
+  loadScripts: ['plugin-entry.js'],
+  registrationMethod: 'callback',
 });
 
 export const getExecutableCodeRefMock = <T = any>(
