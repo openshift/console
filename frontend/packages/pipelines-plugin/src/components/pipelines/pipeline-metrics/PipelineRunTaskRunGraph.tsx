@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
-  ChartLegend,
   getInteractiveLegendEvents,
   getInteractiveLegendItemStyles,
   ChartLegendTooltip,
+  ChartLegend,
 } from '@patternfly/react-charts';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +23,21 @@ import {
 } from './pipeline-metrics-utils';
 
 import './pipeline-chart.scss';
+
+const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
+  // The first child should be a <rect> with a `width` and `height` prop giving the legend's content width and height
+  const width = children?.[0]?.[0]?.props?.width ?? '100%';
+  const height = children?.[0]?.[0]?.props?.height ?? '100%';
+  return (
+    <foreignObject height={48} width="100%" y={DEFAULT_CHART_HEIGHT + 55}>
+      <div className="pipeline-metrics__legend-wrap horizontal-scroll">
+        <svg width={width} height={height}>
+          {children}
+        </svg>
+      </div>
+    </foreignObject>
+  );
+};
 
 const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
   pipeline,
@@ -133,18 +148,18 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
             tickValues={tickValues}
             width={contentRect.bounds.width}
             height={chartHeight}
-            legendPosition="bottom-left"
             legendComponent={
-              <ChartLegend
-                gutter={25}
-                y={DEFAULT_CHART_HEIGHT + 75}
-                itemsPerRow={4}
-                name="legend"
-                data={getLegendData()}
-                style={{
-                  labels: { fill: 'var(--pf-global--Color--100)' },
-                }}
-              />
+              !_.isEmpty(getLegendData()) && (
+                <ChartLegend
+                  groupComponent={<LegendContainer />}
+                  gutter={18}
+                  name="legend"
+                  data={getLegendData()}
+                  style={{
+                    labels: { fontSize: 11, fill: 'var(--pf-global--Color--100)' },
+                  }}
+                />
+              )
             }
             containerComponent={
               <CursorVoronoiContainer
