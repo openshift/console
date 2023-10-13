@@ -1,3 +1,4 @@
+import { SemVer } from 'semver';
 import { PipelineModel, PipelineRunModel } from '../../models';
 import { pipelineTestData, PipelineExampleNames, DataState } from '../../test-data/pipeline-data';
 import {
@@ -47,24 +48,34 @@ describe('PipelineAction testing startPipeline to check the pipelinerun access r
 
 describe('PipelineAction testing stopPipelineRun create correct labels and callbacks', () => {
   it('expect label to be "Stop" with hidden flag as false when latest Run is running', () => {
-    const stopAction = stopPipelineRun(PipelineRunModel, {
-      ...samplePipelineRun,
-      status: {
-        conditions: [
-          {
-            ...samplePipelineRun.status.conditions[0],
-            status: 'Unknown',
-          },
-        ],
+    const stopAction = stopPipelineRun(
+      PipelineRunModel,
+      {
+        ...samplePipelineRun,
+        status: {
+          conditions: [
+            {
+              ...samplePipelineRun.status.conditions[0],
+              status: 'Unknown',
+            },
+          ],
+        },
       },
-    });
+      new SemVer('1.9.0'),
+      [],
+    );
     expect(stopAction.labelKey).toBe(`${i18nNS}~Stop`);
     expect(stopAction.callback).not.toBeNull();
     expect(stopAction.hidden).toBeFalsy();
   });
 
   it('expect label to be "Stop" with hidden flag as true when latest Run is not running', () => {
-    const stopAction = stopPipelineRun(PipelineRunModel, samplePipelineRun);
+    const stopAction = stopPipelineRun(
+      PipelineRunModel,
+      samplePipelineRun,
+      new SemVer('1.9.0'),
+      [],
+    );
     expect(stopAction.labelKey).toBe(`${i18nNS}~Stop`);
     expect(stopAction.callback).not.toBeNull();
     expect(stopAction.hidden).not.toBeFalsy();
@@ -75,26 +86,30 @@ describe('PipelineAction testing cancelPipelineRunFinally create correct labels 
   it('expect label to be "Cancel" with hidden flag as false when latest Run is running', () => {
     const pipelineRun =
       pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.IN_PROGRESS];
-    const cancelAction = cancelPipelineRunFinally(PipelineRunModel, pipelineRun);
+    const cancelAction = cancelPipelineRunFinally(PipelineRunModel, pipelineRun, []);
     expect(cancelAction.labelKey).toBe(`${i18nNS}~Cancel`);
     expect(cancelAction.callback).not.toBeNull();
     expect(cancelAction.hidden).toBeFalsy();
   });
 
   it('expect label to be "Cancel" with hidden flag as true when latest Run is not running', () => {
-    const cancelAction = cancelPipelineRunFinally(PipelineRunModel, samplePipelineRun);
+    const cancelAction = cancelPipelineRunFinally(PipelineRunModel, samplePipelineRun, []);
     expect(cancelAction.labelKey).toBe(`${i18nNS}~Cancel`);
     expect(cancelAction.callback).not.toBeNull();
     expect(cancelAction.hidden).not.toBeFalsy();
   });
 
   it('"Cancel" action should be present for the Stopped latest Run', () => {
-    const cancelAction = cancelPipelineRunFinally(PipelineRunModel, {
-      ...samplePipelineRun,
-      spec: {
-        status: 'StoppedRunFinally',
+    const cancelAction = cancelPipelineRunFinally(
+      PipelineRunModel,
+      {
+        ...samplePipelineRun,
+        spec: {
+          status: 'StoppedRunFinally',
+        },
       },
-    });
+      [],
+    );
     expect(cancelAction.labelKey).toBe(`${i18nNS}~Cancel`);
     expect(cancelAction.callback).not.toBeNull();
     expect(cancelAction.hidden).not.toBeFalsy();
