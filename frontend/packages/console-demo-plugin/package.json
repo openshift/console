@@ -9,11 +9,6 @@
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx",
-    "integrationTestSuites": {
-      "demo": [
-        "integration-tests/**/*.scenario.ts"
-      ]
-    },
     "exposedModules": {
       "perspective": "src/utils/perspective"
     }
