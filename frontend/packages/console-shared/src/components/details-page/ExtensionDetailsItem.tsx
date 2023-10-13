@@ -7,13 +7,20 @@ import { DetailsItem } from '@console/internal/components/utils/details-item';
 
 export const ExtensionDetailsItem: ExtensionDetailsItemComponent = ({ extension, obj }) => {
   const { path, title, component: Component } = extension.properties;
+  const sortWeight = Number(extension.properties.sortWeight) || Infinity;
   const content = Component ? (
     <Component key={extension.properties.id} obj={obj} />
   ) : (
     _.get(obj, path, '-').toString()
   );
+
   return (
-    <DetailsItem obj={obj} path={path} label={title}>
+    <DetailsItem
+      obj={obj}
+      path={path}
+      label={title}
+      labelClassName={`details-item__sort-weight-${sortWeight}`} // for visibility
+    >
       {content}
     </DetailsItem>
   );
