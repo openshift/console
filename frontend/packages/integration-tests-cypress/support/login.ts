@@ -22,7 +22,7 @@ Cypress.Commands.add(
     cy.session(
       [provider, username],
       () => {
-        cy.visit('/'); // visits baseUrl which is set in plugins/index.js
+        cy.visit(Cypress.config('baseUrl'));
         cy.window().then((win: any) => {
           // Check if auth is disabled (for a local development environment)
           if (win.SERVER_FLAGS?.authDisabled) {
@@ -69,8 +69,13 @@ Cypress.Commands.add(
           }
         });
       },
-      { cacheAcrossSpecs: true },
+      {
+        cacheAcrossSpecs: true,
+        validate() {
+          // If unable to visit the baseURL, login has failed, and the session will be re-created.
+          cy.visit(Cypress.config('baseUrl'));
+        },
+      },
     );
-    cy.visit('/'); // visits baseUrl which is set in plugins/index.js
   },
 );
