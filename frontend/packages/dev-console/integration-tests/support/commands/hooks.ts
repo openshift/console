@@ -14,7 +14,6 @@ before(() => {
 after(() => {
   const namespaces: string[] = Cypress.env('NAMESPACES') || [];
   cy.exec(`oc delete namespace ${namespaces.join(' ')}`, { failOnNonZeroExit: false });
-  // cy.logout();
 });
 
 beforeEach(() => {
