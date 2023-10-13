@@ -252,7 +252,7 @@
       "id": "test-list-page",
       "perspective": "admin",
       "section": "admin-demo-section",
-      "name": "List Page",
+      "name": "%plugin__console-demo-plugin~List Page%",
       "href": "/demo-list-page"
     },
     "flags": {
@@ -272,7 +272,7 @@
       "id": "test-k8s-api",
       "perspective": "admin",
       "section": "admin-demo-section",
-      "name": "K8s API",
+      "name": "%plugin__console-demo-plugin~K8s API%",
       "href": "/test-k8sapi"
     },
     "flags": {
@@ -327,7 +327,7 @@
     "properties": {
       "id": "demo-plugin-tab",
       "navSection": "home",
-      "title": "Demo Dashboard"
+      "title": "%plugin__console-demo-plugin~Demo Dashboard%"
     }
   },
   {
@@ -381,7 +381,7 @@
       "id": "test-modal-page",
       "perspective": "admin",
       "section": "admin-demo-section",
-      "name": "Modal Launchers",
+      "name": "%plugin__console-demo-plugin~Modal Launchers%",
       "href": "/test-modal"
     }
   },

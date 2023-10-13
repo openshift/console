@@ -6,7 +6,9 @@ declare global {
   namespace Cypress {
     interface Chainable {
       createProject(name: string): Chainable<Element>;
+      createProjectWithCLI(name: string): Chainable<Element>;
       deleteProject(name: string): Chainable<Element>;
+      deleteProjectWithCLI(name: string, timeout?: number): Chainable<Element>;
     }
   }
 }
@@ -30,6 +32,10 @@ Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false
   }
 });
 
+Cypress.Commands.add('createProjectWithCLI', (name: string) => {
+  cy.exec(`oc new-project ${name}`);
+});
+
 Cypress.Commands.add('deleteProject', (name: string) => {
   cy.log(`delete project`);
   cy.visit(`/k8s/cluster/projects/${name}`);
@@ -43,4 +49,8 @@ Cypress.Commands.add('deleteProject', (name: string) => {
   modal.submit();
   modal.shouldBeClosed();
   listPage.titleShouldHaveText('Projects');
+});
+
+Cypress.Commands.add('deleteProjectWithCLI', (name: string, timeout?: number) => {
+  cy.exec(`oc delete project ${name}`, { timeout });
 });

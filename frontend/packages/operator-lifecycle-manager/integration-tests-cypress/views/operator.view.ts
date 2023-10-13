@@ -52,8 +52,10 @@ export const operator = {
     } else {
       cy.byTestID('All namespaces on the cluster-radio-input').should('be.checked');
     }
-    if (!useOperatorRecommendedNamespace) {
-      cy.log(`verify namespace dropdown shows the "${installToNamespace}" namespace`);
+    if (installToNamespace !== GlobalInstalledNamespace && !useOperatorRecommendedNamespace) {
+      cy.byTestID('dropdown-selectbox').click();
+      cy.byLegacyTestID('dropdown-text-filter').type(installToNamespace);
+      cy.byTestID('dropdown-menu-item-link').click();
       cy.byTestID('dropdown-selectbox').should('contain', installToNamespace);
     }
     // Install
@@ -73,8 +75,8 @@ export const operator = {
     cy.log(`operator "${operatorName}" should exist in ${installToNamespace}`);
     nav.sidenav.clickNavLink(['Operators', 'Installed Operators']);
     listPage.titleShouldHaveText('Installed Operators');
-    listPage.filter.byName(operatorName);
-    cy.byTestOperatorRow(operatorName, { timeout: 180000 }).should('exist'); // 3 minutes
+    operator.filterByName(operatorName);
+    cy.byTestOperatorRow(operatorName, { timeout: 300000 }).should('exist'); // 5 minutes
     listPage.rows.countShouldBe(1);
     cy.byTestID('status-text', { timeout: 720000 }).should('contain.text', 'Succeeded'); // 12 minutes
   },
@@ -87,7 +89,7 @@ export const operator = {
     listPage.titleShouldHaveText('Installed Operators');
     projectDropdown.selectProject(installedNamespace);
     projectDropdown.shouldContain(installedNamespace);
-    listPage.filter.byName(operatorName);
+    operator.filterByName(operatorName);
     listPage.rows.countShouldBe(1);
     cy.byTestOperatorRow(operatorName).should('exist');
     cy.byTestOperatorRow(operatorName).click();
@@ -201,6 +203,11 @@ export const operator = {
     cy.log(`operator "${operatorName}" should not exist in ${installToNamespace}`);
     nav.sidenav.clickNavLink(['Operators', 'Installed Operators']);
     cy.byTestOperatorRow(operatorName).should('not.exist');
+  },
+  filterByName: (name: string) => {
+    cy.byTestID('name-filter-input').focus();
+    cy.byTestID('name-filter-input').clear();
+    cy.byTestID('name-filter-input').type(name);
   },
 };
 
