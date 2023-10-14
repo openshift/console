@@ -995,8 +995,7 @@
         "version": "v1",
         "kind": "VolumeSnapshot"
       }
-    },
-    "flags": { "required": ["CAN_LIST_NS"] }
+    }
   },
   {
     "type": "console.navigation/resource-cluster",
@@ -1011,7 +1010,8 @@
         "version": "v1",
         "kind": "VolumeSnapshotClass"
       }
-    }
+    },
+    "flags": { "required": ["CAN_LIST_NS"] }
   },
   {
     "type": "console.navigation/resource-ns",
