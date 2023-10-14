@@ -4,7 +4,7 @@ import {
   pageTitle,
   helmActions,
 } from '@console/dev-console/integration-tests/support/constants';
-import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { helmPO, topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   topologyPage,
   topologySidePane,
@@ -26,7 +26,8 @@ Given('user has installed helm release {string}', (helmReleaseName: string) => {
 When(
   'user right clicks on the helm release {string} to open the context menu',
   (helmReleaseName: string) => {
-    topologyPage.rightClickOnGroup(helmReleaseName);
+    topologyPage.verifyWorkloadInTopologyPage(helmReleaseName);
+    topologyPage.rightClickOnHelmWorkload(helmReleaseName);
   },
 );
 

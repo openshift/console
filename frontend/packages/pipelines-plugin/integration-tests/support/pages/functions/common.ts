@@ -33,7 +33,7 @@ export const tableFunctions = {
 
 export const userLoginPage = {
   nonAdminUserlogin: () => {
-    cy.logout();
+    Cypress.session.clearAllSavedSessions();
     app.waitForDocumentLoad();
     cy.get('body').then(($body) => {
       if ($body.find('[data-test-id="login"]').length === 0) {

@@ -18,7 +18,7 @@ import {
 import { devNavigationMenuPO } from '../../pageObjects';
 
 Given('user has logged in as a basic user', () => {
-  cy.logout();
+  Cypress.session.clearAllSavedSessions();
   const idp = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'test';
   const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
   const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';

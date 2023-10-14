@@ -85,14 +85,5 @@ module.exports = (on, config) => {
   config.env.BRIDGE_HTPASSWD_PASSWORD = process.env.BRIDGE_HTPASSWD_PASSWORD;
   config.env.BRIDGE_KUBEADMIN_PASSWORD = process.env.BRIDGE_KUBEADMIN_PASSWORD;
   config.env.OAUTH_BASE_ADDRESS = process.env.OAUTH_BASE_ADDRESS;
-  // eslint-disable-next-line global-require
-  const configJson = require(config.configFile);
-  if (configJson.extends) {
-    const baseConfigFilename = path.join(config.projectRoot, configJson.extends);
-    // eslint-disable-next-line import/no-dynamic-require
-    const baseConfig = require(baseConfigFilename);
-    console.log('merging %s with %s', baseConfigFilename, config.configFile);
-    return deepmerge(baseConfig, configJson);
-  }
   return config;
 };

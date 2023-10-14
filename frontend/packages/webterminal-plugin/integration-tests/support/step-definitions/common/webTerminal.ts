@@ -68,7 +68,7 @@ Given('user has installed webTerminal in namespace {string}', (namespace: string
 });
 
 And('user has logged in as basic user', () => {
-  cy.logout();
+  Cypress.session.clearAllSavedSessions();
   cy.login(idp, username, password);
   // sometimes guide tour is not closed properly without delay
   cy.wait(1000);

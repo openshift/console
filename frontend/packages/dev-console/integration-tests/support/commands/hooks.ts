@@ -1,3 +1,4 @@
+import { checkErrors } from '@console/cypress-integration-tests/support';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 
 before(() => {
@@ -13,7 +14,10 @@ before(() => {
 after(() => {
   const namespaces: string[] = Cypress.env('NAMESPACES') || [];
   cy.exec(`oc delete namespace ${namespaces.join(' ')}`, { failOnNonZeroExit: false });
-  // cy.logout();
+});
+
+beforeEach(() => {
+  cy.initDeveloper();
 });
 
 afterEach(() => {
