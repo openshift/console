@@ -3,7 +3,7 @@
   text-align: left;
   // overrides Bootstrap-related line-height issue that causes the title and icon to go out of alignment
   h4 {
-    font-family: var(--pf-v5-global--FontFamily--sans-serif);
+    font-family: var(--pf-v5-global--FontFamily--text);
     line-height: var(--pf-v5-global--LineHeight--md);
   }
 }

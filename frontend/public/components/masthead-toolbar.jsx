@@ -209,7 +209,7 @@ class MastheadToolbarContents_ extends React.Component {
     });
   }
 
-  _onUserDropdownToggle(isUserDropdownOpen) {
+  _onUserDropdownToggle(event, isUserDropdownOpen) {
     this.setState({
       isUserDropdownOpen,
     });
@@ -221,7 +221,7 @@ class MastheadToolbarContents_ extends React.Component {
     });
   }
 
-  _onKebabDropdownToggle(isKebabDropdownOpen) {
+  _onKebabDropdownToggle(event, isKebabDropdownOpen) {
     this.setState({
       isKebabDropdownOpen,
     });
@@ -239,7 +239,7 @@ class MastheadToolbarContents_ extends React.Component {
     });
   }
 
-  _onApplicationLauncherDropdownToggle(isApplicationLauncherDropdownOpen) {
+  _onApplicationLauncherDropdownToggle(event, isApplicationLauncherDropdownOpen) {
     this.setState({
       isApplicationLauncherDropdownOpen,
     });
@@ -251,7 +251,7 @@ class MastheadToolbarContents_ extends React.Component {
     });
   }
 
-  _onHelpDropdownToggle(isHelpDropdownOpen) {
+  _onHelpDropdownToggle(event, isHelpDropdownOpen) {
     this.setState({
       isHelpDropdownOpen,
     });

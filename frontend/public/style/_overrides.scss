@@ -22,16 +22,27 @@ form.pf-v5-c-form {
   }
   .catalog-tile-pf-icon {
     @include catalog-logo-background(var(--pf-v5-global--spacer--sm));
+    display: block;
     height: 50px;
     margin-bottom: calc(-1 * var(--pf-v5-global--spacer--sm)); // Cancels bottom padding
     margin-left: calc(-1 * var(--pf-v5-global--spacer--sm)); // Align logo with left edge
     margin-top: calc(-1 * var(--pf-v5-global--spacer--sm)); // Align logo with top edge
     max-width: 100%;
     min-width: 50px; // prevent collapsed state before img loads
+    width: fit-content;
     :where(.pf-v5-theme-dark) & {
       margin-left: 0;
       margin-top: 0;
     }
+  }
+  .pf-v5-c-card__actions {
+    gap: 0;
+    label {
+      margin-bottom: 0;
+    }
+  }
+  .pf-v5-c-card__selectable-actions .pf-v5-c-radio__label:hover {
+    --pf-v5-c-card--m-selectable--hover--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
   }
 }
 
@@ -100,7 +111,7 @@ form.pf-v5-c-form {
 
 .pf-v5-c-app-launcher__group-title {
   // Reset font to RedHatText so it doesn't appear too bold
-  font-family: var(--pf-v5-global--FontFamily--sans-serif);
+  font-family: var(--pf-v5-global--FontFamily--text);
 }
 
 .pf-v5-c-button--align-right {
@@ -161,6 +172,11 @@ form.pf-v5-c-form {
 .pf-v5-c-modal-box,
 .pf-v5-c-switch {
   --pf-v5-global--FontSize--md: 1rem;
+}
+
+// Drawer
+.pf-v5-c-drawer__body {
+  height: 100%;
 }
 
 // Page
