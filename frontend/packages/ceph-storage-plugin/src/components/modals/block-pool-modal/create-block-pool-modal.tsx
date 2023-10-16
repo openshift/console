@@ -20,7 +20,6 @@ import { BlockPoolModalFooter } from './modal-footer';
 import { CephClusterKind, StoragePoolKind } from '../../../types';
 import { CephBlockPoolModel } from '../../../models';
 import { CEPH_STORAGE_NAMESPACE } from '../../../constants/index';
-import { SECOND } from '../../../../integration-tests/utils/consts';
 import { POOL_STATE, POOL_PROGRESS } from '../../../constants/storage-pool-const';
 import {
   blockPoolReducer,
@@ -96,7 +95,7 @@ export const CreateBlockPoolModal = withHandlePromise((props: CreateBlockPoolMod
           const timeoutTimer = setTimeout(() => {
             dispatch({ type: BlockPoolActionType.SET_POOL_STATUS, payload: POOL_PROGRESS.TIMEOUT });
             setIsSubmit(false);
-          }, 30 * SECOND);
+          }, 30 * 1000);
           setTimer(timeoutTimer);
         },
         () => {

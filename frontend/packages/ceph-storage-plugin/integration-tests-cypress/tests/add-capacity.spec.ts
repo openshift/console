@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import { checkErrors } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
-import { CLUSTER_STATUS } from '../../integration-tests/utils/consts';
 import {
   createOSDTreeMap,
   getDeviceCount,
@@ -55,7 +54,7 @@ xdescribe('OCS Operator Expansion of Storage Class Test', () => {
         _.set(initialState, 'cephCluster', cephCluster);
 
         cy.log('Check if ceph cluster is healthy before expansion');
-        expect(cephCluster.status.ceph.health).not.toBe(CLUSTER_STATUS.HEALTH_ERROR);
+        expect(cephCluster.status.ceph.health).not.toBe('HEALTH_ERR');
       },
     );
     cy.exec(
@@ -116,7 +115,7 @@ xdescribe('OCS Operator Expansion of Storage Class Test', () => {
         const cephCluster = JSON.parse(res.stdout);
 
         cy.log('Check if ceph cluster is healthy after expansion');
-        expect(cephCluster.status.ceph.health).not.toBe(CLUSTER_STATUS.HEALTH_ERROR);
+        expect(cephCluster.status.ceph.health).not.toBe('HEALTH_ERR');
       },
     );
     cy.exec('oc get po -n openshift-storage -o json').then((res) => {

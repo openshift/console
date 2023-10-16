@@ -13,17 +13,6 @@
   },
   "consolePlugin": {
     "entry": "src/plugin.ts",
-    "integrationTestSuites": {
-      "ceph-storage-install": [
-        "integration-tests/**/1-install/installFlow.scenario.ts"
-      ],
-      "ceph-storage-tests": [
-        "integration-tests/**/2-tests/*.scenario.ts"
-      ],
-      "ceph-storage": [
-        "integration-tests/**/*.scenario.ts"
-      ]
-    },
     "exposedModules": {
       "alert": "src/utils/alert-action-path.tsx",
       "storageProvider": "src/components/attach-obc/attach-obc-deployment.tsx",
