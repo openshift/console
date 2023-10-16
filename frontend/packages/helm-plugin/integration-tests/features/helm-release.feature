@@ -9,6 +9,7 @@ Feature: Helm Release
 
 
         Scenario: Open the Helm tab on the navigation bar when helm charts are absent: HR-05-TC01
+            Given user is at developer perspective
              When user clicks on the Helm tab
              Then user will be redirected to Helm releases page
               And user is able to see the message "No Helm Releases found"
@@ -111,12 +112,12 @@ Feature: Helm Release
              Then user will be redirected to Topology page
 
         Scenario: Helm release status verification: HR-01-TC04
-          Given user has installed helm chart "Nodejs" with helm release name "nodejs-release"
-            And user is able to see "nodejs-release" in helm page
-            And user is able to see the status and status icon of "nodejs-release" under helm releases tab
-            And user is able to see the "PendingInstall", "PendingUpgrade" and "PendingRollback" options under filter bar
-           When user clicks on the helm release name "nodejs-release"
-           Then user is able to see the status and status icon in title after "nodejs-release"
-            And user is able to see the status and status icon under helm release details
-            And user switch to Revision history tab
-            And user is able to see the status and status icon of Revision history page
+            Given user has installed helm chart "Nodejs" with helm release name "nodejs-release"
+              And user is able to see "nodejs-release" in helm page
+              And user is able to see the status and status icon of "nodejs-release" under helm releases tab
+              And user is able to see the "PendingInstall", "PendingUpgrade" and "PendingRollback" options under filter bar
+             When user clicks on the helm release name "nodejs-release"
+             Then user is able to see the status and status icon in title after "nodejs-release"
+              And user is able to see the status and status icon under helm release details
+              And user switch to Revision history tab
+              And user is able to see the status and status icon of Revision history page

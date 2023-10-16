@@ -9,7 +9,10 @@ before(() => {
   cy.exec('oc apply -f test-data/red-hat-helm-charts.yaml');
 });
 
+beforeEach(() => {
+  cy.initDeveloper();
+});
+
 after(() => {
   cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, { failOnNonZeroExit: false });
-  // cy.logout();
 });

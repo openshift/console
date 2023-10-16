@@ -303,6 +303,12 @@ export const topologyPage = {
   clickOnSinkBinding: (nodeName: string = 'sink-binding') => {
     topologyPage.getNode(nodeName).click({ force: true });
   },
+  getHelmRelease: (helmReleaseName: string) => {
+    return cy
+      .get('[data-type="helm-release"]')
+      .find(topologyPO.graph.groupLabel)
+      .contains(helmReleaseName);
+  },
   getKnativeService: (serviceName: string) => {
     return cy
       .get('[data-type="knative-service"]')
@@ -318,8 +324,8 @@ export const topologyPage = {
   waitForKnativeRevision: () => {
     cy.get(topologyPO.graph.node, { timeout: 300000 }).should('be.visible');
   },
-  rightClickOnHelmWorkload: () => {
-    cy.get(topologyPO.graph.node).find('circle').trigger('contextmenu', { force: true });
+  rightClickOnHelmWorkload: (helmReleaseName: string) => {
+    topologyPage.getHelmRelease(helmReleaseName).trigger('contextmenu', { force: true });
   },
   clickOnHelmWorkload: () => {
     cy.get(topologyPO.graph.node).find('circle').click({ force: true });

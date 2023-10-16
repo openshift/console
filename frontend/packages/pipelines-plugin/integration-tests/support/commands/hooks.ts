@@ -1,3 +1,4 @@
+import { checkErrors } from '@console/cypress-integration-tests/support';
 import { verifyAndInstallPipelinesOperator } from '@console/dev-console/integration-tests/support/pages';
 
 before(() => {
@@ -15,6 +16,10 @@ after(() => {
   });
 });
 
+beforeEach(() => {
+  cy.initDeveloper();
+});
+
 afterEach(() => {
-  cy.checkErrors();
+  checkErrors();
 });

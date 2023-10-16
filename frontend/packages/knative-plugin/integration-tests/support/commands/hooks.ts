@@ -1,3 +1,4 @@
+import { checkErrors } from '@console/cypress-integration-tests/support';
 import {
   devNavigationMenu,
   switchPerspective,
@@ -26,8 +27,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  perspective.switchTo(switchPerspective.Developer);
-  navigateTo(devNavigationMenu.Add);
+  cy.initDeveloper();
 });
 
 after(() => {
@@ -38,5 +38,5 @@ after(() => {
 
 afterEach(() => {
   // Below code helps to close the form, when there is any issue. so that other scenarios will be executed
-  cy.checkErrors();
+  checkErrors();
 });
