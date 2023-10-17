@@ -15,8 +15,7 @@ export const projectDropdown = {
     cy.byTestID('dropdown-menu-item-link').contains(projectName).click();
   },
   shouldContain: (name: string) =>
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.byLegacyTestID('namespace-bar-dropdown').contains(name).should('exist').wait(3000),
+    cy.byLegacyTestID('namespace-bar-dropdown').contains(name).should('exist'),
   shouldNotContain: (name: string) =>
     cy.byLegacyTestID('namespace-bar-dropdown').should('not.contain', name),
   shouldNotExist: () => cy.byLegacyTestID('namespace-bar-dropdown').should('not.exist'),
