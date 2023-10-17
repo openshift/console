@@ -38,6 +38,7 @@ import {
   history,
   humanizeBinaryBytes,
   humanizeCpuCores,
+  isManaged,
   isUpstream,
   Kebab,
   KebabAction,
@@ -231,7 +232,7 @@ const BuildMetrics = ({ obj }) => {
 const OpenShiftPipelines: React.FC = () => {
   const { t } = useTranslation();
   const text = t('public~OpenShift Pipelines based on Tekton');
-  return isUpstream() ? (
+  return isUpstream() || isManaged() ? (
     <>{text}</>
   ) : (
     <ExternalLink href={getDocumentationURL(documentationURLs.pipelines)} text={text} />

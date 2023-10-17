@@ -40,6 +40,7 @@ import {
   ExternalLink,
   FirehoseResult,
   getDocumentationURL,
+  isManaged,
   Kebab,
   KebabAction,
   KebabOption,
@@ -741,13 +742,20 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
   const title = t('olm~Installed Operators');
   const olmURL = getDocumentationURL(documentationURLs.operators);
   const helpText = (
-    <Trans ns="olm">
-      Installed Operators are represented by ClusterServiceVersions within this Namespace. For more
-      information, see the{' '}
-      <ExternalLink href={olmURL}>Understanding Operators documentation</ExternalLink>. Or create an
-      Operator and ClusterServiceVersion using the{' '}
-      <ExternalLink href={DOC_URL_OPERATORFRAMEWORK_SDK}>Operator SDK</ExternalLink>.
-    </Trans>
+    <>
+      {t(
+        'olm~Installed Operators are represented by ClusterServiceVersions within this Namespace.',
+      )}
+      {!isManaged() && (
+        <Trans ns="olm">
+          {' '}
+          For more information, see the{' '}
+          <ExternalLink href={olmURL}>Understanding Operators documentation</ExternalLink>. Or
+          create an Operator and ClusterServiceVersion using the{' '}
+          <ExternalLink href={DOC_URL_OPERATORFRAMEWORK_SDK}>Operator SDK</ExternalLink>.
+        </Trans>
+      )}
+    </>
   );
 
   const flatten: Flatten<{

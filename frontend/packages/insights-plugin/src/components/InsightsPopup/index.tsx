@@ -9,6 +9,7 @@ import {
   ExternalLink,
   getDocumentationURL,
   Timestamp,
+  isManaged,
 } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
@@ -163,7 +164,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
           )}
         </StackItem>
       )}
-      {(waiting || disabled || error) && (
+      {(waiting || disabled || error) && !isManaged() && (
         <ExternalLink href={insightsURL} text={t('insights-plugin~More about Insights')} />
       )}
     </Stack>

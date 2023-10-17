@@ -47,6 +47,7 @@ import {
   ExternalLink,
   getDocumentationURL,
   documentationURLs,
+  isManaged,
 } from './utils';
 import { ReplicationControllersPage } from './replication-controller';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
@@ -232,11 +233,13 @@ export const DeploymentConfigDeprecationAlert: React.FC = () => {
           'public~DeploymentConfigs will continue to be supported for security and critical fixes, but you should migrate to Deployments wherever it is possible.',
         )}
       </p>
-      <ExternalLink
-        href={getDocumentationURL(documentationURLs.deprecatedDeploymentConfig)}
-        text={t('public~Learn more about Deployments')}
-        additionalClassName="pf-u-mt-md"
-      />
+      {!isManaged() && (
+        <ExternalLink
+          href={getDocumentationURL(documentationURLs.deprecatedDeploymentConfig)}
+          text={t('public~Learn more about Deployments')}
+          additionalClassName="pf-u-mt-md"
+        />
+      )}
     </Alert>
   );
 };

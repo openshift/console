@@ -88,6 +88,9 @@ export const documentationURLs: documentationURLsType = {
 
 export const isUpstream = () => window.SERVER_FLAGS.branding === 'okd';
 
+export const isManaged = () =>
+  window.SERVER_FLAGS.branding === 'rosa' || window.SERVER_FLAGS.branding === 'dedicated';
+
 export const getDocumentationURL = (docURLs: docURLs) =>
   isUpstream()
     ? `${UPSTREAM_LATEST}${docURLs.upstream}`

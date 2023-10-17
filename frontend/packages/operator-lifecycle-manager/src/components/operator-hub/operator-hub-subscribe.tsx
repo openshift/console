@@ -21,6 +21,7 @@ import {
   getDocumentationURL,
   getURLSearchParams,
   history,
+  isManaged,
   MsgBox,
   NsDropdown,
   PageHeading,
@@ -620,13 +621,21 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               variant="warning"
               title={t('olm~Namespace monitoring')}
             >
-              <Trans ns="olm">
-                Please note that installing non-Red Hat operators into OpenShift namespaces and
-                enabling monitoring voids user support. Enabling cluster monitoring for non-Red Hat
-                operators can lead to malicious metrics data overriding existing cluster metrics.
-                For more information, see the{' '}
-                <ExternalLink href={monitoringURL}>cluster monitoring documentation</ExternalLink>.
-              </Trans>
+              <>
+                {t(
+                  'olm~Please note that installing non-Red Hat operators into OpenShift namespaces and enabling monitoring voids user support. Enabling cluster monitoring for non-Red Hat operators can lead to malicious metrics data overriding existing cluster metrics.',
+                )}
+                {!isManaged() && (
+                  <Trans ns="olm">
+                    {' '}
+                    For more information, see the{' '}
+                    <ExternalLink href={monitoringURL}>
+                      cluster monitoring documentation
+                    </ExternalLink>
+                    .
+                  </Trans>
+                )}
+              </>
             </Alert>
           )}
         </div>

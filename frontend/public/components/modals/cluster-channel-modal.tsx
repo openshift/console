@@ -6,7 +6,7 @@ import * as semver from 'semver';
 
 import { ChannelDocLink } from '../cluster-settings/cluster-settings';
 import { ClusterVersionModel } from '../../models';
-import { Dropdown, HandlePromiseProps, withHandlePromise } from '../utils';
+import { Dropdown, HandlePromiseProps, isManaged, withHandlePromise } from '../utils';
 import {
   createModalLauncher,
   ModalBody,
@@ -53,9 +53,11 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
                   'public~Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
                 )}
           </Text>
-          <Text component={TextVariants.p} className="pf-u-mb-md">
-            <ChannelDocLink />
-          </Text>
+          {!isManaged() && (
+            <Text component={TextVariants.p} className="pf-u-mb-md">
+              <ChannelDocLink />
+            </Text>
+          )}
         </TextContent>
         <div className="form-group">
           <label htmlFor="channel">{t('public~Channel')}</label>
