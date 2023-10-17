@@ -18,6 +18,7 @@ describe('Cluster dashboard', () => {
         'Cluster ID',
         'Infrastructure provider',
         'OpenShift version',
+        'Service Level Agreement (SLA)',
         'Update channel',
       ];
       if (isLocalDevEnvironment) {
@@ -32,6 +33,7 @@ describe('Cluster dashboard', () => {
         { assertion: 'include.text', value: '-' },
         { assertion: 'not.to.be.empty' },
         { assertion: 'include.text', value: '.' },
+        { assertion: 'not.to.be.empty' },
         { assertion: 'not.to.be.empty' },
       ];
       if (isLocalDevEnvironment) {
