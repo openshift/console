@@ -9,11 +9,16 @@ import CreateProjectListPage, {
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { ListPage } from '@console/internal/components/factory';
 import { withStartGuide } from '@console/internal/components/start-guide';
+import { PageHeading } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
 import { ServiceTypeValue } from '../../types';
+import { CreateActionDropdown } from './CreateActionDropdown';
 import FunctionsList from './FunctionsList';
+import { GettingStartedSection } from './GettingStartedSection';
 import { KnativeServiceTypeContext } from './ServiceTypeContext';
+
+import './FunctionsPage.scss';
 
 const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
   const { t } = useTranslation();
@@ -25,8 +30,15 @@ const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (prop
       <Helmet>
         <title>{t('knative-plugin~Functions')}</title>
       </Helmet>
+      <div className="odc-functions-list-page__heading">
+        <PageHeading title={t('knative-plugin~Functions')} />
+        <div className="co-m-nav-title">
+          <CreateActionDropdown />
+        </div>
+      </div>
+      <GettingStartedSection />
       <ListPage
-        title={t('knative-plugin~Functions')}
+        showTitle={false}
         {...props}
         kind={referenceForModel(ServiceModel)}
         ListComponent={FunctionsList}

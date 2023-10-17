@@ -1,0 +1,22 @@
+.odc-functions__empty-list {
+  &__image {
+    height: var(--pf-c-empty-state__icon--FontSize);
+    max-width: 100%;
+  }
+
+  &__icon {
+    margin-bottom: 0;
+    font-size: inherit;
+  }
+
+  &__dropdown {
+    padding-top: var(--pf-global--spacer--md);
+  }
+}
+
+.odc-functions-list-page {
+  &__heading {
+    display: inline-flex;
+    justify-content: space-between;
+  }
+}

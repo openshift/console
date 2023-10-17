@@ -1,7 +1,7 @@
 import { functionsPO } from '../../pageObjects/functions-po';
 
 export const functionsPage = {
-  verifyTitle: () => cy.byTestSectionHeading('Service details').should('be.visible'),
+  verifyTitle: () => cy.byTestSectionHeading('Details').should('be.visible'),
   verifyMessage: (noFunctionsFound: string) =>
     cy.get(functionsPO.emptyState).contains(noFunctionsFound),
   verifyFunctionsListed: () => {
@@ -18,4 +18,12 @@ export const functionsPage = {
   verifyRevisionsTab: () => cy.get(functionsPO.revisionsTab).should('be.visible'),
   verifyRoutesTab: () => cy.get(functionsPO.routesTab).should('be.visible'),
   verifyPodsTab: () => cy.get(functionsPO.podsTab).should('be.visible'),
+  verifyGettingStarted: () => cy.get(functionsPO.gettingStarted).should('be.visible'),
+  verifyFunctionsActionsDropdown: () =>
+    cy.byLegacyTestID('dropdown-button').eq(0).should('be.visible'),
+  clickFunctionsActionButton: () => cy.byLegacyTestID('dropdown-button').eq(0).click(),
+  verifyActionsInCreateMenu: () => {
+    cy.byLegacyTestID('dropdown-menu').contains('Import from Git').should('exist');
+    cy.byLegacyTestID('dropdown-menu').contains('Samples').should('exist');
+  },
 };

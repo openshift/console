@@ -46,7 +46,7 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('knative-plugin~Service details')} />
+        <SectionHeading text={t('knative-plugin~Details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary

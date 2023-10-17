@@ -177,9 +177,17 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
         ),
       );
     }
+    // Tech debt: ODC-7413: Move Serverless specific actions and providers from devconsole into knative-pluigin
     if (isServerlessEnabled) {
       actionsWithSourceRef.push(
         AddActions.CreateServerlessFunction(
+          namespace,
+          undefined,
+          sourceReference,
+          '',
+          !isCatalogImageResourceAccess,
+        ),
+        AddActions.CreateServerlessFunctionUsingSamples(
           namespace,
           undefined,
           sourceReference,
@@ -244,9 +252,17 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
         ),
       );
     }
+    // Tech debt: ODC-7413: Move Serverless specific actions and providers from devconsole into knative-pluigin
     if (isServerlessEnabled) {
       actionsWithoutSourceRef.push(
         AddActions.CreateServerlessFunction(
+          namespace,
+          undefined,
+          undefined,
+          ADD_TO_PROJECT,
+          !isCatalogImageResourceAccess,
+        ),
+        AddActions.CreateServerlessFunctionUsingSamples(
           namespace,
           undefined,
           undefined,
@@ -345,9 +361,17 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
               ),
             ]
           : []),
+        // Tech debt: ODC-7413: Move Serverless specific actions and providers from devconsole into knative-pluigin
         ...(isServerlessEnabled
           ? [
               AddActions.CreateServerlessFunction(
+                namespace,
+                application,
+                sourceReference,
+                path,
+                !isCatalogImageResourceAccess,
+              ),
+              AddActions.CreateServerlessFunctionUsingSamples(
                 namespace,
                 application,
                 sourceReference,

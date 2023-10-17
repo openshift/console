@@ -11,7 +11,13 @@ Feature: Navigations to Serverless Functions page
         Scenario: User navigates to Functions page when no Function is created: KN-08-TC01
              When user clicks on the Functions tab
              Then user redirected to Functions page
-              And user is able to see the message "No Functions found"
+              And user is able to see the message "No functions found"
+              And user will see Getting started resources
+              And user will see Create functions using Samples
+              And user will see create with guided documentation
+              And user will see Explore serverless functions
+              And user is able to see the Create function drop down menu with Import from Git and Samples options
+
 
         @smoke
         Scenario: User navigates to Functions page when Function is created: KN-08-TC02

@@ -68,3 +68,29 @@ Then('user is able to see Revisions, Routes and Pods tabs', () => {
   functionsPage.verifyRoutesTab();
   functionsPage.verifyPodsTab();
 });
+
+Then('user will see Getting started resources', () => {
+  functionsPage.verifyGettingStarted();
+});
+
+Then('user will see Create functions using Samples', () => {
+  cy.exec(`oc apply -f support/testData/serverless-functions-samples.yaml`);
+  cy.byTestID('card samples').should('be.visible');
+});
+
+Then('user will see create with guided documentation', () => {
+  cy.byTestID('card quick-start').should('be.visible');
+});
+
+Then('user will see Explore serverless functions', () => {
+  cy.byTestID('card serverless-features').should('be.visible');
+});
+
+Then(
+  'user is able to see the Create function drop down menu with Import from Git and Samples options',
+  () => {
+    functionsPage.verifyFunctionsActionsDropdown();
+    functionsPage.clickFunctionsActionButton();
+    functionsPage.verifyActionsInCreateMenu();
+  },
+);

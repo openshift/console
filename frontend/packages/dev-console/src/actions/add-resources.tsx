@@ -159,6 +159,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
     path,
     disabled: accessReviewDisabled,
   }),
+  // Tech debt: ODC-7413: Move Serverless specific actions and providers from devconsole into knative-pluigin
   CreateServerlessFunction: (
     namespace,
     application,
@@ -172,6 +173,27 @@ export const AddActions: { [name: string]: ActionFactory } = {
     cta: {
       href: resolvedURLWithParams(
         '/serverless-function/ns/:namespace',
+        namespace,
+        application,
+        contextSource,
+      ),
+    },
+    path,
+    disabled: accessReviewDisabled,
+  }),
+  CreateServerlessFunctionUsingSamples: (
+    namespace,
+    application,
+    contextSource,
+    path,
+    accessReviewDisabled,
+  ) => ({
+    id: 'create-serverless-function-samples',
+    label: i18next.t('devconsole~Serverless function using Samples'),
+    icon: <ServerlessFunctionIcon style={eventIconStyle} />,
+    cta: {
+      href: resolvedURLWithParams(
+        '/samples/ns/:namespace?sampleType=Serverless function',
         namespace,
         application,
         contextSource,

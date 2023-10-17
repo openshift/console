@@ -24,9 +24,7 @@ import { notSupportedRuntime } from '../../../utils/serverless-functions';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import GitSection from '../git/GitSection';
-import ExtensionCards from './ExtensionCards';
 import ServerlessFunctionStrategySection from './ServerlessFunctionStrategySection';
-import './AddServerlessFunctionForm.scss';
 
 type AddServerlessFunctionFormProps = {
   builderImages?: NormalizedBuilderImages;
@@ -156,12 +154,6 @@ const AddServerlessFunctionForm: React.FC<
                 </Alert>
               )}
           </FormBody>
-        </FlexItem>
-        <FlexItem
-          flex={{ default: 'flex_1' }}
-          className="pf-u-display-none pf-u-display-flex-on-lg"
-        >
-          <ExtensionCards />
         </FlexItem>
       </Flex>
       <FormFooter

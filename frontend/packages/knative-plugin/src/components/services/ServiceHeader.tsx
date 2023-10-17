@@ -24,27 +24,27 @@ const ServiceHeader = (t: TFunction) => () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('knative-plugin~Generation'),
+      title: t('knative-plugin~Conditions'),
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('knative-plugin~Ready'),
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: t('knative-plugin~Reason'),
+      props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: t('knative-plugin~Revision'),
       sortField: 'metadata.generation',
       transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
+      props: { className: tableColumnClasses[6] },
     },
     {
       title: t('knative-plugin~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: t('knative-plugin~Conditions'),
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: t('knative-plugin~Ready'),
-      props: { className: tableColumnClasses[6] },
-    },
-    {
-      title: t('knative-plugin~Reason'),
       props: { className: tableColumnClasses[7] },
     },
     {

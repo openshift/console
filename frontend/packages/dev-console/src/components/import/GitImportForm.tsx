@@ -15,8 +15,6 @@ import GitSection from './git/GitSection';
 import { BuildOptions, GitImportFormProps, ImportTypes } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
 import { BuildSection } from './section/BuildSection';
-import ExtensionCards from './serverless-function/ExtensionCards';
-import './serverless-function/AddServerlessFunctionForm.scss';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
   values,
@@ -50,8 +48,6 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
     importType !== ImportTypes.devfile &&
     values.import.selectedStrategy.type !== ImportStrategy.DEVFILE &&
     !isSample;
-  const showExtensionCards =
-    values.import.selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION && isSample;
 
   return (
     <form onSubmit={handleSubmit} data-test-id="import-git-form">
@@ -97,12 +93,6 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
               </>
             )}
           </FormBody>
-        </FlexItem>
-        <FlexItem
-          flex={{ default: 'flex_1' }}
-          className="pf-u-display-none pf-u-display-flex-on-lg"
-        >
-          {showExtensionCards && <ExtensionCards />}
         </FlexItem>
       </Flex>
       <FormFooter
