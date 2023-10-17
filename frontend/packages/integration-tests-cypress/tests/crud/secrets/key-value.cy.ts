@@ -1,17 +1,17 @@
 import 'cypress-file-upload';
 
-import { checkErrors, testName } from '../../support';
-import { detailsPage } from '../../views/details-page';
-import { infoMessage } from '../../views/form';
-import { listPage } from '../../views/list-page';
-import { nav } from '../../views/nav';
-import { secrets } from '../../views/secret';
+import { checkErrors, testName } from '../../../support';
+import { detailsPage } from '../../../views/details-page';
+import { infoMessage } from '../../../views/form';
+import { listPage } from '../../../views/list-page';
+import { nav } from '../../../views/nav';
+import { secrets } from '../../../views/secret';
 
 const populateSecretForm = (name: string, key: string, fileName: string) => {
   cy.get('.co-m-pane__heading').contains('Create key/value secret');
   cy.byTestID('secret-name').should('exist');
   cy.byLegacyTestID('file-input-textarea').should('exist');
-  cy.byTestID('secret-name').type(name);
+  secrets.enterSecretName(name);
   cy.byTestID('secret-key').type(key);
   cy.byTestID('file-input').attachFile(fileName);
 };
@@ -23,9 +23,9 @@ const modifySecretForm = (key: string) => {
 };
 
 describe('Create key/value secrets', () => {
-  const binarySecretName = `${testName}binarysecretname`;
-  const asciiSecretName = `${testName}asciisecretname`;
-  const unicodeSecretName = `${testName}unicodesecretname`;
+  const binarySecretName = `key-value-binary-secret-${testName}`;
+  const asciiSecretName = `key-value-ascii-secret-${testName}`;
+  const unicodeSecretName = `key-value-unicode-secret-${testName}`;
   const binaryFilename = 'binarysecret.bin';
   const asciiFilename = 'asciisecret.txt';
   const unicodeFilename = 'unicodesecret.utf8';
@@ -42,7 +42,7 @@ describe('Create key/value secrets', () => {
     cy.visit(`/k8s/cluster/projects/${testName}`);
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     listPage.titleShouldHaveText('Secrets');
-    secrets.clickCreateKeyValSecretDropdownButton();
+    secrets.clickCreateSecretDropdownButton('generic');
   });
 
   afterEach(() => {
@@ -63,7 +63,7 @@ describe('Create key/value secrets', () => {
     populateSecretForm(binarySecretName, secretKey, binaryFilename);
     cy.byLegacyTestID('file-input-textarea').should('not.exist');
     cy.get(infoMessage).should('exist');
-    cy.byTestID('save-changes').click();
+    secrets.save();
     cy.byTestID('loading-indicator').should('not.exist');
     detailsPage.isLoaded();
     detailsPage.titleShouldContain(binarySecretName);
@@ -78,7 +78,7 @@ describe('Create key/value secrets', () => {
       });
     });
     modifySecretForm(modifiedSecretKey);
-    cy.byTestID('save-changes').click();
+    secrets.save();
     cy.byTestID('loading-indicator').should('not.exist');
     detailsPage.isLoaded();
     detailsPage.titleShouldContain(binarySecretName);
@@ -99,7 +99,7 @@ describe('Create key/value secrets', () => {
     cy.fixture(asciiFilename, 'ascii').then((asciiSecret) => {
       cy.byLegacyTestID('file-input-textarea').should('contain.text', asciiSecret);
       cy.get(infoMessage).should('not.exist');
-      cy.byTestID('save-changes').click();
+      secrets.save();
       cy.byTestID('loading-indicator').should('not.exist');
       detailsPage.isLoaded();
       detailsPage.titleShouldContain(asciiSecretName);
@@ -119,7 +119,7 @@ describe('Create key/value secrets', () => {
     cy.fixture(unicodeFilename, 'utf8').then((unicodeSecret) => {
       cy.byLegacyTestID('file-input-textarea').should('contain.text', unicodeSecret);
       cy.get(infoMessage).should('not.exist');
-      cy.byTestID('save-changes').click();
+      secrets.save();
       cy.byTestID('loading-indicator').should('not.exist');
       detailsPage.isLoaded();
       detailsPage.titleShouldContain(unicodeSecretName);

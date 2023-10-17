@@ -187,6 +187,7 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
             autocompleteFilter={autocompleteFilter}
             autocompletePlaceholder={selectWorkloadPlaceholder}
             id="co-add-secret-to-workload__workload"
+            data-test="add-secret-to-workload-button"
           />
         </div>
         <fieldset>
@@ -207,6 +208,7 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
                   className="pf-c-form-control"
                   name="prefix"
                   id="co-add-secret-to-workload__prefix"
+                  data-test="add-secret-to-workload-prefix"
                   placeholder="(optional)"
                   type="text"
                   onChange={(e) => setPrefix(e.currentTarget.value)}
@@ -232,6 +234,7 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
                   className="pf-c-form-control"
                   name="mountPath"
                   id="co-add-secret-to-workload__mountpath"
+                  data-test="add-secret-to-workload-mountpath"
                   type="text"
                   onChange={(e) => setMountPath(e.currentTarget.value)}
                   required

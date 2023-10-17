@@ -86,6 +86,7 @@ export const ActionButtons: React.SFC<ActionButtonsProps> = ({ actionButtons }) 
             variant="primary"
             onClick={actionButton.callback}
             key={i}
+            data-test={actionButton.label}
           >
             {actionButton.label}
           </Button>
