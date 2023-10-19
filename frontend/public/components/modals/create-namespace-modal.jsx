@@ -13,7 +13,7 @@ import { FLAGS } from '@console/shared';
 import { k8sCreate, referenceFor } from '../../module/k8s';
 import { NamespaceModel, ProjectRequestModel, NetworkPolicyModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { Dropdown, history, resourceObjPath, SelectorInput } from '../utils';
+import { Dropdown, history, isManaged, resourceObjPath, SelectorInput } from '../utils';
 import { setFlag } from '../../actions/features';
 
 const allow = 'allow';
@@ -159,11 +159,13 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
                 'public~An OpenShift project is an alternative representation of a Kubernetes namespace.',
               )}
             </p>
-            <p>
-              <ExternalLink href={projectsURL}>
-                {t('public~Learn more about working with projects')}
-              </ExternalLink>
-            </p>
+            {!isManaged() && (
+              <p>
+                <ExternalLink href={projectsURL}>
+                  {t('public~Learn more about working with projects')}
+                </ExternalLink>
+              </p>
+            )}
           </>
         ) : null}
 

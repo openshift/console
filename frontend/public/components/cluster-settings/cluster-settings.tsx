@@ -101,6 +101,7 @@ import {
   FirehoseResource,
   getDocumentationURL,
   HorizontalNav,
+  isManaged,
   PageHeading,
   ReleaseNotesLink,
   ResourceLink,
@@ -472,9 +473,11 @@ const ChannelHeader: React.FC<{}> = () => {
               'public~Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
             )}
           </Text>
-          <Text component={TextVariants.p}>
-            <ChannelDocLink />
-          </Text>
+          {!isManaged() && (
+            <Text component={TextVariants.p}>
+              <ChannelDocLink />
+            </Text>
+          )}
         </TextContent>
       </FieldLevelHelp>
     </>

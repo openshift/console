@@ -14,6 +14,7 @@ import {
   ExternalLink,
   getDocumentationURL,
   HandlePromiseProps,
+  isManaged,
   withHandlePromise,
 } from '../utils';
 import { useTranslation } from 'react-i18next';
@@ -60,12 +61,14 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
               'public~Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
             )}
           </p>
-          <p>
-            <ExternalLink
-              href={updateURL}
-              text={t('public~Learn more about OpenShift local update services.')}
-            />
-          </p>
+          {!isManaged() && (
+            <p>
+              <ExternalLink
+                href={updateURL}
+                text={t('public~Learn more about OpenShift local update services.')}
+              />
+            </p>
+          )}
           <div className="form-group">
             <fieldset>
               <label>{t('public~Configuration')}</label>

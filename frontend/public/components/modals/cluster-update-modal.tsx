@@ -11,7 +11,13 @@ import {
 import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
 
 import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
-import { FieldLevelHelp, HandlePromiseProps, LinkifyExternal, withHandlePromise } from '../utils';
+import {
+  FieldLevelHelp,
+  HandlePromiseProps,
+  LinkifyExternal,
+  isManaged,
+  withHandlePromise,
+} from '../utils';
 import {
   ClusterVersionKind,
   getConditionUpgradeableFalse,
@@ -314,7 +320,9 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                     title={t('public~You must resume updates within 60 days to avoid failures.')}
                     className="pf-u-mb-md"
                   >
-                    <ExternalLink href={helpURL}>{t('public~Learn more')}</ExternalLink>
+                    {!isManaged() && (
+                      <ExternalLink href={helpURL}>{t('public~Learn more')}</ExternalLink>
+                    )}
                   </Alert>
                 </>
               )
