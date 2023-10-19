@@ -298,7 +298,7 @@
     "graphql-tag": "^2.10.3",
     "html-webpack-plugin": "3.x",
     "husky": "^4.2.5",
-    "i18next-parser": "^6.5.0",
+    "i18next-parser": "^7.9.0",
     "i18next-pseudo": "^2.2.0",
     "jasmine-console-reporter": "2.x",
     "jasmine-core": "2.x",
