@@ -682,7 +682,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
 		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
 		LogoutURL:                 proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
-		LogoutRedirect:            s.LogoutRedirect.String(),
 		KubeAPIServerURL:          s.KubeAPIServerURL,
 		Branding:                  s.Branding,
 		CustomProductName:         s.CustomProductName,
@@ -713,6 +712,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		NodeOperatingSystems:      s.NodeOperatingSystems,
 		CopiedCSVsDisabled:        s.CopiedCSVsDisabled,
 		K8sMode:                   s.K8sMode,
+	}
+
+	if s.LogoutRedirect != nil {
+		jsg.LogoutRedirect = s.LogoutRedirect.String()
 	}
 
 	if !s.authDisabled() {
