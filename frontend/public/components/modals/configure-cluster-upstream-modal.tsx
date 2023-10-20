@@ -15,6 +15,7 @@ import {
   getDocumentationURL,
   HandlePromiseProps,
   isManaged,
+  isUpstream,
   withHandlePromise,
 } from '../utils';
 import { useTranslation } from 'react-i18next';
@@ -61,7 +62,7 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
               'public~Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
             )}
           </p>
-          {!isManaged() && (
+          {!isManaged() && !isUpstream() && (
             <p>
               <ExternalLink
                 href={updateURL}
