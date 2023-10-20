@@ -666,5 +666,7 @@
   "BindableKinds": "BindableKinds",
   "Secure route": "보안 경로",
   "Image name from external registry": "외부 레지스트리의 이미지 이름",
-  "Image stream tag from internal registry": "내부 레지스트리의 이미지 스트림 태그"
+  "Image stream tag from internal registry": "내부 레지스트리의 이미지 스트림 태그",
+  "Browse...": "검색...",
+  "Clear": "지우기"
 }
