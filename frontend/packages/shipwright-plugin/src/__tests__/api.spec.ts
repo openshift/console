@@ -159,7 +159,17 @@ describe('rerunBuildRun', () => {
         generateName: 'buildrun3-33333-',
       },
       spec: {
-        buildSpec: {},
+        buildSpec: {
+          output: {
+            image: '',
+          },
+          source: {
+            url: '',
+          },
+          strategy: {
+            name: '',
+          },
+        },
       },
     };
 
@@ -181,7 +191,17 @@ describe('rerunBuildRun', () => {
         generateName: 'buildrun4-',
       },
       spec: {
-        buildSpec: {},
+        buildSpec: {
+          output: {
+            image: '',
+          },
+          source: {
+            url: '',
+          },
+          strategy: {
+            name: '',
+          },
+        },
       },
     };
 
@@ -194,7 +214,7 @@ describe('rerunBuildRun', () => {
   });
 
   it('should fail when try to rerun an incomplete BuildRun without buildRef and without buildSpec', async () => {
-    const buildRun: BuildRun = incompleteBuildRun;
+    const buildRun = incompleteBuildRun;
 
     await expect(rerunBuildRun(buildRun)).rejects.toEqual(
       new Error('Could not rerun BuildRun without buildRef.name or inline buildSpec.'),
