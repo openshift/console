@@ -4,6 +4,7 @@
 .oc-nav-header {
   border-bottom: 1px solid var(--pf-v5-global--BackgroundColor--dark-200);
   padding: 0.6rem var(--pf-v5-global--spacer--sm);
+  margin-top: var(--pf-v5-global--spacer--sm);
 
   :where(.pf-v5-theme-dark) & {
     // Match --pf-v5-c-nav__item--before--BorderColor

@@ -9,45 +9,72 @@
   --pf-v5-c-code-block__pre--FontSize: var(--pf-v5-global--FontSize--sm);
   --pf-v5-c-content--MarginBottom: var(--pf-v5-global--spacer--md);
 }
+:where(:not([class*="pf-v5-c-"])) {
+  @at-root h1#{&} {
+    font-size: var(--pf-v5-global--FontSize--2xl);
+    line-height: var(--pf-v5-global--LineHeight--sm);
+    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    word-break: break-word;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
-  font-weight: var(--pf-v5-global--FontWeight--normal);
-  line-height: var(--pf-v5-global--LineHeight--md);
-  margin-bottom: var(--pf-v5-global--spacer--sm);
-  word-break: break-word;
-}
+  @at-root h2#{&} {
+    font-size: var(--pf-v5-global--FontSize--xl);
+    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    word-break: break-word;
+  }
 
-h1 {
-  font-size: var(--pf-v5-global--FontSize--2xl);
-  line-height: var(--pf-v5-global--LineHeight--sm);
-}
+  @at-root h3#{&} {
+    font-size: var(--pf-v5-global--FontSize--lg);
+    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    word-break: break-word;
+  }
 
-h2 {
-  font-size: var(--pf-v5-global--FontSize--xl);
-}
+  @at-root h4#{&} {
+    font-size: var(--pf-v5-global--FontSize--md);
+    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    word-break: break-word;
+  }
 
-h3 {
-  font-size: var(--pf-v5-global--FontSize--lg);
-}
+  @at-root h5#{&} {
+    font-size: var(--pf-v5-global--FontSize--md);
+    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    word-break: break-word;
+  }
 
-h4,
-h5,
-h6 {
-  font-size: var(--pf-v5-global--FontSize--md);
-}
+  @at-root h6#{&} {
+    font-size: var(--pf-v5-global--FontSize--md);
+    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    word-break: break-word;
+  }
 
-// Override PF4 inheritance
-button,
-input,
-optgroup,
-select,
-textarea,
-.pf-v5-c-badge {
-  font-family: var(--pf-v5-global--FontFamily--text);
+  // Override PF4 inheritance
+  input,
+  optgroup,
+  select,
+  textarea,
+  .pf-v5-c-badge {
+    font-family: var(--pf-v5-global--FontFamily--sans-text);
+  }
+
+  @at-root button#{&} {
+    font-family: var(--pf-v5-global--FontFamily--sans-text);
+  }
 }

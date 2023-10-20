@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title } from '@patternfly/react-core';
+import { Title, Icon } from '@patternfly/react-core';
 import {
   Dropdown as DropdownDeprecated,
   DropdownItem as DropdownItemDeprecated,
@@ -44,11 +44,11 @@ const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
       }}
     >
       <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
-        <span className="oc-nav-header__icon">
+        <Icon>
           <React.Suspense fallback={<>&emsp;</>}>
             <LazyIcon />
           </React.Suspense>
-        </span>
+        </Icon>
         {perspective.properties.name}
       </Title>
     </DropdownItemDeprecated>
@@ -153,10 +153,10 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
                 onToggle={() => (perspectiveItems.length === 1 ? null : togglePerspectiveOpen())}
                 toggleIndicator={perspectiveItems.length === 1 ? null : CaretDownIcon}
                 data-test-id="perspective-switcher-toggle"
+                icon={<LazyIcon />}
               >
                 {name && (
                   <Title headingLevel="h2" size="md">
-                    <span className="oc-nav-header__icon">{<LazyIcon />}</span>
                     {name}
                   </Title>
                 )}
