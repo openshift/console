@@ -1,13 +1,13 @@
 import { Build, BuildRun } from '../types';
 
-export const incompleteBuild: Build = {
+export const incompleteBuild = {
   apiVersion: 'shipwright.io/v1alpha1',
   kind: 'Build',
   metadata: {
     namespace: 'a-namespace',
     name: 'incomplete-build',
   },
-};
+} as Build;
 
 export const buildWithLabels: Build = {
   apiVersion: 'shipwright.io/v1alpha1',
@@ -35,14 +35,14 @@ export const buildWithLabels: Build = {
   },
 };
 
-export const incompleteBuildRun: BuildRun = {
+export const incompleteBuildRun = {
   apiVersion: 'shipwright.io/v1alpha1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
     name: 'incomplete-buildrun',
   },
-};
+} as BuildRun;
 
 export const buildRunWithLabels: BuildRun = {
   apiVersion: 'shipwright.io/v1alpha1',
@@ -100,7 +100,17 @@ export const buildRunContainsIncompleteBuildSpecWithoutGenerateName: BuildRun = 
     name: 'buildrun3-33333',
   },
   spec: {
-    buildSpec: {},
+    buildSpec: {
+      output: {
+        image: '',
+      },
+      source: {
+        url: '',
+      },
+      strategy: {
+        name: '',
+      },
+    },
   },
 };
 
@@ -113,7 +123,17 @@ export const buildRunContainsIncompleteBuildSpecWithGenerateName: BuildRun = {
     name: 'buildrun4-44444',
   },
   spec: {
-    buildSpec: {},
+    buildSpec: {
+      output: {
+        image: '',
+      },
+      source: {
+        url: '',
+      },
+      strategy: {
+        name: '',
+      },
+    },
   },
 };
 
@@ -124,6 +144,7 @@ export const pendingBuildRun: BuildRun = {
     namespace: 'a-namespace',
     name: 'pending-buildrun',
   },
+  spec: {},
   status: {
     conditions: [
       {
@@ -131,6 +152,7 @@ export const pendingBuildRun: BuildRun = {
         status: 'Unknown',
         reason: 'Pending',
         message: '',
+        lastTransitionTime: '',
       },
     ],
   },
@@ -143,6 +165,7 @@ export const runningBuildRun: BuildRun = {
     namespace: 'a-namespace',
     name: 'running-buildrun',
   },
+  spec: {},
   status: {
     conditions: [
       {
@@ -150,6 +173,7 @@ export const runningBuildRun: BuildRun = {
         status: 'Unknown',
         reason: 'Running',
         message: '',
+        lastTransitionTime: '',
       },
     ],
   },
@@ -162,6 +186,7 @@ export const succeededBuildRun: BuildRun = {
     namespace: 'a-namespace',
     name: 'Succeeded-buildrun',
   },
+  spec: {},
   status: {
     conditions: [
       {
@@ -169,6 +194,7 @@ export const succeededBuildRun: BuildRun = {
         status: 'True',
         reason: '',
         message: '',
+        lastTransitionTime: '',
       },
     ],
   },
@@ -181,6 +207,7 @@ export const failedBuildRun: BuildRun = {
     namespace: 'a-namespace',
     name: 'failed-buildrun',
   },
+  spec: {},
   status: {
     conditions: [
       {
@@ -188,6 +215,7 @@ export const failedBuildRun: BuildRun = {
         status: 'False',
         reason: '',
         message: '',
+        lastTransitionTime: '',
       },
     ],
   },
