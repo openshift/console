@@ -80,7 +80,7 @@ export const topologyPO = {
   sidePane: {
     actionsDropDown: '[data-test-id="actions-menu-button"]',
     showPodCount: '[id$=show-pod-count]',
-    dialog: 'div.pf-c-drawer__panel-main [role="dialog"]',
+    dialog: 'div.pf-v5-c-drawer__panel-main [role="dialog"]',
     title: '[role="dialog"] h1',
     knativeServiceIcon: '[title="Service"]',
     tabs: '[role="dialog"] li button',

@@ -26,7 +26,7 @@ module.exports = defineConfig({
     NAMESPACE: 'aut-pipelines',
   },
   retries: {
-    runMode: 0,
+    runMode: 1,
     openMode: 0,
   },
   e2e: {

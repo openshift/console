@@ -109,7 +109,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
         id={`${item.getId()}_label`}
       >
         {badgeCell || <TypedResourceBadgeCell key="type-icon" kind={kind} />}
-        {item.getLabel()}
+        <span data-test-id={item.getLabel()}>{item.getLabel()}</span>
         {alertIndicator}
       </DataListCell>
     ),

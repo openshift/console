@@ -28,7 +28,8 @@ export const listPage = {
   },
   filter: {
     byName: (name: string) => {
-      cy.byTestID('name-filter-input').clear().type(name);
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.byTestID('name-filter-input').clear().type(name).wait(3000);
     },
     numberOfActiveFiltersShouldBe: (numFilters: number) => {
       cy.get("[class='pf-v5-c-toolbar__item pf-m-chip-group']").should('have.length', numFilters);

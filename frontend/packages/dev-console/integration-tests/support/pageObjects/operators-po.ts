@@ -1,5 +1,5 @@
 export const operatorsPO = {
-  search: '[data-test="search-operatorhub"] input.pf-c-text-input-group__text-input',
+  search: '[data-test="search-operatorhub"] input.pf-v5-c-text-input-group__text-input',
   nav: {
     operators: '[data-quickstart-id="qs-nav-operators"]',
     operatorHub: 'a[data-test="nav"][href="/operatorhub"]',

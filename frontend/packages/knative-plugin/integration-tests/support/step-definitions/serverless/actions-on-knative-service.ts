@@ -433,5 +433,5 @@ Given('workload {string} is present in topology page', (workloadName: string) =>
 });
 
 When('user clicks on service {string} to open sidebar', () => {
-  cy.get('.odc-knative-service__label').click();
+  cy.get('.odc-knative-service__label').click({ force: true });
 });
