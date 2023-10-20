@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator';
 import {
   ButtonBar,
   Dropdown,
@@ -77,6 +78,13 @@ const getResourceName = (networkType, typeParamsData): string => {
     : `openshift.io/${_.get(typeParamsData, 'resourceName.value', '')}`;
 };
 
+const generateNADName = (name: string): string => {
+  return `${name}-${uniqueNamesGenerator({
+    dictionaries: [adjectives, animals],
+    separator: '-',
+  })}`;
+};
+
 const createNetAttachDef = (
   e: React.FormEvent<EventTarget>,
   description,
@@ -92,7 +100,8 @@ const createNetAttachDef = (
   setLoading(true);
   setError(null);
 
-  const config = JSON.stringify(buildConfig(name, networkType, typeParamsData, namespace));
+  const nadName = generateNADName(name);
+  const config = JSON.stringify(buildConfig(nadName, networkType, typeParamsData, namespace));
   const resourceName = getResourceName(networkType, typeParamsData);
   const annotations: NetworkAttachmentDefinitionAnnotations = {
     ...(resourceName && { 'k8s.v1.cni.cncf.io/resourceName': resourceName }),
@@ -106,7 +115,7 @@ const createNetAttachDef = (
     apiVersion: `${NetworkAttachmentDefinitionModel.apiGroup}/${NetworkAttachmentDefinitionModel.apiVersion}`,
     kind: NetworkAttachmentDefinitionModel.kind,
     metadata: {
-      name,
+      name: nadName,
       namespace,
       annotations,
     },
@@ -118,7 +127,7 @@ const createNetAttachDef = (
   k8sCreate(NetworkAttachmentDefinitionModel, newNetAttachDef)
     .then(() => {
       setLoading(false);
-      history.push(resourcePathFromModel(NetworkAttachmentDefinitionModel, name, namespace));
+      history.push(resourcePathFromModel(NetworkAttachmentDefinitionModel, nadName, namespace));
     })
     .catch((err) => {
       setError(err);
