@@ -57,7 +57,7 @@ describe('Auth test', () => {
 
   it(`log in as 'kubeadmin' user`, () => {
     cy.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, Cypress.env('BRIDGE_KUBEADMIN_PASSWORD'));
-    cy.visit('');
+    cy.byTestID('loading-indicator').should('not.exist');
     cy.url().should('include', Cypress.config('baseUrl'));
     masthead.username.shouldHaveText(KUBEADMIN_IDP);
     cy.byTestID('global-notifications').contains(

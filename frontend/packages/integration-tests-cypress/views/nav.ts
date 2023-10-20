@@ -2,7 +2,7 @@ export const nav = {
   sidenav: {
     switcher: {
       shouldHaveText: (text: string) =>
-        cy.byLegacyTestID('perspective-switcher-toggle').contains(text),
+        cy.byLegacyTestID('perspective-switcher-toggle').scrollIntoView().contains(text),
       changePerspectiveTo: (newPerspective: string) =>
         cy
           .byLegacyTestID('perspective-switcher-toggle')
