@@ -96,10 +96,11 @@ func main() {
 	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
 
-	fKubectlClientID := fs.String("kubectl-client-id", "", "The OAuth2 client_id of kubectl.")
-	fKubectlClientSecret := fs.String("kubectl-client-secret", "", "The OAuth2 client_secret of kubectl.")
-	fKubectlClientSecretFile := fs.String("kubectl-client-secret-file", "", "File containing the OAuth2 client_secret of kubectl.")
-	fK8sPublicEndpoint := fs.String("k8s-public-endpoint", "", "Endpoint to use when rendering kubeconfigs for clients. Useful for when bridge uses an internal endpoint clients can't access for communicating with the API server.")
+	_ = fs.String("kubectl-client-id", "", "DEPRECATED: setting this does not do anything.")
+	_ = fs.String("kubectl-client-secret", "", "DEPRECATED: setting this does not do anything.")
+	_ = fs.String("kubectl-client-secret-file", "", "DEPRECATED: setting this does not do anything.")
+
+	fK8sPublicEndpoint := fs.String("k8s-public-endpoint", "", "Endpoint to use to communicate to the API server.")
 
 	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, ocp, online, dedicated, azure, or rosa. Defaults to okd.")
 	fCustomProductName := fs.String("custom-product-name", "", "Custom product name for console branding.")
@@ -284,16 +285,6 @@ func main() {
 	if *fK8sMode == "in-cluster" {
 		srv.GOARCH = runtime.GOARCH
 		srv.GOOS = runtime.GOOS
-	}
-
-	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "" && *fKubectlClientSecretFile == "") {
-		fmt.Fprintln(os.Stderr, "Must provide both --kubectl-client-id and --kubectl-client-secret or --kubectrl-client-secret-file")
-		os.Exit(1)
-	}
-
-	if *fKubectlClientSecret != "" && *fKubectlClientSecretFile != "" {
-		fmt.Fprintln(os.Stderr, "Cannot provide both --kubectl-client-secret and --kubectrl-client-secret-file")
-		os.Exit(1)
 	}
 
 	if *fLogLevel != "" {
@@ -588,7 +579,7 @@ func main() {
 		caCertFilePath = k8sInClusterCA
 	}
 
-	if err := authOptions.ApplyTo(srv, k8sEndpoint, apiServerEndpoint, caCertFilePath, *fKubectlClientID); err != nil {
+	if err := authOptions.ApplyTo(srv, k8sEndpoint, apiServerEndpoint, caCertFilePath); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)
 		os.Exit(1)
 	}

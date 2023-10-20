@@ -106,7 +106,6 @@ func (c *AuthOptions) ApplyTo(
 	k8sEndpoint *url.URL,
 	pubAPIServerEndpoint string,
 	caCertFilePath string,
-	kubeCtlClientId string,
 ) error {
 	srv.InactivityTimeout = c.InactivityTimeoutSeconds
 
@@ -118,11 +117,6 @@ func (c *AuthOptions) ApplyTo(
 		srv.LogoutRedirect = logoutURL
 	}
 
-	switch c.AuthType {
-	case "oidc", "openshift":
-		srv.KubectlClientID = kubeCtlClientId
-	}
-
 	var err error
 	srv.Authenticator, err = c.getAuthenticator(
 		srv.BaseURL,
@@ -130,7 +124,6 @@ func (c *AuthOptions) ApplyTo(
 		pubAPIServerEndpoint,
 		caCertFilePath,
 		srv.K8sClient.Transport,
-		kubeCtlClientId,
 	)
 	if err != nil {
 		return err
@@ -145,7 +138,6 @@ func (c *AuthOptions) getAuthenticator(
 	pubAPIServerEndpoint string,
 	caCertFilePath string,
 	k8sTransport http.RoundTripper,
-	kubeCtlClientId string,
 ) (*auth.Authenticator, error) {
 
 	if c.AuthType == "disabled" {
@@ -234,19 +226,6 @@ func (c *AuthOptions) getAuthenticator(
 			Host:      pubAPIServerEndpoint,
 			Transport: k8sTransport,
 		},
-	}
-
-	// NOTE: This won't work when using the OpenShift auth mode.
-	if kubeCtlClientId != "" {
-		// Assume kubectl is the client ID trusted by kubernetes, not bridge.
-		// These additional flags causes Dex to issue an ID token valid for
-		// both bridge and kubernetes.
-		oidcClientConfig.Scope = append(
-			oidcClientConfig.Scope,
-			"audience:server:client_id:"+c.ClientID,
-			"audience:server:client_id:"+kubeCtlClientId,
-		)
-
 	}
 
 	authenticator, err := auth.NewAuthenticator(context.Background(), oidcClientConfig)
