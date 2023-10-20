@@ -286,9 +286,21 @@ const AppRouter = () => {
 const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   const [perspective] = useActivePerspective();
   const fireTelemetryEvent = useTelemetry();
-
+  const [debounceTime, setDebounceTime] = React.useState(5000);
+  const [titleOnLoad, setTitleOnLoad] = React.useState('');
   // notify of identity change
   const user = useSelector(getUser);
+  const telemetryTitle = getTelemetryTitle();
+
+  React.useEffect(
+    () =>
+      setTimeout(() => {
+        setTitleOnLoad(telemetryTitle);
+        setDebounceTime(500);
+      }, 5000),
+    [],
+  );
+
   React.useEffect(() => {
     if (user.metadata?.uid || user.metadata?.name) {
       fireTelemetryEvent('identify', { perspective, user });
@@ -306,8 +318,11 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
       title: getTelemetryTitle(),
       ...withoutSensitiveInformations(location),
     });
-  });
+  }, debounceTime);
   React.useEffect(() => {
+    if (!titleOnLoad) {
+      return;
+    }
     fireUrlChangeEvent(history.location);
     let { pathname, search } = history.location;
     const unlisten = history.listen((location) => {
