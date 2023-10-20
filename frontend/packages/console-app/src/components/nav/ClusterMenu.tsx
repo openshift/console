@@ -65,18 +65,18 @@ const ClusterMenu = () => {
         ? [
             {
               key: ACM_PERSPECTIVE_ID,
-              title: 'All Clusters',
+              title: t('console-app~All Clusters'),
               onClick: onAllClustersClick,
             },
           ]
         : []),
       {
         key: 'local-cluster',
-        title: 'local-cluster',
+        title: t('console-app~local-cluster'),
         onClick: () => onClusterClick('local-cluster'),
       },
     ],
-    [acmPerspectiveExtension, onAllClustersClick, onClusterClick],
+    [t, acmPerspectiveExtension, onAllClustersClick, onClusterClick],
   );
 
   const clusterMenu: JSX.Element = (
