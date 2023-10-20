@@ -54,17 +54,18 @@ export const documentationURLs: documentationURLsType = {
   },
   understandingUpgradeChannels: {
     downstream:
-      'html/updating_clusters/understanding-upgrade-channels-releases#understanding-upgrade-channels_understanding-upgrade-channels-releases',
-    upstream: 'updating/index.html#updating-clusters-overview-upgrade-channels-and-releases',
+      'html/updating_clusters/understanding-openshift-updates-1#understanding-update-channels-releases',
+    upstream: 'updating/understanding_updates/intro-to-updates.html',
   },
   updateService: {
     downstream:
-      'html/updating_clusters/updating-restricted-network-cluster#update-service-overview_updating-restricted-network-cluster',
-    upstream: 'updating/understanding-openshift-updates.html',
+      'html/updating_clusters/performing-a-cluster-update#updating-a-cluster-in-a-disconnected-environment',
+    upstream: '', // intentionally blank as there is no upstream equivalent
   },
   updateUsingCustomMachineConfigPools: {
-    downstream: 'html/updating_clusters/update-using-custom-machine-config-pools.html',
-    upstream: 'updating/update-using-custom-machine-config-pools.html',
+    downstream:
+      'html/updating_clusters/performing-a-cluster-update#update-using-custom-machine-config-pools',
+    upstream: 'updating/updating_a_cluster/update-using-custom-machine-config-pools.html',
   },
   usingInsights: {
     downstream:
