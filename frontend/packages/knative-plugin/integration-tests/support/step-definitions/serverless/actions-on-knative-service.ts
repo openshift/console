@@ -291,7 +291,7 @@ When(
 );
 
 Then('error message displays as {string}', (errorMessage: string) => {
-  cy.get('div[aria-label="Danger Alert"] div.co-pre-line').should('contain.text', errorMessage);
+  cy.get('div.co-alert div.co-pre-line').should('contain.text', errorMessage);
 });
 
 Then(
