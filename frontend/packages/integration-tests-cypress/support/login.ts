@@ -72,8 +72,8 @@ Cypress.Commands.add(
       {
         cacheAcrossSpecs: true,
         validate() {
-          // If unable to visit the baseURL, login has failed, and the session will be re-created.
           cy.visit(Cypress.config('baseUrl'));
+          cy.byTestID('user-dropdown').should('exist');
         },
       },
     );
