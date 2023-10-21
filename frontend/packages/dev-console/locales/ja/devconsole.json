@@ -666,5 +666,7 @@
   "BindableKinds": "BindableKinds",
   "Secure route": "セキュアなルート",
   "Image name from external registry": "外部レジストリーからのイメージ名",
-  "Image stream tag from internal registry": "内部レジストリーからのイメージストリームタグ"
+  "Image stream tag from internal registry": "内部レジストリーからのイメージストリームタグ",
+  "Browse...": "参照...",
+  "Clear": "消去"
 }
