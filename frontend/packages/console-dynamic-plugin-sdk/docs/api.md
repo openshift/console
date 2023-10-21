@@ -2508,13 +2508,13 @@ An array with a pair of state value and it's set function.
 | -------------- | ----------- |
 | `value` | String representing the yaml code to render. |
 | `language` | String representing the language of the editor. |
-| `options` | Monaco editor options. For more details, see https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html. |
+| `options` | Monaco editor options. For more details, see https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneEditorConstructionOptions.html. |
 | `minHeight` | Minimum editor height in valid CSS height values. |
 | `showShortcuts` | Boolean to show shortcuts on top of the editor. |
 | `toolbarLinks` | Array of ReactNode rendered on the toolbar links section on top of the editor. |
 | `onChange` | Callback for on code change event. |
 | `onSave` | Callback called when the command `CTRL + S` / `CMD + S` is triggered. |
-| `ref` | React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, see https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html. |
+| `ref` | React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, see https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneCodeEditor.html. |
 
 
 
