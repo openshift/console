@@ -74,7 +74,8 @@ export const validateStatus = async (
   }
 
   if (response.status === 401 && shouldLogout(url)) {
-    authSvc.logout(window.location.pathname, getActiveCluster(storeHandler.getStore()?.getState()));
+    const next = window.location.pathname + window.location.search + window.location.hash;
+    authSvc.logout(next, getActiveCluster(storeHandler.getStore()?.getState()));
   }
 
   const contentType = response.headers.get('content-type');
