@@ -325,7 +325,6 @@
   "How many consecutive successes for the probe to be considered successful after having failed.": "실패 후 프로브가 성공한 것으로 간주되는 프로브의 연속 성공 횟수입니다.",
   "How long to wait after the Container starts before checking its health.": "컨테이너 시작 후 건강 상태를 확인하기 전에 얼마나 기다려야 하는가.",
   "Initial delay": "초기 지연",
-  "How long to wait after the Container starts before checking its health.": "컨테이너가 시작된 후 상태를 확인하기 전까지의 대기 시간입니다.",
   "seconds": "초",
   "Period": "기간",
   "How often to perform the probe.": "프로브를 실행하는 빈도.",
