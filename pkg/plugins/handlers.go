@@ -168,13 +168,6 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		errMsg := fmt.Sprintf("GET request for %q plugin failed with %d status code", pluginName, resp.StatusCode)
-		klog.Error(errMsg)
-		serverutils.SendResponse(w, resp.StatusCode, serverutils.ApiError{Err: errMsg})
-		return
-	}
-
 	// filter unwanted headers from the response
 	proxy.FilterHeaders(resp)
 	// copy headers from the plugin's server response
