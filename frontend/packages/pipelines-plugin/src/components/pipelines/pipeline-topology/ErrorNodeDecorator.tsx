@@ -13,20 +13,16 @@ type ErrorNodeDecoratorProps = {
 };
 
 const ErrorNodeDecorator: React.FC<ErrorNodeDecoratorProps> = ({ errorStr, x, y }) => {
+  const iconRef = React.useRef();
   return (
-    <g className="odc-error-node-decorator" transform={`translate(${x}, ${y})`}>
-      <circle cx={0} cy={0} r={BUILDER_NODE_DECORATOR_RADIUS} fill={redColor.value} />
-      <g transform="translate(-5, -7)">
-        <foreignObject
-          width={BUILDER_NODE_DECORATOR_RADIUS * 2}
-          height={BUILDER_NODE_DECORATOR_RADIUS * 2}
-        >
-          <Tooltip content={errorStr}>
-            <ExclamationIcon color="white" />
-          </Tooltip>
-        </foreignObject>
+    <Tooltip triggerRef={iconRef} content={errorStr}>
+      <g ref={iconRef} className="odc-error-node-decorator" transform={`translate(${x}, ${y})`}>
+        <circle cx={0} cy={0} r={BUILDER_NODE_DECORATOR_RADIUS} fill={redColor.value} />
+        <g transform="translate(-5, -6)">
+          <ExclamationIcon color="white" />
+        </g>
       </g>
-    </g>
+    </Tooltip>
   );
 };
 

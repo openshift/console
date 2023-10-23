@@ -1,6 +1,9 @@
 .ocs-quick-search-bar {
-  &.pf-v5-c-input-group {
+  .pf-v5-c-input-group {
     background-color: var(--pf-v5-global--BackgroundColor--400);
+    &__item.pf-m-box {
+      border: none;
+    }
   }
   &:hover {
     cursor: move;
@@ -14,16 +17,25 @@
     white-space: nowrap;
   }
   &__input {
-    height: 60px !important;
     cursor: auto;
     border: none !important;
-    outline: none;
     display: block;
     z-index: 1;
+    > input {
+      height: 60px !important;
+      outline: none;
+      border: none !important;
+    }
     &-wrapper {
       max-width: 100%;
       display: inline-flex;
     }
+    &.pf-v5-c-form-control:before, &.pf-v5-c-form-control:after {
+      display: none;
+    }
+  }
+  &__no-results {
+    white-space: nowrap;
   }
   &__border-none {
     border: none !important;

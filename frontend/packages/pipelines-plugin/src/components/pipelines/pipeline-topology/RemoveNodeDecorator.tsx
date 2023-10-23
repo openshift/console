@@ -19,28 +19,25 @@ const RemoveNodeDecorator: React.FC<RemoveNodeDecoratorProps> = ({
   y,
   removeCallback = () => {},
 }) => {
+  const trashRef = React.useRef();
   return (
-    <g
-      className="opp-remove-node-decorator"
-      transform={`translate(${x}, ${y})`}
-      onClick={(e) => {
-        e.stopPropagation();
-        removeCallback();
-      }}
-      data-id="delete-task"
-    >
-      <circle cx={0} cy={0} r={BUILDER_NODE_DECORATOR_RADIUS} fill={greyColor.value} />
-      <g transform="translate(-5, -9)">
-        <foreignObject
-          width={BUILDER_NODE_DECORATOR_RADIUS * 2}
-          height={BUILDER_NODE_DECORATOR_RADIUS * 2}
-        >
-          <Tooltip content={content}>
-            <TrashIcon color="white" />
-          </Tooltip>
-        </foreignObject>
+    <Tooltip triggerRef={trashRef} content={content}>
+      <g
+        ref={trashRef}
+        className="opp-remove-node-decorator"
+        transform={`translate(${x}, ${y})`}
+        onClick={(e) => {
+          e.stopPropagation();
+          removeCallback();
+        }}
+        data-id="delete-task"
+      >
+        <circle cx={0} cy={0} r={BUILDER_NODE_DECORATOR_RADIUS} fill={greyColor.value} />
+        <g transform="translate(-6, -6)">
+          <TrashIcon color="white" />
+        </g>
       </g>
-    </g>
+    </Tooltip>
   );
 };
 

@@ -33,7 +33,7 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
       data-test="quick-search-bar"
       translate="no"
     >
-      <InputGroupText className="ocs-quick-search-bar__border-none">
+      <InputGroupText className="ocs-quick-search-bar__icon ocs-quick-search-bar__border-none">
         {icon || <QuickSearchIcon />}
       </InputGroupText>
       <div className="ocs-quick-search-bar__input-wrapper">
@@ -59,7 +59,7 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
         />
         {itemsLoaded && showNoResults && (
           <InputGroupText
-            className="ocs-quick-search-bar__border-none"
+            className="ocs-quick-search-bar__no-results ocs-quick-search-bar__border-none"
             data-test="quick-search-no-results"
           >
             &mdash; {t('console-shared~No results')}

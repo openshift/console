@@ -45,6 +45,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
 }) => {
   const data = element.getData();
   const [hover, hoverRef] = useHover();
+  const taskRef = React.useRef();
   const detailsLevel = useDetailsLevel();
   const isFinallyTask = element.getType() === NodeType.FINALLY_NODE;
   let resources;
@@ -172,6 +173,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
         <Tooltip
           position="bottom"
           enableFlip={false}
+          triggerRef={taskRef}
           content={
             <PipelineVisualizationStepList
               isSpecOverview={!data.status}
@@ -181,7 +183,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
             />
           }
         >
-          {enableLogLink ? <Link to={path}>{taskNode}</Link> : taskNode}
+          <g ref={taskRef}>{enableLogLink ? <Link to={path}>{taskNode}</Link> : taskNode}</g>
         </Tooltip>
       </g>
     </Layer>

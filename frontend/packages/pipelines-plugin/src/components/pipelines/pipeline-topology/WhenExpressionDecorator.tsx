@@ -28,6 +28,7 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
   isFinallyTask,
   isPipelineRun,
 }) => {
+  const nodeRef = React.useRef();
   const rotation = 45; // 45deg
   const { tooltipContent, diamondColor } = getWhenExpressionDiamondState(
     status,
@@ -37,7 +38,10 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
   const diamondHeight =
     Math.round(width * Math.sin(rotation)) + Math.round(height * Math.cos(rotation));
   const diamondNode = (
-    <g transform={`translate(-${width * leftOffset}, ${NODE_HEIGHT / 2 - diamondHeight / 2})`}>
+    <g
+      transform={`translate(-${width * leftOffset}, ${NODE_HEIGHT / 2 - diamondHeight / 2})`}
+      ref={nodeRef}
+    >
       <rect
         data-test="diamond-decorator"
         className="opp-when-expression-decorator-diamond"
@@ -60,6 +64,7 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
 
   return enableTooltip ? (
     <Tooltip
+      triggerRef={nodeRef}
       position="bottom"
       enableFlip={false}
       content={<div data-test="when-expression-tooltip">{tooltipContent}</div>}

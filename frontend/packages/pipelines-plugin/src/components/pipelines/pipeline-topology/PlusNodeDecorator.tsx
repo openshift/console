@@ -20,9 +20,15 @@ const PlusNodeDecorator: React.FC<PlusNodeProps> = ({
   tooltip,
   tooltipPosition,
 }) => {
+  const iconRef = React.useRef();
   return (
-    <Tooltip content={tooltip} position={tooltipPosition}>
-      <g className="odc-plus-node-decorator" onClick={onClick} transform={`translate(${x}, ${y})`}>
+    <Tooltip triggerRef={iconRef} content={tooltip} position={tooltipPosition}>
+      <g
+        className="odc-plus-node-decorator"
+        onClick={onClick}
+        transform={`translate(${x}, ${y})`}
+        ref={iconRef}
+      >
         <circle
           cx={0}
           cy={0}

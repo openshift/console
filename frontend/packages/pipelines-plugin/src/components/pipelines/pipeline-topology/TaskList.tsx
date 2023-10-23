@@ -41,6 +41,7 @@ const TaskList: React.FC<any> = ({
 }) => {
   const { t } = useTranslation();
   const triggerRef = React.useRef(null);
+  const textRef = React.useRef();
   const [hover, hoverRef] = useHover();
 
   const options = _.sortBy(
@@ -58,7 +59,12 @@ const TaskList: React.FC<any> = ({
     [unselectedTaskText],
   );
   const renderText = (
-    <text x={width / 2} y={height / 2 + 1} className="odc-task-list-node__render-text">
+    <text
+      x={width / 2}
+      y={height / 2 + 1}
+      className="odc-task-list-node__render-text"
+      ref={textRef}
+    >
       {truncatedTaskText}
     </text>
   );
@@ -110,7 +116,9 @@ const TaskList: React.FC<any> = ({
               </g>
             )}
             {unselectedTaskText !== truncatedTaskText ? (
-              <Tooltip content={unselectedTaskText}>{renderText}</Tooltip>
+              <Tooltip content={unselectedTaskText} triggerRef={textRef}>
+                {renderText}
+              </Tooltip>
             ) : (
               renderText
             )}
