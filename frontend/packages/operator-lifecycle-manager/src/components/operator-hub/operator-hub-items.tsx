@@ -373,6 +373,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
     <CatalogTile
       className="co-catalog-tile"
       key={uid}
+      id={uid}
       title={name}
       badges={badges}
       icon={icon}
