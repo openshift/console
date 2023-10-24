@@ -13,11 +13,9 @@ import (
 	"os"
 	"strings"
 
-	utilerrors "k8s.io/apimachinery/pkg/util/errors"
-
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/bridge"
+	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
@@ -151,34 +149,34 @@ func main() {
 
 	authOptions.ApplyConfig(&cfg.Auth)
 
-	baseURL, err := bridge.ValidateFlagIsURL("base-address", *fBaseAddress, false)
-	bridge.FatalIfFailed(err)
+	baseURL, err := flags.ValidateFlagIsURL("base-address", *fBaseAddress, false)
+	flags.FatalIfFailed(err)
 
 	if !strings.HasPrefix(*fBasePath, "/") || !strings.HasSuffix(*fBasePath, "/") {
-		bridge.FatalIfFailed(bridge.NewInvalidFlagError("base-path", "value must start and end with slash"))
+		flags.FatalIfFailed(flags.NewInvalidFlagError("base-path", "value must start and end with slash"))
 	}
 	baseURL.Path = *fBasePath
 
 	documentationBaseURL := &url.URL{}
 	if *fDocumentationBaseURL != "" {
 		if !strings.HasSuffix(*fDocumentationBaseURL, "/") {
-			bridge.FatalIfFailed(bridge.NewInvalidFlagError("documentation-base-url", "value must end with slash"))
+			flags.FatalIfFailed(flags.NewInvalidFlagError("documentation-base-url", "value must end with slash"))
 		}
-		documentationBaseURL, err = bridge.ValidateFlagIsURL("documentation-base-url", *fDocumentationBaseURL, false)
-		bridge.FatalIfFailed(err)
+		documentationBaseURL, err = flags.ValidateFlagIsURL("documentation-base-url", *fDocumentationBaseURL, false)
+		flags.FatalIfFailed(err)
 	}
 
-	alertManagerPublicURL, err := bridge.ValidateFlagIsURL("alermanager-public-url", *fAlermanagerPublicURL, true)
-	bridge.FatalIfFailed(err)
+	alertManagerPublicURL, err := flags.ValidateFlagIsURL("alermanager-public-url", *fAlermanagerPublicURL, true)
+	flags.FatalIfFailed(err)
 
-	grafanaPublicURL, err := bridge.ValidateFlagIsURL("grafana-public-url", *fGrafanaPublicURL, true)
-	bridge.FatalIfFailed(err)
+	grafanaPublicURL, err := flags.ValidateFlagIsURL("grafana-public-url", *fGrafanaPublicURL, true)
+	flags.FatalIfFailed(err)
 
-	prometheusPublicURL, err := bridge.ValidateFlagIsURL("prometheus-public-url", *fPrometheusPublicURL, true)
-	bridge.FatalIfFailed(err)
+	prometheusPublicURL, err := flags.ValidateFlagIsURL("prometheus-public-url", *fPrometheusPublicURL, true)
+	flags.FatalIfFailed(err)
 
-	thanosPublicURL, err := bridge.ValidateFlagIsURL("thanos-public-url", *fThanosPublicURL, true)
-	bridge.FatalIfFailed(err)
+	thanosPublicURL, err := flags.ValidateFlagIsURL("thanos-public-url", *fThanosPublicURL, true)
+	flags.FatalIfFailed(err)
 
 	branding := *fBranding
 	if branding == "origin" {
@@ -193,7 +191,7 @@ func main() {
 	case "azure":
 	case "rosa":
 	default:
-		bridge.FatalIfFailed(bridge.NewInvalidFlagError("branding", "value must be one of okd, openshift, ocp, online, dedicated, azure, or rosa"))
+		flags.FatalIfFailed(flags.NewInvalidFlagError("branding", "value must be one of okd, openshift, ocp, online, dedicated, azure, or rosa"))
 	}
 
 	if *fCustomLogoFile != "" {
@@ -214,7 +212,7 @@ func main() {
 		for _, str := range strings.Split(*fI18NamespacesFlags, ",") {
 			str = strings.TrimSpace(str)
 			if str == "" {
-				bridge.FatalIfFailed(bridge.NewInvalidFlagError("i18n-namespaces", "list must contain name of i18n namespaces separated by comma"))
+				flags.FatalIfFailed(flags.NewInvalidFlagError("i18n-namespaces", "list must contain name of i18n namespaces separated by comma"))
 			}
 			i18nNamespaces = append(i18nNamespaces, str)
 		}
@@ -225,7 +223,7 @@ func main() {
 		for _, str := range strings.Split(*fNodeArchitectures, ",") {
 			str = strings.TrimSpace(str)
 			if str == "" {
-				bridge.FatalIfFailed(bridge.NewInvalidFlagError("node-architectures", "list must contain name of node architectures separated by comma"))
+				flags.FatalIfFailed(flags.NewInvalidFlagError("node-architectures", "list must contain name of node architectures separated by comma"))
 			}
 			nodeArchitectures = append(nodeArchitectures, str)
 		}
@@ -236,7 +234,7 @@ func main() {
 		for _, str := range strings.Split(*fNodeOperatingSystems, ",") {
 			str = strings.TrimSpace(str)
 			if str == "" {
-				bridge.FatalIfFailed(bridge.NewInvalidFlagError("node-operating-systems", "list must contain name of node architectures separated by comma"))
+				flags.FatalIfFailed(flags.NewInvalidFlagError("node-operating-systems", "list must contain name of node architectures separated by comma"))
 			}
 			nodeOperatingSystems = append(nodeOperatingSystems, str)
 		}
@@ -276,8 +274,10 @@ func main() {
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 	}
 
-	if errs := authOptions.Validate(*fK8sAuth); len(errs) > 0 {
-		bridge.FatalIfFailed(utilerrors.NewAggregate(errs))
+	completedAuthnOptions, err := authOptions.Complete(*fK8sAuth)
+	if err != nil {
+		klog.Fatalf("failed to complete authentication options: %v", err)
+		os.Exit(1)
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
@@ -392,8 +392,8 @@ func main() {
 		}
 
 	case "off-cluster":
-		k8sEndpoint, err = bridge.ValidateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint, false)
-		bridge.FatalIfFailed(err)
+		k8sEndpoint, err = flags.ValidateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint, false)
+		flags.FatalIfFailed(err)
 
 		serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
 			InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
@@ -413,8 +413,8 @@ func main() {
 		}
 
 		if *fK8sModeOffClusterThanos != "" {
-			offClusterThanosURL, err := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-thanos", *fK8sModeOffClusterThanos, false)
-			bridge.FatalIfFailed(err)
+			offClusterThanosURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-thanos", *fK8sModeOffClusterThanos, false)
+			flags.FatalIfFailed(err)
 
 			offClusterThanosURL.Path += "/api"
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
@@ -435,8 +435,8 @@ func main() {
 		}
 
 		if *fK8sModeOffClusterAlertmanager != "" {
-			offClusterAlertManagerURL, err := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-alertmanager", *fK8sModeOffClusterAlertmanager, false)
-			bridge.FatalIfFailed(err)
+			offClusterAlertManagerURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-alertmanager", *fK8sModeOffClusterAlertmanager, false)
+			flags.FatalIfFailed(err)
 
 			offClusterAlertManagerURL.Path += "/api"
 			srv.AlertManagerProxyConfig = &proxy.Config{
@@ -460,8 +460,8 @@ func main() {
 		srv.PluginsProxyTLSConfig = serviceProxyTLSConfig
 
 		if *fK8sModeOffClusterGitOps != "" {
-			offClusterGitOpsURL, err := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-gitops", *fK8sModeOffClusterGitOps, false)
-			bridge.FatalIfFailed(err)
+			offClusterGitOpsURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-gitops", *fK8sModeOffClusterGitOps, false)
+			flags.FatalIfFailed(err)
 
 			srv.GitOpsProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
@@ -470,7 +470,7 @@ func main() {
 			}
 		}
 	default:
-		bridge.FatalIfFailed(bridge.NewInvalidFlagError("k8s-mode", "must be one of: in-cluster, off-cluster"))
+		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: in-cluster, off-cluster"))
 	}
 
 	apiServerEndpoint := *fK8sPublicEndpoint
@@ -496,24 +496,24 @@ func main() {
 
 	switch *fK8sAuth {
 	case "service-account":
-		bridge.ValidateFlagIs("k8s-mode", *fK8sMode, "in-cluster")
+		flags.ValidateFlagIs("k8s-mode", *fK8sMode, "in-cluster")
 		srv.StaticUser = &auth.User{
 			Token: k8sAuthServiceAccountBearerToken,
 		}
 		srv.ServiceAccountToken = k8sAuthServiceAccountBearerToken
 	case "bearer-token":
-		bridge.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
-		bridge.FatalIfFailed(err)
+		flags.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
+		flags.FatalIfFailed(err)
 
 		srv.StaticUser = &auth.User{
 			Token: *fK8sAuthBearerToken,
 		}
 		srv.ServiceAccountToken = *fK8sAuthBearerToken
 	case "oidc", "openshift":
-		bridge.ValidateFlagIs("user-auth", authOptions.AuthType, "oidc", "openshift")
+		flags.ValidateFlagIs("user-auth", authOptions.AuthType, "oidc", "openshift")
 		srv.ServiceAccountToken = k8sAuthServiceAccountBearerToken
 	default:
-		bridge.FatalIfFailed(bridge.NewInvalidFlagError("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift"))
+		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift"))
 	}
 
 	monitoringDashboardHttpClientTransport := &http.Transport{
@@ -579,21 +579,21 @@ func main() {
 		caCertFilePath = k8sInClusterCA
 	}
 
-	if err := authOptions.ApplyTo(srv, k8sEndpoint, apiServerEndpoint, caCertFilePath); err != nil {
+	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, apiServerEndpoint, caCertFilePath); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)
 		os.Exit(1)
 	}
 
-	listenURL, err := bridge.ValidateFlagIsURL("listen", *fListen, false)
-	bridge.FatalIfFailed(err)
+	listenURL, err := flags.ValidateFlagIsURL("listen", *fListen, false)
+	flags.FatalIfFailed(err)
 
 	switch listenURL.Scheme {
 	case "http":
 	case "https":
-		bridge.FatalIfFailed(bridge.ValidateFlagNotEmpty("tls-cert-file", *fTlSCertFile))
-		bridge.FatalIfFailed(bridge.ValidateFlagNotEmpty("tls-key-file", *fTlSKeyFile))
+		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-cert-file", *fTlSCertFile))
+		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTlSKeyFile))
 	default:
-		bridge.FatalIfFailed(bridge.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
+		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
 	}
 
 	httpsrv := &http.Server{

@@ -4,18 +4,19 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 
+	utilerrors "k8s.io/apimachinery/pkg/util/errors"
+	"k8s.io/client-go/rest"
+	"k8s.io/klog"
+
 	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/bridge"
+	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
-	"k8s.io/client-go/rest"
-	"k8s.io/klog"
 )
 
 type AuthOptions struct {
@@ -29,6 +30,22 @@ type AuthOptions struct {
 
 	InactivityTimeoutSeconds int
 	LogoutRedirect           string
+}
+
+type CompletedOptions struct {
+	*completedOptions
+}
+
+type completedOptions struct {
+	AuthType string
+
+	IssuerURL    *url.URL
+	ClientID     string
+	ClientSecret string
+	CAFilePath   string
+
+	InactivityTimeoutSeconds int
+	LogoutRedirectURL        *url.URL
 }
 
 func NewAuthOptions() *AuthOptions {
@@ -58,64 +75,111 @@ func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
 	}
 }
 
+func (c *AuthOptions) Complete(k8sAuthType string) (*CompletedOptions, error) {
+	// default values before running validation
+	if len(c.AuthType) == 0 {
+		c.AuthType = "openshift"
+	}
+
+	if c.InactivityTimeoutSeconds < 300 {
+		klog.Warning("Flag inactivity-timeout is set to less then 300 seconds and will be ignored!")
+		c.InactivityTimeoutSeconds = 0
+	}
+
+	if errs := c.Validate(k8sAuthType); len(errs) > 0 {
+		return nil, utilerrors.NewAggregate(errs)
+	}
+
+	completed := &completedOptions{
+		AuthType:                 c.AuthType,
+		ClientID:                 c.ClientID,
+		ClientSecret:             c.ClientSecret,
+		CAFilePath:               c.CAFilePath,
+		InactivityTimeoutSeconds: c.InactivityTimeoutSeconds,
+	}
+
+	if len(c.IssuerURL) > 0 {
+		issuerURL, err := url.Parse(c.IssuerURL)
+		if err != nil {
+			return nil, fmt.Errorf("invalid issuer URL: %w", err)
+		}
+		completed.IssuerURL = issuerURL
+	}
+
+	if len(c.LogoutRedirect) > 0 {
+		logoutURL, err := url.Parse(c.LogoutRedirect)
+		if err != nil {
+			return nil, fmt.Errorf("invalid logout redirect URL: %w", err)
+		}
+		completed.LogoutRedirectURL = logoutURL
+	}
+
+	if len(c.ClientSecretFilePath) > 0 {
+		buf, err := os.ReadFile(c.ClientSecretFilePath)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read client secret file: %w", err)
+		}
+		completed.ClientSecret = string(buf)
+	}
+
+	return &CompletedOptions{
+		completedOptions: completed,
+	}, nil
+}
+
 func (c *AuthOptions) Validate(k8sAuthType string) []error {
 	var errs []error
 
 	switch c.AuthType {
-	case "":
-		// Validate() should be called after all initialization. AuthType stayed empty,
-		// default to "openshift"
-		// TODO: add a `func Complete() completedAuthnOptions` and do this there
-		c.AuthType = "openshift"
-	case "openshift", "oidc", "disabled":
+	case "openshift", "oidc":
+		if len(c.ClientID) == 0 {
+			errs = append(errs, flags.NewRequiredFlagError("user-auth-oidc-client-id"))
+		}
+
+		if c.ClientSecret == "" && c.ClientSecretFilePath == "" {
+			errs = append(errs, fmt.Errorf("must provide either --user-auth-oidc-client-secret or --user-auth-oidc-client-secret-file"))
+		}
+
+		if c.ClientSecret != "" && c.ClientSecretFilePath != "" {
+			errs = append(errs, fmt.Errorf("cannot provide both --user-auth-oidc-client-secret and --user-auth-oidc-client-secret-file"))
+		}
+
+	case "disabled":
 	default:
-		errs = append(errs, bridge.NewInvalidFlagError("user-auth", "must be one of: oidc, openshift, disabled"))
+		errs = append(errs, flags.NewInvalidFlagError("user-auth", "must be one of: oidc, openshift, disabled"))
 	}
 
-	if c.AuthType == "openshift" && c.IssuerURL != "" {
-		errs = append(errs, bridge.NewInvalidFlagError("user-auth-oidc-issuer-url", "cannot be used with --user-auth=\"openshift\""))
-	}
+	switch c.AuthType {
+	case "openshift":
+		if len(c.IssuerURL) != 0 {
+			errs = append(errs, flags.NewInvalidFlagError("user-auth-oidc-issuer-url", "cannot be used with --user-auth=\"openshift\""))
+		}
 
-	if c.AuthType == "oidc" {
-		if _, err := bridge.ValidateFlagIsURL("user-auth-oidc-issuer-url", c.IssuerURL, false); err != nil {
-			errs = append(errs, err)
+	case "oidc":
+		if len(c.IssuerURL) == 0 {
+			errs = append(errs, fmt.Errorf("--user-auth-oidc-issuer-url must be set if --user-auth=oidc"))
 		}
 	}
 
-	if _, err := bridge.ValidateFlagIsURL("user-auth-logout-redirect", c.LogoutRedirect, true); err != nil {
-		errs = append(errs, err)
-	}
-
-	if c.InactivityTimeoutSeconds > 0 && c.InactivityTimeoutSeconds < 300 {
-		klog.Warning("Flag inactivity-timeout is set to less then 300 seconds and will be ignored!")
-		c.InactivityTimeoutSeconds = 0
-	} else {
-		switch k8sAuthType {
-		case "oidc", "openshift":
-			klog.Infof("Setting user inactivity timout to %d seconds", c.InactivityTimeoutSeconds)
-		default:
-			errs = append(errs, bridge.NewInvalidFlagError("inactivity-timeout", "In order to activate the user inactivity timout, flag --user-auth must be one of: oidc, openshift"))
+	switch k8sAuthType {
+	case "oidc", "openshift":
+	default:
+		if c.InactivityTimeoutSeconds > 0 {
+			errs = append(errs, flags.NewInvalidFlagError("inactivity-timeout", "in order to activate the user inactivity timout, flag --user-auth must be one of: oidc, openshift"))
 		}
 	}
 
 	return errs
 }
 
-func (c *AuthOptions) ApplyTo(
+func (c *completedOptions) ApplyTo(
 	srv *server.Server,
 	k8sEndpoint *url.URL,
 	pubAPIServerEndpoint string,
 	caCertFilePath string,
 ) error {
 	srv.InactivityTimeout = c.InactivityTimeoutSeconds
-
-	if len(c.LogoutRedirect) > 0 {
-		logoutURL, err := url.Parse(c.LogoutRedirect)
-		if err != nil {
-			return fmt.Errorf("invalid logout redirect URL: %w", err)
-		}
-		srv.LogoutRedirect = logoutURL
-	}
+	srv.LogoutRedirect = c.LogoutRedirectURL
 
 	var err error
 	srv.Authenticator, err = c.getAuthenticator(
@@ -125,14 +189,11 @@ func (c *AuthOptions) ApplyTo(
 		caCertFilePath,
 		srv.K8sClient.Transport,
 	)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
-func (c *AuthOptions) getAuthenticator(
+func (c *completedOptions) getAuthenticator(
 	baseURL *url.URL,
 	k8sEndpoint *url.URL,
 	pubAPIServerEndpoint string,
@@ -145,7 +206,7 @@ func (c *AuthOptions) getAuthenticator(
 		return nil, nil
 	}
 
-	bridge.ValidateFlagNotEmpty("base-address", baseURL.String())
+	flags.FatalIfFailed(flags.ValidateFlagNotEmpty("base-address", baseURL.String()))
 
 	var (
 		err                      error
@@ -158,20 +219,6 @@ func (c *AuthOptions) getAuthenticator(
 		refererPath      = baseURL.String()
 		useSecureCookies = baseURL.Scheme == "https"
 	)
-
-	if err := bridge.ValidateFlagNotEmpty("user-auth-oidc-client-id", c.ClientID); err != nil {
-		return nil, err
-	}
-
-	if c.ClientSecret == "" && c.ClientSecretFilePath == "" {
-		fmt.Fprintln(os.Stderr, "Must provide either --user-auth-oidc-client-secret or --user-auth-oidc-client-secret-file")
-		os.Exit(1)
-	}
-
-	if c.ClientSecret != "" && c.ClientSecretFilePath != "" {
-		fmt.Fprintln(os.Stderr, "Cannot provide both --user-auth-oidc-client-secret and --user-auth-oidc-client-secret-file")
-		os.Exit(1)
-	}
 
 	scopes := []string{"openid", "email", "profile", "groups"}
 	authSource := auth.AuthSourceTectonic
@@ -186,20 +233,11 @@ func (c *AuthOptions) getAuthenticator(
 
 		userAuthOIDCIssuerURL = k8sEndpoint
 	} else {
-		userAuthOIDCIssuerURL, err = url.Parse(c.IssuerURL)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse issuer URL: %w", err)
-		}
+		userAuthOIDCIssuerURL = c.IssuerURL
 
 	}
 
-	if c.ClientSecretFilePath != "" {
-		buf, err := ioutil.ReadFile(c.ClientSecretFilePath)
-		if err != nil {
-			klog.Fatalf("Failed to read client secret file: %v", err)
-		}
-		oidcClientSecret = string(buf)
-	}
+	oidcClientSecret = c.ClientSecret
 
 	// Config for logging into console.
 	oidcClientConfig := &auth.Config{

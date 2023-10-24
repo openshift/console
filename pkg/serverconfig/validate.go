@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	configv1 "github.com/openshift/api/config/v1"
-	"github.com/openshift/console/pkg/bridge"
+	"github.com/openshift/console/pkg/flags"
 )
 
 func Validate(fs *flag.FlagSet) error {
@@ -19,7 +19,7 @@ func Validate(fs *flag.FlagSet) error {
 		return err
 	}
 
-	bridge.ValidateFlagIs("user-settings-location", fs.Lookup("user-settings-location").Value.String(), "configmap", "localstorage")
+	flags.ValidateFlagIs("user-settings-location", fs.Lookup("user-settings-location").Value.String(), "configmap", "localstorage")
 
 	if _, err := validateQuickStarts(fs.Lookup("quick-starts").Value.String()); err != nil {
 		return err
