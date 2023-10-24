@@ -49,7 +49,7 @@ if [ "$SCENARIO" == "nightly-cypress" ]; then
 elif [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
   ./test-cypress.sh -h true
 elif [ "$SCENARIO" == "login" ]; then
-  ./test-cypress.sh -p console -s 'tests/app/auth-multiuser-login.spec.ts' -h true
+  ./test-cypress.sh -p console -s 'tests/app/auth-multiuser-login.cy.ts' -h true
 elif [ "$SCENARIO" == "olmFull" ]; then
   ./test-cypress.sh -p olm -h true
 # elif [ "$SCENARIO" == "ceph" ]; then
