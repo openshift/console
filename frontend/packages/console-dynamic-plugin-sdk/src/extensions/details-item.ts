@@ -4,50 +4,54 @@ import { K8sResourceCommon } from './console-types';
 
 export type DetailsItemColumn = 'right' | 'left';
 
-export type DetailsItemComponentProps<R extends K8sResourceCommon = K8sResourceCommon> = {
-  /** The resource for which details are being rendered. */
+export type DetailsItemComponentProps<R extends K8sResourceCommon = K8sResourceCommon, V = any> = {
+  /** The subject resource */
   obj: R;
+
+  /** The path property provided by the extension */
+  path?: string;
+
+  /** The property of obj referenced by path */
+  value?: V;
 };
 
-/** Adds a new details item to the details page resource summary. */
+/** Adds a new details item to the default resource summary on the details page. */
 export type DetailsItem = ExtensionDeclaration<
   'console.resource/details-item',
   {
-    /** The resource kind to which the details item applies. */
+    /** The subject resource's API group, version, and kind. */
     model: ExtensionK8sModel;
 
-    /** A unique details item identifier. */
+    /** A unique identifier. */
     id: string;
 
     /**
-     * Determines if the item will appear in the left or right column of the details page resource
-     * summary.
-     * @defaultValue 'right'
+     * Determines if the item will appear in the 'left' or 'right' column of the resource summary on
+     * the details page. Default: 'right'
      */
     column: DetailsItemColumn;
 
-    /** The title of the details item. */
+    /** The details item title. */
     title: string;
 
     /**
-     * The fully qualified path to a string-type property on the resource, which will be rendered
-     * as the details item value.
-     * @example 'spec.template.spec.containers[0].image'
+     * An optional, fully-qualified path to a resource property to used as the details item
+     * value. Only [primitive type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)
+     * values can be rendered directly. Use the component property to handle other data types.
      */
     path?: string;
 
     /**
-     * The component to be rendered as the details item value. This takes precedence over the
-     * `path` property.
+     * An optional React component that will render the details item value.
      */
     component?: CodeRef<React.ComponentType<DetailsItemComponentProps>>;
 
     /**
-     * The weight of the details item relative to other items in the same column, represented by any
-     * valid
-     * [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type).
-     * Lower values will appear higher in the column.
-     * @defaultValue Infinity (i.e. the item will appear at the bottom of the column)
+     * An optional sort weight, relative to all other details items in the same column. Represented
+     * by any valid [JavaScript
+     * Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type).
+     * Items in each column are sorted independently, lowest to highest. Items without sort weights
+     * are sorted after items with sort weights.
      */
     sortWeight?: number;
   }

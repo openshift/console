@@ -6,12 +6,19 @@ import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { DetailsItem } from '@console/internal/components/utils/details-item';
 
 export const ExtensionDetailsItem: ExtensionDetailsItemComponent = ({ extension, obj }) => {
-  const { path, title, component: Component } = extension.properties;
-  const sortWeight = Number(extension.properties.sortWeight) || Infinity;
+  const { path, title, component: Component, id } = extension.properties;
+  const sortWeight = extension.properties.sortWeight ?? 'none';
+  const value = _.get(obj, path);
+  if (!Component && typeof value === 'object') {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `Invalid 'console.resource/details-item' extension: '${id}'. The value referenced at path '${path}' must be primitive if not accompanied by a custom component.`,
+    );
+  }
   const content = Component ? (
-    <Component key={extension.properties.id} obj={obj} />
+    <Component obj={obj} path={path} value={value} />
   ) : (
-    _.get(obj, path, '-').toString()
+    (value ?? '-').toString()
   );
 
   return (

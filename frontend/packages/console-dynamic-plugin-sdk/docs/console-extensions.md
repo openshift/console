@@ -948,19 +948,19 @@ This extension allows plugins to provide a custom component (ie wizard or form) 
 
 ### Summary 
 
-Adds a new details item to the details page resource summary.
+Adds a new details item to the default resource summary on the details page.
 
 ### Properties
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `model` | `ExtensionK8sModel` | no | The resource kind to which the details item applies. |
-| `id` | `string` | no | A unique details item identifier. |
-| `column` | `DetailsItemColumn` | no | @defaultValue 'right' |
-| `title` | `string` | no | The title of the details item. |
-| `path` | `string` | yes | @example 'spec.template.spec.containers[0].image' |
-| `component` | `CodeRef<React.ComponentType<DetailsItemComponentProps<K8sResourceCommon>>>` | yes | The component to be rendered as the details item value. This takes precedence over the<br/>`path` property. |
-| `sortWeight` | `number` | yes | @defaultValue Infinity (i.e. the item will appear at the bottom of the column) |
+| `model` | `ExtensionK8sModel` | no | The subject resource's API group, version, and kind. |
+| `id` | `string` | no | A unique identifier. |
+| `column` | `DetailsItemColumn` | no | Determines if the item will appear in the 'left' or 'right' column of the resource summary on<br/>the details page. Default: 'right' |
+| `title` | `string` | no | The details item title. |
+| `path` | `string` | yes | An optional, fully-qualified path to a resource property to used as the details item<br/>value. Only [primitive type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)<br/>values can be rendered directly. Use the component property to handle other data types. |
+| `component` | `CodeRef<React.ComponentType<DetailsItemComponentProps<K8sResourceCommon, any>>>` | yes | An optional React component that will render the details item value. |
+| `sortWeight` | `number` | yes | An optional sort weight, relative to all other details items in the same column. Represented<br/>by any valid [JavaScript<br/>Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type).<br/>Items in each column are sorted independently, lowest to highest. Items without sort weights<br/>are sorted after items with sort weights. |
 
 ---
 

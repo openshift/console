@@ -34,8 +34,14 @@ export const useDetailsItemExtensionsForResource: UseDetailsItemExtensionsForRes
   return React.useMemo(
     () =>
       (extensions ?? []).sort((a, b) => {
-        const aWeight = Number(a.properties.sortWeight) || Infinity;
-        const bWeight = Number(b.properties.sortWeight) || Infinity;
+        const aWeight = Number(a.properties.sortWeight);
+        const bWeight = Number(b.properties.sortWeight);
+        if (Number.isNaN(aWeight)) {
+          return 1;
+        }
+        if (Number.isNaN(bWeight)) {
+          return -1;
+        }
         return aWeight - bWeight;
       }),
     [extensions],
