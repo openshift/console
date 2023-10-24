@@ -716,7 +716,12 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !s.authDisabled() {
-		specialAuthURLs := s.Authenticator.GetSpecialURLs()
+		specialAuthURLs, err := s.Authenticator.GetSpecialURLs(r.Context())
+		if err != nil {
+			klog.Errorf("failed to determine KubeAdminLogoutURL: %v", err)
+			http.Error(w, "failed to determine KubeAdminLogoutURL", http.StatusInternalServerError)
+			return
+		}
 		jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
 	}
 
@@ -769,11 +774,18 @@ func (s *Server) handleClusterTokenURL(w http.ResponseWriter, r *http.Request) {
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only GET is allowed"})
 		return
 	}
-	requestTokenURL := s.Authenticator.GetSpecialURLs().RequestToken
+
+	specialAuthURLs, err := s.Authenticator.GetSpecialURLs(r.Context())
+	if err != nil {
+		klog.Errorf("failed to determine RequestToken URL: %v", err)
+		http.Error(w, "failed to determine RequestToken URL", http.StatusInternalServerError)
+		return
+	}
+
 	serverutils.SendResponse(w, http.StatusOK, struct {
 		RequestTokenURL string `json:"requestTokenURL"`
 	}{
-		RequestTokenURL: requestTokenURL,
+		RequestTokenURL: specialAuthURLs.RequestToken,
 	})
 }
 

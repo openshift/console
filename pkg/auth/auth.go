@@ -49,20 +49,17 @@ var (
 )
 
 type Authenticator struct {
-	authFunc func() (*oauth2.Config, loginMethod)
-
 	clientFunc func() *http.Client
-
-	// userFunc returns the User associated with the cookie from a request.
-	// This is not part of loginMethod to avoid creating an unnecessary
-	// HTTP client for every call.
-	userFunc func(*http.Request) (*User, error)
 
 	errorURL      string
 	successURL    string
 	cookiePath    string
 	refererURL    *url.URL
 	secureCookies bool
+
+	loginMethod
+
+	safeOAuth2ConfigGetter func(context.Context) *oauth2.Config
 
 	k8sConfig *rest.Config
 	metrics   *Metrics
@@ -88,7 +85,13 @@ type loginMethod interface {
 	deleteCookie(http.ResponseWriter, *http.Request)
 	// logout deletes any cookies associated with the user, and writes a no-content response.
 	logout(http.ResponseWriter, *http.Request)
-	getSpecialURLs() SpecialAuthURLs
+
+	// userFunc returns the User associated with the cookie from a request.
+	// This is not part of loginMethod to avoid creating an unnecessary
+	// HTTP client for every call.
+	getUser(*http.Request) (*User, error)
+	getSpecialURLs(ctx context.Context) (SpecialAuthURLs, error)
+	getEndpointConfig(ctx context.Context) (oauth2.Endpoint, error)
 }
 
 // AuthSource allows callers to switch between Tectonic and OpenShift login support.
@@ -183,52 +186,46 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 	)
 	steps := 0
 
-	for {
-		a, err := newUnstartedAuthenticator(c)
+	a, err := newUnstartedAuthenticator(c)
+	if err != nil {
+		return nil, err
+	}
+
+	authConfig := &oidcConfig{
+		client:        a.clientFunc(),
+		issuerURL:     c.IssuerURL,
+		clientID:      c.ClientID,
+		cookiePath:    c.CookiePath,
+		secureCookies: c.SecureCookies,
+	}
+
+	var tokenHandler loginMethod
+	switch c.AuthSource {
+	case AuthSourceOpenShift:
+		// Use the k8s CA for OAuth metadata discovery.
+		k8sClient, errK8Client := newHTTPClient(c.K8sCA, true)
+		if errK8Client != nil {
+			return nil, errK8Client
+		}
+
+		_, tokenHandler, err = newOpenShiftAuth(ctx, k8sClient, authConfig)
 		if err != nil {
 			return nil, err
 		}
+	default:
+		// the OIDC provider is using a sessions store which we don't want to create
+		// on every authSourceFunc() invocation
+		sessionStore := NewSessionStore(32768)
 
-		var authSourceFunc func() (oauth2.Endpoint, loginMethod, error)
-		switch c.AuthSource {
-		case AuthSourceOpenShift:
-			a.userFunc = getOpenShiftUser
-			authSourceFunc = func() (oauth2.Endpoint, loginMethod, error) {
-				// Use the k8s CA for OAuth metadata discovery.
-				k8sClient, errK8Client := newHTTPClient(c.K8sCA, true)
-				if errK8Client != nil {
-					return oauth2.Endpoint{}, nil, errK8Client
-				}
-
-				return newOpenShiftAuth(ctx, &openShiftConfig{
-					k8sClient:     k8sClient,
-					oauthClient:   a.clientFunc(),
-					issuerURL:     c.IssuerURL,
-					cookiePath:    c.CookiePath,
-					secureCookies: c.SecureCookies,
-				})
-			}
-		default:
-			// OIDC auth source is stateful, so only create it once.
-			endpoint, oidcAuthSource, err := newOIDCAuth(ctx, &oidcConfig{
-				client:        a.clientFunc(),
-				issuerURL:     c.IssuerURL,
-				clientID:      c.ClientID,
-				cookiePath:    c.CookiePath,
-				secureCookies: c.SecureCookies,
-			})
-			a.userFunc = func(r *http.Request) (*User, error) {
-				if oidcAuthSource == nil {
-					return nil, fmt.Errorf("OIDC auth source is not intialized")
-				}
-				return oidcAuthSource.authenticate(r)
-			}
-			authSourceFunc = func() (oauth2.Endpoint, loginMethod, error) {
-				return endpoint, oidcAuthSource, err
-			}
+		_, tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig)
+		if err != nil {
+			return nil, err
 		}
+	}
+	a.loginMethod = tokenHandler
 
-		fallbackEndpoint, fallbackLoginMethod, err := authSourceFunc()
+	for {
+		fallbackEndpoint, err := a.loginMethod.getEndpointConfig(ctx)
 		if err != nil {
 			steps++
 			if steps > maxSteps {
@@ -242,7 +239,7 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 			continue
 		}
 
-		a.authFunc = func() (*oauth2.Config, loginMethod) {
+		a.safeOAuth2ConfigGetter = func(ctx context.Context) *oauth2.Config {
 			// rebuild non-pointer struct each time to prevent any mutation
 			baseOAuth2Config := oauth2.Config{
 				ClientID:     c.ClientID,
@@ -252,14 +249,14 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 				Endpoint:     fallbackEndpoint,
 			}
 
-			currentEndpoint, currentLoginMethod, errAuthSource := authSourceFunc()
+			currentEndpoint, errAuthSource := a.loginMethod.getEndpointConfig(ctx)
 			if errAuthSource != nil {
 				klog.Errorf("failed to get latest auth source data: %v", errAuthSource)
-				return &baseOAuth2Config, fallbackLoginMethod
+				return &baseOAuth2Config
 			}
 
 			baseOAuth2Config.Endpoint = currentEndpoint
-			return &baseOAuth2Config, currentLoginMethod
+			return &baseOAuth2Config
 		}
 
 		return a, nil
@@ -321,11 +318,16 @@ type User struct {
 }
 
 func (a *Authenticator) Authenticate(r *http.Request) (*User, error) {
-	return a.userFunc(r)
+	user, err := a.getUser(r)
+	// FIXME: probably remove this logging eventually
+	if err != nil {
+		klog.Warningf("authentication failed: %v", err)
+	}
+	return user, err
 }
 
 func (a *Authenticator) DeleteCookie(w http.ResponseWriter, r *http.Request) {
-	a.getLoginMethod().deleteCookie(w, r)
+	a.deleteCookie(w, r)
 }
 
 // LoginFunc redirects to the OIDC provider for user login.
@@ -347,7 +349,7 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 		Secure:   a.secureCookies,
 	}
 	http.SetCookie(w, &cookie)
-	http.Redirect(w, r, a.getOAuth2Config().AuthCodeURL(state), http.StatusSeeOther)
+	http.Redirect(w, r, a.getOAuth2Config(r.Context()).AuthCodeURL(state), http.StatusSeeOther)
 }
 
 // LogoutFunc cleans up session cookies.
@@ -356,12 +358,12 @@ func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 		a.metrics.LogoutRequested(UnknownLogoutReason)
 	}
 
-	a.getLoginMethod().logout(w, r)
+	a.logout(w, r)
 }
 
 // GetKubeAdminLogoutURL returns the logout URL for the special kube:admin user in OpenShift
-func (a *Authenticator) GetSpecialURLs() SpecialAuthURLs {
-	return a.getLoginMethod().getSpecialURLs()
+func (a *Authenticator) GetSpecialURLs(ctx context.Context) (SpecialAuthURLs, error) {
+	return a.getSpecialURLs(ctx)
 }
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
@@ -404,8 +406,8 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			a.redirectAuthError(w, errorInvalidState)
 			return
 		}
-		ctx := oidc.ClientContext(context.TODO(), a.clientFunc())
-		oauthConfig, lm := a.authFunc()
+		ctx := oidc.ClientContext(r.Context(), a.clientFunc())
+		oauthConfig := a.safeOAuth2ConfigGetter(r.Context())
 		token, err := oauthConfig.Exchange(ctx, code)
 		if err != nil {
 			klog.Errorf("unable to verify auth code with issuer: %v", err)
@@ -413,7 +415,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 
-		ls, err := lm.login(w, token)
+		ls, err := a.login(w, token)
 		if err != nil {
 			klog.Errorf("error constructing login state: %v", err)
 			a.redirectAuthError(w, errorInternal)
@@ -429,14 +431,8 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 	}
 }
 
-func (a *Authenticator) getOAuth2Config() *oauth2.Config {
-	oauthConfig, _ := a.authFunc()
-	return oauthConfig
-}
-
-func (a *Authenticator) getLoginMethod() loginMethod {
-	_, lm := a.authFunc()
-	return lm
+func (a *Authenticator) getOAuth2Config(ctx context.Context) *oauth2.Config {
+	return a.safeOAuth2ConfigGetter(ctx)
 }
 
 func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string) {
