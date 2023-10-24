@@ -13,7 +13,8 @@ import (
 )
 
 type oidcAuth struct {
-	verifier *oidc.IDTokenVerifier
+	issuerURL string
+	verifier  *oidc.IDTokenVerifier
 
 	// This preserves the old logic of associating users with session keys
 	// and requires smart routing when running multiple backend instances.
@@ -24,14 +25,14 @@ type oidcAuth struct {
 }
 
 type oidcConfig struct {
-	client        *http.Client
+	client        *http.Client // FIXME: this should be client construct func
 	issuerURL     string
 	clientID      string
 	cookiePath    string
 	secureCookies bool
 }
 
-func newOIDCAuth(ctx context.Context, c *oidcConfig) (oauth2.Endpoint, *oidcAuth, error) {
+func newOIDCAuth(ctx context.Context, sessionStore *SessionStore, c *oidcConfig) (oauth2.Endpoint, *oidcAuth, error) {
 	ctx = oidc.ClientContext(ctx, c.client)
 	p, err := oidc.NewProvider(ctx, c.issuerURL)
 	if err != nil {
@@ -39,10 +40,11 @@ func newOIDCAuth(ctx context.Context, c *oidcConfig) (oauth2.Endpoint, *oidcAuth
 	}
 
 	return p.Endpoint(), &oidcAuth{
+		issuerURL: c.issuerURL,
 		verifier: p.Verifier(&oidc.Config{
 			ClientID: c.clientID,
 		}),
-		sessions:      NewSessionStore(32768),
+		sessions:      sessionStore,
 		cookiePath:    c.cookiePath,
 		secureCookies: c.secureCookies,
 	}, nil
@@ -124,7 +126,7 @@ func (o *oidcAuth) getLoginState(r *http.Request) (*loginState, error) {
 	return ls, nil
 }
 
-func (o *oidcAuth) authenticate(r *http.Request) (*User, error) {
+func (o *oidcAuth) getUser(r *http.Request) (*User, error) {
 	ls, err := o.getLoginState(r)
 	if err != nil {
 		return nil, err
@@ -137,6 +139,15 @@ func (o *oidcAuth) authenticate(r *http.Request) (*User, error) {
 	}, nil
 }
 
-func (o *oidcAuth) getSpecialURLs() SpecialAuthURLs {
-	return SpecialAuthURLs{}
+func (o *oidcAuth) getSpecialURLs(_ context.Context) (SpecialAuthURLs, error) {
+	return SpecialAuthURLs{}, nil
+}
+
+func (o *oidcAuth) getEndpointConfig(ctx context.Context) (oauth2.Endpoint, error) {
+	p, err := oidc.NewProvider(ctx, o.issuerURL)
+	if err != nil {
+		return oauth2.Endpoint{}, err
+	}
+
+	return p.Endpoint(), nil
 }

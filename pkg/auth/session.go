@@ -23,6 +23,7 @@ type SessionStore struct {
 	mux         sync.Mutex
 }
 
+// TODO: how is this shared between console instances? I doubt it is, we may want to use encrypted cookies instead
 func NewSessionStore(maxSessions int) *SessionStore {
 	return &SessionStore{
 		byToken:     make(map[string]*loginState),
