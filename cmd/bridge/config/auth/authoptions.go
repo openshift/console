@@ -73,13 +73,19 @@ func (c *AuthOptions) AddFlags(fs *flag.FlagSet) {
 }
 
 func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
+	setIfUnset(&c.AuthType, config.AuthType)
 	setIfUnset(&c.ClientID, config.ClientID)
+	setIfUnset(&c.IssuerURL, config.OIDCIssuer)
 	setIfUnset(&c.ClientSecretFilePath, config.ClientSecretFile)
 	setIfUnset(&c.CAFilePath, config.OAuthEndpointCAFile)
 	setIfUnset(&c.LogoutRedirect, config.LogoutRedirect)
 
 	if c.InactivityTimeoutSeconds == 0 {
 		c.InactivityTimeoutSeconds = config.InactivityTimeoutSeconds
+	}
+
+	if len(c.ExtraScopes) == 0 {
+		c.ExtraScopes = config.OIDCExtraScopes
 	}
 }
 
