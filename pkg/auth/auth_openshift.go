@@ -12,7 +12,6 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/openshift/console/pkg/proxy"
-	"github.com/openshift/console/pkg/serverutils"
 )
 
 // openShiftAuth implements OpenShift Authentication as defined in:
@@ -21,7 +20,6 @@ type openShiftAuth struct {
 	cookiePath    string
 	secureCookies bool
 	specialURLs   SpecialAuthURLs
-	clusterName   string // TODO remove multicluster
 }
 
 type openShiftConfig struct {
@@ -30,7 +28,6 @@ type openShiftConfig struct {
 	issuerURL     string
 	cookiePath    string
 	secureCookies bool
-	clusterName   string // TODO remove multicluster
 }
 
 func validateAbsURL(value string) error {
@@ -117,7 +114,6 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 				requestTokenURL,
 				kubeAdminLogoutURL,
 			},
-			c.clusterName, // TODO remove multicluster
 		}, nil
 }
 
@@ -144,7 +140,7 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 	// only logic using the OAuth2 implicit flow.
 	// https://tools.ietf.org/html/rfc6749#section-4.2
 	cookie := http.Cookie{
-		Name:     GetCookieName(o.clusterName), // TODO remove multicluster
+		Name:     openshiftAccessTokenCookieName,
 		Value:    ls.rawToken,
 		MaxAge:   int(expiresIn),
 		HttpOnly: true,
@@ -161,7 +157,7 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 func (o *openShiftAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
 	// Delete session cookie
 	cookie := http.Cookie{
-		Name:     GetCookieName(o.clusterName), // TODO remove multicluster
+		Name:     openshiftAccessTokenCookieName,
 		Value:    "",
 		MaxAge:   0,
 		HttpOnly: true,
@@ -177,19 +173,15 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func getOpenShiftUser(r *http.Request) (*User, error) {
-	// TODO remove multicluster
-	cluster := serverutils.GetCluster(r)
-	cookieName := GetCookieName(cluster)
-
 	// TODO: This doesn't do any validation of the cookie with the assumption that the
 	// API server will reject tokens it doesn't recognize. If we want to keep some backend
 	// state we should sign this cookie. If not there's not much we can do.
-	cookie, err := r.Cookie(cookieName)
+	cookie, err := r.Cookie(openshiftAccessTokenCookieName)
 	if err != nil {
 		return nil, err
 	}
 	if cookie.Value == "" {
-		return nil, fmt.Errorf("unauthenticated, no value for cookie %s", cookieName)
+		return nil, fmt.Errorf("unauthenticated, no value for cookie %s", openshiftAccessTokenCookieName)
 	}
 
 	return &User{

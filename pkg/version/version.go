@@ -5,5 +5,5 @@ package version
 var Version string
 
 type KubeVersionGetter interface {
-	GetKubeVersion(cluster string) string // TODO remove multicluster
+	GetKubeVersion() string
 }

@@ -58,7 +58,6 @@ const (
 	alertmanagerUserWorkloadProxyEndpoint = "/api/alertmanager-user-workload"
 	authLoginEndpoint                     = "/auth/login"
 	authLogoutEndpoint                    = "/auth/logout"
-	authLogoutMulticlusterEndpoint        = "/api/logout/multicluster" // TODO remove multicluster.
 	customLogoEndpoint                    = "/custom-logo"
 	deleteOpenshiftTokenEndpoint          = "/api/openshift/delete-token"
 	devfileEndpoint                       = "/api/devfile/"
@@ -71,7 +70,6 @@ const (
 	knativeProxyEndpoint                  = "/api/console/knative/"
 	devConsoleEndpoint                    = "/api/dev-console/"
 	localesEndpoint                       = "/locales/resource.json"
-	multiclusterLogoutPageTemplateName    = "multicluster-logout.html" // TODO remove multicluster
 	operandsListEndpoint                  = "/api/list-operands/"
 	pluginAssetsEndpoint                  = "/api/plugins/"
 	pluginProxyEndpoint                   = "/api/proxy/"
@@ -79,9 +77,6 @@ const (
 	prometheusTenancyProxyEndpoint        = "/api/prometheus-tenancy"
 	requestTokenEndpoint                  = "/api/request-token"
 	sha256Prefix                          = "sha256~"
-	thanosServiceProxyPath                = "/api/v1/namespaces/openshift-monitoring/services/https:thanos-querier:9091/proxy-service/api" // TODO remove multicluster
-	thanosTenancyForRulesServiceProxyPath = "/api/v1/namespaces/openshift-monitoring/services/https:thanos-querier:9093/proxy-service/api" // TODO remove multicluster
-	thanosTenancyServiceProxyPath         = "/api/v1/namespaces/openshift-monitoring/services/https:thanos-querier:9092/proxy-service/api" // TODO remove multicluster
 	tokenizerPageTemplateName             = "tokener.html"
 	updatesEndpoint                       = "/api/check-updates"
 )
@@ -107,7 +102,6 @@ type jsGlobals struct {
 	GOOS                            string                     `json:"GOOS"`
 	GrafanaPublicURL                string                     `json:"grafanaPublicURL"`
 	GraphQLBaseURL                  string                     `json:"graphqlBaseURL"`
-	HubConsoleURL                   string                     `json:"hubConsoleURL"` // TODO remove multicluster
 	I18nNamespaces                  []string                   `json:"i18nNamespaces"`
 	InactivityTimeout               int                        `json:"inactivityTimeout"`
 	KubeAdminLogoutURL              string                     `json:"kubeAdminLogoutURL"`
@@ -119,7 +113,6 @@ type jsGlobals struct {
 	LoginURL                        string                     `json:"loginURL"`
 	LogoutRedirect                  string                     `json:"logoutRedirect"`
 	LogoutURL                       string                     `json:"logoutURL"`
-	MulticlusterLogoutRedirect      string                     `json:"multiclusterLogoutRedirect"` // TODO remove multicluster
 	NodeArchitectures               []string                   `json:"nodeArchitectures"`
 	NodeOperatingSystems            []string                   `json:"nodeOperatingSystems"`
 	Perspectives                    string                     `json:"perspectives"`
@@ -144,8 +137,7 @@ type Server struct {
 	AlertManagerTenancyProxyConfig      *proxy.Config
 	AlertManagerUserWorkloadHost        string
 	AlertManagerUserWorkloadProxyConfig *proxy.Config
-	Authers                             map[string]*auth.Authenticator // TODO remove multicluster
-	AuthMetrics                         *auth.Metrics                  // TODO remove multicluster
+	Authenticator                       *auth.Authenticator
 	BaseURL                             *url.URL
 	Branding                            string
 	ClusterManagementProxyConfig        *proxy.Config
@@ -161,7 +153,6 @@ type Server struct {
 	GOARCH                              string
 	GOOS                                string
 	GrafanaPublicURL                    *url.URL
-	HubConsoleURL                       *url.URL // TODO remove multicluster
 	I18nNamespaces                      []string
 	InactivityTimeout                   int
 	K8sClient                           *http.Client
@@ -174,7 +165,6 @@ type Server struct {
 	KubeVersion                         string
 	LoadTestFactor                      int
 	LogoutRedirect                      *url.URL
-	ManagedClusterProxyConfig           *proxy.Config // TODO remove multicluster
 	MonitoringDashboardConfigMapLister  ResourceLister
 	NodeArchitectures                   []string
 	NodeOperatingSystems                []string
@@ -200,11 +190,6 @@ type Server struct {
 	UserSettingsLocation                string
 }
 
-// TODO remove multicluster
-func (s *Server) getLocalAuther() *auth.Authenticator {
-	return s.Authers[serverutils.LocalClusterName]
-}
-
 func disableDirectoryListing(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// If the request is for a directory, return a 404.
@@ -220,7 +205,7 @@ func disableDirectoryListing(handler http.Handler) http.Handler {
 }
 
 func (s *Server) authDisabled() bool {
-	return s.getLocalAuther() == nil
+	return s.Authenticator == nil
 }
 
 func (s *Server) prometheusProxyEnabled() bool {
@@ -235,26 +220,9 @@ func (s *Server) gitopsProxyEnabled() bool {
 	return s.GitOpsProxyConfig != nil
 }
 
-// TODO remove multicluster
-func (s *Server) getManagedClusterList() []string {
-	clusters := make([]string, 0, len(s.Authers))
-	for cluster := range s.Authers {
-		clusters = append(clusters, cluster)
-	}
-	return clusters
-}
-
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
-
-	// TODO remove multicluster
-	localAuther := s.getLocalAuther()
-	localK8sProxy := proxy.NewProxy(s.K8sProxyConfig)
-	var managedClusterProxy *proxy.Proxy
-	if s.ManagedClusterProxyConfig != nil {
-		managedClusterProxy = proxy.NewProxy(s.ManagedClusterProxyConfig)
-	}
-
+	k8sProxy := proxy.NewProxy(s.K8sProxyConfig)
 	handle := func(path string, handler http.Handler) {
 		mux.Handle(proxy.SingleJoiningSlash(s.BaseURL.Path, path), handler)
 	}
@@ -289,11 +257,11 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	authHandler := func(h http.HandlerFunc) http.HandlerFunc {
-		return authMiddleware(s.getLocalAuther(), h)
+		return authMiddleware(s.Authenticator, h)
 	}
 
 	authHandlerWithUser := func(h HandlerWithUser) http.HandlerFunc {
-		return authMiddlewareWithUser(s.getLocalAuther(), h)
+		return authMiddlewareWithUser(s.Authenticator, h)
 	}
 
 	if s.authDisabled() {
@@ -307,22 +275,19 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 	}
 
+	authHandlerWithHeader := func(h http.HandlerFunc) http.HandlerFunc {
+		return authHandlerWithUser(func(u *auth.User, w http.ResponseWriter, r *http.Request) {
+			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", u.Token))
+			h(w, r)
+		})
+	}
+
 	if !s.authDisabled() {
-		handleFunc(authLoginEndpoint, localAuther.LoginFunc)
+		handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
 		handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
-		handleFunc(AuthLoginCallbackEndpoint, localAuther.CallbackFunc(fn))
-		handleFunc(authLogoutMulticlusterEndpoint, s.handleLogoutMulticluster) // TODO remove multicluster
+		handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
 		handle(requestTokenEndpoint, authHandler(s.handleClusterTokenURL))
 		handleFunc(deleteOpenshiftTokenEndpoint, allowMethod(http.MethodPost, authHandlerWithUser(s.handleOpenShiftTokenDeletion)))
-
-		// TODO remove multicluster
-		for clusterName, clusterAuther := range s.Authers {
-			if clusterAuther != nil {
-				handleFunc(proxy.SingleJoiningSlash(authLoginEndpoint, clusterName), clusterAuther.LoginFunc)
-				handleFunc(proxy.SingleJoiningSlash(AuthLoginCallbackEndpoint, clusterName), clusterAuther.CallbackFunc(fn))
-			}
-		}
-
 	}
 
 	handleFunc("/api/", notFoundHandler)
@@ -347,20 +312,8 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	handle(k8sProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
-
-		// TODO remove multicluster.
-		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			cluster := serverutils.GetCluster(r)
-			k8sProxy := localK8sProxy
-			if cluster != serverutils.LocalClusterName {
-				r.URL.Path = proxy.SingleJoiningSlash("/"+cluster, r.URL.Path)
-				r.URL.RawPath = proxy.SingleJoiningSlash("/"+cluster, r.URL.RawPath)
-				k8sProxy = managedClusterProxy
-			}
-			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-			k8sProxy.ServeHTTP(w, r)
-		})),
-	)
+		authHandlerWithHeader(k8sProxy.ServeHTTP),
+	))
 
 	handleFunc(devfileEndpoint, devfile.DevfileHandler)
 	handleFunc(devfileSamplesEndpoint, devfile.DevfileSamplesHandler)
@@ -379,7 +332,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		panic(err)
 	}
 	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
-	k8sResolver := resolver.K8sResolver{K8sProxy: localK8sProxy}
+	k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxy}
 	rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
 	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
 	handler := graphqlws.NewHandler()
@@ -395,75 +348,37 @@ func (s *Server) HTTPHandler() http.Handler {
 	if s.prometheusProxyEnabled() {
 		// Only proxy requests to the Prometheus API, not the UI.
 		var (
-			labelSourcePath      = prometheusProxyEndpoint + "/api/v1/label/"
-			rulesSourcePath      = prometheusProxyEndpoint + "/api/v1/rules"
-			querySourcePath      = prometheusProxyEndpoint + "/api/v1/query"
-			queryRangeSourcePath = prometheusProxyEndpoint + "/api/v1/query_range"
-			targetsSourcePath    = prometheusProxyEndpoint + "/api/v1/targets"
-			metadataSourcePath   = prometheusProxyEndpoint + "/api/v1/metadata"
-			seriesSourcePath     = prometheusProxyEndpoint + "/api/v1/series"
-			labelsSourcePath     = prometheusProxyEndpoint + "/api/v1/labels"
-			targetAPIPath        = prometheusProxyEndpoint + "/api/"
-
+			labelSourcePath             = prometheusProxyEndpoint + "/api/v1/label/"
+			rulesSourcePath             = prometheusProxyEndpoint + "/api/v1/rules"
+			querySourcePath             = prometheusProxyEndpoint + "/api/v1/query"
+			queryRangeSourcePath        = prometheusProxyEndpoint + "/api/v1/query_range"
+			targetsSourcePath           = prometheusProxyEndpoint + "/api/v1/targets"
+			metadataSourcePath          = prometheusProxyEndpoint + "/api/v1/metadata"
+			seriesSourcePath            = prometheusProxyEndpoint + "/api/v1/series"
+			labelsSourcePath            = prometheusProxyEndpoint + "/api/v1/labels"
+			targetAPIPath               = prometheusProxyEndpoint + "/api/"
 			tenancyQuerySourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/query"
 			tenancyQueryRangeSourcePath = prometheusTenancyProxyEndpoint + "/api/v1/query_range"
 			tenancyRulesSourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/rules"
 			tenancyTargetAPIPath        = prometheusTenancyProxyEndpoint + "/api/"
+			thanosProxy                 = proxy.NewProxy(s.ThanosProxyConfig)
+			thanosTenancyProxy          = proxy.NewProxy(s.ThanosTenancyProxyConfig)
+			thanosTenancyForRulesProxy  = proxy.NewProxy(s.ThanosTenancyProxyForRulesConfig)
 		)
 
-		localThanosProxy := proxy.NewProxy(s.ThanosProxyConfig)
 		handleThanosRequest := http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
+			authHandlerWithHeader(thanosProxy.ServeHTTP),
+		)
 
-			// TODO remove multicluster
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-				cluster := serverutils.GetCluster(r)
-				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-				thanosProxy := localThanosProxy
-				if cluster != serverutils.LocalClusterName {
-					path := proxy.SingleJoiningSlash("/"+cluster, thanosServiceProxyPath)
-					r.URL.Path = proxy.SingleJoiningSlash(path, r.URL.Path)
-					r.URL.RawPath = proxy.SingleJoiningSlash(path, r.URL.RawPath)
-					thanosProxy = managedClusterProxy
-				}
-				thanosProxy.ServeHTTP(w, r)
-			}))
-
-		localThanosTenancyProxy := proxy.NewProxy(s.ThanosTenancyProxyConfig)
 		handleThanosTenancyRequest := http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
+			authHandlerWithHeader(thanosTenancyProxy.ServeHTTP),
+		)
 
-			// TODO remove multicluster
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-				cluster := serverutils.GetCluster(r)
-				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-				thanosTenancyProxy := localThanosTenancyProxy
-				if cluster != serverutils.LocalClusterName {
-					serviceProxyPath := proxy.SingleJoiningSlash("/"+cluster, thanosTenancyServiceProxyPath)
-					r.URL.Path = proxy.SingleJoiningSlash(serviceProxyPath, r.URL.Path)
-					r.URL.RawPath = proxy.SingleJoiningSlash(serviceProxyPath, r.URL.RawPath)
-					thanosTenancyProxy = managedClusterProxy
-				}
-				thanosTenancyProxy.ServeHTTP(w, r)
-			}))
-
-		localThanosTenancyForRulesProxy := proxy.NewProxy(s.ThanosTenancyProxyForRulesConfig)
 		handleThanosTenancyForRulesRequest := http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
-
-			// TODO remove multicluster
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-				cluster := serverutils.GetCluster(r)
-				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-				thanosTenancyForRulesProxy := localThanosTenancyForRulesProxy
-				if cluster != serverutils.LocalClusterName {
-					serviceProxyPath := proxy.SingleJoiningSlash("/"+cluster, thanosTenancyForRulesServiceProxyPath)
-					r.URL.Path = proxy.SingleJoiningSlash(serviceProxyPath, r.URL.Path)
-					r.URL.RawPath = proxy.SingleJoiningSlash(serviceProxyPath, r.URL.RawPath)
-					thanosTenancyForRulesProxy = managedClusterProxy
-				}
-				thanosTenancyForRulesProxy.ServeHTTP(w, r)
-			}))
+			authHandlerWithHeader(thanosTenancyForRulesProxy.ServeHTTP))
 
 		// global label, query, and query_range requests have to be proxied via thanos
 		handle(querySourcePath, handleThanosRequest)
@@ -499,27 +414,18 @@ func (s *Server) HTTPHandler() http.Handler {
 
 		handle(alertManagerProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-				alertManagerProxy.ServeHTTP(w, r)
-			})),
-		)
+			authHandlerWithHeader(alertManagerProxy.ServeHTTP),
+		))
 
 		handle(alertManagerUserWorkloadProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerUserWorkloadProxyAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-				alertManagerUserWorkloadProxy.ServeHTTP(w, r)
-			})),
-		)
+			authHandlerWithHeader(alertManagerUserWorkloadProxy.ServeHTTP),
+		))
 
 		handle(alertManagerTenancyProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerTenancyProxyAPIPath),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-				alertManagerTenancyProxy.ServeHTTP(w, r)
-			})),
-		)
+			authHandlerWithHeader(alertManagerTenancyProxy.ServeHTTP),
+		))
 	}
 
 	clusterManagementProxy := proxy.NewProxy(s.ClusterManagementProxyConfig)
@@ -646,13 +552,11 @@ func (s *Server) HTTPHandler() http.Handler {
 			return
 		}
 		serverutils.SendResponse(w, http.StatusOK, struct {
-			ConsoleCommit   string   `json:"consoleCommit"`
-			ManagedClusters []string `json:"managedClusters"` // TODO remove multicluster
-			Plugins         []string `json:"plugins"`
+			ConsoleCommit string   `json:"consoleCommit"`
+			Plugins       []string `json:"plugins"`
 		}{
-			ConsoleCommit:   os.Getenv("SOURCE_GIT_COMMIT"),
-			ManagedClusters: s.getManagedClusterList(), // TODO remove multicluster
-			Plugins:         pluginsHandler.GetPluginsList(),
+			ConsoleCommit: os.Getenv("SOURCE_GIT_COMMIT"),
+			Plugins:       pluginsHandler.GetPluginsList(),
 		})
 	}))
 
@@ -681,7 +585,6 @@ func (s *Server) HTTPHandler() http.Handler {
 		s.K8sProxyConfig.Endpoint.String(),
 		s.ServiceAccountToken,
 	)
-	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...) // TODO remove multicluster
 	prometheus.MustRegister(serverconfigMetrics.GetCollectors()...)
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
 	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
@@ -736,11 +639,8 @@ func (s *Server) HTTPHandler() http.Handler {
 		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)
 		handle(gitopsEndpoint, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, gitopsEndpoint),
-			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-				gitopsProxy.ServeHTTP(w, r)
-			})),
-		)
+			authHandlerWithHeader(gitopsProxy.ServeHTTP),
+		))
 	}
 
 	handle("/api/console/version", authHandler(s.versionHandler))
@@ -774,53 +674,49 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsg := &jsGlobals{
-		ConsoleVersion:             version.Version,
-		AuthDisabled:               s.authDisabled(),
-		KubectlClientID:            s.KubectlClientID,
-		BasePath:                   s.BaseURL.Path,
-		LoginURL:                   proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
-		LoginSuccessURL:            proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginErrorURL:              proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
-		LogoutRedirect:             s.LogoutRedirect.String(),
-		MulticlusterLogoutRedirect: proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutMulticlusterEndpoint), // TODO remove multicluster
-		KubeAPIServerURL:           s.KubeAPIServerURL,
-		Branding:                   s.Branding,
-		CustomProductName:          s.CustomProductName,
-		ControlPlaneTopology:       s.ControlPlaneTopology,
-		StatuspageID:               s.StatuspageID,
-		InactivityTimeout:          s.InactivityTimeout,
-		DocumentationBaseURL:       s.DocumentationBaseURL.String(),
-		AlertManagerPublicURL:      s.AlertManagerPublicURL.String(),
-		GrafanaPublicURL:           s.GrafanaPublicURL.String(),
-		PrometheusPublicURL:        s.PrometheusPublicURL.String(),
-		ThanosPublicURL:            s.ThanosPublicURL.String(),
-		GOARCH:                     s.GOARCH,
-		GOOS:                       s.GOOS,
-		LoadTestFactor:             s.LoadTestFactor,
-		GraphQLBaseURL:             proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
-		DevCatalogCategories:       s.DevCatalogCategories,
-		DevCatalogTypes:            s.DevCatalogTypes,
-		UserSettingsLocation:       s.UserSettingsLocation,
-		ConsolePlugins:             plugins,
-		I18nNamespaces:             s.I18nNamespaces,
-		QuickStarts:                s.QuickStarts,
-		AddPage:                    s.AddPage,
-		ProjectAccessClusterRoles:  s.ProjectAccessClusterRoles,
-		Perspectives:               s.Perspectives,
-		Telemetry:                  s.Telemetry,
-		ReleaseVersion:             s.ReleaseVersion,
-		NodeArchitectures:          s.NodeArchitectures,
-		NodeOperatingSystems:       s.NodeOperatingSystems,
-		CopiedCSVsDisabled:         s.CopiedCSVsDisabled,
-		HubConsoleURL:              s.HubConsoleURL.String(), // TODO remove multicluster
-		K8sMode:                    s.K8sMode,
+		ConsoleVersion:            version.Version,
+		AuthDisabled:              s.authDisabled(),
+		KubectlClientID:           s.KubectlClientID,
+		BasePath:                  s.BaseURL.Path,
+		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
+		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		LogoutURL:                 proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
+		LogoutRedirect:            s.LogoutRedirect.String(),
+		KubeAPIServerURL:          s.KubeAPIServerURL,
+		Branding:                  s.Branding,
+		CustomProductName:         s.CustomProductName,
+		ControlPlaneTopology:      s.ControlPlaneTopology,
+		StatuspageID:              s.StatuspageID,
+		InactivityTimeout:         s.InactivityTimeout,
+		DocumentationBaseURL:      s.DocumentationBaseURL.String(),
+		AlertManagerPublicURL:     s.AlertManagerPublicURL.String(),
+		GrafanaPublicURL:          s.GrafanaPublicURL.String(),
+		PrometheusPublicURL:       s.PrometheusPublicURL.String(),
+		ThanosPublicURL:           s.ThanosPublicURL.String(),
+		GOARCH:                    s.GOARCH,
+		GOOS:                      s.GOOS,
+		LoadTestFactor:            s.LoadTestFactor,
+		GraphQLBaseURL:            proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
+		DevCatalogCategories:      s.DevCatalogCategories,
+		DevCatalogTypes:           s.DevCatalogTypes,
+		UserSettingsLocation:      s.UserSettingsLocation,
+		ConsolePlugins:            plugins,
+		I18nNamespaces:            s.I18nNamespaces,
+		QuickStarts:               s.QuickStarts,
+		AddPage:                   s.AddPage,
+		ProjectAccessClusterRoles: s.ProjectAccessClusterRoles,
+		Perspectives:              s.Perspectives,
+		Telemetry:                 s.Telemetry,
+		ReleaseVersion:            s.ReleaseVersion,
+		NodeArchitectures:         s.NodeArchitectures,
+		NodeOperatingSystems:      s.NodeOperatingSystems,
+		CopiedCSVsDisabled:        s.CopiedCSVsDisabled,
+		K8sMode:                   s.K8sMode,
 	}
 
-	localAuther := s.getLocalAuther() // TODO remove multicluster
-
 	if !s.authDisabled() {
-		specialAuthURLs := localAuther.GetSpecialURLs()
+		specialAuthURLs := s.Authenticator.GetSpecialURLs()
 		jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
 	}
 
@@ -835,7 +731,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !s.authDisabled() {
-		localAuther.SetCSRFCookie(s.BaseURL.Path, &w)
+		s.Authenticator.SetCSRFCookie(s.BaseURL.Path, &w)
 	}
 
 	if s.CustomLogoFile != "" {
@@ -873,18 +769,7 @@ func (s *Server) handleClusterTokenURL(w http.ResponseWriter, r *http.Request) {
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only GET is allowed"})
 		return
 	}
-
-	// TODO remove multicluster
-	cluster := serverutils.GetCluster(r)
-	auther, ok := s.Authers[cluster]
-	if !ok {
-		errMsg := fmt.Sprintf("Auther for %q not found", cluster)
-		klog.Error(errMsg)
-		serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: errMsg})
-		return
-	}
-
-	requestTokenURL := auther.GetSpecialURLs().RequestToken
+	requestTokenURL := s.Authenticator.GetSpecialURLs().RequestToken
 	serverutils.SendResponse(w, http.StatusOK, struct {
 		RequestTokenURL string `json:"requestTokenURL"`
 	}{
@@ -898,20 +783,9 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 		tokenName = tokenToObjectName(tokenName)
 	}
 
-	// Proxy request to correct cluster
-	// TODO remove multicluster
-	cluster := serverutils.GetCluster(r)
-	client := s.K8sClient
-	proxyConfig := s.K8sProxyConfig
 	path := "/apis/oauth.openshift.io/v1/oauthaccesstokens/" + tokenName
-	if cluster != serverutils.LocalClusterName {
-		client = s.ServiceClient
-		proxyConfig = s.ManagedClusterProxyConfig
-		path = proxy.SingleJoiningSlash("/"+cluster, path)
-	}
-
 	// Delete the OpenShift OAuthAccessToken.
-	url := proxy.SingleJoiningSlash(proxyConfig.Endpoint.String(), path)
+	url := proxy.SingleJoiningSlash(s.K8sProxyConfig.Endpoint.String(), path)
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to create token DELETE request: %v", err)})
@@ -919,66 +793,19 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 	}
 
 	r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-	resp, err := client.Do(req)
+	resp, err := s.K8sClient.Do(req)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to delete token: %v", err)})
 		return
 	}
-	s.getLocalAuther().DeleteCookie(w, r)
+	s.Authenticator.DeleteCookie(w, r)
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
 	resp.Body.Close()
 }
 
-// TODO: Move this function into the auth module
-// TODO remove multicluster
-func (s *Server) handleLogoutMulticluster(w http.ResponseWriter, r *http.Request) {
-	if s.AuthMetrics != nil {
-		s.AuthMetrics.LogoutRequested(auth.UnknownLogoutReason)
-	}
-
-	for cluster, auther := range s.Authers {
-		cookieName := auth.GetCookieName(cluster)
-		if cookie, _ := r.Cookie(cookieName); cookie != nil {
-			clearedCookie := http.Cookie{
-				Name:     cookie.Name,
-				Value:    "",
-				MaxAge:   0,
-				HttpOnly: cookie.HttpOnly,
-				Path:     auther.GetCookiePath(),
-				Secure:   cookie.Secure,
-			}
-			klog.Infof("Deleting cookie %v", cookie.Name)
-			http.SetCookie(w, &clearedCookie)
-		}
-	}
-
-	jsg := struct {
-		BasePath          string `json:"basePath"`
-		Branding          string `json:"branding"`
-		CustomProductName string `json:"customProductName"`
-	}{
-		BasePath:          s.BaseURL.Path,
-		Branding:          s.Branding,
-		CustomProductName: s.CustomProductName,
-	}
-	tpl := template.New(multiclusterLogoutPageTemplateName)
-	tpl.Delims("[[", "]]")
-	tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, multiclusterLogoutPageTemplateName))
-	if err != nil {
-		fmt.Printf("%v not found in configured public-dir path: %v", multiclusterLogoutPageTemplateName, err)
-		os.Exit(1)
-	}
-
-	if err := tpls.ExecuteTemplate(w, multiclusterLogoutPageTemplateName, jsg); err != nil {
-		fmt.Printf("%v", err)
-		os.Exit(1)
-	}
-}
-
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
-	authenticator := s.getLocalAuther() // TODO remove multicluster
-	verifyCSRF(authenticator, authenticator.LogoutFunc).ServeHTTP(w, r)
+	verifyCSRF(s.Authenticator, s.Authenticator.LogoutFunc).ServeHTTP(w, r)
 }
 
 // tokenToObjectName returns the oauthaccesstokens object name for the given raw token,
