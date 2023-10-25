@@ -487,8 +487,6 @@ We support the latest versions of the following browsers:
 IE 11 and earlier is not supported.
 
 ## Frontend Packages
-- [ceph-storage-plugin](./frontend/packages/ceph-storage-plugin/README.md)
-
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
 [[API]](./frontend/packages/console-dynamic-plugin-sdk/docs/api.md)
 [[Console Extensions]](./frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md)
