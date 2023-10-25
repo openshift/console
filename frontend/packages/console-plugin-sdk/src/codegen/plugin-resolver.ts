@@ -115,7 +115,6 @@ export type Package = readPkg.NormalizedPackageJson & {
 export type PluginPackage = Package & {
   consolePlugin: {
     entry: string;
-    integrationTestSuites?: Record<string, string[]>;
     exposedModules?: { [moduleName: string]: string };
   };
 };

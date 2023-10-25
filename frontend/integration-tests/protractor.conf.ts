@@ -7,8 +7,6 @@ import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
 import { createWriteStream, writeFileSync } from 'fs';
 import { format } from 'util';
-import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
-import { reducePluginTestSuites } from '@console/plugin-sdk/src/codegen/plugin-integration-tests';
 
 const tap = !!process.env.TAP;
 
@@ -38,12 +36,6 @@ const junitReporter = new JUnitXmlReporter({
   consolidateAll: true,
 });
 const browserLogs = [];
-
-const suite = (tests: string[]): string[] =>
-  (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/login.scenario.ts'] : []).concat([
-    'tests/base.scenario.ts',
-    ...tests,
-  ]);
 
 export const config = {
   framework: 'jasmine',
@@ -131,7 +123,7 @@ export const config = {
     failFast.clean();
     return new Promise((resolve) => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
   },
-  suites: reducePluginTestSuites(resolvePluginPackages(), __dirname, suite),
+  suites: {},
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
     // Use a string rather than boolean so it can be specified on the command line:

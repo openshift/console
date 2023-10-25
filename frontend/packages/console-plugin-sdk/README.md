@@ -72,7 +72,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Card',
     properties: {
       tab: 'foo-tab',
-      loader: () => import('./components/foo-card' /* webpackChunkName: "foo" */).then((m) => m.FooCard),
+      loader: () =>
+        import('./components/foo-card' /* webpackChunkName: "foo" */).then((m) => m.FooCard),
     },
   },
 ];
@@ -91,34 +92,6 @@ Plugin's dynamic extensions are declared via `console-extensions.json` file; see
 
 When loading static plugins during Console startup, the overall list of plugin's extensions is computed
 as `[...staticExtensions, ...dynamicExtensions]`.
-
-## Integration tests
-
-Static plugins can extend the list of core [Protractor](https://www.protractortest.org/) test suites via
-the `consolePlugin.integrationTestSuites` object in their `package.json` file.
-
-```jsonc
-{
-  "name": "@console/foo-plugin",
-  "version": "0.0.0-fixed",
-  "private": true,
-  // scripts, dependencies, devDependencies, ...
-  "consolePlugin": {
-    "entry": "src/plugin.ts",
-    "integrationTestSuites": {
-      "foo": [
-        "integration-tests/**/*.scenario.ts"
-      ]
-    }
-  }
-}
-```
-
-Protractor test suite integration uses the same plugin resolution as the webpack build; only the plugins
-that would be included in the Console build will have their test suites added to the list.
-
-Plugin developers should consider writing new integration tests using [Cypress](https://www.cypress.io/).
-The `integration-tests-cypress` package currently hosts tests to be moved out into appropriate packages.
 
 ## `OWNERS`
 

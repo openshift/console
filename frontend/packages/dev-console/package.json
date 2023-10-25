@@ -18,11 +18,6 @@
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx",
-    "integrationTestSuites": {
-      "devconsole": [
-        "integration-tests/**/*.scenario.ts"
-      ]
-    },
     "exposedModules": {
       "actions": "src/actions",
       "builds": "src/components/builds",
