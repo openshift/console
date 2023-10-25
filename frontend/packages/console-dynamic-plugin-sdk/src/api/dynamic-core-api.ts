@@ -609,13 +609,13 @@ export const YAMLEditor: React.ForwardRefExoticComponent<
  * ```
  * @param {CodeEditorProps['value']} value - String representing the yaml code to render.
  * @param {CodeEditorProps['language']} language - String representing the language of the editor.
- * @param {CodeEditorProps['options']} options - Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html.
+ * @param {CodeEditorProps['options']} options - Monaco editor options. For more details, please, visit https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneEditorConstructionOptions.html.
  * @param {CodeEditorProps['minHeight']} minHeight - Minimum editor height in valid CSS height values.
  * @param {CodeEditorProps['showShortcuts']} showShortcuts - Boolean to show shortcuts on top of the editor.
  * @param {CodeEditorProps['toolbarLinks']} toolbarLinks - Array of ReactNode rendered on the toolbar links section on top of the editor.
  * @param {CodeEditorProps['onChange']} onChange - Callback for on code change event.
  * @param {CodeEditorProps['onSave']} onSave - Callback called when the command CTRL / CMD + S is triggered.
- * @param {CodeEditorRef} ref - React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html.
+ * @param {CodeEditorRef} ref - React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, visit https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneCodeEditor.html.
  */
 export const CodeEditor: React.ForwardRefExoticComponent<
   CodeEditorProps & React.RefAttributes<CodeEditorRef>
