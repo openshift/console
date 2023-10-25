@@ -93,6 +93,7 @@ To Execute the scripts on Remote cluster, use below commands
     export BRIDGE_KUBEADMIN_PASSWORD
     export BRIDGE_BASE_ADDRESS
     oc login -u kubeadmin -p $BRIDGE_KUBEADMIN_PASSWORD
-    oc apply -f ./frontend/integration-tests/data/htpasswd-secret.yaml
-    oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-htpasswd.yaml)" --type=merge
+    oc apply -f ./frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml
+    oc patch oauths cluster --patch "$(cat ./frontend/packages/console-shared/src/test-data/patch-htpasswd.yaml)" --type=merge
     ./test-cypress.sh -p knative -h true
+```

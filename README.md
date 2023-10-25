@@ -227,8 +227,6 @@ Run frontend tests:
 
 ### Integration Tests
 
-#### Cypress
-
 Cypress integration tests are implemented in [Cypress.io](https://www.cypress.io/).
 
 Launch Cypress test runner:
@@ -244,7 +242,7 @@ By default, it will look for Chrome in the system and use it, but if you want to
 
 **Important:**  when testing with authentication, set `BRIDGE_KUBEADMIN_PASSWORD` environment variable in your shell.
 
-##### Execute Cypress in different packages
+#### Execute Cypress in different packages
 
 An alternate way to execute cypress tests is via [test-cypress.sh](test-cypress.sh) which takes a `-p <package>` parameter to allow execution in different packages. It also can run Cypress tests in the Test Runner UI or in `-- headless` mode:
 
@@ -268,117 +266,19 @@ Examples:
 
 [**_More information on DevConsole's Cypress usage_**](frontend/packages/dev-console/integration-tests/README.md)
 
-#### Protractor
-
-Integration tests are run in a headless browser driven by [protractor](http://www.protractortest.org/#/).
-Requirements include Chrome or Firefox, a working cluster, kubectl, and bridge itself (see building above).
-By default, it will look for Chrome in the system and use it, but if you want to use Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `firefox`.
-
-Setup (or any time you change node_modules - `yarn add` or `yarn install`)
-
-```
-cd frontend && yarn run webdriver-update
-```
-
-Run integration tests:
-
-```
-yarn run test-protractor
-```
-
-Run integration tests on an OpenShift cluster:
-
-```
-yarn run test-protractor-openshift
-```
-
-This will include the normal k8s CRUD tests and CRUD tests for OpenShift
-resources.
-
-If you get Jasmine spec timeout errors during runs perhaps against a busy cluster or over slow network, you can try setting a bigger timeout in milliseconds to `BRIDGE_JASMINE_TIMEOUT` environment variable in your shell before running the tests. Default 120000 (2 minutes).
-
-If your local Chrome version doesn't match the Chromedriver version from the console dependencies, override the version with:
-
-```
-yarn run webdriver-update --versions.chrome=77.0.3865.120
-```
-
-For Fedora, you can use:
-
-```
-yarn run webdriver-update-fedora
-```
-
-For macOS, you can use:
-
-```
-yarn run webdriver-update-macos
-```
-
-##### Hacking Protractor Tests
-
-To see what the tests are actually doing, it is possible to run in non-`headless` mode by setting the `NO_HEADLESS` environment variable:
-
-```
-$ NO_HEADLESS=true ./test-protractor.sh <suite>
-```
-
-To use a specific binary version of chrome, it is possible to set the `CHROME_BINARY_PATH` environment variable:
-
-```
-$ CHROME_BINARY_PATH="/usr/bin/chromium-browser" ./test-protractor.sh <suite>
-```
-
-To avoid skipping remaining portion of tests upon encountering the first failure, `NO_FAILFAST` environment variable can be used:
-
-```
-$ NO_FAILFAST=true ./test-protractor.sh <suite>
-```
-
-##### Debugging Protractor Tests
-
-1. `cd frontend; yarn run build`
-2. Add `debugger;` statements to any e2e test
-3. `yarn run debug-protractor-suite --suite <suite-to-debug>`
-4. Chrome browser URL: 'chrome://inspect/#devices', click on the 'inspect' link in **Target (v10...)** section.
-5. Launches chrome-dev tools, click Resume button to continue
-6. Will break on any `debugger;` statements
-7. Pauses browser when not using `--headless` argument!
-
 #### How the Integration Tests Run in CI
 
 The end-to-end tests run against pull requests using [ci-operator](https://github.com/openshift/ci-operator/).
 The tests are defined in [this manifest](https://github.com/openshift/release/blob/master/ci-operator/jobs/openshift/console/openshift-console-master-presubmits.yaml)
 in the [openshift/release](https://github.com/openshift/release) repo and were generated with [ci-operator-prowgen](https://github.com/openshift/ci-operator-prowgen).
 
-CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [test-cypress.sh](test-cypress.sh) and ['test-protractor.sh e2e'](test-protractor.sh), which runs the protractor `e2e` test suite.
+CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [test-cypress.sh](test-cypress.sh).
 
-##### Cypress in CI
-
-The CI executes [test-cypress.sh](test-cypress.sh) to run all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
+[test-cypress.sh](test-cypress.sh) runs all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
 
 `test-cypress.sh -h true`
 
 For more information on `test-cypress.sh` usage please see [Execute Cypress in different packages](#execute-cypress-in-different-packages)
-
-##### Protractor in CI
-
-['test-protractor.sh e2e'](test-protractor.sh) runs the protractor `e2e` test suite defined in [protractor.conf.ts](frontend/integration-tests/protractor.conf.ts)
-You can simulate an e2e run against an existing cluster with the following commands (replace `/path/to/install-dir` with your OpenShift install directory):
-
-```
-$ oc apply -f ./frontend/integration-tests/data/htpasswd-secret.yaml
-$ oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-htpasswd.yaml)" --type=merge
-$ export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
-$ export BRIDGE_KUBEADMIN_PASSWORD=$(cat "/path/to/install-dir/auth/kubeadmin-password")
-$ ./test-protractor.sh e2e
-```
-
-If you don't want to run the entire e2e tests, you can use a different suite from [protractor.conf.ts](frontend/integration-tests/protractor.conf.ts). For instance,
-
-```
-$ ./test-protractor.sh <suite>
-```
 
 ### Internationalization
 

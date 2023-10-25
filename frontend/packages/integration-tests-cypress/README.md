@@ -10,14 +10,6 @@ cy.visit() or nav to page
 [Selector Playground](https://docs.cypress.io/guides/core-concepts/test-runner.html#Selector-Playground)
 - Use [Cypress's Best Practices for Selecting Elements](https://docs.cypress.io/guides/references/best-practices.html)
 
-#### Migrating Protractor tests to Cypress
-
-When migrating a test suite from Protractor to Cypress, the following steps are recommended:
-1. Create the new test suite in Cypress
-2. If you need to create a new test id use the `data-test` attribute and the `cy.byTestID()` helper method.
-If you need to access the legacy `data-test-id` attribute, use the `cy.byLegacyTestID()` helper method.
-3. Remove test suite from Protractor
-
 #### Directory Structure
 ```
 frontend/packages/integration-tests-cypress/
