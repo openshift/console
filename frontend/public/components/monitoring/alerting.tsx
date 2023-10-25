@@ -112,7 +112,7 @@ import { fetchAlerts } from './fetch-alerts';
 import { useBoolean } from './hooks/useBoolean';
 import KebabDropdown from './kebab-dropdown';
 import { Labels } from './labels';
-import { QueryBrowserPage, ToggleGraph } from './metrics';
+import { ToggleGraph } from './metrics';
 import { CreateSilence, EditSilence } from './silence-form';
 import { TargetsUI } from './targets';
 import { Alerts, AlertSource, MonitoringResource, Silences } from './types';
@@ -2406,7 +2406,6 @@ export const MonitoringUI = () => (
     <Route path="/monitoring/alertmanageryaml" exact component={AlertmanagerPage} />
     <Route path="/monitoring/dashboards/:board?" exact component={MonitoringDashboardsPage} />
     <Route path="/monitoring/graph" exact component={PrometheusUIRedirect} />
-    <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
     <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
     <Route path="/monitoring/targets" component={TargetsUI} />
     <Route component={PollerPages} />
