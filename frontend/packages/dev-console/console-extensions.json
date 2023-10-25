@@ -459,7 +459,7 @@
       ]
     },
     "flags": {
-      "required": ["JAVA_IMAGE_STREAM_ENABLED"]
+      "required": ["OPENSHIFT_BUILDCONFIG", "JAVA_IMAGE_STREAM_ENABLED"]
     }
   },
   {
@@ -525,7 +525,7 @@
       "typeDescription": "%devconsole~**Builder Images** are container images that build source code for a particular language or framework.%"
     },
     "flags": {
-      "required": ["OPENSHIFT_IMAGESTREAM"]
+      "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
     }
   },
   {
@@ -537,7 +537,7 @@
       "provider": { "$codeRef": "catalog.builderImageProvider" }
     },
     "flags": {
-      "required": ["OPENSHIFT_IMAGESTREAM"]
+      "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
     }
   },
   {
@@ -571,6 +571,9 @@
       "title": "%devconsole~Devfiles%",
       "catalogDescription": "%devconsole~Browse for devfiles that support a particular language or framework. Cluster administrators can customize the content made available in the catalog.%",
       "typeDescription": "%devconsole~**Devfiles** are sets of objects for creating services, build configurations, and anything you have permission to create within a Project.%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
     }
   },
   {
@@ -580,6 +583,9 @@
       "type": "Devfile",
       "title": "%devconsole~Devfiles%",
       "provider": { "$codeRef": "catalog.devfileProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
     }
   },
   {
@@ -637,7 +643,7 @@
       "provider": { "$codeRef": "catalog.builderImageSamplesProvider" }
     },
     "flags": {
-      "required": ["OPENSHIFT_IMAGESTREAM"]
+      "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
     }
   },
   {
@@ -647,6 +653,9 @@
       "type": "Devfile",
       "title": "%devconsole~Devfile%",
       "provider": { "$codeRef": "catalog.devfileSamplesProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
     }
   },
   {
