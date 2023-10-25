@@ -33,7 +33,7 @@ export DBUS_SESSION_BUS_ADDRESS
 SCENARIO="${1:-e2e}"
 
 case $SCENARIO in
-  login|olmFull|ceph|kubevirt-gating|nightly-cypress) ;; # no protractor tests
+  login|olmFull|nightly-cypress) ;; # no protractor tests
   *) CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO";;
 esac
 
@@ -52,10 +52,6 @@ elif [ "$SCENARIO" == "login" ]; then
   ./test-cypress.sh -p console -s 'tests/app/auth-multiuser-login.cy.ts' -h true
 elif [ "$SCENARIO" == "olmFull" ]; then
   ./test-cypress.sh -p olm -h true
-# elif [ "$SCENARIO" == "ceph" ]; then
-#   ./test-cypress.sh -p ceph -h true
-# elif [ "$SCENARIO" == "kubevirt-gating" ]; then
-#   ./test-cypress.sh -p kubevirt -h true
 elif [ "$SCENARIO" == "dev-console" ]; then
   ./test-cypress.sh -p dev-console -h true
 elif [ "$SCENARIO" == "pipelines" ]; then
