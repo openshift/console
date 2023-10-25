@@ -44,6 +44,7 @@ export const ExpandCollapseDescription: React.FC<ExpandCollapseDescriptionProps>
 
 const normalizeClusterServiceVersions = (
   clusterServiceVersions: ClusterServiceVersionKind[],
+  namespace: string,
   t: TFunction,
 ): CatalogItem[] => {
   const formatTileDescription = (csvDescription: string): string =>
@@ -125,7 +126,7 @@ const normalizeClusterServiceVersions = (
         },
         cta: {
           label: t('public~Create'),
-          href: `/k8s/ns/${desc.csv.metadata.namespace}/clusterserviceversions/${
+          href: `/k8s/ns/${namespace}/clusterserviceversions/${
             desc.csv.metadata.name
           }/${referenceForProvidedAPI(desc)}/~new`,
         },
@@ -175,9 +176,10 @@ const useClusterServiceVersions: ExtensionHook<CatalogItem[]> = ({
     () =>
       normalizeClusterServiceVersions(
         [...(csvsResources.csvs?.data ?? []), ...(csvsResources.globalCsvs?.data ?? [])],
+        namespace,
         t,
       ),
-    [csvsResources, t],
+    [csvsResources, namespace, t],
   );
 
   return [normalizedCSVs, csvsResources.csvs?.loaded, csvsResources.csvs?.loadError];
