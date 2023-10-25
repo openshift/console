@@ -54,7 +54,6 @@ export const init = () => {
       detection: { caches: [] },
       contextSeparator: '~',
       ns: [
-        'ceph-storage-plugin',
         'console-app',
         'console-shared',
         'container-security',

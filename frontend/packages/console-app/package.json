@@ -8,7 +8,6 @@
     "test": "yarn --cwd ../.. test packages/console-app"
   },
   "dependencies": {
-    "@console/ceph-storage-plugin": "0.0.0-fixed",
     "@console/container-security": "0.0.0-fixed",
     "@console/dev-console": "0.0.0-fixed",
     "@console/gitops-plugin": "0.0.0-fixed",

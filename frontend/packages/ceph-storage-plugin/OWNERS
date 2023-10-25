@@ -1,8 +1,0 @@
-reviewers:
-  - bipuladh
-  - cloudbehl
-approvers:
-  - bipuladh
-  - cloudbehl
-labels:
-  - component/ceph
