@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 
-export const filterVerticalPodAutoscaler = (vpas, obj) =>
+export const FilterVerticalPodAutoscaler = (vpas, obj) =>
   (vpas ?? []).find((vpa) => {
     const { targetRef } = vpa.spec;
     return (
@@ -29,8 +29,7 @@ export const VerticalPodAutoscalerRecommendations: React.FC<VerticalPodAutoscale
     namespaced: true,
   });
 
-  const verticalPodAutoscaler = filterVerticalPodAutoscaler(vpas, obj);
-
+  const verticalPodAutoscaler = FilterVerticalPodAutoscaler(vpas, obj);
   const targetCPU =
     verticalPodAutoscaler?.status?.recommendation?.containerRecommendations?.[0]?.target?.cpu;
   const targetMemory =
@@ -59,7 +58,7 @@ export const VerticalPodAutoscalerRecommendations: React.FC<VerticalPodAutoscale
             )}
           </>
         ) : (
-          t('console-app~No VerticalPodAutoscaler')
+          <div>{t('console-app~No VerticalPodAutoscaler')}</div>
         )}
       </dd>
     </>
