@@ -1,7 +1,6 @@
 import { submitButton } from '@console/cypress-integration-tests/views/form';
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
-import { nav } from '../../../integration-tests-cypress/views/nav';
 import { operator, TestOperandProps } from '../views/operator.view';
 
 const testOperator = {
@@ -20,20 +19,6 @@ const testOperand: TestOperandProps = {
 
 const alertExists = (titleText: string) => {
   cy.get('.pf-c-alert__title').contains(titleText).should('exist');
-};
-
-const uninstallAndVerify = () => {
-  cy.log('uninstall the Operator and all Operand instances');
-  operator.uninstallModal.open(testOperator.name, testOperator.installedNamespace);
-  operator.uninstallModal.checkDeleteAllOperands();
-  modal.submit();
-
-  cy.log(`verify the Operator is not installed`);
-  operator.shouldNotExist(testOperator.name, testOperator.installedNamespace);
-
-  // TODO:  debug once the Cypress upgrade is complete
-  // cy.log('verify operand instance is deleted or marked for deletion');
-  // cy.resourceShouldBeDeleted(testName, testOperand.kind, testOperand.exampleName);
 };
 
 describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
@@ -60,9 +45,6 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   });
 
   after(() => {
-    cy.visit('/');
-    nav.sidenav.switcher.changePerspectiveTo('Administrator');
-    nav.sidenav.switcher.shouldHaveText('Administrator');
     cy.deleteProjectWithCLI(testName);
   });
 
@@ -84,26 +66,6 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
 
     cy.wait('@listOperands');
     alertExists('Cannot load Operands');
-    modal.cancel();
-    modal.shouldBeClosed();
-  });
-
-  xit(`attempts to uninstall the Operator, shows 'Error uninstalling Operator' alert`, () => {
-    // invalidate the request so operator doesn't get uninstalled
-    cy.intercept(
-      'DELETE',
-      `/api/kubernetes/apis/operators.coreos.com/*/namespaces/${testName}/**`,
-      (req) => {
-        req.destroy();
-      },
-    ).as('deleteOperatorSubscriptionAndCSV');
-
-    cy.log('attempt to uninstall the Operator');
-    operator.uninstallModal.open(testOperator.name, testOperator.installedNamespace);
-    modal.submit(true);
-    cy.wait('@deleteOperatorSubscriptionAndCSV');
-    alertExists('Error uninstalling Operator');
-    cy.get(submitButton).contains('OK'); // test change from 'Uninstall'
     modal.cancel();
     modal.shouldBeClosed();
   });
@@ -134,6 +96,11 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   // before each test -they are not cleared before after[all]() hook, which is where this should exist
   // this might be addressed in Cypress v7.0
   it(`successfully uninstalls Operator and deletes all Operands`, () => {
-    uninstallAndVerify();
+    cy.log('uninstall the Operator and all Operand instances');
+    operator.uninstall(testOperator.name, testOperator.installedNamespace, true);
+    cy.log(`verify the Operator is not installed`);
+    operator.shouldNotExist(testOperator.name, testOperator.installedNamespace);
+    cy.log('verify operand instance is deleted or marked for deletion');
+    cy.resourceShouldBeDeleted(testName, testOperand.kind, testOperand.exampleName);
   });
 });
