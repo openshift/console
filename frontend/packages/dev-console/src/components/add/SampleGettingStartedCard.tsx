@@ -66,6 +66,10 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
         const orderedCatalogItems = orderCatalogItems(service.items || [], featured);
         const slicedCatalogItems = orderedCatalogItems.slice(0, 2);
 
+        if (service.loaded && slicedCatalogItems.length === 0) {
+          return null;
+        }
+
         const links: GettingStartedLink[] = service.loaded
           ? slicedCatalogItems.map((item) => {
               return {
