@@ -26,6 +26,7 @@ import {
   networkTypeParams,
   networkTypes,
   ovnKubernetesNetworkType,
+  ovnKubernetesSecondaryLocalnet,
 } from '../../constants';
 import {
   NetworkAttachmentDefinitionAnnotations,
@@ -64,8 +65,15 @@ const buildConfig = (
   } else if (networkType === ovnKubernetesNetworkType) {
     config.topology = 'layer2';
     config.netAttachDefName = `${namespace}/${name}`;
+  } else if (networkType === ovnKubernetesSecondaryLocalnet) {
+    config.cniVersion = '0.4.0';
+    config.name = _.get(typeParamsData, 'bridgeMapping.value', '');
+    config.type = ovnKubernetesNetworkType;
+    config.topology = 'localnet';
+    config.vlanID = parseInt(typeParamsData?.vlanID?.value, 10) || undefined;
+    config.mtu = parseInt(typeParamsData?.mtu?.value, 10) || undefined;
+    config.netAttachDefName = `${namespace}/${name}`;
   }
-
   return config;
 };
 
@@ -168,6 +176,7 @@ const getNetworkTypes = (hasSriovNetNodePolicyCRD, hasHyperConvergedCRD, hasOVNK
 
   if (!hasOVNK8sNetwork) {
     delete types[ovnKubernetesNetworkType];
+    delete types[ovnKubernetesSecondaryLocalnet];
   }
 
   return types;
@@ -241,6 +250,8 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
     hasOVNK8sNetwork,
   );
 
+  const networkTypeTitle = t('kubevirt-plugin~Network Type');
+
   React.useEffect(() => setLoading(hasSriovNetNodePolicyCRD && !loaded && !networkConfigLoaded), [
     hasSriovNetNodePolicyCRD,
     networkConfigLoaded,
@@ -298,7 +309,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
 
         <FormGroup fieldId="basic-settings-network-type">
           <label className="control-label co-required" htmlFor="network-type">
-            {t('kubevirt-plugin~Network Type')}
+            {networkTypeTitle}
           </label>
           {_.isEmpty(networkTypeDropdownItems) && (
             <Alert
@@ -316,7 +327,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
           )}
           <Dropdown
             id="network-type"
-            title="Network Type"
+            title={networkTypeTitle}
             items={networkTypeDropdownItems}
             dropDownClassName="dropdown--full-width"
             selectedKey={networkType}

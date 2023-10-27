@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { FormGroup, TextArea, TextInput } from '@patternfly/react-core';
+import { FormGroup, Popover, PopoverPosition, TextArea, TextInput } from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
 import { isEmpty } from 'lodash';
 import { Dropdown } from '@console/internal/components/utils';
@@ -164,7 +165,12 @@ const NetworkTypeOptions = (props) => {
               })}
               id={`network-type-params-${key}-label`}
             >
-              {name}
+              {name}{' '}
+              {parameter?.hintText && (
+                <Popover bodyContent={parameter.hintText} position={PopoverPosition.right}>
+                  <HelpIcon className="network-type-options--help-icon" />
+                </Popover>
+              )}
             </label>
             <TextInput
               type="text"
