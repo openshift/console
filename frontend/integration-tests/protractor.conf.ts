@@ -8,10 +8,7 @@ import * as failFast from 'protractor-fail-fast';
 import { createWriteStream, writeFileSync } from 'fs';
 import { format } from 'util';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
-import {
-  reducePluginTestSuites,
-  mergeTestSuites,
-} from '@console/plugin-sdk/src/codegen/plugin-integration-tests';
+import { reducePluginTestSuites } from '@console/plugin-sdk/src/codegen/plugin-integration-tests';
 
 const tap = !!process.env.TAP;
 
@@ -47,42 +44,6 @@ const suite = (tests: string[]): string[] =>
     'tests/base.scenario.ts',
     ...tests,
   ]);
-
-// TODO(vojtech): move base Console test suites to console-app package
-const testSuites = {
-  environment: suite(['tests/environment.scenario.ts']),
-  secrets: suite(['tests/secrets.scenario.ts']),
-  crud: suite(['tests/secrets.scenario.ts', 'tests/environment.scenario.ts']),
-  monitoring: suite(['tests/monitoring.scenario.ts']),
-  newApp: suite(['tests/deploy-image.scenario.ts']),
-  oauth: suite(['tests/oauth.scenario.ts']),
-  e2e: suite([
-    'tests/secrets.scenario.ts',
-    'tests/environment.scenario.ts',
-    'tests/deploy-image.scenario.ts',
-    'tests/monitoring.scenario.ts',
-    'tests/alertmanager.scenario.ts',
-    'tests/oauth.scenario.ts',
-    'tests/cluster-settings.scenario.ts',
-  ]),
-  release: suite([
-    'tests/secrets.scenario.ts',
-    'tests/environment.scenario.ts',
-    'tests/deploy-image.scenario.ts',
-    'tests/monitoring.scenario.ts',
-  ]),
-  all: suite([
-    'tests/secrets.scenario.ts',
-    'tests/deploy-image.scenario.ts',
-    'tests/monitoring.scenario.ts',
-    'tests/alertmanager.scenario.ts',
-    'tests/oauth.scenario.ts',
-    'tests/cluster-settings.scenario.ts',
-  ]),
-  clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
-  alertmanager: suite(['tests/alertmanager.scenario.ts']),
-  login: ['tests/login.scenario.ts'],
-};
 
 export const config = {
   framework: 'jasmine',
@@ -170,10 +131,7 @@ export const config = {
     failFast.clean();
     return new Promise((resolve) => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
   },
-  suites: mergeTestSuites(
-    testSuites,
-    reducePluginTestSuites(resolvePluginPackages(), __dirname, suite),
-  ),
+  suites: reducePluginTestSuites(resolvePluginPackages(), __dirname, suite),
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
     // Use a string rather than boolean so it can be specified on the command line:

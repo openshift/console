@@ -51,6 +51,7 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
           className="co-alert-manager-config__edit-alert-routing-btn"
           onClick={() => createAlertRoutingModal({ config, secret })}
           variant="secondary"
+          data-test="edit-alert-routing-btn"
         >
           {t('public~Edit')}
         </Button>

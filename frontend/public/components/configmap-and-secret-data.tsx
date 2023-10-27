@@ -107,7 +107,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
     .sort()
     .forEach((k) => {
       dl.push(
-        <dt i18n-not-translated="true" key={`${k}-k`}>
+        <dt i18n-not-translated="true" key={`${k}-k`} data-test="secret-data-term">
           {k}
         </dt>,
       );
@@ -131,6 +131,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
             onClick={() => setReveal(!reveal)}
             variant="link"
             className="pf-m-link--align-right"
+            data-test="reveal-values"
           >
             {reveal ? (
               <>
@@ -146,7 +147,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
           </Button>
         ) : null}
       </SectionHeading>
-      {dl.length ? <dl className="secret-data">{dl}</dl> : <EmptyBox label={t('public~Data')} />}
+      {dl.length ? <dl data-test="secret-data">{dl}</dl> : <EmptyBox label={t('public~Data')} />}
     </>
   );
 };

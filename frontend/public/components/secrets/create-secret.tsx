@@ -693,7 +693,12 @@ class CreateConfigSubformWithTranslation extends React.Component<
         <div className="co-add-remove-form__entry" key={entryData.uid}>
           {_.size(this.state.secretEntriesArray) > 1 && (
             <div className="co-add-remove-form__link--remove-entry">
-              <Button onClick={() => this.removeEntry(index)} type="button" variant="link">
+              <Button
+                onClick={() => this.removeEntry(index)}
+                type="button"
+                variant="link"
+                data-test="remove-entry-button"
+              >
                 <MinusCircleIcon className="co-icon-space-r" />
                 {t('public~Remove credentials')}
               </Button>
@@ -711,6 +716,7 @@ class CreateConfigSubformWithTranslation extends React.Component<
           onClick={() => this.addEntry()}
           type="button"
           variant="link"
+          data-test="add-credentials-button"
         >
           <PlusCircleIcon className="co-icon-space-r" />
           {t('public~Add credentials')}
@@ -819,6 +825,7 @@ class WebHookSecretFormWithTranslation extends React.Component<
           <input
             className="pf-c-form-control"
             id="webhook-secret-key"
+            data-test="secret-key"
             type="text"
             name="webhookSecretKey"
             onChange={this.changeWebHookSecretkey}
@@ -830,6 +837,7 @@ class WebHookSecretFormWithTranslation extends React.Component<
             type="button"
             onClick={this.generateWebHookSecret}
             className="pf-c-button pf-m-tertiary"
+            data-test="webhook-generate-button"
           >
             {t('public~Generate')}
           </button>
@@ -943,6 +951,7 @@ class BasicAuthSubformWithTranslation extends React.Component<
             <input
               className="pf-c-form-control"
               id="username"
+              data-test="secret-username"
               aria-describedby="username-help"
               type="text"
               name="username"
@@ -962,6 +971,7 @@ class BasicAuthSubformWithTranslation extends React.Component<
             <input
               className="pf-c-form-control"
               id="password"
+              data-test="secret-password"
               aria-describedby="password-help"
               type="password"
               name="password"
@@ -1164,7 +1174,12 @@ class GenericSecretFormWithTranslation extends React.Component<
         <div className="co-add-remove-form__entry" key={entryData.uid}>
           {_.size(this.state.secretEntriesArray) > 1 && (
             <div className="co-add-remove-form__link--remove-entry">
-              <Button type="button" onClick={() => this.removeEntry(index)} variant="link">
+              <Button
+                type="button"
+                onClick={() => this.removeEntry(index)}
+                variant="link"
+                data-test="remove-entry-button"
+              >
                 <MinusCircleIcon className="co-icon-space-r" />
                 {t('public~Remove key/value')}
               </Button>
@@ -1182,6 +1197,7 @@ class GenericSecretFormWithTranslation extends React.Component<
           onClick={() => this.addEntry()}
           type="button"
           variant="link"
+          data-test="add-credentials-button"
         >
           <PlusCircleIcon className="co-icon-space-r" />
           {t('public~Add key/value')}

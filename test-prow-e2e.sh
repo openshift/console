@@ -33,7 +33,7 @@ export DBUS_SESSION_BUS_ADDRESS
 SCENARIO="${1:-e2e}"
 
 case $SCENARIO in
-  login|olmFull|nightly-cypress) ;; # no protractor tests
+  e2e|login|olmFull|nightly-cypress) ;; # no protractor tests
   *) CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO";;
 esac
 
