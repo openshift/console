@@ -1,4 +1,3 @@
-import { checkErrors } from '@console/cypress-integration-tests/support';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 
 before(() => {

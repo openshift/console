@@ -1,13 +1,5 @@
 import { checkErrors } from '@console/cypress-integration-tests/support';
-import {
-  devNavigationMenu,
-  switchPerspective,
-} from '@console/dev-console/integration-tests/support/constants/global';
-import {
-  verifyAndInstallKnativeOperator,
-  navigateTo,
-  perspective,
-} from '@console/dev-console/integration-tests/support/pages';
+import { verifyAndInstallKnativeOperator } from '@console/dev-console/integration-tests/support/pages';
 
 before(() => {
   cy.login();

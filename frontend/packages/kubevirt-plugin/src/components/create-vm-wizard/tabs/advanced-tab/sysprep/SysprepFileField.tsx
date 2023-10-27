@@ -1,12 +1,18 @@
+// IMPORTANT: This code is orphaned, but it was using xml2js,
+// which was a subdependency of selenium-webdriver and webdriver-manager.
+// With the removal of Protractor, selenium-webdriver and webdriver-manager
+// are no longer installed, and, as a result, xml2js is no longer available.
+// Given this code is orphaned, I am just commenting out the xml2js code. (rhamilto)
+
 import * as React from 'react';
 import { FileUpload, Text, TextVariants } from '@patternfly/react-core';
-import { isEmpty } from 'lodash';
+// import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useDispatch } from 'react-redux';
-import xml from 'xml2js';
-import { SysprepActions, SysprepActionsNames } from '../../../../../redux/actions/sysprep-actions';
+// import { useDispatch } from 'react-redux';
+// import xml from 'xml2js';
+// import { SysprepActions, SysprepActionsNames } from '../../../../../redux/actions/sysprep-actions';
 import { ValidatedOptions } from '../../../../../utils/validations/common';
 
 export type SysprepFile = {
@@ -22,7 +28,7 @@ type SysprepFileFieldProps = {
 
 const SysprepFileField: React.FC<SysprepFileFieldProps> = ({ id }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [data, setData] = React.useState<SysprepFile>({
     validated: ValidatedOptions.default,
     fileName: '',
@@ -30,29 +36,26 @@ const SysprepFileField: React.FC<SysprepFileFieldProps> = ({ id }) => {
     isLoading: false,
   });
 
-  const onChange = React.useCallback(
-    (value: string, fileName: string) => {
-      setData((currentSysprepFile) => ({
-        ...currentSysprepFile,
-        validated: ValidatedOptions.default,
-        value,
-        fileName,
-      }));
+  const onChange = React.useCallback((value: string, fileName: string) => {
+    setData((currentSysprepFile) => ({
+      ...currentSysprepFile,
+      validated: ValidatedOptions.default,
+      value,
+      fileName,
+    }));
 
-      xml.parseString(value, (parseError) => {
-        dispatch(
-          SysprepActions[SysprepActionsNames.updateValue]({
-            [id]: !parseError && !isEmpty(value) ? value : null,
-          }),
-        );
-        setData((currentSysprepFile) => ({
-          ...currentSysprepFile,
-          validated: parseError ? ValidatedOptions.error : ValidatedOptions.default,
-        }));
-      });
-    },
-    [dispatch, id],
-  );
+    // xml.parseString(value, (parseError) => {
+    //   dispatch(
+    //     SysprepActions[SysprepActionsNames.updateValue]({
+    //       [id]: !parseError && !isEmpty(value) ? value : null,
+    //     }),
+    //   );
+    //   setData((currentSysprepFile) => ({
+    //     ...currentSysprepFile,
+    //     validated: parseError ? ValidatedOptions.error : ValidatedOptions.default,
+    //   }));
+    // });
+  }, []);
   return (
     <>
       <FileUpload

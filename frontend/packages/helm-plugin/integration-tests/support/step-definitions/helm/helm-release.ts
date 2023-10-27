@@ -4,7 +4,7 @@ import {
   pageTitle,
   helmActions,
 } from '@console/dev-console/integration-tests/support/constants';
-import { helmPO, topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   topologyPage,
   topologySidePane,
