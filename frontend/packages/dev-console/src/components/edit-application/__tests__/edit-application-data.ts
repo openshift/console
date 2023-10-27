@@ -7,7 +7,12 @@ import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksData } from '../../health-checks/__tests__/create-health-checks-probe-data';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { serverlessInitialValues } from '../../import/__mocks__/serverless-mock';
-import { DeployImageFormData, GitImportFormData, Resources } from '../../import/import-types';
+import {
+  BuildOptions,
+  DeployImageFormData,
+  GitImportFormData,
+  Resources,
+} from '../../import/import-types';
 import { AppResources } from '../edit-application-types';
 
 export const knativeService: K8sResourceKind = {
@@ -568,6 +573,7 @@ export const gitImportInitialValues: GitImportFormData = {
     },
     triggers: { webhook: true, image: true, config: true },
     strategy: 'Source',
+    option: BuildOptions.BUILDS,
   },
   healthChecks: healthChecksProbeInitialData,
   import: {

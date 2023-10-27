@@ -238,6 +238,7 @@ export interface BuildData {
   env: (NameValuePair | NameValueFromPair)[];
   strategy: string;
   source?: { type: string };
+  option?: BuildOptions;
 }
 
 export interface DetectedStrategyFormData extends DetectedStrategy {
@@ -300,6 +301,12 @@ export enum Resources {
   KnativeService = 'knative',
 }
 
+export enum BuildOptions {
+  BUILDS = 'BUILDS',
+  PIPELINES = 'PIPELINES',
+  DISABLED = 'DISABLED',
+}
+
 export enum SampleRuntime {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   'Node.js' = 'nodejs',
@@ -315,6 +322,12 @@ export const ReadableResourcesNames: Record<Resources, string> = {
   [Resources.Kubernetes]: DeploymentModel.labelKey,
   // t('devconsole~Serverless Deployment')
   [Resources.KnativeService]: `devconsole~Serverless Deployment`,
+};
+
+export const ReadableBuildOptions: Record<BuildOptions, string> = {
+  [BuildOptions.BUILDS]: `devconsole~Builds`,
+  [BuildOptions.PIPELINES]: `pipelines-plugin~Pipelines`,
+  [BuildOptions.DISABLED]: `devconsole~Disabled`,
 };
 
 export const ResourcesKinds: Record<Resources, string> = {

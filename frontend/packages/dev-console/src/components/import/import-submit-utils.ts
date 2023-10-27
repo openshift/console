@@ -72,6 +72,7 @@ import {
   RouteData,
   ServerlessData,
   DeploymentData,
+  BuildOptions,
 } from './import-types';
 
 export const generateSecret = () => {
@@ -678,6 +679,7 @@ export const createOrUpdateResources = async (
     build: {
       strategy: buildStrategy,
       triggers: { webhook: webhookTrigger },
+      option: buildOption,
     },
     deployment: {
       triggers: { image: imageChange },
@@ -735,7 +737,7 @@ export const createOrUpdateResources = async (
       );
       responses.push(...pipelineResources);
     }
-  } else {
+  } else if (buildOption === BuildOptions.BUILDS) {
     responses.push(
       await createOrUpdateBuildConfig(
         formData,

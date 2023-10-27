@@ -14,6 +14,7 @@ import DockerSection from '../import/git/DockerSection';
 import GitSection from '../import/git/GitSection';
 import ImageSearchSection from '../import/image-search/ImageSearchSection';
 import JarSection from '../import/jar/section/JarSection';
+import { BuildSection } from '../import/section/BuildSection';
 import FormSection from '../import/section/FormSection';
 import IconSection from '../import/section/IconSection';
 import { AppResources } from './edit-application-types';
@@ -68,6 +69,8 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
             </FormSection>
           )}
           <AppSection project={values.project} />
+          {flowType !== ApplicationFlowType.Container &&
+            flowType !== ApplicationFlowType.JarUpload && <BuildSection values={values} />}
           {flowType !== ApplicationFlowType.Container &&
             flowType !== ApplicationFlowType.JarUpload && (
               <PipelineSection

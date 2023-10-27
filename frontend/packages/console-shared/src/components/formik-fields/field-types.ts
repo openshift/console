@@ -183,6 +183,7 @@ export interface SelectInputFieldProps extends FieldProps {
   variant?: SelectVariant;
   placeholderText?: React.ReactNode;
   isCreatable?: boolean;
+  isDisabled?: boolean;
   hasOnCreateOption?: boolean;
   isInputValuePersisted?: boolean;
   noResultsFoundText?: string;

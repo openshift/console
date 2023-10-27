@@ -6,7 +6,6 @@ import { AppResources } from '../../edit-application/edit-application-types';
 import HealthChecks from '../../health-checks/HealthChecks';
 import { Resources } from '../import-types';
 import FormSection from '../section/FormSection';
-import BuildConfigSection from './BuildConfigSection';
 import DeploymentConfigSection from './DeploymentConfigSection';
 import LabelSection from './LabelSection';
 import ResourceLimitSection from './ResourceLimitSection';
@@ -48,21 +47,15 @@ const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
       <ProgressiveListItem name={t('devconsole~Health checks')}>
         <HealthChecks title={t('devconsole~Health checks')} resourceType={values.resources} />
       </ProgressiveListItem>
-      {/* Hide Build for Deploy Image or when a Pipeline is added */}
-      {values.isi || values.pipeline?.enabled ? null : (
-        <ProgressiveListItem name={t('devconsole~Build configuration')}>
-          <BuildConfigSection
+      {values?.formType === 'edit' ? (
+        <ProgressiveListItem name={t('devconsole~Deployment')}>
+          <DeploymentConfigSection
             namespace={values.project.name}
-            resource={appResources?.buildConfig?.data}
+            resource={appResources?.editAppResource?.data}
           />
         </ProgressiveListItem>
-      )}
-      <ProgressiveListItem name={t('devconsole~Deployment')}>
-        <DeploymentConfigSection
-          namespace={values.project.name}
-          resource={appResources?.editAppResource?.data}
-        />
-      </ProgressiveListItem>
+      ) : null}
+
       <ProgressiveListItem name={t('devconsole~Scaling')}>
         {values.resources === Resources.KnativeService ? (
           <ServerlessScalingSection />

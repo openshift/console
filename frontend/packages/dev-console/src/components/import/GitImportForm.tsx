@@ -9,11 +9,12 @@ import { FormBody, FormFooter } from '@console/shared/src/components/form-utils'
 import { hasSampleQueryParameter } from '../../utils/samples';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
+import { DeploySection } from './DeploySection';
 import DevfileStrategySection from './devfile/DevfileStrategySection';
 import GitSection from './git/GitSection';
-import { GitImportFormProps, ImportTypes } from './import-types';
+import { BuildOptions, GitImportFormProps, ImportTypes } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
-import ResourceSection from './section/ResourceSection';
+import { BuildSection } from './section/BuildSection';
 import ExtensionCards from './serverless-function/ExtensionCards';
 import './serverless-function/AddServerlessFunctionForm.scss';
 
@@ -37,6 +38,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
   const importType = searchParams.get('importType');
   const {
     git: { validated, gitType },
+    build: { option: buildOption },
   } = values;
 
   const showFullForm =
@@ -79,10 +81,16 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
                   project={values.project}
                   noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
                 />
+                {formType !== 'sample' && importType !== ImportTypes.devfile && (
+                  <BuildSection values={values} />
+                )}
                 {showAdvancedSections && (
                   <>
-                    <ResourceSection />
-                    <PipelineSection builderImages={builderImages} />
+                    {buildOption === BuildOptions.PIPELINES && (
+                      <PipelineSection builderImages={builderImages} />
+                    )}
+                    {buildOption !== BuildOptions.DISABLED && <DeploySection values={values} />}
+
                     <AdvancedSection values={values} />
                   </>
                 )}
