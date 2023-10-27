@@ -99,14 +99,10 @@
 "@openshift-console/dynamic-plugin-sdk@file:../frontend/packages/console-dynamic-plugin-sdk/dist/core":
   version "0.0.0-fixed"
   dependencies:
-    "@patternfly/quickstarts" "5.0.0"
-    "@patternfly/react-core" "5.1.0"
-    "@patternfly/react-table" "5.1.0"
     classnames "2.x"
     immutable "3.x"
     lodash "^4.17.21"
     react "^17.0.1"
-    react-helmet "^6.1.0"
     react-i18next "^11.7.3"
     react-redux "7.2.2"
     react-router "5.3.x"
@@ -131,24 +127,6 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-5.0.2.tgz#f5daf2c98ccb85e6466d42fd61d39ba3c10ed532"
   integrity sha512-PB8+MLdYVgF1hIOxGmnVsZG+YHUX3RePe5W1oMS4gS00EmSgw1cobr1Qbpy/BqqS8/R9DRN4hZ2FKDT0d5tkFQ==
 
-"@patternfly/quickstarts@5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-5.0.0.tgz#ea35042f4e8cc180b390153712292f753542f612"
-  integrity sha512-G1nb0x+jmO/F2fVv+bymadvjO+RZWwY3foU+1VBqvI28vtr7M6isLj81Cz8cjjT0t0Z2CdMSVVfkwxoKQxMOgA==
-  dependencies:
-    "@patternfly/react-catalog-view-extension" "^5.0.0"
-    dompurify "^2.2.6"
-    history "^5.0.0"
-    showdown "1.8.6"
-
-"@patternfly/react-catalog-view-extension@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-catalog-view-extension/-/react-catalog-view-extension-5.0.0.tgz#a3892debd5987e15e9d7cabf9ed4ed3b25f48b0f"
-  integrity sha512-Sg0iLAVhE7wAwBJERNdYp6peMO4THG7ez3xvMXEWh2biXghIv9XVj5BEy0TssihMxZa/pRMdROzcv3QZ9m24Yg==
-  dependencies:
-    "@patternfly/react-core" "^5.0.0"
-    "@patternfly/react-styles" "^5.0.0"
-
 "@patternfly/react-core@5.1.0", "@patternfly/react-core@^5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-5.1.0.tgz#0e1264d7bf086b77afd63a99255d7b51a9380e29"
@@ -162,34 +140,12 @@
     react-dropzone "^14.2.3"
     tslib "^2.5.0"
 
-"@patternfly/react-core@^5.0.0":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-5.0.1.tgz#474456a6bf173c421ba285d7371fd635b9b63f46"
-  integrity sha512-Eevd+8ACLFV733J+cpo4FRgNtRBObIgmUcrqLjf9H99jZ1hFpBgacFyHiALFi2cuoNVGmdEzskFl+4c7Uo0n+w==
-  dependencies:
-    "@patternfly/react-icons" "^5.0.1"
-    "@patternfly/react-styles" "^5.0.1"
-    "@patternfly/react-tokens" "^5.0.1"
-    focus-trap "7.4.3"
-    react-dropzone "^14.2.3"
-    tslib "^2.5.0"
-
-"@patternfly/react-icons@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-5.0.1.tgz#bb4c8054a843b98b83a0eaa8bd8634bb39d6cea8"
-  integrity sha512-MduetDRzve3eRlKAioM/UxmVuPyFccdeBWAKhbN4SBn7RaZWS7kO7/xZzNkpeT5pqQIeAACvz3uiV2/3uAf38w==
-
 "@patternfly/react-icons@^5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-5.1.0.tgz#b0f2b932174ac26d1142b259861f747fb6c0fd4f"
   integrity sha512-mSFAJMrT6QUQ10DifYYGSXOPlFob88lWPZXeOyPdstJ8cJRRRVTMYgoR/VnXsUO/vthwFbViY+sS6+/jL8pl9w==
   dependencies:
     "@patternfly/patternfly" "5.0.2"
-
-"@patternfly/react-styles@^5.0.0", "@patternfly/react-styles@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-5.0.1.tgz#8bd70b78ffa921e1a20c523eed30f60f3597b5df"
-  integrity sha512-kHP/lbvmhBnNfWiqJJLNwOQZnkcl6wfwAesRp22s4Lj941EWe0oFIqn925/uORIOAOz2du1121t7T4UTfLZg4w==
 
 "@patternfly/react-styles@^5.1.0":
   version "5.1.0"
@@ -209,11 +165,6 @@
     "@patternfly/react-tokens" "^5.1.0"
     lodash "^4.17.19"
     tslib "^2.5.0"
-
-"@patternfly/react-tokens@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-5.0.1.tgz#01eb28052d7680e32886d777dd474c0c3824ab0a"
-  integrity sha512-YafAGJYvxDP4GaQ0vMybalWmx7MJ+etUf1cGoaMh0wRD2eswltT/RckygtEBKR/M61qXbgG+CxKmMyY8leoiDw==
 
 "@patternfly/react-tokens@^5.1.0":
   version "5.1.0"
@@ -1208,11 +1159,6 @@ domhandler@^5.0.1, domhandler@^5.0.2:
   dependencies:
     domelementtype "^2.3.0"
 
-dompurify@^2.2.6:
-  version "2.4.7"
-  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.4.7.tgz#277adeb40a2c84be2d42a8bcd45f582bfa4d0cfc"
-  integrity sha512-kxxKlPEDa6Nc5WJi+qRgPbOAbgTpSULL+vI3NUXsZMlkJxTqYI9wg5ZTay2sFrdZRWHPWNi+EdAhcJf81WtoMQ==
-
 domutils@^2.5.2, domutils@^2.6.0, domutils@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/domutils/-/domutils-2.7.0.tgz#8ebaf0c41ebafcf55b0b72ec31c56323712c5442"
@@ -1728,7 +1674,7 @@ history@^4.9.0:
     tiny-warning "^1.0.0"
     value-equal "^1.0.1"
 
-history@^5.0.0, history@^5.3.0:
+history@^5.3.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/history/-/history-5.3.0.tgz#1548abaa245ba47992f063a0783db91ef201c73b"
   integrity sha512-ZqaKwjjrAYUYfLG+htGaIIZ4nioX2L70ZUMIFysS3xvBsSG4x/n1V6TXV3N8ZYNuFGlDirFg32T7B6WOUPDYcQ==

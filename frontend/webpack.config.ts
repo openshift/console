@@ -48,15 +48,24 @@ const extractCSS = new MiniCssExtractPlugin({
   // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
   ignoreOrder: true,
 });
+const virtualModules = new VirtualModulesPlugin();
+
 const getVendorModuleRegExp = (vendorModules: string[]) =>
   new RegExp(`node_modules\\/(${vendorModules.map((m) => _.escapeRegExp(m)).join('|')})\\/`);
-const virtualModules = new VirtualModulesPlugin();
+
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
-const sharedPluginTest = getVendorModuleRegExp(Object.keys(sharedPluginModules));
-const sharedPatternFlyCoreTest = getVendorModuleRegExp([
-  '@patternfly/react-core',
-  '@patternfly/react-table',
-]);
+
+const sharedPluginTest = getVendorModuleRegExp(
+  sharedPluginModules.map((moduleName) =>
+    // Console provides specific PatternFly 4 shared modules to its dynamic plugins.
+    // These are represented in Console webpack compilation as @patternfly-4/* modules.
+    moduleName.startsWith('@patternfly/')
+      ? moduleName.replace(/^@patternfly\//, '@patternfly-4/')
+      : moduleName,
+  ),
+);
+
+const sharedPatternFlyCoreTest = /node_modules\/@patternfly(-\S)?\//;
 
 const config: Configuration = {
   entry: ['./public/components/app.jsx', 'monaco-editor-core/esm/vs/editor/editor.worker.js'],
@@ -94,6 +103,25 @@ const config: Configuration = {
         sideEffects: true,
       },
       { test: /\.glsl$/, loader: 'raw!glslify' },
+      {
+        test: /\.js$/,
+        include: /node_modules\/@patternfly-4\//,
+        loader: 'babel-loader',
+        options: {
+          plugins: [
+            [
+              'transform-imports',
+              {
+                // Transform all @patternfly/* imports to @patternfly-4/*
+                '@patternfly\\/(\\S*)': {
+                  transform: (importName, matches) => `@patternfly-4/${matches[1]}`,
+                  skipDefaultConversion: true,
+                },
+              },
+            ],
+          ],
+        },
+      },
       {
         test: /(\.jsx?)|(\.tsx?)$/,
         exclude: /node_modules\/(?!(bitbucket|ky)\/)/,
@@ -146,7 +174,7 @@ const config: Configuration = {
       },
       {
         test: /\.s?css$/,
-        exclude: /node_modules\/(?!(@patternfly|@console\/plugin-shared)\/).*/,
+        exclude: /node_modules\/(?!(@patternfly(-\S+)?|@console\/plugin-shared)\/).*/,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,

@@ -43,13 +43,6 @@ export type ExtensionDeclaration<T extends string, P extends {}> = Extension<P> 
 };
 
 /**
- * Resolution of modules shared between the Console application and its dynamic plugins.
- */
-export type SharedModuleResolution<M extends string = string> = {
-  [moduleRequest in M]: () => Promise<() => any>;
-};
-
-/**
  * Remote webpack container entry module interface.
  */
 export type RemoteEntryModule = {
@@ -57,13 +50,6 @@ export type RemoteEntryModule = {
    * Initialize the container with modules provided via the shared scope.
    */
   init: (sharedScope: any) => void;
-
-  /**
-   * _For webpack 5.0.0-beta.16 compatibility_
-   *
-   * Override module(s) that were flagged by the container as "overridable".
-   */
-  override?: (modules: SharedModuleResolution) => void;
 
   /**
    * Get a module exposed through the container.

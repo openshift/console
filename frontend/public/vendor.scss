@@ -1,7 +1,8 @@
 // Config
 @import 'style/vars';
 
-// External dependencies (tilde tells Webpack not to use relative path). Seperate SCSS entrypoint here because some modules break sourcemaps.
+// External dependencies (tilde tells Webpack not to use relative path).
+// Separate SCSS entrypoint here because some modules break source maps.
 @import '~openshift-logos-icon/style';
 @import '~@fortawesome/fontawesome-free/scss/fontawesome';
 @import '~@fortawesome/fontawesome-free/scss/solid';
@@ -25,6 +26,11 @@
 @import '~@patternfly/patternfly/components/Toolbar/toolbar';
 @import '~@patternfly/patternfly/patternfly-charts';
 @import '~@patternfly/patternfly/patternfly-addons';
+
+// PatternFly 4 stylesheets. We need these to support existing Console dynamic plugins
+// that may use PatternFly 4 shared modules as their runtime dependencies.
+@import '~@patternfly-4/patternfly/patternfly';
+@import '~@patternfly-4/patternfly/patternfly-addons';
 
 // External dependency extensions
 @import 'style/patternfly-sizing-extension';

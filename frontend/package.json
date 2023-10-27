@@ -91,8 +91,7 @@
       "^.+\\.(gql|graphql)$": "jest-transform-graphql"
     },
     "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!(@patternfly|d3(-.\\S*)|delaunator|robust-predicates|internmap|lodash-es|@console|@novnc|@spice-project|@popperjs|i18next\\S*?)/.*)"
-    ],
+      "<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?)/.*)"    ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/.*/integration-tests-cypress"
@@ -145,6 +144,14 @@
     "@patternfly/react-topology": "5.0.0",
     "@patternfly/react-user-feedback": "5.0.0",
     "@patternfly/react-virtualized-extension": "5.0.0",
+    "@patternfly-4/patternfly": "npm:@patternfly/patternfly@4.224.5",
+    "@patternfly-4/quickstarts": "npm:@patternfly/quickstarts@2.4.2",
+    "@patternfly-4/react-catalog-view-extension": "npm:@patternfly/react-catalog-view-extension@4.96.1",
+    "@patternfly-4/react-core": "npm:@patternfly/react-core@4.278.0",
+    "@patternfly-4/react-icons": "npm:@patternfly/react-icons@4.93.7",
+    "@patternfly-4/react-styles": "npm:@patternfly/react-styles@4.92.8",
+    "@patternfly-4/react-table": "npm:@patternfly/react-table@4.113.6",
+    "@patternfly-4/react-tokens": "npm:@patternfly/react-tokens@4.94.7",
     "@prometheus-io/codemirror-promql": "^0.37.0",
     "@rjsf/core": "^2.5.1",
     "abort-controller": "3.0.0",
@@ -264,6 +271,7 @@
     "acorn": "^7.0.0",
     "acorn-jsx": "5.2.0",
     "babel-loader": "^8.2.1",
+    "babel-plugin-transform-imports": "1.5.1",
     "browser-env": "3.x",
     "cache-loader": "^4.1.0",
     "chalk": "2.4.x",

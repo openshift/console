@@ -14,18 +14,4 @@ describe('initSharedPluginModules', () => {
       new Set(sharedPluginModules),
     );
   });
-
-  it('supports plugins built with an older version of plugin SDK', () => {
-    const [, entryModule] = getEntryModuleMocks({});
-    entryModule.override = jest.fn();
-
-    initSharedPluginModules(entryModule);
-
-    expect(entryModule.override).toHaveBeenCalledTimes(1);
-    expect(entryModule.init).not.toHaveBeenCalled();
-
-    expect(new Set(Object.keys(entryModule.override.mock.calls[0][0]))).toEqual(
-      new Set(sharedPluginModules),
-    );
-  });
 });

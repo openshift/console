@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
-import { sharedPluginModules } from '../src/shared-modules';
+import { sharedPluginModules, getSharedModuleMetadata } from '../src/shared-modules';
 import { resolvePath } from './utils/path';
 
 type GeneratedPackage = {
@@ -84,7 +84,9 @@ const parseSharedModuleDeps = (
 ) =>
   parseDeps(
     pkg,
-    sharedPluginModules.filter((m) => !m.startsWith('@openshift-console/')),
+    sharedPluginModules.filter(
+      (m) => !m.startsWith('@openshift-console/') && !getSharedModuleMetadata(m).allowFallback,
+    ),
     missingDepCallback,
   );
 
