@@ -1745,6 +1745,8 @@
   "Previous log": "Previous log",
   "Only the current log is available for this container.": "Only the current log is available for this container.",
   "Debug in terminal is not currently available for windows containers.": "Debug in terminal is not currently available for windows containers.",
+  "Select to view the entire log. Default view is the last 1,000 lines.": "Select to view the entire log. Default view is the last 1,000 lines.",
+  "Show full log": "Show full log",
   "Wrap lines": "Wrap lines",
   "Raw": "Raw",
   "An error occurred while retrieving the requested logs.": "An error occurred while retrieving the requested logs.",

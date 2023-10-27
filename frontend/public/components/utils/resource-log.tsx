@@ -4,6 +4,8 @@ import * as React from 'react';
 // @ts-ignore
 import { useSelector } from 'react-redux';
 import { Base64 } from 'js-base64';
+import * as _ from 'lodash-es';
+import { Trans, useTranslation } from 'react-i18next';
 import { Alert, AlertActionLink, Button, Checkbox, Divider, Tooltip } from '@patternfly/react-core';
 import {
   Select as SelectDeprecated,
@@ -11,21 +13,23 @@ import {
   SelectVariant as SelectVariantDeprecated,
 } from '@patternfly/react-core/deprecated';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
-
-import * as _ from 'lodash-es';
-import { Trans, useTranslation } from 'react-i18next';
-import { CompressIcon } from '@patternfly/react-icons/dist/esm/icons/compress-icon';
-import { ExpandIcon } from '@patternfly/react-icons/dist/esm/icons/expand-icon';
-import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
-import { OutlinedWindowRestoreIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-window-restore-icon';
-import { OutlinedPlayCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-play-circle-icon';
+import {
+  CompressIcon,
+  ExpandIcon,
+  DownloadIcon,
+  OutlinedWindowRestoreIcon,
+  OutlinedPlayCircleIcon,
+} from '@patternfly/react-icons';
 import * as classNames from 'classnames';
-import { FLAGS, LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
+import {
+  FLAGS,
+  LOG_WRAP_LINES_USERSETTINGS_KEY,
+  SHOW_FULL_LOG_USERSETTINGS_KEY,
+} from '@console/shared/src/constants';
 import { useUserSettings } from '@console/shared';
 import { LoadingInline, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
-import { LineBuffer } from './line-buffer';
 import * as screenfull from 'screenfull';
 import { RootState } from '@console/internal/redux';
 import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
@@ -36,6 +40,7 @@ import { Link } from 'react-router-dom';
 import { resourcePath } from './resource-link';
 import { isWindowsPod } from '../../module/k8s/pods';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import useToggleLineBuffer from './useToggleLineBuffer';
 
 export const STREAM_EOF = 'eof';
 export const STREAM_LOADING = 'loading';
@@ -49,6 +54,8 @@ export const LOG_SOURCE_WAITING = 'waiting';
 
 const LOG_TYPE_CURRENT = 'current';
 const LOG_TYPE_PREVIOUS = 'previous';
+
+const DEFAULT_BUFFER_SIZE = 1000;
 
 // Messages to display for corresponding log status
 const streamStatusMessages = {
@@ -161,6 +168,8 @@ export const LogControls: React.FC<LogControlsProps> = ({
   hasPreviousLog,
   logType,
   showLogTypeSelect,
+  isShowFullLog,
+  toggleShowFullLog,
 }) => {
   const { t } = useTranslation();
   const [isLogTypeOpen, setLogTypeOpen] = React.useState(false);
@@ -234,7 +243,9 @@ export const LogControls: React.FC<LogControlsProps> = ({
       </Tooltip>
     );
   };
+
   const label = t('public~Debug container');
+
   return (
     <div className="co-toolbar">
       <div className="co-toolbar__group co-toolbar__group--left">
@@ -314,6 +325,29 @@ export const LogControls: React.FC<LogControlsProps> = ({
                 </React.Fragment>
               );
             })}
+          <div>
+            <Tooltip
+              content={t(
+                'public~Select to view the entire log. Default view is the last 1,000 lines.',
+              )}
+            >
+              <Checkbox
+                label={t('public~Show full log')}
+                id="showFullLog"
+                data-test="show-full-log"
+                isChecked={isShowFullLog}
+                data-checked-state={isShowFullLog}
+                onChange={(_event, checked: boolean) => {
+                  toggleShowFullLog(checked);
+                }}
+              />
+            </Tooltip>
+          </div>
+          <Divider
+            orientation={{
+              default: 'vertical',
+            }}
+          />
           <Checkbox
             label={t('public~Wrap lines')}
             id="wrapLogLines"
@@ -371,13 +405,20 @@ export const LogControls: React.FC<LogControlsProps> = ({
 
 // Resource agnostic log component
 export const ResourceLog: React.FC<ResourceLogProps> = ({
+  bufferSize = DEFAULT_BUFFER_SIZE,
   containerName,
   dropdown,
   resource,
   resourceStatus,
 }) => {
   const { t } = useTranslation();
-  const buffer = React.useRef(new LineBuffer()); // TODO Make this a hook
+  const [showFullLog, setShowFullLog] = useUserSettings<boolean>(
+    SHOW_FULL_LOG_USERSETTINGS_KEY,
+    false,
+    true,
+  );
+  const [showFullLogCheckbox, setShowFullLogCheckbox] = React.useState(showFullLog);
+  const buffer = useToggleLineBuffer(showFullLogCheckbox ? null : bufferSize);
   const ws = React.useRef<any>(); // TODO Make this a hook
   const resourceLogRef = React.useRef();
   const logViewerRef = React.useRef(null);
@@ -415,14 +456,17 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
 
   const [wrapLinesCheckbox, setWrapLinesCheckbox] = React.useState(wrapLines || hasWrapAnnotation);
   const firstRender = React.useRef(true);
+  const handleShowFullLogCheckbox = () => setShowFullLogCheckbox(!showFullLogCheckbox);
 
   React.useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
       return;
     }
+
     setWrapLines(wrapLinesCheckbox);
-  }, [wrapLinesCheckbox, setWrapLines]);
+    setShowFullLog(showFullLogCheckbox);
+  }, [wrapLinesCheckbox, showFullLogCheckbox, setWrapLines, setShowFullLog]);
 
   const timeoutIdRef = React.useRef(null);
   const countRef = React.useRef(0);
@@ -532,7 +576,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
       startWebSocket();
     }
     return () => ws.current?.destroy();
-  }, [error, resourceStatus, stale, startWebSocket]);
+  }, [error, resourceStatus, stale, startWebSocket, showFullLogCheckbox]);
 
   // Toggle currently displayed log content to/from fullscreen
   const toggleFullscreen = () => {
@@ -613,10 +657,12 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
       namespaceUID={namespaceUID}
       toggleWrapLines={setWrapLinesCheckbox}
       isWrapLines={wrapLinesCheckbox}
+      isShowFullLog={showFullLogCheckbox}
       hasPreviousLog={hasPreviousLogs}
       changeLogType={setLogType}
       logType={logType}
       showLogTypeSelect={resource.kind === 'Pod'}
+      toggleShowFullLog={handleShowFullLogCheckbox}
     />
   );
 
@@ -676,7 +722,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
         <div className={classNames('resource-log__log-viewer-wrapper')}>
           <LogViewer
             header={
-              <div className="log-window__header">
+              <div className="log-window__header" data-test="no-log-lines">
                 <HeaderBanner lines={lines} />
               </div>
             }
@@ -721,6 +767,8 @@ type LogControlsProps = {
   hasPreviousLog?: boolean;
   logType: LogTypeStatus;
   showLogTypeSelect: boolean;
+  toggleShowFullLog: (showFullLogCheckbox: boolean) => void;
+  isShowFullLog: boolean;
 };
 
 type ResourceLogProps = {
@@ -728,6 +776,7 @@ type ResourceLogProps = {
   dropdown?: React.ReactNode;
   resource: any;
   resourceStatus: string;
+  bufferSize?: number;
 };
 
 type LogTypeStatus = typeof LOG_TYPE_CURRENT | typeof LOG_TYPE_PREVIOUS;
