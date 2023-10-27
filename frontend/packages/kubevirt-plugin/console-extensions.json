@@ -91,16 +91,6 @@
     }
   },
   {
-    "type": "console.pvc/create-prop",
-    "properties": {
-      "label": "%kubevirt-plugin~With Data upload form%",
-      "path": "~new/data"
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
     "type": "console.pvc/alert",
     "properties": {
       "alert": { "$codeRef": "pvcAlert.PVCAlertExtension" }
