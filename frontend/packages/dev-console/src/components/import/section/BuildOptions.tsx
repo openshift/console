@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SelectVariant } from '@patternfly/react-core';
+import { SelectVariant } from '@patternfly/react-core/deprecated';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
