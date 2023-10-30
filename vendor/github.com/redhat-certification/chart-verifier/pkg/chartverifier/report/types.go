@@ -1,13 +1,19 @@
 package report
 
 import (
-	apichecks "github.com/redhat-certification/chart-verifier/pkg/chartverifier/checks"
-	helmchart "helm.sh/helm/v3/pkg/chart"
 	"net/url"
+
+	helmchart "helm.sh/helm/v3/pkg/chart"
+
+	apichecks "github.com/redhat-certification/chart-verifier/pkg/chartverifier/checks"
 )
 
-type ReportFormat string
-type OutcomeType string
+type (
+	ReportFormat string
+	OutcomeType  string
+)
+
+type ShaValue struct{}
 
 type Report struct {
 	options    *reportOptions
@@ -24,21 +30,24 @@ type ReportMetadata struct {
 }
 
 type ToolMetadata struct {
-	Version                    string  `json:"verifier-version" yaml:"verifier-version"`
-	Profile                    Profile `json:"profile" yaml:"profile"`
-	ReportDigest               string  `json:"reportDigest" yaml:"reportDigest"`
+	Version      string  `json:"verifier-version" yaml:"verifier-version"`
+	Profile      Profile `json:"profile" yaml:"profile"`
+	ReportDigest string  `json:"reportDigest" yaml:"reportDigest"`
+	//nolint:stylecheck // complaining Uri should be URI
 	ChartUri                   string  `json:"chart-uri" yaml:"chart-uri"`
 	Digests                    Digests `json:"digests" yaml:"digests"`
 	LastCertifiedTimestamp     string  `json:"lastCertifiedTimestamp,omitempty" yaml:"lastCertifiedTimestamp,omitempty"`
 	CertifiedOpenShiftVersions string  `json:"certifiedOpenShiftVersions,omitempty" yaml:"certifiedOpenShiftVersions,omitempty"`
 	TestedOpenShiftVersion     string  `json:"testedOpenShiftVersion,omitempty" yaml:"testedOpenShiftVersion,omitempty"`
 	SupportedOpenShiftVersions string  `json:"supportedOpenShiftVersions,omitempty" yaml:"supportedOpenShiftVersions,omitempty"`
-	ProviderDelivery           bool    `json:"providerControlledDelivery" yaml:"providerControlledDelivery"`
+	ProviderDelivery           bool    `json:"providerControlledDelivery,omitempty" yaml:"providerControlledDelivery,omitempty"`
+	WebCatalogOnly             bool    `json:"webCatalogOnly" yaml:"webCatalogOnly" hash:"ignore"`
 }
 
 type Digests struct {
-	Chart   string `json:"chart" yaml:"chart"`
-	Package string `json:"package,omitempty" yaml:"package,omitempty"`
+	Chart     string `json:"chart" yaml:"chart"`
+	Package   string `json:"package,omitempty" yaml:"package,omitempty"`
+	PublicKey string `hash:"ignore" json:"publicKey,omitempty" yaml:"publicKey,omitempty"`
 }
 
 type Profile struct {
@@ -55,5 +64,6 @@ type CheckReport struct {
 
 type reportOptions struct {
 	reportString string
-	reportUrl    *url.URL
+	//nolint: stylecheck // complains Url should be URL
+	reportUrl *url.URL
 }

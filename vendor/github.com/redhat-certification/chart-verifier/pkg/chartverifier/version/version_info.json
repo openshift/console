@@ -1,9 +1,31 @@
 {
-    "version": "1.9.0",
+    "version": "1.13.0",
     "quay-image":  "quay.io/redhat-certification/chart-verifier",
     "release-info": [
         "<ul>",
-        "<li>None - temp for testing</li>",
+        "<li>remove extra owners and add mgoerens (#381) by @komish</li>",
+        "<li>Move release logic to a new workflow (#382) by @mgoerens</li>",
+        "<li>Print step's output paramaters also to sdtout (#389) by @mgoerens</li>",
+        "<li>Fix default branch name in workflows (#387) by @mgoerens</li>",
+        "<li>Move container images creation to release workflow (#386) by @mgoerens</li>",
+        "<li>Update Github actions that use deprecated Node12 (#392) by @mgoerens</li>",
+        "<li>change actions/cache@v4 to v3 (#394) by @OchiengEd</li>",
+        "<li>Check images for an empty image string (#385) by @OchiengEd</li>",
+        "<li>Update gitignore file to skip system files (#395) by @OchiengEd</li>",
+        "<li>Remove testing using docker (#393) by @mgoerens</li>",
+        "<li>Fix variable reference in dev release action (#396) by @komish</li>",
+        "<li>Remove unecessary steps in dev_release workflow (#400) by @mgoerens</li>",
+        "<li>Apply black and flake8 to python scripts (#399) by @mgoerens</li>",
+        "<li>Add flake8 step in the build pipeline (#401) by @mgoerens</li>",
+        "<li>Expire commit container images after 1 week (#402) by @mgoerens</li>",
+        "<li>Update report sub-command tests (#403) by @OchiengEd</li>",
+        "<li>Refactor tests for the verify subcommand (#406) by @OchiengEd</li>",
+        "<li>Build dev release container image in main (#404) by @mgoerens</li>",
+        "<li>update k8's to 1.28 and other dependencies (#407) by @acornett21</li>",
+        "<li>Adding support for daemonSet and statefulSet resources in charts (#405) by @dcurran90</li>",
+        "<li>Fix help command and output in docs (#409) by @mgoerens</li>",
+        "<li>Use external library to get the OCP versions range (#408) by @mgoerens</li>",
         "</ul>"
     ]
 }
+

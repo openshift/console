@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/blang/semver"
+	"github.com/blang/semver/v4"
 	"github.com/onsi/gomega/gstruct/errors"
 )
 
@@ -54,8 +54,6 @@ func (g *DirGraphLoader) Generate() (*Package, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error geting CSVs from bundles in the package directory, %v", err)
 	}
-
-	g.loadReplaces()
 
 	pkg, err := g.parsePackageYAMLFile()
 	if err != nil {
@@ -118,22 +116,6 @@ func (g *DirGraphLoader) loadBundleCsvPathMap() error {
 	g.CsvNameAndReplaceMap = CsvNameAndReplaceMap
 	sort.Sort(g.SortedCSVs)
 	return nil
-}
-
-// loadReplaces converts skipRange to explicit csv name and write to replaces in CsvNameAndReplaceMap.
-func (g *DirGraphLoader) loadReplaces() {
-	for csvName, replace := range g.CsvNameAndReplaceMap {
-		if replace.skipRange != nil {
-			for _, v := range g.SortedCSVs {
-				if replace.skipRange(v.version) {
-					g.CsvNameAndReplaceMap[csvName] = csvReplaces{
-						replaces:  append(g.CsvNameAndReplaceMap[csvName].replaces, v.name),
-						skipRange: g.CsvNameAndReplaceMap[csvName].skipRange,
-					}
-				}
-			}
-		}
-	}
 }
 
 // getChannelNodes follows the head of the channel csv through all replaces to fill the nodes until the tail of the

@@ -21,11 +21,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"github.com/pkg/errors"
-	"github.com/redhat-certification/chart-verifier/internal/chartverifier/checks"
-	"github.com/redhat-certification/chart-verifier/internal/chartverifier/profiles"
-	"github.com/redhat-certification/chart-verifier/internal/chartverifier/utils"
-	apiReport "github.com/redhat-certification/chart-verifier/pkg/chartverifier/report"
 	"io"
 	"net/http"
 	"net/url"
@@ -34,18 +29,24 @@ import (
 	"strings"
 	"time"
 
+	"github.com/redhat-certification/chart-verifier/internal/chartverifier/checks"
+	"github.com/redhat-certification/chart-verifier/internal/chartverifier/profiles"
+	"github.com/redhat-certification/chart-verifier/internal/chartverifier/utils"
+	apiReport "github.com/redhat-certification/chart-verifier/pkg/chartverifier/report"
+
 	helmchart "helm.sh/helm/v3/pkg/chart"
 )
 
 type ReportBuilder interface {
 	SetToolVersion(name string) ReportBuilder
 	SetProfile(vendorType profiles.VendorType, version string) ReportBuilder
-	SetChartUri(name string) ReportBuilder
+	SetChartURI(name string) ReportBuilder
 	AddCheck(check checks.Check, result checks.Result) ReportBuilder
 	SetChart(chart *helmchart.Chart) ReportBuilder
 	SetTestedOpenShiftVersion(version string) ReportBuilder
 	SetSupportedOpenShiftVersions(versions string) ReportBuilder
-	SetProviderDelivery(providerDelivery bool) ReportBuilder
+	SetWebCatalogOnly(webCatalogOnly bool) ReportBuilder
+	SetPublicKeyDigest(digest string) ReportBuilder
 	Build() (*apiReport.Report, error)
 }
 
@@ -59,6 +60,7 @@ type reportBuilder struct {
 	Report               InternalReport
 	OCPVersion           string
 	SupportedOCPVersions string
+	PublicKey            string
 }
 
 func NewReportBuilder() ReportBuilder {
@@ -78,45 +80,49 @@ func (r *reportBuilder) SetSupportedOpenShiftVersions(versions string) ReportBui
 }
 
 func (r *reportBuilder) SetToolVersion(version string) ReportBuilder {
-	r.Report.GetApiReport().Metadata.ToolMetadata.Version = version
+	r.Report.GetAPIReport().Metadata.ToolMetadata.Version = version
 	return r
 }
 
 func (r *reportBuilder) SetProfile(vendorType profiles.VendorType, version string) ReportBuilder {
-	r.Report.GetApiReport().Metadata.ToolMetadata.Profile.VendorType = string(vendorType)
-	r.Report.GetApiReport().Metadata.ToolMetadata.Profile.Version = version
+	r.Report.GetAPIReport().Metadata.ToolMetadata.Profile.VendorType = string(vendorType)
+	r.Report.GetAPIReport().Metadata.ToolMetadata.Profile.Version = version
 	return r
 }
 
-func (r *reportBuilder) SetChartUri(uri string) ReportBuilder {
-	r.Report.GetApiReport().Metadata.ToolMetadata.ChartUri = uri
+func (r *reportBuilder) SetChartURI(uri string) ReportBuilder {
+	r.Report.GetAPIReport().Metadata.ToolMetadata.ChartUri = uri
 	return r
 }
 
 func (r *reportBuilder) SetChart(chart *helmchart.Chart) ReportBuilder {
 	r.Chart = chart
-	r.Report.GetApiReport().Metadata.ChartData = chart.Metadata
+	r.Report.GetAPIReport().Metadata.ChartData = chart.Metadata
 	return r
 }
 
-func (r *reportBuilder) SetProviderDelivery(providerDelivery bool) ReportBuilder {
-	r.Report.GetApiReport().Metadata.ToolMetadata.ProviderDelivery = providerDelivery
+func (r *reportBuilder) SetWebCatalogOnly(webCatalogOnly bool) ReportBuilder {
+	r.Report.GetAPIReport().Metadata.ToolMetadata.WebCatalogOnly = webCatalogOnly
+	return r
+}
+
+func (r *reportBuilder) SetPublicKeyDigest(digest string) ReportBuilder {
+	r.Report.GetAPIReport().Metadata.ToolMetadata.Digests.PublicKey = digest
 	return r
 }
 
 func (r *reportBuilder) AddCheck(check checks.Check, result checks.Result) ReportBuilder {
 	checkReport := r.Report.AddCheck(check)
-	checkReport.SetResult(result.Ok, result.Reason)
-	utils.LogInfo(fmt.Sprintf("Check: %s:%s result : %t", check.CheckId.Name, check.CheckId.Version, result.Ok))
+	checkReport.SetResult(result.Ok, result.Skipped, result.Reason)
+	utils.LogInfo(fmt.Sprintf("Check: %s:%s result : %t", check.CheckID.Name, check.CheckID.Version, result.Ok))
 	if !result.Ok {
-		utils.LogInfo(fmt.Sprintf("Check: %s:%s reason : %s", check.CheckId.Name, check.CheckId.Version, result.Reason))
+		utils.LogInfo(fmt.Sprintf("Check: %s:%s reason : %s", check.CheckID.Name, check.CheckID.Version, result.Reason))
 	}
 	return r
 }
 
 func (r *reportBuilder) Build() (*apiReport.Report, error) {
-
-	apiReport := r.Report.GetApiReport()
+	apiReport := r.Report.GetAPIReport()
 
 	for _, annotation := range profiles.Get().Annotations {
 		switch annotation {
@@ -147,8 +153,8 @@ func (r *reportBuilder) Build() (*apiReport.Report, error) {
 
 	apiReport.Metadata.ToolMetadata.Digests.Package = GetPackageDigest(apiReport.Metadata.ToolMetadata.ChartUri)
 
-	if apiReport.Metadata.ToolMetadata.ProviderDelivery {
-		r.SetChartUri(("N/A"))
+	if apiReport.Metadata.ToolMetadata.WebCatalogOnly {
+		r.SetChartURI(("N/A"))
 	}
 
 	r.Report.SetReportDigest()
@@ -187,7 +193,6 @@ func (fs *fileSorter) Less(i, j int) bool {
 }
 
 func GenerateSha(rawFiles []*helmchart.File) string {
-
 	name := func(f1, f2 *helmchart.File) bool {
 		return f1.Name < f2.Name
 	}
@@ -203,7 +208,6 @@ func GenerateSha(rawFiles []*helmchart.File) string {
 }
 
 func GetPackageDigest(uri string) string {
-
 	url, err := url.Parse(uri)
 	if err != nil {
 		return ""
@@ -221,7 +225,7 @@ func GetPackageDigest(uri string) string {
 			chartReader, _ = os.Open(url.Path)
 		}
 	default:
-		err = errors.Errorf("scheme %q not supported", url.Scheme)
+		err = fmt.Errorf("scheme %q not supported", url.Scheme)
 	}
 	if err != nil || chartReader == nil {
 		return ""

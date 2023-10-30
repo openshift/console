@@ -19,14 +19,17 @@ package checks
 import (
 	"time"
 
-	apiChecks "github.com/redhat-certification/chart-verifier/pkg/chartverifier/checks"
 	"github.com/spf13/viper"
 	helmcli "helm.sh/helm/v3/pkg/cli"
+
+	apiChecks "github.com/redhat-certification/chart-verifier/pkg/chartverifier/checks"
 )
 
 type Result struct {
 	// Ok indicates whether the result was successful or not.
 	Ok bool
+	// Skipped indicates is test was skipped
+	Skipped bool
 	// Reason for the result value.  This is a message indicating
 	// the reason for the value of Ok became true or false.
 	Reason string
@@ -35,18 +38,39 @@ type Result struct {
 func NewResult(outcome bool, reason string) Result {
 	result := Result{}
 	result.Ok = outcome
+	result.Skipped = false
+	result.Reason = reason
+	return result
+}
+
+func NewSkippedResult(reason string) Result {
+	result := Result{}
+	result.Ok = true
+	result.Skipped = true
 	result.Reason = reason
 	return result
 }
 
 func (r *Result) SetResult(outcome bool, reason string) Result {
 	r.Ok = outcome
+	r.Skipped = false
 	r.Reason = reason
+	return *r
+}
+
+func (r *Result) SetSkipped(reason string) Result {
+	if len(r.Reason) == 0 {
+		r.Skipped = true
+		r.Reason = reason
+	} else {
+		r.Reason += "\n" + reason
+	}
 	return *r
 }
 
 func (r *Result) AddResult(outcome bool, reason string) Result {
 	r.Ok = r.Ok && outcome
+	r.Skipped = false
 	if len(r.Reason) > 0 {
 		r.Reason += "\n"
 	}
@@ -60,12 +84,12 @@ type AnnotationHolder interface {
 	SetSupportedOpenShiftVersions(versions string)
 }
 
-type CheckId struct {
+type CheckID struct {
 	Name    apiChecks.CheckName
 	Version string
 }
 type Check struct {
-	CheckId CheckId
+	CheckID CheckID
 	Type    apiChecks.CheckType
 	Func    CheckFunc
 }
@@ -85,17 +109,23 @@ type CheckOptions struct {
 	AnnotationHolder AnnotationHolder
 	// client timeout
 	Timeout time.Duration
+	// keyring - public gpg for signed chart
+	PublicKeys []string
+	// helm install timeout
+	HelmInstallTimeout time.Duration
+	// skip helm cleanup
+	SkipCleanup bool
 }
 
 type CheckFunc func(options *CheckOptions) (Result, error)
 
 type Registry interface {
-	Get(id CheckId) (Check, bool)
+	Get(id CheckID) (Check, bool)
 	Add(name apiChecks.CheckName, version string, checkFunc CheckFunc) Registry
 	AllChecks() DefaultRegistry
 }
 
-type DefaultRegistry map[CheckId]Check
+type DefaultRegistry map[CheckID]Check
 
 func (r *DefaultRegistry) AllChecks() DefaultRegistry {
 	return *r
@@ -105,14 +135,13 @@ func NewRegistry() Registry {
 	return &DefaultRegistry{}
 }
 
-func (r *DefaultRegistry) Get(id CheckId) (Check, bool) {
+func (r *DefaultRegistry) Get(id CheckID) (Check, bool) {
 	v, ok := (*r)[id]
 	return v, ok
 }
 
 func (r *DefaultRegistry) Add(name apiChecks.CheckName, version string, checkFunc CheckFunc) Registry {
-
-	check := Check{CheckId: CheckId{Name: name, Version: version}, Func: checkFunc}
-	(*r)[check.CheckId] = check
+	check := Check{CheckID: CheckID{Name: name, Version: version}, Func: checkFunc}
+	(*r)[check.CheckID] = check
 	return r
 }

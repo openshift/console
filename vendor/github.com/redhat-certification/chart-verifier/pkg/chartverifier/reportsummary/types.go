@@ -1,14 +1,17 @@
 package reportsummary
 
 import (
+	helmchart "helm.sh/helm/v3/pkg/chart"
+
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/profiles"
 	apireport "github.com/redhat-certification/chart-verifier/pkg/chartverifier/report"
-	helmchart "helm.sh/helm/v3/pkg/chart"
 )
 
-type SummaryType string
-type SummaryFormat string
-type BooleanKey string
+type (
+	SummaryType   string
+	SummaryFormat string
+	BooleanKey    string
+)
 
 type ReportSummary struct {
 	options           *reportOptions
@@ -24,16 +27,19 @@ type Annotation struct {
 }
 
 type DigestReport struct {
-	ChartDigest   string `json:"chart" yaml:"chart"`
-	PackageDigest string `json:"package" yaml:"package"`
+	ChartDigest     string `json:"chart" yaml:"chart"`
+	PackageDigest   string `json:"package" yaml:"package"`
+	PublicKeyDigest string `json:"publicKey,omitempty" yaml:"publicKey,omitempty"`
 }
 
 type MetadataReport struct {
 	ProfileVendorType profiles.VendorType `json:"vendorType" yaml:"vendorType"`
 	ProfileVersion    string              `json:"profileVersion" yaml:"profileVersion"`
-	ProviderDelivery  bool                `json:"providerControlledDelivery" yaml:"providerControlledDelivery,omitempty"`
-	ChartUri          string              `json:"chart-uri" yaml:"chart-uri"`
-	Chart             *helmchart.Metadata `json:"chart" yaml:"chart"`
+	WebCatalogOnly    bool                `json:"webCatalogOnly" yaml:"webCatalogOnly,omitempty"`
+	//nolint:stylecheck // complains Uri should be URI - leaving as is for now
+	//because this produces an outputted file.
+	ChartUri string              `json:"chart-uri" yaml:"chart-uri"`
+	Chart    *helmchart.Metadata `json:"chart" yaml:"chart"`
 }
 
 type ResultsReport struct {

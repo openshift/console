@@ -17,16 +17,15 @@ package pyxis
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/utils"
 )
 
-var pyxisBaseUrl = "https://catalog.redhat.com/api/containers/v1/repositories"
+var pyxisBaseURL = "https://catalog.redhat.com/api/containers/v1/repositories"
 
 type RepositoriesBody struct {
 	PyxisRepositories []PyxisRepository `json:"data"`
@@ -36,7 +35,7 @@ type RepositoriesBody struct {
 }
 
 type PyxisRepository struct {
-	Id          string `json:"_id"`
+	ID          string `json:"_id"`
 	Repository  string `json:"repository"`
 	VendorLabel string `json:"vendor_label"`
 	Registry    string `json:"registry"`
@@ -50,8 +49,8 @@ type RegistriesBody struct {
 }
 
 type PyxisRegistry struct {
-	Id           string               `json:"_id"`
-	ImageId      string               `json:"image_id"`
+	ID           string               `json:"_id"`
+	ImageID      string               `json:"image_id"`
 	Repositories []RegistryRepository `json:"repositories"`
 }
 
@@ -83,9 +82,8 @@ func GetImageRegistries(repository string) ([]string, error) {
 	allDataRead := false
 
 	for !allDataRead {
-
-		utils.LogInfo(fmt.Sprintf("Look for repository %s at %s, page %d", repository, pyxisBaseUrl, nextPage))
-		req, _ := http.NewRequest("GET", pyxisBaseUrl, nil)
+		utils.LogInfo(fmt.Sprintf("Look for repository %s at %s, page %d", repository, pyxisBaseURL, nextPage))
+		req, _ := http.NewRequest("GET", pyxisBaseURL, nil)
 		queryString := req.URL.Query()
 		queryString.Add("filter", fmt.Sprintf("repository==%s", repository))
 		queryString.Add("page_size", "100")
@@ -95,12 +93,15 @@ func GetImageRegistries(repository string) ([]string, error) {
 		client := &http.Client{}
 		resp, reqErr := client.Do(req)
 		if reqErr != nil {
-			err = errors.New(fmt.Sprintf("Error getting repository %s : %v\n", repository, err))
+			err = fmt.Errorf("error getting repository %s : %v", repository, err)
 		} else {
 			if resp.StatusCode == 200 {
+				// #nosec G307
 				defer resp.Body.Close()
-				body, _ := ioutil.ReadAll(resp.Body)
+				body, _ := io.ReadAll(resp.Body)
 				var repositoriesBody RepositoriesBody
+				//nolint:errcheck // TODO(komish): this should be checked, but we really need
+				// to look at refactoring this block in its entirety. Delay fixing this until then.
 				json.Unmarshal(body, &repositoriesBody)
 
 				if total == 0 {
@@ -119,10 +120,10 @@ func GetImageRegistries(repository string) ([]string, error) {
 						utils.LogInfo(fmt.Sprintf("Found repository in registry: %s", repo.Registry))
 					}
 				} else {
-					err = errors.New(fmt.Sprintf("Respository not found: %s", repository))
+					err = fmt.Errorf("repository not found: %s", repository)
 				}
 			} else {
-				err = errors.New(fmt.Sprintf("Bad response code from Pyxis: %d : %s", resp.StatusCode, req.URL))
+				err = fmt.Errorf("bad response code from Pyxis: %d : %s", resp.StatusCode, req.URL)
 			}
 		}
 	}
@@ -133,7 +134,6 @@ func GetImageRegistries(repository string) ([]string, error) {
 }
 
 func IsImageInRegistry(imageRef ImageReference) (bool, error) {
-
 	var err error
 	found := false
 
@@ -142,18 +142,16 @@ func IsImageInRegistry(imageRef ImageReference) (bool, error) {
 
 Loops:
 	for _, registry := range imageRef.Registries {
-
 		read := 0
 		total := 0
 		nextPage := 0
 		allDataRead := false
 
-		requestUrl := fmt.Sprintf("%s/registry/%s/repository/%s/images", pyxisBaseUrl, registry, imageRef.Repository)
-		utils.LogInfo(fmt.Sprintf("Search url: %s, tag: %s, sha: %s ", requestUrl, imageRef.Tag, imageRef.Sha))
+		requestURL := fmt.Sprintf("%s/registry/%s/repository/%s/images", pyxisBaseURL, registry, imageRef.Repository)
+		utils.LogInfo(fmt.Sprintf("Search url: %s, tag: %s, sha: %s ", requestURL, imageRef.Tag, imageRef.Sha))
 
 		for !allDataRead && err == nil && !found {
-
-			req, _ := http.NewRequest("GET", requestUrl, nil)
+			req, _ := http.NewRequest("GET", requestURL, nil)
 			queryString := req.URL.Query()
 			queryString.Add("filter", fmt.Sprintf("repositories=em=(repository==%s;registry==%s)", imageRef.Repository, registry))
 			queryString.Add("page_size", "100")
@@ -165,9 +163,15 @@ Loops:
 
 			if reqErr == nil {
 				if resp.StatusCode == 200 {
+					// #nosec G307
 					defer resp.Body.Close()
-					body, _ := ioutil.ReadAll(resp.Body)
+					// TODO(komish): this should be checked, but we really need
+					// to look at refactoring this block in its entirety. Delay fixing this until then
+					//
+					//nolint:errcheck
+					body, _ := io.ReadAll(resp.Body)
 					var registriesBody RegistriesBody
+					//nolint:errcheck
 					json.Unmarshal(body, &registriesBody)
 
 					if total == 0 {
@@ -185,13 +189,13 @@ Loops:
 						found = false
 						for _, reg := range registriesBody.PyxisRegistries {
 							if len(imageRef.Sha) > 0 {
-								if imageRef.Sha == reg.ImageId {
+								if imageRef.Sha == reg.ImageID {
 									utils.LogInfo(fmt.Sprintf("sha found: %s", imageRef.Sha))
 									found = true
 									err = nil
 									continue Loops
 								} else {
-									shas = append(shas, reg.ImageId)
+									shas = append(shas, reg.ImageID)
 								}
 							} else {
 								for _, repo := range reg.Repositories {
@@ -213,10 +217,16 @@ Loops:
 							}
 						}
 					} else {
-						err = errors.New(fmt.Sprintf("No images found for Registry/Repository: %s/%s", registry, imageRef.Repository))
+						// Note(komish): For now, leaving this capitalized "No" because this value is checked in the
+						// checks library to decide whether or not a check is considered acceptably passed, specifically
+						// when working with certified images or internal registries. Better to deal with this
+						// by itself at a future date than introduce a potentially subtle bug.
+						//
+						//nolint:stylecheck
+						err = fmt.Errorf("No images found for Registry/Repository: %s/%s", registry, imageRef.Repository)
 					}
 				} else {
-					err = errors.New(fmt.Sprintf("Bad response code %d from pyxis request : %s", resp.StatusCode, requestUrl))
+					err = fmt.Errorf("bad response code %d from pyxis request : %s", resp.StatusCode, requestURL)
 				}
 			} else {
 				err = reqErr
@@ -226,9 +236,9 @@ Loops:
 	if !found {
 		if err == nil {
 			if len(imageRef.Sha) > 0 {
-				err = errors.New(fmt.Sprintf("Digest %s not found. Found : %s", imageRef.Sha, strings.Join(shas, ", ")))
+				err = fmt.Errorf("digest %s not found. Found : %s", imageRef.Sha, strings.Join(shas, ", "))
 			} else {
-				err = errors.New(fmt.Sprintf("Tag %s not found. Found : %s", imageRef.Tag, strings.Join(tags, ", ")))
+				err = fmt.Errorf("tag %s not found. Found : %s", imageRef.Tag, strings.Join(tags, ", "))
 			}
 		}
 	}

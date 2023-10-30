@@ -14,7 +14,6 @@ import (
 )
 
 func RenderManifests(name string, url string, vals map[string]interface{}, conf *action.Configuration) (string, error) {
-
 	var showFiles []string
 	response := make(map[string]string)
 	validate := false

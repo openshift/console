@@ -1,10 +1,10 @@
 package api
 
 import (
+	"time"
+
 	"github.com/spf13/viper"
 	"helm.sh/helm/v3/pkg/cli"
-
-	"time"
 
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier"
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/checks"
@@ -20,21 +20,23 @@ func init() {
 }
 
 type RunOptions struct {
-	APIVersion       string
-	Values           map[string]interface{}
-	ViperConfig      *viper.Viper
-	Overrides        map[string]interface{}
-	ChecksToRun      []apichecks.CheckName
-	OpenShiftVersion string
-	ProviderDelivery bool
-	SuppressErrorLog bool
-	ClientTimeout    time.Duration
-	ChartUri         string
-	Settings         *cli.EnvSettings
+	APIVersion         string
+	Values             map[string]interface{}
+	ViperConfig        *viper.Viper
+	Overrides          map[string]interface{}
+	ChecksToRun        []apichecks.CheckName
+	OpenShiftVersion   string
+	WebCatalogOnly     bool
+	SuppressErrorLog   bool
+	SkipCleanup        bool
+	ClientTimeout      time.Duration
+	HelmInstallTimeout time.Duration
+	ChartURI           string
+	Settings           *cli.EnvSettings
+	PublicKeys         []string
 }
 
 func Run(options RunOptions) (*apireport.Report, error) {
-
 	var verifyReport *apireport.Report
 
 	verifierBuilder := chartverifier.NewVerifierBuilder()
@@ -49,9 +51,9 @@ func Run(options RunOptions) (*apireport.Report, error) {
 	checkRegistry := make(chartverifier.FilteredRegistry)
 
 	for _, checkName := range options.ChecksToRun {
-		for checkId, check := range profileChecks {
-			if checkId == checkName {
-				checkRegistry[checkId] = check
+		for checkID, check := range profileChecks {
+			if checkID == checkName {
+				checkRegistry[checkID] = check
 			}
 		}
 	}
@@ -60,21 +62,22 @@ func Run(options RunOptions) (*apireport.Report, error) {
 		SetChecks(checkRegistry).
 		SetToolVersion(options.APIVersion).
 		SetOpenShiftVersion(options.OpenShiftVersion).
-		SetProviderDelivery(options.ProviderDelivery).
+		SetWebCatalogOnly(options.WebCatalogOnly).
+		SetSkipCleanup(options.SkipCleanup).
 		SetTimeout(options.ClientTimeout).
+		SetHelmInstallTimeout(options.HelmInstallTimeout).
 		SetSettings(options.Settings).
+		SetPublicKeys(options.PublicKeys).
 		Build()
-
 	if err != nil {
 		return verifyReport, err
 	}
 
-	verifyReport, err = verifier.Verify(options.ChartUri)
+	verifyReport, err = verifier.Verify(options.ChartURI)
 
 	if err != nil {
 		return verifyReport, err
 	}
 
 	return verifyReport, nil
-
 }

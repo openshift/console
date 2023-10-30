@@ -17,13 +17,17 @@
 package chartverifier
 
 import (
+	"strings"
 	"time"
+
+	"github.com/spf13/viper"
+	helmcli "helm.sh/helm/v3/pkg/cli"
 
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/checks"
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/profiles"
+	"github.com/redhat-certification/chart-verifier/internal/tool"
+	apiChecks "github.com/redhat-certification/chart-verifier/pkg/chartverifier/checks"
 	apiReport "github.com/redhat-certification/chart-verifier/pkg/chartverifier/report"
-	"github.com/spf13/viper"
-	helmcli "helm.sh/helm/v3/pkg/cli"
 )
 
 type CheckNotFoundErr string
@@ -60,16 +64,19 @@ func (holder *AnnotationHolder) SetSupportedOpenShiftVersions(versions string) {
 }
 
 type verifier struct {
-	config           *viper.Viper
-	registry         checks.Registry
-	requiredChecks   []checks.Check
-	settings         *helmcli.EnvSettings
-	toolVersion      string
-	profile          *profiles.Profile
-	openshiftVersion string
-	providerDelivery bool
-	timeout          time.Duration
-	values           map[string]interface{}
+	config             *viper.Viper
+	registry           checks.Registry
+	requiredChecks     []checks.Check
+	settings           *helmcli.EnvSettings
+	toolVersion        string
+	profile            *profiles.Profile
+	openshiftVersion   string
+	webCatalogOnly     bool
+	skipCleanup        bool
+	timeout            time.Duration
+	helmInstallTimeout time.Duration
+	publicKeys         []string
+	values             map[string]interface{}
 }
 
 func (c *verifier) subConfig(name string) *viper.Viper {
@@ -81,8 +88,7 @@ func (c *verifier) subConfig(name string) *viper.Viper {
 }
 
 func (c *verifier) Verify(uri string) (*apiReport.Report, error) {
-
-	if c.providerDelivery {
+	if c.webCatalogOnly {
 		if len(GetPackageDigest(uri)) == 0 {
 			return nil, CheckErr("Provider delivery control requires chart input which is a tarball.")
 		}
@@ -95,26 +101,30 @@ func (c *verifier) Verify(uri string) (*apiReport.Report, error) {
 
 	result := NewReportBuilder().
 		SetToolVersion(c.toolVersion).
-		SetChartUri(uri).
+		SetChartURI(uri).
 		SetChart(chrt).
 		SetProfile(c.profile.Vendor, c.profile.Version).
-		SetProviderDelivery(c.providerDelivery)
+		SetWebCatalogOnly(c.webCatalogOnly)
 
 	for _, check := range c.requiredChecks {
-
 		if check.Func == nil {
-			return nil, CheckNotFoundErr(check.CheckId.Name)
+			return nil, CheckNotFoundErr(check.CheckID.Name)
 		}
-		holder := AnnotationHolder{Holder: result,
-			CertifiedOpenShiftVersionFlag: c.openshiftVersion}
+		holder := AnnotationHolder{
+			Holder:                        result,
+			CertifiedOpenShiftVersionFlag: c.openshiftVersion,
+		}
 
 		r, checkErr := check.Func(&checks.CheckOptions{
-			HelmEnvSettings:  c.settings,
-			URI:              uri,
-			Values:           c.values,
-			ViperConfig:      c.subConfig(string(check.CheckId.Name)),
-			AnnotationHolder: &holder,
-			Timeout:          c.timeout,
+			HelmEnvSettings:    c.settings,
+			URI:                uri,
+			Values:             c.values,
+			ViperConfig:        c.subConfig(string(check.CheckID.Name)),
+			AnnotationHolder:   &holder,
+			Timeout:            c.timeout,
+			HelmInstallTimeout: c.helmInstallTimeout,
+			SkipCleanup:        c.skipCleanup,
+			PublicKeys:         c.publicKeys,
 		})
 
 		if checkErr != nil {
@@ -122,6 +132,15 @@ func (c *verifier) Verify(uri string) (*apiReport.Report, error) {
 		}
 		_ = result.AddCheck(check, r)
 
+		if check.CheckID.Name == apiChecks.SignatureIsValid {
+			if len(c.publicKeys) == 1 && strings.Contains(r.Reason, checks.ChartSigned) {
+				publicKeyDigest, digestErr := tool.GetPublicKeyDigest(c.publicKeys[0])
+				if digestErr != nil {
+					return nil, err
+				}
+				result.SetPublicKeyDigest(publicKeyDigest)
+			}
+		}
 	}
 
 	return result.Build()

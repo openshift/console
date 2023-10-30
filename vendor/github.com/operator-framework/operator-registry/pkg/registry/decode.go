@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
+
+	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/yaml"
 )
@@ -40,4 +43,27 @@ func DecodePackageManifest(reader io.Reader) (manifest *PackageManifest, err err
 
 	manifest = obj
 	return
+}
+
+func decodeFileFS(root fs.FS, path string, into interface{}, log *logrus.Entry) error {
+	fileReader, err := root.Open(path)
+	if err != nil {
+		return fmt.Errorf("unable to read file %s: %s", path, err)
+	}
+	defer fileReader.Close()
+
+	decoder := yaml.NewYAMLOrJSONDecoder(fileReader, 30)
+
+	errRet := decoder.Decode(into)
+
+	if errRet == nil {
+		// Look for and warn about extra documents
+		extraDocument := &map[string]interface{}{}
+		err = decoder.Decode(extraDocument)
+		if err == nil && log != nil {
+			log.Warnf("found more than one document inside %s, using only the first one", path)
+		}
+	}
+
+	return errRet
 }

@@ -2,19 +2,23 @@ package profiles
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
+
+	"golang.org/x/mod/semver"
+	"gopkg.in/yaml.v3"
+
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/checks"
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/utils"
 	"github.com/redhat-certification/chart-verifier/internal/profileconfig"
 	apiChecks "github.com/redhat-certification/chart-verifier/pkg/chartverifier/checks"
-	"golang.org/x/mod/semver"
-	"gopkg.in/yaml.v3"
-	"regexp"
-	"strings"
 )
 
-type Annotation string
-type VendorType string
-type VendorVersion string
+type (
+	Annotation    string
+	VendorType    string
+	VendorVersion string
+)
 
 const (
 	DigestAnnotation                 Annotation = "Digest"
@@ -69,12 +73,9 @@ func Get() *Profile {
 }
 
 func New(values map[string]interface{}) *Profile {
-
 	profileVendorType := VendorTypeDefault
 	var profileVersion string
-
 	if values != nil {
-
 		if vendorType, ok := values[VendorTypeConfigName]; ok {
 			profileVendorType = VendorType(strings.ToLower(fmt.Sprintf("%v", vendorType)))
 		}
@@ -113,7 +114,6 @@ func New(values map[string]interface{}) *Profile {
 
 // Get all profiles in the profiles directory, and any subdirectories, and add each to the profile map
 func getProfiles() {
-
 	profileFiles, err := profileconfig.GetProfiles()
 	if err != nil {
 		return
@@ -137,13 +137,12 @@ func getProfiles() {
 }
 
 func (profile *Profile) FilterChecks(registry checks.DefaultRegistry) FilteredRegistry {
-
 	filteredChecks := make(map[apiChecks.CheckName]checks.Check)
 
 	for _, check := range profile.Checks {
 		splitter := regexp.MustCompile(`/`)
 		splitCheck := splitter.Split(check.Name, -1)
-		checkIndex := checks.CheckId{Name: apiChecks.CheckName(splitCheck[1]), Version: splitCheck[0]}
+		checkIndex := checks.CheckID{Name: apiChecks.CheckName(splitCheck[1]), Version: splitCheck[0]}
 		if newCheck, ok := registry[checkIndex]; ok {
 			newCheck.Type = check.Type
 			filteredChecks[checkIndex.Name] = newCheck
@@ -151,11 +150,9 @@ func (profile *Profile) FilterChecks(registry checks.DefaultRegistry) FilteredRe
 	}
 
 	return filteredChecks
-
 }
 
 func readProfile(profileBytes []byte) (*Profile, error) {
-
 	profile := &Profile{}
 	err := yaml.Unmarshal(profileBytes, profile)
 	if err != nil {
@@ -163,5 +160,4 @@ func readProfile(profileBytes []byte) (*Profile, error) {
 	}
 
 	return profile, nil
-
 }

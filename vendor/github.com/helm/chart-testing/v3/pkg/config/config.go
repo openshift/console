@@ -15,16 +15,17 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/mitchellh/go-homedir"
 
 	"github.com/helm/chart-testing/v3/pkg/util"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -34,6 +35,7 @@ var (
 	homeDir, _            = homedir.Dir()
 	configSearchLocations = []string{
 		".",
+		".ct",
 		filepath.Join(homeDir, ".ct"),
 		"/usr/local/etc/ct",
 		"/etc/ct",
@@ -41,41 +43,49 @@ var (
 )
 
 type Configuration struct {
-	Remote                string   `mapstructure:"remote"`
-	TargetBranch          string   `mapstructure:"target-branch"`
-	Since                 string   `mapstructure:"since"`
-	BuildId               string   `mapstructure:"build-id"`
-	LintConf              string   `mapstructure:"lint-conf"`
-	ChartYamlSchema       string   `mapstructure:"chart-yaml-schema"`
-	ValidateMaintainers   bool     `mapstructure:"validate-maintainers"`
-	ValidateChartSchema   bool     `mapstructure:"validate-chart-schema"`
-	ValidateYaml          bool     `mapstructure:"validate-yaml"`
-	AdditionalCommands    []string `mapstructure:"additional-commands"`
-	CheckVersionIncrement bool     `mapstructure:"check-version-increment"`
-	ProcessAllCharts      bool     `mapstructure:"all"`
-	Charts                []string `mapstructure:"charts"`
-	ChartRepos            []string `mapstructure:"chart-repos"`
-	ChartDirs             []string `mapstructure:"chart-dirs"`
-	ExcludedCharts        []string `mapstructure:"excluded-charts"`
-	HelmExtraArgs         string   `mapstructure:"helm-extra-args"`
-	HelmRepoExtraArgs     []string `mapstructure:"helm-repo-extra-args"`
-	Debug                 bool     `mapstructure:"debug"`
-	Upgrade               bool     `mapstructure:"upgrade"`
-	SkipMissingValues     bool     `mapstructure:"skip-missing-values"`
-	Namespace             string   `mapstructure:"namespace"`
-	ReleaseLabel          string   `mapstructure:"release-label"`
-	ExcludeDeprecated     bool     `mapstructure:"exclude-deprecated"`
+	Remote                  string        `mapstructure:"remote"`
+	TargetBranch            string        `mapstructure:"target-branch"`
+	Since                   string        `mapstructure:"since"`
+	BuildID                 string        `mapstructure:"build-id"`
+	LintConf                string        `mapstructure:"lint-conf"`
+	ChartYamlSchema         string        `mapstructure:"chart-yaml-schema"`
+	ValidateMaintainers     bool          `mapstructure:"validate-maintainers"`
+	ValidateChartSchema     bool          `mapstructure:"validate-chart-schema"`
+	ValidateYaml            bool          `mapstructure:"validate-yaml"`
+	AdditionalCommands      []string      `mapstructure:"additional-commands"`
+	CheckVersionIncrement   bool          `mapstructure:"check-version-increment"`
+	ProcessAllCharts        bool          `mapstructure:"all"`
+	Charts                  []string      `mapstructure:"charts"`
+	ChartRepos              []string      `mapstructure:"chart-repos"`
+	ChartDirs               []string      `mapstructure:"chart-dirs"`
+	ExcludedCharts          []string      `mapstructure:"excluded-charts"`
+	HelmExtraArgs           string        `mapstructure:"helm-extra-args"`
+	HelmRepoExtraArgs       []string      `mapstructure:"helm-repo-extra-args"`
+	HelmDependencyExtraArgs []string      `mapstructure:"helm-dependency-extra-args"`
+	Debug                   bool          `mapstructure:"debug"`
+	Upgrade                 bool          `mapstructure:"upgrade"`
+	SkipMissingValues       bool          `mapstructure:"skip-missing-values"`
+	SkipCleanUp             bool          `mapstructure:"skip-clean-up"`
+	Namespace               string        `mapstructure:"namespace"`
+	ReleaseLabel            string        `mapstructure:"release-label"`
+	ExcludeDeprecated       bool          `mapstructure:"exclude-deprecated"`
+	KubectlTimeout          time.Duration `mapstructure:"kubectl-timeout"`
+	PrintLogs               bool          `mapstructure:"print-logs"`
+	GithubGroups            bool          `mapstructure:"github-groups"`
 }
 
 func LoadConfiguration(cfgFile string, cmd *cobra.Command, printConfig bool) (*Configuration, error) {
 	v := viper.New()
+
+	v.SetDefault("kubectl-timeout", 30*time.Second)
+	v.SetDefault("print-logs", bool(true))
 
 	cmd.Flags().VisitAll(func(flag *flag.Flag) {
 		flagName := flag.Name
 		if flagName != "config" && flagName != "help" {
 			if err := v.BindPFlag(flagName, flag); err != nil {
 				// can't really happen
-				panic(fmt.Sprintln(errors.Wrapf(err, "Error binding flag '%s'", flagName)))
+				panic(fmt.Sprintf("failed binding flag %q: %v\n", flagName, err.Error()))
 			}
 		}
 	})
@@ -100,7 +110,7 @@ func LoadConfiguration(cfgFile string, cmd *cobra.Command, printConfig bool) (*C
 	if err := v.ReadInConfig(); err != nil {
 		if cfgFile != "" {
 			// Only error out for specified config file. Ignore for default locations.
-			return nil, errors.Wrap(err, "Error loading config file")
+			return nil, fmt.Errorf("failed loading config file: %w", err)
 		}
 	} else {
 		if printConfig {
@@ -113,7 +123,7 @@ func LoadConfiguration(cfgFile string, cmd *cobra.Command, printConfig bool) (*C
 
 	cfg := &Configuration{}
 	if err := v.Unmarshal(cfg); err != nil {
-		return nil, errors.Wrap(err, "Error unmarshaling configuration")
+		return nil, fmt.Errorf("failed unmarshaling configuration: %w", err)
 	}
 
 	if cfg.ProcessAllCharts && len(cfg.Charts) > 0 {
@@ -164,9 +174,13 @@ func LoadConfiguration(cfgFile string, cmd *cobra.Command, printConfig bool) (*C
 }
 
 func printCfg(cfg *Configuration) {
-	util.PrintDelimiterLineToWriter(os.Stderr, "-")
-	fmt.Fprintln(os.Stderr, " Configuration")
-	util.PrintDelimiterLineToWriter(os.Stderr, "-")
+	if !cfg.GithubGroups {
+		util.PrintDelimiterLineToWriter(os.Stderr, "-")
+		fmt.Fprintln(os.Stderr, " Configuration")
+		util.PrintDelimiterLineToWriter(os.Stderr, "-")
+	} else {
+		util.GithubGroupsBegin(os.Stderr, "Configuration")
+	}
 
 	e := reflect.ValueOf(cfg).Elem()
 	typeOfCfg := e.Type()
@@ -182,7 +196,11 @@ func printCfg(cfg *Configuration) {
 		fmt.Fprintf(os.Stderr, pattern, typeOfCfg.Field(i).Name, e.Field(i).Interface())
 	}
 
-	util.PrintDelimiterLineToWriter(os.Stderr, "-")
+	if !cfg.GithubGroups {
+		util.PrintDelimiterLineToWriter(os.Stderr, "-")
+	} else {
+		util.GithubGroupsEnd(os.Stderr)
+	}
 }
 
 func findConfigFile(fileName string) (string, error) {
@@ -197,5 +215,5 @@ func findConfigFile(fileName string) (string, error) {
 		}
 	}
 
-	return "", errors.New(fmt.Sprintf("Config file not found: %s", fileName))
+	return "", fmt.Errorf("config file not found: %s", fileName)
 }

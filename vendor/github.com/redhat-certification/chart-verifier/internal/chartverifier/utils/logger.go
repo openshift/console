@@ -4,22 +4,22 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 type VerifierLog struct {
 	Name    string      `json:"name" yaml:"name"`
-	Time    string      `json:"time" yaml: time"`
+	Time    string      `json:"time" yaml:"time"`
 	Entries []*LogEntry `json:"log" yaml:"log"`
 }
 
@@ -27,13 +27,17 @@ type LogEntry struct {
 	Entry string `json:"Entry" yaml:"Entry"`
 }
 
-var CmdStdout io.Writer = os.Stdout
-var CmdStderr io.Writer = os.Stderr
+var (
+	CmdStdout io.Writer = os.Stdout
+	CmdStderr io.Writer = os.Stderr
+)
 
-var verifierlog VerifierLog
-var cmd *cobra.Command
-var stdoutFileName string
-var stderrFileName string
+var (
+	verifierlog    VerifierLog
+	cmd            *cobra.Command
+	stdoutFileName string
+	stderrFileName string
+)
 
 const outputDirectory string = "chartverifier"
 
@@ -54,30 +58,29 @@ func LogWarning(message string) {
 	if cmd != nil {
 		cmd.PrintErrln(message)
 	}
-	warning_log_entry := LogEntry{Entry: fmt.Sprintf("[WARNING] %s", message)}
-	verifierlog.Entries = append(verifierlog.Entries, &warning_log_entry)
+	warningLogEntry := LogEntry{Entry: fmt.Sprintf("[WARNING] %s : %s", getTimeStamp(), message)}
+	verifierlog.Entries = append(verifierlog.Entries, &warningLogEntry)
 }
 
 func LogInfo(message string) {
-	info_log_entry := LogEntry{Entry: fmt.Sprintf("[INFO] %s", message)}
-	verifierlog.Entries = append(verifierlog.Entries, &info_log_entry)
+	infoLogEntry := LogEntry{Entry: fmt.Sprintf("[INFO] %s : %s", getTimeStamp(), message)}
+	verifierlog.Entries = append(verifierlog.Entries, &infoLogEntry)
 }
 
 func LogError(message string) {
 	if cmd != nil {
 		cmd.PrintErrln(message)
 	}
-	error_log_entry := LogEntry{Entry: fmt.Sprintf("[ERROR] %s", message)}
-	verifierlog.Entries = append(verifierlog.Entries, &error_log_entry)
+	errorLogEntry := LogEntry{Entry: fmt.Sprintf("[ERROR] %s : %s", getTimeStamp(), message)}
+	verifierlog.Entries = append(verifierlog.Entries, &errorLogEntry)
 }
 
-func WriteLogs(log_format string) {
-
+func WriteLogs(logFormat string) {
 	pruneLogFiles()
 
 	if len(verifierlog.Entries) > 0 && len(stderrFileName) > 0 {
 		logOut := ""
-		if log_format == "json" {
+		if logFormat == "json" {
 			b, err := json.Marshal(&verifierlog)
 			if err != nil {
 				LogError(err.Error())
@@ -94,8 +97,6 @@ func WriteLogs(log_format string) {
 		}
 		writeToFile(logOut, stderrFileName)
 	}
-	return
-
 }
 
 func WriteStdOut(output string) {
@@ -115,8 +116,8 @@ func writeToStdOut(output string) {
 	cmd.SetOut(savedOut)
 }
 
+// writeToFile writes output to fileName and returns true if successful.
 func writeToFile(output string, fileName string) bool {
-
 	currentDir, err := os.Getwd()
 	if err != nil {
 		LogError(fmt.Sprintf("error getting current working directory : %s", err))
@@ -125,26 +126,40 @@ func writeToFile(output string, fileName string) bool {
 	outputDir := path.Join(currentDir, outputDirectory)
 	outputFile := path.Join(outputDir, fileName)
 	if _, err := os.Stat(outputDir); err != nil {
-		if err = os.MkdirAll(outputDir, 0777); err != nil {
+		// #nosec G301
+		if err = os.MkdirAll(outputDir, 0o777); err != nil {
 			LogError(fmt.Sprintf("error creating directory : %s : %s", outputDir, err))
 			return false
 		}
 	}
 
 	if _, err := os.Stat(outputFile); err == nil {
+		// TODO(komish) this block needs refactoring.
+		//
+		// The general idea here is "try to delete an existing file and if you can't
+		// fail", but the handling of the value err here doesn't quite do what is
+		// expected. Adding this comment at linting/styling application instead of refactoring,
+		// but this should be done soon after.
+		//
+		//nolint:ineffassign,staticcheck
 		err = os.Remove(outputFile)
 	} else if errors.Is(err, os.ErrNotExist) {
+		//nolint:ineffassign
 		err = nil
 	} else {
 		LogError(fmt.Sprintf("Error removing existing file %s: %s", fileName, err))
 	}
-
-	if outfile, open_err := os.OpenFile(outputFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600); open_err == nil {
-		outfile.WriteString(output)
-		outfile.Close()
+	outfile, openErr := os.OpenFile(outputFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0o600)
+	if openErr == nil {
+		// #nosec G304
+		defer outfile.Close()
+		if _, writeErr := outfile.WriteString(output); writeErr != nil {
+			LogError(fmt.Sprintf("Error writing file %s: %s", fileName, writeErr))
+			return false
+		}
 		return true
 	} else {
-		LogError(fmt.Sprintf("Error creating/opening file %s: %s", fileName, open_err))
+		LogError(fmt.Sprintf("Error creating/opening file %s: %s", fileName, openErr))
 	}
 	return false
 }
@@ -180,7 +195,6 @@ func (fs *fileSorter) Less(i, j int) bool {
 }
 
 func pruneLogFiles() {
-
 	currentDir, err := os.Getwd()
 	if err != nil {
 		LogError(fmt.Sprintf("error getting current working directory : %s", err))
@@ -192,7 +206,7 @@ func pruneLogFiles() {
 		return
 	}
 
-	files, err := ioutil.ReadDir(logFilesPath)
+	files, err := os.ReadDir(logFilesPath)
 	if err != nil {
 		LogError(fmt.Sprintf("error reading log directory : %s : %s", logFilesPath, err))
 		return
@@ -201,7 +215,13 @@ func pruneLogFiles() {
 	logFiles := make([]fs.FileInfo, 0)
 	for _, file := range files {
 		if strings.HasPrefix(file.Name(), "verifier") && strings.HasSuffix(file.Name(), ".log") {
-			logFiles = append(logFiles, file)
+			fileInfo, err := file.Info()
+			if err != nil {
+				LogError(fmt.Sprintf("error getting file info : %s : %s", logFiles, err))
+				return
+			}
+
+			logFiles = append(logFiles, fileInfo)
 		}
 	}
 
@@ -218,7 +238,11 @@ func pruneLogFiles() {
 				LogError(fmt.Sprintf("error deleting logfile : %s : %s", logFiles[i].Name(), err))
 			}
 		}
-
 	}
+}
 
+func getTimeStamp() string {
+	t := time.Now()
+	year, month, day := t.Date()
+	return fmt.Sprintf("[%d-%s-%d %d:%d:%d.%d]", year, month, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond())
 }
