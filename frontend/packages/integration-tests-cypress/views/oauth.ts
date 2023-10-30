@@ -11,7 +11,7 @@ export const oauth = {
   },
   idpSaveAndVerify: (idpName: string, idpType: string) => {
     cy.byLegacyTestID('add-idp').click();
-    cy.get('.pf-c-alert.pf-m-danger').should('not.exist');
+    cy.get('.pf-v5-c-alert.pf-m-danger').should('not.exist');
     cy.url().should('include', oauthSettingsURL);
     cy.get(`[data-test-idp-name="${idpName}"]`).should('have.text', idpName);
     cy.get(`[data-test-idp-type-for="${idpName}"]`).should('have.text', idpType);

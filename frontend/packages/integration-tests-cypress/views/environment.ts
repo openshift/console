@@ -16,7 +16,7 @@ export const environment = {
   },
   addVariableFrom: (resourceName: string, resourcePrefix?: string, getExactResource?: boolean) => {
     environment.isLoaded();
-    cy.get('.value-from .pf-c-dropdown__toggle')
+    cy.get('.value-from .pf-v5-c-dropdown__toggle')
       .click()
       .byLegacyTestID('dropdown-text-filter')
       .type(resourceName);
