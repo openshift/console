@@ -4,7 +4,7 @@ export const buildPO = {
     nav: '[data-test="nav"]',
   },
   filter: '[aria-label="Options menu"]',
-  filterList: '[aria-labelledby="Status"]',
+  filterList: '[aria-labelledby="BuildRun-status"]',
   pane: '.co-m-pane__body',
   eventTab: '[data-test-id="horizontal-link-Events"]',
   eventStream: '.co-sysevent-stream',
@@ -15,6 +15,7 @@ export const buildPO = {
   },
   decorator: '[data-test="build-decorator"]',
   shipwrightBuild: {
+    filterList: '[aria-labelledby="Status"]',
     shipwrightBuildsTab: '[data-test-id="horizontal-link-Shipwright Builds"]',
     shipwrightBuildRunsTab: '[data-test-id="horizontal-link-BuildRuns"]',
     statusText: '[data-test="status-text"]',
