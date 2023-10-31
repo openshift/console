@@ -15,6 +15,7 @@ import {
 import { NameValueEditorPair } from '../utils/types';
 import { withHandlePromise, HandlePromiseProps } from '../utils/promise-component';
 import { AsyncComponent } from '../utils/async';
+import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 
 /**
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
@@ -34,8 +35,19 @@ export const TagsModal = withHandlePromise<TagsModalProps & HandlePromiseProps>(
     _.isEmpty(props.tags) ? [['', '']] : _.toPairs(props.tags),
   );
   const [errorMessage, setErrorMessage] = React.useState(props.errorMessage);
-
+  const [watchedResource, watchedResourceLoaded] = useK8sWatchResource<K8sResourceCommon>({
+    kind: props.resource?.kind,
+    name: props.resource?.metadata?.name,
+    namespace: props.resource?.metadata?.namespace,
+  });
+  const [stale, setStale] = React.useState(false);
   const { t } = useTranslation();
+
+  React.useEffect(() => {
+    if (watchedResourceLoaded) {
+      setStale(!_.isEqual(props.tags, watchedResource?.metadata?.annotations));
+    }
+  }, [props.tags, watchedResource, watchedResourceLoaded]);
 
   const submit = (e) => {
     e.preventDefault();
@@ -67,8 +79,14 @@ export const TagsModal = withHandlePromise<TagsModalProps & HandlePromiseProps>(
       </ModalBody>
       <ModalSubmitFooter
         submitText={t('public~Save')}
+        submitDisabled={stale}
         cancel={props.cancel}
         errorMessage={props.errorMessage || errorMessage}
+        message={
+          stale
+            ? t('public~Annotations have been updated. Click Cancel and reapply your changes.')
+            : undefined
+        }
         inProgress={props.inProgress}
       />
     </form>
@@ -78,7 +96,7 @@ export const TagsModal = withHandlePromise<TagsModalProps & HandlePromiseProps>(
 export const AnnotationsModal: React.FC<AnnotationsModalProps> = (props) => (
   <TagsModal
     path="/metadata/annotations"
-    tags={props.resource.metadata.annotations}
+    tags={props.resource?.metadata?.annotations}
     // t('public~Edit annotations')
     titleKey="public~Edit annotations"
     {...props}
