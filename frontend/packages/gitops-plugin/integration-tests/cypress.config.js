@@ -1,7 +1,7 @@
-const { defineConfig } = require("cypress");
+const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
-  projectId: "j4jxoy",
+  projectId: 'j4jxoy',
   viewportWidth: 1920,
   viewportHeight: 1080,
   defaultCommandTimeout: 40000,
@@ -10,17 +10,16 @@ module.exports = defineConfig({
   requestTimeout: 15000,
   responseTimeout: 15000,
   animationDistanceThreshold: 20,
-  screenshotsFolder: "../../../gui_test_screenshots/cypress/screenshots",
-  videosFolder: "../../../gui_test_screenshots/cypress/videos",
+  screenshotsFolder: '../../../gui_test_screenshots/cypress/screenshots',
+  videosFolder: '../../../gui_test_screenshots/cypress/videos',
   video: true,
-  reporter: "../../node_modules/cypress-multi-reporters",
+  reporter: '../../node_modules/cypress-multi-reporters',
 
   reporterOptions: {
-    configFile: "reporter-config.json",
+    configFile: 'reporter-config.json',
   },
 
-  fixturesFolder: "testData",
-  defaultCommandTimeout: 40000,
+  fixturesFolder: 'testData',
 
   retries: {
     runMode: 1,
@@ -28,8 +27,8 @@ module.exports = defineConfig({
   },
 
   env: {
-    TAGS: "@gitOps and @smoke and not (@manual or @to-do or @un-verified)",
-    NAMESPACE: "aut-gitops",
+    TAGS: '@gitOps and @smoke and not (@manual or @to-do or @un-verified)',
+    NAMESPACE: 'aut-gitops',
   },
 
   e2e: {
@@ -38,14 +37,11 @@ module.exports = defineConfig({
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
       // eslint-disable-next-line global-require
-      return require("../../dev-console/integration-tests/plugins/index.js")(
-        on,
-        config
-      );
+      return require('../../dev-console/integration-tests/plugins/index.js')(on, config);
     },
-    specPattern: "**/*.{feature,features}",
-    supportFile: "support/commands/index.ts",
-    baseUrl: "http://localhost:9000",
+    specPattern: '**/*.{feature,features}',
+    supportFile: 'support/commands/index.ts',
+    baseUrl: 'http://localhost:9000',
     testIsolation: false,
   },
 });

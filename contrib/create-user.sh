@@ -36,8 +36,8 @@ function waitForAuthOperatorProgressing {
 htpasswd_secret_name=$(oc get --ignore-not-found secret -n openshift-config htpass-secret -o name 2> /dev/null)
 
 if [ "$htpasswd_secret_name" == "" ]; then
-  oc create -f "$BASEDIR/frontend/integration-tests/data/htpasswd-secret.yaml"
-  oc patch oauths cluster --patch "$(cat "$BASEDIR/frontend/integration-tests/data/patch-htpasswd.yaml")" --type=merge
+  oc create -f "$BASEDIR/frontend/packages/console-shared/src/test-data/htpasswd-secret.yaml"
+  oc patch oauths cluster --patch "$(cat "$BASEDIR/frontend/packages/console-shared/src/test-data/patch-htpasswd.yaml")" --type=merge
   set +x
   echo "waiting for authentication operator to start Progressing 'test' idp..."
   waitForAuthOperatorProgressing "True"

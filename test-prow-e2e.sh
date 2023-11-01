@@ -25,17 +25,7 @@ export BRIDGE_BASE_ADDRESS
 
 ./contrib/create-user.sh
 
-# "fake" dbus address to prevent errors
-# https://github.com/SeleniumHQ/docker-selenium/issues/87
-DBUS_SESSION_BUS_ADDRESS=/dev/null
-export DBUS_SESSION_BUS_ADDRESS
-
 SCENARIO="${1:-e2e}"
-
-case $SCENARIO in
-  e2e|login|olmFull|nightly-cypress) ;; # no protractor tests
-  *) CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO";;
-esac
 
 # Disable color codes in Cypress since they do not render well CI test logs.
 # https://docs.cypress.io/guides/guides/continuous-integration.html#Colors

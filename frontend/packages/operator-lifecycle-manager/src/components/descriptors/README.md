@@ -110,14 +110,3 @@ Add a corresponding unit test file (named `<module>.spec.tsx`) that imports your
 ```shell
 $ yarn test
 ```
-
-#### E2E Tests
-
-Located at `frontend/integration-tests/tests/olm`.
-To sufficiently test your component, modify `descriptors.scenario.ts` and add a new case to `defaultValueFor` to provide a default value for your descriptor.
-
-Run the OLM end-to-end tests against a cluster with OLM installed:
-
-```shell
-$ yarn test-protractor-suite --suite olmFull
-```
