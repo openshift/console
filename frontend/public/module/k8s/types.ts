@@ -426,6 +426,18 @@ export type HPAMetric = {
   };
 };
 
+type HPAScalingPolicy = {
+  hpaScalingPolicyType: 'Pods' | 'Percent';
+  value: number;
+  periodSeconds: number;
+};
+
+type HPAScalingRules = {
+  stabilizationWindowSeconds?: number;
+  selectPolicy?: 'Max' | 'Min' | 'Disabled';
+  policies?: HPAScalingPolicy[];
+};
+
 type HPACurrentMetrics = {
   type: 'Object' | 'Pods' | 'Resource' | 'External';
   external?: {
@@ -457,6 +469,10 @@ export type HorizontalPodAutoscalerKind = K8sResourceCommon & {
     minReplicas?: number;
     maxReplicas: number;
     metrics?: HPAMetric[];
+    behavior?: {
+      scaleUp?: HPAScalingRules;
+      scaleDown?: HPAScalingRules;
+    };
   };
   status?: {
     currentReplicas: number;
