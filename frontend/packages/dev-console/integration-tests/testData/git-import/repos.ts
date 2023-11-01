@@ -14,6 +14,30 @@ export const gitImportRepos: GithubRepo[] = [
     url: 'https://github.com/rohitkrai03/flask-dockerfile-example',
     folder: 'flask-dockerfile-example',
   },
+  {
+    url: 'https://github.com/Lucifergene/serverless-func-repo',
+    folder: 'serverless-func-repo',
+  },
+  {
+    url: 'https://github.com/vikram-raj/hello-func-node',
+    folder: 'hello-func-node',
+  },
+  {
+    url: 'https://github.com/vikram-raj/hello-func-node-env',
+    folder: 'hello-func-node-env',
+  },
+  {
+    url: 'https://github.com/vikram-raj/hello-func-quarkus',
+    folder: 'hello-func-quarkus',
+  },
+  {
+    url: 'https://github.com/openshift-dev-console/kn-func-typescript-http',
+    folder: 'kn-func-typescript-http',
+  },
+  {
+    url: 'https://github.com/openshift-dev-console/kn-func-typescript-cloudevents',
+    folder: 'kn-func-typescript-cloudevents',
+  },
 ];
 
 interface GithubRepo {
@@ -27,6 +51,7 @@ export function getResponseMocks(repo: GithubRepo) {
 
   let packageJson = null;
   let devFileResources = null;
+  let funcJson = null;
   try {
     packageJson = require(`./${repo.folder}/package.json`);
   } catch (err) {
@@ -37,10 +62,16 @@ export function getResponseMocks(repo: GithubRepo) {
   } catch (err) {
     // nothing, the file does not exist
   }
+  try {
+    funcJson = require(`./${repo.folder}/func.json`);
+  } catch (err) {
+    // nothing, the file does not exist
+  }
   return {
     repoResponse: repoJson,
     contentsResponse: contentsJson,
     packageResponse: packageJson,
     devFileResources,
+    funcJson,
   };
 }
