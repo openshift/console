@@ -241,11 +241,13 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 
 		a.safeOAuth2ConfigGetter = func(ctx context.Context) *oauth2.Config {
 			// rebuild non-pointer struct each time to prevent any mutation
+			scopesCopy := make([]string, len(c.Scope))
+			copy(scopesCopy, c.Scope)
 			baseOAuth2Config := oauth2.Config{
 				ClientID:     c.ClientID,
 				ClientSecret: c.ClientSecret,
 				RedirectURL:  c.RedirectURL,
-				Scopes:       c.Scope,
+				Scopes:       scopesCopy,
 				Endpoint:     fallbackEndpoint,
 			}
 
