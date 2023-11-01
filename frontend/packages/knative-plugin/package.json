@@ -15,11 +15,6 @@
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx",
-    "integrationTestSuites": {
-      "knativeplugin": [
-        "integration-tests/**/*.scenario.ts"
-      ]
-    },
     "exposedModules": {
       "actions": "src/actions/providers.ts",
       "icons": "src/utils/icons.tsx",

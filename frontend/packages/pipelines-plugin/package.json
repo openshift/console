@@ -14,11 +14,6 @@
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx",
-    "integrationTestSuites": {
-      "pipelinesPlugin": [
-        "integration-tests/**/*.scenario.ts"
-      ]
-    },
     "exposedModules": {
       "icons": "src/utils/icons.ts",
       "yamlTemplates": "src/templates/pipelines.ts",

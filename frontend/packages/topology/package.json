@@ -17,11 +17,6 @@
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx",
-    "integrationTestSuites": {
-      "topology": [
-        "integration-tests/**/*.scenario.ts"
-      ]
-    },
     "exposedModules": {
       "reduxReducer": "src/utils/reducer.ts",
       "workload": "src/components/workload",
