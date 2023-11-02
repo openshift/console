@@ -6,7 +6,7 @@ import {
   EmptyStateBody,
   EmptyStateHeader,
 } from '@patternfly/react-core';
-import { UnknownIcon } from '@patternfly/react-icons';
+import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 import { useTranslation } from 'react-i18next';
 import { AlertsBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 

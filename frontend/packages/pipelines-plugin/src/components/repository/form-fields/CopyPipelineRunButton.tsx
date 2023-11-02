@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tooltip, Button } from '@patternfly/react-core';
-import { CopyIcon } from '@patternfly/react-icons';
+import { CopyIcon } from '@patternfly/react-icons/dist/esm/icons/copy-icon';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
 import { useTranslation } from 'react-i18next';
 

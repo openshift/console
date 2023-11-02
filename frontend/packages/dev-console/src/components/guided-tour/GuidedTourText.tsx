@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { Trans, useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import { ExternalLink } from '@console/internal/components/utils';

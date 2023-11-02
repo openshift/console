@@ -18,7 +18,8 @@ import {
   Title,
   EmptyStateActions,
 } from '@patternfly/react-core';
-import { ErrorCircleOIcon, InProgressIcon } from '@patternfly/react-icons';
+import { ErrorCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/error-circle-o-icon';
+import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { useTranslation } from 'react-i18next';
 import { history, resourcePath } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

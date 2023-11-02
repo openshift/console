@@ -10,7 +10,7 @@ import {
   EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { CheckIcon } from '@patternfly/react-icons';
+import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { global_palette_light_green_400 as globalLightGreen400 } from '@patternfly/react-tokens/dist/js/global_palette_light_green_400';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';

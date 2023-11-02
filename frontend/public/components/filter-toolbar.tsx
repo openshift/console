@@ -22,7 +22,8 @@ import {
   SelectOption as SelectOptionDeprecated,
   SelectVariant as SelectVariantDeprecated,
 } from '@patternfly/react-core/deprecated';
-import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
+import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
+import { ColumnsIcon } from '@patternfly/react-icons/dist/esm/icons/columns-icon';
 import {
   RowFilterItem,
   ColumnLayout,

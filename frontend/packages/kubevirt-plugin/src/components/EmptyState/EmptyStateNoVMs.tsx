@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { EmptyState, EmptyStateIcon, TitleSizes, EmptyStateHeader } from '@patternfly/react-core';
-import { VirtualMachineIcon } from '@patternfly/react-icons';
+import { VirtualMachineIcon } from '@patternfly/react-icons/dist/esm/icons/virtual-machine-icon';
 import { useTranslation } from 'react-i18next';
 
 type EmptyStateNoVMsProps = {

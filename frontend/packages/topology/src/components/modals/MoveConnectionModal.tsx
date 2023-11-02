@@ -5,7 +5,7 @@ import {
   DropdownItem as DropdownItemDeprecated,
   DropdownToggle as DropdownToggleDeprecated,
 } from '@patternfly/react-core/deprecated';
-import { CaretDownIcon } from '@patternfly/react-icons';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { Edge, Node } from '@patternfly/react-topology';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import { TFunction } from 'i18next';

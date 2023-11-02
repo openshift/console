@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { Formik, useField, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { SecretType } from '@console/internal/components/secrets/create-secret';

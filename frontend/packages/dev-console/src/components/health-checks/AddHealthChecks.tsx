@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Form, Button } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';

@@ -9,7 +9,7 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { PercentIcon } from '@patternfly/react-icons';
+import { PercentIcon } from '@patternfly/react-icons/dist/esm/icons/percent-icon';
 import { FormikErrors, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';

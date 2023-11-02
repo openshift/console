@@ -9,7 +9,7 @@ import {
   StackItem,
   EmptyStateHeader,
 } from '@patternfly/react-core';
-import { ChartLineIcon } from '@patternfly/react-icons';
+import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line-icon';
 import { useTranslation } from 'react-i18next';
 
 import './PipelineMetrics.scss';

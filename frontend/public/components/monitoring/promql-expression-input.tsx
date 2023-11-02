@@ -33,7 +33,7 @@ import {
 } from '@codemirror/view';
 import { PrometheusEndpoint, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { Button } from '@patternfly/react-core';
-import { CloseIcon } from '@patternfly/react-icons';
+import { CloseIcon } from '@patternfly/react-icons/dist/esm/icons/close-icon';
 import { PromQLExtension } from '@prometheus-io/codemirror-promql';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';

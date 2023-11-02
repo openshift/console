@@ -4,7 +4,7 @@ import {
   DropdownItem as DropdownItemDeprecated,
   DropdownToggle as DropdownToggleDeprecated,
 } from '@patternfly/react-core/deprecated';
-import { CheckCircleIcon } from '@patternfly/react-icons';
+import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { global_palette_green_500 as greenColor } from '@patternfly/react-tokens';
 import i18n from 'i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';

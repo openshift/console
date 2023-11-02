@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { OffIcon } from '@patternfly/react-icons';
+import { OffIcon } from '@patternfly/react-icons/dist/esm/icons/off-icon';
 import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
 import { StatusSimpleLabel } from '../../../constants/status-constants';

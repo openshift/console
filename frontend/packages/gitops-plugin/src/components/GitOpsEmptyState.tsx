@@ -6,7 +6,7 @@ import {
   EmptyStateBody,
   EmptyStateHeader,
 } from '@patternfly/react-core';
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon } from '@patternfly/react-icons/dist/esm/icons/cubes-icon';
 import './GitOpsEmptyState.scss';
 
 interface GitOpsEmptyStateProps {

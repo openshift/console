@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Grid, Split, SplitItem } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, resourcePath } from '@console/internal/components/utils';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';

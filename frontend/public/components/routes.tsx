@@ -4,7 +4,9 @@ import * as classNames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
 import { Button, Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
-import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon';
+import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon';
+import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import i18next from 'i18next';
 
 import { Status } from '@console/shared';

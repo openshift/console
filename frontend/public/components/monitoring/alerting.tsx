@@ -68,13 +68,11 @@ import {
   KebabToggle as KebabToggleDeprecated,
   KebabToggleProps as KebabTogglePropsDeprecated,
 } from '@patternfly/react-core/deprecated';
-import {
-  BanIcon,
-  BellIcon,
-  BellSlashIcon,
-  HourglassHalfIcon,
-  OutlinedBellIcon,
-} from '@patternfly/react-icons';
+import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
+import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
+import { BellSlashIcon } from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
+import { HourglassHalfIcon } from '@patternfly/react-icons/dist/esm/icons/hourglass-half-icon';
+import { OutlinedBellIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-bell-icon';
 import { sortable } from '@patternfly/react-table';
 import classNames from 'classnames';
 import i18next, { TFunction } from 'i18next';

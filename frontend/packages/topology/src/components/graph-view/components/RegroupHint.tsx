@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { ShortcutTable, Shortcut } from '@console/shared';
 

@@ -5,7 +5,7 @@ import {
   SelectOption as SelectOptionDeprecated,
   SelectVariant as SelectVariantDeprecated,
 } from '@patternfly/react-core/deprecated';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { EXPRESSION_OPERATORS } from '../../../shared/consts';
 import { AffinityLabel } from '../../types';

@@ -1,4 +1,4 @@
-import { CodeIcon } from '@patternfly/react-icons';
+import { CodeIcon } from '@patternfly/react-icons/dist/esm/icons/code-icon';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';

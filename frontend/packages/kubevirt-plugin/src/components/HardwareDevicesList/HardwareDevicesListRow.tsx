@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, GridItem, TextInput } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 
 export type HardwareDevicesListRowProps = {
   name?: string;

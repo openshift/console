@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, FormSelect, FormSelectOption, GridItem, TextInput } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { TaintEffect } from '@console/internal/module/k8s';
 import { TOLERATIONS_EFFECTS } from '../shared/consts';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MouseIcon } from '@patternfly/react-icons';
+import { MouseIcon } from '@patternfly/react-icons/dist/esm/icons/mouse-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import './Shortcut.scss';

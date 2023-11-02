@@ -2,13 +2,11 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
-import {
-  BellIcon,
-  CaretDownIcon,
-  EllipsisVIcon,
-  PlusCircleIcon,
-  QuestionCircleIcon,
-} from '@patternfly/react-icons';
+import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import {
   NotificationBadge,
   Toolbar,

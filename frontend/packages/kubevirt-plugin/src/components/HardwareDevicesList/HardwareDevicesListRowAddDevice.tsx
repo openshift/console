@@ -4,7 +4,7 @@ import {
   SelectGroup as SelectGroupDeprecated,
   SelectOption as SelectOptionDeprecated,
 } from '@patternfly/react-core/deprecated';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useHyperconvergedCR } from '../../hooks/use-hyperconverged-resource';

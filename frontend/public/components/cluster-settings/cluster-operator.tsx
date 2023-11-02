@@ -3,7 +3,8 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert } from '@patternfly/react-core';
-import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
+import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
+import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 import { useTranslation } from 'react-i18next';
 
 import { ClusterOperatorModel } from '../../models';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { useTranslation } from 'react-i18next';
 import { Decorator } from '@console/topology/src/components/graph-view';
 

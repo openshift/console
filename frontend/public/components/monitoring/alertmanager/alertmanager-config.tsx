@@ -14,7 +14,7 @@ import {
   LabelGroup as PfLabelGroup,
   EmptyStateHeader,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 

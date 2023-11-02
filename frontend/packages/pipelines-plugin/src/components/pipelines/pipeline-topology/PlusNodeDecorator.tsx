@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { PlusIcon } from '@patternfly/react-icons';
+import { PlusIcon } from '@patternfly/react-icons/dist/esm/icons/plus-icon';
 import { BUILDER_NODE_ADD_RADIUS } from './const';
 
 import './PlusNodeDecorator.scss';

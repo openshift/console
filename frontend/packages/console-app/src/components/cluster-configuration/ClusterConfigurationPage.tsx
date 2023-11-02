@@ -9,7 +9,7 @@ import {
   EmptyStateBody,
   EmptyStateHeader,
 } from '@patternfly/react-core';
-import { LockIcon } from '@patternfly/react-icons';
+import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';

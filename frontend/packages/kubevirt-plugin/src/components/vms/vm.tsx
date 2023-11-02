@@ -9,7 +9,8 @@ import {
   EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { RocketIcon, VirtualMachineIcon } from '@patternfly/react-icons';
+import { RocketIcon } from '@patternfly/react-icons/dist/esm/icons/rocket-icon';
+import { VirtualMachineIcon } from '@patternfly/react-icons/dist/esm/icons/virtual-machine-icon';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { TFunction } from 'i18next';

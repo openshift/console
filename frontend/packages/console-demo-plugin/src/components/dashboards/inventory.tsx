@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AddressBookIcon } from '@patternfly/react-icons';
+import { AddressBookIcon } from '@patternfly/react-icons/dist/esm/icons/address-book-icon';
 import {
   StatusGroupMapper,
   ExpandedComponentProps,

@@ -7,7 +7,7 @@ import { getMachineAWSPlacement, getMachineRole, getMachineSetInstanceType } fro
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ListPageBody, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import { Tooltip, Button } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { useTranslation } from 'react-i18next';
 
 import { MachineAutoscalerModel, MachineModel, MachineSetModel, NodeModel } from '../models';

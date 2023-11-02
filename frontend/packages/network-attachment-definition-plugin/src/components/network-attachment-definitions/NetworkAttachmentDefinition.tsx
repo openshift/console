@@ -7,7 +7,7 @@ import {
   EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { RocketIcon } from '@patternfly/react-icons';
+import { RocketIcon } from '@patternfly/react-icons/dist/esm/icons/rocket-icon';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { QuickStartModel } from '@console/app/src/models';

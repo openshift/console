@@ -13,7 +13,7 @@ import {
   DropdownItem as DropdownItemDeprecated,
   KebabToggle as KebabToggleDeprecated,
 } from '@patternfly/react-core/deprecated';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
 
 import './GettingStartedGrid.scss';

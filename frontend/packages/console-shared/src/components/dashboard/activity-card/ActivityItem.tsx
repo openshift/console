@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Progress, ProgressSize } from '@patternfly/react-core';
-import { InProgressIcon } from '@patternfly/react-icons';
+import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import classNames from 'classnames';
 import { ActivityItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { saveAs } from 'file-saver';
 import { Alert, Button } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
+import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 
 import { coFetch } from '../../co-fetch';
 

@@ -5,7 +5,7 @@ import {
   DropdownItem as DropdownItemDeprecated,
   DropdownToggle as DropdownToggleDeprecated,
 } from '@patternfly/react-core/deprecated';
-import { CaretDownIcon } from '@patternfly/react-icons';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';

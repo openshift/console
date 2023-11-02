@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Bullseye, Stack, StackItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { StarIcon } from '@patternfly/react-icons';
+import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
 import { info, sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';

@@ -9,14 +9,13 @@ import {
   Stack,
   StackItem,
 } from '@patternfly/react-core';
-import {
-  HourglassHalfIcon,
-  InProgressIcon,
-  OffIcon,
-  PausedIcon,
-  SyncAltIcon,
-  UnknownIcon,
-} from '@patternfly/react-icons';
+import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
+import { HourglassHalfIcon } from '@patternfly/react-icons/dist/esm/icons/hourglass-half-icon';
+import { OffIcon } from '@patternfly/react-icons/dist/esm/icons/off-icon';
+import { PausedIcon } from '@patternfly/react-icons/dist/esm/icons/paused-icon';
+import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
+import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
+
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { GenericStatus } from '@console/dynamic-plugin-sdk';

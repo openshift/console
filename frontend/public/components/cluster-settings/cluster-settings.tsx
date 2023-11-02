@@ -22,12 +22,11 @@ import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import { useTranslation } from 'react-i18next';
 
-import {
-  AddCircleOIcon,
-  PauseCircleIcon,
-  PencilAltIcon,
-  SyncAltIcon,
-} from '@patternfly/react-icons';
+import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
+import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-circle-icon';
+import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
+
 import { removeQueryArgument } from '@console/internal/components/utils/router';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {

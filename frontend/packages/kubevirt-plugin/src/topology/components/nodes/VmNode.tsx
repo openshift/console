@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import { VirtualMachineIcon } from '@patternfly/react-icons';
+import { VirtualMachineIcon } from '@patternfly/react-icons/dist/esm/icons/virtual-machine-icon';
 import {
   Node,
   NodeModel,

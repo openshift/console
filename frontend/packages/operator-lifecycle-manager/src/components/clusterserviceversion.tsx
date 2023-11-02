@@ -8,7 +8,8 @@ import {
   Popover,
   CardTitle,
 } from '@patternfly/react-core';
-import { AddCircleOIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
+import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { sortable, wrappable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';

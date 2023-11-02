@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert, AlertVariant } from '@patternfly/react-core';
-import { InProgressIcon } from '@patternfly/react-icons';
+import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';

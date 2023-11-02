@@ -8,7 +8,7 @@ import {
   Grid,
   gridItemSpanValueShape,
 } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import './MultiColumnField.scss';
 

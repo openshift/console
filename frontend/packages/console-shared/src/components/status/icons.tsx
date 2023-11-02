@@ -1,11 +1,10 @@
 import * as React from 'react';
-import {
-  ArrowCircleUpIcon,
-  UnknownIcon,
-  SyncAltIcon,
-  ResourcesAlmostFullIcon,
-  ResourcesFullIcon,
-} from '@patternfly/react-icons';
+import { ArrowCircleUpIcon } from '@patternfly/react-icons/dist/esm/icons/arrow-circle-up-icon';
+import { ResourcesAlmostFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-full-icon';
+import { ResourcesFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-full-icon';
+import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
+import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
+
 import * as ReactTokens from '@patternfly/react-tokens';
 import { ColoredIconProps } from '@console/dynamic-plugin-sdk';
 

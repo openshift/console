@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
-import { CubeIcon } from '@patternfly/react-icons';
+import { CubeIcon } from '@patternfly/react-icons/dist/esm/icons/cube-icon';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getGitService, ImportStrategy } from '@console/git-service/src';

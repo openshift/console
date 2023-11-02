@@ -8,7 +8,8 @@ import {
   ButtonType,
   Tooltip,
 } from '@patternfly/react-core';
-import { MinusCircleIcon, GripVerticalIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { GripVerticalIcon } from '@patternfly/react-icons/dist/esm/icons/grip-vertical-icon';
 import { useTranslation } from 'react-i18next';
 import InputField from '../InputField';
 import {

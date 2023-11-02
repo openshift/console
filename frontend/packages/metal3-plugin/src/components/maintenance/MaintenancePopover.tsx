@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { InProgressIcon, MaintenanceIcon } from '@patternfly/react-icons';
+import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
+import { MaintenanceIcon } from '@patternfly/react-icons/dist/esm/icons/maintenance-icon';
 import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getNodeMaintenancePhase } from '../../selectors';

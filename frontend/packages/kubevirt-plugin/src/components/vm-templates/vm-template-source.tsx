@@ -9,7 +9,8 @@ import {
   Stack,
   StackItem,
 } from '@patternfly/react-core';
-import { InProgressIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, LoadingInline, ResourceLink } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';

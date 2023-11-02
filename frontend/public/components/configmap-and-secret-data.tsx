@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon';
+import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';

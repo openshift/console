@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BanIcon } from '@patternfly/react-icons';
+import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
 
 export const Phase: React.SFC<PhaseProps> = ({ status }) => (
   <span className={status === 'Failed' ? 'co-error' : ''}>

@@ -8,7 +8,7 @@ import {
   EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { TopologyIcon } from '@patternfly/react-icons';
+import { TopologyIcon } from '@patternfly/react-icons/dist/esm/icons/topology-icon';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Text, TextVariants } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 
 export const AddDeviceButton: React.FC<AddDeviceButtonType> = ({
   id,

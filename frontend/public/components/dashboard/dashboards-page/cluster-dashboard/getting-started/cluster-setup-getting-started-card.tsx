@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ClipboardCheckIcon } from '@patternfly/react-icons';
+import { ClipboardCheckIcon } from '@patternfly/react-icons/dist/esm/icons/clipboard-check-icon';
 
 import { useCanClusterUpgrade } from '@console/shared';
 

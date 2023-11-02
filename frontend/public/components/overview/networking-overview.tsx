@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
-import { LongArrowAltRightIcon } from '@patternfly/react-icons';
+import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
 
 import { K8sResourceKind, RouteKind } from '../../module/k8s';
 import { RouteLocation } from '../routes';

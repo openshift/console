@@ -24,7 +24,7 @@ import {
   SelectOption as SelectOptionDeprecated,
   SelectVariant as SelectVariantDeprecated,
 } from '@patternfly/react-core/deprecated';
-import { SearchIcon } from '@patternfly/react-icons';
+import { SearchIcon } from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import * as classnames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import { Trans, useTranslation } from 'react-i18next';

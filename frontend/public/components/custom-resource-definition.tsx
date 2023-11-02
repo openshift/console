@@ -7,7 +7,7 @@ import {
   TableBody as TableBodyDeprecated,
   TableHeader as TableHeaderDeprecated,
 } from '@patternfly/react-table/deprecated';
-import { BanIcon } from '@patternfly/react-icons';
+import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
 import { useTranslation } from 'react-i18next';
 
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';

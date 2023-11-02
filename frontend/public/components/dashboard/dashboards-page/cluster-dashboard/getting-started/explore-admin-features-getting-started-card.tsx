@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as semver from 'semver';
 import { useTranslation } from 'react-i18next';
-import { FlagIcon } from '@patternfly/react-icons';
+import { FlagIcon } from '@patternfly/react-icons/dist/esm/icons/flag-icon';
 
 import { useOpenShiftVersion } from '@console/shared/src';
 import {

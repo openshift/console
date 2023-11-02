@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Text } from '@patternfly/react-core';
-import { CatalogIcon } from '@patternfly/react-icons';
+import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import AddCardItem from '../AddCardItem';

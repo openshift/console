@@ -6,7 +6,7 @@ import {
   EmptyStateVariant,
   EmptyStateHeader,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import { global_danger_color_200 as globalDanger200 } from '@patternfly/react-tokens/dist/js/global_danger_color_200';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';

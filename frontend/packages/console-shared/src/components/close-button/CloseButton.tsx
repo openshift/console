@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { CloseIcon } from '@patternfly/react-icons';
+import { CloseIcon } from '@patternfly/react-icons/dist/esm/icons/close-icon';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import './CloseButton.scss';

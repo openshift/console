@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Flex, FlexItem, Divider, Label, Text, TextVariants } from '@patternfly/react-core';
-import { LockIcon } from '@patternfly/react-icons';
+import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import { useTranslation } from 'react-i18next';
 import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';

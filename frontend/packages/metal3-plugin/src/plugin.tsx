@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MaintenanceIcon } from '@patternfly/react-icons';
+import { MaintenanceIcon } from '@patternfly/react-icons/dist/esm/icons/maintenance-icon';
 import * as _ from 'lodash';
 import '@console/internal/i18n.js';
 import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';

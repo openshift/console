@@ -5,7 +5,8 @@ import {
   DropdownToggle as DropdownToggleDeprecated,
   DropdownItem as DropdownItemDeprecated,
 } from '@patternfly/react-core/deprecated';
-import { CaretDownIcon, FilterIcon } from '@patternfly/react-icons';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { TextFilter } from './factory';
 
 export enum searchFilterValues {

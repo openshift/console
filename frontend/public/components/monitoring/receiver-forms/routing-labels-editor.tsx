@@ -2,7 +2,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
-import { MinusCircleIcon, PlusCircleIcon, InfoCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { Button, Tooltip } from '@patternfly/react-core';
 
 import { ExternalLink, SectionHeading } from '../../utils';

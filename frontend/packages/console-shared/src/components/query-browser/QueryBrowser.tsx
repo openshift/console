@@ -31,7 +31,7 @@ import {
   Dropdown as DropdownDeprecated,
   DropdownToggle as DropdownToggleDeprecated,
 } from '@patternfly/react-core/deprecated';
-import { ChartLineIcon } from '@patternfly/react-icons';
+import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line-icon';
 import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Alert, Divider, FormHelperText } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { ArrayFieldTemplateProps, FieldTemplateProps, ObjectFieldTemplateProps } from '@rjsf/core';
 import { getUiOptions, getSchemaType } from '@rjsf/core/dist/cjs/utils';
 import * as _ from 'lodash';

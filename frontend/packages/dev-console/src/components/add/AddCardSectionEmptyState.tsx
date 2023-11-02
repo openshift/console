@@ -6,7 +6,8 @@ import {
   EmptyStateVariant,
   EmptyStateHeader,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon, LockIcon } from '@patternfly/react-icons';
+import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
+import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import { useTranslation } from 'react-i18next';
 
 type AddCardSectionEmptyStateProps = {

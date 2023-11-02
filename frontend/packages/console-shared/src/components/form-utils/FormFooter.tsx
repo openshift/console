@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ActionGroup, Alert, Button, ButtonVariant } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
+import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils';

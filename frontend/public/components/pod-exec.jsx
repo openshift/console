@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Base64 } from 'js-base64';
 import { withTranslation } from 'react-i18next';
-import { ExpandIcon } from '@patternfly/react-icons';
+import { ExpandIcon } from '@patternfly/react-icons/dist/esm/icons/expand-icon';
 import { Button, Alert, AlertActionLink } from '@patternfly/react-core';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 

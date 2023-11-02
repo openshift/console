@@ -7,7 +7,8 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/dynamic-plugin-sdk';
 import { Alert, Button } from '@patternfly/react-core';
-import { ChartLineIcon, CompressIcon } from '@patternfly/react-icons';
+import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line-icon';
+import { CompressIcon } from '@patternfly/react-icons/dist/esm/icons/compress-icon';
 import {
   ISortBy,
   sortable,

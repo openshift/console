@@ -1,13 +1,11 @@
 import * as React from 'react';
-import {
-  GitAltIcon,
-  OsImageIcon,
-  CatalogIcon,
-  DatabaseIcon,
-  LaptopCodeIcon,
-  BoltIcon,
-  FileUploadIcon,
-} from '@patternfly/react-icons';
+import { GitAltIcon } from '@patternfly/react-icons/dist/esm/icons/git-alt-icon';
+import { OsImageIcon } from '@patternfly/react-icons/dist/esm/icons/os-image-icon';
+import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
+import { DatabaseIcon } from '@patternfly/react-icons/dist/esm/icons/database-icon';
+import { LaptopCodeIcon } from '@patternfly/react-icons/dist/esm/icons/laptop-code-icon';
+import { BoltIcon } from '@patternfly/react-icons/dist/esm/icons/bolt-icon';
+import { FileUploadIcon } from '@patternfly/react-icons/dist/esm/icons/file-upload-icon';
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk/src';
 import { eventIconStyle, ServerlessFunctionIcon } from '@console/knative-plugin/src/utils/icons';

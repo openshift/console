@@ -14,13 +14,11 @@ import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
-import {
-  CompressIcon,
-  ExpandIcon,
-  DownloadIcon,
-  OutlinedWindowRestoreIcon,
-  OutlinedPlayCircleIcon,
-} from '@patternfly/react-icons';
+import { CompressIcon } from '@patternfly/react-icons/dist/esm/icons/compress-icon';
+import { ExpandIcon } from '@patternfly/react-icons/dist/esm/icons/expand-icon';
+import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
+import { OutlinedWindowRestoreIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-window-restore-icon';
+import { OutlinedPlayCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-play-circle-icon';
 import * as classNames from 'classnames';
 import { FLAGS, LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
 import { useUserSettings } from '@console/shared';

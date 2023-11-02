@@ -1,13 +1,12 @@
 import * as React from 'react';
-import {
-  BanIcon,
-  ClipboardListIcon,
-  HourglassHalfIcon,
-  HourglassStartIcon,
-  NotStartedIcon,
-  SyncAltIcon,
-  UnknownIcon,
-} from '@patternfly/react-icons';
+import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
+import { ClipboardListIcon } from '@patternfly/react-icons/dist/esm/icons/clipboard-list-icon';
+import { HourglassHalfIcon } from '@patternfly/react-icons/dist/esm/icons/hourglass-half-icon';
+import { HourglassStartIcon } from '@patternfly/react-icons/dist/esm/icons/hourglass-start-icon';
+import { NotStartedIcon } from '@patternfly/react-icons/dist/esm/icons/not-started-icon';
+import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
+import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
+
 import { StatusComponentProps } from '../../../extensions/console-types';
 import { DASH } from '../../constants';
 import { YellowExclamationTriangleIcon } from './icons';

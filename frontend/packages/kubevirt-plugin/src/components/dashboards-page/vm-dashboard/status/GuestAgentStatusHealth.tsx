@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { OffIcon } from '@patternfly/react-icons';
+import { OffIcon } from '@patternfly/react-icons/dist/esm/icons/off-icon';
 import { useTranslation } from 'react-i18next';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
