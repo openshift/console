@@ -9,9 +9,9 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -21,6 +21,7 @@ import (
 
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
+	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 )
@@ -51,15 +52,21 @@ var (
 type Authenticator struct {
 	clientFunc func() *http.Client
 
+	clientID     string
+	clientSecret string
+	scopes       []string
+
+	loginMethod
+
+	redirectURL   string
 	errorURL      string
 	successURL    string
 	cookiePath    string
 	refererURL    *url.URL
 	secureCookies bool
 
-	loginMethod
-
-	safeOAuth2ConfigGetter func(context.Context) *oauth2.Config
+	lastSuccessfulEndpointRWLock sync.RWMutex
+	lastSuccesfulEndpoint        *oauth2.Endpoint
 
 	k8sConfig *rest.Config
 	metrics   *Metrics
@@ -131,7 +138,7 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 	if issuerCA == "" {
 		return http.DefaultClient, nil
 	}
-	data, err := ioutil.ReadFile(issuerCA)
+	data, err := os.ReadFile(issuerCA)
 	if err != nil {
 		return nil, fmt.Errorf("load issuer CA file %s: %v", issuerCA, err)
 	}
@@ -179,13 +186,6 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 // NewAuthenticator initializes an Authenticator struct. It blocks until the authenticator is
 // able to contact the provider.
 func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
-	// Retry connecting to the identity provider every 10s for 5 minutes
-	const (
-		backoff  = time.Second * 10
-		maxSteps = 30
-	)
-	steps := 0
-
 	a, err := newUnstartedAuthenticator(c)
 	if err != nil {
 		return nil, err
@@ -208,61 +208,97 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 			return nil, errK8Client
 		}
 
-		_, tokenHandler, err = newOpenShiftAuth(ctx, k8sClient, authConfig)
+		tokenHandler, err = newOpenShiftAuth(ctx, k8sClient, authConfig)
 		if err != nil {
 			return nil, err
 		}
 	default:
-		// the OIDC provider is using a sessions store which we don't want to create
-		// on every authSourceFunc() invocation
 		sessionStore := NewSessionStore(32768)
-
-		_, tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig)
+		tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig)
 		if err != nil {
 			return nil, err
 		}
 	}
 	a.loginMethod = tokenHandler
 
-	for {
-		fallbackEndpoint, err := a.loginMethod.getEndpointConfig(ctx)
-		if err != nil {
-			steps++
-			if steps > maxSteps {
-				klog.Errorf("error contacting auth provider: %v", err)
-				return nil, err
-			}
+	// make sure we've got a fallback endpoint set up
+	if err := a.refreshFallbackEndpoint(ctx); err != nil {
+		return nil, err
+	}
 
-			klog.Errorf("error contacting auth provider (retrying in %s): %v", backoff, err)
+	// refresh the fallback endpoint every hour
+	go wait.UntilWithContext(ctx, func(loopCtx context.Context) {
+		err := a.refreshFallbackEndpoint(loopCtx)
+		if err != nil {
+			klog.Errorf(err.Error())
+		}
+	}, time.Hour)
+
+	return a, nil
+}
+
+func (a *Authenticator) getLastSuccessfulEndpoint() oauth2.Endpoint {
+	a.lastSuccessfulEndpointRWLock.RLock()
+	defer a.lastSuccessfulEndpointRWLock.RUnlock()
+
+	endpoint := a.lastSuccesfulEndpoint
+	if endpoint == nil {
+		panic("authenticator is uninitialized!")
+	}
+
+	return *a.lastSuccesfulEndpoint
+}
+
+func (a *Authenticator) getOAuth2Config(ctx context.Context) *oauth2.Config {
+	// rebuild non-pointer struct each time to prevent any mutation
+	scopesCopy := make([]string, len(a.scopes))
+	copy(scopesCopy, a.scopes)
+	baseOAuth2Config := oauth2.Config{
+		ClientID:     a.clientID,
+		ClientSecret: a.clientSecret,
+		RedirectURL:  a.redirectURL,
+		Scopes:       scopesCopy,
+	}
+
+	currentEndpoint, errAuthSource := a.loginMethod.getEndpointConfig(ctx)
+	if errAuthSource != nil {
+		klog.Errorf("failed to get latest auth source data: %v", errAuthSource)
+		baseOAuth2Config.Endpoint = a.getLastSuccessfulEndpoint()
+
+		return &baseOAuth2Config
+	}
+
+	baseOAuth2Config.Endpoint = currentEndpoint
+	return &baseOAuth2Config
+}
+
+func (a *Authenticator) refreshFallbackEndpoint(ctx context.Context) error {
+	// Retry connecting to the identity provider every 10s for 5 minutes
+	const (
+		backoff  = time.Second * 10
+		maxSteps = 30
+	)
+
+	var (
+		err              error
+		fallbackEndpoint oauth2.Endpoint
+	)
+	for steps := 0; steps < maxSteps; steps++ {
+		fallbackEndpoint, err = a.loginMethod.getEndpointConfig(ctx)
+		if err != nil {
+			klog.Warningf("error contacting auth provider (retrying in %s): %v", backoff, err)
 
 			time.Sleep(backoff)
 			continue
 		}
 
-		a.safeOAuth2ConfigGetter = func(ctx context.Context) *oauth2.Config {
-			// rebuild non-pointer struct each time to prevent any mutation
-			scopesCopy := make([]string, len(c.Scope))
-			copy(scopesCopy, c.Scope)
-			baseOAuth2Config := oauth2.Config{
-				ClientID:     c.ClientID,
-				ClientSecret: c.ClientSecret,
-				RedirectURL:  c.RedirectURL,
-				Scopes:       scopesCopy,
-				Endpoint:     fallbackEndpoint,
-			}
-
-			currentEndpoint, errAuthSource := a.loginMethod.getEndpointConfig(ctx)
-			if errAuthSource != nil {
-				klog.Errorf("failed to get latest auth source data: %v", errAuthSource)
-				return &baseOAuth2Config
-			}
-
-			baseOAuth2Config.Endpoint = currentEndpoint
-			return &baseOAuth2Config
-		}
-
-		return a, nil
+		a.lastSuccessfulEndpointRWLock.Lock()
+		defer a.lastSuccessfulEndpointRWLock.Unlock()
+		a.lastSuccesfulEndpoint = &fallbackEndpoint
+		return nil
 	}
+
+	return fmt.Errorf("failed to refresh fallback OAuth2 endpoint: %w", err)
 }
 
 func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
@@ -301,7 +337,13 @@ func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
 	}
 
 	return &Authenticator{
-		clientFunc:    clientFunc,
+		clientFunc: clientFunc,
+
+		clientID:     c.ClientID,
+		clientSecret: c.ClientSecret,
+		scopes:       c.Scope,
+
+		redirectURL:   c.RedirectURL,
 		errorURL:      errURL,
 		successURL:    sucURL,
 		cookiePath:    c.CookiePath,
@@ -409,7 +451,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 		ctx := oidc.ClientContext(r.Context(), a.clientFunc())
-		oauthConfig := a.safeOAuth2ConfigGetter(r.Context())
+		oauthConfig := a.getOAuth2Config(r.Context())
 		token, err := oauthConfig.Exchange(ctx, code)
 		if err != nil {
 			klog.Errorf("unable to verify auth code with issuer: %v", err)
@@ -431,10 +473,6 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 		klog.Infof("oauth success, redirecting to: %q", a.successURL)
 		fn(ls.toLoginJSON(), a.successURL, w)
 	}
-}
-
-func (a *Authenticator) getOAuth2Config(ctx context.Context) *oauth2.Config {
-	return a.safeOAuth2ConfigGetter(ctx)
 }
 
 func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string) {
