@@ -43,7 +43,7 @@ func validateAbsURL(value string) error {
 	return nil
 }
 
-func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig) (oauth2.Endpoint, loginMethod, error) {
+func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig) (loginMethod, error) {
 	o := &openShiftAuth{
 		issuerURL:     c.issuerURL,
 		cookiePath:    c.cookiePath,
@@ -53,21 +53,17 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 	}
 
 	// TODO: repeat the discovery several times as in the auth.go logic
-	metadata, err := o.getOIDCDiscovery(ctx)
+	_, err := o.getOIDCDiscovery(ctx)
 	if err != nil {
-		return oauth2.Endpoint{}, nil, err
+		return nil, err
 	}
 
-	return oauth2.Endpoint{
-		AuthURL:  metadata.Auth,
-		TokenURL: metadata.Token,
-	}, o, nil
+	return o, nil
 }
 
 func (o *openShiftAuth) getOIDCDiscovery(ctx context.Context) (*oidcDiscovery, error) {
 	// Use metadata discovery to determine the OAuth2 token and authorization URL.
 	// https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/authentication_and_authorization/configuring-internal-oauth#oauth-server-metadata_configuring-internal-oauth
-	// FIXME: this all belongs to `login()``
 	wellKnownURL := strings.TrimSuffix(o.issuerURL, "/") + "/.well-known/oauth-authorization-server"
 
 	req, err := http.NewRequest(http.MethodGet, wellKnownURL, nil)
@@ -92,7 +88,7 @@ func (o *openShiftAuth) getOIDCDiscovery(ctx context.Context) (*oidcDiscovery, e
 			wellKnownURL, err)
 	}
 
-	if err := validateAbsURL(metadata.Issuer); err != nil {
+	if err := validateAbsURL(metadata.Issuer); err != nil { // FIXME: must validate issuer == o.Issuer
 		return nil, err
 	}
 

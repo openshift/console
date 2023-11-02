@@ -14,7 +14,7 @@ import (
 
 type oidcAuth struct {
 	issuerURL string
-	verifier  *oidc.IDTokenVerifier
+	verifier  *oidc.IDTokenVerifier // TODO: the verifier should be dynamic and cached
 
 	// This preserves the old logic of associating users with session keys
 	// and requires smart routing when running multiple backend instances.
@@ -32,14 +32,16 @@ type oidcConfig struct {
 	secureCookies bool
 }
 
-func newOIDCAuth(ctx context.Context, sessionStore *SessionStore, c *oidcConfig) (oauth2.Endpoint, *oidcAuth, error) {
+func newOIDCAuth(ctx context.Context, sessionStore *SessionStore, c *oidcConfig) (*oidcAuth, error) {
 	ctx = oidc.ClientContext(ctx, c.client)
+
+	// NewProvider attempts to do OIDC Discovery
 	p, err := oidc.NewProvider(ctx, c.issuerURL)
 	if err != nil {
-		return oauth2.Endpoint{}, nil, err
+		return nil, err
 	}
 
-	return p.Endpoint(), &oidcAuth{
+	return &oidcAuth{
 		issuerURL: c.issuerURL,
 		verifier: p.Verifier(&oidc.Config{
 			ClientID: c.clientID,
