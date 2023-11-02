@@ -157,9 +157,8 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 	return ls, nil
 }
 
-func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
-	// NOTE: cookies are going away, this should be removed in the future
-
+// NOTE: cookies are going away, this should be removed in the future
+func (o *openShiftAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
 	// Delete session cookie
 	cookie := http.Cookie{
 		Name:     GetCookieName(o.clusterName), // TODO remove multicluster
@@ -170,6 +169,10 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 		Secure:   o.secureCookies,
 	}
 	http.SetCookie(w, &cookie)
+}
+
+func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
+	o.deleteCookie(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
 
