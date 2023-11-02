@@ -22,6 +22,8 @@ type openShiftAuth struct {
 	secureCookies bool
 	k8sClient     *http.Client
 	client        *http.Client
+
+	oauthEndpointCache *AsyncCache[*oidcDiscovery]
 }
 
 type oidcDiscovery struct {
@@ -53,15 +55,21 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 	}
 
 	// TODO: repeat the discovery several times as in the auth.go logic
-	_, err := o.getOIDCDiscovery(ctx)
+	var err error
+	o.oauthEndpointCache, err = NewAsyncCache[*oidcDiscovery](ctx, 5*time.Minute, o.getOIDCDiscoveryInternal)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to construct OAuth endpoint cache: %w", err)
 	}
+	o.oauthEndpointCache.Run(ctx)
 
 	return o, nil
 }
 
-func (o *openShiftAuth) getOIDCDiscovery(ctx context.Context) (*oidcDiscovery, error) {
+func (o *openShiftAuth) getOIDCDiscovery() *oidcDiscovery {
+	return o.oauthEndpointCache.GetItem()
+}
+
+func (o *openShiftAuth) getOIDCDiscoveryInternal(ctx context.Context) (*oidcDiscovery, error) {
 	// Use metadata discovery to determine the OAuth2 token and authorization URL.
 	// https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/authentication_and_authorization/configuring-internal-oauth#oauth-server-metadata_configuring-internal-oauth
 	wellKnownURL := strings.TrimSuffix(o.issuerURL, "/") + "/.well-known/oauth-authorization-server"
@@ -188,11 +196,8 @@ func (o *openShiftAuth) getUser(r *http.Request) (*User, error) {
 	}, nil
 }
 
-func (o *openShiftAuth) getSpecialURLs(ctx context.Context) (SpecialAuthURLs, error) {
-	discovery, err := o.getOIDCDiscovery(ctx)
-	if err != nil {
-		return SpecialAuthURLs{}, err
-	}
+func (o *openShiftAuth) GetSpecialURLs() SpecialAuthURLs {
+	discovery := o.getOIDCDiscovery()
 
 	// Special page on the integrated OAuth server for requesting a token.
 	// TODO: We will need to implement this directly console to support external OAuth servers.
@@ -202,16 +207,14 @@ func (o *openShiftAuth) getSpecialURLs(ctx context.Context) (SpecialAuthURLs, er
 	return SpecialAuthURLs{
 		RequestToken:    requestTokenURL,
 		KubeAdminLogout: kubeAdminLogoutURL,
-	}, nil
+	}
 }
 
-func (o *openShiftAuth) getEndpointConfig(ctx context.Context) (oauth2.Endpoint, error) {
-	metadata, err := o.getOIDCDiscovery(ctx)
-	if err != nil {
-		return oauth2.Endpoint{}, nil
-	}
+func (o *openShiftAuth) getEndpointConfig() oauth2.Endpoint {
+	metadata := o.getOIDCDiscovery()
+
 	return oauth2.Endpoint{
 		AuthURL:  metadata.Auth,
 		TokenURL: metadata.Token,
-	}, nil
+	}
 }

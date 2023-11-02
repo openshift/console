@@ -14,7 +14,9 @@ import (
 
 type oidcAuth struct {
 	issuerURL string
-	verifier  *oidc.IDTokenVerifier // TODO: the verifier should be dynamic and cached
+	clientID  string
+
+	providerCache *AsyncCache[*oidc.Provider]
 
 	// This preserves the old logic of associating users with session keys
 	// and requires smart routing when running multiple backend instances.
@@ -36,16 +38,20 @@ func newOIDCAuth(ctx context.Context, sessionStore *SessionStore, c *oidcConfig)
 	ctx = oidc.ClientContext(ctx, c.client)
 
 	// NewProvider attempts to do OIDC Discovery
-	p, err := oidc.NewProvider(ctx, c.issuerURL)
+	providerCache, err := NewAsyncCache[*oidc.Provider](
+		ctx, 5*time.Minute,
+		func(cacheCtx context.Context) (*oidc.Provider, error) { return oidc.NewProvider(cacheCtx, c.issuerURL) },
+	)
 	if err != nil {
 		return nil, err
 	}
 
+	providerCache.Run(ctx)
+
 	return &oidcAuth{
-		issuerURL: c.issuerURL,
-		verifier: p.Verifier(&oidc.Config{
-			ClientID: c.clientID,
-		}),
+		issuerURL:     c.issuerURL,
+		clientID:      c.clientID,
+		providerCache: providerCache,
 		sessions:      sessionStore,
 		cookiePath:    c.cookiePath,
 		secureCookies: c.secureCookies,
@@ -58,7 +64,7 @@ func (o *oidcAuth) login(w http.ResponseWriter, token *oauth2.Token) (*loginStat
 		return nil, errors.New("token response did not have an id_token field")
 	}
 
-	idToken, err := o.verifier.Verify(context.Background(), rawIDToken)
+	idToken, err := o.verify(context.TODO(), rawIDToken)
 	if err != nil {
 		return nil, err
 	}
@@ -86,6 +92,11 @@ func (o *oidcAuth) login(w http.ResponseWriter, token *oauth2.Token) (*loginStat
 
 	o.sessions.pruneSessions()
 	return ls, nil
+}
+
+func (o *oidcAuth) verify(ctx context.Context, rawIDToken string) (*oidc.IDToken, error) {
+	provider := o.providerCache.GetItem()
+	return provider.Verifier(&oidc.Config{ClientID: o.clientID}).Verify(ctx, rawIDToken)
 }
 
 func (o *oidcAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
@@ -141,15 +152,10 @@ func (o *oidcAuth) getUser(r *http.Request) (*User, error) {
 	}, nil
 }
 
-func (o *oidcAuth) getSpecialURLs(_ context.Context) (SpecialAuthURLs, error) {
-	return SpecialAuthURLs{}, nil
+func (o *oidcAuth) GetSpecialURLs() SpecialAuthURLs {
+	return SpecialAuthURLs{}
 }
 
-func (o *oidcAuth) getEndpointConfig(ctx context.Context) (oauth2.Endpoint, error) {
-	p, err := oidc.NewProvider(ctx, o.issuerURL)
-	if err != nil {
-		return oauth2.Endpoint{}, err
-	}
-
-	return p.Endpoint(), nil
+func (o *oidcAuth) getEndpointConfig() oauth2.Endpoint {
+	return o.providerCache.GetItem().Endpoint()
 }

@@ -21,7 +21,6 @@ import (
 
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
-	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 )
@@ -65,9 +64,6 @@ type Authenticator struct {
 	refererURL    *url.URL
 	secureCookies bool
 
-	lastSuccessfulEndpointRWLock sync.RWMutex
-	lastSuccesfulEndpoint        *oauth2.Endpoint
-
 	k8sConfig *rest.Config
 	metrics   *Metrics
 }
@@ -97,8 +93,8 @@ type loginMethod interface {
 	// This is not part of loginMethod to avoid creating an unnecessary
 	// HTTP client for every call.
 	getUser(*http.Request) (*User, error)
-	getSpecialURLs(ctx context.Context) (SpecialAuthURLs, error)
-	getEndpointConfig(ctx context.Context) (oauth2.Endpoint, error)
+	GetSpecialURLs() SpecialAuthURLs
+	getEndpointConfig() oauth2.Endpoint
 }
 
 // AuthSource allows callers to switch between Tectonic and OpenShift login support.
@@ -221,35 +217,10 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 	}
 	a.loginMethod = tokenHandler
 
-	// make sure we've got a fallback endpoint set up
-	if err := a.refreshFallbackEndpoint(ctx); err != nil {
-		return nil, err
-	}
-
-	// refresh the fallback endpoint every hour
-	go wait.UntilWithContext(ctx, func(loopCtx context.Context) {
-		err := a.refreshFallbackEndpoint(loopCtx)
-		if err != nil {
-			klog.Errorf(err.Error())
-		}
-	}, time.Hour)
-
 	return a, nil
 }
 
-func (a *Authenticator) getLastSuccessfulEndpoint() oauth2.Endpoint {
-	a.lastSuccessfulEndpointRWLock.RLock()
-	defer a.lastSuccessfulEndpointRWLock.RUnlock()
-
-	endpoint := a.lastSuccesfulEndpoint
-	if endpoint == nil {
-		panic("authenticator is uninitialized!")
-	}
-
-	return *a.lastSuccesfulEndpoint
-}
-
-func (a *Authenticator) getOAuth2Config(ctx context.Context) *oauth2.Config {
+func (a *Authenticator) getOAuth2Config() *oauth2.Config {
 	// rebuild non-pointer struct each time to prevent any mutation
 	scopesCopy := make([]string, len(a.scopes))
 	copy(scopesCopy, a.scopes)
@@ -258,47 +229,10 @@ func (a *Authenticator) getOAuth2Config(ctx context.Context) *oauth2.Config {
 		ClientSecret: a.clientSecret,
 		RedirectURL:  a.redirectURL,
 		Scopes:       scopesCopy,
+		Endpoint:     a.loginMethod.getEndpointConfig(),
 	}
 
-	currentEndpoint, errAuthSource := a.loginMethod.getEndpointConfig(ctx)
-	if errAuthSource != nil {
-		klog.Errorf("failed to get latest auth source data: %v", errAuthSource)
-		baseOAuth2Config.Endpoint = a.getLastSuccessfulEndpoint()
-
-		return &baseOAuth2Config
-	}
-
-	baseOAuth2Config.Endpoint = currentEndpoint
 	return &baseOAuth2Config
-}
-
-func (a *Authenticator) refreshFallbackEndpoint(ctx context.Context) error {
-	// Retry connecting to the identity provider every 10s for 5 minutes
-	const (
-		backoff  = time.Second * 10
-		maxSteps = 30
-	)
-
-	var (
-		err              error
-		fallbackEndpoint oauth2.Endpoint
-	)
-	for steps := 0; steps < maxSteps; steps++ {
-		fallbackEndpoint, err = a.loginMethod.getEndpointConfig(ctx)
-		if err != nil {
-			klog.Warningf("error contacting auth provider (retrying in %s): %v", backoff, err)
-
-			time.Sleep(backoff)
-			continue
-		}
-
-		a.lastSuccessfulEndpointRWLock.Lock()
-		defer a.lastSuccessfulEndpointRWLock.Unlock()
-		a.lastSuccesfulEndpoint = &fallbackEndpoint
-		return nil
-	}
-
-	return fmt.Errorf("failed to refresh fallback OAuth2 endpoint: %w", err)
 }
 
 func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
@@ -393,7 +327,7 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 		Secure:   a.secureCookies,
 	}
 	http.SetCookie(w, &cookie)
-	http.Redirect(w, r, a.getOAuth2Config(r.Context()).AuthCodeURL(state), http.StatusSeeOther)
+	http.Redirect(w, r, a.getOAuth2Config().AuthCodeURL(state), http.StatusSeeOther)
 }
 
 // LogoutFunc cleans up session cookies.
@@ -403,11 +337,6 @@ func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	a.logout(w, r)
-}
-
-// GetKubeAdminLogoutURL returns the logout URL for the special kube:admin user in OpenShift
-func (a *Authenticator) GetSpecialURLs(ctx context.Context) (SpecialAuthURLs, error) {
-	return a.getSpecialURLs(ctx)
 }
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
@@ -451,7 +380,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			return
 		}
 		ctx := oidc.ClientContext(r.Context(), a.clientFunc())
-		oauthConfig := a.getOAuth2Config(r.Context())
+		oauthConfig := a.getOAuth2Config()
 		token, err := oauthConfig.Exchange(ctx, code)
 		if err != nil {
 			klog.Errorf("unable to verify auth code with issuer: %v", err)
