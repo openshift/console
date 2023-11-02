@@ -237,8 +237,7 @@ oc login ...
 yarn run test-cypress-console
 ```
 
-This will launch the Cypress Test Runner UI in the `console` package, where you can run one or all cypress tests.
-By default, it will look for Chrome in the system and use it, but if you want to use Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `firefox`.
+This will launch the Cypress Test Runner UI in the `console` package, where you can run one or all Cypress tests.
 
 **Important:**  when testing with authentication, set `BRIDGE_KUBEADMIN_PASSWORD` environment variable in your shell.
 
@@ -261,6 +260,8 @@ Examples:
   test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode
   test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode
 ```
+
+When running in headless mode, Cypress will test using its integrated Electron browser, but if you want to use Chrome or Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `chrome` or `firefox`.
 
 [**_More information on Console's Cypress usage_**](frontend/packages/integration-tests-cypress/README.md)
 
