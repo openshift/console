@@ -9,11 +9,13 @@ export const ELEMENT_TYPES = {
 
 export const cnvBridgeNetworkType = 'cnv-bridge';
 export const ovnKubernetesNetworkType = 'ovn-k8s-cni-overlay';
+export const ovnKubernetesSecondaryLocalnet = 'ovn-k8s-cni-overlay-localnet';
 
 export const networkTypes = {
   sriov: 'SR-IOV',
   [cnvBridgeNetworkType]: 'CNV Linux bridge',
   [ovnKubernetesNetworkType]: 'OVN Kubernetes L2 overlay network',
+  [ovnKubernetesSecondaryLocalnet]: 'OVN Kubernetes secondary localnet network',
 };
 
 export enum NetworkTypes {
@@ -22,39 +24,66 @@ export enum NetworkTypes {
   'CNV-Bridge' = 'CNV Linux bridge',
 }
 
+// t('kubevirt-plugin~Resource name')
+// t('kubevirt-plugin~VLAN tag number')
+// t('kubevirt-plugin~IP address management')
+// t('kubevirt-plugin~Bridge name')
+// t('kubevirt-plugin~MAC spoof check')
+// t('kubevirt-plugin~Bridge mapping')
+// t('kubevirt-plugin~Physical network name. A bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.')
+// t('kubevirt-plugin~MTU')
+// t('kubevirt-plugin~VLAN')
+
 export const networkTypeParams: NetworkTypeParamsList = {
   sriov: {
     resourceName: {
-      name: 'Resource Name',
+      name: 'Resource name',
       values: {},
       required: true,
       type: ELEMENT_TYPES.DROPDOWN,
     },
     vlanTagNum: {
-      name: 'VLAN Tag Number',
+      name: 'VLAN tag number',
       hintText: 'Ex: 100',
       type: ELEMENT_TYPES.TEXT,
     },
     ipam: {
-      name: 'IP Address Management',
+      name: 'IP address management',
       type: ELEMENT_TYPES.TEXTAREA,
     },
   },
   [cnvBridgeNetworkType]: {
     bridge: {
-      name: 'Bridge Name',
+      name: 'Bridge name',
       required: true,
       type: ELEMENT_TYPES.TEXT,
     },
     vlanTagNum: {
-      name: 'VLAN Tag Number',
+      name: 'VLAN tag number',
       hintText: 'Ex: 100',
       type: ELEMENT_TYPES.TEXT,
     },
     macspoofchk: {
-      name: 'MAC Spoof Check',
+      name: 'MAC spoof check',
       type: ELEMENT_TYPES.CHECKBOX,
       initValue: true,
+    },
+  },
+  [ovnKubernetesSecondaryLocalnet]: {
+    bridgeMapping: {
+      name: 'Bridge mapping',
+      type: ELEMENT_TYPES.TEXT,
+      required: true,
+      hintText:
+        'Physical network name. A bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.',
+    },
+    mtu: {
+      name: 'MTU',
+      type: ELEMENT_TYPES.TEXT,
+    },
+    vlanID: {
+      name: 'VLAN',
+      type: ELEMENT_TYPES.TEXT,
     },
   },
 };
