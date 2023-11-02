@@ -82,7 +82,7 @@ form.pf-v5-c-form {
   top: -999em;
 }
 
-// PatternFly 4 overrides
+// PatternFly overrides
 
 .pf-v5-c-about-modal-box {
   --pf-v5-c-about-modal-box__brand-image--Height: auto !important; // allow logo to be taller
@@ -95,14 +95,30 @@ form.pf-v5-c-form {
 
 // Webpack will not properly bundle the background-image from PatternFly
 @media only screen and (min-width: 576px) {
-  .pf-v5-c-about-modal-box__hero {
+  .pf-v5-c-about-modal-box {
     background-image: url('../imgs/pfbg_992.jpg') !important;
+    background-position: 400px !important;
+    background-size: cover !important;
   }
+}
+
+.pf-v5-c-about-modal-box__brand {
+  background-color: var(--pf-v5-global--palette--black-1000);
 }
 
 .pf-v5-c-about-modal-box__brand-image,
 .pf-v5-c-brand {
   max-width: 100%;
+}
+
+.pf-v5-c-about-modal-box__content {
+  background-color: var(--pf-v5-global--palette--black-1000);
+  padding: var(--pf-v5-global--spacer--2xl) var(--pf-v5-global--spacer--3xl);
+  
+  --pf-v5-c-about-modal-box__content--MarginBottom: 0;
+  --pf-v5-c-about-modal-box__content--MarginLeft: 0;
+  --pf-v5-c-about-modal-box__content--MarginRight: 0;
+  --pf-v5-c-about-modal-box__content--MarginTop: 0;
 }
 
 .pf-v5-c-alert--top-margin {
@@ -199,10 +215,15 @@ form.pf-v5-c-form {
 .modal-dialog {
   .pf-v5-c-app-launcher,
   .pf-v5-c-button,
+  .pf-c-button,
   .pf-v5-c-dropdown,
+  .pf-c-dropdown,
   .pf-v5-c-dropdown__menu-item,
+  .pf-c-dropdown__menu-item,
   .pf-v5-c-dropdown__toggle,
-  .pf-v5-c-form-control {
+  .pf-c-dropdown__toggle,
+  .pf-v5-c-form-control,
+  .pf-c-form-control {
     font-size: $font-size-base;
     height: auto;
   }

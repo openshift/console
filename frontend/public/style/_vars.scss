@@ -19,8 +19,11 @@ $pf-v5-global--font-path: '~@patternfly/patternfly/assets/fonts';
 $table-border-color: var(--pf-v5-global--BorderColor--300);
 
 :root {
-  --pf-v5-global--FontSize--md: 14px; // Numerical value required, same as $font-size-base
+  // Numerical value required
+  --pf-v5-global--FontSize--md: 14px; // same as $font-size-base
+  --pf-global--FontSize--md: 14px; // same as $font-size-base
   --pf-v5-global--FontSize--sm: 13px;
+  --pf-global--FontSize--sm: 13px;
 }
 
 // == Declare max breakpoints from PatternFly variables

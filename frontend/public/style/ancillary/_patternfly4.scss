@@ -1,4 +1,4 @@
-// Addition of specific styles to bring elements into visual likeness with PF4
+// Addition of specific styles to bring elements into visual likeness with PF
 // These are either components we don't currently use or that our current
 // markup structure doesn't align with PF4 so we must apply through targeted css
 
@@ -12,17 +12,16 @@
 :where(:not([class*="pf-v5-c-"])) {
   @at-root h1#{&} {
     font-size: var(--pf-v5-global--FontSize--2xl);
-    line-height: var(--pf-v5-global--LineHeight--sm);
-    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-family: var(--pf-v5-global--FontFamily--heading);
     font-weight: var(--pf-v5-global--FontWeight--normal);
     line-height: var(--pf-v5-global--LineHeight--md);
     margin-bottom: var(--pf-v5-global--spacer--sm);
     word-break: break-word;
   }
-
+  
   @at-root h2#{&} {
     font-size: var(--pf-v5-global--FontSize--xl);
-    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-family: var(--pf-v5-global--FontFamily--heading);
     font-weight: var(--pf-v5-global--FontWeight--normal);
     line-height: var(--pf-v5-global--LineHeight--md);
     margin-bottom: var(--pf-v5-global--spacer--sm);
@@ -31,7 +30,7 @@
 
   @at-root h3#{&} {
     font-size: var(--pf-v5-global--FontSize--lg);
-    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-family: var(--pf-v5-global--FontFamily--heading);
     font-weight: var(--pf-v5-global--FontWeight--normal);
     line-height: var(--pf-v5-global--LineHeight--md);
     margin-bottom: var(--pf-v5-global--spacer--sm);
@@ -40,7 +39,7 @@
 
   @at-root h4#{&} {
     font-size: var(--pf-v5-global--FontSize--md);
-    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-family: var(--pf-v5-global--FontFamily--heading);
     font-weight: var(--pf-v5-global--FontWeight--normal);
     line-height: var(--pf-v5-global--LineHeight--md);
     margin-bottom: var(--pf-v5-global--spacer--sm);
@@ -49,7 +48,7 @@
 
   @at-root h5#{&} {
     font-size: var(--pf-v5-global--FontSize--md);
-    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-family: var(--pf-v5-global--FontFamily--heading);
     font-weight: var(--pf-v5-global--FontWeight--normal);
     line-height: var(--pf-v5-global--LineHeight--md);
     margin-bottom: var(--pf-v5-global--spacer--sm);
@@ -58,7 +57,7 @@
 
   @at-root h6#{&} {
     font-size: var(--pf-v5-global--FontSize--md);
-    font-family: var(--pf-v5-global--FontFamily--heading--sans-serif);
+    font-family: var(--pf-v5-global--FontFamily--heading);
     font-weight: var(--pf-v5-global--FontWeight--normal);
     line-height: var(--pf-v5-global--LineHeight--md);
     margin-bottom: var(--pf-v5-global--spacer--sm);
@@ -71,10 +70,10 @@
   select,
   textarea,
   .pf-v5-c-badge {
-    font-family: var(--pf-v5-global--FontFamily--sans-text);
+    font-family: var(--pf-v5-global--FontFamily--text);
   }
 
   @at-root button#{&} {
-    font-family: var(--pf-v5-global--FontFamily--sans-text);
+    font-family: var(--pf-v5-global--FontFamily--text);
   }
 }
