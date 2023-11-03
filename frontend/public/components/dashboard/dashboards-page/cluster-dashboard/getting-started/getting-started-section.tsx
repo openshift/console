@@ -27,7 +27,19 @@ export const GettingStartedSection: React.FC = () => {
     <div className="co-dashboard-getting-started-section">
       <GettingStartedGrid onHide={() => setShowState(GettingStartedShowState.HIDE)}>
         <ClusterSetupGettingStartedCard />
-        <QuickStartGettingStartedCard featured={['monitor-sampleapp', 'quarkus-with-helm']} />
+        <QuickStartGettingStartedCard
+          featured={[
+            // All part of the console-operator:
+            // - Monitor your sample application
+            'monitor-sampleapp',
+            // - Install the Red Hat Developer Hub (RHDH) operator (and create a RHDH instance)
+            'rhdh-installation-via-operator',
+            // - Install the Red Hat OpenShift Pipelines operator
+            'explore-pipelines',
+            // - Install the Red Hat OpenShift Serverless operator
+            'install-serverless',
+          ]}
+        />
         <ExploreAdminFeaturesGettingStartedCard />
       </GettingStartedGrid>
     </div>
