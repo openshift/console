@@ -2,9 +2,8 @@ import * as React from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
-import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
-
+import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 import {
   global_palette_green_500 as okColor,
   global_palette_red_100 as errorColor,

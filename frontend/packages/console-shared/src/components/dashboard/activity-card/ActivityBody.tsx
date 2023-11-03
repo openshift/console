@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Accordion, Button } from '@patternfly/react-core';
-import { PlayIcon } from '@patternfly/react-icons/dist/esm/icons/play-icon';
 import { PauseIcon } from '@patternfly/react-icons/dist/esm/icons/pause-icon';
+import { PlayIcon } from '@patternfly/react-icons/dist/esm/icons/play-icon';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';

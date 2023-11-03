@@ -1,9 +1,8 @@
 import * as React from 'react';
+import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { OffIcon } from '@patternfly/react-icons/dist/esm/icons/off-icon';
 import { PausedIcon } from '@patternfly/react-icons/dist/esm/icons/paused-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
-import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
-
 import { Link } from 'react-router-dom';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 

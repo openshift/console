@@ -6,8 +6,8 @@ import {
   DataListItemProps,
   DataListItemRow,
 } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { GripVerticalIcon } from '@patternfly/react-icons/dist/esm/icons/grip-vertical-icon';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { useDrag, useDrop } from 'react-dnd';
 
 const DNDDataListItemTypeName = 'dnd-row';

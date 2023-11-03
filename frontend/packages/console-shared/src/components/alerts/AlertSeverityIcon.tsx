@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 
 interface AlertSeverityIconProps {

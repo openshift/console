@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { OnRunningIcon } from '@patternfly/react-icons/dist/esm/icons/on-running-icon';
-import { OffIcon } from '@patternfly/react-icons/dist/esm/icons/off-icon';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
+import { OffIcon } from '@patternfly/react-icons/dist/esm/icons/off-icon';
+import { OnRunningIcon } from '@patternfly/react-icons/dist/esm/icons/on-running-icon';
 import { HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERED_ON } from '../../constants';
 
 type BareMetalHostPowerStatusIconProps = {

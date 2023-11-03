@@ -6,7 +6,6 @@ import { HourglassStartIcon } from '@patternfly/react-icons/dist/esm/icons/hourg
 import { NotStartedIcon } from '@patternfly/react-icons/dist/esm/icons/not-started-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
-
 import { StatusComponentProps } from '../../../extensions/console-types';
 import { DASH } from '../../constants';
 import { YellowExclamationTriangleIcon } from './icons';

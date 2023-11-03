@@ -5,7 +5,6 @@ import { CircleIcon } from '@patternfly/react-icons/dist/esm/icons/circle-icon';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import { HourglassHalfIcon } from '@patternfly/react-icons/dist/esm/icons/hourglass-half-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
-
 import * as cx from 'classnames';
 import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { ComputedStatus } from '../../../../types';
