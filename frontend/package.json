@@ -134,7 +134,7 @@
     "@lezer/highlight": "^1.0.0",
     "@lezer/lr": "^1.0.0",
     "@patternfly/patternfly": "5.0.2",
-    "@patternfly/quickstarts": "5.0.0",
+    "@patternfly/quickstarts": "5.1.0",
     "@patternfly/react-catalog-view-extension": "5.0.0",
     "@patternfly/react-charts": "7.1.0",
     "@patternfly/react-core": "5.1.0",
