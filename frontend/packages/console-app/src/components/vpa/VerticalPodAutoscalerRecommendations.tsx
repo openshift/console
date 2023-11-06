@@ -1,18 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
-
-export const FilterVerticalPodAutoscaler = (vpas, obj) =>
-  (vpas ?? []).find((vpa) => {
-    const { targetRef } = vpa.spec;
-    return (
-      targetRef &&
-      targetRef.apiVersion === obj?.apiVersion &&
-      targetRef.kind === obj?.kind &&
-      targetRef.name === obj?.metadata?.name
-    );
-  });
+import { getVerticalPodAutoscalerForResource } from '@console/shared/src';
 
 export const VerticalPodAutoscalerRecommendations: React.FC<VerticalPodAutoscalerRecommendationsProps> = ({
   obj,
@@ -29,36 +21,40 @@ export const VerticalPodAutoscalerRecommendations: React.FC<VerticalPodAutoscale
     namespaced: true,
   });
 
-  const verticalPodAutoscaler = FilterVerticalPodAutoscaler(vpas, obj);
-  const targetCPU =
-    verticalPodAutoscaler?.status?.recommendation?.containerRecommendations?.[0]?.target?.cpu;
-  const targetMemory =
-    verticalPodAutoscaler?.status?.recommendation?.containerRecommendations?.[0]?.target?.memory;
+  const verticalPodAutoscaler = getVerticalPodAutoscalerForResource(vpas, obj);
+  const recommendations =
+    verticalPodAutoscaler?.status?.recommendation?.containerRecommendations ?? [];
 
   return (
     <>
       <dt>{t('console-app~VerticalPodAutoscaler')}</dt>
       <dd>
-        {targetCPU || targetMemory ? (
+        {verticalPodAutoscaler ? (
           <>
-            <p>Recommended</p>
-            {targetCPU && (
-              <>
+            <p>
+              <ResourceLink
+                groupVersionKind={getGroupVersionKindForResource(verticalPodAutoscaler)}
+                name={verticalPodAutoscaler?.metadata?.name}
+                namespace={verticalPodAutoscaler?.metadata?.namespace}
+              />
+            </p>
+            {recommendations.length > 0 && <p>{t('console-app~Recommended')}</p>}
+            {recommendations.map((recommendation) => (
+              <React.Fragment key={recommendation.containerName}>
                 <div>
-                  {t('console-app~CPU')}: {targetCPU}
+                  {t('console-app~Container name')}: {recommendation.containerName}
                 </div>
-              </>
-            )}
-            {targetMemory && (
-              <>
                 <div>
-                  {t('console-app~Memory')}: {targetMemory}
+                  {t('console-app~CPU')}: {recommendation.target.cpu}
                 </div>
-              </>
-            )}
+                <div>
+                  {t('console-app~Memory')}: {recommendation.target.memory}
+                </div>
+              </React.Fragment>
+            ))}
           </>
         ) : (
-          <div>{t('console-app~No VerticalPodAutoscaler')}</div>
+          t('console-app~No VerticalPodAutoscaler')
         )}
       </dd>
     </>

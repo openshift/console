@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { FilterVerticalPodAutoscaler } from '@console/app/src/components/vpa/VerticalPodAutoscalerRecommendations';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk';
+import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
+import { getVerticalPodAutoscalerForResource } from '@console/shared/src';
 import { TYPE_WORKLOAD } from '@console/topology/src/const';
 import { getResource } from '../../utils';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
@@ -23,7 +24,7 @@ const VPATabSection: React.FC<VPATabSectionProps> = ({ vpas }) => {
         {vpas.map((vpa: K8sResourceCommon) => (
           <li key={vpa.metadata.name} className="list-group-item">
             <ResourceLink
-              kind="autoscaling.k8s.io~v1~VerticalPodAutoscaler"
+              groupVersionKind={getGroupVersionKindForResource(vpa)}
               name={vpa.metadata.name}
               namespace={vpa.metadata.namespace}
             />
@@ -50,9 +51,9 @@ export const useVpaSideBarTabSection: DetailsTabSectionExtensionHook = (element:
   }
 
   const resource = getResource(element);
-  const filteredVPAs = FilterVerticalPodAutoscaler(vpas, resource);
+  const verticalPodAutoscaler = getVerticalPodAutoscalerForResource(vpas, resource);
 
-  const section = filteredVPAs ? (
+  const section = verticalPodAutoscaler ? (
     <TopologySideBarTabSection>
       <VPATabSection vpas={vpas} />
     </TopologySideBarTabSection>

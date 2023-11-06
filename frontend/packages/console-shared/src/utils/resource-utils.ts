@@ -765,3 +765,17 @@ export const getLimitsDataFromResource = (resource: K8sResourceKind) => {
   };
   return limitsData;
 };
+
+export const getVerticalPodAutoscalerForResource = (
+  vpas: K8sResourceKind[],
+  obj: K8sResourceKind,
+) =>
+  (vpas ?? []).find((vpa) => {
+    const { targetRef } = vpa.spec;
+    return (
+      targetRef &&
+      targetRef.apiVersion === obj?.apiVersion &&
+      targetRef.kind === obj?.kind &&
+      targetRef.name === obj?.metadata?.name
+    );
+  });
