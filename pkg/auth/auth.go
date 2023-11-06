@@ -85,14 +85,15 @@ type loginMethod interface {
 	// cookie with the user.
 	login(http.ResponseWriter, *oauth2.Token) (*loginState, error)
 	// Removes user token cookie, but does not write a response.
-	deleteCookie(http.ResponseWriter, *http.Request)
+	DeleteCookie(http.ResponseWriter, *http.Request)
 	// logout deletes any cookies associated with the user, and writes a no-content response.
 	logout(http.ResponseWriter, *http.Request)
 
-	// userFunc returns the User associated with the cookie from a request.
-	// This is not part of loginMethod to avoid creating an unnecessary
-	// HTTP client for every call.
-	getUser(*http.Request) (*User, error)
+	// Authenticate checks if there's an authenticated session connected to the
+	// request based on a cookie, and returns a user associated to the cookie
+	// This does not itself perform an actual token request but it's based solely
+	// on the cookie.
+	Authenticate(*http.Request) (*User, error)
 	GetSpecialURLs() SpecialAuthURLs
 	getEndpointConfig() oauth2.Endpoint
 }
@@ -293,19 +294,6 @@ type User struct {
 	ID       string
 	Username string
 	Token    string
-}
-
-func (a *Authenticator) Authenticate(r *http.Request) (*User, error) {
-	user, err := a.getUser(r)
-	// FIXME: probably remove this logging eventually
-	if err != nil {
-		klog.Warningf("authentication failed: %v", err)
-	}
-	return user, err
-}
-
-func (a *Authenticator) DeleteCookie(w http.ResponseWriter, r *http.Request) {
-	a.deleteCookie(w, r)
 }
 
 // LoginFunc redirects to the OIDC provider for user login.
