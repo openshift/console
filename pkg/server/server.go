@@ -285,6 +285,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
 		handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
 		handle(requestTokenEndpoint, authHandler(s.handleClusterTokenURL))
+		// TODO: only add the following in case the auth type is openshift?
 		handleFunc(deleteOpenshiftTokenEndpoint, allowMethod(http.MethodPost, authHandlerWithUser(s.handleOpenShiftTokenDeletion)))
 	}
 
