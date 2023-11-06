@@ -14,7 +14,8 @@
       }
     },
     "flags": {
-      "required": ["OPENSHIFT_GITOPS"]
+      "required": ["OPENSHIFT_GITOPS"],
+      "disallowed": ["GITOPS_DYNAMIC"]
     }
   }
 ]
