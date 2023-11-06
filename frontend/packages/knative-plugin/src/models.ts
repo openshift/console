@@ -103,7 +103,7 @@ export const ServiceModel: K8sKind = {
 
 export const DomainMappingModel: K8sKind = {
   apiGroup: KNATIVE_SERVING_APIGROUP,
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   kind: 'DomainMapping',
   label: 'DomainMapping',
   // t('knative-plugin~DomainMapping')

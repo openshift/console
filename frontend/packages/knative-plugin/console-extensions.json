@@ -1473,7 +1473,7 @@
     "properties": {
       "model": {
         "group": "serving.knative.dev",
-        "version": "v1alpha1",
+        "version": "v1beta1",
         "kind": "DomainMapping"
       },
       "label": "%knative-plugin~DomainMapping%",
