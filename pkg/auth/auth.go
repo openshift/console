@@ -189,7 +189,7 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 	}
 
 	authConfig := &oidcConfig{
-		client:        a.clientFunc(),
+		getClient:     a.clientFunc,
 		issuerURL:     c.IssuerURL,
 		clientID:      c.ClientID,
 		cookiePath:    c.CookiePath,
@@ -199,6 +199,10 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 	var tokenHandler loginMethod
 	switch c.AuthSource {
 	case AuthSourceOpenShift:
+		// TODO: once https://github.com/kubernetes/kubernetes/issues/11948 is fixed,
+		// copy the transport config from c.k8sConfig with rest.CopyConfig,
+		// add the c.K8SCA to it and use the roundtripper created from that config
+		//
 		// Use the k8s CA for OAuth metadata discovery.
 		k8sClient, errK8Client := newHTTPClient(c.K8sCA, true)
 		if errK8Client != nil {
