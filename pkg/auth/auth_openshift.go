@@ -161,7 +161,7 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 }
 
 // NOTE: cookies are going away, this should be removed in the future
-func (o *openShiftAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
+func (o *openShiftAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
 	// Delete session cookie
 	cookie := http.Cookie{
 		Name:     openshiftAccessTokenCookieName,
@@ -175,11 +175,11 @@ func (o *openShiftAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
-	o.deleteCookie(w, r)
+	o.DeleteCookie(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (o *openShiftAuth) getUser(r *http.Request) (*User, error) {
+func (o *openShiftAuth) Authenticate(r *http.Request) (*User, error) {
 	// TODO: This doesn't do any validation of the cookie with the assumption that the
 	// API server will reject tokens it doesn't recognize. If we want to keep some backend
 	// state we should sign this cookie. If not there's not much we can do.

@@ -99,7 +99,7 @@ func (o *oidcAuth) verify(ctx context.Context, rawIDToken string) (*oidc.IDToken
 	return provider.Verifier(&oidc.Config{ClientID: o.clientID}).Verify(ctx, rawIDToken)
 }
 
-func (o *oidcAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
+func (o *oidcAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
 	// The returned login state can be nil even if err == nil.
 	if ls, _ := o.getLoginState(r); ls != nil {
 		o.sessions.deleteSession(ls.sessionToken)
@@ -118,7 +118,7 @@ func (o *oidcAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
-	o.deleteCookie(w, r)
+	o.DeleteCookie(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -139,7 +139,7 @@ func (o *oidcAuth) getLoginState(r *http.Request) (*loginState, error) {
 	return ls, nil
 }
 
-func (o *oidcAuth) getUser(r *http.Request) (*User, error) {
+func (o *oidcAuth) Authenticate(r *http.Request) (*User, error) {
 	ls, err := o.getLoginState(r)
 	if err != nil {
 		return nil, err
