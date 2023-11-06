@@ -21,7 +21,7 @@ type openShiftAuth struct {
 	cookiePath    string
 	secureCookies bool
 	k8sClient     *http.Client
-	client        *http.Client
+	getClient     func() *http.Client
 
 	oauthEndpointCache *AsyncCache[*oidcDiscovery]
 }
@@ -51,7 +51,7 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 		cookiePath:    c.cookiePath,
 		secureCookies: c.secureCookies,
 		k8sClient:     k8sClient,
-		client:        c.client,
+		getClient:     c.getClient,
 	}
 
 	// TODO: repeat the discovery several times as in the auth.go logic
@@ -114,7 +114,7 @@ func (o *openShiftAuth) getOIDCDiscoveryInternal(ctx context.Context) (*oidcDisc
 		return nil, err
 	}
 
-	resp, err = o.client.Do(req.WithContext(ctx))
+	resp, err = o.getClient().Do(req.WithContext(ctx))
 	if err != nil {
 		return nil, fmt.Errorf("request to OAuth issuer endpoint %s failed: %v",
 			metadata.Token, err)

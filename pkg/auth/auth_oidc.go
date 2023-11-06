@@ -27,7 +27,7 @@ type oidcAuth struct {
 }
 
 type oidcConfig struct {
-	client        *http.Client // FIXME: this should be client construct func
+	getClient     func() *http.Client
 	issuerURL     string
 	clientID      string
 	cookiePath    string
@@ -35,12 +35,13 @@ type oidcConfig struct {
 }
 
 func newOIDCAuth(ctx context.Context, sessionStore *SessionStore, c *oidcConfig) (*oidcAuth, error) {
-	ctx = oidc.ClientContext(ctx, c.client)
-
 	// NewProvider attempts to do OIDC Discovery
 	providerCache, err := NewAsyncCache[*oidc.Provider](
 		ctx, 5*time.Minute,
-		func(cacheCtx context.Context) (*oidc.Provider, error) { return oidc.NewProvider(cacheCtx, c.issuerURL) },
+		func(cacheCtx context.Context) (*oidc.Provider, error) {
+			oidcCtx := oidc.ClientContext(cacheCtx, c.getClient())
+			return oidc.NewProvider(oidcCtx, c.issuerURL)
+		},
 	)
 	if err != nil {
 		return nil, err
