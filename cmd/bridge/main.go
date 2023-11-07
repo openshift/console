@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"runtime"
@@ -21,7 +20,6 @@ import (
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
-	"github.com/openshift/console/pkg/serverutils"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
 	"k8s.io/client-go/rest"
@@ -91,7 +89,6 @@ func main() {
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
 	fK8sModeOffClusterThanos := fs.String("k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Thanos server.")
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
-	fK8sModeOffClusterManagedClusterProxy := fs.String("k8s-mode-off-cluster-managed-cluster-proxy", "", "DEV ONLY. Public URL of the ACM/MCE cluster proxy.")
 
 	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
@@ -145,11 +142,6 @@ func main() {
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
 	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
-
-	// TODO Remove multicluster
-	fManagedClusterConfigs := fs.String("managed-clusters", "", "List of managed cluster configurations. (JSON as string)")
-	fHubConsoleURL := fs.String("hub-console-url", "", "URL of the hub cluster's console in a multi cluster environment.")
-	// TODO Remove multicluster
 
 	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -277,12 +269,6 @@ func main() {
 		}
 	}
 
-	// TODO remove multicluster
-	hubConsoleURL := &url.URL{}
-	if *fHubConsoleURL != "" {
-		hubConsoleURL = bridge.ValidateFlagIsURL("hub-console-url", *fHubConsoleURL)
-	}
-
 	srv := &server.Server{
 		PublicDir:                    *fPublicDir,
 		BaseURL:                      baseURL,
@@ -315,27 +301,8 @@ func main() {
 		ReleaseVersion:               *fReleaseVersion,
 		NodeArchitectures:            nodeArchitectures,
 		NodeOperatingSystems:         nodeOperatingSystems,
-		HubConsoleURL:                hubConsoleURL, // TODO remove multicluster
-		AuthMetrics:                  auth.NewMetrics(),
 		K8sMode:                      *fK8sMode,
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
-	}
-
-	// TODO remove multicluster
-	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}
-	if *fManagedClusterConfigs != "" {
-		unvalidatedManagedClusters := []serverconfig.ManagedClusterConfig{}
-		if err := json.Unmarshal([]byte(*fManagedClusterConfigs), &unvalidatedManagedClusters); err != nil {
-			klog.Fatalf("Unable to parse managed cluster JSON: %v", *fManagedClusterConfigs)
-		}
-		for _, managedClusterConfig := range unvalidatedManagedClusters {
-			err := serverconfig.ValidateManagedClusterConfig(managedClusterConfig)
-			if err != nil {
-				klog.Errorf("Error configuring managed cluster. Invalid configuration: %v", err)
-				continue
-			}
-			managedClusterConfigs = append(managedClusterConfigs, managedClusterConfig)
-		}
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
@@ -467,12 +434,6 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftGitOpsHost},
 			}
-			// TODO remove multicluster
-			srv.ManagedClusterProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftClusterProxyHost},
-			}
 		}
 
 	case "off-cluster":
@@ -546,17 +507,6 @@ func main() {
 			}
 		}
 
-		// TODO remove multicluster
-		// Must have off-cluster cluster proxy endpoint if we have managed clusters
-		if len(managedClusterConfigs) > 0 {
-			offClusterManagedClusterProxyURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-managed-cluster-proxy", *fK8sModeOffClusterManagedClusterProxy)
-			srv.ManagedClusterProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        offClusterManagedClusterProxyURL,
-			}
-		}
-
 	default:
 		bridge.FlagFatalf("k8s-mode", "must be one of: in-cluster, off-cluster")
 	}
@@ -598,7 +548,6 @@ func main() {
 		}
 
 		var (
-			err                      error
 			userAuthOIDCIssuerURL    *url.URL
 			authLoginErrorEndpoint   = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginErrorEndpoint)
 			authLoginSuccessEndpoint = proxy.SingleJoiningSlash(srv.BaseURL.String(), server.AuthLoginSuccessEndpoint)
@@ -654,13 +603,11 @@ func main() {
 			CookiePath:    cookiePath,
 			RefererPath:   refererPath,
 			SecureCookies: secureCookies,
-			ClusterName:   serverutils.LocalClusterName,
 
 			K8sConfig: &rest.Config{
 				Host:      apiServerEndpoint,
 				Transport: srv.K8sClient.Transport,
 			},
-			Metrics: srv.AuthMetrics,
 		}
 
 		// NOTE: This won't work when using the OpenShift auth mode.
@@ -677,49 +624,11 @@ func main() {
 			)
 
 		}
-		// TODO remove multicluster
-		// Revert to *auth.Authenticator property
-		srv.Authers = make(map[string]*auth.Authenticator)
-		if srv.Authers[serverutils.LocalClusterName], err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
+
+		if srv.Authenticator, err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
 			klog.Fatalf("Error initializing authenticator: %v", err)
 		}
 
-		// TODO remove multicluster
-		if len(managedClusterConfigs) > 0 {
-			for _, managedCluster := range managedClusterConfigs {
-				managedClusterOIDCClientConfig := &auth.Config{
-					AuthSource:   authSource,
-					IssuerURL:    managedCluster.APIServer.URL,
-					IssuerCA:     managedCluster.OAuth.CAFile,
-					ClientID:     managedCluster.OAuth.ClientID,
-					ClientSecret: managedCluster.OAuth.ClientSecret,
-					RedirectURL:  proxy.SingleJoiningSlash(srv.BaseURL.String(), fmt.Sprintf("%s/%s", server.AuthLoginCallbackEndpoint, managedCluster.Name)),
-					Scope:        scopes,
-
-					// Use the k8s CA file for OpenShift OAuth metadata discovery.
-					// This might be different than IssuerCA.
-					K8sCA: managedCluster.APIServer.CAFile,
-
-					ErrorURL:   authLoginErrorEndpoint,
-					SuccessURL: authLoginSuccessEndpoint,
-
-					CookiePath:    cookiePath,
-					RefererPath:   refererPath,
-					SecureCookies: secureCookies,
-					ClusterName:   managedCluster.Name,
-
-					K8sConfig: &rest.Config{
-						Host:      apiServerEndpoint,
-						Transport: srv.K8sClient.Transport,
-					},
-					Metrics: srv.AuthMetrics,
-				}
-
-				if srv.Authers[managedCluster.Name], err = auth.NewAuthenticator(context.Background(), managedClusterOIDCClientConfig); err != nil {
-					klog.Fatalf("Error initializing managed cluster authenticator: %v", err)
-				}
-			}
-		}
 	case "disabled":
 		klog.Warning("running with AUTHENTICATION DISABLED!")
 	default:

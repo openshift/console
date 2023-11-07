@@ -1,4 +1,3 @@
-// TODO remove multicluster
 package server
 
 import (

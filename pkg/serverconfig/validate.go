@@ -182,29 +182,3 @@ func validatePerspectives(value string) ([]Perspective, error) {
 
 	return perspectives, nil
 }
-
-// TODO remove multicluster
-func ValidateManagedClusterConfig(managedCluster ManagedClusterConfig) error {
-	errors := []string{}
-	if managedCluster.Name == "" {
-		errors = append(errors, "Name is required.")
-	}
-
-	if managedCluster.OAuth.ClientID == "" {
-		errors = append(errors, "Oauth.ClientID is required.")
-	}
-
-	if managedCluster.OAuth.ClientSecret == "" {
-		errors = append(errors, "OAuth.ClientSecret is required.")
-	}
-
-	if managedCluster.OAuth.CAFile == "" {
-		errors = append(errors, "OAuth.CAFile is required.")
-	}
-
-	if len(errors) > 0 {
-		return fmt.Errorf("\n\t- %s\n", strings.Join(errors, "\n\t- "))
-	}
-
-	return nil
-}

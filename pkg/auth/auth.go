@@ -119,7 +119,6 @@ type Config struct {
 	// cookiePath is an abstraction leak. (unfortunately, a necessary one.)
 	CookiePath    string
 	SecureCookies bool
-	ClusterName   string // TODO remove multicluster
 
 	K8sConfig *rest.Config
 	Metrics   *Metrics
@@ -207,7 +206,6 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 					issuerURL:     c.IssuerURL,
 					cookiePath:    c.CookiePath,
 					secureCookies: c.SecureCookies,
-					clusterName:   c.ClusterName, // TODO remove multicluster
 				})
 			}
 		default:
@@ -347,9 +345,6 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 		Value:    state,
 		HttpOnly: true,
 		Secure:   a.secureCookies,
-		// TODO remove multicluster
-		// Make sure cookie path matches multi-cluster login paths
-		Path: "/",
 	}
 	http.SetCookie(w, &cookie)
 	http.Redirect(w, r, a.getOAuth2Config().AuthCodeURL(state), http.StatusSeeOther)

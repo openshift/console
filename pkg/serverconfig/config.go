@@ -112,7 +112,6 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config Config) (err error) {
 	addHelmConfig(fs, &config.Helm)
 	addPlugins(fs, config.Plugins)
 	addI18nNamespaces(fs, config.I18nNamespaces)
-	addManagedClusters(fs, config.ManagedClusterConfigFile) // TODO remove multicluster
 	err = addProxy(fs, &config.Proxy)
 	if err != nil {
 		return err
@@ -379,34 +378,4 @@ func addTelemetry(fs *flag.FlagSet, telemetry MultiKeyValue) {
 
 func addI18nNamespaces(fs *flag.FlagSet, i18nNamespaces []string) {
 	fs.Set("i18n-namespaces", strings.Join(i18nNamespaces, ","))
-}
-
-// TODO remove multicluster
-func addManagedClusters(fs *flag.FlagSet, fileName string) {
-	if fileName != "" {
-		klog.V(4).Info("Setting managed-clusters flag from config file")
-		content, err := ioutil.ReadFile(fileName)
-		if err != nil {
-			klog.Fatalf("Error reading managed cluster config: %v", err)
-		}
-
-		managedClusterConfigs := []ManagedClusterConfig{}
-		err = yaml.Unmarshal(content, &managedClusterConfigs)
-		if err != nil {
-			klog.Fatalf("Error unmarshalling managed cluster yaml: %v", err)
-		}
-
-		if len(managedClusterConfigs) == 0 {
-			klog.V(4).Info("Managed cluster config is empty.")
-			return
-		}
-
-		configJSON, err := json.Marshal(managedClusterConfigs)
-		if err != nil {
-			klog.Fatalf("Error marshalling managed cluster config into JSON: %v", err)
-		}
-
-		klog.Infof("Successfully parsed configs for %v managed cluster(s).", len(managedClusterConfigs))
-		fs.Set("managed-clusters", string(configJSON))
-	}
 }

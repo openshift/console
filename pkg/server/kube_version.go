@@ -2,33 +2,19 @@ package server
 
 import (
 	"errors"
-	"fmt"
-	"net/http"
 
-	"github.com/openshift/console/pkg/serverutils"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 )
 
-// TODO remove multicluster: Remove cluster arg.
-func (s *Server) GetKubeVersion(cluster string) string {
+func (s *Server) GetKubeVersion() string {
 	if s.KubeVersion != "" {
 		return s.KubeVersion
 	}
 	config := &rest.Config{
 		Host:      s.K8sProxyConfig.Endpoint.String(),
 		Transport: s.K8sClient.Transport,
-	}
-
-	if cluster != serverutils.LocalClusterName {
-		config = &rest.Config{
-			Host: s.ManagedClusterProxyConfig.Endpoint.String(),
-			Transport: &http.Transport{
-				TLSClientConfig: s.ManagedClusterProxyConfig.TLSClientConfig,
-			},
-			APIPath: fmt.Sprintf("/%s", cluster),
-		}
 	}
 
 	kubeVersion, err := kubeVersion(config)

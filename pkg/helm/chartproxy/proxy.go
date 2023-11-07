@@ -11,7 +11,6 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 
-	"github.com/openshift/console/pkg/serverutils"
 	"github.com/openshift/console/pkg/version"
 )
 
@@ -60,7 +59,7 @@ func New(k8sConfig RestConfigProvider, kubeVersionGetter version.KubeVersionGett
 
 	p := &proxy{
 		config:      config,
-		kubeVersion: kubeVersionGetter.GetKubeVersion(serverutils.LocalClusterName), // TODO remove multicluster. Remove cluster arg.
+		kubeVersion: kubeVersionGetter.GetKubeVersion(),
 	}
 
 	if len(opts) == 0 {
