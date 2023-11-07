@@ -91,6 +91,7 @@ export type MatchLabels = {
 export type Selector = {
   matchLabels?: MatchLabels;
   matchExpressions?: MatchExpression[];
+  filterByName?: string;
 };
 
 type K8sVerb =

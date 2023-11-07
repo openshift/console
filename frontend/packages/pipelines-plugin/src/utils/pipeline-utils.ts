@@ -56,6 +56,7 @@ import {
   TektonParam,
   TaskRunStatus,
   TaskKind,
+  PLRTaskRunData,
 } from '../types';
 import { getLatestRun } from './pipeline-augment';
 import {
@@ -546,3 +547,10 @@ export const getSbomTaskRun = (taskruns: TaskRunKind[]): TaskRunKind =>
 
 export const getSbomLink = (sbomTaskRun: TaskRunKind): string | undefined =>
   sbomTaskRun?.status?.results?.find((r) => r.name === 'LINK_TO_SBOM')?.value;
+export const taskRunStatus = (taskRun: TaskRunKind | PLRTaskRunData): ComputedStatus => {
+  if (!taskRun?.status?.conditions?.length) {
+    return ComputedStatus.Pending;
+  }
+  const status: ComputedStatus = pipelineRunStatus(taskRun);
+  return status;
+};
