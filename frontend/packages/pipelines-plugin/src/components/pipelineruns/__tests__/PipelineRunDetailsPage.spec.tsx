@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { SemVer } from 'semver';
+import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { DetailsPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
@@ -18,6 +19,10 @@ const taskRuns = jest.spyOn(taskRunUtils, 'useTaskRuns');
 type PipelineRunDetailsPageProps = React.ComponentProps<typeof PipelineRunDetailsPage>;
 const i18nNS = 'public';
 const i18nPipelineNS = 'pipelines-plugin';
+
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource', () => ({
+  useK8sWatchResource: jest.fn(),
+}));
 
 describe('PipelineRunDetailsPage:', () => {
   let pipelineRunDetailsPageProps: PipelineRunDetailsPageProps;
@@ -38,6 +43,7 @@ describe('PipelineRunDetailsPage:', () => {
     menuActions.mockReturnValue([getPipelineRunKebabActions(new SemVer('1.9.0'), [], true)]);
     breadCrumbs.mockReturnValue([{ label: 'PipelineRuns' }, { label: 'PipelineRuns Details' }]);
     taskRuns.mockReturnValue([]);
+    (useK8sWatchResource as jest.Mock).mockReturnValue([[], true]);
     wrapper = shallow(<PipelineRunDetailsPage {...pipelineRunDetailsPageProps} />);
   });
 

@@ -15,8 +15,9 @@ import {
   resourceURL,
   k8sGet,
 } from '@console/internal/module/k8s';
-import { PLRTaskRunData, PLRTaskRuns } from '../../../types';
+import { TaskRunKind } from '../../../types';
 import { containerToLogSourceStatus } from '../../../utils/pipeline-utils';
+import { getTaskRunLog } from '../utils/tekton-results';
 
 const getSortedContainerStatus = (
   containers: ContainerSpec[],
@@ -78,20 +79,22 @@ type WatchURLStatus = {
 };
 
 export const getDownloadAllLogsCallback = (
-  sortedTaskRuns: string[],
-  taskRunFromYaml: PLRTaskRuns,
+  sortedTaskRunNames: string[],
+  taskRuns: TaskRunKind[],
   namespace: string,
   pipelineRunName: string,
 ): (() => Promise<Error>) => {
   const getWatchUrls = async (): Promise<StepsWatchUrl> => {
     const stepsList: ContainerStatus[][] = await Promise.all(
-      sortedTaskRuns.map((currTask) => {
-        const { status } = taskRunFromYaml[currTask] as PLRTaskRunData;
+      sortedTaskRunNames.map((currTask) => {
+        const { status } = taskRuns.find((t) => t.metadata.name === currTask) ?? {};
         return getOrderedStepsFromPod(status?.podName, namespace);
       }),
     );
-    return sortedTaskRuns.reduce((acc, currTask, i) => {
-      const { pipelineTaskName, status } = taskRunFromYaml[currTask];
+    return sortedTaskRunNames.reduce((acc, currTask, i) => {
+      const taskRun = taskRuns.find((t) => t.metadata.name === currTask);
+      const pipelineTaskName = taskRun?.spec.taskRef?.name ?? taskRun?.metadata.name;
+      const { status } = taskRun;
       const podName = status?.podName;
       const steps = stepsList[i];
       const allStepUrls = steps.reduce((stepUrls, currentStep) => {
@@ -125,41 +128,45 @@ export const getDownloadAllLogsCallback = (
 
   const fetchLogs = async (tasksPromise: Promise<StepsWatchUrl>) => {
     const tasks = await tasksPromise;
-    const allRequests: Promise<string>[] = sortedTaskRuns.reduce((acc, currTask) => {
+    let allLogs = '';
+    for (const currTask of sortedTaskRunNames) {
       const task = tasks[currTask];
-      const promises: Promise<string>[] = Object.keys(task.steps).map((step, i) => {
-        let heading = '';
-        if (i === 0) {
-          heading += `${task.name}\n\n`;
+      const steps = Object.keys(task.steps);
+      allLogs += `${task.name}\n\n`;
+      if (steps.length > 0) {
+        for (const step of steps) {
+          const { url, status } = task.steps[step];
+          const getContentPromise = coFetchText(url).then((logs) => {
+            return `${step.toUpperCase()}\n\n${logs}\n\n`;
+          });
+          allLogs +=
+            status === LOG_SOURCE_TERMINATED
+              ? // If we are done, we want this log content
+                // eslint-disable-next-line no-await-in-loop
+                await getContentPromise
+              : // If we are not done, let's not wait indefinitely
+                // eslint-disable-next-line no-await-in-loop
+                await Promise.race([
+                  getContentPromise,
+                  new Promise<string>((resolve) => {
+                    setTimeout(() => resolve(''), 1000);
+                  }),
+                ]);
         }
-        heading += `${step}\n\n`;
-        const { url, status } = task.steps[step];
-        const getContentPromise = coFetchText(url).then((logs) => {
-          return `${heading}${logs}\n\n`;
-        });
-        if (status === LOG_SOURCE_TERMINATED) {
-          // If we are done, we want this log content
-          return getContentPromise;
-        }
-        // If we are not done, let's not wait indefinitely
-        return Promise.race([
-          getContentPromise,
-          new Promise<string>((resolve) => {
-            setTimeout(() => resolve(''), 1000);
-          }),
-        ]);
-      });
-      return [...acc, ...promises];
-    }, []);
+      } else {
+        // eslint-disable-next-line no-await-in-loop
+        allLogs += await getTaskRunLog(namespace, currTask).then(
+          (log) => `${tasks[currTask].name.toUpperCase()}\n\n${log}\n\n`,
+        );
+      }
+    }
     const buffer = new LineBuffer();
-    return Promise.all(allRequests).then((allLogs) => {
-      buffer.ingest(allLogs.join(''));
-      const blob = buffer.getBlob({
-        type: 'text/plain;charset=utf-8',
-      });
-      saveAs(blob, `${pipelineRunName}.log`);
-      return null;
+    buffer.ingest(allLogs);
+    const blob = buffer.getBlob({
+      type: 'text/plain;charset=utf-8',
     });
+    saveAs(blob, `${pipelineRunName}.log`);
+    return null;
   };
   return (): Promise<Error> => {
     return fetchLogs(getWatchUrls());
