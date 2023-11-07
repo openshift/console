@@ -30,7 +30,7 @@
 }
 
 .dropdown-menu__header {
-  color: $pf-v5-color-black-600;
+  color: var(--pf-global--Color--100);
   flex-grow: 1;
   font-size: ($font-size-base - 1);
   padding: 3px 10px;
