@@ -20,11 +20,15 @@ import (
 type Helm struct {
 	config      *action.Configuration
 	envSettings *cli.EnvSettings
+	timeout     time.Duration
 	args        map[string]interface{}
 }
 
-func NewHelm(envSettings *cli.EnvSettings, args map[string]interface{}) (*Helm, error) {
-	helm := &Helm{envSettings: envSettings, args: args}
+func NewHelm(envSettings *cli.EnvSettings, args map[string]interface{}, timeout time.Duration) (*Helm, error) {
+	helm := &Helm{envSettings: envSettings, args: args, timeout: timeout}
+	if timeout < 5*time.Minute {
+		helm.timeout = 5 * time.Minute
+	}
 	config := new(action.Configuration)
 	if err := config.Init(envSettings.RESTClientGetter(), envSettings.Namespace(), os.Getenv("HELM_DRIVER"), func(format string, v ...interface{}) {
 		utils.LogInfo(fmt.Sprintf(format, v))
@@ -43,7 +47,7 @@ func (h Helm) Install(ctx context.Context, namespace, chart, release, valuesFile
 	client.Wait = true
 	// default timeout duration
 	// ref: https://helm.sh/docs/helm/helm_install
-	client.Timeout = 5 * time.Minute
+	client.Timeout = h.timeout
 
 	cp, err := client.ChartPathOptions.LocateChart(chart, h.envSettings)
 	if err != nil {
@@ -89,6 +93,8 @@ func (h Helm) Install(ctx context.Context, namespace, chart, release, valuesFile
 		return err
 	}
 
+	utils.LogInfo(fmt.Sprintf("Start install with timeout %s", client.Timeout.String()))
+
 	// TODO: support other options if required
 	_, err = client.RunWithContext(ctx, c, vals)
 	if err != nil {
@@ -105,7 +111,7 @@ func (h Helm) Test(ctx context.Context, namespace, release string) error {
 	deadline, _ := ctx.Deadline()
 	client := action.NewReleaseTesting(h.config)
 	client.Namespace = namespace
-	client.Timeout = deadline.Sub(time.Now())
+	client.Timeout = time.Until(deadline)
 
 	if client.Timeout <= 0 {
 		return errors.New("Helm test error : timeout has expired, please consider increasing the timeout using the chart-verifier timeout flag")
@@ -126,7 +132,6 @@ func (h Helm) Uninstall(namespace, release string) error {
 	client := action.NewUninstall(h.config)
 	// TODO: support other options if required
 	_, err := client.Run(release)
-
 	if err != nil {
 		utils.LogError(fmt.Sprintf("Error from helm uninstall : %v", err))
 		return err

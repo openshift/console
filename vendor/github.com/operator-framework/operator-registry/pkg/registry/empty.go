@@ -100,8 +100,20 @@ func (EmptyQuery) ListBundles(ctx context.Context) ([]*api.Bundle, error) {
 	return nil, errors.New("empty querier: cannot list bundles")
 }
 
+func (EmptyQuery) SendBundles(ctx context.Context, stream BundleSender) error {
+	return errors.New("empty querier: cannot stream bundles")
+}
+
 func (EmptyQuery) GetDependenciesForBundle(ctx context.Context, name, version, path string) (dependencies []*api.Dependency, err error) {
 	return nil, errors.New("empty querier: cannot get dependencies for bundle")
+}
+
+func (EmptyQuery) GetBundlePathIfExists(ctx context.Context, csvName string) (bundlePath string, err error) {
+	return "", errors.New("empty querier: cannot get bundle path for bundle")
+}
+
+func (EmptyQuery) ListRegistryBundles(ctx context.Context) ([]*Bundle, error) {
+	return nil, errors.New("empty querier: cannot list registry bundles")
 }
 
 var _ Query = &EmptyQuery{}

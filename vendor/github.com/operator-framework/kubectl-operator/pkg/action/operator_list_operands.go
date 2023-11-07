@@ -3,6 +3,7 @@ package action
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	v1 "github.com/operator-framework/api/pkg/operators/v1"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -166,6 +167,21 @@ func (o *OperatorListOperands) listAll(ctx context.Context, opKey types.Namespac
 		}
 		result.Items = append(result.Items, list.Items...)
 	}
+
+	// sort results
+	sort.Slice(result.Items, func(i, j int) bool {
+		if result.Items[i].GetAPIVersion() != result.Items[j].GetAPIVersion() {
+			return result.Items[i].GetAPIVersion() < result.Items[j].GetAPIVersion()
+		}
+		if result.Items[i].GetKind() != result.Items[j].GetKind() {
+			return result.Items[i].GetKind() < result.Items[j].GetKind()
+		}
+		if result.Items[i].GetNamespace() != result.Items[j].GetNamespace() {
+			return result.Items[i].GetNamespace() < result.Items[j].GetNamespace()
+		}
+		return result.Items[i].GetName() < result.Items[j].GetName()
+	})
+
 	return &result, nil
 }
 

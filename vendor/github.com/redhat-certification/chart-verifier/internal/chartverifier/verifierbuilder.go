@@ -46,8 +46,10 @@ func init() {
 	defaultRegistry.Add(apiChecks.HelmLint, "v1.0", checks.HelmLint)
 	defaultRegistry.Add(apiChecks.NotContainCsiObjects, "v1.0", checks.NotContainCSIObjects)
 	defaultRegistry.Add(apiChecks.ImagesAreCertified, "v1.0", checks.ImagesAreCertified)
+	defaultRegistry.Add(apiChecks.ImagesAreCertified, "v1.1", checks.ImagesAreCertified_V1_1)
 	defaultRegistry.Add(apiChecks.ChartTesting, "v1.0", checks.ChartTesting)
 	defaultRegistry.Add(apiChecks.RequiredAnnotationsPresent, "v1.0", checks.RequiredAnnotationsPresent)
+	defaultRegistry.Add(apiChecks.SignatureIsValid, "v1.0", checks.SignatureIsValid)
 }
 
 func DefaultRegistry() checks.Registry {
@@ -57,16 +59,24 @@ func DefaultRegistry() checks.Registry {
 type FilteredRegistry map[apiChecks.CheckName]checks.Check
 
 type verifierBuilder struct {
-	checks                      FilteredRegistry
-	config                      *viper.Viper
-	registry                    checks.Registry
-	toolVersion                 string
-	openshiftVersion            string
-	suppportedOpenshiftVersions string
-	providerDelivery            bool
-	timeout                     time.Duration
-	values                      map[string]interface{}
-	settings                    *cli.EnvSettings
+	checks           FilteredRegistry
+	config           *viper.Viper
+	registry         checks.Registry
+	toolVersion      string
+	openshiftVersion string
+	// NOTE(komish): We should do some due diligence as to if this was
+	// used at some point and that was later removed before we consider
+	// removing it fro mhere.
+	//
+	//nolint:unused
+	supportedOpenshiftVersions string
+	webCatalogOnly             bool
+	skipCleanup                bool
+	timeout                    time.Duration
+	publicKeys                 []string
+	helmInstallTimeout         time.Duration
+	values                     map[string]interface{}
+	settings                   *cli.EnvSettings
 }
 
 func (b *verifierBuilder) SetSettings(settings *cli.EnvSettings) VerifierBuilder {
@@ -95,7 +105,6 @@ func (b *verifierBuilder) SetConfig(config *viper.Viper) VerifierBuilder {
 }
 
 func (b *verifierBuilder) SetOverrides(overrides map[string]interface{}) VerifierBuilder {
-
 	// naively override values from the configuration
 	for key, val := range overrides {
 		b.config.Set(key, val)
@@ -113,13 +122,28 @@ func (b *verifierBuilder) SetOpenShiftVersion(version string) VerifierBuilder {
 	return b
 }
 
-func (b *verifierBuilder) SetProviderDelivery(providerDelivery bool) VerifierBuilder {
-	b.providerDelivery = providerDelivery
+func (b *verifierBuilder) SetWebCatalogOnly(webCatalogOnly bool) VerifierBuilder {
+	b.webCatalogOnly = webCatalogOnly
+	return b
+}
+
+func (b *verifierBuilder) SetSkipCleanup(skipCleanup bool) VerifierBuilder {
+	b.skipCleanup = skipCleanup
 	return b
 }
 
 func (b *verifierBuilder) SetTimeout(timeout time.Duration) VerifierBuilder {
 	b.timeout = timeout
+	return b
+}
+
+func (b *verifierBuilder) SetPublicKeys(publicKey []string) VerifierBuilder {
+	b.publicKeys = publicKey
+	return b
+}
+
+func (b *verifierBuilder) SetHelmInstallTimeout(timeout time.Duration) VerifierBuilder {
+	b.helmInstallTimeout = timeout
 	return b
 }
 
@@ -153,16 +177,19 @@ func (b *verifierBuilder) Build() (Verifier, error) {
 	profile := profiles.Get()
 
 	return &verifier{
-		config:           b.config,
-		registry:         b.registry,
-		requiredChecks:   requiredChecks,
-		settings:         b.settings,
-		toolVersion:      b.toolVersion,
-		profile:          profile,
-		openshiftVersion: b.openshiftVersion,
-		providerDelivery: b.providerDelivery,
-		timeout:          b.timeout,
-		values:           b.values,
+		config:             b.config,
+		registry:           b.registry,
+		requiredChecks:     requiredChecks,
+		settings:           b.settings,
+		toolVersion:        b.toolVersion,
+		profile:            profile,
+		openshiftVersion:   b.openshiftVersion,
+		webCatalogOnly:     b.webCatalogOnly,
+		skipCleanup:        b.skipCleanup,
+		timeout:            b.timeout,
+		helmInstallTimeout: b.helmInstallTimeout,
+		publicKeys:         b.publicKeys,
+		values:             b.values,
 	}, nil
 }
 

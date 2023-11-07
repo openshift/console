@@ -1,17 +1,17 @@
-/*   Copyright 2020-2022 Red Hat, Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+//
+// Copyright Red Hat
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package library
 
@@ -29,6 +29,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/hashicorp/go-multierror"
 )
 
 // SplitVersionFromStack takes a stack/version tag and splits the stack name from the version
@@ -73,17 +75,30 @@ func ValidateStackVersionTag(stackWithVersion string) (bool, error) {
 
 // decompress extracts the archive file
 func decompress(targetDir string, tarFile string, excludeFiles []string) error {
-	reader, err := os.Open(tarFile)
+	var returnedErr error
+
+	reader, err := os.Open(filepath.Clean(tarFile))
 	if err != nil {
 		return err
 	}
-	defer reader.Close()
+
+	defer func() {
+		if err = reader.Close(); err != nil {
+			returnedErr = multierror.Append(returnedErr, err)
+		}
+	}()
 
 	gzReader, err := gzip.NewReader(reader)
 	if err != nil {
-		return err
+		returnedErr = multierror.Append(returnedErr, err)
+		return returnedErr
 	}
-	defer gzReader.Close()
+
+	defer func() {
+		if err = gzReader.Close(); err != nil {
+			returnedErr = multierror.Append(returnedErr, err)
+		}
+	}()
 
 	tarReader := tar.NewReader(gzReader)
 	for {
@@ -91,29 +106,39 @@ func decompress(targetDir string, tarFile string, excludeFiles []string) error {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return err
+			returnedErr = multierror.Append(returnedErr, err)
+			return returnedErr
 		}
 		if isExcluded(header.Name, excludeFiles) {
 			continue
 		}
 
-		target := path.Join(targetDir, header.Name)
+		target := path.Join(targetDir, filepath.Clean(header.Name))
 		switch header.Typeflag {
 		case tar.TypeDir:
 			err = os.MkdirAll(target, os.FileMode(header.Mode))
 			if err != nil {
-				return err
+				returnedErr = multierror.Append(returnedErr, err)
+				return returnedErr
 			}
 		case tar.TypeReg:
+			/* #nosec G304 -- target is produced using path.Join which cleans the dir path */
 			w, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 			if err != nil {
-				return err
+				returnedErr = multierror.Append(returnedErr, err)
+				return returnedErr
 			}
+			/* #nosec G110 -- starter projects are vetted before they are added to a registry.  Their contents can be seen before they are downloaded */
 			_, err = io.Copy(w, tarReader)
 			if err != nil {
-				return err
+				returnedErr = multierror.Append(returnedErr, err)
+				return returnedErr
 			}
-			w.Close()
+			err = w.Close()
+			if err != nil {
+				returnedErr = multierror.Append(returnedErr, err)
+				return returnedErr
+			}
 		default:
 			log.Printf("Unsupported type: %v", header.Typeflag)
 		}
@@ -132,7 +157,7 @@ func isExcluded(name string, excludeFiles []string) bool {
 	return false
 }
 
-//setHeaders sets the request headers
+// setHeaders sets the request headers
 func setHeaders(headers *http.Header, options RegistryOptions) {
 	t := options.Telemetry
 	if t.User != "" {
@@ -146,7 +171,7 @@ func setHeaders(headers *http.Header, options RegistryOptions) {
 	}
 }
 
-//getHTTPClient returns a new http client object
+// getHTTPClient returns a new http client object
 func getHTTPClient(options RegistryOptions) *http.Client {
 
 	overriddenTimeout := httpRequestResponseTimeout
@@ -161,7 +186,8 @@ func getHTTPClient(options RegistryOptions) *http.Client {
 		Transport: &http.Transport{
 			Proxy:                 http.ProxyFromEnvironment,
 			ResponseHeaderTimeout: overriddenTimeout,
-			TLSClientConfig:       &tls.Config{InsecureSkipVerify: options.SkipTLSVerify},
+			/*#nosec G402 -- documented user option for dev/test, not for prod use */
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: options.SkipTLSVerify},
 		},
 		Timeout: overriddenTimeout,
 	}

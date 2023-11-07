@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
+
+	"golang.org/x/mod/semver"
+	"gopkg.in/yaml.v3"
+
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/profiles"
 	"github.com/redhat-certification/chart-verifier/pkg/chartverifier/checks"
 	"github.com/redhat-certification/chart-verifier/pkg/chartverifier/report"
-	"golang.org/x/mod/semver"
-	"gopkg.in/yaml.v3"
-	"strings"
 )
 
 const (
@@ -28,13 +30,14 @@ const (
 	AnnotationsSummary SummaryType = "annotations"
 	AllSummary         SummaryType = "all"
 
-	JsonReport SummaryFormat = "json"
-	YamlReport SummaryFormat = "yaml"
+	JSONReport SummaryFormat = "json"
+	YAMLReport SummaryFormat = "yaml"
 
 	// SkipDigestCheck: Use for testing purpose only
 	SkipDigestCheck BooleanKey = "skipDigestCheck"
 )
 
+//nolint:deadcode,unused // Note(komish) need to ensure this isn't used, and research
 var setBooleanKeys = [...]BooleanKey{SkipDigestCheck}
 
 type APIReportSummary interface {
@@ -78,7 +81,6 @@ func (r *ReportSummary) SetBoolean(key BooleanKey, value bool) APIReportSummary 
 }
 
 func (r *ReportSummary) GetContent(summary SummaryType, format SummaryFormat) (string, error) {
-
 	generateSummary := (r.MetadataReport == nil) || (r.ResultsReport == nil) || (r.AnnotationsReport == nil) || (r.DigestsReport == nil)
 
 	if generateSummary {
@@ -116,7 +118,7 @@ func (r *ReportSummary) GetContent(summary SummaryType, format SummaryFormat) (s
 	}
 
 	reportContent := ""
-	if format == JsonReport {
+	if format == JSONReport {
 		b, err := json.Marshal(outputSummary)
 		if err == nil {
 			reportContent = string(b)
@@ -136,16 +138,13 @@ func (r *ReportSummary) GetContent(summary SummaryType, format SummaryFormat) (s
 }
 
 func (r *ReportSummary) addAll() {
-
 	r.addAnnotations()
 	r.addDigests()
 	r.addResults()
 	r.addMetadata()
-
 }
 
 func (r *ReportSummary) addAnnotations() {
-
 	anotationsPrefix := DefaultAnnotationsPrefix
 
 	if configAnnotationsPrefix, ok := r.options.values[AnnotationsPrefixConfigName]; ok {
@@ -196,30 +195,27 @@ func (r *ReportSummary) addAnnotations() {
 		annotation.Value = value
 		r.AnnotationsReport = append(r.AnnotationsReport, annotation)
 	}
-
 }
 
 func (r *ReportSummary) addDigests() {
-
 	r.DigestsReport = &DigestReport{}
 	r.DigestsReport.ChartDigest = r.options.report.Metadata.ToolMetadata.Digests.Chart
 	r.DigestsReport.PackageDigest = r.options.report.Metadata.ToolMetadata.Digests.Package
-
+	if len(r.options.report.Metadata.ToolMetadata.Digests.PublicKey) > 0 {
+		r.DigestsReport.PublicKeyDigest = r.options.report.Metadata.ToolMetadata.Digests.PublicKey
+	}
 }
 
 func (r *ReportSummary) addMetadata() {
-
 	r.MetadataReport = &MetadataReport{}
 	r.MetadataReport.ProfileVendorType = profiles.VendorType(r.options.report.Metadata.ToolMetadata.Profile.VendorType)
 	r.MetadataReport.ProfileVersion = r.options.report.Metadata.ToolMetadata.Profile.Version
 	r.MetadataReport.ChartUri = r.options.report.Metadata.ToolMetadata.ChartUri
 	r.MetadataReport.Chart = r.options.report.Metadata.ChartData
-	r.MetadataReport.ProviderDelivery = r.options.report.Metadata.ToolMetadata.ProviderDelivery
-
+	r.MetadataReport.WebCatalogOnly = r.options.report.Metadata.ToolMetadata.ProviderDelivery || r.options.report.Metadata.ToolMetadata.WebCatalogOnly
 }
 
 func (r *ReportSummary) addResults() {
-
 	profileVendorType := r.options.report.Metadata.ToolMetadata.Profile.VendorType
 	profileVersion := r.options.report.Metadata.ToolMetadata.Profile.Version
 
@@ -252,7 +248,7 @@ func (r *ReportSummary) addResults() {
 			for _, reportCheck := range r.options.report.Results {
 				if strings.Compare(profileCheck.Name, string(reportCheck.Check)) == 0 {
 					found = true
-					if reportCheck.Outcome == report.PassOutcomeType {
+					if reportCheck.Outcome == report.PassOutcomeType || reportCheck.Outcome == report.SkippedOutcomeType {
 						passed++
 					} else {
 						failed++
@@ -275,30 +271,24 @@ func (r *ReportSummary) addResults() {
 	r.ResultsReport.Passed = fmt.Sprintf("%d", passed)
 	r.ResultsReport.Failed = fmt.Sprintf("%d", failed)
 	r.ResultsReport.Messages = messages
-
 }
 
 func (r *ReportSummary) checkReportDigest() error {
-
 	toolMetadata := r.options.report.Metadata.ToolMetadata
 	reportVersion := fmt.Sprintf("v%s", toolMetadata.Version)
-
 	if semver.Compare(reportVersion, report.ReportShaVersion) >= 0 {
-
 		digestFromReport := toolMetadata.ReportDigest
 		if digestFromReport == "" {
-			return errors.New("Report does not contain expected report digest. ")
+			return errors.New("report does not contain expected report digest")
 		}
 
 		calculatedDigest, err := r.options.report.GetReportDigest()
 		if err != nil {
-			return errors.New(fmt.Sprintf("error calculating report digest: %v", err))
+			return fmt.Errorf("error calculating report digest: %v", err)
 		}
 		if calculatedDigest != digestFromReport {
-			return errors.New("Digest in report did not match report content.")
+			return errors.New("digest in report did not match report content")
 		}
-
 	}
 	return nil
-
 }

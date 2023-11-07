@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/api"
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/profiles"
 	"github.com/redhat-certification/chart-verifier/pkg/chartverifier/checks"
@@ -42,10 +43,10 @@ import (
 // add go test
 
 const (
-	JsonReport ReportFormat = "json"
-	YamlReport ReportFormat = "yaml"
+	JSONReport ReportFormat = "json"
+	YAMLReport ReportFormat = "yaml"
 
-	KubeApiServer    StringKey = "kube-apiserver"
+	KubeAPIServer    StringKey = "kube-apiserver"
 	KubeAsUser       StringKey = "kube-as-user"
 	KubeCaFile       StringKey = "kube-ca-file"
 	KubeContext      StringKey = "kube-context"
@@ -59,19 +60,24 @@ const (
 	Config           StringKey = "config"
 	ChartValues      StringKey = "chart-values"
 	KubeAsGroups     StringKey = "kube-as-group"
+	PGPPublicKey     StringKey = "pgp-public-key"
 
 	ChartSet       ValuesKey = "chart-set"
 	ChartSetFile   ValuesKey = "chart-set-file"
 	ChartSetString ValuesKey = "chart-set-string"
 	CommandSet     ValuesKey = "set"
 
-	ProviderDelivery BooleanKey = "provider-delivery"
+	WebCatalogOnly   BooleanKey = "web-catalog-only"
+	ProviderDelivery BooleanKey = "provider-delivery" // Deprecated in 1.10
 	SuppressErrorLog BooleanKey = "suppress-error-log"
+	SkipCleanup      BooleanKey = "skip-cleanup"
 
-	Timeout DurationKey = "timeout"
+	Timeout            DurationKey = "timeout"
+	HelmInstallTimeout DurationKey = "helm-install-timeout"
 )
 
-var setStringKeys = [...]StringKey{KubeApiServer,
+var setStringKeys = [...]StringKey{
+	KubeAPIServer,
 	KubeAsUser,
 	KubeCaFile,
 	KubeConfig,
@@ -84,32 +90,35 @@ var setStringKeys = [...]StringKey{KubeApiServer,
 	RepositoryCache,
 	Config,
 	ChartValues,
-	KubeAsGroups}
+	KubeAsGroups,
+	PGPPublicKey,
+}
 
-var setValuesKeys = [...]ValuesKey{CommandSet,
+var setValuesKeys = [...]ValuesKey{
+	CommandSet,
 	ChartSet,
 	ChartSetFile,
-	ChartSetString}
+	ChartSetString,
+}
 
-var setBooleanKeys = [...]BooleanKey{ProviderDelivery, SuppressErrorLog}
+var setBooleanKeys = [...]BooleanKey{WebCatalogOnly, SuppressErrorLog, SkipCleanup}
 
-var setDurationKeys = [...]DurationKey{Timeout}
+var setDurationKeys = [...]DurationKey{Timeout, HelmInstallTimeout}
 
-type ApiVerifier interface {
-	SetBoolean(key BooleanKey, value bool) ApiVerifier
-	SetDuration(key DurationKey, duration time.Duration) ApiVerifier
-	SetString(key StringKey, value []string) ApiVerifier
-	SetValues(key ValuesKey, values map[string]interface{}) ApiVerifier
-	EnableChecks(names []checks.CheckName) ApiVerifier
-	UnEnableChecks(names []checks.CheckName) ApiVerifier
-	Run(chart_uri string) (ApiVerifier, error)
+type APIVerifier interface {
+	SetBoolean(key BooleanKey, value bool) APIVerifier
+	SetDuration(key DurationKey, duration time.Duration) APIVerifier
+	SetString(key StringKey, value []string) APIVerifier
+	SetValues(key ValuesKey, values map[string]interface{}) APIVerifier
+	EnableChecks(names []checks.CheckName) APIVerifier
+	UnEnableChecks(names []checks.CheckName) APIVerifier
+	Run(chartURI string) (APIVerifier, error)
 	GetReport() *report.Report
 }
 
 func validateBooleanKeys(v Verifier) error {
 	var err error
-	for key, _ := range v.Inputs.Flags.BooleanFlags {
-
+	for key := range v.Inputs.Flags.BooleanFlags {
 		foundElement := false
 		for _, sliceElement := range setBooleanKeys {
 			if sliceElement == key {
@@ -118,7 +127,7 @@ func validateBooleanKeys(v Verifier) error {
 			}
 		}
 		if !foundElement {
-			err = errors.New(fmt.Sprintf("Invalid boolean key name: %s", key))
+			err = fmt.Errorf("invalid boolean key name: %s", key)
 		}
 	}
 	return err
@@ -127,7 +136,7 @@ func validateBooleanKeys(v Verifier) error {
 /*
  * Set a boolean flag. Overwrites any previous setting.
  */
-func (v *Verifier) SetBoolean(key BooleanKey, value bool) ApiVerifier {
+func (v *Verifier) SetBoolean(key BooleanKey, value bool) APIVerifier {
 	v.Inputs.Flags.BooleanFlags[key] = value
 	return v
 }
@@ -136,15 +145,14 @@ func (v *Verifier) SetBoolean(key BooleanKey, value bool) ApiVerifier {
  * Set a duration flag. Overwrites any previous setting
  * Default timeout is 30 minutes
  */
-func (v *Verifier) SetDuration(key DurationKey, duration time.Duration) ApiVerifier {
+func (v *Verifier) SetDuration(key DurationKey, duration time.Duration) APIVerifier {
 	v.Inputs.Flags.DurationFlags[key] = duration
 	return v
 }
 
 func validateDurationKeys(v Verifier) error {
 	var err error
-	for key, _ := range v.Inputs.Flags.DurationFlags {
-
+	for key := range v.Inputs.Flags.DurationFlags {
 		foundElement := false
 		for _, sliceElement := range setDurationKeys {
 			if sliceElement == key {
@@ -153,7 +161,7 @@ func validateDurationKeys(v Verifier) error {
 			}
 		}
 		if !foundElement {
-			err = errors.New(fmt.Sprintf("Invalid duration key name: %s", key))
+			err = fmt.Errorf("invalid duration key name: %s", key)
 		}
 	}
 	return err
@@ -162,14 +170,14 @@ func validateDurationKeys(v Verifier) error {
 /*
  * Set a string flag. Overwrites any previous setting.
  */
-func (v *Verifier) SetString(key StringKey, value []string) ApiVerifier {
+func (v *Verifier) SetString(key StringKey, value []string) APIVerifier {
 	v.Inputs.Flags.StringFlags[key] = value
 	return v
 }
 
 func validateStringKeys(v Verifier) error {
 	var err error
-	for key, _ := range v.Inputs.Flags.StringFlags {
+	for key := range v.Inputs.Flags.StringFlags {
 		foundElement := false
 		for _, sliceElement := range setStringKeys {
 			if sliceElement == key {
@@ -178,7 +186,7 @@ func validateStringKeys(v Verifier) error {
 			}
 		}
 		if !foundElement {
-			err = errors.New(fmt.Sprintf("Invalid string key name: %s", key))
+			err = fmt.Errorf("invalid string key name: %s", key)
 		}
 	}
 	return err
@@ -187,8 +195,7 @@ func validateStringKeys(v Verifier) error {
 /*
  * Set a map of values flags. Adds/replaces any previous set values for the specified value setting.
  */
-func (v *Verifier) SetValues(valuesFlagName ValuesKey, values map[string]interface{}) ApiVerifier {
-
+func (v *Verifier) SetValues(valuesFlagName ValuesKey, values map[string]interface{}) APIVerifier {
 	if _, ok := v.Inputs.Flags.ValuesFlags[valuesFlagName]; ok {
 		for key, element := range values {
 			v.Inputs.Flags.ValuesFlags[valuesFlagName][strings.ToLower(key)] = element
@@ -201,7 +208,7 @@ func (v *Verifier) SetValues(valuesFlagName ValuesKey, values map[string]interfa
 
 func validateValuesKeys(v Verifier) error {
 	var err error
-	for key, _ := range v.Inputs.Flags.ValuesFlags {
+	for key := range v.Inputs.Flags.ValuesFlags {
 		foundElement := false
 		for _, sliceElement := range setValuesKeys {
 			if sliceElement == key {
@@ -210,7 +217,7 @@ func validateValuesKeys(v Verifier) error {
 			}
 		}
 		if !foundElement {
-			err = errors.New(fmt.Sprintf("Invalid values key name: %s", key))
+			err = fmt.Errorf("invalid values key name: %s", key)
 		}
 	}
 	return err
@@ -220,7 +227,7 @@ func validateValuesKeys(v Verifier) error {
  * Enables the set of checks provided and un-enables all others,
  * If no checks are provided all checks are enabled
  */
-func (v *Verifier) EnableChecks(checkNames []checks.CheckName) ApiVerifier {
+func (v *Verifier) EnableChecks(checkNames []checks.CheckName) APIVerifier {
 	if len(checkNames) > 0 {
 		for _, checkName := range checks.GetChecks() {
 			v.Inputs.Flags.Checks[checkName] = CheckStatus{false}
@@ -239,7 +246,7 @@ func (v *Verifier) EnableChecks(checkNames []checks.CheckName) ApiVerifier {
 /*
  * Un-Enables the set of checks provided and enables all others,
  */
-func (v *Verifier) UnEnableChecks(checkNames []checks.CheckName) ApiVerifier {
+func (v *Verifier) UnEnableChecks(checkNames []checks.CheckName) APIVerifier {
 	if len(checkNames) > 0 {
 		for _, checkName := range checks.GetChecks() {
 			v.Inputs.Flags.Checks[checkName] = CheckStatus{true}
@@ -253,7 +260,7 @@ func (v *Verifier) UnEnableChecks(checkNames []checks.CheckName) ApiVerifier {
 
 func validateChecks(v Verifier) error {
 	var err error
-	for checkName, _ := range v.Inputs.Flags.Checks {
+	for checkName := range v.Inputs.Flags.Checks {
 		isValidCheckName := false
 		for _, validCheckName := range checks.GetChecks() {
 			if checkName == validCheckName {
@@ -262,26 +269,25 @@ func validateChecks(v Verifier) error {
 			}
 		}
 		if !isValidCheckName {
-			err = errors.New(fmt.Sprintf("Invalid check name : %s", checkName))
+			err = fmt.Errorf("invalid check name : %s", checkName)
 			return err
 		}
 	}
 	return err
-
 }
 
 /*
  * Runs the chart verifier for specified chart and based on previously set flags.
  */
-func (v *Verifier) Run(chart_uri string) (ApiVerifier, error) {
+func (v *Verifier) Run(chartURI string) (APIVerifier, error) {
 	var err error
 
-	if len(chart_uri) == 0 {
+	if len(chartURI) == 0 {
 		err = errors.New("run error: chart_uri is required")
 		return v, err
 	}
 
-	v.Inputs.ChartUri = chart_uri
+	v.Inputs.ChartURI = chartURI
 
 	err = v.checkInputs()
 	if err != nil {
@@ -290,7 +296,7 @@ func (v *Verifier) Run(chart_uri string) (ApiVerifier, error) {
 
 	runOptions := api.RunOptions{}
 
-	runOptions.ChartUri = chart_uri
+	runOptions.ChartURI = chartURI
 
 	runOptions.ViperConfig = viper.New()
 
@@ -335,16 +341,30 @@ func (v *Verifier) Run(chart_uri string) (ApiVerifier, error) {
 		runOptions.OpenShiftVersion = stringsValue[0]
 	}
 
-	if booleanValue, ok := v.Inputs.Flags.BooleanFlags[ProviderDelivery]; ok {
-		runOptions.ProviderDelivery = booleanValue
+	if booleanValue, ok := v.Inputs.Flags.BooleanFlags[WebCatalogOnly]; ok {
+		runOptions.WebCatalogOnly = booleanValue
+	} else if booleanValue, ok := v.Inputs.Flags.BooleanFlags[ProviderDelivery]; ok {
+		runOptions.WebCatalogOnly = booleanValue
 	}
 
 	if booleanValue, ok := v.Inputs.Flags.BooleanFlags[SuppressErrorLog]; ok {
 		runOptions.SuppressErrorLog = booleanValue
 	}
 
+	if booleanValue, ok := v.Inputs.Flags.BooleanFlags[SkipCleanup]; ok {
+		runOptions.SkipCleanup = booleanValue
+	}
+
 	if durationValue, ok := v.Inputs.Flags.DurationFlags[Timeout]; ok {
 		runOptions.ClientTimeout = durationValue
+	}
+
+	if stringsValue, ok := v.Inputs.Flags.StringFlags[PGPPublicKey]; ok {
+		runOptions.PublicKeys = stringsValue
+	}
+
+	if durationValue, ok := v.Inputs.Flags.DurationFlags[HelmInstallTimeout]; ok {
+		runOptions.HelmInstallTimeout = durationValue
 	}
 
 	runOptions.APIVersion = version.GetVersion()
@@ -368,21 +388,21 @@ func (v *Verifier) GetReport() *report.Report {
 /*
  * Create a new verifier
  */
-func NewVerifier() ApiVerifier {
+func NewVerifier() APIVerifier {
 	verifier := Verifier{}
 	verifier.initialize()
 	return &verifier
 }
 
 func (v *Verifier) initialize() {
-
-	v.Id = uuid.New().String()
+	v.ID = uuid.New().String()
 
 	v.Inputs.Flags.StringFlags = make(map[StringKey][]string)
 	v.Inputs.Flags.ValuesFlags = make(map[ValuesKey]map[string]interface{})
 	v.Inputs.Flags.BooleanFlags = make(map[BooleanKey]bool)
-	v.Inputs.Flags.BooleanFlags[ProviderDelivery] = false
+	v.Inputs.Flags.BooleanFlags[WebCatalogOnly] = false
 	v.Inputs.Flags.BooleanFlags[SuppressErrorLog] = false
+	v.Inputs.Flags.BooleanFlags[SkipCleanup] = false
 	v.Inputs.Flags.DurationFlags = make(map[DurationKey]time.Duration)
 	v.Inputs.Flags.Checks = make(map[checks.CheckName]CheckStatus)
 
@@ -396,7 +416,6 @@ func (v *Verifier) initialize() {
 
 	v.Outputs.Report = nil
 	v.Outputs.ReportSummary = nil
-
 }
 
 func (v Verifier) checkInputs() error {
@@ -427,7 +446,7 @@ func mapToStringSlice(valuesMap map[string]interface{}) []string {
 func setHelmEnv(settings *cli.EnvSettings, stringSettings map[StringKey][]string) {
 	for key, value := range stringSettings {
 		switch key {
-		case KubeApiServer:
+		case KubeAPIServer:
 			settings.KubeAPIServer = value[0]
 		case KubeAsUser:
 			settings.KubeAsUser = value[0]

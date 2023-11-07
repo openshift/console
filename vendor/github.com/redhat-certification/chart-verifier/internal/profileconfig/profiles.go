@@ -15,7 +15,6 @@ type ProfileInfo struct {
 
 // Get all profiles in the profiles directory, and any subdirectories, and add each to the profile map
 func GetProfiles() ([]ProfileInfo, error) {
-
 	var profiles []ProfileInfo
 	profileFiles, err := content.ReadDir("profiles")
 	if err != nil {

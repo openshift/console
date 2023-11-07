@@ -17,12 +17,17 @@
 package checks
 
 import (
+	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"os"
+	"path"
 	"strings"
 
-	"github.com/Masterminds/sprig"
-	"github.com/pkg/errors"
-	"golang.org/x/mod/semver"
+	"github.com/opdev/getocprange"
+	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/lint"
 	"helm.sh/helm/v3/pkg/lint/support"
 
@@ -60,11 +65,17 @@ const (
 	MetadataFailure              = "Empty metadata in chart"
 	RequiredAnnotationsSuccess   = "All required annotations present"
 	RequiredAnnotationsFailure   = "Missing required annotations"
+	ChartSigned                  = "Chart is signed"
+	ChartNotSigned               = "Chart is not signed"
+	SignatureIsNotPresentSuccess = "Signature verification not required"
+	SignatureIsValidSuccess      = "Signature verification passed"
+	SignatureFailure             = "Signature verification failed"
+	SignatureNoKey               = "Signature verification skipped, a public key was not specified"
+	ImageCertifySkipped          = "Image certification skipped"
+	RedHatRegistry               = "registry.redhat.io/"
 )
 
-var (
-	requiredAnnotations = [...]string{"charts.openshift.io/name"}
-)
+var requiredAnnotations = [...]string{"charts.openshift.io/name"}
 
 func notImplemented() (Result, error) {
 	return Result{Ok: false}, errors.New("not implemented")
@@ -116,7 +127,6 @@ func ContainsTest(opts *CheckOptions) (Result, error) {
 	}
 
 	return r, nil
-
 }
 
 func ContainsValues(opts *CheckOptions) (Result, error) {
@@ -175,8 +185,8 @@ func HasKubeVersion(opts *CheckOptions) (Result, error) {
 	return r, nil
 }
 
+//nolint:stylecheck // Note(komish) separating numeric values is a valid use case for underscores.
 func HasKubeVersion_V1_1(opts *CheckOptions) (Result, error) {
-
 	c, _, err := LoadChartFromURI(opts)
 	if err != nil {
 		return NewResult(false, err.Error()), err
@@ -185,7 +195,7 @@ func HasKubeVersion_V1_1(opts *CheckOptions) (Result, error) {
 	r := NewResult(false, KuberVersionNotSpecified)
 
 	if c.Metadata.KubeVersion != "" {
-		OCPRange, err := getOCPRange(c.Metadata.KubeVersion)
+		OCPRange, err := getocprange.GetOCPRange(c.Metadata.KubeVersion)
 		if err != nil {
 			r = NewResult(false, err.Error())
 		} else {
@@ -264,43 +274,18 @@ func CanBeInstalledWithoutClusterAdminPrivileges(opts *CheckOptions) (Result, er
 }
 
 func ImagesAreCertified(opts *CheckOptions) (Result, error) {
-
 	r := NewResult(true, "")
 
-	images, err := getImageReferences(opts.URI, opts.Values)
+	r = certifyImages(r, opts, "")
 
-	if err != nil {
-		r.SetResult(false, fmt.Sprintf("%s : Failed to get images, error running helm template : %v", ImageCertifyFailed, err))
-	} else if len(images) == 0 {
-		r.SetResult(true, NoImagesToCertify)
-	} else {
-		for _, image := range images {
+	return r, nil
+}
 
-			err = nil
-			imageRef := parseImageReference(image)
+//nolint:stylecheck // Note(komish) separating numeric values is a valid use case for underscores.
+func ImagesAreCertified_V1_1(opts *CheckOptions) (Result, error) {
+	r := NewResult(true, "")
 
-			if len(imageRef.Registries) == 0 {
-				imageRef.Registries, err = pyxis.GetImageRegistries(imageRef.Repository)
-			}
-
-			if err != nil {
-				r.AddResult(false, fmt.Sprintf("%s : %s : %v", ImageNotCertified, image, err))
-			} else if len(imageRef.Registries) == 0 {
-				r.AddResult(false, fmt.Sprintf("%s : %s", ImageNotCertified, image))
-			} else {
-				certified, checkImageErr := pyxis.IsImageInRegistry(imageRef)
-				if !certified {
-					if checkImageErr != nil {
-						r.AddResult(false, fmt.Sprintf("%s : %s : %v", ImageNotCertified, image, checkImageErr))
-					} else {
-						r.AddResult(false, fmt.Sprintf("%s : %s", ImageNotCertified, image))
-					}
-				} else {
-					r.AddResult(true, fmt.Sprintf("%s : %s", ImageCertified, image))
-				}
-			}
-		}
-	}
+	r = certifyImages(r, opts, RedHatRegistry)
 
 	return r, nil
 }
@@ -330,8 +315,92 @@ func RequiredAnnotationsPresent(opts *CheckOptions) (Result, error) {
 	return NewResult(true, RequiredAnnotationsSuccess), nil
 }
 
-func parseImageReference(image string) pyxis.ImageReference {
+func SignatureIsValid(opts *CheckOptions) (Result, error) {
+	chartPath := opts.URI
 
+	chartURL, err := url.Parse(chartPath)
+	if err != nil {
+		return NewResult(false, fmt.Sprintf("Failed to parse chart location: %s", chartPath)), nil
+	}
+	var provFile string
+	switch chartURL.Scheme {
+	case "http", "https":
+		if strings.HasSuffix(chartPath, ".tgz") {
+			provFile = chartPath + ".prov"
+		} else if strings.HasSuffix(chartPath, ".tgz?raw=true") {
+			provFile = strings.Replace(chartPath, ".tgz?", ".tgz.prov?", 1)
+		} else {
+			return NewSkippedResult(fmt.Sprintf("%s : %s", ChartNotSigned, SignatureIsNotPresentSuccess)), nil
+		}
+		provFileURL, err := url.Parse(provFile)
+		if err != nil {
+			return NewResult(false, fmt.Sprintf("%s : Failed to parse prov file location: %s", SignatureFailure, provFile)), nil
+		}
+		// #nosec G107
+		resp, err := http.Get(provFile)
+		if err != nil {
+			return NewResult(false, fmt.Sprintf("%s : get error was %v", SignatureFailure, err)), nil
+		}
+
+		if resp.StatusCode == 404 {
+			return NewSkippedResult(fmt.Sprintf("%s : %s", ChartNotSigned, SignatureIsNotPresentSuccess)), nil
+		} else if resp.StatusCode != 200 {
+			return NewResult(false, fmt.Sprintf("%s. get prov file response code was %d", SignatureFailure, resp.StatusCode)), nil
+		}
+
+		downloadDir, err := os.UserCacheDir()
+		if err != nil {
+			return NewResult(false, fmt.Sprintf("%s : %s : error getting cache dir:  %v", ChartSigned, SignatureFailure, err)), nil
+		}
+
+		chartPath, err = downloadFile(chartURL, downloadDir)
+		if err != nil {
+			return NewResult(false, fmt.Sprintf("%s : %s. error downloading %s:  %v", ChartSigned, SignatureIsNotPresentSuccess, chartURL.String(), err)), nil
+		}
+		_, err = downloadFile(provFileURL, downloadDir)
+		if err != nil {
+			return NewResult(false, fmt.Sprintf("%s : %s. error downloading %s:  %v", ChartSigned, SignatureIsNotPresentSuccess, provFileURL.String(), err)), nil
+		}
+	case "file", "":
+		if strings.HasSuffix(chartPath, ".tgz") {
+			provFile = chartPath + ".prov"
+			if _, err := os.Stat(provFile); err != nil {
+				return NewSkippedResult(fmt.Sprintf("%s : %s", ChartNotSigned, SignatureIsNotPresentSuccess)), nil
+			}
+		} else {
+			return NewSkippedResult(fmt.Sprintf("%s : %s", ChartNotSigned, SignatureIsNotPresentSuccess)), nil
+		}
+	default:
+		return NewResult(false, fmt.Sprintf("%s: scheme %q not supported", SignatureFailure, chartURL.Scheme)), nil
+	}
+
+	verify := action.NewVerify()
+	var keyringFilename string
+	if len(opts.PublicKeys) > 0 && len(opts.PublicKeys[0]) > 0 {
+		keryingDir := path.Join(getCacheDir(opts), "pgp")
+		keyringFilename, err = tool.GetKeyRing(keryingDir, opts.PublicKeys)
+		if err != nil {
+			return NewResult(false, fmt.Sprintf("%s : %s : failed to create keyring : %v", ChartSigned, SignatureFailure, err)), nil
+		}
+	} else {
+		return NewSkippedResult(fmt.Sprintf("%s : %s", ChartSigned, SignatureNoKey)), nil
+	}
+
+	if _, err := os.Stat(keyringFilename); err != nil {
+		return NewResult(false, fmt.Sprintf("%s : %s : failed to create keyring.", ChartSigned, SignatureFailure)), nil
+	}
+	verify.Keyring = keyringFilename
+
+	err = verify.Run(chartPath)
+	if err != nil {
+		failureMsg := fmt.Sprintf("%s : %s : %v", ChartSigned, SignatureFailure, err)
+		return NewResult(false, failureMsg), nil
+	}
+
+	return NewResult(true, fmt.Sprintf("%s : %s", ChartSigned, SignatureIsValidSuccess)), nil
+}
+
+func parseImageReference(image string) pyxis.ImageReference {
 	imageRef := pyxis.ImageReference{}
 	imageParts := strings.Split(image, "/")
 
@@ -359,44 +428,94 @@ func parseImageReference(image string) pyxis.ImageReference {
 	}
 
 	return imageRef
-
 }
 
-func getOCPRange(kubeVersionRange string) (string, error) {
+func downloadFile(fileURL *url.URL, directory string) (string, error) {
+	// Create blank file
+	filePath := path.Join(directory, path.Base(fileURL.Path))
+	// #nosec G304
+	file, err := os.Create(filePath)
+	if err != nil {
+		return "", err
+	}
+	client := http.Client{
+		CheckRedirect: func(r *http.Request, via []*http.Request) error {
+			r.URL.Opaque = r.URL.Path
+			return nil
+		},
+	}
+	// Put content on file
+	resp, err := client.Get(fileURL.String())
+	if err != nil {
+		return "", err
+	}
+	// #nosec G307
+	defer resp.Body.Close()
 
-	semverCompare := sprig.GenericFuncMap()["semverCompare"].(func(string, string) (bool, error))
-	minOCPVersion := ""
-	maxOCPVersion := ""
-	for kubeVersion, OCPVersion := range tool.GetKubeOpenShiftVersionMap() {
-		match, err := semverCompare(kubeVersionRange, kubeVersion)
-		if err != nil {
-			return "", fmt.Errorf("%s : %s", KuberVersionProcessingError, err)
-		}
-		if match {
-			testOCPVersion := fmt.Sprintf("v%s", OCPVersion)
-			if minOCPVersion == "" || semver.Compare(testOCPVersion, fmt.Sprintf("v%s", minOCPVersion)) < 0 {
-				minOCPVersion = OCPVersion
-			}
-			if maxOCPVersion == "" || semver.Compare(testOCPVersion, fmt.Sprintf("v%s", maxOCPVersion)) > 0 {
-				maxOCPVersion = OCPVersion
-			}
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return "", err
+	}
+	// #nosec G307
+	defer file.Close()
+
+	return filePath, nil
+}
+
+func certifyImages(r Result, opts *CheckOptions, registry string) Result {
+	kubeVersion := ""
+	kubeConfig := tool.GetClientConfig(opts.HelmEnvSettings)
+	kubectl, kubeErr := tool.NewKubectl(kubeConfig)
+	if kubeErr == nil {
+		serverVersion, versionErr := kubectl.GetServerVersion()
+		if versionErr == nil {
+			kubeVersion = fmt.Sprintf("%s.%s", serverVersion.Major, serverVersion.Minor)
 		}
 	}
-	// Check if min ocp range is open ended, for example 1.* or >-=1.20
-	// To do this see if 1.999 is valid for the min OCP version range, not perfect but works until kubernetes hits 2.0.
-	if minOCPVersion != "" {
-		match, _ := semverCompare(kubeVersionRange, "1.999")
-		if match {
-			return fmt.Sprintf(">=%s", minOCPVersion), nil
-		} else {
-			if minOCPVersion == maxOCPVersion {
-				return minOCPVersion, nil
+
+	images, err := getImageReferences(opts.URI, opts.Values, kubeVersion)
+	if err != nil {
+		r.SetResult(false, fmt.Sprintf("%s : Failed to get images, error running helm template : %v", ImageCertifyFailed, err))
+	}
+
+	if len(images) == 0 {
+		r.SetResult(true, NoImagesToCertify)
+	} else {
+		for _, image := range images {
+			// skip to evaluate next image, if current image is an empty string
+			if strings.Trim(image, " ") == "" {
+				r.AddResult(false, "ImageCertify() = empty image found")
+				continue
+			}
+
+			imageRef := parseImageReference(image)
+			if len(imageRef.Registries) == 0 {
+				imageRef.Registries, err = pyxis.GetImageRegistries(imageRef.Repository)
+				if err != nil {
+					r.AddResult(false, fmt.Sprintf("%s : %s : %v", ImageNotCertified, image, err))
+				}
+			}
+
+			if len(imageRef.Registries) == 0 {
+				r.AddResult(false, fmt.Sprintf("%s : %s", ImageNotCertified, image))
 			} else {
-				return fmt.Sprintf("%s - %s", minOCPVersion, maxOCPVersion), nil
+				certified, checkImageErr := pyxis.IsImageInRegistry(imageRef)
+				if !certified {
+					if strings.Contains(checkImageErr.Error(), "No images found for Registry/Repository") && registry != "" {
+						if strings.HasPrefix(image, registry) {
+							r.SetSkipped(fmt.Sprintf("%s : %s", ImageCertifySkipped, image))
+						} else {
+							r.AddResult(false, fmt.Sprintf("%s : %s", ImageNotCertified, image))
+						}
+					} else {
+						r.AddResult(false, fmt.Sprintf("%s : %s : %v", ImageCertifyFailed, image, checkImageErr))
+					}
+				} else {
+					r.AddResult(true, fmt.Sprintf("%s : %s", ImageCertified, image))
+				}
 			}
 		}
 	}
 
-	return "", fmt.Errorf("%s : Failed to determine a minimum OCP version", KuberVersionProcessingError)
-
+	return r
 }

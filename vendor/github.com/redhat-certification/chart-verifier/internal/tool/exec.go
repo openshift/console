@@ -47,11 +47,11 @@ func (p ProcessExecutor) RunProcessInDirAndCaptureOutput(
 	if err != nil {
 		if len(capturedOutput) == 0 {
 			return "", fmt.Errorf(
-				"Error running process: executing %s with args %q: %w",
+				"error running process: executing %s with args %q: %w",
 				executable, execArgsStr, err)
 		}
 		return capturedOutput, fmt.Errorf(
-			"Error running process: executing %s with args %q: %w\n---\n%s",
+			"error running process: executing %s with args %q: %w\n---\n%s",
 			executable, execArgsStr, err, capturedOutput)
 	}
 	return capturedOutput, nil

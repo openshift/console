@@ -1,17 +1,17 @@
-/*   Copyright 2020-2022 Red Hat, Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+//
+// Copyright Red Hat
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package library
 
@@ -31,6 +31,7 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/hashicorp/go-multierror"
 	orasctx "oras.land/oras-go/pkg/context"
 
 	"github.com/containerd/containerd/remotes/docker"
@@ -48,9 +49,9 @@ const (
 	DevfilePNGLogoMediaType = "image/png"
 	DevfileArchiveMediaType = "application/x-tar"
 
-	OwnersFile = "OWNERS"
-
-	httpRequestResponseTimeout = 30 * time.Second // httpRequestTimeout configures timeout of all HTTP requests
+	OwnersFile                 = "OWNERS"
+	registryLibrary            = "registry-library" //constant to indicate that function is called by the library
+	httpRequestResponseTimeout = 30 * time.Second   // httpRequestTimeout configures timeout of all HTTP requests
 )
 
 var (
@@ -65,7 +66,7 @@ type Registry struct {
 	err              error
 }
 
-//TelemetryData structure to pass in client telemetry information
+// TelemetryData structure to pass in client telemetry information
 // The User and Locale fields should be passed in by clients if telemetry opt-in is enabled
 // the generic Client name will be passed in regardless of opt-in/out choice.  The value
 // will be assigned to the UserId field for opt-outs
@@ -214,12 +215,15 @@ func PrintRegistry(registryURLs string, devfileType string, options RegistryOpti
 	registryURLArray := strings.Split(registryURLs, ",")
 	var registryList []Registry
 
+	//ignore telemetry when printing the registry
+	modifiedOptions := options
+	modifiedOptions.Telemetry = TelemetryData{Client: registryLibrary}
 	if devfileType == string(indexSchema.StackDevfileType) {
-		registryList = GetMultipleRegistryIndices(registryURLArray, options, indexSchema.StackDevfileType)
+		registryList = GetMultipleRegistryIndices(registryURLArray, modifiedOptions, indexSchema.StackDevfileType)
 	} else if devfileType == string(indexSchema.SampleDevfileType) {
-		registryList = GetMultipleRegistryIndices(registryURLArray, options, indexSchema.SampleDevfileType)
+		registryList = GetMultipleRegistryIndices(registryURLArray, modifiedOptions, indexSchema.SampleDevfileType)
 	} else if devfileType == "all" {
-		registryList = GetMultipleRegistryIndices(registryURLArray, options, indexSchema.StackDevfileType, indexSchema.SampleDevfileType)
+		registryList = GetMultipleRegistryIndices(registryURLArray, modifiedOptions, indexSchema.StackDevfileType, indexSchema.SampleDevfileType)
 	}
 
 	w := tabwriter.NewWriter(os.Stdout, 5, 2, 3, ' ', tabwriter.TabIndent)
@@ -233,7 +237,8 @@ func PrintRegistry(registryURLs string, devfileType string, options RegistryOpti
 			}
 		}
 	}
-	w.Flush()
+
+	_ = w.Flush()
 	return nil
 }
 
@@ -314,17 +319,20 @@ func DownloadStarterProjectAsDir(path string, registryURL string, stack string, 
 	defer archive.Close()
 
 	// Extract files from starter project archive to specified directory path
+	cleanPath := filepath.Clean(path)
 	for _, file := range archive.File {
-		filePath := filepath.Join(path, file.Name)
+		filePath := filepath.Join(cleanPath, filepath.Clean(file.Name))
 
 		// validate extracted filepath
-		if filePath != file.Name && !strings.HasPrefix(filePath, filepath.Clean(path)+string(os.PathSeparator)) {
+		if filePath != file.Name && !strings.HasPrefix(filePath, cleanPath+string(os.PathSeparator)) {
 			return fmt.Errorf("invalid file path %s", filePath)
 		}
 
 		// if file is a directory, create it in destination and continue to next file
 		if file.FileInfo().IsDir() {
-			os.MkdirAll(filePath, os.ModePerm)
+			if err = os.MkdirAll(filePath, os.ModePerm); err != nil {
+				return fmt.Errorf("error creating directory %s: %v", filepath.Dir(filePath), err)
+			}
 			continue
 		}
 
@@ -334,6 +342,7 @@ func DownloadStarterProjectAsDir(path string, registryURL string, stack string, 
 		}
 
 		// open destination file
+		/* #nosec G304 -- filePath is produced using path.Join which cleans the dir path */
 		dstFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
 		if err != nil {
 			return fmt.Errorf("error opening destination file at %s: %v", filePath, err)
@@ -346,12 +355,19 @@ func DownloadStarterProjectAsDir(path string, registryURL string, stack string, 
 		}
 
 		// extract source file to destination file
+		/* #nosec G110 -- starter projects are vetted before they are added to a registry.  Their contents can be seen before they are downloaded */
 		if _, err = io.Copy(dstFile, srcFile); err != nil {
 			return fmt.Errorf("error extracting file %s from archive %s to destination at %s: %v", file.Name, archivePath, filePath, err)
 		}
 
-		dstFile.Close()
-		srcFile.Close()
+		err = dstFile.Close()
+		if err != nil {
+			return err
+		}
+		err = srcFile.Close()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -360,7 +376,9 @@ func DownloadStarterProjectAsDir(path string, registryURL string, stack string, 
 // DownloadStarterProject downloads a specified starter project archive to a given path
 func DownloadStarterProject(path string, registryURL string, stack string, starterProject string, options RegistryOptions) error {
 	var fileStream *os.File
+	var returnedErr error
 
+	cleanPath := filepath.Clean(path)
 	// Download Starter Project archive bytes
 	bytes, err := DownloadStarterProjectAsBytes(registryURL, stack, starterProject, options)
 	if err != nil {
@@ -368,29 +386,35 @@ func DownloadStarterProject(path string, registryURL string, stack string, start
 	}
 
 	// Error if parent directory does not exist
-	if _, err = os.Stat(filepath.Dir(path)); os.IsNotExist(err) {
+	if _, err = os.Stat(filepath.Dir(cleanPath)); os.IsNotExist(err) {
 		return fmt.Errorf("parent directory '%s' does not exist: %v", filepath.Dir(path), err)
 	}
 
 	// If file does not exist, create a new one
 	// Else open existing for overwriting
 	if _, err = os.Stat(path); os.IsNotExist(err) {
-		fileStream, err = os.Create(path)
+		fileStream, err = os.Create(cleanPath)
 		if err != nil {
 			return fmt.Errorf("failed to create file '%s': %v", path, err)
 		}
 	} else {
-		fileStream, err = os.OpenFile(path, os.O_WRONLY|os.O_TRUNC, os.ModePerm)
+		fileStream, err = os.OpenFile(cleanPath, os.O_WRONLY|os.O_TRUNC, os.ModePerm)
 		if err != nil {
 			return fmt.Errorf("failed to open file '%s': %v", path, err)
 		}
 	}
-	defer fileStream.Close()
+
+	defer func() {
+		if err = fileStream.Close(); err != nil {
+			returnedErr = multierror.Append(returnedErr, err)
+		}
+	}()
 
 	// Write downloaded bytes to file
 	_, err = fileStream.Write(bytes)
 	if err != nil {
-		return fmt.Errorf("failed writing to '%s': %v", path, err)
+		returnedErr = multierror.Append(returnedErr, fmt.Errorf("failed writing to '%s': %v", path, err))
+		return returnedErr
 	}
 
 	return nil
@@ -436,7 +460,10 @@ func DownloadStarterProjectAsBytes(registryURL string, stack string, starterProj
 // IsStarterProjectExists checks if starter project exists for a given stack
 func IsStarterProjectExists(registryURL string, stack string, starterProject string, options RegistryOptions) (bool, error) {
 	// Get stack index
-	stackIndex, err := GetStackIndex(registryURL, stack, options)
+	// Avoid collecting telemetry here since it's an indirect call to GetStackIndex
+	modifiedOptions := options
+	modifiedOptions.Telemetry = TelemetryData{Client: registryLibrary}
+	stackIndex, err := GetStackIndex(registryURL, stack, modifiedOptions)
 	if err != nil {
 		return false, err
 	}
@@ -476,7 +503,10 @@ func GetStackLink(registryURL string, stack string, options RegistryOptions) (st
 	var stackLink string
 
 	// Get stack index
-	stackIndex, err := GetStackIndex(registryURL, stack, options)
+	// Avoid collecting telemetry here since it's an indirect call to GetStackIndex
+	modifiedOptions := options
+	modifiedOptions.Telemetry = TelemetryData{Client: registryLibrary}
+	stackIndex, err := GetStackIndex(registryURL, stack, modifiedOptions)
 	if err != nil {
 		return "", err
 	}

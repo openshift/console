@@ -18,13 +18,16 @@ package chartverifier
 
 import (
 	"fmt"
+
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/checks"
 	apiChecks "github.com/redhat-certification/chart-verifier/pkg/chartverifier/checks"
 	apiReport "github.com/redhat-certification/chart-verifier/pkg/chartverifier/report"
 )
 
-var ReportApiVersion = "v1"
-var ReportKind = "verify-report"
+var (
+	ReportAPIVersion = "v1"
+	ReportKind       = "verify-report"
+)
 
 type InternalReport struct {
 	APIReport apiReport.Report
@@ -36,7 +39,7 @@ type InternalCheckReport struct {
 
 func newReport() InternalReport {
 	report := InternalReport{}
-	report.APIReport = apiReport.Report{Apiversion: ReportApiVersion, Kind: ReportKind}
+	report.APIReport = apiReport.Report{Apiversion: ReportAPIVersion, Kind: ReportKind}
 	report.APIReport.Metadata = apiReport.ReportMetadata{}
 	report.APIReport.Metadata.ToolMetadata = apiReport.ToolMetadata{}
 
@@ -46,15 +49,17 @@ func newReport() InternalReport {
 func (ir *InternalReport) AddCheck(check checks.Check) *InternalCheckReport {
 	newCheck := InternalCheckReport{}
 	newCheck.APICheckReport = apiReport.CheckReport{}
-	newCheck.APICheckReport.Check = apiChecks.CheckName(fmt.Sprintf("%s/%s", check.CheckId.Version, check.CheckId.Name))
-	newCheck.APICheckReport.Type = apiChecks.CheckType(check.Type)
+	newCheck.APICheckReport.Check = apiChecks.CheckName(fmt.Sprintf("%s/%s", check.CheckID.Version, check.CheckID.Name))
+	newCheck.APICheckReport.Type = check.Type
 	newCheck.APICheckReport.Outcome = apiReport.UnknownOutcomeType
 	ir.APIReport.Results = append(ir.APIReport.Results, &newCheck.APICheckReport)
 	return &newCheck
 }
 
-func (cr *InternalCheckReport) SetResult(outcome bool, reason string) {
-	if outcome {
+func (cr *InternalCheckReport) SetResult(outcome bool, skipped bool, reason string) {
+	if skipped {
+		cr.APICheckReport.Outcome = apiReport.SkippedOutcomeType
+	} else if outcome {
 		cr.APICheckReport.Outcome = apiReport.PassOutcomeType
 	} else {
 		cr.APICheckReport.Outcome = apiReport.FailOutcomeType
@@ -62,20 +67,18 @@ func (cr *InternalCheckReport) SetResult(outcome bool, reason string) {
 	cr.APICheckReport.Reason = reason
 }
 
-func (ir *InternalReport) GetApiReport() *apiReport.Report {
+func (ir *InternalReport) GetAPIReport() *apiReport.Report {
 	return &ir.APIReport
 }
 
-func (cr *InternalCheckReport) GetApiCheckReport() *apiReport.CheckReport {
+func (cr *InternalCheckReport) GetAPICheckReport() *apiReport.CheckReport {
 	return &cr.APICheckReport
 }
 
 func (ir *InternalReport) SetReportDigest() {
-
 	var err error
 	ir.APIReport.Metadata.ToolMetadata.ReportDigest, err = ir.APIReport.GetReportDigest()
 	if err != nil {
 		ir.APIReport.Metadata.ToolMetadata.ReportDigest = err.Error()
 	}
-
 }

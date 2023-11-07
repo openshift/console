@@ -25,7 +25,7 @@ func ChartVerifier(charturl string, values map[string]interface{}, conf *action.
 	}
 	report := verifier.GetReport()
 	reportSummaryObj := reportSummary.NewReportSummary()
-	reportSummary, summaryErr := reportSummaryObj.SetValues(commandSet).SetReport(report).GetContent(reportSummary.ResultsSummary, reportSummary.JsonReport)
+	reportSummary, summaryErr := reportSummaryObj.SetValues(commandSet).SetReport(report).GetContent(reportSummary.ResultsSummary, reportSummary.JSONReport)
 	if summaryErr != nil {
 		return "", summaryErr
 	}

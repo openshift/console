@@ -17,11 +17,13 @@
 package chartverifier
 
 import (
-	"github.com/redhat-certification/chart-verifier/internal/chartverifier/checks"
-	apiReport "github.com/redhat-certification/chart-verifier/pkg/chartverifier/report"
+	"time"
+
 	"github.com/spf13/viper"
 	"helm.sh/helm/v3/pkg/cli"
-	"time"
+
+	"github.com/redhat-certification/chart-verifier/internal/chartverifier/checks"
+	apiReport "github.com/redhat-certification/chart-verifier/pkg/chartverifier/report"
 )
 
 type VerifierBuilder interface {
@@ -33,8 +35,11 @@ type VerifierBuilder interface {
 	SetOverrides(map[string]interface{}) VerifierBuilder
 	SetToolVersion(string) VerifierBuilder
 	SetOpenShiftVersion(string) VerifierBuilder
-	SetProviderDelivery(bool) VerifierBuilder
+	SetWebCatalogOnly(bool) VerifierBuilder
+	SetSkipCleanup(bool) VerifierBuilder
 	SetTimeout(time.Duration) VerifierBuilder
+	SetPublicKeys([]string) VerifierBuilder
+	SetHelmInstallTimeout(time.Duration) VerifierBuilder
 	SetSettings(settings *cli.EnvSettings) VerifierBuilder
 	Build() (Verifier, error)
 }

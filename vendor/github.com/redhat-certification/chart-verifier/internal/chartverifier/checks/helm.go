@@ -17,9 +17,8 @@
 package checks
 
 import (
-	"bufio"
+	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -28,11 +27,8 @@ import (
 	"regexp"
 	"strings"
 
-	"gopkg.in/yaml.v3"
-
 	"helm.sh/helm/v3/pkg/chartutil"
 
-	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 
@@ -42,13 +38,14 @@ import (
 	"helm.sh/helm/v3/pkg/storage/driver"
 
 	"github.com/redhat-certification/chart-verifier/internal/helm/actions"
+	"github.com/redhat-certification/chart-verifier/internal/tool"
 )
 
 // loadChartFromRemote attempts to retrieve a Helm chart from the given remote url. Returns an error if the given url
 // doesn't contain the 'http' or 'https' schema, or any other error related to retrieving the contents of the chart.
 func loadChartFromRemote(url *url.URL) (*chart.Chart, error) {
 	if url.Scheme != "http" && url.Scheme != "https" {
-		return nil, errors.Errorf("only 'http' and 'https' schemes are supported, but got %q", url.Scheme)
+		return nil, fmt.Errorf("only 'http' and 'https' schemes are supported, but got %q", url.Scheme)
 	}
 
 	resp, err := http.Get(url.String())
@@ -119,22 +116,18 @@ func (c *chartCache) Get(uri string) (ChartCacheItem, bool, error) {
 	}
 }
 
-func (c *chartCache) Add(uri string, repositoryCache string, chrt *chart.Chart) (ChartCacheItem, error) {
+func (c *chartCache) Add(opts *CheckOptions, chrt *chart.Chart) (ChartCacheItem, error) {
 	var (
 		err          error
 		userCacheDir string
 	)
-	if repositoryCache == "" {
-		userCacheDir, err = os.UserCacheDir()
-		if err != nil {
-			return ChartCacheItem{}, err
-		}
-	} else {
-		userCacheDir = repositoryCache
+
+	userCacheDir = getCacheDir(opts)
+	if userCacheDir == "" {
+		return ChartCacheItem{}, err
 	}
-	cacheDir := path.Join(userCacheDir, "chart-verifier")
-	key := c.MakeKey(uri)
-	chartCacheDir := path.Join(cacheDir, key)
+	key := c.MakeKey(opts.URI)
+	chartCacheDir := path.Join(userCacheDir, key)
 	cacheItem := ChartCacheItem{Chart: chrt, Path: path.Join(chartCacheDir, chrt.Name())}
 	if err = chartutil.SaveDir(chrt, chartCacheDir); err != nil {
 		return ChartCacheItem{}, err
@@ -172,14 +165,14 @@ func LoadChartFromURI(opts *CheckOptions) (*chart.Chart, string, error) {
 	case "file", "":
 		chrt, err = loadChartFromAbsPath(u.Path)
 	default:
-		return nil, "", errors.Errorf("scheme %q not supported", u.Scheme)
+		return nil, "", fmt.Errorf("scheme %q not supported", u.Scheme)
 	}
 
 	if err != nil {
 		return nil, "", err
 	}
 
-	if cached, err := defaultChartCache.Add(opts.URI, opts.HelmEnvSettings.RepositoryCache, chrt); err != nil {
+	if cached, err := defaultChartCache.Add(opts, chrt); err != nil {
 		return nil, "", err
 	} else {
 		return cached.Chart, cached.Path, nil
@@ -197,70 +190,69 @@ func IsChartNotFound(err error) bool {
 	return ok
 }
 
-func getImageReferences(chartUri string, vals map[string]interface{}) ([]string, error) {
+func getImageReferences(chartURI string, vals map[string]interface{}, kubeVersionString string) ([]string, error) {
+	capabilities := chartutil.DefaultCapabilities
+
+	if kubeVersionString == "" {
+		kubeVersionString = tool.GetLatestKubeVersion()
+	}
+	kubeVersion, err := chartutil.ParseKubeVersion(kubeVersionString)
+	if err != nil {
+		return nil, err
+	}
+
+	capabilities.KubeVersion = *kubeVersion
 
 	actionConfig := &action.Configuration{
 		Releases:     nil,
-		KubeClient:   &kubefake.PrintingKubeClient{Out: ioutil.Discard},
-		Capabilities: chartutil.DefaultCapabilities,
+		KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities: capabilities,
 		Log:          func(format string, v ...interface{}) {},
 	}
 	mem := driver.NewMemory()
 	mem.SetNamespace("TestNamespace")
 	actionConfig.Releases = storage.Init(mem)
 
-	txt, err := actions.RenderManifests("test-release", chartUri, vals, actionConfig)
+	txt, err := actions.RenderManifests("test-release", chartURI, vals, actionConfig)
 	if err != nil {
 		return nil, err
 	}
 
 	return getImagesFromContent(txt)
-
 }
 
+// getImagesFromContent evaluates generated templates from
+// helm and extracts images which are returned in a slice
 func getImagesFromContent(content string) ([]string, error) {
-
-	imagesMap := make(map[string]bool)
-
-	type ImageRef struct {
-		Ref string `yaml:"image"`
+	re, err := regexp.Compile(`\s+image\:\s+(?P<image>.*)\n`)
+	if err != nil {
+		return nil, fmt.Errorf("error getting images; %v", err)
+	}
+	matches := re.FindAllStringSubmatch(content, -1)
+	imageMap := make(map[string]struct{})
+	for _, match := range matches {
+		image := strings.TrimSpace(match[re.SubexpIndex("image")])
+		image = strings.Trim(image, "\"")
+		image = strings.Trim(image, "'")
+		imageMap[image] = struct{}{}
 	}
 
-	r := strings.NewReader(content)
-	reader := bufio.NewReader(r)
-	line, err := getNextLine(reader)
-	for err == nil {
-		var imageRef ImageRef
-		yamlErr := yaml.Unmarshal([]byte(line), &imageRef)
-		if yamlErr == nil {
-			if len(imageRef.Ref) > 0 && !imagesMap[imageRef.Ref] {
-				imagesMap[imageRef.Ref] = true
-			}
-		}
-		line, err = getNextLine(reader)
-		if err == io.EOF {
-			err = nil
-			break
-		}
+	var images []string
+	for k := range imageMap {
+		images = append(images, k)
 	}
 
-	images := make([]string, 0, len(imagesMap))
-	for image := range imagesMap {
-		images = append(images, image)
-	}
-
-	return images, err
-
+	return images, nil
 }
 
-func getNextLine(reader *bufio.Reader) (string, error) {
-	nextLine, isPrefix, err := reader.ReadLine()
-	if isPrefix && err == nil {
-		for isPrefix && err == nil {
-			var partLine []byte
-			partLine, isPrefix, err = reader.ReadLine()
-			nextLine = append(nextLine, partLine...)
+func getCacheDir(opts *CheckOptions) string {
+	var err error
+	cacheDir := opts.HelmEnvSettings.RepositoryCache
+	if cacheDir == "" {
+		cacheDir, err = os.UserCacheDir()
+		if err != nil {
+			return ""
 		}
 	}
-	return string(nextLine), err
+	return path.Join(cacheDir, "chart-verifier")
 }

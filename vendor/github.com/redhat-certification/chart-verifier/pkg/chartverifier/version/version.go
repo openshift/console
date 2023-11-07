@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+
 	"golang.org/x/mod/semver"
 )
 
@@ -17,7 +18,6 @@ type Version struct {
 }
 
 func init() {
-
 	version := Version{}
 	// we unmarshal our byteArray which contains our
 	// jsonFile's content into 'users' which we defined above

@@ -14,18 +14,18 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/big"
 	mathrand "math/rand"
 	"net"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strconv"
 	"sync"
 	"time"
 
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apiserver/pkg/authentication/user"
@@ -120,28 +120,30 @@ var ciphersTLS13 = map[string]uint16{
 }
 
 var ciphers = map[string]uint16{
-	"TLS_RSA_WITH_RC4_128_SHA":                tls.TLS_RSA_WITH_RC4_128_SHA,
-	"TLS_RSA_WITH_3DES_EDE_CBC_SHA":           tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA,
-	"TLS_RSA_WITH_AES_128_CBC_SHA":            tls.TLS_RSA_WITH_AES_128_CBC_SHA,
-	"TLS_RSA_WITH_AES_256_CBC_SHA":            tls.TLS_RSA_WITH_AES_256_CBC_SHA,
-	"TLS_RSA_WITH_AES_128_CBC_SHA256":         tls.TLS_RSA_WITH_AES_128_CBC_SHA256,
-	"TLS_RSA_WITH_AES_128_GCM_SHA256":         tls.TLS_RSA_WITH_AES_128_GCM_SHA256,
-	"TLS_RSA_WITH_AES_256_GCM_SHA384":         tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
-	"TLS_ECDHE_ECDSA_WITH_RC4_128_SHA":        tls.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
-	"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA":    tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-	"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA":    tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-	"TLS_ECDHE_RSA_WITH_RC4_128_SHA":          tls.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
-	"TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA":     tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,
-	"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA":      tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-	"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA":      tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-	"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256": tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
-	"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256":   tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-	"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256":   tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-	"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256": tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-	"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384":   tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-	"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384": tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
-	"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305":    tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
-	"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305":  tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
+	"TLS_RSA_WITH_RC4_128_SHA":                      tls.TLS_RSA_WITH_RC4_128_SHA,
+	"TLS_RSA_WITH_3DES_EDE_CBC_SHA":                 tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA,
+	"TLS_RSA_WITH_AES_128_CBC_SHA":                  tls.TLS_RSA_WITH_AES_128_CBC_SHA,
+	"TLS_RSA_WITH_AES_256_CBC_SHA":                  tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+	"TLS_RSA_WITH_AES_128_CBC_SHA256":               tls.TLS_RSA_WITH_AES_128_CBC_SHA256,
+	"TLS_RSA_WITH_AES_128_GCM_SHA256":               tls.TLS_RSA_WITH_AES_128_GCM_SHA256,
+	"TLS_RSA_WITH_AES_256_GCM_SHA384":               tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+	"TLS_ECDHE_ECDSA_WITH_RC4_128_SHA":              tls.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
+	"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA":          tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+	"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA":          tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+	"TLS_ECDHE_RSA_WITH_RC4_128_SHA":                tls.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
+	"TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA":           tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,
+	"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA":            tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+	"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA":            tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+	"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256":       tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+	"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256":         tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+	"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256":         tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+	"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256":       tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+	"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384":         tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+	"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384":       tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+	"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305":          tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+	"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305":        tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
+	"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256":   tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+	"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256": tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
 }
 
 // openSSLToIANACiphersMap maps OpenSSL cipher suite names to IANA names
@@ -153,17 +155,17 @@ var openSSLToIANACiphersMap = map[string]string{
 	//	"TLS_CHACHA20_POLY1305_SHA256": "TLS_CHACHA20_POLY1305_SHA256", // 0x13,0x03
 
 	// TLS 1.2
-	"ECDHE-ECDSA-AES128-GCM-SHA256": "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256", // 0xC0,0x2B
-	"ECDHE-RSA-AES128-GCM-SHA256":   "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",   // 0xC0,0x2F
-	"ECDHE-ECDSA-AES256-GCM-SHA384": "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384", // 0xC0,0x2C
-	"ECDHE-RSA-AES256-GCM-SHA384":   "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",   // 0xC0,0x30
-	"ECDHE-ECDSA-CHACHA20-POLY1305": "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305",  // 0xCC,0xA9
-	"ECDHE-RSA-CHACHA20-POLY1305":   "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305",    // 0xCC,0xA8
-	"ECDHE-ECDSA-AES128-SHA256":     "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256", // 0xC0,0x23
-	"ECDHE-RSA-AES128-SHA256":       "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",   // 0xC0,0x27
-	"AES128-GCM-SHA256":             "TLS_RSA_WITH_AES_128_GCM_SHA256",         // 0x00,0x9C
-	"AES256-GCM-SHA384":             "TLS_RSA_WITH_AES_256_GCM_SHA384",         // 0x00,0x9D
-	"AES128-SHA256":                 "TLS_RSA_WITH_AES_128_CBC_SHA256",         // 0x00,0x3C
+	"ECDHE-ECDSA-AES128-GCM-SHA256": "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",       // 0xC0,0x2B
+	"ECDHE-RSA-AES128-GCM-SHA256":   "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",         // 0xC0,0x2F
+	"ECDHE-ECDSA-AES256-GCM-SHA384": "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",       // 0xC0,0x2C
+	"ECDHE-RSA-AES256-GCM-SHA384":   "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",         // 0xC0,0x30
+	"ECDHE-ECDSA-CHACHA20-POLY1305": "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256", // 0xCC,0xA9
+	"ECDHE-RSA-CHACHA20-POLY1305":   "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",   // 0xCC,0xA8
+	"ECDHE-ECDSA-AES128-SHA256":     "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",       // 0xC0,0x23
+	"ECDHE-RSA-AES128-SHA256":       "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",         // 0xC0,0x27
+	"AES128-GCM-SHA256":             "TLS_RSA_WITH_AES_128_GCM_SHA256",               // 0x00,0x9C
+	"AES256-GCM-SHA384":             "TLS_RSA_WITH_AES_256_GCM_SHA384",               // 0x00,0x9D
+	"AES128-SHA256":                 "TLS_RSA_WITH_AES_128_CBC_SHA256",               // 0x00,0x3C
 
 	// TLS 1
 	"ECDHE-ECDSA-AES128-SHA": "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA", // 0xC0,0x09
@@ -189,6 +191,17 @@ func CipherSuitesToNamesOrDie(intVals []uint16) []string {
 
 // CipherSuiteToNameOrDie given a cipher suite as an int, return its readable name
 func CipherSuiteToNameOrDie(intVal uint16) string {
+	// The following suite ids appear twice in the cipher map (with
+	// and without the _SHA256 suffix) for the purposes of backwards
+	// compatibility. Always return the current rather than the legacy
+	// name.
+	switch intVal {
+	case tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256:
+		return "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256"
+	case tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256:
+		return "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256"
+	}
+
 	matches := []string{}
 	for key, version := range ciphers {
 		if version == intVal {
@@ -247,8 +260,8 @@ func DefaultCiphers() []uint16 {
 	// See RFC7540, section 9.2 (Use of TLS Features) and Appendix A
 	// (TLS 1.2 Cipher Suite Black List).
 	return []uint16{
-		tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
-		tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
+		tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
+		tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
 		tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
 		tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, // required by http/2
 		tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
@@ -374,7 +387,7 @@ func GetTLSCertificateConfig(certFile, keyFile string) (*TLSCertificateConfig, e
 		return nil, errors.New("keyFile missing")
 	}
 
-	certPEMBlock, err := ioutil.ReadFile(certFile)
+	certPEMBlock, err := os.ReadFile(certFile)
 	if err != nil {
 		return nil, err
 	}
@@ -383,7 +396,7 @@ func GetTLSCertificateConfig(certFile, keyFile string) (*TLSCertificateConfig, e
 		return nil, fmt.Errorf("Error reading %s: %s", certFile, err)
 	}
 
-	keyPEMBlock, err := ioutil.ReadFile(keyFile)
+	keyPEMBlock, err := os.ReadFile(keyFile)
 	if err != nil {
 		return nil, err
 	}
@@ -496,14 +509,14 @@ func (s *SerialFileGenerator) Next(template *x509.Certificate) (int64, error) {
 	// always add a newline at the end to have a valid file
 	serialText += "\n"
 
-	if err := ioutil.WriteFile(s.SerialFile, []byte(serialText), os.FileMode(0640)); err != nil {
+	if err := os.WriteFile(s.SerialFile, []byte(serialText), os.FileMode(0640)); err != nil {
 		return 0, err
 	}
 	return next, nil
 }
 
 func fileToSerial(serialFile string) (int64, error) {
-	serialData, err := ioutil.ReadFile(serialFile)
+	serialData, err := os.ReadFile(serialFile)
 	if err != nil {
 		return 0, err
 	}
@@ -598,7 +611,7 @@ func MakeSelfSignedCA(certFile, keyFile, serialFile, name string, expireDays int
 	var serialGenerator SerialGenerator
 	if len(serialFile) > 0 {
 		// create / overwrite the serial file with a zero padded hex value (ending in a newline to have a valid file)
-		if err := ioutil.WriteFile(serialFile, []byte("00\n"), 0644); err != nil {
+		if err := os.WriteFile(serialFile, []byte("00\n"), 0644); err != nil {
 			return nil, err
 		}
 		serialGenerator, err = NewSerialFileGenerator(serialFile)
@@ -680,6 +693,54 @@ func MakeCAConfigForDuration(name string, caLifetime time.Duration, issuer *CA) 
 	return signerConfig, nil
 }
 
+// EnsureSubCA returns a subCA signed by the `ca`, whether it was created
+// (as opposed to pre-existing), and any error that might occur during the subCA
+// creation.
+// If serialFile is an empty string, a RandomSerialGenerator will be used.
+func (ca *CA) EnsureSubCA(certFile, keyFile, serialFile, name string, expireDays int) (*CA, bool, error) {
+	if subCA, err := GetCA(certFile, keyFile, serialFile); err == nil {
+		return subCA, false, err
+	}
+	subCA, err := ca.MakeAndWriteSubCA(certFile, keyFile, serialFile, name, expireDays)
+	return subCA, true, err
+}
+
+// MakeAndWriteSubCA returns a new sub-CA configuration. New cert/key pair is generated
+// while using this function.
+// If serialFile is an empty string, a RandomSerialGenerator will be used.
+func (ca *CA) MakeAndWriteSubCA(certFile, keyFile, serialFile, name string, expireDays int) (*CA, error) {
+	klog.V(4).Infof("Generating sub-CA certificate in %s, key in %s, serial in %s", certFile, keyFile, serialFile)
+
+	subCAConfig, err := MakeCAConfigForDuration(name, time.Duration(expireDays)*time.Hour*24, ca)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := subCAConfig.WriteCertConfigFile(certFile, keyFile); err != nil {
+		return nil, err
+	}
+
+	var serialGenerator SerialGenerator
+	if len(serialFile) > 0 {
+		// create / overwrite the serial file with a zero padded hex value (ending in a newline to have a valid file)
+		if err := os.WriteFile(serialFile, []byte("00\n"), 0644); err != nil {
+			return nil, err
+		}
+
+		serialGenerator, err = NewSerialFileGenerator(serialFile)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		serialGenerator = &RandomSerialGenerator{}
+	}
+
+	return &CA{
+		Config:          subCAConfig,
+		SerialGenerator: serialGenerator,
+	}, nil
+}
+
 func (ca *CA) EnsureServerCert(certFile, keyFile string, hostnames sets.String, expireDays int) (*TLSCertificateConfig, bool, error) {
 	certConfig, err := GetServerCert(certFile, keyFile, hostnames)
 	if err != nil {
@@ -697,15 +758,17 @@ func GetServerCert(certFile, keyFile string, hostnames sets.String) (*TLSCertifi
 	}
 
 	cert := server.Certs[0]
-	ips, dns := IPAddressesDNSNames(hostnames.List())
-	missingIps := ipsNotInSlice(ips, cert.IPAddresses)
-	missingDns := stringsNotInSlice(dns, cert.DNSNames)
-	if len(missingIps) == 0 && len(missingDns) == 0 {
+	certNames := sets.NewString()
+	for _, ip := range cert.IPAddresses {
+		certNames.Insert(ip.String())
+	}
+	certNames.Insert(cert.DNSNames...)
+	if hostnames.Equal(certNames) {
 		klog.V(4).Infof("Found existing server certificate in %s", certFile)
 		return server, nil
 	}
 
-	return nil, fmt.Errorf("Existing server certificate in %s was missing some hostnames (%v) or IP addresses (%v).", certFile, missingDns, missingIps)
+	return nil, fmt.Errorf("Existing server certificate in %s does not match required hostnames.", certFile)
 }
 
 func (ca *CA) MakeAndWriteServerCert(certFile, keyFile string, hostnames sets.String, expireDays int) (*TLSCertificateConfig, error) {
@@ -768,13 +831,35 @@ func (ca *CA) MakeServerCertForDuration(hostnames sets.String, lifetime time.Dur
 }
 
 func (ca *CA) EnsureClientCertificate(certFile, keyFile string, u user.Info, expireDays int) (*TLSCertificateConfig, bool, error) {
-	certConfig, err := GetTLSCertificateConfig(certFile, keyFile)
+	certConfig, err := GetClientCertificate(certFile, keyFile, u)
 	if err != nil {
 		certConfig, err = ca.MakeClientCertificate(certFile, keyFile, u, expireDays)
 		return certConfig, true, err // true indicates we wrote the files.
 	}
-
 	return certConfig, false, nil
+}
+
+func GetClientCertificate(certFile, keyFile string, u user.Info) (*TLSCertificateConfig, error) {
+	certConfig, err := GetTLSCertificateConfig(certFile, keyFile)
+	if err != nil {
+		return nil, err
+	}
+
+	if subject := certConfig.Certs[0].Subject; subjectChanged(subject, userToSubject(u)) {
+		return nil, fmt.Errorf("existing client certificate in %s was issued for a different Subject (%s)",
+			certFile, subject)
+	}
+
+	return certConfig, nil
+}
+
+func subjectChanged(existing, expected pkix.Name) bool {
+	sort.Strings(existing.Organization)
+	sort.Strings(expected.Organization)
+
+	return existing.CommonName != expected.CommonName ||
+		existing.SerialNumber != expected.SerialNumber ||
+		!reflect.DeepEqual(existing.Organization, expected.Organization)
 }
 
 func (ca *CA) MakeClientCertificate(certFile, keyFile string, u user.Info, expireDays int) (*TLSCertificateConfig, error) {
@@ -803,10 +888,10 @@ func (ca *CA) MakeClientCertificate(certFile, keyFile string, u user.Info, expir
 		return nil, err
 	}
 
-	if err = ioutil.WriteFile(certFile, certData, os.FileMode(0644)); err != nil {
+	if err = os.WriteFile(certFile, certData, os.FileMode(0644)); err != nil {
 		return nil, err
 	}
-	if err = ioutil.WriteFile(keyFile, keyData, os.FileMode(0600)); err != nil {
+	if err = os.WriteFile(keyFile, keyData, os.FileMode(0600)); err != nil {
 		return nil, err
 	}
 
@@ -1128,42 +1213,4 @@ func writeKeyFile(f io.Writer, key crypto.PrivateKey) error {
 	}
 
 	return nil
-}
-
-func stringsNotInSlice(needles []string, haystack []string) []string {
-	missing := []string{}
-	for _, needle := range needles {
-		if !stringInSlice(needle, haystack) {
-			missing = append(missing, needle)
-		}
-	}
-	return missing
-}
-
-func stringInSlice(needle string, haystack []string) bool {
-	for _, straw := range haystack {
-		if needle == straw {
-			return true
-		}
-	}
-	return false
-}
-
-func ipsNotInSlice(needles []net.IP, haystack []net.IP) []net.IP {
-	missing := []net.IP{}
-	for _, needle := range needles {
-		if !ipInSlice(needle, haystack) {
-			missing = append(missing, needle)
-		}
-	}
-	return missing
-}
-
-func ipInSlice(needle net.IP, haystack []net.IP) bool {
-	for _, straw := range haystack {
-		if needle.Equal(straw) {
-			return true
-		}
-	}
-	return false
 }
