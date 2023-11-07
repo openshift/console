@@ -72,3 +72,6 @@ export const getNodeTaints = (node: NodeKind) => node?.spec?.taints;
 export const isWindowsNode = (node) =>
   node?.metadata?.labels?.['node.openshift.io/os_id'] === 'Windows' ||
   node?.metadata?.labels?.['corev1.LabelOSStable'] === 'windows';
+
+export const getNodeUptime = (node: NodeKind) =>
+  _.find(node?.status?.conditions, { type: 'Ready', status: 'True' })?.lastTransitionTime;

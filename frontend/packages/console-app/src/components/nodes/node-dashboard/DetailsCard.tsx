@@ -10,6 +10,7 @@ import { getNodeAddresses } from '@console/shared/src/selectors/node';
 import NodeIPList from '../NodeIPList';
 import NodeRoles from '../NodeRoles';
 import { NodeDashboardContext } from './NodeDashboardContext';
+import NodeUptime from './NodeUptime';
 
 const DetailsCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
@@ -49,6 +50,9 @@ const DetailsCard: React.FC = () => {
           </OverviewDetailItem>
           <OverviewDetailItem isLoading={!obj} title={t('console-app~Node addresses')}>
             <NodeIPList ips={getNodeAddresses(obj)} expand />
+          </OverviewDetailItem>
+          <OverviewDetailItem isLoading={!obj} title={t('console-app~Uptime')}>
+            <NodeUptime obj={obj} />
           </OverviewDetailItem>
         </DetailsBody>
       </CardBody>

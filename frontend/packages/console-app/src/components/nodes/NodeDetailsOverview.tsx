@@ -21,6 +21,7 @@ import {
   getNodeMachineNameAndNamespace,
   getNodeAddresses,
 } from '@console/shared/src/selectors/node';
+import NodeUptime from './node-dashboard/NodeUptime';
 import NodeIPList from './NodeIPList';
 import NodeStatus from './NodeStatus';
 import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
@@ -59,6 +60,10 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
             </dd>
             <dt>{t('console-app~External ID')}</dt>
             <dd>{_.get(node, 'spec.externalID', '-')}</dd>
+            <dt>{t('console-app~Uptime')}</dt>
+            <dd>
+              <NodeUptime obj={node} />
+            </dd>
             <dt>{t('console-app~Node addresses')}</dt>
             <dd>
               <NodeIPList ips={getNodeAddresses(node)} expand />
