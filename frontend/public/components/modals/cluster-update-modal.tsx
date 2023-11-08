@@ -229,7 +229,6 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
           {desiredNotRecommendedUpdate && desiredNotRecommendedUpdateConditions?.message && (
             <Alert
               className="pf-u-mt-sm"
-              isExpandable
               isInline
               title={t(
                 'public~Updating this cluster to {{desiredVersion}} is supported, but not recommended as it might not be optimized for some components in this cluster.',
