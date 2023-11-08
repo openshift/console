@@ -8,6 +8,10 @@ import {
 } from '@console/internal/components/utils';
 import { ContainerStatus } from '@console/internal/module/k8s';
 import { SecretAnnotationId, TektonResourceLabel } from '../../components/pipelines/const';
+import {
+  taskRunWithResults,
+  taskRunWithSBOMResult,
+} from '../../components/taskruns/__tests__/taskrun-test-data';
 import { PipelineRunModel } from '../../models';
 import { DataState, PipelineExampleNames, pipelineTestData } from '../../test-data/pipeline-data';
 import { ComputedStatus } from '../../types';
@@ -23,6 +27,8 @@ import {
   updateServiceAccount,
   appendPipelineRunStatus,
   getMatchedPVCs,
+  getSbomTaskRun,
+  getSbomLink,
 } from '../pipeline-utils';
 import { mockPipelineServiceAccount } from './pipeline-serviceaccount-test-data';
 import {
@@ -341,5 +347,24 @@ describe('pipeline-utils ', () => {
     const pipelineRun = pipelineRuns[DataState.IN_PROGRESS];
     const taskList = appendPipelineRunStatus(pipeline, pipelineRun, [], true);
     expect(taskList).toHaveLength(0);
+  });
+
+  it('should not return the taskrun related to SBOM', () => {
+    const taskrunsWithoutSBOM = [taskRunWithResults];
+    expect(getSbomTaskRun([])).toBeUndefined();
+    expect(getSbomTaskRun(null)).toBeUndefined();
+    expect(getSbomTaskRun(taskrunsWithoutSBOM)).toBeUndefined();
+  });
+
+  it('should return the taskrun related to SBOM', () => {
+    expect(getSbomTaskRun([taskRunWithSBOMResult])).toBeDefined();
+  });
+
+  it('should not return the SBOM link', () => {
+    expect(getSbomLink(taskRunWithResults)).toBeUndefined();
+  });
+
+  it('should return the SBOM link', () => {
+    expect(getSbomLink(taskRunWithSBOMResult)).toBe('quay.io/test/image:build-8e536-1692702836');
   });
 });

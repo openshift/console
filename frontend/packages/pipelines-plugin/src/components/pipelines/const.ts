@@ -68,6 +68,7 @@ export const DEFAULT_SAMPLES = 60;
 
 // Annotation for referencing pipeline name in case of PipelineRun with no reference to a Pipeline (embedded pipeline)
 export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';
+export const chainsSignedAnnotation = 'chains.tekton.dev/signed';
 
 export const PIPELINE_NAMESPACE = 'openshift-pipelines';
 export const PIPELINERUN_TEMPLATE_NAMESPACE = 'openshift';

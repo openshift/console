@@ -528,3 +528,21 @@ export const returnValidTaskModel = (task: TaskKind): K8sModel => {
   }
   return TaskModel;
 };
+
+export enum TaskRunResultsAnnotations {
+  KEY = 'task.results.key',
+}
+
+export enum TaskRunResults {
+  SBOM = 'LINK_TO_SBOM',
+  SCAN_OUTPUT = 'SCAN_OUTPUT',
+  TEST_OUTPUT = 'TEST_OUTPUT',
+}
+
+export const getSbomTaskRun = (taskruns: TaskRunKind[]): TaskRunKind =>
+  taskruns?.find(
+    (tr) => tr?.metadata?.annotations?.[TaskRunResultsAnnotations.KEY] === TaskRunResults.SBOM,
+  );
+
+export const getSbomLink = (sbomTaskRun: TaskRunKind): string | undefined =>
+  sbomTaskRun?.status?.results?.find((r) => r.name === 'LINK_TO_SBOM')?.value;
