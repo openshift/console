@@ -64,51 +64,48 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
         <dd>
           <PipelineResourceRef {...convertBackingPipelineToPipelineResourceRefProps(pipelineRun)} />
         </dd>
+        {buildImage && (
+          <>
+            <dt>{t('pipelines-plugin~Download SBOM')}</dt>
+            <dd>
+              <ClipboardCopy
+                isReadOnly
+                hoverTip={t('pipelines-plugin~Copy')}
+                clickTip={t('pipelines-plugin~Copied')}
+              >
+                {`cosign download sbom ${buildImage}`}
+              </ClipboardCopy>
+              <ExternalLink href="https://docs.sigstore.dev/cosign/installation">
+                {t('pipelines-plugin~Install Cosign')}
+              </ExternalLink>
+            </dd>
+          </>
+        )}
+        {sbomTaskRun && (
+          <>
+            <dt>{t('pipelines-plugin~SBOM')}</dt>
+            <dd>
+              <Link
+                to={`/k8s/ns/${sbomTaskRun.metadata.namespace}/${referenceForModel(TaskRunModel)}/${
+                  sbomTaskRun.metadata.name
+                }/logs`}
+              >
+                {t('pipelines-plugin~View SBOM')}
+              </Link>
+            </dd>
+          </>
+        )}
       </dl>
-      {buildImage && (
-        <dl>
-          <dt>{t('pipelines-plugin~Download SBOM')}</dt>
-          <dd>
-            <ClipboardCopy
-              isReadOnly
-              hoverTip={t('pipelines-plugin~Copy')}
-              clickTip={t('pipelines-plugin~Copied')}
-            >
-              {`cosign download sbom ${buildImage}`}
-            </ClipboardCopy>
-            <ExternalLink href="https://docs.sigstore.dev/cosign/installation">
-              {t('pipelines-plugin~Install Cosign')}
-            </ExternalLink>
-          </dd>
-        </dl>
-      )}
-      {sbomTaskRun && (
-        <dl>
-          <dt>{t('pipelines-plugin~SBOM')}</dt>
-          <dd>
-            <Link
-              to={`/k8s/ns/${sbomTaskRun.metadata.namespace}/${referenceForModel(TaskRunModel)}/${
-                sbomTaskRun.metadata.name
-              }/logs`}
-            >
-              {t('pipelines-plugin~View SBOM')}
-            </Link>
-          </dd>
-        </dl>
-      )}
+
       <dl>
         <dt>{t('pipelines-plugin~Start time')}</dt>
         <dd>
           <Timestamp timestamp={pipelineRun?.status?.startTime} />
         </dd>
-      </dl>
-      <dl>
         <dt>{t('pipelines-plugin~Completion time')}</dt>
         <dd>
           <Timestamp timestamp={pipelineRun?.status?.completionTime} />
         </dd>
-      </dl>
-      <dl>
         <dt>{t('pipelines-plugin~Duration')}</dt>
         <dd>{pipelineRunDuration(pipelineRun)}</dd>
       </dl>
