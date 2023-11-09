@@ -60,7 +60,7 @@ func Parse(fs *flag.FlagSet, args []string, envPrefix string) (*Config, error) {
 		return nil, err
 	}
 
-	var cfg *Config
+	cfg := &Config{}
 	configFile := fs.Lookup("config").Value.String()
 	if configFile != "" {
 		var err error

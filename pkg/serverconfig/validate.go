@@ -19,7 +19,7 @@ func Validate(fs *flag.FlagSet) error {
 		return err
 	}
 
-	flags.ValidateFlagIs("user-settings-location", fs.Lookup("user-settings-location").Value.String(), "configmap", "localstorage")
+	flags.FatalIfFailed(flags.ValidateFlagIs("user-settings-location", fs.Lookup("user-settings-location").Value.String(), "configmap", "localstorage"))
 
 	if _, err := validateQuickStarts(fs.Lookup("quick-starts").Value.String()); err != nil {
 		return err

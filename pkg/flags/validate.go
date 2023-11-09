@@ -55,20 +55,20 @@ func ValidateFlagIsURL(name string, value string, allowEmpty bool) (*url.URL, er
 	return ur, nil
 }
 
-func ValidateFlagIs(name string, value string, expectedValues ...string) string {
+func ValidateFlagIs(name string, value string, expectedValues ...string) error {
 	if len(expectedValues) != 1 {
 		for _, v := range expectedValues {
 			if v == value {
-				return value
+				return nil
 			}
 		}
-		NewInvalidFlagError(name, "value must be one of %s, not %s", expectedValues, value)
+		return NewInvalidFlagError(name, "value must be one of %s, not %s", expectedValues, value)
 	}
 	if value != expectedValues[0] {
-		NewInvalidFlagError(name, "value must be %s, not %s", expectedValues[0], value)
+		return NewInvalidFlagError(name, "value must be %s, not %s", expectedValues[0], value)
 	}
 
-	return value
+	return nil
 }
 
 func FatalIfFailed(err error) {

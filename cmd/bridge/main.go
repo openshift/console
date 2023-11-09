@@ -149,7 +149,7 @@ func main() {
 
 	authOptions.ApplyConfig(&cfg.Auth)
 
-	baseURL, err := flags.ValidateFlagIsURL("base-address", *fBaseAddress, false)
+	baseURL, err := flags.ValidateFlagIsURL("base-address", *fBaseAddress, true)
 	flags.FatalIfFailed(err)
 
 	if !strings.HasPrefix(*fBasePath, "/") || !strings.HasSuffix(*fBasePath, "/") {
@@ -496,21 +496,20 @@ func main() {
 
 	switch *fK8sAuth {
 	case "service-account":
-		flags.ValidateFlagIs("k8s-mode", *fK8sMode, "in-cluster")
+		flags.FatalIfFailed(flags.ValidateFlagIs("k8s-mode", *fK8sMode, "in-cluster"))
 		srv.StaticUser = &auth.User{
 			Token: k8sAuthServiceAccountBearerToken,
 		}
 		srv.ServiceAccountToken = k8sAuthServiceAccountBearerToken
 	case "bearer-token":
-		flags.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
-		flags.FatalIfFailed(err)
+		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken))
 
 		srv.StaticUser = &auth.User{
 			Token: *fK8sAuthBearerToken,
 		}
 		srv.ServiceAccountToken = *fK8sAuthBearerToken
 	case "oidc", "openshift":
-		flags.ValidateFlagIs("user-auth", authOptions.AuthType, "oidc", "openshift")
+		flags.FatalIfFailed(flags.ValidateFlagIs("user-auth", authOptions.AuthType, "oidc", "openshift"))
 		srv.ServiceAccountToken = k8sAuthServiceAccountBearerToken
 	default:
 		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift"))
