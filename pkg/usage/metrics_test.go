@@ -11,6 +11,7 @@ import (
 	authv1 "k8s.io/api/authorization/v1"
 	rbac "k8s.io/api/rbac/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes/fake"
 
 	"github.com/openshift/console/pkg/metrics"
 	"github.com/stretchr/testify/assert"
@@ -274,7 +275,7 @@ func TestUsersMetrics(t *testing.T) {
 			defer testserver.Close()
 
 			m := NewMetrics()
-			err := m.updateUsersMetric(&http.Client{}, testserver.URL, "ignored-service-account-token")
+			err := m.updateUsersMetric(fake.NewSimpleClientset())
 			if testcase.expectedError != "" {
 				assert.Equal(t, testcase.expectedError, err.Error())
 			} else {

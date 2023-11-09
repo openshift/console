@@ -9,10 +9,11 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
+
+	userv1client "github.com/openshift/client-go/user/clientset/versioned/typed/user/v1"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/serverutils"
@@ -27,21 +28,24 @@ var USER_RESOURCE = schema.GroupVersionResource{
 }
 
 type UserSettingsHandler struct {
-	Client              *http.Client
-	Endpoint            string
-	ServiceAccountToken string
+	internalProxiedClient *kubernetes.Clientset
+	anonClientConfig      *rest.Config
+}
+
+func NewUserSettingsHandler(kubeClient *kubernetes.Clientset, anonymousRoundTripper http.RoundTripper, k8sProxiedEndpoint string) *UserSettingsHandler {
+	return &UserSettingsHandler{
+		internalProxiedClient: kubeClient,
+		anonClientConfig: &rest.Config{
+			Host:      k8sProxiedEndpoint,
+			Transport: anonymousRoundTripper,
+		},
+	}
 }
 
 func (h *UserSettingsHandler) HandleUserSettings(user *auth.User, w http.ResponseWriter, r *http.Request) {
-	context := context.TODO()
+	ctx := r.Context()
 
-	serviceAccountClient, err := h.createServiceAccountClient()
-	if err != nil {
-		h.sendErrorResponse("Failed to create service account to handle user setting request: %v", err, w)
-		return
-	}
-
-	userSettingMeta, err := h.getUserSettingMeta(context, user)
+	userSettingMeta, err := h.getUserSettingMeta(ctx, user)
 	if err != nil {
 		h.sendErrorResponse("Failed to get user data to handle user setting request: %v", err, w)
 		return
@@ -49,21 +53,21 @@ func (h *UserSettingsHandler) HandleUserSettings(user *auth.User, w http.Respons
 
 	switch r.Method {
 	case http.MethodGet:
-		configMap, err := h.getUserSettings(context, serviceAccountClient, userSettingMeta)
+		configMap, err := h.getUserSettings(ctx, userSettingMeta)
 		if err != nil {
 			h.sendErrorResponse("Failed to get user settings: %v", err, w)
 			return
 		}
 		serverutils.SendResponse(w, http.StatusOK, configMap)
 	case http.MethodPost:
-		configMap, err := h.createUserSettings(context, serviceAccountClient, userSettingMeta)
+		configMap, err := h.createUserSettings(ctx, userSettingMeta)
 		if err != nil {
 			h.sendErrorResponse("Failed to create user settings: %v", err, w)
 			return
 		}
 		serverutils.SendResponse(w, http.StatusOK, configMap)
 	case http.MethodDelete:
-		err := h.deleteUserSettings(context, serviceAccountClient, userSettingMeta)
+		err := h.deleteUserSettings(ctx, userSettingMeta)
 		if err != nil {
 			h.sendErrorResponse("Failed to delete user settings: %v", err, w)
 			return
@@ -88,37 +92,37 @@ func (h *UserSettingsHandler) sendErrorResponse(format string, err error, w http
 }
 
 // Fetch the user-setting ConfigMap of the current user, by using his token.
-func (h *UserSettingsHandler) getUserSettings(ctx context.Context, client *kubernetes.Clientset, userSettingMeta *UserSettingMeta) (*core.ConfigMap, error) {
-	return client.CoreV1().ConfigMaps(namespace).Get(ctx, userSettingMeta.getConfigMapName(), meta.GetOptions{})
+func (h *UserSettingsHandler) getUserSettings(ctx context.Context, userSettingMeta *UserSettingMeta) (*core.ConfigMap, error) {
+	return h.internalProxiedClient.CoreV1().ConfigMaps(namespace).Get(ctx, userSettingMeta.getConfigMapName(), meta.GetOptions{})
 }
 
 // Create a new user-setting ConfigMap, incl. Role and RoleBinding for the current user.
 // Returns the existing ConfigMap if it is already exist.
-func (h *UserSettingsHandler) createUserSettings(ctx context.Context, client *kubernetes.Clientset, userSettingMeta *UserSettingMeta) (*core.ConfigMap, error) {
+func (h *UserSettingsHandler) createUserSettings(ctx context.Context, userSettingMeta *UserSettingMeta) (*core.ConfigMap, error) {
 	role := createRole(userSettingMeta)
 	roleBinding := createRoleBinding(userSettingMeta)
 	configMap := createConfigMap(userSettingMeta)
 
-	_, err := client.RbacV1().Roles(namespace).Create(ctx, role, meta.CreateOptions{})
+	_, err := h.internalProxiedClient.RbacV1().Roles(namespace).Create(ctx, role, meta.CreateOptions{})
 	if err != nil && !apierrors.IsAlreadyExists(err) {
-		h.deleteUserSettings(ctx, client, userSettingMeta)
+		h.deleteUserSettings(ctx, userSettingMeta)
 		return nil, err
 	}
 
-	_, err = client.RbacV1().RoleBindings(namespace).Create(ctx, roleBinding, meta.CreateOptions{})
+	_, err = h.internalProxiedClient.RbacV1().RoleBindings(namespace).Create(ctx, roleBinding, meta.CreateOptions{})
 	if err != nil && !apierrors.IsAlreadyExists(err) {
-		h.deleteUserSettings(ctx, client, userSettingMeta)
+		h.deleteUserSettings(ctx, userSettingMeta)
 		return nil, err
 	}
 
-	configMap, err = client.CoreV1().ConfigMaps(namespace).Create(ctx, configMap, meta.CreateOptions{})
+	configMap, err = h.internalProxiedClient.CoreV1().ConfigMaps(namespace).Create(ctx, configMap, meta.CreateOptions{})
 	if err != nil {
 		// Return actual ConfigMap if it is already created
 		if apierrors.IsAlreadyExists(err) {
 			klog.Infof("User settings ConfigMap \"%s\" already exist, will return existing data.", userSettingMeta.getConfigMapName())
-			return client.CoreV1().ConfigMaps(namespace).Get(ctx, userSettingMeta.getConfigMapName(), meta.GetOptions{})
+			return h.internalProxiedClient.CoreV1().ConfigMaps(namespace).Get(ctx, userSettingMeta.getConfigMapName(), meta.GetOptions{})
 		}
-		h.deleteUserSettings(ctx, client, userSettingMeta)
+		h.deleteUserSettings(ctx, userSettingMeta)
 		return nil, err
 	}
 	return configMap, nil
@@ -126,18 +130,18 @@ func (h *UserSettingsHandler) createUserSettings(ctx context.Context, client *ku
 
 // Deletes the user-setting ConfigMap, Role and RoleBinding of the current user.
 // It handles not found responses, so that it does not fail on multiple calls.
-func (h *UserSettingsHandler) deleteUserSettings(ctx context.Context, client *kubernetes.Clientset, userSettingMeta *UserSettingMeta) error {
-	err := client.RbacV1().RoleBindings(namespace).Delete(ctx, userSettingMeta.getRoleBindingName(), meta.DeleteOptions{})
+func (h *UserSettingsHandler) deleteUserSettings(ctx context.Context, userSettingMeta *UserSettingMeta) error {
+	err := h.internalProxiedClient.RbacV1().RoleBindings(namespace).Delete(ctx, userSettingMeta.getRoleBindingName(), meta.DeleteOptions{})
 	if err != nil && !apierrors.IsNotFound(err) {
 		return err
 	}
 
-	err = client.RbacV1().Roles(namespace).Delete(ctx, userSettingMeta.getRoleName(), meta.DeleteOptions{})
+	err = h.internalProxiedClient.RbacV1().Roles(namespace).Delete(ctx, userSettingMeta.getRoleName(), meta.DeleteOptions{})
 	if err != nil && !apierrors.IsNotFound(err) {
 		return err
 	}
 
-	err = client.CoreV1().ConfigMaps(namespace).Delete(ctx, userSettingMeta.getConfigMapName(), meta.DeleteOptions{})
+	err = h.internalProxiedClient.CoreV1().ConfigMaps(namespace).Delete(ctx, userSettingMeta.getConfigMapName(), meta.DeleteOptions{})
 	if err != nil && !apierrors.IsNotFound(err) {
 		return err
 	}
@@ -145,22 +149,12 @@ func (h *UserSettingsHandler) deleteUserSettings(ctx context.Context, client *ku
 	return nil
 }
 
-func (h *UserSettingsHandler) createServiceAccountClient() (*kubernetes.Clientset, error) {
-	config := &rest.Config{
-		Host:        h.Endpoint,
-		BearerToken: h.ServiceAccountToken,
-		Transport:   h.Client.Transport,
-	}
-	return kubernetes.NewForConfig(config)
-}
+func (h *UserSettingsHandler) createUserProxyClient(user *auth.User) (*userv1client.UserV1Client, error) {
+	userConfig := rest.CopyConfig(h.anonClientConfig)
+	userConfig.BearerToken = user.Token
 
-func (h *UserSettingsHandler) createUserProxyClient(user *auth.User) (dynamic.Interface, error) {
-	config := &rest.Config{
-		Host:        h.Endpoint,
-		BearerToken: user.Token,
-		Transport:   h.Client.Transport,
-	}
-	return dynamic.NewForConfig(config)
+	// TODO: will old HTTP transports be garbage-collected?
+	return userv1client.NewForConfig(userConfig)
 }
 
 func (h *UserSettingsHandler) getUserSettingMeta(ctx context.Context, user *auth.User) (*UserSettingMeta, error) {
@@ -169,7 +163,7 @@ func (h *UserSettingsHandler) getUserSettingMeta(ctx context.Context, user *auth
 		return nil, err
 	}
 
-	userInfo, err := client.Resource(USER_RESOURCE).Get(ctx, "~", meta.GetOptions{})
+	userInfo, err := client.Users().Get(ctx, "~", meta.GetOptions{})
 	if err != nil {
 		return nil, err
 	}

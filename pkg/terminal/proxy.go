@@ -122,7 +122,7 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 	userId := user.ID
 	if userId == "" {
 		// user id is missing, auth is used that does not support user info propagated, like OpenShift OAuth
-		userInfo, err := client.Resource(UserGroupVersionResource).Get(context.TODO(), "~", metav1.GetOptions{})
+		userInfo, err := client.Resource(UserGroupVersionResource).Get(context.TODO(), "~", metav1.GetOptions{}) // FIXME: use k8s self-subject review API
 		if err != nil {
 			http.Error(w, "Failed to retrieve the current user info. Cause: "+err.Error(), http.StatusInternalServerError)
 			return

@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -20,8 +19,13 @@ import (
 	"github.com/coreos/pkg/health"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 
+	oauthv1client "github.com/openshift/client-go/oauth/clientset/versioned/typed/oauth/v1"
 	"github.com/openshift/console/pkg/auth"
 	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
 	"github.com/openshift/console/pkg/devfile"
@@ -154,7 +158,7 @@ type Server struct {
 	GrafanaPublicURL                    *url.URL
 	I18nNamespaces                      []string
 	InactivityTimeout                   int
-	K8sClient                           *http.Client
+	InternalProxiedK8SClientConfig      *rest.Config
 	K8sMode                             string
 	K8sProxyConfig                      *proxy.Config
 	KnativeChannelCRDLister             ResourceLister
@@ -174,7 +178,6 @@ type Server struct {
 	PublicDir                           string
 	QuickStarts                         string
 	ReleaseVersion                      string
-	ServiceAccountToken                 string
 	ServiceClient                       *http.Client
 	StaticUser                          *auth.User
 	StatuspageID                        string
@@ -218,7 +221,24 @@ func (s *Server) gitopsProxyEnabled() bool {
 	return s.GitOpsProxyConfig != nil
 }
 
-func (s *Server) HTTPHandler() http.Handler {
+func (s *Server) HTTPHandler() (http.Handler, error) {
+	internalProxiedK8SClient, err := kubernetes.NewForConfig(s.InternalProxiedK8SClientConfig)
+	if err != nil {
+		return nil, fmt.Errorf("failed to set up internal k8s client: %w", err)
+	}
+	internalProxiedK8SRT, err := rest.TransportFor(s.InternalProxiedK8SClientConfig)
+	if err != nil {
+		return nil, fmt.Errorf("failed to set up internal k8s roundtripper: %v", err)
+	}
+	internalProxiedDynamic, err := dynamic.NewForConfig(s.InternalProxiedK8SClientConfig)
+	if err != nil {
+		return nil, fmt.Errorf("failed to set up a dynamic client: %w", err)
+	}
+	anonymousInternalProxiedK8SRT, err := rest.TransportFor(rest.AnonymousClientConfig(s.InternalProxiedK8SClientConfig))
+	if err != nil {
+		return nil, fmt.Errorf("failed to set up an anonymous roundtripper: %w", err)
+	}
+
 	mux := http.NewServeMux()
 	k8sProxy := proxy.NewProxy(s.K8sProxyConfig)
 	handle := func(path string, handler http.Handler) {
@@ -438,7 +458,9 @@ func (s *Server) HTTPHandler() http.Handler {
 	// List operator operands endpoint
 	operandsListHandler := &OperandsListHandler{
 		APIServerURL: s.KubeAPIServerURL,
-		Client:       s.K8sClient,
+		Client: &http.Client{
+			Transport: internalProxiedK8SRT,
+		},
 	}
 
 	handle(operandsListEndpoint, http.StripPrefix(
@@ -451,9 +473,12 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	// Knative
 	trimURLPrefix := proxy.SingleJoiningSlash(s.BaseURL.Path, knativeProxyEndpoint)
-	knativeHandler := knative.NewKnativeHandler(trimURLPrefix,
-		s.K8sClient,
-		s.K8sProxyConfig.Endpoint.String())
+	knativeHandler := knative.NewKnativeHandler(
+		anonymousInternalProxiedK8SRT,
+		s.K8sProxyConfig.Endpoint.String(),
+		trimURLPrefix,
+	)
+
 	handle(knativeProxyEndpoint, authHandlerWithUser(knativeHandler.Handle))
 	// TODO: move the knative-event-sources and knative-channels handler into the knative module.
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
@@ -468,16 +493,13 @@ func (s *Server) HTTPHandler() http.Handler {
 	)
 
 	// User settings
-	userSettingHandler := usersettings.UserSettingsHandler{
-		Client:              s.K8sClient,
-		Endpoint:            s.K8sProxyConfig.Endpoint.String(),
-		ServiceAccountToken: s.ServiceAccountToken,
-	}
+	userSettingHandler := usersettings.NewUserSettingsHandler(internalProxiedK8SClient, anonymousInternalProxiedK8SRT, s.K8sProxyConfig.Endpoint.String())
+
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
 	// Helm
-	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport, s)
-	verifierHandler := helmhandlerspkg.NewVerifierHandler(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport, s)
+	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), internalProxiedK8SRT, s)
+	verifierHandler := helmhandlerspkg.NewVerifierHandler(s.K8sProxyConfig.Endpoint.String(), internalProxiedK8SRT, s)
 	handle("/api/helm/verify", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
@@ -573,17 +595,9 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 	}
 	serverconfigMetrics := serverconfig.NewMetrics(config)
-	serverconfigMetrics.MonitorPlugins(
-		s.K8sClient,
-		s.K8sProxyConfig.Endpoint.String(),
-		s.ServiceAccountToken,
-	)
+	serverconfigMetrics.MonitorPlugins(internalProxiedDynamic)
 	usageMetrics := usage.NewMetrics()
-	usageMetrics.MonitorUsers(
-		s.K8sClient,
-		s.K8sProxyConfig.Endpoint.String(),
-		s.ServiceAccountToken,
-	)
+	usageMetrics.MonitorUsers(internalProxiedK8SClient)
 	prometheus.MustRegister(serverconfigMetrics.GetCollectors()...)
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
 	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
@@ -646,7 +660,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
-	return securityHeadersMiddleware(http.Handler(mux))
+	return securityHeadersMiddleware(http.Handler(mux)), nil
 }
 
 func (s *Server) handleMonitoringDashboardConfigmaps(w http.ResponseWriter, r *http.Request) {
@@ -786,25 +800,23 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 		tokenName = tokenToObjectName(tokenName)
 	}
 
-	path := "/apis/oauth.openshift.io/v1/oauthaccesstokens/" + tokenName
-	// Delete the OpenShift OAuthAccessToken.
-	url := proxy.SingleJoiningSlash(s.K8sProxyConfig.Endpoint.String(), path)
-	req, err := http.NewRequest("DELETE", url, nil)
+	clientConfig := rest.AnonymousClientConfig(s.InternalProxiedK8SClientConfig)
+	clientConfig.Host = s.KubeAPIServerURL
+	clientConfig.BearerToken = user.Token
+
+	oauthClient, err := oauthv1client.NewForConfig(clientConfig)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to create token DELETE request: %v", err)})
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("failed to create an OAuth API client for a user: %v", err)})
 		return
 	}
 
-	r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-	resp, err := s.K8sClient.Do(req)
+	err = oauthClient.OAuthAccessTokens().Delete(r.Context(), tokenName, metav1.DeleteOptions{})
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to delete token: %v", err)})
 		return
 	}
 	s.Authenticator.DeleteCookie(w, r)
-	w.WriteHeader(resp.StatusCode)
-	io.Copy(w, resp.Body)
-	resp.Body.Close()
+	w.WriteHeader(http.StatusOK)
 }
 
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
