@@ -229,6 +229,13 @@ Run frontend tests:
 
 Cypress integration tests are implemented in [Cypress.io](https://www.cypress.io/).
 
+To install Cypress:
+
+```
+cd frontend
+yarn run cypress install
+```
+
 Launch Cypress test runner:
 
 ```
