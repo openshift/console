@@ -1,11 +1,13 @@
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: Build
 metadata:
   namespace: build-examples
   name: kaniko-golang-build
 spec:
   source:
-    url: https://github.com/shipwright-io/sample-go
+    type: Git
+    git:
+      url: https://github.com/shipwright-io/sample-go
     contextDir: docker-build
   strategy:
     name: kaniko
@@ -14,20 +16,20 @@ spec:
   output:
     image: image-registry.openshift-image-registry.svc:5000/build-examples/kaniko-golang-build
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildRun
 metadata:
   namespace: build-examples
   generateName: kaniko-golang-build-
 spec:
-  buildRef:
+  build:
     name: kaniko-golang-build
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildRun
 metadata:
   namespace: build-examples
   generateName: kaniko-golang-build-
 spec:
-  buildRef:
+  build:
     name: kaniko-golang-build

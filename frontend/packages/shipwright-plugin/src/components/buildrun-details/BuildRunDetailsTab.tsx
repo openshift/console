@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { BuildRun } from '../../types';
+import { isV1Alpha1Resource } from '../../utils';
 import BuildSpecSection from '../build-details/BuildSpecSection';
 import BuildRunSection from './BuildRunSection';
 
@@ -32,8 +33,19 @@ const BuildRunDetailsTab: React.FC<BuildRunDetailsTabProps> = ({ obj: buildRun }
                 <Text component={TextVariants.h3}>{t('shipwright-plugin~BuildSpec details')}</Text>
                 <BuildSpecSection
                   obj={buildRun}
-                  buildSpec={buildRun.status?.buildSpec || buildRun.spec?.buildSpec}
-                  path={buildRun.status?.buildSpec ? 'status.buildSpec' : 'spec.buildSpec'}
+                  buildSpec={
+                    buildRun.status?.buildSpec ||
+                    (isV1Alpha1Resource(buildRun)
+                      ? buildRun.spec?.buildSpec
+                      : buildRun.spec?.build?.spec)
+                  }
+                  path={
+                    buildRun.status?.buildSpec
+                      ? 'status.buildSpec'
+                      : isV1Alpha1Resource(buildRun)
+                      ? 'spec.buildSpec'
+                      : 'spec.build.spec'
+                  }
                 />
               </FlexItem>
             </Flex>

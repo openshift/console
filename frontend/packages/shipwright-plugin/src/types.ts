@@ -1,16 +1,26 @@
-import { IBuild } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/Build';
-import { IBuildRun } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/BuildRun';
+import { IBuild as IBuildV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/Build';
+import { IBuildRun as IBuildRunV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/BuildRun';
+import { IBuild as IBuildV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/Build';
+import { IBuildRun as IBuildRunV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/BuildRun';
 import { K8sResourceCondition } from '@console/internal/module/k8s';
 
 // Add missing latestBuild to Build
-export type Build = IBuild & { latestBuild?: BuildRun };
+export type Build =
+  | (IBuildV1Alpha1 & { latestBuild?: BuildRun })
+  | (IBuildV1Beta1 & { latestBuild?: BuildRun });
 
-export type BuildSpec = IBuild['spec'];
+export type BuildSpec = IBuildV1Alpha1['spec'] & IBuildV1Beta1['spec'];
 
-export type BuildStatus = IBuild['status'];
+export type BuildStatus = IBuildV1Alpha1['status'] & IBuildV1Beta1['status'];
 
 // Make status.conditions compatible with @console/internal/components/conditions props
-export type BuildRun = IBuildRun & { status?: { conditions?: K8sResourceCondition[] } };
+export type BuildRun =
+  | (IBuildRunV1Alpha1 & {
+      status?: { conditions?: K8sResourceCondition[] };
+    })
+  | (IBuildRunV1Beta1 & {
+      status?: { conditions?: K8sResourceCondition[]; latestTaskRunRef?: string };
+    });
 
 // The enum values need to match the dynamic-plugin `Status` `status` prop.
 // A translation (title) is added in the BuildRunStatus component.

@@ -9,9 +9,9 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from '../../const';
-import { BuildRunModel } from '../../models';
+import { BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
 import { Build, BuildRun } from '../../types';
-import { getLatestBuildRunStatusforDeployment } from '../../utils';
+import { getLatestBuildRunStatusforDeployment, isV1Alpha1Resource } from '../../utils';
 
 type BuildRunDecoratorProps = {
   buildRuns: BuildRun[];
@@ -50,8 +50,12 @@ export const ConnectedBuildRunDecorator: React.FC<BuildRunDecoratorProps & State
     const resourceLabel =
       latestBuildRun.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL] || 'build-decorator';
 
+    const buildRunModel = isV1Alpha1Resource(latestBuildRun)
+      ? BuildRunModelV1Alpha1
+      : BuildRunModel;
+
     const link = `${resourcePathFromModel(
-      BuildRunModel,
+      buildRunModel,
       latestBuildRun.metadata.name,
       latestBuildRun.metadata.namespace,
     )}/logs`;

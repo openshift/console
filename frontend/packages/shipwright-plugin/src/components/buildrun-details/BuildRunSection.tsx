@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ResourceLink, DetailsItem, Timestamp } from '@console/internal/components/utils';
-import { BuildModel } from '../../models';
+import { BuildModel, BuildModelV1Alpha1 } from '../../models';
 import { BuildRun } from '../../types';
+import { getBuildNameFromBuildRun, isV1Alpha1Resource } from '../../utils';
 import BuildRunDuration from '../buildrun-duration/BuildRunDuration';
 import BuildRunStatus from '../buildrun-status/BuildRunStatus';
 
@@ -13,6 +14,7 @@ type BuildRunSectionProps = {
 
 const BuildRunSection: React.FC<BuildRunSectionProps> = ({ buildRun }) => {
   const { t } = useTranslation();
+  const buildModel = isV1Alpha1Resource(buildRun) ? BuildModelV1Alpha1 : BuildModel;
 
   return (
     <dl>
@@ -21,12 +23,16 @@ const BuildRunSection: React.FC<BuildRunSectionProps> = ({ buildRun }) => {
         <BuildRunStatus buildRun={buildRun} />
       </dd>
 
-      <DetailsItem label={t('shipwright-plugin~Build')} obj={buildRun} path="spec.buildRef">
-        {buildRun.spec.buildRef?.name ? (
+      <DetailsItem
+        label={t('shipwright-plugin~Build')}
+        obj={buildRun}
+        path={isV1Alpha1Resource(buildRun) ? 'spec.buildRef' : 'spec.build'}
+      >
+        {getBuildNameFromBuildRun(buildRun) ? (
           <ResourceLink
-            groupVersionKind={getGroupVersionKindForModel(BuildModel)}
+            groupVersionKind={getGroupVersionKindForModel(buildModel)}
             namespace={buildRun.metadata.namespace}
-            name={buildRun.spec.buildRef.name}
+            name={getBuildNameFromBuildRun(buildRun)}
           />
         ) : (
           '-'

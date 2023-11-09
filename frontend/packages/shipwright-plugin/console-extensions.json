@@ -27,7 +27,36 @@
     "properties": {
       "model": {
         "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "Build"
+      },
+      "color": "#7c8fa4",
+      "label": "%shipwright-plugin~Build%",
+      "labelPlural": "%shipwright-plugin~Builds%",
+      "abbr": "B"
+    }
+  },
+
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
         "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "color": "#7c8fa4",
+      "label": "%shipwright-plugin~BuildRun%",
+      "labelPlural": "%shipwright-plugin~BuildRuns%",
+      "abbr": "BR"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
         "kind": "BuildRun"
       },
       "color": "#7c8fa4",
@@ -44,6 +73,17 @@
         "version": "v1alpha1",
         "kind": "Build"
       },
+      "flag": "SHIPWRIGHT_BUILD_V1ALPHA1"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "Build"
+      },
       "flag": "SHIPWRIGHT_BUILD"
     }
   },
@@ -53,6 +93,17 @@
       "model": {
         "group": "shipwright.io",
         "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "flag": "SHIPWRIGHT_BUILDRUN_V1ALPHA1"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
         "kind": "BuildRun"
       },
       "flag": "SHIPWRIGHT_BUILDRUN"
@@ -72,7 +123,8 @@
       }
     },
     "flags": {
-      "required": ["SHIPWRIGHT_BUILD"]
+      "required": ["SHIPWRIGHT_BUILD_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILD"]
     }
   },
   {
@@ -90,6 +142,42 @@
       }
     },
     "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "builds",
+      "id": "shipwright-builds",
+      "name": "%shipwright-plugin~Shipwright Builds%",
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "Build"
+      }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILD"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "builds",
+      "id": "shipwright-buildruns",
+      "insertAfter": "shipwright-buildruns",
+      "name": "%shipwright-plugin~Shipwright BuildRuns%",
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildRun"
+      }
+    },
+    "flags": {
       "required": ["SHIPWRIGHT_BUILDRUN"]
     }
   },
@@ -102,9 +190,17 @@
         "kind": "Build"
       },
       "component": { "$codeRef": "pages.BuildListPage" }
-    },
-    "flags": {
-      "required": ["SHIPWRIGHT_BUILD"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "Build"
+      },
+      "component": { "$codeRef": "pages.BuildListPage" }
     }
   },
   {
@@ -116,9 +212,17 @@
         "kind": "Build"
       },
       "component": { "$codeRef": "pages.BuildDetailsPage" }
-    },
-    "flags": {
-      "required": ["SHIPWRIGHT_BUILD"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "Build"
+      },
+      "component": { "$codeRef": "pages.BuildDetailsPage" }
     }
   },
   {
@@ -127,6 +231,21 @@
       "model": {
         "group": "shipwright.io",
         "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "component": { "$codeRef": "pages.BuildRunListPage" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
         "kind": "BuildRun"
       },
       "component": { "$codeRef": "pages.BuildRunListPage" }
@@ -146,6 +265,21 @@
       "component": { "$codeRef": "pages.BuildRunDetailsPage" }
     },
     "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildRun"
+      },
+      "component": { "$codeRef": "pages.BuildRunDetailsPage" }
+    },
+    "flags": {
       "required": ["SHIPWRIGHT_BUILDRUN"]
     }
   },
@@ -160,7 +294,22 @@
       "provider": { "$codeRef": "actions.useBuildActions" }
     },
     "flags": {
-      "required": ["SHIPWRIGHT_BUILD"]
+      "required": ["SHIPWRIGHT_BUILD_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "Build"
+      },
+      "provider": { "$codeRef": "actions.useBuildActions" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
     }
   },
   {
@@ -169,6 +318,21 @@
       "model": {
         "group": "shipwright.io",
         "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "provider": { "$codeRef": "actions.useBuildRunActions" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
         "kind": "BuildRun"
       },
       "provider": { "$codeRef": "actions.useBuildRunActions" }
@@ -186,7 +350,35 @@
       "decorator": { "$codeRef": "topology.getShipWrightBuildDecorator" }
     },
     "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "shipwright-buildruns-decorator",
+      "priority": 100,
+      "quadrant": "lowerLeft",
+      "decorator": { "$codeRef": "topology.getShipWrightBuildDecorator" }
+    },
+    "flags": {
       "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-shipwright-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "insertAfter": "topology-tab-section-pods-overview",
+      "provider": {
+        "$codeRef": "topology.useBuildSideBarTabSection"
+      }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
     }
   },
   {
@@ -215,6 +407,28 @@
         },
         "buildRuns": {
           "model": { "kind": "BuildRun", "group": "shipwright.io", "version": "v1alpha1" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        }
+      },
+      "getDataModelReconciler": { "$codeRef": "topology.getShipwrightDataModelReconcilor" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "shipwright-topology-model-factory",
+      "priority": 800,
+      "resources": {
+        "builds": {
+          "model": { "kind": "Build", "group": "shipwright.io", "version": "v1beta1" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "buildRuns": {
+          "model": { "kind": "BuildRun", "group": "shipwright.io", "version": "v1beta1" },
           "opts": { "isList": true, "optional": true, "namespaced": true }
         }
       },
