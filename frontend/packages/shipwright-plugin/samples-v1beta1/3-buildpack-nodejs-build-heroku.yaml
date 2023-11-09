@@ -1,6 +1,7 @@
 apiVersion: shipwright.io/v1beta1
 kind: Build
 metadata:
+  namespace: build-examples
   name: buildpack-nodejs-build-heroku
 spec:
   source:
@@ -17,7 +18,8 @@ spec:
 apiVersion: shipwright.io/v1beta1
 kind: BuildRun
 metadata:
-  name: buildpack-nodejs-build-heroku-1
+  namespace: build-examples
+  generateName: buildpack-nodejs-build-heroku-
 spec:
   build:
     name: buildpack-nodejs-build-heroku
@@ -25,7 +27,8 @@ spec:
 apiVersion: shipwright.io/v1beta1
 kind: BuildRun
 metadata:
-  name: buildpack-nodejs-build-heroku-2
+  namespace: build-examples
+  generateName: buildpack-nodejs-build-heroku-
 spec:
   build:
     name: buildpack-nodejs-build-heroku

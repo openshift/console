@@ -1,7 +1,7 @@
 apiVersion: shipwright.io/v1beta1
 kind: BuildRun
 metadata:
-  name: buildpack-nodejs-buildrun-123
+  generateName: buildpack-nodejs-buildrun-
 spec:
   build:
     spec:

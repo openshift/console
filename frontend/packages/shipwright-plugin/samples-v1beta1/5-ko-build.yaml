@@ -1,0 +1,40 @@
+apiVersion: shipwright.io/v1beta1
+kind: Build
+metadata:
+  namespace: build-examples
+  name: ko-build
+spec:
+  source:
+    type: Git
+    git:
+      url: https://github.com/shipwright-io/build
+  strategy:
+    name: ko
+    kind: BuildStrategy
+  paramValues:
+    - name: go-flags
+      value: '-v -mod=vendor -ldflags=-w'
+    - name: go-version
+      value: '1.17'
+    - name: package-directory
+      value: ./cmd/shipwright-build-controller
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/ko-build
+---
+apiVersion: shipwright.io/v1beta1
+kind: BuildRun
+metadata:
+  namespace: build-examples
+  generateName: ko-build-
+spec:
+  build:
+    name: ko-build
+---
+apiVersion: shipwright.io/v1beta1
+kind: BuildRun
+metadata:
+  namespace: build-examples
+  generateName: ko-build-
+spec:
+  build:
+    name: ko-build

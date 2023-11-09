@@ -1,7 +1,9 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { IBuild as IBuildV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/Build';
+import { IBuildRun as IBuildRunV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/BuildRun';
+import { K8sResourceCondition, K8sResourceKind } from '@console/internal/module/k8s';
 import { getBuildRunStatus } from './components/buildrun-status/BuildRunStatus';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from './const';
-import { BuildRun, ComputedBuildRunStatus } from './types';
+import { Build, BuildRun, ComputedBuildRunStatus } from './types';
 
 export type LatestBuildRunStatus = {
   latestBuildRun: BuildRun;
@@ -79,4 +81,19 @@ export const byCreationTime = (left: K8sResourceKind, right: K8sResourceKind): n
   const leftCreationTime = new Date(left?.metadata?.creationTimestamp || Date.now());
   const rightCreationTime = new Date(right?.metadata?.creationTimestamp || Date.now());
   return rightCreationTime.getTime() - leftCreationTime.getTime();
+};
+
+export const isV1Alpha1Resource = (
+  resource: Build | BuildRun,
+): resource is
+  | IBuildV1Alpha1
+  | (IBuildRunV1Alpha1 & { status?: { conditions?: K8sResourceCondition[] } }) => {
+  return resource.apiVersion === 'shipwright.io/v1alpha1';
+};
+
+export const getBuildNameFromBuildRun = (buildRun: BuildRun) => {
+  if (isV1Alpha1Resource(buildRun)) {
+    return buildRun.spec?.buildRef?.name;
+  }
+  return buildRun.spec?.build?.name;
 };

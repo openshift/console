@@ -1,6 +1,6 @@
 # Based on https://github.com/shipwright-io/build/releases/download/v0.9.0/sample-strategies.yaml
 #
-# - Changed ClusterBuildStrategy to BuildStrategy, add namespace `build-examples`
+# - Changed ClusterBuildStrategy to BuildStrategy, add namespace `build-examples-alpha`
 # - Removed all securityContext sections
 # - Removed `prepare` (chown -R 1000:1000 /tekton/home) from
 #     buildpacks-v3,
@@ -14,7 +14,7 @@
 apiVersion: shipwright.io/v1alpha1
 kind: BuildStrategy
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   name: buildah
 spec:
   buildSteps:
@@ -178,14 +178,14 @@ spec:
         - $(params.registries-search[*])
       resources:
         limits:
-          cpu: "1"
+          cpu: '1'
           memory: 2Gi
         requests:
           cpu: 250m
           memory: 65Mi
   parameters:
     - name: build-args
-      description: "The values for the args in the Dockerfile. Values must be in the format KEY=VALUE."
+      description: 'The values for the args in the Dockerfile. Values must be in the format KEY=VALUE.'
       type: array
       defaults: []
     - name: registries-block
@@ -207,12 +207,12 @@ spec:
 apiVersion: shipwright.io/v1alpha1
 kind: BuildStrategy
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   name: buildkit
 spec:
   parameters:
     - name: build-args
-      description: "The values for the ARGs in the Dockerfile. Values must be in the format KEY=VALUE."
+      description: 'The values for the ARGs in the Dockerfile. Values must be in the format KEY=VALUE.'
       type: array
       defaults: []
     - name: cache
@@ -221,14 +221,14 @@ spec:
       default: registry
     - name: insecure-registry
       type: string
-      description: "Enables the push to an insecure registry"
-      default: "false"
+      description: 'Enables the push to an insecure registry'
+      default: 'false'
     - name: platforms
       description: "Build the image for different platforms. By default, the image is built for the platform used by the FROM image. If that is present for multiple platforms, then it is built for the environment's platform."
       type: array
       defaults: []
     - name: secrets
-      description: "The secrets to pass to the build. Values must be in the format ID=FILE_CONTENT."
+      description: 'The secrets to pass to the build. Values must be in the format ID=FILE_CONTENT.'
       type: array
       defaults: []
   buildSteps:
@@ -370,13 +370,13 @@ spec:
 apiVersion: shipwright.io/v1alpha1
 kind: BuildStrategy
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   name: buildpacks-v3-heroku
 spec:
   parameters:
     - name: platform-api-version
       description: The referenced version is the minimum version that all relevant buildpack implementations support.
-      default: "0.4"
+      default: '0.4'
   buildSteps:
     - name: build-and-push
       image: heroku/buildpacks:18
@@ -407,13 +407,13 @@ spec:
 apiVersion: shipwright.io/v1alpha1
 kind: BuildStrategy
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   name: buildpacks-v3
 spec:
   parameters:
     - name: platform-api-version
       description: The referenced version is the minimum version that all relevant buildpack implementations support.
-      default: "0.4"
+      default: '0.4'
   buildSteps:
     - name: build-and-push
       image: docker.io/paketobuildpacks/builder:full
@@ -448,7 +448,7 @@ spec:
 apiVersion: shipwright.io/v1alpha1
 kind: BuildStrategy
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   name: kaniko-trivy
 spec:
   buildSteps:
@@ -552,7 +552,7 @@ spec:
 apiVersion: shipwright.io/v1alpha1
 kind: BuildStrategy
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   name: kaniko
 spec:
   buildSteps:
@@ -617,22 +617,22 @@ spec:
 apiVersion: shipwright.io/v1alpha1
 kind: BuildStrategy
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   name: ko
 spec:
   parameters:
     - name: go-flags
-      description: "Value for the GOFLAGS environment variable."
-      default: ""
+      description: 'Value for the GOFLAGS environment variable.'
+      default: ''
     - name: go-version
-      description: "Version of Go, must match a tag from https://hub.docker.com/_/golang?tab=tags"
-      default: "1.17"
+      description: 'Version of Go, must match a tag from https://hub.docker.com/_/golang?tab=tags'
+      default: '1.17'
     - name: ko-version
       description: "Version of ko, must be either 'latest', or a release name from https://github.com/google/ko/releases"
       default: latest
     - name: package-directory
-      description: "The directory inside the context directory containing the main package."
-      default: "."
+      description: 'The directory inside the context directory containing the main package.'
+      default: '.'
     - name: target-platform
       description: "Target platform to be built. For example: 'linux/arm64'. Multiple platforms can be provided separated by comma, for example: 'linux/arm64,linux/amd64'. The value 'all' will build all platforms supported by the base image. The value 'current' will build the platform on which the build runs."
       default: current
@@ -746,7 +746,7 @@ spec:
 apiVersion: shipwright.io/v1alpha1
 kind: BuildStrategy
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   name: source-to-image-redhat
 spec:
   buildSteps:
@@ -888,7 +888,7 @@ spec:
 apiVersion: shipwright.io/v1alpha1
 kind: BuildStrategy
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   name: source-to-image
 spec:
   buildSteps:

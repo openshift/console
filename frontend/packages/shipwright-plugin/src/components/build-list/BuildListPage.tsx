@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { ListPage, ListPageProps } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { BuildModel } from '../../models';
+import { BuildModel, BuildModelV1Alpha1 } from '../../models';
 import { Build } from '../../types';
 import { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
 import { BuildTable } from './BuildTable';
@@ -45,7 +46,11 @@ const BuildListPage: React.FC<BuildListPageProps> = (props) => {
   return (
     <ListPage
       title={t('shipwright-plugin~Builds')}
-      kind={referenceForModel(BuildModel)}
+      kind={
+        useFlag('SHIPWRIGHT_BUILD')
+          ? referenceForModel(BuildModel)
+          : referenceForModel(BuildModelV1Alpha1)
+      }
       ListComponent={BuildTable}
       rowFilters={filters}
       canCreate

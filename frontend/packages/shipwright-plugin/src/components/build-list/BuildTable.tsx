@@ -2,6 +2,7 @@ import * as React from 'react';
 import { sortable, SortByDirection } from '@patternfly/react-table';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import {
   Table,
@@ -13,9 +14,9 @@ import { Kebab, ResourceLink, Timestamp } from '@console/internal/components/uti
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { BUILDRUN_TO_BUILD_REFERENCE_LABEL } from '../../const';
-import { BuildRunModel } from '../../models';
+import { BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
 import { Build, BuildRun } from '../../types';
-import { isBuildRunNewerThen } from '../../utils';
+import { isBuildRunNewerThen, isV1Alpha1Resource } from '../../utils';
 import BuildRunDuration, { getBuildRunDuration } from '../buildrun-duration/BuildRunDuration';
 import BuildRunStatus, { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
 import BuildOutput from './BuildOutput';
@@ -87,7 +88,9 @@ export const BuildHeader = () => {
 export const BuildRow: React.FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
   const kindReference = referenceFor(build);
   const context = { [kindReference]: build };
-  const buildRunKindReference = referenceForModel(BuildRunModel);
+  const buildRunKindReference = isV1Alpha1Resource(build)
+    ? referenceForModel(BuildRunModelV1Alpha1)
+    : referenceForModel(BuildRunModel);
 
   return (
     <>
@@ -149,7 +152,10 @@ type BuildTableProps = TableProps & {
 
 export const BuildTable: React.FC<BuildTableProps> = (props) => {
   const { t } = useTranslation();
-  const buildRunModel = referenceForModel(BuildRunModel);
+  const buildRunModel = useFlag('SHIPWRIGHT_BUILDRUN')
+    ? referenceForModel(BuildRunModel)
+    : referenceForModel(BuildRunModelV1Alpha1);
+
   const [buildRuns, buildRunsLoaded, buildRunsLoadError] = useK8sWatchResource<BuildRun[]>({
     kind: buildRunModel,
     namespace: props.namespace,
