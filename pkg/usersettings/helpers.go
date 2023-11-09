@@ -6,10 +6,11 @@ import (
 	core "k8s.io/api/core/v1"
 	rbac "k8s.io/api/rbac/v1"
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+
+	userv1 "github.com/openshift/api/user/v1"
 )
 
-func newUserSettingMeta(userInfo *unstructured.Unstructured) (*UserSettingMeta, error) {
+func newUserSettingMeta(userInfo *userv1.User) (*UserSettingMeta, error) {
 	uid := userInfo.GetUID()
 	name := userInfo.GetName()
 	resourceIdentifier := ""
@@ -19,8 +20,8 @@ func newUserSettingMeta(userInfo *unstructured.Unstructured) (*UserSettingMeta, 
 		resourceIdentifier = string(uid)
 		ownerReferences = []meta.OwnerReference{
 			{
-				APIVersion: userInfo.GetAPIVersion(),
-				Kind:       userInfo.GetKind(),
+				APIVersion: userInfo.APIVersion,
+				Kind:       userInfo.Kind,
 				Name:       name,
 				UID:        uid,
 			},

@@ -12,10 +12,7 @@ func (s *Server) GetKubeVersion() string {
 	if s.KubeVersion != "" {
 		return s.KubeVersion
 	}
-	config := &rest.Config{
-		Host:      s.K8sProxyConfig.Endpoint.String(),
-		Transport: s.K8sClient.Transport,
-	}
+	config := s.InternalProxiedK8SClientConfig
 
 	kubeVersion, err := kubeVersion(config)
 	if err != nil {
