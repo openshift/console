@@ -2092,6 +2092,11 @@
   resolved "https://registry.yarnpkg.com/@novnc/novnc/-/novnc-1.2.0.tgz#535ffd7d074022d35205deae2753100f1f2b29f3"
   integrity sha512-FaUckOedGhSbwQBXk/KGyxKt9ngskg4wPw6ghbHWXOUEmQscAZr3467lTU5DSfppwHJt5k+lQiHoeYUuY90l2Q==
 
+"@novnc/novnc@^1.3.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@novnc/novnc/-/novnc-1.4.0.tgz#68adae81a741624142b518323441e852c1f34281"
+  integrity sha512-kW6ALMc5BuH08e/ond/I1naYcfjc19JYMN1EdtmgjjjzPGCjW8fMtVM3MwM6q7YLRjPlQ3orEvoKMgSS7RkEVQ==
+
 "@octokit/endpoint@^5.1.0":
   version "5.3.6"
   resolved "https://registry.yarnpkg.com/@octokit/endpoint/-/endpoint-5.3.6.tgz#58a67b75b853127568e0db533cdd10f3bdca2e23"
@@ -2161,6 +2166,21 @@
   dependencies:
     "@patternfly/react-core" "^4.276.11"
     "@patternfly/react-styles" "^4.92.8"
+
+"@patternfly-4/react-console@npm:@patternfly/react-console@4.13.4":
+  version "4.13.4"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-4.13.4.tgz#b8d5d84db521f47ad75684a1f3d55702ed7022f1"
+  integrity sha512-ykNM6Olrx6pg5BkCkb11gtwmFOQCbiXjhgRSkPzXC3Qs3YqX1KhseoLvn3TXR3PBVtn7CpKAyfRnJO7RPTGANg==
+  dependencies:
+    "@novnc/novnc" "^1.2.0"
+    "@patternfly/patternfly" "4.139.2"
+    "@patternfly/react-core" "^4.160.2"
+    "@spice-project/spice-html5" "^0.2.1"
+    "@types/file-saver" "^2.0.1"
+    file-saver "^1.3.8"
+    tslib "^2.0.0"
+    xterm "^4.8.1"
+    xterm-addon-fit "^0.2.1"
 
 "@patternfly-4/react-core@npm:@patternfly/react-core@4.278.0", "@patternfly/react-core@^4.276.11", "@patternfly/react-core@^4.278.0":
   version "4.278.0"
@@ -2257,18 +2277,16 @@
     victory-voronoi-container "^36.6.11"
     victory-zoom-container "^36.6.11"
 
-"@patternfly/react-console@4.13.4":
-  version "4.13.4"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-4.13.4.tgz#b8d5d84db521f47ad75684a1f3d55702ed7022f1"
-  integrity sha512-ykNM6Olrx6pg5BkCkb11gtwmFOQCbiXjhgRSkPzXC3Qs3YqX1KhseoLvn3TXR3PBVtn7CpKAyfRnJO7RPTGANg==
+"@patternfly/react-console@5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-5.0.0.tgz#303eb4738d90d7ada50077e3d82ff00aa121ba9c"
+  integrity sha512-3J43+5ilxr56I334p90/SlHE7HD30rHCCYvXwWIIabqOgO3uBy/j6yOpyV47x74yMSK+pmHpWOi+/iIGOUighA==
   dependencies:
-    "@novnc/novnc" "^1.2.0"
-    "@patternfly/patternfly" "4.139.2"
-    "@patternfly/react-core" "^4.160.2"
+    "@novnc/novnc" "^1.3.0"
+    "@patternfly/react-core" "^5.0.0"
+    "@patternfly/react-styles" "^5.0.0"
     "@spice-project/spice-html5" "^0.2.1"
-    "@types/file-saver" "^2.0.1"
     file-saver "^1.3.8"
-    tslib "^2.0.0"
     xterm "^4.8.1"
     xterm-addon-fit "^0.2.1"
 
@@ -2332,6 +2350,13 @@
     "@patternfly/react-styles" "^5.0.0"
     memoize-one "^5.1.0"
 
+"@patternfly/react-styles@5.1.0", "@patternfly/react-styles@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-5.1.0.tgz#1c65fee356accdf7dbdb403aeb5921519cb4bd0c"
+  integrity sha512-RnVS/v1PZuvnXXmPtJamuAprq1lg6tqw6dbeYbm9KmBNXSuB1Iu5fc6kjzrdoSLKBmf6rzpRmafYm2HRwFcrLw==
+  dependencies:
+    "@patternfly/patternfly" "5.0.2"
+
 "@patternfly/react-styles@^4.12.2":
   version "4.12.2"
   resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-4.12.2.tgz#3d0a56fffcbc1d2ff3f343e6013bb318e99fd1bc"
@@ -2341,13 +2366,6 @@
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-5.0.0.tgz#63705ad498ff271fd056e92bd07b2c720ef3491a"
   integrity sha512-xbSCgjx+fPrXbIzUznwTFWtJEbzVS0Wn4zrejdKJYQTY+4YcuPlFkeq2tl3syzwGsaYMpHiFwQiTaKyTvlwtuw==
-
-"@patternfly/react-styles@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-5.1.0.tgz#1c65fee356accdf7dbdb403aeb5921519cb4bd0c"
-  integrity sha512-RnVS/v1PZuvnXXmPtJamuAprq1lg6tqw6dbeYbm9KmBNXSuB1Iu5fc6kjzrdoSLKBmf6rzpRmafYm2HRwFcrLw==
-  dependencies:
-    "@patternfly/patternfly" "5.0.2"
 
 "@patternfly/react-table@5.1.0":
   version "5.1.0"
@@ -11056,6 +11074,11 @@ html-parse-stringify@^3.0.1:
   integrity sha512-KknJ50kTInJ7qIScF3jeaFRpMpE8/lfiTdzf/twXyPBLAGrLRTmkz3AdTnKeh40X8k9L2fdYwEp/42WGXIRGcg==
   dependencies:
     void-elements "3.1.0"
+
+html-webpack-exclude-assets-plugin@^0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/html-webpack-exclude-assets-plugin/-/html-webpack-exclude-assets-plugin-0.0.7.tgz#ee69906adb3d869e4e29f29b0f3e99b53fa87c99"
+  integrity sha512-gaYKMGBPDts3Fb1WXyDEEcS/0TSRg2IDl3EsbQL2AkKWTqdjSKwfQ8Iz0RhPiWErJfqhq5/wkhoYyjQoG55pug==
 
 html-webpack-plugin@3.x:
   version "3.1.0"

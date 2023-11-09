@@ -3,6 +3,7 @@ import * as webpack from 'webpack';
 import * as path from 'path';
 import * as _ from 'lodash';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
+import * as HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import * as _crypto from 'crypto';
@@ -43,7 +44,9 @@ Object.assign(_crypto, {
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({
   filename:
-    NODE_ENV === 'production' ? 'app-bundle.[contenthash].css' : 'app-bundle.[name].[hash].css',
+    NODE_ENV === 'production'
+      ? 'app-bundle.[name].[contenthash].css'
+      : 'app-bundle.[name].[hash].css',
   // We follow BEM naming to scope CSS.
   // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
   ignoreOrder: true,
@@ -55,20 +58,30 @@ const getVendorModuleRegExp = (vendorModules: string[]) =>
 
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
 
-const sharedPluginTest = getVendorModuleRegExp(
-  sharedPluginModules.map((moduleName) =>
-    // Console provides specific PatternFly 4 shared modules to its dynamic plugins.
-    // These are represented in Console webpack compilation as @patternfly-4/* modules.
-    moduleName.startsWith('@patternfly/')
-      ? moduleName.replace(/^@patternfly\//, '@patternfly-4/')
-      : moduleName,
-  ),
+const sharedPluginModulesTest = getVendorModuleRegExp(
+  // Map shared module names to actual webpack modules as per shared-modules-init.ts
+  sharedPluginModules.map((moduleName) => {
+    if (moduleName === '@openshift-console/dynamic-plugin-sdk') {
+      return '@console/dynamic-plugin-sdk/src/lib-core';
+    }
+
+    if (moduleName === '@openshift-console/dynamic-plugin-sdk-internal') {
+      return '@console/dynamic-plugin-sdk/src/lib-internal';
+    }
+
+    if (moduleName.startsWith('@patternfly/')) {
+      return moduleName.replace(/^@patternfly\//, '@patternfly-4/');
+    }
+
+    return moduleName;
+  }),
 );
 
-const sharedPatternFlyCoreTest = /node_modules\/@patternfly(-\S)?\//;
-
 const config: Configuration = {
-  entry: ['./public/components/app.jsx', 'monaco-editor-core/esm/vs/editor/editor.worker.js'],
+  entry: {
+    main: ['./public/components/app.jsx', 'monaco-editor-core/esm/vs/editor/editor.worker.js'],
+    'vendor-patternfly-4-shared': './public/vendor-patternfly-4-shared.scss',
+  },
   output: {
     path: path.resolve(__dirname, 'public/dist'),
     publicPath: 'static/',
@@ -99,7 +112,7 @@ const config: Configuration = {
     rules: [
       {
         // Disable tree shaking on modules shared with Console dynamic plugins
-        test: sharedPluginTest,
+        test: sharedPluginModulesTest,
         sideEffects: true,
       },
       { test: /\.glsl$/, loader: 'raw!glslify' },
@@ -238,14 +251,29 @@ const config: Configuration = {
   optimization: {
     splitChunks: {
       chunks: 'all',
+      maxInitialRequests: 6,
+      maxAsyncRequests: 8,
       cacheGroups: {
-        vendor: {
-          test: sharedPatternFlyCoreTest,
-          name: 'vendor-patternfly-core',
+        vendors: {
+          test: /\/node_modules\//,
+          priority: -10,
+          enforce: true,
+        },
+        'vendor-patternfly-5': {
+          // modules with @patternfly/ that don't also have @patternfly-4/ in the string
+          test: /^(?!.*@patternfly-4\/).*@patternfly\/.*/,
+        },
+        'vendor-patternfly-4-shared': {
+          test: /@patternfly-4\//,
+        },
+        'vendor-plugins-shared': {
+          test: ({ resource = '' }) =>
+            sharedPluginModulesTest.test(resource) &&
+            !resource.includes('/node_modules/@patternfly'),
         },
       },
     },
-    runtimeChunk: true,
+    runtimeChunk: 'single',
   },
   plugins: [
     new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
@@ -267,7 +295,15 @@ const config: Configuration = {
       template: './public/index.html',
       production: NODE_ENV === 'production',
       chunksSortMode: 'none',
+      // exclude:
+      // vendor-patternfly-4-shared-chunk-<hash>.min.js (js entry for vendor-patternfly-4-shared.scss)
+      // app-bundle.vendor-patternfly-4-shared~main.<hash>.css (PF4 from the shared PF modules - we already share out PF4 css)
+      excludeAssets: [
+        /vendor-patternfly-4-shared-chunk.*\.js/,
+        /vendor-patternfly-4-shared~main.*\.css/,
+      ],
     }),
+    new HtmlWebpackExcludeAssetsPlugin(),
     new MonacoWebpackPlugin({
       languages: ['yaml', 'dockerfile', 'json', 'plaintext'],
     }),
@@ -340,7 +376,6 @@ if (ANALYZE_BUNDLE === 'true') {
 if (NODE_ENV === 'production') {
   config.output.filename = '[name]-bundle-[hash].min.js';
   config.output.chunkFilename = '[name]-chunk-[chunkhash].min.js';
-  extractCSS.filename = '[name]-[chunkhash].min.css';
   // Causes error in --mode=production due to scope hoisting
   config.optimization.concatenateModules = false;
   config.stats = 'normal';
