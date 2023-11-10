@@ -23,7 +23,8 @@
       "pipelinesComponent": "src/components/pipelines-index.ts",
       "tasksComponent": "src/components/tasks-index.ts",
       "triggersComponent": "src/components/triggers-index.ts",
-      "pacComponent": "src/components/pac/index.ts"
+      "pacComponent": "src/components/pac/index.ts",
+      "ResultsComponent": "src/components/shared/results"
     }
   }
 }
