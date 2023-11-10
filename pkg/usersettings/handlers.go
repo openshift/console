@@ -5,27 +5,19 @@ import (
 	"fmt"
 	"net/http"
 
+	authenticationv1 "k8s.io/api/authentication/v1"
 	core "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
-
-	userv1client "github.com/openshift/client-go/user/clientset/versioned/typed/user/v1"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/serverutils"
 )
 
 const namespace = "openshift-console-user-settings"
-
-var USER_RESOURCE = schema.GroupVersionResource{
-	Group:    "user.openshift.io",
-	Version:  "v1",
-	Resource: "users",
-}
 
 type UserSettingsHandler struct {
 	internalProxiedClient *kubernetes.Clientset
@@ -91,7 +83,7 @@ func (h *UserSettingsHandler) sendErrorResponse(format string, err error, w http
 	serverutils.SendResponse(w, code, serverutils.ApiError{Err: errMsg})
 }
 
-// Fetch the user-setting ConfigMap of the current user, by using his token.
+// Fetch the user-setting ConfigMap of the current user
 func (h *UserSettingsHandler) getUserSettings(ctx context.Context, userSettingMeta *UserSettingMeta) (*core.ConfigMap, error) {
 	return h.internalProxiedClient.CoreV1().ConfigMaps(namespace).Get(ctx, userSettingMeta.getConfigMapName(), meta.GetOptions{})
 }
@@ -149,24 +141,20 @@ func (h *UserSettingsHandler) deleteUserSettings(ctx context.Context, userSettin
 	return nil
 }
 
-func (h *UserSettingsHandler) createUserProxyClient(user *auth.User) (*userv1client.UserV1Client, error) {
+func (h *UserSettingsHandler) getUserSettingMeta(ctx context.Context, user *auth.User) (*UserSettingMeta, error) {
+	// copy the anon config for the user and authenticate the transport with the user's token
 	userConfig := rest.CopyConfig(h.anonClientConfig)
 	userConfig.BearerToken = user.Token
 
-	// TODO: will old HTTP transports be garbage-collected?
-	return userv1client.NewForConfig(userConfig)
-}
-
-func (h *UserSettingsHandler) getUserSettingMeta(ctx context.Context, user *auth.User) (*UserSettingMeta, error) {
-	client, err := h.createUserProxyClient(user)
+	client, err := kubernetes.NewForConfig(userConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	userInfo, err := client.Users().Get(ctx, "~", meta.GetOptions{})
+	userInfo, err := client.AuthenticationV1().SelfSubjectReviews().Create(ctx, &authenticationv1.SelfSubjectReview{}, meta.CreateOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	return newUserSettingMeta(userInfo)
+	return newUserSettingMeta(userInfo.Status.UserInfo)
 }
