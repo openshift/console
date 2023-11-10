@@ -3,16 +3,14 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
-
+import { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
+import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
+import { useDetailsItemExtensionsForResource } from '@console/shared/src/hooks/useDetailsItemExtensionsForResource';
+import { ExtensionDetailsItem } from '@console/shared/src/components/details-page/ExtensionDetailsItem';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData, TableProps, RowFunctionArgs } from './factory';
-import {
-  referenceFor,
-  kindForReference,
-  K8sResourceKind,
-  modelFor,
-  K8sResourceKindReference,
-} from '../module/k8s';
+import { referenceFor, K8sResourceKind, modelFor } from '../module/k8s';
 import {
   Kebab,
   kindObj,
@@ -28,47 +26,56 @@ const { common } = Kebab.factory;
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
-export const DetailsForKind = (
-  kind: string,
-  additionalDetailsCallback?: (obj: K8sResourceKind) => React.ReactNode,
-) =>
-  function DetailsForKind_({ obj }) {
-    const { t } = useTranslation();
+export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ obj }) => {
+  const { t } = useTranslation();
+  const groupVersionKind = getGroupVersionKindForResource(obj);
+  const [model] = useK8sModel(groupVersionKind);
+  const leftDetailsItemExtensions = useDetailsItemExtensionsForResource(obj, 'left');
+  const rightDetailsItemExtensions = useDetailsItemExtensionsForResource(obj, 'right');
+  const leftDetailsItems = React.useMemo(
+    () =>
+      leftDetailsItemExtensions.map((extension) => (
+        <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj} />
+      )),
+    [leftDetailsItemExtensions, obj],
+  );
 
-    const getKindLabel = (item: K8sResourceKindReference) => {
-      const model = modelFor(item);
-      return model?.labelKey ? t(model.labelKey) : kindForReference(item);
-    };
+  const rightDetailsItems = React.useMemo(
+    () =>
+      rightDetailsItemExtensions.map((extension) => (
+        <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj} />
+      )),
+    [rightDetailsItemExtensions, obj],
+  );
 
-    const additionalDetails: React.ReactNode =
-      additionalDetailsCallback && additionalDetailsCallback(obj);
-
-    return (
-      <>
-        <div className="co-m-pane__body">
-          <SectionHeading
-            text={t('public~{{kindLabel}} details', { kindLabel: getKindLabel(kind) })}
-          />
-          <div className="row">
-            <div className="col-md-6">
-              <ResourceSummary
-                resource={obj}
-                podSelector="spec.podSelector"
-                showNodeSelector={false}
-              />
-            </div>
-            {additionalDetails && <div className="col-md-6">{additionalDetails}</div>}
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading
+          text={t('public~{{kind}} details', {
+            kind: model?.labelKey ? t(model.labelKey) : model?.label,
+          })}
+        />
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false}>
+              {leftDetailsItems}
+            </ResourceSummary>
           </div>
+          {rightDetailsItems.length > 0 && (
+            <dl className="co-m-pane__details col-md-6">{rightDetailsItems}</dl>
+          )}
         </div>
-        {_.isArray(obj?.status?.conditions) && (
-          <div className="co-m-pane__body">
-            <SectionHeading text={t('public~Conditions')} />
-            <Conditions conditions={obj.status.conditions} />
-          </div>
-        )}
-      </>
-    );
-  };
+      </div>
+      {_.isArray(obj?.status?.conditions) && (
+        <div className="co-m-pane__body">
+          <SectionHeading text={t('public~Conditions')} />
+          <Conditions conditions={obj.status.conditions} />
+        </div>
+      )}
+    </>
+  );
+};
 
 const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, customData }) => {
   const kind = referenceFor(obj) || customData.kind;
@@ -171,7 +178,7 @@ export const DefaultPage: React.FC<React.ComponentProps<typeof ListPage>> = (pro
 DefaultPage.displayName = 'DefaultPage';
 
 export const DefaultDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
+  const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
   const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(props.kind)), ...common];
 
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;

@@ -26,6 +26,7 @@ import {
   DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
 } from '../extensions/dashboards';
+import { DetailsItem } from '../extensions/details-item';
 import {
   FeatureFlag,
   ModelFeatureFlag,
@@ -137,7 +138,8 @@ export type SupportedExtension =
   | CustomOverviewDetailItem
   | ProjectOverviewUtilizationItem
   | ProjectOverviewInventoryItem
-  | StorageClassProvisioner;
+  | StorageClassProvisioner
+  | DetailsItem;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

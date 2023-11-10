@@ -6,7 +6,7 @@ import { useTriggersTechPreviewBadge } from '../../utils/hooks';
 import { useTriggersBreadcrumbsFor } from './hooks';
 
 const ClusterTriggerBindingPage: React.FC<DetailsPageProps> = (props) => {
-  const { kindObj, match, kind } = props;
+  const { kindObj, match } = props;
   const breadcrumbsFor = useTriggersBreadcrumbsFor(kindObj, match);
   const badge = useTriggersTechPreviewBadge(props.namespace);
 
@@ -16,7 +16,7 @@ const ClusterTriggerBindingPage: React.FC<DetailsPageProps> = (props) => {
       badge={badge}
       menuActions={Kebab.factory.common}
       breadcrumbsFor={() => breadcrumbsFor}
-      pages={[navFactory.details(DetailsForKind(kind)), navFactory.editYaml()]}
+      pages={[navFactory.details(DetailsForKind), navFactory.editYaml()]}
     />
   );
 };

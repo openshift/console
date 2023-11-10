@@ -9,7 +9,7 @@ import { KnativeServingModel } from '../../models';
 const knativeServingReference: K8sResourceKindReference = referenceForModel(KnativeServingModel);
 
 const KnativeServingDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
+  const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
 
   return (
     <DetailsPage

@@ -294,7 +294,7 @@ export const RolesDetailsPage = (props) => {
 export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 export const ClusterRoleBindingsDetailsPage = (props) => {
-  const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
+  const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
   const actions = [...Kebab.getExtensionsActionsForKind(ClusterRoleBindingModel), ...common];
 
   return (
