@@ -1,37 +1,36 @@
 package usersettings
 
 import (
-	"errors"
-
+	authenticationv1 "k8s.io/api/authentication/v1"
 	core "k8s.io/api/core/v1"
 	rbac "k8s.io/api/rbac/v1"
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	userv1 "github.com/openshift/api/user/v1"
+	"k8s.io/apimachinery/pkg/types"
 )
 
-func newUserSettingMeta(userInfo *userv1.User) (*UserSettingMeta, error) {
-	uid := userInfo.GetUID()
-	name := userInfo.GetName()
+func newUserSettingMeta(userInfo authenticationv1.UserInfo) (*UserSettingMeta, error) {
+	uid := userInfo.UID
+	name := userInfo.Username
 	resourceIdentifier := ""
-	ownerReferences := []meta.OwnerReference{}
+	var ownerReferences []meta.OwnerReference
 
 	if uid != "" {
 		resourceIdentifier = string(uid)
 		ownerReferences = []meta.OwnerReference{
 			{
-				APIVersion: userInfo.APIVersion,
-				Kind:       userInfo.Kind,
+				APIVersion: "user.openshift.io/v1", // TODO: is this necessary? What does it do?
+				Kind:       "User",                 // TODO: is this necessary? What does it do?
 				Name:       name,
-				UID:        uid,
+				UID:        types.UID(uid),
 			},
 		}
 	} else if name == "kube:admin" {
 		resourceIdentifier = "kubeadmin"
 		ownerReferences = []meta.OwnerReference{}
-	} else {
-		return nil, errors.New("User must have UID to get required resource data for user-settings")
-	}
+	} //else {
+	// FIXME: The legacy OIDC config won't pass UIDs, which is a k8s design flaw. We may need to parse the token to get its sub claim.
+	//return nil, errors.New("User must have UID to get required resource data for user-settings")
+	//}
 
 	return &UserSettingMeta{
 		Username:           name,
