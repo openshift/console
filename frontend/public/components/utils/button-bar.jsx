@@ -32,7 +32,13 @@ const ErrorMessage = ({ message }) => {
   );
 };
 const InfoMessage = ({ message }) => (
-  <Alert isInline className="co-alert" variant="info" title={message} />
+  <Alert
+    isInline
+    className="co-alert"
+    variant="info"
+    title={message}
+    data-test="button-bar-info-message"
+  />
 );
 const SuccessMessage = ({ message }) => (
   <Alert isInline className="co-alert" variant="success" title={message} />

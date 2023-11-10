@@ -137,6 +137,7 @@ export class SelectorInput extends React.Component {
           key={key}
           onClose={() => onRemove(key)}
           isTruncated
+          data-test={`label=${key}`}
         >
           {getTagDisplayValue(tag)}
         </PfLabel>

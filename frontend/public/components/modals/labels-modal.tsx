@@ -15,6 +15,7 @@ import {
   ModalTitle,
 } from '../factory/modal';
 import { ResourceIcon, SelectorInput } from '../utils';
+import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 
 const LABELS_PATH = '/metadata/labels';
 const TEMPLATE_SELECTOR_PATH = '/spec/template/metadata/labels';
@@ -35,8 +36,20 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
   const [labels, setLabels] = React.useState(
     SelectorInput.arrayify(_.get(resource, path.split('/').slice(1))),
   );
+  const [watchedResource, watchedResourceLoaded] = useK8sWatchResource<K8sResourceCommon>({
+    kind: resource?.kind,
+    name: resource?.metadata?.name,
+    namespace: resource?.metadata?.namespace,
+  });
+  const [stale, setStale] = React.useState(false);
   const createPath = !labels.length;
   const { t } = useTranslation();
+
+  React.useEffect(() => {
+    if (watchedResourceLoaded) {
+      setStale(!_.isEqual(resource?.metadata?.labels, watchedResource?.metadata?.labels));
+    }
+  }, [path, resource, watchedResource, watchedResourceLoaded]);
 
   const submit = (e) => {
     e.preventDefault();
@@ -90,7 +103,7 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
                 ? t('{{description}} for', { description: t(descriptionKey) })
                 : t('public~Labels for')}{' '}
               <ResourceIcon groupVersionKind={getGroupVersionKindForModel(kind)} />{' '}
-              {resource.metadata.name}
+              {resource?.metadata?.name}
             </label>
             <SelectorInput
               onChange={(l) => setLabels(l)}
@@ -103,8 +116,14 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
+        message={
+          stale
+            ? t('public~Labels have been updated. Click Cancel and reapply your changes.')
+            : undefined
+        }
         inProgress={false}
         submitText={t('public~Save')}
+        submitDisabled={stale}
         cancel={cancel}
       />
     </form>

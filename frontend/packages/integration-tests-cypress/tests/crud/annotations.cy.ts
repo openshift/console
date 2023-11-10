@@ -9,6 +9,8 @@ import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
 import * as yamlEditor from '../../views/yaml-editor';
 
+const configmapName = 'example';
+
 const createExampleConfigMapInstance = () => {
   nav.sidenav.clickNavLink(['Workloads', 'ConfigMaps']);
   cy.byLegacyTestID('resource-title').should('have.text', 'ConfigMaps');
@@ -21,7 +23,7 @@ const createExampleConfigMapInstance = () => {
   let newContent;
   // get, update, and set yaml editor content.
   yamlEditor.getEditorContent().then((content) => {
-    newContent = defaultsDeep({}, { metadata: { name: 'example' } }, safeLoad(content));
+    newContent = defaultsDeep({}, { metadata: { name: configmapName } }, safeLoad(content));
     yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
       yamlEditor.clickSaveCreateButton();
       cy.get(errorMessage).should('not.exist');
@@ -31,7 +33,7 @@ const createExampleConfigMapInstance = () => {
 
 const deleteExampleConfigMapInstance = () => {
   detailsPage.isLoaded();
-  detailsPage.titleShouldContain('example');
+  detailsPage.titleShouldContain(configmapName);
   detailsPage.clickPageActionFromDropdown('Delete ConfigMap');
   modal.shouldBeOpened();
   modal.submit();
@@ -48,6 +50,7 @@ const setName = (row: JQuery<HTMLElement>, nameValue: string) => {
     cy.byTestID('pairs-list-name').type(nameValue);
   });
 };
+
 const setValue = (row: JQuery<HTMLElement>, value: string) => {
   cy.wrap(row).within(() => {
     cy.byTestID('pairs-list-value').type(value);
@@ -59,6 +62,7 @@ const clearValue = (row: JQuery<HTMLElement>) => {
     cy.byTestID('pairs-list-value').clear();
   });
 };
+
 const nameValueEquals = (row: JQuery<HTMLElement>, name: string, value: string) => {
   cy.wrap(row).within(() => {
     cy.byTestID('pairs-list-name').should('have.value', name);
@@ -66,11 +70,43 @@ const nameValueEquals = (row: JQuery<HTMLElement>, name: string, value: string) 
   });
 };
 
+const addAnnotationByCLI = (annotation: string) =>
+  cy.exec(`oc annotate configmap ${configmapName} ${annotation}`);
+
+const removeAnnotationByCLI = (annotationKey: string) =>
+  cy.exec(`oc annotate configmap ${configmapName} ${annotationKey}-`);
+
+const ANNOTATION_KEY = 'ALPHA_Num_KEY-3';
+const ANNOTATION_VALUE = 'ALPHA_Num_VALUE-2';
+const annotations = [
+  {
+    key: 'ALPHA_Num_KEY-1',
+    value: 'ALPHA_Num_VALUE-1',
+  },
+  {
+    key: 'ALPHA_Num_KEY-2',
+    value: '',
+  },
+  {
+    key: '',
+    value: 'ALPHA_Num_VALUE-3',
+  },
+];
+
 describe('Annotations', () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
     createExampleConfigMapInstance();
+  });
+
+  beforeEach(() => {
+    cy.visit(`/k8s/ns/${testName}/configmaps/${configmapName}`);
+    detailsPage.isLoaded();
+    detailsPage.titleShouldContain(configmapName);
+    cy.byTestID('edit-annotations').contains('0 annotations');
+    detailsPage.clickPageActionFromDropdown('Edit annotations');
+    modal.shouldBeOpened();
   });
 
   afterEach(() => {
@@ -83,31 +119,7 @@ describe('Annotations', () => {
   });
 
   it(`Creates, Edits, Updates, and Deletes Annotations`, () => {
-    const ANNOTATION_KEY = 'ALPHA_Num_KEY-3';
-    const ANNOTATION_VALUE = 'ALPHA_Num_VALUE-2';
-    const annotations = [
-      {
-        key: 'ALPHA_Num_KEY-1',
-        value: 'ALPHA_Num_VALUE-1',
-      },
-      {
-        key: 'ALPHA_Num_KEY-2',
-        value: '',
-      },
-      {
-        key: '',
-        value: 'ALPHA_Num_VALUE-3',
-      },
-    ];
-
-    cy.url().should('include', `/k8s/ns/${testName}/configmaps/example`);
-    detailsPage.isLoaded();
-    detailsPage.titleShouldContain('example');
-    cy.byTestID('edit-annotations').contains('0 annotations');
-
     cy.log('Add annotations');
-    detailsPage.clickPageActionFromDropdown('Edit annotations');
-    modal.shouldBeOpened();
     getNameValueEditorRow(0).then((row) => {
       setName(row, annotations[0].key);
       setValue(row, annotations[0].value);
@@ -190,5 +202,16 @@ describe('Annotations', () => {
     modal.submit();
     modal.shouldBeClosed();
     cy.byTestID('edit-annotations').contains('0 annotations');
+  });
+
+  it(`Disables Save and displays an info alert in the annotations modal if the annotations change`, () => {
+    cy.log('Add an annotation via the CLI and check the modal contents');
+    addAnnotationByCLI(`${annotations[0].key}=${annotations[0].value}`).then(() => {
+      cy.byTestID('confirm-action').should('be.disabled');
+      cy.byTestID('button-bar-info-message').should('exist');
+    });
+    removeAnnotationByCLI(annotations[0].key);
+    modal.cancel();
+    modal.shouldBeClosed();
   });
 });
