@@ -66,6 +66,28 @@
     }
   },
   {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "OPENSHIFT_USER_API",
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "User"
+      }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "OPENSHIFT_GROUP_API",
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "Group"
+      }
+    }
+  },
+  {
     "type": "console.context-provider",
     "properties": {
       "provider": { "$codeRef": "tourContext.TourContextProvider" },
@@ -466,7 +488,8 @@
         "label": "%console-app~Enable exact string match%",
         "trueValue": true,
         "falseValue": false,
-        "defaultValue": false      }
+        "defaultValue": false
+      }
     }
   },
   {
@@ -1162,7 +1185,7 @@
         "kind": "User"
       }
     },
-    "flags": { "required": ["OPENSHIFT", "CAN_LIST_USERS"] }
+    "flags": { "required": ["OPENSHIFT", "OPENSHIFT_USER_API", "CAN_LIST_USERS"] }
   },
   {
     "type": "console.navigation/resource-cluster",
@@ -1178,7 +1201,7 @@
         "kind": "Group"
       }
     },
-    "flags": { "required": ["OPENSHIFT", "CAN_LIST_GROUPS"] }
+    "flags": { "required": ["OPENSHIFT", "OPENSHIFT_GROUP_API", "CAN_LIST_GROUPS"] }
   },
   {
     "type": "console.navigation/resource-ns",
