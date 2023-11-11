@@ -14,9 +14,10 @@
 apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
+  namespace: build-examples
   name: buildah
 spec:
-  buildSteps:
+  steps:
     - name: build-and-push
       image: quay.io/containers/buildah:v1.23.1
       workingDir: $(params.shp-source-root)
@@ -26,6 +27,7 @@ spec:
         - -c
         - |
           set -euo pipefail
+
           # Parse parameters
           context=
           dockerfile=
@@ -42,6 +44,7 @@ spec:
           while [[ $# -gt 0 ]]; do
             arg="$1"
             shift
+
             if [ "${arg}" == "--context" ]; then
               inBuildArgs=false
               inRegistriesBlock=false
@@ -89,6 +92,7 @@ spec:
               registriesBlock="${registriesBlock}'${arg}', "
             elif [ "${inRegistriesInsecure}" == "true" ]; then
               registriesInsecure="${registriesInsecure}'${arg}', "
+
               # This assumes that the image is passed before the insecure registries which is fair in this context
               if [[ ${image} == ${arg}/* ]]; then
                 tlsVerify=false
@@ -100,6 +104,7 @@ spec:
               exit 1
             fi
           done
+
           # Verify the existence of the context directory
           if [ ! -d "${context}" ]; then
             echo -e "The context directory '${context}' does not exist."
@@ -108,6 +113,7 @@ spec:
             exit 1
           fi
           cd "${context}"
+
           # Verify the existence of the Dockerfile
           if [ ! -f "${dockerfile}" ]; then
             echo -e "The Dockerfile '${dockerfile}' does not exist."
@@ -115,25 +121,30 @@ spec:
             echo -n "The Dockerfile '${dockerfile}' does not exist." > '$(results.shp-error-message.path)'
             exit 1
           fi
+
           echo "[INFO] Creating registries config file..."
           if [ "${registriesSearch}" != "" ]; then
             cat <<EOF >>/tmp/registries.conf
           [registries.search]
           registries = [${registriesSearch::-2}]
+
           EOF
           fi
           if [ "${registriesInsecure}" != "" ]; then
             cat <<EOF >>/tmp/registries.conf
           [registries.insecure]
           registries = [${registriesInsecure::-2}]
+
           EOF
           fi
           if [ "${registriesBlock}" != "" ]; then
             cat <<EOF >>/tmp/registries.conf
           [registries.block]
           registries = [${registriesBlock::-2}]
+
           EOF
           fi
+
           # Building the image
           echo "[INFO] Building image ${image}"
           buildah bud "${buildArgs[@]}" \
@@ -141,6 +152,7 @@ spec:
             --tag="${image}" \
             --file="${dockerfile}" \
             .
+
           # Push the image
           echo "[INFO] Pushing image ${image}"
           buildah push \
@@ -195,6 +207,7 @@ spec:
 apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
+  namespace: build-examples
   name: buildkit
 spec:
   parameters:
@@ -218,7 +231,11 @@ spec:
       description: 'The secrets to pass to the build. Values must be in the format ID=FILE_CONTENT.'
       type: array
       defaults: []
-  buildSteps:
+    - name: dockerfile
+      description: The path to the Dockerfile to be used for building the image.
+      type: string
+      default: 'Dockerfile'
+  steps:
     - name: build-and-push
       image: moby/buildkit:nightly-rootless
       imagePullPolicy: Always
@@ -247,6 +264,7 @@ spec:
         - -c
         - |
           set -euo pipefail
+
           # Verify the existence of the context directory
           if [ ! -d "${PARAM_SOURCE_CONTEXT}" ]; then
             echo -e "The context directory '${PARAM_SOURCE_CONTEXT}' does not exist."
@@ -254,10 +272,12 @@ spec:
             echo -n "The context directory '${PARAM_SOURCE_CONTEXT}' does not exist." > '$(results.shp-error-message.path)'
             exit 1
           fi
+
           # Prepare the file arguments
           DOCKERFILE_PATH="${PARAM_SOURCE_CONTEXT}/${PARAM_DOCKERFILE}"
           DOCKERFILE_DIR="$(dirname "${DOCKERFILE_PATH}")"
           DOCKERFILE_NAME="$(basename "${DOCKERFILE_PATH}")"
+
           # Verify the existence of the Dockerfile
           if [ ! -f "${DOCKERFILE_PATH}" ]; then
             echo -e "The Dockerfile '${DOCKERFILE_PATH}' does not exist."
@@ -265,7 +285,9 @@ spec:
             echo -n "The Dockerfile '${DOCKERFILE_PATH}' does not exist." > '$(results.shp-error-message.path)'
             exit 1
           fi
+
           # We only have ash here and therefore no bash arrays to help add dynamic arguments (the build-args) to the build command.
+
           echo "#!/bin/ash" > /tmp/run.sh
           echo "set -euo pipefail" >> /tmp/run.sh
           echo "buildctl-daemonless.sh \\" >> /tmp/run.sh
@@ -287,6 +309,7 @@ spec:
             echo -n "An invalid value for the parameter 'cache' has been provided: '${PARAM_CACHE}'. Allowed values are 'disabled' and 'registry'." > '$(results.shp-error-message.path)'
             exit 1
           fi
+
           stage=""
           platforms=""
           for a in "$@"
@@ -307,27 +330,35 @@ spec:
               fi
             elif [ "${stage}" == "secrets" ]; then
               # Split ID=FILE_CONTENT into variables id and data
+
               # using head because the data could be multiline
               id="$(echo "${a}" | head -1 | sed 's/=.*//')"
+
               # This is hacky, we remove the suffix ${id}= from all lines of the data.
               # If the data would be multiple lines and a line would start with ${id}=
               # then we would remove it. We could force users to give us the secret
               # base64 encoded. But ultimately, the best solution might be if the user
               # mounts the secret and just gives us the path here.
               data="$(echo "${a}" | sed "s/^${id}=//")"
+
               # Write the secret data into a temporary file, once we have volume support
               # in the build strategy, we should use a memory based emptyDir for this.
               echo -n "${data}" > "/tmp/secret_${id}"
+
               # Add the secret argument
               echo "--secret id=${id},src="/tmp/secret_${id}" \\" >> /tmp/run.sh
             fi
           done
+
           if [ "${platforms}" != "" ]; then
             echo "--opt=\"platform=${platforms}\" \\" >> /tmp/run.sh
           fi
+
           echo "--metadata-file /tmp/image-metadata.json" >> /tmp/run.sh
+
           chmod +x /tmp/run.sh
           /tmp/run.sh
+
           # Store the image digest
           grep containerimage.digest /tmp/image-metadata.json | sed -E 's/.*containerimage.digest":\s*"([^"]*).*/\1/' | tr -d '\n' > '$(results.shp-image-digest.path)'
         # That's the separator between the shell script and its args
@@ -343,13 +374,14 @@ spec:
 apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
+  namespace: build-examples
   name: buildpacks-v3-heroku
 spec:
   parameters:
     - name: platform-api-version
       description: The referenced version is the minimum version that all relevant buildpack implementations support.
       default: '0.4'
-  buildSteps:
+  steps:
     - name: build-and-push
       image: heroku/buildpacks:18
       env:
@@ -379,13 +411,14 @@ spec:
 apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
+  namespace: build-examples
   name: buildpacks-v3
 spec:
   parameters:
     - name: platform-api-version
       description: The referenced version is the minimum version that all relevant buildpack implementations support.
       default: '0.4'
-  buildSteps:
+  steps:
     - name: build-and-push
       image: docker.io/paketobuildpacks/builder:full
       imagePullPolicy: Always
@@ -419,9 +452,10 @@ spec:
 apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
+  namespace: build-examples
   name: kaniko-trivy
 spec:
-  buildSteps:
+  steps:
     - name: kaniko-build
       image: gcr.io/kaniko-project/executor:v1.8.1
       workingDir: $(params.shp-source-root)
@@ -436,7 +470,7 @@ spec:
         - /kaniko/executor
       args:
         - --skip-tls-verify=true
-        - --dockerfile=$(build.dockerfile)
+        - --dockerfile=$(params.dockerfile)
         - --context=$(params.shp-source-context)
         - --destination=$(params.shp-output-image)
         - --oci-layout-path=/kaniko/oci-image-layout
@@ -501,8 +535,10 @@ spec:
         - -c
         - |
           set -euo pipefail
+
           # Store the image digest
           grep digest /kaniko/oci-image-layout/index.json | sed -E 's/.*sha256([^"]*).*/sha256\1/' | tr -d '\n' > "$(results.shp-image-digest.path)"
+
           # Store the image size
           du -b -c /kaniko/oci-image-layout/blobs/sha256/* | tail -1 | sed 's/\s*total//' | tr -d '\n' > "$(results.shp-image-size.path)"
       resources:
@@ -515,14 +551,19 @@ spec:
       volumeMounts:
         - name: layout
           mountPath: /kaniko/oci-image-layout
-
+  parameters:
+    - name: dockerfile
+      description: The path to the Dockerfile to be used for building the image.
+      type: string
+      default: 'Dockerfile'
 ---
 apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
+  namespace: build-examples
   name: kaniko
 spec:
-  buildSteps:
+  steps:
     - name: build-and-push
       image: gcr.io/kaniko-project/executor:v1.8.1
       workingDir: $(params.shp-source-root)
@@ -539,7 +580,7 @@ spec:
         - /kaniko/executor
       args:
         - --skip-tls-verify=true
-        - --dockerfile=$(build.dockerfile)
+        - --dockerfile=$(params.dockerfile)
         - --context=$(params.shp-source-context)
         - --destination=$(params.shp-output-image)
         - --oci-layout-path=/kaniko/oci-image-layout
@@ -563,8 +604,10 @@ spec:
         - -c
         - |
           set -euo pipefail
+
           # Store the image digest
           grep digest /kaniko/oci-image-layout/index.json | sed -E 's/.*sha256([^"]*).*/sha256\1/' | tr -d '\n' > "$(results.shp-image-digest.path)"
+
           # Store the image size
           du -b -c /kaniko/oci-image-layout/blobs/sha256/* | tail -1 | sed 's/\s*total//' | tr -d '\n' > "$(results.shp-image-size.path)"
       resources:
@@ -577,11 +620,17 @@ spec:
       volumeMounts:
         - name: layout
           mountPath: /kaniko/oci-image-layout
+  parameters:
+    - name: dockerfile
+      description: The path to the Dockerfile to be used for building the image.
+      type: string
+      default: 'Dockerfile'
 
 ---
 apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
+  namespace: build-examples
   name: ko
 spec:
   parameters:
@@ -600,7 +649,7 @@ spec:
     - name: target-platform
       description: "Target platform to be built. For example: 'linux/arm64'. Multiple platforms can be provided separated by comma, for example: 'linux/arm64,linux/amd64'. The value 'all' will build all platforms supported by the base image. The value 'current' will build the platform on which the build runs."
       default: current
-  buildSteps:
+  steps:
     - name: build-and-push
       image: golang:$(params.go-version)
       imagePullPolicy: Always
@@ -628,13 +677,16 @@ spec:
         - -c
         - |
           set -euo pipefail
+
           # Parse image URL to extract repository and tag, must work with
           # - a URL without a tag and a port: registry/image
           # - a URL without a tag but a port: registry:port/image
           # - a URL with a tag but without a port: registry/image:tag
           # - a URL with both a tag and a port: registry:port/image:tag
+
           REPO=
           TAG=
+
           IFS=':' read -ra PARTS <<< "${PARAM_OUTPUT_IMAGE}"
           for PART in "${PARTS[@]}"; do
             if [ "${REPO}" == "" ]; then
@@ -648,11 +700,13 @@ spec:
               TAG="${PART}"
             fi
           done
+
           # Determine the ko version
           KO_VERSION="${PARAM_KO_VERSION}"
           if [ "${KO_VERSION}" == "latest" ]; then
             KO_VERSION=$(curl --silent "https://api.github.com/repos/google/ko/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
           fi
+
           # Create one variable with v-suffix and one without as we need both for the download URL
           if [[ ${KO_VERSION} = v* ]]; then
             KO_VERSION_WITH_V=${KO_VERSION}
@@ -661,19 +715,25 @@ spec:
             KO_VERSION_WITH_V=v${KO_VERSION}
             KO_VERSION_WITHOUT_V=${KO_VERSION}
           fi
+
           # Download ko to the temp directory
           curl -f -s -L "https://github.com/google/ko/releases/download/${KO_VERSION_WITH_V}/ko_${KO_VERSION_WITHOUT_V}_$(uname)_$(uname -m | sed 's/aarch64/arm64/').tar.gz" | tar xzf - -C /tmp ko
+
           # Determine the platform
           PLATFORM="${PARAM_TARGET_PLATFORM}"
           if [ "${PLATFORM}" == "current" ]; then
             PLATFORM="$(uname | tr '[:upper:]' '[:lower:]')/$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')"
           fi
+
           # Print version information
           go version
           echo "ko version $(/tmp/ko version)"
+
           # Run ko
+
           export GOROOT="$(go env GOROOT)"
           export KO_DOCKER_REPO="${REPO}"
+
           pushd "${PARAM_SOURCE_CONTEXT}" > /dev/null
             if [ "${TAG}" == "" ]; then
               /tmp/ko publish "${PARAM_PACKAGE_DIRECTORY}" --bare --oci-layout-path=/tmp/layout --platform="${PLATFORM}"
@@ -681,8 +741,10 @@ spec:
               /tmp/ko publish "${PARAM_PACKAGE_DIRECTORY}" --bare --oci-layout-path=/tmp/layout --platform="${PLATFORM}" --tags="${TAG}"
             fi
           popd > /dev/null
+
           # Store the image digest
           grep digest /tmp/layout/index.json | sed -E 's/.*sha256([^"]*).*/sha256\1/' | tr -d '\n' > '$(results.shp-image-digest.path)'
+
           # Store the image size
           du -b -c /tmp/layout/blobs/sha256/* | tail -1 | sed 's/\s*total//' | tr -d '\n' > '$(results.shp-image-size.path)'
       resources:
@@ -697,9 +759,10 @@ spec:
 apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
+  namespace: build-examples
   name: source-to-image-redhat
 spec:
-  buildSteps:
+  steps:
     - name: s2i-generate
       image: registry.redhat.io/ocp-tools-43-tech-preview/source-to-image-rhel8:latest
       workingDir: $(params.shp-source-root)
@@ -721,6 +784,7 @@ spec:
         - -c
         - |
           set -euo pipefail
+
           # Parse parameters
           image=
           registriesBlock=""
@@ -733,6 +797,7 @@ spec:
           while [[ $# -gt 0 ]]; do
             arg="$1"
             shift
+
             if [ "${arg}" == "--image" ]; then
               inRegistriesBlock=false
               inRegistriesInsecure=false
@@ -755,6 +820,7 @@ spec:
               registriesBlock="${registriesBlock}'${arg}', "
             elif [ "${inRegistriesInsecure}" == "true" ]; then
               registriesInsecure="${registriesInsecure}'${arg}', "
+
               # This assumes that the image is passed before the insecure registries which is fair in this context
               if [[ ${image} == ${arg}/* ]]; then
                 tlsVerify=false
@@ -766,30 +832,36 @@ spec:
               exit 1
             fi
           done
+
           echo "[INFO] Creating registries config file..."
           if [ "${registriesSearch}" != "" ]; then
             cat <<EOF >>/tmp/registries.conf
           [registries.search]
           registries = [${registriesSearch::-2}]
+
           EOF
           fi
           if [ "${registriesInsecure}" != "" ]; then
             cat <<EOF >>/tmp/registries.conf
           [registries.insecure]
           registries = [${registriesInsecure::-2}]
+
           EOF
           fi
           if [ "${registriesBlock}" != "" ]; then
             cat <<EOF >>/tmp/registries.conf
           [registries.block]
           registries = [${registriesBlock::-2}]
+
           EOF
           fi
+
           # Building the image
           echo "[INFO] Building image ${image}"
           buildah bud \
             --registries-conf=/tmp/registries.conf \
             --tag="${image}"
+
           # Push the image
           echo "[INFO] Pushing image ${image}"
           buildah push \
@@ -829,9 +901,10 @@ spec:
 apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
+  namespace: build-examples
   name: source-to-image
 spec:
-  buildSteps:
+  steps:
     - command:
         - /usr/local/bin/s2i
         - build
@@ -881,8 +954,10 @@ spec:
         - -c
         - |
           set -euo pipefail
+
           # Store the image digest
           grep digest /kaniko/oci-image-layout/index.json | sed -E 's/.*sha256([^"]*).*/sha256\1/' | tr -d '\n' > "$(results.shp-image-digest.path)"
+
           # Store the image size
           du -b -c /kaniko/oci-image-layout/blobs/sha256/* | tail -1 | sed 's/\s*total//' | tr -d '\n' > "$(results.shp-image-size.path)"
       resources:

@@ -1,11 +1,13 @@
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: Build
 metadata:
   namespace: build-examples
   name: buildpack-nodejs-build
 spec:
   source:
-    url: https://github.com/shipwright-io/sample-nodejs
+    type: Git
+    git:
+      url: https://github.com/shipwright-io/sample-nodejs
     contextDir: source-build
   strategy:
     name: buildpacks-v3
@@ -13,20 +15,20 @@ spec:
   output:
     image: image-registry.openshift-image-registry.svc:5000/build-examples/buildpack-nodejs-build
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildRun
 metadata:
   namespace: build-examples
   generateName: buildpack-nodejs-build-
 spec:
-  buildRef:
+  build:
     name: buildpack-nodejs-build
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildRun
 metadata:
   namespace: build-examples
   generateName: buildpack-nodejs-build-
 spec:
-  buildRef:
+  build:
     name: buildpack-nodejs-build

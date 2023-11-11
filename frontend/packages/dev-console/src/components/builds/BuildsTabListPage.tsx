@@ -62,8 +62,13 @@ const BuildsTabListPage: React.FC<BuildsTabListPageProps> = ({ match }) => {
   // Shipwright Builds from @console/shipwright-plugin
   // We resolve this plugin (list) page by string, so that we don't have
   // a bi-directional or circular dependency to the shipwright-plugin.
-  const shipwrightKind = 'shipwright.io~v1alpha1~Build';
-  const shipwrightBuildEnabled = useFlag('SHIPWRIGHT_BUILD');
+  const SHIPWRIGHT_BUILD = useFlag('SHIPWRIGHT_BUILD');
+  const SHIPWRIGHT_BUILD_V1ALPHA1 = useFlag('SHIPWRIGHT_BUILD_V1ALPHA1');
+
+  const shipwrightBuildEnabled = SHIPWRIGHT_BUILD || SHIPWRIGHT_BUILD_V1ALPHA1;
+  const shipwrightKind = SHIPWRIGHT_BUILD
+    ? 'shipwright.io~v1beta1~Build'
+    : 'shipwright.io~v1alpha1~Build';
   const shipwrightBuildLoader = resourceListPages.get(shipwrightKind);
   const [shipwrightBuildModel] = useK8sModel(shipwrightKind);
   const shipwrightBuildComponent = React.useMemo(() => {
