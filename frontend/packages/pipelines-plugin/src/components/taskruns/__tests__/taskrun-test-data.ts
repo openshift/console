@@ -95,7 +95,54 @@ export const taskRunWithResults: TaskRunKind = {
     ],
   },
 };
-
+export const taskRunWithSBOMResult = {
+  apiVersion: 'tekton.dev/v1',
+  kind: 'TaskRun',
+  metadata: {
+    annotations: {
+      'chains.tekton.dev/signed': 'true',
+      'pipeline.openshift.io/preferredName': 'pipelinerun-with-sbom-task',
+      'pipeline.openshift.io/started-by': 'kube:admin',
+      'pipeline.tekton.dev/release': 'a2f17f6',
+      'task.output.location': 'results',
+      'task.results.format': 'application/text',
+      'task.results.key': 'LINK_TO_SBOM',
+    },
+    resourceVersion: '197373',
+    name: 'pipelinerun-with-sbom-task-t237ev-sbom-task',
+    uid: '764d0a6c-a4f6-419c-a3c3-585c2a9eb67c',
+    creationTimestamp: '2023-11-08T08:18:18Z',
+    generation: 1,
+  },
+  spec: {
+    serviceAccountName: 'pipeline',
+    taskRef: {
+      kind: 'Task',
+      name: 'sbom-task',
+    },
+    timeout: '1h0m0s',
+  },
+  status: {
+    completionTime: '2023-11-08T08:18:25Z',
+    conditions: [
+      {
+        lastTransitionTime: '2023-11-08T08:18:25Z',
+        message: 'All Steps have completed executing',
+        reason: 'Succeeded',
+        status: 'True',
+        type: 'Succeeded',
+      },
+    ],
+    podName: 'pipelinerun-with-sbom-task-t237ev-sbom-task-pod',
+    results: [
+      {
+        name: 'LINK_TO_SBOM',
+        type: 'string',
+        value: 'quay.io/test/image:build-8e536-1692702836',
+      },
+    ],
+  },
+};
 export const taskRunWithWorkspaces: TaskRunKind[] = [
   {
     apiVersion: 'tekton.dev/v1beta1',

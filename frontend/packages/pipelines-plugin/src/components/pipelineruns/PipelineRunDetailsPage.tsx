@@ -1,9 +1,14 @@
 import * as React from 'react';
+import { Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { KebabAction, navFactory, viewYamlComponent } from '@console/internal/components/utils';
+import * as SignedPipelinerunIcon from '../../images/signed-badge.svg';
+import { PipelineRunKind } from '../../types';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { getPipelineRunKebabActions } from '../../utils/pipeline-actions';
 import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
+import { chainsSignedAnnotation } from '../pipelines/const';
 import { useDevPipelinesBreadcrumbsFor } from '../pipelines/hooks';
 import { usePipelineOperatorVersion } from '../pipelines/utils/pipeline-operator';
 import { useTaskRuns } from '../taskruns/useTaskRuns';
@@ -16,6 +21,7 @@ import { useMenuActionsWithUserAnnotation } from './triggered-by';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { kindObj, match } = props;
+  const { t } = useTranslation();
   const operatorVersion = usePipelineOperatorVersion(props.namespace);
   const [taskRuns] = useTaskRuns(props.namespace);
   const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
@@ -23,7 +29,17 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   );
   const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj, match);
   const badge = usePipelineTechPreviewBadge(props.namespace);
-
+  const resourceTitleFunc = (obj: PipelineRunKind): string | JSX.Element =>
+    obj?.metadata?.annotations?.[chainsSignedAnnotation] === 'true' ? (
+      <div style={{ display: 'flex' }}>
+        {obj?.metadata?.name}{' '}
+        <Tooltip content={t('pipelines-plugin~Signed')}>
+          <img src={SignedPipelinerunIcon} alt={t('pipelines-plugin~Signed')} />
+        </Tooltip>
+      </div>
+    ) : (
+      obj?.metadata?.name
+    );
   return (
     <DetailsPage
       {...props}
@@ -31,6 +47,7 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
       menuActions={menuActions}
       getResourceStatus={pipelineRunStatus}
       breadcrumbsFor={() => breadcrumbsFor}
+      titleFunc={resourceTitleFunc}
       pages={[
         navFactory.details(PipelineRunDetails),
         navFactory.editYaml(viewYamlComponent),
