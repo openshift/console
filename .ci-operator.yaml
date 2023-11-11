@@ -1,4 +1,4 @@
 build_root_image:
   name: tectonic-console-builder
   namespace: ci
-  tag: v25
+  tag: v26
