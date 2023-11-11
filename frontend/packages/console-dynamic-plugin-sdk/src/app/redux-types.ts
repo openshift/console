@@ -15,7 +15,6 @@ export type ImpersonateKind = {
 };
 
 export type CoreState = {
-  activeCluster?: string; // TODO remove multicluster
   user?: UserKind;
   impersonate?: ImpersonateKind;
 };

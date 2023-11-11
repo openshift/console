@@ -9,8 +9,6 @@ import { inject } from './inject';
 import { makeReduxID, makeQuery } from './k8s-watcher';
 import * as k8sActions from '../../actions/k8s';
 
-// TODO remove multicluster
-import { getActiveCluster } from '@console/dynamic-plugin-sdk/src/app/core/reducers/coreSelectors';
 import {
   INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL,
   INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL,
@@ -142,7 +140,6 @@ const ConnectToState = connect(mapStateToProps)(
 
 const stateToProps = (state, { resources }) => {
   const { k8s } = state;
-  const cluster = getActiveCluster(state); // TODO remove multicluster
   const k8sModels = resources.reduce(
     (models, { kind }) => models.set(kind, getK8sModel(k8s, kind)),
     ImmutableMap(),
@@ -153,7 +150,6 @@ const stateToProps = (state, { resources }) => {
       makeReduxID(
         k8sModels.get(r.kind),
         makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
-        cluster,
       ),
       'loaded',
     ]);
@@ -162,7 +158,6 @@ const stateToProps = (state, { resources }) => {
     k8sModels,
     loaded: resources.every(loaded),
     inFlight: k8s.getIn(['RESOURCES', 'inFlight']),
-    cluster,
   };
 };
 
@@ -179,7 +174,6 @@ export const Firehose = connect(
     areStatePropsEqual: (next, prev) =>
       next.loaded === prev.loaded &&
       next.inFlight === prev.inFlight &&
-      next.cluster === prev.cluster &&
       shallowMapEquals(next.k8sModels, prev.k8sModels),
   },
 )(
@@ -214,7 +208,6 @@ export const Firehose = connect(
     }
 
     componentDidUpdate(prevProps) {
-      const clusterChanged = prevProps.cluster !== this.props.cluster; // TODO remove multicluster
       const discoveryComplete =
         !this.props.inFlight && !this.props.loaded && this.state.firehoses.length === 0;
       const resourcesChanged =
@@ -222,14 +215,14 @@ export const Firehose = connect(
         _.intersectionWith(prevProps.resources, this.props.resources, _.isEqual).length !==
           this.props.resources.length;
 
-      if (discoveryComplete || clusterChanged || resourcesChanged) {
+      if (discoveryComplete || resourcesChanged) {
         this.clear();
         this.start();
       }
     }
 
     start() {
-      const { watchK8sList, watchK8sObject, resources, k8sModels, inFlight, cluster } = this.props; // TODO remove multicluster
+      const { watchK8sList, watchK8sObject, resources, k8sModels, inFlight } = this.props;
 
       let firehoses = [];
       if (!(inFlight && _.some(resources, ({ kind }) => !k8sModels.get(kind)))) {
@@ -243,7 +236,7 @@ export const Firehose = connect(
               resource.limit,
             );
             const k8sKind = k8sModels.get(resource.kind);
-            const id = makeReduxID(k8sKind, query, cluster); // TODO remove multicluster
+            const id = makeReduxID(k8sKind, query);
             return _.extend({}, resource, { query, id, k8sKind });
           })
           .filter((f) => {

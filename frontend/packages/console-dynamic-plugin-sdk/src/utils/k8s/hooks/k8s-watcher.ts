@@ -13,14 +13,13 @@ export class NoModelError extends CustomError {
   }
 }
 
-// TODO remove multicluster
-export const makeReduxID = (k8sKind: K8sModel, query: Query, cluster?: string) => {
+export const makeReduxID = (k8sKind: K8sModel, query: Query) => {
   let qs = '';
   if (!_.isEmpty(query)) {
     qs = `---${JSON.stringify(query)}`;
   }
 
-  return `${cluster ?? 'local-cluster'}${getReferenceForModel(k8sKind || ({} as K8sModel))}${qs}`;
+  return `${getReferenceForModel(k8sKind || ({} as K8sModel))}${qs}`;
 };
 
 export const makeQuery: MakeQuery = (namespace, labelSelector, fieldSelector, name, limit) => {
@@ -80,8 +79,7 @@ export const getReduxData = (immutableData, resource: WatchK8sResource) => {
   return null;
 };
 
-// TODO remove multicluster
-export const getIDAndDispatch: GetIDAndDispatch<SDKStoreState> = (resource, k8sModel, cluster) => {
+export const getIDAndDispatch: GetIDAndDispatch<SDKStoreState> = (resource, k8sModel) => {
   if (!k8sModel || !resource) {
     return null;
   }
@@ -92,21 +90,14 @@ export const getIDAndDispatch: GetIDAndDispatch<SDKStoreState> = (resource, k8sM
     resource.name,
     resource.limit,
   );
-  const targetCluster = resource.cluster ?? cluster;
-  const id = makeReduxID(k8sModel, query, targetCluster);
+  const id = makeReduxID(k8sModel, query);
   const dispatch = resource.isList
-    ? k8sActions.watchK8sList(
-        id,
-        { ...query, cluster: targetCluster },
-        k8sModel,
-        null,
-        resource.partialMetadata,
-      )
+    ? k8sActions.watchK8sList(id, query, k8sModel, null, resource.partialMetadata)
     : k8sActions.watchK8sObject(
         id,
         resource.name,
         resource.namespace,
-        { ...query, cluster: targetCluster },
+        query,
         k8sModel,
         resource.partialMetadata,
       );

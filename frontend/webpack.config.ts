@@ -234,13 +234,6 @@ const config: Configuration = {
       inject: false,
       chunksSortMode: 'none',
     }),
-    // TODO Remove multicluster
-    new HtmlWebpackPlugin({
-      filename: './multicluster-logout.html',
-      template: './public/multicluster-logout.html',
-      inject: false,
-      chunksSortMode: 'none',
-    }),
     new HtmlWebpackPlugin({
       filename: './index.html',
       template: './public/index.html',

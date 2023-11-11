@@ -22,8 +22,6 @@ import {
   GreenCheckCircleIcon,
   Modal,
   useUserSettingsCompatibility,
-  useActiveCluster, // TODO remove multicluster
-  HUB_CLUSTER_NAME, // TODO remove multicluster
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
 import { isModifiedEvent } from '@console/shared/src/utils';
@@ -399,7 +397,6 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
 
 export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) => {
   const { t } = useTranslation();
-  const [activeCluster] = useActiveCluster(); // TODO remove multicluster
   const [detailsItem, setDetailsItem] = React.useState(null);
   const [showDetails, setShowDetails] = React.useState(false);
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
@@ -409,8 +406,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   const [updateVersion, setUpdateVersion] = React.useState('');
   const [tokenizedAuth, setTokenizedAuth] = React.useState(null);
   const installVersion = getQueryArgument('version');
-  const filteredItems =
-    activeCluster === HUB_CLUSTER_NAME ? filterByArchAndOS(props.items) : props.items; // TODO remove multicluster
+  const filteredItems = filterByArchAndOS(props.items);
 
   React.useEffect(() => {
     const detailsItemID = new URLSearchParams(window.location.search).get('details-item');

@@ -1203,7 +1203,6 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 | `method` | The HTTP method to use. Defaults to GET |
 | `options` | The options to pass to fetch |
 | `timeout` | The timeout in milliseconds |
-| `cluster` | The name of the cluster to make the request to. Defaults to the active cluster the user has selected |
 
 
 
@@ -1230,7 +1229,6 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 | `url` | The URL to fetch |
 | `options` | The options to pass to fetch |
 | `timeout` | The timeout in milliseconds |
-| `cluster` | The name of the cluster to make the request to. Defaults to the active cluster the user has selected |
 
 
 
@@ -1245,22 +1243,16 @@ A promise that resolves to the response as text.
 
 ### Summary 
 
-A function that creates impersonation- and multicluster-related headers for API requests using current redux state.
+A function that creates impersonation headers for API requests using current redux state.
 
 
 
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `targetCluster` | override the current active cluster with the provided targetCluster |
 
 
 
 ### Returns
 
-An object containing the appropriate impersonation and clustr requst headers, based on redux state.
+an object containing the appropriate impersonation requst headers, based on redux state
 
 
 ---

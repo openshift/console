@@ -134,13 +134,7 @@ describe('useK8sWatchResource', () => {
 
     // Assert API calls
     expect(k8sListMock).toHaveBeenCalledTimes(1);
-    expect(k8sListMock.mock.calls[0]).toEqual([
-      PodModel,
-      { cluster: 'local-cluster', limit: 250 }, // TODO remove multicluster
-      true,
-      {},
-      'local-cluster',
-    ]);
+    expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
     k8sListMock.mockClear();
 
     await act(async () => jest.runAllTimers());
@@ -149,7 +143,7 @@ describe('useK8sWatchResource', () => {
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
     expect(k8sWatchMock.mock.calls[0]).toEqual([
       PodModel,
-      { cluster: 'local-cluster', resourceVersion: '123' }, // TODO remove multicluster
+      { resourceVersion: '123' },
       { timeout: 60000 },
     ]);
     k8sWatchMock.mockClear();
@@ -179,13 +173,7 @@ describe('useK8sWatchResource', () => {
 
     // Assert API calls
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
-    expect(k8sGetMock.mock.calls[0]).toEqual([
-      PodModel,
-      'my-pod',
-      undefined,
-      { cluster: 'local-cluster' }, // TODO remove multicluster
-      {},
-    ]);
+    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', undefined, {}, {}]);
     k8sGetMock.mockClear();
 
     await act(async () => jest.runAllTimers());
@@ -194,7 +182,7 @@ describe('useK8sWatchResource', () => {
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
     expect(k8sWatchMock.mock.calls[0]).toEqual([
       PodModel,
-      { cluster: 'local-cluster', fieldSelector: 'metadata.name=my-pod' }, // TODO remove multicluster
+      { fieldSelector: 'metadata.name=my-pod' },
       { subprotocols: undefined },
     ]);
     k8sWatchMock.mockClear();
@@ -226,13 +214,7 @@ describe('useK8sWatchResource', () => {
 
     // Assert API calls
     expect(k8sListMock).toHaveBeenCalledTimes(1);
-    expect(k8sListMock.mock.calls[0]).toEqual([
-      PodModel,
-      { cluster: 'local-cluster', limit: 250 }, // TODO remove multicluster
-      true,
-      {},
-      'local-cluster', // TODO remove multicluster
-    ]);
+    expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
     k8sListMock.mockClear();
 
     expect(resourceUpdate.mock.calls[2]).toEqual([[], false, new Error('Network issue')]);
@@ -261,20 +243,14 @@ describe('useK8sWatchResource', () => {
 
     // Assert API calls
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
-    expect(k8sGetMock.mock.calls[0]).toEqual([
-      PodModel,
-      'my-pod',
-      undefined,
-      { cluster: 'local-cluster' }, // TODO remove multicluster
-      {},
-    ]);
+    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', undefined, {}, {}]);
     k8sGetMock.mockClear();
 
     // TODO: Unexpected watch call! The watch call was not triggered when watching a list
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
     expect(k8sWatchMock.mock.calls[0]).toEqual([
       PodModel,
-      { cluster: 'local-cluster', fieldSelector: 'metadata.name=my-pod' }, // TODO remove multicluster
+      { fieldSelector: 'metadata.name=my-pod' },
       { subprotocols: undefined },
     ]);
     k8sWatchMock.mockClear();
@@ -341,13 +317,7 @@ describe('useK8sWatchResource', () => {
 
     // Assert API calls
     expect(k8sListMock).toHaveBeenCalledTimes(1);
-    expect(k8sListMock.mock.calls[0]).toEqual([
-      PodModel,
-      { cluster: 'local-cluster', limit: 250 }, // TODO remove multicluster
-      true,
-      {},
-      'local-cluster',
-    ]);
+    expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
     k8sListMock.mockClear();
 
     await act(async () => jest.runAllTimers());
@@ -356,7 +326,7 @@ describe('useK8sWatchResource', () => {
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
     expect(k8sWatchMock.mock.calls[0]).toEqual([
       PodModel,
-      { cluster: 'local-cluster', resourceVersion: '123' }, // TODO remove multicluster
+      { resourceVersion: '123' },
       { timeout: 60000 },
     ]);
     k8sWatchMock.mockClear();
@@ -398,13 +368,7 @@ describe('useK8sWatchResource', () => {
 
     // Assert API calls
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
-    expect(k8sGetMock.mock.calls[0]).toEqual([
-      PodModel,
-      'my-pod',
-      undefined,
-      { cluster: 'local-cluster' }, // TODO remove multicluster
-      {},
-    ]);
+    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', undefined, {}, {}]);
     k8sGetMock.mockClear();
 
     await act(async () => jest.runAllTimers());
@@ -413,7 +377,7 @@ describe('useK8sWatchResource', () => {
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
     expect(k8sWatchMock.mock.calls[0]).toEqual([
       PodModel,
-      { cluster: 'local-cluster', fieldSelector: 'metadata.name=my-pod' }, // TODO remove multicluster
+      { fieldSelector: 'metadata.name=my-pod' },
       { subprotocols: undefined },
     ]);
     k8sWatchMock.mockClear();

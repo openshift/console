@@ -30,7 +30,6 @@ import {
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
-import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled'; // TODO remove multicluster
 import { getUser } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
 import { connectToFlags } from '../reducers/connectToFlags';
@@ -66,11 +65,9 @@ const defaultHelpLinks = [
 ];
 
 const MultiClusterToolbarGroup = () => {
-  const showMultiClusterToolbarGroup =
-    usePerspectiveExtension(ACM_PERSPECTIVE_ID) || isMultiClusterEnabled(); // TODO remove multicluster
-
+  const acmPerspectiveExtension = usePerspectiveExtension(ACM_PERSPECTIVE_ID);
   return (
-    showMultiClusterToolbarGroup && (
+    !!acmPerspectiveExtension && (
       <ToolbarGroup spacer={{ default: 'spacerNone' }}>
         <ClusterMenu />
       </ToolbarGroup>
@@ -179,10 +176,7 @@ class MastheadToolbarContents_ extends React.Component {
     const { flags, user } = this.props;
     clearTimeout(this.userInactivityTimeout);
     this.userInactivityTimeout = setTimeout(() => {
-      // TODO remove multicluster
-      if (isMultiClusterEnabled()) {
-        authSvc.logoutMulticluster();
-      } else if (flags[FLAGS.OPENSHIFT]) {
+      if (flags[FLAGS.OPENSHIFT]) {
         authSvc.logoutOpenShift(user?.metadata?.name === 'kube:admin');
       } else {
         authSvc.logout();
@@ -399,21 +393,6 @@ class MastheadToolbarContents_ extends React.Component {
             fireTelemetryEvent('Documentation Clicked');
           },
         },
-        // TODO remove multicluster
-        ...(isMultiClusterEnabled()
-          ? [
-              {
-                label: t('public~ACM Documentation'),
-                externalLink: true,
-                // TODO:  add version number to end of URL
-                href:
-                  'https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes',
-                callback: () => {
-                  fireTelemetryEvent('ACM Documentation Clicked');
-                },
-              },
-            ]
-          : []),
         ...(flags[FLAGS.CONSOLE_CLI_DOWNLOAD]
           ? [
               {
@@ -569,10 +548,7 @@ class MastheadToolbarContents_ extends React.Component {
     if (flags[FLAGS.AUTH_ENABLED]) {
       const logout = (e) => {
         e.preventDefault();
-        // TODO remove multicluster
-        if (isMultiClusterEnabled()) {
-          authSvc.logoutMulticluster();
-        } else if (flags[FLAGS.OPENSHIFT]) {
+        if (flags[FLAGS.OPENSHIFT]) {
           authSvc.logoutOpenShift(this.state.isKubeAdmin);
         } else {
           authSvc.logout();

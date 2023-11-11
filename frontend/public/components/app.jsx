@@ -28,7 +28,6 @@ import { pluginStore } from '../plugins';
 import CloudShell from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
-import DetectCluster from '@console/app/src/components/detect-cluster/DetectCluster'; // TODO remove multicluster
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
 import FeatureFlagExtensionLoader from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
@@ -223,19 +222,16 @@ const App = (props) => {
     <DetectPerspective>
       <CaptureTelemetry />
       <DetectNamespace>
-        {/* TODO remove multicluster */}
-        <DetectCluster>
-          <ModalProvider>
-            {contextProviderExtensions.reduce(
-              (children, e) => (
-                <EnhancedProvider key={e.uid} {...e.properties}>
-                  {children}
-                </EnhancedProvider>
-              ),
-              content,
-            )}
-          </ModalProvider>
-        </DetectCluster>
+        <ModalProvider>
+          {contextProviderExtensions.reduce(
+            (children, e) => (
+              <EnhancedProvider key={e.uid} {...e.properties}>
+                {children}
+              </EnhancedProvider>
+            ),
+            content,
+          )}
+        </ModalProvider>
       </DetectNamespace>
       <DetectLanguage />
     </DetectPerspective>
@@ -444,16 +440,6 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
 
   const consoleCommitChanged = prevUpdateData?.consoleCommit !== updateData?.consoleCommit;
   if (stateInitialized && consoleCommitChanged && !consoleChanged) {
-    setConsoleChanged(true);
-  }
-
-  // TODO remove multicluster
-  const managedClustersChanged = !_.isEmpty(
-    _.xor(prevUpdateData?.managedClusters, updateData?.managedClusters),
-  );
-  if (stateInitialized && managedClustersChanged && !consoleChanged) {
-    // eslint-disable-next-line no-console
-    console.log('[DEBUG] MANGED CLUSTERS UPDATED');
     setConsoleChanged(true);
   }
 

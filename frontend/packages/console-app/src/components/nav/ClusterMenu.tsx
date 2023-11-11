@@ -2,14 +2,13 @@ import * as React from 'react';
 import { Menu, MenuContent, MenuItem, MenuList } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { useActiveCluster, usePerspectiveExtension } from '@console/shared';
+import { usePerspectiveExtension } from '@console/shared';
 import { ACM_PERSPECTIVE_ID } from '../../consts';
 import ClusterMenuToggle from './ClusterMenuToggle';
 
 const ClusterGroup: React.FC<{
   clusters: ClusterMenuItem[];
 }> = ({ clusters }) => {
-  const [activeCluster] = useActiveCluster();
   const [activePerspective] = useActivePerspective();
 
   return clusters.length === 0 ? null : (
@@ -23,7 +22,7 @@ const ClusterGroup: React.FC<{
           isSelected={
             activePerspective === ACM_PERSPECTIVE_ID
               ? cluster.key === ACM_PERSPECTIVE_ID
-              : cluster.key === activeCluster
+              : cluster.key === 'local-cluster'
           }
           onClick={(e) => {
             e.preventDefault();
@@ -37,29 +36,27 @@ const ClusterGroup: React.FC<{
   );
 };
 
-// TODO remove multicluster
 const ClusterMenu = () => {
   const { t } = useTranslation();
   const menuRef = React.useRef(null);
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const acmPerspectiveExtension = usePerspectiveExtension(ACM_PERSPECTIVE_ID);
-  const [activeCluster, setActiveCluster] = useActiveCluster();
+  const [selection, setSelection] = React.useState('local-cluster');
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
-  const onClusterClick = React.useCallback(
-    (cluster: string): void => {
-      setActiveCluster(cluster);
-      setDropdownOpen(false);
-    },
-    [setActiveCluster],
-  );
-
-  const onAllClustersClick = React.useCallback(() => {
-    setActivePerspective(ACM_PERSPECTIVE_ID);
+  const onLocalClusterClick = React.useCallback((): void => {
+    setActivePerspective('admin');
+    setSelection('local-cluster');
     setDropdownOpen(false);
   }, [setActivePerspective]);
 
-  const optionItems = React.useMemo<ClusterMenuItem[]>(
+  const onAllClustersClick = React.useCallback(() => {
+    setActivePerspective(ACM_PERSPECTIVE_ID);
+    setSelection(ACM_PERSPECTIVE_ID);
+    setDropdownOpen(false);
+  }, [setActivePerspective]);
+
+  const items = React.useMemo<ClusterMenuItem[]>(
     () => [
       ...(acmPerspectiveExtension
         ? [
@@ -73,16 +70,16 @@ const ClusterMenu = () => {
       {
         key: 'local-cluster',
         title: t('console-app~local-cluster'),
-        onClick: () => onClusterClick('local-cluster'),
+        onClick: () => onLocalClusterClick(),
       },
     ],
-    [t, acmPerspectiveExtension, onAllClustersClick, onClusterClick],
+    [t, acmPerspectiveExtension, onAllClustersClick, onLocalClusterClick],
   );
 
   const clusterMenu: JSX.Element = (
-    <Menu ref={menuRef} isScrollable activeItemId={activeCluster} className="co-cluster-menu">
+    <Menu ref={menuRef} isScrollable activeItemId={selection} className="co-cluster-menu">
       <MenuContent maxMenuHeight="60vh" translate="no">
-        <ClusterGroup clusters={optionItems} />
+        <ClusterGroup clusters={items} />
       </MenuContent>
     </Menu>
   );
@@ -95,9 +92,7 @@ const ClusterMenu = () => {
       isOpen={dropdownOpen}
       onToggle={setDropdownOpen}
       title={
-        `${activePerspective}` === ACM_PERSPECTIVE_ID
-          ? t('console-app~All Clusters')
-          : activeCluster
+        activePerspective === ACM_PERSPECTIVE_ID ? t('console-app~All Clusters') : 'local-cluster'
       }
     />
   );

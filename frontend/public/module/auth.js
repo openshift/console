@@ -2,8 +2,17 @@ import * as _ from 'lodash-es';
 import { coFetch } from '../co-fetch';
 import { stripBasePath } from '../components/utils/link';
 
-export const LOGIN_ERROR_PATH = window.SERVER_FLAGS.loginErrorURL
-  ? new URL(window.SERVER_FLAGS.loginErrorURL, window.location.href).pathname
+const {
+  kubeAdminLogoutURL,
+  loginErrorURL,
+  loginSuccessURL,
+  loginURL,
+  logoutRedirect,
+  logoutURL,
+} = window.SERVER_FLAGS;
+
+export const LOGIN_ERROR_PATH = loginErrorURL
+  ? new URL(loginErrorURL, window.location.href).pathname
   : '';
 
 const isLoginErrorPath = (path) => path && path === LOGIN_ERROR_PATH;
@@ -16,7 +25,6 @@ const userID = 'userID';
 const name = 'name';
 const email = 'email';
 const clearLocalStorageKeys = [userID, name, email];
-const lastClusterKey = 'bridge/last-cluster'; // TODO remove multicluster
 
 const setNext = (next) => {
   if (!next) {
@@ -58,9 +66,9 @@ export const authSvc = {
   email: () => loginStateItem(email),
 
   logoutRedirect: (next) => {
-    const logoutRedirect = next ? '' : window.SERVER_FLAGS.logoutRedirect;
-    if (logoutRedirect) {
-      window.location.assign(logoutRedirect);
+    const redirect = next ? '' : logoutRedirect;
+    if (redirect) {
+      window.location.assign(redirect);
       return;
     }
 
@@ -75,14 +83,10 @@ export const authSvc = {
   },
 
   // Avoid logging out multiple times if concurrent requests return unauthorized.
-  // TODO remove multicluster
-  logout: _.once((next, cluster) => {
+  logout: _.once((next) => {
     setNext(next);
     clearLocalStorage(clearLocalStorageKeys);
-    coFetch(
-      cluster ? `${window.SERVER_FLAGS.logoutURL}/${cluster}` : window.SERVER_FLAGS.logoutURL, // TODO remove multicluster
-      { method: 'POST' },
-    )
+    coFetch(logoutURL, { method: 'POST' })
       // eslint-disable-next-line no-console
       .catch((e) => console.error('Error logging out', e))
       .then(() => authSvc.logoutRedirect(next));
@@ -112,7 +116,7 @@ export const authSvc = {
     // We need to POST to the kube:admin logout URL. Since this is a
     // cross-origin request, use a hidden form to POST.
     const form = document.createElement('form');
-    form.action = window.SERVER_FLAGS.kubeAdminLogoutURL;
+    form.action = kubeAdminLogoutURL;
     form.method = 'POST';
 
     // Redirect back to the console when logout is complete by passing a
@@ -120,26 +124,16 @@ export const authSvc = {
     const input = document.createElement('input');
     input.type = 'hidden';
     input.name = 'then';
-    input.value = window.SERVER_FLAGS.loginSuccessURL;
+    input.value = loginSuccessURL;
     form.appendChild(input);
 
     document.body.appendChild(form);
     form.submit();
   },
 
-  // TODO remove multicluster
-  logoutMulticluster: () => {
-    clearLocalStorage([...clearLocalStorageKeys, lastClusterKey]);
-    window.location = window.SERVER_FLAGS.multiclusterLogoutRedirect;
-  },
-
-  // TODO remove multicluster
-  login: (cluster) => {
+  login: () => {
     // Ensure that we don't redirect to the current URL in a loop
     // when using local bridge in development mode without authorization.
-    const loginURL = cluster // TODO remove multicluster
-      ? `${window.SERVER_FLAGS.loginURL}/${cluster}`
-      : window.SERVER_FLAGS.loginURL;
     if (![window.location.href, window.location.pathname].includes(loginURL)) {
       window.location = loginURL;
     }

@@ -132,7 +132,6 @@ export const k8sWatch = (
     resourceVersion?: string;
     ns?: string;
     fieldSelector?: string;
-    cluster?: string; // TODO remove multicluster
   } = {},
   wsOptions: {
     [key: string]: any;
@@ -168,11 +167,6 @@ export const k8sWatch = (
 
   if (query.ns) {
     opts.ns = query.ns;
-  }
-
-  // TODO remove multicluster
-  if (query.cluster) {
-    queryParams.cluster = encodeURIComponent(query.cluster);
   }
 
   if (query.resourceVersion) {

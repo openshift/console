@@ -40,7 +40,6 @@ describe('k8s-Resource', () => {
       'GET',
       {},
       null,
-      undefined,
     );
   });
 
@@ -49,13 +48,7 @@ describe('k8s-Resource', () => {
     await k8sList(MockPodModel);
     expect(spyCoFetchJSON).toHaveBeenCalled();
     expect(spyCoFetchJSON).toHaveBeenCalledTimes(1);
-    expect(spyCoFetchJSON).toHaveBeenCalledWith(
-      '/api/kubernetes/api/v1/pods?',
-      'GET',
-      {},
-      null,
-      undefined,
-    );
+    expect(spyCoFetchJSON).toHaveBeenCalledWith('/api/kubernetes/api/v1/pods?', 'GET', {}, null);
   });
 
   it('k8sGetResource should call consoleFetchJSON', async () => {

@@ -11,7 +11,7 @@ import { ActionType, CoreAction } from '../actions/core';
  * @returns The the updated state.
  */
 export const coreReducer = (
-  state: CoreState = { user: { identities: [] }, activeCluster: '' }, // TODO remove multicluster
+  state: CoreState = { user: { identities: [] } },
   action: CoreAction,
 ): CoreState => {
   switch (action.type) {
@@ -42,13 +42,6 @@ export const coreReducer = (
       return {
         ...state,
         user: action.payload.user,
-      };
-
-    // TODO remove multicluster
-    case ActionType.SetActiveCluster:
-      return {
-        ...state,
-        activeCluster: action.payload.cluster,
       };
 
     default:

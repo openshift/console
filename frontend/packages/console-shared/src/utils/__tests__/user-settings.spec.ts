@@ -1,6 +1,5 @@
 import { coFetch } from '@console/internal/co-fetch';
 import { ConfigMapKind } from '@console/internal/module/k8s';
-import { HUB_CLUSTER_NAME } from '@console/shared/src/constants/common';
 import {
   createConfigMap,
   updateConfigMap,
@@ -42,7 +41,6 @@ describe('createConfigMap', () => {
     expect(actual).toEqual(configMap);
     expect(coFetchMock).toHaveBeenCalledTimes(1);
     expect(coFetchMock).lastCalledWith('/api/console/user-settings', {
-      headers: { 'X-Cluster': HUB_CLUSTER_NAME }, // TODO remove multicluster
       method: 'POST',
     });
   });
@@ -65,7 +63,6 @@ describe('updateConfigMap', () => {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/merge-patch+json;charset=UTF-8',
-          'X-Cluster': HUB_CLUSTER_NAME, // TODO Remove multicluster
         },
         body: '{"data":{"key":"value"}}',
       },
