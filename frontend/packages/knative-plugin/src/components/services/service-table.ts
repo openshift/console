@@ -5,10 +5,10 @@ export const tableColumnClasses = [
   '', // name
   '', // namespace
   classNames('pf-m-hidden', 'pf-m-visible-on-sm'), // url
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // generation
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // created
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // conditions
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // ready
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // created
+  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // reason
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // revision
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // created
   Kebab.columnClass,
 ];

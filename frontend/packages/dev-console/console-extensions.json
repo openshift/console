@@ -252,7 +252,7 @@
     "properties": {
       "id": "developer-catalog",
       "name": "%devconsole~Developer Catalog%",
-      "insertBefore": "git-repository"
+      "insertBefore": "serverless-function"
     },
     "flags": {
       "required": ["DEVELOPER_CATALOG"]
@@ -261,10 +261,31 @@
   {
     "type": "dev-console.add/action-group",
     "properties": {
+      "id": "eventing",
+      "name": "%devconsole~Eventing%",
+      "insertAfter": "developer-catalog"
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_ENABLED"]
+    }
+  },
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "serverless-function",
+      "name": "%devconsole~Serverless function%",
+      "insertAfter": "eventing",
+      "insertBefore": "git-repository",
+      "icon": { "$codeRef": "icons.serverlessFunctionSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
       "id": "git-repository",
       "name": "%devconsole~Git Repository%",
       "insertBefore": "container-images",
-      "insertAfter": "developer-catalog"
+      "insertAfter": "serverless-function"
     }
   },
   {
@@ -272,7 +293,6 @@
     "properties": {
       "id": "container-images",
       "name": "%devconsole~Container images%",
-      "insertBefore": "eventing",
       "insertAfter": "git-repository"
     }
   },
@@ -281,8 +301,7 @@
     "properties": {
       "id": "local-machine",
       "name": "%devconsole~From Local Machine%",
-      "insertBefore": "pipelines",
-      "insertAfter": "eventing"
+      "insertBefore": "pipelines"
     }
   },
   {

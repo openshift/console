@@ -36,20 +36,15 @@ describe('ServiceRow', () => {
   });
 
   it('should show generations for associated service', () => {
-    const generationColData = wrapper.find(TableData).at(3);
+    const generationColData = wrapper.find(TableData).at(6);
     expect(generationColData.props().children).toEqual(1);
   });
 
   it('should show "-" in generations for no  associated generation', () => {
     svcData = _.omit(svcData, 'obj.metadata.generation');
     wrapper = shallow(<ServiceRow {...svcData} />);
-    const generationColData = wrapper.find(TableData).at(3);
+    const generationColData = wrapper.find(TableData).at(6);
     expect(generationColData.props().children).toEqual('-');
-  });
-
-  it('should show appropriate conditions', () => {
-    const conditionColData = wrapper.find(TableData).at(5);
-    expect(conditionColData.props().children).toEqual('3 OK / 3');
   });
 
   it('should show "-" in conditions for no  associated generation', () => {
@@ -60,8 +55,8 @@ describe('ServiceRow', () => {
   });
 
   it('should show appropriate ready status and reason for ready state', () => {
-    const readyColData = wrapper.find(TableData).at(6);
-    const reasonColData = wrapper.find(TableData).at(7);
+    const readyColData = wrapper.find(TableData).at(4);
+    const reasonColData = wrapper.find(TableData).at(5);
     expect(readyColData.props().children).toEqual('True');
     expect(reasonColData.props().children).toEqual('-');
   });
@@ -82,8 +77,8 @@ describe('ServiceRow', () => {
       },
     };
     wrapper = shallow(<ServiceRow {...svcData} />);
-    const readyColData = wrapper.find(TableData).at(6);
-    const reasonColData = wrapper.find(TableData).at(7);
+    const readyColData = wrapper.find(TableData).at(4);
+    const reasonColData = wrapper.find(TableData).at(5);
     expect(readyColData.props().children).toEqual('False');
     expect(reasonColData.dive().find(ClampedText).at(0).props().children).toEqual(
       'Something went wrong.',

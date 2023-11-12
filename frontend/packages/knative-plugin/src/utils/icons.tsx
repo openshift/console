@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { LaptopCodeIcon, GitAltIcon } from '@patternfly/react-icons';
 import * as serverlessFunctionIcon from '@console/internal/imgs/logos/serverlessfx.svg';
 import * as channelIcon from '../imgs/channel.svg';
 import * as eventSinkIcon from '../imgs/event-sink.svg';
@@ -15,6 +16,10 @@ export const eventSinkIconSVG = eventSinkIcon;
 export const channelIconSVG = channelIcon;
 
 export const serverlessFunctionSVG = serverlessFunctionIcon;
+
+export const gitIconElement = <GitAltIcon />;
+
+export const samplesIconElement = <LaptopCodeIcon />;
 
 export const EventSinkIcon: React.FC<{ style?: React.CSSProperties }> = ({ style }) => (
   <img src={eventSinkIcon} style={style} alt="Event Sink logo" />

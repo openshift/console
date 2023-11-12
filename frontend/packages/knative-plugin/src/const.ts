@@ -52,3 +52,4 @@ export const EVENT_SOURCE_ACTION_ID = 'knative-event-source';
 export const EVENT_SINK_ACTION_ID = 'knative-event-sink';
 export const EVENTING_CHANNEL_ACTION_ID = 'knative-eventing-channel';
 export const EVENTING_BROKER_ACTION_ID = 'knative-eventing-broker';
+export const FUNCTIONS_GETTING_STARTED_SECTION_USER_SETTING_KEY = 'functions.gettingStartedSection';
