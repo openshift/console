@@ -231,7 +231,7 @@ const config: Configuration = {
         exclude: overpassTest,
         loader: 'file-loader',
         options: {
-          name: 'assets/[name].[ext]',
+          name: 'assets/[path][name].[ext]',
         },
       },
       {
