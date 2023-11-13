@@ -39,6 +39,9 @@ export const pipelinesPage = {
       case pipelineTabs.Pipelines:
         cy.byLegacyTestID('horizontal-link-Pipelines').click();
         break;
+      case pipelineTabs.PipelineRuns:
+        cy.byLegacyTestID('horizontal-link-PipelineRuns').click();
+        break;
       case pipelineTabs.Repositories:
         cy.byLegacyTestID('horizontal-link-Repositories').click();
         break;

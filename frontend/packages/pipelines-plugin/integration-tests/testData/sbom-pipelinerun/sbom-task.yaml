@@ -1,0 +1,18 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: sbom-task
+  annotations:
+    task.output.location: results
+    task.results.format: application/text
+    task.results.key: LINK_TO_SBOM
+spec:
+  results:
+    - name: LINK_TO_SBOM
+      description: Contains the SBOM link
+  steps:
+    - name: print-sbom-results
+      image: bash:latest
+      script: |
+        #!/usr/bin/env bash
+        echo 'quay.io/redhat-user-workloads/karthik-jk-tenant/node-express-hello/node-express-hello:build-8e536-1692702836' | tee $(results.LINK_TO_SBOM.path)

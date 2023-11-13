@@ -66,7 +66,7 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
         </dd>
         {buildImage && (
           <>
-            <dt>{t('pipelines-plugin~Download SBOM')}</dt>
+            <dt data-test="download-sbom">{t('pipelines-plugin~Download SBOM')}</dt>
             <dd>
               <ClipboardCopy
                 isReadOnly
@@ -83,7 +83,7 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
         )}
         {sbomTaskRun && (
           <>
-            <dt>{t('pipelines-plugin~SBOM')}</dt>
+            <dt data-test="view-sbom">{t('pipelines-plugin~SBOM')}</dt>
             <dd>
               <Link
                 to={`/k8s/ns/${sbomTaskRun.metadata.namespace}/${referenceForModel(TaskRunModel)}/${

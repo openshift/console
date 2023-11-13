@@ -139,6 +139,11 @@ export const pipelineRunDetailsPage = {
         cy.url().should('include', 'parameters');
         break;
       }
+      case 'Output': {
+        cy.get(pipelineRunDetailsPO.outputTab).click();
+        cy.url().should('include', 'output');
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }
