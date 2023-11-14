@@ -1,0 +1,20 @@
+.opp-vulnerabilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pf-global--spacer--sm);
+  &__severity {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--pf-global--spacer--xs);
+  }
+  &__severity-status {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--pf-global--spacer--xs);
+  }
+  &__severity-count {
+    font-weight: var(--pf-global--FontWeight--bold);
+  }
+}

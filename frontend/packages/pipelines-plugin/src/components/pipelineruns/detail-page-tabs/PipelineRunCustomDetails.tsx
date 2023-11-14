@@ -23,6 +23,7 @@ import WorkspaceResourceLinkList from '../../shared/workspaces/WorkspaceResource
 import { useTaskRuns } from '../../taskruns/useTaskRuns';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import RunDetailsErrorLog from '../logs/RunDetailsErrorLog';
+import PipelineRunVulnerabilities from '../status/PipelineRunVulnerabilities';
 import TriggeredBySection from './TriggeredBySection';
 
 export type PipelineRunCustomDetailsProps = {
@@ -59,6 +60,12 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
           namespace={pipelineRun.metadata.namespace}
         />
       )}
+      <dl>
+        <dt>{t('pipelines-plugin~Vulnerabilities')}</dt>
+        <dd>
+          <PipelineRunVulnerabilities pipelineRun={pipelineRun} />
+        </dd>
+      </dl>
       <dl>
         <dt>{t('pipelines-plugin~Pipeline')}</dt>
         <dd>

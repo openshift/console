@@ -455,6 +455,7 @@ export type ResourceLinkProps = {
   dataTest?: string;
   onClick?: () => void;
   truncate?: boolean;
+  nameSuffix?: React.ReactNode;
   children?: React.ReactNode;
 };
 

@@ -3206,6 +3206,366 @@ export const PipeLineRunWithRepoMetadata: Record<string, PipelineRunKind> = {
   },
 };
 
+export enum PipeLineRunWithVulnerabilitiesNames {
+  ScanOutput = 'scan-output',
+  MyScanOutput = 'my-scan-output',
+  InvalidScanOutput = 'invalid-scan-output',
+  MultipleScanOutput = 'multiple-scan-output',
+}
+
+export const PipeLineRunWithVulnerabilitiesData: Record<string, PipelineRunKind> = {
+  [PipeLineRunWithVulnerabilitiesNames.ScanOutput]: {
+    kind: 'PipelineRun',
+    apiVersion: 'tekton.dev/v1',
+    metadata: {
+      annotations: {
+        'chains.tekton.dev/signed': 'true',
+        'results.tekton.dev/log':
+          'jeff-project/results/2e22062d-6a05-4f62-b348-12da06fadbab/logs/3826b8ee-d80e-34ba-828d-7b8ab32e37f0',
+        'results.tekton.dev/record':
+          'jeff-project/results/2e22062d-6a05-4f62-b348-12da06fadbab/records/2e22062d-6a05-4f62-b348-12da06fadbab',
+        'results.tekton.dev/result': 'jeff-project/results/2e22062d-6a05-4f62-b348-12da06fadbab',
+      },
+      resourceVersion: '317768',
+      name: 'pipelinerun-with-scan-task',
+      uid: '2e22062d-6a05-4f62-b348-12da06fadbab',
+      creationTimestamp: '2023-11-13T12:32:19Z',
+      generation: 1,
+      namespace: 'jeff-project',
+      finalizers: ['chains.tekton.dev/pipelinerun'],
+      labels: {
+        'tekton.dev/pipeline': 'pipelinerun-with-scan-task',
+      },
+    },
+    spec: {
+      pipelineSpec: {
+        results: [
+          {
+            description: 'The common vulnerabilities and exposures (CVE) result',
+            name: 'SCAN_OUTPUT',
+            value: '$(tasks.scan-task.results.SCAN_OUTPUT)',
+          },
+        ],
+        tasks: [
+          {
+            name: 'scan-task',
+            taskRef: {
+              kind: 'Task',
+              name: 'scan-task',
+            },
+          },
+        ],
+      },
+      taskRunTemplate: {
+        serviceAccountName: 'pipeline',
+      },
+    },
+    status: {
+      completionTime: '2023-11-13T12:32:26Z',
+      conditions: [
+        {
+          lastTransitionTime: '2023-11-13T12:32:26Z',
+          message: 'Tasks Completed: 1 (Failed: 0, Cancelled 0), Skipped: 0',
+          reason: 'Succeeded',
+          status: 'True',
+          type: 'Succeeded',
+        },
+      ],
+      pipelineSpec: {
+        results: [
+          {
+            description: 'The common vulnerabilities and exposures (CVE) result',
+            name: 'SCAN_OUTPUT',
+            value: '$(tasks.scan-task.results.SCAN_OUTPUT)',
+          },
+        ],
+        tasks: [
+          {
+            name: 'scan-task',
+            taskRef: {
+              kind: 'Task',
+              name: 'scan-task',
+            },
+          },
+        ],
+      },
+      results: [
+        {
+          name: 'SCAN_OUTPUT',
+          value:
+            '{"vulnerabilities":{\n"critical": 13,\n"high": 29,\n"medium": 32,\n"low": 3,\n"unknown": 0},\n"unpatched_vulnerabilities": {\n"critical": 0,\n"high": 1,\n"medium": 0,\n"low":1}\n}\n',
+        },
+      ],
+      startTime: '2023-11-13T12:32:19Z',
+    },
+  },
+  [PipeLineRunWithVulnerabilitiesNames.MyScanOutput]: {
+    kind: 'PipelineRun',
+    apiVersion: 'tekton.dev/v1',
+    metadata: {
+      annotations: {
+        'chains.tekton.dev/signed': 'true',
+        'results.tekton.dev/log':
+          'jeff-project/results/8c5a7c3f-3590-40b4-869b-5258d1450726/logs/cd4f186e-5c5c-331c-a7ff-6c990bb5b47b',
+        'results.tekton.dev/record':
+          'jeff-project/results/8c5a7c3f-3590-40b4-869b-5258d1450726/records/8c5a7c3f-3590-40b4-869b-5258d1450726',
+        'results.tekton.dev/result': 'jeff-project/results/8c5a7c3f-3590-40b4-869b-5258d1450726',
+      },
+      resourceVersion: '317738',
+      name: 'pipelinerun-with-my-scan-task',
+      uid: '8c5a7c3f-3590-40b4-869b-5258d1450726',
+      creationTimestamp: '2023-11-13T12:32:20Z',
+      generation: 1,
+      namespace: 'jeff-project',
+      finalizers: ['chains.tekton.dev/pipelinerun'],
+      labels: {
+        'tekton.dev/pipeline': 'pipelinerun-with-scan-task-1',
+      },
+    },
+    spec: {
+      pipelineSpec: {
+        results: [
+          {
+            description: 'The common vulnerabilities and exposures (CVE) result',
+            name: 'MY_SCAN_OUTPUT',
+            value: '$(tasks.scan-task.results.MY_SCAN_OUTPUT)',
+          },
+        ],
+        tasks: [
+          {
+            name: 'scan-task',
+            taskRef: {
+              kind: 'Task',
+              name: 'scan-task',
+            },
+          },
+        ],
+      },
+      taskRunTemplate: {
+        serviceAccountName: 'pipeline',
+      },
+    },
+    status: {
+      completionTime: '2023-11-13T12:32:25Z',
+      conditions: [
+        {
+          lastTransitionTime: '2023-11-13T12:32:25Z',
+          message: 'Tasks Completed: 1 (Failed: 0, Cancelled 0), Skipped: 0',
+          reason: 'Succeeded',
+          status: 'True',
+          type: 'Succeeded',
+        },
+      ],
+      pipelineSpec: {
+        results: [
+          {
+            description: 'The common vulnerabilities and exposures (CVE) result',
+            name: 'MY_SCAN_OUTPUT',
+            value: '$(tasks.scan-task.results.MY_SCAN_OUTPUT)',
+          },
+        ],
+        tasks: [
+          {
+            name: 'scan-task',
+            taskRef: {
+              kind: 'Task',
+              name: 'scan-task',
+            },
+          },
+        ],
+      },
+      results: [
+        {
+          name: 'MY_SCAN_OUTPUT',
+          value:
+            '{"vulnerabilities":{\n"critical": 0,\n"high": 9,\n"medium": 2,\n"low": 13,\n"unknown": 0},\n"unpatched_vulnerabilities": {\n"critical": 0,\n"high": 1,\n"medium": 0,\n"low":1}\n}\n',
+        },
+      ],
+      startTime: '2023-11-13T12:32:20Z',
+    },
+  },
+  [PipeLineRunWithVulnerabilitiesNames.InvalidScanOutput]: {
+    kind: 'PipelineRun',
+    apiVersion: 'tekton.dev/v1',
+    metadata: {
+      annotations: {
+        'chains.tekton.dev/signed': 'true',
+        'results.tekton.dev/log':
+          'jeff-project/results/8c5a7c3f-3590-40b4-869b-5258d1450726/logs/cd4f186e-5c5c-331c-a7ff-6c990bb5b47b',
+        'results.tekton.dev/record':
+          'jeff-project/results/8c5a7c3f-3590-40b4-869b-5258d1450726/records/8c5a7c3f-3590-40b4-869b-5258d1450726',
+        'results.tekton.dev/result': 'jeff-project/results/8c5a7c3f-3590-40b4-869b-5258d1450726',
+      },
+      resourceVersion: '317738',
+      name: 'pipelinerun-with-invalid-scan-task',
+      uid: '8c5a7c3f-3590-40b4-869b-5258d1450729',
+      creationTimestamp: '2023-11-13T12:32:20Z',
+      generation: 1,
+      namespace: 'jeff-project',
+      finalizers: ['chains.tekton.dev/pipelinerun'],
+      labels: {
+        'tekton.dev/pipeline': 'pipelinerun-with-scan-task-1',
+      },
+    },
+    spec: {
+      pipelineSpec: {
+        results: [
+          {
+            description: 'The common vulnerabilities and exposures (CVE) result',
+            name: 'INVALID_SCAN_OUTPUTS',
+            value: '$(tasks.scan-task.results.INVALID_SCAN_OUTPUTS)',
+          },
+        ],
+        tasks: [
+          {
+            name: 'scan-task',
+            taskRef: {
+              kind: 'Task',
+              name: 'scan-task',
+            },
+          },
+        ],
+      },
+      taskRunTemplate: {
+        serviceAccountName: 'pipeline',
+      },
+    },
+    status: {
+      completionTime: '2023-11-13T12:32:25Z',
+      conditions: [
+        {
+          lastTransitionTime: '2023-11-13T12:32:25Z',
+          message: 'Tasks Completed: 1 (Failed: 0, Cancelled 0), Skipped: 0',
+          reason: 'Succeeded',
+          status: 'True',
+          type: 'Succeeded',
+        },
+      ],
+      pipelineSpec: {
+        results: [
+          {
+            description: 'The common vulnerabilities and exposures (CVE) result',
+            name: 'INVALID_SCAN_OUTPUTS',
+            value: '$(tasks.scan-task.results.INVALID_SCAN_OUTPUTS)',
+          },
+        ],
+        tasks: [
+          {
+            name: 'scan-task',
+            taskRef: {
+              kind: 'Task',
+              name: 'scan-task',
+            },
+          },
+        ],
+      },
+      results: [
+        {
+          name: 'INVALID_SCAN_OUTPUTS',
+          value:
+            '{"vulnerabilities":{\n"critical": 0,\n"high": 9,\n"medium": 2,\n"low": 13,\n"unknown": 0},\n"unpatched_vulnerabilities": {\n"critical": 0,\n"high": 1,\n"medium": 0,\n"low":1}\n}\n',
+        },
+      ],
+      startTime: '2023-11-13T12:32:20Z',
+    },
+  },
+  [PipeLineRunWithVulnerabilitiesNames.MultipleScanOutput]: {
+    kind: 'PipelineRun',
+    apiVersion: 'tekton.dev/v1',
+    metadata: {
+      annotations: {
+        'chains.tekton.dev/signed': 'true',
+        'results.tekton.dev/log':
+          'jeff-project/results/8c5a7c3f-3590-40b4-869b-5258d1450726/logs/cd4f186e-5c5c-331c-a7ff-6c990bb5b47b',
+        'results.tekton.dev/record':
+          'jeff-project/results/8c5a7c3f-3590-40b4-869b-5258d1450726/records/8c5a7c3f-3590-40b4-869b-5258d1450726',
+        'results.tekton.dev/result': 'jeff-project/results/8c5a7c3f-3590-40b4-869b-5258d1450726',
+      },
+      resourceVersion: '317738',
+      name: 'pipelinerun-with-invalid-scan-task',
+      uid: '8c5a7c3f-3590-40b4-869b-5258d1450729',
+      creationTimestamp: '2023-11-13T12:32:20Z',
+      generation: 1,
+      namespace: 'jeff-project',
+      finalizers: ['chains.tekton.dev/pipelinerun'],
+      labels: {
+        'tekton.dev/pipeline': 'pipelinerun-with-scan-task-1',
+      },
+    },
+    spec: {
+      pipelineSpec: {
+        results: [
+          {
+            description: 'The common vulnerabilities and exposures (CVE) result',
+            name: 'INVALID_SCAN_OUTPUTS',
+            value: '$(tasks.scan-task.results.INVALID_SCAN_OUTPUTS)',
+          },
+        ],
+        tasks: [
+          {
+            name: 'scan-task',
+            taskRef: {
+              kind: 'Task',
+              name: 'scan-task',
+            },
+          },
+        ],
+      },
+      taskRunTemplate: {
+        serviceAccountName: 'pipeline',
+      },
+    },
+    status: {
+      completionTime: '2023-11-13T12:32:25Z',
+      conditions: [
+        {
+          lastTransitionTime: '2023-11-13T12:32:25Z',
+          message: 'Tasks Completed: 1 (Failed: 0, Cancelled 0), Skipped: 0',
+          reason: 'Succeeded',
+          status: 'True',
+          type: 'Succeeded',
+        },
+      ],
+      pipelineSpec: {
+        results: [
+          {
+            description: 'The common vulnerabilities and exposures (CVE) result',
+            name: 'INVALID_SCAN_OUTPUTS',
+            value: '$(tasks.scan-task.results.INVALID_SCAN_OUTPUTS)',
+          },
+        ],
+        tasks: [
+          {
+            name: 'scan-task',
+            taskRef: {
+              kind: 'Task',
+              name: 'scan-task',
+            },
+          },
+        ],
+      },
+      results: [
+        {
+          name: 'SCAN_OUTPUT',
+          value:
+            '{"vulnerabilities":{\n"critical": 13,\n"high": 29,\n"medium": 32,\n"low": 3,\n"unknown": 0},\n"unpatched_vulnerabilities": {\n"critical": 0,\n"high": 1,\n"medium": 0,\n"low":1}\n}\n',
+        },
+        {
+          name: 'MY_SCAN_OUTPUT',
+          value:
+            '{"vulnerabilities":{\n"critical": 0,\n"high": 9,\n"medium": 2,\n"low": 13,\n"unknown": 0},\n"unpatched_vulnerabilities": {\n"critical": 0,\n"high": 1,\n"medium": 0,\n"low":1}\n}\n',
+        },
+        {
+          name: 'INVALID_SCAN_OUTPUTS',
+          value:
+            '{"vulnerabilities":{\n"critical": 0,\n"high": 9,\n"medium": 2,\n"low": 13,\n"unknown": 0},\n"unpatched_vulnerabilities": {\n"critical": 0,\n"high": 1,\n"medium": 0,\n"low":1}\n}\n',
+        },
+      ],
+      startTime: '2023-11-13T12:32:20Z',
+    },
+  },
+};
+
 export const mockRepositories: RepositoryKind[] = [
   {
     apiVersion: 'pipelinesascode.tekton.dev/v1alpha1',
