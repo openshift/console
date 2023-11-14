@@ -52,49 +52,56 @@ func (mkv *MultiKeyValue) Set(value string) error {
 // Because the config filename could be defined as commandline argument or
 // environment variable, we need to parse these inputs before reading the
 // config file and need to override the config values after this again.
-func Parse(fs *flag.FlagSet, args []string, envPrefix string) error {
+func Parse(fs *flag.FlagSet, args []string, envPrefix string) (*Config, error) {
 	if err := flagutil.SetFlagsFromEnv(fs, envPrefix); err != nil {
-		return err
+		return nil, err
 	}
 	if err := fs.Parse(args); err != nil {
-		return err
+		return nil, err
 	}
 
+	cfg := &Config{}
 	configFile := fs.Lookup("config").Value.String()
 	if configFile != "" {
-		if err := SetFlagsFromConfigFile(fs, configFile); err != nil {
+		var err error
+		cfg, err = SetFlagsFromConfigFile(fs, configFile)
+		if err != nil {
 			klog.Fatalf("Failed to load config: %v", err)
-			return err
+			return nil, err
 		}
 		if err := flagutil.SetFlagsFromEnv(fs, envPrefix); err != nil {
-			return err
+			return nil, err
 		}
 		if err := fs.Parse(args); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return nil
+	return cfg, nil
 }
 
 // SetFlagsFromConfigFile sets flag values based on a YAML config file.
-func SetFlagsFromConfigFile(fs *flag.FlagSet, filename string) (err error) {
+func SetFlagsFromConfigFile(fs *flag.FlagSet, filename string) (*Config, error) {
 	content, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	config := Config{}
-	err = yaml.Unmarshal(content, &config)
+	config := &Config{}
+	err = yaml.Unmarshal(content, config)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return SetFlagsFromConfig(fs, config)
+	if err := SetFlagsFromConfig(fs, config); err != nil {
+		return nil, err
+	}
+
+	return config, nil
 }
 
 // SetFlagsFromConfig sets flag values based on a YAML config.
-func SetFlagsFromConfig(fs *flag.FlagSet, config Config) (err error) {
+func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 	if !(config.APIVersion == "console.openshift.io/v1beta1" || config.APIVersion == "console.openshift.io/v1") || config.Kind != "ConsoleConfig" {
 		return fmt.Errorf("unsupported version (apiVersion: %s, kind: %s), only console.openshift.io/v1 ConsoleConfig is supported", config.APIVersion, config.Kind)
 	}
@@ -105,7 +112,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config Config) (err error) {
 	}
 
 	addClusterInfo(fs, &config.ClusterInfo)
-	addAuth(fs, &config.Auth)
+	defaultK8SAuth(fs)
 	addCustomization(fs, &config.Customization)
 	addProviders(fs, &config.Providers)
 	addMonitoringInfo(fs, &config.MonitoringInfo)
@@ -226,34 +233,11 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 	}
 }
 
-func addAuth(fs *flag.FlagSet, auth *Auth) {
+func defaultK8SAuth(fs *flag.FlagSet) {
 	// Assume "openshift" if config file is used and it is not set already
 	// by a command-line argument or environment variable.
 	if !isAlreadySet(fs, "k8s-auth") {
 		fs.Set("k8s-auth", "openshift")
-	}
-	if !isAlreadySet(fs, "user-auth") {
-		fs.Set("user-auth", "openshift")
-	}
-
-	if auth.ClientID != "" {
-		fs.Set("user-auth-oidc-client-id", auth.ClientID)
-	}
-
-	if auth.ClientSecretFile != "" {
-		fs.Set("user-auth-oidc-client-secret-file", auth.ClientSecretFile)
-	}
-
-	if auth.OAuthEndpointCAFile != "" {
-		fs.Set("user-auth-oidc-ca-file", auth.OAuthEndpointCAFile)
-	}
-
-	if auth.LogoutRedirect != "" {
-		fs.Set("user-auth-logout-redirect", auth.LogoutRedirect)
-	}
-
-	if auth.InactivityTimeoutSeconds != 0 {
-		fs.Set("inactivity-timeout", strconv.Itoa(auth.InactivityTimeoutSeconds))
 	}
 }
 

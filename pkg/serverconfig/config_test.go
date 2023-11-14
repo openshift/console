@@ -145,16 +145,11 @@ func TestCliArgumentToParseConfig(t *testing.T) {
 	prefix := fmt.Sprintf("TEST_PREFIX_%d", rand.Int())
 	fs := flag.NewFlagSet(prefix, flag.ContinueOnError)
 	fs.String("config", "", "The config file.")
-	userAuth := fs.String("user-auth", "default value", "")
 	listen := fs.String("listen", "http://0.0.0.0:9000", "")
 
 	args := []string{"-config", "test/bind-address-config.yaml"}
 	Parse(fs, args, prefix)
 
-	// Parsing a configfile automatically switches to 'openshift' user auth
-	if *userAuth != "openshift" {
-		t.Errorf("Unexpected value: actual %s, expected %s", *userAuth, "openshift")
-	}
 	// Value from config file
 	if *listen != "http://localhost:9000" {
 		t.Errorf("Unexpected value: actual %s, expected %s", *listen, "http://localhost:9000")
@@ -185,17 +180,12 @@ func TestEnvVariableToParseConfig(t *testing.T) {
 	prefix := fmt.Sprintf("TEST_PREFIX_%d", rand.Int())
 	fs := flag.NewFlagSet(prefix, flag.ContinueOnError)
 	fs.String("config", "", "The config file.")
-	userAuth := fs.String("user-auth", "default value", "")
 	listen := fs.String("listen", "http://0.0.0.0:9000", "")
 
 	args := []string{}
 	os.Setenv(fmt.Sprintf("%s_CONFIG", prefix), "test/bind-address-config.yaml")
 	Parse(fs, args, prefix)
 
-	// Parsing a configfile automatically switches to 'openshift' user auth
-	if *userAuth != "openshift" {
-		t.Errorf("Unexpected value: actual %s, expected %s", *userAuth, "openshift")
-	}
 	// Value from config file
 	if *listen != "http://localhost:9000" {
 		t.Errorf("Unexpected value: actual %s, expected %s", *listen, "http://localhost:9000")
@@ -307,7 +297,7 @@ func TestSetFlagsFromConfig(t *testing.T) {
 			fs.Var(&MultiKeyValue{}, "plugins", "")
 			fs.Var(&MultiKeyValue{}, "telemetry", "")
 
-			actualError := SetFlagsFromConfig(fs, test.config)
+			actualError := SetFlagsFromConfig(fs, &test.config)
 			actual := make(map[string]string)
 			fs.Visit(func(f *flag.Flag) { actual[f.Name] = f.Value.String() })
 

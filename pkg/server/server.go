@@ -106,7 +106,6 @@ type jsGlobals struct {
 	InactivityTimeout               int                        `json:"inactivityTimeout"`
 	KubeAdminLogoutURL              string                     `json:"kubeAdminLogoutURL"`
 	KubeAPIServerURL                string                     `json:"kubeAPIServerURL"`
-	KubectlClientID                 string                     `json:"kubectlClientID"`
 	LoadTestFactor                  int                        `json:"loadTestFactor"`
 	LoginErrorURL                   string                     `json:"loginErrorURL"`
 	LoginSuccessURL                 string                     `json:"loginSuccessURL"`
@@ -161,7 +160,6 @@ type Server struct {
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
 	KubeAPIServerURL                    string
-	KubectlClientID                     string
 	KubeVersion                         string
 	LoadTestFactor                      int
 	LogoutRedirect                      *url.URL
@@ -676,13 +674,11 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
 		ConsoleVersion:            version.Version,
 		AuthDisabled:              s.authDisabled(),
-		KubectlClientID:           s.KubectlClientID,
 		BasePath:                  s.BaseURL.Path,
 		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
 		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
 		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
 		LogoutURL:                 proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
-		LogoutRedirect:            s.LogoutRedirect.String(),
 		KubeAPIServerURL:          s.KubeAPIServerURL,
 		Branding:                  s.Branding,
 		CustomProductName:         s.CustomProductName,
@@ -713,6 +709,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		NodeOperatingSystems:      s.NodeOperatingSystems,
 		CopiedCSVsDisabled:        s.CopiedCSVsDisabled,
 		K8sMode:                   s.K8sMode,
+	}
+
+	if s.LogoutRedirect != nil {
+		jsg.LogoutRedirect = s.LogoutRedirect.String()
 	}
 
 	if !s.authDisabled() {
