@@ -13,7 +13,7 @@ import { MultiStreamLogs } from './MultiStreamLogs';
 import { TektonTaskRunLog } from './TektonTaskRunLog';
 
 type LogsWrapperComponentProps = {
-  taskName: string;
+  taskName?: string;
   downloadAllLabel?: string;
   onDownloadAll?: () => Promise<Error>;
   taskRun?: TaskRunKind;

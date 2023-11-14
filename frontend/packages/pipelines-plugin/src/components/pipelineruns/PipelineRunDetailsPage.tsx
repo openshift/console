@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { KebabAction, navFactory, viewYamlComponent } from '@console/internal/components/utils';
-import { FirehoseResult, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import * as SignedPipelinerunIcon from '../../images/signed-badge.svg';
-import { PipelineRunModel } from '../../models';
 import { PipelineRunKind } from '../../types';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { getPipelineRunKebabActions } from '../../utils/pipeline-actions';
@@ -14,22 +11,20 @@ import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
 import { chainsSignedAnnotation } from '../pipelines/const';
 import { useDevPipelinesBreadcrumbsFor } from '../pipelines/hooks';
 import { usePipelineOperatorVersion } from '../pipelines/utils/pipeline-operator';
-import { useTaskRuns } from '../taskruns/useTaskRuns';
 import { PipelineRunDetails } from './detail-page-tabs/PipelineRunDetails';
 import { PipelineRunLogsWithActiveTask } from './detail-page-tabs/PipelineRunLogs';
 import TaskRuns from './detail-page-tabs/TaskRuns';
 import PipelineRunEvents from './events/PipelineRunEvents';
-import { useTRPipelineRuns } from './hooks/useTektonResults';
+import { usePipelineRun } from './hooks/usePipelineRuns';
+import { useTaskRuns } from './hooks/useTaskRuns';
 import PipelineRunParametersForm from './PipelineRunParametersForm';
 import { useMenuActionsWithUserAnnotation } from './triggered-by';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { kindObj, match, namespace, name } = props;
   const { t } = useTranslation();
-  const [data, setData] = React.useState<FirehoseResult<K8sResourceKind> | PipelineRunKind>();
-  const [loaded, setLoaded] = React.useState(false);
   const operatorVersion = usePipelineOperatorVersion(namespace);
-  const [taskRuns] = useTaskRuns(namespace);
+  const [taskRuns] = useTaskRuns(namespace, name);
   const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineRunKebabActions(operatorVersion, taskRuns, true),
   );
@@ -47,28 +42,15 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
       obj?.metadata?.name
     );
 
-  const [pipelineRun, pipelineRunLoaded] = useK8sWatchResource<FirehoseResult<K8sResourceKind>>({
-    kind: referenceForModel(PipelineRunModel),
-    namespace,
-    name,
-    isList: false,
-  });
-  const [TRPlrs, TRPlrsLoaded] = useTRPipelineRuns(namespace, {
-    selector: { filterByName: name },
-  });
-
-  React.useEffect(() => {
-    setData(pipelineRun || TRPlrs[0]);
-    setLoaded(pipelineRunLoaded || TRPlrsLoaded);
-  }, [TRPlrs, pipelineRun, pipelineRunLoaded, TRPlrsLoaded]);
+  const [pipelineRun, loaded, error] = usePipelineRun(namespace, name);
 
   return (
     <DetailsPage
       {...props}
       obj={{
-        data,
+        data: pipelineRun,
         loaded,
-        loadError: undefined,
+        loadError: error,
       }}
       badge={badge}
       menuActions={menuActions}

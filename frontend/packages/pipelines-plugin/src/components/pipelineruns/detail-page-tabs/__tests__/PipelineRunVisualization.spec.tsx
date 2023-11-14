@@ -7,8 +7,8 @@ import {
   pipelineTestData,
 } from '../../../../test-data/pipeline-data';
 import PipelineVisualization from '../../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
-import * as utils from '../../../taskruns/useTaskRuns';
 import * as plrDetailsHooks from '../../hooks/usePipelineFromPipelineRun';
+import * as utils from '../../hooks/useTaskRuns';
 import PipelineRunVisualization from '../PipelineRunVisualization';
 
 const pipelineData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];

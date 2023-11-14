@@ -10,8 +10,7 @@ import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
 import { taskRunStatus } from '../../../utils/pipeline-utils';
 import { TektonResourceLabel } from '../../pipelines/const';
 import { ColoredStatusIcon } from '../../pipelines/detail-page-tabs/pipeline-details/StatusIcon';
-import { useTaskRuns } from '../../taskruns/useTaskRuns';
-import { useTRTaskRuns } from '../hooks/useTektonResults';
+import { useTaskRuns } from '../hooks/useTaskRuns';
 import { ErrorDetailsWithStaticLog } from '../logs/log-snippet-types';
 import { getDownloadAllLogsCallback } from '../logs/logs-utils';
 import LogsWrapperComponent from '../logs/LogsWrapperComponent';
@@ -212,22 +211,12 @@ export const PipelineRunLogsWithActiveTask: React.FC<PipelineRunLogsWithActiveTa
   obj,
   params,
 }) => {
-  const [data, setData] = React.useState<TaskRunKind[]>();
-  const [loaded, setLoaded] = React.useState(false);
   const activeTask = _.get(params, 'match.params.name');
   const [taskRuns, taskRunsLoaded] = useTaskRuns(obj?.metadata?.namespace, obj?.metadata?.name);
-  const [resultTaskRuns, resultTaskRunsLoaded] = useTRTaskRuns(obj?.metadata?.namespace, {
-    selector: {
-      matchLabels: {
-        [TektonResourceLabel.pipelinerun]: obj?.metadata?.name,
-      },
-    },
-  });
-  React.useEffect(() => {
-    setData(taskRuns || resultTaskRuns);
-    setLoaded(taskRunsLoaded || resultTaskRunsLoaded);
-  }, [taskRuns, resultTaskRuns, taskRunsLoaded, resultTaskRunsLoaded]);
-  return loaded && <PipelineRunLogs obj={obj} activeTask={activeTask} taskRuns={data} />;
+
+  return (
+    taskRunsLoaded && <PipelineRunLogs obj={obj} activeTask={activeTask} taskRuns={taskRuns} />
+  );
 };
 
 export default PipelineRunLogs;
