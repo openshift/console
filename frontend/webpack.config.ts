@@ -68,7 +68,7 @@ const config: Configuration = {
   },
   devServer: {
     hot: HOT_RELOAD !== 'false',
-    webSocketServer: 'ws',
+    webSocketServer: 'sockjs',
     port: WDS_PORT,
     static: false,
     devMiddleware: {
