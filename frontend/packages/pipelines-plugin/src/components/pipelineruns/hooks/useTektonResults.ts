@@ -123,7 +123,7 @@ export const useGetPipelineRuns = (ns: string, options?: { name: string; kind: s
   if (options?.kind === 'Repository') {
     selector = { matchLabels: { [RepositoryLabels[RepositoryFields.REPOSITORY]]: options?.name } };
   }
-  const [resultPlrs, resultPlrsLoaded, resultPlrsLoadError] = useTRPipelineRuns(
+  const [resultPlrs, resultPlrsLoaded, resultPlrsLoadError, getNextPage] = useTRPipelineRuns(
     ns,
     options && {
       selector,
@@ -139,7 +139,12 @@ export const useGetPipelineRuns = (ns: string, options?: { name: string; kind: s
     (resultPlrsLoaded || k8sPlrsLoaded) && !k8sPlrsLoadError
       ? uniqBy([...k8sPlrs, ...resultPlrs], (r) => r.metadata.name)
       : [];
-  return [mergedPlrs, resultPlrsLoaded || k8sPlrsLoaded, resultPlrsLoadError || k8sPlrsLoadError];
+  return [
+    mergedPlrs,
+    resultPlrsLoaded || k8sPlrsLoaded,
+    resultPlrsLoadError || k8sPlrsLoadError,
+    getNextPage,
+  ];
 };
 
 export const useGetTaskRuns = (ns: string) => {

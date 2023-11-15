@@ -20,7 +20,9 @@ const PipelineRunsResourceList: React.FC<
   const { t } = useTranslation();
   const ns = props.namespace || props?.match?.params?.ns;
   const badge = usePipelineTechPreviewBadge(ns);
-  const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] = useGetPipelineRuns(ns);
+  const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError, getNextPage] = useGetPipelineRuns(
+    ns,
+  );
   const resources = {
     [referenceForModel(PipelineRunModel)]: {
       data: pipelineRuns,
@@ -37,6 +39,7 @@ const PipelineRunsResourceList: React.FC<
       ListComponent={PipelineRunsList}
       rowFilters={runFilters(t)}
       badge={props.hideBadge ? null : badge}
+      customData={{ nextPage: getNextPage }}
       data={resources}
     />
   );
