@@ -275,7 +275,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	authHandler := func(hf http.HandlerFunc) http.Handler {
 		return authMiddleware(s.Authers, hf)
 	}
-	authHandlerWithUser := func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
+	authHandlerWithUser := func(hf HandlerWithUser) http.Handler {
 		return authMiddlewareWithUser(s.Authers, hf)
 	}
 
@@ -283,7 +283,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		authHandler = func(hf http.HandlerFunc) http.Handler {
 			return hf
 		}
-		authHandlerWithUser = func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
+		authHandlerWithUser = func(hf HandlerWithUser) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				hf(s.StaticUser, w, r)
 			})
@@ -292,10 +292,10 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	if !s.authDisabled() {
 		handleFunc(authLoginEndpoint, localAuther.LoginFunc)
-		handleFunc(authLogoutEndpoint, localAuther.LogoutFunc)
+		handle(authLogoutEndpoint, allowMethod(http.MethodPost, verifyCSRF(s.Authers, localAuther.LogoutFunc)))
 		handleFunc(authLogoutMulticlusterEndpoint, s.handleLogoutMulticluster)
 		handleFunc(AuthLoginCallbackEndpoint, localAuther.CallbackFunc(fn))
-		handle("/api/openshift/delete-token", authHandlerWithUser(s.handleOpenShiftTokenDeletion))
+		handle("/api/openshift/delete-token", allowMethod(http.MethodPost, authHandlerWithUser(s.handleOpenShiftTokenDeletion)))
 		for clusterName, clusterAuther := range s.Authers {
 			if clusterAuther != nil {
 				handleFunc(fmt.Sprintf("%s/%s", authLoginEndpoint, clusterName), clusterAuther.LoginFunc)
@@ -820,6 +820,7 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 	cluster := serverutils.GetCluster(r)
 	k8sProxy := s.getK8sProxyConfig(cluster)
 	k8sClient := s.getK8sClient(cluster)
+	auther := s.Authers[cluster]
 	tokenName := user.Token
 	if strings.HasPrefix(tokenName, sha256Prefix) {
 		tokenName = tokenToObjectName(tokenName)
@@ -840,27 +841,15 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to delete token: %v", err)})
 		return
 	}
-
+	auther.DeleteCookie(w, r)
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
 	resp.Body.Close()
 }
 
 func (s *Server) handleLogoutMulticluster(w http.ResponseWriter, r *http.Request) {
-	for cluster, auther := range s.Authers {
-		cookieName := auth.GetCookieName(cluster)
-		if cookie, _ := r.Cookie(cookieName); cookie != nil {
-			clearedCookie := http.Cookie{
-				Name:     cookie.Name,
-				Value:    "",
-				MaxAge:   0,
-				HttpOnly: cookie.HttpOnly,
-				Path:     auther.GetCookiePath(),
-				Secure:   cookie.Secure,
-			}
-			klog.Infof("Deleting cookie %v", cookie.Name)
-			http.SetCookie(w, &clearedCookie)
-		}
+	for _, auther := range s.Authers {
+		auther.DeleteCookie(w, r)
 	}
 
 	jsg := struct {
