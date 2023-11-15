@@ -84,7 +84,9 @@ type loginMethod interface {
 	// login turns on oauth2 token response into a user session and associates a
 	// cookie with the user.
 	login(http.ResponseWriter, *oauth2.Token) (*loginState, error)
-	// logout deletes any cookies associated with the user.
+	// Removes user token cookie, but does not write a response.
+	deleteCookie(http.ResponseWriter, *http.Request)
+	// logout deletes any cookies associated with the user, and writes a no-content response.
 	logout(http.ResponseWriter, *http.Request)
 	getSpecialURLs() SpecialAuthURLs
 }
@@ -322,6 +324,10 @@ type User struct {
 
 func (a *Authenticator) Authenticate(r *http.Request) (*User, error) {
 	return a.userFunc(r)
+}
+
+func (a *Authenticator) DeleteCookie(w http.ResponseWriter, r *http.Request) {
+	a.getLoginMethod().deleteCookie(w, r)
 }
 
 // LoginFunc redirects to the OIDC provider for user login.

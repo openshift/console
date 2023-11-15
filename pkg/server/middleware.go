@@ -13,6 +13,8 @@ import (
 	"k8s.io/klog"
 )
 
+type HandlerWithUser func(user *auth.User, w http.ResponseWriter, r *http.Request)
+
 // Middleware generates a middleware wrapper for request hanlders.
 // Responds with 401 for requests with missing/invalid/incomplete token with verified email address.
 func authMiddleware(authers map[string]*auth.Authenticator, hdlr http.HandlerFunc) http.Handler {
@@ -22,9 +24,23 @@ func authMiddleware(authers map[string]*auth.Authenticator, hdlr http.HandlerFun
 	return authMiddlewareWithUser(authers, f)
 }
 
-func authMiddlewareWithUser(authers map[string]*auth.Authenticator, handlerFunc func(user *auth.User, w http.ResponseWriter, r *http.Request)) http.Handler {
+func authMiddlewareWithUser(authers map[string]*auth.Authenticator, handlerFunc HandlerWithUser) http.Handler {
+	return verifyCSRF(authers, func(w http.ResponseWriter, r *http.Request) {
+		cluster := serverutils.GetCluster(r)
+		auther := authers[cluster]
+		user, err := auther.Authenticate(r)
+		if err != nil {
+			klog.V(4).Infof("authentication failed: %v", err)
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+		handlerFunc(user, w, r)
+	})
+}
+
+func verifyCSRF(authers map[string]*auth.Authenticator, h http.HandlerFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Get the correct Auther for the cluster.
 		cluster := serverutils.GetCluster(r)
 		auther, autherFound := authers[cluster]
 
@@ -34,14 +50,6 @@ func authMiddlewareWithUser(authers map[string]*auth.Authenticator, handlerFunc 
 			w.Write([]byte(fmt.Sprintf("Bad Request. Invalid cluster: %v", cluster)))
 			return
 		}
-
-		user, err := auther.Authenticate(r)
-		if err != nil {
-			klog.V(4).Infof("authentication failed: %v", err)
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 
 		safe := false
 		switch r.Method {
@@ -65,9 +73,26 @@ func authMiddlewareWithUser(authers map[string]*auth.Authenticator, handlerFunc 
 				return
 			}
 		}
-
-		handlerFunc(user, w, r)
+		h(w, r)
 	})
+}
+
+func allowMethods(methods []string, h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		for _, method := range methods {
+			if r.Method == method {
+				h.ServeHTTP(w, r)
+				return
+			}
+		}
+		allowedStr := strings.Join(methods, ", ")
+		w.Header().Set("Allow", allowedStr)
+		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: fmt.Sprintf("Method '%s' not allowed. Allowed methods: %s", r.Method, allowedStr)})
+	})
+}
+
+func allowMethod(method string, h http.Handler) http.Handler {
+	return allowMethods([]string{method}, h)
 }
 
 type gzipResponseWriter struct {
