@@ -187,6 +187,7 @@ export const pipelineRunDetailsPO = {
   detailsTab: '[data-test-id$="Details"]',
   taskRunsTab: '[data-test-id="horizontal-link-TaskRuns"]',
   parametersTab: '[data-test-id="horizontal-link-Parameters"]',
+  outputTab: '[data-test-id="horizontal-link-Output"]',
   pipelineRunsResults: '[data-test-section-heading="PipelineRun results"]',
   eventsTab: '[data-test-id$="Events"]',
   pipelineRunStatus: '[data-test="resource-status"]',
@@ -194,8 +195,11 @@ export const pipelineRunDetailsPO = {
   details: {
     pipelineLink: '[data-test-id="git-pipeline-events"]',
     sectionTitle: '[data-test-section-heading="PipelineRun details"]',
+    outputTitle: '[data-test-section-heading="PipelineRun results"]',
     pipelineRunDetails: 'div dl',
     workspacesSection: '[data-test-id="workspace-resources-section"]',
+    viewSbomLink: '[data-test="view-sbom"]',
+    downloadSbomLink: '[data-test="download-sbom"]',
     workspacesResources: {
       volumeClaimTemplateResources: '[data-test-id="volumeClaimTemplate-resources-section"]',
       emptyDirectory: '[data-test-id="empty-directory-workspace"]',

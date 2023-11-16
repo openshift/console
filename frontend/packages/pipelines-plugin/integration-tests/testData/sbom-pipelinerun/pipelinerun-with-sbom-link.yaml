@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-with-sbom-link
+spec:
+  pipelineSpec:
+    tasks:
+      - name: sbom-task
+        taskRef:
+          name: sbom-task
+    results:
+      - name: LINK_TO_SBOM
+        description: Contains the SBOM link
+        value: $(tasks.sbom-task.results.LINK_TO_SBOM)

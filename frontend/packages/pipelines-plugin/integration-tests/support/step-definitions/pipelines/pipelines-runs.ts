@@ -163,9 +163,12 @@ Then('user is able to see kebab menu options Rerun, Delete Pipeline Run', () => 
   cy.byTestActionID('Delete PipelineRun').should('be.visible');
 });
 
-Then('user is able to see Details, YAML, TaskRuns, Parameters, Logs and Events tabs', () => {
-  pipelineRunDetailsPage.verifyTabs();
-});
+Then(
+  'user is able to see Details, YAML, TaskRuns, Parameters, Logs, Events and Output tabs',
+  () => {
+    pipelineRunDetailsPage.verifyTabs();
+  },
+);
 
 Then(
   'Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created At, Owner, Status, Pipeline and Triggered by',
@@ -671,4 +674,45 @@ When('user starts the pipeline {string} in Pipeline Details page', (pipelineName
   pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
   modal.modalTitleShouldContain('Start Pipeline');
   startPipelineInPipelinesPage.clickStart();
+});
+
+Given('user has created a pipelineRun with sbom task {string}', async (pipelineRunName: string) => {
+  cy.exec(`oc apply -f testData/sbom-pipelinerun/sbom-task.yaml -n ${Cypress.env('NAMESPACE')}`, {
+    failOnNonZeroExit: false,
+  }).then((result) => {
+    cy.exec(
+      `oc apply -f testData/sbom-pipelinerun/${pipelineRunName}.yaml -n ${Cypress.env(
+        'NAMESPACE',
+      )}`,
+      {
+        failOnNonZeroExit: false,
+      },
+    );
+    cy.log(result.stdout);
+  });
+});
+
+When('user navigates to PipelineRun Details page {string}', (pipelineRunName: string) => {
+  pipelinesPage.selectTab(pipelineTabs.PipelineRuns);
+
+  cy.byTestID(pipelineRunName).click();
+});
+
+Then('user can see Download SBOM and View SBOM section in PipelineRun details page', () => {
+  pipelineRunDetailsPage.verifyTitle();
+  cy.get(pipelineRunDetailsPO.details.viewSbomLink).should('be.visible');
+  cy.get(pipelineRunDetailsPO.details.downloadSbomLink).should('be.visible');
+});
+
+When(
+  'user navigates to output tab of pipelineRun details page {string}',
+  (pipelineRunName: string) => {
+    pipelinesPage.selectTab(pipelineTabs.PipelineRuns);
+    cy.byTestID(pipelineRunName).click();
+    pipelineRunDetailsPage.selectTab('Output');
+  },
+);
+
+Then('user can see the results in the output tab', () => {
+  cy.get(pipelineRunDetailsPO.details.outputTitle).should('be.visible');
 });

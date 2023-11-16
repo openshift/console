@@ -374,3 +374,16 @@ Feature: Pipeline Runs
              When user starts the pipeline "pipeline-stop" in Pipeline Details page
               And user selects option "Stop" from Actions menu drop down
              Then status displays as "Cancelled" in pipeline run details page
+        
+        @regression @odc-7420
+        Scenario: SBOM information on the pipelineRun detail page: P-07-TC36
+            Given user has created a pipelineRun with sbom task "pipelinerun-with-sbom-link"
+             When user navigates to PipelineRun Details page "pipelinerun-with-sbom-link"
+             Then user can see Download SBOM and View SBOM section in PipelineRun details page
+
+
+        @regression @odc-7423
+        Scenario: Output of the pipelinerun: P-07-TC37
+            Given user has created a pipelineRun with sbom task "pipelinerun-with-sbom-link"
+             When user navigates to output tab of pipelineRun details page "pipelinerun-with-sbom-link"
+             Then user can see the results in the output tab
