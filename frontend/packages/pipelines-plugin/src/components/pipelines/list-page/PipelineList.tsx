@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
 import { PipelineModel } from '../../../models';
 import { PropPipelineData } from '../../../utils/pipeline-augment';
-import { useTaskRuns } from '../../taskruns/useTaskRuns';
+import { useGetTaskRuns } from '../../pipelineruns/hooks/useTektonResults';
 import PipelineHeader from './PipelineHeader';
 import PipelineRow from './PipelineRow';
 
@@ -15,7 +15,7 @@ export interface PipelineListProps {
 
 const PipelineList: React.FC<PipelineListProps> = (props) => {
   const { t } = useTranslation();
-  const [taskRuns, taskRunsLoaded] = useTaskRuns(props.namespace);
+  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(props.namespace);
   return (
     <Table
       {...props}

@@ -481,7 +481,18 @@
         "version": "v1beta1",
         "kind": "PipelineRun"
       },
-      "component": { "$codeRef": "pipelinesComponent.PipelineRunsResourceList" }
+      "component": { "$codeRef": "pipelinesComponent.PipelineRunsK8sResourceList" }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "component": { "$codeRef": "pipelinesComponent.PipelineRunsK8sResourceList" }
     }
   },
   {
@@ -493,17 +504,6 @@
         "kind": "Pipeline"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelinesResourceList" }
-    }
-  },
-  {
-    "type": "console.page/resource/list",
-    "properties": {
-      "model": {
-        "group": "tekton.dev",
-        "version": "v1",
-        "kind": "PipelineRun"
-      },
-      "component": { "$codeRef": "pipelinesComponent.PipelineRunsResourceList" }
     }
   },
   {

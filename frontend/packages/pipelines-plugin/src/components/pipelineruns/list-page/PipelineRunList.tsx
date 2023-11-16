@@ -9,8 +9,8 @@ import { PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY } from '../../../const
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
 import { usePipelineOperatorVersion } from '../../pipelines/utils/pipeline-operator';
-import { useTaskRuns } from '../../taskruns/useTaskRuns';
 import { getPipelineRunVulnerabilities } from '../hooks/usePipelineRunVulnerabilities';
+import { useGetTaskRuns } from '../hooks/useTektonResults';
 import PipelineRunHeader from './PipelineRunHeader';
 import PipelineRunRow from './PipelineRunRow';
 
@@ -18,23 +18,32 @@ import './PipelineRunList.scss';
 
 type PipelineRunListProps = {
   namespace: string;
+  loaded?: boolean;
+  data?: PipelineRunKind[];
+  customData?: any;
 };
 
 export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
   const { t } = useTranslation();
-  const operatorVersion = usePipelineOperatorVersion(props.namespace);
+  const { namespace, loaded, data, customData } = props;
+  const operatorVersion = usePipelineOperatorVersion(namespace);
   const activePerspective = useActivePerspective()[0];
   const [, setPreferredTab, preferredTabLoaded] = useUserSettings<string>(
     PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY,
     'pipelines',
   );
-  const [taskRuns, taskRunsLoaded] = useTaskRuns(props.namespace);
-
+  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(namespace);
   React.useEffect(() => {
     if (preferredTabLoaded && activePerspective === 'dev') {
       setPreferredTab('pipeline-runs');
     }
   }, [activePerspective, preferredTabLoaded, setPreferredTab]);
+
+  const onRowsRendered = ({ stopIndex }) => {
+    if (loaded && stopIndex === data.length - 1) {
+      customData?.nextPage?.();
+    }
+  };
 
   return (
     <>
@@ -64,6 +73,7 @@ export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
           },
         }}
         customData={{ operatorVersion, taskRuns: taskRunsLoaded ? taskRuns : [] }}
+        onRowsRendered={onRowsRendered}
         virtualize
       />
     </>

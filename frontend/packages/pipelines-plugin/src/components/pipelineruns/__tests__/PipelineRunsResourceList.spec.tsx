@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { ListPage } from '@console/internal/components/factory';
+import { ListPage } from '../../ListPage';
 import { PIPELINE_GA_VERSION } from '../../pipelines/const';
 import * as operatorUtils from '../../pipelines/utils/pipeline-operator';
+import * as tektonResultsHooks from '../hooks/useTektonResults';
 import PipelineRunsResourceList from '../PipelineRunsResourceList';
 
 type PipelineRunsResourceListProps = React.ComponentProps<typeof PipelineRunsResourceList>;
@@ -11,6 +12,7 @@ type PipelineRunsResourceListProps = React.ComponentProps<typeof PipelineRunsRes
 describe('PipelineRunsResourceList:', () => {
   let pipelineRunsResourceListProps: PipelineRunsResourceListProps;
   let wrapper: ShallowWrapper<PipelineRunsResourceListProps>;
+  jest.spyOn(tektonResultsHooks, 'useGetPipelineRuns').mockReturnValue([[], true, '']);
 
   beforeEach(() => {
     pipelineRunsResourceListProps = {

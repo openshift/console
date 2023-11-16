@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Table } from '@console/internal/components/factory';
 import { RepositoryModel } from '../../../models';
-import { useTaskRuns } from '../../taskruns/useTaskRuns';
+import { useGetTaskRuns } from '../../pipelineruns/hooks/useTektonResults';
 import { RepositoryKind } from '../types';
 import RepositoryHeader from './RepositoryHeader';
 import RepositoryRow from './RepositoryRow';
@@ -12,7 +12,7 @@ export interface RepositoryListProps {
 }
 
 const RepositoryList: React.FC<RepositoryListProps> = (props) => {
-  const [taskRuns, taskRunsLoaded] = useTaskRuns(props.namespace);
+  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(props.namespace);
 
   return (
     <Table

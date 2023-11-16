@@ -253,6 +253,7 @@ const VirtualBody: React.FC<VirtualBodyProps> = (props) => {
     scrollTop,
     width,
     getRowProps,
+    onRowsRendered,
   } = props;
 
   const cellMeasurementCache = new CellMeasurerCache({
@@ -306,6 +307,7 @@ const VirtualBody: React.FC<VirtualBodyProps> = (props) => {
       rowRenderer={rowRenderer}
       scrollTop={scrollTop}
       width={width}
+      onRowsRendered={onRowsRendered}
     />
   );
 };
@@ -328,6 +330,12 @@ export type VirtualBodyProps<D = any, C = any> = {
   width: number;
   expand: boolean;
   getRowProps?: (obj: D) => Partial<Pick<TableRowProps, 'id' | 'className' | 'title'>>;
+  onRowsRendered?: (params: {
+    overscanStartIndex: number;
+    overscanStopIndex: number;
+    startIndex: number;
+    stopIndex: number;
+  }) => void;
 };
 
 type HeaderFunc = (componentProps: ComponentProps) => any[];
@@ -418,6 +426,7 @@ export const Table: React.FC<TableProps> = ({
   isPinned,
   defaultSortField,
   getRowProps,
+  onRowsRendered,
 }) => {
   const filters = useDeepCompareMemoize(initFilters);
   const Header = useDeepCompareMemoize(initHeader);
@@ -553,6 +562,7 @@ export const Table: React.FC<TableProps> = ({
                 width={width}
                 expand={expand}
                 getRowProps={getRowProps}
+                onRowsRendered={onRowsRendered}
               />
             </div>
           )}
@@ -657,6 +667,7 @@ export type TableProps<D = any, C = any> = Partial<ComponentProps<D>> & {
   expand?: boolean;
   scrollElement?: HTMLElement | (() => HTMLElement);
   getRowProps?: VirtualBodyProps<D>['getRowProps'];
+  onRowsRendered?: VirtualBodyProps<D>['onRowsRendered'];
 };
 
 export type ComponentProps<D = any> = {
