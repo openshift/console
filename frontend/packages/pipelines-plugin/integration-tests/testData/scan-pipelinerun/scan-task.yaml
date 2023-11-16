@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: scan-task
+  annotations:
+    task.output.location: results
+    task.results.format: application/json
+    task.results.key: SCAN_OUTPUT
+spec:
+  results:
+    - name: SCAN_OUTPUT
+      description: The common vulnerabilities and exposures (CVE) result format
+  steps:
+    - name: print-cve-results
+      image: bash:latest
+      script: |
+        #!/usr/bin/env bash
+        echo '{"vulnerabilities":{
+        "critical": 13,
+        "high": 29,
+        "medium": 32,
+        "low": 3,
+        "unknown": 0},
+        "unpatched_vulnerabilities": {
+        "critical": 0,
+        "high": 1,
+        "medium": 0,
+        "low":1}
+        }' | tee $(results.SCAN_OUTPUT.path)

@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-with-scan-task
+spec:
+  pipelineSpec:
+    tasks:
+      - name: scan-task
+        taskRef:
+          name: scan-task
+    results:
+      - name: SCAN_OUTPUT
+        description: The common vulnerabilities and exposures (CVE) result
+        value: $(tasks.scan-task.results.SCAN_OUTPUT)

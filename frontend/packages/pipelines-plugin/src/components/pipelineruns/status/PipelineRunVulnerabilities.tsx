@@ -31,51 +31,50 @@ const PipelineRunVulnerabilities: React.FC<PipelineRunVulnerabilitiesProps> = ({
 }) => {
   const scanResults = usePipelineRunVulnerabilities(pipelineRun);
 
-  return (
-    <div className="opp-vulnerabilities">
-      {scanResults?.vulnerabilities ? (
-        <>
-          <div className="opp-vulnerabilities__severity">
-            <span className="opp-vulnerabilities__severity-status">
-              <CriticalIcon />
-              {!condensed ? i18n.t('pipelines-plugin~Critical') : null}
-            </span>
-            <span className="opp-vulnerabilities__severity-count">
-              {scanResults.vulnerabilities.critical}
-            </span>
-          </div>
-          <div className="opp-vulnerabilities__severity">
-            <span className="opp-vulnerabilities__severity-status">
-              <HighIcon />
-              {!condensed ? i18n.t('pipelines-plugin~High') : null}
-            </span>
-            <span className="opp-vulnerabilities__severity-count">
-              {scanResults.vulnerabilities.high}
-            </span>
-          </div>
-          <div className="opp-vulnerabilities__severity">
-            <span className="opp-vulnerabilities__severity-status">
-              <MediumIcon />
-              {!condensed ? i18n.t('pipelines-plugin~Medium') : null}
-            </span>
-            <span className="opp-vulnerabilities__severity-count">
-              {scanResults.vulnerabilities.medium}
-            </span>
-          </div>
-          <div className="opp-vulnerabilities__severity">
-            <span className="opp-vulnerabilities__severity-status">
-              <LowIcon />
-              {!condensed ? i18n.t('pipelines-plugin~Low') : null}
-            </span>
-            <span className="opp-vulnerabilities__severity-count">
-              {scanResults.vulnerabilities.low}
-            </span>
-          </div>
-        </>
-      ) : (
-        '-'
-      )}
+  return scanResults?.vulnerabilities ? (
+    <div
+      className="opp-vulnerabilities"
+      data-test={`${pipelineRun?.metadata?.name}-vulnerabilities`}
+    >
+      <div className="opp-vulnerabilities__severity">
+        <span className="opp-vulnerabilities__severity-status">
+          <CriticalIcon />
+          {!condensed ? i18n.t('pipelines-plugin~Critical') : null}
+        </span>
+        <span className="opp-vulnerabilities__severity-count">
+          {scanResults.vulnerabilities.critical}
+        </span>
+      </div>
+      <div className="opp-vulnerabilities__severity">
+        <span className="opp-vulnerabilities__severity-status">
+          <HighIcon />
+          {!condensed ? i18n.t('pipelines-plugin~High') : null}
+        </span>
+        <span className="opp-vulnerabilities__severity-count">
+          {scanResults.vulnerabilities.high}
+        </span>
+      </div>
+      <div className="opp-vulnerabilities__severity">
+        <span className="opp-vulnerabilities__severity-status">
+          <MediumIcon />
+          {!condensed ? i18n.t('pipelines-plugin~Medium') : null}
+        </span>
+        <span className="opp-vulnerabilities__severity-count">
+          {scanResults.vulnerabilities.medium}
+        </span>
+      </div>
+      <div className="opp-vulnerabilities__severity">
+        <span className="opp-vulnerabilities__severity-status">
+          <LowIcon />
+          {!condensed ? i18n.t('pipelines-plugin~Low') : null}
+        </span>
+        <span className="opp-vulnerabilities__severity-count">
+          {scanResults.vulnerabilities.low}
+        </span>
+      </div>
     </div>
+  ) : (
+    <div>-</div>
   );
 };
 

@@ -716,3 +716,48 @@ When(
 Then('user can see the results in the output tab', () => {
   cy.get(pipelineRunDetailsPO.details.outputTitle).should('be.visible');
 });
+
+Given('user has created a PipelineRun with scan task {string}', async (pipelineRunName: string) => {
+  cy.exec(`oc apply -f testData/scan-pipelinerun/scan-task.yaml -n ${Cypress.env('NAMESPACE')}`, {
+    failOnNonZeroExit: false,
+  }).then((result) => {
+    cy.exec(
+      `oc apply -f testData/scan-pipelinerun/${pipelineRunName}.yaml -n ${Cypress.env(
+        'NAMESPACE',
+      )}`,
+      {
+        failOnNonZeroExit: false,
+      },
+    );
+    cy.log(result.stdout);
+  });
+});
+
+When('user navigates to PipelineRun list page', () => {
+  pipelinesPage.selectTab(pipelineTabs.PipelineRuns);
+});
+
+Then('user can see the vulnerabilities in the list page {string}', (pipelineRunName: string) => {
+  pipelineRunsPage.verifyVulnerabilities(pipelineRunName);
+});
+
+Then('user navigates to PipelineRun details page {string}', (pipelineRunName: string) => {
+  pipelinesPage.selectTab(pipelineTabs.PipelineRuns);
+
+  cy.byTestID(pipelineRunName).click();
+});
+
+Then(
+  'user can see the vulnerabilities section in the details page {string}',
+  (pipelineRunName: string) => {
+    pipelineRunsPage.verifyVulnerabilities(pipelineRunName);
+  },
+);
+
+Then(
+  'user can see View SBOM link in the kebab menu of PipelineRun {string}',
+  (pipelineRunName: string) => {
+    pipelineRunsPage.selectKebabMenu(pipelineRunName);
+    cy.byTestActionID(pipelineActions.ViewSBOM).should('be.visible');
+  },
+);
