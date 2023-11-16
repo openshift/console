@@ -76,6 +76,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   groupVersionKind,
   linkTo = true,
   name,
+  nameSuffix,
   namespace,
   hideIcon,
   title,
@@ -108,6 +109,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
           onClick={onClick}
         >
           {value}
+          {nameSuffix}
         </Link>
       ) : (
         <span
@@ -116,6 +118,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
           data-test={dataTest ?? value}
         >
           {value}
+          {nameSuffix}
         </span>
       )}
       {children}
