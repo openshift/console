@@ -39,7 +39,11 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props
 
   return (
     <CodeBlock actions={actions} className="co-copy-to-clipboard">
-      <CodeBlockCode className="co-copy-to-clipboard__text" data-test="copy-to-clipboard">
+      <CodeBlockCode
+        className="co-copy-to-clipboard__text"
+        data-test="copy-to-clipboard"
+        codeClassName="co-copy-to-clipboard__code"
+      >
         {visibleValue}
       </CodeBlockCode>
     </CodeBlock>

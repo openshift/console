@@ -20,13 +20,15 @@ Cypress.Commands.add('testI18n', (selectors: string[] = [], testIDs: string[] = 
     cy.visit(pseudoLocUrl);
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000); // don't know what to wait for since could be list or detial page
+    cy.wait(2000); // don't know what to wait for since could be list or detail page
 
     // if PF toolbar, click to open 'search by' dropdown
     cy.get('#content').then(($body) => {
       if ($body.find('#filter-toolbar').length) {
-        listPage.filter.clickSearchByDropdown();
-        cy.get('.pf-v5-c-dropdown__menu-item').isPseudoLocalized(); // 'search by' menu items
+        cy.get('#content').within(() => {
+          listPage.filter.clickSearchByDropdown();
+          cy.byLegacyTestID('dropdown-menu').isPseudoLocalized(); // 'search by' menu items
+        });
       }
 
       testIDs.forEach((testId) => cy.byTestID(testId).isPseudoLocalized());

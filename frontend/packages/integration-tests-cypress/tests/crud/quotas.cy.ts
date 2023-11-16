@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { projectDropdown } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
-import { errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
@@ -27,7 +26,7 @@ const createExampleQuotas = () => {
     newContent = _.defaultsDeep({}, { metadata: { name: quotaName } }, safeLoad(content));
     yamlEditor.setEditorContent(safeDump(newContent)).then(() => {
       yamlEditor.clickSaveCreateButton();
-      cy.get(errorMessage).should('not.exist');
+      cy.byTestID('yaml-error').should('not.exist');
     });
   });
   detailsPage.breadcrumb(0).click();
@@ -63,7 +62,7 @@ const createExampleQuotas = () => {
     );
     yamlEditor.setEditorContent(safeDump(newContent)).then(() => {
       yamlEditor.clickSaveCreateButton();
-      cy.get(errorMessage).should('not.exist');
+      cy.byTestID('yaml-error').should('not.exist');
     });
   });
 };

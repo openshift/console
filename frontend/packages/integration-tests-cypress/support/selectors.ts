@@ -40,9 +40,9 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('byTestActionID', (selector: string) => {
-  cy.get(`[data-test-action="${selector}"]:not(.pf-m-disabled)`);
-});
+Cypress.Commands.add('byTestActionID', (selector: string) =>
+  cy.get(`[data-test-action="${selector}"]:not([disabled])`),
+);
 
 // deprecated!  new IDs should use 'data-test', ie. `cy.byTestID(...)`
 Cypress.Commands.add('byLegacyTestID', (selector: string, timeout?: number) => {

@@ -7,8 +7,10 @@ export const roleBindings = {
       .click()
       .byLegacyTestID('dropdown-text-filter')
       .type(namespace)
-      .get('.pf-v5-c-menu__item .co-resource-item__resource-name')
-      .click(),
+      .parents('.co-namespace-dropdown__menu')
+      .within(() => {
+        cy.get('.co-resource-item__resource-name').click();
+      }),
   selectRole: (role: string) =>
     cy
       .byTestID('role-dropdown')

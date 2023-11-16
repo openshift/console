@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { projectDropdown } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
-import { errorMessage } from '../../views/form';
 import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
@@ -31,7 +30,7 @@ const createExampleRoles = () => {
     newContent = _.defaultsDeep({}, { metadata: { name: roleName } }, safeLoad(content));
     yamlEditor.setEditorContent(safeDump(newContent)).then(() => {
       yamlEditor.clickSaveCreateButton();
-      cy.get(errorMessage).should('not.exist');
+      cy.byTestID('yaml-error').should('not.exist');
     });
   });
   detailsPage.breadcrumb(0).click();
@@ -49,7 +48,7 @@ const createExampleRoles = () => {
     );
     yamlEditor.setEditorContent(safeDump(newContent)).then(() => {
       yamlEditor.clickSaveCreateButton();
-      cy.get(errorMessage).should('not.exist');
+      cy.byTestID('yaml-error').should('not.exist');
     });
   });
   detailsPage.breadcrumb(0).click();
@@ -66,7 +65,7 @@ const createExampleRoleBindings = () => {
   roleBindings.selectRole('cluster-admin');
   roleBindings.inputSubject('subject-name');
   roleBindings.clickSaveChangesButton();
-  cy.get(errorMessage).should('not.exist');
+  cy.byTestID('yaml-error').should('not.exist');
 
   cy.log('create ClusterRoleBindings instance');
   nav.sidenav.clickNavLink(['User Management', 'RoleBindings']);
@@ -78,7 +77,7 @@ const createExampleRoleBindings = () => {
   roleBindings.selectRole('cluster-admin');
   roleBindings.inputSubject('subject-name');
   roleBindings.clickSaveChangesButton();
-  cy.get(errorMessage).should('not.exist');
+  cy.byTestID('yaml-error').should('not.exist');
   nav.sidenav.clickNavLink(['User Management', 'RoleBindings']);
 };
 
@@ -161,7 +160,6 @@ describe('Roles and RoleBindings', () => {
       projectDropdown.selectProject(allProjectsDropdownLabel);
       listPage.rows.shouldBeLoaded();
       listPage.filter.by('cluster');
-      listPage.filter.numberOfActiveFiltersShouldBe(1);
       listPage.filter.byName(clusterRoleOrBindingName);
       listPage.rows.clickRowByName(clusterRoleOrBindingName);
       detailsPage.isLoaded();

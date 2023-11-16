@@ -1,10 +1,9 @@
-const saveBtn = '.environment-buttons .pf-m-primary';
 const option = '[role="option"]';
 
 export const environment = {
   isLoaded: () => {
     cy.byTestID('pairs-list-name').should('exist');
-    cy.get(saveBtn).should('be.enabled');
+    cy.byTestID('environment-save').should('be.enabled');
   },
   addVariable: (key: string, value: string) => {
     environment.isLoaded();
@@ -12,14 +11,11 @@ export const environment = {
     cy.byTestID('pairs-list-name').type(key);
     cy.byTestID('pairs-list-value').clear();
     cy.byTestID('pairs-list-value').type(value);
-    cy.get(saveBtn).click();
+    cy.byTestID('environment-save').click();
   },
   addVariableFrom: (resourceName: string, resourcePrefix?: string, getExactResource?: boolean) => {
     environment.isLoaded();
-    cy.get('.value-from .pf-v5-c-dropdown__toggle')
-      .click()
-      .byLegacyTestID('dropdown-text-filter')
-      .type(resourceName);
+    cy.get('.value-from button').click().byLegacyTestID('dropdown-text-filter').type(resourceName);
     if (getExactResource) {
       cy.get(option).find('.co-resource-item__resource-name').contains(resourceName).click();
     } else {
@@ -28,17 +24,17 @@ export const environment = {
     if (resourcePrefix) {
       cy.byLegacyTestID('env-prefix').clear().type(resourcePrefix);
     }
-    cy.get(saveBtn).click();
+    cy.byTestID('environment-save').click();
   },
   deleteVariable: () => {
     environment.isLoaded();
     cy.byTestID('delete-button').first().click();
-    cy.get(saveBtn).click();
+    cy.byTestID('environment-save').click();
   },
   deleteFromVariable: () => {
     environment.isLoaded();
     cy.byLegacyTestID('pairs-list__delete-from-btn').click();
-    cy.get(saveBtn).click();
+    cy.byTestID('environment-save').click();
   },
   validateKeyAndValue: (key: string, value: string, isPresent: boolean) => {
     if (isPresent) {

@@ -1,6 +1,5 @@
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
-import { errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import * as yamlEditor from '../../views/yaml-editor';
 
@@ -46,7 +45,7 @@ describe('Debug pod', () => {
     yamlEditor.isImportLoaded();
     yamlEditor.setEditorContent(podToDebug).then(() => {
       yamlEditor.clickSaveCreateButton();
-      cy.get(errorMessage).should('not.exist');
+      cy.byTestID('yaml-error').should('not.exist');
       detailsPage.sectionHeaderShouldExist('Pod details');
     });
   });

@@ -2,7 +2,6 @@ import 'cypress-file-upload';
 
 import { checkErrors, testName } from '../../../support';
 import { detailsPage } from '../../../views/details-page';
-import { infoMessage } from '../../../views/form';
 import { listPage } from '../../../views/list-page';
 import { nav } from '../../../views/nav';
 import { secrets } from '../../../views/secret';
@@ -62,7 +61,7 @@ describe('Create key/value secrets', () => {
   it(`Validate create and edit of a key/value secret whose value is a binary file`, () => {
     populateSecretForm(binarySecretName, secretKey, binaryFilename);
     cy.byLegacyTestID('file-input-textarea').should('not.exist');
-    cy.get(infoMessage).should('exist');
+    cy.byTestID('alert-info').should('exist');
     secrets.save();
     cy.byTestID('loading-indicator').should('not.exist');
     detailsPage.isLoaded();
@@ -98,7 +97,7 @@ describe('Create key/value secrets', () => {
     populateSecretForm(asciiSecretName, secretKey, asciiFilename);
     cy.fixture(asciiFilename, 'ascii').then((asciiSecret) => {
       cy.byLegacyTestID('file-input-textarea').should('contain.text', asciiSecret);
-      cy.get(infoMessage).should('not.exist');
+      cy.byTestID('alert-info').should('not.exist');
       secrets.save();
       cy.byTestID('loading-indicator').should('not.exist');
       detailsPage.isLoaded();
@@ -118,7 +117,7 @@ describe('Create key/value secrets', () => {
     populateSecretForm(unicodeSecretName, secretKey, unicodeFilename);
     cy.fixture(unicodeFilename, 'utf8').then((unicodeSecret) => {
       cy.byLegacyTestID('file-input-textarea').should('contain.text', unicodeSecret);
-      cy.get(infoMessage).should('not.exist');
+      cy.byTestID('alert-info').should('not.exist');
       secrets.save();
       cy.byTestID('loading-indicator').should('not.exist');
       detailsPage.isLoaded();

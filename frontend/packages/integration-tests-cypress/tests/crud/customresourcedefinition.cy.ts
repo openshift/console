@@ -2,7 +2,6 @@ import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 import { CustomResourceDefinitionKind } from '@console/internal/module/k8s';
 import { checkErrors, testName } from '../../support';
-import { errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import * as yamlEditor from '../../views/yaml-editor';
 
@@ -93,7 +92,7 @@ describe('CustomResourceDefinitions', () => {
         const newContent = _.defaultsDeep({}, crd, safeLoad(content));
         yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
           yamlEditor.clickSaveCreateButton();
-          cy.get(errorMessage).should('not.exist');
+          cy.byTestID('yaml-error').should('not.exist');
         });
       });
       cy.visit(`/k8s/cluster/customresourcedefinitions?name=${name}`);
@@ -105,7 +104,7 @@ describe('CustomResourceDefinitions', () => {
         const newContent = _.defaultsDeep({}, customResource, safeLoad(content));
         yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
           yamlEditor.clickSaveCreateButton();
-          cy.get(errorMessage).should('not.exist');
+          cy.byTestID('yaml-error').should('not.exist');
         });
       });
       cy.visit(`/k8s/cluster/customresourcedefinitions?name=${name}`);

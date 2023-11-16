@@ -2,7 +2,7 @@ import { safeLoadAll } from 'js-yaml';
 import { checkErrors } from '../../support';
 import { isLocalDevEnvironment } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
-import { infoMessage, hintMessage, refreshWebConsoleLink, warningMessage } from '../../views/form';
+import { refreshWebConsoleLink } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
@@ -69,11 +69,11 @@ const enableDemoPlugin = (enable: boolean) => {
 
 const dynamicNavTest = (navID: string) => {
   nav.sidenav.clickNavLink(['Demo Plugin', `Dynamic Nav ${navID}`]);
-  cy.get('.pf-v5-c-title.pf-m-2xl').should('contain', `Dynamic Page ${navID}`);
-  cy.get(infoMessage).should('contain', 'Example info alert');
-  cy.get(warningMessage).should('contain', 'Example warning alert');
-  cy.get(hintMessage).should('contain', 'Example hint');
-  cy.get('.pf-v5-c-card').should('contain', 'Example card');
+  cy.byTestID('title').should('contain', `Dynamic Page ${navID}`);
+  cy.byTestID('alert-info').should('contain', 'Example info alert');
+  cy.byTestID('alert-warning').should('contain', 'Example warning alert');
+  cy.byTestID('hint').should('contain', 'Example hint');
+  cy.byTestID('card').should('contain', 'Example card');
 };
 
 const k8sAPINavTest = (apiID: string) => {
@@ -82,7 +82,7 @@ const k8sAPINavTest = (apiID: string) => {
   cy.get(`test-k8s-${apiID}`).should('not.be.empty');
 };
 if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
-  xdescribe('Demo dynamic plugin test', () => {
+  describe('Demo dynamic plugin test', () => {
     before(() => {
       cy.login();
       cy.createProjectWithCLI(PLUGIN_NAME);

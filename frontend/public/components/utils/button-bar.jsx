@@ -26,6 +26,7 @@ const ErrorMessage = ({ message }) => {
       className="co-alert co-alert--scrollable"
       variant="danger"
       title={t('public~An error occurred')}
+      data-test="alert-error"
     >
       <div className="co-pre-line">{message}</div>
     </Alert>

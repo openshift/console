@@ -134,6 +134,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         <ExpandCollapse
           textCollapsed={t('public~Show advanced configuration')}
           textExpanded={t('public~Hide advanced configuration')}
+          dataTest="advanced-configuration"
         >
           <div className="co-form-subsection">
             <SendResolvedAlertsCheckbox

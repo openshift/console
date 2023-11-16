@@ -2,7 +2,6 @@ import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
-import { errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
@@ -50,7 +49,7 @@ describe(`${crd} CRD`, () => {
       const newContent = _.defaultsDeep({}, crdObj, safeLoad(content));
       yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
         yamlEditor.clickSaveCreateButton();
-        cy.get(errorMessage).should('not.exist');
+        cy.byTestID('yaml-error').should('not.exist');
       });
     });
 
