@@ -204,18 +204,18 @@ const OperandVersions: React.FC<OperandVersionsProps> = ({ versions }) => {
     <EmptyBox label={t('public~versions')} />
   ) : (
     <div className="co-table-container">
-      <table className="table">
-        <thead>
-          <tr>
-            <th>{t('public~Name')}</th>
-            <th>{t('public~Version')}</th>
+      <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+        <thead className="pf-v5-c-table__thead">
+          <tr className="pf-v5-c-table__tr">
+            <th className="pf-v5-c-table__th">{t('public~Name')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Version')}</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="pf-v5-c-table__tbody">
           {_.map(versions, ({ name, version }, i) => (
-            <tr key={i}>
-              <td>{name}</td>
-              <td>{version}</td>
+            <tr className="pf-v5-c-table__tr" key={i}>
+              <td className="pf-v5-c-table__td">{name}</td>
+              <td className="pf-v5-c-table__td">{version}</td>
             </tr>
           ))}
         </tbody>

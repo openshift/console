@@ -41,20 +41,26 @@ const IdentityProviders: React.FC<IdentityProvidersProps> = ({ identityProviders
     <EmptyBox label={t('public~Identity providers')} />
   ) : (
     <div className="co-table-container">
-      <table className="table">
-        <thead>
-          <tr>
-            <th>{t('public~Name')}</th>
-            <th>{t('public~Type')}</th>
-            <th>{t('public~Mapping method')}</th>
+      <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+        <thead className="pf-v5-c-table__thead">
+          <tr className="pf-v5-c-table__th">
+            <th className="pf-v5-c-table__th">{t('public~Name')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Type')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Mapping method')}</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="pf-v5-c-table__tbody">
           {_.map(identityProviders, (idp) => (
-            <tr key={idp.name}>
-              <td data-test-idp-name={idp.name}>{idp.name}</td>
-              <td data-test-idp-type-for={idp.name}>{idp.type}</td>
-              <td data-test-idp-mapping-for={idp.name}>{idp.mappingMethod || 'claim'}</td>
+            <tr className="pf-v5-c-table__th" key={idp.name}>
+              <td className="pf-v5-c-table__td" data-test-idp-name={idp.name}>
+                {idp.name}
+              </td>
+              <td className="pf-v5-c-table__td" data-test-idp-type-for={idp.name}>
+                {idp.type}
+              </td>
+              <td className="pf-v5-c-table__td" data-test-idp-mapping-for={idp.name}>
+                {idp.mappingMethod || 'claim'}
+              </td>
             </tr>
           ))}
         </tbody>

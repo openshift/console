@@ -201,6 +201,10 @@ form.pf-v5-c-form {
   &__main.default-overflow {
     z-index: calc(var(--pf-v5-c-page__header--ZIndex) + 50);
   }
+  // Default light background for our content
+  .co-page-backdrop {
+    background-color: var(--pf-global--BackgroundColor--100) !important;
+  }
 
   // Apply to primary content section to prevent yaml editor and topology sections from collapsing
   .pf-v5-page__main-section--flex {

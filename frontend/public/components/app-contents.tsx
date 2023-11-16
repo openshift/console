@@ -711,8 +711,7 @@ const AppContents: React.FC<{}> = () => {
       </PageSection>
       <div id="content-scrollable">
         <PageSection
-          variant={PageSectionVariants.light}
-          className="pf-v5-page__main-section--flex"
+          className="pf-v5-page__main-section--flex co-page-backdrop"
           padding={{ default: 'noPadding' }}
         >
           <ErrorBoundaryPage>

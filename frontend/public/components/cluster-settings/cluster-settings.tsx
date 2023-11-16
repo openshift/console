@@ -1259,32 +1259,36 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
               </Text>
             </TextContent>
             <div className="co-table-container">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>{t('public~Version')}</th>
-                    <th>{t('public~State')}</th>
-                    <th>{t('public~Started')}</th>
-                    <th>{t('public~Completed')}</th>
+              <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+                <thead className="pf-v5-c-table__thead">
+                  <tr className="pf-v5-c-table__tr">
+                    <th className="pf-v5-c-table__th">{t('public~Version')}</th>
+                    <th className="pf-v5-c-table__th">{t('public~State')}</th>
+                    <th className="pf-v5-c-table__th">{t('public~Started')}</th>
+                    <th className="pf-v5-c-table__th">{t('public~Completed')}</th>
                     {releaseNotes && (
-                      <th className="hidden-xs hidden-sm">{t('public~Release notes')}</th>
+                      <th className="pf-v5-c-table__th pf-m-hidden pf-m-visible-on-md">
+                        {t('public~Release notes')}
+                      </th>
                     )}
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="pf-v5-c-table__tbody">
                   {_.map(history, (update, i) => (
-                    <tr key={i}>
+                    <tr className="pf-v5-c-table__tr" key={i}>
                       <td
-                        className="co-break-all co-select-to-copy"
+                        className="pf-v5-c-table__td pf-m-break-word co-select-to-copy"
                         data-test-id="cv-details-table-version"
                       >
                         {update.version || '-'}
                       </td>
-                      <td data-test-id="cv-details-table-state">{update.state || '-'}</td>
-                      <td>
+                      <td className="pf-v5-c-table__td" data-test-id="cv-details-table-state">
+                        {update.state || '-'}
+                      </td>
+                      <td className="pf-v5-c-table__td">
                         <Timestamp timestamp={update.startedTime} />
                       </td>
-                      <td>
+                      <td className="pf-v5-c-table__td">
                         {update.completionTime ? (
                           <Timestamp timestamp={update.completionTime} />
                         ) : (
@@ -1292,7 +1296,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                         )}
                       </td>
                       {releaseNotes && (
-                        <td className="hidden-xs hidden-sm">
+                        <td className="pf-v5-c-table__td pf-m-hidden pf-m-visible-on-md">
                           {getReleaseNotesLink(update.version) ? (
                             <ReleaseNotesLink version={update.version} />
                           ) : (

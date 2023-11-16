@@ -96,14 +96,14 @@ export const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({
   limit,
 }) => {
   return (
-    <tr className="co-resource-list__item">
-      <td>{limitType}</td>
-      <td>{resource}</td>
-      <td>{limit.min || '-'}</td>
-      <td>{limit.max || '-'}</td>
-      <td>{limit.defaultRequest || '-'}</td>
-      <td>{limit.default || '-'}</td>
-      <td>{limit.maxLimitRequestRatio || '-'}</td>
+    <tr className="pf-v5-c-table__tr">
+      <td className="pf-v5-c-table__td">{limitType}</td>
+      <td className="pf-v5-c-table__td">{resource}</td>
+      <td className="pf-v5-c-table__td">{limit.min || '-'}</td>
+      <td className="pf-v5-c-table__td">{limit.max || '-'}</td>
+      <td className="pf-v5-c-table__td">{limit.defaultRequest || '-'}</td>
+      <td className="pf-v5-c-table__td">{limit.default || '-'}</td>
+      <td className="pf-v5-c-table__td">{limit.maxLimitRequestRatio || '-'}</td>
     </tr>
   );
 };
@@ -134,26 +134,24 @@ export const LimitRangeDetailsList = (resource) => {
   return (
     <div className="co-m-pane__body">
       <SectionHeading text={t('public~Limits')} />
-      <div className="table-responsive">
-        <table className="co-m-table-grid co-m-table-grid--bordered table">
-          <thead className="co-m-table-grid__head">
-            <tr>
-              <td>{t('public~Type')}</td>
-              <td>{t('public~Resource')}</td>
-              <td>{t('public~Min')}</td>
-              <td>{t('public~Max')}</td>
-              <td>{t('public~Default request')}</td>
-              <td>{t('public~Default limit')}</td>
-              <td>{t('public~Max limit/request ratio')}</td>
-            </tr>
-          </thead>
-          <tbody className="co-m-table-grid__body">
-            {_.map(resource.resource.spec.limits, (limit, index) => (
-              <LimitRangeDetailsRows limit={limit} key={index} />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+        <thead className="pf-v5-c-table__thead">
+          <tr className="pf-v5-c-table__tr">
+            <th className="pf-v5-c-table__th">{t('public~Type')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Resource')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Min')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Max')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Default request')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Default limit')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Max limit/request ratio')}</th>
+          </tr>
+        </thead>
+        <tbody className="pf-v5-c-table__tbody">
+          {_.map(resource.resource.spec.limits, (limit, index) => (
+            <LimitRangeDetailsRows limit={limit} key={index} />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

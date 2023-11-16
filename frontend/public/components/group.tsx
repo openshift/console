@@ -129,20 +129,20 @@ const UsersTable: React.FC<UsersTableProps> = ({ group, users }) => {
   return _.isEmpty(users) ? (
     <EmptyBox label={t('public~Users')} />
   ) : (
-    <table className="table">
-      <thead>
-        <tr>
-          <th>{t('public~Name')}</th>
-          <th />
+    <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+      <thead className="pf-v5-c-table__thead">
+        <tr className="pf-v5-c-table__tr">
+          <th className="pf-v5-c-table__th">{t('public~Name')}</th>
+          <th className="pf-v5-c-table__th" />
         </tr>
       </thead>
-      <tbody>
+      <tbody className="pf-v5-c-table__tbody">
         {users.map((user: string) => (
-          <tr key={user}>
-            <td>
+          <tr className="pf-v5-c-table__tr" key={user}>
+            <td className="pf-v5-c-table__td">
               <ResourceLink kind={referenceForModel(UserModel)} name={user} />
             </td>
-            <td className="dropdown-kebab-pf pf-v5-c-table__action">
+            <td className="pf-v5-c-table__td dropdown-kebab-pf pf-v5-c-table__action">
               <UserKebab group={group} user={user} />
             </td>
           </tr>

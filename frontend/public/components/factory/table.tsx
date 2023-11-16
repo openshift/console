@@ -136,7 +136,7 @@ export const TableRow: React.FC<TableRowProps> = ({
       data-test-rows="resource-row"
       data-key={trKey}
       style={style}
-      className={className}
+      className={classNames('pf-v5-c-table__tr', className)}
       role="row"
     />
   );
@@ -206,7 +206,7 @@ export const TableData: React.FC<TableDataProps> = ({
   ...props
 }) => {
   return isColumnVisible(window.innerWidth, columnID, columns, showNamespaceOverride) ? (
-    <td {...props} className={className} role="gridcell" />
+    <td {...props} className={classNames('pf-v5-c-table__td', className)} role="gridcell" />
   ) : null;
 };
 TableData.displayName = 'TableData';

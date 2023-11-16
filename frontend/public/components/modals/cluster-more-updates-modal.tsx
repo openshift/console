@@ -40,18 +40,18 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
         {clusterUpgradeableFalseAndNotExternallyManaged && (
           <ClusterNotUpgradeableAlert cv={cv} onCancel={cancel} />
         )}
-        <table className="table">
-          <thead>
-            <tr>
-              <th>{t('public~Version')}</th>
-              {releaseNotes && <th>{t('public~Release notes')}</th>}
+        <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+          <thead className="pf-v5-c-table__thead">
+            <tr className="pf-v5-c-table__tr">
+              <th className="pf-v5-c-table__th">{t('public~Version')}</th>
+              {releaseNotes && <th className="pf-v5-c-table__th">{t('public~Release notes')}</th>}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="pf-v5-c-table__tbody">
             {moreAvailableUpdates.map((update) => {
               return (
-                <tr key={update.version}>
-                  <td>
+                <tr className="pf-v5-c-table__tr" key={update.version}>
+                  <td className="pf-v5-c-table__td">
                     {update.version}
                     {clusterUpgradeableFalseAndNotExternallyManaged &&
                       isMinorVersionNewer(getLastCompletedUpdate(cv), update.version) && (
@@ -59,7 +59,7 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
                       )}
                   </td>
                   {releaseNotes && (
-                    <td>
+                    <td className="pf-v5-c-table__td">
                       {getReleaseNotesLink(update.version) ? (
                         <ReleaseNotesLink version={update.version} />
                       ) : (
