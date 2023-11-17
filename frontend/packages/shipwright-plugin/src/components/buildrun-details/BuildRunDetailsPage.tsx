@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import { Page, navFactory, viewYamlComponent } from '@console/internal/components/utils';
+import { Page, navFactory } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import {
   ActionMenu,
@@ -29,7 +29,7 @@ const BuildRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
 
   const pages: Page[] = [
     navFactory.details(BuildRunDetailsTab),
-    navFactory.editYaml(viewYamlComponent),
+    navFactory.editYaml(),
     navFactory.logs(BuildRunLogsTab),
     navFactory.events(BuildRunEventsTab),
   ];
