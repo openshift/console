@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import { Page, navFactory, viewYamlComponent } from '@console/internal/components/utils';
+import { Page, navFactory } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import {
   ActionMenu,
@@ -31,7 +31,7 @@ const BuildDetailsPage: React.FC<DetailsPageProps> = (props) => {
 
   const pages: Page[] = [
     navFactory.details(BuildDetailsTab),
-    navFactory.editYaml(viewYamlComponent),
+    navFactory.editYaml(),
     {
       href: 'buildruns',
       name: t('shipwright-plugin~BuildRuns'),
