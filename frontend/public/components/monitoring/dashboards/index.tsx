@@ -644,6 +644,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
         data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
         isClickable
         isSelectable
+        data-test-id={panel.id ? `chart-${panel.id}` : undefined}
       >
         <CardHeader
           actions={{
