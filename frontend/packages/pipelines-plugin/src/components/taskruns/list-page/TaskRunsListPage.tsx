@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { ListPage } from '@console/internal/components/factory';
 import { getURLSearchParams } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
@@ -13,6 +12,8 @@ import {
 } from '@console/shared';
 import { TaskRunModel } from '../../../models';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
+import { ListPage } from '../../ListPage';
+import { useTaskRuns } from '../../pipelineruns/hooks/useTaskRuns';
 import { runFilters as taskRunFilters } from '../../pipelines/detail-page-tabs/PipelineRuns';
 import TaskRunsHeader from './TaskRunsHeader';
 import TaskRunsList from './TaskRunsList';
@@ -32,12 +33,25 @@ const TaskRunsListPage: React.FC<
   const { t } = useTranslation();
   const searchParams = getURLSearchParams();
   const kind = searchParams?.kind;
-  const badge = usePipelineTechPreviewBadge(namespace);
+  const ns = namespace || props?.match?.params?.ns;
+  const badge = usePipelineTechPreviewBadge(ns);
+  const trForPlr = props.selector && props.selector?.matchLabels?.['tekton.dev/pipelineRun'];
+  const [taskRuns, taskRunsLoaded, taskRunsLoadError, getNextPage] = useTaskRuns(ns, trForPlr);
+
+  const taskRunsResource = {
+    [referenceForModel(TaskRunModel)]: {
+      data: taskRuns,
+      kind: referenceForModel(TaskRunModel),
+      loadError: taskRunsLoadError,
+      loaded: taskRunsLoaded,
+    },
+  };
   const customData = React.useMemo(
     () => ({
       showPipelineColumn,
+      nextPage: getNextPage,
     }),
-    [showPipelineColumn],
+    [showPipelineColumn, getNextPage],
   );
   const columnManagementID = referenceForModel(TaskRunModel);
   const [tableColumns, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
@@ -60,7 +74,7 @@ const TaskRunsListPage: React.FC<
           ListComponent={TaskRunsList}
           rowFilters={taskRunFilters(t)}
           badge={hideBadge ? null : badge}
-          namespace={namespace}
+          namespace={ns}
           columnLayout={{
             columns: TaskRunsHeader()().map((column) =>
               _.pick(column, ['title', 'additional', 'id']),
@@ -72,6 +86,7 @@ const TaskRunsListPage: React.FC<
                 : null,
             type: t('pipelines-plugin~TaskRun'),
           }}
+          data={taskRunsResource}
         />
       )}
     </>

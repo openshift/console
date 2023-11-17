@@ -1,4 +1,8 @@
-import { K8sResourceCommon, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import {
+  K8sGroupVersionKind,
+  K8sResourceCommon,
+  PersistentVolumeClaimKind,
+} from '@console/internal/module/k8s';
 import { TektonResource, TektonResultsRun, TektonTaskSpec } from './coreTekton';
 import { PipelineTaskParam, PipelineTaskRef } from './pipeline';
 import {
@@ -40,4 +44,10 @@ export type TaskRunKind = K8sResourceCommon & {
     workspaces?: TaskRunWorkspace[];
   };
   status?: TaskRunStatus;
+};
+
+export const TaskRunGroupVersionKind: K8sGroupVersionKind = {
+  group: 'tekton.dev',
+  version: 'v1',
+  kind: 'TaskRun',
 };
