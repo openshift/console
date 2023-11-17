@@ -41,6 +41,8 @@ export type AddActionGroup = ExtensionDeclaration<
     insertBefore?: string;
     /** ID of action group after which this group should be placed */
     insertAfter?: string;
+    /** The perspective display icon. */
+    icon?: CodeRef<React.ReactNode> | string;
   }
 >;
 

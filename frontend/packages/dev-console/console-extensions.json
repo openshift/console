@@ -276,7 +276,7 @@
       "name": "%devconsole~Serverless function%",
       "insertAfter": "eventing",
       "insertBefore": "git-repository",
-      "icon": { "$codeRef": "icons.serverlessFunctionSVG" }
+      "icon": "icon-serverless-function"
     }
   },
   {
