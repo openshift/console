@@ -171,6 +171,6 @@ export type PipelineWithLatest = PipelineKind & {
 
 export const PipelineRunGroupVersionKind: K8sGroupVersionKind = {
   group: 'tekton.dev',
-  version: 'v1beta1',
+  version: 'v1',
   kind: 'PipelineRun',
 };

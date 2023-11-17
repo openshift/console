@@ -5,6 +5,7 @@ import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/h
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
+import { TektonResourceLabel } from '../../pipelines/const';
 import { RepositoryFields, RepositoryLabels } from '../../repository/consts';
 import { useTaskRuns } from '../../taskruns/useTaskRuns';
 import {
@@ -147,14 +148,40 @@ export const useGetPipelineRuns = (ns: string, options?: { name: string; kind: s
   ];
 };
 
-export const useGetTaskRuns = (ns: string) => {
-  const [taskRuns, taskRunsLoaded] = useTaskRuns(ns);
-  const [resultTaskRuns, resultTaskRunsLoaded] = useTRTaskRuns(ns);
+export const useGetTaskRuns = (
+  ns: string,
+  pipelineRunName?: string,
+): [TaskRunKind[], boolean, unknown, GetNextPage] => {
+  let selector: Selector;
+  if (pipelineRunName) {
+    selector = {
+      matchLabels: {
+        [TektonResourceLabel.pipelinerun]: pipelineRunName,
+      },
+    };
+  }
+  const [k8sTaskRuns, k8sTaskRunsLoaded, k8sTaskRunsLoadError] = useTaskRuns(ns, pipelineRunName);
+  const [
+    resultTaskRuns,
+    resultTaskRunsLoaded,
+    resultTaskRunsLoadError,
+    getNextPage,
+  ] = useTRTaskRuns(
+    ns,
+    pipelineRunName && {
+      selector,
+    },
+  );
   const mergedTaskRuns =
-    resultTaskRunsLoaded || taskRunsLoaded
-      ? uniqBy([...taskRuns, ...resultTaskRuns], (r) => r.metadata.name)
+    resultTaskRunsLoaded || k8sTaskRunsLoaded
+      ? uniqBy([...k8sTaskRuns, ...resultTaskRuns], (r) => r.metadata.name)
       : [];
-  return [mergedTaskRuns, resultTaskRunsLoaded || taskRunsLoaded];
+  return [
+    mergedTaskRuns,
+    resultTaskRunsLoaded || k8sTaskRunsLoaded,
+    k8sTaskRunsLoadError || resultTaskRunsLoadError,
+    getNextPage,
+  ];
 };
 
 export const useTRTaskRunLog = (

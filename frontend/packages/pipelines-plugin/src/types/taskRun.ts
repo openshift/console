@@ -48,6 +48,6 @@ export type TaskRunKind = K8sResourceCommon & {
 
 export const TaskRunGroupVersionKind: K8sGroupVersionKind = {
   group: 'tekton.dev',
-  version: 'v1beta1',
+  version: 'v1',
   kind: 'TaskRun',
 };

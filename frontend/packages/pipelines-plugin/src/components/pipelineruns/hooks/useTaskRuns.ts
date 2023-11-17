@@ -1,26 +1,29 @@
 import * as React from 'react';
+import { Selector } from '@console/dynamic-plugin-sdk/src';
 import { TaskRunKind } from '../../../types';
 import { TektonResourceLabel } from '../../pipelines/const';
 import { useTaskRuns as useTaskRuns2 } from './usePipelineRuns';
+import { GetNextPage } from './useTektonResults';
 
 export const useTaskRuns = (
   namespace: string,
-  pipelineRunName: string,
+  pipelineRunName?: string,
   taskName?: string,
-): [TaskRunKind[], boolean, unknown] => {
-  const [taskRuns, loaded, error] = useTaskRuns2(
+): [TaskRunKind[], boolean, unknown, GetNextPage] => {
+  const selector: Selector = React.useMemo(() => {
+    if (pipelineRunName) {
+      return { matchLabels: { [TektonResourceLabel.pipelinerun]: pipelineRunName } };
+    }
+    if (taskName) {
+      return { matchLabels: { [TektonResourceLabel.pipelineTask]: taskName } };
+    }
+    return undefined;
+  }, [taskName, pipelineRunName]);
+  const [taskRuns, loaded, error, getNextPage] = useTaskRuns2(
     namespace,
-    React.useMemo(
-      () => ({
-        selector: {
-          matchLabels: {
-            [TektonResourceLabel.pipelinerun]: pipelineRunName,
-            ...(taskName ? { [TektonResourceLabel.pipelineTask]: taskName } : {}),
-          },
-        },
-      }),
-      [pipelineRunName, taskName],
-    ),
+    selector && {
+      selector,
+    },
   );
 
   const sortedTaskRuns = React.useMemo(
@@ -39,5 +42,10 @@ export const useTaskRuns = (
       }),
     [taskRuns],
   );
-  return React.useMemo(() => [sortedTaskRuns, loaded, error], [sortedTaskRuns, loaded, error]);
+  return React.useMemo(() => [sortedTaskRuns, loaded, error, getNextPage], [
+    sortedTaskRuns,
+    loaded,
+    error,
+    getNextPage,
+  ]);
 };
