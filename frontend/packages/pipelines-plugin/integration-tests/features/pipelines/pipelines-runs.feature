@@ -387,3 +387,18 @@ Feature: Pipeline Runs
             Given user has created a pipelineRun with sbom task "pipelinerun-with-sbom-link"
              When user navigates to output tab of pipelineRun details page "pipelinerun-with-sbom-link"
              Then user can see the results in the output tab
+        
+        @regression @odc-7421
+        Scenario: CVE information in the pipelinerun list and details page: P-07-TC38
+            Given user has created a PipelineRun with scan task "pipelinerun-with-scan-task"
+             When user navigates to PipelineRun list page
+             Then user can see the vulnerabilities in the list page "pipelinerun-with-scan-task"
+              And user navigates to PipelineRun details page "pipelinerun-with-scan-task"
+              And user can see the vulnerabilities section in the details page "pipelinerun-with-scan-task"
+
+        
+        @regression @odc-7421
+        Scenario: View SBOM link in the pipelinerun list kebab action: P-07-TC38
+            Given user has created a pipelineRun with sbom task "pipelinerun-with-sbom-link"
+             When user navigates to PipelineRun list page
+             Then user can see View SBOM link in the kebab menu of PipelineRun "pipelinerun-with-sbom-link" 

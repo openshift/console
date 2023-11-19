@@ -10,6 +10,7 @@ export enum pipelineActions {
   DeletePipeline = 'Delete Pipeline',
   StartLastRun = 'Start Last Run',
   Rerun = 'Rerun',
+  ViewSBOM = 'View SBOM',
   DeletePipelineRun = 'Delete PipelineRun',
   EditRepository = 'Edit Repository',
   DeleteRepository = 'Delete Repository',
