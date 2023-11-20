@@ -44,7 +44,7 @@ export const TagsModal = withHandlePromise<TagsModalProps & HandlePromiseProps>(
   const { t } = useTranslation();
 
   React.useEffect(() => {
-    if (watchedResourceLoaded) {
+    if (watchedResourceLoaded && !_.isEmpty(watchedResource)) {
       setStale(!_.isEqual(props.tags, watchedResource?.metadata?.annotations));
     }
   }, [props.tags, watchedResource, watchedResourceLoaded]);
