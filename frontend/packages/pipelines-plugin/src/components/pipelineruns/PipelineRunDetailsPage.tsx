@@ -11,19 +11,20 @@ import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
 import { chainsSignedAnnotation } from '../pipelines/const';
 import { useDevPipelinesBreadcrumbsFor } from '../pipelines/hooks';
 import { usePipelineOperatorVersion } from '../pipelines/utils/pipeline-operator';
-import { useTaskRuns } from '../taskruns/useTaskRuns';
 import { PipelineRunDetails } from './detail-page-tabs/PipelineRunDetails';
 import { PipelineRunLogsWithActiveTask } from './detail-page-tabs/PipelineRunLogs';
 import TaskRuns from './detail-page-tabs/TaskRuns';
 import PipelineRunEvents from './events/PipelineRunEvents';
+import { usePipelineRun } from './hooks/usePipelineRuns';
+import { useTaskRuns } from './hooks/useTaskRuns';
 import PipelineRunParametersForm from './PipelineRunParametersForm';
 import { useMenuActionsWithUserAnnotation } from './triggered-by';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { kindObj, match } = props;
+  const { kindObj, match, namespace, name } = props;
   const { t } = useTranslation();
-  const operatorVersion = usePipelineOperatorVersion(props.namespace);
-  const [taskRuns] = useTaskRuns(props.namespace);
+  const operatorVersion = usePipelineOperatorVersion(namespace);
+  const [taskRuns] = useTaskRuns(namespace, name);
   const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineRunKebabActions(operatorVersion, taskRuns, true),
   );
@@ -40,9 +41,17 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
     ) : (
       obj?.metadata?.name
     );
+
+  const [pipelineRun, loaded, error] = usePipelineRun(namespace, name);
+
   return (
     <DetailsPage
       {...props}
+      obj={{
+        data: pipelineRun,
+        loaded,
+        loadError: error,
+      }}
       badge={badge}
       menuActions={menuActions}
       getResourceStatus={pipelineRunStatus}

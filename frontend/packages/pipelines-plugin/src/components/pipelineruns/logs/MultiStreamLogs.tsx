@@ -1,42 +1,40 @@
 import * as React from 'react';
-import { Button, Flex, FlexItem } from '@patternfly/react-core';
-import { DownloadIcon, CompressIcon, ExpandIcon } from '@patternfly/react-icons';
-import * as classNames from 'classnames';
-import { saveAs } from 'file-saver';
-import { useTranslation } from 'react-i18next';
-import { errorModal } from '@console/internal/components/modals/error-modal';
 import { LoadingInline, LOG_SOURCE_WAITING } from '@console/internal/components/utils';
 import { ContainerStatus, PodKind, ContainerSpec } from '@console/internal/module/k8s';
-import { useFullscreen, useScrollDirection, ScrollDirection } from '@console/shared';
+import { useScrollDirection, ScrollDirection } from '@console/shared';
+import { TaskRunKind } from '../../../types';
 import { containerToLogSourceStatus } from '../../../utils/pipeline-utils';
 import Logs from './Logs';
 import { getRenderContainers } from './logs-utils';
+
 import './MultiStreamLogs.scss';
 
 type MultiStreamLogsProps = {
   resource: PodKind;
-  taskName: string;
-  downloadAllLabel?: string;
-  onDownloadAll?: () => Promise<Error>;
+  taskName?: string;
+  taskRun?: TaskRunKind;
+  setCurrentLogsGetter?: (getter: () => string) => void;
 };
 
 export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
   resource,
-  taskName,
-  downloadAllLabel,
-  onDownloadAll,
+  taskRun,
+  setCurrentLogsGetter,
 }) => {
-  const { t } = useTranslation();
   const scrollPane = React.useRef<HTMLDivElement>();
   const completedRef = React.useRef<boolean[]>([]);
   const [renderToCount, setRenderToCount] = React.useState(0);
-  const [isFullscreen, fullscreenRef, fullscreenToggle] = useFullscreen<HTMLDivElement>();
   const [scrollDirection, handleScrollCallback] = useScrollDirection();
-  const [autoScroll, setAutoScroll] = React.useState(true);
   const { containers, stillFetching } = getRenderContainers(resource);
-  const [downloadAllStatus, setDownloadAllStatus] = React.useState(false);
   const dataRef = React.useRef<ContainerSpec[]>(null);
   dataRef.current = containers;
+  const taskName = taskRun?.spec.taskRef?.name ?? taskRun?.metadata.name;
+
+  React.useEffect(() => {
+    setCurrentLogsGetter(() => {
+      return scrollPane.current?.innerText;
+    });
+  }, [setCurrentLogsGetter]);
 
   const handleComplete = React.useCallback((containerName) => {
     const index = dataRef.current.findIndex(({ name }) => name === containerName);
@@ -49,88 +47,13 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
     }
   }, []);
 
-  React.useEffect(() => {
-    if (!scrollDirection) return;
-    if (scrollDirection === ScrollDirection.scrollingUp && autoScroll === true) {
-      setAutoScroll(false);
-    }
-    if (scrollDirection === ScrollDirection.scrolledToBottom && autoScroll === false) {
-      setAutoScroll(true);
-    }
-  }, [autoScroll, scrollDirection]);
-  const startDownloadAll = () => {
-    setDownloadAllStatus(true);
-    onDownloadAll()
-      .then(() => {
-        setDownloadAllStatus(false);
-      })
-      .catch((err: Error) => {
-        setDownloadAllStatus(false);
-        const error = err.message || t('pipelines-plugin~Error downloading logs.');
-        errorModal({ error });
-      });
-  };
-  const downloadLogs = () => {
-    if (!scrollPane.current) return;
-    const logString = scrollPane.current.innerText;
-    const blob = new Blob([logString], {
-      type: 'text/plain;charset=utf-8',
-    });
-    saveAs(blob, `${taskName}.log`);
-  };
+  const autoScroll =
+    scrollDirection == null || scrollDirection === ScrollDirection.scrolledToBottom;
 
   const containerStatus: ContainerStatus[] = resource.status?.containerStatuses ?? [];
-  const divider = <FlexItem className="odc-multi-stream-logs__divider">|</FlexItem>;
   return (
-    <div ref={fullscreenRef} className="odc-multi-stream-logs">
-      <Flex
-        className={classNames({
-          'odc-multi-stream-logs--fullscreen': isFullscreen,
-        })}
-      >
-        <FlexItem className="odc-multi-stream-logs__button" align={{ default: 'alignRight' }}>
-          <Button variant="link" onClick={downloadLogs} isInline>
-            <DownloadIcon className="odc-multi-stream-logs__icon" />
-            {t('pipelines-plugin~Download')}
-          </Button>
-        </FlexItem>
-        {divider}
-        {onDownloadAll && (
-          <>
-            <FlexItem className="odc-multi-stream-logs__button">
-              <Button
-                variant="link"
-                onClick={startDownloadAll}
-                isDisabled={downloadAllStatus}
-                isInline
-              >
-                <DownloadIcon className="odc-multi-stream-logs__icon" />
-                {downloadAllLabel || t('pipelines-plugin~Download all')}
-                {downloadAllStatus && <LoadingInline />}
-              </Button>
-            </FlexItem>
-            {divider}
-          </>
-        )}
-        {fullscreenToggle && (
-          <FlexItem className="odc-multi-stream-logs__button">
-            <Button variant="link" onClick={fullscreenToggle} isInline>
-              {isFullscreen ? (
-                <>
-                  <CompressIcon className="odc-multi-stream-logs__icon" />
-                  {t('pipelines-plugin~Collapse')}
-                </>
-              ) : (
-                <>
-                  <ExpandIcon className="odc-multi-stream-logs__icon" />
-                  {t('pipelines-plugin~Expand')}
-                </>
-              )}
-            </Button>
-          </FlexItem>
-        )}
-      </Flex>
-      <div className="odc-multi-stream-logs__taskName">
+    <>
+      <div className="odc-multi-stream-logs__taskName" data-test-id="logs-taskName">
         {taskName}
         {stillFetching && (
           <span className="odc-multi-stream-logs__taskName__loading-indicator">
@@ -150,7 +73,7 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
             return (
               resourceStatus !== LOG_SOURCE_WAITING && (
                 <Logs
-                  key={container.name}
+                  key={`${taskName}-${container.name}`}
                   resource={resource}
                   container={container}
                   resourceStatus={resourceStatus}
@@ -163,6 +86,6 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
           })}
         </div>
       </div>
-    </div>
+    </>
   );
 };

@@ -2,8 +2,8 @@ import * as React from 'react';
 import { LoadingInline } from '@console/internal/components/utils';
 import { PipelineKind, PipelineRunKind } from '../../../types';
 import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
-import { useTaskRuns } from '../../taskruns/useTaskRuns';
 import { usePipelineFromPipelineRun } from '../hooks/usePipelineFromPipelineRun';
+import { useTaskRuns } from '../hooks/useTaskRuns';
 import './PipelineRunVisualization.scss';
 
 type PipelineRunVisualizationProps = {

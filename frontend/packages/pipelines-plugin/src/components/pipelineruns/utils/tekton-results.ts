@@ -1,12 +1,11 @@
 import {
   K8sResourceCommon,
-  K8sResourceKind,
   MatchExpression,
   MatchLabels,
   Selector,
 } from '@console/dynamic-plugin-sdk/src';
-import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { RouteModel } from '@console/internal/models';
+import { k8sGet } from '@console/internal/module/k8s';
 import { consoleProxyFetchJSON } from '@console/shared/src/utils/proxy';
 import { TektonResultModel } from '../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
@@ -52,10 +51,10 @@ export type TektonResultsOptions = {
   filter?: string;
 };
 
-// const throw404 = () => {
-//   // eslint-disable-next-line no-throw-literal
-//   throw { code: 404 };
-// };
+const throw404 = () => {
+  // eslint-disable-next-line no-throw-literal
+  throw { code: 404 };
+};
 
 // decoding result base64
 export const decodeValue = (value: string) => atob(value);
@@ -144,11 +143,9 @@ export const selectorToFilter = (selector) => {
   let filter = '';
   if (selector) {
     const { matchLabels, matchExpressions, filterByName } = selector;
-
     if (filterByName) {
       filter = AND(filter, nameFilter(filterByName as string));
     }
-
     if (matchLabels || matchExpressions) {
       if (matchLabels) {
         filter = AND(filter, labelsToFilter(matchLabels));
@@ -172,30 +169,25 @@ export const clearCache = () => {
 };
 const InFlightStore: { [key: string]: boolean } = {};
 
-let tektonResultUrl: string;
+// const getTRUrlPrefix = (): string => URL_PREFIX;
+
+export const getTRURLHost = async () => {
+  const tektonResult = await k8sGet(TektonResultModel, 'result');
+  const targetNamespace = tektonResult?.spec?.targetNamespace;
+  const route = await k8sGet(RouteModel, 'tekton-results-api-service', targetNamespace);
+  return route?.spec.host;
+};
 
 export const createTektonResultsUrl = async (
   namespace: string,
-  dataType: DataType,
+  dataType?: DataType,
   filter?: string,
   options?: TektonResultsOptions,
   nextPageToken?: string,
 ): Promise<string> => {
+  const tektonResultUrl = await getTRURLHost();
   if (!tektonResultUrl) {
-    const tektonResult: K8sResourceKind = await k8sGetResource({
-      model: TektonResultModel,
-      name: 'result',
-    });
-    const targetNamespace = tektonResult?.spec?.targetNamespace;
-    const route: K8sResourceKind = await k8sGetResource({
-      model: RouteModel,
-      name: 'tekton-results-api-service',
-      ns: targetNamespace,
-    });
-    tektonResultUrl = route?.spec.host;
-    if (!tektonResultUrl) {
-      throw new Error('route.spec.host is undefined');
-    }
+    throw new Error('route.spec.host is undefined');
   }
   const url = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${namespace}/results/-/records?${new URLSearchParams(
     {
@@ -328,21 +320,24 @@ export const getTaskRuns = (
   cacheKey?: string,
 ) => getFilteredTaskRuns(namespace, '', options, nextPageToken, cacheKey);
 
-// const getLog = (taskRunPath: string) =>
-//   consoleProxyFetchJSON({
-//     url: `${getTRUrlPrefix()}/${taskRunPath.replace('/records/', '/logs/')}`,
-//     method: 'GET', allowInsecure: true
-//   });
+const getLog = async (taskRunPath: string) => {
+  const tektonResultUrl = await getTRURLHost();
+  const url = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${taskRunPath.replace(
+    '/records/',
+    '/logs/',
+  )}`;
+  return consoleProxyFetchJSON({ url, method: 'GET', allowInsecure: true });
+};
 
-// export const getTaskRunLog = (namespace: string, taskRunName: string): Promise<string> =>
-//   getFilteredRecord<any>(
-//     namespace,
-//     DataType.Log,
-//     AND(EQ(`data.spec.resource.kind`, 'TaskRun'), EQ(`data.spec.resource.name`, taskRunName)),
-//     { limit: 1 },
-//   ).then((x) =>
-//     x?.[1]?.records.length > 0
-//       ? // eslint-disable-next-line promise/no-nesting
-//         getLog(x?.[1]?.records[0].name).then((response) => decodeValue(response.result.data))
-//       : throw404(),
-//   );
+export const getTaskRunLog = (namespace: string, taskRunName: string): Promise<string> =>
+  getFilteredRecord<any>(
+    namespace,
+    DataType.Log,
+    AND(EQ(`data.spec.resource.kind`, 'TaskRun'), EQ(`data.spec.resource.name`, taskRunName)),
+    { limit: 1 },
+  ).then((x) =>
+    x?.[1]?.records.length > 0
+      ? // eslint-disable-next-line promise/no-nesting
+        getLog(x?.[1]?.records[0].name).then((response: Log) => decodeValue(response.result.data))
+      : throw404(),
+  );

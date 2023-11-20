@@ -1,4 +1,8 @@
-import { K8sResourceCommon, ObjectMetadata } from '@console/internal/module/k8s';
+import {
+  K8sGroupVersionKind,
+  K8sResourceCommon,
+  ObjectMetadata,
+} from '@console/internal/module/k8s';
 import { TektonResultsRun, TektonTaskSpec } from './coreTekton';
 import { PipelineKind, PipelineSpec } from './pipeline';
 
@@ -163,4 +167,10 @@ export type PipelineRunKind = K8sResourceCommon & {
 
 export type PipelineWithLatest = PipelineKind & {
   latestRun?: PipelineRunKind;
+};
+
+export const PipelineRunGroupVersionKind: K8sGroupVersionKind = {
+  group: 'tekton.dev',
+  version: 'v1',
+  kind: 'PipelineRun',
 };
