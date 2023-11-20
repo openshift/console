@@ -101,7 +101,8 @@ type K8sVerb =
   | 'patch'
   | 'delete'
   | 'deletecollection'
-  | 'watch';
+  | 'watch'
+  | 'impersonate';
 
 enum BadgeType {
   DEV = 'Dev Preview',
