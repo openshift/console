@@ -46,7 +46,7 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
   const { t } = useTranslation();
 
   React.useEffect(() => {
-    if (watchedResourceLoaded) {
+    if (watchedResourceLoaded && !_.isEmpty(watchedResource)) {
       setStale(!_.isEqual(resource?.metadata?.labels, watchedResource?.metadata?.labels));
     }
   }, [path, resource, watchedResource, watchedResourceLoaded]);
