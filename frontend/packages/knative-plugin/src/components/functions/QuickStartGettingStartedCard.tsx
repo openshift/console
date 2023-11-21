@@ -80,17 +80,17 @@ export const QuickStartGettingStartedCard: React.FC<QuickStartGettingStartedCard
         if (loaded && slicedQuickStarts.length === 0) {
           links.push(
             {
-              id: 'ide-extensions',
+              id: 'serverless-functions-using-cli-link',
+              title: t('knative-plugin~Create Serverless functions using CLI'),
               href:
-                'https://marketplace.visualstudio.com/items?itemName=redhat.vscode-openshift-connector',
-              title: t('knative-plugin~Create using IDE extension'),
+                'https://access.redhat.com/documentation/en-us/red_hat_openshift_serverless/1.30/html/functions/index',
               external: true,
             },
             {
-              id: 'functions-tekton-pipelines',
-              title: t('knative-plugin~Building Functions on Cluster with Tekton Pipelines'),
+              id: 'serverless-functions-using-ide-link',
               href:
-                'https://github.com/knative/func/blob/main/docs/building-functions/on_cluster_build.md',
+                'https://github.com/redhat-developer/vscode-openshift-tools/blob/main/README.serverlessfn.md',
+              title: t('knative-plugin~Create Serverless functions using IDE'),
               external: true,
             },
           );

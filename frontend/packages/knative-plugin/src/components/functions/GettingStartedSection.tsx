@@ -27,12 +27,12 @@ export const GettingStartedSection: React.FC = () => {
       >
         <Card className="odc-functions-getting-started-grid" data-test="getting-started">
           <span style={{ marginLeft: '16px' }}>
-            {t('knative-plugin~Choose how to create a function from 3 methods')}
+            {t('knative-plugin~Choose how to create a function from below methods')}
           </span>
           <CardBody className="odc-functions-getting-started-grid__content">
             <SampleGettingStartedCard />
             <QuickStartGettingStartedCard
-              featured={['serverless-application', 'install-serverless']}
+              featured={['serverless-functions-using-cli', 'serverless-functions-using-ide']}
               title={t('knative-plugin~Create function with guided documentation')}
               description={t(
                 'knative-plugin~Follow guided documentation to create serverless functions.',
