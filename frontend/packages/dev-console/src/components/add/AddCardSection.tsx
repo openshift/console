@@ -41,8 +41,8 @@ const AddCardSection: React.FC<AddCardSectionProps> = ({
 
     const addGroups: AddGroup[] = getAddGroups(addActionExtensions, sortedActionGroup);
 
-    return addGroups.map(({ id, name, items }) => (
-      <AddCard key={id} id={id} title={name} items={items} namespace={namespace} />
+    return addGroups.map(({ id, name, items, icon }) => (
+      <AddCard key={id} id={id} title={name} items={items} namespace={namespace} icon={icon} />
     ));
   };
 

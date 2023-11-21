@@ -1334,6 +1334,7 @@ This extension allows plugins to contibute a group in the add page of developer 
 | `name` | `string` | no | The title of the action group |
 | `insertBefore` | `string` | yes | ID of action group before which this group should be placed |
 | `insertAfter` | `string` | yes | ID of action group after which this group should be placed |
+| `icon` | `string \| CodeRef<React.ReactNode>` | yes | The perspective display icon. |
 
 ---
 

@@ -6,6 +6,19 @@
   &__title {
     margin: var(--pf-global--spacer--lg) 0px 0px var(--pf-global--spacer--lg);
   }
+
+  &__icon {
+    max-width: var(--pf-global--spacer--lg);
+    min-width: var(--pf-global--spacer--md);
+    color: var(--pf-global--Color--100) !important;
+    // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
+    font-size: var(--pf-global--FontSize--md);
+    margin-right: var(--pf-global--spacer--sm);
+  }
+
+  &__img-icon {
+    vertical-align: -0.3em;
+  }
 }
 
 .pf-c-simple-list ul {
