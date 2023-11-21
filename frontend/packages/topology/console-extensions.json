@@ -98,6 +98,14 @@
   {
     "type": "console.topology/details/tab-section",
     "properties": {
+      "id": "topology-tab-section-vpa-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "provider": { "$codeRef": "workload.useVpaSideBarTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
       "id": "topology-tab-section-jobs-overview",
       "tab": "topology-side-bar-tab-resource",
       "provider": { "$codeRef": "workload.useJobsSideBarTabSection" }

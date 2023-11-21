@@ -12,3 +12,4 @@ export * from './network-tab-section';
 export * from './jobs-tab-section';
 export * from './PodSideBarDetails';
 export * from './resource-alert';
+export * from './vpa-tab-section';
