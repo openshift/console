@@ -17,7 +17,6 @@ import {
   Silence,
   SilenceStates,
   TableColumn,
-  useActivePerspective,
   useResolvedExtensions,
   YellowExclamationTriangleIcon,
 } from '@console/dynamic-plugin-sdk';
@@ -38,7 +37,6 @@ import {
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { useExtensions } from '@console/plugin-sdk';
 import { withFallback } from '@console/shared/src/components/error';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
   Alert as PFAlert,
@@ -149,8 +147,12 @@ const alertSource = (alert: Alert): AlertSource | string => alertingRuleSource(a
 const pollers = {};
 const pollerTimeouts = {};
 
-const silenceAlert = (alert: Alert) =>
-  history.push(`${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`);
+const silenceAlert = (alert: Alert, namespace?: string) =>
+  history.push(
+    namespace
+      ? `/dev-monitoring/ns/${namespace}/silences/~new/?${labelsToParams(alert.labels)}`
+      : `/monitoring/silences/~new/?${labelsToParams(alert.labels)}`,
+  );
 
 const viewAlertRule = (alert: Alert) => history.push(ruleURL(alert.rule));
 
@@ -507,8 +509,15 @@ const SilenceMatchersList = ({ silence }) => (
   </div>
 );
 
-const SilenceTableRow: React.FC<RowProps<Silence>> = ({ obj }) => {
+type SilenceTableRowProps = RowProps<Silence> & {
+  rowData: {
+    namespace?: string;
+  };
+};
+
+const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, rowData }) => {
   const { createdBy, endsAt, firingAlerts, id, name, startsAt } = obj;
+  const namespace = rowData?.namespace;
   const state = silenceState(obj);
 
   const { t } = useTranslation();
@@ -522,7 +531,11 @@ const SilenceTableRow: React.FC<RowProps<Silence>> = ({ obj }) => {
             className="co-resource-item__resource-name"
             data-test-id="silence-resource-link"
             title={id}
-            to={`${SilenceResource.plural}/${id}`}
+            to={
+              namespace
+                ? `/dev-monitoring/ns/${namespace}/silences/${id}`
+                : `/monitoring/silences/${id}`
+            }
           >
             {name}
           </Link>
@@ -548,7 +561,7 @@ const SilenceTableRow: React.FC<RowProps<Silence>> = ({ obj }) => {
       </td>
       <td className={tableSilenceClasses[3]}>{createdBy || '-'}</td>
       <td className={tableSilenceClasses[4]}>
-        <SilenceDropdownKebab silence={obj} />
+        <SilenceDropdownKebab silence={obj} namespace={namespace} />
       </td>
     </>
   );
@@ -643,7 +656,10 @@ const getSourceKey = (t: TFunction, source: string) => {
   }
 };
 
-const SilencedByList: React.FC<{ silences: Silence[] }> = ({ silences }) => {
+const SilencedByList: React.FC<{ silences: Silence[]; namespace?: string }> = ({
+  silences,
+  namespace,
+}) => {
   const { t } = useTranslation();
 
   const columns = React.useMemo<TableColumn<Silence>[]>(
@@ -686,6 +702,7 @@ const SilencedByList: React.FC<{ silences: Silence[] }> = ({ silences }) => {
       loadError={undefined}
       Row={SilenceTableRow}
       unfilteredData={silences}
+      rowData={{ namespace }}
     />
   );
 };
@@ -759,7 +776,7 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               <div data-test-id="details-actions">
                 <Button
                   className="co-action-buttons__btn"
-                  onClick={() => silenceAlert(alert)}
+                  onClick={() => silenceAlert(alert, namespace)}
                   variant="primary"
                 >
                   {t('public~Silence alert')}
@@ -921,7 +938,7 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               <SectionHeading text={t('public~Silenced by')} />
               <div className="row">
                 <div className="col-xs-12">
-                  <SilencedByList silences={alert?.silencedBy} />
+                  <SilencedByList silences={alert?.silencedBy} namespace={namespace} />
                 </div>
               </div>
             </div>
@@ -987,7 +1004,11 @@ const ActiveAlerts: React.FC<{ alerts; ruleID: string; namespace: string }> = (p
               <div className="dropdown-kebab-pf">
                 <KebabDropdown
                   dropdownItems={[
-                    <DropdownItem component="button" key="silence" onClick={() => silenceAlert(a)}>
+                    <DropdownItem
+                      component="button"
+                      key="silence"
+                      onClick={() => silenceAlert(a, namespace)}
+                    >
                       {t('public~Silence alert')}
                     </DropdownItem>,
                   ]}
@@ -1198,12 +1219,14 @@ type ExpireSilenceModalProps = {
   isOpen: boolean;
   setClosed: () => void;
   silenceId: string;
+  namespace?: string;
 };
 
 const ExpireSilenceModal: React.FC<ExpireSilenceModalProps> = ({
   isOpen,
   setClosed,
   silenceId,
+  namespace,
 }) => {
   const { t } = useTranslation();
 
@@ -1212,8 +1235,11 @@ const ExpireSilenceModal: React.FC<ExpireSilenceModalProps> = ({
 
   const expireSilence = () => {
     setInProgress();
+    const url = namespace
+      ? `api/alertmanager-tenancy/api/v2/silence/${silenceId}?namespace=${namespace}`
+      : `${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silenceId}`;
     consoleFetchJSON
-      .delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silenceId}`)
+      .delete(url)
       .then(() => {
         refreshNotificationPollers();
         setClosed();
@@ -1272,6 +1298,7 @@ const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
   isPlain,
   silence,
   Toggle,
+  namespace,
 }) => {
   const { t } = useTranslation();
 
@@ -1279,7 +1306,11 @@ const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
   const [isModalOpen, , setModalOpen, setModalClosed] = useBoolean(false);
 
   const editSilence = () => {
-    history.push(`${SilenceResource.plural}/${silence.id}/edit`);
+    history.push(
+      namespace
+        ? `/dev-monitoring/ns/${namespace}/silences/${silence.id}/edit`
+        : `/monitoring/silences/${silence.id}/edit`,
+    );
   };
 
   const dropdownItems =
@@ -1310,14 +1341,20 @@ const SilenceDropdown: React.FC<SilenceDropdownProps> = ({
         position={DropdownPosition.right}
         toggle={<Toggle onToggle={setIsOpen} />}
       />
-      <ExpireSilenceModal isOpen={isModalOpen} setClosed={setModalClosed} silenceId={silence.id} />
+      <ExpireSilenceModal
+        isOpen={isModalOpen}
+        setClosed={setModalClosed}
+        silenceId={silence.id}
+        namespace={namespace}
+      />
     </>
   );
 };
 
-const SilenceDropdownKebab: React.FC<{ silence: Silence }> = ({ silence }) => (
-  <SilenceDropdown isPlain silence={silence} Toggle={KebabToggle} />
-);
+const SilenceDropdownKebab: React.FC<{ silence: Silence; namespace?: string }> = ({
+  silence,
+  namespace,
+}) => <SilenceDropdown isPlain silence={silence} Toggle={KebabToggle} namespace={namespace} />;
 
 const ActionsToggle: React.FC<{ onToggle: OnToggle }> = ({ onToggle, ...props }) => (
   <DropdownToggle data-test="silence-actions-toggle" onToggle={onToggle} {...props}>
@@ -1325,8 +1362,16 @@ const ActionsToggle: React.FC<{ onToggle: OnToggle }> = ({ onToggle, ...props })
   </DropdownToggle>
 );
 
-const SilenceDropdownActions: React.FC<{ silence: Silence }> = ({ silence }) => (
-  <SilenceDropdown className="co-actions-menu" silence={silence} Toggle={ActionsToggle} />
+const SilenceDropdownActions: React.FC<{ silence: Silence; namespace?: string }> = ({
+  silence,
+  namespace,
+}) => (
+  <SilenceDropdown
+    className="co-actions-menu"
+    silence={silence}
+    Toggle={ActionsToggle}
+    namespace={namespace}
+  />
 );
 
 const SilencedAlertsList = ({ alerts }) => {
@@ -1374,11 +1419,11 @@ const SilencedAlertsList = ({ alerts }) => {
 
 const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const { t } = useTranslation();
-  const [namespace] = useActiveNamespace();
-  const [perspective] = useActivePerspective();
+  const isDevPerspective = _.has(match.params, 'ns');
+  const namespace = match?.params?.ns;
 
   const alertsLoaded = useSelector(
-    ({ observe }: RootState) => observe.get(perspective === 'dev' ? 'devAlerts' : 'alerts')?.loaded,
+    ({ observe }: RootState) => observe.get(isDevPerspective ? 'devAlerts' : 'alerts')?.loaded,
   );
 
   const silences: Silences = useSelector(({ observe }: RootState) => observe.get('silences'));
@@ -1403,12 +1448,12 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               <Link
                 className="pf-c-breadcrumb__link"
                 to={
-                  perspective === 'dev'
+                  isDevPerspective
                     ? `/dev-monitoring/ns/${namespace}/alerts`
                     : '/monitoring/silences'
                 }
               >
-                {perspective === 'dev' ? t('public~Alerts') : t('public~Silences')}
+                {isDevPerspective ? t('public~Alerts') : t('public~Silences')}
               </Link>
             </BreadcrumbItem>
             <BreadcrumbItem isActive>{t('public~Silence details')}</BreadcrumbItem>
@@ -1424,7 +1469,7 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               {silence?.name}
             </div>
             <div className="co-actions" data-test-id="details-actions">
-              {silence && <SilenceDropdownActions silence={silence} />}
+              {silence && <SilenceDropdownActions silence={silence} namespace={namespace} />}
             </div>
           </h1>
         </div>
@@ -1503,7 +1548,7 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
     </>
   );
 };
-const SilencesDetailsPage = withFallback(SilencesDetailsPage_);
+export const SilencesDetailsPage = withFallback(SilencesDetailsPage_);
 
 const tableAlertClasses = [
   'pf-u-w-50 pf-u-w-33-on-sm', // Name
@@ -1950,7 +1995,7 @@ const silenceStateOrder = (silence: Silence) => [
   _.get(silence, silenceState(silence) === SilenceStates.Pending ? 'startsAt' : 'endsAt'),
 ];
 
-const SilencesPage_: React.FC<Silences> = () => {
+const SilencesPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   const { data, loaded = false, loadError }: Silences = useSelector(
@@ -2068,7 +2113,7 @@ const SilencesPage_: React.FC<Silences> = () => {
     </>
   );
 };
-const SilencesPage = withFallback(SilencesPage_);
+export const SilencesPage = withFallback(SilencesPage_);
 
 const Tab: React.FC<{ active: boolean; children: React.ReactNode }> = ({ active, children }) => (
   <li
@@ -2231,4 +2276,5 @@ type SilenceDropdownProps = {
   isPlain?: boolean;
   silence: Silence;
   Toggle: React.FC<{ onToggle: OnToggle }>;
+  namespace?: string;
 };

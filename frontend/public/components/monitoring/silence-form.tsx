@@ -89,7 +89,7 @@ const NegativeMatcherHelp = () => {
   );
 };
 
-const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
+const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title, namespace }) => {
   const { t } = useTranslation();
 
   const durationOff = '-';
@@ -149,6 +149,16 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  React.useEffect(() => {
+    if (namespace) {
+      setMatchers([
+        { isRegex: false, name: 'namespace', value: namespace },
+        ...matchers.filter((m) => m.name !== 'namespace'),
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [namespace]);
+
   const getEndsAtValue = (): string => {
     const startsAtDate = Date.parse(startsAt);
     return startsAtDate
@@ -183,8 +193,11 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
       return;
     }
 
-    const { alertManagerBaseURL } = window.SERVER_FLAGS;
-    if (!alertManagerBaseURL) {
+    const url = namespace
+      ? `api/alertmanager-tenancy/api/v2/silences?namespace=${namespace}`
+      : `${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silences`;
+
+    if (!url) {
       setError('Alertmanager URL not set');
       return;
     }
@@ -207,11 +220,15 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
     };
 
     consoleFetchJSON
-      .post(`${alertManagerBaseURL}/api/v2/silences`, body)
+      .post(url, body)
       .then(({ silenceID }) => {
         setError(undefined);
         refreshNotificationPollers();
-        history.push(`${SilenceResource.plural}/${encodeURIComponent(silenceID)}`);
+        history.push(
+          namespace
+            ? `/dev-monitoring/ns/${namespace}/silences/${encodeURIComponent(silenceID)}`
+            : `/monitoring/silences/${encodeURIComponent(silenceID)}`,
+        );
       })
       .catch((err) => {
         const errorMessage =
@@ -452,7 +469,7 @@ const EditInfo = () => {
 
 export const EditSilence = ({ match }) => {
   const { t } = useTranslation();
-
+  const namespace = match?.params?.ns;
   const silences: Silences = useSelector(({ observe }: RootState) => observe.get('silences'));
 
   const silence: Silence = _.find(silences?.data, { id: match.params.id });
@@ -479,20 +496,21 @@ export const EditSilence = ({ match }) => {
         defaults={defaults}
         Info={isExpired ? undefined : EditInfo}
         title={isExpired ? t('public~Recreate silence') : t('public~Edit silence')}
+        namespace={namespace}
       />
     </StatusBox>
   );
 };
 
-export const CreateSilence = () => {
+export const CreateSilence: React.FC<CreateSilenceProps> = ({ namespace }) => {
   const { t } = useTranslation();
 
   const matchers = _.map(getURLSearchParams(), (value, name) => ({ name, value, isRegex: false }));
 
   return _.isEmpty(matchers) ? (
-    <SilenceForm defaults={{}} title={t('public~Create silence')} />
+    <SilenceForm defaults={{}} title={t('public~Create silence')} namespace={namespace} />
   ) : (
-    <SilenceForm defaults={{ matchers }} title={t('public~Silence alert')} />
+    <SilenceForm defaults={{ matchers }} title={t('public~Silence alert')} namespace={namespace} />
   );
 };
 
@@ -500,4 +518,9 @@ type SilenceFormProps = {
   defaults: any;
   Info?: React.ComponentType<{}>;
   title: string;
+  namespace?: string;
+};
+
+type CreateSilenceProps = {
+  namespace?: string;
 };
