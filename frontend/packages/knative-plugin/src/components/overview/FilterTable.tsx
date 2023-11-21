@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { TableVariant, Table, TableBody } from '@patternfly/react-table';
+import { TableVariant } from '@patternfly/react-table';
+import {
+  Table as TableDeprecated,
+  TableBody as TableBodyDeprecated,
+} from '@patternfly/react-table/deprecated';
 import cx from 'classnames';
 import './FilterTable.scss';
 
@@ -40,7 +44,7 @@ const FilterTable: React.FC<FilterTableProps> = ({
     rows: filters.map(({ key, value }) => filterRow(key, value)),
   };
   return (
-    <Table
+    <TableDeprecated
       className="kn-filter-table"
       aria-label="Attributes Table"
       variant={TableVariant.compact}
@@ -48,8 +52,8 @@ const FilterTable: React.FC<FilterTableProps> = ({
       rows={data.rows}
       borders
     >
-      <TableBody />
-    </Table>
+      <TableBodyDeprecated />
+    </TableDeprecated>
   );
 };
 

@@ -167,7 +167,8 @@ export const AboutModal: React.FC<AboutModalProps> = (props) => {
       productName=""
       brandImageSrc={details.logoImg}
       brandImageAlt={details.productName}
-      noAboutModalBoxContentContainer={true}
+      hasNoContentContainer
+      aria-label="About modal"
     >
       {!customBranding && (
         <p>

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { CatalogIcon, SignOutAltIcon } from '@patternfly/react-icons';
+import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
+import { SignOutAltIcon } from '@patternfly/react-icons/dist/esm/icons/sign-out-alt-icon';
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/plugin-sdk/src';
 

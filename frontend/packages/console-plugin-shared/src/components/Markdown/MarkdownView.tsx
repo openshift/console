@@ -235,7 +235,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   body {
     background-color: transparent !important;
     color: ${isEmpty ? '#999' : '#333'};
-    font-family: var(--pf-global--FontFamily--sans-serif);
+    font-family: var(--pf-v5-global--FontFamily--text);
     min-width: auto !important;
   }
   table {
@@ -245,7 +245,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   }
   td,
   th {
-    border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
+    border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
     padding: 10px;
     vertical-align: top;
   }
@@ -253,7 +253,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
     padding-top: 0;
   }
   </style>
-  <body class="pf-m-redhat-font pf-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>`;
+  <body class="pf-m-redhat-font pf-v5-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>`;
   return (
     <>
       <iframe

@@ -1,4 +1,4 @@
-.kubevirt-boot-order-summary__expandable.pf-c-expandable .pf-c-expandable__content {
+.kubevirt-boot-order-summary__expandable.pf-v5-c-expandable .pf-v5-c-expandable__content {
   margin-top: 0;
 }
 
@@ -7,29 +7,29 @@
 }
 
 .kubevirt-boot-order__boot-order-empty-btn {
-  margin-top: var(--pf-global--spacer--md);
+  margin-top: var(--pf-v5-global--spacer--md);
 }
 
-.pf-c-button.pf-m-link.kubevirt-boot-order__add-device-delete-btn {
-  --pf-c-button--PaddingTop: 0;
-  --pf-c-button--PaddingRight: 0;
-  --pf-c-button--PaddingBottom: 0;
-  --pf-c-button--PaddingLeft: 0;
-  --pf-c-button--m-link--Color: var(--pf-global--Color--100);
+.pf-v5-c-button.pf-m-link.kubevirt-boot-order__add-device-delete-btn {
+  --pf-v5-c-button--PaddingTop: 0;
+  --pf-v5-c-button--PaddingRight: 0;
+  --pf-v5-c-button--PaddingBottom: 0;
+  --pf-v5-c-button--PaddingLeft: 0;
+  --pf-v5-c-button--m-link--Color: var(--pf-v5-global--Color--100);
 }
 
 .kubevirt-boot-order__add-device-select {
-  margin-left: var(--pf-global--spacer--lg);
-  margin-right: var(--pf-global--spacer--lg);
+  margin-left: var(--pf-v5-global--spacer--lg);
+  margin-right: var(--pf-v5-global--spacer--lg);
 }
 
 .kubevirt-boot-order__add-device {
   display: flex;
-  padding-top: var(--pf-global--spacer--md);
-  padding-left: var(--pf-global--spacer--lg);
-  padding-right: var(--pf-global--spacer--lg);
+  padding-top: var(--pf-v5-global--spacer--md);
+  padding-left: var(--pf-v5-global--spacer--lg);
+  padding-right: var(--pf-v5-global--spacer--lg);
 }
 
 .kubevirt-boot-order__data-list-item {
-  background: var(--pf-global--BackgroundColor--100);
+  background: var(--pf-v5-global--BackgroundColor--100);
 }

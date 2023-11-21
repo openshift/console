@@ -113,18 +113,18 @@ const Ports: React.FC<PortsProps> = ({ ports }) => {
   }
 
   return (
-    <table className="table">
-      <thead>
-        <tr>
-          <th>{t('public~Name')}</th>
-          <th>{t('public~Container')}</th>
+    <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+      <thead className="pf-v5-c-table__thead">
+        <tr className="pf-v5-c-table__tr">
+          <th className="pf-v5-c-table__th">{t('public~Name')}</th>
+          <th className="pf-v5-c-table__th">{t('public~Container')}</th>
         </tr>
       </thead>
       <tbody>
         {ports.map((p: ContainerPort, i: number) => (
-          <tr key={i}>
-            <td>{p.name || '-'}</td>
-            <td>{p.containerPort}</td>
+          <tr className="pf-v5-c-table__tr" key={i}>
+            <td className="pf-v5-c-table__td">{p.name || '-'}</td>
+            <td className="pf-v5-c-table__td">{p.containerPort}</td>
           </tr>
         ))}
       </tbody>
@@ -145,20 +145,22 @@ const VolumeMounts: React.FC<VolumeMountProps> = ({ volumeMounts }) => {
   }
 
   return (
-    <table className="table table--layout-fixed">
-      <thead>
-        <tr>
-          <th>{t('public~Access')}</th>
-          <th>{t('public~Location')}</th>
-          <th>{t('public~Mount path')}</th>
+    <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+      <thead className="pf-v5-c-table__thead">
+        <tr className="pf-v5-c-table__tr">
+          <th className="pf-v5-c-table__th">{t('public~Access')}</th>
+          <th className="pf-v5-c-table__th">{t('public~Location')}</th>
+          <th className="pf-v5-c-table__th">{t('public~Mount path')}</th>
         </tr>
       </thead>
       <tbody>
         {volumeMounts.map((v: VolumeMount) => (
-          <tr key={v.name}>
-            <td>{v.readOnly === true ? t('public~Read only') : t('public~Read/write')}</td>
-            <td className="co-break-all co-select-to-copy">{v.name}</td>
-            <td>
+          <tr className="pf-v5-c-table__tr" key={v.name}>
+            <td className="pf-v5-c-table__td">
+              {v.readOnly === true ? t('public~Read only') : t('public~Read/write')}
+            </td>
+            <td className="pf-v5-c-table__td pf-m-break-word co-select-to-copy">{v.name}</td>
+            <td className="pf-v5-c-table__td">
               {v.mountPath ? (
                 <div className="co-break-all co-select-to-copy">{v.mountPath}</div>
               ) : (
@@ -200,18 +202,18 @@ const Env: React.FC<EnvProps> = ({ env }) => {
   };
 
   return (
-    <table className="table">
-      <thead>
-        <tr>
-          <th>{t('public~Name')}</th>
-          <th>{t('public~Value')}</th>
+    <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+      <thead className="pf-v5-c-table__thead">
+        <tr className="pf-v5-c-table__tr">
+          <th className="pf-v5-c-table__th">{t('public~Name')}</th>
+          <th className="pf-v5-c-table__th">{t('public~Value')}</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody className="pf-v5-c-table__tbody">
         {env.map((e: EnvVar, i: number) => (
-          <tr key={i}>
-            <td>{e.name}</td>
-            <td>{value(e)}</td>
+          <tr className="pf-v5-c-table__tr" key={i}>
+            <td className="pf-v5-c-table__td">{e.name}</td>
+            <td className="pf-v5-c-table__td">{value(e)}</td>
           </tr>
         ))}
       </tbody>

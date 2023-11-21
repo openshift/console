@@ -1,6 +1,13 @@
 import * as React from 'react';
-import { FormGroup, TextArea } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  TextArea,
+} from '@patternfly/react-core';
 import { useField } from 'formik';
+import { RedExclamationCircleIcon } from '../status';
 import { TextAreaProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -12,15 +19,9 @@ const TextAreaField: React.FC<TextAreaProps> = (
   const fieldId = getFieldId(props.name, 'input');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
+
   return (
-    <FormGroup
-      fieldId={fieldId}
-      label={label}
-      helperText={helpText}
-      helperTextInvalid={errorMessage}
-      validated={isValid ? 'default' : 'error'}
-      isRequired={required}
-    >
+    <FormGroup fieldId={fieldId} label={label} isRequired={required}>
       <TextArea
         {...field}
         {...props}
@@ -30,11 +31,23 @@ const TextAreaField: React.FC<TextAreaProps> = (
         validated={isValid ? 'default' : 'error'}
         isRequired={required}
         aria-describedby={helpText ? `${fieldId}-helper` : undefined}
-        onChange={(value, event) => {
+        onChange={(event, value) => {
           onChange && onChange(value);
           field.onChange(event);
         }}
       />
+
+      <FormHelperText>
+        <HelperText>
+          {!isValid ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          ) : (
+            <HelperTextItem>{helpText}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

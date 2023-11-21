@@ -39,7 +39,7 @@ const SilenceAlert: React.FC<SilenceAlertProps> = ({ rule, namespace }) => {
     setIsChecked(rule.state !== RuleStates.Silenced);
   }, [rule.state]);
 
-  const handleChange = (checked: boolean) => {
+  const handleChange = (_event, checked: boolean) => {
     setIsChecked(checked);
     if (checked) {
       _.each(rule.silencedBy, (silence) => {

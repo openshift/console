@@ -179,7 +179,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
         <Switch
           id={descriptor.path}
           isChecked={checked}
-          onChange={(val) => {
+          onChange={(_event, val) => {
             setChecked(val);
             setConfirmed(false);
             setErrorMessage(null);
@@ -193,7 +193,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
           <>
             &nbsp;&nbsp;
             <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
-              <YellowExclamationTriangleIcon className="co-icon-space-r pf-c-button-icon--plain" />
+              <YellowExclamationTriangleIcon className="co-icon-space-r pf-v5-c-button-icon--plain" />
               {t('olm~Confirm change')}
             </Button>
           </>
@@ -238,7 +238,7 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps<boolean>> = ({
           isChecked={checked}
           data-checked-state={checked}
           label={label}
-          onChange={(val) => {
+          onChange={(_event, val) => {
             setChecked(val);
             setConfirmed(false);
           }}
@@ -249,7 +249,7 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps<boolean>> = ({
           <>
             &nbsp;&nbsp;
             <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
-              <YellowExclamationTriangleIcon className="co-icon-space-r pf-c-button-icon--plain" />
+              <YellowExclamationTriangleIcon className="co-icon-space-r pf-v5-c-button-icon--plain" />
               {t('olm~Confirm change')}
             </Button>
           </>

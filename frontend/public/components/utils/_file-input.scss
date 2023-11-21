@@ -1,7 +1,7 @@
 .co-btn-file {
   overflow: hidden;
   position: relative;
-  input[type=file] {
+  input[type='file'] {
     background: white;
     cursor: inherit;
     display: block;
@@ -29,8 +29,8 @@
   }
 
   .co-file-dropzone-container {
-    border: var(--pf-global--BorderWidth--lg) solid var(--pf-global--BorderColor--100);
-    background: rgba(0,0,0,0.3);
+    border: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--BorderColor--100);
+    background: rgba(0, 0, 0, 0.3);
     bottom: 0;
     color: #fff;
     left: 0;
@@ -40,21 +40,21 @@
     top: 0;
     z-index: 1001;
     &.co-file-dropzone--drop-over {
-      border-color: $pf-color-blue-300;
-      color: $pf-color-blue-300;
+      border-color: $pf-v5-color-blue-300;
+      color: $pf-v5-color-blue-300;
     }
   }
 }
 
 .co-file-dropzone__textarea {
-  font-family: var(--pf-global--FontFamily--monospace);
+  font-family: var(--pf-v5-global--FontFamily--monospace);
   min-height: 300px;
   width: 100%;
 }
 
 .co-file-dropzone__drop-text {
   font-size: 20px;
-  font-weight: var(--pf-global--FontWeight--bold);
+  font-weight: var(--pf-v5-global--FontWeight--bold);
   left: 50%;
   margin-right: -50%;
   position: absolute;

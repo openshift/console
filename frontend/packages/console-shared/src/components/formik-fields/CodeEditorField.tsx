@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';

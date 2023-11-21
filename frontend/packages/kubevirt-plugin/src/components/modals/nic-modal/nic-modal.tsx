@@ -5,9 +5,9 @@ import {
   Form,
   FormSelect,
   FormSelectOption,
-  SelectOption,
   TextInput,
 } from '@patternfly/react-core';
+import { SelectOption as SelectOptionDeprecated } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
@@ -126,7 +126,7 @@ export const Network: React.FC<NetworkProps> = ({
       rawErrorMessage={nadsLoadError}
     >
       <FormSelect
-        onChange={(net, event) => {
+        onChange={(event, net) => {
           const target = event.target as HTMLSelectElement;
           const newNetworkType = NetworkType.fromString(
             target[target.selectedIndex].getAttribute('data-network-type'),
@@ -288,7 +288,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
               isRequired
               id={asId('name')}
               value={name}
-              onChange={(v) => setName(v)}
+              onChange={(_event, v) => setName(v)}
             />
           </FormRow>
           <FormRow title={t('kubevirt-plugin~Model')} fieldId={asId('model')} isRequired>
@@ -305,13 +305,13 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
                 .filter((ifaceModel) => ifaceModel.isSupported() || ifaceModel === model)
                 .map((ifaceModel) => {
                   return (
-                    <SelectOption
+                    <SelectOptionDeprecated
                       key={ifaceModel.getValue()}
                       value={ifaceModel.getValue()}
                       description={t(ifaceModel.getDescriptionKey())}
                     >
                       {t(ifaceModel.toString())}
-                    </SelectOption>
+                    </SelectOptionDeprecated>
                   );
                 })}
             </FormPFSelect>
@@ -348,13 +348,13 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
                 ? resultNetwork.getType().getAllowedInterfaceTypes()
                 : NetworkType.getSupportedAllowedInterfaceTypes()
               ).map((iType) => (
-                <SelectOption
+                <SelectOptionDeprecated
                   key={iType.getValue()}
                   value={iType.getValue()}
                   description={t(iType.getDescriptionKey())}
                 >
                   {t(iType.toString())}
-                </SelectOption>
+                </SelectOptionDeprecated>
               ))}
             </FormPFSelect>
           </FormRow>
@@ -368,7 +368,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
               isDisabled={isDisabled('macAddress', resultNetwork.isPodNetwork())}
               id={asId('mac-address')}
               value={macAddress}
-              onChange={(v) => setMacAddress(v)}
+              onChange={(_event, v) => setMacAddress(v)}
             />
           </FormRow>
         </Form>

@@ -91,7 +91,7 @@ const tableColumnClasses = [
   '',
   '',
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-16-on-lg'),
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
   Kebab.columnClass,
@@ -155,7 +155,7 @@ export const OperandStatus: React.FC<OperandStatusProps> = ({ operand }) => {
   return (
     <span className="co-icon-and-text">
       {type}
-      <span className="pf-u-pr-sm">:</span>{' '}
+      <span className="pf-v5-u-pr-sm">:</span>{' '}
       {value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />}
     </span>
   );
@@ -451,7 +451,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
     <>
       <ListPageHeader title={showTitle ? t('olm~All Instances') : undefined}>
         {managesAllNamespaces && (
-          <div className="co-operator-details__toggle-value pf-u-ml-xl-on-md">
+          <div className="co-operator-details__toggle-value pf-v5-u-ml-xl-on-md">
             <ShowOperandsInAllNamespacesRadioGroup />
           </div>
         )}
@@ -519,7 +519,7 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
     <>
       <ListPageHeader title={showTitle ? `${labelPlural}` : undefined}>
         {managesAllNamespaces && (
-          <div className="co-operator-details__toggle-value pf-u-ml-xl-on-md">
+          <div className="co-operator-details__toggle-value pf-v5-u-ml-xl-on-md">
             <ShowOperandsInAllNamespacesRadioGroup />
           </div>
         )}

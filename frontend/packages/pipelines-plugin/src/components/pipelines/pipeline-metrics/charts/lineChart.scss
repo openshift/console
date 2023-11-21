@@ -7,22 +7,23 @@
 
 .horizontal-scroll {
   overflow-x: auto;
-  padding-left: var(--pf-global--spacer--md);
-  padding-right: var(--pf-global--spacer--md);
+  padding-left: var(--pf-v5-global--spacer--md);
+  padding-right: var(--pf-v5-global--spacer--md);
 
-  &:before, &:after {
+  &:before,
+  &:after {
     bottom: 0;
     content: '';
     pointer-events: none;
     position: absolute;
     top: 0;
-    width: var(--pf-global--spacer--md);
+    width: var(--pf-v5-global--spacer--md);
     z-index: 1;
   }
   &:before {
     background: linear-gradient(
       to right,
-      var(--pf-global--BackgroundColor--100),
+      var(--pf-v5-global--BackgroundColor--100),
       rgba(255, 255, 255, 0)
     );
     left: 0;
@@ -30,7 +31,7 @@
   &:after {
     background: linear-gradient(
       to left,
-      var(--pf-global--BackgroundColor--100),
+      var(--pf-v5-global--BackgroundColor--100),
       rgba(255, 255, 255, 0)
     );
     right: 0;

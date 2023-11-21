@@ -18,7 +18,7 @@ const flexStyle: React.CSSProperties = {
   display: 'flex',
   flex: 1,
   flexDirection: 'column',
-  margin: 'var(--pf-global--spacer--md) 0',
+  margin: 'var(--pf-v5-global--spacer--md) 0',
 };
 
 const FormSection: React.FC<FormSectionProps> = ({
@@ -32,7 +32,7 @@ const FormSection: React.FC<FormSectionProps> = ({
   style,
 }) => (
   <div
-    className={cx('pf-c-form', {
+    className={cx('pf-v5-c-form', {
       'co-m-pane__form': !fullWidth,
       'odc-form-section--extra-margin': extraMargin,
     })}
@@ -40,7 +40,7 @@ const FormSection: React.FC<FormSectionProps> = ({
     data-test={dataTest}
   >
     {title && <h2 className="odc-form-section__heading">{title}</h2>}
-    {subTitle && <FormHelperText isHidden={false}>{subTitle}</FormHelperText>}
+    {subTitle && <FormHelperText>{subTitle}</FormHelperText>}
     {children}
   </div>
 );

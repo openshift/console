@@ -1,19 +1,19 @@
 .ocs-radio-group-field {
-  padding-left: var(--pf-global--spacer--sm);
+  padding-left: var(--pf-v5-global--spacer--sm);
 
   input[type='radio'] {
     margin-top: 0;
   }
 
   &:not(.ocs-radio-group-field--inline) {
-    .pf-c-radio {
-      padding-bottom: var(--pf-global--spacer--md);
+    .pf-v5-c-radio {
+      padding-bottom: var(--pf-v5-global--spacer--md);
     }
-    .pf-c-radio:last-of-type {
+    .pf-v5-c-radio:last-of-type {
       padding-bottom: 0;
     }
     .ocs-radio-group-field__children {
-      padding-top: var(--pf-global--spacer--sm);
+      padding-top: var(--pf-v5-global--spacer--sm);
     }
   }
 
@@ -21,16 +21,14 @@
     display: flex;
     align-items: center;
 
-    > .pf-c-form__group-label {
+    > .pf-v5-c-form__group-label {
       padding-bottom: 0;
-      margin-right: var(--pf-global--spacer--md);
+      margin-right: var(--pf-v5-global--spacer--md);
     }
-
   }
-  .pf-c-radio {
+  .pf-v5-c-radio {
     &__description {
       width: 100%;
     }
   }
 }
-

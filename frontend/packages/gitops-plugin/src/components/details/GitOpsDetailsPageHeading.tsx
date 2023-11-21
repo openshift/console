@@ -31,11 +31,14 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
 
   return (
     <>
-      <div className="pf-c-page__main-breadcrumb">
+      <div className="pf-v5-c-page__main-breadcrumb">
         <BreadCrumbs breadcrumbs={breadcrumbs} />
       </div>
       <div className="gop-gitops-details-page-heading co-m-nav-title co-m-nav-title--breadcrumbs">
-        <h1 className="co-m-pane__heading" style={{ marginRight: 'var(--pf-global--spacer--sm)' }}>
+        <h1
+          className="co-m-pane__heading"
+          style={{ marginRight: 'var(--pf-v5-global--spacer--sm)' }}
+        >
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name">{appName}</span>
           </div>

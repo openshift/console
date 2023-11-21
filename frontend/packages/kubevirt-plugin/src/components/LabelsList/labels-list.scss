@@ -1,10 +1,10 @@
 .kv-labels-list__grid {
-  grid-gap: var(--pf-global--spacer--md);
+  grid-gap: var(--pf-v5-global--spacer--md);
 }
 
 .kv-labels-list__buttons {
   align-items: center;
-  margin-top: var(--pf-global--spacer--md);
+  margin-top: var(--pf-v5-global--spacer--md);
 
   .kv-labels-list__link {
     display: flex;

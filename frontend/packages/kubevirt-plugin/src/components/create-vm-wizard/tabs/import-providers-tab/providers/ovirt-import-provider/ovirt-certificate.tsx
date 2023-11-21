@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FileUpload } from '@patternfly/react-core';
+import { DropEvent, FileUpload } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { ValidationErrorType, ValidationObject } from '../../../../../../selectors';
@@ -28,12 +28,15 @@ const OvirtCertificateConnected: React.FC<OvirtCertificateProps> = React.memo(
       : undefined;
 
     const onCertificateChange = React.useCallback(
-      (value: string, filename: string) => {
+      async (_event: DropEvent, file: File) => {
+        const { name } = file;
+        const value = await file.text();
+
         if (mounted.current) {
-          if (lastError && !filename) {
+          if (lastError && !name) {
             setLastError(null);
           }
-          onCertChange(value, filename);
+          onCertChange(value, name);
         }
       },
       [lastError, onCertChange],
@@ -89,8 +92,8 @@ const OvirtCertificateConnected: React.FC<OvirtCertificateProps> = React.memo(
             onReadStarted={onCertFileReadStarted}
             onReadFinished={onCertFileReadFinished}
             onReadFailed={onCertFileReadFailed}
+            onFileInputChange={onCertificateChange}
             isLoading={isCertFileLoading}
-            onChange={onCertificateChange}
             dropzoneProps={{
               maxSize: MAX_CERT_SIZE,
               onDropRejected: onCertFileRejected,

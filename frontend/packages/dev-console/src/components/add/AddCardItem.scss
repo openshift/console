@@ -1,21 +1,21 @@
 .odc-add-card-item {
-  .pf-c-simple-list__item-link {
-    --pf-c-simple-list__item-link--focus--FontWeight: normal;
-    --pf-c-simple-list__item-link--active--FontWeight: normal;
-    --pf-c-simple-list__item-link--hover--FontWeight: normal;
+  .pf-v5-c-simple-list__item-link {
+    --pf-v5-c-simple-list__item-link--focus--FontWeight: normal;
+    --pf-v5-c-simple-list__item-link--active--FontWeight: normal;
+    --pf-v5-c-simple-list__item-link--hover--FontWeight: normal;
   }
 
-  margin-top: var(--pf-global--spacer--lg);
-  margin-left: calc(var(--pf-global--spacer--lg) - var(--pf-global--spacer--sm));
+  margin-top: var(--pf-v5-global--spacer--lg);
+  margin-left: calc(var(--pf-v5-global--spacer--lg) - var(--pf-v5-global--spacer--sm));
 
   &__icon {
-    height: var(--pf-global--FontSize--lg);
-    max-width: var(--pf-global--spacer--lg);
-    min-width: var(--pf-global--spacer--md);
-    color: var(--pf-global--Color--100) !important;
-    // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
-    font-size: var(--pf-global--FontSize--md);
-    margin-right: var(--pf-global--spacer--sm);
+    height: var(--pf-v5-global--FontSize--lg);
+    max-width: var(--pf-v5-global--spacer--lg);
+    min-width: var(--pf-v5-global--spacer--md);
+    color: var(--pf-v5-global--Color--100) !important;
+    // temporary fix since --pf-v5-global--FontSize--md is being computed to 14px instead of 16px
+    font-size: var(--pf-v5-global--FontSize--md);
+    margin-right: var(--pf-v5-global--spacer--sm);
   }
 
   &__img-icon {
@@ -25,16 +25,16 @@
   &__title {
     display: inline;
     vertical-align: middle;
-    margin-left: var(--pf-global--spacer--sm);
-    // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
-    font-size: var(--pf-global--spacer--md) !important;
+    margin-left: var(--pf-v5-global--spacer--sm);
+    // temporary fix since --pf-v5-global--FontSize--md is being computed to 14px instead of 16px
+    font-size: var(--pf-v5-global--spacer--md) !important;
   }
 
   &__description {
-    margin: var(--pf-global--spacer--sm) 0 0 var(--pf-global--spacer--sm);
-    color: var(--pf-global--Color--200);
-    // temporary fix since --pf-global--FontSize--sm is being computed to 13px instead of 14px
-    font-size: var(--pf-global--FontSize--md);
+    margin: var(--pf-v5-global--spacer--sm) 0 0 var(--pf-v5-global--spacer--sm);
+    color: var(--pf-v5-global--Color--200);
+    // temporary fix since --pf-v5-global--FontSize--sm is being computed to 13px instead of 14px
+    font-size: var(--pf-v5-global--FontSize--md);
   }
 
   a {
@@ -43,8 +43,8 @@
   }
 }
 
-:root:where(.pf-theme-dark) .odc-add-card-item {
+:root:where(.pf-v5-theme-dark) .odc-add-card-item {
   &__img-icon {
-      filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
+    filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
   }
 }

@@ -72,6 +72,7 @@ const routes = [
 
 describe('URLDecorator', () => {
   let mockNode;
+
   beforeEach(() => {
     mockUseRoutesWatcher.mockReset();
     mockUseRoutesWatcher.mockReturnValue({ loaded: true, loadError: null, routes });
@@ -80,7 +81,7 @@ describe('URLDecorator', () => {
 
   it('should not show decorator if annotation ROUTE_DISABLED_ANNOTATION is true', () => {
     topologyNodeDataModel.resource.metadata.annotations[ROUTE_DISABLED_ANNOTATION] = 'true';
-    mockNode.setModel(topologyNodeDataModel);
+    mockNode?.setModel(topologyNodeDataModel);
     const wrapper = shallow(<UrlDecorator element={mockNode} radius={10} x={0} y={0} />);
     expect(wrapper.find(Decorator).exists()).toBe(false);
     expect(mockUseRoutesWatcher).toHaveBeenCalledTimes(1);
@@ -90,7 +91,7 @@ describe('URLDecorator', () => {
 
   it('should show decorator if annotation ROUTE_DISABLED_ANNOTATION is false', () => {
     topologyNodeDataModel.resource.metadata.annotations[ROUTE_DISABLED_ANNOTATION] = 'false';
-    mockNode.setModel(topologyNodeDataModel);
+    mockNode?.setModel(topologyNodeDataModel);
     const wrapper = shallow(<UrlDecorator element={mockNode} radius={10} x={0} y={0} />);
     expect(wrapper.find(Decorator).exists()).toBe(true);
     expect(mockUseRoutesWatcher).toHaveBeenCalledTimes(1);
@@ -101,7 +102,7 @@ describe('URLDecorator', () => {
     const customURL = 'https://test.com';
     topologyNodeDataModel.resource.metadata.annotations[ROUTE_DISABLED_ANNOTATION] = 'false';
     topologyNodeDataModel.resource.metadata.annotations[ROUTE_URL_ANNOTATION] = customURL;
-    mockNode.setModel(topologyNodeDataModel);
+    mockNode?.setModel(topologyNodeDataModel);
     const wrapper = shallow(<UrlDecorator element={mockNode} radius={10} x={0} y={0} />);
     expect(wrapper.find(Decorator).prop('href')).toBe(customURL);
     expect(mockUseRoutesWatcher).toHaveBeenCalledTimes(1);
@@ -112,7 +113,7 @@ describe('URLDecorator', () => {
   it('decorator href value should be equal to default route if annotation ROUTE_URL_ANNOTATION is not present', () => {
     topologyNodeDataModel.resource.metadata.annotations[ROUTE_DISABLED_ANNOTATION] = 'false';
     topologyNodeDataModel.resource.metadata.annotations[ROUTE_URL_ANNOTATION] = '';
-    mockNode.setModel(topologyNodeDataModel);
+    mockNode?.setModel(topologyNodeDataModel);
     const wrapper = shallow(<UrlDecorator element={mockNode} radius={10} x={0} y={0} />);
     expect(wrapper.find(Decorator).prop('href')).toBe('https://www.example.com');
     expect(mockUseRoutesWatcher).toHaveBeenCalledTimes(1);
@@ -124,7 +125,7 @@ describe('URLDecorator', () => {
     topologyNodeDataModel.resource.metadata.annotations[ROUTE_URL_ANNOTATION] =
       // eslint-disable-next-line no-script-url
       'javascript:alert(1)';
-    mockNode.setModel(topologyNodeDataModel);
+    mockNode?.setModel(topologyNodeDataModel);
     const wrapper = shallow(<UrlDecorator element={mockNode} radius={10} x={0} y={0} />);
     expect(wrapper.find(Decorator).exists()).toBe(false);
     expect(mockUseRoutesWatcher).toHaveBeenCalledTimes(1);

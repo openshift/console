@@ -619,7 +619,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
         {containerVars}
         {!currentEnvVars.isCreate && (
           <div className="co-m-pane__body-group">
-            <div className="pf-c-form environment-buttons">
+            <div className="pf-v5-c-form environment-buttons">
               {errorMessage && (
                 <Alert isInline className="co-alert" variant="danger" title={errorMessage} />
               )}

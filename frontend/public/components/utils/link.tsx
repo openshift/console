@@ -4,7 +4,8 @@ import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
 import { Tooltip } from '@patternfly/react-core';
-import { CopyIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { CopyIcon } from '@patternfly/react-icons/dist/esm/icons/copy-icon';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 
 // Kubernetes "dns-friendly" names match

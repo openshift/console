@@ -74,7 +74,7 @@ const BindableServices: React.FC<BindableServiceProps> = ({ resource }) => {
     >
       {resourceAlert && (
         <>
-          <Alert variant="default" title={t('console-app~No bindable services available')} isInline>
+          <Alert variant="custom" title={t('console-app~No bindable services available')} isInline>
             {t('console-app~To create a Service binding, first create a bindable service.')}
           </Alert>
           &nbsp;

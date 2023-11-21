@@ -1,17 +1,19 @@
 .ocs-badge {
   &__inline {
-    background-color: var(--pf-global--BackgroundColor--200);
-    border: 1px solid var(--pf-global--BorderColor--light-100);
+    background-color: var(--pf-v5-global--BackgroundColor--200);
+    border: 1px solid var(--pf-v5-global--BorderColor--light-100);
   }
 }
 
 .ocs-preview-badge {
-  &.pf-c-label {
-    --pf-c-label--BackgroundColor: #d93f00;
-    --pf-c-label--BorderRadius: var(--pf-global--BorderRadius--sm);
-    --pf-c-label__content--before--BorderWidth: 0;
-    --pf-c-label__content--before--BorderColor: transparent;
-    --pf-c-label__content--Color: var(--pf-global--Color--light-100);
-    font-family: var(--pf-global--FontFamily--sans-serif); // Use RedHatText even when inside an <h1>
+  &.pf-v5-c-label {
+    --pf-v5-c-label--BackgroundColor: #d93f00;
+    --pf-v5-c-label--BorderRadius: var(--pf-v5-global--BorderRadius--sm);
+    --pf-v5-c-label__content--before--BorderWidth: 0;
+    --pf-v5-c-label__content--before--BorderColor: transparent;
+    --pf-v5-c-label__content--Color: var(--pf-v5-global--Color--light-100);
+    font-family: var(
+      --pf-v5-global--FontFamily--text
+    ); // Use RedHatText even when inside an <h1>
   }
 }

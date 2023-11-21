@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { connect } from 'react-redux';
 import { errorModal } from '@console/internal/components/modals/error-modal';
@@ -8,7 +8,7 @@ import { SecretModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { getFieldId, useFormikValidationFix } from '@console/shared';
+import { RedExclamationCircleIcon, getFieldId, useFormikValidationFix } from '@console/shared';
 
 interface SecretKeySelectorProps {
   name: string;
@@ -58,13 +58,7 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
   }, [namespace]);
 
   return (
-    <FormGroup
-      fieldId={fieldId}
-      label={label}
-      helperTextInvalid={errorMessage}
-      validated={isValid ? 'default' : 'error'}
-      isRequired={isRequired}
-    >
+    <FormGroup fieldId={fieldId} label={label} isRequired={isRequired}>
       <ValueFromPair
         pair={{ secretKeyRef: field.value }}
         secrets={secrets}
@@ -74,6 +68,16 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
           setFieldTouched(name, true);
         }}
       />
+
+      {!isValid && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      )}
     </FormGroup>
   );
 };

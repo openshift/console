@@ -1,12 +1,12 @@
 .odc-pipeline-topology-graph {
-  font-size: var(--pf-global--FontSize--xs);
+  font-size: var(--pf-v5-global--FontSize--xs);
   max-width: 100%;
   overflow: hidden;
 
   &.builder {
     display: block;
     border-radius: 20px;
-    background: var(--pf-global--BackgroundColor--200);
+    background: var(--pf-v5-global--BackgroundColor--200);
   }
 
   .pf-topology-content {

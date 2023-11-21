@@ -1,11 +1,6 @@
 import * as React from 'react';
-import {
-  KEY_CODES,
-  MenuItem,
-  Tooltip,
-  DropdownItemProps,
-  MenuItemProps,
-} from '@patternfly/react-core';
+import { KeyTypes, MenuItem, Tooltip } from '@patternfly/react-core';
+import { DropdownItemProps as DropdownItemPropsDeprecated } from '@patternfly/react-core/deprecated';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
@@ -14,7 +9,7 @@ import { useAccessReview, history } from '@console/internal/components/utils';
 
 export type ActionMenuItemProps = {
   action: Action;
-  component?: React.ComponentType<MenuItemProps | DropdownItemProps>;
+  component?: React.ComponentType<DropdownItemPropsDeprecated>;
   autoFocus?: boolean;
   onClick?: () => void;
   onEscape?: () => void;
@@ -50,11 +45,11 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   );
 
   const handleKeyDown = (event) => {
-    if (event.keyCode === KEY_CODES.ESCAPE_KEY) {
+    if (event.keyCode === KeyTypes.Escape) {
       onEscape && onEscape();
     }
 
-    if (event.keyCode === KEY_CODES.ENTER) {
+    if (event.keyCode === KeyTypes.Enter) {
       handleClick(event);
     }
   };

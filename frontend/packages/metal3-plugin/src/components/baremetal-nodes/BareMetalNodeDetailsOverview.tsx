@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, pluralize } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
@@ -83,7 +83,7 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
                   onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}
                 >
                   {pluralize(_.size(node.spec.taints), 'Taint')}
-                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                  <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
                 </Button>
               ) : (
                 pluralize(_.size(node.spec.taints), 'Taint')
@@ -99,7 +99,7 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
                   onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}
                 >
                   {pluralize(_.size(node.metadata.annotations), 'Annotation')}
-                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                  <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
                 </Button>
               ) : (
                 pluralize(_.size(node.metadata.annotations), 'Annotation')

@@ -16,8 +16,8 @@ export const Label: React.SFC<LabelProps> = ({ kind, name, value, expand }) => {
 
   return (
     <>
-      <PfLabel className={klass} isTruncated>
-        <Link className="pf-c-label__content" to={href}>
+      <PfLabel className={klass}>
+        <Link className="pf-v5-c-label__content" to={href}>
           <span className="co-label__key" data-test="label-key">
             {name}
           </span>

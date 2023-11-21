@@ -7,8 +7,9 @@ import {
   EmptyStateVariant,
   Stack,
   StackItem,
+  EmptyStateHeader,
 } from '@patternfly/react-core';
-import { ChartLineIcon } from '@patternfly/react-icons';
+import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line-icon';
 import { useTranslation } from 'react-i18next';
 import PipelineMetricsQuickstart from './PipelineMetricsQuickstart';
 
@@ -29,7 +30,7 @@ const PipelineMetricsUnsupported: React.FC<PipelineMetricsUnsupportedProps> = ({
         <StackItem isFilled>
           <Bullseye>
             <EmptyState variant={EmptyStateVariant.full}>
-              <EmptyStateIcon icon={ChartLineIcon} />
+              <EmptyStateHeader icon={<EmptyStateIcon icon={ChartLineIcon} />} />
               <EmptyStateBody>
                 {t('pipelines-plugin~Pipeline metrics configuration is unsupported.')}
               </EmptyStateBody>

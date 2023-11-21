@@ -1,6 +1,11 @@
 import * as React from 'react';
-import { FormGroup, Title, Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
-import { CaretDownIcon } from '@patternfly/react-icons';
+import { FormGroup, Title } from '@patternfly/react-core';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+} from '@patternfly/react-core/deprecated';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { Edge, Node } from '@patternfly/react-topology';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import { TFunction } from 'i18next';
@@ -68,7 +73,7 @@ const MoveConnectionForm: React.FC<
 
   const dropDownNodeItem = (node: Node) => {
     return (
-      <DropdownItem
+      <DropdownItemDeprecated
         key={node.getId()}
         component="button"
         onClick={() => {
@@ -77,7 +82,7 @@ const MoveConnectionForm: React.FC<
         }}
       >
         {nodeItem(node)}
-      </DropdownItem>
+      </DropdownItemDeprecated>
     );
   };
 
@@ -91,15 +96,19 @@ const MoveConnectionForm: React.FC<
             Connect <strong>{{ sourceLabel }}</strong> to
           </Trans>
         </Title>
-        <div className="pf-c-form">
+        <div className="pf-v5-c-form">
           <FormGroup fieldId="target-node" label="Target">
-            <Dropdown
+            <DropdownDeprecated
               id="target-node-dropdown"
               className="dropdown--full-width"
               toggle={
-                <DropdownToggle id="toggle-id" onToggle={onToggle} toggleIndicator={CaretDownIcon}>
+                <DropdownToggleDeprecated
+                  id="toggle-id"
+                  onToggle={onToggle}
+                  toggleIndicator={CaretDownIcon}
+                >
                   {nodeItem(values.target)}
-                </DropdownToggle>
+                </DropdownToggleDeprecated>
               }
               isOpen={isOpen}
               dropdownItems={availableTargets.map(dropDownNodeItem)}

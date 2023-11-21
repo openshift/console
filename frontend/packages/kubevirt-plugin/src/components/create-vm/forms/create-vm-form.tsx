@@ -4,14 +4,16 @@ import {
   Checkbox,
   ExpandableSection,
   Form,
-  SelectOption,
-  SelectVariant,
   Split,
   SplitItem,
   Stack,
   StackItem,
   TextInput,
 } from '@patternfly/react-core';
+import {
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   convertToBaseValue,
@@ -108,7 +110,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
     }
   }, [dispatch, selectedTemplate.variants, template]);
 
-  const onNameChange = (value: string) => {
+  const onNameChange = (event: React.FormEvent<HTMLInputElement>, value: string) => {
     const validation = validateVmLikeEntityName(value, namespace, vms, {
       // t('kubevirt-plugin~Name is already used by another virtual machine in this namespace')
       existsErrorMessage:
@@ -129,7 +131,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
   React.useEffect(() => {
     if (loaded && namespace && !name && template) {
       const initName = generateVMName(template);
-      onNameChange(initName);
+      onNameChange(null, initName);
     }
     // eslint-disable-next-line
   }, [loaded]);
@@ -248,7 +250,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
           <FormRow fieldId="vm-flavor" title={t('kubevirt-plugin~Flavor')} isRequired>
             <FormPFSelect
               toggleId="vm-flavor-select"
-              variant={SelectVariant.single}
+              variant={SelectVariantDeprecated.single}
               selections={[
                 t(
                   'kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}} Memory',
@@ -261,7 +263,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
               isCheckboxSelectionBadgeHidden
             >
               {Object.keys(flavors).map((flavor) => (
-                <SelectOption key={flavor} value={flavor} />
+                <SelectOptionDeprecated key={flavor} value={flavor} />
               ))}
             </FormPFSelect>
           </FormRow>
@@ -335,7 +337,9 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
             <Checkbox
               isChecked={startVM}
               data-checked-state={startVM}
-              onChange={(value) => dispatch({ type: FORM_ACTION_TYPE.START_VM, payload: value })}
+              onChange={(_event, value) =>
+                dispatch({ type: FORM_ACTION_TYPE.START_VM, payload: value })
+              }
               label={t('kubevirt-plugin~Start this virtual machine after creation')}
               id="start-vm"
             />

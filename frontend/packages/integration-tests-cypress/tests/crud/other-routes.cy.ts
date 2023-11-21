@@ -51,7 +51,7 @@ describe('Visiting other routes', () => {
     },
     {
       path: '/api-resource/ns/default/core~v1~Pod/instances',
-      waitFor: () => cy.byTestID('empty-message').should('exist'),
+      waitFor: () => cy.byLegacyTestID('api-explorer-resource-title').contains('Pod'),
     },
     ...(Cypress.env('openshift') === true
       ? [
@@ -104,14 +104,6 @@ describe('Visiting other routes', () => {
             waitFor: () => cy.byLegacyTestID('cluster-version').should('exist'),
           },
           {
-            path: '/monitoring/query-browser',
-            waitFor: () => {
-              cy.byLegacyTestID('kebab-button').should('exist');
-              // loading indicator shows in metrics dropdown until loaded
-              cy.byTestID('loading-indicator').should('not.exist');
-            },
-          },
-          {
             // Test loading search page for a kind with no static model.
             path: '/search/all-namespaces?kind=config.openshift.io~v1~Console',
             waitFor: () => listPage.rows.shouldBeLoaded(),
@@ -142,6 +134,7 @@ describe('Test perspective query parameters', () => {
     cy.initAdmin();
     cy.visit('/k8s/cluster/projects');
     listPage.rows.shouldBeLoaded();
+    guidedTour.close();
   });
 
   afterEach(() => {

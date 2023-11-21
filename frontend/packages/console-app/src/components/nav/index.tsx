@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Nav, NavProps, PageSidebar } from '@patternfly/react-core';
+import { Nav, NavProps, PageSidebar, PageSidebarBody } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import NavHeader from './NavHeader';
 import PerspectiveNav from './PerspectiveNav';
@@ -17,15 +17,13 @@ export const Navigation: React.FC<NavigationProps> = React.memo(function Navigat
 }) {
   const { t } = useTranslation();
   return (
-    <PageSidebar
-      nav={
+    <PageSidebar isSidebarOpen={isNavOpen} theme="dark">
+      <PageSidebarBody>
         <Nav aria-label={t('console-app~Nav')} onSelect={onNavSelect} theme="dark">
           <NavHeader onPerspectiveSelected={onPerspectiveSelected} />
           <PerspectiveNav />
         </Nav>
-      }
-      isNavOpen={isNavOpen}
-      theme="dark"
-    />
+      </PageSidebarBody>
+    </PageSidebar>
   );
 });

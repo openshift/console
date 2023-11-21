@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
-import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { GreenCheckCircleIcon } from '@console/shared';
@@ -123,7 +124,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
           </Button>
         )}
       </div>
-      <div className="pf-c-form__helper-text">
+      <div className="pf-v5-c-form__helper-text">
         {getHealthChecksProbeConfig(probeType, t).formSubtitle}
       </div>
       <div className="co-toolbar__group co-toolbar__group--left">{renderProbe()}</div>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Popover } from '@patternfly/react-core';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { Shortcut, ShortcutTable } from '@console/shared';
 

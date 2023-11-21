@@ -20,10 +20,10 @@ export const CDRomBootSourceCheckbox: React.FC<CDRomBootSourceCheckboxProps> = (
         <Checkbox
           className="kv-create-vm__input-checkbox"
           id={getFieldId(VMSettingsField.IS_CDROM_BOOT_SOURCE)}
-          onChange={(v) => handleCDRomBootSource(v)}
+          onChange={(_event, v) => handleCDRomBootSource(v)}
         />
       </FormField>
-      <div className="pf-c-form__helper-text" aria-live="polite">
+      <div className="pf-v5-c-form__helper-text" aria-live="polite">
         {t('kubevirt-plugin~To boot this source from a CD-ROM. This will create "install" disk.')}
       </div>
     </FormFieldRow>

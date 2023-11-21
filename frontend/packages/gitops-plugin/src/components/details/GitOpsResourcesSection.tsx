@@ -78,7 +78,7 @@ const GitOpsResourcesSection: React.FC<GitOpsResourcesSectionProps> = ({
             <Split hasGutter>
               <span className="gop-gitops-resources__list">
                 <SplitItem>
-                  <Stack style={{ marginRight: 'var(--pf-global--spacer--sm)' }}>
+                  <Stack style={{ marginRight: 'var(--pf-v5-global--spacer--sm)' }}>
                     <StackItem>{deployments ? deployments.length : 'N/A'}</StackItem>
                     <StackItem>{secrets ? secrets.length : 'N/A'}</StackItem>
                     <StackItem>{services ? services.length : 'N/A'}</StackItem>
@@ -91,7 +91,7 @@ const GitOpsResourcesSection: React.FC<GitOpsResourcesSectionProps> = ({
                   </Stack>
                 </SplitItem>
                 <SplitItem>
-                  <Stack style={{ marginRight: 'var(--pf-global--spacer--sm)' }}>
+                  <Stack style={{ marginRight: 'var(--pf-v5-global--spacer--sm)' }}>
                     <StackItem>
                       <ResourceIcon kind="Deployment" /> {t('gitops-plugin~Deployments')}
                     </StackItem>

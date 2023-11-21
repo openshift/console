@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
-import { AngleUpIcon, AngleDownIcon } from '@patternfly/react-icons';
+import { AngleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angle-down-icon';
+import { AngleUpIcon } from '@patternfly/react-icons/dist/esm/icons/angle-up-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ImpersonateKind } from '@console/dynamic-plugin-sdk';

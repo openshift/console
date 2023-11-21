@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
-import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 /* eslint-disable-next-line */
 import { withTranslation, WithTranslation } from 'react-i18next';
 
@@ -56,7 +57,7 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
           <div className="co-list-input__row" key={i}>
             <div className="co-list-input__value">
               <input
-                className="pf-c-form-control"
+                className="pf-v5-c-form-control"
                 type="text"
                 value={v}
                 onChange={(e: React.FormEvent<HTMLInputElement>) =>

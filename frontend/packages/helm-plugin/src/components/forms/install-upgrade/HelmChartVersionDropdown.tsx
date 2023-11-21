@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GridItem } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { FormikValues, useFormikContext } from 'formik';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
@@ -81,7 +81,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
             </Trans>
           </p>
           <p>
-            <InfoCircleIcon color="var(--pf-global--info-color--100)" />{' '}
+            <InfoCircleIcon color="var(--pf-v5-global--info-color--100)" />{' '}
             <Trans t={t} ns="helm-plugin">
               All data entered for version <strong>{{ currentVersion }}</strong> will be reset
             </Trans>

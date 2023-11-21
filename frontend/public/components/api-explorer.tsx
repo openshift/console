@@ -13,7 +13,7 @@ import {
   ToolbarItem,
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
-import { FilterIcon } from '@patternfly/react-icons';
+import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -126,10 +126,10 @@ const Group: React.FC<{ value: string }> = ({ value }) => {
 };
 
 const tableClasses = [
-  'pf-u-w-25-on-2xl',
-  'pf-u-w-16-on-2xl',
-  'pf-u-w-16-on-lg pf-u-w-10-on-2xl',
-  'pf-m-hidden pf-m-visible-on-xl pf-u-w-16-on-lg',
+  'pf-v5-u-w-25-on-2xl',
+  'pf-v5-u-w-16-on-2xl',
+  'pf-v5-u-w-16-on-lg pf-v5-u-w-10-on-2xl',
+  'pf-m-hidden pf-m-visible-on-xl pf-v5-u-w-16-on-lg',
   'pf-m-hidden pf-m-visible-on-lg',
 ];
 
@@ -350,7 +350,11 @@ const APIResourcesList = compose(
               </ToolbarItem>
             </ToolbarToggleGroup>
             <ToolbarItem>
-              <TextFilter value={textFilter} label={t('public~by kind')} onChange={setTextFilter} />
+              <TextFilter
+                value={textFilter}
+                label={t('public~by kind')}
+                onChange={(_event, value) => setTextFilter(value)}
+              />
             </ToolbarItem>
           </ToolbarContent>
         </Toolbar>
@@ -622,7 +626,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
           <TextFilter
             defaultValue={filter}
             label={t('public~by subject')}
-            onChange={(val) => setFilter(val)}
+            onChange={(_event, val) => setFilter(val)}
           />
         </div>
       </div>

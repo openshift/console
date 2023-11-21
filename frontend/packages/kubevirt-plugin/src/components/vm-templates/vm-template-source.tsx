@@ -9,7 +9,8 @@ import {
   Stack,
   StackItem,
 } from '@patternfly/react-core';
-import { InProgressIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, LoadingInline, ResourceLink } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
@@ -291,28 +292,28 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({
   if (!detailed) {
     if (isTemplateSourceError(sourceStatus)) {
       return (
-        <Label variant="outline" color="red" icon={<RedExclamationCircleIcon />} isTruncated>
+        <Label variant="outline" color="red" icon={<RedExclamationCircleIcon />}>
           {t('kubevirt-plugin~Boot source error')}
         </Label>
       );
     }
     if (sourceStatus) {
       return sourceStatus.isReady ? (
-        <Label variant="outline" color="green" icon={<GreenCheckCircleIcon />} isTruncated>
+        <Label variant="outline" color="green" icon={<GreenCheckCircleIcon />}>
           {t('kubevirt-plugin~{{provider}} boot source', { provider: sourceStatus.provider })}
         </Label>
       ) : (
-        <Label variant="outline" color="blue" icon={<InProgressIcon />} isTruncated>
+        <Label variant="outline" color="blue" icon={<InProgressIcon />}>
           {t('kubevirt-plugin~Preparing boot source')}
         </Label>
       );
     }
     return isCommonTemplate(template) ? (
-      <Label variant="outline" color="orange" icon={<YellowExclamationTriangleIcon />} isTruncated>
+      <Label variant="outline" color="orange" icon={<YellowExclamationTriangleIcon />}>
         {t('kubevirt-plugin~Boot source required')}
       </Label>
     ) : (
-      <Label variant="outline" color="red" icon={<RedExclamationCircleIcon />} isTruncated>
+      <Label variant="outline" color="red" icon={<RedExclamationCircleIcon />}>
         {t('kubevirt-plugin~Boot source error')}
       </Label>
     );

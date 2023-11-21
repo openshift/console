@@ -1,23 +1,23 @@
 .co-alert {
-  margin-bottom: var(--pf-global--spacer--lg);
+  margin-bottom: var(--pf-v5-global--spacer--lg);
   text-align: left;
   // overrides Bootstrap-related line-height issue that causes the title and icon to go out of alignment
   h4 {
-    font-family: var(--pf-global--FontFamily--sans-serif);
-    line-height: var(--pf-global--LineHeight--md);
+    font-family: var(--pf-v5-global--FontFamily--text);
+    line-height: var(--pf-v5-global--LineHeight--md);
   }
 }
 
 .co-alert--margin-bottom-sm {
-  margin-bottom: var(--pf-global--spacer--sm);
+  margin-bottom: var(--pf-v5-global--spacer--sm);
 }
 
 .co-alert--margin-top {
   margin-bottom: 0;
-  margin-top: $pf-global-gutter;
+  margin-top: $pf-v5-global-gutter;
 }
 
-.co-alert--scrollable .pf-c-alert__description {
+.co-alert--scrollable .pf-v5-c-alert__description {
   max-height: 100px;
   overflow-x: hidden;
   overflow-y: auto;

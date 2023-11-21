@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { TextInputTypes, FormGroup } from '@patternfly/react-core';
+import {
+  TextInputTypes,
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -80,11 +86,7 @@ const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title, 
         helpText={t('knative-plugin~Arguments passed to the Container')}
         disableDeleteRow={args?.length === 1}
       />
-      <FormGroup
-        fieldId="containersource-env"
-        label={t('knative-plugin~Environment variables')}
-        helperText={t('knative-plugin~The list of variables to set in the Container')}
-      >
+      <FormGroup fieldId="containersource-env" label={t('knative-plugin~Environment variables')}>
         <AsyncComponent
           loader={() =>
             import('@console/internal/components/utils/name-value-editor').then(
@@ -100,6 +102,14 @@ const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title, 
           updateParentData={handleNameValuePairs}
           addLabel={t('knative-plugin~Add more')}
         />
+
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              {t('knative-plugin~The list of variables to set in the Container.')}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
     </FormSection>
   );

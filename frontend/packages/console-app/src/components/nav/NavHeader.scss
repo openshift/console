@@ -2,71 +2,72 @@
 @import '~@console/internal/style/vars';
 
 .oc-nav-header {
-  border-bottom: 1px solid var(--pf-global--BackgroundColor--dark-200);
-  padding: 0.6rem var(--pf-global--spacer--sm);
+  border-bottom: 1px solid var(--pf-v5-global--BackgroundColor--dark-200);
+  padding: 0.6rem var(--pf-v5-global--spacer--sm);
+  margin-top: var(--pf-v5-global--spacer--sm);
 
-  :where(.pf-theme-dark) & {
-    // Match --pf-c-nav__item--before--BorderColor
-    border-bottom-color: var(--pf-global--BorderColor--100);
+  :where(.pf-v5-theme-dark) & {
+    // Match --pf-v5-c-nav__item--before--BorderColor
+    border-bottom-color: var(--pf-v5-global--BorderColor--100);
   }
 
-  @media screen and (min-width: $pf-global--breakpoint--xl) {
-    padding-left: var(--pf-global--spacer--md);
-    padding-right: var(--pf-global--spacer--md);
+  @media screen and (min-width: $pf-v5-global--breakpoint--xl) {
+    padding-left: var(--pf-v5-global--spacer--md);
+    padding-right: var(--pf-v5-global--spacer--md);
   }
 
   &__icon {
-    margin-right: var(--pf-global--spacer--sm);
+    margin-right: var(--pf-v5-global--spacer--sm);
   }
 
   &__dropdown-toggle--is-empty {
     cursor: default !important;
   }
-  .pf-c-dropdown {
-    --pf-c-dropdown__menu-item--PaddingLeft: 7px;
+  .pf-v5-c-dropdown {
+    --pf-v5-c-dropdown__menu-item--PaddingLeft: 7px;
     width: 100%;
     cursor: pointer;
 
     &.pf-m-expanded {
-      .pf-c-dropdown__toggle {
-        background-color: var(--pf-global--BackgroundColor--dark-200);
-        :where(.pf-theme-dark) & {
-          background-color: var(--pf-global--BackgroundColor--dark-300);
+      .pf-v5-c-dropdown__toggle {
+        background-color: var(--pf-v5-global--BackgroundColor--dark-200);
+        :where(.pf-v5-theme-dark) & {
+          background-color: var(--pf-v5-global--BackgroundColor--dark-300);
         }
       }
     }
   }
 
-  .pf-c-dropdown__toggle {
-    :where(.pf-theme-dark) & {
-      background-color: var(--pf-c-page__sidebar--BackgroundColor);
+  .pf-v5-c-dropdown__toggle {
+    :where(.pf-v5-theme-dark) & {
+      background-color: var(--pf-v5-c-page__sidebar--BackgroundColor);
     }
   }
 
-  .pf-c-dropdown__menu-item,
+  .pf-v5-c-dropdown__menu-item,
   // For Edge
-  .pf-c-dropdown__toggle {
+  .pf-v5-c-dropdown__toggle {
     h1 {
       font-size: $co-side-nav-font-size;
     }
   }
 
-  .pf-c-dropdown__toggle {
+  .pf-v5-c-dropdown__toggle {
     font-size: $co-side-nav-font-size;
     justify-content: space-between;
     width: 100%;
 
     .pf-c-dropdown__toggle-icon {
-      color: var(--pf-global--Color--light-100);
+      color: var(--pf-v5-global--Color--light-100);
       font-size: $co-side-nav-section-font-size;
     }
 
-    .pf-c-title {
-      color: var(--pf-global--Color--light-100);
+    .pf-v5-c-title {
+      color: var(--pf-v5-global--Color--light-100);
       &.pf-m-md {
         font-size: $co-side-nav-section-font-size;
         font-family: var(
-          --pf-global--FontFamily--sans-serif
+          --pf-v5-global--FontFamily--text
         ); // Use RedHatText to match side nav links because buttons by default use RedHatDisplay
       }
     }

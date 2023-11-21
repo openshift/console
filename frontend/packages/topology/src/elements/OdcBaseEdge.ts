@@ -1,14 +1,21 @@
 import { BaseEdge } from '@patternfly/react-topology';
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import { K8sResourceKind, K8sResourceKindReference } from '@console/internal/module/k8s';
 import { OdcEdgeModel } from '../topology-types';
 
 class OdcBaseEdge extends BaseEdge {
-  @observable.ref
-  private resource?: K8sResourceKind;
+  public resource?: K8sResourceKind | undefined = undefined;
 
-  @observable
-  private resourceKind?: K8sResourceKindReference;
+  public resourceKind?: K8sResourceKindReference | undefined = undefined;
+
+  constructor() {
+    super();
+
+    makeObservable(this, {
+      resource: observable.ref,
+      resourceKind: observable,
+    });
+  }
 
   getResource(): K8sResourceKind | undefined {
     return this.resource;

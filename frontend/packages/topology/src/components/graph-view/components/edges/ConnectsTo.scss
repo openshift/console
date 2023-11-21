@@ -1,7 +1,7 @@
 .pf-topology__edge {
   &.odc-connects-to {
-    --edge--stroke: var(--pf-global--Color--400);
-    --edge--fill: var(--pf-global--BackgroundColor--light-300);
+    --edge--stroke: var(--pf-v5-global--Color--400);
+    --edge--fill: var(--pf-v5-global--BackgroundColor--light-300);
 
     &.odc-m-editable {
       --edge__arrow--cursor: pointer;

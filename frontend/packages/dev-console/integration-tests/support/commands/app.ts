@@ -54,7 +54,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('verifyDropdownselected', (selector: string) => {
   cy.get(selector).should('be.visible');
-  cy.get(selector).click().get('.pf-c-dropdown__menu').should('be.visible');
+  cy.get(selector).click().get('.pf-v5-c-dropdown__menu').should('be.visible');
 });
 
 Cypress.Commands.add('mouseHover', (selector: string) => {
@@ -79,7 +79,7 @@ Cypress.Commands.add('selectActionsMenuOption', (actionsMenuOption: string) => {
 Cypress.Commands.add('dropdownSwitchTo', (dropdownMenuOption: string) => {
   cy.byLegacyTestID('dropdown-button')
     .click()
-    .get('.pf-c-dropdown__menu')
+    .get('.pf-v5-c-dropdown__menu')
     .contains(dropdownMenuOption)
     .click();
 });
@@ -88,7 +88,7 @@ Cypress.Commands.add('isDropdownVisible', () => {
   cy.byLegacyTestID('dropdown-button')
     .should('be.visible')
     .click()
-    .get('.pf-c-dropdown__menu')
+    .get('.pf-v5-c-dropdown__menu')
     .should('be.visible');
 });
 
@@ -134,7 +134,7 @@ Cypress.Commands.add('checkErrors', () => {
   });
 });
 
-Cypress.Commands.add('waitUntilEnabled', (selector, timeout = 20000) => {
+Cypress.Commands.add('waitUntilEnabled', (selector: string, timeout: number = 20000): any => {
   const start = new Date().getTime();
 
   return cy.get(selector).then(($el) => {

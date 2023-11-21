@@ -22,12 +22,11 @@ import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import { useTranslation } from 'react-i18next';
 
-import {
-  AddCircleOIcon,
-  PauseCircleIcon,
-  PencilAltIcon,
-  SyncAltIcon,
-} from '@patternfly/react-icons';
+import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
+import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-circle-icon';
+import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
+
 import { removeQueryArgument } from '@console/internal/components/utils/router';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
@@ -200,7 +199,7 @@ export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, canUpgrade }
       variant="link"
     >
       {label}
-      <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+      <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
     </Button>
   ) : (
     <>{label}</>
@@ -550,7 +549,7 @@ export const UpdateBlockedLabel = () => {
   const { t } = useTranslation();
 
   return (
-    <Label color="orange" icon={<YellowExclamationTriangleIcon />} className="pf-u-ml-sm">
+    <Label color="orange" icon={<YellowExclamationTriangleIcon />} className="pf-v5-u-ml-sm">
       {t('public~Update blocked')}
     </Label>
   );
@@ -706,7 +705,7 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
           {!isMaster && !isUpdated && machineConfigPoolIsEditable && (
             <Button
               variant="secondary"
-              className={isPaused ? 'pf-u-mt-sm' : 'pf-u-mt-md'}
+              className={isPaused ? 'pf-v5-u-mt-sm' : 'pf-v5-u-mt-md'}
               onClick={() =>
                 togglePaused(MachineConfigPoolModel, machineConfigPool).catch((err) =>
                   errorModal({ error: err.message }),
@@ -1124,7 +1123,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                   <>
                     {!hasAvailableUpdates(cv) && hasNotRecommendedUpdates(cv) && (
                       <Alert
-                        className="pf-u-my-sm"
+                        className="pf-v5-u-my-sm"
                         isInline
                         isPlain
                         title={t(
@@ -1253,39 +1252,43 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
         ) : (
           <>
             <TextContent>
-              <Text component={TextVariants.p} className="help-block pf-u-mb-lg">
+              <Text component={TextVariants.p} className="help-block pf-v5-u-mb-lg">
                 {t(
                   'public~There is a threshold for rendering update data which may cause gaps in the information below.',
                 )}
               </Text>
             </TextContent>
             <div className="co-table-container">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>{t('public~Version')}</th>
-                    <th>{t('public~State')}</th>
-                    <th>{t('public~Started')}</th>
-                    <th>{t('public~Completed')}</th>
+              <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+                <thead className="pf-v5-c-table__thead">
+                  <tr className="pf-v5-c-table__tr">
+                    <th className="pf-v5-c-table__th">{t('public~Version')}</th>
+                    <th className="pf-v5-c-table__th">{t('public~State')}</th>
+                    <th className="pf-v5-c-table__th">{t('public~Started')}</th>
+                    <th className="pf-v5-c-table__th">{t('public~Completed')}</th>
                     {releaseNotes && (
-                      <th className="hidden-xs hidden-sm">{t('public~Release notes')}</th>
+                      <th className="pf-v5-c-table__th pf-m-hidden pf-m-visible-on-md">
+                        {t('public~Release notes')}
+                      </th>
                     )}
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="pf-v5-c-table__tbody">
                   {_.map(history, (update, i) => (
-                    <tr key={i}>
+                    <tr className="pf-v5-c-table__tr" key={i}>
                       <td
-                        className="co-break-all co-select-to-copy"
+                        className="pf-v5-c-table__td pf-m-break-word co-select-to-copy"
                         data-test-id="cv-details-table-version"
                       >
                         {update.version || '-'}
                       </td>
-                      <td data-test-id="cv-details-table-state">{update.state || '-'}</td>
-                      <td>
+                      <td className="pf-v5-c-table__td" data-test-id="cv-details-table-state">
+                        {update.state || '-'}
+                      </td>
+                      <td className="pf-v5-c-table__td">
                         <Timestamp timestamp={update.startedTime} />
                       </td>
-                      <td>
+                      <td className="pf-v5-c-table__td">
                         {update.completionTime ? (
                           <Timestamp timestamp={update.completionTime} />
                         ) : (
@@ -1293,7 +1296,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                         )}
                       </td>
                       {releaseNotes && (
-                        <td className="hidden-xs hidden-sm">
+                        <td className="pf-v5-c-table__td pf-m-hidden pf-m-visible-on-md">
                           {getReleaseNotesLink(update.version) ? (
                             <ReleaseNotesLink version={update.version} />
                           ) : (

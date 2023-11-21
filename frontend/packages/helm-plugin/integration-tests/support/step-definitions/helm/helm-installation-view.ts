@@ -8,7 +8,7 @@ When('user searches and selects {string} helm chart from catalog page', (helmCha
 });
 
 Then('user will see the information of all the chart versions', () => {
-  cy.get('ul.pf-c-dropdown__menu').find('li button').should('have.length.gte', 1);
+  cy.get('ul.pf-v5-c-dropdown__menu').find('li button').should('have.length.gte', 1);
   cy.byLegacyTestID('reset-button').click();
 });
 
@@ -48,5 +48,5 @@ Then(
 );
 
 Then('user should see message {string}', (message: string) => {
-  cy.get('h4.pf-c-alert__title').should('contain.text', message).should('exist');
+  cy.get('h4.pf-v5-c-alert__title').should('contain.text', message).should('exist');
 });

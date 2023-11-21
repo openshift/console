@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ActionGroup, Alert, Button, ButtonVariant } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
+import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils';
@@ -59,7 +59,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               })}
           </Alert>
         )}
-        <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
+        <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
           {!hideSubmit && (
             <Button
               type={handleSubmit ? 'button' : 'submit'}
@@ -97,7 +97,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               type="button"
               data-test-id="download-button"
               variant={ButtonVariant.secondary}
-              className="pf-c-button--align-right hidden-sm hidden-xs"
+              className="pf-v5-c-button--align-right hidden-sm hidden-xs"
               onClick={handleDownload}
               icon={<DownloadIcon />}
             >

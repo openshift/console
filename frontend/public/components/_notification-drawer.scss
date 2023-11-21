@@ -1,10 +1,10 @@
 .co-notification-drawer {
   overflow-y: hidden !important;
-  // place above pf-m-sticky-top --pf-c-page--section--m-sticky-top--ZIndex + 10
+  // place above pf-m-sticky-top --pf-v5-c-page--section--m-sticky-top--ZIndex + 10
   z-index: 310 !important;
   @include co-break-word;
 }
 
-.pf-c-drawer__content {
-  --pf-c-drawer__content--ZIndex: auto;
+.pf-v5-c-drawer__content {
+  --pf-v5-c-drawer__content--ZIndex: auto;
 }

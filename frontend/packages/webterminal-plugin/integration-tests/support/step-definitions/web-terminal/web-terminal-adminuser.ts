@@ -33,7 +33,9 @@ When('user clicks on the Web Terminal icon on the Masthead', () => {
 });
 
 When('user clicks advanced option for Timeout', () => {
-  cy.get('[role="tabpanel"] button.pf-c-button.pf-m-link.pf-m-inline').contains('Timeout').click();
+  cy.get('[role="tabpanel"] button.pf-v5-c-button.pf-m-link.pf-m-inline')
+    .contains('Timeout')
+    .click();
 });
 
 When('user sets timeout to 1 Minute', () => {

@@ -21,7 +21,7 @@ const OptionalableWorkspace: React.FC<OptionalableWorkspace> = ({ namePrefix, is
         isReadOnly={isReadOnly}
         aria-label={t('pipelines-plugin~Name')}
       />
-      <div style={{ marginBottom: 'var(--pf-global--spacer--xs)' }} />
+      <div style={{ marginBottom: 'var(--pf-v5-global--spacer--xs)' }} />
       <CheckboxField
         name={`${namePrefix}.optional`}
         label={t('pipelines-plugin~Optional workspace')}

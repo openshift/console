@@ -3,15 +3,15 @@
     position: initial !important;
   }
 
-  &__sub.pf-c-dropdown__menu-item {
-    --pf-c-dropdown__menu-item--PaddingRight: var(--pf-global--spacer--lg);
+  &__sub.pf-v5-c-dropdown__menu-item {
+    --pf-v5-c-dropdown__menu-item--PaddingRight: var(--pf-v5-global--spacer--lg);
 
     position: relative;
   }
 
   &__arrow {
     position: absolute;
-    right: var(--pf-global--spacer--xs);
+    right: var(--pf-v5-global--spacer--xs);
     top: 50%;
     transform: translateY(-50%);
   }

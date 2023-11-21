@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { NumberSpinner } from '@console/internal/components/utils';
 import { useFormikValidationFix } from '../../hooks';
+import { RedExclamationCircleIcon } from '../status';
 import { FieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -25,19 +26,12 @@ const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, .
   );
 
   return (
-    <FormGroup
-      fieldId={fieldId}
-      label={label}
-      helperText={helpText}
-      helperTextInvalid={errorMessage}
-      validated={isValid ? 'default' : 'error'}
-      isRequired={required}
-    >
+    <FormGroup fieldId={fieldId} label={label} isRequired={required}>
       <NumberSpinner
         {...field}
         {...props}
         onChange={handleChange}
-        value={parseInt(field.value, 10)}
+        value={field.value ? parseInt(field.value, 10) : 0}
         id={fieldId}
         data-test-id="number-spinner-field"
         changeValueBy={(operation: number) => {
@@ -46,6 +40,18 @@ const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, .
         }}
         aria-describedby={helpText ? `${fieldId}-helper` : undefined}
       />
+
+      <FormHelperText>
+        <HelperText>
+          {!isValid ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          ) : (
+            <HelperTextItem>{helpText}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

@@ -7,8 +7,7 @@ $consoleWebDistPath: './';
 @import '~@patternfly/patternfly/sass-utilities/all';
 
 // Enable use within shared components and packages
-@import "../style/ancillary/bootstrap-variables";
-
+@import '../style/ancillary/bootstrap-variables';
 
 // == Overrides of external dependency variables
 
@@ -16,54 +15,55 @@ $consoleWebDistPath: './';
 $fa-font-path: $consoleWebDistPath + '/';
 
 // PatternFly 4 font path.
-$pf-global--font-path: '~@patternfly/patternfly/assets/fonts';
-$table-border-color: var(--pf-global--BorderColor--300);
+$pf-v5-global--font-path: '~@patternfly/patternfly/assets/fonts';
+$table-border-color: var(--pf-v5-global--BorderColor--300);
 
 :root {
-  --pf-global--FontSize--md: 14px; // Numerical value required, same as $font-size-base
+  // Numerical value required
+  --pf-v5-global--FontSize--md: 14px; // same as $font-size-base
+  --pf-global--FontSize--md: 14px; // same as $font-size-base
+  --pf-v5-global--FontSize--sm: 13px;
   --pf-global--FontSize--sm: 13px;
 }
 
 // == Declare max breakpoints from PatternFly variables
-$pf-global--breakpoint--xs-max: ($pf-global--breakpoint--xs - 1);
-$pf-global--breakpoint--sm-max: ($pf-global--breakpoint--sm - 1);
-$pf-global--breakpoint--md-max: ($pf-global--breakpoint--md - 1);
-$pf-global--breakpoint--lg-max: ($pf-global--breakpoint--lg - 1);
+$pf-v5-global--breakpoint--xs-max: ($pf-v5-global--breakpoint--xs - 1);
+$pf-v5-global--breakpoint--sm-max: ($pf-v5-global--breakpoint--sm - 1);
+$pf-v5-global--breakpoint--md-max: ($pf-v5-global--breakpoint--md - 1);
+$pf-v5-global--breakpoint--lg-max: ($pf-v5-global--breakpoint--lg - 1);
 
-// Can not use --pf-global--gutter --pf-global--gutter--md because you can't get a negative value of a scss variable that is assigned a css custom property.
-$pf-global-gutter: 1rem; // Matches --pf-global--gutter
-$pf-global-gutter--md: 1.5rem; // Matches --pf-global--gutter--md
-
+// Can not use --pf-v5-global--gutter --pf-v5-global--gutter--md because you can't get a negative value of a scss variable that is assigned a css custom property.
+$pf-v5-global-gutter: 1rem; // Matches --pf-v5-global--gutter
+$pf-v5-global-gutter--md: 1.5rem; // Matches --pf-v5-global--gutter--md
 
 // == Custom variables
 
-$pf-header-icon-fontsize: 16px; // Patternfly 4 default
+$pf-v5-header-icon-fontsize: 16px; // Patternfly 4 default
 // Manually set because our default font size is different than PF 4
-$co-side-nav-font-size: $font-size-base; // Matches PF 4 --pf-c-nav__subnav__link--FontSize
-$co-side-nav-section-font-size: ($font-size-base + 2); // Matches PF 4 --pf-c-nav__link--FontSize
+$co-side-nav-font-size: $font-size-base; // Matches PF 4 --pf-v5-c-nav__subnav__link--FontSize
+$co-side-nav-section-font-size: ($font-size-base + 2); // Matches PF 4 --pf-v5-c-nav__link--FontSize
 $co-m-catalog-tile-height: 100%;
 $co-m-catalog-tile-width: 260px;
 
-
 // == Colors
 
-$color-alertmanager-dark: $pf-color-orange-600;
-$color-application-dark: $pf-color-green-500;
-$color-configmap-dark: $pf-color-purple-600;
-$color-container-dark: $pf-color-blue-300;
-$color-error: $pf-color-red-100;
-$color-ingress-dark: $pf-color-purple-600;
-$color-namespace-dark: $pf-color-green-600;
-$color-node-dark: $pf-color-purple-400;
-$color-pod-dark: $pf-color-cyan-300;
-$color-pod-overlord: $pf-color-blue-500;
-$color-primary: $pf-color-blue-300;
-$color-rbac-binding-dark: $pf-color-light-blue-500;
-$color-rbac-role-dark: $pf-color-gold-600;
-$color-secret-dark: $pf-color-orange-400;
-$color-service-dark: $pf-color-light-green-500;
-$color-text-muted: $pf-color-black-600;
-$color-text-secondary: $pf-color-black-600;
+$color-alertmanager-dark: $pf-v5-color-orange-600;
+$color-application-dark: $pf-v5-color-green-500;
+$color-configmap-dark: $pf-v5-color-purple-600;
+$color-container-dark: $pf-v5-color-blue-300;
+$color-error: $pf-v5-color-red-100;
+$color-ingress-dark: $pf-v5-color-purple-600;
+$color-namespace-dark: $pf-v5-color-green-600;
+$color-node-dark: $pf-v5-color-purple-400;
+$color-pod-dark: $pf-v5-color-cyan-300;
+$color-pod-overlord: $pf-v5-color-blue-500;
+$color-primary: $pf-v5-color-blue-300;
+$color-rbac-binding-dark: $pf-v5-color-light-blue-500;
+$color-rbac-role-dark: $pf-v5-color-gold-600;
+$color-secret-dark: $pf-v5-color-orange-400;
+$color-service-dark: $pf-v5-color-light-green-500;
+$color-text-muted: $pf-v5-color-black-600;
+$color-text-secondary: $pf-v5-color-black-600;
 // -- Depend on color vars defined above
 $color-alert-dark: $color-container-dark;
 $color-alertrule-dark: $color-configmap-dark;

@@ -69,7 +69,7 @@ export const alertmanager = {
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${defaultAlertmanagerYaml}}]'`,
     ),
   save: () => cy.byLegacyTestID('save-changes').should('be.enabled').click(),
-  showAdvancedConfiguration: () => cy.get('button.pf-c-expandable-section__toggle').click(),
+  showAdvancedConfiguration: () => cy.get('button.pf-v5-c-expandable-section__toggle').click(),
   validateCreation: (receiverName: string, type: string, severity: string, warning: string) => {
     cy.byLegacyTestID('item-filter').clear();
     cy.byLegacyTestID('item-filter').type(receiverName);

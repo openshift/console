@@ -2,18 +2,18 @@
   padding: 40px 20px;
 
   &__title {
-    color: var(--pf-global--Color--100);
+    color: var(--pf-v5-global--Color--100);
     font-size: 18px;
     margin-bottom: 20px;
     text-align: center;
 
     .cos-error-title {
-      color: var(--pf-global--danger-color--100);
+      color: var(--pf-v5-global--danger-color--100);
     }
   }
 
   &__detail {
-    color: var(--pf-global--Color--200);
+    color: var(--pf-v5-global--Color--200);
     font-size: $font-size-base;
     max-width: 500px;
     margin: 0 auto;
@@ -24,7 +24,7 @@
   }
 
   &__loading-message {
-    margin-top: var(--pf-global--spacer--sm);
+    margin-top: var(--pf-v5-global--spacer--sm);
   }
 }
 

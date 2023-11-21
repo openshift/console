@@ -162,6 +162,8 @@ const TaskComponent: React.FC<TaskProps> = ({
   const stepStatusList: StepStatus[] = stepList.map((step) => createStepStatus(step, status));
   const showStatusState: boolean = isPipelineRun && !!status && !!status.reason;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
+  const nameRef = React.useRef();
+  const pillRef = React.useRef();
   const path = pipelineRunName
     ? `${resourcePathFromModel(PipelineRunModel, pipelineRunName, namespace)}/logs/${name}`
     : undefined;
@@ -184,6 +186,7 @@ const TaskComponent: React.FC<TaskProps> = ({
 
   const renderVisualName = (
     <text
+      ref={nameRef}
       x={showStatusState ? 30 : width / 2}
       y={height / 2 + 1}
       className={cx('odc-pipeline-vis-task-text', {
@@ -209,7 +212,9 @@ const TaskComponent: React.FC<TaskProps> = ({
         })}
       />
       {visualName !== truncatedVisualName && disableVisualizationTooltip ? (
-        <Tooltip content={visualName}>{renderVisualName}</Tooltip>
+        <Tooltip triggerRef={nameRef} content={visualName}>
+          {renderVisualName}
+        </Tooltip>
       ) : (
         renderVisualName
       )}
@@ -244,6 +249,7 @@ const TaskComponent: React.FC<TaskProps> = ({
     taskPill = (
       <>
         <Tooltip
+          triggerRef={pillRef}
           position="bottom"
           enableFlip={false}
           content={
@@ -255,7 +261,7 @@ const TaskComponent: React.FC<TaskProps> = ({
             />
           }
         >
-          {taskPill}
+          <g ref={pillRef}>{taskPill}</g>
         </Tooltip>
       </>
     );

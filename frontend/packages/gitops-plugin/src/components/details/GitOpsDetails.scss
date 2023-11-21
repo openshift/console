@@ -1,5 +1,5 @@
 .gop-gitops-details {
-  padding: var(--pf-global--spacer--xl);
+  padding: var(--pf-v5-global--spacer--xl);
   height: 100%;
   display: flex;
   flex-wrap: wrap;
@@ -16,21 +16,21 @@
     &__app-name {
       font-size: 20px;
       font-weight: bold;
-      margin: var(--pf-global--spacer--xs) 0px;
+      margin: var(--pf-v5-global--spacer--xs) 0px;
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
       display: block;
     }
     &__status-label {
-      margin: var(--pf-global--spacer--xs) 0px;
+      margin: var(--pf-v5-global--spacer--xs) 0px;
       outline: none;
     }
     &__envname-and-status {
       display: flex;
     }
     &__env {
-      .pf-c-label__text {
+      .pf-v5-c-label__text {
         text-align: left;
         font-size: 20px;
         font-weight: bold;
@@ -38,14 +38,14 @@
       }
     }
     &__time {
-      margin: var(--pf-global--spacer--xs) 0px var(--pf-global--spacer--xs) 0px;
+      margin: var(--pf-v5-global--spacer--xs) 0px var(--pf-v5-global--spacer--xs) 0px;
       display: flex;
       .co-icon-and-text__icon {
         display: none;
       }
     }
     &__time-unavailable {
-      margin: var(--pf-global--spacer--xs) 0px var(--pf-global--spacer--xs) 0px;
+      margin: var(--pf-v5-global--spacer--xs) 0px var(--pf-v5-global--spacer--xs) 0px;
       display: flex;
       font-style: italic;
       .co-icon-and-text__icon {
@@ -53,7 +53,7 @@
       }
     }
     &__deployment-history {
-      margin-top: var(--pf-global--spacer--xs);
+      margin-top: var(--pf-v5-global--spacer--xs);
       justify-content: space-between;
     }
     &__argo-external-link {
@@ -65,10 +65,10 @@
     }
     &__cluster-url-empty-state {
       font-size: 12px;
-      color: var(--pf-global--palette--black-600);
+      color: var(--pf-v5-global--palette--black-600);
     }
     article {
-      border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+      border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
       min-width: 335px;
       max-width: 335px;
     }
@@ -78,31 +78,31 @@
   }
   &__author-sha {
     align-items: center;
-    color: var(--pf-global--Color--200);
+    color: var(--pf-v5-global--Color--200);
     display: flex;
-    margin-bottom: var(--pf-global--spacer--xs);
+    margin-bottom: var(--pf-v5-global--spacer--xs);
   }
   &__message {
-    margin-bottom: var(--pf-global--spacer--xs);
+    margin-bottom: var(--pf-v5-global--spacer--xs);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   &__warning-message {
-    margin-bottom: var(--pf-global--spacer--xs);
+    margin-bottom: var(--pf-v5-global--spacer--xs);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-style: italic;
   }
   &__author {
-    margin-right: var(--pf-global--spacer--sm);
+    margin-right: var(--pf-v5-global--spacer--sm);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   &__author-unavailable {
-    margin-right: var(--pf-global--spacer--sm);
+    margin-right: var(--pf-v5-global--spacer--sm);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -110,7 +110,7 @@
   }
   &__sha {
     background-color: inherit;
-    color: var(--pf-global--link--Color);
+    color: var(--pf-v5-global--link--Color);
     font-size: 12px;
     width: auto;
     svg {
@@ -118,6 +118,6 @@
     }
   }
   &__special-message-alert {
-    margin-bottom: var(--pf-global--spacer--xl);
+    margin-bottom: var(--pf-v5-global--spacer--xl);
   }
 }

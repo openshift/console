@@ -10,7 +10,7 @@ export enum EditorType {
 
 export const EditorToggle: React.FC<EditorToggleProps> = ({ value, onChange }) => {
   const { t } = useTranslation();
-  const handleChange = (_checked: boolean, event: React.FormEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     onChange(event?.currentTarget?.value as EditorType);
   };
   return (

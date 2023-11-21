@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ActionGroup, Button, ButtonVariant } from '@patternfly/react-core';
-import { CheckIcon } from '@patternfly/react-icons';
+import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import CloseButton from '../close-button/CloseButton';
 import { ActionGroupWithIconsProps } from './form-utils-types';
 
@@ -10,7 +10,7 @@ const ActionGroupWithIcons: React.FC<ActionGroupWithIconsProps> = ({
   isDisabled,
 }) => {
   return (
-    <ActionGroup className="pf-c-form pf-c-form__actions--right">
+    <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right">
       {onSubmit && (
         <Button
           type="submit"

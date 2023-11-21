@@ -1,13 +1,9 @@
 import * as React from 'react';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import {
-  Card,
-  CardActions,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  SelectOption,
-  SelectVariant,
-} from '@patternfly/react-core';
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -48,26 +44,34 @@ export const VirtOverviewTopConsumersCard: React.FC = () => {
 
   return (
     <div className="kv-top-consumers-card">
-      <Card data-test="kv-top-consumers-card">
-        <CardHeader className="kv-top-consumers-card__header">
+      <Card data-test="kv-top-consumers-card" isClickable isSelectable>
+        <CardHeader
+          actions={{
+            actions: (
+              <>
+                <Link to="/monitoring/dashboards/grafana-dashboard-kubevirt-top-consumers?period=4h">
+                  {t('kubevirt-plugin~View virtualization dashboard')}
+                </Link>
+                <div className="kv-top-consumers-card__dropdown">
+                  <FormPFSelect
+                    toggleId="kv-top-consumers-card-amount-select"
+                    variant={SelectVariantDeprecated.single}
+                    selections={numItemsToShow}
+                    onSelect={(e, value) => onTopAmountSelect(value)}
+                  >
+                    {topAmountSelectOptions(t).map((opt) => (
+                      <SelectOptionDeprecated key={opt.key} value={opt.value} />
+                    ))}
+                  </FormPFSelect>
+                </div>
+              </>
+            ),
+            hasNoOffset: false,
+            className: 'co-overview-card__actions',
+          }}
+          className="kv-top-consumers-card__header"
+        >
           <CardTitle>{t('kubevirt-plugin~Top consumers')} </CardTitle>
-          <CardActions className="co-overview-card__actions">
-            <Link to="/monitoring/dashboards/grafana-dashboard-kubevirt-top-consumers?period=4h">
-              {t('kubevirt-plugin~View virtualization dashboard')}
-            </Link>
-            <div className="kv-top-consumers-card__dropdown">
-              <FormPFSelect
-                toggleId="kv-top-consumers-card-amount-select"
-                variant={SelectVariant.single}
-                selections={numItemsToShow}
-                onSelect={(e, value) => onTopAmountSelect(value)}
-              >
-                {topAmountSelectOptions(t).map((opt) => (
-                  <SelectOption key={opt.key} value={opt.value} />
-                ))}
-              </FormPFSelect>
-            </div>
-          </CardActions>
         </CardHeader>
         <CardBody className="kv-top-consumers-card__body">
           <TopConsumersGridRow

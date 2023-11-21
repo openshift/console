@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
 
 import { Dropdown, EmptyBox, withHandlePromise, HandlePromiseProps } from '../utils';
@@ -86,7 +87,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                   </div>
                   <input
                     type="text"
-                    className="pf-c-form-control taint-modal__input"
+                    className="pf-v5-c-form-control taint-modal__input"
                     value={c.key}
                     onChange={(e) => change(e, i, 'key')}
                     required
@@ -98,7 +99,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                   </div>
                   <input
                     type="text"
-                    className="pf-c-form-control taint-modal__input"
+                    className="pf-v5-c-form-control taint-modal__input"
                     value={c.value}
                     onChange={(e) => change(e, i, 'value')}
                   />

@@ -28,7 +28,7 @@ export const GitOpsDeploymentHistoryTableRow: React.FC<RowFunctionArgs<GitOpsHis
       </TableData>
       <TableData className={GitOpsDeploymentHistoryTableColumnClasses[3]}>{data.author}</TableData>
       <TableData
-        className={classNames(GitOpsDeploymentHistoryTableColumnClasses[4], 'pf-u-text-nowrap')}
+        className={classNames(GitOpsDeploymentHistoryTableColumnClasses[4], 'pf-v5-u-text-nowrap')}
       >
         <CommitRevision repoUrl={data.repo_url} revision={data.revision} />
       </TableData>

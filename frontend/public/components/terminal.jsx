@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Terminal as XTerminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { withTranslation } from 'react-i18next';
-import { CompressIcon } from '@patternfly/react-icons';
+import { CompressIcon } from '@patternfly/react-icons/dist/esm/icons/compress-icon';
 import { Button } from '@patternfly/react-core';
 import { XtermAddonFullscreen } from '@console/shared';
 
@@ -40,12 +40,12 @@ class Terminal_ extends React.Component {
   }
 
   enableiOSFix() {
-    document.getElementsByClassName('pf-c-page__main')[0].classList.add('default-overflow');
+    document.getElementsByClassName('pf-v5-c-page__main')[0].classList.add('default-overflow');
     document.getElementById('content-scrollable').classList.add('default-overflow');
   }
 
   disableiOSFix() {
-    document.getElementsByClassName('pf-c-page__main')[0].classList.remove('default-overflow');
+    document.getElementsByClassName('pf-v5-c-page__main')[0].classList.remove('default-overflow');
     document.getElementById('content-scrollable').classList.remove('default-overflow');
   }
 
@@ -90,7 +90,7 @@ class Terminal_ extends React.Component {
       return;
     }
 
-    const pageRect = document.getElementsByClassName('pf-c-page')[0].getBoundingClientRect();
+    const pageRect = document.getElementsByClassName('pf-v5-c-page')[0].getBoundingClientRect();
     const bodyRect = document.body.getBoundingClientRect();
     const nodeRect = node.getBoundingClientRect();
 

@@ -5,11 +5,12 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  EmptyStateSecondaryActions,
   EmptyStateVariant,
-  Title,
+  EmptyStateActions,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
-import { CheckIcon } from '@patternfly/react-icons';
+import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { global_palette_light_green_400 as globalLightGreen400 } from '@patternfly/react-tokens/dist/js/global_palette_light_green_400';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -86,15 +87,18 @@ export const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
   }
   return (
     <EmptyState variant={EmptyStateVariant.full} className={className}>
-      <EmptyStateIcon icon={CheckIcon} color={globalLightGreen400.value} />
-      <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-success-result">
-        {title}
-      </Title>
-      {!isOvirtImportProvider && <EmptyStateBody key="info">{description}</EmptyStateBody>}
-      {isOvirtImportProvider ? listButton : detailsButton}
-      {!isOvirtImportProvider && (
-        <EmptyStateSecondaryActions key="secondary">{listButton}</EmptyStateSecondaryActions>
-      )}
+      <EmptyStateHeader
+        titleText={<>{title}</>}
+        icon={<EmptyStateIcon icon={CheckIcon} color={globalLightGreen400.value} />}
+        headingLevel="h5"
+      />
+      <EmptyStateFooter>
+        {!isOvirtImportProvider && <EmptyStateBody key="info">{description}</EmptyStateBody>}
+        {isOvirtImportProvider ? listButton : detailsButton}
+        {!isOvirtImportProvider && (
+          <EmptyStateActions key="secondary">{listButton}</EmptyStateActions>
+        )}
+      </EmptyStateFooter>
     </EmptyState>
   );
 };

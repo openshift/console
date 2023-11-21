@@ -36,12 +36,12 @@ const LabelComponent = ({ clusterID, ...props }) => (
       riskSorting[props.datum.id] + 1
     }`}
   >
-    <ChartLabel {...props} style={{ fill: 'var(--pf-global--link--Color)' }} />
+    <ChartLabel {...props} style={{ fill: 'var(--pf-v5-global--link--Color)' }} />
   </ExternalLink>
 );
 
 const SubTitleComponent = (props) => (
-  <ChartLabel {...props} style={{ fill: 'var(--pf-chart-color-black-500)' }} />
+  <ChartLabel {...props} style={{ fill: 'var(--pf-v5-chart-color-black-500)' }} />
 );
 
 export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses, k8sResult }) => {
@@ -146,7 +146,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
           </div>
           {clusterID ? (
             <>
-              <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
+              <h6 className="pf-v5-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
               <div>
                 <ExternalLink
                   href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}`}

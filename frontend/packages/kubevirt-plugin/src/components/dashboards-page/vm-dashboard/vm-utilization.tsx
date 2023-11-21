@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardActions, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   PrometheusMultilineUtilizationItem,
@@ -70,12 +70,19 @@ export const VMUtilizationCard: React.FC = () => {
   ]);
 
   return (
-    <Card>
-      <CardHeader>
+    <Card isClickable isSelectable>
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <UtilizationDurationDropdown adjustDuration={adjustDuration} />
+            </>
+          ),
+          hasNoOffset: false,
+          className: undefined,
+        }}
+      >
         <CardTitle>{t('kubevirt-plugin~Utilization')}</CardTitle>
-        <CardActions>
-          <UtilizationDurationDropdown adjustDuration={adjustDuration} />
-        </CardActions>
       </CardHeader>
       <UtilizationBody>
         <PrometheusUtilizationItem

@@ -3,7 +3,11 @@ import {
   formatPrometheusDuration,
   parsePrometheusDuration,
 } from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { PipelineMetricsTimeRangeOptions } from './pipeline-metrics-utils';
@@ -29,9 +33,9 @@ const PipelineMetricsTimeRangeDropdown: React.FC<PipelineMetricsTimeRangeDropdow
     <div className="form-group">
       <label>{t('pipelines-plugin~Time Range')}</label>
       <div>
-        <Dropdown
+        <DropdownDeprecated
           dropdownItems={map(timeRangeOptions, (name, key) => (
-            <DropdownItem
+            <DropdownItemDeprecated
               component="button"
               key={key}
               onClick={() => {
@@ -40,13 +44,13 @@ const PipelineMetricsTimeRangeDropdown: React.FC<PipelineMetricsTimeRangeDropdow
               }}
             >
               {name}
-            </DropdownItem>
+            </DropdownItemDeprecated>
           ))}
           isOpen={isOpen}
           toggle={
-            <DropdownToggle onToggle={toggleIsOpen}>
+            <DropdownToggleDeprecated onToggle={toggleIsOpen}>
               {timeRangeOptions[formatPrometheusDuration(timespan)]}
-            </DropdownToggle>
+            </DropdownToggleDeprecated>
           }
         />
       </div>

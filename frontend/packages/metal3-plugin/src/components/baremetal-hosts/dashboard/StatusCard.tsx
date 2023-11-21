@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@patternfly/react-core';
-import { RebootingIcon } from '@patternfly/react-icons';
+import { RebootingIcon } from '@patternfly/react-icons/dist/esm/icons/rebooting-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';

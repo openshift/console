@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LinkIcon } from '@patternfly/react-icons';
+import { LinkIcon } from '@patternfly/react-icons/dist/esm/icons/link-icon';
 
 import './hash-anchor.scss';
 

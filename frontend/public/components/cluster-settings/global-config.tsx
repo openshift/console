@@ -181,7 +181,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
             <TextFilter
               value={textFilter}
               label={t('public~by name or description')}
-              onChange={(val) => setTextFilter(val)}
+              onChange={(_event, val) => setTextFilter(val)}
             />
           </div>
         </>

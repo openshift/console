@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tooltip, Flex, FlexItem, Button } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { useTranslation } from 'react-i18next';
 import CloseButton from '@console/shared/src/components/close-button';
 import Drawer from '@console/shared/src/components/drawer/Drawer';

@@ -1,15 +1,15 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
 
-$filtered-stroke-color: $pf-color-orange-200;
+$filtered-stroke-color: $pf-v5-color-orange-200;
 
-$selected-fill-color: #A5C4E2;
-$selected-stroke-color: $pf-color-blue-400;
+$selected-fill-color: #a5c4e2;
+$selected-stroke-color: $pf-v5-color-blue-400;
 
-$interactive-fill-color: #A5C4E2;
-$interactive-stroke-color: $pf-color-blue-200;
+$interactive-fill-color: #a5c4e2;
+$interactive-stroke-color: $pf-v5-color-blue-200;
 
-$group-node-stroke-color: $pf-color-black-500;
-$group-node-fill-color: $pf-color-black-300;
+$group-node-stroke-color: $pf-v5-color-black-500;
+$group-node-fill-color: $pf-v5-color-black-300;
 $group-node-fill-opacity: 0.5;
 $group-node-stroke-width: 2.5px;
 $group-node-stroke-dasharray: 5 6;

@@ -41,7 +41,7 @@ const DescriptionModal = withHandlePromise((props: DescriptionModalProps) => {
         <TextArea
           className="kubevirt-vm-description-modal__description"
           value={description}
-          onChange={(d) => setDescription(d)}
+          onChange={(_event, d) => setDescription(d)}
           aria-label={t('kubevirt-plugin~description text area')}
         />
       </ModalBody>

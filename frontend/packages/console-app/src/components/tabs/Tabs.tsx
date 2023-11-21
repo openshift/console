@@ -411,7 +411,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
                         <AngleRightIcon arian-hidden="true" />
                       </span>
                       {toggleText && (
-                        <span className={css('pf-c-tabs__toggle-text')} id={`${randomId}-text`}>
+                        <span className={css('pf-v5-c-tabs__toggle-text')} id={`${randomId}-text`}>
                           {toggleText}
                         </span>
                       )}

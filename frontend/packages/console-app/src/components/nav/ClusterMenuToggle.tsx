@@ -69,7 +69,6 @@ const ClusterMenuToggle = (props: {
         position="left"
         appendTo={() => document.body}
         isVisible={isOpen}
-        popperMatchesTriggerWidth={false}
         enableFlip={false}
       />
     </ToolbarItem>

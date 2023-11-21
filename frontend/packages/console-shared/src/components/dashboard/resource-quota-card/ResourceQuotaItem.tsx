@@ -17,7 +17,7 @@ const ResourceQuotaItem: React.FC<ResourceQuotaItemProps> = ({ resourceQuota }) 
       <Split hasGutter>
         <SplitItem isFilled>
           <ExpandableSection
-            onToggle={setExpanded}
+            onToggle={(_event, isOpen) => setExpanded(isOpen)}
             isExpanded={isExpanded}
             toggleContent={
               <ResourceLink

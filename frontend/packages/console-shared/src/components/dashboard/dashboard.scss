@@ -1,11 +1,11 @@
 @import '../../../../../public/style/vars';
 
 .co-dashboard-body {
-  background-color: var(--pf-global--BackgroundColor--200);
+  background-color: var(--pf-v5-global--BackgroundColor--200);
   flex: 1 0 auto;
-  padding: $pf-global-gutter;
-  @media(min-width: $pf-global--breakpoint--xl) {
-    padding: $pf-global-gutter--md;
+  padding: $pf-v5-global-gutter;
+  @media (min-width: $pf-v5-global--breakpoint--xl) {
+    padding: $pf-v5-global-gutter--md;
   }
 }
 

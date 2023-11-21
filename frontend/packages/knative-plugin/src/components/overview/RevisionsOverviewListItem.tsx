@@ -34,7 +34,7 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
           <ResourceLink kind={referenceForModel(RevisionModel)} name={name} namespace={namespace} />
         </div>
         {trafficPercent && (
-          <span className="col-sm-4 col-xs-3 pf-u-text-align-right">{trafficPercent}</span>
+          <span className="col-sm-4 col-xs-3 pf-v5-u-text-align-right">{trafficPercent}</span>
         )}
       </div>
       {deploymentData.name && (

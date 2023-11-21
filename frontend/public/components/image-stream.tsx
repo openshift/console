@@ -5,7 +5,7 @@ import * as semver from 'semver';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { AlertVariant, Button, Popover } from '@patternfly/react-core';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamModel } from '../models';

@@ -5,17 +5,17 @@
   height: 100%;
 
   &--fullscreen {
-    background-color: var(--pf-global--BackgroundColor--100);
-    padding: var(--pf-global--spacer--sm);
+    background-color: var(--pf-v5-global--BackgroundColor--100);
+    padding: var(--pf-v5-global--spacer--sm);
   }
 
   &__icon {
-    margin-right: var(--pf-global--spacer--xs);
+    margin-right: var(--pf-v5-global--spacer--xs);
   }
 
   &__divider {
-    color: var(--pf-global--palette--black-600);
-    margin: 0 var(--pf-global--spacer--sm);
+    color: var(--pf-v5-global--palette--black-600);
+    margin: 0 var(--pf-v5-global--spacer--sm);
   }
 
   &__button {
@@ -26,8 +26,8 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    background-color: var(--pf-global--palette--black-1000);
-    color: var(--pf-global--Color--light-100);
+    background-color: var(--pf-v5-global--palette--black-1000);
+    color: var(--pf-v5-global--Color--light-100);
     font-family: Menlo, Monaco, 'Courier New', monospace;
     overflow-y: scroll;
     position: relative;
@@ -37,11 +37,11 @@
     }
   }
   &__taskName {
-    background-color: var(--pf-global--BackgroundColor--dark-300);
-    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md);
-    color: var(--pf-global--Color--light-100);
+    background-color: var(--pf-v5-global--BackgroundColor--dark-300);
+    padding: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--md);
+    color: var(--pf-v5-global--Color--light-100);
   }
   &__taskName__loading-indicator {
-    margin-left: var(--pf-global--spacer--sm);
+    margin-left: var(--pf-v5-global--spacer--sm);
   }
 }

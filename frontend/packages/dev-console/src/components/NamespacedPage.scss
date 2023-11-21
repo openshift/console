@@ -8,12 +8,12 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    background-color: var(--pf-global--BackgroundColor--200);
+    background-color: var(--pf-v5-global--BackgroundColor--200);
     position: relative;
     overflow: auto;
 
     &.is-light {
-      background-color: var(--pf-global--BackgroundColor--100);
+      background-color: var(--pf-v5-global--BackgroundColor--100);
     }
   }
 

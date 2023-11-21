@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 
 type VMEditWithPencilProps = {
   onEditClick: React.MouseEventHandler;
@@ -25,7 +25,7 @@ const VMEditWithPencil: React.FC<VMEditWithPencilProps> = ({
       variant="link"
     >
       {children}
-      {isEdit && <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />}
+      {isEdit && <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
     </Button>
   );
 };

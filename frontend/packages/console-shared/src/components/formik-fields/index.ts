@@ -22,6 +22,5 @@ export { default as DynamicFormField } from './DynamicFormField';
 export { default as SyncedEditorField } from './SyncedEditorField';
 export { default as SelectInputField } from './SelectInputField';
 export { default as SelectorInputField } from './SelectorInputField';
-export { default as FileUploadField } from './FileUploadField';
 export * from './field-utils';
 export * from './field-types';

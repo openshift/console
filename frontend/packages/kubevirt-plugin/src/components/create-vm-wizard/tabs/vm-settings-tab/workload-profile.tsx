@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SelectOption } from '@patternfly/react-core';
+import { SelectOption as SelectOptionDeprecated } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { WorkloadProfile } from '../../../../constants/vm/workload-profile';
 import { getLabelValue } from '../../../../selectors/selectors';
@@ -86,7 +86,7 @@ export const WorkloadSelect: React.FC<WorkloadProps> = React.memo(
                     'true';
 
                   return (
-                    <SelectOption
+                    <SelectOptionDeprecated
                       key={workload?.getValue()}
                       value={workload?.getValue()}
                       description={t(workload?.getDescriptionKey())}
@@ -96,7 +96,7 @@ export const WorkloadSelect: React.FC<WorkloadProps> = React.memo(
                             workload: t(workload?.toString()),
                           })
                         : t(workload?.toString())}
-                    </SelectOption>
+                    </SelectOptionDeprecated>
                   );
                 })}
             </FormPFSelect>

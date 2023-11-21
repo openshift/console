@@ -43,9 +43,9 @@ const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = 
 const tableColumnClasses = [
   '',
   '',
-  'pf-m-hidden pf-m-visible-on-sm pf-u-w-25-on-xl',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-16-on-xl pf-u-w-10-on-2xl',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-16-on-xl pf-u-w-10-on-2xl',
+  'pf-m-hidden pf-m-visible-on-sm pf-v5-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-16-on-xl pf-v5-u-w-10-on-2xl',
+  'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-16-on-xl pf-v5-u-w-10-on-2xl',
   Kebab.columnClass,
 ];
 

@@ -1,17 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
+import { Card, CardHeader, CardTitle, Split, SplitItem } from '@patternfly/react-core';
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardActions,
-  Select,
-  SelectOption,
-  SelectVariant,
-  Split,
-  SplitItem,
-} from '@patternfly/react-core';
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import {
   ClusterOverviewUtilizationItem,
   isClusterOverviewUtilizationItem,
@@ -233,15 +228,15 @@ const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
     }
     return indexA - indexB;
   });
-  const onToggle = (open: boolean): void => setIsOpen(open);
+  const onToggle = (_event, open: boolean): void => setIsOpen(open);
 
   const selectedNodesUpdated = selectedNodes.map((item) =>
     item === 'master' ? 'control plane' : item,
   );
 
   return (
-    <Select
-      variant={SelectVariant.checkbox}
+    <SelectDeprecated
+      variant={SelectVariantDeprecated.checkbox}
       aria-label={t('public~Filter by Node type')}
       onToggle={onToggle}
       onSelect={onNodeSelect}
@@ -251,12 +246,12 @@ const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
       isPlain
     >
       {sortedMCPs.map((mcp) => (
-        <SelectOption
+        <SelectOptionDeprecated
           key={mcp.metadata.name}
           value={mcp.metadata.name === 'master' ? 'control plane' : mcp.metadata.name}
         />
       ))}
-    </Select>
+    </SelectDeprecated>
   );
 };
 
@@ -295,25 +290,32 @@ export const UtilizationCard = () => {
   );
   return (
     machineConfigPoolsLoaded && (
-      <Card data-test-id="utilization-card">
-        <CardHeader>
+      <Card data-test-id="utilization-card" isClickable isSelectable>
+        <CardHeader
+          actions={{
+            actions: (
+              <>
+                <Split>
+                  <SplitItem>
+                    <UtilizationCardNodeFilter
+                      machineConfigPools={machineConfigPools}
+                      onNodeSelect={onNodeSelect}
+                      selectedNodes={selectedNodes}
+                    />
+                  </SplitItem>
+                  <SplitItem>
+                    <UtilizationDurationDropdown />
+                  </SplitItem>
+                </Split>
+              </>
+            ),
+            hasNoOffset: false,
+            className: undefined,
+          }}
+        >
           <CardTitle data-test="utilization-card__title">
             {t('public~Cluster utilization')}
           </CardTitle>
-          <CardActions>
-            <Split>
-              <SplitItem>
-                <UtilizationCardNodeFilter
-                  machineConfigPools={machineConfigPools}
-                  onNodeSelect={onNodeSelect}
-                  selectedNodes={selectedNodes}
-                />
-              </SplitItem>
-              <SplitItem>
-                <UtilizationDurationDropdown />
-              </SplitItem>
-            </Split>
-          </CardActions>
         </CardHeader>
         <UtilizationBody>
           <ClusterUtilizationContext.Provider value={nodeType}>

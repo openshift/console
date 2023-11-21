@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { Alert, Select, SelectOption } from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { setQueryArgument } from '@console/internal/components/utils';
 import { alphanumericCompare } from '@console/shared';
@@ -19,9 +23,9 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
   channels.sort((a, b) => -alphanumericCompare(a.name, b.name));
 
   const channelSelectOptions = channels.map((ch) => (
-    <SelectOption key={ch.name} id={ch.name} value={ch.name}>
+    <SelectOptionDeprecated key={ch.name} id={ch.name} value={ch.name}>
       {ch.name}
-    </SelectOption>
+    </SelectOptionDeprecated>
   ));
 
   React.useEffect(() => {
@@ -36,7 +40,7 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
 
   return (
     <>
-      <Select
+      <SelectDeprecated
         className="co-operator-channel__select"
         aria-label={t('olm~Select a channel')}
         onToggle={onToggleChannel}
@@ -45,7 +49,7 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
         onSelect={handleChannelSelection}
       >
         {channelSelectOptions}
-      </Select>
+      </SelectDeprecated>
     </>
   );
 };
@@ -87,9 +91,9 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
     setIsVersionSelectOpen(false);
   };
   const versionSelectOptions = selectedChannelVersions.map((v) => (
-    <SelectOption key={v.version} id={v.version} value={v.version}>
+    <SelectOptionDeprecated key={v.version} id={v.version} value={v.version}>
       {v.version}
-    </SelectOption>
+    </SelectOptionDeprecated>
   ));
 
   React.useEffect(() => {
@@ -98,7 +102,7 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
 
   return (
     <>
-      <Select
+      <SelectDeprecated
         className="co-operator-version__select"
         aria-label={t('olm~Select a version')}
         onToggle={onToggleVersion}
@@ -107,7 +111,8 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
         onSelect={handleVersionSelection}
       >
         {versionSelectOptions}
-      </Select>
+      </SelectDeprecated>
+
       {showVersionAlert && selectedUpdateVersion !== defaultVersionForChannel && (
         <Alert
           variant="info"

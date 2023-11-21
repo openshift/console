@@ -138,7 +138,7 @@ const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFo
       lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
     />
   ) : (
-    <Alert variant="default" title={t('knative-plugin~Broker cannot be created')} isInline>
+    <Alert variant="custom" title={t('knative-plugin~Broker cannot be created')} isInline>
       {t('knative-plugin~You do not have write access in this project.')}
     </Alert>
   );

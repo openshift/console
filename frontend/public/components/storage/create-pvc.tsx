@@ -158,7 +158,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
       </label>
       <div className="form-group">
         <input
-          className="pf-c-form-control"
+          className="pf-v5-c-form-control"
           type="text"
           onChange={handlePvcName}
           placeholder="my-storage-claim"
@@ -282,7 +282,7 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
         <form className="co-m-pane__body-group" onSubmit={save}>
           <CreatePVCForm onChange={setPvcObj} namespace={namespace} />
           <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-c-form">
+            <ActionGroup className="pf-v5-c-form">
               <Button id="save-changes" data-test="create-pvc" type="submit" variant="primary">
                 {t('public~Create')}
               </Button>

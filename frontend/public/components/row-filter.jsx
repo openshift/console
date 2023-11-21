@@ -5,13 +5,13 @@ import { Button, Divider, Flex, FlexItem, ToggleGroup } from '@patternfly/react-
 import { useTranslation } from 'react-i18next';
 
 export const CheckBox = ({ title, active, number, toggle }) => {
-  const klass = classNames('pf-c-toggle-group__button', {
+  const klass = classNames('pf-v5-c-toggle-group__button', {
     'pf-m-selected co-row-filter__box--active': active,
     'pf-m-disabled': !number,
   });
 
   return (
-    <div className="pf-c-toggle-group__item">
+    <div className="pf-v5-c-toggle-group__item">
       <a href="#" onClick={toggle} className={klass}>
         <span
           className={classNames('co-row-filter__number-bubble', {
@@ -37,7 +37,7 @@ export const CheckBoxControls = ({
   return (
     <Flex className="co-row-filter" direction={{ default: 'column', md: 'row' }}>
       <ToggleGroup>{children}</ToggleGroup>
-      <Divider className="pf-u-hidden-on-md" />
+      <Divider className="pf-v5-u-hidden-on-md" />
       <Flex flex={{ default: 'flex_1' }}>
         <FlexItem>
           <Button

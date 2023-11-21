@@ -66,7 +66,7 @@ const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalPro
                 type="text"
                 id="node-maintenance-reason"
                 value={reason}
-                onChange={setReason}
+                onChange={(_event, value) => setReason(value)}
               />
             </FormGroup>
           </StackItem>

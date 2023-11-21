@@ -1,10 +1,10 @@
 .ocs-empty-state-resource-badge {
-  margin-bottom: var(--pf-global--spacer--md);
+  margin-bottom: var(--pf-v5-global--spacer--md);
   &--badge {
-    &.pf-c-badge {
-      --pf-c-badge--Color: var(--pf-global--palette--white);
-      --pf-c-badge--FontSize: var(--pf-global--icon--FontSize--md);
-      --pf-c-badge--BackgroundColor: var(--pf-global--Color--400);
+    &.pf-v5-c-badge {
+      --pf-v5-c-badge--Color: var(--pf-v5-global--palette--white);
+      --pf-v5-c-badge--FontSize: var(--pf-v5-global--icon--FontSize--md);
+      --pf-v5-c-badge--BackgroundColor: var(--pf-v5-global--Color--400);
     }
   }
 }

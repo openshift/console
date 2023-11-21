@@ -27,7 +27,7 @@ const SSHFormSaveInNamespace: React.FC = () => {
         isChecked={updateSSHKeyInGlobalNamespaceSecret}
         data-checked-state={updateSSHKeyInGlobalNamespaceSecret}
         isDisabled={disableSaveInNamespaceCheckbox}
-        onChange={(checked) => setUpdateSSHKeyInSecret(checked)}
+        onChange={(_event, checked) => setUpdateSSHKeyInSecret(checked)}
       />
     </Flex>
   );

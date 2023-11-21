@@ -13,6 +13,9 @@ export const listPage = {
         }
       });
   },
+  isCreateButtonVisible: () => {
+    cy.byTestID('item-create').should('be.visible');
+  },
   clickCreateYAMLbutton: () => {
     cy.byTestID('item-create').click({ force: true });
   },
@@ -28,10 +31,10 @@ export const listPage = {
       cy.byTestID('name-filter-input').clear().type(name);
     },
     numberOfActiveFiltersShouldBe: (numFilters: number) => {
-      cy.get("[class='pf-c-toolbar__item pf-m-chip-group']").should('have.length', numFilters);
+      cy.get("[class='pf-v5-c-toolbar__item pf-m-chip-group']").should('have.length', numFilters);
     },
     clickSearchByDropdown: () => {
-      cy.get('.pf-c-toolbar__content-section').within(() => {
+      cy.get('#filter-toolbar').within(() => {
         cy.byLegacyTestID('dropdown-button').click();
       });
     },
@@ -42,12 +45,12 @@ export const listPage = {
     },
     clearAllFilters: () => {
       cy.log('Clearing all filters');
-      cy.get('.pf-c-toolbar__content').within(() => {
+      cy.get('.pf-v5-c-toolbar__content').within(() => {
         cy.get('button').last().click();
       });
     },
     by: (rowFilter: string) => {
-      cy.get('[data-test="filter-toolbar"] .pf-c-toolbar__content-section').within(() => {
+      cy.get('#filter-toolbar').within(() => {
         cy.byLegacyTestID('filter-dropdown-toggle')
           .find('button')
           .as('filterDropdownToggleButton')
@@ -64,13 +67,13 @@ export const listPage = {
   },
   rows: {
     shouldBeLoaded: () => {
-      cy.get(`[data-test-rows="resource-row"`).should('be.visible');
+      cy.get(`[data-test-rows="resource-row"]`).first().scrollIntoView().should('be.visible');
     },
     countShouldBe: (count: number) => {
-      cy.get(`[data-test-rows="resource-row"`).should('have.length', count);
+      cy.get(`[data-test-rows="resource-row"]`).should('have.length', count);
     },
     countShouldBeWithin: (min: number, max: number) => {
-      cy.get(`[data-test-rows="resource-row"`).should('have.length.within', min, max);
+      cy.get(`[data-test-rows="resource-row"]`).should('have.length.within', min, max);
     },
     clickFirstLinkInFirstRow: () => {
       cy.get(`[data-test-rows="resource-row"]`).first().find('a').first().click({ force: true }); // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
@@ -99,7 +102,7 @@ export const listPage = {
         .contains(label);
     },
     shouldExist: (resourceName: string) =>
-      cy.get(`[data-test-rows="resource-row"]`).contains(resourceName),
+      cy.get(`[data-test-rows="resource-row"]`, { timeout: 15000 }).contains(resourceName),
     clickRowByName: (resourceName: string) =>
       cy.get(`a[data-test-id="${resourceName}"]`).click({ force: true }), // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
     shouldNotExist: (resourceName: string) =>
@@ -108,5 +111,5 @@ export const listPage = {
 };
 
 export namespace ListPageSelector {
-  export const tableColumnHeaders = 'th .pf-c-table__text';
+  export const tableColumnHeaders = 'th .pf-v5-c-table__text';
 }

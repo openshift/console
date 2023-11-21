@@ -284,10 +284,10 @@ Given('pipeline {string} is executed for 3 times', (pipelineName: string) => {
   cy.byTestActionID(pipelineActions.Start).click();
   pipelineRunDetailsPage.verifyTitle();
   pipelineRunDetailsPage.verifyPipelineRunStatus('Succeeded');
-  cy.waitFor('[data-test-id="actions-menu-button"]');
+  cy.waitUntilEnabled('[data-test-id="actions-menu-button"]');
   cy.selectActionsMenuOption(pipelineActions.Rerun);
   pipelineRunDetailsPage.verifyPipelineRunStatus('Succeeded');
-  cy.waitFor('[data-test-id="actions-menu-button"]');
+  cy.waitUntilEnabled('[data-test-id="actions-menu-button"]');
   cy.selectActionsMenuOption(pipelineActions.Rerun);
   pipelineRunDetailsPage.verifyTitle();
   pipelineRunDetailsPage.verifyPipelineRunStatus('Succeeded');
@@ -541,7 +541,7 @@ When('user goes to failed pipeline run of pipeline {string}', (pipelineName: str
 });
 
 When('user opens pipeline run details', () => {
-  cy.get('.pf-c-breadcrumb').should('include.text', 'PipelineRun details');
+  cy.get('.pf-v5-c-breadcrumb').should('include.text', 'PipelineRun details');
 });
 
 Then('user can see status as Failure', () => {

@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { FormGroup, ValidatedOptions } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FieldArray, useField } from 'formik';
 import { useFormikValidationFix } from '../../../hooks/formik-validation-fix';
+import { RedExclamationCircleIcon } from '../../status';
 import { getFieldId } from '../field-utils';
 import MultiColumnFieldFooter from '../multi-column-field/MultiColumnFieldFooter';
 import { TextColumnFieldProps, TextColumnItemProps } from './text-column-types';
@@ -37,11 +38,9 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
           <FormGroup
             fieldId={fieldId}
             label={label}
-            validated={isValid ? ValidatedOptions.default : ValidatedOptions.error}
             isRequired={required}
             data-test={props['data-test'] || 'text-column-field'}
           >
-            {helpText && <div className="pf-c-form__helper-text">{helpText}</div>}
             {dndEnabled ? (
               <>
                 {rowValues.map((v, idx) => {
@@ -76,6 +75,18 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
                 }}
               />
             )}
+
+            <FormHelperText>
+              <HelperText>
+                {!isValid ? (
+                  <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                    {error}
+                  </HelperTextItem>
+                ) : (
+                  <HelperTextItem>{helpText}</HelperTextItem>
+                )}
+              </HelperText>
+            </FormHelperText>
           </FormGroup>
         </>
       )}

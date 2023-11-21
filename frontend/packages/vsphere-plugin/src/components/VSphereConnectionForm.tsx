@@ -6,6 +6,10 @@ import {
   FormGroup,
   Spinner,
   TextInput,
+  EmptyStateHeader,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { useConnectionForm } from '../hooks/use-connection-form';
@@ -69,7 +73,7 @@ export const VSphereConnectionForm: React.FC<Pick<
   if (!isLoaded) {
     return (
       <EmptyState>
-        <EmptyStateIcon icon={Spinner} />
+        <EmptyStateHeader icon={<EmptyStateIcon icon={Spinner} />} />
       </EmptyState>
     );
   }
@@ -94,7 +98,6 @@ export const VSphereConnectionForm: React.FC<Pick<
         }
         isRequired
         fieldId="connection-vcenter"
-        helperText={t('Can be either domain name or IP address. See tooltip for details.')}
       >
         <TextInput
           isRequired
@@ -103,9 +106,17 @@ export const VSphereConnectionForm: React.FC<Pick<
           name="vcenter"
           aria-describedby="connection-vcenter-helper"
           value={values.vcenter}
-          onChange={setters.setVcenter}
+          onChange={(_event, value) => setters.setVcenter(value)}
           ref={vcenterRef}
         />
+
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              {t('Can be either domain name or IP address. See tooltip for details.')}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
       <FormGroup
         label={t('vCenter cluster')}
@@ -125,7 +136,7 @@ export const VSphereConnectionForm: React.FC<Pick<
           id="connection-vcenter-cluster"
           name="vcentercluster"
           value={values.vCenterCluster}
-          onChange={setters.setVCenterCluster}
+          onChange={(_event, value) => setters.setVCenterCluster(value)}
         />
       </FormGroup>
       <FormGroup
@@ -146,7 +157,7 @@ export const VSphereConnectionForm: React.FC<Pick<
           id="connection-username"
           name="username"
           value={values.username}
-          onChange={setters.setUsername}
+          onChange={(_event, value) => setters.setUsername(value)}
         />
       </FormGroup>
       <FormGroup
@@ -167,7 +178,7 @@ export const VSphereConnectionForm: React.FC<Pick<
           id="connection-password"
           name="password"
           value={values.password}
-          onChange={setters.setPassword}
+          onChange={(_event, value) => setters.setPassword(value)}
         />
       </FormGroup>
       <FormGroup
@@ -182,7 +193,7 @@ export const VSphereConnectionForm: React.FC<Pick<
           id="connection-datacenter"
           name="datacenter"
           value={values.datacenter}
-          onChange={setters.setDatacenter}
+          onChange={(_event, value) => setters.setDatacenter(value)}
         />
       </FormGroup>
       <FormGroup
@@ -197,7 +208,7 @@ export const VSphereConnectionForm: React.FC<Pick<
           id="connection-defaultdatastore"
           name="defaultdatastore"
           value={values.defaultDatastore}
-          onChange={setters.setDefaultDatastore}
+          onChange={(_event, value) => setters.setDefaultDatastore(value)}
         />
       </FormGroup>
       <FormGroup
@@ -212,7 +223,7 @@ export const VSphereConnectionForm: React.FC<Pick<
           id="connection-folder"
           name="folder"
           value={values.folder}
-          onChange={setters.setFolder}
+          onChange={(_event, value) => setters.setFolder(value)}
         />
       </FormGroup>
     </Form>

@@ -231,7 +231,7 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({
                     isRequired={requiredInput}
                     id={name}
                     value={paramValue}
-                    onChange={(val, e) => onParameterChanged(val, e)}
+                    onChange={(e, val) => onParameterChanged(val, e)}
                     placeholder={placeholder}
                   />
                   {description && (
@@ -245,7 +245,7 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({
             },
           )}
           <ButtonBar errorMessage={errorMsg} inProgress={inProgress}>
-            <ActionGroup className="pf-c-form">
+            <ActionGroup className="pf-v5-c-form">
               <Button type="submit" variant="primary">
                 {t('kubevirt-plugin~Create')}
               </Button>

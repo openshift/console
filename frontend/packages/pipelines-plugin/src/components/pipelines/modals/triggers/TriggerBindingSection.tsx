@@ -58,10 +58,7 @@ const TriggerBindingSection: React.FC = () => {
                 </Badge>
               ))}
             </div>
-            <FormHelperText
-              isHidden={false}
-              className="odc-trigger-binding-section__variable-help-text"
-            >
+            <FormHelperText className="odc-trigger-binding-section__variable-help-text">
               {t('pipelines-plugin~Use this format when you reference variables in this form: ')}
               <code className="co-code">{`$(${paramPrefix}parameter)`}</code>
             </FormHelperText>

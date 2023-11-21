@@ -8,9 +8,9 @@
 }
 
 .co-import-yaml-results-page__main {
-  margin: 0 $pf-global-gutter;
+  margin: 0 $pf-v5-global-gutter;
   @media (min-width: $screen-sm-min) {
-    margin: $pf-global-gutter--md;
+    margin: $pf-v5-global-gutter--md;
     max-width: 600px;
     min-width: 375px;
     width: 100%;

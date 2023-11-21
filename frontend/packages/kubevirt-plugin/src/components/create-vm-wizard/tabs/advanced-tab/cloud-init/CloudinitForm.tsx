@@ -4,12 +4,17 @@ import {
   ButtonVariant,
   Form,
   FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
   Split,
   SplitItem,
   TextInput,
 } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
+import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import { CloudInitDataFormKeys } from '../../../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { joinIDs } from '../../../../../utils/index';
 import { ValidationStatus } from '../../../../../utils/validations/cloudint-utils';
@@ -33,34 +38,65 @@ const CloudinitForm: React.FC<CloudinitFormProps> = ({
         label={t('kubevirt-plugin~User')}
         fieldId={cloudinitIDGenerator(CloudInitDataFormKeys.USER)}
         className="kv-cloudint-advanced-tab-with-editor--validation-text"
-        helperTextInvalid={validationStatus?.user?.message}
-        helperText={t(
-          'kubevirt-plugin~Please provide default username. Username must be valid username for the OS.',
-        )}
-        validated={validationStatus?.user?.type}
         isRequired
       >
         <TextInput type="text" id={cloudinitIDGenerator(CloudInitDataFormKeys.USER)} />
+
+        <FormHelperText>
+          <HelperText>
+            {validationStatus?.user?.type === 'error' ? (
+              <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                {validationStatus?.user?.message}
+              </HelperTextItem>
+            ) : (
+              <HelperTextItem>
+                {t(
+                  'kubevirt-plugin~Please provide default username. Username must be valid username for the OS.',
+                )}
+              </HelperTextItem>
+            )}
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
       <FormGroup
         label={t('kubevirt-plugin~Password')}
         fieldId={cloudinitIDGenerator(CloudInitDataFormKeys.PASSWORD)}
         className="kv-cloudint-advanced-tab-with-editor--validation-text"
-        helperTextInvalid={validationStatus?.password?.message}
-        helperText={t('kubevirt-plugin~Please provide password for username.')}
-        validated={validationStatus?.password?.type}
       >
         <TextInput type="text" id={cloudinitIDGenerator(CloudInitDataFormKeys.PASSWORD)} />
+
+        <FormHelperText>
+          <HelperText>
+            {validationStatus?.password?.type === 'error' ? (
+              <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                {validationStatus?.password?.message}
+              </HelperTextItem>
+            ) : (
+              <HelperTextItem>
+                {t('kubevirt-plugin~Please provide password for username.')}
+              </HelperTextItem>
+            )}
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
       <FormGroup
         label={t('kubevirt-plugin~Hostname')}
         fieldId={cloudinitIDGenerator(CloudInitDataFormKeys.HOSTNAME)}
         className="kv-cloudint-advanced-tab-with-editor--validation-text"
-        helperTextInvalid={validationStatus?.hostname?.message}
-        helperText={t('kubevirt-plugin~Please provide hostname.')}
-        validated={validationStatus?.hostname?.type}
       >
         <TextInput type="text" id={cloudinitIDGenerator(CloudInitDataFormKeys.HOSTNAME)} />
+
+        <FormHelperText>
+          <HelperText>
+            {validationStatus?.hostname?.type === 'error' ? (
+              <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                {validationStatus?.hostname?.message}
+              </HelperTextItem>
+            ) : (
+              <HelperTextItem>{t('kubevirt-plugin~Please provide hostname.')}</HelperTextItem>
+            )}
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
       <FormGroup
         label={t('kubevirt-plugin~Authorized SSH Key')}

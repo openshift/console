@@ -234,7 +234,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             {t('console-app~Policy name')}
           </label>
           <input
-            className="pf-c-form-control"
+            className="pf-v5-c-form-control"
             type="text"
             onChange={handleNameChange}
             value={networkPolicy.name}
@@ -395,7 +395,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             </FormFieldGroupExpandable>
           )}
         <ButtonBar errorMessage={error} inProgress={inProgress}>
-          <ActionGroup className="pf-c-form">
+          <ActionGroup className="pf-v5-c-form">
             <Button type="submit" id="save-changes" variant="primary">
               {t('console-app~Create')}
             </Button>

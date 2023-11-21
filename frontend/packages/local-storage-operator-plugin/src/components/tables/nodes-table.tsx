@@ -24,11 +24,11 @@ import { NodesTableRowsFunction, NodesTableCustomData } from './types';
 import './nodes-table.scss';
 
 const tableColumnClasses = [
-  classNames('pf-u-w-40-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
+  classNames('pf-v5-u-w-40-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-10-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-10-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-10-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-10-on-sm'),
 ];
 
 const getRows: NodesTableRowsFunction = (

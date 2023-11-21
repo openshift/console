@@ -26,7 +26,7 @@ export const NetworkPolicyAddPeerDropdown: React.FunctionComponent<NetworkPolicy
         title={title}
         onChange={onSelect}
         noSelection
-        buttonClassName="pf-c-button pf-m-secondary"
+        buttonClassName="pf-v5-c-button pf-m-secondary"
         data-test="add-peer"
       />
     </div>

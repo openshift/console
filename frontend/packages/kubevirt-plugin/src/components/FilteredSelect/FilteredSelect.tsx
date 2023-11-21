@@ -1,8 +1,12 @@
 /* eslint-disable array-callback-return, consistent-return */
 import * as React from 'react';
-import { Select, SelectProps, SelectVariant } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectProps as SelectPropsDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 
-const FilteredSelect: React.FC<SelectProps> = (props) => {
+const FilteredSelect: React.FC<SelectPropsDeprecated> = (props) => {
   const { isGrouped, children } = props;
   const options = children;
 
@@ -32,9 +36,14 @@ const FilteredSelect: React.FC<SelectProps> = (props) => {
   };
 
   return (
-    <Select {...props} variant={SelectVariant.single} hasInlineFilter onFilter={onFilter}>
+    <SelectDeprecated
+      {...props}
+      variant={SelectVariantDeprecated.single}
+      hasInlineFilter
+      onFilter={onFilter}
+    >
       {options}
-    </Select>
+    </SelectDeprecated>
   );
 };
 

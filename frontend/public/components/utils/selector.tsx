@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { SearchIcon } from '@patternfly/react-icons';
+import { SearchIcon } from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import { useTranslation } from 'react-i18next';
 
 import { Selector as SelectorKind } from '../../module/k8s';

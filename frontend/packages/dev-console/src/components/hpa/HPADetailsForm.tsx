@@ -20,7 +20,10 @@ const HPADetailsForm: React.FC = () => {
     },
   } = useFormikContext<HPAFormValues>();
 
-  const updateField = (type: SupportedMetricTypes) => (value: string) => {
+  const updateField = (type: SupportedMetricTypes) => (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
     const numValue = parseInt(value, 10);
 
     const hpa: HorizontalPodAutoscalerKind = field.value;

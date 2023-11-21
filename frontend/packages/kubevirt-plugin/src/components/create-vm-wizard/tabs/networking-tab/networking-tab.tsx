@@ -8,8 +8,10 @@ import {
   Split,
   SplitItem,
   Title,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { DeviceType } from '../../../../constants/vm';
@@ -125,14 +127,17 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
       {!showNetworks && (
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.full}>
-            <Title headingLevel="h5" size="lg">
-              {t('kubevirt-plugin~No network interface added')}
-            </Title>
-            {!isCreateDisabled && (
-              <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
-                {t('kubevirt-plugin~Add network interface')}
-              </Button>
-            )}
+            <EmptyStateHeader
+              titleText={<>{t('kubevirt-plugin~No network interface added')}</>}
+              headingLevel="h5"
+            />
+            <EmptyStateFooter>
+              {!isCreateDisabled && (
+                <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
+                  {t('kubevirt-plugin~Add network interface')}
+                </Button>
+              )}
+            </EmptyStateFooter>
           </EmptyState>
         </Bullseye>
       )}

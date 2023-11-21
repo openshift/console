@@ -1,4 +1,4 @@
-ul.pf-c-list:not(.pf-m-inline).co-detail-property-list {
+ul.pf-v5-c-list:not(.pf-m-inline).co-detail-property-list {
   list-style: none;
   padding-left: 0;
   li + li {
@@ -7,5 +7,5 @@ ul.pf-c-list:not(.pf-m-inline).co-detail-property-list {
 }
 
 .co-detail-property-list__item-title {
-  color: var(--pf-global--Color--200);
+  color: var(--pf-v5-global--Color--200);
 }

@@ -1,26 +1,26 @@
 :root {
   // Co Palette
-  --co-global--palette--blue-400: var(--pf-global--palette--blue-400);
-  --co-global--palette--purple-600: var(--pf-global--palette--purple-600);
-  --co-global--palette--orange-400: var(--pf-global--palette--orange-400);
-  --co-global--palette--purple-700: var(--pf-global--palette--purple-700);
+  --co-global--palette--blue-400: var(--pf-v5-global--palette--blue-400);
+  --co-global--palette--purple-600: var(--pf-v5-global--palette--purple-600);
+  --co-global--palette--orange-400: var(--pf-v5-global--palette--orange-400);
+  --co-global--palette--purple-700: var(--pf-v5-global--palette--purple-700);
 
   // Co Palette Dark
-  --co-global--dark--palette--blue-400: var(--pf-global--palette--blue-200);
-  --co-global--dark--palette--purple-600: var(--pf-global--palette--purple-200);
-  --co-global--dark--palette--orange-400: var(--pf-global--palette--orange-200);
-  --co-global--dark--palette--purple-700: var(--pf-global--palette--purple-200);
+  --co-global--dark--palette--blue-400: var(--pf-v5-global--palette--blue-200);
+  --co-global--dark--palette--purple-600: var(--pf-v5-global--palette--purple-200);
+  --co-global--dark--palette--orange-400: var(--pf-v5-global--palette--orange-200);
+  --co-global--dark--palette--purple-700: var(--pf-v5-global--palette--purple-200);
 
   // Skeleton
-  --co-skeleton--Color: var(--pf-global--palette--black-150);
-  --co-skeleton--Color--300: var(--pf-global--palette--black-300);
+  --co-skeleton--Color: var(--pf-v5-global--palette--black-150);
+  --co-skeleton--Color--300: var(--pf-v5-global--palette--black-300);
 
   // Skeleton dark
-  --co-skeleton--dark--Color: var(--pf-global--palette--black-600);
-  --co-skeleton--dark--Color--300: var(--pf-global--palette--black-700)
+  --co-skeleton--dark--Color: var(--pf-v5-global--palette--black-600);
+  --co-skeleton--dark--Color--300: var(--pf-v5-global--palette--black-700);
 }
 
-:root:where(.pf-theme-dark) {
+:root:where(.pf-v5-theme-dark) {
   // Co palette updates
   --co-global--palette--blue-400: var(--co-global--dark--palette--blue-400);
   --co-global--palette--purple-600: var(--co-global--dark--palette--purple-600);

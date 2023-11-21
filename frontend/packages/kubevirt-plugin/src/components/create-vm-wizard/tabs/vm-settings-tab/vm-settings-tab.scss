@@ -8,21 +8,21 @@
 }
 
 .kv-create-vm__input-checkbox {
-  margin-top: calc(var(--pf-global--spacer--md) * -1);
+  margin-top: calc(var(--pf-v5-global--spacer--md) * -1);
 }
 
 .kv-create-vm__input-text-help-msg {
-  margin-top: calc(var(--pf-global--spacer--md) * -1);
+  margin-top: calc(var(--pf-v5-global--spacer--md) * -1);
 }
 
 .kv-create-vm__clone-os {
-  .pf-c-form__group-control {
+  .pf-v5-c-form__group-control {
     display: flex;
   }
 }
 
 .kv-create-vm__clone-os-link {
-  padding-left: var(--pf-global--spacer--sm);
+  padding-left: var(--pf-v5-global--spacer--sm);
   .co-resource-item {
     display: inline;
   }

@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { FileUpload } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
-import { FileUploadField, InputField } from '@console/shared/src';
+import { InputField } from '@console/shared/src';
 import JarSection from '../JarSection';
 
 jest.mock('formik', () => ({
@@ -17,9 +18,9 @@ jest.mock('formik', () => ({
 }));
 
 describe('JarSection', () => {
-  it('should render FileUploadField, InputField', () => {
+  it('should render FileUpload, InputField', () => {
     const wrapper = shallow(<JarSection />);
-    expect(wrapper.find(FileUploadField).exists()).toBe(true);
+    expect(wrapper.find(FileUpload).exists()).toBe(true);
     expect(wrapper.find(InputField).exists()).toBe(true);
   });
 });

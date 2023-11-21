@@ -1,7 +1,7 @@
-$co-m-horizontal-nav__menu-item-link-padding-lr: $pf-global-gutter;
+$co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v5-global-gutter;
 
 .co-m-horizontal-nav__menu {
-  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+  border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
   display: flex;
   flex-shrink: 0; // prevent collapse of tabs
   list-style: none;
@@ -11,18 +11,18 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-global-gutter;
   padding: 0;
   -webkit-overflow-scrolling: touch;
   white-space: nowrap;
-  @media (min-width: $pf-global--breakpoint--xl) {
-    padding-left: ($pf-global-gutter--md - $pf-global-gutter);
+  @media (min-width: $pf-v5-global--breakpoint--xl) {
+    padding-left: ($pf-v5-global-gutter--md - $pf-v5-global-gutter);
   }
   &--within-sidebar {
-    border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-    margin-bottom: $pf-global-gutter--md !important;
-    margin-left: -$pf-global-gutter;
-    margin-right: -$pf-global-gutter;
+    border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+    margin-bottom: $pf-v5-global-gutter--md !important;
+    margin-left: -$pf-v5-global-gutter;
+    margin-right: -$pf-v5-global-gutter;
     overflow: visible; // so focus indicator is not clipped since these don't need to scroll
-    @media (min-width: $pf-global--breakpoint--xl) {
-      margin-left: -$pf-global-gutter--md;
-      margin-right: -$pf-global-gutter--md;
+    @media (min-width: $pf-v5-global--breakpoint--xl) {
+      margin-left: -$pf-v5-global-gutter--md;
+      margin-right: -$pf-v5-global-gutter--md;
     }
     .co-m-horizontal-nav__menu-item {
       font-size: 16px;
@@ -42,22 +42,22 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-global-gutter;
   button {
     background: transparent;
     border: 0;
-    color: var(--pf-global--Color--200);
+    color: var(--pf-v5-global--Color--200);
     display: block;
     padding: 6px $co-m-horizontal-nav__menu-item-link-padding-lr 8px;
     position: relative;
     text-decoration: none;
     &:hover,
     &:focus {
-      color: var(--pf-global--Color--100);
+      color: var(--pf-v5-global--Color--100);
       text-decoration: none;
       &::after {
-        background: var(--pf-global--palette--black-400);
+        background: var(--pf-v5-global--palette--black-400);
       }
     }
     &::after {
       bottom: 0;
-      content: "";
+      content: '';
       display: block;
       height: 2px;
       left: $co-m-horizontal-nav__menu-item-link-padding-lr;
@@ -68,14 +68,14 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-global-gutter;
   &.co-m-horizontal-nav-item--active {
     a,
     button {
-      color: var(--pf-global--link--Color);
+      color: var(--pf-v5-global--link--Color);
       &::after {
-        background: var(--pf-global--link--Color);
+        background: var(--pf-v5-global--link--Color);
       }
     }
   }
   &:last-child {
-    @media (min-width: $pf-global--breakpoint--md) {
+    @media (min-width: $pf-v5-global--breakpoint--md) {
       a,
       button {
         margin-right: $co-m-horizontal-nav__menu-item-link-padding-lr;

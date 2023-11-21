@@ -74,7 +74,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
           type={TextInputTypes.text}
           id="create-lvs-volume-set-name"
           value={state.volumeSetName}
-          onChange={(name: string) => dispatch({ type: 'setVolumeSetName', name })}
+          onChange={(_event, name: string) => dispatch({ type: 'setVolumeSetName', name })}
           isRequired
         />
         {lvsNameHelpTxt ? <p className="help-block">{lvsNameHelpTxt}</p> : null}
@@ -85,7 +85,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
           id="create-lvs-storage-class-name"
           value={state.storageClassName}
           placeholder={state.volumeSetName}
-          onChange={(name: string) => dispatch({ type: 'setStorageClassName', name })}
+          onChange={(_event, name: string) => dispatch({ type: 'setStorageClassName', name })}
         />
       </FormGroup>
       <Text component={TextVariants.h3} className="lso-create-lvs__filter-volumes-text--margin">
@@ -239,7 +239,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
                   className="lso-create-lvs__disk-input"
                   onFocus={() => setMinActiveState(true)}
                   onBlur={() => setMinActiveState(false)}
-                  onChange={(size: string) => {
+                  onChange={(_event, size: string) => {
                     dispatch({ type: 'setMinDiskSize', value: size });
                   }}
                 />
@@ -272,7 +272,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
                   className="lso-create-lvs__disk-input"
                   onFocus={() => setMaxActiveState(true)}
                   onBlur={() => setMaxActiveState(false)}
-                  onChange={(value) => dispatch({ type: 'setMaxDiskSize', value })}
+                  onChange={(_event, value) => dispatch({ type: 'setMaxDiskSize', value })}
                 />
               </Tooltip>
             </FormGroup>
@@ -304,7 +304,9 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
               value={state.maxDiskLimit}
               validated={validMaxDiskLimit ? 'default' : 'error'}
               className="lso-create-lvs__disk-input"
-              onChange={(maxLimit) => dispatch({ type: 'setMaxDiskLimit', value: maxLimit })}
+              onChange={(_event, maxLimit) =>
+                dispatch({ type: 'setMaxDiskLimit', value: maxLimit })
+              }
               placeholder={t('lso-plugin~All')}
             />
           </Tooltip>

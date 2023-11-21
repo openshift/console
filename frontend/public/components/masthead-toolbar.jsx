@@ -2,24 +2,24 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
+import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import {
-  BellIcon,
-  CaretDownIcon,
-  EllipsisVIcon,
-  PlusCircleIcon,
-  QuestionCircleIcon,
-} from '@patternfly/react-icons';
-import {
-  ApplicationLauncher,
-  ApplicationLauncherGroup,
-  ApplicationLauncherItem,
-  ApplicationLauncherSeparator,
   NotificationBadge,
   Toolbar,
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
+import {
+  ApplicationLauncher,
+  ApplicationLauncherGroup,
+  ApplicationLauncherItem,
+  ApplicationLauncherSeparator,
+} from '@patternfly/react-core/deprecated';
 import { Link } from 'react-router-dom';
 import {
   ACM_LINK_ID,
@@ -93,7 +93,7 @@ const SystemStatusButton = ({ statuspageData }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
     <a
-      className="pf-c-button pf-m-plain"
+      className="pf-v5-c-button pf-m-plain"
       aria-label={t('public~System status')}
       href={statuspageData.page.url}
       target="_blank"
@@ -207,7 +207,7 @@ class MastheadToolbarContents_ extends React.Component {
     });
   }
 
-  _onUserDropdownToggle(isUserDropdownOpen) {
+  _onUserDropdownToggle(event, isUserDropdownOpen) {
     this.setState({
       isUserDropdownOpen,
     });
@@ -219,7 +219,7 @@ class MastheadToolbarContents_ extends React.Component {
     });
   }
 
-  _onKebabDropdownToggle(isKebabDropdownOpen) {
+  _onKebabDropdownToggle(event, isKebabDropdownOpen) {
     this.setState({
       isKebabDropdownOpen,
     });
@@ -237,7 +237,7 @@ class MastheadToolbarContents_ extends React.Component {
     });
   }
 
-  _onApplicationLauncherDropdownToggle(isApplicationLauncherDropdownOpen) {
+  _onApplicationLauncherDropdownToggle(event, isApplicationLauncherDropdownOpen) {
     this.setState({
       isApplicationLauncherDropdownOpen,
     });
@@ -249,7 +249,7 @@ class MastheadToolbarContents_ extends React.Component {
     });
   }
 
-  _onHelpDropdownToggle(isHelpDropdownOpen) {
+  _onHelpDropdownToggle(event, isHelpDropdownOpen) {
     this.setState({
       isHelpDropdownOpen,
     });
@@ -619,7 +619,7 @@ class MastheadToolbarContents_ extends React.Component {
     }
 
     const userToggle = (
-      <span className="pf-c-dropdown__toggle">
+      <span className="pf-v5-c-dropdown__toggle">
         <span className="co-username" data-test="username">
           {username}
         </span>
@@ -668,7 +668,7 @@ class MastheadToolbarContents_ extends React.Component {
           <ToolbarContent>
             <MultiClusterToolbarGroup />
             <ToolbarGroup
-              alignment={{ default: 'alignRight' }}
+              align={{ default: 'alignRight' }}
               spacer={{ default: 'spacerNone' }}
               visibility={{ default: isMastheadStacked ? 'hidden' : 'visible' }}
             >
@@ -701,7 +701,7 @@ class MastheadToolbarContents_ extends React.Component {
                 )}
                 <Link
                   to={this._getImportYAMLPath()}
-                  className="pf-c-button pf-m-plain"
+                  className="pf-v5-c-button pf-m-plain"
                   aria-label={t('public~Import YAML')}
                   data-quickstart-id="qs-masthead-import"
                   data-test="import-yaml"
@@ -733,7 +733,7 @@ class MastheadToolbarContents_ extends React.Component {
               <ToolbarItem>{this._renderMenu(false)}</ToolbarItem>
             </ToolbarGroup>
             <ToolbarGroup
-              alignment={{ default: 'alignRight' }}
+              align={{ default: 'alignRight' }}
               spacer={{ default: 'spacerNone' }}
               visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
             >

@@ -569,26 +569,29 @@ const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName
       data={operands}
       loaded={loaded}
     >
-      <table className="pf-c-table pf-m-compact pf-m-border-rows">
-        <thead>
-          <tr key="operand-table-header-row">
-            <th className="pf-m-width-35">{t('olm~Name')}</th>
-            <th>{t('olm~Kind')}</th>
-            <th>{t('olm~Namespace')}</th>
+      <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+        <thead className="pf-v5-c-table__thead">
+          <tr className="pf-v5-c-table__tr" key="operand-table-header-row">
+            <th className="pf-m-width-35 pf-v5-c-table__th">{t('olm~Name')}</th>
+            <th className="pf-v5-c-table__th">{t('olm~Kind')}</th>
+            <th className="pf-v5-c-table__th">{t('olm~Namespace')}</th>
           </tr>
         </thead>
         <tbody>
           {operands
             .sort((a, b) => a.metadata.name.localeCompare(b.metadata.name))
             .map((operand) => (
-              <tr key={operand.metadata.uid}>
-                <td>
+              <tr className="pf-v5-c-table__tr" key={operand.metadata.uid}>
+                <td className="pf-v5-c-table__td">
                   <OperandLink obj={operand} csvName={csvName} onClick={cancel} />
                 </td>
-                <td className="co-break-word" data-test-operand-kind={operand.kind}>
+                <td
+                  className="pf-v5-c-table__td pf-m-break-word"
+                  data-test-operand-kind={operand.kind}
+                >
                   {operand.kind}
                 </td>
-                <td>
+                <td className="pf-v5-c-table__td">
                   {operand.metadata.namespace ? (
                     <ResourceLink
                       kind="Namespace"
@@ -614,7 +617,7 @@ const OperandErrorList: React.FC<OperandErrorListProps> = ({ operandErrors, csvN
       {_.map(operandErrors, (operandError) => (
         <li
           key={operandError.operand.metadata.uid}
-          className="pf-c-list pf-m-plain co-operator-uninstall-alert__list-item"
+          className="pf-v5-c-list pf-m-plain co-operator-uninstall-alert__list-item"
         >
           <OperandLink obj={operandError.operand} csvName={csvName} onClick={cancel} />{' '}
           {operandError.operand.kind}

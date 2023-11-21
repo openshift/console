@@ -25,7 +25,7 @@ const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({
           <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
         </div>
         {percent.length > 0 && (
-          <span className="col-xs-2 pf-u-text-align-right">{totalPercent || percent}</span>
+          <span className="col-xs-2 pf-v5-u-text-align-right">{totalPercent || percent}</span>
         )}
       </div>
       {url.length > 0 && <RoutesUrlLink urls={[url]} title={t('knative-plugin~Location')} />}

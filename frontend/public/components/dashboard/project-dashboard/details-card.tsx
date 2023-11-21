@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { Card, CardBody, CardHeader, CardTitle, CardActions, Button } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, Button } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { getName, getRequester, GreenCheckCircleIcon } from '@console/shared';
@@ -21,14 +21,21 @@ export const DetailsCard: React.FC = () => {
   const serviceMeshEnabled = obj.metadata?.labels?.['maistra.io/member-of'];
   const { t } = useTranslation();
   return (
-    <Card data-test-id="details-card">
-      <CardHeader>
+    <Card data-test-id="details-card" isClickable isSelectable>
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <Link to={detailsLink} data-test="details-card-view-all">
+                {t('public~View all')}
+              </Link>
+            </>
+          ),
+          hasNoOffset: false,
+          className: 'co-overview-card__actions',
+        }}
+      >
         <CardTitle>{t('public~Details')}</CardTitle>
-        <CardActions className="co-overview-card__actions">
-          <Link to={detailsLink} data-test="details-card-view-all">
-            {t('public~View all')}
-          </Link>
-        </CardActions>
       </CardHeader>
       <CardBody>
         <DetailsBody>

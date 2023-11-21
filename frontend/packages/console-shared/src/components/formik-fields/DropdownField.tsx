@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { Dropdown } from '@console/internal/components/utils';
 import { useFormikValidationFix } from '../../hooks';
+import { RedExclamationCircleIcon } from '../status';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -17,14 +18,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
   useFormikValidationFix(field.value);
 
   return (
-    <FormGroup
-      fieldId={fieldId}
-      label={label}
-      helperText={helpText}
-      helperTextInvalid={errorMessage}
-      validated={isValid ? 'default' : 'error'}
-      isRequired={required}
-    >
+    <FormGroup fieldId={fieldId} label={label} isRequired={required}>
       <Dropdown
         {...props}
         id={fieldId}
@@ -38,6 +32,18 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
           setFieldTouched(props.name, true, false);
         }}
       />
+
+      <FormHelperText>
+        <HelperText>
+          {!isValid ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          ) : (
+            <HelperTextItem>{helpText}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

@@ -291,7 +291,7 @@ When(
 );
 
 Then('error message displays as {string}', (errorMessage: string) => {
-  cy.get('div[aria-label="Danger Alert"] div.co-pre-line').should('contain.text', errorMessage);
+  cy.get('div.co-alert div.co-pre-line').should('contain.text', errorMessage);
 });
 
 Then(
@@ -433,5 +433,5 @@ Given('workload {string} is present in topology page', (workloadName: string) =>
 });
 
 When('user clicks on service {string} to open sidebar', () => {
-  cy.get('.odc-knative-service__label').click();
+  cy.get('.odc-knative-service__label').click({ force: true });
 });

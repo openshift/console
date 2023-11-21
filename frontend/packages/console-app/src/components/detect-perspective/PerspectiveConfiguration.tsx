@@ -2,12 +2,14 @@ import * as React from 'react';
 import {
   FormGroup,
   FormSection,
-  Select,
-  SelectOption,
   ExpandableSection,
   CodeBlock,
   CodeBlockCode,
 } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { safeDump } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import {
@@ -152,25 +154,25 @@ const PerspectiveVisibilitySelect: React.FC<{
 
   return (
     <>
-      <Select
+      <SelectDeprecated
         toggleId={toggleId}
         disabled={disabled}
         isOpen={isOpen}
         selections={selection}
-        onToggle={(isExpanded) => setIsOpen(isExpanded)}
+        onToggle={(_event, isExpanded) => setIsOpen(isExpanded)}
         onSelect={() => setIsOpen(false)}
       >
         {options.map((option) => (
-          <SelectOption
+          <SelectOptionDeprecated
             key={option.value}
             value={option.value}
             description={option.description}
             onClick={() => onChange(option)}
           >
             {option.title}
-          </SelectOption>
+          </SelectOptionDeprecated>
         ))}
-      </Select>
+      </SelectDeprecated>
       {selection === 'Custom' && value?.accessReview && (
         <ExpandableSection toggleText={t('console-app~Access review rules')}>
           <CodeBlock>

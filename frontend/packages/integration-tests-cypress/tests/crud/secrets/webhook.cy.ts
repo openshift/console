@@ -45,7 +45,7 @@ describe('Webhook secret', () => {
     cy.log('Verify edit');
     secrets.detailsPageIsLoaded(webhookSecretName);
     secrets.clickRevealValues();
-    cy.get('.co-copy-to-clipboard__text .pf-c-code-block__code')
+    cy.get('.co-copy-to-clipboard__text .pf-v5-c-code-block__code')
       .eq(0)
       .invoke('text')
       .should('not.equal', webhookSecretKey);

@@ -33,7 +33,7 @@ import {
 } from '@codemirror/view';
 import { PrometheusEndpoint, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { Button } from '@patternfly/react-core';
-import { CloseIcon } from '@patternfly/react-icons';
+import { CloseIcon } from '@patternfly/react-icons/dist/esm/icons/close-icon';
 import { PromQLExtension } from '@prometheus-io/codemirror-promql';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -67,7 +67,7 @@ export const theme = EditorView.theme({
     outline: 'none',
   },
   '.cm-tooltip.cm-completionInfo': {
-    backgroundColor: 'var(--pf-global--BackgroundColor--200)',
+    backgroundColor: 'var(--pf-v5-global--BackgroundColor--200)',
     border: 'none',
     marginTop: '-11px',
     padding: '10px',
@@ -82,7 +82,7 @@ export const theme = EditorView.theme({
       borderWidth: '10px',
       borderStyle: 'solid',
       borderColor: 'transparent',
-      borderRightColor: 'var(--pf-global--BackgroundColor--200)',
+      borderRightColor: 'var(--pf-v5-global--BackgroundColor--200)',
     },
     marginLeft: '12px',
   },
@@ -96,7 +96,7 @@ export const theme = EditorView.theme({
       borderWidth: '10px',
       borderStyle: 'solid',
       borderColor: 'transparent',
-      borderLeftColor: 'var(--pf-global--BackgroundColor--200)',
+      borderLeftColor: 'var(--pf-v5-global--BackgroundColor--200)',
     },
     marginRight: '12px',
   },
@@ -106,24 +106,24 @@ export const theme = EditorView.theme({
     verticalAlign: 'middle',
   },
   '.cm-selectionMatch': {
-    backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+    backgroundColor: 'var(--pf-v5-global--BackgroundColor--100)',
   },
   '.cm-completionDetail': {
     float: 'right',
-    color: 'var(--pf-global--palette--black-500)',
+    color: 'var(--pf-v5-global--palette--black-500)',
   },
   '.cm-tooltip': {
-    backgroundColor: 'var(--pf-global--BackgroundColor--100)',
-    borderColor: 'var(--pf-global--BorderColor--100)',
+    backgroundColor: 'var(--pf-v5-global--BackgroundColor--100)',
+    borderColor: 'var(--pf-v5-global--BorderColor--100)',
   },
   '.cm-tooltip.cm-tooltip-autocomplete': {
-    boxShadow: 'var(--pf-global--BoxShadow--sm)',
+    boxShadow: 'var(--pf-v5-global--BoxShadow--sm)',
     '& > ul': {
-      fontFamily: 'var(--pf-c-code-block__pre--FontFamily), monospace',
-      fontSize: 'var(--pf-global--FontSize--sm)',
+      fontFamily: 'var(--pf-v5-c-code-block__pre--FontFamily), monospace',
+      fontSize: 'var(--pf-v5-global--FontSize--sm)',
     },
     '& > ul > li[aria-selected]': {
-      backgroundColor: 'var(--pf-global--BackgroundColor--200)',
+      backgroundColor: 'var(--pf-v5-global--BackgroundColor--200)',
       color: 'unset',
     },
     '& > ul > li': {
@@ -133,11 +133,11 @@ export const theme = EditorView.theme({
   '.cm-completionMatchedText': {
     textDecoration: 'none',
     fontWeight: 'bold',
-    color: 'var(--pf-global--palette--blue-400)',
+    color: 'var(--pf-v5-global--palette--blue-400)',
   },
   '.cm-completionIcon-function, .cm-completionIcon-method': {
     '&:after': { content: "'\\ea8c'" },
-    color: 'var(--pf-global--palette--purple-500)',
+    color: 'var(--pf-v5-global--palette--purple-500)',
   },
   '.cm-completionIcon-class': {
     '&:after': { content: "'○'" },
@@ -150,7 +150,7 @@ export const theme = EditorView.theme({
   },
   '.cm-completionIcon-constant': {
     '&:after': { content: "'\\eb5f'" },
-    color: 'var(--pf-global--primary-color--100)',
+    color: 'var(--pf-v5-global--primary-color--100)',
   },
   '.cm-completionIcon-type': {
     '&:after': { content: "'𝑡'" },
@@ -163,14 +163,14 @@ export const theme = EditorView.theme({
   },
   '.cm-completionIcon-keyword': {
     '&:after': { content: "'\\eb62'" },
-    color: 'var(--pf-global--palette--black-600)',
+    color: 'var(--pf-v5-global--palette--black-600)',
   },
   '.cm-completionIcon-namespace': {
     '&:after': { content: "'▢'" },
   },
   '.cm-completionIcon-text': {
     '&:after': { content: "'\\ea95'" },
-    color: 'var(--pf-global--palette--gold-400)',
+    color: 'var(--pf-v5-global--palette--gold-400)',
   },
 });
 
@@ -224,17 +224,17 @@ export const selectAutocompleteOnHoverPlugin = ViewPlugin.fromClass(
 
 export const promqlHighlighter = HighlightStyle.define([
   { tag: tags.name, color: '#000' },
-  { tag: tags.number, color: 'var(--pf-global--success-color--100)' },
-  { tag: tags.string, color: 'var(--pf-global--danger-color--200)' },
-  { tag: tags.keyword, color: 'var(--pf-global--default-color--200)', fontWeight: 'bold' },
+  { tag: tags.number, color: 'var(--pf-v5-global--success-color--100)' },
+  { tag: tags.string, color: 'var(--pf-v5-global--danger-color--200)' },
+  { tag: tags.keyword, color: 'var(--pf-v5-global--default-color--200)', fontWeight: 'bold' },
   {
     tag: tags.function(tags.variableName),
-    color: 'var(--pf-global--default-color--200)',
+    color: 'var(--pf-v5-global--default-color--200)',
     fontWeight: 'bold',
   },
-  { tag: tags.labelName, color: 'var(--pf-global--warning-color--200)' },
+  { tag: tags.labelName, color: 'var(--pf-v5-global--warning-color--200)' },
   { tag: tags.operator },
-  { tag: tags.modifier, color: 'var(--pf-global--default-color--200)', fontWeight: 'bold' },
+  { tag: tags.modifier, color: 'var(--pf-v5-global--default-color--200)', fontWeight: 'bold' },
   { tag: tags.paren },
   { tag: tags.squareBracket },
   { tag: tags.brace },
@@ -398,22 +398,22 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
   };
 
   return (
-    <div className="query-browser__query pf-c-dropdown">
+    <div className="query-browser__query pf-v5-c-dropdown">
       <div
         ref={containerRef}
         onBlur={handleBlur}
-        className="pf-c-form-control query-browser__query-input"
+        className="pf-v5-c-form-control query-browser__query-input"
       ></div>
       {errorMessage && (
         <div
-          className="pf-c-form__helper-text"
+          className="pf-v5-c-form__helper-text"
           id="helper-text-promql-expression-input"
           aria-live="polite"
         >
-          <div className="pf-c-helper-text">
-            <div className="pf-c-helper-text__item pf-m-warning">
-              <YellowExclamationTriangleIcon className="pf-c-helper-text__item-icon" />
-              <span className="pf-c-helper-text__item-text">{errorMessage}</span>
+          <div className="pf-v5-c-helper-text">
+            <div className="pf-v5-c-helper-text__item pf-m-warning">
+              <YellowExclamationTriangleIcon className="pf-v5-c-helper-text__item-icon" />
+              <span className="pf-v5-c-helper-text__item-text">{errorMessage}</span>
             </div>
           </div>
         </div>

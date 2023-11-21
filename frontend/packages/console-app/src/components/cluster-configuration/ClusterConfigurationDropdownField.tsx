@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { FormGroup, Select, SelectOption, SelectVariant } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { ClusterConfigurationDropdownField } from '@console/dynamic-plugin-sdk/src';
 import { FormLayout } from '@console/shared/src/components/cluster-configuration';
 import { useDebounceCallback } from './hooks';
@@ -17,7 +22,7 @@ const ClusterConfigurationTextField: React.FC<ClusterConfigurationTextFieldProps
   const [value, setValue] = React.useState<string>(field.defaultValue);
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const handleToggle = (open: boolean) => setIsOpen(open);
+  const handleToggle = (_event, open: boolean) => setIsOpen(open);
 
   const save = useDebounceCallback(() => {
     // eslint-disable-next-line no-console
@@ -32,7 +37,7 @@ const ClusterConfigurationTextField: React.FC<ClusterConfigurationTextFieldProps
   };
 
   const options = field.options.map((option) => (
-    <SelectOption
+    <SelectOptionDeprecated
       key={option.value}
       value={option.value}
       label={option.label}
@@ -41,16 +46,11 @@ const ClusterConfigurationTextField: React.FC<ClusterConfigurationTextFieldProps
   ));
 
   return (
-    <FormGroup
-      fieldId={item.id}
-      label={item.label}
-      helperText={item.description}
-      data-test={`${item.id} field`}
-    >
+    <FormGroup fieldId={item.id} label={item.label} data-test={`${item.id} field`}>
       <FormLayout>
-        <Select
+        <SelectDeprecated
           toggleId={item.id}
-          variant={SelectVariant.single}
+          variant={SelectVariantDeprecated.single}
           isOpen={isOpen}
           onToggle={handleToggle}
           selections={value}
@@ -58,8 +58,14 @@ const ClusterConfigurationTextField: React.FC<ClusterConfigurationTextFieldProps
           isDisabled={item.readonly}
         >
           {options}
-        </Select>
+        </SelectDeprecated>
       </FormLayout>
+
+      <FormHelperText>
+        <HelperText>
+          <HelperTextItem>{item.description}</HelperTextItem>
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

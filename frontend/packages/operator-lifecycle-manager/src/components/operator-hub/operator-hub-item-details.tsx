@@ -8,7 +8,7 @@ import {
   DescriptionListGroup,
   DescriptionListDescription,
 } from '@patternfly/react-core';
-import { CheckCircleIcon } from '@patternfly/react-icons';
+import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import * as classNames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -65,7 +65,7 @@ const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ selectedChannelCapabi
           >
             {active && (
               <CheckCircleIcon
-                color="var(--pf-global--primary-color--100)"
+                color="var(--pf-v5-global--primary-color--100)"
                 className="properties-side-panel-pf-property-value__capability-level-icon"
                 title={t('olm~Checked')}
               />
@@ -370,7 +370,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                     variant="warning"
                     title={t('olm~Cluster in STS Mode')}
                     actionClose={<AlertActionCloseButton onClose={() => setShowWarn(false)} />}
-                    className="pf-u-mb-lg"
+                    className="pf-v5-u-mb-lg"
                   >
                     <p>
                       {t(

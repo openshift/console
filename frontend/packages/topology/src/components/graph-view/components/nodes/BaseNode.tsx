@@ -140,7 +140,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
             {icon && showDetails && (
               <>
                 <circle
-                  fill="var(--pf-global--palette--white)"
+                  fill="var(--pf-v5-global--palette--white)"
                   cx={cx}
                   cy={cy}
                   r={innerRadius + 6}

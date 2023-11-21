@@ -28,7 +28,7 @@ export const TextWidget: React.FC<WidgetProps> = (props) => {
     <NumberWidget {...props} />
   ) : (
     <input
-      className="pf-c-form-control"
+      className="pf-v5-c-form-control"
       disabled={disabled}
       id={id}
       key={id}
@@ -46,7 +46,7 @@ export const NumberWidget: React.FC<WidgetProps> = ({ value, id, onChange }) => 
   const numberValue = _.toNumber(value);
   return (
     <input
-      className="pf-c-form-control"
+      className="pf-v5-c-form-control"
       id={id}
       key={id}
       onChange={({ currentTarget }) =>
@@ -61,7 +61,7 @@ export const NumberWidget: React.FC<WidgetProps> = ({ value, id, onChange }) => 
 export const PasswordWidget: React.FC<WidgetProps> = ({ value = '', id, onChange }) => {
   return (
     <input
-      className="pf-c-form-control"
+      className="pf-v5-c-form-control"
       key={id}
       id={id}
       type="password"
@@ -79,7 +79,7 @@ export const CheckboxWidget: React.FC<WidgetProps> = ({ value = false, id, label
       isChecked={value}
       data-checked-state={value}
       label={label}
-      onChange={(checked) => onChange(checked)}
+      onChange={(_event, checked) => onChange(checked)}
     />
   );
 };
@@ -92,7 +92,7 @@ export const SwitchWidget: React.FC<WidgetProps> = ({ value, id, label, onChange
       id={id || label}
       key={id || label}
       isChecked={_.isNil(value) ? false : value}
-      onChange={(v) => onChange(v)}
+      onChange={(_event, v) => onChange(v)}
       label={labelOn as string}
       labelOff={labelOff as string}
     />

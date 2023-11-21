@@ -1,15 +1,11 @@
 import * as React from 'react';
+import { Button, FormSelect, FormSelectOption, GridItem, TextInput } from '@patternfly/react-core';
 import {
-  Button,
-  FormSelect,
-  FormSelectOption,
-  GridItem,
-  Select,
-  SelectOption,
-  SelectVariant,
-  TextInput,
-} from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { EXPRESSION_OPERATORS } from '../../../shared/consts';
 import { AffinityLabel } from '../../types';
@@ -45,7 +41,7 @@ export const AffinityExpressionRow = ({
           isRequired
           type="text"
           value={key}
-          onChange={(newKey) => onChange({ ...expression, key: newKey })}
+          onChange={(_event, newKey) => onChange({ ...expression, key: newKey })}
           aria-label={t('kubevirt-plugin~selector key')}
         />
       </GridItem>
@@ -55,7 +51,9 @@ export const AffinityExpressionRow = ({
           className="kv-affinity-expression-row__operator-input"
           isRequired
           value={operator}
-          onChange={(v) => onChange({ ...expression, operator: v as AffinityLabel['operator'] })}
+          onChange={(_event, v) =>
+            onChange({ ...expression, operator: v as AffinityLabel['operator'] })
+          }
           aria-label={t('kubevirt-plugin~selector effect')}
         >
           {EXPRESSION_OPERATORS.map((operatorOption) => (
@@ -64,10 +62,10 @@ export const AffinityExpressionRow = ({
         </FormSelect>
       </GridItem>
       <GridItem span={5}>
-        <Select
+        <SelectDeprecated
           className="kv-affinity-expression-row__values-input"
           isDisabled={!enableValueField}
-          variant={SelectVariant.typeaheadMulti}
+          variant={SelectVariantDeprecated.typeaheadMulti}
           isOpen={isValuesExpanded}
           isCreatable
           typeAheadAriaLabel="Enter Value"
@@ -80,9 +78,9 @@ export const AffinityExpressionRow = ({
         >
           {values?.map((option, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <SelectOption isDisabled={false} key={index} value={option} />
+            <SelectOptionDeprecated isDisabled={false} key={index} value={option} />
           ))}
-        </Select>
+        </SelectDeprecated>
       </GridItem>
       <GridItem span={1}>
         <Button id={`${rowID}-${id}-delete-btn`} onClick={() => onDelete(id)} variant="plain">

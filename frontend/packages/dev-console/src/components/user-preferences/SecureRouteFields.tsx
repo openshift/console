@@ -1,5 +1,16 @@
 import * as React from 'react';
-import { Checkbox, FormGroup, Select, SelectOption, SelectVariant } from '@patternfly/react-core';
+import {
+  Checkbox,
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import {
@@ -32,9 +43,9 @@ const SecureRouteFields: React.FC = () => {
       [TerminationType.REENCRYPT]: t('devconsole~Re-encrypt'),
     };
     return Object.keys(terminationOptions).map((tlsTerminationOption) => (
-      <SelectOption key={tlsTerminationOption} value={tlsTerminationOption}>
+      <SelectOptionDeprecated key={tlsTerminationOption} value={tlsTerminationOption}>
         {terminationOptions[tlsTerminationOption]}
-      </SelectOption>
+      </SelectOptionDeprecated>
     ));
   }, [t]);
 
@@ -51,14 +62,14 @@ const SecureRouteFields: React.FC = () => {
             [InsecureTrafficType.Redirect]: t('devconsole~Redirect'),
           };
     return Object.keys(insecureTrafficOptions).map((insecureTrafficOption) => (
-      <SelectOption key={insecureTrafficOption} value={insecureTrafficOption}>
+      <SelectOptionDeprecated key={insecureTrafficOption} value={insecureTrafficOption}>
         {insecureTrafficOptions[insecureTrafficOption]}
-      </SelectOption>
+      </SelectOptionDeprecated>
     ));
   }, [t, tlsTermination]);
 
   const onSecureRouteChecked = React.useCallback(
-    (checked: boolean) => {
+    (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
       setPreferredRoutingOptions({
         secure: checked,
         tlsTermination,
@@ -72,12 +83,12 @@ const SecureRouteFields: React.FC = () => {
   );
 
   const onTLSTerminationToggle = React.useCallback(
-    (isOpen: boolean) => setIsTLSTerminationOpen(isOpen),
+    (_event: Event, isOpen: boolean) => setIsTLSTerminationOpen(isOpen),
     [],
   );
 
   const onInsecureTrafficToggle = React.useCallback(
-    (isOpen: boolean) => setIsInsecureTrafficOpen(isOpen),
+    (_event: Event, isOpen: boolean) => setIsInsecureTrafficOpen(isOpen),
     [],
   );
 
@@ -112,7 +123,7 @@ const SecureRouteFields: React.FC = () => {
   );
 
   return (
-    <div className="pf-c-form">
+    <div className="pf-v5-c-form">
       <span className="co-help-text">
         {t(
           'devconsole~The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.',
@@ -134,9 +145,9 @@ const SecureRouteFields: React.FC = () => {
       />
 
       <FormGroup fieldId="tls-termination" label={t('devconsole~TLS termination')}>
-        <Select
+        <SelectDeprecated
           id="tls-termination"
-          variant={SelectVariant.single}
+          variant={SelectVariantDeprecated.single}
           isOpen={isTLSTerminationOpen}
           selections={tlsTermination}
           toggleId="tls-termination"
@@ -148,16 +159,12 @@ const SecureRouteFields: React.FC = () => {
           maxHeight={300}
         >
           {tlsTerminationSelectOptions}
-        </Select>
+        </SelectDeprecated>
       </FormGroup>
-      <FormGroup
-        fieldId="insecure-traffic"
-        label={t('devconsole~Insecure traffic')}
-        helperText={t('devconsole~Policy for traffic on insecure schemes like HTTP.')}
-      >
-        <Select
+      <FormGroup fieldId="insecure-traffic" label={t('devconsole~Insecure traffic')}>
+        <SelectDeprecated
           id="insecure-traffic"
-          variant={SelectVariant.single}
+          variant={SelectVariantDeprecated.single}
           isOpen={isInsecureTrafficOpen}
           selections={insecureTraffic}
           toggleId="insecure-traffic"
@@ -169,7 +176,15 @@ const SecureRouteFields: React.FC = () => {
           maxHeight={300}
         >
           {insecureTrafficSelectOptions}
-        </Select>
+        </SelectDeprecated>
+
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              {t('devconsole~Policy for traffic on insecure schemes like HTTP.')}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
     </div>
   );

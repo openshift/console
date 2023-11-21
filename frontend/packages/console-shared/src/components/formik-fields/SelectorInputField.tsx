@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FormikValues, useFormikContext, useField } from 'formik';
 import { SelectorInput } from '@console/internal/components/utils';
 import { FieldProps } from './field-types';
@@ -33,13 +33,19 @@ const SelectorInputField: React.FC<SelectorInputFieldProps> = ({
   };
 
   return (
-    <FormGroup fieldId={fieldId} label={label} helperText={helpText} isRequired={required}>
+    <FormGroup fieldId={fieldId} label={label} isRequired={required}>
       <SelectorInput
         onChange={onChange}
         tags={tags}
         inputProps={{ id: fieldId, 'data-test': dataTest }}
         {...otherProps}
       />
+
+      <FormHelperText>
+        <HelperText>
+          <HelperTextItem>{helpText}</HelperTextItem>
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

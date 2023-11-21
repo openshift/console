@@ -33,7 +33,7 @@ const GitOpsList: React.FC<GitOpsListProps> = ({ appGroups, emptyStateMsg }) => 
             <TextFilter
               value={textFilter}
               label={t('gitops-plugin~by name')}
-              onChange={(val) => setTextFilter(val)}
+              onChange={(_event, val) => setTextFilter(val)}
             />
           </div>
           <Table

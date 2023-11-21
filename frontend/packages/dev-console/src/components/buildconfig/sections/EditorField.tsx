@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import MonacoEditor, { ChangeHandler, MonacoEditorProps } from 'react-monaco-editor';
-import { useDebounceCallback } from '@console/shared/src';
+import { RedExclamationCircleIcon, useDebounceCallback } from '@console/shared/src';
 import '@console/shared/src/components/editor/theme';
 
 type EditorFieldProps = {
@@ -34,14 +34,18 @@ const EditorField: React.FC<EditorFieldProps> = ({
   }, 100);
 
   return (
-    <FormGroup
-      fieldId=""
-      label={label}
-      helperText={helpText}
-      validated={error ? 'error' : 'default'}
-      isRequired={required}
-    >
+    <FormGroup fieldId="" label={label} isRequired={required}>
       <MonacoEditor {...otherProps} value={value} onChange={debouncedOnChange} />
+
+      <FormHelperText>
+        <HelperText>
+          {error ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />} />
+          ) : (
+            <HelperTextItem>{helpText}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StarIcon } from '@patternfly/react-icons';
+import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { ANNOTATION_ICON } from '../../constants';
 

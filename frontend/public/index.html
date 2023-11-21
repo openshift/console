@@ -1,60 +1,63 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
-
   <head>
-    <base href="[[ .BasePath ]]">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <base href="[[ .BasePath ]]" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     [[ if .CustomProductName ]]
-      <title>[[ .CustomProductName ]]</title>
-      <meta name="application-name" content="[[ .CustomProductName ]]">
+    <title>[[ .CustomProductName ]]</title>
+    <meta name="application-name" content="[[ .CustomProductName ]]" />
+    [[ else ]] [[ if eq .Branding "okd" ]]
+    <title>OKD</title>
+    <meta name="application-name" content="OKD" />
+    [[ end ]] [[ if eq .Branding "openshift" ]]
+    <title>Red Hat OpenShift</title>
+    <meta name="application-name" content="Red Hat OpenShift" />
+    [[ end ]] [[ if eq .Branding "ocp" ]]
+    <title>Red Hat OpenShift</title>
+    <meta name="application-name" content="Red Hat OpenShift" />
+    [[ end ]] [[ if eq .Branding "online" ]]
+    <title>Red Hat OpenShift Online</title>
+    <meta name="application-name" content="Red Hat OpenShift Online" />
+    [[ end ]] [[ if eq .Branding "dedicated" ]]
+    <title>Red Hat OpenShift Dedicated</title>
+    <meta name="application-name" content="Red Hat OpenShift Dedicated" />
+    [[ end ]] [[ if eq .Branding "azure" ]]
+    <title>Azure Red Hat OpenShift</title>
+    <meta name="application-name" content="Azure Red Hat OpenShift" />
+    [[ end ]] [[ if eq .Branding "rosa" ]]
+    <title>Red Hat OpenShift Service on AWS</title>
+    <meta name="application-name" content="Red Hat OpenShift Service on AWS" />
+    [[ end ]] [[ if eq .Branding "okd" ]]
+    <link rel="shortcut icon" href="<%= require('./imgs/okd-favicon.png') %>" />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="144x144"
+      href="<%= require('./imgs/okd-apple-touch-icon-precomposed.png') %>"
+    />
+    <link rel="mask-icon" href="<%= require('./imgs/okd-mask-icon.svg') %>" color="#DB242F" />
+    <meta name="msapplication-TileColor" content="#000000" />
+    <meta
+      name="msapplication-TileImage"
+      content="<%= require('./imgs/okd-mstile-144x144.png') %>"
+    />
     [[ else ]]
-      [[ if eq .Branding "okd" ]]
-      <title>OKD</title>
-      <meta name="application-name" content="OKD">
-      [[ end ]]
-      [[ if eq .Branding "openshift" ]]
-      <title>Red Hat OpenShift</title>
-      <meta name="application-name" content="Red Hat OpenShift">
-      [[ end ]]
-      [[ if eq .Branding "ocp" ]]
-      <title>Red Hat OpenShift</title>
-      <meta name="application-name" content="Red Hat OpenShift">
-      [[ end ]]
-      [[ if eq .Branding "online" ]]
-      <title>Red Hat OpenShift Online</title>
-      <meta name="application-name" content="Red Hat OpenShift Online">
-      [[ end ]]
-      [[ if eq .Branding "dedicated" ]]
-      <title>Red Hat OpenShift Dedicated</title>
-      <meta name="application-name" content="Red Hat OpenShift Dedicated">
-      [[ end ]]
-      [[ if eq .Branding "azure" ]]
-      <title>Azure Red Hat OpenShift</title>
-      <meta name="application-name" content="Azure Red Hat OpenShift">
-      [[ end ]]
-      [[ if eq .Branding "rosa" ]]
-      <title>Red Hat OpenShift Service on AWS</title>
-      <meta name="application-name" content="Red Hat OpenShift Service on AWS">
-      [[ end ]]
+    <link rel="shortcut icon" href="<%= require('./imgs/openshift-favicon.png') %>" />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="144x144"
+      href="<%= require('./imgs/openshift-apple-touch-icon-precomposed.png') %>"
+    />
+    <link rel="mask-icon" href="<%= require('./imgs/openshift-mask-icon.svg') %>" color="#DB242F" />
+    <meta name="msapplication-TileColor" content="#000000" />
+    <meta
+      name="msapplication-TileImage"
+      content="<%= require('./imgs/openshift-mstile-144x144.png') %>"
+    />
+    [[ end ]] [[ end ]]
 
-      [[ if eq .Branding "okd" ]]
-      <link rel="shortcut icon" href="<%= require('./imgs/okd-favicon.png') %>">
-      <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<%= require('./imgs/okd-apple-touch-icon-precomposed.png') %>">
-      <link rel="mask-icon" href="<%= require('./imgs/okd-mask-icon.svg') %>" color="#DB242F">
-      <meta name="msapplication-TileColor" content="#000000">
-      <meta name="msapplication-TileImage" content="<%= require('./imgs/okd-mstile-144x144.png') %>">
-      [[ else ]]
-      <link rel="shortcut icon" href="<%= require('./imgs/openshift-favicon.png') %>">
-      <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<%= require('./imgs/openshift-apple-touch-icon-precomposed.png') %>">
-      <link rel="mask-icon" href="<%= require('./imgs/openshift-mask-icon.svg') %>" color="#DB242F">
-      <meta name="msapplication-TileColor" content="#000000">
-      <meta name="msapplication-TileImage" content="<%= require('./imgs/openshift-mstile-144x144.png') %>">
-      [[ end ]]
-    [[ end ]]
-
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="text/javascript">
       window.SERVER_FLAGS = [[.]];
       let theme = localStorage.getItem('bridge/theme') || 'systemDefault';
@@ -62,7 +65,7 @@
         theme = 'dark';
       }
       if (theme === 'dark') {
-        document.documentElement.classList.add('pf-theme-dark');
+        document.documentElement.classList.add('pf-v5-theme-dark', 'pf-theme-dark'); // legacy pf-theme-dark class needed for PF4 component styling
       }
     </script>
   </head>

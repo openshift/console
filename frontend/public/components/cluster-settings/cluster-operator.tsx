@@ -3,7 +3,8 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert } from '@patternfly/react-core';
-import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
+import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
+import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 import { useTranslation } from 'react-i18next';
 
 import { ClusterOperatorModel } from '../../models';
@@ -66,9 +67,9 @@ const OperatorStatusIconAndLabel: React.FC<OperatorStatusIconAndLabelProps> = ({
 
 const tableColumnClasses = [
   '',
-  'pf-u-w-16-on-xl',
-  'pf-m-hidden pf-m-visible-on-md pf-u-w-33-on-2xl',
-  'pf-m-hidden pf-m-visible-on-md pf-u-w-33-on-2xl',
+  'pf-v5-u-w-16-on-xl',
+  'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-33-on-2xl',
+  'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-33-on-2xl',
   Kebab.columnClass,
 ];
 
@@ -203,18 +204,18 @@ const OperandVersions: React.FC<OperandVersionsProps> = ({ versions }) => {
     <EmptyBox label={t('public~versions')} />
   ) : (
     <div className="co-table-container">
-      <table className="table">
-        <thead>
-          <tr>
-            <th>{t('public~Name')}</th>
-            <th>{t('public~Version')}</th>
+      <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+        <thead className="pf-v5-c-table__thead">
+          <tr className="pf-v5-c-table__tr">
+            <th className="pf-v5-c-table__th">{t('public~Name')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Version')}</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="pf-v5-c-table__tbody">
           {_.map(versions, ({ name, version }, i) => (
-            <tr key={i}>
-              <td>{name}</td>
-              <td>{version}</td>
+            <tr className="pf-v5-c-table__tr" key={i}>
+              <td className="pf-v5-c-table__td">{name}</td>
+              <td className="pf-v5-c-table__td">{version}</td>
             </tr>
           ))}
         </tbody>

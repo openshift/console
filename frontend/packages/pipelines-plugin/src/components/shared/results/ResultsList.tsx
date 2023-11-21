@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Bullseye, EmptyState, EmptyStateBody, EmptyStateVariant } from '@patternfly/react-core';
-import { TableComposable, Thead, Tbody, Th, Td, Tr } from '@patternfly/react-table';
+import { Thead, Tbody, Th, Td, Tr } from '@patternfly/react-table';
+import { Table as TableDeprecated } from '@patternfly/react-table/deprecated';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading } from '@console/internal/components/utils';
 import { ComputedStatus, TektonResultsRun } from '../../../types';
@@ -31,9 +32,10 @@ const ResultsList: React.FC<ResultsListProps> = ({ results, resourceName, status
     <>
       <SectionHeading text={t('pipelines-plugin~{{resourceName}} results', { resourceName })} />
       {status !== ComputedStatus.Failed ? (
-        <TableComposable
+        <TableDeprecated
           aria-label={t('pipelines-plugin~{{resourceName}} results', { resourceName })}
           {...reactPropFix}
+          data-codemods="true"
         >
           <Thead {...reactPropFix}>
             <Tr {...reactPropFix}>
@@ -49,7 +51,7 @@ const ResultsList: React.FC<ResultsListProps> = ({ results, resourceName, status
               </Tr>
             ))}
           </Tbody>
-        </TableComposable>
+        </TableDeprecated>
       ) : (
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.full}>

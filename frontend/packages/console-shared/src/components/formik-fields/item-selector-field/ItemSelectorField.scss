@@ -1,32 +1,32 @@
 .odc-item-selector-filter {
-    display: flex;
-    padding-bottom: var(--pf-global--spacer--md);
+  display: flex;
+  padding-bottom: var(--pf-v5-global--spacer--md);
 
-    &__input {
-      max-width: 20em;
-    }
-
-    &__count {
-      color: var(--pf-global--Color--200);
-      margin-left: auto;
-    }
+  &__input {
+    max-width: 20em;
   }
+
+  &__count {
+    color: var(--pf-v5-global--Color--200);
+    margin-left: auto;
+  }
+}
 
 .odc-item-selector-field {
-    display: inline-flex;
-    flex-direction: column;
-    flex-flow: wrap;
-    background: var(--pf-global--BackgroundColor--200);
-    padding: 4px;
+  display: inline-flex;
+  flex-direction: column;
+  flex-flow: wrap;
+  background: var(--pf-v5-global--BackgroundColor--200);
+  padding: 4px;
 
-    &__scrollbar {
-      max-height: 260px;
-      overflow-y: auto;
-    }
-
-    &__success-icon {
-      color: var(--pf-global--palette--green-700);
-      font-size: var(--pf-global--FontSize--md);
-      margin-left: var(--pf-global--spacer--lg);
-    }
+  &__scrollbar {
+    max-height: 260px;
+    overflow-y: auto;
   }
+
+  &__success-icon {
+    color: var(--pf-v5-global--palette--green-700);
+    font-size: var(--pf-v5-global--FontSize--md);
+    margin-left: var(--pf-v5-global--spacer--lg);
+  }
+}

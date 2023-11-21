@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Select, SelectOption, SelectVariant, Skeleton } from '@patternfly/react-core';
+import { Skeleton } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { UserPreferenceDropdownField as DropdownFieldType } from '@console/dynamic-plugin-sdk/src';
 import { useTelemetry, useUserSettings } from '@console/shared';
@@ -30,7 +35,7 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
       options.map((dropdownOption, index) => {
         const key = `${dropdownOption.label}${index}`;
         return (
-          <SelectOption
+          <SelectOptionDeprecated
             key={key}
             value={dropdownOption.label}
             description={dropdownOption?.description}
@@ -57,7 +62,7 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
     options.find((option) => option.label === searchLabel)?.value;
   const getDropdownLabelFromValue = (searchValue: string): string =>
     options.find((option) => option.value === searchValue)?.label;
-  const onToggle = (isOpen: boolean) => setDropdownOpen(isOpen);
+  const onToggle = (_event, isOpen: boolean) => setDropdownOpen(isOpen);
   const onSelect = (_, selection) => {
     const selectedValue = getDropdownValueFromLabel(selection);
     selectedValue !== currentUserPreferenceValue && setCurrentUserPreferenceValue(selectedValue);
@@ -73,9 +78,9 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
       {description && (
         <div className="co-help-text co-user-preference-field--description">{description}</div>
       )}
-      <Select
+      <SelectDeprecated
         toggleId={id}
-        variant={SelectVariant.single}
+        variant={SelectVariantDeprecated.single}
         isOpen={dropdownOpen}
         selections={getDropdownLabelFromValue(currentUserPreferenceValue)}
         onToggle={onToggle}
@@ -84,7 +89,7 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
         data-test={`dropdown ${id}`}
       >
         {selectOptions}
-      </Select>
+      </SelectDeprecated>
     </>
   ) : (
     <Skeleton height="30px" width="100%" data-test={`dropdown skeleton ${id}`} />

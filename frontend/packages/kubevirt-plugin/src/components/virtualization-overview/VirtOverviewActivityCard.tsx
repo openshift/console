@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardActions, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -203,12 +203,24 @@ const OngoingActivity = connect(mapStateToProps)(
 export const VirtOverviewActivityCard: React.FC<{}> = React.memo(() => {
   const { t } = useTranslation();
   return (
-    <Card className="co-overview-card--gradient" data-test-id="kubevirt-activity-card">
-      <CardHeader>
+    <Card
+      className="co-overview-card--gradient"
+      data-test-id="kubevirt-activity-card"
+      isClickable
+      isSelectable
+    >
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <Link to={viewEvents}>{t('kubevirt-plugin~View events')}</Link>
+            </>
+          ),
+          hasNoOffset: false,
+          className: 'co-overview-card__actions',
+        }}
+      >
         <CardTitle>{t('public~Activity')}</CardTitle>
-        <CardActions className="co-overview-card__actions">
-          <Link to={viewEvents}>{t('kubevirt-plugin~View events')}</Link>
-        </CardActions>
       </CardHeader>
       <ActivityBody className="co-overview-dashboard__activity-body">
         <OngoingActivity />

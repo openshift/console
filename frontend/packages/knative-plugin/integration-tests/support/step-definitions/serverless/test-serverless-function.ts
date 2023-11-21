@@ -29,7 +29,7 @@ When('user selects {string} from the Format drop down field', (invokeFormat: str
 });
 
 When('user clicks on the "Advanced Settings" option', () => {
-  cy.byTestID('advanced-settings').find('.pf-c-expandable-section__toggle').click();
+  cy.byTestID('advanced-settings').find('.pf-v5-c-expandable-section__toggle').click();
 });
 
 When('user enters the {string} in the Type field', (type: string) => {

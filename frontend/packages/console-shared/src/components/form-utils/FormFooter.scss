@@ -1,16 +1,16 @@
 @import '../../../../../public/style/vars';
 
 .ocs-form-footer {
-  padding: var(--pf-global--spacer--md) $pf-global-gutter;
-  @media (min-width: $pf-global--breakpoint--xl) {
-    padding: var(--pf-global--spacer--md) $pf-global-gutter--md;
+  padding: var(--pf-v5-global--spacer--md) $pf-v5-global-gutter;
+  @media (min-width: $pf-v5-global--breakpoint--xl) {
+    padding: var(--pf-v5-global--spacer--md) $pf-v5-global-gutter--md;
   }
   &__sticky {
     position: sticky;
-    background-color: var(--pf-global--BackgroundColor--100);
+    background-color: var(--pf-v5-global--BackgroundColor--100);
     bottom: 0;
   }
   &__shadow {
-    box-shadow: var(--pf-global--BoxShadow--sm-top);
+    box-shadow: var(--pf-v5-global--BoxShadow--sm-top);
   }
 }

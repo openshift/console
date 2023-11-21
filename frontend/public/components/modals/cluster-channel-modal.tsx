@@ -54,7 +54,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
                 )}
           </Text>
           {!isManaged() && (
-            <Text component={TextVariants.p} className="pf-u-mb-md">
+            <Text component={TextVariants.p} className="pf-v5-u-mb-md">
               <ChannelDocLink />
             </Text>
           )}
@@ -74,7 +74,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
             <>
               <TextInput
                 id="channel"
-                onChange={(newChannel) => setChannel(newChannel)}
+                onChange={(_event, newChannel) => setChannel(newChannel)}
                 value={channel}
                 placeholder={t(`public~e.g., {{version}}`, {
                   version: `stable-${version.major}.${version.minor}`,

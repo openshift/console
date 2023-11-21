@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Alert, SelectVariant } from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core';
+import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
@@ -77,7 +78,7 @@ const ServerlessRouteSection: React.FC = () => {
             name="serverless.domainMapping"
             label={t('devconsole~Domain mapping')}
             ariaLabel={t('devconsole~Domain mapping')}
-            variant={SelectVariant.typeaheadMulti}
+            variant={SelectVariantDeprecated.typeaheadMulti}
             options={domainMappingResources}
             placeholderText={t('devconsole~Add domain')}
             helpText={t('devconsole~Enter custom domain to map to the Knative service')}
@@ -91,7 +92,7 @@ const ServerlessRouteSection: React.FC = () => {
               isInline
               title={t('devconsole~Domain mapping(s) will be updated')}
             >
-              <div style={{ marginBottom: 'var(--pf-global--spacer--sm)' }}>
+              <div style={{ marginBottom: 'var(--pf-v5-global--spacer--sm)' }}>
                 {t(
                   'devconsole~Warning: The following domain(s) will be removed from the associated service',
                 )}

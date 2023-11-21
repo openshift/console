@@ -1,6 +1,6 @@
 .dropdown--full-width {
   &,
-  .pf-c-dropdown__toggle {
+  .pf-v5-c-dropdown__toggle {
     justify-content: space-between;
     width: 100%;
   }
@@ -10,19 +10,19 @@
   height: 34.5px !important; // default form element height
   margin-left: -1px;
   min-width: auto !important;
-  .pf-c-dropdown {
+  .pf-v5-c-dropdown {
     --pf-c-dropdown__toggle-icon--MarginRight: 0 !important;
     --pf-c-dropdown__toggle-icon--MarginLeft: 0 !important;
   }
 }
 
 .dropdown__disabled {
-  color: var(--pf-global--disabled-color--100);
+  color: var(--pf-v5-global--disabled-color--100);
   cursor: not-allowed;
 }
 
 .dropdown-menu__divider {
-  background-color: var(--pf-global--BackgroundColor--200);
+  background-color: var(--pf-v5-global--BackgroundColor--200);
   height: 1px;
   flex-grow: 1;
   margin: 9px 0;
@@ -30,7 +30,7 @@
 }
 
 .dropdown-menu__header {
-  color: $pf-color-black-600;
+  color: var(--pf-global--Color--100);
   flex-grow: 1;
   font-size: ($font-size-base - 1);
   padding: 3px 10px;
@@ -53,13 +53,13 @@
 }
 
 .co-namespace-bar {
-  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-  padding: 0 $pf-global-gutter;
+  border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  padding: 0 $pf-v5-global-gutter;
   white-space: nowrap;
 
-  @media (min-width: $pf-global--breakpoint--xl) {
-    padding-left: $pf-global-gutter--md;
-    padding-right: $pf-global-gutter--md;
+  @media (min-width: $pf-v5-global--breakpoint--xl) {
+    padding-left: $pf-v5-global-gutter--md;
+    padding-right: $pf-v5-global-gutter--md;
   }
 
   &__items {
@@ -78,8 +78,8 @@
 }
 
 .co-namespace-bar--no-project {
-  padding-left: var(--pf-global--spacer--sm);
-  @media screen and (max-width: $pf-global--breakpoint--xl) {
+  padding-left: var(--pf-v5-global--spacer--sm);
+  @media screen and (max-width: $pf-v5-global--breakpoint--xl) {
     margin-left: -0.5rem;
   }
 }
@@ -88,15 +88,15 @@
   margin-right: 20px;
   max-width: 60%;
 
-  .pf-c-dropdown__toggle.pf-m-plain {
+  .pf-v5-c-dropdown__toggle.pf-m-plain {
     font-size: ($font-size-base + 1);
-    --pf-c-dropdown__toggle--PaddingBottom: 7px;
-    --pf-c-dropdown__toggle--PaddingLeft: 0;
-    --pf-c-dropdown__toggle--PaddingRight: 0;
+    --pf-v5-c-dropdown__toggle--PaddingBottom: 7px;
+    --pf-v5-c-dropdown__toggle--PaddingLeft: 0;
+    --pf-v5-c-dropdown__toggle--PaddingRight: 0;
 
-    @media (min-width: $pf-global--breakpoint--md) {
+    @media (min-width: $pf-v5-global--breakpoint--md) {
       font-size: ($font-size-base + 2);
-      --pf-c-dropdown__toggle--PaddingBottom: 9px;
+      --pf-v5-c-dropdown__toggle--PaddingBottom: 9px;
     }
 
     &:not(:disabled) {
@@ -109,11 +109,11 @@
   }
 }
 
-.pf-c-dropdown .co-m-resource-icon {
+.pf-v5-c-dropdown .co-m-resource-icon {
   margin-left: 2px;
 }
 
-.pf-c-dropdown__content-wrap {
+.pf-v5-c-dropdown__content-wrap {
   align-items: center;
   display: flex;
   flex: 1 1 auto;
@@ -121,25 +121,25 @@
   min-width: 0;
 }
 
-.pf-c-dropdown__menu {
+.pf-v5-c-dropdown__menu {
   list-style: none;
   -webkit-overflow-scrolling: touch;
-  @media (min-width: $pf-global--breakpoint--md) {
+  @media (min-width: $pf-v5-global--breakpoint--md) {
     &.pf-m-align-right-on-md {
       right: 0;
     }
   }
 }
 
-.pf-c-dropdown__toggle {
+.pf-v5-c-dropdown__toggle {
   max-width: 100%;
 }
 
-.pf-c-dropdown__toggle .pf-c-dropdown__toggle-icon {
+.pf-v5-c-dropdown__toggle .pf-c-dropdown__toggle-icon {
   flex: 0 0 auto; // so arrow doesn't shrink
 }
 
-.pf-c-dropdown__toggle-text {
+.pf-v5-c-dropdown__toggle-text {
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;

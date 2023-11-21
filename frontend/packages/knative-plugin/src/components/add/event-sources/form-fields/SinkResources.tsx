@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { FormGroup, Alert } from '@patternfly/react-core';
+import {
+  FormGroup,
+  Alert,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { isEmpty } from 'lodash';
@@ -34,7 +40,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
     fuzzy(strText, item?.props?.name);
   const fieldId = getFieldId('sink-name', 'dropdown');
   const onChange = React.useCallback(
-    (selectedValue, valueObj) => {
+    (_selectedValue, valueObj) => {
       const modelData = valueObj?.props?.model;
       const name = valueObj?.props?.name;
       if (name && modelData) {
@@ -78,18 +84,10 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
   const resourceFilter = ({ metadata }: K8sResourceKind) => !metadata?.ownerReferences?.length;
 
   return (
-    <FormGroup
-      fieldId={fieldId}
-      helperText={
-        !contextAvailable
-          ? t('knative-plugin~This resource will be the sink for the Event source.')
-          : ''
-      }
-      isRequired
-    >
+    <FormGroup fieldId={fieldId} isRequired>
       {resourceAlert && (
         <>
-          <Alert variant="default" title={t('knative-plugin~No resources available')} isInline>
+          <Alert variant="custom" title={t('knative-plugin~No resources available')} isInline>
             {t(
               'knative-plugin~Select the URI option, or exit this form and create a Knative Service, Broker, or Channel first.',
             )}
@@ -114,6 +112,16 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
         resourceFilter={resourceFilter}
         onLoad={handleOnLoad}
       />
+
+      {!contextAvailable && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              {t('knative-plugin~This resource will be the sink for the Event source.')}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      )}
     </FormGroup>
   );
 };

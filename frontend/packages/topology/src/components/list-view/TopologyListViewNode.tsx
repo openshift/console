@@ -109,7 +109,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
         id={`${item.getId()}_label`}
       >
         {badgeCell || <TypedResourceBadgeCell key="type-icon" kind={kind} />}
-        {item.getLabel()}
+        <span data-test-id={item.getLabel()}>{item.getLabel()}</span>
         {alertIndicator}
       </DataListCell>
     ),
@@ -155,7 +155,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
           <DataList
             aria-label={t('topology~{{label}} sub-resources', { label: item.getLabel() })}
             selectedDataListItemId={selectedIds[0]}
-            onSelectDataListItem={(id) => onSelect(selectedIds[0] === id ? [] : [id])}
+            onSelectDataListItem={(_event, id) => onSelect(selectedIds[0] === id ? [] : [id])}
           >
             {children}
           </DataList>

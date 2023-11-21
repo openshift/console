@@ -40,21 +40,22 @@ export const obsDropTargetSpec = (
 > => ({
   accept: [CREATE_CONNECTOR_DROP_TYPE],
   canDrop: (item, monitor, props) => {
+    const nodeElement = props.element as Node;
     if (!serviceBinding) {
       return false;
     }
 
     if (isEdge(item)) {
-      return canDropEdgeOnNode(monitor.getOperation()?.type, item, props.element);
+      return canDropEdgeOnNode(monitor.getOperation()?.type, item, nodeElement);
     }
-    if (!props.element || item === props.element) {
+    if (!nodeElement || item === nodeElement) {
       return false;
     }
-    return !props.element.getTargetEdges().find((e) => e.getSource() === item);
+    return !nodeElement.getTargetEdges().find((e) => e.getSource() === item);
   },
   collect: (monitor, props) => {
     return {
-      canDrop: serviceBinding && highlightNode(monitor, props.element),
+      canDrop: serviceBinding && highlightNode(monitor, props.element as Node),
       dropTarget: monitor.isOver({ shallow: true }),
       edgeDragging: nodesEdgeIsDragging(monitor, props),
     };

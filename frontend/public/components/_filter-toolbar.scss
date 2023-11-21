@@ -15,14 +15,14 @@
 
 .co-filter-dropdown-item {
   display: inline-flex;
-  margin: var(--pf-global--spacer--xs) 0;
+  margin: var(--pf-v5-global--spacer--xs) 0;
 }
 
 .co-filter-dropdown-item__name {
-  padding: 0 var(--pf-global--spacer--xs);
+  padding: 0 var(--pf-v5-global--spacer--xs);
 }
 
-@media (min-width: $pf-global--breakpoint--md) {
+@media (min-width: $pf-v5-global--breakpoint--md) {
   .co-filter-group {
     width: 350px !important; // enable full placeholder text to display
   }

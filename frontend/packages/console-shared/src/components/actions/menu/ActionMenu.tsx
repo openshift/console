@@ -97,12 +97,11 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
           onToggleHover={handleHover}
         />
         <Popper
-          reference={toggleRef}
+          triggerRef={toggleRef}
           popper={menu}
           placement="bottom-end"
           isVisible={isOpen}
           appendTo={containerRef.current}
-          popperMatchesTriggerWidth={false}
         />
       </div>
     )

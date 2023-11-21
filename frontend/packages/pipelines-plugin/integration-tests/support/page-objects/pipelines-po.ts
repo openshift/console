@@ -4,7 +4,7 @@ export const pipelineBuilderPO = {
   cancel: '[data-test-id="reset-button"]',
   pipeline: '#pipeline-link',
   repository: '#repository-link',
-  add: 'button.pf-c-button.pf-m-link.pf-m-inline',
+  add: 'button.pf-v5-c-button.pf-m-link.pf-m-inline',
   configureVia: {
     pipelineBuilder: '#form-radiobutton-editorType-form-field',
     yamlView: '#form-radiobutton-editorType-yaml-field',
@@ -22,7 +22,7 @@ export const pipelineBuilderPO = {
     seriesTask: '[data-id^="has-run-after-"][data-kind="node"]',
     parallelTask: '[data-id^="shared-parallel-"][data-kind="node"]',
     sectionTitle: '.odc-pipeline-builder-page h2',
-    addResourcesLink: 'div.pf-c-form__group button[type="button"]',
+    addResourcesLink: 'div.pf-v5-c-form__group button[type="button"]',
     addParams: {
       name: '#form-input-formData-params-0-name-field',
       description: '#form-input-formData-params-0-description-field',
@@ -132,10 +132,10 @@ export const pipelineDetailsPO = {
     yamlEditor: '[data-mode-id="yaml"]',
   },
   metrics: {
-    emptyMessage: '.pf-c-empty-state__body',
+    emptyMessage: '.pf-v5-c-empty-state__body',
     timeRange: '',
     refreshInterval: '',
-    graphTitle: '.pf-c-card__title',
+    graphTitle: '.pf-v5-c-card__title',
   },
   pipelineRuns: {
     pipelineRunIcon: '[title="PipelineRun"]',
@@ -277,7 +277,7 @@ export const pipelinesPO = {
     gitUrl: '#form-input-resources-0-data-params-url-field',
     revision: '#form-input-resources-0-data-params-revision-field',
     variablesMessage: 'p.odc-trigger-binding-section__variable-descriptor',
-    variablesLink: '.pf-c-form button',
+    variablesLink: '.pf-v5-c-form button',
   },
   editPipeline: {
     title: 'h1.odc-pipeline-builder-header__title',
@@ -297,7 +297,7 @@ export const pipelinesPO = {
     start: '#confirm-action',
     workspaces: {
       workspaceType: '[id$="workspaces-0-type-field"]',
-      emptyDirectoryInfo: '.pf-u-screen-reader',
+      emptyDirectoryInfo: '.pf-v5-u-screen-reader',
       configMap: '.odc-multiple-key-selector button',
       secret: '.odc-multiple-key-selector button',
       pvc: '[id$=persistentVolumeClaim-claimName-field]',

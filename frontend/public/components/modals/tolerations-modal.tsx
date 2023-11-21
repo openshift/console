@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
 
 import { Dropdown, EmptyBox, withHandlePromise, HandlePromiseProps } from '../utils';
@@ -127,7 +128,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     </div>
                     <input
                       type="text"
-                      className="pf-c-form-control"
+                      className="pf-v5-c-form-control"
                       value={key}
                       onChange={(e) => change(e, i, 'key')}
                       readOnly={!isEditable(toleration)}
@@ -147,7 +148,12 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                         title={operators[operator]}
                       />
                     ) : (
-                      <input type="text" className="pf-c-form-control" value={operator} readOnly />
+                      <input
+                        type="text"
+                        className="pf-v5-c-form-control"
+                        value={operator}
+                        readOnly
+                      />
                     )}
                   </div>
                   <div className="clearfix visible-sm visible-xs" />
@@ -157,7 +163,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     </div>
                     <input
                       type="text"
-                      className="pf-c-form-control"
+                      className="pf-v5-c-form-control"
                       value={value}
                       onChange={(e) => change(e, i, 'value')}
                       readOnly={!isEditable(toleration) || operator === 'Exists'}
@@ -179,7 +185,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     ) : (
                       <input
                         type="text"
-                        className="pf-c-form-control"
+                        className="pf-v5-c-form-control"
                         value={effects[effect]}
                         readOnly
                       />

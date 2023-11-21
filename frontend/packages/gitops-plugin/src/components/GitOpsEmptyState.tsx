@@ -4,8 +4,9 @@ import {
   EmptyStateIcon,
   EmptyStateVariant,
   EmptyStateBody,
+  EmptyStateHeader,
 } from '@patternfly/react-core';
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon } from '@patternfly/react-icons/dist/esm/icons/cubes-icon';
 import './GitOpsEmptyState.scss';
 
 interface GitOpsEmptyStateProps {
@@ -14,7 +15,7 @@ interface GitOpsEmptyStateProps {
 
 const GitOpsEmptyState: React.FC<GitOpsEmptyStateProps> = ({ emptyStateMsg }) => (
   <EmptyState variant={EmptyStateVariant.full}>
-    <EmptyStateIcon variant="container" component={CubesIcon} />
+    <EmptyStateHeader icon={<EmptyStateIcon icon={CubesIcon} />} />
     <EmptyStateBody>{emptyStateMsg}</EmptyStateBody>
   </EmptyState>
 );

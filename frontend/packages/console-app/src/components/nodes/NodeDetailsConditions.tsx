@@ -15,30 +15,30 @@ const NodeDetailsConditions: React.FC<NodeDetailsConditionsProps> = ({ node }) =
     <div className="co-m-pane__body">
       <SectionHeading text={t('console-app~Node conditions')} />
       <div className="co-table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>{t('console-app~Type')}</th>
-              <th>{t('console-app~Status')}</th>
-              <th>{t('console-app~Reason')}</th>
-              <th>{t('console-app~Updated')}</th>
-              <th>{t('console-app~Changed')}</th>
+        <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+          <thead className="pf-v5-c-table__thead">
+            <tr className="pf-v5-c-table__tr">
+              <th className="pf-v5-c-table__th">{t('console-app~Type')}</th>
+              <th className="pf-v5-c-table__th">{t('console-app~Status')}</th>
+              <th className="pf-v5-c-table__th">{t('console-app~Reason')}</th>
+              <th className="pf-v5-c-table__th">{t('console-app~Updated')}</th>
+              <th className="pf-v5-c-table__th">{t('console-app~Changed')}</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="pf-v5-c-table__tbody">
             {_.map(node.status.conditions, (c, i) => (
-              <tr key={i}>
-                <td>
+              <tr className="pf-v5-c-table__tr" key={i}>
+                <td className="pf-v5-c-table__td">
                   <CamelCaseWrap value={c.type} />
                 </td>
-                <td>{c.status || '-'}</td>
-                <td>
+                <td className="pf-v5-c-table__td">{c.status || '-'}</td>
+                <td className="pf-v5-c-table__td">
                   <CamelCaseWrap value={c.reason} />
                 </td>
-                <td>
+                <td className="pf-v5-c-table__td">
                   <Timestamp timestamp={c.lastHeartbeatTime} />
                 </td>
-                <td>
+                <td className="pf-v5-c-table__td">
                   <Timestamp timestamp={c.lastTransitionTime} />
                 </td>
               </tr>

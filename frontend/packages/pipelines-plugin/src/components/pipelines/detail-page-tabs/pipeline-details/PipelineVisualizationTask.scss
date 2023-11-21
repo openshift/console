@@ -1,8 +1,8 @@
 @import '../../../../../../topology/src/components/topology-utils';
 
-$border-color: var(--pf-global--BorderColor--light-100);
+$border-color: var(--pf-v5-global--BorderColor--light-100);
 .odc-pipeline-vis-task {
-  fill: var(--pf-global--BackgroundColor--light-100);
+  fill: var(--pf-v5-global--BackgroundColor--light-100);
   stroke: $border-color;
   stroke-width: 1;
   cursor: default;
@@ -28,7 +28,7 @@ $border-color: var(--pf-global--BorderColor--light-100);
 .odc-pipeline-vis-task-text {
   cursor: default;
   dominant-baseline: middle;
-  fill: var(--pf-global--Color--100);
+  fill: var(--pf-v5-global--Color--100);
 
   &.is-text-center {
     text-anchor: middle;

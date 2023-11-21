@@ -164,7 +164,7 @@ type IntegerProps = {
   className?: string;
   value?: string;
   defaultValue?: string;
-  onChange?: (value: string, event: React.FormEvent<HTMLInputElement>) => void;
+  onChange?: (event: React.FormEvent<HTMLInputElement>, value: string) => void;
   isPositive?: boolean;
   isNonNegative?: boolean; // is ignored when positive == true
   isDisabled?: boolean;

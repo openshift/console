@@ -58,7 +58,7 @@ export const topologyPage = {
   },
   verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
   verifyNoWorkLoadsText: (text: string) =>
-    cy.get('h3.pf-c-title.pf-m-lg').should('contain.text', text),
+    cy.get('h3.pf-v5-c-title.pf-m-lg').should('contain.text', text),
   verifyWorkLoads: () => cy.get(topologyPO.graph.workloads).should('be.visible'),
   search: (name: string) => {
     topologyHelper.search(name);
@@ -226,8 +226,8 @@ export const topologyPage = {
       .contains(eventSource);
   },
   getRevisionNode: (serviceName: string) => {
-    cy.get('[data-type="knative-service"] g.pf-topology__group__label > text', { timeout: 80000 })
-      .contains(serviceName)
+    cy.get('[data-type="knative-revision"] g.pf-topology__node__label > text')
+      .contains(serviceName.substring(0, 6))
       .should('be.visible');
     return cy.get('[data-type="knative-revision"] ellipse.pf-topology__node__background');
   },

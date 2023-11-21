@@ -1,9 +1,9 @@
 .kv-permissions-card__status {
   display: flex;
   justify-content: space-between;
-  padding-left: var(--pf-c-card--child--PaddingLeft);
-  padding-right: var(--pf-c-card--child--PaddingRight);
-  padding-top: var(--pf-c-card--first-child--PaddingTop);
+  padding-left: var(--pf-v5-c-card--child--PaddingLeft);
+  padding-right: var(--pf-v5-c-card--child--PaddingRight);
+  padding-top: var(--pf-v5-c-card--first-child--PaddingTop);
 }
 
 .kv-permissions-card__count-item {
@@ -14,30 +14,30 @@
 
 .kv-permissions-card__count-icon {
   margin-right: 0.35em;
-  padding-left: var(--pf-global--spacer--xs);
+  padding-left: var(--pf-v5-global--spacer--xs);
 }
 
 .kv-permissions-card__popover-item {
-  font-size: var(--pf-global--FontSize--md);
+  font-size: var(--pf-v5-global--FontSize--md);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 0.5rem;
-  padding-left: var(--pf-c-card--child--PaddingLeft);
-  padding-right: var(--pf-c-card--child--PaddingRight);
+  padding-left: var(--pf-v5-c-card--child--PaddingLeft);
+  padding-right: var(--pf-v5-c-card--child--PaddingRight);
 }
 
 .kv-permissions-card__popover-table-header {
-  font-size: var(--pf-global--FontSize--md);
+  font-size: var(--pf-v5-global--FontSize--md);
   font-weight: bold;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 0.5rem;
-  padding-left: var(--pf-c-card--child--PaddingLeft);
-  padding-right: var(--pf-c-card--child--PaddingRight);
+  padding-left: var(--pf-v5-c-card--child--PaddingLeft);
+  padding-right: var(--pf-v5-c-card--child--PaddingRight);
 }
 
 .kv-permissions-card__popover-item-task {
-  margin-right: var(--pf-global--spacer--xl);
+  margin-right: var(--pf-v5-global--spacer--xl);
 }

@@ -4,7 +4,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { SyncAltIcon } from '@patternfly/react-icons';
+import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { Button } from '@patternfly/react-core';
 import { LogSnippet, Status, BuildConfigOverviewItem } from '@console/shared';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';

@@ -1,8 +1,8 @@
 import { safeLoad } from 'js-yaml';
 import { omit } from 'lodash';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import { CatalogItem } from '../../../../../console-dynamic-plugin-sdk/src';
 import {
   sampleTektonHubCatalogItem,
   sampleClusterTaskCatalogItem,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -34,7 +34,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
           id={`${path}.cpu`}
           name="cpu"
           type="text"
-          className="pf-c-form-control"
+          className="pf-v5-c-form-control"
           placeholder="500m"
         />
       </div>
@@ -52,7 +52,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
           id={`${path}.memory`}
           name="memory"
           type="text"
-          className="pf-c-form-control"
+          className="pf-v5-c-form-control"
           placeholder="50Mi"
         />
       </div>
@@ -70,7 +70,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
           id={`${path}.ephemeral-storage`}
           name="ephemeral-storage"
           type="text"
-          className="pf-c-form-control"
+          className="pf-v5-c-form-control"
           placeholder="50Mi"
         />
       </div>
@@ -166,7 +166,7 @@ export const ResourceRequirementsModalLink = connect(stateToProps)(
           memory: memory || none,
           storage: storage || none,
         })}
-        <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+        <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
       </Button>
     );
   },

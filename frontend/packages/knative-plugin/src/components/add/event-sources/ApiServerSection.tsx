@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -57,12 +57,7 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title, fullWidth })
   };
   return (
     <FormSection title={title} extraMargin fullWidth={fullWidth} dataTest={`${title} section`}>
-      <FormGroup
-        fieldId={fieldId}
-        label={t('knative-plugin~Resource')}
-        helperText={t('knative-plugin~The list of resources to watch')}
-        isRequired
-      >
+      <FormGroup fieldId={fieldId} label={t('knative-plugin~Resource')} isRequired>
         <AsyncComponent
           loader={() =>
             import('@console/internal/components/utils/name-value-editor').then(
@@ -77,6 +72,12 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title, fullWidth })
           allowSorting={false}
           updateParentData={handleNameValuePairs}
         />
+
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>{t('knative-plugin~The list of resources to watch.')}</HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
       <DropdownField
         name={`formData.data.${EventSources.ApiServerSource}.mode`}

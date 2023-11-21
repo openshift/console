@@ -29,7 +29,7 @@ export const HostDevicesModal: React.FC<HostDevicesModalProps> = ({
   const { t } = useTranslation();
 
   const emptyState = (
-    <div className="pf-c-empty-state">{t('kubevirt-plugin~No Host devices found')}</div>
+    <div className="pf-v5-c-empty-state">{t('kubevirt-plugin~No Host devices found')}</div>
   );
 
   return (

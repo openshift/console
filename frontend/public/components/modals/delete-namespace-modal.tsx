@@ -89,7 +89,7 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
         <input
           type="text"
           data-test="project-name-input"
-          className="pf-c-form-control"
+          className="pf-v5-c-form-control"
           onKeyUp={onKeyUp}
           placeholder={t('public~Enter name')}
           aria-label={t('public~Enter the name of the {{label}} to delete', {

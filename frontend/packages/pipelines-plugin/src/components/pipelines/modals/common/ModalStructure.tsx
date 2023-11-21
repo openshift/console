@@ -38,7 +38,7 @@ const ModalStructure: React.FC<ModalStructureCombinedProps> = (props) => {
       <div className="modal-content">
         <ModalTitle>{title}</ModalTitle>
         <ModalBody>
-          <div className="pf-c-form">{children}</div>
+          <div className="pf-v5-c-form">{children}</div>
         </ModalBody>
         <ModalSubmitFooter
           errorMessage={status?.submitError}

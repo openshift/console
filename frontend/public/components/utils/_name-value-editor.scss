@@ -14,7 +14,7 @@ $drag-column-width: 28px;
   background: transparent;
   border: 0;
   display: flex;
-  padding-left: $pf-global-gutter !important;
+  padding-left: $pf-v5-global-gutter !important;
 }
 
 .pairs-list__action-icon--reorder {
@@ -32,8 +32,8 @@ $drag-column-width: 28px;
 }
 
 .pairs-list__row-dragging {
-  background-color: var(--pf-global--BorderColor--300);
-  border: 1px dashed $pf-color-black-300;
+  background-color: var(--pf-v5-global--BorderColor--300);
+  border: 1px dashed $pf-v5-color-black-300;
   border-radius: 4px;
   height: 28px;
   margin-left: 28px;

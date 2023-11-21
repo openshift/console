@@ -29,7 +29,7 @@ const ServiceInstanceFilter: React.FC<ServiceInstanceFilterProps> = ({
               <TextInput
                 value={textInputNameValue}
                 type="text"
-                onChange={(value) => setTextInputNameValue(value)}
+                onChange={(_event, value) => setTextInputNameValue(value)}
                 aria-label={t('rhoas-plugin~Search by name')}
                 placeholder={`${t('rhoas-plugin~Search by name')}...`}
                 className="co-text-filter"

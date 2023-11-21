@@ -52,7 +52,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
             <strong>{{ resourceName: resource.metadata.name }}</strong> to
           </Trans>
         </Title>
-        <div className="pf-c-form">
+        <div className="pf-v5-c-form">
           <ApplicationSelector namespace={resource.metadata.namespace} />
         </div>
       </ModalBody>

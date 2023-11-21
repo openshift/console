@@ -66,14 +66,14 @@ export const ServiceToken: React.FC<ServiceTokenProps> = ({ namespace }: Service
         <FormGroup fieldId="api-token-value" label={t('rhoas-plugin~API Token')} isRequired>
           <TextInput
             value={apiTokenValue}
-            onChange={setApiTokenValue}
+            onChange={(_event, value) => setApiTokenValue(value)}
             type="password"
             name="apitoken"
             aria-label={t('rhoas-plugin~API Token')}
           />
         </FormGroup>
         <ButtonBar errorMessage={errorMessage} inProgress={isLoading}>
-          <ActionGroup className="pf-c-form pf-c-form__actions--left">
+          <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--left">
             <Button
               key="confirm"
               variant="primary"

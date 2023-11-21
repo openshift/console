@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Button, EmptyState, EmptyStateBody, EmptyStateIcon, Title } from '@patternfly/react-core';
+import {
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateHeader,
+  EmptyStateFooter,
+} from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
 
 type ServicesEmptyStateProps = {
@@ -20,15 +27,18 @@ export const ServicesEmptyState = ({
   iconClass,
 }: ServicesEmptyStateProps) => (
   <EmptyState>
-    <EmptyStateIcon className={iconClass} icon={icon} />
-    <Title headingLevel="h4" size="lg">
-      {title}
-    </Title>
-    {message && <EmptyStateBody>{message}</EmptyStateBody>}
-    {action && (
-      <Button variant="link" onClick={action || history.goBack}>
-        {actionLabel}
-      </Button>
-    )}
+    <EmptyStateHeader
+      titleText={<>{title}</>}
+      icon={<EmptyStateIcon className={iconClass} icon={icon} />}
+      headingLevel="h4"
+    />
+    <EmptyStateFooter>
+      {message && <EmptyStateBody>{message}</EmptyStateBody>}
+      {action && (
+        <Button variant="link" onClick={action || history.goBack}>
+          {actionLabel}
+        </Button>
+      )}
+    </EmptyStateFooter>
   </EmptyState>
 );

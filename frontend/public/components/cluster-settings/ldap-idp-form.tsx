@@ -174,7 +174,7 @@ export const AddLDAPPage = () => {
               {t('public~URL')}
             </label>
             <input
-              className="pf-c-form-control"
+              className="pf-v5-c-form-control"
               type="url"
               onChange={(e) => setUrl(e.currentTarget.value)}
               value={url}
@@ -191,7 +191,7 @@ export const AddLDAPPage = () => {
               {t('public~Bind DN')}
             </label>
             <input
-              className="pf-c-form-control"
+              className="pf-v5-c-form-control"
               type="text"
               onChange={(e) => setBindDN(e.currentTarget.value)}
               value={bindDN}
@@ -207,7 +207,7 @@ export const AddLDAPPage = () => {
               {t('public~Bind password')}
             </label>
             <input
-              className="pf-c-form-control"
+              className="pf-v5-c-form-control"
               type="password"
               onChange={(e) => setBindPassword(e.currentTarget.value)}
               value={bindPassword}
@@ -259,7 +259,7 @@ export const AddLDAPPage = () => {
           <h3>{t('public~More options')}</h3>
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-c-form">
+            <ActionGroup className="pf-v5-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>

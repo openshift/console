@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -85,7 +85,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
                 >
                   {_.size(node.spec.taints)}{' '}
                   {t('console-app~Taint', { count: _.size(node.spec.taints) })}
-                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                  <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
                 </Button>
               ) : (
                 <span>
@@ -105,7 +105,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
                 >
                   {_.size(node.metadata.annotations)}{' '}
                   {t('console-app~Annotation', { count: _.size(node.metadata.annotations) })}
-                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                  <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
                 </Button>
               ) : (
                 <span>

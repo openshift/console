@@ -34,7 +34,7 @@ export const app = {
         cy.get('.co-m-loader', { timeout }).should('not.exist');
       }
     });
-    cy.get('.pf-c-spinner', { timeout }).should('not.exist');
+    cy.get('.pf-v5-c-spinner', { timeout }).should('not.exist');
     cy.get('.skeleton-catalog--grid', { timeout }).should('not.exist');
     cy.get('.loading-skeleton--table', { timeout }).should('not.exist');
     cy.byTestID('skeleton-detail-view', { timeout }).should('not.exist');
@@ -290,7 +290,7 @@ export const projectNameSpace = {
     // Bug: ODC-6164 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
     // cy.testA11y('Create Project modal');
     cy.byTestID('dropdown-text-filter').type(projectName);
-    cy.get('[data-test-id="namespace-bar-dropdown"] span.pf-c-menu-toggle__text')
+    cy.get('[data-test-id="namespace-bar-dropdown"] span.pf-v5-c-menu-toggle__text')
       .first()
       .as('projectNameSpaceDropdown');
     app.waitForDocumentLoad();

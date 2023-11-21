@@ -1,13 +1,13 @@
-.pf-c-menu-toggle.co-user-preference__namespace-menu-toggle {
-  padding: var(--pf-global--spacer--form-element) var(--pf-global--spacer--sm)
-    var(--pf-global--spacer--form-element) var(--pf-global--spacer--sm) !important;
-  background-color: var(--pf-global--BackgroundColor--400);
+.pf-v5-c-menu-toggle.co-user-preference__namespace-menu-toggle {
+  padding: var(--pf-v5-global--spacer--form-element) var(--pf-v5-global--spacer--sm)
+    var(--pf-v5-global--spacer--form-element) var(--pf-v5-global--spacer--sm) !important;
+  background-color: var(--pf-v5-global--BackgroundColor--400);
   &::before,
   &::after {
-    border-width: var(--pf-global--BorderWidth--sm) !important;
+    border-width: var(--pf-v5-global--BorderWidth--sm) !important;
   }
-  .pf-c-menu-toggle__text {
-    font-size: var(--pf-global--FontSize--md);
+  .pf-v5-c-menu-toggle__text {
+    font-size: var(--pf-v5-global--FontSize--md);
   }
 }
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { ExclamationTriangleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 
 interface AlertSeverityIconProps {
@@ -17,7 +18,7 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
         <ExclamationCircleIcon
           style={{
             fontSize,
-            fill: 'var(--pf-global--danger-color--100)',
+            fill: 'var(--pf-v5-global--danger-color--100)',
           }}
         />
       );
@@ -27,7 +28,7 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
         <ExclamationTriangleIcon
           style={{
             fontSize,
-            fill: 'var(--pf-global--warning-color--100)',
+            fill: 'var(--pf-v5-global--warning-color--100)',
           }}
         />
       );

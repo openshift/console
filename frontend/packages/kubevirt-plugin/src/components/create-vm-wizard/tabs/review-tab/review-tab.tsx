@@ -18,12 +18,12 @@ export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
 
   return (
     <>
-      <h2 className="pf-c-title pf-m-xl">
+      <h2 className="pf-v5-c-title pf-m-xl">
         {t('kubevirt-plugin~Review and confirm your settings')}
       </h2>
 
       <section className="kubevirt-create-vm-modal__review-tab-section">
-        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
+        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-v5-c-title pf-m-lg">
           {t('kubevirt-plugin~General')}
         </h3>
         <GeneralReview
@@ -33,21 +33,21 @@ export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
       </section>
 
       <section className="kubevirt-create-vm-modal__review-tab-section">
-        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
+        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-v5-c-title pf-m-lg">
           {t('kubevirt-plugin~Networking')}
         </h3>
         <NetworkingReview wizardReduxID={wizardReduxID} />
       </section>
 
       <section className="kubevirt-create-vm-modal__review-tab-section">
-        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
+        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-v5-c-title pf-m-lg">
           {t('kubevirt-plugin~Storage')}
         </h3>
         <StorageReview wizardReduxID={wizardReduxID} />
       </section>
 
       <section className="kubevirt-create-vm-modal__review-tab-section">
-        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
+        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-v5-c-title pf-m-lg">
           {t('kubevirt-plugin~Advanced')}
         </h3>
         <AdvancedReviewTab wizardReduxID={wizardReduxID} />

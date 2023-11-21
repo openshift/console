@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { GithubIcon, GitAltIcon, GitlabIcon, BitbucketIcon } from '@patternfly/react-icons';
+import { BitbucketIcon } from '@patternfly/react-icons/dist/esm/icons/bitbucket-icon';
+import { GitAltIcon } from '@patternfly/react-icons/dist/esm/icons/git-alt-icon';
+import { GithubIcon } from '@patternfly/react-icons/dist/esm/icons/github-icon';
+import { GitlabIcon } from '@patternfly/react-icons/dist/esm/icons/gitlab-icon';
 import {
   getGitProviderIcon,
   getLatestRepositoryPLRName,
@@ -16,50 +19,24 @@ describe('repository-util', () => {
 
   it('getGitProviderIcon should return Github icon', () => {
     const gitProviderIcon = getGitProviderIcon('https://github.com/sclorg/ruby-ex.git');
-    expect(gitProviderIcon).toEqual(
-      <GithubIcon
-        color="currentColor"
-        noVerticalAlign={false}
-        size="sm"
-        title="https://github.com/sclorg/ruby-ex.git"
-      />,
-    );
+    expect(gitProviderIcon).toEqual(<GithubIcon title="https://github.com/sclorg/ruby-ex.git" />);
   });
 
   it('getGitProviderIcon should return Gitlab icon', () => {
     const gitProviderIcon = getGitProviderIcon('https://gitlab.com/gitlab-org/gitlab');
-    expect(gitProviderIcon).toEqual(
-      <GitlabIcon
-        color="currentColor"
-        noVerticalAlign={false}
-        size="sm"
-        title="https://gitlab.com/gitlab-org/gitlab"
-      />,
-    );
+    expect(gitProviderIcon).toEqual(<GitlabIcon title="https://gitlab.com/gitlab-org/gitlab" />);
   });
 
   it('getGitProviderIcon should return Bitbucket icon', () => {
     const gitProviderIcon = getGitProviderIcon('https://bitbucket.org/vikram_raj/helloworld');
     expect(gitProviderIcon).toEqual(
-      <BitbucketIcon
-        color="currentColor"
-        noVerticalAlign={false}
-        size="sm"
-        title="https://bitbucket.org/vikram_raj/helloworld"
-      />,
+      <BitbucketIcon title="https://bitbucket.org/vikram_raj/helloworld" />,
     );
   });
 
   it('getGitProviderIcon should return default git icon', () => {
     const gitProviderIcon = getGitProviderIcon('https://githube.com/sclorg/ruby-ex.git');
-    expect(gitProviderIcon).toEqual(
-      <GitAltIcon
-        color="currentColor"
-        noVerticalAlign={false}
-        size="sm"
-        title="https://githube.com/sclorg/ruby-ex.git"
-      />,
-    );
+    expect(gitProviderIcon).toEqual(<GitAltIcon title="https://githube.com/sclorg/ruby-ex.git" />);
   });
 
   it('sanitizeBranchName should return branch name', () => {

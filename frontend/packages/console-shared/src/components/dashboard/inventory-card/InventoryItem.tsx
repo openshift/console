@@ -5,7 +5,8 @@ import {
   AccordionToggle,
   AccordionContent,
 } from '@patternfly/react-core';
-import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
+import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {

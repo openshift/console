@@ -15,8 +15,7 @@ const InputField: React.FC<BaseInputFieldProps> = (
         <TextInput ref={ref} {...props} />
         {props.validated && props.validated !== ValidatedOptions.default ? (
           <div
-            // pf-c-form-control is needed to load the right PatternFly variables.
-            className={`pf-c-form-control oc-inputfield__validation-icon ${props.validated}`}
+            className={`oc-inputfield__validation-icon ${props.validated}`}
             // The BaseInputField will show an description (helper-text) below
             // the input field that describes the validation error.
             aria-hidden="true"

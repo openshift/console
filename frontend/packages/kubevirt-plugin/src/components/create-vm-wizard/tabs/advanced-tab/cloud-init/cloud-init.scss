@@ -1,11 +1,11 @@
 .kubevirt-create-vm-modal__cloud-init-help-link {
-  padding-left: var(--pf-global--spacer--xs);
+  padding-left: var(--pf-v5-global--spacer--xs);
 }
 
 .kv-cloudinit-advanced-tab-with-editor--form,
 .kv-cloudinit-advanced-tab-with-editor--main {
   max-width: 50vh;
-  margin-left: var(--pf-global--spacer--md);
+  margin-left: var(--pf-v5-global--spacer--md);
 }
 
 .kv-cloudinit-advanced-tab-with-editor--title_main {
@@ -15,18 +15,18 @@
 
 .kv-cloudinit-advanced-tab-with-editor--title_radio_buttons {
   display: inline-flex;
-  margin-left: var(--pf-global--spacer--lg);
+  margin-left: var(--pf-v5-global--spacer--lg);
   label {
-    margin-right: var(--pf-global--spacer--lg);
+    margin-right: var(--pf-v5-global--spacer--lg);
   }
 }
 
-.kv-cloudint-advanced-tab-with-editor--validation-text .pf-c-form {
-  --pf-c-form__helper-text--m-success--Color: var(--pf-c-form__group-label-help--Color);
+.kv-cloudint-advanced-tab-with-editor--validation-text .pf-v5-c-form {
+  --pf-v5-c-form__helper-text--m-success--Color: var(--pf-v5-c-form__group-label-help--Color);
 }
 
-.kv-cloudint-advanced-tab-with-editor--ssh-key-row.pf-l-split {
-  margin-bottom: var(--pf-global--spacer--sm);
+.kv-cloudint-advanced-tab-with-editor--ssh-key-row.pf-v5-l-split {
+  margin-bottom: var(--pf-v5-global--spacer--sm);
 }
 
 .kv-cloudinit-info-helper--muted {
@@ -34,17 +34,17 @@
 }
 
 .kv-cloudinit-info-helper--link {
-  margin-left: var(--pf-global--spacer--xs);
+  margin-left: var(--pf-v5-global--spacer--xs);
 }
 
 .kv-cloudinit-info-helper--main {
-  margin-bottom: var(--pf-global--spacer--md);
-  margin-top: var(--pf-global--spacer--sm);
+  margin-bottom: var(--pf-v5-global--spacer--md);
+  margin-top: var(--pf-v5-global--spacer--sm);
 }
 
 .kv-cloudint-form-or-yaml-selector--main,
 .kv-cloudinit-info-helper--main {
-  margin-left: var(--pf-global--spacer--lg);
+  margin-left: var(--pf-v5-global--spacer--lg);
 }
 
 .kv-cloudint-form-or-yaml-selector--main {

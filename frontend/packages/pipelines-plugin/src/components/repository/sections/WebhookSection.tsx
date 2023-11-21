@@ -9,8 +9,12 @@ import {
   TextVariants,
   Button,
   Tooltip,
+  InputGroupItem,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
 } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+import { HelpIcon } from '@patternfly/react-icons/dist/esm/icons/help-icon';
 import { FormikValues, useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { Base64 } from 'js-base64';
@@ -217,13 +221,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         ]}
       />
       {webhook?.url && (
-        <FormGroup
-          fieldId="test"
-          label={t('pipelines-plugin~Webhook URL')}
-          helperText={t(
-            'pipelines-plugin~We have detected a URL that can be used to configure the webhook. It will be created and attached to the Git repository.',
-          )}
-        >
+        <FormGroup fieldId="test" label={t('pipelines-plugin~Webhook URL')}>
           <ClipboardCopy
             isReadOnly
             name={`${fieldPrefix}webhook.url`}
@@ -233,6 +231,16 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
           >
             {controllerUrl}
           </ClipboardCopy>
+
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem>
+                {t(
+                  'pipelines-plugin~We have detected a URL that can be used to configure the webhook. It will be created and attached to the Git repository.',
+                )}
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
         </FormGroup>
       )}
 
@@ -241,21 +249,25 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
           fieldId={'webhook-secret-clipboard'}
           label={t('pipelines-plugin~Webhook secret')}
         >
-          <InputGroup style={{ display: 'flex' }}>
-            <ClipboardCopy
-              name={`${fieldPrefix}webhook.secret`}
-              hoverTip="Copy"
-              clickTip="Copied"
-              style={{ flex: '1' }}
-              onChange={(v) => {
-                setFieldValue(`${fieldPrefix}webhook.secret`, v);
-              }}
-            >
-              {webhookSecret}
-            </ClipboardCopy>
-            <Button data-test="generate-secret" variant="control" onClick={generateWebhookSecret}>
-              {t('pipelines-plugin~Generate')}
-            </Button>
+          <InputGroup translate={t} style={{ display: 'flex' }}>
+            <InputGroupItem>
+              <ClipboardCopy
+                name={`${fieldPrefix}webhook.secret`}
+                hoverTip="Copy"
+                clickTip="Copied"
+                style={{ flex: '1' }}
+                onChange={(_event, v) => {
+                  setFieldValue(`${fieldPrefix}webhook.secret`, v);
+                }}
+              >
+                {webhookSecret}
+              </ClipboardCopy>
+            </InputGroupItem>
+            <InputGroupItem>
+              <Button data-test="generate-secret" variant="control" onClick={generateWebhookSecret}>
+                {t('pipelines-plugin~Generate')}
+              </Button>
+            </InputGroupItem>
           </InputGroup>
         </FormGroup>
       ) : null}

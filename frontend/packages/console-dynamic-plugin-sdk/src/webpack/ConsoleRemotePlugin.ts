@@ -4,7 +4,7 @@ import * as semver from 'semver';
 import * as webpack from 'webpack';
 import { remoteEntryFile } from '../constants';
 import { ConsolePackageJSON } from '../schema/plugin-package';
-import { sharedPluginModules, sharedPluginModulesMetadata } from '../shared-modules';
+import { sharedPluginModules, getSharedModuleMetadata } from '../shared-modules';
 import { SchemaValidator } from '../validation/SchemaValidator';
 import { ValidationResult } from '../validation/ValidationResult';
 import { loadSchema, ConsoleAssetPlugin } from './ConsoleAssetPlugin';
@@ -46,9 +46,11 @@ const validateConsoleProvidedSharedModules = (
   const result = new ValidationResult('package.json');
 
   sharedPluginModules.forEach((moduleName) => {
-    // Skip modules for which a fallback (different) version can be provided by the plugin.
+    const { allowFallback } = getSharedModuleMetadata(moduleName);
+
+    // Skip modules that allow a fallback version to be provided by the plugin.
     // Also skip modules which are not explicitly listed in the plugin's dependencies.
-    if (sharedPluginModulesMetadata[moduleName].allowFallback || !pluginDeps[moduleName]) {
+    if (allowFallback || !pluginDeps[moduleName]) {
       return;
     }
 
@@ -81,7 +83,7 @@ export type ConsoleRemotePluginOptions = Partial<{
   /**
    * Validate Console provided shared modules which are consumed by the plugin?
    *
-   * Console provided shared modules are reflected as `dependencies` in the core plugin
+   * Console provided shared modules can be reflected as `dependencies` in the core plugin
    * SDK package manifest. For each shared module where a fallback version is not allowed,
    * check that the version consumed by the plugin satisfies the expected semver range as
    * declared in the core plugin SDK package manifest.
@@ -122,7 +124,7 @@ export type ConsoleRemotePluginOptions = Partial<{
  * If you're facing `ExtensionValidator` related issues, set the `validateExtensionIntegrity` option
  * to `false` or pass `CONSOLE_PLUGIN_SKIP_EXT_VALIDATOR=true` env. variable to your webpack command.
  *
- * @see {@link sharedPluginModulesMetadata}
+ * @see {@link sharedPluginModules}
  */
 export class ConsoleRemotePlugin {
   private readonly options: Required<ConsoleRemotePluginOptions>;
@@ -176,26 +178,15 @@ export class ConsoleRemotePlugin {
     );
 
     // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
-    const sharedModules = Object.entries(sharedPluginModulesMetadata).reduce(
-      (acc, [moduleRequest, moduleMetadata]) => {
-        const adaptedMetadata = _.defaults({}, moduleMetadata, {
-          singleton: true,
-          allowFallback: false,
-        });
-
-        const moduleConfig: Record<string, any> = {
-          singleton: adaptedMetadata.singleton,
-        };
-
-        if (!adaptedMetadata.allowFallback) {
-          moduleConfig.import = false;
-        }
-
-        acc[moduleRequest] = moduleConfig;
-        return acc;
-      },
-      {},
-    );
+    const sharedModules = sharedPluginModules.reduce((acc, moduleName) => {
+      const { singleton, allowFallback } = getSharedModuleMetadata(moduleName);
+      const moduleConfig: Record<string, any> = { singleton };
+      if (!allowFallback) {
+        moduleConfig.import = false;
+      }
+      acc[moduleName] = moduleConfig;
+      return acc;
+    }, {});
 
     compiler.options.output.publicPath = publicPath;
     compiler.options.output.uniqueName = containerName;

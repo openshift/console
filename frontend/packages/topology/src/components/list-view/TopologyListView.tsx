@@ -55,7 +55,7 @@ const TopologyListViewComponent: React.FC<TopologyGraphViewProps> = React.memo(
           aria-label="Topology List View"
           className="odc-topology-list-view__data-list"
           selectedDataListItemId={selectedId}
-          onSelectDataListItem={(id) =>
+          onSelectDataListItem={(_event, id) =>
             onSelect(selectedId === id ? undefined : visualization.getElementById(id))
           }
         >

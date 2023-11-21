@@ -1,9 +1,9 @@
 .ocs-shortcut {
   &__cell {
-    padding-bottom: var(--pf-global--spacer--sm);
+    padding-bottom: var(--pf-v5-global--spacer--sm);
 
     &:first-child {
-      padding-right: var(--pf-global--spacer--md);
+      padding-right: var(--pf-v5-global--spacer--md);
       text-align: right;
       white-space: nowrap;
       vertical-align: top;

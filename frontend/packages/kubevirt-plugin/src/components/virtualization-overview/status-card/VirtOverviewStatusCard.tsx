@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  GalleryItem,
-  Gallery,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardActions,
-} from '@patternfly/react-core';
+import { GalleryItem, Gallery, Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -125,12 +118,24 @@ export const VirtOverviewStatusCard = connect<VirtOverviewStatusCardProps>(mapSt
     });
 
     return (
-      <Card className="co-overview-card--gradient" data-test-id="kv-overview-status-card">
-        <CardHeader>
+      <Card
+        className="co-overview-card--gradient"
+        data-test-id="kv-overview-status-card"
+        isClickable
+        isSelectable
+      >
+        <CardHeader
+          actions={{
+            actions: (
+              <>
+                <Link to="/monitoring/alerts">{t('kubevirt-plugin~View alerts')}</Link>
+              </>
+            ),
+            hasNoOffset: false,
+            className: 'co-overview-card__actions',
+          }}
+        >
           <CardTitle>{t('kubevirt-plugin~Status')}</CardTitle>
-          <CardActions className="co-overview-card__actions">
-            <Link to="/monitoring/alerts">{t('kubevirt-plugin~View alerts')}</Link>
-          </CardActions>
         </CardHeader>
         <HealthBody>
           <Gallery className="co-overview-status__health" hasGutter>

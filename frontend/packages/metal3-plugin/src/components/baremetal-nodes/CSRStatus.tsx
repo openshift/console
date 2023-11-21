@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Alert } from '@patternfly/react-core';
-import { AddCircleOIcon } from '@patternfly/react-icons';
+import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
 import { useTranslation } from 'react-i18next';
 import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';

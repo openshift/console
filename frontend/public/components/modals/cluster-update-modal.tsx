@@ -92,7 +92,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
   const handleUpgradeTypeChange = (value: typeof upgradeType) => {
     setUpgradeType(value);
   };
-  const handleMCPSelectionChange = (checked: boolean, event: React.FormEvent<HTMLInputElement>) => {
+  const handleMCPSelectionChange = (event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
     const checkedItems = [...machineConfigPoolsToPause];
     checked
       ? checkedItems.push(event.currentTarget.id)
@@ -228,7 +228,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
           />
           {desiredNotRecommendedUpdate && desiredNotRecommendedUpdateConditions?.message && (
             <Alert
-              className="pf-u-mt-sm"
+              className="pf-v5-u-mt-sm"
               isInline
               title={t(
                 'public~Updating this cluster to {{desiredVersion}} is supported, but not recommended as it might not be optimized for some components in this cluster.',
@@ -275,7 +275,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                 resource: NodeModel.labelPlural,
               },
             )}
-            className="pf-u-mb-sm"
+            className="pf-v5-u-mb-sm"
             body={
               machineConfigPoolsLoaded &&
               pausedMCPs.length > 0 &&
@@ -303,7 +303,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
               'public~Pause {{worker}} or custom pool {{resource}} updates to accommodate your maintenance schedule.',
               { worker: NodeTypeNames.Worker, resource: NodeModel.label },
             )}
-            className="pf-u-mb-md"
+            className="pf-v5-u-mb-md"
             body={
               upgradeType === upgradeTypes.Partial && (
                 <>
@@ -317,7 +317,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                     isInline
                     isPlain
                     title={t('public~You must resume updates within 60 days to avoid failures.')}
-                    className="pf-u-mb-md"
+                    className="pf-v5-u-mb-md"
                   >
                     {!isManaged() && (
                       <ExternalLink href={helpURL}>{t('public~Learn more')}</ExternalLink>

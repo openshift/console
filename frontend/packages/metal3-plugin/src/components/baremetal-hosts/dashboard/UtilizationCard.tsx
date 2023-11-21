@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardActions, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   PrometheusUtilizationItem,
@@ -122,12 +122,19 @@ const UtilizationCard: React.FC = () => {
   );
 
   return (
-    <Card>
-      <CardHeader>
+    <Card isClickable isSelectable>
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <UtilizationDurationDropdown />
+            </>
+          ),
+          hasNoOffset: false,
+          className: undefined,
+        }}
+      >
         <CardTitle>{t('metal3-plugin~Utilization')}</CardTitle>
-        <CardActions>
-          <UtilizationDurationDropdown />
-        </CardActions>
       </CardHeader>
       <UtilizationBody>
         <PrometheusUtilizationItem

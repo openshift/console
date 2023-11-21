@@ -14,6 +14,6 @@ Then(
       .find('.odc-topology-list-view__type-icon')
       .should('have.attr', 'src')
       .should('include', 'static/assets/serverlessfx.svg');
-    cy.get(`#${name}-app-Service`).find('.pf-c-data-list__cell').should('contain.text', name);
+    cy.get(`#${name}-app-Service`).find('.pf-v5-c-data-list__cell').should('contain.text', name);
   },
 );

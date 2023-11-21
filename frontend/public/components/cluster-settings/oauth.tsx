@@ -3,8 +3,13 @@ import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import { Alert, Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
-import { CaretDownIcon } from '@patternfly/react-icons';
+import { Alert } from '@patternfly/react-core';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+} from '@patternfly/react-core/deprecated';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { Link } from 'react-router-dom';
 
 import { useQueryParams } from '@console/shared';
@@ -36,20 +41,26 @@ const IdentityProviders: React.FC<IdentityProvidersProps> = ({ identityProviders
     <EmptyBox label={t('public~Identity providers')} />
   ) : (
     <div className="co-table-container">
-      <table className="table">
-        <thead>
-          <tr>
-            <th>{t('public~Name')}</th>
-            <th>{t('public~Type')}</th>
-            <th>{t('public~Mapping method')}</th>
+      <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+        <thead className="pf-v5-c-table__thead">
+          <tr className="pf-v5-c-table__th">
+            <th className="pf-v5-c-table__th">{t('public~Name')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Type')}</th>
+            <th className="pf-v5-c-table__th">{t('public~Mapping method')}</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="pf-v5-c-table__tbody">
           {_.map(identityProviders, (idp) => (
-            <tr key={idp.name}>
-              <td data-test-idp-name={idp.name}>{idp.name}</td>
-              <td data-test-idp-type-for={idp.name}>{idp.type}</td>
-              <td data-test-idp-mapping-for={idp.name}>{idp.mappingMethod || 'claim'}</td>
+            <tr className="pf-v5-c-table__th" key={idp.name}>
+              <td className="pf-v5-c-table__td" data-test-idp-name={idp.name}>
+                {idp.name}
+              </td>
+              <td className="pf-v5-c-table__td" data-test-idp-type-for={idp.name}>
+                {idp.type}
+              </td>
+              <td className="pf-v5-c-table__td" data-test-idp-mapping-for={idp.name}>
+                {idp.mappingMethod || 'claim'}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -106,7 +117,7 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
     const [key, value] = idp;
 
     return (
-      <DropdownItem
+      <DropdownItemDeprecated
         key={`idp-${key}`}
         component="button"
         id={key}
@@ -114,7 +125,7 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
         onClick={(e) => history.push(`/settings/idp/${e.currentTarget.id}`)}
       >
         {getAddIDPItemLabels(value)}
-      </DropdownItem>
+      </DropdownItemDeprecated>
     );
   });
 
@@ -157,17 +168,17 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
             </>
           </Alert>
         )}
-        <Dropdown
+        <DropdownDeprecated
           className="co-m-pane__dropdown"
           toggle={
-            <DropdownToggle
+            <DropdownToggleDeprecated
               id="idp-dropdown"
               onToggle={() => setIDPOpen(!isIDPOpen)}
               toggleIndicator={CaretDownIcon}
               data-test-id="dropdown-button"
             >
               {t('public~Add')}
-            </DropdownToggle>
+            </DropdownToggleDeprecated>
           }
           isOpen={isIDPOpen}
           dropdownItems={IDPDropdownItems}

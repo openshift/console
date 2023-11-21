@@ -60,7 +60,7 @@ export const LineChart: React.FC<LineChartProps> = ({
       fontSize: 10,
       textAnchor: 'end',
       verticalAnchor: 'end',
-      fill: 'var(--pf-global--Color--100)',
+      fill: 'var(--pf-v5-global--Color--100)',
     },
   };
 
@@ -90,7 +90,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         tickCount={4}
         tickFormat={yTickFormat}
         style={{
-          tickLabels: { fill: 'var(--pf-global--Color--100)' },
+          tickLabels: { fill: 'var(--pf-v5-global--Color--100)' },
         }}
       />
       <ChartGroup>

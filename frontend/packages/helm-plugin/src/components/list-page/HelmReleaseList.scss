@@ -1,14 +1,14 @@
 .odc-helm-release__empty-list {
   &__title {
-    font-size: var(--pf-global--FontSize--lg);
+    font-size: var(--pf-v5-global--FontSize--lg);
   }
   &__image {
-    height: var(--pf-c-empty-state__icon--FontSize);
+    height: var(--pf-v5-c-empty-state__icon--FontSize);
     max-width: 100%;
   }
 }
 
-:root:where(.pf-theme-dark) .odc-helm-release__empty-list {
+:root:where(.pf-v5-theme-dark) .odc-helm-release__empty-list {
   &__image {
     filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
   }

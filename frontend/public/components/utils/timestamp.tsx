@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { Tooltip } from '@patternfly/react-core';
 import * as classNames from 'classnames';
-import { GlobeAmericasIcon } from '@patternfly/react-icons';
+import { GlobeAmericasIcon } from '@patternfly/react-icons/dist/esm/icons/globe-americas-icon';
 import { TimestampProps } from '@console/dynamic-plugin-sdk';
 
 import * as dateTime from './datetime';

@@ -1,9 +1,7 @@
-import {
-  AngleDoubleDownIcon,
-  AngleDoubleUpIcon,
-  EqualsIcon,
-  CriticalRiskIcon,
-} from '@patternfly/react-icons';
+import { AngleDoubleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angle-double-down-icon';
+import { AngleDoubleUpIcon } from '@patternfly/react-icons/dist/esm/icons/angle-double-up-icon';
+import { CriticalRiskIcon } from '@patternfly/react-icons/dist/esm/icons/critical-risk-icon';
+import { EqualsIcon } from '@patternfly/react-icons/dist/esm/icons/equals-icon';
 import { global_palette_blue_300 as blue300 } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
 import { global_palette_blue_50 as blue50 } from '@patternfly/react-tokens/dist/js/global_palette_blue_50';
 import { global_palette_gold_400 as gold400 } from '@patternfly/react-tokens/dist/js/global_palette_gold_400';

@@ -705,18 +705,13 @@ const AppContents: React.FC<{}> = () => {
 
   return (
     <div id="content">
-      <PageSection
-        variant={PageSectionVariants.light}
-        sticky="top"
-        padding={{ default: 'noPadding' }}
-      >
+      <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
         <GlobalNotifications />
         <Route path={namespacedRoutes} component={NamespaceBar} />
       </PageSection>
       <div id="content-scrollable">
         <PageSection
-          variant={PageSectionVariants.light}
-          className="pf-page__main-section--flex"
+          className="pf-v5-page__main-section--flex co-page-backdrop"
           padding={{ default: 'noPadding' }}
         >
           <ErrorBoundaryPage>

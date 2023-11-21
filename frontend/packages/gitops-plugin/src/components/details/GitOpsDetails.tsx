@@ -11,7 +11,7 @@ import {
   Label,
   Alert,
 } from '@patternfly/react-core';
-import { GitAltIcon } from '@patternfly/react-icons';
+import { GitAltIcon } from '@patternfly/react-icons/dist/esm/icons/git-alt-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';

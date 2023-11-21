@@ -2,13 +2,12 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import {
-  OutlinedCircleIcon,
-  ResourcesAlmostEmptyIcon,
-  ResourcesAlmostFullIcon,
-  ResourcesFullIcon,
-  UnknownIcon,
-} from '@patternfly/react-icons';
+import { OutlinedCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-circle-icon';
+import { ResourcesAlmostEmptyIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-empty-icon';
+import { ResourcesAlmostFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-full-icon';
+import { ResourcesFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-full-icon';
+import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
+
 import { useTranslation } from 'react-i18next';
 import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
 import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';

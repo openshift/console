@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Split, SplitItem, Tooltip } from '@patternfly/react-core';
-import { HeartBrokenIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
+import { HeartBrokenIcon } from '@patternfly/react-icons/dist/esm/icons/heart-broken-icon';
 import {
   global_danger_color_100 as RedColor,
   global_warning_color_100 as YellowColor,

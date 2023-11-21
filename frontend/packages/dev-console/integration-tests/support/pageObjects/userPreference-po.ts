@@ -1,6 +1,6 @@
 export const userPreferencePO = {
   userMenu: '[data-test="user-dropdown"]',
-  userPreference: 'button.pf-c-select__toggle',
+  userPreference: 'button.pf-v5-c-select__toggle',
   namespaceTypeahead: '[id="console.preferredNamespace-select-typeahead"]',
   languageTab: '[data-test="tab language"]',
   creteProjectButton: '[data-test="footer create-namespace-button"]',

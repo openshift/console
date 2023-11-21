@@ -56,7 +56,7 @@ Cypress.Commands.add('logA11yViolations', (violations: Result[], target: string)
     description,
     nodes: nodes.length,
   }));
-  cy.task('logTable', violationData);
+  cy.task('logTable', JSON.stringify(violationData));
 });
 
 Cypress.Commands.add('testA11y', (target: string, selector?: string) => {

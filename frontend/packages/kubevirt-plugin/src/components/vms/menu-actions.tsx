@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StackItem } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import i18next from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';

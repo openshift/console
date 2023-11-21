@@ -4,12 +4,16 @@ import {
   ClipboardCopy,
   ClipboardCopyVariant,
   FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
   ValidatedOptions,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   RegistryType,
@@ -87,8 +91,6 @@ const ImageStream: React.FC<{
       >
         <FormGroup
           fieldId="image-stream-dropdowns"
-          validated={validated}
-          helperTextInvalid={helperTextInvalid}
           label={label}
           required={required}
           data-test={dataTest}
@@ -114,6 +116,16 @@ const ImageStream: React.FC<{
               <div className="odc-imagestream-separator">:</div>
             </div>
           </div>
+
+          {validated === ValidatedOptions.error && (
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                  {helperTextInvalid}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          )}
         </FormGroup>
         {isNamespaceSelected && isImageStreamSelected && !isTagsAvailable && (
           <div className="odc-imagestream-alert">

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DropdownMenu } from '@patternfly/react-core';
+import { DropdownMenu as DropdownMenuDeprecated } from '@patternfly/react-core/deprecated';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { history, KebabItem, KebabOption } from '@console/internal/components/utils';
@@ -136,7 +136,7 @@ export class PopupKebabMenu extends React.Component<PopupKebabMenuProps, PopopKe
     const classes = classNames('ocs-popup-kebab-menu', className);
 
     return (
-      <div className="pf-c-page ocs-popup-kebab-menu__container">
+      <div className="pf-v5-c-page ocs-popup-kebab-menu__container">
         <input className="ocs-popup-kebab-menu__faux-input" />
         <div className={classes}>
           <div
@@ -145,13 +145,13 @@ export class PopupKebabMenu extends React.Component<PopupKebabMenuProps, PopopKe
             onMouseDown={this.handleClose}
           >
             <div
-              className="pf-c-dropdown pf-m-expanded"
+              className="pf-v5-c-dropdown pf-m-expanded"
               style={{ top: menuTop, left: menuLeft }}
               ref={this.setMenu}
               role="presentation"
               onMouseDown={this.handleMenuMouseDown}
             >
-              <DropdownMenu className="pf-c-dropdown__menu">
+              <DropdownMenuDeprecated className="pf-v5-c-dropdown__menu">
                 {_.map(visibleOptions, (o, i) => (
                   <li key={i}>
                     <KebabItem
@@ -162,7 +162,7 @@ export class PopupKebabMenu extends React.Component<PopupKebabMenuProps, PopopKe
                     />
                   </li>
                 ))}
-              </DropdownMenu>
+              </DropdownMenuDeprecated>
             </div>
           </div>
         </div>

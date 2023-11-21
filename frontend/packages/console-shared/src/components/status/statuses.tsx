@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HourglassHalfIcon } from '@patternfly/react-icons';
+import { HourglassHalfIcon } from '@patternfly/react-icons/dist/esm/icons/hourglass-half-icon';
 import { useTranslation } from 'react-i18next';
 import {
   GenericStatus,

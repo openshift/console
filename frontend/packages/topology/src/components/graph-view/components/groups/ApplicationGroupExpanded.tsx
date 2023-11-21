@@ -23,7 +23,7 @@ import {
   WithSelectionProps,
   CollapsibleGroupProps,
 } from '@patternfly/react-topology';
-import styles from '@patternfly/react-topology/src/css/topology-components';
+import styles from '@patternfly/react-topology/dist/js/css/topology-components';
 import { polygonHull } from 'd3-polygon';
 import * as _ from 'lodash';
 import { observer } from 'mobx-react';

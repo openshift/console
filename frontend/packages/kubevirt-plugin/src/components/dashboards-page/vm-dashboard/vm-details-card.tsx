@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
-import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
@@ -74,12 +74,19 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const numLoggedInUsersMsg: string = getNumLoggedInUsersMessage(t, numLoggedInUsers);
 
   return (
-    <Card>
-      <CardHeader>
+    <Card isClickable isSelectable>
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <Link to={viewAllLink}>View all</Link>
+            </>
+          ),
+          hasNoOffset: false,
+          className: 'co-overview-card__actions',
+        }}
+      >
         <CardTitle>{t('kubevirt-plugin~Details')}</CardTitle>
-        <CardActions className="co-overview-card__actions">
-          <Link to={viewAllLink}>View all</Link>
-        </CardActions>
       </CardHeader>
       <CardBody>
         <DetailsBody>

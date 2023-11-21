@@ -1,10 +1,10 @@
 @import '~@patternfly/patternfly/sass-utilities/all';
 
 .odc-monitoring-alerts {
-  padding: var(--pf-global--spacer--lg);
+  padding: var(--pf-v5-global--spacer--lg);
   &--state-column {
-    padding-top: var(--pf-c-table--m-compact__expandable-row-content--PaddingTop);
-    padding-bottom: var(--pf-c-table--m-compact__expandable-row-content--PaddingBottom);
+    padding-top: var(--pf-v5-c-table--m-compact__expandable-row-content--PaddingTop);
+    padding-bottom: var(--pf-v5-c-table--m-compact__expandable-row-content--PaddingBottom);
   }
   &--kebab {
     text-align: right;
@@ -12,12 +12,12 @@
   .odc-monitoring-alert-column {
     &--notification {
       width: 20%;
-      @media screen and (max-width: $pf-global--breakpoint--2xl) {
+      @media screen and (max-width: $pf-v5-global--breakpoint--2xl) {
         width: 30%;
       }
     }
   }
-  .pf-c-table {
+  .pf-v5-c-table {
     table-layout: auto;
   }
 }

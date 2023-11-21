@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useClusterNetworkFeatures } from '@console/internal/module/k8s/network';
@@ -28,7 +29,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
           {t('console-app~CIDR')}
         </label>
         <input
-          className="pf-c-form-control"
+          className="pf-v5-c-form-control"
           type="text"
           onChange={handleCIDRChange}
           value={ipBlock.cidr}
@@ -55,9 +56,9 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
         <div className="form-group co-create-networkpolicy__exceptions">
           <label>{t('console-app~Exceptions')}</label>
           {ipBlock.except.map((exc, idx) => (
-            <div className="pf-c-input-group" key={exc.key}>
+            <div className="pf-v5-c-input-group" key={exc.key}>
               <input
-                className="pf-c-form-control"
+                className="pf-v5-c-form-control"
                 type="text"
                 onChange={(event) => handleExceptionsChange(idx, event.currentTarget.value)}
                 placeholder="10.2.1.0/12"

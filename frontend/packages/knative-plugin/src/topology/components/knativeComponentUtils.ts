@@ -106,14 +106,14 @@ export const eventSourceSinkDropTargetSpec: DropTargetSpec<
     (item.getType() === TYPE_EVENT_SOURCE_LINK && item.getSource() !== props.element) ||
     monitor.getOperation()?.type === MOVE_PUB_SUB_CONNECTOR_OPERATION ||
     (monitor.getOperation()?.type === CREATE_PUB_SUB_CONNECTOR_OPERATION &&
-      isEventPubSubDroppable(monitor.getItem(), props.element)),
+      isEventPubSubDroppable(monitor.getItem(), props.element as Node)),
   collect: (monitor, props) => ({
     canDrop:
       monitor.isDragging() &&
       (monitor.getOperation()?.type === MOVE_EV_SRC_CONNECTOR_OPERATION ||
         monitor.getOperation()?.type === MOVE_PUB_SUB_CONNECTOR_OPERATION ||
         (monitor.getOperation()?.type === CREATE_PUB_SUB_CONNECTOR_OPERATION &&
-          isEventPubSubDroppable(monitor.getItem(), props.element))),
+          isEventPubSubDroppable(monitor.getItem(), props.element as Node))),
     dropTarget: monitor.isOver({ shallow: true }),
     edgeDragging: nodesEdgeIsDragging(monitor, props),
     tooltipLabel: getKnativeTooltip(monitor),
@@ -177,16 +177,17 @@ export const eventSourceLinkDragSourceSpec = (): DragSourceSpec<
     return props.element;
   },
   drag: (event, monitor, props) => {
-    props.element.setEndPoint(event.x, event.y);
+    (props.element as Edge).setEndPoint(event.x, event.y);
   },
   end: (dropResult, monitor, props) => {
-    props.element.setEndPoint();
+    const edge = props.element as Edge;
+    edge.setEndPoint();
     if (
       monitor.didDrop() &&
       dropResult &&
-      canDropEventSourceSinkOnNode(monitor.getOperation().type, props.element, dropResult)
+      canDropEventSourceSinkOnNode(monitor.getOperation().type, edge, dropResult)
     ) {
-      createSinkConnection(props.element.getSource(), dropResult).catch((error) => {
+      createSinkConnection(edge.getSource(), dropResult).catch((error) => {
         errorModal({
           title: i18next.t('knative-plugin~Error moving event source sink'),
           error: error.message,
@@ -214,12 +215,13 @@ export const eventSourceKafkaLinkDragSourceSpec = (): DragSourceSpec<
     return props.element;
   },
   drag: (event, monitor, props) => {
-    props.element.setEndPoint(event.x, event.y);
+    (props.element as Edge).setEndPoint(event.x, event.y);
   },
   end: (dropResult, monitor, props) => {
-    props.element.setEndPoint();
+    const edge = props.element as Edge;
+    edge.setEndPoint();
     if (monitor.didDrop() && dropResult) {
-      createEventSourceKafkaConnection(props.element.getSource(), dropResult).catch((error) => {
+      createEventSourceKafkaConnection(edge.getSource(), dropResult).catch((error) => {
         errorModal({
           title: i18next.t('knative-plugin~Error moving event source kafka connector'),
           error: error?.message,
@@ -247,16 +249,17 @@ export const eventingPubSubLinkDragSourceSpec = (): DragSourceSpec<
     return props.element;
   },
   drag: (event, monitor, props) => {
-    props.element.setEndPoint(event.x, event.y);
+    (props.element as Edge).setEndPoint(event.x, event.y);
   },
   end: (dropResult, monitor, props) => {
-    props.element.setEndPoint();
+    const edge = props.element as Edge;
+    edge.setEndPoint();
     if (
       monitor.didDrop() &&
       dropResult &&
-      canDropPubSubSinkOnNode(monitor.getOperation().type, props.element, dropResult)
+      canDropPubSubSinkOnNode(monitor.getOperation().type, edge, dropResult)
     ) {
-      createSinkPubSubConnection(props.element, dropResult).catch((error) => {
+      createSinkPubSubConnection(edge, dropResult).catch((error) => {
         errorModal({
           title: i18next.t('knative-plugin~Error while sink'),
           error: error.message,

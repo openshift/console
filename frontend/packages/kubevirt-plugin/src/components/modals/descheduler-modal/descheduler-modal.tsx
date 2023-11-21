@@ -53,7 +53,7 @@ export const DeschedulerModal = withHandlePromise<DeschedulerModalProps>(
             id="descheduler-checkbox"
             isChecked={isOn}
             label={t('kubevirt-plugin~Allow the Descheduler to evict the VM via live migration')}
-            onChange={setOn}
+            onChange={(_event, value) => setOn(value)}
             className="kubevirt-descheduler-modal__descheduler_content"
           />
           {isOn && (

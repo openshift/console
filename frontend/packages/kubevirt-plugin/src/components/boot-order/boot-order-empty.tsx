@@ -5,7 +5,8 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
-  Title,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 
 // Display and empty with a Call to add new source if no sources are defined.
@@ -18,21 +19,21 @@ export const BootOrderEmpty: React.FC<BootOrderEmptyProps> = ({
   onClick,
 }) => (
   <EmptyState variant={EmptyStateVariant.full}>
-    <Title headingLevel="h5" size="lg">
-      {title}
-    </Title>
+    <EmptyStateHeader titleText={<>{title}</>} headingLevel="h5" />
     <EmptyStateBody>{message}</EmptyStateBody>
-    {!addItemIsDisabled ? (
-      <Button
-        variant="secondary"
-        onClick={onClick}
-        className="kubevirt-boot-order__boot-order-empty-btn"
-      >
-        {addItemMessage}
-      </Button>
-    ) : (
-      <Alert variant="info" title={addItemDisabledMessage} />
-    )}
+    <EmptyStateFooter>
+      {!addItemIsDisabled ? (
+        <Button
+          variant="secondary"
+          onClick={onClick}
+          className="kubevirt-boot-order__boot-order-empty-btn"
+        >
+          {addItemMessage}
+        </Button>
+      ) : (
+        <Alert variant="info" title={addItemDisabledMessage} />
+      )}
+    </EmptyStateFooter>
   </EmptyState>
 );
 

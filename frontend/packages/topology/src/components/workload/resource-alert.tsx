@@ -81,7 +81,7 @@ export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAler
             {alertMessage} <Link to={addHealthChecksLink}>{t('topology~Add health checks')}</Link>
           </>
         ),
-        variant: 'default',
+        variant: 'custom',
       }
     : null;
 };

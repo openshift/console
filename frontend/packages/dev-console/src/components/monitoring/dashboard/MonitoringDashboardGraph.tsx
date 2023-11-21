@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { BrowserRouter, Link } from 'react-router-dom';
 import { dashboardsSetEndTime, dashboardsSetTimespan } from '@console/internal/actions/observe';
 import { Humanize } from '@console/internal/components/utils';
 import { QueryBrowser } from '@console/shared/src/components/query-browser';
@@ -72,18 +72,27 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
     <Card
       className="monitoring-dashboards__card odc-monitoring-dashboard-graph"
       data-test={title.toLowerCase().replace(/\s+/g, '-')}
+      isClickable
+      isSelectable
     >
-      <CardHeader>
+      <CardHeader
+        actions={{
+          actions: (
+            <BrowserRouter>
+              <PrometheusGraphLink
+                namespace={namespace}
+                query={query}
+                ariaChartLinkLabel={t('devconsole~View metrics for {{title}}', {
+                  title,
+                })}
+              />
+            </BrowserRouter>
+          ),
+          hasNoOffset: false,
+          className: 'co-overview-card__actions',
+        }}
+      >
         <CardTitle>{title}</CardTitle>
-        <CardActions className="co-overview-card__actions">
-          <PrometheusGraphLink
-            namespace={namespace}
-            query={query}
-            ariaChartLinkLabel={t('devconsole~View metrics for {{title}}', {
-              title,
-            })}
-          />
-        </CardActions>
       </CardHeader>
       <CardBody>
         <QueryBrowser

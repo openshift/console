@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
-import { CubeIcon } from '@patternfly/react-icons';
+import { Icon, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
+import { CubeIcon } from '@patternfly/react-icons/dist/esm/icons/cube-icon';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getGitService, ImportStrategy } from '@console/git-service/src';
@@ -88,7 +88,9 @@ const DockerSection: React.FC = () => {
       )}
       {formType !== 'edit' && !docker.dockerfileHasError && (
         <div className="co-catalog-item-details">
-          <CubeIcon size="xl" />
+          <Icon size="xl">
+            <CubeIcon />
+          </Icon>
           &nbsp;
           <div>
             <h2 className="co-section-heading co-catalog-item-details__name">

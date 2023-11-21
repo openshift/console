@@ -5,7 +5,11 @@ import {
   formatPrometheusDuration,
   parsePrometheusDuration,
 } from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+} from '@patternfly/react-core/deprecated';
 
 import { useBoolean } from './hooks/useBoolean';
 
@@ -42,22 +46,22 @@ const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
   const selectedKey = interval === null ? OFF_KEY : formatPrometheusDuration(interval);
 
   return (
-    <Dropdown
+    <DropdownDeprecated
       dropdownItems={_.map(intervalOptions, (name, key) => (
-        <DropdownItem component="button" key={key} onClick={() => onChange(key)}>
+        <DropdownItemDeprecated component="button" key={key} onClick={() => onChange(key)}>
           {name}
-        </DropdownItem>
+        </DropdownItemDeprecated>
       ))}
       isOpen={isOpen}
       onSelect={setClosed}
       toggle={
-        <DropdownToggle
+        <DropdownToggleDeprecated
           className="monitoring-dashboards__dropdown-button"
           id={`${id}-dropdown`}
           onToggle={toggleIsOpen}
         >
           {intervalOptions[selectedKey]}
-        </DropdownToggle>
+        </DropdownToggleDeprecated>
       }
       className="monitoring-dashboards__variable-dropdown"
     />

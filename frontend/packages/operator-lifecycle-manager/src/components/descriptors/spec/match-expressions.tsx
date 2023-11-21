@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '@console/internal/components/utils';
 import { MatchExpression, Operator } from '@console/internal/module/k8s';
@@ -31,7 +32,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
         </div>
         <input
           type="text"
-          className="pf-c-form-control"
+          className="pf-v5-c-form-control"
           value={expression.key ?? ''}
           onChange={(e) => onChange({ ...expression, key: e.target.value })}
         />
@@ -53,7 +54,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
           {t('olm~Values')}
         </div>
         <input
-          className="pf-c-form-control"
+          className="pf-v5-c-form-control"
           type="text"
           value={values?.join(',') ?? ''}
           onChange={(e) =>

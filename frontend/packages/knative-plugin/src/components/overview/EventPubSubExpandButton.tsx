@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
+import { AngleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angle-down-icon';
+import { AngleRightIcon } from '@patternfly/react-icons/dist/esm/icons/angle-right-icon';
 import { useTranslation } from 'react-i18next';
 
 import './EventPubSubExpandButton.scss';

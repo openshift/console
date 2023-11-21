@@ -237,7 +237,7 @@ export const DeploymentConfigDeprecationAlert: React.FC = () => {
         <ExternalLink
           href={getDocumentationURL(documentationURLs.deprecatedDeploymentConfig)}
           text={t('public~Learn more about Deployments')}
-          additionalClassName="pf-u-mt-md"
+          additionalClassName="pf-v5-u-mt-md"
         />
       )}
     </Alert>

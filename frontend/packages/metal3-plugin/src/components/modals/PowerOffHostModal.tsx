@@ -146,7 +146,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
         <Checkbox
           id="host-force-off"
           label={t('metal3-plugin~Power off immediately')}
-          onChange={setForceOff}
+          onChange={(_event, value) => setForceOff(value)}
           isChecked={forceOff}
           data-checked-state={forceOff}
         />

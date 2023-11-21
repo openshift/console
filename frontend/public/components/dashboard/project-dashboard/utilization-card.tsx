@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardActions, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
@@ -50,12 +50,19 @@ export const UtilizationCard: React.FC = () => {
   );
 
   return (
-    <Card data-test-id="utilization-card">
-      <CardHeader>
+    <Card data-test-id="utilization-card" isClickable isSelectable>
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <UtilizationDurationDropdown />
+            </>
+          ),
+          hasNoOffset: false,
+          className: undefined,
+        }}
+      >
         <CardTitle>{t('public~Utilization')}</CardTitle>
-        <CardActions>
-          <UtilizationDurationDropdown />
-        </CardActions>
       </CardHeader>
       <UtilizationBody>
         <ProjectUtilizationContext.Provider value={projectName}>

@@ -23,7 +23,7 @@ export const GettingStartedSection: React.FC = () => {
         toggleText={t('knative-plugin~Get started with functions')}
         onToggle={() => setIsGettingStartedSectionOpen(!isGettingStartedSectionOpen)}
         isExpanded={isGettingStartedSectionOpen}
-        displaySize="large"
+        displaySize="lg"
       >
         <Card className="odc-functions-getting-started-grid" data-test="getting-started">
           <span style={{ marginLeft: '16px' }}>

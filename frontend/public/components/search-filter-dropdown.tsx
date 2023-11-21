@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
-import { CaretDownIcon, FilterIcon } from '@patternfly/react-icons';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+} from '@patternfly/react-core/deprecated';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { TextFilter } from './factory';
 
 export enum searchFilterValues {
@@ -19,28 +24,28 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
 
   const { t } = useTranslation();
 
-  const onToggle = (open: boolean) => setOpen(open);
+  const onToggle = (_event, open: boolean) => setOpen(open);
   const onSelect = (event: React.SyntheticEvent) => {
     setSelected((event.target as HTMLInputElement).name as searchFilterValues);
     setOpen(!isOpen);
   };
   const dropdownItems = [
-    <DropdownItem
+    <DropdownItemDeprecated
       key="label-action"
       data-test="label-filter"
       name={searchFilterValues.Label}
       component="button"
     >
       {t(searchFilterValues.Label)}
-    </DropdownItem>,
-    <DropdownItem
+    </DropdownItemDeprecated>,
+    <DropdownItemDeprecated
       key="name-action"
       data-test="name-filter"
       name={searchFilterValues.Name}
       component="button"
     >
       {t(searchFilterValues.Name)}
-    </DropdownItem>,
+    </DropdownItemDeprecated>,
   ];
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -49,20 +54,24 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
     }
   };
 
-  const handleInputValue = (value: string) => {
+  const handleInputValue = (_event, value: string) => {
     onChange(selected, value, false);
   };
 
   return (
-    <div className="pf-c-input-group">
-      <Dropdown
+    <div className="pf-v5-c-input-group">
+      <DropdownDeprecated
         onSelect={onSelect}
         toggle={
-          <DropdownToggle id="toggle-id" onToggle={onToggle} toggleIndicator={CaretDownIcon}>
+          <DropdownToggleDeprecated
+            id="toggle-id"
+            onToggle={onToggle}
+            toggleIndicator={CaretDownIcon}
+          >
             <>
               <FilterIcon className="span--icon__right-margin" /> {t(selected)}
             </>
-          </DropdownToggle>
+          </DropdownToggleDeprecated>
         }
         isOpen={isOpen}
         dropdownItems={dropdownItems}

@@ -61,7 +61,7 @@ export const StorageBootSource: React.FC<StorageBootOrderProps> = ({
         <FormSelect
           id={STORAGE_BOOT_SOURCE}
           value={selectedStorage ? selectedStorage.id : ''}
-          onChange={(id) => onBootOrderChanged(id, 1)}
+          onChange={(_event, id) => onBootOrderChanged(id, 1)}
           isRequired
           isDisabled={isDisabled}
         >

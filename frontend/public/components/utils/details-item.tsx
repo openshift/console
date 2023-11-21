@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classnames from 'classnames';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -48,7 +48,7 @@ const EditButton: React.SFC<EditButtonProps> = (props) => {
       }
     >
       {props.children}
-      <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+      <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
     </Button>
   );
 };

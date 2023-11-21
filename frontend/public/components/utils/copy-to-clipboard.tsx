@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
 import { Button, CodeBlock, CodeBlockAction, CodeBlockCode, Tooltip } from '@patternfly/react-core';
-import { CopyIcon } from '@patternfly/react-icons';
+import { CopyIcon } from '@patternfly/react-icons/dist/esm/icons/copy-icon';
 import { useTranslation } from 'react-i18next';
 
 export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props) => {

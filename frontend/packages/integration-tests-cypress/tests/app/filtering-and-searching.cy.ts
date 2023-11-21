@@ -7,16 +7,20 @@ import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
 
-const WORKLOAD_NAME = `filter-${testName}`;
-const WORKLOAD_LABEL = `lbl-filter=${testName}`;
-
 describe('Filtering and Searching', () => {
+  let WORKLOAD_NAME;
+  let WORKLOAD_LABEL;
+
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
     cy.visit(`/k8s/ns/${testName}/deployments`);
     listPage.clickCreateYAMLbutton();
     cy.byTestID('yaml-view-input').click();
+
+    WORKLOAD_NAME = `filter-${testName}`;
+    WORKLOAD_LABEL = `lbl-filter=${testName}`;
+
     yamlEditor.isLoaded();
     yamlEditor.getEditorContent().then((content) => {
       const newContent = _.defaultsDeep(

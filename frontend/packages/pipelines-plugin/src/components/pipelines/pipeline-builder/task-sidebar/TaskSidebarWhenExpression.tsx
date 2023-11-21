@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, ButtonType, ButtonVariant, Tooltip } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { useField } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import { MultiColumnField } from '@console/shared';

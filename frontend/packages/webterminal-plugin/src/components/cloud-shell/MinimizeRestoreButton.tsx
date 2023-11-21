@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Tooltip, Button } from '@patternfly/react-core';
-import { OutlinedWindowMinimizeIcon, OutlinedWindowRestoreIcon } from '@patternfly/react-icons';
+import { OutlinedWindowMinimizeIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-window-minimize-icon';
+import { OutlinedWindowRestoreIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-window-restore-icon';
 
 type MinimizeRestoreButtonProps = {
   minimizeText: string;

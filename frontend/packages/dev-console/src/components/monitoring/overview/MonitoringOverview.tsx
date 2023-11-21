@@ -10,9 +10,9 @@ import {
   EmptyState,
   EmptyStateIcon,
   EmptyStateBody,
-  Title,
+  EmptyStateHeader,
 } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Alert } from '@console/dynamic-plugin-sdk';
@@ -119,13 +119,16 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
           <AccordionContent id="metrics-content" isHidden={!expanded.includes('metrics')}>
             {resource.kind === DeploymentConfigModel.kind ? (
               <EmptyState>
-                <EmptyStateIcon
-                  className="odc-monitoring-overview__empty-state-icon"
-                  icon={InfoCircleIcon}
+                <EmptyStateHeader
+                  titleText={<>{t('devconsole~No metrics found')}</>}
+                  icon={
+                    <EmptyStateIcon
+                      className="odc-monitoring-overview__empty-state-icon"
+                      icon={InfoCircleIcon}
+                    />
+                  }
+                  headingLevel="h2"
                 />
-                <Title headingLevel="h2" size="md">
-                  {t('devconsole~No metrics found')}
-                </Title>
                 <EmptyStateBody>
                   {t('devconsole~Deployment Configuration metrics are not yet supported.')}
                 </EmptyStateBody>

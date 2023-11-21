@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
-import { InProgressIcon } from '@patternfly/react-icons';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import {
   BlueArrowCircleUpIcon,
   FLAGS,
@@ -145,14 +145,21 @@ export const DetailsCard = withDashboardResources(
     const k8sGitVersion = getK8sGitVersion(k8sVersion);
 
     return (
-      <Card data-test-id="details-card">
-        <CardHeader>
+      <Card data-test-id="details-card" isClickable isSelectable>
+        <CardHeader
+          actions={{
+            actions: (
+              <>
+                <Link to="/settings/cluster/" data-test="details-card-view-settings">
+                  {t('public~View settings')}
+                </Link>
+              </>
+            ),
+            hasNoOffset: false,
+            className: 'co-overview-card__actions',
+          }}
+        >
           <CardTitle>{t('public~Details')}</CardTitle>
-          <CardActions className="co-overview-card__actions">
-            <Link to="/settings/cluster/" data-test="details-card-view-settings">
-              {t('public~View settings')}
-            </Link>
-          </CardActions>
         </CardHeader>
         <CardBody>
           {flagPending(openshiftFlag) ? (

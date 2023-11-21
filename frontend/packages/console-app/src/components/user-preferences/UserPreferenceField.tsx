@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk';
 import { componentForFieldType } from './const';
 import { ResolvedUserPreferenceItem } from './types';
@@ -14,14 +14,14 @@ const UserPreferenceField: React.FC<UserPreferenceFieldProps> = ({ item }) => {
   >> = componentForFieldType[field.type];
 
   return (
-    <FormGroup
-      key={id}
-      fieldId={id}
-      label={label}
-      helperText={description}
-      data-test={`${id} field`}
-    >
+    <FormGroup key={id} fieldId={id} label={label} data-test={`${id} field`}>
       {FieldComponent ? <FieldComponent id={id} {...field} /> : null}
+
+      <FormHelperText>
+        <HelperText>
+          <HelperTextItem>{description}</HelperTextItem>
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

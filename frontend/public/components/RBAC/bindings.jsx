@@ -651,7 +651,7 @@ const BaseEditRoleBinding = (props) => {
                 <ResourceName kind={data?.kind} name={data?.metadata?.name} />
               ) : (
                 <input
-                  className="pf-c-form-control"
+                  className="pf-v5-c-form-control"
                   type="text"
                   onChange={changeName}
                   placeholder={t('public~RoleBinding name')}
@@ -725,7 +725,7 @@ const BaseEditRoleBinding = (props) => {
                 {t('public~Subject name')}
               </label>
               <input
-                className="pf-c-form-control"
+                className="pf-v5-c-form-control"
                 type="text"
                 onChange={changeSubjectName}
                 placeholder={t('public~Subject name')}
@@ -741,7 +741,7 @@ const BaseEditRoleBinding = (props) => {
           <div className="co-form-section__separator" />
 
           <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-c-form">
+            <ActionGroup className="pf-v5-c-form">
               <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
                 {saveButtonText || t('public~Create')}
               </Button>

@@ -4,7 +4,7 @@
   // Use `background-image: linear-gradient` to draw a dotted underline. This gives us more control over the styling.
   background-image: linear-gradient(
     to right,
-    var(--pf-c-button--m-plain--Color) 33%,
+    var(--pf-v5-c-button--m-plain--Color) 33%,
     rgba(255, 255, 255, 0) 0%
   );
   background-position: bottom;
@@ -15,7 +15,7 @@
   &:hover {
     background-image: linear-gradient(
       to right,
-      var(--pf-c-button--m-tertiary--Color) 33%,
+      var(--pf-v5-c-button--m-tertiary--Color) 33%,
       rgba(255, 255, 255, 0) 0%
     );
   }

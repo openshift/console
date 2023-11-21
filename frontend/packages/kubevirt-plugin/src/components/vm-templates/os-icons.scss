@@ -1,30 +1,30 @@
 .kv-pin-icon {
   width: 2rem;
-  color: var(--pf-global--palette--gold-300);
+  color: var(--pf-v5-global--palette--gold-300);
 }
 
 .kv-remove-pin-icon {
   width: 2rem;
-  color: var(--pf-global--palette--black-300);
+  color: var(--pf-v5-global--palette--black-300);
 }
 
 .kv-pin-row-icon {
-  color: var(--pf-global--palette--gold-300);
+  color: var(--pf-v5-global--palette--gold-300);
   :hover {
-    color: var(--pf-global--palette--gold-500);
+    color: var(--pf-v5-global--palette--gold-500);
   }
 }
 
-.kv-pin-btn.pf-c-button.pf-m-plain {
-  --pf-c-button--m-plain--Color: var(--pf-global--palette--black-300);
-  --pf-c-button--m-plain--hover--Color: var(--pf-global--palette--gold-300);
+.kv-pin-btn.pf-v5-c-button.pf-m-plain {
+  --pf-v5-c-button--m-plain--Color: var(--pf-v5-global--palette--black-300);
+  --pf-v5-c-button--m-plain--hover--Color: var(--pf-v5-global--palette--gold-300);
 }
 
-.kv-pin-remove-btn.pf-c-button.pf-m-plain {
-  --pf-c-button--m-plain--Color: var(--pf-global--palette--gold-300);
-  --pf-c-button--m-plain--hover--Color: var(--pf-global--palette--gold-500);
+.kv-pin-remove-btn.pf-v5-c-button.pf-m-plain {
+  --pf-v5-c-button--m-plain--Color: var(--pf-v5-global--palette--gold-300);
+  --pf-v5-c-button--m-plain--hover--Color: var(--pf-v5-global--palette--gold-500);
 }
 
 .kv-pin-customize-btn {
-  color: var(--pf-global--palette--blue-300);
+  color: var(--pf-v5-global--palette--blue-300);
 }

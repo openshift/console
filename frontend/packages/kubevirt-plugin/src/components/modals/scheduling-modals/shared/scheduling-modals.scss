@@ -1,23 +1,23 @@
 .scheduling-modals__add-btn {
-  padding: var(--pf-global--spacer--xl);
+  padding: var(--pf-v5-global--spacer--xl);
 }
 
 .scheduling-modals__desc-container {
   display: flex;
   flex-direction: column;
-  margin-bottom: var(--pf-global--spacer--md);
+  margin-bottom: var(--pf-v5-global--spacer--md);
 
   .scheduling-modals__desc {
-    color: var(--pf-global--Color--200);
+    color: var(--pf-v5-global--Color--200);
   }
 }
 
 .kubevirt-scheduling__checkbox {
-  margin-top: var(--pf-global--spacer--md);
-  margin-bottom: var(--pf-global--spacer--md);
+  margin-top: var(--pf-v5-global--spacer--md);
+  margin-bottom: var(--pf-v5-global--spacer--md);
 }
 
 .kubevirt-scheduling__helper-text {
-  color: var(--pf-global--Color--200);
-  margin-right: var(--pf-global--spacer--sm);
+  color: var(--pf-v5-global--Color--200);
+  margin-right: var(--pf-v5-global--spacer--sm);
 }

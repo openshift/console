@@ -188,7 +188,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
               data-test="input-name"
               name="name"
               type="text"
-              className="pf-c-form-control"
+              className="pf-v5-c-form-control"
               onChange={(e) => setName(e.target.value)}
               value={name || ''}
               autoFocus
@@ -206,7 +206,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
                 id="input-display-name"
                 name="displayName"
                 type="text"
-                className="pf-c-form-control"
+                className="pf-v5-c-form-control"
                 onChange={(e) => setDisplayName(e.target.value)}
                 value={displayName || ''}
               />
@@ -222,7 +222,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
               <textarea
                 id="input-description"
                 name="description"
-                className="pf-c-form-control"
+                className="pf-v5-c-form-control"
                 onChange={(e) => setDescription(e.target.value)}
                 value={description || ''}
               />

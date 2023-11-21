@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Skeleton, SelectOption, Select, SelectVariant } from '@patternfly/react-core';
+import { Skeleton } from '@patternfly/react-core';
+import {
+  SelectOption as SelectOptionDeprecated,
+  Select as SelectDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { usePerspectives } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -24,7 +29,9 @@ const PerspectiveDropdown: React.FC = () => {
   const lastViewedLabel: string = t('console-app~Last viewed');
 
   const selectOptions: JSX.Element[] = React.useMemo(() => {
-    const lastPerspectiveOption = <SelectOption key={'lastViewed'} value={lastViewedLabel} />;
+    const lastPerspectiveOption = (
+      <SelectOptionDeprecated key={'lastViewed'} value={lastViewedLabel} />
+    );
     const allPerspectiveOptions = allPerspectives
       .sort((currPerspective, nextPerspective) => {
         const { name: currPerspectiveName } = currPerspective;
@@ -34,7 +41,7 @@ const PerspectiveDropdown: React.FC = () => {
         }
         return currPerspectiveName > nextPerspectiveName ? 1 : -1;
       })
-      .map(({ name }) => <SelectOption key={name} value={name} />);
+      .map(({ name }) => <SelectOptionDeprecated key={name} value={name} />);
     return [lastPerspectiveOption, ...allPerspectiveOptions];
   }, [allPerspectives, lastViewedLabel]);
 
@@ -48,7 +55,7 @@ const PerspectiveDropdown: React.FC = () => {
     selectedLabel === lastViewedLabel
       ? null
       : allPerspectives.find((perspective) => perspective.name === selectedLabel)?.id;
-  const onToggle = (isOpen: boolean) => setDropdownOpen(isOpen);
+  const onToggle = (_event, isOpen: boolean) => setDropdownOpen(isOpen);
   const onSelect = (_, selection) => {
     const selectedValue = getDropdownValueForLabel(selection);
     selectedValue !== preferredPerspective && setPreferredPerspective(selectedValue);
@@ -60,8 +67,8 @@ const PerspectiveDropdown: React.FC = () => {
   };
 
   return loaded ? (
-    <Select
-      variant={SelectVariant.single}
+    <SelectDeprecated
+      variant={SelectVariantDeprecated.single}
       isOpen={dropdownOpen}
       selections={getDropdownLabelForValue()}
       toggleId={'console.preferredPerspective'}
@@ -72,7 +79,7 @@ const PerspectiveDropdown: React.FC = () => {
       maxHeight={300}
     >
       {selectOptions}
-    </Select>
+    </SelectDeprecated>
   ) : (
     <Skeleton
       height="30px"

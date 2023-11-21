@@ -3,7 +3,7 @@ import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 
 import { referenceForModel, K8sResourceKind } from '../module/k8s';
 import { ListPage, DetailsPage, Table, TableData, RowFunctionArgs } from './factory';
@@ -51,7 +51,7 @@ const Details: React.SFC<DetailsProps> = (props) => {
               <dd>
                 <Button variant="link" type="button" isInline onClick={openReplicaCountModal}>
                   {pluralize(spec.replicas, 'pod')}
-                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                  <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
                 </Button>
               </dd>
             </dl>
@@ -71,9 +71,9 @@ export const AlertManagersDetailsPage = (props) => (
 const tableColumnClasses = [
   '',
   '',
-  'pf-m-hidden pf-m-visible-on-md pf-u-w-25-on-md',
+  'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-25-on-md',
   'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-25-on-lg',
 ];
 
 const AlertManagerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({

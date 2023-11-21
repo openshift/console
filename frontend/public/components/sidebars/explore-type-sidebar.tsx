@@ -145,7 +145,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
         {_.isEmpty(currentProperties) ? (
           <EmptyBox label={t('public~Properties')} />
         ) : (
-          <ul className="co-resource-sidebar-list pf-c-list">
+          <ul className="co-resource-sidebar-list pf-v5-c-list">
             {_.map(currentProperties, (definition: SwaggerDefinition, name: string) => {
               const path = getDrilldownPath(name);
               const definitionType = definition.type || getTypeForRef(getRef(definition));

@@ -9,7 +9,7 @@
   }
 
   &__bg {
-    fill: var(--pf-global--BackgroundColor--light-100);
+    fill: var(--pf-v5-global--BackgroundColor--light-100);
   }
 
   &.is-filtered &__bg {
@@ -48,7 +48,7 @@
   }
 }
 
-:root:where(.pf-theme-dark) .odc-eventing-pubsub {
+:root:where(.pf-v5-theme-dark) .odc-eventing-pubsub {
   &--image {
     filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
   }

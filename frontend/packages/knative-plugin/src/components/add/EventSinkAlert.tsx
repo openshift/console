@@ -18,7 +18,7 @@ const EventSinkAlert: React.FC<EventSinkAlertProps> = ({
 
   return showAlert ? (
     <Alert
-      variant={!isValidSink ? 'danger' : 'default'}
+      variant={!isValidSink ? 'danger' : undefined}
       title={t('knative-plugin~Event sink cannot be created')}
       isInline
     >

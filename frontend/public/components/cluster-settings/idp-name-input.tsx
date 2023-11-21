@@ -9,7 +9,7 @@ export const IDPNameInput: React.FC<IDPNameInputProps> = ({ value, onChange }) =
         {t('public~Name')}
       </label>
       <input
-        className="pf-c-form-control"
+        className="pf-v5-c-form-control"
         type="text"
         onChange={onChange}
         value={value}

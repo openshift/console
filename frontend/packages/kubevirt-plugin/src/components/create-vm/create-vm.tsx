@@ -1,13 +1,10 @@
 import * as React from 'react';
+import { Alert, AlertActionCloseButton, AlertVariant, Button } from '@patternfly/react-core';
 import {
-  Alert,
-  AlertActionCloseButton,
-  AlertVariant,
-  Button,
-  Wizard,
-  WizardContextConsumer,
-  WizardContextType,
-} from '@patternfly/react-core';
+  Wizard as WizardDeprecated,
+  WizardContextConsumer as WizardContextConsumerDeprecated,
+  WizardContextType as WizardContextTypeDeprecated,
+} from '@patternfly/react-core/deprecated';
 import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
 import * as classNames from 'classnames';
 import { isEmpty } from 'lodash';
@@ -64,7 +61,7 @@ enum WizardStep {
   REVIEW = 'Review',
 }
 
-type FooterProps = WizardContextType & {
+type FooterProps = WizardContextTypeDeprecated & {
   formIsValid: boolean;
   onFinish: VoidFunction;
   onCustomize: VoidFunction;
@@ -423,7 +420,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
     }
 
     body = (
-      <Wizard
+      <WizardDeprecated
         hasNoBodyPadding
         onClose={history.goBack}
         steps={steps}
@@ -435,7 +432,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
             : 1
         }
         footer={
-          <WizardContextConsumer>
+          <WizardContextConsumerDeprecated>
             {(footerProps) => (
               <Footer
                 {...footerProps}
@@ -490,7 +487,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
                 {selectTemplateAlert}
               </Footer>
             )}
-          </WizardContextConsumer>
+          </WizardContextConsumerDeprecated>
         }
       />
     );

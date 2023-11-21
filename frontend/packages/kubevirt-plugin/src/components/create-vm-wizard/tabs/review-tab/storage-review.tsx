@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Alert, AlertVariant, Stack, StackItem } from '@patternfly/react-core';
-import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+import { TableVariant } from '@patternfly/react-table';
+import {
+  Table as TableDeprecated,
+  TableHeader as TableHeaderDeprecated,
+  TableBody as TableBodyDeprecated,
+} from '@patternfly/react-table/deprecated';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -133,16 +138,16 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
               )}
             </Alert>
           )}
-          <Table
+          <TableDeprecated
             aria-label={t('kubevirt-plugin~Storage Devices')}
             variant={TableVariant.compact}
             cells={headers}
             rows={rows}
             gridBreakPoint="grid-xl"
           >
-            <TableHeader />
-            <TableBody />
-          </Table>
+            <TableHeaderDeprecated />
+            <TableBodyDeprecated />
+          </TableDeprecated>
         </>
       )}
       {!showStorages && (

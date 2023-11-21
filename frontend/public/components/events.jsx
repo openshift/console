@@ -226,7 +226,7 @@ export const EventsList = (props) => {
           <TextFilter
             autoFocus={props.autoFocus}
             label={t('public~Events by name or message')}
-            onChange={(val) => setTextFilter(val || '')}
+            onChange={(_event, val) => setTextFilter(val || '')}
           />
         </div>
         <div className="form-group">
@@ -272,7 +272,9 @@ export const NoEvents = () => {
   const { t } = useTranslation();
   return (
     <Box className="co-sysevent-stream__status-box-empty">
-      <div className="pf-u-text-align-center cos-status-box__detail">{t('public~No events')}</div>
+      <div className="pf-v5-u-text-align-center cos-status-box__detail">
+        {t('public~No events')}
+      </div>
     </Box>
   );
 };
@@ -282,7 +284,7 @@ export const NoMatchingEvents = ({ allCount }) => {
   return (
     <Box className="co-sysevent-stream__status-box-empty">
       <div className="cos-status-box__title">{t('public~No matching events')}</div>
-      <div className="pf-u-text-align-center cos-status-box__detail">
+      <div className="pf-v5-u-text-align-center cos-status-box__detail">
         {allCount >= maxMessages
           ? t('public~{{allCount}}+ events exist, but none match the current filter', { allCount })
           : t('public~{{allCount}} events exist, but none match the current filter', { allCount })}
@@ -298,7 +300,7 @@ export const ErrorLoadingEvents = () => {
       <div className="cos-status-box__title cos-error-title">
         {t('public~Error loading events')}
       </div>
-      <div className="cos-status-box__detail pf-u-text-align-center">
+      <div className="cos-status-box__detail pf-v5-u-text-align-center">
         {t('public~An error occurred during event retrieval. Attempting to reconnect...')}
       </div>
     </Box>

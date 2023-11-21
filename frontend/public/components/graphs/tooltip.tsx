@@ -9,17 +9,19 @@ import {
   ChartLegend,
   ChartLabel,
   getTheme,
-  getLegendTooltipDataProps,
-  getLegendTooltipVisibleData,
-  ChartLegendTooltipStyles,
-  getLegendTooltipSize,
-  getLegendTooltipVisibleText,
   ChartLegendTooltipContentProps,
-  ChartLegendLabelProps,
-  ChartLegendTooltipProps,
   ChartCursorTooltip,
   ChartTooltip,
+  ChartLegendTooltipProps,
+  ChartLegendTooltipLabelProps,
 } from '@patternfly/react-charts';
+import {
+  getLegendTooltipSize,
+  getLegendTooltipDataProps,
+  getLegendTooltipVisibleData,
+  getLegendTooltipVisibleText,
+} from '@patternfly/react-charts/dist/js/components/ChartUtils/chart-tooltip';
+import { ChartLegendTooltipStyles } from '@patternfly/react-charts/dist/js/components/ChartTheme/ChartStyles';
 
 import { DataPoint } from '.';
 
@@ -180,7 +182,7 @@ export const ChartLegendTooltipContent: React.FunctionComponent<
 };
 ChartLegendTooltipContent.displayName = 'ChartLegendTooltipContent';
 
-export const ChartLegendTooltipLabel: React.FunctionComponent<ChartLegendLabelProps> = ({
+export const ChartLegendTooltipLabel: React.FunctionComponent<ChartLegendTooltipLabelProps> = ({
   index = 0,
   legendData,
   style,
@@ -191,7 +193,7 @@ export const ChartLegendTooltipLabel: React.FunctionComponent<ChartLegendLabelPr
 
   // destructure last
   ...rest
-}: ChartLegendLabelProps) => {
+}: ChartLegendTooltipLabelProps) => {
   const getStyle = (styles: any) => {
     const applyDefaultStyle = (customStyle: React.CSSProperties) =>
       defaults(

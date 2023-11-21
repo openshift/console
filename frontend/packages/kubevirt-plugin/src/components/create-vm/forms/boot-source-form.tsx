@@ -1,12 +1,13 @@
 import * as React from 'react';
 import {
   Checkbox,
+  DropEvent,
   ExpandableSection,
   FileUpload,
   Form,
-  SelectOption,
   TextInput,
 } from '@patternfly/react-core';
+import { SelectOption as SelectOptionDeprecated } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { dropdownUnits, initialAccessModes } from '@console/internal/components/storage/shared';
 import {
@@ -245,9 +246,13 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
             ? ProvisionSource.getVMTemplateBaseImageSources()
             : ProvisionSource.getBasicWizardSources()
           ).map((ds) => (
-            <SelectOption key={ds.getValue()} value={ds} description={t(ds.getDescriptionKey())}>
+            <SelectOptionDeprecated
+              key={ds.getValue()}
+              value={ds}
+              description={t(ds.getDescriptionKey())}
+            >
               {t(ds.toString())}
-            </SelectOption>
+            </SelectOptionDeprecated>
           ))}
         </FormPFSelect>
       </FormRow>
@@ -257,10 +262,10 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
             id="file-upload"
             value={state.file?.value.value}
             filename={state.file?.value.name}
-            onChange={(file: File, name: string) => {
+            onFileInputChange={(_event: DropEvent, file: File) => {
               dispatch({
                 type: BOOT_ACTION_TYPE.SET_FILE,
-                payload: { value: file, name },
+                payload: { value: file, name: file.name },
               });
               dispatch({
                 type: BOOT_ACTION_TYPE.SET_PVC_SIZE,
@@ -283,7 +288,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
           <TextInput
             value={state.url?.value}
             type="text"
-            onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_URL, payload })}
+            onChange={(_event, payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_URL, payload })}
             aria-label={t('kubevirt-plugin~Import URL')}
             isDisabled={disabled}
             id={getFieldId(VMSettingsField.IMAGE_URL)}
@@ -301,7 +306,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
           <TextInput
             value={state.container?.value}
             type="text"
-            onChange={(payload) =>
+            onChange={(_event, payload) =>
               dispatch({ type: BOOT_ACTION_TYPE.SET_CONTAINER, payload: payload?.trim() })
             }
             aria-label={t('kubevirt-plugin~Container image')}
@@ -373,7 +378,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
         <Checkbox
           isChecked={state.cdRom?.value}
           data-checked-state={state.cdRom?.value}
-          onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CD_ROM, payload })}
+          onChange={(_event, payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CD_ROM, payload })}
           isDisabled={disabled}
           label={
             <>
@@ -408,7 +413,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
             describedBy="request-size-help"
             inputID="request-size-input"
           >
-            <div className="pf-c-form__helper-text" aria-live="polite">
+            <div className="pf-v5-c-form__helper-text" aria-live="polite">
               {t(
                 'kubevirt-plugin~Ensure your PVC size covers the requirements of the uncompressed image and any other space requirements. More storage can be added later.',
               )}
@@ -423,11 +428,13 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
             value={state.provider?.value}
             type="text"
             isRequired
-            onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_PROVIDER, payload })}
+            onChange={(_event, payload) =>
+              dispatch({ type: BOOT_ACTION_TYPE.SET_PROVIDER, payload })
+            }
             aria-label={t('kubevirt-plugin~Source provider')}
             id="form-ds-provider-input"
           />
-          <div className="pf-c-form__helper-text" aria-live="polite">
+          <div className="pf-v5-c-form__helper-text" aria-live="polite">
             {t('kubevirt-plugin~Example: your company name')}
           </div>
         </FormRow>

@@ -75,12 +75,12 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
   return (
     <PfMasthead id="page-main-header" display={{ default: isMastheadStacked ? 'stack' : 'inline' }}>
       <MastheadToggle>
-        <PageToggleButton onNavToggle={onNavToggle} isNavOpen={isNavOpen}>
+        <PageToggleButton onSidebarToggle={onNavToggle} isSidebarOpen={isNavOpen}>
           <BarsIcon />
         </PageToggleButton>
       </MastheadToggle>
       <MastheadMain>
-        <MastheadBrand {...logoProps}>
+        <MastheadBrand component="a" {...logoProps}>
           <Brand src={details.logoImg} alt={details.productName} />
         </MastheadBrand>
       </MastheadMain>

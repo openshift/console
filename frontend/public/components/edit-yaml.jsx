@@ -5,7 +5,8 @@ import * as classNames from 'classnames';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
 import { connect } from 'react-redux';
 import { ActionGroup, Alert, Button, Checkbox } from '@patternfly/react-core';
-import { DownloadIcon, InfoCircleIcon } from '@patternfly/react-icons';
+import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
+import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { Trans, useTranslation } from 'react-i18next';
 
 import {
@@ -712,7 +713,7 @@ const EditYAMLInner = (props) => {
         />
       )}
 
-      <div className="pf-c-form co-m-page__body">
+      <div className="pf-v5-c-form co-m-page__body">
         <div className="co-p-has-sidebar">
           <div className="co-p-has-sidebar__body">
             <div className={classNames('yaml-editor', customClass)} ref={editor}>
@@ -750,7 +751,7 @@ const EditYAMLInner = (props) => {
                     {t('public~Click reload to see the new version.')}
                   </Alert>
                 )}
-                <ActionGroup className="pf-c-form__group--no-top-margin">
+                <ActionGroup className="pf-v5-c-form__group--no-top-margin">
                   {create && (
                     <Button
                       type="submit"
@@ -796,7 +797,7 @@ const EditYAMLInner = (props) => {
                     <Button
                       type="submit"
                       variant="secondary"
-                      className="pf-c-button--align-right hidden-sm hidden-xs"
+                      className="pf-v5-c-button--align-right hidden-sm hidden-xs"
                       onClick={() => download()}
                     >
                       <DownloadIcon /> {t('public~Download')}

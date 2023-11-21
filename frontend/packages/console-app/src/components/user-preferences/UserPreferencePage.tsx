@@ -138,7 +138,7 @@ const UserPreferencePage: React.FC<UserPreferencePageProps> = ({ match }) => {
                 variant="light300"
                 data-test="user-preferences tabs"
               >
-                {userPreferenceTabs}
+                <>{userPreferenceTabs}</>
               </Tabs>
             </div>
             <div className="co-user-preference-page-content__tab-content">

@@ -1,14 +1,10 @@
 import * as React from 'react';
+import { Button, GridItem, HelperText, HelperTextItem, TextInput } from '@patternfly/react-core';
 import {
-  Button,
-  GridItem,
-  HelperText,
-  HelperTextItem,
-  SelectGroup,
-  SelectOption,
-  TextInput,
-} from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+  SelectGroup as SelectGroupDeprecated,
+  SelectOption as SelectOptionDeprecated,
+} from '@patternfly/react-core/deprecated';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useHyperconvergedCR } from '../../hooks/use-hyperconverged-resource';
@@ -74,12 +70,12 @@ export const HardwareDevicesListRowAddDevice: React.FC<HardwareDevicesListRowAdd
     }
 
     return temp?.map((group) => (
-      <SelectGroup label={group?.label} key={group?.key}>
+      <SelectGroupDeprecated label={group?.label} key={group?.key}>
         {group?.options?.map((option, index) => (
           // eslint-disable-next-line react/no-array-index-key
-          <SelectOption key={index} value={option} />
+          <SelectOptionDeprecated key={index} value={option} />
         ))}
-      </SelectGroup>
+      </SelectGroupDeprecated>
     ));
   }, [hc, t]);
 
@@ -96,7 +92,7 @@ export const HardwareDevicesListRowAddDevice: React.FC<HardwareDevicesListRowAdd
           value={name}
           autoFocus
           placeholder={t('kubevirt-plugin~Name')}
-          onChange={onNameChange}
+          onChange={(_event, value) => onNameChange(value)}
           onBlur={onValidateName}
           onFocus={onResetValidateName}
         />
@@ -106,7 +102,7 @@ export const HardwareDevicesListRowAddDevice: React.FC<HardwareDevicesListRowAdd
           placeholderText={t('kubevirt-plugin~Select Hardware device')}
           inlineFilterPlaceholderText={t('kubevirt-plugin~Filter by resource name..')}
           isGrouped
-          onToggle={(expanded) => setIsOpen(expanded)}
+          onToggle={(_event, isExpanded) => setIsOpen(isExpanded)}
           isOpen={isOpen}
           selections={deviceName}
           onSelect={onSelect}

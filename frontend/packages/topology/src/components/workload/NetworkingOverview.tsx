@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LongArrowAltRightIcon } from '@patternfly/react-icons';
+import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
 import { useTranslation } from 'react-i18next';
 import { RouteLocation } from '@console/internal/components/routes';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';

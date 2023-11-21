@@ -6,7 +6,6 @@ import {
   ChartArea,
   ChartAxis,
   ChartThemeColor,
-  ChartThemeVariant,
   ChartVoronoiContainer,
   getCustomTheme,
   ChartGroup,
@@ -68,7 +67,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
 }) => {
   // Note: Victory incorrectly typed ThemeBaseProps.padding as number instead of PaddingProps
   // @ts-ignore
-  const theme = getCustomTheme(ChartThemeColor.blue, ChartThemeVariant.light, areaTheme);
+  const theme = getCustomTheme(ChartThemeColor.blue, areaTheme);
   const [containerRef, width] = useRefWidth();
   const { processedData, unit } = React.useMemo(() => {
     const nonEmptyDataSets = data.filter((dataSet) => dataSet?.length);

@@ -4,11 +4,11 @@ import {
   AlertVariant,
   Checkbox,
   Form,
-  SelectOption,
   Stack,
   StackItem,
   TextInput,
 } from '@patternfly/react-core';
+import { SelectOption as SelectOptionDeprecated } from '@patternfly/react-core/deprecated';
 import { Trans, useTranslation } from 'react-i18next';
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import { initialAccessModes } from '@console/internal/components/storage/shared';
@@ -493,13 +493,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 .sort((a, b) => a.getOrder() - b.getOrder())
                 .map((uiType) => {
                   return (
-                    <SelectOption
+                    <SelectOptionDeprecated
                       key={uiType.getValue()}
                       value={uiType.getValue()}
                       description={t(uiType.getDescriptionKey())}
                     >
                       {t(uiType.toString())}
-                    </SelectOption>
+                    </SelectOptionDeprecated>
                   );
                 })}
             </FormPFSelect>
@@ -518,7 +518,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 isRequired
                 id={asId('url')}
                 value={url}
-                onChange={setURL}
+                onChange={(_event, value) => setURL(value)}
               />
               <URLSourceHelp baseImageName={baseImageName} />
             </FormRow>
@@ -537,7 +537,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 isRequired
                 id={asId('container')}
                 value={containerImage}
-                onChange={setContainerImage}
+                onChange={(_event, value) => setContainerImage(value)}
               />
               <ContainerSourceHelp imageName={baseImageName} />
             </FormRow>
@@ -551,7 +551,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               data={namespaces}
               model={NamespaceModel}
               title={`PVC ${NamespaceModel.label}`}
-              onChange={(ns) => {
+              onChange={(_event, ns) => {
                 setPVCName('');
                 onNamespaceChanged(ns);
               }}
@@ -640,13 +640,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               {DiskType.getAll()
                 .filter((dtype) => !dtype.isDeprecated() || dtype === type)
                 .map((dt) => (
-                  <SelectOption
+                  <SelectOptionDeprecated
                     key={dt.getValue()}
                     value={dt.getValue()}
                     isDisabled={isVMRunning && dt.getValue() !== DiskType.DISK.getValue()}
                   >
                     {t(dt.toString())}
-                  </SelectOption>
+                  </SelectOptionDeprecated>
                 ))}
             </FormPFSelect>
           </FormRow>
@@ -682,7 +682,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               toggleId={asId('select-interface')}
             >
               {allowedBuses.map((b) => (
-                <SelectOption
+                <SelectOptionDeprecated
                   key={b.getValue()}
                   value={b.getValue()}
                   description={t(b.getDescriptionKey())}
@@ -692,7 +692,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   {recommendedBuses.size !== validAllowedBuses.size && recommendedBuses.has(b)
                     ? t('kubevirt-plugin~ --- Recommended ---')
                     : ''}
-                </SelectOption>
+                </SelectOptionDeprecated>
               ))}
             </FormPFSelect>
           </FormRow>

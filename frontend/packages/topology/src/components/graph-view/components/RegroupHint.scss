@@ -3,10 +3,10 @@
   display: flex;
 
   &__icon {
-    color: var(--pf-global--palette--blue-300);
+    color: var(--pf-v5-global--palette--blue-300);
   }
   &__text {
-    margin-left: var(--pf-global--spacer--sm);
+    margin-left: var(--pf-v5-global--spacer--sm);
     .ocs-shortcut__cell {
       padding-bottom: 0;
     }

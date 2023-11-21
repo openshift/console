@@ -22,9 +22,9 @@ import './baremetal-nodes-table.scss';
 const tableColumnClasses = {
   name: '',
   status: 'pf-m-hidden pf-m-visible-on-sm',
-  role: 'pf-m-hidden pf-m-visible-on-md pf-u-w-16-on-lg',
-  machine: 'pf-m-hidden pf-m-visible-on-lg pf-u-w-16-on-lg',
-  address: 'pf-m-hidden pf-m-visible-on-lg pf-u-w-16-on-lg',
+  role: 'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-16-on-lg',
+  machine: 'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-16-on-lg',
+  address: 'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-16-on-lg',
   kebab: Kebab.columnClass,
 };
 

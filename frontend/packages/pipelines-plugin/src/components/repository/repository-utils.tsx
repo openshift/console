@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { GithubIcon, GitAltIcon, GitlabIcon, BitbucketIcon } from '@patternfly/react-icons';
+import { BitbucketIcon } from '@patternfly/react-icons/dist/esm/icons/bitbucket-icon';
+import { GitAltIcon } from '@patternfly/react-icons/dist/esm/icons/git-alt-icon';
+import { GithubIcon } from '@patternfly/react-icons/dist/esm/icons/github-icon';
+import { GitlabIcon } from '@patternfly/react-icons/dist/esm/icons/gitlab-icon';
 import { GitProvider } from '@console/git-service/src';
 import { detectGitType } from './repository-form-utils';
 import { RepositoryKind } from './types';

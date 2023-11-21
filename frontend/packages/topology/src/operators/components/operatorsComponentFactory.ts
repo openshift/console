@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { GraphElement, withDragNode, withSelection } from '@patternfly/react-topology';
+import {
+  GraphElement,
+  WithContextMenuProps,
+  withDragNode,
+  withSelection,
+} from '@patternfly/react-topology';
 import { contextMenuActions } from '../../actions';
 import {
   withContextMenu,
@@ -19,7 +24,9 @@ export const getOperatorsComponentFactory = (
     case TYPE_OPERATOR_BACKED_SERVICE:
       return withSelection({ controlled: true })(
         withContextMenu(contextMenuActions)(
-          withNoDrop()(withDragNode(noRegroupDragSourceSpec)(OperatorBackedService)),
+          withNoDrop()(withDragNode(noRegroupDragSourceSpec)(OperatorBackedService)) as React.FC<
+            WithContextMenuProps
+          >,
         ),
       );
     case TYPE_SERVICE_BINDING:

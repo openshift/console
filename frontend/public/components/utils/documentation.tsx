@@ -97,7 +97,7 @@ export const getDocumentationURL = (docURLs: docURLs) =>
     ? `${UPSTREAM_LATEST}${docURLs.upstream}`
     : `${window.SERVER_FLAGS.documentationBaseURL}${docURLs.downstream}`;
 
-export const getNetworkPolicyDocURL = (openshiftFlag: boolean) => {
+export const getNetworkPolicyDocURL = (openshiftFlag: boolean): string => {
   const networkLink = getDocumentationURL(documentationURLs.networkPolicy);
 
   return openshiftFlag ? networkLink : documentationURLs.networkPolicy.kube;

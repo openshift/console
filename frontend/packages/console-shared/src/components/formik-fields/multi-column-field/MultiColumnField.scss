@@ -1,31 +1,31 @@
 .odc-multi-column-field {
   &__row {
     position: relative;
-    margin-right: var(--pf-global--spacer--lg);
-    margin-bottom: var(--pf-global--spacer--md);
+    margin-right: var(--pf-v5-global--spacer--lg);
+    margin-bottom: var(--pf-v5-global--spacer--md);
   }
   &__header {
     position: relative;
-    margin-right: var(--pf-global--spacer--lg);
-    margin-bottom: var(--pf-global--spacer--sm);
-    max-height: var(--pf-global--spacer--xl);
+    margin-right: var(--pf-v5-global--spacer--lg);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    max-height: var(--pf-v5-global--spacer--xl);
   }
   &__col {
-    margin-right: var(--pf-global--spacer--md);
+    margin-right: var(--pf-v5-global--spacer--md);
   }
 
   &__col--button {
-    line-height: var(--pf-global--spacer--xl);
+    line-height: var(--pf-v5-global--spacer--xl);
     position: absolute;
     right: -30px;
     top: 0;
   }
   &__empty-message {
-    margin-bottom: var(--pf-global--spacer--sm);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
   }
   &__header--required-label {
-    margin-left: var(--pf-global--spacer--xs);
-    font-size: var(--pf-global--FontSize--sm);
-    color: var(--pf-global--danger-color--100);
+    margin-left: var(--pf-v5-global--spacer--xs);
+    font-size: var(--pf-v5-global--FontSize--sm);
+    color: var(--pf-v5-global--danger-color--100);
   }
 }

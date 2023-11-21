@@ -1,42 +1,48 @@
 // Base element styles.
 // Please DO NOT add rules of this type.
 
-dd {
-  margin-bottom: var(--pf-global--spacer--lg);
-}
+//instead of &.foo
+//
+//
+// @at-root .foo#{&}
 
-dd:last-child {
-  margin-bottom: 0;
-}
-
-dl {
-  margin: 0;
-}
-
-// match pf4 styling / table col head styling
-dt {
-  font-weight: var(--pf-global--FontWeight--bold);
-}
-
-fieldset {
-  border: 0;
-}
-
-input[type="number"] {
-  -webkit-appearance: textfield;
-  appearance: textfield;
-  max-width: 100px;
-  &::-webkit-inner-spin-button,
-  &::-webkit-outer-spin-button {
-    -webkit-appearance: none;
+:where(:not([class*="pf-v5-c-"])) {
+  @at-root dd#{&} {
+    margin-bottom: var(--pf-v5-global--spacer--lg);
   }
-}
 
-input[type="radio"] {
-  margin-right: 7px;
-}
+  @at-root dd:last-child#{&} {
+    margin-bottom: 0;
+  }
 
-ol,
-ul {
-  padding-left: 20px;
+  @at-root dl#{&} {
+    margin: 0;
+  }
+
+  // match pf4 styling / table col head styling
+  @at-root dt#{&} {
+    font-weight: var(--pf-v5-global--FontWeight--bold);
+  }
+
+  @at-root fieldset#{&} {
+    border: 0;
+  }
+
+  @at-root input[type='number']#{&} {
+    -webkit-appearance: textfield;
+    appearance: textfield;
+    max-width: 100px;
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
+  }
+
+  @at-root input[type='radio']#{&} {
+    margin-right: 7px;
+  }
+
+  @at-root :is(ul, ol)#{&} {
+    padding-left: 20px;
+  }
 }

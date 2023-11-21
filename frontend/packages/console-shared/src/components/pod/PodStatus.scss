@@ -4,11 +4,11 @@
     display: flex;
   }
   &__status-box {
-    width: var(--pf-global--icon--FontSize--sm);
-    height: var(--pf-global--icon--FontSize--sm);
-    margin-right: var(--pf-global--spacer--sm);
+    width: var(--pf-v5-global--icon--FontSize--sm);
+    height: var(--pf-v5-global--icon--FontSize--sm);
+    margin-right: var(--pf-v5-global--spacer--sm);
   }
   &__status-count {
-    margin-right: var(--pf-global--spacer--xs);
+    margin-right: var(--pf-v5-global--spacer--xs);
   }
 }

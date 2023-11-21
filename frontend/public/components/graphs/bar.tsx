@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-  ChartBar,
-  ChartLabel,
-  ChartThemeColor,
-  ChartThemeVariant,
-  getCustomTheme,
-} from '@patternfly/react-charts';
+import { ChartBar, ChartLabel, ChartThemeColor, getCustomTheme } from '@patternfly/react-charts';
 
 import { useRefWidth } from '../utils/ref-width-hook';
 import { usePrometheusPoll } from './prometheus-poll-hook';
@@ -30,7 +24,7 @@ export const BarChart: React.FC<BarChartProps> = ({
   loading = false,
   noLink = false,
   query,
-  theme = getCustomTheme(ChartThemeColor.blue, ChartThemeVariant.light, barTheme),
+  theme = getCustomTheme(ChartThemeColor.blue, barTheme),
   title,
   titleClassName,
 }) => {

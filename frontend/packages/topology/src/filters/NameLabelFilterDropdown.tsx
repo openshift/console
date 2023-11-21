@@ -1,6 +1,11 @@
 import * as React from 'react';
-import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
-import { CaretDownIcon, FilterIcon } from '@patternfly/react-icons';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+} from '@patternfly/react-core/deprecated';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { useTranslation } from 'react-i18next';
 import AutocompleteInput from '@console/internal/components/autocomplete';
 import { TextFilter } from '@console/internal/components/factory';
@@ -23,18 +28,22 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
 
   const { t } = useTranslation();
 
-  const onToggle = (open: boolean) => setOpen(open);
+  const onToggle = (_event, open: boolean) => setOpen(open);
   const onSelect = (event: React.SyntheticEvent) => {
     setSelected((event.target as HTMLInputElement).name as NameLabelFilterValues);
     setOpen(!isOpen);
   };
   const dropdownItems = [
-    <DropdownItem key="name-action" name={NameLabelFilterValues.Name} component="button">
+    <DropdownItemDeprecated key="name-action" name={NameLabelFilterValues.Name} component="button">
       {t(NameLabelFilterValues.Name)}
-    </DropdownItem>,
-    <DropdownItem key="label-action" name={NameLabelFilterValues.Label} component="button">
+    </DropdownItemDeprecated>,
+    <DropdownItemDeprecated
+      key="label-action"
+      name={NameLabelFilterValues.Label}
+      component="button"
+    >
       {t(NameLabelFilterValues.Label)}
-    </DropdownItem>,
+    </DropdownItemDeprecated>,
   ];
 
   const handleInputValue = (value: string) => {
@@ -42,11 +51,11 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
   };
 
   return (
-    <div className="pf-c-input-group">
-      <Dropdown
+    <div className="pf-v5-c-input-group">
+      <DropdownDeprecated
         onSelect={onSelect}
         toggle={
-          <DropdownToggle
+          <DropdownToggleDeprecated
             isDisabled={isDisabled}
             id="toggle-id"
             onToggle={onToggle}
@@ -55,7 +64,7 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
             <>
               <FilterIcon className="span--icon__right-margin" /> {t(selected)}
             </>
-          </DropdownToggle>
+          </DropdownToggleDeprecated>
         }
         isOpen={isOpen}
         dropdownItems={dropdownItems}
@@ -75,7 +84,7 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
         />
       ) : (
         <TextFilter
-          onChange={handleInputValue}
+          onChange={(_event, value) => handleInputValue(value)}
           placeholder={t('topology~Find by name...')}
           value={nameFilterInput}
           aria-labelledby="toggle-id"

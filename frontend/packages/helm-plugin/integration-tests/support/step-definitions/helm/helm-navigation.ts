@@ -59,7 +59,7 @@ When('user searches and selects {string} card from catalog page', (cardName: str
 });
 
 Then('Create Helm Release page is displayed', () => {
-  cy.get('h1.pf-c-title').should('have.text', pageTitle.CreateHelmRelease);
+  cy.get('h1.pf-v5-c-title').should('have.text', pageTitle.CreateHelmRelease);
 });
 
 Then('release name displays as {string}', (name: string) => {

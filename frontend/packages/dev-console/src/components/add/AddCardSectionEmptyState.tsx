@@ -4,9 +4,10 @@ import {
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
-  Title,
+  EmptyStateHeader,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon, LockIcon } from '@patternfly/react-icons';
+import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
+import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import { useTranslation } from 'react-i18next';
 
 type AddCardSectionEmptyStateProps = {
@@ -26,17 +27,20 @@ const AddCardSectionEmptyState: React.FC<AddCardSectionEmptyStateProps> = ({
     : t('devconsole~Add options failed to load. Check your connection and reload the page.');
   return (
     <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateIcon
-        icon={Icon}
-        color={
-          accessCheckFailed
-            ? 'var(--pf-global--icon--Color--light)'
-            : 'var(--pf-global--danger-color--100)'
+      <EmptyStateHeader
+        titleText={<>{title}</>}
+        icon={
+          <EmptyStateIcon
+            icon={Icon}
+            color={
+              accessCheckFailed
+                ? 'var(--pf-v5-global--icon--Color--light)'
+                : 'var(--pf-v5-global--danger-color--100)'
+            }
+          />
         }
+        headingLevel="h2"
       />
-      <Title headingLevel="h2" size="lg">
-        {title}
-      </Title>
       <EmptyStateBody>{description}</EmptyStateBody>
     </EmptyState>
   );

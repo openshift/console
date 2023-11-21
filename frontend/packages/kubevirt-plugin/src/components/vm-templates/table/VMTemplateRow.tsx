@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { StarIcon } from '@patternfly/react-icons';
+import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';

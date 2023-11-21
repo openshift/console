@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Table, TableHeader, TableBody, SortByDirection } from '@patternfly/react-table';
+import { SortByDirection } from '@patternfly/react-table';
+import {
+  Table as TableDeprecated,
+  TableHeader as TableHeaderDeprecated,
+  TableBody as TableBodyDeprecated,
+} from '@patternfly/react-table/deprecated';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
@@ -163,7 +168,7 @@ export const MonitoringAlerts: React.FC<Props> = ({ match, rules, alerts, filter
           textFilter={textFilter}
           data={rules}
         />
-        <Table
+        <TableDeprecated
           aria-label={t('devconsole~Alerts')}
           onCollapse={onCollapse}
           rows={rows}
@@ -171,9 +176,9 @@ export const MonitoringAlerts: React.FC<Props> = ({ match, rules, alerts, filter
           sortBy={sortBy}
           onSort={handleSort}
         >
-          <TableHeader />
-          <TableBody />
-        </Table>
+          <TableHeaderDeprecated />
+          <TableBodyDeprecated />
+        </TableDeprecated>
       </div>
     );
   }, [handleSort, alerts, monitoringAlertColumn, onCollapse, rows, rules, sortBy, t]);

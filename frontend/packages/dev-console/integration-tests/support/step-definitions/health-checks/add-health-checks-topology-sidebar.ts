@@ -8,7 +8,7 @@ import { navigateTo, perspective, topologyHelper, topologySidePane } from '../..
 
 Given('user selects type as {string}', (type: string) => {
   cy.byLegacyTestID('dropdown-button').should('be.visible').click();
-  cy.get('.pf-c-dropdown__menu').find('li').contains(type).should('be.visible').click();
+  cy.get('.pf-v5-c-dropdown__menu').find('li').contains(type).should('be.visible').click();
   cy.get('body').then(($el) => {
     if ($el.find('[data-test-id="dropdown-button"]').text().includes('Container command')) {
       cy.get('[placeholder="argument"]').should('be.visible').type('example');

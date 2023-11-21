@@ -14,6 +14,7 @@ type LoadingTaskProps = {
 };
 
 const LoadingTask: React.FC<LoadingTaskProps> = ({ width, height, name }) => {
+  const textRef = React.useRef();
   const truncatedName = React.useMemo(
     () => truncateMiddle(name, { length: 10, truncateEnd: true }),
     [name],
@@ -28,8 +29,13 @@ const LoadingTask: React.FC<LoadingTaskProps> = ({ width, height, name }) => {
           content={i18next.t('pipelines-plugin~Installing')}
         />
       </g>
-      <Tooltip content={name}>
-        <text className="opp-pipeline-vis-loading-node__name" x={width / 2} y={height / 2 + 1}>
+      <Tooltip triggerRef={textRef} content={name}>
+        <text
+          ref={textRef}
+          className="opp-pipeline-vis-loading-node__name"
+          x={width / 2}
+          y={height / 2 + 1}
+        >
           {truncatedName}
         </text>
       </Tooltip>

@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { FormGroup, Grid, GridItem, Tile, Tooltip } from '@patternfly/react-core';
-import { LayerGroupIcon, CubeIcon, GitAltIcon, StarIcon } from '@patternfly/react-icons';
+import { CubeIcon } from '@patternfly/react-icons/dist/esm/icons/cube-icon';
+import { GitAltIcon } from '@patternfly/react-icons/dist/esm/icons/git-alt-icon';
+import { LayerGroupIcon } from '@patternfly/react-icons/dist/esm/icons/layer-group-icon';
+import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';

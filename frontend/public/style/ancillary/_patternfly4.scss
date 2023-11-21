@@ -1,43 +1,434 @@
-// Addition of specific styles to bring elements into visual likeness with PF4
+// Addition of specific styles to bring elements into visual likeness with PF
 // These are either components we don't currently use or that our current
-// markup structure doesn't align with PF4 so we must apply through targeted css
+// markup structure doesn't align with PF so we must apply through targeted css
 
 // Assigning PF component specific variables globally so we can use
 :root {
-  --pf-c-code-block--BackgroundColor: var(--pf-global--BackgroundColor--200);
-  --pf-c-code-block__pre--FontFamily: var(--pf-global--FontFamily--monospace);
-  --pf-c-code-block__pre--FontSize: var(--pf-global--FontSize--sm);
-  --pf-c-content--MarginBottom: var(--pf-global--spacer--md);
+  --pf-v5-c-code-block--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
+  --pf-v5-c-code-block__pre--FontFamily: var(--pf-v5-global--FontFamily--monospace);
+  --pf-v5-c-code-block__pre--FontSize: var(--pf-v5-global--FontSize--sm);
+  --pf-v5-c-content--MarginBottom: var(--pf-v5-global--spacer--md);
 }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--pf-global--FontFamily--heading--sans-serif);
-    font-weight: var(--pf-global--FontWeight--normal);
-    line-height: var(--pf-global--LineHeight--md);
-    margin-bottom: var(--pf-global--spacer--sm);
+:where(:not([class*="pf-v5-c-"])) {
+  @at-root h1#{&} {
+    font-size: var(--pf-v5-global--FontSize--2xl);
+    font-family: var(--pf-v5-global--FontFamily--heading);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    word-break: break-word;
+  }
+  
+  @at-root h2#{&} {
+    font-size: var(--pf-v5-global--FontSize--xl);
+    font-family: var(--pf-v5-global--FontFamily--heading);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
     word-break: break-word;
   }
 
-  h1 {
-    font-size: var(--pf-global--FontSize--2xl);
-    line-height: var(--pf-global--LineHeight--sm);
+  @at-root h3#{&} {
+    font-size: var(--pf-v5-global--FontSize--lg);
+    font-family: var(--pf-v5-global--FontFamily--heading);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    word-break: break-word;
   }
 
-  h2 {
-    font-size: var(--pf-global--FontSize--xl);
+  @at-root h4#{&} {
+    font-size: var(--pf-v5-global--FontSize--md);
+    font-family: var(--pf-v5-global--FontFamily--heading);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    word-break: break-word;
   }
 
-  h3 {
-    font-size: var(--pf-global--FontSize--lg);
+  @at-root h5#{&} {
+    font-size: var(--pf-v5-global--FontSize--md);
+    font-family: var(--pf-v5-global--FontFamily--heading);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    word-break: break-word;
   }
 
-  h4, h5, h6 {
-    font-size: var(--pf-global--FontSize--md);
+  @at-root h6#{&} {
+    font-size: var(--pf-v5-global--FontSize--md);
+    font-family: var(--pf-v5-global--FontFamily--heading);
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+    line-height: var(--pf-v5-global--LineHeight--md);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+    word-break: break-word;
   }
 
   // Override PF4 inheritance
-  button, input, optgroup, select, textarea,
-  .pf-c-badge {
-    font-family: var(--pf-global--FontFamily--sans-serif);
+  input,
+  optgroup,
+  select,
+  textarea,
+  .pf-v5-c-badge {
+    font-family: var(--pf-v5-global--FontFamily--text);
   }
 
+  @at-root button#{&} {
+    font-family: var(--pf-v5-global--FontFamily--text);
+  }
+}
+
+// Reuse PF5 form-control styling that is modified to match our legacy components using PF4 markup
+
+.pf-v5-c-form-control {
+  --pf-v5-c-form-control--ColumnGap: var(--pf-v5-global--spacer--sm);
+  --pf-v5-c-form-control--Color: var(--pf-v5-global--Color--100);
+  --pf-v5-c-form-control--FontSize: var(--pf-v5-global--FontSize--md);
+  --pf-v5-c-form-control--LineHeight: var(--pf-v5-global--LineHeight--md);
+  --pf-v5-c-form-control--Resize: none;
+  --pf-v5-c-form-control--OutlineOffset: 0;
+  --pf-c-form-control--BorderTopColor: var(--pf-global--BorderColor--300);
+  --pf-c-form-control--BorderRightColor: var(--pf-global--BorderColor--300);
+  --pf-c-form-control--BorderBottomColor: var(--pf-global--BorderColor--200);
+  --pf-c-form-control--BorderLeftColor: var(--pf-global--BorderColor--300);
+  --pf-v5-c-form-control--before--BorderTopWidth: var(--pf-v5-global--BorderWidth--sm);
+  --pf-v5-c-form-control--before--BorderRightWidth: var(--pf-v5-global--BorderWidth--sm);
+  --pf-v5-c-form-control--before--BorderBottomWidth: 0;
+  --pf-v5-c-form-control--before--BorderLeftWidth: var(--pf-v5-global--BorderWidth--sm);
+  --pf-v5-c-form-control--before--BorderTopColor: var(--pf-v5-global--BorderColor--300);
+  --pf-v5-c-form-control--before--BorderRightColor: var(--pf-v5-global--BorderColor--300);
+  --pf-v5-c-form-control--before--BorderBottomColor: transparent;
+  --pf-v5-c-form-control--before--BorderLeftColor: var(--pf-v5-global--BorderColor--300);
+  --pf-v5-c-form-control--after--BorderBottomWidth: var(--pf-v5-global--BorderWidth--sm);
+  --pf-v5-c-form-control--after--BorderBottomColor: var(--pf-v5-global--BorderColor--200);
+  --pf-v5-c-form-control--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
+  --pf-v5-c-form-control--Width: 100%;
+
+  // padding
+  --pf-v5-c-form-control--inset--base: var(--pf-v5-global--spacer--sm);
+  --pf-v5-c-form-control--PaddingTop: var(--pf-v5-global--spacer--form-element);
+  --pf-v5-c-form-control--PaddingBottom: var(--pf-v5-global--spacer--form-element);
+  --pf-v5-c-form-control--PaddingRight: var(--pf-v5-c-form-control--inset--base);
+  --pf-v5-c-form-control--PaddingLeft: var(--pf-v5-c-form-control--inset--base);
+
+  // hover
+  --pf-v5-c-form-control--hover--after--BorderBottomColor: var(--pf-v5-global--primary-color--100);
+
+  // focus
+  --pf-v5-c-form-control--focus--after--BorderBottomWidth: var(--pf-v5-global--BorderWidth--md);
+  --pf-v5-c-form-control--focus--after--BorderBottomColor: var(--pf-v5-global--primary-color--100);
+
+  // expanded
+  --pf-v5-c-form-control--m-expanded--after--BorderBottomWidth: var(--pf-v5-global--BorderWidth--md);
+  --pf-v5-c-form-control--m-expanded--after--BorderBottomColor: var(--pf-v5-global--primary-color--100);
+
+  // placeholder
+  --pf-v5-c-form-control--m-placeholder--Color: var(--pf-v5-global--Color--dark-200);
+  --pf-v5-c-form-control--m-placeholder--child--Color: var(--pf-v5-global--Color--100);
+
+  // disabled
+  --pf-v5-c-form-control--m-disabled--Color: var(--pf-v5-global--disabled-color--100);
+  --pf-v5-c-form-control--m-disabled--BackgroundColor: var(--pf-v5-global--disabled-color--300);
+  --pf-v5-c-form-control--m-disabled--after--BorderColor: transparent;
+
+  // readonly
+  --pf-v5-c-form-control--m-readonly--BackgroundColor: var(--pf-v5-global--disabled-color--300);
+  --pf-v5-c-form-control--m-readonly--hover--after--BorderBottomColor: var(--pf-v5-global--BorderColor--200);
+  --pf-v5-c-form-control--m-readonly--focus--after--BorderBottomWidth: var(--pf-v5-global--BorderWidth--sm);
+  --pf-v5-c-form-control--m-readonly--focus--after--BorderBottomColor: var(--pf-v5-global--BorderColor--200);
+
+  // readonly plain
+  --pf-v5-c-form-control--m-readonly--m-plain--BackgroundColor: transparent;
+  --pf-v5-c-form-control--m-readonly--m-plain--inset--base: 0;
+  --pf-v5-c-form-control--m-readonly--m-plain--OutlineOffset: 0;
+
+  // success
+  --pf-v5-c-form-control--m-success--after--BorderBottomWidth: var(--pf-v5-global--BorderWidth--md);
+  --pf-v5-c-form-control--m-success--after--BorderBottomColor: var(--pf-v5-global--success-color--100);
+  --pf-v5-c-form-control--m-success--PaddingRight: var(--pf-v5-global--spacer--xl);
+
+  // warning
+  --pf-v5-c-form-control--m-warning--after--BorderBottomWidth: var(--pf-v5-global--BorderWidth--md);
+  --pf-v5-c-form-control--m-warning--after--BorderBottomColor: var(--pf-v5-global--warning-color--100);
+  --pf-v5-c-form-control--m-warning--PaddingRight: var(--pf-v5-global--spacer--xl);
+
+  // error
+  --pf-v5-c-form-control--m-error--after--BorderBottomWidth: var(--pf-v5-global--BorderWidth--md);
+  --pf-v5-c-form-control--m-error--after--BorderBottomColor: var(--pf-v5-global--danger-color--100);
+  --pf-v5-c-form-control--m-error--PaddingRight: var(--pf-v5-global--spacer--xl);
+  --pf-v5-c-form-control--m-error--icon--width: var(--pf-v5-c-form-control--FontSize);
+
+  // custom icon
+  --pf-v5-c-form-control--m-icon--PaddingRight: calc(var(--pf-v5-c-form-control--inset--base) + var(--pf-v5-c-form-control--m-icon--icon--width) + var(--pf-v5-c-form-control--m-icon--icon--spacer));
+  --pf-v5-c-form-control--m-icon--icon--width: var(--pf-v5-c-form-control--FontSize);
+  --pf-v5-c-form-control--m-icon--icon--spacer: var(--pf-v5-global--spacer--sm);
+  --pf-v5-c-form-control--m-icon--icon--PaddingRight: calc(var(--pf-v5-c-form-control--inset--base) + var(--pf-v5-c-form-control--m-error--icon--width) + var(--pf-v5-c-form-control--m-icon--icon--spacer) + var(--pf-v5-c-form-control--m-icon--icon--width) + var(--pf-v5-c-form-control--m-icon--icon--spacer));
+  --pf-v5-c-form-control__select--PaddingRight: var(--pf-v5-global--spacer--lg);
+  --pf-v5-c-form-control__select--PaddingLeft: var(--pf-v5-global--spacer--sm);
+
+  // Select success
+  --pf-v5-c-form-control__select--m-success--m-status--PaddingRight: var(--pf-v5-global--spacer--3xl);
+
+  // Select warning
+  --pf-v5-c-form-control__select--m-warning--m-status--PaddingRight: var(--pf-v5-global--spacer--3xl);
+
+  // Select invalid
+  --pf-v5-c-form-control__select--m-error--m-status--PaddingRight: var(--pf-v5-global--spacer--3xl);
+
+  // Textarea
+  --pf-v5-c-form-control--textarea--Width: var(--pf-v5-c-form-control--Width);
+  --pf-v5-c-form-control--textarea--Height: auto;
+
+  // Form control icon 
+  --pf-v5-c-form-control__icon--PaddingTop: var(--pf-v5-global--spacer--form-element);
+  --pf-v5-c-form-control__icon--Color: var(--pf-v5-global--icon--Color--light);
+  --pf-v5-c-form-control__icon--m-status--Color: var(--pf-v5-global--icon--Color--light);
+  --pf-v5-c-form-control--m-success__icon--m-status--Color: var(--pf-v5-global--success-color--100);
+  --pf-v5-c-form-control--m-warning__icon--m-status--Color: var(--pf-v5-global--warning-color--100);
+  --pf-v5-c-form-control--m-error__icon--m-status--Color: var(--pf-v5-global--danger-color--100);
+
+  // Form control utilities
+  --pf-v5-c-form-control__utilities--Gap: var(--pf-v5-global--spacer--sm);
+  --pf-v5-c-form-control__utilities--PaddingTop: var(--pf-v5-c-form-control--inset--base);
+  --pf-v5-c-form-control__utilities--PaddingRight: var(--pf-v5-c-form-control--inset--base);
+
+  // Form control select toggle icon
+  --pf-v5-c-form-control__toggle-icon--PaddingTop: var(--pf-v5-global--spacer--form-element);
+  --pf-v5-c-form-control__toggle-icon--PaddingRight: var(--pf-v5-c-form-control--inset--base);
+  --pf-v5-c-form-control__toggle-icon--PaddingLeft: var(--pf-v5-c-form-control--inset--base);
+  --pf-v5-c-form-control__toggle-icon--Color: var(--pf-v5-global--Color--100);
+  --pf-v5-c-form-control--m-disabled__toggle-icon--Color: var(--pf-v5-global--disabled-color--100);
+
+  // This component always needs to be light
+  @include pf-v5-t-light("--pf-v5-c-form-control--Color");
+
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: var(--pf-v5-c-form-control--ColumnGap);
+  align-items: start;
+  width: var(--pf-v5-c-form-control--Width);
+  font-size: var(--pf-v5-c-form-control--FontSize);
+  line-height: var(--pf-v5-c-form-control--LineHeight);
+  resize: var(--pf-v5-c-form-control--Resize);
+  background-color: var(--pf-v5-c-form-control--BackgroundColor);
+
+  &:is(input, select, textarea) {
+    grid-row: 1 / 2;
+    grid-column: 1 / -1;
+    padding-block-start: var(--pf-v5-c-form-control--PaddingTop);
+    padding-block-end: var(--pf-v5-c-form-control--PaddingBottom);
+    padding-inline-start: var(--pf-v5-c-form-control--PaddingLeft);
+    padding-inline-end: var(--pf-v5-c-form-control--PaddingRight);
+    color: var(--pf-v5-c-form-control--Color);
+    border: var(--pf-global--BorderWidth--sm) solid;
+    border-color: var(--pf-c-form-control--BorderTopColor) var(--pf-c-form-control--BorderRightColor) var(--pf-c-form-control--BorderBottomColor) var(--pf-c-form-control--BorderLeftColor);
+    // stylelint-disable
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    // stylelint-enable
+
+    &:focus {
+      outline-offset: var(--pf-v5-c-form-control--OutlineOffset);
+    }
+  }
+
+  &::placeholder {
+    color: var(--pf-v5-c-form-control--m-placeholder--Color); // TODO update to set --pf-v5-c-form-control--Color in breaking change - also look for any other place to do that in this component
+  }
+  
+  &:is(input, select) {
+    text-overflow: ellipsis;
+  }
+
+  &.pf-m-readonly {
+    --pf-v5-c-form-control--BackgroundColor: var(--pf-v5-c-form-control--m-readonly--BackgroundColor);
+
+    // stylelint-disable selector-not-notation
+    &:not(.pf-m-success, .pf-m-warning, .pf-m-error) {
+      --pf-v5-c-form-control--hover--after--BorderBottomColor: var(--pf-v5-c-form-control--m-readonly--hover--after--BorderBottomColor);
+      --pf-v5-c-form-control--focus--after--BorderBottomWidth: var(--pf-v5-c-form-control--m-readonly--focus--after--BorderBottomWidth);
+      --pf-v5-c-form-control--focus--after--BorderBottomColor: var(--pf-v5-c-form-control--m-readonly--focus--after--BorderBottomColor);
+    }
+
+    &.pf-m-plain {
+      --pf-v5-c-form-control--m-readonly--BackgroundColor: var(--pf-v5-c-form-control--m-readonly--m-plain--BackgroundColor);
+      --pf-v5-c-form-control--inset--base: var(--pf-v5-c-form-control--m-readonly--m-plain--inset--base);
+      --pf-v5-c-form-control--before--BorderStyle: none;
+      --pf-v5-c-form-control--after--BorderStyle: none;
+      --pf-v5-c-form-control--OutlineOffset: var(--pf-v5-c-form-control--m-readonly--m-plain--OutlineOffset);
+    }
+  }
+
+  &:hover {
+    border-bottom-color: var(--pf-v5-c-form-control--hover--after--BorderBottomColor);
+  }
+
+  &:focus-within {
+    --pf-v5-c-form-control--after--BorderBottomColor: var(--pf-v5-c-form-control--focus--after--BorderBottomColor);
+    --pf-v5-c-form-control--after--BorderBottomWidth: var(--pf-v5-c-form-control--focus--after--BorderBottomWidth);
+  }
+
+  &.pf-m-expanded {
+    --pf-v5-c-form-control--after--BorderBottomColor: var(--pf-v5-c-form-control--m-expanded--after--BorderBottomColor);
+    --pf-v5-c-form-control--after--BorderBottomWidth: var(--pf-v5-c-form-control--m-expanded--after--BorderBottomWidth);
+  }
+
+  &.pf-m-disabled,
+  &:disabled {
+    --pf-v5-c-form-control--BackgroundColor: var(--pf-v5-c-form-control--m-disabled--BackgroundColor);
+    --pf-v5-c-form-control--Color: var(--pf-v5-c-form-control--m-disabled--Color);
+    --pf-v5-c-form-control--m-placeholder--Color: var(--pf-v5-c-form-control--m-disabled--Color);
+    --pf-v5-c-form-control__toggle-icon--Color: var(--pf-v5-c-form-control--m-disabled__toggle-icon--Color);
+    --pf-v5-c-form-control--before--BorderStyle: none;
+    --pf-v5-c-form-control--after--BorderStyle: none;
+    border-color: transparent;
+
+    cursor: not-allowed;
+  }
+
+  &.pf-m-error {
+    --pf-v5-c-form-control--PaddingRight: var(--pf-v5-c-form-control--m-error--PaddingRight);
+    --pf-v5-c-form-control--after--BorderBottomColor: var(--pf-v5-c-form-control--m-error--after--BorderBottomColor);
+    --pf-v5-c-form-control__icon--m-status--Color: var(--pf-v5-c-form-control--m-error__icon--m-status--Color);
+    --pf-v5-c-form-control__select--PaddingRight: var(--pf-v5-c-form-control__select--m-error--m-status--PaddingRight);
+    --pf-v5-c-form-control--after--BorderBottomWidth: var(--pf-v5-c-form-control--m-error--after--BorderBottomWidth);
+
+    &.pf-m-icon {
+      --pf-v5-c-form-control--PaddingRight: var(--pf-v5-c-form-control--m-icon--icon--PaddingRight);
+    }
+  }
+
+  &.pf-m-success {
+    --pf-v5-c-form-control--PaddingRight: var(--pf-v5-c-form-control--m-success--PaddingRight);
+    --pf-v5-c-form-control--after--BorderBottomColor: var(--pf-v5-c-form-control--m-success--after--BorderBottomColor);
+    --pf-v5-c-form-control__icon--m-status--Color: var(--pf-v5-c-form-control--m-success__icon--m-status--Color);
+    --pf-v5-c-form-control__select--PaddingRight: var(--pf-v5-c-form-control__select--m-success--m-status--PaddingRight);
+    --pf-v5-c-form-control--after--BorderBottomWidth: var(--pf-v5-c-form-control--m-success--after--BorderBottomWidth);
+
+    &.pf-m-icon {
+      --pf-v5-c-form-control--PaddingRight: var(--pf-v5-c-form-control--m-icon--icon--PaddingRight);
+    }
+  }
+
+  &.pf-m-warning {
+    --pf-v5-c-form-control--PaddingRight: var(--pf-v5-c-form-control--m-warning--PaddingRight);
+    --pf-v5-c-form-control--after--BorderBottomColor: var(--pf-v5-c-form-control--m-warning--after--BorderBottomColor);
+    --pf-v5-c-form-control__icon--m-status--Color: var(--pf-v5-c-form-control--m-warning__icon--m-status--Color);
+    --pf-v5-c-form-control__select--PaddingRight: var(--pf-v5-c-form-control__select--m-warning--m-status--PaddingRight);
+    --pf-v5-c-form-control--after--BorderBottomWidth: var(--pf-v5-c-form-control--m-warning--after--BorderBottomWidth);
+
+    &.pf-m-icon {
+      --pf-v5-c-form-control--PaddingRight: var(--pf-v5-c-form-control--m-icon--icon--PaddingRight);
+    }
+  }
+
+  &.pf-m-icon {
+    --pf-v5-c-form-control--PaddingRight: var(--pf-v5-c-form-control--m-icon--PaddingRight);
+  }
+
+  @at-root select#{&}  {
+    --pf-v5-c-form-control--PaddingRight: var(--pf-v5-c-form-control__select--PaddingRight);
+    --pf-v5-c-form-control--PaddingLeft: var(--pf-v5-c-form-control__select--PaddingLeft);
+
+    // Firefox's select text has additional padding
+    // stylelint-disable-next-line
+    @-moz-document url-prefix() {
+      --pf-v5-c-form-control--PaddingRight: calc(var(--pf-v5-c-form-control__select--PaddingRight) - 1px);
+      --pf-v5-c-form-control--PaddingLeft: calc(var(--pf-v5-c-form-control__select--PaddingLeft) - 4px);
+    }
+  }
+
+  &.pf-m-placeholder > select {
+    --pf-v5-c-form-control--Color: var(--pf-v5-c-form-control--m-placeholder--Color);
+
+    * {
+      --pf-v5-c-form-control--Color: var(--pf-v5-c-form-control--m-placeholder--child--Color);
+
+      // stylelint-disable max-nesting-depth
+      &:disabled {
+        color: revert;
+      }
+      // stylelint-enable
+    }
+  }
+
+  > textarea {
+    width: 100%;
+    height: 100%;
+    vertical-align: bottom;
+    resize: none;
+  }
+
+  &.pf-m-resize-vertical {
+    --pf-v5-c-form-control--Resize: vertical;
+
+    overflow: auto;
+  }
+
+  &.pf-m-resize-horizontal {
+    --pf-v5-c-form-control--Resize: horizontal;
+
+    overflow: auto;
+  }
+
+  &.pf-m-resize-both {
+    --pf-v5-c-form-control--Resize: both;
+
+    overflow: auto;
+  }
+
+}
+
+.pf-v5-c-form-control__icon {
+  padding-block-start: var(--pf-v5-c-form-control__icon--PaddingTop);
+  color: var(--pf-v5-c-form-control__icon--Color);
+
+  &.pf-m-status {
+    --pf-v5-c-form-control__icon--Color: var(--pf-v5-c-form-control__icon--m-status--Color);
+  }
+}
+
+.pf-v5-c-form-control__toggle-icon {
+  grid-row: 1 / 2;
+  grid-column: 3;
+  padding-block-start: var(--pf-v5-c-form-control__toggle-icon--PaddingTop);
+  padding-inline-start: var(--pf-v5-c-form-control__toggle-icon--PaddingLeft);
+  padding-inline-end: var(--pf-v5-c-form-control__toggle-icon--PaddingRight);
+  color: var(--pf-v5-c-form-control__toggle-icon--Color);
+  pointer-events: none;
+}
+
+.pf-v5-c-form-control__utilities {
+  display: flex;
+  flex-wrap: nowrap;
+  grid-row: 1 / 2;
+  grid-column: 2;
+  gap: var(--pf-v5-c-form-control__utilities--Gap);
+  padding-inline-end: var(--pf-v5-c-form-control__utilities--PaddingRight);
+  pointer-events: none;
+}
+
+
+
+:where(.pf-theme-dark) .pf-v5-c-form-control {
+  --pf-c-form-control__select--BackgroundUrl: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'%3E%3Cpath fill='%23e0e0e0' d='M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z'/%3E%3C/svg%3E");
+  --pf-c-form-control--BorderTopColor: transparent;
+  --pf-c-form-control--BorderRightColor: transparent;
+  --pf-c-form-control--BorderBottomColor: var(--pf-global--BorderColor--400);
+  --pf-c-form-control--BorderLeftColor: transparent;
+  --pf-c-form-control--BackgroundColor: var(--pf-global--BackgroundColor--400);
+  --pf-c-form-control--disabled--Color: var(--pf-global--disabled-color--300);
+  --pf-c-form-control--disabled--BackgroundColor: var(--pf-global--disabled-color--200);
+  --pf-c-form-control--readonly--BackgroundColor: var(--pf-global--BackgroundColor--400);
+  color: var(--pf-global--Color--100);
+}
+:where(.pf-theme-dark) .pf-v5-c-form-control::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+:where(.pf-theme-dark) .pf-v5-c-form-control[readonly] {
+  border-bottom-color: var(--pf-global--palette--black-700);
+}
+:where(.pf-theme-dark) .pf-v5-c-form-control:disabled {
+  color: var(--pf-global--palette--black-100);
+}

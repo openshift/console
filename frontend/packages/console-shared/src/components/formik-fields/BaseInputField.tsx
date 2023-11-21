@@ -1,7 +1,14 @@
 import * as React from 'react';
-import { FormGroup, ValidatedOptions } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  ValidatedOptions,
+} from '@patternfly/react-core';
 import { useField } from 'formik';
 import { useFormikValidationFix } from '../../hooks';
+import { RedExclamationCircleIcon } from '../status';
 import { BaseInputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -26,15 +33,9 @@ const BaseInputField: React.FC<
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
   useFormikValidationFix(field.value);
+
   return (
-    <FormGroup
-      fieldId={fieldId}
-      label={label}
-      helperText={helpText}
-      helperTextInvalid={errorMessage || helpTextInvalid}
-      validated={!isValid ? ValidatedOptions.error : validated}
-      isRequired={required}
-    >
+    <FormGroup fieldId={fieldId} label={label} isRequired={required}>
       {children({
         ...field,
         ...props,
@@ -43,7 +44,7 @@ const BaseInputField: React.FC<
         label,
         validated: !isValid ? ValidatedOptions.error : validated,
         'aria-describedby': helpText ? `${fieldId}-helper` : undefined,
-        onChange: (value, event) => {
+        onChange: (event) => {
           field.onChange(event);
           onChange && onChange(event);
         },
@@ -52,6 +53,18 @@ const BaseInputField: React.FC<
           onBlur && onBlur(event);
         },
       })}
+
+      <FormHelperText id={`${fieldId}-helper`}>
+        <HelperText>
+          {!isValid ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage || helpTextInvalid}
+            </HelperTextItem>
+          ) : (
+            <HelperTextItem variant={validated}>{helpText}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

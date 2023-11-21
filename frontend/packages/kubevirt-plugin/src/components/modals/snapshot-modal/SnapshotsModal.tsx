@@ -117,13 +117,13 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
                   isRequired
                   id={asId('name')}
                   value={name}
-                  onChange={(v) => setName(v)}
+                  onChange={(_event, v) => setName(v)}
                 />
               </FormRow>
               <FormRow title={t('kubevirt-plugin~Description')} fieldId={asId('desc')}>
                 <TextArea
                   value={description}
-                  onChange={(d) => setDescription(d)}
+                  onChange={(_event, d) => setDescription(d)}
                   aria-label={t('kubevirt-plugin~description text area')}
                 />
               </FormRow>
@@ -155,7 +155,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
                 data-checked-state={approveUnsupported}
                 aria-label={t('kubevirt-plugin~unsupported approve checkbox')}
                 label={t('kubevirt-plugin~I am aware of this warning and wish to proceed')}
-                onChange={setApproveUnsupported}
+                onChange={(_event, value) => setApproveUnsupported(value)}
               />
             </FormRow>
           )}

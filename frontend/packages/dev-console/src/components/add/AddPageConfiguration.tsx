@@ -135,6 +135,7 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
 
   // Extract disabled string array from Items
   const onListChange = (
+    _event,
     newEnabledOptions: React.ReactElement<ItemProps>[],
     newDisabledOptions: React.ReactElement<ItemProps>[],
   ) => {
@@ -150,7 +151,7 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
 
   return (
     <FormSection title={t('devconsole~Add page')} data-test="add-page form-section">
-      <FormHelperText isHidden={false}>
+      <FormHelperText>
         {t(
           'devconsole~Option to disable individual actions from the "+Add" page to simplify and standardize your development processes. Users can still create resources from a cli or via YAML. The "Search" and "Topology" will still show such resources.',
         )}

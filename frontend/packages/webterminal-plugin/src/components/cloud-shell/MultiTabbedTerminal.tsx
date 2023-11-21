@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Tab, TabTitleText, TabTitleIcon } from '@patternfly/react-core';
-import { CloseIcon, PlusIcon } from '@patternfly/react-icons';
+import { CloseIcon } from '@patternfly/react-icons/dist/esm/icons/close-icon';
+import { PlusIcon } from '@patternfly/react-icons/dist/esm/icons/plus-icon';
 import { useTranslation } from 'react-i18next';
 import { Tabs } from '@console/app/src/components/tabs';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';

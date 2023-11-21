@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { ActionGroup, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
+import {
+  ActionGroup,
+  Button,
+  Form,
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  TextInput,
+} from '@patternfly/react-core';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router-dom';
@@ -96,7 +105,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
                 id="catalog-source-name"
                 isRequired
                 name="catalog-source-name"
-                onChange={setName}
+                onChange={(_event, value) => setName(value)}
                 placeholder={t('olm~e.g. custom-catalog-source')}
                 type="text"
                 value={name}
@@ -107,7 +116,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               <TextInput
                 id="catalog-source-display-name"
                 name="caltalog-source-display-name"
-                onChange={setDisplayName}
+                onChange={(_event, value) => setDisplayName(value)}
                 placeholder={t('olm~e.g. Custom catalog source')}
                 type="text"
                 value={displayName}
@@ -118,7 +127,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
                 id="catalog-source-publisher"
                 isRequired
                 name="catalog-source-publisher"
-                onChange={setPublisher}
+                onChange={(_event, value) => setPublisher(value)}
                 placeholder={t('olm~e.g. John Doe')}
                 type="text"
                 value={publisher}
@@ -128,7 +137,6 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               label={t('olm~Image (URL of container image)')}
               isRequired
               fieldId="catalog-source-image"
-              helperText={t('olm~URL of container image hosted on a registry')}
             >
               <TextInput
                 aria-describedby="catalog-source-image-helper"
@@ -136,11 +144,19 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
                 type="text"
                 id="catalog-source-image"
                 name="catalog-source-image"
-                onChange={setImage}
+                onChange={(_event, value) => setImage(value)}
                 placeholder={t('olm~e.g. quay.io/johndoe/catalog-registry:latest')}
                 value={image}
                 data-test="catalog-source-image"
               />
+
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem>
+                    {t('olm~URL of container image hosted on a registry.')}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
             </FormGroup>
             <FormGroup fieldId="catalog-source-availability" label={t('olm~Availability')}>
               <RadioGroup
@@ -159,7 +175,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               </FormGroup>
             )}
             <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-              <ActionGroup className="pf-c-form__group--no-top-margin">
+              <ActionGroup className="pf-v5-c-form__group--no-top-margin">
                 <Button type="submit" variant="primary" id="save-changes" data-test="save-changes">
                   {t('olm~Create')}
                 </Button>

@@ -1,12 +1,12 @@
 .co-actions {
   align-items: flex-end;
   display: flex;
-  @media(max-width: $screen-xs){
+  @media (max-width: $screen-xs) {
     flex-direction: column;
   }
 }
 
-@media(max-width: $screen-xs){
+@media (max-width: $screen-xs) {
   .co-action-buttons__btn {
     margin-bottom: 10px;
   }
@@ -18,11 +18,11 @@
 }
 
 .co-m-nav-title {
-  margin-top: $pf-global-gutter--md;
-  padding: 0 $pf-global-gutter 0;
-  @media (min-width: $pf-global--breakpoint--xl) {
-    padding-left: $pf-global-gutter--md;
-    padding-right: $pf-global-gutter--md;
+  margin-top: $pf-v5-global-gutter--md;
+  padding: 0 $pf-v5-global-gutter 0;
+  @media (min-width: $pf-v5-global--breakpoint--xl) {
+    padding-left: $pf-v5-global-gutter--md;
+    padding-right: $pf-v5-global-gutter--md;
   }
   &--row {
     @media (min-width: $screen-sm) {
@@ -32,7 +32,7 @@
     }
   }
   &--detail {
-    border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+    border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
     flex-shrink: 0; // do not allow to shrink
   }
   // Positioned after --detail to take precedence, since they will be a siblings

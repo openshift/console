@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { RedExclamationCircleIcon, WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
@@ -72,7 +72,6 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
     <FormGroup
       fieldId={fieldId}
       label={label}
-      validated={isValid ? 'default' : 'error'}
       className="odc-multiple-key-selector"
       isRequired={required}
     >
@@ -97,6 +96,16 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
       />
       {field.value && !_.isEmpty(keys) && (
         <MultipleKeySelector name={resourceKeysField} keys={keys} addString={addString} />
+      )}
+
+      {!isValid && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {error}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       )}
     </FormGroup>
   );

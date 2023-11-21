@@ -1,19 +1,19 @@
 @import '../../../../public/style/vars';
 
 .odc-topology-filter-bar {
-  background-color: var(--pf-global--BackgroundColor--100);
+  background-color: var(--pf-v5-global--BackgroundColor--100);
   padding: 6px 0;
 
-  @media screen and (min-width: $pf-global--breakpoint--xl) {
-    padding-left: var(--pf-global--spacer--sm); 
-    padding-right: var(--pf-global--spacer--sm)
+  @media screen and (min-width: $pf-v5-global--breakpoint--xl) {
+    padding-left: var(--pf-v5-global--spacer--sm);
+    padding-right: var(--pf-v5-global--spacer--sm);
   }
 
   &__kiali-link {
     margin-left: auto;
   }
 
-  &__resource-quota-warning-block  {
-    margin-right: var(--pf-global--spacer--lg);
+  &__resource-quota-warning-block {
+    margin-right: var(--pf-v5-global--spacer--lg);
   }
 }

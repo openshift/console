@@ -4,7 +4,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
-import { Card, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { EventModel } from '../../../../models';
 import { FirehoseResource, FirehoseResult } from '../../../utils';
@@ -194,14 +194,26 @@ const OngoingActivity = connect(mapStateToProps)(
 export const ActivityCard: React.FC<{}> = React.memo(() => {
   const { t } = useTranslation();
   return (
-    <Card data-test-id="activity-card" className="co-overview-card--gradient">
-      <CardHeader>
+    <Card
+      data-test-id="activity-card"
+      className="co-overview-card--gradient"
+      isClickable
+      isSelectable
+    >
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <Link to={viewEvents} data-test="view-events-link">
+                {t('public~View events')}
+              </Link>
+            </>
+          ),
+          hasNoOffset: false,
+          className: 'co-overview-card__actions',
+        }}
+      >
         <CardTitle>{t('public~Activity')}</CardTitle>
-        <CardActions className="co-overview-card__actions">
-          <Link to={viewEvents} data-test="view-events-link">
-            {t('public~View events')}
-          </Link>
-        </CardActions>
       </CardHeader>
       <ActivityBody className="co-overview-dashboard__activity-body">
         <OngoingActivity />

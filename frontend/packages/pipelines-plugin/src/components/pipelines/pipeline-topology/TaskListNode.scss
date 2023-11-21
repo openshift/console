@@ -1,41 +1,41 @@
 .odc-task-list-node {
-  border: 1px solid var(--pf-global--BorderColor--light-100);
+  border: 1px solid var(--pf-v5-global--BorderColor--light-100);
 
   &__container {
     overflow: hidden;
-    box-shadow: var(--pf-c-dropdown__menu--BoxShadow);
+    box-shadow: var(--pf-v5-c-dropdown__menu--BoxShadow);
   }
   &__trigger-background {
-    stroke: var(--pf-global--BorderColor--100);
-    fill: var(--pf-global--BackgroundColor--light-100);
+    stroke: var(--pf-v5-global--BorderColor--100);
+    fill: var(--pf-v5-global--BackgroundColor--light-100);
     &.is-disabled {
-      fill: var(--pf-global--disabled-color--300);
+      fill: var(--pf-v5-global--disabled-color--300);
     }
   }
   &__trigger-underline {
-    fill: var(--pf-global--Color--100);
+    fill: var(--pf-v5-global--Color--100);
     &--hover {
-      fill: var(--pf-global--link--Color);
+      fill: var(--pf-v5-global--link--Color);
     }
   }
   &__trigger {
-    font-size: var(--pf-global--FontSize--md);
+    font-size: var(--pf-v5-global--FontSize--md);
     text-anchor: middle;
     dominant-baseline: middle;
     cursor: pointer;
   }
   &__trigger-disabled {
-    fill: var(--pf-global--disabled-color--100);
+    fill: var(--pf-v5-global--disabled-color--100);
   }
   &__list-items {
     max-height: 350px;
     overflow: auto;
   }
   &__divider {
-    border-color: var(--pf-global--BorderColor--100);
+    border-color: var(--pf-v5-global--BorderColor--100);
     margin: 0;
   }
   &__render-text {
-    fill: var(--pf-global--Color--100);
+    fill: var(--pf-v5-global--Color--100);
   }
 }

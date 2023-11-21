@@ -4,7 +4,8 @@ import { useUserSettings } from '@console/shared';
 export const THEME_USER_SETTING_KEY = 'console.theme';
 export const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
 const THEME_SYSTEM_DEFAULT = 'systemDefault';
-const THEME_DARK_CLASS = 'pf-theme-dark';
+const THEME_DARK_CLASS = 'pf-v5-theme-dark';
+const THEME_DARK_CLASS_LEGACY = 'pf-theme-dark'; // legacy class name needed to support PF4
 const THEME_DARK = 'dark';
 
 export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string) => {
@@ -14,8 +15,10 @@ export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string) => 
   }
   if (theme === THEME_DARK || (theme === THEME_SYSTEM_DEFAULT && systemTheme === THEME_DARK)) {
     htmlTagElement.classList.add(THEME_DARK_CLASS);
+    htmlTagElement.classList.add(THEME_DARK_CLASS_LEGACY);
   } else {
     htmlTagElement.classList.remove(THEME_DARK_CLASS);
+    htmlTagElement.classList.remove(THEME_DARK_CLASS_LEGACY);
   }
 };
 
@@ -33,8 +36,10 @@ export const ThemeProvider: React.FC<{}> = ({ children }) => {
     (e) => {
       if (e.matches) {
         htmlTagElement?.classList.add(THEME_DARK_CLASS);
+        htmlTagElement?.classList.add(THEME_DARK_CLASS_LEGACY);
       } else {
         htmlTagElement?.classList.remove(THEME_DARK_CLASS);
+        htmlTagElement?.classList.remove(THEME_DARK_CLASS_LEGACY);
       }
     },
     [htmlTagElement],

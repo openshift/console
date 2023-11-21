@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Checkbox, Select } from '@patternfly/react-core';
+import { Checkbox } from '@patternfly/react-core';
+import { Select as SelectDeprecated } from '@patternfly/react-core/deprecated';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { getLastLanguage } from '../getLastLanguage';
 import LanguageDropdown from '../LanguageDropdown';
@@ -66,7 +67,7 @@ describe('LanguageDropdown', () => {
     expect(wrapper.find('[data-test="checkbox console.preferredLanguage"]').exists()).toBeTruthy();
     expect(wrapper.find(Checkbox).props().isChecked).toBe(true);
     expect(wrapper.find('[data-test="dropdown console.preferredLanguage"]').exists()).toBeTruthy();
-    expect(wrapper.find(Select).props().isDisabled).toBe(true);
+    expect(wrapper.find(SelectDeprecated).props().isDisabled).toBe(true);
   });
 
   it('should render checkbox in unchecked state and select in enabled state if user preferences have loaded and preferred language is defined', () => {
@@ -77,7 +78,7 @@ describe('LanguageDropdown', () => {
     expect(wrapper.find('[data-test="checkbox console.preferredLanguage"]').exists()).toBeTruthy();
     expect(wrapper.find(Checkbox).props().isChecked).toBe(false);
     expect(wrapper.find('[data-test="dropdown console.preferredLanguage"]').exists()).toBeTruthy();
-    expect(wrapper.find(Select).props().isDisabled).toBe(false);
+    expect(wrapper.find(SelectDeprecated).props().isDisabled).toBe(false);
   });
 
   it('should render select with value corresponding to preferred language if user preferences have loaded and preferred language is defined', () => {
@@ -87,6 +88,6 @@ describe('LanguageDropdown', () => {
     wrapper = shallow(<LanguageDropdown />);
     expect(wrapper.find('[data-test="checkbox console.preferredLanguage"]').exists()).toBeTruthy();
     expect(wrapper.find('[data-test="dropdown console.preferredLanguage"]').exists()).toBeTruthy();
-    expect(wrapper.find(Select).props().selections).toEqual(preferredLanguageValue);
+    expect(wrapper.find(SelectDeprecated).props().selections).toEqual(preferredLanguageValue);
   });
 });

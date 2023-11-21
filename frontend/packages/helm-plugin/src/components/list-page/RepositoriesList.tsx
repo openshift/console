@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
+import { EmptyState, EmptyStateVariant, EmptyStateHeader } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Table, TableProps } from '@console/internal/components/factory';
 import RepositoriesHeader from './RepositoriesHeader';
@@ -9,10 +9,11 @@ const RepositoriesList: React.FC<TableProps> = (props) => {
   const { t } = useTranslation();
 
   const EmptyMsg = () => (
-    <EmptyState variant={EmptyStateVariant.large}>
-      <Title headingLevel="h4" size="lg" data-test="no-repositories-found">
-        {t('helm-plugin~No repositories found')}
-      </Title>
+    <EmptyState variant={EmptyStateVariant.lg}>
+      <EmptyStateHeader
+        titleText={<>{t('helm-plugin~No repositories found')}</>}
+        headingLevel="h4"
+      />
     </EmptyState>
   );
   return (

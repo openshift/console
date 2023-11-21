@@ -1,6 +1,6 @@
 .VMStatusCard {
-  padding-right: var(--pf-c-card--child--PaddingRight);
-  padding-left: var(--pf-c-card--child--PaddingLeft);
+  padding-right: var(--pf-v5-c-card--child--PaddingRight);
+  padding-left: var(--pf-v5-c-card--child--PaddingLeft);
   .co-status-card__health-item {
     padding-right: 0;
   }
@@ -8,8 +8,8 @@
 
 .VMStatusCard-separator {
   height: 1px;
-  background: var(--pf-global--disabled-color--200);
-  margin-top: var(--pf-global--spacer--sm);
+  background: var(--pf-v5-global--disabled-color--200);
+  margin-top: var(--pf-v5-global--spacer--sm);
 }
 
 .VMStatusCard-body {

@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { Tooltip, Popover, Button } from '@patternfly/react-core';
-import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { Tooltip, Popover, Button, Icon } from '@patternfly/react-core';
+import { ListIcon } from '@patternfly/react-icons/dist/esm/icons/list-icon';
+import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
+import { TopologyIcon } from '@patternfly/react-icons/dist/esm/icons/topology-icon';
 import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import {
@@ -73,7 +75,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
               onViewChange(showGraphView ? TopologyViewType.list : TopologyViewType.graph)
             }
           >
-            {showGraphView ? <ListIcon size="md" /> : <TopologyIcon size="md" />}
+            <Icon size="md">{showGraphView ? <ListIcon /> : <TopologyIcon />}</Icon>
           </Button>
         </Tooltip>
       </>

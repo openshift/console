@@ -1,19 +1,19 @@
-.pf-c-about-modal-box {
+.pf-v5-c-about-modal-box {
   dt {
-    color: var(--pf-global--color--100);
-    font-size: var(--pf-c-content--FontSize);
-    margin-bottom: var(--pf-global--spacer--md);
+    color: var(--pf-v5-global--color--100);
+    font-size: var(--pf-v5-c-content--FontSize);
+    margin-bottom: var(--pf-v5-global--spacer--md);
     text-transform: none;
   }
   dd {
-    margin-bottom: var(--pf-global--spacer--md);
+    margin-bottom: var(--pf-v5-global--spacer--md);
   }
   p {
-    color: var(--pf-global--color--100);
-    margin-bottom: var(--pf-global--spacer--xl);
+    color: var(--pf-v5-global--color--100);
+    margin-bottom: var(--pf-v5-global--spacer--xl);
   }
 }
 
 .co-about-modal__alert {
-  margin-bottom: var(--pf-global--spacer--xl);
+  margin-bottom: var(--pf-v5-global--spacer--xl);
 }

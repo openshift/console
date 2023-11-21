@@ -11,11 +11,11 @@
     max-width: 203px;
   }
 
-  .pf-l-split.pf-m-gutter {
+  .pf-v5-l-split.pf-m-gutter {
     justify-content: space-between;
 
-    &>*:not(:last-child) {
-      margin-right: var(--pf-global--spacer--sm);
+    & > *:not(:last-child) {
+      margin-right: var(--pf-v5-global--spacer--sm);
     }
   }
 }

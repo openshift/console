@@ -1,14 +1,14 @@
 @use "sass:math";
 
-$pipeline-aborted-color: $pf-color-black-300;
-$pipeline-border-color: $pf-color-black-300;
-$pipeline-failed-color: $pf-color-red-100;
+$pipeline-aborted-color: $pf-v5-color-black-300;
+$pipeline-border-color: $pf-v5-color-black-300;
+$pipeline-failed-color: $pf-v5-color-red-100;
 $pipeline-font-base: 13px;
-$pipeline-in-progress-color: $pf-color-blue-400;
-$pipeline-new-color: $pf-color-blue-100;
-$pipeline-pending-color: $pf-color-black-300;
-$pipeline-success-color: var(--pf-chart-color-green-400);
-$pipeline-require-attention-color: $pf-color-gold-400;
+$pipeline-in-progress-color: $pf-v5-color-blue-400;
+$pipeline-new-color: $pf-v5-color-blue-100;
+$pipeline-pending-color: $pf-v5-color-black-300;
+$pipeline-success-color: var(--pf-v5-chart-color-green-400);
+$pipeline-require-attention-color: $pf-v5-color-gold-400;
 $pipeline-circle-animation-time: 0.35s;
 $pipeline-circle-diameter: 18px;
 $pipeline-line-border-width: 8px;
@@ -28,23 +28,33 @@ $pipeline-semi-circle-animation-time: ($pipeline-circle-animation-time * 0.5);
 
 // Animations
 @keyframes build-progress-line {
-  to {width: $pipeline-progress-line}
+  to {
+    width: $pipeline-progress-line;
+  }
 }
 
 @keyframes build-progress-rail {
-  to {transform: translateX(400%)}
+  to {
+    transform: translateX(400%);
+  }
 }
 
 @keyframes build-progress {
-  to {transform: rotate(180deg)}
+  to {
+    transform: rotate(180deg);
+  }
 }
 
 @keyframes pipeline-stage-fadeIcon {
-  to {opacity: 1}
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes pipeline-stage-fadeOut {
-  to {background-color: transparent}
+  to {
+    background-color: transparent;
+  }
 }
 
 .build-pipeline {
@@ -77,13 +87,13 @@ $pipeline-semi-circle-animation-time: ($pipeline-circle-animation-time * 0.5);
   // need to use flex-basis: auto and width because of IE11 bug
   flex: 0 0 auto;
   min-height: 96px;
-  padding: ($pipeline-padding + 5) $pipeline-padding  ($pipeline-padding * 3) $pipeline-padding;
+  padding: ($pipeline-padding + 5) $pipeline-padding ($pipeline-padding * 3) $pipeline-padding;
   position: relative;
   width: 100%;
   // add arrow after each stage
   &:before {
     bottom: 0;
-    color:  darken($pipeline-border-color, 5%);
+    color: darken($pipeline-border-color, 5%);
     content: '\2193';
     font-size: 22px;
     left: 0;
@@ -135,7 +145,9 @@ $pipelineStageScreenSize: (
   padding: 0 $pipeline-padding;
 }
 
-.build-pipeline__stage-name, .build-pipeline__stage-time, .build-pipeline__stage-actions {
+.build-pipeline__stage-name,
+.build-pipeline__stage-time,
+.build-pipeline__stage-actions {
   font-size: $pipeline-font-base;
   text-align: center;
 }
@@ -143,14 +155,15 @@ $pipelineStageScreenSize: (
   @include text-overflow();
   margin-bottom: $pipeline-padding + 3px;
 }
-.build-pipeline__stage-time, .build-pipeline__stage-actions {
+.build-pipeline__stage-time,
+.build-pipeline__stage-actions {
   margin-top: 12px;
   &--in-progress {
     color: #777;
   }
 }
 
-.build-pipeline__status-icon--cancelled{
+.build-pipeline__status-icon--cancelled {
   color: $pipeline-aborted-color;
 }
 
@@ -172,7 +185,7 @@ $pipelineStageScreenSize: (
   }
 }
 
-.build-pipeline__status-bar  {
+.build-pipeline__status-bar {
   .build-pipeline__animation-line:before,
   .build-pipeline__circle-clip1:before,
   .build-pipeline__circle-clip2:before {
@@ -185,41 +198,46 @@ $pipelineStageScreenSize: (
 }
 
 $pipelineStageStatus: (
-  success              Success            $pipeline-success-color           "\f00c"   null,
-  failed               Failed             $pipeline-failed-color            "\f00d"   null,
-  not-executed         NotExecuted        $pipeline-pending-color           ""        null,
-  paused-pending-input null               $pipeline-require-attention-color "\f04c"   ($pipeline-font-base - 2),
-  aborted              Aborted            $pipeline-aborted-color           "\f05e"   null,
-  in-progress          InProgress         $pipeline-in-progress-color       "\f021"   null
+  success Success $pipeline-success-color '\f00c'null,
+  failed Failed $pipeline-failed-color '\f00d'null,
+  not-executed NotExecuted $pipeline-pending-color '' null,
+  paused-pending-input null $pipeline-require-attention-color '\f04c'($pipeline-font-base - 2),
+  aborted Aborted $pipeline-aborted-color '\f05e'null,
+  in-progress InProgress $pipeline-in-progress-color '\f021'null
 );
 
 @each $status in $pipelineStageStatus {
-  .build-pipeline__status-bar--#{nth($status,1)}  {
+  .build-pipeline__status-bar--#{nth($status,1)} {
     .build-pipeline__animation-line:before,
     .build-pipeline__circle-clip1:before,
     .build-pipeline__circle-clip2:before,
     .build-pipeline__circle-inner-fill {
-      background-color: nth($status,3);
+      background-color: nth($status, 3);
     }
     .build-pipeline__animation-circle {
-      @if(nth($status,2)) {
-        animation: pipeline-stage-fadeIn#{nth($status,2)} 0s ($pipeline-line-animation-time + $pipeline-circle-animation-time) linear forwards;
+      @if (nth($status, 2)) {
+        animation: pipeline-stage-fadeIn#{nth($status, 2)}
+          0s
+          ($pipeline-line-animation-time + $pipeline-circle-animation-time)
+          linear
+          forwards;
       }
       &:after {
-        content: nth($status,4);
-        @if(nth($status,5)) {
-          font-size: nth($status,5);
+        content: nth($status, 4);
+        @if (nth($status, 5)) {
+          font-size: nth($status, 5);
         }
       }
     }
   }
 }
 
-.build-pipeline__status-bar--in-progress  {
+.build-pipeline__status-bar--in-progress {
   .build-pipeline__animation-line {
     overflow: hidden;
     &:before {
-      animation: build-progress-rail $pipeline-progress-rail-animation-time $pipeline-line-grow-animation-time linear infinite;
+      animation: build-progress-rail $pipeline-progress-rail-animation-time
+        $pipeline-line-grow-animation-time linear infinite;
       background-color: $pipeline-in-progress-color;
       transform: translateX(-100%);
       width: 25%;
@@ -231,9 +249,10 @@ $pipelineStageStatus: (
     background-color: $pipeline-in-progress-color;
   }
   .build-pipeline__animation-circle {
-    animation: pipeline-stage-fadeInProgress 0s ($pipeline-line-animation-time + $pipeline-circle-animation-time) linear forwards;
+    animation: pipeline-stage-fadeInProgress 0s
+      ($pipeline-line-animation-time + $pipeline-circle-animation-time) linear forwards;
     &:after {
-      content: "\f021";
+      content: '\f021';
     }
   }
 }
@@ -271,7 +290,12 @@ $pipelineStageStatus: (
   width: $pipeline-circle-diameter;
   &:after {
     @include font-awesome-free-solid;
-    animation: pipeline-stage-fadeIcon $pipeline-icon-animation-time ($pipeline-line-grow-animation-time + $pipeline-semi-circle-animation-time + ($pipeline-inner-circle-animation-time * 2)) linear forwards;
+    animation: pipeline-stage-fadeIcon $pipeline-icon-animation-time
+      (
+        $pipeline-line-grow-animation-time + $pipeline-semi-circle-animation-time +
+          ($pipeline-inner-circle-animation-time * 2)
+      )
+      linear forwards;
     color: $pipeline-inner-circle-color;
     font-size: 10px;
     left: 50%;
@@ -301,7 +325,8 @@ $pipelineStageStatus: (
   clip: rect(0, $pipeline-circle-diameter, $pipeline-circle-diameter, $pipeline-circle-radius);
   &:before {
     @extend %circle-clip-before;
-    animation: build-progress $pipeline-semi-circle-animation-time $pipeline-line-animation-time linear forwards;
+    animation: build-progress $pipeline-semi-circle-animation-time $pipeline-line-animation-time
+      linear forwards;
     clip: rect(0, $pipeline-circle-radius, $pipeline-circle-diameter, 0);
   }
 }
@@ -310,12 +335,14 @@ $pipelineStageStatus: (
   clip: rect(0, $pipeline-circle-radius, $pipeline-circle-diameter, 0);
   &:before {
     @extend %circle-clip-before;
-    animation: build-progress $pipeline-semi-circle-animation-time ($pipeline-semi-circle-animation-time + $pipeline-line-animation-time) linear forwards;
+    animation: build-progress $pipeline-semi-circle-animation-time
+      ($pipeline-semi-circle-animation-time + $pipeline-line-animation-time) linear forwards;
     clip: rect(0, $pipeline-circle-diameter, $pipeline-circle-diameter, $pipeline-circle-radius);
   }
 }
 .build-pipeline__circle-inner {
-  animation: pipeline-stage-fadeOut $pipeline-inner-circle-animation-time ($pipeline-line-animation-time + $pipeline-circle-animation-time) linear forwards;
+  animation: pipeline-stage-fadeOut $pipeline-inner-circle-animation-time
+    ($pipeline-line-animation-time + $pipeline-circle-animation-time) linear forwards;
   background-color: $pipeline-inner-circle-color;
   border-radius: $pipeline-circle-radius;
   height: ($pipeline-circle-diameter - $pipeline-circle-border-width * 2);

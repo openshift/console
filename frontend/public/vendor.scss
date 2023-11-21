@@ -1,10 +1,11 @@
 // Config
-@import "style/vars";
+@import 'style/vars';
 
-// External dependencies (tilde tells Webpack not to use relative path). Seperate SCSS entrypoint here because some modules break sourcemaps.
-@import "~openshift-logos-icon/style";
-@import "~@fortawesome/fontawesome-free/scss/fontawesome";
-@import "~@fortawesome/fontawesome-free/scss/solid";
+// External dependencies (tilde tells Webpack not to use relative path).
+// Separate SCSS entrypoint here because some modules break source maps.
+@import '~openshift-logos-icon/style';
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import '~@fortawesome/fontawesome-free/scss/solid';
 @import '~@patternfly/react-catalog-view-extension/dist/sass/variables';
 @import '~@patternfly/react-catalog-view-extension/dist/sass/catalog-item';
 @import '~@patternfly/react-catalog-view-extension/dist/sass/catalog-tile';
@@ -12,18 +13,19 @@
 @import '~@patternfly/react-catalog-view-extension/dist/sass/properties-side-panel';
 @import '~@patternfly/react-catalog-view-extension/dist/sass/vertical-tabs';
 @import '~@patternfly/patternfly/sass-utilities/all';
-@import "~@patternfly/patternfly/base/base";
-@import "~@patternfly/patternfly/base/fonts";
-@import "~@patternfly/patternfly/base/variables";
-@import "~@patternfly/patternfly/components/Drawer/drawer";
-@import "~@patternfly/patternfly/components/Form/form";
-@import "~@patternfly/patternfly/components/FormControl/form-control";
-@import "~@patternfly/patternfly/components/InputGroup/input-group";
-@import "~@patternfly/patternfly/components/NotificationBadge/notification-badge";
-@import "~@patternfly/patternfly/components/NotificationDrawer/notification-drawer";
-@import "~@patternfly/patternfly/components/Toolbar/toolbar";
-@import "~@patternfly/patternfly/patternfly-charts";
-@import "~@patternfly/patternfly/patternfly-addons";
+@import '~@patternfly/patternfly/base/base';
+@import '~@patternfly/patternfly/base/fonts';
+@import '~@patternfly/patternfly/base/svg-icons';
+@import '~@patternfly/patternfly/base/variables';
+@import '~@patternfly/patternfly/components/Drawer/drawer';
+@import '~@patternfly/patternfly/components/Form/form';
+@import '~@patternfly/patternfly/components/FormControl/form-control';
+@import '~@patternfly/patternfly/components/InputGroup/input-group';
+@import '~@patternfly/patternfly/components/NotificationBadge/notification-badge';
+@import '~@patternfly/patternfly/components/NotificationDrawer/notification-drawer';
+@import '~@patternfly/patternfly/components/Toolbar/toolbar';
+@import '~@patternfly/patternfly/patternfly-charts';
+@import '~@patternfly/patternfly/patternfly-addons';
 
 // External dependency extensions
-@import "style/patternfly-sizing-extension";
+@import 'style/patternfly-sizing-extension';

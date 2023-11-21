@@ -1,5 +1,5 @@
 .co-suggestion-box {
-  background-color: var(--pf-global--BackgroundColor--100);
+  background-color: var(--pf-v5-global--BackgroundColor--100);
   z-index: 5;
   width: 100%;
   @media (max-width: $screen-xs-min) {
@@ -11,7 +11,7 @@
 }
 
 .co-suggestion-box__suggestions {
-  background-color: var(--pf-global--BackgroundColor--100);
+  background-color: var(--pf-v5-global--BackgroundColor--100);
   /* To make the suggestion box hover on top of the table */
   margin-bottom: -19em;
   display: flex;
@@ -22,19 +22,19 @@
 }
 
 .co-suggestion-box__suggestions--shadowed {
-  box-shadow: var(--pf-global--BoxShadow--md);
-  padding: var(--pf-global--spacer--sm);
+  box-shadow: var(--pf-v5-global--BoxShadow--md);
+  padding: var(--pf-v5-global--spacer--sm);
 }
 
 .co-suggestion-line {
-  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
-  background-color: var(--pf-global--palette--black-150);
+  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
+  background-color: var(--pf-v5-global--palette--black-150);
   border-radius: 12px;
   overflow: hidden;
   display: inline;
   align-self: flex-start;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: calc(100% - var(--pf-global--spacer--sm));
+  max-width: calc(100% - var(--pf-v5-global--spacer--sm));
   margin: 0.15rem 0;
 }

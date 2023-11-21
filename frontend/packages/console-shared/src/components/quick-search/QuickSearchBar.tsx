@@ -9,7 +9,7 @@ interface QuickSearchBarProps {
   itemsLoaded: boolean;
   autoFocus: boolean;
   searchTerm: string;
-  onSearch: (searchTerm: string) => void;
+  onSearch: (event: React.FormEvent<HTMLInputElement>, searchTerm: string) => void;
   searchPlaceholder: string;
   icon?: React.ReactNode;
 }
@@ -31,8 +31,9 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
       onClick={() => inputRef.current?.focus()}
       className="ocs-quick-search-bar"
       data-test="quick-search-bar"
+      translate="no"
     >
-      <InputGroupText className="ocs-quick-search-bar__border-none">
+      <InputGroupText className="ocs-quick-search-bar__icon ocs-quick-search-bar__border-none">
         {icon || <QuickSearchIcon />}
       </InputGroupText>
       <div className="ocs-quick-search-bar__input-wrapper">
@@ -53,12 +54,12 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
           value={searchTerm}
           data-test="input"
           style={{
-            width: spanRef.current?.offsetWidth + 2 ?? '0px',
+            width: spanRef.current?.offsetWidth ? spanRef.current?.offsetWidth + 2 : '0px',
           }}
         />
         {itemsLoaded && showNoResults && (
           <InputGroupText
-            className="ocs-quick-search-bar__border-none"
+            className="ocs-quick-search-bar__no-results ocs-quick-search-bar__border-none"
             data-test="quick-search-no-results"
           >
             &mdash; {t('console-shared~No results')}

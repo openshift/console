@@ -48,7 +48,6 @@ const DropdownWithSwitchToggle: React.FC<DropdownWithSwitchToggleProps> = ({
         enableFlip={false}
         isVisible={isOpen}
         popper={menu}
-        popperMatchesTriggerWidth
         position="left"
         trigger={
           <MenuToggle

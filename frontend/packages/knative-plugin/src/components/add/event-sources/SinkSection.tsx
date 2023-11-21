@@ -16,7 +16,7 @@ const SinkSection: React.FC<SinkSectionProps> = ({ namespace, fullWidth }) => {
         <>
           {t('knative-plugin~Target')}
           <span
-            className="pf-c-form__label-required"
+            className="pf-v5-c-form__label-required"
             aria-hidden="true"
             style={{ verticalAlign: 'top' }}
           >

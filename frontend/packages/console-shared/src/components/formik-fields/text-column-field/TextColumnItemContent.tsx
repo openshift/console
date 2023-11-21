@@ -8,7 +8,8 @@ import {
   ButtonType,
   Tooltip,
 } from '@patternfly/react-core';
-import { MinusCircleIcon, GripVerticalIcon } from '@patternfly/react-icons';
+import { GripVerticalIcon } from '@patternfly/react-icons/dist/esm/icons/grip-vertical-icon';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import InputField from '../InputField';
 import {
@@ -73,7 +74,7 @@ const TextColumnItemContent: React.FC<TextColumnItemContentProps> = ({
     <div ref={previewDropRef} style={{ opacity }}>
       <Flex
         alignItems={{ default: 'alignItemsFlexStart' }}
-        style={{ marginBottom: 'var(--pf-global--spacer--sm)' }}
+        style={{ marginBottom: 'var(--pf-v5-global--spacer--sm)' }}
       >
         {dndEnabled && (
           <FlexItem style={{ cursor: 'move' }}>

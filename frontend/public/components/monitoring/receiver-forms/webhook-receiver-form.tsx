@@ -14,7 +14,7 @@ export const Form: React.FC<FormProps> = ({ formValues, dispatchFormChange }) =>
         {t('public~URL')}
       </label>
       <input
-        className="pf-c-form-control"
+        className="pf-v5-c-form-control"
         type="text"
         aria-describedby="webhook-url-help"
         id="webhook-url"

@@ -84,7 +84,7 @@ const SecureRoute: React.FC = () => {
           {tls.termination && tls.termination !== 'passthrough' && (
             <>
               <h3>{t('devconsole~Certificates')}</h3>
-              <FormHelperText isHidden={false}>
+              <FormHelperText>
                 {t(
                   "devconsole~TLS certificates for edge and re-encrypt termination. If not specified, the router's default certificate is used.",
                 )}

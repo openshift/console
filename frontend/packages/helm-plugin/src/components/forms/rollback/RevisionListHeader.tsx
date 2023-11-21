@@ -4,9 +4,9 @@ import { Kebab } from '@console/internal/components/utils';
 
 export const tableColumnClasses = {
   input: Kebab.columnClass,
-  revision: 'pf-u-w-8-on-xl pf-u-w-25-on-xs',
-  updated: 'pf-u-w-16-on-xl pf-u-w-25-on-lg pf-u-w-40-on-xs',
-  status: 'pf-m-hidden pf-m-visible-on-lg pf-u-w-8-on-xl pf-u-w-16-on-lg',
+  revision: 'pf-v5-u-w-8-on-xl pf-v5-u-w-25-on-xs',
+  updated: 'pf-v5-u-w-16-on-xl pf-v5-u-w-25-on-lg pf-v5-u-w-40-on-xs',
+  status: 'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-8-on-xl pf-v5-u-w-16-on-lg',
   chartName: 'pf-m-hidden pf-m-visible-on-xl',
   chartVersion: 'pf-m-hidden pf-m-visible-on-xl',
   appVersion: 'pf-m-hidden pf-m-visible-on-xl',

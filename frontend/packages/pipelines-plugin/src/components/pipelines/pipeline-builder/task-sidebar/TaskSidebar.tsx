@@ -84,7 +84,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
           removeThisTask={() => onRemoveTask(thisTask.name)}
         />
       </StackItem>
-      <StackItem className="opp-task-sidebar__content pf-c-form">
+      <StackItem className="opp-task-sidebar__content pf-v5-c-form">
         <TaskSidebarName
           name={`${formikTaskReference}.name`}
           taskName={taskResource.metadata.name}

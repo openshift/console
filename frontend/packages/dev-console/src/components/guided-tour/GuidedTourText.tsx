@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { Trans, useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import { ExternalLink } from '@console/internal/components/utils';
@@ -81,7 +81,7 @@ export const SearchTourText: React.FC = () => {
         {t(
           'devconsole~Add frequently accessed resources to your side navigation for quick access. Look for the',
         )}{' '}
-        <span style={{ color: 'var(--pf-global--palette--blue-400)' }}>
+        <span style={{ color: 'var(--pf-v5-global--palette--blue-400)' }}>
           <PlusCircleIcon /> {t('devconsole~Add to navigation')}
         </span>{' '}
         {t('devconsole~link next to your search result.')}

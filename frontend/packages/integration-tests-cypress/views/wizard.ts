@@ -1,8 +1,8 @@
 export const wizard = {
   next: () => {
-    cy.get('.pf-c-button.pf-m-primary').contains('Next').click();
+    cy.get('.pf-v5-c-button.pf-m-primary').contains('Next').click();
   },
   create: () => {
-    cy.get('.pf-c-button.pf-m-primary').contains('Create').click();
+    cy.get('.pf-v5-c-button.pf-m-primary').contains('Create').click();
   },
 };

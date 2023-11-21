@@ -5,6 +5,8 @@ import {
   FormGroup,
   FormHelperText,
   FormSection,
+  HelperText,
+  HelperTextItem,
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -130,7 +132,7 @@ const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
     setValue(parseInt(event.currentTarget.value, 10));
   };
 
-  const onImageChange = (newValue: string) => {
+  const onImageChange = (_event, newValue: string) => {
     setSaveStatus({ status: null });
     setImage(newValue);
   };
@@ -191,17 +193,17 @@ const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
       title={t('webterminal-plugin~Web Terminal Configuration')}
       data-test="web-terminal form-section"
     >
-      <FormHelperText isHidden={false}>
-        {t(
-          'webterminal-plugin~As admin you can change the default timeout and image of Web Terminal.',
-        )}
+      <FormHelperText>
+        <HelperText>
+          <HelperTextItem>
+            {t(
+              'webterminal-plugin~As admin you can change the default timeout and image of Web Terminal.',
+            )}
+          </HelperTextItem>
+        </HelperText>
       </FormHelperText>
-      <FormGroup
-        label={t('webterminal-plugin~Timeout')}
-        helperText={t('webterminal-plugin~Set timeout for the terminal.')}
-        fieldId="timeout-value"
-      >
-        <div className="pf-c-input-group">
+      <FormGroup label={t('webterminal-plugin~Timeout')} fieldId="timeout-value">
+        <div className="pf-v5-c-input-group">
           <NumberSpinner
             onChange={onValueChange}
             changeValueBy={changeValueBy}
@@ -225,6 +227,12 @@ const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
             disabled={readonly}
           />
         </div>
+
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>{t('webterminal-plugin~Set timeout for the terminal.')}</HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
       <FormGroup>
         <Checkbox
@@ -240,11 +248,7 @@ const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
         />
       </FormGroup>
 
-      <FormGroup
-        label={t('webterminal-plugin~Image')}
-        helperText={t('webterminal-plugin~Set custom image for the terminal.')}
-        fieldId="web-terminal-image"
-      >
+      <FormGroup label={t('webterminal-plugin~Image')} fieldId="web-terminal-image">
         <TextInput
           value={image}
           onChange={onImageChange}
@@ -252,10 +256,18 @@ const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
           id="web-terminal-image"
           type="text"
           aria-label="web-terminal-image"
-          className="pf-c-form-control"
+          className="pf-v5-c-form-control"
           data-test="web-terminal-image"
           isDisabled={readonly}
         />
+
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              {t('webterminal-plugin~Set custom image for the terminal.')}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
       <FormGroup>
         <Checkbox

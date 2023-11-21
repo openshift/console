@@ -4,15 +4,13 @@ import * as React from 'react';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
+import { TableGridBreakpoint, SortByDirection, OnSelect } from '@patternfly/react-table';
 import {
   Table as PfTable,
-  TableHeader,
-  TableBody,
-  TableGridBreakpoint,
-  SortByDirection,
-  OnSelect,
+  TableHeader as TableHeaderDeprecated,
+  TableBody as TableBodyDeprecated,
   TableProps as PfTableProps,
-} from '@patternfly/react-table';
+} from '@patternfly/react-table/deprecated';
 import * as classNames from 'classnames';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import {
@@ -138,7 +136,7 @@ export const TableRow: React.FC<TableRowProps> = ({
       data-test-rows="resource-row"
       data-key={trKey}
       style={style}
-      className={className}
+      className={classNames('pf-v5-c-table__tr', className)}
       role="row"
     />
   );
@@ -208,7 +206,7 @@ export const TableData: React.FC<TableDataProps> = ({
   ...props
 }) => {
   return isColumnVisible(window.innerWidth, columnID, columns, showNamespaceOverride) ? (
-    <td {...props} className={className} role="gridcell" />
+    <td {...props} className={classNames('pf-v5-c-table__td', className)} role="gridcell" />
   ) : null;
 };
 TableData.displayName = 'TableData';
@@ -294,7 +292,7 @@ const VirtualBody: React.FC<VirtualBodyProps> = (props) => {
   return (
     <VirtualTableBody
       autoHeight
-      className="pf-c-table pf-m-compact pf-m-border-rows pf-c-window-scroller"
+      className="pf-v5-c-table pf-m-compact pf-m-border-rows pf-v5-c-window-scroller"
       deferredMeasurementCache={cellMeasurementCache}
       rowHeight={cellMeasurementCache.rowHeight}
       height={height || 0}
@@ -594,8 +592,8 @@ export const Table: React.FC<TableProps> = ({
           role={virtualize ? 'presentation' : 'grid'}
           aria-label={virtualize ? null : ariaLabel}
         >
-          <TableHeader role="rowgroup" />
-          {!virtualize && <TableBody />}
+          <TableHeaderDeprecated role="rowgroup" />
+          {!virtualize && <TableBodyDeprecated />}
         </PfTable>
         {virtualize &&
           (scrollNode ? (

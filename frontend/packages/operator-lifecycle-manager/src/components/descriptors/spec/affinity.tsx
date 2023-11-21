@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -104,7 +105,7 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
             {t('olm~Weight')}
           </label>
           <input
-            className="pf-c-form-control"
+            className="pf-v5-c-form-control"
             type="number"
             value={weight}
             onChange={onChangeWeight}
@@ -299,7 +300,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
               {t('olm~Weight')}
             </label>
             <input
-              className="pf-c-form-control"
+              className="pf-v5-c-form-control"
               type="number"
               value={weight}
               onChange={onChangeWeight}
@@ -313,7 +314,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
           </label>
           <input
             id={`topology-${key}`}
-            className="pf-c-form-control"
+            className="pf-v5-c-form-control"
             type="text"
             value={topologyKey}
             onChange={onChangeTopologyKey}

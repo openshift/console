@@ -4,7 +4,8 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PauseCircleIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-circle-icon';
+import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 
 import { Conditions } from './conditions';
 import { errorModal } from './modals';
@@ -295,7 +296,7 @@ export const MachineConfigPoolDetailsPage: React.SFC<any> = (props) => (
 
 const tableColumnClasses = [
   '',
-  'pf-m-hidden pf-m-visible-on-md pf-u-w-33-on-md',
+  'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-33-on-md',
   '',
   '',
   Kebab.columnClass,

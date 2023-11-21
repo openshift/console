@@ -3,7 +3,11 @@ import {
   formatPrometheusDuration,
   parsePrometheusDuration,
 } from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
+import {
+  Dropdown as DropdownDeprecated,
+  DropdownToggle as DropdownToggleDeprecated,
+  DropdownItem as DropdownItemDeprecated,
+} from '@patternfly/react-core/deprecated';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -81,17 +85,17 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
         >
           {t('public~Time range')}
         </label>
-        <Dropdown
+        <DropdownDeprecated
           className="monitoring-dashboards__variable-dropdown"
           dropdownItems={_.map(items, (name, key) => (
-            <DropdownItem component="button" key={key} onClick={() => onChange(key)}>
+            <DropdownItemDeprecated component="button" key={key} onClick={() => onChange(key)}>
               {name}
-            </DropdownItem>
+            </DropdownItemDeprecated>
           ))}
           isOpen={isOpen}
           onSelect={setClosed}
           toggle={
-            <DropdownToggle
+            <DropdownToggleDeprecated
               className="monitoring-dashboards__dropdown-button"
               id="monitoring-time-range-dropdown"
               onToggle={toggleIsOpen}
@@ -103,7 +107,7 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
                     : formatPrometheusDuration(_.toNumber(timeSpanFromParams) || timespan)
                 ]
               }
-            </DropdownToggle>
+            </DropdownToggleDeprecated>
           }
         />
       </div>

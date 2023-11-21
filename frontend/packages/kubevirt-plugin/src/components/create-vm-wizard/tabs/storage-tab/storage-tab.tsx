@@ -12,8 +12,10 @@ import {
   Stack,
   StackItem,
   Title,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { ExternalLink, Firehose, FirehoseResult } from '@console/internal/components/utils';
@@ -187,18 +189,21 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
           {!showStorages && (
             <Bullseye>
               <EmptyState variant={EmptyStateVariant.full}>
-                <Title headingLevel="h5" size="lg">
-                  {t('kubevirt-plugin~No disks attached')}
-                </Title>
-                {!isCreateDisabled && (
-                  <Button
-                    {...addButtonProps}
-                    icon={<PlusCircleIcon />}
-                    variant={ButtonVariant.link}
-                  >
-                    {t('kubevirt-plugin~Add disk')}
-                  </Button>
-                )}
+                <EmptyStateHeader
+                  titleText={<>{t('kubevirt-plugin~No disks attached')}</>}
+                  headingLevel="h5"
+                />
+                <EmptyStateFooter>
+                  {!isCreateDisabled && (
+                    <Button
+                      {...addButtonProps}
+                      icon={<PlusCircleIcon />}
+                      variant={ButtonVariant.link}
+                    >
+                      {t('kubevirt-plugin~Add disk')}
+                    </Button>
+                  )}
+                </EmptyStateFooter>
               </EmptyState>
             </Bullseye>
           )}

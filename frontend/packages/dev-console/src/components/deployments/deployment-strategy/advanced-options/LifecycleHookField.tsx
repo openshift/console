@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ButtonVariant, Button, Tooltip } from '@patternfly/react-core';
-import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { cloneDeep } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -124,7 +125,7 @@ const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
   return (
     <div>
       <div className="co-section-heading-tertiary odc-lifecycle-hook-field__title">{title}</div>
-      <div className="pf-c-form__helper-text">{subTitle}</div>
+      <div className="pf-v5-c-form__helper-text">{subTitle}</div>
       {!showForm && (
         <Button
           className="pf-m-link--align-left"

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
-import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
@@ -18,12 +18,19 @@ const DetailsCard: React.FC = () => {
   const zone = obj.metadata.labels?.['topology.kubernetes.io/zone'];
   const { t } = useTranslation();
   return (
-    <Card data-test-id="details-card">
-      <CardHeader>
+    <Card data-test-id="details-card" isClickable isSelectable>
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <Link to={detailsLink}>{t('console-app~View all')}</Link>
+            </>
+          ),
+          hasNoOffset: false,
+          className: 'co-overview-card__actions',
+        }}
+      >
         <CardTitle>{t('console-app~Details')}</CardTitle>
-        <CardActions className="co-overview-card__actions">
-          <Link to={detailsLink}>{t('console-app~View all')}</Link>
-        </CardActions>
       </CardHeader>
       <CardBody>
         <DetailsBody>

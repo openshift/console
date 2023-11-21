@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Popover, PopoverPosition } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+import { HelpIcon } from '@patternfly/react-icons/dist/esm/icons/help-icon';
 import { Trans, useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { VirtualMachineModel } from '../../../models/index';
@@ -25,8 +25,8 @@ const SSHCreateServicePopup: React.FC<SSHCreateServicePopupProps> = ({ vmName, h
       )}
       {!hidePopup && (
         <Popover position={PopoverPosition.right} bodyContent={SSHCreateServiceMessage}>
-          <button type="button" onClick={preventDefault} className="pf-c-form__group-label-help">
-            <HelpIcon noVerticalAlign />
+          <button type="button" onClick={preventDefault} className="pf-v5-c-form__group-label-help">
+            <HelpIcon />
           </button>
         </Popover>
       )}

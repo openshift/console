@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '@console/internal/components/utils';
@@ -33,7 +34,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
           {ports.map((port, idx) => {
             const key = `port-${idx}`;
             return (
-              <div className="pf-c-input-group" key={key}>
+              <div className="pf-v5-c-input-group" key={key}>
                 <Dropdown
                   items={{
                     TCP: <>TCP</>,
@@ -47,7 +48,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
                   data-test="port-protocol"
                 />
                 <input
-                  className="pf-c-form-control"
+                  className="pf-v5-c-form-control"
                   onChange={(event) =>
                     onSingleChange({ ...port, port: event.currentTarget.value }, idx)
                   }

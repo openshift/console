@@ -1,8 +1,14 @@
 import * as React from 'react';
-import { FormGroup, Select, SelectVariant, SelectOption } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
+import {
+  Select as SelectDeprecated,
+  SelectOption as SelectOptionDeprecated,
+  SelectVariant as SelectVariantDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useFormikValidationFix } from '../../hooks';
+import { RedExclamationCircleIcon } from '../status';
 import { SelectInputFieldProps, SelectInputOption } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -42,7 +48,10 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
   const onSelect = (event, selection: string) => {
     if (onChange) {
       onChange(selection);
-    } else if (variant !== SelectVariant.typeaheadMulti && variant !== SelectVariant.checkbox) {
+    } else if (
+      variant !== SelectVariantDeprecated.typeaheadMulti &&
+      variant !== SelectVariantDeprecated.checkbox
+    ) {
       setFieldValue(name, selection);
     } else {
       const selections = field.value;
@@ -66,7 +75,10 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
   };
 
   const onClearSelection = () => {
-    if (variant !== SelectVariant.typeaheadMulti && variant !== SelectVariant.checkbox) {
+    if (
+      variant !== SelectVariantDeprecated.typeaheadMulti &&
+      variant !== SelectVariantDeprecated.checkbox
+    ) {
       setFieldValue(name, '');
     } else {
       setFieldValue(name, []);
@@ -75,22 +87,15 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
   };
 
   return (
-    <FormGroup
-      fieldId={fieldId}
-      validated={isValid ? 'default' : 'error'}
-      label={label}
-      helperText={helpText}
-      helperTextInvalid={errorMessage}
-      isRequired={required}
-    >
-      <Select
+    <FormGroup fieldId={fieldId} label={label} isRequired={required}>
+      <SelectDeprecated
         toggleId={fieldId}
         variant={variant}
         aria-describedby={helpText ? `${fieldId}-helper` : undefined}
         typeAheadAriaLabel={ariaLabel}
         onToggle={onToggle}
         onSelect={onSelect}
-        onClear={hideClearButton ? Select.defaultProps.onClear : onClearSelection}
+        onClear={hideClearButton ? SelectDeprecated.defaultProps.onClear : onClearSelection}
         isOpen={isOpen}
         isDisabled={isDisabled}
         selections={getLabelFromValue ? getLabelFromValue(field.value as string) : field.value}
@@ -101,7 +106,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
         noResultsFoundText={noResultsFoundText}
       >
         {_.map([...options, ...newOptions], (op) => (
-          <SelectOption
+          <SelectOptionDeprecated
             value={op.label ? op.label : op.value}
             isDisabled={op.disabled}
             key={op.value}
@@ -109,7 +114,19 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
             description={op.description ?? ''}
           />
         ))}
-      </Select>
+      </SelectDeprecated>
+
+      <FormHelperText>
+        <HelperText>
+          {!isValid ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          ) : (
+            <HelperTextItem>{helpText}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

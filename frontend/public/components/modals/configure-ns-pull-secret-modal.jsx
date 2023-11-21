@@ -155,7 +155,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
             <div className="col-xs-9">
               <input
                 type="text"
-                className="pf-c-form-control"
+                className="pf-v5-c-form-control"
                 id="namespace-pull-secret-name"
                 aria-describedby="namespace-pull-secret-name-help"
                 required
@@ -209,7 +209,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                 <div className="col-xs-9">
                   <input
                     type="text"
-                    className="pf-c-form-control"
+                    className="pf-v5-c-form-control"
                     id="namespace-pull-secret-address"
                     placeholder={t('public~quay.io')}
                     required
@@ -223,7 +223,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                 <div className="col-xs-9">
                   <input
                     type="email"
-                    className="pf-c-form-control"
+                    className="pf-v5-c-form-control"
                     id="namespace-pull-secret-email"
                     aria-describedby="namespace-pull-secret-email-help"
                   />
@@ -239,7 +239,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                 <div className="col-xs-9">
                   <input
                     type="text"
-                    className="pf-c-form-control"
+                    className="pf-v5-c-form-control"
                     id="namespace-pull-secret-username"
                     required
                   />
@@ -252,7 +252,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                 <div className="col-xs-9">
                   <input
                     type="password"
-                    className="pf-c-form-control"
+                    className="pf-v5-c-form-control"
                     id="namespace-pull-secret-password"
                     required
                   />

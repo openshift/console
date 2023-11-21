@@ -1,13 +1,13 @@
-$global-notification-text: $pf-color-white;
+$global-notification-text: $pf-v5-color-white;
 
 .co-global-notification {
-  background-color: $pf-color-blue-400;
+  background-color: $pf-v5-color-blue-400;
   color: $global-notification-text;
-  padding: 4px $pf-global-gutter;
+  padding: 4px $pf-v5-global-gutter;
   text-align: center;
 
-  @media(min-width: $pf-global--breakpoint--md) {
-    padding: 6px $pf-global-gutter--md;
+  @media (min-width: $pf-v5-global--breakpoint--md) {
+    padding: 6px $pf-v5-global-gutter--md;
   }
 
   + .co-global-notification {
@@ -30,10 +30,10 @@ $global-notification-text: $pf-color-white;
 }
 
 .co-global-notification__impersonate-name {
-  font-weight: var(--pf-global--FontWeight--bold);
+  font-weight: var(--pf-v5-global--FontWeight--bold);
 }
 
 .co-global-notification__impersonate-kind {
-  font-weight: var(--pf-global--FontWeight--bold);
+  font-weight: var(--pf-v5-global--FontWeight--bold);
   padding-right: 20px;
 }

@@ -46,7 +46,7 @@ const DeleteRevisionModal: React.FC<Props> = (props) => {
             <Alert
               isInline
               className="co-alert"
-              variant="default"
+              variant="custom"
               title={t(
                 'knative-plugin~Update the traffic distribution among the remaining Revisions',
               )}

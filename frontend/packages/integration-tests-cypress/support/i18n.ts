@@ -26,7 +26,7 @@ Cypress.Commands.add('testI18n', (selectors: string[] = [], testIDs: string[] = 
     cy.get('#content').then(($body) => {
       if ($body.find('#filter-toolbar').length) {
         listPage.filter.clickSearchByDropdown();
-        cy.get('.pf-c-dropdown__menu-item').isPseudoLocalized(); // 'search by' menu items
+        cy.get('.pf-v5-c-dropdown__menu-item').isPseudoLocalized(); // 'search by' menu items
       }
 
       testIDs.forEach((testId) => cy.byTestID(testId).isPseudoLocalized());

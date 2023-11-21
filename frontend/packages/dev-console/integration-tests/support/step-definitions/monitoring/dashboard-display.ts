@@ -36,7 +36,7 @@ When('user selects the workload {string} from the dropdown', (workloadName: stri
 });
 
 When('user clicks on Resources dropdown', () => {
-  cy.contains('.pf-c-select__toggle', 'Resources').click();
+  cy.contains('.pf-v5-c-select__toggle', 'Resources').click();
 });
 
 When('user selects {string} in Resource type section', (resourceType: string) => {
@@ -60,7 +60,7 @@ When('user clicks on Types dropdown', () => {
 });
 
 When('user selects {string} from Types dropdown', (typeName: string) => {
-  cy.contains('.pf-c-dropdown__menu-item', typeName).click();
+  cy.contains('.pf-v5-c-dropdown__menu-item', typeName).click();
 });
 
 When('user enters {string} in the Filter field', (filterCriteria: string) => {
@@ -209,7 +209,7 @@ When('user clicks on Dashboard dropdown', () => {
 
 When('user can see {string} and {string} option', (option1: string, option2: string) => {
   // Uncommented after story ODC-6340 is implemented
-  // cy.get('.pf-c-select__menu')
+  // cy.get('.pf-v5-c-select__menu')
   //   .should('contain', option1)
   //   .and('contain', option2);
   cy.log(option1, option2); // to avoid lint issues
@@ -259,11 +259,11 @@ When('user clicks on Pod dropdown', () => {
 });
 
 When('user selects {string} option from the dropdown', (workloadName: string) => {
-  cy.contains('.pf-c-select__menu-item', workloadName).click();
+  cy.contains('.pf-v5-c-select__menu-item', workloadName).click();
 });
 
 When('user selects the first option from the dropdown', () => {
-  cy.get('.pf-c-select__menu-item').first().click();
+  cy.get('.pf-v5-c-select__menu-item').first().click();
 });
 
 When('user clicks on Inspect on {string} chart', (chartTitle: string) => {

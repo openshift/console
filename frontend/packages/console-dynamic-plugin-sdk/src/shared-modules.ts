@@ -2,7 +2,7 @@ type SharedModuleMetadata = Partial<{
   /**
    * If `true`, only a single version of the module can be loaded at runtime.
    *
-   * @default true
+   * @default false
    */
   singleton: boolean;
 
@@ -13,7 +13,7 @@ type SharedModuleMetadata = Partial<{
    * the Console shared scope object. If the given module is declared as singleton
    * and is already loaded, the fallback module will not load.
    *
-   * @default false
+   * @default true
    */
   allowFallback: boolean;
 }>;
@@ -38,24 +38,31 @@ export const sharedPluginModules = [
   'redux-thunk',
 ] as const;
 
-export type SharedModuleNames = typeof sharedPluginModules[number];
+type SharedModuleNames = typeof sharedPluginModules[number];
 
 /**
  * Metadata associated with the shared modules.
  */
 export const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
-  '@openshift-console/dynamic-plugin-sdk': {},
-  '@openshift-console/dynamic-plugin-sdk-internal': {},
+  '@openshift-console/dynamic-plugin-sdk': { singleton: true, allowFallback: false },
+  '@openshift-console/dynamic-plugin-sdk-internal': { singleton: true, allowFallback: false },
   '@patternfly/react-core': {},
   '@patternfly/react-table': {},
   '@patternfly/quickstarts': {},
-  react: {},
-  'react-helmet': { singleton: false, allowFallback: true },
-  'react-i18next': {},
-  'react-router': {},
-  'react-router-dom': {},
-  'react-router-dom-v5-compat': {},
-  'react-redux': {},
-  redux: {},
-  'redux-thunk': {},
+  react: { singleton: true, allowFallback: false },
+  'react-helmet': {},
+  'react-i18next': { singleton: true, allowFallback: false },
+  'react-router': { singleton: true, allowFallback: false },
+  'react-router-dom': { singleton: true, allowFallback: false },
+  'react-router-dom-v5-compat': { singleton: true, allowFallback: false },
+  'react-redux': { singleton: true, allowFallback: false },
+  redux: { singleton: true, allowFallback: false },
+  'redux-thunk': { singleton: true, allowFallback: false },
+};
+
+export const getSharedModuleMetadata = (
+  moduleName: SharedModuleNames,
+): Required<SharedModuleMetadata> => {
+  const { singleton = false, allowFallback = true } = sharedPluginModulesMetadata[moduleName];
+  return { singleton, allowFallback };
 };

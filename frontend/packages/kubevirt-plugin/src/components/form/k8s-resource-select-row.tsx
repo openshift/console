@@ -17,7 +17,7 @@ type K8sResourceSelectProps = {
   hasPlaceholder?: boolean;
   data?: FirehoseResult<K8sResourceKind[]>;
   name?: string;
-  onChange: (name: string) => void;
+  onChange: (event: React.FormEvent<HTMLSelectElement>, name: string) => void;
   model: K8sKind;
   title?: string;
   validation?: ValidationObject;

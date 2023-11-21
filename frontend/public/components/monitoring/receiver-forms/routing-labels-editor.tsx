@@ -2,7 +2,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
-import { MinusCircleIcon, PlusCircleIcon, InfoCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { Button, Tooltip } from '@patternfly/react-core';
 
 import { ExternalLink, SectionHeading } from '../../utils';
@@ -113,7 +115,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                 <div className="form-group">
                   <input
                     type="text"
-                    className="pf-c-form-control"
+                    className="pf-v5-c-form-control"
                     data-test-id="label-name-default"
                     value={DEFAULT_RECEIVER_LABEL}
                     disabled
@@ -125,7 +127,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                 <div className="form-group">
                   <input
                     type="text"
-                    className="pf-c-form-control"
+                    className="pf-v5-c-form-control"
                     data-test-id="label-value-default"
                     value={DEFAULT_RECEIVER_LABEL}
                     disabled
@@ -151,7 +153,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                   >
                     <input
                       type="text"
-                      className="pf-c-form-control"
+                      className="pf-v5-c-form-control"
                       data-test-id={`label-name-${i}`}
                       onChange={onRoutingLabelChange(`${i}, name`)}
                       placeholder="Name"
@@ -165,7 +167,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                   <div className="form-group">
                     <input
                       type="text"
-                      className="pf-c-form-control"
+                      className="pf-v5-c-form-control"
                       data-test-id={`label-value-${i}`}
                       onChange={onRoutingLabelChange(`${i}, value`)}
                       placeholder="Value"

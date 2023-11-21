@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, FormSelect, FormSelectOption, GridItem, TextInput } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { TaintEffect } from '@console/internal/module/k8s';
 import { TOLERATIONS_EFFECTS } from '../shared/consts';
@@ -19,7 +19,7 @@ export const TolerationRow = ({ label, onChange, onDelete }: TolerationRowProps)
           isRequired
           type="text"
           value={key}
-          onChange={(newKey) => onChange({ ...label, key: newKey })}
+          onChange={(_event, newKey) => onChange({ ...label, key: newKey })}
           aria-label={t('kubevirt-plugin~selector key')}
         />
       </GridItem>
@@ -31,7 +31,7 @@ export const TolerationRow = ({ label, onChange, onDelete }: TolerationRowProps)
           isRequired
           type="text"
           value={value}
-          onChange={(newValue) => onChange({ ...label, value: newValue })}
+          onChange={(_event, newValue) => onChange({ ...label, value: newValue })}
           aria-label={t('kubevirt-plugin~selector value')}
         />
       </GridItem>
@@ -41,7 +41,7 @@ export const TolerationRow = ({ label, onChange, onDelete }: TolerationRowProps)
           className="kv-label__effect"
           isRequired
           value={effect}
-          onChange={(v) => onChange({ ...label, effect: v as TaintEffect })}
+          onChange={(_event, v) => onChange({ ...label, effect: v as TaintEffect })}
           aria-label={t('kubevirt-plugin~selector effect')}
         >
           {TOLERATIONS_EFFECTS.map((effectOption) => (

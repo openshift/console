@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useFormikValidationFix } from '../../hooks';
 import ResourceDropdown, { ResourceDropdownItems } from '../dropdown/ResourceDropdown';
+import { RedExclamationCircleIcon } from '../status';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -49,15 +50,7 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
   useFormikValidationFix(field.value);
 
   return (
-    <FormGroup
-      fieldId={fieldId}
-      label={label}
-      helperText={helpText}
-      helperTextInvalid={errorMessage}
-      validated={isValid ? 'default' : 'error'}
-      isRequired={required}
-      data-test={dataTest}
-    >
+    <FormGroup fieldId={fieldId} label={label} isRequired={required} data-test={dataTest}>
       <Firehose resources={resources}>
         <ResourceDropdown
           {...props}
@@ -74,6 +67,18 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
           }}
         />
       </Firehose>
+
+      <FormHelperText>
+        <HelperText>
+          {!isValid ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          ) : (
+            <HelperTextItem>{helpText}</HelperTextItem>
+          )}
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Checkbox } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
@@ -50,7 +50,7 @@ export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityPro
             </p>
             <Checkbox
               className="co-modal-ignore-warning__checkbox"
-              onChange={setIgnoreWarnings}
+              onChange={(_event, value) => setIgnoreWarnings(value)}
               isChecked={ignoreWarnings}
               data-checked-state={ignoreWarnings}
               id="do-not-show-warning"

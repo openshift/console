@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { Wizard, WizardStep } from '@patternfly/react-core';
+import {
+  Wizard as WizardDeprecated,
+  WizardStep as WizardStepDeprecated,
+} from '@patternfly/react-core/deprecated';
 import { Location } from 'history';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -295,7 +298,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
     },
   ];
 
-  const calculateStepsVisibility = (initialSteps: WizardStep[]): WizardStep[] =>
+  const calculateStepsVisibility = (initialSteps: WizardStepDeprecated[]): WizardStepDeprecated[] =>
     initialSteps
       .map((step) => {
         if (step.steps) {
@@ -313,7 +316,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
           <h1 className="yaml-editor__header-text">{getWizardTitle()}</h1>
         </div>
       )}
-      <Wizard
+      <WizardDeprecated
         key="wizard"
         className="kubevirt-create-vm-modal__wizard-content"
         onClose={onClose}

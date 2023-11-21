@@ -13,7 +13,7 @@
   }
 
   &__container {
-    z-index: calc(var(--pf-c-page__header--ZIndex) + 10);
+    z-index: calc(var(--pf-v5-c-page__header--ZIndex) + 10);
   }
 
   // input component used to trap focus within the context menu

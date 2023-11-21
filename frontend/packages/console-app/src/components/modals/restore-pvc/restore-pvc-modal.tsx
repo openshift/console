@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { FormGroup, Grid, GridItem, TextInput } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormHelperText,
+  Grid,
+  GridItem,
+  HelperText,
+  HelperTextItem,
+  TextInput,
+} from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import {
@@ -41,7 +49,14 @@ import {
   PersistentVolumeClaimKind,
   VolumeSnapshotClassKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace, Status, isCephProvisioner, getAnnotations } from '@console/shared';
+import {
+  getName,
+  getNamespace,
+  Status,
+  isCephProvisioner,
+  getAnnotations,
+  RedExclamationCircleIcon,
+} from '@console/shared';
 import { AccessModeSelector } from '../../access-modes/access-mode';
 
 import './restore-pvc-modal.scss';
@@ -159,7 +174,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
               data-test="pvc-name"
               name="restore-pvc-modal__name"
               value={restorePVCName}
-              onChange={setPVCName}
+              onChange={(_event, value: string) => setPVCName(value)}
             />
           </FormGroup>
           <FormGroup fieldId="restore-storage-class" className="co-restore-pvc-modal__input">
@@ -201,10 +216,6 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             isRequired
             fieldId="pvc-size"
             className="co-restore-pvc-modal__input co-restore-pvc-modal__ocs-size"
-            helperTextInvalid={t(
-              'console-app~Size should be equal or greater than the restore size of snapshot',
-            )}
-            validated={validSize ? 'default' : 'error'}
           >
             {snapshotClassResourceLoaded ? (
               <RequestSizeInput
@@ -220,6 +231,18 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
               />
             ) : (
               <div className="skeleton-text" />
+            )}
+
+            {!validSize && (
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                    {t(
+                      'console-app~Size should be equal or greater than the restore size of snapshot.',
+                    )}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
             )}
           </FormGroup>
           <div className="co-restore-pvc-modal__details-section">

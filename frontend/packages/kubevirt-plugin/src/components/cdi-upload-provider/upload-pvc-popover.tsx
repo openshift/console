@@ -9,7 +9,9 @@ import {
   Stack,
   StackItem,
 } from '@patternfly/react-core';
-import { InProgressIcon, ErrorCircleOIcon, BanIcon } from '@patternfly/react-icons';
+import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
+import { ErrorCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/error-circle-o-icon';
+import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
