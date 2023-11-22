@@ -45,14 +45,18 @@ const AlertmanagerPage: React.FC<{ match: { url: string } }> = ({ match }) => {
             'co-m-horizontal-nav-item--active': url === configPath,
           })}
         >
-          <Link to={configPath}>{t('public~Details')}</Link>
+          <Link to={configPath} data-test-id="horizontal-link-details">
+            {t('public~Details')}
+          </Link>
         </li>
         <li
           className={classNames('co-m-horizontal-nav__menu-item', {
             'co-m-horizontal-nav-item--active': url === YAMLPath,
           })}
         >
-          <Link to={YAMLPath}>{t('public~YAML')}</Link>
+          <Link to={YAMLPath} data-test-id="horizontal-link-yaml">
+            {t('public~YAML')}
+          </Link>
         </li>
       </ul>
       <Switch>

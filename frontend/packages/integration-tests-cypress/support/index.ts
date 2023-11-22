@@ -5,6 +5,7 @@ import './nav';
 import './resources';
 import './i18n';
 import { a11yTestResults } from './a11y';
+import './admin';
 
 Cypress.Cookies.debug(true);
 
