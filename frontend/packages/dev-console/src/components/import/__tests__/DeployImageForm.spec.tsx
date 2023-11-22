@@ -5,6 +5,7 @@ import { formikFormProps } from '@console/shared/src/test-utils/formik-props-uti
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import DeployImageForm from '../DeployImageForm';
+import { DeploySection } from '../DeploySection';
 import ImageSearchSection from '../image-search/ImageSearchSection';
 import IconSection from '../section/IconSection';
 
@@ -26,6 +27,7 @@ describe('DeployImageForm', () => {
     expect(wrapper.find(ImageSearchSection).exists()).toBe(true);
     expect(wrapper.find(IconSection).exists()).toBe(true);
     expect(wrapper.find(AppSection).exists()).toBe(true);
+    expect(wrapper.find(DeploySection).exists()).toBe(true);
     expect(wrapper.find(AdvancedSection).exists()).toBe(true);
     expect(wrapper.find(FormFooter).exists()).toBe(true);
   });

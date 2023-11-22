@@ -7,10 +7,10 @@ import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/f
 import { hasSampleQueryParameter } from '../../utils/samples';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
+import { DeploySection } from './DeploySection';
 import ImageSearchSection from './image-search/ImageSearchSection';
 import { DeployImageFormProps } from './import-types';
 import IconSection from './section/IconSection';
-import ResourceSection from './section/ResourceSection';
 
 const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   values,
@@ -39,7 +39,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
         />
         {showAdvancedSections && (
           <>
-            <ResourceSection />
+            <DeploySection values={values} />
             <AdvancedSection values={values} />
           </>
         )}

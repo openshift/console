@@ -18,7 +18,10 @@ export const DeploySection: React.FC<DeploySectionProps> = ({ values, appResourc
     <FormSection title={t('devconsole~Deploy')} fullWidth>
       <ResourceSection />
 
-      <ExpandableSection toggleText={t('devconsole~Show advanced Deployment option')}>
+      <ExpandableSection
+        isWidthLimited
+        toggleText={t('devconsole~Show advanced Deployment option')}
+      >
         <DeploymentConfigSection
           namespace={values.project.name}
           resource={appResources?.editAppResource?.data}
