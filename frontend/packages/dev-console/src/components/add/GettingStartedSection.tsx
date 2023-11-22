@@ -27,7 +27,23 @@ export const GettingStartedSection: React.FC = () => {
     <div className="odc-add-page-getting-started-section">
       <GettingStartedGrid onHide={() => setShowState(GettingStartedShowState.HIDE)}>
         <SampleGettingStartedCard featured={['code-with-quarkus', 'java-springboot-basic']} />
-        <QuickStartGettingStartedCard featured={['quarkus-with-s2i', 'spring-with-s2i']} />
+        <QuickStartGettingStartedCard
+          featured={[
+            // Available when the Red Hat OpenShift Pipelines operator is installed:
+            // - Deploying an application with a pipeline
+            'install-app-and-associate-pipeline',
+
+            // Available when the Red Hat OpenShift Serverless operator is installed:
+            // - Exploring Serverless applications
+            'serverless-application',
+
+            // All part of the console-operator:
+            // - Get started with Quarkus using s2i
+            'quarkus-with-s2i',
+            // - Get started with Spring
+            'spring-with-s2i',
+          ]}
+        />
         <DeveloperFeaturesGettingStartedCard />
       </GettingStartedGrid>
     </div>
