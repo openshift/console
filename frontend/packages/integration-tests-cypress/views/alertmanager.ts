@@ -38,11 +38,11 @@ const defaultAlertmanagerYaml = Base64.encode(`"global":
   "receiver": "Default"
   "repeat_interval": "12h"
   "routes":
-  - "match":
-      "alertname": "Watchdog"
+  - "matchers":
+      - "alertname = Watchdog"
     "receiver": "Watchdog"
-  - "match":
-      "severity": "critical"
+  - "matchers":
+      - "severity = critical"
     "receiver": "Critical"`);
 
 export const getGlobalsAndReceiverConfig = (name: string, configName: string, content: string) => {
@@ -70,12 +70,12 @@ export const alertmanager = {
     ),
   save: () => cy.byLegacyTestID('save-changes').should('be.enabled').click(),
   showAdvancedConfiguration: () => cy.get('button.pf-v5-c-expandable-section__toggle').click(),
-  validateCreation: (receiverName: string, type: string, severity: string, warning: string) => {
+  validateCreation: (receiverName: string, type: string, label: string) => {
     cy.byLegacyTestID('item-filter').clear();
     cy.byLegacyTestID('item-filter').type(receiverName);
     listPage.rows.shouldExist(receiverName);
     listPage.rows.shouldExist(type);
-    listPage.rows.shouldExist(`${severity}=${warning}`);
+    listPage.rows.shouldExist(label);
   },
   visitAlertmanagerPage: () => {
     cy.visit('/monitoring/alertmanagerconfig');

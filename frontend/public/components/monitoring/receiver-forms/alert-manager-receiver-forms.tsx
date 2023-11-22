@@ -33,9 +33,8 @@ import * as SlackForm from './slack-receiver-form';
 import { coFetchJSON } from '../../../co-fetch';
 
 /**
- * Converts routes of a specific Receiver:
+ * Converts deprecated route match and match_re:
  * {
- *   receiver: "MyReceiver",
  *   match: {
  *     severity: "warning",
  *     cluster: "myCluster"
@@ -44,44 +43,19 @@ import { coFetchJSON } from '../../../co-fetch';
  *    service: "$foobar"
  *  }
 };
- * ...to array of labels for Routing Labels Editor component
- * [
- *   {
- *     "name": "severity",
- *     "value": "warning",
- *     "isRegex": false
- *   },
- *   {
- *     "name": "cluster",
- *     "value": "myCluster",
- *     "isRegex": false
- *   },
- *   {
- *     "name": "service",
- *     "value": "$foobar",
- *     "isRegex": true
- *   }
- * ]
+ * ...to array of matchers for Routing Labels Editor component
+ * Ex: ["severity = warning", "cluster = myCluster", "service =~ $foobar"]
  */
-const convertReceiverRoutesToEditorLabels = (
-  receiver: AlertmanagerReceiver,
-  routes: AlertmanagerRoute[],
-): RouteEditorLabel[] => {
-  if (!receiver) {
-    return [];
-  }
-
-  const routesOfReceiver = _.find(
-    routes,
-    (aRoute: AlertmanagerRoute) => aRoute.receiver === receiver.name,
-  );
-  const matches = _.map(routesOfReceiver?.match || {}, (v, k) => {
-    return { name: k, value: v, isRegex: false };
+const convertDeprecatedReceiverRoutesMatchesToMatchers = (
+  receiverRoutes: AlertmanagerRoute,
+): string[] => {
+  const matches = _.map(receiverRoutes?.match || {}, (v, k) => {
+    return `${k} = ${v}`;
   });
-  const regexMatches = _.map(routesOfReceiver?.match_re || {}, (v, k) => {
-    return { name: k, value: v, isRegex: true };
+  const regexMatches = _.map(receiverRoutes?.match_re || {}, (v, k) => {
+    return `${k} =~ ${v}`;
   });
-  return _.concat([], matches, regexMatches);
+  return [...matches, ...regexMatches];
 };
 
 /**
@@ -89,27 +63,14 @@ const convertReceiverRoutesToEditorLabels = (
  * Ex:
  * {
  *   receiver: myNewReceiver,
- *   match: {
- *     "severity": "warning",
- *     "cluster": "myCluster"
- *   }
- *   match_re {
- *     "service": "^(foo1|foo2|baz)$",
- *   }
+ *   matchers: ["severity = warning"]
  * }
  */
-const createRoute = (
-  receiver: AlertmanagerReceiver,
-  routeLabels: RouteEditorLabel[],
-): AlertmanagerRoute => {
-  return _.reduce(
-    routeLabels,
-    (acc, label) => {
-      _.set(acc, [label.isRegex ? 'match_re' : 'match', label.name], label.value);
-      return acc;
-    },
-    { receiver: receiver.name },
-  );
+const createRoute = (receiver: AlertmanagerReceiver, routeLabels: string[]): AlertmanagerRoute => {
+  return {
+    receiver: receiver.name,
+    matchers: routeLabels,
+  };
 };
 
 /**
@@ -172,11 +133,14 @@ const getRouteLabelsForEditor = (
   isDefaultReceiver: boolean,
   receiverToEdit: AlertmanagerReceiver,
   allRoutes: AlertmanagerRoute[],
-): RouteEditorLabel[] => {
-  const routeLabels = convertReceiverRoutesToEditorLabels(receiverToEdit, allRoutes);
-  return !isDefaultReceiver && _.isEmpty(routeLabels)
-    ? [{ name: '', value: '', isRegex: false }]
-    : routeLabels;
+): string[] => {
+  const receiverRoutes = _.find(
+    allRoutes,
+    (aRoute: AlertmanagerRoute) => aRoute.receiver === receiverToEdit?.name,
+  );
+  const convertedRouteLabels = convertDeprecatedReceiverRoutesMatchesToMatchers(receiverRoutes);
+  const routeLabels = [...(convertedRouteLabels ?? []), ...(receiverRoutes?.matchers ?? [])];
+  return !isDefaultReceiver && _.isEmpty(routeLabels) ? [''] : routeLabels;
 };
 
 const AlertMsg: React.FC<AlertMsgProps> = ({ type }) => {
@@ -291,7 +255,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   const isDefaultReceiver = defaultReceiver
     ? _.isEmpty(config?.receivers?.filter((receiver) => receiver.name === defaultReceiver)) ||
       defaultReceiver === editReceiverNamed
-    : true; // defaultReceiver (the name stored in config.routes.receiver) is not defined, so this should be the default receiver
+    : true; // defaultReceiver (the name stored in config.route.receiver) is not defined, so this should be the default receiver
 
   INITIAL_STATE.routeLabels = getRouteLabelsForEditor(
     isDefaultReceiver,
@@ -661,12 +625,6 @@ type ReceiverBaseFormProps = {
   saveButtonText: string;
   editReceiverNamed?: string;
   alertmanagerGlobals?: { [key: string]: any };
-};
-
-export type RouteEditorLabel = {
-  name: string;
-  value: string;
-  isRegex: boolean;
 };
 
 type FormAction = {

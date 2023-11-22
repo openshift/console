@@ -7,8 +7,7 @@ const receiverName = `EmailReceiver-${testName}`;
 const receiverType = 'email';
 const configName = `${receiverType}_configs`;
 const localhost = 'localhost';
-const severity = 'severity';
-const warning = 'warning';
+const label = 'severity = warning';
 const emailTo = 'you@there.com';
 const emailFrom = 'me@here.com';
 const emailSmarthost = 'smarthost:8080';
@@ -48,12 +47,11 @@ describe('Alertmanager: Email Receiver Form', () => {
     cy.byLegacyTestID('email-from').type(emailFrom);
     cy.byLegacyTestID('save-as-default').should('be.enabled');
     cy.byLegacyTestID('email-smarthost').type(emailSmarthost);
-    cy.byLegacyTestID('label-name-0').type(severity);
-    cy.byLegacyTestID('label-value-0').type(warning);
+    cy.byLegacyTestID('label-0').type(label);
     alertmanager.save();
 
     cy.log('verify Email Receiver was created correctly');
-    alertmanager.validateCreation(receiverName, receiverType, severity, warning);
+    alertmanager.validateCreation(receiverName, receiverType, label);
     alertmanager.visitYAMLPage();
     yamlEditor.getEditorContent().then((content) => {
       const configs = getGlobalsAndReceiverConfig(receiverName, configName, content);

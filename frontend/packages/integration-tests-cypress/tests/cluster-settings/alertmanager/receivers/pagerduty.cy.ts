@@ -8,7 +8,7 @@ const receiverName = `PagerDutyReceiver-${testName}`;
 const receiverType = 'pagerduty';
 const configName = `${receiverType}_configs`;
 const severity = 'severity';
-const warning = 'warning';
+const label = `${severity} = warning`;
 const pagerDutyClient = '{{ template "pagerduty.default.client" . }}';
 const pagerDutyClientURL = '{{ template "pagerduty.default.clientURL" . }}';
 const pagerDutyURL1 = 'http://pagerduty-url-specific-to-receiver';
@@ -46,12 +46,11 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
       .invoke('val')
       .should('eq', '{{ template "pagerduty.default.description" .}}');
     cy.byLegacyTestID('pagerduty-severity').invoke('val').should('eq', 'error');
-    cy.byLegacyTestID('label-name-0').type(severity);
-    cy.byLegacyTestID('label-value-0').type(warning);
+    cy.byLegacyTestID('label-0').type(label);
     alertmanager.save();
 
     cy.log('verify PagerDuty Receiver was created correctly');
-    alertmanager.validateCreation(receiverName, receiverType, severity, warning);
+    alertmanager.validateCreation(receiverName, receiverType, label);
 
     cy.log('update pagerduty_url');
     listPage.rows.clickKebabAction(receiverName, 'Edit Receiver');
