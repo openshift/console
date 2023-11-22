@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
+import { ArchiveIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { KebabAction, navFactory, viewYamlComponent } from '@console/internal/components/utils';
@@ -20,6 +21,8 @@ import { useTaskRuns } from './hooks/useTaskRuns';
 import PipelineRunParametersForm from './PipelineRunParametersForm';
 import { useMenuActionsWithUserAnnotation } from './triggered-by';
 
+import './PipelineRunDetailsPage.scss';
+
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { kindObj, match, namespace, name } = props;
   const { t } = useTranslation();
@@ -30,17 +33,23 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   );
   const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj, match);
   const badge = usePipelineTechPreviewBadge(props.namespace);
-  const resourceTitleFunc = (obj: PipelineRunKind): string | JSX.Element =>
-    obj?.metadata?.annotations?.[chainsSignedAnnotation] === 'true' ? (
-      <div style={{ display: 'flex' }}>
+  const resourceTitleFunc = (obj: PipelineRunKind): string | JSX.Element => {
+    return (
+      <div className="pipelinerun-details-page">
         {obj?.metadata?.name}{' '}
-        <Tooltip content={t('pipelines-plugin~Signed')}>
-          <img src={SignedPipelinerunIcon} alt={t('pipelines-plugin~Signed')} />
-        </Tooltip>
+        {obj?.metadata?.annotations?.[chainsSignedAnnotation] === 'true' && (
+          <Tooltip content={t('pipelines-plugin~Signed')}>
+            <img src={SignedPipelinerunIcon} alt={t('pipelines-plugin~Signed')} />
+          </Tooltip>
+        )}
+        {obj?.metadata?.annotations?.['resource.deleted.in.k8s'] === 'true' && (
+          <Tooltip content={t('pipelines-plugin~Archived in Tekton results')}>
+            <ArchiveIcon className="pipelinerun-details-page__results-indicator" />
+          </Tooltip>
+        )}
       </div>
-    ) : (
-      obj?.metadata?.name
     );
+  };
 
   const [pipelineRun, loaded, error] = usePipelineRun(namespace, name);
 

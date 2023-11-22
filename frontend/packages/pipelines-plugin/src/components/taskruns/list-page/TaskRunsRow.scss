@@ -1,0 +1,9 @@
+.opp-task-run-list {
+  &__results-indicator {
+    display: inline-block;
+    margin-left: var(--pf-global--spacer--xs);
+    > svg{
+      color: var(--pf-global--Color--400);
+    }
+  }
+}

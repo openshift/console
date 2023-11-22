@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
+import { ArchiveIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import {
   ResourceLink,
@@ -51,6 +53,7 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
   obj,
   customData,
 }) => {
+  const { t } = useTranslation();
   const plrLabels = obj.metadata.labels;
   const plrAnnotations = obj.metadata.annotations;
   const { operatorVersion, taskRuns } = customData;
@@ -63,6 +66,17 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
           data-test-id={obj.metadata.name}
+          nameSuffix={
+            <>
+              {obj?.metadata?.annotations?.['resource.deleted.in.k8s'] === 'true' ? (
+                <Tooltip content={t('pipelines-plugin~Archived in Tekton results')}>
+                  <div className="opp-pipeline-run-list__results-indicator">
+                    <ArchiveIcon />
+                  </div>
+                </Tooltip>
+              ) : null}
+            </>
+          }
         />
       </TableData>
       <TableData className={tableColumnClasses[1]} columnID="sha">

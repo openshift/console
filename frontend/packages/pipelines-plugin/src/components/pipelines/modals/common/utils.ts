@@ -113,6 +113,8 @@ export const getPipelineRunData = (
   delete annotations['results.tekton.dev/log'];
   delete annotations['results.tekton.dev/record'];
   delete annotations['results.tekton.dev/result'];
+  delete annotations['resource.deleted.in.k8s'];
+  delete annotations['resource.loaded.from.tektonResults'];
 
   const newPipelineRun = {
     apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,

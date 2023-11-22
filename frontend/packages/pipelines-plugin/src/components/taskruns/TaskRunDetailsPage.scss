@@ -1,0 +1,9 @@
+.taskrun-details-page {
+  display: flex;
+  &__results-indicator {
+    margin-left: var(--pf-global--spacer--xs);
+    color: var(--pf-global--Color--400);
+    font-size: var(--pf-global--FontSize--lg);
+    align-self: center;
+  }
+}

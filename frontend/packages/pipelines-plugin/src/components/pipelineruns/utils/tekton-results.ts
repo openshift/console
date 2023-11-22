@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {
   K8sResourceCommon,
   MatchExpression,
@@ -58,7 +59,28 @@ const throw404 = () => {
 
 // decoding result base64
 export const decodeValue = (value: string) => atob(value);
-export const decodeValueJson = (value: string) => (value ? JSON.parse(decodeValue(value)) : null);
+export const decodeValueJson = (value: string) => {
+  const decodedValue = value ? JSON.parse(decodeValue(value)) : null;
+  let resourceDeletedInK8sAnnotation;
+  if (_.has(decodedValue?.metadata, 'deletionTimestamp')) {
+    delete decodedValue?.metadata?.deletionTimestamp;
+    resourceDeletedInK8sAnnotation = { 'resource.deleted.in.k8s': 'true' };
+  }
+  const decodedValueWithTRAnnotation = decodedValue
+    ? {
+        ...decodedValue,
+        metadata: {
+          ...decodedValue?.metadata,
+          annotations: {
+            ...decodedValue?.metadata?.annotations,
+            'resource.loaded.from.tektonResults': 'true',
+            ...resourceDeletedInK8sAnnotation,
+          },
+        },
+      }
+    : null;
+  return decodedValueWithTRAnnotation;
+};
 
 // filter functions
 export const AND = (...expressions: string[]) => expressions.filter((x) => x).join(' && ');
