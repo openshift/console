@@ -10,12 +10,26 @@ export const FunctionsDocsGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
   const links: GettingStartedLink[] = [];
 
-  links.push({
-    id: 'functions-tekton-pipelines',
-    title: t('knative-plugin~Building Functions on Cluster with Tekton Pipelines'),
-    href: 'https://github.com/knative/func/blob/main/docs/building-functions/on_cluster_build.md',
-    external: true,
-  });
+  links.push(
+    {
+      id: 'learn-more-about-functions-link',
+      title: t('knative-plugin~Learn more about Serverless Functions'),
+      href: 'https://www.youtube.com/watch?v=lNeieapAhnc',
+      external: true,
+    },
+    {
+      id: 'learn-more-about-containers-link',
+      title: t('knative-plugin~Learn more about Serverless Containers'),
+      href: 'https://www.youtube.com/watch?v=oKIHoDzw1RI',
+      external: true,
+    },
+    {
+      id: 'event-driven-apps-link',
+      title: t('knative-plugin~Explore how to create Event Driven Apps using OpenShift Serverless'),
+      href: 'https://access.redhat.com/documentation/en-us/red_hat_openshift_serverless/',
+      external: true,
+    },
+  );
 
   return (
     <GettingStartedCard
