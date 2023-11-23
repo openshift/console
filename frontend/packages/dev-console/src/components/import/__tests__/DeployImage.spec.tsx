@@ -13,8 +13,8 @@ import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import DeployImage from '../DeployImage';
 import DeployImagePage from '../DeployImagePage';
+import { DeploySection } from '../DeploySection';
 import ImageSearchSection from '../image-search/ImageSearchSection';
-import ResourceSection from '../section/ResourceSection';
 
 jest.mock('@console/shared/src/hooks/post-form-submit-action', () => ({
   usePostFormSubmitAction: () => () => {},
@@ -135,8 +135,8 @@ describe('Deploy Image Test', () => {
   it('should load  correct app section', () => {
     expect(deployImageWrapper.find(AppSection).exists()).toBe(true);
   });
-  it('should load  correct resource section', () => {
-    expect(deployImageWrapper.find(ResourceSection).exists()).toBe(true);
+  it('should load  correct Deploy section', () => {
+    expect(deployImageWrapper.find(DeploySection).exists()).toBe(true);
   });
   it('should load  correct advanced section', () => {
     expect(deployImageWrapper.find(AdvancedSection).exists()).toBe(true);
