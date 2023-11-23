@@ -348,7 +348,7 @@ export const convertBuilderFormToPipeline = (
     kind: PipelineModel.kind,
     metadata: {
       ...existingPipeline?.metadata,
-      name,
+      name: existingPipeline?.metadata?.name ? existingPipeline?.metadata?.name : name,
       namespace,
     },
     spec: {
