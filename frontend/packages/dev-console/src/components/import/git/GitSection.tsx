@@ -320,12 +320,12 @@ const GitSection: React.FC<GitSectionProps> = ({
 
       gitRepoName && !nameTouched && !values.name && setFieldValue('name', gitRepoName);
       gitRepoName &&
-        values.formType !== 'edit' &&
+        values?.formType !== 'edit' &&
         !values.application.name &&
         values.application.selectedKey !== UNASSIGNED_KEY &&
         setFieldValue('application.name', `${gitRepoName}-app`);
 
-      if (importType === 'devfile' || imageStreamName || values.formType === 'edit') {
+      if (importType === 'devfile' || imageStreamName || values?.formType === 'edit') {
         setValidated(ValidatedOptions.success);
         setFieldValue('git.validated', ValidatedOptions.success);
         setFieldValue('git.isUrlValidating', false);
@@ -333,7 +333,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         importType === 'devfile' &&
           !values.devfile?.devfileContent &&
           setFieldValue('import.recommendedStrategy', importStrategies[0]);
-        values.formType === 'edit' &&
+        values?.formType === 'edit' &&
           values.build.strategy === BuildStrategyType.Source &&
           handleBuilderImageRecommendation(
             importStrategies?.find((s) => s.type === ImportStrategy.S2I)?.detectedCustomData,
@@ -406,7 +406,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.devfile,
       values.docker,
       values.name,
-      values.formType,
+      values?.formType,
       values.application.name,
       values.application.selectedKey,
       values.build.strategy,
@@ -508,13 +508,15 @@ const GitSection: React.FC<GitSectionProps> = ({
     }
     values.image.recommended && setFieldValue('image.recommended', '');
     values.image.couldNotRecommend && setFieldValue('image.couldNotRecommend', false);
-    if (values.formType === 'edit') {
+    if (values?.formType === 'edit') {
       values.application.selectedKey !== UNASSIGNED_KEY &&
         values.application.selectedKey === CREATE_APPLICATION_KEY &&
         !applicationNameTouched &&
         setFieldValue('application.name', '');
       return;
     }
+    setFieldValue('formType', '');
+
     !nameTouched && setFieldValue('name', '');
     !values.application.isInContext &&
       values.application.selectedKey !== UNASSIGNED_KEY &&
@@ -522,7 +524,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       setFieldValue('application.name', '');
   }, [
     setFieldValue,
-    values.formType,
+    values?.formType,
     values.image.recommended,
     values.image.couldNotRecommend,
     values.application.selectedKey,

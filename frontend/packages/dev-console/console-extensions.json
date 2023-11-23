@@ -1014,7 +1014,7 @@
         "type": "dropdown",
         "userSettingsKey": "devconsole.preferredResourceType",
         "defaultValue": "kubernetes",
-        "description": "%devconsole~The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.%",
+        "description": "%devconsole~The default for the 'Deploy' resource type when a user import a component via 'Import from Git', 'Import JAR file' or 'Deploy Image'.%",
         "options": [
           {
             "value": "latest",
@@ -1092,7 +1092,7 @@
         "type": "dropdown",
         "userSettingsKey": "devconsole.preferredResourceType",
         "defaultValue": "kubernetes",
-        "description": "%devconsole~The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.%",
+        "description": "%devconsole~The default for the 'Deploy' resource type when a user import a component via 'Import from Git', 'Import JAR file' or 'Deploy Image'.%",
         "options": [
           {
             "value": "latest",
@@ -1123,7 +1123,7 @@
         "type": "dropdown",
         "userSettingsKey": "devconsole.preferredResourceType",
         "defaultValue": "kubernetes",
-        "description": "%devconsole~The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.%",
+        "description": "%devconsole~The default for the 'Deploy' resource type when a user import a component via 'Import from Git', 'Import JAR file' or 'Deploy Image'.%",
         "options": [
           {
             "value": "latest",

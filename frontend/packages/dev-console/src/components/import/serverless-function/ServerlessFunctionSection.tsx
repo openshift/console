@@ -52,6 +52,7 @@ const ServerlessFunctionSection = ({ builderImages }) => {
           setFieldValue('resources', Resources.KnativeService);
           setFieldValue('build.env', res.values.builderEnvs);
           setFieldValue('deployment.env', res.values.runtimeEnvs);
+          setFieldValue('formType', 'serverlessFunction');
         })
         .catch((err) => {
           // eslint-disable-next-line no-console

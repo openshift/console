@@ -73,6 +73,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
       image,
       build: { option: buildOption, strategy },
       resources,
+      formType,
     },
     setFieldValue,
     setFieldTouched,
@@ -256,7 +257,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
 
   return pipeline.template ? (
     <>
-      {buildOption !== BuildOptions.PIPELINES && (
+      {buildOption !== BuildOptions.PIPELINES && formType !== 'edit' && (
         <CheckboxField
           label={t('pipelines-plugin~Add pipeline')}
           name="pipeline.enabled"

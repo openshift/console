@@ -70,7 +70,9 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
           )}
           <AppSection project={values.project} />
           {flowType !== ApplicationFlowType.Container &&
-            flowType !== ApplicationFlowType.JarUpload && <BuildSection values={values} />}
+            flowType !== ApplicationFlowType.JarUpload && (
+              <BuildSection values={values} appResources={appResources} />
+            )}
           {flowType !== ApplicationFlowType.Container &&
             flowType !== ApplicationFlowType.JarUpload && (
               <PipelineSection

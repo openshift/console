@@ -14,20 +14,24 @@ type DeploySectionProps = {
 
 export const DeploySection: React.FC<DeploySectionProps> = ({ values, appResources }) => {
   const { t } = useTranslation();
-  return (
-    <FormSection title={t('devconsole~Deploy')} fullWidth>
-      <ResourceSection />
 
-      <ExpandableSection
-        isWidthLimited
-        toggleText={t('devconsole~Show advanced Deployment option')}
-      >
-        <DeploymentConfigSection
-          namespace={values.project.name}
-          resource={appResources?.editAppResource?.data}
-          showHeader={false}
-        />
-      </ExpandableSection>
-    </FormSection>
-  );
+  if (!['edit', 'knatify', 'serverlessFunction'].includes(values?.formType)) {
+    return (
+      <FormSection title={t('devconsole~Deploy')} fullWidth>
+        <ResourceSection />
+
+        <ExpandableSection
+          isWidthLimited
+          toggleText={t('devconsole~Show advanced Deployment option')}
+        >
+          <DeploymentConfigSection
+            namespace={values.project.name}
+            resource={appResources?.editAppResource?.data}
+            showHeader={false}
+          />
+        </ExpandableSection>
+      </FormSection>
+    );
+  }
+  return null;
 };

@@ -47,7 +47,7 @@ const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
       <ProgressiveListItem name={t('devconsole~Health checks')}>
         <HealthChecks title={t('devconsole~Health checks')} resourceType={values.resources} />
       </ProgressiveListItem>
-      {values?.formType === 'edit' ? (
+      {['edit', 'knatify', 'serverlessFunction'].includes(values?.formType) ? (
         <ProgressiveListItem name={t('devconsole~Deployment')}>
           <DeploymentConfigSection
             namespace={values.project.name}

@@ -3,7 +3,11 @@ import { ExpandableSection } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getGitService } from '@console/git-service/src';
-import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
+import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
+import {
+  FLAG_OPENSHIFT_PIPELINE,
+  FLAG_OPENSHIFT_PIPELINE_AS_CODE,
+} from '@console/pipelines-plugin/src/const';
 import { useFlag } from '@console/shared/src';
 import { AppResources } from '../../edit-application/edit-application-types';
 import BuildConfigSection from '../advanced/BuildConfigSection';
@@ -19,8 +23,10 @@ type BuildSectionProps = {
 export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources }) => {
   const { t } = useTranslation();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
+  const isPipelineEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE);
+  const isPipelineAttached = !!appResources?.pipeline?.data;
 
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const { setFieldValue, setFieldTouched, setStatus } = useFormikContext<FormikValues>();
 
   /* Auto-select Pipelines as Build option for PAC Repositories */
   React.useEffect(() => {
@@ -49,22 +55,32 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     if (values?.formType === 'edit' && values?.pipeline?.enabled) {
       setFieldValue('build.option', BuildOptions.PIPELINES);
     }
-  }, [values, setFieldValue]);
+  }, [values?.formType, setFieldValue, values?.pipeline?.enabled]);
 
   React.useEffect(() => {
-    if (
-      values?.formType !== 'edit' &&
-      values.pipeline?.enabled &&
-      values.build.option !== BuildOptions.PIPELINES
-    ) {
+    if (values.pipeline?.enabled && values.build.option !== BuildOptions.PIPELINES) {
       setFieldValue('pipeline.enabled', false);
       setFieldValue('pac.pipelineEnabled', false);
     }
-  }, [setFieldValue, values.pipeline?.enabled, values.build.option, values.formType]);
+  }, [setFieldValue, values.pipeline?.enabled, values.build.option, values?.formType]);
+
+  /* Reset submitError when switching from Pipelines to other build options for PAC Repositories */
+  React.useEffect(() => {
+    if (
+      values.pipeline?.type === PipelineType.PAC &&
+      values.build.option !== BuildOptions.PIPELINES
+    ) {
+      setStatus({
+        submitError: '',
+      });
+    }
+  }, [setFieldTouched, values.build.option, values.pipeline?.type, setStatus]);
 
   return (
     <FormSection title={t('devconsole~Build')}>
-      <BuildOption isDisabled={values?.formType === 'edit'} />
+      <BuildOption
+        isDisabled={values?.formType === 'edit' && (!isPipelineEnabled || isPipelineAttached)}
+      />
 
       {values.isi || values.pipeline?.enabled ? null : (
         <ExpandableSection toggleText={t('devconsole~Show advanced Build option')}>
