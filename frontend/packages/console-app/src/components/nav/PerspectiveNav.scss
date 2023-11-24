@@ -12,7 +12,7 @@
   .pf-v5-c-nav__section.no-title {
     border-bottom: 1px solid var(--pf-v5-global--BackgroundColor--dark-200);
     padding-bottom: var(--pf-v5-global--spacer--sm);
-    --pf-v5-c-nav__section--MarginTop: 0;
+    --pf-v5-c-nav__section--section--MarginTop: var(--pf-v5-global--spacer--sm);
     .pf-v5-c-nav__section-title {
       --pf-v5-c-nav__section-title--PaddingBottom: 0;
     }
