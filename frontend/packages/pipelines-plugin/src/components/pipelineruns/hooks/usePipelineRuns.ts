@@ -105,10 +105,9 @@ const useRuns = <Kind extends K8sResourceCommon>(
       runs && trResources
         ? uniqBy([...runs, ...trResources], (r) => r.metadata.name)
         : runs || trResources;
-
     return [
       rResources,
-      namespace ? !!rResources?.[0] : false,
+      loaded || trLoaded,
       namespace
         ? queryTr
           ? isList
@@ -119,7 +118,18 @@ const useRuns = <Kind extends K8sResourceCommon>(
         : undefined,
       trGetNextPage,
     ];
-  }, [error, trResources, trLoaded, trError, trGetNextPage, namespace, isList, queryTr, runs]);
+  }, [
+    runs,
+    trResources,
+    loaded,
+    trLoaded,
+    namespace,
+    queryTr,
+    isList,
+    trError,
+    error,
+    trGetNextPage,
+  ]);
 };
 
 export const usePipelineRuns = (

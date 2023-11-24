@@ -13,7 +13,8 @@ export type ScanResults = {
 };
 
 export const getPipelineRunVulnerabilities = (pipelineRun: PipelineRunKind): ScanResults => {
-  return pipelineRun.status?.results?.reduce((acc, result) => {
+  const results = pipelineRun.status?.results || pipelineRun.status?.pipelineResults;
+  return results?.reduce((acc, result) => {
     if (result.name?.endsWith(SCAN_OUTPUT_SUFFIX)) {
       if (!acc.vulnerabilities) {
         acc.vulnerabilities = { critical: 0, high: 0, medium: 0, low: 0 };
