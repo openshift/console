@@ -37,6 +37,12 @@ const RepositoryPipelineRunHeader = () => {
       id: 'namespace',
     },
     {
+      title: i18n.t('pipelines-plugin~Vulnerabilities'),
+      sortFunc: 'vulnerabilities',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
       title: i18n.t('pipelines-plugin~Status'),
       sortField: 'status.conditions[0].reason',
       transforms: [sortable],
