@@ -2,7 +2,6 @@ import * as React from 'react';
 import { LoadingInline, LOG_SOURCE_WAITING } from '@console/internal/components/utils';
 import { ContainerStatus, PodKind, ContainerSpec } from '@console/internal/module/k8s';
 import { useScrollDirection, ScrollDirection } from '@console/shared';
-import { TaskRunKind } from '../../../types';
 import { containerToLogSourceStatus } from '../../../utils/pipeline-utils';
 import Logs from './Logs';
 import { getRenderContainers } from './logs-utils';
@@ -12,13 +11,12 @@ import './MultiStreamLogs.scss';
 type MultiStreamLogsProps = {
   resource: PodKind;
   taskName?: string;
-  taskRun?: TaskRunKind;
   setCurrentLogsGetter?: (getter: () => string) => void;
 };
 
 export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
   resource,
-  taskRun,
+  taskName,
   setCurrentLogsGetter,
 }) => {
   const scrollPane = React.useRef<HTMLDivElement>();
@@ -28,7 +26,6 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
   const { containers, stillFetching } = getRenderContainers(resource);
   const dataRef = React.useRef<ContainerSpec[]>(null);
   dataRef.current = containers;
-  const taskName = taskRun?.spec.taskRef?.name ?? taskRun?.metadata.name;
 
   React.useEffect(() => {
     setCurrentLogsGetter(() => {
@@ -50,7 +47,7 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
   const autoScroll =
     scrollDirection == null || scrollDirection === ScrollDirection.scrolledToBottom;
 
-  const containerStatus: ContainerStatus[] = resource.status?.containerStatuses ?? [];
+  const containerStatus: ContainerStatus[] = resource?.status?.containerStatuses ?? [];
   return (
     <>
       <div className="odc-multi-stream-logs__taskName" data-test-id="logs-taskName">

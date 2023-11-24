@@ -4,7 +4,10 @@ import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
+import { Link } from 'react-router-dom';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { PipelineRunModel } from '../../../models';
 import { ComputedStatus, PipelineRunKind, PipelineTask, TaskRunKind } from '../../../types';
 import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
 import { taskRunStatus } from '../../../utils/pipeline-utils';
@@ -49,7 +52,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
   // eslint-disable-next-line @typescript-eslint/naming-convention
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.obj !== nextProps.obj || this.props.taskRuns !== nextProps.taskRuns) {
-      const { activeTask, taskRuns } = this.props;
+      const { activeTask, taskRuns } = nextProps;
       const sortedTaskRuns = this.getSortedTaskRun(taskRuns, [
         ...(this.props?.obj?.status?.pipelineSpec?.tasks || []),
         ...(this.props?.obj?.status?.pipelineSpec?.finally || []),
@@ -92,7 +95,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
     );
   };
 
-  onNavSelect = (item) => {
+  onNavSelect = (e, item) => {
     this.setState({
       activeItem: item.itemId,
       navUntouched: false,
@@ -137,6 +140,13 @@ class PipelineRunLogsWithTranslation extends React.Component<
         item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     };
+
+    const logsPath = `${resourcePathFromModel(
+      PipelineRunModel,
+      obj.metadata.name,
+      obj.metadata.namespace,
+    )}/logs/`;
+
     return (
       <div className="odc-pipeline-run-logs">
         <div className="odc-pipeline-run-logs__tasklist" data-test-id="logs-tasklist">
@@ -152,12 +162,20 @@ class PipelineRunLogsWithTranslation extends React.Component<
                       isActive={activeItem === taskRunName}
                       className="odc-pipeline-run-logs__navitem"
                     >
-                      <span ref={activeItem === taskRunName ? selectedItemRef : undefined}>
+                      <Link
+                        to={
+                          logsPath +
+                          (taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-')
+                        }
+                      >
                         <ColoredStatusIcon status={taskRunStatus(taskRun)} />
-                        <span className="odc-pipeline-run-logs__namespan">
+                        <span
+                          className="odc-pipeline-run-logs__namespan"
+                          ref={activeItem === taskRunName ? selectedItemRef : undefined}
+                        >
                           {taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-'}
                         </span>
-                      </span>
+                      </Link>
                     </NavItem>
                   );
                 })}
@@ -172,6 +190,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
         <div className="odc-pipeline-run-logs__container">
           {activeItem && resources ? (
             <LogsWrapperComponent
+              key={taskName}
               resource={resources}
               taskName={taskName}
               downloadAllLabel={t('pipelines-plugin~Download all task logs')}
