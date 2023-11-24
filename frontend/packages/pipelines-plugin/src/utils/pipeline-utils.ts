@@ -546,7 +546,9 @@ export const getSbomTaskRun = (taskruns: TaskRunKind[]): TaskRunKind =>
   );
 
 export const getSbomLink = (sbomTaskRun: TaskRunKind): string | undefined =>
-  sbomTaskRun?.status?.results?.find((r) => r.name === 'LINK_TO_SBOM')?.value;
+  (sbomTaskRun?.status?.results || sbomTaskRun?.status?.taskResults)?.find(
+    (r) => r.name === 'LINK_TO_SBOM',
+  )?.value;
 export const taskRunStatus = (taskRun: TaskRunKind | PLRTaskRunData): ComputedStatus => {
   if (!taskRun?.status?.conditions?.length) {
     return ComputedStatus.Pending;

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../models';
 import { ListPage } from '../ListPage';
-import { useGetPipelineRuns } from '../pipelineruns/hooks/useTektonResults';
+import { usePipelineRuns } from '../pipelineruns/hooks/usePipelineRuns';
 import { runFilters } from '../pipelines/detail-page-tabs/PipelineRuns';
 import { RepositoryFields, RepositoryLabels } from './consts';
 import RunList from './RepositoryPipelineRunList';
@@ -16,9 +16,16 @@ export interface RepositoryPipelineRunListPageProps {
 const RepositoryPipelineRunListPage: React.FC<RepositoryPipelineRunListPageProps> = (props) => {
   const { t } = useTranslation();
   const { obj } = props;
-  const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] = useGetPipelineRuns(
+  const selector = React.useMemo(() => {
+    return {
+      matchLabels: { [RepositoryLabels[RepositoryFields.REPOSITORY]]: obj.metadata.name },
+    };
+  }, [obj.metadata.name]);
+  const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] = usePipelineRuns(
     obj.metadata.namespace,
-    { name: obj.metadata.name, kind: obj.kind },
+    {
+      selector,
+    },
   );
   const resources = {
     [referenceForModel(PipelineRunModel)]: {

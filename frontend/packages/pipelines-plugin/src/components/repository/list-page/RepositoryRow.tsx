@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import {
   Kebab,
-  LoadingInline,
   ResourceIcon,
   ResourceKebab,
   ResourceLink,
@@ -18,7 +17,6 @@ import {
   pipelineRunTitleFilterReducer,
 } from '../../../utils/pipeline-filter-reducer';
 import { pipelineRunDuration } from '../../../utils/pipeline-utils';
-import { useGetPipelineRuns } from '../../pipelineruns/hooks/useTektonResults';
 import LinkedPipelineRunTaskStatus from '../../pipelineruns/status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../../pipelineruns/status/PipelineRunStatus';
 import { getTaskRunsOfPipelineRun } from '../../taskruns/useTaskRuns';
@@ -30,11 +28,13 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
   const {
     metadata: { name, namespace },
   } = obj;
-  const { taskRuns } = customData;
-
-  const [pipelineRuns, loaded] = useGetPipelineRuns(namespace, { name, kind: obj.kind });
-
-  const latestRun = loaded && getLatestRun(pipelineRuns, 'creationTimestamp');
+  const { taskRuns, pipelineRuns } = customData;
+  const plrs = pipelineRuns.filter((plr) => {
+    return (
+      plr.metadata?.labels[RepositoryLabels[RepositoryFields.REPOSITORY]] === obj.metadata.name
+    );
+  });
+  const latestRun = getLatestRun(plrs, 'creationTimestamp');
 
   const latestPLREventType =
     latestRun && latestRun?.metadata?.labels[RepositoryLabels[RepositoryFields.EVENT_TYPE]];
@@ -59,49 +59,39 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
         {latestPLREventType || '-'}
       </TableData>
       <TableData className={repositoriesTableColumnClasses[3]}>
-        {loaded ? (
-          latestRun ? (
-            <ResourceLink
-              kind={referenceForModel(PipelineRunModel)}
-              name={latestRun?.metadata.name}
-              namespace={namespace}
-            />
-          ) : (
-            '-'
-          )
+        {latestRun ? (
+          <ResourceLink
+            kind={referenceForModel(PipelineRunModel)}
+            name={latestRun?.metadata.name}
+            namespace={namespace}
+          />
         ) : (
-          <LoadingInline />
+          '-'
         )}
       </TableData>
       <TableData className={repositoriesTableColumnClasses[4]}>
         {}
-        {loaded ? (
-          latestRun ? (
-            <LinkedPipelineRunTaskStatus pipelineRun={latestRun} taskRuns={PLRTaskRuns} />
-          ) : (
-            '-'
-          )
+        {latestRun ? (
+          <LinkedPipelineRunTaskStatus pipelineRun={latestRun} taskRuns={PLRTaskRuns} />
         ) : (
-          <LoadingInline />
+          '-'
         )}
       </TableData>
       <TableData className={repositoriesTableColumnClasses[5]}>
-        {loaded ? (
+        {
           <PipelineRunStatus
             status={pipelineRunFilterReducer(latestRun)}
             title={pipelineRunTitleFilterReducer(latestRun)}
             pipelineRun={latestRun}
             taskRuns={PLRTaskRuns}
           />
-        ) : (
-          <LoadingInline />
-        )}
+        }
       </TableData>
       <TableData className={repositoriesTableColumnClasses[6]}>
-        {loaded ? <Timestamp timestamp={latestRun?.status.startTime} /> : <LoadingInline />}
+        {<Timestamp timestamp={latestRun?.status.startTime} />}
       </TableData>
       <TableData className={repositoriesTableColumnClasses[7]}>
-        {loaded ? pipelineRunDuration(latestRun) : <LoadingInline />}
+        {pipelineRunDuration(latestRun)}
       </TableData>
       <TableData className={repositoriesTableColumnClasses[8]}>
         <ResourceKebab actions={Kebab.factory.common} kind={referenceFor(obj)} resource={obj} />

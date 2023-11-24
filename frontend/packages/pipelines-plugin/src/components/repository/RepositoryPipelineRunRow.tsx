@@ -10,6 +10,7 @@ import {
   ExternalLink,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import * as SignedPipelinerunIcon from '../../images/signed-badge.svg';
 import { PipelineRunModel } from '../../models';
 import { PipelineRunKind, TaskRunKind } from '../../types';
 import { getPipelineRunKebabActions } from '../../utils/pipeline-actions';
@@ -20,7 +21,9 @@ import {
 import { pipelineRunDuration } from '../../utils/pipeline-utils';
 import LinkedPipelineRunTaskStatus from '../pipelineruns/status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../pipelineruns/status/PipelineRunStatus';
+import PipelineRunVulnerabilities from '../pipelineruns/status/PipelineRunVulnerabilities';
 import { ResourceKebabWithUserLabel } from '../pipelineruns/triggered-by';
+import { chainsSignedAnnotation } from '../pipelines/const';
 import { getTaskRunsOfPipelineRun } from '../taskruns/useTaskRuns';
 import {
   RepositoryLabels,
@@ -68,6 +71,13 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
           data-test-id={obj.metadata.name}
           nameSuffix={
             <>
+              {obj?.metadata?.annotations?.[chainsSignedAnnotation] === 'true' ? (
+                <Tooltip content={t('pipelines-plugin~Signed')}>
+                  <div className="opp-pipeline-run-list__signed-indicator">
+                    <img src={SignedPipelinerunIcon} alt={t('pipelines-plugin~Signed')} />
+                  </div>
+                </Tooltip>
+              ) : null}
               {obj?.metadata?.annotations?.['resource.deleted.in.k8s'] === 'true' ? (
                 <Tooltip content={t('pipelines-plugin~Archived in Tekton results')}>
                   <div className="opp-pipeline-run-list__results-indicator">
@@ -102,6 +112,9 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
       </TableData>
       <TableData className={tableColumnClasses[2]} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <PipelineRunVulnerabilities pipelineRun={obj} condensed />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <PLRStatus obj={obj} taskRuns={PLRTaskRuns} />

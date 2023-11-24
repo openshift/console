@@ -3,8 +3,8 @@ import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
 import { PipelineRunModel } from '../../models';
+import { useTaskRuns } from '../pipelineruns/hooks/useTaskRuns';
 import { usePipelineOperatorVersion } from '../pipelines/utils/pipeline-operator';
-import { useTaskRuns } from '../taskruns/useTaskRuns';
 import RepositoryPipelineRunHeader from './RepositoryPipelineRunHeader';
 import RepositoryPipelineRunRow from './RepositoryPipelineRunRow';
 
