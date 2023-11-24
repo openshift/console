@@ -187,15 +187,18 @@ const ImageSearch: React.FC = () => {
     [handleSearch, values.searchTerm],
   );
 
-  const getHelpText = () => {
+  const helpText = React.useMemo(() => {
     if (values.isSearchingForImage) {
       return `${t('devconsole~Validating')}...`;
     }
     if (!values.isSearchingForImage && validated === ValidatedOptions.success) {
       return t('devconsole~Validated');
     }
+    if (validated === ValidatedOptions.error) {
+      return values.searchTerm === '' ? t('devconsole~Required') : values.isi.status?.message;
+    }
     return '';
-  };
+  }, [t, validated, values.isSearchingForImage, values.searchTerm, values.isi.status?.message]);
 
   const resetFields = () => {
     if (values.formType === 'edit') {
@@ -211,12 +214,6 @@ const ImageSearch: React.FC = () => {
       !applicationNameTouched &&
       setFieldValue('application.name', '');
   };
-
-  const helpTextInvalid = validated === ValidatedOptions.error && (
-    <span className="odc-image-search__helper-text-invalid">
-      {values.searchTerm === '' ? 'Required' : values.isi.status?.message}
-    </span>
-  );
 
   React.useEffect(() => {
     !dirty && values.searchTerm && handleSearch(values.searchTerm);
@@ -248,8 +245,8 @@ const ImageSearch: React.FC = () => {
         placeholder={t(
           'devconsole~docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>',
         )}
-        helpText={getHelpText()}
-        helpTextInvalid={helpTextInvalid}
+        helpText={helpText}
+        helpTextInvalid={helpText}
         validated={validated}
         onChange={(e: KeyboardEvent) => {
           resetFields();
