@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
+import { ArchiveIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Timestamp, ResourceLink } from '@console/internal/components/utils';
@@ -53,13 +54,22 @@ const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, custo
           namespace={obj.metadata.namespace}
           data-test-id={obj.metadata.name}
           nameSuffix={
-            obj?.metadata?.annotations?.[chainsSignedAnnotation] === 'true' ? (
-              <Tooltip content={t('pipelines-plugin~Signed')}>
-                <div className="opp-pipeline-run-list__signed-indicator">
-                  <img src={SignedPipelinerunIcon} alt={t('pipelines-plugin~Signed')} />
-                </div>
-              </Tooltip>
-            ) : null
+            <>
+              {obj?.metadata?.annotations?.[chainsSignedAnnotation] === 'true' ? (
+                <Tooltip content={t('pipelines-plugin~Signed')}>
+                  <div className="opp-pipeline-run-list__signed-indicator">
+                    <img src={SignedPipelinerunIcon} alt={t('pipelines-plugin~Signed')} />
+                  </div>
+                </Tooltip>
+              ) : null}
+              {obj?.metadata?.annotations?.['resource.deleted.in.k8s'] === 'true' ? (
+                <Tooltip content={t('pipelines-plugin~Archived in Tekton results')}>
+                  <div className="opp-pipeline-run-list__results-indicator">
+                    <ArchiveIcon />
+                  </div>
+                </Tooltip>
+              ) : null}
+            </>
           }
         />
       </TableData>

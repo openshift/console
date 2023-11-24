@@ -1,12 +1,14 @@
+import * as React from 'react';
 import i18n from 'i18next';
 import * as _ from 'lodash';
 import { SemVer } from 'semver';
-import { errorModal } from '@console/internal/components/modals';
+import { deleteModal, errorModal } from '@console/internal/components/modals';
 import {
   history,
   resourcePathFromModel,
   Kebab,
   KebabAction,
+  asAccessReview,
 } from '@console/internal/components/utils';
 import { k8sCreate, K8sKind, k8sPatch, referenceForModel } from '@console/internal/module/k8s';
 import { StartedByAnnotation } from '../components/pipelines/const';
@@ -167,6 +169,41 @@ export const rerunPipelineAndRedirect: KebabAction = (
     // t('pipelines-plugin~Start last run')
     labelKey: 'pipelines-plugin~Start last run',
   });
+};
+
+export const deleteResourceObj: KebabAction = (
+  kind: K8sKind,
+  resourceObj: PipelineRunKind | TaskRunKind,
+) => {
+  const tektonResultsFlag =
+    resourceObj?.metadata?.annotations?.['results.tekton.dev/log'] ||
+    resourceObj?.metadata?.annotations?.['results.tekton.dev/record'] ||
+    resourceObj?.metadata?.annotations?.['results.tekton.dev/result'];
+  const isResourceDeletedInK8s = resourceObj?.metadata?.annotations?.['resource.deleted.in.k8s'];
+
+  const message = (
+    <p>
+      {i18n.t(
+        'pipelines-plugin~This action will delete resource from k8s but still the resource can be fetched from Tekton Results',
+      )}
+    </p>
+  );
+  return {
+    // t('pipelines-plugin~Delete {{kind}}', {kind: kind.label})
+    labelKey: 'pipelines-plugin~Delete {{kind}}',
+    labelKind: { kind: kind.labelKey ? i18n.t(kind.labelKey) : kind.label },
+    callback: () =>
+      deleteModal({
+        kind,
+        resource: resourceObj,
+        message: !isResourceDeletedInK8s && tektonResultsFlag ? message : '',
+      }),
+    accessReview: asAccessReview(kind, resourceObj, 'delete'),
+    isDisabled: !!isResourceDeletedInK8s,
+    tooltip: isResourceDeletedInK8s
+      ? i18n.t('pipelines-plugin~Resource is being fetched from Tekton Results.')
+      : '',
+  };
 };
 
 export const rerunPipelineRunAndRedirect: KebabAction = (
@@ -343,7 +380,9 @@ export const getPipelineRunKebabActions = (
   (model, pipelineRun) => stopPipelineRun(model, pipelineRun, operatorVersion, taskRuns),
   (model, pipelineRun) => viewPipelineRunSBOM(model, pipelineRun, taskRuns),
   (model, pipelineRun) => cancelPipelineRunFinally(model, pipelineRun, taskRuns),
-  Kebab.factory.Delete,
+  (model, pipelineRun) => deleteResourceObj(model, pipelineRun),
 ];
 
-export const getTaskRunKebabActions = (): KebabAction[] => [Kebab.factory.Delete];
+export const getTaskRunKebabActions = (): KebabAction[] => [
+  (model, taskRun) => deleteResourceObj(model, taskRun),
+];
