@@ -60,7 +60,7 @@ When('user will see Shipwright Builds', () => {
 });
 
 When('user clicks on {string} build', (build: string) => {
-  cy.byLegacyTestID(`${build}`).should('be.visible').click();
+  cy.get(`[data-test-id='${build}'][href*='Build/${build}']`).should('be.visible').click();
 });
 
 When('user will see {string}, {string} and {string}', (el1, el2, el3: string) => {
@@ -74,7 +74,7 @@ Then('user will see events steaming', () => {
 Given('user is at Shipwright Builds details page for build {string}', (buildName: string) => {
   navigateTo(devNavigationMenu.Builds);
   cy.get(buildPO.shipwrightBuild.shipwrightBuildsTab).should('be.visible').click();
-  cy.byLegacyTestID(`${buildName}`).should('be.visible').click();
+  cy.get(`[data-test-id='${buildName}'][href*='Build/${buildName}']`).should('be.visible').click();
   cy.get('[aria-label="Breadcrumb"]').should('contain', 'Build details');
   cy.get('[data-test-id="actions-menu-button"]', { timeout: 10000 }).should('be.visible');
 });
@@ -86,7 +86,7 @@ When('user clicks on Filter', () => {
 When(
   'user will see {string}, {string}, {string}, {string} and {string} options',
   (el1, el2, el3, el4, el5: string) => {
-    cy.get(buildPO.filterList)
+    cy.get(buildPO.shipwrightBuild.filterList)
       .should('contain', el1)
       .and('contain', el2)
       .and('contain', el3)
@@ -113,19 +113,21 @@ Then(
 Given('user is at Shipwright Builds run page {string}', (buildName: string) => {
   navigateTo(devNavigationMenu.Builds);
   cy.get(buildPO.shipwrightBuild.shipwrightBuildsTab).should('be.visible').click();
-  cy.byLegacyTestID(`${buildName}`).should('be.visible').click();
+  cy.get(`[data-test-id='${buildName}'][href*='Build/${buildName}']`).should('be.visible').click();
   cy.get(buildPO.shipwrightBuild.shipwrightBuildRunsTab).should('be.visible').click();
 });
 
 When('user has a failed build run', () => {
   cy.exec(`oc apply -n ${Cypress.env('NAMESPACE')} -f testData/builds/shipwrightBuildRun.yaml`, {
     failOnNonZeroExit: false,
+  }).then(function (result) {
+    cy.log(result.stdout);
   });
   cy.byLegacyTestID('buildpack-nodejs-build-heroku-1').should('be.visible').click();
   cy.byLegacyTestID('breadcrumb-link-0').should('be.visible').click();
   cy.get(buildPO.filter).should('be.visible').click();
   cy.get(buildPO.failedFilter).should('be.visible').click();
-  cy.get(resourceRow).should('be.visible');
+  cy.get(resourceRow, { timeout: 20000 }).should('be.visible');
 });
 
 When('user clicks on Failed Status', () => {

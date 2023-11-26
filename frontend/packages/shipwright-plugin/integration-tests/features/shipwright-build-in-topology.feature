@@ -60,7 +60,7 @@ Feature: Shipwright build in topolgy
 
         @regression
         Scenario Outline: View logs for shipwright buildrun: SWB-02-TC04
-            When user navigates to Topology in Developer perspective
+             When user navigates to Topology in Developer perspective
               And user filters the workload "<workload_name>" by name and sets the workload type to "<workload_type>"
               And user clicks on View logs button for buildrun for workload type "<workload_type>" from the sidebar
              Then user will be able to see the buildRun logs
