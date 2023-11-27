@@ -48,7 +48,7 @@ const Logs: React.FC<LogsProps> = ({
         scrollToRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
       }
       blockContentRef.current = '';
-    }, 300),
+    }, 1000),
     [],
   );
 
