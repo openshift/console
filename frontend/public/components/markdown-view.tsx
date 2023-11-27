@@ -5,13 +5,20 @@ import { ThemeContext, updateThemeClass } from './ThemeProvider';
 
 type SyncMarkdownProps = Omit<MarkdownProps, 'theme' | 'updateThemeClass' | 'emptyMsg'> & {
   emptyMsg?: string;
+  theme?: string;
 };
 
-export const SyncMarkdownView: React.FC<SyncMarkdownProps> = ({ emptyMsg, ...rest }) => {
+export const SyncMarkdownView: React.FC<SyncMarkdownProps> = ({ emptyMsg, theme, ...rest }) => {
   const { t } = useTranslation();
   emptyMsg = emptyMsg || t('public~Not available');
-  const theme = React.useContext(ThemeContext);
+  const contextTheme = React.useContext(ThemeContext);
+  const markDownTheme = theme || contextTheme;
   return (
-    <MarkdownView {...rest} emptyMsg={emptyMsg} theme={theme} updateThemeClass={updateThemeClass} />
+    <MarkdownView
+      {...rest}
+      emptyMsg={emptyMsg}
+      theme={markDownTheme}
+      updateThemeClass={updateThemeClass}
+    />
   );
 };

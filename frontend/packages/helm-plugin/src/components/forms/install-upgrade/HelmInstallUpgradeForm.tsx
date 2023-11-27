@@ -5,6 +5,7 @@ import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import {
   InputField,
   FormFooter,
@@ -66,6 +67,7 @@ const HelmInstallUpgradeForm: React.FC<
   chartIndexEntry,
 }) => {
   const { t } = useTranslation();
+  const theme = React.useContext(ThemeContext);
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
 
@@ -111,6 +113,7 @@ const HelmInstallUpgradeForm: React.FC<
           helmReadmeModalLauncher({
             readme: chartReadme,
             modalClassName: 'modal-lg',
+            theme,
           })
         }
         isInline
