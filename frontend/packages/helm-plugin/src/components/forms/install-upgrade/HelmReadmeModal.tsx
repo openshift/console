@@ -10,16 +10,17 @@ import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 
 type HelmReadmeModalProps = {
   readme: string;
+  theme?: string;
 };
 type Props = HelmReadmeModalProps & ModalComponentProps;
 
-const HelmReadmeModal: React.FunctionComponent<Props> = ({ readme, close }) => {
+const HelmReadmeModal: React.FunctionComponent<Props> = ({ readme, theme, close }) => {
   const { t } = useTranslation();
   return (
     <div className="modal-content">
       <ModalTitle close={close}>{t('helm-plugin~README')}</ModalTitle>
       <ModalBody>
-        <SyncMarkdownView content={readme} />
+        <SyncMarkdownView content={readme} theme={theme} />
       </ModalBody>
     </div>
   );
