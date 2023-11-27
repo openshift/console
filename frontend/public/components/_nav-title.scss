@@ -1,6 +1,7 @@
 .co-actions {
   align-items: flex-end;
   display: flex;
+  font-family: var(--pf-v5-global--FontFamily--text);
   @media (max-width: $screen-xs) {
     flex-direction: column;
   }
