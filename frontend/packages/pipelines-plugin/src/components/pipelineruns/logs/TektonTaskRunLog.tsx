@@ -2,6 +2,7 @@ import * as React from 'react';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { LoadingInline } from '@console/internal/components/utils';
 import { TaskRunKind } from '../../../types';
+import { TektonResourceLabel } from '../../pipelines/const';
 import { useTRTaskRunLog } from '../hooks/useTektonResults';
 
 import './Logs.scss';
@@ -17,7 +18,7 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
   setCurrentLogsGetter,
 }) => {
   const scrollPane = React.useRef<HTMLDivElement>();
-  const taskName = taskRun?.spec.taskRef?.name ?? taskRun?.metadata.name;
+  const taskName = taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-';
   const [trResults, trLoaded, trError] = useTRTaskRunLog(
     taskRun.metadata.namespace,
     taskRun.metadata.name,

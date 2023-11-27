@@ -35,8 +35,8 @@ const getSortedContainerStatus = (
 export const getRenderContainers = (
   pod: PodKind,
 ): { containers: ContainerSpec[]; stillFetching: boolean } => {
-  const containers: ContainerSpec[] = pod.spec?.containers ?? [];
-  const containerStatuses: ContainerStatus[] = pod.status?.containerStatuses ?? [];
+  const containers: ContainerSpec[] = pod?.spec?.containers ?? [];
+  const containerStatuses: ContainerStatus[] = pod?.status?.containerStatuses ?? [];
 
   const sortedContainerStatuses = getSortedContainerStatus(containers, containerStatuses);
 

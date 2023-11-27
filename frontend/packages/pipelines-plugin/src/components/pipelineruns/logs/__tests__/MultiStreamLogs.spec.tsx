@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { cloneDeep } from 'lodash';
-import { taskRunWithResults } from '../../../taskruns/__tests__/taskrun-test-data';
 import Logs from '../Logs';
 import { MultiStreamLogs } from '../MultiStreamLogs';
 import { podData } from './logs-test-data';
@@ -23,9 +22,9 @@ describe('MultiStreamLogs', () => {
   });
 
   it('should render inline loading based on logs completion', () => {
-    const wrapper = shallow(<MultiStreamLogs {...props} taskRun={taskRunWithResults} />);
+    const wrapper = shallow(<MultiStreamLogs {...props} />);
     expect(wrapper.find('.odc-multi-stream-logs__taskName--loading').exists()).toBe(false);
-    expect(wrapper.find('.odc-multi-stream-logs__taskName').text()).toBe('add-task');
+    expect(wrapper.find('.odc-multi-stream-logs__taskName').text()).toBe('step-oc');
   });
 
   it('should render number of logs equal to number of containers', () => {
