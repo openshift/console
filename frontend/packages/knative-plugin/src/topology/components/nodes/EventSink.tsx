@@ -60,6 +60,7 @@ const EventSink: React.FC<EventSinkProps> = ({
   ...rest
 }) => {
   useAnchor(EventSinkTargetAnchor, AnchorEnd.target, TYPE_EVENT_SINK_LINK);
+  const ref = React.useRef();
   const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef);
@@ -129,48 +130,50 @@ const EventSink: React.FC<EventSinkProps> = ({
       isVisible={dropTarget && canDrop}
       animationDuration={0}
     >
-      <BaseNode
-        className="odc-event-source"
-        onShowCreateConnector={isKafkaConnectionLinkPresent && onShowCreateConnector}
-        kind={data.kind}
-        element={element}
-        hoverRef={hoverRef}
-        dragNodeRef={groupRefs}
-        dropTarget={dropTarget}
-        canDrop={canDrop}
-        labelIcon={<EventSinkIcon />}
-        {...rest}
-      >
-        {donutStatus && showDetails && !isKafkaSink && (
-          <PodSet size={size * 0.75} x={width / 2} y={height / 2} data={donutStatus} />
-        )}
-        <circle
-          cx={width * 0.5}
-          cy={height * 0.5}
-          r={width * 0.25}
-          fill="var(--pf-v5-global--palette--white)"
-        />
-        {typeof getEventSourceIcon(data.kind, resources.obj) === 'string' ? (
-          <image
-            x={width * 0.33}
-            y={height * 0.33}
-            width={size * 0.35}
-            height={size * 0.35}
-            xlinkHref={getEventSourceIcon(data.kind, resources.obj, element.getType()) as string}
+      <g ref={ref}>
+        <BaseNode
+          className="odc-event-source"
+          onShowCreateConnector={isKafkaConnectionLinkPresent && onShowCreateConnector}
+          kind={data.kind}
+          element={element}
+          hoverRef={hoverRef}
+          dragNodeRef={groupRefs}
+          dropTarget={dropTarget}
+          canDrop={canDrop}
+          labelIcon={<EventSinkIcon />}
+          {...rest}
+        >
+          {donutStatus && showDetails && !isKafkaSink && (
+            <PodSet size={size * 0.75} x={width / 2} y={height / 2} data={donutStatus} />
+          )}
+          <circle
+            cx={width * 0.5}
+            cy={height * 0.5}
+            r={width * 0.25}
+            fill="var(--pf-v5-global--palette--white)"
           />
-        ) : (
-          <foreignObject
-            x={width * 0.33}
-            y={height * 0.33}
-            width={size * 0.35}
-            height={size * 0.35}
-            className="odc-event-source__svg-icon"
-          >
-            {getEventSourceIcon(data.kind, resources.obj, element.getType())}
-          </foreignObject>
-        )}
-        {children}
-      </BaseNode>
+          {typeof getEventSourceIcon(data.kind, resources.obj) === 'string' ? (
+            <image
+              x={width * 0.33}
+              y={height * 0.33}
+              width={size * 0.35}
+              height={size * 0.35}
+              xlinkHref={getEventSourceIcon(data.kind, resources.obj, element.getType()) as string}
+            />
+          ) : (
+            <foreignObject
+              x={width * 0.33}
+              y={height * 0.33}
+              width={size * 0.35}
+              height={size * 0.35}
+              className="odc-event-source__svg-icon"
+            >
+              {getEventSourceIcon(data.kind, resources.obj, element.getType())}
+            </foreignObject>
+          )}
+          {children}
+        </BaseNode>
+      </g>
     </Tooltip>
   );
 };

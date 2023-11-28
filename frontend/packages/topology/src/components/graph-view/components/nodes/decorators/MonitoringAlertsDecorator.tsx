@@ -37,6 +37,7 @@ const MonitoringAlertsDecorator: React.FC<MonitoringAlertsDecoratorType> = ({
   y,
   showMonitoringOverview,
 }) => {
+  const ref = React.useRef();
   const { t } = useTranslation();
   const workloadData = element.getData().data;
   const { monitoringAlerts } = workloadData;
@@ -53,12 +54,14 @@ const MonitoringAlertsDecorator: React.FC<MonitoringAlertsDecoratorType> = ({
 
   const label = t('topology~Monitoring alert');
   return (
-    <Tooltip key="monitoringAlert" content={label} position={TooltipPosition.left}>
-      <Decorator x={x} y={y} radius={radius} onClick={showSidebar} ariaLabel={label}>
-        <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
-          <AlertSeverityIcon severityAlertType={severityAlertType} fontSize={radius} />
-        </g>
-      </Decorator>
+    <Tooltip triggerRef={ref} key="monitoringAlert" content={label} position={TooltipPosition.left}>
+      <g ref={ref}>
+        <Decorator x={x} y={y} radius={radius} onClick={showSidebar} ariaLabel={label}>
+          <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
+            <AlertSeverityIcon severityAlertType={severityAlertType} fontSize={radius} />
+          </g>
+        </Decorator>
+      </g>
     </Tooltip>
   );
 };

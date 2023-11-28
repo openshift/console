@@ -19,6 +19,7 @@ const HelmReleaseStatusDecorator: React.FC<HelmReleaseStatusDecoratorProps> = ({
   x,
   y,
 }) => {
+  const ref = React.useRef();
   const { t } = useTranslation();
   const { data } = element.getData();
 
@@ -29,10 +30,12 @@ const HelmReleaseStatusDecorator: React.FC<HelmReleaseStatusDecoratorProps> = ({
   const label = t('helm-plugin~Helm release is {{status}}', { status });
 
   return (
-    <Tooltip content={label} position={TooltipPosition.left}>
-      <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={label}>
-        <Status status={status} iconOnly noTooltip />
-      </BuildDecoratorBubble>
+    <Tooltip triggerRef={ref} content={label} position={TooltipPosition.left}>
+      <g ref={ref}>
+        <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={label}>
+          <Status status={status} iconOnly noTooltip />
+        </BuildDecoratorBubble>
+      </g>
     </Tooltip>
   );
 };

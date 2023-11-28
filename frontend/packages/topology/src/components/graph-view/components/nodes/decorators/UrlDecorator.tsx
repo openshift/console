@@ -15,6 +15,7 @@ interface DefaultDecoratorProps {
 }
 
 const UrlDecorator: React.FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
+  const ref = React.useRef();
   const { t } = useTranslation();
   const resourceObj = getResource(element);
   const url = useRoutesURL(resourceObj);
@@ -23,12 +24,14 @@ const UrlDecorator: React.FC<DefaultDecoratorProps> = ({ element, radius, x, y }
   }
   const label = t('topology~Open URL');
   return (
-    <Tooltip key="route" content={label} position={TooltipPosition.right}>
-      <Decorator x={x} y={y} radius={radius} href={url} external ariaLabel={label}>
-        <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
-          <ExternalLinkAltIcon style={{ fontSize: radius }} title={label} />
-        </g>
-      </Decorator>
+    <Tooltip triggerRef={ref} key="route" content={label} position={TooltipPosition.right}>
+      <g ref={ref}>
+        <Decorator x={x} y={y} radius={radius} href={url} external ariaLabel={label}>
+          <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
+            <ExternalLinkAltIcon style={{ fontSize: radius }} title={label} />
+          </g>
+        </Decorator>
+      </g>
     </Tooltip>
   );
 };

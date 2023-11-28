@@ -39,6 +39,7 @@ export const ConnectedPipelineRunDecorator: React.FC<PipelineRunDecoratorProps &
   y,
   impersonate,
 }) => {
+  const ref = React.useRef();
   const { t } = useTranslation();
   const { latestPipelineRun, status } = getLatestPipelineRunStatus(pipelineRuns);
   const [taskRuns, taskRunsLoaded] = useTaskRuns(latestPipelineRun?.metadata?.namespace);
@@ -99,8 +100,8 @@ export const ConnectedPipelineRunDecorator: React.FC<PipelineRunDecoratorProps &
   }
 
   return (
-    <Tooltip content={tooltipContent} position={TooltipPosition.left}>
-      {decoratorContent}
+    <Tooltip triggerRef={ref} content={tooltipContent} position={TooltipPosition.left}>
+      <g ref={ref}>{decoratorContent}</g>
     </Tooltip>
   );
 };

@@ -49,6 +49,7 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   useAnchor(RectAnchor, AnchorEnd.target, TYPE_AGGREGATE_EDGE);
   useAnchor(EventSinkSourceAnchor, AnchorEnd.source, TYPE_EVENT_SINK_LINK);
 
+  const ref = React.useRef();
   const { t } = useTranslation();
   const { data } = element.getData();
   const { width } = element.getBounds();
@@ -57,6 +58,7 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
 
   return (
     <Tooltip
+      triggerRef={ref}
       content={t('knative-plugin~Move sink to {{resourceObjKind}}', {
         resourceObjKind: resourceObj.kind,
       })}
@@ -64,25 +66,27 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
       isVisible={dropTarget && canDrop}
       animationDuration={0}
     >
-      <BaseNode
-        className="odc-eventing-pubsub"
-        createConnectorAccessVerb="create"
-        kind={data.kind}
-        element={element}
-        dropTarget={dropTarget}
-        canDrop={canDrop}
-        {...rest}
-      >
-        <image
-          x={width * 0.1}
-          y={0}
-          width={width * 0.8}
-          height={width * 0.5}
-          xlinkHref={eventPubSubImg}
-          className="odc-eventing-pubsub--image"
-        />
-        {children}
-      </BaseNode>
+      <g ref={ref}>
+        <BaseNode
+          className="odc-eventing-pubsub"
+          createConnectorAccessVerb="create"
+          kind={data.kind}
+          element={element}
+          dropTarget={dropTarget}
+          canDrop={canDrop}
+          {...rest}
+        >
+          <image
+            x={width * 0.1}
+            y={0}
+            width={width * 0.8}
+            height={width * 0.5}
+            xlinkHref={eventPubSubImg}
+            className="odc-eventing-pubsub--image"
+          />
+          {children}
+        </BaseNode>
+      </g>
     </Tooltip>
   );
 };
