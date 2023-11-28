@@ -36,6 +36,7 @@ import {
   ALL_NAMESPACES_KEY,
   getName,
   useDeepCompareMemoize,
+  nodeUptime,
 } from '@console/shared';
 import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
@@ -117,6 +118,7 @@ const sorts = {
     const channel = defaultChannelFor(packageManifest);
     return channel?.currentCSVDesc?.displayName;
   },
+  nodeUptime: (node: NodeKind): string => nodeUptime(node),
 };
 
 // Common table row/columns helper SFCs for implementing accessible data grid

@@ -37,6 +37,7 @@ import {
 } from '@console/shared';
 import { nodeStatus } from '../../status/node';
 import { menuActions } from './menu-actions';
+import NodeUptime from './node-dashboard/NodeUptime';
 import NodeRoles from './NodeRoles';
 import NodeStatus from './NodeStatus';
 import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
@@ -53,6 +54,7 @@ import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
 // t('console-app~Machine')
 // t('console-app~Labels')
 // t('console-app~Zone')
+// t('console-app~Uptime')
 
 const nodeColumnInfo = Object.freeze({
   name: {
@@ -114,6 +116,11 @@ const nodeColumnInfo = Object.freeze({
     classes: '',
     id: 'zone',
     title: 'console-app~Zone',
+  },
+  uptime: {
+    classes: '',
+    id: 'uptime',
+    title: 'console-app~Uptime',
   },
 });
 
@@ -207,6 +214,14 @@ const NodeTableHeader = () => {
       sortFunc: 'nodeZone',
       transforms: [sortable],
       props: { className: nodeColumnInfo.zone.classes },
+      additional: true,
+    },
+    {
+      title: i18next.t(nodeColumnInfo.uptime.title),
+      id: nodeColumnInfo.uptime.id,
+      sortFunc: 'nodeUptime',
+      transforms: [sortable],
+      props: { className: nodeColumnInfo.uptime.classes },
       additional: true,
     },
     {
@@ -358,6 +373,13 @@ const NodesTableRow: React.FC<RowFunctionArgs<NodeKind>> = ({
         columnID={nodeColumnInfo.zone.id}
       >
         {zone}
+      </TableData>
+      <TableData
+        className={nodeColumnInfo.uptime.classes}
+        columns={columns}
+        columnID={nodeColumnInfo.uptime.id}
+      >
+        <NodeUptime obj={node} />
       </TableData>
       <TableData className={Kebab.columnClass}>
         <ResourceKebab actions={menuActions} kind={referenceForModel(NodeModel)} resource={node} />

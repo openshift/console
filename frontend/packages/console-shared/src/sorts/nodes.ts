@@ -1,5 +1,6 @@
 import * as UIActions from '@console/internal/actions/ui';
 import { NodeKind } from '@console/internal/module/k8s';
+import { getNodeUptime } from '@console/shared/src';
 import { getNodeMachineName } from '../selectors/node';
 
 export const nodeMemory = (node: NodeKind): number => {
@@ -19,3 +20,4 @@ export const nodeInstanceType = (node: NodeKind): string =>
   node.metadata.labels?.['beta.kubernetes.io/instance-type'];
 export const nodeZone = (node: NodeKind): string =>
   node.metadata.labels?.['topology.kubernetes.io/zone'];
+export const nodeUptime = (node: NodeKind): string => getNodeUptime(node);
