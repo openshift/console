@@ -45,7 +45,7 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
   }, []);
 
   const autoScroll =
-    scrollDirection == null || scrollDirection === ScrollDirection.scrolledToBottom;
+    scrollDirection == null || scrollDirection !== ScrollDirection.scrolledToBottom;
 
   const containerStatus: ContainerStatus[] = resource?.status?.containerStatuses ?? [];
   return (
