@@ -460,7 +460,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
         <div key={steps[0].resolving} className="co-m-pane__body">
           <SectionHeading text={steps[0].resolving} />
           <div className="co-table-container">
-            <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+            <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
               <thead className="pf-v5-c-table__thead">
                 <tr className="pf-v5-c-table__tr">
                   <th className={componentsTableColumnClasses[0]}>{t('olm~Name')}</th>

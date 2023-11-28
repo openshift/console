@@ -569,7 +569,7 @@ const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName
       data={operands}
       loaded={loaded}
     >
-      <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+      <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
         <thead className="pf-v5-c-table__thead">
           <tr className="pf-v5-c-table__tr" key="operand-table-header-row">
             <th className="pf-m-width-35 pf-v5-c-table__th">{t('olm~Name')}</th>

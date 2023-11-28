@@ -15,7 +15,7 @@ const NodeDetailsConditions: React.FC<NodeDetailsConditionsProps> = ({ node }) =
     <div className="co-m-pane__body">
       <SectionHeading text={t('console-app~Node conditions')} />
       <div className="co-table-container">
-        <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+        <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
           <thead className="pf-v5-c-table__thead">
             <tr className="pf-v5-c-table__tr">
               <th className="pf-v5-c-table__th">{t('console-app~Type')}</th>
