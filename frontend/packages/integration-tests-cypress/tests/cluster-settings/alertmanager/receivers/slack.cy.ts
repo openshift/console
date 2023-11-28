@@ -6,8 +6,7 @@ import * as yamlEditor from '../../../../views/yaml-editor';
 const receiverName = `SlackReceiver-${testName}`;
 const receiverType = 'slack';
 const configName = `${receiverType}_configs`;
-const severity = 'severity';
-const warning = 'warning';
+const label = 'severity = warning';
 const slackAPIURL = 'http://myslackapi';
 const slackChannel = 'myslackchannel';
 const slackIconURL = 'http://slackiconurl';
@@ -49,12 +48,11 @@ describe('Alertmanager: Slack Receiver Form', () => {
     cy.byLegacyTestID('slack-api-url').type(slackAPIURL);
     cy.byLegacyTestID('save-as-default').should('be.enabled');
     cy.byLegacyTestID('slack-channel').type(slackChannel);
-    cy.byLegacyTestID('label-name-0').type(severity);
-    cy.byLegacyTestID('label-value-0').type(warning);
+    cy.byLegacyTestID('label-0').type(label);
     alertmanager.save();
 
     cy.log('verify Slack Receiver was created correctly');
-    alertmanager.validateCreation(receiverName, receiverType, severity, warning);
+    alertmanager.validateCreation(receiverName, receiverType, label);
     alertmanager.visitYAMLPage();
     yamlEditor.getEditorContent().then((content) => {
       const configs = getGlobalsAndReceiverConfig(receiverName, configName, content);

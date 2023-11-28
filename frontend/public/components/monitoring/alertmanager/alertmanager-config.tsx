@@ -103,8 +103,8 @@ const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
 };
 
 /**
- * Recursive function which transverses routes and sub-routes to get labels for each receiver.
- * Each entry is a set of labels used to route alerts to a receiver
+ * Recursive function which transverses routes and sub-routes to get labels and/or matchers for each receiver.
+ * Each entry is a set of labels and/or matchers used to route alerts to a receiver
  *
  * Ex: returns
  * [{
@@ -112,7 +112,8 @@ const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
  *   "labels": {
  *     "service": "database",
  *     "owner": "team-Y"
- *   }
+ *   },
+ *   "matchers": ["severity = critical"]
  * },
  * {
  *   "receiver": "team-Y-pager",
@@ -122,14 +123,19 @@ const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
  *   }
  * }]
 }*/
-const getRoutingLabelsByReceivers = (routes, parentLabels): RoutingLabelsByReceivers[] => {
+const getRoutingLabelsByReceivers = (
+  routes: AlertmanagerRoute[],
+  parentLabels: { [key: string]: string } = {},
+  parentMatchers: string[] = [],
+): RoutingLabelsByReceivers[] => {
   let results: RoutingLabelsByReceivers[] = [];
   let labels = {};
   for (const obj of routes) {
     labels = _.merge({}, parentLabels, obj.match, obj.match_re);
-    results.push({ receiver: obj.receiver, labels });
+    const matchers = [...parentMatchers, ...(obj.matchers ?? [])];
+    results.push({ receiver: obj.receiver, labels, matchers });
     if (obj.routes) {
-      results = results.concat(getRoutingLabelsByReceivers(obj.routes, labels));
+      results = results.concat(getRoutingLabelsByReceivers(obj.routes, labels, matchers));
     }
   }
   return results;
@@ -192,28 +198,18 @@ export const numberOfIncompleteReceivers = (config: AlertmanagerConfig): number 
     : numIncompleteReceivers;
 };
 
-// Puts sets of key=value pairs into single comma delimited label
-const RoutingLabel: React.FC<RoutingLabelProps> = ({ labels }) => {
-  let count = 0;
-  const { t } = useTranslation();
-  const list = _.map(labels, (value, key) => {
-    count++;
-    return key === 'default' ? (
-      <span key="default">{t('public~All (default receiver)')}</span>
-    ) : (
-      <PfLabel className="co-label" key={`label-${key}-${value}`}>
-        <span className="co-label__key">{key}</span>
-        <span className="co-label__eq">=</span>
-        <span className="co-label__value">{value}</span>
-        {count < _.size(labels) && <>,&nbsp;</>}
-      </PfLabel>
-    );
-  });
-  return (
-    <div>
-      <PfLabelGroup className="co-label-group">{list}</PfLabelGroup>
-    </div>
-  );
+const RoutingLabels: React.FC<RoutingLabelsProps> = ({ data }) => {
+  const { labels, matchers } = data;
+  const lbls = _.map(labels || {}, (value, key) => `${key}=${value}`);
+  const values = [...lbls, ...(matchers ?? [])];
+
+  return values.length > 0 ? (
+    <PfLabelGroup>
+      {values.map((value, i) => (
+        <PfLabel key={`label-${i}`}>{value}</PfLabel>
+      ))}
+    </PfLabelGroup>
+  ) : null;
 };
 
 const deleteReceiver = (
@@ -311,10 +307,11 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
         )}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {isDefaultReceiver && <RoutingLabel labels={{ default: 'all' }} />}
-        {_.map(receiverRoutingLabels, (rte, i) => {
-          return !_.isEmpty(rte.labels) ? <RoutingLabel key={i} labels={rte.labels} /> : null;
-        })}
+        {isDefaultReceiver
+          ? t('public~All (default receiver)')
+          : _.map(receiverRoutingLabels, (rte, i) => {
+              return <RoutingLabels data={rte} key={i} />;
+            })}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <Kebab options={receiverMenuItems(receiver.name)} />
@@ -337,7 +334,7 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
   const { t } = useTranslation();
 
   const routingLabelsByReceivers = React.useMemo(
-    () => (_.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes, {})),
+    () => (_.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes)),
     [routes],
   );
 
@@ -551,11 +548,13 @@ export type AlertmanagerRoute = {
   match?: labels[];
   match_re?: labels[];
   routes?: AlertmanagerRoute[];
+  matchers?: string[];
 };
 
 type RoutingLabelsByReceivers = {
   receiver: string;
   labels: { [key: string]: string };
+  matchers: string[];
 };
 
 type WebhookConfig = {
@@ -580,6 +579,6 @@ export type AlertmanagerConfig = {
   receivers: AlertmanagerReceiver[];
 };
 
-type RoutingLabelProps = {
-  labels: { [key: string]: string };
+type RoutingLabelsProps = {
+  data: RoutingLabelsByReceivers;
 };
