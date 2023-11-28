@@ -19,11 +19,11 @@
     margin: var(--pf-v5-global--spacer--sm) 0;
     text-align: right;
   }
-  .pf-v5-c-accordion__expanded-content.pf-m-expanded {
-    --pf-v5-c-accordion__expanded-content-body--before--BackgroundColor: transparent;
+  .pf-v5-c-accordion__expandable-content.pf-m-expanded {
+    --pf-v5-c-accordion__expandable-content-body--after--BackgroundColor: transparent;
   }
   .pf-v5-c-accordion__toggle.pf-m-expanded {
-    --pf-v5-c-accordion__toggle--before--BackgroundColor: transparent;
+    --pf-v5-c-accordion__toggle--after--BackgroundColor: transparent;
   }
   &__empty-state {
     &-icon {
