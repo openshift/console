@@ -27,14 +27,16 @@ const PipelineQuickSearchVersionDropdown: React.FC<PipelineQuickSearchVersionDro
   const [isOpen, setOpen] = React.useState(false);
   const toggleIsOpen = React.useCallback(() => setOpen((v) => !v), []);
 
-  if (!versions || versions?.length === 0) {
+  if (!versions || !versions.length) {
     return null;
   }
   const versionItems = versions.reduce((acc, { version }) => {
-    acc[version.toString()] =
-      version === item.data?.latestVersion?.version
-        ? i18n.t('pipelines-plugin~{{version}} (latest)', { version })
-        : version;
+    if (version) {
+      acc[version.toString()] =
+        version === item.data?.latestVersion?.version
+          ? i18n.t('pipelines-plugin~{{version}} (latest)', { version })
+          : version;
+    }
     return acc;
   }, {});
   return (
