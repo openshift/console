@@ -394,3 +394,8 @@ ul.pf-v5-c-tree-view__list {
     font-size: $font-size-base;
   }
 }
+
+:where(.pf-theme-dark) .pfext-quick-start-task__content .pfext-markdown-view pre code {
+  color: var(--pf-global--Color--100);
+  background-color: var(--pf-global--palette--black-600);
+}
