@@ -41,9 +41,9 @@ const IdentityProviders: React.FC<IdentityProvidersProps> = ({ identityProviders
     <EmptyBox label={t('public~Identity providers')} />
   ) : (
     <div className="co-table-container">
-      <table className="pf-v5-c-table pf-m-grid-md pf-m-compact pf-m-border-rows">
+      <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
         <thead className="pf-v5-c-table__thead">
-          <tr className="pf-v5-c-table__th">
+          <tr className="pf-v5-c-table__tr">
             <th className="pf-v5-c-table__th">{t('public~Name')}</th>
             <th className="pf-v5-c-table__th">{t('public~Type')}</th>
             <th className="pf-v5-c-table__th">{t('public~Mapping method')}</th>
@@ -51,7 +51,7 @@ const IdentityProviders: React.FC<IdentityProvidersProps> = ({ identityProviders
         </thead>
         <tbody className="pf-v5-c-table__tbody">
           {_.map(identityProviders, (idp) => (
-            <tr className="pf-v5-c-table__th" key={idp.name}>
+            <tr className="pf-v5-c-table__tr" key={idp.name}>
               <td className="pf-v5-c-table__td" data-test-idp-name={idp.name}>
                 {idp.name}
               </td>
