@@ -114,7 +114,6 @@ form.pf-v5-c-form {
 .pf-v5-c-about-modal-box__content {
   background-color: var(--pf-v5-global--palette--black-1000);
   padding: var(--pf-v5-global--spacer--2xl) var(--pf-v5-global--spacer--3xl);
-  
   --pf-v5-c-about-modal-box__content--MarginBottom: 0;
   --pf-v5-c-about-modal-box__content--MarginLeft: 0;
   --pf-v5-c-about-modal-box__content--MarginRight: 0;
@@ -171,6 +170,11 @@ form.pf-v5-c-form {
 
 .pf-v5-c-button.pf-m-link--align-right {
   --pf-v5-c-button--PaddingRight: 0;
+}
+
+// Override label in _bootstrap-residual.scss
+.pf-v5-c-check__label {
+  margin-bottom: 0;
 }
 
 @media print {
