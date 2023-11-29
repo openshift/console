@@ -11,7 +11,7 @@
     "integration-tests"
   ],
   "scripts": {
-    "postinstall": "yarn generate",
+    "postinstall": "yarn prepare-husky && yarn generate",
     "clean": "rm -rf ./public/dist",
     "dev": "yarn clean && yarn generate && REACT_REFRESH=true NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack serve --mode=development --progress",
     "dev-once": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=development",
@@ -67,7 +67,8 @@
     "i18n": "./i18n-scripts/build-i18n.sh && node ./i18n-scripts/consolidate-public-folders && node ./i18n-scripts/set-english-defaults.js",
     "export-pos": "./i18n-scripts/export-pos.sh",
     "memsource-upload": "./i18n-scripts/memsource-upload.sh",
-    "memsource-download": "./i18n-scripts/memsource-download.sh"
+    "memsource-download": "./i18n-scripts/memsource-download.sh",
+    "prepare-husky": "cd .. && husky install frontend/.husky"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -300,7 +301,7 @@
     "graphql-tag": "^2.10.3",
     "html-webpack-plugin": "3.x",
     "html-webpack-exclude-assets-plugin": "^0.0.7",
-    "husky": "^4.2.5",
+    "husky": "^8.0.3",
     "i18next-parser": "^7.9.0",
     "i18next-pseudo": "^2.2.0",
     "jasmine-core": "2.x",
@@ -355,11 +356,6 @@
     "jest": "21.x",
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.13"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
