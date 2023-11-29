@@ -59,6 +59,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   onContextMenu,
   contextMenuOpen,
 }) => {
+  const ref = React.useRef();
   const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
@@ -85,47 +86,50 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
       <NodeShadows />
       <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
         <Tooltip
+          triggerRef={ref}
           content={t('topology~Create Service Binding')}
           trigger="manual"
           isVisible={dropTarget && canDrop}
           animationDuration={0}
           position="top"
         >
-          <g
-            ref={nodeRefs}
-            className={classNames('odc-operator-backed-service', {
-              'pf-m-selected': selected,
-              'pf-m-highlight': canDrop,
-              'pf-m-dragging': dragging || labelDragging,
-              'is-filtered': filtered,
-              'pf-m-drop-target': canDrop && dropTarget,
-            })}
-          >
-            <rect
-              key={
-                hover || innerHover || contextMenuOpen || dragging || labelDragging
-                  ? 'rect-hover'
-                  : 'rect'
-              }
-              ref={dndDropRef}
-              className="odc-operator-backed-service__bg"
-              x={x}
-              y={y}
-              width={width}
-              height={height}
-              rx="5"
-              ry="5"
-              filter={createSvgIdUrl(
-                hover || innerHover || contextMenuOpen || dragging || labelDragging
-                  ? NODE_SHADOW_FILTER_ID_HOVER
-                  : NODE_SHADOW_FILTER_ID,
+          <g ref={ref}>
+            <g
+              ref={nodeRefs}
+              className={classNames('odc-operator-backed-service', {
+                'pf-m-selected': selected,
+                'pf-m-highlight': canDrop,
+                'pf-m-dragging': dragging || labelDragging,
+                'is-filtered': filtered,
+                'pf-m-drop-target': canDrop && dropTarget,
+              })}
+            >
+              <rect
+                key={
+                  hover || innerHover || contextMenuOpen || dragging || labelDragging
+                    ? 'rect-hover'
+                    : 'rect'
+                }
+                ref={dndDropRef}
+                className="odc-operator-backed-service__bg"
+                x={x}
+                y={y}
+                width={width}
+                height={height}
+                rx="5"
+                ry="5"
+                filter={createSvgIdUrl(
+                  hover || innerHover || contextMenuOpen || dragging || labelDragging
+                    ? NODE_SHADOW_FILTER_ID_HOVER
+                    : NODE_SHADOW_FILTER_ID,
+                )}
+              />
+              {!hasChildren && (
+                <text x={x + width / 2} y={y + height / 2} dy="0.35em" textAnchor="middle">
+                  No Resources
+                </text>
               )}
-            />
-            {!hasChildren && (
-              <text x={x + width / 2} y={y + height / 2} dy="0.35em" textAnchor="middle">
-                No Resources
-              </text>
-            )}
+            </g>
           </g>
         </Tooltip>
       </Layer>

@@ -17,6 +17,7 @@ interface DefaultDecoratorProps {
 }
 
 const EditDecorator: React.FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
+  const ref = React.useRef();
   const { t } = useTranslation();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
@@ -35,10 +36,12 @@ const EditDecorator: React.FC<DefaultDecoratorProps> = ({ element, radius, x, y 
   }
   const label = t('topology~Edit source code');
   return (
-    <Tooltip content={label} position={TooltipPosition.right}>
-      <Decorator x={x} y={y} radius={radius} href={editUrl} external ariaLabel={label}>
-        <g transform={`translate(-${radius / 2}, -${radius / 2})`}>{repoIcon}</g>
-      </Decorator>
+    <Tooltip triggerRef={ref} content={label} position={TooltipPosition.right}>
+      <g ref={ref}>
+        <Decorator x={x} y={y} radius={radius} href={editUrl} external ariaLabel={label}>
+          <g transform={`translate(-${radius / 2}, -${radius / 2})`}>{repoIcon}</g>
+        </Decorator>
+      </g>
     </Tooltip>
   );
 };

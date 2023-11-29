@@ -20,6 +20,7 @@ const RevisionRouteDecorator: React.FC<RevisionRouteDecoratorProps> = ({
   x,
   y,
 }) => {
+  const ref = React.useRef();
   const { t } = useTranslation();
   const resourceObj = getResource(element);
   const url = useRoutesURL(resourceObj);
@@ -28,12 +29,22 @@ const RevisionRouteDecorator: React.FC<RevisionRouteDecoratorProps> = ({
     return null;
   }
   return (
-    <Tooltip key="route" content={t('knative-plugin~Open URL')} position={TooltipPosition.right}>
-      <Decorator x={x} y={y} radius={radius} href={url} external>
-        <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
-          <ExternalLinkAltIcon style={{ fontSize: radius }} title={t('knative-plugin~Open URL')} />
-        </g>
-      </Decorator>
+    <Tooltip
+      triggerRef={ref}
+      key="route"
+      content={t('knative-plugin~Open URL')}
+      position={TooltipPosition.right}
+    >
+      <g ref={ref}>
+        <Decorator x={x} y={y} radius={radius} href={url} external>
+          <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
+            <ExternalLinkAltIcon
+              style={{ fontSize: radius }}
+              title={t('knative-plugin~Open URL')}
+            />
+          </g>
+        </Decorator>
+      </g>
     </Tooltip>
   );
 };

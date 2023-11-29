@@ -47,6 +47,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
   children,
   ...rest
 }) => {
+  const ref = React.useRef();
   useAnchor(RectAnchor);
   const { width, height } = element.getBounds();
   const vmData = element.getData().data;
@@ -123,30 +124,33 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
   return (
     <g>
       <Tooltip
+        triggerRef={ref}
         content={tipContent}
         trigger="manual"
         isVisible={dropTarget && canDrop}
         animationDuration={0}
       >
-        <BaseNode
-          className={classNames('kubevirt-vm-node', statusClass)}
-          kind={kind}
-          element={element}
-          dropTarget={dropTarget}
-          canDrop={canDrop}
-          {...rest}
-        >
-          {statusMessage ? <Tooltip content={statusMessage}>{statusRect}</Tooltip> : statusRect}
-          <rect
-            className="kubevirt-vm-node__bg"
-            x={VM_STATUS_GAP + VM_STATUS_WIDTH}
-            y={VM_STATUS_GAP + VM_STATUS_WIDTH}
-            width={width - (VM_STATUS_GAP + VM_STATUS_WIDTH) * 2}
-            height={height - (VM_STATUS_GAP + VM_STATUS_WIDTH) * 2}
-          />
-          {imageComponent}
-          {children}
-        </BaseNode>
+        <g ref={ref}>
+          <BaseNode
+            className={classNames('kubevirt-vm-node', statusClass)}
+            kind={kind}
+            element={element}
+            dropTarget={dropTarget}
+            canDrop={canDrop}
+            {...rest}
+          >
+            {statusMessage ? <Tooltip content={statusMessage}>{statusRect}</Tooltip> : statusRect}
+            <rect
+              className="kubevirt-vm-node__bg"
+              x={VM_STATUS_GAP + VM_STATUS_WIDTH}
+              y={VM_STATUS_GAP + VM_STATUS_WIDTH}
+              width={width - (VM_STATUS_GAP + VM_STATUS_WIDTH) * 2}
+              height={height - (VM_STATUS_GAP + VM_STATUS_WIDTH) * 2}
+            />
+            {imageComponent}
+            {children}
+          </BaseNode>
+        </g>
       </Tooltip>
     </g>
   );

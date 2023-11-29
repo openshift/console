@@ -30,16 +30,20 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   dropTarget,
   ...rest
 }) => {
+  const ref = React.useRef();
   const { t } = useTranslation();
   return (
     <Tooltip
+      triggerRef={ref}
       content={t('topology~Create Service Binding')}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}
       position="top"
     >
-      <GroupNode bgClassName="odc-operator-backed-service__bg" {...rest} />
+      <g ref={ref}>
+        <GroupNode bgClassName="odc-operator-backed-service__bg" {...rest} />
+      </g>
     </Tooltip>
   );
 };

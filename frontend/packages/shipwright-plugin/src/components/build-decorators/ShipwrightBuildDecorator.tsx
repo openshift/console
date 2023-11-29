@@ -37,6 +37,7 @@ export const ConnectedBuildRunDecorator: React.FC<BuildRunDecoratorProps & State
   x,
   y,
 }) => {
+  const ref = React.useRef();
   const { t } = useTranslation();
   const { latestBuildRun, status } = getLatestBuildRunStatusforDeployment(buildRuns, resource);
 
@@ -78,8 +79,8 @@ export const ConnectedBuildRunDecorator: React.FC<BuildRunDecoratorProps & State
   }
 
   return (
-    <Tooltip content={tooltipContent} position={TooltipPosition.left}>
-      {decoratorContent}
+    <Tooltip triggerRef={ref} content={tooltipContent} position={TooltipPosition.left}>
+      <g ref={ref}>{decoratorContent}</g>
     </Tooltip>
   );
 };

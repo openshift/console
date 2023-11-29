@@ -16,6 +16,7 @@ interface BuildDecoratorProps {
 }
 
 const BuildDecorator: React.FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
+  const ref = React.useRef();
   const { t } = useTranslation();
   const resource = getResource(element);
   const { buildConfigs } = useBuildConfigsWatcher(resource);
@@ -34,10 +35,12 @@ const BuildDecorator: React.FC<BuildDecoratorProps> = ({ element, radius, x, y }
   )}/logs`;
 
   return (
-    <Tooltip content={label} position={TooltipPosition.left}>
-      <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={label} href={link}>
-        <Status status={build.status.phase} iconOnly noTooltip />
-      </BuildDecoratorBubble>
+    <Tooltip triggerRef={ref} content={label} position={TooltipPosition.left}>
+      <g ref={ref}>
+        <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={label} href={link}>
+          <Status status={build.status.phase} iconOnly noTooltip />
+        </BuildDecoratorBubble>
+      </g>
     </Tooltip>
   );
 };

@@ -38,6 +38,8 @@ const SinkUriNode: React.FC<SinkUriNodeProps> = ({
   contextMenuOpen,
   ...rest
 }) => {
+  const ref = React.useRef();
+  const sinkRef = React.useRef();
   const { t } = useTranslation();
   const { width, height } = element.getDimensions();
   const [hover, hoverRef] = useHover();
@@ -57,44 +59,50 @@ const SinkUriNode: React.FC<SinkUriNodeProps> = ({
             key="URI"
             content={t('knative-plugin~Open URI')}
             position={TooltipPosition.right}
+            triggerRef={sinkRef}
           >
-            <Decorator
-              x={cx + radius - DECORATOR_RADIUS * 0.7}
-              y={cy - radius + DECORATOR_RADIUS * 0.7}
-              radius={DECORATOR_RADIUS}
-              href={sinkData.sinkUri}
-              external
-            >
-              <g transform={`translate(-${DECORATOR_RADIUS / 2}, -${DECORATOR_RADIUS / 2})`}>
-                <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} title="Open URL" />
-              </g>
-            </Decorator>
+            <g ref={sinkRef}>
+              <Decorator
+                x={cx + radius - DECORATOR_RADIUS * 0.7}
+                y={cy - radius + DECORATOR_RADIUS * 0.7}
+                radius={DECORATOR_RADIUS}
+                href={sinkData.sinkUri}
+                external
+              >
+                <g transform={`translate(-${DECORATOR_RADIUS / 2}, -${DECORATOR_RADIUS / 2})`}>
+                  <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} title="Open URL" />
+                </g>
+              </Decorator>
+            </g>
           </Tooltip>,
         ]
       : undefined;
 
   return (
     <Tooltip
+      triggerRef={ref}
       content={t('knative-plugin~Move sink to URI')}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}
     >
-      <BaseNode
-        className="odc-sink-uri"
-        hoverRef={hoverRef}
-        createConnectorAccessVerb="create"
-        kind={sinkData.kind}
-        element={element}
-        dropTarget={dropTarget}
-        canDrop={canDrop}
-        attachments={decorators}
-        {...rest}
-      >
-        <g transform={`translate(${cx / 2}, ${cy / 2})`}>
-          <LinkIcon style={{ fontSize: radius }} />
-        </g>
-      </BaseNode>
+      <g ref={ref}>
+        <BaseNode
+          className="odc-sink-uri"
+          hoverRef={hoverRef}
+          createConnectorAccessVerb="create"
+          kind={sinkData.kind}
+          element={element}
+          dropTarget={dropTarget}
+          canDrop={canDrop}
+          attachments={decorators}
+          {...rest}
+        >
+          <g transform={`translate(${cx / 2}, ${cy / 2})`}>
+            <LinkIcon style={{ fontSize: radius }} />
+          </g>
+        </BaseNode>
+      </g>
     </Tooltip>
   );
 };

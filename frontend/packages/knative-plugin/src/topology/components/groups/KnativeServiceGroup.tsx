@@ -78,6 +78,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   onShowCreateConnector,
   createConnectorDrag,
 }) => {
+  const ref = React.useRef();
   const { t } = useTranslation();
   const [hoverChange, setHoverChange] = React.useState<boolean>(false);
   const [hover, hoverRef] = useHover(200, 200, [hoverChange]);
@@ -138,85 +139,88 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
 
   return (
     <Tooltip
+      triggerRef={ref}
       content={tooltipLabel}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}
     >
-      <g
-        ref={hoverRef}
-        onClick={onSelect}
-        onContextMenu={onContextMenu}
-        className={classNames('odc-knative-service', {
-          'pf-m-dragging': dragging || labelDragging,
-          'pf-m-highlight': canDrop || edgeDragging,
-          'is-filtered': filtered,
-        })}
-      >
-        <NodeShadows />
-        <Layer
-          id={
-            (dragging || labelDragging) && (regrouping || labelRegrouping) ? undefined : 'groups2'
-          }
+      <g ref={ref}>
+        <g
+          ref={hoverRef}
+          onClick={onSelect}
+          onContextMenu={onContextMenu}
+          className={classNames('odc-knative-service', {
+            'pf-m-dragging': dragging || labelDragging,
+            'pf-m-highlight': canDrop || edgeDragging,
+            'is-filtered': filtered,
+          })}
         >
-          <g
-            ref={nodeRefs}
-            className={classNames('odc-knative-service', {
-              'pf-m-selected': selected,
-              'pf-m-dragging': dragging || labelDragging,
-              'pf-m-highlight': canDrop || edgeDragging,
-              'pf-m-drop-target': canDrop && dropTarget,
-              'is-filtered': filtered,
-              'is-function': isServerlessFunction(getResource(element)),
-            })}
+          <NodeShadows />
+          <Layer
+            id={
+              (dragging || labelDragging) && (regrouping || labelRegrouping) ? undefined : 'groups2'
+            }
           >
-            <rect
-              key={
-                hover || innerHover || dragging || labelDragging || contextMenuOpen || dropTarget
-                  ? 'rect-hover'
-                  : 'rect'
-              }
-              ref={dndDropRef}
-              className="odc-knative-service__bg"
-              x={x}
-              y={y}
-              width={width}
-              height={height}
-              rx="5"
-              ry="5"
-              filter={createSvgIdUrl(
-                hover || innerHover || dragging || labelDragging || contextMenuOpen || dropTarget
-                  ? NODE_SHADOW_FILTER_ID_HOVER
-                  : NODE_SHADOW_FILTER_ID,
+            <g
+              ref={nodeRefs}
+              className={classNames('odc-knative-service', {
+                'pf-m-selected': selected,
+                'pf-m-dragging': dragging || labelDragging,
+                'pf-m-highlight': canDrop || edgeDragging,
+                'pf-m-drop-target': canDrop && dropTarget,
+                'is-filtered': filtered,
+                'is-function': isServerlessFunction(getResource(element)),
+              })}
+            >
+              <rect
+                key={
+                  hover || innerHover || dragging || labelDragging || contextMenuOpen || dropTarget
+                    ? 'rect-hover'
+                    : 'rect'
+                }
+                ref={dndDropRef}
+                className="odc-knative-service__bg"
+                x={x}
+                y={y}
+                width={width}
+                height={height}
+                rx="5"
+                ry="5"
+                filter={createSvgIdUrl(
+                  hover || innerHover || dragging || labelDragging || contextMenuOpen || dropTarget
+                    ? NODE_SHADOW_FILTER_ID_HOVER
+                    : NODE_SHADOW_FILTER_ID,
+                )}
+              />
+              {!hasChildren && (
+                <text x={x + width / 2} y={y + height / 2} dy="0.35em" textAnchor="middle">
+                  {t('knative-plugin~No Revisions')}
+                </text>
               )}
-            />
-            {!hasChildren && (
-              <text x={x + width / 2} y={y + height / 2} dy="0.35em" textAnchor="middle">
-                {t('knative-plugin~No Revisions')}
-              </text>
-            )}
-          </g>
-        </Layer>
-        {decorators}
-        {showLabel && (data.kind || element.getLabel()) && (
-          <NodeLabel
-            className="pf-topology__group__label odc-knative-service__label odc-base-node__label"
-            onContextMenu={onContextMenu}
-            contextMenuOpen={contextMenuOpen}
-            x={x + width / 2}
-            y={y + height + 20}
-            paddingX={8}
-            paddingY={4}
-            labelIconClass={getImageForIconClass(typeIconClass) || typeIconClass}
-            badge={badge}
-            badgeColor={badgeColor}
-            badgeClassName={badgeClassName}
-            dragRef={dragLabelRef}
-          >
-            {element.getLabel()}
-          </NodeLabel>
-        )}
-        {children}
+            </g>
+          </Layer>
+          {decorators}
+          {showLabel && (data.kind || element.getLabel()) && (
+            <NodeLabel
+              className="pf-topology__group__label odc-knative-service__label odc-base-node__label"
+              onContextMenu={onContextMenu}
+              contextMenuOpen={contextMenuOpen}
+              x={x + width / 2}
+              y={y + height + 20}
+              paddingX={8}
+              paddingY={4}
+              labelIconClass={getImageForIconClass(typeIconClass) || typeIconClass}
+              badge={badge}
+              badgeColor={badgeColor}
+              badgeClassName={badgeClassName}
+              dragRef={dragLabelRef}
+            >
+              {element.getLabel()}
+            </NodeLabel>
+          )}
+          {children}
+        </g>
       </g>
     </Tooltip>
   );

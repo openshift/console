@@ -57,6 +57,7 @@ const PodStatus: React.FC<PodStatusProps> = ({
   subTitleComponent,
   data,
 }) => {
+  const ref = React.useRef();
   const [updateOnEnd, setUpdateOnEnd] = React.useState<boolean>(false);
   const forceUpdate = useForceUpdate();
   const prevVData = React.useRef<PodData[]>(null);
@@ -165,7 +166,11 @@ const PodStatus: React.FC<PodStatusProps> = ({
         })}
       </div>
     );
-    return <Tooltip content={tipContent}>{chartDonut}</Tooltip>;
+    return (
+      <Tooltip triggerRef={ref} content={tipContent}>
+        <g ref={ref}>{chartDonut}</g>
+      </Tooltip>
+    );
   }
   return chartDonut;
 };
