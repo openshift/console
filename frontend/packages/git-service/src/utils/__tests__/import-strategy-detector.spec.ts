@@ -30,6 +30,23 @@ describe('Import strategy detection', () => {
     expect(types[0].detectedFiles).toEqual(['Dockerfile', 'Dockerfile.build']);
   });
 
+  it('should detect containerfile strategy', async () => {
+    const files = ['src', 'Containerfile', 'Containerfile.build'];
+    const mockGitService: any = {
+      getRepoFileList: jest.fn(() => Promise.resolve({ files })),
+      getPackageJsonContent: jest.fn(),
+      isRepoReachable: jest.fn(() => Promise.resolve(RepoStatus.Reachable)),
+    };
+    mockIsServerlessFxRepository.mockReturnValue(Promise.resolve(false));
+    const data = await detectImportStrategies(
+      'https://github.com/divyanshiGupta/bus.git',
+      mockGitService,
+    );
+    const types = data.strategies;
+    expect(types[0].type).toEqual(ImportStrategy.DOCKERFILE);
+    expect(types[0].detectedFiles).toEqual(['Containerfile', 'Containerfile.build']);
+  });
+
   it('should detect devfile strategy', async () => {
     const files = ['src', 'devfile.yaml'];
     const mockGitService: any = {
