@@ -624,8 +624,8 @@ const EditYAMLInner = (props) => {
     window.dispatchEvent(new Event('sidebar_toggle'));
   };
 
-  const toggleShowTooltips = (v) => {
-    props.setShowTooltips(v);
+  const toggleShowTooltips = (event, checked) => {
+    props.setShowTooltips(checked);
   };
 
   const sanitizeYamlContent = (id, yaml, kind) => {
@@ -679,9 +679,7 @@ const EditYAMLInner = (props) => {
       id="showTooltips"
       isChecked={showTooltips}
       data-checked-state={showTooltips}
-      onChange={(checked) => {
-        toggleShowTooltips(checked);
-      }}
+      onChange={toggleShowTooltips}
     />
   );
 
