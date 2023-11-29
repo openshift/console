@@ -134,16 +134,23 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                       </span>
                       <Split style={{ alignItems: 'center' }} hasGutter>
                         <SplitItem>
-                          <Label>{itemType}</Label>
+                          <Split>
+                            <SplitItem>
+                              <Label>{itemType}</Label>
+                            </SplitItem>
+                            {item?.secondaryLabel && (
+                              <SplitItem className="ocs-quick-search-list__secondary-label">
+                                <Label>{item.secondaryLabel}</Label>
+                              </SplitItem>
+                            )}
+                          </Split>
                         </SplitItem>
                         <SplitItem>
-                          {item.secondaryLabel ?? (
-                            <TextContent
-                              data-test={`item-name-${item.name}-${item.provider}-secondary-label`}
-                            >
-                              <Text component={TextVariants.small}>{item.provider}</Text>
-                            </TextContent>
-                          )}
+                          <TextContent
+                            data-test={`item-name-${item.name}-${item.provider}-secondary-label`}
+                          >
+                            <Text component={TextVariants.small}>{item.provider}</Text>
+                          </TextContent>
                         </SplitItem>
                       </Split>
                     </DataListCell>,
