@@ -146,6 +146,14 @@ const menuActions = ({ subjectIndex, subjects }, startImpersonate) => {
     actions.unshift(() => ({
       label: i18next.t('public~Impersonate {{kind}} "{{name}}"', subject),
       callback: () => startImpersonate(subject.kind, subject.name),
+      // Must use API group authorization.k8s.io, NOT user.openshift.io
+      // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
+      accessReview: {
+        group: 'authorization.k8s.io',
+        resource: subject.kind === 'Group' ? 'groups' : 'users',
+        name: subject.name,
+        verb: 'impersonate',
+      },
     }));
   }
 
