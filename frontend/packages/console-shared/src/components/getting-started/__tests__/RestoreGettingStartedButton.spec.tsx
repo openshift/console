@@ -41,7 +41,7 @@ describe('RestoreGettingStartedButton', () => {
     expect(wrapper.render().text()).toEqual('Show getting started resources');
   });
 
-  xit('should change user settings to show if button is pressed', () => {
+  it('should change user settings to show if button is pressed', () => {
     const setGettingStartedShowState = jest.fn();
     useGettingStartedShowStateMock.mockReturnValue([
       GettingStartedShowState.HIDE,
@@ -51,7 +51,7 @@ describe('RestoreGettingStartedButton', () => {
 
     const wrapper = shallow(<RestoreGettingStartedButton userSettingsKey="test" />).shallow();
 
-    wrapper.simulate('click');
+    wrapper.find('button').simulate('click');
 
     expect(setGettingStartedShowState).toHaveBeenCalledTimes(1);
     expect(setGettingStartedShowState).toHaveBeenLastCalledWith(GettingStartedShowState.SHOW);
