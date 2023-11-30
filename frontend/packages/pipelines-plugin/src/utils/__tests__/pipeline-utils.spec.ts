@@ -11,9 +11,15 @@ import { SecretAnnotationId, TektonResourceLabel } from '../../components/pipeli
 import {
   taskRunWithResults,
   taskRunWithSBOMResult,
+  taskRunWithSBOMResultExternalLink,
 } from '../../components/taskruns/__tests__/taskrun-test-data';
 import { PipelineRunModel } from '../../models';
-import { DataState, PipelineExampleNames, pipelineTestData } from '../../test-data/pipeline-data';
+import {
+  DataState,
+  PipelineExampleNames,
+  PipelineRunWithSBOM,
+  pipelineTestData,
+} from '../../test-data/pipeline-data';
 import { ComputedStatus } from '../../types';
 import {
   getPipelineTasks,
@@ -29,6 +35,8 @@ import {
   getMatchedPVCs,
   getSbomTaskRun,
   getSbomLink,
+  getImageUrl,
+  hasExternalLink,
 } from '../pipeline-utils';
 import { mockPipelineServiceAccount } from './pipeline-serviceaccount-test-data';
 import {
@@ -366,5 +374,37 @@ describe('pipeline-utils ', () => {
 
   it('should return the SBOM link', () => {
     expect(getSbomLink(taskRunWithSBOMResult)).toBe('quay.io/test/image:build-8e536-1692702836');
+  });
+
+  it('should undefined for the pipelinerun without IMAGE_URL', () => {
+    const { pipelineRuns } = pipelineTestData[PipelineExampleNames.PIPELINE_WITH_FINALLY];
+    const pipelineRun = pipelineRuns[DataState.SUCCESS];
+    expect(getImageUrl(pipelineRun)).toBeUndefined();
+  });
+
+  it('should return the SBOM image registry url', () => {
+    expect(getImageUrl(PipelineRunWithSBOM)).toBe(
+      'quay.io/redhat-user-workloads/karthik-jk-tenant/node-express-hello/node-express-hello:build-8e536-1692702836',
+    );
+  });
+
+  it('should false if the taskrun is missing annotations', () => {
+    expect(
+      hasExternalLink({
+        ...taskRunWithSBOMResultExternalLink,
+        metadata: {
+          ...taskRunWithSBOMResultExternalLink.metadata,
+          annotations: undefined,
+        },
+      }),
+    ).toBe(false);
+  });
+
+  it('should false if the taskrun is missing external-link type annotation', () => {
+    expect(hasExternalLink(taskRunWithSBOMResult)).toBe(false);
+  });
+
+  it('should true if the taskrun has external-link type annotation', () => {
+    expect(hasExternalLink(taskRunWithSBOMResultExternalLink)).toBe(true);
   });
 });

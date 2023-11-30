@@ -3213,6 +3213,67 @@ export enum PipeLineRunWithVulnerabilitiesNames {
   MultipleScanOutput = 'multiple-scan-output',
 }
 
+export enum PipelineRunwithSBOMType {
+  ExternalLink = 'external-link',
+  InternalLink = 'internal-link',
+}
+
+export const PipelineRunWithSBOM: PipelineRunKind = {
+  apiVersion: 'tekton.dev/v1',
+  kind: 'PipelineRun',
+  metadata: {
+    name: 'pipelinerun-with-sbom-task',
+    namespace: 'test-ns',
+  },
+  spec: {
+    pipelineSpec: {
+      results: [
+        {
+          description: 'Contains the SBOM link',
+          name: 'IMAGE_URL',
+          value: '$(tasks.sbom-task.results.IMAGE_URL)',
+        },
+      ],
+      tasks: [
+        {
+          name: 'sbom-task',
+          taskRef: {
+            kind: 'Task',
+            name: 'sbom-task',
+          },
+        },
+      ],
+    },
+  },
+  status: {
+    pipelineSpec: {
+      results: [
+        {
+          description: 'Contains the SBOM link',
+          name: 'IMAGE_URL',
+          value: '$(tasks.sbom-task.results.IMAGE_URL)',
+        },
+      ],
+      tasks: [
+        {
+          name: 'sbom-task',
+          taskRef: {
+            kind: 'Task',
+            name: 'sbom-task',
+          },
+        },
+      ],
+    },
+    results: [
+      {
+        name: 'IMAGE_URL',
+        value:
+          'quay.io/redhat-user-workloads/karthik-jk-tenant/node-express-hello/node-express-hello:build-8e536-1692702836',
+      },
+    ],
+  },
+};
+
 export const PipeLineRunWithVulnerabilitiesData: Record<string, PipelineRunKind> = {
   [PipeLineRunWithVulnerabilitiesNames.ScanOutput]: {
     kind: 'PipelineRun',

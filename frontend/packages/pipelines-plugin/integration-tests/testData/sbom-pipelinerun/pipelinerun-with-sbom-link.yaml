@@ -9,6 +9,6 @@ spec:
         taskRef:
           name: sbom-task
     results:
-      - name: LINK_TO_SBOM
+      - name: IMAGE_URL
         description: Contains the SBOM link
         value: $(tasks.sbom-task.results.LINK_TO_SBOM)
