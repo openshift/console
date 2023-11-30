@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { DynamicRemotePlugin, EncodedExtension } from '@openshift/dynamic-plugin-sdk-webpack';
+import * as glob from 'glob';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
 import * as semver from 'semver';
@@ -36,6 +37,9 @@ const getWebpackSharedModules = () =>
     acc[moduleName] = moduleConfig;
     return acc;
   }, {});
+
+const getPatternFlyStyles = (baseDir = process.cwd()) =>
+  glob.sync(`${baseDir}/node_modules/@patternfly/react-styles/**/*.css`);
 
 /**
  * Perform (additional) build-time validation of Console plugin metadata.
@@ -198,6 +202,18 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
     }
 
     compiler.options.output.publicPath = publicPath;
+
+    compiler.options.resolve = compiler.options.resolve ?? {};
+    compiler.options.resolve.alias = compiler.options.resolve.alias ?? {};
+
+    // Prevent PatternFly styles from being included in the compilation
+    getPatternFlyStyles().forEach((cssFile) => {
+      if (Array.isArray(compiler.options.resolve.alias)) {
+        compiler.options.resolve.alias.push({ name: cssFile, alias: false });
+      } else {
+        compiler.options.resolve.alias[cssFile] = false;
+      }
+    });
 
     new DynamicRemotePlugin({
       pluginMetadata: {
