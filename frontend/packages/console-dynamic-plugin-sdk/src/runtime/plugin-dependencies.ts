@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as semver from 'semver';
 import { subscribeToDynamicPlugins } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
-import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
+import { StandardConsolePluginManifest } from '../build-types';
 import { CustomError } from '../utils/error/custom-error';
 import { getPluginID } from './plugin-utils';
 
@@ -33,7 +33,7 @@ const formatUnmetDependency = (depName: string, requiredRange: string, currentVe
  * the semver version properly. In that case, the corresponding dependency check will be skipped.
  */
 export const resolvePluginDependencies = (
-  manifest: ConsolePluginManifestJSON,
+  manifest: StandardConsolePluginManifest,
   consolePluginAPIVersion: string,
   allowedPluginNames: string[],
 ) => {

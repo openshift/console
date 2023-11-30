@@ -17,12 +17,13 @@
   },
   "devDependencies": {
     "@microsoft/tsdoc": "0.14.2",
+    "@openshift/dynamic-plugin-sdk-webpack": "^4.0.0",
     "@types/ejs": "3.x",
     "@types/fs-extra": "9.x",
     "ejs": "3.x",
     "fs-extra": "9.x",
     "ts-json-schema-generator": "0.98.0",
     "tsutils": "3.21.0",
-    "webpack": "^5.73.0"
+    "webpack": "5.75.0"
   }
 }

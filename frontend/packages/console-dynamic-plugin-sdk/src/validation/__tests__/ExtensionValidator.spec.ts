@@ -79,7 +79,6 @@ describe('ExtensionValidator', () => {
         compilation,
         extensions,
         exposedModules,
-        'testExtensions',
       );
       afterResult(result, getProvidedExports);
     };
@@ -150,7 +149,7 @@ describe('ExtensionValidator', () => {
         (result, getProvidedExports) => {
           expect(result.getErrors().length).toBe(1);
           expect(result.getErrors()[0]).toBe(
-            "Invalid code reference '.fooExport' in testExtensions[1] property 'mux'",
+            "Invalid code reference '.fooExport' in extension [1] property 'mux'",
           );
           expect(getProvidedExports).toHaveBeenCalledTimes(1);
         },
@@ -186,7 +185,7 @@ describe('ExtensionValidator', () => {
         (result, getProvidedExports) => {
           expect(result.getErrors().length).toBe(1);
           expect(result.getErrors()[0]).toBe(
-            "Invalid module 'barModule' in testExtensions[1] property 'mux'",
+            "Invalid module 'barModule' in extension [1] property 'mux'",
           );
           expect(getProvidedExports).toHaveBeenCalledTimes(1);
         },
@@ -222,7 +221,7 @@ describe('ExtensionValidator', () => {
         (result, getProvidedExports) => {
           expect(result.getErrors().length).toBe(1);
           expect(result.getErrors()[0]).toBe(
-            "Invalid module export 'barExport' in testExtensions[1] property 'mux'",
+            "Invalid module export 'barExport' in extension [1] property 'mux'",
           );
           expect(getProvidedExports).toHaveBeenCalledTimes(2);
         },

@@ -18,10 +18,6 @@ type SchemaTypeConfig = {
 
 const typeConfigs: SchemaTypeConfig[] = [
   {
-    srcFile: 'src/schema/plugin-package.ts',
-    typeName: 'ConsolePluginMetadata',
-  },
-  {
     srcFile: 'src/schema/console-extensions.ts',
     typeName: 'ConsoleExtensionsJSON',
     handleConsoleExtensions: true,
@@ -29,7 +25,6 @@ const typeConfigs: SchemaTypeConfig[] = [
   {
     srcFile: 'src/schema/plugin-manifest.ts',
     typeName: 'ConsolePluginManifestJSON',
-    handleConsoleExtensions: true,
   },
 ];
 

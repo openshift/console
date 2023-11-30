@@ -4,12 +4,16 @@ import * as _ from 'lodash';
 import * as semver from 'semver';
 import { PluginStore } from '@console/plugin-sdk/src/store';
 import { getRandomChars } from '@console/shared/src/utils/utils';
+import {
+  AnyConsolePluginManifest,
+  StandardConsolePluginManifest,
+  isStandardPluginManifest,
+} from '../build-types';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
-import { remoteEntryFile } from '../constants';
-import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { initSharedPluginModules } from '../shared-modules-init';
 import { RemoteEntryModule } from '../types';
 import { ErrorWithCause } from '../utils/error/custom-error';
+import { settleAllPromises } from '../utils/promise';
 import { resolveURL } from '../utils/url';
 import { resolvePluginDependencies } from './plugin-dependencies';
 import { fetchPluginManifest } from './plugin-manifest';
@@ -17,18 +21,36 @@ import { getPluginID } from './plugin-utils';
 
 type ConsolePluginData = {
   /** The manifest containing plugin metadata and extension declarations. */
-  manifest: ConsolePluginManifestJSON;
+  manifest: StandardConsolePluginManifest;
   /** Indicates if `window.loadPluginEntry` callback has been fired for this plugin. */
   entryCallbackFired: boolean;
 };
 
 const pluginMap = new Map<string, ConsolePluginData>();
 
-export const scriptIDPrefix = 'console-plugin';
+export const getScriptElementID = (pluginName: string, scriptName: string) =>
+  `${pluginName}/${scriptName}`;
 
-export const getScriptElementID = (m: ConsolePluginManifestJSON) => `${scriptIDPrefix}-${m.name}`;
+const injectScriptElement = (url: string, id: string) =>
+  new Promise<void>((resolve, reject) => {
+    const script = document.createElement('script');
 
-export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManifestJSON) =>
+    script.async = true;
+    script.src = url;
+    script.id = id;
+
+    script.onload = () => {
+      resolve();
+    };
+
+    script.onerror = (event) => {
+      reject(event);
+    };
+
+    document.head.appendChild(script);
+  });
+
+export const loadDynamicPlugin = (manifest: StandardConsolePluginManifest) =>
   new Promise<string>((resolve, reject) => {
     const pluginID = getPluginID(manifest);
 
@@ -42,37 +64,47 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
       return;
     }
 
+    if (manifest.registrationMethod !== 'callback') {
+      reject(new Error(`Plugin ${pluginID} does not use callback registration method`));
+      return;
+    }
+
     pluginMap.set(pluginID, {
       manifest,
       entryCallbackFired: false,
     });
 
-    const scriptURL = resolveURL(baseURL, remoteEntryFile, (url) => {
-      url.search = `?cacheBuster=${getRandomChars()}`;
-      return url;
-    });
+    console.info(`Loading scripts of plugin ${pluginID}`);
 
-    const script = document.createElement('script');
-    script.id = getScriptElementID(manifest);
-    script.src = scriptURL;
-    script.async = true;
+    // eslint-disable-next-line promise/catch-or-return
+    settleAllPromises(
+      manifest.loadScripts.map((scriptName) => {
+        const scriptID = getScriptElementID(manifest.name, scriptName);
 
-    script.onload = () => {
-      if (pluginMap.get(pluginID).entryCallbackFired) {
-        resolve(pluginID);
-      } else {
-        reject(new Error(`Entry script for plugin ${pluginID} loaded without callback`));
+        const scriptURL = resolveURL(manifest.baseURL, scriptName, (url) => {
+          url.search = `?cacheBuster=${getRandomChars()}`;
+          return url;
+        });
+
+        console.info(`Loading plugin script from ${scriptURL}`);
+
+        return injectScriptElement(scriptURL, scriptID);
+      }),
+    ).then(([, rejectedReasons]) => {
+      if (rejectedReasons.length > 0) {
+        reject(
+          new ErrorWithCause(`Detected errors while loading plugin entry scripts`, rejectedReasons),
+        );
+        return;
       }
-    };
 
-    script.onerror = (event) => {
-      reject(
-        new ErrorWithCause(`Error while loading plugin entry script from ${scriptURL}`, event),
-      );
-    };
+      if (!pluginMap.get(pluginID).entryCallbackFired) {
+        reject(new Error(`Scripts of plugin ${pluginID} loaded without entry callback`));
+        return;
+      }
 
-    console.info(`Loading entry script for plugin ${pluginID}`);
-    document.head.appendChild(script);
+      resolve(pluginID);
+    });
   });
 
 export const getPluginEntryCallback = (
@@ -121,18 +153,48 @@ export const registerPluginEntryCallback = (pluginStore: PluginStore) => {
   );
 };
 
+export const adaptPluginManifest = (
+  manifest: AnyConsolePluginManifest,
+  baseURL: string,
+): StandardConsolePluginManifest => {
+  if (isStandardPluginManifest(manifest)) {
+    return manifest;
+  }
+
+  const {
+    name,
+    version,
+    extensions,
+    dependencies,
+    displayName,
+    description,
+    disableStaticPlugins,
+  } = manifest;
+
+  return {
+    name,
+    version,
+    extensions,
+    dependencies,
+    customProperties: { console: { displayName, description, disableStaticPlugins } },
+    baseURL,
+    loadScripts: ['plugin-entry.js'],
+    registrationMethod: 'callback',
+  };
+};
+
 export const loadAndEnablePlugin = async (
   pluginName: string,
   pluginStore: PluginStore,
   onError: (errorMessage: string, errorCause?: unknown) => void = _.noop,
 ) => {
-  const url = `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/`;
-  let manifest: ConsolePluginManifestJSON;
+  const baseURL = `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/`;
+  let manifest: StandardConsolePluginManifest;
 
   try {
-    manifest = await fetchPluginManifest(url);
+    manifest = adaptPluginManifest(await fetchPluginManifest(baseURL), baseURL);
   } catch (e) {
-    onError(`Failed to get a valid plugin manifest from ${url}`, e);
+    onError(`Failed to get a valid plugin manifest from ${baseURL}`, e);
     return;
   }
 
@@ -148,9 +210,9 @@ export const loadAndEnablePlugin = async (
   }
 
   try {
-    await loadDynamicPlugin(url, manifest);
+    await loadDynamicPlugin(manifest);
   } catch (e) {
-    onError(`Failed to load entry script of plugin ${pluginName}`, e);
+    onError(`Failed to load scripts of plugin ${pluginName}`, e);
     return;
   }
 
@@ -164,7 +226,7 @@ export const getStateForTestPurposes = () => ({
 export const resetStateAndEnvForTestPurposes = () => {
   pluginMap.clear();
 
-  document.querySelectorAll(`[id^="${scriptIDPrefix}"]`).forEach((element) => {
+  Array.from(document.scripts).forEach((element) => {
     element.remove();
   });
 

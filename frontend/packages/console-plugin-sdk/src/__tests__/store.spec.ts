@@ -608,7 +608,7 @@ describe('PluginStore', () => {
         {
           status: 'Loaded',
           pluginID: 'Test@1.2.3',
-          metadata: _.omit(manifest, 'extensions'),
+          metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: false,
         },
       ]);
@@ -993,7 +993,7 @@ describe('PluginStore', () => {
         {
           status: 'Loaded',
           pluginID: 'TestA@1.2.3',
-          metadata: _.omit(manifest, 'extensions'),
+          metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: false,
         },
         {
@@ -1008,7 +1008,7 @@ describe('PluginStore', () => {
         {
           status: 'Loaded',
           pluginID: 'TestA@1.2.3',
-          metadata: _.omit(manifest, 'extensions'),
+          metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: true,
         },
         {
@@ -1023,7 +1023,7 @@ describe('PluginStore', () => {
         {
           status: 'Loaded',
           pluginID: 'TestA@1.2.3',
-          metadata: _.omit(manifest, 'extensions'),
+          metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: true,
         },
         {

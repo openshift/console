@@ -151,7 +151,11 @@ export const getWebpackPackage: GetPackageDefinition = (
     main: 'lib/lib-webpack.js',
     ...commonManifestFields,
     dependencies: {
-      ...parseDeps(sdkPackage, ['webpack'], missingDepCallback),
+      ...parseDeps(
+        sdkPackage,
+        ['@openshift/dynamic-plugin-sdk-webpack', 'webpack'],
+        missingDepCallback,
+      ),
       ...parseDeps(
         rootPackage,
         ['ajv', 'chalk', 'comment-json', 'find-up', 'read-pkg', 'semver'],

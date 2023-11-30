@@ -9,14 +9,6 @@ released, installed and upgraded independently from each other. To ensure compat
 other plugins, each plugin must declare its dependencies using [semantic version](https://semver.org/)
 ranges.
 
-## Related Documentation
-
-_[Extension Documentation](./docs/console-extensions.md)_ - Detailed documentation of every available console extension point.
-
-_[API Documentation](./docs/api.md)_ - Detailed documentation of hooks, components, and other APIs provided by this package.
-
-_[OpenShift Console Dynamic Plugins feature page](https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md)_ - A high level overview of dynamic plugins in relation to OLM operators and cluster administration.
-
 Example project structure:
 
 ```
@@ -28,18 +20,30 @@ dynamic-demo-plugin/
 └── webpack.config.ts
 ```
 
-## SDK packages
+## Related Documentation
 
-| Package Name                                     | Description                                                                                                                              |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `@openshift-console/dynamic-plugin-sdk`          | Provides core APIs, types and utilities used by dynamic plugins at runtime.                                                              |
-| `@openshift-console/dynamic-plugin-sdk-webpack`  | Provides webpack plugin `ConsoleRemotePlugin` used to build all dynamic plugin assets.                                                   |
-| `@openshift-console/dynamic-plugin-sdk-internal` | Internal package exposing additional code.                                                                                               |
+_[Extension Documentation][console-doc-extensions]_ - Detailed documentation of all available Console
+extension points.
+
+_[API Documentation][console-doc-api]_ - Detailed documentation of React components, hooks and other APIs
+provided by Console to its dynamic plugins.
+
+_[OpenShift Console Dynamic Plugins feature page][console-doc-feature-page]_ - A high-level overview of
+dynamic plugins in relation to OLM operators and cluster administration.
+
+## Distributable SDK package overview
+
+| Package Name | Description |
+| ------------ | ----------- |
+| `@openshift-console/dynamic-plugin-sdk`          | Provides core APIs, types and utilities used by dynamic plugins at runtime. |
+| `@openshift-console/dynamic-plugin-sdk-webpack`  | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets. |
+| `@openshift-console/dynamic-plugin-sdk-internal` | Internal package exposing additional code. |
 | `@openshift-console/plugin-shared`               | Provides reusable components and utility functions to build OCP dynamic plugins. Compatible with multiple versions of OpenShift Console. |
 
 ## OpenShift Console Versions vs SDK Versions
 
-Not all NPM packages are fully compatible with all versions of the Console. This table will help align compatible versions of the SDK Packages to versions of the OpenShift Console.
+Not all NPM packages are fully compatible with all versions of the Console. This table will help align
+compatible versions of distributable SDK packages to versions of the OpenShift Console.
 
 | Console Version   | SDK Package                                     | Last Package Version |
 | ----------------- | ----------------------------------------------- | -------------------- |
@@ -51,20 +55,20 @@ Not all NPM packages are fully compatible with all versions of the Console. This
 |                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.6                |
 | 4.9.x **[Dev]**   | `@openshift-console/dynamic-plugin-sdk`         | 0.0.0-alpha18        |
 
-Notes
+Notes:
 
 - **[Tech]** - Release 4.10 was Tech Preview for the SDK packages
 - **[Dev]** - Release 4.9 was Dev Preview for the SDK packages
 
-## `package.json`
+## Plugin metadata
 
-Plugin metadata is declared via the `consolePlugin` object.
+Older versions of webpack `ConsoleRemotePlugin` assumed that the plugin metadata is specified via
+`consolePlugin` object within the `package.json` file, for example:
 
 ```jsonc
 {
   "name": "dynamic-demo-plugin",
   "version": "0.0.0",
-  "private": true,
   // scripts, dependencies, devDependencies, ...
   "consolePlugin": {
     "name": "console-demo-plugin",
@@ -81,32 +85,40 @@ Plugin metadata is declared via the `consolePlugin` object.
 }
 ```
 
-`consolePlugin.name` is the plugin's unique identifier. It should be the same as `metadata.name`
-of the corresponding `ConsolePlugin` resource used to represent the plugin on the cluster.
-Therefore, it must be a valid
+Newer versions of webpack `ConsoleRemotePlugin` allow passing the plugin metadata directly as an
+object, for example:
+
+```ts
+new ConsoleRemotePlugin({
+  pluginMetadata: { /* same metadata like above */ },
+})
+```
+
+`name` serves as the plugin's unique identifier. Its value should be the same as `metadata.name`
+of the corresponding `ConsolePlugin` resource on the cluster. Therefore, it must be a valid
 [DNS subdomain name](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-subdomain-names).
 
-`consolePlugin.version` must be [semver](https://semver.org/) compliant.
+`version` must be [semver](https://semver.org/) compliant version string.
 
-Dynamic plugins can expose modules representing additional code to be referenced, loaded and executed
+Dynamic plugins can expose modules representing plugin code that can be referenced, loaded and executed
 at runtime. A separate [webpack chunk](https://webpack.js.org/guides/code-splitting/) is generated for
-each entry in `consolePlugin.exposedModules` object. Exposed modules are resolved relative to plugin's
-webpack `context` option.
+each entry in the `exposedModules` object. Exposed modules are resolved relative to the plugin's webpack
+`context` option.
 
 The `@console/pluginAPI` dependency is optional and refers to Console versions this dynamic plugin is
-compatible with. The `consolePlugin.dependencies` object may also refer to other dynamic plugins that
-are required for this dynamic plugin to work correctly. For dependencies whose versions may include
-a [semver pre-release](https://semver.org/#spec-item-9) identifier, adapt your semver range constraint
-to include the relevant pre-release prefix, e.g. use `~4.11.0-0.ci` when targeting pre-release versions
-like `4.11.0-0.ci-1234`.
+compatible with. The `dependencies` object may also refer to other dynamic plugins that are required for
+this plugin to work correctly. For dependencies where the version string may include a
+[semver pre-release](https://semver.org/#spec-item-9) identifier, adapt your semver range constraint
+(dependency value) to include the relevant pre-release prefix, e.g. use `~4.11.0-0.ci` when targeting
+pre-release versions like `4.11.0-0.ci-1234`.
 
-See `ConsolePluginMetadata` type for details on the `consolePlugin` object and its schema.
+## Extensions contributed by the plugin
 
-## `console-extensions.json`
-
-Declares all extensions contributed by the plugin.
+Older versions of webpack `ConsoleRemotePlugin` assumed that the list of extensions contributed by the
+plugin is specified via the `console-extensions.json` file, for example:
 
 ```jsonc
+// This file is parsed as JSONC (JSON with Comments)
 [
   {
     "type": "console.flag",
@@ -128,13 +140,30 @@ Declares all extensions contributed by the plugin.
 ]
 ```
 
-Depending on extension `type`, the `properties` object may contain code references, encoded as object
-literals `{ $codeRef: string }`. When loading dynamic plugins, encoded code references are transformed
-into functions `() => Promise<T>` used to load the referenced objects.
+Newer versions of webpack `ConsoleRemotePlugin` allow passing the extension list directly as an array
+of objects, for example:
 
-The `$codeRef` value should be formatted as either `moduleName.exportName` (referring to a named export)
-or `moduleName` (referring to the `default` export). Only the plugin's exposed modules (i.e. the keys of
-`consolePlugin.exposedModules` object) may be used in code references.
+```ts
+new ConsoleRemotePlugin({
+  extensions: [ /* same extensions like above */ ],
+})
+```
+
+Each extension a single instance of extending the Console application's functionality. Extensions are
+declarative and expressed as plain static objects.
+
+Extension `type` determines the kind of extension to perform, while any data and/or code necessary to
+interpret such extensions are declared through their `properties`.
+
+Extensions may contain code references pointing to specific modules exposed by the plugin. For example:
+
+- `{ $codeRef: 'barUtils' }` - refers to `default` export of `barUtils` module
+- `{ $codeRef: 'barUtils.testHandler' }` - refers to `testHandler` export of `barUtils` module
+
+
+When loading dynamic plugins, all encoded code references `{ $codeRef: string }` are transformed into
+functions `() => Promise<T>` used to load the referenced objects on demand. Only the plugin's exposed
+modules (i.e. the keys of `exposedModules` object) may be used in code references.
 
 ## Webpack config
 
@@ -142,13 +171,14 @@ Dynamic plugins _must_ be built with [webpack](https://webpack.js.org/) in order
 seamlessly integrate with Console application at runtime. Use webpack version 5+ which includes native
 support for module federation.
 
-All dynamic plugin assets are managed via webpack plugin `ConsoleRemotePlugin`.
+All dynamic plugin assets are generated via webpack `ConsoleRemotePlugin`.
 
 ```ts
-const { ConsoleRemotePlugin } = require('@openshift-console/dynamic-plugin-sdk-webpack');
+import { ConsoleRemotePlugin } from '@openshift-console/dynamic-plugin-sdk-webpack';
+import { Configuration } from 'webpack';
 
-const config = {
-  // 'entry' is optional, but unrelated to plugin assets
+const config: Configuration = {
+  entry: {}, // Plugin container entry is generated by DynamicRemotePlugin
   plugins: [new ConsoleRemotePlugin()],
   // ... rest of webpack configuration
 };
@@ -156,11 +186,7 @@ const config = {
 export default config;
 ```
 
-`ConsoleRemotePlugin` automatically detects your plugin's metadata and extension declarations and
-generates the corresponding assets.
-
-`ConsoleRemotePlugin` constructor supports an options object used to tweak its behavior. Refer to
-`ConsoleRemotePluginOptions` type for details on supported options.
+Refer to `ConsoleRemotePluginOptions` type for details on supported Console plugin build options.
 
 ## Generated assets
 
@@ -168,20 +194,21 @@ Building the above example plugin produces the following assets:
 
 ```
 dynamic-demo-plugin/dist/
+├── exposed-barUtils-chunk.js
 ├── plugin-entry.js
-├── plugin-manifest.json
-└── utils_bar_ts-chunk.js
+└── plugin-manifest.json
 ```
 
-`plugin-manifest.json`: dynamic plugin manifest. Contains both metadata and extension declarations to
-be parsed and interpreted by Console at runtime. This is the first plugin asset loaded by Console.
+`plugin-manifest.json` is the dynamic plugin manifest. It contains both plugin metadata and extension
+declarations to be loaded and interpreted by Console at runtime. This is the first plugin asset loaded
+by Console.
 
-`plugin-entry.js`: [webpack container entry chunk](https://webpack.js.org/concepts/module-federation/#low-level-concepts).
-Provides asynchronous access to specific modules exposed by the plugin. Loaded right after the plugin
-manifest.
+`plugin-entry.js` is the
+[webpack container entry chunk](https://webpack.js.org/concepts/module-federation/#low-level-concepts).
+It provides access to specific modules exposed by the plugin. It's loaded right after the plugin manifest.
 
-`utils_bar_ts-chunk.js`: webpack chunk for the exposed `barUtils` module. Loaded via the plugin entry
-chunk when needed.
+`exposed-barUtils-chunk.js` is the generated webpack chunk for `barUtils` exposed module. It's loaded
+via the plugin entry chunk (`plugin-entry.js`) when needed.
 
 ## Plugin development
 
@@ -189,6 +216,7 @@ Run Bridge locally and instruct it to proxy e.g. `/api/plugins/console-demo-plug
 to your local plugin asset server (web server hosting the plugin's generated assets):
 
 ```sh
+# Note that the plugin's base URL should have a trailing slash
 ./bin/bridge -plugins console-demo-plugin=http://localhost:9001/
 ```
 
@@ -220,8 +248,6 @@ list of plugin names (disable specific plugins) or an empty string (disable all 
   to ensure a single version of React etc. is loaded and used by the application.
 - Enabling a plugin makes all of its extensions available for consumption. Individual extensions cannot
   be enabled or disabled separately.
-- Failure to resolve a code reference (unable to load module, missing module export etc.) will disable
-  the plugin.
 
 ## Publishing SDK packages
 
@@ -253,6 +279,14 @@ If the given package doesn't exist in npm registry, add `--access public` to `ya
 
 ## Future Deprecations in Shared Plugin Dependencies
 
-Certain packages are currently in the shared plugin dependencies that will be removed in the future. Plugin authors will need to manually add these items to their configurations or chose other options:
+Console provides certain packages as shared modules to all of its dynamic plugins. Some of these shared
+modules may be removed in the future. Plugin authors will need to manually add these items to their webpack
+configs or choose other options.
 
-_- react-helmet_
+The list of shared modules planned for deprecation:
+
+- `react-helmet`
+
+[console-doc-extensions]: ./docs/console-extensions.md
+[console-doc-api]: ./docs/api.md
+[console-doc-feature-page]: https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md

@@ -1,17 +1,15 @@
 import * as _ from 'lodash';
 import * as webpack from 'webpack';
+import { ConsolePluginBuildMetadata } from '../build-types';
 import { isEncodedCodeRef, parseEncodedCodeRefValue } from '../coderefs/coderef-resolver';
-import { ConsolePluginMetadata } from '../schema/plugin-package';
 import { Extension, EncodedCodeRef } from '../types';
 import { deepForOwn } from '../utils/object';
-import { ValidationResult } from './ValidationResult';
+import { BaseValidator } from './BaseValidator';
 
 type ExtensionCodeRefData = {
   index: number;
   propToCodeRefValue: { [propName: string]: string };
 };
-
-type ExposedPluginModules = ConsolePluginMetadata['exposedModules'];
 
 export const collectCodeRefData = (extensions: Extension[]) =>
   extensions.reduce((acc, e, index) => {
@@ -30,7 +28,7 @@ export const collectCodeRefData = (extensions: Extension[]) =>
 
 export const findWebpackModules = (
   compilation: webpack.Compilation,
-  exposedModules: ExposedPluginModules,
+  exposedModules: ConsolePluginBuildMetadata['exposedModules'],
 ) => {
   const webpackModules = Array.from(compilation.modules);
 
@@ -43,18 +41,11 @@ export const findWebpackModules = (
   }, {} as { [moduleName: string]: webpack.Module });
 };
 
-export class ExtensionValidator {
-  readonly result: ValidationResult;
-
-  constructor(description: string) {
-    this.result = new ValidationResult(description);
-  }
-
+export class ExtensionValidator extends BaseValidator {
   validate(
     compilation: webpack.Compilation,
     extensions: Extension[],
-    exposedModules: ExposedPluginModules,
-    dataVar: string = 'extensions',
+    exposedModules: ConsolePluginBuildMetadata['exposedModules'],
   ) {
     const codeRefs = collectCodeRefData(extensions);
     const webpackModules = findWebpackModules(compilation, exposedModules);
@@ -77,7 +68,7 @@ export class ExtensionValidator {
     codeRefs.forEach((data) => {
       Object.entries(data.propToCodeRefValue).forEach(([propName, codeRefValue]) => {
         const [moduleName, exportName] = parseEncodedCodeRefValue(codeRefValue);
-        const errorTrace = `in ${dataVar}[${data.index}] property '${propName}'`;
+        const errorTrace = `in extension [${data.index}] property '${propName}'`;
 
         if (!moduleName || !exportName) {
           this.result.addError(`Invalid code reference '${codeRefValue}' ${errorTrace}`);
