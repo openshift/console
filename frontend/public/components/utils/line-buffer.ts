@@ -6,11 +6,13 @@ export class LineBuffer {
   private _buffer: string[];
   private _tail: string;
   private _hasTruncated: boolean;
+  private _maxSize?: number;
 
-  constructor() {
+  constructor(maxSize) {
     this._buffer = [];
     this._tail = '';
     this._hasTruncated = false;
+    this._maxSize = maxSize;
   }
 
   ingest(text): number {
@@ -22,6 +24,9 @@ export class LineBuffer {
         this._hasTruncated = true;
       }
       if (/\n$/.test(line)) {
+        if (this._buffer.length === this._maxSize) {
+          this._buffer.shift();
+        }
         this._buffer.push(_.truncate(next, { length: TRUNCATE_LENGTH }).trimEnd());
         lineCount++;
         this._tail = '';

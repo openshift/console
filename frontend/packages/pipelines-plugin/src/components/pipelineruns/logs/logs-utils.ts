@@ -160,7 +160,7 @@ export const getDownloadAllLogsCallback = (
         );
       }
     }
-    const buffer = new LineBuffer();
+    const buffer = new LineBuffer(null);
     buffer.ingest(allLogs);
     const blob = buffer.getBlob({
       type: 'text/plain;charset=utf-8',
