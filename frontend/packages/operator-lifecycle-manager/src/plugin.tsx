@@ -86,6 +86,37 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: `/k8s/cluster/${models.ClusterServiceVersionModel.plural}/:csvName/:plural/~new`,
+      loader: async () =>
+        (
+          await import(
+            './components/operand/create-operand' /* webpackChunkName: "create-operand" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      path: `/k8s/cluster/${models.ClusterServiceVersionModel.plural}/:appName/:plural/:name`,
+      loader: async () =>
+        (await import('./components/operand' /* webpackChunkName: "operand" */)).OperandDetailsPage,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      path: `/k8s/cluster/${referenceForModel(
+        models.ClusterServiceVersionModel,
+      )}/:appName/:plural/:name`,
+      loader: async () =>
+        (await import('./components/operand' /* webpackChunkName: "operand" */)).OperandDetailsPage,
+    },
+  },
+  {
     type: 'Page/Resource/List',
     properties: {
       model: models.SubscriptionModel,

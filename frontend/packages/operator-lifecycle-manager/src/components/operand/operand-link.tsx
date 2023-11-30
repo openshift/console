@@ -19,9 +19,9 @@ export const OperandLink: React.FC<OperandLinkProps> = (props) => {
   const csvName = props.csvName || csvNameFromWindow();
 
   const reference = referenceFor(props.obj);
-  const to = namespace
-    ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${csvName}/${reference}/${name}`
-    : `/k8s/cluster/${reference}/${name}`;
+  const to = `/k8s/${namespace ? `ns/${namespace}` : 'cluster'}/${
+    ClusterServiceVersionModel.plural
+  }/${csvName}/${reference}/${name}`;
   const classes = classNames('co-resource-item', {
     'co-resource-item--inline': props.inline,
   });
