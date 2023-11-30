@@ -3,6 +3,7 @@ import { K8sResourceCommon, Toleration } from '@console/internal/module/k8s';
 export enum DiskType {
   RawDisk = 'disk',
   Partition = 'part',
+  Multipath = 'mpath',
 }
 
 export enum DiskMechanicalProperties {

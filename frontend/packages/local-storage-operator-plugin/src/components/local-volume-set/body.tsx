@@ -181,7 +181,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
         >
           <MultiSelectDropdown
             id="create-lso-device-type-dropdown"
-            options={[deviceTypeOptions.DISK, deviceTypeOptions.PART]}
+            options={[deviceTypeOptions.DISK, deviceTypeOptions.PART, deviceTypeOptions.MPATH]}
             placeholder="Select disk types"
             onChange={(selectedValues: string[]) => {
               dispatch({ type: 'setDeviceType', value: selectedValues });
