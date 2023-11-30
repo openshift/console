@@ -18,3 +18,9 @@ export type ResolvedClusterConfigurationItem = Omit<
   ResolvedExtension<ClusterConfigurationItem>['properties'],
   'insertBefore' | 'insertAfter' | 'readAccessReview' | 'writeAccessReview'
 > & { readonly: boolean };
+
+export type ClusterConfigurationTabGroup = {
+  id: string;
+  label: string;
+  items: ResolvedClusterConfigurationItem[];
+};

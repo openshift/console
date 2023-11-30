@@ -10,7 +10,7 @@
   }
 
   .ocs-page-layout__content {
-    display: flex;
+    display: inline;
   }
 
   .pf-v5-c-empty-state {
@@ -39,10 +39,33 @@
   .pf-v5-c-tabs__scroll-button {
     display: none;
   }
+}
 
-  .pf-v5-c-tab-content {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
-    width: 100%;
-    padding: var(--pf-v5-global--spacer--lg);
+.co-cluster-configuration-page-content {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--pf-v5-global--BackgroundColor--100);
+  min-height: 100%;
+  &__tabs {
+    @media (min-width: 769px) {
+      max-width: 100%;
+    }
+
+    @media (min-width: 992px) {
+      min-width: 220px;
+    }
+
+    @media (min-width: 1200px) {
+      max-width: 220px;
+    }
+  }
+  &__tab-content {
+    margin: var(--pf-v5-global--spacer--lg);
+    max-width: 100%;
+  }
+
+  //workaround for patternfly bug which causes the buttons to show even when isVertical prop is true
+  .pf-v5-c-tabs__scroll-button {
+    display: none;
   }
 }
