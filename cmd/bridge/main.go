@@ -571,7 +571,7 @@ func main() {
 		caCertFilePath = k8sInClusterCA
 	}
 
-	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, apiServerEndpoint, caCertFilePath); err != nil {
+	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)
 		os.Exit(1)
 	}

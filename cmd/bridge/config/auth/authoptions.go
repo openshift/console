@@ -193,7 +193,6 @@ func (c *AuthOptions) Validate(k8sAuthType string) []error {
 func (c *completedOptions) ApplyTo(
 	srv *server.Server,
 	k8sEndpoint *url.URL,
-	pubAPIServerEndpoint string,
 	caCertFilePath string,
 ) error {
 	srv.InactivityTimeout = c.InactivityTimeoutSeconds
@@ -203,7 +202,6 @@ func (c *completedOptions) ApplyTo(
 	srv.Authenticator, err = c.getAuthenticator(
 		srv.BaseURL,
 		k8sEndpoint,
-		pubAPIServerEndpoint,
 		caCertFilePath,
 		srv.InternalProxiedK8SClientConfig,
 	)
@@ -214,7 +212,6 @@ func (c *completedOptions) ApplyTo(
 func (c *completedOptions) getAuthenticator(
 	baseURL *url.URL,
 	k8sEndpoint *url.URL,
-	pubAPIServerEndpoint string,
 	caCertFilePath string,
 	k8sClientConfig *rest.Config,
 ) (*auth.Authenticator, error) {
