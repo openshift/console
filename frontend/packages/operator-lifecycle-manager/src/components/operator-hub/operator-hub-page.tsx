@@ -98,9 +98,6 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
               );
             },
           );
-          const filteredInfraFeatures = _.uniq(
-            _.compact(_.map(parsedInfraFeatures, (key) => InfraFeatures[key])),
-          );
 
           const {
             certifiedLevel,
@@ -110,6 +107,19 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             createdAt,
             support,
             capabilities: capabilityLevel,
+            [OperatorHubCSVAnnotationKey.disconnected]: disconnected,
+            [OperatorHubCSVAnnotationKey.fipsCompliant]: fipsCompliant,
+            [OperatorHubCSVAnnotationKey.proxyAware]: proxyAware,
+            [OperatorHubCSVAnnotationKey.cnf]: cnf,
+            [OperatorHubCSVAnnotationKey.cni]: cni,
+            [OperatorHubCSVAnnotationKey.csi]: csi,
+            // tlsProfiles requires addtional changes
+            // [OperatorHubCSVAnnotationKey.tlsProfiles]: tlsProfiles,
+            // tokenAuthAWS requires additional changes
+            // [OperatorHubCSVAnnotationKey.tokenAuthAWS]: tokenAuthAWS,
+            // tokenAuthAzure and tokenAuthGCP require additional changes
+            // [OperatorHubCSVAnnotationKey.tokenAuthAzure]: tokenAuthAzure,
+            // [OperatorHubCSVAnnotationKey.tokenAuthGCP]: tokenAuthGCP,
             [OperatorHubCSVAnnotationKey.actionText]: marketplaceActionText,
             [OperatorHubCSVAnnotationKey.remoteWorkflow]: marketplaceRemoteWorkflow,
             [OperatorHubCSVAnnotationKey.supportWorkflow]: marketplaceSupportWorkflow,
@@ -117,6 +127,30 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
 
           const subscription =
             loaded && subscriptionFor(subscriptions?.data)(operatorGroups?.data)(pkg)(namespace);
+
+          let infrastructureFeatures: InfraFeatures[] = parsedInfraFeatures.map(
+            (key) => InfraFeatures[key],
+          );
+
+          const featuresAnnotationsObjects = [
+            { key: InfraFeatures.Disconnected, value: disconnected },
+            { key: InfraFeatures.FipsMode, value: fipsCompliant },
+            { key: InfraFeatures.Proxy, value: proxyAware },
+            { key: InfraFeatures.cnf, value: cnf },
+            { key: InfraFeatures.cni, value: cni },
+            { key: InfraFeatures.csi, value: csi },
+          ];
+
+          featuresAnnotationsObjects.forEach(({ key, value }) => {
+            if (value === 'false') {
+              // override existing operators.openshift.io/infrastructure-features annotation value
+              infrastructureFeatures = infrastructureFeatures.filter((feature) => feature !== key);
+            } else if (value === 'true') {
+              infrastructureFeatures.push(key);
+            }
+          });
+
+          const infraFeatures = _.uniq(_.compact(infrastructureFeatures));
 
           const clusterServiceVersion =
             loaded &&
@@ -163,7 +197,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             marketplaceRemoteWorkflow,
             marketplaceSupportWorkflow,
             validSubscription,
-            infraFeatures: filteredInfraFeatures,
+            infraFeatures,
             keywords: currentCSVDesc?.keywords ?? [],
           };
         },
