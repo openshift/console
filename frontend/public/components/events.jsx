@@ -392,27 +392,33 @@ const EventStream = (props) => {
   };
 
   React.useEffect(() => {
+    // If the namespace has changed, create a new WebSocket with the new namespace
     if (!props.mock) {
       wsInit(props.namespace);
+      // Reset the messages and events
+      setSortedMessages([]);
+      setFilteredEvents([]);
+
+      return () => {
+        ws && ws.destroy();
+      };
     }
-
-    return () => {
-      ws && ws.destroy();
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.namespace]);
 
-  const [prevProps, setPrevProps] = React.useState(props);
+  const prevSortedMessages = React.useRef([]);
+
+  const toggleStream = () => {
+    setActive((prev) => !prev);
+    prevSortedMessages.current = sortedMessages;
+  };
 
   React.useEffect(() => {
-    // If the namespace has changed, created a new WebSocket with the new namespace
-    if (prevProps.namespace !== props.namespace) {
-      ws && ws.destroy();
-      wsInit(props.namespace);
-    }
-    setPrevProps(props);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.namespace, prevProps?.namespace]);
+    // If the filter has changed, update the filteredEvents
+    setFilteredEvents(
+      EventStream.filterEvents(active ? sortedMessages : prevSortedMessages.current, props),
+    );
+  }, [active, sortedMessages, props, prevSortedMessages]);
 
   // Messages can come in extremely fast when the buffer flushes.
   // Instead of calling setState() on every single message, let onmessage()
@@ -421,24 +427,13 @@ const EventStream = (props) => {
     const sorted = sortEvents(messages);
     sorted.splice(maxMessages);
     setSortedMessages(sorted);
-    setFilteredEvents(EventStream.filterEvents(sorted, props));
+    setFilteredEvents(
+      EventStream.filterEvents(active ? sorted : prevSortedMessages.current, props),
+    );
 
-    // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
+    // Shrink messages back to maxMessages messages, to stop it growing indefinitely
     messages = _.keyBy(sorted, 'metadata.uid');
   };
-
-  const toggleStream = () => {
-    setActive((prev) => !prev);
-  };
-
-  React.useEffect(() => {
-    if (active) {
-      ws && ws.unpause();
-    } else {
-      ws && ws.pause();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]);
 
   const count = filteredEvents.length;
   const allCount = sortedMessages.length;
@@ -557,31 +552,6 @@ EventStream.filterEvents = (messages, { kind, type, filter, textFilter }) => {
   };
 
   return _.filter(messages, f);
-};
-
-EventStream.getDerivedStateFromProps = (nextProps, prevState) => {
-  const { filter, kind, type, textFilter, loading } = prevState;
-
-  if (
-    _.isEqual(filter, nextProps.filter) &&
-    kind === nextProps.kind &&
-    type === nextProps.type &&
-    textFilter === nextProps.textFilter
-  ) {
-    return {};
-  }
-
-  return {
-    active: !nextProps.mock,
-    loading: !nextProps.mock && loading,
-    // update the filteredEvents
-    filteredEvents: EventStream.filterEvents(prevState.sortedMessages, nextProps),
-    // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
-    textFilter: nextProps.textFilter,
-    kind: nextProps.kind,
-    type: nextProps.type,
-    filter: nextProps.filter,
-  };
 };
 
 export const ResourceEventStream_ = ({
