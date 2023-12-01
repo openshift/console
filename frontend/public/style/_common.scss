@@ -384,6 +384,15 @@ dl.co-inline {
   }
 }
 
+.co-toolbar__group--alongside-kebab {
+  flex: 1 1 0;
+  flex-direction: row;
+}
+
+.co-toolbar__group--kebab {
+  justify-content: flex-start;
+}
+
 .co-toolbar__group--right {
   justify-content: flex-end;
   @media (min-width: $screen-xs-min) {
