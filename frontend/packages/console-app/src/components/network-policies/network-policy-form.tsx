@@ -3,16 +3,17 @@ import {
   ActionGroup,
   Alert,
   Button,
+  Checkbox,
   Title,
   Form,
   FormFieldGroupExpandable,
   FormFieldGroupHeader,
+  FormGroup,
   AlertActionCloseButton,
   AlertVariant,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { Checkbox } from '@console/internal/components/checkbox';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import {
   ButtonBar,
@@ -275,33 +276,29 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             dataTest="policy-pods-preview"
           />
         </div>
-        <div className="form-group co-create-networkpolicy__type">
-          <Title headingLevel="h2">{t('console-app~Policy type')}</Title>
-        </div>
-        <div className="form-group co-create-networkpolicy__deny">
-          <label>{t('console-app~Select default ingress and egress deny rules')}</label>
-
-          <div className="co-create-networkpolicy__deny-checkboxes">
-            <div className="co-create-networkpolicy__deny-checkbox">
-              <Checkbox
-                label={t('console-app~Deny all ingress traffic')}
-                onChange={handleDenyAllIngress}
-                checked={networkPolicy.ingress.denyAll}
-                name="denyAllIngress"
-              />
-            </div>
-            {networkFeaturesLoaded && networkFeatures.PolicyEgress !== false && (
-              <div className="co-create-networkpolicy__deny-checkbox">
-                <Checkbox
-                  label={t('console-app~Deny all egress traffic')}
-                  onChange={handleDenyAllEgress}
-                  checked={networkPolicy.egress.denyAll}
-                  name="denyAllEgress"
-                />
-              </div>
-            )}
-          </div>
-        </div>
+        <Title headingLevel="h2">{t('console-app~Policy type')}</Title>
+        <FormGroup
+          role="group"
+          isInline
+          label={t('console-app~Select default ingress and egress deny rules')}
+        >
+          <Checkbox
+            label={t('console-app~Deny all ingress traffic')}
+            onChange={handleDenyAllIngress}
+            isChecked={networkPolicy.ingress.denyAll}
+            name="denyAllIngress"
+            id="denyAllIngress"
+          />
+          {networkFeaturesLoaded && networkFeatures.PolicyEgress !== false && (
+            <Checkbox
+              label={t('console-app~Deny all egress traffic')}
+              onChange={handleDenyAllEgress}
+              isChecked={networkPolicy.egress.denyAll}
+              name="denyAllEgress"
+              id="denyAllEgress"
+            />
+          )}
+        </FormGroup>
         {!networkPolicy.ingress.denyAll && (
           <FormFieldGroupExpandable
             toggleAriaLabel="Ingress"
