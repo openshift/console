@@ -2,7 +2,6 @@ import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
-import { errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
@@ -15,14 +14,14 @@ describe(`${crd} CRD`, () => {
     {
       name,
       dropdownMenuName: 'help menu',
-      dropdownToggle: '[data-test=help-dropdown-toggle] .pf-v5-c-app-launcher__toggle',
+      dropdownToggle: '[data-test=help-dropdown-toggle] [aria-label="Help menu"]',
       menuLinkLocation: 'HelpMenu',
       menuLinkText: `${name} help menu link`,
     },
     {
       name,
       dropdownMenuName: 'user menu',
-      dropdownToggle: '[data-test=user-dropdown] .pf-v5-c-app-launcher__toggle',
+      dropdownToggle: '[data-test=user-dropdown] [aria-label="User menu"]',
       menuLinkLocation: 'UserMenu',
       menuLinkText: `${name} user menu link`,
     },
@@ -64,7 +63,7 @@ describe(`${crd} CRD`, () => {
           );
           yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
             yamlEditor.clickSaveCreateButton();
-            cy.get(errorMessage).should('not.exist');
+            cy.byTestID('yaml-error').should('not.exist');
           });
         });
 
@@ -73,7 +72,8 @@ describe(`${crd} CRD`, () => {
         detailsPage.titleShouldContain(name);
 
         cy.get(dropdownToggle).click();
-        cy.get('.pf-v5-c-app-launcher__menu')
+        cy.get(dropdownToggle)
+          .parent()
           .find('[data-test="application-launcher-item"]')
           .contains(menuLinkText)
           .should('exist');

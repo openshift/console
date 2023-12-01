@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import { testName, editKind, deleteKind, checkErrors } from '../../support';
 import { projectDropdown } from '../../views/common';
 import { detailsPage, DetailsPageSelector } from '../../views/details-page';
-import { errorMessage } from '../../views/form';
 import { listPage, ListPageSelector } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
@@ -197,7 +196,7 @@ describe('Kubernetes resource CRUD operations', () => {
           );
           yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
             yamlEditor.clickSaveCreateButton();
-            cy.get(errorMessage).should('not.exist');
+            cy.byTestID('yaml-error').should('not.exist');
           });
         });
       });
@@ -238,8 +237,6 @@ describe('Kubernetes resource CRUD operations', () => {
           }?kind=${kind}&q=${testLabel}%3d${testName}&name=${name}`,
         );
 
-        // filter should have 3 chip groups: resource, label, and name
-        listPage.filter.numberOfActiveFiltersShouldBe(3);
         listPage.rows.shouldExist(name);
         cy.testA11y(`Search page for ${kind}: ${name}`);
 

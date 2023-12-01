@@ -31,7 +31,7 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
     <Page
       additionalGroupedContent={
         <PageSection variant="light">
-          <Title headingLevel="h1">{title}</Title>
+          <Title headingLevel="h1" data-test="title">{title}</Title>
         </PageSection>
       }
       groupProps={{ stickyOnBreakpoint: { 'default': 'top' }}}
@@ -39,17 +39,17 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
       <PageSection>
         <Stack hasGutter>
           <AlertGroup>
-            <Alert title={t('Example info alert')} variant="info" isInline />
-            <Alert title={t('Example warning alert')} variant="warning" isInline />
+            <Alert title={t('Example info alert')} variant="info" isInline data-test="alert-info" />
+            <Alert title={t('Example warning alert')} variant="warning" isInline data-test="alert-warning" />
           </AlertGroup>
-          <Hint>
+          <Hint data-test="hint">
             <HintTitle>{t('Example hint')}</HintTitle>
             <HintBody>{t('This page shows an example gallery view with cards')}</HintBody>
           </Hint>
           <Gallery hasGutter>
             {new Array(50).fill(0).map((_, index) => (
               <GalleryItem key={index}>
-                <Card>
+                <Card data-test="card">
                   <CardTitle>{t('Example card')}</CardTitle>
                   <CardBody>{t('Card content goes here.')}</CardBody>
                 </Card>

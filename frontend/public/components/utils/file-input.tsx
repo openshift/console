@@ -140,6 +140,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
                 className="co-alert"
                 variant="info"
                 title={t('public~Non-printable file detected.')}
+                data-test="alert-info"
               >
                 {t('public~File contains non-printable characters. Preview is not available.')}
               </Alert>

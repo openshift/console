@@ -55,9 +55,9 @@ describe('Alertmanager', () => {
     alertmanager.visitAlertmanagerPage();
     detailsPage.selectTab('yaml');
     yamlEditor.isLoaded();
-    cy.get('.yaml-editor__buttons .pf-m-success').should('not.exist');
+    cy.byTestID('alert-success').should('not.exist');
     yamlEditor.clickSaveCreateButton();
-    cy.get('.yaml-editor__buttons .pf-m-success').should('exist');
+    cy.byTestID('alert-success').should('exist');
   });
 
   it('creates and deletes a receiver', () => {
@@ -97,9 +97,9 @@ receivers:
     alertmanager.visitYAMLPage();
     yamlEditor.setEditorContent(yaml);
     yamlEditor.clickSaveCreateButton();
-    cy.get('.yaml-editor__buttons .pf-m-success').should('exist');
+    cy.byTestID('alert-success').should('exist');
     detailsPage.selectTab('details');
-    cy.get(`[data-test-rows="resource-row"]`)
+    cy.get('[data-test-rows="resource-row"]')
       .contains('team-X-pager')
       .parents('tr')
       .within(() => {

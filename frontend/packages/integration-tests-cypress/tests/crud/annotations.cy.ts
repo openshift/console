@@ -3,7 +3,6 @@ import { defaultsDeep } from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { projectDropdown } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
-import { errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
@@ -26,7 +25,7 @@ const createExampleConfigMapInstance = () => {
     newContent = defaultsDeep({}, { metadata: { name: configmapName } }, safeLoad(content));
     yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
       yamlEditor.clickSaveCreateButton();
-      cy.get(errorMessage).should('not.exist');
+      cy.byTestID('yaml-error').should('not.exist');
     });
   });
 };
@@ -38,7 +37,7 @@ const deleteExampleConfigMapInstance = () => {
   modal.shouldBeOpened();
   modal.submit();
   modal.shouldBeClosed();
-  cy.get(errorMessage).should('not.exist');
+  cy.byTestID('yaml-error').should('not.exist');
 };
 
 const getNameValueEditorRow = (row: number) => {

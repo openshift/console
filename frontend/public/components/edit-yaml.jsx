@@ -732,6 +732,7 @@ const EditYAMLInner = (props) => {
                     className="co-alert co-alert--scrollable"
                     variant="danger"
                     title={t('public~An error occurred')}
+                    data-test="yaml-error"
                   >
                     <div className="co-pre-line">{errors.join('\n')}</div>
                   </Alert>

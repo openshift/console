@@ -1,5 +1,4 @@
 import { checkErrors, testName } from '../../support';
-import { errorMessage } from '../../views/form';
 import * as yamlEditor from '../../views/yaml-editor';
 
 describe('Bulk import operation', () => {
@@ -90,7 +89,7 @@ stringData:
     yamlEditor.isImportLoaded();
     yamlEditor.setEditorContent(dupSecrets).then(() => {
       yamlEditor.clickSaveCreateButton();
-      cy.get(errorMessage).should('exist');
+      cy.byTestID('yaml-error').should('exist');
     });
   });
 
@@ -108,7 +107,7 @@ stringData:
     yamlEditor.isImportLoaded();
     yamlEditor.setEditorContent(threeSecrets).then(() => {
       yamlEditor.clickSaveCreateButton();
-      cy.get(errorMessage).should('not.exist');
+      cy.byTestID('yaml-error').should('not.exist');
       cy.byLegacyTestID('secret-one').should('exist');
       cy.byLegacyTestID('secret-two').should('exist');
       cy.byLegacyTestID('secret-three').should('exist');

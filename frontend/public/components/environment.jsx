@@ -649,6 +649,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
                     type="submit"
                     variant="primary"
                     onClick={this.saveChanges}
+                    data-test="environment-save"
                   >
                     {t('public~Save')}
                   </Button>

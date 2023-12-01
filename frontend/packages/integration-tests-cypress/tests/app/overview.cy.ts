@@ -9,7 +9,6 @@ import {
 } from '../../../../public/models';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
-import { errorMessage } from '../../views/form';
 import { masthead } from '../../views/masthead';
 import { overviewPage } from '../../views/overview';
 import * as yamlEditor from '../../views/yaml-editor';
@@ -47,7 +46,7 @@ describe('Visiting Overview page', () => {
           );
           yamlEditor.setEditorContent(safeDump(newContent)).then(() => {
             yamlEditor.clickSaveCreateButton();
-            cy.get(errorMessage).should('not.exist');
+            cy.byTestID('yaml-error').should('not.exist');
             detailsPage.sectionHeaderShouldExist(`${kindModel.label} details`);
           });
         });

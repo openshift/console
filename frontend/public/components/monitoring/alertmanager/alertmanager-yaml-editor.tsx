@@ -85,7 +85,15 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: se
             <div className="co-pre-line">{errorMsg}</div>
           </Alert>
         )}
-        {successMsg && <Alert isInline className="co-alert" variant="success" title={successMsg} />}
+        {successMsg && (
+          <Alert
+            isInline
+            className="co-alert"
+            variant="success"
+            title={successMsg}
+            data-test="alert-success"
+          />
+        )}
       </EditAlertmanagerYAML>
     </>
   );

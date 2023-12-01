@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { ConfigMapKind } from '@console/internal/module/k8s';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
-import { errorMessage } from '../../views/form';
 import { labels } from '../../views/labels';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
@@ -37,7 +36,7 @@ describe('Editing labels', () => {
       const newContent = _.defaultsDeep({}, yaml, safeLoad(content));
       yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
         yamlEditor.clickSaveCreateButton();
-        cy.get(errorMessage).should('not.exist');
+        cy.byTestID('yaml-error').should('not.exist');
       });
     });
   });
@@ -65,7 +64,7 @@ describe('Editing labels', () => {
     labels.clickDetailsPageLabel();
     detailsPage.isLoaded();
     cy.url().should('include', `/search/ns/${testName}?kind=core~v1~ConfigMap&q=${label1Key}`);
-    labels.chipExists();
+    labels.chipExists(label1);
     removeLabelByCLI(label1Key);
   });
 

@@ -18,7 +18,7 @@ const testOperand: TestOperandProps = {
 };
 
 const alertExists = (titleText: string) => {
-  cy.get('.pf-v5-c-alert__title').contains(titleText).should('exist');
+  cy.get('.co-alert').contains(titleText).should('exist');
 };
 
 describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
