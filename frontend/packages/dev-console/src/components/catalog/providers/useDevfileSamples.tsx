@@ -29,6 +29,7 @@ const normalizeDevfileSamples = (
       uid,
       type: 'Devfile',
       name: displayName,
+      secondaryLabel: 'Samples',
       description,
       tags,
       provider,

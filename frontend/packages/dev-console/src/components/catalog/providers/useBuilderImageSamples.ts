@@ -30,13 +30,14 @@ const normalizeBuilderImages = (
     const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
     const href = `/samples/ns/${activeNamespace}/${name}/${imageStreamNS}`;
-    const createLabel = t('devconsole~Create');
+    const createLabel = t('devconsole~Create Builder Image Sample');
     const type = 'BuilderImage';
 
     const item: CatalogItem = {
       uid: `${type}-${uid}`,
       type,
       name: title,
+      secondaryLabel: 'Samples',
       provider,
       description,
       creationTimestamp,
