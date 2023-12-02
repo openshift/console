@@ -50,5 +50,6 @@ export const devFilePage = {
         cy.log(`Issue with git url ${gitUrl}, maybe a private repo url. Please check it`);
       }
     });
+    cy.get(gitPO.gitSection.validatedMessage).should('have.text', 'Validated');
   },
 };

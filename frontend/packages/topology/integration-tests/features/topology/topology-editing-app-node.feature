@@ -61,7 +61,7 @@ Feature: Editing an application
              Then user will be redirected to Topology with the updated resource limits
 
 
-        @smoke @broken-test
+        @smoke
         Scenario: Editing deployment using form view: T-09-TC05
             Given user has created workload "rolling-update" with resource type "Deployment"
              When user right clicks on the workload "rolling-update" to open the Context Menu
