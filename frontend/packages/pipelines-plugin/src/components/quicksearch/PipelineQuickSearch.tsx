@@ -66,7 +66,7 @@ const Contents: React.FC<
     ) {
       item.attributes.installed = '';
       if (installedTask) {
-        item.attributes.installed = installedTask.attributes?.versions[0]?.version.toString();
+        item.attributes.installed = installedTask.attributes?.versions[0]?.version?.toString();
       }
     }
 
