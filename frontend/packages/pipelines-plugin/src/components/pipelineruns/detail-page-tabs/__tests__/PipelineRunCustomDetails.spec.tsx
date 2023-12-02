@@ -6,6 +6,7 @@ import store from '@console/internal/redux';
 import {
   DataState,
   PipelineExampleNames,
+  PipelineRunWithSBOM,
   pipelineTestData,
 } from '../../../../test-data/pipeline-data';
 import {
@@ -64,7 +65,7 @@ describe('PipelineRunCustomDetails', () => {
     useTaskRunsMock.mockReturnValue([[taskRunWithSBOMResult], true]);
     const wrapper = render(
       <Wrapper>
-        <PipelineRunCustomDetails pipelineRun={pipelineRun} />
+        <PipelineRunCustomDetails pipelineRun={PipelineRunWithSBOM} />
       </Wrapper>,
       {
         wrapper: BrowserRouter,

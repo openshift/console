@@ -532,9 +532,15 @@ export const returnValidTaskModel = (task: TaskKind): K8sModel => {
 
 export enum TaskRunResultsAnnotations {
   KEY = 'task.results.key',
+  TYPE = 'task.results.type',
+}
+
+export enum TaskRunResultsAnnotationValue {
+  EXTERNAL_LINK = 'external-link',
 }
 
 export enum TaskRunResults {
+  IMAGE_REPOSITORY = 'IMAGE_URL',
   SBOM = 'LINK_TO_SBOM',
   SCAN_OUTPUT = 'SCAN_OUTPUT',
   TEST_OUTPUT = 'TEST_OUTPUT',
@@ -545,10 +551,20 @@ export const getSbomTaskRun = (taskruns: TaskRunKind[]): TaskRunKind =>
     (tr) => tr?.metadata?.annotations?.[TaskRunResultsAnnotations.KEY] === TaskRunResults.SBOM,
   );
 
+export const hasExternalLink = (sbomTaskRun: TaskRunKind): boolean =>
+  sbomTaskRun?.metadata?.annotations?.[TaskRunResultsAnnotations.TYPE] ===
+  TaskRunResultsAnnotationValue.EXTERNAL_LINK;
+
 export const getSbomLink = (sbomTaskRun: TaskRunKind): string | undefined =>
   (sbomTaskRun?.status?.results || sbomTaskRun?.status?.taskResults)?.find(
-    (r) => r.name === 'LINK_TO_SBOM',
+    (r) => r.name === TaskRunResults.SBOM,
   )?.value;
+
+export const getImageUrl = (PipelineRun: PipelineRunKind): string | undefined =>
+  (PipelineRun?.status?.results || PipelineRun?.status?.pipelineResults)?.find(
+    (r) => r.name === TaskRunResults.IMAGE_REPOSITORY,
+  )?.value;
+
 export const taskRunStatus = (taskRun: TaskRunKind | PLRTaskRunData): ComputedStatus => {
   if (!taskRun?.status?.conditions?.length) {
     return ComputedStatus.Pending;

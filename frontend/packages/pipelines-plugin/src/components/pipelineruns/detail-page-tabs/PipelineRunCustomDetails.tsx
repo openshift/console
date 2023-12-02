@@ -11,7 +11,13 @@ import {
   pipelineRunFilterReducer,
   pipelineRunTitleFilterReducer,
 } from '../../../utils/pipeline-filter-reducer';
-import { getSbomLink, getSbomTaskRun, pipelineRunDuration } from '../../../utils/pipeline-utils';
+import {
+  getImageUrl,
+  getSbomLink,
+  getSbomTaskRun,
+  hasExternalLink,
+  pipelineRunDuration,
+} from '../../../utils/pipeline-utils';
 import {
   convertBackingPipelineToPipelineResourceRefProps,
   getPipelineResourceLinks,
@@ -42,7 +48,9 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
   );
 
   const sbomTaskRun = taskRunsLoaded ? getSbomTaskRun(taskRuns) : null;
-  const buildImage = getSbomLink(sbomTaskRun);
+  const buildImage = getImageUrl(pipelineRun);
+  const linkToSbom = getSbomLink(sbomTaskRun);
+  const isExternalLink = hasExternalLink(sbomTaskRun);
   return (
     <>
       <dl>
@@ -71,7 +79,7 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
         <dd>
           <PipelineResourceRef {...convertBackingPipelineToPipelineResourceRefProps(pipelineRun)} />
         </dd>
-        {buildImage && (
+        {buildImage && sbomTaskRun && (
           <>
             <dt data-test="download-sbom">{t('pipelines-plugin~Download SBOM')}</dt>
             <dd>
@@ -92,13 +100,17 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
           <>
             <dt data-test="view-sbom">{t('pipelines-plugin~SBOM')}</dt>
             <dd>
-              <Link
-                to={`/k8s/ns/${sbomTaskRun.metadata.namespace}/${referenceForModel(TaskRunModel)}/${
-                  sbomTaskRun.metadata.name
-                }/logs`}
-              >
-                {t('pipelines-plugin~View SBOM')}
-              </Link>
+              {isExternalLink && !!linkToSbom ? (
+                <ExternalLink href={linkToSbom}>{t('pipelines-plugin~View SBOM')}</ExternalLink>
+              ) : (
+                <Link
+                  to={`/k8s/ns/${sbomTaskRun.metadata.namespace}/${referenceForModel(
+                    TaskRunModel,
+                  )}/${sbomTaskRun.metadata.name}/logs`}
+                >
+                  {t('pipelines-plugin~View SBOM')}
+                </Link>
+              )}
             </dd>
           </>
         )}
