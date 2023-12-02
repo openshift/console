@@ -193,6 +193,12 @@ go 1.18+, nodejs/yarn, kubectl
 
 All frontend code lives in the `frontend/` directory. The frontend uses node, yarn, and webpack to compile dependencies into self contained bundles which are loaded dynamically at run time in the browser. These bundles are not committed to git. Tasks are defined in `package.json` in the `scripts` section and are aliased to `yarn run <cmd>` (in the frontend directory).
 
+#### Git hooks and PATH
+
+In order to make a commit, the PATH env var in the terminal session where the commit command is executed must include `./node_modules/.bin`. We use a git pre-commit hook to lint changes before they are committed. This will fail if the commands used in the hook cannot be found in PATH.
+
+It is also possible to skip the pre-commit hook by passing the `-n` or `--no-verify` flag in the git commit command. This will allow commits to include lint errors. Use this sparingly as the pre-commit hook is intended to save time by catching lint errors before they make it into a PR and fail CI.
+
 #### Install Dependencies
 
 To install the build tools and dependencies:
