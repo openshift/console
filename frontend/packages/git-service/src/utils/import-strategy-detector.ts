@@ -22,7 +22,7 @@ const ImportStrategyList: ImportStrategyType[] = [
   {
     name: 'Dockerfile',
     type: ImportStrategy.DOCKERFILE,
-    expectedRegexp: /^Dockerfile.*/,
+    expectedRegexp: /^(Dockerfile|Containerfile).*/,
     priority: 2,
   },
   {
