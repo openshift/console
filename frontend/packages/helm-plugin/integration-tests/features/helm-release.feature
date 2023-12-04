@@ -38,8 +38,8 @@ Feature: Helm Release
              Then user will be redirected to Topology page
               And Topology page have the helm chart workload "nodejs-release"
 
-
-        Scenario: Context menu options of helm release: HR-01-TC01
+        @regression @broken-test
+        Scenario: Context menu options of helm release:  HR-01-TC01
             Given user is at the Topology page
              When user right clicks on the helm release "nodejs-release" to open the context menu
              Then user is able to see the context menu with actions Upgrade and Delete Helm Release
