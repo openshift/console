@@ -107,6 +107,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
       className={classNames('co-sysevent', {
         'co-sysevent--warning': isWarning,
       })}
+      data-test={isWarning ? 'event-warning' : 'event'}
     >
       <div className="co-sysevent__icon-box">
         <i className="co-sysevent-icon" title={tooltipMsg} />
@@ -484,7 +485,9 @@ const EventStream = (props) => {
       <div className="co-sysevent-stream">
         <div className="co-sysevent-stream__status">
           <div className="co-sysevent-stream__timeline__btn-text">{statusBtnTxt}</div>
-          <div className="co-sysevent-stream__totals text-secondary">{messageCount}</div>
+          <div className="co-sysevent-stream__totals text-secondary" data-test="event-totals">
+            {messageCount}
+          </div>
         </div>
 
         <div className={klass}>
