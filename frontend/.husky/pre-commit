@@ -3,4 +3,5 @@
 
 echo "Running husky pre-commit hook..."
 cd frontend
-lint-staged
+yarn run lint-staged
+
