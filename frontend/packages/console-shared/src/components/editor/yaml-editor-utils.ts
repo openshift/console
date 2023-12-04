@@ -221,20 +221,18 @@ export const enableYAMLValidation = (
     tryFolding();
   }
 
-  setTimeout(() => {
-    getModel()?.onDidChangeContent(() => {
-      tryFolding();
+  getModel()?.onDidChangeContent(() => {
+    tryFolding();
 
-      const document = createDocument(getModel());
-      cleanPendingValidation(document);
-      pendingValidationRequests.set(
-        document.uri,
-        setTimeout(() => {
-          pendingValidationRequests.delete(document.uri);
-          doValidate(document);
-        }),
-      );
-    });
+    const document = createDocument(getModel());
+    cleanPendingValidation(document);
+    pendingValidationRequests.set(
+      document.uri,
+      setTimeout(() => {
+        pendingValidationRequests.delete(document.uri);
+        doValidate(document);
+      }),
+    );
   });
 };
 
