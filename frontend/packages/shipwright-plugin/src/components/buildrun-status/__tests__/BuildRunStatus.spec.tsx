@@ -6,7 +6,7 @@ import {
   runningBuildRun,
   succeededBuildRun,
   failedBuildRun,
-} from '../../../__tests__/mock-data';
+} from '../../../__tests__/mock-data-v1beta1';
 import { ComputedBuildRunStatus } from '../../../types';
 import BuildRunStatus, { getBuildRunStatus } from '../BuildRunStatus';
 

@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 import { resourcePath } from '@console/internal/components/utils';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { BuildRunModel } from '../../models';
+import { BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
 import { BuildRun } from '../../types';
+import { isV1Alpha1Resource } from '../../utils';
 import BuildRunStatus from '../buildrun-status/BuildRunStatus';
 
 import './BuildRunItem.scss';
@@ -21,7 +22,8 @@ const BuildRunItem: React.FC<BuildRunItemProps> = ({ buildRun }) => {
     metadata: { name, namespace, creationTimestamp },
     status,
   } = buildRun;
-  const path = resourcePath(referenceForModel(BuildRunModel), name, namespace);
+  const buildRunModel = isV1Alpha1Resource(buildRun) ? BuildRunModelV1Alpha1 : BuildRunModel;
+  const path = resourcePath(referenceForModel(buildRunModel), name, namespace);
   const lastUpdated = status
     ? status.completionTime || status.startTime || creationTimestamp
     : creationTimestamp;

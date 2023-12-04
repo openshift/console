@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sw-deployment-example
-  namespace: build-examples
+  namespace: build-examples-alpha
   labels:
     app.kubernetes.io/part-of: sw-deployment-app
 spec:
@@ -18,13 +18,13 @@ spec:
       containers:
         - name: container
           image: >-
-            image-registry.openshift-image-registry.svc:5000/build-examples/sw-deployment-example:latest
+            image-registry.openshift-image-registry.svc:5000/build-examples-alpha/sw-deployment-example:latest
 ---
 apiVersion: shipwright.io/v1alpha1
 kind: Build
 metadata:
   name: sw-deployment-example-build
-  namespace: build-examples
+  namespace: build-examples-alpha
   labels:
     app.kubernetes.io/part-of: sw-deployment-app
 spec:
@@ -35,12 +35,12 @@ spec:
     name: buildpacks-v3
     kind: BuildStrategy
   output:
-    image: image-registry.openshift-image-registry.svc:5000/build-examples/sw-deployment-example-build
+    image: image-registry.openshift-image-registry.svc:5000/build-examples-alpha/sw-deployment-example-build
 ---
 apiVersion: shipwright.io/v1alpha1
 kind: BuildRun
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   generateName: sw-deployment-example-build-
   labels:
     app.kubernetes.io/part-of: sw-deployment-app

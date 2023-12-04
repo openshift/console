@@ -1,7 +1,7 @@
 apiVersion: shipwright.io/v1alpha1
 kind: Build
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   name: buildpack-nodejs-build-heroku
 spec:
   source:
@@ -11,12 +11,12 @@ spec:
     name: buildpacks-v3-heroku
     kind: BuildStrategy
   output:
-    image: image-registry.openshift-image-registry.svc:5000/build-examples/buildpack-nodejs-build-heroku
+    image: image-registry.openshift-image-registry.svc:5000/build-examples-alpha/buildpack-nodejs-build-heroku
 ---
 apiVersion: shipwright.io/v1alpha1
 kind: BuildRun
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   generateName: buildpack-nodejs-build-heroku-
 spec:
   buildRef:
@@ -25,7 +25,7 @@ spec:
 apiVersion: shipwright.io/v1alpha1
 kind: BuildRun
 metadata:
-  namespace: build-examples
+  namespace: build-examples-alpha
   generateName: buildpack-nodejs-build-heroku-
 spec:
   buildRef:

@@ -8,7 +8,9 @@
     "lint": "yarn --cwd ../.. eslint packages/shipwright-plugin",
     "test": "yarn --cwd ../.. test packages/shipwright-plugin"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@kubernetes-models/shipwright": "^0.2.0"
+  },
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "exposedModules": {

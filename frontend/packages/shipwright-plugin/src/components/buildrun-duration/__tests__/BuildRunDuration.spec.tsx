@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render } from '@testing-library/react';
-import { incompleteBuildRun } from '../../../__tests__/mock-data';
+import { incompleteBuildRun } from '../../../__tests__/mock-data-v1beta1';
 import { BuildRun } from '../../../types';
 import BuildRunDuration, { getDuration } from '../BuildRunDuration';
 
@@ -46,6 +46,7 @@ describe('BuildRunDuration', () => {
         namespace: 'a-namespace',
         name: 'incomplete-buildrun',
       },
+      spec: {},
       status: {
         startTime: '2022-06-06T13:52:34Z',
         completionTime: '2022-06-06T13:53:26Z',
@@ -63,6 +64,7 @@ describe('BuildRunDuration', () => {
         namespace: 'a-namespace',
         name: 'incomplete-buildrun',
       },
+      spec: {},
       status: {
         startTime: '2022-06-06T13:52:34Z',
       },

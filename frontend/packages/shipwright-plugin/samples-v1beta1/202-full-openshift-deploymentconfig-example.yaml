@@ -30,7 +30,7 @@ spec:
           namespace: build-examples
           name: 'sw-deploymentconfig-example:latest'
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: Build
 metadata:
   namespace: build-examples
@@ -39,7 +39,9 @@ metadata:
     app.kubernetes.io/part-of: sw-deploymentconfig-app
 spec:
   source:
-    url: https://github.com/shipwright-io/sample-nodejs
+    type: Git
+    git:
+      url: https://github.com/shipwright-io/sample-nodejs
     contextDir: source-build
   strategy:
     name: buildpacks-v3
@@ -47,7 +49,7 @@ spec:
   output:
     image: image-registry.openshift-image-registry.svc:5000/build-examples/sw-deploymentconfig-example
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildRun
 metadata:
   namespace: build-examples
@@ -55,7 +57,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: sw-deploymentconfig-app
 spec:
-  buildRef:
+  build:
     name: sw-deploymentconfig-example-build
 ---
 apiVersion: v1

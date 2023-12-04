@@ -1,6 +1,6 @@
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { startBuild, canRerunBuildRun, rerunBuildRun } from '../api';
-import { BuildRunModel } from '../models';
+import { BuildRunModelV1Alpha1 } from '../models';
 import { Build, BuildRun } from '../types';
 import {
   incompleteBuild,
@@ -11,7 +11,7 @@ import {
   buildRunContainsIncompleteBuildSpecWithGenerateName,
   buildRunWithLabels,
   buildWithLabels,
-} from './mock-data';
+} from './mock-data-v1alpha1';
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
   k8sCreateResource: jest.fn(),
@@ -44,7 +44,7 @@ describe('startBuild', () => {
     await startBuild(build);
     expect(k8sCreateResourceMock).toHaveBeenCalledTimes(1);
     expect(k8sCreateResourceMock).toHaveBeenCalledWith({
-      model: BuildRunModel,
+      model: BuildRunModelV1Alpha1,
       data: expectedBuildRun,
     });
   });
@@ -72,7 +72,7 @@ describe('startBuild', () => {
     await startBuild(build);
     expect(k8sCreateResourceMock).toHaveBeenCalledTimes(1);
     expect(k8sCreateResourceMock).toHaveBeenCalledWith({
-      model: BuildRunModel,
+      model: BuildRunModelV1Alpha1,
       data: expectedBuildRun,
     });
   });
@@ -117,7 +117,7 @@ describe('rerunBuildRun', () => {
     await rerunBuildRun(buildRun);
     expect(k8sCreateResourceMock).toHaveBeenCalledTimes(1);
     expect(k8sCreateResourceMock).toHaveBeenCalledWith({
-      model: BuildRunModel,
+      model: BuildRunModelV1Alpha1,
       data: expectedBuildRun,
     });
   });
@@ -144,7 +144,7 @@ describe('rerunBuildRun', () => {
     await rerunBuildRun(buildRun);
     expect(k8sCreateResourceMock).toHaveBeenCalledTimes(1);
     expect(k8sCreateResourceMock).toHaveBeenCalledWith({
-      model: BuildRunModel,
+      model: BuildRunModelV1Alpha1,
       data: expectedBuildRun,
     });
   });
@@ -159,14 +159,24 @@ describe('rerunBuildRun', () => {
         generateName: 'buildrun3-33333-',
       },
       spec: {
-        buildSpec: {},
+        buildSpec: {
+          output: {
+            image: '',
+          },
+          source: {
+            url: '',
+          },
+          strategy: {
+            name: '',
+          },
+        },
       },
     };
 
     await rerunBuildRun(buildRun);
     expect(k8sCreateResourceMock).toHaveBeenCalledTimes(1);
     expect(k8sCreateResourceMock).toHaveBeenCalledWith({
-      model: BuildRunModel,
+      model: BuildRunModelV1Alpha1,
       data: expectedBuildRun,
     });
   });
@@ -181,20 +191,30 @@ describe('rerunBuildRun', () => {
         generateName: 'buildrun4-',
       },
       spec: {
-        buildSpec: {},
+        buildSpec: {
+          output: {
+            image: '',
+          },
+          source: {
+            url: '',
+          },
+          strategy: {
+            name: '',
+          },
+        },
       },
     };
 
     await rerunBuildRun(buildRun);
     expect(k8sCreateResourceMock).toHaveBeenCalledTimes(1);
     expect(k8sCreateResourceMock).toHaveBeenCalledWith({
-      model: BuildRunModel,
+      model: BuildRunModelV1Alpha1,
       data: expectedBuildRun,
     });
   });
 
   it('should fail when try to rerun an incomplete BuildRun without buildRef and without buildSpec', async () => {
-    const buildRun: BuildRun = incompleteBuildRun;
+    const buildRun = incompleteBuildRun;
 
     await expect(rerunBuildRun(buildRun)).rejects.toEqual(
       new Error('Could not rerun BuildRun without buildRef.name or inline buildSpec.'),
@@ -225,7 +245,7 @@ describe('rerunBuildRun', () => {
     await rerunBuildRun(buildRun);
     expect(k8sCreateResourceMock).toHaveBeenCalledTimes(1);
     expect(k8sCreateResourceMock).toHaveBeenCalledWith({
-      model: BuildRunModel,
+      model: BuildRunModelV1Alpha1,
       data: expectedBuildRun,
     });
   });

@@ -8,11 +8,11 @@ import {
   SidebarSectionHeading,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
-import { OverviewItem } from '@console/shared';
+import { OverviewItem, useFlag } from '@console/shared';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from '../../const';
-import { BuildModel, BuildRunModel } from '../../models';
+import { BuildModel, BuildModelV1Alpha1, BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
 import { Build, BuildRun } from '../../types';
-import { byCreationTime } from '../../utils';
+import { byCreationTime, isV1Alpha1Resource } from '../../utils';
 import BuildRunItem from './BuildRunItem';
 import StartBuildButton from './StartBuildButton';
 import TriggerLastBuildButton from './TriggerLastBuildButton';
@@ -29,6 +29,9 @@ type BuildsOverviewProps = {
 const BuildsOverview: React.FC<BuildsOverviewProps> = ({ item: { builds, buildRuns, obj } }) => {
   const { t } = useTranslation();
   const resourceLabel = obj.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL];
+  const buildRunModel = useFlag('SHIPWRIGHT_BUILDRUN')
+    ? referenceForModel(BuildRunModel)
+    : referenceForModel(BuildRunModelV1Alpha1);
   const buildRunsforResource = resourceLabel
     ? buildRuns.filter((buildRun) => {
         return resourceLabel === buildRun.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL];
@@ -53,7 +56,7 @@ const BuildsOverview: React.FC<BuildsOverviewProps> = ({ item: { builds, buildRu
           <Link
             className="sidebar__section-view-all"
             to={`${resourcePath(
-              referenceForModel(BuildRunModel),
+              buildRunModel,
               undefined,
               obj.metadata?.namespace,
             )}?labels=${BUILDRUN_TO_RESOURCE_MAP_LABEL}=${encodeURIComponent(resourceLabel)}`}
@@ -67,11 +70,12 @@ const BuildsOverview: React.FC<BuildsOverviewProps> = ({ item: { builds, buildRu
 
       {buildsForResource.map((build) => {
         const buildRunsforBuild = buildRuns
-          .filter(
-            (buildRun) =>
-              buildRun.spec.buildRef?.name === build.metadata.name &&
-              buildRun.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL] ===
-                obj.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL],
+          .filter((buildRun) =>
+            isV1Alpha1Resource(buildRun)
+              ? buildRun.spec.buildRef?.name === build.metadata.name
+              : buildRun.spec.build?.name === build.metadata.name &&
+                buildRun.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL] ===
+                  obj.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL],
           )
           .sort(byCreationTime);
         return (
@@ -81,7 +85,11 @@ const BuildsOverview: React.FC<BuildsOverviewProps> = ({ item: { builds, buildRu
                 <FlexItem>
                   <ResourceLink
                     inline
-                    kind={referenceForModel(BuildModel)}
+                    kind={
+                      isV1Alpha1Resource(build)
+                        ? referenceForModel(BuildModelV1Alpha1)
+                        : referenceForModel(BuildModel)
+                    }
                     name={build.metadata.name}
                     namespace={build.metadata.namespace}
                   />

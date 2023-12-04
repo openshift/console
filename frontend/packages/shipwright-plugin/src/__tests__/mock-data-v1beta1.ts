@@ -1,16 +1,16 @@
 import { Build, BuildRun } from '../types';
 
-export const incompleteBuild: Build = {
-  apiVersion: 'shipwright.io/v1alpha1',
+export const incompleteBuild = {
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'Build',
   metadata: {
     namespace: 'a-namespace',
     name: 'incomplete-build',
   },
-};
+} as Build;
 
 export const buildWithLabels: Build = {
-  apiVersion: 'shipwright.io/v1alpha1',
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'Build',
   metadata: {
     namespace: 'a-namespace',
@@ -21,7 +21,9 @@ export const buildWithLabels: Build = {
   },
   spec: {
     source: {
-      url: 'https://github.com/shipwright-io/sample-nodejs',
+      git: {
+        url: 'https://github.com/shipwright-io/sample-nodejs',
+      },
       contextDir: 'source-build',
     },
     strategy: {
@@ -35,17 +37,17 @@ export const buildWithLabels: Build = {
   },
 };
 
-export const incompleteBuildRun: BuildRun = {
-  apiVersion: 'shipwright.io/v1alpha1',
+export const incompleteBuildRun = {
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
     name: 'incomplete-buildrun',
   },
-};
+} as BuildRun;
 
 export const buildRunWithLabels: BuildRun = {
-  apiVersion: 'shipwright.io/v1alpha1',
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
@@ -57,28 +59,28 @@ export const buildRunWithLabels: BuildRun = {
     },
   },
   spec: {
-    buildRef: {
+    build: {
       name: 'build-with-labels',
     },
   },
 };
 
 export const buildRunReferenceIncompleteBuildWithoutGenerateName: BuildRun = {
-  apiVersion: 'shipwright.io/v1alpha1',
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
     name: 'buildrun1-11111',
   },
   spec: {
-    buildRef: {
+    build: {
       name: 'incomplete-build',
     },
   },
 };
 
 export const buildRunReferenceIncompleteBuildWithGenerateName: BuildRun = {
-  apiVersion: 'shipwright.io/v1alpha1',
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
@@ -86,26 +88,40 @@ export const buildRunReferenceIncompleteBuildWithGenerateName: BuildRun = {
     name: 'buildrun2-22222',
   },
   spec: {
-    buildRef: {
+    build: {
       name: 'incomplete-build',
     },
   },
 };
 
 export const buildRunContainsIncompleteBuildSpecWithoutGenerateName: BuildRun = {
-  apiVersion: 'shipwright.io/v1alpha1',
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
     name: 'buildrun3-33333',
   },
   spec: {
-    buildSpec: {},
+    build: {
+      spec: {
+        output: {
+          image: '',
+        },
+        source: {
+          git: {
+            url: '',
+          },
+        },
+        strategy: {
+          name: '',
+        },
+      },
+    },
   },
 };
 
 export const buildRunContainsIncompleteBuildSpecWithGenerateName: BuildRun = {
-  apiVersion: 'shipwright.io/v1alpha1',
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
@@ -113,16 +129,35 @@ export const buildRunContainsIncompleteBuildSpecWithGenerateName: BuildRun = {
     name: 'buildrun4-44444',
   },
   spec: {
-    buildSpec: {},
+    build: {
+      spec: {
+        output: {
+          image: '',
+        },
+        source: {
+          git: {
+            url: '',
+          },
+        },
+        strategy: {
+          name: '',
+        },
+      },
+    },
   },
 };
 
 export const pendingBuildRun: BuildRun = {
-  apiVersion: 'shipwright.io/v1alpha1',
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
     name: 'pending-buildrun',
+  },
+  spec: {
+    build: {
+      name: 'pending-build',
+    },
   },
   status: {
     conditions: [
@@ -131,17 +166,23 @@ export const pendingBuildRun: BuildRun = {
         status: 'Unknown',
         reason: 'Pending',
         message: '',
+        lastTransitionTime: '',
       },
     ],
   },
 };
 
 export const runningBuildRun: BuildRun = {
-  apiVersion: 'shipwright.io/v1alpha1',
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
     name: 'running-buildrun',
+  },
+  spec: {
+    build: {
+      name: 'running-build',
+    },
   },
   status: {
     conditions: [
@@ -150,17 +191,23 @@ export const runningBuildRun: BuildRun = {
         status: 'Unknown',
         reason: 'Running',
         message: '',
+        lastTransitionTime: '',
       },
     ],
   },
 };
 
 export const succeededBuildRun: BuildRun = {
-  apiVersion: 'shipwright.io/v1alpha1',
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
     name: 'Succeeded-buildrun',
+  },
+  spec: {
+    build: {
+      name: 'Succeeded-build',
+    },
   },
   status: {
     conditions: [
@@ -169,17 +216,23 @@ export const succeededBuildRun: BuildRun = {
         status: 'True',
         reason: '',
         message: '',
+        lastTransitionTime: '',
       },
     ],
   },
 };
 
 export const failedBuildRun: BuildRun = {
-  apiVersion: 'shipwright.io/v1alpha1',
+  apiVersion: 'shipwright.io/v1beta1',
   kind: 'BuildRun',
   metadata: {
     namespace: 'a-namespace',
     name: 'failed-buildrun',
+  },
+  spec: {
+    build: {
+      name: 'failed-build',
+    },
   },
   status: {
     conditions: [
@@ -188,6 +241,7 @@ export const failedBuildRun: BuildRun = {
         status: 'False',
         reason: '',
         message: '',
+        lastTransitionTime: '',
       },
     ],
   },
