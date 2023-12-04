@@ -11,12 +11,21 @@
   "Network attachment definition name cannot contain uppercase characters": "네트워크 연결 정의 이름은 대문자를 포함할 수 없습니다.",
   "Network attachment definition name is too long": "네트워크 연결 정의 이름이 너무 깁니다.",
   "Network attachment definition name is too short": "네트워크 연결 정의 이름이 너무 짧습니다.",
+  "Network Type": "네트워크 유형",
   "Create Network Attachment Definition": "네트워크 연결 정의 만들기",
   "Edit YAML": "YAML 편집",
   "Name": "이름",
   "Description": "설명",
-  "Network Type": "네트워크 유형",
   "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "네트워크 유형을 선택하려면 <0>OpenShift Virtualization Operator</0> 또는 <3>SR-IOV Network Operator </3>를 클러스터에 설치해야 합니다.",
   "Create": "만들기",
-  "Cancel": "취소"
+  "Cancel": "취소",
+  "Resource name": "리소스 이름",
+  "VLAN tag number": "VLAN 태그 번호",
+  "IP address management": "IP 주소 관리",
+  "Bridge name": "브리지 이름",
+  "MAC spoof check": "MAC 스푸핑 검사",
+  "Bridge mapping": "브리지 매핑",
+  "Physical network name. A bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.": "물리적 네트워크 이름. 브리지 매핑은 물리적 네트워크 이름과 Open vSwitch 브리지 간에 매핑하려면 클러스터 노드에 구성해야 합니다.",
+  "MTU": "MTU",
+  "VLAN": "VLAN"
 }

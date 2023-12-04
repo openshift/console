@@ -11,12 +11,21 @@
   "Network attachment definition name cannot contain uppercase characters": "ネットワーク接続定義名に大文字は使用できません",
   "Network attachment definition name is too long": "ネットワーク接続定義名が長すぎます",
   "Network attachment definition name is too short": "ネットワーク接続定義名が短すぎます",
+  "Network Type": "ネットワークタイプ",
   "Create Network Attachment Definition": "ネットワーク接続定義の作成",
   "Edit YAML": "YAML の編集",
   "Name": "名前",
   "Description": "説明",
-  "Network Type": "ネットワークタイプ",
   "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "ネットワークタイプを選択するには、<0>OpenShift Virtualization Operator</0> または <3>SR-IOV Network Operator</3> がクラスターにインストールされている必要があります。",
   "Create": "作成",
-  "Cancel": "キャンセル"
+  "Cancel": "キャンセル",
+  "Resource name": "リソース名",
+  "VLAN tag number": "VLAN タグ番号",
+  "IP address management": "IP アドレス管理",
+  "Bridge name": "ブリッジ名",
+  "MAC spoof check": "MAC spoof チェック",
+  "Bridge mapping": "ブリッジマッピング",
+  "Physical network name. A bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.": "物理ネットワーク名。物理ネットワーク名と Open vSwitch ブリッジの間をマッピングするには、クラスターノード上にブリッジマッピングを設定する必要があります。",
+  "MTU": "MTU",
+  "VLAN": "VLAN"
 }
