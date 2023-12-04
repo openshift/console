@@ -54,14 +54,14 @@ const ImageSearchSection: React.FC<{ disabled?: boolean }> = ({ disabled = false
               label: imageRegistryType(t).External.label,
               value: imageRegistryType(t).External.value,
               isDisabled:
-                (values.formType === 'edit' && values.registry === 'internal') || disabled,
+                (values?.formType === 'edit' && values.registry === 'internal') || disabled,
               activeChildren: <ImageSearch />,
             },
             {
               label: imageRegistryType(t).Internal.label,
               value: imageRegistryType(t).Internal.value,
               isDisabled:
-                (values.formType === 'edit' && values.registry === 'external') || disabled,
+                (values?.formType === 'edit' && values.registry === 'external') || disabled,
               activeChildren: <ImageStream disabled={disabled} />,
             },
           ]}

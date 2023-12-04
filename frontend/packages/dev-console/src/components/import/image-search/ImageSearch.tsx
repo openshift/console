@@ -201,7 +201,7 @@ const ImageSearch: React.FC = () => {
   }, [t, validated, values.isSearchingForImage, values.searchTerm, values.isi.status?.message]);
 
   const resetFields = () => {
-    if (values.formType === 'edit') {
+    if (values?.formType === 'edit') {
       values.application.selectedKey !== UNASSIGNED_KEY &&
         values.application.selectedKey === CREATE_APPLICATION_KEY &&
         !applicationNameTouched &&

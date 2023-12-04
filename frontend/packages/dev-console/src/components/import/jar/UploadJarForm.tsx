@@ -11,9 +11,9 @@ import { BuilderImage } from '../../../utils/imagestream-utils';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
+import { DeploySection } from '../DeploySection';
 import FormSection from '../section/FormSection';
 import IconSection from '../section/IconSection';
-import ResourceSection from '../section/ResourceSection';
 import JarSection from './section/JarSection';
 
 export type UploadJarFormProps = {
@@ -65,7 +65,7 @@ const UploadJarForm: React.FunctionComponent<FormikProps<FormikValues> & UploadJ
           project={values.project}
           noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
         />
-        <ResourceSection />
+        <DeploySection values={values} />
         <AdvancedSection values={values} />
       </FormBody>
       <FormFooter

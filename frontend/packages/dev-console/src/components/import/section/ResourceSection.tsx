@@ -5,7 +5,6 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { FLAG_OPENSHIFT_DEPLOYMENTCONFIG } from '@console/dev-console/src/const';
-import { ImportStrategy } from '@console/git-service/src';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
@@ -32,9 +31,9 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const [resourceType] = useResourceType();
 
   React.useEffect(() => {
-    !['edit', 'knatify', 'serverlessFunction'].includes(values.formType) &&
+    !['edit', 'knatify', 'serverlessFunction'].includes(values?.formType) &&
       setFieldValue('resources', resourceType);
-  }, [resourceType, setFieldValue, values.formType]);
+  }, [resourceType, setFieldValue, values?.formType]);
 
   const knativeServiceAccess = useAccessReview({
     group: ServiceModel.apiGroup,
@@ -96,34 +95,28 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
     return options;
   }, [invalidTypes, canIncludeDeploymentConfig, canIncludeKnative, t]);
 
-  if (
-    !['edit', 'knatify'].includes(values.formType) &&
-    values.import?.selectedStrategy?.type !== ImportStrategy.SERVERLESS_FUNCTION
-  ) {
-    return (
-      <FormSection>
-        <SelectInputField
-          name={fieldName}
-          label={t('devconsole~Resource type')}
-          options={selectInputOptions}
-          variant={SelectVariantDeprecated.single}
-          onChange={onChange}
-          getLabelFromValue={(value: string) => t(ReadableResourcesNames[value])}
-          helpText={
-            <p className="pf-v5-c-form__helper-text">
-              <Trans t={t} ns="devconsole">
-                Resource type to generate. The default can be set in{' '}
-                <Link to="/user-preferences/applications">User Preferences</Link>.
-              </Trans>
-            </p>
-          }
-          hideClearButton
-          toggleOnSelection
-        />
-      </FormSection>
-    );
-  }
-  return null;
+  return (
+    <FormSection>
+      <SelectInputField
+        name={fieldName}
+        label={t('devconsole~Resource type')}
+        options={selectInputOptions}
+        variant={SelectVariantDeprecated.single}
+        onChange={onChange}
+        getLabelFromValue={(value: string) => t(ReadableResourcesNames[value])}
+        helpText={
+          <p className="pf-v5-c-form__helper-text">
+            <Trans t={t} ns="devconsole">
+              Resource type to generate. The default can be set in{' '}
+              <Link to="/user-preferences/applications">User Preferences</Link>.
+            </Trans>
+          </p>
+        }
+        hideClearButton
+        toggleOnSelection
+      />
+    </FormSection>
+  );
 };
 
 export default connectToFlags(
