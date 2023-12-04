@@ -46,6 +46,7 @@ func FilterHeaders(r *http.Response) error {
 		"Access-Control-Allow-Methods",
 		"Access-Control-Allow-Origin",
 		"Access-Control-Expose-Headers",
+		"Server",
 	}
 	for _, h := range badHeaders {
 		r.Header.Del(h)
