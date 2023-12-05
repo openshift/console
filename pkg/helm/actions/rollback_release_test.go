@@ -62,9 +62,6 @@ func TestRollbackRelease(t *testing.T) {
 				t.Error(err)
 			}
 
-			tt.release.Version = 2
-			store.Create(&tt.release)
-
 			r, err := RollbackRelease(tt.release.Name, tt.rollbackTo, actionConfig)
 			if err != nil && err.Error() != tt.err.Error() {
 				t.Error(err)
