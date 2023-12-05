@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
-import { match, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 import { getUser } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import {
@@ -221,7 +221,8 @@ const getCatalogSources = (
 
 export const InstallPlansPage: React.FC<InstallPlansPageProps> = (props) => {
   const { t } = useTranslation();
-  const namespace = props.namespace || props.match?.params?.ns;
+  const params = useParams();
+  const namespace = props.namespace || params?.ns;
   return (
     <MultiListPage
       {...props}
@@ -519,35 +520,36 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   );
 };
 
-export const InstallPlanDetailsPage: React.FC<InstallPlanDetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    namespace={props.match.params.ns}
-    kind={referenceForModel(InstallPlanModel)}
-    name={props.match.params.name}
-    pages={[
-      navFactory.details(InstallPlanDetails),
-      navFactory.editYaml(),
-      // t('olm~Components')
-      { href: 'components', nameKey: 'olm~Components', component: InstallPlanPreview },
-    ]}
-    menuActions={[...Kebab.getExtensionsActionsForKind(InstallPlanModel), ...Kebab.factory.common]}
-  />
-);
+export const InstallPlanDetailsPage: React.FC = (props) => {
+  const params = useParams();
+  return (
+    <DetailsPage
+      {...props}
+      namespace={params.ns}
+      kind={referenceForModel(InstallPlanModel)}
+      name={params.name}
+      pages={[
+        navFactory.details(InstallPlanDetails),
+        navFactory.editYaml(),
+        // t('olm~Components')
+        { href: 'components', nameKey: 'olm~Components', component: InstallPlanPreview },
+      ]}
+      menuActions={[
+        ...Kebab.getExtensionsActionsForKind(InstallPlanModel),
+        ...Kebab.factory.common,
+      ]}
+    />
+  );
+};
 
 export type InstallPlansListProps = {};
 
 export type InstallPlansPageProps = {
   namespace?: string;
-  match?: match<{ ns?: string }>;
 };
 
 export type InstallPlanDetailsProps = {
   obj: InstallPlanKind;
-};
-
-export type InstallPlanDetailsPageProps = {
-  match: match<{ ns: string; name: string }>;
 };
 
 export type InstallPlanPreviewProps = {

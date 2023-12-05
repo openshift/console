@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AlertActionLink } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { CommonActionFactory } from '@console/app/src/actions/creators/common-factory';
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { Action, DetailsResourceAlertContent, useAccessReview } from '@console/dynamic-plugin-sdk';

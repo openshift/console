@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { match as RouterMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { PageHeading } from '@console/internal/components/utils';
 import { NetworkPolicyModel } from '@console/internal/models';
-import { K8sResourceKindReference, NetworkPolicyKind } from '@console/internal/module/k8s';
+import { NetworkPolicyKind } from '@console/internal/module/k8s';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { NetworkPolicyForm } from './network-policy-form';
@@ -21,11 +21,10 @@ import './_create-network-policy.scss';
 
 const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.createNetworkPolicy.editor.lastView';
 
-export const CreateNetworkPolicy: React.FC<{
-  match: RouterMatch<{ ns: string }>;
-}> = (props) => {
+export const CreateNetworkPolicy: React.FC<{}> = () => {
   const { t } = useTranslation();
-  const params = { ...props.match.params, plural: NetworkPolicyModel.plural };
+  const p = useParams();
+  const params: any = { ...p, plural: NetworkPolicyModel.plural };
   const initialPolicy: NetworkPolicy = {
     name: '',
     namespace: params.ns,
@@ -76,7 +75,6 @@ export const CreateNetworkPolicy: React.FC<{
   type YAMLEditorProps = {
     initialYAML?: string;
     onChange?: (yaml: string) => void;
-    match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
   };
 
   return (

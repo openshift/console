@@ -4,25 +4,11 @@ import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
 import HelmReleaseDetails from '../HelmReleaseDetails';
 import HelmReleaseDetailsPage from '../HelmReleaseDetailsPage';
 
-type Component = typeof HelmReleaseDetailsPage;
-type Props = React.ComponentProps<Component>;
-let helmReleaseDetailsProps: Props;
-let helmReleaseDetailsPage: ShallowWrapper<Props>;
+let helmReleaseDetailsPage: ShallowWrapper;
 
 describe('HelmReleaseDetailsPage', () => {
   beforeEach(() => {
-    helmReleaseDetailsProps = {
-      match: {
-        url: '/helm-releases/ns/xyz/release/helm-mysql',
-        isExact: false,
-        path: '/helm-releases/ns/xyz/release/:name',
-        params: {
-          ns: 'xyz',
-        },
-      },
-    };
-
-    helmReleaseDetailsPage = shallow(<HelmReleaseDetailsPage {...helmReleaseDetailsProps} />);
+    helmReleaseDetailsPage = shallow(<HelmReleaseDetailsPage />);
   });
 
   it('should render the NamespaceBar component', () => {

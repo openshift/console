@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { getMachineAWSPlacement, getMachineRole, getMachineSetInstanceType } from '@console/shared';
@@ -455,7 +455,7 @@ export const MachineSetPage: React.FC<MachineSetPageProps> = ({
   );
 };
 
-export const MachineSetDetailsPage: React.FC<MachineSetDetailsPageProps> = (props) => (
+export const MachineSetDetailsPage: React.FC = (props) => (
   <DetailsPage
     {...props}
     menuActions={menuActions}
@@ -496,8 +496,4 @@ export type MachineSetPageProps = {
   hideLabelFilter?: boolean;
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
-};
-
-export type MachineSetDetailsPageProps = {
-  match: any;
 };

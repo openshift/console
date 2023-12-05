@@ -9,7 +9,7 @@ import { getName, getRequester, GreenCheckCircleIcon } from '@console/shared';
 import { LabelList, resourcePathFromModel } from '../../utils';
 import { ProjectModel } from '../../../models';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 
 export const DetailsCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);

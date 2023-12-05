@@ -2,8 +2,11 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-import { setActiveNamespace as setActiveNamespaceForStore } from '@console/internal/actions/ui';
+import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import {
+  setActiveNamespace as setActiveNamespaceForStore,
+  formatNamespaceRoute,
+} from '@console/internal/actions/ui';
 import { getNamespace } from '@console/internal/components/utils/link';
 import { flagPending } from '@console/internal/reducers/features';
 import { FLAGS } from '@console/shared';
@@ -29,11 +32,24 @@ type UseValuesForNamespaceContext = () => {
 
 export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => {
   const urlNamespace = useUrlNamespace();
+  const navigate = useNavigate();
   const [activeNamespace, setActiveNamespace] = React.useState<string>(urlNamespace);
   const [preferredNamespace, , preferredNamespaceLoaded] = usePreferredNamespace();
   const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useLastNamespace();
   const useProjects: boolean = useFlag(FLAGS.OPENSHIFT);
   const dispatch = useDispatch();
+
+  const updateNamespace = (ns) => {
+    if (ns !== activeNamespace) {
+      setActiveNamespace(ns);
+      const oldPath = window.location.pathname;
+      const newPath = formatNamespaceRoute(ns, oldPath, window.location);
+      if (newPath !== oldPath) {
+        navigate(newPath);
+      }
+    }
+    dispatch(setActiveNamespaceForStore(ns));
+  };
 
   // Set namespace when all pending namespace infos are loaded.
   // Automatically check if preferred and last namespace still exist.
@@ -43,8 +59,7 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
     if (!urlNamespace && resourcesLoaded) {
       getValueForNamespace(preferredNamespace, lastNamespace, useProjects)
         .then((ns: string) => {
-          ns !== activeNamespace && setActiveNamespace(ns);
-          dispatch(setActiveNamespaceForStore(ns));
+          updateNamespace(ns);
         })
         .catch((e) => {
           // eslint-disable-next-line no-console
@@ -53,26 +68,26 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
     }
     // Only run this hook after all resources have loaded.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resourcesLoaded]);
+  }, [resourcesLoaded, navigate]);
 
   // Updates active namespace (in context and redux state) when the url changes.
   // This updates the redux state also after the initial rendering.
   React.useEffect(() => {
     if (urlNamespace) {
-      urlNamespace !== activeNamespace && setActiveNamespace(urlNamespace);
-      dispatch(setActiveNamespaceForStore(urlNamespace));
+      updateNamespace(urlNamespace);
     }
-  }, [urlNamespace, activeNamespace, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlNamespace, activeNamespace, dispatch, navigate]);
 
   // Change active namespace (in context and redux state) as well as last used namespace
   // when a component calls setNamespace, for example via useActiveNamespace()
   const setNamespace = React.useCallback(
     (ns: string) => {
-      ns !== activeNamespace && setActiveNamespace(ns);
       ns !== lastNamespace && setLastNamespace(ns);
-      dispatch(setActiveNamespaceForStore(ns));
+      updateNamespace(ns);
     },
-    [dispatch, activeNamespace, setActiveNamespace, lastNamespace, setLastNamespace],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dispatch, activeNamespace, setActiveNamespace, lastNamespace, setLastNamespace, navigate],
   );
 
   return {

@@ -7,10 +7,11 @@ import {
 } from '@patternfly/react-table/deprecated';
 import * as classNames from 'classnames';
 import { AutoSizer, WindowScroller } from '@patternfly/react-virtualized-extension';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { VirtualizedTableFC, TableColumn, TableDataProps } from '@console/dynamic-plugin-sdk';
 
 import VirtualizedTableBody from './VirtualizedTableBody';
-import { history, StatusBox, WithScrollContainer, EmptyBox } from '../../utils';
+import { StatusBox, WithScrollContainer, EmptyBox } from '../../utils';
 import { sortResourceByValue } from './sort';
 
 const BREAKPOINT_SM = 576;
@@ -76,6 +77,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
   unfilteredData,
   mock = false,
 }) => {
+  const navigate = useNavigate();
   const columnShift = onSelect ? 1 : 0; //shift indexes by 1 if select provided
   const [sortBy, setSortBy] = React.useState<{
     index: number;
@@ -98,14 +100,14 @@ const VirtualizedTable: VirtualizedTableFC = ({
       if (sortColumn) {
         sp.set('orderBy', direction);
         sp.set('sortBy', sortColumn.title);
-        history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
+        navigate(`${url.pathname}?${sp.toString()}${url.hash}`, { replace: true });
         setSortBy({
           index,
           direction,
         });
       }
     },
-    [columnShift, columns],
+    [columnShift, columns, navigate],
   );
 
   data = React.useMemo(() => {

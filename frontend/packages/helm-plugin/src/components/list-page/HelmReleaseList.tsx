@@ -10,8 +10,7 @@ import {
 import { SortByDirection } from '@patternfly/react-table';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { match } from 'react-router';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -33,13 +32,10 @@ const getRowProps = (obj) => ({
   id: obj.name,
 });
 
-interface HelmReleaseListProps {
-  match: match<{ ns?: string }>;
-}
-
-const HelmReleaseList: React.FC<HelmReleaseListProps> = (props) => {
+const HelmReleaseList: React.FC = () => {
   const { t } = useTranslation();
-  const namespace = props.match.params.ns;
+  const params = useParams();
+  const namespace = params.ns;
   const secretsCountRef = React.useRef<number>(0);
   const [releasesLoaded, setReleasesLoaded] = React.useState<boolean>(false);
   const [loadError, setLoadError] = React.useState<string>();

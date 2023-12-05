@@ -1,18 +1,15 @@
 import * as React from 'react';
-import { match } from 'react-router';
+import { Location } from 'react-router-dom-v5-compat';
 import { DetailsPageBreadCrumbsHook } from '@console/plugin-sdk';
 import { K8sKind } from '@console/internal/module/k8s';
 
 type DetailsBreadcrumbResolverType = {
   useBreadcrumbs: DetailsPageBreadCrumbsHook;
   onBreadcrumbsResolved: (
-    breadcrumbs: {
-      name: string;
-      path: string;
-    }[],
+    breadcrumbs: ({ name: string; path: string } | { name: string; path: Location })[],
   ) => void;
   kind: K8sKind;
-  urlMatch: match<any>;
+  urlMatch: any;
 };
 
 const DetailsBreadcrumbResolver: React.FC<DetailsBreadcrumbResolverType> = ({

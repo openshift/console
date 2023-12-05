@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { match as RMatch } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory';
 import {
@@ -25,10 +25,6 @@ import HelmReleaseResources from './resources/HelmReleaseResources';
 const SecretReference: K8sResourceKindReference = 'Secret';
 const HelmReleaseReference = 'HelmRelease';
 interface HelmReleaseDetailsProps {
-  match: RMatch<{
-    ns?: string;
-    name?: string;
-  }>;
   secrets?: FirehoseResult<SecretKind[]>;
 }
 
@@ -41,12 +37,12 @@ interface LoadedHelmReleaseDetailsProps extends HelmReleaseDetailsProps {
 }
 
 export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> = ({
-  match,
   helmRelease,
   secrets,
 }) => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const { ns: namespace } = useParams();
+  const location = useLocation();
 
   if (helmRelease.loadError) {
     return <StatusBox loadError={helmRelease.loadError} />;
@@ -106,7 +102,6 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   return (
     <DetailsPage
       kindObj={SecretModel}
-      match={match}
       customActionMenu={customActionMenu}
       name={latestSecretName}
       namespace={namespace}
@@ -116,7 +111,7 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
           name: t('helm-plugin~Helm Releases'),
           path: `/helm-releases/ns/${namespace}`,
         },
-        { name: t('helm-plugin~Helm Release details'), path: `${match.url}` },
+        { name: t('helm-plugin~Helm Release details'), path: `${location.pathname}` },
       ]}
       title={title}
       kind={SecretReference}
@@ -146,9 +141,10 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   );
 };
 
-const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = ({ match }) => {
-  const namespace = match.params.ns;
-  const helmReleaseName = match.params.name;
+const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = () => {
+  const params = useParams();
+  const namespace = params.ns;
+  const helmReleaseName = params.name;
 
   const [helmReleaseData, setHelmReleaseData] = React.useState<HelmRelease>();
   const [helmReleaseError, setHelmReleaseError] = React.useState<Error>();
@@ -214,13 +210,7 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = ({ match }) => {
     data: secrets,
   };
 
-  return (
-    <LoadedHelmReleaseDetails
-      match={match}
-      helmRelease={helmRelease}
-      secrets={secretsFirehoseResult}
-    />
-  );
+  return <LoadedHelmReleaseDetails helmRelease={helmRelease} secrets={secretsFirehoseResult} />;
 };
 
 export default HelmReleaseDetails;

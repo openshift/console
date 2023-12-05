@@ -2,7 +2,6 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { DetailsPage } from '@console/internal/components/factory';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskRunModel } from '../../../../models';
 import * as hookUtils from '../../../pipelines/hooks';
 import TaskRunDetailsPage from '../../TaskRunDetailsPage';
@@ -22,14 +21,6 @@ describe('TaskRunDetailsPage:', () => {
     taskRunDetailsPageProps = {
       kind: TaskRunModel.kind,
       kindObj: TaskRunModel,
-      match: {
-        isExact: true,
-        path: `/k8s/ns/:ns/${referenceForModel(TaskRunModel)}/events`,
-        url: `k8s/ns/rhd-test/${referenceForModel(TaskRunModel)}/events`,
-        params: {
-          ns: 'rhd-test',
-        },
-      },
     };
     breadCrumbs.mockReturnValue([{ label: 'TaskRuns' }, { label: 'TaskRuns Details' }]);
     (useK8sWatchResource as jest.Mock).mockReturnValue([[], true]);

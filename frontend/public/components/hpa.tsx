@@ -219,9 +219,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.events(ResourceEventStream),
 ];
-export const HorizontalPodAutoscalersDetailsPage: React.FC<HorizontalPodAutoscalersDetailsPageProps> = (
-  props,
-) => (
+export const HorizontalPodAutoscalersDetailsPage: React.FC = (props) => (
   <DetailsPage
     {...props}
     kind={HorizontalPodAutoscalersReference}
@@ -361,10 +359,6 @@ export type HorizontalPodAutoscalersPageProps = {
   showTitle?: boolean;
   namespace?: string;
   selector?: any;
-};
-
-export type HorizontalPodAutoscalersDetailsPageProps = {
-  match: any;
 };
 
 type MetricsTableProps = {

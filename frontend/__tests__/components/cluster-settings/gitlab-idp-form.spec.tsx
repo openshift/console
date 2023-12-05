@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom-v5-compat';
+import store from '@console/internal/redux';
 
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
 import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
@@ -7,10 +10,15 @@ import { AddGitLabPage } from '../../../public/components/cluster-settings/gitla
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: GitLab', () => {
-  let wrapper: ShallowWrapper<any>;
-
+  let wrapper;
   beforeEach(() => {
-    wrapper = shallow(<AddGitLabPage />);
+    wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <AddGitLabPage />
+        </BrowserRouter>
+      </Provider>,
+    );
   });
 
   it('should render AddGitLabPage component', () => {

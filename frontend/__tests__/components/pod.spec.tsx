@@ -13,7 +13,6 @@ import {
 import { DetailsPage } from '../../public/components/factory';
 
 import {
-  history,
   NodeLink,
   ResourceLink,
   RuntimeClass,
@@ -21,26 +20,26 @@ import {
 } from '@console/internal/components/utils';
 import { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
 import { t } from '../../__mocks__/i18next';
-import { Router } from 'react-router-dom';
+import * as ReactRouter from 'react-router-dom-v5-compat';
 import { PodKind } from '@console/internal/module/k8s';
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+}));
 
 describe(PodsDetailsPage.displayName, () => {
   let wrapper: ReactWrapper;
   beforeEach(() => {
-    wrapper = mount(
-      <PodsDetailsPage
-        match={{
-          url: '/k8s/ns/default/pods/example',
-          path: '/k8s/ns/:ns/:plural/:name',
-          isExact: true,
-          params: {},
-        }}
-        kind="Pod"
-      />,
-      {
-        wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
-      },
-    );
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({});
+    jest
+      .spyOn(ReactRouter, 'useLocation')
+      .mockReturnValue({ pathname: '/k8s/ns/default/pods/example' });
+
+    wrapper = mount(<PodsDetailsPage kind="Pod" />, {
+      wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
   });
 
   it('renders `DetailsPage` with correct props', () => {
@@ -83,9 +82,9 @@ describe(PodDetailsList.displayName, () => {
     // Full mount needed, because links have to be rendered
     podDetailsList = mount(<PodDetailsList pod={pod} />, {
       wrappingComponent: ({ children }) => (
-        <Router history={history}>
+        <ReactRouter.BrowserRouter>
           <Provider store={store}>{children}</Provider>
-        </Router>
+        </ReactRouter.BrowserRouter>
       ),
     });
   });
@@ -114,9 +113,9 @@ describe(PodDetailsList.displayName, () => {
       <PodDetailsList pod={{ ...pod, spec: { ...pod.spec, activeDeadlineSeconds: 10 } }} />,
       {
         wrappingComponent: ({ children }) => (
-          <Router history={history}>
+          <ReactRouter.BrowserRouter>
             <Provider store={store}>{children}</Provider>
-          </Router>
+          </ReactRouter.BrowserRouter>
         ),
       },
     );

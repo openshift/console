@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { StatusBox } from '@console/internal/components/utils';
 import {
@@ -20,14 +20,11 @@ type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind | PipelineKind[];
 };
 
-type EditApplicationPageProps = RouteComponentProps<{ ns?: string }>;
-
-const EditApplicationPage: React.FunctionComponent<EditApplicationPageProps> = ({
-  match,
-  location,
-}) => {
+const EditApplicationPage: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const params = useParams();
+  const location = useLocation();
+  const namespace = params.ns;
   const queryParams = new URLSearchParams(location.search);
   const editAppResourceKind = queryParams.get('kind');
   const appName = queryParams.get('name');

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel, TemplateModel } from '@console/internal/models';

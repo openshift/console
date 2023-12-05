@@ -6,8 +6,8 @@ import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
 import TaskDetails from './TaskDetails';
 
 const TaskDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { kindObj, match } = props;
-  const breadcrumbsFor = useTasksBreadcrumbsFor(kindObj, match);
+  const { kindObj } = props;
+  const breadcrumbsFor = useTasksBreadcrumbsFor(kindObj);
   const badge = usePipelineTechPreviewBadge(props.namespace);
 
   return (

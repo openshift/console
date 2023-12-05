@@ -2,6 +2,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { CodeBlock, CodeBlockCode, Divider } from '@patternfly/react-core';
 import { Status } from '@console/shared';
 import {
@@ -256,8 +257,9 @@ const getContainerStateValue = (state: any) => {
 
 export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props) => {
   const { t } = useTranslation();
+  const params = useParams();
   const pod = props.obj;
-  const container = getContainer(pod, props.match.params.name);
+  const container = getContainer(pod, params.name);
 
   if (!container) {
     return <ErrorPage404 />;
@@ -316,11 +318,7 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
             </dd>
             <dt>{t('public~Pod')}</dt>
             <dd>
-              <ResourceLink
-                kind="Pod"
-                name={props.match.params.podName}
-                namespace={props.match.params.ns}
-              />
+              <ResourceLink kind="Pod" name={params.podName} namespace={params.ns} />
             </dd>
           </dl>
         </div>
@@ -401,13 +399,14 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
 };
 ContainerDetailsList.displayName = 'ContainerDetailsList';
 
-export const ContainersDetailsPage: React.FC<ContainerDetailsProps> = (props) => {
+export const ContainersDetailsPage: React.FC = (props) => {
+  const params = useParams();
   return (
     <Firehose
       resources={[
         {
-          name: props.match.params.podName,
-          namespace: props.match.params.ns,
+          name: params.podName,
+          namespace: params.ns,
           kind: 'Pod',
           isList: false,
           prop: 'obj',
@@ -429,13 +428,15 @@ const getContainerStatusStateValue = (pod: PodKind, containerName: string) => {
 
 export const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
   const { t } = useTranslation();
+  const params = useParams();
+  const location = useLocation();
 
   if (!props.loaded) {
     return <LoadingBox />;
   }
 
   const pod = props.obj.data;
-  const container = getContainer(pod, props.match.params.name);
+  const container = getContainer(pod, params.name);
 
   if (!container) {
     return <ErrorPage404 />;
@@ -447,23 +448,22 @@ export const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
     <>
       <PageHeading
         detail={true}
-        title={props.match.params.name}
+        title={params.name}
         kind="Container"
         getResourceStatus={() => containerStateValue}
         breadcrumbsFor={() => [
-          { name: t('public~Pods'), path: getBreadcrumbPath(props.match, 'pods') },
+          { name: t('public~Pods'), path: getBreadcrumbPath(params, 'pods') },
           {
-            name: props.match.params.podName,
-            path: resourcePath('Pod', props.match.params.podName, props.match.params.ns),
+            name: params.podName,
+            path: resourcePath('Pod', params.podName, params.ns),
           },
-          { name: t('public~Container details'), path: props.match.url },
+          { name: t('public~Container details'), path: location.pathname },
         ]}
         obj={props.obj}
       />
       <HorizontalNav
         hideNav={true}
         pages={[{ name: 'container', href: '', component: ContainerDetailsList }]}
-        match={props.match}
         obj={props.obj}
       />
     </>
@@ -493,12 +493,10 @@ type EnvProps = {
 };
 
 export type ContainerDetailsListProps = {
-  match: any;
   obj: PodKind;
 };
 
 export type ContainerDetailsProps = {
-  match: any;
   obj?: any;
   loaded?: boolean;
 };

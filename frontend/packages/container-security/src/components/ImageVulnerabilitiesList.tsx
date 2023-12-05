@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { match } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
 import { FirehoseResourcesResult } from '@console/internal/components/utils';
@@ -13,7 +13,6 @@ import { getVulnerabilityType, VulnerabilitiesType } from './image-vulnerability
 import ImageVulnerabilitiesTable from './ImageVulnerabilitiesTable';
 
 type ImageVulnerabilitiesListProps = {
-  match?: match<{ ns?: string }>;
   obj: ImageManifestVuln;
 };
 
@@ -28,10 +27,8 @@ const ImageVulnerabilitiesList: React.FC<ImageVulnerabilitiesListProps> = (props
     obj: {
       metadata: { name },
     },
-    match: {
-      params: { ns: namespace },
-    },
   } = props;
+  const { ns: namespace } = useParams();
 
   const imageVulnerabilitiesRowFilters: RowFilter<ImageVuln>[] = [
     {

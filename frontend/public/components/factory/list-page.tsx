@@ -5,7 +5,8 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import { Link, match as RMatch } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
+
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -24,7 +25,6 @@ import {
   FirehoseResourcesResult,
   FirehoseResultObject,
   FirehoseResult,
-  history,
   inject,
   kindObj,
   makeQuery,
@@ -196,6 +196,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     badge,
     title,
   } = props;
+  const navigate = useNavigate();
 
   const [reduxIDs, setReduxIDs] = React.useState([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -238,7 +239,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       params.delete(filterName);
     }
     const url = new URL(window.location.href);
-    history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+    navigate(`${url.pathname}?${params.toString()}${url.hash}`, { replace: true });
   };
 
   const applyFilter = (filterName: string, options: any) => {
@@ -258,7 +259,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     if (action) {
       action();
     } else if (_.isFunction(createProps.createLink)) {
-      history.push(createProps.createLink(itemName));
+      navigate(createProps.createLink(itemName), { replace: true });
     }
   };
 
@@ -353,7 +354,6 @@ export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   filters?: any;
   limit?: number;
   nameFilter?: string;
-  match?: RMatch<any>;
   skipAccessReview?: boolean;
 };
 
@@ -381,7 +381,6 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     showTitle = true,
     skipAccessReview,
     textFilter,
-    match,
     badge,
     hideLabelFilter,
     hideNameLabelFilters,
@@ -390,11 +389,12 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     flatten = (_resources) => _.get(_resources, name || kind, {} as FirehoseResult).data,
   } = props;
   const { t } = useTranslation();
+  const params = useParams();
   let { createProps } = props;
   const ko = kindObj(kind);
   const { label, labelKey, labelPlural, labelPluralKey, namespaced, plural } = ko;
   const title = props.title || t(labelPluralKey) || labelPlural;
-  const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') : namespace;
+  const usedNamespace = !namespace && namespaced ? params.ns : namespace;
 
   let href = usedNamespace
     ? `/k8s/ns/${usedNamespace || 'default'}/${plural}/~new`

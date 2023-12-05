@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
-import { match as Match } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { useExtensions } from '@console/plugin-sdk';
@@ -14,7 +14,6 @@ import './attach-storage.scss';
 
 export type AttachStorageFormProps = {
   kindObj: K8sKind;
-  match?: Match<{ ns: string; name: string }>;
   kindsInFlight: any;
   history: History;
 };
@@ -26,11 +25,12 @@ type StorageProviderMap = {
   };
 };
 
-const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
+const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
   const storageProviders = useExtensions<StorageProvider>(isStorageProvider);
   const [activeProvider, setActiveProvider] = React.useState('0');
   const memoizedStorageProviders = useDeepCompareMemoize(storageProviders, true);
-  const { kindObj, match, kindsInFlight } = props;
+  const { kindObj, kindsInFlight } = props;
+  const params = useParams();
 
   const { t } = useTranslation();
 
@@ -71,8 +71,8 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
             <ResourceLink
               inline
               kind={props?.kindObj?.kind}
-              name={match.params.name}
-              namespace={match.params.ns}
+              name={params.name}
+              namespace={params.ns}
             />
           </div>
         </Trans>
@@ -102,4 +102,11 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
   );
 };
 
-export default connectToPlural(AttachStorage);
+const AttachStorage_ = connectToPlural(AttachStorageInner);
+
+export const AttachStorage = (props) => {
+  const params = useParams();
+  return <AttachStorage_ {...props} params={params} />;
+};
+
+export default AttachStorage;

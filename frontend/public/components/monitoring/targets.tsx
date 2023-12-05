@@ -29,7 +29,7 @@ import { find, includes, isEmpty } from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Routes, Route, useParams, Link } from 'react-router-dom-v5-compat';
 
 import {
   NamespaceModel,
@@ -210,13 +210,13 @@ type DetailsProps = {
 
 const Details: React.FC<DetailsProps> = ({ loaded, loadError, targets }) => {
   const { t } = useTranslation();
-  const match = useRouteMatch<{ scrapeUrl?: string }>();
+  const params = useParams();
 
   let scrapeUrl: string = '';
   let target: Target | undefined;
-  if (match?.params?.scrapeUrl) {
+  if (params.scrapeUrl) {
     try {
-      scrapeUrl = atob(match?.params?.scrapeUrl);
+      scrapeUrl = atob(params.scrapeUrl);
       target = find(targets, { scrapeUrl });
     } catch {
       // Leave scrapeUrl and target unset
@@ -600,14 +600,16 @@ export const TargetsUI: React.FC<{}> = () => {
       <ServicesWatchContext.Provider value={servicesWatch}>
         <PodMonitorsWatchContext.Provider value={podMonitorsWatch}>
           <PodsWatchContext.Provider value={podsWatch}>
-            <Switch>
-              <Route path="/monitoring/targets" exact>
-                <ListPage loaded={loaded} loadError={loadError} targets={targets} />
-              </Route>
-              <Route path="/monitoring/targets/:scrapeUrl?" exact>
-                <Details loaded={loaded} loadError={loadError} targets={targets} />
-              </Route>
-            </Switch>
+            <Routes>
+              <Route
+                path="/monitoring/targets"
+                element={<ListPage loaded={loaded} loadError={loadError} targets={targets} />}
+              />
+              <Route
+                path="/monitoring/targets/:scrapeUrl?"
+                element={<Details loaded={loaded} loadError={loadError} targets={targets} />}
+              />
+            </Routes>
           </PodsWatchContext.Provider>
         </PodMonitorsWatchContext.Provider>
       </ServicesWatchContext.Provider>

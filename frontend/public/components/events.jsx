@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 import { Helmet } from 'react-helmet';
 import { Chip, ChipGroup } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
@@ -179,6 +179,7 @@ export const EventsList = (props) => {
   const [type, setType] = React.useState('all');
   const [textFilter, setTextFilter] = React.useState('');
   const resourceTypeAll = 'all';
+  const { ns } = useParams();
   const [selected, setSelected] = React.useState(new Set([resourceTypeAll]));
   const eventTypes = {
     all: t('public~All types'),
@@ -254,6 +255,7 @@ export const EventsList = (props) => {
       </PageHeading>
       <EventStream
         {...props}
+        namespace={ns}
         key={[...selected].join(',')}
         type={type}
         kind={

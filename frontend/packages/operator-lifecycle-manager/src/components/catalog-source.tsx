@@ -4,7 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { match } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import {
@@ -213,29 +213,27 @@ export const CatalogSourceOperatorsPage: React.FC<CatalogSourceOperatorsPageProp
   return <PackageManifestsPage catalogSource={props.obj} showTitle={false} {...props} />;
 };
 
-export const CatalogSourceDetailsPage: React.FC<CatalogSourceDetailsPageProps> = (props) => {
+export const CatalogSourceDetailsPage: React.FC = (props) => {
   const [operatorHub, operatorHubLoaded, operatorHubLoadError] = useOperatorHubConfig();
+  const params = useParams();
 
   const isDefaultSource = React.useMemo(
     () =>
-      DEFAULT_SOURCE_NAMESPACE === props.match.params.ns &&
-      operatorHub?.status?.sources?.some((source) => source.name === props.match.params.name),
-    [operatorHub, props.match.params.name, props.match.params.ns],
+      DEFAULT_SOURCE_NAMESPACE === params.ns &&
+      operatorHub?.status?.sources?.some((source) => source.name === params.name),
+    [operatorHub, params.name, params.ns],
   );
 
   const menuActions = isDefaultSource
-    ? [
-        Kebab.factory.Edit,
-        () => disableSourceModal(OperatorHubModel, operatorHub, props.match.params.name),
-      ]
+    ? [Kebab.factory.Edit, () => disableSourceModal(OperatorHubModel, operatorHub, params.name)]
     : Kebab.factory.common;
 
   return (
     <DetailsPage
       {...props}
-      namespace={props.match.params.ns}
+      namespace={params.ns}
       kind={referenceForModel(CatalogSourceModel)}
-      name={props.match.params.name}
+      name={params.name}
       pages={[
         navFactory.details(CatalogSourceDetails),
         navFactory.editYaml(),
@@ -251,7 +249,7 @@ export const CatalogSourceDetailsPage: React.FC<CatalogSourceDetailsPageProps> =
         {
           kind: referenceForModel(PackageManifestModel),
           isList: true,
-          namespace: props.match.params.ns,
+          namespace: params.ns,
           prop: 'packageManifests',
         },
       ]}
@@ -259,12 +257,14 @@ export const CatalogSourceDetailsPage: React.FC<CatalogSourceDetailsPageProps> =
   );
 };
 
-export const CreateSubscriptionYAML: React.FC<CreateSubscriptionYAMLProps> = (props) => {
+export const CreateSubscriptionYAML: React.FC = (props) => {
   type CreateProps = {
     packageManifest: { loaded: boolean; data?: PackageManifestKind };
     operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
   };
   const { t } = useTranslation();
+  const params = useParams();
+  const location = useLocation();
   const Create = requireOperatorGroup(
     withFallback<CreateProps>(
       (createProps) => {
@@ -281,8 +281,8 @@ export const CreateSubscriptionYAML: React.FC<CreateSubscriptionYAMLProps> = (pr
             generateName: ${pkg.metadata.name}-
             namespace: default
           spec:
-            source: ${new URLSearchParams(props.location.search).get('catalog')}
-            sourceNamespace: ${new URLSearchParams(props.location.search).get('catalogNamespace')}
+            source: ${new URLSearchParams(location.search).get('catalog')}
+            sourceNamespace: ${new URLSearchParams(location.search).get('catalogNamespace')}
             name: ${pkg.metadata.name}
             startingCSV: ${channel.currentCSV}
             channel: ${channel.name}
@@ -308,14 +308,14 @@ export const CreateSubscriptionYAML: React.FC<CreateSubscriptionYAMLProps> = (pr
         {
           kind: referenceForModel(PackageManifestModel),
           isList: false,
-          name: new URLSearchParams(props.location.search).get('pkg'),
-          namespace: new URLSearchParams(props.location.search).get('catalogNamespace'),
+          name: new URLSearchParams(location.search).get('pkg'),
+          namespace: new URLSearchParams(location.search).get('catalogNamespace'),
           prop: 'packageManifest',
         },
         {
           kind: referenceForModel(OperatorGroupModel),
           isList: true,
-          namespace: props.match.params.ns,
+          namespace: params.ns,
           prop: 'operatorGroup',
         },
       ]}
@@ -625,18 +625,9 @@ export type CatalogSourceDetailsProps = {
   packageManifests: PackageManifestKind[];
 };
 
-export type CatalogSourceDetailsPageProps = {
-  match: match<{ ns?: string; name: string }>;
-};
-
 export type CatalogSourceListPageProps = {
   obj: OperatorHubKind;
 } & MultiListPageProps;
-
-export type CreateSubscriptionYAMLProps = {
-  match: match<{ ns: string; pkgName: string }>;
-  location: Location;
-};
 
 export type CatalogSourceOperatorsPageProps = {
   obj: CatalogSourceKind;

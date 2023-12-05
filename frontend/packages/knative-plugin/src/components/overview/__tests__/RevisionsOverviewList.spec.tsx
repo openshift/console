@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
 import * as rbacModule from '@console/internal/components/utils/rbac';
 import { referenceForModel } from '@console/internal/module/k8s';

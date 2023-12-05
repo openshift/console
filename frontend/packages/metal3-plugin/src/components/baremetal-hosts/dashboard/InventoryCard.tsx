@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { PodModel, NodeModel } from '@console/internal/models';

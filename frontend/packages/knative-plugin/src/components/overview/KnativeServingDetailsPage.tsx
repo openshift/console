@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -10,13 +11,16 @@ const knativeServingReference: K8sResourceKindReference = referenceForModel(Knat
 
 const KnativeServingDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
+  const location = useLocation();
 
   return (
     <DetailsPage
       {...props}
       kind={knativeServingReference}
       pages={pages}
-      breadcrumbsFor={() => breadcrumbsForGlobalConfig(KnativeServingModel.label, props.match.url)}
+      breadcrumbsFor={() =>
+        breadcrumbsForGlobalConfig(KnativeServingModel.label, location.pathname)
+      }
     />
   );
 };

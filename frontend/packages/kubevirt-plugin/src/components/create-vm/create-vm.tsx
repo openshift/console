@@ -9,7 +9,7 @@ import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
 import * as classNames from 'classnames';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel } from '@console/internal/models';
@@ -175,12 +175,14 @@ const Footer: React.FC<FooterProps> = ({
   );
 };
 
-export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match, location }) => {
+export const CreateVM: React.FC = () => {
   const { t } = useTranslation();
+  const location = useLocation();
+  const params = useParams();
   const searchParams = new URLSearchParams(location && location.search);
   const initData = parseVMWizardInitialData(searchParams);
   const templateNS = initData.commonTemplateName ? NAMESPACE_OPENSHIFT : initData.userTemplateNs;
-  const [namespace, setNamespace] = React.useState(match?.params?.ns);
+  const [namespace, setNamespace] = React.useState(params?.ns);
   const [state, dispatch] = React.useReducer(formReducer, initFormState(namespace));
   const [isCreating, setCreating] = React.useState(false);
   const [created, setCreated] = React.useState(false);

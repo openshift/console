@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { resourcePath, LoadingInline } from '@console/internal/components/utils';

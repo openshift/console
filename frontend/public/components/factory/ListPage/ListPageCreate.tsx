@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   DropdownToggle as DropdownToggleDeprecated,
   Dropdown as DropdownDeprecated,

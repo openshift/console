@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router';
+import { BrowserRouter } from 'react-router-dom-v5-compat';
 import { NamespaceModel } from '@console/internal/models';
 import { modelFor } from '@console/internal/module/k8s/k8s-models';
 import store from '@console/internal/redux';
@@ -21,9 +21,9 @@ jest.mock('@console/internal/module/k8s/k8s-models', () => ({
 });
 
 const Wrapper: React.FC = ({ children }) => (
-  <MemoryRouter>
+  <BrowserRouter>
     <Provider store={store}>{children}</Provider>
-  </MemoryRouter>
+  </BrowserRouter>
 );
 
 describe('ServiceBindingHeader', () => {

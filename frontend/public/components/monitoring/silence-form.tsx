@@ -15,6 +15,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circ
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector } from 'react-redux';
@@ -27,7 +28,6 @@ import { refreshNotificationPollers } from '../notification-drawer';
 import { ButtonBar } from '../utils/button-bar';
 import { PageHeading, SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams } from '../utils/link';
-import { history } from '../utils/router';
 import { StatusBox } from '../utils/status-box';
 import { useBoolean } from './hooks/useBoolean';
 import { Silences } from './types';
@@ -88,8 +88,9 @@ const NegativeMatcherHelp = () => {
 
 const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const [namespace] = useActiveNamespace();
+  const { ns: namespace } = useParams();
 
   const durationOff = '-';
   const durations = {
@@ -222,7 +223,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
       .then(({ silenceID }) => {
         setError(undefined);
         refreshNotificationPollers();
-        history.push(
+        navigate(
           namespace
             ? `/dev-monitoring/ns/${namespace}/silences/${encodeURIComponent(silenceID)}`
             : `/monitoring/silences/${encodeURIComponent(silenceID)}`,
@@ -444,7 +445,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 <Button type="submit" variant="primary">
                   {t('public~Silence')}
                 </Button>
-                <Button onClick={history.goBack} variant="secondary">
+                <Button onClick={() => navigate(-1)} variant="secondary">
                   {t('public~Cancel')}
                 </Button>
               </ActionGroup>
@@ -474,8 +475,9 @@ const EditInfo = () => {
   );
 };
 
-export const EditSilence = ({ match }) => {
+export const EditSilence = () => {
   const { t } = useTranslation();
+  const params = useParams();
 
   const [namespace] = useActiveNamespace();
 
@@ -483,7 +485,7 @@ export const EditSilence = ({ match }) => {
     observe.get(namespace ? 'devSilences' : 'silences'),
   );
 
-  const silence: Silence = _.find(silences?.data, { id: match.params.id });
+  const silence: Silence = _.find(silences?.data, { id: params.id });
   const isExpired = silenceState(silence) === SilenceStates.Expired;
   const defaults = _.pick(silence, [
     'comment',

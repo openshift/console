@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, act, configure } from '@testing-library/react';
+import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router';
+import * as Router from 'react-router-dom-v5-compat';
 import { Firehose } from '@console/internal/components/utils/firehose';
 import { modelFor, useModelFinder } from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
@@ -18,6 +18,18 @@ jest.mock('@console/plugin-sdk', () => ({
   ...require.requireActual('@console/plugin-sdk'),
   useExtensions: () => [],
   useResolvedExtensions: () => [[]],
+}));
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  Link: 'Link',
+}));
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+  useRoutes: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/components/error/error-boundary', () => ({
@@ -61,20 +73,12 @@ jest.mock('@console/shared/src/components/actions', () => ({
   ActionServiceProvider: () => null,
 }));
 
-const Wrapper: React.FC = ({ children }) => (
-  <MemoryRouter>
-    <Provider store={store}>{children}</Provider>
-  </MemoryRouter>
-);
-
 (modelFor as jest.Mock).mockReturnValue(ServiceBindingModel);
 (useK8sModel as jest.Mock).mockReturnValue([ServiceBindingModel]);
 (useModelFinder as jest.Mock).mockImplementation(() => ({ findModel: () => ServiceBindingModel }));
 
-configure({ testIdAttribute: 'data-test' });
-
 describe('ServiceBindingDetailsPage', () => {
-  it('should render a connected SB with the right status and attributes', async () => {
+  it('should render a connected SB with the right status and attributes', () => {
     ((Firehose as any) as jest.Mock).mockImplementation((props) => {
       const childProps = {
         obj: {
@@ -85,46 +89,48 @@ describe('ServiceBindingDetailsPage', () => {
       return React.Children.map(props.children, (child) => React.cloneElement(child, childProps));
     });
 
-    const matchExistingServiceBinding = {
-      params: { ns: 'a-namespace', name: 'connected-service-binding' },
-      isExact: true,
-      path: '/',
-      url: '',
-    };
+    jest
+      .spyOn(Router, 'useParams')
+      .mockReturnValue({ ns: 'a-namespace', name: 'connected-service-binding' });
+    jest.spyOn(Router, 'useLocation').mockReturnValue({ pathname: '' });
+    jest.spyOn(Router, 'useRoutes').mockReturnValue([{ path: '/' }]);
 
-    const renderResult = render(
-      <Wrapper>
-        <ServiceBindingDetailsPage match={matchExistingServiceBinding} kind="" />
-      </Wrapper>,
+    const wrapper = mount(
+      <ServiceBindingDetailsPage kind="binding.operators.coreos.com~v1alpha1~ServiceBinding" />,
+      {
+        wrappingComponent: ({ children }) => (
+          <Provider store={store}>
+            <Router.BrowserRouter>{children}</Router.BrowserRouter>
+          </Provider>
+        ),
+      },
     );
-    // Consume one rerendering to hide 'test was not wrapped in act' warnings
-    await act(async () => null);
 
-    renderResult.getAllByText('ServiceBinding details');
+    expect(wrapper.find({ children: 'ServiceBinding details' }).exists()).toBe(true);
 
     // Name
-    renderResult.getByText('Name');
-    renderResult.getByText('connected-service-binding');
+    expect(wrapper.find({ children: 'Name' }).exists()).toBe(true);
+    expect(wrapper.find({ children: 'connected-service-binding' }).exists()).toBe(true);
 
     // Status
-    renderResult.getAllByText('Status');
-    renderResult.getAllByText('Connected');
-    expect(renderResult.queryAllByText('Error')).toEqual([]);
+    expect(wrapper.find({ children: 'Status' }).exists()).toBe(true);
+    expect(wrapper.find('[status="Connected"]').exists()).toBe(true);
+    expect(wrapper.find('[status="Error"]').exists()).toBe(false);
 
     // Application
-    renderResult.getByText('Application');
-    renderResult.getByText('nodeinfo-from-source');
+    expect(wrapper.find('[label="Application"]').exists()).toBe(true);
+    expect(wrapper.find({ children: 'nodeinfo-from-source' }).exists()).toBe(true);
 
     // Services
-    renderResult.getByText('Services');
-    renderResult.getByText('example');
+    expect(wrapper.find({ children: 'Services' }).exists()).toBe(true);
+    expect(wrapper.find('[data-test="example"]').exists()).toBe(true);
 
     // Conditions
-    renderResult.getByText('Conditions');
-    renderResult.getByText('Ready');
+    expect(wrapper.find({ children: 'Conditions' }).exists()).toBe(true);
+    expect(wrapper.find('[data-test="Ready"]').exists()).toBe(true);
   });
 
-  it('should render a failed SB with the right status and attributes', async () => {
+  it('should render a failed SB with the right status and attributes', () => {
     ((Firehose as any) as jest.Mock).mockImplementation((props) => {
       const childProps = {
         obj: {
@@ -135,48 +141,49 @@ describe('ServiceBindingDetailsPage', () => {
       return React.Children.map(props.children, (child) => React.cloneElement(child, childProps));
     });
 
-    const matchExistingServiceBinding = {
-      params: { ns: 'a-namespace', name: 'failed-service-binding' },
-      isExact: true,
-      path: '',
-      url: '',
-    };
+    jest
+      .spyOn(Router, 'useParams')
+      .mockReturnValue({ ns: 'a-namespace', name: 'failed-service-binding' });
+    jest.spyOn(Router, 'useLocation').mockReturnValue({ pathname: '' });
+    jest.spyOn(Router, 'useRoutes').mockReturnValue([{ path: '/' }]);
 
-    const renderResult = render(
-      <Wrapper>
-        <ServiceBindingDetailsPage match={matchExistingServiceBinding} kind="" />
-      </Wrapper>,
+    const wrapper = mount(
+      <ServiceBindingDetailsPage kind="binding.operators.coreos.com~v1alpha1~ServiceBinding" />,
+      {
+        wrappingComponent: ({ children }) => (
+          <Provider store={store}>
+            <Router.BrowserRouter>{children}</Router.BrowserRouter>
+          </Provider>
+        ),
+      },
     );
-    // Consume one rerendering to hide 'test was not wrapped in act' warnings
-    await act(async () => null);
-
-    renderResult.getAllByText('ServiceBinding details');
 
     // Name
-    renderResult.getByText('Name');
-    renderResult.getByText('failed-service-binding');
+    expect(wrapper.find({ children: 'ServiceBinding details' }).exists()).toBe(true);
+    expect(wrapper.find({ children: 'Name' }).exists()).toBe(true);
+    expect(wrapper.find({ children: 'failed-service-binding' }).exists()).toBe(true);
 
     // Status
-    renderResult.getAllByText('Status');
-    expect(renderResult.queryAllByText('Connected')).toEqual([]);
-    renderResult.getAllByText('Error');
+    expect(wrapper.find({ children: 'Status' }).exists()).toBe(true);
+    expect(wrapper.find('[status="Connected"]').exists()).toBe(false);
+    expect(wrapper.find('[status="Error"]').exists()).toBe(true);
 
     // Application
-    renderResult.getByText('Application');
-    renderResult.getByText('nodeinfo');
+    expect(wrapper.find('[label="Application"]').exists()).toBe(true);
+    expect(wrapper.find({ children: 'nodeinfo' }).exists()).toBe(true);
 
     // Services
-    renderResult.getByText('Services');
-    renderResult.getByText('redis-standalone');
+    expect(wrapper.find({ children: 'Services' }).exists()).toBe(true);
+    expect(wrapper.find('[data-test="redis-standalone"]').exists()).toBe(true);
 
     // Conditions
-    renderResult.getByText('Conditions');
-    renderResult.getByText('Ready');
-    renderResult.getByText('ErrorReadingBinding');
-    renderResult.getAllByText('redisSecret is not found');
+    expect(wrapper.find({ children: 'Conditions' }).exists()).toBe(true);
+    expect(wrapper.find('[data-test="Ready"]').exists()).toBe(true);
+    expect(wrapper.find('[value="ErrorReadingBinding"]').exists()).toBe(true);
+    expect(wrapper.find({ children: 'redisSecret is not found' }).exists()).toBe(true);
   });
 
-  it('should render a connected SB using label selector with the right status and attributes', async () => {
+  it('should render a connected SB using label selector with the right status and attributes', () => {
     ((Firehose as any) as jest.Mock).mockImplementation((props) => {
       const childProps = {
         obj: {
@@ -187,42 +194,47 @@ describe('ServiceBindingDetailsPage', () => {
       return React.Children.map(props.children, (child) => React.cloneElement(child, childProps));
     });
 
-    const matchExistingServiceBinding = {
-      params: { ns: 'a-namespace', name: 'connected-service-binding-with-label-selector' },
-      isExact: true,
-      path: '/',
-      url: '',
-    };
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: 'a-namespace',
+      name: 'connected-service-binding-with-label-selector',
+    });
+    jest.spyOn(Router, 'useLocation').mockReturnValue({ pathname: '' });
+    jest.spyOn(Router, 'useRoutes').mockReturnValue([{ path: '/' }]);
 
-    const renderResult = render(
-      <Wrapper>
-        <ServiceBindingDetailsPage match={matchExistingServiceBinding} kind="" />
-      </Wrapper>,
+    const wrapper = mount(
+      <ServiceBindingDetailsPage kind="binding.operators.coreos.com~v1alpha1~ServiceBinding" />,
+      {
+        wrappingComponent: ({ children }) => (
+          <Provider store={store}>
+            <Router.BrowserRouter>{children}</Router.BrowserRouter>
+          </Provider>
+        ),
+      },
     );
-    // Consume one rerendering to hide 'test was not wrapped in act' warnings
-    await act(async () => null);
 
-    renderResult.getAllByText('ServiceBinding details');
+    expect(wrapper.find({ children: 'ServiceBinding details' }).exists()).toBe(true);
 
     // Name
-    renderResult.getByText('Name');
-    renderResult.getByText('connected-service-binding-with-label-selector');
+    expect(wrapper.find({ children: 'Name' }).exists()).toBe(true);
+    expect(
+      wrapper.find({ children: 'connected-service-binding-with-label-selector' }).exists(),
+    ).toBe(true);
 
     // Status
-    renderResult.getAllByText('Status');
-    renderResult.getAllByText('Connected');
-    expect(renderResult.queryAllByText('Error')).toEqual([]);
+    expect(wrapper.find({ children: 'Status' }).exists()).toBe(true);
+    expect(wrapper.find('[status="Connected"]').exists()).toBe(true);
+    expect(wrapper.find('[status="Error"]').exists()).toBe(false);
 
     // Application
-    renderResult.getByText('Label Selector');
-    expect(renderResult.getByTestId('label-list').textContent).toEqual('test=test');
+    expect(wrapper.find('[label="Label Selector"]').exists()).toBe(true);
+    expect(wrapper.text().includes('test=test')).toBe(true);
 
     // Services
-    renderResult.getByText('Services');
-    renderResult.getByText('example');
+    expect(wrapper.find({ children: 'Services' }).exists()).toBe(true);
+    expect(wrapper.find('[data-test="example"]').exists()).toBe(true);
 
     // Conditions
-    renderResult.getByText('Conditions');
-    renderResult.getByText('Ready');
+    expect(wrapper.find({ children: 'Conditions' }).exists()).toBe(true);
+    expect(wrapper.find('[data-test="Ready"]').exists()).toBe(true);
   });
 });

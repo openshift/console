@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useParams } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import { OutlinedCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-circle-icon';
 import { ResourcesAlmostEmptyIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-empty-icon';
@@ -272,13 +273,14 @@ export const hasComputeResources = (resourceTypes) => {
   return _.intersection(resourceTypes, chartResourceTypes).length > 0;
 };
 
-const Details = ({ obj: rq, match }) => {
+const Details = ({ obj: rq }) => {
   const { t } = useTranslation();
+  const params = useParams();
   const resourceTypes = getQuotaResourceTypes(rq);
   const scopes = rq.spec?.scopes ?? rq.spec?.quota?.scopes;
   const reference = referenceFor(rq);
   const isACRQ = reference === appliedClusterQuotaReference;
-  const namespace = match?.params?.ns;
+  const namespace = params?.ns;
   let text;
   let charts;
   switch (reference) {
@@ -764,8 +766,8 @@ export const ResourceQuotasDetailsPage = (props) => {
 };
 
 export const AppliedClusterResourceQuotasDetailsPage = (props) => {
-  const { match } = props;
-  const actions = appliedClusterResourceQuotaMenuActions(match?.params?.ns);
+  const params = useParams();
+  const actions = appliedClusterResourceQuotaMenuActions(params?.ns);
   return (
     <DetailsPage
       {...props}

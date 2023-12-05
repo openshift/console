@@ -34,7 +34,7 @@ export const NavItemHref: React.FC<NavItemHrefProps> = ({
   }, [activeNamespace, href, namespaced, prefixNamespaced]);
   return (
     <NavItem isActive={isActive}>
-      <NavLink {...navLinkProps} {...dataAttributes} to={to}>
+      <NavLink {...navLinkProps} {...dataAttributes} to={to()}>
         {children}
       </NavLink>
     </NavItem>

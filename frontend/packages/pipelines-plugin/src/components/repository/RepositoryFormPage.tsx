@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import { history } from '@console/internal/components/utils';
 import { defaultRepositoryFormValues } from './consts';
 import { usePacInfo } from './hooks/pac-hook';
@@ -13,15 +13,11 @@ import {
 import { RepositoryForm } from './RepositoryForm';
 import { RepositoryFormValues } from './types';
 
-type RepositoryFormPageProps = RouteComponentProps<{ ns?: string }>;
-
-const RepositoryFormPage: React.FC<RepositoryFormPageProps> = ({
-  match: {
-    params: { ns },
-  },
-}) => {
+const RepositoryFormPage: React.FC = () => {
   const { t } = useTranslation();
   const [pac, loaded] = usePacInfo();
+
+  const { ns } = useParams();
 
   const handleSubmit = (values: RepositoryFormValues, actions): void => {
     createRepositoryResources(values, ns)

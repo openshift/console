@@ -7,6 +7,7 @@ import { mount, ReactWrapper, shallow } from 'enzyme';
 import * as React from 'react';
 import store from '@console/internal/redux';
 import { Provider } from 'react-redux';
+import * as ReactRouter from 'react-router-dom-v5-compat';
 import {
   Firehose,
   HorizontalNav,
@@ -18,22 +19,22 @@ import { testPodInstance } from '../../__mocks__/k8sResourcesMocks';
 import { Status } from '@console/shared';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { StatusProps } from '@console/metal3-plugin/src/components/types';
-import { Router } from 'react-router';
-import { history } from '@console/internal/components/utils/router';
 import { act } from 'react-dom/test-utils';
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+}));
 
 describe(ContainersDetailsPage.displayName, () => {
   let containerDetailsPage: ReactWrapper;
 
   beforeEach(() => {
-    const match = {
-      params: { podName: 'test-name', ns: 'default' },
-      isExact: true,
-      path: '',
-      url: '',
-    };
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({ podName: 'test-name', ns: 'default' });
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({ pathname: '' });
 
-    containerDetailsPage = mount(<ContainersDetailsPage match={match} />, {
+    containerDetailsPage = mount(<ContainersDetailsPage />, {
       wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
   });
@@ -52,27 +53,23 @@ describe(ContainersDetailsPage.displayName, () => {
 
 describe(ContainerDetails.displayName, () => {
   const obj = { data: { ...testPodInstance } };
-  const matchWithExistingContainer = {
-    params: { podName: 'test-name', ns: 'default', name: 'crash-app' },
-    isExact: true,
-    path: '',
-    url: '',
-  };
 
   it('renders a `PageHeading` and a `ContainerDetails` with the same state', async () => {
+    jest
+      .spyOn(ReactRouter, 'useParams')
+      .mockReturnValue({ podName: 'test-name', ns: 'default', name: 'crash-app' });
+
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({ pathname: '' });
     // Full mount needed to get the children of the PageHeading within the ContainerDetails without warning
     let containerDetails: ReactWrapper;
     await act(async () => {
-      containerDetails = mount(
-        <ContainerDetails match={matchWithExistingContainer} obj={obj} loaded={true} />,
-        {
-          wrappingComponent: ({ children }) => (
-            <Router history={history}>
-              <Provider store={store}>{children}</Provider>
-            </Router>
-          ),
-        },
-      );
+      containerDetails = mount(<ContainerDetails obj={obj} loaded={true} />, {
+        wrappingComponent: ({ children }) => (
+          <Provider store={store}>
+            <ReactRouter.BrowserRouter>{children}</ReactRouter.BrowserRouter>
+          </Provider>
+        ),
+      });
     });
 
     const pageHeadingStatusProps = containerDetails
@@ -85,7 +82,7 @@ describe(ContainerDetails.displayName, () => {
       containerDetails
         .find<any>(HorizontalNav)
         .props()
-        .pages[0].component({ match: matchWithExistingContainer, obj: testPodInstance }),
+        .pages[0].component({ obj: testPodInstance }),
     );
 
     const containerDetailsStatusProps = containerDetailsList.find<StatusProps>(Status).props();
@@ -95,23 +92,32 @@ describe(ContainerDetails.displayName, () => {
   });
 
   it("renders a `ErrorPage404` if the container to render doesn't exist", () => {
-    const matchWithNonExistingContainer = {
-      params: { podName: 'test-name', ns: 'default', name: 'non-existing-container' },
-      isExact: true,
-      path: '',
-      url: '',
-    };
+    jest
+      .spyOn(ReactRouter, 'useParams')
+      .mockReturnValue({ podName: 'test-name', ns: 'default', name: 'non-existing-container' });
 
-    const containerDetails = shallow(
-      <ContainerDetails match={matchWithNonExistingContainer} obj={obj} loaded={true} />,
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({ pathname: '' });
+
+    const containerDetails = mount(
+      <Provider store={store}>
+        <ReactRouter.BrowserRouter>
+          <ContainerDetails obj={obj} loaded={true} />
+        </ReactRouter.BrowserRouter>
+      </Provider>,
     );
 
     expect(containerDetails.containsMatchingElement(<ErrorPage404 />)).toBe(true);
   });
 
   it("renders a `LoadingBox` if props aren't loaded yet", () => {
-    const containerDetails = shallow(
-      <ContainerDetails match={matchWithExistingContainer} obj={obj} loaded={false} />,
+    jest
+      .spyOn(ReactRouter, 'useParams')
+      .mockReturnValue({ podName: 'test-name', ns: 'default', name: 'crash-app' });
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({ pathname: '' });
+    const containerDetails = mount(
+      <ReactRouter.BrowserRouter>
+        <ContainerDetails obj={obj} loaded={false} />
+      </ReactRouter.BrowserRouter>,
     );
 
     expect(containerDetails.containsMatchingElement(<LoadingBox />)).toBe(true);
@@ -120,16 +126,17 @@ describe(ContainerDetails.displayName, () => {
 
 describe(ContainerDetailsList.displayName, () => {
   it("renders a `ErrorPage404` if the container to render doesn't exist", () => {
-    const matchWithNonExistingContainer = {
-      params: { podName: 'test-name', ns: 'default', name: 'non-existing-container' },
-      isExact: true,
-      path: '',
-      url: '',
-    };
+    jest
+      .spyOn(ReactRouter, 'useParams')
+      .mockReturnValue({ podName: 'test-name', ns: 'default', name: 'non-existing-container' });
 
-    const containerDetailsList = shallow(
-      <ContainerDetailsList match={matchWithNonExistingContainer} obj={testPodInstance} />,
-    );
+    const containerDetailsList = mount(<ContainerDetailsList obj={testPodInstance} />, {
+      wrappingComponent: ({ children }) => (
+        <Provider store={store}>
+          <ReactRouter.BrowserRouter>{children}</ReactRouter.BrowserRouter>
+        </Provider>
+      ),
+    });
 
     expect(containerDetailsList.containsMatchingElement(<ErrorPage404 />)).toBe(true);
   });

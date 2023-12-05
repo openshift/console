@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { HorizontalNav, LoadingBox, Page } from '@console/internal/components/utils';
 import { DevPreviewBadge } from '@console/shared';
 import GitOpsDetailsPageHeading from './details/GitOpsDetailsPageHeading';
@@ -11,15 +11,11 @@ import { getPipelinesBaseURI, getApplicationsBaseURI } from './utils/gitops-util
 import useDefaultSecret from './utils/useDefaultSecret';
 import useEnvDetails from './utils/useEnvDetails';
 
-type GitOpsDetailsPageTabsProps = RouteComponentProps<{ appName?: string }>;
-
-export const GitOpsDetailsPageTabs: React.FC<GitOpsDetailsPageTabsProps> = ({
-  match,
-  location,
-}) => {
+export const GitOpsDetailsPageTabs: React.FC = () => {
   const { t } = useTranslation();
   const [secretNS, secretName] = useDefaultSecret();
-  const { appName } = match.params;
+  const { appName } = useParams();
+  const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const manifestURL = searchParams.get('url');
   const pipelinesBaseURI = getPipelinesBaseURI(secretNS, secretName);
@@ -47,7 +43,7 @@ export const GitOpsDetailsPageTabs: React.FC<GitOpsDetailsPageTabsProps> = ({
         <title>{t('gitops-plugin~{{appName}} · Details', { appName })}</title>
       </Helmet>
       <GitOpsDetailsPageHeading
-        url={match.url}
+        url={location.pathname}
         appName={appName}
         manifestURL={manifestURL}
         badge={<DevPreviewBadge />}
@@ -57,7 +53,6 @@ export const GitOpsDetailsPageTabs: React.FC<GitOpsDetailsPageTabsProps> = ({
       ) : (
         <HorizontalNav
           pages={pages}
-          match={match}
           customData={{ emptyStateMsg, envs, applicationBaseURI, manifestURL, location }}
           noStatusBox
         />

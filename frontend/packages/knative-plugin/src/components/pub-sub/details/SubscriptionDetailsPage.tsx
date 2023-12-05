@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
@@ -13,7 +14,9 @@ import { serverlessTab } from '../../../utils/serverless-tab-utils';
 import SubscriptionDetails from './SubscriptionDetails';
 
 const SubscriptionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const { kindObj, match } = props;
+  const { kindObj } = props;
+  const params = useParams();
+  const location = useLocation();
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const customActionMenu = (kindObjData, obj) => {
     const resourceKind = referenceForModel(kindObjData);
@@ -32,7 +35,8 @@ const SubscriptionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>
   const pages = [navFactory.details(SubscriptionDetails), navFactory.editYaml()];
   const breadcrumbs = useTabbedTableBreadcrumbsFor(
     kindObj,
-    match,
+    location,
+    params,
     'eventing',
     serverlessTab(kindObj.kind),
     undefined,

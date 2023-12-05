@@ -2,16 +2,18 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ConfigMapModel, SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
-import { ButtonBar, ListInput, history, PageHeading } from '../utils';
+import { ButtonBar, ListInput, PageHeading } from '../utils';
 import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
 export const AddLDAPPage = () => {
+  const navigate = useNavigate();
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const [name, setName] = React.useState('ldap');
@@ -150,7 +152,9 @@ export const AddLDAPPage = () => {
               const caConfigMapName = _.get(caConfigMap, 'metadata.name');
               return addLDAPIDP(oauth, bindPasswordSecretName, caConfigMapName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
         })
         .catch((err) => {
           setErrorMessage(err);
@@ -263,7 +267,7 @@ export const AddLDAPPage = () => {
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
+              <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>

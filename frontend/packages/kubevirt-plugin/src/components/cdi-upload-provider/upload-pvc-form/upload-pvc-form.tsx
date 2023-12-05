@@ -17,7 +17,7 @@ import cx from 'classnames';
 import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { match } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { dropdownUnits, initialAccessModes } from '@console/internal/components/storage/shared';
 import {
@@ -554,8 +554,9 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   );
 };
 
-export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
+export const UploadPVCPage: React.FC = () => {
   const { t } = useTranslation();
+  const params = useParams();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isCheckingCertificate, setCheckingCertificate] = React.useState(false);
   const [disableFormSubmit, setDisableFormSubmit] = React.useState(false);
@@ -611,7 +612,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
       : null,
   );
 
-  const initialNamespace = props?.match?.params?.ns;
+  const initialNamespace = params?.ns;
   const namespace = getNamespace(dvObj) || initialNamespace;
   const urlParams = new URLSearchParams(window.location.search);
   const osParam = urlParams.get(CDI_UPLOAD_OS_URL_PARAM);
@@ -788,8 +789,4 @@ export type UploadPVCFormProps = {
   storageClasses: StorageClassResourceKind[];
   onChange: (K8sResourceKind) => void;
   handleFileChange: (value, filename, event) => void;
-};
-
-export type UploadPVCPageProps = {
-  match: match<{ ns?: string }>;
 };

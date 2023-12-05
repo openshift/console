@@ -3,7 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { safeLoad, safeDump } from 'js-yaml';
 import * as useExtensionsModule from '@console/plugin-sdk/src/api/useExtensions';
 
-import { CreateYAML, CreateYAMLProps } from '../../public/components/create-yaml';
+import { CreateYAML, CreateYAMLProps, CreateYAMLInner } from '../../public/components/create-yaml';
 import { PodModel } from '../../public/models';
 import { getYAMLTemplates } from '../../public/models/yaml-templates';
 import { AsyncComponent, LoadingBox } from '../../public/components/utils';
@@ -14,10 +14,8 @@ describe(CreateYAML.displayName, () => {
 
   beforeEach(() => {
     spyOn(useExtensionsModule, 'useExtensions').and.returnValue([]);
-    const match = { url: '', params: { ns: 'default', plural: 'pods' }, isExact: true, path: '' };
-    wrapper = shallow(
-      <CreateYAML.WrappedComponent match={match} kindsInFlight={false} kindObj={PodModel} />,
-    );
+    const params = { ns: 'default', plural: 'pods' };
+    wrapper = shallow(<CreateYAMLInner params={params} kindsInFlight={false} kindObj={PodModel} />);
   });
 
   it('renders loading box if `props.kindsInFlight` is true', () => {

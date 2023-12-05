@@ -8,6 +8,7 @@ import { ActionGroup, Alert, Button, Checkbox } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 
 import {
   FLAGS,
@@ -28,15 +29,7 @@ import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
-import {
-  checkAccess,
-  Firehose,
-  history,
-  Loading,
-  LoadingBox,
-  PageHeading,
-  resourceObjPath,
-} from './utils';
+import { checkAccess, Firehose, Loading, LoadingBox, PageHeading, resourceObjPath } from './utils';
 import {
   referenceForModel,
   k8sCreate,
@@ -113,6 +106,7 @@ const EditYAMLInner = (props) => {
     onSave,
   } = props;
 
+  const navigate = useNavigate();
   const [errors, setErrors] = React.useState(null);
   const [success, setSuccess] = React.useState(null);
   const [initialized, setInitialized] = React.useState(false);
@@ -132,8 +126,10 @@ const EditYAMLInner = (props) => {
 
   const { t } = useTranslation();
 
+  const navigateBack = () => navigate(-1);
+
   const displayedVersion = React.useRef('0');
-  const onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
+  const onCancel = 'onCancel' in props ? props.onCancel : navigateBack;
 
   const getEditor = () => {
     return monacoRef.current.editor;
@@ -350,7 +346,7 @@ const EditYAMLInner = (props) => {
                 : resourceObjPath;
               url = path(o, referenceFor(o));
             }
-            history.push(url);
+            navigate(url);
             // TODO: (ggreer). show message on new page. maybe delete old obj?
             return;
           }
@@ -366,7 +362,7 @@ const EditYAMLInner = (props) => {
           handleError(e.message);
         });
     },
-    [create, loadYaml, t, postFormSubmissionCallback, redirectURL, props.resourceObjPath],
+    [create, loadYaml, t, postFormSubmissionCallback, redirectURL, props.resourceObjPath, navigate],
   );
 
   const setDisplay = React.useCallback(

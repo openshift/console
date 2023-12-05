@@ -20,7 +20,7 @@ import {
 } from '@patternfly/react-core/deprecated';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { dropdownUnits } from '@console/internal/components/storage/shared';
 import {
   convertToBaseValue,
@@ -68,8 +68,9 @@ import { filterTemplates } from '../utils';
 import { FORM_ACTION_TYPE, formReducer, initFormState } from './customize-source-form-reducer';
 import './customize-source.scss';
 
-const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
+const CustomizeSourceForm: React.FC = () => {
   const { t } = useTranslation();
+  const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const templateName = urlParams.get('template');
   const templateNs = urlParams.get('templateNs') || 'openshift';

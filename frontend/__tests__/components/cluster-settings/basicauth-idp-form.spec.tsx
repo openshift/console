@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { Button } from '@patternfly/react-core';
+import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom-v5-compat';
+import store from '@console/internal/redux';
 
 import { ButtonBar } from '../../../public/components/utils';
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
@@ -10,16 +12,22 @@ import {
   DroppableFileInput as BasicDroppableInput,
 } from '../../../public/components/cluster-settings/basicauth-idp-form';
 
-export const controlButtonTest = (wrapper: ShallowWrapper) => {
+export const controlButtonTest = (wrapper) => {
   expect(wrapper.find(ButtonBar).exists()).toBe(true);
-  expect(wrapper.find(Button).at(0).childAt(0).text()).toEqual('Add');
-  expect(wrapper.find(Button).at(1).childAt(0).text()).toEqual('Cancel');
+  expect(wrapper.find('Button[type="submit"]').at(0).text()).toEqual('Add');
+  expect(wrapper.find('Button[variant="secondary"]').at(0).text()).toEqual('Cancel');
 };
 
 describe('Add Identity Provider: BasicAuthentication', () => {
-  let wrapper: ShallowWrapper<any>;
+  let wrapper;
   beforeEach(() => {
-    wrapper = shallow(<AddBasicAuthPage />);
+    wrapper = mount(
+      <Provider store={store}>
+        <BrowserRouter>
+          <AddBasicAuthPage />
+        </BrowserRouter>
+      </Provider>,
+    );
   });
 
   it('should render AddBasicAuthPage component', () => {

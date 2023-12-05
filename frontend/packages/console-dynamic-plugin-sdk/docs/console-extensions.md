@@ -746,7 +746,7 @@ Adds new resource details page to Console router.
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `model` | `ExtensionK8sGroupKindModel` | no | The model for which this resource page links to. |
-| `component` | `CodeRef<React.ComponentType<{ match: match<{}>; namespace: string; model: ExtensionK8sModel; }>>` | no | The component to be rendered when the route matches. |
+| `component` | `CodeRef<React.ComponentType<{ namespace: string; model: ExtensionK8sModel; }>>` | no | The component to be rendered when the route matches. |
 
 ---
 
@@ -761,7 +761,7 @@ Adds new resource list page to Console router.
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `model` | `ExtensionK8sGroupKindModel` | no | The model for which this resource page links to. |
-| `component` | `CodeRef<React.ComponentType<{ match: match<{}>; namespace: string; model: ExtensionK8sModel; }>>` | no | The component to be rendered when the route matches. |
+| `component` | `CodeRef<React.ComponentType<{ namespace: string; model: ExtensionK8sModel; }>>` | no | The component to be rendered when the route matches. |
 
 ---
 
@@ -775,7 +775,7 @@ Adds new page to Console router.<br/><br/>Under the hood we use React Router.<br
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<React.ComponentType<RouteComponentProps<{}, StaticContext, unknown>>>` | no | The component to be rendered when the route matches. |
+| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
 | `path` | `string \| string[]` | no | Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. |
 | `perspective` | `string` | yes | The perspective to which this page belongs to. If not specified, contributes to all perspectives. |
 | `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
@@ -792,7 +792,7 @@ Adds new standalone page (rendered outside the common page layout) to Console ro
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<React.ComponentType<RouteComponentProps<{}, StaticContext, unknown>>>` | no | The component to be rendered when the route matches. |
+| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
 | `path` | `string \| string[]` | no | Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. |
 | `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
 
@@ -990,7 +990,7 @@ This extension can be used to contribute a new storage provider to select,<br/>w
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `name` | `string` | no | Displayed name of the provider. |
-| `Component` | `CodeRef<React.ComponentType<Partial<RouteComponentProps<{}, StaticContext, unknown>>>>` | no | Provider specific component to render. |
+| `Component` | `CodeRef<React.ComponentType<{}>>` | no | Provider specific component to render. |
 
 ---
 
@@ -1379,7 +1379,7 @@ This extension can be used to specify extra build environment variable fields un
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `model` | `ExtensionK8sGroupKindModel` | no | The model for which this resource page links to. |
-| `component` | `CodeRef<React.ComponentType<RouteComponentProps<{}, StaticContext, unknown>>>` | no | The component to be rendered when the route matches. |
+| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
 | `name` | `string` | no | The name of the tab. |
 | `href` | `string` | yes | The optional href for the tab link. If not provided, the first `path` is used. |
 | `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |

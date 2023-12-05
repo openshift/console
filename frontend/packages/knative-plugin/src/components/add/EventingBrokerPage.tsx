@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -10,10 +10,9 @@ import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { PageHeading } from '@console/internal/components/utils';
 import AddBroker from './brokers/AddBroker';
 
-type EventingBrokerPageProps = RouteComponentProps<{ ns?: string }>;
-
-const EventingBrokerPage: React.FC<EventingBrokerPageProps> = ({ match, location }) => {
-  const namespace = match.params.ns;
+const EventingBrokerPage: React.FC = () => {
+  const { ns: namespace } = useParams();
+  const location = useLocation();
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   return (

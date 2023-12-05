@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { PageHeading, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -15,21 +16,19 @@ import { getPDBResource } from './utils/get-pdb-resources';
 
 const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.pdbForm.editor.lastView';
 
-export const PDBFormPage: React.FC<{
-  location: { search: string };
-  match: Match;
-}> = (props) => {
+export const PDBFormPage: React.FC<{}> = () => {
   const { t } = useTranslation();
+  const params = useParams();
+  const location = useLocation();
   const match = {
-    params: { ...props.match.params, plural: PodDisruptionBudgetModel.plural, appName: '' },
+    params: { ...params, plural: PodDisruptionBudgetModel.plural, appName: '' },
     isExact: true,
     url: '',
     path: '',
   };
-  const { location } = props;
   const searchParams = new URLSearchParams(location.search);
   const name = searchParams.get('name');
-  const groupVersionKind = getGroupVersionKind(match.params.resourceRef) || [];
+  const groupVersionKind = getGroupVersionKind(params.resourceRef) || [];
   const [group, version, kind] = groupVersionKind;
 
   const [resource, loadedResource] = useK8sWatchResource<K8sPodControllerKind>({
@@ -40,7 +39,7 @@ export const PDBFormPage: React.FC<{
     },
     name,
     namespaced: true,
-    namespace: match.params.ns,
+    namespace: params.ns,
   });
 
   const [pdbResources, loadedPDBResource] = useK8sWatchResource<PodDisruptionBudgetKind[]>({
@@ -51,7 +50,7 @@ export const PDBFormPage: React.FC<{
     },
     isList: true,
     namespaced: true,
-    namespace: match.params.ns,
+    namespace: params.ns,
   });
 
   const existingResource = getPDBResource(pdbResources, resource);
@@ -62,7 +61,7 @@ export const PDBFormPage: React.FC<{
   );
   const initialPDB = {
     name: '',
-    namespace: match.params.ns,
+    namespace: params.ns,
     selector: { matchLabels: resource?.spec?.template?.metadata?.labels } || {},
   };
   const [helpText, setHelpText] = React.useState(formHelpText);
@@ -74,8 +73,8 @@ export const PDBFormPage: React.FC<{
     return (
       <CreateYAML
         hideHeader
-        match={match}
         onChange={onChange}
+        match={match}
         template={safeJSToYAML(yamlData, 'yamlData', {
           skipInvalid: true,
         })}
@@ -131,11 +130,4 @@ export const PDBFormPage: React.FC<{
 type YAMLEditorProps = {
   initialYAML?: string;
   onChange?: (yaml: string) => void;
-};
-
-type Match = {
-  params: { ns: string; plural: string; appName: string; resourceRef: string };
-  isExact: boolean;
-  url: string;
-  path: string;
 };

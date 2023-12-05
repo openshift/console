@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../constants/url-params';

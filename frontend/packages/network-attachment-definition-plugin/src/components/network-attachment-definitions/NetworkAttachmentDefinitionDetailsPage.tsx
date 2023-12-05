@@ -37,7 +37,6 @@ type NetworkAttachmentDefinitionsDetailPageProps = {
   name: string;
   namespace: string;
   kind: K8sResourceKindReference;
-  match: any;
 };
 
 export default NetworkAttachmentDefinitionsDetailsPage;

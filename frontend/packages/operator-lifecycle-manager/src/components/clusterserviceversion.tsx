@@ -15,7 +15,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, match as RouterMatch, useParams } from 'react-router-dom';
+import { useParams, useLocation, Link } from 'react-router-dom-v5-compat';
 import {
   WatchK8sResource,
   ResourceStatus,
@@ -78,7 +78,6 @@ import { RedExclamationCircleIcon } from '@console/shared/src/components/status/
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { RouteParams } from '@console/shared/src/types';
 import { isPluginEnabled } from '@console/shared/src/utils';
 import { GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
 import {
@@ -1223,14 +1222,11 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({ obj, customDat
   );
 };
 
-type ClusterServiceVersionDetailsPageRouteParams = RouteParams<'name' | 'ns'>;
-
-export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDetailsPageProps> = (
-  props,
-) => {
+export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
   const { t } = useTranslation();
-  const { name, ns } = useParams<ClusterServiceVersionDetailsPageRouteParams>();
-  const [csv, csvLoaded, csvLoadError] = useClusterServiceVersion(name, ns);
+  const params = useParams();
+  const location = useLocation();
+  const [csv, csvLoaded, csvLoadError] = useClusterServiceVersion(params.name, params.ns);
   const namespace = operatorNamespaceFor(csv);
   const [subscriptions, subscriptionsLoaded, subscriptionsLoadError] = useK8sWatchResource<
     SubscriptionKind[]
@@ -1307,9 +1303,9 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
       breadcrumbsFor={() => [
         {
           name: t('olm~Installed Operators'),
-          path: getBreadcrumbPath(props.match),
+          path: getBreadcrumbPath(params),
         },
-        { name: t('olm~Operator details'), path: props.match.url },
+        { name: t('olm~Operator details'), path: location.pathname },
       ]}
       resources={[
         { kind: referenceForModel(PackageManifestModel), isList: true, prop: 'packageManifests' },
@@ -1328,9 +1324,9 @@ export const ClusterServiceVersionDetailsPage: React.FC<ClusterServiceVersionsDe
           version={obj?.spec?.version}
         />
       )}
-      namespace={props.match.params.ns}
+      namespace={params.ns}
       kind={referenceForModel(ClusterServiceVersionModel)}
-      name={props.match.params.name}
+      name={params.name}
       pagesFor={pagesFor}
       menuActions={menuActions}
       createRedirect
@@ -1372,10 +1368,6 @@ export type CRDCardRowProps = {
 
 export type CRDCardRowState = {
   expand: boolean;
-};
-
-export type ClusterServiceVersionsDetailsPageProps = {
-  match: RouterMatch<any>;
 };
 
 export type ClusterServiceVersionDetailsProps = {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormGroup, Form, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { match as RouterMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { history } from '@console/internal/components/utils/router';
@@ -45,10 +45,8 @@ const makeLocalVolumeDiscoverRequest = async (
   }
 };
 
-export const CreateLocalVolumeDiscovery: React.FC<CreateLocalVolumeDiscoveryProps> = ({
-  match,
-}) => {
-  const { appName, ns } = match.params;
+export const CreateLocalVolumeDiscovery: React.FC = () => {
+  const { appName, ns } = useParams();
   const { t } = useTranslation();
 
   const [nodesData, nodesLoaded, nodesLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
@@ -111,8 +109,4 @@ export const CreateLocalVolumeDiscovery: React.FC<CreateLocalVolumeDiscoveryProp
       </Form>
     </>
   );
-};
-
-type CreateLocalVolumeDiscoveryProps = {
-  match: RouterMatch<{ appName: string; ns: string }>;
 };

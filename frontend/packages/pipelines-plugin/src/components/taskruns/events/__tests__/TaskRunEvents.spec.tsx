@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ResourcesEventStream } from '@console/internal/components/events';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { TaskRunModel } from '../../../../models';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
 import * as utils from '../../../pipelineruns/events/event-utils';
 import TaskRunEvents from '../TaskRunEvents';
@@ -18,14 +16,6 @@ describe('TaskRunEvents:', () => {
   beforeEach(() => {
     taskRunEventsProps = {
       obj: pipeline.taskRuns[0],
-      match: {
-        isExact: true,
-        path: `/k8s/ns/:ns/${referenceForModel(TaskRunModel)}/events`,
-        url: `k8s/ns/rhd-test/${referenceForModel(TaskRunModel)}/events`,
-        params: {
-          ns: 'rhd-test',
-        },
-      },
     };
     spyUseTaskRunRelatedResources.mockReturnValue({
       pods: { data: pods, loaded: true },

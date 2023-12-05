@@ -3,7 +3,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, match } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 import {
   MultiListPage,
   Table,
@@ -140,7 +140,7 @@ export const PackageManifestList = (props: PackageManifestListProps) => {
 
 export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props) => {
   const { catalogSource } = props;
-  const namespace = _.get(props.match, 'params.ns');
+  const { ns: namespace } = useParams();
 
   const flatten: Flatten = (resources) => _.get(resources.packageManifest, 'data', []);
 
@@ -204,7 +204,6 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
 export type PackageManifestsPageProps = {
   catalogSource: CatalogSourceKind;
   namespace?: string;
-  match?: match<{ ns?: string }>;
 };
 
 export type PackageManifestListProps = {

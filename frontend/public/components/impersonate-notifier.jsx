@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { useTranslation, Trans } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { Button } from '@patternfly/react-core';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
@@ -11,6 +12,7 @@ export const ImpersonateNotifier = connect((state) => ({ impersonate: getImperso
   stopImpersonate: UIActions.stopImpersonate,
 })(({ stopImpersonate, impersonate }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   if (!impersonate) {
     return null;
   }
@@ -32,7 +34,15 @@ export const ImpersonateNotifier = connect((state) => ({ impersonate: getImperso
             <span className="co-global-notification__impersonate-name">{{ impersonateName }}</span>.
             You are viewing all resources and roles this {{ kindTranslated }} can access.
           </Trans>{' '}
-          <Button isInline type="button" variant="link" onClick={stopImpersonate}>
+          <Button
+            isInline
+            type="button"
+            variant="link"
+            onClick={() => {
+              stopImpersonate();
+              navigate(window.SERVER_FLAGS.basePath);
+            }}
+          >
             {t('public~Stop impersonation')}
           </Button>
         </p>

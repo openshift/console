@@ -2,7 +2,7 @@ import * as React from 'react';
 import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-extension';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { isModifiedEvent } from '@console/shared/src/utils';
 import { getURLWithParams } from '../utils/catalog-utils';
 import { hasActiveDescendant, isActiveTab } from '../utils/category-utils';

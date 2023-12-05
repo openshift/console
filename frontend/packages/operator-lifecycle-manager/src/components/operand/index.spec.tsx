@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
-import { MemoryRouter, Router, Route } from 'react-router-dom';
+import * as ReactRouter from 'react-router-dom-v5-compat';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { Table, DetailsPage, MultiListPage } from '@console/internal/components/factory';
 import {
@@ -12,7 +12,6 @@ import {
 import ListPageFilter from '@console/internal/components/factory/ListPage/ListPageFilter';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
 import {
-  history,
   Timestamp,
   LabelList,
   FirehoseResourcesResult,
@@ -50,16 +49,11 @@ import {
   OperandStatusProps,
 } from '.';
 
-const mountWithRoute = <T,>(component, currentURL, routePath): ReactWrapper<T> =>
-  mount<T>(component, {
-    wrappingComponent: ({ children }) => (
-      <Provider store={store}>
-        <MemoryRouter initialEntries={[currentURL]}>
-          <Route path={routePath}>{children}</Route>
-        </MemoryRouter>
-      </Provider>
-    ),
-  });
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+}));
 
 jest.mock('@console/shared/src/hooks/useK8sModels', () => ({
   useK8sModels: () => [
@@ -121,6 +115,12 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn(),
 }));
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
 const i18nNS = 'public';
 
 describe(OperandTableRow.displayName, () => {
@@ -130,9 +130,9 @@ describe(OperandTableRow.displayName, () => {
     spyOn(useExtensionsModule, 'useExtensions').and.returnValue([]);
     wrapper = mount(<OperandTableRow obj={testResourceInstance} columns={[]} showNamespace />, {
       wrappingComponent: (props) => (
-        <Router history={history}>
+        <ReactRouter.BrowserRouter>
           <Provider store={store} {...props} />
-        </Router>
+        </ReactRouter.BrowserRouter>
       ),
     });
   });
@@ -191,9 +191,9 @@ describe(OperandList.displayName, () => {
     spyOn(useExtensionsModule, 'useExtensions').and.returnValue([]);
     wrapper = mount(<OperandList loaded data={resources} showNamespace />, {
       wrappingComponent: (props) => (
-        <Router history={history}>
+        <ReactRouter.BrowserRouter>
           <Provider store={store} {...props} />
-        </Router>
+        </ReactRouter.BrowserRouter>
       ),
     });
   });
@@ -308,15 +308,27 @@ describe(OperandDetails.displayName, () => {
 });
 
 describe('ResourcesList', () => {
-  const currentURL = `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/${referenceFor(
-    testResourceInstance,
-  )}/my-etcd`;
-  const routePath = `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`;
+  jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+    pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/${referenceFor(
+      testResourceInstance,
+    )}/my-etcd`,
+  });
+  jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
+    ns: 'default',
+    appName: 'etcd',
+    plural: `${referenceFor(testResourceInstance)}`,
+    name: 'my-etcd',
+  });
   it('uses the resources defined in the CSV', () => {
-    const wrapper = mountWithRoute(
+    const wrapper = mount(
       <Resources customData={testClusterServiceVersion} obj={testResourceInstance} />,
-      currentURL,
-      routePath,
+      {
+        wrappingComponent: ({ children }) => (
+          <Provider store={store}>
+            <ReactRouter.BrowserRouter>{children}</ReactRouter.BrowserRouter>
+          </Provider>
+        ),
+      },
     );
     const multiListPage = wrapper.find(MultiListPage);
     expect(multiListPage.props().resources).toEqual(
@@ -327,23 +339,43 @@ describe('ResourcesList', () => {
   });
 
   it('uses the default resources if the kind is not found in the CSV', () => {
-    const wrapper = mountWithRoute(
-      <Resources customData={null} obj={testResourceInstance} />,
-      currentURL,
-      routePath,
-    );
+    const wrapper = mount(<Resources customData={null} obj={testResourceInstance} />, {
+      wrappingComponent: ({ children }) => (
+        <Provider store={store}>
+          <ReactRouter.BrowserRouter>{children}</ReactRouter.BrowserRouter>
+        </Provider>
+      ),
+    });
     const multiListPage = wrapper.find(MultiListPage);
     expect(multiListPage.props().resources.length > 5).toEqual(true);
   });
 });
 
 describe(OperandDetailsPage.displayName, () => {
-  const currentURL = `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`;
-  const routePath = `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`;
   window.SERVER_FLAGS.copiedCSVsDisabled = false;
 
+  beforeEach(() => {
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
+      ns: 'default',
+      appName: 'testapp',
+      plural: 'testapp.coreos.com~v1alpha1~TestResource',
+      name: 'my-test-resource',
+    });
+
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`,
+    });
+  });
+
   it('renders a `DetailsPage` with the correct subpages', () => {
-    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
+    const wrapper = mount(
+      <Provider store={store}>
+        <ReactRouter.BrowserRouter>
+          <OperandDetailsPage />
+        </ReactRouter.BrowserRouter>
+      </Provider>,
+    );
+
     const detailsPage = wrapper.find(DetailsPage);
     expect(detailsPage.props().pages[0].nameKey).toEqual(`${i18nNS}~Details`);
     expect(detailsPage.props().pages[0].href).toEqual('');
@@ -354,7 +386,13 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('renders a `DetailsPage` which also watches the parent CSV', () => {
-    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
+    const wrapper = mount(
+      <Provider store={store}>
+        <ReactRouter.BrowserRouter>
+          <OperandDetailsPage />
+        </ReactRouter.BrowserRouter>
+      </Provider>,
+    );
     expect(wrapper.find(DetailsPage).prop('resources')[0]).toEqual({
       kind: 'CustomResourceDefinition',
       name: 'testresources.testapp.coreos.com',
@@ -364,12 +402,24 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('menu actions to `DetailsPage`', () => {
-    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
+    const wrapper = mount(
+      <Provider store={store}>
+        <ReactRouter.BrowserRouter>
+          <OperandDetailsPage />
+        </ReactRouter.BrowserRouter>
+      </Provider>,
+    );
     expect(wrapper.find(DetailsPage).prop('customActionMenu')).toBeTruthy();
   });
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
-    const wrapper = mountWithRoute(<OperandDetailsPage />, currentURL, routePath);
+    const wrapper = mount(
+      <Provider store={store}>
+        <ReactRouter.BrowserRouter>
+          <OperandDetailsPage />
+        </ReactRouter.BrowserRouter>
+      </Provider>,
+    );
     expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
       {
         name: 'Installed Operators',
@@ -387,10 +437,23 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('creates correct breadcrumbs even if `namespace`, `plural`, `appName`, and `name` URL parameters are the same', () => {
-    const wrapper = mountWithRoute(
-      <OperandDetailsPage />,
-      `/k8s/ns/example/${ClusterServiceVersionModel.plural}/example/example/example`,
-      routePath,
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
+      ns: 'example',
+      appName: 'example',
+      plural: 'example',
+      name: 'example',
+    });
+
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      pathname: `/k8s/ns/example/${ClusterServiceVersionModel.plural}/example/example/example`,
+    });
+
+    const wrapper = mount(
+      <Provider store={store}>
+        <ReactRouter.BrowserRouter>
+          <OperandDetailsPage />
+        </ReactRouter.BrowserRouter>
+      </Provider>,
     );
 
     expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
@@ -410,10 +473,12 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('passes `flatten` function to Resources component which returns only objects with `ownerReferences` to each other or parent object', () => {
-    const wrapper = mountWithRoute(
-      <Resources customData={testClusterServiceVersion} obj={testResourceInstance} />,
-      currentURL,
-      routePath,
+    const wrapper = mount(
+      <Provider store={store}>
+        <ReactRouter.BrowserRouter>
+          <Resources customData={testClusterServiceVersion} obj={testResourceInstance} />
+        </ReactRouter.BrowserRouter>
+      </Provider>,
     );
     const { flatten } = wrapper.find(MultiListPage).props();
     const pod = {
@@ -484,21 +549,35 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   beforeEach(() => {
-    wrapper = mountWithRoute<ProvidedAPIsPageProps>(
-      <ProvidedAPIsPage obj={testClusterServiceVersion} />,
-      `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/instances`,
-      `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/instances`,
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
+      ns: 'default',
+      appName: 'testapp',
+    });
+
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/instances`,
+    });
+
+    wrapper = mount(
+      <Provider store={store}>
+        <ReactRouter.BrowserRouter>
+          <ProvidedAPIsPage obj={testClusterServiceVersion} />
+        </ReactRouter.BrowserRouter>
+      </Provider>,
     );
   });
+
   it('render listpage components', () => {
     expect(wrapper.find(ListPageHeader).exists()).toBe(true);
     expect(wrapper.find(ListPageCreateDropdown).exists()).toBe(true);
     expect(wrapper.find(ListPageBody).exists()).toBe(true);
     expect(wrapper.find(ListPageFilter).exists()).toBe(true);
   });
+
   it('render ListPageCreateDropdown with the correct text', () => {
     expect(wrapper.find(ListPageCreateDropdown).children().text()).toEqual('Create new');
   });
+
   it('passes `items` props and render ListPageCreateDropdown create button if app has multiple owned CRDs', () => {
     const obj = _.cloneDeep(testClusterServiceVersion);
     obj.spec.customresourcedefinitions.owned.push({
@@ -507,7 +586,15 @@ describe(ProvidedAPIsPage.displayName, () => {
       version: 'v1',
       kind: 'FooBar',
     });
-    wrapper.setProps({ obj });
+
+    wrapper = mount(
+      <Provider store={store}>
+        <ReactRouter.BrowserRouter>
+          <ProvidedAPIsPage obj={obj} />
+        </ReactRouter.BrowserRouter>
+      </Provider>,
+    );
+
     const listPageCreateDropdown = wrapper.find(ListPageCreateDropdown);
 
     expect(listPageCreateDropdown.props().items).toEqual({
@@ -515,6 +602,7 @@ describe(ProvidedAPIsPage.displayName, () => {
       'testapp.coreos.com~v1~FooBar': 'Foo Bars',
     });
   });
+
   it('check if ListPageBody component renders the correct children', () => {
     expect(wrapper.find(ListPageBody).children().children().length).toBe(2);
   });
@@ -524,10 +612,22 @@ describe(ProvidedAPIPage.displayName, () => {
   let wrapper: ReactWrapper<ProvidedAPIPageProps>;
 
   beforeEach(() => {
-    wrapper = mountWithRoute(
-      <ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} />,
-      `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResourceRO`,
-      `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural`,
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
+      ns: 'default',
+      appName: 'testapp',
+      plural: 'TestResourceRO',
+    });
+
+    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResourceRO`,
+    });
+
+    wrapper = mount(
+      <Provider store={store}>
+        <ReactRouter.BrowserRouter>
+          <ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} />
+        </ReactRouter.BrowserRouter>
+      </Provider>,
     );
   });
 
@@ -537,14 +637,17 @@ describe(ProvidedAPIPage.displayName, () => {
     expect(wrapper.find(ListPageBody).exists()).toBe(true);
     expect(wrapper.find(ListPageFilter).exists()).toBe(true);
   });
+
   it('render ListPageCreateLink with the correct props for create button if app has single owned CRDs', () => {
     expect(wrapper.find(ListPageCreateLink).props().to).toEqual(
       `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResourceRO/~new`,
     );
   });
+
   it('render ListPageCreateLink with the correct text', () => {
     expect(wrapper.find(ListPageCreateLink).children().text()).toEqual('Create Test Resource');
   });
+
   it('check if ListPageBody component renders the correct children', () => {
     expect(wrapper.find(ListPageBody).children().children().length).toBe(2);
   });

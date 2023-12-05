@@ -2,13 +2,14 @@ import * as React from 'react';
 import { act } from '@testing-library/react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
-import { Router } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import * as Router from 'react-router-dom-v5-compat';
 import { SemVer } from 'semver';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/useActivePerspective';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory/';
-import { history, LoadingBox } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
@@ -48,6 +49,12 @@ jest.mock('@console/internal/components/utils/firehose', () => ({
   Firehose: ({ children }) => children,
 }));
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useLocation: jest.fn(),
+  useParams: jest.fn(),
+}));
+
 type PipelineDetailsPageProps = React.ComponentProps<typeof PipelineDetailsPage>;
 const mockData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
 const pipelineRuns: PipelineRunKind[] = Object.values(mockData.pipelineRuns);
@@ -61,15 +68,11 @@ describe('PipelineDetailsPage:', () => {
     PipelineDetailsPageProps = {
       kind: PipelineModel.kind,
       kindObj: PipelineModel,
-      match: {
-        isExact: true,
-        path: `/k8s/ns/${namespace}/${referenceForModel(PipelineModel)}/${pipelineName}`,
-        url: `k8s/ns/${namespace}/${referenceForModel(PipelineModel)}/${pipelineName}`,
-        params: {
-          ns: namespace,
-        },
-      },
     };
+    jest.spyOn(Router, 'useLocation').mockReturnValue({
+      pathname: `k8s/ns/${namespace}/${referenceForModel(PipelineModel)}/${pipelineName}`,
+    });
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: namespace });
     menuActions.mockReturnValue(getPipelineKebabActions(pipelineRuns[0], true));
     breadCrumbs.mockReturnValue([{ label: 'Pipelines' }, { label: 'Pipeline Details' }]);
     templateNames.mockReturnValue([]);
@@ -85,11 +88,11 @@ describe('PipelineDetailsPage:', () => {
     await act(
       async () =>
         (wrapper = mount(
-          <Router history={history}>
+          <BrowserRouter>
             <Provider store={store}>
               <PipelineDetailsPage {...PipelineDetailsPageProps} />
             </Provider>
-          </Router>,
+          </BrowserRouter>,
         )),
     );
     return wrapper;

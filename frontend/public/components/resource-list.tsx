@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { match } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { connectToPlural } from '../kinds';
@@ -34,9 +34,9 @@ import {
 } from '@console/dynamic-plugin-sdk';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
-const allParams = (props) => Object.assign({}, _.get(props, 'match.params'), props);
+const allParams = (props) => Object.assign({}, _.get(props, 'params'), props);
 
-export const ResourceListPage = connectToPlural(
+const ResourceListPage_ = connectToPlural(
   withStartGuide((props: ResourceListPageProps) => {
     const resourceListPageExtensions = useExtensions<ResourceListPageExt>(isResourceListPage);
     const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
@@ -72,7 +72,6 @@ export const ResourceListPage = connectToPlural(
           autoFocus={!noProjectsAvailable}
           kind={modelRef}
           loader={componentLoader}
-          match={props.match}
           mock={noProjectsAvailable}
           namespace={ns}
           badge={getBadgeFromType(kindObj.badge)}
@@ -82,11 +81,18 @@ export const ResourceListPage = connectToPlural(
   }),
 );
 
-export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProps) => {
+export const ResourceListPage = (props) => {
+  const params = useParams();
+  return <ResourceListPage_ {...props} params={params} />;
+};
+
+const ResourceDetailsPage_ = connectToPlural((props: ResourceDetailsPageProps) => {
   const detailsPageExtensions = useExtensions<ResourceDetailsPageExt>(isResourceDetailsPage);
   const dynamicResourceDetailsPageExtensions = useExtensions<DynamicResourceDetailsPage>(
     isDynamicResourceDetailsPage,
   );
+  const location = useLocation();
+
   const { name, ns, kindObj, kindsInFlight } = allParams(props);
   const decodedName = decodeURIComponent(name);
 
@@ -98,7 +104,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
   }
 
   const ref =
-    props.match.path.indexOf('customresourcedefinitions') === -1
+    location.pathname.indexOf('customresourcedefinitions') === -1
       ? referenceForModel(kindObj)
       : null;
   const componentLoader =
@@ -106,6 +112,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     getResourceDetailsPages(detailsPageExtensions, dynamicResourceDetailsPageExtensions).get(
       referenceForExtensionModel({
         group: kindObj.apiGroup,
+        version: kindObj.apiVersion,
         kind: kindObj.kind,
       }),
     );
@@ -113,14 +120,13 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
 
   const titleProviderValues = {
     telemetryPrefix: props.kindObj?.kind,
-    titlePrefix: `${props.match.params.name} · ${getTitleForNodeKind(props.kindObj?.kind)}`,
+    titlePrefix: `${props.params.name} · ${getTitleForNodeKind(props.kindObj?.kind)}`,
   };
 
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
       <AsyncComponent
         loader={componentLoader || defaultPage}
-        match={props.match}
         namespace={ns}
         kind={props.modelRef}
         kindObj={kindObj}
@@ -131,18 +137,23 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
   );
 });
 
+export const ResourceDetailsPage = (props) => {
+  const params = useParams();
+  return <ResourceDetailsPage_ {...props} params={params} />;
+};
+
 export type ResourceListPageProps = {
   flags: any;
   kindObj: K8sKind;
   kindsInFlight: boolean;
-  match: match<any>;
+  params?: any;
   modelRef: K8sResourceKindReference;
 };
 
 export type ResourceDetailsPageProps = {
   kindObj: K8sKind;
   kindsInFlight: boolean;
-  match: match<any>;
+  params?: any;
   modelRef: K8sResourceKindReference;
 };
 

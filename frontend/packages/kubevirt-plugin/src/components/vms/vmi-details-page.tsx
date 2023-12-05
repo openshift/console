@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
@@ -28,11 +29,11 @@ import { VMDetailsFirehose } from './vm-details';
 import { breadcrumbsForVMPage } from './vm-details-page';
 import { VMEvents } from './vm-events';
 
-export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanceDetailsPageProps> = (
-  props,
-) => {
+export const VirtualMachinesInstanceDetailsPage: React.FC = () => {
   const { t } = useTranslation();
-  const { name, ns: namespace } = props.match.params;
+  const location = useLocation();
+  const params = useParams();
+  const { name, ns: namespace } = params;
 
   const overviewPage = {
     href: '', // default landing page
@@ -93,7 +94,6 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
 
   return (
     <DetailsPage
-      {...props}
       name={name}
       namespace={namespace}
       kind={kubevirtReferenceForModel(VirtualMachineInstanceModel)}
@@ -105,14 +105,10 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
       }}
       pages={pages}
       resources={resources}
-      breadcrumbsFor={breadcrumbsForVMPage(t, props.match)}
+      breadcrumbsFor={breadcrumbsForVMPage(t, location, params)}
       customData={{ kindObj: VirtualMachineInstanceModel }}
     >
       <VMIDetailsPageInfoMessage name={name} namespace={namespace} />
     </DetailsPage>
   );
-};
-
-export type VirtualMachinesInstanceDetailsPageProps = {
-  match: any;
 };

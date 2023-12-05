@@ -14,7 +14,7 @@ import {
 import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { LoadingBox, history } from '@console/internal/components/utils';
 import { PageLayout, isModifiedEvent } from '@console/shared';
 import ClusterConfigurationForm from './ClusterConfigurationForm';
@@ -25,12 +25,11 @@ import useClusterConfigurationItems from './useClusterConfigurationItems';
 
 import './ClusterConfigurationPage.scss';
 
-export type ClusterConfigurationPageProps = RouteComponentProps<{ group: string }>;
-
-const ClusterConfigurationPage: React.FC<ClusterConfigurationPageProps> = ({ match }) => {
+const ClusterConfigurationPage: React.FC = () => {
   const { t } = useTranslation();
+  const params = useParams();
 
-  const initialGroupId = match.params.group || 'general';
+  const initialGroupId = params.group || 'general';
   const [activeTabId, setActiveTabId] = React.useState<string>(initialGroupId);
   const onSelect = (event: React.MouseEvent<HTMLElement>, newGroupId: string) => {
     if (isModifiedEvent(event)) {
@@ -38,9 +37,7 @@ const ClusterConfigurationPage: React.FC<ClusterConfigurationPageProps> = ({ mat
     }
     event.preventDefault();
     setActiveTabId(newGroupId);
-    const path = match.path.includes(':group')
-      ? match.path.replace(':group', newGroupId)
-      : `${match.path}/${newGroupId}`;
+    const path = `/cluster-configuration/${newGroupId}`;
     history.replace(path);
   };
 

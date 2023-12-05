@@ -2,7 +2,7 @@ import * as React from 'react';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import {
   NodeLink,

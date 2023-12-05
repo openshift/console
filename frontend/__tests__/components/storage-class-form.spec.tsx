@@ -8,6 +8,11 @@ import {
 } from '../../public/components/storage-class-form';
 import { PageHeading } from '../../public/components/utils';
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useNavigate: jest.fn(),
+}));
+
 describe(ConnectedStorageClassForm.displayName, () => {
   const Component: React.ComponentType<Omit<
     StorageClassFormProps,

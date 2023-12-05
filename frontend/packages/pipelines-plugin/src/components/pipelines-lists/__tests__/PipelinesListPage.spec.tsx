@@ -15,7 +15,6 @@ type PipelinesListPageProps = React.ComponentProps<typeof PipelinesListPage>;
 
 describe('PipelinesListPage', () => {
   let wrapper: ShallowWrapper<PipelinesListPageProps>;
-  let pipelinesListPageProps: PipelinesListPageProps;
   let spyUseFlag;
   let spyPipelineTechPreviewBadge;
   let spyUseAccessReview;
@@ -31,17 +30,6 @@ describe('PipelinesListPage', () => {
     spyPipelineTechPreviewBadge.mockReturnValue(null);
     spyUseAccessReview.mockReturnValue([true, false]);
     spyK8sGet.mockReturnValue([sampleSecretData, true, null]);
-
-    pipelinesListPageProps = {
-      match: {
-        isExact: true,
-        path: '/pipelines/ns/:ns',
-        url: 'pipelines/ns/openshift-pipelines',
-        params: {
-          ns: 'openshift-pipelines',
-        },
-      },
-    };
   });
 
   afterEach(() => {
@@ -50,7 +38,7 @@ describe('PipelinesListPage', () => {
 
   it('Shoud show CTA for GitHub app as Setup GitHub App if user has required access and App has not been setup', () => {
     spyK8sGet.mockReturnValue([undefined, true, null]);
-    wrapper = shallow(<PipelinesListPage {...pipelinesListPageProps} />);
+    wrapper = shallow(<PipelinesListPage />);
     const multiTabListPage = wrapper.find(MultiTabListPage);
     expect(multiTabListPage.exists()).toBe(true);
     expect(multiTabListPage.props().secondaryButtonAction.href).toEqual(
@@ -62,7 +50,7 @@ describe('PipelinesListPage', () => {
   });
 
   it('Shoud show CTA for GitHub app as View GitHub App if user has required access and App has been setup', () => {
-    wrapper = shallow(<PipelinesListPage {...pipelinesListPageProps} />);
+    wrapper = shallow(<PipelinesListPage />);
     const multiTabListPage = wrapper.find(MultiTabListPage);
     expect(multiTabListPage.exists()).toBe(true);
     expect(multiTabListPage.props().secondaryButtonAction.href).toEqual(
@@ -75,7 +63,7 @@ describe('PipelinesListPage', () => {
 
   it('Shoud not show CTA for GitHub app if user does not have required access', () => {
     spyUseAccessReview.mockReturnValue([false, false]);
-    wrapper = shallow(<PipelinesListPage {...pipelinesListPageProps} />);
+    wrapper = shallow(<PipelinesListPage />);
     const multiTabListPage = wrapper.find(MultiTabListPage);
     expect(multiTabListPage.exists()).toBe(true);
     expect(multiTabListPage.props().secondaryButtonAction).toBeUndefined();

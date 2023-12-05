@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import * as Router from 'react-router-dom-v5-compat';
 import { ResourcesEventStream } from '@console/internal/components/events';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { PipelineRunModel } from '../../../../models';
 import {
   DataState,
   PipelineExampleNames,
@@ -18,19 +17,19 @@ const { taskRuns, pods } = pipeline;
 const spyUsePipelineRunRelatedResources = jest.spyOn(utils, 'usePipelineRunRelatedResources');
 type PipelineRunEventsProps = React.ComponentProps<typeof PipelineRunEvents>;
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+}));
+
 describe('PipelineRunEvents:', () => {
   let pipelineRunEventsProps: PipelineRunEventsProps;
   beforeEach(() => {
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: 'rhd-test',
+    });
     pipelineRunEventsProps = {
       obj: pipelineRun,
-      match: {
-        isExact: true,
-        path: `/k8s/ns/:ns/${referenceForModel(PipelineRunModel)}/events`,
-        url: `k8s/ns/rhd-test/${referenceForModel(PipelineRunModel)}/events`,
-        params: {
-          ns: 'rhd-test',
-        },
-      },
     };
     spyUsePipelineRunRelatedResources.mockReturnValue({
       taskruns: { data: taskRuns, loaded: true },

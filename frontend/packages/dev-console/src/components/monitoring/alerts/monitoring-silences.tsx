@@ -50,7 +50,7 @@ const ConnectedPage: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   return <>{children}</>;
 };
 
-export const MonitoringEditSilencePage: React.FC<{ match: any }> = ({ match }) => (
+export const MonitoringEditSilencePage: React.FC<{}> = () => (
   <ConnectedPage>
     <NamespacedPage
       hideApplications
@@ -63,7 +63,7 @@ export const MonitoringEditSilencePage: React.FC<{ match: any }> = ({ match }) =
       }}
       variant={NamespacedPageVariants.light}
     >
-      <EditSilence match={match} />
+      <EditSilence />
     </NamespacedPage>
   </ConnectedPage>
 );
@@ -74,7 +74,7 @@ export const MonitoringSilencesPage: React.FC<{}> = () => (
   </ConnectedPage>
 );
 
-export const MonitoringSilenceDetailsPage: React.FC<{ match: any }> = ({ match }) => (
+export const MonitoringSilenceDetailsPage: React.FC<{}> = () => (
   <ConnectedPage>
     <NamespacedPage
       hideApplications
@@ -87,7 +87,7 @@ export const MonitoringSilenceDetailsPage: React.FC<{ match: any }> = ({ match }
       }}
       variant={NamespacedPageVariants.light}
     >
-      <SilencesDetailsPage match={match} />
+      <SilencesDetailsPage />
     </NamespacedPage>
   </ConnectedPage>
 );

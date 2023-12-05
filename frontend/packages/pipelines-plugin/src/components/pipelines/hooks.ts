@@ -1,4 +1,4 @@
-import { match as RMatch } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { WatchK8sResource, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
@@ -18,13 +18,14 @@ import { pipelinesTab } from '../../utils/pipeline-utils';
 import { DEFAULT_SAMPLES, TektonResourceLabel } from './const';
 import { metricsQueries, PipelineQuery } from './pipeline-metrics/pipeline-metrics-utils';
 
-type Match = RMatch<{ url: string }>;
-
-export const usePipelinesBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
+export const usePipelinesBreadcrumbsFor = (kindObj: K8sKind) => {
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
+  const params = useParams();
+  const location = useLocation();
   return useTabbedTableBreadcrumbsFor(
     kindObj,
-    match,
+    location,
+    params,
     'pipelines',
     pipelinesTab(kindObj),
     undefined,
@@ -32,11 +33,14 @@ export const usePipelinesBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
   );
 };
 
-export const useTasksBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
+export const useTasksBreadcrumbsFor = (kindObj: K8sKind) => {
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
+  const params = useParams();
+  const location = useLocation();
   return useTabbedTableBreadcrumbsFor(
     kindObj,
-    match,
+    location,
+    params,
     'tasks',
     pipelinesTab(kindObj),
     undefined,
@@ -44,11 +48,14 @@ export const useTasksBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
   );
 };
 
-export const useTriggersBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
+export const useTriggersBreadcrumbsFor = (kindObj: K8sKind) => {
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
+  const params = useParams();
+  const location = useLocation();
   return useTabbedTableBreadcrumbsFor(
     kindObj,
-    match,
+    location,
+    params,
     'triggers',
     pipelinesTab(kindObj),
     undefined,
@@ -56,12 +63,15 @@ export const useTriggersBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
   );
 };
 
-export const useDevPipelinesBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
+export const useDevPipelinesBreadcrumbsFor = (kindObj: K8sKind) => {
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const navOption = isAdminPerspective ? `pipelines` : 'dev-pipelines';
+  const params = useParams();
+  const location = useLocation();
   return useTabbedTableBreadcrumbsFor(
     kindObj,
-    match,
+    location,
+    params,
     navOption,
     pipelinesTab(kindObj),
     undefined,

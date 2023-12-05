@@ -5,7 +5,7 @@ import i18next from 'i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { connect, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, redirect } from 'react-router-dom-v5-compat';
 import {
   NotificationDrawer,
   NotificationEntry,
@@ -61,7 +61,7 @@ import {
   useResolvedExtensions,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
-import { history, resourcePath } from '@console/internal/components/utils';
+import { resourcePath } from '@console/internal/components/utils';
 import { coFetchJSON } from '../co-fetch';
 import { ConsolePluginModel } from '../models';
 import {
@@ -128,7 +128,7 @@ export const getAlertActions = (actionsExtensions: ResolvedExtension<AlertAction
     Omit<ResolvedExtension<AlertAction>['properties'], 'alert'>
   >().set('AlertmanagerReceiversNotConfigured', {
     text: i18next.t('public~Configure'),
-    action: () => history.push('/monitoring/alertmanagerconfig'),
+    action: () => redirect('/monitoring/alertmanagerconfig'),
   });
   actionsExtensions.forEach(({ properties }) =>
     alertActions.set(properties.alert, {

@@ -3,7 +3,7 @@ import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core
 import { FormikValues, useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { FLAG_OPENSHIFT_DEPLOYMENTCONFIG } from '@console/dev-console/src/const';
 import { ImportStrategy } from '@console/git-service/src';
 import { getActiveNamespace } from '@console/internal/actions/ui';

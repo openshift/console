@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -107,8 +108,10 @@ const FunctionsPods: React.FC<FunctionsPodsProps> = ({ obj }) => (
 const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { t } = useTranslation();
   const serviceTypeValue = React.useContext(KnativeServiceTypeContext);
+  const { kindObj } = props;
+  const params = useParams();
+  const location = useLocation();
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
-  const { kindObj, match } = props;
   const pages = [
     navFactory.details(ServiceDetails),
     navFactory.editYaml(),
@@ -119,7 +122,7 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
       component: RevisionsPage,
       pageData: {
         kind: referenceForModel(RevisionModel),
-        namespace: match.params.ns,
+        namespace: params.ns,
         showTitle: false,
       },
     },
@@ -130,7 +133,7 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
       component: RoutesPage,
       pageData: {
         kind: referenceForModel(RouteModel),
-        namespace: match.params.ns,
+        namespace: params.ns,
         showTitle: false,
       },
     },
@@ -151,8 +154,9 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
   };
   const breadcrumbs = useTabbedTableBreadcrumbsFor(
     kindObj,
-    match,
-    serviceTypeValue === ServiceTypeValue.Function ? 'functions' : 'serving',
+    location,
+    params,
+    'serving',
     serverlessTab(kindObj.kind),
     serviceTypeValue === ServiceTypeValue.Function ? t('knative-plugin~Functions') : undefined,
     serviceTypeValue === ServiceTypeValue.Function ? true : isAdminPerspective,
@@ -164,7 +168,11 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
       breadcrumbsFor={() => breadcrumbs}
       pages={pages}
       customActionMenu={actionMenu}
-      customData={{ selectResourcesForName: match.params.name }}
+      customData={
+        serviceTypeValue === ServiceTypeValue.Function
+          ? { selectResourcesForName: params.name }
+          : undefined
+      }
     />
   );
 };

@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   useResolvedExtensions,
   UserPreferenceGroup,
@@ -34,9 +34,7 @@ import UserPreferenceForm from './UserPreferenceForm';
 import { getUserPreferenceGroups } from './utils/getUserPreferenceGroups';
 import './UserPreferencePage.scss';
 
-export type UserPreferencePageProps = RouteComponentProps<{ group: string }>;
-
-const UserPreferencePage: React.FC<UserPreferencePageProps> = ({ match }) => {
+const UserPreferencePage: React.FC = () => {
   // resources and calls to hooks
   const { t } = useTranslation();
 
@@ -53,9 +51,7 @@ const UserPreferencePage: React.FC<UserPreferencePageProps> = ({ match }) => {
   >(userPreferenceItemExtensions.map(({ properties }) => properties));
 
   // fetch the default user preference group from the url params if available
-  const {
-    params: { group: groupIdFromUrl },
-  } = match;
+  const { group: groupIdFromUrl } = useParams();
   const initialTabId =
     sortedUserPreferenceGroups.find((extension) => extension.id === groupIdFromUrl)?.id ||
     sortedUserPreferenceGroups[0]?.id;

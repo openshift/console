@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import Helmet from 'react-helmet';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
@@ -180,12 +181,11 @@ export const DebugTerminal: React.FC<DebugTerminalProps> = ({ podData, container
   return <LoadingBox />;
 };
 
-export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = ({ match }) => {
+export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = () => {
   const { t } = useTranslation();
-  const {
-    params: { podName, ns, name },
-    url,
-  } = match;
+  const params = useParams();
+  const { podName, ns, name } = params;
+  const { pathname: url } = useLocation();
 
   const [podData, loaded, err] = useK8sWatchResource<PodKind>({
     isList: false,
@@ -205,7 +205,7 @@ export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = ({ match }) =
         kind="Pod"
         obj={{ data: podData }}
         breadcrumbs={[
-          { name: t('public~Pods'), path: getBreadcrumbPath(match, 'pods') },
+          { name: t('public~Pods'), path: getBreadcrumbPath(params, 'pods') },
           {
             name: podName,
             path: resourcePath('Pod', podName, ns),
@@ -242,6 +242,5 @@ type DebugTerminalProps = {
 };
 
 type DebugTerminalPageProps = {
-  match: any;
   obj: PodKind;
 };

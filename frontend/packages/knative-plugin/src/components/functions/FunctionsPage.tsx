@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -22,10 +23,8 @@ import './FunctionsPage.scss';
 
 const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
   const { t } = useTranslation();
-  const {
-    params: { ns: namespace },
-  } = props.match;
-  return namespace ? (
+  const params = useParams();
+  return params.namespace ? (
     <KnativeServiceTypeContext.Provider value={ServiceTypeValue.Function}>
       <Helmet>
         <title>{t('knative-plugin~Functions')}</title>

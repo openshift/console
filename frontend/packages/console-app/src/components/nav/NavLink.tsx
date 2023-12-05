@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom-v5-compat';
 
 export const NavLink: React.FC<NavLinkProps> = ({ children, dragRef, ...linkProps }) => {
   return (

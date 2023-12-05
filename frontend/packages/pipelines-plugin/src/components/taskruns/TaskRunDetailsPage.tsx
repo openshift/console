@@ -15,9 +15,9 @@ import TaskRunLog from './TaskRunLog';
 import './TaskRunDetailsPage.scss';
 
 const TaskRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const { kindObj, namespace, name } = props;
   const { t } = useTranslation();
-  const { kindObj, match, namespace, name } = props;
-  const breadcrumbsFor = useTasksBreadcrumbsFor(kindObj, match);
+  const breadcrumbsFor = useTasksBreadcrumbsFor(kindObj);
   const badge = usePipelineTechPreviewBadge(props.namespace);
   const [taskRun, loaded, error] = useTaskRun(namespace, name);
   const resourceTitleFunc = (obj: TaskRunKind): string | JSX.Element => {

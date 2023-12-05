@@ -20,7 +20,7 @@ import {
   ApplicationLauncherItem,
   ApplicationLauncherSeparator,
 } from '@patternfly/react-core/deprecated';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   ACM_LINK_ID,
   FLAGS,

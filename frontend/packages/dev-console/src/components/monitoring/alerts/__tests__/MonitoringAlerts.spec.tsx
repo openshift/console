@@ -7,27 +7,30 @@ import {
 import { shallow } from 'enzyme';
 import { Map } from 'immutable';
 import * as redux from 'react-redux';
+import * as Router from 'react-router-dom-v5-compat';
 import { AlertStates, PrometheusRulesResponse, RuleStates } from '@console/dynamic-plugin-sdk/src';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { EmptyBox } from '@console/internal/components/utils';
 import { MonitoringAlerts } from '../MonitoringAlerts';
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useNavigate: jest.fn(),
+}));
+
 describe('MonitoringAlerts', () => {
   const monitoringAlertsProps: React.ComponentProps<typeof MonitoringAlerts> = {
-    match: {
-      params: {
-        ns: 'monitoring-test',
-      },
-      isExact: true,
-      path: '',
-      url: '',
-    },
     rules: [],
     alerts: { data: [], loaded: false },
     filters: Map({}),
     listSorts: Map({}),
   };
+
+  jest.spyOn(Router, 'useParams').mockReturnValue({
+    ns: 'monitoring-test',
+  });
   // FIXME upgrading redux types is causing many errors at this time
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

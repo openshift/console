@@ -6,8 +6,8 @@ import { useTriggersTechPreviewBadge } from '../../utils/hooks';
 import { useTriggersBreadcrumbsFor } from './hooks';
 
 const ClusterTriggerBindingPage: React.FC<DetailsPageProps> = (props) => {
-  const { kindObj, match } = props;
-  const breadcrumbsFor = useTriggersBreadcrumbsFor(kindObj, match);
+  const { kindObj } = props;
+  const breadcrumbsFor = useTriggersBreadcrumbsFor(kindObj);
   const badge = useTriggersTechPreviewBadge(props.namespace);
 
   return (

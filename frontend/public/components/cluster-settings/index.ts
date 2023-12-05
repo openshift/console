@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 
 import { OAuthModel } from '../../models';
 import { IdentityProvider, k8sGet, k8sPatch, OAuthKind } from '../../module/k8s';
-import { history, resourcePathFromModel } from '../utils';
+import { resourcePathFromModel } from '../utils';
 
 // The name of the cluster-scoped OAuth configuration resource.
 const OAUTH_RESOURCE_NAME = 'cluster';
@@ -20,9 +20,9 @@ export const addIDP = (
   return k8sPatch(OAuthModel, oauth, [patch], dryRun ? { queryParams: { dryRun: 'All' } } : {});
 };
 
-export const redirectToOAuthPage = () => {
+export const redirectToOAuthPage = (navigate) => {
   const path = `${resourcePathFromModel(OAuthModel, OAUTH_RESOURCE_NAME)}?idpAdded=true`;
-  history.push(path);
+  navigate(path);
 };
 
 export const mockNames = {

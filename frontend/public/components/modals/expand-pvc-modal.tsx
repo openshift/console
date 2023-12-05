@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import {
   RequestSizeInput,
   resourceObjPath,
-  history,
   validate,
   withHandlePromise,
   HandlePromiseProps,
@@ -22,6 +22,7 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
   const [inProgress, setInProgress] = React.useState(false);
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const handleRequestSizeInputChange = (obj) => {
     setRequestSizeValue(obj.value);
@@ -42,7 +43,7 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
       .then((resource) => {
         setInProgress(false);
         props.close();
-        history.push(resourceObjPath(resource, referenceFor(resource)));
+        navigate(resourceObjPath(resource, referenceFor(resource)));
       })
       .catch((err) => {
         setErrorMessage(err.message);

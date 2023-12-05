@@ -1,6 +1,6 @@
 import * as React from 'react';
 // import { useTranslation } from 'react-i18next';
-import { useLocation, match as Rmatch, useHistory } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -14,16 +14,10 @@ import { usePacData } from './hooks/usePacData';
 import PacForm from './PacForm';
 import PacOverview from './PacOverview';
 
-type PacPageProps = {
-  match: Rmatch<{
-    ns?: string;
-  }>;
-};
-
-const PacPage: React.FC<PacPageProps> = ({ match }) => {
+const PacPage: React.FC = () => {
   // const { t } = useTranslation();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const isPipelinesEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE);
   const [isAdmin, isAdminCheckLoading] = useAccessReview({
@@ -32,15 +26,13 @@ const PacPage: React.FC<PacPageProps> = ({ match }) => {
     resource: 'secrets',
   });
   const code = queryParams.get('code');
-  const {
-    params: { ns: namespace },
-  } = match;
+  const { ns: namespace } = useParams();
 
   React.useEffect(() => {
     if (isPipelinesEnabled && namespace !== PIPELINE_NAMESPACE) {
-      history.push(`/pac/ns/${PIPELINE_NAMESPACE}`);
+      navigate(`/pac/ns/${PIPELINE_NAMESPACE}`);
     }
-  }, [history, isPipelinesEnabled, namespace]);
+  }, [isPipelinesEnabled, namespace, navigate]);
 
   const { loaded, secretData, loadError, isFirstSetup } = usePacData(code);
 

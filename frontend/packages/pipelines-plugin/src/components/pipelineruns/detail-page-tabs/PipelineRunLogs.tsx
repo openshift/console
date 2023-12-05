@@ -3,8 +3,7 @@ import { Nav, NavItem, NavList } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { PipelineRunModel } from '../../../models';
@@ -221,16 +220,14 @@ class PipelineRunLogsWithTranslation extends React.Component<
 
 type PipelineRunLogsWithActiveTaskProps = {
   obj: PipelineRunKind;
-  params?: RouteComponentProps;
 };
 
 const PipelineRunLogs = withTranslation()(PipelineRunLogsWithTranslation);
 
 export const PipelineRunLogsWithActiveTask: React.FC<PipelineRunLogsWithActiveTaskProps> = ({
   obj,
-  params,
 }) => {
-  const activeTask = _.get(params, 'match.params.name');
+  const { name: activeTask } = useParams();
   const [taskRuns, taskRunsLoaded] = useTaskRuns(obj?.metadata?.namespace, obj?.metadata?.name);
 
   return (

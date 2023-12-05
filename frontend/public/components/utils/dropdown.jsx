@@ -4,15 +4,15 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
-import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
-import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
-import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { Divider } from '@patternfly/react-core';
 import { impersonateStateToProps, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useUserSettingsCompatibility } from '@console/shared';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
+import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
 
 import { checkAccess } from './rbac';
-import { history } from './router';
 import { KebabItems } from './kebab';
 import { ResourceName } from './resource-icon';
 
@@ -646,6 +646,7 @@ Dropdown.propTypes = {
 
 const ActionsMenuDropdown = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [active, setActive] = React.useState(!!props.active);
 
   const dropdownElement = React.useRef();
@@ -712,7 +713,7 @@ const ActionsMenuDropdown = (props) => {
     }
 
     if (option.href) {
-      history.push(option.href);
+      navigate(option.href);
     }
 
     hide();

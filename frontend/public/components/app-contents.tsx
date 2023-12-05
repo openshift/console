@@ -1,6 +1,13 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import {
+  Route,
+  Routes,
+  Navigate,
+  useParams,
+  useLocation,
+  matchRoutes,
+} from 'react-router-dom-v5-compat';
 
 import {
   useActivePerspective,
@@ -34,9 +41,10 @@ import { RoutePage, isRoutePage, useExtensions, LoadedExtension } from '@console
 
 import CreateResource from './create-resource';
 
-const RedirectComponent = (props) => {
-  const to = `/k8s${props.location.pathname}`;
-  return <Redirect to={to} />;
+const RedirectComponent = () => {
+  const location = useLocation();
+  const to = `/k8s${location.pathname}`;
+  return <Navigate to={to} replace />;
 };
 
 // Ensure a *const* function wrapper for each namespaced Component so that react router doesn't recreate them
@@ -45,7 +53,7 @@ function NamespaceFromURL(Component) {
   let C = Memoized.get(Component);
   if (!C) {
     C = function NamespaceInjector(props) {
-      return <Component namespace={props.match.params.ns} {...props} />;
+      return <Component {...props} />;
     };
     Memoized.set(Component, C);
   }
@@ -54,8 +62,8 @@ function NamespaceFromURL(Component) {
 
 const namespacedRoutes = [];
 _.each(namespacedPrefixes, (p) => {
-  namespacedRoutes.push(`${p}/ns/:ns`);
-  namespacedRoutes.push(`${p}/all-namespaces`);
+  namespacedRoutes.push({ path: `${p}/ns/:ns/*` });
+  namespacedRoutes.push({ path: `${p}/all-namespaces/*` });
 });
 
 const DefaultPageRedirect: React.FC<{
@@ -70,7 +78,7 @@ const DefaultPageRedirect: React.FC<{
     })();
   }, [url, flags, firstVisit]);
 
-  return resolvedUrl ? <Redirect to={resolvedUrl} /> : null;
+  return resolvedUrl ? <Navigate to={resolvedUrl} replace /> : null;
 };
 
 type DefaultPageProps = {
@@ -121,21 +129,7 @@ const DefaultPage = connectToFlags(
   FLAGS.MONITORING,
 )(DefaultPage_);
 
-const LazyRoute = (props) => (
-  <Route
-    {...props}
-    component={undefined}
-    render={(componentProps) => (
-      <AsyncComponent loader={props.loader} kind={props.kind} {...componentProps} />
-    )}
-  />
-);
-
-const LazyDynamicRoute: React.FC<
-  Omit<React.ComponentProps<typeof Route>, 'component'> & {
-    component: LoadedExtension<DynamicRoutePage>['properties']['component'];
-  }
-> = ({ component, ...props }) => {
+const LazyDynamicRoute: React.FC<{ component: any }> = ({ component }) => {
   const LazyComponent = React.useMemo(
     () =>
       React.lazy(async () => {
@@ -145,7 +139,7 @@ const LazyDynamicRoute: React.FC<
       }),
     [component],
   );
-  return <Route {...props} component={LazyComponent} />;
+  return <LazyComponent />;
 };
 
 const getPluginPageRoutes = (
@@ -154,43 +148,151 @@ const getPluginPageRoutes = (
   routePages: RoutePage[],
   dynamicRoutePages: LoadedExtension<DynamicRoutePage>[],
 ) => {
-  const activeRoutes = [
-    ...routePages
-      .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
-      .map((r) => {
-        const Component = r.properties.loader ? LazyRoute : Route;
-        return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
-      }),
-    ...dynamicRoutePages
-      .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
-      .map((r) => (
-        <LazyDynamicRoute
-          exact={r.properties.exact}
-          path={r.properties.path}
-          component={r.properties.component}
-          key={r.uid}
-        />
-      )),
-  ];
+  const activeRoutes = [];
+  const inactiveRoutes = [];
 
-  const inactiveRoutes = [...routePages, ...dynamicRoutePages]
+  routePages
+    .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
+    .forEach((r) => {
+      const copiedProperties = Object.assign({}, r.properties);
+      delete copiedProperties.path;
+
+      if (r.properties.loader) {
+        // if path is a string
+        if (typeof r.properties.path === 'string') {
+          activeRoutes.push(
+            <Route
+              {...copiedProperties}
+              path={`${r.properties.path}${r.properties.exact ? '' : '/*'}`}
+              key={Array.from(r.properties.path).join(',')}
+              element={<AsyncComponent loader={r.properties.loader} />}
+            />,
+          );
+        }
+        // if path is an array
+        else if (Array.isArray(r.properties.path)) {
+          r.properties.path.forEach((p) => {
+            activeRoutes.push(
+              <Route
+                {...copiedProperties}
+                path={`${p}${r.properties.exact ? '' : '/*'}`}
+                key={Array.from(p).join(',')}
+                element={<AsyncComponent loader={r.properties.loader} />}
+              />,
+            );
+          });
+        }
+      } else if (typeof r.properties.path === 'string') {
+        activeRoutes.push(
+          <Route
+            {...copiedProperties}
+            path={`${r.properties.path}${r.properties.exact ? '' : '/*'}`}
+            key={Array.from(r.properties.path).join(',')}
+          />,
+        );
+      } else if (Array.isArray(r.properties.path)) {
+        r.properties.path.forEach((p) => {
+          activeRoutes.push(
+            <Route
+              {...copiedProperties}
+              path={`${p}${r.properties.exact ? '' : '/*'}`}
+              key={Array.from(p).join(',')}
+            />,
+          );
+        });
+      }
+    });
+
+  dynamicRoutePages
+    .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
+    .forEach((r) => {
+      if (typeof r.properties.path === 'string') {
+        activeRoutes.push(
+          <Route
+            path={`${r.properties.path}${r.properties.exact ? '' : '/*'}`}
+            key={r.uid}
+            element={<LazyDynamicRoute component={r.properties.component} />}
+          />,
+        );
+      } else if (Array.isArray(r.properties.path)) {
+        r.properties.path.forEach((p) => {
+          activeRoutes.push(
+            <Route
+              path={`${p}${r.properties.exact ? '' : '/*'}`}
+              key={r.uid}
+              element={<LazyDynamicRoute component={r.properties.component} />}
+            />,
+          );
+        });
+      }
+    });
+
+  [...routePages, ...dynamicRoutePages]
     .filter((r) => r.properties.perspective && r.properties.perspective !== activePerspective)
-    .map((r) => {
-      const key = Array.from(r.properties.path).concat([r.properties.perspective]).join(',');
+    .forEach((r) => {
+      const copiedProperties = Object.assign({}, r.properties);
+      delete copiedProperties.path;
 
-      return (
-        <Route
-          {...r.properties}
-          key={key}
-          component={() => {
-            React.useEffect(() => setActivePerspective(r.properties.perspective));
-            return null;
-          }}
-        />
-      );
+      if (typeof r.properties.path === 'string') {
+        const key = Array.from(r.properties.path).concat([r.properties.perspective]).join(',');
+        inactiveRoutes.push(
+          <Route
+            {...copiedProperties}
+            path={`${r.properties.path}${r.properties.exact ? '' : '/*'}`}
+            key={key}
+            element={() => {
+              React.useEffect(() => setActivePerspective(r.properties.perspective));
+              return null;
+            }}
+          />,
+        );
+      }
+      // if path is an array
+      else if (Array.isArray(r.properties.path)) {
+        r.properties.path.forEach((p) => {
+          const key = Array.from(p).concat([r.properties.perspective]).join(',');
+          inactiveRoutes.push(
+            <Route
+              {...copiedProperties}
+              path={`${p}${r.properties.exact ? '' : '/*'}`}
+              key={key}
+              element={() => {
+                React.useEffect(() => setActivePerspective(r.properties.perspective));
+                return null;
+              }}
+            />,
+          );
+        });
+      }
     });
 
   return [activeRoutes, inactiveRoutes];
+};
+
+// REDIRECT ROUTES FOR REACT-ROUTER-V6
+const StatusProjectsRedirect = () => {
+  const { ns } = useParams();
+  return <Navigate to={`/k8s/cluster/projects/${ns}`} replace />;
+};
+
+const OverviewProjectsRedirect = () => {
+  const { ns } = useParams();
+  return <Navigate to={`/k8s/cluster/projects/${ns}/workloads`} replace />;
+};
+
+const AlertManagerRedirect = () => {
+  const { ns, name } = useParams();
+  return <Navigate to={`/k8s/ns/${ns}/${referenceForModel(AlertmanagerModel)}/${name}`} replace />;
+};
+
+const CronJobRedirect = () => {
+  const { ns, name } = useParams();
+  return <Navigate to={`/k8s/ns/${ns}/${CronJobModel.plural}/${name}`} replace />;
+};
+
+const HorizontalPodRedirect = () => {
+  const { ns, name } = useParams();
+  return <Navigate to={`/k8s/ns/${ns}/${HorizontalPodAutoscalerModel.plural}/${name}`} replace />;
 };
 
 const AppContents: React.FC<{}> = () => {
@@ -198,6 +300,7 @@ const AppContents: React.FC<{}> = () => {
   const routePageExtensions = useExtensions<RoutePage>(isRoutePage);
   const dynamicRoutePages = useExtensions<DynamicRoutePage>(isDynamicRoutePage);
   const [, allPluginsProcessed] = useDynamicPluginInfo();
+  const location = useLocation();
 
   const [pluginPageRoutes, inactivePluginPageRoutes] = React.useMemo(
     () =>
@@ -211,503 +314,644 @@ const AppContents: React.FC<{}> = () => {
   );
 
   const contentRouter = (
-    <Switch>
+    <Routes>
       {pluginPageRoutes}
 
-      <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
-      <LazyRoute
-        path="/dashboards"
-        loader={() =>
-          import(
-            './dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */
-          ).then((m) => m.DashboardsPage)
+      <Route path="/all-namespaces/*" element={<RedirectComponent />} />
+      <Route path="/ns/:ns/*" element={<RedirectComponent />} />
+      <Route
+        path="/dashboards/*"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */
+              ).then((m) => m.DashboardsPage)
+            }
+          />
         }
       />
 
       {/* Redirect legacy routes to avoid breaking links */}
-      <Redirect from="/cluster-status" to="/dashboards" />
-      <Redirect from="/status/all-namespaces" to="/dashboards" />
-      <Redirect from="/status/ns/:ns" to="/k8s/cluster/projects/:ns" />
-      <Route path="/status" exact component={NamespaceRedirect} />
-      <Redirect from="/overview/all-namespaces" to="/dashboards" />
-      <Redirect from="/overview/ns/:ns" to="/k8s/cluster/projects/:ns/workloads" />
-      <Route path="/overview" exact component={NamespaceRedirect} />
+      <Route path="/cluster-status" element={<Navigate to="/dashboards" replace />} />
+      <Route path="/status/all-namespaces" element={<Navigate to="/dashboards" replace />} />
+      <Route path="/status/ns/:ns" element={<StatusProjectsRedirect />} />
+      <Route path="/status" element={<NamespaceRedirect />} />
+      <Route path="/overview/all-namespaces" element={<Navigate to="/dashboards" replace />} />
+      <Route path="/overview/ns/:ns" element={<OverviewProjectsRedirect />} />
+      <Route path="/overview" element={<NamespaceRedirect />} />
 
-      <LazyRoute
+      <Route
         path="/api-explorer"
-        exact
-        loader={() =>
-          import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(
-            (m) => m.APIExplorerPage,
-          )
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(
+                (m) => m.APIExplorerPage,
+              )
+            }
+          />
         }
       />
-      <LazyRoute
-        path="/api-resource/cluster/:plural"
-        loader={() =>
-          import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(
-            (m) => m.APIResourcePage,
-          )
+      <Route
+        path="/api-resource/cluster/:plural/*"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(
+                (m) => m.APIResourcePage,
+              )
+            }
+          />
         }
       />
-      <LazyRoute
-        path="/api-resource/all-namespaces/:plural"
-        loader={() =>
-          import('./api-explorer' /* webpackChunkName: "api-explorer" */).then((m) =>
-            NamespaceFromURL(m.APIResourcePage),
-          )
+      <Route
+        path="/api-resource/all-namespaces/:plural/*"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./api-explorer' /* webpackChunkName: "api-explorer" */).then((m) =>
+                NamespaceFromURL(m.APIResourcePage),
+              )
+            }
+          />
         }
       />
-      <LazyRoute
-        path="/api-resource/ns/:ns/:plural"
-        loader={() =>
-          import('./api-explorer' /* webpackChunkName: "api-explorer" */).then((m) =>
-            NamespaceFromURL(m.APIResourcePage),
-          )
-        }
-      />
-
-      <LazyRoute
-        path="/command-line-tools"
-        exact
-        loader={() =>
-          import('./command-line-tools' /* webpackChunkName: "command-line-tools" */).then(
-            (m) => m.CommandLineToolsPage,
-          )
-        }
-      />
-
-      <Route path="/operatorhub" exact component={NamespaceRedirect} />
-
-      <LazyRoute
-        path="/catalog/instantiate-template"
-        exact
-        loader={() =>
-          import('./instantiate-template' /* webpackChunkName: "instantiate-template" */).then(
-            (m) => m.InstantiateTemplatePage,
-          )
+      <Route
+        path="/api-resource/ns/:ns/:plural/*"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./api-explorer' /* webpackChunkName: "api-explorer" */).then((m) =>
+                NamespaceFromURL(m.APIResourcePage),
+              )
+            }
+          />
         }
       />
 
       <Route
-        path="/k8s/ns/:ns/alertmanagers/:name"
-        exact
-        render={({ match }) => (
-          <Redirect
-            to={`/k8s/ns/${match.params.ns}/${referenceForModel(AlertmanagerModel)}/${
-              match.params.name
-            }`}
+        path="/command-line-tools"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./command-line-tools' /* webpackChunkName: "command-line-tools" */).then(
+                (m) => m.CommandLineToolsPage,
+              )
+            }
           />
-        )}
+        }
       />
 
-      <Redirect
-        exact
-        from="/k8s/ns/:ns/batch~v1beta1~CronJob/:name"
-        to={`/k8s/ns/:ns/${CronJobModel.plural}/:name`}
+      <Route path="/operatorhub" element={<NamespaceRedirect />} />
+
+      <Route
+        path="/catalog/instantiate-template"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./instantiate-template' /* webpackChunkName: "instantiate-template" */).then(
+                (m) => m.InstantiateTemplatePage,
+              )
+            }
+          />
+        }
       />
 
-      <Redirect
-        exact
-        from="/k8s/ns/:ns/autoscaling~v2beta2~HorizontalPodAutoscaler/:name"
-        to={`/k8s/ns/:ns/${HorizontalPodAutoscalerModel.plural}/:name`}
+      <Route path="/k8s/ns/:ns/alertmanagers/:name" element={<AlertManagerRedirect />} />
+      <Route path="/k8s/ns/:ns/batch~v1beta1~CronJob/:name" element={<CronJobRedirect />} />
+      <Route
+        path="/k8s/ns/:ns/autoscaling~v2beta2~HorizontalPodAutoscaler/:name"
+        element={<HorizontalPodRedirect />}
       />
 
-      <LazyRoute
+      <Route
         path="/k8s/all-namespaces/events"
-        exact
-        loader={() =>
-          import('./events' /* webpackChunkName: "events" */).then((m) =>
-            NamespaceFromURL(m.EventStreamPage),
-          )
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./events' /* webpackChunkName: "events" */).then((m) =>
+                NamespaceFromURL(m.EventStreamPage),
+              )
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/events"
-        exact
-        loader={() =>
-          import('./events' /* webpackChunkName: "events" */).then((m) =>
-            NamespaceFromURL(m.EventStreamPage),
-          )
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./events' /* webpackChunkName: "events" */).then((m) =>
+                NamespaceFromURL(m.EventStreamPage),
+              )
+            }
+          />
         }
       />
-      <Route path="/search/all-namespaces" exact component={NamespaceFromURL(SearchPage)} />
-      <Route path="/search/ns/:ns" exact component={NamespaceFromURL(SearchPage)} />
-      <Route path="/search" exact component={NamespaceRedirect} />
 
-      <LazyRoute
+      <Route path="/search/all-namespaces" element={<SearchPage />} />
+      <Route path="/search/ns/:ns" element={<SearchPage />} />
+      <Route path="/search" element={<NamespaceRedirect />} />
+
+      <Route
         path="/k8s/all-namespaces/import"
-        exact
-        loader={() =>
-          import('./import-yaml' /* webpackChunkName: "import-yaml" */).then((m) =>
-            NamespaceFromURL(m.ImportYamlPage),
-          )
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./import-yaml' /* webpackChunkName: "import-yaml" */).then(
+                (m) => m.ImportYamlPage,
+              )
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/import/"
-        exact
-        loader={() =>
-          import('./import-yaml' /* webpackChunkName: "import-yaml" */).then((m) =>
-            NamespaceFromURL(m.ImportYamlPage),
-          )
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./import-yaml' /* webpackChunkName: "import-yaml" */).then(
+                (m) => m.ImportYamlPage,
+              )
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/secrets/~new/:type"
-        exact
-        kind="Secret"
-        loader={() =>
-          import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(
-            (m) => m.CreateSecret,
-          )
+        element={
+          <AsyncComponent
+            kind="Secret"
+            loader={() =>
+              import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(
+                (m) => m.CreateSecret,
+              )
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/configmaps/~new/form"
-        exact
-        kind="ConfigMap"
-        loader={() =>
-          import('./configmaps/ConfigMapPage' /* webpackChunkName: "create-configmap-page" */).then(
-            (m) => m.default,
-          )
+        element={
+          <AsyncComponent
+            kind="ConfigMap"
+            loader={() =>
+              import(
+                './configmaps/ConfigMapPage' /* webpackChunkName: "create-configmap-page" */
+              ).then((m) => m.default)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/configmaps/:name/form"
-        exact
-        kind="ConfigMap"
-        loader={() =>
-          import('./configmaps/ConfigMapPage' /* webpackChunkName: "edit-configmap-page" */).then(
-            (m) => m.default,
-          )
+        element={
+          <AsyncComponent
+            kind="ConfigMap"
+            loader={() =>
+              import(
+                './configmaps/ConfigMapPage' /* webpackChunkName: "edit-configmap-page" */
+              ).then((m) => m.default)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/secrets/:name/edit"
-        exact
-        kind="Secret"
-        loader={() =>
-          import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(
-            (m) => m.EditSecret,
-          )
+        element={
+          <AsyncComponent
+            kind="Secret"
+            loader={() =>
+              import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(
+                (m) => m.EditSecret,
+              )
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/secrets/:name/edit-yaml"
-        exact
-        kind="Secret"
-        loader={() => import('./create-yaml').then((m) => m.EditYAMLPage)}
+        element={
+          <AsyncComponent
+            kind="Secret"
+            loader={() => import('./create-yaml').then((m) => m.EditYAMLPage)}
+          />
+        }
       />
 
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/networkpolicies/~new/form"
-        exact
-        kind="NetworkPolicy"
-        loader={() =>
-          import(
-            '@console/app/src/components/network-policies/create-network-policy' /* webpackChunkName: "create-network-policy" */
-          ).then((m) => m.CreateNetworkPolicy)
+        element={
+          <AsyncComponent
+            kind="NetworkPolicy"
+            loader={() =>
+              import(
+                '@console/app/src/components/network-policies/create-network-policy' /* webpackChunkName: "create-network-policy" */
+              ).then((m) => m.CreateNetworkPolicy)
+            }
+          />
         }
       />
 
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/routes/~new/form"
-        exact
-        kind="Route"
-        loader={() =>
-          import('./routes/RoutePage' /* webpackChunkName: "create-route" */).then(
-            (m) => m.RoutePage,
-          )
+        element={
+          <AsyncComponent
+            kind="Route"
+            loader={() =>
+              import('./routes/RoutePage' /* webpackChunkName: "create-route" */).then(
+                (m) => m.RoutePage,
+              )
+            }
+          />
         }
       />
 
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/routes/:name/form"
-        exact
-        kind="Route"
-        loader={() =>
-          import('./routes/RoutePage' /* webpackChunkName: "edit-route" */).then((m) => m.RoutePage)
+        element={
+          <AsyncComponent
+            kind="Route"
+            loader={() =>
+              import('./routes/RoutePage' /* webpackChunkName: "edit-route" */).then(
+                (m) => m.RoutePage,
+              )
+            }
+          />
         }
       />
 
-      <LazyRoute
+      <Route
         path="/k8s/cluster/rolebindings/~new"
-        exact
-        loader={() =>
-          import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CreateRoleBinding)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CreateRoleBinding)
+            }
+            kind="RoleBinding"
+          />
         }
-        kind="RoleBinding"
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/rolebindings/~new"
-        exact
-        loader={() =>
-          import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CreateRoleBinding)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CreateRoleBinding)
+            }
+            kind="RoleBinding"
+          />
         }
-        kind="RoleBinding"
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/rolebindings/:name/copy"
-        exact
-        kind="RoleBinding"
-        loader={() =>
-          import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CopyRoleBinding)
+        element={
+          <AsyncComponent
+            kind="RoleBinding"
+            loader={() =>
+              import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CopyRoleBinding)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/rolebindings/:name/edit"
-        exact
-        kind="RoleBinding"
-        loader={() =>
-          import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.EditRoleBinding)
+        element={
+          <AsyncComponent
+            kind="RoleBinding"
+            loader={() =>
+              import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.EditRoleBinding)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/cluster/clusterrolebindings/:name/copy"
-        exact
-        kind="ClusterRoleBinding"
-        loader={() =>
-          import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CopyRoleBinding)
+        element={
+          <AsyncComponent
+            kind="ClusterRoleBinding"
+            loader={() =>
+              import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CopyRoleBinding)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/cluster/clusterrolebindings/:name/edit"
-        exact
-        kind="ClusterRoleBinding"
-        loader={() =>
-          import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.EditRoleBinding)
+        element={
+          <AsyncComponent
+            kind="ClusterRoleBinding"
+            loader={() =>
+              import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.EditRoleBinding)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/:plural/:name/attach-storage"
-        exact
-        loader={() =>
-          import('./storage/attach-storage' /* webpackChunkName: "attach-storage" */).then(
-            (m) => m.default,
-          )
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./storage/attach-storage' /* webpackChunkName: "attach-storage" */).then(
+                (m) => m.default,
+              )
+            }
+          />
         }
       />
 
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/persistentvolumeclaims/~new/form"
-        exact
-        kind="PersistentVolumeClaim"
-        loader={() =>
-          import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(
-            (m) => m.CreatePVC,
-          )
+        element={
+          <AsyncComponent
+            kind="PersistentVolumeClaim"
+            loader={() =>
+              import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(
+                (m) => m.CreatePVC,
+              )
+            }
+          />
         }
       />
 
-      <LazyRoute
+      <Route
         path={`/k8s/ns/:ns/${VolumeSnapshotModel.plural}/~new/form`}
-        exact
-        loader={() =>
-          import(
-            '@console/app/src/components/volume-snapshot/create-volume-snapshot/create-volume-snapshot' /* webpackChunkName: "create-volume-snapshot" */
-          ).then((m) => m.VolumeSnapshot)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                '@console/app/src/components/volume-snapshot/create-volume-snapshot/create-volume-snapshot' /* webpackChunkName: "create-volume-snapshot" */
+              ).then((m) => m.VolumeSnapshot)
+            }
+          />
         }
       />
-
-      <LazyRoute
+      <Route
         path={`/k8s/all-namespaces/${VolumeSnapshotModel.plural}/~new/form`}
-        exact
-        loader={() =>
-          import(
-            '@console/app/src/components/volume-snapshot/create-volume-snapshot/create-volume-snapshot' /* webpackChunkName: "create-volume-snapshot" */
-          ).then((m) => m.VolumeSnapshot)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                '@console/app/src/components/volume-snapshot/create-volume-snapshot/create-volume-snapshot' /* webpackChunkName: "create-volume-snapshot" */
+              ).then((m) => m.VolumeSnapshot)
+            }
+          />
         }
       />
 
-      <LazyRoute
-        path="/monitoring/alertmanageryaml"
-        exact
-        loader={() =>
-          import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
-            (m) => m.MonitoringUI,
-          )
-        }
-      />
-      <LazyRoute
-        path="/monitoring/alertmanagerconfig"
-        exact
-        loader={() =>
-          import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
-            (m) => m.MonitoringUI,
-          )
-        }
-      />
-      <LazyRoute
+      <Route
         path="/monitoring/alertmanagerconfig/receivers/~new"
-        exact
-        loader={() =>
-          import(
-            './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
-          ).then((m) => m.CreateReceiver)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
+              ).then((m) => m.CreateReceiver)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/monitoring/alertmanagerconfig/receivers/:name/edit"
-        exact
-        loader={() =>
-          import(
-            './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
-          ).then((m) => m.EditReceiver)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
+              ).then((m) => m.EditReceiver)
+            }
+          />
+        }
+      />
+      <Route
+        path="/monitoring/*"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
+                (m) => m.MonitoringUI,
+              )
+            }
+          />
         }
       />
 
-      <LazyRoute
+      <Route
         path="/settings/idp/github"
-        exact
-        loader={() =>
-          import(
-            './cluster-settings/github-idp-form' /* webpackChunkName: "github-idp-form" */
-          ).then((m) => m.AddGitHubPage)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './cluster-settings/github-idp-form' /* webpackChunkName: "github-idp-form" */
+              ).then((m) => m.AddGitHubPage)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/settings/idp/gitlab"
-        exact
-        loader={() =>
-          import(
-            './cluster-settings/gitlab-idp-form' /* webpackChunkName: "gitlab-idp-form" */
-          ).then((m) => m.AddGitLabPage)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './cluster-settings/gitlab-idp-form' /* webpackChunkName: "gitlab-idp-form" */
+              ).then((m) => m.AddGitLabPage)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/settings/idp/google"
-        exact
-        loader={() =>
-          import(
-            './cluster-settings/google-idp-form' /* webpackChunkName: "google-idp-form" */
-          ).then((m) => m.AddGooglePage)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './cluster-settings/google-idp-form' /* webpackChunkName: "google-idp-form" */
+              ).then((m) => m.AddGooglePage)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/settings/idp/htpasswd"
-        exact
-        loader={() =>
-          import(
-            './cluster-settings/htpasswd-idp-form' /* webpackChunkName: "htpasswd-idp-form" */
-          ).then((m) => m.AddHTPasswdPage)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './cluster-settings/htpasswd-idp-form' /* webpackChunkName: "htpasswd-idp-form" */
+              ).then((m) => m.AddHTPasswdPage)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/settings/idp/keystone"
-        exact
-        loader={() =>
-          import(
-            './cluster-settings/keystone-idp-form' /* webpackChunkName: "keystone-idp-form" */
-          ).then((m) => m.AddKeystonePage)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './cluster-settings/keystone-idp-form' /* webpackChunkName: "keystone-idp-form" */
+              ).then((m) => m.AddKeystonePage)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/settings/idp/ldap"
-        exact
-        loader={() =>
-          import('./cluster-settings/ldap-idp-form' /* webpackChunkName: "ldap-idp-form" */).then(
-            (m) => m.AddLDAPPage,
-          )
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './cluster-settings/ldap-idp-form' /* webpackChunkName: "ldap-idp-form" */
+              ).then((m) => m.AddLDAPPage)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
+        path="/settings/idp/ldap"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './cluster-settings/ldap-idp-form' /* webpackChunkName: "ldap-idp-form" */
+              ).then((m) => m.AddLDAPPage)
+            }
+          />
+        }
+      />
+      <Route
         path="/settings/idp/oidconnect"
-        exact
-        loader={() =>
-          import(
-            './cluster-settings/openid-idp-form' /* webpackChunkName: "openid-idp-form" */
-          ).then((m) => m.AddOpenIDIDPPage)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './cluster-settings/openid-idp-form' /* webpackChunkName: "openid-idp-form" */
+              ).then((m) => m.AddOpenIDIDPPage)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/settings/idp/basicauth"
-        exact
-        loader={() =>
-          import(
-            './cluster-settings/basicauth-idp-form' /* webpackChunkName: "basicauth-idp-form" */
-          ).then((m) => m.AddBasicAuthPage)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './cluster-settings/basicauth-idp-form' /* webpackChunkName: "basicauth-idp-form" */
+              ).then((m) => m.AddBasicAuthPage)
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/settings/idp/requestheader"
-        exact
-        loader={() =>
-          import(
-            './cluster-settings/request-header-idp-form' /* webpackChunkName: "request-header-idp-form" */
-          ).then((m) => m.AddRequestHeaderPage)
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './cluster-settings/request-header-idp-form' /* webpackChunkName: "request-header-idp-form" */
+              ).then((m) => m.AddRequestHeaderPage)
+            }
+          />
         }
       />
-      <LazyRoute
-        path="/settings/cluster"
-        loader={() =>
-          import(
-            './cluster-settings/cluster-settings' /* webpackChunkName: "cluster-settings" */
-          ).then((m) => m.ClusterSettingsPage)
+      <Route
+        path="/settings/cluster/*"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './cluster-settings/cluster-settings' /* webpackChunkName: "cluster-settings" */
+              ).then((m) => m.ClusterSettingsPage)
+            }
+          />
         }
       />
 
-      <LazyRoute
+      <Route
         path={'/k8s/cluster/storageclasses/~new/form'}
-        exact
-        loader={() =>
-          import('./storage-class-form' /* webpackChunkName: "storage-class-form" */).then(
-            (m) => m.StorageClassForm,
-          )
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./storage-class-form' /* webpackChunkName: "storage-class-form" */).then(
+                (m) => m.StorageClassForm,
+              )
+            }
+          />
         }
       />
-      <LazyRoute
+      <Route
         path="/k8s/ns/:ns/:resourceRef/form"
-        exact
-        kind="PodDisruptionBudgets"
-        loader={() =>
-          import(
-            '@console/app/src/components/pdb/PDBFormPage' /* webpackChunkName: "PDBFormPage" */
-          ).then((m) => m.PDBFormPage)
+        element={
+          <AsyncComponent
+            kind="PodDisruptionBudgets"
+            loader={() =>
+              import(
+                '@console/app/src/components/pdb/PDBFormPage' /* webpackChunkName: "PDBFormPage" */
+              ).then((m) => m.PDBFormPage)
+            }
+          />
         }
       />
-      <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
-      <Route path="/k8s/cluster/:plural/~new" exact component={CreateResource} />
-      <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />
-      <LazyRoute
-        path="/k8s/ns/:ns/pods/:podName/containers/:name/debug"
-        loader={() =>
-          import('./debug-terminal' /* webpackChunkName: "debug-terminal" */).then(
-            (m) => m.DebugTerminalPage,
-          )
+      <Route path="/k8s/cluster/:plural" element={<ResourceListPage />} />
+      <Route path="/k8s/cluster/:plural/~new" element={<CreateResource />} />
+      <Route path="/k8s/cluster/:plural/:name/*" element={<ResourceDetailsPage />} />
+      <Route
+        path="/k8s/ns/:ns/pods/:podName/containers/:name/debug/*"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./debug-terminal' /* webpackChunkName: "debug-terminal" */).then(
+                (m) => m.DebugTerminalPage,
+              )
+            }
+          />
         }
       />
-      <LazyRoute
-        path="/k8s/ns/:ns/pods/:podName/containers/:name"
-        loader={() => import('./container').then((m) => m.ContainersDetailsPage)}
+      <Route
+        path="/k8s/ns/:ns/pods/:podName/containers/:name/*"
+        element={
+          <AsyncComponent
+            loader={() => import('./container').then((m) => m.ContainersDetailsPage)}
+          />
+        }
       />
-      <Route path="/k8s/ns/:ns/:plural/~new" component={CreateResource} />
-      <Route path="/k8s/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
-      <Route path="/k8s/ns/:ns/:plural" exact component={ResourceListPage} />
+      <Route path="/k8s/ns/:ns/:plural/~new/*" element={<CreateResource />} />
+      <Route path="/k8s/ns/:ns/:plural/:name/*" element={<ResourceDetailsPage />} />
+      <Route path="/k8s/ns/:ns/:plural" element={<ResourceListPage />} />
 
-      <Route path="/k8s/all-namespaces/:plural" exact component={ResourceListPage} />
-      <Route path="/k8s/all-namespaces/:plural/:name" component={ResourceDetailsPage} />
+      <Route path="/k8s/all-namespaces/:plural" element={<ResourceListPage />} />
+      <Route path="/k8s/all-namespaces/:plural/:name/*" element={<ResourceDetailsPage />} />
 
       {inactivePluginPageRoutes}
-      <Route path="/" exact component={DefaultPage} />
+      <Route path="/" element={<DefaultPage />} />
 
       {allPluginsProcessed ? (
-        <LazyRoute
-          loader={() =>
-            import('./error' /* webpackChunkName: "error" */).then((m) => m.ErrorPage404)
+        <Route
+          path="*"
+          element={
+            <AsyncComponent
+              loader={() =>
+                import('./error' /* webpackChunkName: "error" */).then((m) => m.ErrorPage404)
+              }
+            />
           }
         />
       ) : (
-        <Route component={LoadingBox} />
+        <Route element={<LoadingBox />} />
       )}
-    </Switch>
+    </Routes>
   );
+
+  const matches = matchRoutes(namespacedRoutes, location);
 
   return (
     <div id="content">
       <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
         <GlobalNotifications />
-        <Route path={namespacedRoutes} component={NamespaceBar} />
+        {matches && <NamespaceBar />}
       </PageSection>
       <div id="content-scrollable">
         <PageSection

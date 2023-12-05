@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { match as RMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { StatusBox } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { CustomResourceList, useDeepCompareMemoize } from '@console/shared';
@@ -11,10 +11,6 @@ import HelmReleaseHistoryHeader from './HelmReleaseHistoryHeader';
 import HelmReleaseHistoryRow from './HelmReleaseHistoryRow';
 
 interface HelmReleaseHistoryProps {
-  match: RMatch<{
-    ns?: string;
-    name?: string;
-  }>;
   obj: K8sResourceKind;
   customData: HelmRelease;
 }
@@ -24,12 +20,12 @@ const getRowProps = (obj) => ({
 });
 
 const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
-  match,
   obj,
   customData: latestHelmRelease,
 }) => {
-  const namespace = match.params.ns;
-  const helmReleaseName = match.params.name;
+  const params = useParams();
+  const namespace = params.ns;
+  const helmReleaseName = params.name;
   const [revisionsLoaded, setRevisionsLoaded] = React.useState<boolean>(false);
   const [loadError, setLoadError] = React.useState<string>();
   const [revisions, setRevisions] = React.useState([]);

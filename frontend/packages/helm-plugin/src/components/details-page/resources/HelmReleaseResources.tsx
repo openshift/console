@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { match as RMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { MultiListPage } from '@console/internal/components/factory';
 import { FirehoseResource } from '@console/internal/components/utils';
 import {
@@ -14,16 +14,13 @@ import { flattenReleaseResources, loadHelmManifestResources } from '../../../uti
 import HelmReleaseResourcesList from './HelmReleaseResourcesList';
 
 export interface HelmReleaseResourcesProps {
-  match: RMatch<{
-    ns?: string;
-    name?: string;
-  }>;
   customData: HelmRelease;
 }
 
-const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, customData }) => {
+const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ customData }) => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const params = useParams();
+  const namespace = params.ns;
   const helmManifestResources = loadHelmManifestResources(customData);
   const firehoseResources: FirehoseResource[] = helmManifestResources.map(
     (resource: K8sResourceKind) => {

@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
-import { ButtonBar, history, PageHeading } from '../utils';
+import { ButtonBar, PageHeading } from '../utils';
 import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
 export const AddGitLabPage = () => {
+  const navigate = useNavigate();
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const [name, setName] = React.useState('gitlab');
@@ -127,7 +129,9 @@ export const AddGitLabPage = () => {
               const caName = configMap ? configMap.metadata.name : '';
               return addGitLabIDP(oauth, secret.metadata.name, caName);
             })
-            .then(redirectToOAuthPage);
+            .then(() => {
+              redirectToOAuthPage(navigate);
+            });
         })
         .catch((err) => {
           setErrorMessage(err);
@@ -200,7 +204,7 @@ export const AddGitLabPage = () => {
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
+              <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>

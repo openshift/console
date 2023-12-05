@@ -3,7 +3,6 @@ import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import { LocationDescriptor } from 'history';
 import MonacoEditor from 'react-monaco-editor/lib/editor';
-import { RouteComponentProps } from 'react-router';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
@@ -284,7 +283,7 @@ export type NavPage = {
   href?: string;
   path?: string;
   name: string;
-  component: React.ComponentType<RouteComponentProps>;
+  component: React.ComponentType;
 };
 
 export type HorizontalNavProps = {

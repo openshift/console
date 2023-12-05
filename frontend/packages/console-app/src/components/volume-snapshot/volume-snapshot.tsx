@@ -3,7 +3,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { match } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { TableData, ListPage, Table, RowFunctionArgs } from '@console/internal/components/factory';
 import {
   ResourceLink,
@@ -187,8 +187,9 @@ const VolumeSnapshotTable: React.FC<VolumeSnapshotTableProps> = (props) => {
 
 const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = (props) => {
   const { t } = useTranslation();
+  const params = useParams();
   const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
-  const namespace = props.namespace || props.match?.params?.ns || 'all-namespaces';
+  const namespace = props.namespace || params?.ns || 'all-namespaces';
   const createProps = {
     to: `/k8s/${namespace === 'all-namespaces' ? namespace : `ns/${namespace}`}/${
       VolumeSnapshotModel.plural
@@ -247,7 +248,6 @@ export const VolumeSnapshotPVCPage: React.FC<VolumeSnapshotPVCPage> = (props) =>
 };
 type VolumeSnapshotPageProps = {
   namespace?: string;
-  match: match<{ ns?: string; plural?: string }>;
 };
 
 type CheckPVCSnapshot = (

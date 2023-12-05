@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Form, TextVariants } from '@patternfly/react-core';
-import { match as RouterMatch } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { history } from '@console/internal/components/utils/router';
@@ -17,8 +17,8 @@ import { getLocalVolumeSetRequestData } from './request';
 import { reducer, initialState } from './state';
 import './create-local-volume-set.scss';
 
-const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ match }) => {
-  const { appName, ns } = match.params;
+const CreateLocalVolumeSet: React.FC = () => {
+  const { appName, ns } = useParams();
   const resourcePath = resourcePathFromModel(ClusterServiceVersionModel, appName, ns);
 
   const [state, dispatch] = React.useReducer(reducer, initialState);
@@ -81,10 +81,6 @@ const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ match }) =>
       </Form>
     </>
   );
-};
-
-type CreateLocalVolumeSetProps = {
-  match: RouterMatch<{ appName: string; ns: string }>;
 };
 
 export default CreateLocalVolumeSet;

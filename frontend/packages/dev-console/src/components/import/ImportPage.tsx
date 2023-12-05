@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TFunction } from 'i18next';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { PageHeading, Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import DevPreviewBadge from '@console/shared/src/components/badges/DevPreviewBadge';
@@ -11,8 +11,6 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import QueryFocusApplication from '../QueryFocusApplication';
 import { ImportTypes, ImportData } from './import-types';
 import ImportForm from './ImportForm';
-
-export type ImportPageProps = RouteComponentProps<{ ns?: string }>;
 
 const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
   git: {
@@ -33,9 +31,10 @@ const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
   },
 });
 
-const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location }) => {
+const ImportPage: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const { ns: namespace } = useParams();
+  const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const imageStreamName = searchParams.get('imagestream');
   const imageStreamNamespace = searchParams.get('imagestream-ns');

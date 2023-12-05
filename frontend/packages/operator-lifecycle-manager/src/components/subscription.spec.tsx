@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
+import * as Router from 'react-router-dom-v5-compat';
 import {
   Table,
   MultiListPage,
@@ -38,6 +39,11 @@ import {
   SubscriptionUpdatesState,
   SubscriptionStatus,
 } from './subscription';
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+}));
 
 describe('SubscriptionTableRow', () => {
   let wrapper: ShallowWrapper;
@@ -181,8 +187,7 @@ describe('SubscriptionsPage', () => {
   let wrapper: ShallowWrapper<SubscriptionsPageProps>;
 
   beforeEach(() => {
-    const match = { params: { ns: 'default' }, isExact: true, path: '', url: '' };
-    wrapper = shallow(<SubscriptionsPage match={match} namespace="default" />);
+    wrapper = shallow(<SubscriptionsPage namespace="default" />);
   });
 
   it('renders a `MultiListPage` component with the correct props', () => {
@@ -310,13 +315,8 @@ describe('SubscriptionDetails', () => {
 describe('SubscriptionDetailsPage', () => {
   it('renders `DetailsPage` with correct props', () => {
     const menuArgs = [ClusterServiceVersionModel, testSubscription];
-    const match = {
-      params: { ns: 'default', name: 'example-sub' },
-      url: '',
-      isExact: true,
-      path: '',
-    };
-    const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default', name: 'example-sub' });
+    const wrapper = shallow(<SubscriptionDetailsPage namespace="default" />);
 
     expect(wrapper.find(DetailsPage).props().kind).toEqual(referenceForModel(SubscriptionModel));
     expect(wrapper.find(DetailsPage).props().pages.length).toEqual(2);
@@ -336,13 +336,8 @@ describe('SubscriptionDetailsPage', () => {
   });
 
   it('passes additional resources to watch', () => {
-    const match = {
-      params: { ns: 'default', name: 'example-sub' },
-      url: '',
-      isExact: true,
-      path: '',
-    };
-    const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default', name: 'example-sub' });
+    const wrapper = shallow(<SubscriptionDetailsPage namespace="default" />);
 
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
       {

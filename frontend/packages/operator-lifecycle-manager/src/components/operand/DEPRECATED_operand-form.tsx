@@ -19,6 +19,7 @@ import * as Immutable from 'immutable';
 import { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { RadioGroup } from '@console/internal/components/radio';
@@ -506,11 +507,11 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   model,
   onChange,
   providedAPI,
-  match,
   next,
 }) => {
   const postFormCallback = usePostFormSubmitAction<K8sResourceKind>();
   const { t } = useTranslation();
+  const params = useParams();
   const immutableFormData = Immutable.fromJS(formData);
   const handleFormDataUpdate = (path: string, value: any): void => {
     const { regexMatch, index, pathBeforeIndex, pathAfterIndex } = parseArrayPath(path);
@@ -674,7 +675,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     k8sCreate(
       model,
       model.namespaced
-        ? immutableFormData.setIn(['metadata', 'namespace'], match.params.ns).toJS()
+        ? immutableFormData.setIn(['metadata', 'namespace'], params.ns).toJS()
         : immutableFormData.toJS(),
     )
       .then((res) => postFormCallback(res))
@@ -798,7 +799,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           resources={[
             {
               kind: groupVersionKind,
-              namespace: k8sModel.namespaced ? match?.params?.ns : null,
+              namespace: k8sModel.namespaced ? params?.ns : null,
             },
           ]}
           desc={displayName}

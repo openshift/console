@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { match as Rmatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -13,15 +13,9 @@ import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
 import ClusterTasksPage from './ClusterTasksPage';
 import TasksPage from './TasksPage';
 
-interface TasksListsPageProps {
-  match: Rmatch<any>;
-}
-
-const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
+const TasksListsPage: React.FC = () => {
   const { t } = useTranslation();
-  const {
-    params: { ns: namespace },
-  } = match;
+  const { ns: namespace } = useParams();
   const badge = usePipelineTechPreviewBadge(namespace);
   const [showTitle, canCreate, hideBadge] = [false, false, true];
   const menuActions: MenuActions = {
@@ -66,7 +60,6 @@ const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
       <MultiTabListPage
         pages={pages}
-        match={match}
         title={t('pipelines-plugin~Tasks')}
         badge={badge}
         menuActions={menuActions}

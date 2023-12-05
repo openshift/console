@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom-v5-compat';
 import { LoadingBox } from '@console/internal/components/utils';
 import { k8sGet, referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
@@ -10,17 +10,11 @@ import PipelineBuilderPage from './PipelineBuilderPage';
 
 import './PipelineBuilderEditPage.scss';
 
-type PipelineBuilderEditPageProps = RouteComponentProps<{ ns: string; pipelineName: string }>;
-
-const PipelineBuilderEditPage: React.FC<PipelineBuilderEditPageProps> = (props) => {
+const PipelineBuilderEditPage: React.FC = (props) => {
   const { t } = useTranslation();
   const [editPipeline, setEditPipeline] = React.useState<PipelineKind>(null);
   const [error, setError] = React.useState<string>(null);
-  const {
-    match: {
-      params: { pipelineName, ns },
-    },
-  } = props;
+  const { pipelineName, ns } = useParams();
 
   React.useEffect(() => {
     k8sGet(PipelineModel, pipelineName, ns)

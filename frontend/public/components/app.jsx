@@ -5,8 +5,8 @@ import { render } from 'react-dom';
 import { Helmet } from 'react-helmet';
 import { linkify } from 'react-linkify';
 import { Provider, useSelector } from 'react-redux';
-import { Route, Router, Switch } from 'react-router-dom';
-import { CompatRouter } from 'react-router-dom-v5-compat';
+import { Router } from 'react-router-dom';
+import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
 import store, { applyReduxExtensions } from '../redux';
@@ -84,6 +84,9 @@ const EnhancedProvider = ({ provider: ContextProvider, useValueHook, children })
 const App = (props) => {
   const { contextProviderExtensions } = props;
 
+  const location = useLocation();
+  const params = useParams();
+
   const isLargeLayout = () => {
     return window.innerWidth >= NOTIFICATION_DRAWER_BREAKPOINT;
   };
@@ -96,7 +99,8 @@ const App = (props) => {
     return window.innerWidth < PF_BREAKPOINT_MD;
   };
 
-  const [prevProps, setPrevProps] = React.useState(props);
+  const [prevLocation, setPrevLocation] = React.useState(location);
+  const [prevParams, setPrevParams] = React.useState(params);
 
   const [isMastheadStacked, setIsMastheadStacked] = React.useState(isMobile());
   const [isNavOpen, setIsNavOpen] = React.useState(isDesktop());
@@ -133,16 +137,16 @@ const App = (props) => {
 
   React.useLayoutEffect(() => {
     // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)
-    const oldLocation = _.omit(prevProps.location, ['key']);
-    const newLocation = _.omit(props.location, ['key']);
-    if (_.isEqual(newLocation, oldLocation) && _.isEqual(props.match, prevProps.match)) {
+    const oldLocation = _.omit(prevLocation, ['key']);
+    const newLocation = _.omit(location, ['key']);
+    if (_.isEqual(newLocation, oldLocation) && _.isEqual(params, prevParams)) {
       return;
     }
-    // two way data binding :-/
-    const { pathname } = props.location;
+    const { pathname } = location;
     store.dispatch(UIActions.setCurrentLocation(pathname));
-    setPrevProps(props);
-  }, [props, prevProps.location, prevProps.match]);
+    setPrevLocation(location);
+    setPrevParams(params);
+  }, [location, params, prevLocation, prevParams]);
 
   const onNavToggle = () => {
     // Some components, like svg charts, need to reflow when nav is toggled.
@@ -197,7 +201,7 @@ const App = (props) => {
               />
             }
             skipToContent={
-              <SkipToContent href={`${props.location.pathname}${props.location.search}#content`}>
+              <SkipToContent href={`${location.pathname}${location.search}#content`}>
                 Skip to Content
               </SkipToContent>
             }
@@ -260,21 +264,18 @@ const AppRouter = () => {
   return (
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
       <CompatRouter>
-        <Switch>
+        <Routes>
           <Route path={LOGIN_ERROR_PATH} component={AuthenticationErrorPage} />
           {standaloneRouteExtensions.map((e) => (
             <Route
               key={e.uid}
-              render={(componentProps) => (
-                <AsyncComponent loader={e.properties.component} {...componentProps} />
-              )}
-              path={e.properties.path}
-              exact={e.properties.exact}
+              element={<AsyncComponent loader={e.properties.component} />}
+              path={`${e.properties.path}${e.properties.exact ? '' : '/*'}`}
             />
           ))}
-          <Route path="/terminal" component={CloudShellTab} />
-          <Route path="/" component={AppWithExtensions} />
-        </Switch>
+          <Route path="/terminal/*" element={<CloudShellTab />} />
+          <Route path="/*" element={<AppWithExtensions />} />
+        </Routes>
       </CompatRouter>
     </Router>
   );
@@ -295,7 +296,7 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
         setTitleOnLoad(telemetryTitle);
         setDebounceTime(500);
       }, 5000),
-    [],
+    [telemetryTitle],
   );
 
   React.useEffect(() => {
@@ -331,7 +332,7 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
       }
     });
     return () => unlisten();
-  }, [perspective, fireUrlChangeEvent]);
+  }, [perspective, fireUrlChangeEvent, titleOnLoad]);
 
   return null;
 });

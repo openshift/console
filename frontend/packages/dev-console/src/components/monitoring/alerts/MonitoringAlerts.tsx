@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, connect } from 'react-redux';
-import { match as RMatch } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import {
   RowFilter as RowFilterExt,
   Rule,
@@ -37,12 +37,6 @@ import { MonitoringAlertColumn } from './MonitoringAlertColumn';
 import './MonitoringAlerts.scss';
 import { useRulesAlertsPoller } from './useRuleAlertsPoller';
 
-type MonitoringAlertsProps = {
-  match: RMatch<{
-    ns?: string;
-  }>;
-};
-
 type StateProps = {
   rules: Rule[];
   alerts: NotificationAlerts;
@@ -50,13 +44,15 @@ type StateProps = {
   listSorts: { [key: string]: any };
 };
 
-type Props = MonitoringAlertsProps & StateProps;
+type Props = StateProps;
 
 const reduxID = 'devMonitoringAlerts';
 const textFilter = 'resource-list-text';
 
-export const MonitoringAlerts: React.FC<Props> = ({ match, rules, alerts, filters, listSorts }) => {
+export const MonitoringAlerts: React.FC<Props> = ({ rules, alerts, filters, listSorts }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams();
   const [sortBy, setSortBy] = React.useState<{ index: number; direction: SortByDirection }>({
     index: null,
     direction: SortByDirection.asc,
@@ -64,7 +60,7 @@ export const MonitoringAlerts: React.FC<Props> = ({ match, rules, alerts, filter
   const [rows, setRows] = React.useState([]);
   const [collapsedRowsIds, setCollapsedRowsIds] = React.useState([]);
   const dispatch = useDispatch();
-  const namespace = match.params.ns;
+  const namespace = params.ns;
   const { sortBy: listSortBy, orderBy: listOrderBy } = getURLSearchParams();
   const monitoringAlertColumn = React.useMemo(() => MonitoringAlertColumn(t), [t]);
   const columnIndex = _.findIndex(monitoringAlertColumn, { title: listSortBy });
@@ -144,12 +140,17 @@ export const MonitoringAlerts: React.FC<Props> = ({ match, rules, alerts, filter
           monitoringAlertColumn[index - 1].fieldName,
           monitoringAlertColumn[index - 1].sortFunc,
           direction,
-          monitoringAlertColumn[index - 1].title,
         ),
       );
       setSortBy({ index, direction });
+
+      const url = new URL(window.location.href);
+      const sp = new URLSearchParams(window.location.search);
+      sp.set('orderBy', direction);
+      sp.set('sortBy', monitoringAlertColumn[index - 1].title);
+      navigate(`${url.pathname}?${sp.toString()}${url.hash}`, { replace: true });
     },
-    [dispatch, monitoringAlertColumn],
+    [dispatch, monitoringAlertColumn, navigate],
   );
 
   const Content = React.useMemo(() => {

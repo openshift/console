@@ -3,7 +3,7 @@ import { act } from 'react-dom/test-utils';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -17,9 +17,10 @@ jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-  ...require.requireActual('react-router-dom'),
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
   useLocation: jest.fn(),
+  useNavigate: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/hooks/flag', () => ({

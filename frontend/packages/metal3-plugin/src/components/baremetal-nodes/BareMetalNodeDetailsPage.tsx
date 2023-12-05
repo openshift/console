@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NodeTerminal from '@console/app/src/components/nodes/NodeTerminal';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -25,6 +26,7 @@ type BareMetalNodeDetailsPageProps = ResourceDetailsPageProps & {
 
 const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPageProps) => {
   const { t } = useTranslation();
+  const location = useLocation();
   const [hasNodeMaintenanceCapability, maintenanceModel] = useMaintenanceCapability();
 
   const pagesFor = React.useCallback(
@@ -96,8 +98,8 @@ const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPag
     });
   }
 
-  const { modelRef, plural, kindObj, match } = props;
-  const { name } = match.params;
+  const { modelRef, plural, kindObj } = props;
+  const { name } = useParams();
   return (
     <>
       <Helmet>
@@ -118,7 +120,7 @@ const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPag
           },
           {
             name: t('metal3-plugin~{{name}} Details', { name: kindObj.label }),
-            path: `${match.url}`,
+            path: `${location.pathname}`,
           },
         ]}
       />

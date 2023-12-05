@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Formik } from 'formik';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -11,18 +11,13 @@ import { HelmRelease, HelmActionType, HelmActionOrigins } from '../../../types/h
 import { fetchHelmReleaseHistory, getHelmActionConfig } from '../../../utils/helm-utils';
 import HelmReleaseRollbackForm from './HelmReleaseRollbackForm';
 
-type HelmReleaseRollbackPageProps = RouteComponentProps<{
-  ns?: string;
-  releaseName?: string;
-}>;
-
 type HelmRollbackFormData = {
   revision: number;
 };
 
-const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match }) => {
+const HelmReleaseRollbackPage: React.FC = () => {
   const { t } = useTranslation();
-  const { releaseName, ns: namespace } = match.params;
+  const { releaseName, ns: namespace } = useParams();
   const actionOrigin = getQueryArgument('actionOrigin') as HelmActionOrigins;
   const [releaseHistory, setReleaseHistory] = React.useState<HelmRelease[]>(null);
 

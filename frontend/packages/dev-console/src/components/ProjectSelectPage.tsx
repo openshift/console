@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { match } from 'react-router';
+import { useParams } from 'react-router-dom-v5-compat';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { LoadingBox } from '@console/internal/components/utils';
@@ -16,16 +16,16 @@ import { getBadgeFromType } from '@console/shared/src';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 
 export interface ProjectSelectPageProps {
-  match: match<any>;
   kindObj?: K8sKind;
   kindsInFlight?: boolean;
 }
 
-const allParams = (props) => Object.assign({}, props?.match?.params, props);
+const allParams = (props, params) => Object.assign({}, params, props);
 
 const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
   const { t } = useTranslation();
-  const { kindObj, kindsInFlight, plural } = allParams(props);
+  const params = useParams();
+  const { kindObj, kindsInFlight, plural } = allParams(props, params);
 
   if (!kindObj) {
     if (kindsInFlight) {

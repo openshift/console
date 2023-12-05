@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Formik } from 'formik';
+import * as Router from 'react-router-dom-v5-compat';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { useRelatedHPA } from '@console/shared/src/hooks/hpa-hooks';
 import { deploymentData } from '../../../utils/__tests__/knative-serving-data';
 import CreateKnatifyPage from '../CreateKnatifyPage';
-
-let createKnatifyPageProps: React.ComponentProps<typeof CreateKnatifyPage>;
 
 const useK8sWatchResourcesMock = useK8sWatchResources as jest.Mock;
 const useRelatedHPAMock = useRelatedHPA as jest.Mock;
@@ -20,26 +19,22 @@ jest.mock('@console/shared/src/hooks/hpa-hooks', () => ({
   useRelatedHPA: jest.fn(),
 }));
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(),
+  useLocation: jest.fn(),
+}));
+
 describe('CreateKnatifyPage', () => {
   beforeEach(() => {
-    createKnatifyPageProps = {
-      history: null,
-      location: {
-        pathname: 'knatify/ns/jai-test-1?name=ruby-ex-git-dc&kind=Deployment',
-        search: 'knatify/ns/jai-test-1?name=ruby-ex-git-dc&kind=Deployment',
-        state: null,
-        hash: null,
-      },
-      match: {
-        isExact: true,
-        path: 'knatify/ns/jai-test-1?name=ruby-ex-git-dc&kind=Deployment',
-        url: 'knatify/ns/jai-test-1?name=ruby-ex-git-dc&kind=Deployment',
-        params: {
-          ns: 'openshift',
-        },
-      },
-    };
     useK8sWatchResourcesMock.mockClear();
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      pathname: 'knatify/ns/jai-test-1?name=ruby-ex-git-dc&kind=Deployment',
+      search: 'knatify/ns/jai-test-1?name=ruby-ex-git-dc&kind=Deployment',
+      state: null,
+      hash: null,
+    });
+    jest.spyOn(Router, 'useLocation').mockReturnValue({ pathname: '' });
   });
 
   it('CreateKnatifyPage should render PageHeading and Loading if resources is not loaded yet', () => {
@@ -49,7 +44,7 @@ describe('CreateKnatifyPage', () => {
       workloadResource: { data: deploymentData, loaded: true },
     });
     useRelatedHPAMock.mockReturnValue([{}, true, null]);
-    const wrapper = shallow(<CreateKnatifyPage {...createKnatifyPageProps} />);
+    const wrapper = shallow(<CreateKnatifyPage />);
     expect(wrapper.find(PageHeading).exists()).toBe(true);
     expect(wrapper.find(LoadingBox).exists()).toBe(true);
     expect(wrapper.find(Formik).exists()).toBe(false);
@@ -62,7 +57,7 @@ describe('CreateKnatifyPage', () => {
       workloadResource: { data: deploymentData, loaded: true },
     });
     useRelatedHPAMock.mockReturnValue([null, false, null]);
-    const wrapper = shallow(<CreateKnatifyPage {...createKnatifyPageProps} />);
+    const wrapper = shallow(<CreateKnatifyPage />);
     expect(wrapper.find(PageHeading).exists()).toBe(true);
     expect(wrapper.find(LoadingBox).exists()).toBe(true);
     expect(wrapper.find(Formik).exists()).toBe(false);
@@ -75,7 +70,7 @@ describe('CreateKnatifyPage', () => {
       workloadResource: { data: deploymentData, loaded: true },
     });
     useRelatedHPAMock.mockReturnValue([{}, true, null]);
-    const wrapper = shallow(<CreateKnatifyPage {...createKnatifyPageProps} />);
+    const wrapper = shallow(<CreateKnatifyPage />);
     expect(wrapper.find(PageHeading).exists()).toBe(true);
     expect(wrapper.find(Formik).exists()).toBe(true);
     expect(wrapper.find(LoadingBox).exists()).toBe(false);

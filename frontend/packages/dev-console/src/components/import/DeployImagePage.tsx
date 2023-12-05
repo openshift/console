@@ -1,18 +1,17 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { PageHeading, Firehose } from '@console/internal/components/utils';
 import { QUERY_PROPERTIES } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import QueryFocusApplication from '../QueryFocusApplication';
 import DeployImage from './DeployImage';
 
-export type DeployImagePageProps = RouteComponentProps<{ ns?: string }>;
-
-const DeployImagePage: React.FunctionComponent<DeployImagePageProps> = ({ match, location }) => {
+const DeployImagePage: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const namespace = match.params.ns;
+  const { ns: namespace } = useParams();
+  const location = useLocation();
   const params = new URLSearchParams(location.search);
 
   return (
