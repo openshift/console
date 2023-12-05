@@ -396,3 +396,8 @@ ul {
   color: var(--pf-global--Color--100);
   background-color: var(--pf-global--palette--black-600);
 }
+
+// PF5 Popover component applies an new inline width:auto style that overrides it's own pf-v5-c-popover min-width: var(--pf-v5-c-popover--MinWidth). So the pf-v5-c-popover container is not a consistent size and can resize when additional content is loaded which causes the alignment to be incorrect.
+.pf-v5-c-popover {
+  min-width: var(--pf-v5-c-popover--MinWidth) !important;
+}
