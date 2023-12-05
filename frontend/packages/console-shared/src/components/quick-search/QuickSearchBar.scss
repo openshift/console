@@ -1,5 +1,5 @@
 .ocs-quick-search-bar {
-  .pf-v5-c-input-group {
+  &.pf-v5-c-input-group {
     background-color: var(--pf-v5-global--BackgroundColor--400);
     &__item.pf-m-box {
       border: none;
