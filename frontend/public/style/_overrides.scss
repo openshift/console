@@ -359,14 +359,11 @@ button.pf-v5-c-dropdown__menu-item.pf-m-disabled {
 ul {
   list-style: disc;
 }
-// And here we explicitly remove it from PF components so it doesn't show.
-ul.pf-v5-c-alert-group,
-ul.pf-v5-c-nav__list,
-ul.pf-v5-c-options-menu__menu,
-ul.pf-v5-c-select__menu,
-ul.pf-v5-c-simple-list__list,
-ul.pf-v5-c-tree-view__list {
-  list-style: none !important;
+// And here we explicitly remove it from PF components, except for the List component.
+:where([class^="pf-"]:not(.pf-v5-c-list, .pf-c-list)) {
+  @at-root :is(ul, ol)#{&} {
+    list-style: none !important;
+  }
 }
 
 .pfext-quick-start-content {
