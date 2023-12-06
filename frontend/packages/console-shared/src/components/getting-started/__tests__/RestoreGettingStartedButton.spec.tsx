@@ -51,7 +51,7 @@ describe('RestoreGettingStartedButton', () => {
 
     const wrapper = shallow(<RestoreGettingStartedButton userSettingsKey="test" />).shallow();
 
-    wrapper.simulate('click');
+    wrapper.find('button').simulate('click');
 
     expect(setGettingStartedShowState).toHaveBeenCalledTimes(1);
     expect(setGettingStartedShowState).toHaveBeenLastCalledWith(GettingStartedShowState.SHOW);

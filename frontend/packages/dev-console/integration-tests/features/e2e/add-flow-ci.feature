@@ -86,6 +86,7 @@ Feature: Create the different workloads from Add page
              Then user will be redirected to Topology page
               And user is able to see workload "mariadb" in topology page
 
+        @regression @broken-test
         Scenario: Deploy git workload with devfile from topology page: A-04-TC01
             Given user is at the Topology page
              When user right clicks on topology empty graph
@@ -123,7 +124,7 @@ Feature: Create the different workloads from Add page
               And Application Name, Name fields displayed in General section
               And Advanced options sections are displayed
               And Create button is in disabled state
-              
+
         Scenario Outline: Create Sample Application from Add page: GS-03-TC05
             Given user is at Add page
              When user clicks on the Samples card
