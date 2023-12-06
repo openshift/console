@@ -6,7 +6,7 @@ import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
-import { getVerticalPodAutoscalerForResource } from '@console/shared/src';
+import { getVerticalPodAutoscalersForResource } from '@console/shared/src';
 import { TYPE_WORKLOAD } from '@console/topology/src/const';
 import { getResource } from '../../utils';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
@@ -19,7 +19,7 @@ const VPATabSection: React.FC<VPATabSectionProps> = ({ vpas }) => {
   const { t } = useTranslation();
   return (
     <>
-      <SidebarSectionHeading text={t('topology~VerticalPodAutoscaler')} />
+      <SidebarSectionHeading text={t('topology~VerticalPodAutoscalers')} />
       <ul className="list-group">
         {vpas.map((vpa: K8sResourceCommon) => (
           <li key={vpa.metadata.name} className="list-group-item">
@@ -51,12 +51,13 @@ export const useVpaSideBarTabSection: DetailsTabSectionExtensionHook = (element:
   }
 
   const resource = getResource(element);
-  const verticalPodAutoscaler = getVerticalPodAutoscalerForResource(vpas, resource);
+  const verticalPodAutoscalers = getVerticalPodAutoscalersForResource(vpas, resource);
 
-  const section = verticalPodAutoscaler ? (
-    <TopologySideBarTabSection>
-      <VPATabSection vpas={vpas} />
-    </TopologySideBarTabSection>
-  ) : undefined;
+  const section =
+    verticalPodAutoscalers.length > 0 ? (
+      <TopologySideBarTabSection>
+        <VPATabSection vpas={verticalPodAutoscalers} />
+      </TopologySideBarTabSection>
+    ) : undefined;
   return [section, true, undefined];
 };
