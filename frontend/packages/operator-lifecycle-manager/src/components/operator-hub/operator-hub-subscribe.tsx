@@ -85,7 +85,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   const { pathname: url } = useLocation();
 
-  const [roleARNText, setRoleARNText] = React.useState(null);
+  const [roleARNText, setRoleARNText] = React.useState('');
   const { catalogNamespace, channel, pkg, tokenizedAuth, version } = getURLSearchParams();
   const [targetNamespace, setTargetNamespace] = React.useState(null);
   const [installMode, setInstallMode] = React.useState(null);
@@ -477,7 +477,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     !namespaceSupports(selectedTargetNamespace)(selectedInstallMode) ||
     (selectedTargetNamespace && cannotResolve) ||
     !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) ||
-    (tokenizedAuth === 'AWS' && _.isNull(roleARNText));
+    (tokenizedAuth === 'AWS' && _.isEmpty(roleARNText));
 
   const formError = () => {
     return (
@@ -773,7 +773,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                         aria-label={'role ARN'}
                         type="text"
                         value={roleARNText}
-                        onChange={(value) => {
+                        onChange={(_event, value) => {
                           setRoleARNText(value);
                         }}
                       />
