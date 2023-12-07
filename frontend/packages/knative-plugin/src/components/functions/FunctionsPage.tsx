@@ -24,7 +24,7 @@ import './FunctionsPage.scss';
 const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
   const { t } = useTranslation();
   const params = useParams();
-  return params.namespace ? (
+  return params.ns ? (
     <KnativeServiceTypeContext.Provider value={ServiceTypeValue.Function}>
       <Helmet>
         <title>{t('knative-plugin~Functions')}</title>
