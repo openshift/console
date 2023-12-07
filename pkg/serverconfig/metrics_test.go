@@ -71,8 +71,9 @@ func TestPluginMetrics(t *testing.T) {
 			configuredPlugins: []string{"acm", "kubevirt-plugin", "my-plugin"},
 			consolePlugins:    []string{"acm", "kubevirt-plugin", "my-plugin"},
 			expectedMetrics: `
+			console_plugins_info{name="acm",state="enabled"} 1
 			console_plugins_info{name="demo",state="enabled"} 1
-			console_plugins_info{name="redhat",state="enabled"} 2
+			console_plugins_info{name="kubevirt",state="enabled"} 1
 			`,
 		},
 
@@ -82,7 +83,7 @@ func TestPluginMetrics(t *testing.T) {
 			configuredPlugins: []string{"an-enabled-plugin", "another-enabled-plugin"},
 			consolePlugins:    []string{"an-enabled-plugin", "another-enabled-plugin"},
 			expectedMetrics: `
-			console_plugins_info{name="other",state="enabled"} 2
+			console_plugins_info{name="unknown",state="enabled"} 2
 			`,
 		},
 
@@ -92,7 +93,7 @@ func TestPluginMetrics(t *testing.T) {
 			configuredPlugins: []string{},
 			consolePlugins:    []string{"a-disabed-plugin", "another-disabed-plugin"},
 			expectedMetrics: `
-			console_plugins_info{name="other",state="disabled"} 2
+			console_plugins_info{name="unknown",state="disabled"} 2
 			`,
 		},
 
@@ -102,7 +103,7 @@ func TestPluginMetrics(t *testing.T) {
 			configuredPlugins: []string{"a-missing-plugin", "another-missing-plugin"},
 			consolePlugins:    []string{},
 			expectedMetrics: `
-			console_plugins_info{name="other",state="notfound"} 2
+			console_plugins_info{name="unknown",state="notfound"} 2
 			`,
 		},
 	}
@@ -156,14 +157,17 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 			consolePluginsInitially: []string{"acm", "kubevirt-plugin", "my-plugin"},
 			consolePluginsUpdated:   []string{},
 			expectedMetricsInitially: `
+			console_plugins_info{name="acm",state="enabled"} 1
 			console_plugins_info{name="demo",state="enabled"} 1
-			console_plugins_info{name="redhat",state="enabled"} 2
+			console_plugins_info{name="kubevirt",state="enabled"} 1
 			`,
 			expectedMetricsAfterUpdate: `
+			console_plugins_info{name="acm",state="enabled"} 0
+			console_plugins_info{name="acm",state="notfound"} 1
 			console_plugins_info{name="demo",state="enabled"} 0
 			console_plugins_info{name="demo",state="notfound"} 1
-			console_plugins_info{name="redhat",state="enabled"} 0
-			console_plugins_info{name="redhat",state="notfound"} 2
+			console_plugins_info{name="kubevirt",state="enabled"} 0
+			console_plugins_info{name="kubevirt",state="notfound"} 1
 			`,
 		},
 
@@ -173,11 +177,11 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 			consolePluginsInitially: []string{"an-enabled-plugin", "another-enabled-plugin"},
 			consolePluginsUpdated:   []string{"an-enabled-plugin"},
 			expectedMetricsInitially: `
-			console_plugins_info{name="other",state="enabled"} 2
+			console_plugins_info{name="unknown",state="enabled"} 2
 			`,
 			expectedMetricsAfterUpdate: `
-			console_plugins_info{name="other",state="enabled"} 1
-			console_plugins_info{name="other",state="notfound"} 1
+			console_plugins_info{name="unknown",state="enabled"} 1
+			console_plugins_info{name="unknown",state="notfound"} 1
 			`,
 		},
 
@@ -187,10 +191,10 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 			consolePluginsInitially: []string{"a-disabed-plugin", "another-disabed-plugin"},
 			consolePluginsUpdated:   []string{"a-disabed-plugin"},
 			expectedMetricsInitially: `
-			console_plugins_info{name="other",state="disabled"} 2
+			console_plugins_info{name="unknown",state="disabled"} 2
 			`,
 			expectedMetricsAfterUpdate: `
-			console_plugins_info{name="other",state="disabled"} 1
+			console_plugins_info{name="unknown",state="disabled"} 1
 			`,
 		},
 
@@ -200,11 +204,11 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 			consolePluginsInitially: []string{},
 			consolePluginsUpdated:   []string{"another-plugin"},
 			expectedMetricsInitially: `
-			console_plugins_info{name="other",state="notfound"} 2
+			console_plugins_info{name="unknown",state="notfound"} 2
 			`,
 			expectedMetricsAfterUpdate: `
-			console_plugins_info{name="other",state="enabled"} 1
-			console_plugins_info{name="other",state="notfound"} 1
+			console_plugins_info{name="unknown",state="enabled"} 1
+			console_plugins_info{name="unknown",state="notfound"} 1
 			`,
 		},
 
@@ -214,16 +218,16 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 			consolePluginsInitially: []string{"an-first-enabled-plugin", "acm", "another-disabled-plugin"},
 			consolePluginsUpdated:   []string{"another-disabled-plugin", "acm", "my-plugin"},
 			expectedMetricsInitially: `
-			console_plugins_info{name="other",state="disabled"} 1
-			console_plugins_info{name="other",state="enabled"} 1
-			console_plugins_info{name="redhat",state="enabled"} 1
+			console_plugins_info{name="acm",state="enabled"} 1
+			console_plugins_info{name="unknown",state="disabled"} 1
+			console_plugins_info{name="unknown",state="enabled"} 1
 			`,
 			expectedMetricsAfterUpdate: `
+			console_plugins_info{name="acm",state="enabled"} 1
 			console_plugins_info{name="demo",state="disabled"} 1
-			console_plugins_info{name="other",state="disabled"} 1
-			console_plugins_info{name="other",state="enabled"} 0
-			console_plugins_info{name="other",state="notfound"} 1
-			console_plugins_info{name="redhat",state="enabled"} 1
+			console_plugins_info{name="unknown",state="disabled"} 1
+			console_plugins_info{name="unknown",state="enabled"} 0
+			console_plugins_info{name="unknown",state="notfound"} 1
 			`,
 		},
 	}
