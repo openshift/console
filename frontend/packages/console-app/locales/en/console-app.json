@@ -385,6 +385,7 @@
   "Reprovision pending": "Reprovision pending",
   "Only one {{ machineHealthCheckLabel }} resource should match this node.": "Only one {{ machineHealthCheckLabel }} resource should match this node.",
   "Not configured": "Not configured",
+  "No conditions": "No conditions",
   "CPU": "CPU",
   "Memory": "Memory",
   "Filesystem": "Filesystem",
