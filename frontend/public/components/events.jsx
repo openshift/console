@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router-dom-v5-compat';
 import { Helmet } from 'react-helmet';
 import { Chip, ChipGroup } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
@@ -61,7 +61,7 @@ export const typeFilter = (eventType, event) => {
 };
 
 const kindFilter = (reference, { involvedObject }) => {
-  if (reference === 'all') {
+  if (!reference) {
     return true;
   }
   const kinds = reference.split(',');
@@ -179,9 +179,8 @@ export const EventsList = (props) => {
   const { t } = useTranslation();
   const [type, setType] = React.useState('all');
   const [textFilter, setTextFilter] = React.useState('');
-  const resourceTypeAll = 'all';
   const { ns } = useParams();
-  const [selected, setSelected] = React.useState(new Set([resourceTypeAll]));
+  const [selected, setSelected] = React.useState(new Set([]));
   const eventTypes = {
     all: t('public~All types'),
     normal: t('public~Normal'),
@@ -189,19 +188,19 @@ export const EventsList = (props) => {
   };
 
   const toggleSelected = (selection) => {
-    if (selected.has(resourceTypeAll) || selection === resourceTypeAll) {
-      setSelected(new Set([selection]));
-    } else {
-      const updateItems = new Set(selected);
+    setSelected((prev) => {
+      const updateItems = new Set(prev);
       updateItems.has(selection) ? updateItems.delete(selection) : updateItems.add(selection);
-      setSelected(updateItems);
-    }
+      return updateItems;
+    });
   };
 
   const removeResource = (selection) => {
-    const updateItems = new Set(selected);
-    updateItems.delete(selection);
-    setSelected(updateItems);
+    setSelected((prev) => {
+      const updateItems = new Set(prev);
+      updateItems.delete(selection);
+      return updateItems;
+    });
   };
 
   const clearSelection = () => {
@@ -241,11 +240,10 @@ export const EventsList = (props) => {
               expandedText={t('public~Show less')}
             >
               {[...selected].map((chip) => {
-                const chipString = chip === resourceTypeAll ? t('public~All') : chip;
                 return (
                   <Chip key={chip} onClick={() => removeResource(chip)}>
-                    <ResourceIcon kind={chipString} />
-                    {kindForReference(chipString)}
+                    <ResourceIcon kind={chip} />
+                    {kindForReference(chip)}
                   </Chip>
                 );
               })}
@@ -259,11 +257,7 @@ export const EventsList = (props) => {
         namespace={ns}
         key={[...selected].join(',')}
         type={type}
-        kind={
-          selected.has(resourceTypeAll) || selected.size === 0
-            ? resourceTypeAll
-            : [...selected].join(',')
-        }
+        kind={[...selected].join(',')}
         mock={props.mock}
         textFilter={textFilter}
       />
@@ -289,8 +283,12 @@ export const NoMatchingEvents = ({ allCount }) => {
       <div className="cos-status-box__title">{t('public~No matching events')}</div>
       <div className="pf-v5-u-text-align-center cos-status-box__detail">
         {allCount >= maxMessages
-          ? t('public~{{allCount}}+ events exist, but none match the current filter', { allCount })
-          : t('public~{{allCount}} events exist, but none match the current filter', { allCount })}
+          ? t('public~{{count}}+ event exist, but none match the current filter', {
+              count: maxMessages,
+            })
+          : t('public~{{count}} event exist, but none match the current filter', {
+              count: allCount,
+            })}
       </div>
     </Box>
   );
@@ -328,119 +326,112 @@ export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest })
   );
 });
 
-const EventStream = (props) => {
+const EventStream = ({
+  namespace,
+  fieldSelector,
+  mock,
+  resourceEventStream,
+  kind,
+  type,
+  filter,
+  textFilter,
+}) => {
+  const { t } = useTranslation();
   const [active, setActive] = React.useState(true);
-  const [sortedMessages, setSortedMessages] = React.useState([]);
-  const [filteredEvents, setFilteredEvents] = React.useState([]);
+  const [sortedEvents, setSortedEvents] = React.useState([]);
   const [error, setError] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const ws = React.useRef(null);
 
-  const { t } = useTranslation();
+  const filteredEvents = React.useMemo(() => {
+    return filterEvents(sortedEvents, { kind, type, filter, textFilter }).slice(0, maxMessages);
+  }, [sortedEvents, kind, type, filter, textFilter]);
 
-  const { fieldSelector, mock, resourceEventStream } = props;
-
-  let messages = {};
-  let ws;
-
-  const wsInit = (ns) => {
-    const params = { ns };
-    if (fieldSelector) {
-      params.queryParams = { fieldSelector: encodeURIComponent(fieldSelector) };
-    }
-
-    ws = new WSFactory(`${ns || 'all'}-sysevents`, {
-      host: 'auto',
-      reconnect: true,
-      path: watchURL(EventModel, params),
-      jsonParse: true,
-      bufferFlushInterval: flushInterval,
-      bufferMax: maxMessages,
-    })
-      .onbulkmessage((events) => {
-        events.forEach(({ object, type }) => {
-          const uid = object.metadata.uid;
-
-          switch (type) {
-            case 'ADDED':
-            case 'MODIFIED':
-              if (messages[uid] && messages[uid].count > object.count) {
-                // We already have a more recent version of this message stored, so skip this one
-                return;
-              }
-              messages[uid] = object;
-              break;
-            case 'DELETED':
-              delete messages[uid];
-              break;
-            default:
-              // eslint-disable-next-line no-console
-              console.error(`UNHANDLED EVENT: ${type}`);
-              return;
-          }
-        });
-        flushMessages();
-      })
-      .onopen(() => {
-        setError(false);
-        setLoading(false);
-      })
-      .onclose((evt) => {
-        if (evt && evt.wasClean === false) {
-          setError(evt.reason || t('public~Connection did not close cleanly.'));
-        }
-      })
-      .onerror(() => {
-        setError(true);
-      });
-  };
-
+  // Handle websocket setup and teardown when dependent props change
   React.useEffect(() => {
-    // If the namespace has changed, create a new WebSocket with the new namespace
-    if (!props.mock) {
-      wsInit(props.namespace);
-      // Reset the messages and events
-      setSortedMessages([]);
-      setFilteredEvents([]);
-
-      return () => {
-        ws && ws.destroy();
+    ws.current?.destroy();
+    if (!mock) {
+      const webSocketID = `${namespace || 'all'}-sysevents`;
+      const watchURLOptions = {
+        ...(namespace ? { ns: namespace } : {}),
+        ...(fieldSelector
+          ? {
+              queryParams: {
+                fieldSelector: encodeURIComponent(fieldSelector),
+              },
+            }
+          : {}),
       };
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.namespace]);
+      const path = watchURL(EventModel, watchURLOptions);
+      const webSocketOptions = {
+        host: 'auto',
+        reconnect: true,
+        path,
+        jsonParse: true,
+        bufferFlushInterval: flushInterval,
+        bufferMax: maxMessages,
+      };
 
-  const prevSortedMessages = React.useRef([]);
+      ws.current = new WSFactory(webSocketID, webSocketOptions)
+        .onbulkmessage((messages) => {
+          // Make one update to state per batch of events.
+          setSortedEvents((currentSortedEvents) => {
+            const topEvents = currentSortedEvents.slice(0, maxMessages);
+            const batch = messages.reduce((acc, { object, type: eventType }) => {
+              const uid = object.metadata.uid;
+              switch (eventType) {
+                case 'ADDED':
+                case 'MODIFIED':
+                  if (acc[uid] && acc[uid].count > object.count) {
+                    // We already have a more recent version of this message stored, so skip this one
+                    return acc;
+                  }
+                  return { ...acc, [uid]: object };
+                case 'DELETED':
+                  return _.omit(acc, uid);
+                default:
+                  // eslint-disable-next-line no-console
+                  console.error(`UNHANDLED EVENT: ${eventType}`);
+                  return acc;
+              }
+            }, _.keyBy(topEvents, 'metadata.uid'));
+            return sortEvents(batch);
+          });
+        })
+        .onopen(() => {
+          setError(false);
+          setLoading(false);
+        })
+        .onclose((evt) => {
+          if (evt?.wasClean === false) {
+            setError(evt.reason || t('public~Connection did not close cleanly.'));
+          }
+        })
+        .onerror(() => {
+          setError(true);
+        });
+    }
+    return () => {
+      ws.current?.destroy();
+    };
+  }, [namespace, fieldSelector, mock, t]);
+
+  // Pause/unpause the websocket when the active state changes
+  React.useEffect(() => {
+    if (active) {
+      ws.current?.unpause();
+    } else {
+      ws.current?.pause();
+    }
+  }, [active]);
 
   const toggleStream = () => {
     setActive((prev) => !prev);
-    prevSortedMessages.current = sortedMessages;
-  };
-
-  React.useEffect(() => {
-    // If the filter has changed, update the filteredEvents
-    setFilteredEvents(
-      EventStream.filterEvents(active ? sortedMessages : prevSortedMessages.current, props),
-    );
-  }, [active, sortedMessages, props, prevSortedMessages]);
-
-  // Messages can come in extremely fast when the buffer flushes.
-  // Instead of calling setState() on every single message, let onmessage()
-  // update an instance variable, and throttle the actual UI update (see constructor)
-  const flushMessages = () => {
-    const sorted = sortEvents(messages);
-    sorted.splice(maxMessages);
-    setSortedMessages(sorted);
-    setFilteredEvents(
-      EventStream.filterEvents(active ? sorted : prevSortedMessages.current, props),
-    );
-
-    // Shrink messages back to maxMessages messages, to stop it growing indefinitely
-    messages = _.keyBy(sorted, 'metadata.uid');
   };
 
   const count = filteredEvents.length;
-  const allCount = sortedMessages.length;
-  const noEvents = allCount === 0 && ws && ws.bufferSize() === 0;
+  const allCount = sortedEvents.length;
+  const noEvents = allCount === 0;
   const noMatches = allCount > 0 && count === 0;
   let sysEventStatus, statusBtnTxt;
 
@@ -455,7 +446,9 @@ const EventStream = (props) => {
     statusBtnTxt = (
       <span className="co-sysevent-stream__connection-error">
         {_.isString(error)
-          ? t('public~Error connecting to event stream: { error }', { error })
+          ? t('public~Error connecting to event stream: { error }', {
+              error,
+            })
           : t('public~Error connecting to event stream')}
       </span>
     );
@@ -475,10 +468,7 @@ const EventStream = (props) => {
   const messageCount =
     count < maxMessages
       ? t('public~Showing {{count}} event', { count })
-      : t('public~Showing {{messageCount}} of {{allCount}}+ events', {
-          messageCount: count,
-          allCount,
-        });
+      : t('public~Showing most recent {{count}} event', { count });
 
   return (
     <div className="co-m-pane__body">
@@ -509,7 +499,7 @@ const EventStream = (props) => {
 
 EventStream.defaultProps = {
   type: 'all',
-  kind: 'all',
+  kind: '',
   mock: false,
 };
 
@@ -523,7 +513,7 @@ EventStream.propTypes = {
   textFilter: PropTypes.string,
 };
 
-EventStream.filterEvents = (messages, { kind, type, filter, textFilter }) => {
+const filterEvents = (messages, { kind, type, filter, textFilter }) => {
   // Don't use `fuzzy` because it results in some surprising matches in long event messages.
   // Instead perform an exact substring match on each word in the text filter.
   const words = _.uniq(_.toLower(textFilter).match(/\S+/g)).sort((a, b) => {
