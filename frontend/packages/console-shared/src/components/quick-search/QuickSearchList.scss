@@ -56,4 +56,7 @@
     display: flex;
     flex-direction: column;
   }
+  &__secondary-label {
+    margin-left: var(--pf-v5-global--BorderWidth--md);
+  }
 }

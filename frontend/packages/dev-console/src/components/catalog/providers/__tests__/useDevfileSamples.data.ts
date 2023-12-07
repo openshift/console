@@ -66,6 +66,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     type: 'Devfile',
     name: 'Basic Node.js',
     provider: undefined,
+    secondaryLabel: 'Samples',
     description: 'A simple Hello World Node.js application',
     tags: ['NodeJS', 'Express'],
     cta: {
@@ -80,6 +81,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     type: 'Devfile',
     name: 'Basic Quarkus',
     provider: undefined,
+    secondaryLabel: 'Samples',
     description: 'A simple Hello World Java application using Quarkus',
     tags: ['Java', 'Quarkus'],
     cta: {
@@ -94,6 +96,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     type: 'Devfile',
     name: 'Basic Spring Boot',
     provider: undefined,
+    secondaryLabel: 'Samples',
     description: 'A simple Hello World Java Spring Boot application using Maven',
     tags: ['Java', 'Spring'],
     cta: {
@@ -108,6 +111,7 @@ export const expectedCatalogItems: CatalogItem[] = [
     type: 'Devfile',
     name: 'Basic Python',
     provider: undefined,
+    secondaryLabel: 'Samples',
     description: 'A simple Hello World application using Python',
     tags: ['Python'],
     cta: {
