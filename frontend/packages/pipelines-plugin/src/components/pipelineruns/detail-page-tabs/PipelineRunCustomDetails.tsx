@@ -100,7 +100,9 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
           <>
             <dt data-test="view-sbom">{t('pipelines-plugin~SBOM')}</dt>
             <dd>
-              {isExternalLink && !!linkToSbom ? (
+              {isExternalLink &&
+              linkToSbom &&
+              (linkToSbom.startsWith('http://') || linkToSbom.startsWith('https://')) ? (
                 <ExternalLink href={linkToSbom}>{t('pipelines-plugin~View SBOM')}</ExternalLink>
               ) : (
                 <Link

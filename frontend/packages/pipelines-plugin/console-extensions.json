@@ -1117,7 +1117,7 @@
     }
   },
   {
-    "type": "console.tab/horizontalNav",   
+    "type": "console.tab/horizontalNav",
     "properties": {
       "id": "Output",
       "name": "Output",
@@ -1130,15 +1130,15 @@
         "name": "%pipelines-plugin~Output%",
         "href": "output"
       },
-      "component": { "$codeRef": "ResultsComponent.OutputTab" }
-    } ,  
+      "component": { "$codeRef": "resultsComponent.OutputTab" }
+    },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"],
       "disallowed": ["CONSOLE_PIPELINE_PLUGIN"]
     }
   },
   {
-    "type": "console.tab/horizontalNav",   
+    "type": "console.tab/horizontalNav",
     "properties": {
       "id": "Output",
       "name": "Output",
@@ -1152,8 +1152,8 @@
         "name": "%pipelines-plugin~Output%",
         "href": "output"
       },
-      "component": { "$codeRef": "ResultsComponent.OutputTab" }
-    } ,  
+      "component": { "$codeRef": "resultsComponent.OutputTab" }
+    },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"],
       "disallowed": ["CONSOLE_PIPELINE_PLUGIN"]
