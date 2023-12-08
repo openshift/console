@@ -18,7 +18,7 @@ const testpod = {
     containers: [
       {
         name: 'httpd',
-        image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
+        image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest-error', // intentionally invalid image url
         securityContext: {
           allowPrivilegeEscalation: false,
           capabilities: {
@@ -54,8 +54,21 @@ describe('Events', () => {
     cy.deleteProjectWithCLI(testName);
   });
 
-  it('event view displays created pod', () => {
-    cy.visit(`/ns/${testName}/events`);
+  it('displays events for a newly created Pod', () => {
+    cy.visit(`/k8s/ns/${testName}/events`);
+
+    cy.log('Pod should exist in events list');
     cy.byTestID(name).should('exist');
+
+    cy.log('Event type filter should work');
+    cy.byLegacyTestID('dropdown-button').click();
+    cy.get('[data-test-dropdown-menu="warning"]').click();
+    cy.byTestID('event-totals').should('have.text', 'Showing 3 events');
+    cy.byTestID('event-warning').should('have.length', 3);
+
+    cy.log('Event text filter should work');
+    cy.byLegacyTestID('item-filter').type('Error: ImagePullBackOff');
+    cy.byTestID('event-totals').should('have.text', 'Showing 1 event');
+    cy.byTestID('event-warning').should('have.length', 1);
   });
 });
