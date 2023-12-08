@@ -766,11 +766,11 @@ export const getLimitsDataFromResource = (resource: K8sResourceKind) => {
   return limitsData;
 };
 
-export const getVerticalPodAutoscalerForResource = (
+export const getVerticalPodAutoscalersForResource = (
   vpas: K8sResourceKind[],
   obj: K8sResourceKind,
 ) =>
-  (vpas ?? []).find((vpa) => {
+  (vpas ?? []).filter((vpa) => {
     const { targetRef } = vpa.spec;
     return (
       targetRef &&
