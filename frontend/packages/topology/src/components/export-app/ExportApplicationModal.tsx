@@ -50,7 +50,7 @@ export const ExportApplicationModal: React.FC<ExportApplicationModalProps> = (pr
 
   React.useEffect(() => {
     if (exportResource && exportResource.status?.completed !== true) {
-      setStartTime(dateTimeFormatter.format(new Date(exportResource.metadata.creationTimestamp)));
+      setStartTime(dateTimeFormatter().format(new Date(exportResource.metadata.creationTimestamp)));
     }
   }, [exportResource]);
 
