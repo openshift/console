@@ -134,6 +134,7 @@
   "Health checks": "健康检查",
   "Add health checks": "添加健康检查",
   "Resource Quotas": "资源配额",
+  "VerticalPodAutoscaler": "VerticalPodAutoscaler",
   "Visual connector": "视觉化连接器",
   "Expand groups": "扩展组",
   "Pod count": "Pod 数",
