@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ListPage } from '../../../ListPage';
-import * as tektonResultsHooks from '../../../pipelineruns/hooks/useTektonResults';
+import * as pipelineRunssHooks from '../../../pipelineruns/hooks/usePipelineRuns';
 import PipelineRuns from '../PipelineRuns';
 
 const pipelineRunProps: React.ComponentProps<typeof PipelineRuns> = {
@@ -21,7 +21,7 @@ const pipelineRunProps: React.ComponentProps<typeof PipelineRuns> = {
   },
 };
 
-jest.spyOn(tektonResultsHooks, 'useGetPipelineRuns').mockReturnValue([[], true, '']);
+jest.spyOn(pipelineRunssHooks, 'usePipelineRuns').mockReturnValue([[], true, '']);
 const pipelineRunWrapper = shallow(<PipelineRuns {...pipelineRunProps} />);
 
 describe('Pipeline Run List', () => {

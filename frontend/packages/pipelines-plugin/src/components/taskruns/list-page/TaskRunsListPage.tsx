@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import { getURLSearchParams } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
@@ -31,9 +32,10 @@ const TaskRunsListPage: React.FC<
     TaskRunsListPageProps
 > = ({ hideBadge, showPipelineColumn = true, namespace, ...props }) => {
   const { t } = useTranslation();
+  const params = useParams();
   const searchParams = getURLSearchParams();
   const kind = searchParams?.kind;
-  const ns = namespace || props?.match?.params?.ns;
+  const ns = namespace || params?.ns;
   const badge = usePipelineTechPreviewBadge(ns);
   const trForPlr = props.selector && props.selector?.matchLabels?.['tekton.dev/pipelineRun'];
   const [taskRuns, taskRunsLoaded, taskRunsLoadError, getNextPage] = useTaskRuns(ns, trForPlr);
