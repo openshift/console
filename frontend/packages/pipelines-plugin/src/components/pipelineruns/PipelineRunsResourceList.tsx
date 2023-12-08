@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
@@ -18,7 +19,8 @@ const PipelineRunsResourceList: React.FC<
     PipelineRunsResourceListProps
 > = (props) => {
   const { t } = useTranslation();
-  const ns = props.namespace || props?.match?.params?.ns;
+  const params = useParams();
+  const ns = props.namespace || params?.ns;
   const badge = usePipelineTechPreviewBadge(ns);
   const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError, getNextPage] = useGetPipelineRuns(
     ns,
