@@ -31,7 +31,6 @@ export const NetworkPolicySelectorPreview: React.FC<NetworkPolicySelectorPreview
     <>
       <Popover
         aria-label="pods-list"
-        headerContent={<p />}
         data-test={props.dataTest ? `${props.dataTest}-popover` : `pods-preview-popover`}
         bodyContent={
           props.namespaceSelector ? (
