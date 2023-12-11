@@ -78,7 +78,8 @@ export type K8sVerb =
   | 'patch'
   | 'delete'
   | 'deletecollection'
-  | 'watch';
+  | 'watch'
+  | 'impersonate';
 
 export type AccessReviewResourceAttributes = {
   group?: string;

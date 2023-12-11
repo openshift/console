@@ -35,6 +35,14 @@ const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
   const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => startImpersonate('User', obj.metadata.name),
+    // Must use API group authorization.k8s.io, NOT user.openshift.io
+    // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
+    accessReview: {
+      group: 'authorization.k8s.io',
+      resource: 'users',
+      name: obj.metadata.name,
+      verb: 'impersonate',
+    },
   });
   return (
     <ResourceKebab
@@ -218,6 +226,14 @@ const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> 
   const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => startImpersonate('User', obj.metadata.name),
+    // Must use API group authorization.k8s.io, NOT user.openshift.io
+    // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
+    accessReview: {
+      group: 'authorization.k8s.io',
+      resource: 'users',
+      name: obj.metadata.name,
+      verb: 'impersonate',
+    },
   });
   return (
     <DetailsPage
