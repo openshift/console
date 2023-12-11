@@ -4,5 +4,5 @@
     "module": "commonjs",
     "outDir": "dist/webpack/lib"
   },
-  "files": ["src/lib-webpack.ts"]
+  "files": ["src/lib-webpack.ts", "src/webpack/loaders/dynamic-module-import-loader.ts"]
 }
