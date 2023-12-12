@@ -201,6 +201,7 @@
   "A <1>DeploymentConfig</1> to rollout new revisions when the Image changes.": "<1>DeploymentConfig</1>: イメージの変更時に新規リビジョンを展開します。",
   "A <1>Service</1> to expose your workload inside the Cluster.": "<1>Service</1>: クラスター内にワークロードを公開します。",
   "An optional <1>Route</1> to expose your workload outside the Cluster.": "(オプション) <1>Route</1>: クラスター外にワークロードを公開します。",
+  "Create Builder Image Sample": "ビルダーイメージのサンプルを作成",
   "Create Devfile Sample": "devfile サンプルの作成",
   "Instantiate Template": "Template のインスタンス化",
   "Pause rollouts": "ロールアウトの一時停止",
