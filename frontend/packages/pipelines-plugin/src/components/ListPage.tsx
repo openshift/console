@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import { Link, match as RMatch } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { ColumnLayout } from '@console/dynamic-plugin-sdk';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -19,7 +19,6 @@ import {
   FirehoseResource,
   FirehoseResourcesResult,
   FirehoseResultObject,
-  history,
   inject,
   kindObj,
   makeQuery,
@@ -202,6 +201,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     badge,
     title,
   } = props;
+  const navigate = useNavigate();
   const [reduxIDs, setReduxIDs] = React.useState([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expand] = React.useState();
@@ -243,7 +243,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       params.delete(filterName);
     }
     const url = new URL(window.location.href);
-    history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+    navigate(`${url.pathname}?${params.toString()}${url.hash}`, { replace: true });
   };
 
   const applyFilter = (filterName: string, options: any) => {
@@ -263,7 +263,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     if (action) {
       action();
     } else if (_.isFunction(createProps.createLink)) {
-      history.push(createProps.createLink(itemName));
+      navigate(createProps.createLink(itemName), { replace: true });
     }
   };
 
@@ -358,7 +358,6 @@ export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   filters?: any;
   limit?: number;
   nameFilter?: string;
-  match?: RMatch<any>;
   skipAccessReview?: boolean;
   data?: any;
 };
@@ -387,7 +386,6 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     showTitle = true,
     skipAccessReview,
     textFilter,
-    match,
     badge,
     hideLabelFilter,
     hideNameLabelFilters,
@@ -397,11 +395,12 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     flatten = (_resources) => _.get(_resources, kind)?.data,
   } = props;
   const { t } = useTranslation();
+  const params = useParams();
   let { createProps } = props;
   const ko = kindObj(kind);
   const { label, labelKey, labelPlural, labelPluralKey, namespaced, plural } = ko;
   const title = props.title || t(labelPluralKey) || labelPlural;
-  const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') : namespace;
+  const usedNamespace = !namespace && namespaced ? params.ns : namespace;
 
   let href = usedNamespace
     ? `/k8s/ns/${usedNamespace || 'default'}/${plural}/~new`
