@@ -37,7 +37,6 @@ const RepositoryPipelineRunListPage: React.FC<RepositoryPipelineRunListPageProps
   };
   return (
     <ListPage
-      {...props}
       showTitle={false}
       canCreate={false}
       kind={referenceForModel(PipelineRunModel)}

@@ -10,7 +10,7 @@ import {
 } from '../../../utils/pipeline-filter-reducer';
 import { ListFilterId, ListFilterLabels } from '../../../utils/pipeline-utils';
 import { ListPage } from '../../ListPage';
-import { useGetPipelineRuns } from '../../pipelineruns/hooks/useTektonResults';
+import { usePipelineRuns } from '../../pipelineruns/hooks/usePipelineRuns';
 import PipelineRunsList from '../../pipelineruns/list-page/PipelineRunList';
 import { PipelineDetailsTabProps } from './types';
 
@@ -31,13 +31,20 @@ export const runFilters = (t: TFunction): RowFilter[] => {
   ];
 };
 
-const PipelineRuns: React.FC<PipelineDetailsTabProps> = ({ obj }) => {
+const PipelineRuns: React.FC<PipelineDetailsTabProps> = (props) => {
   const { t } = useTranslation();
-  const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] = useGetPipelineRuns(
+  const { obj } = props;
+  const selector = React.useMemo(() => {
+    return {
+      matchLabels: { 'tekton.dev/pipeline': obj.metadata.name },
+    };
+  }, [obj.metadata.name]);
+  const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] = usePipelineRuns(
     obj.metadata.namespace,
-    { name: obj.metadata.name, kind: obj.kind },
+    {
+      selector,
+    },
   );
-
   const resources = React.useMemo(
     () => ({
       [referenceForModel(PipelineRunModel)]: {
