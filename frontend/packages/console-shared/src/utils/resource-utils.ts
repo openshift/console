@@ -772,10 +772,12 @@ export const getVerticalPodAutoscalersForResource = (
 ) =>
   (vpas ?? []).filter((vpa) => {
     const { targetRef } = vpa.spec;
+    const { namespace } = vpa.metadata;
     return (
       targetRef &&
       targetRef.apiVersion === obj?.apiVersion &&
       targetRef.kind === obj?.kind &&
-      targetRef.name === obj?.metadata?.name
+      targetRef.name === obj?.metadata?.name &&
+      namespace === obj?.metadata?.namespace
     );
   });
