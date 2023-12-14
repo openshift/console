@@ -37,7 +37,7 @@ const CodeEditor = React.forwardRef<MonacoEditor, CodeEditorProps>((props, ref) 
         default:
           break;
       }
-      monaco.editor.getModels()[0].updateOptions({ tabSize: 2 });
+      monaco.editor.getModels()[0]?.updateOptions({ tabSize: 2 });
       onSave && editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, onSave); // eslint-disable-line no-bitwise
     },
     [onSave, usesValue],
