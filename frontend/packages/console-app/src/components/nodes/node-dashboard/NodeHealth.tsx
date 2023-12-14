@@ -200,28 +200,34 @@ export const getMachineHealth = (
   }
   let failingConditions: number = 0;
   const conditions = _.flatten(
-    matchingHC.map((hc) =>
-      hc.spec.unhealthyConditions.map((c) => {
-        const failing = isConditionFailing(node, c);
-        if (failing) {
-          failingConditions++;
-        }
-        return {
-          ...c,
-          failing,
-        };
-      }),
+    matchingHC.map(
+      (hc) =>
+        hc.spec?.unhealthyConditions?.map((c) => {
+          const failing = isConditionFailing(node, c);
+          if (failing) {
+            failingConditions++;
+          }
+          return {
+            ...c,
+            failing,
+          };
+        }) ?? [],
     ),
   );
 
   return {
-    state: failingConditions || matchingHC.length > 1 ? HealthState.WARNING : HealthState.OK,
+    state:
+      failingConditions || matchingHC.length > 1 || conditions.length === 0
+        ? HealthState.WARNING
+        : HealthState.OK,
     details:
       matchingHC.length > 1
         ? 'Multiple resources'
         : failingConditions
         ? `${pluralize(failingConditions, 'condition')} failing`
-        : `${pluralize(conditions.length, 'condition')} passing`,
+        : conditions.length > 0
+        ? `${pluralize(conditions.length, 'condition')} passing`
+        : i18next.t('console-app~No conditions'),
     conditions,
     matchingHC,
   };
