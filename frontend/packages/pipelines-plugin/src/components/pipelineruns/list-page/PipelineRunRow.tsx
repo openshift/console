@@ -5,6 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Timestamp, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import {
+  DELETED_RESOURCE_IN_K8S_ANNOTATION,
+  RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
+} from '../../../const';
 import * as SignedPipelinerunIcon from '../../../images/signed-badge.svg';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
@@ -62,7 +66,8 @@ const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, custo
                   </div>
                 </Tooltip>
               ) : null}
-              {obj?.metadata?.annotations?.['resource.deleted.in.k8s'] === 'true' ? (
+              {obj?.metadata?.annotations?.[DELETED_RESOURCE_IN_K8S_ANNOTATION] === 'true' ||
+              obj?.metadata?.annotations?.[RESOURCE_LOADED_FROM_RESULTS_ANNOTATION] === 'true' ? (
                 <Tooltip content={t('pipelines-plugin~Archived in Tekton results')}>
                   <div className="opp-pipeline-run-list__results-indicator">
                     <ArchiveIcon />

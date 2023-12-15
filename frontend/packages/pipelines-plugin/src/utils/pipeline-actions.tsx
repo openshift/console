@@ -19,6 +19,7 @@ import {
 } from '../components/pipelines/modals';
 import { getPipelineRunData } from '../components/pipelines/modals/common/utils';
 import { getTaskRunsOfPipelineRun } from '../components/taskruns/useTaskRuns';
+import { RESOURCE_LOADED_FROM_RESULTS_ANNOTATION } from '../const';
 import { EventListenerModel, PipelineModel, PipelineRunModel, TaskRunModel } from '../models';
 import { PipelineKind, PipelineRunKind, TaskRunKind } from '../types';
 import { shouldHidePipelineRunStop, shouldHidePipelineRunCancel } from './pipeline-augment';
@@ -179,7 +180,8 @@ export const deleteResourceObj: KebabAction = (
     resourceObj?.metadata?.annotations?.['results.tekton.dev/log'] ||
     resourceObj?.metadata?.annotations?.['results.tekton.dev/record'] ||
     resourceObj?.metadata?.annotations?.['results.tekton.dev/result'];
-  const isResourceDeletedInK8s = resourceObj?.metadata?.annotations?.['resource.deleted.in.k8s'];
+  const isResourceLoadedFromTR =
+    resourceObj?.metadata?.annotations?.[RESOURCE_LOADED_FROM_RESULTS_ANNOTATION];
 
   const message = (
     <p>
@@ -196,11 +198,11 @@ export const deleteResourceObj: KebabAction = (
       deleteModal({
         kind,
         resource: resourceObj,
-        message: !isResourceDeletedInK8s && tektonResultsFlag ? message : '',
+        message: !isResourceLoadedFromTR && tektonResultsFlag ? message : '',
       }),
     accessReview: asAccessReview(kind, resourceObj, 'delete'),
-    isDisabled: !!isResourceDeletedInK8s,
-    tooltip: isResourceDeletedInK8s
+    isDisabled: !!isResourceLoadedFromTR,
+    tooltip: isResourceLoadedFromTR
       ? i18n.t('pipelines-plugin~Resource is being fetched from Tekton Results.')
       : '',
   };

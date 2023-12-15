@@ -10,6 +10,7 @@ import {
   ExternalLink,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { DELETED_RESOURCE_IN_K8S_ANNOTATION } from '../../const';
 import * as SignedPipelinerunIcon from '../../images/signed-badge.svg';
 import { PipelineRunModel } from '../../models';
 import { PipelineRunKind, TaskRunKind } from '../../types';
@@ -78,7 +79,7 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
                   </div>
                 </Tooltip>
               ) : null}
-              {obj?.metadata?.annotations?.['resource.deleted.in.k8s'] === 'true' ? (
+              {obj?.metadata?.annotations?.[DELETED_RESOURCE_IN_K8S_ANNOTATION] === 'true' ? (
                 <Tooltip content={t('pipelines-plugin~Archived in Tekton results')}>
                   <div className="opp-pipeline-run-list__results-indicator">
                     <ArchiveIcon />

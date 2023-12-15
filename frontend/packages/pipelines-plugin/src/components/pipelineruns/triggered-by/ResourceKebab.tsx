@@ -14,23 +14,14 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
     actions.map((a) => a(kindObj, resource, null, customData)),
     'hidden',
   );
-  const isResourceLoadedFromTR =
-    resource?.metadata?.annotations?.['resource.loaded.from.tektonResults'];
-  const isResourceDeletedInK8s = resource?.metadata?.annotations?.['resource.deleted.in.k8s'];
   return (
     <Kebab
       options={options}
       key={resource.metadata.uid}
-      isDisabled={
-        isDisabled ??
-        ((_.has(resource.metadata, 'deletionTimestamp') && !isResourceLoadedFromTR) ||
-          options.length === 0)
-      }
+      isDisabled={isDisabled ?? options.length === 0}
       terminatingTooltip={
-        _.has(resource.metadata, 'deletionTimestamp') && !isResourceLoadedFromTR
+        _.has(resource.metadata, 'deletionTimestamp')
           ? terminatingTooltip || t('pipelines-plugin~Resource is being deleted.')
-          : isResourceDeletedInK8s
-          ? t('pipelines-plugin~Resource is being fetched from Tekton Results.')
           : ''
       }
     />
