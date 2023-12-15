@@ -125,7 +125,7 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
               className="co-external-link-with-copy__icon co-external-link-with-copy__copyicon"
             >
               <CopyIcon />
-              <span className="sr-only">{t('public~Copy to clipboard')}</span>
+              <span className="pf-v5-u-screen-reader">{t('public~Copy to clipboard')}</span>
             </span>
           </CTC>
         </Tooltip>
