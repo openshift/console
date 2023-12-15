@@ -86,6 +86,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const { pathname: url } = useLocation();
 
   const [roleARNText, setRoleARNText] = React.useState('');
+  const [azureTenantId, setAzureTenantId] = React.useState('');
+  const [azureClientId, setAzureClientId] = React.useState('');
+  const [azureSubscriptionId, setAzureSubscriptionId] = React.useState('');
   const { catalogNamespace, channel, pkg, tokenizedAuth, version } = getURLSearchParams();
   const [targetNamespace, setTargetNamespace] = React.useState(null);
   const [installMode, setInstallMode] = React.useState(null);
@@ -256,7 +259,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     if (
       version !== currentLatestVersion ||
       manualSubscriptionsInNamespace?.length > 0 ||
-      tokenizedAuth === 'AWS'
+      tokenizedAuth === 'AWS' ||
+      tokenizedAuth === 'Azure'
     ) {
       setApproval(InstallPlanApproval.Manual);
     } else setApproval(InstallPlanApproval.Automatic);
@@ -419,15 +423,37 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       },
     };
 
-    if (tokenizedAuth === 'AWS') {
-      subscription.spec.config = {
-        env: [
-          {
-            name: 'ROLEARN',
-            value: roleARNText,
-          },
-        ],
-      };
+    switch (tokenizedAuth) {
+      case 'AWS':
+        subscription.spec.config = {
+          env: [
+            {
+              name: 'ROLEARN',
+              value: roleARNText,
+            },
+          ],
+        };
+        break;
+      case 'Azure':
+        subscription.spec.config = {
+          env: [
+            {
+              name: 'CLIENTID',
+              value: azureClientId,
+            },
+            {
+              name: 'TENANTID',
+              value: azureTenantId,
+            },
+            {
+              name: 'SUBSCRIPTIONID',
+              value: azureSubscriptionId,
+            },
+          ],
+        };
+        break;
+      default:
+        break;
     }
 
     try {
@@ -477,7 +503,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     !namespaceSupports(selectedTargetNamespace)(selectedInstallMode) ||
     (selectedTargetNamespace && cannotResolve) ||
     !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) ||
-    (tokenizedAuth === 'AWS' && _.isEmpty(roleARNText));
+    (tokenizedAuth === 'AWS' && _.isEmpty(roleARNText)) ||
+    (tokenizedAuth === 'Azure' &&
+      [azureClientId, azureTenantId, azureSubscriptionId].some((v) => _.isEmpty(v)));
 
   const formError = () => {
     return (
@@ -756,6 +784,21 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             </p>
           </Alert>
         )}
+        {tokenizedAuth === 'Azure' && showSTSWarn && (
+          <Alert
+            isInline
+            variant="warning"
+            title={t('olm~Cluster in Workload Identity / Federated Identity Mode')}
+            actionClose={<AlertActionCloseButton onClose={() => setShowSTSWarn(false)} />}
+            className="pf-u-mb-lg"
+          >
+            <p>
+              {t(
+                'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
+              )}
+            </p>
+          </Alert>
+        )}
         <div className="row">
           <div className="col-xs-6">
             <>
@@ -775,6 +818,70 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                         value={roleARNText}
                         onChange={(_event, value) => {
                           setRoleARNText(value);
+                        }}
+                      />
+                    </div>
+                  </fieldset>
+                </div>
+              )}
+              {tokenizedAuth === 'Azure' && (
+                <div className="form-group">
+                  <fieldset>
+                    <label className="co-required">{t('olm~Azure Client ID')}</label>
+                    <FieldLevelHelp>
+                      {t(
+                        'olm~The Azure Client ID required for the operator to access the cloud API.',
+                      )}
+                    </FieldLevelHelp>
+                    <div className="co-toolbar__item">
+                      <TextInput
+                        autoFocus
+                        placeholder={'Azure Client ID'}
+                        aria-label={'Azure Client ID'}
+                        type="text"
+                        value={azureClientId}
+                        onChange={(_event, value) => {
+                          setAzureClientId(value);
+                        }}
+                      />
+                    </div>
+                  </fieldset>
+                  <fieldset>
+                    <label className="co-required">{t('olm~Azure Tenant ID')}</label>
+                    <FieldLevelHelp>
+                      {t(
+                        'olm~The Azure Tenant ID required for the operator to access the cloud API.',
+                      )}
+                    </FieldLevelHelp>
+                    <div className="co-toolbar__item">
+                      <TextInput
+                        autoFocus
+                        placeholder={'Azure Tenant ID'}
+                        aria-label={'Azure Tenant ID'}
+                        type="text"
+                        value={azureTenantId}
+                        onChange={(_event, value) => {
+                          setAzureTenantId(value);
+                        }}
+                      />
+                    </div>
+                  </fieldset>
+                  <fieldset>
+                    <label className="co-required">{t('olm~Azure Subscription ID')}</label>
+                    <FieldLevelHelp>
+                      {t(
+                        'olm~The Azure Subscription ID required for the operator to access the cloud API.',
+                      )}
+                    </FieldLevelHelp>
+                    <div className="co-toolbar__item">
+                      <TextInput
+                        autoFocus
+                        placeholder={'Azure Subcription ID'}
+                        aria-label={'Azure Subscription ID'}
+                        type="text"
+                        value={azureSubscriptionId}
+                        onChange={(_event, value) => {
+                          setAzureSubscriptionId(value);
                         }}
                       />
                     </div>
