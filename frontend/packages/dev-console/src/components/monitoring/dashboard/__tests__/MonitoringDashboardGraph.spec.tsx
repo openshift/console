@@ -3,6 +3,7 @@ import { screen, render } from '@testing-library/react';
 import { shallow } from 'enzyme';
 import '@testing-library/jest-dom';
 import * as redux from 'react-redux';
+import { BrowserRouter } from 'react-router-dom-v5-compat';
 import { QueryBrowser } from '@console/shared/src/components/query-browser';
 import { t } from '../../../../../../../__mocks__/i18next';
 import { monitoringDashboardQueries } from '../../queries';
@@ -43,7 +44,11 @@ describe('Monitoring Dashboard graph', () => {
 
   it('should add link to line graph', () => {
     monitoringDashboardGraphProps.graphType = GraphTypes.line;
-    render(<MonitoringDashboardGraph {...monitoringDashboardGraphProps} />);
+    render(
+      <BrowserRouter>
+        <MonitoringDashboardGraph {...monitoringDashboardGraphProps} />
+      </BrowserRouter>,
+    );
 
     const link = screen.getByRole('link', { name: 'View metrics for Memory usage' });
 
