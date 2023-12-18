@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { DELETED_RESOURCE_IN_K8S_ANNOTATION } from '../../../const';
 import { TaskRunModel, PipelineModel } from '../../../models';
 import { TaskRunKind } from '../../../types';
 import { getTaskRunKebabActions } from '../../../utils/pipeline-actions';
@@ -34,7 +35,7 @@ const TaskRunsRow: React.FC<RowFunctionArgs<TaskRunKind>> = ({ obj, customData }
           data-test-id={obj.metadata.name}
           nameSuffix={
             <>
-              {obj?.metadata?.annotations?.['resource.deleted.in.k8s'] === 'true' ? (
+              {obj?.metadata?.annotations?.[DELETED_RESOURCE_IN_K8S_ANNOTATION] === 'true' ? (
                 <Tooltip content={t('pipelines-plugin~Archived in Tekton results')}>
                   <div className="opp-task-run-list__results-indicator">
                     <ArchiveIcon />
