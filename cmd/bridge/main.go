@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"flag"
 	"fmt"
+	"net"
 	"runtime"
 
 	"io/ioutil"
@@ -12,6 +14,9 @@ import (
 	"net/url"
 	"os"
 	"strings"
+
+	"sigs.k8s.io/controller-runtime/pkg/certwatcher"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
@@ -61,6 +66,7 @@ const (
 func main() {
 	fs := flag.NewFlagSet("bridge", flag.ExitOnError)
 	klog.InitFlags(fs)
+	log.SetLogger(klog.NewKlogr())
 	defer klog.Flush()
 
 	authOptions := authopts.NewAuthOptions()
@@ -242,6 +248,18 @@ func main() {
 			}
 			nodeOperatingSystems = append(nodeOperatingSystems, str)
 		}
+	}
+
+	listenURL, err := flags.ValidateFlagIsURL("listen", *fListen, false)
+	flags.FatalIfFailed(err)
+
+	switch listenURL.Scheme {
+	case "http":
+	case "https":
+		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-cert-file", *fTlSCertFile))
+		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTlSKeyFile))
+	default:
+		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
 	}
 
 	srv := &server.Server{
@@ -558,56 +576,93 @@ func main() {
 		os.Exit(1)
 	}
 
-	listenURL, err := flags.ValidateFlagIsURL("listen", *fListen, false)
-	flags.FatalIfFailed(err)
-
-	switch listenURL.Scheme {
-	case "http":
-	case "https":
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-cert-file", *fTlSCertFile))
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTlSKeyFile))
-	default:
-		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
-	}
-
 	consoleHandler, err := srv.HTTPHandler()
 	if err != nil {
 		klog.Errorf("failed to set up the console's HTTP handler: %v", err)
 		os.Exit(1)
 	}
-	httpsrv := &http.Server{
-		Addr:    listenURL.Host,
-		Handler: consoleHandler,
-		// Disable HTTP/2, which breaks WebSockets.
-		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
-		TLSConfig:    oscrypto.SecureTLSConfig(&tls.Config{}),
-	}
 
-	if *fRedirectPort != 0 {
+	startRedirectServer(srv.BaseURL, *fRedirectPort)
+	if err = startBridge(listenURL, *fTlSCertFile, *fTlSKeyFile, consoleHandler); err != nil {
+		klog.Fatalf("Error starting bridge: %v", err)
+	}
+}
+
+func startRedirectServer(baseURL *url.URL, port int) {
+	if port != 0 {
 		go func() {
 			// Listen on passed port number to be redirected to the console
 			redirectServer := http.NewServeMux()
 			redirectServer.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
 				redirectURL := &url.URL{
-					Scheme:   srv.BaseURL.Scheme,
-					Host:     srv.BaseURL.Host,
+					Scheme:   baseURL.Scheme,
+					Host:     baseURL.Host,
 					RawQuery: req.URL.RawQuery,
 					Path:     req.URL.Path,
 				}
 				http.Redirect(res, req, redirectURL.String(), http.StatusMovedPermanently)
 			})
-			redirectPort := fmt.Sprintf(":%d", *fRedirectPort)
-			klog.Infof("Listening on %q for custom hostname redirect...", redirectPort)
-			klog.Fatal(http.ListenAndServe(redirectPort, redirectServer))
+
+			addr := fmt.Sprintf(":%d", port)
+			klog.Infof("Redirect server listening on %v", addr)
+			err := http.ListenAndServe(addr, redirectServer)
+			if err != nil {
+				klog.Fatalf("Redirect server error: %v", err)
+			}
 		}()
 	}
+}
 
-	klog.Infof("Binding to %s...", httpsrv.Addr)
-	if listenURL.Scheme == "https" {
-		klog.Info("using TLS")
-		klog.Fatal(httpsrv.ListenAndServeTLS(*fTlSCertFile, *fTlSKeyFile))
-	} else {
-		klog.Info("not using TLS")
-		klog.Fatal(httpsrv.ListenAndServe())
+func startBridge(listenURL *url.URL, certFile, keyFile string, handler http.Handler) error {
+	// Context to clean up on exit
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	klog.Infof("Binding to %s...", listenURL.Host)
+	httpsrv := &http.Server{Handler: handler}
+	listener, err := getListener(ctx, listenURL, certFile, keyFile)
+	if err != nil {
+		return err
 	}
+	defer (*listener).Close()
+
+	go func() {
+		<-ctx.Done()
+		klog.Infof("Shutting down server...")
+		if err = httpsrv.Shutdown(ctx); err != nil {
+			klog.Errorf("Error shutting down server: %v", err)
+		}
+	}()
+
+	// Cancel context and close listener on Serve return
+	return httpsrv.Serve(*listener)
+}
+
+func getListener(ctx context.Context, listenURL *url.URL, certFile, keyFile string) (*net.Listener, error) {
+	if listenURL.Scheme == "http" {
+		klog.Info("Not using TLS")
+		listener, err := net.Listen("tcp", listenURL.Host)
+		return &listener, err
+	}
+	klog.Info("Using TLS")
+	klog.V(4).Infof("Creating cert watcher")
+	// Initialize a new cert watcher with cert/key pair
+	watcher, err := certwatcher.New(certFile, keyFile)
+	if err != nil {
+		return nil, err
+	}
+	// Start goroutine with certwatcher running fsnotify against supplied certdir
+	go func() {
+		klog.V(4).Infof("Starting cert watcher")
+		if err := watcher.Start(ctx); err != nil {
+			klog.Fatalf("Serving cert watcher failed: %v", err)
+		}
+	}()
+
+	tlsConfig := &tls.Config{
+		NextProtos:     []string{"http/1.1"},
+		GetCertificate: watcher.GetCertificate,
+	}
+	listener, err := tls.Listen("tcp", listenURL.Host, tlsConfig)
+	return &listener, err
 }
