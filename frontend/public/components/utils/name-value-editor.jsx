@@ -481,7 +481,7 @@ const PairElement_ = DragSource(
         const deleteIcon = (
           <>
             <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-            <span className="sr-only">{t('public~Delete')}</span>
+            <span className="pf-v5-u-screen-reader">{t('public~Delete')}</span>
           </>
         );
         const dragButton = (
@@ -642,7 +642,7 @@ const EnvFromPairElement_ = DragSource(
         const deleteButton = (
           <>
             <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-            <span className="sr-only">{t('public~Delete')}</span>
+            <span className="pf-v5-u-screen-reader">{t('public~Delete')}</span>
           </>
         );
         return connectDropTarget(

@@ -30,7 +30,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props
             type="button"
           >
             <CopyIcon />
-            <span className="sr-only">{t('public~Copy to clipboard')}</span>
+            <span className="pf-v5-u-screen-reader">{t('public~Copy to clipboard')}</span>
           </Button>
         </CTC>
       </Tooltip>
