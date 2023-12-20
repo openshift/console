@@ -1,6 +1,10 @@
 import * as _ from 'lodash';
 import { getActiveUserName } from '@console/internal/actions/ui';
 import { getRandomChars } from '@console/shared';
+import {
+  DELETED_RESOURCE_IN_K8S_ANNOTATION,
+  RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
+} from '../../../../const';
 import { PipelineRunModel } from '../../../../models';
 import {
   PipelineKind,
@@ -113,8 +117,8 @@ export const getPipelineRunData = (
   delete annotations['results.tekton.dev/log'];
   delete annotations['results.tekton.dev/record'];
   delete annotations['results.tekton.dev/result'];
-  delete annotations['resource.deleted.in.k8s'];
-  delete annotations['resource.loaded.from.tektonResults'];
+  delete annotations[DELETED_RESOURCE_IN_K8S_ANNOTATION];
+  delete annotations[RESOURCE_LOADED_FROM_RESULTS_ANNOTATION];
 
   const newPipelineRun = {
     apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,

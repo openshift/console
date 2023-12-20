@@ -8,6 +8,10 @@ import {
 import { RouteModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
 import { consoleProxyFetchJSON } from '@console/shared/src/utils/proxy';
+import {
+  DELETED_RESOURCE_IN_K8S_ANNOTATION,
+  RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
+} from '../../../const';
 import { TektonResultModel } from '../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
 
@@ -64,7 +68,7 @@ export const decodeValueJson = (value: string) => {
   let resourceDeletedInK8sAnnotation;
   if (_.has(decodedValue?.metadata, 'deletionTimestamp')) {
     delete decodedValue?.metadata?.deletionTimestamp;
-    resourceDeletedInK8sAnnotation = { 'resource.deleted.in.k8s': 'true' };
+    resourceDeletedInK8sAnnotation = { [DELETED_RESOURCE_IN_K8S_ANNOTATION]: 'true' };
   }
   const decodedValueWithTRAnnotation = decodedValue
     ? {
@@ -73,7 +77,7 @@ export const decodeValueJson = (value: string) => {
           ...decodedValue?.metadata,
           annotations: {
             ...decodedValue?.metadata?.annotations,
-            'resource.loaded.from.tektonResults': 'true',
+            [RESOURCE_LOADED_FROM_RESULTS_ANNOTATION]: 'true',
             ...resourceDeletedInK8sAnnotation,
           },
         },
