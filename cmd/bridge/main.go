@@ -1,12 +1,10 @@
 package main
 
 import (
-	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"flag"
 	"fmt"
-	"net"
 	"runtime"
 
 	"io/ioutil"
@@ -15,15 +13,15 @@ import (
 	"os"
 	"strings"
 
-	"sigs.k8s.io/controller-runtime/pkg/certwatcher"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
+	"github.com/openshift/console/cmd/bridge/server"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
-	"github.com/openshift/console/pkg/server"
+	handler "github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
@@ -75,10 +73,11 @@ func main() {
 	sessionOptions := session.NewSessionOptions()
 	sessionOptions.AddFlags(fs)
 
+	consoleServer := server.NewServer(fs)
+	redirectServer := server.NewRedirectServer(fs)
+
 	// Define commandline / env / config options
 	fs.String("config", "", "The YAML config file.")
-
-	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
 
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")
 	fBasePath := fs.String("base-path", "/", "")
@@ -96,11 +95,8 @@ func main() {
 
 	fK8sModeOffClusterGitOps := fs.String("k8s-mode-off-cluster-gitops", "", "DEV ONLY. URL of the GitOps backend service")
 
-	fRedirectPort := fs.Int("redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
 	fLogLevel := fs.String("log-level", "", "level of logging information by package (pkg=level).")
 	fPublicDir := fs.String("public-dir", "./frontend/public/dist", "directory containing static web assets.")
-	fTlSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
-	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
 
 	_ = fs.String("kubectl-client-id", "", "DEPRECATED: setting this does not do anything.")
@@ -250,19 +246,7 @@ func main() {
 		}
 	}
 
-	listenURL, err := flags.ValidateFlagIsURL("listen", *fListen, false)
-	flags.FatalIfFailed(err)
-
-	switch listenURL.Scheme {
-	case "http":
-	case "https":
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-cert-file", *fTlSCertFile))
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTlSKeyFile))
-	default:
-		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
-	}
-
-	srv := &server.Server{
+	srv := &handler.Server{
 		PublicDir:                    *fPublicDir,
 		BaseURL:                      baseURL,
 		Branding:                     branding,
@@ -527,7 +511,7 @@ func main() {
 	if err != nil {
 		klog.Fatalf("Failed to create k8s HTTP client: %v", err)
 	}
-	srv.MonitoringDashboardConfigMapLister = server.NewResourceLister(
+	srv.MonitoringDashboardConfigMapLister = handler.NewResourceLister(
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
@@ -540,7 +524,7 @@ func main() {
 		nil,
 	)
 
-	srv.KnativeEventSourceCRDLister = server.NewResourceLister(
+	srv.KnativeEventSourceCRDLister = handler.NewResourceLister(
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
@@ -553,7 +537,7 @@ func main() {
 		knative.EventSourceFilter,
 	)
 
-	srv.KnativeChannelCRDLister = server.NewResourceLister(
+	srv.KnativeChannelCRDLister = handler.NewResourceLister(
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
@@ -581,88 +565,14 @@ func main() {
 		klog.Errorf("failed to set up the console's HTTP handler: %v", err)
 		os.Exit(1)
 	}
-
-	startRedirectServer(srv.BaseURL, *fRedirectPort)
-	if err = startBridge(listenURL, *fTlSCertFile, *fTlSKeyFile, consoleHandler); err != nil {
-		klog.Fatalf("Error starting bridge: %v", err)
-	}
-}
-
-func startRedirectServer(baseURL *url.URL, port int) {
-	if port != 0 {
-		go func() {
-			// Listen on passed port number to be redirected to the console
-			redirectServer := http.NewServeMux()
-			redirectServer.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-				redirectURL := &url.URL{
-					Scheme:   baseURL.Scheme,
-					Host:     baseURL.Host,
-					RawQuery: req.URL.RawQuery,
-					Path:     req.URL.Path,
-				}
-				http.Redirect(res, req, redirectURL.String(), http.StatusMovedPermanently)
-			})
-
-			addr := fmt.Sprintf(":%d", port)
-			klog.Infof("Redirect server listening on %v", addr)
-			err := http.ListenAndServe(addr, redirectServer)
-			if err != nil {
-				klog.Fatalf("Redirect server error: %v", err)
-			}
-		}()
-	}
-}
-
-func startBridge(listenURL *url.URL, certFile, keyFile string, handler http.Handler) error {
-	// Context to clean up on exit
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	klog.Infof("Binding to %s...", listenURL.Host)
-	httpsrv := &http.Server{Handler: handler}
-	listener, err := getListener(ctx, listenURL, certFile, keyFile)
-	if err != nil {
-		return err
-	}
-	defer (*listener).Close()
-
 	go func() {
-		<-ctx.Done()
-		klog.Infof("Shutting down server...")
-		if err = httpsrv.Shutdown(ctx); err != nil {
-			klog.Errorf("Error shutting down server: %v", err)
+		err := redirectServer.Serve(baseURL.Scheme, baseURL.Host)
+		if err != nil {
+			klog.Fatalf("redirect server error: %v", err)
 		}
 	}()
 
-	// Cancel context and close listener on Serve return
-	return httpsrv.Serve(*listener)
-}
-
-func getListener(ctx context.Context, listenURL *url.URL, certFile, keyFile string) (*net.Listener, error) {
-	if listenURL.Scheme == "http" {
-		klog.Info("Not using TLS")
-		listener, err := net.Listen("tcp", listenURL.Host)
-		return &listener, err
+	if err := consoleServer.Serve(consoleHandler); err != nil {
+		klog.Fatalf("console server error: %v", err)
 	}
-	klog.Info("Using TLS")
-	klog.V(4).Infof("Creating cert watcher")
-	// Initialize a new cert watcher with cert/key pair
-	watcher, err := certwatcher.New(certFile, keyFile)
-	if err != nil {
-		return nil, err
-	}
-	// Start goroutine with certwatcher running fsnotify against supplied certdir
-	go func() {
-		klog.V(4).Infof("Starting cert watcher")
-		if err := watcher.Start(ctx); err != nil {
-			klog.Fatalf("Serving cert watcher failed: %v", err)
-		}
-	}()
-
-	tlsConfig := &tls.Config{
-		NextProtos:     []string{"http/1.1"},
-		GetCertificate: watcher.GetCertificate,
-	}
-	listener, err := tls.Listen("tcp", listenURL.Host, tlsConfig)
-	return &listener, err
 }
