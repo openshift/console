@@ -1911,5 +1911,8 @@
   "Disable": "無効にする",
   "default": "デフォルト",
   "Disabled": "無効",
-  "Enabled": "有効化"
+  "Enabled": "有効化",
+  "Create RoleBinding": "RoleBinding の作成",
+  "Edit RoleBinding": "RoleBinding の編集",
+  "Duplicate RoleBinding": "RoleBinding の複製"
 }

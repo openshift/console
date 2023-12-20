@@ -1911,5 +1911,8 @@
   "Disable": "비활성화",
   "default": "기본",
   "Disabled": "비활성화됨",
-  "Enabled": "활성화됨"
+  "Enabled": "활성화됨",
+  "Create RoleBinding": "역할 바인딩 만들기",
+  "Edit RoleBinding": "역할 바인딩 편집",
+  "Duplicate RoleBinding": "중복된 역할 바인딩"
 }
