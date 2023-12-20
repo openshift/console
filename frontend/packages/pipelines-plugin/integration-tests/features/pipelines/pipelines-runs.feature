@@ -44,7 +44,7 @@ Feature: Pipeline Runs
               And user is at pipelines page
              When user clicks Last Run value of "<pipeline_name>"
              Then user will be redirected to Pipeline Run Details page
-              And user is able to see Details, YAML, TaskRuns, Parameters, Logs and Events tabs
+              And user is able to see Details, YAML, TaskRuns, Parameters, Logs, Events and Output tabs
               And Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created At, Owner, Status, Pipeline and Triggered by
               And Actions dropdown display on the top right corner of the page
 
@@ -343,7 +343,7 @@ Feature: Pipeline Runs
               And user is at pipelines page
              When user clicks Last Run value of "pipeline-run-no-parameters"
              Then user will be redirected to Pipeline Run Details page
-              And user is able to see Details, YAML, TaskRuns, Parameters, Logs and Events tabs
+              And user is able to see Details, YAML, TaskRuns, Parameters, Logs, Events and Output tabs
               And user navigates to pipelineRun parameters tab
               And user is able to see No parameters are associated with this PipelineRun
 
