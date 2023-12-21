@@ -16,8 +16,11 @@ export const isSelectedVersionInstalled = (item: CatalogItem, selectedVersion: s
 export const isTaskVersionInstalled = (item: CatalogItem): boolean => !!item.attributes?.installed;
 
 export const isOneVersionInstalled = (item: CatalogItem): boolean => {
-  return !!item.attributes?.versions?.find(
-    (v) => v.version.toString() === item.attributes?.installed?.toString(),
+  return !!(
+    item.attributes?.installed &&
+    item.attributes?.versions?.some(
+      (v) => v.version?.toString() === item.attributes?.installed?.toString(),
+    )
   );
 };
 
