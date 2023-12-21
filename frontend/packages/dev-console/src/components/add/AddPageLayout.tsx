@@ -5,14 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
 import { getQueryArgument } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src';
-import { PageLayout, useActiveNamespace, RestoreGettingStartedButton } from '@console/shared';
+import { PageLayout, useActiveNamespace } from '@console/shared';
 import TopologyQuickSearch from '@console/topology/src/components/quick-search/TopologyQuickSearch';
 import TopologyQuickSearchButton from '@console/topology/src/components/quick-search/TopologyQuickSearchButton';
 import { filterNamespaceScopedUrl } from '../../utils/add-page-utils';
 import { useAddActionExtensions } from '../../utils/useAddActionExtensions';
 import { ResourceQuotaAlert } from '../resource-quota/ResourceQuotaAlert';
 import AddCardSection from './AddCardSection';
-import { GETTING_STARTED_USER_SETTINGS_KEY } from './constants';
 import { GettingStartedSection } from './GettingStartedSection';
 import { useAccessFilterExtensions } from './hooks/useAccessFilterExtensions';
 import { useShowAddCardItemDetails } from './hooks/useShowAddCardItemDetails';
@@ -66,7 +65,6 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
             <div className="odc-add-page-layout__resource-quota-message-block">
               <ResourceQuotaAlert namespace={activeNamespace} />
             </div>
-            <RestoreGettingStartedButton userSettingsKey={GETTING_STARTED_USER_SETTINGS_KEY} />
             <div
               className={cx('odc-add-page-layout__hint-block__details-switch', {
                 'odc-add-page-layout__hint-block__details-switch__loading-state': !extensionsLoaded,
