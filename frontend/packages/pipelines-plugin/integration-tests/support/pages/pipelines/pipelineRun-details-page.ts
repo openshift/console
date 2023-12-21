@@ -68,9 +68,10 @@ export const pipelineRunDetailsPage = {
     cy.get(pipelineRunDetailsPO.detailsTab).should('be.visible');
     cy.get(pipelineRunDetailsPO.yamlTab).should('be.visible');
     cy.get(pipelineRunDetailsPO.taskRunsTab).should('be.visible');
+    cy.get(pipelineRunDetailsPO.parametersTab).should('be.visible');
     cy.get(pipelineRunDetailsPO.logsTab).should('be.visible');
     cy.get(pipelineRunDetailsPO.eventsTab).should('be.visible');
-    cy.get(pipelineRunDetailsPO.parametersTab).should('be.visible');
+    cy.get(pipelineRunDetailsPO.outputTab).should('be.visible');
   },
   verifyFields: () => {
     cy.byLegacyTestID('resource-summary').within(() => {
