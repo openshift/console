@@ -63,7 +63,7 @@ export const topologyPO = {
       showPodCount: '[id$=show-pod-count]',
     },
     contextMenuOptions: {
-      addToProject: '.pf-topology-context-sub-menu',
+      addToProject: 'button.pf-topology-context-sub-menu',
     },
     addLink: '[data-test="add-page"]',
     quickSearch: '[data-test="quick-search-bar"]',

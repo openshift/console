@@ -42,7 +42,7 @@ Then(
 );
 
 Then('user is able to see the context menu with actions Upgrade and Delete Helm Release', () => {
-  cy.get('ul[role="menu"]').should('be.visible');
+  cy.get('div.odc-topology-context-menu').should('be.visible');
   cy.byTestActionID('Upgrade').should('be.visible');
   cy.byTestActionID('Delete Helm Release').should('be.visible');
 });

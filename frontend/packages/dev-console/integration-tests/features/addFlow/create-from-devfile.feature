@@ -9,7 +9,7 @@ Feature: Create Application from Devfile
               And user is at Add page
 
 
-        @regression @broken-test
+        @regression
         Scenario: Deploy git workload with devfile from topology page: A-04-TC01
             Given user is at the Topology page
              When user right clicks on topology empty graph
@@ -31,7 +31,7 @@ Feature: Create Application from Devfile
               And user is able to see workload "node-example" in topology page
 
 
-        @regression
+        @regression @broken-test
         Scenario: No service is shown in the node sidebar if it is not defined in the devfile : A-04-TC03
             Given user has created workload "node-example" with resource type "Deployment"
               And user is at Topology page
@@ -40,7 +40,7 @@ Feature: Create Application from Devfile
               And user can see under Services section "No Services found for this resource."
 
 
-        @regression
+        @regression @broken-test
         Scenario: No route is shown in the node sidebar if it is not defined in the devfile : A-04-TC04
             Given user has created workload "node-example" with resource type "Deployment"
               And user is at Topology page

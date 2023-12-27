@@ -8,7 +8,9 @@ When('user right clicks on topology empty graph', () => {
 
 When('user selects {string} option from Add to Project context menu', (option: string) => {
   cy.get(topologyPO.graph.contextMenuOptions.addToProject).focus().trigger('mouseover');
-  cy.byTestActionID(option).click({ force: true });
+  cy.get(`[data-test-action="${option}"] button[role="menuitem"]`)
+    .should('be.visible')
+    .click({ force: true });
 });
 
 When('user enters Git Repo url {string} in Devfile page', (gitUrl: string) => {
