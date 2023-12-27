@@ -100,9 +100,14 @@ const buildConfig = (
 const getResourceName = (networkType, typeParamsData): string => {
   if (_.isEmpty(typeParamsData)) return null;
 
-  return networkType === bridgeNetworkType
-    ? `bridge.network.kubevirt.io/${_.get(typeParamsData, 'bridge.value', '')}`
-    : `openshift.io/${_.get(typeParamsData, 'resourceName.value', '')}`;
+  if (networkType === bridgeNetworkType) {
+    return `bridge.network.kubevirt.io/${_.get(typeParamsData, 'bridge.value', '')}`;
+  }
+
+  if (!_.isEmpty(_.get(typeParamsData, 'resourceName.value', ''))) {
+    return `openshift.io/${_.get(typeParamsData, 'resourceName.value', '')}`;
+  }
+  return null;
 };
 
 const generateNADName = (): string => {
