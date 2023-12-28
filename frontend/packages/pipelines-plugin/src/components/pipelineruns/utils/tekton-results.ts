@@ -7,7 +7,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src';
 import { RouteModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
-import { consoleProxyFetchJSON } from '@console/shared/src/utils/proxy';
+import { consoleProxyFetch, consoleProxyFetchJSON } from '@console/shared/src/utils/proxy';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
@@ -23,7 +23,7 @@ import { PipelineRunKind, TaskRunKind } from '../../../types';
 const MINIMUM_PAGE_SIZE = 5;
 const MAXIMUM_PAGE_SIZE = 10000;
 
-export type Record = {
+export type ResultRecord = {
   name: string;
   uid: string;
   createTime: string;
@@ -43,9 +43,18 @@ export type Log = {
   };
 };
 
+type ProxyRequest = {
+  allowInsecure?: boolean;
+  method: string;
+  url: string;
+  headers?: Record<string, string[]>;
+  queryparams?: Record<string, string[]>;
+  body?: string;
+};
+
 export type RecordsList = {
   nextPageToken?: string;
-  records: Record[];
+  records: ResultRecord[];
 };
 
 export type TektonResultsOptions = {
@@ -346,13 +355,28 @@ export const getTaskRuns = (
   cacheKey?: string,
 ) => getFilteredTaskRuns(namespace, '', options, nextPageToken, cacheKey);
 
+const isJSONString = (str: string): boolean => {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+};
+
+export const consoleProxyFetchLog = <T>(proxyRequest: ProxyRequest): Promise<T> => {
+  return consoleProxyFetch(proxyRequest).then((response) => {
+    return isJSONString(response.body) ? JSON.parse(response.body) : response.body;
+  });
+};
+
 const getLog = async (taskRunPath: string) => {
   const tektonResultUrl = await getTRURLHost();
   const url = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${taskRunPath.replace(
     '/records/',
     '/logs/',
   )}`;
-  return consoleProxyFetchJSON({ url, method: 'GET', allowInsecure: true });
+  return consoleProxyFetchLog({ url, method: 'GET', allowInsecure: true });
 };
 
 export const getTaskRunLog = (namespace: string, taskRunName: string): Promise<string> =>
@@ -364,6 +388,8 @@ export const getTaskRunLog = (namespace: string, taskRunName: string): Promise<s
   ).then((x) =>
     x?.[1]?.records.length > 0
       ? // eslint-disable-next-line promise/no-nesting
-        getLog(x?.[1]?.records[0].name).then((response: Log) => decodeValue(response.result.data))
+        getLog(x?.[1]?.records[0].name).then((response: string) => {
+          return response;
+        })
       : throw404(),
   );
