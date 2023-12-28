@@ -3,7 +3,7 @@ import { Tooltip } from '@patternfly/react-core';
 import { ArchiveIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Timestamp, ResourceLink } from '@console/internal/components/utils';
+import { Timestamp, ResourceLink, truncateMiddle } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
@@ -31,15 +31,17 @@ const pipelinerunReference = referenceForModel(PipelineRunModel);
 type PLRStatusProps = {
   obj: PipelineRunKind;
   taskRuns: TaskRunKind[];
+  iconOnly?: boolean;
 };
 
-const PLRStatus: React.FC<PLRStatusProps> = ({ obj, taskRuns }) => {
+const PLRStatus: React.FC<PLRStatusProps> = ({ obj, taskRuns, iconOnly = false }) => {
   return (
     <PipelineRunStatus
       status={pipelineRunFilterReducer(obj)}
       title={pipelineRunTitleFilterReducer(obj)}
       pipelineRun={obj}
       taskRuns={taskRuns}
+      iconOnly={iconOnly}
     />
   );
 };
@@ -54,7 +56,7 @@ const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, custo
       <TableData className={tableColumnClasses.name}>
         <ResourceLink
           kind={pipelinerunReference}
-          name={obj.metadata.name}
+          name={truncateMiddle(obj.metadata.name, { length: 12 })}
           namespace={obj.metadata.namespace}
           data-test-id={obj.metadata.name}
           nameSuffix={
@@ -85,15 +87,20 @@ const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, custo
         <PipelineRunVulnerabilities pipelineRun={obj} condensed />
       </TableData>
       <TableData className={tableColumnClasses.status}>
-        <PLRStatus obj={obj} taskRuns={PLRTaskRuns} />
+        <PLRStatus obj={obj} taskRuns={PLRTaskRuns} iconOnly />
       </TableData>
       <TableData className={tableColumnClasses.taskStatus}>
         <LinkedPipelineRunTaskStatus pipelineRun={obj} taskRuns={PLRTaskRuns} />
       </TableData>
       <TableData className={tableColumnClasses.started}>
-        <Timestamp timestamp={obj.status && obj.status.startTime} />
+        <div className="opp-pipeline-run-list__started-timestamp">
+          <Timestamp timestamp={obj.status && obj.status.startTime} omitSuffix />{' '}
+          <div>&nbsp; {t('pipelines-plugin~ago')}</div>
+        </div>
       </TableData>
-      <TableData className={tableColumnClasses.duration}>{pipelineRunDuration(obj)}</TableData>
+      <TableData className={tableColumnClasses.duration}>
+        {pipelineRunDuration(obj, false)}
+      </TableData>
       <TableData className={tableColumnClasses.actions}>
         <ResourceKebabWithUserLabel
           actions={getPipelineRunKebabActions(operatorVersion, taskRuns)}
