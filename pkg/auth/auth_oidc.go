@@ -22,7 +22,7 @@ type oidcAuth struct {
 
 	// This preserves the old logic of associating users with session keys
 	// and requires smart routing when running multiple backend instances.
-	sessions *sessions.SessionStore
+	sessions *sessions.CombinedSessionStore
 
 	cookiePath    string
 	secureCookies bool
@@ -36,7 +36,7 @@ type oidcConfig struct {
 	secureCookies bool
 }
 
-func newOIDCAuth(ctx context.Context, sessionStore *sessions.SessionStore, c *oidcConfig) (*oidcAuth, error) {
+func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig) (*oidcAuth, error) {
 	// NewProvider attempts to do OIDC Discovery
 	providerCache, err := NewAsyncCache[*oidc.Provider](
 		ctx, 5*time.Minute,
@@ -61,7 +61,7 @@ func newOIDCAuth(ctx context.Context, sessionStore *sessions.SessionStore, c *oi
 	}, nil
 }
 
-func (o *oidcAuth) login(w http.ResponseWriter, token *oauth2.Token) (*sessions.LoginState, error) {
+func (o *oidcAuth) login(w http.ResponseWriter, r *http.Request, token *oauth2.Token) (*sessions.LoginState, error) {
 	rawIDToken, ok := token.Extra("id_token").(string)
 	if !ok {
 		return nil, errors.New("token response did not have an id_token field")
@@ -79,19 +79,9 @@ func (o *oidcAuth) login(w http.ResponseWriter, token *oauth2.Token) (*sessions.
 	if err != nil {
 		return nil, err
 	}
-	if err := o.sessions.AddSession(ls); err != nil {
+	if err := o.sessions.AddSession(w, r, ls); err != nil {
 		return nil, err
 	}
-
-	cookie := http.Cookie{
-		Name:     sessions.OpenshiftAccessTokenCookieName,
-		Value:    ls.SessionToken(),
-		MaxAge:   maxAge(ls.Expiry(), time.Now()),
-		HttpOnly: true,
-		Path:     o.cookiePath,
-		Secure:   o.secureCookies,
-	}
-	http.SetCookie(w, &cookie)
 
 	o.sessions.PruneSessions()
 	return ls, nil
@@ -104,20 +94,9 @@ func (o *oidcAuth) verify(ctx context.Context, rawIDToken string) (*oidc.IDToken
 
 func (o *oidcAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
 	// The returned login state can be nil even if err == nil.
-	if ls, _ := o.getLoginState(r); ls != nil {
-		o.sessions.DeleteSession(ls.SessionToken())
+	if ls, _ := o.getLoginState(w, r); ls != nil {
+		o.sessions.DeleteSession(w, r, ls.SessionToken()) // TODO: could we just use the session token from the cookie instead of trying to retrieving the session first?
 	}
-
-	// Delete session cookie
-	cookie := http.Cookie{
-		Name:     sessions.OpenshiftAccessTokenCookieName,
-		Value:    "",
-		MaxAge:   0,
-		HttpOnly: true,
-		Path:     o.cookiePath,
-		Secure:   o.secureCookies,
-	}
-	http.SetCookie(w, &cookie)
 }
 
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
@@ -125,25 +104,19 @@ func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (o *oidcAuth) getLoginState(r *http.Request) (*sessions.LoginState, error) {
-	sessionCookie, err := r.Cookie(sessions.OpenshiftAccessTokenCookieName)
+func (o *oidcAuth) getLoginState(w http.ResponseWriter, r *http.Request) (*sessions.LoginState, error) {
+	ls, err := o.sessions.GetSession(w, r)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to retrieve login state: %v", err)
 	}
-	sessionToken := sessionCookie.Value
-	ls := o.sessions.GetSession(sessionToken)
 	if ls == nil {
-		return nil, fmt.Errorf("No session found on server")
-	}
-	if ls.IsExpired() {
-		o.sessions.DeleteSession(sessionToken)
-		return nil, fmt.Errorf("Session is expired.")
+		return nil, fmt.Errorf("no session found on server")
 	}
 	return ls, nil
 }
 
-func (o *oidcAuth) Authenticate(r *http.Request) (*User, error) {
-	ls, err := o.getLoginState(r)
+func (o *oidcAuth) Authenticate(w http.ResponseWriter, r *http.Request) (*User, error) {
+	ls, err := o.getLoginState(w, r)
 	if err != nil {
 		return nil, err
 	}
@@ -161,9 +134,4 @@ func (o *oidcAuth) GetSpecialURLs() SpecialAuthURLs {
 
 func (o *oidcAuth) getEndpointConfig() oauth2.Endpoint {
 	return o.providerCache.GetItem().Endpoint()
-}
-
-func maxAge(exp time.Time, curr time.Time) int {
-	age := exp.Sub(curr)
-	return int(age.Seconds())
 }

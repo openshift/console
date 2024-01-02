@@ -145,6 +145,8 @@ type Server struct {
 	BaseURL                             *url.URL
 	Branding                            string
 	ClusterManagementProxyConfig        *proxy.Config
+	CookieEncryptionKey                 []byte
+	CookieAuthenticationKey             []byte
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
 	CustomLogoFile                      string

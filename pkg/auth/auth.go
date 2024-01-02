@@ -84,7 +84,7 @@ type SpecialAuthURLs struct {
 type loginMethod interface {
 	// login turns on oauth2 token response into a user session and associates a
 	// cookie with the user.
-	login(http.ResponseWriter, *oauth2.Token) (*sessions.LoginState, error)
+	login(http.ResponseWriter, *http.Request, *oauth2.Token) (*sessions.LoginState, error)
 	// Removes user token cookie, but does not write a response.
 	DeleteCookie(http.ResponseWriter, *http.Request)
 	// logout deletes any cookies associated with the user, and writes a no-content response.
@@ -94,7 +94,7 @@ type loginMethod interface {
 	// request based on a cookie, and returns a user associated to the cookie
 	// This does not itself perform an actual token request but it's based solely
 	// on the cookie.
-	Authenticate(*http.Request) (*User, error)
+	Authenticate(http.ResponseWriter, *http.Request) (*User, error)
 	GetSpecialURLs() SpecialAuthURLs
 	getEndpointConfig() oauth2.Endpoint
 }
@@ -125,8 +125,10 @@ type Config struct {
 	ErrorURL    string
 	RefererPath string
 	// cookiePath is an abstraction leak. (unfortunately, a necessary one.)
-	CookiePath    string
-	SecureCookies bool
+	CookiePath              string
+	SecureCookies           bool
+	CookieEncryptionKey     []byte
+	CookieAuthenticationKey []byte
 
 	K8sConfig *rest.Config
 	Metrics   *Metrics
@@ -215,7 +217,12 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 			return nil, err
 		}
 	case AuthSourceOIDC:
-		sessionStore := sessions.NewSessionStore(32768)
+		sessionStore := sessions.NewSessionStore(
+			c.CookieAuthenticationKey,
+			c.CookieEncryptionKey,
+			c.SecureCookies,
+			c.CookiePath,
+		)
 		tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig)
 		if err != nil {
 			return nil, err
@@ -383,7 +390,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON, succe
 			return
 		}
 
-		ls, err := a.login(w, token)
+		ls, err := a.login(w, r, token)
 		if err != nil {
 			klog.Errorf("error constructing login state: %v", err)
 			a.redirectAuthError(w, errorInternal)

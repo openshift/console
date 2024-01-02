@@ -19,7 +19,7 @@ func checkSessions(t *testing.T, ss *SessionStore) {
 }
 
 func TestSessions(t *testing.T) {
-	ss := NewSessionStore(3)
+	ss := NewServerSessionStore(3)
 	notExpired := time.Now().Add(time.Duration(3600) * time.Second)
 	expired := time.Now().Add(time.Duration(3600) * time.Second * -1)
 	fakeTokens := []struct {

@@ -125,7 +125,7 @@ func (o *openShiftAuth) getOIDCDiscoveryInternal(ctx context.Context) (*oidcDisc
 	return metadata, nil
 }
 
-func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*sessions.LoginState, error) {
+func (o *openShiftAuth) login(w http.ResponseWriter, _ *http.Request, token *oauth2.Token) (*sessions.LoginState, error) {
 	if token.AccessToken == "" {
 		return nil, fmt.Errorf("token response did not contain an access token %#v", token)
 	}
@@ -177,7 +177,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (o *openShiftAuth) Authenticate(r *http.Request) (*User, error) {
+func (o *openShiftAuth) Authenticate(_ http.ResponseWriter, r *http.Request) (*User, error) {
 	// TODO: This doesn't do any validation of the cookie with the assumption that the
 	// API server will reject tokens it doesn't recognize. If we want to keep some backend
 	// state we should sign this cookie. If not there's not much we can do.
