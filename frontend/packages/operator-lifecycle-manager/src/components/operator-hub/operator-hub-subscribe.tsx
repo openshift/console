@@ -788,7 +788,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           <Alert
             isInline
             variant="warning"
-            title={t('olm~Cluster in Workload Identity / Federated Identity Mode')}
+            title={t('olm~Cluster in Azure Workload Identity / Federated Identity Mode')}
             actionClose={<AlertActionCloseButton onClose={() => setShowSTSWarn(false)} />}
             className="pf-u-mb-lg"
           >
