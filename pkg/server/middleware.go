@@ -30,7 +30,7 @@ func authMiddleware(authenticator *auth.Authenticator, h http.HandlerFunc) http.
 
 func authMiddlewareWithUser(authenticator *auth.Authenticator, h HandlerWithUser) http.HandlerFunc {
 	return verifyCSRF(authenticator, func(w http.ResponseWriter, r *http.Request) {
-		user, err := authenticator.Authenticate(r)
+		user, err := authenticator.Authenticate(w, r)
 		if err != nil {
 			klog.V(4).Infof("authentication failed: %v", err)
 			w.WriteHeader(http.StatusUnauthorized)
