@@ -11,6 +11,7 @@ import (
 
 	"golang.org/x/oauth2"
 
+	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/proxy"
 )
 
@@ -124,14 +125,11 @@ func (o *openShiftAuth) getOIDCDiscoveryInternal(ctx context.Context) (*oidcDisc
 	return metadata, nil
 }
 
-func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*loginState, error) {
+func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*sessions.LoginState, error) {
 	if token.AccessToken == "" {
 		return nil, fmt.Errorf("token response did not contain an access token %#v", token)
 	}
-	ls := &loginState{
-		// Not clear if there's another way to fill in information like the user's name.
-		rawToken: token.AccessToken,
-	}
+	ls := sessions.NewRawLoginState(token.AccessToken)
 
 	expiresIn := (time.Hour * 24).Seconds()
 	if !token.Expiry.IsZero() {
@@ -147,8 +145,8 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 	// only logic using the OAuth2 implicit flow.
 	// https://tools.ietf.org/html/rfc6749#section-4.2
 	cookie := http.Cookie{
-		Name:     openshiftAccessTokenCookieName,
-		Value:    ls.rawToken,
+		Name:     sessions.OpenshiftAccessTokenCookieName,
+		Value:    ls.AccessToken(),
 		MaxAge:   int(expiresIn),
 		HttpOnly: true,
 		Path:     o.cookiePath,
@@ -164,7 +162,7 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 func (o *openShiftAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
 	// Delete session cookie
 	cookie := http.Cookie{
-		Name:     openshiftAccessTokenCookieName,
+		Name:     sessions.OpenshiftAccessTokenCookieName,
 		Value:    "",
 		MaxAge:   0,
 		HttpOnly: true,
@@ -183,12 +181,12 @@ func (o *openShiftAuth) Authenticate(r *http.Request) (*User, error) {
 	// TODO: This doesn't do any validation of the cookie with the assumption that the
 	// API server will reject tokens it doesn't recognize. If we want to keep some backend
 	// state we should sign this cookie. If not there's not much we can do.
-	cookie, err := r.Cookie(openshiftAccessTokenCookieName)
+	cookie, err := r.Cookie(sessions.OpenshiftAccessTokenCookieName)
 	if err != nil {
 		return nil, err
 	}
 	if cookie.Value == "" {
-		return nil, fmt.Errorf("unauthenticated, no value for cookie %s", openshiftAccessTokenCookieName)
+		return nil, fmt.Errorf("unauthenticated, no value for cookie %s", sessions.OpenshiftAccessTokenCookieName)
 	}
 
 	return &User{

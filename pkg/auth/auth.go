@@ -19,6 +19,7 @@ import (
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
 
+	"github.com/openshift/console/pkg/auth/sessions"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
 	"k8s.io/client-go/rest"
@@ -83,7 +84,7 @@ type SpecialAuthURLs struct {
 type loginMethod interface {
 	// login turns on oauth2 token response into a user session and associates a
 	// cookie with the user.
-	login(http.ResponseWriter, *oauth2.Token) (*loginState, error)
+	login(http.ResponseWriter, *oauth2.Token) (*sessions.LoginState, error)
 	// Removes user token cookie, but does not write a response.
 	DeleteCookie(http.ResponseWriter, *http.Request)
 	// logout deletes any cookies associated with the user, and writes a no-content response.
@@ -214,7 +215,7 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 			return nil, err
 		}
 	case AuthSourceOIDC:
-		sessionStore := NewSessionStore(32768)
+		sessionStore := sessions.NewSessionStore(32768)
 		tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig)
 		if err != nil {
 			return nil, err
@@ -335,7 +336,7 @@ func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
 // Requests with unexpected params are redirected to the root route.
-func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL string, w http.ResponseWriter)) func(w http.ResponseWriter, r *http.Request) {
+func (a *Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON, successURL string, w http.ResponseWriter)) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query()
 		qErr := q.Get("error")
@@ -394,7 +395,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 		}
 
 		klog.Infof("oauth success, redirecting to: %q", a.successURL)
-		fn(ls.toLoginJSON(), a.successURL, w)
+		fn(ls.ToLoginJSON(), a.successURL, w)
 	}
 }
 
@@ -455,7 +456,7 @@ func (a *Authenticator) VerifySourceOrigin(r *http.Request) (err error) {
 func (a *Authenticator) SetCSRFCookie(path string, w *http.ResponseWriter) {
 	cookie := http.Cookie{
 		Name:  CSRFCookieName,
-		Value: randomString(64),
+		Value: sessions.RandomString(64),
 		// JS needs to read this Cookie
 		HttpOnly: false,
 		Path:     path,

@@ -1,4 +1,4 @@
-package auth
+package sessions
 
 import (
 	"encoding/json"
@@ -6,13 +6,16 @@ import (
 	"time"
 )
 
+// for unit testing
+type nowFunc func() time.Time
+
 // loginState represents the current login state of a user.
 // None of the serializable fields contain any sensitive information,
 // and should be safe to send as a non-http-only cookie.
-type loginState struct {
-	UserID       string
-	Name         string
-	Email        string
+type LoginState struct {
+	userID       string
+	name         string
+	email        string
 	exp          time.Time
 	now          nowFunc
 	sessionToken string
@@ -26,10 +29,18 @@ type LoginJSON struct {
 	Exp    int64  `json:"exp"`
 }
 
+// NewRawLoginState creates a new login state in cases where the access token
+// is just an opaque string.
+func NewRawLoginState(accessToken string) *LoginState {
+	return &LoginState{
+		rawToken: accessToken,
+	}
+}
+
 // newLoginState unpacks a token and generates a new loginState from it.
-func newLoginState(rawToken string, claims []byte) (*loginState, error) {
-	ls := &loginState{
-		now:      defaultNow,
+func NewLoginState(rawToken string, claims []byte) (*LoginState, error) {
+	ls := &LoginState{
+		now:      time.Now,
 		rawToken: rawToken,
 	}
 
@@ -48,18 +59,42 @@ func newLoginState(rawToken string, claims []byte) (*loginState, error) {
 		return nil, fmt.Errorf("token missing require claim 'sub'")
 	}
 
-	ls.UserID = c.Subject
-	ls.Email = c.Email
+	ls.userID = c.Subject
+	ls.email = c.Email
 	ls.exp = time.Time(c.Expiry)
-	ls.Name = c.Name
+	ls.name = c.Name
 	return ls, nil
 }
 
-func (ls *loginState) toLoginJSON() LoginJSON {
+func (ls *LoginState) UserID() string {
+	return ls.userID
+}
+
+func (ls *LoginState) Username() string {
+	return ls.name
+}
+
+func (ls *LoginState) Expiry() time.Time {
+	return ls.exp
+}
+
+func (ls *LoginState) AccessToken() string {
+	return ls.rawToken
+}
+
+func (ls *LoginState) SessionToken() string {
+	return ls.sessionToken
+}
+
+func (ls *LoginState) IsExpired() bool {
+	return ls.now().After(ls.exp)
+}
+
+func (ls *LoginState) ToLoginJSON() LoginJSON {
 	return LoginJSON{
-		UserID: ls.UserID,
-		Name:   ls.Name,
-		Email:  ls.Email,
+		UserID: ls.userID,
+		Name:   ls.name,
+		Email:  ls.email,
 		Exp:    ls.exp.Unix(),
 	}
 }

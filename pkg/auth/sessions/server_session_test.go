@@ -1,4 +1,4 @@
-package auth
+package sessions
 
 import (
 	"fmt"
@@ -33,12 +33,12 @@ func TestSessions(t *testing.T) {
 	}
 
 	for _, ft := range fakeTokens {
-		ls, err := newLoginState(ft.raw, []byte(ft.claims))
+		ls, err := NewLoginState(ft.raw, []byte(ft.claims))
 		if err != nil {
 			t.Fatalf("newLoginState error: %v", err)
 		}
 
-		err = ss.addSession(ls)
+		err = ss.AddSession(ls)
 		if err != nil {
 			t.Fatalf("addSession error: %v", err)
 		}
@@ -54,7 +54,7 @@ func TestSessions(t *testing.T) {
 		t.Fatal("ss.byAge != 4")
 	}
 
-	ss.pruneSessions()
+	ss.PruneSessions()
 
 	if len(ss.byAge) != 3 {
 		t.Fatal("ss.byAge != 3")
@@ -62,7 +62,7 @@ func TestSessions(t *testing.T) {
 
 	checkSessions(t, ss)
 
-	err := ss.deleteSession(ss.byAge[0].token)
+	err := ss.DeleteSession(ss.byAge[0].token)
 	if err != nil {
 		t.Fatalf("deleteSession error: %v", err)
 	}

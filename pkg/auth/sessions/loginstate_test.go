@@ -1,4 +1,4 @@
-package auth
+package sessions
 
 import (
 	"fmt"
@@ -41,7 +41,7 @@ func TestNewLoginState(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		ls, err := newLoginState(tt.encoded, []byte(tt.claims))
+		ls, err := NewLoginState(tt.encoded, []byte(tt.claims))
 		if err != nil {
 			if tt.wantErr {
 				continue
@@ -53,12 +53,12 @@ func TestNewLoginState(t *testing.T) {
 			t.Errorf("case %d: encoded token mismatch, want: %s, got: %s", i, tt.encoded, ls.rawToken)
 		}
 
-		if ls.Email != tt.wantEmail {
-			t.Errorf("case %d: email mismatch, want: %s, got: %s", i, tt.wantEmail, ls.Email)
+		if ls.email != tt.wantEmail {
+			t.Errorf("case %d: email mismatch, want: %s, got: %s", i, tt.wantEmail, ls.email)
 		}
 
-		if ls.UserID != tt.wantID {
-			t.Errorf("case %d: user id mismatch, want: %s, got: %s", i, tt.wantID, ls.UserID)
+		if ls.userID != tt.wantID {
+			t.Errorf("case %d: user id mismatch, want: %s, got: %s", i, tt.wantID, ls.userID)
 		}
 
 		if ls.exp.Unix() != tt.wantExp {
