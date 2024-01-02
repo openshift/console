@@ -7,6 +7,7 @@ import {
   EmptyStateVariant,
   EmptyStateHeader,
   EmptyStateFooter,
+  Truncate,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import * as classNames from 'classnames';
@@ -93,7 +94,7 @@ const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
 
 const Badge = ({ text }) => (
   <span key={text} className="pf-v5-c-badge pf-m-read">
-    {text}
+    <Truncate className="pf-v5-c-truncate--no-min-width" content={text} />
   </span>
 );
 

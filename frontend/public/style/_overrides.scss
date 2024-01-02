@@ -401,3 +401,7 @@ ul {
 .pf-v5-c-popover {
   min-width: var(--pf-v5-c-popover--MinWidth) !important;
 }
+
+.pf-v5-c-truncate--no-min-width {
+  --pf-v5-c-truncate--MinWidth: 0 !important;
+}
