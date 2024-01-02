@@ -1,6 +1,8 @@
-package auth
+package sessions
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"sync"
 	"time"
@@ -8,7 +10,7 @@ import (
 	"k8s.io/klog"
 )
 
-const openshiftAccessTokenCookieName = "openshift-session-token"
+const OpenshiftAccessTokenCookieName = "openshift-session-token"
 
 type oldSession struct {
 	token string
@@ -16,7 +18,7 @@ type oldSession struct {
 }
 
 type SessionStore struct {
-	byToken     map[string]*loginState
+	byToken     map[string]*LoginState
 	byAge       []oldSession
 	maxSessions int
 	now         nowFunc
@@ -26,18 +28,18 @@ type SessionStore struct {
 // TODO: how is this shared between console instances? I doubt it is, we may want to use encrypted cookies instead
 func NewSessionStore(maxSessions int) *SessionStore {
 	return &SessionStore{
-		byToken:     make(map[string]*loginState),
+		byToken:     make(map[string]*LoginState),
 		maxSessions: maxSessions,
-		now:         defaultNow,
+		now:         time.Now,
 	}
 }
 
 // addSession sets sessionToken to a random value and adds loginState to session data structures
-func (ss *SessionStore) addSession(ls *loginState) error {
-	sessionToken := randomString(128)
+func (ss *SessionStore) AddSession(ls *LoginState) error {
+	sessionToken := RandomString(128)
 	if ss.byToken[sessionToken] != nil {
-		ss.deleteSession(sessionToken)
-		return fmt.Errorf("Session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
+		ss.DeleteSession(sessionToken)
+		return fmt.Errorf("session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
 	}
 	ls.sessionToken = sessionToken
 	ss.mux.Lock()
@@ -48,13 +50,13 @@ func (ss *SessionStore) addSession(ls *loginState) error {
 	return nil
 }
 
-func (ss *SessionStore) getSession(token string) *loginState {
+func (ss *SessionStore) GetSession(token string) *LoginState {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()
 	return ss.byToken[token]
 }
 
-func (ss *SessionStore) deleteSession(token string) error {
+func (ss *SessionStore) DeleteSession(token string) error {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()
 	delete(ss.byToken, token)
@@ -69,7 +71,7 @@ func (ss *SessionStore) deleteSession(token string) error {
 	return fmt.Errorf("ss.byAge did not contain session %v", token)
 }
 
-func (ss *SessionStore) pruneSessions() {
+func (ss *SessionStore) PruneSessions() {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()
 	expired := 0
@@ -94,4 +96,13 @@ func (ss *SessionStore) pruneSessions() {
 	if expired+toRemove > 0 {
 		klog.V(4).Infof("Pruned %v old sessions.", expired+toRemove)
 	}
+}
+
+func RandomString(length int) string {
+	bytes := make([]byte, length)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		panic(fmt.Sprintf("FATAL ERROR: Unable to get random bytes for session token: %v", err))
+	}
+	return base64.StdEncoding.EncodeToString(bytes)
 }

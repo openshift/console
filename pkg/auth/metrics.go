@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/prometheus/client_golang/prometheus"
 	authv1 "k8s.io/api/authorization/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -62,8 +63,8 @@ func (m *Metrics) LoginRequested() {
 	m.loginRequests.Inc()
 }
 
-func (m *Metrics) LoginSuccessful(k8sConfig *rest.Config, ls *loginState) {
-	if k8sConfig == nil || ls == nil || len(ls.rawToken) == 0 {
+func (m *Metrics) LoginSuccessful(k8sConfig *rest.Config, ls *sessions.LoginState) {
+	if k8sConfig == nil || ls == nil || len(ls.AccessToken()) == 0 {
 		return
 	}
 	go func() {
@@ -71,8 +72,8 @@ func (m *Metrics) LoginSuccessful(k8sConfig *rest.Config, ls *loginState) {
 	}()
 }
 
-func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *loginState) {
-	if k8sConfig == nil || ls == nil || len(ls.rawToken) == 0 {
+func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.LoginState) {
+	if k8sConfig == nil || ls == nil || len(ls.AccessToken()) == 0 {
 		return
 	}
 
@@ -80,7 +81,7 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *loginState) {
 	configWithBearerToken := &rest.Config{
 		Host:        k8sConfig.Host,
 		Transport:   k8sConfig.Transport,
-		BearerToken: ls.rawToken,
+		BearerToken: ls.AccessToken(),
 		Timeout:     30 * time.Second,
 	}
 
