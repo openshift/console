@@ -11,9 +11,9 @@ func checkSessions(t *testing.T, ss *SessionStore) {
 		t.Fatalf("age: %v != token %v", len(ss.byAge), len(ss.byToken))
 	}
 	for _, s := range ss.byAge {
-		ls := ss.byToken[s.token]
+		ls := ss.byToken[s.sessionToken]
 		if ls == nil {
-			t.Fatalf("ss.byAge %v not in ss.byToken", s.token)
+			t.Fatalf("ss.byAge %v not in ss.byToken", s.sessionToken)
 		}
 	}
 }
@@ -62,7 +62,7 @@ func TestSessions(t *testing.T) {
 
 	checkSessions(t, ss)
 
-	err := ss.DeleteSession(ss.byAge[0].token)
+	err := ss.DeleteSession(ss.byAge[0].sessionToken)
 	if err != nil {
 		t.Fatalf("deleteSession error: %v", err)
 	}

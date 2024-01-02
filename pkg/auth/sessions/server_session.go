@@ -12,14 +12,9 @@ import (
 
 const OpenshiftAccessTokenCookieName = "openshift-session-token"
 
-type oldSession struct {
-	token string
-	exp   time.Time
-}
-
 type SessionStore struct {
 	byToken     map[string]*LoginState
-	byAge       []oldSession
+	byAge       []*LoginState
 	maxSessions int
 	now         nowFunc
 	mux         sync.Mutex
@@ -45,7 +40,7 @@ func (ss *SessionStore) AddSession(ls *LoginState) error {
 	ss.mux.Lock()
 	ss.byToken[sessionToken] = ls
 	// Assume token expiration is always the same time in the future. Should be close enough for government work.
-	ss.byAge = append(ss.byAge, oldSession{sessionToken, ls.exp})
+	ss.byAge = append(ss.byAge, ls)
 	ss.mux.Unlock()
 	return nil
 }
@@ -59,10 +54,16 @@ func (ss *SessionStore) GetSession(token string) *LoginState {
 func (ss *SessionStore) DeleteSession(token string) error {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()
+
+	// not found - return fast
+	if _, ok := ss.byToken[token]; !ok {
+		return nil
+	}
+
 	delete(ss.byToken, token)
 	for i := 0; i < len(ss.byAge); i++ {
 		s := ss.byAge[i]
-		if s.token == token {
+		if s.sessionToken == token {
 			ss.byAge = append(ss.byAge[:i], ss.byAge[i+1:]...)
 			return nil
 		}
@@ -77,8 +78,8 @@ func (ss *SessionStore) PruneSessions() {
 	expired := 0
 	for i := 0; i < len(ss.byAge); i++ {
 		s := ss.byAge[i]
-		if s.exp.Sub(ss.now()) < 0 {
-			delete(ss.byToken, s.token)
+		if s.IsExpired() {
+			delete(ss.byToken, s.sessionToken)
 			ss.byAge = append(ss.byAge[:i], ss.byAge[i+1:]...)
 			expired++
 		}
@@ -89,7 +90,7 @@ func (ss *SessionStore) PruneSessions() {
 		klog.V(4).Infof("Still too many sessions. Pruning oldest %v sessions...", toRemove)
 		// TODO: account for user ids when pruning old sessions. Otherwise one user could log in 16k times and boot out everyone else.
 		for _, s := range ss.byAge[:toRemove] {
-			delete(ss.byToken, s.token)
+			delete(ss.byToken, s.sessionToken)
 		}
 		ss.byAge = ss.byAge[toRemove:]
 	}
