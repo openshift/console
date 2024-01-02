@@ -47,7 +47,7 @@ const DropdownWithSwitchToggle: React.FC<DropdownWithSwitchToggleProps> = ({
         direction="down"
         enableFlip={false}
         isVisible={isOpen}
-        popper={menu}
+        popper={<>{menu}</>} // fragment is necessary to avoid a bug in PatternFly v5 Popper
         position="left"
         trigger={
           <MenuToggle
