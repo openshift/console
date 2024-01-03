@@ -11,7 +11,7 @@ foofoo=barbar
 server=https://1.2.3.4/something
 datacenter=my-datacenter
 default-datastore=my-default-ds
-folder=/my/folder
+folder="/CLUSTER/vm/SomeGeo/Infra\\ \\(Dev\\ Env\\)/OpenShift"
 resourcepool-path=/my-datacenter/host/foo-cluster/Resources
 
 [VirtualCenter "https://1.2.3.4/something"]
@@ -28,7 +28,7 @@ foofoo=barbar
 server=https://1.2.3.4/something
 datacenter=my-datacenter
 default-datastore=my-default-ds
-folder=/my/folder
+folder=\\"/CLUSTER/vm/SomeGeo/Infra\\\\ \\\\(Dev\\\\ Env\\\\)/OpenShift\\"
 resourcepool-path=/my-datacenter/host/foo-cluster/Resources
 
 [VirtualCenter \\"https://1.2.3.4/something\\"]
@@ -46,7 +46,7 @@ insecure-flag=1
 server=https://1.2.3.4/something
 datacenter=my-datacenter
 default-datastore=my-default-ds
-folder=/my/folder
+folder=\\"/CLUSTER/vm/SomeGeo/Infra\\\\ \\\\(Dev\\\\ Env\\\\)/OpenShift\\"
 resourcepool-path=/my-datacenter/host/foo-cluster/Resources
 
 [VirtualCenter \\"https://1.2.3.4/something\\"]

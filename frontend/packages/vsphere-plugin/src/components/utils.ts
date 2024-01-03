@@ -69,6 +69,12 @@ export const mergeCloudProviderConfig = (
         // We do not want to have the value escaped ("safe")
         return `[VirtualCenter "${vcenter}"]`;
       }
+      if (line.startsWith('folder=')) {
+        const value = line.split('folder=', 2);
+        if (value[1]) {
+          return `folder="${value[1]}"`;
+        }
+      }
       return line;
     })
     .join('\n');

@@ -7,7 +7,8 @@
     "lint": "yarn --cwd ../.. eslint packages/vsphere-plugin --fix"
   },
   "dependencies": {
-    "@console/dynamic-plugin-sdk": "0.0.0-fixed"
+    "@console/dynamic-plugin-sdk": "0.0.0-fixed",
+    "ini": "4.1.1"
   },
   "consolePlugin": {
     "entry": "src/plugin.ts",
