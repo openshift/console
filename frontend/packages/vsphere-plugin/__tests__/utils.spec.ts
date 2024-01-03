@@ -8,7 +8,7 @@ const config: ConnectionFormContextValues = {
   vcenter: 'https://1.2.3.4/something',
   datacenter: 'my-datacenter',
   defaultDatastore: 'my-default-ds',
-  folder: '/my/folder',
+  folder: '/CLUSTER/vm/SomeGeo/Infra\\ \\(Dev\\ Env\\)/OpenShift',
   vCenterCluster: 'foo-cluster',
 };
 
