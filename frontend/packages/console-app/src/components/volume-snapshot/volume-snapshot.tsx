@@ -209,7 +209,7 @@ const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = (props) => {
 };
 
 const checkPVCSnapshot: CheckPVCSnapshot = (volumeSnapshots, pvc) =>
-  volumeSnapshots.filter(
+  volumeSnapshots?.filter(
     (snapshot) =>
       snapshot?.spec?.source?.persistentVolumeClaimName === getName(pvc) &&
       getNamespace(snapshot) === getNamespace(pvc),
