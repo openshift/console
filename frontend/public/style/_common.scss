@@ -165,11 +165,15 @@ dl.co-inline {
   margin: 15px 0;
 }
 
-// TODO: remove when $font-size-base goes away or to 16px
-// and when override `label` font-weight style from _bootstrap-residual.scss is removed
-.co-switch-label .pf-v5-c-switch__label {
-  font-size: $font-size-base;
-  font-weight: var(--pf-v5-global--FontWeight--normal);
+.co-switch-label {
+  margin-bottom: 0;
+
+  // TODO: remove when $font-size-base goes away or to 16px
+  // and when override `label` font-weight style from _bootstrap-residual.scss is removed
+  .pf-v5-c-switch__label {
+    font-size: $font-size-base;
+    font-weight: var(--pf-v5-global--FontWeight--normal);
+  }
 }
 
 .co-table-container {
