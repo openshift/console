@@ -13,25 +13,29 @@ import (
 const OpenshiftAccessTokenCookieName = "openshift-session-token"
 
 type SessionStore struct {
-	byToken     map[string]*LoginState
-	byAge       []*LoginState
-	maxSessions int
-	now         nowFunc
-	mux         sync.Mutex
+	byToken map[string]*LoginState
+	// TODO: implement delayed pruning (so that all clients with old refresh token can get the session correctly) when two instances are pointing to the same item (key != ls.refreshToken)
+	// TODO: maybe only store indexed by the old refresh tokens and have each item have lifespan of ~10s
+	byRefreshToken map[string]*LoginState
+	byAge          []*LoginState
+	maxSessions    int
+	now            nowFunc
+	mux            sync.Mutex
 }
 
 // TODO: how is this shared between console instances? I doubt it is, we may want to use encrypted cookies instead
 func NewServerSessionStore(maxSessions int) *SessionStore {
 	return &SessionStore{
-		byToken:     make(map[string]*LoginState),
-		maxSessions: maxSessions,
-		now:         time.Now,
+		byToken:        make(map[string]*LoginState),
+		byRefreshToken: make(map[string]*LoginState),
+		maxSessions:    maxSessions,
+		now:            time.Now,
 	}
 }
 
 // addSession sets sessionToken to a random value and adds loginState to session data structures
 func (ss *SessionStore) AddSession(ls *LoginState) error {
-	sessionToken := RandomString(128)
+	sessionToken := RandomString(256)
 	if ss.byToken[sessionToken] != nil {
 		ss.DeleteSession(sessionToken)
 		return fmt.Errorf("session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
@@ -39,37 +43,41 @@ func (ss *SessionStore) AddSession(ls *LoginState) error {
 	ls.sessionToken = sessionToken
 	ss.mux.Lock()
 	ss.byToken[sessionToken] = ls
+
 	// Assume token expiration is always the same time in the future. Should be close enough for government work.
 	ss.byAge = append(ss.byAge, ls)
 	ss.mux.Unlock()
 	return nil
 }
 
-func (ss *SessionStore) GetSession(token string) *LoginState {
+func (ss *SessionStore) GetSession(sessionToken, refreshToken string) *LoginState {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()
-	return ss.byToken[token]
+	if state, ok := ss.byToken[sessionToken]; ok {
+		return state
+	}
+	return ss.byRefreshToken[refreshToken]
 }
 
-func (ss *SessionStore) DeleteSession(token string) error {
+func (ss *SessionStore) DeleteSession(sessionToken string) error {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()
 
 	// not found - return fast
-	if _, ok := ss.byToken[token]; !ok {
+	if _, ok := ss.byToken[sessionToken]; !ok {
 		return nil
 	}
 
-	delete(ss.byToken, token)
+	delete(ss.byToken, sessionToken)
 	for i := 0; i < len(ss.byAge); i++ {
 		s := ss.byAge[i]
-		if s.sessionToken == token {
+		if s.sessionToken == sessionToken {
 			ss.byAge = append(ss.byAge[:i], ss.byAge[i+1:]...)
 			return nil
 		}
 	}
-	klog.Errorf("ss.byAge did not contain session %v", token)
-	return fmt.Errorf("ss.byAge did not contain session %v", token)
+	klog.Errorf("ss.byAge did not contain session %v", sessionToken)
+	return fmt.Errorf("ss.byAge did not contain session %v", sessionToken)
 }
 
 func (ss *SessionStore) PruneSessions() {
@@ -80,6 +88,7 @@ func (ss *SessionStore) PruneSessions() {
 		s := ss.byAge[i]
 		if s.IsExpired() {
 			delete(ss.byToken, s.sessionToken)
+			delete(ss.byRefreshToken, s.refreshToken)
 			ss.byAge = append(ss.byAge[:i], ss.byAge[i+1:]...)
 			expired++
 		}

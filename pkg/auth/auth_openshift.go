@@ -18,11 +18,9 @@ import (
 // openShiftAuth implements OpenShift Authentication as defined in:
 // https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/authentication_and_authorization/understanding-authentication
 type openShiftAuth struct {
-	issuerURL     string
-	cookiePath    string
-	secureCookies bool
-	k8sClient     *http.Client
-	getClient     func() *http.Client
+	*oidcConfig
+
+	k8sClient *http.Client
 
 	oauthEndpointCache *AsyncCache[*oidcDiscovery]
 }
@@ -48,11 +46,8 @@ func validateAbsURL(value string) error {
 
 func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig) (loginMethod, error) {
 	o := &openShiftAuth{
-		issuerURL:     c.issuerURL,
-		cookiePath:    c.cookiePath,
-		secureCookies: c.secureCookies,
-		k8sClient:     k8sClient,
-		getClient:     c.getClient,
+		oidcConfig: c,
+		k8sClient:  k8sClient,
 	}
 
 	// TODO: repeat the discovery several times as in the auth.go logic
@@ -208,11 +203,11 @@ func (o *openShiftAuth) GetSpecialURLs() SpecialAuthURLs {
 	}
 }
 
-func (o *openShiftAuth) getEndpointConfig() oauth2.Endpoint {
+func (o *openShiftAuth) oauth2Config() *oauth2.Config {
 	metadata := o.getOIDCDiscovery()
 
-	return oauth2.Endpoint{
+	return o.constructOAuth2Config(oauth2.Endpoint{
 		AuthURL:  metadata.Auth,
 		TokenURL: metadata.Token,
-	}
+	})
 }
