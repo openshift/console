@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 	"time"
+
+	"golang.org/x/oauth2"
 )
 
 func checkSessions(t *testing.T, ss *SessionStore) {
@@ -33,7 +35,11 @@ func TestSessions(t *testing.T) {
 	}
 
 	for _, ft := range fakeTokens {
-		ls, err := NewLoginState(ft.raw, []byte(ft.claims))
+		rawToken := createTestIDToken([]byte(ft.claims))
+		tokenResp := &oauth2.Token{RefreshToken: rawToken}
+		tokenResp = tokenResp.WithExtra(map[string]interface{}{"id_token": rawToken})
+
+		ls, err := NewLoginState(newTestVerifier([]byte(ft.claims)), tokenResp)
 		if err != nil {
 			t.Fatalf("newLoginState error: %v", err)
 		}

@@ -95,8 +95,8 @@ type loginMethod interface {
 	// This does not itself perform an actual token request but it's based solely
 	// on the cookie.
 	Authenticate(http.ResponseWriter, *http.Request) (*User, error)
+	oauth2Config() *oauth2.Config
 	GetSpecialURLs() SpecialAuthURLs
-	getEndpointConfig() oauth2.Endpoint
 }
 
 // AuthSource allows callers to switch between Tectonic and OpenShift login support.
@@ -192,11 +192,12 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 	}
 
 	authConfig := &oidcConfig{
-		getClient:     a.clientFunc,
-		issuerURL:     c.IssuerURL,
-		clientID:      c.ClientID,
-		cookiePath:    c.CookiePath,
-		secureCookies: c.SecureCookies,
+		getClient:             a.clientFunc,
+		issuerURL:             c.IssuerURL,
+		clientID:              c.ClientID,
+		cookiePath:            c.CookiePath,
+		secureCookies:         c.SecureCookies,
+		constructOAuth2Config: a.oauth2ConfigConstructor,
 	}
 
 	var tokenHandler loginMethod
@@ -235,7 +236,7 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 	return a, nil
 }
 
-func (a *Authenticator) getOAuth2Config() *oauth2.Config {
+func (a *Authenticator) oauth2ConfigConstructor(endpointConfig oauth2.Endpoint) *oauth2.Config {
 	// rebuild non-pointer struct each time to prevent any mutation
 	scopesCopy := make([]string, len(a.scopes))
 	copy(scopesCopy, a.scopes)
@@ -244,7 +245,7 @@ func (a *Authenticator) getOAuth2Config() *oauth2.Config {
 		ClientSecret: a.clientSecret,
 		RedirectURL:  a.redirectURL,
 		Scopes:       scopesCopy,
-		Endpoint:     a.loginMethod.getEndpointConfig(),
+		Endpoint:     endpointConfig,
 	}
 
 	return &baseOAuth2Config
@@ -329,7 +330,7 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 		Secure:   a.secureCookies,
 	}
 	http.SetCookie(w, &cookie)
-	http.Redirect(w, r, a.getOAuth2Config().AuthCodeURL(state), http.StatusSeeOther)
+	http.Redirect(w, r, a.oauth2Config().AuthCodeURL(state), http.StatusSeeOther)
 }
 
 // LogoutFunc cleans up session cookies.
@@ -382,7 +383,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON, succe
 			return
 		}
 		ctx := oidc.ClientContext(r.Context(), a.clientFunc())
-		oauthConfig := a.getOAuth2Config()
+		oauthConfig := a.oauth2Config()
 		token, err := oauthConfig.Exchange(ctx, code)
 		if err != nil {
 			klog.Errorf("unable to verify auth code with issuer: %v", err)
