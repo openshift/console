@@ -48,6 +48,7 @@ import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
 import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
 import { FeedbackModal } from '@patternfly/react-user-feedback';
 import { useFeedbackLocal } from './feedback-local';
+import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
 
 const defaultHelpLinks = [
   {
@@ -83,6 +84,7 @@ const FeedbackModalLocalized = ({ isOpen, onClose, reportBugLink }) => {
       onOpenSupportCase={reportBugLink.href}
       feedbackLocale={feedbackLocales}
       onJoinMailingList="https://console.redhat.com/self-managed-research-form?source=openshift"
+      feedbackImg={feedbackImage}
       isOpen={isOpen}
       onClose={onClose}
     />
