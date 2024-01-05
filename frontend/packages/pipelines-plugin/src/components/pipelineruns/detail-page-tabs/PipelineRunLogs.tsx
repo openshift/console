@@ -3,7 +3,7 @@ import { Nav, NavItem, NavList } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { Link, useLocation } from 'react-router-dom-v5-compat';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { PipelineRunModel } from '../../../models';
@@ -144,7 +144,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
       PipelineRunModel,
       obj.metadata.name,
       obj.metadata.namespace,
-    )}/logs/`;
+    )}/logs`;
 
     return (
       <div className="odc-pipeline-run-logs">
@@ -162,10 +162,9 @@ class PipelineRunLogsWithTranslation extends React.Component<
                       className="odc-pipeline-run-logs__navitem"
                     >
                       <Link
-                        to={
-                          logsPath +
-                          (taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-')
-                        }
+                        to={`${logsPath}?taskName=${
+                          taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-'
+                        }`}
                       >
                         <ColoredStatusIcon status={taskRunStatus(taskRun)} />
                         <span
@@ -227,7 +226,9 @@ const PipelineRunLogs = withTranslation()(PipelineRunLogsWithTranslation);
 export const PipelineRunLogsWithActiveTask: React.FC<PipelineRunLogsWithActiveTaskProps> = ({
   obj,
 }) => {
-  const { name: activeTask } = useParams();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const activeTask = params?.get('taskName');
   const [taskRuns, taskRunsLoaded] = useTaskRuns(obj?.metadata?.namespace, obj?.metadata?.name);
 
   return (
