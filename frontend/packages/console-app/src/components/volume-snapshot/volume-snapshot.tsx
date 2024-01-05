@@ -4,7 +4,10 @@ import * as classNames from 'classnames';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
+import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { TableData, ListPage, Table, RowFunctionArgs } from '@console/internal/components/factory';
+import { useListPageFilter } from '@console/internal/components/factory/ListPage/filter-hook';
+import ListPageFilter from '@console/internal/components/factory/ListPage/ListPageFilter';
 import {
   ResourceLink,
   ResourceKebab,
@@ -13,6 +16,7 @@ import {
   convertToBaseValue,
   humanizeBinaryBytes,
 } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,
@@ -232,18 +236,52 @@ const FilteredSnapshotTable: React.FC<FilteredSnapshotTable> = (props) => {
 
 export const VolumeSnapshotPVCPage: React.FC<VolumeSnapshotPVCPage> = (props) => {
   const { t } = useTranslation();
+  const params = useParams();
   const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
+  const namespace = props.ns || params?.ns;
+  const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotKind[]>({
+    groupVersionKind: {
+      group: VolumeSnapshotModel.apiGroup,
+      kind: VolumeSnapshotModel.kind,
+      version: VolumeSnapshotModel.apiVersion,
+    },
+    isList: true,
+    namespaced: true,
+    namespace,
+  });
+  const rowFilters = [
+    {
+      filterGroupName: t('console-app~Status'),
+      type: 'snapshot-status',
+      reducer: volumeSnapshotStatus,
+      filter: () => null,
+      items: [
+        { id: 'Ready', title: 'Ready' },
+        { id: 'Pending', title: 'Pending' },
+        { id: 'Error', title: 'Error' },
+      ],
+    },
+  ];
+  const [data, filteredData, onFilterChange] = useListPageFilter(resources);
+
   return (
-    <ListPage
-      {...props}
-      kind={referenceForModel(VolumeSnapshotModel)}
-      ListComponent={FilteredSnapshotTable}
-      rowFilters={snapshotStatusFilters(t)}
-      customData={{
-        pvc: props.obj,
-        disableItems: { Source: true, 'Snapshot Content': !canListVSC },
-      }}
-    />
+    <ListPageBody>
+      <ListPageFilter
+        data={data}
+        loaded={loaded}
+        onFilterChange={onFilterChange}
+        rowFilters={rowFilters}
+      />
+      <FilteredSnapshotTable
+        data={filteredData}
+        customData={{
+          pvc: props.obj,
+          disableItems: { Source: true, 'Snapshot Content': !canListVSC },
+        }}
+        loaded={loaded}
+        loadError={loadError}
+      />
+    </ListPageBody>
   );
 };
 type VolumeSnapshotPageProps = {
@@ -258,10 +296,13 @@ type CheckPVCSnapshot = (
 type FilteredSnapshotTable = {
   data: VolumeSnapshotKind[];
   customData: { [key: string]: any };
+  loaded: boolean;
+  loadError: any;
 };
 
 type VolumeSnapshotPVCPage = {
   obj: PersistentVolumeClaimKind;
+  ns: string;
 };
 
 type VolumeSnapshotTableProps = {
