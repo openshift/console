@@ -134,7 +134,7 @@ const Row: React.FC<RowFunctionArgs<VolumeSnapshotKind>> = ({ obj, customData })
         <Status status={volumeSnapshotStatus(obj)} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>{sizeMetrics}</TableData>
-      {!customData?.disableItems?.PVC && (
+      {!customData?.disableItems?.Source && (
         <TableData className={tableColumnClasses[4]}>
           <ResourceLink
             kind={referenceForModel(sourceModel)}
@@ -234,11 +234,11 @@ const FilteredSnapshotTable: React.FC<FilteredSnapshotTable> = (props) => {
   );
 };
 
-export const VolumeSnapshotPVCPage: React.FC<VolumeSnapshotPVCPage> = (props) => {
+export const VolumeSnapshotPVCPage: React.FC<VolumeSnapshotPVCPage> = ({ ns, obj }) => {
   const { t } = useTranslation();
   const params = useParams();
   const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
-  const namespace = props.ns || params?.ns;
+  const namespace = ns || params?.ns;
   const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotKind[]>({
     groupVersionKind: {
       group: VolumeSnapshotModel.apiGroup,
@@ -267,7 +267,7 @@ export const VolumeSnapshotPVCPage: React.FC<VolumeSnapshotPVCPage> = (props) =>
   return (
     <ListPageBody>
       <ListPageFilter
-        data={data}
+        data={checkPVCSnapshot(data, obj)}
         loaded={loaded}
         onFilterChange={onFilterChange}
         rowFilters={rowFilters}
@@ -275,7 +275,7 @@ export const VolumeSnapshotPVCPage: React.FC<VolumeSnapshotPVCPage> = (props) =>
       <FilteredSnapshotTable
         data={filteredData}
         customData={{
-          pvc: props.obj,
+          pvc: obj,
           disableItems: { Source: true, 'Snapshot Content': !canListVSC },
         }}
         loaded={loaded}
