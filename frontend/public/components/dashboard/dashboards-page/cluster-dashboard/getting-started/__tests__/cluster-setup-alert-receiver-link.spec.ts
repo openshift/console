@@ -51,11 +51,11 @@ const defaultClusterAlertManagerConfigYAML = `
   "receiver": "Default"
   "repeat_interval": "12h"
   "routes":
-  - "match":
-      "alertname": "Watchdog"
+  - "matchers":
+      - "alertname = Watchdog"
     "receiver": "Watchdog"
-  - "match":
-      "severity": "critical"
+  - "matchers":
+      - "severity = critical"
     "receiver": "Critical"
 `;
 
@@ -95,12 +95,12 @@ route:
   receiver: Default
   repeat_interval: 12h
   routes:
-    - match:
-        alertname: Watchdog
+    - matchers:
+        - "alertname = Watchdog"
       receiver: Watchdog
     - receiver: Critical
-      match:
-        severity: critical
+      matchers:
+        - "severity = critical"
 `;
 
 describe('useAlertReceiverLink', () => {
