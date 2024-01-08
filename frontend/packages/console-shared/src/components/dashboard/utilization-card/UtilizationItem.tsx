@@ -285,7 +285,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
                 {humanLimit && (
                   <span>
                     {t(
-                      'console-shared~{{humanAvailable}} available of {{humanLimit}} total limit',
+                      'console-shared~{{humanAvailable}} available {{humanLimit}} total limit',
                       {
                         humanAvailable,
                         humanLimit,
@@ -295,7 +295,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
                 )}
                 {!humanLimit && humanMax && (
                   <span>
-                    {t('console-shared~{{humanAvailable}} available of {{humanMax}}', {
+                    {t('console-shared~{{humanAvailable}} available {{humanMax}}', {
                       humanAvailable,
                       humanMax,
                     })}
