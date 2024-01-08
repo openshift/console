@@ -8,7 +8,16 @@ import { RedExclamationCircleIcon } from '../status';
 import { FieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, ...props }) => {
+interface NumberSpinnerFieldProps extends FieldProps {
+  setOutputAsIntegerFlag?: boolean;
+}
+
+const NumberSpinnerField: React.FC<NumberSpinnerFieldProps> = ({
+  label,
+  helpText,
+  required,
+  ...props
+}) => {
   const [field, { touched, error }] = useField(props.name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const fieldId = getFieldId(props.name, 'number-spinner');
@@ -20,9 +29,14 @@ const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, .
   const handleChange: React.ReactEventHandler<HTMLInputElement> = React.useCallback(
     (event) => {
       field.onChange(event);
-      setFieldValue(props.name, event.currentTarget.value);
+      setFieldValue(
+        props.name,
+        props?.setOutputAsIntegerFlag
+          ? _.toInteger(event.currentTarget.value)
+          : event.currentTarget.value,
+      );
     },
-    [field, props.name, setFieldValue],
+    [field, props.name, setFieldValue, props?.setOutputAsIntegerFlag],
   );
 
   return (
