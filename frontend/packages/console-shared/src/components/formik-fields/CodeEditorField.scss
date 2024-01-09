@@ -27,7 +27,7 @@
   }
   &__sidebar {
     display: flex;
-    flex: 1 0 0;
+    width: 34%;
     margin-top: -$pf-v5-global-gutter--md;
     @media screen and (max-width: $pf-v5-global--breakpoint--lg) {
       display: none;
