@@ -102,7 +102,7 @@ type loginMethod interface {
 type AuthSource int
 
 const (
-	AuthSourceTectonic  AuthSource = 0
+	AuthSourceOIDC      AuthSource = 0
 	AuthSourceOpenShift AuthSource = 1
 )
 
@@ -213,12 +213,14 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 		if err != nil {
 			return nil, err
 		}
-	default:
+	case AuthSourceOIDC:
 		sessionStore := NewSessionStore(32768)
 		tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig)
 		if err != nil {
 			return nil, err
 		}
+	default:
+		return nil, fmt.Errorf("unknown auth source: %v", c.AuthSource)
 	}
 	a.loginMethod = tokenHandler
 
