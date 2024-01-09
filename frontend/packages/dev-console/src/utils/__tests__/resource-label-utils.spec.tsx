@@ -36,7 +36,7 @@ describe('resource-label-utils', () => {
         'app.openshift.io/vcs-ref': 'master',
         'app.openshift.io/vcs-uri': 'https://github.com/divyanshiGupta/nationalparks-py',
         'image.openshift.io/triggers':
-          '[{"from":{"kind":"ImageStreamTag","name":"nationalparks-py:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"nationalparks-py\\")].image","pause":"true"}]',
+          '[{"from":{"kind":"ImageStreamTag","name":"nationalparks-py:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"nationalparks-py\\")].image","paused":"true"}]',
         'openshift.io/generated-by': 'OpenShiftWebConsole',
         'app.openshift.io/connects-to': 'database',
         'deployment.kubernetes.io/revision': '4',
@@ -125,12 +125,12 @@ describe('resource-label-utils', () => {
       let annotation = getTriggerAnnotation('test', 'python', 'div', true);
       expect(annotation).toEqual({
         'image.openshift.io/triggers':
-          '[{"from":{"kind":"ImageStreamTag","name":"python:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"test\\")].image","pause":"false"}]',
+          '[{"from":{"kind":"ImageStreamTag","name":"python:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"test\\")].image","paused":"false"}]',
       });
       annotation = getTriggerAnnotation('test', 'test', 'div', false);
       expect(annotation).toEqual({
         'image.openshift.io/triggers':
-          '[{"from":{"kind":"ImageStreamTag","name":"test:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"test\\")].image","pause":"true"}]',
+          '[{"from":{"kind":"ImageStreamTag","name":"test:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"test\\")].image","paused":"true"}]',
       });
     });
   });
