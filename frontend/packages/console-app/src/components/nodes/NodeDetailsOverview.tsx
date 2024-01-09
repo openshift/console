@@ -24,7 +24,6 @@ import {
 import NodeUptime from './node-dashboard/NodeUptime';
 import NodeIPList from './NodeIPList';
 import NodeStatus from './NodeStatus';
-import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
 
 type NodeDetailsOverviewProps = {
   node: NodeKind;
@@ -52,11 +51,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
             <dd>{node.metadata.name || '-'}</dd>
             <dt>{t('console-app~Status')}</dt>
             <dd>
-              {!node.spec.unschedulable ? (
-                <NodeStatus node={node} showPopovers />
-              ) : (
-                <MarkAsSchedulablePopover node={node} />
-              )}
+              <NodeStatus node={node} />
             </dd>
             <dt>{t('console-app~External ID')}</dt>
             <dd>{_.get(node, 'spec.externalID', '-')}</dd>

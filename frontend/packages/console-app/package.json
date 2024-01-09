@@ -46,7 +46,8 @@
       "perspectiveConfiguration": "src/components/detect-perspective/PerspectiveConfiguration.tsx",
       "dynamicPluginsHealthResource": "src/components/dashboards-page/dynamic-plugins-health-resource",
       "storageProvisioners": "src/components/storage/StorageClassProviders",
-      "storageProvisionerDocs": "src/components/storage/Documentation"
+      "storageProvisionerDocs": "src/components/storage/Documentation",
+      "nodeStatus": "src/components/nodes/status"
     }
   }
 }

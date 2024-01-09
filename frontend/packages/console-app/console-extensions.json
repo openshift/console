@@ -1794,5 +1794,31 @@
         }
       }
     }
+  },
+  {
+    "type": "console.node/status",
+    "properties": {
+      "title": "%console-app~Scheduling disabled%",
+      "PopoverContent": { "$codeRef": "nodeStatus.MarkAsSchedulablePopover" },
+      "isActive": { "$codeRef": "nodeStatus.isUnschedulableActive" }
+    }
+  },
+  {
+    "type": "console.node/status",
+    "properties": {
+      "title": "%console-app~Approval required%",
+      "PopoverContent": { "$codeRef": "nodeStatus.ServerCSRPopoverContent" },
+      "isActive": { "$codeRef": "nodeStatus.isCSRActive" },
+      "resources": {
+        "csrs": {
+          "groupVersionKind": {
+            "group": "certificates.k8s.io",
+            "kind": "CertificateSigningRequest",
+            "version": "v1"
+          },
+          "isList": true
+        }
+      }
+    }
   }
 ]

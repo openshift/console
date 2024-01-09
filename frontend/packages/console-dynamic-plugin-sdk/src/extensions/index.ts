@@ -31,3 +31,4 @@ export * from './topology-details';
 export * from './topology';
 export * from './user-preferences';
 export * from './yaml-templates';
+export * from './node';
