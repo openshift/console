@@ -348,7 +348,7 @@ export const getDeploymentData = (resource: K8sResourceKind) => {
       return {
         env,
         triggers: {
-          image: imageTrigger?.pause === 'false',
+          image: imageTrigger?.paused === 'false',
         },
         replicas: resource.spec?.replicas ?? 1,
       };
