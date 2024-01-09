@@ -240,7 +240,7 @@ func (c *completedOptions) getAuthenticator(
 	)
 
 	var scopes []string
-	authSource := auth.AuthSourceTectonic
+	authSource := auth.AuthSourceOIDC
 
 	if c.AuthType == "openshift" {
 		scopes = []string{"user:full"}
