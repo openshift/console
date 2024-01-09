@@ -6,6 +6,7 @@ import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd/lib/interfaces';
 import { Alert } from '@patternfly/react-core';
 /* eslint-disable-next-line */
 import { withTranslation, WithTranslation } from 'react-i18next';
+import { isBinary } from 'istextorbinary/edition-es2017/index';
 
 import withDragDropContext from './drag-drop-context';
 
@@ -46,7 +47,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
         ? (reader.result as string).split(',')[1]
         : (reader.result as string);
       // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-      if (containsNonPrintableCharacters(input) && !fileIsBinary) {
+      if (containsNonPrintableCharacters(input) && isBinary(null, input) && !fileIsBinary) {
         fileIsBinary = true;
         reader.readAsDataURL(file);
       } else {
@@ -176,7 +177,9 @@ const DroppableFileInputWithTranslation = withDragDropContext(
         inputFileName: '',
         inputFileData: this.props.inputFileData || '',
         inputFileIsBinary:
-          this.props.inputFileIsBinary || containsNonPrintableCharacters(this.props.inputFileData),
+          this.props.inputFileIsBinary ||
+          (containsNonPrintableCharacters(this.props.inputFileData) &&
+            isBinary(null, this.props.inputFileData)),
       };
       this.handleFileDrop = this.handleFileDrop.bind(this);
       this.onDataChange = this.onDataChange.bind(this);
@@ -200,7 +203,7 @@ const DroppableFileInputWithTranslation = withDragDropContext(
       reader.onload = () => {
         const input = reader.result as string; // Note(Yaacov): we use reader.readAsText
         // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-        if (containsNonPrintableCharacters(input) && !inputFileIsBinary) {
+        if (containsNonPrintableCharacters(input) && isBinary(null, input) && !inputFileIsBinary) {
           inputFileIsBinary = true;
           reader.readAsBinaryString(file);
         } else {
