@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import {
-  GettingStartedGrid,
-  useGettingStartedShowState,
-  GettingStartedShowState,
-} from '@console/shared/src/components/getting-started';
+import { useUserSettings } from '@console/shared';
+import { GettingStartedExpandableGrid } from '@console/shared/src/components/getting-started';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { GettingStartedSection } from '../GettingStartedSection';
 
@@ -32,34 +29,30 @@ jest.mock(
     },
 );
 
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  useUserSettings: jest.fn(),
+}));
+
+const mockUserSettings = useUserSettings as jest.Mock;
+
 const useFlagMock = useFlag as jest.Mock;
-const useGettingStartedShowStateMock = useGettingStartedShowState as jest.Mock;
 
 describe('GettingStartedSection', () => {
   it('should render with three child elements', () => {
     useFlagMock.mockReturnValue(true);
-    useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
+    mockUserSettings.mockReturnValue([true, jest.fn()]);
 
     const wrapper = shallow(<GettingStartedSection />);
 
-    expect(wrapper.find(GettingStartedGrid).props().children.length).toEqual(3);
+    expect(wrapper.find(GettingStartedExpandableGrid).props().children.length).toEqual(3);
   });
 
   it('should render nothing when useFlag(FLAGS.OPENSHIFT) return false', () => {
     useFlagMock.mockReturnValue(false);
-    useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
+    mockUserSettings.mockReturnValue([true, jest.fn()]);
 
     const wrapper = shallow(<GettingStartedSection />);
 
-    expect(wrapper.find(GettingStartedGrid).length).toEqual(0);
-  });
-
-  it('should render nothing if user settings hide them', () => {
-    useFlagMock.mockReturnValue(true);
-    useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
-
-    const wrapper = shallow(<GettingStartedSection />);
-
-    expect(wrapper.find(GettingStartedGrid).length).toEqual(0);
+    expect(wrapper.find(GettingStartedExpandableGrid).length).toEqual(0);
   });
 });

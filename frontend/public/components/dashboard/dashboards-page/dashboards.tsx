@@ -8,7 +8,6 @@ import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
 import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
-import { RestoreGettingStartedButton } from '@console/shared/src/components/getting-started';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import {
   useExtensions,
@@ -26,7 +25,6 @@ import {
   OverviewGridCard,
 } from '@console/dynamic-plugin-sdk';
 import { RootState } from '../../../redux';
-import { USER_SETTINGS_KEY } from './cluster-dashboard/getting-started/constants';
 
 export const getCardsOnPosition = (
   cards: DashboardsCard[],
@@ -102,7 +100,6 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ kindsInFlight, k8sMode
         // t('public~Cluster')
         nameKey: 'public~Cluster',
         component: ClusterDashboard,
-        badge: <RestoreGettingStartedButton userSettingsKey={USER_SETTINGS_KEY} />,
       },
       ...pluginPages,
     ],
