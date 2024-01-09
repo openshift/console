@@ -201,6 +201,7 @@
   "A <1>DeploymentConfig</1> to rollout new revisions when the Image changes.": "<1>배포 구성</1> 이미지가 변경되면 새 버전을 배포합니다.",
   "A <1>Service</1> to expose your workload inside the Cluster.": "<1>Service</1> 클러스터 내부의 워크로드를 공개합니다.",
   "An optional <1>Route</1> to expose your workload outside the Cluster.": "(선택 사항)<1>Route</1> 클러스터 외부에 워크로드를 공개합니다.",
+  "Create Builder Image Sample": "빌더 이미지 샘플 만들기",
   "Create Devfile Sample": "Devfile 샘플 만들기",
   "Instantiate Template": "템플릿 인스턴스화",
   "Pause rollouts": "롤아웃 일시 중지",

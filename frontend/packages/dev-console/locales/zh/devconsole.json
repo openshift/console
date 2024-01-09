@@ -201,6 +201,7 @@
   "A <1>DeploymentConfig</1> to rollout new revisions when the Image changes.": "一个<1>部署配置</1>用于在镜像有变化时推出新的修订版本。",
   "A <1>Service</1> to expose your workload inside the Cluster.": "一个 <1>Service</1> 用于在集群内公开工作负载。",
   "An optional <1>Route</1> to expose your workload outside the Cluster.": "一个可选的 <1>Route</1>，用于在集群外公开工作负载。",
+  "Create Builder Image Sample": "创建构建器镜像示例",
   "Create Devfile Sample": "创建 Devfile 示例",
   "Instantiate Template": "实例化模板",
   "Pause rollouts": "暂停推出部署",
