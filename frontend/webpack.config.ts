@@ -374,6 +374,7 @@ if (ANALYZE_BUNDLE === 'true') {
 
 /* Production settings */
 if (NODE_ENV === 'production') {
+  config.devtool = 'source-map';
   config.output.filename = '[name]-bundle-[hash].min.js';
   config.output.chunkFilename = '[name]-chunk-[chunkhash].min.js';
   // Causes error in --mode=production due to scope hoisting
