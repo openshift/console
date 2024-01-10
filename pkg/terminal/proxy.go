@@ -125,11 +125,7 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 
 		userId = string(userInfo.Status.UserInfo.UID) // TODO: are we cool rewriting this here?
 		if userId == "" {
-			// uid is missing. it must be kube:admin
-			if userInfo.Status.UserInfo.Username != "kube:admin" {
-				http.Error(w, "User must have UID to proceed authorization", http.StatusInternalServerError)
-				return
-			}
+			userId = userInfo.Status.UserInfo.Username
 		}
 	}
 
