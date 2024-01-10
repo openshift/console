@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	authenticationv1 "k8s.io/api/authentication/v1"
-	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func TestNewUserSettingsMeta(t *testing.T) {
@@ -26,7 +25,6 @@ func TestNewUserSettingsMeta(t *testing.T) {
 				Username:           "kube:admin",
 				UID:                "",
 				ResourceIdentifier: "kubeadmin",
-				OwnerReferences:    []meta.OwnerReference{},
 			},
 		},
 		{
@@ -40,14 +38,6 @@ func TestNewUserSettingsMeta(t *testing.T) {
 				Username:           "kube:admin",
 				UID:                "1234",
 				ResourceIdentifier: "1234",
-				OwnerReferences: []meta.OwnerReference{
-					{
-						APIVersion: "user.openshift.io/v1",
-						Kind:       "User",
-						Name:       "kube:admin",
-						UID:        "1234",
-					},
-				},
 			},
 		},
 		{
@@ -61,26 +51,8 @@ func TestNewUserSettingsMeta(t *testing.T) {
 				Username:           "developer",
 				UID:                "1234",
 				ResourceIdentifier: "1234",
-				OwnerReferences: []meta.OwnerReference{
-					{
-						APIVersion: "user.openshift.io/v1",
-						Kind:       "User",
-						Name:       "developer",
-						UID:        "1234",
-					},
-				},
 			},
 		},
-		// FIXME: the following test will currently fail as the else clause is commented out
-		// {
-		// 	testcase: "returns error for non kube:admin users without uid",
-		// 	userInfo: authenticationv1.UserInfo{
-		// 		Username: "developer",
-		// 		UID:      "",
-		// 	},
-		// 	expectedError: errors.New("User must have UID to get required resource data for user-settings"),
-		// 	expectedData:  nil,
-		// },
 	}
 
 	for _, tt := range tests {
