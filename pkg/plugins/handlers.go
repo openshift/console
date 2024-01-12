@@ -168,6 +168,9 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 	}
 	defer resp.Body.Close()
 
+	// Make sure to copy status code from the plugin service response
+	w.WriteHeader(resp.StatusCode)
+
 	// filter unwanted headers from the response
 	proxy.FilterHeaders(resp)
 	// copy headers from the plugin's server response
