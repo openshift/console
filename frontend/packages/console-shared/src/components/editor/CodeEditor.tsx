@@ -24,7 +24,7 @@ const CodeEditor = React.forwardRef<MonacoEditor, CodeEditorProps>((props, ref) 
   const [usesValue] = React.useState<boolean>(value !== undefined);
   const editorDidMount = React.useCallback(
     (editor, monaco) => {
-      const currentLanguage = editor.getModel().getModeId();
+      const currentLanguage = editor.getModel()?.getModeId();
       editor.layout();
       editor.focus();
       switch (currentLanguage) {
