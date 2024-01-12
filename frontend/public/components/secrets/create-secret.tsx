@@ -138,6 +138,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   const { isCreate, modal, onCancel } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const params = useParams();
 
   const existingSecret = _.pick(props.obj, ['metadata', 'type']);
   const defaultSecretType = toDefaultSecretType(props.secretTypeAbstraction);
@@ -163,7 +164,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   const [base64StringData, setBase64StringData] = React.useState({});
   const [disableForm, setDisableForm] = React.useState(false);
 
-  const defaultCancel = () => navigate(-1);
+  const cancel = () => navigate(`/k8s/ns/${params.ns}/core~v1~Secret`);
 
   const onDataChanged = (secretsData) => {
     setStringData({ ...secretsData?.stringData });
@@ -272,7 +273,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
         errorMessage={error || ''}
         inProgress={inProgress}
         submitText={t('public~Create')}
-        cancel={props.onCancel || defaultCancel}
+        cancel={onCancel || cancel}
       />
     </form>
   ) : (
@@ -295,12 +296,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
               >
                 {props.saveButtonText || t('public~Create')}
               </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                id="cancel"
-                onClick={onCancel || defaultCancel}
-              >
+              <Button type="button" variant="secondary" id="cancel" onClick={onCancel || cancel}>
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>
