@@ -1820,5 +1820,17 @@
         }
       }
     }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Node"
+      },
+      "provider": {
+        "$codeRef": "nodeActions.useNodeActions"
+      }
+    }
   }
 ]

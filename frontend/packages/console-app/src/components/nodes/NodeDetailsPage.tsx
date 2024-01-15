@@ -3,10 +3,14 @@ import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodsPage } from '@console/internal/components/pod';
 import { navFactory, PageComponentProps } from '@console/internal/components/utils';
-import { NodeKind } from '@console/internal/module/k8s';
+import { K8sModel, NodeKind, referenceForModel } from '@console/internal/module/k8s';
+import {
+  ActionMenu,
+  ActionMenuVariant,
+  ActionServiceProvider,
+} from '@console/shared/src/components/actions';
 import { isWindowsNode } from '@console/shared/src/selectors/node';
 import { nodeStatus } from '../../status/node';
-import { menuActions } from './menu-actions';
 import NodeDashboard from './node-dashboard/NodeDashboard';
 import NodeDetails from './NodeDetails';
 import NodeLogs from './NodeLogs';
@@ -44,11 +48,25 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
     [],
   );
 
+  const customActionMenu = (kindObj: K8sModel, obj: NodeKind) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+
   return (
     <DetailsPage
       {...props}
       getResourceStatus={nodeStatus}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       pagesFor={pagesFor}
     />
   );

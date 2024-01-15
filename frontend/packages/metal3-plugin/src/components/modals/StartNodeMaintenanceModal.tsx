@@ -29,7 +29,7 @@ export type StartNodeMaintenanceModalProps = HandlePromiseProps &
 const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalProps>((props) => {
   const { t } = useTranslation();
   const { nodeName, inProgress, errorMessage, handlePromise, close, cancel } = props;
-  const [, model] = useMaintenanceCapability();
+  const [model] = useMaintenanceCapability();
 
   const [reason, setReason] = React.useState('');
 

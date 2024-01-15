@@ -28,7 +28,6 @@ import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import {
   Kebab,
-  ResourceKebab,
   ResourceLink,
   Timestamp,
   humanizeBinaryBytes,
@@ -41,6 +40,7 @@ import {
   NodeKind,
   referenceForModel,
   CertificateSigningRequestKind,
+  referenceFor,
 } from '@console/internal/module/k8s';
 import {
   getName,
@@ -64,10 +64,10 @@ import {
   nodeReadiness,
   nodeRoles as nodeRolesSort,
   sortWithCSRResource,
+  LazyActionMenu,
 } from '@console/shared';
 import { nodeStatus } from '../../status';
 import { getNodeClientCSRs, isCSRResource } from './csr';
-import { menuActions } from './menu-actions';
 import NodeUptime from './node-dashboard/NodeUptime';
 import NodeRoles from './NodeRoles';
 import { NodeStatusWithExtensions } from './NodeStatus';
@@ -270,6 +270,8 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
   const instanceType = node.metadata.labels?.['beta.kubernetes.io/instance-type'];
   const labels = getLabels(node);
   const zone = node.metadata.labels?.['topology.kubernetes.io/zone'];
+  const resourceKind = referenceFor(node);
+  const context = { [resourceKind]: node };
   return (
     <>
       <TableData
@@ -383,7 +385,7 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
         <NodeUptime obj={node} />
       </TableData>
       <TableData className={Kebab.columnClass} activeColumnIDs={activeColumnIDs} id="">
-        <ResourceKebab actions={menuActions} kind={referenceForModel(NodeModel)} resource={node} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );

@@ -1,35 +1,21 @@
-import { K8sKind } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared/src/hooks/flag';
-import {
-  NODE_MAINTENANCE_FLAG,
-  NODE_MAINTENANCE_KV_ALPHA_FLAG,
-  NODE_MAINTENANCE_KV_BETA_FLAG,
-} from '../features';
+import { useK8sModels } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { K8sModel } from '@console/internal/module/k8s';
 import {
   NodeMaintenanceModel,
   NodeMaintenanceKubevirtBetaModel,
   NodeMaintenanceKubevirtAlphaModel,
 } from '../models';
 
-export const useMaintenanceCapability = (): [boolean, K8sKind] => {
-  const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
-  const hasNodeMaintenanceKvAlphaCapability = useFlag(NODE_MAINTENANCE_KV_ALPHA_FLAG);
-  const hasNodeMaintenanceKvBetaCapability = useFlag(NODE_MAINTENANCE_KV_BETA_FLAG);
-
-  const available =
-    hasNodeMaintenanceCapability ||
-    hasNodeMaintenanceKvAlphaCapability ||
-    hasNodeMaintenanceKvBetaCapability;
-  let model: K8sKind;
-  if (available) {
-    if (hasNodeMaintenanceCapability) {
-      model = NodeMaintenanceModel;
-    } else if (hasNodeMaintenanceKvBetaCapability) {
-      model = NodeMaintenanceKubevirtBetaModel;
-    } else {
-      model = NodeMaintenanceKubevirtAlphaModel;
-    }
+export const useMaintenanceCapability = (): [K8sModel, boolean] => {
+  const [models, loading] = useK8sModels();
+  if (loading) {
+    return [undefined, true];
   }
+  const model =
+    models[getReferenceForModel(NodeMaintenanceModel)] ||
+    models[getReferenceForModel(NodeMaintenanceKubevirtBetaModel)] ||
+    models[getReferenceForModel(NodeMaintenanceKubevirtAlphaModel)];
 
-  return [available, model];
+  return [model, false];
 };

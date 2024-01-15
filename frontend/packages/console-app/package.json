@@ -47,7 +47,8 @@
       "dynamicPluginsHealthResource": "src/components/dashboards-page/dynamic-plugins-health-resource",
       "storageProvisioners": "src/components/storage/StorageClassProviders",
       "storageProvisionerDocs": "src/components/storage/Documentation",
-      "nodeStatus": "src/components/nodes/status"
+      "nodeStatus": "src/components/nodes/status",
+      "nodeActions": "src/components/nodes/menu-actions.tsx"
     }
   }
 }
