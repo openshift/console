@@ -57,10 +57,10 @@ export const getNodeClientCSRs = (csrs: CertificateSigningRequestKind[] = []): C
         new Date(a.metadata.creationTimestamp).getTime(),
     );
 
-  const groupped = _.groupBy<CSRBundle>(nodeCSRs, (csr) => csr.metadata.name);
+  const grouped = _.groupBy<CSRBundle>(nodeCSRs, (csr) => csr.metadata.name);
 
-  return Object.keys(groupped).reduce((acc, key) => {
-    const { csr } = groupped[key][0];
+  return Object.keys(grouped).reduce((acc, key) => {
+    const { csr } = grouped[key][0];
     if (isCSRPending(csr)) {
       acc.push({
         metadata: { ...csr.metadata, name: key },

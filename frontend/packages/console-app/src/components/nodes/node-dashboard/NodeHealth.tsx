@@ -40,7 +40,7 @@ export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
 }) => {
   let conditionFailing: boolean = false;
   let reboot: boolean = false;
-  const grouppedConditions = Object.values(
+  const groupedConditions = Object.values(
     _.groupBy(
       conditions.sort((a, b) => a.type.localeCompare(b.type)),
       (c) => c.type,
@@ -102,7 +102,7 @@ export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
             firstColumn={t('console-app~Conditions')}
             secondColumn={t('console-app~Status')}
           >
-            {grouppedConditions.map((c) => (
+            {groupedConditions.map((c) => (
               <Status {...c} key={c.title}>
                 {c.title}
               </Status>
