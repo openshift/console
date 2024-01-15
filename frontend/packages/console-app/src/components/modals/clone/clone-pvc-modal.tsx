@@ -30,6 +30,7 @@ import {
   validate,
   resourceObjPath,
   convertToBaseValue,
+  humanizeBinaryBytesWithoutB,
 } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { HandlePromiseProps } from '@console/internal/components/utils/promise-component';
@@ -54,8 +55,9 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const { t } = useTranslation();
   const { close, cancel, resource, handlePromise, errorMessage, inProgress } = props;
   const { name: pvcName, namespace } = resource?.metadata;
-  const defaultSize: string[] = validate.split(getRequestedPVCSize(resource));
-  const pvcRequestedSize = `${defaultSize[0]} ${dropdownUnits[defaultSize[1]]}`;
+  const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
+  const defaultSize: string[] = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
+  const pvcRequestedSize = humanizeBinaryBytes(baseValue).string;
 
   const [clonePVCName, setClonePVCName] = React.useState(`${pvcName}-clone`);
   const [requestedSize, setRequestedSize] = React.useState(defaultSize[0] || '');
