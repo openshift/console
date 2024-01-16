@@ -41,10 +41,8 @@ RUN test -d ${REMOTE_SOURCES}/cachito-gomod-with-deps || exit 0; \
     cp -f $REMOTE_SOURCES_DIR/cachito-gomod-with-deps/app/registry-ca.pem . \
  && cp -f $REMOTE_SOURCES_DIR/cachito-gomod-with-deps/app/frontend/{.npmrc,.yarnrc,yarn.lock} frontend/
 
-# prevent download of chromedriver, geckodriver, and the cypress binary as part of module installs
-ENV CHROMEDRIVER_SKIP_DOWNLOAD=true \
-    GECKODRIVER_SKIP_DOWNLOAD=true \
-    CYPRESS_INSTALL_BINARY=0
+# prevent download of cypress binary as part of module installs
+ENV CYPRESS_INSTALL_BINARY=0
 
 # run the build
 RUN container-entrypoint ./build-frontend.sh
