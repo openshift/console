@@ -61,7 +61,6 @@ type Authenticator struct {
 	redirectURL   string
 	errorURL      string
 	successURL    string
-	cookiePath    string
 	refererURL    *url.URL
 	secureCookies bool
 
@@ -296,7 +295,6 @@ func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
 		redirectURL:   c.RedirectURL,
 		errorURL:      errURL,
 		successURL:    sucURL,
-		cookiePath:    c.CookiePath,
 		refererURL:    refUrl,
 		secureCookies: c.SecureCookies,
 		k8sConfig:     c.K8sConfig,
@@ -490,8 +488,4 @@ func (a *Authenticator) VerifyCSRFToken(r *http.Request) (err error) {
 	}
 
 	return fmt.Errorf("CSRF token does not match CSRF cookie")
-}
-
-func (a *Authenticator) GetCookiePath() string {
-	return a.cookiePath
 }
