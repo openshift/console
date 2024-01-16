@@ -89,7 +89,7 @@ func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
 	}
 }
 
-func (c *AuthOptions) Complete(k8sAuthType string) (*CompletedOptions, error) {
+func (c *AuthOptions) Complete() (*CompletedOptions, error) {
 	// default values before running validation
 	if len(c.AuthType) == 0 {
 		c.AuthType = "openshift"
@@ -100,7 +100,7 @@ func (c *AuthOptions) Complete(k8sAuthType string) (*CompletedOptions, error) {
 		c.InactivityTimeoutSeconds = 0
 	}
 
-	if errs := c.Validate(k8sAuthType); len(errs) > 0 {
+	if errs := c.Validate(); len(errs) > 0 {
 		return nil, utilerrors.NewAggregate(errs)
 	}
 
@@ -142,7 +142,7 @@ func (c *AuthOptions) Complete(k8sAuthType string) (*CompletedOptions, error) {
 	}, nil
 }
 
-func (c *AuthOptions) Validate(k8sAuthType string) []error {
+func (c *AuthOptions) Validate() []error {
 	var errs []error
 
 	switch c.AuthType {
@@ -180,7 +180,7 @@ func (c *AuthOptions) Validate(k8sAuthType string) []error {
 		}
 	}
 
-	switch k8sAuthType {
+	switch c.AuthType {
 	case "oidc", "openshift":
 	default:
 		if c.InactivityTimeoutSeconds > 0 {

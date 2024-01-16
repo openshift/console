@@ -280,7 +280,7 @@ func main() {
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 	}
 
-	completedAuthnOptions, err := authOptions.Complete(*fK8sAuth)
+	completedAuthnOptions, err := authOptions.Complete()
 	if err != nil {
 		klog.Fatalf("failed to complete authentication options: %v", err)
 		os.Exit(1)
