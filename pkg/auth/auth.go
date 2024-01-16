@@ -133,6 +133,13 @@ type Config struct {
 	Metrics   *Metrics
 }
 
+type completedConfig struct {
+	*Config
+
+	clientFunc func() *http.Client
+	refererURL *url.URL
+}
+
 func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, error) {
 	if issuerCA == "" {
 		return http.DefaultClient, nil
@@ -184,11 +191,13 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 
 // NewAuthenticator initializes an Authenticator struct. It blocks until the authenticator is
 // able to contact the provider.
-func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
-	a, err := newUnstartedAuthenticator(c)
+func NewAuthenticator(ctx context.Context, config *Config) (*Authenticator, error) {
+	c, err := config.Complete()
 	if err != nil {
 		return nil, err
 	}
+
+	a := newUnstartedAuthenticator(c)
 
 	authConfig := &oidcConfig{
 		getClient:             a.clientFunc,
@@ -250,56 +259,22 @@ func (a *Authenticator) oauth2ConfigConstructor(endpointConfig oauth2.Endpoint) 
 	return &baseOAuth2Config
 }
 
-func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
-	// make sure we get a valid starting client
-	fallbackClient, err := newHTTPClient(c.IssuerCA, true)
-	if err != nil {
-		return nil, err
-	}
-
-	clientFunc := func() *http.Client {
-		currentClient, err := newHTTPClient(c.IssuerCA, true)
-		if err != nil {
-			klog.Errorf("failed to get latest http client: %v", err)
-			return fallbackClient
-		}
-		return currentClient
-	}
-
-	errURL := "/"
-	if c.ErrorURL != "" {
-		errURL = c.ErrorURL
-	}
-
-	sucURL := "/"
-	if c.SuccessURL != "" {
-		sucURL = c.SuccessURL
-	}
-
-	if c.CookiePath == "" {
-		c.CookiePath = "/"
-	}
-
-	refUrl, err := url.Parse(c.RefererPath)
-	if err != nil {
-		return nil, err
-	}
-
+func newUnstartedAuthenticator(c *completedConfig) *Authenticator {
 	return &Authenticator{
-		clientFunc: clientFunc,
+		clientFunc: c.clientFunc,
 
 		clientID:     c.ClientID,
 		clientSecret: c.ClientSecret,
 		scopes:       c.Scope,
 
 		redirectURL:   c.RedirectURL,
-		errorURL:      errURL,
-		successURL:    sucURL,
-		refererURL:    refUrl,
+		errorURL:      c.ErrorURL,
+		successURL:    c.SuccessURL,
+		refererURL:    c.refererURL,
 		secureCookies: c.SecureCookies,
 		k8sConfig:     c.K8sConfig,
 		metrics:       c.Metrics,
-	}, nil
+	}
 }
 
 // User holds fields representing a user.
@@ -488,4 +463,50 @@ func (a *Authenticator) VerifyCSRFToken(r *http.Request) (err error) {
 	}
 
 	return fmt.Errorf("CSRF token does not match CSRF cookie")
+}
+
+func (c *Config) Complete() (*completedConfig, error) {
+	completed := &completedConfig{
+		Config: c,
+	}
+
+	// make sure we get a valid starting client
+	fallbackClient, err := newHTTPClient(c.IssuerCA, true)
+	if err != nil {
+		return nil, err
+	}
+
+	clientFunc := func() *http.Client {
+		currentClient, err := newHTTPClient(c.IssuerCA, true)
+		if err != nil {
+			klog.Errorf("failed to get latest http client: %v", err)
+			return fallbackClient
+		}
+		return currentClient
+	}
+	completed.clientFunc = clientFunc
+
+	errURL := "/"
+	if c.ErrorURL != "" {
+		errURL = c.ErrorURL
+	}
+	completed.ErrorURL = errURL
+
+	sucURL := "/"
+	if c.SuccessURL != "" {
+		sucURL = c.SuccessURL
+	}
+	completed.SuccessURL = sucURL
+
+	if c.CookiePath == "" {
+		completed.CookiePath = "/"
+	}
+
+	refUrl, err := url.Parse(c.RefererPath)
+	if err != nil {
+		return nil, err
+	}
+	completed.refererURL = refUrl
+
+	return completed, nil
 }

@@ -153,7 +153,7 @@ func TestRedirectAuthError(t *testing.T) {
 	sucURL := "http://example.com/success"
 	w := httptest.NewRecorder()
 
-	ccfg := &Config{
+	cfg := &Config{
 		ClientID:      "fake-client-id",
 		ClientSecret:  "fake-secret",
 		RedirectURL:   "http://example.com/callback",
@@ -165,11 +165,12 @@ func TestRedirectAuthError(t *testing.T) {
 		SecureCookies: true,
 	}
 
-	a, err := newUnstartedAuthenticator(ccfg)
+	ccfg, err := cfg.Complete()
 	if err != nil {
-		t.Fatal("error instantiating test authenticator")
+		t.Fatalf("failed to complete config: %v", err)
 	}
 
+	a := newUnstartedAuthenticator(ccfg)
 	a.redirectAuthError(w, "fake_error")
 	if w.Code != http.StatusSeeOther {
 		t.Fatalf("wrong http status, want: %d, got: %d", http.StatusSeeOther, w.Code)
@@ -194,7 +195,7 @@ func makeAuthenticator() (*Authenticator, error) {
 	errURL := "https://example.com/error"
 	sucURL := "https://example.com/success"
 
-	ccfg := &Config{
+	cfg := &Config{
 		ClientID:      "fake-client-id",
 		ClientSecret:  "fake-secret",
 		RedirectURL:   "http://example.com/callback",
@@ -205,7 +206,12 @@ func makeAuthenticator() (*Authenticator, error) {
 		SecureCookies: true,
 	}
 
-	return newUnstartedAuthenticator(ccfg)
+	ccfg, err := cfg.Complete()
+	if err != nil {
+		return nil, err
+	}
+
+	return newUnstartedAuthenticator(ccfg), nil
 }
 
 func testReferer(t *testing.T, referer string, accept bool) {
