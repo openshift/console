@@ -201,7 +201,6 @@ func makeAuthenticator() (*Authenticator, error) {
 		IssuerURL:     "http://auth.example.com",
 		ErrorURL:      errURL,
 		SuccessURL:    sucURL,
-		CookiePath:    "/",
 		RefererPath:   validReferer,
 		SecureCookies: true,
 	}
@@ -283,7 +282,7 @@ func testCSRF(t *testing.T, token string, cookie string, accept bool) {
 			Value:    cookie,
 			MaxAge:   1000000,
 			HttpOnly: true,
-			Path:     a.cookiePath,
+			Path:     "/",
 		})
 	}
 
