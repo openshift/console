@@ -38,7 +38,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
+    <form onSubmit={submit} name="form" className="modal-content" data-test="channel-modal">
       <ModalTitle>
         {channelsExist ? t('public~Select channel') : t('public~Input channel')}
       </ModalTitle>
@@ -79,6 +79,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
                 placeholder={t(`public~e.g., {{version}}`, {
                   version: `stable-${version.major}.${version.minor}`,
                 })}
+                data-test="channel-modal-input"
               />
               <p className="help-block">
                 {t(`public~Potential channels are {{stable}}, {{fast}}, or {{candidate}}.`, {

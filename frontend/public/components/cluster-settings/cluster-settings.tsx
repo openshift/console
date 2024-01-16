@@ -219,14 +219,14 @@ const StatusMessagePopover: React.FC<CVStatusMessagePopoverProps> = ({ bodyConte
 const InvalidMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   const { t } = useTranslation();
   return (
-    <>
+    <div data-test="cv-update-status-invalid">
       <div>
         <RedExclamationCircleIcon /> {t('public~Invalid cluster version')}
       </div>
-      <Button onClick={() => cancelUpdate(cv)} variant="primary">
+      <Button onClick={() => cancelUpdate(cv)} variant="primary" className="pf-v5-u-mt-xs">
         {t('public~Cancel update')}
       </Button>
-    </>
+    </div>
   );
 };
 
@@ -239,7 +239,7 @@ const ReleaseNotAcceptedMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div>
+      <div data-test="cv-update-status-release-accepted-false">
         <StatusMessagePopover bodyContent={releaseNotAcceptedCondition.message}>
           <RedExclamationCircleIcon /> {t('public~Release not accepted')}
         </StatusMessagePopover>
@@ -252,7 +252,7 @@ const ReleaseNotAcceptedMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
 const UpdatesAvailableMessage: React.FC<CVStatusMessageProps> = () => {
   const { t } = useTranslation();
   return (
-    <div className="co-update-status">
+    <div className="co-update-status" data-test="cv-update-status-available-updates">
       <BlueArrowCircleUpIcon /> {t('public~Available updates')}
     </div>
   );
@@ -266,7 +266,7 @@ const FailingMessageText: React.FC<CVStatusMessageProps> = ({ cv }) => {
   );
   const { t } = useTranslation();
   return (
-    <div>
+    <div data-test="cv-update-status-failing">
       <StatusMessagePopover bodyContent={failingCondition.message}>
         <RedExclamationCircleIcon /> {t('public~Failing')}
       </StatusMessagePopover>
@@ -297,7 +297,7 @@ export const UpdatingMessageText: React.FC<CVStatusMessageProps> = ({ cv }) => {
 const UpdatingMessage: React.FC<CVStatusMessageProps> = ({ cv, isFailing }) => {
   return (
     <>
-      <div>
+      <div data-test="cv-update-status-updating">
         <SyncAltIcon className="fa-spin co-icon-space-r" />
         <UpdatingMessageText cv={cv} />
       </div>
@@ -315,12 +315,12 @@ const ErrorRetrievingMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   );
   const { t } = useTranslation();
   return retrievedUpdatesCondition.reason === 'NoChannel' ? (
-    <>
+    <div data-test="cv-update-status-no-channel">
       <BlueInfoCircleIcon /> {retrievedUpdatesCondition.message}
-    </>
+    </div>
   ) : (
     <>
-      <div>
+      <div data-test="cv-update-status-no-updates">
         <StatusMessagePopover bodyContent={retrievedUpdatesCondition.message}>
           <RedExclamationCircleIcon /> {t('public~Not retrieving updates')}
         </StatusMessagePopover>
@@ -342,7 +342,7 @@ const FailingMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
 export const UpToDateMessage: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
-    <span>
+    <span data-test="cv-update-status-up-to-date">
       <GreenCheckCircleIcon /> {t('public~Up to date')}
     </span>
   );
@@ -489,6 +489,7 @@ const Channel: React.FC<ChannelProps> = ({ children, endOfLife }) => {
       className={classNames('co-channel', {
         'co-channel--end-of-life': endOfLife,
       })}
+      data-test="cv-channel"
     >
       {children}
     </div>
@@ -507,6 +508,7 @@ export const ChannelName: React.FC<ChannelNameProps> = ({ children, current }) =
       className={classNames('co-channel-name', {
         'co-channel-name--current': current,
       })}
+      data-test="cv-channel-name"
     >
       {children}
     </span>
@@ -530,12 +532,14 @@ export const ChannelVersion: React.FC<ChannelVersionProps> = ({
   current,
   updateBlocked,
 }) => {
+  const test = 'cv-channel-version';
   return (
     <span
       className={classNames('co-channel-version', {
         'co-channel-version--current': current,
         'co-channel-version--update-blocked': updateBlocked,
       })}
+      data-test={updateBlocked ? `${test}-blocked` : test}
     >
       {updateBlocked && (
         <YellowExclamationTriangleIcon className="co-channel-version__warning-icon co-icon-space-r" />
@@ -549,7 +553,12 @@ export const UpdateBlockedLabel = () => {
   const { t } = useTranslation();
 
   return (
-    <Label color="orange" icon={<YellowExclamationTriangleIcon />} className="pf-v5-u-ml-sm">
+    <Label
+      color="orange"
+      icon={<YellowExclamationTriangleIcon />}
+      className="pf-v5-u-ml-sm"
+      data-test="cv-update-blocked"
+    >
       {t('public~Update blocked')}
     </Label>
   );
@@ -562,6 +571,7 @@ const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({
 }) => {
   const releaseNotesLink = getReleaseNotesLink(version);
   const { t } = useTranslation();
+  const test = 'cv-channel-version-dot';
 
   return releaseNotesLink || updateBlocked ? (
     <Popover
@@ -574,7 +584,7 @@ const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({
       bodyContent={
         <>
           {updateBlocked && (
-            <p>
+            <p data-test="cv-channel-version-dot-blocked-info">
               {t(
                 'public~See the alert above the visualization for instructions on how to unblock this version.',
               )}
@@ -590,6 +600,7 @@ const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({
           'co-channel-version-dot--current': current,
           'co-channel-version-dot--update-blocked': updateBlocked,
         })}
+        data-test={updateBlocked ? `${test}-blocked` : test}
       />
     </Popover>
   ) : (
@@ -598,6 +609,7 @@ const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({
         'co-channel-version-dot--current': current,
         'co-channel-version-dot--update-blocked': updateBlocked,
       })}
+      data-test={test}
     ></div>
   );
 };
@@ -612,6 +624,7 @@ export const UpdatesGroup: React.FC<UpdatesGroupProps> = ({ children, divided })
       className={classNames('co-cluster-settings__updates-group', {
         'co-cluster-settings__updates-group--divided': divided,
       })}
+      data-test="cv-updates-group"
     >
       {children}
     </div>
@@ -619,7 +632,11 @@ export const UpdatesGroup: React.FC<UpdatesGroupProps> = ({ children, divided })
 };
 
 export const UpdatesProgress: React.FC<UpdatesProgressProps> = ({ children }) => {
-  return <div className="co-cluster-settings__updates-progress">{children}</div>;
+  return (
+    <div className="co-cluster-settings__updates-progress" data-test="cv-updates-progress">
+      {children}
+    </div>
+  );
 };
 
 const UpdatesType: React.FC<UpdatesTypeProps> = ({ children }) => {
@@ -705,12 +722,13 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
           {!isMaster && !isUpdated && machineConfigPoolIsEditable && (
             <Button
               variant="secondary"
-              className={isPaused ? 'pf-v5-u-mt-sm' : 'pf-v5-u-mt-md'}
+              className="pf-v5-u-mt-md"
               onClick={() =>
                 togglePaused(MachineConfigPoolModel, machineConfigPool).catch((err) =>
                   errorModal({ error: err.message }),
                 )
               }
+              data-test="mcp-paused-button"
             >
               {isPaused ? t('public~Resume update') : t('public~Pause update')}
             </Button>
@@ -765,7 +783,7 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="co-cluster-settings__updates-graph">
+    <div className="co-cluster-settings__updates-graph" data-test="cv-updates-graph">
       <Channel>
         <ChannelPath current>
           <ChannelLine>
@@ -784,6 +802,7 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
                 variant="secondary"
                 className="co-channel-more-versions"
                 onClick={() => clusterMoreUpdatesModal({ cv })}
+                data-test="cv-more-updates-button"
               >
                 {t('public~+ More')}
               </Button>
@@ -977,6 +996,7 @@ export const ClusterNotUpgradeableAlert: React.FC<ClusterNotUpgradeableAlertProp
           </Flex>
         )
       }
+      data-test="cluster-settings-alerts-not-upgradeable"
     >
       <SyncMarkdownView
         content={clusterUpgradeableFalseCondition.message}
@@ -1015,13 +1035,16 @@ export const MachineConfigPoolsArePausedAlert: React.FC<MachineConfigPoolsArePau
       customIcon={<PauseCircleIcon />}
       actionLinks={
         workerMachineConfigPoolIsEditable && (
-          <AlertActionLink onClick={() => Promise.all(getMCPsToPausePromises(pausedMCPs, false))}>
+          <AlertActionLink
+            onClick={() => Promise.all(getMCPsToPausePromises(pausedMCPs, false))}
+            data-test="cluster-settings-alerts-paused-nodes-resume-link"
+          >
             {t('public~Resume all updates')}
           </AlertActionLink>
         )
       }
       className="co-alert"
-      data-test-id="cluster-settings-alerts-paused-nodes"
+      data-test="cluster-settings-alerts-paused-nodes"
     />
   ) : null;
 };
@@ -1039,6 +1062,7 @@ export const ClusterSettingsAlerts: React.FC<ClusterSettingsAlertsProps> = ({
         isInline
         title={t('public~Control plane is hosted.')}
         className="co-alert"
+        data-test="cluster-settings-alerts-hosted"
       />
     );
   }
@@ -1091,10 +1115,10 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
             <div className="co-cluster-settings__row">
               <div className="co-cluster-settings__section co-cluster-settings__section--current">
                 <dl className="co-m-pane__details co-cluster-settings__details">
-                  <dt>
+                  <dt data-test="cv-current-version-header">
                     <CurrentVersionHeader cv={cv} />
                   </dt>
-                  <dd>
+                  <dd data-test="cv-current-version">
                     <CurrentVersion cv={cv} />
                   </dd>
                 </dl>
@@ -1130,6 +1154,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                           'public~Click "Select a version" to view supported but not recommended versions.',
                         )}
                         variant="info"
+                        data-test="cv-not-recommended-alert"
                       />
                     )}
                     <UpdatesGraph cv={cv} />
@@ -1222,7 +1247,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
             <UpstreamConfigDetailsItem resource={cv} />
             {autoscalers && canUpgrade && (
               <>
-                <dt>{t('public~Cluster autoscaler')}</dt>
+                <dt data-test="cv-autoscaler">{t('public~Cluster autoscaler')}</dt>
                 <dd>
                   {_.isEmpty(autoscalers) ? (
                     <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>

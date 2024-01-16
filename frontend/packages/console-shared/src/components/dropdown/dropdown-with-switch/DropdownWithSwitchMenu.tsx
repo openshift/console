@@ -47,6 +47,7 @@ const DropdownWithSwitchMenu: React.FC<DropdownWithSwitchMenuProps> = ({
               label={switchLabel}
               labelOff={switchLabelOff}
               onChange={(_event, value) => switchOnChange(value)}
+              data-test="dropdown-with-switch-switch"
             />
           </MenuSearchInput>
         </MenuSearch>
