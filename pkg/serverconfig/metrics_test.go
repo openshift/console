@@ -7,10 +7,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/openshift/console/pkg/metrics"
 	"github.com/stretchr/testify/assert"
 	authv1 "k8s.io/api/authorization/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/dynamic/fake"
+
+	consolev1 "github.com/openshift/api/console/v1"
+
+	"github.com/openshift/console/pkg/metrics"
 )
 
 func createPluginConfiguration(pluginNames []string) *Config {
@@ -113,6 +118,18 @@ func TestPluginMetrics(t *testing.T) {
 			configuredPlugins := createPluginConfiguration(testcase.configuredPlugins)
 			consolePlugins := createConsolePluginList(testcase.consolePlugins)
 
+			testScheme := runtime.NewScheme()
+			consolev1.Install(testScheme)
+
+			objs := []runtime.Object{}
+			for _, p := range consolePlugins.Items {
+				objs = append(objs,
+					&consolev1.ConsolePlugin{
+						ObjectMeta: p.ObjectMeta,
+					},
+				)
+			}
+
 			testserver := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				fmt.Printf("Mock testserver handles: %s\n", r.URL.Path)
 				if r.URL.Path == "/apis/console.openshift.io/v1/consoleplugins" {
@@ -132,7 +149,7 @@ func TestPluginMetrics(t *testing.T) {
 			defer testserver.Close()
 
 			m := NewMetrics(configuredPlugins)
-			m.updatePluginMetric(&http.Client{}, testserver.URL, "ignored-service-account-token")
+			m.updatePluginMetric(fake.NewSimpleDynamicClient(testScheme, objs...))
 
 			assert.Equal(t,
 				metrics.RemoveComments(testcase.expectedMetrics),
@@ -238,6 +255,29 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 			consolePluginsInitially := createConsolePluginList(testcase.consolePluginsInitially)
 			consolePluginsUpdated := createConsolePluginList(testcase.consolePluginsUpdated)
 
+			testScheme := runtime.NewScheme()
+			consolev1.Install(testScheme)
+
+			objs := []runtime.Object{}
+			for _, p := range consolePluginsInitially.Items {
+				objs = append(objs,
+					&consolev1.ConsolePlugin{
+						ObjectMeta: p.ObjectMeta,
+					},
+				)
+			}
+			initialClient := fake.NewSimpleDynamicClient(testScheme, objs...)
+
+			updatedObjs := []runtime.Object{}
+			for _, p := range consolePluginsUpdated.Items {
+				updatedObjs = append(updatedObjs,
+					&consolev1.ConsolePlugin{
+						ObjectMeta: p.ObjectMeta,
+					},
+				)
+			}
+			updatedClient := fake.NewSimpleDynamicClient(testScheme, updatedObjs...)
+
 			m := NewMetrics(configuredPlugins)
 			{
 				testserver := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -257,7 +297,7 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 					}
 				}))
 				defer testserver.Close()
-				m.updatePluginMetric(&http.Client{}, testserver.URL, "ignored-service-account-token")
+				m.updatePluginMetric(initialClient)
 			}
 			assert.Equal(t,
 				metrics.RemoveComments(testcase.expectedMetricsInitially),
@@ -282,7 +322,7 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 					}
 				}))
 				defer testserver.Close()
-				m.updatePluginMetric(&http.Client{}, testserver.URL, "ignored-service-account-token")
+				m.updatePluginMetric(updatedClient)
 			}
 			assert.Equal(t,
 				metrics.RemoveComments(testcase.expectedMetricsAfterUpdate),

@@ -24,27 +24,26 @@ import (
 
 type KnativeHandler struct {
 	trimURLPrefix string
-	k8sClient     *http.Client
-	k8sEndpoint   string
+	anonConfig    *rest.Config
 }
 
-func NewKnativeHandler(trimURLPrefix string, k8sClient *http.Client, k8sEndpoint string) *KnativeHandler {
+func NewKnativeHandler(anonymousTransport http.RoundTripper, proxiedK8SEndpoint, trimURLPrefix string) *KnativeHandler {
 	return &KnativeHandler{
-		trimURLPrefix,
-		k8sClient,
-		k8sEndpoint,
+		trimURLPrefix: trimURLPrefix,
+		anonConfig: &rest.Config{
+			Host:      proxiedK8SEndpoint,
+			Transport: anonymousTransport,
+		},
 	}
 }
 
 func (h *KnativeHandler) generateClient(user *auth.User) (dynamic.Interface, error) {
-	config := &rest.Config{
-		Host:        h.k8sEndpoint,
-		Transport:   h.k8sClient.Transport,
-		BearerToken: user.Token,
-	}
+	config := rest.CopyConfig(h.anonConfig)
+	config.BearerToken = user.Token
+
 	client, err := dynamic.NewForConfig(config)
 	if err != nil {
-		return nil, fmt.Errorf("Error creating dynamic client: %v", err)
+		return nil, fmt.Errorf("error creating dynamic client: %v", err)
 	}
 	return client, nil
 }
@@ -52,51 +51,47 @@ func (h *KnativeHandler) generateClient(user *auth.User) (dynamic.Interface, err
 func (h *KnativeHandler) Handle(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(strings.Trim(strings.TrimPrefix(r.URL.Path, h.trimURLPrefix), "/"), "/")
 
-	if len(parts) >= 4 && parts[0] == "namespaces" && parts[2] == "services" {
-		namespace := parts[1]
-		service := parts[3]
+	if len(parts) < 4 || parts[0] != "namespaces" || parts[2] != "services" {
+		return
+	}
+	namespace := parts[1]
+	service := parts[3]
 
-		// GET /namespaces/{namespace}/services/{service}/invoke
-		if r.Method == http.MethodGet && len(parts) == 5 && parts[4] == "invoke" {
-			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only POST is allowed"})
+	client, err := h.generateClient(user)
+	if err != nil {
+		klog.Errorf("Error creating dynamic client: %v", err)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
+		return
+	}
+
+	// GET /namespaces/{namespace}/services/{service}/invoke
+	if r.Method == http.MethodGet && len(parts) == 5 && parts[4] == "invoke" {
+		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only POST is allowed"})
+		return
+	}
+
+	// GET /namespaces/{namespace}/services/{service}/endpoints
+	if r.Method == http.MethodGet && len(parts) == 5 && parts[4] == "endpoints" {
+		url, err := getServiceEndpoints(client, namespace, service)
+		if err != nil {
+			klog.Errorf("Error Fetching Route URL for Knative Service: %v", err)
+			serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
 			return
 		}
+		serverutils.SendResponse(w, http.StatusOK, json.RawMessage(fmt.Sprintf(`{"url": "%s"}`, url)))
+		return
+	}
 
-		// GET /namespaces/{namespace}/services/{service}/endpoints
-		if r.Method == http.MethodGet && len(parts) == 5 && parts[4] == "endpoints" {
-			client, err := h.generateClient(user)
-			if err != nil {
-				klog.Errorf("Error creating dynamic client: %v", err)
-				serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
-				return
-			}
-			url, err := getServiceEndpoints(client, namespace, service)
-			if err != nil {
-				klog.Errorf("Error Fetching Route URL for Knative Service: %v", err)
-				serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
-				return
-			}
-			serverutils.SendResponse(w, http.StatusOK, json.RawMessage(fmt.Sprintf(`{"url": "%s"}`, url)))
+	// POST /namespaces/{namespace}/services/{service}/invoke
+	if r.Method == http.MethodPost && len(parts) == 5 && parts[4] == "invoke" {
+		response, err := invokeService(client, namespace, service, r)
+		if err != nil {
+			klog.Errorf("Error During Knative Function Invokation: %v", err)
+			serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
 			return
 		}
-
-		// POST /namespaces/{namespace}/services/{service}/invoke
-		if r.Method == http.MethodPost && len(parts) == 5 && parts[4] == "invoke" {
-			client, err := h.generateClient(user)
-			if err != nil {
-				klog.Errorf("Error creating dynamic client: %v", err)
-				serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
-				return
-			}
-			response, err := invokeService(client, namespace, service, r)
-			if err != nil {
-				klog.Errorf("Error During Knative Function Invokation: %v", err)
-				serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
-				return
-			}
-			serverutils.SendResponse(w, http.StatusOK, response)
-			return
-		}
+		serverutils.SendResponse(w, http.StatusOK, response)
+		return
 	}
 }
 

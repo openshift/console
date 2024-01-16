@@ -1,109 +1,57 @@
 package usersettings
 
 import (
-	"errors"
 	"reflect"
 	"testing"
 
-	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	authenticationv1 "k8s.io/api/authentication/v1"
 )
 
 func TestNewUserSettingsMeta(t *testing.T) {
 	tests := []struct {
 		testcase      string
-		userInfo      *unstructured.Unstructured
+		userInfo      authenticationv1.UserInfo
 		expectedError error
 		expectedData  *UserSettingMeta
 	}{
 		{
 			testcase: "returns -kubeadmin for kube:admin",
-			userInfo: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"apiVersion": "user.openshift.io/v1",
-					"kind":       "User",
-					"metadata": map[string]interface{}{
-						"name": "kube:admin",
-						"uid":  "",
-					},
-				},
+			userInfo: authenticationv1.UserInfo{
+				Username: "kube:admin",
+				UID:      "",
 			},
 			expectedError: nil,
 			expectedData: &UserSettingMeta{
 				Username:           "kube:admin",
 				UID:                "",
 				ResourceIdentifier: "kubeadmin",
-				OwnerReferences:    []meta.OwnerReference{},
 			},
 		},
 		{
 			testcase: "returns -kubeadmin for fake kube:admin with uid",
-			userInfo: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"apiVersion": "user.openshift.io/v1",
-					"kind":       "User",
-					"metadata": map[string]interface{}{
-						"name": "kube:admin",
-						"uid":  "1234",
-					},
-				},
+			userInfo: authenticationv1.UserInfo{
+				Username: "kube:admin",
+				UID:      "1234",
 			},
 			expectedError: nil,
 			expectedData: &UserSettingMeta{
 				Username:           "kube:admin",
 				UID:                "1234",
 				ResourceIdentifier: "1234",
-				OwnerReferences: []meta.OwnerReference{
-					{
-						APIVersion: "user.openshift.io/v1",
-						Kind:       "User",
-						Name:       "kube:admin",
-						UID:        "1234",
-					},
-				},
 			},
 		},
 		{
 			testcase: "returns uid for non kube:admin users",
-			userInfo: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"apiVersion": "user.openshift.io/v1",
-					"kind":       "User",
-					"metadata": map[string]interface{}{
-						"name": "developer",
-						"uid":  "1234",
-					},
-				},
+			userInfo: authenticationv1.UserInfo{
+				Username: "developer",
+				UID:      "1234",
 			},
 			expectedError: nil,
 			expectedData: &UserSettingMeta{
 				Username:           "developer",
 				UID:                "1234",
 				ResourceIdentifier: "1234",
-				OwnerReferences: []meta.OwnerReference{
-					{
-						APIVersion: "user.openshift.io/v1",
-						Kind:       "User",
-						Name:       "developer",
-						UID:        "1234",
-					},
-				},
 			},
-		},
-		{
-			testcase: "returns error for non kube:admin users without uid",
-			userInfo: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"apiVersion": "user.openshift.io/v1",
-					"kind":       "User",
-					"metadata": map[string]interface{}{
-						"name": "developer",
-						"uid":  "",
-					},
-				},
-			},
-			expectedError: errors.New("User must have UID to get required resource data for user-settings"),
-			expectedData:  nil,
 		},
 	}
 
@@ -123,22 +71,16 @@ func TestNewUserSettingsMeta(t *testing.T) {
 func TestCreateUserSettingsResources(t *testing.T) {
 	tests := []struct {
 		testcase                string
-		userInfo                *unstructured.Unstructured
+		userInfo                authenticationv1.UserInfo
 		expectedRoleName        string
 		expectedRoleBindingName string
 		expectedConfigMapName   string
 	}{
 		{
 			testcase: "for kubeadmin",
-			userInfo: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"apiVersion": "user.openshift.io/v1",
-					"kind":       "User",
-					"metadata": map[string]interface{}{
-						"name": "kube:admin",
-						"uid":  "",
-					},
-				},
+			userInfo: authenticationv1.UserInfo{
+				Username: "kube:admin",
+				UID:      "",
 			},
 			expectedConfigMapName:   "user-settings-kubeadmin",
 			expectedRoleName:        "user-settings-kubeadmin-role",
@@ -146,15 +88,9 @@ func TestCreateUserSettingsResources(t *testing.T) {
 		},
 		{
 			testcase: "for fake kubeadmin we use uid",
-			userInfo: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"apiVersion": "user.openshift.io/v1",
-					"kind":       "User",
-					"metadata": map[string]interface{}{
-						"name": "kube:admin",
-						"uid":  "1234",
-					},
-				},
+			userInfo: authenticationv1.UserInfo{
+				Username: "kube:admin",
+				UID:      "1234",
 			},
 			expectedConfigMapName:   "user-settings-1234",
 			expectedRoleName:        "user-settings-1234-role",
@@ -162,15 +98,9 @@ func TestCreateUserSettingsResources(t *testing.T) {
 		},
 		{
 			testcase: "for non kubeadmin",
-			userInfo: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"apiVersion": "user.openshift.io/v1",
-					"kind":       "User",
-					"metadata": map[string]interface{}{
-						"name": "developer",
-						"uid":  "1234",
-					},
-				},
+			userInfo: authenticationv1.UserInfo{
+				Username: "developer",
+				UID:      "1234",
 			},
 			expectedConfigMapName:   "user-settings-1234",
 			expectedRoleName:        "user-settings-1234-role",
@@ -201,8 +131,8 @@ func TestCreateUserSettingsResources(t *testing.T) {
 			if roleBinding.ObjectMeta.Name != tt.expectedRoleBindingName {
 				t.Errorf("RoleBinding name does not match:\n%v\nbut got\n%v", tt.expectedRoleBindingName, roleBinding.ObjectMeta.Name)
 			}
-			if roleBinding.Subjects[0].Name != tt.userInfo.GetName() {
-				t.Errorf("RoleBinding username ref does not match:\n%v\nbut got\n%v", tt.userInfo.GetName(), roleBinding.Subjects[0].Name)
+			if roleBinding.Subjects[0].Name != tt.userInfo.Username {
+				t.Errorf("RoleBinding username ref does not match:\n%v\nbut got\n%v", tt.userInfo.Username, roleBinding.Subjects[0].Name)
 			}
 			if roleBinding.RoleRef.Name != tt.expectedRoleName {
 				t.Errorf("RoleBinding role ref does not match:\n%v\nbut got\n%v", tt.expectedRoleName, roleBinding.RoleRef.Name)

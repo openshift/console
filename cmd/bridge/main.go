@@ -22,6 +22,7 @@ import (
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
+	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 )
 
@@ -322,6 +323,13 @@ func main() {
 			klog.Fatalf("failed to read bearer token: %v", err)
 		}
 
+		srv.InternalProxiedK8SClientConfig = &rest.Config{
+			Host: k8sEndpoint.String(),
+			TLSClientConfig: rest.TLSClientConfig{
+				CAFile: k8sInClusterCA,
+			},
+		}
+
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: tlsConfig,
 			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -405,6 +413,11 @@ func main() {
 			},
 		}
 
+		srv.InternalProxiedK8SClientConfig = &rest.Config{
+			Host:      k8sEndpoint.String(),
+			Transport: &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
+		}
+
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig:         serviceProxyTLSConfig,
 			HeaderBlacklist:         []string{"Cookie", "X-CSRFToken"},
@@ -478,11 +491,6 @@ func main() {
 		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
 	}
 	srv.KubeAPIServerURL = apiServerEndpoint
-	srv.K8sClient = &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
-		},
-	}
 
 	clusterManagementURL, err := url.Parse(clusterManagementURL)
 	if err != nil {
@@ -498,31 +506,28 @@ func main() {
 	case "service-account":
 		flags.FatalIfFailed(flags.ValidateFlagIs("k8s-mode", *fK8sMode, "in-cluster"))
 		srv.StaticUser = &auth.User{
-			Token: k8sAuthServiceAccountBearerToken,
+			Token: k8sAuthServiceAccountBearerToken, // FIXME: make it read the token from the file and periodically re-read?
 		}
-		srv.ServiceAccountToken = k8sAuthServiceAccountBearerToken
+		srv.InternalProxiedK8SClientConfig.BearerTokenFile = k8sInClusterBearerToken
 	case "bearer-token":
 		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken))
 
 		srv.StaticUser = &auth.User{
 			Token: *fK8sAuthBearerToken,
 		}
-		srv.ServiceAccountToken = *fK8sAuthBearerToken
+		srv.InternalProxiedK8SClientConfig.BearerToken = *fK8sAuthBearerToken
 	case "oidc", "openshift":
 		flags.FatalIfFailed(flags.ValidateFlagIs("user-auth", authOptions.AuthType, "oidc", "openshift"))
-		srv.ServiceAccountToken = k8sAuthServiceAccountBearerToken
+		srv.InternalProxiedK8SClientConfig.BearerTokenFile = k8sInClusterBearerToken
 	default:
 		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift"))
 	}
 
-	monitoringDashboardHttpClientTransport := &http.Transport{
-		TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
-	}
-	if *fK8sMode == "off-cluster" {
-		monitoringDashboardHttpClientTransport.Proxy = http.ProxyFromEnvironment
+	internalProxiedK8SRT, err := rest.TransportFor(srv.InternalProxiedK8SClientConfig)
+	if err != nil {
+		klog.Fatalf("Failed to create k8s HTTP client: %v", err)
 	}
 	srv.MonitoringDashboardConfigMapLister = server.NewResourceLister(
-		srv.ServiceAccountToken,
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
@@ -531,14 +536,11 @@ func main() {
 				"labelSelector": {"console.openshift.io/dashboard=true"},
 			}.Encode(),
 		},
-		&http.Client{
-			Transport: monitoringDashboardHttpClientTransport,
-		},
+		internalProxiedK8SRT,
 		nil,
 	)
 
 	srv.KnativeEventSourceCRDLister = server.NewResourceLister(
-		srv.ServiceAccountToken,
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
@@ -547,16 +549,11 @@ func main() {
 				"labelSelector": {"duck.knative.dev/source=true"},
 			}.Encode(),
 		},
-		&http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
-			},
-		},
+		internalProxiedK8SRT,
 		knative.EventSourceFilter,
 	)
 
 	srv.KnativeChannelCRDLister = server.NewResourceLister(
-		srv.ServiceAccountToken,
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
@@ -565,11 +562,7 @@ func main() {
 				"labelSelector": {"duck.knative.dev/addressable=true,messaging.knative.dev/subscribable=true"},
 			}.Encode(),
 		},
-		&http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
-			},
-		},
+		internalProxiedK8SRT,
 		knative.ChannelFilter,
 	)
 
@@ -578,7 +571,7 @@ func main() {
 		caCertFilePath = k8sInClusterCA
 	}
 
-	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, apiServerEndpoint, caCertFilePath); err != nil {
+	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)
 		os.Exit(1)
 	}
@@ -595,9 +588,14 @@ func main() {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
 	}
 
+	consoleHandler, err := srv.HTTPHandler()
+	if err != nil {
+		klog.Errorf("failed to set up the console's HTTP handler: %v", err)
+		os.Exit(1)
+	}
 	httpsrv := &http.Server{
 		Addr:    listenURL.Host,
-		Handler: srv.HTTPHandler(),
+		Handler: consoleHandler,
 		// Disable HTTP/2, which breaks WebSockets.
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
 		TLSConfig:    oscrypto.SecureTLSConfig(&tls.Config{}),

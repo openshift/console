@@ -208,6 +208,7 @@ const detectCanCreateProject = (dispatch) =>
   );
 
 const detectUser = (dispatch) =>
+  // FIXME: use k8s self-subject review API
   fetchURL('/apis/user.openshift.io/v1/users/~').then(
     (user) => {
       dispatch(setUser(user));

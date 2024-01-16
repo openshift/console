@@ -2,7 +2,6 @@ package usage
 
 import (
 	"context"
-	"net/http"
 	"strings"
 	"time"
 
@@ -10,7 +9,6 @@ import (
 	authv1 "k8s.io/api/authorization/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 )
 
@@ -56,13 +54,11 @@ func (m *Metrics) HandleUsage(event string, perspective string) error {
 }
 
 func (m *Metrics) MonitorUsers(
-	userSettingsClient *http.Client,
-	userSettingsEndpoint string,
-	serviceAccountToken string,
+	internalProxiedK8SClient kubernetes.Interface,
 ) {
 	go func() {
 		time.Sleep(5 * time.Second)
-		go m.updateUsersMetric(userSettingsClient, userSettingsEndpoint, serviceAccountToken)
+		go m.updateUsersMetric(internalProxiedK8SClient)
 	}()
 
 	ticker := time.NewTicker(updateConsoleUsersInterval)
@@ -71,7 +67,7 @@ func (m *Metrics) MonitorUsers(
 		for {
 			select {
 			case <-ticker.C:
-				m.updateUsersMetric(userSettingsClient, userSettingsEndpoint, serviceAccountToken)
+				m.updateUsersMetric(internalProxiedK8SClient)
 			case <-quit:
 				ticker.Stop()
 				return
@@ -80,27 +76,13 @@ func (m *Metrics) MonitorUsers(
 	}()
 }
 
-func (m *Metrics) updateUsersMetric(
-	userSettingsClient *http.Client,
-	userSettingsEndpoint string,
-	serviceAccountToken string,
-) error {
+func (m *Metrics) updateUsersMetric(internalProxiedK8SClient kubernetes.Interface) error {
 	klog.Info("usage.Metrics: Count console users...\n")
 	startTime := time.Now()
 
 	ctx := context.TODO()
-	config := &rest.Config{
-		Host:        userSettingsEndpoint,
-		BearerToken: serviceAccountToken,
-		Transport:   userSettingsClient.Transport,
-	}
-	client, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		klog.Errorf("usage.Metrics: Failed to create service account client: %v\n", err)
-		return err
-	}
 
-	roleBindingList, err := client.RbacV1().RoleBindings("openshift-console-user-settings").List(ctx, metav1.ListOptions{})
+	roleBindingList, err := internalProxiedK8SClient.RbacV1().RoleBindings("openshift-console-user-settings").List(ctx, metav1.ListOptions{})
 	if err != nil {
 		klog.Errorf("usage.Metrics: Failed to get user-settings RoleBindings: %v\n", err)
 		return err
@@ -147,7 +129,7 @@ func (m *Metrics) updateUsersMetric(
 				},
 			},
 		}
-		res, err := client.AuthorizationV1().SubjectAccessReviews().Create(
+		res, err := internalProxiedK8SClient.AuthorizationV1().SubjectAccessReviews().Create(
 			ctx,
 			canGetNamespacesAccessReview,
 			metav1.CreateOptions{},
