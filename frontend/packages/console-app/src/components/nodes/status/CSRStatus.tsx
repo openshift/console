@@ -35,9 +35,14 @@ export const isCSRActive: IsNodeStatusActive<NodeStatusResources> = (node, resou
 type CSRPopoverContentProps = {
   csr: CertificateSigningRequestKind;
   serverCSR?: boolean;
+  onPatch?: VoidFunction;
 };
 
-export const CSRPopoverContent: React.FC<CSRPopoverContentProps> = ({ csr, serverCSR }) => {
+export const CSRPopoverContent: React.FC<CSRPopoverContentProps> = ({
+  csr,
+  serverCSR,
+  onPatch,
+}) => {
   const { t } = useTranslation();
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState<string>();
@@ -46,6 +51,7 @@ export const CSRPopoverContent: React.FC<CSRPopoverContentProps> = ({ csr, serve
     setInProgress(true);
     try {
       await (approve ? approveCSR(csr) : denyCSR(csr));
+      onPatch?.();
     } catch (err) {
       setError(`${csr.metadata.name} ${approve ? 'approval' : 'denial'} failed - ${err}`);
     } finally {
@@ -151,24 +157,28 @@ export const ServerCSRPopoverContent: React.FC<NodePopoverContentProps<NodeStatu
   );
 };
 
-type CSRStatusProps = CSRPopoverContentProps & {
+type ClientCSRStatusProps = CSRPopoverContentProps & {
   title: string;
 };
 
-const CSRStatus: React.FC<CSRStatusProps> = ({ title, ...rest }) => {
+const ClientCSRStatus: React.FC<ClientCSRStatusProps> = ({ title, ...rest }) => {
   const { t } = useTranslation();
+  const [isOpen, setIsOpen] = React.useState(false);
 
   return (
     <>
       <PopoverStatus
         title={t('console-app~Certificate approval required')}
         statusBody={<StatusTitle title={title} />}
+        isVisible={isOpen}
+        shouldClose={() => setIsOpen(false)}
+        shouldOpen={() => setIsOpen(true)}
       >
-        <CSRPopoverContent {...rest} />
+        <CSRPopoverContent {...rest} onPatch={() => setIsOpen(false)} />
       </PopoverStatus>
       <SecondaryStatus status={t('console-app~Approval required')} />
     </>
   );
 };
 
-export default CSRStatus;
+export default ClientCSRStatus;

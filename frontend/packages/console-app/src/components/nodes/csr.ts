@@ -5,16 +5,13 @@ import { CertificationRequest } from 'pkijs';
 import { stringToArrayBuffer, fromBase64 } from 'pvutils';
 import {
   NodeKind,
-  ObjectMetadata,
   CertificateSigningRequestKind,
+  K8sResourceCommon,
+  NodeCertificateSigningRequestKind,
 } from '@console/internal/module/k8s';
 
-export const isCSRBundle = (bundle: any): bundle is CSRBundle => 'csr' in bundle;
-
-export type CSRBundle = {
-  metadata: ObjectMetadata;
-  csr: CertificateSigningRequestKind;
-};
+export const isCSRResource = (obj: K8sResourceCommon): obj is CertificateSigningRequestKind =>
+  obj.kind === 'CertificateSigningRequest';
 
 const getNodeCSRs = (
   csrs: CertificateSigningRequestKind[],
@@ -31,12 +28,14 @@ const getNodeCSRs = (
 const isCSRPending = (csr: CertificateSigningRequestKind): boolean =>
   !csr.status?.conditions?.some((c) => ['Approved', 'Denied'].includes(c.type));
 
-export const getNodeClientCSRs = (csrs: CertificateSigningRequestKind[] = []): CSRBundle[] => {
+export const getNodeClientCSRs = (
+  csrs: CertificateSigningRequestKind[] = [],
+): NodeCertificateSigningRequestKind[] => {
   const nodeCSRs = getNodeCSRs(
     csrs,
     'system:serviceaccount:openshift-machine-config-operator:node-bootstrapper',
   )
-    .map((csr) => {
+    .map<NodeCertificateSigningRequestKind>((csr) => {
       const request = Base64.decode(csr.spec.request);
       const req = request.replace(/(-----(BEGIN|END) CERTIFICATE REQUEST-----|\n)/g, '');
       const asn1 = fromBER(stringToArrayBuffer(fromBase64(req)));
@@ -44,11 +43,12 @@ export const getNodeClientCSRs = (csrs: CertificateSigningRequestKind[] = []): C
       // '2.5.4.3' is commonName code
       const commonName = pkcs10.subject.typesAndValues.find(({ type }) => type === '2.5.4.3');
       return {
+        ...csr,
         metadata: {
+          ...csr.metadata,
           name: commonName.value.valueBlock.value.replace('system:node:', ''),
-          creationTimestamp: csr.metadata.creationTimestamp,
+          originalName: csr.metadata.name,
         },
-        csr,
       };
     })
     .sort(
@@ -57,20 +57,16 @@ export const getNodeClientCSRs = (csrs: CertificateSigningRequestKind[] = []): C
         new Date(a.metadata.creationTimestamp).getTime(),
     );
 
-  const grouped = _.groupBy<CSRBundle>(nodeCSRs, (csr) => csr.metadata.name);
+  const grouped = _.groupBy(nodeCSRs, (csr) => csr.metadata.name);
 
   return Object.keys(grouped).reduce((acc, key) => {
-    const { csr } = grouped[key][0];
+    const csr = grouped[key][0];
     if (isCSRPending(csr)) {
-      acc.push({
-        metadata: { ...csr.metadata, name: key },
-        csr,
-      });
+      acc.push(csr);
     }
     return acc;
   }, []);
 };
-
 export const getNodeServerCSR = (
   csrs: CertificateSigningRequestKind[] = [],
   node: NodeKind,

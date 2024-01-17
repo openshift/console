@@ -767,3 +767,7 @@ export type CertificateSigningRequestKind = {
     }[];
   };
 } & K8sResourceCommon;
+
+export type NodeCertificateSigningRequestKind = CertificateSigningRequestKind & {
+  metadata: K8sResourceCommon['metadata'] & { originalName: string };
+};

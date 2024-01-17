@@ -9,9 +9,10 @@ import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { ListPageBody } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import {
-  ObjectMetadata,
+  NodeCertificateSigningRequestKind,
   RowFilter,
   RowProps,
+  TableColumn,
   VirtualizedTableProps,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { NodeMetrics, setNodeMetrics } from '@console/internal/actions/ui';
@@ -52,14 +53,25 @@ import {
   getNodeRoleMatch,
   getNodeRoles,
   useUserSettingsCompatibility,
+  nodeUptime,
+  nodeZone,
+  nodeMachine,
+  nodeInstanceType,
+  nodeFS,
+  nodeCPU,
+  nodeMemory,
+  nodePods,
+  nodeReadiness,
+  nodeRoles as nodeRolesSort,
+  sortWithCSRResource,
 } from '@console/shared';
 import { nodeStatus } from '../../status';
-import { CSRBundle, getNodeClientCSRs, isCSRBundle } from './csr';
+import { getNodeClientCSRs, isCSRResource } from './csr';
 import { menuActions } from './menu-actions';
 import NodeUptime from './node-dashboard/NodeUptime';
 import NodeRoles from './NodeRoles';
 import { NodeStatusWithExtensions } from './NodeStatus';
-import CSRStatus from './status/CSRStatus';
+import ClientCSRStatus from './status/CSRStatus';
 import { GetNodeStatusExtensions, useNodeStatusExtensions } from './useNodeStatusExtensions';
 
 const nodeColumnInfo = Object.freeze({
@@ -120,74 +132,74 @@ const nodeColumnInfo = Object.freeze({
 const columnManagementID = referenceForModel(NodeModel);
 const kind = 'Node';
 
-const getColumns = (t: TFunction) => [
+const getColumns = (t: TFunction): TableColumn<NodeRowItem>[] => [
   {
     title: t('console-app~Name'),
     id: nodeColumnInfo.name.id,
-    sortField: 'metadata.name',
+    sort: 'metadata.name',
     transforms: [sortable],
     props: { className: nodeColumnInfo.name.classes },
   },
   {
     title: t('console-app~Status'),
     id: nodeColumnInfo.status.id,
-    sortFunc: 'nodeReadiness',
+    sort: sortWithCSRResource(nodeReadiness, 'False'),
     transforms: [sortable],
     props: { className: nodeColumnInfo.status.classes },
   },
   {
     title: t('console-app~Roles'),
     id: nodeColumnInfo.role.id,
-    sortFunc: 'nodeRoles',
+    sort: sortWithCSRResource(nodeRolesSort, ''),
     transforms: [sortable],
     props: { className: nodeColumnInfo.role.classes },
   },
   {
     title: t('console-app~Pods'),
     id: nodeColumnInfo.pods.id,
-    sortFunc: 'nodePods',
+    sort: sortWithCSRResource(nodePods, 0),
     transforms: [sortable],
     props: { className: nodeColumnInfo.pods.classes },
   },
   {
     title: t('console-app~Memory'),
     id: nodeColumnInfo.memory.id,
-    sortFunc: 'nodeMemory',
+    sort: sortWithCSRResource(nodeMemory, 0),
     transforms: [sortable],
     props: { className: nodeColumnInfo.memory.classes },
   },
   {
     title: t('console-app~CPU'),
     id: nodeColumnInfo.cpu.id,
-    sortFunc: 'nodeCPU',
+    sort: sortWithCSRResource(nodeCPU, 0),
     transforms: [sortable],
     props: { className: nodeColumnInfo.cpu.classes },
   },
   {
     title: t('console-app~Filesystem'),
     id: nodeColumnInfo.filesystem.id,
-    sortFunc: 'nodeFS',
+    sort: sortWithCSRResource(nodeFS, 0),
     transforms: [sortable],
     props: { className: nodeColumnInfo.filesystem.classes },
   },
   {
     title: t('console-app~Created'),
     id: nodeColumnInfo.created.id,
-    sortField: 'metadata.creationTimestamp',
+    sort: 'metadata.creationTimestamp',
     transforms: [sortable],
     props: { className: nodeColumnInfo.created.classes },
   },
   {
     title: t('console-app~Instance type'),
     id: nodeColumnInfo.instanceType.id,
-    sortFunc: 'nodeInstanceType',
+    sort: sortWithCSRResource(nodeInstanceType, ''),
     transforms: [sortable],
     props: { className: nodeColumnInfo.instanceType.classes },
   },
   {
     title: t('console-app~Machine'),
     id: nodeColumnInfo.machine.id,
-    sortFunc: 'nodeMachine',
+    sort: sortWithCSRResource(nodeMachine, ''),
     transforms: [sortable],
     props: { className: nodeColumnInfo.machine.classes },
     additional: true,
@@ -195,7 +207,7 @@ const getColumns = (t: TFunction) => [
   {
     title: t('console-app~Labels'),
     id: nodeColumnInfo.labels.id,
-    sortField: 'metadata.labels',
+    sort: 'metadata.labels',
     transforms: [sortable],
     props: { className: nodeColumnInfo.labels.classes },
     additional: true,
@@ -203,7 +215,7 @@ const getColumns = (t: TFunction) => [
   {
     title: t('console-app~Zone'),
     id: nodeColumnInfo.zone.id,
-    sortFunc: 'nodeZone',
+    sort: sortWithCSRResource(nodeZone, ''),
     transforms: [sortable],
     props: { className: nodeColumnInfo.zone.classes },
     additional: true,
@@ -211,7 +223,7 @@ const getColumns = (t: TFunction) => [
   {
     title: t('console-app~Uptime'),
     id: nodeColumnInfo.uptime.id,
-    sortFunc: 'nodeUptime',
+    sort: sortWithCSRResource(nodeUptime, ''),
     transforms: [sortable],
     props: { className: nodeColumnInfo.uptime.classes },
     additional: true,
@@ -223,8 +235,8 @@ const getColumns = (t: TFunction) => [
   },
 ];
 
-const NodesTableRow: React.FC<RowProps<NodeBundle, GetNodeStatusExtensions>> = ({
-  obj: { node },
+const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
+  obj: node,
   activeColumnIDs,
   rowData,
 }) => {
@@ -424,7 +436,10 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
 
 const showMetrics = PROMETHEUS_BASE_PATH && window.innerWidth > 1200;
 
-const CSRTableRow: React.FC<RowProps<CSRBundle>> = ({ obj, activeColumnIDs }) => {
+const CSRTableRow: React.FC<RowProps<NodeCertificateSigningRequestKind>> = ({
+  obj: csr,
+  activeColumnIDs,
+}) => {
   return (
     <>
       <TableData
@@ -432,14 +447,17 @@ const CSRTableRow: React.FC<RowProps<CSRBundle>> = ({ obj, activeColumnIDs }) =>
         id={nodeColumnInfo.name.id}
         activeColumnIDs={activeColumnIDs}
       >
-        {obj.metadata.name}
+        {csr.metadata.name}
       </TableData>
       <TableData
         className={nodeColumnInfo.status.classes}
         id={nodeColumnInfo.status.id}
         activeColumnIDs={activeColumnIDs}
       >
-        <CSRStatus csr={obj.csr} title="Discovered" />
+        <ClientCSRStatus
+          csr={{ ...csr, metadata: { ...csr.metadata, name: csr.metadata.originalName } }}
+          title="Discovered"
+        />
       </TableData>
       <TableData
         className={nodeColumnInfo.role.classes}
@@ -481,7 +499,7 @@ const CSRTableRow: React.FC<RowProps<CSRBundle>> = ({ obj, activeColumnIDs }) =>
         id={nodeColumnInfo.created.id}
         activeColumnIDs={activeColumnIDs}
       >
-        <Timestamp timestamp={obj.csr.metadata.creationTimestamp} />
+        <Timestamp timestamp={csr.metadata.creationTimestamp} />
       </TableData>
       <TableData
         className={nodeColumnInfo.instanceType.classes}
@@ -502,7 +520,7 @@ const CSRTableRow: React.FC<RowProps<CSRBundle>> = ({ obj, activeColumnIDs }) =>
         id={nodeColumnInfo.labels.id}
         activeColumnIDs={activeColumnIDs}
       >
-        <LabelList kind={kind} labels={getLabels(obj.csr)} />
+        <LabelList kind={kind} labels={getLabels(csr)} />
       </TableData>
       <TableData
         className={nodeColumnInfo.zone.classes}
@@ -523,11 +541,11 @@ const CSRTableRow: React.FC<RowProps<CSRBundle>> = ({ obj, activeColumnIDs }) =>
   );
 };
 
-const TableRow: React.FC<RowProps<ItemBundle, GetNodeStatusExtensions>> = ({ obj, ...rest }) =>
-  isCSRBundle(obj) ? <CSRTableRow obj={obj} {...rest} /> : <NodesTableRow obj={obj} {...rest} />;
+const TableRow: React.FC<RowProps<NodeRowItem, GetNodeStatusExtensions>> = ({ obj, ...rest }) =>
+  isCSRResource(obj) ? <CSRTableRow obj={obj} {...rest} /> : <NodesTableRow obj={obj} {...rest} />;
 
 type NodeListProps = Pick<
-  VirtualizedTableProps<ItemBundle>,
+  VirtualizedTableProps<NodeRowItem>,
   'data' | 'unfilteredData' | 'loaded' | 'loadError'
 >;
 
@@ -543,7 +561,7 @@ const NodeList: React.FC<NodeListProps> = (props) => {
   const statusExtensions = useNodeStatusExtensions();
   return (
     userSettingsLoaded && (
-      <VirtualizedTable<ItemBundle, GetNodeStatusExtensions>
+      <VirtualizedTable<NodeRowItem, GetNodeStatusExtensions>
         {...props}
         aria-label={t('public~Nodes')}
         label={t('public~Nodes')}
@@ -555,18 +573,13 @@ const NodeList: React.FC<NodeListProps> = (props) => {
   );
 };
 
-type NodeBundle = {
-  metadata: ObjectMetadata;
-  node: NodeKind;
-};
+type NodeRowItem = NodeKind | NodeCertificateSigningRequestKind;
 
-type ItemBundle = NodeBundle | CSRBundle;
-
-const getFilters = (t: TFunction): RowFilter<ItemBundle>[] => [
+const getFilters = (t: TFunction): RowFilter<NodeRowItem>[] => [
   {
     filterGroupName: t('console-app~Status'),
     type: 'node-status',
-    reducer: (obj) => (isCSRBundle(obj) ? 'Discovered' : nodeStatus(obj.node)),
+    reducer: (obj) => (isCSRResource(obj) ? 'Discovered' : nodeStatus(obj)),
     items: [
       { id: 'Ready', title: t('console-app~Ready') },
       { id: 'Not Ready', title: t('console-app~Not Ready') },
@@ -576,16 +589,16 @@ const getFilters = (t: TFunction): RowFilter<ItemBundle>[] => [
       if (!input.selected?.length) {
         return true;
       }
-      if (isCSRBundle(obj)) {
+      if (isCSRResource(obj)) {
         return input.selected?.includes('Discovered');
       }
-      return input.selected?.includes(nodeStatus(obj.node));
+      return input.selected?.includes(nodeStatus(obj));
     },
   },
   {
     filterGroupName: t('console-app~Roles'),
     type: 'node-role',
-    isMatch: (obj, role) => (isCSRBundle(obj) ? false : getNodeRoleMatch(obj.node, role)),
+    isMatch: (obj, role) => (isCSRResource(obj) ? false : getNodeRoleMatch(obj, role)),
     items: [
       {
         id: 'control-plane',
@@ -600,10 +613,10 @@ const getFilters = (t: TFunction): RowFilter<ItemBundle>[] => [
       if (!input.selected?.length) {
         return true;
       }
-      if (isCSRBundle(obj)) {
+      if (isCSRResource(obj)) {
         return false;
       }
-      const nodeRoles = getNodeRoles(obj.node);
+      const nodeRoles = getNodeRoles(obj);
       return input.selected?.some((r) => nodeRoles.includes(r));
     },
   },
@@ -656,12 +669,8 @@ const NodesPage = () => {
   const { t } = useTranslation();
 
   const data = React.useMemo(() => {
-    const nodeBundle: NodeBundle[] = nodes?.map((node) => ({
-      node,
-      metadata: node.metadata,
-    }));
     const csrBundle = getNodeClientCSRs(csrs);
-    return [...csrBundle, ...nodeBundle];
+    return [...csrBundle, ...nodes];
   }, [csrs, nodes]);
 
   const filters = React.useMemo(() => getFilters(t), [t]);
