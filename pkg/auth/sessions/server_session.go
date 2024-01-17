@@ -10,7 +10,10 @@ import (
 	"k8s.io/klog"
 )
 
-const OpenshiftAccessTokenCookieName = "openshift-session-token"
+const (
+	OpenshiftAccessTokenCookieName  = "openshift-session-token"
+	openshiftRefreshTokenCookieName = "openshift-refresh-token"
+)
 
 type SessionStore struct {
 	byToken map[string]*LoginState
@@ -23,7 +26,6 @@ type SessionStore struct {
 	mux            sync.Mutex
 }
 
-// TODO: how is this shared between console instances? I doubt it is, we may want to use encrypted cookies instead
 func NewServerSessionStore(maxSessions int) *SessionStore {
 	return &SessionStore{
 		byToken:        make(map[string]*LoginState),
