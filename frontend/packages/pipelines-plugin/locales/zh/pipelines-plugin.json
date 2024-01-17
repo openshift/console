@@ -129,7 +129,6 @@
   "Medium": "中",
   "Low": "低",
   "Resource is being deleted.": "正在删除资源。",
-  "Resource is being fetched from Tekton Results.": "从 Tekton Results 中获取资源。",
   "View GitHub App": "查看 GitHub 应用程序",
   "EventListener details": "事件监听器详情",
   "URL": "URL",
@@ -453,6 +452,7 @@
   "Start last run": "启动最后的运行",
   "This action will delete resource from k8s but still the resource can be fetched from Tekton Results": "此操作将从 k8s 中删除资源，但仍然可以从 Tekton Results 中获取资源",
   "Delete {{kind}}": "删除{{kind}}",
+  "Resource is being fetched from Tekton Results.": "从 Tekton Results 中获取资源。",
   "Stop": "停止",
   "Let the running tasks complete, then execute finally tasks": "让正在运行的任务完成，然后执行最后的任务",
   "Interrupt any executing non finally tasks, then execute finally tasks": "中断任何正在运行的非最后的任务，然后执行最后的任务",
@@ -463,7 +463,7 @@
   "Skipped": "跳过",
   "Cancelled": "取消",
   "Cancelling": "取消",
-  "Pending": "待定",
+  "Pending": "Pending",
   "PipelineRun not started yet": "管道运行尚未启动",
   "Other": "其他"
 }

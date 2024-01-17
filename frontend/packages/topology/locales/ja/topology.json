@@ -134,7 +134,7 @@
   "Health checks": "ヘルスチェック",
   "Add health checks": "ヘルスチェックの追加",
   "Resource Quotas": "リソースクォータ",
-  "VerticalPodAutoscaler": "VerticalPodAutoscaler",
+  "VerticalPodAutoscalers": "VerticalPodAutoscalers",
   "Visual connector": "ビジュアルコネクター",
   "Expand groups": "グループの展開",
   "Pod count": "Pod 数",
