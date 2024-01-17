@@ -3,6 +3,8 @@ package sessions
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"strings"
 	"sync"
 
 	gorilla "github.com/gorilla/sessions"
@@ -14,6 +16,16 @@ type CombinedSessionStore struct {
 	clientStore *gorilla.CookieStore // FIXME: we need to determine what the default session expiration should be, possibly make it configurable
 
 	sessionLock sync.Mutex
+}
+
+type session struct {
+	sessionToken *gorilla.Session
+	refreshToken *gorilla.Session
+}
+
+func SessionCookieName() string {
+	podName, _ := os.LookupEnv("POD_NAME")
+	return OpenshiftAccessTokenCookieName + "-" + podName
 }
 
 func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath string) *CombinedSessionStore {
@@ -39,11 +51,32 @@ func (cs *CombinedSessionStore) AddSession(w http.ResponseWriter, r *http.Reques
 		return fmt.Errorf("failed to add session to server store: %w", err)
 	}
 
-	clientSession, _ := cs.clientStore.Get(r, OpenshiftAccessTokenCookieName)
-	clientSession.Values["session-token"] = ls.sessionToken
-	clientSession.Values["refresh-token"] = ls.refreshToken
+	clientSession := cs.getCookieSession(r)
+	clientSession.sessionToken.Values["session-token"] = ls.sessionToken
+	clientSession.refreshToken.Values["refresh-token"] = ls.refreshToken
 
-	return clientSession.Save(r, w)
+	return clientSession.save(r, w)
+}
+
+func (cs *CombinedSessionStore) getCookieSession(r *http.Request) *session {
+	clientSession, _ := cs.clientStore.Get(r, SessionCookieName())
+	refreshSession, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
+	return &session{
+		sessionToken: clientSession,
+		refreshToken: refreshSession,
+	}
+}
+
+func (s *session) save(r *http.Request, w http.ResponseWriter) error {
+	if err := s.sessionToken.Save(r, w); err != nil {
+		return fmt.Errorf("failed to save session token cookie: %w", err)
+	}
+
+	if err := s.refreshToken.Save(r, w); err != nil {
+		return fmt.Errorf("failed to save refresh token cookie: %w", err)
+	}
+
+	return nil
 }
 
 // GetSession returns a session identified by the cookie from the current request.
@@ -53,33 +86,23 @@ func (cs *CombinedSessionStore) GetSession(w http.ResponseWriter, r *http.Reques
 	defer cs.sessionLock.Unlock()
 
 	// Get always returns a session, even if empty.
-	clientSession, _ := cs.clientStore.Get(r, OpenshiftAccessTokenCookieName)
+	clientSession := cs.getCookieSession(r)
 
-	// TODO: what happens if session-token is set by another instance and we get here?
-	// Will we loop in redirects forever since it's set but we don't know anything about that session
-	// and so we redirect back to login, which sees session token exists?
 	var sessionToken, refreshToken string
-	if sessionTokenIface, ok := clientSession.Values["session-token"]; ok { // FIXME: allow for multiple session tokens, add pruning
+	if sessionTokenIface, ok := clientSession.sessionToken.Values["session-token"]; ok {
 		sessionToken = sessionTokenIface.(string)
 	}
-	if refreshTokenIface, ok := clientSession.Values["refresh-token"]; ok {
+	if refreshTokenIface, ok := clientSession.refreshToken.Values["refresh-token"]; ok {
 		refreshToken = refreshTokenIface.(string)
 	}
 
 	loginState := cs.serverStore.GetSession(sessionToken, refreshToken)
-	if loginState == nil {
-		// // the session-token was created by someone else (or it was pruned), we need to get our own server session
-		// clientSession.Values["session-token"] = "" // FIXME: wrong for non-sticky sessions but should be ok for PoC
-		// clientSession.Save(r, w)
-		return nil, nil
-	}
-
 	return loginState, nil
 }
 
 func (cs *CombinedSessionStore) GetCookieRefreshToken(r *http.Request) string {
 	// Get always returns a session, even if empty.
-	clientSession, _ := cs.clientStore.Get(r, OpenshiftAccessTokenCookieName)
+	clientSession, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
 	if refreshToken, ok := clientSession.Values["refresh-token"].(string); ok {
 		return refreshToken
 	}
@@ -88,7 +111,7 @@ func (cs *CombinedSessionStore) GetCookieRefreshToken(r *http.Request) string {
 
 func (cs *CombinedSessionStore) UpdateCookieRefreshToken(w http.ResponseWriter, r *http.Request, refreshToken string) error {
 	// no need to lock here since there shouldn't be any races around the client session
-	clientSession, _ := cs.clientStore.Get(r, OpenshiftAccessTokenCookieName)
+	clientSession, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
 	clientSession.Values["refresh-token"] = refreshToken
 	return clientSession.Save(r, w)
 }
@@ -97,18 +120,18 @@ func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Requ
 	cs.sessionLock.Lock()
 	defer cs.sessionLock.Unlock()
 
-	clientSession, _ := cs.clientStore.Get(r, OpenshiftAccessTokenCookieName)
+	clientSession := cs.getCookieSession(r)
 	var oldRefreshToken string
-	if oldToken, ok := clientSession.Values["refresh-token"]; ok {
+	if oldToken, ok := clientSession.refreshToken.Values["refresh-token"]; ok {
 		oldRefreshToken = oldToken.(string)
 	}
 
 	refreshToken := tokenResponse.RefreshToken
-	clientSession.Values["refresh-token"] = refreshToken
+	clientSession.refreshToken.Values["refresh-token"] = refreshToken
 
 	var loginState *LoginState
-	sessionToken, ok := clientSession.Values["session-token"]
-	if ok { // TODO: since we only have a single session token in the cookie, we need to check that the session was actually created by us or not
+	sessionToken, ok := clientSession.sessionToken.Values["session-token"]
+	if ok {
 		loginState = cs.serverStore.GetSession(sessionToken.(string), "")
 	}
 	if loginState == nil {
@@ -122,7 +145,7 @@ func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Requ
 			return nil, fmt.Errorf("failed to add session to server store: %w", err)
 		}
 		cs.serverStore.byRefreshToken[oldRefreshToken] = loginState
-		clientSession.Values["session-token"] = loginState.sessionToken
+		clientSession.sessionToken.Values["session-token"] = loginState.sessionToken
 	} else {
 		if err := loginState.UpdateTokens(tokenVerifier, tokenResponse); err != nil {
 			return nil, err
@@ -132,21 +155,23 @@ func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Requ
 
 	}
 
-	return loginState, clientSession.Save(r, w)
-}
-
-func (cs *CombinedSessionStore) deleteSession(w http.ResponseWriter, r *http.Request, sessionToken string) error {
-	clientSession, _ := cs.clientStore.Get(r, OpenshiftAccessTokenCookieName)
-	delete(clientSession.Values, "session-token")
-	clientSession.Save(r, w)
-	return cs.serverStore.DeleteSession(sessionToken)
+	return loginState, clientSession.save(r, w)
 }
 
 func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Request, sessionToken string) error {
 	cs.sessionLock.Lock()
 	defer cs.sessionLock.Unlock()
 
-	return cs.deleteSession(w, r, sessionToken)
+	for _, cookie := range r.Cookies() {
+		if strings.HasPrefix(cookie.Name, OpenshiftAccessTokenCookieName) {
+			cookie.MaxAge = -1
+			http.SetCookie(w, cookie)
+		}
+	}
+
+	refreshTokenCookie, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
+	refreshTokenCookie.Options.MaxAge = -1
+	return cs.clientStore.Save(r, w, refreshTokenCookie)
 }
 
 // FIXME: do this regulary in a separate goroutine on background
