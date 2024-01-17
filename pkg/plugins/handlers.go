@@ -158,6 +158,8 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 
 	proxy.CopyRequestHeaders(orignalRequest, newRequest)
 
+	klog.Infof("=== %q | Original Request Headers : %v", pluginName, orignalRequest.Header)
+
 	resp, err := p.Client.Do(newRequest)
 	if err != nil {
 		errMsg := fmt.Sprintf("failed to send GET request for %q plugin: %v", pluginName, err)
@@ -166,6 +168,8 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 		return
 	}
 	defer resp.Body.Close()
+
+	klog.Infof("=== %q | Respone Headers : %v", pluginName, resp.Header)
 
 	// filter unwanted headers from the response
 	proxy.FilterHeaders(resp)
@@ -176,9 +180,15 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 		}
 	}
 
+<<<<<<< HEAD
 	// Make sure to copy status code from the plugin service response
 	w.WriteHeader(resp.StatusCode)
 
+=======
+	w.WriteHeader(resp.StatusCode)
+
+	klog.Infof("=== %q | Writers Respone Headers : %v", pluginName, w.Header())
+>>>>>>> [DO NOT MERGE] test
 	_, err = io.Copy(w, resp.Body)
 	if err != nil {
 		errMsg := fmt.Sprintf("failed sending HTTP response body from %q plugin: %v", pluginName, err)
