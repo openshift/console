@@ -16,9 +16,14 @@ export const isCSRResource = (obj: K8sResourceCommon): obj is CertificateSigning
 const getNodeCSRs = (
   csrs: CertificateSigningRequestKind[],
   username: string,
+  client: boolean,
 ): CertificateSigningRequestKind[] =>
   csrs
-    .filter((csr) => csr.spec.username === username)
+    .filter(
+      (csr) =>
+        csr.spec.username === username &&
+        csr.spec.usages.some((u) => u === (client ? 'client auth' : 'server auth')),
+    )
     .sort(
       (a, b) =>
         new Date(b.metadata.creationTimestamp).getTime() -
@@ -34,6 +39,7 @@ export const getNodeClientCSRs = (
   const nodeCSRs = getNodeCSRs(
     csrs,
     'system:serviceaccount:openshift-machine-config-operator:node-bootstrapper',
+    true,
   )
     .map<NodeCertificateSigningRequestKind>((csr) => {
       const request = Base64.decode(csr.spec.request);
@@ -71,7 +77,7 @@ export const getNodeServerCSR = (
   csrs: CertificateSigningRequestKind[] = [],
   node: NodeKind,
 ): CertificateSigningRequestKind => {
-  const nodeCSRs = getNodeCSRs(csrs, `system:node:${node.metadata.name}`);
+  const nodeCSRs = getNodeCSRs(csrs, `system:node:${node.metadata.name}`, false);
   if (!nodeCSRs.length || !isCSRPending(nodeCSRs[0])) {
     return null;
   }
