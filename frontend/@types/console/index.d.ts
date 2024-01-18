@@ -62,7 +62,8 @@ declare interface Window {
   i18n?: {}; // i18next instance, only available in development builds for debugging
   store?: {}; // Redux store, only available in development builds for debugging
   pluginStore?: {}; // Console plugin store
-  loadPluginEntry?: Function;
+  loadPluginEntry?: Function; // Console plugin entry callback, used to load dynamic plugins
+  webpackSharedScope?: {}; // webpack shared scope object, contains modules shared across plugins
   Cypress?: {};
 }
 
