@@ -5,6 +5,9 @@ import {
   ObjectMetadata,
   K8sResourceCommon,
   K8sVerb,
+  K8sResourceCondition,
+  NodeCondition,
+  TaintEffect,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { EventInvolvedObject } from './event';
 import { Selector, MatchLabels, K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -18,33 +21,11 @@ export type PartialObjectMetadata = {
   metadata: ObjectMetadata;
 };
 
-export enum K8sResourceConditionStatus {
-  True = 'True',
-  False = 'False',
-  Unknown = 'Unknown',
-}
-
-export type K8sResourceCondition = {
-  type: string;
-  status: keyof typeof K8sResourceConditionStatus;
-  lastTransitionTime?: string;
-  reason?: string;
-  message?: string;
-};
-
 export type ClusterServiceVersionCondition = {
   phase: string;
   lastTransitionTime?: string;
   reason?: string;
   message?: string;
-};
-
-export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
-
-export type Taint = {
-  key: string;
-  value: string;
-  effect: TaintEffect;
 };
 
 export type TolerationOperator = 'Exists' | 'Equal';
@@ -488,31 +469,6 @@ export type StorageClassResourceKind = {
   reclaimPolicy: string;
   parameters?: {
     [key: string]: string;
-  };
-} & K8sResourceCommon;
-
-export type NodeCondition = {
-  lastHeartbeatTime?: string;
-} & K8sResourceCondition;
-
-export type NodeKind = {
-  spec: {
-    taints?: Taint[];
-    unschedulable?: boolean;
-  };
-  status?: {
-    capacity?: {
-      [key: string]: string;
-    };
-    conditions?: NodeCondition[];
-    images?: {
-      names: string[];
-      sizeBytes?: number;
-    }[];
-    phase?: string;
-    nodeInfo?: {
-      operatingSystem: string;
-    };
   };
 } & K8sResourceCommon;
 

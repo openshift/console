@@ -227,33 +227,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: [`/k8s/cluster/${referenceForModel(NodeModel)}`],
-      loader: () =>
-        import(
-          './components/baremetal-nodes/BareMetalNodesPage' /* webpackChunkName: "node" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG],
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      path: ['/k8s/cluster/nodes/:name'],
-      loader: () =>
-        import(
-          './components/baremetal-nodes/BareMetalNodeDetailsPage' /* webpackChunkName: "node" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG],
-    },
-  },
-  {
     type: 'Dashboards/Overview/Activity/Resource',
     properties: {
       k8sResource: {

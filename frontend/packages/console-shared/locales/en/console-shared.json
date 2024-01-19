@@ -225,7 +225,6 @@
   "This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.": "This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.",
   "{{label}} details": "{{label}} details",
   "Provisioned as node": "Provisioned as node",
-  "Scheduling disabled": "Scheduling disabled",
   "Select input": "Select input",
   "Select options": "Select options",
   "Pod": "Pod",

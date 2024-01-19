@@ -20,23 +20,14 @@ import {
 import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import {
-  getNodeRoles,
   getMachinePhase,
   getMachineSetInstanceType,
-  nodeMemory,
-  nodeCPU,
-  nodeFS,
-  nodePods,
-  nodeMachine,
-  nodeInstanceType,
-  nodeZone,
   pvcUsed,
   snapshotSize,
   snapshotSource,
   ALL_NAMESPACES_KEY,
   getName,
   useDeepCompareMemoize,
-  nodeUptime,
 } from '@console/shared';
 import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
@@ -55,7 +46,6 @@ import {
   getTemplateInstanceStatus,
   K8sResourceKind,
   K8sResourceKindReference,
-  NodeKind,
   PodKind,
   podPhase,
   podReadiness,
@@ -77,11 +67,6 @@ const sorts = {
   instanceType: (obj): string => getMachineSetInstanceType(obj),
   jobCompletionsSucceeded: (job) => job?.status?.succeeded || 0,
   jobType: (job) => getJobTypeAndCompletions(job).type,
-  nodeReadiness: (node: NodeKind) => {
-    let readiness = _.get(node, 'status.conditions');
-    readiness = _.find(readiness, { type: 'Ready' });
-    return _.get(readiness, 'status');
-  },
   numReplicas: (resource) => _.toInteger(_.get(resource, 'status.replicas')),
   namespaceCPU: (ns: K8sResourceKind): number => UIActions.getNamespaceMetric(ns, 'cpu'),
   namespaceMemory: (ns: K8sResourceKind): number => UIActions.getNamespaceMetric(ns, 'memory'),
@@ -97,18 +82,7 @@ const sorts = {
   getClusterOperatorStatus: (operator: ClusterOperator) => getClusterOperatorStatus(operator),
   getClusterOperatorVersion: (operator: ClusterOperator) => getClusterOperatorVersion(operator),
   getTemplateInstanceStatus,
-  nodeRoles: (node: NodeKind): string => {
-    const roles = getNodeRoles(node);
-    return roles.sort().join(', ');
-  },
-  nodeMemory: (node: NodeKind): number => nodeMemory(node),
-  nodeCPU: (node: NodeKind): number => nodeCPU(node),
-  nodeFS: (node: NodeKind): number => nodeFS(node),
-  nodeMachine: (node: NodeKind): string => nodeMachine(node),
-  nodeInstanceType: (node: NodeKind): string => nodeInstanceType(node),
-  nodeZone: (node: NodeKind): string => nodeZone(node),
   machinePhase: (machine: MachineKind): string => getMachinePhase(machine),
-  nodePods: (node: NodeKind): number => nodePods(node),
   pvcUsed: (pvc: K8sResourceKind): number => pvcUsed(pvc),
   volumeSnapshotSize: (snapshot: VolumeSnapshotKind): number => snapshotSize(snapshot),
   volumeSnapshotSource: (snapshot: VolumeSnapshotKind): string => snapshotSource(snapshot),
@@ -118,7 +92,6 @@ const sorts = {
     const channel = defaultChannelFor(packageManifest);
     return channel?.currentCSVDesc?.displayName;
   },
-  nodeUptime: (node: NodeKind): string => nodeUptime(node),
 };
 
 // Common table row/columns helper SFCs for implementing accessible data grid

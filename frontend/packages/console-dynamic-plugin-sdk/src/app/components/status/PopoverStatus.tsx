@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
+import { Button, Popover, PopoverPosition, PopoverProps } from '@patternfly/react-core';
 import './PopoverStatus.scss';
 
 type PopoverStatusProps = {
@@ -10,6 +10,7 @@ type PopoverStatusProps = {
   hideHeader?: boolean;
   isVisible?: boolean;
   shouldClose?: (hideFunction: any) => void;
+  shouldOpen?: PopoverProps['shouldOpen'];
 };
 
 /**
@@ -34,6 +35,7 @@ const PopoverStatus: React.FC<PopoverStatusProps> = ({
   children,
   isVisible = null,
   shouldClose = null,
+  shouldOpen = null,
   statusBody,
   title,
   onHide,
@@ -49,6 +51,7 @@ const PopoverStatus: React.FC<PopoverStatusProps> = ({
       onShow={onShow}
       isVisible={isVisible}
       shouldClose={shouldClose}
+      shouldOpen={shouldOpen}
     >
       <Button variant="link" isInline className="co-popover-status-button">
         {statusBody}

@@ -1,17 +1,16 @@
 import * as React from 'react';
+import { Stack, StackItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { PopoverStatus, NodeStatus } from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
-import {
-  getNodeSecondaryStatus,
-  NodeUnschedulableStatus,
-  Status,
-  SecondaryStatus,
-} from '@console/shared';
+import { Status, SecondaryStatus } from '@console/shared';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
+import { ErrorBoundary } from '@console/shared/src/components/error';
 import { PressureQueries, Condition } from '../../queries';
 import { nodeStatus } from '../../status/node';
+import { GetNodeStatusExtensions, useNodeStatusExtensions } from './useNodeStatusExtensions';
 
 const conditionDescriptionMap = Object.freeze({
   [Condition.DISK_PRESSURE]: 'available disk capacity is low',
@@ -34,40 +33,75 @@ const getDegradedStates = (node: NodeKind): Condition[] => {
     .map(({ type }) => type as Condition);
 };
 
-const NodeStatus: React.FC<NodeStatusProps> = ({ node, showPopovers = false, className }) => {
-  const status = showPopovers ? getDegradedStates(node) : [];
+type NodeStatusWithExtensionsProps = {
+  node: NodeKind;
+  statusExtensions: GetNodeStatusExtensions;
+  className?: string;
+};
+
+export const NodeStatusWithExtensions: React.FC<NodeStatusWithExtensionsProps> = ({
+  node,
+  className,
+  statusExtensions,
+}) => {
   const { t } = useTranslation();
+
+  const { popoverContent, secondaryStatuses } = React.useMemo(() => statusExtensions(node), [
+    statusExtensions,
+    node,
+  ]);
+
+  const mainStatus = <Status status={nodeStatus(node)} className={className} />;
+
   return (
     <>
-      {!node.spec.unschedulable ? (
-        <Status status={nodeStatus(node)} className={className} />
+      {popoverContent.length ? (
+        <PopoverStatus title={t('console-app~Node status')} statusBody={mainStatus}>
+          <Stack>
+            {popoverContent.map(({ content, uid }) => (
+              <ErrorBoundary key={uid}>
+                <StackItem>{content}</StackItem>
+              </ErrorBoundary>
+            ))}
+          </Stack>
+        </PopoverStatus>
       ) : (
-        <NodeUnschedulableStatus status={nodeStatus(node)} className={className} />
+        mainStatus
       )}
-      <SecondaryStatus status={getNodeSecondaryStatus(node)} />
-      {status.length > 0 &&
-        status.map((item) => (
-          <div key={item}>
-            <ConsumerPopover
-              title={_.startCase(item)}
-              current={_.startCase(item)}
-              consumers={PressureQueries[item](node.metadata.name)}
-              humanize={humanizeMap[item]}
-              description={t(
-                "console-app~This node's {{conditionDescription}}. Performance may be degraded.",
-                { conditionDescription: conditionDescriptionMap[item] },
-              )}
-            />
-          </div>
-        ))}
+      <SecondaryStatus status={secondaryStatuses} />
+      {getDegradedStates(node)?.map((item) => (
+        <div key={item}>
+          <ConsumerPopover
+            title={_.startCase(item)}
+            current={_.startCase(item)}
+            consumers={PressureQueries[item](node.metadata.name)}
+            humanize={humanizeMap[item]}
+            description={t(
+              "console-app~This node's {{conditionDescription}}. Performance may be degraded.",
+              { conditionDescription: conditionDescriptionMap[item] },
+            )}
+          />
+        </div>
+      ))}
     </>
   );
 };
 
 type NodeStatusProps = {
   node: NodeKind;
-  showPopovers?: boolean;
   className?: string;
+};
+
+const NodeStatus: React.FC<NodeStatusProps> = ({ node, className }) => {
+  const statusExtensions = useNodeStatusExtensions();
+
+  return (
+    <NodeStatusWithExtensions
+      node={node}
+      className={className}
+      statusExtensions={statusExtensions}
+    />
+  );
 };
 
 export default NodeStatus;

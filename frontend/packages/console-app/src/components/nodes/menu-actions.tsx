@@ -1,12 +1,41 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { deleteModal } from '@console/internal/components/modals/delete-modal';
 import { Kebab, KebabAction, asAccessReview } from '@console/internal/components/utils';
-import { NodeModel } from '@console/internal/models';
-import { K8sKind, NodeKind } from '@console/internal/module/k8s';
+import { CertificateSigningRequestModel, NodeModel } from '@console/internal/models';
+import { CertificateSigningRequestKind, K8sKind, NodeKind } from '@console/internal/module/k8s';
 import { isNodeUnschedulable } from '@console/shared';
 import { makeNodeSchedulable } from '../../k8s/requests/nodes';
 import { createConfigureUnschedulableModal } from './modals';
+
+const updateCSR = (csr: CertificateSigningRequestKind, type: 'Approved' | 'Denied') => {
+  const approvedCSR = {
+    ...csr,
+    status: {
+      ...(csr.status || {}),
+      conditions: [
+        {
+          lastUpdateTime: new Date().toISOString(),
+          message: `This CSR was ${type.toLowerCase()} via OpenShift Console`,
+          reason: 'OpenShiftConsoleCSRApprove',
+          status: 'True',
+          type,
+        },
+        ...(csr.status?.conditions || []),
+      ],
+    },
+  };
+  return k8sUpdateResource<CertificateSigningRequestKind>({
+    data: approvedCSR,
+    model: CertificateSigningRequestModel,
+    path: 'approval',
+  });
+};
+
+export const approveCSR = (csr: CertificateSigningRequestKind) => updateCSR(csr, 'Approved');
+
+export const denyCSR = (csr: CertificateSigningRequestKind) => updateCSR(csr, 'Denied');
 
 export const MarkAsUnschedulable: KebabAction = (kind: K8sKind, obj: NodeKind) => ({
   labelKey: 'console-app~Mark as unschedulable',

@@ -304,7 +304,7 @@ export type RowProps<D, R extends any = {}> = {
   activeColumnIDs: Set<string>;
 };
 
-type VirtualizedTableProps<D, R extends any = {}> = {
+export type VirtualizedTableProps<D, R extends any = {}> = {
   data: D[];
   unfilteredData: D[];
   loaded: boolean;
@@ -704,3 +704,70 @@ export type UseValuesForNamespaceContext = () => {
 };
 
 export type UseActiveNamespace = () => [string, (ns: string) => void];
+
+export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
+
+export type Taint = {
+  key: string;
+  value: string;
+  effect: TaintEffect;
+};
+
+export enum K8sResourceConditionStatus {
+  True = 'True',
+  False = 'False',
+  Unknown = 'Unknown',
+}
+
+export type K8sResourceCondition = {
+  type: string;
+  status: keyof typeof K8sResourceConditionStatus;
+  lastTransitionTime?: string;
+  reason?: string;
+  message?: string;
+};
+
+export type NodeCondition = {
+  lastHeartbeatTime?: string;
+} & K8sResourceCondition;
+
+export type NodeKind = {
+  spec: {
+    taints?: Taint[];
+    unschedulable?: boolean;
+  };
+  status?: {
+    capacity?: {
+      [key: string]: string;
+    };
+    conditions?: NodeCondition[];
+    images?: {
+      names: string[];
+      sizeBytes?: number;
+    }[];
+    phase?: string;
+    nodeInfo?: {
+      operatingSystem: string;
+    };
+  };
+} & K8sResourceCommon;
+
+export type CertificateSigningRequestKind = {
+  spec: {
+    groups: string[];
+    request: string;
+    usages: string[];
+    username: string;
+    uid: string;
+  };
+  status?: {
+    conditions: {
+      type: string;
+      [key: string]: string;
+    }[];
+  };
+} & K8sResourceCommon;
+
+export type NodeCertificateSigningRequestKind = CertificateSigningRequestKind & {
+  metadata: K8sResourceCommon['metadata'] & { originalName: string };
+};
