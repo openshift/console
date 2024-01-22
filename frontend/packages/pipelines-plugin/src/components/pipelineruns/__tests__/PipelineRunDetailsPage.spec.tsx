@@ -7,7 +7,6 @@ import { PipelineRunModel } from '../../../models';
 import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
 import * as hookUtils from '../../pipelines/hooks';
 import * as taskRunUtils from '../../taskruns/useTaskRuns';
-import TaskRuns from '../detail-page-tabs/TaskRuns';
 import PipelineRunEvents from '../events/PipelineRunEvents';
 import PipelineRunDetailsPage from '../PipelineRunDetailsPage';
 import * as triggerHooksModule from '../triggered-by/hooks';
@@ -44,7 +43,7 @@ describe('PipelineRunDetailsPage:', () => {
 
   it('Should contain five tabs in the details page', () => {
     const { pages } = wrapper.props();
-    expect(pages).toHaveLength(6);
+    expect(pages).toHaveLength(5);
   });
 
   it('Should contain events page', () => {
@@ -52,14 +51,6 @@ describe('PipelineRunDetailsPage:', () => {
     const eventPage = pages.find((page) => page.nameKey === `${i18nNS}~Events`);
     expect(eventPage).toBeDefined();
     expect(eventPage.component).toBe(PipelineRunEvents);
-  });
-
-  it('Should contain task runs page', () => {
-    const { pages } = wrapper.props();
-
-    const taskRunsPage = pages.find((page) => page.nameKey.includes('TaskRuns'));
-    expect(taskRunsPage).toBeDefined();
-    expect(taskRunsPage.component).toBe(TaskRuns);
   });
 
   it('Should contain Parameters page', () => {

@@ -18,7 +18,6 @@ import { useDevPipelinesBreadcrumbsFor } from '../pipelines/hooks';
 import { usePipelineOperatorVersion } from '../pipelines/utils/pipeline-operator';
 import { PipelineRunDetails } from './detail-page-tabs/PipelineRunDetails';
 import { PipelineRunLogsWithActiveTask } from './detail-page-tabs/PipelineRunLogs';
-import TaskRuns from './detail-page-tabs/TaskRuns';
 import PipelineRunEvents from './events/PipelineRunEvents';
 import { usePipelineRun } from './hooks/usePipelineRuns';
 import { useTaskRuns } from './hooks/useTaskRuns';
@@ -74,12 +73,6 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
       pages={[
         navFactory.details(PipelineRunDetails),
         navFactory.editYaml(viewYamlComponent),
-        {
-          href: 'task-runs',
-          // t('pipelines-plugin~TaskRuns')
-          nameKey: 'pipelines-plugin~TaskRuns',
-          component: TaskRuns,
-        },
         {
           href: 'parameters',
           // t('pipelines-plugin~Parameters')
