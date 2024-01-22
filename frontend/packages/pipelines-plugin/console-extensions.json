@@ -1235,6 +1235,42 @@
   {
     "type": "console.tab/horizontalNav",
     "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "page": {
+        "name": "%pipelines-plugin~TaskRuns%",
+        "href": "task-runs"
+      },
+      "component": { "$codeRef": "pipelinesComponent.TaskRuns" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_TASKRUNS_TAB"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "PipelineRun"
+      },
+      "page": {
+        "name": "%pipelines-plugin~TaskRuns%",
+        "href": "task-runs"
+      },
+      "component": { "$codeRef": "pipelinesComponent.TaskRuns" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_TASKRUNS_TAB"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
       "id": "Output",
       "name": "Output",
       "model": {
