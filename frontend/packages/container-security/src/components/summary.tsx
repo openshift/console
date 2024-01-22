@@ -31,7 +31,7 @@ export const securityHealthHandler: ResourceHealthHandler<WatchImageVuln> = ({
   if (!_.isEmpty(data)) {
     return {
       state: HealthState.ERROR,
-      message: pluralize(_.uniqBy(data, 'metadata.name').length, 'vulnerable image'),
+      message: pluralize(data.length, 'vulnerable image'),
     };
   }
   return { state: HealthState.OK, message: '0 vulnerable images' };
@@ -109,8 +109,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                             title={priority.title}
                           />
                           &nbsp;
-                          {_.uniqBy(vulnsFor(priority.value), 'metadata.name').length}{' '}
-                          {priority.title}
+                          {vulnsFor(priority.value).length} {priority.title}
                         </div>
                       </div>
                     ) : null,
@@ -125,11 +124,11 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                       .map((priority) => ({
                         label: priority.title,
                         x: priority.value,
-                        y: _.uniqBy(vulnsFor(priority.value), 'metadata.name').length,
+                        y: vulnsFor(priority.value).length,
                       }))
                       .toArray()}
                     title={t('container-security~{{vulnImageCount, number}} total', {
-                      vulnImageCount: _.uniqBy(resource, 'metadata.name').length,
+                      vulnImageCount: resource.length,
                     })}
                   />
                 </Link>
