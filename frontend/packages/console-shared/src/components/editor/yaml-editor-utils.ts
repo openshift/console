@@ -16,7 +16,12 @@ const MODEL_URI = 'inmemory://model.yaml';
 const MONACO_URI = monaco.Uri.parse(MODEL_URI);
 
 const createDocument = (model) => {
-  return TextDocument.create(MODEL_URI, model.getModeId(), model.getVersionId(), model.getValue());
+  return TextDocument.create(
+    MODEL_URI,
+    model?.getModeId(),
+    model?.getVersionId(),
+    model?.getValue(),
+  );
 };
 
 // Unfortunately, `editor.focus()` doesn't work when hiding the shortcuts
