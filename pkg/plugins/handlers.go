@@ -176,6 +176,9 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 		}
 	}
 
+	// Make sure to copy status code from the plugin service response
+	w.WriteHeader(resp.StatusCode)
+
 	_, err = io.Copy(w, resp.Body)
 	if err != nil {
 		errMsg := fmt.Sprintf("failed sending HTTP response body from %q plugin: %v", pluginName, err)
