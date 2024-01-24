@@ -68,9 +68,7 @@ const MachineAutoscalerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
       <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         <MachineAutoscalerTargetLink obj={obj} />
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {_.get(obj, 'spec.minReplicas') || '-'}
-      </TableData>
+      <TableData className={tableColumnClasses[3]}>{_.get(obj, 'spec.minReplicas', '-')}</TableData>
       <TableData className={tableColumnClasses[4]}>
         {_.get(obj, 'spec.maxReplicas') || '-'}
       </TableData>
@@ -148,7 +146,7 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
                 <MachineAutoscalerTargetLink obj={obj} />
               </dd>
               <dt>{t('public~Min replicas')}</dt>
-              <dd>{_.get(obj, 'spec.minReplicas') || '-'}</dd>
+              <dd>{_.get(obj, 'spec.minReplicas', '-')}</dd>
               <dt>{t('public~Max replicas')}</dt>
               <dd>{_.get(obj, 'spec.maxReplicas') || '-'}</dd>
             </ResourceSummary>
