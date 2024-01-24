@@ -194,7 +194,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
   const helpURL = getDocumentationURL(documentationURLs.updateUsingCustomMachineConfigPools);
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
+    <form onSubmit={submit} name="form" className="modal-content" data-test="update-cluster-modal">
       <ModalTitle>{t('public~Update cluster')}</ModalTitle>
       <ModalBody>
         {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert onCancel={cancel} cv={cv} />}
@@ -235,6 +235,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                 { desiredVersion: desiredNotRecommendedUpdate.release.version },
               )}
               variant="info"
+              data-test="update-cluster-modal-not-recommended-alert"
             >
               <TextContent>
                 <Text component={TextVariants.p}>
@@ -288,9 +289,11 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                     'public~Paused {{worker}} or custom pool {{resource}} updates will be resumed. If you want to update only the control plane, select "Partial cluster update" below.',
                     { worker: NodeTypeNames.Worker, resource: NodeModel.label },
                   )}
+                  data-test="update-cluster-modal-paused-nodes-warning"
                 />
               )
             }
+            data-test="update-cluster-modal-full-update-radio"
           />
           <Radio
             isChecked={upgradeType === upgradeTypes.Partial}
@@ -326,6 +329,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                 </>
               )
             }
+            data-test="update-cluster-modal-partial-update-radio"
           />
         </div>
       </ModalBody>

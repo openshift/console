@@ -20,6 +20,7 @@ const DropdownWithSwitchGroups: React.FC<DropdownWithSwitchGroupsProps> = ({
                   isSelected={selectedKey === iKey}
                   key={iKey}
                   translate="no"
+                  data-test={`dropdown-with-switch-menu-item-${iKey}`}
                 >
                   {title}
                 </MenuItem>

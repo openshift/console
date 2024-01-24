@@ -34,7 +34,7 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
   const { t } = useTranslation();
 
   return (
-    <div className="modal-content">
+    <div className="modal-content" data-test="more-updates-modal">
       <ModalTitle>{t('public~Other available paths')}</ModalTitle>
       <ModalBody>
         {clusterUpgradeableFalseAndNotExternallyManaged && (
@@ -75,7 +75,12 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
       </ModalBody>
       <ModalFooter inProgress={false}>
         <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right pf-v5-c-form__group--no-top-margin">
-          <Button type="button" variant="primary" onClick={cancel}>
+          <Button
+            type="button"
+            variant="primary"
+            onClick={cancel}
+            data-test="more-updates-modal-close-button"
+          >
             {t('Close')}
           </Button>
         </ActionGroup>

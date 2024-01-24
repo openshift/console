@@ -56,6 +56,7 @@ const DropdownWithSwitchToggle: React.FC<DropdownWithSwitchToggleProps> = ({
             isExpanded={isOpen}
             onClick={() => onToggle(!isOpen)}
             ref={toggleRef}
+            data-test="dropdown-with-switch-toggle"
           >
             {label}
           </MenuToggle>

@@ -204,7 +204,7 @@ export const UpstreamConfigDetailsItem: React.SFC<UpstreamConfigDetailsItemProps
         <Button
           type="button"
           isInline
-          data-test-id="cluster-version-upstream-server-url"
+          data-test-id="cv-upstream-server-url"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
