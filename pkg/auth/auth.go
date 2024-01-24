@@ -66,6 +66,9 @@ type Authenticator struct {
 
 	k8sConfig *rest.Config
 	metrics   *Metrics
+
+	// Custom login command to display in the console
+	ocLoginCommand string
 }
 
 type SpecialAuthURLs struct {
@@ -134,6 +137,9 @@ type Config struct {
 
 	K8sConfig *rest.Config
 	Metrics   *Metrics
+
+	// Custom login command to display in the console
+	OCLoginCommand string
 }
 
 type completedConfig struct {
@@ -271,13 +277,14 @@ func newUnstartedAuthenticator(c *completedConfig) *Authenticator {
 		clientSecret: c.ClientSecret,
 		scopes:       c.Scope,
 
-		redirectURL:   c.RedirectURL,
-		errorURL:      c.ErrorURL,
-		successURL:    c.SuccessURL,
-		refererURL:    c.refererURL,
-		secureCookies: c.SecureCookies,
-		k8sConfig:     c.K8sConfig,
-		metrics:       c.Metrics,
+		redirectURL:    c.RedirectURL,
+		errorURL:       c.ErrorURL,
+		successURL:     c.SuccessURL,
+		refererURL:     c.refererURL,
+		secureCookies:  c.SecureCookies,
+		k8sConfig:      c.K8sConfig,
+		metrics:        c.Metrics,
+		ocLoginCommand: c.OCLoginCommand,
 	}
 }
 
@@ -513,4 +520,8 @@ func (c *Config) Complete() (*completedConfig, error) {
 	completed.refererURL = refUrl
 
 	return completed, nil
+}
+
+func (a *Authenticator) GetOCLoginCommand() string {
+	return a.ocLoginCommand
 }

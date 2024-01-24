@@ -75,7 +75,7 @@ const (
 	pluginProxyEndpoint                   = "/api/proxy/"
 	prometheusProxyEndpoint               = "/api/prometheus"
 	prometheusTenancyProxyEndpoint        = "/api/prometheus-tenancy"
-	requestTokenEndpoint                  = "/api/request-token"
+	copyLoginEndpoint                     = "/api/copy-login-commands"
 	sha256Prefix                          = "sha256~"
 	tokenizerPageTemplateName             = "tokener.html"
 	updatesEndpoint                       = "/api/check-updates"
@@ -302,7 +302,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
 		handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
 		handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
-		handle(requestTokenEndpoint, authHandler(s.handleClusterTokenURL))
+		handle(copyLoginEndpoint, authHandler(s.handleCopyLogin))
 		// TODO: only add the following in case the auth type is openshift?
 	}
 
@@ -774,7 +774,7 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("not found"))
 }
 
-func (s *Server) handleClusterTokenURL(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleCopyLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only GET is allowed"})
 		return
@@ -783,9 +783,11 @@ func (s *Server) handleClusterTokenURL(w http.ResponseWriter, r *http.Request) {
 	specialAuthURLs := s.Authenticator.GetSpecialURLs()
 
 	serverutils.SendResponse(w, http.StatusOK, struct {
-		RequestTokenURL string `json:"requestTokenURL"`
+		RequestTokenURL      string `json:"requestTokenURL"`
+		ExternalLoginCommand string `json:"externalLoginCommand"`
 	}{
-		RequestTokenURL: specialAuthURLs.RequestToken,
+		RequestTokenURL:      specialAuthURLs.RequestToken,
+		ExternalLoginCommand: s.Authenticator.GetOCLoginCommand(),
 	})
 }
 

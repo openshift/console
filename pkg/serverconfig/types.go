@@ -83,6 +83,7 @@ type Auth struct {
 	AuthType                 string   `yaml:"authType,omitempty"`
 	OIDCIssuer               string   `yaml:"oidcIssuer,omitempty"`
 	OIDCExtraScopes          []string `yaml:"oidcExtraScopes,omitempty"`
+	OIDCOCLoginCommand       string   `yaml:"oidcOCLoginCommand,omitempty"`
 	ClientID                 string   `yaml:"clientID,omitempty"`
 	ClientSecretFile         string   `yaml:"clientSecretFile,omitempty"`
 	OAuthEndpointCAFile      string   `yaml:"oauthEndpointCAFile,omitempty"`
