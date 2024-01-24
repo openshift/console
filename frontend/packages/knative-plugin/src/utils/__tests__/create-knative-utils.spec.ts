@@ -27,7 +27,7 @@ describe('Create knative Utils', () => {
         8080,
       );
     });
-    it('expect to have minSccale, maxScale, target and containerConcurrency defined', () => {
+    it('expect to have min-scale, max-scale, target and containerConcurrency defined', () => {
       defaultData.route.unknownTargetPort = '8080';
       const knDeploymentResource: K8sResourceKind = getKnativeServiceDepResource(
         defaultData,
@@ -37,14 +37,18 @@ describe('Create knative Utils', () => {
         knDeploymentResource.spec.template.metadata.annotations['autoscaling.knative.dev/target'],
       ).toBe('1');
       expect(
-        knDeploymentResource.spec.template.metadata.annotations['autoscaling.knative.dev/minScale'],
+        knDeploymentResource.spec.template.metadata.annotations[
+          'autoscaling.knative.dev/min-scale'
+        ],
       ).toBe('1');
       expect(
-        knDeploymentResource.spec.template.metadata.annotations['autoscaling.knative.dev/maxScale'],
+        knDeploymentResource.spec.template.metadata.annotations[
+          'autoscaling.knative.dev/max-scale'
+        ],
       ).toBe('5');
       expect(knDeploymentResource.spec.template.spec.containerConcurrency).toBe(1);
     });
-    it('expect not to have minScale defined', () => {
+    it('expect not to have min-scale defined', () => {
       defaultData.serverless.scaling.minpods = 0;
       defaultData.route.unknownTargetPort = '8080';
       const knDeploymentResource: K8sResourceKind = getKnativeServiceDepResource(
@@ -52,7 +56,9 @@ describe('Create knative Utils', () => {
         'imgStream',
       );
       expect(
-        knDeploymentResource.spec.template.metadata.annotations['autoscaling.knative.dev/minScale'],
+        knDeploymentResource.spec.template.metadata.annotations[
+          'autoscaling.knative.dev/min-scale'
+        ],
       ).toBeUndefined();
     });
 
