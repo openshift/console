@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { createHash } from 'crypto-browserify';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -63,10 +64,26 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   // Request counter
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
 
+  const hashNameOrKubeadmin = (name: string): string | null => {
+    if (!name) {
+      return null;
+    }
+
+    if (name === 'kube:admin') {
+      return 'kubeadmin';
+    }
+    const hash = createHash('sha256');
+    hash.update(name);
+    return hash.digest('hex');
+  };
+
   // User and impersonate
   const userUid = useSelector(
     (state: RootState) =>
-      getImpersonate(state)?.name ?? getUser(state)?.metadata?.uid ?? 'kubeadmin',
+      getImpersonate(state)?.name ??
+      getUser(state)?.metadata?.uid ??
+      hashNameOrKubeadmin(getUser(state).metadata?.name) ??
+      '',
   );
   const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
 
