@@ -101,7 +101,7 @@ func (o *openShiftAuth) getOIDCDiscoveryInternal(ctx context.Context) (*oidcDisc
 			wellKnownURL, err)
 	}
 
-	if err := validateAbsURL(metadata.Issuer); err != nil { // FIXME: must validate issuer == o.Issuer
+	if err := validateAbsURL(metadata.Issuer); err != nil {
 		return nil, err
 	}
 
