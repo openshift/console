@@ -126,17 +126,19 @@
   }
 }
 
+.co-recent-item__icon {
+  height: 18px !important;
+  margin-right: var(--pf-v5-global--spacer--xs);
+  min-width: 18px;
+}
+
 .co-recent-item__icon--warning {
-  align-items: center;
-  display: flex;
-  margin-right: 0.3rem;
-  margin-top: 0;
-  flex: 0 0 auto;
+  font-size: 1.1rem;
 }
 
 .co-recent-item__title {
-  display: flex;
   align-items: center;
+  display: flex;
 }
 
 .co-recent-item__title-message {
@@ -151,7 +153,7 @@
 }
 
 .co-recent-item__title-timestamp {
-  min-width: 65px;
+  min-width: 60px;
   padding-right: 0.3rem;
   text-align: left;
 }
