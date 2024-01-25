@@ -102,7 +102,7 @@ const getCreateProps = ({ namespace, t }: { namespace: string; t: TFunction }) =
 
 const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = (props) => {
   const { t } = useTranslation();
-  const [hasNodeMaintenanceCapability, model] = useMaintenanceCapability();
+  const [model] = useMaintenanceCapability();
   const { namespace } = props;
   const resources: FirehoseResource[] = [
     {
@@ -128,7 +128,7 @@ const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = (props) => {
     },
   ];
 
-  if (hasNodeMaintenanceCapability) {
+  if (model) {
     resources.push({
       kind: referenceForModel(model),
       namespaced: false,

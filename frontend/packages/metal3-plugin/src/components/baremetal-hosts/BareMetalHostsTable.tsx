@@ -75,7 +75,7 @@ const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
   obj: { host, node, nodeMaintenance, machine, machineSet, status },
 }) => {
   const { t } = useTranslation();
-  const [hasNodeMaintenanceCapability, maintenanceModel] = useMaintenanceCapability();
+  const [maintenanceModel] = useMaintenanceCapability();
   const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
   const name = getName(host);
   const namespace = getNamespace(host);
@@ -111,7 +111,7 @@ const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
             action(BareMetalHostModel, host, {
               nodeMaintenance,
               nodeName,
-              hasNodeMaintenanceCapability,
+              hasNodeMaintenanceCapability: !!maintenanceModel,
               machine,
               machineSet,
               status,

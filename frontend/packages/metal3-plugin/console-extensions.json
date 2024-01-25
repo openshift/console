@@ -1,5 +1,11 @@
 [
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "features.useDetectNodeMaintenance" }
+    }
+  },
+  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "id": "baremetal",
@@ -14,6 +20,21 @@
     },
     "flags": {
       "required": ["BAREMETAL", "METAL3"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Node"
+      },
+      "provider": {
+        "$codeRef": "nodeActions.useNodeMaintenanceActions"
+      }
+    },
+    "flags": {
+      "required": ["NODE_MAINTENANCE_ENABLED"]
     }
   }
 ]

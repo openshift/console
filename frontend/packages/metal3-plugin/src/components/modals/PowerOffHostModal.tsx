@@ -179,7 +179,7 @@ const PowerOffHostModal = withHandlePromise<PowerOffHostModalProps & HandlePromi
       fieldSelector: `spec.nodeName=${nodeName}`,
     });
     const { t } = useTranslation();
-    const [hasNodeMaintenanceCapability] = useMaintenanceCapability();
+    const [maintenanceModel] = useMaintenanceCapability();
     const [forceOff, setForceOff] = React.useState(false);
 
     const submit = (event) => {
@@ -210,7 +210,7 @@ const PowerOffHostModal = withHandlePromise<PowerOffHostModalProps & HandlePromi
             <ForcePowerOffDialog
               forceOff={forceOff}
               setForceOff={setForceOff}
-              canStartMaintenance={!isUnderMaintenance && nodeName && hasNodeMaintenanceCapability}
+              canStartMaintenance={!isUnderMaintenance && nodeName && !!maintenanceModel}
               nodeName={nodeName}
               status={status}
               pods={pods}
