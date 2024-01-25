@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/oauth2"
 	"k8s.io/klog"
 )
 
@@ -36,11 +37,16 @@ func NewServerSessionStore(maxSessions int) *SessionStore {
 }
 
 // addSession sets sessionToken to a random value and adds loginState to session data structures
-func (ss *SessionStore) AddSession(ls *LoginState) error {
-	sessionToken := RandomString(256)
+func (ss *SessionStore) AddSession(tokenVerifier IDTokenVerifier, token *oauth2.Token) (*LoginState, error) {
+	ls, err := newLoginState(tokenVerifier, token)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new session: %w", err)
+	}
+
+	sessionToken := ls.sessionToken
 	if ss.byToken[sessionToken] != nil {
 		ss.DeleteSession(sessionToken)
-		return fmt.Errorf("session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
+		return nil, fmt.Errorf("session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
 	}
 	ls.sessionToken = sessionToken
 	ss.mux.Lock()
@@ -49,7 +55,7 @@ func (ss *SessionStore) AddSession(ls *LoginState) error {
 	// Assume token expiration is always the same time in the future. Should be close enough for government work.
 	ss.byAge = append(ss.byAge, ls)
 	ss.mux.Unlock()
-	return nil
+	return ls, nil
 }
 
 func (ss *SessionStore) GetSession(sessionToken, refreshToken string) *LoginState {
