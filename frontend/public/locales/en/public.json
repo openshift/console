@@ -271,6 +271,7 @@
   "The set of headers to check for the display name.": "The set of headers to check for the display name.",
   "Email headers": "Email headers",
   "The set of headers to check for the email address.": "The set of headers to check for the email address.",
+  "Login with this command": "Login with this command",
   "Download {{displayName}}": "Download {{displayName}}",
   "Command Line Tools": "Command Line Tools",
   "Copy login command": "Copy login command",

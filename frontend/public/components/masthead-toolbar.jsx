@@ -8,6 +8,7 @@ import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import {
+  Button,
   NotificationBadge,
   Toolbar,
   ToolbarContent,
@@ -25,6 +26,8 @@ import {
   ACM_LINK_ID,
   FLAGS,
   useActiveNamespace,
+  useCopyCodeModal,
+  useCopyLoginCommands,
   useFlag,
   usePerspectiveExtension,
   useTelemetry,
@@ -49,7 +52,6 @@ import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
 import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
 import { FeedbackModal } from '@patternfly/react-user-feedback';
 import { useFeedbackLocal } from './feedback-local';
-import { useRequestTokenURL } from '@console/shared/src/hooks/useRequestTokenURL';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
 
 const defaultHelpLinks = [
@@ -117,7 +119,11 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const dispatch = useDispatch();
   const [activeNamespace] = useActiveNamespace();
-  const [requestTokenURL] = useRequestTokenURL();
+  const [requestTokenURL, externalLoginCommand] = useCopyLoginCommands();
+  const launchCopyLoginCommandModal = useCopyCodeModal(
+    t('public~Login with this command'),
+    externalLoginCommand,
+  );
   const { clusterID, user, alertCount, canAccessNS } = useSelector((state) => ({
     clusterID: state.UI.get('clusterID'),
     user: getUser(state),
@@ -447,13 +453,24 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
           authSvc.logout();
         }
       };
-
       if (requestTokenURL) {
         userActions.unshift({
           label: t('public~Copy login command'),
           href: requestTokenURL,
           externalLink: true,
           dataTest: 'copy-login-command',
+        });
+      } else if (externalLoginCommand) {
+        userActions.unshift({
+          component: (
+            <Button
+              variant="plain"
+              onClick={launchCopyLoginCommandModal}
+              dataTest="copy-login-command"
+            >
+              {t('public~Copy login command')}
+            </Button>
+          ),
         });
       }
 
