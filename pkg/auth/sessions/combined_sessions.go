@@ -43,19 +43,20 @@ func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath
 	}
 }
 
-func (cs *CombinedSessionStore) AddSession(w http.ResponseWriter, r *http.Request, ls *LoginState) error {
+func (cs *CombinedSessionStore) AddSession(w http.ResponseWriter, r *http.Request, tokenVerifier IDTokenVerifier, token *oauth2.Token) (*LoginState, error) {
 	cs.sessionLock.Lock()
 	defer cs.sessionLock.Unlock()
 
-	if err := cs.serverStore.AddSession(ls); err != nil {
-		return fmt.Errorf("failed to add session to server store: %w", err)
+	ls, err := cs.serverStore.AddSession(tokenVerifier, token)
+	if err != nil {
+		return nil, fmt.Errorf("failed to add session to server store: %w", err)
 	}
 
 	clientSession := cs.getCookieSession(r)
 	clientSession.sessionToken.Values["session-token"] = ls.sessionToken
 	clientSession.refreshToken.Values["refresh-token"] = ls.refreshToken
 
-	return clientSession.save(r, w)
+	return ls, clientSession.save(r, w)
 }
 
 func (cs *CombinedSessionStore) getCookieSession(r *http.Request) *session {
@@ -136,25 +137,21 @@ func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Requ
 	}
 	if loginState == nil {
 		var err error
-		// FIXME: all the below should be a part of AddSession
-		loginState, err = NewLoginState(tokenVerifier, tokenResponse)
+		loginState, err = cs.serverStore.AddSession(tokenVerifier, tokenResponse)
 		if err != nil {
-			return nil, err
-		}
-		if err := cs.serverStore.AddSession(loginState); err != nil {
 			return nil, fmt.Errorf("failed to add session to server store: %w", err)
 		}
-		cs.serverStore.byRefreshToken[oldRefreshToken] = loginState
 		clientSession.sessionToken.Values["session-token"] = loginState.sessionToken
 	} else {
+		// loginState is a pointer to the cache so this effectively mutates it for everyone
 		if err := loginState.UpdateTokens(tokenVerifier, tokenResponse); err != nil {
 			return nil, err
 		}
-		cs.serverStore.byRefreshToken[oldRefreshToken] = loginState // TODO: figure out a nicer way to do this in an internal method probably
-		// loginState is a pointer to the cache so this effectively mutates it for everyone
-
 	}
 
+	// index by the old refresh token so that any follow-up requests that arrived
+	// before their cookie was updated with an actual session can still find the login state
+	cs.serverStore.byRefreshToken[oldRefreshToken] = loginState
 	return loginState, clientSession.save(r, w)
 }
 
