@@ -65,12 +65,16 @@ func TestNewLoginState(t *testing.T) {
 		tokenResp := &oauth2.Token{RefreshToken: tt.encoded}
 		tokenResp = tokenResp.WithExtra(map[string]interface{}{"id_token": rawToken})
 
-		ls, err := NewLoginState(newTestVerifier([]byte(tt.claims)), tokenResp)
+		ls, err := newLoginState(newTestVerifier([]byte(tt.claims)), tokenResp)
 		if err != nil {
 			if tt.wantErr {
 				continue
 			}
 			t.Errorf("case %d: unexpected error: %v", i, err)
+		}
+
+		if len(ls.sessionToken) == 0 {
+			t.Errorf("case %d: session token is empty", i)
 		}
 
 		if ls.rawToken != rawToken {
