@@ -11,6 +11,7 @@ require (
 	github.com/devfile/registry-support/index/generator v0.0.0-20231020181239-1168591f0b4e
 	github.com/devfile/registry-support/registry-library v0.0.0-20231020181239-1168591f0b4e
 	github.com/golang/mock v1.6.0
+	github.com/gorilla/securecookie v1.1.2
 	github.com/gorilla/sessions v1.2.2
 	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v1.5.0
@@ -34,6 +35,7 @@ require (
 	k8s.io/client-go v0.28.2
 	k8s.io/klog v1.0.0
 	k8s.io/klog/v2 v2.100.1
+	k8s.io/utils v0.0.0-20230726121419-3b25d923346b
 	sigs.k8s.io/controller-runtime v0.14.7
 	sigs.k8s.io/yaml v1.3.0
 )
@@ -99,7 +101,6 @@ require (
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
-	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gosuri/uitable v0.0.4 // indirect
 	github.com/gregjones/httpcache v0.0.0-20180305231024-9cad4c3443a7 // indirect
 	github.com/h2non/filetype v1.1.1 // indirect
@@ -209,7 +210,6 @@ require (
 	k8s.io/kube-openapi v0.0.0-20230717233707-2695361300d9 // indirect
 	k8s.io/kubectl v0.28.2 // indirect
 	k8s.io/pod-security-admission v0.26.10 // indirect
-	k8s.io/utils v0.0.0-20230726121419-3b25d923346b // indirect
 	oras.land/oras-go v1.2.4 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/kustomize/api v0.13.5-0.20230601165947-6ce0bf390ce3 // indirect

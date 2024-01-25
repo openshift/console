@@ -61,12 +61,8 @@ func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStor
 }
 
 func (o *oidcAuth) login(w http.ResponseWriter, r *http.Request, token *oauth2.Token) (*sessions.LoginState, error) {
-
-	ls, err := sessions.NewLoginState(o.verify, token)
+	ls, err := o.sessions.AddSession(w, r, o.verify, token)
 	if err != nil {
-		return nil, err
-	}
-	if err := o.sessions.AddSession(w, r, ls); err != nil {
 		return nil, err
 	}
 
