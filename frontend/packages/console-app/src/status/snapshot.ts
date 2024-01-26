@@ -1,5 +1,5 @@
 import { TFunction } from 'i18next';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { RowFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { VolumeSnapshotStatus } from '@console/internal/module/k8s';
 
 export const volumeSnapshotStatus = ({ status }: { status?: VolumeSnapshotStatus }) => {
@@ -14,6 +14,7 @@ export const snapshotStatusFilters = (t: TFunction): RowFilter[] => {
       filterGroupName: t('console-app~Status'),
       type: 'snapshot-status',
       reducer: volumeSnapshotStatus,
+      filter: () => null,
       items: [
         { id: 'Ready', title: 'Ready' },
         { id: 'Pending', title: 'Pending' },
