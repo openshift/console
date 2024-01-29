@@ -50,7 +50,7 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
   '@patternfly/react-table': {},
   '@patternfly/quickstarts': {},
   react: { singleton: true, allowFallback: false },
-  'react-helmet': {},
+  'react-helmet': {}, // Deprecated, to be removed in future release
   'react-i18next': { singleton: true, allowFallback: false },
   'react-router': { singleton: true, allowFallback: false },
   'react-router-dom': { singleton: true, allowFallback: false },

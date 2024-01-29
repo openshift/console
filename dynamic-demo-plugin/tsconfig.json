@@ -11,5 +11,12 @@
     "skipLibCheck": true,
     "lib": ["dom", "es7", "es2017.string"]
   },
-  "include": ["src"]
+  "include": ["src"],
+  "ts-node": {
+    "files": true,
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
 }
