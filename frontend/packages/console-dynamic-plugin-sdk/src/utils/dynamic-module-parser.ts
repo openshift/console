@@ -3,7 +3,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as glob from 'glob';
-import * as _ from 'lodash';
 import * as ts from 'typescript';
 
 const defaultCompilerOptions: ts.CompilerOptions = {
@@ -100,11 +99,14 @@ export const getDynamicModuleMap = (
     .filter((d) => d.category === ts.DiagnosticCategory.Error);
 
   if (errorDiagnostics.length > 0) {
+    const { getCanonicalFileName, getCurrentDirectory, getNewLine } = compilerHost;
+
     console.error(
-      ts.formatDiagnostics(
-        errorDiagnostics,
-        _.pick(compilerHost, ['getCanonicalFileName', 'getCurrentDirectory', 'getNewLine']),
-      ),
+      ts.formatDiagnostics(errorDiagnostics, {
+        getCanonicalFileName,
+        getCurrentDirectory,
+        getNewLine,
+      }),
     );
 
     throw new Error(`Detected TypeScript errors while parsing modules at ${basePath}`);
@@ -122,7 +124,6 @@ export const getDynamicModuleMap = (
   const dynamicModuleExports = dynamicModulePaths.reduce<Record<string, string[]>>(
     (acc, modulePath) => {
       acc[modulePath] = getExportNames(program.getSourceFile(modulePath));
-
       return acc;
     },
     {},
