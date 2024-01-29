@@ -931,7 +931,7 @@
   "Remove User {{ user }} from Group {{ name }}?": "Remove User {{ user }} from Group {{ name }}?",
   "Remove": "Remove",
   "Remove volume?": "Remove volume?",
-  "Are you sure you want to remove volume <2>{volume.name}</2> from <5>{kind.label}</5>: <7>{resource.metadata.name}</7>?": "Are you sure you want to remove volume <2>{volume.name}</2> from <5>{kind.label}</5>: <7>{resource.metadata.name}</7>?",
+  "Are you sure you want to remove volume <2>{{volumeName}}</2> from <5>{{label}}</5>: <7>{{resourceName}}</7>?": "Are you sure you want to remove volume <2>{{volumeName}}</2> from <5>{{label}}</5>: <7>{{resourceName}}</7>?",
   "Note: This will not remove the underlying {{type}}.": "Note: This will not remove the underlying {{type}}.",
   "Remove volume": "Remove volume",
   "You cannot rollback a paused {{ deployType }}. You must resume it first.": "You cannot rollback a paused {{ deployType }}. You must resume it first.",

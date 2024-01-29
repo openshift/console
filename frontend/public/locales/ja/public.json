@@ -930,7 +930,7 @@
   "Remove User {{ user }} from Group {{ name }}?": "グループ {{ name }} からユーザー {{ user }} を削除しますか?",
   "Remove": "削除",
   "Remove volume?": "ボリュームを削除しますか?",
-  "Are you sure you want to remove volume <2>{volume.name}</2> from <5>{kind.label}</5>: <7>{resource.metadata.name}</7>?": "ボリューム <2>{volume.name}</2> を <5>{kind.label}</5>: <7>{resource.metadata.name}</7> から削除してもよいですか?",
+  "Are you sure you want to remove volume <2>{{volumeName}}</2> from <5>{{label}}</5>: <7>{{resourceName}}</7>?": "ボリューム <2>{{volumeName}}</2> を <5>{{label}}</5>: <7>{{resourceName}}</7> から削除してもよいですか?",
   "Note: This will not remove the underlying {{type}}.": "注: これにより、基礎となる {{type}} は削除されません。",
   "Remove volume": "ボリュームの削除",
   "You cannot rollback a paused {{ deployType }}. You must resume it first.": "一時停止した {{ deployType }} をロールバックすることはできません。まず、これを再開する必要があります。",
