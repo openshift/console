@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  Form,
   FormGroup,
   FormHelperText,
   HelperText,
@@ -34,6 +33,7 @@ import {
 } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { HandlePromiseProps } from '@console/internal/components/utils/promise-component';
+import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,
@@ -46,7 +46,7 @@ import {
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
 import { RedExclamationCircleIcon, isCephProvisioner } from '@console/shared';
-import { getRequestedPVCSize } from '@console/shared/src/selectors';
+import { getName, getRequestedPVCSize, onlyPvcSCs } from '@console/shared/src/selectors';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
 
 import './_clone-pvc-modal.scss';
@@ -65,6 +65,12 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const [requestedUnit, setRequestedUnit] = React.useState(defaultSize[1] || 'Ti');
   const [validSize, setValidSize] = React.useState(true);
   const pvcAccessMode = getPVCAccessModes(resource, 'title');
+  const [pvcSC, setPVCStorageClass] = React.useState('');
+  const [updatedProvisioner, setUpdatedProvisioner] = React.useState('');
+  const handleStorageClass = (updatedStorageClass: StorageClassResourceKind) => {
+    setPVCStorageClass(getName(updatedStorageClass) || '');
+    setUpdatedProvisioner(updatedStorageClass?.provisioner);
+  };
 
   const [scResource, scResourceLoaded, scResourceLoadError] = useK8sGet<StorageClassResourceKind>(
     StorageClassModel,
@@ -103,7 +109,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
         namespace: resource.metadata.namespace,
       },
       spec: {
-        storageClassName: resource.spec.storageClassName,
+        storageClassName: pvcSC,
         dataSource: {
           name: pvcName,
           kind: PersistentVolumeClaimModel.kind,
@@ -126,125 +132,139 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   };
 
   return (
-    <Form onSubmit={submit}>
-      <div className="modal-content">
-        <ModalTitle>{t('console-app~Clone')}</ModalTitle>
-        <ModalBody>
-          <FormGroup
-            label={t('console-app~Name')}
-            isRequired
-            fieldId="clone-pvc-modal__name"
-            className="co-clone-pvc-modal__form--space"
-          >
-            <TextInput
-              type="text"
-              className="co-clone-pvc-modal__name--margin"
-              value={clonePVCName}
-              onChange={(_event, value) => setClonePVCName(value)}
-              aria-label={t('console-app~Clone PVC')}
-            />
-          </FormGroup>
-          <AccessModeSelector
-            onChange={setCloneAccessMode}
-            className="co-clone-pvc-modal__form--space"
-            pvcResource={resource}
-            provisioner={scResource?.provisioner}
-            loaded={scResourceLoaded}
-            loadError={scResourceLoadError}
-            filterByVolumeMode
+    <form onSubmit={submit} name="form" className="modal-content">
+      <ModalTitle>{t('console-app~Clone')}</ModalTitle>
+      <ModalBody>
+        <FormGroup
+          label={t('console-app~Name')}
+          isRequired
+          fieldId="clone-pvc-modal__name"
+          className="co-clone-pvc-modal__form--space"
+        >
+          <TextInput
+            type="text"
+            className="co-clone-pvc-modal__name--margin"
+            data-test="pvc-name"
+            value={clonePVCName}
+            onChange={(_event, value) => setClonePVCName(value)}
+            aria-label={t('console-app~Clone PVC')}
           />
-          <FormGroup
-            label={t('console-app~Size')}
-            isRequired
-            fieldId="clone-pvc-modal__size"
-            className="co-clone-pvc-modal__form--space"
-          >
-            {scResourceLoaded ? (
-              <RequestSizeInput
-                name="requestSize"
-                testID="input-request-size"
-                onChange={requestedSizeInputChange}
-                defaultRequestSizeUnit={requestedUnit}
-                defaultRequestSizeValue={requestedSize}
-                dropdownUnits={dropdownUnits}
-                isInputDisabled={scResourceLoadError || isCephProvisioner(scResource?.provisioner)}
-                required
-              />
-            ) : (
-              <div className="skeleton-text" />
-            )}
+        </FormGroup>
+        <AccessModeSelector
+          onChange={setCloneAccessMode}
+          className="co-clone-pvc-modal__form--space"
+          pvcResource={resource}
+          provisioner={updatedProvisioner}
+          loaded={scResourceLoaded}
+          loadError={scResourceLoadError}
+          filterByVolumeMode
+        />
+        <FormGroup
+          label={t('console-app~Size')}
+          isRequired
+          fieldId="clone-pvc-modal__size"
+          className="co-clone-pvc-modal__form--space"
+        >
+          {scResourceLoaded ? (
+            <RequestSizeInput
+              name="requestSize"
+              testID="input-request-size"
+              onChange={requestedSizeInputChange}
+              defaultRequestSizeUnit={requestedUnit}
+              defaultRequestSizeValue={requestedSize}
+              dropdownUnits={dropdownUnits}
+              isInputDisabled={scResourceLoadError || isCephProvisioner(scResource?.provisioner)}
+              required
+            />
+          ) : (
+            <div className="skeleton-text" />
+          )}
 
-            {!validSize && (
-              <FormHelperText>
-                <HelperText>
-                  <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-                    {t(
-                      'console-app~Size should be equal or greater than the requested size of PVC.',
-                    )}
-                  </HelperTextItem>
-                </HelperText>
-              </FormHelperText>
-            )}
-          </FormGroup>
-          <div className="co-clone-pvc-modal__details">
-            <p className="text-muted">{t('console-app~PVC details')}</p>
-            <div className="co-clone-pvc-modal__details-section">
+          {!validSize && (
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                  {t('console-app~Size should be equal or greater than the requested size of PVC.')}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          )}
+        </FormGroup>
+        <FormGroup
+          fieldId="clone-pvc-modal__storage-class"
+          className="co-clone-pvc-modal__form--space"
+        >
+          {!scResourceLoaded ? (
+            <div className="skeleton-text" />
+          ) : (
+            <StorageClassDropdown
+              onChange={handleStorageClass}
+              filter={(scObj: StorageClassResourceKind) =>
+                onlyPvcSCs(scObj, scResourceLoadError, scResource)
+              }
+              id="clone-storage-class"
+              data-test="storage-class-dropdown"
+              required
+              selectedKey={getName(scResource)}
+            />
+          )}
+        </FormGroup>
+        <div className="co-clone-pvc-modal__details">
+          <p className="text-muted">{t('console-app~PVC details')}</p>
+          <div className="co-clone-pvc-modal__details-section">
+            <div>
               <div>
-                <div>
-                  <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Namespace')}</p>
-                  <p>
-                    <ResourceIcon kind={NamespaceModel.kind} />
-                    {resource.metadata.namespace}
-                  </p>
-                </div>
-                <div>
-                  <p className="co-clone-pvc-modal__pvc-details">{t('console-app~StorageClass')}</p>
-                  <p>
-                    <ResourceIcon kind={StorageClassModel.kind} />
-                    {resource.spec?.storageClassName || '-'}
-                  </p>
-                </div>
+                <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Namespace')}</p>
+                <p>
+                  <ResourceIcon kind={NamespaceModel.kind} />
+                  {resource.metadata.namespace}
+                </p>
               </div>
               <div>
-                <div>
-                  <p className="co-clone-pvc-modal__pvc-details">
-                    {t('console-app~Requested capacity')}
-                  </p>
-                  <p>{pvcRequestedSize}</p>
-                </div>
-                <div>
-                  <p className="co-clone-pvc-modal__pvc-details">
-                    {t('console-app~Used capacity')}
-                  </p>
-                  <div>
-                    {!loading && !error && pvcUsedCapacity}
-                    {loading && <LoadingInline />}
-                    {!loading && error && '-'}
-                  </div>
-                </div>
+                <p className="co-clone-pvc-modal__pvc-details">{t('console-app~StorageClass')}</p>
+                <p>
+                  <ResourceIcon kind={StorageClassModel.kind} />
+                  {pvcSC || '-'}
+                </p>
+              </div>
+            </div>
+            <div>
+              <div>
+                <p className="co-clone-pvc-modal__pvc-details">
+                  {t('console-app~Requested capacity')}
+                </p>
+                <p>{pvcRequestedSize}</p>
               </div>
               <div>
+                <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Used capacity')}</p>
                 <div>
-                  <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Access mode')}</p>
-                  <p>{pvcAccessMode.join(', ') || '-'}</p>
-                </div>
-                <div>
-                  <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Volume mode')}</p>
-                  <p>{resource.spec.volumeMode}</p>
+                  {!loading && !error && pvcUsedCapacity}
+                  {loading && <LoadingInline />}
+                  {!loading && error && '-'}
                 </div>
               </div>
             </div>
+            <div>
+              <div>
+                <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Access mode')}</p>
+                <p>{pvcAccessMode.join(', ') || '-'}</p>
+              </div>
+              <div>
+                <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Volume mode')}</p>
+                <p>{resource.spec.volumeMode}</p>
+              </div>
+            </div>
           </div>
-        </ModalBody>
-        <ModalSubmitFooter
-          inProgress={inProgress}
-          submitDisabled={!validSize || !resource.spec?.storageClassName}
-          errorMessage={errorMessage}
-          submitText={t('console-app~Clone')}
-          cancel={cancel}
-        />
-      </div>
-    </Form>
+        </div>
+      </ModalBody>
+      <ModalSubmitFooter
+        inProgress={inProgress}
+        submitDisabled={!validSize || !pvcSC}
+        errorMessage={errorMessage}
+        submitText={t('console-app~Clone')}
+        cancel={cancel}
+      />
+    </form>
   );
 });
 
