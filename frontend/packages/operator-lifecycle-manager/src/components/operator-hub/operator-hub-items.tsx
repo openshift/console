@@ -219,8 +219,10 @@ const infraFeaturesSort = (infrastructure) => {
       return 2;
     case InfraFeatures.TokenAuth:
       return 3;
-    default:
+    case InfraFeatures.tlsProfiles:
       return 4;
+    default:
+      return 5;
   }
 };
 

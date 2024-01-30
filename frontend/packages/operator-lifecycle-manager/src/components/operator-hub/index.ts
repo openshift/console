@@ -27,6 +27,7 @@ export enum InfraFeatures {
   'proxy-aware' = 'Proxy-aware',
   FipsMode = 'FIPS Mode',
   fips = 'FIPS Mode',
+  tlsProfiles = 'Configurable TLS ciphers',
   cnf = 'Cloud-Native Network Function',
   cni = 'Container Network Interface',
   csi = 'Container Storage Interface',
@@ -114,6 +115,7 @@ export type OperatorHubCSVAnnotations = {
   [OperatorHubCSVAnnotationKey.disconnected]?: string;
   [OperatorHubCSVAnnotationKey.fipsCompliant]?: string;
   [OperatorHubCSVAnnotationKey.proxyAware]?: string;
+  [OperatorHubCSVAnnotationKey.tlsProfiles]?: string;
   [OperatorHubCSVAnnotationKey.cnf]?: string;
   [OperatorHubCSVAnnotationKey.cni]?: string;
   [OperatorHubCSVAnnotationKey.csi]?: string;
