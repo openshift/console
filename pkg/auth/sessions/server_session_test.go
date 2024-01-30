@@ -1,9 +1,11 @@
-package auth
+package sessions
 
 import (
 	"fmt"
 	"testing"
 	"time"
+
+	"golang.org/x/oauth2"
 )
 
 func checkSessions(t *testing.T, ss *SessionStore) {
@@ -11,15 +13,15 @@ func checkSessions(t *testing.T, ss *SessionStore) {
 		t.Fatalf("age: %v != token %v", len(ss.byAge), len(ss.byToken))
 	}
 	for _, s := range ss.byAge {
-		ls := ss.byToken[s.token]
+		ls := ss.byToken[s.sessionToken]
 		if ls == nil {
-			t.Fatalf("ss.byAge %v not in ss.byToken", s.token)
+			t.Fatalf("ss.byAge %v not in ss.byToken", s.sessionToken)
 		}
 	}
 }
 
 func TestSessions(t *testing.T) {
-	ss := NewSessionStore(3)
+	ss := NewServerSessionStore(3)
 	notExpired := time.Now().Add(time.Duration(3600) * time.Second)
 	expired := time.Now().Add(time.Duration(3600) * time.Second * -1)
 	fakeTokens := []struct {
@@ -33,12 +35,16 @@ func TestSessions(t *testing.T) {
 	}
 
 	for _, ft := range fakeTokens {
-		ls, err := newLoginState(ft.raw, []byte(ft.claims))
+		rawToken := createTestIDToken([]byte(ft.claims))
+		tokenResp := &oauth2.Token{RefreshToken: rawToken}
+		tokenResp = tokenResp.WithExtra(map[string]interface{}{"id_token": rawToken})
+
+		ls, err := NewLoginState(newTestVerifier([]byte(ft.claims)), tokenResp)
 		if err != nil {
 			t.Fatalf("newLoginState error: %v", err)
 		}
 
-		err = ss.addSession(ls)
+		err = ss.AddSession(ls)
 		if err != nil {
 			t.Fatalf("addSession error: %v", err)
 		}
@@ -54,7 +60,7 @@ func TestSessions(t *testing.T) {
 		t.Fatal("ss.byAge != 4")
 	}
 
-	ss.pruneSessions()
+	ss.PruneSessions()
 
 	if len(ss.byAge) != 3 {
 		t.Fatal("ss.byAge != 3")
@@ -62,7 +68,7 @@ func TestSessions(t *testing.T) {
 
 	checkSessions(t, ss)
 
-	err := ss.deleteSession(ss.byAge[0].token)
+	err := ss.DeleteSession(ss.byAge[0].sessionToken)
 	if err != nil {
 		t.Fatalf("deleteSession error: %v", err)
 	}

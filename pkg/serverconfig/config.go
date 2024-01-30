@@ -363,3 +363,9 @@ func addTelemetry(fs *flag.FlagSet, telemetry MultiKeyValue) {
 func addI18nNamespaces(fs *flag.FlagSet, i18nNamespaces []string) {
 	fs.Set("i18n-namespaces", strings.Join(i18nNamespaces, ","))
 }
+
+func SetIfUnset(flagVal *string, val string) {
+	if len(*flagVal) == 0 {
+		*flagVal = val
+	}
+}

@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
+	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
@@ -65,6 +66,9 @@ func main() {
 
 	authOptions := authopts.NewAuthOptions()
 	authOptions.AddFlags(fs)
+
+	sessionOptions := session.NewSessionOptions()
+	sessionOptions.AddFlags(fs)
 
 	// Define commandline / env / config options
 	fs.String("config", "", "The YAML config file.")
@@ -149,6 +153,7 @@ func main() {
 	}
 
 	authOptions.ApplyConfig(&cfg.Auth)
+	sessionOptions.ApplyConfig(&cfg.Session)
 
 	baseURL, err := flags.ValidateFlagIsURL("base-address", *fBaseAddress, true)
 	flags.FatalIfFailed(err)
@@ -275,9 +280,15 @@ func main() {
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 	}
 
-	completedAuthnOptions, err := authOptions.Complete(*fK8sAuth)
+	completedAuthnOptions, err := authOptions.Complete()
 	if err != nil {
 		klog.Fatalf("failed to complete authentication options: %v", err)
+		os.Exit(1)
+	}
+
+	completedSessionOptions, err := sessionOptions.Complete(completedAuthnOptions.AuthType)
+	if err != nil {
+		klog.Fatalf("failed to complete session options: %v", err)
 		os.Exit(1)
 	}
 
@@ -571,7 +582,7 @@ func main() {
 		caCertFilePath = k8sInClusterCA
 	}
 
-	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath); err != nil {
+	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)
 		os.Exit(1)
 	}

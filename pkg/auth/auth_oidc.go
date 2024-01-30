@@ -2,39 +2,41 @@ package auth
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
+
+	"github.com/openshift/console/pkg/auth/sessions"
 )
 
+type oauth2ConfigConstructor func(oauth2.Endpoint) *oauth2.Config
+
 type oidcAuth struct {
-	issuerURL string
-	clientID  string
+	*oidcConfig
 
 	providerCache *AsyncCache[*oidc.Provider]
 
 	// This preserves the old logic of associating users with session keys
 	// and requires smart routing when running multiple backend instances.
-	sessions *SessionStore
+	sessions *sessions.CombinedSessionStore
 
-	cookiePath    string
-	secureCookies bool
+	refreshLock sync.Mutex
 }
 
 type oidcConfig struct {
-	getClient     func() *http.Client
-	issuerURL     string
-	clientID      string
-	cookiePath    string
-	secureCookies bool
+	getClient             func() *http.Client
+	issuerURL             string
+	clientID              string
+	cookiePath            string
+	secureCookies         bool
+	constructOAuth2Config oauth2ConfigConstructor
 }
 
-func newOIDCAuth(ctx context.Context, sessionStore *SessionStore, c *oidcConfig) (*oidcAuth, error) {
+func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig) (*oidcAuth, error) {
 	// NewProvider attempts to do OIDC Discovery
 	providerCache, err := NewAsyncCache[*oidc.Provider](
 		ctx, 5*time.Minute,
@@ -50,48 +52,54 @@ func newOIDCAuth(ctx context.Context, sessionStore *SessionStore, c *oidcConfig)
 	providerCache.Run(ctx)
 
 	return &oidcAuth{
-		issuerURL:     c.issuerURL,
-		clientID:      c.clientID,
+		oidcConfig:    c,
 		providerCache: providerCache,
 		sessions:      sessionStore,
-		cookiePath:    c.cookiePath,
-		secureCookies: c.secureCookies,
+		refreshLock:   sync.Mutex{},
 	}, nil
 }
 
-func (o *oidcAuth) login(w http.ResponseWriter, token *oauth2.Token) (*loginState, error) {
-	rawIDToken, ok := token.Extra("id_token").(string)
-	if !ok {
-		return nil, errors.New("token response did not have an id_token field")
-	}
+func (o *oidcAuth) login(w http.ResponseWriter, r *http.Request, token *oauth2.Token) (*sessions.LoginState, error) {
 
-	idToken, err := o.verify(context.TODO(), rawIDToken)
+	ls, err := sessions.NewLoginState(o.verify, token)
 	if err != nil {
 		return nil, err
 	}
-	var c json.RawMessage
-	if err := idToken.Claims(&c); err != nil {
-		return nil, fmt.Errorf("parsing claims: %v", err)
+	if err := o.sessions.AddSession(w, r, ls); err != nil {
+		return nil, err
 	}
-	ls, err := newLoginState(rawIDToken, []byte(c))
+
+	o.sessions.PruneSessions()
+	return ls, nil
+}
+
+func (o *oidcAuth) refreshSession(ctx context.Context, w http.ResponseWriter, r *http.Request, oauthConfig *oauth2.Config, cookieRefreshToken string) (*sessions.LoginState, error) {
+	o.refreshLock.Lock()
+	defer o.refreshLock.Unlock()
+
+	session, err := o.sessions.GetSession(w, r)
 	if err != nil {
 		return nil, err
 	}
-	if err := o.sessions.addSession(ls); err != nil {
-		return nil, err
+
+	// if the refresh token got changed by someone else in the meantime (guarded by the refreshLock),
+	//  use the most current session instead of doing the full token refresh
+	if session != nil && session.RefreshToken() != cookieRefreshToken {
+		// TODO: add metrics here
+		o.sessions.UpdateCookieRefreshToken(w, r, session.RefreshToken()) // we must update our own client session, too!
+		return session, nil
 	}
 
-	cookie := http.Cookie{
-		Name:     openshiftAccessTokenCookieName,
-		Value:    ls.sessionToken,
-		MaxAge:   maxAge(ls.exp, time.Now()),
-		HttpOnly: true,
-		Path:     o.cookiePath,
-		Secure:   o.secureCookies,
+	newTokens, err := oauthConfig.TokenSource(ctx, &oauth2.Token{RefreshToken: cookieRefreshToken}).Token()
+	if err != nil {
+		return nil, fmt.Errorf("failed to refresh a token %s: %w", cookieRefreshToken, err)
 	}
-	http.SetCookie(w, &cookie)
 
-	o.sessions.pruneSessions()
+	ls, err := o.sessions.UpdateTokens(w, r, o.verify, newTokens)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update session tokens: %w", err)
+	}
+
 	return ls, nil
 }
 
@@ -102,20 +110,9 @@ func (o *oidcAuth) verify(ctx context.Context, rawIDToken string) (*oidc.IDToken
 
 func (o *oidcAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
 	// The returned login state can be nil even if err == nil.
-	if ls, _ := o.getLoginState(r); ls != nil {
-		o.sessions.deleteSession(ls.sessionToken)
+	if ls, _ := o.getLoginState(w, r); ls != nil {
+		o.sessions.DeleteSession(w, r, ls.SessionToken()) // TODO: could we just use the session token from the cookie instead of trying to retrieving the session first?
 	}
-
-	// Delete session cookie
-	cookie := http.Cookie{
-		Name:     openshiftAccessTokenCookieName,
-		Value:    "",
-		MaxAge:   0,
-		HttpOnly: true,
-		Path:     o.cookiePath,
-		Secure:   o.secureCookies,
-	}
-	http.SetCookie(w, &cookie)
 }
 
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
@@ -123,33 +120,32 @@ func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (o *oidcAuth) getLoginState(r *http.Request) (*loginState, error) {
-	sessionCookie, err := r.Cookie(openshiftAccessTokenCookieName)
+func (o *oidcAuth) getLoginState(w http.ResponseWriter, r *http.Request) (*sessions.LoginState, error) {
+	ls, err := o.sessions.GetSession(w, r)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to retrieve login state: %v", err)
 	}
-	sessionToken := sessionCookie.Value
-	ls := o.sessions.getSession(sessionToken)
-	if ls == nil {
-		return nil, fmt.Errorf("No session found on server")
-	}
-	if ls.exp.Sub(ls.now()) < 0 {
-		o.sessions.deleteSession(sessionToken)
-		return nil, fmt.Errorf("Session is expired.")
+
+	if ls == nil || ls.IsExpired() {
+		if refreshToken := o.sessions.GetCookieRefreshToken(r); refreshToken != "" {
+			return o.refreshSession(r.Context(), w, r, o.oauth2Config(), refreshToken)
+		}
+
+		return nil, fmt.Errorf("a session was not found on server or is expired")
 	}
 	return ls, nil
 }
 
-func (o *oidcAuth) Authenticate(r *http.Request) (*User, error) {
-	ls, err := o.getLoginState(r)
+func (o *oidcAuth) Authenticate(w http.ResponseWriter, r *http.Request) (*User, error) {
+	ls, err := o.getLoginState(w, r)
 	if err != nil {
 		return nil, err
 	}
 
 	return &User{
-		ID:       ls.UserID,
-		Username: ls.Name,
-		Token:    ls.rawToken,
+		ID:       ls.UserID(),
+		Username: ls.Username(),
+		Token:    ls.AccessToken(),
 	}, nil
 }
 
@@ -157,6 +153,6 @@ func (o *oidcAuth) GetSpecialURLs() SpecialAuthURLs {
 	return SpecialAuthURLs{}
 }
 
-func (o *oidcAuth) getEndpointConfig() oauth2.Endpoint {
-	return o.providerCache.GetItem().Endpoint()
+func (o *oidcAuth) oauth2Config() *oauth2.Config {
+	return o.oidcConfig.constructOAuth2Config(o.providerCache.GetItem().Endpoint())
 }
