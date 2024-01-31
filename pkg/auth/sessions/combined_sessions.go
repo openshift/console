@@ -155,7 +155,7 @@ func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Requ
 	return loginState, clientSession.save(r, w)
 }
 
-func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Request, sessionToken string) error {
+func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Request) error {
 	cs.sessionLock.Lock()
 	defer cs.sessionLock.Unlock()
 
