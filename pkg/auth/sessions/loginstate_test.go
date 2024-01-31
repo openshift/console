@@ -20,9 +20,13 @@ func (ks *testKeySet) VerifySignature(ctx context.Context, jwt string) ([]byte, 
 	return ks.payload, nil
 }
 
-func newTestVerifier(payload []byte) IDTokenVerifier {
-	verifier := oidc.NewVerifier("", &testKeySet{payload: payload}, &oidc.Config{SkipClientIDCheck: true, SkipExpiryCheck: true, SkipIssuerCheck: true})
+func newTestVerifier(payload string) IDTokenVerifier {
+	verifier := oidc.NewVerifier("", &testKeySet{payload: []byte(payload)}, &oidc.Config{SkipClientIDCheck: true, SkipExpiryCheck: true, SkipIssuerCheck: true})
 	return verifier.Verify
+}
+
+func testErrVerifier(context.Context, string) (*oidc.IDToken, error) {
+	return nil, fmt.Errorf("not a valid token: this is a test")
 }
 
 func TestNewLoginState(t *testing.T) {
@@ -61,11 +65,11 @@ func TestNewLoginState(t *testing.T) {
 
 	for i, tt := range tests {
 
-		rawToken := createTestIDToken([]byte(tt.claims))
+		rawToken := createTestIDToken(tt.claims)
 		tokenResp := &oauth2.Token{RefreshToken: tt.encoded}
 		tokenResp = tokenResp.WithExtra(map[string]interface{}{"id_token": rawToken})
 
-		ls, err := newLoginState(newTestVerifier([]byte(tt.claims)), tokenResp)
+		ls, err := newLoginState(newTestVerifier(tt.claims), tokenResp)
 		if err != nil {
 			if tt.wantErr {
 				continue
@@ -101,8 +105,8 @@ func TestNewLoginState(t *testing.T) {
 
 // createTestIDToken creates a token with the proper payload but a bogus signature
 // which should be good enough for testing sessions at least
-func createTestIDToken(payload []byte) string {
-	return base64.RawStdEncoding.EncodeToString([]byte(`{"alg":"RS256","typ":"jwt"}`)) +
-		"." + base64.RawStdEncoding.EncodeToString(payload) +
+func createTestIDToken(payload string) string {
+	return base64.RawStdEncoding.EncodeToString([]byte(`{"alg":"RS256","typ":"JWT"}`)) +
+		"." + base64.RawStdEncoding.EncodeToString([]byte(payload)) +
 		"." + base64.RawStdEncoding.EncodeToString([]byte("whoopsie"))
 }
