@@ -166,9 +166,23 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 		}
 	}
 
+	cookieSession := cs.getCookieSession(r)
+	if sessionToken, ok := cookieSession.sessionToken.Values["session-token"]; ok {
+		cs.serverStore.DeleteBySessionToken(sessionToken.(string))
+	}
+
+	if refreshToken, ok := cookieSession.refreshToken.Values["refresh-token"]; ok {
+		cs.serverStore.DeleteByRefreshToken(refreshToken.(string))
+	}
+
 	refreshTokenCookie, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
-	refreshTokenCookie.Options.MaxAge = -1
-	return cs.clientStore.Save(r, w, refreshTokenCookie)
+	if !refreshTokenCookie.IsNew {
+		// Get always returns a session, only timeout current sessions
+		refreshTokenCookie.Options.MaxAge = -1
+		return cs.clientStore.Save(r, w, refreshTokenCookie)
+	}
+
+	return nil
 }
 
 // FIXME: do this regulary in a separate goroutine on background
