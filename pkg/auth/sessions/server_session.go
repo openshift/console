@@ -88,6 +88,41 @@ func (ss *SessionStore) DeleteSession(sessionToken string) error {
 	return fmt.Errorf("ss.byAge did not contain session %v", sessionToken)
 }
 
+func (ss *SessionStore) DeleteByRefreshToken(refreshToken string) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+
+	session, ok := ss.byRefreshToken[refreshToken]
+	if !ok {
+		return
+	}
+
+	delete(ss.byRefreshToken, refreshToken)
+	delete(ss.byToken, session.sessionToken)
+
+	ss.byAge = spliceOut(ss.byAge, session)
+}
+
+func (ss *SessionStore) DeleteBySessionToken(sessionToken string) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+
+	session, ok := ss.byToken[sessionToken]
+	if !ok {
+		return
+	}
+
+	delete(ss.byToken, sessionToken)
+	ss.byAge = spliceOut(ss.byAge, session)
+
+	for k, v := range ss.byRefreshToken {
+		if v == session {
+			delete(ss.byRefreshToken, k)
+			return
+		}
+	}
+}
+
 func (ss *SessionStore) PruneSessions() {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()
@@ -123,4 +158,17 @@ func RandomString(length int) string {
 		panic(fmt.Sprintf("FATAL ERROR: Unable to get random bytes for session token: %v", err))
 	}
 	return base64.StdEncoding.EncodeToString(bytes)
+}
+
+func spliceOut(slice []*LoginState, toRemove *LoginState) []*LoginState {
+	for i := 0; i < len(slice); i++ {
+		s := slice[i]
+		// compare pointers, these should be the same in the byAge cache
+		if s == toRemove {
+			// splice out the session from the slice
+			return append(slice[:i], slice[i+1:]...)
+
+		}
+	}
+	return slice
 }
