@@ -34,6 +34,7 @@ export enum InfraFeatures {
   sno = 'Single Node Clusters',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   TokenAuth = 'Short-lived token authentication',
+  tokenAuthGCP = 'Auth Token GCP',
 }
 
 export enum ValidSubscriptionValue {
