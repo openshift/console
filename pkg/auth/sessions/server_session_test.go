@@ -37,11 +37,11 @@ func TestSessions(t *testing.T) {
 	}
 
 	for _, ft := range fakeTokens {
-		rawToken := createTestIDToken([]byte(ft.claims))
+		rawToken := createTestIDToken(ft.claims)
 		tokenResp := &oauth2.Token{RefreshToken: rawToken}
 		tokenResp = tokenResp.WithExtra(map[string]interface{}{"id_token": rawToken})
 
-		_, err := ss.AddSession(newTestVerifier([]byte(ft.claims)), tokenResp)
+		_, err := ss.AddSession(newTestVerifier(ft.claims), tokenResp)
 		if err != nil {
 			t.Fatalf("addSession error: %v", err)
 		}
