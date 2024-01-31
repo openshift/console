@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
+import { AccordionContent, AccordionItem, AccordionToggle, Icon } from '@patternfly/react-core';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { typeFilter, getLastTime } from '@console/internal/components/events';
@@ -42,10 +42,12 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
             </div>
             <div className="co-recent-item__title-message">
               {isWarning && (
-                <YellowExclamationTriangleIcon
-                  title={t('public~Warning')}
-                  className="co-dashboard-icon co-recent-item__icon--warning"
-                />
+                <Icon iconSize="md" className="co-recent-item__icon">
+                  <YellowExclamationTriangleIcon
+                    title={t('public~Warning')}
+                    className="co-recent-item__icon--warning"
+                  />
+                </Icon>
               )}
               {!expanded && (
                 <>
