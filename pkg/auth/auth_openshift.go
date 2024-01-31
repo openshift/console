@@ -17,17 +17,19 @@ import (
 // openShiftAuth implements OpenShift Authentication as defined in:
 // https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/authentication_and_authorization/understanding-authentication
 type openShiftAuth struct {
-	cookiePath    string
-	secureCookies bool
-	specialURLs   SpecialAuthURLs
-}
-
-type openShiftConfig struct {
-	k8sClient     *http.Client
-	oauthClient   *http.Client
 	issuerURL     string
 	cookiePath    string
 	secureCookies bool
+	k8sClient     *http.Client
+	getClient     func() *http.Client
+
+	oauthEndpointCache *AsyncCache[*oidcDiscovery]
+}
+
+type oidcDiscovery struct {
+	Issuer string `json:"issuer"`
+	Auth   string `json:"authorization_endpoint"`
+	Token  string `json:"token_endpoint"`
 }
 
 func validateAbsURL(value string) error {
@@ -43,78 +45,83 @@ func validateAbsURL(value string) error {
 	return nil
 }
 
-func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint, *openShiftAuth, error) {
+func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig) (loginMethod, error) {
+	o := &openShiftAuth{
+		issuerURL:     c.issuerURL,
+		cookiePath:    c.cookiePath,
+		secureCookies: c.secureCookies,
+		k8sClient:     k8sClient,
+		getClient:     c.getClient,
+	}
+
+	// TODO: repeat the discovery several times as in the auth.go logic
+	var err error
+	o.oauthEndpointCache, err = NewAsyncCache[*oidcDiscovery](ctx, 5*time.Minute, o.getOIDCDiscoveryInternal)
+	if err != nil {
+		return nil, fmt.Errorf("failed to construct OAuth endpoint cache: %w", err)
+	}
+	o.oauthEndpointCache.Run(ctx)
+
+	return o, nil
+}
+
+func (o *openShiftAuth) getOIDCDiscovery() *oidcDiscovery {
+	return o.oauthEndpointCache.GetItem()
+}
+
+func (o *openShiftAuth) getOIDCDiscoveryInternal(ctx context.Context) (*oidcDiscovery, error) {
 	// Use metadata discovery to determine the OAuth2 token and authorization URL.
 	// https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/authentication_and_authorization/configuring-internal-oauth#oauth-server-metadata_configuring-internal-oauth
-	wellKnownURL := strings.TrimSuffix(c.issuerURL, "/") + "/.well-known/oauth-authorization-server"
+	wellKnownURL := strings.TrimSuffix(o.issuerURL, "/") + "/.well-known/oauth-authorization-server"
 
 	req, err := http.NewRequest(http.MethodGet, wellKnownURL, nil)
 	if err != nil {
-		return oauth2.Endpoint{}, nil, err
+		return nil, err
 	}
 
-	resp, err := c.k8sClient.Do(req.WithContext(ctx))
+	resp, err := o.k8sClient.Do(req.WithContext(ctx))
 	if err != nil {
-		return oauth2.Endpoint{}, nil, err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode/100 != 2 {
-		return oauth2.Endpoint{}, nil, fmt.Errorf("discovery through endpoint %s failed: %s",
+		return nil, fmt.Errorf("discovery through endpoint %s failed: %s",
 			wellKnownURL, resp.Status)
 	}
 
-	var metadata struct {
-		Issuer string `json:"issuer"`
-		Auth   string `json:"authorization_endpoint"`
-		Token  string `json:"token_endpoint"`
-	}
-
-	if err := json.NewDecoder(resp.Body).Decode(&metadata); err != nil {
-		return oauth2.Endpoint{}, nil, fmt.Errorf("discovery through endpoint %s failed to decode body: %v",
+	metadata := &oidcDiscovery{}
+	if err := json.NewDecoder(resp.Body).Decode(metadata); err != nil {
+		return nil, fmt.Errorf("discovery through endpoint %s failed to decode body: %v",
 			wellKnownURL, err)
 	}
 
-	if err := validateAbsURL(metadata.Issuer); err != nil {
-		return oauth2.Endpoint{}, nil, err
+	if err := validateAbsURL(metadata.Issuer); err != nil { // FIXME: must validate issuer == o.Issuer
+		return nil, err
 	}
 
 	if err := validateAbsURL(metadata.Auth); err != nil {
-		return oauth2.Endpoint{}, nil, err
+		return nil, err
 	}
 
 	if err := validateAbsURL(metadata.Token); err != nil {
-		return oauth2.Endpoint{}, nil, err
+		return nil, err
 	}
 
 	// Make sure we can talk to the issuer endpoint.
 	req, err = http.NewRequest(http.MethodHead, metadata.Issuer, nil)
 	if err != nil {
-		return oauth2.Endpoint{}, nil, err
+		return nil, err
 	}
 
-	resp, err = c.oauthClient.Do(req.WithContext(ctx))
+	resp, err = o.getClient().Do(req.WithContext(ctx))
 	if err != nil {
-		return oauth2.Endpoint{}, nil, fmt.Errorf("request to OAuth issuer endpoint %s failed: %v",
+		return nil, fmt.Errorf("request to OAuth issuer endpoint %s failed: %v",
 			metadata.Token, err)
 	}
 	defer resp.Body.Close()
 
-	// Special page on the integrated OAuth server for requesting a token.
-	// TODO: We will need to implement this directly console to support external OAuth servers.
-	requestTokenURL := proxy.SingleJoiningSlash(metadata.Token, "/request")
-	kubeAdminLogoutURL := proxy.SingleJoiningSlash(metadata.Issuer, "/logout")
-	return oauth2.Endpoint{
-			AuthURL:  metadata.Auth,
-			TokenURL: metadata.Token,
-		}, &openShiftAuth{
-			c.cookiePath,
-			c.secureCookies,
-			SpecialAuthURLs{
-				requestTokenURL,
-				kubeAdminLogoutURL,
-			},
-		}, nil
+	return metadata, nil
 }
 
 func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*loginState, error) {
@@ -154,7 +161,7 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 }
 
 // NOTE: cookies are going away, this should be removed in the future
-func (o *openShiftAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
+func (o *openShiftAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
 	// Delete session cookie
 	cookie := http.Cookie{
 		Name:     openshiftAccessTokenCookieName,
@@ -168,11 +175,11 @@ func (o *openShiftAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
-	o.deleteCookie(w, r)
+	o.DeleteCookie(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func getOpenShiftUser(r *http.Request) (*User, error) {
+func (o *openShiftAuth) Authenticate(r *http.Request) (*User, error) {
 	// TODO: This doesn't do any validation of the cookie with the assumption that the
 	// API server will reject tokens it doesn't recognize. If we want to keep some backend
 	// state we should sign this cookie. If not there's not much we can do.
@@ -189,6 +196,25 @@ func getOpenShiftUser(r *http.Request) (*User, error) {
 	}, nil
 }
 
-func (o *openShiftAuth) getSpecialURLs() SpecialAuthURLs {
-	return o.specialURLs
+func (o *openShiftAuth) GetSpecialURLs() SpecialAuthURLs {
+	discovery := o.getOIDCDiscovery()
+
+	// Special page on the integrated OAuth server for requesting a token.
+	// TODO: We will need to implement this directly console to support external OAuth servers.
+	requestTokenURL := proxy.SingleJoiningSlash(discovery.Token, "/request")
+	kubeAdminLogoutURL := proxy.SingleJoiningSlash(discovery.Issuer, "/logout")
+
+	return SpecialAuthURLs{
+		RequestToken:    requestTokenURL,
+		KubeAdminLogout: kubeAdminLogoutURL,
+	}
+}
+
+func (o *openShiftAuth) getEndpointConfig() oauth2.Endpoint {
+	metadata := o.getOIDCDiscovery()
+
+	return oauth2.Endpoint{
+		AuthURL:  metadata.Auth,
+		TokenURL: metadata.Token,
+	}
 }

@@ -8,6 +8,8 @@ import (
 	"net/url"
 	"os"
 
+	"github.com/coreos/pkg/flagutil"
+
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
@@ -28,6 +30,8 @@ type AuthOptions struct {
 	ClientSecretFilePath string
 	CAFilePath           string
 
+	ExtraScopes flagutil.StringSliceFlag
+
 	InactivityTimeoutSeconds int
 	LogoutRedirect           string
 }
@@ -43,6 +47,8 @@ type completedOptions struct {
 	ClientID     string
 	ClientSecret string
 	CAFilePath   string
+
+	ExtraScopes []string
 
 	InactivityTimeoutSeconds int
 	LogoutRedirectURL        *url.URL
@@ -60,18 +66,26 @@ func (c *AuthOptions) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&c.ClientSecretFilePath, "user-auth-oidc-client-secret-file", "", "File containing the OIDC OAuth2 Client Secret.")
 	fs.StringVar(&c.CAFilePath, "user-auth-oidc-ca-file", "", "Path to a PEM file for the OIDC/OAuth2 issuer CA.")
 
+	fs.Var(&c.ExtraScopes, "user-auth-oidc-token-scopes", "Comma-separated list of extra scopes to request ID tokens with")
+
 	fs.IntVar(&c.InactivityTimeoutSeconds, "inactivity-timeout", 0, "Number of seconds, after which user will be logged out if inactive. Ignored if less than 300 seconds (5 minutes).")
 	fs.StringVar(&c.LogoutRedirect, "user-auth-logout-redirect", "", "Optional redirect URL on logout needed for some single sign-on identity providers.")
 }
 
 func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
+	setIfUnset(&c.AuthType, config.AuthType)
 	setIfUnset(&c.ClientID, config.ClientID)
+	setIfUnset(&c.IssuerURL, config.OIDCIssuer)
 	setIfUnset(&c.ClientSecretFilePath, config.ClientSecretFile)
 	setIfUnset(&c.CAFilePath, config.OAuthEndpointCAFile)
 	setIfUnset(&c.LogoutRedirect, config.LogoutRedirect)
 
 	if c.InactivityTimeoutSeconds == 0 {
 		c.InactivityTimeoutSeconds = config.InactivityTimeoutSeconds
+	}
+
+	if len(c.ExtraScopes) == 0 {
+		c.ExtraScopes = config.OIDCExtraScopes
 	}
 }
 
@@ -94,6 +108,7 @@ func (c *AuthOptions) Complete(k8sAuthType string) (*CompletedOptions, error) {
 		AuthType:                 c.AuthType,
 		ClientID:                 c.ClientID,
 		ClientSecret:             c.ClientSecret,
+		ExtraScopes:              c.ExtraScopes,
 		CAFilePath:               c.CAFilePath,
 		InactivityTimeoutSeconds: c.InactivityTimeoutSeconds,
 	}
@@ -153,6 +168,10 @@ func (c *AuthOptions) Validate(k8sAuthType string) []error {
 	case "openshift":
 		if len(c.IssuerURL) != 0 {
 			errs = append(errs, flags.NewInvalidFlagError("user-auth-oidc-issuer-url", "cannot be used with --user-auth=\"openshift\""))
+		}
+
+		if len(c.ExtraScopes) > 0 {
+			errs = append(errs, flags.NewInvalidFlagError("user-auth-oidc-token-scopes", "cannot be used with --user-auth=\"openshift\""))
 		}
 
 	case "oidc":
@@ -220,20 +239,17 @@ func (c *completedOptions) getAuthenticator(
 		useSecureCookies = baseURL.Scheme == "https"
 	)
 
-	scopes := []string{"openid", "email", "profile", "groups"}
-	authSource := auth.AuthSourceTectonic
+	var scopes []string
+	authSource := auth.AuthSourceOIDC
 
 	if c.AuthType == "openshift" {
-		// Scopes come from OpenShift documentation
-		// https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/authentication_and_authorization/using-service-accounts-as-oauth-client
-		//
-		// TODO(ericchiang): Support other scopes like view only permissions.
 		scopes = []string{"user:full"}
 		authSource = auth.AuthSourceOpenShift
 
 		userAuthOIDCIssuerURL = k8sEndpoint
 	} else {
 		userAuthOIDCIssuerURL = c.IssuerURL
+		scopes = append(c.ExtraScopes, "openid")
 
 	}
 

@@ -151,7 +151,7 @@ func (m *Metrics) isKubeAdmin(ctx context.Context, config *rest.Config) (bool, e
 		klog.Errorf("Error in auth.metrics isKubeAdmin: %v\n", err)
 		return false, err
 	}
-	userInfo, err := client.Resource(userResource).Get(ctx, "~", metav1.GetOptions{})
+	userInfo, err := client.Resource(userResource).Get(ctx, "~", metav1.GetOptions{}) // FIXME: fix this for the world where the userapi does not exist
 	if err != nil {
 		klog.Errorf("Error in auth.metrics isKubeAdmin: %v\n", err)
 		return false, err

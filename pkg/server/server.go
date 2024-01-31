@@ -285,6 +285,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
 		handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
 		handle(requestTokenEndpoint, authHandler(s.handleClusterTokenURL))
+		// TODO: only add the following in case the auth type is openshift?
 		handleFunc(deleteOpenshiftTokenEndpoint, allowMethod(http.MethodPost, authHandlerWithUser(s.handleOpenShiftTokenDeletion)))
 	}
 
@@ -769,11 +770,13 @@ func (s *Server) handleClusterTokenURL(w http.ResponseWriter, r *http.Request) {
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only GET is allowed"})
 		return
 	}
-	requestTokenURL := s.Authenticator.GetSpecialURLs().RequestToken
+
+	specialAuthURLs := s.Authenticator.GetSpecialURLs()
+
 	serverutils.SendResponse(w, http.StatusOK, struct {
 		RequestTokenURL string `json:"requestTokenURL"`
 	}{
-		RequestTokenURL: requestTokenURL,
+		RequestTokenURL: specialAuthURLs.RequestToken,
 	})
 }
 

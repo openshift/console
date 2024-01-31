@@ -13,7 +13,10 @@ import (
 )
 
 type oidcAuth struct {
-	verifier *oidc.IDTokenVerifier
+	issuerURL string
+	clientID  string
+
+	providerCache *AsyncCache[*oidc.Provider]
 
 	// This preserves the old logic of associating users with session keys
 	// and requires smart routing when running multiple backend instances.
@@ -24,25 +27,33 @@ type oidcAuth struct {
 }
 
 type oidcConfig struct {
-	client        *http.Client
+	getClient     func() *http.Client
 	issuerURL     string
 	clientID      string
 	cookiePath    string
 	secureCookies bool
 }
 
-func newOIDCAuth(ctx context.Context, c *oidcConfig) (oauth2.Endpoint, *oidcAuth, error) {
-	ctx = oidc.ClientContext(ctx, c.client)
-	p, err := oidc.NewProvider(ctx, c.issuerURL)
+func newOIDCAuth(ctx context.Context, sessionStore *SessionStore, c *oidcConfig) (*oidcAuth, error) {
+	// NewProvider attempts to do OIDC Discovery
+	providerCache, err := NewAsyncCache[*oidc.Provider](
+		ctx, 5*time.Minute,
+		func(cacheCtx context.Context) (*oidc.Provider, error) {
+			oidcCtx := oidc.ClientContext(cacheCtx, c.getClient())
+			return oidc.NewProvider(oidcCtx, c.issuerURL)
+		},
+	)
 	if err != nil {
-		return oauth2.Endpoint{}, nil, err
+		return nil, err
 	}
 
-	return p.Endpoint(), &oidcAuth{
-		verifier: p.Verifier(&oidc.Config{
-			ClientID: c.clientID,
-		}),
-		sessions:      NewSessionStore(32768),
+	providerCache.Run(ctx)
+
+	return &oidcAuth{
+		issuerURL:     c.issuerURL,
+		clientID:      c.clientID,
+		providerCache: providerCache,
+		sessions:      sessionStore,
 		cookiePath:    c.cookiePath,
 		secureCookies: c.secureCookies,
 	}, nil
@@ -54,7 +65,7 @@ func (o *oidcAuth) login(w http.ResponseWriter, token *oauth2.Token) (*loginStat
 		return nil, errors.New("token response did not have an id_token field")
 	}
 
-	idToken, err := o.verifier.Verify(context.Background(), rawIDToken)
+	idToken, err := o.verify(context.TODO(), rawIDToken)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +95,12 @@ func (o *oidcAuth) login(w http.ResponseWriter, token *oauth2.Token) (*loginStat
 	return ls, nil
 }
 
-func (o *oidcAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
+func (o *oidcAuth) verify(ctx context.Context, rawIDToken string) (*oidc.IDToken, error) {
+	provider := o.providerCache.GetItem()
+	return provider.Verifier(&oidc.Config{ClientID: o.clientID}).Verify(ctx, rawIDToken)
+}
+
+func (o *oidcAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
 	// The returned login state can be nil even if err == nil.
 	if ls, _ := o.getLoginState(r); ls != nil {
 		o.sessions.deleteSession(ls.sessionToken)
@@ -103,7 +119,7 @@ func (o *oidcAuth) deleteCookie(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
-	o.deleteCookie(w, r)
+	o.DeleteCookie(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -124,7 +140,7 @@ func (o *oidcAuth) getLoginState(r *http.Request) (*loginState, error) {
 	return ls, nil
 }
 
-func (o *oidcAuth) authenticate(r *http.Request) (*User, error) {
+func (o *oidcAuth) Authenticate(r *http.Request) (*User, error) {
 	ls, err := o.getLoginState(r)
 	if err != nil {
 		return nil, err
@@ -137,6 +153,10 @@ func (o *oidcAuth) authenticate(r *http.Request) (*User, error) {
 	}, nil
 }
 
-func (o *oidcAuth) getSpecialURLs() SpecialAuthURLs {
+func (o *oidcAuth) GetSpecialURLs() SpecialAuthURLs {
 	return SpecialAuthURLs{}
+}
+
+func (o *oidcAuth) getEndpointConfig() oauth2.Endpoint {
+	return o.providerCache.GetItem().Endpoint()
 }
