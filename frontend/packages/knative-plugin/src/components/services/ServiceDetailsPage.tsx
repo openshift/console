@@ -124,6 +124,7 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
         kind: referenceForModel(RevisionModel),
         namespace: params.ns,
         showTitle: false,
+        name: '',
       },
     },
     {
@@ -135,6 +136,7 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
         kind: referenceForModel(RouteModel),
         namespace: params.ns,
         showTitle: false,
+        name: '',
       },
     },
     navFactory.pods(FunctionsPods),
@@ -156,7 +158,7 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
     kindObj,
     location,
     params,
-    'serving',
+    serviceTypeValue === ServiceTypeValue.Function ? 'functions' : 'serving',
     serverlessTab(kindObj.kind),
     serviceTypeValue === ServiceTypeValue.Function ? t('knative-plugin~Functions') : undefined,
     serviceTypeValue === ServiceTypeValue.Function ? true : isAdminPerspective,
@@ -168,11 +170,7 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
       breadcrumbsFor={() => breadcrumbs}
       pages={pages}
       customActionMenu={actionMenu}
-      customData={
-        serviceTypeValue === ServiceTypeValue.Function
-          ? { selectResourcesForName: params.name }
-          : undefined
-      }
+      customData={{ selectResourcesForName: params.name }}
     />
   );
 };
