@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"net/http"
 	"net/url"
 	"os"
 
@@ -194,7 +193,6 @@ func (c *AuthOptions) Validate(k8sAuthType string) []error {
 func (c *completedOptions) ApplyTo(
 	srv *server.Server,
 	k8sEndpoint *url.URL,
-	pubAPIServerEndpoint string,
 	caCertFilePath string,
 ) error {
 	srv.InactivityTimeout = c.InactivityTimeoutSeconds
@@ -204,9 +202,8 @@ func (c *completedOptions) ApplyTo(
 	srv.Authenticator, err = c.getAuthenticator(
 		srv.BaseURL,
 		k8sEndpoint,
-		pubAPIServerEndpoint,
 		caCertFilePath,
-		srv.K8sClient.Transport,
+		srv.InternalProxiedK8SClientConfig,
 	)
 
 	return err
@@ -215,9 +212,8 @@ func (c *completedOptions) ApplyTo(
 func (c *completedOptions) getAuthenticator(
 	baseURL *url.URL,
 	k8sEndpoint *url.URL,
-	pubAPIServerEndpoint string,
 	caCertFilePath string,
-	k8sTransport http.RoundTripper,
+	k8sClientConfig *rest.Config,
 ) (*auth.Authenticator, error) {
 
 	if c.AuthType == "disabled" {
@@ -276,10 +272,7 @@ func (c *completedOptions) getAuthenticator(
 		RefererPath:   refererPath,
 		SecureCookies: useSecureCookies,
 
-		K8sConfig: &rest.Config{
-			Host:      pubAPIServerEndpoint,
-			Transport: k8sTransport,
-		},
+		K8sConfig: k8sClientConfig,
 	}
 
 	authenticator, err := auth.NewAuthenticator(context.Background(), oidcClientConfig)

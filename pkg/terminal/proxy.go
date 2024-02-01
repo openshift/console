@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	v1 "k8s.io/api/authentication/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -64,12 +65,6 @@ var (
 		Version:  "v1alpha1",
 		Resource: "devworkspaces",
 	}
-
-	UserGroupVersionResource = schema.GroupVersionResource{
-		Group:    "user.openshift.io",
-		Version:  "v1",
-		Resource: "users",
-	}
 )
 
 // HandleProxy evaluates the namespace and workspace names from URL and after check that
@@ -113,29 +108,31 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	client, err := p.createDynamicClient(user.Token)
-	if err != nil {
-		http.Error(w, "Failed to create k8s client for the authenticated user. Cause: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	userId := user.ID
 	if userId == "" {
+		client, err := p.createTypedClient(user.Token)
+		if err != nil {
+			http.Error(w, "Failed to create k8s client for the authenticated user. Cause: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		// user id is missing, auth is used that does not support user info propagated, like OpenShift OAuth
-		userInfo, err := client.Resource(UserGroupVersionResource).Get(context.TODO(), "~", metav1.GetOptions{})
+		userInfo, err := client.AuthenticationV1().SelfSubjectReviews().Create(r.Context(), &v1.SelfSubjectReview{}, metav1.CreateOptions{})
 		if err != nil {
 			http.Error(w, "Failed to retrieve the current user info. Cause: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		userId = string(userInfo.GetUID())
+		userId = string(userInfo.Status.UserInfo.UID) // TODO: are we cool rewriting this here?
 		if userId == "" {
-			// uid is missing. it must be kube:admin
-			if "kube:admin" != userInfo.GetName() {
-				http.Error(w, "User must have UID to proceed authorization", http.StatusInternalServerError)
-				return
-			}
+			userId = userInfo.Status.UserInfo.Username
 		}
+	}
+
+	client, err := p.createDynamicClient(user.Token)
+	if err != nil {
+		http.Error(w, "Failed to create k8s client for the authenticated user. Cause: "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	ws, err := client.Resource(WorkspaceGroupVersionResource).Namespace(namespace).Get(context.TODO(), workspaceName, metav1.GetOptions{})

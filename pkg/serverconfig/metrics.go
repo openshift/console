@@ -2,7 +2,6 @@ package serverconfig
 
 import (
 	"context"
-	"net/http"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -10,7 +9,6 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 )
 
@@ -103,14 +101,10 @@ func (m *Metrics) GetCollectors() []prometheus.Collector {
 	}
 }
 
-func (m *Metrics) MonitorPlugins(
-	userSettingsClient *http.Client,
-	userSettingsEndpoint string,
-	serviceAccountToken string,
-) {
+func (m *Metrics) MonitorPlugins(dynamicClient dynamic.Interface) {
 	go func() {
 		time.Sleep(3 * time.Second)
-		go m.updatePluginMetric(userSettingsClient, userSettingsEndpoint, serviceAccountToken)
+		go m.updatePluginMetric(dynamicClient)
 	}()
 
 	ticker := time.NewTicker(updateConsolePluginInterval)
@@ -119,7 +113,7 @@ func (m *Metrics) MonitorPlugins(
 		for {
 			select {
 			case <-ticker.C:
-				m.updatePluginMetric(userSettingsClient, userSettingsEndpoint, serviceAccountToken)
+				m.updatePluginMetric(dynamicClient)
 			case <-quit:
 				ticker.Stop()
 				return
@@ -130,15 +124,11 @@ func (m *Metrics) MonitorPlugins(
 
 // ConsolePlugins are monitored with a slow interval (see updateConsolePluginInterval).
 // So this gauge can go up and down and it is required to set missing values to 0.
-func (m *Metrics) updatePluginMetric(
-	k8sClient *http.Client,
-	k8sEndpoint string,
-	serviceAccountToken string,
-) {
+func (m *Metrics) updatePluginMetric(dynamicClient dynamic.Interface) {
 	klog.Info("serverconfig.Metrics: Update ConsolePlugin metrics...\n")
 	startTime := time.Now()
 
-	consolePlugins, err := m.getConsolePlugins(k8sClient, k8sEndpoint, serviceAccountToken)
+	consolePlugins, err := m.getConsolePlugins(dynamicClient)
 	if err != nil {
 		klog.Errorf("serverconfig.Metrics: Failed to get all installed ConsolePlugins: %v\n", err)
 	}
@@ -159,22 +149,10 @@ func (m *Metrics) updatePluginMetric(
 	}
 }
 
-func (m *Metrics) getConsolePlugins(
-	k8sClient *http.Client,
-	k8sEndpoint string,
-	serviceAccountToken string,
-) (*[]unstructured.Unstructured, error) {
-	ctx := context.TODO()
-	config := &rest.Config{
-		Transport:   k8sClient.Transport,
-		Host:        k8sEndpoint,
-		BearerToken: serviceAccountToken,
-	}
-	client, err := dynamic.NewForConfig(config)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := client.Resource(consolePluginResource).List(ctx, v1.ListOptions{})
+func (m *Metrics) getConsolePlugins(dynamicClient dynamic.Interface) (*[]unstructured.Unstructured, error) {
+	ctx := context.TODO() // FIXME: this is a wrong spot, the context should be wired through to this function
+
+	resp, err := dynamicClient.Resource(consolePluginResource).List(ctx, v1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}

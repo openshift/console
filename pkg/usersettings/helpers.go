@@ -1,42 +1,27 @@
 package usersettings
 
 import (
-	"errors"
-
+	authenticationv1 "k8s.io/api/authentication/v1"
 	core "k8s.io/api/core/v1"
 	rbac "k8s.io/api/rbac/v1"
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
-func newUserSettingMeta(userInfo *unstructured.Unstructured) (*UserSettingMeta, error) {
-	uid := userInfo.GetUID()
-	name := userInfo.GetName()
-	resourceIdentifier := ""
-	ownerReferences := []meta.OwnerReference{}
+func newUserSettingMeta(userInfo authenticationv1.UserInfo) (*UserSettingMeta, error) {
+	uid := userInfo.UID
+	name := userInfo.Username
+	resourceIdentifier := name
 
 	if uid != "" {
 		resourceIdentifier = string(uid)
-		ownerReferences = []meta.OwnerReference{
-			{
-				APIVersion: userInfo.GetAPIVersion(),
-				Kind:       userInfo.GetKind(),
-				Name:       name,
-				UID:        uid,
-			},
-		}
 	} else if name == "kube:admin" {
 		resourceIdentifier = "kubeadmin"
-		ownerReferences = []meta.OwnerReference{}
-	} else {
-		return nil, errors.New("User must have UID to get required resource data for user-settings")
 	}
 
 	return &UserSettingMeta{
 		Username:           name,
 		UID:                string(uid),
 		ResourceIdentifier: resourceIdentifier,
-		OwnerReferences:    ownerReferences,
 	}, nil
 }
 
@@ -47,8 +32,7 @@ func createRole(userSettingMeta *UserSettingMeta) *rbac.Role {
 			Kind:       "Role",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name:            userSettingMeta.getRoleName(),
-			OwnerReferences: userSettingMeta.OwnerReferences,
+			Name: userSettingMeta.getRoleName(),
 		},
 		Rules: []rbac.PolicyRule{
 			{
@@ -80,8 +64,7 @@ func createRoleBinding(userSettingMeta *UserSettingMeta) *rbac.RoleBinding {
 			Kind:       "RoleBinding",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name:            userSettingMeta.getRoleBindingName(),
-			OwnerReferences: userSettingMeta.OwnerReferences,
+			Name: userSettingMeta.getRoleBindingName(),
 		},
 		Subjects: []rbac.Subject{
 			{
@@ -105,8 +88,7 @@ func createConfigMap(userSettingMeta *UserSettingMeta) *core.ConfigMap {
 			Kind:       "ConfigMap",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name:            userSettingMeta.getConfigMapName(),
-			OwnerReferences: userSettingMeta.OwnerReferences,
+			Name: userSettingMeta.getConfigMapName(),
 		},
 	}
 }
