@@ -1,4 +1,5 @@
-export const NET_ATTACH_DEF_HEADER_LABEL = 'Create Network Attachment Definition';
+// t('kubevirt-plugin~Create network attachment definition')
+export const NET_ATTACH_DEF_HEADER_LABEL = 'Create network attachment definition';
 
 export const ELEMENT_TYPES = {
   CHECKBOX: 'checkbox',
