@@ -12,7 +12,7 @@ Feature: Create Application from git form
         # Marking this scenario as @manual, because due to git-rate limit issue, below scenarios are failing
         # TODO: Use Cypress HTTP mocking to solve the github rate limiting issue. See - https://docs.cypress.io/guides/guides/network-requests
         @regression @manual @odc-6266
-        Scenario Outline: Add new git workload with new application for resoruce type "<resource_type>": A-06-TC01
+        Scenario Outline: Add new git workload with new application for resource type "<resource_type>": A-06-TC01
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/dancer-ex.git"
               And user enters Application name as "dancer-ex-git-app"
@@ -20,13 +20,13 @@ Feature: Create Application from git form
               And user selects resource type as "<resource_type>"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And user can see toast notification saying "Deployment created successfully"
+              And user can see toast notification saying "<resource_type>" created successfully
               And user is able to see workload "<name>" in topology page
 
         Examples:
-                  | name         | resource_type     |
-                  | import-git   | Deployment        |
-                  | import-git-1 | Deployment Config |
+                  | name         | resource_type    |
+                  | import-git   | Deployment       |
+                  | import-git-1 | DeploymentConfig |
 
 
         @regression @odc-6266
@@ -40,7 +40,7 @@ Feature: Create Application from git form
               And user selects resource type as "Deployment Config"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And user can see toast notification saying "Deployment created successfully"
+              And user can see toast notification saying "DeploymentConfig" created successfully
               And user can see the created workload "dancer-ex-git-2" is linked to existing application "nodejs-ex-git-app"
 
 
@@ -82,11 +82,11 @@ Feature: Create Application from git form
 
 
         @regression
-        Scenario: Create the workload by unselecting options in "Build Configuration" section:: A-06-TC06
+        Scenario: Create the workload by unselecting options in "Build" section:: A-06-TC06
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/dancer-ex.git"
               And user enters name as "git-build" in General section
-              And user clicks "Build configuration" link in Advanced Options section
+              And user clicks "Show advanced Build option" link in Advanced Options section
               And user unselects Configure a webhook build trigger checkbox in build configuration section
               And user unselects Automatically build a new image when the builder image changes checkbox in build configuration section
               And user unselects Launch the first build when the build configuration is created checkbox in build configuration section
@@ -102,7 +102,7 @@ Feature: Create Application from git form
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/dancer-ex.git"
               And user enters Name as "git-deploy" in General section
-              And user clicks "Deployment" link in Advanced Options section
+              And user clicks "Show advanced Deployment option" link in Advanced Options section
               And user verify the Auto deploy when new image is available checkbox is selected
               And user enters Name as "home" in Environment Variables Runtime only section
               And user enters Value as "value" in Environment Variables Runtime only section
@@ -123,8 +123,8 @@ Feature: Create Application from git form
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
 
-
-        @regression
+# Marked below test as broken due to issue https://issues.redhat.com/browse/OCPBUGS-30205
+        @regression @broken-test
         Scenario: Create a git workload with advanced option "Scaling": A-06-TC09
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/dancer-ex.git"
@@ -201,6 +201,7 @@ Feature: Create Application from git form
         Scenario Outline: "Unable to detect the builder image" warning message displays for server related git urls: A-06-TC14
             Given user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
+              And user clicks on "Edit Import Strategy"
              Then git url "<git_url>" gets Validated
               And user is able to see warning message "Unable to detect Import strategy"
 
@@ -246,13 +247,12 @@ Feature: Create Application from git form
               And user is able to see Redirect value is selected in "Insecure traffic"
 
 
-
-        
         @regression @ocp-43404
         Scenario: Disable devfile import strategy for git type - other: A-06-TC18
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://mysupersecretgit.example.com/org/repo"
              Then devfile import strategy is disabled
+
 
         @regression @ocp-43404
         Scenario: When devfile path is not detected: A-06-TC19

@@ -52,7 +52,7 @@ Given('user has created broker {string}', (brokerName: string) => {
 });
 
 When('user selects {string} event source', (sourceType: string) => {
-  cy.get(eventingPO.catlogTiles).contains(sourceType).click();
+  cy.get(eventingPO.catlogTiles).contains(sourceType).click({ force: true });
 });
 
 When('user clicks on Create Event Source button', () => {

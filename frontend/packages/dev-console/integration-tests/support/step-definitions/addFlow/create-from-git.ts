@@ -41,7 +41,7 @@ Then('Name displays as {string}', (nodeName: string) => {
   gitPage.verifyNodeName(nodeName);
 });
 
-Then('user can see toast notification saying {string}', (message: string) => {
+Then('user can see toast notification saying {string} created successfully', (message: string) => {
   gitPage.notificationVerify(message);
 });
 

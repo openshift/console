@@ -15,6 +15,7 @@ import {
 } from '@console/topology/integration-tests/support/pages/topology';
 import { formPO } from '../../../../../dev-console/integration-tests/support/pageObjects/global-po';
 import { domainPO } from '../../pageObjects/global-po';
+import { functionsPage } from '../../pages/functions/functions-page';
 
 When('user enters Domain mapping as {string}', (domain: string) => {
   cy.get(domainPO.domainMapping).clear().type(domain).should('have.value', domain);
@@ -26,7 +27,7 @@ When('user clicks on {string} in dropdown', () => {
 });
 
 When('user clicks on knative workload {string}', (workloadName: string) => {
-  topologyPage.waitForLoad();
+  functionsPage.clickonEmptyAreaTopology();
   topologyPage.knativeNode(workloadName).click({ force: true });
 });
 
@@ -81,7 +82,7 @@ Given(
 When(
   'user selects {string} from actions drop down menu of knative service {string}',
   (option: string, workloadName: string) => {
-    topologyPage.waitForLoad();
+    functionsPage.clickonEmptyAreaTopology();
     topologyPage.knativeNode(workloadName).click({ force: true });
     cy.get(eventingPO.broker.actionMenu).click();
     cy.byTestActionID(option).click();
@@ -89,9 +90,10 @@ When(
 );
 
 When('user removes already added custom domain mapping {string} and {string}', (d1, d2) => {
-  cy.get(domainPO.chipText).contains(d1).parent().find(domainPO.removeLabel).click();
-  cy.get(domainPO.chipText).contains(d2).parent().find(domainPO.removeLabel).click();
-  cy.get(domainPO.removeLabel).should('not.exist');
+  cy.get(domainPO.chipArea).should('be.visible').click();
+  cy.get(`[id="select-option-serverless.domainMapping-${d1}"] button`).should('be.visible').click();
+  cy.get(`[id="select-option-serverless.domainMapping-${d2}"] button`).should('be.visible').click();
+  cy.get(domainPO.chipDescribe).should('not.contain', d1).and('not.contain', d2);
 });
 
 Then(
@@ -108,6 +110,7 @@ Given('user can see knative service {string} exist in topology page', (workloadN
 });
 
 When('user removes already added custom domain mapping {string}', (d1) => {
-  cy.get(domainPO.chipText).contains(d1).parent().find(domainPO.removeLabel).click();
-  cy.get(domainPO.removeLabel).should('not.exist');
+  cy.get(domainPO.chipArea).should('be.visible').click();
+  cy.get(`[id="select-option-serverless.domainMapping-${d1}"] button`).should('be.visible').click();
+  cy.get(domainPO.chipDescribe).should('not.contain', d1);
 });

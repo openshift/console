@@ -51,10 +51,9 @@ When('user checks the Enable checkbox under SASL', () => {
 });
 
 When('user selects resource {string} under User', (resource: string) => {
-  cy.get(eventingPO.kafkaSource.toggleText)
-    .contains('Select a resource')
-    .eq(0)
-    .click({ force: true });
+  cy.get('.odc-namespaced-page__content').within(() => {
+    cy.get('.value-from button').contains('Select a resource').eq(0).click({ force: true });
+  });
   cy.get(eventingPO.kafkaSource.dropdownInput).type(resource);
   cy.get(eventingPO.kafkaSource.rhSecret).click();
 });

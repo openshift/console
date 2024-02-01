@@ -1,4 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { guidedTour, guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import {
   addOptions,
@@ -103,7 +104,10 @@ Given('knative service {string} with multiple revisions', (serviceName: string) 
 
   // Open sidebar if not already opened
   cy.get('body').then(($body) => {
-    if ($body.find('[data-test-id="actions-menu-button"]').length === 0) {
+    if (
+      $body.find('[data-test-id="actions-menu-button"]').length === 0 ||
+      $body.find('[title="Service"]').text() !== 'KSVC'
+    ) {
       topologyPage.clickOnKnativeService(serviceName);
     }
   });
@@ -300,8 +304,13 @@ Then('user clicks the save button on the "Edit annotations" modal', () => {
 Then(
   'verify the number of annotations equal to {string} in side bar details knative revision',
   (numOfAnnotations: string) => {
+    cy.reload();
+    guidedTour.close();
+    topologyPage.waitForLoad();
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
     topologySidePane.verifyNumberOfAnnotations(numOfAnnotations);
   },
 );

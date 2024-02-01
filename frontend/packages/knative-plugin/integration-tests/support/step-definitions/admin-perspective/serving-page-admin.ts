@@ -48,10 +48,10 @@ When('user clicks on Service button', () => {
   cy.get(servingPO.createService).click();
 });
 
-Then('user can see titles URL, Generation, Created, Conditions, Ready, Reason', () => {
+Then('user can see titles URL, Revision, Created, Conditions, Ready, Reason', () => {
   cy.get('[role="rowgroup"]')
     .should('contain', 'URL')
-    .and('contain', 'Generation')
+    .and('contain', 'Revision')
     .and('contain', 'Created')
     .and('contain', 'Conditions')
     .and('contain', 'Ready')

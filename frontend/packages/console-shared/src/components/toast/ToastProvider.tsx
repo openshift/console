@@ -58,6 +58,7 @@ const ToastProvider: React.FC = ({ children }) => {
               variant={toast.variant}
               timeout={toast.timeout}
               onTimeout={() => removeToast(toast.id)}
+              data-test={`${toast.title} alert`}
               actionClose={
                 toast.dismissible ? (
                   <AlertActionCloseButton

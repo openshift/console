@@ -9,6 +9,8 @@ import {
   topologyPage,
   topologySidePane,
 } from '@console/topology/integration-tests/support/pages/topology';
+import { functionsPO } from '../../pageObjects/functions-po';
+import { functionsPage } from '../../pages/functions/functions-page';
 
 Given('knative service, event source and sink connector are present in topology page', () => {
   cy.get(topologyPO.graph.eventSourceWorkload).should('be.visible');
@@ -47,7 +49,7 @@ Then(
 );
 
 Then('user is able to see context menu', () => {
-  cy.get('ul[role="menu"]').should('be.visible');
+  cy.get('div.odc-topology-context-menu').should('be.visible');
 });
 
 Then('modal displays with the header name {string}', (title: string) => {
@@ -61,7 +63,7 @@ When('user selects the Delete option on {string} modal', (modalTitle: string) =>
 });
 
 Then('event source {string} will not be displayed in topology page', (eventSourceName: string) => {
-  cy.get('[data-id="odc-topology-graph"]').should('not.have.text', eventSourceName);
+  cy.get(functionsPO.topologyGraph).should('not.have.text', eventSourceName);
 });
 
 Then('Resource dropdown is displayed in Move Sink modal', () => {
@@ -97,6 +99,7 @@ When('user clicks save on Move Sink modal', () => {
 });
 
 When('user clicks on event source {string} to open side bar', (eventSourceName: string) => {
+  functionsPage.clickonEmptyAreaTopology();
   topologyPage.componentNode(eventSourceName).click({ force: true });
 });
 

@@ -79,8 +79,7 @@ Feature: Knative Eventing Broker and Trigger
              Then user will see connection between Broker and Subscriber
 
 
-    @regression @broken-test
-    # Bug 2090193 : https://bugzilla.redhat.com/show_bug.cgi?id=2090193
+        @regression
         Scenario: Sidebar for the Event Source sinked Broker subscribed to Knative Service: KE-04-TC07
             Given user is having Broker "broker-test1" subscribed to Knative Service on the Topology page
               And user has already added the trigger
