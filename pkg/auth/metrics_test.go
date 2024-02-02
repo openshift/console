@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/metrics"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/client-go/rest"
@@ -135,9 +136,7 @@ func TestLoginSuccessful(t *testing.T) {
 			k8sConfig := &rest.Config{
 				Host: strings.TrimPrefix(testserver.URL, "http://"),
 			}
-			ls := &loginState{
-				rawToken: testcase.name,
-			}
+			ls := sessions.NewRawLoginState(testcase.name)
 
 			m := NewMetrics()
 			m.loginSuccessfulSync(k8sConfig, ls)

@@ -27,6 +27,7 @@ import (
 
 	oauthv1client "github.com/openshift/client-go/oauth/clientset/versioned/typed/oauth/v1"
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/auth/sessions"
 	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
 	"github.com/openshift/console/pkg/devfile"
 	"github.com/openshift/console/pkg/graphql/resolver"
@@ -144,6 +145,8 @@ type Server struct {
 	BaseURL                             *url.URL
 	Branding                            string
 	ClusterManagementProxyConfig        *proxy.Config
+	CookieEncryptionKey                 []byte
+	CookieAuthenticationKey             []byte
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
 	CustomLogoFile                      string
@@ -247,12 +250,12 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handleFunc := func(path string, handler http.HandlerFunc) { handle(path, handler) }
 
-	fn := func(loginInfo auth.LoginJSON, successURL string, w http.ResponseWriter) {
+	fn := func(loginInfo sessions.LoginJSON, successURL string, w http.ResponseWriter) {
 		jsg := struct {
-			auth.LoginJSON    `json:",inline"`
-			LoginSuccessURL   string `json:"loginSuccessURL"`
-			Branding          string `json:"branding"`
-			CustomProductName string `json:"customProductName"`
+			sessions.LoginJSON `json:",inline"`
+			LoginSuccessURL    string `json:"loginSuccessURL"`
+			Branding           string `json:"branding"`
+			CustomProductName  string `json:"customProductName"`
 		}{
 			LoginJSON:         loginInfo,
 			LoginSuccessURL:   successURL,

@@ -11,6 +11,7 @@ require (
 	github.com/devfile/registry-support/index/generator v0.0.0-20231020181239-1168591f0b4e
 	github.com/devfile/registry-support/registry-library v0.0.0-20231020181239-1168591f0b4e
 	github.com/golang/mock v1.6.0
+	github.com/gorilla/sessions v1.2.2
 	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v1.5.0
 	github.com/openshift/api v3.9.0+incompatible
@@ -97,6 +98,7 @@ require (
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
+	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gosuri/uitable v0.0.4 // indirect
 	github.com/gregjones/httpcache v0.0.0-20180305231024-9cad4c3443a7 // indirect
 	github.com/h2non/filetype v1.1.1 // indirect

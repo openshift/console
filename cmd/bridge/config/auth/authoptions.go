@@ -13,6 +13,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 
+	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/proxy"
@@ -72,12 +73,12 @@ func (c *AuthOptions) AddFlags(fs *flag.FlagSet) {
 }
 
 func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
-	setIfUnset(&c.AuthType, config.AuthType)
-	setIfUnset(&c.ClientID, config.ClientID)
-	setIfUnset(&c.IssuerURL, config.OIDCIssuer)
-	setIfUnset(&c.ClientSecretFilePath, config.ClientSecretFile)
-	setIfUnset(&c.CAFilePath, config.OAuthEndpointCAFile)
-	setIfUnset(&c.LogoutRedirect, config.LogoutRedirect)
+	serverconfig.SetIfUnset(&c.AuthType, config.AuthType)
+	serverconfig.SetIfUnset(&c.ClientID, config.ClientID)
+	serverconfig.SetIfUnset(&c.IssuerURL, config.OIDCIssuer)
+	serverconfig.SetIfUnset(&c.ClientSecretFilePath, config.ClientSecretFile)
+	serverconfig.SetIfUnset(&c.CAFilePath, config.OAuthEndpointCAFile)
+	serverconfig.SetIfUnset(&c.LogoutRedirect, config.LogoutRedirect)
 
 	if c.InactivityTimeoutSeconds == 0 {
 		c.InactivityTimeoutSeconds = config.InactivityTimeoutSeconds
@@ -88,7 +89,7 @@ func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
 	}
 }
 
-func (c *AuthOptions) Complete(k8sAuthType string) (*CompletedOptions, error) {
+func (c *AuthOptions) Complete() (*CompletedOptions, error) {
 	// default values before running validation
 	if len(c.AuthType) == 0 {
 		c.AuthType = "openshift"
@@ -99,7 +100,7 @@ func (c *AuthOptions) Complete(k8sAuthType string) (*CompletedOptions, error) {
 		c.InactivityTimeoutSeconds = 0
 	}
 
-	if errs := c.Validate(k8sAuthType); len(errs) > 0 {
+	if errs := c.Validate(); len(errs) > 0 {
 		return nil, utilerrors.NewAggregate(errs)
 	}
 
@@ -141,7 +142,7 @@ func (c *AuthOptions) Complete(k8sAuthType string) (*CompletedOptions, error) {
 	}, nil
 }
 
-func (c *AuthOptions) Validate(k8sAuthType string) []error {
+func (c *AuthOptions) Validate() []error {
 	var errs []error
 
 	switch c.AuthType {
@@ -179,7 +180,7 @@ func (c *AuthOptions) Validate(k8sAuthType string) []error {
 		}
 	}
 
-	switch k8sAuthType {
+	switch c.AuthType {
 	case "oidc", "openshift":
 	default:
 		if c.InactivityTimeoutSeconds > 0 {
@@ -194,6 +195,7 @@ func (c *completedOptions) ApplyTo(
 	srv *server.Server,
 	k8sEndpoint *url.URL,
 	caCertFilePath string,
+	sessionConfig *session.CompletedOptions,
 ) error {
 	srv.InactivityTimeout = c.InactivityTimeoutSeconds
 	srv.LogoutRedirect = c.LogoutRedirectURL
@@ -204,6 +206,7 @@ func (c *completedOptions) ApplyTo(
 		k8sEndpoint,
 		caCertFilePath,
 		srv.InternalProxiedK8SClientConfig,
+		sessionConfig,
 	)
 
 	return err
@@ -214,6 +217,7 @@ func (c *completedOptions) getAuthenticator(
 	k8sEndpoint *url.URL,
 	caCertFilePath string,
 	k8sClientConfig *rest.Config,
+	sessionConfig *session.CompletedOptions,
 ) (*auth.Authenticator, error) {
 
 	if c.AuthType == "disabled" {
@@ -268,9 +272,11 @@ func (c *completedOptions) getAuthenticator(
 		ErrorURL:   authLoginErrorEndpoint,
 		SuccessURL: authLoginSuccessEndpoint,
 
-		CookiePath:    cookiePath,
-		RefererPath:   refererPath,
-		SecureCookies: useSecureCookies,
+		CookiePath:              cookiePath,
+		RefererPath:             refererPath,
+		SecureCookies:           useSecureCookies,
+		CookieEncryptionKey:     sessionConfig.CookieEncryptionKey,
+		CookieAuthenticationKey: sessionConfig.CookieAuthenticationKey,
 
 		K8sConfig: k8sClientConfig,
 	}
@@ -281,10 +287,4 @@ func (c *completedOptions) getAuthenticator(
 	}
 
 	return authenticator, nil
-}
-
-func setIfUnset(flagVal *string, val string) {
-	if len(*flagVal) == 0 {
-		*flagVal = val
-	}
 }
