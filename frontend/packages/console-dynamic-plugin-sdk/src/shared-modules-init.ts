@@ -73,7 +73,14 @@ const initSharedScope = () => {
 
   return scope;
 };
+
 const sharedScope = initSharedScope();
+
+if (process.env.NODE_ENV !== 'production') {
+  // Expose webpack shared scope object for debugging
+  window.webpackSharedScope = sharedScope;
+}
+
 /**
  * At runtime, the Console application will initialize shared modules for each
  * dynamic plugin before loading any of the modules exposed by the given plugin.

@@ -163,6 +163,9 @@ export const getWebpackPackage: GetPackageDefinition = (
       ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
+    peerDependencies: {
+      typescript: '>=4.5.5',
+    },
   },
   filesToCopy: {
     ...commonFiles,

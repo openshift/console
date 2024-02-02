@@ -60,6 +60,42 @@ Notes:
 - **[Tech]** - Release 4.10 was Tech Preview for the SDK packages
 - **[Dev]** - Release 4.9 was Dev Preview for the SDK packages
 
+## Shared modules
+
+Console is [configured](./src/shared-modules.ts) to share specific modules with its dynamic plugins.
+
+The following shared modules are provided by Console, without plugins providing their own fallback:
+
+- `@openshift-console/dynamic-plugin-sdk`
+- `@openshift-console/dynamic-plugin-sdk-internal`
+- `react`
+- `react-i18next`
+- `react-redux`
+- `react-router`
+- `react-router-dom`
+- `react-router-dom-v5-compat`
+- `redux`
+- `redux-thunk`
+
+For backwards compatibility, Console also provides the following PatternFly **4.x** shared modules:
+
+- `@patternfly/react-core`
+- `@patternfly/react-table`
+- `@patternfly/quickstarts`
+
+Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package (1.0.0 and higher) include
+support for automatic detection and sharing of individual PatternFly 5.x dynamic modules.
+
+Plugins using PatternFly 5.x dependencies should generally avoid non-index imports for any PatternFly
+packages, for example:
+
+```ts
+// Do _not_ do this:
+import { MonitoringIcon } from '@patternfly/react-icons/dist/esm/icons/monitoring-icon';
+// Instead, do this:
+import { MonitoringIcon } from '@patternfly/react-icons';
+```
+
 ## Plugin metadata
 
 Older versions of webpack `ConsoleRemotePlugin` assumed that the plugin metadata is specified via
