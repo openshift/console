@@ -30,7 +30,7 @@ export function useFeedbackLocal(reportBug) {
     informDirectionDescription: t(
       'public~By participating in feedback sessions, usability tests, and interviews with our',
     ),
-    informRedhatDirection: t('public~Inform the direction of Red Hat'),
+    informDirection: t('public~Inform the direction of Red Hat'),
     learnAboutResearchOpportunities: t(
       'public~Learn about opportunities to share your feedback with our User Research Team.',
     ),
