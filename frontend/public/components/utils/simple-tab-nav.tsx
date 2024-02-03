@@ -19,7 +19,7 @@ class SimpleTab extends React.PureComponent<SimpleTabProps> {
       'co-m-horizontal-nav-item--active': active,
     });
     return (
-      <li className={className}>
+      <li className={className} data-test-id={`horizontal-link-${title}`}>
         <button onClick={this.onClick} type="button">
           {title}
         </button>
@@ -73,6 +73,7 @@ class SimpleTabNav_ extends React.Component<SimpleTabNavProps, SimpleTabNavState
               active={selectedTabData.name === tab.name}
               onClick={this.onClickTab}
               title={tab.name}
+              data-test={`horizonta-link-${tab.name}`}
             />
           ))}
         </ul>
