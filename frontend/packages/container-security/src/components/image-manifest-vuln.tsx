@@ -55,6 +55,7 @@ export const highestSeverityIndex = (obj: ImageManifestVuln) =>
 
 export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> = (props) => {
   const { t } = useTranslation();
+  const queryURL = quayURLFor(props.obj);
   return (
     <>
       <div className="co-m-pane__body">
@@ -78,10 +79,11 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
                 obj={props.obj}
                 path="obj.spec.manifest"
               >
-                <ExternalLink
-                  text={shortenHash(props.obj.spec.manifest)}
-                  href={quayURLFor(props.obj)}
-                />
+                {queryURL ? (
+                  <ExternalLink text={shortenHash(props.obj.spec.manifest)} href={queryURL} />
+                ) : (
+                  <span className="small text-muted">-</span>
+                )}
               </DetailsItem>
             </dl>
           </div>
@@ -157,6 +159,7 @@ export const ImageManifestVulnTableRow: React.FC<RowFunctionArgs<ImageManifestVu
   obj,
 }) => {
   const { name, namespace } = obj.metadata;
+  const queryURL = quayURLFor(obj);
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -184,7 +187,11 @@ export const ImageManifestVulnTableRow: React.FC<RowFunctionArgs<ImageManifestVu
       <TableData className={tableColumnClasses[4]}>{obj.status?.fixableCount || 0}</TableData>
       <TableData className={tableColumnClasses[5]}>{totalCount(obj)}</TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ExternalLink text={shortenHash(obj.spec.manifest)} href={quayURLFor(obj)} />
+        {queryURL ? (
+          <ExternalLink text={shortenHash(obj.spec.manifest)} href={queryURL} />
+        ) : (
+          <span className="small text-muted">-</span>
+        )}
       </TableData>
     </>
   );
