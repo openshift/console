@@ -1,6 +1,9 @@
 package usersettings
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+
 	authenticationv1 "k8s.io/api/authentication/v1"
 	core "k8s.io/api/core/v1"
 	rbac "k8s.io/api/rbac/v1"
@@ -16,6 +19,14 @@ func newUserSettingMeta(userInfo authenticationv1.UserInfo) (*UserSettingMeta, e
 		resourceIdentifier = string(uid)
 	} else if name == "kube:admin" {
 		resourceIdentifier = "kubeadmin"
+	} else {
+		// to avoid issues when the username contains special characters like '@'
+		// that are not allowed in kube resource names
+		// we also can't use base64 encoding because only lowercase chars are allowed
+		// in CM names
+		sha256Hash := sha256.New()
+		sha256Hash.Write([]byte(resourceIdentifier))
+		resourceIdentifier = hex.EncodeToString(sha256Hash.Sum(nil))
 	}
 
 	return &UserSettingMeta{
