@@ -933,7 +933,7 @@
   "Remove User {{ user }} from Group {{ name }}?": "그룹 {{ name }}에서 사용자 {{ user }}을/를 제거하시겠습니까?",
   "Remove": "삭제",
   "Remove volume?": "볼륨을 제거하시겠습니까?",
-  "Are you sure you want to remove volume <2>{volume.name}</2> from <5>{kind.label}</5>: <7>{resource.metadata.name}</7>?": "<5>{kind.label}</5>: <7>{resource.metadata.name}</7>에서 <2>{volume.name}</2>을 삭제하시겠습니까?",
+  "Are you sure you want to remove volume <2>{{volumeName}}</2> from <5>{{label}}</5>: <7>{{resourceName}}</7>?": "<5>{{label}}</5>: <7>{{resourceName}}</7>에서 <2>{{volumeName}}</2>을 삭제하시겠습니까?",
   "Note: This will not remove the underlying {{type}}.": "참고: 이렇게 해도 기본값 {{type}}이 제거되지는 않습니다.",
   "Remove volume": "볼륨 제거",
   "You cannot rollback a paused {{ deployType }}. You must resume it first.": "일시 중지된 {{ deployType }}은 롤백할 수 없습니다. 먼저 재개해야 합니다.",

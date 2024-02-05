@@ -933,7 +933,7 @@
   "Remove User {{ user }} from Group {{ name }}?": "从组 {{ name }} 中删除用户 {{ user }}?",
   "Remove": "删除",
   "Remove volume?": "删除卷?",
-  "Are you sure you want to remove volume <2>{volume.name}</2> from <5>{kind.label}</5>: <7>{resource.metadata.name}</7>?": "您确定要从 <5>{kind.label}</5> 中删除卷 <2>{volume.name}</2>: <7>{resource.metadata.name}</7>？",
+  "Are you sure you want to remove volume <2>{{volumeName}}</2> from <5>{{label}}</5>: <7>{{resourceName}}</7>?": "您确定要从 <5>{{label}}</5> 中删除卷 <2>{{volumeName}}</2>: <7>{{resourceName}}</7>？",
   "Note: This will not remove the underlying {{type}}.": "注： 这不会删除底层 {{type}}。",
   "Remove volume": "删除卷",
   "You cannot rollback a paused {{ deployType }}. You must resume it first.": "您无法回滚一个暂停的 {{ deployType }}。您必须首先恢复它。",
