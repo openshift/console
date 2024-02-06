@@ -102,17 +102,17 @@ const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) =
     <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
       <thead className="pf-v5-c-table__thead">
         <tr className="pf-v5-c-table__tr">
+          <th className="pf-v5-c-table__th">{t('public~Type')}</th>
           <th className="pf-v5-c-table__th">{t('public~Status')}</th>
           <th className="pf-v5-c-table__th">{t('public~Timeout')}</th>
-          <th className="pf-v5-c-table__th">{t('public~Type')}</th>
         </tr>
       </thead>
       <tbody className="pf-v5-c-table__tbody">
         {obj.spec.unhealthyConditions.map(({ status, timeout, type }, i: number) => (
           <tr className="pf-v5-c-table__tr" key={i}>
+            <td className="pf-v5-c-table__td">{type}</td>
             <td className="pf-v5-c-table__td">{status}</td>
             <td className="pf-v5-c-table__td">{timeout}</td>
-            <td className="pf-v5-c-table__td">{type}</td>
           </tr>
         ))}
       </tbody>
