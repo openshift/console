@@ -13,6 +13,7 @@ import (
 
 	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/proxy"
+	"github.com/openshift/console/pkg/serverutils/asynccache"
 )
 
 // openShiftAuth implements OpenShift Authentication as defined in:
@@ -22,7 +23,7 @@ type openShiftAuth struct {
 
 	k8sClient *http.Client
 
-	oauthEndpointCache *AsyncCache[*oidcDiscovery]
+	oauthEndpointCache *asynccache.AsyncCache[*oidcDiscovery]
 }
 
 type oidcDiscovery struct {
@@ -52,7 +53,7 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 
 	// TODO: repeat the discovery several times as in the auth.go logic
 	var err error
-	o.oauthEndpointCache, err = NewAsyncCache[*oidcDiscovery](ctx, 5*time.Minute, o.getOIDCDiscoveryInternal)
+	o.oauthEndpointCache, err = asynccache.NewAsyncCache[*oidcDiscovery](ctx, 5*time.Minute, o.getOIDCDiscoveryInternal)
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct OAuth endpoint cache: %w", err)
 	}
