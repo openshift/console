@@ -16,10 +16,10 @@ export type BuildStatus = IBuildV1Alpha1['status'] & IBuildV1Beta1['status'];
 // Make status.conditions compatible with @console/internal/components/conditions props
 export type BuildRun =
   | (IBuildRunV1Alpha1 & {
-      status?: { conditions?: K8sResourceCondition[] };
+      status?: { conditions?: K8sResourceCondition[]; latestTaskRunRef?: string };
     })
   | (IBuildRunV1Beta1 & {
-      status?: { conditions?: K8sResourceCondition[]; latestTaskRunRef?: string };
+      status?: { conditions?: K8sResourceCondition[]; taskRunName?: string };
     });
 
 // The enum values need to match the dynamic-plugin `Status` `status` prop.
