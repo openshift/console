@@ -74,6 +74,9 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
   const { t } = useTranslation();
   const { kind, resource, volume } = props;
   const type: string = _.get(getVolumeType(volume.volumeDetail), 'id', '');
+  const volumeName = volume.name;
+  const label = kind.label;
+  const resourceName = resource.metadata.name;
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
@@ -83,8 +86,8 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
         <div>
           <Trans t={t} ns="public">
             Are you sure you want to remove volume{' '}
-            <strong className="co-break-word">{volume.name}</strong> from{' '}
-            <strong>{kind.label}</strong>: <strong>{resource.metadata.name}</strong>?
+            <strong className="co-break-word">{{ volumeName }}</strong> from{' '}
+            <strong>{{ label }}</strong>: <strong>{{ resourceName }}</strong>?
           </Trans>
         </div>
         {type && (
