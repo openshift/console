@@ -15,9 +15,12 @@ export const quickStartSidebarPO = {
   quickStartSidebarBody: '[data-test~="drawer"] [data-test~="content"]',
   startButton: `[data-test="Start button"]`,
   nextButton: '[data-test="Next button"]',
+  backButton: '[data-testid="qs-drawer-back"]',
   restartSideNoteAction: '[data-testid="qs-drawer-side-note-action"]',
   closeButton: '[data-test="Close button"]',
-  closePanel: '[data-test~="drawer"] [aria-label="Close drawer panel"]',
+  closePanel: '[data-testid="qs-drawer-close"] [aria-label="Close drawer panel"] ',
+  yesOptionCheckInput: '[data-testid="qs-drawer-check-yes"]',
+  noOptionCheckInput: '[data-testid="qs-drawer-check-no"]',
 };
 
 export const quickStartLeaveModalPO = {
