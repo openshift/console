@@ -19,6 +19,9 @@ jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', ()
 }));
 jest.mock('../useUserSettingsCompatibility', () => ({ useUserSettingsCompatibility: jest.fn() }));
 jest.mock('@console/internal/module/k8s/k8s-models', () => ({ useModelFinder: jest.fn() }));
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => {},
+}));
 
 describe('usePinnedResources', () => {
   beforeEach(() => {

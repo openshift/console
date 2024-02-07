@@ -6,6 +6,10 @@ import {
   GettingStartedCardProps,
 } from '../GettingStartedCard';
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => {},
+}));
+
 describe('GettingStartedCard', () => {
   it('should render without any props without an error', () => {
     shallow(<GettingStartedCard {...({} as GettingStartedCardProps)} />);

@@ -3,6 +3,11 @@ import {
   ResolvedExtension,
   TelemetryListener,
 } from '@console/dynamic-plugin-sdk';
+import {
+  CLUSTER_TELEMETRY_ANALYTICS,
+  USER_TELEMETRY_ANALYTICS,
+  useUserSettings,
+} from '@console/shared';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import {
   getConsoleVersion,
@@ -15,6 +20,12 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
   ...require.requireActual('@console/dynamic-plugin-sdk'),
   useResolvedExtensions: jest.fn(),
 }));
+
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  useUserSettings: jest.fn(),
+}));
+
+const mockUserSettings = useUserSettings as jest.Mock;
 
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
 
@@ -99,6 +110,7 @@ describe('useTelemetry', () => {
         },
       },
     ];
+    mockUserSettings.mockReturnValue(['', jest.fn(), true]);
     useResolvedExtensionsMock.mockReturnValue([extensions]);
   });
 
@@ -106,6 +118,10 @@ describe('useTelemetry', () => {
     window.SERVER_FLAGS = { ...originServerFlags };
     delete window.SERVER_FLAGS.consoleVersion;
     delete window.SERVER_FLAGS.telemetry;
+    window.SERVER_FLAGS = {
+      ...window.SERVER_FLAGS,
+      telemetry: { STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE },
+    };
     updateServerFlagsFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
@@ -121,7 +137,7 @@ describe('useTelemetry', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       consoleVersion: 'x.y.z',
-      telemetry: { CLUSTER_TYPE: 'OSD' },
+      telemetry: { CLUSTER_TYPE: 'OSD', STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE },
     };
     updateServerFlagsFromTests();
     const { result } = testHook(() => useTelemetry());
@@ -138,7 +154,7 @@ describe('useTelemetry', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       consoleVersion: 'x.y.z',
-      telemetry: { CLUSTER_TYPE: 'OSD' },
+      telemetry: { CLUSTER_TYPE: 'OSD', STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE },
     };
     updateServerFlagsFromTests();
     const { result } = testHook(() => useTelemetry());
@@ -157,7 +173,11 @@ describe('useTelemetry', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       consoleVersion: 'x.y.z',
-      telemetry: { CLUSTER_TYPE: 'OSD', DEVSANDBOX: 'true' },
+      telemetry: {
+        CLUSTER_TYPE: 'OSD',
+        DEVSANDBOX: 'true',
+        STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
+      },
     };
     updateServerFlagsFromTests();
     const { result } = testHook(() => useTelemetry());
@@ -168,5 +188,112 @@ describe('useTelemetry', () => {
       consoleVersion: 'x.y.z',
       clusterType: 'DEVSANDBOX',
     });
+  });
+
+  it('When telemetry event is disabled in cluster configuration', () => {
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      consoleVersion: 'x.y.z',
+      telemetry: {
+        CLUSTER_TYPE: 'OSD',
+        DEVSANDBOX: 'true',
+        STATE: CLUSTER_TELEMETRY_ANALYTICS.DISABLED,
+      },
+    };
+    updateServerFlagsFromTests();
+    const { result } = testHook(() => useTelemetry());
+    const fireTelemetryEvent = result.current;
+    fireTelemetryEvent('test 5');
+    expect(listener).toHaveBeenCalledTimes(0);
+  });
+
+  it('When telemetry event is opt-in in cluster configuration and user accepted to send telemetry event', () => {
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      consoleVersion: 'x.y.z',
+      telemetry: {
+        CLUSTER_TYPE: 'OSD',
+        DEVSANDBOX: 'true',
+        STATE: CLUSTER_TELEMETRY_ANALYTICS['OPT-IN'],
+      },
+    };
+    mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
+    updateServerFlagsFromTests();
+    const { result } = testHook(() => useTelemetry());
+    const fireTelemetryEvent = result.current;
+    fireTelemetryEvent('test 6');
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('When telemetry event is opt-in in cluster configuration and user denied to send telemetry event', () => {
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      consoleVersion: 'x.y.z',
+      telemetry: {
+        CLUSTER_TYPE: 'OSD',
+        DEVSANDBOX: 'true',
+        STATE: CLUSTER_TELEMETRY_ANALYTICS['OPT-IN'],
+      },
+    };
+    mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
+    updateServerFlagsFromTests();
+    const { result } = testHook(() => useTelemetry());
+    const fireTelemetryEvent = result.current;
+    fireTelemetryEvent('test 7');
+    expect(listener).toHaveBeenCalledTimes(0);
+  });
+
+  it('When telemetry event is opt-out in cluster configuration and user accepted to send telemetry event', () => {
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      consoleVersion: 'x.y.z',
+      telemetry: {
+        CLUSTER_TYPE: 'OSD',
+        DEVSANDBOX: 'true',
+        STATE: CLUSTER_TELEMETRY_ANALYTICS['OPT-OUT'],
+      },
+    };
+    mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
+    updateServerFlagsFromTests();
+    const { result } = testHook(() => useTelemetry());
+    const fireTelemetryEvent = result.current;
+    fireTelemetryEvent('test 8');
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('When telemetry event is opt-out in cluster configuration and user denied to send telemetry event', () => {
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      consoleVersion: 'x.y.z',
+      telemetry: {
+        CLUSTER_TYPE: 'OSD',
+        DEVSANDBOX: 'true',
+        STATE: CLUSTER_TELEMETRY_ANALYTICS['OPT-OUT'],
+      },
+    };
+    mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
+    updateServerFlagsFromTests();
+    const { result } = testHook(() => useTelemetry());
+    const fireTelemetryEvent = result.current;
+    fireTelemetryEvent('test 9');
+    expect(listener).toHaveBeenCalledTimes(0);
+  });
+
+  it('When telemetry event is opt-in in cluster configuration and user not selected either accept or deny', () => {
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      consoleVersion: 'x.y.z',
+      telemetry: {
+        CLUSTER_TYPE: 'OSD',
+        DEVSANDBOX: 'true',
+        STATE: CLUSTER_TELEMETRY_ANALYTICS['OPT-IN'],
+      },
+    };
+    mockUserSettings.mockReturnValue(['', jest.fn(), true]);
+    updateServerFlagsFromTests();
+    const { result } = testHook(() => useTelemetry());
+    const fireTelemetryEvent = result.current;
+    fireTelemetryEvent('test 10');
+    expect(listener).toHaveBeenCalledTimes(0);
   });
 });

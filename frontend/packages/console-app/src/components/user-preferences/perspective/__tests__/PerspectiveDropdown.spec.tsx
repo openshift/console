@@ -14,6 +14,10 @@ jest.mock('../usePreferredPerspective', () => ({
   usePreferredPerspective: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => {},
+}));
+
 const useExtensionsMock = useExtensions as jest.Mock;
 const usePreferredPerspectiveMock = usePreferredPerspective as jest.Mock;
 

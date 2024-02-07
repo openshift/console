@@ -4,6 +4,10 @@ import { Drawer } from '@console/shared';
 import CloseButton from '@console/shared/src/components/close-button';
 import CloudShellDrawer from '../CloudShellDrawer';
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => {},
+}));
+
 describe('CloudShellDrawerComponent', () => {
   it('should render children as Drawer children when present', () => {
     const wrapper = shallow(

@@ -11,6 +11,10 @@ import {
 import { getFilterById } from '../filter-utils';
 import FilterDropdown from '../FilterDropdown';
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => {},
+}));
+
 describe(FilterDropdown.displayName, () => {
   let dropdownFilter: DisplayFilters;
   let onChange: () => void;

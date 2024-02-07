@@ -25,6 +25,10 @@ jest.mock('@console/internal/co-fetch', () => ({
   coFetch: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => {},
+}));
+
 beforeEach(() => {
   coFetchMock.mockClear();
   coFetchMock.mockReturnValue(

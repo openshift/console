@@ -14,6 +14,10 @@ jest.mock('react', () => {
   };
 });
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => {},
+}));
+
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
   return {
