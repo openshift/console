@@ -158,10 +158,13 @@ export const getWebpackPackage: GetPackageDefinition = (
       ),
       ...parseDeps(
         rootPackage,
-        ['ajv', 'chalk', 'comment-json', 'find-up', 'read-pkg', 'semver'],
+        ['ajv', 'chalk', 'comment-json', 'find-up', 'glob', 'read-pkg', 'semver'],
         missingDepCallback,
       ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
+    },
+    peerDependencies: {
+      typescript: '>=4.5.5',
     },
   },
   filesToCopy: {

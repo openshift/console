@@ -54,7 +54,7 @@ const extractCSS = new MiniCssExtractPlugin({
 const virtualModules = new VirtualModulesPlugin();
 
 const getVendorModuleRegExp = (vendorModules: string[]) =>
-  new RegExp(`node_modules\\/(${vendorModules.map((m) => _.escapeRegExp(m)).join('|')})\\/`);
+  new RegExp(`node_modules\\/(${vendorModules.map(_.escapeRegExp).join('|')})\\/`);
 
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
 

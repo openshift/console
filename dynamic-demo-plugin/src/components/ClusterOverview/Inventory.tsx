@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { MonitoringIcon } from '@patternfly/react-icons/dist/esm/icons/monitoring-icon';
+import { MonitoringIcon } from '@patternfly/react-icons';
 import {
   K8sResourceCommon,
   useK8sWatchResource,
