@@ -82,7 +82,7 @@
     }
   ],
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "cucumberautocomplete.steps": ["./packages/*/integration-tests/support/step-definitions/*/*.ts"],
   "cucumberautocomplete.strictGherkinCompletion": true,
@@ -90,6 +90,12 @@
     "comments": "on",
     "strings": "on",
     "other": "on"
+  },
+  "[javascript][javascriptreact][typescript][typescriptreact]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "never",
+      "source.sortImports": "never"
+    }
   }
   // TODO support prettier + stylelint
   // "prettier.stylelintIntegration": true,
