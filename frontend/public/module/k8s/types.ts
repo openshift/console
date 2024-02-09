@@ -940,10 +940,12 @@ export type ResourceAccessReviewResponse = {
   groups: string[];
 } & K8sResourceCommon;
 
-export type UserKind = {
-  fullName?: string;
-  identities: string[];
-} & K8sResourceCommon;
+export type UserInfo = {
+  uid?: string;
+  username?: string;
+  group?: string[];
+  extra?: { [key: string]: string[] };
+}
 
 export type GroupKind = {
   users: string[];

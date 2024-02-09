@@ -607,6 +607,24 @@ export type SelfSubjectAccessReviewKind = {
   };
 };
 
+// per https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#selfsubjectreview-v1-authentication-k8s-io
+export type SelfSubjectReviewKind = {
+  apiVersion: string;
+  kind: string;
+  metadata?: ObjectMetadata;
+  status?: {
+    userInfo?: UserInfo
+  }
+}
+
+// per https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#userinfo-v1-authentication-k8s-io
+export type UserInfo = {
+  uid?: string;
+  username?: string;
+  group?: string[];
+  extra?: { [key: string]: string[] };
+}
+
 export type CodeEditorProps = {
   value?: string;
   language?: string;

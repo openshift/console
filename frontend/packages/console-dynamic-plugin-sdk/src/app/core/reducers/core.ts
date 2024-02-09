@@ -11,7 +11,7 @@ import { ActionType, CoreAction } from '../actions/core';
  * @returns The the updated state.
  */
 export const coreReducer = (
-  state: CoreState = { user: { identities: [] } },
+  state: CoreState = { user: { } },
   action: CoreAction,
 ): CoreState => {
   switch (action.type) {
@@ -41,7 +41,7 @@ export const coreReducer = (
     case ActionType.SetUser:
       return {
         ...state,
-        user: action.payload.user,
+        user: action.payload.userInfo,
       };
 
     default:

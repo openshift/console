@@ -1,7 +1,8 @@
-import { ImpersonateKind, SDKStoreState, UserKind } from '../../redux-types';
+import { UserInfo } from '../../../extensions';
+import { ImpersonateKind, SDKStoreState } from '../../redux-types';
 
 type GetImpersonate = (state: SDKStoreState) => ImpersonateKind;
-type GetUser = (state: SDKStoreState) => UserKind;
+type GetUser = (state: SDKStoreState) => UserInfo;
 
 /**
  * It provides impersonation details from the redux store.
