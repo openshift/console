@@ -56,6 +56,7 @@ export const init = () => {
       ns: [
         'console-app',
         'console-shared',
+        'console-telemetry-plugin',
         'container-security',
         'devconsole',
         'git-service',

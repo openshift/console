@@ -24,8 +24,8 @@ export const TelemetryNotifier = () => {
   return (
     <>
       {!currentUserPreferenceTelemetryValue &&
-        (window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS['OPT-IN'] ||
-          window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS['OPT-OUT']) && (
+        (window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTIN ||
+          window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTOUT) && (
           <div className="co-global-notifications" data-test="global-notifications">
             <div className="co-global-notification">
               <div className="co-global-telemetry-notification__content">

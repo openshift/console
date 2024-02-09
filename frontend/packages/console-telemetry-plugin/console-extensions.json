@@ -24,12 +24,19 @@
     "flags": { "required": ["TELEMETRY"] }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "providers.useTelemetryProvider" }
+    }
+  },
+  {
     "type": "console.cluster-configuration/group",
     "properties": {
       "id": "telemetry",
       "label": "%console-telemetry-plugin~Telemetry%",
       "insertAfter": "webTerminal"
-    }
+    },
+    "flags": { "required": ["TELEMETRY_ENABLED"] }
   },
   {
     "type": "console.cluster-configuration/item",

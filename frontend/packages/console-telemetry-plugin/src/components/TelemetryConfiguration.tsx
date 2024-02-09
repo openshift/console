@@ -40,16 +40,16 @@ const TelemetryAnalyticsSelect: React.FC<{
   const { t } = useTranslation();
   const options: TelemetryAnalyticsSelectOptions[] = [
     {
-      value: CLUSTER_TELEMETRY_ANALYTICS['OPT-IN'],
+      value: CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
       title: t('console-telemetry-plugin~Opt-in'),
       description: t('console-telemetry-plugin~Opt-in to send telemetry events.'),
-      isSelected: value === CLUSTER_TELEMETRY_ANALYTICS['OPT-IN'],
+      isSelected: value === CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
     },
     {
-      value: CLUSTER_TELEMETRY_ANALYTICS['OPT-OUT'],
+      value: CLUSTER_TELEMETRY_ANALYTICS.OPTOUT,
       title: t('console-telemetry-plugin~Opt-out'),
       description: t('console-telemetry-plugin~Opt-out to send telemetry events.'),
-      isSelected: value === CLUSTER_TELEMETRY_ANALYTICS['OPT-OUT'],
+      isSelected: value === CLUSTER_TELEMETRY_ANALYTICS.OPTOUT,
     },
     {
       value: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
@@ -68,7 +68,7 @@ const TelemetryAnalyticsSelect: React.FC<{
   const [isOpen, setIsOpen] = React.useState(false);
   const selection = options.find((option) => option.isSelected)?.value;
   return (
-    <>
+    <div data-test="telemetry-dropdown">
       <SelectDeprecated
         disabled={disabled}
         isOpen={isOpen}
@@ -83,12 +83,13 @@ const TelemetryAnalyticsSelect: React.FC<{
             value={option.value}
             description={option.description}
             onClick={() => onChange(option)}
+            data-test={`telemetry-dropdown-option-${option.title}`}
           >
             {option.title}
           </SelectOptionDeprecated>
         ))}
       </SelectDeprecated>
-    </>
+    </div>
   );
 };
 

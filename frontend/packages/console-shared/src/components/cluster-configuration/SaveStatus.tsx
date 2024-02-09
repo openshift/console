@@ -11,7 +11,12 @@ export const SaveStatus: React.FC<SaveStatusProps> = ({ status, error }) => {
   const { t } = useTranslation();
   if (status === 'successful') {
     return (
-      <Alert variant="success" isInline title={t('console-shared~Saved.')}>
+      <Alert
+        variant="success"
+        data-test="success-alert"
+        isInline
+        title={t('console-shared~Saved.')}
+      >
         {t(
           'console-shared~This config update requires a console rollout, this can take up to a minute and require a browser refresh.',
         )}

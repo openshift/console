@@ -46,43 +46,46 @@ export const useTelemetry = () => {
 
   const [extensions] = useResolvedExtensions<TelemetryListener>(isTelemetryListener);
 
+  React.useEffect(() => {
+    if (
+      currentUserPreferenceTelemetryValue === USER_TELEMETRY_ANALYTICS.ALLOW &&
+      window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTIN &&
+      telemetryArray.length > 0
+    ) {
+      telemetryArray.forEach((telemetryEvent) => {
+        extensions.forEach((e) =>
+          e.properties.listener(telemetryEvent.eventType, {
+            consoleVersion,
+            clusterType,
+            ...telemetryEvent,
+            path: telemetryEvent?.pathname,
+          }),
+        );
+      });
+      telemetryArray = [];
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUserPreferenceTelemetryValue]);
+
   return React.useCallback<TelemetryEventListener>(
     (eventType, properties) => {
       if (
-        !window.SERVER_FLAGS.telemetry?.STATE ||
         window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.DISABLED ||
         (currentUserPreferenceTelemetryValue === USER_TELEMETRY_ANALYTICS.DENY &&
-          (window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS['OPT-IN'] ||
-            window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS['OPT-OUT']))
+          (window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTIN ||
+            window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTOUT))
       ) {
         return;
       }
       if (
         !currentUserPreferenceTelemetryValue &&
-        window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS['OPT-IN']
+        window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTIN
       ) {
         telemetryArray.push({ ...properties, eventType });
         if (telemetryArray.length > 10) {
           telemetryArray.shift(); // Remove the first element
         }
         return;
-      }
-      if (
-        currentUserPreferenceTelemetryValue === USER_TELEMETRY_ANALYTICS.ALLOW &&
-        window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS['OPT-IN'] &&
-        telemetryArray.length > 0
-      ) {
-        telemetryArray.forEach((telemetryEvent) => {
-          extensions.forEach((e) =>
-            e.properties.listener(telemetryEvent.eventType, {
-              consoleVersion,
-              clusterType,
-              ...telemetryEvent,
-              path: telemetryEvent?.pathname,
-            }),
-          );
-        });
-        telemetryArray = [];
       }
       extensions.forEach((e) =>
         e.properties.listener(eventType, {

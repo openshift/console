@@ -190,7 +190,7 @@ describe('useTelemetry', () => {
     });
   });
 
-  it('When telemetry event is disabled in cluster configuration', () => {
+  it('Should not send telemetry event when cluster configuration telemetry state is set to disabled', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       consoleVersion: 'x.y.z',
@@ -207,14 +207,14 @@ describe('useTelemetry', () => {
     expect(listener).toHaveBeenCalledTimes(0);
   });
 
-  it('When telemetry event is opt-in in cluster configuration and user accepted to send telemetry event', () => {
+  it('Should send telemetry event when cluster configuration telemetry state is set to opt-in and user accepted to send telemetry event', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       consoleVersion: 'x.y.z',
       telemetry: {
         CLUSTER_TYPE: 'OSD',
         DEVSANDBOX: 'true',
-        STATE: CLUSTER_TELEMETRY_ANALYTICS['OPT-IN'],
+        STATE: CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
       },
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
@@ -225,14 +225,14 @@ describe('useTelemetry', () => {
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
-  it('When telemetry event is opt-in in cluster configuration and user denied to send telemetry event', () => {
+  it('Should not send telemetry event when cluster configuration telemetry state is set to opt-in and user denied to send telemetry event', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       consoleVersion: 'x.y.z',
       telemetry: {
         CLUSTER_TYPE: 'OSD',
         DEVSANDBOX: 'true',
-        STATE: CLUSTER_TELEMETRY_ANALYTICS['OPT-IN'],
+        STATE: CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
       },
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
@@ -243,14 +243,14 @@ describe('useTelemetry', () => {
     expect(listener).toHaveBeenCalledTimes(0);
   });
 
-  it('When telemetry event is opt-out in cluster configuration and user accepted to send telemetry event', () => {
+  it('Should send telemetry event when cluster configuration telemetry state is set to opt-out and user accepted to send telemetry event', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       consoleVersion: 'x.y.z',
       telemetry: {
         CLUSTER_TYPE: 'OSD',
         DEVSANDBOX: 'true',
-        STATE: CLUSTER_TELEMETRY_ANALYTICS['OPT-OUT'],
+        STATE: CLUSTER_TELEMETRY_ANALYTICS.OPTOUT,
       },
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
@@ -261,14 +261,14 @@ describe('useTelemetry', () => {
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
-  it('When telemetry event is opt-out in cluster configuration and user denied to send telemetry event', () => {
+  it('Should not send telemetry event when cluster configuration telemetry state is set to opt-out and user denied to send telemetry event', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       consoleVersion: 'x.y.z',
       telemetry: {
         CLUSTER_TYPE: 'OSD',
         DEVSANDBOX: 'true',
-        STATE: CLUSTER_TELEMETRY_ANALYTICS['OPT-OUT'],
+        STATE: CLUSTER_TELEMETRY_ANALYTICS.OPTOUT,
       },
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
@@ -279,14 +279,14 @@ describe('useTelemetry', () => {
     expect(listener).toHaveBeenCalledTimes(0);
   });
 
-  it('When telemetry event is opt-in in cluster configuration and user not selected either accept or deny', () => {
+  it('Should not send telemetry event when cluster configuration telemetry state is set to opt-in and user not accepted or denied to send telemetry event', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       consoleVersion: 'x.y.z',
       telemetry: {
         CLUSTER_TYPE: 'OSD',
         DEVSANDBOX: 'true',
-        STATE: CLUSTER_TELEMETRY_ANALYTICS['OPT-IN'],
+        STATE: CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
       },
     };
     mockUserSettings.mockReturnValue(['', jest.fn(), true]);
@@ -295,5 +295,22 @@ describe('useTelemetry', () => {
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 10');
     expect(listener).toHaveBeenCalledTimes(0);
+  });
+
+  it('Should send telemetry event when cluster configuration telemetry state is set to enforce', () => {
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      consoleVersion: 'x.y.z',
+      telemetry: {
+        CLUSTER_TYPE: 'OSD',
+        DEVSANDBOX: 'true',
+        STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
+      },
+    };
+    updateServerFlagsFromTests();
+    const { result } = testHook(() => useTelemetry());
+    const fireTelemetryEvent = result.current;
+    fireTelemetryEvent('test 11');
+    expect(listener).toHaveBeenCalledTimes(1);
   });
 });
