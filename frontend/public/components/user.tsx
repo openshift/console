@@ -8,7 +8,7 @@ import { sortable } from '@patternfly/react-table';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
-import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
+import { K8sKind, referenceForModel, UserInfo } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { RoleBindingsPage } from './RBAC';
 import {
@@ -33,10 +33,10 @@ const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
-    label: t('public~Impersonate User {{name}}', obj.metadata),
+  const impersonateAction: KebabAction = (kind: K8sKind, obj: UserInfo) => ({
+    label: t('public~Impersonate User {{name}}', obj),
     callback: () => {
-      startImpersonate('User', obj.metadata.name);
+      startImpersonate('User', obj.username);
       navigate(window.SERVER_FLAGS.basePath);
     },
     // Must use API group authorization.k8s.io, NOT user.openshift.io
@@ -44,7 +44,7 @@ const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
     accessReview: {
       group: 'authorization.k8s.io',
       resource: 'users',
-      name: obj.metadata.name,
+      name: obj.username,
       verb: 'impersonate',
     },
   });
@@ -61,17 +61,11 @@ const UserKebab = connect<{}, UserKebabDispatchProps, UserKebabProps>(null, {
   startImpersonate: UIActions.startImpersonate,
 })(UserKebab_);
 
-const UserTableRow: React.FC<RowFunctionArgs<UserKind>> = ({ obj }) => {
-  return (
+const UserTableRow: React.FC<RowFunctionArgs<UserInfo>> = ({ obj }) => {
+  return (// TODO: UserModel is probably wrong here, we're changing to UserInfo
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={referenceForModel(UserModel)} name={obj.metadata.name} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>{obj.fullName || '-'}</TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {_.map(obj.identities, (identity: string) => (
-          <div key={identity}>{identity}</div>
-        ))}
+        <ResourceLink kind={referenceForModel(UserModel)} name={obj.username} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <UserKebab user={obj} />
@@ -219,16 +213,16 @@ type UserKebabDispatchProps = {
 };
 
 type UserKebabProps = {
-  user: UserKind;
+  user: UserInfo;
 };
 
 const UserDetailsPage_: React.FC<UserKebabDispatchProps> = ({ startImpersonate, ...props }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
-    label: t('public~Impersonate User {{name}}', obj.metadata),
+  const impersonateAction: KebabAction = (kind: K8sKind, obj: UserInfo) => ({
+    label: t('public~Impersonate User {{name}}', obj),
     callback: () => {
-      startImpersonate('User', obj.metadata.name);
+      startImpersonate('User', obj.username);
       navigate(window.SERVER_FLAGS.basePath);
     },
     // Must use API group authorization.k8s.io, NOT user.openshift.io
@@ -236,7 +230,7 @@ const UserDetailsPage_: React.FC<UserKebabDispatchProps> = ({ startImpersonate, 
     accessReview: {
       group: 'authorization.k8s.io',
       resource: 'users',
-      name: obj.metadata.name,
+      name: obj.username,
       verb: 'impersonate',
     },
   });
@@ -264,9 +258,9 @@ type UserPageProps = {
 };
 
 type RoleBindingsTabProps = {
-  obj: UserKind;
+  obj: UserInfo;
 };
 
 type UserDetailsProps = {
-  obj: UserKind;
+  obj: UserInfo;
 };
