@@ -47,8 +47,14 @@ compatible versions of distributable SDK packages to versions of the OpenShift C
 
 | Console Version   | SDK Package                                     | Last Package Version |
 | ----------------- | ----------------------------------------------- | -------------------- |
-| 4.12.x            | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
+| 4.15.x            | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
 |                   | `@openshift-console/dynamic-plugin-sdk-webpack` | Latest               |
+| 4.14.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.21               |
+|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.11               |
+| 4.13.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.19               |
+|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
+| 4.12.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.18               |
+|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
 | 4.11.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.12               |
 |                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.7                |
 | 4.10.x **[Tech]** | `@openshift-console/dynamic-plugin-sdk`         | 0.0.3                |
