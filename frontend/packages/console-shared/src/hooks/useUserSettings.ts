@@ -65,6 +65,9 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
 
   const hashNameOrKubeadmin = (name: string): string | null => {
+    /* eslint-disable no-console */
+    console.log('USERNAME ---', name);
+    /* eslint-enable no-console */
     if (!name) {
       return null;
     }
@@ -81,8 +84,8 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   const userUid = useSelector(
     (state: RootState) =>
       getImpersonate(state)?.name ??
-      getUser(state)?.metadata?.uid ??
-      hashNameOrKubeadmin(getUser(state).metadata?.name) ??
+      getUser(state)?.uid ??
+      hashNameOrKubeadmin(getUser(state)?.username) ??
       '',
   );
   const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
