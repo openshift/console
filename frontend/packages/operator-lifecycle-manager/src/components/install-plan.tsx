@@ -40,7 +40,7 @@ import {
   referenceForOwnerRef,
   k8sPatch,
   apiVersionForReference,
-  UserKind,
+  UserInfo,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { FLAGS, GreenCheckCircleIcon, Status, useFlag } from '@console/shared';
@@ -249,18 +249,18 @@ export const InstallPlansPage: React.FC<InstallPlansPageProps> = (props) => {
   );
 };
 
-const updateUser = (isOpenShift: boolean, user: UserKind): string => {
+const updateUser = (isOpenShift: boolean, user: UserInfo): string => {
   if (!isOpenShift) {
     return authSvc.name();
   }
-  return user.fullName || user.metadata?.name;
+  return user?.username;
 };
 
 export const NeedInstallPlanPermissions: React.FC<NeedInstallPlanPermissionsProps> = ({
   installPlan,
 }) => {
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
-  const user = useSelector<RootState, object>(getUser);
+  const user: UserInfo = useSelector<RootState, object>(getUser);
 
   const [username, setUsername] = React.useState(updateUser(isOpenShift, user));
 
@@ -564,7 +564,7 @@ export type InstallPlanPreviewState = {
 
 export type NeedInstallPlanPermissionsProps = {
   installPlan: InstallPlanKind;
-  user?: UserKind;
+  user?: UserInfo;
 };
 
 InstallPlansPage.displayName = 'InstallPlansPage';

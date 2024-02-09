@@ -18,6 +18,9 @@ let config: UtilsConfig | undefined;
  * This must be done before using any of the Kubernetes utilities.
  */
 export const setUtilsConfig = (c: UtilsConfig) => {
+  /* eslint-disable no-console */
+  console.log('setting config --- ', c);
+  /* eslint-enable no-console */
   if (config !== undefined) {
     throw new Error('setUtilsConfig has already been called');
   }

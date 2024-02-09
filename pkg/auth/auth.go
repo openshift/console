@@ -303,6 +303,8 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 		Secure:   a.secureCookies,
 	}
 	http.SetCookie(w, &cookie)
+	klog.Infof("-- Redirect request - %q", r.URL.String())
+	klog.Infof("-- AuthCodeURL - %q", a.oauth2Config().AuthCodeURL(state))
 	http.Redirect(w, r, a.oauth2Config().AuthCodeURL(state), http.StatusSeeOther)
 }
 

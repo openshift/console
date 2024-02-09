@@ -8,12 +8,7 @@ describe('Core Reducer', () => {
 
   it('set user', () => {
     const mockUser = {
-      apiVersion: 'user.openshift.io/v1',
-      kind: 'User',
-      identities: [],
-      metadata: {
-        name: 'kube:admin',
-      },
+      username: 'kube:admin',
     };
     reducerTest(coreReducer, state, setUser(mockUser)).expectVal({
       user: mockUser,
