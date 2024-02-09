@@ -55,6 +55,10 @@ func NewRawLoginState(accessToken string) *LoginState {
 
 // newLoginState unpacks a token and generates a new loginState from it.
 func newLoginState(tokenVerifier IDTokenVerifier, token *oauth2.Token) (*LoginState, error) {
+	if token == nil {
+		return nil, fmt.Errorf("no token response was supplied")
+	}
+
 	rawIDToken, ok := token.Extra("id_token").(string)
 	if !ok {
 		return nil, errors.New("token response did not have an id_token field")
