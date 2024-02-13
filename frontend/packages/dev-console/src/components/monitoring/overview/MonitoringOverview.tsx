@@ -135,7 +135,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
               </EmptyState>
             ) : (
               <>
-                <div className="odc-monitoring-overview__view-monitoring-dashboard">
+                <div className="odc-monitoring-overview__view-monitoring-dashboards">
                   <Link
                     to={`/dev-monitoring/ns/${
                       resource?.metadata?.namespace
