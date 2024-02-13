@@ -21,6 +21,7 @@ import (
 	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
+	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/plugins"
@@ -62,6 +63,7 @@ const (
 	devfileSamplesEndpoint                = "/api/devfile/samples/"
 	pluginAssetsEndpoint                  = "/api/plugins/"
 	pluginProxyEndpoint                   = "/api/proxy/"
+	devConsoleEndpoint                    = "/api/dev-console/"
 	localesEndpoint                       = "/locales/resource.json"
 	updatesEndpoint                       = "/api/check-updates"
 	operandsListEndpoint                  = "/api/list-operands/"
@@ -547,6 +549,14 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
 	handle("/api/console/version", authHandler(s.versionHandler))
+
+	// Dev-Console Proxy
+	handle(devConsoleEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, devConsoleEndpoint),
+		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			devconsoleProxy.Handler(w, r)
+		})),
+	)
 
 	// User settings
 	userSettingHandler := usersettings.UserSettingsHandler{
