@@ -144,7 +144,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
                     }&type=${resource?.kind?.toLowerCase()}`}
                     data-test="observe-dashboard-link"
                   >
-                    {t('devconsole~View dashboard')}
+                    {t('devconsole~View dashboards')}
                   </Link>
                 </div>
                 <WorkloadGraphs resource={resource} />
