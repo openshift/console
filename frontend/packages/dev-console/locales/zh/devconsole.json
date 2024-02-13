@@ -505,7 +505,7 @@
   "JAR": "JAR",
   "JAR file": "JAR 文件",
   "Drag a file here or browse to upload": "把文件拖放在这里或者浏览文件进行上传",
-  "Browse...": "浏览......",
+  "Browse...": "浏览...",
   "Clear": "清理",
   "Optional Java arguments": "可选的 Java 参数",
   "Optional Java arguments are saved as JAVA_ARGS environment variable to customize your application.": "可选的 Java 参数保存为 JAVA_ARGS 环境变量，以自定义您的应用程序。",

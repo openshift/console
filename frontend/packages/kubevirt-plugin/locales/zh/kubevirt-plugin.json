@@ -797,7 +797,7 @@
   "This script will run against the boot source.": "这个脚本将根据引导源运行。",
   "Start customization": "开始自定义",
   "Preparing boot source customization": "准备引导源自定义",
-  "This might take a few minutes.": "它可能需要几分钟时间。",
+  "This might take a few minutes.": "这可能需要几分钟时间。",
   "You can exit this screen and return later by launching console from the following virtual machine.": "您可以退出此屏幕，以后通过从以下虚拟机启动控制台返回。",
   "This flow will require you to generalize your custom boot source.": "这个过程需要您概括自定义引导源。",
   "Learn how to generalize a boot source": "了解如何概括引导源",

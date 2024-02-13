@@ -25,7 +25,7 @@
   "Reason": "原因",
   "Message": "消息",
   "BuildRun status": "BuildRun 状态",
-  "Pending": "Pending",
+  "Pending": "待处理",
   "Running": "运行",
   "Succeeded": "成功",
   "Failed": "失败",

@@ -225,7 +225,6 @@
   "This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.": "이 콘솔 플러그인은 사용자 정의 인터페이스를 제공하고 로그인 한 사용자로 Kubernetes 명령을 실행할 수 있습니다. 활성화하기 전에 이를 신뢰할 수 있는지 확인하십시오.",
   "{{label}} details": "{{label}} 세부 정보",
   "Provisioned as node": "노드로 프로비저닝",
-  "Scheduling disabled": "예약 비활성화",
   "Select input": "입력 선택",
   "Select options": "옵션 선택",
   "Pod": "Pod",

@@ -404,7 +404,7 @@
   "ClusterServiceVersions": "ClusterServiceVersions",
   "OperatorGroups": "OperatorGroup",
   "OperatorHubs": "OperatorHubs",
-  "Pending": "Pending",
+  "Pending": "待处理",
   "OK": "OK",
   "Failed": "失败",
   "This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.": "此 Operator 包含一个控制台插件，它提供了一个可包含在控制台中的自定义接口。控制台插件会在启用后提示刷新控制台。请确保在启用前信任此控制台插件。",
