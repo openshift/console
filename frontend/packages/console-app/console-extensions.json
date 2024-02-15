@@ -121,7 +121,8 @@
         "group": "config.openshift.io",
         "version": "v1",
         "kind": "OAuth"
-      }
+      },
+      "component": { "$codeRef": "oauthConfigDetailsPage.default" }
     },
     "flags": {
       "required": ["OPENSHIFT_OAUTH_API"]
@@ -307,6 +308,15 @@
         "kind": "ReplicationController"
       },
       "provider": { "$codeRef": "actions.useReplicationControllerActionsProvider" }
+    }
+  },
+
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/cluster-configuration", "/cluster-configuration/:group"],
+      "component": { "$codeRef": "clusterConfiguration.ClusterConfigurationPage" }
     }
   },
 
