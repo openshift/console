@@ -39,7 +39,7 @@ func NewAsyncCache[T any](ctx context.Context, reloadPeriod time.Duration, cachi
 			c.cachedItem = item
 			return c, nil
 		}
-		klog.Errorf("failed attempt %v to setup an async cache - caching func returned error: %v. ", retries, err)
+		klog.V(4).Infof("retrying async cache setup - attempt %v of %v", retries, initializationRetries)
 		time.Sleep(initializationRetryDelay)
 	}
 
