@@ -88,6 +88,46 @@
     }
   },
   {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "OPENSHIFT_OAUTH_API",
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OAuth"
+      }
+    }
+  },
+  {
+    "type": "console.global-config",
+    "properties": {
+      "id": "oauth-config",
+      "name": "oauth-config",
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OAuth"
+      },
+      "namespace": ""
+    },
+    "flags": {
+      "required": ["OPENSHIFT_OAUTH_API"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OAuth"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_OAUTH_API"]
+    }
+  },
+  {
     "type": "console.context-provider",
     "properties": {
       "provider": { "$codeRef": "tourContext.TourContextProvider" },

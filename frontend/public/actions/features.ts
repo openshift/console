@@ -21,10 +21,15 @@ import { ClusterVersionKind } from '../module/k8s/types';
 import { receivedResources } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { setClusterID, setCreateProjectMessage } from './common';
 import client, { fetchURL } from '../graphql/client';
-import { coFetch } from '../co-fetch';
-import { SSARQuery } from './features.gql';
-import { SSARQueryType, SSARQueryVariables } from '../../@types/console/generated/graphql-schema';
-import { SelfSubjectReviewKind } from 'packages/console-dynamic-plugin-sdk/src';
+import { SSARQuery, SSRQuery } from './features.gql';
+import {
+  SSARQueryType,
+  SSARQueryVariables,
+  SSRQueryType,
+} from '../../@types/console/generated/graphql-schema';
+import { UserInfo } from '@console/internal/module/k8s';
+// import { SelfSubjectReviewKind } from 'packages/console-dynamic-plugin-sdk/src';
+// import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 export enum ActionType {
   SetFlag = 'setFlag',
@@ -209,30 +214,37 @@ const detectCanCreateProject = (dispatch) =>
     },
   );
 
-const fetchUser = async (): Promise<SelfSubjectReviewKind> => {
-  try {
-    const response = await coFetch('/apis/authentication.k8s.io/v1/selfsubjectreviews', {
-      method: 'POST',
-    });
-    return response.json();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Could not retrieve user attributes', err);
-    throw err;
-  }
-};
+const detectUser = (dispatch: Dispatch) =>
+  client
+    .query<SSRQueryType>({
+      query: SSRQuery,
+    })
+    .then(
+      (res) => {
+        /* eslint-disable no-console */
+        console.log('---USER---> ', res);
+        const userInfo = res.data.selfSubjectReview.status.userInfo;
+        let newUserInfo: UserInfo;
+        if (userInfo.extra) {
+          try {
+            newUserInfo.extra = JSON.parse(userInfo.extra);
+          } catch (error) {
+            console.error('!!!!Error parsing JSON:', error);
+          }
+        }
+        newUserInfo.group = userInfo.groups;
+        newUserInfo.uid = userInfo.uid;
+        newUserInfo.username = userInfo.username;
 
-const detectUser = (dispatch) =>
-  fetchUser().then(
-    (selfSubjectReview) => {
-      dispatch(setUser(selfSubjectReview.status.userInfo));
-    },
-    (err) => {
-      if (!_.includes([401, 403, 404, 500], err?.response?.status)) {
-        setTimeout(() => detectUser(dispatch), 15000);
-      }
-    },
-  );
+        dispatch(setUser(newUserInfo));
+        /* eslint-enable no-console */
+      },
+      (err) => {
+        /* eslint-disable no-console */
+        console.log('---ERR---> ', err);
+        /* eslint-enable no-console */
+      },
+    );
 
 const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) => {
   const fn = (dispatch: Dispatch) =>
