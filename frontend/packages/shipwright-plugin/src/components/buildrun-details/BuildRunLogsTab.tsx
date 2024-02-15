@@ -9,6 +9,7 @@ import TaskRunLog from '@console/pipelines-plugin/src/components/taskruns/TaskRu
 import { TaskRunModel } from '@console/pipelines-plugin/src/models/pipelines';
 import { TaskRunKind } from '@console/pipelines-plugin/src/types';
 import { BuildRun } from '../../types';
+import { isV1Alpha1Resource } from '../../utils';
 
 type BuildRunLogsTabProps = {
   obj: BuildRun;
@@ -25,7 +26,9 @@ const BuildRunLogsTab: React.FC<BuildRunLogsTabProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const taskRunRef = buildRun.status?.latestTaskRunRef;
+  const taskRunRef = isV1Alpha1Resource(buildRun)
+    ? buildRun.status?.latestTaskRunRef
+    : buildRun.status?.taskRunName;
   const [taskRun, taskRunLoaded, taskRunLoadError] = useK8sWatchResource<TaskRunKind>(
     taskRunRef
       ? {
