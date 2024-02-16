@@ -9,7 +9,9 @@ type GetUser = (state: SDKStoreState) => UserInfo;
  * @param state the root state
  * @returns The the impersonate state.
  */
-export const getImpersonate: GetImpersonate = (state) => state.sdkCore.impersonate;
+export const getImpersonate: GetImpersonate = (state) => {
+  return state.sdkCore.impersonate;
+};
 
 /**
  * It provides impersonation details from the redux store as a props object.

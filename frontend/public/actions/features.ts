@@ -221,28 +221,24 @@ const detectUser = (dispatch: Dispatch) =>
     })
     .then(
       (res) => {
-        /* eslint-disable no-console */
-        console.log('---USER---> ', res);
         const userInfo = res.data.selfSubjectReview.status.userInfo;
-        let newUserInfo: UserInfo;
+        const newUserInfo: UserInfo = {};
         if (userInfo.extra) {
           try {
             newUserInfo.extra = JSON.parse(userInfo.extra);
           } catch (error) {
-            console.error('!!!!Error parsing JSON:', error);
+            // eslint-disable-next-line no-console
+            console.error('Error parsing UserInfo JSON:', error);
           }
         }
-        newUserInfo.group = userInfo.groups;
+        newUserInfo.groups = userInfo.groups;
         newUserInfo.uid = userInfo.uid;
         newUserInfo.username = userInfo.username;
-
         dispatch(setUser(newUserInfo));
-        /* eslint-enable no-console */
       },
       (err) => {
-        /* eslint-disable no-console */
-        console.log('---ERR---> ', err);
-        /* eslint-enable no-console */
+        // eslint-disable-next-line no-console
+        console.error('Error retrieving SelfSubjectReview: ', err);
       },
     );
 
