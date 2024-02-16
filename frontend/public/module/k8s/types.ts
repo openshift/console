@@ -987,7 +987,7 @@ export type ResourceAccessReviewResponse = {
 export type UserInfo = {
   uid?: string;
   username?: string;
-  group?: string[];
+  groups?: string[];
   extra?: object;
 };
 

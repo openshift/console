@@ -621,7 +621,7 @@ export type SelfSubjectReviewKind = {
 export type UserInfo = {
   uid?: string;
   username?: string;
-  group?: string[];
+  groups?: string[];
   extra?: object;
 };
 
