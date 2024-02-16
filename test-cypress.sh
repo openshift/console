@@ -57,7 +57,8 @@ if [ -n "${nightly-}" ] && [ -z "${pkg-}" ]; then
 
   yarn run test-cypress-dev-console-nightly
   yarn run test-cypress-helm-nightly
-  yarn run test-cypress-pipelines-nightly
+  # disabling pipeline tests due to unavailablility of opertor in operator hub
+  # yarn run test-cypress-pipelines-nightly
   # yarn run test-cypress-shipwright-nightly
   yarn run test-cypress-topology-nightly
   yarn run test-cypress-knative-nightly
@@ -73,7 +74,8 @@ if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-helm-headless
   yarn run test-cypress-knative-headless
   yarn run test-cypress-topology-headless
-  yarn run test-cypress-pipelines-headless
+  # disabling pipeline tests due to unavailablility of opertor in operator hub
+  # yarn run test-cypress-pipelines-headless
   # yarn run test-cypress-shipwright-headless
   # yarn run test-cypress-webterminal-headless
   exit;
