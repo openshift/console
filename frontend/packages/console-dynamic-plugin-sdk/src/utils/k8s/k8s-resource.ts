@@ -51,6 +51,7 @@ const adapterFunc: AdapterFunc = (func: Function, knownArgs: string[]) => {
  * @param ns The namespace to look into, should not be specified for cluster-scoped resources.
  * @param opts The options to pass
  * @param requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
+ * @param isFullResponse The flag to cotrol whether to return full or partial response. The default is partial.
  * See more at https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html
  * @returns A promise that resolves to the response as JSON object with a resource if the name is provided
  * else it returns all the resouces matching the model. In case of failure, the promise gets rejected with HTTP error response.
@@ -96,6 +97,7 @@ export const k8sGetResource: K8sGetResource = adapterFunc(k8sGet, [
  * @param model Kubernetes model
  * @param data The payload for the resource to be created.
  * @param opts The options to pass.
+ * @param isFullResponse The flag to cotrol whether to return full or partial response. The default is partial.
  * @returns A promise that resolves to the response of the resource created.
  * In case of failure promise gets rejected with HTTP error response.
  */
@@ -103,18 +105,21 @@ export const k8sCreate = <R extends K8sResourceCommon>(
   model: K8sModel,
   data: R,
   opts: Options = {},
+  isFullResponse?: boolean,
 ) => {
   return coFetchJSON.post(
     resourceURL(model, Object.assign({ ns: data?.metadata?.namespace }, opts)),
     data,
     null,
     null,
+    isFullResponse,
   );
 };
 
 type OptionsCreate<R> = BaseOptions & {
   model: K8sModel;
   data: R;
+  isFullResponse?: boolean;
 };
 
 type K8sCreateResource = <R extends K8sResourceCommon>(options: OptionsCreate<R>) => Promise<R>;
@@ -133,6 +138,7 @@ export const k8sCreateResource: K8sCreateResource = adapterFunc(k8sCreate, [
   'model',
   'data',
   'opts',
+  'isFullResponse',
 ]);
 
 /**
@@ -145,6 +151,7 @@ export const k8sCreateResource: K8sCreateResource = adapterFunc(k8sCreate, [
  * @param ns namespace to look into, it should not be specified for cluster-scoped resources.
  * @param name resource name to be updated.
  * @param opts The options to pass
+ * @param isFullResponse The flag to cotrol whether to return full or partial response. The default is partial.
  * @returns A promise that resolves to the response of the resource updated.
  * In case of failure promise gets rejected with HTTP error response.
  */
@@ -154,6 +161,7 @@ export const k8sUpdate = <R extends K8sResourceCommon>(
   ns?: string,
   name?: string,
   opts?: Options,
+  isFullResponse?: boolean,
 ): Promise<R> =>
   coFetchJSON.put(
     resourceURL(model, {
@@ -164,6 +172,7 @@ export const k8sUpdate = <R extends K8sResourceCommon>(
     data,
     null,
     null,
+    isFullResponse,
   );
 
 type OptionsUpdate<R> = BaseOptions & {
@@ -212,6 +221,7 @@ export const k8sPatch = <R extends K8sResourceCommon>(
   resource: R,
   data: Patch[],
   opts: Options = {},
+  isFullResponse?: boolean,
 ) => {
   const patches = _.compact(data);
 
@@ -233,6 +243,7 @@ export const k8sPatch = <R extends K8sResourceCommon>(
     patches,
     null,
     null,
+    isFullResponse,
   );
 };
 

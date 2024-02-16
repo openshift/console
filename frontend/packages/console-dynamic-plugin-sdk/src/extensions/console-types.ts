@@ -266,17 +266,42 @@ export type ConsoleFetch = (
   url: string,
   options?: RequestInit,
   timeout?: number,
+  isFullResponse?: boolean,
 ) => Promise<Response>;
 
 export type ConsoleFetchJSON<T = any> = {
-  (url: string, method?: string, options?: RequestInit, timeout?: number): Promise<T>;
+  (
+    url: string,
+    method?: string,
+    options?: RequestInit,
+    timeout?: number,
+    isFullResponse?: boolean,
+  ): Promise<T>;
   delete(url: string, json?: any, options?: RequestInit, timeout?: number): Promise<T>;
-  post(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
-  put(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
-  patch(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  post(
+    url: string,
+    json: any,
+    options?: RequestInit,
+    timeout?: number,
+    isFullResponse?: boolean,
+  ): Promise<T>;
+  put(
+    url: string,
+    json: any,
+    options?: RequestInit,
+    timeout?: number,
+    isFullResponse?: boolean,
+  ): Promise<T>;
+  patch(
+    url: string,
+    json: any,
+    options?: RequestInit,
+    timeout?: number,
+    isFullResponse?: boolean,
+  ): Promise<T>;
 };
 
-export type ConsoleFetchText = (...args: Parameters<ConsoleFetch>) => Promise<string>;
+export type ConsoleFetchText<T = any> = (...args: Parameters<ConsoleFetch>) => Promise<T>;
 
 /* Horizontal Nav Types */
 export type NavPage = {

@@ -1203,6 +1203,7 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 | `method` | The HTTP method to use. Defaults to GET |
 | `options` | The options to pass to fetch |
 | `timeout` | The timeout in milliseconds |
+| `isFullResponse` | The flag to cotrol whether to return full or partial response. The default is partial. |
 
 
 

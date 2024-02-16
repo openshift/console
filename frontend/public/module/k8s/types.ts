@@ -46,6 +46,7 @@ export type K8sResourceKind = K8sResourceCommon & {
   };
   status?: { [key: string]: any };
   data?: { [key: string]: any };
+  headers?: { [key: string]: any };
 };
 
 export type VolumeMount = {

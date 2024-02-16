@@ -2,8 +2,12 @@ import * as React from 'react';
 import { FormikBag, Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { useDispatch } from 'react-redux';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import * as UIActions from '@console/internal/actions/ui';
 import { history } from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -27,6 +31,7 @@ export interface EditDeploymentProps {
 
 const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, namespace, name }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
   const isNew = !name || name === '~new';
@@ -67,6 +72,7 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
       ? k8sCreateResource({
           model: resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel,
           data: deploymentRes,
+          isFullResponse: true,
         })
       : k8sUpdateResource({
           model: resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel,
@@ -76,17 +82,21 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
         });
 
     return resourceCall
-      .then((res: K8sResourceKind) => {
+      .then((res: any) => {
         if (isNew) {
           const model =
             resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel;
           actions.setStatus({
             submitError: '',
-            submitSuccess: t('devconsole~{{resource}} has been created', { resource: res.kind }),
+
+            submitSuccess: t('devconsole~{{resource}} has been created', {
+              resource: res.data.kind,
+            }),
           });
-          history.push(`/k8s/ns/${namespace}/${model.plural}/${res.metadata.name}`);
+          dispatch(UIActions.setWarningPolicy(res));
+          history.push(`/k8s/ns/${namespace}/${model.plural}/${res.data.metadata.name}`);
         } else {
-          const resVersion = res.metadata.resourceVersion;
+          const resVersion = res.data.metadata.resourceVersion;
           actions.setStatus({
             submitError: '',
             submitSuccess: t('devconsole~{{name}} has been updated to version {{resVersion}}', {
