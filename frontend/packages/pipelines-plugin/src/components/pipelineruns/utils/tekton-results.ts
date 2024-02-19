@@ -7,6 +7,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src';
 import { RouteModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import { consoleProxyFetch, consoleProxyFetchJSON } from '@console/shared/src/utils/proxy';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
@@ -224,7 +225,8 @@ export const createTektonResultsUrl = async (
   if (!tektonResultUrl) {
     throw new Error('route.spec.host is undefined');
   }
-  const url = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${namespace}/results/-/records?${new URLSearchParams(
+  const namespaceToSearch = namespace && namespace !== ALL_NAMESPACES_KEY ? namespace : '-';
+  const url = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records?${new URLSearchParams(
     {
       // default sort should always be by `create_time desc`
       // order_by: 'create_time desc', not supported yet
