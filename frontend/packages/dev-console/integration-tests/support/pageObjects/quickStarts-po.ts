@@ -21,6 +21,9 @@ export const quickStartSidebarPO = {
   closePanel: '[data-testid="qs-drawer-close"] [aria-label="Close drawer panel"] ',
   yesOptionCheckInput: '[data-testid="qs-drawer-check-yes"]',
   noOptionCheckInput: '[data-testid="qs-drawer-check-no"]',
+  clipboardAction: '[aria-label="Copy to clipboard"]',
+  executeAction: '[aria-label="Run in Web Terminal"]',
+  tooltip: '[role="tooltip"]',
 };
 
 export const quickStartLeaveModalPO = {
@@ -41,6 +44,9 @@ export const quickStartDisplayNameToName = (displayName: string) => {
     }
     case 'Install the OpenShift Serverless Operator': {
       return 'install-serverless';
+    }
+    case 'Create ruby app': {
+      return 'copy-execute-demo';
     }
     default: {
       throw new Error('Option is not available');
