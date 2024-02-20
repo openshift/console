@@ -70,16 +70,21 @@ func serve(r *http.Request) (ProxyResponse, error) {
 	}
 	serviceRequest.URL.RawQuery = query.Encode()
 
-	var serviceClient *http.Client
+	var serviceTransport *http.Transport
 	if request.AllowInsecure {
-		serviceTransport := &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		}
-		serviceClient = &http.Client{
-			Transport: serviceTransport,
+		serviceTransport = &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
 		}
 	} else {
-		serviceClient = &http.Client{}
+		serviceTransport = &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+		}
+	}
+	serviceClient := &http.Client{
+		Transport: serviceTransport,
 	}
 
 	serviceResponse, err := serviceClient.Do(serviceRequest)
