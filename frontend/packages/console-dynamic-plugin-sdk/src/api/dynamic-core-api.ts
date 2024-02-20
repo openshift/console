@@ -128,7 +128,7 @@ export const VirtualizedTable: VirtualizedTableFC = require('@console/internal/c
  *         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
  *       </TableData>
  *       // Important:  the kebab menu cell should include the id and className prop values below
- *       <TableData id='' className='pf-c-table__action' activeColumnIDs={activeColumnIDs}>
+ *       <TableData id='' className='pf-v5-c-table__action' activeColumnIDs={activeColumnIDs}>
  *         <MockKebabMenu obj={obj} />
  *      </TableData>
  *     </>
@@ -736,7 +736,7 @@ export const NamespaceBar: React.FC<NamespaceBarProps> = require('@console/inter
   .NamespaceBar;
 
 /**
- * Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong." message along with the stack trace and other helpful debugging information. 
+ * Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong." message along with the stack trace and other helpful debugging information.
  * This is to be used in conjunction with an `ErrorBoundary` component.
  *
  * @param {string} errorMessage - text description of the error message
@@ -795,7 +795,7 @@ export const ErrorBoundaryFallbackPage: React.FC<ErrorBoundaryFallbackProps> = r
  * ```
  */
 export const QueryBrowser: React.FC<QueryBrowserProps> = require('@console/shared/src/components/query-browser')
-         .QueryBrowser;
+  .QueryBrowser;
 
 /**
  * A hook that provides a callback to launch a modal for editing Kubernetes resource annotations.
