@@ -166,7 +166,7 @@ type Server struct {
 	K8sProxyConfig                      *proxy.Config
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
-	KubeAPIServerURL                    string
+	KubeAPIServerURL                    string // JS global only. Not used for proxying.
 	KubeVersion                         string
 	LoadTestFactor                      int
 	LogoutRedirect                      *url.URL
@@ -244,6 +244,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	mux := http.NewServeMux()
 	k8sProxy := proxy.NewProxy(s.K8sProxyConfig)
+	k8sProxyURL := s.K8sProxyConfig.Endpoint.String()
 	handle := func(path string, handler http.Handler) {
 		mux.Handle(proxy.SingleJoiningSlash(s.BaseURL.Path, path), handler)
 	}
@@ -460,7 +461,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	// List operator operands endpoint
 	operandsListHandler := &OperandsListHandler{
-		APIServerURL: s.KubeAPIServerURL,
+		APIServerURL: k8sProxyURL,
 		Client: &http.Client{
 			Transport: internalProxiedK8SRT,
 		},
@@ -478,7 +479,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	trimURLPrefix := proxy.SingleJoiningSlash(s.BaseURL.Path, knativeProxyEndpoint)
 	knativeHandler := knative.NewKnativeHandler(
 		anonymousInternalProxiedK8SRT,
-		s.K8sProxyConfig.Endpoint.String(),
+		k8sProxyURL,
 		trimURLPrefix,
 	)
 
@@ -496,13 +497,13 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	)
 
 	// User settings
-	userSettingHandler := usersettings.NewUserSettingsHandler(internalProxiedK8SClient, anonymousInternalProxiedK8SRT, s.K8sProxyConfig.Endpoint.String())
+	userSettingHandler := usersettings.NewUserSettingsHandler(internalProxiedK8SClient, anonymousInternalProxiedK8SRT, k8sProxyURL)
 
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
 	// Helm
-	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), internalProxiedK8SRT, s)
-	verifierHandler := helmhandlerspkg.NewVerifierHandler(s.K8sProxyConfig.Endpoint.String(), internalProxiedK8SRT, s)
+	helmHandlers := helmhandlerspkg.New(k8sProxyURL, internalProxiedK8SRT, s)
+	verifierHandler := helmhandlerspkg.NewVerifierHandler(k8sProxyURL, internalProxiedK8SRT, s)
 	handle("/api/helm/verify", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
