@@ -11,7 +11,9 @@ import (
 )
 
 const (
-	initializationRetryDelay = 30 * time.Second
+	initializationRetryInterval = 30 * time.Second
+	initializationTimeout       = 5 * time.Minute
+	initializeImmediately       = true
 )
 
 type cachingFuncType[T any] func(ctx context.Context) (T, error)
@@ -31,17 +33,21 @@ func NewAsyncCache[T any](ctx context.Context, reloadPeriod time.Duration, cachi
 		cachingFunc:  cachingFunc,
 	}
 
-	var err error
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
-	wait.UntilWithContext(ctx, func(ctx context.Context) {
-		item, err := cachingFunc(ctx)
-		if err != nil {
-			klog.V(4).Infof("failed to setup an async cache - retrying in %s", initializationRetryDelay)
-			return
-		}
-		c.cachedItem = item
-		cancel()
-	}, initializationRetryDelay)
+	err := wait.PollUntilContextTimeout(
+		ctx,
+		initializationRetryInterval,
+		initializationTimeout,
+		initializeImmediately,
+		func(ctx context.Context) (bool, error) {
+			item, err := cachingFunc(ctx)
+			if err != nil {
+				klog.V(4).Infof("failed to setup an async cache - retrying in %s", initializationRetryInterval)
+				return false, err
+			}
+			c.cachedItem = item
+			return true, nil
+		},
+	)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to setup an async cache - caching func returned error: %w", err)
