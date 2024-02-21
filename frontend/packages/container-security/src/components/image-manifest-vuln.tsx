@@ -74,17 +74,16 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
                 obj={props.obj}
                 path="spec.image"
               />
-              <DetailsItem
-                label={t('container-security~Manifest')}
-                obj={props.obj}
-                path="obj.spec.manifest"
-              >
-                {queryURL ? (
+
+              {queryURL && (
+                <DetailsItem
+                  label={t('container-security~Manifest')}
+                  obj={props.obj}
+                  path="obj.spec.manifest"
+                >
                   <ExternalLink text={shortenHash(props.obj.spec.manifest)} href={queryURL} />
-                ) : (
-                  <span className="small text-muted">-</span>
-                )}
-              </DetailsItem>
+                </DetailsItem>
+              )}
             </dl>
           </div>
         </div>
