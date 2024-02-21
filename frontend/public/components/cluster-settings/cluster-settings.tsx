@@ -1151,7 +1151,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                         isInline
                         isPlain
                         title={t(
-                          'public~Click "Select a version" to view supported but not recommended versions.',
+                          'public~Click "Select a version" to view versions with known issues.',
                         )}
                         variant="info"
                         data-test="cv-not-recommended-alert"
