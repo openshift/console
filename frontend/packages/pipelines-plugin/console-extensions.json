@@ -818,5 +818,41 @@
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"]
     }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "page": {
+        "name": "%pipelines-plugin~Metrics%",
+        "href": "metrics"
+      },
+      "component": { "$codeRef": "pipelinesComponent.PipelineMetrics" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAIL_METRICS_TAB"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Pipeline"
+      },
+      "page": {
+        "name": "%pipelines-plugin~Metrics%",
+        "href": "metrics"
+      },
+      "component": { "$codeRef": "pipelinesComponent.PipelineMetrics" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAIL_METRICS_TAB"]
+    }
   }
 ]

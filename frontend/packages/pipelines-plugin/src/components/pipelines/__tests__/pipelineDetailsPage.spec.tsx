@@ -14,14 +14,10 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
 import { PipelineModel } from '../../../models';
 import { pipelineTestData, PipelineExampleNames } from '../../../test-data/pipeline-data';
-import {
-  sampleTektonConfig,
-  sampleTektonConfigMetrics,
-} from '../../../test-data/tekon-config-data';
+import { sampleTektonConfig } from '../../../test-data/tekon-config-data';
 import { PipelineRunKind } from '../../../types';
 import { getPipelineKebabActions } from '../../../utils/pipeline-actions';
 import * as utils from '../../pipelineruns/triggered-by';
-import { PipelineMetricsLevel } from '../const';
 import * as hookUtils from '../hooks';
 import { MetricsQueryPrefix } from '../pipeline-metrics/pipeline-metrics-utils';
 import PipelineDetailsPage from '../PipelineDetailsPage';
@@ -165,30 +161,5 @@ describe('PipelineDetailsPage:', () => {
         menu(PipelineModel, mockData.pipeline).labelKey === 'pipelines-plugin~Start last run',
     );
     expect(startLastRun).toBeDefined();
-  });
-
-  describe('Pipeline Details page Metrics Tab:', () => {
-    test('It should contain metrics tab if the user has view permission in the openshift pipelines namespace', async () => {
-      const wrapper: ReactWrapper = await renderPipelineDetailsPage();
-      const tabs = wrapper.find(DetailsPage).props().pages;
-      const metricsTab = tabs.find((t) => t.name === 'Metrics');
-
-      expect(tabs).toHaveLength(6);
-      expect(metricsTab).toBeDefined();
-    });
-
-    test('It should contain metrics tab if the user has permission and osp 1.5.2 is installed', async () => {
-      spyUseAccessReview.mockReturnValue([true]);
-      ((operatorVersion as unknown) as jest.Mock).mockReturnValue(new SemVer('1.5.2'));
-      spyPipelineConfig.mockReturnValue([
-        sampleTektonConfigMetrics[PipelineMetricsLevel.UNSIMPLIFIED_METRICS_LEVEL],
-      ]);
-      const wrapper: ReactWrapper = await renderPipelineDetailsPage();
-      const tabs = wrapper.find(DetailsPage).props().pages;
-      const metricsTab = tabs.find((t) => t.name === 'Metrics');
-
-      expect(tabs).toHaveLength(6);
-      expect(metricsTab).toBeDefined();
-    });
   });
 });

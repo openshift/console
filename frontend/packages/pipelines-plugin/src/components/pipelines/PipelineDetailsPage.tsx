@@ -20,7 +20,6 @@ import {
 } from './detail-page-tabs';
 import { PipelineDetailsTabProps } from './detail-page-tabs/types';
 import { useDevPipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
-import PipelineMetrics from './pipeline-metrics/PipelineMetrics';
 import { usePipelineMetricsLevel } from './utils/pipeline-operator';
 import { usePipelineTriggerTemplateNames } from './utils/triggers';
 
@@ -49,11 +48,6 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
       breadcrumbsFor={() => breadcrumbsFor}
       pages={[
         navFactory.details(PipelineDetails),
-        {
-          href: 'metrics',
-          name: t('pipelines-plugin~Metrics'),
-          component: PipelineMetrics,
-        },
         navFactory.editYaml(),
         {
           href: 'Runs',
