@@ -1,7 +1,36 @@
 import { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src';
-import { SEGMENT_API_KEY, TELEMETRY_DISABLED, TELEMETRY_DEBUG } from './const';
+import { TELEMETRY_DISABLED, TELEMETRY_DEBUG } from './const';
+
+/** Segmnet API Key that looks like a hash */
+const apiKey =
+  window.SERVER_FLAGS?.telemetry?.DEVSANDBOX_SEGMENT_API_KEY ||
+  window.SERVER_FLAGS?.telemetry?.SEGMENT_API_KEY ||
+  '';
+
+/**
+ * Segment `apiHost` parameter that should have the format like `api.segment.io/v1`.
+ * Is not defined here so that Segment can change it.
+ */
+const apiHost = window.SERVER_FLAGS?.telemetry?.SEGMENT_API_HOST || '';
+
+/** Segment JS host. Default: `cdn.segment.com` */
+const jsHost = window.SERVER_FLAGS?.telemetry?.SEGMENT_JS_HOST || 'cdn.segment.com';
+
+/** Full segment JS URL */
+const jsUrl =
+  window.SERVER_FLAGS?.telemetry?.SEGMENT_JS_URL ||
+  `https://${jsHost}/analytics.js/v1/${encodeURIComponent(apiKey)}/analytics.min.js`;
 
 const initSegment = () => {
+  if (TELEMETRY_DEBUG) {
+    // eslint-disable-next-line no-console
+    console.debug('console-telemetry-plugin: initialize segment API with:', {
+      apiKey,
+      apiHost,
+      jsHost,
+      jsUrl,
+    });
+  }
   // eslint-disable-next-line no-multi-assign
   const analytics = ((window as any).analytics = (window as any).analytics || []);
   if (analytics.initialize) {
@@ -51,7 +80,7 @@ const initSegment = () => {
     const t = document.createElement('script');
     t.type = 'text/javascript';
     t.async = true;
-    t.src = `https://cdn.segment.com/analytics.js/v1/${encodeURIComponent(key)}/analytics.min.js`;
+    t.src = jsUrl;
     const n = document.getElementsByTagName('script')[0];
     if (n.parentNode) {
       n.parentNode.insertBefore(t, n);
@@ -60,10 +89,16 @@ const initSegment = () => {
     analytics._loadOptions = e;
   };
   analytics.SNIPPET_VERSION = '4.13.1';
-  analytics.load(SEGMENT_API_KEY);
+  const options: Record<string, any> = {};
+  if (apiHost) {
+    options.integrations = { 'Segment.io': { apiHost } };
+  }
+  analytics.load(apiKey, options);
 };
 
-SEGMENT_API_KEY && !TELEMETRY_DISABLED && initSegment();
+if (!TELEMETRY_DISABLED && apiKey) {
+  initSegment();
+}
 
 const anonymousIP = {
   context: {
@@ -80,7 +115,7 @@ export const eventListener: TelemetryEventListener = async (
     console.debug('console-telemetry-plugin: received telemetry event:', eventType, properties);
     return;
   }
-  if (!SEGMENT_API_KEY || TELEMETRY_DISABLED) {
+  if (TELEMETRY_DISABLED || !apiKey) {
     return;
   }
   switch (eventType) {
