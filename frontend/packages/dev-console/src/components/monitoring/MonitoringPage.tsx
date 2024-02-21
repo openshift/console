@@ -39,8 +39,8 @@ export const PageContents: React.FC = () => {
   const pages = [
     {
       href: '',
-      // t('devconsole~Dashboard')
-      nameKey: 'devconsole~Dashboard',
+      // t('devconsole~Dashboards')
+      nameKey: 'devconsole~Dashboards',
       component: MonitoringDashboardsPage,
     },
     {

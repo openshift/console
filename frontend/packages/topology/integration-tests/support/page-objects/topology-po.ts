@@ -113,7 +113,7 @@ export const topologyPO = {
       podTrafficStatus: 'div[data-test="pod-traffic-status',
     },
     monitoringTab: {
-      viewMonitoringDashBoardLink: '[data-test="observe-dashboard-link"]',
+      viewMonitoringDashBoardsLink: '[data-test="observe-dashboards-link"]',
     },
     releaseNotesTab: {},
   },
