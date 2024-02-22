@@ -37,14 +37,15 @@ export const securityHealthHandler: ResourceHealthHandler<WatchImageVuln> = ({
   return { state: HealthState.OK, message: '0 vulnerable images' };
 };
 
-export const quayURLFor = (vuln: ImageManifestVuln) => {
-  const base = vuln.spec.image
-    .replace('@sha256', '')
-    .split('/')
-    .reduce((url, part, i) => [...url, part, ...(i === 0 ? ['repository'] : [])], [])
-    .join('/');
-  return `//${base}/manifest/${vuln.spec.manifest}?tab=vulnerabilities`;
-};
+export const quayURLFor = (vuln: ImageManifestVuln) =>
+  // The first part of the url is the base
+  vuln?.spec?.image
+    ? `//${vuln.spec.image
+        .replace('@sha256', '')
+        .split('/')
+        .reduce((url, part, i) => [...url, part, ...(i === 0 ? ['repository'] : [])], [])
+        .join('/')}/manifest/${vuln.spec?.manifest}?tab=vulnerabilities`
+    : '';
 
 export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
   imageManifestVuln,
@@ -184,7 +185,11 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                     </Link>
                   </span>
                   <div className="text-secondary">
-                    <ExternalLink href={quayURLFor(v)} text={getVulnerabilityCountText(v)} />
+                    {quayURLFor(v) ? (
+                      <ExternalLink href={quayURLFor(v)} text={getVulnerabilityCountText(v)} />
+                    ) : (
+                      <span className="small text-muted">-</span>
+                    )}
                   </div>
                 </div>
               ))}
