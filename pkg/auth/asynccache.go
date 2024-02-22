@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	initializationRetryInterval = 30 * time.Second
+	initializationRetryInterval = 10 * time.Second
 	initializationTimeout       = 5 * time.Minute
 	initializeImmediately       = true
 )
@@ -33,7 +33,8 @@ func NewAsyncCache[T any](ctx context.Context, reloadPeriod time.Duration, cachi
 		cachingFunc:  cachingFunc,
 	}
 
-	err := wait.PollUntilContextTimeout(
+	var err error
+	wait.PollUntilContextTimeout(
 		ctx,
 		initializationRetryInterval,
 		initializationTimeout,
@@ -41,8 +42,8 @@ func NewAsyncCache[T any](ctx context.Context, reloadPeriod time.Duration, cachi
 		func(ctx context.Context) (bool, error) {
 			item, err := cachingFunc(ctx)
 			if err != nil {
-				klog.V(4).Infof("failed to setup an async cache - retrying in %s", initializationRetryInterval)
-				return false, err
+				klog.V(4).Infof("failed to setup an async cache (retrying in %v) - caching func returned error: %v", initializationRetryInterval, err)
+				return false, nil
 			}
 			c.cachedItem = item
 			return true, nil
