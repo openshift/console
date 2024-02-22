@@ -8,8 +8,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	authentication "k8s.io/api/authentication/v1"
-	auth "k8s.io/api/authorization/v1"
+	authn "k8s.io/api/authentication/v1"
+	authz "k8s.io/api/authorization/v1"
+	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/proxy"
 )
@@ -46,8 +47,8 @@ type SSARArgs struct {
 	Namespace *string `json:"namespace"`
 }
 
-func parseArgs(args SSARArgs) *auth.ResourceAttributes {
-	attr := auth.ResourceAttributes{}
+func parseArgs(args SSARArgs) *authz.ResourceAttributes {
+	attr := authz.ResourceAttributes{}
 	if args.Namespace != nil {
 		attr.Namespace = *args.Namespace
 	}
@@ -63,6 +64,11 @@ func parseArgs(args SSARArgs) *auth.ResourceAttributes {
 	return &attr
 }
 
+// This is a modified copy o k8s.io/api/authentication/v1 types,
+// so we can serialize SelfSubjectReview.Status.UserInfo.Extra
+// In the UserInfo struct we needed to modify so that the `Extra`
+// field is a string rather then a object cause GraphQL is not
+// able to handle objects.
 type SelfSubjectReview struct {
 	Status SelfSubjectReviewStatus `json:"status,omitempty"`
 }
@@ -79,10 +85,10 @@ type UserInfo struct {
 }
 
 func (r *K8sResolver) SelfSubjectReview(ctx context.Context) (*SelfSubjectReview, error) {
-	spec := authentication.SelfSubjectReview{}
+	spec := authn.SelfSubjectReview{}
 	buf := new(bytes.Buffer)
 	json.NewEncoder(buf).Encode(&spec)
-	request, err := http.NewRequest("POST", "/apis/"+authentication.SchemeGroupVersion.String()+"/selfsubjectreviews", buf)
+	request, err := http.NewRequest("POST", "/apis/"+authn.SchemeGroupVersion.String()+"/selfsubjectreviews", buf)
 	if err != nil {
 		return nil, err
 	}
@@ -98,20 +104,36 @@ func (r *K8sResolver) SelfSubjectReview(ctx context.Context) (*SelfSubjectReview
 		}
 		return nil, resolverError{Status: result.StatusCode, Message: string(body)}
 	}
-	ssr := SelfSubjectReview{}
-	err = json.NewDecoder(result.Body).Decode(&ssr)
-	return &ssr, err
+	ssr := authn.SelfSubjectReview{}
+	if err := json.NewDecoder(result.Body).Decode(&ssr); err != nil {
+		klog.Errorf("failed to encode SelfSubjectReview: %v", err)
+		return nil, err
+	}
+
+	convertedSSR := SelfSubjectReview{}
+	convertedSSR.Status.UserInfo.Username = ssr.Status.UserInfo.Username
+	convertedSSR.Status.UserInfo.UID = ssr.Status.UserInfo.UID
+	convertedSSR.Status.UserInfo.Groups = ssr.Status.UserInfo.Groups
+	userExtraBytes, err := json.Marshal(ssr.Status.UserInfo.Extra)
+	if err != nil {
+		klog.Errorf("failed to marshal userInfo.Extra: %v", err)
+		return nil, err
+	}
+
+	convertedSSR.Status.UserInfo.Extra = string(userExtraBytes)
+
+	return &convertedSSR, err
 }
 
-func (r *K8sResolver) SelfSubjectAccessReview(ctx context.Context, args SSARArgs) (*auth.SelfSubjectAccessReview, error) {
-	spec := auth.SelfSubjectAccessReview{
-		Spec: auth.SelfSubjectAccessReviewSpec{
+func (r *K8sResolver) SelfSubjectAccessReview(ctx context.Context, args SSARArgs) (*authz.SelfSubjectAccessReview, error) {
+	spec := authz.SelfSubjectAccessReview{
+		Spec: authz.SelfSubjectAccessReviewSpec{
 			ResourceAttributes: parseArgs(args),
 		},
 	}
 	buf := new(bytes.Buffer)
 	json.NewEncoder(buf).Encode(&spec)
-	request, err := http.NewRequest("POST", "/apis/"+auth.SchemeGroupVersion.String()+"/selfsubjectaccessreviews", buf)
+	request, err := http.NewRequest("POST", "/apis/"+authz.SchemeGroupVersion.String()+"/selfsubjectaccessreviews", buf)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +149,7 @@ func (r *K8sResolver) SelfSubjectAccessReview(ctx context.Context, args SSARArgs
 		}
 		return nil, resolverError{Status: result.StatusCode, Message: string(body)}
 	}
-	ssar := auth.SelfSubjectAccessReview{}
+	ssar := authz.SelfSubjectAccessReview{}
 	err = json.NewDecoder(result.Body).Decode(&ssar)
 	return &ssar, err
 }

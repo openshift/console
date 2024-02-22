@@ -7,15 +7,15 @@ import { IdentityProvider } from '@console/internal/module/k8s';
 export const IdentityProviders: React.FC<IdentityProvidersProps> = ({ identityProviders }) => {
   const { t } = useTranslation();
   return _.isEmpty(identityProviders) ? (
-    <EmptyBox label={t('public~Identity providers')} />
+    <EmptyBox label={t('console-app~Identity providers')} />
   ) : (
     <div className="co-table-container">
       <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
         <thead className="pf-v5-c-table__thead">
           <tr className="pf-v5-c-table__tr">
-            <th className="pf-v5-c-table__th">{t('public~Name')}</th>
-            <th className="pf-v5-c-table__th">{t('public~Type')}</th>
-            <th className="pf-v5-c-table__th">{t('public~Mapping method')}</th>
+            <th className="pf-v5-c-table__th">{t('console-app~Name')}</th>
+            <th className="pf-v5-c-table__th">{t('console-app~Type')}</th>
+            <th className="pf-v5-c-table__th">{t('console-app~Mapping method')}</th>
           </tr>
         </thead>
         <tbody className="pf-v5-c-table__tbody">

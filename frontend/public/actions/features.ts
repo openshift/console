@@ -28,8 +28,6 @@ import {
   SSRQueryType,
 } from '../../@types/console/generated/graphql-schema';
 import { UserInfo } from '@console/internal/module/k8s';
-// import { SelfSubjectReviewKind } from 'packages/console-dynamic-plugin-sdk/src';
-// import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 export enum ActionType {
   SetFlag = 'setFlag',
@@ -239,6 +237,9 @@ const detectUser = (dispatch: Dispatch) =>
       (err) => {
         // eslint-disable-next-line no-console
         console.error('Error retrieving SelfSubjectReview: ', err);
+        if (!_.includes([400, 404, 500], err?.response?.status)) {
+          retryFlagDetection(dispatch, detectUser);
+        }
       },
     );
 

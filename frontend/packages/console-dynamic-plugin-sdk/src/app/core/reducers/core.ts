@@ -10,10 +10,7 @@ import { ActionType, CoreAction } from '../actions/core';
  * @see CoreAction
  * @returns The the updated state.
  */
-export const coreReducer = (
-  state: CoreState = { user: { } },
-  action: CoreAction,
-): CoreState => {
+export const coreReducer = (state: CoreState = { user: {} }, action: CoreAction): CoreState => {
   switch (action.type) {
     case ActionType.BeginImpersonate:
       return {
