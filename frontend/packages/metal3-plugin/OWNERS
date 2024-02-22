@@ -1,10 +1,8 @@
 reviewers:
-  - jtomasek
-  - honza
-  - flofuchs
+  - rawagner
+  - jhadvig
 approvers:
-  - jtomasek
-  - honza
-  - flofuchs
+  - rawagner
+  - jhadvig
 labels:
   - component/metal3
