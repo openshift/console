@@ -36,23 +36,23 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
   const getAddIDPItemLabels = (type: string) => {
     switch (type) {
       case 'Basic Authentication':
-        return t('public~Basic Authentication');
+        return t('console-app~Basic Authentication');
       case 'GitHub':
-        return t('public~GitHub');
+        return t('console-app~GitHub');
       case 'GitLab':
-        return t('public~GitLab');
+        return t('console-app~GitLab');
       case 'Google':
-        return t('public~Google');
+        return t('console-app~Google');
       case 'HTPasswd':
-        return t('public~HTPasswd');
+        return t('console-app~HTPasswd');
       case 'Keystone':
-        return t('public~Keystone');
+        return t('console-app~Keystone');
       case 'LDAP':
-        return t('public~LDAP');
+        return t('console-app~LDAP');
       case 'OpenID Connect':
-        return t('public~OpenID Connect');
+        return t('console-app~OpenID Connect');
       case 'Request Header':
-        return t('public~Request Header');
+        return t('console-app~Request Header');
       default:
         return type;
     }
@@ -77,13 +77,13 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('public~OAuth details')} />
+        <SectionHeading text={t('console-app~OAuth details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={obj}>
               {tokenConfig && (
                 <>
-                  <dt>{t('public~Access token max age')}</dt>
+                  <dt>{t('console-app~Access token max age')}</dt>
                   <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
                 </>
               )}
@@ -92,23 +92,23 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('public~Identity providers')} />
+        <SectionHeading text={t('console-app~Identity providers')} />
         <p className="co-m-pane__explanation co-m-pane__explanation--alt">
-          {t('public~Identity providers determine how users log into the cluster.')}
+          {t('console-app~Identity providers determine how users log into the cluster.')}
         </p>
         {idpAdded === 'true' && (
           <Alert
             isInline
             className="co-alert"
             variant="info"
-            title={t('public~New identity provider added.')}
+            title={t('console-app~New identity provider added.')}
           >
             <>
               {t(
-                'public~Authentication is being reconfigured. The new identity provider will be available once reconfiguration is complete.',
+                'console-app~Authentication is being reconfigured. The new identity provider will be available once reconfiguration is complete.',
               )}{' '}
               <Link to={resourcePathFromModel(ClusterOperatorModel, 'authentication')}>
-                {t('public~View authentication conditions for reconfiguration status.')}
+                {t('console-app~View authentication conditions for reconfiguration status.')}
               </Link>
             </>
           </Alert>
@@ -122,7 +122,7 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
               toggleIndicator={CaretDownIcon}
               data-test-id="dropdown-button"
             >
-              {t('public~Add')}
+              {t('console-app~Add')}
             </DropdownToggleDeprecated>
           }
           isOpen={isIDPOpen}

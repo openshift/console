@@ -14,7 +14,7 @@ const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 export const KubeAdminNotifier = connect(userStateToProps)(({ user }) => {
   const { t } = useTranslation();
   const canUpgrade = useCanClusterUpgrade();
-  const username = _.get(user, 'metadata.name');
+  const username = _.get(user, 'username');
   return KUBE_ADMIN_USERNAMES.includes(username) && canUpgrade ? (
     <div className="co-global-notification">
       <div className="co-global-notification__content">
