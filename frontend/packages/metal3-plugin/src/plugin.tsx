@@ -311,41 +311,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
-  {
-    type: 'HorizontalNavTab',
-    properties: {
-      page: {
-        href: 'nics',
-        name: '%metal3-plugin~Network Interfaces%',
-      },
-      model: NodeModel,
-      loader: () =>
-        import('./components/baremetal-nodes/NICsPage').then(
-          (m) => m.default,
-        ) /* webpackChunkName: "metal3-bmn-nics" */,
-    },
-    flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG],
-    },
-  },
-  {
-    type: 'HorizontalNavTab',
-    properties: {
-      page: {
-        href: 'disks',
-        name: '%metal3-plugin~Disks%',
-      },
-      model: NodeModel,
-      loader: () =>
-        import('./components/baremetal-nodes/DisksPage').then(
-          (m) => m.default,
-        ) /* webpackChunkName: "metal3-bmn-disks" */,
-    },
-    flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG],
-      disallowed: ['LSO_DEVICE_DISCOVERY'],
-    },
-  },
 ];
 
 export default plugin;
