@@ -49,7 +49,7 @@ export const documentationURLs: documentationURLsType = {
     upstream: '', // intentionally blank as there is no upstream equivalent
   },
   postInstallationMachineConfigurationTasks: {
-    downstream: 'html/post-installation_configuration/index',
+    downstream: 'html/postinstallation_configuration/index',
     upstream: 'post_installation_configuration/machine-configuration-tasks.html',
   },
   understandingUpgradeChannels: {
