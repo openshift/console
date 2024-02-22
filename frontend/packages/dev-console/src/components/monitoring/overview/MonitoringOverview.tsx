@@ -135,16 +135,16 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
               </EmptyState>
             ) : (
               <>
-                <div className="odc-monitoring-overview__view-monitoring-dashboard">
+                <div className="odc-monitoring-overview__view-monitoring-dashboards">
                   <Link
                     to={`/dev-monitoring/ns/${
                       resource?.metadata?.namespace
                     }?dashboard=grafana-dashboard-k8s-resources-workload&workload=${
                       resource?.metadata?.name
                     }&type=${resource?.kind?.toLowerCase()}`}
-                    data-test="observe-dashboard-link"
+                    data-test="observe-dashboards-link"
                   >
-                    {t('devconsole~View dashboard')}
+                    {t('devconsole~View dashboards')}
                   </Link>
                 </div>
                 <WorkloadGraphs resource={resource} />

@@ -164,8 +164,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             [OperatorHubCSVAnnotationKey.cnf]: cnf,
             [OperatorHubCSVAnnotationKey.cni]: cni,
             [OperatorHubCSVAnnotationKey.csi]: csi,
-            // tlsProfiles requires addtional changes
-            // [OperatorHubCSVAnnotationKey.tlsProfiles]: tlsProfiles,
+            [OperatorHubCSVAnnotationKey.tlsProfiles]: tlsProfiles,
             [OperatorHubCSVAnnotationKey.tokenAuthAWS]: tokenAuthAWS,
             [OperatorHubCSVAnnotationKey.tokenAuthAzure]: tokenAuthAzure,
             // tokenAuthGCP requires additional changes
@@ -197,6 +196,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             { key: InfraFeatures.cnf, value: cnf },
             { key: InfraFeatures.cni, value: cni },
             { key: InfraFeatures.csi, value: csi },
+            { key: InfraFeatures.tlsProfiles, value: tlsProfiles },
           ];
 
           // override old with new

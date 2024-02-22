@@ -47,24 +47,33 @@ compatible versions of distributable SDK packages to versions of the OpenShift C
 
 | Console Version   | SDK Package                                     | Last Package Version |
 | ----------------- | ----------------------------------------------- | -------------------- |
-| 4.15.x            | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
+| 4.16.x            | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
 |                   | `@openshift-console/dynamic-plugin-sdk-webpack` | Latest               |
+| 4.15.x            | `@openshift-console/dynamic-plugin-sdk`         | 1.0.0                |
+|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.0.0                |
 | 4.14.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.21               |
 |                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.11               |
 | 4.13.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.19               |
 |                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
 | 4.12.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.18               |
 |                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
-| 4.11.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.12               |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.7                |
-| 4.10.x **[Tech]** | `@openshift-console/dynamic-plugin-sdk`         | 0.0.3                |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.6                |
-| 4.9.x **[Dev]**   | `@openshift-console/dynamic-plugin-sdk`         | 0.0.0-alpha18        |
 
-Notes:
+Note: this table includes Console versions which currently receive technical support, as per
+[Red Hat OpenShift Container Platform Life Cycle Policy](https://access.redhat.com/support/policy/updates/openshift).
 
-- **[Tech]** - Release 4.10 was Tech Preview for the SDK packages
-- **[Dev]** - Release 4.9 was Dev Preview for the SDK packages
+## OpenShift Console Versions vs PatternFly Versions
+
+Each Console version supports specific versions of [PatternFly](https://www.patternfly.org/) in terms
+of CSS styling. This table will help align compatible versions of PatternFly to versions of the OpenShift
+Console.
+
+| Console Version   | PatternFly Versions | Notes                                 |
+| ----------------- | ------------------- | ------------------------------------- |
+| 4.16.x            | 5.x + 4.x           | New dynamic plugins should use PF 5.x |
+| 4.15.x            | 5.x + 4.x           | New dynamic plugins should use PF 5.x |
+| 4.14.x            | 4.x                 |                                       |
+| 4.13.x            | 4.x                 |                                       |
+| 4.12.x            | 4.x                 |                                       |
 
 ## Shared modules
 
@@ -88,6 +97,11 @@ For backwards compatibility, Console also provides the following PatternFly **4.
 - `@patternfly/react-core`
 - `@patternfly/react-table`
 - `@patternfly/quickstarts`
+
+Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
+in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
+
+### PatternFly dynamic modules
 
 Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package (1.0.0 and higher) include
 support for automatic detection and sharing of individual PatternFly 5.x dynamic modules.

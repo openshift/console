@@ -34,15 +34,13 @@ const useRuns = <Kind extends K8sResourceCommon>(
   const watchOptions = React.useMemo(() => {
     // reset cached runs as the options have changed
     etcdRunsRef.current = [];
-    return namespace
-      ? {
-          groupVersionKind,
-          namespace,
-          isList,
-          selector: optionsMemo?.selector,
-          name: optionsMemo?.name,
-        }
-      : null;
+    return {
+      groupVersionKind,
+      namespace: namespace || undefined,
+      isList,
+      selector: optionsMemo?.selector,
+      name: optionsMemo?.name,
+    };
   }, [groupVersionKind, namespace, optionsMemo, isList]);
 
   const [resources, loaded, error] = useK8sWatchResource(watchOptions);

@@ -54,7 +54,7 @@ When('user selects {string} from Context Menu', (menuOption: string) => {
 });
 
 When('user clicks on View dashboard link', () => {
-  cy.get(topologyPO.sidePane.monitoringTab.viewMonitoringDashBoardLink).click({ force: true });
+  cy.get(topologyPO.sidePane.monitoringTab.viewMonitoringDashBoardsLink).click({ force: true });
 });
 
 When('user selects {string} from topology sidebar Actions dropdown', (menuOption: string) => {
@@ -189,7 +189,7 @@ Then('user wont see Monitoring tab', () => {
 });
 
 Then('user will see View dashboard link', () => {
-  cy.get(topologyPO.sidePane.monitoringTab.viewMonitoringDashBoardLink).should('be.visible');
+  cy.get(topologyPO.sidePane.monitoringTab.viewMonitoringDashBoardsLink).should('be.visible');
 });
 
 Then('user will see CPU Usage Metrics', () => {

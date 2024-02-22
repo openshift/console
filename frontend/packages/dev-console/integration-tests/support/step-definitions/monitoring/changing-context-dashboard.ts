@@ -6,9 +6,9 @@ When('user selects the workload {string} to open the topology sidebar', (workloa
   topologyPage.clickOnNode(workloadName);
 });
 
-When('user navigates to observe dashboard from toplogy sidebar', () => {
+When('user navigates to observe dashboards from toplogy sidebar', () => {
   topologySidePane.selectTab('Observe');
-  cy.get(topologyPO.sidePane.monitoringTab.viewMonitoringDashBoardLink).click({ force: true });
+  cy.get(topologyPO.sidePane.monitoringTab.viewMonitoringDashBoardsLink).click({ force: true });
 });
 
 Then('user is able to see the workload {string} in workloads dropdown', (workloadName: string) => {
