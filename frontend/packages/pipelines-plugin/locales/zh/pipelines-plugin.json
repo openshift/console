@@ -463,7 +463,7 @@
   "Skipped": "跳过",
   "Cancelled": "取消",
   "Cancelling": "取消",
-  "Pending": "Pending",
+  "Pending": "待处理",
   "PipelineRun not started yet": "管道运行尚未启动",
   "Other": "其他"
 }
