@@ -45,6 +45,9 @@ export const quickStartDisplayNameToName = (displayName: string) => {
     case 'Install the OpenShift Serverless Operator': {
       return 'install-serverless';
     }
+    case 'Install Red Hat Developer Hub (RHDH) with a Helm Chart': {
+      return 'rhdh-installation-via-helm';
+    }
     case 'Create ruby app': {
       return 'copy-execute-demo';
     }
