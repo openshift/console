@@ -63,7 +63,7 @@ Note: this table includes Console versions which currently receive technical sup
 
 ## OpenShift Console Versions vs PatternFly Versions
 
-Each Console version supports specific versions of [PatternFly](https://www.patternfly.org/) in terms
+Each Console version supports specific version(s) of [PatternFly](https://www.patternfly.org/) in terms
 of CSS styling. This table will help align compatible versions of PatternFly to versions of the OpenShift
 Console.
 
@@ -74,6 +74,8 @@ Console.
 | 4.14.x            | 4.x                 |                                       |
 | 4.13.x            | 4.x                 |                                       |
 | 4.12.x            | 4.x                 |                                       |
+
+Refer to [PatternFly Upgrade Notes](./upgrade-PatternFly.md) containing links to PatternFly documentation.
 
 ## Shared modules
 
@@ -265,6 +267,32 @@ It provides access to specific modules exposed by the plugin. It's loaded right 
 
 `exposed-barUtils-chunk.js` is the generated webpack chunk for `barUtils` exposed module. It's loaded
 via the plugin entry chunk (`plugin-entry.js`) when needed.
+
+Plugins may also include other assets, such as JSON localization files that follow the general pattern
+`locales/<lang>/plugin__<plugin-name>.json` or static images referenced from the plugin code.
+
+## Serving plugin assets
+
+Dynamic plugins are deployed on a cluster via OLM operators. Each plugin deployment should include a web
+server that hosts the [generated assets](#generated-assets) of the given plugin.
+
+**Important!** Make sure to configure your plugin web server to use MIME type `text/javascript` for all
+JS assets to avoid any issues with the `X-Content-Type-Options: nosniff` security header used by Console
+when fetching plugin assets via Bridge URL `/api/plugins/<plugin-name>`.
+
+Requests for JS assets not served with the correct MIME type can be blocked by the browser, breaking your
+plugin's functionality.
+
+### Caching
+
+The following table lists important plugin assets that must NOT be cached by the plugin web server.
+
+| Asset                  | Notes                                                          |
+| ---------------------- | -------------------------------------------------------------- |
+| `plugin-manifest.json` |                                                                |
+| `plugin-entry.js`      | Applies only to Console plugin SDK versions 0.0.x              |
+
+We generally recommend disabling caching of any JSON resources hosted by the plugin web server.
 
 ## Plugin development
 
