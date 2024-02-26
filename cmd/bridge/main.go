@@ -17,11 +17,11 @@ import (
 
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
-	"github.com/openshift/console/cmd/bridge/server"
+	"github.com/openshift/console/cmd/bridge/httpserver"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
-	handler "github.com/openshift/console/pkg/server"
+	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
@@ -73,8 +73,8 @@ func main() {
 	sessionOptions := session.NewSessionOptions()
 	sessionOptions.AddFlags(fs)
 
-	consoleServer := server.NewServer(fs)
-	redirectServer := server.NewRedirectServer(fs)
+	consoleServer := httpserver.NewServer(fs)
+	redirectServer := httpserver.NewRedirectServer(fs)
 
 	// Define commandline / env / config options
 	fs.String("config", "", "The YAML config file.")
@@ -246,7 +246,7 @@ func main() {
 		}
 	}
 
-	srv := &handler.Server{
+	srv := &server.Server{
 		PublicDir:                    *fPublicDir,
 		BaseURL:                      baseURL,
 		Branding:                     branding,
@@ -511,7 +511,7 @@ func main() {
 	if err != nil {
 		klog.Fatalf("Failed to create k8s HTTP client: %v", err)
 	}
-	srv.MonitoringDashboardConfigMapLister = handler.NewResourceLister(
+	srv.MonitoringDashboardConfigMapLister = server.NewResourceLister(
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
@@ -524,7 +524,7 @@ func main() {
 		nil,
 	)
 
-	srv.KnativeEventSourceCRDLister = handler.NewResourceLister(
+	srv.KnativeEventSourceCRDLister = server.NewResourceLister(
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
@@ -537,7 +537,7 @@ func main() {
 		knative.EventSourceFilter,
 	)
 
-	srv.KnativeChannelCRDLister = handler.NewResourceLister(
+	srv.KnativeChannelCRDLister = server.NewResourceLister(
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
