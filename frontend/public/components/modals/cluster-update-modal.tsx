@@ -188,7 +188,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
     options.unshift({
       items: notRecommendedOptions,
       key: 'notRecommended',
-      label: t('public~Supported but not recommended'),
+      label: t('public~Have known issues'),
     });
   }
   const helpURL = getDocumentationURL(documentationURLs.updateUsingCustomMachineConfigPools);
@@ -213,10 +213,10 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
             switchIsDisabled={notRecommendedOptions.length === 0}
             switchLabel={
               <>
-                {t('public~Include supported but not recommended versions')}
+                {t('public~Include versions with known issues')}
                 <FieldLevelHelp>
                   {t(
-                    'public~These versions are supported, but not recommended. Review the known risks before updating.',
+                    'public~These versions are supported, but include known issues. Review the known issues before updating.',
                   )}
                 </FieldLevelHelp>
               </>
@@ -231,7 +231,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
               className="pf-v5-u-mt-sm"
               isInline
               title={t(
-                'public~Updating this cluster to {{desiredVersion}} is supported, but not recommended as it might not be optimized for some components in this cluster.',
+                'public~Updating this cluster to {{desiredVersion}} is supported, but includes known issues.  Review the known issues before updating.',
                 { desiredVersion: desiredNotRecommendedUpdate.release.version },
               )}
               variant="info"
