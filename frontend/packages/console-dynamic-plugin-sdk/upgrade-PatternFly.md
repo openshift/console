@@ -6,7 +6,15 @@ specific version(s) of [PatternFly](https://www.patternfly.org/) in terms of CSS
 Check the [OpenShift Console Versions vs PatternFly Versions][console-pf-versions] table for
 compatibility before upgrading to a newer version of PatternFly.
 
-## Console 4.14 and below
+## CSS styling
+
+Plugins should only include styles that are specific to their user interfaces, to be evaluated on
+top of base PatternFly styles. Avoid importing styles such as `@patternfly/react-styles/**/*.css`
+or any styles from `@patternfly/patternfly` package in your plugin.
+
+Console application is responsible for loading base styles for all supported PatternFly version(s).
+
+## Console 4.14 & below
 
 Console provides the following PatternFly 4.x [shared modules][console-shared-modules] to plugins:
 
