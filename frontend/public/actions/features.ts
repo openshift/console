@@ -21,8 +21,13 @@ import { ClusterVersionKind } from '../module/k8s/types';
 import { receivedResources } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { setClusterID, setCreateProjectMessage } from './common';
 import client, { fetchURL } from '../graphql/client';
-import { SSARQuery } from './features.gql';
-import { SSARQueryType, SSARQueryVariables } from '../../@types/console/generated/graphql-schema';
+import { SSARQuery, SSRQuery } from './features.gql';
+import {
+  SSARQueryType,
+  SSARQueryVariables,
+  SSRQueryType,
+} from '../../@types/console/generated/graphql-schema';
+import { UserInfo } from '@console/internal/module/k8s';
 
 export enum ActionType {
   SetFlag = 'setFlag',
@@ -207,18 +212,36 @@ const detectCanCreateProject = (dispatch) =>
     },
   );
 
-const detectUser = (dispatch) =>
-  // FIXME: use k8s self-subject review API
-  fetchURL('/apis/user.openshift.io/v1/users/~').then(
-    (user) => {
-      dispatch(setUser(user));
-    },
-    (err) => {
-      if (!_.includes([401, 403, 404, 500], err?.response?.status)) {
-        setTimeout(() => detectUser(dispatch), 15000);
-      }
-    },
-  );
+const detectUser = (dispatch: Dispatch) =>
+  client
+    .query<SSRQueryType>({
+      query: SSRQuery,
+    })
+    .then(
+      (res) => {
+        const userInfo = res.data.selfSubjectReview.status.userInfo;
+        const newUserInfo: UserInfo = {};
+        if (userInfo.extra) {
+          try {
+            newUserInfo.extra = JSON.parse(userInfo.extra);
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error('Error parsing UserInfo JSON:', error);
+          }
+        }
+        newUserInfo.groups = userInfo.groups;
+        newUserInfo.uid = userInfo.uid;
+        newUserInfo.username = userInfo.username;
+        dispatch(setUser(newUserInfo));
+      },
+      (err) => {
+        // eslint-disable-next-line no-console
+        console.error('Error retrieving SelfSubjectReview: ', err);
+        if (!_.includes([400, 404, 500], err?.response?.status)) {
+          retryFlagDetection(dispatch, detectUser);
+        }
+      },
+    );
 
 const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) => {
   const fn = (dispatch: Dispatch) =>

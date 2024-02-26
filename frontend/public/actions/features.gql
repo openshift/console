@@ -5,3 +5,16 @@ query SSARQuery($resource: String, $verb: String, $group: String, $namespace: St
     }
   }
 }
+
+query SSRQuery {
+  selfSubjectReview {
+    status {
+      userInfo {
+        uid,
+        username,
+        groups,
+        extra
+      }
+    }
+  }
+}

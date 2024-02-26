@@ -44,7 +44,7 @@ const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({
 }) => {
   const { t } = useTranslation();
   const [silencing, setSilencing] = React.useState(false);
-  const createdBy = useSelector((state: RootState) => getUser(state)?.metadata?.name);
+  const createdBy = useSelector((state: RootState) => getUser(state)?.username);
   const rules = useSelector(({ observe }: RootState) => observe.getIn(['devRules']));
   const ruleMatchers = _.map(rule?.labels, (value, key) => ({ isRegex: false, name: key, value }));
   const dispatch = useDispatch();

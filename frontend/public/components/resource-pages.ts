@@ -37,7 +37,6 @@ import {
   NamespaceModel,
   NetworkPolicyModel,
   NodeModel,
-  OAuthModel,
   PersistentVolumeClaimModel,
   PersistentVolumeModel,
   PodModel,
@@ -294,11 +293,6 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ClusterVersionModel), () =>
     import('./cluster-settings/cluster-version' /* webpackChunkName: "cluster-version" */).then(
       (m) => m.ClusterVersionDetailsPage,
-    ),
-  )
-  .set(referenceForModel(OAuthModel), () =>
-    import('./cluster-settings/oauth' /* webpackChunkName: "oauth" */).then(
-      (m) => m.OAuthDetailsPage,
     ),
   )
   .set(referenceForModel(PodDisruptionBudgetModel), () =>
