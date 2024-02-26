@@ -65,7 +65,7 @@
   .pf-v5-c-select__menu {
     min-width: 290px;
     @media (min-width: 480px) {
-      min-width: 350px;
+      min-width: 420px;
     }
     .co-resource-item__tech-dev-preview {
       color: red;
@@ -76,4 +76,19 @@
 
 .span--icon__right-margin {
   margin-right: 6px;
+}
+
+.co-select-group-close-button {
+  margin-left: 360px;
+  top: 2px;
+  z-index: 1;
+}
+
+.co-select-group-dismissible {
+  top: -32px;
+  position: relative;
+}
+
+.co-select-group-divider {
+  margin-top: -22px !important;
 }

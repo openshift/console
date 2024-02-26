@@ -1414,6 +1414,8 @@
   "ReplicationController details": "ReplicationController details",
   "{{statusReplicas}} of {{specReplicas}} pods": "{{statusReplicas}} of {{specReplicas}} pods",
   "Tech Preview": "Tech Preview",
+  "Clear history": "Clear history",
+  "Recently used": "Recently used",
   "Select Resource": "Select Resource",
   "Edit AppliedClusterResourceQuota": "Edit AppliedClusterResourceQuota",
   "Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.": "Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.",
