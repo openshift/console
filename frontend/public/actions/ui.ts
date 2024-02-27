@@ -104,7 +104,7 @@ export const getNamespacedResources = () => {
 };
 
 export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
-export const getActiveUserName = (): string => getUser(store.getState())?.metadata?.name;
+export const getActiveUserName = (): string => getUser(store.getState())?.username;
 
 export const getNamespaceMetric = (ns: K8sResourceKind, metric: string): number => {
   const metrics = store.getState().UI.getIn(['metrics', 'namespace']);

@@ -15,7 +15,6 @@ import {
   referenceForGroupVersionKind,
 } from '../../module/k8s';
 import { EmptyBox, ExpandableAlert, Kebab, LoadingBox, resourcePathFromModel } from '../utils';
-import { addIDPItems } from './oauth';
 import { TextFilter } from '../factory';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import i18next from 'i18next';
@@ -25,6 +24,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
 import { useCanClusterUpgrade } from '@console/shared';
 import filterNonUpgradableResources from './filterNonUpgradableResources';
+import { IDP_TYPES } from '@console/shared/src/constants/auth';
 
 type ConfigDataType = { model: K8sKind; id: string; name: string; namespace: string };
 
@@ -75,7 +75,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
   const { t } = useTranslation();
 
   React.useEffect(() => {
-    const oauthMenuItems = _.map(addIDPItems, (label: string, id: string) => ({
+    const oauthMenuItems = _.map(IDP_TYPES, (label: string, id: string) => ({
       label: t('public~{{label}}', { label }),
       href: `/settings/idp/${id}`,
     }));

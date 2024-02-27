@@ -78,13 +78,20 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   };
 
   // User and impersonate
-  const userUid = useSelector(
-    (state: RootState) =>
-      getImpersonate(state)?.name ??
-      getUser(state)?.metadata?.uid ??
-      hashNameOrKubeadmin(getUser(state).metadata?.name) ??
-      '',
-  );
+  const userUid = useSelector((state: RootState) => {
+    const impersonateName = getImpersonate(state)?.name;
+    if (impersonateName) {
+      return impersonateName;
+    }
+    const uid = getUser(state)?.uid;
+    if (uid) {
+      return uid;
+    }
+    const username = hashNameOrKubeadmin(getUser(state)?.username);
+
+    return username || '';
+  });
+
   const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
 
   // Fallback
@@ -95,6 +102,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
     (...args) => mounted.current && setFallbackLocalStorageUnsafe(...args),
     [setFallbackLocalStorageUnsafe],
   );
+
   const isLocalStorage = fallbackLocalStorage || impersonate;
   const [lsData, setLsDataCallback] = useUserSettingsLocalStorage(
     alwaysUseFallbackLocalStorage && !impersonate
