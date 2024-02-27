@@ -281,6 +281,9 @@
         "kind": "Pipeline"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelineDetailsPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAILS"]
     }
   },
   {
@@ -292,6 +295,9 @@
         "kind": "Pipeline"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelineDetailsPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAILS"]
     }
   },
   {
@@ -316,7 +322,8 @@
       "component": { "$codeRef": "pipelinesComponent.PipelineConditionDetailsPage" }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE_CONDITION"]
+      "required": ["OPENSHIFT_PIPELINE_CONDITION"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONDITIONS_DETAILS"]
     }
   },
   {
@@ -328,6 +335,9 @@
         "kind": "PipelineRun"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelineRunDetailsPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAILS"]
     }
   },
   {
@@ -339,6 +349,9 @@
         "kind": "PipelineRun"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelineRunDetailsPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAILS"]
     }
   },
   {
@@ -350,6 +363,9 @@
         "kind": "TaskRun"
       },
       "component": { "$codeRef": "tasksComponent.TaskRunDetailsPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKRUN_DETAILS"]
     }
   },
   {
@@ -361,6 +377,9 @@
         "kind": "TaskRun"
       },
       "component": { "$codeRef": "tasksComponent.TaskRunDetailsPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKRUN_DETAILS"]
     }
   },
   {
@@ -372,6 +391,9 @@
         "kind": "Repository"
       },
       "component": { "$codeRef": "pipelinesComponent.RepositoryDetailsPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_REPOSITORY_DETAILS"]
     }
   },
   {
@@ -383,6 +405,9 @@
         "kind": "ClusterTask"
       },
       "component": { "$codeRef": "tasksComponent.ClusterTaskDetailsPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASK_DETAILS"]
     }
   },
   {
@@ -394,6 +419,9 @@
         "kind": "Task"
       },
       "component": { "$codeRef": "tasksComponent.TaskDetailsPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASK_DETAILS"]
     }
   },
   {
@@ -405,6 +433,9 @@
         "kind": "Task"
       },
       "component": { "$codeRef": "tasksComponent.TaskDetailsPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASK_DETAILS"]
     }
   },
   {
@@ -416,6 +447,9 @@
         "kind": "EventListener"
       },
       "component": { "$codeRef": "pipelinesComponent.EventListenerPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_EVENTLISTENERS_DETAILS"]
     }
   },
   {
@@ -427,6 +461,9 @@
         "kind": "TriggerTemplate"
       },
       "component": { "$codeRef": "pipelinesComponent.TriggerTemplatePage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERTEMPLATE_DETAILS"]
     }
   },
   {
@@ -438,6 +475,9 @@
         "kind": "TriggerBinding"
       },
       "component": { "$codeRef": "pipelinesComponent.TriggerBindingPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERBINDING_DETAILS"]
     }
   },
   {
@@ -449,17 +489,9 @@
         "kind": "ClusterTriggerBinding"
       },
       "component": { "$codeRef": "pipelinesComponent.ClusterTriggerBindingPage" }
-    }
-  },
-  {
-    "type": "console.page/resource/details",
-    "properties": {
-      "model": {
-        "group": "triggers.tekton.dev",
-        "version": "v1alpha1",
-        "kind": "ClusterTriggerBinding"
-      },
-      "component": { "$codeRef": "pipelinesComponent.ClusterTriggerBindingPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTRIGGERSBINDING_DETAILS"]
     }
   },
   {
@@ -471,6 +503,9 @@
         "kind": "Pipeline"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelinesResourceList" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINES_LIST"]
     }
   },
   {
@@ -482,6 +517,9 @@
         "kind": "PipelineRun"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelineRunsResourceList" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUNS_LIST"]
     }
   },
   {
@@ -493,6 +531,9 @@
         "kind": "Pipeline"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelinesResourceList" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINES_LIST"]
     }
   },
   {
@@ -504,6 +545,9 @@
         "kind": "PipelineRun"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelineRunsResourceList" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUNS_LIST"]
     }
   },
   {
@@ -515,6 +559,23 @@
         "kind": "TaskRun"
       },
       "component": { "$codeRef": "tasksComponent.TaskRunsListPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKRUNS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "TaskRun"
+      },
+      "component": { "$codeRef": "tasksComponent.TaskRunsListPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKRUNS_LIST"]
     }
   },
   {
@@ -528,7 +589,8 @@
       "component": { "$codeRef": "pipelinesComponent.ConditionListPage" }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE_CONDITION"]
+      "required": ["OPENSHIFT_PIPELINE_CONDITION"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONDITIONS_LIST"]
     }
   },
   {
@@ -540,6 +602,23 @@
         "kind": "Task"
       },
       "component": { "$codeRef": "tasksComponent.TaskListPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Task"
+      },
+      "component": { "$codeRef": "tasksComponent.TaskListPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKS_LIST"]
     }
   },
   {
@@ -551,6 +630,23 @@
         "kind": "ClusterTask"
       },
       "component": { "$codeRef": "tasksComponent.ClusterTaskListPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "ClusterTask"
+      },
+      "component": { "$codeRef": "tasksComponent.ClusterTaskListPage" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST"]
     }
   },
   {
@@ -571,6 +667,9 @@
       "component": {
         "$codeRef": "pipelinesComponent.PipelinesListsPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
     }
   },
   {
@@ -581,6 +680,9 @@
       "component": {
         "$codeRef": "tasksComponent.TasksListsPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKS_NAV_OPTION"]
     }
   },
   {
@@ -591,6 +693,9 @@
       "component": {
         "$codeRef": "triggersComponent.TriggersPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERS_NAV_OPTION"]
     }
   },
   {
@@ -615,6 +720,9 @@
       "component": {
         "$codeRef": "pipelinesComponent.PipelinesPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINES_LIST"]
     }
   },
   {
@@ -679,6 +787,9 @@
       "component": {
         "$codeRef": "pipelinesComponent.PipelineRunsPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUNS_LIST"]
     }
   },
   {
@@ -788,7 +899,8 @@
       }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE", "FLAG_TEKTON_V1_ENABLED"]
+      "required": ["OPENSHIFT_PIPELINE", "FLAG_TEKTON_V1_ENABLED"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
     }
   },
   {
@@ -808,7 +920,7 @@
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE_V1BETA1"],
-      "disallowed": ["FLAG_TEKTON_V1_ENABLED"]
+      "disallowed": ["FLAG_TEKTON_V1_ENABLED", "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
     }
   },
   {
@@ -825,7 +937,8 @@
       }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE", "FLAG_TEKTON_V1_ENABLED"]
+      "required": ["OPENSHIFT_PIPELINE", "FLAG_TEKTON_V1_ENABLED"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
     }
   },
   {
@@ -839,7 +952,8 @@
       "namespaced": true
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE", "FLAG_TEKTON_V1_ENABLED"]
+      "required": ["OPENSHIFT_PIPELINE", "FLAG_TEKTON_V1_ENABLED"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKS_NAV_OPTION"]
     }
   },
   {
@@ -853,7 +967,8 @@
       "namespaced": true
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE", "FLAG_TEKTON_V1_ENABLED"]
+      "required": ["OPENSHIFT_PIPELINE", "FLAG_TEKTON_V1_ENABLED"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERS_NAV_OPTION"]
     }
   },
   {
@@ -871,7 +986,7 @@
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE_V1BETA1"],
-      "disallowed": ["FLAG_TEKTON_V1_ENABLED"]
+      "disallowed": ["FLAG_TEKTON_V1_ENABLED", "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
     }
   },
   {
@@ -886,7 +1001,7 @@
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE_V1BETA1"],
-      "disallowed": ["FLAG_TEKTON_V1_ENABLED"]
+      "disallowed": ["FLAG_TEKTON_V1_ENABLED", "HIDE_STATIC_PIPELINE_PLUGIN_TASKS_NAV_OPTION"]
     }
   },
   {
@@ -901,7 +1016,7 @@
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE_V1BETA1"],
-      "disallowed": ["FLAG_TEKTON_V1_ENABLED"]
+      "disallowed": ["FLAG_TEKTON_V1_ENABLED", "HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERS_NAV_OPTION"]
     }
   },
   {
@@ -1060,7 +1175,8 @@
       "component": { "$codeRef": "pipelinesComponent.RepositoriesList" }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE_AS_CODE"]
+      "required": ["OPENSHIFT_PIPELINE_AS_CODE"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_REPOSITORIES_LIST"]
     }
   },
   {
