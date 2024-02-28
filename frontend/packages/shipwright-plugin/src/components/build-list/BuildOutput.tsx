@@ -13,7 +13,10 @@ const BuildOutput: React.FC<BuildOutputProps> = ({ buildSpec }) => {
   const outputImage = buildSpec?.output?.image;
 
   if (outputImage?.startsWith(BUILD_OUTPUT_IMAGESTREAM_URL)) {
-    const imageStreamName = outputImage?.split('/')?.pop();
+    let imageStreamName = outputImage?.split('/')?.pop();
+    if (imageStreamName?.includes(':')) {
+      imageStreamName = imageStreamName?.split(':')[0];
+    }
     const imageStreamNamespace = outputImage?.split('/')[1];
     return (
       <ResourceLink
