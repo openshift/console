@@ -42,7 +42,11 @@ const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
         e.preventDefault();
         onClick(perspective.properties.id);
       }}
-      icon={<LazyIcon />}
+      icon={
+        <React.Suspense fallback={<>&emsp;</>}>
+          <LazyIcon />
+        </React.Suspense>
+      }
     >
       <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
         {perspective.properties.name}
