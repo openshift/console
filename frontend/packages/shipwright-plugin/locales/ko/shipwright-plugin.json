@@ -60,8 +60,8 @@
   "{{count}} second_other": "{{count}} 초",
   "{{sec}}s": "{{sec}}초",
   "Started": "시작",
-  "ClusterBuildStrategy": "ClusterBuildStrategy",
-  "ClusterBuildStrategies": "ClusterBuildStrategies",
-  "BuildStrategy": "BuildStrategy",
-  "BuildStrategies": "BuildStrategies"
+  "ClusterBuildStrategy": "클러스터 빌드 전략",
+  "ClusterBuildStrategies": "클러스터 빌드 전략",
+  "BuildStrategy": "빌드 전략",
+  "BuildStrategies": "빌드 전략"
 }
