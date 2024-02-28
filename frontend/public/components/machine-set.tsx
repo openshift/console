@@ -404,6 +404,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
     <VirtualizedTable<MachineSetKind>
       {...props}
       aria-label={t('public~MachineSets')}
+      label={t('public~MachineSets')}
       columns={machineSetTableColumn}
       Row={MachineSetTableRow}
     />

@@ -259,6 +259,7 @@ export const MachineList: React.FC<MachineListProps> = (props) => {
     <VirtualizedTable<MachineKind>
       {...props}
       aria-label={t('public~Machines')}
+      label={t('public~Machines')}
       columns={columns}
       Row={MachineTableRow}
     />
