@@ -81,7 +81,14 @@
   width: 100%;
 }
 
+.co-sysevent__count-and-actions {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+}
+
 .co-sysevent__details {
+  column-gap: 8px;
   display: flex;
   justify-content: space-between;
 }

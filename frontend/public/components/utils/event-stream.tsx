@@ -39,7 +39,7 @@ class SysEvent extends React.Component<SysEventProps> {
   }
 
   render() {
-    const { EventComponent, index, style, event, className } = this.props;
+    const { EventComponent, index, style, event, className, list } = this.props;
 
     let shouldAnimate: boolean;
     const key = event.metadata.uid;
@@ -61,7 +61,7 @@ class SysEvent extends React.Component<SysEventProps> {
         >
           {(status) => (
             <div className={`slide-${status}`}>
-              <EventComponent event={event} />
+              <EventComponent event={event} list={list} cache={measurementCache} index={index} />
             </div>
           )}
         </CSSTransition>
@@ -94,6 +94,7 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
           <SysEvent
             className={className}
             event={events[index]}
+            list={list}
             EventComponent={EventComponent}
             onLoad={measure}
             onEntered={print}
@@ -104,7 +105,7 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
         )}
       </CellMeasurer>
     ),
-    [events, className, EventComponent],
+    [events, className, EventComponent, list],
   );
 
   const renderVirtualizedTable = (scrollContainer) => (
@@ -146,6 +147,9 @@ type EventStreamListProps = {
 
 export type EventComponentProps = {
   event: EventKind;
+  list: VirtualList;
+  cache: CellMeasurerCache;
+  index: number;
 };
 
 type SysEventProps = {
@@ -156,4 +160,5 @@ type SysEventProps = {
   style: React.CSSProperties;
   index: number;
   className?: string;
+  list: VirtualList;
 };

@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link, useParams } from 'react-router-dom-v5-compat';
 import { Helmet } from 'react-helmet';
-import { Chip, ChipGroup } from '@patternfly/react-core';
+import { Button, ButtonSize, ButtonVariant, Chip, ChipGroup } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { namespaceProptype } from '../propTypes';
@@ -36,6 +36,8 @@ import {
 } from './utils';
 import { EventStreamList } from './utils/event-stream';
 import CloseButton from '@console/shared/src/components/close-button';
+import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
+import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
 
 const maxMessages = 500;
 const flushInterval = 500;
@@ -84,9 +86,34 @@ const kindFilter = (reference, { involvedObject }) => {
   });
 };
 
+const Actions = ({ actions, options, list, cache, index }) => {
+  React.useEffect(() => {
+    // Actions contents will render after the initial row height calculation,
+    // so recompute the row height.
+    cache.clear(index);
+    list?.recomputeRowHeights(index);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="co-sysevent__actions">
+      {actions.length === 1 ? (
+        <ActionMenuItem
+          action={actions[0]}
+          component={(props) => (
+            <Button variant={ButtonVariant.secondary} size={ButtonSize.sm} {...props} />
+          )}
+        />
+      ) : (
+        <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+      )}
+    </div>
+  );
+};
+
 const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
   const { t } = useTranslation();
-  const { event, flags } = props;
+  const { event, flags, list, cache, index } = props;
   const { involvedObject: obj, source, message, reason, series, reportingComponent } = event;
 
   const tooltipMsg = `${reason} (${obj.kind})`;
@@ -152,21 +179,37 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
                   sourceHost: source.host,
                 })}
             </small>
-            {count > 1 && firstTime && (
-              <Trans ns="public">
-                <small className="co-sysevent__count text-secondary">
-                  {{ eventCount: count }} times in the last{' '}
-                  <Timestamp timestamp={firstTime} simple={true} omitSuffix={true} />
-                </small>
-              </Trans>
-            )}
-            {count > 1 && !firstTime && (
-              <Trans ns="public">
-                <small className="co-sysevent__count text-secondary">
-                  {{ eventCount: count }} times
-                </small>
-              </Trans>
-            )}
+            <div className="co-sysevent__count-and-actions">
+              {count > 1 && firstTime && (
+                <Trans ns="public">
+                  <small className="co-sysevent__count text-secondary">
+                    {{ eventCount: count }} times in the last{' '}
+                    <Timestamp timestamp={firstTime} simple={true} omitSuffix={true} />
+                  </small>
+                </Trans>
+              )}
+              {count > 1 && !firstTime && (
+                <Trans ns="public">
+                  <small className="co-sysevent__count text-secondary">
+                    {{ eventCount: count }} times
+                  </small>
+                </Trans>
+              )}
+              <ActionServiceProvider context={{ [referenceFor(event)]: event }}>
+                {({ actions, options, loaded }) =>
+                  loaded &&
+                  actions.length > 0 && (
+                    <Actions
+                      actions={actions}
+                      options={options}
+                      list={list}
+                      cache={cache}
+                      index={index}
+                    />
+                  )
+                }
+              </ActionServiceProvider>
+            </div>
           </div>
         </div>
         <div className="co-sysevent__message">{message}</div>
