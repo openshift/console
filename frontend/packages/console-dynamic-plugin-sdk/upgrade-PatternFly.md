@@ -33,8 +33,8 @@ import { Button } from '@patternfly/react-core';
 
 ## Console 4.15
 
-All plugins that target OpenShift Console 4.15 should upgrade to PatternFly 5.x to take advantage
-of [PatternFly dynamic modules][console-pf-dynamic-modules].
+Plugins that only target OpenShift Console 4.15 and newer should upgrade to PatternFly 5.x to take
+advantage of [PatternFly dynamic modules][console-pf-dynamic-modules].
 
 Any PatternFly related code should be imported via the corresponding package index:
 
