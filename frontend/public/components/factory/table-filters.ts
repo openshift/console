@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { nodeStatus, volumeSnapshotStatus } from '@console/app/src/status';
 import { getNodeRoles, getLabelsAsString } from '@console/shared';
-import { Alert, FilterValue, RowFilter, Rule } from '@console/dynamic-plugin-sdk';
+import { Alert, AnyRowFilter, FilterValue, Rule } from '@console/dynamic-plugin-sdk';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
 import { roleType } from '../RBAC';
@@ -235,13 +235,16 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
     },
   };
 };
-const rowFiltersToFilterFuncs = (rowFilters: RowFilter[]): FilterMap => {
+const rowFiltersToFilterFuncs = (rowFilters: AnyRowFilter[]): FilterMap => {
   return (rowFilters || [])
     .filter((f) => f.type && _.isFunction(f.filter))
     .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {} as FilterMap);
 };
 
-export const getAllTableFilters = (rowFilters: RowFilter[], isExactMatch?: boolean): FilterMap => ({
+export const getAllTableFilters = (
+  rowFilters: AnyRowFilter[],
+  isExactMatch?: boolean,
+): FilterMap => ({
   ...tableFilters(isExactMatch),
   ...rowFiltersToFilterFuncs(rowFilters),
 });

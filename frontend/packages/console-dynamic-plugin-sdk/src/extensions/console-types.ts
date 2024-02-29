@@ -401,6 +401,12 @@ export type RowReducerFilter<R = any> = RowFilterBase<R> & {
 
 export type RowFilter<R = any> = RowMatchFilter<R> | RowReducerFilter<R>;
 
+export type RowSearchFilter<R = any> = Omit<RowFilterBase<R>, 'items' | 'defaultSelected'> & {
+  placeholder?: string;
+};
+
+export type AnyRowFilter<R = any> = RowFilter<R> | RowSearchFilter<R>;
+
 export type ColumnLayout = {
   id: string;
   columns: ManagedColumn[];
@@ -420,7 +426,7 @@ export type OnFilterChange = (type: string, value: FilterValue) => void;
 export type ListPageFilterProps<D = any> = {
   data: D;
   loaded: boolean;
-  rowFilters?: RowFilter[];
+  rowFilters?: RowFilter<D>[];
   labelFilter?: string;
   labelPath?: string;
   nameFilterTitle?: string;
@@ -432,11 +438,12 @@ export type ListPageFilterProps<D = any> = {
   onFilterChange: OnFilterChange;
   hideColumnManagement?: boolean;
   nameFilter?: string;
+  rowSearchFilters?: RowSearchFilter<D>[];
 };
 
 export type UseListPageFilter = <D, R>(
   data: D[],
-  rowFilters?: RowFilter<R>[],
+  rowFilters?: AnyRowFilter<R>[],
   staticFilters?: { [key: string]: FilterValue },
 ) => [D[], D[], OnFilterChange];
 
