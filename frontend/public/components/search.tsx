@@ -253,6 +253,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
                 <ResourceListDropdown
                   selected={[...selectedItems]}
                   onChange={updateSelectedItems}
+                  recentList={true}
                 />
               </ToolbarFilter>
             </ToolbarItem>

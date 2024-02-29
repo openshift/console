@@ -4,15 +4,20 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-
 import { ResourceIcon } from './utils';
 import { K8sKind, K8sResourceKindReference, modelFor, referenceForModel } from '../module/k8s';
 import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import {
   Select as SelectDeprecated,
+  SelectGroup as SelectGroupDeprecated,
   SelectOption as SelectOptionDeprecated,
   SelectVariant as SelectVariantDeprecated,
 } from '@patternfly/react-core/deprecated';
+import { useUserSettings } from '@console/shared/src';
+import { Divider, Tooltip } from '@patternfly/react-core';
+import CloseButton from '@console/shared/src/components/close-button';
+
+const RECENT_SEARCH_ITEMS = 5;
 
 // Blacklist known duplicate resources.
 const blacklistGroups = ImmutableSet([
@@ -26,11 +31,36 @@ const blacklistResources = ImmutableSet([
 ]);
 
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
-  const { selected, onChange, allModels, groupToVersionMap, className } = props;
+  const { selected, onChange, recentList, allModels, groupToVersionMap, className } = props;
   const { t } = useTranslation();
 
   const [isOpen, setOpen] = React.useState(false);
+  const [clearItems, setClearItems] = React.useState(false);
+
+  const [recentSelected, setRecentSelected] = useUserSettings<string>(
+    'console.search.recentlySearched',
+    '[]',
+    true,
+  );
+
   const [selectedOptions, setSelectedOptions] = React.useState(selected);
+
+  const filterGroupVersionKind = (resourceList: string[]): string[] => {
+    return resourceList.filter((resource) => {
+      const parts = resource.split('~');
+      return parts.length === 3 && parts.every((part) => part.trim() !== '');
+    });
+  };
+
+  const recentSelectedList = (data: string[] | string): string[] => {
+    return (
+      (data &&
+        data !== '[]' &&
+        data !== 'undefined' &&
+        JSON.parse(_.isString(data) ? data : JSON.stringify(data))) ??
+      []
+    );
+  };
 
   const resources = allModels
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
@@ -65,7 +95,24 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
 
   React.useEffect(() => {
     setSelectedOptions(selected);
-  }, [selected]);
+    !_.isEmpty(selected) &&
+      setRecentSelected(
+        JSON.stringify(
+          _.union(
+            !clearItems ? filterGroupVersionKind(selected.reverse()) : [],
+            recentSelectedList(recentSelected),
+          ),
+        ),
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setClearItems(false);
+  }, [selected, setRecentSelected]);
+
+  const onClear = () => {
+    setSelectedOptions([]);
+    setClearItems(true);
+    setRecentSelected(JSON.stringify([]));
+  };
 
   const items = resources
     .map((model: K8sKind) => (
@@ -98,9 +145,78 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
     ))
     .toArray();
 
+  const recentSearches: JSX.Element[] =
+    !_.isEmpty(recentSelectedList(recentSelected)) &&
+    recentSelectedList(recentSelected)
+      .splice(0, RECENT_SEARCH_ITEMS)
+      .map((modelRef: K8sResourceKindReference) => {
+        const model: K8sKind = resources.find((m) => referenceForModel(m) === modelRef);
+        if (model) {
+          return (
+            <SelectOptionDeprecated
+              key={modelRef}
+              value={modelRef}
+              data-filter-text={`${model.abbr}${model.labelKey ? t(model.labelKey) : model.kind}`}
+            >
+              <span className="co-resource-item">
+                <span className="co-resource-icon--fixed-width">
+                  <ResourceIcon kind={modelRef} />
+                </span>
+                <span className="co-resource-item__resource-name">
+                  <span>
+                    {model.labelKey ? t(model.labelKey) : model.kind}
+                    {model.badge && model.badge === 'Tech Preview' && (
+                      <span className="co-resource-item__tech-dev-preview">
+                        {t('public~Tech Preview')}
+                      </span>
+                    )}
+                  </span>
+                  {isDup(model.kind) && (
+                    <div className="co-resource-item__resource-api text-muted co-truncate co-nowrap small">
+                      {model.apiGroup || 'core'}/{model.apiVersion}
+                    </div>
+                  )}
+                </span>
+              </span>
+            </SelectOptionDeprecated>
+          );
+        }
+        return null;
+      })
+      .filter((item) => item !== null);
+
+  const renderedOptions = () => {
+    const options: JSX.Element[] = [];
+    if (!_.isEmpty(recentSelectedList(recentSelected)) && !!recentList) {
+      options.push(
+        <Tooltip position="right" content={t('public~Clear history')}>
+          <CloseButton
+            additionalClassName="co-select-group-close-button"
+            dataTestID="close-icon"
+            onClick={onClear}
+          />
+        </Tooltip>,
+      );
+      options.push(
+        <SelectGroupDeprecated
+          label={t('public~Recently used')}
+          className="co-select-group-dismissible"
+        >
+          {recentSearches}
+        </SelectGroupDeprecated>,
+      );
+      options.push(<Divider key={3} className="co-select-group-divider" />);
+    }
+    options.push(<SelectGroupDeprecated>{items}</SelectGroupDeprecated>);
+    return options;
+  };
+
   const onCustomFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const filterText = event?.target.value.toLocaleLowerCase();
-    if (filterText === null || filterText === '') {
+    if (filterText === null || filterText === '' || filterText === undefined) {
+      if (!_.isEmpty(recentSelectedList(recentSelected)) && !!recentList) {
+        return renderedOptions();
+      }
       return items;
     }
     return items.filter((item) => {
@@ -130,8 +246,9 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       customBadgeText={selected.length}
       className={classNames('co-type-selector', className)}
       maxHeight="60vh"
+      isGrouped
     >
-      {items}
+      {renderedOptions()}
     </SelectDeprecated>
   );
 };
@@ -148,6 +265,7 @@ export const ResourceListDropdown = connect<ResourceListDropdownStateToProps>(
 export type ResourceListDropdownProps = ResourceListDropdownStateToProps & {
   selected: K8sResourceKindReference[];
   onChange: (value: string) => void;
+  recentList?: boolean;
   className?: string;
   id?: string;
 };
