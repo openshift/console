@@ -182,7 +182,7 @@ export const enableYAMLValidation = (
 ) => {
   const pendingValidationRequests = new Map();
 
-  const getModel = () => monaco.editor.getModels()[0];
+  const getModel = () => monaco.editor?.getModels()[0];
 
   const cleanPendingValidation = (document) => {
     const request = pendingValidationRequests.get(document.uri);
