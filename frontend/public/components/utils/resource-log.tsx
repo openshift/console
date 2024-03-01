@@ -565,7 +565,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
       .onerror(onError)
       .onmessage(onMessage)
       .onopen(onOpen);
-  }, [watchURL, subprotocols]);
+  }, [watchURL, subprotocols, buffer]);
   // Restart websocket if startWebSocket function changes
   React.useEffect(() => {
     if (
