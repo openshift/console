@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	devfilev1 "github.com/devfile/api/v2/pkg/apis/workspaces/v1alpha2"
-	"github.com/devfile/library/pkg/devfile/generator"
-	"github.com/devfile/library/pkg/devfile/parser"
-	"github.com/devfile/library/pkg/devfile/parser/data/v2/common"
+	"github.com/devfile/library/v2/pkg/devfile/generator"
+	"github.com/devfile/library/v2/pkg/devfile/parser"
+	"github.com/devfile/library/v2/pkg/devfile/parser/data/v2/common"
 
 	buildv1 "github.com/openshift/api/build/v1"
 	imagev1 "github.com/openshift/api/image/v1"
@@ -169,7 +169,7 @@ func GetResourceFromDevfile(devfileObj parser.DevfileObj, deployAssociatedCompon
 			src := parser.YamlSrc{
 				Data: []byte(component.Kubernetes.Inlined),
 			}
-			values, err := parser.ReadKubernetesYaml(src, nil)
+			values, err := parser.ReadKubernetesYaml(src, nil, nil)
 			if err != nil {
 				errMsg := fmt.Sprintf("Failed to read the Kubernetes yaml from devfile: %v", err)
 				klog.Error(errMsg)
