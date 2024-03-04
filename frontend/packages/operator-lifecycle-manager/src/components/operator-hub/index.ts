@@ -32,7 +32,7 @@ export enum InfraFeatures {
   csi = 'Container Storage Interface',
   sno = 'Single Node Clusters',
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  'Short-lived token authentication' = 'Short-lived token authentication',
+  TokenAuth = 'Short-lived token authentication',
 }
 
 export enum ValidSubscriptionValue {
