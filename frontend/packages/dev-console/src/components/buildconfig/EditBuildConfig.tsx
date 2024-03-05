@@ -45,6 +45,9 @@ const EditBuildConfig: React.FC<EditBuildConfigProps> = ({
     try {
       // Use YAML also as base when submitting the form
       parsedBuildConfig = safeYAMLToJS(values.yamlData);
+      if (!parsedBuildConfig?.metadata?.namespace) {
+        parsedBuildConfig.metadata.namespace = namespace;
+      }
     } catch (err) {
       helpers.setStatus({
         submitSuccess: '',
