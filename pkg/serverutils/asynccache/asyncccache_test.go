@@ -10,6 +10,9 @@ import (
 )
 
 func TestAsyncCache(t *testing.T) {
+	initializationRetryInterval = time.Second
+	initializationTimeout = 5 * time.Second
+
 	cacheTime := func(ctx context.Context) (time.Time, error) {
 		return time.Now(), nil
 	}
