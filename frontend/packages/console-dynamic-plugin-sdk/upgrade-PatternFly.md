@@ -1,6 +1,6 @@
 # PatternFly Upgrade Notes
 
-A dynamic plugin targets one or more versions of OpenShift Console. Each Console version supports
+A dynamic plugin targets one or more versions of OpenShift Console. Each version supports
 specific version(s) of [PatternFly](https://www.patternfly.org/) in terms of CSS styling.
 
 Check the [OpenShift Console Versions vs PatternFly Versions][console-pf-versions] table for
@@ -8,7 +8,7 @@ compatibility before upgrading to a newer version of PatternFly.
 
 ## CSS styling
 
-Plugins should only include styles that are specific to their user interfaces, to be evaluated on
+Plugins should only include styles that are specific to their user interfaces to be evaluated on
 top of base PatternFly styles. Avoid importing styles such as `@patternfly/react-styles/**/*.css`
 or any styles from `@patternfly/patternfly` package in your plugin.
 
