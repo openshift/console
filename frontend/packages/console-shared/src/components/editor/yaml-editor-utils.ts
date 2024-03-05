@@ -226,7 +226,7 @@ export const enableYAMLValidation = (
     tryFolding();
   }
 
-  getModel().onDidChangeContent(() => {
+  getModel()?.onDidChangeContent(() => {
     tryFolding();
 
     const document = createDocument(getModel());
