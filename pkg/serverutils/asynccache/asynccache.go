@@ -10,6 +10,11 @@ import (
 	"k8s.io/klog"
 )
 
+var ( // make these variable so that we can change them in unit tests
+	initializationRetryInterval = 5 * time.Second
+	initializationTimeout       = 5 * time.Minute
+)
+
 type cachingFuncType[T any] func(ctx context.Context) (T, error)
 
 type AsyncCache[T any] struct {
@@ -27,12 +32,25 @@ func NewAsyncCache[T any](ctx context.Context, reloadPeriod time.Duration, cachi
 		cachingFunc:  cachingFunc,
 	}
 
-	item, err := cachingFunc(ctx)
+	err := wait.PollUntilContextTimeout(
+		ctx,
+		initializationRetryInterval,
+		initializationTimeout,
+		true,
+		func(ctx context.Context) (bool, error) {
+			item, err := cachingFunc(ctx)
+			if err != nil {
+				klog.V(4).Infof("failed to setup an async cache (retrying in %v) - caching func returned error: %v", initializationRetryInterval, err)
+				return false, nil
+			}
+			c.cachedItem = item
+			return true, nil
+		},
+	)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to setup an async cache - caching func returned error: %w", err)
 	}
-
-	c.cachedItem = item
 
 	return c, nil
 }
