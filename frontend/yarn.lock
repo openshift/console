@@ -1670,10 +1670,10 @@
     once "^1.4.0"
     universal-user-agent "^4.0.0"
 
-"@openshift/dynamic-plugin-sdk-webpack@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@openshift/dynamic-plugin-sdk-webpack/-/dynamic-plugin-sdk-webpack-4.0.1.tgz#5d9956f12234fd50854868744b947a4a1009406a"
-  integrity sha512-ZlY57t1WIl8B8XNPoq+CuU/+Ll4/ZX/7IO/dxn+7dp1S/NUmdvgwv01mXpUcjviOUhhgWl/dK2WvCQTzz6CoZg==
+"@openshift/dynamic-plugin-sdk-webpack@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@openshift/dynamic-plugin-sdk-webpack/-/dynamic-plugin-sdk-webpack-4.0.2.tgz#0304911c9c27ecff7ba5d2df5ca24f781fd445ec"
+  integrity sha512-zgRLt9WM63aGYygrQEtd8QtWoP5zYWr67kzlRKzGcHeRbWDgiHnY7FOiDUM04bYeb4lL6qv3iErEnrtvVpyh0Q==
   dependencies:
     lodash "^4.17.21"
     semver "^7.3.7"

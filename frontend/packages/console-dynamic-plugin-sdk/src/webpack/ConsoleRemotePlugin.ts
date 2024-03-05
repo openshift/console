@@ -19,6 +19,7 @@ import { loadSchema } from '../utils/schema';
 import { ExtensionValidator } from '../validation/ExtensionValidator';
 import { SchemaValidator } from '../validation/SchemaValidator';
 import { ValidationResult } from '../validation/ValidationResult';
+import { DynamicModuleImportLoaderOptions } from './loaders/dynamic-module-import-loader';
 
 type ConsolePluginPackageJSON = readPkg.PackageJson & {
   consolePlugin?: ConsolePluginBuildMetadata;
@@ -241,9 +242,10 @@ export type ConsoleRemotePluginOptions = Partial<{
     /**
      * Import transformations will be applied to modules that match this filter.
      *
-     * If not specified, the following module requests will be matched:
-     * - request does not contain `node_modules` path elements
+     * If not specified, the following conditions must be all true for a module to be matched:
      * - request ends with one of `.js`, `.jsx`, `.ts`, `.tsx`
+     * - request does not contain `node_modules` path elements (i.e. not a vendor module request),
+     *   _except_ for `@openshift-console/*` packages
      */
     transformImports: (moduleRequest: string) => boolean;
   }>;
@@ -399,9 +401,12 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
 
     const transformImports =
       sharedDynamicModuleSettings.transformImports ??
-      ((moduleRequest) =>
-        !moduleRequest.split(path.sep).includes('node_modules') &&
-        /\.(jsx?|tsx?)$/.test(moduleRequest));
+      ((moduleRequest) => {
+        const isCode = /\.(jsx?|tsx?)$/.test(moduleRequest);
+        const isVendor = moduleRequest.includes('/node_modules/');
+
+        return isCode && (!isVendor || moduleRequest.includes('/node_modules/@openshift-console/'));
+      });
 
     compiler.hooks.thisCompilation.tap(ConsoleRemotePlugin.name, (compilation) => {
       const modifiedModules: string[] = [];
@@ -416,9 +421,14 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
           );
 
           if (!modifiedModules.includes(moduleRequest) && transformImports(moduleRequest)) {
+            const loaderOptions: DynamicModuleImportLoaderOptions = {
+              dynamicModuleMaps: this.sharedDynamicModuleMaps,
+              resourceMetadata: { jsx: /\.(jsx|tsx)$/.test(moduleRequest) },
+            };
+
             normalModule.loaders.push({
               loader: dynamicModuleImportLoader,
-              options: { dynamicModuleMaps: this.sharedDynamicModuleMaps },
+              options: loaderOptions,
             } as any);
 
             modifiedModules.push(moduleRequest);
