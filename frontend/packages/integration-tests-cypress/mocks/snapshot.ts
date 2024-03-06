@@ -73,6 +73,23 @@ export const PVC = {
   },
 };
 
+export const PVCGP3 = {
+  apiVersion: PVC.apiVersion,
+  kind: PVC.kind,
+  metadata: {
+    name: 'testpvcgp3',
+  },
+  spec: {
+    storageClassName: 'gp3-csi',
+    accessModes: PVC.spec.accessModes,
+    resources: {
+      requests: {
+        storage: PVC.spec.resources.requests.storage,
+      },
+    },
+  },
+};
+
 export const SnapshotClass = {
   apiVersion: 'snapshot.storage.k8s.io/v1',
   kind: 'VolumeSnapshotClass',

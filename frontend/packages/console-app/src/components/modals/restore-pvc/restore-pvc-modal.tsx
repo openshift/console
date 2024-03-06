@@ -40,14 +40,13 @@ import {
   NamespaceModel,
   PersistentVolumeClaimModel,
   VolumeSnapshotModel,
-  VolumeSnapshotClassModel,
+  StorageClassModel,
 } from '@console/internal/models';
 import {
   k8sCreate,
   VolumeSnapshotKind,
   StorageClassResourceKind,
   PersistentVolumeClaimKind,
-  VolumeSnapshotClassKind,
 } from '@console/internal/module/k8s';
 import {
   getName,
@@ -56,6 +55,7 @@ import {
   isCephProvisioner,
   getAnnotations,
   RedExclamationCircleIcon,
+  onlyPvcSCs,
 } from '@console/shared';
 import { AccessModeSelector } from '../../access-modes/access-mode';
 
@@ -85,21 +85,13 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       PersistentVolumeClaimKind
     >(PersistentVolumeClaimModel, resource?.spec?.source?.persistentVolumeClaimName, namespace);
 
-    const [
-      snapshotClassResource,
-      snapshotClassResourceLoaded,
-      snapshotClassResourceLoadError,
-    ] = useK8sGet<VolumeSnapshotClassKind>(
-      VolumeSnapshotClassModel,
-      resource?.spec?.volumeSnapshotClassName,
+    const pvcStorageClassName = pvcResource?.spec?.storageClassName;
+    const [scResource, scResourceLoaded, scResourceLoadError] = useK8sGet<StorageClassResourceKind>(
+      StorageClassModel,
+      pvcStorageClassName,
     );
 
     const [volumeMode, setVolumeMode] = React.useState('');
-    const onlyPvcSCs = (scObj: StorageClassResourceKind) =>
-      !snapshotClassResourceLoadError
-        ? scObj.provisioner.includes(snapshotClassResource?.driver)
-        : true;
-
     const requestedSizeInputChange = ({ value, unit }) => {
       setRequestedSize(value);
       setRequestedUnit(unit);
@@ -178,12 +170,14 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             />
           </FormGroup>
           <FormGroup fieldId="restore-storage-class" className="co-restore-pvc-modal__input">
-            {!snapshotClassResourceLoaded ? (
+            {!pvcStorageClassName || !scResourceLoaded ? (
               <div className="skeleton-text" />
             ) : (
               <StorageClassDropdown
                 onChange={handleStorageClass}
-                filter={onlyPvcSCs}
+                filter={(scObj: StorageClassResourceKind) =>
+                  onlyPvcSCs(scObj, scResourceLoadError, scResource)
+                }
                 id="restore-storage-class"
                 required
                 selectedKey={volumeSnapshotAnnotations?.[snapshotPVCStorageClassAnnotation]}
@@ -217,16 +211,14 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             fieldId="pvc-size"
             className="co-restore-pvc-modal__input co-restore-pvc-modal__ocs-size"
           >
-            {snapshotClassResourceLoaded ? (
+            {!!pvcStorageClassName && scResourceLoaded ? (
               <RequestSizeInput
                 name="requestSize"
                 onChange={requestedSizeInputChange}
                 defaultRequestSizeUnit={requestedUnit}
                 defaultRequestSizeValue={requestedSize}
                 dropdownUnits={dropdownUnits}
-                isInputDisabled={
-                  snapshotClassResourceLoadError || isCephProvisioner(snapshotClassResource?.driver)
-                }
+                isInputDisabled={scResourceLoadError || isCephProvisioner(scResource?.provisioner)}
                 required
               />
             ) : (

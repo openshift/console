@@ -63,6 +63,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
           '',
         ),
         provisioner: resource.provisioner,
+        parameters: resource.parameters,
         type: _.get(resource, 'parameters.type', ''),
         zone: _.get(resource, 'parameters.zone', ''),
         resource,
