@@ -221,12 +221,20 @@ export const createTektonResultsUrl = async (
   options?: TektonResultsOptions,
   nextPageToken?: string,
 ): Promise<string> => {
-  const tektonResultUrl = await getTRURLHost();
-  if (!tektonResultUrl) {
-    throw new Error('route.spec.host is undefined');
+  const tektonResult = await k8sGet(TektonResultModel, 'result');
+  const targetNamespace = tektonResult?.spec?.targetNamespace;
+  const serverPort = tektonResult?.spec?.server_port ?? '8080';
+  const tlsHostname = tektonResult?.spec?.tls_hostname_override;
+  let tektonResultsAPI;
+  if (tlsHostname) {
+    tektonResultsAPI = `${tlsHostname}:${serverPort}`;
+  } else if (targetNamespace && serverPort) {
+    tektonResultsAPI = `tekton-results-api-service.${targetNamespace}.svc.cluster.local:${serverPort}`;
+  } else {
+    tektonResultsAPI = `tekton-results-api-service.openshift-pipelines.svc.cluster.local:${serverPort}`;
   }
   const namespaceToSearch = namespace && namespace !== ALL_NAMESPACES_KEY ? namespace : '-';
-  const url = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records?${new URLSearchParams(
+  const url = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records?${new URLSearchParams(
     {
       // default sort should always be by `create_time desc`
       // order_by: 'create_time desc', not supported yet
