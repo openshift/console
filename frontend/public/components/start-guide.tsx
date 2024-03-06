@@ -12,18 +12,18 @@ import { createProjectMessageStateToProps } from '../reducers/ui';
 import { Disabled, HintBlock, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { ProjectModel } from '../models';
-import { createProjectModal } from './modals';
+import { createNamespaceOrProjectModal } from './modals';
 import { K8sResourceKind } from '../module/k8s/types';
 
 export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)(
-  ({ canCreateProject = true, createProjectMessage }: OpenShiftGettingStartedProps) => {
+  ({ canCreate = true, createProjectMessage }: OpenShiftGettingStartedProps) => {
     const { t } = useTranslation();
     const [, setActiveNamespace] = useActiveNamespace();
     const [perspective] = useActivePerspective();
 
     return (
       <>
-        {canCreateProject ? (
+        {canCreate ? (
           <p>
             {t(
               'public~OpenShift helps you quickly develop, host, and scale applications. To get started, create a project for your application.',
@@ -55,11 +55,11 @@ export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)
             Download the <Link to="/command-line-tools">command-line tools</Link>
           </Trans>
         </p>
-        {canCreateProject && (
+        {canCreate ? (
           <Button
             variant="link"
             onClick={() =>
-              createProjectModal({
+              createNamespaceOrProjectModal({
                 blocking: true,
                 onSubmit:
                   perspective !== 'admin'
@@ -72,7 +72,7 @@ export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)
           >
             {t('public~Create a new project')}
           </Button>
-        )}
+        ) : null}
       </>
     );
   },
@@ -86,6 +86,7 @@ type WithStartGuide = <P>(
 export const withStartGuide: WithStartGuide = (WrappedComponent, disable = true) =>
   connectToFlags<any>(
     FLAGS.SHOW_OPENSHIFT_START_GUIDE,
+    FLAGS.CAN_CREATE_NS,
     FLAGS.CAN_CREATE_PROJECT,
   )(({ flags, ...rest }: any) => {
     const { kindObj } = rest;
@@ -101,7 +102,9 @@ export const withStartGuide: WithStartGuide = (WrappedComponent, disable = true)
         <>
           <div className="co-m-pane__body">
             <HintBlock title="Getting Started">
-              <OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />
+              <OpenShiftGettingStarted
+                canCreate={flags[FLAGS.CAN_CREATE_NS] || flags[FLAGS.CAN_CREATE_PROJECT]}
+              />
             </HintBlock>
           </div>
           {!disable || (rest.kindObj && !rest.kindObj.namespaced) ? (
@@ -118,7 +121,7 @@ export const withStartGuide: WithStartGuide = (WrappedComponent, disable = true)
   });
 
 type OpenShiftGettingStartedProps = {
-  canCreateProject: boolean;
+  canCreate: boolean;
   createProjectMessage: string;
 };
 

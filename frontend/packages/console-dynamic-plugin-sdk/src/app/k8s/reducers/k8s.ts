@@ -87,7 +87,16 @@ const loadList = (oldList, resources) => {
 
 const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
   if (!state) {
-    return fromJS({ RESOURCES: { inFlight: false, models: ImmutableMap<string, K8sModel>() } });
+    return fromJS({
+      RESOURCES: {
+        // Loaded k8s models (CRDs), might also be empty on a cluster without any CRD!
+        models: ImmutableMap<string, K8sModel>(),
+        // Indicates whether a loading is 'in flight' (in progress), could jump back and forth.
+        inFlight: false,
+        // Indicates whether a some data was ever loaded successfully, changes just once to true.
+        loaded: false,
+      },
+    });
   }
 
   let newList;
@@ -137,6 +146,7 @@ const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
           .setIn(['RESOURCES', 'namespacedSet'], action.payload.resources.namespacedSet)
           .setIn(['RESOURCES', 'groupToVersionMap'], action.payload.resources.groupVersionMap)
           .setIn(['RESOURCES', 'inFlight'], false)
+          .setIn(['RESOURCES', 'loaded'], true)
       );
 
     case ActionType.StartWatchK8sObject:

@@ -28,7 +28,7 @@ import { SearchIcon } from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import * as classnames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import { Trans, useTranslation } from 'react-i18next';
-import { createProjectModal } from '@console/internal/components/modals';
+import { createNamespaceOrProjectModal } from '@console/internal/components/modals';
 import { humanizeBinaryBytes, ResourceName, StatusBox } from '@console/internal/components/utils';
 import { ProjectModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
@@ -95,7 +95,7 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
         'pf-m-selectable pf-m-selected': isSelected,
       })}
       icon={<img src={getTemplateOSIcon(template)} alt="" />}
-      badges={[...(isPinned ? [<PinnedIcon />] : [])]}
+      badges={[...(isPinned ? [<PinnedIcon key="pinned-icon" />] : [])]}
       title={
         <Stack>
           <StackItem>
@@ -243,7 +243,8 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
   });
 
   const canListNs = useFlag(FLAGS.CAN_LIST_NS);
-  const canCreateNs = useFlag(FLAGS.CAN_CREATE_PROJECT);
+  const isOpenShift = useFlag(FLAGS.OPENSHIFT);
+  const canCreateNs = useFlag(isOpenShift ? FLAGS.CAN_CREATE_PROJECT : FLAGS.CAN_CREATE_NS);
   const allProjects = t('kubevirt-plugin~All projects');
 
   return (
@@ -290,14 +291,14 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                           className="kv-select-template__project"
                         >
                           <>
-                            {canCreateNs && (
+                            {canCreateNs ? (
                               <>
                                 <Button
                                   className="kv-select-template__create-project-btn"
                                   variant="plain"
                                   onClick={(e) => {
                                     e.preventDefault();
-                                    createProjectModal({
+                                    createNamespaceOrProjectModal({
                                       blocking: true,
                                       onSubmit: (newProject) => {
                                         setNamespace(newProject.metadata.name);
@@ -309,7 +310,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                                 </Button>
                                 <Divider component="li" key={5} />
                               </>
-                            )}
+                            ) : null}
                           </>
                           <>
                             {(canListNs

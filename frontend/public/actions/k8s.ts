@@ -4,7 +4,7 @@ import { ActionType as Action } from 'typesafe-actions';
 import { checkAccess } from '@console/internal/components/utils/rbac';
 
 import { cacheResources, getResources as getResources_ } from '../module/k8s/get-resources';
-import { K8sResourceKind, fetchSwagger } from '../module/k8s';
+import { fetchSwagger, CustomResourceDefinitionKind, K8sResourceKind } from '../module/k8s';
 import { makeReduxID } from '../components/utils/k8s-watcher';
 import { CustomResourceDefinitionModel } from '../models';
 import {
@@ -60,22 +60,31 @@ export const startAPIDiscovery = () => (dispatch) => {
       if (res.status.allowed) {
         // eslint-disable-next-line no-console
         console.log('API discovery method: Watching');
+        // Always dispatch an initial call
+        dispatch(getResources());
         // Watch CRDs and dispatch refreshAPI action whenever an event is received
         dispatch(
           watchK8sList(
             reduxID,
             {},
             CustomResourceDefinitionModel,
-            // Only re-run API discovery on added or removed CRDs.
-            (_id: string, events: K8sEvent[]) =>
-              events.some((e) => e.type !== 'MODIFIED') ? getResources() : _.noop,
+            // Re-run API discovery on added or removed CRDs.
+            // Note: This extraAction callback is initially called with all items (CRD resources),
+            // and later with all changes (K8ssEvents).
+            (_id: string, crdsOrEvents: CustomResourceDefinitionKind[] | K8sEvent[]) => {
+              if (crdsOrEvents.some((e) => e.type === 'ADDED' || e.type === 'DELETED')) {
+                return getResources();
+              }
+              return _.noop;
+            },
           ),
         );
       } else {
         // eslint-disable-next-line no-console
         console.log('API discovery method: Polling');
-        // Poll API discovery every 30 seconds since we can't watch CRDs
+        // Always dispatch an initial call
         dispatch(getResources());
+        // Poll API discovery every 30 seconds since we can't watch CRDs
         if (POLLs[apiDiscovery]) {
           clearTimeout(POLLs[apiDiscovery]);
           delete POLLs[apiDiscovery];

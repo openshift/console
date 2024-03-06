@@ -25,6 +25,7 @@ describe('featureReducer', () => {
         PROMETHEUS: undefined,
         OPENSHIFT: undefined,
         MONITORING: false,
+        CAN_CREATE_NS: undefined,
         CAN_GET_NS: undefined,
         CAN_LIST_NS: undefined,
         CAN_LIST_NODE: undefined,
@@ -48,6 +49,7 @@ describe('featureReducer', () => {
         CONSOLE_NOTIFICATION: undefined,
         CONSOLE_EXTERNAL_LOG_LINK: undefined,
         CONSOLE_YAML_SAMPLE: undefined,
+        CONSOLE_QUICKSTART: undefined,
       }),
     );
   });

@@ -10,6 +10,14 @@ jest.mock('react-router-dom-v5-compat', () => ({
   useParams: jest.fn(),
 }));
 
+jest.mock('@console/shared', () => {
+  const originalModule = (jest as any).requireActual('@console/shared');
+  return {
+    ...originalModule,
+    useFlag: jest.fn<boolean>(),
+  };
+});
+
 describe('AddPage', () => {
   let wrapper: ShallowWrapper;
 

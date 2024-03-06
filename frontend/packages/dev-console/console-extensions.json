@@ -27,61 +27,6 @@
     "type": "console.flag/model",
     "properties": {
       "model": {
-        "group": "build.openshift.io",
-        "version": "v1",
-        "kind": "BuildConfig"
-      },
-      "flag": "OPENSHIFT_BUILDCONFIG"
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "model": {
-        "group": "console.openshift.io",
-        "version": "v1",
-        "kind": "ConsoleSample"
-      },
-      "flag": "CONSOLESAMPLE"
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "model": {
-        "group": "apps.openshift.io",
-        "version": "v1",
-        "kind": "DeploymentConfig"
-      },
-      "flag": "OPENSHIFT_DEPLOYMENTCONFIG"
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "model": {
-        "group": "image.openshift.io",
-        "version": "v1",
-        "kind": "ImageStream"
-      },
-      "flag": "OPENSHIFT_IMAGESTREAM"
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "model": {
-        "group": "template.openshift.io",
-        "version": "v1",
-        "kind": "Template"
-      },
-      "flag": "OPENSHIFT_TEMPLATE"
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "model": {
         "group": "tekton.dev",
         "version": "v1",
         "kind": "Pipeline"
@@ -253,9 +198,6 @@
       "id": "developer-catalog",
       "name": "%devconsole~Developer Catalog%",
       "insertBefore": "serverless-function"
-    },
-    "flags": {
-      "required": ["DEVELOPER_CATALOG"]
     }
   },
   {
@@ -264,9 +206,6 @@
       "id": "eventing",
       "name": "%devconsole~Eventing%",
       "insertAfter": "developer-catalog"
-    },
-    "flags": {
-      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_ENABLED"]
     }
   },
   {
@@ -762,6 +701,9 @@
         "data-quickstart-id": "qs-nav-project",
         "data-test-id": "project-details-header"
       }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PROJECT"]
     }
   },
   {

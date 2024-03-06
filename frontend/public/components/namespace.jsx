@@ -79,8 +79,8 @@ import {
   useAccessReview,
 } from './utils';
 import {
-  createNamespaceModal,
   createProjectModal,
+  createNamespaceModal,
   deleteNamespaceModal,
   configureNamespacePullSecretModal,
 } from './modals';
@@ -762,7 +762,9 @@ export const ProjectList = ({ data, ...tableProps }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
+  const canCreateNs = useFlag(FLAGS.CAN_CREATE_NS);
   const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
+  const canCreate = canCreateNs || canCreateProject;
   const [tableColumns] = useUserSettingsCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
@@ -803,7 +805,7 @@ export const ProjectList = ({ data, ...tableProps }) => {
   const ProjectEmptyMessage = () => (
     <MsgBox
       title={t('public~Welcome to OpenShift')}
-      detail={<OpenShiftGettingStarted canCreateProject={canCreateProject} />}
+      detail={<OpenShiftGettingStarted canCreate={canCreate} />}
     />
   );
 
