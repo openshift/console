@@ -11,6 +11,7 @@ export const addPagePO = {
   buildWithGuidedDocumentation: '[data-test="card quick-start"]',
   buildWithGuidedDocumentationItems: '[data-test="card quick-start"] [data-test~="item"]',
   viewAllQuickStarts: '[data-test="item all-quick-starts"]',
+  viewAllSamples: '[data-test="item all-samples"]',
   helmChartRepositoriesCard: '[data-test="card helm-chart-repositories"]',
 };
 
@@ -226,6 +227,12 @@ export const samplesPO = {
   cards: {
     httpdTemplate: 'a[data-test="BuilderImage-Httpd"]',
     basicgoTemplate: 'a[data-test="Devfile-Basic Go"]',
+    basicnodeTemplate: '[data-test="Devfile-Basic Node.js"]',
+    goTemplate: '[data-test="BuilderImage-Go"]',
+  },
+  form: {
+    name: '[data-test-id="application-form-app-name"]',
+    header: '[data-test-id="resource-title"]',
   },
 };
 

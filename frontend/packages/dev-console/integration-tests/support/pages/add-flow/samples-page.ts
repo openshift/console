@@ -17,6 +17,14 @@ export const samplesPage = {
         cy.get(samplesPO.cards.basicgoTemplate).first().click();
         break;
       }
+      case 'Basic Node.js': {
+        cy.get(samplesPO.cards.basicnodeTemplate).first().click();
+        break;
+      }
+      case 'Go': {
+        cy.get(samplesPO.cards.goTemplate).first().click();
+        break;
+      }
       default: {
         throw new Error(`${card} card is not available in Catalog`);
       }
