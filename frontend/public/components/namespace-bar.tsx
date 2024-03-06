@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 
-import { NamespaceBarProps } from '@console/dynamic-plugin-sdk';
+import { NamespaceBarProps, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   ALL_NAMESPACES_KEY,
   FLAGS,
@@ -15,7 +15,7 @@ import {
   useActiveNamespace,
   useFlag,
 } from '@console/shared';
-
+import { k8sGet } from '@console/internal/module/k8s';
 import { setFlag } from '../actions/features';
 import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
@@ -41,12 +41,32 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
 }) => {
   const dispatch = useDispatch();
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
+  const activePerspective = useActivePerspective()[0];
+  const [activeNamespaceError, setActiveNamespaceError] = React.useState(false);
   const canListNS = useFlag(FLAGS.CAN_LIST_NS);
   React.useEffect(() => {
     if (namespace.loaded) {
       dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(namespace.data)));
     }
   }, [dispatch, namespace.data, namespace.loaded]);
+
+  /* Check if the activeNamespace is present in the cluster */
+  React.useEffect(() => {
+    if (activePerspective === 'dev' && activeNamespace !== ALL_NAMESPACES_KEY) {
+      k8sGet(useProjects ? ProjectModel : NamespaceModel, activeNamespace)
+        .then(() => {
+          setActiveNamespace(activeNamespace);
+          setActiveNamespaceError(false);
+        })
+        .catch((err) => {
+          if (err?.response?.status === 404) {
+            /* This would redirect to "/all-namespaces" to show the Project List */
+            setActiveNamespace(ALL_NAMESPACES_KEY);
+            setActiveNamespaceError(true);
+          }
+        });
+    }
+  }, [activeNamespace, activePerspective, setActiveNamespace, activeNamespaceError, useProjects]);
 
   if (flagPending(canListNS)) {
     return null;
@@ -69,7 +89,7 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
             },
           });
         }}
-        selected={activeNamespace || ALL_NAMESPACES_KEY}
+        selected={!activeNamespaceError ? activeNamespace : ALL_NAMESPACES_KEY}
         isProjects={getModel(useProjects).label === 'Project'}
         disabled={isDisabled}
         shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
