@@ -57,6 +57,14 @@ const JarSection: React.FunctionComponent = () => {
     }
   }, [fileUpload, updatedJarFile, setFileUpload, fileName]);
 
+  const handleClear = () => {
+    setFieldValue('fileUpload.value', '');
+    setFieldValue('fileUpload.name', '');
+    setTimeout(() => {
+      setFieldTouched('fileUpload.name', true);
+    }, 0);
+  };
+
   return (
     <FormSection title={t('devconsole~JAR')}>
       <FileUpload
@@ -73,7 +81,8 @@ const JarSection: React.FunctionComponent = () => {
         dropzoneProps={{
           accept: { 'application/java-archive': ['.jar', '.JAR'] },
         }}
-        required
+        isRequired
+        onClearClick={handleClear}
       />
       <InputField
         type={TextInputTypes.text}
