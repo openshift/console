@@ -216,7 +216,7 @@ Then('user will see {string} modal', (modalName: string) => {
 
 Then('user will see alert {string}', (alertName: string) => {
   app.waitForDocumentLoad();
-  cy.get('[aria-label="Default Alert"]').should('be.visible').should('contain', alertName);
+  cy.get('.modal-body-content').contains(alertName).should('be.visible');
   modal.cancel();
 });
 
@@ -297,7 +297,7 @@ When('user clicks on Samples', () => {
 
 When('user selects go sample', () => {
   cy.get(chartAreaPO.filterItem).type('Go');
-  cy.get(chartAreaPO.sampleGo).click();
+  cy.get(chartAreaPO.sampleBuilderGo).click();
 });
 
 When('user hovers on Add to Project and clicks on {string}', (optionName: string) => {
@@ -329,9 +329,9 @@ When('user selects Postgres Database and clicks on Instantiate Template', () => 
   cy.get(chartAreaPO.overlayCreate).click({ force: true });
 });
 
-When('user selects Redis and clicks on Create', () => {
-  cy.get(chartAreaPO.filterItem).type('redis');
-  cy.get(chartAreaPO.operatorBackedRedis).click();
+When('user selects {string} and clicks on Create', (operator: string) => {
+  cy.get(chartAreaPO.filterItem).type(operator);
+  cy.get(chartAreaPO.operatorBackedPostgres).click();
   cy.get(chartAreaPO.overlayCreate).click({ force: true });
 });
 
@@ -360,7 +360,7 @@ Then(
       'hello-openshift',
       'python-app',
       'postgres',
-      'redis-standalone',
+      'hippo',
       'helm-nodejs',
       'api-server-source',
       'channel',

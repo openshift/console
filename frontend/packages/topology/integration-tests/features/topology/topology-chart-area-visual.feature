@@ -174,7 +174,7 @@ Feature: Topology chart area
              Then user is able to see options like Samples, Import from Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
 
 
-        @regression 
+        @regression
         Scenario: Add to Project in topology: T-06-TC17
             Given user is at the Topology page
              When user right clicks on the empty chart area
@@ -194,8 +194,8 @@ Feature: Topology chart area
               And user clicks on Create button
     # Crunchy Postgres for Kubernetes operator not installing correctly, won't able to create a postgres.
               And user hovers on Add to Project and clicks on "Operator Backed"
-              And user selects Redis and clicks on Create
-              And user fills the "Operator Backed" form with yaml at "test-data/redis-standalone.yaml" and clicks Create
+              And user selects "Postgres Cluster" and clicks on Create
+              And user fills the "Operator Backed" form with yaml at "test-data/hippo-postgres-cluster.yaml" and clicks Create
               And user hovers on Add to Project and clicks on "Helm Charts"
               And user selects Nodejs and clicks on Install Helm Charts
               And user fills the "Helm Chart" form and clicks Create
@@ -425,7 +425,9 @@ Feature: Topology chart area
               And user can see "Error" in Status section on service binding connnector topology sidebar
 
 
-        @regression @odc-4944 
+        @regression @odc-4944 @broken-test
+        # Redis operator having issues after 0.14 updates, it does not appears in topology
+        # https://github.com/OT-CONTAINER-KIT/redis-operator/issues/526
         Scenario: Connected status on Service binding details page: T-06-TC35
             Given user has created namespace "aut-connected-sb"
               And user has installed Service Binding operator
@@ -440,7 +442,9 @@ Feature: Topology chart area
              Then user will see "Connected" Status on Service binding details page
 
 
-        @regression @odc-4944
+        @regression @odc-4944 @broken-test
+        # Redis operator having issues after 0.14 updates, it does not appears in topology
+        # https://github.com/OT-CONTAINER-KIT/redis-operator/issues/526
         Scenario: Error status on Service binding details page: T-06-TC36
             Given user has created namespace "aut-error-sb"
               And user has installed Service Binding operator
@@ -455,7 +459,9 @@ Feature: Topology chart area
              Then user will see "Error" Status on Service binding details page
 
 
-        @regression @odc-7120
+        @regression @odc-7120 @broken-test
+        # Redis operator having issues after 0.14 updates, it does not appears in topology
+        # https://github.com/OT-CONTAINER-KIT/redis-operator/issues/526
         Scenario: Create connection using import YAML with Service Binding using Label Selector: T-06-TC37
             Given user has created namespace "aut-connected-sb-ls"
               And user has installed Service Binding operator
@@ -472,7 +478,9 @@ Feature: Topology chart area
              Then user will see service binding connection
 
 
-        @regression @odc-7120
+        @regression @odc-7120 @broken-test
+        # Redis operator having issues after 0.14 updates, it does not appears in topology
+        # https://github.com/OT-CONTAINER-KIT/redis-operator/issues/526
         Scenario: Label specified in Label Selector section on Service binding details page: T-06-TC38
             Given user has created namespace "aut-label-details-sb"
               And user has installed Service Binding operator
@@ -488,7 +496,9 @@ Feature: Topology chart area
              Then user will see "app=node-ej" in Label Selector section on Service binding details page
 
 
-        @regression @odc-7120
+        @regression @odc-7120 @broken-test
+        # Redis operator having issues after 0.14 updates, it does not appears in topology
+        # https://github.com/OT-CONTAINER-KIT/redis-operator/issues/526
         Scenario: Label specified in Label Selector section on Service binding side panel: T-06-TC39
             Given user has created namespace "aut-label-panel-sb"
               And user has installed Service Binding operator

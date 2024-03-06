@@ -41,7 +41,7 @@ Given('user created a workload and is at topology list view', () => {
     false,
   );
   navigateTo(devNavigationMenu.Topology);
-  cy.get(topologyPO.quickSearchPO.listView).click();
+  topologyPage.verifyUserIsInListView();
 });
 
 Given('user is at topology list view', () => {
@@ -101,7 +101,7 @@ Then(
 );
 
 When('user selects .Net core option', () => {
-  cy.get(topologyPO.quickSearchPO.NETSample).click();
+  cy.get(topologyPO.quickSearchPO.NETSample).should('have.length', '2').eq(1).click();
 });
 
 When('user clicks on Create Application', () => {
@@ -151,7 +151,7 @@ Then('user will be redirected to the search results of the Quick Starts Catalog'
 });
 
 When('user selects Basic NodeJS Devfiles option', () => {
-  cy.get(topologyPO.quickSearchPO.nodejsDevfiles).click();
+  cy.get(topologyPO.quickSearchPO.nodejsDevfiles).eq(0).click();
 });
 
 When('user clicks on Create button in the Import from Devfile page', () => {
@@ -171,7 +171,7 @@ Then(
 );
 
 When('user selects Basic NodeJS Samples option', () => {
-  cy.get(topologyPO.quickSearchPO.nodejsSamples).click();
+  cy.get(topologyPO.quickSearchPO.nodejsDevfiles).eq(1).click();
 });
 
 When('user clicks on Create Devfile Samples', () => {

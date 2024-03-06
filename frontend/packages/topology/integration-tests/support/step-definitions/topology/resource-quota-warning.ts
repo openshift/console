@@ -1,5 +1,6 @@
 import { Given, When, Then, And } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { listPage } from '@console/cypress-integration-tests/views/list-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import * as yamlView from '@console/cypress-integration-tests/views/yaml-editor';
@@ -33,7 +34,9 @@ Given('user has created workload with resource type deployment', () => {
 });
 
 Given('user has created two resource quotas using {string} file', (yamlLocation) => {
-  cy.exec(`oc apply -f ${yamlLocation}  -n ${Cypress.env('NAMESPACE')}`);
+  cy.exec(`oc apply -f ${yamlLocation}  -n ${Cypress.env('NAMESPACE')}`).then(function (result) {
+    cy.log(result.stdout);
+  });
   app.waitForDocumentLoad();
 });
 
@@ -43,6 +46,9 @@ When('user navigates to Topology page', () => {
 });
 
 When('user clicks on link to view resource quota details', () => {
+  cy.reload();
+  app.waitForLoad();
+  guidedTour.close();
   cy.byTestID('resource-quota-warning').click();
 });
 

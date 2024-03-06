@@ -84,7 +84,7 @@ Then('user will be redirected to Topology with the updated resource limits', () 
 });
 
 When('user selects {string} Strategy type under Deployment Strategy', (strategyType: string) => {
-  cy.wait(50000);
+  cy.wait(60000);
   cy.get(formPO.cancel).click();
   editDeployment.selectDeploymentStrategyType(strategyType);
 });
