@@ -181,11 +181,11 @@ describe('getServerlessData', () => {
       template: {
         metadata: {
           annotations: {
-            'autoscaling.knative.dev/maxScale': '2',
+            'autoscaling.knative.dev/max-scale': '2',
             'autoscaling.knative.dev/window': '60s',
             'autoscaling.knative.dev/target': '100',
-            'autoscaling.knative.dev/targetUtilizationPercentage': '70',
-            'autoscaling.knative.dev/minScale': '1',
+            'autoscaling.knative.dev/target-utilization-percentage': '70',
+            'autoscaling.knative.dev/min-scale': '1',
           },
         },
         spec: {
