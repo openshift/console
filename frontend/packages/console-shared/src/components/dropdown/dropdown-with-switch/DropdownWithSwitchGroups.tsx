@@ -11,7 +11,7 @@ const DropdownWithSwitchGroups: React.FC<DropdownWithSwitchGroupsProps> = ({
       {renderedOptions.map(({ items, key, label }, i) => (
         <React.Fragment key={key}>
           {i !== 0 && <Divider />}
-          <MenuGroup label={label} translate="no">
+          <MenuGroup label={label}>
             <MenuList>
               {items.map(({ isDisabled, key: iKey, title }) => (
                 <MenuItem
@@ -19,7 +19,6 @@ const DropdownWithSwitchGroups: React.FC<DropdownWithSwitchGroupsProps> = ({
                   isDisabled={isDisabled}
                   isSelected={selectedKey === iKey}
                   key={iKey}
-                  translate="no"
                   data-test={`dropdown-with-switch-menu-item-${iKey}`}
                 >
                   {title}

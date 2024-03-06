@@ -249,7 +249,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
           fieldId={'webhook-secret-clipboard'}
           label={t('pipelines-plugin~Webhook secret')}
         >
-          <InputGroup translate={t} style={{ display: 'flex' }}>
+          <InputGroup style={{ display: 'flex' }}>
             <InputGroupItem>
               <ClipboardCopy
                 name={`${fieldPrefix}webhook.secret`}
