@@ -24,8 +24,9 @@ type oidcAuth struct {
 	// This preserves the old logic of associating users with session keys
 	// and requires smart routing when running multiple backend instances.
 	sessions *sessions.CombinedSessionStore
+	metrics  *Metrics
 
-	refreshLock sync.Mutex
+	refreshLock sync.Map // map [refreshToken -> sync.Mutex]
 }
 
 type oidcConfig struct {
@@ -37,7 +38,7 @@ type oidcConfig struct {
 	constructOAuth2Config oauth2ConfigConstructor
 }
 
-func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig) (*oidcAuth, error) {
+func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig, metrics *Metrics) (*oidcAuth, error) {
 	// NewProvider attempts to do OIDC Discovery
 	providerCache, err := asynccache.NewAsyncCache[*oidc.Provider](
 		ctx, 5*time.Minute,
@@ -56,7 +57,8 @@ func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStor
 		oidcConfig:    c,
 		providerCache: providerCache,
 		sessions:      sessionStore,
-		refreshLock:   sync.Mutex{},
+		metrics:       metrics,
+		refreshLock:   sync.Map{},
 	}, nil
 }
 
@@ -71,8 +73,14 @@ func (o *oidcAuth) login(w http.ResponseWriter, r *http.Request, token *oauth2.T
 }
 
 func (o *oidcAuth) refreshSession(ctx context.Context, w http.ResponseWriter, r *http.Request, oauthConfig *oauth2.Config, cookieRefreshToken string) (*sessions.LoginState, error) {
-	o.refreshLock.Lock()
-	defer o.refreshLock.Unlock()
+	actual, _ := o.refreshLock.LoadOrStore(cookieRefreshToken, &sync.Mutex{})
+	actual.(*sync.Mutex).Lock()
+	defer actual.(*sync.Mutex).Unlock()
+
+	tokenRefreshHandling := TokenRefreshUnknown
+	defer func() {
+		o.metrics.TokenRefreshRequest(tokenRefreshHandling)
+	}()
 
 	session, err := o.sessions.GetSession(w, r)
 	if err != nil {
@@ -82,11 +90,12 @@ func (o *oidcAuth) refreshSession(ctx context.Context, w http.ResponseWriter, r 
 	// if the refresh token got changed by someone else in the meantime (guarded by the refreshLock),
 	//  use the most current session instead of doing the full token refresh
 	if session != nil && session.RefreshToken() != cookieRefreshToken {
-		// TODO: add metrics here
+		tokenRefreshHandling = TokenRefreshShortCircuit
 		o.sessions.UpdateCookieRefreshToken(w, r, session.RefreshToken()) // we must update our own client session, too!
 		return session, nil
 	}
 
+	tokenRefreshHandling = TokenRefreshFull
 	newTokens, err := oauthConfig.TokenSource(ctx, &oauth2.Token{RefreshToken: cookieRefreshToken}).Token()
 	if err != nil {
 		return nil, fmt.Errorf("failed to refresh a token %s: %w", cookieRefreshToken, err)
