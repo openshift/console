@@ -12,7 +12,7 @@ describe('Localization', () => {
 
   it('pseudolocalizes masthead', () => {
     cy.log('test masthead');
-    cy.visit('/dashboards?pseudolocalization=true&lng=en');
+    cy.visitWithDefaultLang('/dashboards?pseudolocalization=true');
     masthead.clickMastheadLink('help-dropdown-toggle');
     cy.byTestID('help-dropdown-toggle').within(() => {
       // wait for both console help menu items and additionalHelpActions items to load
@@ -24,13 +24,13 @@ describe('Localization', () => {
 
   it('pseudolocalizes navigation', () => {
     cy.log('test navigation');
-    cy.visit('/dashboards?pseudolocalization=true&lng=en');
+    cy.visitWithDefaultLang('/dashboards?pseudolocalization=true');
     cy.byTestID('nav').isPseudoLocalized();
   });
 
   it('pseudolocalizes activity card', () => {
     cy.log('test activity card components');
-    cy.visit('/dashboards?pseudolocalization=true&lng=en');
+    cy.visitWithDefaultLang('/dashboards?pseudolocalization=true');
     cy.byTestID('activity').isPseudoLocalized();
     cy.byTestID('activity-recent-title').isPseudoLocalized();
     cy.byTestID('ongoing-title').isPseudoLocalized();
@@ -40,7 +40,7 @@ describe('Localization', () => {
 
   it('pseudolocalizes utilization card', () => {
     cy.log('test utilization card components');
-    cy.visit('/dashboards?pseudolocalization=true&lng=en');
+    cy.visitWithDefaultLang('/dashboards?pseudolocalization=true');
     cy.byLegacyTestID('utilization-card').within(() => {
       cy.byTestID('utilization-card__title').isPseudoLocalized();
       cy.byTestID('utilization-card-item-text').isPseudoLocalized();

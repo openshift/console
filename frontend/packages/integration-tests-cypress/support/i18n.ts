@@ -6,6 +6,7 @@ declare global {
     interface Chainable {
       isPseudoLocalized(): Chainable<Element>;
       testI18n(selectors?: string[], testIDs?: string[]): Chainable<Element>;
+      visitWithDefaultLang(url: string): Chainable<Element>;
     }
   }
 }
@@ -17,7 +18,7 @@ Cypress.Commands.add('testI18n', (selectors: string[] = [], testIDs: string[] = 
     params.set('lng', 'en');
     const pseudoLocUrl = `${loc.pathname}?${params.toString()}`;
 
-    cy.visit(pseudoLocUrl);
+    cy.visitWithDefaultLang(pseudoLocUrl);
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000); // don't know what to wait for since could be list or detail page
@@ -58,3 +59,14 @@ Cypress.Commands.add(
     });
   },
 );
+
+Cypress.Commands.add('visitWithDefaultLang', (url) => {
+  cy.visit(url, {
+    onBeforeLoad(win) {
+      Object.defineProperty(win.navigator, 'language', {
+        value: 'en',
+        writable: false,
+      });
+    },
+  });
+});

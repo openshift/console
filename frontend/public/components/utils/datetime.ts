@@ -4,51 +4,50 @@ import { getLastLanguage } from '@console/app/src/components/user-preferences/la
 
 // The maximum allowed clock skew in milliseconds where we show a date as "Just now" even if it is from the future.
 export const maxClockSkewMS = -60000;
+const lang = getLastLanguage();
 
 // https://tc39.es/ecma402/#datetimeformat-objects
-export const timeFormatter = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
+export const timeFormatter = new Intl.DateTimeFormat(lang, {
   hour: 'numeric',
   minute: 'numeric',
 });
 
-export const timeFormatterWithSeconds = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
+export const timeFormatterWithSeconds = new Intl.DateTimeFormat(lang, {
   hour: 'numeric',
   minute: 'numeric',
   second: 'numeric',
 });
 
-export const dateFormatter = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
+export const dateFormatter = new Intl.DateTimeFormat(lang, {
   month: 'short',
   day: 'numeric',
   year: 'numeric',
 });
 
-export const dateFormatterNoYear = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
+export const dateFormatterNoYear = new Intl.DateTimeFormat(lang, {
   month: 'short',
   day: 'numeric',
 });
 
-export const dateTimeFormatter = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  year: 'numeric',
-});
-
-export const dateTimeFormatterWithSeconds = new Intl.DateTimeFormat(
-  getLastLanguage() || undefined,
-  {
+export const dateTimeFormatter = (langArg?: string) =>
+  new Intl.DateTimeFormat(langArg ?? lang, {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
-    second: 'numeric',
     year: 'numeric',
-  },
-);
+  });
 
-export const utcDateTimeFormatter = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
+export const dateTimeFormatterWithSeconds = new Intl.DateTimeFormat(lang, {
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  year: 'numeric',
+});
+
+export const utcDateTimeFormatter = new Intl.DateTimeFormat(lang, {
   month: 'short',
   day: 'numeric',
   hour: 'numeric',
@@ -58,9 +57,8 @@ export const utcDateTimeFormatter = new Intl.DateTimeFormat(getLastLanguage() ||
   timeZoneName: 'short',
 });
 
-export const relativeTimeFormatter = Intl.RelativeTimeFormat
-  ? new Intl.RelativeTimeFormat(getLastLanguage() || undefined)
-  : null;
+export const relativeTimeFormatter = (langArg?: string) =>
+  Intl.RelativeTimeFormat ? new Intl.RelativeTimeFormat(langArg ?? lang) : null;
 
 export const getDuration = (ms: number) => {
   if (!ms || ms < 0) {
@@ -76,7 +74,7 @@ export const getDuration = (ms: number) => {
   return { days, hours, minutes, seconds };
 };
 
-export const fromNow = (dateTime: string | Date, now?: Date, options?) => {
+export const fromNow = (dateTime: string | Date, now?: Date, options?, langArg?: string) => {
   // Check for null. If dateTime is null, it returns incorrect date Jan 1 1970.
   if (!dateTime) {
     return '-';
@@ -115,8 +113,8 @@ export const fromNow = (dateTime: string | Date, now?: Date, options?) => {
   // Fallback to normal date/time formatting if Intl.RelativeTimeFormat is not
   // available. This is the case for older Safari versions.
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat#browser_compatibility
-  if (!relativeTimeFormatter) {
-    return dateTimeFormatter.format(d);
+  if (!relativeTimeFormatter(langArg)) {
+    return dateTimeFormatter().format(d);
   }
 
   if (!days && !hours && !minutes) {
@@ -124,14 +122,14 @@ export const fromNow = (dateTime: string | Date, now?: Date, options?) => {
   }
 
   if (days) {
-    return relativeTimeFormatter.format(-days, 'day');
+    return relativeTimeFormatter(langArg).format(-days, 'day');
   }
 
   if (hours) {
-    return relativeTimeFormatter.format(-hours, 'hour');
+    return relativeTimeFormatter(langArg).format(-hours, 'hour');
   }
 
-  return relativeTimeFormatter.format(-minutes, 'minute');
+  return relativeTimeFormatter(langArg).format(-minutes, 'minute');
 };
 
 export const isValid = (dateTime: Date) => dateTime instanceof Date && !_.isNaN(dateTime.valueOf());

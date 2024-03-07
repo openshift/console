@@ -8,30 +8,35 @@ import { GlobeAmericasIcon } from '@patternfly/react-icons/dist/esm/icons/globe-
 import { TimestampProps } from '@console/dynamic-plugin-sdk';
 
 import * as dateTime from './datetime';
+import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
-const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
+const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean, lang: string) => {
   if (!dateTime.isValid(mdate)) {
     return '-';
   }
 
   const timeDifference = now.getTime() - mdate.getTime();
   if (omitSuffix) {
-    return dateTime.fromNow(mdate, undefined, { omitSuffix: true });
+    return dateTime.fromNow(mdate, undefined, { omitSuffix: true }, lang);
   }
 
   // Show a relative time if within 10.5 minutes in the past from the current time.
   if (timeDifference > dateTime.maxClockSkewMS && timeDifference < 630000) {
-    return dateTime.fromNow(mdate);
+    return dateTime.fromNow(mdate, undefined, undefined, lang);
   }
 
   // Apr 23, 2021, 4:33 PM
-  return dateTime.dateTimeFormatter.format(mdate);
+  return dateTime.dateTimeFormatter(lang).format(mdate);
 };
 
 const nowStateToProps = ({ UI }) => ({ now: UI.get('lastTick') });
 
 export const Timestamp = (props: TimestampProps) => {
   const now = useSelector(nowStateToProps);
+
+  // Workaround for Date&Time values are not showing in supported languages onchange of language selector.
+  const lang = getLastLanguage();
+
   // Check for null. If props.timestamp is null, it returns incorrect date and time of Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)
   if (!props.timestamp) {
     return <div className="co-timestamp">-</div>;
@@ -39,7 +44,7 @@ export const Timestamp = (props: TimestampProps) => {
 
   const mdate = new Date(props.timestamp);
 
-  const timestamp = timestampFor(mdate, new Date(now), props.omitSuffix);
+  const timestamp = timestampFor(mdate, new Date(now), props.omitSuffix, lang);
 
   if (!dateTime.isValid(mdate)) {
     return <div className="co-timestamp">-</div>;
