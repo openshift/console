@@ -48,18 +48,21 @@ export const getAPIVersionForModel: GetAPIVersionForModel = (model) =>
  * If the resource has an invalid apiVersion then it'll throw Error.
  * */
 export const getGroupVersionKindForResource: GetGroupVersionKindForResource = (resource) => {
-  const { apiVersion, kind } = resource;
-  const apiVersionSplit = apiVersion.split('/');
-  const apiVersionSplitLen = apiVersionSplit.length;
+  const apiVersion = resource?.apiVersion;
+  const kind = resource?.kind;
+  const apiVersionSplit = apiVersion?.split('/');
+  const apiVersionSplitLen = apiVersionSplit?.length;
   if (apiVersionSplitLen > 2) throw new Error('Provided resource has invalid apiVersion.');
 
-  return {
-    ...(apiVersionSplitLen === 2 && {
-      group: apiVersionSplit[0],
-    }),
-    version: apiVersionSplitLen === 2 ? apiVersionSplit[1] : apiVersion,
-    kind,
-  };
+  return !apiVersion || !kind
+    ? undefined
+    : {
+        ...(apiVersionSplitLen === 2 && {
+          group: apiVersionSplit[0],
+        }),
+        version: apiVersionSplitLen === 2 ? apiVersionSplit[1] : resource?.apiVersion,
+        kind,
+      };
 };
 
 /**
