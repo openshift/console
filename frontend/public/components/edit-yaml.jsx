@@ -325,20 +325,18 @@ const EditYAMLInner = (props) => {
   };
 
   const updateYAML = React.useCallback(
-    (obj, model, newNamespace, newName) => {
+    (obj) => {
+      const model = getModel(obj);
       setSuccess(null);
       setErrors(null);
-      let action = k8sUpdate;
-      let redirect = false;
-      if (create) {
-        action = k8sCreate;
-        delete obj.metadata.resourceVersion;
-        redirect = true;
-      }
-      action(model, obj, newNamespace, newName)
+      const response = create
+        ? k8sCreate(model, _.omit(obj, ['metadata.resourceVersion']))
+        : k8sUpdate(model, obj, obj.metadata.namespace, obj.metadata.name);
+
+      response
         .then((o) => postFormSubmissionCallback(o))
         .then((o) => {
-          if (redirect) {
+          if (create) {
             let url = redirectURL;
             if (!url) {
               const path = _.isFunction(props.resourceObjPath)
@@ -350,8 +348,8 @@ const EditYAMLInner = (props) => {
             // TODO: (ggreer). show message on new page. maybe delete old obj?
             return;
           }
-          const s = t('public~{{newName}} has been updated to version {{version}}', {
-            newName,
+          const s = t('public~{{name}} has been updated to version {{version}}', {
+            name: obj.metadata.name,
             version: o.metadata.resourceVersion,
           });
           setSuccess(s);
@@ -362,7 +360,16 @@ const EditYAMLInner = (props) => {
           handleError(e.message);
         });
     },
-    [create, loadYaml, t, postFormSubmissionCallback, redirectURL, props.resourceObjPath, navigate],
+    [
+      create,
+      loadYaml,
+      t,
+      postFormSubmissionCallback,
+      redirectURL,
+      props.resourceObjPath,
+      navigate,
+      getModel,
+    ],
   );
 
   const setDisplay = React.useCallback(
@@ -496,14 +503,14 @@ const EditYAMLInner = (props) => {
         managedResourceSaveModal({
           kind: obj.kind,
           resource: obj,
-          onSubmit: () => updateYAML(obj, getModel(obj), newNamespace, newName),
+          onSubmit: () => updateYAML(obj),
           owner,
         });
         return;
       }
     }
-    updateYAML(obj, getModel(obj), newNamespace, newName);
-  }, [create, getModel, owner, t, updateYAML, validate, onSave, props.obj]);
+    updateYAML(obj);
+  }, [create, owner, t, updateYAML, validate, onSave, props.obj]);
 
   const save = () => {
     setErrors([]);
