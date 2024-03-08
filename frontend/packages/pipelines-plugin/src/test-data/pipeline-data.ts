@@ -34,6 +34,7 @@ export enum PipelineExampleNames {
   EMBEDDED_PIPELINE_SPEC = 'embedded-pipeline-spec',
   PIPELINE_WITH_FINALLY = 'pipeline-with-finally',
   RESULTS = 'results-pipeline',
+  CUSTOM_TASK_PIPELINE = 'custom-task-pipeline',
 }
 
 type CombinedPipelineTestData = {
@@ -54,42 +55,88 @@ const pipelineSpec: PipelineSpecData = {
     tasks: [
       {
         name: 'hello-world-1',
-        taskRef: { name: 'hello-world-1' },
+        taskRef: { kind: 'Task', name: 'hello-world-1' },
       },
       {
         name: 'hello-world-truncate-more-than-20-char',
-        taskRef: { name: 'hello-world-truncate-more-than-20-char' },
+        taskRef: { kind: 'Task', name: 'hello-world-truncate-more-than-20-char' },
       },
     ],
   },
   [PipelineExampleNames.PARTIAL_PIPELINE]: {
     tasks: [
-      { name: 'hello-world-1', taskRef: { name: 'hello-world-1' } },
+      { name: 'hello-world-1', taskRef: { kind: 'Task', name: 'hello-world-1' } },
       {
         name: 'hello-world-truncate-more-than-20-char',
-        taskRef: { name: 'hello-world-truncate-more-than-20-char' },
+        taskRef: { kind: 'Task', name: 'hello-world-truncate-more-than-20-char' },
       },
-      { name: 'hello-world-3', taskRef: { name: 'hello-world-3' } },
+      { name: 'hello-world-3', taskRef: { kind: 'Task', name: 'hello-world-3' } },
+    ],
+  },
+  [PipelineExampleNames.CUSTOM_TASK_PIPELINE]: {
+    tasks: [
+      { name: 'hello-world-1', taskRef: { kind: 'Task', name: 'hello-world-1' } },
+      {
+        name: 'hello-world-custom-task-2',
+        taskRef: { kind: 'ApprovalTask', name: 'hello-world-custom-task-2' },
+      },
+      { name: 'hello-world-3', taskRef: { kind: 'Task', name: 'hello-world-3' } },
     ],
   },
   [PipelineExampleNames.COMPLEX_PIPELINE]: {
     tasks: [
-      { name: 'build-app', taskRef: { name: 'noop-task' } },
-      { name: 'analyse-code', runAfter: ['build-app'], taskRef: { name: 'noop-task' } },
-      { name: 'style-checks', runAfter: ['build-app'], taskRef: { name: 'noop-task' } },
-      { name: 'find-bugs', runAfter: ['build-app'], taskRef: { name: 'noop-task' } },
+      { name: 'build-app', taskRef: { kind: 'Task', name: 'noop-task' } },
+      {
+        name: 'analyse-code',
+        runAfter: ['build-app'],
+        taskRef: { kind: 'Task', name: 'noop-task' },
+      },
+      {
+        name: 'style-checks',
+        runAfter: ['build-app'],
+        taskRef: { kind: 'Task', name: 'noop-task' },
+      },
+      { name: 'find-bugs', runAfter: ['build-app'], taskRef: { kind: 'Task', name: 'noop-task' } },
       {
         name: 'build-image',
         runAfter: ['find-bugs', 'style-checks', 'analyse-code'],
-        taskRef: { name: 'noop-task' },
+        taskRef: { kind: 'Task', name: 'noop-task' },
       },
-      { name: 'deploy-image', runAfter: ['build-image'], taskRef: { name: 'noop-task' } },
-      { name: 'test-suite-1', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
-      { name: 'test-suite-2', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
-      { name: 'test-suite-3', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
-      { name: 'test-suite-4', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
-      { name: 'test-suite-5', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
-      { name: 'test-suite-6', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
+      {
+        name: 'deploy-image',
+        runAfter: ['build-image'],
+        taskRef: { kind: 'Task', name: 'noop-task' },
+      },
+      {
+        name: 'test-suite-1',
+        runAfter: ['deploy-image'],
+        taskRef: { kind: 'Task', name: 'noop-task' },
+      },
+      {
+        name: 'test-suite-2',
+        runAfter: ['deploy-image'],
+        taskRef: { kind: 'Task', name: 'noop-task' },
+      },
+      {
+        name: 'test-suite-3',
+        runAfter: ['deploy-image'],
+        taskRef: { kind: 'Task', name: 'noop-task' },
+      },
+      {
+        name: 'test-suite-4',
+        runAfter: ['deploy-image'],
+        taskRef: { kind: 'Task', name: 'noop-task' },
+      },
+      {
+        name: 'test-suite-5',
+        runAfter: ['deploy-image'],
+        taskRef: { kind: 'Task', name: 'noop-task' },
+      },
+      {
+        name: 'test-suite-6',
+        runAfter: ['deploy-image'],
+        taskRef: { kind: 'Task', name: 'noop-task' },
+      },
       {
         name: 'verify',
         runAfter: [
@@ -100,7 +147,7 @@ const pipelineSpec: PipelineSpecData = {
           'test-suite-5',
           'test-suite-6',
         ],
-        taskRef: { name: 'noop-task' },
+        taskRef: { kind: 'Task', name: 'noop-task' },
       },
     ],
     finally: [],
@@ -388,17 +435,17 @@ const pipelineSpec: PipelineSpecData = {
     tasks: [
       {
         name: 'hello-world-1',
-        taskRef: { name: 'hello-world-1' },
+        taskRef: { kind: 'Task', name: 'hello-world-1' },
       },
       {
         name: 'hello-world-2',
-        taskRef: { name: 'hello-world-2' },
+        taskRef: { kind: 'Task', name: 'hello-world-2' },
       },
     ],
     finally: [
       {
         name: 'run-anyway',
-        taskRef: { name: 'run-anyway' },
+        taskRef: { kind: 'Task', name: 'run-anyway' },
       },
     ],
   },
@@ -726,6 +773,41 @@ export const pipelineTestData: PipelineTestData = {
           conditions: [
             {
               status: 'False',
+              type: 'Succeeded',
+            },
+          ],
+        },
+      },
+    },
+  },
+  [PipelineExampleNames.CUSTOM_TASK_PIPELINE]: {
+    dataSource: 'custom-task-pipeline',
+    pipeline: {
+      apiVersion: 'tekton.dev/v1alpha1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'custom-task-pipeline',
+        namespace: 'tekton-pipelines',
+      },
+      spec: pipelineSpec[PipelineExampleNames.CUSTOM_TASK_PIPELINE],
+    },
+    pipelineRuns: {
+      [DataState.PIPELINE_RUN_PENDING]: {
+        apiVersion: 'tekton.dev/v1alpha1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'custom-task-pipeline-3tt7aw',
+          namespace: 'tekton-pipelines',
+          labels: { [TektonResourceLabel.pipeline]: 'custom-task-pipeline' },
+        },
+        spec: {
+          pipelineRef: { name: 'custom-task-pipeline' },
+        },
+        status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.CUSTOM_TASK_PIPELINE],
+          conditions: [
+            {
+              status: 'True',
               type: 'Succeeded',
             },
           ],
