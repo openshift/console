@@ -72,7 +72,7 @@ export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
             );
           },
         }}
-        customData={{ operatorVersion, taskRuns: taskRunsLoaded ? taskRuns : [] }}
+        customData={{ operatorVersion, taskRuns: taskRunsLoaded ? taskRuns : [], taskRunsLoaded }}
         onRowsRendered={onRowsRendered}
         virtualize
       />

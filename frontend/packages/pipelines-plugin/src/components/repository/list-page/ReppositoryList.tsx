@@ -24,6 +24,7 @@ const RepositoryList: React.FC<RepositoryListProps> = (props) => {
       customData={{
         taskRuns: taskRunsLoaded ? taskRuns : [],
         pipelineRuns: pipelineRunsLoaded ? pipelineRuns : [],
+        taskRunsLoaded,
       }}
       virtualize
     />
