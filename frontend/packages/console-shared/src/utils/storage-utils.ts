@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { StorageClass } from '@console/internal/components/storage-class-form';
 
 export const cephStorageProvisioners = [
@@ -7,16 +6,11 @@ export const cephStorageProvisioners = [
   'rbd.csi.ceph.com',
 ];
 
-const objectStorageProvisioners = [
-  'openshift-storage.noobaa.io/obc',
-  'openshift-storage.ceph.rook.io/bucket',
-];
+const objectStorageProvisioners = ['noobaa.io/obc', 'ceph.rook.io/bucket'];
 
 // To check if the provisioner is OCS based
-export const isCephProvisioner = (scProvisioner: string): boolean => {
-  return cephStorageProvisioners.some((provisioner: string) =>
-    _.endsWith(scProvisioner, provisioner),
-  );
-};
+export const isCephProvisioner = (scProvisioner: string): boolean =>
+  cephStorageProvisioners.some((provisioner: string) => scProvisioner?.includes(provisioner));
 
-export const isObjectSC = (sc: StorageClass) => objectStorageProvisioners.includes(sc.provisioner);
+export const isObjectSC = (sc: StorageClass) =>
+  objectStorageProvisioners.some((provisioner: string) => sc.provisioner?.includes(provisioner));
