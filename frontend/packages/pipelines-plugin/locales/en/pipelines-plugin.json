@@ -153,6 +153,8 @@
   "No workspaces are associated with this pipeline.": "No workspaces are associated with this pipeline.",
   "{{triggerBindingLabel}} details": "{{triggerBindingLabel}} details",
   "TriggerTemplate details": "TriggerTemplate details",
+  "Approval Task": "Approval Task",
+  "Custom Task": "Custom Task",
   "Embedded task": "Embedded task",
   "Embedded PipelineResource": "Embedded PipelineResource",
   "Embedded Pipeline": "Embedded Pipeline",

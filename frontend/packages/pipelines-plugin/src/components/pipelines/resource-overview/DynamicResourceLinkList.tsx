@@ -8,6 +8,7 @@ export type ResourceModelLink = {
   resourceKind: string;
   name: string;
   qualifier?: string;
+  disableLink?: boolean;
 };
 
 type DynamicResourceLinkListProps = {
@@ -35,10 +36,10 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
       <dl>
         {title && <dt>{title}</dt>}
         <dd>
-          {links.map(({ name, resourceKind, qualifier = '' }) => {
-            let linkName = name;
+          {links.map(({ name, resourceKind, qualifier = '', disableLink = false }) => {
+            let linkName = qualifier;
             if (qualifier?.length > 0 && name !== qualifier) {
-              linkName += ` (${qualifier})`;
+              linkName += ` (${name})`;
             }
             return (
               <div key={`${resourceKind}/${linkName}`}>
@@ -47,6 +48,7 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
                   resourceName={name}
                   displayName={linkName}
                   namespace={namespace}
+                  disableLink={disableLink}
                 />
               </div>
             );

@@ -22,6 +22,7 @@ import {
   getResourceModelFromBindingKind,
   shouldHidePipelineRunStop,
   shouldHidePipelineRunCancel,
+  totalPipelineRunCustomTasks,
 } from '../pipeline-augment';
 import { testData } from './pipeline-augment-test-data';
 
@@ -501,5 +502,19 @@ describe('getResourceModelFromBindingKind', () => {
     expect(getResourceModelFromBindingKind('EmbeddedBinding')).toBe(null);
     expect(getResourceModelFromBindingKind('123%$^&asdf')).toBe(null);
     expect(getResourceModelFromBindingKind('Nothing special')).toBe(null);
+  });
+});
+
+describe('PipelineAugment test correct task status state is shown when there is custom tasks', () => {
+  it('should not count custom tasks in TaskStatus', () => {
+    const customTaskPipeline = pipelineTestData[PipelineExampleNames.CUSTOM_TASK_PIPELINE];
+    const taskStatus = getTaskStatus(
+      customTaskPipeline.pipelineRuns[DataState.PIPELINE_RUN_PENDING],
+      customTaskPipeline.pipeline,
+      [],
+    );
+    const totalTasks = totalPipelineRunTasks(customTaskPipeline.pipeline);
+    const customTaskCount = totalPipelineRunCustomTasks(customTaskPipeline.pipeline);
+    expect(taskStatus.Pending).toEqual(totalTasks - customTaskCount);
   });
 });
