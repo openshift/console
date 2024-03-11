@@ -140,9 +140,13 @@ export const getVolumeModeRadios = () => [
 ];
 
 export const dropdownUnits = {
+  i: 'B',
+  Ki: 'KiB',
   Mi: 'MiB',
   Gi: 'GiB',
   Ti: 'TiB',
+  Pi: 'PiB',
+  Ei: 'EiB',
 };
 
 export const getProvisionerModeMapping = (provisioner: string): ModeMapping =>
