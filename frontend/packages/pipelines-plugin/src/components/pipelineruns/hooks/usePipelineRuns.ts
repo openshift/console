@@ -8,7 +8,9 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
+import { CustomRunModelV1Beta1 } from '@console/pipelines-plugin/src/models';
 import {
+  CustomRunKind,
   PipelineRunGroupVersionKind,
   PipelineRunKind,
   TaskRunGroupVersionKind,
@@ -136,6 +138,24 @@ export const useTaskRuns = (
   },
 ): [TaskRunKind[], boolean, unknown, GetNextPage] =>
   useRuns<TaskRunKind>(TaskRunGroupVersionKind, namespace, options);
+
+export const useCustomRuns = (namespace: string): [CustomRunKind[], boolean, any] => {
+  const watchedResource = React.useMemo(
+    () => ({
+      isList: true,
+      groupVersionKind: {
+        group: CustomRunModelV1Beta1.apiGroup,
+        kind: CustomRunModelV1Beta1.kind,
+        version: CustomRunModelV1Beta1.apiVersion,
+      },
+      namespace,
+      namespaced: true,
+    }),
+    [namespace],
+  );
+
+  return useK8sWatchResource<CustomRunKind[]>(watchedResource);
+};
 
 export const usePipelineRun = (
   namespace: string,

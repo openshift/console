@@ -19,14 +19,7 @@ import {
   TriggerBindingModel,
   PipelineModel,
 } from '../models';
-import {
-  ApprovalStatus,
-  ComputedStatus,
-  PipelineKind,
-  PipelineRunKind,
-  PipelineTask,
-  TaskRunKind,
-} from '../types';
+import { ComputedStatus, PipelineKind, PipelineRunKind, PipelineTask, TaskRunKind } from '../types';
 import { pipelineRunFilterReducer, SucceedConditionReason } from './pipeline-filter-reducer';
 
 interface Metadata {
@@ -39,7 +32,7 @@ export interface PropPipelineData {
   latestRun?: PipelineRunKind;
 }
 
-interface StatusMessage {
+export interface StatusMessage {
   message: string;
   pftoken: { name: string; value: string; var: string };
 }
@@ -135,21 +128,6 @@ export const getRunStatusColor = (status: string): StatusMessage => {
         message: i18next.t('pipelines-plugin~PipelineRun not started yet'),
         pftoken: pendingColor,
       };
-  }
-};
-
-export const getApprovalStatusColor = (status: string): StatusMessage => {
-  switch (status) {
-    case ApprovalStatus.RequestSent:
-      return { message: i18next.t('pipelines-plugin~Request sent'), pftoken: skippedColor };
-    case ApprovalStatus.Accepted:
-      return { message: i18next.t('pipelines-plugin~Approved'), pftoken: successColor };
-    case ApprovalStatus.Rejected:
-      return { message: i18next.t('pipelines-plugin~Rejected'), pftoken: failureColor };
-    case ApprovalStatus.TimedOut:
-      return { message: i18next.t('pipelines-plugin~Timed out'), pftoken: cancelledColor };
-    default:
-      return { message: i18next.t('pipelines-plugin~Idle'), pftoken: skippedColor };
   }
 };
 

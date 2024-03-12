@@ -13,17 +13,12 @@ import {
 import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import { resourcePathFromModel, truncateMiddle } from '@console/internal/components/utils';
 import { ApprovalTaskModel, CustomRunModelV1Beta1 } from '@console/pipelines-plugin/src/models';
-import { pipelineRunFilterReducer } from '@console/pipelines-plugin/src/utils/pipeline-filter-reducer';
-import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
 import {
-  TaskKind,
-  ApprovalTaskKind,
-  ApprovalStatus,
-  ComputedStatus,
-  CustomRunKind,
-  CustomRunStatus,
-} from '../../../types';
-import { getApprovalStatusColor } from '../../../utils/pipeline-augment';
+  getApprovalStatus,
+  getApprovalStatusInfo,
+} from '@console/pipelines-plugin/src/utils/pipeline-approval-utils';
+import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
+import { TaskKind, ApprovalTaskKind, ApprovalStatus, CustomRunKind } from '../../../types';
 import { ApprovalStatusIcon } from '../detail-page-tabs/pipeline-details/StatusIcon';
 import { TaskNodeModelData } from './types';
 
@@ -34,8 +29,9 @@ type ApprovalTaskNodeProps = {
   disableTooltip?: boolean;
 };
 
-type WatchResource = {
-  [key: string]: K8sResourceKind[] | K8sResourceKind;
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export type WatchResource = {
+  [key: string]: ApprovalTaskKind & CustomRunKind;
 };
 
 interface ApprovalTaskComponentProps {
@@ -45,7 +41,7 @@ interface ApprovalTaskComponentProps {
   task?: {
     data: TaskKind;
   };
-  status: string;
+  status: ApprovalStatus;
   namespace: string;
   disableVisualizationTooltip?: boolean;
   width: number;
@@ -76,8 +72,8 @@ const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
 
   const enableLogLink = status !== ApprovalStatus.Idle && !!path;
   const taskStatusColor = status
-    ? getApprovalStatusColor(status).pftoken.value
-    : getApprovalStatusColor(ApprovalStatus.Idle).pftoken.value;
+    ? getApprovalStatusInfo(status).pftoken.value
+    : getApprovalStatusInfo(ApprovalStatus.Idle).pftoken.value;
 
   const [hover, hoverRef] = useHover();
   const truncatedVisualName = React.useMemo(
@@ -114,8 +110,8 @@ const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
         style={{
           stroke: pipelineRunName
             ? status
-              ? getApprovalStatusColor(status).pftoken.value
-              : getApprovalStatusColor(ApprovalStatus.Idle).pftoken.value
+              ? getApprovalStatusInfo(status).pftoken.value
+              : getApprovalStatusInfo(ApprovalStatus.Idle).pftoken.value
             : '',
         }}
       />
@@ -167,8 +163,6 @@ const ApprovalTaskNode: React.FC<ApprovalTaskNodeProps> = ({ element, disableToo
   const { pipeline, pipelineRun, task } = element.getData();
 
   const customTaskName = `${pipelineRun?.metadata?.name}-${task?.name}`;
-  const pipelineRunStatus = pipelineRun && pipelineRunFilterReducer(pipelineRun);
-  let customTaskStatus: string = '';
 
   const watchedResources = {
     customRun: {
@@ -189,17 +183,11 @@ const ApprovalTaskNode: React.FC<ApprovalTaskNodeProps> = ({ element, disableToo
     watchedResources,
   );
 
-  let approvalStatus = (resourcesData?.approvalTask?.data as ApprovalTaskKind)?.status
-    ?.approvalState;
-  if (pipelineRunStatus === ComputedStatus.Running && !approvalStatus) {
-    approvalStatus = ApprovalStatus.Idle;
-  }
-  if (
-    (resourcesData?.customRun?.data as CustomRunKind)?.spec?.status === CustomRunStatus.RunCancelled
-  ) {
-    approvalStatus = ApprovalStatus.TimedOut;
-  }
-  customTaskStatus = approvalStatus;
+  const approvalStatus = getApprovalStatus(
+    resourcesData.approvalTask?.data,
+    resourcesData.customRun?.data,
+    pipelineRun,
+  );
 
   const taskComponent: JSX.Element = (
     <ApprovalTaskComponent
@@ -207,7 +195,7 @@ const ApprovalTaskNode: React.FC<ApprovalTaskNodeProps> = ({ element, disableToo
       name={task.name || ''}
       task={task.taskSpec && { data: { spec: task.taskSpec } }}
       namespace={pipeline?.metadata?.namespace}
-      status={customTaskStatus}
+      status={approvalStatus}
       disableVisualizationTooltip={disableTooltip}
       width={width}
       height={height}
