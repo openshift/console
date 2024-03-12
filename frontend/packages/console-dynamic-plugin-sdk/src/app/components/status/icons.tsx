@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Icon } from '@patternfly/react-core';
-import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
-import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
-import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
+  InfoCircleIcon,
+} from '@patternfly/react-icons';
 import * as classNames from 'classnames';
 
 import './icons.scss';

@@ -4,6 +4,7 @@ import { DynamicModuleMap } from '../../utils/dynamic-module-parser';
 
 export type DynamicModuleImportLoaderOptions = {
   dynamicModuleMaps: Record<string, DynamicModuleMap>;
+  resourceMetadata: { jsx: boolean };
 };
 
 export type DynamicModuleImportLoader = webpack.LoaderDefinitionFunction<
@@ -45,14 +46,22 @@ const getImportInfo = (importDeclaration: ts.ImportDeclaration) => {
  * @see https://webpack.js.org/contribute/writing-a-loader/
  */
 const dynamicModuleImportLoader: DynamicModuleImportLoader = function (source) {
-  const { dynamicModuleMaps } = this.getOptions();
+  const { dynamicModuleMaps, resourceMetadata } = this.getOptions();
+
+  const sourceContainsDynamicModuleReference = Object.keys(dynamicModuleMaps).some(
+    (m) => source.indexOf(m) !== -1,
+  );
+
+  if (!sourceContainsDynamicModuleReference) {
+    return source;
+  }
 
   const sourceFile = ts.createSourceFile(
     this.resourcePath,
     source,
     ts.ScriptTarget.Latest,
     true,
-    ts.ScriptKind.TSX,
+    resourceMetadata.jsx ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   );
 
   // TypeScript compiler sets the 'parseDiagnostics' property on created SourceFile instances,
@@ -65,7 +74,7 @@ const dynamicModuleImportLoader: DynamicModuleImportLoader = function (source) {
     parseDiagnostics.filter((d) => d.category === ts.DiagnosticCategory.Error).length > 0;
 
   if (hasParseErrors) {
-    this.getLogger().info(`Detected parse errors in ${this.resourcePath}`);
+    this.getLogger().warn(`Detected parse errors in ${this.resourcePath}`);
 
     return source;
   }
