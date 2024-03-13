@@ -600,6 +600,7 @@
   "total requested": "total requested",
   "Add Users": "Add Users",
   "Remove User": "Remove User",
+  "Impersonate Group {{name}}": "Impersonate Group {{name}}",
   "Users": "Users",
   "Groups": "Groups",
   "Group details": "Group details",
