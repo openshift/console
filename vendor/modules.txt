@@ -139,27 +139,32 @@ github.com/devfile/api/v2/pkg/utils/overriding
 github.com/devfile/api/v2/pkg/utils/unions
 github.com/devfile/api/v2/pkg/validation
 github.com/devfile/api/v2/pkg/validation/variables
-# github.com/devfile/library v1.2.1-0.20221017204048-ec4b02cbe9c7
-## explicit; go 1.15
-github.com/devfile/library/pkg/devfile
-github.com/devfile/library/pkg/devfile/generator
-github.com/devfile/library/pkg/devfile/parser
-github.com/devfile/library/pkg/devfile/parser/context
-github.com/devfile/library/pkg/devfile/parser/data
-github.com/devfile/library/pkg/devfile/parser/data/v2
-github.com/devfile/library/pkg/devfile/parser/data/v2/2.0.0
-github.com/devfile/library/pkg/devfile/parser/data/v2/2.1.0
-github.com/devfile/library/pkg/devfile/parser/data/v2/2.2.0
-github.com/devfile/library/pkg/devfile/parser/data/v2/common
-github.com/devfile/library/pkg/devfile/validate
-github.com/devfile/library/pkg/testingutil/filesystem
-github.com/devfile/library/pkg/util
+# github.com/devfile/library/v2 v2.2.2-0.20240222173303-eefdbd323c45
+## explicit; go 1.18
+github.com/devfile/library/v2/pkg/devfile
+github.com/devfile/library/v2/pkg/devfile/generator
+github.com/devfile/library/v2/pkg/devfile/parser
+github.com/devfile/library/v2/pkg/devfile/parser/context
+github.com/devfile/library/v2/pkg/devfile/parser/data
+github.com/devfile/library/v2/pkg/devfile/parser/data/v2
+github.com/devfile/library/v2/pkg/devfile/parser/data/v2/2.0.0
+github.com/devfile/library/v2/pkg/devfile/parser/data/v2/2.1.0
+github.com/devfile/library/v2/pkg/devfile/parser/data/v2/2.2.0
+github.com/devfile/library/v2/pkg/devfile/parser/data/v2/common
+github.com/devfile/library/v2/pkg/devfile/parser/errors
+github.com/devfile/library/v2/pkg/devfile/parser/util
+github.com/devfile/library/v2/pkg/devfile/validate
+github.com/devfile/library/v2/pkg/testingutil/filesystem
+github.com/devfile/library/v2/pkg/util
 # github.com/devfile/registry-support/index/generator v0.0.0-20231020181239-1168591f0b4e
 ## explicit; go 1.18
 github.com/devfile/registry-support/index/generator/schema
 # github.com/devfile/registry-support/registry-library v0.0.0-20231020181239-1168591f0b4e
 ## explicit; go 1.18
 github.com/devfile/registry-support/registry-library/library
+# github.com/distribution/distribution/v3 v3.0.0-20230511163743-f7717b7855ca
+## explicit; go 1.18
+github.com/distribution/distribution/v3/reference
 # github.com/docker/cli v24.0.6+incompatible
 ## explicit
 github.com/docker/cli/cli/config
@@ -622,17 +627,12 @@ github.com/openshift/api/image/dockerpre012
 github.com/openshift/api/image/v1
 github.com/openshift/api/oauth/v1
 github.com/openshift/api/route/v1
-github.com/openshift/api/user/v1
 # github.com/openshift/client-go v0.0.0-20230926161409-848405da69e1
 ## explicit; go 1.20
 github.com/openshift/client-go/oauth/applyconfigurations/internal
 github.com/openshift/client-go/oauth/applyconfigurations/oauth/v1
 github.com/openshift/client-go/oauth/clientset/versioned/scheme
 github.com/openshift/client-go/oauth/clientset/versioned/typed/oauth/v1
-github.com/openshift/client-go/user/applyconfigurations/internal
-github.com/openshift/client-go/user/applyconfigurations/user/v1
-github.com/openshift/client-go/user/clientset/versioned/scheme
-github.com/openshift/client-go/user/clientset/versioned/typed/user/v1
 # github.com/openshift/library-go v0.0.0-20231020125034-5a2d9fe760b3
 ## explicit; go 1.20
 github.com/openshift/library-go/pkg/crypto
@@ -1468,6 +1468,10 @@ k8s.io/kubectl/pkg/util/openapi
 k8s.io/kubectl/pkg/util/templates
 k8s.io/kubectl/pkg/util/term
 k8s.io/kubectl/pkg/validation
+# k8s.io/pod-security-admission v0.26.10
+## explicit; go 1.19
+k8s.io/pod-security-admission/api
+k8s.io/pod-security-admission/policy
 # k8s.io/utils v0.0.0-20230726121419-3b25d923346b
 ## explicit; go 1.18
 k8s.io/utils/buffer
@@ -1495,7 +1499,7 @@ oras.land/oras-go/pkg/registry/remote/auth
 oras.land/oras-go/pkg/registry/remote/internal/errutil
 oras.land/oras-go/pkg/registry/remote/internal/syncutil
 oras.land/oras-go/pkg/target
-# sigs.k8s.io/controller-runtime v0.14.4
+# sigs.k8s.io/controller-runtime v0.14.7
 ## explicit; go 1.19
 sigs.k8s.io/controller-runtime/pkg/client
 sigs.k8s.io/controller-runtime/pkg/client/apiutil

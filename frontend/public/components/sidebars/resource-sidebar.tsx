@@ -22,6 +22,7 @@ const ResourceSidebarWrapper: React.FC<{
   label: string;
   toggleSidebar: () => void;
 }> = (props) => {
+  const { t } = useTranslation();
   const { label, children, toggleSidebar } = props;
 
   return (
@@ -32,6 +33,7 @@ const ResourceSidebarWrapper: React.FC<{
       <div className="co-m-pane__body co-p-has-sidebar__sidebar-body">
         <CloseButton
           additionalClassName="co-close-button--float-right co-p-has-sidebar__close-button"
+          ariaLabel={t('public~Close')}
           onClick={toggleSidebar}
         />
         <h2 className="co-p-has-sidebar__sidebar-heading text-capitalize">{label}</h2>

@@ -46,15 +46,26 @@ export const getPipelineTaskLinks = (pipeline: PipelineKind): PipelineTaskLinks 
     if (!tasks) return [];
     return tasks?.map((task) =>
       task.taskRef
-        ? {
-            resourceKind: getSafeTaskResourceKind(task.taskRef.kind),
-            name: task.taskRef.name,
-            qualifier: task.name,
-          }
+        ? task.taskRef.kind === 'ClusterTask' || task.taskRef.kind === 'Task'
+          ? {
+              resourceKind: getSafeTaskResourceKind(task.taskRef.kind),
+              name: task.taskRef.name,
+              qualifier: task.name,
+            }
+          : {
+              resourceKind: task.taskRef?.kind,
+              name:
+                task.taskRef?.kind === 'ApprovalTask'
+                  ? i18next.t('pipelines-plugin~Approval Task')
+                  : i18next.t('pipelines-plugin~Custom Task'),
+              qualifier: task.name,
+              disableLink: true,
+            }
         : {
             resourceKind: 'EmbeddedTask',
             name: i18next.t('pipelines-plugin~Embedded task'),
             qualifier: task.name,
+            disableLink: true,
           },
     );
   };

@@ -131,13 +131,13 @@ export const getKnativeServiceDepResource = (
             ...(concurrencytarget && {
               'autoscaling.knative.dev/target': `${concurrencytarget}`,
             }),
-            ...(minpods && { 'autoscaling.knative.dev/minScale': `${minpods}` }),
-            ...(maxpods && { 'autoscaling.knative.dev/maxScale': `${maxpods}` }),
+            ...(minpods && { 'autoscaling.knative.dev/min-scale': `${minpods}` }),
+            ...(maxpods && { 'autoscaling.knative.dev/max-scale': `${maxpods}` }),
             ...(autoscalewindow && {
               'autoscaling.knative.dev/window': `${autoscalewindow}${autoscalewindowUnit}`,
             }),
             ...(concurrencyutilization && {
-              'autoscaling.knative.dev/targetUtilizationPercentage': `${concurrencyutilization}`,
+              'autoscaling.knative.dev/target-utilization-percentage': `${concurrencyutilization}`,
             }),
           },
         },

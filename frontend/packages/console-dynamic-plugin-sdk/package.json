@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@microsoft/tsdoc": "0.14.2",
-    "@openshift/dynamic-plugin-sdk-webpack": "^4.0.1",
+    "@openshift/dynamic-plugin-sdk-webpack": "^4.0.2",
     "@types/ejs": "3.x",
     "@types/fs-extra": "9.x",
     "ejs": "3.x",

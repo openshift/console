@@ -5,7 +5,7 @@ import i18next from 'i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { connect, useDispatch } from 'react-redux';
-import { Link, redirect } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   NotificationDrawer,
   NotificationEntry,
@@ -21,6 +21,7 @@ import {
 } from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
+import { history, resourcePath } from '@console/internal/components/utils';
 
 import { getClusterID } from '../module/k8s/cluster-settings';
 
@@ -61,7 +62,6 @@ import {
   useResolvedExtensions,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
-import { resourcePath } from '@console/internal/components/utils';
 import { coFetchJSON } from '../co-fetch';
 import { ConsolePluginModel } from '../models';
 import {
@@ -128,7 +128,7 @@ export const getAlertActions = (actionsExtensions: ResolvedExtension<AlertAction
     Omit<ResolvedExtension<AlertAction>['properties'], 'alert'>
   >().set('AlertmanagerReceiversNotConfigured', {
     text: i18next.t('public~Configure'),
-    action: () => redirect('/monitoring/alertmanagerconfig'),
+    action: () => history.push('/monitoring/alertmanagerconfig'),
   });
   actionsExtensions.forEach(({ properties }) =>
     alertActions.set(properties.alert, {

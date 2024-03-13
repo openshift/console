@@ -462,7 +462,7 @@
   "ReplicaSets": "ReplicaSets",
   "Deployments": "Deployments",
   "Error getting YAML: {{e}}": "Error getting YAML: {{e}}",
-  "{{newName}} has been updated to version {{version}}": "{{newName}} has been updated to version {{version}}",
+  "{{name}} has been updated to version {{version}}": "{{name}} has been updated to version {{version}}",
   "No YAML content found.": "No YAML content found.",
   "No \"apiVersion\" field found in YAML.": "No \"apiVersion\" field found in YAML.",
   "No \"kind\" field found in YAML.": "No \"kind\" field found in YAML.",

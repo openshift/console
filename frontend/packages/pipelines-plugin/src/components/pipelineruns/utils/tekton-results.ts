@@ -5,7 +5,6 @@ import {
   MatchLabels,
   Selector,
 } from '@console/dynamic-plugin-sdk/src';
-import { RouteModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import { consoleProxyFetch, consoleProxyFetchJSON } from '@console/shared/src/utils/proxy';
@@ -205,22 +204,7 @@ export const clearCache = () => {
 };
 const InFlightStore: { [key: string]: boolean } = {};
 
-// const getTRUrlPrefix = (): string => URL_PREFIX;
-
 export const getTRURLHost = async () => {
-  const tektonResult = await k8sGet(TektonResultModel, 'result');
-  const targetNamespace = tektonResult?.spec?.targetNamespace;
-  const route = await k8sGet(RouteModel, 'tekton-results-api-service', targetNamespace);
-  return route?.spec.host;
-};
-
-export const createTektonResultsUrl = async (
-  namespace: string,
-  dataType?: DataType,
-  filter?: string,
-  options?: TektonResultsOptions,
-  nextPageToken?: string,
-): Promise<string> => {
   const tektonResult = await k8sGet(TektonResultModel, 'result');
   const targetNamespace = tektonResult?.spec?.targetNamespace;
   const serverPort = tektonResult?.spec?.server_port ?? '8080';
@@ -233,6 +217,17 @@ export const createTektonResultsUrl = async (
   } else {
     tektonResultsAPI = `tekton-results-api-service.openshift-pipelines.svc.cluster.local:${serverPort}`;
   }
+  return tektonResultsAPI;
+};
+
+export const createTektonResultsUrl = async (
+  namespace: string,
+  dataType?: DataType,
+  filter?: string,
+  options?: TektonResultsOptions,
+  nextPageToken?: string,
+): Promise<string> => {
+  const tektonResultsAPI = await getTRURLHost();
   const namespaceToSearch = namespace && namespace !== ALL_NAMESPACES_KEY ? namespace : '-';
   const url = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records?${new URLSearchParams(
     {

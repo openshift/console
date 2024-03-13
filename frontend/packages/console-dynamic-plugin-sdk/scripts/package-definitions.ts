@@ -11,7 +11,7 @@ type GeneratedPackage = {
   outDir: string;
   /** Package manifest. Note: `version` is updated via the publish script. */
   manifest: readPkg.PackageJson;
-  /** Additional files to copy to the package output directory. */
+  /** Additional files or directories to copy to the package output directory. */
   filesToCopy: Record<string, string>;
 };
 
@@ -33,6 +33,11 @@ const commonManifestFields: Partial<readPkg.PackageJson> = {
 const commonFiles: Record<string, string> = {
   '../../../LICENSE': 'LICENSE',
   'README.md': 'README.md',
+};
+
+const docFiles: Record<string, string> = {
+  docs: 'docs',
+  'upgrade-PatternFly.md': 'upgrade-PatternFly.md',
 };
 
 const getReferencedAssets = (outDir: string) => {
@@ -113,7 +118,7 @@ export const getCorePackage: GetPackageDefinition = (
   },
   filesToCopy: {
     ...commonFiles,
-    docs: 'docs',
+    ...docFiles,
     ...getReferencedAssets('dist/core'),
   },
 });

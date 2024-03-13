@@ -63,7 +63,7 @@ Note: this table includes Console versions which currently receive technical sup
 
 ## OpenShift Console Versions vs PatternFly Versions
 
-Each Console version supports specific versions of [PatternFly](https://www.patternfly.org/) in terms
+Each Console version supports specific version(s) of [PatternFly](https://www.patternfly.org/) in terms
 of CSS styling. This table will help align compatible versions of PatternFly to versions of the OpenShift
 Console.
 
@@ -74,6 +74,8 @@ Console.
 | 4.14.x            | 4.x                 |                                       |
 | 4.13.x            | 4.x                 |                                       |
 | 4.12.x            | 4.x                 |                                       |
+
+Refer to [PatternFly Upgrade Notes](./upgrade-PatternFly.md) containing links to PatternFly documentation.
 
 ## Shared modules
 
@@ -265,6 +267,21 @@ It provides access to specific modules exposed by the plugin. It's loaded right 
 
 `exposed-barUtils-chunk.js` is the generated webpack chunk for `barUtils` exposed module. It's loaded
 via the plugin entry chunk (`plugin-entry.js`) when needed.
+
+Plugins may also include other assets, such as JSON localization files that follow the general pattern
+`locales/<lang>/plugin__<plugin-name>.json` or static images referenced from the plugin code.
+
+## Serving plugin assets
+
+Dynamic plugins are deployed as workloads on the cluster. Each plugin deployment should include a web
+server that hosts the [generated assets](#generated-assets) of the given plugin.
+
+Console Bridge server adds `X-Content-Type-Options: nosniff` HTTP response header to all plugin asset
+requests for added security. Web browsers that comply with this security header will block `<script>`
+initiated requests when the MIME type of requested asset is not valid.
+
+**Important!** Make sure to provide valid JavaScript MIME type via the `Content-Type` response header
+for all assets served by your plugin web server.
 
 ## Plugin development
 
