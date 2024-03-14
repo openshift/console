@@ -76,6 +76,14 @@ const createGenericNode: NodeCreatorSetup = (type, width?, height?) => (name, da
 
 // Node variations
 export const createTaskNode: NodeCreator<TaskNodeModelData> = createGenericNode(NodeType.TASK_NODE);
+
+export const createCustomTaskNode: NodeCreator<TaskNodeModelData> = createGenericNode(
+  NodeType.CUSTOM_TASK_NODE,
+);
+
+export const createApprovalTaskNode: NodeCreator<TaskNodeModelData> = createGenericNode(
+  NodeType.APPROVAL_TASK_NODE,
+);
 export const createSpacerNode: NodeCreator<SpacerNodeModelData> = createGenericNode(
   NodeType.SPACER_NODE,
   0,
@@ -122,6 +130,10 @@ export const getNodeCreator = (type: NodeType): NodeCreator<PipelineRunAfterNode
       return createLoadingNode;
     case NodeType.INVALID_TASK_LIST_NODE:
       return createInvalidTaskListNode;
+    case NodeType.CUSTOM_TASK_NODE:
+      return createCustomTaskNode;
+    case NodeType.APPROVAL_TASK_NODE:
+      return createApprovalTaskNode;
     case NodeType.TASK_NODE:
     default:
       return createTaskNode;
@@ -509,9 +521,18 @@ export const getGraphDataModel = (
     }
     const badgePadding = Object.keys(pipelineRun.spec)?.length > 0 ? DEFAULT_BADGE_WIDTH : 0;
     const isTaskSkipped = pipelineRun?.status?.skippedTasks?.some((t) => t.name === task.name);
+    const getNodeType = (taskKind: string) => {
+      if (taskKind === 'Task' || taskKind === 'ClusterTask') {
+        return NodeType.TASK_NODE;
+      }
+      if (taskKind === 'ApprovalTask') {
+        return NodeType.APPROVAL_TASK_NODE;
+      }
+      return NodeType.CUSTOM_TASK_NODE;
+    };
 
     nodes.push(
-      createPipelineTaskNode(NodeType.TASK_NODE, {
+      createPipelineTaskNode(getNodeType(task?.taskRef?.kind), {
         id: vertex.name,
         label: vertex.name,
         width:

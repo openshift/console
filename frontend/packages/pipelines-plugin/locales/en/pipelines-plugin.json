@@ -438,6 +438,10 @@
   "TaskRun log": "TaskRun log",
   "Pod not found": "Pod not found",
   "{{taskLabel}} details": "{{taskLabel}} details",
+  "CustomRun": "CustomRun",
+  "CustomRuns": "CustomRuns",
+  "ApprovalTask": "ApprovalTask",
+  "ApprovalTasks": "ApprovalTasks",
   "TektonConfig": "TektonConfig",
   "TektonConfigs": "TektonConfigs",
   "TektonHub": "TektonHub",
@@ -467,5 +471,10 @@
   "Cancelling": "Cancelling",
   "Pending": "Pending",
   "PipelineRun not started yet": "PipelineRun not started yet",
+  "Request sent": "Request sent",
+  "Approved": "Approved",
+  "Rejected": "Rejected",
+  "Timed out": "Timed out",
+  "Idle": "Idle",
   "Other": "Other"
 }
