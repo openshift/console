@@ -9,21 +9,39 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAsyncCache(t *testing.T) {
-	initializationRetryInterval = time.Second
-	initializationTimeout = 5 * time.Second
+type testItem struct {
+	ctx context.Context
+	t   time.Time
+}
 
-	cacheTime := func(ctx context.Context) (time.Time, error) {
-		return time.Now(), nil
+func (i *testItem) isContextCancelled() bool {
+	select {
+	case <-i.ctx.Done():
+		return true
+	default:
+		return false
+	}
+}
+
+func TestAsyncCache(t *testing.T) {
+	cacheTime := func(ctx context.Context) (*testItem, error) {
+		return &testItem{ctx: ctx, t: time.Now()}, nil
 	}
 
 	c, err := NewAsyncCache(context.Background(), 2*time.Second, cacheTime)
 	require.NoError(t, err)
 
+	initializationRetryInterval = 5 * time.Millisecond
+	initializationTimeout = 10 * time.Millisecond
 	// test that initialization was successful
 	item := c.GetItem()
-	if item.IsZero() {
+	if item.t.IsZero() {
 		t.Error("expected non-zero time")
+	}
+
+	time.Sleep(1 * time.Second)
+	if item.isContextCancelled() {
+		t.Error("expected usable context")
 	}
 
 	timedCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
