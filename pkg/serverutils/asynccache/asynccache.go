@@ -37,14 +37,30 @@ func NewAsyncCache[T any](ctx context.Context, reloadPeriod time.Duration, cachi
 		initializationRetryInterval,
 		initializationTimeout,
 		true,
-		func(ctx context.Context) (bool, error) {
-			item, err := cachingFunc(ctx)
-			if err != nil {
+		func(pollingCtx context.Context) (bool, error) {
+			itemChan := make(chan *T, 1)
+			errChan := make(chan error, 1)
+
+			go func() {
+				item, err := cachingFunc(ctx)
+				if err != nil {
+					errChan <- err
+					return
+				}
+				itemChan <- &item
+
+			}()
+
+			select {
+			case <-pollingCtx.Done(): // either a global context cancel or polling timeout
+				return false, nil // leave the error reporting to the polling mechanism
+			case item := <-itemChan:
+				c.cachedItem = *item
+				return true, nil
+			case err := <-errChan:
 				klog.V(4).Infof("failed to setup an async cache (retrying in %v) - caching func returned error: %v", initializationRetryInterval, err)
 				return false, nil
 			}
-			c.cachedItem = item
-			return true, nil
 		},
 	)
 
