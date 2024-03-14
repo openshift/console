@@ -132,7 +132,11 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
 
   const { name: plrName, namespace } = pipelineRun?.metadata;
   const path = plrName
-    ? `${resourcePathFromModel(PipelineRunModel, plrName, namespace)}/logs/${element.getLabel()}`
+    ? `${resourcePathFromModel(
+        PipelineRunModel,
+        plrName,
+        namespace,
+      )}/logs?taskName=${element.getLabel()}`
     : undefined;
 
   const enableLogLink =
