@@ -12,8 +12,11 @@
   &__results-indicator {
     display: inline-block;
     margin-left: var(--pf-global--spacer--xs);
-    > svg{
+    > svg {
       color: var(--pf-global--Color--400);
     }
+  }
+  &__started-timestamp {
+    display: flex;
   }
 }

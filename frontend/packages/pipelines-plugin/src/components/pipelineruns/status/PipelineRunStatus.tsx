@@ -14,17 +14,19 @@ type PipelineRunStatusProps = {
   pipelineRun: PipelineRunKind;
   title?: string;
   taskRuns: TaskRunKind[];
+  iconOnly?: boolean;
 };
 const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({
   status,
   pipelineRun,
   title,
   taskRuns,
+  iconOnly,
 }) => {
   const { t } = useTranslation();
   return pipelineRun ? (
     taskRuns.length > 0 ? (
-      <PipelineResourceStatus status={status} title={title}>
+      <PipelineResourceStatus status={status} title={title} iconOnly={iconOnly}>
         <StatusPopoverContent
           logDetails={getPLRLogSnippet(pipelineRun, taskRuns)}
           namespace={pipelineRun.metadata.namespace}

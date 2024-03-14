@@ -354,7 +354,10 @@ export const calculateDuration = (startTime: string, endTime?: string, long?: bo
   return getDuration(durationInSeconds, long);
 };
 
-export const pipelineRunDuration = (run: PipelineRunKind | TaskRunKind): string => {
+export const pipelineRunDuration = (
+  run: PipelineRunKind | TaskRunKind,
+  long: boolean = true,
+): string => {
   const startTime = run?.status?.startTime ?? null;
   const completionTime = run?.status?.completionTime ?? null;
 
@@ -362,7 +365,7 @@ export const pipelineRunDuration = (run: PipelineRunKind | TaskRunKind): string 
   if (!startTime || (!completionTime && pipelineRunStatus(run) !== 'Running')) {
     return '-';
   }
-  return calculateDuration(startTime, completionTime, true);
+  return calculateDuration(startTime, completionTime, long);
 };
 
 export const updateServiceAccount = (
