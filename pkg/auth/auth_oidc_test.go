@@ -273,11 +273,6 @@ func Test_oidcAuth_login(t *testing.T) {
 			)
 			require.NoError(t, err)
 
-			// The OIDC provider apparently needs some time to load the keys from the
-			// JWKs URI, and so the provider object that we get is not 100% ready
-			// to verify keys when we get it. Wow.
-			time.Sleep(20 * time.Millisecond)
-
 			req := httptest.NewRequest("GET", "/", nil)
 
 			writer := httptest.NewRecorder()
