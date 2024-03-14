@@ -181,6 +181,7 @@ describe(ContainerRow.displayName, () => {
               },
             },
             restartCount: 10,
+            lastState: {},
           },
         ],
       },
@@ -204,19 +205,23 @@ describe(ContainerRow.displayName, () => {
     expect(wrapper.childAt(2).find({ status: 'Running' }).exists()).toBe(true);
   });
 
+  it('renders the container last state', () => {
+    expect(wrapper.childAt(3).find({ containerLastState: {} }).exists()).toBe(true);
+  });
+
   it('renders the container restart times', () => {
-    expect(wrapper.childAt(3).text()).toBe('10');
+    expect(wrapper.childAt(4).text()).toBe('10');
   });
 
   it('renders the container started time', () => {
-    expect(wrapper.childAt(4).find({ timestamp: { startTime } }).exists()).toBe(true);
+    expect(wrapper.childAt(5).find({ timestamp: { startTime } }).exists()).toBe(true);
   });
 
   it('renders the container finished time', () => {
-    expect(wrapper.childAt(5).find({ timestamp: { finishTime } }).exists()).toBe(true);
+    expect(wrapper.childAt(6).find({ timestamp: { finishTime } }).exists()).toBe(true);
   });
 
   it('renders the container exit code', () => {
-    expect(wrapper.childAt(6).text()).toBe('-');
+    expect(wrapper.childAt(7).text()).toBe('-');
   });
 });
