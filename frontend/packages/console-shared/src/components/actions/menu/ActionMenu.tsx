@@ -75,7 +75,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
 
   const menu = (
     <Menu ref={menuRef} containsFlyout onSelect={hideMenu}>
-      <MenuContent data-test-id="action-items" translate="no">
+      <MenuContent data-test-id="action-items">
         <MenuList>
           <ActionMenuContent options={menuOptions} onClick={hideMenu} focusItem={menuOptions[0]} />
         </MenuList>

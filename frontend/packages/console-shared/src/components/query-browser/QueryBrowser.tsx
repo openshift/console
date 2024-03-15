@@ -146,7 +146,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
 
     return (
       <>
-        <InputGroup translate={t} className="query-browser__span">
+        <InputGroup className="query-browser__span">
           <InputGroupItem isFill>
             <TextInput
               aria-label={t('public~graph timespan')}

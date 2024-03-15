@@ -73,7 +73,6 @@ const ClusterConfigurationPage: React.FC = () => {
             tabContentId={id}
             tabContentRef={ref}
             data-test={`tab ${id}`}
-            translate="no"
           />,
         );
         acc[1].push(

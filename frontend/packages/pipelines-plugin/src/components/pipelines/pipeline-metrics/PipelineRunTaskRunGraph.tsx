@@ -173,7 +173,7 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
                 labelComponent={
                   <ChartLegendTooltip
                     legendData={getLegendData()}
-                    title={(datum) => truncateMiddle(datum?.metric?.pipelinerun)}
+                    title={({ datum }) => truncateMiddle(datum?.metric?.pipelinerun)}
                   />
                 }
                 activateData={false}
