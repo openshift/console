@@ -894,19 +894,6 @@
     "properties": {
       "perspective": "admin",
       "section": "networking",
-      "id": "services",
-      "name": "%console-app~Services%",
-      "model": {
-        "version": "v1",
-        "kind": "Service"
-      }
-    }
-  },
-  {
-    "type": "console.navigation/resource-ns",
-    "properties": {
-      "perspective": "admin",
-      "section": "networking",
       "id": "routes",
       "insertAfter": "services",
       "name": "%console-app~Routes%",
@@ -930,21 +917,6 @@
         "group": "networking.k8s.io",
         "version": "v1",
         "kind": "Ingress"
-      }
-    }
-  },
-  {
-    "type": "console.navigation/resource-ns",
-    "properties": {
-      "perspective": "admin",
-      "section": "networking",
-      "id": "networkpolicies",
-      "insertAfter": "ingresses",
-      "name": "%console-app~NetworkPolicies%",
-      "model": {
-        "group": "networking.k8s.io",
-        "version": "v1",
-        "kind": "NetworkPolicy"
       }
     }
   },

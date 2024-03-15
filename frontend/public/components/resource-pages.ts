@@ -35,7 +35,7 @@ import {
   MachineModel,
   MachineSetModel,
   NamespaceModel,
-  NetworkPolicyModel,
+  // NetworkPolicyModel,
   NodeModel,
   OAuthModel,
   PersistentVolumeClaimModel,
@@ -51,7 +51,7 @@ import {
   RouteModel,
   SecretModel,
   ServiceAccountModel,
-  ServiceModel,
+  // ServiceModel,
   ServiceMonitorModel,
   StatefulSetModel,
   StorageClassModel,
@@ -141,11 +141,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(NamespaceModel), () =>
     import('./namespace' /* webpackChunkName: "namespace" */).then((m) => m.NamespacesDetailsPage),
   )
-  .set(referenceForModel(NetworkPolicyModel), () =>
-    import('./network-policy' /* webpackChunkName: "network-policy" */).then(
-      (m) => m.NetworkPoliciesDetailsPage,
-    ),
-  )
+  // .set(referenceForModel(NetworkPolicyModel), () =>
+  //   import('./network-policy' /* webpackChunkName: "network-policy" */).then(
+  //     (m) => m.NetworkPoliciesDetailsPage,
+  //   ),
+  // )
   .set(referenceForModel(NodeModel), () =>
     import(
       '@console/app/src/components/nodes/NodeDetailsPage' /* webpackChunkName: "node-detail" */
@@ -200,9 +200,9 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.ServiceAccountsDetailsPage,
     ),
   )
-  .set(referenceForModel(ServiceModel), () =>
-    import('./service' /* webpackChunkName: "service" */).then((m) => m.ServicesDetailsPage),
-  )
+  // .set(referenceForModel(ServiceModel), () =>
+  //   import('./service' /* webpackChunkName: "service" */).then((m) => m.ServicesDetailsPage),
+  // )
   .set(referenceForModel(IngressModel), () =>
     import('./ingress' /* webpackChunkName: "ingress" */).then((m) => m.IngressesDetailsPage),
   )
@@ -368,11 +368,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(NamespaceModel), () =>
     import('./namespace' /* webpackChunkName: "namespace" */).then((m) => m.NamespacesPage),
   )
-  .set(referenceForModel(NetworkPolicyModel), () =>
-    import('./network-policy' /* webpackChunkName: "network-policy" */).then(
-      (m) => m.NetworkPoliciesPage,
-    ),
-  )
+  // .set(referenceForModel(NetworkPolicyModel), () =>
+  //   import('./network-policy' /* webpackChunkName: "network-policy" */).then(
+  //     (m) => m.NetworkPoliciesPage,
+  //   ),
+  // )
   .set(referenceForModel(NodeModel), () =>
     import('@console/app/src/components/nodes/NodesPage' /* webpackChunkName: "node" */).then(
       (m) => m.default,
@@ -423,9 +423,9 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.ServiceAccountsPage,
     ),
   )
-  .set(referenceForModel(ServiceModel), () =>
-    import('./service' /* webpackChunkName: "service" */).then((m) => m.ServicesPage),
-  )
+  // .set(referenceForModel(ServiceModel), () =>
+  //   import('./service' /* webpackChunkName: "service" */).then((m) => m.ServicesPage),
+  // )
   .set(referenceForModel(IngressModel), () =>
     import('./ingress' /* webpackChunkName: "ingress" */).then((m) => m.IngressesPage),
   )

@@ -22,31 +22,6 @@ metadata:
 `,
   )
   .setIn(
-    [referenceForModel(k8sModels.NetworkPolicyModel), 'default'],
-    `
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: example
-  namespace: default
-spec:
-  podSelector:
-    matchLabels:
-      role: db
-  ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: somerole
-    ports:
-    - protocol: TCP
-      port: 6379
-`,
-  )
-  .setIn(
     [referenceForModel(k8sModels.NetworkPolicyModel), 'deny-other-namespaces'],
     `
 apiVersion: networking.k8s.io/v1
@@ -558,22 +533,6 @@ metadata:
 rules:
 - nonResourceURLs: ["/healthz", "/healthz/*"] # '*' in a nonResourceURL is a suffix glob match
   verbs: ["get", "post"]
-`,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ServiceModel), 'default'],
-    `
-apiVersion: v1
-kind: Service
-metadata:
-  name: example
-spec:
-  selector:
-    app: MyApp
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 9376
 `,
   )
   .setIn(
