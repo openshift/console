@@ -5,12 +5,14 @@ import { LoadingInline, resourcePathFromModel } from '@console/internal/componen
 import { DASH } from '@console/shared';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
-import { PipelineBars } from './PipelineBars';
+import { TaskStatus } from '../../../utils/pipeline-augment';
+import { PipelineBars, PipelineBarsForTaskRunsStatus } from './PipelineBars';
 
 export interface LinkedPipelineRunTaskStatusProps {
   pipelineRun: PipelineRunKind;
   taskRuns: TaskRunKind[];
   taskRunsLoaded?: boolean;
+  taskRunStatusObj?: TaskStatus;
 }
 
 /**
@@ -21,20 +23,18 @@ const LinkedPipelineRunTaskStatus: React.FC<LinkedPipelineRunTaskStatusProps> = 
   pipelineRun,
   taskRuns,
   taskRunsLoaded,
+  taskRunStatusObj,
 }) => {
   const { t } = useTranslation();
-  const pipelineStatus =
-    taskRuns.length > 0 ? (
-      <PipelineBars
-        key={pipelineRun.metadata?.name}
-        pipelinerun={pipelineRun}
-        taskRuns={taskRuns}
-      />
-    ) : taskRunsLoaded && taskRuns.length === 0 ? (
-      <>{DASH}</>
-    ) : (
-      <LoadingInline />
-    );
+  const pipelineStatus = taskRunStatusObj ? (
+    <PipelineBarsForTaskRunsStatus taskRunStatusObj={taskRunStatusObj} />
+  ) : taskRunsLoaded && taskRuns?.length > 0 ? (
+    <PipelineBars key={pipelineRun.metadata?.name} pipelinerun={pipelineRun} taskRuns={taskRuns} />
+  ) : taskRunsLoaded && taskRuns?.length === 0 && !taskRunStatusObj ? (
+    <>{DASH}</>
+  ) : (
+    <LoadingInline />
+  );
 
   if (pipelineRun.metadata?.name && pipelineRun.metadata?.namespace) {
     return (

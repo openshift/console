@@ -22,7 +22,13 @@ import { getTaskRunsOfPipelineRun } from '../components/taskruns/useTaskRuns';
 import { RESOURCE_LOADED_FROM_RESULTS_ANNOTATION } from '../const';
 import { EventListenerModel, PipelineModel, PipelineRunModel, TaskRunModel } from '../models';
 import { PipelineKind, PipelineRunKind, TaskRunKind } from '../types';
-import { shouldHidePipelineRunStop, shouldHidePipelineRunCancel } from './pipeline-augment';
+import {
+  shouldHidePipelineRunStop,
+  shouldHidePipelineRunCancel,
+  TaskStatus,
+  shouldHidePipelineRunStopForTaskRunStatus,
+  shouldHidePipelineRunCancelForTaskRunStatus,
+} from './pipeline-augment';
 import { getSbomTaskRun, returnValidPipelineRunModel } from './pipeline-utils';
 
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
@@ -261,6 +267,47 @@ export const stopPipelineRun: KebabAction = (
   };
 };
 
+export const stopPipelineRunForTaskRunStatus: KebabAction = (
+  kind: K8sKind,
+  pipelineRun: PipelineRunKind,
+  operatorVersion: SemVer,
+  taskRunStatusObj?: TaskStatus,
+) => {
+  // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
+  return {
+    // t('pipelines-plugin~Stop')
+    labelKey: 'pipelines-plugin~Stop',
+    // t('pipelines-plugin~Let the running tasks complete, then execute finally tasks'),
+    tooltipKey: 'pipelines-plugin~Let the running tasks complete, then execute finally tasks',
+    callback: () => {
+      k8sPatch(
+        PipelineRunModel,
+        {
+          metadata: { name: pipelineRun.metadata.name, namespace: pipelineRun.metadata.namespace },
+        },
+        [
+          {
+            op: 'replace',
+            path: `/spec/status`,
+            value:
+              operatorVersion.major === 1 && operatorVersion.minor < 9
+                ? 'PipelineRunCancelled'
+                : 'StoppedRunFinally',
+          },
+        ],
+      );
+    },
+    hidden: shouldHidePipelineRunStopForTaskRunStatus(pipelineRun, taskRunStatusObj),
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.plural,
+      name: pipelineRun.metadata.name,
+      namespace: pipelineRun.metadata.namespace,
+      verb: 'update',
+    },
+  };
+};
+
 export const cancelPipelineRunFinally: KebabAction = (
   kind: K8sKind,
   pipelineRun: PipelineRunKind,
@@ -290,6 +337,44 @@ export const cancelPipelineRunFinally: KebabAction = (
       );
     },
     hidden: shouldHidePipelineRunCancel(pipelineRun, PLRTasks),
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.plural,
+      name: pipelineRun.metadata.name,
+      namespace: pipelineRun.metadata.namespace,
+      verb: 'update',
+    },
+  };
+};
+
+export const cancelPipelineRunFinallyForTaskRunStatus: KebabAction = (
+  kind: K8sKind,
+  pipelineRun: PipelineRunKind,
+  taskRunStatusObj?: TaskStatus,
+) => {
+  // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
+  return {
+    // t('pipelines-plugin~Cancel')
+    labelKey: 'pipelines-plugin~Cancel',
+    // t('pipelines-plugin~Interrupt any executing non finally tasks, then execute finally tasks'),
+    tooltipKey:
+      'pipelines-plugin~Interrupt any executing non finally tasks, then execute finally tasks',
+    callback: () => {
+      k8sPatch(
+        PipelineRunModel,
+        {
+          metadata: { name: pipelineRun.metadata.name, namespace: pipelineRun.metadata.namespace },
+        },
+        [
+          {
+            op: 'replace',
+            path: `/spec/status`,
+            value: 'CancelledRunFinally',
+          },
+        ],
+      );
+    },
+    hidden: shouldHidePipelineRunCancelForTaskRunStatus(pipelineRun, taskRunStatusObj),
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
@@ -373,15 +458,21 @@ export const getPipelineKebabActions = (
 
 export const getPipelineRunKebabActions = (
   operatorVersion: SemVer,
-  taskRuns: TaskRunKind[],
+  taskRuns?: TaskRunKind[],
   redirectReRun?: boolean,
+  taskRunStatusObj?: TaskStatus,
 ): KebabAction[] => [
   redirectReRun
     ? (model, pipelineRun) => rerunPipelineRunAndRedirect(model, pipelineRun)
     : (model, pipelineRun) => reRunPipelineRun(model, pipelineRun),
-  (model, pipelineRun) => stopPipelineRun(model, pipelineRun, operatorVersion, taskRuns),
-  (model, pipelineRun) => viewPipelineRunSBOM(model, pipelineRun, taskRuns),
-  (model, pipelineRun) => cancelPipelineRunFinally(model, pipelineRun, taskRuns),
+  !taskRunStatusObj
+    ? (model, pipelineRun) => stopPipelineRun(model, pipelineRun, operatorVersion, taskRuns)
+    : (model, pipelineRun) =>
+        stopPipelineRunForTaskRunStatus(model, pipelineRun, operatorVersion, taskRunStatusObj),
+  !taskRunStatusObj
+    ? (model, pipelineRun) => cancelPipelineRunFinally(model, pipelineRun, taskRuns)
+    : (model, pipelineRun) =>
+        cancelPipelineRunFinallyForTaskRunStatus(model, pipelineRun, taskRunStatusObj),
   (model, pipelineRun) => deleteResourceObj(model, pipelineRun),
 ];
 
