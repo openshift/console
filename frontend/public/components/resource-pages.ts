@@ -25,7 +25,6 @@ import {
   HorizontalPodAutoscalerModel,
   ImageStreamModel,
   ImageStreamTagModel,
-  IngressModel,
   JobModel,
   LimitRangeModel,
   MachineAutoscalerModel,
@@ -35,7 +34,6 @@ import {
   MachineModel,
   MachineSetModel,
   NamespaceModel,
-  NetworkPolicyModel,
   NodeModel,
   PersistentVolumeClaimModel,
   PersistentVolumeModel,
@@ -47,10 +45,8 @@ import {
   ResourceQuotaModel,
   RoleBindingModel,
   RoleModel,
-  RouteModel,
   SecretModel,
   ServiceAccountModel,
-  ServiceModel,
   ServiceMonitorModel,
   StatefulSetModel,
   StorageClassModel,
@@ -59,7 +55,6 @@ import {
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,
   ClusterRoleBindingModel,
-  MultiNetworkPolicyModel,
 } from '../models';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
 
@@ -141,16 +136,6 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(NamespaceModel), () =>
     import('./namespace' /* webpackChunkName: "namespace" */).then((m) => m.NamespacesDetailsPage),
   )
-  .set(referenceForModel(NetworkPolicyModel), () =>
-    import('./network-policy' /* webpackChunkName: "network-policy" */).then(
-      (m) => m.NetworkPoliciesDetailsPage,
-    ),
-  )
-  .set(referenceForModel(MultiNetworkPolicyModel), () =>
-    import('./network-policy' /* webpackChunkName: "network-policy" */).then(
-      (m) => m.NetworkPoliciesDetailsPage,
-    ),
-  )
   .set(referenceForModel(NodeModel), () =>
     import(
       '@console/app/src/components/nodes/NodeDetailsPage' /* webpackChunkName: "node-detail" */
@@ -204,15 +189,6 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     import('./service-account' /* webpackChunkName: "service-account" */).then(
       (m) => m.ServiceAccountsDetailsPage,
     ),
-  )
-  .set(referenceForModel(ServiceModel), () =>
-    import('./service' /* webpackChunkName: "service" */).then((m) => m.ServicesDetailsPage),
-  )
-  .set(referenceForModel(IngressModel), () =>
-    import('./ingress' /* webpackChunkName: "ingress" */).then((m) => m.IngressesDetailsPage),
-  )
-  .set(referenceForModel(RouteModel), () =>
-    import('./routes' /* webpackChunkName: "routes" */).then((m) => m.RoutesDetailsPage),
   )
   .set(referenceForModel(ClusterRoleModel), () =>
     import('./RBAC/role' /* webpackChunkName: "role" */).then((m) => m.ClusterRolesDetailsPage),
@@ -368,16 +344,6 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(NamespaceModel), () =>
     import('./namespace' /* webpackChunkName: "namespace" */).then((m) => m.NamespacesPage),
   )
-  .set(referenceForModel(NetworkPolicyModel), () =>
-    import('./network-policy' /* webpackChunkName: "network-policy" */).then(
-      (m) => m.NetworkPoliciesPage,
-    ),
-  )
-  .set(referenceForModel(MultiNetworkPolicyModel), () =>
-    import(
-      '@console/app/src/components/network-policies/multi-network-policy/MultiNetworkPolicyListPage' /* webpackChunkName: "multi-network-policy" */
-    ).then((m) => m.MultiNetworkPolicyListPage),
-  )
   .set(referenceForModel(NodeModel), () =>
     import('@console/app/src/components/nodes/NodesPage' /* webpackChunkName: "node" */).then(
       (m) => m.default,
@@ -427,15 +393,6 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     import('./service-account' /* webpackChunkName: "service-account" */).then(
       (m) => m.ServiceAccountsPage,
     ),
-  )
-  .set(referenceForModel(ServiceModel), () =>
-    import('./service' /* webpackChunkName: "service" */).then((m) => m.ServicesPage),
-  )
-  .set(referenceForModel(IngressModel), () =>
-    import('./ingress' /* webpackChunkName: "ingress" */).then((m) => m.IngressesPage),
-  )
-  .set(referenceForModel(RouteModel), () =>
-    import('./routes' /* webpackChunkName: "routes" */).then((m) => m.RoutesPage),
   )
   .set(referenceForModel(RoleModel), () =>
     import('./RBAC/role' /* webpackChunkName: "role" */).then((m) => m.RolesPage),

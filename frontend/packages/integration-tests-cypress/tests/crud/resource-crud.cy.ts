@@ -32,15 +32,8 @@ describe('Kubernetes resource CRUD operations', () => {
 
   const k8sObjs = OrderedMap<string, TestDefinition>()
     .set('pods', { kind: 'Pod' })
-    .set('services', { kind: 'Service' })
     .set('serviceaccounts', { kind: 'ServiceAccount', humanizeKind: false })
     .set('secrets', { kind: 'Secret', skipYamlReloadTest: true })
-    .set('configmaps', {
-      kind: 'ConfigMap',
-      humanizeKind: false,
-      skipYamlReloadTest: true,
-      skipYamlSaveTest: true,
-    })
     .set('persistentvolumes', {
       kind: 'PersistentVolume',
       namespaced: false,
@@ -51,7 +44,6 @@ describe('Kubernetes resource CRUD operations', () => {
       namespaced: false,
       humanizeKind: false,
     })
-    .set('ingresses', { kind: 'Ingress' })
     .set('cronjobs', { kind: 'CronJob', humanizeKind: false })
     .set('jobs', { kind: 'Job' })
     .set('daemonsets', { kind: 'DaemonSet', humanizeKind: false })
@@ -66,7 +58,6 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('resourcequotas', { kind: 'ResourceQuota', humanizeKind: false })
     .set('limitranges', { kind: 'LimitRange', humanizeKind: false })
     .set('horizontalpodautoscalers', { kind: 'HorizontalPodAutoscaler', humanizeKind: false })
-    .set('networkpolicies', { kind: 'NetworkPolicy', humanizeKind: false })
     .set('roles', { kind: 'Role' })
     .set('snapshot.storage.k8s.io~v1~VolumeSnapshot', {
       kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshot',
@@ -94,7 +85,6 @@ describe('Kubernetes resource CRUD operations', () => {
       skipYamlSaveTest: true,
     })
     .set('imagestreams', { kind: 'ImageStream', humanizeKind: false })
-    .set('routes', { kind: 'Route', skipYamlReloadTest: true, skipYamlSaveTest: true })
     .set('user.openshift.io~v1~Group', {
       kind: 'user.openshift.io~v1~Group',
       namespaced: false,
@@ -108,9 +98,7 @@ describe('Kubernetes resource CRUD operations', () => {
     'snapshot.storage.k8s.io~v1~VolumeSnapshot',
   ]);
   const resourcesWithSyncedEditor = new Set([
-    'NetworkPolicy',
     'ConfigMap',
-    'Route',
     'DeploymentConfig',
     'Deployment',
     'BuildConfig',
