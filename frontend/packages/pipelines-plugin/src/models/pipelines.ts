@@ -147,6 +147,42 @@ export const TaskRunModelV1Beta1: K8sKind = {
   color,
 };
 
+export const CustomRunModelV1Beta1: K8sKind = {
+  apiGroup: 'tekton.dev',
+  apiVersion: 'v1beta1',
+  label: 'CustomRun',
+  // t('pipelines-plugin~CustomRun')
+  labelKey: 'pipelines-plugin~CustomRun',
+  // t('pipelines-plugin~CustomRuns')
+  labelPluralKey: 'pipelines-plugin~CustomRuns',
+  plural: 'customruns',
+  abbr: 'CR',
+  namespaced: true,
+  kind: 'CustomRun',
+  id: 'customrun',
+  labelPlural: 'CustomRuns',
+  crd: true,
+  color,
+};
+
+export const ApprovalTaskModel: K8sKind = {
+  apiGroup: 'openshift-pipelines.org',
+  apiVersion: 'v1alpha1',
+  label: 'ApprovalTask',
+  // t('pipelines-plugin~ApprovalTask')
+  labelKey: 'pipelines-plugin~ApprovalTask',
+  // t('pipelines-plugin~ApprovalTasks')
+  labelPluralKey: 'pipelines-plugin~ApprovalTasks',
+  plural: 'approvaltasks',
+  abbr: 'AT',
+  namespaced: true,
+  kind: 'ApprovalTask',
+  id: 'approvaltask',
+  labelPlural: 'ApprovalTasks',
+  crd: true,
+  color,
+};
+
 export const PipelineResourceModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1alpha1',

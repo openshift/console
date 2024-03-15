@@ -1,0 +1,37 @@
+.odc-pipeline-topology__task-node {
+  &.is-link {
+    > a:hover {
+      text-decoration: none;
+    }
+  }
+  &:focus {
+    outline: -webkit-focus-ring-color auto 5px;
+  }
+}
+
+.odc-pipeline-vis-task {
+  fill: var(--pf-v5-global--BackgroundColor--light-100);
+  stroke-width: 1;
+  cursor: default;
+
+  &.is-selected {
+    stroke-width: 2;
+  }
+  &.is-linked {
+    cursor: pointer;
+  }
+}
+
+.odc-pipeline-vis-task-text {
+  cursor: default;
+  dominant-baseline: middle;
+  fill: var(--pf-v5-global--Color--100);
+  font-size: var(--pf-global--FontSize--sm);
+
+  &.is-text-center {
+    text-anchor: middle;
+  }
+  &.is-linked {
+    cursor: pointer;
+  }
+}
