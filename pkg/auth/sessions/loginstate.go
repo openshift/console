@@ -24,7 +24,8 @@ type LoginState struct {
 	userID       string
 	name         string
 	email        string
-	exp          time.Time // 80% of token's lifetime
+	exp          time.Time
+	rotateAt     time.Time // 80% of token's lifetime
 	now          nowFunc
 	sessionToken string
 	rawToken     string
@@ -78,7 +79,7 @@ func newLoginState(tokenVerifier IDTokenVerifier, token *oauth2.Token) (*LoginSt
 		email:        tokenClaims.Email,
 		name:         tokenClaims.Name,
 	}
-	ls.UpdateExpiry(tokenClaims.Expiry)
+	ls.updateExpiry(tokenClaims.Expiry)
 
 	return ls, nil
 }
@@ -89,10 +90,6 @@ func (ls *LoginState) UserID() string {
 
 func (ls *LoginState) Username() string {
 	return ls.name
-}
-
-func (ls *LoginState) Expiry() time.Time {
-	return ls.exp
 }
 
 func (ls *LoginState) UpdateTokens(verifier IDTokenVerifier, tokenResponse *oauth2.Token) error {
@@ -113,15 +110,28 @@ func (ls *LoginState) UpdateTokens(verifier IDTokenVerifier, tokenResponse *oaut
 
 	ls.rawToken = rawIDToken
 	ls.refreshToken = tokenResponse.RefreshToken
-	ls.UpdateExpiry(tokenClaims.Expiry)
+	ls.updateExpiry(tokenClaims.Expiry)
 
 	return nil
 }
 
-func (ls *LoginState) UpdateExpiry(expiry jsonTime) {
+func (ls *LoginState) updateExpiry(expiry jsonTime) {
 	now := ls.now()
-	expiringAt := now.Add(time.Duration(0.8 * float64(time.Time(expiry).Sub(now))))
-	ls.exp = expiringAt
+	ls.exp = time.Time(expiry)
+	ls.rotateAt = now.Add(time.Duration(0.8 * float64(time.Time(expiry).Sub(now))))
+}
+
+func (ls *LoginState) CompareExpiry(other *LoginState) int {
+	if ls.exp.Equal(other.exp) {
+		return 0
+	}
+
+	// we want to sort the array so that the earliest expiry is last
+	if ls.exp.After(other.exp) {
+		return -1
+	}
+
+	return 1
 }
 
 func (ls *LoginState) AccessToken() string {
@@ -138,6 +148,10 @@ func (ls *LoginState) RefreshToken() string {
 
 func (ls *LoginState) IsExpired() bool {
 	return ls.now().After(ls.exp)
+}
+
+func (ls *LoginState) ShouldRotate() bool {
+	return ls.now().After(ls.rotateAt)
 }
 
 func (ls *LoginState) ToLoginJSON() LoginJSON {
