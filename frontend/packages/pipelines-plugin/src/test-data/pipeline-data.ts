@@ -49,7 +49,7 @@ type CombinedPipelineTestData = {
 type PipelineTestData = { [key in PipelineExampleNames]?: CombinedPipelineTestData };
 type PipelineSpecData = { [key in PipelineExampleNames]?: PipelineSpec };
 
-const pipelineSpec: PipelineSpecData = {
+export const pipelineSpec: PipelineSpecData = {
   [PipelineExampleNames.SIMPLE_PIPELINE]: {
     tasks: [
       {

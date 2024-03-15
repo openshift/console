@@ -18,6 +18,7 @@ import {
   DataState,
   PipelineExampleNames,
   PipelineRunWithSBOM,
+  pipelineSpec,
   pipelineTestData,
 } from '../../test-data/pipeline-data';
 import { ComputedStatus } from '../../types';
@@ -37,6 +38,7 @@ import {
   getSbomLink,
   getImageUrl,
   hasExternalLink,
+  getPipelineRunStatus,
 } from '../pipeline-utils';
 import { mockPipelineServiceAccount } from './pipeline-serviceaccount-test-data';
 import {
@@ -45,6 +47,9 @@ import {
   mockRunDurationTest,
   pvcWithPipelineOwnerRef,
 } from './pipeline-test-data';
+
+const samplePipelineRun =
+  pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.SUCCESS];
 
 const plRun = {
   apiVersion: '',
@@ -406,5 +411,121 @@ describe('pipeline-utils ', () => {
 
   it('should true if the taskrun has external-link type annotation', () => {
     expect(hasExternalLink(taskRunWithSBOMResultExternalLink)).toBe(true);
+  });
+
+  it('should expect getPipelineRunStatus to return taskruns status object with 1 Succeeded, 1 Failed and 1 Skipped for Cancelled status', () => {
+    const data = getPipelineRunStatus({
+      ...samplePipelineRun,
+      status: {
+        conditions: [
+          {
+            ...samplePipelineRun.status.conditions[0],
+            message: 'Tasks Completed: 2 (Failed: 1, Cancelled 0), Skipped: 1',
+            reason: 'Failed',
+            status: 'False',
+            type: 'Succeeded',
+          },
+        ],
+        pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
+      },
+    });
+    expect(data).toEqual({
+      Running: 0,
+      Succeeded: 1,
+      Cancelled: 0,
+      Failed: 1,
+      Skipped: 1,
+      Completed: 2,
+      Cancelling: 0,
+      PipelineNotStarted: 0,
+      Pending: 0,
+    });
+  });
+
+  it('should expect getPipelineRunStatus to return taskruns status object with 2 Succeeded for Succeeded status', () => {
+    const data = getPipelineRunStatus({
+      ...samplePipelineRun,
+      status: {
+        conditions: [
+          {
+            ...samplePipelineRun.status.conditions[0],
+            message: 'Tasks Completed: 2 (Failed: 0, Cancelled 0), Skipped: 0',
+            reason: 'Succeeded',
+            status: 'True',
+            type: 'Succeeded',
+          },
+        ],
+        pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
+      },
+    });
+    expect(data).toEqual({
+      Running: 0,
+      Succeeded: 2,
+      Cancelled: 0,
+      Failed: 0,
+      Skipped: 0,
+      Completed: 2,
+      Cancelling: 0,
+      PipelineNotStarted: 0,
+      Pending: 0,
+    });
+  });
+
+  it('should expect getPipelineRunStatus to return taskruns status object with 1 Failed for Failed status', () => {
+    const data = getPipelineRunStatus({
+      ...samplePipelineRun,
+      status: {
+        conditions: [
+          {
+            ...samplePipelineRun.status.conditions[0],
+            message: 'Tasks Completed: 1 (Failed: 1, Cancelled 0), Skipped: 0',
+            reason: 'Failed',
+            status: 'False',
+            type: 'Succeeded',
+          },
+        ],
+        pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
+      },
+    });
+    expect(data).toEqual({
+      Running: 0,
+      Succeeded: 0,
+      Cancelled: 0,
+      Failed: 1,
+      Skipped: 0,
+      Completed: 1,
+      Cancelling: 0,
+      PipelineNotStarted: 0,
+      Pending: 0,
+    });
+  });
+
+  it('should expect getPipelineRunStatus to return taskruns status object all 0 values for cancelled status', () => {
+    const data = getPipelineRunStatus({
+      ...samplePipelineRun,
+      status: {
+        conditions: [
+          {
+            ...samplePipelineRun.status.conditions[0],
+            message: 'PipelineRun "nodejs-ex-bxvic6" was cancelled',
+            reason: 'Cancelled',
+            status: 'False',
+            type: 'Succeeded',
+          },
+        ],
+        pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
+      },
+    });
+    expect(data).toEqual({
+      Running: 0,
+      Succeeded: 0,
+      Cancelled: 0,
+      Failed: 0,
+      Skipped: 0,
+      Completed: 0,
+      Cancelling: 0,
+      PipelineNotStarted: 0,
+      Pending: 0,
+    });
   });
 });

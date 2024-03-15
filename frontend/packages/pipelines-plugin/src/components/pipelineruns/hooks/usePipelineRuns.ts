@@ -105,7 +105,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
         : runs || trResources;
     return [
       rResources,
-      !!rResources?.[0],
+      !!rResources?.[0] || (loaded && trLoaded),
       namespace
         ? queryTr
           ? isList
@@ -116,7 +116,18 @@ const useRuns = <Kind extends K8sResourceCommon>(
         : undefined,
       trGetNextPage,
     ];
-  }, [runs, trResources, trLoaded, namespace, queryTr, isList, trError, error, trGetNextPage]);
+  }, [
+    runs,
+    trResources,
+    trLoaded,
+    loaded,
+    namespace,
+    queryTr,
+    isList,
+    trError,
+    error,
+    trGetNextPage,
+  ]);
 };
 
 export const usePipelineRuns = (
