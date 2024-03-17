@@ -48,6 +48,10 @@ const AppInitSDK: React.FC<AppInitSDKProps> = ({ children, configurations }) => 
       // eslint-disable-next-line no-console
       console.warn(e);
     }
+
+    return () => {
+      setUtilsConfig(undefined);
+    };
   }, [configurations, store]);
 
   return !storeContextPresent ? <Provider store={store}>{children}</Provider> : <>{children}</>;
