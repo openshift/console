@@ -2,8 +2,6 @@ import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { queryBrowserPatchQuery, queryBrowserRunQueries } from '@console/internal/actions/observe';
 import { RootState } from '@console/internal/redux';
@@ -119,13 +117,13 @@ export const QueryInput: React.FC<QueryInputProps> = ({ index }) => {
 
   const [token, setToken] = React.useState('');
 
-  const metrics = useSelector(({ observe }: RootState) =>
+  const metrics = useSelector<RootState, any>(({ observe }) =>
     observe.getIn(['queryBrowser', 'metrics']),
-  );
+  ); // fix useSelector return type
 
-  const text = useSelector(({ observe }: RootState) =>
+  const text = useSelector<RootState, any>(({ observe }) =>
     observe.getIn(['queryBrowser', 'queries', index, 'text'], ''),
-  );
+  ); // fix useSelector return type
 
   const dispatch = useDispatch();
 

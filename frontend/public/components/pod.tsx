@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@console/internal/redux';
 import { Link } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
@@ -361,11 +359,11 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
 }) => {
   const { t } = useTranslation();
   const { name, namespace, creationTimestamp, labels } = pod.metadata;
-  const bytes: number = useSelector(({ UI }) => {
+  const bytes = useSelector<RootState, number>(({ UI }) => {
     const metrics = UI.getIn(['metrics', 'pod']);
     return metrics?.memory?.[namespace]?.[name];
   });
-  const cores: number = useSelector(({ UI }) => {
+  const cores = useSelector<RootState, number>(({ UI }) => {
     const metrics = UI.getIn(['metrics', 'pod']);
     return metrics?.cpu?.[namespace]?.[name];
   });

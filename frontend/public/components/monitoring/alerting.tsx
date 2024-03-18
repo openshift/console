@@ -79,8 +79,6 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Routes,
@@ -764,9 +762,9 @@ const AlertsDetailsPage_: React.FC<{}> = () => {
 
   const isDevPerspective = _.has(params, 'ns');
   const namespace = params?.ns;
-  const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
+  const hideGraphs = useSelector<RootState, boolean>(({ observe }) => !!observe.get('hideGraphs'));
 
-  const alerts: Alerts = useSelector(({ observe }: RootState) =>
+  const alerts = useSelector<RootState, Alerts>(({ observe }) =>
     observe.get(isDevPerspective ? 'devAlerts' : 'alerts'),
   );
 
@@ -1084,7 +1082,7 @@ const AlertRulesDetailsPage_: React.FC<{}> = () => {
   const isDevPerspective = _.has(params, 'ns');
   const namespace = params?.ns;
 
-  const rules: Rule[] = useSelector(({ observe }: RootState) =>
+  const rules = useSelector<RootState, Rule[]>(({ observe }) =>
     observe.get(isDevPerspective ? 'devRules' : 'rules'),
   );
   const rule = _.find(rules, { id: params?.id });
@@ -1495,7 +1493,7 @@ const SilencesDetailsPage_: React.FC<{}> = () => {
     ({ observe }: RootState) => observe.get(namespace ? 'devAlerts' : 'alerts')?.loaded,
   );
 
-  const silences: Silences = useSelector(({ observe }: RootState) =>
+  const silences = useSelector<RootState, Silences>(({ observe }) =>
     observe.get(namespace ? 'devSilences' : 'silences'),
   );
   const silence = _.find(silences?.data, { id: params?.id });
@@ -1934,7 +1932,7 @@ const RulesPage_: React.FC<{}> = () => {
   const [isExactSearch] = useExactSearch();
   const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
-  const data: Rule[] = useSelector(({ observe }: RootState) => observe.get('rules'));
+  const data = useSelector<RootState, Rule[]>(({ observe }) => observe.get('rules'));
   const { loaded = false, loadError }: Alerts = useSelector(
     ({ observe }: RootState) => observe.get('alerts') || {},
   );

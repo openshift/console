@@ -2,9 +2,6 @@ import * as React from 'react';
 import { parsePrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
 import {
   AlertStates,
@@ -45,7 +42,7 @@ const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({
   const { t } = useTranslation();
   const [silencing, setSilencing] = React.useState(false);
   const createdBy = useSelector((state: RootState) => getUser(state)?.username);
-  const rules = useSelector(({ observe }: RootState) => observe.getIn(['devRules']));
+  const rules = useSelector<RootState, Rule[]>(({ observe }) => observe.getIn(['devRules']));
   const ruleMatchers = _.map(rule?.labels, (value, key) => ({ isRegex: false, name: key, value }));
   const dispatch = useDispatch();
 

@@ -1,6 +1,4 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useStore } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore, compose, Store } from 'redux';
 import thunk from 'redux-thunk';

@@ -5,8 +5,6 @@ import * as classNames from 'classnames';
 // eslint-disable-next-line no-restricted-imports
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useDispatch } from 'react-redux';
 import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { ColumnLayout } from '@console/dynamic-plugin-sdk';

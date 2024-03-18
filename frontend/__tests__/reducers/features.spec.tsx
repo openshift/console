@@ -13,7 +13,7 @@ import {
   FeatureState,
 } from '../../public/reducers/features';
 import { connectToFlags, stateToFlagsObject } from '../../public/reducers/connectToFlags';
-import { RootState } from '../../public/redux';
+import { RootState } from '@console/internal/redux';
 
 describe('featureReducer', () => {
   it('returns default values if state is uninitialized', () => {

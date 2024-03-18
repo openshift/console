@@ -23,8 +23,6 @@ import {
 } from '@patternfly/react-table/deprecated';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 
 import { queryBrowserTheme } from '@console/shared/src/components/query-browser';
@@ -43,7 +41,7 @@ import { PrometheusAPIError } from './types';
 export const ToggleGraph: React.FC = () => {
   const { t } = useTranslation();
 
-  const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
+  const hideGraphs = useSelector<RootState, boolean>(({ observe }) => !!observe.get('hideGraphs'));
 
   const dispatch = useDispatch();
   const toggle = React.useCallback(() => dispatch(toggleGraphs()), [dispatch]);
@@ -67,7 +65,10 @@ const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
 
   const colors = queryBrowserTheme.line.colorScale;
 
-  const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ observe }: RootState) => {
+  const [colorIndex, isDisabled, isSeriesEmpty] = useSelector<
+    RootState,
+    [number, boolean, boolean]
+  >(({ observe }) => {
     const disabledSeries = observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries']);
     if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
       return [null, true, false];
@@ -125,24 +126,26 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
   const [perPage, setPerPage] = React.useState(50);
   const [sortBy, setSortBy] = React.useState<ISortBy>({});
 
-  const isEnabled = useSelector(({ observe }: RootState) =>
+  const isEnabled = useSelector<RootState, boolean>(({ observe }) =>
     observe.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
   );
-  const isExpanded = useSelector(({ observe }: RootState) =>
+  const isExpanded = useSelector<RootState, boolean>(({ observe }) =>
     observe.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
   );
-  const pollInterval = useSelector(({ observe }: RootState) =>
+  const pollInterval = useSelector<RootState, number>(({ observe }) =>
     observe.getIn(['queryBrowser', 'pollInterval'], 15 * 1000),
   );
-  const query = useSelector(({ observe }: RootState) =>
+  const query = useSelector<RootState, string>(({ observe }) =>
     observe.getIn(['queryBrowser', 'queries', index, 'query']),
   );
-  const series = useSelector(({ observe }: RootState) =>
+  const series = useSelector<RootState, string>(({ observe }) =>
     observe.getIn(['queryBrowser', 'queries', index, 'series']),
   );
-  const span = useSelector(({ observe }: RootState) => observe.getIn(['queryBrowser', 'timespan']));
+  const span = useSelector<RootState, string>(({ observe }) =>
+    observe.getIn(['queryBrowser', 'timespan']),
+  );
 
-  const lastRequestTime = useSelector(({ observe }: RootState) =>
+  const lastRequestTime = useSelector<RootState, string>(({ observe }) =>
     observe.getIn(['queryBrowser', 'lastRequestTime']),
   );
 
@@ -153,7 +156,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
     index,
   ]);
 
-  const isDisabledSeriesEmpty = useSelector(({ observe }: RootState) =>
+  const isDisabledSeriesEmpty = useSelector<RootState, boolean>(({ observe }) =>
     _.isEmpty(observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
   );
 

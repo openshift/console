@@ -1,8 +1,7 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useSelector } from 'react-redux';
+import { RootState } from '@console/internal/redux';
 
 import { K8sResourceKindReference, K8sKind, getModelExtensionMetadata } from './index';
 import * as staticModels from '../../models';
@@ -133,7 +132,7 @@ export const useModelFinder = () => {
   const referenceForGroupVersionPlural = (group: string) => (version: string) => (plural: string) =>
     [group || 'core', version, plural].join('~');
 
-  const models: ImmutableMap<string, K8sKind> = useSelector(({ k8s }) =>
+  const models = useSelector<RootState, ImmutableMap<string, K8sKind>>(({ k8s }) =>
     k8s.getIn(['RESOURCES', 'models']),
   );
   const pluralsToModelMap = models.reduce((acc, curr) => {
@@ -141,7 +140,7 @@ export const useModelFinder = () => {
     acc[ref] = curr;
     return acc;
   }, {});
-  const groupVersionMap: DiscoveryResources['groupVersionMap'] = useSelector(({ k8s }) =>
+  const groupVersionMap = useSelector<RootState, DiscoveryResources['groupVersionMap']>(({ k8s }) =>
     k8s.getIn(['RESOURCES', 'groupToVersionMap']),
   );
 

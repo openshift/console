@@ -3,9 +3,6 @@ import { Button } from '@patternfly/react-core';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
 import {
   queryBrowserRunQueries,
@@ -45,9 +42,9 @@ const MetricsQueryInput: React.FC = () => {
   ];
 
   const namespace = useSelector((state: RootState) => getActiveNamespace(state));
-  const queries = useSelector(({ observe }: RootState) =>
+  const queries = useSelector<RootState, any>(({ observe }) =>
     observe.getIn(['queryBrowser', 'queries', 0]).toJS(),
-  );
+  ); // fix useSelector return type
   const dispatch = useDispatch();
   const [title, setTitle] = React.useState(DEFAULT_TITLE);
   const [selectedKey, setSelectedKey] = React.useState('');

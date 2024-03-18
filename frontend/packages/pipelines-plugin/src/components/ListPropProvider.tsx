@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useSelector } from 'react-redux';
 import { inject, processReduxId } from '@console/internal/components/utils';
+import { RootState } from '@console/internal/redux';
+import { K8sState } from 'packages/console-dynamic-plugin-sdk/src';
 
 const worstError = (errors) => {
   let worst = errors && errors[0];
@@ -24,7 +22,7 @@ const worstError = (errors) => {
 };
 
 const ListPropProvider = (props) => {
-  const k8sData: ImmutableMap<string, any> = useSelector(({ k8s }) => k8s);
+  const k8sData = useSelector<RootState, K8sState>(({ k8s }) => k8s);
   const reduxes = props.resources.map(({ prop, isList, filters, optional, kind }) => {
     return {
       reduxID: props.reduxIDs[0],

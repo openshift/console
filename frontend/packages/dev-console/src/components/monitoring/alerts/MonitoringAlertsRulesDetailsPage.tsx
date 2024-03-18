@@ -1,7 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import {
@@ -16,6 +14,7 @@ import {
 import { history, StatusBox, LoadingBox } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { Alerts } from 'public/components/monitoring/types';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import { useAlertManagerSilencesDispatch } from './monitoring-alerts-utils';
 import { useRulesAlertsPoller } from './useRuleAlertsPoller';
@@ -32,7 +31,7 @@ const MonitoringAlertsDetailsPage: React.FC = () => {
   const { ns: namespace } = useParams();
   const location = useLocation();
   const dispatch = useDispatch();
-  const alerts = useSelector(({ observe }: RootState) => observe.get('devAlerts'));
+  const alerts = useSelector<RootState, Alerts>(({ observe }) => observe.get('devAlerts'));
   const [customExtensions] = useResolvedExtensions<AlertingRulesSourceExtension>(
     isAlertingRulesSource,
   );
