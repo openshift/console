@@ -9,13 +9,16 @@ import {
   validate,
   withHandlePromise,
   HandlePromiseProps,
+  convertToBaseValue,
+  humanizeBinaryBytesWithoutB,
 } from '../utils';
 import { k8sPatch, referenceFor, K8sKind, K8sResourceKind } from '../../module/k8s/';
 import { getRequestedPVCSize } from '@console/shared';
 
 // Modal for expanding persistent volume claims
 const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
-  const defaultSize = validate.split(getRequestedPVCSize(props.resource));
+  const baseValue = convertToBaseValue(getRequestedPVCSize(props.resource));
+  const defaultSize = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
   const [requestSizeValue, setRequestSizeValue] = React.useState(defaultSize[0] || '');
   const [requestSizeUnit, setRequestSizeUnit] = React.useState(defaultSize[1] || 'Gi');
   const [errorMessage, setErrorMessage] = React.useState<string>();
