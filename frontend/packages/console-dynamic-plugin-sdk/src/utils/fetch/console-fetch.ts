@@ -32,8 +32,11 @@ const consoleFetchCommon = async (
   method: string = 'GET',
   options: RequestInit = {},
   timeout?: number,
+  isFullResponse?: boolean,
 ) => {
   const headers = getConsoleRequestHeaders();
+  const defaultIsFullResponse = typeof isFullResponse !== 'boolean' ? false : isFullResponse;
+
   // Pass headers last to let callers to override Accept.
   const allOptions = _.defaultsDeep({ method }, options, { headers });
   const response = await consoleFetch(url, allOptions, timeout);
@@ -42,7 +45,21 @@ const consoleFetchCommon = async (
   if (!text) {
     return isPlainText ? '' : {};
   }
-  return isPlainText || !response.ok ? text : JSON.parse(text);
+
+  // Map cosole respose to data, headers and status
+  const fullResponse: { data: Body; headers: { [key: string]: any }; status: number } = {
+    headers: [...response.headers].reduce((acc, header) => {
+      return { ...acc, [header[0]]: header[1] };
+    }, {}),
+    status: response.status,
+    data: JSON.parse(text),
+  };
+
+  return isPlainText || !response.ok
+    ? text
+    : defaultIsFullResponse
+    ? fullResponse
+    : fullResponse.data;
 };
 
 /**
@@ -54,13 +71,20 @@ const consoleFetchCommon = async (
  * @param method  The HTTP method to use. Defaults to GET
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
+ * @param isFullResponse The flag to cotrol whether to return full or partial response. The default is partial.
  * @returns A promise that resolves to the response as JSON object.
  */
-export const consoleFetchJSON: ConsoleFetchJSON = (url, method = 'GET', options = {}, timeout) => {
+export const consoleFetchJSON: ConsoleFetchJSON = (
+  url,
+  method = 'GET',
+  options = {},
+  timeout,
+  isFullResponse,
+) => {
   const allOptions = _.defaultsDeep({}, options, {
     headers: { Accept: 'application/json' },
   });
-  return consoleFetchCommon(url, method, allOptions, timeout);
+  return consoleFetchCommon(url, method, allOptions, timeout, isFullResponse);
 };
 
 /**
@@ -73,8 +97,8 @@ export const consoleFetchJSON: ConsoleFetchJSON = (url, method = 'GET', options 
  * @param timeout The timeout in milliseconds
  * @returns A promise that resolves to the response as text.
  */
-export const consoleFetchText: ConsoleFetchText = (url, options = {}, timeout) => {
-  return consoleFetchCommon(url, 'GET', options, timeout);
+export const consoleFetchText: ConsoleFetchText = (url, options = {}, timeout, isFullRespons) => {
+  return consoleFetchCommon(url, 'GET', options, timeout, isFullRespons);
 };
 
 const consoleFetchSendJSON = (
@@ -83,6 +107,7 @@ const consoleFetchSendJSON = (
   json = null,
   options: RequestInit = {},
   timeout: number,
+  isFullResponse?: boolean,
 ) => {
   const allOptions: Record<string, any> = {
     headers: {
@@ -95,7 +120,14 @@ const consoleFetchSendJSON = (
   if (json) {
     allOptions.body = JSON.stringify(json);
   }
-  return consoleFetchJSON(url, method, _.defaultsDeep(allOptions, options), timeout);
+
+  return consoleFetchJSON(
+    url,
+    method,
+    _.defaultsDeep(allOptions, options),
+    timeout,
+    isFullResponse,
+  );
 };
 
 /**
@@ -119,9 +151,10 @@ consoleFetchJSON.delete = (url, json = null, options = {}, timeout) => {
  * @param json The JSON to POST the object
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
+ * @param isFullResponse The flag to cotrol whether to return full or partial response. The default is partial.
  */
-consoleFetchJSON.post = (url: string, json, options = {}, timeout) =>
-  consoleFetchSendJSON(url, 'POST', json, options, timeout);
+consoleFetchJSON.post = (url: string, json, options = {}, timeout, isFullResponse) =>
+  consoleFetchSendJSON(url, 'POST', json, options, timeout, isFullResponse);
 
 /**
  * A custom PUT method of consoleFetchJSON.
@@ -130,9 +163,10 @@ consoleFetchJSON.post = (url: string, json, options = {}, timeout) =>
  * @param json The JSON to PUT the object
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
+ * @param isFullResponse The flag to cotrol whether to return full or partial response. The default is partial.
  */
-consoleFetchJSON.put = (url: string, json, options = {}, timeout) =>
-  consoleFetchSendJSON(url, 'PUT', json, options, timeout);
+consoleFetchJSON.put = (url: string, json, options = {}, timeout, isFullResponse) =>
+  consoleFetchSendJSON(url, 'PUT', json, options, timeout, isFullResponse);
 
 /**
  * A custom PATCH method of consoleFetchJSON.
@@ -141,6 +175,7 @@ consoleFetchJSON.put = (url: string, json, options = {}, timeout) =>
  * @param json The JSON to PATCH the object
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
+ * @param isFullResponse The flag to cotrol whether to return full or partial response. The default is partial.
  */
-consoleFetchJSON.patch = (url: string, json, options = {}, timeout) =>
-  consoleFetchSendJSON(url, 'PATCH', json, options, timeout);
+consoleFetchJSON.patch = (url: string, json, options = {}, timeout, isFullResponse) =>
+  consoleFetchSendJSON(url, 'PATCH', json, options, timeout, isFullResponse);

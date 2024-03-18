@@ -24,6 +24,8 @@ import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, startAPIDiscovery } from '../actions/k8s';
 import { pluginStore } from '../plugins';
+//import { RootState } from '@console/internal/redux';
+
 // cloud shell imports must come later than features
 import CloudShell from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellTab';
@@ -337,6 +339,25 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   return null;
 });
 
+const WarningPolicyAlert = React.memo(function WarningPolicyAlert() {
+  const { t } = useTranslation();
+  const toastContext = useToast();
+  const warningPolicy = useSelector((state) => state.UI.get('warningPolicy'));
+
+  if (warningPolicy?.headers?.warning) {
+    toastContext.addToast({
+      variant: AlertVariant.warning,
+      title: t('public~Warning Policy'),
+      content: t(`This {{kind}} violates policy {{warning}}`, {
+        kind: warningPolicy?.kind,
+        warning: warningPolicy?.headers?.warning,
+      }),
+      timeout: true,
+      dismissible: true,
+    });
+  }
+  return null;
+});
 const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const toastContext = useToast();
   const { t } = useTranslation();
@@ -491,7 +512,6 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
     onClose: toastCallback,
     onRemove: toastCallback,
   });
-
   setToastOpen(true);
   return null;
 });
@@ -597,6 +617,7 @@ graphQLReady.onReady(() => {
           >
             <ToastProvider>
               <PollConsoleUpdates />
+              <WarningPolicyAlert />
               <AppRouter />
             </ToastProvider>
           </AppInitSDK>

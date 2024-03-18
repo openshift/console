@@ -17,6 +17,7 @@ export default (state: UIState, action: UIAction): UIState => {
       activeNavSectionId: 'workloads',
       location: pathname,
       showOperandsInAllNamespaces: true,
+      warninPolicy: {},
       activeNamespace: ALL_NAMESPACES_KEY,
       activeApplication: ALL_APPLICATIONS_KEY,
       createProjectMessage: '',
@@ -144,6 +145,8 @@ export default (state: UIState, action: UIAction): UIState => {
 
     case ActionType.SetShowOperandsInAllNamespaces:
       return state.set('showOperandsInAllNamespaces', action.payload.value);
+    case ActionType.SetWarningPolicy:
+      return state.set('warningPolicy', action.payload.value);
     default:
       break;
   }
