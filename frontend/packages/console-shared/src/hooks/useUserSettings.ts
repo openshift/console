@@ -1,8 +1,5 @@
 import * as React from 'react';
 import { createHash } from 'crypto-browserify';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useSelector } from 'react-redux';
 import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { UseUserSettings } from '@console/dynamic-plugin-sdk/src/api/internal-types';

@@ -24,8 +24,6 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link, useNavigate } from 'react-router-dom-v5-compat';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
@@ -214,11 +212,11 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
 
   const activePerspective = getActivePerspective(namespace);
 
-  const timespan = useSelector(({ observe }: RootState) =>
+  const timespan = useSelector<RootState, number>(({ observe }) =>
     observe.getIn(['dashboards', activePerspective, 'timespan']),
   );
 
-  const variables = useSelector(({ observe }: RootState) =>
+  const variables = useSelector<RootState, ImmutableMap<string, Variable>>(({ observe }) =>
     observe.getIn(['dashboards', activePerspective, 'variables']),
   );
   const variable = variables.toJS()[name];
@@ -355,7 +353,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
 
 const AllVariableDropdowns = () => {
   const namespace = React.useContext(NamespaceContext);
-  const variables = useSelector(({ observe }: RootState) =>
+  const variables = useSelector<RootState, string>(({ observe }) =>
     observe.getIn(['dashboards', getActivePerspective(namespace), 'variables']),
   );
 
@@ -429,7 +427,7 @@ export const PollIntervalDropdown: React.FC<TimeDropdownsProps> = ({ namespace }
 
   const refreshIntervalFromParams = getQueryArgument('refreshInterval');
   const activePerspective = getActivePerspective(namespace);
-  const interval = useSelector(({ observe }: RootState) =>
+  const interval = useSelector<RootState, string>(({ observe }) =>
     observe.getIn(['dashboards', activePerspective, 'pollInterval']),
   );
 
@@ -540,13 +538,13 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
 
   const namespace = React.useContext(NamespaceContext);
   const activePerspective = getActivePerspective(namespace);
-  const pollInterval = useSelector(({ observe }: RootState) =>
+  const pollInterval = useSelector<RootState, string>(({ observe }) =>
     observe.getIn(['dashboards', activePerspective, 'pollInterval']),
   );
-  const timespan = useSelector(({ observe }: RootState) =>
+  const timespan = useSelector<RootState, string>(({ observe }) =>
     observe.getIn(['dashboards', activePerspective, 'timespan']),
   );
-  const variables = useSelector(({ observe }: RootState) =>
+  const variables = useSelector<RootState, string>(({ observe }) =>
     observe.getIn(['dashboards', activePerspective, 'variables']),
   );
 
