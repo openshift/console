@@ -134,7 +134,7 @@
   "Health checks": "상태 검사",
   "Add health checks": "상태 검사 추가",
   "Resource Quotas": "리소스 할당량",
-  "VerticalPodAutoscaler": "VerticalPodAutoscaler",
+  "VerticalPodAutoscalers": "VerticalPodAutoscalers",
   "Visual connector": "비주얼 커넥터",
   "Expand groups": "그룹 확장",
   "Pod count": "Pod 수",
