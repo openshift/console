@@ -27,22 +27,28 @@ export const consoleFetch: ConsoleFetch = async (url, options = {}, timeout = 60
   return Promise.race([fetchPromise, timeoutPromise]);
 };
 
-const consoleFetchCommon = async (
-  url: string,
-  method: string = 'GET',
-  options: RequestInit = {},
-  timeout?: number,
-) => {
-  const headers = getConsoleRequestHeaders();
-  // Pass headers last to let callers to override Accept.
-  const allOptions = _.defaultsDeep({ method }, options, { headers });
-  const response = await consoleFetch(url, allOptions, timeout);
+const parseData = async (response) => {
   const text = await response.text();
   const isPlainText = response.headers.get('Content-Type') === 'text/plain';
   if (!text) {
     return isPlainText ? '' : {};
   }
   return isPlainText || !response.ok ? text : JSON.parse(text);
+};
+
+const consoleFetchCommon = async (
+  url: string,
+  method: string = 'GET',
+  options: RequestInit = {},
+  timeout?: number,
+  isEntireResponse?: boolean,
+): Promise<Response | string> => {
+  const headers = getConsoleRequestHeaders();
+  // Pass headers last to let callers to override Accept.
+  const allOptions = _.defaultsDeep({ method }, options, { headers });
+  const response = await consoleFetch(url, allOptions, timeout);
+
+  return isEntireResponse ? response : parseData(response);
 };
 
 /**
@@ -54,13 +60,20 @@ const consoleFetchCommon = async (
  * @param method  The HTTP method to use. Defaults to GET
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
- * @returns A promise that resolves to the response as JSON object.
+ * @param isEntireResponse The flag to control whether to return the entire content of the response or response body. The default is the response body.
+ * @returns A promise that resolves to the response as text, response JSON object or entire content of the HTTP response.
  */
-export const consoleFetchJSON: ConsoleFetchJSON = (url, method = 'GET', options = {}, timeout) => {
+export const consoleFetchJSON: ConsoleFetchJSON = (
+  url,
+  method = 'GET',
+  options = {},
+  timeout,
+  isEntireResponse,
+) => {
   const allOptions = _.defaultsDeep({}, options, {
     headers: { Accept: 'application/json' },
   });
-  return consoleFetchCommon(url, method, allOptions, timeout);
+  return consoleFetchCommon(url, method, allOptions, timeout, isEntireResponse);
 };
 
 /**
@@ -71,10 +84,16 @@ export const consoleFetchJSON: ConsoleFetchJSON = (url, method = 'GET', options 
  * @param url The URL to fetch
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
- * @returns A promise that resolves to the response as text.
+ * @param isEntireResponse The flag to control whether to return the entire content of the response or response body. The default is the response body.
+ * @returns A promise that resolves to the response as text, response JSON object or entire content of the HTTP response.
  */
-export const consoleFetchText: ConsoleFetchText = (url, options = {}, timeout) => {
-  return consoleFetchCommon(url, 'GET', options, timeout);
+export const consoleFetchText: ConsoleFetchText = (
+  url,
+  options = {},
+  timeout,
+  isEntireResponse,
+) => {
+  return consoleFetchCommon(url, 'GET', options, timeout, isEntireResponse);
 };
 
 const consoleFetchSendJSON = (
@@ -83,6 +102,7 @@ const consoleFetchSendJSON = (
   json = null,
   options: RequestInit = {},
   timeout: number,
+  isEntireResponse?: boolean,
 ) => {
   const allOptions: Record<string, any> = {
     headers: {
@@ -95,7 +115,14 @@ const consoleFetchSendJSON = (
   if (json) {
     allOptions.body = JSON.stringify(json);
   }
-  return consoleFetchJSON(url, method, _.defaultsDeep(allOptions, options), timeout);
+
+  return consoleFetchJSON(
+    url,
+    method,
+    _.defaultsDeep(allOptions, options),
+    timeout,
+    isEntireResponse,
+  );
 };
 
 /**
@@ -119,9 +146,10 @@ consoleFetchJSON.delete = (url, json = null, options = {}, timeout) => {
  * @param json The JSON to POST the object
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
+ * @param isEntireResponse The flag to control whether to return the entire content of the response or response body. The default is the response body.
  */
-consoleFetchJSON.post = (url: string, json, options = {}, timeout) =>
-  consoleFetchSendJSON(url, 'POST', json, options, timeout);
+consoleFetchJSON.post = (url: string, json, options = {}, timeout, isEntireResponse) =>
+  consoleFetchSendJSON(url, 'POST', json, options, timeout, isEntireResponse);
 
 /**
  * A custom PUT method of consoleFetchJSON.
@@ -130,9 +158,10 @@ consoleFetchJSON.post = (url: string, json, options = {}, timeout) =>
  * @param json The JSON to PUT the object
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
+ * @param isEntireResponse The flag to control whether to return the entire content of the response or response body. The default is the response body.
  */
-consoleFetchJSON.put = (url: string, json, options = {}, timeout) =>
-  consoleFetchSendJSON(url, 'PUT', json, options, timeout);
+consoleFetchJSON.put = (url: string, json, options = {}, timeout, isEntireResponse) =>
+  consoleFetchSendJSON(url, 'PUT', json, options, timeout, isEntireResponse);
 
 /**
  * A custom PATCH method of consoleFetchJSON.
@@ -141,6 +170,7 @@ consoleFetchJSON.put = (url: string, json, options = {}, timeout) =>
  * @param json The JSON to PATCH the object
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
+ * @param isEntireResponse The flag to control whether to return the entire content of the response or response body. The default is the response body.
  */
-consoleFetchJSON.patch = (url: string, json, options = {}, timeout) =>
-  consoleFetchSendJSON(url, 'PATCH', json, options, timeout);
+consoleFetchJSON.patch = (url: string, json, options = {}, timeout, isEntireResponse) =>
+  consoleFetchSendJSON(url, 'PATCH', json, options, timeout, isEntireResponse);
