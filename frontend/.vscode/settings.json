@@ -3,29 +3,29 @@
   "[javascript]": {
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.organizeImports": false,
-      "source.sortImports": false
+      "source.organizeImports": "never",
+      "source.sortImports": "never"
     }
   },
   "[javascriptreact]": {
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.organizeImports": false,
-      "source.sortImports": false
+      "source.organizeImports": "never",
+      "source.sortImports": "never"
     }
   },
   "[typescript]": {
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.organizeImports": false,
-      "source.sortImports": false
+      "source.organizeImports": "never",
+      "source.sortImports": "never"
     }
   },
   "[typescriptreact]": {
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.organizeImports": false,
-      "source.sortImports": false
+      "source.organizeImports": "never",
+      "source.sortImports": "never"
     }
   },
   "[json]": {
@@ -82,7 +82,7 @@
     }
   ],
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "cucumberautocomplete.steps": ["./packages/*/integration-tests/support/step-definitions/*/*.ts"],
   "cucumberautocomplete.strictGherkinCompletion": true,
