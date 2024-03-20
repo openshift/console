@@ -48,6 +48,7 @@ export enum ActionType {
   SetUtilizationDurationSelectedKey = 'SetUtilizationDurationSelectedKey',
   SetUtilizationDurationEndTime = 'SetUtilizationDurationEndTime',
   SetShowOperandsInAllNamespaces = 'setShowOperandsInAllNamespaces',
+  SetWarningPolicy = 'setWarningPolicy',
 }
 
 type MetricValuesByName = {
@@ -80,6 +81,11 @@ export type NodeMetrics = {
 
 export type PVCMetrics = {
   usedCapacity: MetricValuesByName;
+};
+export type WarningPolicy = {
+  headers: Headers;
+  kind: string;
+  name: string;
 };
 
 // URL routes that can be namespaced
@@ -300,11 +306,12 @@ export const setUtilizationDurationSelectedKey = (key) =>
   action(ActionType.SetUtilizationDurationSelectedKey, { key });
 export const setUtilizationDurationEndTime = (endTime) =>
   action(ActionType.SetUtilizationDurationEndTime, { endTime });
-
 export const setShowOperandsInAllNamespaces = (value: boolean) => {
   return action(ActionType.SetShowOperandsInAllNamespaces, { value });
 };
-
+export const setWarningPolicy = (value: WarningPolicy) => {
+  return action(ActionType.SetWarningPolicy, { value });
+};
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
   setCurrentLocation,
@@ -332,6 +339,7 @@ const uiActions = {
   setUtilizationDuration,
   setUtilizationDurationSelectedKey,
   setUtilizationDurationEndTime,
+  setWarningPolicy,
 };
 
 export type UIAction = Action<typeof uiActions>;

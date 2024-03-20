@@ -20,6 +20,7 @@ export default (state: UIState, action: UIAction): UIState => {
       activeNamespace: ALL_NAMESPACES_KEY,
       activeApplication: ALL_APPLICATIONS_KEY,
       createProjectMessage: '',
+      warningPolicy: null,
       serviceLevel: ImmutableMap({
         level: '',
         daysRemaining: null,
@@ -141,9 +142,10 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['utilizationDuration', 'selectedKey'], action.payload.key);
     case ActionType.SetUtilizationDurationEndTime:
       return state.setIn(['utilizationDuration', 'endTime'], action.payload.endTime);
-
     case ActionType.SetShowOperandsInAllNamespaces:
       return state.set('showOperandsInAllNamespaces', action.payload.value);
+    case ActionType.SetWarningPolicy:
+      return state.set('warningPolicy', action.payload.value);
     default:
       break;
   }

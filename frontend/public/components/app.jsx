@@ -48,8 +48,10 @@ import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { useToast } from '@console/shared/src/components/toast';
+import { documentationURLs, getDocumentationURL } from '@console/internal/components/utils';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import { useWarningPolicy } from '@console/shared/src/hooks/useWarningPolicy';
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
 import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
 import { ThemeProvider } from './ThemeProvider';
@@ -337,6 +339,42 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   return null;
 });
 
+const WarningPolicyAlert = React.memo(function WarningPolicyAlert() {
+  const { t } = useTranslation();
+  const toastContext = useToast();
+  const [warningPolicy] = useWarningPolicy();
+
+  React.useEffect(() => {
+    if (warningPolicy?.warning) {
+      const docURL = getDocumentationURL(documentationURLs.warningPolicy);
+
+      toastContext.addToast({
+        variant: AlertVariant.warning,
+        title: t('public~Warning Policy'),
+        content: t(`The {{kind}} {{ name }} violates policy {{warning}}`, {
+          kind: warningPolicy?.kind,
+          name: warningPolicy?.name,
+          warning: warningPolicy.warning,
+        }),
+        actions: [
+          {
+            dismiss: true,
+            label: t('public~Learn more'),
+            callback: () => {
+              window.open(docURL, '_blank');
+            },
+            component: 'a',
+          },
+        ],
+        timeout: true,
+        dismissible: true,
+      });
+    }
+  }, [warningPolicy, t, toastContext]);
+
+  return null;
+});
+
 const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const toastContext = useToast();
   const { t } = useTranslation();
@@ -597,6 +635,7 @@ graphQLReady.onReady(() => {
           >
             <ToastProvider>
               <PollConsoleUpdates />
+              <WarningPolicyAlert />
               <AppRouter />
             </ToastProvider>
           </AppInitSDK>

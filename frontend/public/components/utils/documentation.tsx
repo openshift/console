@@ -85,6 +85,10 @@ export const documentationURLs: documentationURLsType = {
     downstream: 'html/building_applications/deployments',
     upstream: 'applications/deployments/what-deployments-are.html',
   },
+  warningPolicy: {
+    downstream: '',
+    upstream: 'operators/understanding/olm/olm-webhooks.html',
+  },
 };
 
 export const isUpstream = () => window.SERVER_FLAGS.branding === 'okd';

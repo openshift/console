@@ -3,6 +3,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { connect } from 'react-redux';
 import { ActionGroup, Alert, Button, Checkbox } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
@@ -26,7 +28,9 @@ import '@console/shared/src/components/editor/theme';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
+import { getConsoleResponseDetails } from '@console/shared/src/utils/get-console-response-details';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { useWarningPolicy } from '@console/shared/src/hooks/useWarningPolicy';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
 import { checkAccess, Firehose, Loading, LoadingBox, PageHeading, resourceObjPath } from './utils';
@@ -117,19 +121,15 @@ const EditYAMLInner = (props) => {
   const [notAllowed, setNotAllowed] = React.useState();
   const [displayResults, setDisplayResults] = React.useState();
   const [resourceObjects, setResourceObjects] = React.useState();
-
   const [callbackCommand, setCallbackCommand] = React.useState('');
-
   const monacoRef = React.useRef();
   const editor = React.useRef();
   const buttons = React.useRef();
-
   const { t } = useTranslation();
-
   const navigateBack = () => navigate(-1);
-
   const displayedVersion = React.useRef('0');
   const onCancel = 'onCancel' in props ? props.onCancel : navigateBack;
+  const [, setWarningPolicy] = useWarningPolicy();
 
   const getEditor = () => {
     return monacoRef.current.editor;
@@ -325,40 +325,41 @@ const EditYAMLInner = (props) => {
   };
 
   const updateYAML = React.useCallback(
-    (obj) => {
+    async (obj) => {
       const model = getModel(obj);
       setSuccess(null);
       setErrors(null);
       const response = create
-        ? k8sCreate(model, _.omit(obj, ['metadata.resourceVersion']))
+        ? k8sCreate(model, _.omit(obj, ['metadata.resourceVersion']), null, true)
         : k8sUpdate(model, obj, obj.metadata.namespace, obj.metadata.name);
 
-      response
-        .then((o) => postFormSubmissionCallback(o))
-        .then((o) => {
-          if (create) {
-            let url = redirectURL;
-            if (!url) {
-              const path = _.isFunction(props.resourceObjPath)
-                ? props.resourceObjPath
-                : resourceObjPath;
-              url = path(o, referenceFor(o));
-            }
-            navigate(url);
-            // TODO: (ggreer). show message on new page. maybe delete old obj?
-            return;
+      try {
+        const { data, headers } = await getConsoleResponseDetails(response);
+        setWarningPolicy({ headers, kind: data.kind, name: data.metadata.name });
+        const o = await postFormSubmissionCallback(data);
+
+        if (create) {
+          let url = redirectURL;
+          if (!url) {
+            const path = _.isFunction(props.resourceObjPath)
+              ? props.resourceObjPath
+              : resourceObjPath;
+            url = path(o, referenceFor(o));
           }
-          const s = t('public~{{name}} has been updated to version {{version}}', {
-            name: obj.metadata.name,
-            version: o.metadata.resourceVersion,
-          });
-          setSuccess(s);
-          setErrors(null);
-          loadYaml(true, o);
-        })
-        .catch((e) => {
-          handleError(e.message);
+          navigate(url);
+          return;
+        }
+
+        const s = t('public~{{name}} has been updated to version {{version}}', {
+          name: o.metadata.name,
+          version: o.metadata.resourceVersion,
         });
+        setSuccess(s);
+        setErrors(null);
+        loadYaml(true, o);
+      } catch (e) {
+        handleError(e.message);
+      }
     },
     [
       create,
@@ -369,6 +370,7 @@ const EditYAMLInner = (props) => {
       props.resourceObjPath,
       navigate,
       getModel,
+      setWarningPolicy,
     ],
   );
 
