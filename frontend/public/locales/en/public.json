@@ -1952,6 +1952,8 @@
   "HTTP GET": "HTTP GET",
   "TCP socket (port)": "TCP socket (port)",
   "Default pull Secret_plural": "Default pull Secret_plural",
+  "Admission Webhook Warning": "Admission Webhook Warning",
+  "{{kind}} {{name}} violates policy {{warning}}": "{{kind}} {{name}} violates policy {{warning}}",
   "Are you sure you want to remove <1>{{label}}</1> from navigation?": "Are you sure you want to remove <1>{{label}}</1> from navigation?",
   "Refer to your cluster administrator to know which network provider is used.": "Refer to your cluster administrator to know which network provider is used.",
   "Input error: selectors must start and end by a letter or number, and can only contain -, _, / or . Offending value: {{offendingSelector}}": "Input error: selectors must start and end by a letter or number, and can only contain -, _, / or . Offending value: {{offendingSelector}}",

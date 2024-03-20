@@ -1203,13 +1203,12 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 | `method` | The HTTP method to use. Defaults to GET |
 | `options` | The options to pass to fetch |
 | `timeout` | The timeout in milliseconds |
-| `isEntireResponse` | The flag to control whether to return the entire content of the response or response body. The default is the response body. |
 
 
 
 ### Returns
 
-A promise that resolves to the response as text, response JSON object or entire content of the HTTP response.
+A promise that resolves to the response as text or JSON object.
 
 
 ---
@@ -1230,13 +1229,12 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 | `url` | The URL to fetch |
 | `options` | The options to pass to fetch |
 | `timeout` | The timeout in milliseconds |
-| `isEntireResponse` | The flag to control whether to return the entire content of the response or response body. The default is the response body. |
 
 
 
 ### Returns
 
-A promise that resolves to the response as text, response JSON object or entire content of the HTTP response.
+A promise that resolves to the response as text or JSON object.
 
 
 ---

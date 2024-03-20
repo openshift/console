@@ -85,6 +85,11 @@ export const documentationURLs: documentationURLsType = {
     downstream: 'html/building_applications/deployments',
     upstream: 'applications/deployments/what-deployments-are.html',
   },
+  admissionWebhookWarning: {
+    downstream: 'html/architecture/admission-plug-ins',
+    kube: `${KUBE_DOCS}/reference/access-authn-authz/extensible-admission-controllers/#response`,
+    upstream: 'architecture/index.html#about-admission-plug-ins',
+  },
 };
 
 export const isUpstream = () => window.SERVER_FLAGS.branding === 'okd';
