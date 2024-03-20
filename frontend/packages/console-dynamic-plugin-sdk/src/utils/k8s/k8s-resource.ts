@@ -119,6 +119,7 @@ export const k8sCreate = <R extends K8sResourceCommon>(
 type OptionsCreate<R> = BaseOptions & {
   model: K8sModel;
   data: R;
+  isEntireResponse?: boolean;
 };
 
 type K8sCreateResource = <R extends K8sResourceCommon>(options: OptionsCreate<R>) => Promise<R>;
@@ -137,6 +138,7 @@ export const k8sCreateResource: K8sCreateResource = adapterFunc(k8sCreate, [
   'model',
   'data',
   'opts',
+  'isEntireResponse',
 ]);
 
 /**

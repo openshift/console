@@ -3,7 +3,7 @@ import 'whatwg-fetch';
 import { getUtilsConfig } from '../../app/configSetup';
 import { ConsoleFetchText, ConsoleFetchJSON, ConsoleFetch } from '../../extensions/console-types';
 import { TimeoutError } from '../error/http-error';
-import { getConsoleRequestHeaders } from './console-fetch-utils';
+import { getConsoleRequestHeaders, parseData } from './console-fetch-utils';
 
 /**
  * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
@@ -25,15 +25,6 @@ export const consoleFetch: ConsoleFetch = async (url, options = {}, timeout = 60
   });
 
   return Promise.race([fetchPromise, timeoutPromise]);
-};
-
-const parseData = async (response) => {
-  const text = await response.text();
-  const isPlainText = response.headers.get('Content-Type') === 'text/plain';
-  if (!text) {
-    return isPlainText ? '' : {};
-  }
-  return isPlainText || !response.ok ? text : JSON.parse(text);
 };
 
 const consoleFetchCommon = async (
