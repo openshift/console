@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 /* eslint-disable @typescript-eslint/no-require-imports */
 
+import { SharedModuleNames } from './shared-modules';
 import { RemoteEntryModule } from './types';
 
 type SharedScopeObject = {
@@ -19,7 +20,7 @@ const initSharedScope = () => {
   // If version range is '*' it means "this shared module matches all requested versions",
   // i.e. make sure that the plugin always uses the given shared module implementation
   const addModule = (
-    moduleName: string,
+    moduleName: SharedModuleNames,
     getModule: () => Promise<() => any>,
     versionRange = '*',
   ) => {
@@ -61,14 +62,6 @@ const initSharedScope = () => {
     async () => () => require('@patternfly-4/quickstarts'),
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     require('@patternfly-4/quickstarts/package.json').version,
-  );
-
-  // Deprecated modules to be removed from Console shared scope in future
-  addModule(
-    'react-helmet',
-    async () => () => require('react-helmet'),
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('react-helmet/package.json').version,
   );
 
   return scope;

@@ -28,7 +28,6 @@ export const sharedPluginModules = [
   '@patternfly/react-table',
   '@patternfly/quickstarts',
   'react',
-  'react-helmet',
   'react-i18next',
   'react-router',
   'react-router-dom',
@@ -38,7 +37,7 @@ export const sharedPluginModules = [
   'redux-thunk',
 ] as const;
 
-type SharedModuleNames = typeof sharedPluginModules[number];
+export type SharedModuleNames = typeof sharedPluginModules[number];
 
 /**
  * Metadata associated with the shared modules.
@@ -50,7 +49,6 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
   '@patternfly/react-table': {},
   '@patternfly/quickstarts': {},
   react: { singleton: true, allowFallback: false },
-  'react-helmet': {}, // Deprecated, to be removed in future release
   'react-i18next': { singleton: true, allowFallback: false },
   'react-router': { singleton: true, allowFallback: false },
   'react-router-dom': { singleton: true, allowFallback: false },
