@@ -13,7 +13,7 @@ import {
   PrometheusRulesResponse,
 } from '@console/dynamic-plugin-sdk';
 
-import { AlertSource, MonitoringResource, Target } from './types';
+import { MonitoringResource } from './types';
 
 export const PROMETHEUS_BASE_PATH = window.SERVER_FLAGS.prometheusBaseURL;
 
@@ -121,8 +121,3 @@ export const alertingRuleStateOrder = (rule: Rule): ListOrder => {
     (state) => Number.MAX_SAFE_INTEGER - (counts[state] ?? 0),
   );
 };
-
-export const targetSource = (target: Target): AlertSource =>
-  target.labels?.prometheus === 'openshift-monitoring/k8s'
-    ? AlertSource.Platform
-    : AlertSource.User;
