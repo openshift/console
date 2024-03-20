@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import { useUserSettings } from '@console/shared';
 import CloseButton from '@console/shared/src/components/close-button';
@@ -27,7 +26,12 @@ describe('TopologySideBar:', () => {
     mockUserSettings.mockReturnValue([100, () => {}, true]);
     const onClose = jest.fn();
     const wrapper = shallow(<TopologySideBar onClose={onClose} />);
-    wrapper.find(CloseButton).shallow().find(Button).simulate('click');
+    wrapper
+      .find(CloseButton)
+      .dive()
+      .shallow()
+      .find('[data-test-id="sidebar-close-button"]')
+      .simulate('click');
     expect(onClose).toHaveBeenCalled();
   });
 });

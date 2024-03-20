@@ -152,7 +152,6 @@ const NamespaceDropdown: React.FC = () => {
         itemId={lastViewedOption.key}
         isSelected={selected === lastViewedOption.key}
         data-test="dropdown-menu-item-lastViewed"
-        translate="no"
       >
         {lastViewedOption.title}
       </MenuItem>
@@ -169,7 +168,7 @@ const NamespaceDropdown: React.FC = () => {
       onActionClick={() => {}}
       isScrollable
     >
-      <MenuContent menuHeight="40vh" maxMenuHeight="40vh" translate="no">
+      <MenuContent menuHeight="40vh" maxMenuHeight="40vh">
         <Filter
           filterRef={filterRef}
           onFilterChange={setFilterText}

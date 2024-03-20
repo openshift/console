@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core/dist/esm/components/Alert';
-import { Label } from '@patternfly/react-core/dist/esm/components/Label';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import { FormikProps, FormikValues } from 'formik/dist/types';
 import { useTranslation } from 'react-i18next';
 import { ExpandCollapse, Loading } from '@console/internal/components/utils';

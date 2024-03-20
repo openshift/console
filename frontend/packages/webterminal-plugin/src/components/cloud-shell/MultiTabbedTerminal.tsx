@@ -79,7 +79,6 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
     <Tabs activeKey={activeTabKey} isBox data-test="multi-tab-terminal">
       {terminalTabs.map((terminalNumber, tabIndex) => (
         <Tab
-          translate="no"
           className="co-multi-tabbed-terminal__tab"
           data-test="multi-tab-terminal-tab"
           eventKey={terminalNumber}
@@ -124,7 +123,6 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
       ))}
       {terminalTabs.length < MAX_TERMINAL_TABS && (
         <Tab
-          translate="no"
           eventKey="add-tab"
           onClick={addNewTerminal}
           title={
