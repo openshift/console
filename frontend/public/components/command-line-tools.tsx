@@ -2,19 +2,24 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import { Divider } from '@patternfly/react-core';
+import { Button, Divider } from '@patternfly/react-core';
 
-import { FLAGS } from '@console/shared';
+import { FLAGS, useCopyLoginCommands } from '@console/shared';
 import { ExternalLink, Firehose, FirehoseResult } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { ConsoleCLIDownloadModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { SyncMarkdownView } from './markdown-view';
-import { useRequestTokenURL } from '@console/shared/src/hooks/useRequestTokenURL';
+import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
 
 export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
   const { t } = useTranslation();
-  const [requestTokenURL] = useRequestTokenURL();
+  const [requestTokenURL, externalLoginCommand] = useCopyLoginCommands();
+  const launchCopyLoginCommandModal = useCopyCodeModal(
+    t('public~Login with this command'),
+    externalLoginCommand,
+  );
+  const showCopyLoginCommand = requestTokenURL || externalLoginCommand;
   const data = _.sortBy(_.get(obj, 'data'), 'spec.displayName');
   const cliData = _.remove(data, (item) => item.metadata.name === 'oc-cli-downloads');
 
@@ -58,10 +63,16 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name">{t('public~Command Line Tools')}</div>
         </h1>
-        {requestTokenURL && (
+        {showCopyLoginCommand && (
           <>
             <Divider className="co-divider" />
-            <ExternalLink href={requestTokenURL} text={t('public~Copy login command')} />
+            {requestTokenURL ? (
+              <ExternalLink href={requestTokenURL} text={t('public~Copy login command')} />
+            ) : (
+              <Button variant="link" onClick={launchCopyLoginCommandModal}>
+                {t('public~Copy login command')}
+              </Button>
+            )}
           </>
         )}
         {additionalCommandLineTools}
