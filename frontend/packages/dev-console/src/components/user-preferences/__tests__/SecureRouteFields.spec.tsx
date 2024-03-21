@@ -9,6 +9,10 @@ jest.mock('../usePreferredRoutingOptions', () => ({
   usePreferredRoutingOptions: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => {},
+}));
+
 const mockUsePreferredRoutingOptions = usePreferredRoutingOptions as jest.Mock;
 
 describe('SecureRouteFields', () => {

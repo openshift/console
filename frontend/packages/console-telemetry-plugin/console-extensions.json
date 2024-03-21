@@ -22,5 +22,61 @@
       }
     },
     "flags": { "required": ["TELEMETRY"] }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "providers.useTelemetryProvider" }
+    }
+  },
+  {
+    "type": "console.cluster-configuration/group",
+    "properties": {
+      "id": "telemetry",
+      "label": "%console-telemetry-plugin~Telemetry%",
+      "insertAfter": "webTerminal"
+    },
+    "flags": { "required": ["TELEMETRY_ENABLED"] }
+  },
+  {
+    "type": "console.cluster-configuration/item",
+    "properties": {
+      "id": "telemetry.telemetryConfiguration",
+      "groupId": "telemetry",
+      "label": "%console-telemetry-plugin~Telemetry%",
+      "description": "%console-telemetry-plugin~Configure telemetry setting%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "telemetryConfiguration" }
+      },
+      "readAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "get",
+          "name": "cluster"
+        }
+      ],
+      "writeAccessReview": [
+        {
+          "group": "operator.openshift.io/v1",
+          "resource": "consoles",
+          "verb": "patch",
+          "name": "cluster"
+        }
+      ]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.telemetryAnalytics",
+      "groupId": "general",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "telemetryUserPreferenceDropdown" }
+      },
+      "insertAfter": "console.preferredCreateEditMethod"
+    }
   }
 ]

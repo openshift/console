@@ -24,6 +24,10 @@ jest.mock('fuzzysearch', () => {
   return { default: jest.fn() };
 });
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => {},
+}));
+
 const mockProjectOrNamespaceModel = useProjectOrNamespaceModel as jest.Mock;
 const mockK8sWatchResource = useK8sWatchResource as jest.Mock;
 const mockUsePreferredNamespace = usePreferredNamespace as jest.Mock;

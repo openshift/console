@@ -10,7 +10,10 @@
     "description": "An OpenShift Console plugin for capturing events in segment.",
     "exposedModules": {
       "telemetryListeners": "src/listeners",
-      "telemetryFlags": "src/flags"
+      "telemetryFlags": "src/flags",
+      "telemetryConfiguration": "src/components/TelemetryConfiguration.tsx",
+      "telemetryUserPreferenceDropdown": "src/components/TelemetryUserPreferenceDropdown.tsx",
+      "providers": "src/providers"
     }
   }
 }

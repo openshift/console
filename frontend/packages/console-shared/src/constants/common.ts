@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 export const CONST = Object.freeze({
   // http://kubernetes.io/docs/user-guide/images/#bypassing-kubectl-create-secrets
   PULL_SECRET_TYPE: 'kubernetes.io/dockerconfigjson',
@@ -100,6 +102,18 @@ export enum REQUESTER_FILTER {
   SYSTEM = 'system',
 }
 
+export enum USER_TELEMETRY_ANALYTICS {
+  ALLOW = 'allow',
+  DENY = 'deny',
+}
+
+export enum CLUSTER_TELEMETRY_ANALYTICS {
+  OPTIN = 'OPT-IN',
+  OPTOUT = 'OPT-OUT',
+  DISABLED = 'DISABLED',
+  ENFORCE = 'ENFORCE',
+}
+
 export const CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER =
   'https://api.openshift.com/api/upgrades_info/v1/graph';
 
@@ -107,3 +121,4 @@ export const GETTING_STARTED_USER_SETTINGS_KEY_ADD_PAGE =
   'devconsole.addPage.gettingStarted.expanded';
 export const GETTING_STARTED_USER_SETTINGS_KEY_CLUSTER_DASHBOARD =
   'console.clusterDashboard.gettingStarted.expanded';
+export const PREFERRED_TELEMETRY_USER_SETTING_KEY = 'telemetry.analytics';

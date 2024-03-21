@@ -40,6 +40,7 @@ import { PageSection, PageSectionVariants } from '@patternfly/react-core';
 import { RoutePage, isRoutePage, useExtensions, LoadedExtension } from '@console/plugin-sdk';
 
 import CreateResource from './create-resource';
+import { TelemetryNotifier } from './global-telemetry-notifications';
 
 const RedirectComponent = () => {
   const location = useLocation();
@@ -963,6 +964,9 @@ const AppContents: React.FC<{}> = () => {
           </ErrorBoundaryPage>
         </PageSection>
       </div>
+      <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+        <TelemetryNotifier />
+      </PageSection>
     </div>
   );
 };
