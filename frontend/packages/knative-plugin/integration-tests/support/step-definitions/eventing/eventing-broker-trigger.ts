@@ -80,11 +80,11 @@ When('user right clicks on the Trigger to open the context menu', () => {
 });
 
 When('user clicks on the Move Trigger', () => {
-  cy.get(topologyPO.graph.nodeContextMenu).contains('Move Trigger').click();
+  cy.byTestActionID('Move Trigger').click();
 });
 
 When('user clicks on the Delete Trigger', () => {
-  cy.get(topologyPO.graph.nodeContextMenu).contains('Delete Trigger').click();
+  cy.byTestActionID('Delete Trigger').click();
 });
 
 When('user clicks on the Delete button on the modal', () => {

@@ -1,3 +1,4 @@
+import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
 import { functionsPO } from '../../pageObjects/functions-po';
 
 export const functionsPage = {
@@ -25,5 +26,9 @@ export const functionsPage = {
   verifyActionsInCreateMenu: () => {
     cy.byLegacyTestID('dropdown-menu').contains('Import from Git').should('exist');
     cy.byLegacyTestID('dropdown-menu').contains('Samples').should('exist');
+  },
+  clickonEmptyAreaTopology: () => {
+    topologyPage.waitForLoad();
+    cy.get(functionsPO.topologyGraph).click('topLeft');
   },
 };

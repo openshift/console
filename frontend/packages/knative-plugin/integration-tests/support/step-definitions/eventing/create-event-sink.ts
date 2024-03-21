@@ -15,6 +15,7 @@ import {
   createEventSinkPage,
 } from '@console/dev-console/integration-tests/support/pages';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
+import { functionsPO } from '../../pageObjects/functions-po';
 import { eventingPO } from '../../pageObjects/global-po';
 
 When('user clicks on Event Sink card', () => {
@@ -67,7 +68,7 @@ Given('user is at Topology page', () => {
 
 When('user right clicks in empty space of topology', () => {
   cy.get(topologyPO.graph.fitToScreen).should('be.visible');
-  cy.get('[data-id="odc-topology-graph"]').rightclick('topLeft');
+  cy.get(functionsPO.topologyGraph).rightclick('topLeft');
 });
 
 When('user selects {string} from Add to project', (option: string) => {

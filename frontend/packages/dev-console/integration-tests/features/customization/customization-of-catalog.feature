@@ -30,7 +30,6 @@ Feature: Customization of catalogs
               And user clicks on Save button
              Then user will see "Developer Catalog" and all the sub-catalogs in Add page and Topology page except "HelmChart"
 
-
         @regression @manual
         Scenario: When specific sub-catalog is enabled: DC-01-TC04
             Given user is at cluster YAML of "operator.openshift.io/v1" console

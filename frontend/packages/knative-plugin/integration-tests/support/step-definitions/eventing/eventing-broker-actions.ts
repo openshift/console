@@ -21,7 +21,7 @@ When('user selects on {string} from {string} card', (eventName: string, addFlowC
 
 When('user selects {string} from Actions drop down', (actionName: string) => {
   cy.get(eventingPO.broker.actionMenu).click();
-  cy.get(eventingPO.broker.actionDropDown).contains(actionName).click();
+  cy.byTestActionID(actionName).click();
 });
 
 When('user selects Form view', () => {
@@ -59,7 +59,7 @@ When('user right clicks on {string} broker', (nodeName: string) => {
 });
 
 Then('user will see option {string}', (optionName: string) => {
-  cy.get(eventingPO.broker.sidebar.dropdownMenu).contains(optionName).should('be.visible');
+  cy.byTestActionID(optionName).should('be.visible');
 });
 
 When('user clicks on the {string} broker to open the sidebar', (nodeName: string) => {
@@ -95,7 +95,7 @@ When('user right click on the {string} broker to open the context menu', (broker
 });
 
 When('user clicks on {string}', (optionName: string) => {
-  cy.get(eventingPO.broker.sidebar.dropdownMenu).contains(optionName).click();
+  cy.byTestActionID(optionName).should('be.visible').click();
 });
 
 When('user will click on Application drop down on the modal', () => {
@@ -143,6 +143,7 @@ When('user selects {string} from Subscriber drop down', (subscriberName: string)
 
 When('user clicks on Add button', () => {
   cy.get(eventingPO.broker.confirm).click();
+  cy.get('[aria-label="Modal"]').should('not.exist');
 });
 
 Then('user will see {string} created', (triggerName) => {

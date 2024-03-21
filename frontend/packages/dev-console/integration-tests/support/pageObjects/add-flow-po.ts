@@ -89,14 +89,11 @@ export const gitPO = {
       replicaCount: 'input#form-number-spinner-deployment-replicas-field',
     },
     resourceLimit: {
-      cpuRequest: 'input[name="limits.cpu.requestValue"]',
-      cpuLimit: 'input[name="limits.cpu.limitValue"]',
-      memoryRequest: 'input[name="limits.memory.requestValue"]',
-      memoryLimit: 'input[name="limits.memory.limitValue"]',
-      cpuRequestHelperText: 'div#form-resource-limit-limits-cpu-request-field-helper',
-      cpuLimitHelperText: 'div#form-resource-limit-limits-cpu-limit-field-helper',
-      memoryRequestHelperText: 'div#form-resource-limit-limits-memory-request-field-helper',
-      memoryLimitHelperText: 'div#form-resource-limit-limits-memory-limit-field-helper',
+      cpuRequest: 'input[aria-describedby="form-resource-limit-limits-cpu-request-field-helper"]',
+      cpuLimit: 'input[aria-describedby="form-resource-limit-limits-cpu-limit-field-helper"]',
+      memoryRequest:
+        'input[aria-describedby="form-resource-limit-limits-memory-request-field-helper"]',
+      memoryLimit: 'input[aria-describedby="form-resource-limit-limits-memory-limit-field-helper"]',
     },
     labels: 'input[data-test="labels"]',
   },
@@ -106,6 +103,7 @@ export const gitPO = {
     devFilePathInput: '[data-test=git-form-devfile-path-input]',
     devFileHelperText: '.pf-v5-c-form__helper-text',
   },
+  resourceCreationAlert: '[data-test="Resource added alert"]',
 };
 
 export const catalogPO = {

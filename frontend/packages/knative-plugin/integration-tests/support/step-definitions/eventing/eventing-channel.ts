@@ -32,13 +32,13 @@ Then('user clicks on YAML view', () => {
   cy.get(eventingPO.channel.yamlView).should('be.visible').click();
 });
 
-Then('user can see reate button enabled', () => {
+Then('user can see create button enabled', () => {
   modal.submitShouldBeEnabled();
 });
 
 When('user selects auto selected InMemoryChannel from Type dropdown', () => {
   cy.get(eventingPO.channel.selectChannel).click();
-  cy.get(eventingPO.channel.channelDropdown).contains('InMemoryChannel').click();
+  cy.get(eventingPO.channel.dropDownMenu).contains('InMemoryChannel').click();
 });
 
 When('user selects Application', () => {
@@ -102,11 +102,11 @@ Then('user will see the Context Menu for channel', () => {
 });
 
 Then('user will see option {string}', (optionName: string) => {
-  cy.get(eventingPO.channel.contextMenuItem).contains(optionName).should('be.visible');
+  cy.byTestActionID(optionName).should('be.visible');
 });
 
 When('user clicks on the {string}', (optionName: string) => {
-  cy.get(eventingPO.channel.contextMenuItem).contains(optionName).click();
+  cy.byTestActionID(optionName).should('be.visible').click();
 });
 
 When('user will click on the Application dropdown on the modal', () => {
@@ -155,11 +155,13 @@ When('user selects the {string} item', (applicationName: string) => {
 });
 
 When('user adds the label {string}', (label: string) => {
-  cy.get(eventingPO.channel.labelTagsInput).click().type(label);
+  cy.byTestID('tags-input').click().type(label);
 });
 
 When('user clicks on the Save button on the modal to save labels and close the modal', () => {
   cy.get(eventingPO.channel.save).click('center', { force: true });
+  cy.get('[aria-label="Modal"]').should('not.exist');
+  navigateTo(devNavigationMenu.Add);
 });
 
 When('user clicks on the Channel {string} to open the sidebar', (channelName: string) => {
@@ -225,7 +227,7 @@ Then('user will see namespace of channel', () => {
 });
 
 Then('user will see labels and annotations associated with channel', () => {
-  cy.get(eventingPO.channel.sidebarLabelList).should('exist');
+  cy.get(eventingPO.channel.labelList).should('exist');
   cy.get(eventingPO.channel.editAnnotations).should('exist');
 });
 

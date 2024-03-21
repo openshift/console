@@ -6,4 +6,5 @@ export const functionsPO = {
   routesTab: '[data-test-id="horizontal-link-Routes"]',
   podsTab: '[data-test-id="horizontal-link-Pods"]',
   gettingStarted: '[data-test="getting-started"]',
+  topologyGraph: '[data-id="odc-topology-graph"]',
 };

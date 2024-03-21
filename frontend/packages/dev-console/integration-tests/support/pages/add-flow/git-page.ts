@@ -267,6 +267,11 @@ export const gitPage = {
         cy.get(gitPO.nodeName).clear();
         cy.get(gitPO.nodeName).type(componentName);
       } else if (
+        $body.find('.warning').length ||
+        $body.text().includes(messages.addFlow.nonGitRepoMessage)
+      ) {
+        cy.log(`Not a git url ${gitUrl}. Please check it`);
+      } else if (
         $body.find('[aria-label="Warning Alert"]').length ||
         $body.text().includes(messages.addFlow.privateGitRepoMessage)
       ) {
@@ -308,16 +313,36 @@ export const gitPage = {
     }
   },
   enterBuildConfigEnvName: (envName: string) =>
-    cy.get(gitPO.advancedOptions.buildConfig.envName).type(envName),
+    cy
+      .get(gitPO.sectionTitle)
+      .contains('Build')
+      .parent()
+      .find(gitPO.advancedOptions.buildConfig.envName)
+      .type(envName),
   enterBuildConfigEnvValue: (envValue: string) =>
-    cy.get(gitPO.advancedOptions.buildConfig.envValue).type(envValue),
+    cy
+      .get(gitPO.sectionTitle)
+      .contains('Build')
+      .parent()
+      .find(gitPO.advancedOptions.buildConfig.envValue)
+      .type(envValue),
   verifyDeploymentOptionIsChecked: () => {
     cy.get(gitPO.advancedOptions.deployment.deploymentTriggerImage).should('be.checked');
   },
   enterDeploymentEnvName: (envName: string) =>
-    cy.get(gitPO.advancedOptions.deployment.envName).type(envName),
+    cy
+      .get(gitPO.sectionTitle)
+      .contains('Deploy')
+      .parent()
+      .find(gitPO.advancedOptions.deployment.envName)
+      .type(envName),
   enterDeploymentEnvValue: (envValue: string) =>
-    cy.get(gitPO.advancedOptions.deployment.envValue).type(envValue),
+    cy
+      .get(gitPO.sectionTitle)
+      .contains('Deploy')
+      .parent()
+      .find(gitPO.advancedOptions.deployment.envValue)
+      .type(envValue),
   enterResourceLimitCPURequest: (cpuRequestValue: string) =>
     cy.get(gitPO.advancedOptions.resourceLimit.cpuRequest).type(cpuRequestValue),
   enterResourceLimitCPULimit: (cpuLimitValue: string) =>
@@ -332,7 +357,7 @@ export const gitPage = {
   enterRouteLabels: (labelRouteName: string) =>
     cy.get(gitPO.advancedOptions.routing.labels).type(labelRouteName),
   notificationVerify: (message: string) =>
-    cy.get(gitPO.pipeline.infoMessage).should('contain.text', message),
+    cy.get(gitPO.resourceCreationAlert).should('contain.text', message),
   checkIfDevfileImportStrategyDisabled: () =>
     cy.get(gitPO.importStrategy.devFileStrategy).should('have.attr', 'aria-disabled', 'true'),
   clickEditImportStrategy: () => cy.get(gitPO.importStrategy.editImportStrategyBtn).click(),
