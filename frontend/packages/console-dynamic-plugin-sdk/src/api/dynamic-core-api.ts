@@ -807,7 +807,7 @@ export const QueryBrowser: React.FC<QueryBrowserProps> = require('@console/share
  * ```tsx
  * const PodAnnotationsButton = ({ pod }) => {
  *   const { t } = useTranslation();
- *   const launchAnnotationsModal = useAnnotationsModal<PodKind>(pod);
+ *   const launchAnnotationsModal = useAnnotationsModal(pod);
  *   return <button onClick={launchAnnotationsModal}>{t('Edit Pod Annotations')}</button>
  * }
  * ```
@@ -828,7 +828,7 @@ export const useAnnotationsModal: UseAnnotationsModal = require('@console/shared
  * ```tsx
  * const DeletePodButton = ({ pod }) => {
  *   const { t } = useTranslation();
- *   const launchDeleteModal = useDeleteModal<PodKind>(pod);
+ *   const launchDeleteModal = useDeleteModal(pod);
  *   return <button onClick={launchDeleteModal}>{t('Delete Pod')}</button>
  * }
  * ```
@@ -845,7 +845,7 @@ export const useDeleteModal: UseDeleteModal = require('@console/shared/src/hooks
  * ```tsx
  * const PodLabelsButton = ({ pod }) => {
  *   const { t } = useTranslation();
- *   const launchLabelsModal = useLabelsModal<PodKind>(pod);
+ *   const launchLabelsModal = useLabelsModal(pod);
  *   return <button onClick={launchLabelsModal}>{t('Edit Pod Labels')}</button>
  * }
  * ```
