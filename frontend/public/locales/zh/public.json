@@ -462,7 +462,7 @@
   "ReplicaSets": "副本集",
   "Deployments": "部署",
   "Error getting YAML: {{e}}": "获取 YAML 时出错： {{e}}",
-  "{{newName}} has been updated to version {{version}}": "{{newName}} 已更新至版本 {{version}}",
+  "{{name}} has been updated to version {{version}}": "{{name}} 已更新至版本 {{version}}",
   "No YAML content found.": "没有找到 YAML 内容。",
   "No \"apiVersion\" field found in YAML.": "在 YAML 中没有找到 \"apiVersion\" 字段。",
   "No \"kind\" field found in YAML.": "在 YAML 中没有找到 \"kind\" 字段。",

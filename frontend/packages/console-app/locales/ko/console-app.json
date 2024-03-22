@@ -569,6 +569,7 @@
   "VolumeSnapshotClass details": "볼륨 스냅샷 클래스 세부 정보",
   "Driver": "드라이버",
   "Deletion policy": "삭제 정책",
+  "Create VolumeSnapshotClass": "볼륨 스냅샷 클래스 만들기",
   "VolumeSnapshotContent details": "볼륨 스냅샷 컨텐츠 세부 정보",
   "VolumeSnapshot": "볼륨 스냅샷",
   "VolumeSnapshotClass": "볼륨 스냅샷 클래스",
