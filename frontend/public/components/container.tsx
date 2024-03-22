@@ -18,7 +18,12 @@ import {
   VolumeMount,
 } from '../module/k8s';
 import * as k8sProbe from '../module/k8s/probe';
-import { getContainerState, getContainerStatus, getPullPolicyLabel } from '../module/k8s/container';
+import {
+  getContainerRestartCount,
+  getContainerState,
+  getContainerStatus,
+  getPullPolicyLabel,
+} from '../module/k8s/container';
 import {
   Firehose,
   HorizontalNav,
@@ -35,6 +40,7 @@ import {
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import i18n from 'i18next';
 import { ErrorPage404 } from './error';
+import { ContainerLastState } from './pod';
 
 const formatComputeResources = (resources: ResourceList) =>
   _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
@@ -282,16 +288,20 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
             <dd>
               <Status status={stateValue} />
             </dd>
+            <dt>{t('public~Last State')}</dt>
+            <dd>
+              <ContainerLastState containerLastState={status?.lastState} />
+            </dd>
             <dt>{t('public~ID')}</dt>
             <dd>
-              {status.containerID ? (
+              {status?.containerID ? (
                 <div className="co-break-all co-select-to-copy">{status.containerID}</div>
               ) : (
                 '-'
               )}
             </dd>
             <dt>{t('public~Restarts')}</dt>
-            <dd>{status.restartCount}</dd>
+            <dd>{getContainerRestartCount(status)}</dd>
             <dt>{t('public~Resource requests')}</dt>
             <dd>{getResourceRequestsValue(container) || '-'}</dd>
             <dt>{t('public~Resource limits')}</dt>
