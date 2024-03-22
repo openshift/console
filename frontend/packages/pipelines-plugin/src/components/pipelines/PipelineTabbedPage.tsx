@@ -17,6 +17,7 @@ import {
   useUserSettings,
 } from '@console/shared';
 import {
+  FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK,
   FLAG_OPENSHIFT_PIPELINE_AS_CODE,
   PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY,
 } from '../../const';
@@ -24,6 +25,7 @@ import { PipelineModel, PipelineRunModel, RepositoryModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { PipelineRunsResourceList } from '../pipelineruns';
 import RepositoriesList from '../repository/list-page/RepositoriesList';
+import ApprovalTasksListPage from '../tasks/list-page/approval-tasks/ApprovalTasksListPage';
 import PipelinesList from './list-page/PipelinesList';
 
 export const PageContents: React.FC = () => {
@@ -32,6 +34,7 @@ export const PageContents: React.FC = () => {
   const navigate = useNavigate();
   const badge = usePipelineTechPreviewBadge(namespace);
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
+  const isApprovalTaskEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK);
   const [preferredTab, , preferredTabLoaded] = useUserSettings<string>(
     PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY,
     'pipelines',
@@ -82,6 +85,17 @@ export const PageContents: React.FC = () => {
             // t(RepositoryModel.labelPluralKey)
             nameKey: RepositoryModel.labelPluralKey,
             component: RepositoriesList,
+            pageData: { showTitle, hideBadge, canCreate },
+          },
+        ]
+      : []),
+    ...(isApprovalTaskEnabled
+      ? [
+          {
+            href: 'approvals',
+            // t(RepositoryModel.labelPluralKey)
+            nameKey: `${t('pipelines-plugin~Approvals')}`,
+            component: ApprovalTasksListPage,
             pageData: { showTitle, hideBadge, canCreate },
           },
         ]

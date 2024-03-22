@@ -58,9 +58,9 @@ export const ApprovalStatusIcon: React.FC<StatusIconProps> = ({ status, ...other
       return <NewProcessIcon {...others} />;
     case ApprovalStatus.RequestSent:
       return <ResourcesEmptyIcon {...others} />;
-    case 'partially approved (1)':
+    case ApprovalStatus.PartiallyApproved:
       return <ResourcesAlmostEmptyIcon {...others} />;
-    case 'partially approved (2)':
+    case ApprovalStatus.AlmostApproved:
       return <ResourcesAlmostFullIcon {...others} />;
     case ApprovalStatus.Accepted:
       return <SuccessApprovalTaskIcon {...others} />;
@@ -68,6 +68,7 @@ export const ApprovalStatusIcon: React.FC<StatusIconProps> = ({ status, ...other
       return <FailedApprovalTaskIcon {...others} />;
     case ApprovalStatus.TimedOut:
       return <TimeoutApprovalTaskIcon {...others} />;
+    case ApprovalStatus.Unknown:
     default:
       return <QuestionCircleIcon {...others} />;
   }

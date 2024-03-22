@@ -20,8 +20,12 @@ export type CustomRunKind = K8sResourceCommon & {
 
 export type ApprovalTaskKind = K8sResourceCommon & {
   spec?: {
-    approved?: string;
-    name?: string;
+    approvals: {
+      input: string;
+      message: string;
+      name: string;
+    }[];
+    approvalsRequired: number;
   };
   status?: {
     approvalState: string;
@@ -29,6 +33,6 @@ export type ApprovalTaskKind = K8sResourceCommon & {
     approvedBy: {
       name: string;
       approved: string;
-    };
+    }[];
   };
 };
