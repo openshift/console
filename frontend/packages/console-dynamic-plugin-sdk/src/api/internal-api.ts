@@ -21,6 +21,7 @@ import {
   UseURLPoll,
   UseLastNamespace,
 } from './internal-types';
+import { UseActiveNamespace } from '../extensions'
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
   .default;
@@ -57,6 +58,9 @@ export const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = require('@con
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
   .useUtilizationDuration;
+// useActiveNamespace is deprecated and is now exposed as shared hook.
+export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
+  .useActiveNamespace;
 export const ServicesList = require('@console/internal/components/service').ServicesList;
 export const useDashboardResources: UseDashboardResources = require('@console/shared/src/hooks/useDashboardResources')
   .useDashboardResources;
