@@ -628,7 +628,7 @@
   "Hide PromQL": "PromQL の非表示",
   "Show PromQL": "PromQL の表示",
   "Dashboards": "ダッシュボード",
-  "Metrics": "Metrics",
+  "Metrics": "メトリクス",
   "Silences": "サイレンス",
   "Events": "イベント",
   "Select a Project to view monitoring metrics<1></1>.": "プロジェクトを選択してモニタリングメトリクスを表示します。<1></1>。",
