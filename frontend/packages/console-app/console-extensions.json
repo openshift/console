@@ -10,28 +10,30 @@
       "importRedirectURL": { "$codeRef": "perspective.getImportRedirectURL" }
     }
   },
+
   {
     "type": "console.flag/model",
     "properties": {
-      "flag": "DEVWORKSPACE",
       "model": {
-        "group": "workspace.devfile.io",
-        "version": "v1alpha1",
-        "kind": "DevWorkspace"
-      }
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsoleSample"
+      },
+      "flag": "CONSOLESAMPLE"
     }
   },
   {
     "type": "console.flag/model",
     "properties": {
-      "flag": "v1alpha2DEVWORKSPACE",
       "model": {
-        "group": "workspace.devfile.io",
-        "version": "v1alpha2",
-        "kind": "DevWorkspace"
-      }
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsoleQuickStart"
+      },
+      "flag": "CONSOLE_QUICKSTART"
     }
   },
+
   {
     "type": "console.flag/model",
     "properties": {
@@ -46,23 +48,56 @@
   {
     "type": "console.flag/model",
     "properties": {
-      "flag": "OPENSHIFT_DEPLOYMENTCONFIG",
-      "model": {
-        "group": "apps.openshift.io",
-        "version": "v1",
-        "kind": "DeploymentConfig"
-      }
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
       "flag": "OPENSHIFT_BUILDCONFIG",
       "model": {
         "group": "build.openshift.io",
         "version": "v1",
         "kind": "BuildConfig"
       }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "apps.openshift.io",
+        "version": "v1",
+        "kind": "DeploymentConfig"
+      },
+      "flag": "OPENSHIFT_DEPLOYMENTCONFIG"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStream"
+      },
+      "flag": "OPENSHIFT_IMAGESTREAM"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "template.openshift.io",
+        "version": "v1",
+        "kind": "Template"
+      },
+      "flag": "OPENSHIFT_TEMPLATE"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "project.openshift.io",
+        "version": "v1",
+        "kind": "Project"
+      },
+      "flag": "OPENSHIFT_PROJECT"
     }
   },
   {
@@ -98,6 +133,30 @@
       }
     }
   },
+
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "DEVWORKSPACE",
+      "model": {
+        "group": "workspace.devfile.io",
+        "version": "v1alpha1",
+        "kind": "DevWorkspace"
+      }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "v1alpha2DEVWORKSPACE",
+      "model": {
+        "group": "workspace.devfile.io",
+        "version": "v1alpha2",
+        "kind": "DevWorkspace"
+      }
+    }
+  },
+
   {
     "type": "console.global-config",
     "properties": {

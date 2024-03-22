@@ -28,6 +28,10 @@ const defaultDeny = {
   },
 };
 
+const mapStateToProps = (state, ownProps) => ({
+  isOpenShift: ownProps.isOpenShift ?? state.FLAGS.get(FLAGS.OPENSHIFT),
+});
+
 const mapDispatchToProps = (dispatch) => ({
   hideStartGuide: () => setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, false),
 });
@@ -97,7 +101,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
   const _submit = (event) => {
     event.preventDefault();
 
-    let promise = props.createProject ? createProject() : createNamespace();
+    let promise = props.isOpenShift ? createProject() : createNamespace();
     if (np === deny) {
       promise = promise.then((ns) => {
         const policy = Object.assign({}, defaultDeny, {
@@ -118,7 +122,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
         }
       })
       .catch((err) => {
-        const label = props.createProject ? 'project' : 'namespace';
+        const label = props.isOpenShift ? 'project' : 'namespace';
         // eslint-disable-next-line no-console
         console.error(`Failed to create ${label}:`, err);
       });
@@ -130,7 +134,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
   };
 
   const popoverText = () => {
-    const type = props.createProject ? t('public~Project') : t('public~Namespace');
+    const type = props.isOpenShift ? t('public~Project') : t('public~Namespace');
     const nameFormat = t(
       "public~A {{type}} name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
       { type },
@@ -141,7 +145,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
     return (
       <>
         <p>{nameFormat}</p>
-        {createProject ? <p>{createNamespaceText}</p> : null}
+        <p>{createNamespaceText}</p>
       </>
     );
   };
@@ -151,10 +155,10 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
   return (
     <form onSubmit={_submit} name="form" className="modal-content">
       <ModalTitle>
-        {props.createProject ? t('public~Create Project') : t('public~Create Namespace')}
+        {props.isOpenShift ? t('public~Create Project') : t('public~Create Namespace')}
       </ModalTitle>
       <ModalBody>
-        {props.createProject ? (
+        {props.isOpenShift ? (
           <>
             <p>
               {t(
@@ -198,7 +202,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
             />
           </div>
         </div>
-        {props.createProject && (
+        {props.isOpenShift && (
           <div className="form-group">
             <label htmlFor="input-display-name" className="control-label">
               {t('public~Display name')}
@@ -215,7 +219,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
             </div>
           </div>
         )}
-        {props.createProject && (
+        {props.isOpenShift && (
           <div className="form-group">
             <label htmlFor="input-description" className="control-label">
               {t('public~Description')}
@@ -231,7 +235,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
             </div>
           </div>
         )}
-        {!props.createProject && (
+        {!props.isOpenShift && (
           <div className="form-group">
             <label htmlFor="tags-input" className="control-label">
               {t('public~Labels')}
@@ -245,7 +249,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
             </div>
           </div>
         )}
-        {!props.createProject && (
+        {!props.isOpenShift && (
           <div className="form-group">
             <label htmlFor="network-policy" className="control-label">
               {t('public~Default network policy')}
@@ -273,11 +277,16 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
 };
 
 const CreateNamespaceModal = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(CreateNamespaceModalWithTranslation_);
 
-export const createNamespaceModal = createModalLauncher(CreateNamespaceModal);
+export const createNamespaceOrProjectModal = createModalLauncher(CreateNamespaceModal);
+
+export const createNamespaceModal = createModalLauncher((props) => (
+  <CreateNamespaceModal {...props} isOpenShift={false} />
+));
+
 export const createProjectModal = createModalLauncher((props) => (
-  <CreateNamespaceModal {...props} createProject={true} />
+  <CreateNamespaceModal {...props} isOpenShift={true} />
 ));

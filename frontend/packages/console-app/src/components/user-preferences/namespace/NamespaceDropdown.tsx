@@ -14,7 +14,7 @@ import {
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import fuzzysearch from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
-import { createProjectModal } from '@console/internal/components/modals';
+import { createNamespaceOrProjectModal } from '@console/internal/components/modals';
 import { useProjectOrNamespaceModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel } from '@console/internal/models';
@@ -86,20 +86,19 @@ const NamespaceDropdown: React.FC = () => {
     key: '##lastViewed##',
   };
 
-  const onCreateNamespace = React.useCallback(
-    () =>
-      createProjectModal({
-        blocking: true,
-        onSubmit: (newProject) => {
-          setPreferredNamespace(newProject.metadata.name);
-          fireTelemetryEvent('User Preference Changed', {
-            property: PREFERRED_NAMESPACE_USER_SETTING_KEY,
-            value: newProject.metadata.name,
-          });
-        },
-      }),
-    [fireTelemetryEvent, setPreferredNamespace],
-  );
+  const onCreateNamespace = React.useCallback(() => {
+    createNamespaceOrProjectModal({
+      blocking: true,
+      onSubmit: (newProject) => {
+        setPreferredNamespace(newProject.metadata.name);
+        fireTelemetryEvent('User Preference Changed', {
+          property: PREFERRED_NAMESPACE_USER_SETTING_KEY,
+          value: newProject.metadata.name,
+        });
+      },
+      isOpenShift: isProject,
+    });
+  }, [fireTelemetryEvent, setPreferredNamespace, isProject]);
 
   const loadErrorDescription: string = isProject
     ? t('console-app~Projects failed to load. Check your connection and reload the page.')
@@ -177,7 +176,12 @@ const NamespaceDropdown: React.FC = () => {
         />
         {lastNamespaceOption}
         {loadErrorState || emptyState}
-        <NamespaceGroup options={filteredOptions} selectedKey={selected} canFavorite={false} />
+        <NamespaceGroup
+          isProjects={isProject}
+          options={filteredOptions}
+          selectedKey={selected}
+          canFavorite={false}
+        />
       </MenuContent>
       <Footer
         canCreateNew={canCreate}

@@ -19,7 +19,7 @@ import { k8sGet } from '@console/internal/module/k8s';
 import { setFlag } from '../actions/features';
 import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
-import { createProjectModal } from './modals';
+import { createNamespaceOrProjectModal } from './modals';
 import { Firehose, FirehoseResult, removeQueryArgument } from './utils';
 
 export type NamespaceBarDropdownsProps = {
@@ -81,7 +81,7 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
           removeQueryArgument('project-name');
         }}
         onCreateNew={() => {
-          createProjectModal({
+          createNamespaceOrProjectModal({
             blocking: true,
             onSubmit: (newProject) => {
               setActiveNamespace(newProject.metadata.name);

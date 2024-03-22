@@ -114,7 +114,7 @@ const getResources = async (): Promise<DiscoveryResources> => {
       namespacedSet,
       models,
       groupVersionMap,
-    } as DiscoveryResources;
+    };
   });
 };
 

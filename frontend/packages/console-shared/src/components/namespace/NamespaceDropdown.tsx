@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as React from 'react';
 import {
   Button,
@@ -83,9 +82,7 @@ export const Filter: React.FC<{
 }> = ({ filterText, filterRef, onFilterChange, isProject }) => {
   const { t } = useTranslation();
   return (
-    // @ts-ignore
     <MenuSearch>
-      {/* @ts-ignore */}
       <MenuSearchInput>
         <TextInput
           data-test="dropdown-text-filter"
@@ -122,9 +119,7 @@ const SystemSwitch: React.FC<{
   return hasSystemNamespaces ? (
     <>
       <Divider />
-      {/* @ts-ignore */}
       <MenuSearch>
-        {/* @ts-ignore */}
         <MenuSearchInput>
           <Switch
             data-test="showSystemSwitch"
@@ -147,27 +142,26 @@ const SystemSwitch: React.FC<{
 /* ****************************************** */
 
 export const NamespaceGroup: React.FC<{
+  isProjects: boolean;
   isFavorites?: boolean;
   options: { key: string; title: string }[];
   selectedKey: string;
   favorites?: { [key: string]: boolean }[];
   canFavorite?: boolean;
-}> = ({ isFavorites, options, selectedKey, favorites, canFavorite = true }) => {
+}> = ({ isProjects, isFavorites, options, selectedKey, favorites, canFavorite = true }) => {
   const { t } = useTranslation();
-  const label = isFavorites ? t('console-shared~Favorites') : t('console-shared~Projects');
+  let label = isProjects ? t('console-shared~Projects') : t('console-shared~Namespaces');
+  if (isFavorites) {
+    label = t('console-shared~Favorites');
+  }
 
   return options.length === 0 ? null : (
     <>
       <Divider />
-      {/*
-        //@ts-ignore */}
       <MenuGroup label={label}>
-        {/*
-        //@ts-ignore */}
         <MenuList>
           {options.map((option) => {
             return (
-              // @ts-ignore
               <MenuItem
                 key={option.key}
                 itemId={option.key}
@@ -232,7 +226,6 @@ const NamespaceMenu: React.FC<{
   onCreateNew: () => void;
   menuRef: React.MutableRefObject<HTMLDivElement>;
 }> = ({ setOpen, onSelect, selected, isProjects, allNamespacesTitle, onCreateNew, menuRef }) => {
-  // const menuRef = React.useRef(null);
   const filterRef = React.useRef(null);
 
   const [filterText, setFilterText] = React.useState('');
@@ -250,7 +243,7 @@ const NamespaceMenu: React.FC<{
   );
 
   const canList: boolean = useFlag(FLAGS.CAN_LIST_NS);
-  const canCreate: boolean = useFlag(FLAGS.CAN_CREATE_PROJECT);
+  const canCreate: boolean = useFlag(isProjects ? FLAGS.CAN_CREATE_PROJECT : FLAGS.CAN_CREATE_NS);
   const [options, optionsLoaded] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: isProjects ? ProjectModel.kind : NamespaceModel.kind,
@@ -349,8 +342,6 @@ const NamespaceMenu: React.FC<{
       data-test="namespace-dropdown-menu"
       isScrollable
     >
-      {/*
-        //@ts-ignore */}
       <MenuContent maxMenuHeight="60vh">
         <Filter
           filterRef={filterRef}
@@ -370,6 +361,7 @@ const NamespaceMenu: React.FC<{
           />
         ) : null}
         <NamespaceGroup
+          isProjects={isProjects}
           isFavorites
           options={filteredFavorites}
           selectedKey={selected}
@@ -381,7 +373,12 @@ const NamespaceMenu: React.FC<{
           isChecked={systemNamespaces}
           onChange={setSystemNamespaces}
         />
-        <NamespaceGroup options={filteredOptions} selectedKey={selected} favorites={favorites} />
+        <NamespaceGroup
+          isProjects={isProjects}
+          options={filteredOptions}
+          selectedKey={selected}
+          favorites={favorites}
+        />
       </MenuContent>
       <Footer
         canCreateNew={canCreate}

@@ -11,7 +11,9 @@ import { CREATE_NAMESPACE_KEY } from './cloud-shell-setup-utils';
 type NamespaceSectionProps = WithFlagsProps;
 
 const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
-  const canCreate = flags[FLAGS.CAN_CREATE_PROJECT];
+  const canCreateNs = flags[FLAGS.CAN_CREATE_NS];
+  const canCreateProject = flags[FLAGS.CAN_CREATE_PROJECT];
+  const canCreate = canCreateNs || canCreateProject;
   const [namespace] = useField('namespace');
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const { t } = useTranslation();

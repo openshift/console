@@ -137,7 +137,7 @@ export const getModelExtensionMetadata = (
   );
 };
 
-export const getResources = () =>
+export const getResources = (): Promise<DiscoveryResources> =>
   fetchURL('/apis').then((res) => {
     const groupVersionMap = res.groups.reduce(
       (acc, { name, versions, preferredVersion: { version } }) => {
@@ -228,7 +228,7 @@ export const getResources = () =>
         namespacedSet,
         models,
         groupVersionMap,
-      } as DiscoveryResources;
+      };
     });
   });
 

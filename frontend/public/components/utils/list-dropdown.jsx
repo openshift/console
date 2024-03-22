@@ -11,7 +11,6 @@ import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';
 import { ResourceName } from './resource-icon';
 import { flagPending } from '../../reducers/features';
-import { useAccessReview } from '@console/internal/components/utils';
 import { createNamespaceModal, createProjectModal } from '../modals';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import { useTranslation, withTranslation } from 'react-i18next';
@@ -206,23 +205,19 @@ ListDropdown.propTypes = {
   disabled: PropTypes.bool,
 };
 
+/** @type {() => [K8sModel?, boolean?]} */
 export const useProjectOrNamespaceModel = () => {
-  const canCreateNamespace = useAccessReview({
-    group: NamespaceModel.apiGroup,
-    resource: NamespaceModel.plural,
-    verb: 'create',
-  });
-
-  const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
+  const canCreateNs = useFlag(FLAGS.CAN_CREATE_NS);
+  const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
 
-  if (flagPending(openshiftFlag) || flagPending(canCreateProject)) {
+  if (flagPending(openshiftFlag) || flagPending(canCreateNs) || flagPending(canCreateProject)) {
     return [];
   }
 
   // NamespaceModal is used when not on an openshift cluster
   const model = openshiftFlag ? ProjectModel : NamespaceModel;
-  const canCreate = openshiftFlag ? canCreateProject : canCreateNamespace;
+  const canCreate = openshiftFlag ? canCreateProject : canCreateNs;
   return [model, canCreate];
 };
 

@@ -384,9 +384,13 @@ class MastheadToolbarContents_ extends React.Component {
       name: '',
       isSection: true,
       actions: [
-        {
-          component: <Link to="/quickstart">{t('public~Quick Starts')}</Link>,
-        },
+        ...(flags[FLAGS.CONSOLE_QUICKSTART]
+          ? [
+              {
+                component: <Link to="/quickstart">{t('public~Quick Starts')}</Link>,
+              },
+            ]
+          : []),
         {
           label: t('public~Documentation'),
           externalLink: true,
@@ -784,6 +788,7 @@ const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
 })(
   connectToFlags(
     FLAGS.AUTH_ENABLED,
+    FLAGS.CONSOLE_QUICKSTART,
     FLAGS.CONSOLE_CLI_DOWNLOAD,
     FLAGS.OPENSHIFT,
   )(MastheadToolbarContentsWithTranslation),

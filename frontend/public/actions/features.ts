@@ -88,6 +88,10 @@ const detectShowOpenShiftStartGuide = (dispatch, canListNS: boolean = false) => 
 // Check the user's access to some resources.
 const ssarChecks = [
   {
+    flag: FLAGS.CAN_CREATE_NS,
+    resourceAttributes: { resource: 'namespaces', verb: 'get' },
+  },
+  {
     flag: FLAGS.CAN_GET_NS,
     resourceAttributes: { resource: 'namespaces', verb: 'get' },
   },
