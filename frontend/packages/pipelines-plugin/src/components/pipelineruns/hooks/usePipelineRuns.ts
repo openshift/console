@@ -101,7 +101,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
   return React.useMemo(() => {
     const rResources =
       runs && trResources
-        ? uniqBy([...runs, ...trResources], (r) => r.metadata.name)
+        ? uniqBy([...runs, ...trResources], (r) => r.metadata.uid)
         : runs || trResources;
     return [
       rResources,
