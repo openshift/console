@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
-import { removeTemplateWhitespace } from './utils';
 
 import './showdown-extension.scss';
 
@@ -19,20 +18,25 @@ const useInlineCopyClipboardShowdownExtension = () => {
         groupId: string,
       ): string => {
         if (!group || !subGroup || !groupType || !groupId) return text;
-        return removeTemplateWhitespace(
-          `<span class="pf-v5-c-clipboard-copy pf-m-inline">
-              <span class="pf-v5-c-clipboard-copy__text" ${MARKDOWN_SNIPPET_ID}="${groupType}">${group}</span>
-              <span class="pf-v5-c-clipboard-copy__actions">
-                <span class="pf-v5-c-clipboard-copy__actions-item">
-                  <button class="pf-v5-c-button pf-m-plain" aria-label="${t(
-                    'console-shared~Copy to clipboard',
-                  )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupType}">
-                    <i class="fas fa-copy" />
-                  </button>
-                </span>
-              </span>
-            </span>`,
-        );
+        return `<b><div class="pf-v5-c-code-block">
+        <div class="pf-v5-c-code-block__header">
+          <div class="pf-v5-c-code-block__actions">
+            <div class="pf-v5-c-code-block__actions-item">
+              <button class="pf-v5-c-button pf-m-plain" type="button" aria-label="${t(
+                'console-shared~Copy to clipboard',
+              )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupType}">
+                <i class="fas fa-copy" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="pf-v5-c-code-block__content">
+          <pre class="pf-v5-c-code-block__pre ocs-code-block__pre">
+            <code class="pf-v5-c-code-block__code" 
+              ${MARKDOWN_SNIPPET_ID}="${groupType}">${group.trim()}</code>
+          </pre>
+        </div>
+      </div></b>`;
       },
     }),
     [t],
