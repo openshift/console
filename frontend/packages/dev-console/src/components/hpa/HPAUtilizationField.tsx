@@ -43,7 +43,7 @@ const HPAUtilizationField: React.FC<HPAUtilizationFieldProps> = ({
       fieldId={`${type}-utilization`}
       label={t('devconsole~{{label}} Utilization', { label })}
     >
-      <InputGroup translate={t}>
+      <InputGroup>
         <InputGroupItem isFill>
           <TextInput
             id={type}

@@ -36,9 +36,9 @@ const DropdownWithSwitchMenu: React.FC<DropdownWithSwitchMenuProps> = ({
       ref={menuRef}
       style={{ position: 'absolute' }}
     >
-      <MenuContent translate="no">
-        <MenuSearch translate="no">
-          <MenuSearchInput translate="no">
+      <MenuContent>
+        <MenuSearch>
+          <MenuSearchInput>
             <Switch
               className={switchLabelClassName}
               isChecked={switchIsChecked}
@@ -55,7 +55,7 @@ const DropdownWithSwitchMenu: React.FC<DropdownWithSwitchMenuProps> = ({
         see https://github.com/patternfly/patternfly-react/issues/7365
         hack to workaround this bug by adding a hidden MenuList */}
         <MenuList className="pf-v5-u-display-none">
-          <MenuItem translate="no"> </MenuItem>
+          <MenuItem> </MenuItem>
         </MenuList>
         <DropdownWithSwitchGroups options={options} selectedKey={selected} />
       </MenuContent>

@@ -99,9 +99,9 @@ const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
   };
 
   const emptyStateRows = (
-    <Tbody translate>
-      <Tr translate>
-        <Td translate colSpan={7}>
+    <Tbody>
+      <Tr>
+        <Td colSpan={7}>
           <Bullseye>
             <EmptyState variant={EmptyStateVariant.sm}>
               <EmptyStateHeader

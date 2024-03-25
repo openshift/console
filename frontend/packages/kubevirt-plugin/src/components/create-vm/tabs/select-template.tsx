@@ -381,7 +381,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                   </Split>
                 </ToolbarGroup>
                 <ToolbarItem>
-                  <InputGroup translate={t}>
+                  <InputGroup>
                     <InputGroupItem isFill>
                       <TextInput
                         name="textFilter"

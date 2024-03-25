@@ -14,7 +14,7 @@ type GroupMenuContentProps = {
 const GroupMenuContent: React.FC<GroupMenuContentProps> = ({ option, onClick }) => (
   <>
     <Divider />
-    <MenuGroup label={option.label} translate="no">
+    <MenuGroup label={option.label}>
       <MenuList>
         <ActionMenuContent
           options={option.children}
@@ -32,7 +32,7 @@ const SubMenuContent: React.FC<GroupMenuContentProps> = ({ option, onClick }) =>
     data-test-action={option.id}
     flyoutMenu={
       <Menu containsFlyout>
-        <MenuContent data-test-id="action-items" translate="no">
+        <MenuContent data-test-id="action-items">
           <MenuList>
             <ActionMenuContent
               options={option.children}
@@ -43,7 +43,6 @@ const SubMenuContent: React.FC<GroupMenuContentProps> = ({ option, onClick }) =>
         </MenuContent>
       </Menu>
     }
-    translate="no"
   >
     {option.label}
   </MenuItem>

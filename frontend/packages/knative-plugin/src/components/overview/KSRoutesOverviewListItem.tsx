@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ClipboardCopy } from '@patternfly/react-core/dist/esm/components/ClipboardCopy';
+import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';

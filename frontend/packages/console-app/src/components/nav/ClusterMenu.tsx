@@ -15,7 +15,6 @@ const ClusterGroup: React.FC<{
     <MenuList>
       {clusters.map((cluster) => (
         <MenuItem
-          translate="no"
           data-test-id="cluster-dropdown-item"
           key={cluster.key}
           itemId={cluster.key}
@@ -78,7 +77,7 @@ const ClusterMenu = () => {
 
   const clusterMenu: JSX.Element = (
     <Menu ref={menuRef} isScrollable activeItemId={selection} className="co-cluster-menu">
-      <MenuContent maxMenuHeight="60vh" translate="no">
+      <MenuContent maxMenuHeight="60vh">
         <ClusterGroup clusters={items} />
       </MenuContent>
     </Menu>

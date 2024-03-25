@@ -31,7 +31,6 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
       onClick={() => inputRef.current?.focus()}
       className="ocs-quick-search-bar"
       data-test="quick-search-bar"
-      translate="no"
     >
       <InputGroupText className="ocs-quick-search-bar__icon ocs-quick-search-bar__border-none">
         {icon || <QuickSearchIcon />}
