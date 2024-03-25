@@ -28,10 +28,10 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
   const {
     metadata: { name, namespace },
   } = obj;
-  const { taskRuns, pipelineRuns } = customData;
+  const { taskRuns, pipelineRuns, taskRunsLoaded } = customData;
   const plrs = pipelineRuns.filter((plr) => {
     return (
-      plr.metadata?.labels[RepositoryLabels[RepositoryFields.REPOSITORY]] === obj.metadata.name
+      plr.metadata?.labels?.[RepositoryLabels[RepositoryFields.REPOSITORY]] === obj.metadata.name
     );
   });
   const latestRun = getLatestRun(plrs, 'creationTimestamp');
@@ -72,7 +72,11 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
       <TableData className={repositoriesTableColumnClasses[4]}>
         {}
         {latestRun ? (
-          <LinkedPipelineRunTaskStatus pipelineRun={latestRun} taskRuns={PLRTaskRuns} />
+          <LinkedPipelineRunTaskStatus
+            pipelineRun={latestRun}
+            taskRuns={PLRTaskRuns}
+            taskRunsLoaded={taskRunsLoaded}
+          />
         ) : (
           '-'
         )}
@@ -84,6 +88,7 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
             title={pipelineRunTitleFilterReducer(latestRun)}
             pipelineRun={latestRun}
             taskRuns={PLRTaskRuns}
+            taskRunsLoaded={taskRunsLoaded}
           />
         }
       </TableData>
