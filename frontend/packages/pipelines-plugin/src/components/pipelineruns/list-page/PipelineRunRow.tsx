@@ -21,21 +21,23 @@ const pipelinerunReference = referenceForModel(PipelineRunModel);
 type PLRStatusProps = {
   obj: PipelineRunKind;
   taskRuns: TaskRunKind[];
+  taskRunsLoaded: boolean;
 };
 
-const PLRStatus: React.FC<PLRStatusProps> = ({ obj, taskRuns }) => {
+const PLRStatus: React.FC<PLRStatusProps> = ({ obj, taskRuns, taskRunsLoaded }) => {
   return (
     <PipelineRunStatus
       status={pipelineRunFilterReducer(obj)}
       title={pipelineRunTitleFilterReducer(obj)}
       pipelineRun={obj}
       taskRuns={taskRuns}
+      taskRunsLoaded={taskRunsLoaded}
     />
   );
 };
 
 const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, customData }) => {
-  const { operatorVersion, taskRuns } = customData;
+  const { operatorVersion, taskRuns, taskRunsLoaded } = customData;
   const PLRTaskRuns = getTaskRunsOfPipelineRun(taskRuns, obj?.metadata?.name);
   return (
     <>
@@ -51,10 +53,14 @@ const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, custo
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <PLRStatus obj={obj} taskRuns={PLRTaskRuns} />
+        <PLRStatus obj={obj} taskRuns={PLRTaskRuns} taskRunsLoaded={taskRunsLoaded} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <LinkedPipelineRunTaskStatus pipelineRun={obj} taskRuns={PLRTaskRuns} />
+        <LinkedPipelineRunTaskStatus
+          pipelineRun={obj}
+          taskRuns={PLRTaskRuns}
+          taskRunsLoaded={taskRunsLoaded}
+        />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={obj.status && obj.status.startTime} />

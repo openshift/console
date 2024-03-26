@@ -31,7 +31,7 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
   const {
     metadata: { name, namespace },
   } = obj;
-  const { taskRuns } = customData;
+  const { taskRuns, taskRunsLoaded } = customData;
 
   const [pipelineRun, loaded] = useK8sWatchResource<PipelineRunKind[]>({
     kind: referenceForModel(PipelineRunModel),
@@ -83,7 +83,11 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
         {}
         {loaded ? (
           latestRun ? (
-            <LinkedPipelineRunTaskStatus pipelineRun={latestRun} taskRuns={PLRTaskRuns} />
+            <LinkedPipelineRunTaskStatus
+              pipelineRun={latestRun}
+              taskRuns={PLRTaskRuns}
+              taskRunsLoaded={taskRunsLoaded}
+            />
           ) : (
             '-'
           )
@@ -98,6 +102,7 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
             title={pipelineRunTitleFilterReducer(latestRun)}
             pipelineRun={latestRun}
             taskRuns={PLRTaskRuns}
+            taskRunsLoaded={taskRunsLoaded}
           />
         ) : (
           <LoadingInline />

@@ -20,7 +20,7 @@ const RepositoryList: React.FC<RepositoryListProps> = (props) => {
       aria-label={RepositoryModel.labelPluralKey}
       Header={RepositoryHeader}
       Row={RepositoryRow}
-      customData={{ taskRuns: taskRunsLoaded ? taskRuns : [] }}
+      customData={{ taskRuns: taskRunsLoaded ? taskRuns : [], taskRunsLoaded }}
       virtualize
     />
   );

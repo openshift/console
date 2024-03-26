@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { LoadingInline, resourcePathFromModel } from '@console/internal/components/utils';
+import { DASH } from '@console/shared';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
 import { PipelineBars } from './PipelineBars';
@@ -9,6 +10,7 @@ import { PipelineBars } from './PipelineBars';
 export interface LinkedPipelineRunTaskStatusProps {
   pipelineRun: PipelineRunKind;
   taskRuns: TaskRunKind[];
+  taskRunsLoaded?: boolean;
 }
 
 /**
@@ -18,6 +20,7 @@ export interface LinkedPipelineRunTaskStatusProps {
 const LinkedPipelineRunTaskStatus: React.FC<LinkedPipelineRunTaskStatusProps> = ({
   pipelineRun,
   taskRuns,
+  taskRunsLoaded,
 }) => {
   const { t } = useTranslation();
   const pipelineStatus =
@@ -27,6 +30,8 @@ const LinkedPipelineRunTaskStatus: React.FC<LinkedPipelineRunTaskStatusProps> = 
         pipelinerun={pipelineRun}
         taskRuns={taskRuns}
       />
+    ) : taskRunsLoaded && taskRuns.length === 0 ? (
+      <>{DASH}</>
     ) : (
       <LoadingInline />
     );
