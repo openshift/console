@@ -38,7 +38,7 @@ export const ResourceMetricsDashboard: React.FC<ResourceMetricsDashboardProps> =
           <ResourceMetricsDashboardCard
             namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.CPU]}
-            title={t('public~CPU usage')}
+            title={t('public~CPU usageX')}
           />
         </GridItem>
         <GridItem xl={6} lg={12}>
@@ -60,6 +60,13 @@ export const ResourceMetricsDashboard: React.FC<ResourceMetricsDashboardProps> =
             namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.NETWORK_OUT]}
             title={t('public~Network out')}
+          />
+        </GridItem>
+        <GridItem xl={6} lg={12}>
+          <ResourceMetricsDashboardCard
+            namespace={obj.metadata.namespace}
+            queries={queries[ResourceUtilizationQuery.CPU_ARCH]}
+            title={t('public~CPU Architecture')}
           />
         </GridItem>
       </Grid>

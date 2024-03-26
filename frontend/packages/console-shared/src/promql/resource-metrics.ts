@@ -5,6 +5,7 @@ import { useK8sModel } from '../hooks/useK8sModel';
 export enum ResourceUtilizationQuery {
   MEMORY = 'MEMORY',
   CPU = 'CPU',
+  CPU_ARCH = 'CPU_ARCH',
   FILESYSTEM = 'FILESYSTEM',
   NETWORK_IN = 'NETWORK_IN',
   NETWORK_OUT = 'NETWORK_OUT',
@@ -40,6 +41,9 @@ const podControllerMetricsQueries = {
   ),
   [ResourceUtilizationQuery.CPU]: _.template(
     "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{} * on(pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",
+  ),
+  [ResourceUtilizationQuery.CPU_ARCH]: _.template(
+    "sum by(node) (kube_node_info{node='<%= name %>'})",
   ),
   [ResourceUtilizationQuery.FILESYSTEM]: _.template(
     "sum(pod:container_fs_usage_bytes:sum * on(pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",
@@ -83,6 +87,9 @@ export const getPodControllerMetricsQueries = (
   ],
   [ResourceUtilizationQuery.CPU]: [
     podControllerMetricsQueries[ResourceUtilizationQuery.CPU]({ name, type }),
+  ],
+  [ResourceUtilizationQuery.CPU_ARCH]: [
+    podControllerMetricsQueries[ResourceUtilizationQuery.CPU_ARCH]({ name, type }),
   ],
   [ResourceUtilizationQuery.FILESYSTEM]: [
     podControllerMetricsQueries[ResourceUtilizationQuery.FILESYSTEM]({ name, type }),

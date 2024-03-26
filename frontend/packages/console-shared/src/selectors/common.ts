@@ -1,10 +1,12 @@
 import * as _ from 'lodash';
-import { K8sResourceCommon } from '@console/internal/module/k8s';
+import { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
 
 export const hasLabel = (obj: K8sResourceCommon, label: string): boolean =>
   _.has(obj, ['metadata', 'labels', label]);
 export const getName = <A extends K8sResourceCommon = K8sResourceCommon>(value: A) =>
   _.get(value, 'metadata.name') as K8sResourceCommon['metadata']['name'];
+export const getStatus = <A extends K8sResourceKind = K8sResourceKind>(value: A) =>
+  _.get(value, 'status') as K8sResourceKind['status'];
 export const getNamespace = <A extends K8sResourceCommon = K8sResourceCommon>(value: A) =>
   _.get(value, 'metadata.namespace') as K8sResourceCommon['metadata']['namespace'];
 export const getUID = <A extends K8sResourceCommon = K8sResourceCommon>(value: A) =>
