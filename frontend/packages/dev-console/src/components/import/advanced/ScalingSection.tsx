@@ -15,6 +15,7 @@ const ScalingSection: React.FC<{ name: string }> = ({ name }) => {
         name={name}
         label={t('devconsole~Replicas')}
         helpText={t('devconsole~The number of instances of your Image.')}
+        setOutputAsIntegerFlag
       />
     </FormSection>
   );
