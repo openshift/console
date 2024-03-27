@@ -105,18 +105,18 @@ in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` packag
 
 ### Changes in shared modules
 
-This section documents notable changes in Console provided shared modules across Console versions.
+This section documents notable changes in the Console provided shared modules across Console versions.
 
 #### Console 4.14.x
 
-- Add `react-router-dom-v5-compat` to allow plugins to migrate to React Router v6. Check the
+- Added `react-router-dom-v5-compat` to allow plugins to migrate to React Router v6. Check the
   [Official v5 to v6 Migration Guide](https://github.com/remix-run/react-router/discussions/8753)
   (section "Migration Strategy" and beyond) for details.
 
 #### Console 4.15.x
 
-- Console application now uses React Router v6 code internally. Plugins that only target OpenShift
-  Console 4.15 and newer should fully upgrade to React Router v6 via `react-router-dom-v5-compat`.
+- The Console application now uses React Router v6 code internally. Plugins that only target OpenShift
+  Console 4.15 or later should fully upgrade to React Router v6 via `react-router-dom-v5-compat`.
 
 ### PatternFly dynamic modules
 
@@ -321,20 +321,20 @@ To work with multiple plugins, provide multiple arguments to Bridge server:
   -plugins bar-plugin=http://localhost:9002/ -i18n-namespaces=plugin__bar-plugin
 ```
 
-Once the Bridge server is running, start your plugin web server(s) and ensure that plugin assets can
+Once the Bridge server is running, start your plugin web server(s), and ensure that plugin assets can
 be fetched via `/api/plugins/<plugin-name>` Bridge endpoint. For example, the following URLs should
 provide the same content:
 
 - http://localhost:9000/api/plugins/foo-plugin/plugin-manifest.json
 - http://localhost:9001/plugin-manifest.json
 
-Open Console in web browser and inspect the value of `window.SERVER_FLAGS.consolePlugins` to see the
-list of dynamic plugins which Console loads upon its startup. For local development, this should only
+Open the Console in your web browser and inspect the value of `window.SERVER_FLAGS.consolePlugins` to see the
+list of dynamic plugins the Console loads at runtime. For local development, this should only
 include plugin(s) listed via `-plugins` Bridge argument.
 
 ### Using local Console plugin SDK code
 
-If you need to make modifications to Console dynamic plugin SDK code and have them reflected in your
+If you need to make modifications to Console dynamic plugin SDK code and reflect them in your
 plugin builds, follow these steps:
 
 1. Make changes in Console repo. Run `yarn build` in `frontend/packages/console-dynamic-plugin-sdk`
@@ -344,7 +344,7 @@ plugin builds, follow these steps:
 "@openshift-console/dynamic-plugin-sdk": "file:../openshift/console/frontend/packages/console-dynamic-plugin-sdk/dist/core",
 "@openshift-console/dynamic-plugin-sdk-webpack": "file:../openshift/console/frontend/packages/console-dynamic-plugin-sdk/dist/webpack",
 ```
-3. Refresh your plugin's `node_modules` whenever the local plugin SDK files are changed:
+3. Refresh your plugin's `node_modules` whenever you change local plugin SDK files:
 ```sh
 rm -rf node_modules/@openshift-console && yarn --check-files
 ```
