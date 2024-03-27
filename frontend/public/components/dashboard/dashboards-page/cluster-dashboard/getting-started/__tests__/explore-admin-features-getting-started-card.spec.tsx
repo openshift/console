@@ -28,6 +28,10 @@ jest.mock(
     },
 );
 
+jest.mock('@console/shared/src/hooks/flag', () => ({
+  useFlag: () => false,
+}));
+
 describe('ExploreAdminFeaturesGettingStartedCard', () => {
   it('should contain the right static links', () => {
     const wrapper = shallow(<ExploreAdminFeaturesGettingStartedCard />);
