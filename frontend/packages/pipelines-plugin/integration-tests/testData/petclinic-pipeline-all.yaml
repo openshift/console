@@ -270,18 +270,18 @@ metadata:
   name: spring-petclinic
 spec:
   ports:
-  - name: 8080-tcp
-    port: 8080
-    protocol: TCP
-    targetPort: 8080
-  - name: 8443-tcp
-    port: 8443
-    protocol: TCP
-    targetPort: 8443
-  - name: 8778-tcp
-    port: 8778
-    protocol: TCP
-    targetPort: 8778
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
   selector:
     app: spring-petclinic
   sessionAffinity: None
@@ -309,36 +309,36 @@ spec:
         app: spring-petclinic
     spec:
       containers:
-      - image: quay.io/siamaksade/spring-petclinic:latest
-        imagePullPolicy: Always
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 45
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        name: spring-petclinic
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        - containerPort: 8443
-          protocol: TCP
-        - containerPort: 8778
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 45
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 5
+        - image: quay.io/siamaksade/spring-petclinic:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 45
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: spring-petclinic
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+            - containerPort: 8778
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 45
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
 ---
 apiVersion: route.openshift.io/v1
 kind: Route
@@ -376,81 +376,81 @@ metadata:
   name: petclinic-deploy
 spec:
   params:
-  - default: spring-petclinic
-    description: The application deployment name
-    name: APP_NAME
-    type: string
-  - default: https://github.com/siamaksade/spring-petclinic/
-    description: The application git repository url
-    name: APP_GIT_URL
-    type: string
-  - default: master
-    description: The application git repository revision
-    name: APP_GIT_REVISION
-    type: string
-  - default: spring-petclinic:latest
-    description: The application image stream
-    name: APP_IMAGE_STREAM
-    type: string
+    - default: spring-petclinic
+      description: The application deployment name
+      name: APP_NAME
+      type: string
+    - default: https://github.com/siamaksade/spring-petclinic/
+      description: The application git repository url
+      name: APP_GIT_URL
+      type: string
+    - default: master
+      description: The application git repository revision
+      name: APP_GIT_REVISION
+      type: string
+    - default: spring-petclinic:latest
+      description: The application image stream
+      name: APP_IMAGE_STREAM
+      type: string
   tasks:
-  - name: git-clone
-    params:
-    - name: url
-      value: $(params.APP_GIT_URL)
-    - name: revision
-      value: $(params.APP_GIT_REVISION)
-    - name: deleteExisting
-      value: "true"
-    taskRef:
-      kind: ClusterTask
-      name: git-clone
-    workspaces:
-    - name: output
-      workspace: app-source
-  - name: build-jar
-    params:
-    - name: GOALS
-      value:
-      - package
-      - -DskipTests
-    runAfter:
-    - git-clone
-    taskRef:
-      name: maven
-    workspaces:
-    - name: maven-cache
-      workspace: maven-cache
-    - name: maven-settings
-      workspace: maven-settings
-    - name: source
-      workspace: app-source
-  - name: build-image
-    params:
-    - name: TLSVERIFY
-      value: "false"
-    - name: OUTPUT_IMAGE_STREAM
-      value: $(params.APP_IMAGE_STREAM)
-    runAfter:
-    - build-jar
-    taskRef:
-      name: s2i-java-11-binary
-    workspaces:
-    - name: source
-      workspace: app-source
-  - name: deploy
-    params:
-    - name: DEPLOYMENT
-      value: $(params.APP_NAME)
-    - name: IMAGE_STREAM
-      value: $(params.APP_IMAGE_STREAM)
-    runAfter:
-    - build-image
-    taskRef:
-      name: redeploy
+    - name: git-clone
+      params:
+        - name: url
+          value: $(params.APP_GIT_URL)
+        - name: revision
+          value: $(params.APP_GIT_REVISION)
+        - name: deleteExisting
+          value: 'true'
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: app-source
+    - name: build-jar
+      params:
+        - name: GOALS
+          value:
+            - package
+            - -DskipTests
+      runAfter:
+        - git-clone
+      taskRef:
+        name: maven
+      workspaces:
+        - name: maven-cache
+          workspace: maven-cache
+        - name: maven-settings
+          workspace: maven-settings
+        - name: source
+          workspace: app-source
+    - name: build-image
+      params:
+        - name: TLSVERIFY
+          value: 'false'
+        - name: OUTPUT_IMAGE_STREAM
+          value: $(params.APP_IMAGE_STREAM)
+      runAfter:
+        - build-jar
+      taskRef:
+        name: s2i-java-11-binary
+      workspaces:
+        - name: source
+          workspace: app-source
+    - name: deploy
+      params:
+        - name: DEPLOYMENT
+          value: $(params.APP_NAME)
+        - name: IMAGE_STREAM
+          value: $(params.APP_IMAGE_STREAM)
+      runAfter:
+        - build-image
+      taskRef:
+        name: redeploy
   workspaces:
-  - name: maven-cache
-  - name: maven-settings
-  - name: app-source
+    - name: maven-cache
+    - name: maven-settings
+    - name: app-source
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
@@ -458,26 +458,26 @@ metadata:
   name: maven
 spec:
   params:
-  - default:
-    - package
-    description: maven goals to run
-    name: GOALS
-    type: array
+    - default:
+        - package
+      description: maven goals to run
+      name: GOALS
+      type: array
   steps:
-  - args:
-    - -Dmaven.repo.local=$(workspaces.maven-cache.path)
-    - -s
-    - $(workspaces.maven-settings.path)/settings.xml
-    - $(params.GOALS)
-    command:
-    - /usr/bin/mvn
-    image: gcr.io/cloud-builders/mvn
-    name: mvn
-    workingDir: $(workspaces.source.path)
+    - args:
+        - -Dmaven.repo.local=$(workspaces.maven-cache.path)
+        - -s
+        - $(workspaces.maven-settings.path)/settings.xml
+        - $(params.GOALS)
+      command:
+        - /usr/bin/mvn
+      image: gcr.io/cloud-builders/mvn
+      name: mvn
+      workingDir: $(workspaces.source.path)
   workspaces:
-  - name: source
-  - name: maven-cache
-  - name: maven-settings
+    - name: source
+    - name: maven-cache
+    - name: maven-settings
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
@@ -485,28 +485,28 @@ metadata:
   name: redeploy
 spec:
   params:
-  - name: DEPLOYMENT
-    type: string
-  - name: IMAGE_STREAM
-    type: string
+    - name: DEPLOYMENT
+      type: string
+    - name: IMAGE_STREAM
+      type: string
   steps:
-  - env:
-    - name: POD_NAMESPACE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
-    image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
-    name: deploy
-    script: |
-      #!/usr/bin/env bash
+    - env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      name: deploy
+      script: |
+        #!/usr/bin/env bash
 
-      image_ref="image-registry.openshift-image-registry.svc:5000/$POD_NAMESPACE/$(params.IMAGE_STREAM)"
+        image_ref="image-registry.openshift-image-registry.svc:5000/$POD_NAMESPACE/$(params.IMAGE_STREAM)"
 
-      echo "Deploying $image_ref"
+        echo "Deploying $image_ref"
 
-      oc set image deployment/$(params.DEPLOYMENT) $(params.DEPLOYMENT)=$image_ref
-      oc patch deployment $(params.DEPLOYMENT) -p "{\"spec\": {\"template\": {\"metadata\": { \"labels\": {  \"redeploy\": \"$(date +%s)\"}}}}}"
-      oc rollout status deployment/$(params.DEPLOYMENT)
+        oc set image deployment/$(params.DEPLOYMENT) $(params.DEPLOYMENT)=$image_ref
+        oc patch deployment $(params.DEPLOYMENT) -p "{\"spec\": {\"template\": {\"metadata\": { \"labels\": {  \"redeploy\": \"$(date +%s)\"}}}}}"
+        oc rollout status deployment/$(params.DEPLOYMENT)
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
@@ -514,139 +514,139 @@ metadata:
   name: s2i-java-11-binary
 spec:
   params:
-  - default: .
-    description: The location of the path to run s2i from
-    name: PATH_CONTEXT
-    type: string
-  - default: "false"
-    description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
-    name: TLSVERIFY
-    type: string
-  - description: The application image url in registry
-    name: OUTPUT_IMAGE_STREAM
-    type: string
+    - default: .
+      description: The location of the path to run s2i from
+      name: PATH_CONTEXT
+      type: string
+    - default: 'false'
+      description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
+      name: TLSVERIFY
+      type: string
+    - description: The application image url in registry
+      name: OUTPUT_IMAGE_STREAM
+      type: string
   stepTemplate:
     env:
-    - name: POD_NAMESPACE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
   steps:
-  - command:
-    - s2i
-    - build
-    - $(params.PATH_CONTEXT)
-    - registry.access.redhat.com/openjdk/openjdk-11-rhel7
-    - --image-scripts-url
-    - image:///usr/local/s2i
-    - --as-dockerfile
-    - /gen-source/Dockerfile.gen
-    image: registry.redhat.io/ocp-tools-43-tech-preview/source-to-image-rhel8
-    name: generate
-    volumeMounts:
-    - mountPath: /env-params
-      name: envparams
-    - mountPath: /gen-source
-      name: gen-source
-    workingdir: $(workspaces.source.path)/target
-  - command:
-    - buildah
-    - bud
-    - --tls-verify=$(params.TLSVERIFY)
-    - --layers
-    - -f
-    - /gen-source/Dockerfile.gen
-    - -t
-    - image-registry.openshift-image-registry.svc:5000/$(POD_NAMESPACE)/$(params.OUTPUT_IMAGE_STREAM)
-    - .
-    image: registry.redhat.io/rhel8/buildah
-    name: build
-    securityContext:
-      privileged: true
-    volumeMounts:
-    - mountPath: /var/lib/containers
-      name: varlibcontainers
-    - mountPath: /gen-source
-      name: gen-source
-    workingdir: /gen-source
-  - command:
-    - buildah
-    - push
-    - --tls-verify=$(params.TLSVERIFY)
-    - image-registry.openshift-image-registry.svc:5000/$(POD_NAMESPACE)/$(params.OUTPUT_IMAGE_STREAM)
-    - docker://image-registry.openshift-image-registry.svc:5000/$(POD_NAMESPACE)/$(params.OUTPUT_IMAGE_STREAM)
-    image: registry.redhat.io/rhel8/buildah
-    name: push
-    securityContext:
-      privileged: true
-    volumeMounts:
-    - mountPath: /var/lib/containers
-      name: varlibcontainers
+    - command:
+        - s2i
+        - build
+        - $(params.PATH_CONTEXT)
+        - registry.access.redhat.com/openjdk/openjdk-11-rhel7
+        - --image-scripts-url
+        - image:///usr/local/s2i
+        - --as-dockerfile
+        - /gen-source/Dockerfile.gen
+      image: registry.redhat.io/ocp-tools-43-tech-preview/source-to-image-rhel8
+      name: generate
+      volumeMounts:
+        - mountPath: /env-params
+          name: envparams
+        - mountPath: /gen-source
+          name: gen-source
+      workingdir: $(workspaces.source.path)/target
+    - command:
+        - buildah
+        - bud
+        - --tls-verify=$(params.TLSVERIFY)
+        - --layers
+        - -f
+        - /gen-source/Dockerfile.gen
+        - -t
+        - image-registry.openshift-image-registry.svc:5000/$(POD_NAMESPACE)/$(params.OUTPUT_IMAGE_STREAM)
+        - .
+      image: registry.redhat.io/rhel8/buildah
+      name: build
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+        - mountPath: /gen-source
+          name: gen-source
+      workingdir: /gen-source
+    - command:
+        - buildah
+        - push
+        - --tls-verify=$(params.TLSVERIFY)
+        - image-registry.openshift-image-registry.svc:5000/$(POD_NAMESPACE)/$(params.OUTPUT_IMAGE_STREAM)
+        - docker://image-registry.openshift-image-registry.svc:5000/$(POD_NAMESPACE)/$(params.OUTPUT_IMAGE_STREAM)
+      image: registry.redhat.io/rhel8/buildah
+      name: push
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
   volumes:
-  - emptyDir: {}
-    name: varlibcontainers
-  - emptyDir: {}
-    name: gen-source
-  - emptyDir: {}
-    name: envparams
+    - emptyDir: {}
+      name: varlibcontainers
+    - emptyDir: {}
+      name: gen-source
+    - emptyDir: {}
+      name: envparams
   workspaces:
-  - name: source
+    - name: source
 ---
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
   name: petclinic-event-listener
 spec:
   serviceAccountName: pipeline
   triggers:
-  - bindings:
-    - kind: ClusterTriggerBinding
-      ref: github-push
-    template:
-      name: trigger-template-petclinic-deploy
+    - bindings:
+        - kind: ClusterTriggerBinding
+          ref: github-push
+      template:
+        name: trigger-template-petclinic-deploy
 ---
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
   name: trigger-template-petclinic-deploy
 spec:
   params:
-  - name: git-revision
-  - name: git-commit-message
-  - name: git-repo-url
-  - name: git-repo-name
-  - name: content-type
-  - name: pusher-name
+    - name: git-revision
+    - name: git-commit-message
+    - name: git-repo-url
+    - name: git-repo-name
+    - name: content-type
+    - name: pusher-name
   resourcetemplates:
-  - apiVersion: tekton.dev/v1beta1
-    kind: PipelineRun
-    metadata:
-      labels:
-        tekton.dev/pipeline: petclinic-deploy
-      name: petclinic-deploy-$(uid)
-      namespace: demo
-    spec:
-      params:
-      - name: APP_NAME
-        value: spring-petclinic
-      - name: APP_GIT_URL
-        value: https://github.com/siamaksade/spring-petclinic/
-      - name: APP_GIT_REVISION
-        value: $(params.git-revision)
-      - name: APP_IMAGE_STREAM
-        value: spring-petclinic:$(params.git-revision)
-      pipelineRef:
-        name: petclinic-deploy
-      workspaces:
-      - name: app-source
-        persistentVolumeClaim:
-          claimName: app-source-pvc
-      - name: maven-cache
-        persistentVolumeClaim:
-          claimName: maven-cache-pvc
-      - configMap:
-          name: maven-settings
-        name: maven-settings
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        labels:
+          tekton.dev/pipeline: petclinic-deploy
+        name: petclinic-deploy-$(uid)
+        namespace: demo
+      spec:
+        params:
+          - name: APP_NAME
+            value: spring-petclinic
+          - name: APP_GIT_URL
+            value: https://github.com/siamaksade/spring-petclinic/
+          - name: APP_GIT_REVISION
+            value: $(params.git-revision)
+          - name: APP_IMAGE_STREAM
+            value: spring-petclinic:$(params.git-revision)
+        pipelineRef:
+          name: petclinic-deploy
+        workspaces:
+          - name: app-source
+            persistentVolumeClaim:
+              claimName: app-source-pvc
+          - name: maven-cache
+            persistentVolumeClaim:
+              claimName: maven-cache-pvc
+          - configMap:
+              name: maven-settings
+            name: maven-settings
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -654,7 +654,7 @@ metadata:
   name: app-source-pvc
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Recycle
   resources:
     requests:
@@ -667,7 +667,7 @@ metadata:
   name: maven-cache-pvc
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   resources:
     requests:
