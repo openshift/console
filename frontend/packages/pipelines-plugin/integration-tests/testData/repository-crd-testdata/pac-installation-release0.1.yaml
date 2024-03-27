@@ -55,24 +55,24 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: pipelines-as-code
 rules:
-  - apiGroups: ["triggers.tekton.dev"]
-    resources: ["eventlisteners", "triggerbindings", "triggertemplates", "triggers"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
+  - apiGroups: ['triggers.tekton.dev']
+    resources: ['eventlisteners', 'triggerbindings', 'triggertemplates', 'triggers']
+    verbs: ['get', 'list', 'watch']
+  - apiGroups: ['']
     # secrets are only needed for Github/Gitlab interceptors, serviceaccounts only for per trigger authorization
-    resources: ["configmaps", "secrets"]
-    verbs: ["get", "list", "watch"]
+    resources: ['configmaps', 'secrets']
+    verbs: ['get', 'list', 'watch']
   # Permissions to create resources in associated TriggerTemplates
-  - apiGroups: ["tekton.dev"]
-    resources: ["pipelineruns", "taskruns"]
-    verbs: ["create"]
-  - apiGroups: [""]
-    resources: ["serviceaccounts"]
-    verbs: ["impersonate"]
-  - apiGroups: ["policy"]
-    resources: ["podsecuritypolicies"]
-    resourceNames: ["tekton-triggers"]
-    verbs: ["use"]
+  - apiGroups: ['tekton.dev']
+    resources: ['pipelineruns', 'taskruns']
+    verbs: ['create']
+  - apiGroups: ['']
+    resources: ['serviceaccounts']
+    verbs: ['impersonate']
+  - apiGroups: ['policy']
+    resources: ['podsecuritypolicies']
+    resourceNames: ['tekton-triggers']
+    verbs: ['use']
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -101,25 +101,25 @@ metadata:
     app.kubernetes.io/part-of: pipelines-as-code
 rules:
   # Permissions to list repositories on cluster
-  - apiGroups: [""]
-    resources: ["namespaces", "pods", "pods/log"]
-    verbs: ["get", "list", "watch"]
+  - apiGroups: ['']
+    resources: ['namespaces', 'pods', 'pods/log']
+    verbs: ['get', 'list', 'watch']
   # Permissions to list repositories on cluster
-  - apiGroups: ["pipelinesascode.tekton.dev"]
-    resources: ["repositories"]
-    verbs: ["get", "list", "update"]
-  - apiGroups: ["triggers.tekton.dev"]
-    resources: ["clustertriggerbindings", "clusterinterceptors"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["tekton.dev"]
-    resources: ["pipelineruns"]
-    verbs: ["get", "delete", "list", "create", "watch"]
-  - apiGroups: ["tekton.dev"]
-    resources: ["taskruns"]
-    verbs: ["get"]
-  - apiGroups: ["route.openshift.io"]
-    resources: ["routes"]
-    verbs: ["get"]
+  - apiGroups: ['pipelinesascode.tekton.dev']
+    resources: ['repositories']
+    verbs: ['get', 'list', 'update']
+  - apiGroups: ['triggers.tekton.dev']
+    resources: ['clustertriggerbindings', 'clusterinterceptors']
+    verbs: ['get', 'list', 'watch']
+  - apiGroups: ['tekton.dev']
+    resources: ['pipelineruns']
+    verbs: ['get', 'delete', 'list', 'create', 'watch']
+  - apiGroups: ['tekton.dev']
+    resources: ['taskruns']
+    verbs: ['get']
+  - apiGroups: ['route.openshift.io']
+    resources: ['routes']
+    verbs: ['get']
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -130,9 +130,9 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: pipelines-as-code
 subjects:
-- kind: ServiceAccount
-  name: pipelines-as-code-sa-el
-  namespace: pipelines-as-code
+  - kind: ServiceAccount
+    name: pipelines-as-code-sa-el
+    namespace: pipelines-as-code
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -177,16 +177,16 @@ spec:
           type: string
         - name: Succeeded
           type: string
-          jsonPath: ".pipelinerun_status[-1].conditions[?(@.type==\"Succeeded\")].status"
+          jsonPath: '.pipelinerun_status[-1].conditions[?(@.type=="Succeeded")].status'
         - name: Reason
           type: string
-          jsonPath: ".pipelinerun_status[-1].conditions[?(@.type==\"Succeeded\")].reason"
+          jsonPath: '.pipelinerun_status[-1].conditions[?(@.type=="Succeeded")].reason'
         - name: StartTime
           type: date
-          jsonPath: ".pipelinerun_status[-1].startTime"
+          jsonPath: '.pipelinerun_status[-1].startTime'
         - name: CompletionTime
           type: date
-          jsonPath: ".pipelinerun_status[-1].completionTime"
+          jsonPath: '.pipelinerun_status[-1].completionTime'
       served: true
       storage: true
       schema:
@@ -229,7 +229,7 @@ spec:
     singular: repository
     kind: Repository
     shortNames:
-    - repo
+      - repo
 ---
 # Copyright 2021 Red Hat
 #
@@ -248,10 +248,10 @@ spec:
 apiVersion: v1
 data:
   # The number of days kept for pipelinerun inside pipelines-as-code namespace
-  max-keep-days: "5"
+  max-keep-days: '5'
 
   # The application name, you can customize this label
-  application-name: "Pipelines as Code"
+  application-name: 'Pipelines as Code'
 kind: ConfigMap
 metadata:
   name: pipelines-as-code
@@ -288,25 +288,25 @@ spec:
       template:
         spec:
           containers:
-          - command:
-            - /bin/bash
-            - -c
-            - test -e /etc/config/max-keep-days && export MAX_DAY_KEEP=$(cat /etc/config/max-keep-days);for pr in $(kubectl get pipelineruns -l app.kubernetes.io/managed-by=pipelines-as-code -o json | python3 -c "import
-              os, sys, datetime, json;jeez=json.load(sys.stdin);res=[ i['metadata']['name']
-              for i in jeez['items'] if datetime.datetime.now() > datetime.datetime.strptime(i['metadata']['creationTimestamp'],
-              '%Y-%m-%dT%H:%M:%SZ') + datetime.timedelta(days=int(os.environ.get('MAX_DAY_KEEP', 1))) ];print(' '.join(res))");do
-              kubectl delete pipelinerun ${pr};done
-            image: quay.io/openshift/origin-cli:4.8
-            imagePullPolicy: IfNotPresent
-            name: cleanup
-            terminationMessagePath: /dev/termination-log
-            terminationMessagePolicy: File
-            volumeMounts:
-              - name: config-volume
-                mountPath: /etc/config
-            env:
-              - name: MAX_DAY_KEEP
-                value: "1"
+            - command:
+                - /bin/bash
+                - -c
+                - test -e /etc/config/max-keep-days && export MAX_DAY_KEEP=$(cat /etc/config/max-keep-days);for pr in $(kubectl get pipelineruns -l app.kubernetes.io/managed-by=pipelines-as-code -o json | python3 -c "import
+                  os, sys, datetime, json;jeez=json.load(sys.stdin);res=[ i['metadata']['name']
+                  for i in jeez['items'] if datetime.datetime.now() > datetime.datetime.strptime(i['metadata']['creationTimestamp'],
+                  '%Y-%m-%dT%H:%M:%SZ') + datetime.timedelta(days=int(os.environ.get('MAX_DAY_KEEP', 1))) ];print(' '.join(res))");do
+                  kubectl delete pipelinerun ${pr};done
+              image: quay.io/openshift/origin-cli:4.8
+              imagePullPolicy: IfNotPresent
+              name: cleanup
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+              volumeMounts:
+                - name: config-volume
+                  mountPath: /etc/config
+              env:
+                - name: MAX_DAY_KEEP
+                  value: '1'
           dnsPolicy: ClusterFirst
           restartPolicy: Never
           schedulerName: default-scheduler
@@ -318,7 +318,7 @@ spec:
               configMap:
                 name: pipelines-as-code
                 optional: true
-  schedule: "0 * * * *"
+  schedule: '0 * * * *'
   successfulJobsHistoryLimit: 1
   suspend: false
 ---
@@ -336,7 +336,7 @@ spec:
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
   name: pipelines-as-code-interceptor
@@ -354,8 +354,8 @@ spec:
       interceptors:
         - github:
             secretRef:
-              secretName: "github-app-secret"
-              secretKey: "webhook.secret"
+              secretName: 'github-app-secret'
+              secretKey: 'webhook.secret'
             eventTypes:
               - issue_comment
         - cel:
@@ -375,8 +375,8 @@ spec:
       interceptors:
         - github:
             secretRef:
-              secretName: "github-app-secret"
-              secretKey: "webhook.secret"
+              secretName: 'github-app-secret'
+              secretKey: 'webhook.secret'
             eventTypes:
               - issue_comment
         - cel:
@@ -397,8 +397,8 @@ spec:
       interceptors:
         - github:
             secretRef:
-              secretName: "github-app-secret"
-              secretKey: "webhook.secret"
+              secretName: 'github-app-secret'
+              secretKey: 'webhook.secret'
             eventTypes:
               - push
         - cel:
@@ -415,8 +415,8 @@ spec:
       interceptors:
         - github:
             secretRef:
-              secretName: "github-app-secret"
-              secretKey: "webhook.secret"
+              secretName: 'github-app-secret'
+              secretKey: 'webhook.secret'
             eventTypes:
               - check_run
         - cel:
@@ -432,8 +432,8 @@ spec:
       interceptors:
         - github:
             secretRef:
-              secretName: "github-app-secret"
-              secretKey: "webhook.secret"
+              secretName: 'github-app-secret'
+              secretKey: 'webhook.secret'
             eventTypes:
               - pull_request
         - cel:
@@ -443,7 +443,7 @@ spec:
         ref: pipelines-as-code-template-pullreq
 # Triggers >0.13 Changed almost everything for EventListener
 # ---
-# apiVersion: triggers.tekton.dev/v1alpha1
+# apiVersion: triggers.tekton.dev/v1beta1
 # kind: EventListener
 # metadata:
 #   name: pipelines-as-code-interceptor
@@ -492,7 +492,7 @@ spec:
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: pipelines-as-code-bindings-recheck
@@ -509,10 +509,10 @@ spec:
     - name: head_sha
       value: $(body.check_run.check_suite.head_sha)
     - name: trigger_target
-      value: "issue-recheck"
+      value: 'issue-recheck'
     - name: event_type
       value: $(header.X-GitHub-Event)
-    - name: "ghe_host"
+    - name: 'ghe_host'
       value: $(header.X-GitHub-Enterprise-Host)
     - name: owner
       value: $(body.repository.owner.login)
@@ -530,7 +530,7 @@ spec:
       value: $(body.installation.id)
 
 ---
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
   name: pipelines-as-code-template-recheck
@@ -553,7 +553,7 @@ spec:
     - name: installation_id
     - name: trigger_target
     - name: ghe_host
-      default: "api.github.com"
+      default: 'api.github.com'
   resourcetemplates:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
@@ -644,7 +644,7 @@ spec:
                     type: string
                   - name: pull_request_number
                     type: string
-                    default: "000"
+                    default: '000'
                   - name: sender
                     type: string
                   - name: token
@@ -654,13 +654,13 @@ spec:
                 steps:
                   - name: apply-and-launch
                     imagePullPolicy: Always
-                    image: "quay.io/openshift-pipeline/pipelines-as-code:0.1"
+                    image: 'quay.io/openshift-pipeline/pipelines-as-code:0.1'
                     env:
-                    - name: PAC_APPLICATION_NAME
-                      valueFrom:
-                        configMapKeyRef:
-                          name: pipelines-as-code
-                          key: application-name
+                      - name: PAC_APPLICATION_NAME
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipelines-as-code
+                            key: application-name
                     script: |
                       #!/usr/bin/env bash
                       set -eux
@@ -698,29 +698,29 @@ spec:
                 - name: ghe_host
                   value: $(params.ghe_host)
                 - name: action
-                  value: "$(params.action)"
+                  value: '$(params.action)'
                 - name: head_branch
-                  value: "$(params.head_branch)"
+                  value: '$(params.head_branch)'
                 - name: head_sha
-                  value: "$(params.head_sha)"
+                  value: '$(params.head_sha)'
                 - name: trigger_target
-                  value: "$(params.trigger_target)"
+                  value: '$(params.trigger_target)'
                 - name: event_type
-                  value: "$(params.event_type)"
+                  value: '$(params.event_type)'
                 - name: owner
-                  value: "$(params.owner)"
+                  value: '$(params.owner)'
                 - name: url
-                  value: "$(params.url)"
+                  value: '$(params.url)'
                 - name: repository
-                  value: "$(params.repository)"
+                  value: '$(params.repository)'
                 - name: default_branch
-                  value: "$(params.default_branch)"
+                  value: '$(params.default_branch)'
                 - name: pull_request_number
-                  value: "$(params.pull_request_number)"
+                  value: '$(params.pull_request_number)'
                 - name: sender
-                  value: "$(params.sender)"
+                  value: '$(params.sender)'
                 - name: token
-                  value: "$(tasks.get-token.results.token)"
+                  value: '$(tasks.get-token.results.token)'
         workspaces:
           - name: secrets
             secret:
@@ -740,7 +740,7 @@ spec:
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: pipelines-as-code-bindings-pullreq
@@ -751,32 +751,32 @@ metadata:
 spec:
   params:
     - name: trigger_target
-      value: "pull-request"
-    - name: "event_type"
+      value: 'pull-request'
+    - name: 'event_type'
       value: $(header.X-GitHub-Event)
-    - name: "ghe_host"
+    - name: 'ghe_host'
       value: $(header.X-GitHub-Enterprise-Host)
-    - name: "owner"
+    - name: 'owner'
       value: $(body.repository.owner.login)
-    - name: "repository"
+    - name: 'repository'
       value: $(body.repository.name)
-    - name: "default_branch"
+    - name: 'default_branch'
       value: $(body.repository.default_branch)
-    - name: "url"
+    - name: 'url'
       value: $(body.repository.html_url)
-    - name: "sender"
+    - name: 'sender'
       value: $(body.pull_request.user.login)
-    - name: "base_ref"
+    - name: 'base_ref'
       value: $(body.pull_request.base.ref)
-    - name: "sha"
+    - name: 'sha'
       value: $(body.pull_request.head.sha)
-    - name: "head_ref"
+    - name: 'head_ref'
       value: $(body.pull_request.head.ref)
-    - name: "installation_id"
+    - name: 'installation_id'
       value: $(body.installation.id)
 
 ---
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
   name: pipelines-as-code-template-pullreq
@@ -798,7 +798,7 @@ spec:
     - name: installation_id
     - name: trigger_target
     - name: ghe_host
-      default: "api.github.com"
+      default: 'api.github.com'
   resourcetemplates:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
@@ -893,13 +893,13 @@ spec:
                 steps:
                   - name: apply-and-launch
                     env:
-                    - name: PAC_APPLICATION_NAME
-                      valueFrom:
-                        configMapKeyRef:
-                          name: pipelines-as-code
-                          key: application-name
+                      - name: PAC_APPLICATION_NAME
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipelines-as-code
+                            key: application-name
                     imagePullPolicy: Always
-                    image: "quay.io/openshift-pipeline/pipelines-as-code:0.1"
+                    image: 'quay.io/openshift-pipeline/pipelines-as-code:0.1'
                     script: |
                       cat << EOF > /tmp/payload.json
                       {
@@ -954,7 +954,7 @@ spec:
                 - name: head_ref
                   value: $(params.head_ref)
                 - name: token
-                  value: "$(tasks.get-token.results.token)"
+                  value: '$(tasks.get-token.results.token)'
 
         workspaces:
           - name: secrets
@@ -975,7 +975,7 @@ spec:
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: pipelines-as-code-bindings-push
@@ -985,33 +985,33 @@ metadata:
     app.kubernetes.io/part-of: pipelines-as-code
 spec:
   params:
-    - name: "event_type"
+    - name: 'event_type'
       value: $(header.X-GitHub-Event)
-    - name: "ghe_host"
+    - name: 'ghe_host'
       value: $(header.X-GitHub-Enterprise-Host)
-    - name: "trigger_target"
-      value: "push"
-    - name: "owner"
+    - name: 'trigger_target'
+      value: 'push'
+    - name: 'owner'
       value: $(body.repository.owner.login)
-    - name: "repository"
+    - name: 'repository'
       value: $(body.repository.name)
-    - name: "default_branch"
+    - name: 'default_branch'
       value: $(body.repository.default_branch)
-    - name: "sha"
+    - name: 'sha'
       value: $(body.head_commit.id)
-    - name: "url"
+    - name: 'url'
       value: $(body.repository.html_url)
-    - name: "sender"
+    - name: 'sender'
       value: $(body.sender.login)
-    - name: "base_ref"
+    - name: 'base_ref'
       value: $(body.ref)
-    - name: "head_ref"  # head ref is the same as base ref
+    - name: 'head_ref' # head ref is the same as base ref
       value: $(body.ref)
-    - name: "installation_id"
+    - name: 'installation_id'
       value: $(body.installation.id)
 
 ---
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
   name: pipelines-as-code-template-push
@@ -1023,7 +1023,7 @@ spec:
   params:
     - name: event_type
     - name: ghe_host
-      default: "api.github.com"
+      default: 'api.github.com'
     - name: owner
     - name: repository
     - name: default_branch
@@ -1128,13 +1128,13 @@ spec:
                 steps:
                   - name: apply-and-launch
                     imagePullPolicy: Always
-                    image: "quay.io/openshift-pipeline/pipelines-as-code:0.1"
+                    image: 'quay.io/openshift-pipeline/pipelines-as-code:0.1'
                     env:
-                    - name: PAC_APPLICATION_NAME
-                      valueFrom:
-                        configMapKeyRef:
-                          name: pipelines-as-code
-                          key: application-name
+                      - name: PAC_APPLICATION_NAME
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipelines-as-code
+                            key: application-name
                     script: |
                       cat << EOF > /tmp/payload.json
                       {
@@ -1182,7 +1182,7 @@ spec:
                 - name: head_ref
                   value: $(params.head_ref)
                 - name: token
-                  value: "$(tasks.get-token.results.token)"
+                  value: '$(tasks.get-token.results.token)'
 
         workspaces:
           - name: secrets
@@ -1203,7 +1203,7 @@ spec:
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: pipelines-as-code-bindings-retest-comment
@@ -1214,12 +1214,12 @@ metadata:
 spec:
   params:
     - name: trigger_target
-      value: "retest-comment"
+      value: 'retest-comment'
     - name: action
       value: $(body.action)
     - name: event_type
       value: $(header.X-GitHub-Event)
-    - name: "ghe_host"
+    - name: 'ghe_host'
       value: $(header.X-GitHub-Enterprise-Host)
     - name: owner
       value: $(body.repository.owner.login)
@@ -1232,7 +1232,7 @@ spec:
     - name: installation_id
       value: $(body.installation.id)
 ---
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
   name: pipelines-as-code-template-retest-comment
@@ -1251,7 +1251,7 @@ spec:
     - name: installation_id
     - name: trigger_target
     - name: ghe_host
-      default: "api.github.com"
+      default: 'api.github.com'
   resourcetemplates:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
@@ -1331,13 +1331,13 @@ spec:
                 steps:
                   - name: apply-and-launch
                     imagePullPolicy: Always
-                    image: "quay.io/openshift-pipeline/pipelines-as-code:0.1"
+                    image: 'quay.io/openshift-pipeline/pipelines-as-code:0.1'
                     env:
-                    - name: PAC_APPLICATION_NAME
-                      valueFrom:
-                        configMapKeyRef:
-                          name: pipelines-as-code
-                          key: application-name
+                      - name: PAC_APPLICATION_NAME
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipelines-as-code
+                            key: application-name
                     script: |
                       env
                       env|grep PAC_APPLICATION_NAME
@@ -1365,23 +1365,23 @@ spec:
                         --payload-file=/tmp/payload.json --token="$(params.token)" --webhook-type="$(params.event_type)"
               params:
                 - name: action
-                  value: "$(params.action)"
+                  value: '$(params.action)'
                 - name: ghe_host
-                  value: "$(params.ghe_host)"
+                  value: '$(params.ghe_host)'
                 - name: trigger_target
-                  value: "$(params.trigger_target)"
+                  value: '$(params.trigger_target)'
                 - name: event_type
-                  value: "$(params.event_type)"
+                  value: '$(params.event_type)'
                 - name: owner
-                  value: "$(params.owner)"
+                  value: '$(params.owner)'
                 - name: sender
-                  value: "$(params.sender)"
+                  value: '$(params.sender)'
                 - name: repository
-                  value: "$(params.repository)"
+                  value: '$(params.repository)'
                 - name: pull_request_url
-                  value: "$(params.pull_request_url)"
+                  value: '$(params.pull_request_url)'
                 - name: token
-                  value: "$(tasks.get-token.results.token)"
+                  value: '$(tasks.get-token.results.token)'
         workspaces:
           - name: secrets
             secret:
@@ -1401,7 +1401,7 @@ spec:
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: pipelines-as-code-bindings-ok-to-test-comment
@@ -1412,12 +1412,12 @@ metadata:
 spec:
   params:
     - name: action
-      value: "$(body.action)"
+      value: '$(body.action)'
     - name: trigger_target
-      value: "ok-to-test-comment"
+      value: 'ok-to-test-comment'
     - name: event_type
       value: $(header.X-GitHub-Event)
-    - name: "ghe_host"
+    - name: 'ghe_host'
       value: $(header.X-GitHub-Enterprise-Host)
     - name: owner
       value: $(body.repository.owner.login)
@@ -1454,11 +1454,11 @@ metadata:
   labels:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: pipelines-as-code
-    app.kubernetes.io/version: "0.2"
+    app.kubernetes.io/version: '0.2'
   annotations:
-    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/pipelines.minVersion: '0.12.1'
     tekton.dev/tags: github
-    tekton.dev/displayName: "github app token"
+    tekton.dev/displayName: 'github app token'
 spec:
   description: >-
     Retrieve a user token from a GitHub application
@@ -1481,27 +1481,27 @@ spec:
     - name: application_id
       description: The application id for the GitHub application to request a token for.
       type: string
-      default: "api.github.com"
+      default: 'api.github.com'
 
     - name: private_key_path
       description: The key path inside the secret workspace
       type: string
-      default: "private.key"
+      default: 'private.key'
 
     - name: application_id_path
       description: The path for the application id inside the secret workspace
       type: string
-      default: "application_id"
+      default: 'application_id'
 
     - name: token_expiration_minutes
       description: Token expiration time in minutes
       type: string
-      default: "10"
+      default: '10'
 
     - name: github_api_url
       description: GitHUB API URL endpoint
       type: string
-      default: "api.github.com"
+      default: 'api.github.com'
 
   steps:
     - name: get-token

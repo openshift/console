@@ -51,7 +51,7 @@ export const formValues: AddTriggerFormValues = {
     name: '2~github-push',
     resource: {
       kind: 'ClusterTriggerBinding',
-      apiVersion: 'triggers.tekton.dev/v1alpha1',
+      apiVersion: 'triggers.tekton.dev/v1beta1',
       metadata: {
         name: 'github-push',
       },
