@@ -569,6 +569,7 @@
   "VolumeSnapshotClass details": "卷快照类详情",
   "Driver": "驱动",
   "Deletion policy": "删除策略",
+  "Create VolumeSnapshotClass": "创建卷快照类",
   "VolumeSnapshotContent details": "卷快照内容详情",
   "VolumeSnapshot": "卷快照",
   "VolumeSnapshotClass": "卷快照类",

@@ -627,7 +627,7 @@
   "Select query": "クエリーの選択",
   "Hide PromQL": "PromQL の非表示",
   "Show PromQL": "PromQL の表示",
-  "Dashboards": "ダッシュボード",
+  "Dashboards": "Dashboard",
   "Metrics": "Metrics",
   "Silences": "サイレンス",
   "Events": "イベント",
