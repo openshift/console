@@ -151,7 +151,12 @@ const PipelineRunRowWithoutTaskRuns: React.FC<PipelineRunRowWithoutTaskRunsProps
 
 const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> = React.memo(
   ({ obj, operatorVersion }) => {
-    const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(obj.metadata.namespace, obj.metadata.name);
+    const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
+      obj.metadata.namespace,
+      obj.metadata.name,
+      undefined,
+      `${obj.metadata.namespace}-${obj.metadata.name}`,
+    );
     return (
       <PipelineRunRowTable
         obj={obj}

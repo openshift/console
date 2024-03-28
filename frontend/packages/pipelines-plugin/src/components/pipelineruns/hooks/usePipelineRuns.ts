@@ -25,6 +25,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
     limit?: number;
     name?: string;
   },
+  cacheKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
   const etcdRunsRef = React.useRef<Kind[]>([]);
   const optionsMemo = useDeepCompareMemoize(options);
@@ -96,7 +97,12 @@ const useRuns = <Kind extends K8sResourceCommon>(
   const [trResources, trLoaded, trError, trGetNextPage] = (groupVersionKind ===
     PipelineRunGroupVersionKind
     ? useTRPipelineRuns
-    : useTRTaskRuns)(queryTr ? namespace : null, trOptions) as [[], boolean, unknown, GetNextPage];
+    : useTRTaskRuns)(queryTr ? namespace : null, trOptions, cacheKey) as [
+    [],
+    boolean,
+    unknown,
+    GetNextPage,
+  ];
 
   return React.useMemo(() => {
     const rResources =
@@ -145,8 +151,9 @@ export const useTaskRuns = (
     selector?: Selector;
     limit?: number;
   },
+  cacheKey?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] =>
-  useRuns<TaskRunKind>(TaskRunGroupVersionKind, namespace, options);
+  useRuns<TaskRunKind>(TaskRunGroupVersionKind, namespace, options, cacheKey);
 
 export const usePipelineRun = (
   namespace: string,

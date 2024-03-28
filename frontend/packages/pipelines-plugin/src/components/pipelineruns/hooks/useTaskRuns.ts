@@ -9,6 +9,7 @@ export const useTaskRuns = (
   namespace: string,
   pipelineRunName?: string,
   taskName?: string,
+  cacheKey?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] => {
   const selector: Selector = React.useMemo(() => {
     if (pipelineRunName) {
@@ -24,6 +25,7 @@ export const useTaskRuns = (
     selector && {
       selector,
     },
+    cacheKey,
   );
 
   const sortedTaskRuns = React.useMemo(
