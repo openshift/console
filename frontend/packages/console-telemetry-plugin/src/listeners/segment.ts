@@ -110,12 +110,18 @@ export const eventListener: TelemetryEventListener = async (
   eventType: string,
   properties?: any,
 ) => {
+  if (TELEMETRY_DISABLED || !apiKey) {
+    // eslint-disable-next-line no-console
+    console.debug(
+      'console-telemetry-plugin: telemetry disabled - ignoring telemetry event:',
+      eventType,
+      properties,
+    );
+    return;
+  }
   if (TELEMETRY_DEBUG) {
     // eslint-disable-next-line no-console
     console.debug('console-telemetry-plugin: received telemetry event:', eventType, properties);
-    return;
-  }
-  if (TELEMETRY_DISABLED || !apiKey) {
     return;
   }
   switch (eventType) {
