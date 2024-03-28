@@ -25,7 +25,7 @@ import {
   AuthenticationKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { RH_OPERATOR_SUPPORT_POLICY_LINK, isClusterExternallyManaged } from '@console/shared';
+import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import { DefaultCatalogSource } from '../../const';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
@@ -363,7 +363,6 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             <div className="co-catalog-page__overlay-description">
               {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) &&
                 showWarn &&
-                !isClusterExternallyManaged() &&
                 infraFeatures?.find((i) => i === InfraFeatures.TokenAuth) && (
                   <Alert
                     isInline

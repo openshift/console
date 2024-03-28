@@ -50,7 +50,6 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
-import { isClusterExternallyManaged } from '@console/shared';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
@@ -769,7 +768,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         )}
       />
       <div className="co-m-pane__body">
-        {tokenizedAuth === 'AWS' && !isClusterExternallyManaged() && showSTSWarn && (
+        {tokenizedAuth === 'AWS' && showSTSWarn && (
           <Alert
             isInline
             variant="warning"
@@ -802,7 +801,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         <div className="row">
           <div className="col-xs-6">
             <>
-              {tokenizedAuth === 'AWS' && !isClusterExternallyManaged() && (
+              {tokenizedAuth === 'AWS' && (
                 <div className="form-group">
                   <fieldset>
                     <label className="co-required">{t('olm~role ARN')}</label>
