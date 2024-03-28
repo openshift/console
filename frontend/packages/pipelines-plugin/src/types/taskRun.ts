@@ -51,3 +51,15 @@ export const TaskRunGroupVersionKind: K8sGroupVersionKind = {
   version: 'v1',
   kind: 'TaskRun',
 };
+
+export type PipelineRunStatusType = {
+  Completed?: number;
+  Failed?: number;
+  Skipped?: number;
+  Cancelled?: number;
+  Incomplete?: number;
+  PipelineNotStarted?: number;
+  Pending?: number;
+  Running?: number;
+  Succeeded?: number;
+};

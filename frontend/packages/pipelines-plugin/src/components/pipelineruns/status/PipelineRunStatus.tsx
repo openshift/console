@@ -25,7 +25,7 @@ const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({
 }) => {
   const { t } = useTranslation();
   return pipelineRun ? (
-    taskRuns.length > 0 || (taskRunsLoaded && taskRuns.length === 0) ? (
+    taskRunsLoaded ? (
       <PipelineResourceStatus status={status} title={title}>
         <StatusPopoverContent
           logDetails={getPLRLogSnippet(pipelineRun, taskRuns)}

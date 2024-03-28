@@ -45,6 +45,8 @@ export interface TaskStatus {
   Cancelled: number;
   Failed: number;
   Skipped: number;
+  Completed?: number;
+  Cancelling?: number;
 }
 
 export const getLatestRun = (runs: PipelineRunKind[], field: string): PipelineRunKind => {
@@ -306,6 +308,16 @@ export const shouldHidePipelineRunStop = (
       pipelineRunFilterReducer(pipelineRun) === ComputedStatus.Running)
   );
 
+export const shouldHidePipelineRunStopForTaskRunStatus = (
+  pipelineRun: PipelineRunKind,
+  taskRunStatusObj: TaskStatus,
+): boolean =>
+  !(
+    pipelineRun &&
+    (taskRunStatusObj?.Running > 0 ||
+      pipelineRunFilterReducer(pipelineRun) === ComputedStatus.Running)
+  );
+
 export const shouldHidePipelineRunCancel = (
   pipelineRun: PipelineRunKind,
   taskRuns: TaskRunKind[],
@@ -313,5 +325,15 @@ export const shouldHidePipelineRunCancel = (
   !(
     pipelineRun &&
     countRunningTasks(pipelineRun, taskRuns) > 0 &&
+    pipelineRunFilterReducer(pipelineRun) !== ComputedStatus.Cancelled
+  );
+
+export const shouldHidePipelineRunCancelForTaskRunStatus = (
+  pipelineRun: PipelineRunKind,
+  taskRunStatusObj: TaskStatus,
+): boolean =>
+  !(
+    pipelineRun &&
+    taskRunStatusObj?.Running > 0 &&
     pipelineRunFilterReducer(pipelineRun) !== ComputedStatus.Cancelled
   );
