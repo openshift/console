@@ -2,6 +2,8 @@ package sessions
 
 import (
 	"fmt"
+	"reflect"
+	"strconv"
 	"testing"
 	"time"
 
@@ -35,24 +37,15 @@ func TestSessions(t *testing.T) {
 	}
 
 	for _, ft := range fakeTokens {
-		rawToken := createTestIDToken([]byte(ft.claims))
+		rawToken := createTestIDToken(ft.claims)
 		tokenResp := &oauth2.Token{RefreshToken: rawToken}
 		tokenResp = tokenResp.WithExtra(map[string]interface{}{"id_token": rawToken})
 
-		ls, err := NewLoginState(newTestVerifier([]byte(ft.claims)), tokenResp)
-		if err != nil {
-			t.Fatalf("newLoginState error: %v", err)
-		}
-
-		err = ss.AddSession(ls)
+		_, err := ss.AddSession(newTestVerifier(ft.claims), tokenResp)
 		if err != nil {
 			t.Fatalf("addSession error: %v", err)
 		}
 
-		sessionToken := ls.sessionToken
-		if sessionToken == "" {
-			t.Fatal("sessionToken is empty!")
-		}
 		checkSessions(t, ss)
 	}
 
@@ -77,5 +70,60 @@ func TestSessions(t *testing.T) {
 
 	if len(ss.byAge) != 2 {
 		t.Fatal("ss.byAge != 2")
+	}
+}
+
+func TestSessionStore_GetSession(t *testing.T) {
+	testStore := NewServerSessionStore(10)
+	for i := 0; i < 10; i++ {
+		sessionToken := strconv.Itoa(i)
+		testStore.byToken[sessionToken] = &LoginState{sessionToken: sessionToken}
+	}
+
+	refreshedSession := testStore.byToken["5"]
+	refreshedSession.refreshToken = "refresh-new"
+	testStore.byRefreshToken["refresh-old"] = refreshedSession
+
+	tests := []struct {
+		name         string
+		sessionToken string
+		refreshToken string
+		want         *LoginState
+	}{
+		{
+			name:         "cache miss",
+			sessionToken: "10",
+			refreshToken: "2",
+			want:         nil,
+		},
+		{
+			name:         "session hit",
+			sessionToken: "2",
+			want:         testStore.byToken["2"],
+		},
+		{
+			name:         "session miss, refresh hit",
+			sessionToken: "10",
+			refreshToken: "refresh-old",
+			want:         testStore.byToken["5"],
+		},
+		{
+			name:         "no session, refresh hit",
+			refreshToken: "refresh-old",
+			want:         testStore.byToken["5"],
+		},
+		{
+			name:         "session hit priority",
+			sessionToken: "4",
+			refreshToken: "refresh-old",
+			want:         testStore.byToken["4"],
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := testStore.GetSession(tt.sessionToken, tt.refreshToken); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SessionStore.GetSession() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

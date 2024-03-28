@@ -11,6 +11,7 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/openshift/console/pkg/auth/sessions"
+	"github.com/openshift/console/pkg/serverutils/asynccache"
 )
 
 type oauth2ConfigConstructor func(oauth2.Endpoint) *oauth2.Config
@@ -18,7 +19,7 @@ type oauth2ConfigConstructor func(oauth2.Endpoint) *oauth2.Config
 type oidcAuth struct {
 	*oidcConfig
 
-	providerCache *AsyncCache[*oidc.Provider]
+	providerCache *asynccache.AsyncCache[*oidc.Provider]
 
 	// This preserves the old logic of associating users with session keys
 	// and requires smart routing when running multiple backend instances.
@@ -38,7 +39,7 @@ type oidcConfig struct {
 
 func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig) (*oidcAuth, error) {
 	// NewProvider attempts to do OIDC Discovery
-	providerCache, err := NewAsyncCache[*oidc.Provider](
+	providerCache, err := asynccache.NewAsyncCache[*oidc.Provider](
 		ctx, 5*time.Minute,
 		func(cacheCtx context.Context) (*oidc.Provider, error) {
 			oidcCtx := oidc.ClientContext(cacheCtx, c.getClient())
@@ -60,12 +61,8 @@ func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStor
 }
 
 func (o *oidcAuth) login(w http.ResponseWriter, r *http.Request, token *oauth2.Token) (*sessions.LoginState, error) {
-
-	ls, err := sessions.NewLoginState(o.verify, token)
+	ls, err := o.sessions.AddSession(w, r, o.verify, token)
 	if err != nil {
-		return nil, err
-	}
-	if err := o.sessions.AddSession(w, r, ls); err != nil {
 		return nil, err
 	}
 
@@ -109,10 +106,7 @@ func (o *oidcAuth) verify(ctx context.Context, rawIDToken string) (*oidc.IDToken
 }
 
 func (o *oidcAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
-	// The returned login state can be nil even if err == nil.
-	if ls, _ := o.getLoginState(w, r); ls != nil {
-		o.sessions.DeleteSession(w, r, ls.SessionToken()) // TODO: could we just use the session token from the cookie instead of trying to retrieving the session first?
-	}
+	o.sessions.DeleteSession(w, r)
 }
 
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
