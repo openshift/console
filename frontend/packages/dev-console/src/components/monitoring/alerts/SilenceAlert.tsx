@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { Switch } from '@patternfly/react-core';
 import * as _ from 'lodash';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useDispatch } from 'react-redux';
 import { Rule, RuleStates } from '@console/dynamic-plugin-sdk';
 import { alertingSetRules } from '@console/internal/actions/observe';

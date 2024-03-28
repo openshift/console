@@ -1,8 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useSelector } from 'react-redux';
 import { Location } from 'react-router-dom-v5-compat';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';

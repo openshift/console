@@ -10,8 +10,6 @@ import {
 } from '@patternfly/react-core/deprecated';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 
 import { dashboardsSetEndTime, dashboardsSetTimespan } from '../../../actions/observe';
@@ -31,10 +29,10 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
   const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
   const [isModalOpen, , setModalOpen, setModalClosed] = useBoolean(false);
 
-  const timespan = useSelector(({ observe }: RootState) =>
+  const timespan = useSelector<RootState, number>(({ observe }) =>
     observe.getIn(['dashboards', activePerspective, 'timespan']),
   );
-  const endTime = useSelector(({ observe }: RootState) =>
+  const endTime = useSelector<RootState, number>(({ observe }) =>
     observe.getIn(['dashboards', activePerspective, 'endTime']),
   );
 

@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useSelector } from 'react-redux';
 import { FeatureSubStore } from '../app/features';
 

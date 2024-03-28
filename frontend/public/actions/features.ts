@@ -1,4 +1,4 @@
-import { Dispatch } from 'react-redux';
+import { Dispatch } from 'redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 

@@ -1,7 +1,4 @@
 import * as React from 'react';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useDispatch } from 'react-redux';
 import { alertingLoaded } from '@console/internal/actions/observe';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';

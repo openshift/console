@@ -1,7 +1,5 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { TableGridBreakpoint, SortByDirection, OnSelect } from '@patternfly/react-table';
 import {

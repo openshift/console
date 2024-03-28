@@ -1,4 +1,4 @@
-import { Dispatch } from 'react-redux';
+import { Dispatch } from 'redux';
 import { action, ActionType } from 'typesafe-actions';
 import { RootState } from '@console/internal/redux';
 import { isCloudShellExpanded, isCloudShellActive } from '../reducers/cloud-shell-selectors';
