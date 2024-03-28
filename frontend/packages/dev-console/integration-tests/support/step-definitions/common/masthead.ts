@@ -5,7 +5,5 @@ When('user clicks on Application button in Masthead', () => {
 });
 
 Then('{string} entry is present in Application menu in Masthead', (entry: string) => {
-  cy.byTestID('application-launcher-item')
-    .find('.pf-v5-c-app-launcher__menu-item-text')
-    .should('have.text', entry);
+  cy.byTestID('application-launcher-item').should('have.text', entry);
 });
