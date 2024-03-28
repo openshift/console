@@ -44,6 +44,7 @@ import {
 } from '@console/internal/module/k8s';
 import {
   getName,
+  getStatus,
   getUID,
   getLabels,
   getNodeMachineNameAndNamespace,
@@ -98,6 +99,10 @@ const nodeColumnInfo = Object.freeze({
   cpu: {
     classes: '',
     id: 'cpu',
+  },
+  cpuarch: {
+    classes: '',
+    id: 'cpuarch',
   },
   filesystem: {
     classes: '',
@@ -174,6 +179,13 @@ const getColumns = (t: TFunction): TableColumn<NodeRowItem>[] => [
     sort: sortWithCSRResource(nodeCPU, 0),
     transforms: [sortable],
     props: { className: nodeColumnInfo.cpu.classes },
+  },
+  {
+    title: t('console-app~CPU Architecture'),
+    id: nodeColumnInfo.cpuarch.id,
+    sort: sortWithCSRResource(nodeCPU, 0),
+    transforms: [sortable],
+    props: { className: nodeColumnInfo.cpuarch.classes },
   },
   {
     title: t('console-app~Filesystem'),
@@ -259,6 +271,7 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
           totalCores,
         })
       : '-';
+  const cpuarch = getStatus(node)?.nodeInfo?.architecture;
   const usedStrg = metrics?.usedStorage?.[nodeName];
   const totalStrg = metrics?.totalStorage?.[nodeName];
   const storage =
@@ -322,6 +335,13 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
         activeColumnIDs={activeColumnIDs}
       >
         {cpu}
+      </TableData>
+      <TableData
+        className={nodeColumnInfo.cpuarch.classes}
+        id={nodeColumnInfo.cpuarch.id}
+        activeColumnIDs={activeColumnIDs}
+      >
+        {cpuarch}
       </TableData>
       <TableData
         className={nodeColumnInfo.filesystem.classes}
