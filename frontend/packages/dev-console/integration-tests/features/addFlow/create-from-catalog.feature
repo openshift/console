@@ -11,10 +11,11 @@ Feature: Create Application from Catalog file
         @regression
         Scenario: Create the workload using Builder Image: A-01-TC01
             Given user is at Developer Catalog page
-             When user selects "Builder Images" option from Type section
+             When user selects "Builder Image" option from Type section
               And user searches and selects Builder Image card "Node.js" from catalog page
               And user clicks Create Application button on side bar
               And user enters Git Repo url in s2i builder image page as "https://github.com/sclorg/nodejs-ex.git"
+              And user selects resource type as "Deployment"
               And user enters Application name as "builder-app"
               And user enters workload name as "builder"
               And user clicks create button

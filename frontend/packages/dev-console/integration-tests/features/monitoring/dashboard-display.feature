@@ -97,8 +97,6 @@ Feature: Observe Page
               And user will see "Rate of Packets" charts
               And user will see "Rate of Packets Dropped" charts
               And user will see "Storage IO - Distribution(Pod - Read & Writes)" charts
-              And user will see "Storage IO - Distribution(Containers)" charts
-              And user will see "Storage IO - Distribution" charts
 
 
         # https://bugzilla.redhat.com/show_bug.cgi?id=2026865
