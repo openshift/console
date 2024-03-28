@@ -48,6 +48,7 @@ export enum ActionType {
   SetUtilizationDurationSelectedKey = 'SetUtilizationDurationSelectedKey',
   SetUtilizationDurationEndTime = 'SetUtilizationDurationEndTime',
   SetShowOperandsInAllNamespaces = 'setShowOperandsInAllNamespaces',
+  SetHttpHeaders = 'setHttpHeaders',
 }
 
 type MetricValuesByName = {
@@ -300,11 +301,12 @@ export const setUtilizationDurationSelectedKey = (key) =>
   action(ActionType.SetUtilizationDurationSelectedKey, { key });
 export const setUtilizationDurationEndTime = (endTime) =>
   action(ActionType.SetUtilizationDurationEndTime, { endTime });
-
 export const setShowOperandsInAllNamespaces = (value: boolean) => {
   return action(ActionType.SetShowOperandsInAllNamespaces, { value });
 };
-
+export const setHttpHeaders = (value: any) => {
+  return action(ActionType.SetHttpHeaders, { value });
+};
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
   setCurrentLocation,
@@ -332,6 +334,7 @@ const uiActions = {
   setUtilizationDuration,
   setUtilizationDurationSelectedKey,
   setUtilizationDurationEndTime,
+  setHttpHeaders,
 };
 
 export type UIAction = Action<typeof uiActions>;

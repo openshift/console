@@ -46,3 +46,28 @@ export const getConsoleRequestHeaders = (): ConsoleRequestHeaders => {
 
   return headers;
 };
+
+export const parseData = async (response) => {
+  const text = await response.text();
+  const isPlainText = response.headers.get('Content-Type') === 'text/plain';
+  if (!text) {
+    return isPlainText ? '' : {};
+  }
+  return isPlainText || !response.ok ? text : JSON.parse(text);
+};
+
+/**
+ * This function takes a response object, waits for it to resolve,
+ * converts the response to JSON, and then returns the data, headers, and status.
+ * @param {Response} response - The response object to process.
+ * @return {Promise<{ data: any, headers: Headers, status: number }>} - A promise that resolves to an object containing the data, headers, and status of the response.
+ */
+export const getResponseDetails = async (
+  response: Response,
+): Promise<{ data: any; headers: Headers; status: number }> => {
+  const res = await response;
+  const data = await parseData(res);
+  const { headers } = res;
+  const { status } = res;
+  return { data, headers, status };
+};

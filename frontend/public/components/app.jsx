@@ -337,6 +337,28 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   return null;
 });
 
+const WarningPolicyAlert = React.memo(function WarningPolicyAlert() {
+  const { t } = useTranslation();
+  const toastContext = useToast();
+  const response = useSelector((state) => state.UI.get('httpHeaders'));
+  const headers = Object.fromEntries(response?.headers || []);
+
+  if (headers?.warning) {
+    toastContext.addToast({
+      variant: AlertVariant.warning,
+      title: t('public~Warning Policy'),
+      content: t(`This {{kind}} {{ name }} violates policy {{warning}}`, {
+        kind: response?.data?.kind,
+        name: response?.data?.metadata?.name,
+        warning: headers.warning,
+      }),
+      timeout: true,
+      dismissible: true,
+    });
+  }
+  return null;
+});
+
 const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const toastContext = useToast();
   const { t } = useTranslation();
@@ -597,6 +619,7 @@ graphQLReady.onReady(() => {
           >
             <ToastProvider>
               <PollConsoleUpdates />
+              <WarningPolicyAlert />
               <AppRouter />
             </ToastProvider>
           </AppInitSDK>

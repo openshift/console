@@ -33,44 +33,45 @@
 31.  [consoleFetchJSON](#consolefetchjson)
 32.  [consoleFetchText](#consolefetchtext)
 33.  [getConsoleRequestHeaders](#getconsolerequestheaders)
-34.  [k8sGetResource](#k8sgetresource)
-35.  [k8sCreateResource](#k8screateresource)
-36.  [k8sUpdateResource](#k8supdateresource)
-37.  [k8sPatchResource](#k8spatchresource)
-38.  [k8sDeleteResource](#k8sdeleteresource)
-39.  [k8sListResource](#k8slistresource)
-40.  [k8sListResourceItems](#k8slistresourceitems)
-41.  [getAPIVersionForModel](#getapiversionformodel)
-42.  [getGroupVersionKindForResource](#getgroupversionkindforresource)
-43.  [getGroupVersionKindForModel](#getgroupversionkindformodel)
-44.  [StatusPopupSection](#statuspopupsection)
-45.  [StatusPopupItem](#statuspopupitem)
-46.  [Overview](#overview)
-47.  [OverviewGrid](#overviewgrid)
-48.  [InventoryItem](#inventoryitem)
-49.  [InventoryItemTitle](#inventoryitemtitle)
-50.  [InventoryItemBody](#inventoryitembody)
-51.  [InventoryItemStatus](#inventoryitemstatus)
-52.  [InventoryItemLoading](#inventoryitemloading)
-53.  [useFlag](#useflag)
-54.  [CodeEditor](#codeeditor)
-55.  [ResourceYAMLEditor](#resourceyamleditor)
-56.  [ResourceEventStream](#resourceeventstream)
-57.  [usePrometheusPoll](#useprometheuspoll)
-58.  [Timestamp](#timestamp)
-59.  [useModal](#usemodal)
-60.  [ActionServiceProvider](#actionserviceprovider)
-61.  [NamespaceBar](#namespacebar)
-62.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
-63.  [QueryBrowser](#querybrowser)
-64.  [useAnnotationsModal](#useannotationsmodal)
-65.  [useDeleteModal](#usedeletemodal)
-66.  [useLabelsModal](#uselabelsmodal)
-67.  [useActiveNamespace](#useactivenamespace)
-68. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-69. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-70. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
-71. [DEPRECATED] [YAMLEditor](#yamleditor)
+34.  [getResponseDetails](#getresponsedetails)
+35.  [k8sGetResource](#k8sgetresource)
+36.  [k8sCreateResource](#k8screateresource)
+37.  [k8sUpdateResource](#k8supdateresource)
+38.  [k8sPatchResource](#k8spatchresource)
+39.  [k8sDeleteResource](#k8sdeleteresource)
+40.  [k8sListResource](#k8slistresource)
+41.  [k8sListResourceItems](#k8slistresourceitems)
+42.  [getAPIVersionForModel](#getapiversionformodel)
+43.  [getGroupVersionKindForResource](#getgroupversionkindforresource)
+44.  [getGroupVersionKindForModel](#getgroupversionkindformodel)
+45.  [StatusPopupSection](#statuspopupsection)
+46.  [StatusPopupItem](#statuspopupitem)
+47.  [Overview](#overview)
+48.  [OverviewGrid](#overviewgrid)
+49.  [InventoryItem](#inventoryitem)
+50.  [InventoryItemTitle](#inventoryitemtitle)
+51.  [InventoryItemBody](#inventoryitembody)
+52.  [InventoryItemStatus](#inventoryitemstatus)
+53.  [InventoryItemLoading](#inventoryitemloading)
+54.  [useFlag](#useflag)
+55.  [CodeEditor](#codeeditor)
+56.  [ResourceYAMLEditor](#resourceyamleditor)
+57.  [ResourceEventStream](#resourceeventstream)
+58.  [usePrometheusPoll](#useprometheuspoll)
+59.  [Timestamp](#timestamp)
+60.  [useModal](#usemodal)
+61.  [ActionServiceProvider](#actionserviceprovider)
+62.  [NamespaceBar](#namespacebar)
+63.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
+64.  [QueryBrowser](#querybrowser)
+65.  [useAnnotationsModal](#useannotationsmodal)
+66.  [useDeleteModal](#usedeletemodal)
+67.  [useLabelsModal](#uselabelsmodal)
+68.  [useActiveNamespace](#useactivenamespace)
+69. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+70. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+71. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+72. [DEPRECATED] [YAMLEditor](#yamleditor)
 
 ---
 
@@ -1255,6 +1256,26 @@ A function that creates impersonation headers for API requests using current red
 ### Returns
 
 an object containing the appropriate impersonation requst headers, based on redux state
+
+
+---
+
+## `getResponseDetails`
+
+### Summary 
+
+This function takes a response object, waits for it to resolve,<br/>converts the response to JSON, and then returns the data, headers, and status.
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `response` | The response object to process.@return {Promise<{ data: any, headers: Headers, status: number }>} - A promise that resolves to an object containing the data, headers, and status of the response.
+ |
+
 
 
 ---
