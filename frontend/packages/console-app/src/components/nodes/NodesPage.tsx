@@ -404,12 +404,14 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     {
       key: 'usedStorage',
       query:
-        'sum by (instance) ((max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"})) - (max by (device, instance) (node_filesystem_free_bytes{device=~"/.*"})))',
+        'sum by (instance) ((max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"})) - (max by (device, instance) (node_filesystem_free_bytes{device=~"/.*"}))) or ' +
+        'sum by (instance) ((max by (volume, instance) (windows_logical_disk_size_bytes)) - (max by (volume, instance) (windows_logical_disk_free_bytes)))',
     },
     {
       key: 'totalStorage',
       query:
-        'sum by (instance) (max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"}))',
+        'sum by (instance) (max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"})) or' +
+        'sum by (instance) (max by (volume, instance) (windows_logical_disk_size_bytes))',
     },
     {
       key: 'cpu',

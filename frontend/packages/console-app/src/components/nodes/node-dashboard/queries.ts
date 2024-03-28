@@ -37,10 +37,11 @@ const queries = {
   [NodeQueries.MEMORY_TOTAL]: _.template(`node_memory_MemTotal_bytes{instance='<%= node %>'}`),
   [NodeQueries.POD_COUNT]: _.template(`kubelet_running_pods{instance=~'<%= ipAddress %>:.*'}`),
   [NodeQueries.FILESYSTEM_USAGE]: _.template(
-    `sum(max by (device) (node_filesystem_size_bytes{instance='<%= node %>', device=~"/.*"})) - sum(max by (device) (node_filesystem_avail_bytes{instance='<%= node %>', device=~"/.*"}))`,
+    `sum(max by (device) (node_filesystem_size_bytes{instance='<%= node %>', device=~"/.*"})) - sum(max by (device) (node_filesystem_avail_bytes{instance='<%= node %>', device=~"/.*"})) or
+    sum (max by (volume) (windows_logical_disk_size_bytes{instance='<%= node %>'})) - sum(max by (volume) (windows_logical_disk_free_bytes{instance='<%= node %>'}))`,
   ),
   [NodeQueries.FILESYSTEM_TOTAL]: _.template(
-    `sum(max by (device) (node_filesystem_size_bytes{instance='<%= node %>', device=~"/.*"}))`,
+    `sum(max by (device) (node_filesystem_size_bytes{instance='<%= node %>', device=~"/.*"})) or sum(max by (volume) (windows_logical_disk_size_bytes{instance='<%= node %>'}))`,
   ),
   [NodeQueries.NETWORK_IN_UTILIZATION]: _.template(
     `instance:node_network_receive_bytes:rate:sum{instance='<%= node %>'}`,
