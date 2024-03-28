@@ -1,1 +1,1 @@
-export * from './useLightspeed';
+export * from './useHideLightspeed';

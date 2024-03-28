@@ -604,17 +604,17 @@
   {
     "type": "console.user-preference/item",
     "properties": {
-      "id": "console.showLightspeedButton",
+      "id": "console.hideLightspeedButton",
       "label": "%console-app~Lightspeed%",
       "groupId": "general",
-      "description": "%console-app~Show or hide the Lightspeed button.%",
+      "description": "%console-app~Hide or show the Lightspeed button.%",
       "field": {
         "type": "checkbox",
-        "userSettingsKey": "console.showLightspeedButton",
-        "label": "%console-app~Display Lightspeed button%",
+        "userSettingsKey": "console.hideLightspeedButton",
+        "label": "%console-app~Hide Lightspeed button%",
         "trueValue": true,
         "falseValue": false,
-        "defaultValue": true
+        "defaultValue": false
       },
       "insertAfter": "console.preferredCreateEditMethod"
     }
