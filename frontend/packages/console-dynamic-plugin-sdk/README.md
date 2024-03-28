@@ -103,6 +103,21 @@ For backwards compatibility, Console also provides the following PatternFly **4.
 Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
 in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
 
+### Changes in shared modules
+
+This section documents notable changes in the Console provided shared modules across Console versions.
+
+#### Console 4.14.x
+
+- Added `react-router-dom-v5-compat` to allow plugins to migrate to React Router v6. Check the
+  [Official v5 to v6 Migration Guide](https://github.com/remix-run/react-router/discussions/8753)
+  (section "Migration Strategy" and beyond) for details.
+
+#### Console 4.15.x
+
+- The Console application now uses React Router v6 code internally. Plugins that only target OpenShift
+  Console 4.15 or later should fully upgrade to React Router v6 via `react-router-dom-v5-compat`.
+
 ### PatternFly dynamic modules
 
 Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package (1.0.0 and higher) include
@@ -283,18 +298,57 @@ initiated requests when the MIME type of requested asset is not valid.
 **Important!** Make sure to provide valid JavaScript MIME type via the `Content-Type` response header
 for all assets served by your plugin web server.
 
-## Plugin development
+## Local plugin development
 
-Run Bridge locally and instruct it to proxy e.g. `/api/plugins/console-demo-plugin` requests directly
-to your local plugin asset server (web server hosting the plugin's generated assets):
+Clone Console repo and build the Bridge server by running `build-backend.sh` script.
+
+Run the following commands to log in as `kubeadmin` user and start a local Bridge server instance.
+The `-plugins` argument tells Bridge to force load your plugin upon Console application startup.
+The `-i18n-namespaces` argument registers the corresponding i18n namespace for your plugin in Console.
 
 ```sh
-# Note that the plugin's base URL should have a trailing slash
-./bin/bridge -plugins console-demo-plugin=http://localhost:9001/
+oc login https://example.openshift.com:6443 -u kubeadmin -p example-password
+source ./contrib/oc-environment.sh
+# Note: the plugin web server URL should include a trailing slash
+./bin/bridge -plugins foo-plugin=http://localhost:9001/ -i18n-namespaces=plugin__foo-plugin
 ```
 
-Your plugin should start loading automatically upon Console application startup. Inspect the value of
-`window.SERVER_FLAGS.consolePlugins` to see the list of plugins which Console loads upon its startup.
+To work with multiple plugins, provide multiple arguments to Bridge server:
+
+```sh
+./bin/bridge \
+  -plugins foo-plugin=http://localhost:9001/ -i18n-namespaces=plugin__foo-plugin \
+  -plugins bar-plugin=http://localhost:9002/ -i18n-namespaces=plugin__bar-plugin
+```
+
+Once the Bridge server is running, start your plugin web server(s), and ensure that plugin assets can
+be fetched via `/api/plugins/<plugin-name>` Bridge endpoint. For example, the following URLs should
+provide the same content:
+
+- http://localhost:9000/api/plugins/foo-plugin/plugin-manifest.json
+- http://localhost:9001/plugin-manifest.json
+
+Open the Console in your web browser and inspect the value of `window.SERVER_FLAGS.consolePlugins` to see the
+list of dynamic plugins the Console loads at runtime. For local development, this should only
+include plugin(s) listed via `-plugins` Bridge argument.
+
+### Using local Console plugin SDK code
+
+If you need to make modifications to Console dynamic plugin SDK code and reflect them in your
+plugin builds, follow these steps:
+
+1. Make changes in Console repo. Run `yarn build` in `frontend/packages/console-dynamic-plugin-sdk`
+   directory to rebuild plugin SDK files at `frontend/packages/console-dynamic-plugin-sdk/dist`.
+2. Make sure your plugin's `package.json` dependencies refer to local plugin SDK files, for example:
+```json
+"@openshift-console/dynamic-plugin-sdk": "file:../openshift/console/frontend/packages/console-dynamic-plugin-sdk/dist/core",
+"@openshift-console/dynamic-plugin-sdk-webpack": "file:../openshift/console/frontend/packages/console-dynamic-plugin-sdk/dist/webpack",
+```
+3. Refresh your plugin's `node_modules` whenever you change local plugin SDK files:
+```sh
+rm -rf node_modules/@openshift-console && yarn --check-files
+```
+4. Build your plugin as usual. The build should now use the current local plugin SDK files.
 
 ## Plugin detection and management
 
