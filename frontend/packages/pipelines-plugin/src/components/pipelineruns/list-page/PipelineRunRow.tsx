@@ -151,7 +151,12 @@ const PipelineRunRowWithoutTaskRuns: React.FC<PipelineRunRowWithoutTaskRunsProps
 
 const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> = React.memo(
   ({ obj, operatorVersion }) => {
-    const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(obj.metadata.namespace, obj.metadata.name);
+    const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
+      obj.metadata.namespace,
+      obj.metadata.name,
+      undefined,
+      `${obj.metadata.namespace}-${obj.metadata.name}`,
+    );
     return (
       <PipelineRunRowTable
         obj={obj}
@@ -166,10 +171,10 @@ const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> = Re
 
 const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, customData }) => {
   const { operatorVersion } = customData;
-  const pieplineRunStatus = pipelineRunStatus(obj);
+  const plrStatus = pipelineRunStatus(obj);
   if (
-    pieplineRunStatus === ComputedStatus.Cancelled ||
-    pieplineRunStatus === ComputedStatus.Failed
+    (plrStatus === ComputedStatus.Cancelled || plrStatus === ComputedStatus.Failed) &&
+    (obj?.status?.childReferences ?? []).length > 0
   ) {
     return <PipelineRunRowWithTaskRuns obj={obj} operatorVersion={operatorVersion} />;
   }

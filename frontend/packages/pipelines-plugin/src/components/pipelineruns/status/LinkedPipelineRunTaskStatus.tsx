@@ -26,15 +26,22 @@ const LinkedPipelineRunTaskStatus: React.FC<LinkedPipelineRunTaskStatusProps> = 
   taskRunStatusObj,
 }) => {
   const { t } = useTranslation();
-  const pipelineStatus = taskRunStatusObj ? (
-    <PipelineBarsForTaskRunsStatus taskRunStatusObj={taskRunStatusObj} />
-  ) : taskRunsLoaded && taskRuns?.length > 0 ? (
-    <PipelineBars key={pipelineRun.metadata?.name} pipelinerun={pipelineRun} taskRuns={taskRuns} />
-  ) : taskRunsLoaded && taskRuns?.length === 0 && !taskRunStatusObj ? (
-    <>{DASH}</>
-  ) : (
-    <LoadingInline />
-  );
+  const pipelineStatus =
+    taskRunStatusObj && Object.values(taskRunStatusObj)?.every((value) => value === 0) ? (
+      <>{DASH}</>
+    ) : taskRunStatusObj ? (
+      <PipelineBarsForTaskRunsStatus taskRunStatusObj={taskRunStatusObj} />
+    ) : taskRunsLoaded && taskRuns?.length > 0 ? (
+      <PipelineBars
+        key={pipelineRun.metadata?.name}
+        pipelinerun={pipelineRun}
+        taskRuns={taskRuns}
+      />
+    ) : taskRunsLoaded && taskRuns?.length === 0 && !taskRunStatusObj ? (
+      <>{DASH}</>
+    ) : (
+      <LoadingInline />
+    );
 
   if (pipelineRun.metadata?.name && pipelineRun.metadata?.namespace) {
     return (
