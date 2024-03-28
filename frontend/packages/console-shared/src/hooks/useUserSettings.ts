@@ -77,19 +77,11 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
     return hash.digest('hex');
   };
 
-  // User and impersonate
   const userUid = useSelector((state: RootState) => {
     const impersonateName = getImpersonate(state)?.name;
-    if (impersonateName) {
-      return impersonateName;
-    }
     const uid = getUser(state)?.uid;
-    if (uid) {
-      return uid;
-    }
     const username = hashNameOrKubeadmin(getUser(state)?.username);
-
-    return username || '';
+    return impersonateName ?? uid ?? username ?? '';
   });
 
   const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
