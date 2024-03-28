@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/oauth2"
 	"k8s.io/klog"
 )
 
@@ -36,11 +37,16 @@ func NewServerSessionStore(maxSessions int) *SessionStore {
 }
 
 // addSession sets sessionToken to a random value and adds loginState to session data structures
-func (ss *SessionStore) AddSession(ls *LoginState) error {
-	sessionToken := RandomString(256)
+func (ss *SessionStore) AddSession(tokenVerifier IDTokenVerifier, token *oauth2.Token) (*LoginState, error) {
+	ls, err := newLoginState(tokenVerifier, token)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new session: %w", err)
+	}
+
+	sessionToken := ls.sessionToken
 	if ss.byToken[sessionToken] != nil {
 		ss.DeleteSession(sessionToken)
-		return fmt.Errorf("session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
+		return nil, fmt.Errorf("session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
 	}
 	ls.sessionToken = sessionToken
 	ss.mux.Lock()
@@ -49,7 +55,7 @@ func (ss *SessionStore) AddSession(ls *LoginState) error {
 	// Assume token expiration is always the same time in the future. Should be close enough for government work.
 	ss.byAge = append(ss.byAge, ls)
 	ss.mux.Unlock()
-	return nil
+	return ls, nil
 }
 
 func (ss *SessionStore) GetSession(sessionToken, refreshToken string) *LoginState {
@@ -80,6 +86,41 @@ func (ss *SessionStore) DeleteSession(sessionToken string) error {
 	}
 	klog.Errorf("ss.byAge did not contain session %v", sessionToken)
 	return fmt.Errorf("ss.byAge did not contain session %v", sessionToken)
+}
+
+func (ss *SessionStore) DeleteByRefreshToken(refreshToken string) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+
+	session, ok := ss.byRefreshToken[refreshToken]
+	if !ok {
+		return
+	}
+
+	delete(ss.byRefreshToken, refreshToken)
+	delete(ss.byToken, session.sessionToken)
+
+	ss.byAge = spliceOut(ss.byAge, session)
+}
+
+func (ss *SessionStore) DeleteBySessionToken(sessionToken string) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+
+	session, ok := ss.byToken[sessionToken]
+	if !ok {
+		return
+	}
+
+	delete(ss.byToken, sessionToken)
+	ss.byAge = spliceOut(ss.byAge, session)
+
+	for k, v := range ss.byRefreshToken {
+		if v == session {
+			delete(ss.byRefreshToken, k)
+			return
+		}
+	}
 }
 
 func (ss *SessionStore) PruneSessions() {
@@ -117,4 +158,17 @@ func RandomString(length int) string {
 		panic(fmt.Sprintf("FATAL ERROR: Unable to get random bytes for session token: %v", err))
 	}
 	return base64.StdEncoding.EncodeToString(bytes)
+}
+
+func spliceOut(slice []*LoginState, toRemove *LoginState) []*LoginState {
+	for i := 0; i < len(slice); i++ {
+		s := slice[i]
+		// compare pointers, these should be the same in the byAge cache
+		if s == toRemove {
+			// splice out the session from the slice
+			return append(slice[:i], slice[i+1:]...)
+
+		}
+	}
+	return slice
 }
