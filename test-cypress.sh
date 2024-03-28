@@ -77,7 +77,7 @@ if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   # disabling pipeline tests due to unavailablility of opertor in operator hub
   # yarn run test-cypress-pipelines-headless
   # yarn run test-cypress-shipwright-headless
-  # yarn run test-cypress-webterminal-headless
+  yarn run test-cypress-webterminal-headless
   exit;
 fi
 
