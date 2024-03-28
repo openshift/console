@@ -1,0 +1,61 @@
+.ols-plugin__popover-container {
+  --bottom: calc(2 * var(--logo-size) + 0.5rem);
+  --logo-size: 50px;
+
+  .ols-plugin__popover,
+  .ols-plugin__popover-button {
+    box-shadow: var(--pf-v5-global--BoxShadow--lg);
+    position: fixed;
+    right: var(--logo-size);
+    z-index: 99;
+  }
+
+  .ols-plugin__popover {
+    border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+    border-radius: 1rem;
+    bottom: var(--bottom);
+
+    .pf-v5-c-page {
+      border-radius: 1rem;
+
+      .pf-v5-c-page__main {
+        border-radius: 1rem;
+      }
+    }
+  }
+
+  .ols-plugin__popover--collapsed {
+    height: calc(100% - 2 * var(--bottom));
+    width: 35%;
+  }
+
+  .ols-plugin__popover--expanded {
+    height: calc(100% - var(--bottom) - var(--logo-size));
+    width: calc(100% - 2 * var(--logo-size));
+  }
+
+  .ols-plugin__popover-close {
+    float: right;
+    height: 1rem;
+    margin-left: var(--pf-v5-global--spacer--md);
+    right: var(--pf-v5-global--spacer--sm);
+    top: var(--pf-v5-global--spacer--sm);
+    width: 1rem;
+  }
+
+  .ols-plugin__popover-button {
+    background: url('./Lightspeed.svg') no-repeat center center;
+    border: 1px solid var(--pf-v5-global--BackgroundColor--200);
+    border-radius: 12px;
+    bottom: var(--logo-size);
+    height: var(--logo-size);
+    padding: 0;
+    right: var(--logo-size);
+    width: var(--logo-size);
+    z-index: 9999;
+
+    .pf-v5-theme-dark & {
+      background-image: url('./Lightspeed-dark.svg');
+    }
+  }
+}
