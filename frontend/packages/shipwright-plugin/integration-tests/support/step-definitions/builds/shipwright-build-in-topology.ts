@@ -66,15 +66,16 @@ Then('user will be able to see the buildRun logs', () => {
   cy.get(buildPO.shipwrightBuild.buildrunLogs).should('be.visible');
 });
 
-When('user clicks on the workload of type {string}', (type: string) => {
-  if (type === 'Service') {
-    cy.get('g.odc-knative-service__label > text').first().click({ force: true });
-  } else {
-    cy.get(topologyPO.highlightNode).within(() => {
-      cy.get('g.pf-topology__node__label > text').click({ force: true });
-    });
-  }
-});
+When(
+  'user clicks on the workload with name {string} and of type {string}',
+  (name: string, type: string) => {
+    if (type === 'Service') {
+      cy.get('[data-type="knative-service"]').contains(name).click({ force: true });
+    } else {
+      cy.byLegacyTestID(name).click('center');
+    }
+  },
+);
 
 Then(
   'user will clicks on the Resources tab on the topology sidebar for {string}',
@@ -89,7 +90,7 @@ Then('user will verify BuildRuns section is visible', () => {
   topologySidePane.verifySection('BuildRuns');
 });
 
-Then('user will see build running for {string}', (type: string) => {
+Then('user will see build running for {string} of type {string}', (name: string, type: string) => {
   if (type === 'Service') {
     cy.get('g.odc-knative-service__label > text').click({ force: true });
 
@@ -97,7 +98,7 @@ Then('user will see build running for {string}', (type: string) => {
       .find('ul.list-group > li.so-build-run-item')
       .should('have.length.greaterThan', 1);
   } else {
-    cy.get('g.pf-topology__node__label > text').click({ force: true });
+    cy.byLegacyTestID(name).click('center');
     cy.get('div.ocs-sidebar-tabsection:nth-child(5)')
       .find('ul.list-group > li.so-build-run-item')
       .should('have.length.greaterThan', 1);
@@ -105,15 +106,15 @@ Then('user will see build running for {string}', (type: string) => {
 });
 
 When(
-  'user clicks on View logs button for buildrun for workload type {string} from the sidebar',
-  (type: string) => {
+  'user clicks on View logs button for buildrun for workload with name {string} and of type {string} from the sidebar',
+  (name: string, type: string) => {
     if (type === 'Service') {
       cy.get('g.odc-knative-service__label > text').click({ force: true });
 
       cy.get('div.ocs-sidebar-tabsection:nth-child(6)').should('be.visible');
       cy.get('ul.list-group > li.so-build-run-item').contains('View logs').click({ force: true });
     } else {
-      cy.get('g.pf-topology__node__label > text').click({ force: true });
+      cy.byLegacyTestID(name).click('center');
 
       cy.get('div.ocs-sidebar-tabsection:nth-child(5)').should('be.visible');
       cy.get('ul.list-group > li.so-build-run-item').contains('View logs').click({ force: true });
