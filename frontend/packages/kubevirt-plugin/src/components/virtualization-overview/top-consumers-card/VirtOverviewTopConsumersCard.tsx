@@ -35,9 +35,9 @@ const topAmountSelectOptions = (t: TFunction) => [
 
 export const VirtOverviewTopConsumersCard: React.FC = () => {
   const { t } = useTranslation();
-  const [numItemsToShow, setNumItemsToShow] = React.useState('Show top 5');
-  const numItemsOptionSelected = React.useMemo(() => (numItemsToShow === 'Show top 5' ? 5 : 10), [
-    numItemsToShow,
+  const [numItemsToShow, setNumItemsToShow] = React.useState(topAmountSelectOptions(t)[0]);
+  const numItemsOptionSelected = React.useMemo(() => (numItemsToShow.key === 'top-5' ? 5 : 10), [
+    numItemsToShow.key,
   ]);
 
   const onTopAmountSelect = (value) => setNumItemsToShow(value);
@@ -56,7 +56,7 @@ export const VirtOverviewTopConsumersCard: React.FC = () => {
                   <FormPFSelect
                     toggleId="kv-top-consumers-card-amount-select"
                     variant={SelectVariantDeprecated.single}
-                    selections={numItemsToShow}
+                    selections={numItemsToShow.value}
                     onSelect={(e, value) => onTopAmountSelect(value)}
                   >
                     {topAmountSelectOptions(t).map((opt) => (
