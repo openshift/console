@@ -6,7 +6,7 @@ import {
   PodKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { OverviewItem } from '@console/shared';
+import { OverviewItem, WORKLOAD_TYPES } from '@console/shared';
 import {
   getTopologyEdgeItems,
   getTopologyGroupItems,
@@ -113,7 +113,16 @@ export const getKubevirtTopologyDataModel = (
         ),
       );
       vmsDataModel.edges.push(...getTopologyEdgeItems(resource, resources.virtualmachines.data));
+      WORKLOAD_TYPES.forEach((workload) => {
+        vmsDataModel.edges.push(...getTopologyEdgeItems(resource, resources[workload]?.data)); // create visual connector from all WORKLOAD_TYPES to VMs
+      });
       mergeGroup(getTopologyGroupItems(resource), vmsDataModel.nodes);
+    });
+
+    WORKLOAD_TYPES.forEach((resource) => {
+      resources[resource]?.data?.forEach((d) => {
+        vmsDataModel.edges.push(...getTopologyEdgeItems(d, resources.virtualmachines.data)); // create visual connector from VMs to all WORKLOAD_TYPES
+      });
     });
   }
 
