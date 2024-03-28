@@ -52,6 +52,7 @@ import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
 import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
+import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
 import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core'; // PF4 Imports
@@ -215,6 +216,7 @@ const App = (props) => {
           </Page>
           <CloudShell />
           <GuidedTour />
+          <Lightspeed />
         </div>
         <div id="modal-container" role="dialog" aria-modal="true" />
       </QuickStartDrawer>
