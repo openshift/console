@@ -1952,6 +1952,7 @@ A lazy loaded YAML editor for Kubernetes resources with hover help and completio
 | `initialResource` | YAML/Object representing a resource to be shown by the editor. This prop is used only during the inital render. |
 | `header` | Add a header on top of the YAML editor. |
 | `onSave` | Callback for the Save button. Passing it will override the default update performed on the resource by the editor. |
+| `readOnly` | Sets the YAML editor to read-only mode. |
 
 
 
