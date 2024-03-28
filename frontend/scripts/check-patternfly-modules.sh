@@ -31,26 +31,26 @@ check-resolution() {
 #
 # To see the current full list, run the following command:
 #   sed -nr 's/^\"(@patternfly\/[^@]+).*$/\1/p' yarn.lock | sort -u
-PKGS_TO_CHECK=$(echo \
-  '@patternfly/quickstarts' \
-  '@patternfly/react-catalog-view-extension' \
-  '@patternfly/react-charts' \
-  '@patternfly/react-component-groups' \
-  '@patternfly/react-console' \
-  '@patternfly/react-core' \
-  '@patternfly/react-icons' \
-  '@patternfly/react-log-viewer' \
-  '@patternfly/react-styles' \
-  '@patternfly/react-table' \
-  '@patternfly/react-tokens' \
-  '@patternfly/react-topology' \
-  '@patternfly/react-user-feedback' \
+PKGS_TO_CHECK=(
+  '@patternfly/quickstarts'
+  '@patternfly/react-catalog-view-extension'
+  '@patternfly/react-charts'
+  '@patternfly/react-component-groups'
+  '@patternfly/react-console'
+  '@patternfly/react-core'
+  '@patternfly/react-icons'
+  '@patternfly/react-log-viewer'
+  '@patternfly/react-styles'
+  '@patternfly/react-table'
+  '@patternfly/react-tokens'
+  '@patternfly/react-topology'
+  '@patternfly/react-user-feedback'
   '@patternfly/react-virtualized-extension'
 )
 
 echo -e "Checking ${COL_YELLOW}yarn.lock${COL_RESET} file for PatternFly module resolutions"
 
-for pkg in $PKGS_TO_CHECK; do
+for pkg in "${PKGS_TO_CHECK[@]}"; do
   check-resolution $pkg
 done
 
