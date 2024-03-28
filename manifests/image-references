@@ -1,0 +1,8 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+spec:
+  tags:
+  - name: networking-console-plugin-rhel9
+    from:
+      kind: DockerImage
+      name: quay.io/openshift/origin-networking-console-plugin:4.16
