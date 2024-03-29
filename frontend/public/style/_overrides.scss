@@ -197,6 +197,10 @@ form.pf-v5-c-form {
 // Drawer
 .pf-v5-c-drawer__body {
   height: 100%;
+
+  .lightspeed & {
+    height: auto;
+  }
 }
 
 // Page
@@ -360,7 +364,7 @@ ul {
   list-style: disc;
 }
 // And here we explicitly remove it from PF components, except for the List component.
-:where([class^="pf-"]:not(.pf-v5-c-list, .pf-c-list)) {
+:where([class^='pf-']:not(.pf-v5-c-list, .pf-c-list)) {
   @at-root :is(ul, ol)#{&} {
     list-style: none !important;
   }

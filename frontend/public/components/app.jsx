@@ -183,40 +183,41 @@ const App = (props) => {
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
         <div id="app-content" className="co-m-app__content">
-          <Page
-            // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
-            mainTabIndex={null}
-            className="pf-c-page" // legacy pf-c-page class needed for PF4 component styling
-            header={
-              <Masthead
-                isNavOpen={isNavOpen}
-                onNavToggle={onNavToggle}
-                isMastheadStacked={isMastheadStacked}
-              />
-            }
-            sidebar={
-              <Navigation
-                isNavOpen={isNavOpen}
-                onNavSelect={onNavSelect}
-                onPerspectiveSelected={onNavSelect}
-              />
-            }
-            skipToContent={
-              <SkipToContent href={`${location.pathname}${location.search}#content`}>
-                Skip to Content
-              </SkipToContent>
-            }
-          >
-            <ConnectedNotificationDrawer
-              isDesktop={isDrawerInline}
-              onDrawerChange={onNotificationDrawerToggle}
+          <Lightspeed>
+            <Page
+              // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
+              mainTabIndex={null}
+              className="pf-c-page" // legacy pf-c-page class needed for PF4 component styling
+              header={
+                <Masthead
+                  isNavOpen={isNavOpen}
+                  onNavToggle={onNavToggle}
+                  isMastheadStacked={isMastheadStacked}
+                />
+              }
+              sidebar={
+                <Navigation
+                  isNavOpen={isNavOpen}
+                  onNavSelect={onNavSelect}
+                  onPerspectiveSelected={onNavSelect}
+                />
+              }
+              skipToContent={
+                <SkipToContent href={`${location.pathname}${location.search}#content`}>
+                  Skip to Content
+                </SkipToContent>
+              }
             >
-              <AppContents />
-            </ConnectedNotificationDrawer>
-          </Page>
-          <CloudShell />
-          <GuidedTour />
-          <Lightspeed />
+              <ConnectedNotificationDrawer
+                isDesktop={isDrawerInline}
+                onDrawerChange={onNotificationDrawerToggle}
+              >
+                <AppContents />
+              </ConnectedNotificationDrawer>
+            </Page>
+            <CloudShell />
+            <GuidedTour />
+          </Lightspeed>
         </div>
         <div id="modal-container" role="dialog" aria-modal="true" />
       </QuickStartDrawer>

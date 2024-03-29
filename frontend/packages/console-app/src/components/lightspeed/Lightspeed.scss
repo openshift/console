@@ -1,61 +1,45 @@
-.ols-plugin__popover-container {
-  --bottom: calc(2 * var(--logo-size) + 0.5rem);
-  --logo-size: 50px;
+:root {
+  --lightspeed__logo-size: 50px;
+}
 
-  .ols-plugin__popover,
-  .ols-plugin__popover-button {
-    box-shadow: var(--pf-v5-global--BoxShadow--lg);
-    position: fixed;
-    right: var(--logo-size);
-    z-index: 99;
+@mixin lightspeed__logo {
+  background: var(--pf-v5-c-drawer__section--BackgroundColor) url('./Lightspeed.svg') no-repeat
+    center center !important;
+  border: 1px solid var(--pf-v5-global--BackgroundColor--200) !important;
+  border-radius: 12px !important;
+  height: var(--lightspeed__logo-size);
+  width: var(--lightspeed__logo-size);
+}
+
+@mixin lightspeed__logo-dark {
+  .pf-v5-theme-dark & {
+    background-image: url('./Lightspeed-dark.svg') !important;
   }
+}
 
-  .ols-plugin__popover {
-    border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    border-radius: 1rem;
-    bottom: var(--bottom);
+.lightspeed__drawer-title {
+  align-items: center;
+  column-gap: var(--pf-global--spacer--md);
+  display: flex;
 
-    .pf-v5-c-page {
-      border-radius: 1rem;
+  &::before {
+    @include lightspeed__logo;
+    content: '';
+    display: block;
+    flex-shrink: 0;
 
-      .pf-v5-c-page__main {
-        border-radius: 1rem;
-      }
-    }
+    @include lightspeed__logo-dark;
   }
+}
 
-  .ols-plugin__popover--collapsed {
-    height: calc(100% - 2 * var(--bottom));
-    width: 35%;
-  }
+.lightspeed__open-button {
+  @include lightspeed__logo;
+  bottom: var(--lightspeed__logo-size);
+  box-shadow: var(--pf-v5-global--BoxShadow--lg);
+  padding: 0;
+  position: absolute !important;
+  right: var(--lightspeed__logo-size);
+  z-index: 9999;
 
-  .ols-plugin__popover--expanded {
-    height: calc(100% - var(--bottom) - var(--logo-size));
-    width: calc(100% - 2 * var(--logo-size));
-  }
-
-  .ols-plugin__popover-close {
-    float: right;
-    height: 1rem;
-    margin-left: var(--pf-v5-global--spacer--md);
-    right: var(--pf-v5-global--spacer--sm);
-    top: var(--pf-v5-global--spacer--sm);
-    width: 1rem;
-  }
-
-  .ols-plugin__popover-button {
-    background: url('./Lightspeed.svg') no-repeat center center;
-    border: 1px solid var(--pf-v5-global--BackgroundColor--200);
-    border-radius: 12px;
-    bottom: var(--logo-size);
-    height: var(--logo-size);
-    padding: 0;
-    right: var(--logo-size);
-    width: var(--logo-size);
-    z-index: 9999;
-
-    .pf-v5-theme-dark & {
-      background-image: url('./Lightspeed-dark.svg');
-    }
-  }
+  @include lightspeed__logo-dark;
 }
