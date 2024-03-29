@@ -11,6 +11,7 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/openshift/console/pkg/auth/sessions"
+	"github.com/openshift/console/pkg/serverutils/asynccache"
 )
 
 type oauth2ConfigConstructor func(oauth2.Endpoint) *oauth2.Config
@@ -18,7 +19,7 @@ type oauth2ConfigConstructor func(oauth2.Endpoint) *oauth2.Config
 type oidcAuth struct {
 	*oidcConfig
 
-	providerCache *AsyncCache[*oidc.Provider]
+	providerCache *asynccache.AsyncCache[*oidc.Provider]
 
 	// This preserves the old logic of associating users with session keys
 	// and requires smart routing when running multiple backend instances.
@@ -38,7 +39,7 @@ type oidcConfig struct {
 
 func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig) (*oidcAuth, error) {
 	// NewProvider attempts to do OIDC Discovery
-	providerCache, err := NewAsyncCache[*oidc.Provider](
+	providerCache, err := asynccache.NewAsyncCache[*oidc.Provider](
 		ctx, 5*time.Minute,
 		func(cacheCtx context.Context) (*oidc.Provider, error) {
 			oidcCtx := oidc.ClientContext(cacheCtx, c.getClient())
