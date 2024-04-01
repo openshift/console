@@ -169,7 +169,7 @@ type Server struct {
 	K8sProxyConfig                      *proxy.Config
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
-	KubeAPIServerURL                    string
+	KubeAPIServerURL                    string // JS global only. Do no use internally.
 	KubectlClientID                     string
 	KubeVersion                         string
 	LoadTestFactor                      int
@@ -250,6 +250,8 @@ func (s *Server) HTTPHandler() http.Handler {
 	// TODO remove multicluster
 	localAuther := s.getLocalAuther()
 	localK8sProxy := proxy.NewProxy(s.K8sProxyConfig)
+	localK8sEndpoint := s.K8sProxyConfig.Endpoint.String()
+
 	var managedClusterProxy *proxy.Proxy
 	if s.ManagedClusterProxyConfig != nil {
 		managedClusterProxy = proxy.NewProxy(s.ManagedClusterProxyConfig)
@@ -532,7 +534,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	// List operator operands endpoint
 	operandsListHandler := &OperandsListHandler{
-		APIServerURL: s.KubeAPIServerURL,
+		APIServerURL: localK8sEndpoint,
 		Client:       s.K8sClient,
 	}
 
@@ -548,7 +550,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	trimURLPrefix := proxy.SingleJoiningSlash(s.BaseURL.Path, knativeProxyEndpoint)
 	knativeHandler := knative.NewKnativeHandler(trimURLPrefix,
 		s.K8sClient,
-		s.K8sProxyConfig.Endpoint.String())
+		localK8sEndpoint)
 	handle(knativeProxyEndpoint, authHandlerWithUser(knativeHandler.Handle))
 	// TODO: move the knative-event-sources and knative-channels handler into the knative module.
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
@@ -565,14 +567,14 @@ func (s *Server) HTTPHandler() http.Handler {
 	// User settings
 	userSettingHandler := usersettings.UserSettingsHandler{
 		Client:              s.K8sClient,
-		Endpoint:            s.K8sProxyConfig.Endpoint.String(),
+		Endpoint:            localK8sEndpoint,
 		ServiceAccountToken: s.ServiceAccountToken,
 	}
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
 	// Helm
-	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport, s)
-	verifierHandler := helmhandlerspkg.NewVerifierHandler(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport, s)
+	helmHandlers := helmhandlerspkg.New(localK8sEndpoint, s.K8sClient.Transport, s)
+	verifierHandler := helmhandlerspkg.NewVerifierHandler(localK8sEndpoint, s.K8sClient.Transport, s)
 	handle("/api/helm/verify", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
@@ -672,13 +674,13 @@ func (s *Server) HTTPHandler() http.Handler {
 	serverconfigMetrics := serverconfig.NewMetrics(config)
 	serverconfigMetrics.MonitorPlugins(
 		s.K8sClient,
-		s.K8sProxyConfig.Endpoint.String(),
+		localK8sEndpoint,
 		s.ServiceAccountToken,
 	)
 	usageMetrics := usage.NewMetrics()
 	usageMetrics.MonitorUsers(
 		s.K8sClient,
-		s.K8sProxyConfig.Endpoint.String(),
+		localK8sEndpoint,
 		s.ServiceAccountToken,
 	)
 	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...) // TODO remove multicluster
