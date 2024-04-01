@@ -525,12 +525,13 @@ const formatSeriesValues = (
   values: PrometheusValue[],
   samples: number,
   span: number,
+  defaultEmptyValue: 0 | null,
 ): GraphDataPoint[] => {
   const newValues = _.map(values, (v) => {
     const y = Number(v[1]);
     return {
       x: new Date(v[0] * 1000),
-      y: Number.isNaN(y) ? null : y,
+      y: Number.isNaN(y) ? defaultEmptyValue : y,
     };
   });
 
@@ -811,17 +812,30 @@ const QueryBrowserWrapped: React.FC<QueryBrowserProps> = ({
         ) {
           setSamples(newSamples);
         } else {
-          const newGraphData = _.map(newResults, (result: PrometheusResult[]) => {
-            return _.map(
-              result,
-              ({ metric, values }): Series => {
-                // If filterLabels is specified, ignore all series that don't match
-                return _.some(filterLabels, (v, k) => _.has(metric, k) && metric[k] !== v)
-                  ? []
-                  : [metric, formatSeriesValues(values, samples, span)];
-              },
-            );
-          });
+          const newGraphData = _.map(
+            newResults,
+            (result: PrometheusResult[], queryIndex: number) => {
+              return _.map(
+                result,
+                ({ metric, values }): Series => {
+                  // If filterLabels is specified, ignore all series that don't match
+                  if (_.some(filterLabels, (v, k) => _.has(metric, k) && metric[k] !== v)) {
+                    return [];
+                  }
+                  let defaultEmptyValue = null;
+                  if (isStack && _.some(values, (value) => Number.isNaN(Number(value[1])))) {
+                    // eslint-disable-next-line no-console
+                    console.warn(
+                      'Invalid response values for stacked graph converted to 0 for query: ',
+                      queries[queryIndex],
+                    );
+                    defaultEmptyValue = 0;
+                  }
+                  return [metric, formatSeriesValues(values, samples, span, defaultEmptyValue)];
+                },
+              );
+            },
+          );
           setGraphData(newGraphData);
 
           _.each(newResults, (r, i) =>
