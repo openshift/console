@@ -13,7 +13,7 @@ const InputGroupField: React.FC<GroupInputProps> = ({
     <BaseInputField {...baseProps}>
       {(props) => {
         return (
-          <InputGroup translate="no">
+          <InputGroup>
             <InputGroupItem>{beforeInput}</InputGroupItem>
             <InputGroupItem>
               {groupTextType === GroupTextType.TextArea ? (

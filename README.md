@@ -402,6 +402,13 @@ To upgrade yarn itself, download a new yarn release from
 `frontend/.yarn/releases` with the new version, and update `yarn-path` in
 `frontend/.yarnrc`.
 
+##### @patternfly
+
+Note that when upgrading @patternfly packages, we've seen in the past that it can cause the JavaScript heap to run out of memory, or the bundle being too large if multiple versions of the same @patternfly package is pulled in. To increase efficiency, run the following after updating packages:
+
+```
+npx yarn-deduplicate --scopes @patternfly
+```
 #### Supported Browsers
 
 We support the latest versions of the following browsers:
