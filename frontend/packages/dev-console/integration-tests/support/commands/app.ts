@@ -54,7 +54,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('verifyDropdownselected', (selector: string) => {
   cy.get(selector).should('be.visible');
-  cy.get(selector).click().get('.pf-v5-c-dropdown__menu').should('be.visible');
+  cy.get(selector).click().get('[role="menu"]').should('be.visible');
 });
 
 Cypress.Commands.add('mouseHover', (selector: string) => {
@@ -79,7 +79,7 @@ Cypress.Commands.add('selectActionsMenuOption', (actionsMenuOption: string) => {
 Cypress.Commands.add('dropdownSwitchTo', (dropdownMenuOption: string) => {
   cy.byLegacyTestID('dropdown-button')
     .click()
-    .get('.pf-v5-c-dropdown__menu')
+    .find('data-test-id="dropdown-menu"')
     .contains(dropdownMenuOption)
     .click();
 });
@@ -88,7 +88,7 @@ Cypress.Commands.add('isDropdownVisible', () => {
   cy.byLegacyTestID('dropdown-button')
     .should('be.visible')
     .click()
-    .get('.pf-v5-c-dropdown__menu')
+    .find('data-test-id="dropdown-menu"')
     .should('be.visible');
 });
 
