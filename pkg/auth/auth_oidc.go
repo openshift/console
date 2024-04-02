@@ -90,7 +90,10 @@ func (o *oidcAuth) refreshSession(ctx context.Context, w http.ResponseWriter, r 
 		return session, nil
 	}
 
-	newTokens, err := oauthConfig.TokenSource(ctx, &oauth2.Token{RefreshToken: cookieRefreshToken}).Token()
+	newTokens, err := oauthConfig.TokenSource(
+		context.WithValue(ctx, oauth2.HTTPClient, o.getClient()), // supply our client with custom trust
+		&oauth2.Token{RefreshToken: cookieRefreshToken},
+	).Token()
 	if err != nil {
 		return nil, fmt.Errorf("failed to refresh a token %s: %w", cookieRefreshToken, err)
 	}
