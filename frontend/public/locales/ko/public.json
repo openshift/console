@@ -462,7 +462,7 @@
   "ReplicaSets": "복제 세트",
   "Deployments": "배포",
   "Error getting YAML: {{e}}": "YAML 가져 오기 오류: {{e}}",
-  "{{newName}} has been updated to version {{version}}": "{{newName}}이  {{version}}버전으로 업데이트되었습니다",
+  "{{name}} has been updated to version {{version}}": "{{name}}이 {{version}}버전으로 업데이트됨",
   "No YAML content found.": "YAML 콘텐츠를 찾을 수 없습니다.",
   "No \"apiVersion\" field found in YAML.": "YAML에 \"apiVersion\" 필드를 찾을 수 없습니다.",
   "No \"kind\" field found in YAML.": "YAML에 \"kind\" 필드를 찾을 수 없습니다.",
