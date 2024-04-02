@@ -5,7 +5,6 @@ import {
   quickStartSidebarPO,
   quickStartsPO,
 } from '../pageObjects';
-import { catalogPage } from './add-flow/catalog-page';
 import { app, navigateTo } from './app';
 
 function clickVisibleButton(el: string) {
@@ -33,7 +32,8 @@ export const quickStartsPage = {
     app.waitForDocumentLoad();
     cy.get(addPagePO.viewAllQuickStarts).click();
     cy.get(quickStartsPO.quickStartTitle).scrollIntoView().should('be.visible');
-    catalogPage.isCardsDisplayed();
+    app.waitForLoad();
+    cy.get('.pfext-quick-start-catalog__gallery').should('be.visible');
   },
   filterByKeyword: (filterName: string) => {
     cy.get(quickStartsPO.filterKeyword).scrollIntoView().click();

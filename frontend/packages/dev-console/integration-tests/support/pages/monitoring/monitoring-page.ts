@@ -16,7 +16,7 @@ export const monitoringPage = {
     },
     selectDashboard: (dashboardName: string) => {
       cy.get(monitoringPO.dashboardTab.dashboardDropdown).click();
-      cy.get('input.pf-m-search').type(dashboardName);
+      cy.get('input[type="search"]').type(dashboardName);
       cy.get('button.monitoring-dashboards__dashboard_dropdown_item').first().click();
     },
     verifySection: () => cy.get(monitoringPO.dashboardTab.dashboard).should('exist'),

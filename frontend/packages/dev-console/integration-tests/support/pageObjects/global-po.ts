@@ -48,7 +48,6 @@ export const formPO = {
   successAlert: '[aria-label="Success Alert"]',
   confirm: '[data-test="confirm-action"]',
 };
-export const alert = '.pf-v5-c-alert';
 export const pagePO = {
   create: '[data-test="item-create"]',
   breadcrumb: '[aria-label="Breadcrumb"]',

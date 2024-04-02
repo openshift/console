@@ -188,14 +188,9 @@ export const catalogPage = {
     });
   },
   verifyFilterByKeywordField: () => {
-    cy.get('.pf-v5-c-search-input__text-input').should('be.visible');
+    cy.get('[data-test="search-catalog"] input').should('be.visible');
   },
   verifySortDropdown: () => {
-    cy.get(catalogPO.groupBy).then((body) => {
-      if (body.find(catalogPO.groupByMenu).length <= 0) {
-        cy.get(catalogPO.groupBy).click();
-      }
-    });
     cy.get(catalogPO.aToz).should('be.visible');
     cy.get(catalogPO.zToA).should('be.visible');
   },
