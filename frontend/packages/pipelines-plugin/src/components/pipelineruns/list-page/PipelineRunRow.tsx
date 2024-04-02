@@ -48,6 +48,9 @@ type PipelineRunRowWithTaskRunsProps = {
   operatorVersion: SemVer;
 };
 
+const TASKRUNSFORPLRCACHE: { [key: string]: TaskRunKind[] } = {};
+const InFlightStoreForTaskRunsForPLR: { [key: string]: boolean } = {};
+
 const PLRStatus: React.FC<PLRStatusProps> = React.memo(({ obj, taskRuns, taskRunsLoaded }) => {
   return (
     <PipelineRunStatus
@@ -149,14 +152,45 @@ const PipelineRunRowWithoutTaskRuns: React.FC<PipelineRunRowWithoutTaskRunsProps
   },
 );
 
-const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> = React.memo(
+const PipelineRunRowWithTaskRunsFetch: React.FC<PipelineRunRowWithTaskRunsProps> = React.memo(
   ({ obj, operatorVersion }) => {
+    const cacheKey = `${obj.metadata.namespace}-${obj.metadata.name}`;
     const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
       obj.metadata.namespace,
       obj.metadata.name,
       undefined,
       `${obj.metadata.namespace}-${obj.metadata.name}`,
     );
+    InFlightStoreForTaskRunsForPLR[cacheKey] = false;
+    TASKRUNSFORPLRCACHE[cacheKey] = PLRTaskRuns;
+    return (
+      <PipelineRunRowTable
+        obj={obj}
+        PLRTaskRuns={PLRTaskRuns}
+        taskRunsLoaded={taskRunsLoaded}
+        operatorVersion={operatorVersion}
+        taskRunStatusObj={undefined}
+      />
+    );
+  },
+);
+
+const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> = React.memo(
+  ({ obj, operatorVersion }) => {
+    let PLRTaskRuns: TaskRunKind[];
+    let taskRunsLoaded: boolean;
+    const cacheKey = `${obj.metadata.namespace}-${obj.metadata.name}`;
+    const result = TASKRUNSFORPLRCACHE[cacheKey];
+    if (result) {
+      PLRTaskRuns = result;
+      taskRunsLoaded = true;
+    } else if (InFlightStoreForTaskRunsForPLR[cacheKey]) {
+      PLRTaskRuns = [];
+      taskRunsLoaded = true;
+      InFlightStoreForTaskRunsForPLR[cacheKey] = true;
+    } else {
+      return <PipelineRunRowWithTaskRunsFetch obj={obj} operatorVersion={operatorVersion} />;
+    }
     return (
       <PipelineRunRowTable
         obj={obj}
