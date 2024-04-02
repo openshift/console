@@ -124,20 +124,18 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
 
     // Clear any previous error message.
     setError('');
-    let MCPsToResumePromises;
     let MCPsToPausePromises;
+    let MCPsToResumePromises;
     if (upgradeType === upgradeTypes.Full) {
-      MCPsToResumePromises = getMCPsToPausePromises(pausedMCPs, false);
       MCPsToPausePromises = [];
+      MCPsToResumePromises = getMCPsToPausePromises(pausedMCPs, false);
     } else {
-      const MCPsToResume = pausedMCPs.filter((mcp) =>
-        machineConfigPoolsToPause.find((m) => m !== mcp.metadata.name),
-      );
       const MCPsToPause = pauseableMCPs.filter((mcp) =>
         machineConfigPoolsToPause.find((m) => m === mcp.metadata.name),
       );
-      MCPsToResumePromises = getMCPsToPausePromises(MCPsToResume, false);
+      const MCPsToResume = pauseableMCPs.filter((mcp) => !MCPsToPause.includes(mcp));
       MCPsToPausePromises = getMCPsToPausePromises(MCPsToPause, true);
+      MCPsToResumePromises = getMCPsToPausePromises(MCPsToResume, false);
     }
     const patch = [
       {
