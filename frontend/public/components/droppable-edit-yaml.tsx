@@ -38,7 +38,15 @@ export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = ({
   initialResource,
   header,
   onSave,
-}) => <DroppableEditYAML initialResource={initialResource} header={header} onSave={onSave} />;
+  readOnly,
+}) => (
+  <DroppableEditYAML
+    initialResource={initialResource}
+    header={header}
+    onSave={onSave}
+    readOnly={readOnly}
+  />
+);
 
 export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
   class DroppableEditYAML extends React.Component<DroppableEditYAMLProps, DroppableEditYAMLState> {

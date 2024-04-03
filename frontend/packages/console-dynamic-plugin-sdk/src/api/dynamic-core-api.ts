@@ -640,6 +640,7 @@ export const CodeEditor: React.ForwardRefExoticComponent<
  * @param {ResourceYAMLEditorProps['initialResource']} initialResource - YAML/Object representing a resource to be shown by the editor. This prop is used only during the inital render.
  * @param {ResourceYAMLEditorProps['header']} header - Add a header on top of the YAML editor.
  * @param {ResourceYAMLEditorProps['onSave']} onSave - Callback for the Save button. Passing it will override the default update performed on the resource by the editor.
+ * @param {ResourceYAMLEditorProps['readOnly']} readOnly - Sets the YAML editor to read-only mode.
  */
 export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = require('@console/internal/components/AsyncResourceYAMLEditor')
   .AsyncResourceYAMLEditor;
