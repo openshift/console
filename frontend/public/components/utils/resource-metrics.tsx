@@ -62,6 +62,13 @@ export const ResourceMetricsDashboard: React.FC<ResourceMetricsDashboardProps> =
             title={t('public~Network out')}
           />
         </GridItem>
+        <GridItem xl={6} lg={12}>
+          <ResourceMetricsDashboardCard
+            namespace={obj.metadata.namespace}
+            queries={queries[ResourceUtilizationQuery.CPU_ARCH]}
+            title={t('public~Architecture')}
+          />
+        </GridItem>
       </Grid>
     </Dashboard>
   ) : null;
