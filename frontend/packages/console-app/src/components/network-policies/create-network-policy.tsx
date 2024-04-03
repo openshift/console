@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
-import { CreateYAML } from '@console/internal/components/create-yaml';
+import { AsyncResourceYAMLEditor } from '@console/internal/components/AsyncResourceYAMLEditor';
 import { PageHeading } from '@console/internal/components/utils';
-import { NetworkPolicyModel } from '@console/internal/models';
+import { MultiNetworkPolicyModel, NetworkPolicyModel } from '@console/internal/models';
 import { NetworkPolicyKind } from '@console/internal/module/k8s';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { NetworkPolicyForm } from './network-policy-form';
 import {
   isNetworkPolicyConversionError,
@@ -16,18 +16,17 @@ import {
   networkPolicyNormalizeK8sResource,
   networkPolicyToK8sResource,
 } from './network-policy-model';
-
 import './_create-network-policy.scss';
+import useIsMultiNetworkPolicy from './useIsMultiNetworkPolicy';
 
 const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.createNetworkPolicy.editor.lastView';
 
 export const CreateNetworkPolicy: React.FC<{}> = () => {
   const { t } = useTranslation();
-  const p = useParams();
-  const params: any = { ...p, plural: NetworkPolicyModel.plural };
+  const isMulti = useIsMultiNetworkPolicy();
+
   const initialPolicy: NetworkPolicy = {
     name: '',
-    namespace: params.ns,
     podSelector: [['', '']],
     ingress: {
       denyAll: false,
@@ -46,11 +45,16 @@ export const CreateNetworkPolicy: React.FC<{}> = () => {
 
   const [helpText, setHelpText] = React.useState(formHelpText);
 
-  const k8sObj = networkPolicyToK8sResource(initialPolicy);
+  const k8sObj = networkPolicyToK8sResource(initialPolicy, isMulti);
 
   const YAMLEditor: React.FC<YAMLEditorProps> = ({ onChange, initialYAML = '' }) => {
     return (
-      <CreateYAML hideHeader match={{ params } as any} onChange={onChange} template={initialYAML} />
+      <AsyncResourceYAMLEditor
+        create
+        hideHeader
+        initialResource={safeYAMLToJS(initialYAML)}
+        onChange={onChange}
+      />
     );
   };
 
@@ -61,7 +65,7 @@ export const CreateNetworkPolicy: React.FC<{}> = () => {
       throw converted.error;
     } else {
       // Convert back to check for unsupported fields (check isomorphism)
-      const reconverted = networkPolicyToK8sResource(converted);
+      const reconverted = networkPolicyToK8sResource(converted, isMulti);
       if (!_.isEqual(normalizedK8S, reconverted)) {
         throw new Error(
           t(
@@ -81,7 +85,9 @@ export const CreateNetworkPolicy: React.FC<{}> = () => {
     <>
       <PageHeading
         className="create-network-policy__page-heading"
-        title={t('console-app~Create NetworkPolicy')}
+        title={t('console-app~Create {{kind}}', {
+          kind: isMulti ? MultiNetworkPolicyModel.kind : NetworkPolicyModel.kind,
+        })}
         helpText={helpText}
       />
       <SyncedEditor

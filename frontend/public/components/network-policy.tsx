@@ -18,7 +18,7 @@ import {
   Selector,
   ExternalLink,
 } from './utils';
-import { NetworkPolicyModel } from '../models';
+import { MultiNetworkPolicyModel, NetworkPolicyModel } from '../models';
 import { getNetworkPolicyDocURL, isManaged } from './utils/documentation';
 import {
   NetworkPolicyKind,
@@ -27,19 +27,32 @@ import {
   Selector as K8SSelector,
 } from '../module/k8s';
 import { Tooltip } from '@patternfly/react-core';
+import useIsMultiNetworkPolicy from '@console/app/src/components/network-policies/useIsMultiNetworkPolicy';
+
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(NetworkPolicyModel), ...common];
+const menuMultiNetworkActions = [
+  ...Kebab.getExtensionsActionsForKind(MultiNetworkPolicyModel),
+  ...common,
+];
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
-const kind = 'NetworkPolicy';
-
 const NetworkPolicyTableRow: React.FC<RowFunctionArgs<NetworkPolicyKind>> = ({ obj: np }) => {
+  const isMulti = useIsMultiNetworkPolicy();
+
+  const modelKind = isMulti ? MultiNetworkPolicyModel : NetworkPolicyModel;
+
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={np.metadata.name} namespace={np.metadata.namespace} />
+        <ResourceLink
+          groupVersionKind={getGroupVersionKindForModel(modelKind)}
+          name={np.metadata.name}
+          namespace={np.metadata.namespace}
+        />
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
@@ -57,13 +70,17 @@ const NetworkPolicyTableRow: React.FC<RowFunctionArgs<NetworkPolicyKind>> = ({ o
         )}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={np} />
+        <ResourceKebab
+          actions={isMulti ? menuMultiNetworkActions : menuActions}
+          kind={getGroupVersionKindForModel(modelKind)}
+          resource={np}
+        />
       </TableData>
     </>
   );
 };
 
-const NetworkPoliciesList = (props) => {
+export const NetworkPoliciesList = (props) => {
   const { t } = useTranslation();
   const NetworkPolicyTableHeader = () => {
     return [
@@ -111,7 +128,7 @@ export const NetworkPoliciesPage = (props) => {
   return (
     <ListPage
       ListComponent={NetworkPoliciesList}
-      kind={kind}
+      kind={props.kindObj}
       canCreate={true}
       createProps={createProps}
       {...props}
@@ -287,6 +304,7 @@ type DetailsProps = {
 
 const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => {
   const { t } = useTranslation();
+  const isMulti = useIsMultiNetworkPolicy();
   // Note, the logic differs between ingress and egress, see https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#networkpolicyspec-v1-networking-k8s-io
   // A policy affects egress if it is explicitely specified in policyTypes, or if policyTypes isn't set and there is an egress section.
   // A policy affects ingress if it is explicitely specified in policyTypes, or if policyTypes isn't set, regardless the presence of an ingress sections.
@@ -301,7 +319,11 @@ const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('public~NetworkPolicy details')} />
+        <SectionHeading
+          text={t('public~{{kind}} details', {
+            kind: isMulti ? MultiNetworkPolicyModel.kind : NetworkPolicyModel.kind,
+          })}
+        />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={np} podSelector={'spec.podSelector'} showPodSelector />

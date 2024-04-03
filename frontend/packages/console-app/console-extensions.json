@@ -1057,6 +1057,15 @@
       }
     }
   },
+
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/all-namespaces/networkpolicies/~enable-multi", "/k8s/ns/:ns/networkpolicies/~enable-multi"],
+      "component": { "$codeRef": "networkPolicyListPage.NetworkPolicyListPage" }
+    }
+  },
   {
     "type": "console.navigation/resource-cluster",
     "properties": {
