@@ -678,6 +678,9 @@ export type ResourceYAMLEditorProps = {
   header?: string;
   onSave?: (content: string) => void;
   readOnly?: boolean;
+  create?: boolean;
+  onChange?: (content: string) => void;
+  hideHeader?: boolean;
 };
 
 export type ResourceEventStreamProps = {
