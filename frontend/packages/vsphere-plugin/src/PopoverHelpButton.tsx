@@ -4,15 +4,10 @@ import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/ico
 import { useTranslation } from 'react-i18next';
 
 export const PopoverHelpButton: React.FC<{ content: React.ReactNode }> = ({ content }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('vsphere-plugin');
   return (
-    <Popover aria-label={t('vsphere-plugin~Help')} bodyContent={content}>
-      <Button
-        aria-label={t('vsphere-plugin~Help')}
-        variant="link"
-        isInline
-        className="co-field-level-help"
-      >
+    <Popover aria-label={t('Help')} bodyContent={content}>
+      <Button aria-label={t('Help')} variant="link" isInline className="co-field-level-help">
         <OutlinedQuestionCircleIcon className="co-field-level-help__icon" />
       </Button>
     </Popover>

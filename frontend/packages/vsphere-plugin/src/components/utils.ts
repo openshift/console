@@ -1,7 +1,8 @@
 import { Buffer } from 'buffer';
 import { encode, decode } from 'ini';
+import { TFunction } from 'react-i18next';
 import { VSPHERE_CREDS_SECRET_NAME, VSPHERE_CREDS_SECRET_NAMESPACE } from '../constants';
-import { ConnectionFormContextValues } from './types';
+import { ConnectionFormFormikValues } from './types';
 
 export const parseKeyValue = (config: string, delimiter = '='): { [key: string]: string } => {
   const lines = config.split('\n');
@@ -27,13 +28,7 @@ export const decodeBase64 = (data: string) => Buffer.from(data, 'base64').toStri
 
 export const mergeCloudProviderConfig = (
   existingIni: string,
-  {
-    vcenter,
-    datacenter,
-    defaultDatastore: defaultdatastore,
-    folder,
-    vCenterCluster,
-  }: ConnectionFormContextValues,
+  { vcenter, datacenter, defaultDatastore, folder, vCenterCluster }: ConnectionFormFormikValues,
 ): string => {
   const configIni = decode(existingIni);
 
@@ -46,7 +41,7 @@ export const mergeCloudProviderConfig = (
   configIni.Workspace = configIni.Workspace || {};
   configIni.Workspace.server = vcenter;
   configIni.Workspace.datacenter = datacenter;
-  configIni.Workspace['default-datastore'] = defaultdatastore;
+  configIni.Workspace['default-datastore'] = defaultDatastore;
   configIni.Workspace.folder = folder;
   configIni.Workspace['resourcepool-path'] = `/${datacenter}/host/${vCenterCluster}/Resources`;
 
@@ -80,4 +75,17 @@ export const mergeCloudProviderConfig = (
     .join('\n');
 
   return result;
+};
+
+export const getErrorMessage = (t: TFunction<'vsphere-plugin'>, error: unknown): string => {
+  if (error instanceof Error) {
+    return error.message || '';
+  }
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (error instanceof String) {
+    return error.toString();
+  }
+  return t('Unexpected error');
 };
