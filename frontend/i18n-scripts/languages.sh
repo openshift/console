@@ -1,3 +1,3 @@
 #!/bin/bash
 
-export LANGUAGES=( 'ja' 'zh-cn' 'ko')
+export LANGUAGES=( 'ja' 'zh-cn' 'ko' 'fr' 'es')
