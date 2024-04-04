@@ -65,7 +65,8 @@
           "name": "cluster"
         }
       ]
-    }
+    },
+    "flags": { "required": ["TELEMETRY_CLUSTER_CONFIGURATION"] }
   },
   {
     "type": "console.user-preference/item",
