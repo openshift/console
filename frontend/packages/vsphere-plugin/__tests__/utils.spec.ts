@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { ConnectionFormContextValues } from '../src/components/types';
+import { ConnectionFormFormikValues } from '../src/components/types';
 import { mergeCloudProviderConfig } from '../src/components/utils';
 
-const config: ConnectionFormContextValues = {
+const config: ConnectionFormFormikValues = {
   username: 'my-username',
   password: 'my-password',
   vcenter: 'https://1.2.3.4/something',
