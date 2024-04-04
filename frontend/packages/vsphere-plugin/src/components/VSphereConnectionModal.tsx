@@ -5,108 +5,213 @@ import {
   Button,
   Alert,
   AlertVariant,
-  AlertActionLink,
   Stack,
   StackItem,
+  Bullseye,
+  Spinner,
+  Split,
+  SplitItem,
 } from '@patternfly/react-core';
+import { Formik, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { HealthState } from '@console/dynamic-plugin-sdk';
+import * as Yup from 'yup';
+import { HealthState, SubsystemHealth } from '@console/dynamic-plugin-sdk';
+import { useConnectionForm } from '../hooks/use-connection-form';
 import { useConnectionModels } from '../hooks/use-connection-models';
-import { useConnectionFormContext } from './ConnectionFormContext';
-import { persist } from './persist';
-import { VSphereConnectionProps } from './types';
+import { usePopupVisibility } from '../hooks/use-popup-visibility';
+import { PersistError, persist } from './persist';
+import { ConnectionFormFormikValues, VSphereConnectionProps } from './types';
+import { getErrorMessage } from './utils';
 import { VSphereConnectionForm } from './VSphereConnectionForm';
 import { VSphereOperatorStatuses } from './VSphereOperatorStatuses';
 import './VSphereConnectionModal.css';
 
-export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (props) => {
+type VSphereConnectionModalFooterProps = {
+  onClose: VoidFunction;
+  mustPatch: boolean;
+};
+
+const VSphereConnectionModalFooter: React.FC<VSphereConnectionModalFooterProps> = ({
+  onClose,
+  mustPatch,
+}) => {
   const { t } = useTranslation('vsphere-plugin');
-  const [isModalOpen, setModalOpen] = React.useState(true);
-  const [isSaving, setIsSaving] = React.useState(false);
-  const [error, setError] = React.useState<string>();
+  const { isSubmitting, isValid, dirty, submitForm } = useFormikContext();
+  return (
+    <Split hasGutter>
+      <SplitItem>
+        <Button
+          variant="primary"
+          isDisabled={isSubmitting || !isValid || (mustPatch ? false : !dirty)}
+          onClick={submitForm}
+          isLoading={isSubmitting}
+        >
+          {isSubmitting ? t('Saving') : t('Save configuration')}
+        </Button>
+      </SplitItem>
+      <SplitItem>
+        <Button variant="link" onClick={onClose} isDisabled={isSubmitting}>
+          {t('Cancel')}
+        </Button>
+      </SplitItem>
+    </Split>
+  );
+};
 
-  const models = useConnectionModels();
+type VSphereConnectionModalAlertProps = {
+  health: SubsystemHealth;
+  error?: { title: string; message: string };
+};
 
-  const { values, isDirty, setDirty, isValid } = useConnectionFormContext();
+const VSphereConnectionModalAlert: React.FC<VSphereConnectionModalAlertProps> = ({
+  health,
+  error,
+}) => {
+  const { t } = useTranslation('vsphere-plugin');
+  const { isSubmitting } = useFormikContext();
 
-  const onClose = () => {
-    if (isSaving) {
-      return;
-    }
-    setModalOpen(false);
+  if (error) {
+    return (
+      <Alert isInline title={error.title} variant={AlertVariant.danger}>
+        {error.message}
+      </Alert>
+    );
+  }
 
-    // hide popup
-    props.hide?.();
-  };
-
-  const onSave = () => {
-    setIsSaving(true);
-    const doItAsync = async () => {
-      setError('');
-
-      const errorMsg = await persist(models, values, props.cloudProviderConfig);
-
-      // Done
-      setIsSaving(false);
-
-      if (errorMsg) {
-        setError(errorMsg);
-        return;
-      }
-
-      // We are all good now
-      setDirty(false); // Or call initialLoad() instead
-    };
-
-    doItAsync();
-  };
-
-  let alert;
-  if (!error && !isSaving && props.health.state === HealthState.WARNING) {
-    alert = (
+  if (!isSubmitting && health.state === HealthState.WARNING) {
+    return (
       <Alert
         isInline
         title={t('vSphere Problem Detector (can be outdated)')}
         variant={AlertVariant.warning}
       >
-        {props.health.message}
-      </Alert>
-    );
-  } else if (error) {
-    alert = (
-      <Alert
-        isInline
-        title={error}
-        actionLinks={<AlertActionLink onClick={onSave}>{t('Retry')}</AlertActionLink>}
-        variant={AlertVariant.danger}
-      />
-    );
-  } else {
-    alert = (
-      <Alert variant={AlertVariant.info} isInline title={t('Delayed propagation of configuration')}>
-        {t(
-          'The configuration process updates operator statuses and reboots nodes. This process typically takes about an hour. Existing resources such as previously bound Persistent Volume Claims might become disconnected.',
-        )}
-        <br />
-        {t(
-          'Note, that existing resources (like already bound PVCs) might get broken by these changes.',
-        )}
+        {health.message}
       </Alert>
     );
   }
 
-  const isSaveDisabled = isSaving || !isDirty || !isValid;
-
-  const footer = (
-    <>
-      <Button variant="link" onClick={onClose} isDisabled={isSaving}>
-        {t('Cancel')}
-      </Button>
-      <Button variant="primary" isDisabled={isSaveDisabled} onClick={onSave} isLoading={isSaving}>
-        {isSaving ? t('Saving') : t('Save configuration')}
-      </Button>
-    </>
+  return (
+    <Alert variant={AlertVariant.info} isInline title={t('Delayed propagation of configuration')}>
+      {t(
+        'The configuration process updates operator statuses and reboots nodes. This process typically takes about an hour. Existing resources such as previously bound Persistent Volume Claims might become disconnected.',
+      )}
+      <br />
+      {t(
+        'Note, that existing resources (like already bound PVCs) might get broken by these changes.',
+      )}
+    </Alert>
   );
+};
+
+const datastoreRegex = /^\/.*?\/datastore\/.+/;
+const folderRegex = /^\/.*?\/vm\/.+/;
+
+const validationSchema = Yup.lazy((values: ConnectionFormFormikValues) =>
+  Yup.object<ConnectionFormFormikValues>({
+    vcenter: Yup.string().required('vCenter is required.'),
+    username: Yup.string().required('Username is required.'),
+    password: Yup.string().required('Password is required.'),
+    datacenter: Yup.string().required('Datacenter is required.'),
+    defaultDatastore: Yup.string()
+      .required('Default data store is required.')
+      .test(
+        'Correct prefix',
+        `Must start with /${values.datacenter}/datastore/`,
+        (value: string) => {
+          if (!value || !values.datacenter) {
+            return true;
+          }
+          return value.startsWith(`/${values.datacenter}/datastore/`);
+        },
+      )
+      .matches(datastoreRegex, `Must match regex ${datastoreRegex}`),
+    folder: Yup.string()
+      .required('Virtual Machine Folder is required.')
+      .test('Correct prefix', `Must start with /${values.datacenter}/vm/`, (value: string) => {
+        if (!value || !values.datacenter) {
+          return true;
+        }
+        return value.startsWith(`/${values.datacenter}/vm/`);
+      })
+      .matches(folderRegex, `Must match regex ${folderRegex}`),
+    vCenterCluster: Yup.string().required('vCenter cluster is required.'),
+  }),
+);
+
+export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = ({
+  health,
+  hide,
+  cloudProviderConfig,
+}) => {
+  usePopupVisibility();
+  const { t } = useTranslation('vsphere-plugin');
+  const [isModalOpen, setModalOpen] = React.useState(true);
+  const [error, setError] = React.useState<{ title: string; message: string }>();
+
+  const models = useConnectionModels();
+
+  const { initValues, isLoaded, mustPatch, error: loadError } = useConnectionForm(
+    cloudProviderConfig,
+  );
+
+  const onClose = () => {
+    setModalOpen(false);
+    hide();
+  };
+
+  const onSave = async (values: ConnectionFormFormikValues) => {
+    setError(undefined);
+
+    try {
+      await persist(t, models, values, cloudProviderConfig);
+      onClose();
+    } catch (e) {
+      if (e instanceof PersistError) {
+        setError({ title: e.message, message: e.detail });
+      } else {
+        setError({ title: t('An error occured.'), message: getErrorMessage(t, e) });
+      }
+    }
+  };
+
+  let modalBody: React.ReactNode;
+
+  if (loadError) {
+    modalBody = (
+      <Alert isInline title={loadError.title} variant="danger">
+        {loadError.message}
+      </Alert>
+    );
+  } else if (isLoaded) {
+    modalBody = (
+      <Formik<ConnectionFormFormikValues>
+        initialValues={initValues}
+        onSubmit={onSave}
+        validationSchema={validationSchema}
+      >
+        <Stack hasGutter>
+          <StackItem>
+            <VSphereConnectionForm />
+          </StackItem>
+          <StackItem>
+            <VSphereOperatorStatuses />
+          </StackItem>
+          <StackItem>
+            <VSphereConnectionModalAlert error={error} health={health} />
+          </StackItem>
+          <StackItem>
+            <VSphereConnectionModalFooter onClose={onClose} mustPatch={mustPatch || !!error} />
+          </StackItem>
+        </Stack>
+      </Formik>
+    );
+  } else {
+    modalBody = (
+      <Bullseye>
+        <Spinner />
+      </Bullseye>
+    );
+  }
 
   return (
     isModalOpen && (
@@ -116,18 +221,10 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (props) 
         position="top"
         title={t('vSphere connection configuration')}
         isOpen
-        onClose={onClose}
-        footer={footer}
+        showClose={!isLoaded}
+        onClose={!isLoaded ? onClose : undefined}
       >
-        <Stack hasGutter>
-          <StackItem>
-            <VSphereConnectionForm {...props} />
-          </StackItem>
-          <StackItem>
-            <VSphereOperatorStatuses />
-          </StackItem>
-          <StackItem>{alert}</StackItem>
-        </Stack>
+        {modalBody}
       </Modal>
     )
   );
