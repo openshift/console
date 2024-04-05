@@ -94,6 +94,13 @@ export type Condition = {
   lastTransitionTime?: string;
 };
 
+export type ChildReferences = {
+  apiVersion: string;
+  kind: string;
+  name: string;
+  pipelineTaskName: string;
+};
+
 export type PipelineRunEmbeddedResourceParam = { name: string; value: string };
 export type PipelineRunEmbeddedResource = {
   name: string;
@@ -143,6 +150,7 @@ export type PipelineRunStatus = {
   }[];
   pipelineResults?: TektonResultsRun[]; // in tekton v1 pipelineResults is renamed to results
   results?: TektonResultsRun[];
+  childReferences?: ChildReferences[];
 };
 
 export type PipelineRunKind = K8sResourceCommon & {

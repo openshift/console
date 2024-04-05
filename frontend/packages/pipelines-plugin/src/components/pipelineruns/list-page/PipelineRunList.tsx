@@ -10,7 +10,6 @@ import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
 import { usePipelineOperatorVersion } from '../../pipelines/utils/pipeline-operator';
 import { getPipelineRunVulnerabilities } from '../hooks/usePipelineRunVulnerabilities';
-import { useGetTaskRuns } from '../hooks/useTektonResults';
 import PipelineRunHeader from './PipelineRunHeader';
 import PipelineRunRow from './PipelineRunRow';
 
@@ -32,7 +31,6 @@ export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
     PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY,
     'pipelines',
   );
-  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(namespace);
   React.useEffect(() => {
     if (preferredTabLoaded && activePerspective === 'dev') {
       setPreferredTab('pipeline-runs');
@@ -72,7 +70,7 @@ export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
             );
           },
         }}
-        customData={{ operatorVersion, taskRuns: taskRunsLoaded ? taskRuns : [], taskRunsLoaded }}
+        customData={{ operatorVersion }}
         onRowsRendered={onRowsRendered}
         virtualize
       />
