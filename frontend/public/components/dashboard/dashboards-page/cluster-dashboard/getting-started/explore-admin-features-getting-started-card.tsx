@@ -18,14 +18,18 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
 
   const links: GettingStartedLink[] = [
     {
-      id: 'api-explorer',
-      title: t('public~API Explorer'),
-      href: '/api-explorer',
+      id: 'openshift-ai',
+      title: t('public~OpenShift AI'),
+      description: t('public~Build, deploy, and manage AI-enabled applications.'),
+      href:
+        '/operatorhub/all-namespaces?keyword=openshift+ai&details-item=rhods-operator-redhat-operators-openshift-marketplace',
     },
     {
-      id: 'operatorhub',
-      title: t('public~OperatorHub'),
-      href: '/operatorhub',
+      id: 'openshift-lightspeed',
+      title: t('public~OpenShift LightSpeed'),
+      description: t('public~Your personal AI helper.'),
+      href:
+        '/operatorhub/all-namespaces?keyword=lightspeed&details-item=lightspeed-operator-lightspeed-operator-catalog-openshift-marketplace', // TODO: add correct href
     },
   ];
 
@@ -40,9 +44,8 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
     <GettingStartedCard
       id="admin-features"
       icon={<FlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
-      title={t('public~Explore new admin features')}
+      title={t('public~Explore new features and capabilities')}
       titleColor={'var(--co-global--palette--orange-400)'}
-      description={t('public~Explore new features and resources within the admin perspective.')}
       links={links}
       moreLink={moreLink}
     />

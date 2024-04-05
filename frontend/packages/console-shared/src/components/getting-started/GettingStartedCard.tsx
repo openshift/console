@@ -22,6 +22,7 @@ export interface GettingStartedLink {
   loading?: boolean;
 
   title?: string | React.ReactElement;
+  description?: string;
 
   external?: boolean;
   /** Default hyperlink location */
@@ -57,6 +58,9 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
       id: activePerspective,
     });
   };
+  const getLinkTitleClassNames = (external: boolean) =>
+    external ? 'co-external-link pf-v5-u-display-block' : 'co-goto-arrow';
+
   return (
     <Flex
       direction={{ default: 'column' }}
@@ -87,7 +91,7 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                 <SimpleListItem
                   key={link.id}
                   component={link.href ? (link.external ? 'a' : (Link as any)) : 'button'}
-                  componentClassName={link.external ? 'co-external-link' : 'co-goto-arrow'}
+                  componentClassName={link.description ? '' : getLinkTitleClassNames(link.external)}
                   componentProps={
                     link.external
                       ? {
@@ -107,7 +111,14 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                     link.onClick?.(e);
                   }}
                 >
-                  {link.title}
+                  {link.description ? (
+                    <>
+                      <Text className={getLinkTitleClassNames(link.external)}>{link.title}</Text>
+                      <Text component={TextVariants.small}>{link.description}</Text>
+                    </>
+                  ) : (
+                    link.title
+                  )}
                 </SimpleListItem>
               ),
             )}

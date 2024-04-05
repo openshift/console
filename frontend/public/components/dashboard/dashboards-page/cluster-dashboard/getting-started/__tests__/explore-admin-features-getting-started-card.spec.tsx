@@ -11,7 +11,7 @@ jest.mock('react', () => ({
 
 jest.mock('@console/shared/src', () => ({
   ...require.requireActual('@console/shared/src'),
-  useOpenShiftVersion: () => '4.8.0',
+  useOpenShiftVersion: () => '4.16.0',
 }));
 
 // Workaround because getting-started exports also RestoreGettingStartedButton
@@ -32,22 +32,28 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
   it('should contain the right static links', () => {
     const wrapper = shallow(<ExploreAdminFeaturesGettingStartedCard />);
 
-    expect(wrapper.find(GettingStartedCard).props().title).toEqual('Explore new admin features');
+    expect(wrapper.find(GettingStartedCard).props().title).toEqual(
+      'Explore new features and capabilities',
+    );
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
       {
-        id: 'api-explorer',
-        title: 'API Explorer',
-        href: '/api-explorer',
+        id: 'openshift-ai',
+        title: 'OpenShift AI',
+        description: 'Build, deploy, and manage AI-enabled applications.',
+        href:
+          '/operatorhub/all-namespaces?keyword=openshift+ai&details-item=rhods-operator-redhat-operators-openshift-marketplace',
       },
       {
-        id: 'operatorhub',
-        title: 'OperatorHub',
-        href: '/operatorhub',
+        id: 'openshift-lightspeed',
+        title: 'OpenShift LightSpeed',
+        description: 'Your personal AI helper.',
+        href:
+          '/operatorhub/all-namespaces?keyword=lightspeed&details-item=lightspeed-operator-lightspeed-operator-catalog-openshift-marketplace', // TODO: add correct href
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
       id: 'whats-new',
-      title: "See what's new in OpenShift 4.8",
+      title: "See what's new in OpenShift 4.16",
       href: 'https://www.openshift.com/learn/whats-new',
       external: true,
     });
