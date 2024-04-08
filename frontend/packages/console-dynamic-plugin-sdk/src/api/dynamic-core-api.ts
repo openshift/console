@@ -641,6 +641,9 @@ export const CodeEditor: React.ForwardRefExoticComponent<
  * @param {ResourceYAMLEditorProps['header']} header - Add a header on top of the YAML editor.
  * @param {ResourceYAMLEditorProps['onSave']} onSave - Callback for the Save button. Passing it will override the default update performed on the resource by the editor.
  * @param {ResourceYAMLEditorProps['readOnly']} readOnly - Sets the YAML editor to read-only mode.
+ * @param {ResourceYAMLEditorProps['create']} create - Editor will be on creation mode. Create button will replace the Save and Cancel buttons. If no onSave method defined, the 'Create' button will trigger the creation of the defined resource. Default: false
+ * @param {ResourceYAMLEditorProps['onChange']} onChange - Callback triggered at any editor change.
+ * @param {ResourceYAMLEditorProps['hideHeader']} hideHeader - On creation mode the editor by default show an header that can be hided with this property
  */
 export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = require('@console/internal/components/AsyncResourceYAMLEditor')
   .AsyncResourceYAMLEditor;
