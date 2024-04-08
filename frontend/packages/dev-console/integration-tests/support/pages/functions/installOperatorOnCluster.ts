@@ -58,7 +58,7 @@ export const installOperator = (operatorName: operators) => {
       waitForResult();
     } else {
       cy.log(`${operatorName} Operator is already installed`);
-      sidePane.close();
+      sidePane.operatorClose();
     }
     operatorsPage.navigateToInstallOperatorsPage();
     operatorsPage.verifyInstalledOperator(operatorName);

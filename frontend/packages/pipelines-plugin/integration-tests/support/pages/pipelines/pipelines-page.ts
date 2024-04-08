@@ -77,7 +77,9 @@ export const pipelinesPage = {
           cy.get('tbody tr')
             .eq(index)
             .within(() => {
-              cy.get(pipelinesPO.pipelinesTable.kebabMenu).click({ force: true });
+              cy.get(`button${pipelinesPO.pipelinesTable.kebabMenu}`)
+                .should('be.visible')
+                .click({ force: true });
             });
         }
       });
@@ -235,7 +237,7 @@ export const startPipelineInPipelinesPage = {
   clickCancel: () => cy.byLegacyTestID('modal-cancel-action').click(),
   verifySections: () => {
     cy.get(pipelinesPO.startPipeline.sectionTitle).as('sectionTitle');
-    cy.get('@sectionTitle').eq(0).should('have.text', 'Git resources');
+    cy.get('@sectionTitle').eq(0).should('have.text', 'Workspaces');
     cy.get('@sectionTitle').eq(1).should('have.text', 'Advanced options');
   },
   enterGitUrl: (gitUrl: string) => {

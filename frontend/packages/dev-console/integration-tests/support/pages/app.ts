@@ -49,7 +49,8 @@ export const app = {
 };
 
 export const sidePane = {
-  close: () => cy.get('button[aria-label="Close"]').click({ force: true }),
+  operatorClose: () => cy.get('button[aria-label="Close"]').click({ force: true }),
+  close: () => cy.byLegacyTestID('sidebar-close-button').click({ force: true }),
 };
 
 export const perspective = {
