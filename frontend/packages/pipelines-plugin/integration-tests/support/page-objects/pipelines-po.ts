@@ -4,7 +4,6 @@ export const pipelineBuilderPO = {
   cancel: '[data-test-id="reset-button"]',
   pipeline: '#pipeline-link',
   repository: '#repository-link',
-  add: 'button.pf-v5-c-button.pf-m-link.pf-m-inline',
   configureVia: {
     pipelineBuilder: '#form-radiobutton-editorType-form-field',
     yamlView: '#form-radiobutton-editorType-yaml-field',
@@ -22,14 +21,14 @@ export const pipelineBuilderPO = {
     seriesTask: '[data-id^="has-run-after-"][data-kind="node"]',
     parallelTask: '[data-id^="shared-parallel-"][data-kind="node"]',
     sectionTitle: '.odc-pipeline-builder-page h2',
-    addResourcesLink: 'div.pf-v5-c-form__group button[type="button"]',
+    addResourcesLink: '[data-test="add-action"]',
     addParams: {
       name: '#form-input-formData-params-0-name-field',
       description: '#form-input-formData-params-0-description-field',
       defaultValue: '#form-input-formData-params-0-default-field',
     },
     addResources: {
-      name: '#form-input-formData-resources-0-name-field',
+      name: '#form-input-formData-workspaces-0-name-field',
       resourceType: '#form-dropdown-formData-resources-0-type-field',
     },
     sidePane: {
@@ -132,10 +131,10 @@ export const pipelineDetailsPO = {
     yamlEditor: '[data-mode-id="yaml"]',
   },
   metrics: {
-    emptyMessage: '.pf-v5-c-empty-state__body',
+    emptyMessage: '.loading-box.loading-box__loaded',
     timeRange: '',
     refreshInterval: '',
-    graphTitle: '.pf-v5-c-card__title',
+    graphTitle: '[class$="card__title"]',
   },
   pipelineRuns: {
     pipelineRunIcon: '[title="PipelineRun"]',
@@ -274,10 +273,10 @@ export const pipelinesPO = {
   addTrigger: {
     add: '#confirm-action',
     gitProviderType: '[id$="triggerBinding-name-field"]',
-    gitUrl: '#form-input-resources-0-data-params-url-field',
-    revision: '#form-input-resources-0-data-params-revision-field',
+    gitUrl: '#form-input-parameters-1-value-field',
+    revision: '#form-input-parameters-2-value-field',
     variablesMessage: 'p.odc-trigger-binding-section__variable-descriptor',
-    variablesLink: '.pf-v5-c-form button',
+    variablesLink: '[id^="expandable-section-toggle"]',
   },
   editPipeline: {
     title: 'h1.odc-pipeline-builder-header__title',
@@ -289,15 +288,14 @@ export const pipelinesPO = {
   },
   startPipeline: {
     sectionTitle: 'h2.odc-form-section__heading',
-    gitResourceDropdown: '[id*="dropdown-resources-0"]',
-    gitUrl: '#form-input-resources-0-data-params-url-field',
-    revision: '#form-input-resources-0-data-params-revision-field',
+    gitResourceDropdown: '[for="form-input-parameters-1-value-field"]', // '[id*="dropdown-resources-0"]',
+    gitUrl: '#form-input-parameters-1-value-field',
+    revision: '#form-input-parameters-2-value-field',
     sharedWorkspace: '#form-dropdown-workspaces-0-type-field',
     emptyDirectoryInfo: '[aria-label="Info Alert"]',
     start: '#confirm-action',
     workspaces: {
       workspaceType: '[id$="workspaces-0-type-field"]',
-      emptyDirectoryInfo: '.pf-v5-u-screen-reader',
       configMap: '.odc-multiple-key-selector button',
       secret: '.odc-multiple-key-selector button',
       pvc: '[id$=persistentVolumeClaim-claimName-field]',

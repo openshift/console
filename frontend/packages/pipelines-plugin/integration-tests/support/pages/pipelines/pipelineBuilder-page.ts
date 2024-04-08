@@ -98,10 +98,9 @@ export const pipelineBuilderPage = {
     cy.get(pipelineBuilderPO.formView.addParams.description).type(description);
     cy.get(pipelineBuilderPO.formView.addParams.defaultValue).type(defaultValue);
   },
-  addResource: (resourceName: string, resourceType: string = 'Git') => {
+  addResource: (resourceName: string) => {
     cy.get(pipelineBuilderPO.formView.addResourcesLink).eq(1).click();
     cy.get(pipelineBuilderPO.formView.addResources.name).type(resourceName);
-    cy.get(pipelineBuilderPO.formView.addResources.resourceType).select(resourceType);
   },
   verifySection: () => {
     cy.get(pipelineBuilderPO.formView.sectionTitle).as('sectionTitle');
