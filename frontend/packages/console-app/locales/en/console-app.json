@@ -576,6 +576,7 @@
   "Volume handle": "Volume handle",
   "Snapshot handle": "Snapshot handle",
   "SnapshotClass": "SnapshotClass",
+  "Create VolumeSnapshotContent": "Create VolumeSnapshotContent",
   "VolumeSnapshot details": "VolumeSnapshot details",
   "Source": "Source",
   "VolumeSnapshotContent": "VolumeSnapshotContent",
