@@ -204,8 +204,8 @@ class MastheadToolbarContents_ extends React.Component {
       this.setState({ username: authSvc.name() });
     }
     this.setState({
-      username: _.get(user, 'username') || _.get(user, 'metadata.name', ''),
-      isKubeAdmin: _.get(user, 'metadata.name') === 'kube:admin',
+      username: _.get(user, 'username'),
+      isKubeAdmin: _.get(user, 'username') === 'kube:admin' && _.get(user, 'uid') === '',
     });
   }
 
