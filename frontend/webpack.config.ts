@@ -232,6 +232,7 @@ const config: Configuration = {
         loader: 'file-loader',
         options: {
           name: 'assets/[path][name].[ext]',
+          esModule: false,
         },
       },
       {

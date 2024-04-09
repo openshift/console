@@ -298,7 +298,7 @@
     "cypress-jest-adapter": "^0.1.1",
     "cypress-multi-reporters": "^1.4.0",
     "enzyme": "3.10.x",
-    "file-loader": "1.x",
+    "file-loader": "6.2.0",
     "find-up": "4.x",
     "fork-ts-checker-webpack-plugin": "6.5.2",
     "glob": "7.x",
