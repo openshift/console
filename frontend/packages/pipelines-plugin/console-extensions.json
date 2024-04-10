@@ -506,6 +506,35 @@
     }
   },
   {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "approval-task-description",
+      "model": {
+        "group": "openshift-pipelines.org",
+        "version": "v1alpha1",
+        "kind": "ApprovalTask"
+      },
+      "component": { "$codeRef": "tasksComponent.TaskDescriptionSection" },
+      "sortWeight": 1,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "approval-task-approvers",
+      "model": {
+        "group": "openshift-pipelines.org",
+        "version": "v1alpha1",
+        "kind": "ApprovalTask"
+      },
+      "component": { "$codeRef": "tasksComponent.ApproverListSection" },
+      "title": "%pipelines-plugin~Approvers%",
+      "sortWeight": 1,
+      "column": "right"
+    }
+  },
+  {
     "type": "console.page/resource/list",
     "properties": {
       "model": {

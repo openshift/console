@@ -83,6 +83,13 @@ export const getApprovalStatus = (
   return ApprovalStatus.Unknown;
 };
 
+export const getPipelineRunName = (approvalTask: ApprovalTaskKind): string => {
+  if (approvalTask?.metadata?.labels?.['tekton.dev/pipelineRun']) {
+    return approvalTask?.metadata?.labels?.['tekton.dev/pipelineRun'];
+  }
+  return approvalTask.metadata.name?.split('-')?.slice(0, -1)?.join('-');
+};
+
 export const getPipelineRunOfApprovalTask = (
   pipelineRuns: PipelineRunKind[],
   approvalTask: ApprovalTaskKind,
@@ -90,13 +97,7 @@ export const getPipelineRunOfApprovalTask = (
   if (!pipelineRuns || !pipelineRuns.length) {
     return null;
   }
-  let pipelineRunName = '';
-
-  if (approvalTask?.metadata?.labels?.['tekton.dev/pipelineRun']) {
-    pipelineRunName = approvalTask?.metadata?.labels?.['tekton.dev/pipelineRun'];
-  } else {
-    pipelineRunName = approvalTask.metadata.name?.split('-')?.slice(0, -1)?.join('-');
-  }
+  const pipelineRunName = getPipelineRunName(approvalTask) || '';
 
   return pipelineRuns.find((pr) => pr.metadata.name === pipelineRunName);
 };

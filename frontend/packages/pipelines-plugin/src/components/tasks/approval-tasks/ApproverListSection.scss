@@ -1,0 +1,21 @@
+.odc-pl-approval-status-badge {
+  height: 30px;
+}
+
+.odc-pl-approval-approver__wait {
+  top: var(--pf-v5-global--spacer--form-element);
+  position: relative;
+  left: -9px;
+  width: var(--pf-v5-global--spacer--md);
+}
+
+.odc-pl-approval-approver__approved {
+  top: 5px;
+  position: relative;
+  left: -9px;
+  width: var(--pf-v5-global--FontSize--xl);
+}
+
+.odc-pl-approval-approver-list {
+  margin-top: var(--pf-v5-global--spacer--form-element);
+}

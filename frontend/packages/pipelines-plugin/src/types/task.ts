@@ -26,6 +26,7 @@ export type ApprovalTaskKind = K8sResourceCommon & {
       name: string;
     }[];
     approvalsRequired: number;
+    description?: string;
   };
   status?: {
     approvalState: string;

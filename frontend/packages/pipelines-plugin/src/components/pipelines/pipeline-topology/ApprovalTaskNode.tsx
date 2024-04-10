@@ -10,8 +10,10 @@ import {
   WatchK8sResults,
   getGroupVersionKindForModel,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useUserSettings } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
-import { resourcePathFromModel, truncateMiddle } from '@console/internal/components/utils';
+import { truncateMiddle } from '@console/internal/components/utils';
+import { PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY } from '@console/pipelines-plugin/src/const';
 import { ApprovalTaskModel, CustomRunModelV1Beta1 } from '@console/pipelines-plugin/src/models';
 import {
   getApprovalStatus,
@@ -67,8 +69,20 @@ const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
   const visualName = name || _.get(task, ['metadata', 'name'], '');
   const nameRef = React.useRef();
   const pillRef = React.useRef();
+  const [, setPreferredTab, preferredTabLoaded] = useUserSettings<string>(
+    PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY,
+    'approvals',
+  );
 
-  const path = `${resourcePathFromModel(ApprovalTaskModel, customTask?.metadata?.name, namespace)}`;
+  React.useEffect(() => {
+    if (preferredTabLoaded) {
+      setPreferredTab('approvals');
+    }
+  }, [preferredTabLoaded, setPreferredTab]);
+
+  const path = customTask?.metadata?.name
+    ? `/dev-pipelines/ns/${namespace}/approvals?name=${customTask?.metadata?.name}`
+    : undefined;
 
   const enableLogLink = status !== ApprovalStatus.Idle && !!path;
   const taskStatusColor = status

@@ -21,11 +21,11 @@ import {
   FLAG_OPENSHIFT_PIPELINE_AS_CODE,
   PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY,
 } from '../../const';
-import { PipelineModel, PipelineRunModel, RepositoryModel } from '../../models';
+import { ApprovalTaskModel, PipelineModel, PipelineRunModel, RepositoryModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { PipelineRunsResourceList } from '../pipelineruns';
 import RepositoriesList from '../repository/list-page/RepositoriesList';
-import ApprovalTasksListPage from '../tasks/list-page/approval-tasks/ApprovalTasksListPage';
+import ApprovalTasksListPage from '../tasks/approval-tasks/ApprovalTasksListPage';
 import PipelinesList from './list-page/PipelinesList';
 
 export const PageContents: React.FC = () => {
@@ -93,8 +93,8 @@ export const PageContents: React.FC = () => {
       ? [
           {
             href: 'approvals',
-            // t(RepositoryModel.labelPluralKey)
-            nameKey: `${t('pipelines-plugin~Approvals')}`,
+            // t(ApprovalTaskModel.labelPluralKey)
+            nameKey: ApprovalTaskModel.labelPluralKey,
             component: ApprovalTasksListPage,
             pageData: { showTitle, hideBadge, canCreate },
           },

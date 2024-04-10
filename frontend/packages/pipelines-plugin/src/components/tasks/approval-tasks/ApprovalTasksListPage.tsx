@@ -1,8 +1,10 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ListPage } from '@console/internal/components/factory';
 import { RowFilter, referenceForModel } from '@console/internal/module/k8s';
+import { PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY } from '@console/pipelines-plugin/src/const';
 import { ApprovalTaskModel } from '@console/pipelines-plugin/src/models';
 import { ApprovalStatus, ApprovalTaskKind } from '@console/pipelines-plugin/src/types';
 import {
@@ -10,7 +12,8 @@ import {
   getApprovalStatusInfo,
   getPipelineRunOfApprovalTask,
 } from '@console/pipelines-plugin/src/utils/pipeline-approval-utils';
-import { useCustomRuns, usePipelineRuns } from '../../../pipelineruns/hooks/usePipelineRuns';
+import { useUserSettings } from '@console/shared/src/hooks';
+import { useCustomRuns, usePipelineRuns } from '../../pipelineruns/hooks/usePipelineRuns';
 import ApprovalTasksList from './ApprovalTasksList';
 
 const pipelineApprovalFilterReducer = (obj: ApprovalTaskKind, pipelineRuns, customRuns) => {
@@ -21,7 +24,7 @@ const pipelineApprovalFilterReducer = (obj: ApprovalTaskKind, pipelineRuns, cust
 
 const ApprovalTasksListPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
   const { t } = useTranslation();
-
+  const activePerspective = useActivePerspective()[0];
   const [pipelineRuns, pipelineRunsLoaded] = usePipelineRuns(props.namespace);
   const [customRuns, customRunLoaded] = useCustomRuns(props.namespace);
 
@@ -53,13 +56,25 @@ const ApprovalTasksListPage: React.FC<React.ComponentProps<typeof ListPage>> = (
         const status = pipelineApprovalFilterReducer(obj, pipelineRuns, customRuns);
         return !filterValue.selected?.length || (status && filterValue.selected.includes(status));
       },
+      defaultSelected: [ApprovalStatus.RequestSent],
     },
   ];
+
+  const [, setPreferredTab, preferredTabLoaded] = useUserSettings<string>(
+    PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY,
+    'approvals',
+  );
+
+  React.useEffect(() => {
+    if (preferredTabLoaded && activePerspective === 'dev') {
+      setPreferredTab('approvals');
+    }
+  }, [activePerspective, preferredTabLoaded, setPreferredTab]);
 
   return (
     <>
       <Helmet>
-        <title>{t('pipelines-plugin~ApprovalTasks')}</title>
+        <title>{t('pipelines-plugin~Approval tasks')}</title>
       </Helmet>
       <ListPage
         {...props}

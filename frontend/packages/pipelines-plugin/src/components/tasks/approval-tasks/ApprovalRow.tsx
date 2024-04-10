@@ -1,19 +1,17 @@
 import * as React from 'react';
-import { Split, SplitItem, List, ListItem } from '@patternfly/react-core';
-import * as _ from 'lodash';
+import { Split, SplitItem, Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
 import { getUser } from '@console/dynamic-plugin-sdk';
 import { UserInfo } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import {
   KebabAction,
-  ResourceIcon,
   ResourceKebab,
   ResourceLink,
-  resourcePath,
+  Timestamp,
 } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
@@ -24,19 +22,23 @@ import {
   getApprovalStatusInfo,
   getPipelineRunOfApprovalTask,
 } from '@console/pipelines-plugin/src/utils/pipeline-approval-utils';
-import { pipelineRunDuration } from '@console/pipelines-plugin/src/utils/pipeline-utils';
-import { ApprovalStatusIcon } from '../../../pipelines/detail-page-tabs/pipeline-details/StatusIcon';
+import { ApprovalStatusIcon } from '../../pipelines/detail-page-tabs/pipeline-details/StatusIcon';
 import { tableColumnClasses } from './approval-table';
 import { addApprovalModal } from './modal/ApprovalModalLauncher';
 
 import './ApprovalRow.scss';
 
 const ApprovalRow: React.FC<RowFunctionArgs<ApprovalTaskKind>> = ({ obj, customData }) => {
+  const { t } = useTranslation();
   const {
-    metadata: { name, namespace },
-    status: { approvals, approvedBy },
+    metadata: { name, namespace, creationTimestamp },
+    spec: { description, approvalsRequired },
+    status: { approvalState, approvals, approvedBy },
   } = obj;
-
+  const translatedDescription = t('pipelines-plugin~{{description}}', { description });
+  const translatedApproversCount = t('pipelines-plugin~{{assignees}} Assigned', {
+    assignees: approvals?.length || 0,
+  });
   const { pipelineRuns, customRuns } = customData;
   const pipelineRun = getPipelineRunOfApprovalTask(pipelineRuns, obj);
   const customRun = customRuns?.find((cr) => cr?.metadata?.name === name);
@@ -53,7 +55,9 @@ const ApprovalRow: React.FC<RowFunctionArgs<ApprovalTaskKind>> = ({ obj, customD
   const approveAction: KebabAction = (kind, approvalTask) => ({
     // t('pipelines-plugin~Approve')
     labelKey: 'pipelines-plugin~Approve',
-    isDisabled: !approvals?.find((approver) => approver === user.username),
+    isDisabled:
+      approvalState !== ApprovalStatus.RequestSent ||
+      !approvals?.find((approver) => approver === user.username),
     callback: () => {
       addApprovalModal({
         resource: approvalTask,
@@ -74,7 +78,9 @@ const ApprovalRow: React.FC<RowFunctionArgs<ApprovalTaskKind>> = ({ obj, customD
   const rejectAction: KebabAction = (kind, approvalTask) => ({
     // t('pipelines-plugin~Reject')
     labelKey: 'pipelines-plugin~Reject',
-    isDisabled: !approvals?.find((approver) => approver === user.username),
+    isDisabled:
+      approvalState !== ApprovalStatus.RequestSent ||
+      !approvals?.find((approver) => approver === user.username),
     callback: () => {
       addApprovalModal({
         resource: approvalTask,
@@ -94,54 +100,16 @@ const ApprovalRow: React.FC<RowFunctionArgs<ApprovalTaskKind>> = ({ obj, customD
 
   const kebabActions = [approveAction, rejectAction];
 
-  const getApprovalStatusforApprovers = (approver: string) => {
-    return (
-      approvedBy?.find((approvalStatus) => approvalStatus.name === approver)?.approved ??
-      ApprovalStatus.RequestSent
-    );
-  };
-
   return (
     <>
       <TableData className={tableColumnClasses.plrName}>
-        <ResourceIcon kind={referenceForModel(PipelineRunModel)} />
-        <Link
-          to={`${resourcePath(
-            referenceForModel(PipelineRunModel),
-            pipelineRun?.metadata?.name,
-            namespace,
-          )}`}
-          className="co-resource-item__resource-name"
-          data-test-id={name}
-        >
-          {pipelineRun?.metadata?.name}
-        </Link>
+        <ResourceLink
+          kind={referenceForModel(PipelineRunModel)}
+          name={pipelineRun?.metadata.name}
+          namespace={namespace}
+        />
       </TableData>
-      <TableData className={tableColumnClasses.approvers}>
-        <List isPlain>
-          {!_.isEmpty(approvals) &&
-            approvals?.map((approver) => (
-              <ListItem key={approver}>
-                <Split hasGutter className="odc-pl-approval-approver-list">
-                  <SplitItem>
-                    <svg
-                      width={30}
-                      height={30}
-                      viewBox="-10 -2 30 30"
-                      style={{
-                        color: getApprovalStatusInfo(approvalTaskStatus).pftoken.value,
-                      }}
-                    >
-                      <ApprovalStatusIcon status={getApprovalStatusforApprovers(approver)} />
-                    </svg>
-                  </SplitItem>
-                  <SplitItem isFilled>{approver}</SplitItem>
-                </Split>
-              </ListItem>
-            ))}
-        </List>
-      </TableData>
-      <TableData className={tableColumnClasses.taskName}>
+      <TableData className={tableColumnClasses.taskRunName}>
         <ResourceLink
           kind={referenceForModel(ApprovalTaskModel)}
           name={name}
@@ -163,12 +131,28 @@ const ApprovalRow: React.FC<RowFunctionArgs<ApprovalTaskKind>> = ({ obj, customD
             </svg>
           </SplitItem>
           <SplitItem isFilled className="co-resource-item">
-            {getApprovalStatusInfo(approvalTaskStatus).message}
+            {getApprovalStatusInfo(approvalTaskStatus).message}{' '}
+            <Tooltip content={translatedApproversCount} position="right">
+              <span className="odc-pl-approval-status-info">{`(${approvedBy?.length || 0}/${
+                approvalsRequired || 0
+              })`}</span>
+            </Tooltip>
           </SplitItem>
         </Split>
       </TableData>
-      <TableData className={tableColumnClasses.duration}>
-        {pipelineRunDuration(pipelineRun)}
+      <TableData className={tableColumnClasses.description}>
+        {!description ? (
+          '-'
+        ) : description.length > 35 ? (
+          <Tooltip content={translatedDescription}>
+            <span>{translatedDescription.slice(0, 35)}...</span>
+          </Tooltip>
+        ) : (
+          translatedDescription
+        )}
+      </TableData>
+      <TableData className={tableColumnClasses.startTime}>
+        {(creationTimestamp && <Timestamp timestamp={creationTimestamp} />) || '-'}
       </TableData>
       <TableData className={tableColumnClasses.actions}>
         <ResourceKebab actions={kebabActions} kind={referenceFor(obj)} resource={obj} />

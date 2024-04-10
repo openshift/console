@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ResourceIcon } from '@console/internal/components/utils';
@@ -73,23 +73,21 @@ const Approval: React.FC<ApprovalProps> = ({
     type === 'approve' ? t('pipelines-plugin~Approve') : t('pipelines-plugin~Reject');
 
   const labelDescription = (
-    <Trans t={t} ns="pipelines-plugin">
-      <p>
-        {type === 'approve'
-          ? 'Are you sure you want to approve'
-          : 'Please provide a reason for not approving'}{' '}
-        <ResourceIcon kind={referenceForModel(ApprovalTaskModel)} />
-        <Link to={`/k8s/ns/${namespace}/${referenceForModel(ApprovalTaskModel)}/${name}`}>
-          {name}
-        </Link>{' '}
-        in <br />
-        <ResourceIcon kind={referenceForModel(PipelineRunModel)} />
-        <Link to={`/k8s/ns/${namespace}/${referenceForModel(PipelineRunModel)}/${pipelineRunName}`}>
-          {pipelineRunName}
-        </Link>
-        ?
-      </p>
-    </Trans>
+    <p>
+      {type === 'approve'
+        ? t('pipelines-plugin~Are you sure you want to approve')
+        : t('pipelines-plugin~Please provide a reason for not approving')}{' '}
+      <ResourceIcon kind={referenceForModel(ApprovalTaskModel)} />
+      <Link to={`/k8s/ns/${namespace}/${referenceForModel(ApprovalTaskModel)}/${name}`}>
+        {name}
+      </Link>{' '}
+      {t('pipelines-plugin~in')} <br />
+      <ResourceIcon kind={referenceForModel(PipelineRunModel)} />
+      <Link to={`/k8s/ns/${namespace}/${referenceForModel(PipelineRunModel)}/${pipelineRunName}`}>
+        {pipelineRunName}
+      </Link>
+      ?
+    </p>
   );
   return (
     <Formik
