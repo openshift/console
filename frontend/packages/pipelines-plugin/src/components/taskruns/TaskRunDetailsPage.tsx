@@ -10,6 +10,7 @@ import {
 } from '../../const';
 import { TaskRunKind } from '../../types';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
+import { taskRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { useTaskRun } from '../pipelineruns/hooks/usePipelineRuns';
 import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
 import TaskRunEvents from './events/TaskRunEvents';
@@ -49,6 +50,7 @@ const TaskRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
       badge={badge}
       breadcrumbsFor={() => breadcrumbsFor}
       titleFunc={resourceTitleFunc}
+      getResourceStatus={taskRunFilterReducer}
       pages={[
         navFactory.details(TaskRunDetails),
         navFactory.editYaml(viewYamlComponent),
