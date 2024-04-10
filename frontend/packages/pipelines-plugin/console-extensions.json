@@ -535,6 +535,17 @@
     }
   },
   {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "pipelineApprovalContext.PipelineApprovalContextProvider" },
+      "useValueHook": { "$codeRef": "pipelineApprovalContext.usePipelineApprovalToast" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE_APPROVAL_TASK"],
+      "disallowed": ["CONSOLE_PIPELINE_PLUGIN"]
+    }
+  },
+  {
     "type": "console.page/resource/list",
     "properties": {
       "model": {

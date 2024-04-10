@@ -24,7 +24,8 @@
       "tasksComponent": "src/components/tasks-index.ts",
       "triggersComponent": "src/components/triggers-index.ts",
       "pacComponent": "src/components/pac/index.ts",
-      "resultsComponent": "src/components/shared/results"
+      "resultsComponent": "src/components/shared/results",
+      "pipelineApprovalContext": "src/components/tasks/approval-tasks/pipeline-approval-context.tsx"
     }
   }
 }
