@@ -22,7 +22,7 @@ import (
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
-
+	downloadsServer "github.com/openshift/cmd/bridge/downloads/server"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 )
@@ -74,6 +74,12 @@ func main() {
 	fs.String("config", "", "The YAML config file.")
 
 	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
+	fDownloads := fs.String("downloads-server", "", "Bridge will console will run as a downloads server, that is serving the CLI artifacts.")
+
+	if *fDownloads != "" {
+		// run downloads server
+		downloadsServer.start()
+	}
 
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")
 	fBasePath := fs.String("base-path", "/", "")
