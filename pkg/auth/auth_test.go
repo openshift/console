@@ -30,29 +30,6 @@ func (m *mockOpenShiftProvider) handleDiscovery(w http.ResponseWriter, r *http.R
 }`, m.issuer, m.issuer, m.issuer)
 }
 
-// mockOIDICProvider is test provider that only supports discovery
-//
-// https://openid.net/specs/openid-connect-discovery-1_0.html
-type mockOIDCProvider struct {
-	issuer string
-}
-
-func (m *mockOIDCProvider) handleDiscovery(w http.ResponseWriter, r *http.Request) {
-	// https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationRequest
-	if r.URL.Path != "/.well-known/openid-configuration" {
-		http.NotFound(w, r)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, `{
- "issuer": "%s",
- "authorization_endpoint": "%s/auth",
- "token_endpoint": "%s/token",
- "jwks_uri": "%s/keys"
-}`, m.issuer, m.issuer, m.issuer, m.issuer)
-}
-
 func TestNewAuthenticator(t *testing.T) {
 	errURL := "http://example.com/error"
 	sucURL := "http://example.com/success"

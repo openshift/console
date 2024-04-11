@@ -61,12 +61,8 @@ func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStor
 }
 
 func (o *oidcAuth) login(w http.ResponseWriter, r *http.Request, token *oauth2.Token) (*sessions.LoginState, error) {
-
-	ls, err := sessions.NewLoginState(o.verify, token)
+	ls, err := o.sessions.AddSession(w, r, o.verify, token)
 	if err != nil {
-		return nil, err
-	}
-	if err := o.sessions.AddSession(w, r, ls); err != nil {
 		return nil, err
 	}
 
@@ -113,10 +109,7 @@ func (o *oidcAuth) verify(ctx context.Context, rawIDToken string) (*oidc.IDToken
 }
 
 func (o *oidcAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
-	// The returned login state can be nil even if err == nil.
-	if ls, _ := o.getLoginState(w, r); ls != nil {
-		o.sessions.DeleteSession(w, r, ls.SessionToken()) // TODO: could we just use the session token from the cookie instead of trying to retrieving the session first?
-	}
+	o.sessions.DeleteSession(w, r)
 }
 
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
