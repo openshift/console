@@ -23,10 +23,10 @@ import { dropdownUnits, initialAccessModes } from '@console/internal/components/
 import {
   ButtonBar,
   ExternalLink,
-  history,
   LoadingInline,
   RequestSizeInput,
   ResourceLink,
+  history,
   resourcePath,
   useAccessReview2,
   useMultipleAccessReviews,
@@ -56,8 +56,8 @@ import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-ma
 import { useBaseImages } from '../../../hooks/use-base-images';
 import { useStorageProfileSettings } from '../../../hooks/use-storage-profile-settings';
 import {
-  createUploadPVC,
   PVCInitError,
+  createUploadPVC,
 } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import { DataVolumeModel } from '../../../models';
 import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
@@ -76,7 +76,7 @@ import {
   CDI_UPLOAD_SUPPORTED_TYPES_URL,
   CDI_UPLOAD_URL_BUILDER,
 } from '../consts';
-import { uploadErrorType, UploadPVCFormStatus } from './upload-pvc-form-status';
+import { UploadPVCFormStatus, uploadErrorType } from './upload-pvc-form-status';
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {

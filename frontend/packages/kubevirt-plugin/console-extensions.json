@@ -17,19 +17,6 @@
     }
   },
   {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/k8s/ns/:ns/persistentvolumeclaims/~new/data"],
-      "component": {
-        "$codeRef": "UploadPVCPage.UploadPVCPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
     "type": "console.catalog/item-type",
     "properties": {
       "type": "VmTemplate",
@@ -81,30 +68,9 @@
     }
   },
   {
-    "type": "console.context-provider",
-    "properties": {
-      "provider": { "$codeRef": "contextProvider.CDIUploadProvider" },
-      "useValueHook": { "$codeRef": "contextProvider.useCDIUploadHook" }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
     "type": "console.pvc/alert",
     "properties": {
       "alert": { "$codeRef": "pvcAlert.PVCAlertExtension" }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.pvc/status",
-    "properties": {
-      "priority": 10,
-      "predicate": { "$codeRef": "pvcSelectors.isPvcUploading" },
-      "status": { "$codeRef": "pvcUploadStatus.UploadPVCPopover" }
     },
     "flags": {
       "required": ["KUBEVIRT"]
