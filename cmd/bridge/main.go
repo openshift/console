@@ -74,9 +74,9 @@ func main() {
 	fs.String("config", "", "The YAML config file.")
 
 	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
-	fDownloads := fs.String("downloads-server", "", "Bridge will run as a downloads server, that is serving the CLI artifacts.")
+	fDownloads := fs.Bool("downloads-server", false, "Bridge will run as a downloads server, that is serving the CLI artifacts.")
 
-	if *fDownloads != "" {
+	if *fDownloads {
 		// run downloads server
 		downloadsServer.start()
 	}
