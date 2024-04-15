@@ -12,7 +12,7 @@
       }
     },
     "flags": {
-      "required": ["NET_ATTACH_DEF", "KUBEVIRT"]
+      "required": ["NET_ATTACH_DEF", "KUBEVIRT_DYNAMIC"]
     }
   },
   {

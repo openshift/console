@@ -47,7 +47,9 @@ export const NetAttachDefinitionSummary: React.FC<NetAttachDefinitionSummaryProp
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('kubevirt-plugin~NetworkAttachmentDefinition details')} />
+        <SectionHeading
+          text={t('network-attachment-definition-plugin~NetworkAttachmentDefinition details')}
+        />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={netAttachDef} />
@@ -55,7 +57,7 @@ export const NetAttachDefinitionSummary: React.FC<NetAttachDefinitionSummaryProp
           <div className="col-sm-6">
             <dl className="co-m-pane__details">
               <DetailsItem
-                title={t('kubevirt-plugin~Type')}
+                title={t('network-attachment-definition-plugin~Type')}
                 idValue={prefixedID(id, 'type')}
                 isNotAvail={!type}
               >

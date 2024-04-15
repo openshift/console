@@ -145,7 +145,7 @@ const NADListEmpty: React.FC = () => {
       <EmptyStateHeader
         titleText={
           <>
-            {t('kubevirt-plugin~No {{label}} found', {
+            {t('network-attachment-definition-plugin~No {{label}} found', {
               label: NetworkAttachmentDefinitionModel.labelPlural,
             })}
           </>
@@ -161,7 +161,9 @@ const NADListEmpty: React.FC = () => {
           }
           isDisabled={!canCreate}
         >
-          {t('kubevirt-plugin~Create {{label}}', { label: NetworkAttachmentDefinitionModel.label })}
+          {t('network-attachment-definition-plugin~Create {{label}}', {
+            label: NetworkAttachmentDefinitionModel.label,
+          })}
         </Button>
         {hasQuickStarts && (
           <EmptyStateActions>
@@ -171,7 +173,7 @@ const NADListEmpty: React.FC = () => {
               onClick={() => history.push('/quickstart?keyword=network+attachment+definition')}
             >
               <RocketIcon className="nad-quickstart-icon" />
-              {t('kubevirt-plugin~Learn how to use {{label}}', {
+              {t('network-attachment-definition-plugin~Learn how to use {{label}}', {
                 label: NetworkAttachmentDefinitionModel.labelPlural,
               })}
             </Button>
