@@ -8,7 +8,7 @@ import (
 
 	"github.com/openshift/console/pkg/serverutils"
 
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // ResourceLister handles resource requests

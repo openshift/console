@@ -11,7 +11,7 @@ import (
 
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/client-go/rest"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"

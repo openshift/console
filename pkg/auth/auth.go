@@ -23,7 +23,7 @@ import (
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
 	"k8s.io/client-go/rest"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 const (

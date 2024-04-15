@@ -23,7 +23,7 @@ import (
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	oauthv1client "github.com/openshift/client-go/oauth/clientset/versioned/typed/oauth/v1"
 	"github.com/openshift/console/pkg/auth"
