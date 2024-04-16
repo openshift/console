@@ -684,7 +684,7 @@ const PodMetrics: React.FC<PodMetricsProps> = ({ obj }) => {
                 ariaChartLinkLabel={t('public~View in query browser')}
                 humanize={humanizeDecimalBytesPerSec}
                 namespace={obj.metadata.namespace}
-                query={`(sum(irate(container_network_receive_bytes_total{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) (pod_network_name_info)`}
+                query={`pod_interface_network:container_network_receive_bytes:irate5m{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}`}
                 description={getNetworkName}
               />
             </CardBody>
@@ -700,7 +700,7 @@ const PodMetrics: React.FC<PodMetricsProps> = ({ obj }) => {
                 ariaChartLinkLabel={t('public~View in query browser')}
                 humanize={humanizeDecimalBytesPerSec}
                 namespace={obj.metadata.namespace}
-                query={`(sum(irate(container_network_transmit_bytes_total{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) (pod_network_name_info)`}
+                query={`pod_interface_network:container_network_transmit_bytes_total:irate5m{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}`}
                 description={getNetworkName}
               />
             </CardBody>
