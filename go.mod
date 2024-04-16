@@ -7,7 +7,7 @@ require (
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/coreos/pkg v0.0.0-20230601102743-20bbbf26f4d8
 	github.com/devfile/api/v2 v2.2.1
-	github.com/devfile/library v1.2.1-0.20221017204048-ec4b02cbe9c7
+	github.com/devfile/library/v2 v2.2.2-0.20240222173303-eefdbd323c45
 	github.com/devfile/registry-support/index/generator v0.0.0-20231020181239-1168591f0b4e
 	github.com/devfile/registry-support/registry-library v0.0.0-20231020181239-1168591f0b4e
 	github.com/golang/mock v1.6.0
@@ -34,7 +34,7 @@ require (
 	k8s.io/client-go v0.28.2
 	k8s.io/klog v1.0.0
 	k8s.io/klog/v2 v2.100.1
-	sigs.k8s.io/controller-runtime v0.14.4
+	sigs.k8s.io/controller-runtime v0.14.7
 	sigs.k8s.io/yaml v1.3.0
 )
 
@@ -61,6 +61,7 @@ require (
 	github.com/containerd/containerd v1.7.6 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/distribution/distribution/v3 v3.0.0-20230511163743-f7717b7855ca // indirect
 	github.com/docker/cli v24.0.6+incompatible // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/docker/docker v24.0.7+incompatible // indirect
@@ -207,6 +208,7 @@ require (
 	k8s.io/helm v2.17.0+incompatible // indirect
 	k8s.io/kube-openapi v0.0.0-20230717233707-2695361300d9 // indirect
 	k8s.io/kubectl v0.28.2 // indirect
+	k8s.io/pod-security-admission v0.26.10 // indirect
 	k8s.io/utils v0.0.0-20230726121419-3b25d923346b // indirect
 	oras.land/oras-go v1.2.4 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect

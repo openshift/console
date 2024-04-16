@@ -10,8 +10,8 @@ import (
 	"github.com/openshift/console/pkg/serverutils"
 	"k8s.io/klog"
 
-	devfile "github.com/devfile/library/pkg/devfile"
-	"github.com/devfile/library/pkg/devfile/parser"
+	devfile "github.com/devfile/library/v2/pkg/devfile"
+	"github.com/devfile/library/v2/pkg/devfile/parser"
 )
 
 func DevfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
