@@ -1,10 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-COL_RESET='\e[0m'
-COL_RED='\e[0;31m'
-COL_GREEN='\e[0;32m'
-COL_YELLOW='\e[0;33m'
+COL_RESET='\033[0m'
+COL_RED='\033[31m'
+COL_GREEN='\033[32m'
+COL_YELLOW='\033[33m'
 
 resolution_errors=false
 
@@ -15,7 +15,7 @@ resolution_errors=false
 # proper JSON output. We should revisit this code once we upgrade to a newer Yarn version.
 check-resolution() {
   local PKG_NAME="${1:?Provide package name to check}"
-  local RES_COUNT=$(grep -Pc "^\"${PKG_NAME}@" yarn.lock)
+  local RES_COUNT=$(grep -c "^\"${PKG_NAME}@" yarn.lock)
 
   if [[ $RES_COUNT -eq 0 ]]; then
     echo -e "${COL_RED}${PKG_NAME}${COL_RESET} has no version resolutions"
