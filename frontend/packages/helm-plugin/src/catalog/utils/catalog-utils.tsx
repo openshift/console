@@ -167,8 +167,9 @@ export const normalizeHelmCharts = (
         // group Helm chart with same name and different version together
         const existingChartIndex = normalizedCharts.findIndex((currentChart) => {
           return (
-            currentChart.attributes?.name === name &&
-            currentChart.attributes?.chartRepositoryTitle === chartRepositoryTitle
+            (currentChart.attributes?.name === name &&
+              currentChart.attributes?.chartRepositoryTitle === chartRepositoryTitle) ||
+            (currentChart.name === annotatedName && currentChart.provider === providerName)
           );
         });
 
