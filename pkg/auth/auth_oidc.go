@@ -28,12 +28,13 @@ type oidcAuth struct {
 }
 
 type oidcConfig struct {
-	getClient             func() *http.Client
-	issuerURL             string
-	clientID              string
-	cookiePath            string
-	secureCookies         bool
-	constructOAuth2Config oauth2ConfigConstructor
+	getClient              func() *http.Client
+	issuerURL              string
+	logoutRedirectOverride string
+	clientID               string
+	cookiePath             string
+	secureCookies          bool
+	constructOAuth2Config  oauth2ConfigConstructor
 }
 
 func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig) (*oidcAuth, error) {
@@ -144,6 +145,22 @@ func (o *oidcAuth) Authenticate(w http.ResponseWriter, r *http.Request) (*User, 
 
 func (o *oidcAuth) GetSpecialURLs() SpecialAuthURLs {
 	return SpecialAuthURLs{}
+}
+
+func (o *oidcAuth) LogoutRedirectURL() string {
+	if len(o.logoutRedirectOverride) > 0 {
+		return o.logoutRedirectOverride
+	}
+
+	sessionEndpoints := struct {
+		// Get the RP-initiated logout endpoint (https://openid.net/specs/openid-connect-rpinitiated-1_0.html)
+		EndSessionEndpoint string `json:"end_session_endpoint"`
+	}{}
+
+	provider := o.providerCache.GetItem()
+	provider.Claims(&sessionEndpoints)
+
+	return sessionEndpoints.EndSessionEndpoint
 }
 
 func (o *oidcAuth) oauth2Config() *oauth2.Config {

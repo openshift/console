@@ -160,6 +160,7 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 	defer cs.sessionLock.Unlock()
 
 	for _, cookie := range r.Cookies() {
+		cookie := cookie
 		if strings.HasPrefix(cookie.Name, OpenshiftAccessTokenCookieName) {
 			cookie.MaxAge = -1
 			http.SetCookie(w, cookie)
@@ -167,12 +168,12 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 	}
 
 	cookieSession := cs.getCookieSession(r)
-	if sessionToken, ok := cookieSession.sessionToken.Values["session-token"]; ok {
-		cs.serverStore.DeleteBySessionToken(sessionToken.(string))
-	}
-
 	if refreshToken, ok := cookieSession.refreshToken.Values["refresh-token"]; ok {
 		cs.serverStore.DeleteByRefreshToken(refreshToken.(string))
+	}
+
+	if sessionToken, ok := cookieSession.sessionToken.Values["session-token"]; ok {
+		cs.serverStore.DeleteBySessionToken(sessionToken.(string))
 	}
 
 	refreshTokenCookie, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
