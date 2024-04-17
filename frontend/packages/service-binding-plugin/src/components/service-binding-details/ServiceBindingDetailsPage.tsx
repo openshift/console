@@ -8,6 +8,7 @@ import {
   ActionServiceProvider,
 } from '@console/shared/src/components/actions';
 import { getComputedServiceBindingStatus } from '../../utils';
+import { ServiceBindingDeprecationAlert } from '../service-binding-utils/ServiceBindingAlerts';
 import ServiceBindingDetailsTab from './ServiceBindingDetailsTab';
 
 const ServiceBindingDetailsPage: React.FC<DetailsPageProps> = (props) => {
@@ -36,7 +37,10 @@ const ServiceBindingDetailsPage: React.FC<DetailsPageProps> = (props) => {
       getResourceStatus={getComputedServiceBindingStatus}
       customActionMenu={customActionMenu}
       pages={pages}
-    />
+    >
+      <ServiceBindingDeprecationAlert />
+      <br />
+    </DetailsPage>
   );
 };
 

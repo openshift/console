@@ -10,6 +10,7 @@ import {
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { ServiceBindingDeprecationAlertForModals } from '@console/service-binding-plugin/src/components/service-binding-utils/ServiceBindingAlerts';
 import { InputField } from '@console/shared';
 import BindableServices from './BindableServices';
 
@@ -39,6 +40,8 @@ const CreateServiceBindingForm: React.FC<
     <form onSubmit={handleSubmit} className="modal-content">
       <ModalTitle>{t('console-app~Create Service Binding')}</ModalTitle>
       <ModalBody>
+        <ServiceBindingDeprecationAlertForModals />
+        <br />
         <Title headingLevel="h2" size="md" className="co-m-form-row">
           {title}
         </Title>

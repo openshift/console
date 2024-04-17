@@ -73,7 +73,9 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
             <>
               {filterGroupMap[groupName].label || groupName}
               {filterGroupMap[groupName].description && (
-                <FieldLevelHelp>{filterGroupMap[groupName].description}</FieldLevelHelp>
+                <FieldLevelHelp>
+                  <p style={{ whiteSpace: 'pre-line' }}>{filterGroupMap[groupName].description}</p>
+                </FieldLevelHelp>
               )}
             </>
           }
