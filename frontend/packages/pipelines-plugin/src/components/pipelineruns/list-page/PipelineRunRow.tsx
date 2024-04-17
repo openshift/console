@@ -162,7 +162,9 @@ const PipelineRunRowWithTaskRunsFetch: React.FC<PipelineRunRowWithTaskRunsProps>
       `${obj.metadata.namespace}-${obj.metadata.name}`,
     );
     InFlightStoreForTaskRunsForPLR[cacheKey] = false;
-    TASKRUNSFORPLRCACHE[cacheKey] = PLRTaskRuns;
+    if (taskRunsLoaded) {
+      TASKRUNSFORPLRCACHE[cacheKey] = PLRTaskRuns;
+    }
     return (
       <PipelineRunRowTable
         obj={obj}
