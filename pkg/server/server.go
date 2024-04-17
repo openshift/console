@@ -62,9 +62,8 @@ const (
 	alertManagerTenancyProxyEndpoint      = "/api/alertmanager-tenancy"
 	alertmanagerUserWorkloadProxyEndpoint = "/api/alertmanager-user-workload"
 	authLoginEndpoint                     = "/auth/login"
-	authLogoutEndpoint                    = "/auth/logout"
+	authLogoutEndpoint                    = "/api/console/logout"
 	customLogoEndpoint                    = "/custom-logo"
-	deleteOpenshiftTokenEndpoint          = "/api/openshift/delete-token"
 	devfileEndpoint                       = "/api/devfile/"
 	devfileSamplesEndpoint                = "/api/devfile/samples/"
 	gitopsEndpoint                        = "/api/gitops/"
@@ -169,7 +168,6 @@ type Server struct {
 	KubeAPIServerURL                    string // JS global only. Not used for proxying.
 	KubeVersion                         string
 	LoadTestFactor                      int
-	LogoutRedirect                      *url.URL
 	MonitoringDashboardConfigMapLister  ResourceLister
 	NodeArchitectures                   []string
 	NodeOperatingSystems                []string
@@ -310,7 +308,6 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
 		handle(requestTokenEndpoint, authHandler(s.handleClusterTokenURL))
 		// TODO: only add the following in case the auth type is openshift?
-		handleFunc(deleteOpenshiftTokenEndpoint, allowMethod(http.MethodPost, authHandlerWithUser(s.handleOpenShiftTokenDeletion)))
 	}
 
 	handleFunc("/api/", notFoundHandler)
@@ -697,7 +694,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
 		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
 		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:                 proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
+		LogoutURL:                 authLogoutEndpoint,
 		KubeAPIServerURL:          s.KubeAPIServerURL,
 		Branding:                  s.Branding,
 		CustomProductName:         s.CustomProductName,
@@ -730,11 +727,9 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		K8sMode:                   s.K8sMode,
 	}
 
-	if s.LogoutRedirect != nil {
-		jsg.LogoutRedirect = s.LogoutRedirect.String()
-	}
-
 	if !s.authDisabled() {
+		jsg.LogoutRedirect = s.Authenticator.LogoutRedirectURL()
+
 		specialAuthURLs := s.Authenticator.GetSpecialURLs()
 		jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
 	}
