@@ -555,7 +555,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	// List operator operands endpoint
 	operandsListHandler := &OperandsListHandler{
-		APIServerURL: s.KubeAPIServerURL,
+		APIServerURL: localK8sProxyConfig.Endpoint.String(),
 		Client:       s.LocalK8sClient,
 	}
 
