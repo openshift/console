@@ -75,7 +75,7 @@ import TopologyEmptyState from './TopologyEmptyState';
 import './TopologyView.scss';
 
 const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
-const MAX_NODES_LIMIT = 100;
+const MAX_NODES_LIMIT = 200;
 
 interface StateProps {
   application?: string;
