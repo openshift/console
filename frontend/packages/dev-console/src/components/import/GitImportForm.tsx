@@ -14,6 +14,7 @@ import DevfileStrategySection from './devfile/DevfileStrategySection';
 import GitSection from './git/GitSection';
 import { BuildOptions, GitImportFormProps, ImportTypes } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
+import SecureRoute from './route/SecureRoute';
 import { BuildSection } from './section/BuildSection';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
@@ -48,6 +49,10 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
     importType !== ImportTypes.devfile &&
     values.import.selectedStrategy.type !== ImportStrategy.DEVFILE &&
     !isSample;
+  const showSecureRouteSectionForDevfile =
+    (importType === ImportTypes.devfile ||
+      values.import.selectedStrategy.type === ImportStrategy.DEVFILE) &&
+    values?.devfile?.devfileSuggestedResources?.route?.spec?.tls;
 
   return (
     <form onSubmit={handleSubmit} data-test-id="import-git-form">
@@ -89,6 +94,11 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
 
                     <AdvancedSection values={values} />
                   </>
+                )}
+                {showSecureRouteSectionForDevfile && (
+                  <div className="pf-v5-c-form co-m-pane__form">
+                    <SecureRoute />
+                  </div>
                 )}
               </>
             )}
