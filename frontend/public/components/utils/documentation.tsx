@@ -33,7 +33,7 @@ export const documentationURLs: documentationURLsType = {
     downstream:
       'html/monitoring/configuring-the-monitoring-stack#maintenance-and-support_configuring-the-monitoring-stack',
     upstream:
-      'monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring',
+      'observability/monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring',
   },
   networkPolicy: {
     downstream: 'html/networking/network-policy#about-network-policy',
