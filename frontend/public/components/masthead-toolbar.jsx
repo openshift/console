@@ -8,7 +8,6 @@ import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import {
-  Button,
   NotificationBadge,
   Toolbar,
   ToolbarContent,
@@ -449,15 +448,10 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         });
       } else if (externalLoginCommand) {
         userActions.unshift({
-          component: (
-            <Button
-              variant="plain"
-              onClick={launchCopyLoginCommandModal}
-              dataTest="copy-login-command"
-            >
-              {t('public~Copy login command')}
-            </Button>
-          ),
+          callback: launchCopyLoginCommandModal,
+          component: 'button',
+          dataTest: 'copy-login-command',
+          label: t('public~Copy login command'),
         });
       }
 
