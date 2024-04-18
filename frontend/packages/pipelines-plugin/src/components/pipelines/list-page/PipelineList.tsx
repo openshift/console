@@ -24,7 +24,7 @@ const PipelineList: React.FC<PipelineListProps> = (props) => {
       aria-label={t(PipelineModel.labelPluralKey)}
       Header={PipelineHeader}
       Row={PipelineRow}
-      customData={{ taskRuns: taskRunsLoaded ? taskRuns : [] }}
+      customData={{ taskRuns: taskRunsLoaded ? taskRuns : [], taskRunsLoaded }}
       virtualize
     />
   );

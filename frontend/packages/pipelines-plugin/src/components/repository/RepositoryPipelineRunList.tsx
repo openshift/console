@@ -24,7 +24,7 @@ export const RepositoryPipelineRunList: React.FC<RepositoryPipelineRunListProps>
       defaultSortOrder={SortByDirection.desc}
       Header={RepositoryPipelineRunHeader}
       Row={RepositoryPipelineRunRow}
-      customData={{ operatorVersion, taskRuns: taskRunsLoaded ? taskRuns : [] }}
+      customData={{ operatorVersion, taskRuns: taskRunsLoaded ? taskRuns : [], taskRunsLoaded }}
       virtualize
     />
   );
