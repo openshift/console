@@ -43,13 +43,6 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
         href:
           '/operatorhub/all-namespaces?keyword=openshift+ai&details-item=rhods-operator-redhat-operators-openshift-marketplace',
       },
-      {
-        id: 'openshift-lightspeed',
-        title: 'OpenShift LightSpeed',
-        description: 'Your personal AI helper.',
-        href:
-          '/operatorhub/all-namespaces?keyword=lightspeed&details-item=lightspeed-operator-lightspeed-operator-catalog-openshift-marketplace', // TODO: add correct href
-      },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
       id: 'whats-new',
