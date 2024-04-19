@@ -34,7 +34,7 @@ export const getContainerStatus = (pod: PodKind, containerName: string): Contain
 };
 
 export const getContainerRestartCount = (status: ContainerStatus): number =>
-  status.restartCount ?? 0;
+  status?.restartCount ?? 0;
 
 const getPullPolicy = (container: ContainerSpec) => {
   const pullPolicy = {
