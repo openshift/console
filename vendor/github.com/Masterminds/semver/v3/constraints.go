@@ -60,8 +60,7 @@ func (cs Constraints) Check(v *Version) bool {
 	for _, o := range cs.constraints {
 		joy := true
 		for _, c := range o {
-			if check, err := c.check(v); !check {
-				fmt.Println(err, "ERROR CWNAKNVCIEJVOEJVJO")
+			if check, _ := c.check(v); !check {
 				joy = false
 				break
 			}
