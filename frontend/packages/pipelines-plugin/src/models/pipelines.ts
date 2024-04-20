@@ -171,8 +171,8 @@ export const ApprovalTaskModel: K8sKind = {
   label: 'ApprovalTask',
   // t('pipelines-plugin~ApprovalTask')
   labelKey: 'pipelines-plugin~ApprovalTask',
-  // t('pipelines-plugin~ApprovalTasks')
-  labelPluralKey: 'pipelines-plugin~ApprovalTasks',
+  // t('pipelines-plugin~Approvals')
+  labelPluralKey: 'pipelines-plugin~Approvals',
   plural: 'approvaltasks',
   abbr: 'AT',
   namespaced: true,
