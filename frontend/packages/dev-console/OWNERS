@@ -1,16 +1,7 @@
 reviewers:
-  - abhinandan13jan
-  - debsmita1
-  - divyanshiGupta
-  - christianvogt
-  - invincibleJai
   - jerolimov
-  - karthikjeeyar
   - lokanandaprabhu
   - lucifergene
-  - rohitkrai03
-  - rottencandy
-  - sahil143
   - vikram-raj
 approvers:
   - debsmita1
@@ -18,6 +9,8 @@ approvers:
   - invincibleJai
   - jerolimov
   - karthikjeeyar
+  - lokanandaprabhu
+  - lucifergene
   - rohitkrai03
   - sahil143
   - vikram-raj
