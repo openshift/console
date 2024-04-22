@@ -2,9 +2,7 @@ package server
 
 import (
 	"context"
-	"crypto/sha256"
 	"crypto/tls"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -19,13 +17,11 @@ import (
 	"github.com/coreos/pkg/health"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
-	oauthv1client "github.com/openshift/client-go/oauth/clientset/versioned/typed/oauth/v1"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
 	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
@@ -793,40 +789,6 @@ func (s *Server) handleClusterTokenURL(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWriter, r *http.Request) {
-	tokenName := user.Token
-	if strings.HasPrefix(tokenName, sha256Prefix) {
-		tokenName = tokenToObjectName(tokenName)
-	}
-
-	clientConfig := rest.AnonymousClientConfig(s.InternalProxiedK8SClientConfig)
-	clientConfig.Host = s.KubeAPIServerURL
-	clientConfig.BearerToken = user.Token
-
-	oauthClient, err := oauthv1client.NewForConfig(clientConfig)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("failed to create an OAuth API client for a user: %v", err)})
-		return
-	}
-
-	err = oauthClient.OAuthAccessTokens().Delete(r.Context(), tokenName, metav1.DeleteOptions{})
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to delete token: %v", err)})
-		return
-	}
-	s.Authenticator.DeleteCookie(w, r)
-	w.WriteHeader(http.StatusOK)
-}
-
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 	verifyCSRF(s.Authenticator, s.Authenticator.LogoutFunc).ServeHTTP(w, r)
-}
-
-// tokenToObjectName returns the oauthaccesstokens object name for the given raw token,
-// i.e. the sha256 hash prefixed with "sha256~".
-// TODO this should be a member function of the User type
-func tokenToObjectName(token string) string {
-	name := strings.TrimPrefix(token, sha256Prefix)
-	h := sha256.Sum256([]byte(name))
-	return sha256Prefix + base64.RawURLEncoding.EncodeToString(h[0:])
 }
