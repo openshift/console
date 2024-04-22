@@ -21,6 +21,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { requirementFromString } from '@console/internal/module/k8s/selector-requirement';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
+import { ServiceBindingWarningForTopology } from '@console/service-binding-plugin/src/components/service-binding-utils/ServiceBindingAlerts';
 import { useFlag, useQueryParams } from '@console/shared';
 import ExportApplication from '../components/export-app/ExportApplication';
 import TopologyQuickSearchButton from '../components/quick-search/TopologyQuickSearchButton';
@@ -199,6 +200,9 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           variant={ToolbarGroupVariant['button-group']}
           align={{ default: 'alignRight' }}
         >
+          <ToolbarItem>
+            <ServiceBindingWarningForTopology namespace={namespace} />
+          </ToolbarItem>
           <ToolbarItem
             className={
               isExportApplicationEnabled || kialiLink
