@@ -10,9 +10,8 @@ import {
 } from '@console/shared';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import {
-  getConsoleVersion,
-  getClusterType,
-  updateServerFlagsFromTests,
+  getClusterProperties,
+  updateClusterPropertiesFromTests,
   useTelemetry,
 } from '../useTelemetry';
 
@@ -39,34 +38,32 @@ afterAll(() => {
   window.SERVER_FLAGS = originServerFlags;
 });
 
-describe('getConsoleVersion', () => {
+describe('getClusterProperties', () => {
   it('returns undefined when consoleVersion is not configured', () => {
     window.SERVER_FLAGS = { ...originServerFlags };
     delete window.SERVER_FLAGS.consoleVersion;
-    expect(getConsoleVersion()).toBe(undefined);
+    expect(getClusterProperties().consoleVersion).toBe(undefined);
   });
 
   it('returns the right version when it is configured', () => {
     window.SERVER_FLAGS = { ...originServerFlags, consoleVersion: 'x.y.z' };
-    expect(getConsoleVersion()).toBe('x.y.z');
+    expect(getClusterProperties().consoleVersion).toBe('x.y.z');
   });
-});
 
-describe('getClusterType', () => {
   it('returns undefined when telemetry is missing at all', () => {
     window.SERVER_FLAGS = { ...originServerFlags };
     delete window.SERVER_FLAGS.telemetry;
-    expect(getClusterType()).toBe(undefined);
+    expect(getClusterProperties().clusterType).toBe(undefined);
   });
 
   it('returns undefined when telemetry configuration is empty', () => {
     window.SERVER_FLAGS = { ...originServerFlags, telemetry: {} };
-    expect(getClusterType()).toBe(undefined);
+    expect(getClusterProperties().clusterType).toBe(undefined);
   });
 
   it('returns the clusterType that it is configured', () => {
     window.SERVER_FLAGS = { ...originServerFlags, telemetry: { CLUSTER_TYPE: 'TEST' } };
-    expect(getClusterType()).toBe('TEST');
+    expect(getClusterProperties().clusterType).toBe('TEST');
   });
 
   it('returns DEVSANDBOX when CLUSTER_TYPE is "OSD" but and DEVSANDBOX is "true"', () => {
@@ -74,7 +71,7 @@ describe('getClusterType', () => {
       ...originServerFlags,
       telemetry: { CLUSTER_TYPE: 'OSD', DEVSANDBOX: 'true' },
     };
-    expect(getClusterType()).toBe('DEVSANDBOX');
+    expect(getClusterProperties().clusterType).toBe('DEVSANDBOX');
   });
 
   it('returns the clusterType that it is configured if CLUSTER_TYPE is not OSD (in the future) but DEVSANDBOX is still "true"', () => {
@@ -82,7 +79,7 @@ describe('getClusterType', () => {
       ...originServerFlags,
       telemetry: { CLUSTER_TYPE: 'a_FUTURE_DEVSANDBOX_KEY', DEVSANDBOX: 'true' },
     };
-    expect(getClusterType()).toBe('a_FUTURE_DEVSANDBOX_KEY');
+    expect(getClusterProperties().clusterType).toBe('a_FUTURE_DEVSANDBOX_KEY');
   });
 
   it('returns the clusterType that it is configured if CLUSTER_TYPE is OSD but DEVSANDBOX is not exactly "true"', () => {
@@ -90,7 +87,7 @@ describe('getClusterType', () => {
       ...originServerFlags,
       telemetry: { CLUSTER_TYPE: 'OSD', DEVSANDBOX: 'false' },
     };
-    expect(getClusterType()).toBe('OSD');
+    expect(getClusterProperties().clusterType).toBe('OSD');
   });
 });
 
@@ -122,7 +119,7 @@ describe('useTelemetry', () => {
       ...window.SERVER_FLAGS,
       telemetry: { STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE },
     };
-    updateServerFlagsFromTests();
+    updateClusterPropertiesFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 1');
@@ -139,7 +136,7 @@ describe('useTelemetry', () => {
       consoleVersion: 'x.y.z',
       telemetry: { CLUSTER_TYPE: 'OSD', STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE },
     };
-    updateServerFlagsFromTests();
+    updateClusterPropertiesFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 2');
@@ -156,7 +153,7 @@ describe('useTelemetry', () => {
       consoleVersion: 'x.y.z',
       telemetry: { CLUSTER_TYPE: 'OSD', STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE },
     };
-    updateServerFlagsFromTests();
+    updateClusterPropertiesFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 3', { 'a-string': 'works fine', 'a-boolean': true });
@@ -179,7 +176,7 @@ describe('useTelemetry', () => {
         STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
       },
     };
-    updateServerFlagsFromTests();
+    updateClusterPropertiesFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 4');
@@ -200,7 +197,7 @@ describe('useTelemetry', () => {
         STATE: CLUSTER_TELEMETRY_ANALYTICS.DISABLED,
       },
     };
-    updateServerFlagsFromTests();
+    updateClusterPropertiesFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 5');
@@ -218,7 +215,7 @@ describe('useTelemetry', () => {
       },
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
-    updateServerFlagsFromTests();
+    updateClusterPropertiesFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 6');
@@ -236,7 +233,7 @@ describe('useTelemetry', () => {
       },
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
-    updateServerFlagsFromTests();
+    updateClusterPropertiesFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 7');
@@ -254,7 +251,7 @@ describe('useTelemetry', () => {
       },
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
-    updateServerFlagsFromTests();
+    updateClusterPropertiesFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 8');
@@ -272,7 +269,7 @@ describe('useTelemetry', () => {
       },
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
-    updateServerFlagsFromTests();
+    updateClusterPropertiesFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 9');
@@ -290,7 +287,7 @@ describe('useTelemetry', () => {
       },
     };
     mockUserSettings.mockReturnValue(['', jest.fn(), true]);
-    updateServerFlagsFromTests();
+    updateClusterPropertiesFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 10');
@@ -307,7 +304,7 @@ describe('useTelemetry', () => {
         STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
       },
     };
-    updateServerFlagsFromTests();
+    updateClusterPropertiesFromTests();
     const { result } = testHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 11');

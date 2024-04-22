@@ -300,12 +300,12 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   );
 
   React.useEffect(() => {
-    if (user.metadata?.uid || user.metadata?.name) {
+    if (user?.uid || user?.username) {
       fireTelemetryEvent('identify', { perspective, user });
     }
     // Only trigger identify event when the user identifier changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.metadata?.uid || user.metadata?.name, fireTelemetryEvent]);
+  }, [user?.uid || user?.username, fireTelemetryEvent]);
 
   // notify url change events
   // Debouncing the url change events so that redirects don't fire multiple events.
