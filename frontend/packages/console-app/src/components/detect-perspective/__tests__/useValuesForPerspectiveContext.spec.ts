@@ -31,12 +31,15 @@ jest.mock('react', () => {
   };
 });
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  useNavigate: jest.fn(),
+}));
+
 const useStateMock = React.useState as jest.Mock;
 const usePerspectiveExtensionMock = usePerspectiveExtension as jest.Mock;
 const usePerspectivesMock = usePerspectives as jest.Mock;
 const useLastPerspectiveMock = useLastPerspective as jest.Mock;
 const usePreferredPerspectiveMock = usePreferredPerspective as jest.Mock;
-
 describe('useValuesForPerspectiveContext', () => {
   afterEach(() => {
     jest.resetAllMocks();
