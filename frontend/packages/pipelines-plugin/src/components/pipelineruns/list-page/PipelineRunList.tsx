@@ -30,7 +30,7 @@ export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
         defaultSortOrder={SortByDirection.desc}
         Header={PipelineRunHeader}
         Row={PipelineRunRow}
-        customData={{ operatorVersion, taskRuns: taskRunsLoaded ? taskRuns : [] }}
+        customData={{ operatorVersion, taskRuns: taskRunsLoaded ? taskRuns : [], taskRunsLoaded }}
         virtualize
       />
     </>
