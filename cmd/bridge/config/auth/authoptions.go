@@ -11,7 +11,7 @@ import (
 
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/client-go/rest"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
@@ -198,7 +198,6 @@ func (c *completedOptions) ApplyTo(
 	sessionConfig *session.CompletedOptions,
 ) error {
 	srv.InactivityTimeout = c.InactivityTimeoutSeconds
-	srv.LogoutRedirect = c.LogoutRedirectURL
 
 	var err error
 	srv.Authenticator, err = c.getAuthenticator(
@@ -234,7 +233,7 @@ func (c *completedOptions) getAuthenticator(
 		authLoginSuccessEndpoint = proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginSuccessEndpoint)
 		oidcClientSecret         = c.ClientSecret
 		// Abstraction leak required by NewAuthenticator. We only want the browser to send the auth token for paths starting with basePath/api.
-		cookiePath       = proxy.SingleJoiningSlash(baseURL.Path, "/api/")
+		cookiePath       = proxy.SingleJoiningSlash(baseURL.Path, "/api")
 		refererPath      = baseURL.String()
 		useSecureCookies = baseURL.Scheme == "https"
 	)
@@ -279,6 +278,10 @@ func (c *completedOptions) getAuthenticator(
 		CookieAuthenticationKey: sessionConfig.CookieAuthenticationKey,
 
 		K8sConfig: k8sClientConfig,
+	}
+
+	if c.LogoutRedirectURL != nil {
+		oidcClientConfig.LogoutRedirectOverride = c.LogoutRedirectURL.String()
 	}
 
 	authenticator, err := auth.NewAuthenticator(context.Background(), oidcClientConfig)

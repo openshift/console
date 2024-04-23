@@ -23,7 +23,7 @@ import (
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
 	"k8s.io/client-go/rest"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 const (
@@ -88,6 +88,8 @@ type loginMethod interface {
 	DeleteCookie(http.ResponseWriter, *http.Request)
 	// logout deletes any cookies associated with the user, and writes a no-content response.
 	logout(http.ResponseWriter, *http.Request)
+	// LogoutRedirectURL returns the URL to redirect to after a logout.
+	LogoutRedirectURL() string
 
 	// Authenticate checks if there's an authenticated session connected to the
 	// request based on a cookie, and returns a user associated to the cookie
@@ -109,12 +111,13 @@ const (
 type Config struct {
 	AuthSource AuthSource
 
-	IssuerURL    string
-	IssuerCA     string
-	RedirectURL  string
-	ClientID     string
-	ClientSecret string
-	Scope        []string
+	IssuerURL              string
+	LogoutRedirectOverride string // overrides the OIDC provider's front-channel logout URL
+	IssuerCA               string
+	RedirectURL            string
+	ClientID               string
+	ClientSecret           string
+	Scope                  []string
 
 	// K8sCA is required for OpenShift OAuth metadata discovery. This is the CA
 	// used to talk to the master, which might be different than the issuer CA.
@@ -200,12 +203,13 @@ func NewAuthenticator(ctx context.Context, config *Config) (*Authenticator, erro
 	a := newUnstartedAuthenticator(c)
 
 	authConfig := &oidcConfig{
-		getClient:             a.clientFunc,
-		issuerURL:             c.IssuerURL,
-		clientID:              c.ClientID,
-		cookiePath:            c.CookiePath,
-		secureCookies:         c.SecureCookies,
-		constructOAuth2Config: a.oauth2ConfigConstructor,
+		getClient:              a.clientFunc,
+		issuerURL:              c.IssuerURL,
+		logoutRedirectOverride: c.LogoutRedirectOverride,
+		clientID:               c.ClientID,
+		cookiePath:             c.CookiePath,
+		secureCookies:          c.SecureCookies,
+		constructOAuth2Config:  a.oauth2ConfigConstructor,
 	}
 
 	var tokenHandler loginMethod

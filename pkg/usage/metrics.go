@@ -9,7 +9,7 @@ import (
 	authv1 "k8s.io/api/authorization/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // We don't expect that the users metrics (console users count) changes often.
@@ -95,7 +95,7 @@ func (m *Metrics) updateUsersMetric(internalProxiedK8SClient kubernetes.Interfac
 		time.Sleep(delayBetweenConsoleUserPermissionChecks)
 
 		if !strings.HasPrefix(roleBinding.Name, "user-settings-") || !strings.HasSuffix(roleBinding.Name, "-rolebinding") {
-			if klog.V(4) {
+			if klog.V(4).Enabled() {
 				klog.Infof("usage.Metrics: Ignore role binding: %q (name doesn't match user-settings-*-rolebinding)\n", roleBinding.Name)
 			}
 			continue
@@ -113,7 +113,7 @@ func (m *Metrics) updateUsersMetric(internalProxiedK8SClient kubernetes.Interfac
 		}
 
 		if user.Name == "kube:admin" {
-			if klog.V(4) {
+			if klog.V(4).Enabled() {
 				klog.Infof("usage.Metrics: Count %q as %q...\n", user.Name, KubeadminUserRole)
 			}
 			kubeAdmin++
@@ -141,12 +141,12 @@ func (m *Metrics) updateUsersMetric(internalProxiedK8SClient kubernetes.Interfac
 		}
 
 		if res.Status.Allowed {
-			if klog.V(4) && clusterAdmins < 10 {
+			if klog.V(4).Enabled() && clusterAdmins < 10 {
 				klog.Infof("usage.Metrics: Count %q as %q...\n", user.Name, ClusterAdminUserRole)
 			}
 			clusterAdmins++
 		} else {
-			if klog.V(4) && developers < 10 {
+			if klog.V(4).Enabled() && developers < 10 {
 				klog.Infof("usage.Metrics: Count %q as %q...\n", user.Name, DeveloperUserRole)
 			}
 			developers++

@@ -175,14 +175,10 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _resetInactivityTimeout() {
-    const { flags, user } = this.props;
+    const { user } = this.props;
     clearTimeout(this.userInactivityTimeout);
     this.userInactivityTimeout = setTimeout(() => {
-      if (flags[FLAGS.OPENSHIFT]) {
-        authSvc.logoutOpenShift(user?.metadata?.name === 'kube:admin');
-      } else {
-        authSvc.logout();
-      }
+      authSvc.logout('', user?.username === 'kube:admin');
     }, window.SERVER_FLAGS.inactivityTimeout * 1000);
   }
 
@@ -554,11 +550,7 @@ class MastheadToolbarContents_ extends React.Component {
     if (flags[FLAGS.AUTH_ENABLED]) {
       const logout = (e) => {
         e.preventDefault();
-        if (flags[FLAGS.OPENSHIFT]) {
-          authSvc.logoutOpenShift(this.state.isKubeAdmin);
-        } else {
-          authSvc.logout();
-        }
+        authSvc.logout('', this.state.isKubeAdmin);
       };
 
       if (requestTokenURL) {

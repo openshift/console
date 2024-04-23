@@ -12,7 +12,7 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 type HandlerWithUser func(*auth.User, http.ResponseWriter, *http.Request)
