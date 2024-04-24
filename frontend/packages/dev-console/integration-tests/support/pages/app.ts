@@ -130,7 +130,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     }
     case devNavigationMenu.Search: {
       cy.get(devNavigationMenuPO.search).click();
-      detailsPage.titleShouldContain(pageTitle.Search);
+      cy.get('h1').contains(pageTitle.Search);
       cy.testA11y('Search Page in dev perspective');
       break;
     }
