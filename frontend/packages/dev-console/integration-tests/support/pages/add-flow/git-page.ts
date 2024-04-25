@@ -191,7 +191,10 @@ export const gitPage = {
         break;
     }
   },
-  selectAddPipeline: () => cy.get(gitPO.pipeline.addPipeline).scrollIntoView().check(),
+  selectAddPipeline: () => {
+    cy.get(gitPO.pipeline.buildDropdown).scrollIntoView().click();
+    cy.get(gitPO.pipeline.addPipeline).should('be.visible').click();
+  },
   clickCreate: () => cy.get(gitPO.create).scrollIntoView().should('be.enabled').click(),
   clickCancel: () => cy.get(gitPO.cancel).should('be.enabled').click(),
   selectBuilderImageForGitUrl: (gitUrl: string) => {
