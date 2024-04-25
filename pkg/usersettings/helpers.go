@@ -40,7 +40,9 @@ func createRole(userSettingMeta *UserSettingMeta) *rbac.Role {
 			Kind:       "Role",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name: userSettingMeta.getRoleName(),
+			Name:        userSettingMeta.getRoleName(),
+			Labels:      userSettingMeta.getLabels(),
+			Annotations: userSettingMeta.getAnnotations(),
 		},
 		Rules: []rbac.PolicyRule{
 			{
@@ -72,7 +74,9 @@ func createRoleBinding(userSettingMeta *UserSettingMeta) *rbac.RoleBinding {
 			Kind:       "RoleBinding",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name: userSettingMeta.getRoleBindingName(),
+			Name:        userSettingMeta.getRoleBindingName(),
+			Labels:      userSettingMeta.getLabels(),
+			Annotations: userSettingMeta.getAnnotations(),
 		},
 		Subjects: []rbac.Subject{
 			{
@@ -96,7 +100,9 @@ func createConfigMap(userSettingMeta *UserSettingMeta) *core.ConfigMap {
 			Kind:       "ConfigMap",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name: userSettingMeta.getConfigMapName(),
+			Name:        userSettingMeta.getConfigMapName(),
+			Labels:      userSettingMeta.getLabels(),
+			Annotations: userSettingMeta.getAnnotations(),
 		},
 	}
 }
