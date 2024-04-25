@@ -72,19 +72,27 @@ export const eventListener = async (eventType: string, properties?: any) => {
     },
   };
   switch (eventType) {
-    case 'identify':
+    case 'identify': {
       const { user, ...otherProperties } = properties;
-      const id = user.metadata.uid || `${location.host}-${user.metadata.name}`;
+      // With 4.15+ we can use the user object directly, but on older releases (<4.15)
+      // we need to extract the user object from the metadata.
+      // All properties are defined in the UserInfo interface and marked as optional.
+      const uid = user?.uid || user?.metadata?.uid;
+      const username = user?.username || user?.metadata?.name;
+      const id = uid || `${location.host}-${username}`;
       // Use SHA1 hash algorithm to anonymize the user
       const anonymousIdBuffer = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(id));
       const anonymousIdArray = Array.from(new Uint8Array(anonymousIdBuffer));
       const anonymousId = anonymousIdArray.map((b) => b.toString(16).padStart(2, '0')).join('');
       (window as any).analytics.identify(anonymousId, otherProperties, anonymousIP);
       break;
-    case 'page':
+    }
+    case 'page': {
       (window as any).analytics.page(undefined, properties, anonymousIP);
       break;
-    default:
+    }
+    default: {
       (window as any).analytics.track(eventType, properties, anonymousIP);
+    }
   }
 };
