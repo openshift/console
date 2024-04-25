@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { RouteComponentProps } from 'react-router-dom';
+import Helmet from 'react-helmet';
 import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk/src';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -110,24 +111,33 @@ export const RoutePage: React.FC<RoutePageProps> = ({ match }) => {
   }
 
   return (
-    <StatusBox loaded={loaded} loadError={routeLoadError || serviceLoadError} data={initialValues}>
-      <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        validationSchema={routeValidationSchema}
-        enableReinitialize
+    <>
+      <Helmet>
+        <title>{heading}</title>
+      </Helmet>
+      <StatusBox
+        loaded={loaded}
+        loadError={routeLoadError || serviceLoadError}
+        data={initialValues}
       >
-        {(formikProps) => (
-          <RouteForm
-            {...formikProps}
-            heading={heading}
-            handleCancel={handleCancel}
-            submitLabel={submitLabel}
-            services={services}
-            existingRoute={name && route}
-          />
-        )}
-      </Formik>
-    </StatusBox>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validationSchema={routeValidationSchema}
+          enableReinitialize
+        >
+          {(formikProps) => (
+            <RouteForm
+              {...formikProps}
+              heading={heading}
+              handleCancel={handleCancel}
+              submitLabel={submitLabel}
+              services={services}
+              existingRoute={name && route}
+            />
+          )}
+        </Formik>
+      </StatusBox>
+    </>
   );
 };
