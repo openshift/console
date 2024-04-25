@@ -11,13 +11,10 @@ import (
 )
 
 func newUserSettingMeta(userInfo authenticationv1.UserInfo) (*UserSettingMeta, error) {
-	uid := userInfo.UID
-	name := userInfo.Username
-	resourceIdentifier := name
-
-	if uid != "" {
-		resourceIdentifier = string(uid)
-	} else if name == "kube:admin" {
+	var resourceIdentifier string
+	if userInfo.UID != "" {
+		resourceIdentifier = userInfo.UID
+	} else if userInfo.Username == "kube:admin" {
 		resourceIdentifier = "kubeadmin"
 	} else {
 		// to avoid issues when the username contains special characters like '@'
@@ -30,8 +27,8 @@ func newUserSettingMeta(userInfo authenticationv1.UserInfo) (*UserSettingMeta, e
 	}
 
 	return &UserSettingMeta{
-		Username:           name,
-		UID:                string(uid),
+		Username:           userInfo.Username,
+		UID:                userInfo.UID,
 		ResourceIdentifier: resourceIdentifier,
 	}, nil
 }
