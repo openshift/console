@@ -19,7 +19,7 @@ type HandlerWithUser func(*auth.User, http.ResponseWriter, *http.Request)
 
 // Middleware generates a middleware wrapper for request hanlders.
 // Responds with 401 for requests with missing/invalid/incomplete token with verified email address.
-func authMiddleware(authenticator *auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
+func authMiddleware(authenticator auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
 	return authMiddlewareWithUser(
 		authenticator,
 		func(user *auth.User, w http.ResponseWriter, r *http.Request) {
@@ -28,7 +28,7 @@ func authMiddleware(authenticator *auth.Authenticator, h http.HandlerFunc) http.
 	)
 }
 
-func authMiddlewareWithUser(authenticator *auth.Authenticator, h HandlerWithUser) http.HandlerFunc {
+func authMiddlewareWithUser(authenticator auth.Authenticator, h HandlerWithUser) http.HandlerFunc {
 	return verifyCSRF(authenticator, func(w http.ResponseWriter, r *http.Request) {
 		user, err := authenticator.Authenticate(w, r)
 		if err != nil {
@@ -41,7 +41,7 @@ func authMiddlewareWithUser(authenticator *auth.Authenticator, h HandlerWithUser
 	})
 }
 
-func verifyCSRF(authenticator *auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
+func verifyCSRF(authenticator auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		safe := false
 		switch r.Method {

@@ -15,6 +15,7 @@ import (
 
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
+	oauth2 "github.com/openshift/console/pkg/auth/oauth2"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
@@ -226,7 +227,7 @@ func (c *completedOptions) getAuthenticator(
 	caCertFilePath string,
 	k8sClientConfig *rest.Config,
 	sessionConfig *session.CompletedOptions,
-) (*auth.Authenticator, error) {
+) (auth.Authenticator, error) {
 
 	if c.AuthType == "disabled" {
 		klog.Warning("running with AUTHENTICATION DISABLED!")
@@ -248,11 +249,11 @@ func (c *completedOptions) getAuthenticator(
 	)
 
 	var scopes []string
-	authSource := auth.AuthSourceOIDC
+	authSource := oauth2.AuthSourceOIDC
 
 	if c.AuthType == "openshift" {
 		scopes = []string{"user:full"}
-		authSource = auth.AuthSourceOpenShift
+		authSource = oauth2.AuthSourceOpenShift
 
 		userAuthOIDCIssuerURL = k8sEndpoint
 	} else {
@@ -264,7 +265,7 @@ func (c *completedOptions) getAuthenticator(
 	oidcClientSecret = c.ClientSecret
 
 	// Config for logging into console.
-	oidcClientConfig := &auth.Config{
+	oidcClientConfig := &oauth2.Config{
 		AuthSource:     authSource,
 		IssuerURL:      userAuthOIDCIssuerURL.String(),
 		IssuerCA:       c.CAFilePath,
@@ -294,7 +295,7 @@ func (c *completedOptions) getAuthenticator(
 		oidcClientConfig.LogoutRedirectOverride = c.LogoutRedirectURL.String()
 	}
 
-	authenticator, err := auth.NewAuthenticator(context.Background(), oidcClientConfig)
+	authenticator, err := oauth2.NewOAuth2Authenticator(context.Background(), oidcClientConfig)
 	if err != nil {
 		klog.Fatalf("Error initializing authenticator: %v", err)
 	}

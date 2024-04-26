@@ -56,7 +56,7 @@ func TestNewAuthenticator(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	a, err := NewAuthenticator(ctx, ccfg)
+	a, err := NewOAuth2Authenticator(ctx, ccfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -104,7 +104,7 @@ func TestNewOpenShiftAuthenticator(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	a, err := NewAuthenticator(ctx, ccfg)
+	a, err := NewOAuth2Authenticator(ctx, ccfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -168,7 +168,7 @@ func TestRedirectAuthError(t *testing.T) {
 
 const validReferer string = "https://example.com/asdf/"
 
-func makeAuthenticator() (*Authenticator, error) {
+func makeAuthenticator() (*OAuth2Authenticator, error) {
 	errURL := "https://example.com/error"
 	sucURL := "https://example.com/success"
 
