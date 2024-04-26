@@ -9,10 +9,6 @@ import (
 type Authenticator interface {
 	Authenticate(w http.ResponseWriter, req *http.Request) (*User, error)
 
-	VerifySourceOrigin(req *http.Request) error
-	VerifyCSRFToken(req *http.Request) error
-	SetCSRFCookie(path string, w http.ResponseWriter)
-
 	LoginFunc(w http.ResponseWriter, req *http.Request)
 	LogoutFunc(w http.ResponseWriter, req *http.Request)
 	CallbackFunc(fn func(loginInfo sessions.LoginJSON, successURL string, w http.ResponseWriter)) func(w http.ResponseWriter, req *http.Request)
