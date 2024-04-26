@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"crypto/rand"
-	"crypto/subtle"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/hex"
@@ -12,7 +11,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"strings"
 	"sync"
 	"time"
 
@@ -28,8 +26,6 @@ import (
 )
 
 const (
-	CSRFCookieName    = "csrf-token"
-	CSRFHeader        = "X-CSRFToken"
 	stateCookieName   = "login-state"
 	errorOAuth        = "oauth_error"
 	errorLoginState   = "login_state_error"
@@ -62,7 +58,6 @@ type OAuth2Authenticator struct {
 	redirectURL   string
 	errorURL      string
 	successURL    string
-	refererURL    *url.URL
 	secureCookies bool
 
 	k8sConfig *rest.Config
@@ -120,9 +115,8 @@ type Config struct {
 	// used to talk to the master, which might be different than the issuer CA.
 	K8sCA string
 
-	SuccessURL  string
-	ErrorURL    string
-	RefererPath string
+	SuccessURL string
+	ErrorURL   string
 	// cookiePath is an abstraction leak. (unfortunately, a necessary one.)
 	CookiePath              string
 	SecureCookies           bool
@@ -140,7 +134,6 @@ type completedConfig struct {
 	*Config
 
 	clientFunc func() *http.Client
-	refererURL *url.URL
 }
 
 func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, error) {
@@ -274,7 +267,6 @@ func newUnstartedAuthenticator(c *completedConfig) *OAuth2Authenticator {
 		redirectURL:    c.RedirectURL,
 		errorURL:       c.ErrorURL,
 		successURL:     c.SuccessURL,
-		refererURL:     c.refererURL,
 		secureCookies:  c.SecureCookies,
 		k8sConfig:      c.K8sConfig,
 		metrics:        c.Metrics,
@@ -398,71 +390,6 @@ func (a *OAuth2Authenticator) redirectAuthError(w http.ResponseWriter, authErr s
 	w.WriteHeader(http.StatusSeeOther)
 }
 
-func (a *OAuth2Authenticator) getSourceOrigin(r *http.Request) string {
-	origin := r.Header.Get("Origin")
-	if len(origin) != 0 {
-		return origin
-	}
-
-	return r.Referer()
-}
-
-// VerifySourceOrigin checks that the Origin request header, if present, matches the target origin. Otherwise, it checks the Referer request header.
-// https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet#Identifying_Source_Origin
-func (a *OAuth2Authenticator) VerifySourceOrigin(r *http.Request) (err error) {
-	source := a.getSourceOrigin(r)
-	if len(source) == 0 {
-		return fmt.Errorf("no Origin or Referer header in request")
-	}
-
-	u, err := url.Parse(source)
-	if err != nil {
-		return err
-	}
-
-	isValid := a.refererURL.Hostname() == u.Hostname() &&
-		a.refererURL.Port() == u.Port() &&
-		a.refererURL.Scheme == u.Scheme &&
-		// The Origin header does not have a path
-		(u.Path == "" || strings.HasPrefix(u.Path, a.refererURL.Path))
-
-	if !isValid {
-		return fmt.Errorf("invalid Origin or Referer: %v expected `%v`", source, a.refererURL)
-	}
-	return nil
-}
-
-func (a *OAuth2Authenticator) SetCSRFCookie(path string, w http.ResponseWriter) {
-	cookie := http.Cookie{
-		Name:  CSRFCookieName,
-		Value: sessions.RandomString(64),
-		// JS needs to read this Cookie
-		HttpOnly: false,
-		Path:     path,
-		Secure:   a.secureCookies,
-		SameSite: http.SameSiteLaxMode,
-	}
-
-	http.SetCookie(w, &cookie)
-}
-
-func (a *OAuth2Authenticator) VerifyCSRFToken(r *http.Request) (err error) {
-	CSRFToken := r.Header.Get(CSRFHeader)
-	CRSCookie, err := r.Cookie(CSRFCookieName)
-	if err != nil {
-		return fmt.Errorf("No CSRF Cookie!")
-	}
-
-	tokenBytes := []byte(CSRFToken)
-	cookieBytes := []byte(CRSCookie.Value)
-
-	if 1 == subtle.ConstantTimeCompare(tokenBytes, cookieBytes) {
-		return nil
-	}
-
-	return fmt.Errorf("CSRF token does not match CSRF cookie")
-}
-
 func (c *Config) Complete() (*completedConfig, error) {
 	completed := &completedConfig{
 		Config: c,
@@ -499,12 +426,6 @@ func (c *Config) Complete() (*completedConfig, error) {
 	if c.CookiePath == "" {
 		completed.CookiePath = "/"
 	}
-
-	refUrl, err := url.Parse(c.RefererPath)
-	if err != nil {
-		return nil, err
-	}
-	completed.refererURL = refUrl
 
 	return completed, nil
 }
