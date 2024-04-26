@@ -136,7 +136,7 @@ type Server struct {
 	AlertManagerTenancyProxyConfig      *proxy.Config
 	AlertManagerUserWorkloadHost        string
 	AlertManagerUserWorkloadProxyConfig *proxy.Config
-	Authenticator                       *auth.Authenticator
+	Authenticator                       auth.Authenticator
 	BaseURL                             *url.URL
 	Branding                            string
 	ClusterManagementProxyConfig        *proxy.Config
@@ -741,7 +741,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !s.authDisabled() {
-		s.Authenticator.SetCSRFCookie(s.BaseURL.Path, &w)
+		s.Authenticator.SetCSRFCookie(s.BaseURL.Path, w)
 	}
 
 	if s.CustomLogoFile != "" {

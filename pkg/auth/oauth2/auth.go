@@ -19,6 +19,7 @@ import (
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
 
+	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
@@ -49,7 +50,7 @@ var (
 	httpClientCacheSystemRoots sync.Map
 )
 
-type Authenticator struct {
+type OAuth2Authenticator struct {
 	clientFunc func() *http.Client
 
 	clientID     string
@@ -65,17 +66,10 @@ type Authenticator struct {
 	secureCookies bool
 
 	k8sConfig *rest.Config
-	metrics   *Metrics
+	metrics   *auth.Metrics
 
 	// Custom login command to display in the console
 	ocLoginCommand string
-}
-
-type SpecialAuthURLs struct {
-	// RequestToken is a special page in the OpenShift integrated OAuth server for requesting a token.
-	RequestToken string
-	// KubeAdminLogout is the logout URL for the special kube:admin user in OpenShift.
-	KubeAdminLogout string
 }
 
 // loginMethod is used to handle OAuth2 responses and associate bearer tokens
@@ -98,9 +92,9 @@ type loginMethod interface {
 	// request based on a cookie, and returns a user associated to the cookie
 	// This does not itself perform an actual token request but it's based solely
 	// on the cookie.
-	Authenticate(http.ResponseWriter, *http.Request) (*User, error)
+	Authenticate(http.ResponseWriter, *http.Request) (*auth.User, error)
 	oauth2Config() *oauth2.Config
-	GetSpecialURLs() SpecialAuthURLs
+	GetSpecialURLs() auth.SpecialAuthURLs
 }
 
 // AuthSource allows callers to switch between Tectonic and OpenShift login support.
@@ -136,7 +130,7 @@ type Config struct {
 	CookieAuthenticationKey []byte
 
 	K8sConfig *rest.Config
-	Metrics   *Metrics
+	Metrics   *auth.Metrics
 
 	// Custom login command to display in the console
 	OCLoginCommand string
@@ -200,7 +194,7 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 
 // NewAuthenticator initializes an Authenticator struct. It blocks until the authenticator is
 // able to contact the provider.
-func NewAuthenticator(ctx context.Context, config *Config) (*Authenticator, error) {
+func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authenticator, error) {
 	c, err := config.Complete()
 	if err != nil {
 		return nil, err
@@ -254,7 +248,7 @@ func NewAuthenticator(ctx context.Context, config *Config) (*Authenticator, erro
 	return a, nil
 }
 
-func (a *Authenticator) oauth2ConfigConstructor(endpointConfig oauth2.Endpoint) *oauth2.Config {
+func (a *OAuth2Authenticator) oauth2ConfigConstructor(endpointConfig oauth2.Endpoint) *oauth2.Config {
 	// rebuild non-pointer struct each time to prevent any mutation
 	scopesCopy := make([]string, len(a.scopes))
 	copy(scopesCopy, a.scopes)
@@ -269,8 +263,8 @@ func (a *Authenticator) oauth2ConfigConstructor(endpointConfig oauth2.Endpoint) 
 	return &baseOAuth2Config
 }
 
-func newUnstartedAuthenticator(c *completedConfig) *Authenticator {
-	return &Authenticator{
+func newUnstartedAuthenticator(c *completedConfig) *OAuth2Authenticator {
+	return &OAuth2Authenticator{
 		clientFunc: c.clientFunc,
 
 		clientID:     c.ClientID,
@@ -288,15 +282,8 @@ func newUnstartedAuthenticator(c *completedConfig) *Authenticator {
 	}
 }
 
-// User holds fields representing a user.
-type User struct {
-	ID       string
-	Username string
-	Token    string
-}
-
 // LoginFunc redirects to the OIDC provider for user login.
-func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
+func (a *OAuth2Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 	if a.metrics != nil {
 		a.metrics.LoginRequested()
 	}
@@ -318,9 +305,9 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 }
 
 // LogoutFunc cleans up session cookies.
-func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
+func (a *OAuth2Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 	if a.metrics != nil {
-		a.metrics.LogoutRequested(UnknownLogoutReason)
+		a.metrics.LogoutRequested(auth.UnknownLogoutReason)
 	}
 
 	a.logout(w, r)
@@ -328,7 +315,7 @@ func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
 // Requests with unexpected params are redirected to the root route.
-func (a *Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON, successURL string, w http.ResponseWriter)) func(w http.ResponseWriter, r *http.Request) {
+func (a *OAuth2Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON, successURL string, w http.ResponseWriter)) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query()
 		qErr := q.Get("error")
@@ -391,9 +378,9 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON, succe
 	}
 }
 
-func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string) {
+func (a *OAuth2Authenticator) redirectAuthError(w http.ResponseWriter, authErr string) {
 	if a.metrics != nil {
-		a.metrics.LoginFailed(UnknownLoginFailureReason)
+		a.metrics.LoginFailed(auth.UnknownLoginFailureReason)
 	}
 
 	var u url.URL
@@ -411,7 +398,7 @@ func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string)
 	w.WriteHeader(http.StatusSeeOther)
 }
 
-func (a *Authenticator) getSourceOrigin(r *http.Request) string {
+func (a *OAuth2Authenticator) getSourceOrigin(r *http.Request) string {
 	origin := r.Header.Get("Origin")
 	if len(origin) != 0 {
 		return origin
@@ -422,7 +409,7 @@ func (a *Authenticator) getSourceOrigin(r *http.Request) string {
 
 // VerifySourceOrigin checks that the Origin request header, if present, matches the target origin. Otherwise, it checks the Referer request header.
 // https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet#Identifying_Source_Origin
-func (a *Authenticator) VerifySourceOrigin(r *http.Request) (err error) {
+func (a *OAuth2Authenticator) VerifySourceOrigin(r *http.Request) (err error) {
 	source := a.getSourceOrigin(r)
 	if len(source) == 0 {
 		return fmt.Errorf("no Origin or Referer header in request")
@@ -445,7 +432,7 @@ func (a *Authenticator) VerifySourceOrigin(r *http.Request) (err error) {
 	return nil
 }
 
-func (a *Authenticator) SetCSRFCookie(path string, w *http.ResponseWriter) {
+func (a *OAuth2Authenticator) SetCSRFCookie(path string, w http.ResponseWriter) {
 	cookie := http.Cookie{
 		Name:  CSRFCookieName,
 		Value: sessions.RandomString(64),
@@ -456,10 +443,10 @@ func (a *Authenticator) SetCSRFCookie(path string, w *http.ResponseWriter) {
 		SameSite: http.SameSiteLaxMode,
 	}
 
-	http.SetCookie(*w, &cookie)
+	http.SetCookie(w, &cookie)
 }
 
-func (a *Authenticator) VerifyCSRFToken(r *http.Request) (err error) {
+func (a *OAuth2Authenticator) VerifyCSRFToken(r *http.Request) (err error) {
 	CSRFToken := r.Header.Get(CSRFHeader)
 	CRSCookie, err := r.Cookie(CSRFCookieName)
 	if err != nil {
@@ -522,6 +509,6 @@ func (c *Config) Complete() (*completedConfig, error) {
 	return completed, nil
 }
 
-func (a *Authenticator) GetOCLoginCommand() string {
+func (a *OAuth2Authenticator) GetOCLoginCommand() string {
 	return a.ocLoginCommand
 }
