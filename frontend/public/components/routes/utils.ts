@@ -45,7 +45,7 @@ export const convertRouteToEditForm = (
     secure: !!spec?.tls,
     namespace: metadata?.namespace || getActiveNamespace(),
     labels: metadata?.labels,
-    alternateServices: Array.isArray(spec?.alternateBackends)
+    alternateBackends: Array.isArray(spec?.alternateBackends)
       ? spec.alternateBackends.map((b) => ({
           name: b.name,
           weight: b.weight,
@@ -79,9 +79,9 @@ const createRoteTls = (formData: RouteFormProps) => {
 };
 
 export const createAlternateBackends = (
-  alternateServices: RouteFormProps['alternateServices'],
+  alternateBackends: RouteFormProps['alternateBackends'],
 ): RouteTarget[] => {
-  return _.filter(alternateServices, 'name').map((serviceData: AlternateServiceEntryType) => {
+  return _.filter(alternateBackends, 'name').map((serviceData: AlternateServiceEntryType) => {
     return {
       weight: serviceData.weight,
       kind: 'Service',
@@ -102,7 +102,7 @@ export const convertEditFormToRoute = (
     weight,
     targetPort: selectedPort,
     namespace,
-    alternateServices,
+    alternateBackends,
   } = formData;
 
   const tls = createRoteTls(formData);
@@ -119,7 +119,7 @@ export const convertEditFormToRoute = (
       ? _.get(service, 'spec.ports[0].targetPort') || _.get(service, 'spec.ports[0].port')
       : selectedPort;
 
-  const alternateBackends = createAlternateBackends(alternateServices);
+  const altBackends = createAlternateBackends(alternateBackends);
 
   const route: RouteKind = {
     ...(existingRoute || {}),
@@ -147,9 +147,7 @@ export const convertEditFormToRoute = (
     },
   };
 
-  if (!_.isEmpty(alternateBackends)) {
-    route.spec.alternateBackends = alternateBackends;
-  }
+  route.spec.alternateBackends = altBackends;
 
   return route;
 };
