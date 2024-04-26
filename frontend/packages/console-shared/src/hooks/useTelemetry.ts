@@ -14,29 +14,31 @@ import { useUserSettings } from './useUserSettings';
 
 let telemetryEvents: { eventType: string; event: Record<string, any> }[] = [];
 
-export const getClusterType = () => {
+interface ClusterProperties {
+  clusterId?: string;
+  clusterType?: string;
+  consoleVersion?: string;
+  organizationId?: string;
+}
+
+export const getClusterProperties = () => {
+  const clusterProperties: ClusterProperties = {};
+  clusterProperties.clusterId = window.SERVER_FLAGS?.telemetry?.CLUSTER_ID;
+  clusterProperties.clusterType = window.SERVER_FLAGS?.telemetry?.CLUSTER_TYPE;
   if (
     window.SERVER_FLAGS?.telemetry?.CLUSTER_TYPE === 'OSD' &&
     window.SERVER_FLAGS?.telemetry?.DEVSANDBOX === 'true'
   ) {
-    return 'DEVSANDBOX';
+    clusterProperties.clusterType = 'DEVSANDBOX';
   }
-  return window.SERVER_FLAGS?.telemetry?.CLUSTER_TYPE;
+  clusterProperties.consoleVersion = window.SERVER_FLAGS?.consoleVersion;
+  clusterProperties.organizationId = window.SERVER_FLAGS?.telemetry?.ORGANIZATION_ID;
+  return clusterProperties;
 };
 
-export const getConsoleVersion = () => window.SERVER_FLAGS?.consoleVersion;
+let clusterProperties = getClusterProperties();
 
-export const getOrganizationId = () => window.SERVER_FLAGS?.telemetry?.ORGANIZATION_ID;
-
-let clusterType = getClusterType();
-let consoleVersion = getConsoleVersion();
-let organizationId = getOrganizationId();
-
-export const updateServerFlagsFromTests = () => {
-  clusterType = getClusterType();
-  consoleVersion = getConsoleVersion();
-  organizationId = getOrganizationId();
-};
+export const updateClusterPropertiesFromTests = () => (clusterProperties = getClusterProperties());
 
 export const useTelemetry = () => {
   // TODO use useDynamicPluginInfo() hook to tell whether all dynamic plugins have been processed
@@ -67,9 +69,7 @@ export const useTelemetry = () => {
   return React.useCallback<TelemetryEventListener>(
     (eventType, properties: Record<string, any>) => {
       const event = {
-        clusterType,
-        consoleVersion,
-        organizationId,
+        ...clusterProperties,
         ...properties,
         // This is required to ensure that the replayed events uses the right path.
         path: properties?.pathname,
