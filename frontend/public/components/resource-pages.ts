@@ -369,14 +369,14 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     import('./namespace' /* webpackChunkName: "namespace" */).then((m) => m.NamespacesPage),
   )
   .set(referenceForModel(NetworkPolicyModel), () =>
-    import(
-      '@console/app/src/components/network-policies/network-policy-list/NetworkPolicyListPage' /* webpackChunkName: "network-policy" */
-    ).then((m) => m.NetworkPolicyListPage),
+    import('./network-policy' /* webpackChunkName: "network-policy" */).then(
+      (m) => m.NetworkPoliciesPage,
+    ),
   )
   .set(referenceForModel(MultiNetworkPolicyModel), () =>
     import(
-      '@console/app/src/components/network-policies/network-policy-list/NetworkPolicyListPage' /* webpackChunkName: "multi-network-policy" */
-    ).then((m) => m.NetworkPolicyListPage),
+      '@console/app/src/components/network-policies/multi-network-policy/MultiNetworkPolicyListPage' /* webpackChunkName: "multi-network-policy" */
+    ).then((m) => m.MultiNetworkPolicyListPage),
   )
   .set(referenceForModel(NodeModel), () =>
     import('@console/app/src/components/nodes/NodesPage' /* webpackChunkName: "node" */).then(

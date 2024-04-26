@@ -1,12 +1,6 @@
 import { K8sModel } from '@console/dynamic-plugin-sdk/src';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { MultiNetworkPolicyModel, NetworkPolicyModel } from '@console/internal/models';
-
-export const TAB_INDEXES = {
-  ENABLE_MULTI: 2,
-  MULTI_NETWORK: 1,
-  NETWORK: 0,
-};
+import { MultiNetworkPolicyModel } from '@console/internal/models';
 
 export const NetworkConfigModel: K8sModel = {
   abbr: 'NO',
@@ -24,4 +18,5 @@ export const NetworkConfigModel: K8sModel = {
 export const ALL_NAMESPACES = 'all-namespaces';
 
 export const multiNetworkPolicyRef = getReferenceForModel(MultiNetworkPolicyModel);
-export const networkPolicyRef = getReferenceForModel(NetworkPolicyModel);
+
+export const FLAG_MULTI_NETWORK_POLICY = 'MULTI_NETWORK_POLICY_ENABLED';

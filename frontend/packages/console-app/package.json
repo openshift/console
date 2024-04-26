@@ -50,7 +50,8 @@
       "nodeStatus": "src/components/nodes/status",
       "nodeActions": "src/components/nodes/menu-actions.tsx",
       "oauthConfigDetailsPage": "src/components/oauth-config/OAuthConfigDetailsPage.tsx",
-      "networkPolicyListPage": "src/components/network-policies/network-policy-list/NetworkPolicyListPage.tsx"
+      "networkPolicyListPage": "src/components/network-policies/multi-network-policy/NetworkPolicyListPage.tsx",
+      "multiNetworkFlag": "src/components/network-policies/multi-network-policy/multiNetworkFlag.ts"
     }
   }
 }

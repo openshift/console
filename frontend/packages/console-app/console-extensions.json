@@ -10,7 +10,6 @@
       "importRedirectURL": { "$codeRef": "perspective.getImportRedirectURL" }
     }
   },
-
   {
     "type": "console.flag/model",
     "properties": {
@@ -1057,14 +1056,38 @@
       }
     }
   },
-
   {
-    "type": "console.page/route",
     "properties": {
-      "exact": true,
-      "path": ["/k8s/all-namespaces/networkpolicies/~enable-multi", "/k8s/ns/:ns/networkpolicies/~enable-multi"],
-      "component": { "$codeRef": "networkPolicyListPage.NetworkPolicyListPage" }
+      "handler": { "$codeRef": "multiNetworkFlag.enableMultiNetworkPolicy" }
+    },
+    "type": "console.flag"
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "k8s.cni.cncf.io",
+        "version": "v1beta1",
+        "kind": "MultiNetworkPolicy"
+      },
+      "flag": "MULTI_NETWORK_POLICY_ENABLED"
     }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "networking",
+      "id": "multinetworkpolicies",
+      "insertAfter": "networkpolicies",
+      "name": "%console-app~MultiNetworkPolicies%",
+      "model": {
+        "group": "k8s.cni.cncf.io",
+        "version": "v1beta1",
+        "kind": "MultiNetworkPolicy"
+      }
+    },
+    "flags": {"required": ["MULTI_NETWORK_POLICY_ENABLED"]}
   },
   {
     "type": "console.navigation/resource-cluster",
