@@ -23,6 +23,7 @@ import (
 	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/auth/sessions"
 	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
 	"github.com/openshift/console/pkg/devfile"
@@ -144,6 +145,7 @@ type Server struct {
 	CookieAuthenticationKey             []byte
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
+	CSRFVerifier                        *csrfverifier.CSRFVerifier
 	CustomLogoFile                      string
 	CustomProductName                   string
 	DevCatalogCategories                string
@@ -273,11 +275,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	}
 
 	authHandler := func(h http.HandlerFunc) http.HandlerFunc {
-		return authMiddleware(s.Authenticator, h)
+		return authMiddleware(s.Authenticator, s.CSRFVerifier, h)
 	}
 
 	authHandlerWithUser := func(h HandlerWithUser) http.HandlerFunc {
-		return authMiddlewareWithUser(s.Authenticator, h)
+		return authMiddlewareWithUser(s.Authenticator, s.CSRFVerifier, h)
 	}
 
 	if s.authDisabled() {
@@ -741,7 +743,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !s.authDisabled() {
-		s.Authenticator.SetCSRFCookie(s.BaseURL.Path, w)
+		s.CSRFVerifier.SetCSRFCookie(s.BaseURL.Path, w)
 	}
 
 	if s.CustomLogoFile != "" {
@@ -792,5 +794,5 @@ func (s *Server) handleCopyLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
-	verifyCSRF(s.Authenticator, s.Authenticator.LogoutFunc).ServeHTTP(w, r)
+	s.CSRFVerifier.WithCSRFVerification(http.HandlerFunc(s.Authenticator.LogoutFunc)).ServeHTTP(w, r)
 }

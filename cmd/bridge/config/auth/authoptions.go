@@ -15,6 +15,7 @@ import (
 
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/auth/csrfverifier"
 	oauth2 "github.com/openshift/console/pkg/auth/oauth2"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/proxy"
@@ -209,16 +210,23 @@ func (c *completedOptions) ApplyTo(
 ) error {
 	srv.InactivityTimeout = c.InactivityTimeoutSeconds
 
+	useSecureCookies := srv.BaseURL.Scheme == "https"
 	var err error
 	srv.Authenticator, err = c.getAuthenticator(
 		srv.BaseURL,
 		k8sEndpoint,
 		caCertFilePath,
 		srv.InternalProxiedK8SClientConfig,
+		useSecureCookies,
 		sessionConfig,
 	)
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	srv.CSRFVerifier = csrfverifier.NewCSRFVerifier(srv.BaseURL, useSecureCookies)
+	return nil
 }
 
 func (c *completedOptions) getAuthenticator(
@@ -226,6 +234,7 @@ func (c *completedOptions) getAuthenticator(
 	k8sEndpoint *url.URL,
 	caCertFilePath string,
 	k8sClientConfig *rest.Config,
+	useSecureCookies bool,
 	sessionConfig *session.CompletedOptions,
 ) (auth.Authenticator, error) {
 
@@ -243,9 +252,7 @@ func (c *completedOptions) getAuthenticator(
 		authLoginSuccessEndpoint = proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginSuccessEndpoint)
 		oidcClientSecret         = c.ClientSecret
 		// Abstraction leak required by NewAuthenticator. We only want the browser to send the auth token for paths starting with basePath/api.
-		cookiePath       = proxy.SingleJoiningSlash(baseURL.Path, "/api")
-		refererPath      = baseURL.String()
-		useSecureCookies = baseURL.Scheme == "https"
+		cookiePath = proxy.SingleJoiningSlash(baseURL.Path, "/api")
 	)
 
 	var scopes []string
@@ -283,7 +290,6 @@ func (c *completedOptions) getAuthenticator(
 		SuccessURL: authLoginSuccessEndpoint,
 
 		CookiePath:              cookiePath,
-		RefererPath:             refererPath,
 		SecureCookies:           useSecureCookies,
 		CookieEncryptionKey:     sessionConfig.CookieEncryptionKey,
 		CookieAuthenticationKey: sessionConfig.CookieAuthenticationKey,
