@@ -2,6 +2,8 @@ package auth
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,6 +12,12 @@ import (
 	"time"
 
 	"golang.org/x/oauth2"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/rest"
+	"k8s.io/klog"
+
+	oauthv1client "github.com/openshift/client-go/oauth/clientset/versioned/typed/oauth/v1"
 
 	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/proxy"
@@ -159,7 +167,7 @@ func (o *openShiftAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Name:     sessions.OpenshiftAccessTokenCookieName,
 		Value:    "",
-		MaxAge:   0,
+		MaxAge:   -1,
 		HttpOnly: true,
 		Path:     o.cookiePath,
 		Secure:   o.secureCookies,
@@ -168,8 +176,47 @@ func (o *openShiftAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	k8sURL, err := url.Parse(o.issuerURL)
+	if err != nil {
+		klog.Errorf("failed to parse the URL to kube-apiserver: %v", err)
+		http.Error(w, "removing the session failed", http.StatusInternalServerError)
+		return
+	}
+
+	cookie, err := r.Cookie(sessions.OpenshiftAccessTokenCookieName)
+	if err != nil {
+		klog.V(4).Infof("the session cookie is not present: %v", err)
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	configWithBearerToken := &rest.Config{
+		Host:        "https://" + k8sURL.Host,
+		Transport:   o.k8sClient.Transport,
+		BearerToken: cookie.Value,
+		Timeout:     30 * time.Second,
+	}
+
+	oauthClient, err := oauthv1client.NewForConfig(configWithBearerToken)
+	if err != nil {
+		klog.Infof("failed setting up the oauthaccesstokens client: %v", err)
+		http.Error(w, "removing the session failed", http.StatusInternalServerError)
+		return
+	}
+	err = oauthClient.OAuthAccessTokens().Delete(ctx, tokenToObjectName(cookie.Value), metav1.DeleteOptions{})
+	if err != nil {
+		http.Error(w, "removing the session failed", http.StatusInternalServerError)
+		return
+	}
+
 	o.DeleteCookie(w, r)
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (o *openShiftAuth) LogoutRedirectURL() string {
+	return o.logoutRedirectOverride
 }
 
 func (o *openShiftAuth) Authenticate(_ http.ResponseWriter, r *http.Request) (*User, error) {
@@ -210,4 +257,12 @@ func (o *openShiftAuth) oauth2Config() *oauth2.Config {
 		AuthURL:  metadata.Auth,
 		TokenURL: metadata.Token,
 	})
+}
+
+func tokenToObjectName(token string) string {
+	const sha256Prefix = "sha256~"
+
+	name := strings.TrimPrefix(token, sha256Prefix)
+	h := sha256.Sum256([]byte(name))
+	return sha256Prefix + base64.RawURLEncoding.EncodeToString(h[0:])
 }

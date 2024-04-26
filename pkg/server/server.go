@@ -2,9 +2,7 @@ package server
 
 import (
 	"context"
-	"crypto/sha256"
 	"crypto/tls"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -19,13 +17,11 @@ import (
 	"github.com/coreos/pkg/health"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 
-	oauthv1client "github.com/openshift/client-go/oauth/clientset/versioned/typed/oauth/v1"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
 	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
@@ -62,9 +58,8 @@ const (
 	alertManagerTenancyProxyEndpoint      = "/api/alertmanager-tenancy"
 	alertmanagerUserWorkloadProxyEndpoint = "/api/alertmanager-user-workload"
 	authLoginEndpoint                     = "/auth/login"
-	authLogoutEndpoint                    = "/auth/logout"
+	authLogoutEndpoint                    = "/api/console/logout"
 	customLogoEndpoint                    = "/custom-logo"
-	deleteOpenshiftTokenEndpoint          = "/api/openshift/delete-token"
 	devfileEndpoint                       = "/api/devfile/"
 	devfileSamplesEndpoint                = "/api/devfile/samples/"
 	gitopsEndpoint                        = "/api/gitops/"
@@ -169,7 +164,6 @@ type Server struct {
 	KubeAPIServerURL                    string // JS global only. Not used for proxying.
 	KubeVersion                         string
 	LoadTestFactor                      int
-	LogoutRedirect                      *url.URL
 	MonitoringDashboardConfigMapLister  ResourceLister
 	NodeArchitectures                   []string
 	NodeOperatingSystems                []string
@@ -310,7 +304,6 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
 		handle(requestTokenEndpoint, authHandler(s.handleClusterTokenURL))
 		// TODO: only add the following in case the auth type is openshift?
-		handleFunc(deleteOpenshiftTokenEndpoint, allowMethod(http.MethodPost, authHandlerWithUser(s.handleOpenShiftTokenDeletion)))
 	}
 
 	handleFunc("/api/", notFoundHandler)
@@ -697,7 +690,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
 		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
 		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:                 proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
+		LogoutURL:                 authLogoutEndpoint,
 		KubeAPIServerURL:          s.KubeAPIServerURL,
 		Branding:                  s.Branding,
 		CustomProductName:         s.CustomProductName,
@@ -730,11 +723,9 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		K8sMode:                   s.K8sMode,
 	}
 
-	if s.LogoutRedirect != nil {
-		jsg.LogoutRedirect = s.LogoutRedirect.String()
-	}
-
 	if !s.authDisabled() {
+		jsg.LogoutRedirect = s.Authenticator.LogoutRedirectURL()
+
 		specialAuthURLs := s.Authenticator.GetSpecialURLs()
 		jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
 	}
@@ -798,40 +789,6 @@ func (s *Server) handleClusterTokenURL(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWriter, r *http.Request) {
-	tokenName := user.Token
-	if strings.HasPrefix(tokenName, sha256Prefix) {
-		tokenName = tokenToObjectName(tokenName)
-	}
-
-	clientConfig := rest.AnonymousClientConfig(s.InternalProxiedK8SClientConfig)
-	clientConfig.Host = s.KubeAPIServerURL
-	clientConfig.BearerToken = user.Token
-
-	oauthClient, err := oauthv1client.NewForConfig(clientConfig)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("failed to create an OAuth API client for a user: %v", err)})
-		return
-	}
-
-	err = oauthClient.OAuthAccessTokens().Delete(r.Context(), tokenName, metav1.DeleteOptions{})
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to delete token: %v", err)})
-		return
-	}
-	s.Authenticator.DeleteCookie(w, r)
-	w.WriteHeader(http.StatusOK)
-}
-
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 	verifyCSRF(s.Authenticator, s.Authenticator.LogoutFunc).ServeHTTP(w, r)
-}
-
-// tokenToObjectName returns the oauthaccesstokens object name for the given raw token,
-// i.e. the sha256 hash prefixed with "sha256~".
-// TODO this should be a member function of the User type
-func tokenToObjectName(token string) string {
-	name := strings.TrimPrefix(token, sha256Prefix)
-	h := sha256.Sum256([]byte(name))
-	return sha256Prefix + base64.RawURLEncoding.EncodeToString(h[0:])
 }
