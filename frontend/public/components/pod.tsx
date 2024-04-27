@@ -811,6 +811,8 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
 
 export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
   const { t } = useTranslation();
+  const moreThanOnePodIPs = pod.status?.podIPs?.length > 1;
+  const moreThanOneHostIPs = pod.status?.hostIPs?.length > 1;
   return (
     <dl className="co-m-pane__details">
       <dt>{t('public~Status')}</dt>
@@ -829,8 +831,24 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
           ? t('public~{{count}} second', { count: pod.spec.activeDeadlineSeconds })
           : t('public~Not configured')}
       </DetailsItem>
-      <DetailsItem label={t('public~Pod IP')} obj={pod} path="status.podIP" />
-      <DetailsItem label={t('public~Host IP')} obj={pod} path="status.hostIP" />
+      <DetailsItem
+        label={moreThanOnePodIPs ? t('public~Pod IPs') : t('public~Pod IP')}
+        obj={pod}
+        path={moreThanOnePodIPs ? 'status.podIPs' : 'status.podIP'}
+      >
+        {moreThanOnePodIPs
+          ? pod.status.podIPs.map((podIP) => podIP.ip).join(', ')
+          : pod.status.podIP}
+      </DetailsItem>
+      <DetailsItem
+        label={moreThanOneHostIPs ? t('public~Host IPs') : t('public~Host IP')}
+        obj={pod}
+        path={moreThanOneHostIPs ? 'status.hostIPs' : 'status.hostIP'}
+      >
+        {moreThanOneHostIPs
+          ? pod.status.hostIPs.map((hostIP) => hostIP.ip).join(', ')
+          : pod.status.hostIP}
+      </DetailsItem>
       <DetailsItem label={t('public~Node')} obj={pod} path="spec.nodeName" hideEmpty>
         <NodeLink name={pod.spec.nodeName} />
       </DetailsItem>
