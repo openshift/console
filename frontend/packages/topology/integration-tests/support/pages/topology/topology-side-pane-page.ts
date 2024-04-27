@@ -51,8 +51,8 @@ export const topologySidePane = {
       .get(`[data-test-selector="details-item-value__${fieldName}"]`)
       .should('contain.text', fieldValue),
   selectAddHealthChecks: () => cy.get('a').contains('Add Health Checks').click(),
-  scaleUpPodCount: () => cy.get(topologyPO.sidePane.podScale).eq(0).click(),
-  scaleDownPodCount: () => cy.get(topologyPO.sidePane.podScale).eq(1).click(),
+  scaleUpPodCount: () => cy.get(topologyPO.sidePane.podScaleUP).click(),
+  scaleDownPodCount: () => cy.get(topologyPO.sidePane.podScaleDown).click(),
   verifyPodText: (scaleNumber: string) => {
     cy.get(topologyPO.sidePane.podText, { timeout: 120000 }).should('contain.text', scaleNumber);
   },
@@ -100,8 +100,7 @@ export const topologySidePane = {
     cy.byTestID(deploymentName).should('be.visible');
   },
   verifyActionsOnApplication: () => {
-    cy.byTestActionID('Delete application').should('be.visible');
-    cy.get(topologyPO.addToApplicationInContext).should('be.visible');
+    cy.get(topologyPO.menuItemInContext).should('be.visible');
   },
   selectResource: (opt: resources | string, namespace: string, name: string) => {
     switch (opt) {
