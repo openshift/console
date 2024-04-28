@@ -22,31 +22,6 @@ metadata:
 `,
   )
   .setIn(
-    [referenceForModel(k8sModels.NetworkPolicyModel), 'default'],
-    `
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: example
-  namespace: default
-spec:
-  podSelector:
-    matchLabels:
-      role: db
-  ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: somerole
-    ports:
-    - protocol: TCP
-      port: 6379
-`,
-  )
-  .setIn(
     [referenceForModel(k8sModels.NetworkPolicyModel), 'deny-other-namespaces'],
     `
 apiVersion: networking.k8s.io/v1
@@ -396,27 +371,6 @@ spec:
 `,
   )
   .setIn(
-    [referenceForModel(k8sModels.IngressModel), 'default'],
-    `
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: example
-spec:
-  rules:
-  - host: example.com
-    http:
-      paths:
-      - path: /testpath
-        pathType: Prefix
-        backend:
-          service:
-            name: test
-            port:
-              number: 80
-`,
-  )
-  .setIn(
     [referenceForModel(k8sModels.JobModel), 'default'],
     `
 apiVersion: batch/v1
@@ -558,22 +512,6 @@ metadata:
 rules:
 - nonResourceURLs: ["/healthz", "/healthz/*"] # '*' in a nonResourceURL is a suffix glob match
   verbs: ["get", "post"]
-`,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ServiceModel), 'default'],
-    `
-apiVersion: v1
-kind: Service
-metadata:
-  name: example
-spec:
-  selector:
-    app: MyApp
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 9376
 `,
   )
   .setIn(
@@ -742,22 +680,6 @@ spec:
         image: image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest
         ports:
         - containerPort: 8080
-`,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.RouteModel), 'default'],
-    `
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: example
-spec:
-  path: /
-  to:
-    kind: Service
-    name: example
-  port:
-    targetPort: 80
 `,
   )
   .setIn(
