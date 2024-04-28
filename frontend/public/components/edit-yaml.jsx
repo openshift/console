@@ -387,6 +387,10 @@ const EditYAMLInner = (props) => {
 
   const validate = React.useCallback(
     (obj) => {
+      if (!obj) {
+        return t('public~No YAML content found.');
+      }
+
       if (!obj.apiVersion) {
         return t('public~No "apiVersion" field found in YAML.');
       }
