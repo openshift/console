@@ -252,12 +252,12 @@ func (c *completedOptions) getAuthenticator(
 ) (auth.Authenticator, error) {
 
 	if c.AuthType == "disabled" {
-		klog.Warning("running with AUTHENTICATION DISABLED!")
-
 		if c.BearerToken == "" {
+			klog.Warning("console is disabled -- no authentication method configured")
 			return nil, nil
 		}
 
+		klog.Warning("running with AUTHENTICATION DISABLED -- for development use only!")
 		return static.NewStaticAuthenticator(auth.User{
 			Token: c.BearerToken,
 		}), nil
