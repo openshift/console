@@ -561,8 +561,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Setting the --k8s-auth-bearer-token flag will override both the authenticator
+	// and the internal proxy user
 	if len(*fK8sAuthBearerToken) > 0 {
-		srv.StaticUser = static.NewStaticAuthenticator(auth.User{
+		srv.Authenticator = static.NewStaticAuthenticator(auth.User{
 			Token: *fK8sAuthBearerToken,
 		})
 		srv.InternalProxiedK8SClientConfig.BearerToken = *fK8sAuthBearerToken

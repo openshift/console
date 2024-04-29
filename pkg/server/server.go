@@ -178,7 +178,6 @@ type Server struct {
 	QuickStarts                         string
 	ReleaseVersion                      string
 	ServiceClient                       *http.Client
-	StaticUser                          auth.Authenticator
 	StatuspageID                        string
 	TectonicVersion                     string
 	Telemetry                           serverconfig.MultiKeyValue
@@ -204,10 +203,6 @@ func disableDirectoryListing(handler http.Handler) http.Handler {
 	})
 }
 
-func (s *Server) authDisabled() bool {
-	return s.Authenticator == nil
-}
-
 func (s *Server) prometheusProxyEnabled() bool {
 	return s.ThanosProxyConfig != nil && s.ThanosTenancyProxyConfig != nil && s.ThanosTenancyProxyForRulesConfig != nil
 }
@@ -221,6 +216,10 @@ func (s *Server) gitopsProxyEnabled() bool {
 }
 
 func (s *Server) HTTPHandler() (http.Handler, error) {
+	if s.Authenticator == nil {
+		return s.NoAuthConfiguredHandler(), nil
+	}
+
 	internalProxiedK8SClient, err := kubernetes.NewForConfig(s.InternalProxiedK8SClientConfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to set up internal k8s client: %w", err)
@@ -275,10 +274,6 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	}
 
 	authenticator := s.Authenticator
-	if s.authDisabled() {
-		authenticator = s.StaticUser
-	}
-
 	authHandler := func(h http.HandlerFunc) http.HandlerFunc {
 		return authMiddleware(authenticator, s.CSRFVerifier, h)
 	}
@@ -286,14 +281,10 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	authHandlerWithUser := func(h HandlerWithUser) http.HandlerFunc {
 		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
 	}
-
-	if !s.authDisabled() {
-		handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
-		handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
-		handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
-		handle(copyLoginEndpoint, authHandler(s.handleCopyLogin))
-		// TODO: only add the following in case the auth type is openshift?
-	}
+	handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
+	handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
+	handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
+	handle(copyLoginEndpoint, authHandler(s.handleCopyLogin))
 
 	handleFunc("/api/", notFoundHandler)
 
@@ -674,12 +665,13 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	jsg := &jsGlobals{
 		ConsoleVersion:            version.Version,
-		AuthDisabled:              s.authDisabled(),
 		BasePath:                  s.BaseURL.Path,
 		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
 		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
 		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
 		LogoutURL:                 authLogoutEndpoint,
+		LogoutRedirect:            s.Authenticator.LogoutRedirectURL(),
+		KubeAdminLogoutURL:        s.Authenticator.GetSpecialURLs().KubeAdminLogout,
 		KubeAPIServerURL:          s.KubeAPIServerURL,
 		Branding:                  s.Branding,
 		CustomProductName:         s.CustomProductName,
@@ -712,13 +704,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		K8sMode:                   s.K8sMode,
 	}
 
-	if !s.authDisabled() {
-		jsg.LogoutRedirect = s.Authenticator.LogoutRedirectURL()
-
-		specialAuthURLs := s.Authenticator.GetSpecialURLs()
-		jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
-	}
-
 	if s.prometheusProxyEnabled() {
 		jsg.PrometheusBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusProxyEndpoint)
 		jsg.PrometheusTenancyBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusTenancyProxyEndpoint)
@@ -729,9 +714,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		jsg.AlertmanagerUserWorkloadBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertmanagerUserWorkloadProxyEndpoint)
 	}
 
-	if !s.authDisabled() {
-		s.CSRFVerifier.SetCSRFCookie(s.BaseURL.Path, w)
-	}
+	s.CSRFVerifier.SetCSRFCookie(s.BaseURL.Path, w)
 
 	if s.CustomLogoFile != "" {
 		jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
@@ -782,4 +765,13 @@ func (s *Server) handleCopyLogin(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 	s.CSRFVerifier.WithCSRFVerification(http.HandlerFunc(s.Authenticator.LogoutFunc)).ServeHTTP(w, r)
+}
+
+func (s *Server) NoAuthConfiguredHandler() http.Handler {
+	mux := http.NewServeMux()
+	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprint(w, "Please configure authentication to use the web console.")
+	}))
+	return securityHeadersMiddleware(mux)
 }
