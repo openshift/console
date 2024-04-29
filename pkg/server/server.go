@@ -287,13 +287,6 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
 	}
 
-	authHandlerWithHeader := func(h http.HandlerFunc) http.HandlerFunc {
-		return authHandlerWithUser(func(u *auth.User, w http.ResponseWriter, r *http.Request) {
-			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", u.Token))
-			h(w, r)
-		})
-	}
-
 	if !s.authDisabled() {
 		handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
 		handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
@@ -324,7 +317,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(k8sProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
-		authHandlerWithHeader(k8sProxy.ServeHTTP),
+		authHandler(k8sProxy.ServeHTTP),
 	))
 
 	handleFunc(devfileEndpoint, devfile.DevfileHandler)
@@ -380,17 +373,17 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 		handleThanosRequest := http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
-			authHandlerWithHeader(thanosProxy.ServeHTTP),
+			authHandler(thanosProxy.ServeHTTP),
 		)
 
 		handleThanosTenancyRequest := http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
-			authHandlerWithHeader(thanosTenancyProxy.ServeHTTP),
+			authHandler(thanosTenancyProxy.ServeHTTP),
 		)
 
 		handleThanosTenancyForRulesRequest := http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
-			authHandlerWithHeader(thanosTenancyForRulesProxy.ServeHTTP))
+			authHandler(thanosTenancyForRulesProxy.ServeHTTP))
 
 		// global label, query, and query_range requests have to be proxied via thanos
 		handle(querySourcePath, handleThanosRequest)
@@ -426,17 +419,17 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 		handle(alertManagerProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyAPIPath),
-			authHandlerWithHeader(alertManagerProxy.ServeHTTP),
+			authHandler(alertManagerProxy.ServeHTTP),
 		))
 
 		handle(alertManagerUserWorkloadProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerUserWorkloadProxyAPIPath),
-			authHandlerWithHeader(alertManagerUserWorkloadProxy.ServeHTTP),
+			authHandler(alertManagerUserWorkloadProxy.ServeHTTP),
 		))
 
 		handle(alertManagerTenancyProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerTenancyProxyAPIPath),
-			authHandlerWithHeader(alertManagerTenancyProxy.ServeHTTP),
+			authHandler(alertManagerTenancyProxy.ServeHTTP),
 		))
 	}
 
@@ -645,7 +638,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)
 		handle(gitopsEndpoint, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, gitopsEndpoint),
-			authHandlerWithHeader(gitopsProxy.ServeHTTP),
+			authHandler(gitopsProxy.ServeHTTP),
 		))
 	}
 
