@@ -178,7 +178,7 @@ type Server struct {
 	QuickStarts                         string
 	ReleaseVersion                      string
 	ServiceClient                       *http.Client
-	StaticUser                          *auth.User
+	StaticUser                          auth.Authenticator
 	StatuspageID                        string
 	TectonicVersion                     string
 	Telemetry                           serverconfig.MultiKeyValue
@@ -274,23 +274,17 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		}
 	}
 
+	authenticator := s.Authenticator
+	if s.authDisabled() {
+		authenticator = s.StaticUser
+	}
+
 	authHandler := func(h http.HandlerFunc) http.HandlerFunc {
-		return authMiddleware(s.Authenticator, s.CSRFVerifier, h)
+		return authMiddleware(authenticator, s.CSRFVerifier, h)
 	}
 
 	authHandlerWithUser := func(h HandlerWithUser) http.HandlerFunc {
-		return authMiddlewareWithUser(s.Authenticator, s.CSRFVerifier, h)
-	}
-
-	if s.authDisabled() {
-		authHandler = func(h http.HandlerFunc) http.HandlerFunc {
-			return h
-		}
-		authHandlerWithUser = func(h HandlerWithUser) http.HandlerFunc {
-			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				h(s.StaticUser, w, r)
-			})
-		}
+		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
 	}
 
 	authHandlerWithHeader := func(h http.HandlerFunc) http.HandlerFunc {
