@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { ArchiveIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { SemVer } from 'semver';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Timestamp, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -11,15 +12,17 @@ import {
 } from '../../../const';
 import * as SignedPipelinerunIcon from '../../../images/signed-badge.svg';
 import { PipelineRunModel } from '../../../models';
-import { PipelineRunKind, TaskRunKind } from '../../../types';
+import { ComputedStatus, PipelineRunKind, TaskRunKind } from '../../../types';
 import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
+import { TaskStatus } from '../../../utils/pipeline-augment';
 import {
   pipelineRunFilterReducer,
+  pipelineRunStatus,
   pipelineRunTitleFilterReducer,
 } from '../../../utils/pipeline-filter-reducer';
-import { pipelineRunDuration } from '../../../utils/pipeline-utils';
+import { getPipelineRunStatus, pipelineRunDuration } from '../../../utils/pipeline-utils';
 import { chainsSignedAnnotation } from '../../pipelines/const';
-import { getTaskRunsOfPipelineRun } from '../../taskruns/useTaskRuns';
+import { useTaskRuns } from '../hooks/useTaskRuns';
 import LinkedPipelineRunTaskStatus from '../status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../status/PipelineRunStatus';
 import PipelineRunVulnerabilities from '../status/PipelineRunVulnerabilities';
@@ -34,7 +37,21 @@ type PLRStatusProps = {
   taskRunsLoaded: boolean;
 };
 
-const PLRStatus: React.FC<PLRStatusProps> = ({ obj, taskRuns, taskRunsLoaded }) => {
+type PipelineRunRowWithoutTaskRunsProps = {
+  obj: PipelineRunKind;
+  operatorVersion: SemVer;
+  taskRunStatusObj: TaskStatus;
+};
+
+type PipelineRunRowWithTaskRunsProps = {
+  obj: PipelineRunKind;
+  operatorVersion: SemVer;
+};
+
+const TASKRUNSFORPLRCACHE: { [key: string]: TaskRunKind[] } = {};
+const InFlightStoreForTaskRunsForPLR: { [key: string]: boolean } = {};
+
+const PLRStatus: React.FC<PLRStatusProps> = React.memo(({ obj, taskRuns, taskRunsLoaded }) => {
   return (
     <PipelineRunStatus
       status={pipelineRunFilterReducer(obj)}
@@ -44,12 +61,16 @@ const PLRStatus: React.FC<PLRStatusProps> = ({ obj, taskRuns, taskRunsLoaded }) 
       taskRunsLoaded={taskRunsLoaded}
     />
   );
-};
+});
 
-const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, customData }) => {
+const PipelineRunRowTable = ({
+  obj,
+  PLRTaskRuns,
+  taskRunsLoaded,
+  taskRunStatusObj,
+  operatorVersion,
+}) => {
   const { t } = useTranslation();
-  const { operatorVersion, taskRuns, taskRunsLoaded } = customData;
-  const PLRTaskRuns = getTaskRunsOfPipelineRun(taskRuns, obj?.metadata?.name);
 
   return (
     <>
@@ -94,6 +115,7 @@ const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, custo
           pipelineRun={obj}
           taskRuns={PLRTaskRuns}
           taskRunsLoaded={taskRunsLoaded}
+          taskRunStatusObj={taskRunStatusObj}
         />
       </TableData>
       <TableData className={tableColumnClasses.started}>
@@ -102,12 +124,101 @@ const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, custo
       <TableData className={tableColumnClasses.duration}>{pipelineRunDuration(obj)}</TableData>
       <TableData className={tableColumnClasses.actions}>
         <ResourceKebabWithUserLabel
-          actions={getPipelineRunKebabActions(operatorVersion, taskRuns)}
+          actions={getPipelineRunKebabActions(
+            operatorVersion,
+            PLRTaskRuns,
+            undefined,
+            taskRunStatusObj,
+          )}
           kind={pipelinerunReference}
           resource={obj}
         />
       </TableData>
     </>
+  );
+};
+
+const PipelineRunRowWithoutTaskRuns: React.FC<PipelineRunRowWithoutTaskRunsProps> = React.memo(
+  ({ obj, operatorVersion, taskRunStatusObj }) => {
+    return (
+      <PipelineRunRowTable
+        obj={obj}
+        PLRTaskRuns={[]}
+        taskRunsLoaded
+        operatorVersion={operatorVersion}
+        taskRunStatusObj={taskRunStatusObj}
+      />
+    );
+  },
+);
+
+const PipelineRunRowWithTaskRunsFetch: React.FC<PipelineRunRowWithTaskRunsProps> = React.memo(
+  ({ obj, operatorVersion }) => {
+    const cacheKey = `${obj.metadata.namespace}-${obj.metadata.name}`;
+    const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
+      obj.metadata.namespace,
+      obj.metadata.name,
+      undefined,
+      `${obj.metadata.namespace}-${obj.metadata.name}`,
+    );
+    InFlightStoreForTaskRunsForPLR[cacheKey] = false;
+    TASKRUNSFORPLRCACHE[cacheKey] = PLRTaskRuns;
+    return (
+      <PipelineRunRowTable
+        obj={obj}
+        PLRTaskRuns={PLRTaskRuns}
+        taskRunsLoaded={taskRunsLoaded}
+        operatorVersion={operatorVersion}
+        taskRunStatusObj={undefined}
+      />
+    );
+  },
+);
+
+const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> = React.memo(
+  ({ obj, operatorVersion }) => {
+    let PLRTaskRuns: TaskRunKind[];
+    let taskRunsLoaded: boolean;
+    const cacheKey = `${obj.metadata.namespace}-${obj.metadata.name}`;
+    const result = TASKRUNSFORPLRCACHE[cacheKey];
+    if (result) {
+      PLRTaskRuns = result;
+      taskRunsLoaded = true;
+    } else if (InFlightStoreForTaskRunsForPLR[cacheKey]) {
+      PLRTaskRuns = [];
+      taskRunsLoaded = true;
+      InFlightStoreForTaskRunsForPLR[cacheKey] = true;
+    } else {
+      return <PipelineRunRowWithTaskRunsFetch obj={obj} operatorVersion={operatorVersion} />;
+    }
+    return (
+      <PipelineRunRowTable
+        obj={obj}
+        PLRTaskRuns={PLRTaskRuns}
+        taskRunsLoaded={taskRunsLoaded}
+        operatorVersion={operatorVersion}
+        taskRunStatusObj={undefined}
+      />
+    );
+  },
+);
+
+const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, customData }) => {
+  const { operatorVersion } = customData;
+  const plrStatus = pipelineRunStatus(obj);
+  if (
+    (plrStatus === ComputedStatus.Cancelled || plrStatus === ComputedStatus.Failed) &&
+    (obj?.status?.childReferences ?? []).length > 0
+  ) {
+    return <PipelineRunRowWithTaskRuns obj={obj} operatorVersion={operatorVersion} />;
+  }
+  const taskRunStatusObj = getPipelineRunStatus(obj);
+  return (
+    <PipelineRunRowWithoutTaskRuns
+      obj={obj}
+      operatorVersion={operatorVersion}
+      taskRunStatusObj={taskRunStatusObj}
+    />
   );
 };
 

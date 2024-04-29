@@ -136,7 +136,7 @@ export const useGetPipelineRuns = (ns: string, options?: { name: string; kind: s
   });
   const mergedPlrs =
     (resultPlrsLoaded || k8sPlrsLoaded) && !k8sPlrsLoadError
-      ? uniqBy([...k8sPlrs, ...resultPlrs], (r) => r.metadata.name)
+      ? uniqBy([...k8sPlrs, ...resultPlrs], (r) => r.metadata.uid)
       : [];
   return [
     mergedPlrs,
