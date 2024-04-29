@@ -16,6 +16,7 @@ import (
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/auth/static"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
@@ -516,16 +517,16 @@ func main() {
 	switch *fK8sAuth {
 	case "service-account":
 		flags.FatalIfFailed(flags.ValidateFlagIs("k8s-mode", *fK8sMode, "in-cluster"))
-		srv.StaticUser = &auth.User{
+		srv.StaticUser = static.NewStaticAuthenticator(auth.User{
 			Token: k8sAuthServiceAccountBearerToken, // FIXME: make it read the token from the file and periodically re-read?
-		}
+		})
 		srv.InternalProxiedK8SClientConfig.BearerTokenFile = k8sInClusterBearerToken
 	case "bearer-token":
 		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken))
 
-		srv.StaticUser = &auth.User{
+		srv.StaticUser = static.NewStaticAuthenticator(auth.User{
 			Token: *fK8sAuthBearerToken,
-		}
+		})
 		srv.InternalProxiedK8SClientConfig.BearerToken = *fK8sAuthBearerToken
 	case "oidc", "openshift":
 		flags.FatalIfFailed(flags.ValidateFlagIs("user-auth", authOptions.AuthType, "oidc", "openshift"))
