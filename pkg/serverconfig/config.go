@@ -112,7 +112,6 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 	}
 
 	addClusterInfo(fs, &config.ClusterInfo)
-	defaultK8SAuth(fs)
 	addCustomization(fs, &config.Customization)
 	addProviders(fs, &config.Providers)
 	addMonitoringInfo(fs, &config.MonitoringInfo)
@@ -230,14 +229,6 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 
 	if clusterInfo.CopiedCSVsDisabled {
 		fs.Set("copied-csvs-disabled", "true")
-	}
-}
-
-func defaultK8SAuth(fs *flag.FlagSet) {
-	// Assume "openshift" if config file is used and it is not set already
-	// by a command-line argument or environment variable.
-	if !isAlreadySet(fs, "k8s-auth") {
-		fs.Set("k8s-auth", "openshift")
 	}
 }
 
