@@ -16,7 +16,8 @@ import (
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
-	oauth2 "github.com/openshift/console/pkg/auth/oauth2"
+	"github.com/openshift/console/pkg/auth/oauth2"
+	"github.com/openshift/console/pkg/auth/static"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
@@ -32,6 +33,7 @@ type AuthOptions struct {
 	ClientSecretFilePath string
 	CAFilePath           string
 	OCLoginCommand       string
+	BearerToken          string
 
 	ExtraScopes flagutil.StringSliceFlag
 
@@ -51,6 +53,7 @@ type completedOptions struct {
 	ClientSecret   string
 	CAFilePath     string
 	OCLoginCommand string
+	BearerToken    string
 
 	ExtraScopes []string
 
@@ -70,6 +73,7 @@ func (c *AuthOptions) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&c.ClientSecretFilePath, "user-auth-oidc-client-secret-file", "", "File containing the OIDC OAuth2 Client Secret.")
 	fs.StringVar(&c.CAFilePath, "user-auth-oidc-ca-file", "", "Path to a PEM file for the OIDC/OAuth2 issuer CA.")
 	fs.StringVar(&c.OCLoginCommand, "user-auth-oidc-oc-login-command", "", "External OIDC OC login command which will be displayed in the console 'Copy Login Command' dialog.")
+	fs.StringVar(&c.BearerToken, "k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
 
 	fs.Var(&c.ExtraScopes, "user-auth-oidc-token-scopes", "Comma-separated list of extra scopes to request ID tokens with")
 
@@ -118,6 +122,7 @@ func (c *AuthOptions) Complete() (*CompletedOptions, error) {
 		CAFilePath:               c.CAFilePath,
 		InactivityTimeoutSeconds: c.InactivityTimeoutSeconds,
 		OCLoginCommand:           c.OCLoginCommand,
+		BearerToken:              c.BearerToken,
 	}
 
 	if len(c.IssuerURL) > 0 {
@@ -166,6 +171,9 @@ func (c *AuthOptions) Validate() []error {
 			errs = append(errs, fmt.Errorf("cannot provide both --user-auth-oidc-client-secret and --user-auth-oidc-client-secret-file"))
 		}
 
+		if c.BearerToken != "" {
+			errs = append(errs, flags.NewInvalidFlagError("k8s-auth-bearer-token", "cannot be used with --user-auth=\"oidc\" or --user-auth=\"openshift\""))
+		}
 	case "disabled":
 	default:
 		errs = append(errs, flags.NewInvalidFlagError("user-auth", "must be one of: oidc, openshift, disabled"))
@@ -211,6 +219,11 @@ func (c *completedOptions) ApplyTo(
 	srv.InactivityTimeout = c.InactivityTimeoutSeconds
 
 	useSecureCookies := srv.BaseURL.Scheme == "https"
+
+	if c.BearerToken != "" {
+		srv.InternalProxiedK8SClientConfig.BearerToken = c.BearerToken
+	}
+
 	var err error
 	srv.Authenticator, err = c.getAuthenticator(
 		srv.BaseURL,
@@ -240,7 +253,14 @@ func (c *completedOptions) getAuthenticator(
 
 	if c.AuthType == "disabled" {
 		klog.Warning("running with AUTHENTICATION DISABLED!")
-		return nil, nil
+
+		if c.BearerToken == "" {
+			return nil, nil
+		}
+
+		return static.NewStaticAuthenticator(auth.User{
+			Token: c.BearerToken,
+		}), nil
 	}
 
 	flags.FatalIfFailed(flags.ValidateFlagNotEmpty("base-address", baseURL.String()))

@@ -15,8 +15,6 @@ import (
 
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
-	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/auth/static"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
@@ -89,7 +87,6 @@ func main() {
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
 
 	fK8sAuth := fs.String("k8s-auth", "", "this option is deprecated, setting it has no effect")
-	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
 
 	fK8sModeOffClusterGitOps := fs.String("k8s-mode-off-cluster-gitops", "", "DEV ONLY. URL of the GitOps backend service")
 
@@ -559,15 +556,6 @@ func main() {
 	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)
 		os.Exit(1)
-	}
-
-	// Setting the --k8s-auth-bearer-token flag will override both the authenticator
-	// and the internal proxy user
-	if len(*fK8sAuthBearerToken) > 0 {
-		srv.Authenticator = static.NewStaticAuthenticator(auth.User{
-			Token: *fK8sAuthBearerToken,
-		})
-		srv.InternalProxiedK8SClientConfig.BearerToken = *fK8sAuthBearerToken
 	}
 
 	listenURL, err := flags.ValidateFlagIsURL("listen", *fListen, false)
