@@ -69,6 +69,7 @@ const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 import 'url-search-params-polyfill';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { graphQLReady } from '../graphql/client';
+import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 
 initI18n();
 
@@ -597,6 +598,7 @@ graphQLReady.onReady(() => {
           >
             <ToastProvider>
               <PollConsoleUpdates />
+              <AdmissionWebhookWarningNotifications />
               <AppRouter />
             </ToastProvider>
           </AppInitSDK>
