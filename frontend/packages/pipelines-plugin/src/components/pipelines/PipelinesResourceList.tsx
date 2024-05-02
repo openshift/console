@@ -29,7 +29,7 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
       kind: referenceForModel(PipelineModel),
       namespace,
       prop: PipelineModel.id,
-      filters: { ...filters(t), name: nameFilter },
+      filters: { ...filters(t), ...(nameFilter && { name: nameFilter }) },
       selector,
       name,
     },
