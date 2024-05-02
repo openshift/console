@@ -46,6 +46,7 @@ export const AdmissionWebhookWarningNotifications = () => {
         ],
         timeout: true,
         dismissible: true,
+        dataTest: 'admission-webhook-warning',
       });
       dispatch(removeAdmissionWebhookWarning(id));
     });

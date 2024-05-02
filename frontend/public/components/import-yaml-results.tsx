@@ -41,7 +41,9 @@ export const ImportYAMLPageStatus: React.FC<ImportYAMLPageStatusProps> = ({ erro
           <GreenCheckCircleIcon />
         </Icon>
 
-        <h2>{t('public~Resources successfully created')}</h2>
+        <h2 data-test="resources-successfully-created">
+          {t('public~Resources successfully created')}
+        </h2>
       </>
     );
   } else {
