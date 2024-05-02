@@ -208,7 +208,8 @@ export class GitlabService extends BaseService {
     try {
       const projectID = await this.getProjectId();
       const ref = this.metadata.defaultBranch || (this.repo as any)?.default_branch;
-      return await this.client.RepositoryFiles.showRaw(projectID, path, ref);
+      const filePath = path.replace(/^\/+/, '');
+      return await this.client.RepositoryFiles.showRaw(projectID, filePath, ref);
     } catch (e) {
       return null;
     }
