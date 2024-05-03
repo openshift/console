@@ -59,7 +59,7 @@ const consoleFetchCommon = async (
   const warning = response.headers.get('Warning');
 
   // If the response has a warning header, store it in the redux store.
-  if (response.ok && warning) {
+  if (response.ok && warning && method !== 'GET') {
     // Do nothing on error since this is a side-effect. Caller will handle the error.
     dataPromise
       .then((data) => handleAdmissionWebhookWarning(warning, data.kind, data.metadata?.name))
