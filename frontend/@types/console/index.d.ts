@@ -1,5 +1,6 @@
 /// <reference path="./react.d.ts" />
 /// <reference path="./ResizeObserver.d.ts" />
+/// <reference path="./VictoryPortal.d.ts" />
 /// <reference path="./generated/graphql-queries.d.ts" />
 
 declare module '*.svg' {

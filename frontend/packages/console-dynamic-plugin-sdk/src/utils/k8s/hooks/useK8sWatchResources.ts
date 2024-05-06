@@ -61,9 +61,13 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     const requiredModels = Object.values(resources).map((r) =>
       transformGroupVersionKindToReference(r.groupVersionKind || r.kind),
     );
-    k8sModelsRef.current = allK8sModels.filter(
-      (model) =>
-        requiredModels.includes(getReferenceForModel(model)) || requiredModels.includes(model.kind),
+
+    k8sModelsRef.current = ImmutableMap<string, K8sModel>(
+      allK8sModels.filter(
+        (model) =>
+          requiredModels.includes(getReferenceForModel(model)) ||
+          requiredModels.includes(model.kind),
+      ),
     );
   }
 

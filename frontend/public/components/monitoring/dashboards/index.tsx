@@ -353,7 +353,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
 
 const AllVariableDropdowns = () => {
   const namespace = React.useContext(NamespaceContext);
-  const variables = useSelector<RootState, string>(({ observe }) =>
+  const variables = useSelector<RootState, ImmutableMap<string, Variable>>(({ observe }) =>
     observe.getIn(['dashboards', getActivePerspective(namespace), 'variables']),
   );
 
@@ -451,7 +451,7 @@ export const PollIntervalDropdown: React.FC<TimeDropdownsProps> = ({ namespace }
       </label>
       <IntervalDropdown
         id="refresh-interval-dropdown"
-        interval={_.toNumber(refreshIntervalFromParams) || interval}
+        interval={_.toNumber(refreshIntervalFromParams) || _.toNumber(interval)}
         setInterval={setInterval}
       />
     </div>
@@ -538,13 +538,13 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
 
   const namespace = React.useContext(NamespaceContext);
   const activePerspective = getActivePerspective(namespace);
-  const pollInterval = useSelector<RootState, string>(({ observe }) =>
+  const pollInterval = useSelector<RootState, number>(({ observe }) =>
     observe.getIn(['dashboards', activePerspective, 'pollInterval']),
   );
-  const timespan = useSelector<RootState, string>(({ observe }) =>
+  const timespan = useSelector<RootState, number>(({ observe }) =>
     observe.getIn(['dashboards', activePerspective, 'timespan']),
   );
-  const variables = useSelector<RootState, string>(({ observe }) =>
+  const variables = useSelector<RootState, ImmutableMap<string, Variable>>(({ observe }) =>
     observe.getIn(['dashboards', activePerspective, 'variables']),
   );
 

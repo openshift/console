@@ -237,8 +237,8 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
           const parser = new DOMParser();
           const doc = parser.parseFromString(responseText, 'text/html');
           const links = !isWindows
-            ? doc.querySelectorAll('a[href^="audit"]')
-            : doc.querySelectorAll('a');
+            ? Array.from(doc.querySelectorAll('a[href^="audit"]'))
+            : Array.from(doc.querySelectorAll('a'));
           const filenames = [];
           for (const link of links) {
             filenames.push(link.textContent);

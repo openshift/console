@@ -37,6 +37,8 @@ export type ConnectToPlural = <P extends WithPluralProps>(
  * @deprecated TODO(alecmerdler): `plural` is not a unique lookup key, remove uses of this.
  * FIXME(alecmerdler): Not returning correctly typed `WrappedComponent`
  */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export const connectToPlural: ConnectToPlural = connect(
   (
     { k8s }: RootState,

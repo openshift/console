@@ -8,7 +8,7 @@ import {
   usePluginsOverviewTabSection,
   useBuildConfigsWatcher,
 } from '@console/shared';
-import { K8sModel } from '@console/dynamic-plugin-sdk';
+import { K8sKind, K8sModel } from '@console/dynamic-plugin-sdk';
 import { connectToModel } from '../../kinds';
 import { modelFor, referenceFor, referenceForModel } from '../../module/k8s';
 import { AsyncComponent, Kebab, KebabAction, ResourceSummary } from '../utils';
@@ -79,22 +79,30 @@ const DefaultSideBar: React.FC<{
   );
 };
 
-export const ResourceOverviewPage = connectToModel(({ kindObj, item, customActions }) => {
-  if (!kindObj && !item?.obj) {
-    return null;
-  }
-  const resourceModel = kindObj || modelFor(referenceFor(item.obj));
-  const ref = referenceForModel(resourceModel);
-  const loader = resourceOverviewPages.get(ref, () => Promise.resolve(DefaultSideBar));
-  return (
-    <AsyncComponent
-      loader={loader}
-      kindObj={resourceModel}
-      item={item}
-      customActions={customActions}
-    />
-  );
-});
+type ResourceOverviewPageProps = {
+  kindObj: K8sKind;
+  item: OverviewItem;
+  customActions?: KebabAction[];
+};
+
+export const ResourceOverviewPage = connectToModel(
+  ({ kindObj, item, customActions }: ResourceOverviewPageProps) => {
+    if (!kindObj && !item?.obj) {
+      return null;
+    }
+    const resourceModel = kindObj || modelFor(referenceFor(item.obj));
+    const ref = referenceForModel(resourceModel);
+    const loader = resourceOverviewPages.get(ref, () => Promise.resolve(DefaultSideBar));
+    return (
+      <AsyncComponent
+        loader={loader}
+        kindObj={resourceModel}
+        item={item}
+        customActions={customActions}
+      />
+    );
+  },
+);
 
 export type OverviewDetailsResourcesTabProps = {
   item: OverviewItem;

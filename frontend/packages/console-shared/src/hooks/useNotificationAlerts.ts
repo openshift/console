@@ -24,7 +24,7 @@ export const useNotificationAlerts = (
     true,
     true,
   );
-  const { data: alerts, loaded, loadError } = useSelector<NotificationAlerts>(
+  const { data: alerts, loaded, loadError } = useSelector<RootState, NotificationAlerts>(
     ({ observe }: RootState) => observe.get('notificationAlerts') ?? {},
   );
 
