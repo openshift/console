@@ -13,8 +13,10 @@ import DevfileStrategySection from './devfile/DevfileStrategySection';
 import GitSection from './git/GitSection';
 import { GitImportFormProps, ImportTypes } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
+import SecureRoute from './route/SecureRoute';
 import ResourceSection from './section/ResourceSection';
 import ExtensionCards from './serverless-function/ExtensionCards';
+
 import './serverless-function/AddServerlessFunctionForm.scss';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
@@ -51,6 +53,11 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
   const showExtensionCards =
     values.import.selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION && isSample;
 
+  const showSecureRouteSectionForDevfile =
+    (importType === ImportTypes.devfile ||
+      values.import.selectedStrategy.type === ImportStrategy.DEVFILE) &&
+    values?.devfile?.devfileSuggestedResources?.route?.spec?.tls;
+
   return (
     <form onSubmit={handleSubmit} data-test-id="import-git-form">
       <Flex direction={{ default: 'column', sm: 'row' }}>
@@ -85,6 +92,11 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
                     <PipelineSection builderImages={builderImages} />
                     <AdvancedSection values={values} />
                   </>
+                )}
+                {showSecureRouteSectionForDevfile && (
+                  <div className="pf-c-form co-m-pane__form">
+                    <SecureRoute />
+                  </div>
                 )}
               </>
             )}
