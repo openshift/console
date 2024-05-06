@@ -5,6 +5,7 @@ import { TELEMETRY_DISABLED, TELEMETRY_DEBUG } from './const';
 const apiKey =
   window.SERVER_FLAGS?.telemetry?.DEVSANDBOX_SEGMENT_API_KEY ||
   window.SERVER_FLAGS?.telemetry?.SEGMENT_API_KEY ||
+  window.SERVER_FLAGS?.telemetry?.SEGMENT_PUBLIC_API_KEY ||
   '';
 
 /**
