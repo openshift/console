@@ -8,50 +8,68 @@ COL_YELLOW='\033[33m'
 
 resolution_errors=false
 
-# Ensure that only one version resolution exists for PatternFly packages in yarn.lock file.
+# Ensure that only one major version resolution exists for the given package in yarn.lock file.
 # Having multiple version resolutions may lead to bugs and webpack build or performance issues.
-#
-# Note: this code relies on yarn.lock v1 format since `yarn why <query>` CLI does not support
-# proper JSON output. We should revisit this code once we upgrade to a newer Yarn version.
 check-resolution() {
   local PKG_NAME="${1:?Provide package name to check}"
-  local RES_COUNT=$(grep -c "^\"${PKG_NAME}@" yarn.lock)
+  local PKG_MAJOR_VERSION="${2:?Provide package major version}"
+
+  # https://stackoverflow.com/a/29613573
+  local PKG_NAME_ESCAPED=$(sed 's/[^^]/[&]/g; s/\^/\\^/g' <<< "${PKG_NAME}")
+
+  local RES_COUNT=$(
+    yarn why "${PKG_NAME}" --json 2>/dev/null \
+      | grep -o '=> Found \\".*\\"' \
+      | sed -n "s/^.*${PKG_NAME_ESCAPED}@\(.*\)[\]\"/\1/p" \
+      | grep "^${PKG_MAJOR_VERSION}\." \
+      | uniq \
+      | wc -l
+  )
+
+  local MSG_PKG_ERROR="${COL_RED}${PKG_NAME}${COL_RESET}"
+  local MSG_PKG_SUCCESS="${COL_GREEN}${PKG_NAME}${COL_RESET}"
+  local MSG_VERSION="${COL_YELLOW}${PKG_MAJOR_VERSION}.x${COL_RESET}"
 
   if [[ $RES_COUNT -eq 0 ]]; then
-    echo -e "${COL_RED}${PKG_NAME}${COL_RESET} has no version resolutions"
+    echo -e "${MSG_PKG_ERROR} has no ${MSG_VERSION} resolutions"
     resolution_errors=true
   elif [[ $RES_COUNT -ne 1 ]]; then
-    echo -e "${COL_RED}${PKG_NAME}${COL_RESET} has multiple version resolutions"
+    echo -e "${MSG_PKG_ERROR} has multiple ${MSG_VERSION} resolutions"
     resolution_errors=true
+  else
+    echo -e "${MSG_PKG_SUCCESS} has one ${MSG_VERSION} resolution"
   fi
 }
 
-# These packages will be checked for version resolutions.
-# This list is explicit since we may want to skip checking certain packages.
-#
-# To see the current full list, run the following command:
-#   sed -nr 's/^\"(@patternfly\/[^@]+).*$/\1/p' yarn.lock | sort -u
+# List of packages to check, formatted as '{package_name}:{major_version}'
 PKGS_TO_CHECK=(
-  '@patternfly/quickstarts'
-  '@patternfly/react-catalog-view-extension'
-  '@patternfly/react-charts'
-  '@patternfly/react-component-groups'
-  '@patternfly/react-console'
-  '@patternfly/react-core'
-  '@patternfly/react-icons'
-  '@patternfly/react-log-viewer'
-  '@patternfly/react-styles'
-  '@patternfly/react-table'
-  '@patternfly/react-tokens'
-  '@patternfly/react-topology'
-  '@patternfly/react-user-feedback'
-  '@patternfly/react-virtualized-extension'
+  '@patternfly/patternfly:5'
+  '@patternfly/patternfly:4'
+  '@patternfly/quickstarts:5'
+  '@patternfly/react-catalog-view-extension:5'
+  '@patternfly/react-catalog-view-extension:4'
+  '@patternfly/react-charts:7'
+  '@patternfly/react-component-groups:5'
+  '@patternfly/react-console:5'
+  '@patternfly/react-core:5'
+  '@patternfly/react-core:4'
+  '@patternfly/react-icons:5'
+  '@patternfly/react-icons:4'
+  '@patternfly/react-log-viewer:5'
+  '@patternfly/react-styles:5'
+  '@patternfly/react-styles:4'
+  '@patternfly/react-table:5'
+  '@patternfly/react-tokens:5'
+  '@patternfly/react-tokens:4'
+  '@patternfly/react-topology:5'
+  '@patternfly/react-user-feedback:5'
+  '@patternfly/react-virtualized-extension:5'
 )
 
 echo -e "Checking ${COL_YELLOW}yarn.lock${COL_RESET} file for PatternFly module resolutions"
 
 for pkg in "${PKGS_TO_CHECK[@]}"; do
-  check-resolution $pkg
+  check-resolution "${pkg%%:*}" "${pkg#*:}"
 done
 
 if [[ "$resolution_errors" == "false" ]]; then
