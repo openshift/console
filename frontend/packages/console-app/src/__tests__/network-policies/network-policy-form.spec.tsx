@@ -17,6 +17,14 @@ jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
   useUserSettingsCompatibility: () => ['', () => {}],
 }));
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useParams: jest.fn(() => ({ ns: 'default' })),
+  useLocation: jest.fn(() => ({
+    pathname: '/k8s/ns/default/networking.k8s.io~v1~NetworkPolicy/~new/form',
+  })),
+}));
+
 const emptyPolicy: NetworkPolicyKind = {
   metadata: {
     name: '',

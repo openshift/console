@@ -59,6 +59,7 @@ import {
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,
   ClusterRoleBindingModel,
+  MultiNetworkPolicyModel,
 } from '../models';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
 
@@ -141,6 +142,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     import('./namespace' /* webpackChunkName: "namespace" */).then((m) => m.NamespacesDetailsPage),
   )
   .set(referenceForModel(NetworkPolicyModel), () =>
+    import('./network-policy' /* webpackChunkName: "network-policy" */).then(
+      (m) => m.NetworkPoliciesDetailsPage,
+    ),
+  )
+  .set(referenceForModel(MultiNetworkPolicyModel), () =>
     import('./network-policy' /* webpackChunkName: "network-policy" */).then(
       (m) => m.NetworkPoliciesDetailsPage,
     ),
@@ -366,6 +372,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     import('./network-policy' /* webpackChunkName: "network-policy" */).then(
       (m) => m.NetworkPoliciesPage,
     ),
+  )
+  .set(referenceForModel(MultiNetworkPolicyModel), () =>
+    import(
+      '@console/app/src/components/network-policies/multi-network-policy/MultiNetworkPolicyListPage' /* webpackChunkName: "multi-network-policy" */
+    ).then((m) => m.MultiNetworkPolicyListPage),
   )
   .set(referenceForModel(NodeModel), () =>
     import('@console/app/src/components/nodes/NodesPage' /* webpackChunkName: "node" */).then(
