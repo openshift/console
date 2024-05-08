@@ -1,3 +1,5 @@
+# Dockerfile to build console-demo-plugin image from pre-built front end.
+#
 # This image is used for testing OpenShift Console dynamic plugin capabilities.
 #
 # See dynamic-demo-plugin/README.md for details.
@@ -11,7 +13,7 @@
 # yarn build
 
 # Stage 1: build the target image
-FROM node:10
+FROM node:18
 
 COPY ./dynamic-demo-plugin/dist /opt/console-demo-plugin/static
 COPY ./dynamic-demo-plugin/node_modules /opt/console-demo-plugin/node_modules
