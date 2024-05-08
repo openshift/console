@@ -1286,7 +1286,7 @@
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"],
-      "disallowed": ["CONSOLE_PIPELINE_PLUGIN"]
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB"]
     }
   },
   {
@@ -1308,7 +1308,7 @@
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"],
-      "disallowed": ["CONSOLE_PIPELINE_PLUGIN"]
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB"]
     }
   }
 ]
