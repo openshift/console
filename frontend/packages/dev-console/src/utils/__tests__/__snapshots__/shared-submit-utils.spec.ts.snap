@@ -5,7 +5,7 @@ Object {
   "apiVersion": "route.openshift.io/v1",
   "kind": "Route",
   "metadata": Object {
-    "defaultAnnotations": Object {
+    "annotations": Object {
       "openshift.io/generated-by": "OpenShiftWebConsole",
     },
     "labels": Object {
@@ -40,7 +40,7 @@ Object {
   "apiVersion": "route.openshift.io/v1",
   "kind": "Route",
   "metadata": Object {
-    "defaultAnnotations": Object {
+    "annotations": Object {
       "app.openshift.io/vcs-ref": "",
       "app.openshift.io/vcs-uri": "https://github.com/test/repo",
       "openshift.io/generated-by": "OpenShiftWebConsole",
