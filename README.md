@@ -108,25 +108,6 @@ In order to enable the monitoring UI and see the "Observe" navigation item while
   export BRIDGE_PLUGINS="monitoring-plugin=http://localhost:9001"
   ```
 
-#### Updating `tectonic-console-builder` image
-Updating `tectonic-console-builder` image is needed whenever there is a change in the build-time dependencies and/or go versions.
-
-In order to update the `tectonic-console-builder` to a new version i.e. v27, follow these steps:
-
-1. Update the `tectonic-console-builder` image tag in files listed below:
-   - .ci-operator.yaml
-   - Dockerfile.dev
-   - Dockerfile.plugins.demo
-   For example, `tectonic-console-builder:27`
-2. Update the dependencies in Dockerfile.builder file i.e. v18.0.0.
-3. Run `./push-builder.sh` script build and push the updated builder image to quay.io.
-   Note: You can test the image using `./builder-run.sh ./build-backend.sh`.
-   To update the image on quay.io, you need edit permission to the quay.io/coreos/  tectonic-console-builder repo. 
-4. Lastly, update the mapping of `tectonic-console-builder` image tag in 
-   [openshift/release](https:// github.com/openshift/release/blob/master/core-services/image-mirroring/supplemental-ci-images/mapping_supplemental_ci_images_ci) repository. 
-   Note: There could be scenario were you would have to add the new image reference in the "mapping_supplemental_ci_images_ci" file, i.e. to avoid CI downtime for upcoming release cycle. 
-   Optional: Request for the [rhel-8-base-nodejs-openshift-4.15](https://github.com/openshift-eng/ocp-build-data/pull/3775/files) nodebuilder update if it doesn't match the node version in `tectonic-console-builder`.
-
 #### CodeReady Containers
 
 If you want to use CodeReady for local development, first make sure [it is set up](https://crc.dev/crc/#setting-up-codeready-containers_gsg), and the [OpenShift cluster is started](https://crc.dev/crc/#starting-the-virtual-machine_gsg).
