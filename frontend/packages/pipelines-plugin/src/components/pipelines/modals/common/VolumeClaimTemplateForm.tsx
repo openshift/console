@@ -2,9 +2,9 @@ import * as React from 'react';
 import { FormGroup, Alert } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
 import { RadioInput } from '@console/internal/components//radio';
 import {
-  getAccessModeRadios,
   getVolumeModeRadios,
   initialAccessModes,
   dropdownUnits,
@@ -49,10 +49,6 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
   const [storageProvisioner, setStorageProvisioner] = React.useState('');
   const [storageClass, setStorageClass] = React.useState('');
   useFormikValidationFix(field.value);
-
-  const handleAccessMode: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    setAccessMode(event.currentTarget.value);
-  };
 
   const handleVolumeMode: React.ReactEventHandler<HTMLInputElement> = (event) => {
     setVolumeMode(event.currentTarget.value);
@@ -140,28 +136,14 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
           />
         </div>
         <div className="odc-VolumeClaimTemplateForm--section">
-          <label className="control-label co-required" htmlFor="access-mode">
-            {t('pipelines-plugin~Access Mode')}
-          </label>
-          <FormGroup fieldId="accessMode" data-test-id="accessModeRadio">
-            {getAccessModeRadios().map((radio) => {
-              const disabled = !allowedAccessModes.includes(radio.value);
-              return (
-                <RadioInput
-                  {...radio}
-                  key={radio.value}
-                  onChange={handleAccessMode}
-                  inline
-                  disabled={disabled}
-                  checked={radio.value === accessMode}
-                  aria-describedby="access-mode-help"
-                  name={`${name}.accessMode`}
-                />
-              );
-            })}
-
-            <p className="help-block">{accessModeHelp}</p>
-          </FormGroup>
+          <AccessModeSelector
+            onChange={setAccessMode}
+            provisioner={storageProvisioner}
+            loaded
+            availableAccessModes={allowedAccessModes}
+            description={accessModeHelp}
+            ignoreReadOnly
+          />
         </div>
         <div className="odc-VolumeClaimTemplateForm--section">
           <label className="control-label co-required" htmlFor="request-size-input">

@@ -1,11 +1,17 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import {
+  FormGroup,
+  Select,
+  SelectOption,
+  SelectList,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { RadioInput } from '@console/internal/components/radio';
 import {
   getAccessModeForProvisioner,
-  getAccessModeRadios,
+  getAccessModeOptions,
 } from '@console/internal/components/storage/shared';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 
@@ -13,7 +19,7 @@ export const getPVCAccessModes = (resource: PersistentVolumeClaimKind, key: stri
   _.reduce(
     resource?.spec?.accessModes,
     (res, value) => {
-      const mode = getAccessModeRadios().find((accessMode) => accessMode.value === value);
+      const mode = getAccessModeOptions().find((accessMode) => accessMode.value === value);
       if (mode) {
         res.push(mode[key]);
       }
@@ -52,6 +58,47 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
     [onChange],
   );
 
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [selected, setSelected] = React.useState<string>(getAccessModeOptions()[0].title);
+
+  const onToggleClick = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const onSelect = (_event: undefined, value: { val: string; label: string }) => {
+    setIsOpen(!isOpen);
+    setSelected(value.label);
+    changeAccessMode(value.val);
+  };
+  const selectOptions = getAccessModeOptions().map((option) => {
+    const disabled = !allowedAccessModes?.includes(option.value);
+    return (
+      <SelectOption
+        key={option.title}
+        value={{ val: option.value, label: option.title }}
+        isDisabled={disabled}
+        isSelected={accessMode === option.value}
+      >
+        {option.title}
+      </SelectOption>
+    );
+  });
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      style={
+        {
+          width: '200px',
+        } as React.CSSProperties
+      }
+    >
+      {selected}
+    </MenuToggle>
+  );
+
   React.useEffect(() => {
     if (loaded) {
       setAllowedAccessModes(
@@ -65,7 +112,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
   }, [filterByVolumeMode, ignoreReadOnly, loaded, provisioner, volumeMode]);
 
   React.useEffect(() => {
-    // Make sure the default or already checked radio button value is from any one of allowed the access mode
+    // Make sure the default or already checked option button value is from any one of allowed the access mode
     if (allowedAccessModes) {
       if (!accessMode && allowedAccessModes.includes(pvcInitialAccessMode[0])) {
         // To view the same access mode value of pvc
@@ -84,23 +131,19 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
       fieldId="access-mode"
       className={className}
     >
-      {loaded &&
-        allowedAccessModes &&
-        getAccessModeRadios().map((radio) => {
-          const disabled = !allowedAccessModes.includes(radio.value);
-          const checked = radio.value === accessMode;
-          return (
-            <RadioInput
-              {...radio}
-              key={radio.value}
-              onChange={(event) => changeAccessMode(event.currentTarget.value)}
-              inline
-              disabled={disabled}
-              checked={checked}
-              name="accessMode"
-            />
-          );
-        })}
+      {loaded && allowedAccessModes && (
+        <Select
+          isOpen={isOpen}
+          selected={selected}
+          onSelect={onSelect}
+          onOpenChange={(open) => setIsOpen(open)}
+          toggle={toggle}
+          shouldFocusToggleOnSelect
+        >
+          <SelectList>{selectOptions}</SelectList>
+        </Select>
+      )}
+
       {allowedAccessModes && allowedAccessModes && description && (
         <p className="help-block" id="access-mode-help">
           {description}
