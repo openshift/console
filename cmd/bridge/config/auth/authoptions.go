@@ -34,7 +34,9 @@ type AuthOptions struct {
 	ClientSecretFilePath string
 	CAFilePath           string
 	OCLoginCommand       string
-	BearerToken          string
+
+	// DEV ONLY. When authentication is disabled, this token will be used for all requests.
+	StaticUserBearerToken string
 
 	ExtraScopes flagutil.StringSliceFlag
 
@@ -53,7 +55,8 @@ type completedOptions struct {
 	ClientSecret   string
 	CAFilePath     string
 	OCLoginCommand string
-	BearerToken    string
+
+	StaticUserBearerToken string
 
 	ExtraScopes []string
 
@@ -67,13 +70,13 @@ func NewAuthOptions() *AuthOptions {
 
 func (c *AuthOptions) AddFlags(fs *flag.FlagSet) {
 	fs.Var(&c.AuthType, "user-auth", "User authentication provider type. Possible values: disabled, oidc, openshift. Defaults to 'openshift'")
-	fs.StringVar(&c.IssuerURL, "user-auth-oidc-issuer-url", "", "The OIDC OAuth2 issuer URL.")
-	fs.StringVar(&c.ClientID, "user-auth-oidc-client-id", "", "The OIDC OAuth2 Client ID.")
-	fs.StringVar(&c.ClientSecret, "user-auth-oidc-client-secret", "", "The OIDC OAuth2 Client Secret.")
-	fs.StringVar(&c.ClientSecretFilePath, "user-auth-oidc-client-secret-file", "", "File containing the OIDC OAuth2 Client Secret.")
-	fs.StringVar(&c.CAFilePath, "user-auth-oidc-ca-file", "", "Path to a PEM file for the OIDC OAuth2 issuer CA.")
+	fs.StringVar(&c.IssuerURL, "user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
+	fs.StringVar(&c.ClientID, "user-auth-oidc-client-id", "", "The OIDC/OAuth2 Client ID.")
+	fs.StringVar(&c.ClientSecret, "user-auth-oidc-client-secret", "", "The OIDC/OAuth2 Client Secret.")
+	fs.StringVar(&c.ClientSecretFilePath, "user-auth-oidc-client-secret-file", "", "File containing the OIDC/OAuth2 Client Secret.")
+	fs.StringVar(&c.CAFilePath, "user-auth-oidc-ca-file", "", "Path to a PEM file for the OIDC/OAuth2 issuer CA.")
 	fs.StringVar(&c.OCLoginCommand, "user-auth-oidc-oc-login-command", "", "External OIDC OC login command which will be displayed in the console 'Copy Login Command' dialog.")
-	fs.StringVar(&c.BearerToken, "k8s-auth-bearer-token", "", "DEV ONLY. Static user token to be used when authentication is disabled. Can only be used with --user-auth=\"disabled\".")
+	fs.StringVar(&c.StaticUserBearerToken, "k8s-auth-bearer-token", "", "DEV ONLY. Static user token to be used when authentication is disabled. Can only be used with --user-auth=\"disabled\".")
 
 	fs.Var(&c.ExtraScopes, "user-auth-oidc-token-scopes", "Comma-separated list of extra scopes to request ID tokens with")
 
@@ -122,7 +125,7 @@ func (c *AuthOptions) Complete() (*CompletedOptions, error) {
 		CAFilePath:               c.CAFilePath,
 		InactivityTimeoutSeconds: c.InactivityTimeoutSeconds,
 		OCLoginCommand:           c.OCLoginCommand,
-		BearerToken:              c.BearerToken,
+		StaticUserBearerToken:    c.StaticUserBearerToken,
 	}
 
 	if len(c.IssuerURL) > 0 {
@@ -171,7 +174,7 @@ func (c *AuthOptions) Validate() []error {
 			errs = append(errs, fmt.Errorf("cannot provide both --user-auth-oidc-client-secret and --user-auth-oidc-client-secret-file"))
 		}
 
-		if c.BearerToken != "" {
+		if c.StaticUserBearerToken != "" {
 			errs = append(errs, flags.NewInvalidFlagError("k8s-auth-bearer-token", "cannot be used with --user-auth=\"oidc\" or --user-auth=\"openshift\""))
 		}
 	case flagvalues.AuthTypeDisabled:
@@ -220,8 +223,8 @@ func (c *completedOptions) ApplyTo(
 
 	useSecureCookies := srv.BaseURL.Scheme == "https"
 
-	if c.AuthType == flagvalues.AuthTypeDisabled && c.BearerToken != "" {
-		srv.InternalProxiedK8SClientConfig.BearerToken = c.BearerToken
+	if c.AuthType == flagvalues.AuthTypeDisabled && c.StaticUserBearerToken != "" {
+		srv.InternalProxiedK8SClientConfig.BearerToken = c.StaticUserBearerToken
 	}
 
 	var err error
@@ -252,14 +255,14 @@ func (c *completedOptions) getAuthenticator(
 ) (auth.Authenticator, error) {
 
 	if c.AuthType == flagvalues.AuthTypeDisabled {
-		if c.BearerToken == "" {
+		if c.StaticUserBearerToken == "" {
 			klog.Warning("console is disabled -- no authentication method configured")
 			return nil, nil
 		}
 
 		klog.Warning("running with AUTHENTICATION DISABLED -- for development use only!")
 		return static.NewStaticAuthenticator(auth.User{
-			Token: c.BearerToken,
+			Token: c.StaticUserBearerToken,
 		}), nil
 	}
 
