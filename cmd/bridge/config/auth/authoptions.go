@@ -13,6 +13,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
+	"github.com/openshift/console/cmd/bridge/config/flagvalues"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
@@ -25,7 +26,7 @@ import (
 )
 
 type AuthOptions struct {
-	AuthType string
+	AuthType flagvalues.AuthType
 
 	IssuerURL            string
 	ClientID             string
@@ -44,9 +45,8 @@ type AuthOptions struct {
 type CompletedOptions struct {
 	*completedOptions
 }
-
 type completedOptions struct {
-	AuthType string
+	AuthType flagvalues.AuthType
 
 	IssuerURL      *url.URL
 	ClientID       string
@@ -66,7 +66,7 @@ func NewAuthOptions() *AuthOptions {
 }
 
 func (c *AuthOptions) AddFlags(fs *flag.FlagSet) {
-	fs.StringVar(&c.AuthType, "user-auth", "", "User authentication provider type. Possible values: disabled, oidc, openshift. Defaults to 'openshift'")
+	fs.Var(&c.AuthType, "user-auth", "User authentication provider type. Possible values: disabled, oidc, openshift. Defaults to 'openshift'")
 	fs.StringVar(&c.IssuerURL, "user-auth-oidc-issuer-url", "", "The OIDC OAuth2 issuer URL.")
 	fs.StringVar(&c.ClientID, "user-auth-oidc-client-id", "", "The OIDC OAuth2 Client ID.")
 	fs.StringVar(&c.ClientSecret, "user-auth-oidc-client-secret", "", "The OIDC OAuth2 Client Secret.")
@@ -82,13 +82,13 @@ func (c *AuthOptions) AddFlags(fs *flag.FlagSet) {
 }
 
 func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
-	serverconfig.SetIfUnset(&c.AuthType, config.AuthType)
 	serverconfig.SetIfUnset(&c.ClientID, config.ClientID)
 	serverconfig.SetIfUnset(&c.IssuerURL, config.OIDCIssuer)
 	serverconfig.SetIfUnset(&c.ClientSecretFilePath, config.ClientSecretFile)
 	serverconfig.SetIfUnset(&c.CAFilePath, config.OAuthEndpointCAFile)
 	serverconfig.SetIfUnset(&c.LogoutRedirect, config.LogoutRedirect)
 	serverconfig.SetIfUnset(&c.OCLoginCommand, config.OIDCOCLoginCommand)
+	c.AuthType.Set(config.AuthType)
 
 	if c.InactivityTimeoutSeconds == 0 {
 		c.InactivityTimeoutSeconds = config.InactivityTimeoutSeconds
@@ -102,7 +102,7 @@ func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
 func (c *AuthOptions) Complete() (*CompletedOptions, error) {
 	// default values before running validation
 	if len(c.AuthType) == 0 {
-		c.AuthType = "openshift"
+		c.AuthType = flagvalues.AuthTypeOpenShift
 	}
 
 	if c.InactivityTimeoutSeconds < 300 {
@@ -158,7 +158,7 @@ func (c *AuthOptions) Validate() []error {
 	var errs []error
 
 	switch c.AuthType {
-	case "openshift", "oidc":
+	case flagvalues.AuthTypeOpenShift, flagvalues.AuthTypeOIDC:
 		if len(c.ClientID) == 0 {
 			errs = append(errs, flags.NewRequiredFlagError("user-auth-oidc-client-id"))
 		}
@@ -174,13 +174,13 @@ func (c *AuthOptions) Validate() []error {
 		if c.BearerToken != "" {
 			errs = append(errs, flags.NewInvalidFlagError("k8s-auth-bearer-token", "cannot be used with --user-auth=\"oidc\" or --user-auth=\"openshift\""))
 		}
-	case "disabled":
+	case flagvalues.AuthTypeDisabled:
 	default:
 		errs = append(errs, flags.NewInvalidFlagError("user-auth", "must be one of: oidc, openshift, disabled"))
 	}
 
 	switch c.AuthType {
-	case "openshift":
+	case flagvalues.AuthTypeOpenShift:
 		if len(c.IssuerURL) != 0 {
 			errs = append(errs, flags.NewInvalidFlagError("user-auth-oidc-issuer-url", "cannot be used with --user-auth=\"openshift\""))
 		}
@@ -193,14 +193,14 @@ func (c *AuthOptions) Validate() []error {
 			errs = append(errs, flags.NewInvalidFlagError("user-auth-oidc-oc-login-command", "cannot be used with --user-auth=\"openshift\""))
 		}
 
-	case "oidc":
+	case flagvalues.AuthTypeOIDC:
 		if len(c.IssuerURL) == 0 {
 			errs = append(errs, fmt.Errorf("--user-auth-oidc-issuer-url must be set if --user-auth=oidc"))
 		}
 	}
 
 	switch c.AuthType {
-	case "oidc", "openshift":
+	case flagvalues.AuthTypeOIDC, flagvalues.AuthTypeOpenShift:
 	default:
 		if c.InactivityTimeoutSeconds > 0 {
 			errs = append(errs, flags.NewInvalidFlagError("inactivity-timeout", "in order to activate the user inactivity timout, flag --user-auth must be one of: oidc, openshift"))
@@ -220,7 +220,7 @@ func (c *completedOptions) ApplyTo(
 
 	useSecureCookies := srv.BaseURL.Scheme == "https"
 
-	if c.BearerToken != "" {
+	if c.AuthType == flagvalues.AuthTypeDisabled && c.BearerToken != "" {
 		srv.InternalProxiedK8SClientConfig.BearerToken = c.BearerToken
 	}
 
@@ -251,7 +251,7 @@ func (c *completedOptions) getAuthenticator(
 	sessionConfig *session.CompletedOptions,
 ) (auth.Authenticator, error) {
 
-	if c.AuthType == "disabled" {
+	if c.AuthType == flagvalues.AuthTypeDisabled {
 		if c.BearerToken == "" {
 			klog.Warning("console is disabled -- no authentication method configured")
 			return nil, nil
