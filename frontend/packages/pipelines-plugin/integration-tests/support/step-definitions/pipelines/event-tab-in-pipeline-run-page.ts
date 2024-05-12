@@ -47,7 +47,7 @@ When('user goes to Pipeline Runs tab', () => {
 });
 
 When('user clicks on pipeline run for pipeline {string}', (pipelineName: string) => {
-  cy.get(`[data-test-id^="${pipelineName}-"]`).click();
+  cy.get(`[data-test-id^="${pipelineName}-"]`).eq(0).click();
 });
 
 When('user clicks on Events tab', () => {
@@ -112,7 +112,7 @@ When('user clicks on available pipeline {string}', (pipelineName: string) => {
 });
 
 When('user opens pipeline run {string}', (pipelineName: string) => {
-  cy.get(`[data-test-id^="${pipelineName}-"]`).click();
+  cy.get(`[data-test-id^="${pipelineName}-"]`).eq(0).click();
 });
 
 When('user opens task run {string}', (pipelineName: string) => {

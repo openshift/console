@@ -68,6 +68,7 @@ export const pipelinesPage = {
         }
       });
     });
+    cy.get('[data-test-id="action-items"]').should('be.visible');
   },
 
   selectActionForPipeline: (pipelineName: string, action: string | pipelineActions) => {
@@ -84,6 +85,7 @@ export const pipelinesPage = {
         }
       });
     });
+    cy.byLegacyTestID('action-items').should('be.visible');
     cy.byTestActionID(action).click({ force: true });
   },
 

@@ -361,7 +361,7 @@ Feature: Pipeline Runs
 
 
         @regression @odc-4793
-        Scenario: Status for the cancelled pipeline: P-07-TC34
+        Scenario: Status for the cancelled pipeline: P-07-TC36
             Given user creates pipeline using git named "pipeline-cancel"
               And user is at the Pipeline Details page of pipeline "pipeline-cancel"
              When user starts the pipeline "pipeline-cancel" in Pipeline Details page
@@ -370,7 +370,7 @@ Feature: Pipeline Runs
 
 
         @regression @odc-4793
-        Scenario: Status for the stopped pipeline: P-07-TC35
+        Scenario: Status for the stopped pipeline: P-07-TC37
             Given user creates pipeline using git named "pipeline-stop"
               And user is at the Pipeline Details page of pipeline "pipeline-stop"
              When user starts the pipeline "pipeline-stop" in Pipeline Details page
@@ -378,20 +378,20 @@ Feature: Pipeline Runs
              Then status displays as "Cancelled" in pipeline run details page
 
         @regression @odc-7420
-        Scenario: SBOM information on the pipelineRun detail page: P-07-TC36
+        Scenario: SBOM information on the pipelineRun detail page: P-07-TC38
             Given user has created a pipelineRun with sbom task "pipelinerun-with-sbom-link"
              When user navigates to PipelineRun Details page "pipelinerun-with-sbom-link"
              Then user can see Download SBOM and View SBOM section in PipelineRun details page
 
 
         @regression @odc-7423
-        Scenario: Output of the pipelinerun: P-07-TC37
+        Scenario: Output of the pipelinerun: P-07-TC39
             Given user has created a pipelineRun with sbom task "pipelinerun-with-sbom-link"
              When user navigates to output tab of pipelineRun details page "pipelinerun-with-sbom-link"
              Then user can see the results in the output tab
 
         @regression @odc-7421
-        Scenario: CVE information in the pipelinerun list and details page: P-07-TC38
+        Scenario: CVE information in the pipelinerun list and details page: P-07-TC40
             Given user has created a PipelineRun with scan task "pipelinerun-with-scan-task"
              When user navigates to PipelineRun list page
              Then user can see the vulnerabilities in the list page "pipelinerun-with-scan-task"
@@ -400,7 +400,7 @@ Feature: Pipeline Runs
 
 
         @regression @odc-7421
-        Scenario: View SBOM link in the pipelinerun list kebab action: P-07-TC38
+        Scenario: View SBOM link in the pipelinerun list kebab action: P-07-TC41
             Given user has created a pipelineRun with sbom task "pipelinerun-with-sbom-link"
              When user navigates to PipelineRun list page
              Then user can see View SBOM link in the kebab menu of PipelineRun "pipelinerun-with-sbom-link"

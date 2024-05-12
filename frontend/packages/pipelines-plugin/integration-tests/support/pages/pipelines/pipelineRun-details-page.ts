@@ -89,12 +89,14 @@ export const pipelineRunDetailsPage = {
     });
   },
   verifyDetailsFields: () => {
-    cy.get('.odc-pipeline-run-details__customDetails').within(() => {
-      cy.contains('dl dt', 'Repository').should('be.visible');
-      cy.contains('dl dt', 'Branch').should('be.visible');
-      cy.contains('dl dt', 'Commit id').should('be.visible');
-      cy.contains('dl dt', 'Event type').should('be.visible');
-    });
+    cy.get('.odc-pipeline-run-details__customDetails')
+      .scrollIntoView()
+      .within(() => {
+        cy.contains('dl>dt', 'Repository').should('be.visible');
+        cy.contains('dl>dt', 'Branch').should('be.visible');
+        cy.contains('dl>dt', 'Commit id').should('be.visible');
+        cy.contains('dl>dt', 'Event type').should('be.visible');
+      });
   },
   verifyPipelineRunColumns: () => {
     cy.get(pipelineRunDetailsPO.taskRuns.columnNames.name).should('be.visible');
