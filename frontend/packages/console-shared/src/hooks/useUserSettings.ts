@@ -4,8 +4,7 @@ import { createHash } from 'crypto-browserify';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector } from 'react-redux';
-import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
-import { UseUserSettings } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { UseUserSettings, getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
